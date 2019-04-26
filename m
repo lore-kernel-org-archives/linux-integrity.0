@@ -2,30 +2,29 @@ Return-Path: <SRS0=sNqz=S4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A401EC43218
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644BEC4321A
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5582146E
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B8A208C4
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbfDZHdh (ORCPT
+        id S1725971AbfDZHbr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:33:37 -0400
+        Fri, 26 Apr 2019 03:31:47 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2747 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725899AbfDZHbs (ORCPT
+        by vger.kernel.org with ESMTP id S1725899AbfDZHbr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:48 -0400
+        Fri, 26 Apr 2019 03:31:47 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:40 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 9879D412A1;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 593CC41298;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -33,7 +32,7 @@ To:     Peter Zijlstra <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>
 CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Nadav Amit <nadav.amit@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         <linux_dti@icloud.com>, <linux-integrity@vger.kernel.org>,
@@ -43,16 +42,11 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Masami Hiramatsu" <mhiramat@kernel.org>
-Subject: [PATCH v5 07/23] x86/alternative: Use temporary mm for text poking
-Date:   Thu, 25 Apr 2019 17:11:27 -0700
-Message-ID: <20190426001143.4983-8-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v5 00/23] x86: text_poke() fixes and executable lockdowns
+Date:   Thu, 25 Apr 2019 17:11:20 -0700
+Message-ID: <20190426001143.4983-1-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
-References: <20190426001143.4983-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
@@ -62,199 +56,145 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-text_poke() can potentially compromise security as it sets temporary
-PTEs in the fixmap. These PTEs might be used to rewrite the kernel code
-from other cores accidentally or maliciously, if an attacker gains the
-ability to write onto kernel memory.
+Yet another version, per PeterZ request, addressing the latest feedback.
 
-Moreover, since remote TLBs are not flushed after the temporary PTEs are
-removed, the time-window in which the code is writable is not limited if
-the fixmap PTEs - maliciously or accidentally - are cached in the TLB.
-To address these potential security hazards, use a temporary mm for
-patching the code.
+This patchset improves several overlapping issues around stale TLB
+entries and W^X violations. It is combined from "x86/alternative:
+text_poke() enhancements v7" [1] and "Don't leave executable TLB entries
+to freed pages v2" [2] patchsets that were conflicting.
 
-Finally, text_poke() is also not conservative enough when mapping pages,
-as it always tries to map 2 pages, even when a single one is sufficient.
-So try to be more conservative, and do not map more than needed.
+The related issues that this fixes:
+1. Fixmap PTEs that are used for patching are available for access from
+  other cores and might be exploited. They are not even flushed from
+  the TLB in remote cores, so the risk is even higher. Address this
+  issue by introducing a temporary mm that is only used during
+  patching. Unfortunately, due to init ordering, fixmap is still used
+  during boot-time patching. Future patches can eliminate the need for
+  it.
+2. Missing lockdep assertion to ensure text_mutex is taken. It is
+  actually not always taken, so fix the instances that were found not
+  to take the lock (although they should be safe even without taking
+  the lock).
+3. Module_alloc returning memory that is RWX until a module is finished
+  loading.
+4. Sometimes when memory is freed via the module subsystem, an
+  executable permissioned TLB entry can remain to a freed page. If the
+  page is re-used to back an address that will receive data from
+  userspace, it can result in user data being mapped as executable in
+  the kernel. The root of this behavior is vfree lazily flushing the
+  TLB, but not lazily freeing the underlying pages.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
----
- arch/x86/include/asm/fixmap.h |   2 -
- arch/x86/kernel/alternative.c | 108 +++++++++++++++++++++++++++-------
- arch/x86/xen/mmu_pv.c         |   2 -
- 3 files changed, 86 insertions(+), 26 deletions(-)
 
-diff --git a/arch/x86/include/asm/fixmap.h b/arch/x86/include/asm/fixmap.h
-index 50ba74a34a37..9da8cccdf3fb 100644
---- a/arch/x86/include/asm/fixmap.h
-+++ b/arch/x86/include/asm/fixmap.h
-@@ -103,8 +103,6 @@ enum fixed_addresses {
- #ifdef CONFIG_PARAVIRT
- 	FIX_PARAVIRT_BOOTMAP,
- #endif
--	FIX_TEXT_POKE1,	/* reserve 2 pages for text_poke() */
--	FIX_TEXT_POKE0, /* first page is last, because allocation is backward */
- #ifdef	CONFIG_X86_INTEL_MID
- 	FIX_LNW_VRTC,
- #endif
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 11d5c710a94f..599203876c32 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -12,6 +12,7 @@
- #include <linux/slab.h>
- #include <linux/kdebug.h>
- #include <linux/kprobes.h>
-+#include <linux/mmu_context.h>
- #include <asm/text-patching.h>
- #include <asm/alternative.h>
- #include <asm/sections.h>
-@@ -684,41 +685,104 @@ __ro_after_init unsigned long poking_addr;
- 
- static void *__text_poke(void *addr, const void *opcode, size_t len)
- {
-+	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
-+	struct page *pages[2] = {NULL};
-+	temp_mm_state_t prev;
- 	unsigned long flags;
--	char *vaddr;
--	struct page *pages[2];
--	int i;
-+	pte_t pte, *ptep;
-+	spinlock_t *ptl;
-+	pgprot_t pgprot;
- 
- 	/*
--	 * While boot memory allocator is runnig we cannot use struct
--	 * pages as they are not yet initialized.
-+	 * While boot memory allocator is running we cannot use struct pages as
-+	 * they are not yet initialized. There is no way to recover.
- 	 */
- 	BUG_ON(!after_bootmem);
- 
- 	if (!core_kernel_text((unsigned long)addr)) {
- 		pages[0] = vmalloc_to_page(addr);
--		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-+		if (cross_page_boundary)
-+			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
- 	} else {
- 		pages[0] = virt_to_page(addr);
- 		WARN_ON(!PageReserved(pages[0]));
--		pages[1] = virt_to_page(addr + PAGE_SIZE);
-+		if (cross_page_boundary)
-+			pages[1] = virt_to_page(addr + PAGE_SIZE);
- 	}
--	BUG_ON(!pages[0]);
-+	/*
-+	 * If something went wrong, crash and burn since recovery paths are not
-+	 * implemented.
-+	 */
-+	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
-+
- 	local_irq_save(flags);
--	set_fixmap(FIX_TEXT_POKE0, page_to_phys(pages[0]));
--	if (pages[1])
--		set_fixmap(FIX_TEXT_POKE1, page_to_phys(pages[1]));
--	vaddr = (char *)fix_to_virt(FIX_TEXT_POKE0);
--	memcpy(&vaddr[(unsigned long)addr & ~PAGE_MASK], opcode, len);
--	clear_fixmap(FIX_TEXT_POKE0);
--	if (pages[1])
--		clear_fixmap(FIX_TEXT_POKE1);
--	local_flush_tlb();
--	sync_core();
--	/* Could also do a CLFLUSH here to speed up CPU recovery; but
--	   that causes hangs on some VIA CPUs. */
--	for (i = 0; i < len; i++)
--		BUG_ON(((char *)addr)[i] != ((char *)opcode)[i]);
-+
-+	/*
-+	 * Map the page without the global bit, as TLB flushing is done with
-+	 * flush_tlb_mm_range(), which is intended for non-global PTEs.
-+	 */
-+	pgprot = __pgprot(pgprot_val(PAGE_KERNEL) & ~_PAGE_GLOBAL);
-+
-+	/*
-+	 * The lock is not really needed, but this allows to avoid open-coding.
-+	 */
-+	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
-+
-+	/*
-+	 * This must not fail; preallocated in poking_init().
-+	 */
-+	VM_BUG_ON(!ptep);
-+
-+	pte = mk_pte(pages[0], pgprot);
-+	set_pte_at(poking_mm, poking_addr, ptep, pte);
-+
-+	if (cross_page_boundary) {
-+		pte = mk_pte(pages[1], pgprot);
-+		set_pte_at(poking_mm, poking_addr + PAGE_SIZE, ptep + 1, pte);
-+	}
-+
-+	/*
-+	 * Loading the temporary mm behaves as a compiler barrier, which
-+	 * guarantees that the PTE will be set at the time memcpy() is done.
-+	 */
-+	prev = use_temporary_mm(poking_mm);
-+
-+	kasan_disable_current();
-+	memcpy((u8 *)poking_addr + offset_in_page(addr), opcode, len);
-+	kasan_enable_current();
-+
-+	/*
-+	 * Ensure that the PTE is only cleared after the instructions of memcpy
-+	 * were issued by using a compiler barrier.
-+	 */
-+	barrier();
-+
-+	pte_clear(poking_mm, poking_addr, ptep);
-+	if (cross_page_boundary)
-+		pte_clear(poking_mm, poking_addr + PAGE_SIZE, ptep + 1);
-+
-+	/*
-+	 * Loading the previous page-table hierarchy requires a serializing
-+	 * instruction that already allows the core to see the updated version.
-+	 * Xen-PV is assumed to serialize execution in a similar manner.
-+	 */
-+	unuse_temporary_mm(prev);
-+
-+	/*
-+	 * Flushing the TLB might involve IPIs, which would require enabled
-+	 * IRQs, but not if the mm is not used, as it is in this point.
-+	 */
-+	flush_tlb_mm_range(poking_mm, poking_addr, poking_addr +
-+			   (cross_page_boundary ? 2 : 1) * PAGE_SIZE,
-+			   PAGE_SHIFT, false);
-+
-+	/*
-+	 * If the text does not match what we just wrote then something is
-+	 * fundamentally screwy; there's nothing we can really do about that.
-+	 */
-+	BUG_ON(memcmp(addr, opcode, len));
-+
-+	pte_unmap_unlock(ptep, ptl);
- 	local_irq_restore(flags);
- 	return addr;
- }
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index a21e1734fc1f..beb44e22afdf 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -2318,8 +2318,6 @@ static void xen_set_fixmap(unsigned idx, phys_addr_t phys, pgprot_t prot)
- #elif defined(CONFIG_X86_VSYSCALL_EMULATION)
- 	case VSYSCALL_PAGE:
- #endif
--	case FIX_TEXT_POKE0:
--	case FIX_TEXT_POKE1:
- 		/* All local page mappings */
- 		pte = pfn_pte(phys, prot);
- 		break;
+Changes v4 to v5:
+- Change temporary state variable name [Borislav]
+- Commit log and comment fixes [Borislav]
+
+Changes v3 to v4:
+- Remove the size parameter from tramp_free() [Steven]
+- Remove caching of hw_breakpoint_active() [Sean]
+- Prevent the use of bpf_probe_write_user() while using temporary mm [Jann]
+- Fix build issues on other archs
+
+Changes v2 to v3:
+- Fix commit messages and comments [Boris]
+- Rename VM_HAS_SPECIAL_PERMS [Boris]
+- Remove unnecessary local variables [Boris]
+- Rename set_alias_*() functions [Boris, Andy]
+- Save/restore DR registers when using temporary mm
+- Move line deletion from patch 10 to patch 17
+
+Changes v1 to v2:
+- Adding "Reviewed-by tag" [Masami]
+- Comment instead of code to warn against module removal while
+  patching [Masami]
+- Avoiding open-coded TLB flush [Andy]
+- Remove "This patch" [Borislav Petkov]
+- Not set global bit during text poking [Andy, hpa]
+- Add Ack from [Pavel Machek]
+- Split patch 16 "Plug in new special vfree flag" into 4 patches (16-19)
+  to make it easier to review. There were no code changes.
+
+The changes from "Don't leave executable TLB entries to freed pages
+v2" to v1:
+- Add support for case of hibernate trying to save an unmapped page
+  on the directmap. (Ard Biesheuvel)
+- No week arch breakout for vfree-ing special memory (Andy Lutomirski)
+- Avoid changing deferred free code by moving modules init free to work
+  queue (Andy Lutomirski)
+- Plug in new flag for kprobes and ftrace
+- More arch generic names for set_pages functions (Ard Biesheuvel)
+- Fix for TLB not always flushing the directmap (Nadav Amit)
+
+Changes from "x86/alternative: text_poke() enhancements v7" to v1
+- Fix build failure on CONFIG_RANDOMIZE_BASE=n (Rick)
+- Remove text_poke usage from ftrace (Nadav)
+
+[1] https://lkml.org/lkml/2018/12/5/200
+[2] https://lkml.org/lkml/2018/12/11/1571
+
+
+Andy Lutomirski (1):
+  x86/mm: Introduce temporary mm structs
+
+Nadav Amit (15):
+  Fix "x86/alternatives: Lockdep-enforce text_mutex in text_poke*()"
+  x86/jump_label: Use text_poke_early() during early init
+  x86/mm: Save debug registers when loading a temporary mm
+  fork: Provide a function for copying init_mm
+  x86/alternative: Initialize temporary mm for patching
+  x86/alternative: Use temporary mm for text poking
+  x86/kgdb: Avoid redundant comparison of patched code
+  x86/ftrace: Set trampoline pages as executable
+  x86/kprobes: Set instruction page as executable
+  x86/module: Avoid breaking W^X while loading modules
+  x86/jump-label: Remove support for custom poker
+  x86/alternative: Remove the return value of text_poke_*()
+  x86/alternative: Comment about module removal races
+  mm/tlb: Provide default nmi_uaccess_okay()
+  bpf: Fail bpf_probe_write_user() while mm is switched
+
+Rick Edgecombe (7):
+  x86/mm/cpa: Add set_direct_map_ functions
+  mm: Make hibernate handle unmapped pages
+  vmalloc: Add flag for free of special permsissions
+  modules: Use vmalloc special flag
+  bpf: Use vmalloc special flag
+  x86/ftrace: Use vmalloc special flag
+  x86/kprobes: Use vmalloc special flag
+
+ arch/Kconfig                         |   4 +
+ arch/x86/Kconfig                     |   1 +
+ arch/x86/include/asm/fixmap.h        |   2 -
+ arch/x86/include/asm/mmu_context.h   |  56 ++++++++
+ arch/x86/include/asm/pgtable.h       |   3 +
+ arch/x86/include/asm/set_memory.h    |   3 +
+ arch/x86/include/asm/text-patching.h |   7 +-
+ arch/x86/include/asm/tlbflush.h      |   2 +
+ arch/x86/kernel/alternative.c        | 201 ++++++++++++++++++++-------
+ arch/x86/kernel/ftrace.c             |  22 +--
+ arch/x86/kernel/jump_label.c         |  21 ++-
+ arch/x86/kernel/kgdb.c               |  25 +---
+ arch/x86/kernel/kprobes/core.c       |  19 ++-
+ arch/x86/kernel/module.c             |   2 +-
+ arch/x86/mm/init_64.c                |  36 +++++
+ arch/x86/mm/pageattr.c               |  16 ++-
+ arch/x86/xen/mmu_pv.c                |   2 -
+ include/asm-generic/tlb.h            |   9 ++
+ include/linux/filter.h               |  18 +--
+ include/linux/mm.h                   |  18 +--
+ include/linux/sched/task.h           |   1 +
+ include/linux/set_memory.h           |  11 ++
+ include/linux/vmalloc.h              |  15 ++
+ init/main.c                          |   3 +
+ kernel/bpf/core.c                    |   1 -
+ kernel/fork.c                        |  24 +++-
+ kernel/module.c                      |  82 ++++++-----
+ kernel/power/snapshot.c              |   5 +-
+ kernel/trace/bpf_trace.c             |   8 ++
+ mm/page_alloc.c                      |   7 +-
+ mm/vmalloc.c                         | 113 ++++++++++++---
+ 31 files changed, 542 insertions(+), 195 deletions(-)
+
 -- 
 2.17.1
 
