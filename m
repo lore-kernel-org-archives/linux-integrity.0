@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C205AC43218
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76248C43219
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90E38208C2
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DBD920C01
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q470hKxC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JIPBw61l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbfD0Gnd (ORCPT
+        id S1726654AbfD0GoH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:43:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44684 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbfD0Gnc (ORCPT
+        Sat, 27 Apr 2019 02:44:07 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39611 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726628AbfD0Gnb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 27 Apr 2019 02:43:32 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y12so2555205plk.11;
-        Fri, 26 Apr 2019 23:43:32 -0700 (PDT)
+        Sat, 27 Apr 2019 02:43:31 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i17so2752936pfo.6;
+        Fri, 26 Apr 2019 23:43:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=03x8MyH4ONo6RL8TDAuJcYQYBUTk8Xfu5EMEl5vv8zs=;
-        b=Q470hKxCA0zkhL+IQMRmPe5UQg42Gi+l2RRmW947taZyL//Jesf10pqg7iknajn5cM
-         6MahwRUBormFC9ROtXZzOCBPO1osFE8XuHCncIgLvsCHxLcNuXntyLIPTNUxNKWwnbuS
-         YivKpxFXT45f055xbj7gqKyZeZCL6izznlo4y+QcynGiNpgPJSJn6cIDoQUEWR8q3NIV
-         QQ28y5mhdxTCv3ZGyzW3vgvH+5eRIAil3M9uo1sFkym+2/eXjUEbYhGGuoRIn6PGQ204
-         szqozT+L1TEHgWXr+gjrabBNVx0fQWsxwFBogU0RCWe7qqaev2wbboj0cmVtOcpDQP9M
-         I7SA==
+        bh=FbRVtA2o2v3UWbAlXvOdnbyNDEqG2rBMqLF6HOTpV1U=;
+        b=JIPBw61lhFhbsSeNNRCeinW8YzpjhHLS0kAFQAbk6hxmpp9hUg6J0GnYaKJNU0FHKf
+         3bqKVJ6C8Tvx6TJOkuOrWJna7fqoUuHizJ+qKiMIA5CS7CEShzqQKK/AW7XLnX200hVn
+         h6Uo9w63gy2P9k2VG6r72+XF0lb0lBkXJJXjhuCTEIV+s2i43bDAgsF9azMi0JLNH7ed
+         aF+f6J70rXkPNjBlMKsdUnSwpqHyYUKOSX8pNfq8+bcRkjXvPZVggFfZsbJYWh1FzF5C
+         WOAREpo4S3btT9Orow8C8eatHDMaItBqA+/J+o0vl9gjb3c0Jf12Oahj1tktHyDbSwU0
+         U95A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=03x8MyH4ONo6RL8TDAuJcYQYBUTk8Xfu5EMEl5vv8zs=;
-        b=kFXVFkmMXdfC7/oyY9p08Z7JSxqpYcZyQXqA7qOk+GmXBUx4XCdSEEQfabP3VDscEw
-         XYUiOpAJ9qgVsjuTMWBMF9dWTB3eR2EPG0o5HsYFGm2RuWy18KBoMpjPk/W6Q55gDUEZ
-         /yXEcJpM1vWwfKgdtB0VcVDqwtCCJKkhKdSWsIEBoMb21Gx1RbanstNE+Lq4Ff1GTgn1
-         4LSgoBV2TwgzPwS/07KkaCpObWFVjW+EqHTaz3DpZlmpShydFKvbr0khcvp6TPbF6AI7
-         F1lk3ftEh3U0kyTyhKvLVIqEJs0rGzAN3HiqvR+LaXxZZatwK0M+uM31woJamc7Asa0J
-         n58w==
-X-Gm-Message-State: APjAAAVYmRZkXlb/YFXP4ss3DSpub5Jw2FTlBbGOVhXXbBvN1/5Y3gGr
-        8ToK/3zPdRmEHoKNHgIv8mY=
-X-Google-Smtp-Source: APXvYqwS9mBb6vrC0DhVyMmyRT5ZRdKwezrJErmAVG/FEmt+6AsmQkMSAz9lRez80K2MggQYstDNlg==
-X-Received: by 2002:a17:902:bd0c:: with SMTP id p12mr17355851pls.50.1556347411683;
-        Fri, 26 Apr 2019 23:43:31 -0700 (PDT)
+        bh=FbRVtA2o2v3UWbAlXvOdnbyNDEqG2rBMqLF6HOTpV1U=;
+        b=iTbfbJ9F800QeuMkc82vb9tUG0CWIEDItsMGWedbPh8pWs/gB3nPogkDms/XGL6GQ4
+         WopqB+1JcewqUU+hlMpgNWMeohsbbJhQERx+UdCfgI1Atenj5U8bQ4kd+XY0rysHVczh
+         DhJrEPUhGuCSl99LcFmaZzZHO3nF7gNWL9lViO2QnLcALc5+VgcLhd5yX3Ig8GvZ77Cb
+         N9iJBI2mpug/Km0Up9BDU0kfsAzZ91aQJ7Y6V8WHbNn/NaMQnPEO3OwHSle7IHmXa6ML
+         pGvsIje0BlPCCRZPPmUWWeMYUtnsIhJn/jVcNbLkwyHHIUjxT43qW//H/wRb83k/2/kN
+         QUWA==
+X-Gm-Message-State: APjAAAVt+AKD/+e5lkKopbjlsanCNCdADHXzqsfLJZCttv3VdXjU6unL
+        mAVWy8vIzJqmgLe3ubM2uxw=
+X-Google-Smtp-Source: APXvYqym7OynpsRkDmNxinoK0RlpSBEGSXR11tkqmQ4UsD/W+17lELi4duQgGdmbTXOTa0GEeSPAlA==
+X-Received: by 2002:a63:df43:: with SMTP id h3mr48430342pgj.294.1556347410385;
+        Fri, 26 Apr 2019 23:43:30 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.30
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:31 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:29 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -71,11 +71,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH v6 19/24] bpf: Use vmalloc special flag
-Date:   Fri, 26 Apr 2019 16:22:58 -0700
-Message-Id: <20190426232303.28381-20-nadav.amit@gmail.com>
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v6 18/24] modules: Use vmalloc special flag
+Date:   Fri, 26 Apr 2019 16:22:57 -0700
+Message-Id: <20190426232303.28381-19-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -86,89 +86,198 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-permissioned memory in vmalloc and remove places where memory was set RW
-before freeing which is no longer needed. Don't track if the memory is RO
-anymore because it is now tracked in vmalloc.
+Use new flag for handling freeing of special permissioned memory in vmalloc
+and remove places where memory was set RW before freeing which is no longer
+needed.
 
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Alexei Starovoitov <ast@kernel.org>
+Since freeing of VM_FLUSH_RESET_PERMS memory is not supported in an
+interrupt by vmalloc, the freeing of init sections is moved to a work
+queue. Instead of call_rcu it now uses synchronize_rcu() in the work
+queue.
+
+Lastly, there is now a WARN_ON in module_memfree since it should not be
+called in an interrupt with special memory as is required for
+VM_FLUSH_RESET_PERMS.
+
+Cc: Jessica Yu <jeyu@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- include/linux/filter.h | 17 +++--------------
- kernel/bpf/core.c      |  1 -
- 2 files changed, 3 insertions(+), 15 deletions(-)
+ kernel/module.c | 77 +++++++++++++++++++++++++------------------------
+ 1 file changed, 39 insertions(+), 38 deletions(-)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 14ec3bdad9a9..7d3abde3f183 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -20,6 +20,7 @@
- #include <linux/set_memory.h>
- #include <linux/kallsyms.h>
- #include <linux/if_vlan.h>
-+#include <linux/vmalloc.h>
+diff --git a/kernel/module.c b/kernel/module.c
+index 2b2845ae983e..a9020bdd4cf6 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -98,6 +98,10 @@ DEFINE_MUTEX(module_mutex);
+ EXPORT_SYMBOL_GPL(module_mutex);
+ static LIST_HEAD(modules);
  
- #include <net/sch_generic.h>
++/* Work queue for freeing init sections in success case */
++static struct work_struct init_free_wq;
++static struct llist_head init_free_list;
++
+ #ifdef CONFIG_MODULES_TREE_LOOKUP
  
-@@ -503,7 +504,6 @@ struct bpf_prog {
- 	u16			pages;		/* Number of allocated pages */
- 	u16			jited:1,	/* Is our filter JIT'ed? */
- 				jit_requested:1,/* archs need to JIT the prog */
--				undo_set_mem:1,	/* Passed set_memory_ro() checkpoint */
- 				gpl_compatible:1, /* Is filter GPL compatible? */
- 				cb_access:1,	/* Is control block accessed? */
- 				dst_needed:1,	/* Do we need dst entry? */
-@@ -733,27 +733,17 @@ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ /*
+@@ -1949,6 +1953,8 @@ void module_enable_ro(const struct module *mod, bool after_init)
+ 	if (!rodata_enabled)
+ 		return;
  
- static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
- {
--	fp->undo_set_mem = 1;
-+	set_vm_flush_reset_perms(fp);
- 	set_memory_ro((unsigned long)fp, fp->pages);
++	set_vm_flush_reset_perms(mod->core_layout.base);
++	set_vm_flush_reset_perms(mod->init_layout.base);
+ 	frob_text(&mod->core_layout, set_memory_ro);
+ 	frob_text(&mod->core_layout, set_memory_x);
+ 
+@@ -1972,15 +1978,6 @@ static void module_enable_nx(const struct module *mod)
+ 	frob_writable_data(&mod->init_layout, set_memory_nx);
  }
  
--static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+-static void module_disable_nx(const struct module *mod)
 -{
--	if (fp->undo_set_mem)
--		set_memory_rw((unsigned long)fp, fp->pages);
+-	frob_rodata(&mod->core_layout, set_memory_x);
+-	frob_ro_after_init(&mod->core_layout, set_memory_x);
+-	frob_writable_data(&mod->core_layout, set_memory_x);
+-	frob_rodata(&mod->init_layout, set_memory_x);
+-	frob_writable_data(&mod->init_layout, set_memory_x);
 -}
 -
- static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+ /* Iterate through all modules and set each module's text as RW */
+ void set_all_modules_text_rw(void)
  {
-+	set_vm_flush_reset_perms(hdr);
- 	set_memory_ro((unsigned long)hdr, hdr->pages);
- 	set_memory_x((unsigned long)hdr, hdr->pages);
+@@ -2024,23 +2021,8 @@ void set_all_modules_text_ro(void)
+ 	}
+ 	mutex_unlock(&module_mutex);
  }
- 
--static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+-
+-static void disable_ro_nx(const struct module_layout *layout)
 -{
--	set_memory_rw((unsigned long)hdr, hdr->pages);
+-	if (rodata_enabled) {
+-		frob_text(layout, set_memory_rw);
+-		frob_rodata(layout, set_memory_rw);
+-		frob_ro_after_init(layout, set_memory_rw);
+-	}
+-	frob_rodata(layout, set_memory_x);
+-	frob_ro_after_init(layout, set_memory_x);
+-	frob_writable_data(layout, set_memory_x);
 -}
 -
- static inline struct bpf_binary_header *
- bpf_jit_binary_hdr(const struct bpf_prog *fp)
- {
-@@ -789,7 +779,6 @@ void __bpf_prog_free(struct bpf_prog *fp);
+ #else
+-static void disable_ro_nx(const struct module_layout *layout) { }
+ static void module_enable_nx(const struct module *mod) { }
+-static void module_disable_nx(const struct module *mod) { }
+ #endif
  
- static inline void bpf_prog_unlock_free(struct bpf_prog *fp)
+ #ifdef CONFIG_LIVEPATCH
+@@ -2120,6 +2102,11 @@ static void free_module_elf(struct module *mod)
+ 
+ void __weak module_memfree(void *module_region)
  {
--	bpf_prog_unlock_ro(fp);
- 	__bpf_prog_free(fp);
++	/*
++	 * This memory may be RO, and freeing RO memory in an interrupt is not
++	 * supported by vmalloc.
++	 */
++	WARN_ON(in_interrupt());
+ 	vfree(module_region);
  }
  
-diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
-index ff09d32a8a1b..c605397c79f0 100644
---- a/kernel/bpf/core.c
-+++ b/kernel/bpf/core.c
-@@ -848,7 +848,6 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
- 	if (fp->jited) {
- 		struct bpf_binary_header *hdr = bpf_jit_binary_hdr(fp);
+@@ -2171,7 +2158,6 @@ static void free_module(struct module *mod)
+ 	mutex_unlock(&module_mutex);
  
--		bpf_jit_binary_unlock_ro(hdr);
- 		bpf_jit_binary_free(hdr);
+ 	/* This may be empty, but that's OK */
+-	disable_ro_nx(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	module_memfree(mod->init_layout.base);
+ 	kfree(mod->args);
+@@ -2181,7 +2167,6 @@ static void free_module(struct module *mod)
+ 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
  
- 		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(fp));
+ 	/* Finally, free the core (containing the module structure) */
+-	disable_ro_nx(&mod->core_layout);
+ 	module_memfree(mod->core_layout.base);
+ }
+ 
+@@ -3420,17 +3405,34 @@ static void do_mod_ctors(struct module *mod)
+ 
+ /* For freeing module_init on success, in case kallsyms traversing */
+ struct mod_initfree {
+-	struct rcu_head rcu;
++	struct llist_node node;
+ 	void *module_init;
+ };
+ 
+-static void do_free_init(struct rcu_head *head)
++static void do_free_init(struct work_struct *w)
+ {
+-	struct mod_initfree *m = container_of(head, struct mod_initfree, rcu);
+-	module_memfree(m->module_init);
+-	kfree(m);
++	struct llist_node *pos, *n, *list;
++	struct mod_initfree *initfree;
++
++	list = llist_del_all(&init_free_list);
++
++	synchronize_rcu();
++
++	llist_for_each_safe(pos, n, list) {
++		initfree = container_of(pos, struct mod_initfree, node);
++		module_memfree(initfree->module_init);
++		kfree(initfree);
++	}
+ }
+ 
++static int __init modules_wq_init(void)
++{
++	INIT_WORK(&init_free_wq, do_free_init);
++	init_llist_head(&init_free_list);
++	return 0;
++}
++module_init(modules_wq_init);
++
+ /*
+  * This is where the real work happens.
+  *
+@@ -3507,7 +3509,6 @@ static noinline int do_init_module(struct module *mod)
+ #endif
+ 	module_enable_ro(mod, true);
+ 	mod_tree_remove_init(mod);
+-	disable_ro_nx(&mod->init_layout);
+ 	module_arch_freeing_init(mod);
+ 	mod->init_layout.base = NULL;
+ 	mod->init_layout.size = 0;
+@@ -3518,14 +3519,18 @@ static noinline int do_init_module(struct module *mod)
+ 	 * We want to free module_init, but be aware that kallsyms may be
+ 	 * walking this with preempt disabled.  In all the failure paths, we
+ 	 * call synchronize_rcu(), but we don't want to slow down the success
+-	 * path, so use actual RCU here.
++	 * path. module_memfree() cannot be called in an interrupt, so do the
++	 * work and call synchronize_rcu() in a work queue.
++	 *
+ 	 * Note that module_alloc() on most architectures creates W+X page
+ 	 * mappings which won't be cleaned up until do_free_init() runs.  Any
+ 	 * code such as mark_rodata_ro() which depends on those mappings to
+ 	 * be cleaned up needs to sync with the queued work - ie
+ 	 * rcu_barrier()
+ 	 */
+-	call_rcu(&freeinit->rcu, do_free_init);
++	if (llist_add(&freeinit->node, &init_free_list))
++		schedule_work(&init_free_wq);
++
+ 	mutex_unlock(&module_mutex);
+ 	wake_up_all(&module_wq);
+ 
+@@ -3822,10 +3827,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
+ 	module_bug_cleanup(mod);
+ 	mutex_unlock(&module_mutex);
+ 
+-	/* we can't deallocate the module until we clear memory protection */
+-	module_disable_ro(mod);
+-	module_disable_nx(mod);
+-
+  ddebug_cleanup:
+ 	ftrace_release_mod(mod);
+ 	dynamic_debug_remove(mod, info->debug);
 -- 
 2.17.1
 
