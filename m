@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49C9C43218
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9292EC4360E
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850642146E
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 727D62084F
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbfDZHbx (ORCPT
+        id S1726189AbfDZHbw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:31:53 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726150AbfDZHbw (ORCPT
+        Fri, 26 Apr 2019 03:31:52 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2747 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725942AbfDZHbw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 26 Apr 2019 03:31:52 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Fri, 26 Apr 2019 00:31:40 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 87E8C41298;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id BC4EC412A4;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -45,101 +45,141 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
         Nadav Amit <namit@vmware.com>,
         Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v5 05/23] fork: Provide a function for copying init_mm
-Date:   Thu, 25 Apr 2019 17:11:25 -0700
-Message-ID: <20190426001143.4983-6-namit@vmware.com>
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>
+Subject: [PATCH v5 11/23] x86/module: Avoid breaking W^X while loading modules
+Date:   Thu, 25 Apr 2019 17:11:31 -0700
+Message-ID: <20190426001143.4983-12-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Provide a function for copying init_mm. This function will be later used
-for setting a temporary mm.
+When modules and BPF filters are loaded, there is a time window in
+which some memory is both writable and executable. An attacker that has
+already found another vulnerability (e.g., a dangling pointer) might be
+able to exploit this behavior to overwrite kernel code. Prevent having
+writable executable PTEs in this stage.
 
-Cc: Andy Lutomirski <luto@kernel.org>
+In addition, avoiding having W+X mappings can also slightly simplify the
+patching of modules code on initialization (e.g., by alternatives and
+static-key), as would be done in the next patch. This was actually the
+main motivation for this patch.
+
+To avoid having W+X mappings, set them initially as RW (NX) and after
+they are set as RO set them as X as well. Setting them as executable is
+done as a separate step to avoid one core in which the old PTE is cached
+(hence writable), and another which sees the updated PTE (executable),
+which would break the W^X protection.
+
 Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Jessica Yu <jeyu@kernel.org>
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: Andy Lutomirski <luto@amacapital.net>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- include/linux/sched/task.h |  1 +
- kernel/fork.c              | 24 ++++++++++++++++++------
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
+ arch/x86/kernel/module.c      |  2 +-
+ include/linux/filter.h        |  1 +
+ kernel/module.c               |  5 +++++
+ 4 files changed, 28 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 2e97a2227045..f1227f2c38a4 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -76,6 +76,7 @@ extern void exit_itimers(struct signal_struct *);
- extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
- extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
- struct task_struct *fork_idle(int);
-+struct mm_struct *copy_init_mm(void);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
- extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 9dcd18aa210b..099cca8f701c 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1298,13 +1298,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
- 		complete_vfork_done(tsk);
- }
- 
--/*
-- * Allocate a new mm structure and copy contents from the
-- * mm structure of the passed in task structure.
-+/**
-+ * dup_mm() - duplicates an existing mm structure
-+ * @tsk: the task_struct with which the new mm will be associated.
-+ * @oldmm: the mm to duplicate.
-+ *
-+ * Allocates a new mm structure and duplicates the provided @oldmm structure
-+ * content into it.
-+ *
-+ * Return: the duplicated mm or NULL on failure.
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index 599203876c32..3d2b6b6fb20c 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -668,15 +668,29 @@ void __init alternative_instructions(void)
+  * handlers seeing an inconsistent instruction while you patch.
   */
--static struct mm_struct *dup_mm(struct task_struct *tsk)
-+static struct mm_struct *dup_mm(struct task_struct *tsk,
-+				struct mm_struct *oldmm)
+ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+-					      size_t len)
++				       size_t len)
  {
--	struct mm_struct *mm, *oldmm = current->mm;
-+	struct mm_struct *mm;
- 	int err;
- 
- 	mm = allocate_mm();
-@@ -1371,7 +1378,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
- 	}
- 
- 	retval = -ENOMEM;
--	mm = dup_mm(tsk);
-+	mm = dup_mm(tsk, current->mm);
- 	if (!mm)
- 		goto fail_nomem;
- 
-@@ -2186,6 +2193,11 @@ struct task_struct *fork_idle(int cpu)
- 	return task;
+ 	unsigned long flags;
+-	local_irq_save(flags);
+-	memcpy(addr, opcode, len);
+-	local_irq_restore(flags);
+-	sync_core();
+-	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+-	   that causes hangs on some VIA CPUs. */
++
++	if (boot_cpu_has(X86_FEATURE_NX) &&
++	    is_module_text_address((unsigned long)addr)) {
++		/*
++		 * Modules text is marked initially as non-executable, so the
++		 * code cannot be running and speculative code-fetches are
++		 * prevented. Just change the code.
++		 */
++		memcpy(addr, opcode, len);
++	} else {
++		local_irq_save(flags);
++		memcpy(addr, opcode, len);
++		local_irq_restore(flags);
++		sync_core();
++
++		/*
++		 * Could also do a CLFLUSH here to speed up CPU recovery; but
++		 * that causes hangs on some VIA CPUs.
++		 */
++	}
+ 	return addr;
  }
  
-+struct mm_struct *copy_init_mm(void)
-+{
-+	return dup_mm(NULL, &init_mm);
-+}
+diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
+index b052e883dd8c..cfa3106faee4 100644
+--- a/arch/x86/kernel/module.c
++++ b/arch/x86/kernel/module.c
+@@ -87,7 +87,7 @@ void *module_alloc(unsigned long size)
+ 	p = __vmalloc_node_range(size, MODULE_ALIGN,
+ 				    MODULES_VADDR + get_module_load_offset(),
+ 				    MODULES_END, GFP_KERNEL,
+-				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
++				    PAGE_KERNEL, 0, NUMA_NO_NODE,
+ 				    __builtin_return_address(0));
+ 	if (p && (kasan_module_alloc(p, size) < 0)) {
+ 		vfree(p);
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 6074aa064b54..14ec3bdad9a9 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -746,6 +746,7 @@ static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+ static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
+ {
+ 	set_memory_ro((unsigned long)hdr, hdr->pages);
++	set_memory_x((unsigned long)hdr, hdr->pages);
+ }
+ 
+ static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+diff --git a/kernel/module.c b/kernel/module.c
+index 0b9aa8ab89f0..2b2845ae983e 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1950,8 +1950,13 @@ void module_enable_ro(const struct module *mod, bool after_init)
+ 		return;
+ 
+ 	frob_text(&mod->core_layout, set_memory_ro);
++	frob_text(&mod->core_layout, set_memory_x);
 +
- /*
-  *  Ok, this is the main fork-routine.
-  *
+ 	frob_rodata(&mod->core_layout, set_memory_ro);
++
+ 	frob_text(&mod->init_layout, set_memory_ro);
++	frob_text(&mod->init_layout, set_memory_x);
++
+ 	frob_rodata(&mod->init_layout, set_memory_ro);
+ 
+ 	if (after_init)
 -- 
 2.17.1
 
