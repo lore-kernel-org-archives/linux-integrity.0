@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9292EC4360E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F9C43219
 	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 727D62084F
+	by mail.kernel.org (Postfix) with ESMTP id BB9E92084F
 	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfDZHbw (ORCPT
+        id S1726228AbfDZHd0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:31:52 -0400
+        Fri, 26 Apr 2019 03:33:26 -0400
 Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:2747 "EHLO
         EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725942AbfDZHbw (ORCPT
+        by vger.kernel.org with ESMTP id S1726181AbfDZHbx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:52 -0400
+        Fri, 26 Apr 2019 03:31:53 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:40 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id BC4EC412A4;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id E15254129A;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -43,14 +43,11 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>
-Subject: [PATCH v5 11/23] x86/module: Avoid breaking W^X while loading modules
-Date:   Thu, 25 Apr 2019 17:11:31 -0700
-Message-ID: <20190426001143.4983-12-namit@vmware.com>
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH v5 15/23] mm: Make hibernate handle unmapped pages
+Date:   Thu, 25 Apr 2019 17:11:35 -0700
+Message-ID: <20190426001143.4983-16-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -63,123 +60,153 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-When modules and BPF filters are loaded, there is a time window in
-which some memory is both writable and executable. An attacker that has
-already found another vulnerability (e.g., a dangling pointer) might be
-able to exploit this behavior to overwrite kernel code. Prevent having
-writable executable PTEs in this stage.
+From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-In addition, avoiding having W+X mappings can also slightly simplify the
-patching of modules code on initialization (e.g., by alternatives and
-static-key), as would be done in the next patch. This was actually the
-main motivation for this patch.
+Make hibernate handle unmapped pages on the direct map when
+CONFIG_ARCH_HAS_SET_ALIAS is set. These functions allow for setting pages
+to invalid configurations, so now hibernate should check if the pages have
+valid mappings and handle if they are unmapped when doing a hibernate
+save operation.
 
-To avoid having W+X mappings, set them initially as RW (NX) and after
-they are set as RO set them as X as well. Setting them as executable is
-done as a separate step to avoid one core in which the old PTE is cached
-(hence writable), and another which sees the updated PTE (executable),
-which would break the W^X protection.
+Previously this checking was already done when CONFIG_DEBUG_PAGEALLOC
+was configured. It does not appear to have a big hibernating performance
+impact. The speed of the saving operation before this change was measured
+as 819.02 MB/s, and after was measured at 813.32 MB/s.
 
-Cc: Kees Cook <keescook@chromium.org>
+Before:
+[    4.670938] PM: Wrote 171996 kbytes in 0.21 seconds (819.02 MB/s)
+
+After:
+[    4.504714] PM: Wrote 178932 kbytes in 0.22 seconds (813.32 MB/s)
+
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Jessica Yu <jeyu@kernel.org>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Borislav Petkov <bp@alien8.de>
+Acked-by: Pavel Machek <pavel@ucw.cz>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/alternative.c | 28 +++++++++++++++++++++-------
- arch/x86/kernel/module.c      |  2 +-
- include/linux/filter.h        |  1 +
- kernel/module.c               |  5 +++++
- 4 files changed, 28 insertions(+), 8 deletions(-)
+ arch/x86/mm/pageattr.c  |  4 ----
+ include/linux/mm.h      | 18 ++++++------------
+ kernel/power/snapshot.c |  5 +++--
+ mm/page_alloc.c         |  7 +++++--
+ 4 files changed, 14 insertions(+), 20 deletions(-)
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 599203876c32..3d2b6b6fb20c 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -668,15 +668,29 @@ void __init alternative_instructions(void)
-  * handlers seeing an inconsistent instruction while you patch.
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 3574550192c6..daf4d645e537 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2257,7 +2257,6 @@ int set_direct_map_default_noflush(struct page *page)
+ 	return __set_pages_p(page, 1);
+ }
+ 
+-#ifdef CONFIG_DEBUG_PAGEALLOC
+ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+ 	if (PageHighMem(page))
+@@ -2302,11 +2301,8 @@ bool kernel_page_present(struct page *page)
+ 	pte = lookup_address((unsigned long)page_address(page), &level);
+ 	return (pte_val(*pte) & _PAGE_PRESENT);
+ }
+-
+ #endif /* CONFIG_HIBERNATION */
+ 
+-#endif /* CONFIG_DEBUG_PAGEALLOC */
+-
+ int __init kernel_map_pages_in_pgd(pgd_t *pgd, u64 pfn, unsigned long address,
+ 				   unsigned numpages, unsigned long page_flags)
+ {
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6b10c21630f5..083d7b4863ed 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2610,37 +2610,31 @@ static inline void kernel_poison_pages(struct page *page, int numpages,
+ 					int enable) { }
+ #endif
+ 
+-#ifdef CONFIG_DEBUG_PAGEALLOC
+ extern bool _debug_pagealloc_enabled;
+-extern void __kernel_map_pages(struct page *page, int numpages, int enable);
+ 
+ static inline bool debug_pagealloc_enabled(void)
+ {
+-	return _debug_pagealloc_enabled;
++	return IS_ENABLED(CONFIG_DEBUG_PAGEALLOC) && _debug_pagealloc_enabled;
+ }
+ 
++#if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_ARCH_HAS_SET_DIRECT_MAP)
++extern void __kernel_map_pages(struct page *page, int numpages, int enable);
++
+ static inline void
+ kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+-	if (!debug_pagealloc_enabled())
+-		return;
+-
+ 	__kernel_map_pages(page, numpages, enable);
+ }
+ #ifdef CONFIG_HIBERNATION
+ extern bool kernel_page_present(struct page *page);
+ #endif	/* CONFIG_HIBERNATION */
+-#else	/* CONFIG_DEBUG_PAGEALLOC */
++#else	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+ static inline void
+ kernel_map_pages(struct page *page, int numpages, int enable) {}
+ #ifdef CONFIG_HIBERNATION
+ static inline bool kernel_page_present(struct page *page) { return true; }
+ #endif	/* CONFIG_HIBERNATION */
+-static inline bool debug_pagealloc_enabled(void)
+-{
+-	return false;
+-}
+-#endif	/* CONFIG_DEBUG_PAGEALLOC */
++#endif	/* CONFIG_DEBUG_PAGEALLOC || CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+ 
+ #ifdef __HAVE_ARCH_GATE_AREA
+ extern struct vm_area_struct *get_gate_vma(struct mm_struct *mm);
+diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
+index f08a1e4ee1d4..bc9558ab1e5b 100644
+--- a/kernel/power/snapshot.c
++++ b/kernel/power/snapshot.c
+@@ -1342,8 +1342,9 @@ static inline void do_copy_page(long *dst, long *src)
+  * safe_copy_page - Copy a page in a safe way.
+  *
+  * Check if the page we are going to copy is marked as present in the kernel
+- * page tables (this always is the case if CONFIG_DEBUG_PAGEALLOC is not set
+- * and in that case kernel_page_present() always returns 'true').
++ * page tables. This always is the case if CONFIG_DEBUG_PAGEALLOC or
++ * CONFIG_ARCH_HAS_SET_DIRECT_MAP is not set. In that case kernel_page_present()
++ * always returns 'true'.
   */
- void *__init_or_module text_poke_early(void *addr, const void *opcode,
--					      size_t len)
-+				       size_t len)
+ static void safe_copy_page(void *dst, struct page *s_page)
  {
- 	unsigned long flags;
--	local_irq_save(flags);
--	memcpy(addr, opcode, len);
--	local_irq_restore(flags);
--	sync_core();
--	/* Could also do a CLFLUSH here to speed up CPU recovery; but
--	   that causes hangs on some VIA CPUs. */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d96ca5bc555b..34a70681a4af 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1131,7 +1131,9 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	}
+ 	arch_free_page(page, order);
+ 	kernel_poison_pages(page, 1 << order, 0);
+-	kernel_map_pages(page, 1 << order, 0);
++	if (debug_pagealloc_enabled())
++		kernel_map_pages(page, 1 << order, 0);
 +
-+	if (boot_cpu_has(X86_FEATURE_NX) &&
-+	    is_module_text_address((unsigned long)addr)) {
-+		/*
-+		 * Modules text is marked initially as non-executable, so the
-+		 * code cannot be running and speculative code-fetches are
-+		 * prevented. Just change the code.
-+		 */
-+		memcpy(addr, opcode, len);
-+	} else {
-+		local_irq_save(flags);
-+		memcpy(addr, opcode, len);
-+		local_irq_restore(flags);
-+		sync_core();
-+
-+		/*
-+		 * Could also do a CLFLUSH here to speed up CPU recovery; but
-+		 * that causes hangs on some VIA CPUs.
-+		 */
-+	}
- 	return addr;
- }
+ 	kasan_free_nondeferred_pages(page, order);
  
-diff --git a/arch/x86/kernel/module.c b/arch/x86/kernel/module.c
-index b052e883dd8c..cfa3106faee4 100644
---- a/arch/x86/kernel/module.c
-+++ b/arch/x86/kernel/module.c
-@@ -87,7 +87,7 @@ void *module_alloc(unsigned long size)
- 	p = __vmalloc_node_range(size, MODULE_ALIGN,
- 				    MODULES_VADDR + get_module_load_offset(),
- 				    MODULES_END, GFP_KERNEL,
--				    PAGE_KERNEL_EXEC, 0, NUMA_NO_NODE,
-+				    PAGE_KERNEL, 0, NUMA_NO_NODE,
- 				    __builtin_return_address(0));
- 	if (p && (kasan_module_alloc(p, size) < 0)) {
- 		vfree(p);
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index 6074aa064b54..14ec3bdad9a9 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -746,6 +746,7 @@ static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
- static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
- {
- 	set_memory_ro((unsigned long)hdr, hdr->pages);
-+	set_memory_x((unsigned long)hdr, hdr->pages);
- }
+ 	return true;
+@@ -2001,7 +2003,8 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
+ 	set_page_refcounted(page);
  
- static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
-diff --git a/kernel/module.c b/kernel/module.c
-index 0b9aa8ab89f0..2b2845ae983e 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1950,8 +1950,13 @@ void module_enable_ro(const struct module *mod, bool after_init)
- 		return;
- 
- 	frob_text(&mod->core_layout, set_memory_ro);
-+	frob_text(&mod->core_layout, set_memory_x);
-+
- 	frob_rodata(&mod->core_layout, set_memory_ro);
-+
- 	frob_text(&mod->init_layout, set_memory_ro);
-+	frob_text(&mod->init_layout, set_memory_x);
-+
- 	frob_rodata(&mod->init_layout, set_memory_ro);
- 
- 	if (after_init)
+ 	arch_alloc_page(page, order);
+-	kernel_map_pages(page, 1 << order, 1);
++	if (debug_pagealloc_enabled())
++		kernel_map_pages(page, 1 << order, 1);
+ 	kasan_alloc_pages(page, order);
+ 	kernel_poison_pages(page, 1 << order, 1);
+ 	set_page_owner(page, order, gfp_flags);
 -- 
 2.17.1
 
