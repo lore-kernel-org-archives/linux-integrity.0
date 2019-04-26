@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E2AC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E13BC4321A
 	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C807A2087C
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9F9212F5
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:45:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bic4fgDh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XKJ4fAeB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbfD0GnL (ORCPT
+        id S1726521AbfD0GpE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:43:11 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33561 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfD0GnI (ORCPT
+        Sat, 27 Apr 2019 02:45:04 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42169 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfD0GnL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 27 Apr 2019 02:43:08 -0400
-Received: by mail-pl1-f196.google.com with SMTP id y3so1735493plp.0;
-        Fri, 26 Apr 2019 23:43:07 -0700 (PDT)
+        Sat, 27 Apr 2019 02:43:11 -0400
+Received: by mail-pl1-f194.google.com with SMTP id x15so2567500pln.9;
+        Fri, 26 Apr 2019 23:43:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fM02CdP3EHsEznyJ/zI3DVkvywjW2Y0W5QE/m/kGqS8=;
-        b=Bic4fgDhw/zNUsH9AvCevjRRuqcBr7SeEwPi/mNBJHeVn3HWTtTQy0lqVBwB+uwJON
-         033sEQUJVf4JsE8w16M+5haGmPR56gXJit7dknF2eDmFepylyOdGJlykH0b1NW+PihEa
-         WnVuUa5XLxRLLr06QvgHjZbZbm6umZ2Z7Tk21XFYdu0XsSy3LVhSR76ovrEOyDS4RqXk
-         ethcFURK2XAu1qKbwE8JJm/EyYlwhoXg4rc/DRAR47BR1Lx07vr+RFt4HZ8bItbsDTBV
-         RxWJwnwgvwuNGmSEvPkHWRxMq59R7mUfHELo2gZLY6QtoYxwGmeesmwvk7AesQMYnBzh
-         N2AQ==
+        bh=gMfxobg7i1AP5PQ14JM+oGjrmklNXXx9IUFM/PW54zo=;
+        b=XKJ4fAeBY8aGdbJDn84dW83HzgSvQACPuhXWJHvF1CWt6rAKSo0+tUCXqeDEYn8KGx
+         u3zXII+RSuYhdLmlbo5/0feDTgEEs6/tOmzti0w5Pevv/8Nua7dmelg2Hg1YTOM0HPNp
+         IuB1XxBtPV5C1LDrt4HWOamCYTjBpu9Uc9bqXu6wh2x58Sr/Usj1f74P/vpY9jMFSCFS
+         THBbi+fo5P15SNYnnZLc+khNDUp7StdyPifYfNcqKpXcU/HGBdU106YbtBqZ2gBNSvKt
+         YTZSQ/QqPm8CwczIhg2BokKOhThemqJ36d1wwJl1ZB93G6rLPD545DygLOMnvs67gNXF
+         w1Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fM02CdP3EHsEznyJ/zI3DVkvywjW2Y0W5QE/m/kGqS8=;
-        b=e5nJILoW4Yh5mRcRPAYkwBgBwgQE8F8ZWff9Qy3k0Td1uCsVNrv9SnjrpjGTfBK04c
-         lojNPuNwOaRc/xPUHR5snNQCuXJ+ZHMaauaG4CBjZO03VGqBvTKLBnsU+R87m/c9+ciR
-         X9N37emomnkAnctBGm1TRfAkMIHE5icGFjhZvmxGESLtvPhe0Z/ziAuK+fADrIsiOjBg
-         NWXGMkUGfF5g4DuW5ookEz9wR8EsGkqrJsm4rdV+b4OILWeWLfqWDgqK8r8ezRPjkO4u
-         kQW7n4CyRwQFCGaO3fbh5kVbsnmtw7VVxjGQ5zNo2wLuKlGB4s587rXJX33UqWcBmzuC
-         VtgA==
-X-Gm-Message-State: APjAAAVCvWKTlJdMEjjUw6QmRdirFHf4Pfgyv17OXkn2qL3rU4RQZLTO
-        7m+LfOIYaO+twLZnihucWEU=
-X-Google-Smtp-Source: APXvYqxN6NLybNs8lwtcaE7rd9moWK47+PtSS3OruWZmc0YNonCQSY0zJUJKCwxGbV5SIYzeiwOfdw==
-X-Received: by 2002:a17:902:d83:: with SMTP id 3mr52111624plv.125.1556347387028;
-        Fri, 26 Apr 2019 23:43:07 -0700 (PDT)
+        bh=gMfxobg7i1AP5PQ14JM+oGjrmklNXXx9IUFM/PW54zo=;
+        b=VTV3oNABLcWnQT6EyxfYkWKw+VCqL9kozgc+uQPe2ewZsoHcE3S9yVBZlAFpYhBNbz
+         7rq68VSTmRYxNsszQ8s5Vlwp4hOZemvnHQQKISpez0TbprktH90D+seVfxYVw8ndRTyG
+         I9ydMVYCE9ctxzcUKroA6SK8Z1A0tYz4Z8Id5F4BYC7FJ3AjxcpMCnLReoZQrs4WcHs3
+         d/F8E/YoLGT7XA1bcnuhoO8yok3zUru8WptkOegmVycUcvqNj0VnrECe/wzgCTe11fb7
+         PJlS56Zt+9qDwawTwXnNIv0ixb1JamSFn4pIObJ7P6ZiREEoxQWVcwU3Xb6toI3mJm6R
+         f2tQ==
+X-Gm-Message-State: APjAAAUiKMYfOfhAJ0UhztxLwnMMNTfMUy2MaLFgUBNvh5cNYJslMRna
+        5PHCBTbcphtklUIEDQrUf50=
+X-Google-Smtp-Source: APXvYqwk9lLXQyc9bNgKLLm6YtZMcI1PVJ4KR2rM1C+cN3nT9zotDQcbIXGbwEvAmUupbSpfYScE8w==
+X-Received: by 2002:a17:902:a7:: with SMTP id a36mr50206141pla.111.1556347390037;
+        Fri, 26 Apr 2019 23:43:10 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.05
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:06 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:09 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -70,12 +70,11 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH v6 03/24] x86/mm: Introduce temporary mm structs
-Date:   Fri, 26 Apr 2019 16:22:42 -0700
-Message-Id: <20190426232303.28381-4-nadav.amit@gmail.com>
+        Nadav Amit <namit@vmware.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: [PATCH v6 05/24] uprobes: Initialize uprobes earlier
+Date:   Fri, 26 Apr 2019 16:22:44 -0700
+Message-Id: <20190426232303.28381-6-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -84,82 +83,90 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Nadav Amit <namit@vmware.com>
 
-Using a dedicated page-table for temporary PTEs prevents other cores
-from using - even speculatively - these PTEs, thereby providing two
-benefits:
+In order to have a separate address space for text poking, we need to
+duplicate init_mm early during start_kernel(). This, however, introduces
+a problem since uprobes functions are called from dup_mmap(), but
+uprobes is still not initialized in this early stage.
 
-(1) Security hardening: an attacker that gains kernel memory writing
-abilities cannot easily overwrite sensitive data.
+Since uprobes initialization is necassary for fork, and since all the
+dependant initialization has been done when fork is initialized (percpu
+and vmalloc), move uprobes initialization to fork_init(). It does not
+seem uprobes introduces any security problem for the poking_mm.
 
-(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
-remote page-tables.
+Crash and burn if uprobes initialization fails, similarly to other early
+initializations. Change the init_probes() name to probes_init() to match
+other early initialization functions name convention.
 
-To do so a temporary mm_struct can be used. Mappings which are private
-for this mm can be set in the userspace part of the address-space.
-During the whole time in which the temporary mm is loaded, interrupts
-must be disabled.
-
-The first use-case for temporary mm struct, which will follow, is for
-poking the kernel text.
-
-[ Commit message was written by Nadav Amit ]
-
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Reported-by: kernel test robot <lkp@intel.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/include/asm/mmu_context.h | 33 ++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ include/linux/uprobes.h | 5 +++++
+ kernel/events/uprobes.c | 8 +++-----
+ kernel/fork.c           | 1 +
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
-index 19d18fae6ec6..24dc3b810970 100644
---- a/arch/x86/include/asm/mmu_context.h
-+++ b/arch/x86/include/asm/mmu_context.h
-@@ -356,4 +356,37 @@ static inline unsigned long __get_current_cr3_fast(void)
- 	return cr3;
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index 103a48a48872..12bf0b68ed92 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -115,6 +115,7 @@ struct uprobes_state {
+ 	struct xol_area		*xol_area;
+ };
+ 
++extern void __init uprobes_init(void);
+ extern int set_swbp(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
+ extern int set_orig_insn(struct arch_uprobe *aup, struct mm_struct *mm, unsigned long vaddr);
+ extern bool is_swbp_insn(uprobe_opcode_t *insn);
+@@ -154,6 +155,10 @@ extern void arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
+ struct uprobes_state {
+ };
+ 
++static inline void uprobes_init(void)
++{
++}
++
+ #define uprobe_get_trap_addr(regs)	instruction_pointer(regs)
+ 
+ static inline int
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index c5cde87329c7..e6a0d6be87e3 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2294,16 +2294,14 @@ static struct notifier_block uprobe_exception_nb = {
+ 	.priority		= INT_MAX-1,	/* notified after kprobes, kgdb */
+ };
+ 
+-static int __init init_uprobes(void)
++void __init uprobes_init(void)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < UPROBES_HASH_SZ; i++)
+ 		mutex_init(&uprobes_mmap_mutex[i]);
+ 
+-	if (percpu_init_rwsem(&dup_mmap_sem))
+-		return -ENOMEM;
++	BUG_ON(percpu_init_rwsem(&dup_mmap_sem));
+ 
+-	return register_die_notifier(&uprobe_exception_nb);
++	BUG_ON(register_die_notifier(&uprobe_exception_nb));
+ }
+-__initcall(init_uprobes);
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 9dcd18aa210b..44fba5e5e916 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -815,6 +815,7 @@ void __init fork_init(void)
+ #endif
+ 
+ 	lockdep_init_task(&init_task);
++	uprobes_init();
  }
  
-+typedef struct {
-+	struct mm_struct *mm;
-+} temp_mm_state_t;
-+
-+/*
-+ * Using a temporary mm allows to set temporary mappings that are not accessible
-+ * by other CPUs. Such mappings are needed to perform sensitive memory writes
-+ * that override the kernel memory protections (e.g., W^X), without exposing the
-+ * temporary page-table mappings that are required for these write operations to
-+ * other CPUs. Using a temporary mm also allows to avoid TLB shootdowns when the
-+ * mapping is torn down.
-+ *
-+ * Context: The temporary mm needs to be used exclusively by a single core. To
-+ *          harden security IRQs must be disabled while the temporary mm is
-+ *          loaded, thereby preventing interrupt handler bugs from overriding
-+ *          the kernel memory protection.
-+ */
-+static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
-+{
-+	temp_mm_state_t temp_state;
-+
-+	lockdep_assert_irqs_disabled();
-+	temp_state.mm = this_cpu_read(cpu_tlbstate.loaded_mm);
-+	switch_mm_irqs_off(NULL, mm, current);
-+	return temp_state;
-+}
-+
-+static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
-+{
-+	lockdep_assert_irqs_disabled();
-+	switch_mm_irqs_off(NULL, prev_state.mm, current);
-+}
-+
- #endif /* _ASM_X86_MMU_CONTEXT_H */
+ int __weak arch_dup_task_struct(struct task_struct *dst,
 -- 
 2.17.1
 
