@@ -4,28 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9339AC43218
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B0BC4321A
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A89F2089E
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841B4208C3
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:31:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725921AbfDZHbr (ORCPT
+        id S1726317AbfDZHb6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:31:47 -0400
+        Fri, 26 Apr 2019 03:31:58 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725877AbfDZHbq (ORCPT
+        by vger.kernel.org with ESMTP id S1726309AbfDZHb6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:31:46 -0400
+        Fri, 26 Apr 2019 03:31:58 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 6F14E41225;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id A1013412A3;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -43,13 +42,10 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v5 02/23] x86/jump_label: Use text_poke_early() during early init
-Date:   Thu, 25 Apr 2019 17:11:22 -0700
-Message-ID: <20190426001143.4983-3-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v5 08/23] x86/kgdb: Avoid redundant comparison of patched code
+Date:   Thu, 25 Apr 2019 17:11:28 -0700
+Message-ID: <20190426001143.4983-9-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -62,43 +58,63 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There is no apparent reason not to use text_poke_early() during
-early-init, since no patching of code that might be on the stack is done
-and only a single core is running.
+text_poke() already ensures that the written value is the correct one
+and fails if that is not the case. There is no need for an additional
+comparison. Remove it.
 
-This is required for the next patches that would set a temporary mm for
-text poking, and this mm is only initialized after some static-keys are
-enabled/disabled.
-
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/jump_label.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kgdb.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index f99bd26bd3f1..e7d8c636b228 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -50,7 +50,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 2b203ee5b879..13b13311b792 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -747,7 +747,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
+ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ {
+ 	int err;
+-	char opc[BREAK_INSTR_SIZE];
  
--	if (early_boot_irqs_disabled)
-+	/*
-+	 * As long as only a single processor is running and the code is still
-+	 * not marked as RO, text_poke_early() can be used; Checking that
-+	 * system_state is SYSTEM_BOOTING guarantees it.
-+	 */
-+	if (system_state == SYSTEM_BOOTING)
- 		poker = text_poke_early;
+ 	bpt->type = BP_BREAKPOINT;
+ 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
+@@ -766,11 +765,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 		return -EBUSY;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err)
+-		return err;
+-	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
+-		return -EINVAL;
+ 	bpt->type = BP_POKE_BREAKPOINT;
  
- 	if (type == JUMP_LABEL_JMP) {
+ 	return err;
+@@ -778,9 +772,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 
+ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ {
+-	int err;
+-	char opc[BREAK_INSTR_SIZE];
+-
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+@@ -791,10 +782,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 		goto knl_write;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+-		goto knl_write;
+-	return err;
++	return 0;
+ 
+ knl_write:
+ 	return probe_kernel_write((char *)bpt->bpt_addr,
 -- 
 2.17.1
 
