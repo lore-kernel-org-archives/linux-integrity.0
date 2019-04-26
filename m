@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-7.8 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D87BC43219
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C205AC43218
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D8A5208C2
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90E38208C2
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 06:44:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pYvgo9ZC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q470hKxC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfD0Gn7 (ORCPT
+        id S1726580AbfD0Gnd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 27 Apr 2019 02:43:59 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44687 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbfD0Gnd (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
         Sat, 27 Apr 2019 02:43:33 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y12so2555220plk.11;
-        Fri, 26 Apr 2019 23:43:33 -0700 (PDT)
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44684 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfD0Gnc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 27 Apr 2019 02:43:32 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y12so2555205plk.11;
+        Fri, 26 Apr 2019 23:43:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RIE66crRSFais2XMEreovT7cuc4aWzwk2c6XjFrsy1k=;
-        b=pYvgo9ZCfUCHvRHlTxheTL9ZRQVp4fim5mJ1MwWcKR1lA8y1aUP/jaFmmW0gvaWJ7S
-         zVzA0PQ2EURS5SWk/peFTu1A3/0LRw7DZYQoG4uzOziiwhPRGPxHOWrU2FLz8xJKPBlh
-         /zuS4kFNlrBUqnzlR10WasNuwWxPh6kwUkYfWX2HNs3YXw+waJ/qMVcWCQyEr/PXxH6M
-         ipIVs/0XiprUGYbGWdjj/stD10SwODP6rYxbEpQWhHBNTSo8/W1+lQ5k//iDxItfsPxn
-         hO3NCZNloR7//+m6Eozd9KTmliFtML7SM01N4FLmt+HleGXZ2gYxUmzOYvSuD2G1W0Lp
-         NyOQ==
+        bh=03x8MyH4ONo6RL8TDAuJcYQYBUTk8Xfu5EMEl5vv8zs=;
+        b=Q470hKxCA0zkhL+IQMRmPe5UQg42Gi+l2RRmW947taZyL//Jesf10pqg7iknajn5cM
+         6MahwRUBormFC9ROtXZzOCBPO1osFE8XuHCncIgLvsCHxLcNuXntyLIPTNUxNKWwnbuS
+         YivKpxFXT45f055xbj7gqKyZeZCL6izznlo4y+QcynGiNpgPJSJn6cIDoQUEWR8q3NIV
+         QQ28y5mhdxTCv3ZGyzW3vgvH+5eRIAil3M9uo1sFkym+2/eXjUEbYhGGuoRIn6PGQ204
+         szqozT+L1TEHgWXr+gjrabBNVx0fQWsxwFBogU0RCWe7qqaev2wbboj0cmVtOcpDQP9M
+         I7SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RIE66crRSFais2XMEreovT7cuc4aWzwk2c6XjFrsy1k=;
-        b=UIX7WqICoRsO+LiT42b/95RjkddWdaUlctGjIILVrGcJOBzh6zlezMYaHTPvAvaxtp
-         D2Nh0ndy0YdnE8wYg0rinRpotEsbPiFBZkuFvmc9RbipOjXf+GgFnLI0Vl4PK71P5QOv
-         VIiO7psV3Ol99yY3+TTQ2ldiTDY+BE36QG0Iu7uMM5YIn1Y/5cYuVFMnJRMeJcohK9zG
-         +90ok/RTOtIFUf84w6TUjzTKwWyQmOoui7jzxWVZ/4HPtG7IVficrXUycniNrs2nm9uv
-         HiI5NRtSx2C7ipQOsceKMXm7NKY4Fio/8dlG5doDG6mAu1RxQ4Dh0fv9Ivbb6c7Bohb4
-         5qtQ==
-X-Gm-Message-State: APjAAAWvzSJGD44R1VS3wEBPhi8AF8fjA1pob4rea55usRhvbclpe7qO
-        m/bYzjXuuusI2l2yqHaRu50=
-X-Google-Smtp-Source: APXvYqwLfbRywYDBLBkn2s5QjOy7Ake8UGyhjw6r9cFTnOHwE2KsORvL/Fy4JLKSQeWsUj9Okam5Jg==
-X-Received: by 2002:a17:902:b68e:: with SMTP id c14mr52282678pls.49.1556347412993;
-        Fri, 26 Apr 2019 23:43:32 -0700 (PDT)
+        bh=03x8MyH4ONo6RL8TDAuJcYQYBUTk8Xfu5EMEl5vv8zs=;
+        b=kFXVFkmMXdfC7/oyY9p08Z7JSxqpYcZyQXqA7qOk+GmXBUx4XCdSEEQfabP3VDscEw
+         XYUiOpAJ9qgVsjuTMWBMF9dWTB3eR2EPG0o5HsYFGm2RuWy18KBoMpjPk/W6Q55gDUEZ
+         /yXEcJpM1vWwfKgdtB0VcVDqwtCCJKkhKdSWsIEBoMb21Gx1RbanstNE+Lq4Ff1GTgn1
+         4LSgoBV2TwgzPwS/07KkaCpObWFVjW+EqHTaz3DpZlmpShydFKvbr0khcvp6TPbF6AI7
+         F1lk3ftEh3U0kyTyhKvLVIqEJs0rGzAN3HiqvR+LaXxZZatwK0M+uM31woJamc7Asa0J
+         n58w==
+X-Gm-Message-State: APjAAAVYmRZkXlb/YFXP4ss3DSpub5Jw2FTlBbGOVhXXbBvN1/5Y3gGr
+        8ToK/3zPdRmEHoKNHgIv8mY=
+X-Google-Smtp-Source: APXvYqwS9mBb6vrC0DhVyMmyRT5ZRdKwezrJErmAVG/FEmt+6AsmQkMSAz9lRez80K2MggQYstDNlg==
+X-Received: by 2002:a17:902:bd0c:: with SMTP id p12mr17355851pls.50.1556347411683;
+        Fri, 26 Apr 2019 23:43:31 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.31
+        by smtp.gmail.com with ESMTPSA id j22sm36460145pfn.129.2019.04.26.23.43.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Apr 2019 23:43:32 -0700 (PDT)
+        Fri, 26 Apr 2019 23:43:31 -0700 (PDT)
 From:   nadav.amit@gmail.com
 To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
@@ -70,10 +70,12 @@ Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         will.deacon@arm.com, ard.biesheuvel@linaro.org,
         kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v6 20/24] x86/ftrace: Use vmalloc special flag
-Date:   Fri, 26 Apr 2019 16:22:59 -0700
-Message-Id: <20190426232303.28381-21-nadav.amit@gmail.com>
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [PATCH v6 19/24] bpf: Use vmalloc special flag
+Date:   Fri, 26 Apr 2019 16:22:58 -0700
+Message-Id: <20190426232303.28381-20-nadav.amit@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
 References: <20190426232303.28381-1-nadav.amit@gmail.com>
@@ -85,70 +87,88 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
 Use new flag VM_FLUSH_RESET_PERMS for handling freeing of special
-permissioned memory in vmalloc and remove places where memory was set NX
-and RW before freeing which is no longer needed.
+permissioned memory in vmalloc and remove places where memory was set RW
+before freeing which is no longer needed. Don't track if the memory is RO
+anymore because it is now tracked in vmalloc.
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Tested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/ftrace.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ include/linux/filter.h | 17 +++--------------
+ kernel/bpf/core.c      |  1 -
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-index 53ba1aa3a01f..0caf8122d680 100644
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -678,12 +678,8 @@ static inline void *alloc_tramp(unsigned long size)
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 14ec3bdad9a9..7d3abde3f183 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -20,6 +20,7 @@
+ #include <linux/set_memory.h>
+ #include <linux/kallsyms.h>
+ #include <linux/if_vlan.h>
++#include <linux/vmalloc.h>
+ 
+ #include <net/sch_generic.h>
+ 
+@@ -503,7 +504,6 @@ struct bpf_prog {
+ 	u16			pages;		/* Number of allocated pages */
+ 	u16			jited:1,	/* Is our filter JIT'ed? */
+ 				jit_requested:1,/* archs need to JIT the prog */
+-				undo_set_mem:1,	/* Passed set_memory_ro() checkpoint */
+ 				gpl_compatible:1, /* Is filter GPL compatible? */
+ 				cb_access:1,	/* Is control block accessed? */
+ 				dst_needed:1,	/* Do we need dst entry? */
+@@ -733,27 +733,17 @@ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ 
+ static inline void bpf_prog_lock_ro(struct bpf_prog *fp)
  {
- 	return module_alloc(size);
+-	fp->undo_set_mem = 1;
++	set_vm_flush_reset_perms(fp);
+ 	set_memory_ro((unsigned long)fp, fp->pages);
  }
--static inline void tramp_free(void *tramp, int size)
-+static inline void tramp_free(void *tramp)
- {
--	int npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+ 
+-static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
+-{
+-	if (fp->undo_set_mem)
+-		set_memory_rw((unsigned long)fp, fp->pages);
+-}
 -
--	set_memory_nx((unsigned long)tramp, npages);
--	set_memory_rw((unsigned long)tramp, npages);
- 	module_memfree(tramp);
- }
- #else
-@@ -692,7 +688,7 @@ static inline void *alloc_tramp(unsigned long size)
+ static inline void bpf_jit_binary_lock_ro(struct bpf_binary_header *hdr)
  {
- 	return NULL;
- }
--static inline void tramp_free(void *tramp, int size) { }
-+static inline void tramp_free(void *tramp) { }
- #endif
- 
- /* Defined as markers to the end of the ftrace default trampolines */
-@@ -808,6 +804,8 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	/* ALLOC_TRAMP flags lets us know we created it */
- 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
- 
-+	set_vm_flush_reset_perms(trampoline);
-+
- 	/*
- 	 * Module allocation needs to be completed by making the page
- 	 * executable. The page is still writable, which is a security hazard,
-@@ -816,7 +814,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
- 	set_memory_x((unsigned long)trampoline, npages);
- 	return (unsigned long)trampoline;
- fail:
--	tramp_free(trampoline, *tramp_size);
-+	tramp_free(trampoline);
- 	return 0;
++	set_vm_flush_reset_perms(hdr);
+ 	set_memory_ro((unsigned long)hdr, hdr->pages);
+ 	set_memory_x((unsigned long)hdr, hdr->pages);
  }
  
-@@ -947,7 +945,7 @@ void arch_ftrace_trampoline_free(struct ftrace_ops *ops)
- 	if (!ops || !(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
- 		return;
+-static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
+-{
+-	set_memory_rw((unsigned long)hdr, hdr->pages);
+-}
+-
+ static inline struct bpf_binary_header *
+ bpf_jit_binary_hdr(const struct bpf_prog *fp)
+ {
+@@ -789,7 +779,6 @@ void __bpf_prog_free(struct bpf_prog *fp);
  
--	tramp_free((void *)ops->trampoline, ops->trampoline_size);
-+	tramp_free((void *)ops->trampoline);
- 	ops->trampoline = 0;
+ static inline void bpf_prog_unlock_free(struct bpf_prog *fp)
+ {
+-	bpf_prog_unlock_ro(fp);
+ 	__bpf_prog_free(fp);
  }
  
+diff --git a/kernel/bpf/core.c b/kernel/bpf/core.c
+index ff09d32a8a1b..c605397c79f0 100644
+--- a/kernel/bpf/core.c
++++ b/kernel/bpf/core.c
+@@ -848,7 +848,6 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
+ 	if (fp->jited) {
+ 		struct bpf_binary_header *hdr = bpf_jit_binary_hdr(fp);
+ 
+-		bpf_jit_binary_unlock_ro(hdr);
+ 		bpf_jit_binary_free(hdr);
+ 
+ 		WARN_ON_ONCE(!bpf_prog_kallsyms_verify_off(fp));
 -- 
 2.17.1
 
