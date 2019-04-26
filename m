@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDDFC43218
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 443A3C43219
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C5372084F
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2128F208CA
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 07:33:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbfDZHcT (ORCPT
+        id S1726683AbfDZHc6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 03:32:19 -0400
+        Fri, 26 Apr 2019 03:32:58 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:29121 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726336AbfDZHcB (ORCPT
+        by vger.kernel.org with ESMTP id S1726316AbfDZHb7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 03:32:01 -0400
+        Fri, 26 Apr 2019 03:31:59 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Fri, 26 Apr 2019 00:31:44 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id C60F7412A6;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id AA61841299;
         Fri, 26 Apr 2019 00:31:45 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -43,13 +43,10 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <ard.biesheuvel@linaro.org>, <kristen@linux.intel.com>,
         <deneen.t.dock@intel.com>,
         Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v5 12/23] x86/jump-label: Remove support for custom poker
-Date:   Thu, 25 Apr 2019 17:11:32 -0700
-Message-ID: <20190426001143.4983-13-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v5 09/23] x86/ftrace: Set trampoline pages as executable
+Date:   Thu, 25 Apr 2019 17:11:29 -0700
+Message-ID: <20190426001143.4983-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190426001143.4983-1-namit@vmware.com>
 References: <20190426001143.4983-1-namit@vmware.com>
@@ -62,89 +59,52 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There are only two types of poking: early and breakpoint based. The use
-of a function pointer to perform poking complicates the code and is
-probably inefficient due to the use of indirect branches.
+Since alloc_module() will not set the pages as executable soon, set
+ftrace trampoline pages as executable after they are allocated.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+For the time being, do not change ftrace to use the text_poke()
+interface. As a result, ftrace still breaks W^X.
+
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- arch/x86/kernel/jump_label.c | 26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+ arch/x86/kernel/ftrace.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-index e7d8c636b228..e631c358f7f4 100644
---- a/arch/x86/kernel/jump_label.c
-+++ b/arch/x86/kernel/jump_label.c
-@@ -37,7 +37,6 @@ static void bug_at(unsigned char *ip, int line)
+diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
+index ef49517f6bb2..53ba1aa3a01f 100644
+--- a/arch/x86/kernel/ftrace.c
++++ b/arch/x86/kernel/ftrace.c
+@@ -730,6 +730,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	unsigned long end_offset;
+ 	unsigned long op_offset;
+ 	unsigned long offset;
++	unsigned long npages;
+ 	unsigned long size;
+ 	unsigned long retq;
+ 	unsigned long *ptr;
+@@ -762,6 +763,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 		return 0;
  
- static void __ref __jump_label_transform(struct jump_entry *entry,
- 					 enum jump_label_type type,
--					 void *(*poker)(void *, const void *, size_t),
- 					 int init)
- {
- 	union jump_code_union jmp;
-@@ -50,14 +49,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 	jmp.offset = jump_entry_target(entry) -
- 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+ 	*tramp_size = size + RET_SIZE + sizeof(void *);
++	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
  
--	/*
--	 * As long as only a single processor is running and the code is still
--	 * not marked as RO, text_poke_early() can be used; Checking that
--	 * system_state is SYSTEM_BOOTING guarantees it.
--	 */
--	if (system_state == SYSTEM_BOOTING)
--		poker = text_poke_early;
--
- 	if (type == JUMP_LABEL_JMP) {
- 		if (init) {
- 			expect = default_nop; line = __LINE__;
-@@ -80,16 +71,19 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
- 		bug_at((void *)jump_entry_code(entry), line);
+ 	/* Copy ftrace_caller onto the trampoline memory */
+ 	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
+@@ -806,6 +808,12 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
+ 	/* ALLOC_TRAMP flags lets us know we created it */
+ 	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
  
- 	/*
--	 * Make text_poke_bp() a default fallback poker.
-+	 * As long as only a single processor is running and the code is still
-+	 * not marked as RO, text_poke_early() can be used; Checking that
-+	 * system_state is SYSTEM_BOOTING guarantees it. It will be set to
-+	 * SYSTEM_SCHEDULING before other cores are awaken and before the
-+	 * code is write-protected.
- 	 *
- 	 * At the time the change is being done, just ignore whether we
- 	 * are doing nop -> jump or jump -> nop transition, and assume
- 	 * always nop being the 'currently valid' instruction
--	 *
- 	 */
--	if (poker) {
--		(*poker)((void *)jump_entry_code(entry), code,
--			 JUMP_LABEL_NOP_SIZE);
-+	if (init || system_state == SYSTEM_BOOTING) {
-+		text_poke_early((void *)jump_entry_code(entry), code,
-+				JUMP_LABEL_NOP_SIZE);
- 		return;
- 	}
- 
-@@ -101,7 +95,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
- 			       enum jump_label_type type)
- {
- 	mutex_lock(&text_mutex);
--	__jump_label_transform(entry, type, NULL, 0);
-+	__jump_label_transform(entry, type, 0);
- 	mutex_unlock(&text_mutex);
- }
- 
-@@ -131,5 +125,5 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
- 			jlstate = JL_STATE_NO_UPDATE;
- 	}
- 	if (jlstate == JL_STATE_UPDATE)
--		__jump_label_transform(entry, type, text_poke_early, 1);
-+		__jump_label_transform(entry, type, 1);
- }
++	/*
++	 * Module allocation needs to be completed by making the page
++	 * executable. The page is still writable, which is a security hazard,
++	 * but anyhow ftrace breaks W^X completely.
++	 */
++	set_memory_x((unsigned long)trampoline, npages);
+ 	return (unsigned long)trampoline;
+ fail:
+ 	tramp_free(trampoline, *tramp_size);
 -- 
 2.17.1
 
