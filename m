@@ -1,112 +1,144 @@
-Return-Path: <SRS0=sNqz=S4=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=DBTU=S5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F7EC4321A
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 16:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17991C43218
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 01:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10EAE21537
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Apr 2019 16:43:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="G6CRq2cv"
+	by mail.kernel.org (Postfix) with ESMTP id DF24C206E0
+	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 01:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1556330027;
+	bh=ZiDI3Dt5mYEtv9kuG8rDQe8/ZVaAN+P6S4mZU5ltY+Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uxAobtruxQCFVtIX51FfhLt0YUM5e1yDkHyIT9lmZJw0Meqt8JJKI34Z60Q6VBm/b
+	 GqqFlb+XpdvMIoMXCfwCOz2AdUUiuLeMVEz7CEOmOn2cfFsLHmySZzXSnZlVKQkV4T
+	 D7M1yMJQ+1sObgcNdeZ90IqNfE12YF77+DxlpCY0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbfDZQnP (ORCPT
+        id S1727607AbfD0Bxr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 26 Apr 2019 12:43:15 -0400
-Received: from mail-eopbgr710084.outbound.protection.outlook.com ([40.107.71.84]:41632
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726167AbfDZQnP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 26 Apr 2019 12:43:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MLLKAhzdHx7DUdYm/ixbvignsGY2pog+oWt8K53xdOE=;
- b=G6CRq2cvYPDcqznoif5lXD2FoBWbIhBrzH3TNJHAV+1oxm37LjqntTt+xfdFz/n4bOApsZPnhRfOvtReVFRFp+zxQI7e2/tlpTVvoCEEn08OI6WeoUMrzfPa59/1zZiHvrExm/K2BPJThdXo4lM3MrnL0ufX4P0BsMbAXeLZMPg=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4903.namprd05.prod.outlook.com (52.135.235.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1856.6; Fri, 26 Apr 2019 16:43:09 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e862:1b1b:7665:8094]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::e862:1b1b:7665:8094%3]) with mapi id 15.20.1835.010; Fri, 26 Apr 2019
- 16:43:09 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "deneen.t.dock@intel.com" <deneen.t.dock@intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: Re: [PATCH v5 14/23] x86/mm/cpa: Add set_direct_map_ functions
-Thread-Topic: [PATCH v5 14/23] x86/mm/cpa: Add set_direct_map_ functions
-Thread-Index: AQHU/E7LDKApHlfkUkuITMJWRFardKZOpaMA
-Date:   Fri, 26 Apr 2019 16:43:09 +0000
-Message-ID: <636228FC-71D6-418F-B671-4D6A3B69342C@vmware.com>
-References: <20190426001143.4983-1-namit@vmware.com>
- <20190426001143.4983-15-namit@vmware.com>
- <CAADWXX8yZJ9Z4yfqG9wQcb2r+0O7VCk2uQLcOU1=-BOnYhjnow@mail.gmail.com>
-In-Reply-To: <CAADWXX8yZJ9Z4yfqG9wQcb2r+0O7VCk2uQLcOU1=-BOnYhjnow@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 79778191-c6b0-4e1c-eb4a-08d6ca6643f9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600141)(711020)(4605104)(2017052603328)(7193020);SRVR:BYAPR05MB4903;
-x-ms-traffictypediagnostic: BYAPR05MB4903:
-x-microsoft-antispam-prvs: <BYAPR05MB4903D9CE7FDA7C97EA7CB71ED03E0@BYAPR05MB4903.namprd05.prod.outlook.com>
-x-forefront-prvs: 001968DD50
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(189003)(199004)(7416002)(4326008)(7736002)(476003)(66476007)(305945005)(25786009)(6512007)(2906002)(3846002)(6116002)(66066001)(8936002)(446003)(66446008)(186003)(64756008)(486006)(4744005)(66556008)(11346002)(6246003)(2616005)(26005)(53936002)(68736007)(5660300002)(73956011)(256004)(86362001)(66946007)(102836004)(53546011)(6506007)(76116006)(6436002)(54906003)(71200400001)(76176011)(81166006)(83716004)(316002)(99286004)(6916009)(81156014)(97736004)(8676002)(36756003)(6486002)(229853002)(33656002)(71190400001)(82746002)(478600001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4903;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ch5Q0ftsms5PAZYP3L25ycivx2UG2U3d4o7m19Iy/OP40CSsWfsHcpUUdXi9MCzYmwpGGwi1vwR0NLdqooqHVlLTWv+t8ePq5qu8eoBao38U+kz+81lEM95jwcfwKRMRWvOqNto+HVEBgQ4z9/1W241V2aTWioNfAxsyWGSHo06vTtkkdumC1LK+knuW/12aZvfsmgkL+cN4dCRNcHRjI7/JkJlMZXkkhhQcyZMvOTpIN6lm4QQHakJYxaJ5K9mprXnfgZEjxVi9EmL1eXTztnxBbUA5GEqLAHa+J7KyBZFK3RAkrQyd6t7A9g0LZb0yM1THi17z/lQX8EtNs6Qml8+spixG9j7L+2A2i95SqBjyaRBSyKfOgqRu1lyTcrHPjDy+FbOD7X5KYXzYfO8t+TPNfeUh0mRP4zcqhvfqkyo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D1C68EF185691D48BD87873B5B102692@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 26 Apr 2019 21:53:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43334 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727841AbfD0Bj7 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 26 Apr 2019 21:39:59 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 747DF214AE;
+        Sat, 27 Apr 2019 01:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1556329198;
+        bh=ZiDI3Dt5mYEtv9kuG8rDQe8/ZVaAN+P6S4mZU5ltY+Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Nr59P8JDPYtQx1ekfq8BtYjkWCApCciE8ch9qdXk9kNiFXwdUilsPLBX3+9TzX+0V
+         e4ViaPstuEuz8d/Yd6jelA8+se7ANhHnNQRBPbY7RGJdGfrFdL9hsRydYCGeLMtZCu
+         eWRpG1TDZfY9uk7UNmexXPIVO2Lk7JacmX0wygPk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "ndesaulniers@google.com" <ndesaulniers@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.morris@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.0 52/79] KEYS: trusted: fix -Wvarags warning
+Date:   Fri, 26 Apr 2019 21:38:11 -0400
+Message-Id: <20190427013838.6596-52-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190427013838.6596-1-sashal@kernel.org>
+References: <20190427013838.6596-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79778191-c6b0-4e1c-eb4a-08d6ca6643f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2019 16:43:09.2432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4903
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PiBPbiBBcHIgMjYsIDIwMTksIGF0IDk6NDAgQU0sIExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0Bs
-aW51eC1mb3VuZGF0aW9uLm9yZz4gd3JvdGU6DQo+IA0KPiBOYWRhdiwNCj4gDQo+IEkgZ2V0DQo+
-IA0KPiAgICAgICBkbWFyYz1mYWlsIChwPVFVQVJBTlRJTkUgc3A9Tk9ORSBkaXM9UVVBUkFOVElO
-RSkgaGVhZGVyLmZyb209dm13YXJlLmNvbQ0KPiANCj4gZm9yIHRoZXNlIGVtYWlscywgYmVjYXVz
-ZSB0aGV5IGxhY2sgdGhlIHZtd2FyZSBES0lNIHNpZ25hdHVyZS4NCj4gDQo+IEl0IGNsZWFybHkg
-ZGlkIGdvIHRocm91Z2ggc29tZSB2bXdhcmUgbWFpbCBzZXJ2ZXJzLCBidXQgYXBwYXJlbnRseSBu
-b3QNCj4gdGhlICpyaWdodCogZXh0ZXJuYWwgdm13YXJlIFNNVFAgZ2F0ZXdheS4NCj4gDQo+IFBs
-ZWFzZSBjaGVjayB3aXRoIHZtd2FyZSBNSVMgd2hhdCB0aGUgcmlnaHQgU01UUCBzZXR1cCBmb3Ig
-Z2l0LXNlbmQtZW1haWwgaXMuDQoNCkVyci4uIFNvcnJ5IGZvciB0aGF0LiBGb3IgdGhlIHRpbWUg
-YmVpbmcgSeKAmWxsIHVzZSBnbWFpbCBpbnN0ZWFkLg0KDQo=
+From: "ndesaulniers@google.com" <ndesaulniers@google.com>
+
+[ Upstream commit be24b37e22c20cbaa891971616784dd0f35211e8 ]
+
+Fixes the warning reported by Clang:
+security/keys/trusted.c:146:17: warning: passing an object that
+undergoes default
+      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+        va_start(argp, h3);
+                       ^
+security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+char' is declared here
+unsigned char *h2, unsigned char h3, ...)
+                               ^
+Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+standards explicitly call this out as undefined behavior:
+
+The parameter parmN is the identifier of the rightmost parameter in
+the variable parameter list in the function definition (the one just
+before the ...). If the parameter parmN is declared with ... or with a
+type that is not compatible with the type that results after
+application of the default argument promotions, the behavior is
+undefined.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/41
+Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+Suggested-by: David Laight <David.Laight@aculab.com>
+Suggested-by: Denis Kenzior <denkenz@gmail.com>
+Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.morris@microsoft.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/keys/trusted.h  | 2 +-
+ security/keys/trusted.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/keys/trusted.h b/include/keys/trusted.h
+index adbcb6817826..0071298b9b28 100644
+--- a/include/keys/trusted.h
++++ b/include/keys/trusted.h
+@@ -38,7 +38,7 @@ enum {
+ 
+ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+-			unsigned char *h2, unsigned char h3, ...);
++			unsigned char *h2, unsigned int h3, ...);
+ int TSS_checkhmac1(unsigned char *buffer,
+ 			  const uint32_t command,
+ 			  const unsigned char *ononce,
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index 4d98f4f87236..94d2b28c7c22 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -123,7 +123,7 @@ out:
+  */
+ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 			unsigned int keylen, unsigned char *h1,
+-			unsigned char *h2, unsigned char h3, ...)
++			unsigned char *h2, unsigned int h3, ...)
+ {
+ 	unsigned char paramdigest[SHA1_DIGEST_SIZE];
+ 	struct sdesc *sdesc;
+@@ -139,7 +139,7 @@ int TSS_authhmac(unsigned char *digest, const unsigned char *key,
+ 		return PTR_ERR(sdesc);
+ 	}
+ 
+-	c = h3;
++	c = !!h3;
+ 	ret = crypto_shash_init(&sdesc->shash);
+ 	if (ret < 0)
+ 		goto out;
+-- 
+2.19.1
+
