@@ -1,85 +1,68 @@
-Return-Path: <SRS0=DBTU=S5=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=nYnk=S7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EFCC43219
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 10:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F03CC43219
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Apr 2019 15:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20352077B
-	for <linux-integrity@archiver.kernel.org>; Sat, 27 Apr 2019 10:32:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d1C1qdVO"
+	by mail.kernel.org (Postfix) with ESMTP id 59BD320656
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Apr 2019 15:30:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbfD0Kci (ORCPT
+        id S1728761AbfD2Pa5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 27 Apr 2019 06:32:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43872 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfD0Kci (ORCPT
+        Mon, 29 Apr 2019 11:30:57 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:57926 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728663AbfD2Pa4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 27 Apr 2019 06:32:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/wfN9cbY70jLMmaBiwAoTgOUu22N+b34JaAv4aDSiiM=; b=d1C1qdVOjLCTuijW+/UiQ9tUY
-        u2JXmjimTsgGi9pPouHXGSi+f0eSxX0HIH7HWyjHD2y24faIPOC4LiwlTeQlVCXXwbH52+wK2P9eq
-        yywoc+V3Gs/cQiwL8dgcGe75sw2HjavlRB57PNztNaUYzClj6YzlZMrjM04q4hUgigqLhYxdSJbxb
-        jeQuxl+5ANx0PaU2uwc7aLcQ72NXWvHAUBx2/u7X9KKyGjw7AJE3sQYMtfdJ/YUur1FQpoIwTn1Er
-        TXQQB6JzS3+BxL+eHmI18UWhjqcfLspCmuQ+hJBQiE5jEtCdrDhzwhLyK56zyuxFS/xnc9IAWvgY+
-        zs64p7GnA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1hKKd8-0001Xn-GL; Sat, 27 Apr 2019 10:32:26 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 079E329D22409; Sat, 27 Apr 2019 12:32:25 +0200 (CEST)
-Date:   Sat, 27 Apr 2019 12:32:24 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     nadav.amit@gmail.com
-Cc:     Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH v6 00/24] x86: text_poke() fixes and executable lockdowns
-Message-ID: <20190427103224.GG2623@hirez.programming.kicks-ass.net>
-References: <20190426232303.28381-1-nadav.amit@gmail.com>
+        Mon, 29 Apr 2019 11:30:56 -0400
+Received: from [10.91.6.157] (unknown [131.107.159.157])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 50C6B32376D4;
+        Mon, 29 Apr 2019 08:30:55 -0700 (PDT)
+Subject: Re: linux-tpmdd self signed kernel failing to boot with secreboot on
+To:     Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+References: <f9ad2e46-e458-6c78-76da-b85db4601ee3@linux.microsoft.com>
+ <CACdnJuuhiQQ8Uq1A_qfidCLVPVQ_3Ty_Kqg+tQPDx2z3P0Yp9w@mail.gmail.com>
+From:   Jordan Hand <jorhand@linux.microsoft.com>
+Message-ID: <6373c67f-ea2f-ae1d-0343-4bb774f1d52f@linux.microsoft.com>
+Date:   Mon, 29 Apr 2019 08:30:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190426232303.28381-1-nadav.amit@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACdnJuuhiQQ8Uq1A_qfidCLVPVQ_3Ty_Kqg+tQPDx2z3P0Yp9w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Apr 26, 2019 at 04:22:39PM -0700, nadav.amit@gmail.com wrote:
-> From: Nadav Amit <namit@vmware.com>
+On 4/25/19 2:47 PM, Matthew Garrett wrote:
+> On Wed, Apr 24, 2019 at 11:30 AM 'Jordan' via mjg59 <mjg59@google.com> wrote:
+>> Under the following circumstances my kernel will not boot:
 > 
-> *
-> * This version fixes failed boots on 32-bit that were reported by 0day.
-> * Patch 5 is added to initialize uprobes during fork initialization.
-> * Patch 7 (which was 6 in the previous version) is updated - the code is
-> * moved to common mm-init code with no further changes.
-> *
+> Will it boot under other circumstances (ie, if you disable Secure
+> Boot, does it work fine with the patches?)
 
-I've added patch 5 and updated patch 7, I've left the rest of the
-patches from the previous series (and kept my re-ordering of the
-patches).
+Yes it works fine if secure boot is disabled.
 
-I pushed it all out to 0day again. Let's see if it's happy now.
+> 
+>> I have traced kernel boot to the call to efi_exit_boot_services in
+>> arch/x86/boot/compressed/eboot at which point execution terminates. I
+>> see Matthew has made a couple changes in efi_main which calls exit_boot
+>> (and in turn calls efi_exit_boot_services).
+> 
+> Does the boot hang or does the machine reboot?
+> 
 
+The boot hangs.
+
+I haven't had a chance yet but I'll try it out with upstream grub this 
+week (instead of the Ubuntu package) and see if maybe its grub doing 
+something weird.
