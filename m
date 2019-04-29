@@ -2,279 +2,77 @@ Return-Path: <SRS0=nYnk=S7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 854C1C43219
-	for <linux-integrity@archiver.kernel.org>; Mon, 29 Apr 2019 21:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EA4C43219
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Apr 2019 22:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48FE421655
-	for <linux-integrity@archiver.kernel.org>; Mon, 29 Apr 2019 21:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE0AC20673
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Apr 2019 22:50:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QO+jToI9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mAnJCKit"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbfD2Vrx (ORCPT
+        id S1729603AbfD2WuZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 29 Apr 2019 17:47:53 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33117 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729341AbfD2Vrw (ORCPT
+        Mon, 29 Apr 2019 18:50:25 -0400
+Received: from mail-it1-f180.google.com ([209.85.166.180]:51631 "EHLO
+        mail-it1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729593AbfD2WuZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Apr 2019 17:47:52 -0400
-Received: by mail-pf1-f194.google.com with SMTP id z28so684069pfk.0;
-        Mon, 29 Apr 2019 14:47:51 -0700 (PDT)
+        Mon, 29 Apr 2019 18:50:25 -0400
+Received: by mail-it1-f180.google.com with SMTP id s3so1739768itk.1
+        for <linux-integrity@vger.kernel.org>; Mon, 29 Apr 2019 15:50:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tiAA+ScOqrpgokB/bI2A0TI/jwnpVeqj9LdR6JH5rDY=;
-        b=QO+jToI9AspTW//i/bLjwWVqcRVIcXqgLo6xASBAZLLLLcFmer2JhKYttxWPUS5fmR
-         35RdRZUXW4IPlwPcRzdc0vbiiyPgRgGJL4Equ0dNPMdKlDFLzfBEs6N+THH9VEDMrRgF
-         wLwYgiVyr1HHGqf+n/n9sufufg5Xq5nKac5PmTC4hiAbJcJq3LaGBopVuXuAAmsnWin8
-         jE0PrIn8kIBtoO/f/TuwGtA7DajxWZ69rOVbRhUYY1YNtDKB2TbgUTecoNVbSVJlEs03
-         GD+SFGu3vBvVqYQpRdyYzrvYqbgZAhLn2wbdmx2kdqr1PDVkSYCDJ073O2u4GQGUnzck
-         vOqA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V4B0GZz0bYMgiQexQTapZYHmjRYio/CoXRebCBRGSMs=;
+        b=mAnJCKitGSFHVsvnrXgR6spC9fOTUQUss4Js2+6bMguIk5kKuU7EFj427EBkd/v4wv
+         LQ3dxIVnQqWhjZcZrMCaieTyDUWuRpGyifqw4hfQ01RDVPB2uExz5GcskLZWpQd1xwjn
+         QaE1o/0bnY0r5/OkfZpZzgObCo19xzT+BApcuT3R3tlUEEbaEcWNXxjTe3lxgkC86bp4
+         StE/uB68peedN28gQ2KVK/cMRmhsg5ugLvomrWadmhpy9GsALd7xusQNGhejUyZSwGra
+         YI2HTto0scXM3DMbaY0pNU2vuW6rTyUh7C3aWLcs4wyU8ARlWYo1cadEenyhdTTnDtVs
+         CkjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tiAA+ScOqrpgokB/bI2A0TI/jwnpVeqj9LdR6JH5rDY=;
-        b=FeQx762VaLFsH4vyfsj9xKpz5svm1Z4UlzCF+uG7xC/yh9Hv9zatnmdgV9cMEDNjg6
-         DIZtaEwOLcER+RWJYtSYN/7YafyXq4O9FeYa0SeP3AOW4L2eyJxA8i2Kl3hQjIpbdRdB
-         anAA1DoOYqHP+vJux8QE8Mqx0ov71qCC774aWptPGXd+Qpp/0zEouozWU77XgHoHy5Tq
-         gBby2XFeEjTiiEJ+SAao5d/RWEnAksQTvwFKC1knRR0sr9zRePZ8Of7FZgDdN4Cc3CHI
-         QHOin1907++jQR6TlX8xAEbaQGrcceU+Fhts4OKnadhKWJJsmThO96P/0CJ/nqpqWeci
-         ofXQ==
-X-Gm-Message-State: APjAAAUmfieqMnkNI3/DnYtffN3Gomke1C3lEYc1FFPMEi6eTGp2lwX/
-        P6IdPvsPXQSGJvCEpW8ccIFuqlSgUYU=
-X-Google-Smtp-Source: APXvYqz4aE8Jf2gWOZfB26bgGisMVRY08iPh62yu86FZmHRZNA1Yc+0YNknkY8kW7xLjaUdxzzPP8w==
-X-Received: by 2002:a62:2a44:: with SMTP id q65mr33131002pfq.226.1556574471359;
-        Mon, 29 Apr 2019 14:47:51 -0700 (PDT)
-Received: from prsriva-linux.corp.microsoft.com ([2001:4898:80e8:9:445d:9822:2ddb:fb8c])
-        by smtp.gmail.com with ESMTPSA id f66sm1941623pfg.55.2019.04.29.14.47.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Apr 2019 14:47:50 -0700 (PDT)
-From:   Prakhar Srivastava <prsriva02@gmail.com>
-X-Google-Original-From: Prakhar Srivastava
-To:     linux-integrity@vger.kernel.org,
-        linux-secuirty-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.ibm.com, ebiederm@xmission.com, vgoyal@redhat.com,
-        nayna@linux.ibm.com, Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH v3 1/4] added a new ima policy func buffer_check, and ima hook to measure the buffer hash into ima
-Date:   Mon, 29 Apr 2019 14:47:40 -0700
-Message-Id: <20190429214743.4625-2-prsriva02@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190429214743.4625-1-prsriva02@gmail.com>
-References: <20190429214743.4625-1-prsriva02@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V4B0GZz0bYMgiQexQTapZYHmjRYio/CoXRebCBRGSMs=;
+        b=OKDEy88Vpgdzr9+8uDTI9smRpHpyzvG59kyQBUJ9VP/VTr5vwgfB9BTOQc9UCrE+7e
+         BV1lIWQWl+6Ux48QvabiJ9QPQWAMzQ6cxd3NLyPuvU8eZdPCZMqH546SG8QiWOJtFZBn
+         PBPcCIILnRtH5lnsXrpnG3HBglklEf0vsX5zjTIUia/K4gj/oboN8z2/s8F+b/AHirzl
+         IlPUESvmghiNODAhCqQGq5Vn2k8GyQG+yLIPCtRVSG+5qhD6l6XiTdfpkbUvfFYbXRwL
+         Chvm5btGW/htozEY7SD0ycdrwpUTxYIRG/nQhzk5eO/0wsdN3rHZdMp/o62JnTCjQ2sD
+         F8+w==
+X-Gm-Message-State: APjAAAUc9OkihMz7Iiqo3Sp5K5Ga+O38gbJeO/XnxdMKEnCPKzAo6nAo
+        fyU72ftOwXnWBT8tPiMqFwYuA39AC52xA/NMmKC2z3tqbm8=
+X-Google-Smtp-Source: APXvYqyt6Y+g7FTesdDesiP307wvTKEHP0s/NzaZ/l4/lhNToRsa8hF5pXzDwIR+XznLPRvljeysHTV0FIKoYZeC9tg=
+X-Received: by 2002:a24:a86:: with SMTP id 128mr1247101itw.118.1556578224300;
+ Mon, 29 Apr 2019 15:50:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <f9ad2e46-e458-6c78-76da-b85db4601ee3@linux.microsoft.com>
+ <CACdnJuuhiQQ8Uq1A_qfidCLVPVQ_3Ty_Kqg+tQPDx2z3P0Yp9w@mail.gmail.com>
+ <6373c67f-ea2f-ae1d-0343-4bb774f1d52f@linux.microsoft.com>
+ <CACdnJusXEq=7LXB=Ry0zH4CTRkQLHPC+5DnP07yXi0TNPeCYTw@mail.gmail.com> <b4f9cc9d-bded-fb0a-1d53-40fa1460ddec@linux.microsoft.com>
+In-Reply-To: <b4f9cc9d-bded-fb0a-1d53-40fa1460ddec@linux.microsoft.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 29 Apr 2019 15:50:13 -0700
+Message-ID: <CACdnJuuK=BqaHLDFU0+zXk539gobvaJFUpHuNL7nYZcpw8E0ZA@mail.gmail.com>
+Subject: Re: linux-tpmdd self signed kernel failing to boot with secreboot on
+To:     Jordan Hand <jorhand@linux.microsoft.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Prakhar Srivastava <prsriva02@gmail.com>
+On Mon, Apr 29, 2019 at 1:35 PM Jordan Hand <jorhand@linux.microsoft.com> wrote:
+> I have tried this both on a Gen2 Hyper-V VM (from a Windows Host) and on
+> a Lenovo X1 Carbon with the same results.
 
-added a new ima policy func buffer_check, and ima hook to
- measure the buffer hash into ima logs.
-
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
----
- Documentation/ABI/testing/ima_policy |  1 +
- include/linux/ima.h                  |  5 ++
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_api.c     |  1 +
- security/integrity/ima/ima_main.c    | 89 ++++++++++++++++++++++++++++
- security/integrity/ima/ima_policy.c  |  8 +++
- 6 files changed, 105 insertions(+)
-
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 74c6702de74e..12cfe3ff2dea 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,6 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
-+				[BUFFER_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index dc12fbcf484c..f0abade74707 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -26,6 +26,8 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
- extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 			      enum kernel_read_file_id id);
- extern void ima_post_path_mknod(struct dentry *dentry);
-+extern void ima_buffer_check(const void *buff, int size,
-+				const char *eventname);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -92,6 +94,9 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- 	return;
- }
- 
-+static inline void ima_buffer_check(const void *buff, int size,
-+		const char *eventname)
-+{}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index d213e835c498..de70df132575 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -184,6 +184,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_KERNEL_CHECK)	\
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
-+	hook(BUFFER_CHECK)		\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index c7505fb122d4..cb3f67b366f1 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -169,6 +169,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-+ *	| BUFFER_CHECK
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 357edd140c09..3db3f3966ac7 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -576,6 +576,95 @@ int ima_load_data(enum kernel_load_data_id id)
- 	return 0;
- }
- 
-+/*
-+ * process_buffer_measurement - Measure the buffer passed to ima log.
-+ * (Instead of using the file hash the buffer hash is used).
-+ * @buff - The buffer that needs to be added to the log
-+ * @size - size of buffer(in bytes)
-+ * @eventname - this is eventname used for the various buffers
-+ * that can be measured.
-+ *
-+ * The buffer passed is added to the ima logs.
-+ * If the sig template is used, then the sig field contains the buffer.
-+ *
-+ * On success return 0.
-+ * On error cases surface errors from ima calls.
-+ */
-+static int process_buffer_measurement(const void *buff, int size,
-+				const char *eventname, const struct cred *cred,
-+				u32 secid)
-+{
-+	int ret = -EINVAL;
-+	struct ima_template_entry *entry = NULL;
-+	struct integrity_iint_cache tmp_iint, *iint = &tmp_iint;
-+	struct ima_event_data event_data = {iint, NULL, NULL,
-+					    NULL, 0, NULL};
-+	struct {
-+		struct ima_digest_data hdr;
-+		char digest[IMA_MAX_DIGEST_SIZE];
-+	} hash;
-+	int violation = 0;
-+	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+
-+	if (!buff || size ==  0 || !eventname)
-+		goto err_out;
-+
-+	if (ima_get_action(NULL, cred, secid, 0, BUFFER_CHECK, &pcr)
-+		!= IMA_MEASURE)
-+		goto err_out;
-+
-+	memset(iint, 0, sizeof(*iint));
-+	memset(&hash, 0, sizeof(hash));
-+
-+	event_data.filename = eventname;
-+
-+	iint->ima_hash = &hash.hdr;
-+	iint->ima_hash->algo = ima_hash_algo;
-+	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
-+
-+	ret = ima_calc_buffer_hash(buff, size, iint->ima_hash);
-+	if (ret < 0)
-+		goto err_out;
-+
-+	ret = ima_alloc_init_template(&event_data, &entry);
-+	if (ret < 0)
-+		goto err_out;
-+
-+	ret = ima_store_template(entry, violation, NULL,
-+					buff, pcr);
-+	if (ret < 0) {
-+		ima_free_template_entry(entry);
-+		goto err_out;
-+	}
-+
-+	return 0;
-+
-+err_out:
-+	pr_err("Error in adding buffer measure: %d\n", ret);
-+	return ret;
-+}
-+
-+/**
-+ * ima_buffer_check - based on policy, collect & store buffer measurement
-+ * @buf: pointer to buffer
-+ * @size: size of buffer
-+ * @eventname: event name identifier
-+ *
-+ * Buffers can only be measured, not appraised.  The buffer identifier
-+ * is used as the measurement list entry name (eg. boot_cmdline).
-+ */
-+void ima_buffer_check(const void *buf, int size, const char *eventname)
-+{
-+	u32 secid;
-+
-+	if (buf && size != 0 && eventname) {
-+		security_task_getsecid(current, &secid);
-+		process_buffer_measurement(buf, size, eventname,
-+				current_cred(), secid);
-+	}
-+}
-+
-+
- static int __init init_ima(void)
- {
- 	int error;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e0cc323f948f..b12551ed191c 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -291,6 +291,12 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
-+	// Incase of BUFFER_CHECK, Inode is NULL
-+	if (!inode) {
-+		if ((rule->flags & IMA_FUNC) && (rule->func == func))
-+			return true;
-+		return false;
-+	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
-@@ -869,6 +875,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = KEXEC_INITRAMFS_CHECK;
- 			else if (strcmp(args[0].from, "POLICY_CHECK") == 0)
- 				entry->func = POLICY_CHECK;
-+			else if (strcmp(args[0].from, "BUFFER_CHECK") == 0)
-+				entry->func = BUFFER_CHECK;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.19.1
-
+Can you let me know which generation of X1 it is? I'll see if I can
+borrow one to test.
