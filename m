@@ -2,204 +2,87 @@ Return-Path: <SRS0=JTUl=TH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6669BC004C9
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 May 2019 05:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C34CC004C9
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 May 2019 12:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F7820675
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 May 2019 05:51:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1557208298;
-	bh=O2/NA3AYa+PTWrpy6a/5bj3br+ITj7oov1QcxhdukG4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tNktzd3fOQJfTJD4rtraaMTGZ/xD9E4heFIni2jXfmMaJB206q2BS45kPXcwysRrs
-	 hbZh+1i5xTWN4i+yyid+2RT6D7O9tXUGplSoRoEkERdk6T0xmjci0AWFQea6+/gqrT
-	 XpQ5JlY1yK6/CwzITVJRsfz61wB+jMTsgLR9jqbo=
+	by mail.kernel.org (Postfix) with ESMTP id 2A3AA2087F
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 May 2019 12:43:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="orEMXwSl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfEGFvd (ORCPT
+        id S1726206AbfEGMnM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 7 May 2019 01:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728946AbfEGFjw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 May 2019 01:39:52 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A292A21530;
-        Tue,  7 May 2019 05:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1557207591;
-        bh=O2/NA3AYa+PTWrpy6a/5bj3br+ITj7oov1QcxhdukG4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nr7Bsw1zgbsC/9QnxMWQTfx+7uZBEUiCWXSZiZvKP2NmO7eenl1A285VeBoaBLyn8
-         6uG0xsTlV9W2NlXE/fRxKKyFkJYpAAxtyRtr/nkaDxuGgzqRT1EwznT5zjQkaB+8fF
-         JZ1dJbogFI2RrT1TAxeQ/kDPl045wEEXzviokEJs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 41/95] ima: open a new file instance if no read permissions
-Date:   Tue,  7 May 2019 01:37:30 -0400
-Message-Id: <20190507053826.31622-41-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190507053826.31622-1-sashal@kernel.org>
-References: <20190507053826.31622-1-sashal@kernel.org>
+        Tue, 7 May 2019 08:43:12 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:38071 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfEGMnM (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 7 May 2019 08:43:12 -0400
+Received: by mail-lf1-f43.google.com with SMTP id y19so4167402lfy.5
+        for <linux-integrity@vger.kernel.org>; Tue, 07 May 2019 05:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=X5P2X74lmt0BIStcUfA6DKaQQcwJ1Sx5PCgcVMhznTI=;
+        b=orEMXwSls6nZQz5cjDE6PsDYZSt6paWXzevUvaoCTZEQBChrH8D1YG0+fyKwC5BOB4
+         2tdHyXl2Pjg7vVEUZ2VJqSPjKrtWAxSQpYN0giNXLKwkefcZVDGUS9EsPGUvEs+5GwFA
+         jkL1zgR+N6C23NaCDtVnP253TAGwaZm85VTt+LB63uFkAnxkNh0A2SxRNbgr4sVBfZAC
+         AQDIkYk40kUL0OlQJo2dnC013DcHXi/HRWQETMbO7KJgK5wTtSl46svKeDgHMjhvVRnX
+         tcmnvPecSZU2MxSYBj2lMLCeebdtH6dMVODfBz0jTYsXEDn7RVx8oehmBcyirIJP7mC7
+         OOAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=X5P2X74lmt0BIStcUfA6DKaQQcwJ1Sx5PCgcVMhznTI=;
+        b=E/A4Y8Tp8wrTCQAZMSywoRjG72To+n6CNYQ2sg9QHTEFUzx5GIziV2Z7QnE067U89b
+         PHw9mwMaOnq8ZT/Or1cF9Zke0y2RotplaRsyQjCfKG6/fh2/flPEu3aRvYYLXK7eyZ4H
+         igkYqZKs7EXH5FBllzVVDIEGM4nXkmwb7LSjkmWftTB6xYEJs3LtBnWFmosLc9NfYUJ0
+         bbM0AyBxRvOwHhc0ZCyt4/wApbidavhPEFWG4tCH+OMplpukYP8D4l6lwROK+ftJRv7L
+         4gmZ7yR125lXCDcJR4+6qFVImc5ERAw0BDfJNY0tCSBasHKea6bJ0QxCnWakdoxWkB7O
+         jHjw==
+X-Gm-Message-State: APjAAAXFdQUDCc8Xzr+DYclz6ZvU2VbFuF3metq02ykDACDzH+re5PZr
+        LjrjlPvcPG+rS3rtuenVGQ1mCGnA5eCE9FT9UnKiiw==
+X-Google-Smtp-Source: APXvYqwhtTbNn9IbkkkdNZRYuaV5T9m/ZwNS0mDyQQTgSBDdfrX3jBzBRWnAMKMrAVByHsBkhp7qqvjroJvNLYbzqsM=
+X-Received: by 2002:a19:6a18:: with SMTP id u24mr11729879lfu.165.1557232990634;
+ Tue, 07 May 2019 05:43:10 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190410145659.26347-1-janne.karhunen@gmail.com>
+ <1554987784.7843.40.camel@linux.ibm.com> <CAE=NcrY_nwjdPoD+hk90CW93LTDattY_g-qQcqFQa=Xb7M+wPA@mail.gmail.com>
+ <CAE=NcraxAJum=Uk77BoPXVkBDk3rwmXh80mLxy6pxrtUW_hpQg@mail.gmail.com>
+ <1556805843.4134.15.camel@linux.ibm.com> <CAE=Ncrb4unTxeU=2jLb-KTqKXpK98vGFbrOxdcnjdfD_Ddk8ug@mail.gmail.com>
+ <1556884105.4754.18.camel@linux.ibm.com> <CAE=Ncrbjq4MEZL5b6A6n8q2REsb_vG-TFMh54A+dgpQ8an4tyQ@mail.gmail.com>
+In-Reply-To: <CAE=Ncrbjq4MEZL5b6A6n8q2REsb_vG-TFMh54A+dgpQ8an4tyQ@mail.gmail.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Tue, 7 May 2019 15:42:59 +0300
+Message-ID: <CAE=NcrYbX7k-uO_zaYa8qn-qO+5QeykmWH8YFfxAfoKYeLVJSg@mail.gmail.com>
+Subject: Re: [PATCH] integrity: make 'sync' update the inode integrity state
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.de>
+> > The question is whether this impacts your current set of patches?  We
+> > really need to take this discussion back to the mailing list.  I've
+> > responded to my original post with this info.
+>
+> Hmm, if we add the iversion query as you suggested the function can be
+> added as a polling point just about anywhere. I added it in there now.
 
-[ Upstream commit a408e4a86b36bf98ad15b9ada531cf0e5118ac67 ]
+That said, before I chop that patch into pieces with individual
+explanations (and fix the few remaining bugs that seemed to have
+slipped in), hope you can let me know beforehand if the concept is ok
+from your point of view. I understand it fully if this is too
+intrusive as it goes all over the place. Just something we had to do
+to keep the system rolling.
 
-Open a new file instance as opposed to changing file->f_mode when
-the file is not readable.  This is done to accomodate overlayfs
-stacked file operations change.  The real struct file is hidden
-behind the overlays struct file.  So, any file->f_mode manipulations are
-not reflected on the real struct file.  Open the file again in read mode
-if original file cannot be read, read and calculate the hash.
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-Cc: stable@vger.kernel.org (linux-4.19)
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
----
- security/integrity/ima/ima_crypto.c | 54 ++++++++++++++++++-----------
- 1 file changed, 34 insertions(+), 20 deletions(-)
-
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index cb041af9eddb..af680b5b678a 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -232,7 +232,7 @@ static int ima_calc_file_hash_atfm(struct file *file,
- {
- 	loff_t i_size, offset;
- 	char *rbuf[2] = { NULL, };
--	int rc, read = 0, rbuf_len, active = 0, ahash_rc = 0;
-+	int rc, rbuf_len, active = 0, ahash_rc = 0;
- 	struct ahash_request *req;
- 	struct scatterlist sg[1];
- 	struct ahash_completion res;
-@@ -279,11 +279,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 					  &rbuf_size[1], 0);
- 	}
- 
--	if (!(file->f_mode & FMODE_READ)) {
--		file->f_mode |= FMODE_READ;
--		read = 1;
--	}
--
- 	for (offset = 0; offset < i_size; offset += rbuf_len) {
- 		if (!rbuf[1] && offset) {
- 			/* Not using two buffers, and it is not the first
-@@ -322,8 +317,6 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 	/* wait for the last update request to complete */
- 	rc = ahash_wait(ahash_rc, &res);
- out3:
--	if (read)
--		file->f_mode &= ~FMODE_READ;
- 	ima_free_pages(rbuf[0], rbuf_size[0]);
- 	ima_free_pages(rbuf[1], rbuf_size[1]);
- out2:
-@@ -358,7 +351,7 @@ static int ima_calc_file_hash_tfm(struct file *file,
- {
- 	loff_t i_size, offset = 0;
- 	char *rbuf;
--	int rc, read = 0;
-+	int rc;
- 	SHASH_DESC_ON_STACK(shash, tfm);
- 
- 	shash->tfm = tfm;
-@@ -379,11 +372,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 	if (!rbuf)
- 		return -ENOMEM;
- 
--	if (!(file->f_mode & FMODE_READ)) {
--		file->f_mode |= FMODE_READ;
--		read = 1;
--	}
--
- 	while (offset < i_size) {
- 		int rbuf_len;
- 
-@@ -400,8 +388,6 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 		if (rc)
- 			break;
- 	}
--	if (read)
--		file->f_mode &= ~FMODE_READ;
- 	kfree(rbuf);
- out:
- 	if (!rc)
-@@ -442,6 +428,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- {
- 	loff_t i_size;
- 	int rc;
-+	struct file *f = file;
-+	bool new_file_instance = false, modified_flags = false;
- 
- 	/*
- 	 * For consistency, fail file's opened with the O_DIRECT flag on
-@@ -453,15 +441,41 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 		return -EINVAL;
- 	}
- 
--	i_size = i_size_read(file_inode(file));
-+	/* Open a new file instance in O_RDONLY if we cannot read */
-+	if (!(file->f_mode & FMODE_READ)) {
-+		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
-+				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
-+		flags |= O_RDONLY;
-+		f = dentry_open(&file->f_path, flags, file->f_cred);
-+		if (IS_ERR(f)) {
-+			/*
-+			 * Cannot open the file again, lets modify f_flags
-+			 * of original and continue
-+			 */
-+			pr_info_ratelimited("Unable to reopen file for reading.\n");
-+			f = file;
-+			f->f_flags |= FMODE_READ;
-+			modified_flags = true;
-+		} else {
-+			new_file_instance = true;
-+		}
-+	}
-+
-+	i_size = i_size_read(file_inode(f));
- 
- 	if (ima_ahash_minsize && i_size >= ima_ahash_minsize) {
--		rc = ima_calc_file_ahash(file, hash);
-+		rc = ima_calc_file_ahash(f, hash);
- 		if (!rc)
--			return 0;
-+			goto out;
- 	}
- 
--	return ima_calc_file_shash(file, hash);
-+	rc = ima_calc_file_shash(f, hash);
-+out:
-+	if (new_file_instance)
-+		fput(f);
-+	else if (modified_flags)
-+		f->f_flags &= ~FMODE_READ;
-+	return rc;
- }
- 
- /*
--- 
-2.20.1
-
+--
+Janne
