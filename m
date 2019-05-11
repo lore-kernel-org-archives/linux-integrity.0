@@ -2,102 +2,101 @@ Return-Path: <SRS0=BQQ3=TL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87200C04A6B
-	for <linux-integrity@archiver.kernel.org>; Sat, 11 May 2019 00:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC14C04AB1
+	for <linux-integrity@archiver.kernel.org>; Sat, 11 May 2019 22:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5E2217D7
-	for <linux-integrity@archiver.kernel.org>; Sat, 11 May 2019 00:16:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NYKrGaSy"
+	by mail.kernel.org (Postfix) with ESMTP id 338B92183F
+	for <linux-integrity@archiver.kernel.org>; Sat, 11 May 2019 22:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1557614668;
+	bh=DBGXq/wo5eO+VqLPrQODgPeSLnJ8AW0XoIMolnMCp6Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=EnvvLcqi4U7/EwoVHcI4DyHmOflULG5WGR8pPIcD0hdAuRvTg/YWIParxCGwpJFCw
+	 7+AlwVCH0nZklVnh+LI/iBMICNkoPPlv9PW4/Oc5DwLa2e/uLF6klA+jVQKmfSJQLt
+	 s121LFpLmXACkEAR/AfpYJvkaZpg7bSreXKjpReM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfEKAQ2 (ORCPT
+        id S1726229AbfEKWo0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 10 May 2019 20:16:28 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35063 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbfEKAQ2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 May 2019 20:16:28 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t87so4042678pfa.2;
-        Fri, 10 May 2019 17:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=5x2tWauOasbmQygmVEvJr0U0PUarRPwShg51MdnJLjQ=;
-        b=NYKrGaSy3oF5JiFyyguay0cqndzovy1Tn3SS3vaNjZwpXKRuQy0zWkWUd9u/d/HN6U
-         5CMUK0MO/TDYq2oNKHyk8qs+w2PeD9GHwj3oa7nQ/WP3u6dY+axSPxqLmsCM+oSqz4Gu
-         FdZJNC8E4a/27AHMcIVtRU7hPnoexyVQGJwC0+ILnA4VFpmrNR9JMVguBX6jUFOZ60gt
-         rIOhzvyZlierHLXSR/qV7I9o4Vn5JUWaQqjyKazH+1/g6JEiDBI+CHocGIpZRfjDUHUe
-         jmpP+Ol2NQHqb9A4AjGpq1Rq3dvzMi3GYCvUP0v7MbB8EjkmetHpjN4kGhb4MqkZn3g8
-         cmjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=5x2tWauOasbmQygmVEvJr0U0PUarRPwShg51MdnJLjQ=;
-        b=dndPiIzNyQSRVYhsXbcxrwJAbEdHoeyMokkfPFU28zj+JwurDQB89/to93OWeSBYnH
-         67CuPdHojxROF/e1oxxzUy0alzzRwWUVIykozvaKRjTqrD6F8+DSxcjtF4W80cobVsg8
-         BwJf1LGYm29pgFCsGwWjeGN6O/EJCLpghwyDaBG5myw34b1YHtEAmC/wNXPRNLfelXvg
-         IcBB+o/Bb0g7Hz5gN5LZgWa+/LXwZddBX5G481vuS16sFLCr/HPXJBikhC1InGupwSCx
-         zVVYzlgCRH5Y/ISXL9J7YJnbFvgdIjf8k+um5Czt0TbXMprHtnjdctQEG2hQUBIAMq2J
-         o8+w==
-X-Gm-Message-State: APjAAAU7TgSfFA5MoTtSkqmzAd7hwmsWRI9oQUG+GIdLKStI2aEIb0J3
-        LoqQb+7TFP4+s6yKNyTFX6kJU9kjughTkbCEBF7KLLOyol0=
-X-Google-Smtp-Source: APXvYqx1xKu0zJ3XE0Jwmh+BulASMoZnGAAwoGQNyC0SpKI616cDoMY6/HdpLNcr/L7AUE7av17Z1RAHQNfSMQmNW24=
-X-Received: by 2002:aa7:8acb:: with SMTP id b11mr17929164pfd.115.1557533787604;
- Fri, 10 May 2019 17:16:27 -0700 (PDT)
+        Sat, 11 May 2019 18:44:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726201AbfEKWoZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 11 May 2019 18:44:25 -0400
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25E5321881
+        for <linux-integrity@vger.kernel.org>; Sat, 11 May 2019 22:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1557614665;
+        bh=DBGXq/wo5eO+VqLPrQODgPeSLnJ8AW0XoIMolnMCp6Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2T1xXzIyLDFtQqcxDJubuIMPoaEwT56pjInA0mlMgeInYHftrgyEJJ1vJcvv+Tkuf
+         eA8Y/MST6nLsAmwk6H3JEMwXXqquGK0WICtADAdRVPD2CSlR8kj0BwKZncxL4LGmv8
+         hdsfKVy1tsrMoucuy5dczDnqZPdjIjsc/GSodU54=
+Received: by mail-wr1-f46.google.com with SMTP id o4so11355915wra.3
+        for <linux-integrity@vger.kernel.org>; Sat, 11 May 2019 15:44:25 -0700 (PDT)
+X-Gm-Message-State: APjAAAW6dL6+nE6EknvDR9929imgHZ7R6ydEbkZ8Xfyb8V3aFvMjlH0n
+        OQh3G4TmvkckuTkEuDwhxLdJJs2c/cDBbUA+rwHOog==
+X-Google-Smtp-Source: APXvYqz9VVf+0M9zlAhmu/aFtD6QMQ36wIxFeD0UzE/oiKErAKWSOoq0eUm7WmnOKqEkU517LcD4VC3J8VtYROM702w=
+X-Received: by 2002:adf:fb4a:: with SMTP id c10mr12063994wrs.309.1557614663619;
+ Sat, 11 May 2019 15:44:23 -0700 (PDT)
 MIME-Version: 1.0
-From:   prakhar srivastava <prsriva02@gmail.com>
-Date:   Fri, 10 May 2019 17:16:16 -0700
-Message-ID: <CAEFn8q+rT2_0TFb0fKA6ixOvC3H5R5KpR0zFiTOXa_4U-9HeUw@mail.gmail.com>
-Subject: Carrying over the ima log during kexec_file_load
-To:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org
-Cc:     jmorris@namei.org, Mimi Zohar <zohar@linux.ibm.com>,
-        dyoung@redhat.com, bhe@redhat.com, vgoyal@redhat.com
+References: <20190509112420.15671-1-roberto.sassu@huawei.com>
+In-Reply-To: <20190509112420.15671-1-roberto.sassu@huawei.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 11 May 2019 15:44:12 -0700
+X-Gmail-Original-Message-ID: <CALCETrXy7gqmmy37=nrMAisGadZ+qbjZjXtWFF8Crq86xNpsfA@mail.gmail.com>
+Message-ID: <CALCETrXy7gqmmy37=nrMAisGadZ+qbjZjXtWFF8Crq86xNpsfA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        initramfs@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Rob Landley <rob@landley.net>, james.w.mcmechan@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+On Thu, May 9, 2019 at 4:27 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>
+> This patch set aims at solving the following use case: appraise files from
+> the initial ram disk. To do that, IMA checks the signature/hash from the
+> security.ima xattr. Unfortunately, this use case cannot be implemented
+> currently, as the CPIO format does not support xattrs.
+>
+> This proposal consists in marshaling pathnames and xattrs in a file called
+> .xattr-list. They are unmarshaled by the CPIO parser after all files have
+> been extracted.
+>
+> The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that all
+> xattrs are stored in a single file and not per file (solves the file name
+> limitation issue, as it is not necessary to add a suffix to files
+> containing xattrs).
+>
+> The difference with another proposal
+> (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+> included in an image without changing the image format, as opposed to
+> defining a new one. As seen from the discussion, if a new format has to be
+> defined, it should fix the issues of the existing format, which requires
+> more time.
 
-I am currently looking at carrying over the ima log from the current
-kernel to the next kernel during soft reboot(kexec_file_load) for arm64
-and x86_64.
-During soft reboot(kexec_file_load) TPM boot PCR=E2=80=99s(PCRs 0 through 7=
-)
-are not reset or extended and thus the boot aggregate does not change,
-leaving the new kernel with a sense of secure boot.
-During kexec_file_load the kernel file signature is validated through PE
-file signature validation.
-The boot cmdline args will also be measured with
-=E2=80=9Ckexec cmdline buffer measure=E2=80=9D change which is in progress.
-https://lkml.org/lkml/2019/5/10/728
+I read some of those emails.  ISTM that adding TAR support should be
+seriously considered.  Sure, it's baroque, but it's very, very well
+supported, and it does exactly what we need.
 
-Looking at the powerpc implementation of kexec_file_load,  making
-change to the kimage_arch as below seems most reasonable.
-
-Struct kimage_arch {
-                =E2=80=A6
-                ima_log_buffer
-                ima_log_buffer_size
-};
-
-Add respective entries in dtb/fdt and read the same in the next kernel.
-No changes to the purgatory should be needed since no kernel segments
-are changed.
-
-Is anyone already looking at this?
-If not, I want to understand what=E2=80=99s the best approach for this is?
-
-Thanks,
-Prakhar Srivastava
+--Andy
