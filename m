@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A993C04AB4
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 May 2019 22:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C08FC04AB4
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 May 2019 22:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 427FE20881
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 May 2019 22:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBE6E216F4
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 May 2019 22:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbfENWIw (ORCPT
+        id S1726339AbfENWNq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 14 May 2019 18:08:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48042 "EHLO mx1.suse.de"
+        Tue, 14 May 2019 18:13:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48450 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726148AbfENWIw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 May 2019 18:08:52 -0400
+        id S1726314AbfENWNq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 14 May 2019 18:13:46 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 15882AC94;
-        Tue, 14 May 2019 22:08:51 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id A7110AFBD;
+        Tue, 14 May 2019 22:01:31 +0000 (UTC)
 From:   Petr Vorel <pvorel@suse.cz>
 To:     linux-integrity@vger.kernel.org
 Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>
 Subject: [PATCH] ima: fix wrong signed policy requirement when not appraising
-Date:   Wed, 15 May 2019 00:08:45 +0200
-Message-Id: <20190514220845.408-1-pvorel@suse.cz>
+Date:   Wed, 15 May 2019 00:01:25 +0200
+Message-Id: <20190514220125.31222-1-pvorel@suse.cz>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
