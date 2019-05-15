@@ -2,144 +2,84 @@ Return-Path: <SRS0=olBO=TP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DDAC04E53
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 11:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0998EC04E87
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 12:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E6320843
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 11:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE06A20657
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 12:08:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbfEOLTS (ORCPT
+        id S1727508AbfEOMI5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 May 2019 07:19:18 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32942 "EHLO huawei.com"
+        Wed, 15 May 2019 08:08:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50746 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730926AbfEOLTS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 May 2019 07:19:18 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 140A8AC54039E2847CA4;
-        Wed, 15 May 2019 12:19:16 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 15 May
- 2019 12:19:06 +0100
-Subject: Re: [PATCH v2 0/3] initramfs: add support for xattrs in the initial
- ram disk
-To:     Arvind Sankar <nivedita@alum.mit.edu>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-CC:     Rob Landley <rob@landley.net>, Andy Lutomirski <luto@kernel.org>,
-        "Arvind Sankar" <niveditas98@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Linux API" <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        <initramfs@vger.kernel.org>,
-        "Silviu Vlasceanu" <Silviu.Vlasceanu@huawei.com>
-References: <dca50ee1-62d8-2256-6fdb-9a786e6cea5a@landley.net>
- <20190512194322.GA71658@rani.riverdale.lan>
- <3fe0e74b-19ca-6081-3afe-e05921b1bfe6@huawei.com>
- <4f522e28-29c8-5930-5d90-e0086b503613@landley.net>
- <f7bc547c-61f4-1a17-735c-7e8df97d7965@huawei.com>
- <CALCETrV3b205L38xqPr6QqwGn6-vxQdPoJGUygJJpgM-JqqXfQ@mail.gmail.com>
- <1557861511.3378.19.camel@HansenPartnership.com>
- <4da3dbda-bb76-5d71-d5c5-c03d98350ab0@landley.net>
- <1557878052.2873.6.camel@HansenPartnership.com>
- <20190515005221.GB88615@rani.riverdale.lan>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <a138af12-d983-453e-f0b2-661a80b7e837@huawei.com>
-Date:   Wed, 15 May 2019 13:19:04 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1728896AbfEOMI4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 May 2019 08:08:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 60F9AABF4;
+        Wed, 15 May 2019 12:08:55 +0000 (UTC)
+Date:   Wed, 15 May 2019 14:08:53 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Ignaz Forster <iforster@suse.de>, Fabian Vogt <FVogt@suse.com>,
+        Marcus Meissner <meissner@suse.com>,
+        linux-integrity@vger.kernel.org, ltp@lists.linux.it
+Subject: Re: [PATCH v2 0/3] LTP reproducer on broken IMA on overlayfs
+Message-ID: <20190515120853.GA22992@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20190405165225.27216-1-pvorel@suse.cz>
+ <20190514121213.GA28655@dell5510>
+ <1557889279.4581.14.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190515005221.GB88615@rani.riverdale.lan>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1557889279.4581.14.camel@linux.ibm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 5/15/2019 2:52 AM, Arvind Sankar wrote:
-> On Tue, May 14, 2019 at 04:54:12PM -0700, James Bottomley wrote:
->> On Tue, 2019-05-14 at 18:39 -0500, Rob Landley wrote:
->>> On 5/14/19 2:18 PM, James Bottomley wrote:
->>>>> I think Rob is right here.  If /init was statically built into
->>>>> the kernel image, it has no more ability to compromise the kernel
->>>>> than anything else in the kernel.  What's the problem here?
->>>>
->>>> The specific problem is that unless you own the kernel signing key,
->>>> which is really untrue for most distribution consumers because the
->>>> distro owns the key, you cannot build the initrd statically into
->>>> the kernel.  You can take the distro signed kernel, link it with
->>>> the initrd then resign the combination with your key, provided you
->>>> insert your key into the MoK variables as a trusted secure boot
->>>> key, but the distros have been unhappy recommending this as
->>>> standard practice.
->>>>
->>>> If our model for security is going to be to link the kernel and the
->>>> initrd statically to give signature protection over the aggregate
->>>> then we need to figure out how to execute this via the distros.  If
->>>> we accept that the split model, where the distro owns and signs the
->>>> kernel but the machine owner builds and is responsible for the
->>>> initrd, then we need to explore split security models like this
->>>> proposal.
->>>
->>> You can have a built-in and an external initrd? The second extracts
->>> over the first? (I know because once upon a time conflicting files
->>> would append. It sounds like the desired behavior here is O_EXCL fail
->>> and move on.)
->>
->> Technically yes, because the first initrd could find the second by some
->> predefined means, extract it to a temporary directory and do a
->> pivot_root() and then the second would do some stuff, find the real
->> root and do a pivot_root() again.  However, while possible, wouldn't it
->> just add to the rendezvous complexity without adding any benefits? even
->> if the first initrd is built and signed by the distro and the second is
->> built by you, the first has to verify the second somehow.  I suppose
->> the second could be tar extracted, which would add xattrs, if that's
->> the goal?
->>
->> James
->>
-> You can specify multiple initrd's to the boot loader, and they get
-> loaded in sequence into memory and parsed by the kernel before /init is
-> launched. Currently I believe later ones will overwrite the earlier
-> ones, which is why we've been talking about adding an option to prevent
-> that. You don't have to mess with manually finding/parsing initramfs's
-> which wouldn't even be feasible since you may not have the drivers
-> loaded yet to access the device/filesystem on which they live.
-> 
-> Once that's done, the embedded /init is just going to do in userspace
-> wht the current patch does in the kernel. So all the files in the
-> external initramfs(es) would need to have IMA signatures via the special
-> xattr file.
+Hi Mimi,
 
-So, the scheme you are proposing is not equivalent: using the distro key
-to verify signatures, compared to adding a new user key to verify the
-initramfs he builds. Why would it be necessary for the user to share
-responsibility with the distro, if the only files he uses come from the
-distro?
+> The first two patches are fine.  From the test, I'm seeing the
+> following results:
+Thanks a lot for reviewing and testing.
 
+> evm_overlay 1 TINFO: overwrite file in overlay
+> tst_rod: Failed to open '(null)' for writing: Operation not permitted
+> evm_overlay 1 TFAIL: echo overlay > mntpoint/merged/foo1.txt failed unexpectedly
+I've fixed '(null)' [1], with that one applied it should be 'mntpoint/merged/foo1.txt'
+But what is strange to me is that it continues to execute second line. return 1 [2]
+should cause ROD() to quit with TBROK [3].
+Maybe that ROD in test1() should be replaced EXPECT_PASS.
 
-> Note that if you want the flexibility to be able to load one or both of
-> two external initramfs's, the current in-kernel proposal wouldn't be
-> enough -- the xattr specification would have to be more flexible (eg
-> reading .xattr-list* to allow each initramfs to specifiy its own
-> xattrs. This sort of enhancement would be much easier to handle with the
-> userspace variant.
+> evm_overlay 2 TINFO: append file in overlay: mntpoint/lower/foo2.txt
+> evm_overlay 2 TPASS: echo overlay >> mntpoint/merged/foo2.txt passed as expected
+> evm_overlay 3 TINFO: create a new file in overlay
+> evm_overlay 3 TPASS: echo overlay > mntpoint/merged/foo3.txt passed as expected
+> evm_overlay 4 TINFO: read all created files
+> evm_overlay 4 TFAIL: cat mntpoint/merged/foo1.txt > /dev/null 2> /dev/null failed unexpectedly
+> evm_overlay 4 TFAIL: cat mntpoint/merged/foo2.txt > /dev/null 2> /dev/null failed unexpectedly
+> evm_overlay 4 TFAIL: cat mntpoint/merged/foo3.txt > /dev/null 2> /dev/null failed unexpectedly
+> evm_overlay 5 TINFO: SELinux enabled in enforcing mode, this may affect test results
+> evm_overlay 5 TINFO: You can try to disable it with TST_DISABLE_SELINUX=1 (requires super/root)
+> evm_overlay 5 TINFO: loaded SELinux profiles: none
 
-Yes, the alternative solution is to parse .xattr-list at the time it is
-extracted. The .xattr-list of each initramfs will be processed. Also,
-the CPIO parser doesn't have to reopen the file after all other files
-have been extracted.
+> With "evm: instead of using the overlayfs i_ino, use the real i_ino"
+> patch, I'm only seeing the first failure.
 
-Roberto
+> Mimi
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Kind regards,
+Petr
+
+[1] https://github.com/linux-test-project/ltp/commit/8a35daf6bb175391fd43cd28d9ca2d0d5b06157c
+[2] https://github.com/linux-test-project/ltp/blob/master/testcases/lib/tst_rod.c#L117
+[3] https://github.com/linux-test-project/ltp/blob/master/testcases/lib/tst_test.sh#L150
