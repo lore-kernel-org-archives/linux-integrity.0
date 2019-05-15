@@ -2,119 +2,81 @@ Return-Path: <SRS0=olBO=TP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C8FC04E53
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 08:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D35EC04E53
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 11:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96ADB20862
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 08:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E73120843
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 May 2019 11:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbfEOIOv (ORCPT
+        id S1729904AbfEOLce (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 May 2019 04:14:51 -0400
-Received: from mga17.intel.com ([192.55.52.151]:42327 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725876AbfEOIOv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 May 2019 04:14:51 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 May 2019 01:14:50 -0700
-X-ExtLoop1: 1
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by orsmga002.jf.intel.com with ESMTP; 15 May 2019 01:14:46 -0700
-Date:   Wed, 15 May 2019 11:14:55 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, corbet@lwn.net,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
-        thiruan@microsoft.com, bryankel@microsoft.com
-Subject: Re: [PATCH v3 2/2] ftpm: add documentation for ftpm driver
-Message-ID: <20190515081455.GB7708@linux.intel.com>
-References: <20190415155636.32748-1-sashal@kernel.org>
- <20190415155636.32748-3-sashal@kernel.org>
+        Wed, 15 May 2019 07:32:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41618 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733024AbfEOLcc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 15 May 2019 07:32:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7F9FAAF68;
+        Wed, 15 May 2019 11:32:31 +0000 (UTC)
+Date:   Wed, 15 May 2019 13:32:29 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Ignaz Forster <iforster@suse.de>
+Cc:     ltp@lists.linux.it, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Fabian Vogt <FVogt@suse.com>,
+        Marcus Meissner <meissner@suse.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ima: Add overlay test
+Message-ID: <20190515113229.GA22920@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20190405165225.27216-1-pvorel@suse.cz>
+ <20190405165225.27216-4-pvorel@suse.cz>
+ <810d4df7-1e5e-dd24-8b87-e0fa3edbd25f@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190415155636.32748-3-sashal@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <810d4df7-1e5e-dd24-8b87-e0fa3edbd25f@suse.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Apr 15, 2019 at 11:56:36AM -0400, Sasha Levin wrote:
-> This patch adds basic documentation to describe the new fTPM driver.
-> 
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> Signed-off-by: Sasha Levin (Microsoft) <sashal@kernel.org>
-> ---
->  Documentation/security/tpm/index.rst        |  1 +
->  Documentation/security/tpm/tpm_ftpm_tee.rst | 31 +++++++++++++++++++++
->  2 files changed, 32 insertions(+)
->  create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
-> 
-> diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-> index af77a7bbb070..15783668644f 100644
-> --- a/Documentation/security/tpm/index.rst
-> +++ b/Documentation/security/tpm/index.rst
-> @@ -4,4 +4,5 @@ Trusted Platform Module documentation
->  
->  .. toctree::
->  
-> +   tpm_ftpm_tee
->     tpm_vtpm_proxy
-> diff --git a/Documentation/security/tpm/tpm_ftpm_tee.rst b/Documentation/security/tpm/tpm_ftpm_tee.rst
-> new file mode 100644
-> index 000000000000..29c2f8b5ed10
-> --- /dev/null
-> +++ b/Documentation/security/tpm/tpm_ftpm_tee.rst
-> @@ -0,0 +1,31 @@
-> +=============================================
-> +Firmware TPM Driver
-> +=============================================
-> +
-> +| Authors:
-> +| Thirupathaiah Annapureddy <thiruan@microsoft.com>
-> +| Sasha Levin <sashal@kernel.org>
-> +
-> +This document describes the firmware Trusted Platform Module (fTPM)
-> +device driver.
-> +
-> +Introduction
-> +============
-> +
-> +This driver is a shim for a firmware implemented in ARM's TrustZone
-> +environment. The driver allows programs to interact with the TPM in the same
-> +way the would interact with a hardware TPM.
-> +
-> +Design
-> +======
-> +
-> +The driver acts as a thin layer that passes commands to and from a TPM
-> +implemented in firmware. The driver itself doesn't contain much logic and is
-> +used more like a dumb pipe between firmware and kernel/userspace.
-> +
-> +The firmware itself is based on the following paper:
-> +https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/ftpm1.pdf
-> +
-> +When the driver is loaded it will expose ``/dev/tpmX`` character devices to
-> +userspace which will enable userspace to communicate with the firmware tpm
-> +through this device.
-> -- 
-> 2.19.1
-> 
+Hi Ignaz,
 
-Actually this would a better place at least with some words to describe
-what is TEE. I'm, for example, confused whether there is only single TEE
-in existence always used with TZ or is this some MS specific TEE.
+> thanks a lot for your continued work on the IMA / EVM tests and sorry for
+> missing feedback - the mail got lost in my stack of TODO items.
+Not a big deal and thanks a lot for a feedback and info.
 
-Otherwise, looks legit.
+> Am 05.04.19 um 18:52 Uhr schrieb Petr Vorel:
+> > Should I check EVM enabled?
 
-/Jarkko
+> As these tests require an appropriately prepared machine anyway: How about
+> printing a message whether only IMA or both IMA and EVM are enabled. These
+> tests make sense in both cases, so I wouldn't block them on either setup.
+
+> > /sys/kernel/security/evm should be 1?
+
+> Yes, that should be enough to detect whether EVM is enabled.
+
+> > +test1()
+> > +{
+> > +	local file="foo1.txt"
+> > +
+> > +	tst_res TINFO "overwrite file in overlay"
+> > +	ROD echo lower \> $lower/$file
+> > +	EXPECT_PASS echo overlay \> $merged/$file
+
+> It seems the redirection / escaping is wrong here: the string "overlay"
+> never ends up in the target file.
+I'm pretty sure that '>' should be escaped for both ROD and EXPECT_PASS.
+EXPECT_PASS should fail (something like "evm_overlay 1 TFAIL: echo overlay ...
+failed unexpectedly") if "overlay" string didn't get into $merged/$file file.
+Can you sent whole output?
+
+Kind regards,
+Petr
