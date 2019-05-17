@@ -2,77 +2,113 @@ Return-Path: <SRS0=XCI5=TR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8141C04AB4
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 11:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F383C04AB4
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 13:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B36632087B
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 11:28:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F5E320833
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 13:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558099353;
+	bh=9V4P/CjYVKh59IiUM4G5zfY9ceZXaeiacs7WeVytWlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gqMoNJgybIi9xHaD12IB4kXr4XVAfyWidd09k8naHozOttSFeI0uf1VFA+AT3ZpI7
+	 pRHufpndNsrJA87+r3wznHm6OoXZOxmP7SWudk4yCZWVVollqm7YQbBSto1jra+bdf
+	 a2BF1a+6XBJWzhOcPZAxE0CKvjEhypICAPclcVho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbfEQL2v (ORCPT
+        id S1728333AbfEQNW2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 17 May 2019 07:28:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50112 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728659AbfEQL2v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 May 2019 07:28:51 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2CC28AD5D;
-        Fri, 17 May 2019 11:28:50 +0000 (UTC)
-Date:   Fri, 17 May 2019 13:28:48 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        ltp@lists.linux.it, Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter =?iso-8859-2?Q?H=FCwe?= <PeterHuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH] ima: skip verifying TPM 2.0 PCR values
-Message-ID: <20190517112848.GA27606@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <1558041162.3971.2.camel@linux.ibm.com>
- <20190517065116.GA8170@dell5510>
- <1558091974.4507.60.camel@linux.ibm.com>
+        Fri, 17 May 2019 09:22:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728100AbfEQNW2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 May 2019 09:22:28 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A893D20833;
+        Fri, 17 May 2019 13:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558099348;
+        bh=9V4P/CjYVKh59IiUM4G5zfY9ceZXaeiacs7WeVytWlQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A5S+u9PGyBqLrb9GRUGk7Inekez2CVDrhAB4QI+jAeiuFtKt5njEWRkvy1jQSgyeH
+         cFAhtgP13dJlaMkXUmPdxFPHSg2aroqOtYXC03JnTBVID6LFH6CvQH4PhZisIcZWzo
+         c2NnDOqz7sV+zhZ2jRqvigDj4014nhU1Ud3bMgt4=
+Date:   Fri, 17 May 2019 09:22:26 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, corbet@lwn.net,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
+        thiruan@microsoft.com, bryankel@microsoft.com
+Subject: Re: [PATCH v3 1/2] ftpm: firmware TPM running in TEE
+Message-ID: <20190517132226.GB11972@sasha-vm>
+References: <20190415155636.32748-1-sashal@kernel.org>
+ <20190415155636.32748-2-sashal@kernel.org>
+ <20190515081250.GA7708@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1558091974.4507.60.camel@linux.ibm.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190515081250.GA7708@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mimi,
+On Wed, May 15, 2019 at 11:12:50AM +0300, Jarkko Sakkinen wrote:
+>On Mon, Apr 15, 2019 at 11:56:35AM -0400, Sasha Levin wrote:
+>> This patch adds support for a software-only implementation of a TPM
+>> running in TEE.
+>>
+>> There is extensive documentation of the design here:
+>> https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/ .
+>>
+>> As well as reference code for the firmware available here:
+>> https://github.com/Microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM
+>
+>The commit message should include at least a brief description what TEE
+>is.
 
-> On Fri, 2019-05-17 at 08:51 +0200, Petr Vorel wrote:
+The whole TEE subsystem is already well documented in our kernel tree
+(https://www.kernel.org/doc/Documentation/tee.txt) and beyond. I can add
+a reference to the doc here, but I'd rather not add a bunch of TEE
+related comments as you suggest later in your review.
 
-> > > diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-> > > index 0ffc3c02247d..ebe4b4c360e4 100755
-> > > --- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-> > > +++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-> > > @@ -88,6 +88,14 @@ test2()
-> > >  	tst_res TINFO "verify PCR values"
-> > >  	tst_check_cmds evmctl
+The same way a PCI device driver doesn't describe what PCI is in it's
+code, we shouldn't be doing the same for TEE here.
 
-> > > +	local tpm_description="/sys/class/tpm/tpm0/device/description"
-> > > +	if [ -f "$tpm_description" ]; then
-> > > +		if grep -q "^\TPM 2.0" $tpm_description; then
+>> +
+>> +#include <linux/of.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/acpi.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/tee_drv.h>
+>> +#include <linux/uuid.h>
+>> +#include <linux/tpm.h>
+>> +
+>> +#include "tpm.h"
+>> +#include "tpm_ftpm_tee.h"
+>> +
+>> +#define DRIVER_NAME "ftpm-tee"
+>> +
+>> +/* TA_FTPM_UUID: BC50D971-D4C9-42C4-82CB-343FB7F37896 */
+>> +static const uuid_t ftpm_ta_uuid =
+>> +	UUID_INIT(0xBC50D971, 0xD4C9, 0x42C4,
+>> +		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
+>
+>Just wondering why prefixes are here in different order in the comment
+>and code.
 
-> > I guess the backslash in "^\TPM 2.0" is a typo.
-> > If yes, no need to repost, I'll fix it when applying your patch.
-> > + I'd prefer join 2 ifs into single one, but that's just matter of preference,
-> > not important.
+No prefixes, this is a completely randomly generated UUID.
 
-> Thank you for fixing it.  I'd just like to hear from others first, if
-> this is correct way to differentiate between TPM 1.2 and TPM 2.0.
-Oh, yes, let's wait for a feedback.
+I'll address the rest of your comments in the next ver.
 
-> Mimi
-
-Kind regards,
-Petr
+--
+Thanks,
+Sasha
