@@ -2,75 +2,90 @@ Return-Path: <SRS0=XCI5=TR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B03C04AB4
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 21:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658BDC04AB4
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 21:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656F8206A3
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 21:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D772133D
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 May 2019 21:42:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lr1hshRL"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="ZeS6bMg0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfEQVjn (ORCPT
+        id S1728299AbfEQVmd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 17 May 2019 17:39:43 -0400
-Received: from mail-vk1-f201.google.com ([209.85.221.201]:43002 "EHLO
-        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728481AbfEQVjX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 May 2019 17:39:23 -0400
-Received: by mail-vk1-f201.google.com with SMTP id n198so3089089vke.9
-        for <linux-integrity@vger.kernel.org>; Fri, 17 May 2019 14:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=CxlinLSdgStAZj8ZYyY8C5jglK14sBrM48vYUM57nQk=;
-        b=Lr1hshRLI8bkkP5XQ+UnqbvtSIn4+GxIHNrUKo5knOvGtLVWvllhbmL/P7SFVq0q3G
-         oySlkP3VC/FArrDJIA9lERGu11efUk2HE1iv+rtqxt5h25S7olLYbSifqxp2Pm5Sa14n
-         eJG55mOsEM7FGWG36vVTPIvS49vJRvB2AnCjRfPc+2yd0Vqq9usi7KTHCKhCd0IyT4PR
-         qBfAxm/5OnPt9nlgrr+zu3mJDsmaWzAe27XN5d6ZwKQ4qa8VeYXAmd15kiS/0jyawOr0
-         9nYCnuQt/oEVdCzXELQw2AWQANdTpFx0IkvBjyPIam8tKwuieV42gWQlnehz57Ep/F18
-         7Wag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=CxlinLSdgStAZj8ZYyY8C5jglK14sBrM48vYUM57nQk=;
-        b=C1o8Cu+kdJfIQjJahtUv2VkYPVpDI2mvZMdBZ4lHwWw9MzlHIZUkvrCj57tZSLmBm1
-         57Db6TcMyK4PwsVxMYfxZuz2F8rx9bf3a8umIjGZAd7ncBHWAz6CcqiRYNNyP3R72gt2
-         4U2sxS/bKAJZTmO9PRz0dFk60p7oKMXYZ+wOy8fKBVygaK/xntZnwMdwnq23X/CigaZZ
-         P+SPK5T6hOCpjzU1QIbrBBl2hLHIUt4zuWuwGqzMcDm8IkYRPch8bbq0PTq4f5gCHfHW
-         QTYOhAkvqsREFqnHps4TgquXQcnbfMQ7nJiPB7SWH31aPXAfHswDtQWHQZ/9EPxsyYeJ
-         Ujvw==
-X-Gm-Message-State: APjAAAUSNi26avX5DlZn7VgXK0YJVkPWJB+zkM+eiZ/9a+cPGl0nftV2
-        Xcc3fKIJcH1HS9y4A1qW4KKaLul0VAZ5utmS4/BCo58iWgcuZ+PQ70g2CEmGMslu90YG7a2qTVg
-        Fe4c1idIcYy30GlpnSSlIqbR0dVwzyffbOwIA9d6hToAq0vqIzQBA6gzcUvtOdhgppGybhPBEz3
-        dP5A9EdDdcisKDf38H8DE=
-X-Google-Smtp-Source: APXvYqwIDbPWP1gGpGqX0HDPWX3Ohrqk6UfCTZUEHeW8kUGSBX2WSMELoI3iXY6X+cwOujb0YKqTVixq1iTSqpDOz3RSCw==
-X-Received: by 2002:ab0:5a07:: with SMTP id l7mr22035272uad.78.1558129161944;
- Fri, 17 May 2019 14:39:21 -0700 (PDT)
-Date:   Fri, 17 May 2019 14:39:14 -0700
-Message-Id: <20190517213918.26045-1-matthewgarrett@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH V6 0/4] Add support for crypto agile TPM event logs
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com, bsz@semihalf.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 May 2019 17:42:33 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41435 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727215AbfEQVmc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 May 2019 17:42:32 -0400
+Received: from tazenda.hos.anvin.org ([IPv6:2601:646:8600:3280:e269:95ff:fe35:9f3c])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x4HLg1621520285
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Fri, 17 May 2019 14:42:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x4HLg1621520285
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019041745; t=1558129337;
+        bh=bxXMxaG3yomMejfA38U/OeM6jHqv8J+5dyCwLKAF2FU=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=ZeS6bMg0hxchVF1tgoFn6yE8wCqmZlRyMrHmk8o/e+pq/KQ5I/B28qqNjzVsoOD7U
+         DQYWEaBiOgbf+0gG9ks4a8NmplJ4/LiSNS7RtU0cPhv+tMObN4J8JC9is2q+fjK3JI
+         2H5MtDUR3Ifj9jfSwsi87PCafjbWKoB7LTqU4iASOGQNlc8DQgB3Z41Vt+fZ7CKdi4
+         MCkfffGFcvnRHug/Wn4KidawPjicjifNXBnVAZsajxOzIS5KsOQwX7fvchRAxbNb1a
+         UrSu0by2ylgKXiycuvnT/BS0HdTsmsVvePniRdbIAyXbBVomg6bAOlAEpEjRZBN8k0
+         fKHAeL6TgBvcg==
+Subject: Re: [PATCH v3 2/2] initramfs: introduce do_readxattrs()
+From:   "H. Peter Anvin" <hpa@zytor.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, initramfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.vnet.ibm.com,
+        silviu.vlasceanu@huawei.com, dmitry.kasatkin@huawei.com,
+        takondra@cisco.com, kamensky@cisco.com, arnd@arndb.de,
+        rob@landley.net, james.w.mcmechan@gmail.com, niveditas98@gmail.com
+References: <20190517165519.11507-1-roberto.sassu@huawei.com>
+ <20190517165519.11507-3-roberto.sassu@huawei.com>
+ <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
+Message-ID: <69ef1f55-9fc1-7ee0-371f-3dbc77551dc0@zytor.com>
+Date:   Fri, 17 May 2019 14:41:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <CD9A4F89-7CA5-4329-A06A-F8DEB87905A5@zytor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Updated with the fixes from Bartosz and the header fixes folded in.
-Bartosz, my machine still doesn't generate any final event log entries -
-are you able to give this a test and make sure it's good?
+On 5/17/19 1:18 PM, hpa@zytor.com wrote:
+> 
+> Ok... I just realized this does not work for a modular initramfs, composed at load time from multiple files, which is a very real problem. Should be easy enough to deal with: instead of one large file, use one companion file per source file, perhaps something like filename..xattrs (suggesting double dots to make it less likely to conflict with a "real" file.) No leading dot, as it makes it more likely that archivers will sort them before the file proper.
+> 
+> A side benefit is that the format can be simpler as there is no need to encode the filename.
+> 
+> A technically cleaner solution still, but which would need archiver modifications, would be to encode the xattrs as an optionally nameless file (just an empty string) with a new file mode value, immediately following the original file. The advantage there is that the archiver itself could support xattrs and other extended metadata (which has been requested elsewhere); the disadvantage obviously is that that it requires new support in the archiver. However, at least it ought to be simpler since it is still a higher protocol level than the cpio archive itself.
+> 
+> There's already one special case in cpio, which is the "!!!TRAILER!!!" filename; although I don't think it is part of the formal spec, to the extent there is one, I would expect that in practice it is always encoded with a mode of 0, which incidentally could be used to unbreak the case where such a filename actually exists. So one way to support such extended metadata would be to set mode to 0 and use the filename to encode the type of metadata. I wonder how existing GNU or BSD cpio (the BSD one is better maintained these days) would deal with reading such a file; it would at least not be a regression if it just read it still, possibly with warnings. It could also be possible to use bits 17:16 in the mode, which are traditionally always zero (mode_t being 16 bits), but I believe are present in most or all of the cpio formats for historical reasons. It might be accepted better by existing implementations to use one of these high bits combined with S_IFREG, I dont know.
+> 
 
+Correction: it's just !!!TRAILER!!!.
 
+I tested with GNU cpio, BSD cpio, scpio and pax.
+
+With a mode of 0:
+
+	- GNU cpio errors, but extracts all the other files.
+	- BSD cpio extracts them as regular files.
+	- scpio and pax abort.
+
+With a mode of 0x18000 (bit 16 + S_IFREG), all of them happily extracted
+the data as regular files.
+
+	-hpa
