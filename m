@@ -2,74 +2,85 @@ Return-Path: <SRS0=g5fc=TU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE05C04E87
-	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 20:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0BBC04AAC
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 20:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B68EE2173B
-	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 20:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345A82171F
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 20:59:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KwKcFS84"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="URsGLiTS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfETUzH (ORCPT
+        id S1725989AbfETU7l (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 20 May 2019 16:55:07 -0400
-Received: from mail-qt1-f202.google.com ([209.85.160.202]:46761 "EHLO
-        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726814AbfETUzH (ORCPT
+        Mon, 20 May 2019 16:59:41 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39881 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfETU7l (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 20 May 2019 16:55:07 -0400
-Received: by mail-qt1-f202.google.com with SMTP id z7so15363264qtq.13
-        for <linux-integrity@vger.kernel.org>; Mon, 20 May 2019 13:55:06 -0700 (PDT)
+        Mon, 20 May 2019 16:59:41 -0400
+Received: by mail-it1-f193.google.com with SMTP id 9so1274343itf.4
+        for <linux-integrity@vger.kernel.org>; Mon, 20 May 2019 13:59:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=CEe51n1cJjGjM3r3jhy0lvCRaDr0xuP675ZqA1iPYL4=;
-        b=KwKcFS84Od+0uDcbkZwTpIrT43f2kU8zmORrILLiHk2F8YkNKiv1DApHnhAMtYlYNA
-         TTKtXmA8TJ8/ipv7ecH3TyAPVRf9bZ8GXZEFmFgwDXPD4Hjtc9OoZlG6aBmwZtYTn8Oc
-         Nvt9VJVKM4ko0egxxq7cUr2yFh5bt2A6FPsfeESlkTgj+tTo5HipWQkdt0PV7yGNpC2p
-         qwWO/zif0wXn7M/9LQBi1kh21TF0FRSHZu9qfX+5MMJsj7woSz3xBh9gb5WkU4/0KX4c
-         dnI+ZE7GgTCEi7VKzXkA1bmYAkK0Nv9eJ0xJyAJqd/DQAikMJoy/AIkKcuCOHk84b2v+
-         el5A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oDbtrkAn+1X/+6QAPGA7azScNJ8+AfBKHdkpeyBfaAs=;
+        b=URsGLiTS87uMxjVortgbvlWNpWU1BKAlnTtN6iqJokKOYobND8XdHNJd37JypSqXx8
+         6kVbW6mvNu63+SGe4gcIMu0d85gebGUfzQNr8T0Ttry1EbjqpIFlCumGBD5BP0vxUFCY
+         5AS5yL477wJgd0A2pVp6NZI3xtkwmD4ETIj2baBBiN+qUbj+RUuPSgWFdWgkClsfTe6N
+         zDGLP46vd+hZrcO/y+C1M+sUsLvM11nRg3ZRQaYN3umZjt+qoPXElhSITYSMjL6UcQUm
+         fzh+aZ07YmHQQ+n4VDoMAWyc5OK+sUxYy5tXWLRsR9ABYEKI51/HWcsN+xi6tZNFKMbo
+         0tWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=CEe51n1cJjGjM3r3jhy0lvCRaDr0xuP675ZqA1iPYL4=;
-        b=obFYqcAjrXUJWZW8R4uvgwsDgDZdjU3+BugkstnzjoXifR4HZCmeX8PV4EOzZr2Ndt
-         in4VC9V7yGaPzxbTOm9qWjF3zxpRpJ1eMer3ZruY9nlxiXuS24Ny697E5qVnvMUnBTuH
-         4FsdAp4JuaWW96lWGwKlWRq9nkM5kkRlc0CZq78NDgt4uRnJ93VBoFRfgIhUe33mm6In
-         tWiczAvgQndTxhQJaEJPvGF9MEDIWR6LCDoQcrOWxUXJPnd9RyprUxMwgG/UHD2FeAqg
-         GeXKz4Apd3bmXQ1JnyT7Qr8rUGCZmHh8/fOlw7oIda6R7WeyXm+ksLGSQHrwyJUHc+Oe
-         Cs0g==
-X-Gm-Message-State: APjAAAUBJAcW2sQngZb4QFZomC9XxW7YPyWVtyfu6B1cUYCWcsfxuEXJ
-        56TsdErGTQ/HNqfPGBCf2Arr2X1JVL/N4qTsP18fzmHRc5m599Cy2G246lFzG4Z2OIa4brTuRi8
-        ANOsCe6t7NxcJRpKJ9W8elyV3e9YM3Ud1bZX8WOSOY+5KyufcYuybP4KH/Yli8Ymh8eV3z42avM
-        XASV5KsUKhFjl8LKqnYNs=
-X-Google-Smtp-Source: APXvYqxcgPZwWQB2M99XR5b353YmJ/Ei17uYUIv35ZBhj13nsYbaZL7VC+EcLkbxPlvT59VqEEmZiqG52LG+K02tnRds4g==
-X-Received: by 2002:a05:620a:144c:: with SMTP id i12mr32298826qkl.243.1558385706056;
- Mon, 20 May 2019 13:55:06 -0700 (PDT)
-Date:   Mon, 20 May 2019 13:54:57 -0700
-Message-Id: <20190520205501.177637-1-matthewgarrett@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.21.0.1020.gf2820cf01a-goog
-Subject: [PATCH V7 0/4] Add support for crypto agile logs
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        roberto.sassu@huawei.com, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tweek@google.com, bsz@semihalf.com
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oDbtrkAn+1X/+6QAPGA7azScNJ8+AfBKHdkpeyBfaAs=;
+        b=gT/8SqAtWfKXzM/mGg8bk1cTHOrTuY0qqCIhZ1hDjzOkNykCLfVj1KbkVYVFYmBh3P
+         f3YudWNbyN+7z5N6uzFejPWEO88ziPji7KljzgaCBpITrqkRMvIucbyyGvpvhdVN2wq+
+         a0crfG3TXN2gYCWudRWDohXcfzbkpSplGoSjDGkBZbGCm192/yvfiOZoxvyghnsjkrLD
+         TcFNo614Lg9/CkoetF8ourNVPVueEQcN4V8NuHWhJNID2EqwP//VUhBxB8Tz28w7+MBU
+         llBA0wrisjX58l4gj9rLImdrPn1IVsVwUd4jbKxBd/NSWxtTeB4RaHS7yA2CaOks28Fs
+         3wJw==
+X-Gm-Message-State: APjAAAXzzKyfl3KPb5+uTYCTrdjcffDZgTSNwVXK4jcheckyuZeUfZ7h
+        L5JRSkPj8bookYg9Cp0+EgIKEb3b0l9RAK7wX3b1Rg==
+X-Google-Smtp-Source: APXvYqxkjSIeuumxaK1MzS8+Ijo/uhqZYvCMemsPoCqGyeDTpvZS5/GJDjvBPamdgpAcQa8DeEz68v5Zhqb8LElLYr4=
+X-Received: by 2002:a24:a943:: with SMTP id x3mr953454iti.64.1558385980416;
+ Mon, 20 May 2019 13:59:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190517212448.14256-1-matthewgarrett@google.com>
+ <20190517212448.14256-7-matthewgarrett@google.com> <1558136840.4507.91.camel@linux.ibm.com>
+In-Reply-To: <1558136840.4507.91.camel@linux.ibm.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 20 May 2019 13:59:28 -0700
+Message-ID: <CACdnJutPywtoyjykDnfX_gazfo_iQ9TCFPYgK60PcOFFFy39YQ@mail.gmail.com>
+Subject: Re: [PATCH V3 6/6] IMA: Allow profiles to define the desired IMA template
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        prakhar srivastava <prsriva02@gmail.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Identical to previous version except without the KSAN workaround - Ard
-has a better solution for that.
+On Fri, May 17, 2019 at 4:47 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> Matthew, I'm going to ask you to separate out this patch from this
+> patch set.  Roberto, Thiago, Prakhar, I'm going to ask you to review
+> Matthew's patch.  I'm expecting all of the patchsets will be re-posted
+> based on it.
 
-
+Would you like something along these lines merged before reviewing the
+rest of them, or is adding the ima-vfs-ng template and allowing admins
+to configure it as default sufficient?
