@@ -6,75 +6,73 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FC9C04AAC
-	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 12:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAC0C04AAC
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 12:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114DD20645
-	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 12:54:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6F6D20645
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 May 2019 12:54:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732115AbfETMyD (ORCPT
+        id S1732812AbfETMQO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 20 May 2019 08:54:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41392 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731662AbfETMyC (ORCPT
+        Mon, 20 May 2019 08:16:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731553AbfETMQN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 20 May 2019 08:54:02 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KChnS3035360
-        for <linux-integrity@vger.kernel.org>; Mon, 20 May 2019 08:54:01 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2skvebrfcv-1
+        Mon, 20 May 2019 08:16:13 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x4KCCPbM081748
+        for <linux-integrity@vger.kernel.org>; Mon, 20 May 2019 08:16:12 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sks8nqp91-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 20 May 2019 08:54:01 -0400
+        for <linux-integrity@vger.kernel.org>; Mon, 20 May 2019 08:16:12 -0400
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 20 May 2019 13:53:59 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 20 May 2019 13:16:10 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 20 May 2019 13:53:57 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4KCruKx25428168
+        Mon, 20 May 2019 13:16:07 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x4KCG7OO43974680
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 20 May 2019 12:53:56 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76A444C04E;
-        Mon, 20 May 2019 12:53:56 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5EA34C046;
-        Mon, 20 May 2019 12:53:55 +0000 (GMT)
+        Mon, 20 May 2019 12:16:07 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E6D9FA4054;
+        Mon, 20 May 2019 12:16:06 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 71463A4062;
+        Mon, 20 May 2019 12:16:06 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.80.80.87])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 20 May 2019 12:53:55 +0000 (GMT)
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 20 May 2019 12:16:06 +0000 (GMT)
 Subject: [PATCH] x86/ima: check EFI SetupMode too
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     Matthew Garrett <mjg59@google.com>
-Date:   Mon, 20 May 2019 08:53:45 -0400
+Cc:     Matthew Garrett <matthewgarrett@google.com>
+Date:   Mon, 20 May 2019 08:15:55 -0400
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-x-cbid: 19052012-0008-0000-0000-000002E8925B
+x-cbid: 19052012-0012-0000-0000-0000031D9157
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19052012-0009-0000-0000-00002255443F
-Message-Id: <1558356825.4507.103.camel@linux.ibm.com>
+x-cbparentid: 19052012-0013-0000-0000-000021563DB3
+Message-Id: <1558354555.4507.98.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-05-20_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=937 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1905200087
+ mlxlogscore=853 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1905200085
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
-
-[Resending because it didn't make it to the list.] 
 
 Checking "SecureBoot" mode is not sufficient, also check "SetupMode".
 
