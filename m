@@ -2,85 +2,96 @@ Return-Path: <SRS0=6d/K=TX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3226C46460
-	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E921EC282E5
+	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8914F217F9
-	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:16:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="RBmoo21s"
+	by mail.kernel.org (Postfix) with ESMTP id BD7DB21850
+	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1558628437;
+	bh=hzIYKypcpbtVxPutBENdTXvGlYraOt4l/gwPa4stsDw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jAcD01Bs25XCX3FBIR52U1KNmSo77SUXRaN7k/CTV4KzoaLAWIPYMNd4gPivdA6ZU
+	 nuxFTcnzxPDbWpKRv4JSRqzRvV9kiJGXx3hDOgNLuNQNQg+PjSJZt8SBIU3oHGpd2J
+	 ofuDQ3F6aDhr2nleTPWH24d1WgF0dK39aarRWOhM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731241AbfEWQQB (ORCPT
+        id S1731237AbfEWQUg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 23 May 2019 12:16:01 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:41547 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731141AbfEWQQA (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 23 May 2019 12:16:00 -0400
-Received: by mail-ua1-f68.google.com with SMTP id l14so2386852uah.8
-        for <linux-integrity@vger.kernel.org>; Thu, 23 May 2019 09:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nXMl9P+TGNueE5euLoOAhBRVyH0nXGkNGXAvhSh7+OU=;
-        b=RBmoo21sPuzUV/EQovrxfLit8XjveVUpH/oRQNXVl7Q6wTjT2WhMeju7re3mqz8IBN
-         fGdQdayykoLjbugpvir9+tXe/l0zWxJ6gCEaAte21ryH3NxdCpos865hXneKhcdNkwow
-         I29SNtgGZwYGEa/J5emaZ+P8ZhtfSl4GL1UyTdj80GPWBCJWSenaQj7B4XRJ09R2a+fh
-         +C9erGAG6rC9BLBZiGL+ifwexjPk5kRHwJE2C6SvKk2xFEY/klwYPfG+k1WD1LJ+XPWX
-         Cv+wD6cHdbdKCDVNXBvakwQoxcPGeb0X7qvoKYFFJGNz7P6CWVRZGU47e9KNUyuqFZOj
-         FT0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nXMl9P+TGNueE5euLoOAhBRVyH0nXGkNGXAvhSh7+OU=;
-        b=BLqAXbjPHJm+VmuWOSGdK2QhaacOlOoSq/tnxOTRUwh8HV+nHBnI1w3lVGXrr6EO/g
-         atAdq/bSppv/LSS3BMqDFUNQZiURMFOukF5F8nJxZ6LUX9k0wdHTmJv5Ql90KO5oUzyZ
-         jCqIOYKxrG6Std8/gzwHhnWdVtiYmWwn8X2anfaCbtKSrSgiOW0JMI+gpOv+BlFgoZjf
-         ulhSgu7W8ioACNkCVJAHEwx6gXn2tPGRWWtooi0qpDEIk/0/8LusSNQD4kpimEdceufP
-         +8vBCs3BFjma+NzxVRrtLKU7N8YBs8gjw+b4A1fY/Nk8Ge/ALdcjndw9g/60A0wy8VSX
-         Ad2g==
-X-Gm-Message-State: APjAAAXMvE0nJYMuNrVq++ubfzMXI8RuKo+BjYl81ntqEyupFavsk5qP
-        7JFc8LzZUesEQaCBLYWcnA/jnAjGW+69a0VeWcDXjQ==
-X-Google-Smtp-Source: APXvYqyKyrA3Zqk0VgrKQ9df6i2EvyciTk799ILFHCqR2AZ71fV4FIj6HG11qTQ2eMLBgGuo+Uu4fS1QUy9VmXaig2s=
-X-Received: by 2002:ab0:670c:: with SMTP id q12mr24858805uam.106.1558628159122;
- Thu, 23 May 2019 09:15:59 -0700 (PDT)
+        Thu, 23 May 2019 12:20:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730893AbfEWQUg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 23 May 2019 12:20:36 -0400
+Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CE2B217D9;
+        Thu, 23 May 2019 16:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1558628435;
+        bh=hzIYKypcpbtVxPutBENdTXvGlYraOt4l/gwPa4stsDw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ROmtIeDzJQ31Y+xvbqtasyM2iRxub1jmJIR7STxbH3poPEMwrkGMIKN+/fCzeL268
+         A+KLdZJI/nOG+VfLOW7LERfUhTpoP/MSjMjzvObGTjxHoWZTlYIJZqqUz1HP9BNMTg
+         yNdBQNQ72gSBc2v7I+PCo2eEPRe9zgCkllGQWZCU=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-api@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>
+Subject: [PATCH v3 02/15] fs-verity: add MAINTAINERS file entry
+Date:   Thu, 23 May 2019 09:17:58 -0700
+Message-Id: <20190523161811.6259-3-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190523161811.6259-1-ebiggers@kernel.org>
+References: <20190523161811.6259-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20190520205501.177637-1-matthewgarrett@google.com>
-In-Reply-To: <20190520205501.177637-1-matthewgarrett@google.com>
-From:   Bartosz Szczepanek <bsz@semihalf.com>
-Date:   Thu, 23 May 2019 18:15:48 +0200
-Message-ID: <CABLO=+=5D2v2TQ6HWSByJjnb4pzXZxXAs1jJgcFtVNYk5PYrjw@mail.gmail.com>
-Subject: Re: [PATCH V7 0/4] Add support for crypto agile logs
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, May 20, 2019 at 10:55 PM Matthew Garrett
-<matthewgarrett@google.com> wrote:
->
-> Identical to previous version except without the KSAN workaround - Ard
-> has a better solution for that.
+From: Eric Biggers <ebiggers@google.com>
 
-Just tested the patchset on aarch64, all works fine.
+fs-verity will be jointly maintained by Eric Biggers and Theodore Ts'o.
 
-Reviewed-by: Bartosz Szczepanek <bsz@semihalf.com>
-Tested-by: Bartosz Szczepanek <bsz@semihalf.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ MAINTAINERS | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5cfbea4ce5750..869c836e9039f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6493,6 +6493,18 @@ S:	Maintained
+ F:	fs/notify/
+ F:	include/linux/fsnotify*.h
+ 
++FSVERITY: READ-ONLY FILE-BASED AUTHENTICITY PROTECTION
++M:	Eric Biggers <ebiggers@kernel.org>
++M:	Theodore Y. Ts'o <tytso@mit.edu>
++L:	linux-fscrypt@vger.kernel.org
++Q:	https://patchwork.kernel.org/project/linux-fscrypt/list/
++T:	git git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git fsverity
++S:	Supported
++F:	fs/verity/
++F:	include/linux/fsverity.h
++F:	include/uapi/linux/fsverity.h
++F:	Documentation/filesystems/fsverity.rst
++
+ FUJITSU LAPTOP EXTRAS
+ M:	Jonathan Woithe <jwoithe@just42.net>
+ L:	platform-driver-x86@vger.kernel.org
+-- 
+2.21.0
+
