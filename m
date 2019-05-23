@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0010C282DE
-	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D9AC282E3
+	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5BE921880
-	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93FDD21883
+	for <linux-integrity@archiver.kernel.org>; Thu, 23 May 2019 16:20:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1558628440;
-	bh=B3iL2MevvjloSFBuvJsfwES0AAP7Grp3rVRM5r6SXjQ=;
+	s=default; t=1558628441;
+	bh=C17dyOau37zrZLZTeV3mA3ct+U5o1QsEkKdRsXekeqk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0WY96iTwiOomOxDzt0xWxeOBdzvEhEHT9zoVHPxAHEYhwuVOtZazoj90mEJ7HCdz9
-	 hzE4Hx3rVy6N+JIr7Je647QpoFle2uzqFag4CZ1MpefW+UPpEKJ1fBaSXG9rfE+/Yn
-	 InvP1OqlRUVE+Y8gSLTnjAmbCorUY0XK2wpL8eYo=
+	b=dlPw41i3LpYtOwxhjEOry5mvQapsv8jywqjFBcdTQWBJ2CMy2SAW9R0VqjltlR97e
+	 MFXbyAg6SXy1umd6OGBckajalFKMfM2vjjze0yexKPAkAS5uIPpbdiRiEL5IrrC29E
+	 doqASuoTle9Qxp35iONZHHdQq04WpnGGmtcCVVCc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731422AbfEWQUk (ORCPT
+        id S1731457AbfEWQUk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Thu, 23 May 2019 12:20:40 -0400
 Received: from mail.kernel.org ([198.145.29.99]:56244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731064AbfEWQUg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 23 May 2019 12:20:36 -0400
+        id S1731256AbfEWQUh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 23 May 2019 12:20:37 -0400
 Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1CD6217F9;
-        Thu, 23 May 2019 16:20:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8706621851;
+        Thu, 23 May 2019 16:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1558628436;
-        bh=B3iL2MevvjloSFBuvJsfwES0AAP7Grp3rVRM5r6SXjQ=;
+        bh=C17dyOau37zrZLZTeV3mA3ct+U5o1QsEkKdRsXekeqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P+27ZJA4lAe2s9cHIkr9IWkfKIqdqkWlDUXzPKNEtRP8ZXAilze52ADm20A08WW3+
-         jGkVx78JLZNGVozWPylSZzMY7Lf/oEieSQmMFupU3dV4OFtIwVcKGzG0ijb9BjXxS6
-         9dyhn+49Arhg6gl8KwyUSX8cpGODU1DGB08nWrv4=
+        b=d8gQnln0Ww3DisvqyUmO8TXiRMHm4aiiJrKujXjGZ33sNlEFZ+eujPYcLEUE0igO/
+         S2e9w9lJBlMpDCXWCKoNMsv/9TIHnd5Nn2jf9QsOt/lI9Qk6F1JzUtpBdw1o9AmaVU
+         FY/E3pcsKrcVqgnZ4Q/CI+rExvgeIPLjruYs5N0w=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         "Theodore Y . Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Victor Hsieh <victorhsieh@google.com>
-Subject: [PATCH v3 03/15] fs-verity: add UAPI header
-Date:   Thu, 23 May 2019 09:17:59 -0700
-Message-Id: <20190523161811.6259-4-ebiggers@kernel.org>
+Subject: [PATCH v3 05/15] fs-verity: add inode and superblock fields
+Date:   Thu, 23 May 2019 09:18:01 -0700
+Message-Id: <20190523161811.6259-6-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190523161811.6259-1-ebiggers@kernel.org>
 References: <20190523161811.6259-1-ebiggers@kernel.org>
@@ -62,78 +62,73 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add the UAPI header for fs-verity, including two ioctls:
+Analogous to fs/crypto/, add fields to the VFS inode and superblock for
+use by the fs/verity/ support layer:
 
-- FS_IOC_ENABLE_VERITY
-- FS_IOC_MEASURE_VERITY
+- ->s_vop: points to the fsverity_operations if the filesystem supports
+  fs-verity, otherwise is NULL.
 
-These ioctls are documented in the "User API" section of
-Documentation/filesystems/fsverity.rst.
+- ->i_verity_info: points to cached fs-verity information for the inode
+  after someone opens it, otherwise is NULL.
+
+- S_VERITY: bit in ->i_flags that identifies verity inodes, even when
+  they haven't been opened yet and thus still have NULL ->i_verity_info.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- Documentation/ioctl/ioctl-number.txt |  1 +
- include/uapi/linux/fsverity.h        | 39 ++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
- create mode 100644 include/uapi/linux/fsverity.h
+ include/linux/fs.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index c9558146ac589..21767c81e86d5 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -225,6 +225,7 @@ Code  Seq#(hex)	Include File		Comments
- 'f'	00-0F	fs/ext4/ext4.h		conflict!
- 'f'	00-0F	linux/fs.h		conflict!
- 'f'	00-0F	fs/ocfs2/ocfs2_fs.h	conflict!
-+'f'	81-8F	linux/fsverity.h
- 'g'	00-0F	linux/usb/gadgetfs.h
- 'g'	20-2F	linux/usb/g_printer.h
- 'h'	00-7F				conflict! Charon filesystem
-diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
-new file mode 100644
-index 0000000000000..57d1d7fc0c345
---- /dev/null
-+++ b/include/uapi/linux/fsverity.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * fs-verity user API
-+ *
-+ * These ioctls can be used on filesystems that support fs-verity.  See the
-+ * "User API" section of Documentation/filesystems/fsverity.rst.
-+ *
-+ * Copyright 2019 Google LLC
-+ */
-+#ifndef _UAPI_LINUX_FSVERITY_H
-+#define _UAPI_LINUX_FSVERITY_H
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f7fdfe93e25d3..a80a192cdcf28 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -64,6 +64,8 @@ struct workqueue_struct;
+ struct iov_iter;
+ struct fscrypt_info;
+ struct fscrypt_operations;
++struct fsverity_info;
++struct fsverity_operations;
+ struct fs_context;
+ struct fs_parameter_description;
+ 
+@@ -723,6 +725,10 @@ struct inode {
+ 	struct fscrypt_info	*i_crypt_info;
+ #endif
+ 
++#ifdef CONFIG_FS_VERITY
++	struct fsverity_info	*i_verity_info;
++#endif
 +
-+#include <linux/ioctl.h>
-+#include <linux/types.h>
-+
-+#define FS_VERITY_HASH_ALG_SHA256	1
-+
-+struct fsverity_enable_arg {
-+	__u32 version;
-+	__u32 hash_algorithm;
-+	__u32 block_size;
-+	__u32 salt_size;
-+	__u64 salt_ptr;
-+	__u32 sig_size;
-+	__u32 __reserved1;
-+	__u64 sig_ptr;
-+	__u64 __reserved2[11];
-+};
-+
-+struct fsverity_digest {
-+	__u16 digest_algorithm;
-+	__u16 digest_size; /* input/output */
-+	__u8 digest[];
-+};
-+
-+#define FS_IOC_ENABLE_VERITY	_IOW('f', 133, struct fsverity_enable_arg)
-+#define FS_IOC_MEASURE_VERITY	_IOWR('f', 134, struct fsverity_digest)
-+
-+#endif /* _UAPI_LINUX_FSVERITY_H */
+ 	void			*i_private; /* fs or device private pointer */
+ } __randomize_layout;
+ 
+@@ -1429,6 +1435,9 @@ struct super_block {
+ 	const struct xattr_handler **s_xattr;
+ #ifdef CONFIG_FS_ENCRYPTION
+ 	const struct fscrypt_operations	*s_cop;
++#endif
++#ifdef CONFIG_FS_VERITY
++	const struct fsverity_operations *s_vop;
+ #endif
+ 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
+ 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
+@@ -1964,6 +1973,7 @@ struct super_operations {
+ #endif
+ #define S_ENCRYPTED	16384	/* Encrypted file (using fs/crypto/) */
+ #define S_CASEFOLD	32768	/* Casefolded file */
++#define S_VERITY	65536	/* Verity file (using fs/verity/) */
+ 
+ /*
+  * Note that nosuid etc flags are inode-specific: setting some file-system
+@@ -2005,6 +2015,7 @@ static inline bool sb_rdonly(const struct super_block *sb) { return sb->s_flags
+ #define IS_DAX(inode)		((inode)->i_flags & S_DAX)
+ #define IS_ENCRYPTED(inode)	((inode)->i_flags & S_ENCRYPTED)
+ #define IS_CASEFOLDED(inode)	((inode)->i_flags & S_CASEFOLD)
++#define IS_VERITY(inode)	((inode)->i_flags & S_VERITY)
+ 
+ #define IS_WHITEOUT(inode)	(S_ISCHR(inode->i_mode) && \
+ 				 (inode)->i_rdev == WHITEOUT_DEV)
 -- 
 2.21.0
 
