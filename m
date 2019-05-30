@@ -2,540 +2,234 @@ Return-Path: <SRS0=8W07=T6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81442C28CC0
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 May 2019 15:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE38BC28CC0
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 May 2019 17:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503FE24430
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 May 2019 15:28:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559230093;
-	bh=QDh7TkXBr1HHkMfBplzKvgKx7mK1za0gKttQ/yq+pQ0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yXeW+eqKDlL1Rrr09wiHsPuU3+wp59s0fMT4kIsD+PXEHXIfM+3lX3g/YUvZAreCr
-	 bcVU4oRjhPeZ8+0O565Cqme3VNiiEB1eKHJTSpeTLDXb/enrGTOiyLJpEYTmU0qZ+Q
-	 Is+NhYMUKyb8kFB0jU4IsmRAMVsbmCSRowFNf9io=
+	by mail.kernel.org (Postfix) with ESMTP id 95FAF218B0
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 May 2019 17:34:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="SaTAsXR8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbfE3P2F (ORCPT
+        id S1726307AbfE3Req (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 30 May 2019 11:28:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58152 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbfE3P2E (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 May 2019 11:28:04 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CF2724430;
-        Thu, 30 May 2019 15:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559230083;
-        bh=QDh7TkXBr1HHkMfBplzKvgKx7mK1za0gKttQ/yq+pQ0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qav+oHXZcpg71rdyRQsFDfwWEhGHXL6gBGPiJ35w3mibQBpn5LHygRCj1hwkMfubZ
-         75SiRF4QX5k1B3Qyx2ttbYr8OrrhArs4yWJidXjBjsUxM/hU8e89pWqdCBZxozdBvm
-         uVgB5bwrvkdU9mcC1h8d6t4RP8NXE0rKT32pqAhw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@microsoft.com, thiruan@microsoft.com,
-        bryankel@microsoft.com, tee-dev@lists.linaro.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v4 1/2] fTPM: firmware TPM running in TEE
-Date:   Thu, 30 May 2019 11:27:57 -0400
-Message-Id: <20190530152758.16628-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190530152758.16628-1-sashal@kernel.org>
-References: <20190530152758.16628-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 30 May 2019 13:34:46 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52718 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726280AbfE3Req (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 May 2019 13:34:46 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4UHOZjJ130601;
+        Thu, 30 May 2019 17:34:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=dJo7cCnXIeD/X50mA4kUFP8kMfTj0oBfIk9X2rf+aRU=;
+ b=SaTAsXR8KOUlqPXSkVM4/Z3seNHuwx8IGc3UFq8ep35aunh8p66hVk1em08MgeFehv9u
+ 5r/FzvZu8q/2nQFpu84W0uOx4JG7rd6ZRMZTpJVuxusMmSft5ruO2/b8V09iWidWKbQa
+ 71vG0OPbSWw2izRzPEheiban4L9EHxlQg90ZHGAMjLfDof+WKAlsYHjyjE04fpi5G2Ty
+ 856bBfuSTpy/YuUX+4OC4+VTEfJEg0NfplzJG88i2rDNRrjs5tbWQweZVmen7BpdyNMj
+ AT9wqYdVUfdL0tqXnTd9u1iN0hqrwp5s8gikTrKA5Jddf0P2goaFHe1PgXcWcpPu6e8q eQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2spw4tsn24-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 17:34:43 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x4UHXPc3153508;
+        Thu, 30 May 2019 17:34:43 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2ss1fp6y4r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 May 2019 17:34:42 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x4UHYfKb021509;
+        Thu, 30 May 2019 17:34:42 GMT
+Received: from anon-dhcp-171.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 30 May 2019 10:34:41 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: CAP_SYS_ADMIN requirement for updating IMA metadata
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <1558617932.4347.160.camel@linux.ibm.com>
+Date:   Thu, 30 May 2019 13:34:40 -0400
+Cc:     linux-integrity@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9AFFF0FE-E8F3-4DBC-9731-D9018C1EC3A4@oracle.com>
+References: <6FC12520-1B2F-46E8-B9B5-05FEA3147688@oracle.com>
+ <1558538361.4347.35.camel@linux.ibm.com>
+ <E66FAD82-34EF-45A2-9EDD-FD69541B36C5@oracle.com>
+ <1558617932.4347.160.camel@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+X-Mailer: Apple Mail (2.3445.104.11)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1905300123
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9272 signatures=668687
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1905300123
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch adds support for a software-only implementation of a TPM
-running in TEE.
 
-There is extensive documentation of the design here:
-https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/ .
 
-As well as reference code for the firmware available here:
-https://github.com/Microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM
+> On May 23, 2019, at 9:25 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>=20
+> On Wed, 2019-05-22 at 11:49 -0400, Chuck Lever wrote:
+>>=20
+>>> On May 22, 2019, at 11:19 AM, Mimi Zohar <zohar@linux.ibm.com> =
+wrote:
+>>>=20
+>>> On Wed, 2019-05-22 at 10:54 -0400, Chuck Lever wrote:
+>>>> Hi Mimi-
+>>>>=20
+>>>> I'm working on a section of draft-ietf-nfsv4-integrity-measurement =
+that
+>>>> discusses what kind of access permission is necessary to update a =
+file's
+>>>> IMA metadata. This is needed because every NFS operation has an =
+associated
+>>>> user ID -- an NFS server implementer needs to know which users are =
+allowed
+>>>> to alter the IMA metadata.
+>>>>=20
+>>>> On Linux, because the metadata is stored in "security.ima", =
+CAP_SYS_ADMIN
+>>>> is required.
+>>>>=20
+>>>> But on other NFS server implementations (ones that might not have a
+>>>> capabilities system), IMA metadata could be stored via a mechanism =
+that
+>>>> does not require any special permission.
+>>>>=20
+>>>> And, it seems to me that if a user can alter the file content, =
+there is
+>>>> no additional harm in her being allowed to update the IMA metadata.
+>>>>=20
+>>>> Is there an architectural reason, other than that Linux stores IMA =
+metadata
+>>>> in a security.* xattr, for requiring a superuser privilege to =
+update IMA
+>>>> metadata?
+>>>=20
+>>> security.ima may contain either a file hash or signature.   The file
+>>> hash should be protected via security.evm.[1]  Allowing anyone to
+>>> update the file hash would defeat its purpose.
+>>=20
+>> I wasn't thinking that anyone would be allowed to update the hash, =
+but
+>> rather that a typical non-Linux NFS server might allow the file's =
+owner
+>> to update it, for example, since it might store IMA metadata via a
+>> mechanism that does not require privilege.
+>>=20
+>> If privilege is a requirement, then the draft has to state it and a =
+non-
+>> Linux NFS server implementation itself will have to enforce the =
+privilege
+>> requirement explicitly. (For Linux that is done by the VFS's xattr =
+code,
+>> not by the NFS server implementation).
 
-Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/char/tpm/Kconfig        |   5 +
- drivers/char/tpm/Makefile       |   1 +
- drivers/char/tpm/tpm_ftpm_tee.c | 380 ++++++++++++++++++++++++++++++++
- drivers/char/tpm/tpm_ftpm_tee.h |  40 ++++
- 4 files changed, 426 insertions(+)
- create mode 100644 drivers/char/tpm/tpm_ftpm_tee.c
- create mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
+Thinking this through some more. Here's a common usage scenario.
 
-diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-index f3e4bc490cf05..8bc9a56cade14 100644
---- a/drivers/char/tpm/Kconfig
-+++ b/drivers/char/tpm/Kconfig
-@@ -163,6 +163,11 @@ config TCG_VTPM_PROXY
- 	  /dev/vtpmX and a server-side file descriptor on which the vTPM
- 	  can receive commands.
- 
-+config TCG_FTPM_TEE
-+	tristate "TEE based fTPM Interface"
-+	depends on TEE && OPTEE
-+	---help---
-+	  This driver proxies for fTPM running in TEE
- 
- source "drivers/char/tpm/st33zp24/Kconfig"
- endif # TCG_TPM
-diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-index a01c4cab902a6..c354cdff9c625 100644
---- a/drivers/char/tpm/Makefile
-+++ b/drivers/char/tpm/Makefile
-@@ -33,3 +33,4 @@ obj-$(CONFIG_TCG_TIS_ST33ZP24) += st33zp24/
- obj-$(CONFIG_TCG_XEN) += xen-tpmfront.o
- obj-$(CONFIG_TCG_CRB) += tpm_crb.o
- obj-$(CONFIG_TCG_VTPM_PROXY) += tpm_vtpm_proxy.o
-+obj-$(CONFIG_TCG_FTPM_TEE) += tpm_ftpm_tee.o
-diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
-new file mode 100644
-index 0000000000000..f926b1287988b
---- /dev/null
-+++ b/drivers/char/tpm/tpm_ftpm_tee.c
-@@ -0,0 +1,380 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation
-+ *
-+ * Implements a firmware TPM as described here:
-+ * https://www.microsoft.com/en-us/research/publication/ftpm-software-implementation-tpm-chip/
-+ *
-+ * A reference implementation is available here:
-+ * https://github.com/microsoft/ms-tpm-20-ref/tree/master/Samples/ARM32-FirmwareTPM/optee_ta/fTPM
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/tee_drv.h>
-+#include <linux/tpm.h>
-+#include <linux/uuid.h>
-+
-+#include "tpm.h"
-+#include "tpm_ftpm_tee.h"
-+
-+#define DRIVER_NAME "ftpm-tee"
-+
-+/*
-+ * TA_FTPM_UUID: BC50D971-D4C9-42C4-82CB-343FB7F37896
-+ *
-+ * Randomly generated, and must correspond to the GUID on the TA side.
-+ * Defined here in the reference implementation:
-+ * https://github.com/microsoft/ms-tpm-20-ref/blob/master/Samples/ARM32-FirmwareTPM/optee_ta/fTPM/include/fTPM.h#L42
-+ */
-+
-+static const uuid_t ftpm_ta_uuid =
-+	UUID_INIT(0xBC50D971, 0xD4C9, 0x42C4,
-+		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
-+
-+/**
-+ * ftpm_tee_tpm_op_recv - retrieve fTPM response.
-+ *
-+ * @chip: the tpm_chip description as specified in driver/char/tpm/tpm.h.
-+ * @buf: the buffer to store data.
-+ * @count: the number of bytes to read.
-+ * 
-+ * Return:
-+ * 	In case of success the number of bytes received.
-+ *	On failure, -errno.
-+ */
-+static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-+{
-+	struct ftpm_tee_private *pvt_data = dev_get_drvdata(chip->dev.parent);
-+	size_t len;
-+
-+	len = pvt_data->resp_len;
-+	if (count < len) {
-+		dev_err(&chip->dev,
-+			"%s:Invalid size in recv: count=%zd, resp_len=%zd\n",
-+			__func__, count, len);
-+		return -EIO;
-+	}
-+
-+	memcpy(buf, pvt_data->resp_buf, len);
-+	pvt_data->resp_len = 0;
-+
-+	return len;
-+}
-+
-+/**
-+ * ftpm_tee_tpm_op_send - send TPM commands through the TEE shared memory.
-+ *
-+ * @chip: the tpm_chip description as specified in driver/char/tpm/tpm.h
-+ * @buf: the buffer to send.
-+ * @len: the number of bytes to send.
-+ *
-+ * Return:
-+ * 	In case of success, returns 0.
-+ *	On failure, -errno
-+ */
-+static int ftpm_tee_tpm_op_send(struct tpm_chip *chip, u8 *buf, size_t len)
-+{
-+	struct ftpm_tee_private *pvt_data = dev_get_drvdata(chip->dev.parent);
-+	size_t resp_len;
-+	int rc;
-+	u8 *temp_buf;
-+	struct tpm_header *resp_header;
-+	struct tee_ioctl_invoke_arg transceive_args;
-+	struct tee_param command_params[4];
-+	struct tee_shm *shm = pvt_data->shm;
-+
-+	if (len > MAX_COMMAND_SIZE) {
-+		dev_err(&chip->dev,
-+			"%s:len=%zd exceeds MAX_COMMAND_SIZE supported by fTPM TA\n",
-+			__func__, len);
-+		return -EIO;
-+	}
-+
-+	memset(&transceive_args, 0, sizeof(transceive_args));
-+	memset(command_params, 0, sizeof(command_params));
-+	pvt_data->resp_len = 0;
-+
-+	/* Invoke FTPM_OPTEE_TA_SUBMIT_COMMAND function of fTPM TA */
-+	transceive_args = (struct tee_ioctl_invoke_arg) {
-+		.func = FTPM_OPTEE_TA_SUBMIT_COMMAND,
-+		.session = pvt_data->session,
-+		.num_params = 4,
-+	};
-+
-+	/* Fill FTPM_OPTEE_TA_SUBMIT_COMMAND parameters */
-+	command_params[0] = (struct tee_param) {
-+		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT,
-+		.u.memref = {
-+			.shm = shm,
-+			.size = len,
-+			.shm_offs = 0,
-+		},
-+	};
-+
-+	temp_buf = tee_shm_get_va(shm, 0);
-+	if (IS_ERR(temp_buf)) {
-+		dev_err(&chip->dev, "%s:tee_shm_get_va failed for transmit\n",
-+			__func__);
-+		return PTR_ERR(temp_buf);
-+	}
-+	memset(temp_buf, 0, (MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE));
-+
-+	memcpy(temp_buf, buf, len);
-+
-+	command_params[1] = (struct tee_param) {
-+		.attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT,
-+		.u.memref = {
-+			.shm = shm,
-+			.size = MAX_RESPONSE_SIZE,
-+			.shm_offs = MAX_COMMAND_SIZE,
-+		},
-+	};
-+
-+	rc = tee_client_invoke_func(pvt_data->ctx, &transceive_args,
-+					command_params);
-+	if ((rc < 0) || (transceive_args.ret != 0)) {
-+		dev_err(&chip->dev, "%s:SUBMIT_COMMAND invoke error: 0x%x\n",
-+			__func__, transceive_args.ret);
-+		return (rc < 0) ? rc : transceive_args.ret;
-+	}
-+
-+	temp_buf = tee_shm_get_va(shm, command_params[1].u.memref.shm_offs);
-+	if (IS_ERR(temp_buf)) {
-+		dev_err(&chip->dev, "%s:tee_shm_get_va failed for receive\n",
-+			__func__);
-+		return PTR_ERR(temp_buf);
-+	}
-+
-+	resp_header = (struct tpm_header *)temp_buf;
-+	resp_len = be32_to_cpu(resp_header->length);
-+
-+	/* sanity check resp_len */
-+	if (resp_len < TPM_HEADER_SIZE) {
-+		dev_err(&chip->dev, "%s:tpm response header too small\n",
-+			__func__);
-+		return -EIO;
-+	}
-+	if (resp_len > MAX_RESPONSE_SIZE) {
-+		dev_err(&chip->dev,
-+			"%s:resp_len=%zd exceeds MAX_RESPONSE_SIZE\n",
-+			__func__, resp_len);
-+		return -EIO;
-+	}
-+
-+	/* sanity checks look good, cache the response */
-+	memcpy(pvt_data->resp_buf, temp_buf, resp_len);
-+	pvt_data->resp_len = resp_len;
-+
-+	return 0;
-+}
-+
-+static void ftpm_tee_tpm_op_cancel(struct tpm_chip *chip)
-+{
-+	/* not supported */
-+}
-+
-+static u8 ftpm_tee_tpm_op_status(struct tpm_chip *chip)
-+{
-+	return 0;
-+}
-+
-+static bool ftpm_tee_tpm_req_canceled(struct tpm_chip *chip, u8 status)
-+{
-+	return 0;
-+}
-+
-+static const struct tpm_class_ops ftpm_tee_tpm_ops = {
-+	.flags = TPM_OPS_AUTO_STARTUP,
-+	.recv = ftpm_tee_tpm_op_recv,
-+	.send = ftpm_tee_tpm_op_send,
-+	.cancel = ftpm_tee_tpm_op_cancel,
-+	.status = ftpm_tee_tpm_op_status,
-+	.req_complete_mask = 0,
-+	.req_complete_val = 0,
-+	.req_canceled = ftpm_tee_tpm_req_canceled,
-+};
-+
-+/*
-+ * Check whether this driver supports the fTPM TA in the TEE instance
-+ * represented by the params (ver/data) to this function.
-+ */
-+static int ftpm_tee_match(struct tee_ioctl_version_data *ver, const void *data)
-+{
-+	/*
-+	 * Currently this driver only support GP Complaint OPTEE based fTPM TA
-+	 */
-+	if ((ver->impl_id == TEE_IMPL_ID_OPTEE) &&
-+		(ver->gen_caps & TEE_GEN_CAP_GP))
-+		return 1;
-+	else
-+		return 0;
-+}
-+
-+/*
-+ * Undo what has been done in ftpm_tee_probe
-+ */
-+static void ftpm_tee_deinit(struct ftpm_tee_private *pvt_data)
-+{
-+	/* Release the chip */
-+	tpm_chip_unregister(pvt_data->chip);
-+
-+	/* frees chip */
-+	if (pvt_data->chip)
-+		put_device(&pvt_data->chip->dev);
-+
-+	if (pvt_data->ctx) {
-+		/* Free the shared memory pool */
-+		tee_shm_free(pvt_data->shm);
-+
-+		/* close the existing session with fTPM TA*/
-+		tee_client_close_session(pvt_data->ctx, pvt_data->session);
-+
-+		/* close the context with TEE driver */
-+		tee_client_close_context(pvt_data->ctx);
-+	}
-+
-+	/* memory allocated with devm_kzalloc() is freed automatically */
-+}
-+
-+/**
-+ * ftpm_tee_probe - initialize the fTPM
-+ * @pdev: the platform_device description.
-+ *
-+ * Return:
-+ * 	On success, 0. On failure, -errno.
-+ */
-+static int ftpm_tee_probe(struct platform_device *pdev)
-+{
-+	int rc;
-+	struct tpm_chip *chip;
-+	struct device *dev = &pdev->dev;
-+	struct ftpm_tee_private *pvt_data = NULL;
-+	struct tee_ioctl_open_session_arg sess_arg;
-+
-+	pvt_data = devm_kzalloc(dev, sizeof(struct ftpm_tee_private),
-+				GFP_KERNEL);
-+	if (!pvt_data)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, pvt_data);
-+
-+	/* Open context with TEE driver */
-+	pvt_data->ctx = tee_client_open_context(NULL, ftpm_tee_match, NULL,
-+						NULL);
-+	if (IS_ERR(pvt_data->ctx)) {
-+		dev_err(dev, "%s:tee_client_open_context failed\n", __func__);
-+		return -EPROBE_DEFER;
-+	}
-+
-+	/* Open a session with fTPM TA */
-+	memset(&sess_arg, 0, sizeof(sess_arg));
-+	memcpy(sess_arg.uuid, ftpm_ta_uuid.b, TEE_IOCTL_UUID_LEN);
-+	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
-+	sess_arg.num_params = 0;
-+
-+	rc = tee_client_open_session(pvt_data->ctx, &sess_arg, NULL);
-+	if ((rc < 0) || (sess_arg.ret != 0)) {
-+		dev_err(dev, "%s:tee_client_open_session failed, err=%x\n",
-+			__func__, sess_arg.ret);
-+		rc = -EINVAL;
-+		goto out_tee_session;
-+	}
-+	pvt_data->session = sess_arg.session;
-+
-+	/* Allocate dynamic shared memory with fTPM TA */
-+	pvt_data->shm = tee_shm_alloc(pvt_data->ctx,
-+				(MAX_COMMAND_SIZE + MAX_RESPONSE_SIZE),
-+				TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
-+	if (IS_ERR(pvt_data->shm)) {
-+		dev_err(dev, "%s:tee_shm_alloc failed\n", __func__);
-+		rc = -ENOMEM;
-+		goto out_shm_alloc;
-+	}
-+
-+	/* Allocate new struct tpm_chip instance */
-+	chip = tpm_chip_alloc(dev, &ftpm_tee_tpm_ops);
-+	if (IS_ERR(chip)) {
-+		dev_err(dev, "%s:tpm_chip_alloc failed\n", __func__);
-+		rc = PTR_ERR(chip);
-+		goto out_chip_alloc;
-+	}
-+
-+	pvt_data->chip = chip;
-+	pvt_data->chip->flags |= TPM_CHIP_FLAG_TPM2;
-+
-+	/* Create a character device for the fTPM */
-+	rc = tpm_chip_register(pvt_data->chip);
-+	if (rc) {
-+		dev_err(dev, "%s:tpm_chip_register failed with rc=%d\n",
-+			__func__, rc);
-+		goto out_chip;
-+	}
-+
-+	return 0;
-+
-+out_chip:
-+	put_device(&pvt_data->chip->dev);
-+out_chip_alloc:
-+	tee_shm_free(pvt_data->shm);
-+out_shm_alloc:
-+	tee_client_close_session(pvt_data->ctx, pvt_data->session);
-+out_tee_session:
-+	tee_client_close_context(pvt_data->ctx);
-+
-+	return rc;
-+}
-+
-+/**
-+ * ftpm_tee_remove - remove the TPM device
-+ * @pdev: the platform_device description.
-+ *
-+ * Return:
-+ * 	0 in case of success.
-+ */
-+static int ftpm_tee_remove(struct platform_device *pdev)
-+{
-+	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
-+
-+	/* Release the chip */
-+	tpm_chip_unregister(pvt_data->chip);
-+
-+	/* frees chip */
-+	put_device(&pvt_data->chip->dev);
-+
-+	/* Free the shared memory pool */
-+	tee_shm_free(pvt_data->shm);
-+
-+	/* close the existing session with fTPM TA*/
-+	tee_client_close_session(pvt_data->ctx, pvt_data->session);
-+
-+	/* close the context with TEE driver */
-+	tee_client_close_context(pvt_data->ctx);
-+
-+        /* memory allocated with devm_kzalloc() is freed automatically */
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id of_ftpm_tee_ids[] = {
-+	{ .compatible = "microsoft,ftpm" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, of_ftpm_tee_ids);
-+
-+static struct platform_driver ftpm_tee_driver = {
-+	.driver = {
-+		.name = DRIVER_NAME,
-+		.of_match_table = of_match_ptr(of_ftpm_tee_ids),
-+	},
-+	.probe = ftpm_tee_probe,
-+	.remove = ftpm_tee_remove,
-+};
-+
-+module_platform_driver(ftpm_tee_driver);
-+
-+MODULE_AUTHOR("Thirupathaiah Annapureddy <thiruan@microsoft.com>");
-+MODULE_DESCRIPTION("TPM Driver for fTPM TA in TEE");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/char/tpm/tpm_ftpm_tee.h b/drivers/char/tpm/tpm_ftpm_tee.h
-new file mode 100644
-index 0000000000000..b09ee7be45459
---- /dev/null
-+++ b/drivers/char/tpm/tpm_ftpm_tee.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation
-+ */
-+
-+#ifndef __TPM_FTPM_TEE_H__
-+#define __TPM_FTPM_TEE_H__
-+
-+#include <linux/tee_drv.h>
-+#include <linux/tpm.h>
-+#include <linux/uuid.h>
-+
-+/* The TAFs ID implemented in this TA */
-+#define FTPM_OPTEE_TA_SUBMIT_COMMAND  (0)
-+#define FTPM_OPTEE_TA_EMULATE_PPI     (1)
-+
-+/* max. buffer size supported by fTPM  */
-+#define  MAX_COMMAND_SIZE       4096
-+#define  MAX_RESPONSE_SIZE      4096
-+
-+/**
-+ * struct ftpm_tee_private - fTPM's private data
-+ * @chip:     struct tpm_chip instance registered with tpm framework.
-+ * @state:    internal state
-+ * @session:  fTPM TA session identifier.
-+ * @resp_len: cached response buffer length.
-+ * @resp_buf: cached response buffer.
-+ * @ctx:      TEE context handler.
-+ * @shm:      Memory pool shared with fTPM TA in TEE.
-+ */
-+struct ftpm_tee_private {
-+	struct tpm_chip *chip;
-+	u32 session;
-+	size_t resp_len;
-+	u8 resp_buf[MAX_RESPONSE_SIZE];
-+	struct tee_context *ctx;
-+	struct tee_shm *shm;
-+};
-+
-+#endif /* __TPM_FTPM_TEE_H__ */
--- 
-2.20.1
+Suppose we have a NetApp filer that serves a small community of NFS
+clients. Suppose the filer can store IMA metadata using the NFS =
+extension
+I describe in draft-ietf-nfsv4-integrity-measurement. But note some
+things about this NFS server:
+
+ o There is no user execution environment on that server. The only way
+that file content is accessed is via NFS.
+
+ o The server does not have any native support for IMA metadata. It
+just stores the metadata blob, and does not otherwise interpret it.
+
+ o There is no secondary (EVM) protection of the IMA metadata.
+
+In a software distribution scenario with an NFS server that does not
+allow local (non-NFS) access to file contents, the clients must store
+the file content and IMA metadata.
+
+Each NFS operation sent by any NFS client has a user ID associated with
+it, including operations to store and retrieve IMA metadata. Obviously,
+retrieving IMA metadata can be done by anyone on any client that is
+allowed to access the server's exports.
+
+Typically the client passes update requests to the NFS server, which
+is the final authority on when file content can be modified. The
+question is, how does the server determine which clients and users
+are allowed to modify IMA metadata?
+
+Assuming a client is simply running some kind of package tool to
+install files on an NFS mount, there is no local signing key, so there
+is no issue about the writing user requiring a privilege to sign
+these file's IMA metadata. The metadata already exists.
+
+The server could authorize IMA metadata changes by user ID, or it could
+allow only one of the clients to change IMA metadata. Another =
+possibility
+is to allow the file's ACL to determine who can update the metadata.
+
+What is most comparable to local access controls?
+
+My server prototype allows only the root user to update IMA metadata, on
+any client that has write access to the export (controlled by =
+/etc/exports).
+
+
+>> I need to understand this better so I can write it up in the draft.
+>> Can you further explain what "defeat its purpose" means?
+>>=20
+>> - If the hash is altered, the effect is the same as if the file =
+content
+>> is altered.
+>>=20
+>> - If the hash is altered, security.evm (which is not exposed via NFS)
+>> would allow a local (non-NFS) accessor to notice the specific =
+problem.
+>>=20
+>> Seems like the file content is protected in these cases even if the
+>> hash is altered arbitrarily. ie, unwanted alteration is detected and
+>> then someone has to restore the file content and hash.
+>>=20
+>> What am I missing?
+>=20
+> Updating security.ima, or for that matter any other EVM protected
+> security xattrs/file metadata, causes the security.evm HMAC to be
+> recalculated and written, unless security.evm is a portable &
+> immutable signature.  To prevent against including other untrusted
+> modifications from being included in the EVM HMAC, EVM first verifies
+> the existing security.evm xattr is valid, before recalculating the
+> HMAC and writing security.evm.
+>=20
+> The current design assumes that the file metadata would be included
+> with the file data and distributed in software packages.  The package
+> installer is privileged and would install both the file data and
+> metadata.
+>=20
+> In terms of writing security.ima, a similar problem exists in
+> containers, when root in the container is not the system root.  For
+> NFS, in addition to the issue of security xattrs, we need to limit the
+> permitted security.ima types.
+>=20
+> Mimi
+
+--
+Chuck Lever
+
+
 
