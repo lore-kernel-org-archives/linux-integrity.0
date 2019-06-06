@@ -2,84 +2,78 @@ Return-Path: <SRS0=dWk4=UF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5E6C04AB5
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 16:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5F2C04AB5
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 16:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B0BF20645
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 16:04:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r2dMeI6N"
+	by mail.kernel.org (Postfix) with ESMTP id DE38220868
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 16:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729535AbfFFQEI (ORCPT
+        id S1727620AbfFFQ6K (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 6 Jun 2019 12:04:08 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51232 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729173AbfFFQEH (ORCPT
+        Thu, 6 Jun 2019 12:58:10 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:41752 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfFFQ6K (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 6 Jun 2019 12:04:07 -0400
-Received: by mail-it1-f195.google.com with SMTP id m3so814484itl.1
-        for <linux-integrity@vger.kernel.org>; Thu, 06 Jun 2019 09:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=79YHY2kuyJAoI71w0CE6gdEXA7Who0bex5ytS37xcQo=;
-        b=r2dMeI6ND0eztLJwJoVoBTBWBAMl3EhOp8askMUviuV445+/CxjMPjNfOPwgLQ76oZ
-         GcnNsWYf/Eo1TXeabXwKNAi0A5HeIjfgxJzK88xwyl0MNqcC3xAlEtJGNPdNWca1QClF
-         aZ82WuTUdkkcbzaAGmM46YUNFIERYucuaZSO9dpNQHcmT0+9RO6hrhSp1rEvlBU4YlrV
-         HEakmFS2E+02jGvFO45pZGdE7Fzc1bARkIuW36BSTEV3B4aFmaDbKgEkH12wCdBLx8dt
-         PV9QEAqfN9JWWNsdw6sRYYVuohOTS2giCHUUyi091dQ4tXr9cNBiE31AtWIB/RYu1wzo
-         k/7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=79YHY2kuyJAoI71w0CE6gdEXA7Who0bex5ytS37xcQo=;
-        b=f2wUu1x4f7F+Syk9Nw8txLIO2LiiCZi89Ga1CoMs58th7D+5W9gPhCrzWBhsJ5R/hD
-         jsTZojnsVgRXTY1x46HqqHWS3ych5QV61yUcExZNQN5Ag4KFyjrfFtPHBssllZAGqIw0
-         BZ5+IHyizwTEHfA1BtayrxiGc4Kk36s1hwXskvbhfP9AfcYuMeBzU9AQcSUaRS09YJhV
-         O4ikDCeSc4oURlkWE8wRuoEdJjC4d0Mdn/kqnZqOD9imBLYIViPa/CXHtgggsku5f3fv
-         iA1GKPh6VYQxampS7xWvQp5SBDWV/S5DXCOJNIk7SOlBTIkG+F0lETDsmGUNIoMEQC9Q
-         mxOQ==
-X-Gm-Message-State: APjAAAUYu/7VxtC8oFh2sg0cVbbKt5fq4UUWa6pZEByV0BfApBSJgIK4
-        hMy/93ohSudWl7EjI7+qhzFtwJSfyD+ep4hYAbjcFw==
-X-Google-Smtp-Source: APXvYqyH4t7gJ6U8Sk3x8cMUs8aTFLnfuX8s36qZLzqQnFNLxQjPBcke7SPHzWlAeciqXBJvheaYkYYrVyTizDUPVz0=
-X-Received: by 2002:a24:6887:: with SMTP id v129mr658523itb.150.1559837046601;
- Thu, 06 Jun 2019 09:04:06 -0700 (PDT)
+        Thu, 6 Jun 2019 12:58:10 -0400
+Received: from [10.200.157.26] (unknown [131.107.160.154])
+        by linux.microsoft.com (Postfix) with ESMTPSA id A702D20B7192;
+        Thu,  6 Jun 2019 09:58:09 -0700 (PDT)
+Subject: Re: [PATCH 0/2] [IMA] Measure public keys of BuiltIn Trusted Keys
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Linux Integrity <linux-integrity@vger.kernel.org>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     James Morris <jamorris@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva@linux.microsoft.com>,
+        Balaji Balasubramanyan <balajib@linux.microsoft.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>
+References: <f9f2a5ab-a880-7131-d0ca-fb3b72571478@linux.microsoft.com>
+ <1559825065.4278.94.camel@linux.ibm.com>
+From:   Lakshmi <nramas@linux.microsoft.com>
+Message-ID: <77dd257c-f371-1349-62e8-362b5fe01c78@linux.microsoft.com>
+Date:   Thu, 6 Jun 2019 09:58:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <20190605181140.35559-1-matthewgarrett@google.com> <CAKv+Gu_GxV1GySRz-xju6RsB0Qdra=nN=CL+M=jvQ1e2V6p_ig@mail.gmail.com>
-In-Reply-To: <CAKv+Gu_GxV1GySRz-xju6RsB0Qdra=nN=CL+M=jvQ1e2V6p_ig@mail.gmail.com>
-From:   Matthew Garrett <mjg59@google.com>
-Date:   Thu, 6 Jun 2019 09:03:53 -0700
-Message-ID: <CACdnJusonjd_2eciwA8MgJNS7GntGGBqoAMHuJBRHsuqrn4aGQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: Fix TPM code build failure on ARM
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-efi <linux-efi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1559825065.4278.94.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jun 6, 2019 at 4:39 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> On Wed, 5 Jun 2019 at 20:11, Matthew Garrett <matthewgarrett@google.com> wrote:
-> >
-> > asm/early_ioremap.h needs to be #included before tpm_eventlog.h in order
-> > to ensure that early_memremap is available.
-> >
->
-> Doesn't that make it tpm_eventlog.h's job to #include it?
+On 6/6/19 5:44 AM, Mimi Zohar wrote:
+> 
+> Instead of measuring all the files in policy, Roberto's "digest lists"
+> proposed patch set measures only "unknown" files.  Why bother with all
+> those messy measurements?!
 
-tpm_eventlog.h doesn't use early_memremap directly, it's expanded from
-the macros declared in tpm.c .
+I agree. But in our use case scenario, we want the attestation service 
+to know who signed the system files and leave the task of validating the 
+file signature to the clients.
+
+Essentially, in our approach we are measuring the "signer".
+
+> In your use case scenario, will the measurement list only contain the builtin and secondary keys?
+> 
+> Mimi
+
+In my implementation I am measuring the builtin keys. Since any key 
+added to the secondary keyring also needs to be signed by a key in the 
+builtin keyring, I feel measuring only "builtin keys" is sufficient.
+
+But I am open to the suggestion of measuring secondary keys as well. 
+Please let me know if you think that is a must.
+
+Thanks,
+  -lakshmi
+
+
