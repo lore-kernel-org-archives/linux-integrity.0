@@ -2,100 +2,84 @@ Return-Path: <SRS0=dWk4=UF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_HIGH,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E904AC28EB6
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 15:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5E6C04AB5
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 16:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39D2207E0
-	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 15:54:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559836480;
-	bh=uj7OhOWNAd4Pcxs6nLhO9mFRMaxtTmlWgngVbC8runE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d/bsDxDTPFkxtsDf5EBTKhukt6dXYbkHkT+ModSz3sJ5ldwWq7e8ENmKrxEXbkZ6a
-	 0bXHZOnIew7ZqDaXCPQZZNVkjP5EAvID47wPKeT/mlNF4oGifk0wARUnU6M/VKRxgt
-	 lbDJVTtaXa5YBwXa8HJDe7/9xcNw0pk9402QtGE0=
+	by mail.kernel.org (Postfix) with ESMTP id 6B0BF20645
+	for <linux-integrity@archiver.kernel.org>; Thu,  6 Jun 2019 16:04:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r2dMeI6N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729196AbfFFPyF (ORCPT
+        id S1729535AbfFFQEI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 6 Jun 2019 11:54:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729191AbfFFPyE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 6 Jun 2019 11:54:04 -0400
-Received: from sol.localdomain (c-24-5-143-220.hsd1.ca.comcast.net [24.5.143.220])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B019F20868;
-        Thu,  6 Jun 2019 15:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1559836444;
-        bh=uj7OhOWNAd4Pcxs6nLhO9mFRMaxtTmlWgngVbC8runE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bXIPkzUfqDRKOSTk0dQNkKJOMbvMLZDYl9MBexWFxlr62YVXk9/stxK01xg9RS7bC
-         OfNgfQWcb5PGe0C9F7MuL3U8kybF4ykAvcr4M08oybWgQu4MQip0PtkQXO5nvGJkkJ
-         Aj8g+E/KT5cfZgrWNGUvcY/CqaT76HuXp6iZ2Uhw=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v4 02/16] fs-verity: add MAINTAINERS file entry
-Date:   Thu,  6 Jun 2019 08:51:51 -0700
-Message-Id: <20190606155205.2872-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190606155205.2872-1-ebiggers@kernel.org>
-References: <20190606155205.2872-1-ebiggers@kernel.org>
+        Thu, 6 Jun 2019 12:04:08 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51232 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729173AbfFFQEH (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 6 Jun 2019 12:04:07 -0400
+Received: by mail-it1-f195.google.com with SMTP id m3so814484itl.1
+        for <linux-integrity@vger.kernel.org>; Thu, 06 Jun 2019 09:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=79YHY2kuyJAoI71w0CE6gdEXA7Who0bex5ytS37xcQo=;
+        b=r2dMeI6ND0eztLJwJoVoBTBWBAMl3EhOp8askMUviuV445+/CxjMPjNfOPwgLQ76oZ
+         GcnNsWYf/Eo1TXeabXwKNAi0A5HeIjfgxJzK88xwyl0MNqcC3xAlEtJGNPdNWca1QClF
+         aZ82WuTUdkkcbzaAGmM46YUNFIERYucuaZSO9dpNQHcmT0+9RO6hrhSp1rEvlBU4YlrV
+         HEakmFS2E+02jGvFO45pZGdE7Fzc1bARkIuW36BSTEV3B4aFmaDbKgEkH12wCdBLx8dt
+         PV9QEAqfN9JWWNsdw6sRYYVuohOTS2giCHUUyi091dQ4tXr9cNBiE31AtWIB/RYu1wzo
+         k/7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=79YHY2kuyJAoI71w0CE6gdEXA7Who0bex5ytS37xcQo=;
+        b=f2wUu1x4f7F+Syk9Nw8txLIO2LiiCZi89Ga1CoMs58th7D+5W9gPhCrzWBhsJ5R/hD
+         jsTZojnsVgRXTY1x46HqqHWS3ych5QV61yUcExZNQN5Ag4KFyjrfFtPHBssllZAGqIw0
+         BZ5+IHyizwTEHfA1BtayrxiGc4Kk36s1hwXskvbhfP9AfcYuMeBzU9AQcSUaRS09YJhV
+         O4ikDCeSc4oURlkWE8wRuoEdJjC4d0Mdn/kqnZqOD9imBLYIViPa/CXHtgggsku5f3fv
+         iA1GKPh6VYQxampS7xWvQp5SBDWV/S5DXCOJNIk7SOlBTIkG+F0lETDsmGUNIoMEQC9Q
+         mxOQ==
+X-Gm-Message-State: APjAAAUYu/7VxtC8oFh2sg0cVbbKt5fq4UUWa6pZEByV0BfApBSJgIK4
+        hMy/93ohSudWl7EjI7+qhzFtwJSfyD+ep4hYAbjcFw==
+X-Google-Smtp-Source: APXvYqyH4t7gJ6U8Sk3x8cMUs8aTFLnfuX8s36qZLzqQnFNLxQjPBcke7SPHzWlAeciqXBJvheaYkYYrVyTizDUPVz0=
+X-Received: by 2002:a24:6887:: with SMTP id v129mr658523itb.150.1559837046601;
+ Thu, 06 Jun 2019 09:04:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190605181140.35559-1-matthewgarrett@google.com> <CAKv+Gu_GxV1GySRz-xju6RsB0Qdra=nN=CL+M=jvQ1e2V6p_ig@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_GxV1GySRz-xju6RsB0Qdra=nN=CL+M=jvQ1e2V6p_ig@mail.gmail.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Thu, 6 Jun 2019 09:03:53 -0700
+Message-ID: <CACdnJusonjd_2eciwA8MgJNS7GntGGBqoAMHuJBRHsuqrn4aGQ@mail.gmail.com>
+Subject: Re: [PATCH] efi: Fix TPM code build failure on ARM
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-efi <linux-efi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Thu, Jun 6, 2019 at 4:39 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>
+> On Wed, 5 Jun 2019 at 20:11, Matthew Garrett <matthewgarrett@google.com> wrote:
+> >
+> > asm/early_ioremap.h needs to be #included before tpm_eventlog.h in order
+> > to ensure that early_memremap is available.
+> >
+>
+> Doesn't that make it tpm_eventlog.h's job to #include it?
 
-fs-verity will be jointly maintained by Eric Biggers and Theodore Ts'o.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a6954776a37e..655065116f92 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6505,6 +6505,18 @@ S:	Maintained
- F:	fs/notify/
- F:	include/linux/fsnotify*.h
- 
-+FSVERITY: READ-ONLY FILE-BASED AUTHENTICITY PROTECTION
-+M:	Eric Biggers <ebiggers@kernel.org>
-+M:	Theodore Y. Ts'o <tytso@mit.edu>
-+L:	linux-fscrypt@vger.kernel.org
-+Q:	https://patchwork.kernel.org/project/linux-fscrypt/list/
-+T:	git git://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git fsverity
-+S:	Supported
-+F:	fs/verity/
-+F:	include/linux/fsverity.h
-+F:	include/uapi/linux/fsverity.h
-+F:	Documentation/filesystems/fsverity.rst
-+
- FUJITSU LAPTOP EXTRAS
- M:	Jonathan Woithe <jwoithe@just42.net>
- L:	platform-driver-x86@vger.kernel.org
--- 
-2.21.0
-
+tpm_eventlog.h doesn't use early_memremap directly, it's expanded from
+the macros declared in tpm.c .
