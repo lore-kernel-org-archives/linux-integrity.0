@@ -2,90 +2,123 @@ Return-Path: <SRS0=eDk/=UG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA2BC28CC3
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 10:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBB2C2BCA1
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 11:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59CC520B7C
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 10:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YYxEGmdd"
+	by mail.kernel.org (Postfix) with ESMTP id CBFBE208E3
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 11:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfFGKDi (ORCPT
+        id S1727783AbfFGLm0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 7 Jun 2019 06:03:38 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40553 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbfFGKDh (ORCPT
+        Fri, 7 Jun 2019 07:42:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42026 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727553AbfFGLm0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Jun 2019 06:03:37 -0400
-Received: by mail-it1-f196.google.com with SMTP id q14so776437itc.5
-        for <linux-integrity@vger.kernel.org>; Fri, 07 Jun 2019 03:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iXkL1vVxNkQCEf8uIM1j/K14yJ9boqMG1SgO7jduIvc=;
-        b=YYxEGmddlTZo7bYwJ78QEjiVFt60Vd1vKrd7FfgLha73Bfp5xhojPc11T2qge0Ee9U
-         iEqXavk/gZtf5msWQQkYvZ1FzL7dWqtbtuoUThGhH857ANjy9kFBzvrXgfqZfV/ZT3cC
-         kVpAjDoZ9MZX4pFbBjFZoTTZeA9lLePg/eIHn088JZOyRjycYI9mfwz/Vb9bd/ma1wIO
-         G95UnNdBWaTK+dtIs8xMKXGvMdyYZoX8UiJcndYL5Rl9Jt1jBBP+Q2my6vMGB1gSgAoV
-         abk/Dr7gHvMTE+6TxfkThW8/Jdj/PtnPfHBO7GUcd+pe0z7IWh9xEwhLM+cdB0H4qBbF
-         ZCpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iXkL1vVxNkQCEf8uIM1j/K14yJ9boqMG1SgO7jduIvc=;
-        b=CMwE1QjmX8N3Koy8DsPlfGi/ibACElQpthL0v4AP/L1+JqbgPzEg1baG+QmQL4vMJH
-         j1isF8UqhKeufRL7S4ECLiAmcGm6EyVKdAzJPVcJWYC/g9vyUPgpZygyf3pyaTaPhMva
-         BlKWGCSwjjvDWVGf9UMufgSF9JY8iCYIcog4epZ5qcFs+Sze4J0kW7LF1wDJ3gpGblh5
-         /cov/lpjmyK9Mz3e14vN3CQizvrwzGFOCyjz0TOYBwW7v3MEOESYplwqQXCOQNseBIKd
-         v96ThAhCps9ZJCCIHFUUwM6z8lKOyNcmQ5KDPMXfAHwqJSmxwyGmQzw5hEI1wnju0Bkk
-         P21w==
-X-Gm-Message-State: APjAAAU4ukfUdUkkg5ULemp/0fPEYJYdf4y0Gx1FvgUNmRGjOhkaNPlh
-        rbqgiEeqzIhZCSYY+iINkTe1P1a+x5Q0OR1JgD3hwfTYFn0=
-X-Google-Smtp-Source: APXvYqx5BvzpPElJuxssZGqIo/LIQYox9lJ48Af/yrJsR3eUMkJQWs/vjbsQgg7qQmQ96IMfzCBOykjsxchEhdgwN+E=
-X-Received: by 2002:a02:ce37:: with SMTP id v23mr34148542jar.2.1559901817170;
- Fri, 07 Jun 2019 03:03:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190605181140.35559-1-matthewgarrett@google.com>
- <CAKv+Gu_GxV1GySRz-xju6RsB0Qdra=nN=CL+M=jvQ1e2V6p_ig@mail.gmail.com> <CACdnJusonjd_2eciwA8MgJNS7GntGGBqoAMHuJBRHsuqrn4aGQ@mail.gmail.com>
-In-Reply-To: <CACdnJusonjd_2eciwA8MgJNS7GntGGBqoAMHuJBRHsuqrn4aGQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 7 Jun 2019 12:03:26 +0200
-Message-ID: <CAKv+Gu-rqW7VrQ_jiGQLcx2xTc-khOoV7_FOQ0N7tbU932QhFQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: Fix TPM code build failure on ARM
-To:     Matthew Garrett <mjg59@google.com>
+        Fri, 7 Jun 2019 07:42:26 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x57BgHri135713
+        for <linux-integrity@vger.kernel.org>; Fri, 7 Jun 2019 07:42:25 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2syn0weea8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Jun 2019 07:42:24 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 7 Jun 2019 12:42:22 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Jun 2019 12:42:19 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x57BgIhu34013422
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Jun 2019 11:42:19 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D674811C04C;
+        Fri,  7 Jun 2019 11:42:18 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0CCB011C052;
+        Fri,  7 Jun 2019 11:42:18 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.48])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  7 Jun 2019 11:42:17 +0000 (GMT)
+Subject: Re: [PATCH V4] IMA: Allow profiles to define the desired IMA
+ template
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Matthew Garrett <mjg59@google.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        =?UTF-8?Q?Peter_H=C3=BCwe?= <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-efi <linux-efi@vger.kernel.org>
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        prakhar srivastava <prsriva02@gmail.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Date:   Fri, 07 Jun 2019 07:42:07 -0400
+In-Reply-To: <b2e6f9c5-792c-8205-956d-468d059ea296@huawei.com>
+References: <20190604203859.181156-1-matthewgarrett@google.com>
+         <1559691534.4278.14.camel@linux.ibm.com>
+         <CACdnJuvva4n5dDfoUhzZ9RAxzR=Wou4SuLfe8DCGp4f53cXM3w@mail.gmail.com>
+         <1559761830.4278.30.camel@linux.ibm.com>
+         <40275b34-c86e-7550-9eec-78a2b1d316f7@huawei.com>
+         <1559861118.4278.182.camel@linux.ibm.com>
+         <b2e6f9c5-792c-8205-956d-468d059ea296@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19060711-0020-0000-0000-000003480B13
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060711-0021-0000-0000-0000219B2473
+Message-Id: <1559907727.4278.222.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-07_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906070084
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 6 Jun 2019 at 18:04, Matthew Garrett <mjg59@google.com> wrote:
->
-> On Thu, Jun 6, 2019 at 4:39 AM Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> >
-> > On Wed, 5 Jun 2019 at 20:11, Matthew Garrett <matthewgarrett@google.com> wrote:
-> > >
-> > > asm/early_ioremap.h needs to be #included before tpm_eventlog.h in order
-> > > to ensure that early_memremap is available.
-> > >
-> >
-> > Doesn't that make it tpm_eventlog.h's job to #include it?
->
-> tpm_eventlog.h doesn't use early_memremap directly, it's expanded from
-> the macros declared in tpm.c .
+On Fri, 2019-06-07 at 08:46 +0200, Roberto Sassu wrote:
+> On 6/7/2019 12:45 AM, Mimi Zohar wrote:
+> > On Thu, 2019-06-06 at 10:09 +0200, Roberto Sassu wrote:
+> >> On 6/5/2019 9:10 PM, Mimi Zohar wrote:
+> >>> On Wed, 2019-06-05 at 11:12 -0700, Matthew Garrett wrote:
+> >>>> On Tue, Jun 4, 2019 at 4:39 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >>>>> Matthew, what is a "profile"?  Could we rename this patch to something
+> >>>>> clearer?  Maybe something like "support for per policy rule template
+> >>>>> formats"?
+> >>>>
+> >>>> Sounds good to me. Could you also add an Inspired-By: Roberto Sassu
+> >>>> <roberto.sassu@huawei.com> ?
+> >>>
+> >>> Thanks, done.
+> >>
+> >> Thanks Matthew.
+> >>
+> >> If the patch it is not merged yet, please define and initialize the
+> >> template_name variable in ima_policy_show() as the same as in
+> >> ima_measurement_show().
+> > 
+> > The policy rule processing should prevent loading a custom policy with
+> > a template rule, without specifying a valid template name.  Why does
+> > ima_policy_show() need to initialize entry->template->name?
+> 
+> The last element of builtin_templates is reserved for a custom format
+> that can be specified with the ima_template_fmt= kernel option. This
+> last element has name length equal to zero. It can be found by
+> lookup_template_desc() if specified in a policy rule.
 
-Fair enough
+Right, so that would be added with the per policy rule template fields
+support.
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Mimi
+
