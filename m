@@ -2,108 +2,105 @@ Return-Path: <SRS0=eDk/=UG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EF8C2BCA1
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 18:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99E1C468BC
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 19:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B492208E3
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 18:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1559933759;
-	bh=NKbjzBA4u4Y3ZuZvLsm6fgoIPl9oU7Ix9m+3czSnxfg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SNsAb8jAh4jtniOZ/M1rU0c40JybZP/8EQY0+YJwE6JvkwKJQR4wjksRoufmXSdMr
-	 JhX0H2IruN+hIrBKrk6+A05QGh4RKYuL6/t2K1VSxu0MBiZxQimDClmpsedzjEAlOi
-	 /6Lz7XhSLjYXCrnzIg4NnhfERffkHEeUDDWT/8K8=
+	by mail.kernel.org (Postfix) with ESMTP id 9FBEE208C3
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Jun 2019 19:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732079AbfFGSyk (ORCPT
+        id S1729325AbfFGTMY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 7 Jun 2019 14:54:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732040AbfFGSyk (ORCPT
+        Fri, 7 Jun 2019 15:12:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47110 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728783AbfFGTMY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Jun 2019 14:54:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mN9SlMwFezZ1ZPB+c4+XXB+0uQsuZLbIqjOavdIdlqw=; b=HTM+//NTshmY11VPp3W2zCC0AV
-        AnxnJl/5QTXQPkKrFfbo5L9QXQ+NWhQXx55Bzov9saX3KqjAdGWO5e9rYIJj+km9BAG0LXoJj0bap
-        q1I+rt94/+kmxxLnj2fVapCr8TgoRYqK/dxt0UrHQAIQcESZ2UnEA/WxAiDB5UMaYTYAgxAWYgQCB
-        Vm3QYFxZNeS4ooSrsMJqSGEl3lsWf6/E4fGKje0zAmxn2wJaGnYVVFjT3o+oeayKdH1SYHQUxPh6a
-        I+x+Tv3yFEYYuZItw1vXMeLhh3KzKn8fLI0a4cU45VsOQDmju23QkXlJrpu7dSWxgJVfYKUJk1Bw3
-        S69+bYTg==;
-Received: from [179.181.119.115] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hZK0d-0005sj-LB; Fri, 07 Jun 2019 18:54:39 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hZK0b-0007F6-Fo; Fri, 07 Jun 2019 15:54:37 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        James Morris <jamorris@linux.microsoft.com>
-Subject: [PATCH v3 11/20] docs: security: trusted-encrypted.rst: fix code-block tag
-Date:   Fri,  7 Jun 2019 15:54:27 -0300
-Message-Id: <d9063d11a7690c91a61938d0bb1f92e8669be95a.1559933665.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
-References: <ff457774d46d96e8fe56b45409aba39d87a8672a.1559933665.git.mchehab+samsung@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 7 Jun 2019 15:12:24 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x57J1ZhT087182
+        for <linux-integrity@vger.kernel.org>; Fri, 7 Jun 2019 15:12:23 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2sywfqs0qh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Jun 2019 15:12:23 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Fri, 7 Jun 2019 20:12:21 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 7 Jun 2019 20:12:18 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x57JCG9x39321786
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 7 Jun 2019 19:12:16 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 666D35204F;
+        Fri,  7 Jun 2019 19:12:16 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.80.199.252])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6018C52052;
+        Fri,  7 Jun 2019 19:12:15 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Dave Young <dyoung@redhat.com>
+Subject: [PATCH] x86/ima: fix the Kconfig dependency for IMA_ARCH_POLICY
+Date:   Fri,  7 Jun 2019 15:12:06 -0400
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 19060719-4275-0000-0000-000003405B06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19060719-4276-0000-0000-000038506435
+Message-Id: <1559934726-18650-1-git-send-email-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-07_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=835 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906070127
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The code-block tag is at the wrong place, causing those
-warnings:
+If enabled, ima arch specific policies always adds the measurements rules,
+this makes it dependent on CONFIG_IMA. CONFIG_IMA_APPRAISE implicitly takes
+care of this, however it is needed explicitly for CONFIG_KEXEC_VERIFY_SIG.
 
-    Documentation/security/keys/trusted-encrypted.rst:112: WARNING: Literal block expected; none found.
-    Documentation/security/keys/trusted-encrypted.rst:121: WARNING: Unexpected indentation.
-    Documentation/security/keys/trusted-encrypted.rst:122: WARNING: Block quote ends without a blank line; unexpected unindent.
-    Documentation/security/keys/trusted-encrypted.rst:123: WARNING: Block quote ends without a blank line; unexpected unindent.
+This patch adds the CONFIG_IMA dependency in combination with
+CONFIG_KEXEC_VERIFY_SIG for CONFIG_IMA_ARCH_POLICY
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Acked-by: James Morris <jamorris@linux.microsoft.com>
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: d958083a8f640 (x86/ima: define arch_get_ima_policy() for x86)
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Dave Young <dyoung@redhat.com>
 ---
- Documentation/security/keys/trusted-encrypted.rst | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ security/integrity/ima/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 7b35fcb58933..50ac8bcd6970 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -107,12 +107,14 @@ Where::
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index a18f8c6d13b5..df65d2d41905 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -159,7 +159,8 @@ config IMA_APPRAISE
  
- Examples of trusted and encrypted key usage:
- 
--Create and save a trusted key named "kmk" of length 32 bytes::
-+Create and save a trusted key named "kmk" of length 32 bytes.
- 
- Note: When using a TPM 2.0 with a persistent key with handle 0x81000001,
- append 'keyhandle=0x81000001' to statements between quotes, such as
- "new 32 keyhandle=0x81000001".
- 
-+::
-+
-     $ keyctl add trusted kmk "new 32" @u
-     440502848
- 
+ config IMA_ARCH_POLICY
+         bool "Enable loading an IMA architecture specific policy"
+-        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
++        depends on (KEXEC_VERIFY_SIG && IMA) || IMA_APPRAISE \
++		   && INTEGRITY_ASYMMETRIC_KEYS
+         default n
+         help
+           This option enables loading an IMA architecture specific policy
 -- 
-2.21.0
+2.17.1
 
