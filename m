@@ -2,78 +2,86 @@ Return-Path: <SRS0=TSGz=UJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D117C31E43
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Jun 2019 17:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320EFC468D8
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Jun 2019 17:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE1A02053B
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Jun 2019 17:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0419E20859
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Jun 2019 17:46:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FsoZgAHL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfFJRCg (ORCPT
+        id S2388428AbfFJRqr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 Jun 2019 13:02:36 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55802 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727914AbfFJRCg (ORCPT
+        Mon, 10 Jun 2019 13:46:47 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42560 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388215AbfFJRqr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Jun 2019 13:02:36 -0400
-Received: from [10.200.157.26] (unknown [131.107.160.154])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DA0D320B7194;
-        Mon, 10 Jun 2019 10:02:35 -0700 (PDT)
-Subject: Re: [PATCH 0/2] [IMA] Measure public keys of BuiltIn Trusted Keys
-From:   Lakshmi <nramas@linux.microsoft.com>
-To:     Ken Goldman <kgold@linux.ibm.com>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     James Morris <jamorris@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva@linux.microsoft.com>,
-        Balaji Balasubramanyan <balajib@linux.microsoft.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>
-References: <f9f2a5ab-a880-7131-d0ca-fb3b72571478@linux.microsoft.com>
- <71cc3b9b-d045-8a69-5917-96b4c5654b16@linux.ibm.com>
- <0561ce44-f8f7-15f5-6eaf-fb97a785692a@linux.microsoft.com>
-Message-ID: <9223cb39-f24e-d65f-33cc-b9ca25bce540@linux.microsoft.com>
-Date:   Mon, 10 Jun 2019 10:02:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 10 Jun 2019 13:46:47 -0400
+Received: by mail-io1-f68.google.com with SMTP id u19so7562490ior.9
+        for <linux-integrity@vger.kernel.org>; Mon, 10 Jun 2019 10:46:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HmxGys1dpUHh1BpCwFFwU7PWrMRyDun5SlRjJ8jtEeo=;
+        b=FsoZgAHLJxKqdelh9pIxk3sLhOSNQzTayeZmoZe0SdBjHXiRKfW0cGJTbWh3QcponO
+         CSRwRQCPi0VyZgMQ7Nfq0LWYQvH/7/u5rr9t5m6GeqwTYF8aJEc+1/htf8SgV8sioa5p
+         9RcQDkdj6nX7ZmVUk96sT+ozhE94g3+hxDtoB5hw7sOARM06xz+z08VWUM7LTDl6plfO
+         7NBLHM8/JNXQtQmsse7sDgQqrsnl0/smFVjJRpoUk25fq7B9slGk+FU79OuD9DtRY8Yv
+         ErQn6BnGFLK7B5dseJFFbiAStam9SdaxjClZ3gmsv9A6DEZ64knuuuTcT2D8fOkw2Mv4
+         n6Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HmxGys1dpUHh1BpCwFFwU7PWrMRyDun5SlRjJ8jtEeo=;
+        b=mWaDNDhdPsdYyRGqEk+pe2e6r/kR5GNa+iVVzjekaUP2i3dK9h3xIssSNFq/6dXdFx
+         J0hudmFd6/d5Y6gPzYG+0U3Mwejjs1vk5DC2udcXy4DSla5DBuKtdEzZVJTdCIWcbUwg
+         1kFlRpB8YXxyTmTkAB7AlqPs7hv7S3I/OSwJuCj1jyYcD9ZD2Wrp1CgIiX/XHNi6zWaX
+         kgKgblqq7rd92oynsJO2MUIMzEfZdMrHnIuh3SF4/pm7OUykSlT0zinUmTL/rmM8j8N2
+         SbQw7aw6B5N1goOTqsMmCqfi85HJf4mmJuKZnmeusCXszipwT53EN72ni/qXNhVYdnPW
+         YoxA==
+X-Gm-Message-State: APjAAAUq3nkiZsGlK84z0XgshlxuGQsMhHc0wkqm5pD11QaD2iwvqB2g
+        WNVi8y5CMwaI0YzkXm38GF7vk5RCRDp/bI9sRZgJSQ==
+X-Google-Smtp-Source: APXvYqxBJ9oE7++plitE+MmrgGGgNstDTqsBXLF7YahD+dCmjvdOJT+zyBg6iOuJXUPFx4NMyvNPa/RGhf/Fi/mqdac=
+X-Received: by 2002:a5d:97d8:: with SMTP id k24mr17074640ios.84.1560188806028;
+ Mon, 10 Jun 2019 10:46:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0561ce44-f8f7-15f5-6eaf-fb97a785692a@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190607205147.102904-1-matthewgarrett@google.com> <20190610165819.GA10114@linux.intel.com>
+In-Reply-To: <20190610165819.GA10114@linux.intel.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Mon, 10 Jun 2019 10:46:35 -0700
+Message-ID: <CACdnJusZQeKTGDs5c-TG9Yrv1ShN8Twgf6R=TmAdDNjLMnaRNg@mail.gmail.com>
+Subject: Re: [PATCH V2 1/2] Abstract out support for locating an EFI config table
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 6/7/19 10:15 AM, Lakshmi wrote:
-> On 6/7/19 7:14 AM, Ken Goldman wrote:
-> 
->>
->> Why is this important?  What is gained by measuring the keys on the
->> built-in keyring?  The IMA log already measures [a pointer to] the
->> IMA keys used for signature verification.  Why does the service care 
->> what keys were used to install the IMA keys?
-> 
-> By measuring the built-in keyring, the service knows whether or not the 
-> key(s) in "IMA keyring" are indeed trusted or not. So while the IMA key 
-> validates the file signatures on the client, the built-in key validates 
-> the IMA key(s).
-> 
-> By knowing what keys were used to install the IMA key(s) the service 
-> knows whether or not to trust the signature validation performed by IMA 
-> on the client.
+On Mon, Jun 10, 2019 at 9:58 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, Jun 07, 2019 at 01:51:46PM -0700, Matthew Garrett wrote:
+> > We want to grab a pointer to the TPM final events table, so abstract out
+> > the existing code for finding an FDT table and make it generic.
+> >
+> > Signed-off-by: Matthew Garrett <mjg59@google.com>
+>
+> Just to clarify are these extensions to what you did before and not
+> something that needs be squashed your commits pipelined for v5.3?
 
-Hi Ken\Mimi,
-
-Please let me know if you have more questions\concerns about this approach.
-
-If the high level design is acceptable, please review the code changes 
-and provide feedback\comments.
-
-Thanks,
-  -lakshmi
+Correct - they handle a corner case. Ideally they'd hit 5.3 as well,
+but if you'd prefer I'm ok waiting.
