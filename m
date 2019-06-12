@@ -2,317 +2,192 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA5FC31E45
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD62C31E4A
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 653F42084D
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD5A2084D
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=axtens.net header.i=@axtens.net header.b="kMu+BVJa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729758AbfFMRA4 (ORCPT
+        id S1725825AbfFMRCu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:00:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49320 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730181AbfFMRAu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 13:00:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8BD39AFA5;
-        Thu, 13 Jun 2019 17:00:48 +0000 (UTC)
-Subject: Re: [PATCH v4 4/4] ima: Add overlay test + doc
-To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
-Cc:     linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-References: <20190613161414.29161-1-pvorel@suse.cz>
- <20190613161414.29161-5-pvorel@suse.cz>
-From:   Ignaz Forster <iforster@suse.de>
-Message-ID: <55f6fec4-ef01-db2b-62c0-cbbbf79c6c12@suse.de>
-Date:   Thu, 13 Jun 2019 19:00:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Thu, 13 Jun 2019 13:02:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41885 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729505AbfFLXEd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 12 Jun 2019 19:04:33 -0400
+Received: by mail-pg1-f195.google.com with SMTP id 83so9730777pgg.8
+        for <linux-integrity@vger.kernel.org>; Wed, 12 Jun 2019 16:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=0sXEuoXXfB+58oAqB27nyxVJnIR0qxmqN3amvLO4MUI=;
+        b=kMu+BVJa981hAatIgUu4yrYi7Q8PVRZO3FdVXL/KM/vtg9zSDoY6QaoYVsgwARCtsB
+         8wMNnJZZEbmSLCmDQCZCYinzc3oFyRXDR4yjqyajTfxcaq5mYNvy6US7H9FOyI1ujcE6
+         mkifXT6gFQ7lLMNCAiWTrrsyS6n/+tpWDLK+4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=0sXEuoXXfB+58oAqB27nyxVJnIR0qxmqN3amvLO4MUI=;
+        b=VXaWXJbqOb3fIQ+sFAIfXr4bVk/PUoNqr+dnWZwbTS2hzLbuMaYBmlGCyNmZervK4a
+         PgsyC/Mw2IO6BQ+1U3+TCpLatKJfXvClGNVApbpAKisNC3gkdLR4t2Ps0THwmu6FX0SW
+         FyisGE/mxR+Yqp9Ou7D2OjsKpukODnaW+3Sdl+aYCtvKim+7B7F1mHZI5R/1SVPzAU1l
+         rhZm2KvAWvBKcWgXMHm4FB/qzmi6Q+dhAduX+8lIiGdWVmTYaDoMED4bLmrsCvTwIHQx
+         P/qh771UAj0q26wkJ1PxSZcTnj2las5CXPkdL+icqih5Xepad/N0I9IYAlgi5+0njQZm
+         YHrA==
+X-Gm-Message-State: APjAAAUtX74DkDeEJztiyJJuOBNnDbr2Wc6JrRWcOiMNHYkTTQ/wZBrN
+        /XgURO22W//7RLgnfxIIKYXdRA==
+X-Google-Smtp-Source: APXvYqx+XWoFTjG9dZbuolj86wqQOT4Iqef0H+9nNIH/wMPWesoTcaGtVUCDotl0QJH7LYE+KensLw==
+X-Received: by 2002:a63:ee0a:: with SMTP id e10mr26896771pgi.28.1560380672280;
+        Wed, 12 Jun 2019 16:04:32 -0700 (PDT)
+Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
+        by smtp.gmail.com with ESMTPSA id g9sm463989pgs.78.2019.06.12.16.04.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 12 Jun 2019 16:04:31 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
+        linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Eric Richter <erichte@linux.ibm.com>
+Subject: Re: [PATCH v3 1/3] powerpc/powernv: Add OPAL API interface to get secureboot state
+In-Reply-To: <eaa37bd0-a77d-d70a-feb5-c0e73ce231bf@linux.vnet.ibm.com>
+References: <1560198837-18857-1-git-send-email-nayna@linux.ibm.com> <1560198837-18857-2-git-send-email-nayna@linux.ibm.com> <87ftofpbth.fsf@dja-thinkpad.axtens.net> <eaa37bd0-a77d-d70a-feb5-c0e73ce231bf@linux.vnet.ibm.com>
+Date:   Thu, 13 Jun 2019 09:04:26 +1000
+Message-ID: <87d0jipfr9.fsf@dja-thinkpad.axtens.net>
 MIME-Version: 1.0
-In-Reply-To: <20190613161414.29161-5-pvorel@suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Am 13.06.19 um 18:14 Uhr schrieb Petr Vorel:
-> test demonstrate a bug on overlayfs on current mainline kernel when
-> combining IMA with EVM.
-> 
-> Based on reproducer made by Ignaz Forster <iforster@suse.de>
-> used for not upstreamed patchset [1] and previous report [2].
-> IMA only behavior has already been fixed [3].
-> 
-> NOTE: backup variables are needed because ima_setup.sh calling
-> tst_mount as well when TMPDIR is on tmpfs device.
-> 
-> Documentation is based on Ignaz Forster instructions for openSUSE [4].
-> 
-> [1] https://www.spinics.net/lists/linux-integrity/msg05926.html
-> [2] https://www.spinics.net/lists/linux-integrity/msg03593.html
-> [3] https://patchwork.kernel.org/patch/10776231/
-> [4] http://lists.linux.it/pipermail/ltp/2019-May/011956.html
-> 
-> Tested-by: Ignaz Forster <iforster@suse.de>
-> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> ---
->   runtest/ima                                   |  1 +
->   .../security/integrity/ima/tests/README.md    | 83 +++++++++++++++++
->   .../integrity/ima/tests/evm_overlay.sh        | 93 +++++++++++++++++++
->   .../security/integrity/ima/tests/ima_setup.sh |  4 +-
->   4 files changed, 179 insertions(+), 2 deletions(-)
->   create mode 100644 testcases/kernel/security/integrity/ima/tests/README.md
->   create mode 100755 testcases/kernel/security/integrity/ima/tests/evm_overlay.sh
-> 
-> diff --git a/runtest/ima b/runtest/ima
-> index bcae16bb7..f3ea88cf0 100644
-> --- a/runtest/ima
-> +++ b/runtest/ima
-> @@ -3,3 +3,4 @@ ima_measurements ima_measurements.sh
->   ima_policy ima_policy.sh
->   ima_tpm ima_tpm.sh
->   ima_violations ima_violations.sh
-> +evm_overlay evm_overlay.sh
-> diff --git a/testcases/kernel/security/integrity/ima/tests/README.md b/testcases/kernel/security/integrity/ima/tests/README.md
-> new file mode 100644
-> index 000000000..961b68a38
-> --- /dev/null
-> +++ b/testcases/kernel/security/integrity/ima/tests/README.md
-> @@ -0,0 +1,83 @@
-> +IMA + EVM testing
-> +=================
-> +
-> +IMA tests
-> +---------
-> +
-> +`ima_measurements.sh` require builtin IMA tcb policy to be loaded
-> +(`ima_policy=tcb` or `ima_policy=appraise_tcb` kernel parameter).
+Hi Nayna,
 
-This test requires "appraise_tcb" ("tcb" is not enough), as the errors 
-only occur during appraisal.
+>>> Since OPAL can support different types of backend which can vary in the
+>>> variable interpretation, a new OPAL API call named OPAL_SECVAR_BACKEND, is
+>>> added to retrieve the supported backend version. This helps the consumer
+>>> to know how to interpret the variable.
+>>>
+>> (Firstly, apologies that I haven't got around to asking about this yet!)
+>>
+>> Are pluggable/versioned backend a good idea?
+>>
+>> There are a few things that worry me about the idea:
+>>
+>>   - It adds complexity in crypto (or crypto-adjacent) code, and that
+>>     increases the likelihood that we'll accidentally add a bug with bad
+>>     consequences.
+>
+> Sorry, I think I am not clear on what exactly you mean here.Can you 
+> please elaborate or give specifics ?
 
-> +Although custom policy which contains which may contain the equivalent
-> +measurement tcb rules can be loaded via dracut, systemd or later manually
-> +from user space, detecting it would require `IMA_READ_POLICY=y` therefore
-> +ignore this option.
+Cryptosystems with greater flexibility can have new kinds of
+vulnerabilities arise from the greater complexity. The first sort of
+thing that comes to mind is a downgrade attack like from TLS. I think
+you're protected from this because the mode cannot be negotiatied at run
+time, but in general it's security sensitive code so I'd like it to be
+as simple as possible.
 
-I guess this should be
-"Although a custom policy, loaded via dracut, systemd or manually from 
-user space, may contain equivalent measurement tcb rules, detecting them 
-would [...]"
+>>   - If we are worried about a long-term-future change to how secure-boot
+>>     works, would it be better to just add more get/set calls to opal at
+>>     the point at which we actually implement the new system?
+>
+> The intention is to avoid to re-implement the key/value interface for 
+> each scheme. Do you mean to deprecate the old APIs and add new APIs with 
+> every scheme ?
 
-> +Mandatory kernel configuration for IMA:
-> +```
-> +CONFIG_INTEGRITY=y
-> +CONFIG_IMA=y
-> +```
-> +
-> +EVM tests
-> +---------
-> +
-> +`evm_overlay.sh` requires to builtin IMA appraise tcb policy (e.g. `ima_policy=appraise_tcb`                              ^^
-                              a
+Yes, because I expect the scheme would change very, very rarely.
 
-> +kernel parameter) which appraises the integrity of all files owned by root and EVM setup.
-> +Again, for simplicity ignore possibility to load reuired rules via custom policy.
-                                                       ^q
+>>   - Under what circumstances would would we change the kernel-visible
+>>     behaviour of skiboot? Are we expecting to change the behaviour,
+>>     content or names of the variables in future? Otherwise the only
+>>     relevant change I can think of is a change to hardware platforms, and
+>>     I'm not sure how a change in hardware would lead to change in
+>>     behaviour in the kernel. Wouldn't Skiboot hide h/w differences?
+>
+> Backends are intended to be an agreement for firmware, kernel and 
+> userspace on what the format of variables are, what variables should be 
+> expected, how they should be signed, etc. Though we don't expect it to 
+> happen very often, we want to anticipate possible changes in the 
+> firmware which may affect the kernel such as new features, support of 
+> new authentication mechanisms, addition of new variables. Corresponding 
+> skiboot patches are on - 
+> https://lists.ozlabs.org/pipermail/skiboot/2019-June/014641.html
 
-> +Mandatory kernel configuration for IMA & EVM:
-> +```
-> +CONFIG_INTEGRITY=y
-> +CONFIG_INTEGRITY_SIGNATURE=y
-> +CONFIG_IMA=y
-> +CONFIG_IMA_APPRAISE=y
-> +CONFIG_EVM=y
-> +CONFIG_KEYS=y
-> +CONFIG_TRUSTED_KEYS=y
-> +CONFIG_ENCRYPTED_KEYS=y
-> +```
-> +
-> +Example of installing IMA + EVM on openSUSE:
-> +
-> +* Boot install system with `ima_policy=appraise_tcb ima_appraise=fix evm=fix` kernel parameters
+I still feel like this is holding onto ongoing complexity for very
+little gain, but perhaps this is because I can't picture a specific
+change that would actually require a wholesale change to the scheme.
 
-I was missing the measurement option. ima_policy should have been
-ima_policy='tcb|appraise_tcb' for the statement below to be true.
+You mention new features, support for new authentication mechanisms, and
+addition of new variables.
 
-> +  (for IMA measurement, IMA appraisal and EVM protection)
-> +* Proceed with installation until summary screen, but do not start the installation yet
-> +* Select package `dracut-ima` (required for early boot EVM support) for installation
-> +  (Debian based distros already contain IMA + EVM support in `dracut` package)
-> +* Change to a console window and run commands to generate keys required by EVM:
-> +```
-> +# mkdir /etc/keys
-> +# user_key=$(keyctl add user kmk-user "`dd if=/dev/urandom bs=1 count=32 2>/dev/null`" @u)
-> +# keyctl pipe "$user_key" > /etc/keys/kmk-user.blob
-> +# evm_key=$(keyctl add encrypted evm-key "new user:kmk-user 64" @u)
-> +# keyctl pipe "$evm_key" >/etc/keys/evm.blob
-> +# cat <<END >/etc/sysconfig/masterkey
-> +MASTERKEYTYPE="user"
-> +MASTERKEY="/etc/keys/kmk-user.blob"
-> +END
-> +# cat <<END >/etc/sysconfig/evm
-> +EVMKEY="/etc/keys/evm.blob"
-> +END
-> +# mount -t securityfs security /sys/kernel/security
-> +# echo 1 >/sys/kernel/security/evm
-> +```
-> +
-> +* Go back to the installation summary screen and start the installation
-> +* During the installation execute the following commands from the console:
-> +```
-> +# cp -r /etc/keys /mnt/etc/ # Debian based distributions: use /target instead of /mnt
-> +# cp /etc/sysconfig/{evm,masterkey} /mnt/etc/sysconfig/
-> +```
-> +
-> +This should work on any distribution using dracut.
-> +Loading EVM keys is also possible with initramfs-tools (Debian based distributions).
-> +
-> +Of course it's possible to install OS usual way, add keys later and fix missing xattrs with:
-> +```
-> +evmctl -r ima_fix /
-> +```
-> +
-> +or with `find` if evmctl not available:
-                            ^
-                            is
+ - New features is a bit too generic to answer specifically. In general
+   I accept that there exists some new feature that would be
+   sufficiently backwards-incompatible as to require a new version. I
+   just can't think of one off the top of my head and so I'm not
+   convinced it's worth the complexity. Did you have something in mind?
 
-> +```
-> +find / \( -fstype rootfs -o -fstype ext4 -o -fstype btrfs -o -fstype xfs \) -exec sh -c "< '{}'" \;
-> +```
-> +Again, fixing requires `ima_policy=appraise_tcb ima_appraise=fix evm=fix` kernel parameters.
+ - By support for new authentication mechanisms, I assume you mean new
+   mechanisms for authenticating variable updates? This is communicated
+   in edk2 via the attributes field. Looking at patch 5 from the skiboot
+   series:
 
-Maybe also add the tcb option for measurement here.
++ * When the attribute EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS is set,
++ * then the Data buffer shall begin with an instance of a complete (and
++ * serialized) EFI_VARIABLE_AUTHENTICATION_2 descriptor.
 
-Ignaz
+   Could a new authentication scheme be communicated by setting a
+   different attribute value? Or are we not carrying attributes in the
+   metadata blob?
 
-> diff --git a/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh b/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh
-> new file mode 100755
-> index 000000000..024b03917
-> --- /dev/null
-> +++ b/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh
-> @@ -0,0 +1,93 @@
-> +#!/bin/sh
-> +# Copyright (c) 2019 Petr Vorel <pvorel@suse.cz>
-> +# Based on reproducer and further discussion with Ignaz Forster <iforster@suse.de>
-> +# Reproducer for not upstreamed patchset [1] and previous report [2].
-> +# [1] https://www.spinics.net/lists/linux-integrity/msg05926.html
-> +# [2] https://www.spinics.net/lists/linux-integrity/msg03593.html
-> +
-> +TST_SETUP="setup"
-> +TST_CLEANUP="cleanup"
-> +TST_NEEDS_DEVICE=1
-> +TST_CNT=4
-> +. ima_setup.sh
-> +
-> +setup()
-> +{
-> +	EVM_FILE="/sys/kernel/security/evm"
-> +
-> +	[ -f "$EVM_FILE" ] || tst_brk TCONF "EVM not enabled in kernel"
-> +	[ $(cat $EVM_FILE) -eq 1 ] || tst_brk TCONF "EVM not enabled for this boot"
-> +
-> +	check_ima_policy "appraise_tcb"
-> +
-> +	lower="$TST_MNTPOINT/lower"
-> +	upper="$TST_MNTPOINT/upper"
-> +	work="$TST_MNTPOINT/work"
-> +	merged="$TST_MNTPOINT/merged"
-> +	mkdir -p $lower $upper $work $merged
-> +
-> +	device_backup="$TST_DEVICE"
-> +	TST_DEVICE="overlay"
-> +
-> +	fs_type_backup="$TST_FS_TYPE"
-> +	TST_FS_TYPE="overlay"
-> +
-> +	mntpoint_backup="$TST_MNTPOINT"
-> +	TST_MNTPOINT="$merged"
-> +
-> +	params_backup="$TST_MNT_PARAMS"
-> +	TST_MNT_PARAMS="-o lowerdir=$lower,upperdir=$upper,workdir=$work"
-> +
-> +	tst_mount
-> +	mounted=1
-> +}
-> +
-> +test1()
-> +{
-> +	local file="foo1.txt"
-> +
-> +	tst_res TINFO "overwrite file in overlay"
-> +	EXPECT_PASS echo lower \> $lower/$file
-> +	EXPECT_PASS echo overlay \> $merged/$file
-> +}
-> +
-> +test2()
-> +{
-> +	local file="foo2.txt"
-> +
-> +	tst_res TINFO "append file in overlay"
-> +	EXPECT_PASS echo lower \> $lower/$file
-> +	EXPECT_PASS echo overlay \>\> $merged/$file
-> +}
-> +
-> +test3()
-> +{
-> +	local file="foo3.txt"
-> +
-> +	tst_res TINFO "create a new file in overlay"
-> +	EXPECT_PASS echo overlay \> $merged/$file
-> +}
-> +
-> +test4()
-> +{
-> +	local f
-> +
-> +	tst_res TINFO "read all created files"
-> +	for f in $(find $TST_MNTPOINT -type f); do
-> +		EXPECT_PASS cat $f \> /dev/null 2\> /dev/null
-> +	done
-> +}
-> +
-> +cleanup()
-> +{
-> +	[ -n "$mounted" ] || return 0
-> +
-> +	tst_umount $TST_DEVICE
-> +
-> +	TST_DEVICE="$device_backup"
-> +	TST_FS_TYPE="$fs_type_backup"
-> +	TST_MNTPOINT="$mntpoint_backup"
-> +	TST_MNT_PARAMS="$params_backup"
-> +}
-> +
-> +tst_run
-> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> index 606034fec..529b77529 100644
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-> @@ -66,14 +66,14 @@ print_ima_config()
->   	local config="/boot/config-$(uname -r)"
->   	local i
->   
-> -	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
-> -
->   	if [ -r "$config" ]; then
->   		tst_res TINFO "IMA kernel config:"
->   		for i in $(grep ^CONFIG_IMA $config); do
->   			tst_res TINFO "$i"
->   		done
->   	fi
-> +
-> +	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
->   }
->   
->   ima_setup()
-> 
+ - For addition of new variables, I'm confused as to why this would
+   require a new API - wouldn't it just be exposed in the normal way via
+   opal_secvar_get(_next)?
+
+I guess I also somewhat object to calling it a 'backend' if we're using
+it as a version scheme. I think the skiboot storage backends are true
+backends - they provide different implementations of the same
+functionality with the same API, but this seems like you're using it to
+indicate different functionality. It seems like we're using it as if it
+were called OPAL_SECVAR_VERSION.
+
+>>   - What is the correct fallback behaviour if a kernel receives a result
+>>     that it does not expect? If a kernel expecting BackendV1 is instead
+>>     informed that it is running on BackendV2, then the cannot access the
+>>     secure variable at all, so it cannot load keys that are potentially
+>>     required to successfully boot (e.g. to validate the module for
+>>     network card or graphics!)
+>
+> The backend is declaredby the firmware, and is set at compile-time. The 
+> kernel queriesfirmware on whichbackend is in use, and the backend will 
+> not change at runtime.If the backend in use by the firmware is not 
+> supported by the kernel (e.g. kernel is too old), the kernel does not 
+> attempt to read any secure variables, as it won't understand what the 
+> format is. This is a secure boot failure condition, as we cannot verify 
+> the next kernel. With addition of new backends in the skiboot, the 
+> support will be added to the kernel. Note: skiboot and skiroot should 
+> always be in sync with backend support.
+
+Seems reasonable. I'm thinking specifically about the kernel loaded
+after skiroot; and yes, on reflection just failing to boot is the only
+sensible thing you can do.
+
+Regards,
+Daniel
+
