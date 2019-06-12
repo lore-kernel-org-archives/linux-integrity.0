@@ -2,72 +2,70 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C64CC31E49
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21879C31E45
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04FCF205ED
+	by mail.kernel.org (Postfix) with ESMTP id EC0C9205ED
 	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 17:12:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NlY+q/Vl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icj8iRGZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbfFMRLj (ORCPT
+        id S1729779AbfFMRME (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 13:11:39 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41238 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729099AbfFLWQI (ORCPT
+        Thu, 13 Jun 2019 13:12:04 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42668 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729081AbfFLWQF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 12 Jun 2019 18:16:08 -0400
-Received: by mail-pg1-f195.google.com with SMTP id 83so9673787pgg.8;
-        Wed, 12 Jun 2019 15:16:07 -0700 (PDT)
+        Wed, 12 Jun 2019 18:16:05 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l19so7077532pgh.9;
+        Wed, 12 Jun 2019 15:16:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+ORNFrPEzZ/qL561J2uCpcfx53+w6rVCIUyixIdCf1s=;
-        b=NlY+q/VlevbZyQRc2yuSDOQNjD550KzBxr28rtqrzftham1P0Oup/8EROt0GXj3Uvb
-         pCty4kL3SoPjepd/ub0Y/7NdBKWJCDkCl6stIEIV4jBqCuhfc5K7iI1s0AE7szqtmrkc
-         2jFjDt4peuZtcBrm7vIBnfXE5St6vtB63/L2VIdJQeGa+qpGriOQFicI2C5QWvHV3iLi
-         Wf5XPaoRy1y5J9JMR+G13wo8Y+L8C9P5EeNR0o3UQ7hDXi0oSf4iIQCfEiIMq6IWl4ac
-         j382YP2mqIyrkLKYBzk0NreC3fRhRGOTejd108FbV9D4zmQFBQPkKVUKVBGKcksUbB3P
-         vq5Q==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=50PXAoiseRLWKqIb7OtWEpaVhpI7JnjdwO7ARnWibU0=;
+        b=icj8iRGZDF/ZJx+loILNNjs4C+KWLauz5lfr+Tccz/X5CVmpJkNCsGxH0RUb1GhDM2
+         1hWOGudmDN6yvLFza60VkcIULcXF6I4GobhahVnElVABXWnPwbj8Ad3Z4FFl6pI8bfHv
+         6LZkpOiEBGUX1uo2m8H3X0dGKhDnKtYZhEVThebqnrncvdxjfWSH94+YLUsZqjPQq6rq
+         cuZ7HRtT+ubNmR8OivEWEbVoH60j0AEgPrKQY6clqDut7e2MAIgOnabRNbVtXZtrXc8Z
+         lmWKrq8xiv6/7ryx+De+bmjm1eIObNeBpU2pK5Tvgm6drs9NTLRu9l0nV6xWO/Hl4JOY
+         C3jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+ORNFrPEzZ/qL561J2uCpcfx53+w6rVCIUyixIdCf1s=;
-        b=PMLNPXqRTYBkL9Gz8ehqUqUWX3Tg1OeUeBS260e/dDg5uyc46QCq05EjRR+/6rZobW
-         2gNlCT2X/4RCY0WrA8Jk6rI2mUUYpWf896iX2hUU9vSMrYoXJxttw+iT9PWmsQfF4JW5
-         xR0MOY69L1WDvUgrWkxh5QqhJZ4hGcO8+J50M095nwKL27JRlsU9HjKl7r96iJ2m5hlG
-         vmaadsmTwtI65WAa+khA3ycYJZ4g6kEy0H9w53q4qyq2ZSXYxuhhirw3hGPHcVeBx1oK
-         is0WmurQREFSYeKAEoXv2udxg+E4J/s3Dtfgx8o1we4smQ3p3npfnHZwIixX6BHRBJAS
-         P+5A==
-X-Gm-Message-State: APjAAAW2vUSeiPb/bsPsefJFod3gIcWISe5qxTdtIcl4YYciK+W5fkwQ
-        gi5Xip56UuucMpsCfOBm0cOdgI04
-X-Google-Smtp-Source: APXvYqwSYW/yGY1koyjtWfBEpc795qoM7U3dxAr/0Q841JlWYux1B1pAKe80OF3a2waotr55BFazig==
-X-Received: by 2002:a63:5009:: with SMTP id e9mr26649762pgb.396.1560377767345;
-        Wed, 12 Jun 2019 15:16:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=50PXAoiseRLWKqIb7OtWEpaVhpI7JnjdwO7ARnWibU0=;
+        b=gFC5xVNe0D+c02vHK5Ip99zDtb6R6j3soLpl4tMLgdT+2TCkHo98/KlwYDdNTNVMEk
+         M+JIXyTVYrnWgyG2v5S2srhWkLc4hQifLc7eJEIR/Ae6ninNo0B0csP8vJLaOkn2ucyB
+         tcnwdwjHpCimi/eOD+sbYH84B11/GIt4jaEVpB/xUEems05yfuNlhbWM4n2sYGd+Oqy6
+         v5tcvwUrdxeNpeio0J3l7axNKRo5O/TwZeDKfpk+85qprMaWSqjAVWYXhsCoh3yuKrfd
+         PksfU1JF/85Iif30ukG3vw6HMT4z7+SP4uNoojZdzZ6la7hPaitu1vMOuoPsuxDRshIF
+         ZR5g==
+X-Gm-Message-State: APjAAAUpNGq4OtRGApOTjZ7AvJxrzZB5h3zfRg3eLTg5O5kJ1E+8/h6A
+        sefXAvj96DFh6r1fcRhhYCtfQyGp
+X-Google-Smtp-Source: APXvYqycTsh98tnCNefzfzOzPReWZq3/iQw+UWpZ4cK8K3Os/5Wa3dO7FaqfHDGp1094qnYj4yhR8A==
+X-Received: by 2002:a65:41c6:: with SMTP id b6mr26516528pgq.399.1560377763876;
+        Wed, 12 Jun 2019 15:16:03 -0700 (PDT)
 Received: from localhost.localdomain ([167.220.56.169])
-        by smtp.gmail.com with ESMTPSA id f7sm506517pfd.43.2019.06.12.15.16.06
+        by smtp.gmail.com with ESMTPSA id f7sm506517pfd.43.2019.06.12.15.16.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 12 Jun 2019 15:16:06 -0700 (PDT)
+        Wed, 12 Jun 2019 15:16:03 -0700 (PDT)
 From:   Prakhar Srivastava <prsriva02@gmail.com>
 To:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com, vgoyal@redhat.com,
         Prakhar Srivastava <prsriva02@gmail.com>
-Subject: [PATCH V8 3/3] Call ima_kexec_cmdline to measure the cmdline args
-Date:   Wed, 12 Jun 2019 15:15:49 -0700
-Message-Id: <20190612221549.28399-4-prsriva02@gmail.com>
+Subject: [PATCH V8 0/3] Add support for measuring the boot command line during kexec_file_load
+Date:   Wed, 12 Jun 2019 15:15:46 -0700
+Message-Id: <20190612221549.28399-1-prsriva02@gmail.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190612221549.28399-1-prsriva02@gmail.com>
-References: <20190612221549.28399-1-prsriva02@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -75,53 +73,104 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-During soft reboot(kexec_file_load) boot cmdline args
-are not measured.Thus the new kernel on load boots with
-an assumption of cold reboot.
+The kexec boot command line arguments are not currently being
+measured.
 
-This patch makes a call to the ima hook ima_kexec_cmdline,
-added in "Define a new IMA hook to measure the boot command
-line arguments"
-to measure the boot cmdline args into the ima log.
+Currently during soft reboot(kexec) 
+  - the PCRS are not reset
+  - the command line arguments used for the next kernel are not measured.
+This gives the impression to the secure boot attestation that a cold boot took
+place.
+For secure boot attestation, it is necessary to measure the kernel
+command line. For cold boot, the boot loader can be enhanced to measure 
+these parameters.
+(https://mjg59.dreamwidth.org/48897.html)
 
-- call ima_kexec_cmdline from kexec_file_load.
-- move the call ima_add_kexec_buffer after the cmdline
-args have been measured.
+This patch set aims to address measuring the boot command line during
+soft reboot(kexec_file_load).
 
-Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
----
- kernel/kexec_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+To achive the above the patch series does the following
+  -Add a new ima hook: ima_kexec_cmdline which measures the cmdline args
+   into the ima log, behind a new ima policy entry KEXEC_CMDLINE.
+   The kexec cmdline hash is stored in the "d-ng" field of the template data.
+  -Since the cmldine args cannot be appraised, a new template field(buf) is
+   added. The template field contains the buffer passed(cmldine args), which
+   can be used to appraise/attest at a later stage.
+   The kexec cmdline buffer is stored as HEX in the buf field of the event_data.
+  -Call the ima_kexec_cmdline(...) hook from kexec_file_load call.
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 072b6ee55e3f..b0c724e5d86c 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 		return ret;
- 	image->kernel_buf_len = size;
- 
--	/* IMA needs to pass the measurement list to the next kernel. */
--	ima_add_kexec_buffer(image);
--
- 	/* Call arch image probe handlers */
- 	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
- 					    image->kernel_buf_len);
-@@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+
-+		ima_kexec_cmdline(image->cmdline_buf,
-+				  image->cmdline_buf_len - 1);
- 	}
- 
-+	/* IMA needs to pass the measurement list to the next kernel. */
-+	ima_add_kexec_buffer(image);
-+
- 	/* Call arch image load handlers */
- 	ldata = arch_kexec_kernel_image_load(image);
- 
+The ima logs need to be carried over to the next kernel, which will be followed
+up by other patchsets for x86_64 and arm64.
+
+The kexec cmdline hash is stored in the "d-ng" field of the template data.
+and can be verified using
+sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | 
+  grep  kexec-cmdline | cut -d' ' -f 6 | xxd -r -p | sha256sum
+
+Changelog:
+V8(since V7):
+  - added a new ima template name "ima-buf" 
+  - code cleanup
+
+V7:
+  - rebased to next-queued-testing
+  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/log/?h=next-queued-testing
+
+V6:
+  -add a new ima hook and policy to measure the cmdline
+    args(ima_kexec_cmdline)
+  -add a new template field buf to contain the buffer measured.
+  [suggested by Mimi Zohar]
+   add new fields to ima_event_data to store/read buffer data.
+  [suggested by Roberto]
+  -call ima_kexec_cmdline from kexec_file_load path
+
+v5:
+  -add a new ima hook and policy to measure the cmdline
+    args(ima_kexec_cmdline)
+  -add a new template field buf to contain the buffer measured.
+    [suggested by Mimi Zohar]
+  -call ima_kexec_cmdline from kexec_file_load path
+
+v4:
+  - per feedback from LSM community, removed the LSM hook and renamed the
+    IMA policy to KEXEC_CMDLINE
+
+v3: (rebase changes to next-general)
+  - Add policy checks for buffer[suggested by Mimi Zohar]
+  - use the IMA_XATTR to add buffer
+  - Add kexec_cmdline used for kexec file load
+  - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
+
+v2:
+  - Add policy checks for buffer[suggested by Mimi Zohar]
+  - Add an LSM hook to allow usage by other LSM.[suggestd by Mimi Zohar]
+  - use the IMA_XATTR to add buffer instead of sig template
+
+v1:
+  -Add kconfigs to control the ima_buffer_check
+  -measure the cmdline args suffixed with the kernel file name
+  -add the buffer to the template sig field.
+
+Prakhar Srivastava (3):
+  Add a new ima hook ima_kexec_cmdline to measure cmdline args
+  add a new ima template field buf
+  call ima_kexec_cmdline to measure the cmdline args
+
+ Documentation/ABI/testing/ima_policy      |  1 +
+ Documentation/security/IMA-templates.rst  |  2 +-
+ include/linux/ima.h                       |  2 +
+ kernel/kexec_file.c                       |  8 ++-
+ security/integrity/ima/ima.h              |  3 +
+ security/integrity/ima/ima_api.c          |  5 +-
+ security/integrity/ima/ima_init.c         |  2 +-
+ security/integrity/ima/ima_main.c         | 80 +++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c       |  9 +++
+ security/integrity/ima/ima_template.c     |  2 +
+ security/integrity/ima/ima_template_lib.c | 20 ++++++
+ security/integrity/ima/ima_template_lib.h |  4 ++
+ 12 files changed, 131 insertions(+), 7 deletions(-)
+
 -- 
-2.19.1
+2.17.1
 
