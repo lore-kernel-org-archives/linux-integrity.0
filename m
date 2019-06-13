@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5021AC31E45
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803A4C31E45
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3070420896
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:08:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 595AC21473
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:13:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732585AbfFMPIp (ORCPT
+        id S1732853AbfFMPNE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:08:45 -0400
-Received: from mga18.intel.com ([134.134.136.126]:33812 "EHLO mga18.intel.com"
+        Thu, 13 Jun 2019 11:13:04 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6651 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732375AbfFMN7E (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 09:59:04 -0400
+        id S1732613AbfFMPND (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Jun 2019 11:13:03 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 06:59:03 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 08:13:02 -0700
 X-ExtLoop1: 1
 Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
-  by orsmga005.jf.intel.com with ESMTP; 13 Jun 2019 06:59:00 -0700
-Date:   Thu, 13 Jun 2019 16:58:58 +0300
+  by orsmga006.jf.intel.com with ESMTP; 13 Jun 2019 08:12:58 -0700
+Date:   Thu, 13 Jun 2019 18:12:57 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, groeck@chromium.org,
-        Vadim Sukhomlinov <sukhomlinov@google.com>,
-        apronin@chromium.org, mka@chromium.org, swboyd@chromium.org,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM
- operations
-Message-ID: <20190613135858.GB12791@linux.intel.com>
-References: <20190610220118.5530-1-dianders@chromium.org>
- <20190612191618.GC3378@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, jens.wiklander@linaro.org,
+        corbet@lwn.net, dhowells@redhat.com, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+Subject: Re: [RFC 1/7] tee: optee: allow kernel pages to register as shm
+Message-ID: <20190613151257.GA18488@linux.intel.com>
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+ <1560421833-27414-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190612191618.GC3378@linux.intel.com>
+In-Reply-To: <1560421833-27414-2-git-send-email-sumit.garg@linaro.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,25 +51,12 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 10:16:18PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Jun 10, 2019 at 03:01:18PM -0700, Douglas Anderson wrote:
-> > From: Vadim Sukhomlinov <sukhomlinov@google.com>
-> > 
-> > TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-> > future TPM operations. TPM 1.2 behavior was different, future TPM
-> > operations weren't disabled, causing rare issues. This patch ensures
-> > that future TPM operations are disabled.
-> > 
-> > Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-> > [dianders: resolved merge conflicts with mainline]
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+On Thu, Jun 13, 2019 at 04:00:27PM +0530, Sumit Garg wrote:
+> Kernel pages are marked as normal type memory only so allow kernel pages
+> to be registered as shared memory with OP-TEE.
 > 
-> Nice catch. Thank you.
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-Applied to my master branch. I also added a fixes tag.
-
-Can you check that it looks legit to you?
+Just out of pure interest why this was not allowed before?
 
 /Jarkko
