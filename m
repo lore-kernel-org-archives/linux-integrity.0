@@ -2,91 +2,176 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EC7C31E45
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE14FC31E45
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6174921721
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DEDE20673
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbfFMQkv (ORCPT
+        id S2392658AbfFMQmz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:40:51 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33005 "EHLO huawei.com"
+        Thu, 13 Jun 2019 12:42:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43586 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730575AbfFMG5J (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:57:09 -0400
-Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 81C2BB8CCEE475682587;
-        Thu, 13 Jun 2019 07:57:07 +0100 (IST)
-Received: from [10.220.96.108] (10.220.96.108) by smtpsuk.huawei.com
- (10.201.108.35) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 13 Jun
- 2019 07:56:58 +0100
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <dmitry.kasatkin@huawei.com>,
-        <mjg59@google.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
- <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com>
- <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
- <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
- <CAE=NcrZiyWjZUuxdLgA9Bq89Cpt1W6MLAzPkLHVgfOqSo2i1hQ@mail.gmail.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <144bf319-ea0c-f6b6-5737-0aac34f37186@huawei.com>
-Date:   Thu, 13 Jun 2019 08:57:05 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1730500AbfFMQmy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Jun 2019 12:42:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 226A4AF26;
+        Thu, 13 Jun 2019 16:42:53 +0000 (UTC)
+Subject: Re: [PATCH v4 3/4] ima/ima_measurements.sh: Require builtin IMA tcb
+ policy
+To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+References: <20190613161414.29161-1-pvorel@suse.cz>
+ <20190613161414.29161-4-pvorel@suse.cz>
+From:   Ignaz Forster <iforster@suse.de>
+Message-ID: <64f41ac8-51fc-5d2f-d6c6-0e363438beb9@suse.de>
+Date:   Thu, 13 Jun 2019 18:42:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAE=NcrZiyWjZUuxdLgA9Bq89Cpt1W6MLAzPkLHVgfOqSo2i1hQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190613161414.29161-4-pvorel@suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.220.96.108]
-X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 6/13/2019 8:01 AM, Janne Karhunen wrote:
-> On Wed, Jun 12, 2019 at 7:33 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+Hi Petr,
+
+Am 13.06.19 um 18:14 Uhr schrieb Petr Vorel:
+> Although custom policy which may contain the equivalent measurement
+> tcb rules can be loaded via dracut, systemd or later manually from
+> user space, detecting it would require IMA_READ_POLICY=y. In order
+> to simplify the check and avoid false positives lets ignore this
+> option and require builtin IMA tcb policy.
 > 
->>> That's a pretty big change for the userland IMHO. Quite a few
->>> configurations out there will break, including mine I believe, so I
->>> hope there is a solid reason asking people to change their stuff. I'm
->>> fine holding off all writing until it is safe to do so for now..
->>
->> The goal of appraisal is to allow access only to files with a valid
->> signature or HMAC. With the current behavior, that cannot be guaranteed.
->>
->> Unfortunately, dracut-state.sh is created very early. It could be
->> possible to unseal the key before, but this probably means modifying
->> systemd.
+> Create check_ima_policy() helper in ima_setup.sh, so it can be reused in
+> other tests.
 > 
-> Ok, I see the use case. Now, if you pull a urandom key that early on
-> during the boot, the state of the system entropy is at all time low,
-> and you are not really protecting against any sort of offline attack
-> since the file is created during that boot cycle. Is there really use
-> for using such key? Wouldn't it be possible to create a new config
-> option, say IMA_ALLOW_EARLY_WRITERS, that would hold the NEW_FILE flag
-> until the persistent key becomes available? In other words, it would
-> start the measuring at the point when the key becomes online?
+> + Use SPDX license identifier
+> 
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> ---
+>   .../integrity/ima/tests/ima_measurements.sh   | 23 ++++----------
+>   .../security/integrity/ima/tests/ima_setup.sh | 30 ++++++++++---------
+>   2 files changed, 21 insertions(+), 32 deletions(-)
+> 
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+> index 328affc43..1b9ed85b8 100755
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+> @@ -1,19 +1,7 @@
+>   #!/bin/sh
+>   # Copyright (c) 2009 IBM Corporation
+> -# Copyright (c) 2018 Petr Vorel <pvorel@suse.cz>
+> -#
+> -# This program is free software; you can redistribute it and/or
+> -# modify it under the terms of the GNU General Public License as
+> -# published by the Free Software Foundation; either version 2 of
+> -# the License, or (at your option) any later version.
+> -#
+> -# This program is distributed in the hope that it would be useful,
+> -# but WITHOUT ANY WARRANTY; without even the implied warranty of
+> -# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> -# GNU General Public License for more details.
+> -#
+> -# You should have received a copy of the GNU General Public License
+> -# along with this program. If not, see <http://www.gnu.org/licenses/>.
+> +# Copyright (c) 2018-2019 Petr Vorel <pvorel@suse.cz>
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+>   #
+>   # Author: Mimi Zohar, zohar@ibm.vnet.ibm.com
+>   #
+> @@ -28,16 +16,17 @@ TST_NEEDS_DEVICE=1
+>   
+>   setup()
+>   {
+> -	TEST_FILE="$PWD/test.txt"
+> +	check_ima_policy "tcb"
+>   
+> +	TEST_FILE="$PWD/test.txt"
+>   	POLICY="$IMA_DIR/policy"
+>   	[ -f "$POLICY" ] || tst_res TINFO "not using default policy"
+> -
+>   	DIGEST_INDEX=
+>   
+>   	local template="$(tail -1 $ASCII_MEASUREMENTS | cut -d' ' -f 3)"
+>   	local i
+>   
+> +	# parse digest index
+>   	# https://www.kernel.org/doc/html/latest/security/IMA-templates.html#use
+>   	case "$template" in
+>   	ima|ima-ng|ima-sig) DIGEST_INDEX=4 ;;
+> @@ -56,8 +45,6 @@ setup()
+>   
+>   	[ -z "$DIGEST_INDEX" ] && tst_brk TCONF \
+>   		"Cannot find digest index (template: '$template')"
+> -
+> -	tst_res TINFO "IMA measurement tests assume tcb policy to be loaded (ima_policy=tcb)"
+>   }
+>   
+>   # TODO: find support for rmd128 rmd256 rmd320 wp256 wp384 tgr128 tgr160
+> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> index da49eb1b2..606034fec 100644
+> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+> @@ -1,19 +1,7 @@
+>   #!/bin/sh
+>   # Copyright (c) 2009 IBM Corporation
+> -# Copyright (c) 2018 Petr Vorel <pvorel@suse.cz>
+> -#
+> -# This program is free software; you can redistribute it and/or
+> -# modify it under the terms of the GNU General Public License as
+> -# published by the Free Software Foundation; either version 2 of
+> -# the License, or (at your option) any later version.
+> -#
+> -# This program is distributed in the hope that it would be useful,
+> -# but WITHOUT ANY WARRANTY; without even the implied warranty of
+> -# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> -# GNU General Public License for more details.
+> -#
+> -# You should have received a copy of the GNU General Public License
+> -# along with this program. If not, see <http://www.gnu.org/licenses/>.
+> +# Copyright (c) 2018-2019 Petr Vorel <pvorel@suse.cz>
+> +# SPDX-License-Identifier: GPL-2.0-or-later
+>   #
+>   # Author: Mimi Zohar, zohar@ibm.vnet.ibm.com
+>   
+> @@ -31,6 +19,20 @@ SYSFS="/sys"
+>   UMOUNT=
+>   TST_FS_TYPE="ext3"
+>   
+> +check_ima_policy()
+> +{
+> +	local policy="$1"
+> +	local i
+> +
+> +	grep -q "ima_$policy" /proc/cmdline && return
+> +	for i in $(cat /proc/cmdline); do
+> +		if grep -q '^ima_policy=' $i; then
 
-I also thought about similar solutions. Another is for example to keep
-the appraisal flags at file close, if security.ima is successfully
-added to the file.
+$i will not contain a file, which grep will expect here. I guess you 
+meant to echo the variable instead?
 
-Initializing EVM with a key is not a trivial change, but it seemed
-better to me as it does not introduce exceptions in the IMA behavior.
+Ignaz
 
-Roberto
+> +			grep -e "|[ ]*$policy" -e "$policy[ ]*|" -e "=$policy" $i && return
+> +		fi
+> +	done
+> +	tst_brk TCONF "IMA measurement tests require builtin IMA $policy policy (e.g. ima_policy=$policy kernel parameter)"
+> +}
+> +
+>   mount_helper()
+>   {
+>   	local type="$1"
+> 
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
