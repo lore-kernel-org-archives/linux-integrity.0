@@ -2,99 +2,146 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C95C31E45
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9EC8C31E49
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B63215EA
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:45:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRV4gxKf"
+	by mail.kernel.org (Postfix) with ESMTP id B8BF820665
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbfFMQpM (ORCPT
+        id S1731807AbfFMQ5N (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:45:12 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36109 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfFMGCJ (ORCPT
+        Thu, 13 Jun 2019 12:57:13 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54334 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729932AbfFMBGR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 02:02:09 -0400
-Received: by mail-lf1-f67.google.com with SMTP id q26so14082701lfc.3;
-        Wed, 12 Jun 2019 23:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E9vz0in6RS8016Qk80W2zWm5aSJZ0kwQGVww14npFtk=;
-        b=CRV4gxKfPLzeYScqoU0Ca+ajA0dg0SDlrpr6b1YHmlNfBA94oYtvM4y2moLJrM97EZ
-         tzk1NbZAKxfjYp1mdPh5z5cDM6U/3SKPRLoj2IpKEOK9LUbj2VP8dpLuD2G6Ao357mmy
-         Bb6f/NTRdMHvhLxWDe7lTdoShBKC88eWXSun1vcGUc8ZHzqeSLym3cJbOKkpqj63Mznx
-         lBB0FVFwMBdoobmzW67x8MGrj996MBo/a+xHpsTpWk8+ocWe7gx9G/JEGmNOBCAd6x3s
-         /yCsT77iw2Go4upeX35AhpEFv5hAAg91+Zbdzcl9f4SP9ofCHkURljd+CWfWuj8GrP6D
-         J1lQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E9vz0in6RS8016Qk80W2zWm5aSJZ0kwQGVww14npFtk=;
-        b=qaY7j6Llyv2F1rQ1yndztwEodOu0p6EZqHFc8W0rsOysy/8bRRSV/Q/1RZwOHj/iNe
-         tdVZpIDtBHqg023UC/jkUcNYh2QmZtUF+zs5HTPNZZy0k7zY2om9UZ2Qu3SrJ/SFhyeB
-         PGOpTyFpKDueV1MQgHdrz/do9ZkPNLZFZLlFwfAJQW2iUtMpc4KicOtMNFRU7gausXbv
-         2MqKrds5MyhIdrq3JywNktmXXMFCpl+1WoKpzzi2YRxZS2RyjY2rkH4wNGJpjGNC7UGR
-         umi+JrN8ZImA4STNy9iwoWoIVQaDSUQenj1z1pNm9QoA8vyA7VNvSioAnIgL0HjJug4x
-         V3CQ==
-X-Gm-Message-State: APjAAAVed/xDj+ptUk29bKzg1JrZciGQKw39HzVRBt7WWy89yW5xmcaz
-        3tfasq4T6F4TExGEa6+nrHVWDK70OKtzpTDC91c=
-X-Google-Smtp-Source: APXvYqxjxDnpuGrKLNG+sde6iNS+MpLYpd3Fy4JHmv9BwhTqFLoORkVgVyyxHUWe1BcnS70oSUkyh/8kwIT5f02FEuQ=
-X-Received: by 2002:a19:8cc:: with SMTP id 195mr8530538lfi.150.1560405727256;
- Wed, 12 Jun 2019 23:02:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190606112620.26488-1-roberto.sassu@huawei.com>
- <CAE=NcraYOw9B3RFu3_DbJs9nPT87AtQEptC7zF4kAu4FP8YhxA@mail.gmail.com>
- <d9efe3c7-20dd-bbb0-40d8-40f69cba5b88@huawei.com> <CAE=NcraHqzST=SZNcrSgpv5EqfyUfpCCb7iQ0Oh6uohL3yiCdw@mail.gmail.com>
- <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
-In-Reply-To: <c13c6b4f-1302-35fb-f077-00b7f84fea08@huawei.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 13 Jun 2019 09:01:55 +0300
-Message-ID: <CAE=NcrZiyWjZUuxdLgA9Bq89Cpt1W6MLAzPkLHVgfOqSo2i1hQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] ima/evm fixes for v5.2
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, dmitry.kasatkin@huawei.com,
-        mjg59@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, silviu.vlasceanu@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Jun 2019 21:06:17 -0400
+Received: from jaskaran-Intel-Server-Board-S1200V3RPS-UEFI-Development-Kit.corp.microsoft.com (unknown [131.107.160.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2FC2720B7186;
+        Wed, 12 Jun 2019 18:06:16 -0700 (PDT)
+From:   Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+To:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
+        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
+        mpatocka@redhat.com, jaskarankhurana@linux.microsoft.com
+Subject: [RFC PATCH v4 0/1] Add dm verity root hash pkcs7 sig validation.
+Date:   Wed, 12 Jun 2019 18:06:09 -0700
+Message-Id: <20190613010610.4364-1-jaskarankhurana@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jun 12, 2019 at 7:33 PM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+This patch set adds in-kernel pkcs7 signature checking for the roothash of
+the dm-verity hash tree.
+The verification is to support cases where the roothash is not secured by
+Trusted Boot, UEFI Secureboot or similar technologies.
+One of the use cases for this is for dm-verity volumes mounted after boot,
+the root hash provided during the creation of the dm-verity volume has to
+be secure and thus in-kernel validation implemented here will be used
+before we trust the root hash and allow the block device to be created.
 
-> > That's a pretty big change for the userland IMHO. Quite a few
-> > configurations out there will break, including mine I believe, so I
-> > hope there is a solid reason asking people to change their stuff. I'm
-> > fine holding off all writing until it is safe to do so for now..
->
-> The goal of appraisal is to allow access only to files with a valid
-> signature or HMAC. With the current behavior, that cannot be guaranteed.
->
-> Unfortunately, dracut-state.sh is created very early. It could be
-> possible to unseal the key before, but this probably means modifying
-> systemd.
+Why we are doing validation in the Kernel?
 
-Ok, I see the use case. Now, if you pull a urandom key that early on
-during the boot, the state of the system entropy is at all time low,
-and you are not really protecting against any sort of offline attack
-since the file is created during that boot cycle. Is there really use
-for using such key? Wouldn't it be possible to create a new config
-option, say IMA_ALLOW_EARLY_WRITERS, that would hold the NEW_FILE flag
-until the persistent key becomes available? In other words, it would
-start the measuring at the point when the key becomes online?
+The reason is to still be secure in cases where the attacker is able to
+compromise the user mode application in which case the user mode validation
+could not have been trusted.
+The root hash signature validation in the kernel along with existing
+dm-verity implementation gives a higher level of confidence in the
+executable code or the protected data. Before allowing the creation of
+the device mapper block device the kernel code will check that the detached
+pkcs7 signature passed to it validates the roothash and the signature is
+trusted by builtin keys set at kernel creation. The kernel should be
+secured using Verified boot, UEFI Secure Boot or similar technologies so we
+can trust it.
 
+What about attacker mounting non dm-verity volumes to run executable
+code?
 
---
-Janne
+This verification can be used to have a security architecture where a LSM
+can enforce this verification for all the volumes and by doing this it can
+ensure that all executable code runs from signed and trusted dm-verity
+volumes.
+
+Further patches will be posted that build on this and enforce this
+verification based on policy for all the volumes on the system.
+
+How are these changes tested?
+
+To generate and sign the roothash just dump the roothash returned by veritysetup
+format in a text file and then sign using the tool in the topic branch here:
+(fsverity uses the tool for signing, I just added a parameter there for testing)
+
+https://github.com/jaskarankhurana/fsverity-sign/tree/fs_verity_detached_pkcs7_for_dm_verity
+
+fsverity sign-dm-verity <ROOTHASH_IN_A_FILE>  <OUTSIG> --key=<KEYFILE>
+--cert=<CERTFILE>
+
+veritysetup part of cryptsetup library was modified to take a optional
+root-hash-sig parameter.
+
+Commandline used to test the changes:
+
+veritysetup open  <data_device> <name> <hash_device> <root_hash>
+ --root-hash-sig=<root_hash_pkcs7_detached_sig>
+
+The changes for veritysetup are in a topic branch for now at:
+https://github.com/jaskarankhurana/veritysetup/tree/veritysetup_add_sig
+
+Changelog:
+
+v4:
+  - Code review feedback given by Milan Broz.
+  - Add documentation about the root hash signature parameter.
+  - Bump up the dm-verity target version.
+  - Provided way to sign and test with veritysetup in cover letter.
+
+v3:
+  - Code review feedback given by Sasha Levin.
+  - Removed EXPORT_SYMBOL_GPL since this was not required.
+  - Removed "This file is released under the GPLv2" since we have SPDX
+    identifier.
+  - Inside verity_verify_root_hash changed EINVAL to ENOKEY when the key
+    descriptor is not specified but due to force option being set it is
+    expected.
+  - Moved CONFIG check to inside verity_verify_get_sig_from_key.
+     (Did not move the sig_opts_cleanup to inside verity_dtr as the
+     sig_opts do not need to be allocated for the entire duration the block
+     device is active unlike the verity structure, note verity_dtr is called
+     only if verity_ctr fails or after the lifetime of the block device.)
+
+v2:
+  - Code review feedback to pass the signature binary blob as a key that can be
+    looked up in the kernel and be used to verify the roothash.
+    [Suggested by Milan Broz]
+  - Made the code related change suggested in review of v1.
+    [Suggested by Balbir Singh]
+
+v1:
+  - Add kconfigs to control dm-verity root has signature verification and
+    use the signature if specified to verify the root hash.
+
+Jaskaran Khurana (1):
+  Adds in-kernel pkcs7 sig checking the roothash of the dm-verity hash
+    tree
+
+ Documentation/device-mapper/verity.txt |   7 ++
+ drivers/md/Kconfig                     |  23 +++++
+ drivers/md/Makefile                    |   2 +-
+ drivers/md/dm-verity-target.c          |  36 ++++++-
+ drivers/md/dm-verity-verify-sig.c      | 132 +++++++++++++++++++++++++
+ drivers/md/dm-verity-verify-sig.h      |  30 ++++++
+ 6 files changed, 224 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/md/dm-verity-verify-sig.c
+ create mode 100644 drivers/md/dm-verity-verify-sig.h
+
+-- 
+2.17.1
+
