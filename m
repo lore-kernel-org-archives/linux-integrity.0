@@ -2,136 +2,136 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECC8C31E4A
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08903C31E45
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21B7620665
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC2220449
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 16:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfFMQOy (ORCPT
+        id S2388973AbfFMQbZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 12:14:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34146 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731187AbfFMQOs (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 12:14:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A94CDAE20;
-        Thu, 13 Jun 2019 16:14:47 +0000 (UTC)
-From:   Petr Vorel <pvorel@suse.cz>
-To:     ltp@lists.linux.it
-Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Ignaz Forster <iforster@suse.de>,
-        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v4 2/4] shell: Add $TST_DEVICE as default parameter to tst_umount
-Date:   Thu, 13 Jun 2019 18:14:12 +0200
-Message-Id: <20190613161414.29161-3-pvorel@suse.cz>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190613161414.29161-1-pvorel@suse.cz>
-References: <20190613161414.29161-1-pvorel@suse.cz>
+        Thu, 13 Jun 2019 12:31:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730876AbfFMI0k (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Jun 2019 04:26:40 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 73FF830860C0;
+        Thu, 13 Jun 2019 08:26:39 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-87.pek2.redhat.com [10.72.12.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E3E960FB1;
+        Thu, 13 Jun 2019 08:26:31 +0000 (UTC)
+Date:   Thu, 13 Jun 2019 16:26:27 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>, vgoyal@redhat.com,
+        kexec <kexec@lists.infradead.org>
+Subject: Re: [PATCH V8 3/3] Call ima_kexec_cmdline to measure the cmdline args
+Message-ID: <20190613082627.GA30288@dhcp-128-65.nay.redhat.com>
+References: <20190612221549.28399-1-prsriva02@gmail.com>
+ <20190612221549.28399-4-prsriva02@gmail.com>
+ <1560378703.4578.91.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1560378703.4578.91.camel@linux.ibm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Jun 2019 08:26:39 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-+ use it directly as a cleanup function in df01.sh
+On 06/12/19 at 06:31pm, Mimi Zohar wrote:
+> [Cc: kexec mailing list]
+> 
+> Hi Eric, Dave,
+> 
+> On Wed, 2019-06-12 at 15:15 -0700, Prakhar Srivastava wrote:
+> > During soft reboot(kexec_file_load) boot cmdline args
+> > are not measured.Thus the new kernel on load boots with
+> > an assumption of cold reboot.
+> > 
+> > This patch makes a call to the ima hook ima_kexec_cmdline,
+> > added in "Define a new IMA hook to measure the boot command
+> > line arguments"
+> > to measure the boot cmdline args into the ima log.
+> > 
+> > - call ima_kexec_cmdline from kexec_file_load.
+> > - move the call ima_add_kexec_buffer after the cmdline
+> > args have been measured.
+> > 
+> > Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> 
+> Any chance we could get some Acks?
 
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- doc/test-writing-guidelines.txt                            | 4 ++--
- testcases/commands/df/df01.sh                              | 7 +------
- testcases/commands/mkfs/mkfs01.sh                          | 2 +-
- testcases/kernel/security/integrity/ima/tests/ima_setup.sh | 2 +-
- testcases/lib/tst_test.sh                                  | 2 +-
- 5 files changed, 6 insertions(+), 11 deletions(-)
+The ima_* is blackbox functions to me, looks like this patch is trying
+to measure kexec cmdline buffer and save in some ima logs and then add all the
+measure results including those for kernel/initrd to a kexec_buf and pass to 2nd
+kernel.
 
-diff --git a/doc/test-writing-guidelines.txt b/doc/test-writing-guidelines.txt
-index f1912dc12..fc64b418b 100644
---- a/doc/test-writing-guidelines.txt
-+++ b/doc/test-writing-guidelines.txt
-@@ -2115,8 +2115,8 @@ The 'tst_mount' mounts '$TST_DEVICE' of '$TST_FS_TYPE' (optional) to
- '$TST_MNT_PARAMS'. The '$TST_MNTPOINT' directory is created if it didn't
- exist prior to the function call.
- 
--If the path passed to the 'tst_umount' is not mounted (present in '/proc/mounts')
--it's noop.
-+If the path passed (optional, defaults to '$TST_DEVICE') to the 'tst_umount' is
-+not mounted (present in '/proc/mounts') it's noop.
- Otherwise it retries to umount the filesystem a few times on a failure, which
- is a workaround since there are a daemons dumb enough to probe all newly
- mounted filesystems, which prevents them from umounting shortly after they
-diff --git a/testcases/commands/df/df01.sh b/testcases/commands/df/df01.sh
-index 9b0be76fe..3876816dc 100755
---- a/testcases/commands/df/df01.sh
-+++ b/testcases/commands/df/df01.sh
-@@ -18,7 +18,7 @@
- 
- TST_CNT=12
- TST_SETUP=setup
--TST_CLEANUP=cleanup
-+TST_CLEANUP=tst_umount
- TST_TESTFUNC=test
- TST_OPTS="f:"
- TST_USAGE=usage
-@@ -54,11 +54,6 @@ setup()
- 	DF_FS_TYPE=$(mount | grep "$TST_DEVICE" | awk '{print $5}')
- }
- 
--cleanup()
--{
--	tst_umount $TST_DEVICE
--}
--
- df_test()
- {
- 	local cmd="$1 -P"
-diff --git a/testcases/commands/mkfs/mkfs01.sh b/testcases/commands/mkfs/mkfs01.sh
-index 88f7f0baa..28af890b3 100755
---- a/testcases/commands/mkfs/mkfs01.sh
-+++ b/testcases/commands/mkfs/mkfs01.sh
-@@ -71,7 +71,7 @@ mkfs_verify_size()
- {
- 	tst_mount
- 	local blocknum=`df -P -B 1k mntpoint | tail -n1 | awk '{print $2}'`
--	tst_umount "$TST_DEVICE"
-+	tst_umount
- 
- 	if [ $blocknum -gt "$2" ]; then
- 		return 1
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index cbded42c2..da49eb1b2 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-@@ -105,7 +105,7 @@ ima_cleanup()
- 
- 	if [ "$TST_NEEDS_DEVICE" = 1 ]; then
- 		cd $TST_TMPDIR
--		tst_umount $TST_DEVICE
-+		tst_umount
- 	fi
- }
- 
-diff --git a/testcases/lib/tst_test.sh b/testcases/lib/tst_test.sh
-index 512732315..740253df1 100644
---- a/testcases/lib/tst_test.sh
-+++ b/testcases/lib/tst_test.sh
-@@ -259,7 +259,7 @@ tst_mount()
- 
- tst_umount()
- {
--	local device="$1"
-+	local device="${1:-$TST_DEVICE}"
- 	local i=0
- 
- 	if ! grep -q "$device" /proc/mounts; then
--- 
-2.21.0
+It should be good and only take effect when IMA enabled. If all the
+assumptions are right:
 
+Acked-by: Dave Young <dyoung@redhat.com>
+> 
+> thanks,
+> 
+> Mimi
+> 
+> > ---
+> >  kernel/kexec_file.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > index 072b6ee55e3f..b0c724e5d86c 100644
+> > --- a/kernel/kexec_file.c
+> > +++ b/kernel/kexec_file.c
+> > @@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+> >  		return ret;
+> >  	image->kernel_buf_len = size;
+> >  
+> > -	/* IMA needs to pass the measurement list to the next kernel. */
+> > -	ima_add_kexec_buffer(image);
+> > -
+> >  	/* Call arch image probe handlers */
+> >  	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
+> >  					    image->kernel_buf_len);
+> > @@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+> >  			ret = -EINVAL;
+> >  			goto out;
+> >  		}
+> > +
+> > +		ima_kexec_cmdline(image->cmdline_buf,
+> > +				  image->cmdline_buf_len - 1);
+> >  	}
+> >  
+> > +	/* IMA needs to pass the measurement list to the next kernel. */
+> > +	ima_add_kexec_buffer(image);
+> > +
+> >  	/* Call arch image load handlers */
+> >  	ldata = arch_kexec_kernel_image_load(image);
+> >  
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+
+Thanks
+Dave
