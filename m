@@ -3,44 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84B6C46477
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5021AC31E45
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB9E221473
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3070420896
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:08:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732624AbfFMPHA (ORCPT
+        id S1732585AbfFMPIp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:07:00 -0400
-Received: from mga17.intel.com ([192.55.52.151]:44725 "EHLO mga17.intel.com"
+        Thu, 13 Jun 2019 11:08:45 -0400
+Received: from mga18.intel.com ([134.134.136.126]:33812 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732394AbfFMOCG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 10:02:06 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1732375AbfFMN7E (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 13 Jun 2019 09:59:04 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 07:02:05 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2019 06:59:03 -0700
 X-ExtLoop1: 1
 Received: from bbouchn-mobl.ger.corp.intel.com (HELO localhost) ([10.252.35.22])
-  by orsmga007.jf.intel.com with ESMTP; 13 Jun 2019 07:02:02 -0700
-Date:   Thu, 13 Jun 2019 17:02:01 +0300
+  by orsmga005.jf.intel.com with ESMTP; 13 Jun 2019 06:59:00 -0700
+Date:   Thu, 13 Jun 2019 16:58:58 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        linux-efi@vger.kernel.org, ard.biesheuvel@linaro.org,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH V2 1/2] Abstract out support for locating an EFI config
- table
-Message-ID: <20190613140201.GC12791@linux.intel.com>
-References: <20190607205147.102904-1-matthewgarrett@google.com>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, groeck@chromium.org,
+        Vadim Sukhomlinov <sukhomlinov@google.com>,
+        apronin@chromium.org, mka@chromium.org, swboyd@chromium.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM
+ operations
+Message-ID: <20190613135858.GB12791@linux.intel.com>
+References: <20190610220118.5530-1-dianders@chromium.org>
+ <20190612191618.GC3378@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190607205147.102904-1-matthewgarrett@google.com>
+In-Reply-To: <20190612191618.GC3378@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -48,12 +52,25 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Jun 07, 2019 at 01:51:46PM -0700, Matthew Garrett wrote:
-> We want to grab a pointer to the TPM final events table, so abstract out
-> the existing code for finding an FDT table and make it generic.
+On Wed, Jun 12, 2019 at 10:16:18PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Jun 10, 2019 at 03:01:18PM -0700, Douglas Anderson wrote:
+> > From: Vadim Sukhomlinov <sukhomlinov@google.com>
+> > 
+> > TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
+> > future TPM operations. TPM 1.2 behavior was different, future TPM
+> > operations weren't disabled, causing rare issues. This patch ensures
+> > that future TPM operations are disabled.
+> > 
+> > Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
+> > [dianders: resolved merge conflicts with mainline]
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > 
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Nice catch. Thank you.
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Applied to my master branch. I also added a fixes tag.
+
+Can you check that it looks legit to you?
 
 /Jarkko
