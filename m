@@ -2,59 +2,59 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD00C31E45
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D748C31E4A
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A4A2175B
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 778352082C
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 15:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQC72Jqy"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yGqrc+Py"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfFMPew (ORCPT
+        id S1726879AbfFMPfE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 11:34:52 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40448 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfFMKbs (ORCPT
+        Thu, 13 Jun 2019 11:35:04 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40778 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728003AbfFMKbf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 06:31:48 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d30so10710665pgm.7
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Jun 2019 03:31:48 -0700 (PDT)
+        Thu, 13 Jun 2019 06:31:35 -0400
+Received: by mail-pl1-f195.google.com with SMTP id a93so7967950pla.7
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Jun 2019 03:31:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=X1ybKF8wUkHdnaXcEVMx2e6e4CdYBWVAzo6oWbimFYQ=;
-        b=qQC72JqyNS5M5jXNAY8R3qU0KXWZM5lNzLTY1x45KapGIu5nY1kzXvtp8ytpYYAhNe
-         VgEDc2Xb0TO9QjIR1scrGcXdU1EZBuzhgCjzfe7X1+jpmGG6K1x+Pf/9uqbgffhKrmNG
-         wAPT1c1JfaM31idoL06nNamvN48hNPdql4a3HXfHAOdWsQOsfRkD3H3nKJpZB6TPX0ee
-         lVLcpBU+49fTw+3zzRIdis+1cNwUKR2A2T/WWhA/MY121JqRxbEReGNv2toR6GuMHHgy
-         yiSnAlAD6mp1f8mPJKrUvuiGbO6NmXN56mS8pPbZRAPe4I32m2XLpwja0iWkRglQCnZf
-         F3Uw==
+        bh=zNYSDlioe1/7qDzUymWdeZ+QFAflos+mlnY8eEGg+0o=;
+        b=yGqrc+PyiSy4n5qr9NdwCtvk10NU0RuIEZpKtR38SSnXyuNE9KtNc4LOsjqZwwRHrh
+         PQjFPkSB3hzxovhRjl67Bjzjq+MyaDq8caifL9XcLBUffnDo6fKiNVZJMaRJqYYrTpLD
+         236tIR/c1HHyhBzC+DbYQbzknd6nXkp2yR69CfUSomWNfHZq7zDwLo6CtP6Rcz9jQoyU
+         t+UUwCGOlMlfHHdRXEbat32VLMC64YiRRvC+ES6Lwz/POGU5yfdzTRVFTEJkScAUUYU3
+         CLOA6wc/os0XTJLHRiURlUUYawm0WGmE6fu8bzeXwSSiF2jgcH82LXA8DmqI9CW5kKWM
+         JwmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=X1ybKF8wUkHdnaXcEVMx2e6e4CdYBWVAzo6oWbimFYQ=;
-        b=miDLergUyTy3Rr3qO9ZFkUqygBtzwam80AQQcZ8ScmO14YwPbe33Hz8w566f9dGXF8
-         3wHYglN/xab21sZGqwJ7WrhKlS3LiOSkYJhmLNNswzgPgu9neGbTn6eb3MQrMPzvaR1u
-         wpUoQtbJTUl/HQwy8JS/eeIqpUDBqKLtd1B4dKNFr+bEoKjw1VNr4RaFSrRpLfUrGvSb
-         kOAkDzfqmxCO1c9PJYNpaFed5Ms6LusDn9AAtcvs30laqX0Vb7myUb23KcWVGTuDvJm2
-         VdBd4PY+cH9k7lATeFjcaGhoJIvW4y3jkI7+49Tru5orlDpL3F4gI2i6hK5fiBvEWFIk
-         jXEw==
-X-Gm-Message-State: APjAAAU5zBJgMOqbCQGX/Hv1n7CFOIGQqNYCqydp770rtW6kUT1aVW4f
-        D+O2mNev9g1mIKQwZtnrplhaaQ==
-X-Google-Smtp-Source: APXvYqw0m+SBvdVQmbAIqGHxz8wWKmEDiAXyPgV/c4Ovyt4Pnd4N4physSGHsq7lD1C9XamuJuH9gA==
-X-Received: by 2002:a63:e24:: with SMTP id d36mr29935015pgl.80.1560421908050;
-        Thu, 13 Jun 2019 03:31:48 -0700 (PDT)
+        bh=zNYSDlioe1/7qDzUymWdeZ+QFAflos+mlnY8eEGg+0o=;
+        b=uF5hLbt9A3i+wQlBUboXUy3aJAOKKB/Fg0CYnye+3RJ0iqDUdMYFT9YMIddtsLH8xK
+         d9W4VfC8UFVdRYLF80X525jXxDb6Oe0nzKlf0wegibdwF1TyqsnJ2FsToH66ZBKi5h5V
+         D0AJ7LlXSm320p/oVJXQmi8JbSXsPoEgQJQOW33BbqR+1+hoiyp602yyqLhqAaQFu2QL
+         eZvR134nyAAo6GvGb0J+Rm1K5JAWbSQEg3DFMzVXgL0PSC+DOSHbem+vcW0cP6O+0+bc
+         wYlsYOUUjWRAHvh97kA8O/0/697/sD33NUxo2entVJVn+zobVgo/22PHjU4UfXAp7LKp
+         atzQ==
+X-Gm-Message-State: APjAAAUjlQwmYwcuNJTWyTDJu68GhAafoHHBObVPyzaTBErslTVx9ZWA
+        Me8I+Ksdekt4P4261aNkNoKwbg==
+X-Google-Smtp-Source: APXvYqy4QNXOS9+usIQOYreRnBfssjCFTNyHTKoO86Zu6g/HvXHvK12eofupFfZNMLkwbIdNB6kb7A==
+X-Received: by 2002:a17:902:1e6:: with SMTP id b93mr43575179plb.295.1560421895353;
+        Thu, 13 Jun 2019 03:31:35 -0700 (PDT)
 Received: from localhost.localdomain ([117.196.234.139])
-        by smtp.gmail.com with ESMTPSA id a12sm2265078pgq.0.2019.06.13.03.31.35
+        by smtp.gmail.com with ESMTPSA id a12sm2265078pgq.0.2019.06.13.03.31.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 13 Jun 2019 03:31:47 -0700 (PDT)
+        Thu, 13 Jun 2019 03:31:34 -0700 (PDT)
 From:   Sumit Garg <sumit.garg@linaro.org>
 To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
@@ -64,9 +64,9 @@ Cc:     jens.wiklander@linaro.org, corbet@lwn.net, dhowells@redhat.com,
         ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         tee-dev@lists.linaro.org, Sumit Garg <sumit.garg@linaro.org>
-Subject: [RFC 2/7] tee: enable support to register kernel memory
-Date:   Thu, 13 Jun 2019 16:00:28 +0530
-Message-Id: <1560421833-27414-3-git-send-email-sumit.garg@linaro.org>
+Subject: [RFC 1/7] tee: optee: allow kernel pages to register as shm
+Date:   Thu, 13 Jun 2019 16:00:27 +0530
+Message-Id: <1560421833-27414-2-git-send-email-sumit.garg@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
 References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
@@ -75,74 +75,32 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Enable support to register kernel memory reference with TEE. This change
-will allow TEE bus drivers to register memory references.
+Kernel pages are marked as normal type memory only so allow kernel pages
+to be registered as shared memory with OP-TEE.
 
 Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 ---
- drivers/tee/tee_shm.c   | 16 ++++++++++++++--
- include/linux/tee_drv.h |  1 +
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/tee/optee/call.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-index 2da026f..5c69b89 100644
---- a/drivers/tee/tee_shm.c
-+++ b/drivers/tee/tee_shm.c
-@@ -9,6 +9,7 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/tee_drv.h>
-+#include <linux/uio.h>
- #include "tee_private.h"
- 
- static void tee_shm_release(struct tee_shm *shm)
-@@ -224,13 +225,14 @@ struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
- {
- 	struct tee_device *teedev = ctx->teedev;
- 	const u32 req_flags = TEE_SHM_DMA_BUF | TEE_SHM_USER_MAPPED;
-+	const u32 req_ker_flags = TEE_SHM_DMA_BUF | TEE_SHM_KERNEL_MAPPED;
- 	struct tee_shm *shm;
- 	void *ret;
+diff --git a/drivers/tee/optee/call.c b/drivers/tee/optee/call.c
+index aa94270..bce45b1 100644
+--- a/drivers/tee/optee/call.c
++++ b/drivers/tee/optee/call.c
+@@ -553,6 +553,13 @@ static int check_mem_type(unsigned long start, size_t num_pages)
+ 	struct mm_struct *mm = current->mm;
  	int rc;
- 	int num_pages;
- 	unsigned long start;
  
--	if (flags != req_flags)
-+	if (flags != req_flags && flags != req_ker_flags)
- 		return ERR_PTR(-ENOTSUPP);
- 
- 	if (!tee_device_get(teedev))
-@@ -264,7 +266,17 @@ struct tee_shm *tee_shm_register(struct tee_context *ctx, unsigned long addr,
- 		goto err;
- 	}
- 
--	rc = get_user_pages_fast(start, num_pages, FOLL_WRITE, shm->pages);
-+	if (flags & TEE_SHM_USER_MAPPED) {
-+		rc = get_user_pages_fast(start, num_pages, FOLL_WRITE,
-+					 shm->pages);
-+	} else {
-+		const struct kvec kiov = {
-+			.iov_base = (void *)start,
-+			.iov_len = PAGE_SIZE
-+		};
++	/*
++	 * Allow kernel address to register with OP-TEE as kernel
++	 * pages are configured as normal memory only.
++	 */
++	if (virt_addr_valid(start))
++		return 0;
 +
-+		rc = get_kernel_pages(&kiov, num_pages, 0, shm->pages);
-+	}
- 	if (rc > 0)
- 		shm->num_pages = rc;
- 	if (rc != num_pages) {
-diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-index 7a03f68..dedf8fa 100644
---- a/include/linux/tee_drv.h
-+++ b/include/linux/tee_drv.h
-@@ -26,6 +26,7 @@
- #define TEE_SHM_REGISTER	BIT(3)  /* Memory registered in secure world */
- #define TEE_SHM_USER_MAPPED	BIT(4)  /* Memory mapped in user space */
- #define TEE_SHM_POOL		BIT(5)  /* Memory allocated from pool */
-+#define TEE_SHM_KERNEL_MAPPED	BIT(6)  /* Memory mapped in kernel space */
- 
- struct device;
- struct tee_device;
+ 	down_read(&mm->mmap_sem);
+ 	rc = __check_mem_type(find_vma(mm, start),
+ 			      start + num_pages * PAGE_SIZE);
 -- 
 2.7.4
 
