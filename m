@@ -2,71 +2,73 @@ Return-Path: <SRS0=4zez=UM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D31C31E45
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 18:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A32C31E4A
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 18:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C13F720866
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 18:09:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D62222133D
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jun 2019 18:09:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nFQ4Ekck"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AskOkpFh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfFMSJd (ORCPT
+        id S1728623AbfFMSJg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 14:09:33 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39344 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbfFMSJd (ORCPT
+        Thu, 13 Jun 2019 14:09:36 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43993 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728605AbfFMSJg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 14:09:33 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 196so11408851pgc.6
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Jun 2019 11:09:33 -0700 (PDT)
+        Thu, 13 Jun 2019 14:09:36 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i189so12309196pfg.10
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Jun 2019 11:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kxoc9uaFTrXitgGYEWP1umI8D3nYTFG7/XndbmYY6a0=;
-        b=nFQ4EkckPxw0WF0MFLIMBWkPAPG+G/Am9yz3ZWwP3J+255TSNgezoU085vQrU4CYJc
-         BUTYSLyr8z9cPfE3d216HI5JKug0qawJ4t5hsdHfXZyDmyukCy2JV60La7QzJQZpiL8c
-         qMUnTB2Q9imqjjbDI7O9sqLnY9/oaSeV4LM2E=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=s4UOPmCaMTA/ZsZDFJPVYGvmCISuBSexVdeFUduycxw=;
+        b=AskOkpFh+++DQTTwkArdgdbEfkDEWm7fPaUOs7Ny9QWsIUaPiNRiGi5WaJeUUHcjym
+         gm+jUgHvjsTqYfPalPPiLiATfaYoIQekqX/3rNGp/yQFbm0/XdoLXLLQaDF50fZuML1V
+         MdHGKBpojl7UUP03AIFcdmLEsEYcSIGP8ZgI0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kxoc9uaFTrXitgGYEWP1umI8D3nYTFG7/XndbmYY6a0=;
-        b=E2nTC8d4aEBWNlpxjjOiRUoTIoPcBKkdDDDTDYNPB838lT1v2dFtV9xRRdOhkBiNB2
-         py3OYyqzGA+NzknR/jSEfEB/MEU8K2l6vn5dxiWWiseuYjeyUwGhlZ3tZAlGVdVyxXjf
-         voA/NNRnf1hSnl/idS5/EEWW3D/PIYYsyJzR8JAZKZVedYlEU1LjPowXjMfoaRAFt4WG
-         XIDYrRP3QCvfyfXcGP2LcO88Y7J/AqaQZbq7gLIan03Bsw1hh2fY1iR9lLsPuKEGGvi7
-         aX8oWkD4nDvCVFB1BLLxxjh5iOX1DAOQCi39uCpe5pHMaqtJUKShwJbq0mMCiYk+mviD
-         fLmA==
-X-Gm-Message-State: APjAAAWwGjNyqpag5Zz+YmdJbVnfDDwtoFMLwnUqljauQK5dCbZNYYLO
-        EumRIf0re5a3/CZcDlIuTBlmWA==
-X-Google-Smtp-Source: APXvYqxbswxJpCXA0mUnDfPLybphcnLW3OQWcfcV2c3w4Dhlexa68Sj6OQyYRUkDZU2Xd8Mtu2574w==
-X-Received: by 2002:a63:1a5e:: with SMTP id a30mr30997431pgm.433.1560449372553;
-        Thu, 13 Jun 2019 11:09:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=s4UOPmCaMTA/ZsZDFJPVYGvmCISuBSexVdeFUduycxw=;
+        b=NiHUGEDHxbiEEmGIs93iHYTdLH2AQwlYCpWuwbdSEUVV6yDQdRCyVP4Jy15QSYuEZQ
+         aTnhE5kDzGjR/q06z5dNiL7i0KsO3h9hQC53eV2q22LYWIkFmwUb/oH1r8tBB37UgTy7
+         RTNB6YnAEI5DsBf9VbP+WLnD+afaKwo7RnX3EYDXAFQ/WYEnn926WrLi7DCQ/S9OhPd2
+         nk92jUYwSC3sbgZur/mP66nhNvQz5AZTF7P6kErwnmlnxPDHln0HxEcRpuJCwov10lGl
+         OLscePATuxRLVy8e4oU/6woP3GwUX3nmIzzeyAjG4eu4XOIYnbhmS8sBArvjVvdP7tg/
+         WCpw==
+X-Gm-Message-State: APjAAAWiGjzvpm5zJdp7YaG30h1WHvDlrpGQGjDT1DdD5jAt+pPOSMcV
+        NQZHnN4G4ugRwliTW446HeDN8w==
+X-Google-Smtp-Source: APXvYqyK//TFyvvsB14tdex9tb6JEfZao67LE8nQZkwFwZLlBu9O+FoPljXy615K3VxpUOjo9MniMw==
+X-Received: by 2002:a62:14c4:: with SMTP id 187mr20886406pfu.241.1560449375606;
+        Thu, 13 Jun 2019 11:09:35 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b15sm454449pff.31.2019.06.13.11.09.31
+        by smtp.gmail.com with ESMTPSA id b15sm454449pff.31.2019.06.13.11.09.34
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 13 Jun 2019 11:09:32 -0700 (PDT)
+        Thu, 13 Jun 2019 11:09:35 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
+Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        devicetree@vger.kernel.org, Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-Subject: [PATCH 0/8] tpm: Add driver for cr50
-Date:   Thu, 13 Jun 2019 11:09:23 -0700
-Message-Id: <20190613180931.65445-1-swboyd@chromium.org>
+        linux-integrity@vger.kernel.org, devicetree@vger.kernel.org,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Dmitry Torokhov <dtor@chromium.org>
+Subject: [PATCH 3/8] tpm_tis_spi: add max xfer size
+Date:   Thu, 13 Jun 2019 11:09:26 -0700
+Message-Id: <20190613180931.65445-4-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.rc2.383.gf4fbbf30c2-goog
+In-Reply-To: <20190613180931.65445-1-swboyd@chromium.org>
+References: <20190613180931.65445-1-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -74,57 +76,35 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch series adds support for the the H1 secure microcontroller
-running cr50 firmware found on various recent Chromebooks. This driver
-is necessary to boot into a ChromeOS userspace environment. It
-implements support for several functions, including TPM-like
-functionality, and supports SPI and I2C interfaces.
+From: Andrey Pronin <apronin@chromium.org>
 
-The last time this was series sent looks to be [1]. I've looked over the
-patches and review comments and tried to address any feedback that
-Andrey didn't address (really minor things like newlines). The first
-three patches add a couple pre-requisite core changes so that the
-drivers can be merged. The last two patches add some sysfs attributes
-and make symlinks so that ChromeOS userspace works.
+Reject burstcounts larger than 64 bytes reported by tpm.
+SPI Hardware Protocol defined in section 6.4 of TCG PTP
+Spec supports up to 64 bytes of data in a transaction.
 
-[1] https://lkml.kernel.org/r/1469757314-116169-1-git-send-email-apronin@chromium.org
+Signed-off-by: Andrey Pronin <apronin@chromium.org>
+Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
 
-Andrey Pronin (7):
-  tpm: block messages while suspended
-  tpm_tis_core: add optional max xfer size check
-  tpm_tis_spi: add max xfer size
-  dt-bindings: tpm: document properties for cr50
-  tpm: add driver for cr50 on SPI
-  tpm: add sysfs attributes for tpm2
-  tpm: add legacy sysfs attributes for tpm2
+This is a resend of https://lkml.kernel.org/r/1469677797-74304-3-git-send-email-apronin@chromium.org
 
-Duncan Laurie (1):
-  tpm: Add driver for cr50 on I2C
+ drivers/char/tpm/tpm_tis_spi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/security/tpm/cr50_spi.txt        |  19 +
- drivers/char/tpm/Kconfig                      |  26 +
- drivers/char/tpm/Makefile                     |   3 +
- drivers/char/tpm/cr50.c                       |  39 +
- drivers/char/tpm/cr50.h                       |  30 +
- drivers/char/tpm/cr50_i2c.c                   | 704 ++++++++++++++++++
- drivers/char/tpm/cr50_spi.c                   | 450 +++++++++++
- drivers/char/tpm/tpm-chip.c                   |   4 +-
- drivers/char/tpm/tpm-interface.c              |  16 +-
- drivers/char/tpm/tpm-sysfs.c                  | 138 +++-
- drivers/char/tpm/tpm.h                        |  29 +-
- drivers/char/tpm/tpm_tis_core.c               |   9 +-
- drivers/char/tpm/tpm_tis_core.h               |   1 +
- drivers/char/tpm/tpm_tis_spi.c                |   1 +
- include/linux/tpm.h                           |   2 +
- 15 files changed, 1455 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/security/tpm/cr50_spi.txt
- create mode 100644 drivers/char/tpm/cr50.c
- create mode 100644 drivers/char/tpm/cr50.h
- create mode 100644 drivers/char/tpm/cr50_i2c.c
- create mode 100644 drivers/char/tpm/cr50_spi.c
-
-
-base-commit: f2c7c76c5d0a443053e94adb9f0918fa2fb85c3a
+diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
+index 9914f6973463..0fdd3966a3b3 100644
+--- a/drivers/char/tpm/tpm_tis_spi.c
++++ b/drivers/char/tpm/tpm_tis_spi.c
+@@ -194,6 +194,7 @@ static const struct tpm_tis_phy_ops tpm_spi_phy_ops = {
+ 	.read16 = tpm_tis_spi_read16,
+ 	.read32 = tpm_tis_spi_read32,
+ 	.write32 = tpm_tis_spi_write32,
++	.max_xfer_size = MAX_SPI_FRAMESIZE,
+ };
+ 
+ static int tpm_tis_spi_probe(struct spi_device *dev)
 -- 
 Sent by a computer through tubes
 
