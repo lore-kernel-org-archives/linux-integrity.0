@@ -2,102 +2,119 @@ Return-Path: <SRS0=mSwu=UN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE00CC31E4B
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 18:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E53DC31E4D
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 20:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B732A217F9
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 18:13:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F/ZB6ORa"
+	by mail.kernel.org (Postfix) with ESMTP id D4E8321841
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 20:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1560543701;
+	bh=7pm8JkCLHqEoLrJYY8z/2/wqC8f2TYEabiJDZrXwd5A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=qXXt2/T0OgwhUOBBWdBViQOcJeVGM1Tc/Y+fX+aLyTICsC82t+ZAUcgthH5ZoY310
+	 jzdkORl3sIGZ42JxBPGaNrhMn9y3AMWpotxxslKqhmH8UtZoM7iG0RlQjdgVrlZaLn
+	 miQ5ywEpIUHEiwCRQVVUY2Y2TAPriciNVfGLzrcM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725869AbfFNSNP (ORCPT
+        id S1726264AbfFNUVg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 14 Jun 2019 14:13:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42938 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbfFNSNP (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Jun 2019 14:13:15 -0400
-Received: by mail-pg1-f193.google.com with SMTP id l19so1972550pgh.9
-        for <linux-integrity@vger.kernel.org>; Fri, 14 Jun 2019 11:13:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:to:from:subject:cc:user-agent:date;
-        bh=ZLVDWUWwWY4MpQ/fxABhQErt5/T/sQKzxrLl0+83gd0=;
-        b=F/ZB6ORavFWyfK9TSla7/HqOfq2c2l0pz5qJuy3jEPcr17gJLZgyiFcEiReWczZ4bi
-         f9ONz8SUO9N76h1XRciw/qHw+mWnSHHTiG9dg/RyWE2MMARvWcv+Dn6aEfA+HuZpomSK
-         p3L4+/pudF2hA5CGZXA3FcqShuGYAY3jI5KKE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:to:from:subject:cc
-         :user-agent:date;
-        bh=ZLVDWUWwWY4MpQ/fxABhQErt5/T/sQKzxrLl0+83gd0=;
-        b=hKBRgVWa9XrDlXgXgUvjUKyS+vsSHFhdp+Svb/vlNT+8BNcsW58WHVt0sKT/M6XXOg
-         sO3i9FI+ZyampZk3SyVI94RetQMZwek9TFNN+b2iJBhCfTqZ+blfjpNKQWJZYGq457TE
-         yOOIEaG/DtkJjdPA6AwJffUKzs28OEPhQOC710+1FViggForYgf7MLwpdpZFnUwdtid1
-         YNS8yKqA+wgHXdRQzb88mtrvrkURdj0bi4EHzmhWgUcf3OhD/BZmUrjdKS0z2QZrJnse
-         wNV5C2ItzTAmT16LHLmKp0hnqdF39KCzNDK0Z08THcdHa71eP6TG1U6rrC+nxnEdsBel
-         ZhgA==
-X-Gm-Message-State: APjAAAVgX5GVQ9JPRk91Cn/5uGkW1pVbZEVmbLdhEcWvKquXksL2uz44
-        kZmR2viHX0lI+TFHH+iVv7FuZA==
-X-Google-Smtp-Source: APXvYqwhGwL7yshptV+gRwCd63XpWKvE0KUQQrTCSKiIt6r0u4yc69kfnzZn5k0V6NZrfaFRfW4W1Q==
-X-Received: by 2002:a63:e44c:: with SMTP id i12mr11731959pgk.297.1560535994544;
-        Fri, 14 Jun 2019 11:13:14 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id e22sm3590678pgb.9.2019.06.14.11.13.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 14 Jun 2019 11:13:14 -0700 (PDT)
-Message-ID: <5d03e3ba.1c69fb81.9c2c8.aa89@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 14 Jun 2019 16:21:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbfFNUVg (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 14 Jun 2019 16:21:36 -0400
+Received: from sasha-vm.mshome.net (unknown [131.107.159.134])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 423F62184C;
+        Fri, 14 Jun 2019 20:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1560543695;
+        bh=7pm8JkCLHqEoLrJYY8z/2/wqC8f2TYEabiJDZrXwd5A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=y6YMv1qU68gkZugK3Zs30fL635yTULIgOGn84MH449NBFuBJzExPGh9cigrJlIwQE
+         RqIEblW+Qp8qPgGtfhPlQue/kbfpVY8HN5hvdJ7HK5A478nwceV1rCOPn7vzsY3Pue
+         AqL86QycMpZGNo9FD0KrsnwoMHnUw19l6cSBtJtM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
+Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@microsoft.com, thiruan@microsoft.com,
+        bryankel@microsoft.com, tee-dev@lists.linaro.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH v5 2/2] fTPM: add documentation for ftpm driver
+Date:   Fri, 14 Jun 2019 16:21:27 -0400
+Message-Id: <20190614202127.26812-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190614202127.26812-1-sashal@kernel.org>
+References: <20190614202127.26812-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190614152700.GE11241@linux.intel.com>
-References: <20190613180931.65445-1-swboyd@chromium.org> <20190613180931.65445-2-swboyd@chromium.org> <20190614152700.GE11241@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH 1/8] tpm: block messages while suspended
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, devicetree@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Fri, 14 Jun 2019 11:13:13 -0700
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Quoting Jarkko Sakkinen (2019-06-14 08:27:00)
-> On Thu, Jun 13, 2019 at 11:09:24AM -0700, Stephen Boyd wrote:
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index 1b5436b213a2..48df005228d0 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -132,6 +132,8 @@ struct tpm_chip {
-> >       int dev_num;            /* /dev/tpm# */
-> >       unsigned long is_open;  /* only one allowed */
-> > =20
-> > +     unsigned long is_suspended;
-> > +
-> >       char hwrng_name[64];
-> >       struct hwrng hwrng;
->=20
-> I think it would better idea to have a bitmask of some sort that
-> would have bits for 'open' and 'suspended'.
->=20
+This patch adds basic documentation to describe the new fTPM driver.
 
-Sure. I can combine is_open and is_suspended into some sort of 'unsigned
-long flags' member and then have #define TPM_IS_OPEN 0 and #define
-TPM_IS_SUSPENDED 1 defines?
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ Documentation/security/tpm/index.rst        |  1 +
+ Documentation/security/tpm/tpm_ftpm_tee.rst | 31 +++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
+
+diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
+index af77a7bbb070..15783668644f 100644
+--- a/Documentation/security/tpm/index.rst
++++ b/Documentation/security/tpm/index.rst
+@@ -4,4 +4,5 @@ Trusted Platform Module documentation
+ 
+ .. toctree::
+ 
++   tpm_ftpm_tee
+    tpm_vtpm_proxy
+diff --git a/Documentation/security/tpm/tpm_ftpm_tee.rst b/Documentation/security/tpm/tpm_ftpm_tee.rst
+new file mode 100644
+index 000000000000..29c2f8b5ed10
+--- /dev/null
++++ b/Documentation/security/tpm/tpm_ftpm_tee.rst
+@@ -0,0 +1,31 @@
++=============================================
++Firmware TPM Driver
++=============================================
++
++| Authors:
++| Thirupathaiah Annapureddy <thiruan@microsoft.com>
++| Sasha Levin <sashal@kernel.org>
++
++This document describes the firmware Trusted Platform Module (fTPM)
++device driver.
++
++Introduction
++============
++
++This driver is a shim for a firmware implemented in ARM's TrustZone
++environment. The driver allows programs to interact with the TPM in the same
++way the would interact with a hardware TPM.
++
++Design
++======
++
++The driver acts as a thin layer that passes commands to and from a TPM
++implemented in firmware. The driver itself doesn't contain much logic and is
++used more like a dumb pipe between firmware and kernel/userspace.
++
++The firmware itself is based on the following paper:
++https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/ftpm1.pdf
++
++When the driver is loaded it will expose ``/dev/tpmX`` character devices to
++userspace which will enable userspace to communicate with the firmware tpm
++through this device.
+-- 
+2.20.1
 
