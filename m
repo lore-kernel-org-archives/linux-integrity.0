@@ -2,79 +2,139 @@ Return-Path: <SRS0=mSwu=UN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3CFC31E4B
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 20:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A12C31E4B
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 21:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749C821841
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 20:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC8EB21872
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 21:56:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1560543708;
-	bh=SUff+IuHYY1vqG1JvhChINONwtR73776hlNKIIAyNjU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=joMwQ04+BnAu8s67PnQploanA/zXM8xR1eckj3ncWeFB+oJL1SKT9sNwavZ3UHyVq
-	 j5baU685I/7q5N/VgP5lE03ReakiFzQ7qcmR6vWTkkmOc7iIH1S0iMsj673yv8x7HH
-	 78NLUAKx+3DqylOvczFYrtm6yZ3buuS5zAIsIPVw=
+	s=default; t=1560549398;
+	bh=AaOXU9JSXW7lKOl4hZybnR5+zYZKfEbQwzFRA41gvv8=;
+	h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:
+	 List-ID:From;
+	b=PvdDboreLtURw0uhn4OHiOy+Zpwu97xlDQeKXF1shVFB4mYKg2FI2eKbRO+B1uqkM
+	 i1NLOZdy6YKRV7EimVgvLF4zFv7sTuLc4lW4inHIhx7jfiqc5j3BeAiZexvVkvHPR7
+	 hZmleqRLa3UOoD8OF6U7WSCSmDSDvUKnpb41+zDg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfFNUVf (ORCPT
+        id S1726806AbfFNV4i (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 14 Jun 2019 16:21:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43228 "EHLO mail.kernel.org"
+        Fri, 14 Jun 2019 17:56:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725802AbfFNUVf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 14 Jun 2019 16:21:35 -0400
-Received: from sasha-vm.mshome.net (unknown [131.107.159.134])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726792AbfFNV4g (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 14 Jun 2019 17:56:36 -0400
+Received: from localhost (unknown [23.100.24.84])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9C402168B;
-        Fri, 14 Jun 2019 20:21:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D9BD2184E;
+        Fri, 14 Jun 2019 21:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1560543694;
-        bh=SUff+IuHYY1vqG1JvhChINONwtR73776hlNKIIAyNjU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bj+0zlh6+G7niTDlS56IOmNXnwhNj7nxFjbOH3V5aGw1ydsvaR9GVxSftyGr16TFJ
-         F21V0scYHfySAJsB48nFd+7ZUq48qY/uCGsvR63f6wYPGoQQDqmVBAOcanRxv+EBja
-         l0xHcf/8xjGjKdzwh98N2XLnKqDMiAWyZ4FwPIwQ=
+        s=default; t=1560549395;
+        bh=AaOXU9JSXW7lKOl4hZybnR5+zYZKfEbQwzFRA41gvv8=;
+        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=xWMm4yhEKB2Mx1cp5Ek+eYiTWFnytpnjFNZSnN05no6V8kPXEEnXPN7LOMhs3CKgh
+         qP7UlS4SQtOeKJy3UIgInMEYMOWpVcMQo/QAhXJR//VZEPPU3Il/2DKQwGIwjMBbIX
+         HrmYcOoZKI0ZdObfongKn+lIRHTWALWJuJeehGb0=
+Date:   Fri, 14 Jun 2019 21:56:34 +0000
 From:   Sasha Levin <sashal@kernel.org>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@microsoft.com, thiruan@microsoft.com,
-        bryankel@microsoft.com, tee-dev@lists.linaro.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v5 0/2] fTPM: firmware TPM running in TEE
-Date:   Fri, 14 Jun 2019 16:21:25 -0400
-Message-Id: <20190614202127.26812-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Sasha Levin <sashal@kernel.org>
+To:     Milan Broz <gmazyland@gmail.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Milan Broz <gmazyland@gmail.com>, stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH] tpm: Fix null pointer dereference on chip register error path
+In-Reply-To: <20190612084210.13562-1-gmazyland@gmail.com>
+References: <20190612084210.13562-1-gmazyland@gmail.com>
+Message-Id: <20190614215635.2D9BD2184E@mail.kernel.org>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Changes from v4:
+Hi,
 
- - Don't show an error message while waiting for OP-TEE to come up.
+[This is an automated email]
 
-Sasha Levin (2):
-  fTPM: firmware TPM running in TEE
-  fTPM: add documentation for ftpm driver
+This commit has been processed because it contains a -stable tag.
+The stable tag indicates that it's relevant for the following trees: all
 
- Documentation/security/tpm/index.rst        |   1 +
- Documentation/security/tpm/tpm_ftpm_tee.rst |  31 ++
- drivers/char/tpm/Kconfig                    |   5 +
- drivers/char/tpm/Makefile                   |   1 +
- drivers/char/tpm/tpm_ftpm_tee.c             | 382 ++++++++++++++++++++
- drivers/char/tpm/tpm_ftpm_tee.h             |  40 ++
- 6 files changed, 460 insertions(+)
- create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
- create mode 100644 drivers/char/tpm/tpm_ftpm_tee.c
- create mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
+The bot has tested the following trees: v5.1.9, v4.19.50, v4.14.125, v4.9.181, v4.4.181.
 
--- 
-2.20.1
+v5.1.9: Build OK!
+v4.19.50: Failed to apply! Possible dependencies:
+    100b16a6f290 ("tpm: sort objects in the Makefile")
+    29b47ce98759 ("tpm: move TPM space code out of tpm_transmit()")
+    412eb585587a ("tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter")
+    5faafbab77e3 ("tpm: remove @space from tpm_transmit()")
+    70a3199a7101 ("tpm: factor out tpm_get_timeouts()")
+    719b7d81f204 ("tpm: introduce tpm_chip_start() and tpm_chip_stop()")
+    899102bc4518 ("tpm2: add new tpm2 commands according to TCG 1.36")
+    9db7fe187c54 ("tpm: factor out tpm_startup function")
+    9e1b74a63f77 ("tpm: add support for nonblocking operation")
+    b2d6e6de005e ("tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c")
+    b34b77a99b1a ("tpm: declare struct tpm_header")
+    c3465a370fb3 ("tpm: move tpm_validate_commmand() to tpm2-space.c")
+    c3d477a725ef ("tpm: add ptr to the tpm_space struct to file_priv")
+    c4df71d43a5b ("tpm: encapsulate tpm_dev_transmit()")
+    d856c00f7d16 ("tpm: add tpm_calc_ordinal_duration() wrapper")
 
+v4.14.125: Failed to apply! Possible dependencies:
+    09dd144f72e7 ("tpm: Add explicit endianness cast")
+    0bfb23746052 ("tpm: Move eventlog files to a subdirectory")
+    100b16a6f290 ("tpm: sort objects in the Makefile")
+    58cc1e4faf10 ("tpm: parse TPM event logs based on EFI table")
+    67cb8e113ecd ("tpm: rename event log provider files")
+    719b7d81f204 ("tpm: introduce tpm_chip_start() and tpm_chip_stop()")
+    9b01b5356629 ("tpm: Move shared eventlog functions to common.c")
+    b2d6e6de005e ("tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c")
+    d856c00f7d16 ("tpm: add tpm_calc_ordinal_duration() wrapper")
+    fd3ec3663718 ("tpm: move tpm_eventlog.h outside of drivers folder")
+
+v4.9.181: Failed to apply! Possible dependencies:
+    02ae1382882f ("tpm: redefine read_log() to handle ACPI/OF at runtime")
+    100b16a6f290 ("tpm: sort objects in the Makefile")
+    2528a64664f8 ("tpm: define a generic open() method for ascii & bios measurements")
+    719b7d81f204 ("tpm: introduce tpm_chip_start() and tpm_chip_stop()")
+    748935eeb72c ("tpm: have event log use the tpm_chip")
+    7518a21a9da3 ("tpm: drop tpm1_chip_register(/unregister)")
+    9b01b5356629 ("tpm: Move shared eventlog functions to common.c")
+    b1a9b7b602c5 ("tpm: replace symbolic permission with octal for securityfs files")
+    b2d6e6de005e ("tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c")
+    cd9b7631a888 ("tpm: replace dynamically allocated bios_dir with a static array")
+    d856c00f7d16 ("tpm: add tpm_calc_ordinal_duration() wrapper")
+
+v4.4.181: Failed to apply! Possible dependencies:
+    02ae1382882f ("tpm: redefine read_log() to handle ACPI/OF at runtime")
+    036bb38ffb3e ("tpm_tis: Ensure interrupts are disabled when the driver starts")
+    100b16a6f290 ("tpm: sort objects in the Makefile")
+    23d06ff700f5 ("tpm: drop tpm_atmel specific fields from tpm_vendor_specific")
+    25112048cd59 ("tpm: rework tpm_get_timeouts()")
+    41a5e1cf1fe1 ("tpm/tpm_tis: Split tpm_tis driver into a core and TCG TIS compliant phy")
+    4d627e672bd0 ("tpm_tis: Do not fall back to a hardcoded address for TPM2")
+    4eea703caaac ("tpm: drop 'iobase' from struct tpm_vendor_specific")
+    51dd43dff74b ("tpm_tis: Use devm_ioremap_resource")
+    55a889c2cb13 ("tpm_crb: Use the common ACPI definition of struct acpi_tpm2")
+    56671c893e0e ("tpm: drop 'locality' from struct tpm_vendor_specific")
+    570a36097f30 ("tpm: drop 'irq' from struct tpm_vendor_specific")
+    57dacc2b4ce5 ("tpm: tpm_tis: Share common data between phys")
+    719b7d81f204 ("tpm: introduce tpm_chip_start() and tpm_chip_stop()")
+    7ab4032fa579 ("tpm_tis: Get rid of the duplicate IRQ probing code")
+    b2d6e6de005e ("tpm: factor out tpm 1.x duration calculation to tpm1-cmd.c")
+    d30b8e4f68ef ("tpm: cleanup tpm_tis_remove()")
+    d4956524f1b0 ("tpm: drop manufacturer_id from struct tpm_vendor_specific")
+    d856c00f7d16 ("tpm: add tpm_calc_ordinal_duration() wrapper")
+    e3837e74a06d ("tpm_tis: Refactor the interrupt setup")
+    ee1779840d09 ("tpm: drop 'base' from struct tpm_vendor_specific")
+    ef7b81dc7864 ("tpm_tis: Disable interrupt auto probing on a per-device basis")
+
+
+How should we proceed with this patch?
+
+--
+Thanks,
+Sasha
