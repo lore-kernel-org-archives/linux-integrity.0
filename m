@@ -2,37 +2,37 @@ Return-Path: <SRS0=mSwu=UN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2107C31E49
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C0FC31E49
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B156020B7C
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E2520B7C
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfFNBy2 (ORCPT
+        id S1725813AbfFNBya (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 21:54:28 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:41132 "EHLO
+        Thu, 13 Jun 2019 21:54:30 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:41174 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfFNBy2 (ORCPT
+        with ESMTP id S1726083AbfFNBya (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 21:54:28 -0400
+        Thu, 13 Jun 2019 21:54:30 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 7CF2672CCAE;
-        Fri, 14 Jun 2019 04:54:26 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 8E7E672CCD6;
+        Fri, 14 Jun 2019 04:54:28 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 5F5944A4AE7;
-        Fri, 14 Jun 2019 04:54:26 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 6BB924A4AE7;
+        Fri, 14 Jun 2019 04:54:28 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v4 1/5] ima-avm-utils: Make sure sig buffer is always MAX_SIGNATURE_SIZE
-Date:   Fri, 14 Jun 2019 04:54:06 +0300
-Message-Id: <20190614015410.26039-2-vt@altlinux.org>
+Subject: [PATCH v4 3/5] ima-avm-utils: Change read_priv_key to use EVP_PKEY API
+Date:   Fri, 14 Jun 2019 04:54:08 +0300
+Message-Id: <20190614015410.26039-4-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190614015410.26039-1-vt@altlinux.org>
 References: <20190614015410.26039-1-vt@altlinux.org>
@@ -43,34 +43,74 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Fix off-by-one error of the output buffer passed to sign_hash().
+Introduce read_priv_pkey() to read keys using EVP_PKEY, and change
+read_priv_key() to be wrapper for it.
 
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- src/evmctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ src/libimaevm.c | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 15a7226..b6333bf 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -510,7 +510,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- static int sign_evm(const char *file, const char *key)
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index da0f422..c620c1e 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -753,10 +753,10 @@ void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
+ 	free(pkey);
+ }
+ 
+-static RSA *read_priv_key(const char *keyfile, const char *keypass)
++static EVP_PKEY *read_priv_pkey(const char *keyfile, const char *keypass)
  {
- 	unsigned char hash[MAX_DIGEST_SIZE];
--	unsigned char sig[MAX_SIGNATURE_SIZE];
-+	unsigned char sig[MAX_SIGNATURE_SIZE + 1];
- 	int len, err;
+ 	FILE *fp;
+-	RSA *key;
++	EVP_PKEY *key;
  
- 	len = calc_evm_hash(file, hash);
-@@ -519,7 +519,7 @@ static int sign_evm(const char *file, const char *key)
- 		return len;
+ 	fp = fopen(keyfile, "r");
+ 	if (!fp) {
+@@ -764,18 +764,40 @@ static RSA *read_priv_key(const char *keyfile, const char *keypass)
+ 		return NULL;
+ 	}
+ 	ERR_load_crypto_strings();
+-	key = PEM_read_RSAPrivateKey(fp, NULL, NULL, (void *)keypass);
++	key = PEM_read_PrivateKey(fp, NULL, NULL, (void *)keypass);
+ 	if (!key) {
+ 		char str[256];
  
- 	len = sign_hash(params.hash_algo, hash, len, key, NULL, sig + 1);
--	assert(len < sizeof(sig));
-+	assert(len < MAX_SIGNATURE_SIZE);
- 	if (len <= 1)
- 		return len;
+-		ERR_error_string(ERR_get_error(), str);
+-		log_err("PEM_read_RSAPrivateKey() failed: %s\n", str);
++		ERR_error_string(ERR_peek_error(), str);
++		log_err("PEM_read_PrivateKey() failed: %s\n", str);
++#ifdef USE_FPRINTF
++		ERR_print_errors_fp(stderr);
++#else
++		ERR_clear_error();
++#endif
+ 	}
+ 
+ 	fclose(fp);
+ 	return key;
+ }
+ 
++static RSA *read_priv_key(const char *keyfile, const char *keypass)
++{
++	EVP_PKEY *pkey;
++	RSA *key;
++
++	pkey = read_priv_pkey(keyfile, keypass);
++	if (!pkey)
++		return NULL;
++	key = EVP_PKEY_get1_RSA(pkey);
++	EVP_PKEY_free(pkey);
++	if (!key) {
++		log_err("sign_hash_v1: unsupported key type\n");
++		return NULL;
++	}
++	return key;
++}
++
+ static int get_hash_algo_v1(const char *algo)
+ {
  
 -- 
 2.11.0
