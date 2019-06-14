@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA7AC31E45
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8116CC31E45
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB0F21537
-	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D91F20B7C
+	for <linux-integrity@archiver.kernel.org>; Fri, 14 Jun 2019 01:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726187AbfFNBy3 (ORCPT
+        id S1726659AbfFNByj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jun 2019 21:54:29 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:41152 "EHLO
+        Thu, 13 Jun 2019 21:54:39 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:41300 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbfFNBy3 (ORCPT
+        with ESMTP id S1726742AbfFNByj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jun 2019 21:54:29 -0400
+        Thu, 13 Jun 2019 21:54:39 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 820CC72CCD4;
-        Fri, 14 Jun 2019 04:54:27 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 617B372CCAE;
+        Fri, 14 Jun 2019 04:54:35 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 616AB4A4AE7;
-        Fri, 14 Jun 2019 04:54:27 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 46FBC4A4AE7;
+        Fri, 14 Jun 2019 04:54:35 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v4 2/5] ima-avm-utils: Change read_pub_key to use EVP_PKEY API
-Date:   Fri, 14 Jun 2019 04:54:07 +0300
-Message-Id: <20190614015410.26039-3-vt@altlinux.org>
+Subject: [PATCH v4 5/5] ima-avm-utils: Remove RSA_ASN1_templates
+Date:   Fri, 14 Jun 2019 04:54:10 +0300
+Message-Id: <20190614015410.26039-6-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190614015410.26039-1-vt@altlinux.org>
 References: <20190614015410.26039-1-vt@altlinux.org>
@@ -43,89 +43,98 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Introduce read_pub_pkey() to read keys using EVP_PKEY, and change
-read_pub_key() to be wrapper for it.
+Remove RSA_ASN1_templates[] as it does not needed anymore. OpenSSL sign
+is doing proper PKCS1 padding automatically (tested to be compatible
+with previous version, except for MD4). This also fixes bug with MD4
+which produced wrong signature because of absence of the appropriate
+RSA_ASN1_template.
 
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- src/imaevm.h    |  1 +
- src/libimaevm.c | 33 ++++++++++++++++++++++-----------
- 2 files changed, 23 insertions(+), 11 deletions(-)
+ src/imaevm.h    |  1 -
+ src/libimaevm.c | 57 ---------------------------------------------------------
+ 2 files changed, 58 deletions(-)
 
 diff --git a/src/imaevm.h b/src/imaevm.h
-index c81bf21..6d5eabd 100644
+index 8c6aeea..31d05ae 100644
 --- a/src/imaevm.h
 +++ b/src/imaevm.h
-@@ -216,6 +216,7 @@ int get_filesize(const char *filename);
- int ima_calc_hash(const char *file, uint8_t *hash);
- int get_hash_algo(const char *algo);
- RSA *read_pub_key(const char *keyfile, int x509);
-+EVP_PKEY *read_pub_pkey(const char *keyfile, int x509);
+@@ -207,7 +207,6 @@ struct RSA_ASN1_template {
+ #define	NUM_PCRS 20
+ #define DEFAULT_PCR 10
  
- void calc_keyid_v1(uint8_t *keyid, char *str, const unsigned char *pkey, int len);
- void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key);
+-extern const struct RSA_ASN1_template RSA_ASN1_templates[PKEY_HASH__LAST];
+ extern struct libevm_params params;
+ 
+ void do_dump(FILE *fp, const void *ptr, int len, bool cr);
 diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 3a9ab63..da0f422 100644
+index f9bafe3..6458c63 100644
 --- a/src/libimaevm.c
 +++ b/src/libimaevm.c
-@@ -355,10 +355,9 @@ int ima_calc_hash(const char *file, uint8_t *hash)
- 	return mdlen;
- }
+@@ -81,63 +81,6 @@ const char *const pkey_hash_algo_kern[PKEY_HASH__LAST] = {
+ 	[PKEY_HASH_STREEBOG_512] = "streebog512",
+ };
  
--RSA *read_pub_key(const char *keyfile, int x509)
-+EVP_PKEY *read_pub_pkey(const char *keyfile, int x509)
- {
- 	FILE *fp;
--	RSA *key = NULL;
- 	X509 *crt = NULL;
- 	EVP_PKEY *pkey = NULL;
- 
-@@ -375,24 +374,36 @@ RSA *read_pub_key(const char *keyfile, int x509)
- 			goto out;
- 		}
- 		pkey = X509_extract_key(crt);
-+		X509_free(crt);
- 		if (!pkey) {
- 			log_err("X509_extract_key() failed\n");
- 			goto out;
- 		}
--		key = EVP_PKEY_get1_RSA(pkey);
- 	} else {
--		key = PEM_read_RSA_PUBKEY(fp, NULL, NULL, NULL);
-+		pkey = PEM_read_PUBKEY(fp, NULL, NULL, NULL);
-+		if (!pkey)
-+			log_err("PEM_read_PUBKEY() failed\n");
- 	}
- 
--	if (!key)
--		log_err("PEM_read_RSA_PUBKEY() failed\n");
+-/*
+- * Hash algorithm OIDs plus ASN.1 DER wrappings [RFC4880 sec 5.2.2].
+- */
+-static const uint8_t RSA_digest_info_MD5[] = {
+-	0x30, 0x20, 0x30, 0x0C, 0x06, 0x08,
+-	0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x02, 0x05, /* OID */
+-	0x05, 0x00, 0x04, 0x10
+-};
 -
- out:
--	if (pkey)
--		EVP_PKEY_free(pkey);
--	if (crt)
--		X509_free(crt);
- 	fclose(fp);
-+	return pkey;
-+}
-+
-+RSA *read_pub_key(const char *keyfile, int x509)
-+{
-+	EVP_PKEY *pkey;
-+	RSA *key;
-+
-+	pkey = read_pub_pkey(keyfile, x509);
-+	if (!pkey)
-+		return NULL;
-+	key = EVP_PKEY_get1_RSA(pkey);
-+	EVP_PKEY_free(pkey);
-+	if (!key) {
-+		log_err("read_pub_key: unsupported key type\n");
-+		return NULL;
-+	}
- 	return key;
- }
- 
+-static const uint8_t RSA_digest_info_SHA1[] = {
+-	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
+-	0x2B, 0x0E, 0x03, 0x02, 0x1A,
+-	0x05, 0x00, 0x04, 0x14
+-};
+-
+-static const uint8_t RSA_digest_info_RIPE_MD_160[] = {
+-	0x30, 0x21, 0x30, 0x09, 0x06, 0x05,
+-	0x2B, 0x24, 0x03, 0x02, 0x01,
+-	0x05, 0x00, 0x04, 0x14
+-};
+-
+-static const uint8_t RSA_digest_info_SHA224[] = {
+-	0x30, 0x2d, 0x30, 0x0d, 0x06, 0x09,
+-	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04,
+-	0x05, 0x00, 0x04, 0x1C
+-};
+-
+-static const uint8_t RSA_digest_info_SHA256[] = {
+-	0x30, 0x31, 0x30, 0x0d, 0x06, 0x09,
+-	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01,
+-	0x05, 0x00, 0x04, 0x20
+-};
+-
+-static const uint8_t RSA_digest_info_SHA384[] = {
+-	0x30, 0x41, 0x30, 0x0d, 0x06, 0x09,
+-	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02,
+-	0x05, 0x00, 0x04, 0x30
+-};
+-
+-static const uint8_t RSA_digest_info_SHA512[] = {
+-	0x30, 0x51, 0x30, 0x0d, 0x06, 0x09,
+-	0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03,
+-	0x05, 0x00, 0x04, 0x40
+-};
+-
+-const struct RSA_ASN1_template RSA_ASN1_templates[PKEY_HASH__LAST] = {
+-#define _(X) { RSA_digest_info_##X, sizeof(RSA_digest_info_##X) }
+-	[PKEY_HASH_MD5]		= _(MD5),
+-	[PKEY_HASH_SHA1]	= _(SHA1),
+-	[PKEY_HASH_RIPE_MD_160]	= _(RIPE_MD_160),
+-	[PKEY_HASH_SHA256]	= _(SHA256),
+-	[PKEY_HASH_SHA384]	= _(SHA384),
+-	[PKEY_HASH_SHA512]	= _(SHA512),
+-	[PKEY_HASH_SHA224]	= _(SHA224),
+-#undef _
+-};
+-
+ struct libevm_params params = {
+ 	.verbose = LOG_INFO - 1,
+ 	.x509 = 1,
 -- 
 2.11.0
 
