@@ -2,104 +2,125 @@ Return-Path: <SRS0=cZfx=UQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28003C31E5B
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 18:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65F9C31E5C
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 18:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07245208C0
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 18:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ED6A20863
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 18:36:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OExWykqY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbfFQSH2 (ORCPT
+        id S1726776AbfFQSf4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 17 Jun 2019 14:07:28 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726091AbfFQSH2 (ORCPT
+        Mon, 17 Jun 2019 14:35:56 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41397 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfFQSfz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Jun 2019 14:07:28 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HI7Q2Q079225
-        for <linux-integrity@vger.kernel.org>; Mon, 17 Jun 2019 14:07:27 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2t6fmfrjp0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 17 Jun 2019 14:07:26 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 17 Jun 2019 19:07:23 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 17 Jun 2019 19:07:19 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HI7ImH53543130
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 17 Jun 2019 18:07:18 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A32CFA4053;
-        Mon, 17 Jun 2019 18:07:18 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B031A4059;
-        Mon, 17 Jun 2019 18:07:17 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.81.90])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 17 Jun 2019 18:07:17 +0000 (GMT)
-Subject: Re: [PATCH] ima: dynamically allocate shash_desc
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
+        Mon, 17 Jun 2019 14:35:55 -0400
+Received: by mail-pl1-f194.google.com with SMTP id m7so858148pls.8;
+        Mon, 17 Jun 2019 11:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0IvJHoD0x6Z/N31hvvGGVGsE7+bjH2MX+F9HjOeromU=;
+        b=OExWykqYB1XFOJ0uAdfVjaD7+Rm+ptb+DGzRrFHXrfqUpNWmT+gyfF49bfYgfui6Gg
+         XgnxapiU1/pFppenKXF78Tu7baKT6rjno8xgPl58yrOR65sg1dst3gH8VSsDKA/fhM9g
+         Isxo4e0gzq+QSCl1q2FCeidJ5Ap8TyDOff9CzQzp5cu1gUWXogVIAKzBfTxNm8ycDqVJ
+         Wkj+iZe5wWKcb8IBJ6e1EvNehilkjWeMnCX9UFmw7k7UdUjXefP2Yz0hgoscpcim8r6o
+         W0OF8+PdpHRKyy5E2/VxK7rb5Fxq5MPaO6FA0PuTD6FFcV4G1VpWUFCZv6UIj/7e14Tv
+         rvTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0IvJHoD0x6Z/N31hvvGGVGsE7+bjH2MX+F9HjOeromU=;
+        b=oz5QlQom1uknXgqzEIa1usPwjH6qkJL1Pa0R+oJpAQYpBLj8WHPK4lUxaoD7OGzYb5
+         rfMQcenJrjdvGMwjJr8Orcqy+CkC33O/F1AlNRfXvycZ/SP3+P59BmeqDz/WSQ58o+9t
+         QWIM5ZGcNZKy/bAz7RuG8zEP/086tqHwJaGyC39sZ1Kw8sYWdjBO3Wzrl7e5CAZvE3Md
+         jgLP+StlrjauGOjGH+eAFnB1RYCfPeqfynpQ/wpELpYjf9xFvc136SIhalPovdi63Hco
+         PICyRnnbN6vQ0xr+e2vG7hAshBog+Ib9oZ7EUGfPi5FHtrREoDhm+qarAedibNkwG71q
+         RAbA==
+X-Gm-Message-State: APjAAAW11g3MwFFTkqCwWt50/KVZeya7C5MwOW+dA5GdeDqwV4C+uGLJ
+        11Ad70ASsEbGgpS8NADl58ESXXD3
+X-Google-Smtp-Source: APXvYqzQntCtPL7/RfEPKtQ1u4ORO2tP31brIoKS1bdz/vxC7dsrRsL18sLgrnNiWQCGWGBm1k+E5Q==
+X-Received: by 2002:a17:902:6a4:: with SMTP id 33mr3796492plh.338.1560796554726;
+        Mon, 17 Jun 2019 11:35:54 -0700 (PDT)
+Received: from localhost.localdomain ([167.220.56.169])
+        by smtp.gmail.com with ESMTPSA id f186sm16552946pfb.5.2019.06.17.11.35.53
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 17 Jun 2019 11:35:54 -0700 (PDT)
+From:   Prakhar Srivastava <prsriva02@gmail.com>
+To:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 17 Jun 2019 14:07:06 -0400
-In-Reply-To: <1560786951.4072.103.camel@linux.ibm.com>
-References: <20190617115838.2397872-1-arnd@arndb.de>
-         <1560786951.4072.103.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+Cc:     zohar@linux.ibm.com, roberto.sassu@huawei.com,
+        Prakhar Srivastava <prsriva02@gmail.com>
+Subject: [PATCH 3/3] KEXEC:Call ima_kexec_cmdline to measure the boot command line args
+Date:   Mon, 17 Jun 2019 11:35:07 -0700
+Message-Id: <20190617183507.14160-4-prsriva02@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190617183507.14160-1-prsriva02@gmail.com>
+References: <20190617183507.14160-1-prsriva02@gmail.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19061718-0008-0000-0000-000002F48A92
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19061718-0009-0000-0000-000022619DAC
-Message-Id: <1560794826.4072.169.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906170162
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-06-17 at 11:55 -0400, Mimi Zohar wrote:
-> On Mon, 2019-06-17 at 13:20 +0200, Arnd Bergmann wrote:
-> > On 32-bit ARM, we get a warning about excessive stack usage when
-> > building with clang.
-> > 
-> > security/integrity/ima/ima_crypto.c:504:5: error: stack frame size
-> > of 1152 bytes in function 'ima_calc_field_array_hash' [-Werror,-
-> > Wframe-larger-than=]
-> 
-> I'm definitely not seeing this.  Is this problem a result of non
-> upstreamed patches?  For sha1, currently the only possible hash
-> algorithm, I'm seeing 664.
+During soft reboot(kexec_file_load) boot command line
+arguments are not measured.
 
-Every time a measurement is added to the measurement list, the memory
-would be allocated/freed.  The frequency of new measurements is policy
-dependent.  For performance reasons, I'd prefer if the allocation
-remains on the stack.
+Call ima hook ima_kexec_cmdline to measure the boot command line
+arguments into IMA measurement list.
 
-Mimi
+- call ima_kexec_cmdline from kexec_file_load.
+- move the call ima_add_kexec_buffer after the cmdline
+args have been measured.
+
+Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+Acked-by: Dave Young <dyoung@redhat.com>
+---
+ kernel/kexec_file.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 072b6ee55e3f..b0c724e5d86c 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -198,9 +198,6 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 		return ret;
+ 	image->kernel_buf_len = size;
+ 
+-	/* IMA needs to pass the measurement list to the next kernel. */
+-	ima_add_kexec_buffer(image);
+-
+ 	/* Call arch image probe handlers */
+ 	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
+ 					    image->kernel_buf_len);
+@@ -241,8 +238,14 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
++
++		ima_kexec_cmdline(image->cmdline_buf,
++				  image->cmdline_buf_len - 1);
+ 	}
+ 
++	/* IMA needs to pass the measurement list to the next kernel. */
++	ima_add_kexec_buffer(image);
++
+ 	/* Call arch image load handlers */
+ 	ldata = arch_kexec_kernel_image_load(image);
+ 
+-- 
+2.19.1
 
