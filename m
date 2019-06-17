@@ -2,100 +2,168 @@ Return-Path: <SRS0=cZfx=UQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610B2C31E58
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 13:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4886C31E57
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 13:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3904F206B7
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 13:31:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ENOJaDIc"
+	by mail.kernel.org (Postfix) with ESMTP id C140320657
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Jun 2019 13:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfFQNb0 (ORCPT
+        id S1726248AbfFQNd4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 17 Jun 2019 09:31:26 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52359 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbfFQNb0 (ORCPT
+        Mon, 17 Jun 2019 09:33:56 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726215AbfFQNd4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Jun 2019 09:31:26 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s3so9297363wms.2;
-        Mon, 17 Jun 2019 06:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TK/taqnh4uTdUXYrgyPWRNDtNYlU83EQagbd52Vya7Q=;
-        b=ENOJaDIcKIyM2ugEwPbDz5yXeyQ4yLGFt0UoLTW/SfFBEE1GI2WZm4B05Cd7QL89vm
-         i0uC0fZ45h8c9+AtE188tELX/cImyDiX8JOdrOjRAPst2wYL72WdZkzlsLKHDbKwO88A
-         fBFmMZpUnBGo/OcqPiFLq31dtZ7vEz5ltwwm5fW1BBQoxHLdm68UDAUY0eWDPuCJUMO6
-         7HRMfUWEw3KrXVWJwrHfxbWhDffWtoEfx2r//PsTOBcWzfEFH4v6yI6qU44K4tN05rq5
-         SPtgc4Ts8aT7Zs16DyZAZzSzKhli314JMqBmSk3V1umqS0zyyySyltYGB4IxrHJrp70g
-         7cgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TK/taqnh4uTdUXYrgyPWRNDtNYlU83EQagbd52Vya7Q=;
-        b=ERJf3MjkwqXu3lyNHDZGXS21aN6FzW2T1u9voYJoCUw7R0JmHFXRdKRdaJWW0SAANN
-         KZLoEhXuQCmOEs1c+W8ATnDrVZ9b1KLee0LfrWEQSyxF93Y73073coDz7np+WA4ulRGy
-         GhQABTAxTiPYMuOD7u1rBnbROvFbp75jpEdbuD5gATVekIerbKmmGgHq0+n8kXGkgDnP
-         QORMBsEsioOMtlALc97PI3kY51aPnE7rVIPJ5zM8Xo3+uI4okus6sZLPWTu1RBxViOHi
-         CxrwiveEjYGJLG9cnMsh/3EaQSWnOxiYacc4prusne69RXQbgCz2Tz9SwJcTcGxp5S5m
-         bcdQ==
-X-Gm-Message-State: APjAAAU2ovnyxBO+cUCHkpal4xIa3rMSP7zvqrr7pTKDOJb/1CiZQPjg
-        L+aZuJ/dFevy554l5jbOZ6Q=
-X-Google-Smtp-Source: APXvYqzEgy4mPVF+JIAdiL5lPe21YfSxEYStzjxJIEXrMdKSlb4M+1ecnl0Nvbc2TqZFJIsyNWZttw==
-X-Received: by 2002:a1c:700b:: with SMTP id l11mr18910782wmc.106.1560778283508;
-        Mon, 17 Jun 2019 06:31:23 -0700 (PDT)
-Received: from [172.22.36.64] (redhat-nat.vtp.fi.muni.cz. [78.128.215.6])
-        by smtp.gmail.com with ESMTPSA id q12sm8027900wrp.50.2019.06.17.06.31.22
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 17 Jun 2019 06:31:23 -0700 (PDT)
-Subject: Re: [RFC PATCH v4 1/1] Add dm verity root hash pkcs7 sig validation.
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        jmorris@namei.org, scottsh@microsoft.com, ebiggers@google.com,
-        mpatocka@redhat.com
-References: <20190613010610.4364-1-jaskarankhurana@linux.microsoft.com>
- <20190613010610.4364-2-jaskarankhurana@linux.microsoft.com>
-From:   Milan Broz <gmazyland@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <ab346931-1d1b-bd2f-8314-ee4779bd44bf@gmail.com>
-Date:   Mon, 17 Jun 2019 15:31:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.1
-MIME-Version: 1.0
-In-Reply-To: <20190613010610.4364-2-jaskarankhurana@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 17 Jun 2019 09:33:56 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5HDXhKX059544
+        for <linux-integrity@vger.kernel.org>; Mon, 17 Jun 2019 09:33:55 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2t69n4x38b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 17 Jun 2019 09:33:54 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 17 Jun 2019 14:33:31 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 17 Jun 2019 14:33:30 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5HDXT0q51904716
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 17 Jun 2019 13:33:29 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2F450A4051;
+        Mon, 17 Jun 2019 13:33:29 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 79FE0A4040;
+        Mon, 17 Jun 2019 13:33:28 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.81.90])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 17 Jun 2019 13:33:28 +0000 (GMT)
+Subject: Re: [PATCH v4 3/5] ima-avm-utils: Change read_priv_key to use
+ EVP_PKEY API
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Mon, 17 Jun 2019 09:33:17 -0400
+In-Reply-To: <20190614015410.26039-4-vt@altlinux.org>
+References: <20190614015410.26039-1-vt@altlinux.org>
+         <20190614015410.26039-4-vt@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19061713-0016-0000-0000-00000289D113
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19061713-0017-0000-0000-000032E71ADC
+Message-Id: <1560778397.4072.79.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-17_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906170125
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 13/06/2019 03:06, Jaskaran Khurana wrote:
-...
+On Fri, 2019-06-14 at 04:54 +0300, Vitaly Chikunov wrote:
+> Introduce read_priv_pkey() to read keys using EVP_PKEY, and change
+> read_priv_key() to be wrapper for it.
+> 
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> ---
+>  src/libimaevm.c | 32 +++++++++++++++++++++++++++-----
+>  1 file changed, 27 insertions(+), 5 deletions(-)
+> 
+> diff --git a/src/libimaevm.c b/src/libimaevm.c
+> index da0f422..c620c1e 100644
+> --- a/src/libimaevm.c
+> +++ b/src/libimaevm.c
+> @@ -753,10 +753,10 @@ void calc_keyid_v2(uint32_t *keyid, char *str, RSA *key)
+>  	free(pkey);
+>  }
+> 
+> -static RSA *read_priv_key(const char *keyfile, const char *keypass)
+> +static EVP_PKEY *read_priv_pkey(const char *keyfile, const char *keypass)
+>  {
+>  	FILE *fp
+> -	RSA *key;
+> +	EVP_PKEY *key;
 
-> Adds DM_VERITY_VERIFY_ROOTHASH_SIG_FORCE: roothash signature *must* be
-> specified for all dm verity volumes and verification must succeed prior
-> to creation of device mapper block device.
+In read_pub_pkey() EVP_PKEY is named pkey, not key.
 
-I had a quick discussion about this and one suggestion was
-to add dm-verity kernel module parameter instead of a new config option.
+> 
+>  	fp = fopen(keyfile, "r");
+>  	if (!fp) {
+> @@ -764,18 +764,40 @@ static RSA *read_priv_key(const char *keyfile, const char *keypass)
+>  		return NULL;
+>  	}
+>  	ERR_load_crypto_strings();
+> -	key = PEM_read_RSAPrivateKey(fp, NULL, NULL, (void *)keypass);
+> +	key = PEM_read_PrivateKey(fp, NULL, NULL, (void *)keypass);
+>  	if (!key) {
+>  		char str[256];
+> 
+> -		ERR_error_string(ERR_get_error(), str);
+> -		log_err("PEM_read_RSAPrivateKey() failed: %s\n", str);
+> +		ERR_error_string(ERR_peek_error(), str);
+> +		log_err("PEM_read_PrivateKey() failed: %s\n", str);
+> +#ifdef USE_FPRINTF
+> +		ERR_print_errors_fp(stderr);
+> +#else
+> +		ERR_clear_error();
+> +#endif
 
-The idea is that if you can control kernel boot commandline, you can add it
-there with the same effect (expecting that root device is on dm-verity as well).
+Why is this additional print needed?  Are you expecting multiple
+errors?  By calling both log_err() and ERR_print_errors_fp() won't the
+same error message be duplicated?  If calling "ERR_print_errors_fp()"
+is indeed needed, please make this change as a separate patch, with an
+appropriate patch description.
 
-Isn't this better option or it is not going to work for you?
+>  	}
+> 
+>  	fclose(fp);
+>  	return key;
+>  }
+> 
+> +static RSA *read_priv_key(const char *keyfile, const char *keypass)
+> +{
+> +	EVP_PKEY *pkey;
+> +	RSA *key;
+> +
+> +	pkey = read_priv_pkey(keyfile, keypass);
+> +	if (!pkey)
+> +		return NULL;
+> +	key = EVP_PKEY_get1_RSA(pkey);
+> +	EVP_PKEY_free(pkey);
+> +	if (!key) {
+> +		log_err("sign_hash_v1: unsupported key type\n");
+> +		return NULL;
+> +	}
 
-Milan
+At least at this point in the patch series, failing to get the private
+key isn't limited to sign_hash_v1.  Perhaps that might be true later.
+
+Mimi
+
+> +	return key;
+> +}
+> +
+>  static int get_hash_algo_v1(const char *algo)
+>  {
+> 
+
