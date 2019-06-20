@@ -2,38 +2,37 @@ Return-Path: <SRS0=l2T0=UT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2030AC43613
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 07:13:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36149C43613
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 07:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E91F22084A
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 07:13:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 145E42084A
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 07:13:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730704AbfFTHNl (ORCPT
+        id S1730709AbfFTHNr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Jun 2019 03:13:41 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:40196 "EHLO
+        Thu, 20 Jun 2019 03:13:47 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:40450 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbfFTHNl (ORCPT
+        with ESMTP id S1725889AbfFTHNr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Jun 2019 03:13:41 -0400
+        Thu, 20 Jun 2019 03:13:47 -0400
 Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 82F2C72CC64;
-        Thu, 20 Jun 2019 10:13:39 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id AC25472CC64;
+        Thu, 20 Jun 2019 10:13:44 +0300 (MSK)
 Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 681E94A4A29;
-        Thu, 20 Jun 2019 10:13:39 +0300 (MSK)
+        by imap.altlinux.org (Postfix) with ESMTPSA id 4DA104A4A29;
+        Thu, 20 Jun 2019 10:13:44 +0300 (MSK)
 From:   Vitaly Chikunov <vt@altlinux.org>
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v6 05/11] ima-evm-utils: Start converting find_keyid to EVP_PKEY API
-Date:   Thu, 20 Jun 2019 10:12:58 +0300
-Message-Id: <20190620071304.24495-6-vt@altlinux.org>
+Subject: [PATCH v6 06/11] ima-evm-utils: Convert verify_hash_v2 to EVP_PKEY API
+Date:   Thu, 20 Jun 2019 10:12:59 +0300
+Message-Id: <20190620071304.24495-7-vt@altlinux.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20190620071304.24495-1-vt@altlinux.org>
 References: <20190620071304.24495-1-vt@altlinux.org>
@@ -44,71 +43,117 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-New find_keyid_pkey() accepts EVP_PKEY. Old find_keyid() calls
-find_keyid_pkey(), but still return RSA key.
+Rely on OpenSSL API to verify v2 signatures instead of manual PKCS1
+decoding.
 
 Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 ---
- src/libimaevm.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ src/libimaevm.c | 74 +++++++++++++++++++++++++++++----------------------------
+ 1 file changed, 38 insertions(+), 36 deletions(-)
 
 diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 707b2e9..ae18005 100644
+index ae18005..c24c67f 100644
 --- a/src/libimaevm.c
 +++ b/src/libimaevm.c
-@@ -452,11 +452,11 @@ struct public_key_entry {
- 	struct public_key_entry *next;
- 	uint32_t keyid;
- 	char name[9];
--	RSA *key;
-+	EVP_PKEY *key;
- };
- static struct public_key_entry *public_keys = NULL;
- 
--static RSA *find_keyid(uint32_t keyid)
-+static EVP_PKEY *find_keyid_pkey(uint32_t keyid)
- {
- 	struct public_key_entry *entry;
- 
-@@ -467,6 +467,22 @@ static RSA *find_keyid(uint32_t keyid)
- 	return NULL;
+@@ -519,14 +519,17 @@ void init_public_keys(const char *keyfiles)
+ 	}
  }
  
-+static RSA *find_keyid(uint32_t keyid)
-+{
-+	EVP_PKEY *pkey;
-+	RSA *key;
-+
-+	pkey = find_keyid_pkey(keyid);
-+	if (!pkey)
-+		return NULL;
-+	key = EVP_PKEY_get0_RSA(pkey);
-+	if (!key) {
-+		log_err("find_keyid: unsupported key type\n");
-+		return NULL;
-+	}
-+	return key;
-+}
-+
- void init_public_keys(const char *keyfiles)
++/*
++ * Return: 0 verification good, 1 verification bad, -1 error.
++ */
+ int verify_hash_v2(const char *file, const unsigned char *hash, int size,
+ 		   unsigned char *sig, int siglen, const char *keyfile)
  {
- 	struct public_key_entry *entry;
-@@ -489,13 +505,13 @@ void init_public_keys(const char *keyfiles)
- 			break;
- 		}
+-	int err, len;
+-	unsigned char out[1024];
+-	RSA *key;
++	int ret = -1;
++	EVP_PKEY *pkey;
+ 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
+-	const struct RSA_ASN1_template *asn1;
++	EVP_PKEY_CTX *ctx;
++	const EVP_MD *md;
  
--		entry->key = read_pub_key(keyfile, 1);
-+		entry->key = read_pub_pkey(keyfile, 1);
- 		if (!entry->key) {
- 			free(entry);
- 			continue;
- 		}
+ 	if (params.verbose > LOG_INFO) {
+ 		log_info("hash: ");
+@@ -534,45 +537,44 @@ int verify_hash_v2(const char *file, const unsigned char *hash, int size,
+ 	}
  
--		calc_keyid_v2(&entry->keyid, entry->name, entry->key);
-+		calc_pkeyid_v2(&entry->keyid, entry->name, entry->key);
- 		sprintf(entry->name, "%x", __be32_to_cpup(&entry->keyid));
- 		log_info("key %d: %s %s\n", i++, entry->name, keyfile);
- 		entry->next = public_keys;
+ 	if (public_keys) {
+-		key = find_keyid(hdr->keyid);
+-		if (!key) {
++		pkey = find_keyid_pkey(hdr->keyid);
++		if (!pkey) {
+ 			log_err("%s: unknown keyid: %x\n", file,
+ 				__be32_to_cpup(&hdr->keyid));
+ 			return -1;
+ 		}
+ 	} else {
+-		key = read_pub_key(keyfile, 1);
+-		if (!key)
+-			return 1;
+-	}
+-
+-
+-	err = RSA_public_decrypt(siglen - sizeof(*hdr), sig + sizeof(*hdr),
+-				 out, key, RSA_PKCS1_PADDING);
+-	if (err < 0) {
+-		log_err("%s: RSA_public_decrypt() failed: %d\n", file, err);
+-		return 1;
+-	}
+-
+-	len = err;
+-
+-	asn1 = &RSA_ASN1_templates[hdr->hash_algo];
+-
+-	if (len < asn1->size || memcmp(out, asn1->data, asn1->size)) {
+-		log_err("%s: verification failed: %d (asn1 mismatch)\n",
+-			file, err);
+-		return -1;
+-	}
+-
+-	len -= asn1->size;
+-
+-	if (len != size || memcmp(out + asn1->size, hash, len)) {
+-		log_err("%s: verification failed: %d (digest mismatch)\n",
+-			file, err);
+-		return -1;
++		pkey = read_pub_pkey(keyfile, 1);
++		if (!pkey)
++			return -1;
+ 	}
+ 
+-	return 0;
++	if (!(ctx = EVP_PKEY_CTX_new(pkey, NULL)))
++		goto err;
++	if (!EVP_PKEY_verify_init(ctx))
++		goto err;
++	if (!(md = EVP_get_digestbyname(params.hash_algo)))
++		goto err;
++	if (!EVP_PKEY_CTX_set_signature_md(ctx, md))
++		goto err;
++	ret = EVP_PKEY_verify(ctx, sig + sizeof(*hdr),
++			      siglen - sizeof(*hdr), hash, size);
++	if (ret == 1)
++		ret = 0;
++	else if (ret == 0) {
++		log_err("%s: verification failed: %d (%s)\n",
++			file, ret, ERR_reason_error_string(ERR_get_error()));
++		ret = 1;
++	}
++err:
++	if (ret < 0 || ret > 1) {
++		log_err("%s: verification failed: %d (%s)\n",
++			file, ret, ERR_reason_error_string(ERR_peek_error()));
++		ret = -1;
++	}
++	EVP_PKEY_CTX_free(ctx);
++	EVP_PKEY_free(pkey);
++	return ret;
+ }
+ 
+ int get_hash_algo(const char *algo)
 -- 
 2.11.0
 
