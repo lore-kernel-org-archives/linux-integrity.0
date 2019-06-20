@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85F5DC48BE3
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 20:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC165C48BE3
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 20:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7E2214AF
-	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 20:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95EE9214AF
+	for <linux-integrity@archiver.kernel.org>; Thu, 20 Jun 2019 20:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1561064030;
-	bh=7jX9aA8IE8stWz6zj6E8QX1HMCEanuNDjXJElYmTkkM=;
+	s=default; t=1561064032;
+	bh=/rMdDoel18ld9zWX5CGZ6op2X7DEL5ozaTJWNfp3vo4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=l8PwcOqPJwIPbO7yjgVDaUzKVXCCJ9PNUVMd+zu4z7K6BrdiSj8GmW2ShR/gK+c8U
-	 7+DwqyQ0kI6k/om+2X0jl1OK0aAz65fgMCOh7E1tVFJL9m1TzbalzVOCAoeIANumUR
-	 lgfxJwGgtijkGyYvyGpEObKsplCdbDllPImVBUNY=
+	b=0B1Z0rxo/aQV1oZYZyKfSVYXtseIuFqITkTEVIaMo5Jl1tJFag13oqwXRojEQVpp0
+	 Q47GPTfNFphKxTHJcrhdPxM1v0BZ6KQYLzX43LDmWy5rIggoTAvsbK3i5Iquu/odiV
+	 jNZU8tVFrxoTMY/XVAsZUkOZ/D3wDOx+GbHR9sFw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbfFTUxs (ORCPT
+        id S1726556AbfFTUxv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 20 Jun 2019 16:53:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56566 "EHLO mail.kernel.org"
+        Thu, 20 Jun 2019 16:53:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbfFTUxr (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 20 Jun 2019 16:53:47 -0400
+        id S1726451AbfFTUxt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 20 Jun 2019 16:53:49 -0400
 Received: from ebiggers-linuxstation.mtv.corp.google.com (unknown [104.132.1.77])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3768215EA;
-        Thu, 20 Jun 2019 20:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34D2C2173E;
+        Thu, 20 Jun 2019 20:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1561064026;
-        bh=7jX9aA8IE8stWz6zj6E8QX1HMCEanuNDjXJElYmTkkM=;
+        s=default; t=1561064028;
+        bh=/rMdDoel18ld9zWX5CGZ6op2X7DEL5ozaTJWNfp3vo4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RrdlOl3Nwd/Z4Muo8ZjIxtOWBl5qWp/dIGg7LjnewU7tt7Oc58EzolLKFaB19T7SH
-         zPIv3Vir4EoUPeSPcn6vMi0ZXVaMkLAmRIH/vELUvPvtPIEn9RJQqqrkvhx3XUedeX
-         FYbK2BHPNvWVY3CvcWeKmDx8nc3BzX1FtUX1z5+s=
+        b=gNFOfZOLRInrdIRb4WXvGyCooCcUvvFwPlfVOlfXvERmnmkcK7QeQK0AOK+9uz9Uu
+         /vTd78TQdyEVMCqjwputPq+pCf4btIjfR9czX7ucK8R5EICXklEY4V6PDWQRL4GPkw
+         +Dl16nTfksqfTMxResjY2nR29ZSns8PI2Ur7m3oY=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
@@ -51,9 +51,9 @@ Cc:     linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         Christoph Hellwig <hch@lst.de>,
         "Darrick J . Wong" <darrick.wong@oracle.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v5 08/16] fs-verity: add the hook for file ->setattr()
-Date:   Thu, 20 Jun 2019 13:50:35 -0700
-Message-Id: <20190620205043.64350-9-ebiggers@kernel.org>
+Subject: [PATCH v5 12/16] fs-verity: add SHA-512 support
+Date:   Thu, 20 Jun 2019 13:50:39 -0700
+Message-Id: <20190620205043.64350-13-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.22.0.410.gd8fdbe21b5-goog
 In-Reply-To: <20190620205043.64350-1-ebiggers@kernel.org>
 References: <20190620205043.64350-1-ebiggers@kernel.org>
@@ -66,73 +66,60 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add a function fsverity_prepare_setattr() which filesystems that support
-fs-verity must call to deny truncates of verity files.
+Add SHA-512 support to fs-verity.  This is primarily a demonstration of
+the trivial changes needed to support a new hash algorithm in fs-verity;
+most users will still use SHA-256, due to the smaller space required to
+store the hashes.  But some users may prefer SHA-512.
 
 Reviewed-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/open.c         | 21 +++++++++++++++++++++
- include/linux/fsverity.h |  7 +++++++
- 2 files changed, 28 insertions(+)
+ fs/verity/fsverity_private.h  | 2 +-
+ fs/verity/hash_algs.c         | 5 +++++
+ include/uapi/linux/fsverity.h | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/verity/open.c b/fs/verity/open.c
-index 3a3bb27e23f5e3..21ae0ef254a695 100644
---- a/fs/verity/open.c
-+++ b/fs/verity/open.c
-@@ -296,6 +296,27 @@ int fsverity_file_open(struct inode *inode, struct file *filp)
- }
- EXPORT_SYMBOL_GPL(fsverity_file_open);
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index eaa2b3b93bbf6b..02a547f0667c13 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -29,7 +29,7 @@ struct ahash_request;
+  * Largest digest size among all hash algorithms supported by fs-verity.
+  * Currently assumed to be <= size of fsverity_descriptor::root_hash.
+  */
+-#define FS_VERITY_MAX_DIGEST_SIZE	SHA256_DIGEST_SIZE
++#define FS_VERITY_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
  
-+/**
-+ * fsverity_prepare_setattr - prepare to change a verity inode's attributes
-+ * @dentry: dentry through which the inode is being changed
-+ * @attr: attributes to change
-+ *
-+ * Verity files are immutable, so deny truncates.  This isn't covered by the
-+ * open-time check because sys_truncate() takes a path, not a file descriptor.
-+ *
-+ * Return: 0 on success, -errno on failure
-+ */
-+int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr)
-+{
-+	if (IS_VERITY(d_inode(dentry)) && (attr->ia_valid & ATTR_SIZE)) {
-+		pr_debug("Denying truncate of verity file (ino %lu)\n",
-+			 d_inode(dentry)->i_ino);
-+		return -EPERM;
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(fsverity_prepare_setattr);
-+
+ /* A hash algorithm supported by fs-verity */
+ struct fsverity_hash_alg {
+diff --git a/fs/verity/hash_algs.c b/fs/verity/hash_algs.c
+index 46df17094fc252..e0462a010cabfb 100644
+--- a/fs/verity/hash_algs.c
++++ b/fs/verity/hash_algs.c
+@@ -17,6 +17,11 @@ struct fsverity_hash_alg fsverity_hash_algs[] = {
+ 		.digest_size = SHA256_DIGEST_SIZE,
+ 		.block_size = SHA256_BLOCK_SIZE,
+ 	},
++	[FS_VERITY_HASH_ALG_SHA512] = {
++		.name = "sha512",
++		.digest_size = SHA512_DIGEST_SIZE,
++		.block_size = SHA512_BLOCK_SIZE,
++	},
+ };
+ 
  /**
-  * fsverity_cleanup_inode - free the inode's verity info, if present
-  *
-diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
-index 1372c236c8770c..cbcc358d073652 100644
---- a/include/linux/fsverity.h
-+++ b/include/linux/fsverity.h
-@@ -46,6 +46,7 @@ static inline struct fsverity_info *fsverity_get_info(const struct inode *inode)
- /* open.c */
+diff --git a/include/uapi/linux/fsverity.h b/include/uapi/linux/fsverity.h
+index 57d1d7fc0c345a..da0daf6c193b4b 100644
+--- a/include/uapi/linux/fsverity.h
++++ b/include/uapi/linux/fsverity.h
+@@ -14,6 +14,7 @@
+ #include <linux/types.h>
  
- extern int fsverity_file_open(struct inode *inode, struct file *filp);
-+extern int fsverity_prepare_setattr(struct dentry *dentry, struct iattr *attr);
- extern void fsverity_cleanup_inode(struct inode *inode);
+ #define FS_VERITY_HASH_ALG_SHA256	1
++#define FS_VERITY_HASH_ALG_SHA512	2
  
- #else /* !CONFIG_FS_VERITY */
-@@ -62,6 +63,12 @@ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
- 	return IS_VERITY(inode) ? -EOPNOTSUPP : 0;
- }
- 
-+static inline int fsverity_prepare_setattr(struct dentry *dentry,
-+					   struct iattr *attr)
-+{
-+	return IS_VERITY(d_inode(dentry)) ? -EOPNOTSUPP : 0;
-+}
-+
- static inline void fsverity_cleanup_inode(struct inode *inode)
- {
- }
+ struct fsverity_enable_arg {
+ 	__u32 version;
 -- 
 2.22.0.410.gd8fdbe21b5-goog
 
