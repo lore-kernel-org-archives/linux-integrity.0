@@ -2,103 +2,69 @@ Return-Path: <SRS0=ycu+=UX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED894C48BE8
-	for <linux-integrity@archiver.kernel.org>; Mon, 24 Jun 2019 12:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 273E5C43613
+	for <linux-integrity@archiver.kernel.org>; Mon, 24 Jun 2019 14:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD99E2133F
-	for <linux-integrity@archiver.kernel.org>; Mon, 24 Jun 2019 12:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDF1C204EC
+	for <linux-integrity@archiver.kernel.org>; Mon, 24 Jun 2019 14:27:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730370AbfFXMjs (ORCPT
+        id S1728055AbfFXO1X (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 24 Jun 2019 08:39:48 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40276 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726811AbfFXMjr (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 24 Jun 2019 08:39:47 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5OCR4LB059350
-        for <linux-integrity@vger.kernel.org>; Mon, 24 Jun 2019 08:39:46 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2taw5vcnej-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 24 Jun 2019 08:39:46 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 24 Jun 2019 13:39:44 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 24 Jun 2019 13:39:40 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x5OCdd1e15860188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Jun 2019 12:39:39 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B8D242049;
-        Mon, 24 Jun 2019 12:39:39 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 656E64203F;
-        Mon, 24 Jun 2019 12:39:38 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.5])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Jun 2019 12:39:38 +0000 (GMT)
-Subject: Re: [PATCH V10 1/3] IMA: Define a new hook to measure the kexec
- boot command line arguments
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     roberto.sassu@huawei.com, vgoyal@redhat.com
-Date:   Mon, 24 Jun 2019 08:39:27 -0400
-In-Reply-To: <20190624062331.388-2-prsriva02@gmail.com>
-References: <20190624062331.388-1-prsriva02@gmail.com>
-         <20190624062331.388-2-prsriva02@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19062412-0016-0000-0000-0000028BE04C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19062412-0017-0000-0000-000032E94C63
-Message-Id: <1561379967.4340.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-24_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1906240103
+        Mon, 24 Jun 2019 10:27:23 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:44882 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727070AbfFXO1X (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 24 Jun 2019 10:27:23 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hfPvz-0008Pa-02; Mon, 24 Jun 2019 22:27:03 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hfPvq-00056P-KS; Mon, 24 Jun 2019 22:26:54 +0800
+Date:   Mon, 24 Jun 2019 22:26:54 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Andrey Pronin <apronin@chromium.org>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, devicetree@vger.kernel.org,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Matt Mackall <mpm@selenic.com>, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 1/8] tpm: block messages while suspended
+Message-ID: <20190624142654.zprcpz42hivuyrjq@gondor.apana.org.au>
+References: <20190613180931.65445-1-swboyd@chromium.org>
+ <20190613180931.65445-2-swboyd@chromium.org>
+ <20190613232613.GH22901@ziepe.ca>
+ <5d03e394.1c69fb81.f028c.bffb@mx.google.com>
+ <20190617225134.GA30762@ziepe.ca>
+ <5d0c2cd6.1c69fb81.e66af.32bf@mx.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d0c2cd6.1c69fb81.e66af.32bf@mx.google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Prakhar,
+On Thu, Jun 20, 2019 at 06:03:17PM -0700, Stephen Boyd wrote:
+>
+> What do you think of the attached patch? I haven't tested it, but it
+> would make sure that the kthread is frozen so that the hardware can be
+> resumed before the kthread is thawed and tries to go touch the hardware.
 
-On Sun, 2019-06-23 at 23:23 -0700, Prakhar Srivastava wrote:
-> Currently during soft reboot(kexec_file_load) boot command line
-> arguments are not measured. Define hooks needed to measure kexec
-> command line arguments during soft reboot(kexec_file_load).
-> 
-> - A new ima hook ima_kexec_cmdline is defined to be called by the
-> kexec code.
-> - A new function process_buffer_measurement is defined to measure
-> the buffer hash into the IMA measurement list.
-> - A new func policy KEXEC_CMDLINE is defined to control the
->  measurement.[Suggested by Mimi]
-> 
-> Signed-off-by: Prakhar Srivastava <prsriva02@gmail.com>
+Looks good to me.
 
-Thanks!  This patch set is now queued in the next-queued-testing
-branch for any last minute comments or Reviews/Acks, before being
-staged in the next-integrity branch.
-
-Mimi
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
