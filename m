@@ -2,130 +2,119 @@ Return-Path: <SRS0=opix=UY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6326C48BD6
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 23:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E229C48BD5
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 23:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FD320657
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 23:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 113C420657
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 23:14:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V8VlTO0p"
+	dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b="xbrzQuWY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbfFYXNm (ORCPT
+        id S1726068AbfFYXOU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Jun 2019 19:13:42 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36102 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfFYXNm (ORCPT
+        Tue, 25 Jun 2019 19:14:20 -0400
+Received: from mx0b-00273201.pphosted.com ([67.231.152.164]:4886 "EHLO
+        mx0b-00273201.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725914AbfFYXOU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 Jun 2019 19:13:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=bNOnF9RPhjENVHpzmRNMIxdtfQ6guu6sKYduKcd0Tc8=; b=V8VlTO0pZvD95eJUQjucRK+Rbt
-        gO6Y2d2E1MYhOhgMoiK3mYh9wHSdrc7Y4RDWpU/WgZkXW/HbILKz+9VWOpeI9mPPdnknTiW1HEKmV
-        4k2j/uzhDJ5RvVDLUMKJ/GWftlXZ9kVhW9SIARyQtBryfonYWlwrQEc+/ZyNatSQoYKsk1LJlFY8c
-        zzEQVzP1oauTdWdXBJAefgElIT0JIzbQZ9zS4iUz30xXrqHmwtOKKzcgDbTgf4tSTRmtk2Z/KS58W
-        mEdk/ljHdt/Sh9+G4tZ7hzAqyp1+wAIvnG1y9Wvm+N4pNWeEb7VWyNLOoIDy7mEmxqeGMgTEoli91
-        0XodM4TQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hfud4-0001Kq-Oz; Tue, 25 Jun 2019 23:13:35 +0000
-Subject: Re: [PATCH v7 2/2] fTPM: add documentation for ftpm driver
-To:     Sasha Levin <sashal@kernel.org>, peterhuewe@gmx.de,
-        jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@microsoft.com, thiruan@microsoft.com,
-        bryankel@microsoft.com, tee-dev@lists.linaro.org,
-        ilias.apalodimas@linaro.org, sumit.garg@linaro.org
-References: <20190625201341.15865-1-sashal@kernel.org>
- <20190625201341.15865-3-sashal@kernel.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fa526626-9eae-98ba-5127-6a4105781a41@infradead.org>
-Date:   Tue, 25 Jun 2019 16:13:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190625201341.15865-3-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        Tue, 25 Jun 2019 19:14:20 -0400
+X-Greylist: delayed 5916 seconds by postgrey-1.27 at vger.kernel.org; Tue, 25 Jun 2019 19:14:19 EDT
+Received: from pps.filterd (m0108161.ppops.net [127.0.0.1])
+        by mx0b-00273201.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x5PLXpO4026214;
+        Tue, 25 Jun 2019 14:35:41 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net; h=from : to : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=PPS1017;
+ bh=ovwvliNHkcROWSz4q+Ks2pywYjUcJiSx1V88H0JV1BY=;
+ b=xbrzQuWYfMziaQNksw1d5Cj28KWOgnIGCLBtacErTtJNnta4SexJIkF2aBXrDCz5fnu+
+ s6IjxDW7UE4pliF4vkKJ3yJlCjHzmMArHVrk7V4Dkroj90szxktOmvkrgIYD27BDox3W
+ Aao+SCgFgkf1HY93TLT0zGwoQcKYZusL7MbbA+gumVtrBygIW97ElsMVMOit6icAAxNx
+ QS+kbSTWLMl/yOpF8B/PtBlFkRF3NbjIjL41DPsQWUOUUPSKA6GSXPRG9FHxTCAIScSR
+ Zuv1DA+cZMnhqNnOChDBqYl0CReUyzJxu62dpZmzSPPskmjSSR8movylFsNbcoFc/U9q cQ== 
+Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2055.outbound.protection.outlook.com [104.47.41.55])
+        by mx0b-00273201.pphosted.com with ESMTP id 2tbtwsg2cx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 25 Jun 2019 14:35:41 -0700
+Received: from BYAPR05MB3975.namprd05.prod.outlook.com (52.135.196.21) by
+ BYAPR05MB6039.namprd05.prod.outlook.com (20.178.53.212) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2032.12; Tue, 25 Jun 2019 21:35:38 +0000
+Received: from BYAPR05MB3975.namprd05.prod.outlook.com
+ ([fe80::74bc:efb6:42dd:277c]) by BYAPR05MB3975.namprd05.prod.outlook.com
+ ([fe80::74bc:efb6:42dd:277c%3]) with mapi id 15.20.2032.012; Tue, 25 Jun 2019
+ 21:35:38 +0000
+From:   Kavitha Sivagnanam <kavi@juniper.net>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: Can we enforce "IMA Policy" based on file type
+Thread-Topic: Can we enforce "IMA Policy" based on file type
+Thread-Index: AdT2+ZPYS9gcleWrTmSmlo578nvD1wEZKpiADAFAjQA=
+Date:   Tue, 25 Jun 2019 21:35:37 +0000
+Message-ID: <41610A39-BB93-4D64-8821-B59DCE72EE8D@juniper.net>
+References: <BYAPR05MB39753CB3CA47513EEADC134CC1270@BYAPR05MB3975.namprd05.prod.outlook.com>
+ <1556193529.3894.94.camel@linux.ibm.com>
+In-Reply-To: <1556193529.3894.94.camel@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.1a.0.190609
+x-originating-ip: [66.129.239.12]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 22db9acf-c91d-4fe5-a0e1-08d6f9b510b3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR05MB6039;
+x-ms-traffictypediagnostic: BYAPR05MB6039:
+x-microsoft-antispam-prvs: <BYAPR05MB60393E4FD7B7E90726803010C1E30@BYAPR05MB6039.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0079056367
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(136003)(366004)(396003)(199004)(189003)(76116006)(66476007)(14454004)(73956011)(66556008)(4744005)(5660300002)(36756003)(64756008)(66946007)(33656002)(66446008)(99286004)(76176011)(256004)(14444005)(2501003)(8676002)(229853002)(486006)(6486002)(476003)(6506007)(186003)(58126008)(11346002)(478600001)(446003)(102836004)(2616005)(81156014)(6436002)(3846002)(6116002)(86362001)(8936002)(81166006)(66066001)(110136005)(316002)(2906002)(25786009)(53936002)(6246003)(7736002)(68736007)(305945005)(71200400001)(71190400001)(6512007)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR05MB6039;H:BYAPR05MB3975.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: juniper.net does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: S65QPJSaLqhYlSovoAwF3FHA37rftuoxOKvKxd7BBVGRogdAJOzHLg+m/nF2Qh1KRRHqQ3/ulwChlDwikS6ztyBH7SYVGoYZIMky3zNtznxcNbQSF7zGhtas0cCYyGAULYROn5UfhYLBhTaL4UcvMJpoUEzp1Iv0cm+0I9GgUT2t+X3qtqtWXCNCBzZDGvwIeRyZhW4JBy+JG3D1kmpksFng4J1QGJRvEqkIwmD5M/zh/b4P4sY+x1t6SDb9atqe9YW/XePo+ge0h5dbBD9hjmjtdsJLz84NZcvP3V1ZZf+dAaOksar+bR2FlnLWq0M+G/gFUnsiymhUBuKKXHIJEMBCwCpH60YMRgASmvrBpF/7Lms5yYL7WgXzuDrIN/iJRgWTGcV8jLkP/37MIYpDCgkczpkIRNZZd86Eadd2Vtw=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BD580C98CE19DC4F8FAE0DA1CEC25788@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: juniper.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22db9acf-c91d-4fe5-a0e1-08d6f9b510b3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2019 21:35:38.2109
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bea78b3c-4cdb-4130-854a-1d193232e5f4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kavi@juniper.net
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6039
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-06-25_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1906250166
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 6/25/19 1:13 PM, Sasha Levin wrote:
-> This patch adds basic documentation to describe the new fTPM driver.
-> 
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/security/tpm/index.rst        |  1 +
->  Documentation/security/tpm/tpm_ftpm_tee.rst | 31 +++++++++++++++++++++
->  2 files changed, 32 insertions(+)
->  create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
-> 
-> diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
-> index af77a7bbb070..15783668644f 100644
-> --- a/Documentation/security/tpm/index.rst
-> +++ b/Documentation/security/tpm/index.rst
-> @@ -4,4 +4,5 @@ Trusted Platform Module documentation
->  
->  .. toctree::
->  
-> +   tpm_ftpm_tee
->     tpm_vtpm_proxy
-> diff --git a/Documentation/security/tpm/tpm_ftpm_tee.rst b/Documentation/security/tpm/tpm_ftpm_tee.rst
-> new file mode 100644
-> index 000000000000..48de0dcec0f6
-> --- /dev/null
-> +++ b/Documentation/security/tpm/tpm_ftpm_tee.rst
-> @@ -0,0 +1,31 @@
-> +=============================================
-> +Firmware TPM Driver
-> +=============================================
-> +
-> +| Authors:
-> +| Thirupathaiah Annapureddy <thiruan@microsoft.com>
-> +| Sasha Levin <sashal@kernel.org>
-> +
-> +This document describes the firmware Trusted Platform Module (fTPM)
-> +device driver.
-> +
-> +Introduction
-> +============
-> +
-> +This driver is a shim for firmware implemented in ARM's TrustZone
-> +environment. The driver allows programs to interact with the TPM in the same
-> +way they would interact with a hardware TPM.
-> +
-> +Design
-> +======
-> +
-> +The driver acts as a thin layer that passes commands to and from a TPM
-> +implemented in firmware. The driver itself doesn't contain much logic and is
-> +used more like a dumb pipe between firmware and kernel/userspace.
-> +
-> +The firmware itself is based on the following paper:
-> +https://www.microsoft.com/en-us/research/wp-content/uploads/2017/06/ftpm1.pdf
-> +
-> +When the driver is loaded it will expose ``/dev/tpmX`` character devices to
-> +userspace which will enable userspace to communicate with the firmware TPM
-> +through this device.
-> 
-
-
--- 
-~Randy
+DQoNCu+7v09uIDQvMjUvMTksIDQ6NTkgQU0sICJNaW1pIFpvaGFyIiA8em9oYXJAbGludXguaWJt
+LmNvbT4gd3JvdGU6DQoNCj4gICAgQXMgTWF0dGhldyBpbmRpY2F0ZWQsIHlvdSBjb3VsZCBkZWZp
+bmUgTFNNIGxhYmVscyBvbiB0aGUgc3F1YXNoZnMgZmlsZQ0KPiAgIGltYWdlcy4gIEFub3RoZXIg
+b3B0aW9uIHdvdWxkIGJlIHRvIGV4dGVuZCBJTUEgYnkgaW1wbGVtZW50aW5nIHRoZSBMU00NCj4g
+ICAgc2VjdXJpdHlfc2JfbW91bnQgaG9vay4gIFRoZSBJTUEgcG9saWN5IHJ1bGUgd291bGQgcHJv
+YmFibHkgbG9vaw0KPiAgIHNvbWV0aGluZyBsaWtlOg0KDQpXZSBsb29rZWQgaW4gdG8gdGhlIHNl
+Y3VyaXR5X3NiX21vdW50IGZ1bmN0aW9uLiBJdCByZWNlaXZlcyB0aGUgZGV2aWNlIG5hbWUgYXMg
+c3RyaW5nICJjb25zdCBjaGFyICpkZXZfbmFtZSIuDQpXZSBuZWVkIHRvIGRvIHRoZSBJTUEgYXBw
+cmFpc2FsIG9uIHRoZSBiYWNraW5nIGZpbGUgKHNxdWFzaGZzIGZpbGUpIGFzc29jaWF0ZWQgd2l0
+aCB0aGlzIGRldmljZS4NCkhvd2V2ZXIsIGJhc2VkIG9uIHRoaXMgZGV2aWNlIG5hbWUgd2Ugd2Vy
+ZSB1bmFibGUgdG8gZ2V0IHRoZSBiYWNraW5nX2ZpbGUgYXNzb2NpYXRlZCB3aXRoIGl0IGluIGtl
+cm5lbCBzcGFjZS4NCkNhbiB5b3UgZ2l2ZSBzb21lIHBvaW50ZXJzPyANCg0KQWxzbywgd2UgbmVl
+ZCB0byBrbm93IGlmIGF0IHRoZSB0aW1lIHdoZW4gdGhpcyBmdW5jdGlvbiBpcyBjYWxsZWQsIGlm
+IHRoZSBiYWNraW5nIGZpbGUgaXMgYXNzb2NpYXRlZCB3aXRoIHRoaXMgZGV2aWNlLg0KDQo+ICAg
+IGFwcHJhaXNlIGZ1bmM9TU9VTlRfQ0hFQ0sgZnNuYW1lPXNxdWFzaGZzIGFwcHJhaXNlX3R5cGU9
+aW1hc2lnDQogIA0KICANCiAgICANCg0K
