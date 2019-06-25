@@ -2,83 +2,80 @@ Return-Path: <SRS0=opix=UY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80620C48BD5
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 18:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B2E9C48BD6
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 19:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A06D2080C
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 18:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 209C0208CB
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jun 2019 19:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1561492334;
+	bh=cvokQUiYje0g+5BxyM/ENlhJA6cq6C9FFJ1lZj9NgpY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=VXtHLKvimE1BE2Qs4YckNIY74GtuFRdlzDFs2mEUxg0wMQ0VxGLQMN80H6IamwuA7
+	 soUQrpfZlLkTlDZXqnPGsPt0Y3NK/szxr3ChTTeZxsajnbG1eRneCW2Fdmt5VpR3eh
+	 31TvSiEmpPX0WLzKNTLBFcV6Fp+euFIzmlXxrt8Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbfFYSUW (ORCPT
+        id S1726562AbfFYTwN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Jun 2019 14:20:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37294 "EHLO mx1.redhat.com"
+        Tue, 25 Jun 2019 15:52:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727138AbfFYSUW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 Jun 2019 14:20:22 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726274AbfFYTwN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 25 Jun 2019 15:52:13 -0400
+Received: from sasha-vm.mshome.net (unknown [167.220.24.221])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C107D223885;
-        Tue, 25 Jun 2019 18:20:11 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9BFC51972E;
-        Tue, 25 Jun 2019 18:20:05 +0000 (UTC)
-Date:   Tue, 25 Jun 2019 14:20:04 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        gmazyland@gmail.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, scottsh@microsoft.com,
-        ebiggers@google.com, jmorris@namei.org, dm-devel@redhat.com,
-        mpatocka@redhat.com, agk@redhat.com
-Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig validation.
-Message-ID: <20190625182004.GA32075@redhat.com>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com>
- <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 3089F2063F;
+        Tue, 25 Jun 2019 19:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1561492332;
+        bh=cvokQUiYje0g+5BxyM/ENlhJA6cq6C9FFJ1lZj9NgpY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pDkvQ3BmON+Hw7bFUBMMkyDyxwHg7Zrnwspjr80kRGcOVzZMiEgTBeXxPfH8hXZnk
+         07D1xgxS63FSrLnoa26TOADF2KldoBCbESsdSQT22HjoSYd2kCUMGffkYhDSwasn8i
+         pRTLNHahcrUU+hXn0E3hOCPHpiGMY0ZhyYPDz690=
+From:   Sasha Levin <sashal@kernel.org>
+To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
+Cc:     corbet@lwn.net, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@microsoft.com, thiruan@microsoft.com,
+        bryankel@microsoft.com, tee-dev@lists.linaro.org,
+        ilias.apalodimas@linaro.org, sumit.garg@linaro.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH v6 0/2] fTPM: firmware TPM running in TEE
+Date:   Tue, 25 Jun 2019 15:52:07 -0400
+Message-Id: <20190625195209.13663-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 25 Jun 2019 18:20:21 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jun 19 2019 at  3:10pm -0400,
-Jaskaran Khurana <jaskarankhurana@linux.microsoft.com> wrote:
+Changes in v6:
 
-> The verification is to support cases where the roothash is not secured by
-> Trusted Boot, UEFI Secureboot or similar technologies.
-> One of the use cases for this is for dm-verity volumes mounted after boot,
-> the root hash provided during the creation of the dm-verity volume has to
-> be secure and thus in-kernel validation implemented here will be used
-> before we trust the root hash and allow the block device to be created.
-> 
-> The signature being provided for verification must verify the root hash and
-> must be trusted by the builtin keyring for verification to succeed.
-> 
-> The hash is added as a key of type "user" and the description is passed to 
-> the kernel so it can look it up and use it for verification.
-> 
-> Kernel commandline parameter will indicate whether to check (only if 
-> specified) or force (for all dm verity volumes) roothash signature 
-> verification.
-> 
-> Kernel commandline: dm_verity.verify_sig=1 or 2 for check/force root hash
-> signature validation respectively.
-> 
-> Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
+ - Address comments from Ilias Apalodimas
 
-Milan and/or others: could you please provide review and if you're OK
-with this patch respond accordingly?
+Sasha Levin (2):
+  fTPM: firmware TPM running in TEE
+  fTPM: add documentation for ftpm driver
 
-Thanks,
-Mike
+ Documentation/security/tpm/index.rst        |   1 +
+ Documentation/security/tpm/tpm_ftpm_tee.rst |  31 ++
+ drivers/char/tpm/Kconfig                    |   5 +
+ drivers/char/tpm/Makefile                   |   1 +
+ drivers/char/tpm/tpm_ftpm_tee.c             | 356 ++++++++++++++++++++
+ drivers/char/tpm/tpm_ftpm_tee.h             |  40 +++
+ 6 files changed, 434 insertions(+)
+ create mode 100644 Documentation/security/tpm/tpm_ftpm_tee.rst
+ create mode 100644 drivers/char/tpm/tpm_ftpm_tee.c
+ create mode 100644 drivers/char/tpm/tpm_ftpm_tee.h
+
+-- 
+2.20.1
+
