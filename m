@@ -2,42 +2,28 @@ Return-Path: <SRS0=Lk7b=VA=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52C1C0650E
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Jul 2019 16:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D87C06511
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Jul 2019 17:08:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DE47218A6
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Jul 2019 16:45:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WkQhINbq"
+	by mail.kernel.org (Postfix) with ESMTP id 26C9A2187F
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Jul 2019 17:08:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbfGCQp0 (ORCPT
+        id S1726973AbfGCRIk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Jul 2019 12:45:26 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:38366 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726430AbfGCQp0 (ORCPT
+        Wed, 3 Jul 2019 13:08:40 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:33640 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726430AbfGCRIj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 3 Jul 2019 12:45:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=rpaCNZdtbwhwVN7hY9VZeOvZhvhLdEBGPEjtKH2aYAg=; b=WkQhINbqKZP35fqFn/9DS0Nppd
-        tunzEg+4cywUqCx84mnosjqNuckYUAyC4VvwXd62Hix7AUhsaISWcNo+KnnkWVPf1sqPRhomcZQfD
-        vRAmcDgQe4qzc2gkRlJ7eu6TJn1/vcSIzjXi18m54vNKwDVRN/bkjiZHb4rnC2YZ1uQ1npPnJzFIU
-        baOM6/bbZbRJZmfmDf2Vl4Lz1BQMtKobo6+sWtWvvRjyW57KBXY3vwf9B7pRITeXOQSCjvpkZInxi
-        3mG4Rq+AuPj6FxL8Wug3efYLk8K/Z5onN8Pp4NQrEMv52yMQzbta7qenJ6KGLDVHDIZTH9YSUlYXI
-        RYTeRzYQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hiiNl-0008Kj-Fx; Wed, 03 Jul 2019 16:45:21 +0000
+        Wed, 3 Jul 2019 13:08:39 -0400
+Received: from [10.91.6.157] (unknown [131.107.159.157])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7C54E20BCFB8;
+        Wed,  3 Jul 2019 10:08:38 -0700 (PDT)
 Subject: Re: [PATCH] tpm: Document UEFI event log quirks
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
@@ -45,14 +31,14 @@ To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
 Cc:     tweek@google.com, matthewgarrett@google.com,
         Jonathan Corbet <corbet@lwn.net>
 References: <20190703161109.22935-1-jarkko.sakkinen@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6acf78df-b168-14d3-fea4-9a9d2945e77f@infradead.org>
-Date:   Wed, 3 Jul 2019 09:45:19 -0700
+From:   Jordan Hand <jorhand@linux.microsoft.com>
+Message-ID: <dacf145d-49e0-16e5-5963-415bab1884e1@linux.microsoft.com>
+Date:   Wed, 3 Jul 2019 10:08:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
 In-Reply-To: <20190703161109.22935-1-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -67,9 +53,9 @@ On 7/3/19 9:11 AM, Jarkko Sakkinen wrote:
 > 
 > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  Documentation/security/tpm/tpm-eventlog.rst | 53 +++++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/security/tpm/tpm-eventlog.rst
+>   Documentation/security/tpm/tpm-eventlog.rst | 53 +++++++++++++++++++++
+>   1 file changed, 53 insertions(+)
+>   create mode 100644 Documentation/security/tpm/tpm-eventlog.rst
 > 
 > diff --git a/Documentation/security/tpm/tpm-eventlog.rst b/Documentation/security/tpm/tpm-eventlog.rst
 > new file mode 100644
@@ -117,10 +103,10 @@ On 7/3/19 9:11 AM, Jarkko Sakkinen wrote:
 > +
 > +Before calling ExitBootServices() Linux EFI stub copies the event log to
 > +a custom configuration table defined by the stub itself. Unfortanely,
-
-                                                            Unfortunately,
-
 > +the events generated by ExitBootServices() do end up to the table.
+
+                                               do not
+
 > +
 > +The firmware provides so called final events configuration table to sort
 > +out this issue. Events gets mirrored to this table after the first time
@@ -131,13 +117,20 @@ On 7/3/19 9:11 AM, Jarkko Sakkinen wrote:
 > +events table preboot size to the custom configuration table so that
 > +kernel offset it later on.
 
-?  kernel can offset it later on.
+This doesn't really explain what the size will be used for. Matthew's 
+patch description for "tpm: Don't duplicate events from the final event 
+log in the TCG2 log" outlines this well. You could maybe word it 
+differently but I think the information is necessary:
+
+"We can avoid this problem by looking at the size of the Final Event Log 
+just before we call ExitBootServices() and exporting this to the main 
+kernel. The kernel can then skip over all events that occured before
+ExitBootServices() and only append events that were not also logged to 
+the main log."
 
 > +
 > +[1] https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
 > +[2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
 > 
-
-
--- 
-~Randy
+Thanks,
+Jordan
