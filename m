@@ -3,115 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 604B2C74A41
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Jul 2019 03:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A77C74A35
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Jul 2019 14:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E84F2084B
-	for <linux-integrity@archiver.kernel.org>; Thu, 11 Jul 2019 03:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2890E2166E
+	for <linux-integrity@archiver.kernel.org>; Thu, 11 Jul 2019 14:11:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfGKDMb (ORCPT
+        id S1728194AbfGKOLC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 10 Jul 2019 23:12:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18552 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726353AbfGKDMa (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 10 Jul 2019 23:12:30 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6B3CQZU005184
-        for <linux-integrity@vger.kernel.org>; Wed, 10 Jul 2019 23:12:29 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2tnrp3g715-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 10 Jul 2019 23:12:29 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 11 Jul 2019 04:07:31 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 11 Jul 2019 04:07:28 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6B37F0p35652076
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Jul 2019 03:07:15 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5429A405B;
-        Thu, 11 Jul 2019 03:07:27 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 735A7A4054;
-        Thu, 11 Jul 2019 03:07:26 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.110.74])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Jul 2019 03:07:26 +0000 (GMT)
-Subject: Re: [GIT PULL] Keys: Set 4 - Key ACLs for 5.3
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>, keyrings@vger.kernel.org,
-        Netdev <netdev@vger.kernel.org>, linux-nfs@vger.kernel.org,
-        CIFS <linux-cifs@vger.kernel.org>, linux-afs@lists.infradead.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Date:   Wed, 10 Jul 2019 23:07:15 -0400
-In-Reply-To: <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
-References: <28477.1562362239@warthog.procyon.org.uk>
-         <CAHk-=wjxoeMJfeBahnWH=9zShKp2bsVy527vo3_y8HfOdhwAAw@mail.gmail.com>
-         <20190710194620.GA83443@gmail.com> <20190710201552.GB83443@gmail.com>
-         <CAHk-=wiFti6=K2fyAYhx-PSX9ovQPJUNp0FMdV0pDaO_pSx9MQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19071103-4275-0000-0000-0000034BBC6E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19071103-4276-0000-0000-0000385BC1F1
-Message-Id: <1562814435.4014.11.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-10_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1907110035
+        Thu, 11 Jul 2019 10:11:02 -0400
+Received: from mga04.intel.com ([192.55.52.120]:55699 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbfGKOLC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 11 Jul 2019 10:11:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2019 07:11:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.63,478,1557212400"; 
+   d="scan'208";a="365281707"
+Received: from jsolavil-mobl.ger.corp.intel.com (HELO localhost) ([10.249.33.99])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Jul 2019 07:10:59 -0700
+Date:   Thu, 11 Jul 2019 17:10:58 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Safford, David (GE Global Research, US)" <david.safford@ge.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>
+Subject: Re: [PATCH] tpm_crb - workaround broken ACPI tables
+Message-ID: <20190711141058.xfqpsfh4rzcjksth@linux.intel.com>
+References: <BCA04D5D9A3B764C9B7405BBA4D4A3C035EF7BC7@ALPMBAPA12.e2k.ad.ge.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BCA04D5D9A3B764C9B7405BBA4D4A3C035EF7BC7@ALPMBAPA12.e2k.ad.ge.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Linus,
+On Thu, Jul 11, 2019 at 12:29:30PM +0000, Safford, David (GE Global Research, US) wrote:
+> Most x86 desktops and laptops have firmware TPMs which support the
+> CRB interface. Unfortunately, the linux tpm_crb driver depends on
+> perfectly correct ACPI tables, and there are a *lot* of systems out
+> there with broken tpm_crb entries. (Not one of my five tpm_crb
+> systems works with the existing driver.) While it is good to
+> encourage vendors to fix their firmware, many refuse ("It works on
+> Windows"), leaving users in the lurch.
+> 
+> This patch adds a kernel parameter "tpm_crb.force=1" that works
+> around the problem in every case I have tested so far. Basically
+> it does two things:
+> 	- it trusts the cmd and resp addresses in the CRB registers
+> 	- it ignores all alleged IO resource conflicts
+> 
+> Both workarounds make sense. If there really were an address conflict,
+> or if the register values really were wrong, the device would not be
+> working at all. And testing with this patch has shown that in every
+> case (so far), the problem has been bogus ACPI entries.
+> 
+> This patch is against the upstream 5.2 kernel.
+> 
+> Signed-off-by: David Safford <david.safford@ge.com>
 
-On Wed, 2019-07-10 at 18:59 -0700, Linus Torvalds wrote:
-> Anyway, since it does seem like David is offline, I've just reverted
-> this from my tree, and will be continuing my normal merge window pull
-> requests (the other issues I have seen have fixes in their respective
-> trees).
+Will give a detailed review but generally we workaround firmware
+issues when possible so in that way there is no argument here.
 
-Sorry for the delay.  An exception is needed for loading builtin keys
-"KEY_ALLOC_BUILT_IN" onto a keyring that is not writable by userspace.
- The following works, but probably is not how David would handle the
-exception.
-
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 519211a996e7..a99332c1e014 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -896,7 +896,7 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
-        /* if we're going to allocate a new key, we're going to have
-         * to modify the keyring */
-        ret = key_permission(keyring_ref, KEY_NEED_WRITE);
--       if (ret < 0) {
-+       if (ret < 0 && !(flags & KEY_ALLOC_BUILT_IN)) {
-                key_ref = ERR_PTR(ret);
-                goto error_link_end;
-        }
-
-Mimi
-
+/Jarkko
