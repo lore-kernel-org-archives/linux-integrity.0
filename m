@@ -4,30 +4,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4F9C742BA
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Jul 2019 12:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAAB3C742BA
+	for <linux-integrity@archiver.kernel.org>; Fri, 12 Jul 2019 12:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981E520645
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Jul 2019 12:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD081208E4
+	for <linux-integrity@archiver.kernel.org>; Fri, 12 Jul 2019 12:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfGLMoA (ORCPT
+        id S1727108AbfGLMtn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Jul 2019 08:44:00 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32362 "EHLO mga09.intel.com"
+        Fri, 12 Jul 2019 08:49:43 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24366 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbfGLMoA (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Jul 2019 08:44:00 -0400
+        id S1727045AbfGLMtm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 12 Jul 2019 08:49:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 05:43:59 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2019 05:49:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.63,482,1557212400"; 
-   d="scan'208";a="166671615"
+   d="scan'208";a="166672790"
 Received: from jroll-mobl.ger.corp.intel.com (HELO localhost) ([10.249.35.79])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jul 2019 05:43:56 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jul 2019 05:49:39 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-doc@vger.kernel.org
@@ -36,9 +37,9 @@ Cc:     tweek@google.com, matthewgarrett@google.com,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v2] tpm: Document UEFI event log quirks
-Date:   Fri, 12 Jul 2019 15:43:45 +0300
-Message-Id: <20190712124353.9264-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v3] tpm: Document UEFI event log quirks
+Date:   Fri, 12 Jul 2019 15:49:03 +0300
+Message-Id: <20190712124912.23630-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=y
@@ -54,11 +55,13 @@ and how they can be sorted out.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
+v3: Add a section and use bullet list for references. Remove (invalid)
+    author info.
 v2: Fixed one type, adjusted the last paragraph and added the file
     to index.rst
  Documentation/security/tpm/index.rst         |  1 +
- Documentation/security/tpm/tpm_event_log.rst | 56 ++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+ Documentation/security/tpm/tpm_event_log.rst | 55 ++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
  create mode 100644 Documentation/security/tpm/tpm_event_log.rst
 
 diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
@@ -74,18 +77,15 @@ index 15783668644f..9e0815cb1e7f 100644
     tpm_vtpm_proxy
 diff --git a/Documentation/security/tpm/tpm_event_log.rst b/Documentation/security/tpm/tpm_event_log.rst
 new file mode 100644
-index 000000000000..b8c39a1a3f33
+index 000000000000..068eeb659bb9
 --- /dev/null
 +++ b/Documentation/security/tpm/tpm_event_log.rst
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,55 @@
 +.. SPDX-License-Identifier: GPL-2.0
 +
 +=============
 +TPM Event Log
 +=============
-+
-+| Authors:
-+| Stefan Berger <stefanb@linux.vnet.ibm.com>
 +
 +This document briefly describes what TPM log is and how it is handed
 +over from the preboot firmware to the operating system.
@@ -131,9 +131,11 @@ index 000000000000..b8c39a1a3f33
 +concatenating two halves of the event log from the custom configuration table
 +and the final events table.
 +
-+[1]
-+https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
-+[2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
++References
++==========
++
++- [1] https://trustedcomputinggroup.org/resource/pc-client-specific-platform-firmware-profile-specification/
++- [2] The final concatenation is done in drivers/char/tpm/eventlog/efi.c
 -- 
 2.20.1
 
