@@ -2,124 +2,73 @@ Return-Path: <SRS0=Lmej=VN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42294C76192
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jul 2019 22:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54956C7618F
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jul 2019 23:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14AD52173E
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jul 2019 22:45:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WsSLV5wx"
+	by mail.kernel.org (Postfix) with ESMTP id 3311C2187F
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jul 2019 23:39:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388725AbfGPWpu (ORCPT
+        id S2387623AbfGPXjX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Jul 2019 18:45:50 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42868 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388877AbfGPWpV (ORCPT
+        Tue, 16 Jul 2019 19:39:23 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:42668 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbfGPXjX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Jul 2019 18:45:21 -0400
-Received: by mail-pl1-f196.google.com with SMTP id ay6so10855689plb.9
-        for <linux-integrity@vger.kernel.org>; Tue, 16 Jul 2019 15:45:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=d7aVjiR+JK3ggYYZ7yXO08DXVJw3fb9HDv02tv0JnQs=;
-        b=WsSLV5wxog6kvWIkL7tsl/dpBk3h6KCtQVzK3wRMQZycgoNetF0L2hlVtTIwv+mdb7
-         7cdOcd7E5s69ObFuTWG9V3q2o8BXcDlXi1AKT8WQLwj1muCboCZQwl1QXuY+k0KdETX/
-         dlhJO7ZtlW1HnyxfHdjlR711IWf195ERVsWbg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=d7aVjiR+JK3ggYYZ7yXO08DXVJw3fb9HDv02tv0JnQs=;
-        b=BxDDEUtyyonOR5qMaex/rW146itIhTaUy3EUbGRkhYkNcr5jyL+U93GjXaqOAf4XR+
-         2Eaco5QS28bHP3f2K0Fic7567C1L0gpL2tp7JGFyxaMS4gCBl3Y0n5dmm/cj1csLvz+3
-         V/DiZo7D1N1gsCf9lUIWpnmuGDndfy6AJByJQ3VqDTzJkeT22zlmjoiKzs+agPtzQOL6
-         8HjBGY1zklNFrLYDiNyEU+r7dUH3CTzOH+AccCnRsLMJy/v2oiGIHx+ryYiUHp5WwJdi
-         i19MyQEkvrnmgFutVbpGPOPzYXyaW8WjadftEbzp1tRhilL5F528XeiAr1nWC43H2fb7
-         sVWQ==
-X-Gm-Message-State: APjAAAUw7L781DwJbaumJK/Y/3Qq/zsfXZT/ZWXkerM300ZEwpf1Rulk
-        WfH2haDC1RAKM/hkO+R4o6CyLg==
-X-Google-Smtp-Source: APXvYqxPH9EK3keRCVn+uuCQzmztl+iHZMi6aDlVgkc8dTyHKxOKu67J/eMo+6OI5dwAp8p0Iblpbw==
-X-Received: by 2002:a17:902:6b86:: with SMTP id p6mr39696288plk.14.1563317121296;
-        Tue, 16 Jul 2019 15:45:21 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 64sm22182562pfe.128.2019.07.16.15.45.20
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 16 Jul 2019 15:45:20 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH v2 1/6] hwrng: core: Freeze khwrng thread during suspend
-Date:   Tue, 16 Jul 2019 15:45:13 -0700
-Message-Id: <20190716224518.62556-2-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.510.g264f2c817a-goog
-In-Reply-To: <20190716224518.62556-1-swboyd@chromium.org>
-References: <20190716224518.62556-1-swboyd@chromium.org>
+        Tue, 16 Jul 2019 19:39:23 -0400
+Received: from [10.200.157.26] (unknown [131.107.160.154])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B4A4320B7185;
+        Tue, 16 Jul 2019 16:39:22 -0700 (PDT)
+Subject: Re: [PATCH 0/2] [IMA] Measure public keys of BuiltIn Trusted Keys
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        Linux Integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     James Morris <jamorris@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva@linux.microsoft.com>,
+        Balaji Balasubramanyan <balajib@linux.microsoft.com>
+References: <f9f2a5ab-a880-7131-d0ca-fb3b72571478@linux.microsoft.com>
+ <71cc3b9b-d045-8a69-5917-96b4c5654b16@linux.ibm.com>
+ <5b160458-b4b8-470c-0123-8ce5525c5cb0@linux.microsoft.com>
+ <f6ce1524-d1ee-08b4-d7bc-f3337a804b98@linux.ibm.com>
+ <c1abe7e6-5f92-2359-19d0-024af65dd8a9@linux.microsoft.com>
+ <372c86da-8bc6-25a9-1a35-c9b7f35a789c@linux.microsoft.com>
+ <48871b9b-ede1-f2f7-aa51-3e563e966a47@linux.microsoft.com>
+ <1563299517.4539.234.camel@linux.ibm.com>
+From:   Lakshmi <nramas@linux.microsoft.com>
+Message-ID: <31c44150-ba2b-fafb-7ff1-e14bfc41f768@linux.microsoft.com>
+Date:   Tue, 16 Jul 2019 16:39:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1563299517.4539.234.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The hwrng_fill() function can run while devices are suspending and
-resuming. If the hwrng is behind a bus such as i2c or SPI and that bus
-is suspended, the hwrng may hang the bus while attempting to add some
-randomness. It's been observed on ChromeOS devices with suspend-to-idle
-(s2idle) and an i2c based hwrng that this kthread may run and ask the
-hwrng device for randomness before the i2c bus has been resumed.
+On 7/16/19 10:51 AM, Mimi Zohar wrote:
 
-Let's make this kthread freezable so that we don't try to touch the
-hwrng during suspend/resume. This ensures that we can't cause the hwrng
-backing driver to get into a bad state because the device is guaranteed
-to be resumed before the hwrng kthread is thawed.
+> On Tue, 2019-07-16 at 09:33 -0700, Lakshmi wrote:
+>> Hi Ken\Mimi,
+>>
+>> I wanted to check again - Did Jordan and I address your concerns?
+>> Do you have more questions\concerns related to this patch set?
+>>
+>> Please let me know.
+> 
+> I made my thoughts on this subject pretty clear.
+> 
+> Mimi
+> 
 
-Cc: Andrey Pronin <apronin@chromium.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Duncan Laurie <dlaurie@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/char/hw_random/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Thanks Mimi.
 
-diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-index 95be7228f327..3b88af3149a7 100644
---- a/drivers/char/hw_random/core.c
-+++ b/drivers/char/hw_random/core.c
-@@ -13,6 +13,7 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/freezer.h>
- #include <linux/fs.h>
- #include <linux/hw_random.h>
- #include <linux/kernel.h>
-@@ -421,7 +422,9 @@ static int hwrng_fillfn(void *unused)
- {
- 	long rc;
- 
--	while (!kthread_should_stop()) {
-+	set_freezable();
-+
-+	while (!kthread_freezable_should_stop(NULL)) {
- 		struct hwrng *rng;
- 
- 		rng = get_current_rng();
--- 
-Sent by a computer through tubes
-
+  -lakshmi
