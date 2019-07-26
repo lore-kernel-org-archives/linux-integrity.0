@@ -2,113 +2,98 @@ Return-Path: <SRS0=vdCm=VX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DD1C76190
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Jul 2019 01:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A869C76190
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Jul 2019 02:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 242A720828
-	for <linux-integrity@archiver.kernel.org>; Fri, 26 Jul 2019 01:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F5E22C7B
+	for <linux-integrity@archiver.kernel.org>; Fri, 26 Jul 2019 02:14:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="MXTzbm4u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfGZBDM (ORCPT
+        id S1725928AbfGZCOi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Jul 2019 21:03:12 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18704 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726946AbfGZBDM (ORCPT
+        Thu, 25 Jul 2019 22:14:38 -0400
+Received: from condef-08.nifty.com ([202.248.20.73]:30429 "EHLO
+        condef-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfGZCOi (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Jul 2019 21:03:12 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6Q11kZx053378
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Jul 2019 21:03:11 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2tymek5uwh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 25 Jul 2019 21:03:11 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 26 Jul 2019 02:03:10 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 26 Jul 2019 02:03:06 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6Q136QG58589292
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Jul 2019 01:03:06 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E57EE42049;
-        Fri, 26 Jul 2019 01:03:05 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CD2C42045;
-        Fri, 26 Jul 2019 01:03:05 +0000 (GMT)
-Received: from dhcp-9-31-103-88.watson.ibm.com (unknown [9.31.103.88])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 26 Jul 2019 01:03:05 +0000 (GMT)
-Subject: Re: [RFC PATCH] ima-evm-utils: Add some tests for evmctl
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Thu, 25 Jul 2019 22:14:38 -0400
+Received: from conuserg-10.nifty.com ([10.126.8.73])by condef-08.nifty.com with ESMTP id x6Q2Bjtw013844;
+        Fri, 26 Jul 2019 11:11:45 +0900
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x6Q2B03m020523;
+        Fri, 26 Jul 2019 11:11:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6Q2B03m020523
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564107065;
+        bh=2py97rXQmeBJv0x49nST5dYu797IUCM7mWTUZUS20lY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MXTzbm4uOdkuSdZBWHV2rF+A3QgFM7x2x+mWb3z+COmAhltTh4e67vwYhx6iyiTA6
+         /FEanUpRLEBSYNwyQGaPJ3+cA1R/J8VyXHEmA63HfXDQjgjPS1qURaoACzCHNwuJ3n
+         Q0yRW6ff5zMqvLj+AHdWPTvEyy7gd4h8flSJFV6DyNwwd/viWiL8IEK3Wh5WOBeZ6U
+         Ic/pQxZYWBYTgLB614/VwvRA4VBheSEBj7bFlOkYBP7ZhbEhLf9OC53M5gSKpYelUL
+         /B4C9AdZydWf5TCmq0GKUS+lcVOL4pfVfMVBR9l98AJ2T0oowPWqOfVNzx0+Gwpu4K
+         Emm/8uq34ANBQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Thu, 25 Jul 2019 21:03:04 -0400
-In-Reply-To: <20190725153823.dz6brcvoojum47dz@altlinux.org>
-References: <20190725061855.3734-1-vt@altlinux.org>
-         <1564065991.4245.132.camel@linux.ibm.com>
-         <20190725153823.dz6brcvoojum47dz@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19072601-4275-0000-0000-00000350B882
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19072601-4276-0000-0000-00003860F6C1
-Message-Id: <1564102984.4245.199.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-26_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907260010
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 4/5] IMA: use obj-y for non-modular objects
+Date:   Fri, 26 Jul 2019 11:10:57 +0900
+Message-Id: <20190726021058.4212-5-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190726021058.4212-1-yamada.masahiro@socionext.com>
+References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2019-07-25 at 18:38 +0300, Vitaly Chikunov wrote:
-> Mimi,
-> 
-> On Thu, Jul 25, 2019 at 10:46:31AM -0400, Mimi Zohar wrote:
-> > On Thu, 2019-07-25 at 09:18 +0300, Vitaly Chikunov wrote:
-> > > Run `make check' to execute the tests.
-> > > Currently only ima_hash, ima_sign (v2), and ima_verify are tested.
-> > > 
-> > > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> > 
-> > Nice!  As much as I would like to include this patch in this release,
-> > let's hold off and add it to the next release.
-> 
-> You may include it if you wish, this should work good as is (over my
-> latest patches).
+CONFIG_IMA is a boolean option, so none of these objects is linked
+into a module.
 
-Yes, it applies cleanly on top of the other patches.
-> 
-> > Reviewing shorter patches is a lot easier, at least for me.  Could you
-> > break this patch up?  Perhaps by defining the tests separately, and
-> > then adding the autotools support to run the test afterwards?
-> 
-> This is just tests, so they don't alter any other code, don't produce
-> user visible features, and don't complicate anything. Each file inside
-> of the patch could be understood separately.
+All the objects in this directory are compiled only when CONFIG_IMA=y
+since this directory is guarded by the parent Makefile:
 
-I understand that.  However, without comments, with short function
-names, and single letter variable names, makes reviewing the code more
-difficult than needed.
+  obj-$(CONFIG_IMA)                       += ima/
 
-Mimi
+So, there is no point in creating the composite object, ima.o
+
+Flatten the code into the obj-$(CONFIG_...) form.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ security/integrity/ima/Makefile | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index d921dc4f9eb0..5517486c9154 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -4,10 +4,8 @@
+ # Measurement Architecture(IMA).
+ #
+ 
+-obj-$(CONFIG_IMA) += ima.o
+-
+-ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
++obj-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+ 	 ima_policy.o ima_template.o ima_template_lib.o
+-ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+-ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
++obj-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
++obj-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+-- 
+2.17.1
 
