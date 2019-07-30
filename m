@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE7CC433FF
-	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B386C0650F
+	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD12205C9
-	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:31:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CDF12089E
+	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564486283;
-	bh=UzuT1ht2UlH1HsA6I56EcK7JT5cqdTD0Gg6pUQ/5nJE=;
+	s=default; t=1564486300;
+	bh=QWVn3Dcg6llAO1kr6AD3HoOEKYwjUu4hHECH/IB2vPE=;
 	h=Subject:From:To:Date:In-Reply-To:References:List-ID:From;
-	b=DdRepvEjtpjb3GXM8ZG80MM/P7HsHODzzwT4Bk3kvSoWgnL5K6v2AwT7GMl0bCPbY
-	 xMo8RZmnlD75frDZ6UOkYp6vahpSlAD4wW6dwHyiFCw7CQvmHb5tt8vh5y+IuwHN5H
-	 pF7gRzk+NKX/YKI1mlgJqfUIiyIRT1jB8fRMB+JQ=
+	b=FXoRHdm7NqzpwysJkSITKvT6MmHH3Wvvw4eXRJSTTgfL7YD4D1Cw+MWcvBhZkoABr
+	 DJ4tBiduzo2fnU+MzEmZ82JcAViHQJr6NidzRriNvI6Lyn75A1V5p/JA6qvCpi9GOe
+	 s9Tk8V5Du1ZijaaKVDh1ePdG5agdFf2iytBMH5J4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbfG3LbX (ORCPT
+        id S1730238AbfG3Lbj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 30 Jul 2019 07:31:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
+        Tue, 30 Jul 2019 07:31:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728412AbfG3LbW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:31:22 -0400
+        id S1728412AbfG3Lbj (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:31:39 -0400
 Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22AAE2087F;
-        Tue, 30 Jul 2019 11:31:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA45B2087F;
+        Tue, 30 Jul 2019 11:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564486282;
-        bh=UzuT1ht2UlH1HsA6I56EcK7JT5cqdTD0Gg6pUQ/5nJE=;
+        s=default; t=1564486299;
+        bh=QWVn3Dcg6llAO1kr6AD3HoOEKYwjUu4hHECH/IB2vPE=;
         h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=WYqqTVCmkN6C6w37bNAJv6TvB7KhXScyL1GWhj8NmgaJETR9olfNBolURvGIx5iKd
-         zndkFhT91VwEjXMqczMETuiNoqlBwJKzS1CtEd4AWZCn54vHLhchVSN4P6iKChubX9
-         V2cNMfe7BtWLihaOjK7KgtEkLyXI8027BNSrES68=
-Message-ID: <1564486265.4189.29.camel@kernel.org>
-Subject: Re: [PATCH] ima-evm-utils: Fix ima_verify for v1 signatures
+        b=IwFfwYY+ezX1lgSGnO7mJQWXAy5F0ii8t/8fnMLxleCurpzyaRPEIBM7tYDPOCvu9
+         YbJQ7hvetsVj5m851dVJhfZ3fxfKCdfX/8LoCY12yUgoQ0AcnJDi48XJX3yHDx3JWE
+         eLOSCPQ/ZLa/3V4S17iZbqogtQOKGaREZ7shtDQM=
+Message-ID: <1564486268.4189.30.camel@kernel.org>
+Subject: Re: [PATCH] ima-evm-utils: fix trailing chars from configure script
 From:   Mimi Zohar <zohar@kernel.org>
-To:     Vitaly Chikunov <vt@altlinux.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Tue, 30 Jul 2019 07:31:05 -0400
-In-Reply-To: <20190726222309.8106-1-vt@altlinux.org>
-References: <20190726222309.8106-1-vt@altlinux.org>
+To:     "Bruno E. O. Meneguele" <bmeneg@redhat.com>,
+        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com
+Date:   Tue, 30 Jul 2019 07:31:08 -0400
+In-Reply-To: <20190727125501.30914-1-bmeneg@redhat.com>
+References: <20190727125501.30914-1-bmeneg@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
@@ -56,11 +55,14 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, 2019-07-27 at 01:23 +0300, Vitaly Chikunov wrote:
-> Use user supplied key in verify_hash for DIGSIG_VERSION_1.
-> Otherwise v1 signatures don't pass verification.
+On Sat, 2019-07-27 at 09:55 -0300, Bruno E. O. Meneguele wrote:
+> Two chars were left in a AC_DEFINE() in configure.ac, leading to an error
+> message during ./configure call:
 > 
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> checking for tsspcrread... yes
+> ./configure: line 9894: ],: command not found
+> 
+> Signed-off-by: Bruno E. O. Meneguele <bmeneg@redhat.com>
 
 Thanks!
 
