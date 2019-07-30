@@ -2,53 +2,53 @@ Return-Path: <SRS0=07is=V3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF5AC0650F
-	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B8EC433FF
+	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F111120644
-	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1B7208E3
+	for <linux-integrity@archiver.kernel.org>; Tue, 30 Jul 2019 11:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564486948;
-	bh=RU629DfCWPZKpSRC5x2N2EW/Mpdm3PmbsW5zoVKZMRE=;
+	s=default; t=1564487848;
+	bh=JpegaHvxgfMR7/2R1sPMIg//HlHVHOCwT5dw+hQXxTU=;
 	h=Subject:From:To:Date:In-Reply-To:References:List-ID:From;
-	b=AW1KTB5MO1CFqrym9EQme2n21BHN8mrTIscfjQL9wvleIOxyxLOKsPPN79ee1ZAmY
-	 SabqkgP3ONPVLtzCq7SbKtwhgbVoRwLFDMgzZDkE3ButeF5CmS/COX2UKXkCHTUKEA
-	 GVKawv/0RwIoWNJ1uT7kdpneon6nKVWuuOTTFnXs=
+	b=iOEQIhiv2pWee6vHNEGpaZuC/PfF2oMlV+FEKTgnf5lEPszuKhXGeDNByy2SX3XMn
+	 ptZ0Ib58sdKJ5OmEKeI/q5laQKfr61UHzxMyQWoL7cS/BinOVYuVzZIYJSkHgn8X+P
+	 B/eBOHvlniAJGWQJUqrYzFAEXJ5Kpd00EIQaT67w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730832AbfG3Lm1 (ORCPT
+        id S1726941AbfG3L52 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 30 Jul 2019 07:42:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38904 "EHLO mail.kernel.org"
+        Tue, 30 Jul 2019 07:57:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbfG3Lm1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:42:27 -0400
+        id S1726784AbfG3L51 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:57:27 -0400
 Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E277B20644;
-        Tue, 30 Jul 2019 11:42:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 878EF2089E;
+        Tue, 30 Jul 2019 11:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564486946;
-        bh=RU629DfCWPZKpSRC5x2N2EW/Mpdm3PmbsW5zoVKZMRE=;
+        s=default; t=1564487846;
+        bh=JpegaHvxgfMR7/2R1sPMIg//HlHVHOCwT5dw+hQXxTU=;
         h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=rIqZLVxB3o9VnyHv+sGJmQkRVlMgK0xc1sgsXkOijaRbXgeRRKNUGAHz2FBk1uYOu
-         ucIirnNEdc5+OTEKDTJRC0Mixi+BXv1MlpjqX8yr0RFNCH/XB/LET5q44ExuIrsxR7
-         bBhT9JmfMo+Bk9d+Ubd/6gbOLu/6/eKVNzSO1htY=
-Message-ID: <1564486929.4189.32.camel@kernel.org>
-Subject: Re: [PATCH 1/2] ima-evm-utils: Fix ima_verify return value on
- multiple files
+        b=lOkCmvZrbzv4vQWBrGaRx26tnamjO1CcUoclckrDMonB2pl+sPFu4ppNMoM2VdniK
+         oOrrQvYrtFvdR3jFNdKLJqBCh3qcEmASgQGjEwfbuPKeC9O61Ol/U5NcBrbPTt5E/5
+         rWIZB7e76ETAHUYwUqSwWM4sRz7iEuJaDjz4OP0s=
+Message-ID: <1564487830.4189.39.camel@kernel.org>
+Subject: Re: [PATCH 2/2] ima-evm-utils: Never exit with -1 code
 From:   Mimi Zohar <zohar@kernel.org>
 To:     Vitaly Chikunov <vt@altlinux.org>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Date:   Tue, 30 Jul 2019 07:42:09 -0400
-In-Reply-To: <20190727031900.7140-1-vt@altlinux.org>
+Date:   Tue, 30 Jul 2019 07:57:10 -0400
+In-Reply-To: <20190727031900.7140-2-vt@altlinux.org>
 References: <20190727031900.7140-1-vt@altlinux.org>
+         <20190727031900.7140-2-vt@altlinux.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
@@ -58,17 +58,31 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, 2019-07-27 at 06:18 +0300, Vitaly Chikunov wrote:
-> If any tested file results in failure produce failure exit code.
-> Previously exit code affected only by the last file tested.
+On Sat, 2019-07-27 at 06:19 +0300, Vitaly Chikunov wrote:
+> Change main() return code from -1 to 125 as -1 is not really valid exit
+> code. 125 is choosen because exit codes for signals start from 126.
 > 
-> Fixes: "Allow multiple files in ima_verify"
 > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 > ---
+>  src/evmctl.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> I decided not to rebase "Allow multiple files in ima_verify" to not create
-> merge conflicts with "Namespace some too generic object names".
+> diff --git a/src/evmctl.c b/src/evmctl.c
+> index d33a91e..e0a835f 100644
+> --- a/src/evmctl.c
+> +++ b/src/evmctl.c
+> @@ -2100,6 +2100,8 @@ int main(int argc, char *argv[])
+>  				break;
+>  			log_err("%s\n", ERR_error_string(error, NULL));
+>  		}
+> +		if (err < 0)
+> +			err = 125;
+>  	}
+>  
+>  	if (eng) {
 
-This is fine, thanks.
+Agreed we need to return better errors, but instead of always
+returning 125, would it be better to return the first errno, if err is
+-1?
 
 Mimi
