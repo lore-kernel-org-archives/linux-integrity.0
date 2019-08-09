@@ -2,79 +2,78 @@ Return-Path: <SRS0=ZV23=WF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735E8C31E40
-	for <linux-integrity@archiver.kernel.org>; Fri,  9 Aug 2019 15:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3154C433FF
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Aug 2019 19:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E931204EC
-	for <linux-integrity@archiver.kernel.org>; Fri,  9 Aug 2019 15:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57C5214C6
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Aug 2019 19:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436816AbfHIPuz (ORCPT
+        id S1726053AbfHITnw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 9 Aug 2019 11:50:55 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58334 "EHLO mga04.intel.com"
+        Fri, 9 Aug 2019 15:43:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:12176 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436700AbfHIPuz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 9 Aug 2019 11:50:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725927AbfHITnw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 9 Aug 2019 15:43:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 08:50:54 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Aug 2019 12:43:50 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,364,1559545200"; 
-   d="scan'208";a="175189700"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.189])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Aug 2019 08:50:51 -0700
-Date:   Fri, 9 Aug 2019 18:50:50 +0300
+X-IronPort-AV: E=Sophos;i="5.64,366,1559545200"; 
+   d="scan'208";a="169405835"
+Received: from wulili-mobl1.ger.corp.intel.com ([10.249.36.9])
+  by orsmga008.jf.intel.com with ESMTP; 09 Aug 2019 12:43:45 -0700
+Message-ID: <93400d11833bd42c4be0b846416ff1f469904784.camel@linux.intel.com>
+Subject: Re: [PATCH v3 1/4] tpm: Add a flag to indicate TPM power is
+ managed by firmware
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     jejb@linux.ibm.com, zohar@linux.ibm.com, jgg@ziepe.ca,
-        tyhicks@canonical.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, crazyt2019+lml@gmail.com,
-        nayna@linux.vnet.ibm.com, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v3] KEYS: trusted: allow module init if TPM is inactive
- or deactivated
-Message-ID: <20190809155050.5n7dbmabysdlra4m@linux.intel.com>
-References: <20190805164427.17408-1-roberto.sassu@huawei.com>
+To:     Stephen Boyd <swboyd@chromium.org>, Peter Huewe <peterhuewe@gmx.de>
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+In-Reply-To: <20190806220750.86597-2-swboyd@chromium.org>
+References: <20190806220750.86597-1-swboyd@chromium.org>
+         <20190806220750.86597-2-swboyd@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
+ Espoo
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805164427.17408-1-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Date:   Fri, 09 Aug 2019 21:02:01 +0300
+User-Agent: Evolution 3.32.1-2 
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 06:44:27PM +0200, Roberto Sassu wrote:
-> Commit c78719203fc6 ("KEYS: trusted: allow trusted.ko to initialize w/o a
-> TPM") allows the trusted module to be loaded even if a TPM is not found, to
-> avoid module dependency problems.
-> 
-> However, trusted module initialization can still fail if the TPM is
-> inactive or deactivated. tpm_get_random() returns an error.
-> 
-> This patch removes the call to tpm_get_random() and instead extends the PCR
-> specified by the user with zeros. The security of this alternative is
-> equivalent to the previous one, as either option prevents with a PCR update
-> unsealing and misuse of sealed data by a user space process.
-> 
-> Even if a PCR is extended with zeros, instead of random data, it is still
-> computationally infeasible to find a value as input for a new PCR extend
-> operation, to obtain again the PCR value that would allow unsealing.
-> 
-> Fixes: 240730437deb ("KEYS: trusted: explicitly use tpm_chip structure...")
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+On Tue, 2019-08-06 at 15:07 -0700, Stephen Boyd wrote:
+> On some platforms, the TPM power is managed by firmware and therefore we
+> don't need to stop the TPM on suspend when going to a light version of
+> suspend such as S0ix ("freeze" suspend state). Add a chip flag to
+> indicate this so that certain platforms can probe for the usage of this
+> light suspend and avoid touching the TPM state across suspend/resume.
 
-OK so this has been now applied. I'm going to do a PR over
-the weekend, which means that the fix will land to 5.3.
+The commit message should mention the new constant.
+
+> +	if (chip->flags & TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED)
+> +		if (!pm_suspend_via_firmware())
+
+Why both checks are needed?
+
+If both checks are needed, you could write it as a single
+conditional statement:
+
+if (chip->flags & TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED &&
+    !pm_suspend_via_firmware())
 
 /Jarkko
+
