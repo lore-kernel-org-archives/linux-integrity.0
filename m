@@ -1,92 +1,81 @@
-Return-Path: <SRS0=BFN3=WJ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=h9oD=WK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A88C433FF
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Aug 2019 22:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A20C32753
+	for <linux-integrity@archiver.kernel.org>; Wed, 14 Aug 2019 13:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5479D20644
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Aug 2019 22:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B00C9217F4
+	for <linux-integrity@archiver.kernel.org>; Wed, 14 Aug 2019 13:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565789087;
+	bh=728hr/u8ACkr4eN6s55og0sZZKXT3mgz/+81KVMagtM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=x5LRzxrpHZQGCrOF61XYrm+SHRhj8uqlzRrhQDGeUEEVJtgeEQxGET2WWSp3zxkGN
+	 3m/07WyP+t7Y7E9WvNxIdoPS0aSyvPETD5uCrbVqiFk3r86NthB2f11BFOwXtqgl0h
+	 e5o3Br82dkqbKmextlaIo4g2tXGpiTGu/WnEvFiY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfHMWmW (ORCPT
+        id S1728045AbfHNNYm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 13 Aug 2019 18:42:22 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:40528 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726878AbfHMWmW (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Aug 2019 18:42:22 -0400
-Received: by linux.microsoft.com (Postfix, from userid 1029)
-        id CD4FE20B7187; Tue, 13 Aug 2019 11:49:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CD4FE20B7187
-Received: from localhost (localhost [127.0.0.1])
-        by linux.microsoft.com (Postfix) with ESMTP id 039FE3005457;
-        Tue, 13 Aug 2019 11:49:40 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 11:49:39 -0700 (PDT)
-From:   Jaskaran Singh Khurana <jaskarankhurana@linux.microsoft.com>
-X-X-Sender: jaskarankhurana@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net
-To:     Mike Snitzer <snitzer@redhat.com>
-cc:     gmazyland@gmail.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, scottsh@microsoft.com,
-        ebiggers@google.com, jmorris@namei.org, dm-devel@redhat.com,
-        mpatocka@redhat.com, agk@redhat.com
-Subject: Re: [RFC PATCH v5 1/1] Add dm verity root hash pkcs7 sig
- validation.
-In-Reply-To: <20190625182004.GA32075@redhat.com>
-Message-ID: <alpine.LRH.2.21.1908131147390.95186@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.inter>
-References: <20190619191048.20365-1-jaskarankhurana@linux.microsoft.com> <20190619191048.20365-2-jaskarankhurana@linux.microsoft.com> <20190625182004.GA32075@redhat.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+        Wed, 14 Aug 2019 09:24:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727654AbfHNNYm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 14 Aug 2019 09:24:42 -0400
+Received: from localhost.localdomain (ool-18bba523.dyn.optonline.net [24.187.165.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D46EC206C1;
+        Wed, 14 Aug 2019 13:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565789081;
+        bh=728hr/u8ACkr4eN6s55og0sZZKXT3mgz/+81KVMagtM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BEaIXEhbN5LobKXpsJugCZtSW+XS2aQg1QUETdq/6yY99Qn/DFfPk0cHVGWNw7TV9
+         9JisrfYyNGp2YtEudUH9o6nFF5oU4tYajzzGay1/9y5T5phTGmX0XMwBVf3n9JPSXu
+         hGVzpbf/flSHs0lNdtZbG0zWWST/1DLSuYP1HPPc=
+Message-ID: <1565789078.10490.10.camel@kernel.org>
+Subject: Re: [RFC/RFT v4 0/5] Add generic trusted keys framework/subsystem
+From:   Mimi Zohar <zohar@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     dhowells@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, peterhuewe@gmx.de, jgg@ziepe.ca,
+        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, ard.biesheuvel@linaro.org,
+        daniel.thompson@linaro.org, linux-kernel@vger.kernel.org,
+        tee-dev@lists.linaro.org
+Date:   Wed, 14 Aug 2019 09:24:38 -0400
+In-Reply-To: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Hi Sumit,
 
-Hello Mike,
-On Tue, 25 Jun 2019, Mike Snitzer wrote:
+On Tue, 2019-08-13 at 13:22 +0530, Sumit Garg wrote:
+> This patch-set is an outcome of discussion here [1]. It has evolved very
+> much since v1 to create, consolidate and generalize trusted keys
+> subsystem.
+> 
+> This framework has been tested with trusted keys support provided via TEE
+> but I wasn't able to test it with a TPM device as I don't possess one. It
+> would be really helpful if others could test this patch-set using a TPM
+> device.
 
-> On Wed, Jun 19 2019 at  3:10pm -0400,
-> Jaskaran Khurana <jaskarankhurana@linux.microsoft.com> wrote:
->
->> The verification is to support cases where the roothash is not secured by
->> Trusted Boot, UEFI Secureboot or similar technologies.
->> One of the use cases for this is for dm-verity volumes mounted after boot,
->> the root hash provided during the creation of the dm-verity volume has to
->> be secure and thus in-kernel validation implemented here will be used
->> before we trust the root hash and allow the block device to be created.
->>
->> The signature being provided for verification must verify the root hash and
->> must be trusted by the builtin keyring for verification to succeed.
->>
->> The hash is added as a key of type "user" and the description is passed to
->> the kernel so it can look it up and use it for verification.
->>
->> Kernel commandline parameter will indicate whether to check (only if
->> specified) or force (for all dm verity volumes) roothash signature
->> verification.
->>
->> Kernel commandline: dm_verity.verify_sig=1 or 2 for check/force root hash
->> signature validation respectively.
->>
->> Signed-off-by: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
->
-> Milan and/or others: could you please provide review and if you're OK
-> with this patch respond accordingly?
->
+With the "CONFIG_HEADER_TEST" and "CONFIG_KERNEL_HEADER_TEST" config
+options enabled, which is required for linux-next, it fails to build.
 
-The v7 of this patch was Reviewed and Tested by Milan Broz. Could you tell 
-me when this will be merged/next steps, if required I can post the patches 
-again.
-
-> Thanks,
-> Mike
->
-Regards,
-Jaskaran
+Mimi
