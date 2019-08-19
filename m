@@ -2,34 +2,33 @@ Return-Path: <SRS0=yGPs=WP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790BCC3A5A0
-	for <linux-integrity@archiver.kernel.org>; Mon, 19 Aug 2019 16:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0AE8C3A5A0
+	for <linux-integrity@archiver.kernel.org>; Mon, 19 Aug 2019 16:40:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 480F82087E
-	for <linux-integrity@archiver.kernel.org>; Mon, 19 Aug 2019 16:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CCD72070B
+	for <linux-integrity@archiver.kernel.org>; Mon, 19 Aug 2019 16:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfHSQfJ (ORCPT
+        id S1726553AbfHSQkK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 19 Aug 2019 12:35:09 -0400
-Received: from mga04.intel.com ([192.55.52.120]:10068 "EHLO mga04.intel.com"
+        Mon, 19 Aug 2019 12:40:10 -0400
+Received: from mga09.intel.com ([134.134.136.24]:56825 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726168AbfHSQfI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Aug 2019 12:35:08 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1726627AbfHSQkK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Aug 2019 12:40:10 -0400
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 09:35:07 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 09:40:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
-   d="scan'208";a="207057229"
+   d="scan'208";a="207058543"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Aug 2019 09:35:04 -0700
-Date:   Mon, 19 Aug 2019 19:35:05 +0300
+  by fmsmga002.fm.intel.com with ESMTP; 19 Aug 2019 09:40:05 -0700
+Date:   Mon, 19 Aug 2019 19:40:05 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
@@ -40,14 +39,15 @@ Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <groeck@chromium.org>,
         Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: Re: [PATCH v4 3/6] tpm: tpm_tis_spi: Add a pre-transfer callback
-Message-ID: <20190819163505.wnyhgrtg4akiifdn@linux.intel.com>
+Subject: Re: [PATCH v4 4/6] tpm: tpm_tis_spi: Export functionality to other
+ drivers
+Message-ID: <20190819164005.evg35d2hcuslbnrj@linux.intel.com>
 References: <20190812223622.73297-1-swboyd@chromium.org>
- <20190812223622.73297-4-swboyd@chromium.org>
+ <20190812223622.73297-5-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190812223622.73297-4-swboyd@chromium.org>
+In-Reply-To: <20190812223622.73297-5-swboyd@chromium.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
@@ -55,36 +55,21 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 03:36:19PM -0700, Stephen Boyd wrote:
-> Cr50 firmware has a requirement to wait for the TPM to wakeup before
-> sending commands over the SPI bus. Otherwise, the firmware could be in
-> deep sleep and not respond. Add a hook to tpm_tis_spi_transfer() before
-> we start a SPI transfer so we can keep track of the last time the TPM
-> driver accessed the SPI bus.
-> 
-> Cc: Andrey Pronin <apronin@chromium.org>
-> Cc: Duncan Laurie <dlaurie@chromium.org>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->  drivers/char/tpm/tpm_tis_spi.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
-> index 819602e85b34..93f49b1941f0 100644
-> --- a/drivers/char/tpm/tpm_tis_spi.c
-> +++ b/drivers/char/tpm/tpm_tis_spi.c
-> @@ -44,6 +44,7 @@ struct tpm_tis_spi_phy {
->  	struct spi_device *spi_device;
->  	int (*flow_control)(struct tpm_tis_spi_phy *phy,
->  			    struct spi_transfer *xfer);
-> +	void (*pre_transfer)(struct tpm_tis_spi_phy *phy);
+On Mon, Aug 12, 2019 at 03:36:20PM -0700, Stephen Boyd wrote:
+> Export a new function, tpm_tis_spi_init(), and the associated
+> read/write/transfer APIs so that we can create variant drivers based on
+> the core functionality of this TPM SPI driver. Variant drivers can wrap
+> the tpm_tis_spi_phy struct with their own struct and override the
+> behavior of tpm_tis_spi_transfer() by supplying their own flow control
+> and pre-transfer hooks. This shares the most code between the core
+> driver and any variants that want to override certain behavior without
+> cluttering the core driver.
 
-A callback should have somewhat well defined purpose. A callback named
-as pre_transfer() could have any purpose.
+I think this is adding way too much complexity for the purpose. We
+definitely do want this three layer architecture here.
+
+Instead there should be a single tpm_tis_spi driver that dynamically
+either TCG or CR50. I rather take some extra bytes in the LKM than
+the added complexity.
 
 /Jarkko
