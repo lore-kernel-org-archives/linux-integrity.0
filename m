@@ -2,132 +2,103 @@ Return-Path: <SRS0=rqaT=WS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D8FC3A59D
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Aug 2019 05:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDA1C3A5A1
+	for <linux-integrity@archiver.kernel.org>; Thu, 22 Aug 2019 17:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA44233A0
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Aug 2019 05:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1CF623402
+	for <linux-integrity@archiver.kernel.org>; Thu, 22 Aug 2019 17:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qh9NTAxS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l6U7Lyf0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728080AbfHVFla (ORCPT
+        id S2391022AbfHVR3b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 22 Aug 2019 01:41:30 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44064 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726857AbfHVFl3 (ORCPT
+        Thu, 22 Aug 2019 13:29:31 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46744 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390632AbfHVR3a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Aug 2019 01:41:29 -0400
-Received: by mail-io1-f67.google.com with SMTP id j4so1137985iog.11;
-        Wed, 21 Aug 2019 22:41:29 -0700 (PDT)
+        Thu, 22 Aug 2019 13:29:30 -0400
+Received: by mail-pf1-f196.google.com with SMTP id q139so4382735pfc.13
+        for <linux-integrity@vger.kernel.org>; Thu, 22 Aug 2019 10:29:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hn6rxeyfQPsYnbNUt5MSgWQtbToPh9tKf9jba7m/Mb0=;
-        b=qh9NTAxShXjNLbP7aaKIkgSdqONWOprq9JZrxoqc5kVXFAF5XJO5QWJ5FTba1FYzh3
-         y+OtXi6NNfMAbQe96n5PTZ2GLN8Ybf570q7QcCkXQwkR3A2jqYHPWQTtLJDyCxxQ8vpd
-         FzSSFLB6V/D5k3rOIAg7WfBgNX8of0+VO6VwIiUvUCxse5vr2s4F3MMKuILFAbFrOqNJ
-         lS+1sHQf8TtPAnMc9+mI5kOv/1frTd1/wywNNNTIIz42s5GGVf1QxgFPRhvXI6dIUv/7
-         myvqsmGFBPQngRg+CXIaw4wu72oAay3IjQyGlN2B4sBh6xhEnbbur+SeKGMAfsOPCbsP
-         1RXg==
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:to:from:user-agent:date;
+        bh=ukVWNvitz/UHIvotHd8untO0xzPRYvc+1WN6pDOo+Js=;
+        b=l6U7Lyf0pAC/hPrTqdj669gt+CJ2CBM5J0Opg6CFM4CUAfgfTtm4KpO9FqRIop85Qz
+         og1xd2wgn2De8IsjsrP8/RZGxBgAftfBiGPbR1jyBC+m6ItdST7JEQuPdc27GZqj+TUy
+         FVB72DFh2flIuP8MmLebo1Fe4pP6NVI95/AvQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hn6rxeyfQPsYnbNUt5MSgWQtbToPh9tKf9jba7m/Mb0=;
-        b=nUhf9Phac08CA/jnkLXcJoi/sEPWvbc+5LpZUcUq+7bk2Up3hmSGWRVvOPQucx+MVD
-         o4wnb8TAcupcOYClvAmrpemduSnNTPnAoP/34rddiZBIMqh82oz/5rGe5wEOYXx2CCbB
-         QQe6fIwQQucfEIimFhzDPMjOsB9i+00edLTmi3GjYdP16K6LJ4q8k/BxpbDq0vl0kvoW
-         DMsooqligz/M4fr9nfrPk7yKhcgbF5CU+c47yYqnXzFyJ4fozfjCcY5NzOHtzKtD2YHI
-         IS511i++fXETUhLa1KHl9B6/UHkh8hesd4yJCUAnItuXua3mjorhOcCkaQbv3pGGaR/P
-         dJXw==
-X-Gm-Message-State: APjAAAWbAwT+YZMtjrGt9acXxzEIARfkOBVE5X02ghPpEpS9ITZACmf1
-        PcMcFvt9uOqvhFDFbI7oEe1vr6j+N23a/RjDl7w=
-X-Google-Smtp-Source: APXvYqy6nIsjmdyjJU/y7Jt/ct3pwz+lpQCAmPtDtYRpTMGX/1uH9hIhwQwdQXVE23y8PT5ZqJiCE/t5E0jsquqbZXI=
-X-Received: by 2002:a6b:6e0e:: with SMTP id d14mr25453232ioh.18.1566452488810;
- Wed, 21 Aug 2019 22:41:28 -0700 (PDT)
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
+         :user-agent:date;
+        bh=ukVWNvitz/UHIvotHd8untO0xzPRYvc+1WN6pDOo+Js=;
+        b=VhlHcOQD96OkwnyY/Qb/8xCc3OzH+qWs6nLcyPnpgPN9jgFaNqBLfzxSKoaj/QLTLi
+         A9G8vVUpRZCHMMR0S1SA+PxLDvlWxO5gYL2ezwzA3H9zvHqWXFOiDUhcWx2DYxt6Py+H
+         KgTdknOMkMZrT32fS9PS4116UmUU4ZdKutHd08r96sqJlllSG6M6AQFKenhTjVAN/ehJ
+         E9jv2xZ/PFE2vGaMh0s8nGlvzTccBSl2otf44fQFd9M5a7K0CXeo60xVcuxRK06n9IZP
+         FIu0htjLzSvXfbseHgX4HDuRUgS5d2wSYACZtvElbXKXfjBYDqTr3wThjY/ZongZkNUo
+         1b8w==
+X-Gm-Message-State: APjAAAVDV1mLhP9OVdJKN7AHobjpAP/eo12K3bkn3cnM3v7iMtZ4TjjB
+        3gYaOvfKXou82i5K+56T1xlABg==
+X-Google-Smtp-Source: APXvYqz4lxbTsv5Z2JO/gKEg6i2DpoNEniiFZCAuMi/Tl3YoY+PSd8B4B3xWz6iKO9e1ZGHdDvWg5A==
+X-Received: by 2002:a17:90a:380a:: with SMTP id w10mr798893pjb.138.1566494969205;
+        Thu, 22 Aug 2019 10:29:29 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id b6sm23644299pgq.26.2019.08.22.10.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 10:29:28 -0700 (PDT)
+Message-ID: <5d5ed0f8.1c69fb81.46245.daf8@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1566400103-18201-1-git-send-email-nayna@linux.ibm.com>
- <1566400103-18201-2-git-send-email-nayna@linux.ibm.com> <eda9210b56ab220519642d272079eeca60a18265.camel@gmail.com>
-In-Reply-To: <eda9210b56ab220519642d272079eeca60a18265.camel@gmail.com>
-From:   "Oliver O'Halloran" <oohall@gmail.com>
-Date:   Thu, 22 Aug 2019 15:41:17 +1000
-Message-ID: <CAOSf1CHOsnnC94DxHhG4opZfYjV7u_ndrE2B3Cr6ZV58RAxoWA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] powerpc/powernv: Add OPAL API interface to access
- secure variable
-To:     Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev <linuxppc-dev@ozlabs.org>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
+References: <20190812223622.73297-1-swboyd@chromium.org> <20190812223622.73297-5-swboyd@chromium.org> <20190819164005.evg35d2hcuslbnrj@linux.intel.com> <5d5ad7f0.1c69fb81.ebfc2.7e1d@mx.google.com> <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v4 4/6] tpm: tpm_tis_spi: Export functionality to other drivers
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 22 Aug 2019 10:29:27 -0700
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 3:02 PM Oliver O'Halloran <oohall@gmail.com> wrote:
->
-> On Wed, 2019-08-21 at 11:08 -0400, Nayna Jain wrote:
-> > diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
-> > index aba443be7daa..ffe6f1cf0830 100644
-> > --- a/arch/powerpc/platforms/powernv/opal.c
-> > +++ b/arch/powerpc/platforms/powernv/opal.c
-> > @@ -32,6 +32,8 @@
-> >  #include <asm/mce.h>
-> >  #include <asm/imc-pmu.h>
-> >  #include <asm/bug.h>
-> > +#include <asm/secvar.h>
-> > +#include <asm/secboot.h>
-> >
-> >  #include "powernv.h"
-> >
-> > @@ -988,6 +990,9 @@ static int __init opal_init(void)
-> >       /* Initialise OPAL Power control interface */
-> >       opal_power_control_init();
-> >
-> > +     if (is_powerpc_secvar_supported())
-> > +             secvar_init();
-> > +
->
-> The usual pattern here is to have the init function check for support
-> internally.
->
-> Also, is_powerpc_secvar_supported() doesn't appear to be defined
-> anywhere. Is that supposed to be is_opal_secvar_supported()? Or is this
-> series supposed to be applied on top of another series?
+Quoting Jarkko Sakkinen (2019-08-21 10:58:46)
+> On Mon, Aug 19, 2019 at 10:10:08AM -0700, Stephen Boyd wrote:
+> > Quoting Jarkko Sakkinen (2019-08-19 09:40:05)
+> > >=20
+> > > Instead there should be a single tpm_tis_spi driver that dynamically
+> > > either TCG or CR50. I rather take some extra bytes in the LKM than
+> > > the added complexity.
+> > >=20
+> >=20
+> > Ok. I had that patch originally[1]. Do you want me to resend that patch
+> > and start review over from there?
+> >=20
+> > [1] https://lkml.kernel.org/r/5d2f955d.1c69fb81.35877.7018@mx.google.com
+>=20
+> What if:
+>=20
+> 1. You mostly use this solution but have it as a separate source module
+>    only.
+> 2. Use TPM_IS_CR50 only once to bind the callbacks.
+>=20
 
-To answer my own question, yes it depends on the series at [1] which
-adds IMA support. Turns out actually reading the cover letter helps,
-who knew.
+Ok I think I understand. Take the callback approach from these patches
+and combine that with the TPM_IS_CR50 changes I made in [1]. I'll try it
+out and resend.
 
-That said, I'm still not entirely sure about this. The implementation
-of is_powerpc_secvar_supported() in [2] parses the DT and seems to
-assume the DT bindings that OPAL produces. Are those common with the
-DT bindings produced by OF when running on pseries?
-
-[1] http://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=125961
-[2] http://patchwork.ozlabs.org/patch/1149257/
-
->
-> >       return 0;
-> >  }
-> >  machine_subsys_initcall(powernv, opal_init);
->
