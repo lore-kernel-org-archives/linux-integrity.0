@@ -1,104 +1,173 @@
-Return-Path: <SRS0=rqaT=WS=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=pRlr=WV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBDA1C3A5A1
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Aug 2019 17:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4DEC3A5A4
+	for <linux-integrity@archiver.kernel.org>; Sun, 25 Aug 2019 11:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CF623402
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Aug 2019 17:29:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A5322CF7
+	for <linux-integrity@archiver.kernel.org>; Sun, 25 Aug 2019 11:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l6U7Lyf0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcwCzLr2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391022AbfHVR3b (ORCPT
+        id S1726744AbfHYLZ2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 22 Aug 2019 13:29:31 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46744 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390632AbfHVR3a (ORCPT
+        Sun, 25 Aug 2019 07:25:28 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36701 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbfHYLZ2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:29:30 -0400
-Received: by mail-pf1-f196.google.com with SMTP id q139so4382735pfc.13
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Aug 2019 10:29:29 -0700 (PDT)
+        Sun, 25 Aug 2019 07:25:28 -0400
+Received: by mail-io1-f66.google.com with SMTP id o9so30604456iom.3;
+        Sun, 25 Aug 2019 04:25:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=ukVWNvitz/UHIvotHd8untO0xzPRYvc+1WN6pDOo+Js=;
-        b=l6U7Lyf0pAC/hPrTqdj669gt+CJ2CBM5J0Opg6CFM4CUAfgfTtm4KpO9FqRIop85Qz
-         og1xd2wgn2De8IsjsrP8/RZGxBgAftfBiGPbR1jyBC+m6ItdST7JEQuPdc27GZqj+TUy
-         FVB72DFh2flIuP8MmLebo1Fe4pP6NVI95/AvQ=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dIuyrG3/dTHyGA/J/KYequizhWcmMaNv8m8PYDwNWI4=;
+        b=fcwCzLr2Oyfngu50pqfzqF552F9pwU+iIcIoIWSJsaPcfRHw8O8jyLeg2+7vfTS83w
+         KmgvC13akzfojk5+E0580ibiUQjf6MPrnGYkfWDrOBCeoPfetof7RBu8DjfRF46e4exl
+         7abMklO7B5s77Z9U/PKq+XBfZ6mGM8WT7czVVkGGdSmEA/3W3xeDwACrNib1KRRdNRzL
+         TB242cenbOrZh7WNmWSusSMO+bYgzVFULlGlAxjpSGL5lPPuWMMWCC7c8U4Un1fEq70Z
+         fh3ROfj6+5IsWiiFsGDpFAfsoOycVT8MM1cNkTtkoPmdy/2r0pXKn/WBQ10R7b5RmCE2
+         WsvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=ukVWNvitz/UHIvotHd8untO0xzPRYvc+1WN6pDOo+Js=;
-        b=VhlHcOQD96OkwnyY/Qb/8xCc3OzH+qWs6nLcyPnpgPN9jgFaNqBLfzxSKoaj/QLTLi
-         A9G8vVUpRZCHMMR0S1SA+PxLDvlWxO5gYL2ezwzA3H9zvHqWXFOiDUhcWx2DYxt6Py+H
-         KgTdknOMkMZrT32fS9PS4116UmUU4ZdKutHd08r96sqJlllSG6M6AQFKenhTjVAN/ehJ
-         E9jv2xZ/PFE2vGaMh0s8nGlvzTccBSl2otf44fQFd9M5a7K0CXeo60xVcuxRK06n9IZP
-         FIu0htjLzSvXfbseHgX4HDuRUgS5d2wSYACZtvElbXKXfjBYDqTr3wThjY/ZongZkNUo
-         1b8w==
-X-Gm-Message-State: APjAAAVDV1mLhP9OVdJKN7AHobjpAP/eo12K3bkn3cnM3v7iMtZ4TjjB
-        3gYaOvfKXou82i5K+56T1xlABg==
-X-Google-Smtp-Source: APXvYqz4lxbTsv5Z2JO/gKEg6i2DpoNEniiFZCAuMi/Tl3YoY+PSd8B4B3xWz6iKO9e1ZGHdDvWg5A==
-X-Received: by 2002:a17:90a:380a:: with SMTP id w10mr798893pjb.138.1566494969205;
-        Thu, 22 Aug 2019 10:29:29 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b6sm23644299pgq.26.2019.08.22.10.29.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:29:28 -0700 (PDT)
-Message-ID: <5d5ed0f8.1c69fb81.46245.daf8@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dIuyrG3/dTHyGA/J/KYequizhWcmMaNv8m8PYDwNWI4=;
+        b=kFYOt1zv/3Tz7HJpjW6X++fNne43iU1W9VwKa5NzDxKmkglcCsHFybH3Hy/Tli6elY
+         SWxXCniMSv0sFN/j4S/e/oVi56PV/8dCTfiCPSgbtbce5xDzdproe08Hy1SrG5q6vuBj
+         eIGaodhXzyS9FysyGi098FZEH5NV+j3/uHxgnNBeOGNZztZTYbpjA+2i1n+oINjzzwDG
+         KxAb/Wo3PhHHrDjD3ITG2ZlnwnHf+vIuliHorzobAhho3hV6Tjt+TmbHCqjNE6orNZdy
+         dbWSHqxpLlp26GyDjmejOSjrbXxuuGiSQlUz7W/2bSAkhf7UfJOEPMBOpMDDGMNGBnLd
+         PiTA==
+X-Gm-Message-State: APjAAAVb5RWHTeNuY7aEswLu+yhBIH3aQh+tKSQAOTfObJV5anB/Gc+b
+        rfg3Yc7+SGah5ho+osPgq4fqUn878RHeueAGrG8=
+X-Google-Smtp-Source: APXvYqwvEo+Td14aRT0PjhhgoTej9aKxEX7xld6WL/Ul4aBPePGWEZJs4Djx1s/U1N1jbPjwJwC4Ez25O/btr4FOww4=
+X-Received: by 2002:a6b:5d0d:: with SMTP id r13mr1365601iob.89.1566732326980;
+ Sun, 25 Aug 2019 04:25:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
-References: <20190812223622.73297-1-swboyd@chromium.org> <20190812223622.73297-5-swboyd@chromium.org> <20190819164005.evg35d2hcuslbnrj@linux.intel.com> <5d5ad7f0.1c69fb81.ebfc2.7e1d@mx.google.com> <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: Re: [PATCH v4 4/6] tpm: tpm_tis_spi: Export functionality to other drivers
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 22 Aug 2019 10:29:27 -0700
+References: <20190628151327.206818-1-oshrialkoby85@gmail.com>
+ <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
+ <79e8bfd2-2ed1-cf48-499c-5122229beb2e@infineon.com> <CAM9mBwJC2QD5-gV1eJUDzC2Fnnugr-oCZCoaH2sT_7ktFDkS-Q@mail.gmail.com>
+ <45603af2fc8374a90ef9e81a67083395cc9c7190.camel@linux.intel.com>
+ <6e7ff1b958d84f6e8e585fd3273ef295@NTILML02.nuvoton.com> <CAP6Zq1hPo9dG71YFyr7z9rjmi-DvoUZJOme4+2uqsfO+7nH+HQ@mail.gmail.com>
+ <20190715094541.zjqxainggjuvjxd2@linux.intel.com> <9c8e216dbc4f43dbaa1701dc166b05e0@NTILML02.nuvoton.com>
+ <548d3727-4a8f-38d4-2193-8a09cbae1e64@infineon.com> <CAM9mBwL=5+pGTYUKbSdw5F6soR=tW-cqfbEQ9_NmCQTO=fSVZQ@mail.gmail.com>
+ <528c9364-f4f4-d7c1-5e58-6ba6b8e90a6c@infineon.com>
+In-Reply-To: <528c9364-f4f4-d7c1-5e58-6ba6b8e90a6c@infineon.com>
+From:   Oshri Alkobi <oshrialkoby85@gmail.com>
+Date:   Sun, 25 Aug 2019 14:25:17 +0300
+Message-ID: <CAM9mBw+bz4OLoaWqJVs-+O0Wuovcx9bbj+PJWMHq_60WNbgTCg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
+To:     Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc:     Eyal.Cohen@nuvoton.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        tmaimon77@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, oshri.alkoby@nuvoton.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, gcwilson@us.ibm.com,
+        kgoldman@us.ibm.com, nayna@linux.vnet.ibm.com,
+        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
+        amir.mizinski@nuvoton.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Quoting Jarkko Sakkinen (2019-08-21 10:58:46)
-> On Mon, Aug 19, 2019 at 10:10:08AM -0700, Stephen Boyd wrote:
-> > Quoting Jarkko Sakkinen (2019-08-19 09:40:05)
-> > >=20
-> > > Instead there should be a single tpm_tis_spi driver that dynamically
-> > > either TCG or CR50. I rather take some extra bytes in the LKM than
-> > > the added complexity.
-> > >=20
-> >=20
-> > Ok. I had that patch originally[1]. Do you want me to resend that patch
-> > and start review over from there?
-> >=20
-> > [1] https://lkml.kernel.org/r/5d2f955d.1c69fb81.35877.7018@mx.google.com
->=20
-> What if:
->=20
-> 1. You mostly use this solution but have it as a separate source module
->    only.
-> 2. Use TPM_IS_CR50 only once to bind the callbacks.
->=20
+On Fri, Aug 16, 2019 at 7:12 PM Alexander Steffen
+<Alexander.Steffen@infineon.com> wrote:
+>
+> On 15.08.2019 19:03, Oshri Alkobi wrote:
+> > On Thu, Jul 18, 2019 at 8:10 PM Alexander Steffen
+> > <Alexander.Steffen@infineon.com> wrote:
+> >>
+> >> On 18.07.2019 14:51, Eyal.Cohen@nuvoton.com wrote:
+> >>> Hi Jarkko and Alexander,
+> >>>
+> >>> We have made an additional code review on the TPM TIS core driver, it looks quite good and we can connect our new I2C driver to this layer.
+> >>
+> >> Great :) In the meantime, I've done some experiments creating an I2C
+> >> driver based on tpm_tis_core, see
+> >> https://patchwork.kernel.org/patch/11049363/ Please have a look at that
+> >> and provide your feedback (and/or use it as a basis for further
+> >> implementations).
+> >>
+> >
+> > Sorry for the late response.
+> >
+> > Thanks Alexander, indeed it looks much simpler.
+> > I've checked it with Nuvoton's TPM - basic TPM commands work
+>
+> Nice :)
+>
+> > I only
+> > had to remove the first msg from the read/write I2C transmitting
+> > (from/to TPM_LOC_SEL), the TPM couldn't handle two register writes in
+> > a sequence.
+> > Actually it is more efficient to set TPM_LOC_SEL only before locality
+> > check/request/relinquish - it is sticky.
+>
+> There is one problem though: Do we assume that only the kernel driver
+> will communicate with the TPM or might there be something else that also
+> talks to the TPM?
+>
+> If it is only the kernel driver, we could probably skip setting
+> TPM_LOC_SEL at all, since it defaults to 0 and the driver will never use
+> anything else. If something else does its own I2C communication with the
+> TPM, it might write different values to TPM_LOC_SEL at any time, causing
+> the kernel driver to use a different locality than intended. This was
+> the reason I always set TPM_LOC_SEL within the same transaction.
+>
+> > I still didn't manage to work with interrupts, will debug it.
+>
+> Interrupt support might be broken in general at the moment, see this
+> thread: https://www.spinics.net/lists/linux-integrity/msg08663.html
+>
+> > We weren't aware to the implementation of Christophe/ST which looks
+> > good and can be complement to yours.
+> > If no one is currently working on that, we can prepare a new patch
+> > that is based on both.
+> > Please let us know.
+>
+> I won't have the time to do anything, at least for the next two weeks,
+> so feel free to pick it up.
+>
 
-Ok I think I understand. Take the callback approach from these patches
-and combine that with the TPM_IS_CR50 changes I made in [1]. I'll try it
-out and resend.
+Great, we will start working on it.
 
+> >>> However, there are several differences between the SPI interface and the I2C interface that will require changes to the TIS core.
+> >>> At a minimum we thought of:
+> >>> 1. Handling TPM Localities in I2C is different
+> >>
+> >> It turned out not to be that different in the end, see the code
+> >> mentioned above and my comment here:
+> >> https://patchwork.kernel.org/cover/11049365/
+> >>
+> >>> 2. Handling I2C CRC - relevant only to I2C bus hence not supported today by TIS core
+> >>
+> >> That is completely optional, so there is no need to implement it in the
+> >> beginning. Also, do you expect a huge benefit from that functionality?
+> >> Are bit flips that much more likely on I2C compared to SPI, which has no
+> >> CRC at all, but still works fine?
+> >>
+> >
+> > I2C is noisy bus with potentially more devices with larger variety
+> > than SPI. I2C may have more than one master and may have collisions
+> > and/or arbitration.
+>
+> If multi-master usage is a concern, there are probably a lot more places
+> in the driver that need to be adapted to deal with concurrent
+> access/data corruption. For now, I'd assume a single master, similar to SPI.
+>
+> Alexander
+
+Oshri
