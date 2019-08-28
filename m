@@ -2,83 +2,112 @@ Return-Path: <SRS0=GMIj=WY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDB5C3A5A1
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 15:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5815C3A5A1
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 15:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3E9E2339E
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 15:53:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567007598;
-	bh=6/85+MzB1JJmEyPqfvT2XU196VzVe0Da/hn+nwH94WI=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=zo0PSWA5iG4T5FnplrgQUfWBUbf5a482gs1MHkSFFsWOKU3jv677oGbbAOd2R9nps
-	 LnBg1Dx2CVm8/GQHGxH8/mG8eWGI2X9YEI5BBVsq614hPxReN9H1PTQ0COn0EKBM8g
-	 eBEZqyAT+3aL8yveqo0mWdJiuW/KG5K7qlbdOHvM=
+	by mail.kernel.org (Postfix) with ESMTP id 9865422CED
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 15:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfH1PxR (ORCPT
+        id S1726864AbfH1PxU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 28 Aug 2019 11:53:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbfH1PxR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:53:17 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D10A22064A;
-        Wed, 28 Aug 2019 15:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567007596;
-        bh=6/85+MzB1JJmEyPqfvT2XU196VzVe0Da/hn+nwH94WI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=InFHVs6MWH1gnWoAc3XBoEGci7TX31v4oYyKXQyASPylb9B/f/f/NKujpijCRB9yq
-         HjTQRDEkRzEWeu09eK61jLdk8gHjL+8f9hjsuiCsKEMq2bJqiq8WnI74b34D1FqrK4
-         JC/Kvcpz6qgHIa019eKMcbL9hjFJtOnHuSGgbfxA=
-Subject: Re: [PATCH v1] sefltest/ima: support appended signatures (modsig)
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Petr Vorel <pvorel@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Dave Young <dyoung@redhat.com>,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>
-References: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <4a9f9cd3-c550-98e4-1513-14ef161c34c2@kernel.org>
-Date:   Wed, 28 Aug 2019 09:53:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 28 Aug 2019 11:53:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20502 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726368AbfH1PxU (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:53:20 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SFq5tk006738
+        for <linux-integrity@vger.kernel.org>; Wed, 28 Aug 2019 11:53:19 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2unu8d3j8n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 28 Aug 2019 11:53:19 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 28 Aug 2019 16:53:17 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Aug 2019 16:53:15 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SFqqfU36897238
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 15:52:52 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11889A4054;
+        Wed, 28 Aug 2019 15:53:14 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5B0ADA405B;
+        Wed, 28 Aug 2019 15:53:13 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.129.156])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Aug 2019 15:53:13 +0000 (GMT)
+Subject: Re: TPM 2.0 Linux sysfs interface
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Piotr =?ISO-8859-1?Q?Kr=F3l?= <piotr.krol@3mdeb.com>
+Cc:     linux-integrity@vger.kernel.org
+Date:   Wed, 28 Aug 2019 11:53:12 -0400
+In-Reply-To: <20190827010559.GA31752@ziepe.ca>
+References: <3329329f-4bf4-b8cd-dee8-eb36e513c728@3mdeb.com>
+         <20190827010559.GA31752@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19082815-0016-0000-0000-000002A3F13F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082815-0017-0000-0000-0000330442BA
+Message-Id: <1567007592.6115.58.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280161
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 8/28/19 9:14 AM, Mimi Zohar wrote:
-> In addition to the PE/COFF and IMA xattr signatures, the kexec kernel
-> image can be signed with an appended signature, using the same
-> scripts/sign-file tool that is used to sign kernel modules.
+On Mon, 2019-08-26 at 22:05 -0300, Jason Gunthorpe wrote:
+> The sysfs is not done, fundamentally, because the sysfs structure of
+> the existing TPM1 stuff is grandfathered in, and doing anything like
+> it for TPM2 is a complete NAK for not following the normal sysfs
+> interface design rules, particularly of one value per file. This is a
+> big part of why it was dropped for TPM2.
+
+The original TPM 2.0 support was missing a lot of TPM 1.2
+functionality, including exporting the TPM event log.  So it wasn't
+clear that leaving out the sysfs support was intentional or simply a
+question of someone needing to implement it.
+
 > 
-> This patch adds support for detecting a kernel image signed with an
-> appended signature and updates the existing test messages
-> appropriately.
+> So exposing PCRs and things through sysfs is not going to happen.
 > 
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
+> If you had some very narrowly defined things like version, then
+> *maybe* but I think a well defined use case is needed for why this
+> needs to be sysfs and can't be done in C as Jarkko explained.
 
-Thanks Mimi. This commit log looks good. My Ack for the patch
-to go through the IMA tree.
+Piotr's request for a sysfs file to differentiate between TPM 1.2 and
+TPM 2.0 is a reasonable request and probably could be implemented on
+TPM registration.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+If exposing the PCRs through sysfs is not acceptable, then perhaps
+suggest an alternative.
 
-thanks,
--- Shuah
+Mimi
+> 
+> A good reason would be something like needing to trigger a systemd
+> unit from udev.
+> 
+> Jason
+
