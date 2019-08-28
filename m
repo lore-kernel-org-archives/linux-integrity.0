@@ -2,113 +2,148 @@ Return-Path: <SRS0=GMIj=WY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED582C3A5A3
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 00:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FC4C3A5A1
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 05:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1668208CB
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 00:46:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FF6F2173E
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Aug 2019 05:28:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JxQ/DhDP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfH1Aq1 (ORCPT
+        id S1726136AbfH1F2Z (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Aug 2019 20:46:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43278 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfH1Aq0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Aug 2019 20:46:26 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C58E281F25;
-        Wed, 28 Aug 2019 00:46:26 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-118-116.phx2.redhat.com [10.3.118.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 67E5D6092D;
-        Wed, 28 Aug 2019 00:46:26 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Alexey Klimov <aklimov@redhat.com>
-Subject: [PATCH 1/2 v2] tpm: provide a way to override the chip returned durations
-Date:   Tue, 27 Aug 2019 17:46:20 -0700
-Message-Id: <20190828004621.29050-2-jsnitsel@redhat.com>
-In-Reply-To: <20190828004621.29050-1-jsnitsel@redhat.com>
-References: <20190828004621.29050-1-jsnitsel@redhat.com>
+        Wed, 28 Aug 2019 01:28:25 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40095 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfH1F2Y (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 28 Aug 2019 01:28:24 -0400
+Received: by mail-lj1-f194.google.com with SMTP id e27so1363502ljb.7
+        for <linux-integrity@vger.kernel.org>; Tue, 27 Aug 2019 22:28:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
+        b=JxQ/DhDP05PNcJhHPHt2GrZ/B8VfZ53oE6THwxTahk32Tsn0TFdadeMPol+lFd4P1A
+         ZSNr/mSN4jHxlMDbHl9zDZxG22Ec4vfh7ClgirOkCZvTjA6NTfc7GF6QpnMJoq3yf1Tf
+         jZJPmiBUgmxrpi3fZHzpuAAhDEbJIGpkDmyqW77n0f4dC+Kdoog+2dPGysHFHolJFQYJ
+         dKWrRA+dbT0VHyb3+C39xtvli41mc53RQaVl4B3RnrOVhuH3KUKlLJ1X9oNXIVZroUOV
+         ysRIXcz2GlsRxWYVmoX0DOS+xB7rY3Uuf0nRqv9lrREvMrwVG+NiTKs3C3JiDAFCeUsa
+         253w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
+        b=oBbvHnqwCDNwjJGmls5ciCajPVb7afLdWpUhVysLYDF6BXe22G8mooWchT1ch0fzgH
+         1yBANlYAo31Fud3CPaLybdwLUxGMVlXBJvS57lkcArsrWqaIonTEIOCekN4W/az8O7z1
+         C4Q14KkC1l8gljAICId7/gVP7jk6TxcNbo0Xg1g/95TRrG1ODuOJVzMCKHIj7VvOMw3F
+         E5qhhLKIT3K3k7lLg+9bsbeR4OrAF/F1igWng13UeU1XnyfWOgTISFCBWzJE0AhJeXK8
+         suvBQm0H/IQv/0PjLAYDq/7u8u5Bd+SrFqmD5bykPkM27D+eosu/+MNW44T9pc2hKvpX
+         iFBg==
+X-Gm-Message-State: APjAAAWCQJO3nv168v61VQ/uPAbWaK3ThpLvzPs304uhfTSj0PuOOvwO
+        p9mxazZXvESSj5EP6Xh1IT3go59jTVIZHzJDhu834Q==
+X-Google-Smtp-Source: APXvYqzP6WVBc3SIpSbwvH+PA6Ta0a7UKTqmsXsZbvFWOoRZR8d2RevgeN/WfpPSOG2xP4CPkCq1nfyajuFEu/pawkk=
+X-Received: by 2002:a2e:819:: with SMTP id 25mr987414lji.142.1566970102465;
+ Tue, 27 Aug 2019 22:28:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 28 Aug 2019 00:46:26 +0000 (UTC)
+References: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
+ <1566392345-15419-5-git-send-email-sumit.garg@linaro.org> <20190827141742.6qxowsigqolxaod4@linux.intel.com>
+In-Reply-To: <20190827141742.6qxowsigqolxaod4@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 28 Aug 2019 10:58:11 +0530
+Message-ID: <CAFA6WYPnoDoMWd=PT4mgXPhg1Wp0=AFDnWd_44UMP7sijXzAZA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] KEYS: trusted: move tpm2 trusted keys code
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Patch adds method ->update_durations to override returned
-durations in case TPM chip misbehaves for TPM 1.2 drivers.
+On Tue, 27 Aug 2019 at 19:47, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Wed, Aug 21, 2019 at 06:29:05PM +0530, Sumit Garg wrote:
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (C) 2004 IBM Corporation
+> > + * Copyright (C) 2014 Intel Corporation
+>
+> Everything below can be dropped from this new file. Git has the most
+> accurate authority information.
+>
+> I'm not sure why I added the authors-list in the first place to the
+> header when I implemented these functions as none of those folks have
+> contributed to this particular piece of work.
+>
+> > + * Authors:
+> > + * Leendert van Doorn <leendert@watson.ibm.com>
+> > + * Dave Safford <safford@watson.ibm.com>
+> > + * Reiner Sailer <sailer@watson.ibm.com>
+> > + * Kylene Hall <kjhall@us.ibm.com>
+> > + *
+> > + * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+> > + *
+> > + * Trusted Keys code for TCG/TCPA TPM2 (trusted platform module).
+> > + */
+>
+> To summarize, I think this would be sufficient:
+>
+> // SPDX-License-Identifier: GPL-2.0-only
+> /*
+>  * Copyright (C) 2004 IBM Corporation
+>  * Copyright (C) 2014 Intel Corporation
+>  */
 
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Alexey Klimov <aklimov@redhat.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
-v2: newline cleanup as requested by Jarkko
+Sounds good to me.
 
- drivers/char/tpm/tpm1-cmd.c | 15 +++++++++++++++
- include/linux/tpm.h         |  2 ++
- 2 files changed, 17 insertions(+)
+>
+> I think there should never be such a rush that acronym could not be
+> written with the correct spelling. I'm referring to 'tpm2' in the short
+> summary.
 
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 149e953ca369..ca7158fa6e6c 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -343,6 +343,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- {
- 	cap_t cap;
- 	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
-+	unsigned long durations[3];
- 	ssize_t rc;
- 
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
-@@ -427,6 +428,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
- 	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
- 
-+	/*
-+	 * Provide the ability for vendor overrides of duration values in case
-+	 * of misreporting.
-+	 */
-+	if (chip->ops->update_durations)
-+		chip->ops->update_durations(chip, durations);
-+
-+	if (chip->duration_adjusted) {
-+		dev_info(&chip->dev, HW_ERR "Adjusting reported durations.");
-+		chip->duration[TPM_SHORT] = durations[0];
-+		chip->duration[TPM_MEDIUM] = durations[1];
-+		chip->duration[TPM_LONG] = durations[2];
-+	}
-+
- 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
- 	 * value wrong and apparently reports msecs rather than usecs. So we
- 	 * fix up the resulting too-small TPM_SHORT value to make things work.
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 53c0ea9ec9df..bb1d1ac7081d 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -67,6 +67,8 @@ struct tpm_class_ops {
- 	u8 (*status) (struct tpm_chip *chip);
- 	void (*update_timeouts)(struct tpm_chip *chip,
- 				unsigned long *timeout_cap);
-+	void (*update_durations)(struct tpm_chip *chip,
-+				 unsigned long *duration_cap);
- 	int (*go_idle)(struct tpm_chip *chip);
- 	int (*cmd_ready)(struct tpm_chip *chip);
- 	int (*request_locality)(struct tpm_chip *chip, int loc);
--- 
-2.21.0
+So you mean to say we should use upper-case letters for 'TPM2' acronym?
 
+> I'm sorry, I had to say it, just can't help myself with those
+> kind of details :-) I can take care of fixing those once I apply these
+> patches.
+>
+> You've done an awesome job. Thank you.
+>
+
+You are welcome.
+
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>
+
+Thanks for your review.
+
+-Sumit
+
+> Unfortunately I'm not yet sure if I have time to test these before going
+> to Linux Plumbers but these would be anyway too close to the next merge
+> window to be added to the v5.4 PR.
+>
+> /Jarkko
