@@ -2,114 +2,102 @@ Return-Path: <SRS0=gKyt=WZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29992C3A59F
-	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 20:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE77DC3A59F
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 22:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B8E23405
-	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 20:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89F0921726
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 22:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfH2Uu0 (ORCPT
+        id S1728121AbfH2WXG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 29 Aug 2019 16:50:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60396 "EHLO mx1.redhat.com"
+        Thu, 29 Aug 2019 18:23:06 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16742 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfH2UuS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:50:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CD6E0180032B;
-        Thu, 29 Aug 2019 20:50:17 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-116-163.phx2.redhat.com [10.3.116.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 72E3660BF7;
-        Thu, 29 Aug 2019 20:50:17 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        id S1727912AbfH2WXG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:23:06 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 15:23:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
+   d="scan'208";a="182478350"
+Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Aug 2019 15:23:03 -0700
+Date:   Fri, 30 Aug 2019 01:23:01 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: [PATCH 2/3 v3] tpm: provide a way to override the chip returned durations
-Date:   Thu, 29 Aug 2019 13:49:46 -0700
-Message-Id: <20190829204947.2591-3-jsnitsel@redhat.com>
-In-Reply-To: <20190829204947.2591-1-jsnitsel@redhat.com>
-References: <20190829204947.2591-1-jsnitsel@redhat.com>
+        Alexey Klimov <aklimov@redhat.com>
+Subject: Re: [PATCH 2/2 v2] tpm_tis: override durations for STM tpm with
+ firmware 1.2.8.28
+Message-ID: <20190829222301.iqtttpzn2dgoyrze@linux.intel.com>
+References: <20190828004621.29050-1-jsnitsel@redhat.com>
+ <20190828004621.29050-3-jsnitsel@redhat.com>
+ <20190829144002.zhuqxnsswgl65pnm@linux.intel.com>
+ <20190829202527.auyqek7yryuvaruk@cantor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Thu, 29 Aug 2019 20:50:17 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829202527.auyqek7yryuvaruk@cantor>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Patch adds method ->update_durations to override returned
-durations in case TPM chip misbehaves for TPM 1.2 drivers.
+On Thu, Aug 29, 2019 at 01:25:27PM -0700, Jerry Snitselaar wrote:
+> On Thu Aug 29 19, Jarkko Sakkinen wrote:
+> > On Tue, Aug 27, 2019 at 05:46:21PM -0700, Jerry Snitselaar wrote:
+> > > There was revealed a bug in the STM TPM chipset used in Dell R415s.
+> > > Bug is observed so far only on chipset firmware 1.2.8.28
+> > > (1.2 TPM, device-id 0x0, rev-id 78). After some number of
+> > > operations chipset hangs and stays in inconsistent state:
+> > > 
+> > > tpm_tis 00:09: Operation Timed out
+> > > tpm_tis 00:09: tpm_transmit: tpm_send: error -5
+> > > 
+> > > Durations returned by the chip are the same like on other
+> > > firmware revisions but apparently with specifically 1.2.8.28 fw
+> > > durations should be reset to 2 minutes to enable tpm chip work
+> > > properly. No working way of updating firmware was found.
+> > > 
+> > > This patch adds implementation of ->update_durations method
+> > > that matches only STM devices with specific firmware version.
+> > > 
+> > > Cc: Peter Huewe <peterhuewe@gmx.de>
+> > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> > > Signed-off-by: Alexey Klimov <aklimov@redhat.com>
+> > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > ---
+> > > v2: Make suggested changes from Jarkko
+> > >     - change struct field name to durations from durs
+> > >     - formatting cleanups
+> > >     - turn into void function like update_timeouts and
+> > >       use chip->duration_adjusted to track whether adjustment occurred.
+> > 
+> > The code repetition looks horrible so I wrote a patch that should help:
+> > 
+> > https://patchwork.kernel.org/patch/11121475/
+> > 
+> > Read the remar that prepends the diffstat.
+> > 
+> > /Jarkko
+> 
+> LGTM, and testing it on a 1.2 tpm system here worked fine. You can add my
+> Reviewed-by and Tested-by.
+> 
+> I have reworked this 2/2 patch to make use of these new structs and
+> pull the tpm1_getcap calls out of the for loop. So I will submit a v3
+> to go on top of your patch.
 
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Alexey Klimov <aklimov@redhat.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
-v3: no changes
-v2: newline cleanup as requested by Jarkko
+Add my patch to the patch set with the tags.
 
- drivers/char/tpm/tpm1-cmd.c | 15 +++++++++++++++
- include/linux/tpm.h         |  2 ++
- 2 files changed, 17 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 149e953ca369..ca7158fa6e6c 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -343,6 +343,7 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- {
- 	cap_t cap;
- 	unsigned long timeout_old[4], timeout_chip[4], timeout_eff[4];
-+	unsigned long durations[3];
- 	ssize_t rc;
- 
- 	rc = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, NULL,
-@@ -427,6 +428,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
- 		usecs_to_jiffies(be32_to_cpu(cap.duration.tpm_long));
- 	chip->duration[TPM_LONG_LONG] = 0; /* not used under 1.2 */
- 
-+	/*
-+	 * Provide the ability for vendor overrides of duration values in case
-+	 * of misreporting.
-+	 */
-+	if (chip->ops->update_durations)
-+		chip->ops->update_durations(chip, durations);
-+
-+	if (chip->duration_adjusted) {
-+		dev_info(&chip->dev, HW_ERR "Adjusting reported durations.");
-+		chip->duration[TPM_SHORT] = durations[0];
-+		chip->duration[TPM_MEDIUM] = durations[1];
-+		chip->duration[TPM_LONG] = durations[2];
-+	}
-+
- 	/* The Broadcom BCM0102 chipset in a Dell Latitude D820 gets the above
- 	 * value wrong and apparently reports msecs rather than usecs. So we
- 	 * fix up the resulting too-small TPM_SHORT value to make things work.
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 53c0ea9ec9df..bb1d1ac7081d 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -67,6 +67,8 @@ struct tpm_class_ops {
- 	u8 (*status) (struct tpm_chip *chip);
- 	void (*update_timeouts)(struct tpm_chip *chip,
- 				unsigned long *timeout_cap);
-+	void (*update_durations)(struct tpm_chip *chip,
-+				 unsigned long *duration_cap);
- 	int (*go_idle)(struct tpm_chip *chip);
- 	int (*cmd_ready)(struct tpm_chip *chip);
- 	int (*request_locality)(struct tpm_chip *chip, int loc);
--- 
-2.21.0
-
+/Jarkko
