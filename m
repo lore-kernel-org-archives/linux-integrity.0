@@ -2,87 +2,131 @@ Return-Path: <SRS0=gKyt=WZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C84DC3A59F
-	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 16:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F42C3A59F
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 16:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7816321874
-	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 16:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5791A2073F
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 16:13:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kg0eD7aN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfH2QLI (ORCPT
+        id S1727008AbfH2QNG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 29 Aug 2019 12:11:08 -0400
-Received: from mga02.intel.com ([134.134.136.20]:55966 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727257AbfH2QLH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:11:07 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 09:11:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,444,1559545200"; 
-   d="scan'208";a="380819693"
-Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 09:11:03 -0700
-Date:   Thu, 29 Aug 2019 19:10:57 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190829161057.22l72j55jy3dyib7@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
- <20190827131400.qchcwa2act24c47b@linux.intel.com>
- <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
- <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
- <20190829132021.6vfc535ecb62jokf@linux.intel.com>
+        Thu, 29 Aug 2019 12:13:06 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:37450 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727118AbfH2QNF (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 29 Aug 2019 12:13:05 -0400
+Received: by mail-yb1-f196.google.com with SMTP id t5so1382436ybt.4;
+        Thu, 29 Aug 2019 09:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kNznxc1elQs9GK9cu3jq6YkqkQEUKZhFLbPtaGv0C7o=;
+        b=Kg0eD7aNyxUxwwHK5ETgxsz5XldzcAgvsJUzNfvpReGhHOVR2p+874TdwEXnXR9zQ2
+         K9h3T4xDrjrK8j4+dYWIXFkFPPpKRg7Tw76OfrkTNwwV8dzbGtTE3Vx9uSi7skwRwiXL
+         Wz7QG0/CBZ0++nKYNWMsl4mgSFICLzr7VLX1x7QbzZt5D2MEkkRQ8BE4A3Dk79c8I5dk
+         X8RHnt18Ofzeh3b9D7E8hnI97l58deFHhK+/NyftX5pRcqTaY/vRzCCLgAUiKT/SgEUF
+         1B5fixfjE4QImmhs+0/1xvvFK+xXN2T2wl+RZ0mjgVDw9NAr+w2vadGJqEGjDtVsYrY+
+         VaTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kNznxc1elQs9GK9cu3jq6YkqkQEUKZhFLbPtaGv0C7o=;
+        b=adk9d0Dwfc6Kew0WVc1tly3JbjLDW8Gd0Cv8QSnjCERA4Je0LwmMu2xOywhtcTpxaO
+         +zDQj3mQ+KKYp1SH6c7M56F9Jtbpgb1rybiNsRkn8i9R0eEm7d1fyn2BI6zW40FB6y3v
+         2PcysyDIh44skUBo8zDVL1UTc146AQe5nSuyLXNIDbU9iW3+NM/zXKn45QY/zEjTLcFO
+         YjP/WnbO+N61IU0rzHsx6n1zbNRgbN70a4kJwosmfOBQkvfO9KSOZs2lsOrL9Mz21vyr
+         Nwf6wDGbpnITkJ3O/NIsl39Z1bjjUe2tRhm0ZqJgS/KlgEKTqpywbWXD0MCNzQLiXgTF
+         GlBg==
+X-Gm-Message-State: APjAAAUsHXRtOD3RQSRIrxdRCbEI0b12rnwLipYxe5JYmXSXwlI0PKNo
+        XVfTUCK82yIpUfRd0vmpu9JFuA5qffvHnc3MiPA=
+X-Google-Smtp-Source: APXvYqxOiciOtyiybUGhnpKGmM1DjYJIs5IYPSDqHbwUFYOmyJV/fnnpTn6QkBGE0FEPgWf28bsP8P7NLrHxQy9Y8Rk=
+X-Received: by 2002:a25:9cc9:: with SMTP id z9mr7850415ybo.496.1567095184713;
+ Thu, 29 Aug 2019 09:13:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829132021.6vfc535ecb62jokf@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+References: <20190826081752.57258-1-kkamagui@gmail.com> <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
+ <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
+ <CACdnJutfR2X-5ksXw4PNUdyH2MJs_mExNCcYPp8NLcPW2EDrYQ@mail.gmail.com>
+ <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
+ <20190827171106.owkvt6slwwg5ypyl@srcf.ucam.org> <CAHjaAcSu04J3WqT_vnSnaQuYpFQ+xiXXWxhcCeLQccEq6eQGcQ@mail.gmail.com>
+ <20190829153437.gjcqfolsc26vyt4x@linux.intel.com> <20190829153917.glq6eoka2eufy42w@linux.intel.com>
+In-Reply-To: <20190829153917.glq6eoka2eufy42w@linux.intel.com>
+From:   Seunghun Han <kkamagui@gmail.com>
+Date:   Fri, 30 Aug 2019 01:12:53 +0900
+Message-ID: <CAHjaAcQ2OmrFO2wWCXocR9xO_aTRYU4vLf3aBr4v5Fn2A89wvg@mail.gmail.com>
+Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
+ supporting AMD's fTPM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 04:20:21PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 27, 2019 at 03:34:36PM -0400, Stefan Berger wrote:
-> > On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
-> > > On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
-> > > > On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> > > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > 
-> > > > > The interrupt probing of the TPM TIS was broken since we are trying to
-> > > > > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
-> > > > > 
-> > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > Need these:
-> > > > 
-> > > > Cc: linux-stable@vger.kernel.org
-> > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> > > > 
-> > > > Thank you. I'll apply this to my tree.
-> > > > 
-> > > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > The commit went in the following form:
-> > > 
-> > > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
-> > 
-> > I saw you dropped the stetting of the IRQ flag - I needed it, otherwise it
-> > wouldn't execute certain code paths.
-> 
-> I explained why I removed that part. There was no any reasoning for
-> it. Also, it cannot be in the same commit if it fixes a diffent
-> issue.
+>
+> On Thu, Aug 29, 2019 at 06:34:37PM +0300, Jarkko Sakkinen wrote:
+> > On Wed, Aug 28, 2019 at 06:36:04PM +0900, Seunghun Han wrote:
+> > > >
+> > > > On Wed, Aug 28, 2019 at 01:36:30AM +0900, Seunghun Han wrote:
+> > > >
+> > > > > I got your point. Is there any problem if some regions which don't
+> > > > > need to be handled in NVS area are saved and restored? If there is a
+> > > > > problem, how about adding code for ignoring the regions in NVS area to
+> > > > > the nvs.c file like Jarkko said? If we add the code, we can save and
+> > > > > restore NVS area without driver's interaction.
+> > > >
+> > > > The only thing that knows which regions should be skipped by the NVS
+> > > > driver is the hardware specific driver, so the TPM driver needs to ask
+> > > > the NVS driver to ignore that region and grant control to the TPM
+> > > > driver.
+> > > >
+> > > > --
+> > > > Matthew Garrett | mjg59@srcf.ucam.org
+> > >
+> > > Thank you, Matthew and Jarkko.
+> > > It seems that the TPM driver needs to handle the specific case that
+> > > TPM regions are in the NVS. I would make a patch that removes TPM
+> > > regions from the ACPI NVS by requesting to the NVS driver soon.
+> > >
+> > > Jarkko,
+> > > I would like to get some advice on it. What do you think about
+> > > removing TPM regions from the ACPI NVS in TPM CRB driver? If you don't
+> > > mind, I would make the patch about it.
+> >
+> > I'm not sure if ignoring is right call. Then the hibernation behaviour
+> > for TPM regions would break.
+> >
+> > Thus, should be "ask access" rather than "grant control".
 
-AFAIK they go with different fixes-tags.
+I agree with your idea. It seems to make trouble. So, I would like to
+do like your idea below.
 
-/Jarkko
+> Or "reserve access" as NVS driver does not have intelligence to do any
+> policy based decision here.
+>
+> A function that gets region and then checks if NVS driver has matching
+> one and returns true/false based on that should be good enough. Then
+> you raw ioremap() in the TPM driver.
+>
+> /Jarkko
+
+This solution is great and clear to me. I will make a new patch on
+your advice and test it in my machine. After that, I will send it
+again soon.
+I really appreciate it.
+
+Seunghun
