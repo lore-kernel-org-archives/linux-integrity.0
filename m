@@ -2,167 +2,210 @@ Return-Path: <SRS0=+t4C=W2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A43C3A59B
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Aug 2019 15:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 794F9C3A59B
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Aug 2019 16:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAFAB23429
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Aug 2019 15:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A42723429
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Aug 2019 16:09:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfH3Pnv (ORCPT
+        id S1727935AbfH3QJH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 30 Aug 2019 11:43:51 -0400
-Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:50670 "EHLO
-        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727883AbfH3Pnu (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:43:50 -0400
-X-Greylist: delayed 4977 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Aug 2019 11:43:49 EDT
-Received: from pps.filterd (m0048205.ppops.net [127.0.0.1])
-        by m0048205.ppops.net-00176a03. (8.16.0.27/8.16.0.27) with SMTP id x7UEJM78038302;
-        Fri, 30 Aug 2019 10:20:52 -0400
-From:   "Safford, David (GE Global Research, US)" <david.safford@ge.com>
-To:     Seunghun Han <kkamagui@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Fri, 30 Aug 2019 12:09:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42952 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727924AbfH3QJG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:09:06 -0400
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 362A2970E2
+        for <linux-integrity@vger.kernel.org>; Fri, 30 Aug 2019 16:09:06 +0000 (UTC)
+Received: by mail-qk1-f200.google.com with SMTP id z2so7860183qkf.2
+        for <linux-integrity@vger.kernel.org>; Fri, 30 Aug 2019 09:09:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=uMER6VkxPQYhKi/OQwHki0hPwLUf4iWX0DkiisKckaA=;
+        b=Am0K/AAUzABZRWt9/lON0W8YEFBjh91T3fYjtFRmSOqFyTBg+dqaxSRNQe/VixeZFb
+         e6Ur4OGsjDdt9V3n8CkXNkaIEHjsEfNkavJeS+UQasQkWAxLyQtP//jDq+LOPE5pb0Ny
+         HsKzZVeChqSx/NO//HrTlLXGvIcXQyTiJV7tvSZmL0QyeNqoTPrhhOw9xqqx4hMXR65Y
+         om2wIBrSm/pA4qpWZkniiQ71IXEFOuDRPSLUFdKIvmCD9VAz8C+NuWomHmN+/DhAPa/n
+         cK780FL4mqdmspszqVvA+uFMcPE8NAfZJkGE+0qUCu985obRjOBlNKmX77IFfDfNcTMg
+         aGgw==
+X-Gm-Message-State: APjAAAVR6L63q5LiSuqL8EnaLmmWqTmuOH4I2O/8kAE4Gly4i+tVjSFO
+        IUr5fMq+walClFCb4hGckWgR+jM5jc9oOF5gouJLXZeglVgu5q+6gUBDQa0u12lztoTseDIoMyN
+        EedF6aTLw9f3NUz+low8KdiTyWtU0
+X-Received: by 2002:ac8:3525:: with SMTP id y34mr6618246qtb.140.1567181345499;
+        Fri, 30 Aug 2019 09:09:05 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyO7CrM9ykz1tnwBIhlgh637Q2EDJz8NrJCLBv0bo7Kj+zkwWvlY5SwsmvjF8h37LOJohCSng==
+X-Received: by 2002:ac8:3525:: with SMTP id y34mr6618223qtb.140.1567181345241;
+        Fri, 30 Aug 2019 09:09:05 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id q62sm3211852qkb.69.2019.08.30.09.09.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 09:09:04 -0700 (PDT)
+Date:   Fri, 30 Aug 2019 09:09:02 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Alexey Klimov <aklimov@redhat.com>,
         Peter Huewe <peterhuewe@gmx.de>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Thread-Topic: Re: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping
- mechanism for supporting AMD's fTPM
-Thread-Index: AQHVXxlOrNmKX2KHXEaevQ/odv4D9acT5e0AgAAT9ID//79NoA==
-Date:   Fri, 30 Aug 2019 14:20:49 +0000
-Message-ID: <BCA04D5D9A3B764C9B7405BBA4D4A3C035F1CC59@ALPMBAPA12.e2k.ad.ge.com>
-References: <20190830095639.4562-1-kkamagui@gmail.com>
- <20190830095639.4562-3-kkamagui@gmail.com> <20190830124334.GA10004@ziepe.ca>
- <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
-In-Reply-To: <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jTWpFeU5EY3pPVFV3WEdGd2NHUmhkR0ZjY205aGJXbHVaMXd3T1dRNE5E?=
- =?utf-8?B?bGlOaTB6TW1RekxUUmhOREF0T0RWbFpTMDJZamcwWW1FeU9XVXpOV0pjYlhO?=
- =?utf-8?B?bmMxeHRjMmN0TldNek9HSmpPRFl0WTJJek1TMHhNV1U1TFRobE16WXRZVFJq?=
- =?utf-8?B?TTJZd1lqVTVPR0V6WEdGdFpTMTBaWE4wWERWak16aGlZemc0TFdOaU16RXRN?=
- =?utf-8?B?VEZsT1MwNFpUTTJMV0UwWXpObU1HSTFPVGhoTTJKdlpIa3VkSGgwSWlCemVq?=
- =?utf-8?B?MGlOREV5TVNJZ2REMGlNVE15TVRFMk5EZzBORGd5T0RneE16a3lJaUJvUFNK?=
- =?utf-8?B?QmFEWlljSEowYkc0MmMwOHdWbkZHTVROelFUUTRhRlk1UmtFOUlpQnBaRDBp?=
- =?utf-8?B?SWlCaWJEMGlNQ0lnWW04OUlqRWlJR05wUFNKalFVRkJRVVZTU0ZVeFVsTlNW?=
- =?utf-8?B?VVpPUTJkVlFVRkZiME5CUVVKM1ZqVk5aVkJzTDFaQlpYVlhVSFZrWjFCUGNY?=
- =?utf-8?B?bzJOVmtyTlRKQk9EWnlUVVJCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJTRUZCUVVGRVlVRlJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlJVRkJVVUZDUVVGQlFVWjBSMlZSZDBGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VW8wUVVGQlFtNUJSMVZCV0hkQ2FrRkhPRUZpWjBKdFFVZHJRVnBCUW14QlJ6?=
- =?utf-8?B?UkJaRUZDY0VGSFJVRmlRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGRlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFXZEJRVUZCUVVGdVowRkJRVWRqUVZwUlFtWkJSMmRCWVZGQ2JrRkhaMEZp?=
- =?utf-8?B?UVVJMVFVZE5RV0ozUW5WQlIxbEJZVkZDYTBGSFZVRmlaMEl3UVVkclFWbFJR?=
- =?utf-8?B?bk5CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJV?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVU5CUVVGQlFVRkRaVUZCUVVGYWQwSnNRVVk0UVdKblFu?=
- =?utf-8?B?WkJSelJCWTBGQ01VRkhTVUZpUVVKd1FVZE5RVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUWtGQlFVRkJRVUZCUVVGSlFVRkJRVUZCUVQwOUlpOCtQQzl0?=
- =?utf-8?B?WlhSaFBnPT0=?=
-x-dg-rorf: 
-x-originating-ip: [3.159.19.191]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: Remove duplicate code from caps_show() in
+ tpm-sysfs.c
+Message-ID: <20190830160902.iip5jr4yiqcjpz45@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190829143807.30647-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Subject: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping mechanism for supporting
- AMD's fTPM
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908300147
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190829143807.30647-1-jarkko.sakkinen@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PiBGcm9tOiBsaW51eC1pbnRlZ3JpdHktb3duZXJAdmdlci5rZXJuZWwub3JnIDxsaW51eC1pbnRl
-Z3JpdHktDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4gT24gQmVoYWxmIE9mIFNldW5naHVuIEhh
-bg0KPiBTZW50OiBGcmlkYXksIEF1Z3VzdCAzMCwgMjAxOSA5OjU1IEFNDQo+IFRvOiBKYXNvbiBH
-dW50aG9ycGUgPGpnZ0B6aWVwZS5jYT4NCj4gQ2M6IEphcmtrbyBTYWtraW5lbiA8amFya2tvLnNh
-a2tpbmVuQGxpbnV4LmludGVsLmNvbT47IFBldGVyIEh1ZXdlDQo+IDxwZXRlcmh1ZXdlQGdteC5k
-ZT47IG9wZW4gbGlzdDpUUE0gREVWSUNFIERSSVZFUiA8bGludXgtDQo+IGludGVncml0eUB2Z2Vy
-Lmtlcm5lbC5vcmc+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0IDxsaW51eC0NCj4ga2VybmVs
-QHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogRVhUOiBSZTogW1BBVENIIDIvMl0gdHBtOiB0
-cG1fY3JiOiBlbmhhbmNlIHJlc291cmNlIG1hcHBpbmcNCj4gbWVjaGFuaXNtIGZvciBzdXBwb3J0
-aW5nIEFNRCdzIGZUUE0NCj4gDQo+ID4NCj4gPiBPbiBGcmksIEF1ZyAzMCwgMjAxOSBhdCAwNjo1
-NjozOVBNICswOTAwLCBTZXVuZ2h1biBIYW4gd3JvdGU6DQo+ID4gPiBJIGdvdCBhbiBBTUQgc3lz
-dGVtIHdoaWNoIGhhZCBhIFJ5emVuIFRocmVhZHJpcHBlciAxOTUwWCBhbmQgTVNJDQo+ID4gPiBt
-YWluYm9hcmQsIGFuZCBJIGhhZCBhIHByb2JsZW0gd2l0aCBBTUQncyBmVFBNLiBNeSBtYWNoaW5l
-IHNob3dlZA0KPiBhbg0KPiA+ID4gZXJyb3IgbWVzc2FnZSBiZWxvdywgYW5kIHRoZSBmVFBNIGRp
-ZG4ndCB3b3JrIGJlY2F1c2Ugb2YgaXQuDQo+ID4gPg0KPiA+ID4gWyAgNS43MzIwODRdIHRwbV9j
-cmIgTVNGVDAxMDE6MDA6IGNhbid0IHJlcXVlc3QgcmVnaW9uIGZvciByZXNvdXJjZQ0KPiA+ID4g
-ICAgICAgICAgICAgIFttZW0gMHg3OWI0ZjAwMC0weDc5YjRmZmZmXSBbICA1LjczMjA4OV0gdHBt
-X2NyYjogcHJvYmUNCj4gPiA+IG9mIE1TRlQwMTAxOjAwIGZhaWxlZCB3aXRoIGVycm9yIC0xNg0K
-PiA+ID4NCj4gPiA+IFdoZW4gSSBzYXcgdGhlIGlvbWVtLCBJIGZvdW5kIHR3byBmVFBNIHJlZ2lv
-bnMgd2VyZSBpbiB0aGUgQUNQSSBOVlMNCj4gYXJlYS4NCj4gPiA+IFRoZSByZWdpb25zIGFyZSBi
-ZWxvdy4NCj4gPiA+DQo+ID4gPiA3OWEzOTAwMC03OWI2YWZmZiA6IEFDUEkgTm9uLXZvbGF0aWxl
-IFN0b3JhZ2UNCj4gPiA+ICAgNzliNGIwMDAtNzliNGJmZmYgOiBNU0ZUMDEwMTowMA0KPiA+ID4g
-ICA3OWI0ZjAwMC03OWI0ZmZmZiA6IE1TRlQwMTAxOjAwDQo+ID4gPg0KPiA+ID4gQWZ0ZXIgYW5h
-bHl6aW5nIHRoaXMgaXNzdWUsIEkgZm91bmQgdGhhdCBjcmJfbWFwX2lvKCkgZnVuY3Rpb24NCj4g
-PiA+IGNhbGxlZA0KPiA+ID4gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgYW5kIGl0IGZhaWxlZC4g
-VGhlIEFDUEkgTlZTIGRpZG4ndCBhbGxvdyB0aGUNCj4gPiA+IFRQTSBDUkIgZHJpdmVyIHRvIGFz
-c2lnbiBhIHJlc291cmNlIGluIGl0IGJlY2F1c2UgYSBidXN5IGJpdCB3YXMgc2V0DQo+ID4gPiB0
-byB0aGUgQUNQSSBOVlMgYXJlYS4NCj4gPiA+DQo+ID4gPiBUbyBzdXBwb3J0IEFNRCdzIGZUUE0s
-IEkgYWRkZWQgYSBmdW5jdGlvbiB0byBjaGVjayBpbnRlcnNlY3RzDQo+ID4gPiBiZXR3ZWVuIHRo
-ZSBUUE0gcmVnaW9uIGFuZCBBQ1BJIE5WUyBiZWZvcmUgaXQgbWFwcGVkIHRoZSByZWdpb24uIElm
-DQo+ID4gPiBzb21lIGludGVyc2VjdHMgYXJlIGRldGVjdGVkLCB0aGUgZnVuY3Rpb24ganVzdCBj
-YWxscyBkZXZtX2lvcmVtYXAoKQ0KPiA+ID4gZm9yIGEgd29ya2Fyb3VuZC4gSWYgdGhlcmUgaXMg
-bm8gaW50ZXJzZWN0LCBpdCBjYWxscw0KPiBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoKS4NCj4gPiA+
-DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBTZXVuZ2h1biBIYW4gPGtrYW1hZ3VpQGdtYWlsLmNvbT4N
-Cj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMvY2hhci90cG0vdHBtX2NyYi5jIHwgMjUgKysrKysr
-KysrKysrKysrKysrKysrKystLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25z
-KCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gVGhpcyBzdGlsbCBzZWVtcyB0byByZXN1bHQg
-aW4gdHdvIGRyaXZlcnMgY29udHJvbGxpbmcgdGhlIHNhbWUgbWVtb3J5Lg0KPiA+IERvZXMgdGhp
-cyBjcmVhdGUgYnVncyBhbmQgcmFjZXMgZHVyaW5nIHJlc3VtZT8NCj4gPg0KPiA+IEphc29uDQo+
-IA0KPiBXaGVuIEkgdGVzdGVkIHRoaXMgcGF0Y2ggaW4gbXkgbWFjaGluZSwgaXQgc2VlbWVkIHRo
-YXQgQUNQSSBOVlMgd2FzIHNhdmVkDQo+IGFmdGVyIFRQTSBDUkIgZHJpdmVyIHNlbnQgIlRQTTJf
-U2h1dGRvd24oU1RBVEUpIiB0byB0aGUgZlRQTSB3aGlsZQ0KPiBzdXNwZW5kaW5nLiBUaGVuLCBB
-Q1BJIE5WUyB3YXMgcmVzdG9yZWQgd2hpbGUgcmVzdW1pbmcuDQo+IEFmdGVyIHJlc3VtaW5nLCBQ
-Q1JzIGRpZG4ndCBjaGFuZ2UgYW5kIFRQTTIgdG9vbHMgc3VjaCBhcyB0cG0yX3Bjcmxpc3QsDQo+
-IHRwbTJfZXh0ZW5kLCB0cG0yX2dldHJhbmRvbXMgd29ya2VkIHdlbGwuDQo+IFNvLCBhY2NvcmRp
-bmcgdG8gbXkgdGVzdCByZXN1bHQsIGl0IHNlZW1zIHRoYXQgdGhlIHBhdGNoIGRvZXNuJ3QgY3Jl
-YXRlIGJ1Z3MNCj4gYW5kIHJhY2UgZHVyaW5nIHJlc3VtZS4NCj4gDQo+IFNldW5naHVuDQoNClRo
-aXMgd2FzIGRpc2N1c3NlZCBlYXJsaWVyIG9uIHRoZSBsaXN0Lg0KVGhlIGNvbnNlbnN1cyB3YXMg
-dGhhdCwgd2hpbGUgc2FmZSBub3csIHRoaXMgd291bGQgYmUgZnJhZ2lsZSwgYW5kIHN1YmplY3Qg
-dG8gDQp1bmV4cGVjdGVkIGNoYW5nZXMgaW4gQUNQSS9OVlMsIGFuZCB3ZSByZWFsbHkgbmVlZCB0
-byB0ZWxsIE5WUyB0byBleGNsdWRlIHRoZQ0KcmVnaW9ucyBmb3IgbG9uZyB0ZXJtIHNhZmV0eS4N
-Cg0KQXMgc2VwYXJhdGUgaXNzdWVzLCB0aGUgcGF0Y2hlcyBkbyBub3Qgd29yayBhdCBhbGwgb24g
-c29tZSBvZiBteSBBTUQgc3lzdGVtcy4NCkZpcnN0LCB5b3Ugb25seSBmb3JjZSB0aGUgcmVtYXAg
-aWYgdGhlIG92ZXJsYXAgaXMgd2l0aCBOVlMsIGJ1dCBJIGhhdmUgc3lzdGVtcw0Kd2hlcmUgdGhl
-IG92ZXJsYXAgaXMgd2l0aCBvdGhlciByZXNlcnZlZCByZWdpb25zLiBZb3Ugc2hvdWxkIGZvcmNl
-IHRoZSByZW1hcA0KcmVnYXJkbGVzcywgYnV0IGlmIGl0IGlzIE5WUywgZ3JhYiB0aGUgc3BhY2Ug
-YmFjayBmcm9tIE5WUy4NCg0KU2Vjb25kLCB0aGUgcGF0Y2ggZXh0ZW5kcyB0aGUgd3JvbmcgYmVo
-YXZpb3Igb2YgdGhlIGN1cnJlbnQgZHJpdmVyIHRvIGJvdGgNCmJ1ZmZlciByZWdpb25zLiBJZiB0
-aGVyZSBpcyBhIGNvbmZsaWN0IGJldHdlZW4gd2hhdCB0aGUgZGV2aWNlJ3MgY29udHJvbA0KcmVn
-aXN0ZXIgc2F5cywgYW5kIHdoYXQgQUNQSSBzYXlzLCB0aGUgZXhpc3RpbmcgZHJpdmVyIGV4cGxp
-Y2l0bHkgInRydXN0cyB0aGUgQUNQSSIuDQpUaGlzIGlzIGp1c3Qgd3JvbmcuIFRoZSBhY3R1YWwg
-ZGV2aWNlIHdpbGwgdXNlIHRoZSBhcmVhcyBhcyBkZWZpbmVkIGJ5IGl0cw0KY29udHJvbCByZWdp
-c3RlcnMgcmVnYXJkbGVzcyBvZiB3aGF0IEFDUEkgc2F5cy4gSSB0YWxrZWQgdG8gTWljcm9zb2Z0
-LCBhbmQNCnRoZWlyIGRyaXZlciB0cnVzdHMgdGhlIGNvbnRyb2wgcmVnaXN0ZXIgdmFsdWVzLCBh
-bmQgZG9lc24ndCBldmVuIGxvb2sgYXQgdGhlDQpBQ1BJIHZhbHVlcy4NCg0KSW4gcHJhY3RpY2Us
-IEkgaGF2ZSB0ZXN0ZWQgc2V2ZXJhbCBzeXN0ZW1zIGluIHdoaWNoIHRoZSBkZXZpY2UgcmVnaXN0
-ZXJzIHNob3cNClRoZSBjb3JyZWN0IDRLIGJ1ZmZlcnMsIGJ1dCB0aGUgZHJpdmVyIGluc3RlYWQg
-dHJ1c3RzIHRoZSBBQ1BJIHZhbHVlcywgd2hpY2gNCmxpc3QganVzdCAxSyBidWZmZXJzLiAxSyBi
-dWZmZXJzIHdpbGwgbm90IHdvcmsgZm9yIGxhcmdlIHJlcXVlc3RzLCBhbmQgdGhlIA0KZGV2aWNl
-IGlzIGdvaW5nIHRvIHJlYWQgYW5kIHdyaXRlIHRoZSA0SyBidWZmZXJzIHJlZ2FyZGxlc3MuDQoN
-CmRhdmUNCg==
+On Thu Aug 29 19, Jarkko Sakkinen wrote:
+>Replace existing TPM 1.x version structs with new structs that consolidate
+>the common parts into a single struct so that code duplication is no longer
+>needed in caps_show().
+>
+>Cc: Alexey Klimov <aklimov@redhat.com>
+>Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>---
+>Jerry, Alexey: Plese include this to the next version of your patches.
+>This a low priority patch alone so it does not need to be merge upfront.
+> drivers/char/tpm/tpm-sysfs.c | 44 ++++++++++++++++++------------------
+> drivers/char/tpm/tpm.h       | 23 ++++++++-----------
+> 2 files changed, 32 insertions(+), 35 deletions(-)
+>
+>diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+>index edfa89160010..8064fea2de59 100644
+>--- a/drivers/char/tpm/tpm-sysfs.c
+>+++ b/drivers/char/tpm/tpm-sysfs.c
+>@@ -217,6 +217,7 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+> 			 char *buf)
+> {
+> 	struct tpm_chip *chip = to_tpm_chip(dev);
+>+	struct tpm1_version *version;
+> 	ssize_t rc = 0;
+> 	char *str = buf;
+> 	cap_t cap;
+>@@ -232,31 +233,30 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
+> 	str += sprintf(str, "Manufacturer: 0x%x\n",
+> 		       be32_to_cpu(cap.manufacturer_id));
+>
+>-	/* Try to get a TPM version 1.2 TPM_CAP_VERSION_INFO */
+>-	rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
+>+	/* TPM 1.2 */
+>+	if (!tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
+> 			 "attempting to determine the 1.2 version",
+>-			 sizeof(cap.tpm_version_1_2));
+>-	if (!rc) {
+>-		str += sprintf(str,
+>-			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
+>-			       cap.tpm_version_1_2.Major,
+>-			       cap.tpm_version_1_2.Minor,
+>-			       cap.tpm_version_1_2.revMajor,
+>-			       cap.tpm_version_1_2.revMinor);
+>-	} else {
+>-		/* Otherwise just use TPM_STRUCT_VER */
+>-		if (tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
+>-				"attempting to determine the 1.1 version",
+>-				sizeof(cap.tpm_version)))
+>-			goto out_ops;
+>-		str += sprintf(str,
+>-			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
+>-			       cap.tpm_version.Major,
+>-			       cap.tpm_version.Minor,
+>-			       cap.tpm_version.revMajor,
+>-			       cap.tpm_version.revMinor);
+>+			 sizeof(cap.version2))) {
+>+		version = &cap.version2.version;
+>+		goto out_print;
+> 	}
+>+
+>+	/* TPM 1.1 */
+>+	if (tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
+>+			"attempting to determine the 1.1 version",
+>+			sizeof(cap.version1))) {
+>+		version = &cap.version1;
+
+Actually looking at this again, this seems wrong. The version assignment here should be below this if, or in an else block, yes?
+
+>+		goto out_ops;
+>+	}
+>+
+>+out_print:
+>+	str += sprintf(str,
+>+		       "TCG version: %d.%d\nFirmware version: %d.%d\n",
+>+		       version->major, version->minor,
+>+		       version->rev_major, version->rev_minor);
+>+
+> 	rc = str - buf;
+>+
+> out_ops:
+> 	tpm_put_ops(chip);
+> 	return rc;
+>diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+>index a7fea3e0ca86..a4f74dd02a35 100644
+>--- a/drivers/char/tpm/tpm.h
+>+++ b/drivers/char/tpm/tpm.h
+>@@ -186,19 +186,16 @@ struct	stclear_flags_t {
+> 	u8	bGlobalLock;
+> } __packed;
+>
+>-struct	tpm_version_t {
+>-	u8	Major;
+>-	u8	Minor;
+>-	u8	revMajor;
+>-	u8	revMinor;
+>+struct tpm1_version {
+>+	u8 major;
+>+	u8 minor;
+>+	u8 rev_major;
+>+	u8 rev_minor;
+> } __packed;
+>
+>-struct	tpm_version_1_2_t {
+>-	__be16	tag;
+>-	u8	Major;
+>-	u8	Minor;
+>-	u8	revMajor;
+>-	u8	revMinor;
+>+struct tpm1_version2 {
+>+	__be16 tag;
+>+	struct tpm1_version version;
+> } __packed;
+>
+> struct	timeout_t {
+>@@ -243,8 +240,8 @@ typedef union {
+> 	struct	stclear_flags_t	stclear_flags;
+> 	__u8	owned;
+> 	__be32	num_pcrs;
+>-	struct	tpm_version_t	tpm_version;
+>-	struct	tpm_version_1_2_t tpm_version_1_2;
+>+	struct tpm1_version version1;
+>+	struct tpm1_version2 version2;
+> 	__be32	manufacturer_id;
+> 	struct timeout_t  timeout;
+> 	struct duration_t duration;
+>-- 
+>2.20.1
+>
