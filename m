@@ -1,129 +1,102 @@
-Return-Path: <SRS0=gKyt=WZ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=+t4C=W2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA76C3A59F
-	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 22:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB060C3A59F
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Aug 2019 00:09:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305722189D
-	for <linux-integrity@archiver.kernel.org>; Thu, 29 Aug 2019 22:41:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IBRubZtS"
+	by mail.kernel.org (Postfix) with ESMTP id 9366C2173E
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Aug 2019 00:09:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbfH2Wl4 (ORCPT
+        id S1726369AbfH3AJc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 29 Aug 2019 18:41:56 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42907 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbfH2WlO (ORCPT
+        Thu, 29 Aug 2019 20:09:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14322 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726014AbfH3AJc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:41:14 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p3so2358133pgb.9
-        for <linux-integrity@vger.kernel.org>; Thu, 29 Aug 2019 15:41:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oyE0lW4jziioV/J2I+7J0Vx8oaL6QC9YS1SJmLa32Os=;
-        b=IBRubZtS1atZrqip9I8WO1UTgzAETIXc7HfyZTs6nQr0vABcMw+sHvmDJXCiwp1gni
-         nw6735YGQNZkNblmIdQ48ZBesNcP+sSkrySx4lR9ltiJbGTueUZr6NwPAG2b/YWNVmob
-         qPEE1yyqQB6vhC1EoijhgmKUxZlfWmCaLp13w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oyE0lW4jziioV/J2I+7J0Vx8oaL6QC9YS1SJmLa32Os=;
-        b=MWzd/AGgEN26qeWltvCz71f+jkdWPz7aGAkIZQLwos03XK5PK+Ktgc3Nlv/u1YH/Rd
-         CyxOmSjRCMHwRqGjoCgbXfgJgcCYCjr1YrAX/Z6CeO+LrFwEcUiwnsCIFEPhlb3HnsgS
-         gMSIy93TzqzpW7ILLbeGTthES6PIipovjePGkfnZ3vV7e9LzAaWfY7o1uWosTNNqEIAr
-         54/DDyKnAWuZWrGVkmE1i5XxJJwDwYb4rFxugNBg9ikFv1ro+xTYy60/KekK2R/TdybD
-         Y3w8qEpOOmCVAKVfkuySQG3gs3fxwwUkcJ3N35nengWTtqmJS6FMT1P91SAdxmLIUGG5
-         fzfQ==
-X-Gm-Message-State: APjAAAVfZ/2rLD9Q8u5rUtO/kyA6o4H1CgYSAO+v0eI3gNcAhoxCEmIL
-        Bz+AJ28ZYQKSMmc3J5jiiBia0w==
-X-Google-Smtp-Source: APXvYqwGYvucblokw7IOjHB0DGRoWgdDwob5vMGNPjBvaJbTUPcopwQDr6kFLB4lDrG7VWR42z6a5Q==
-X-Received: by 2002:aa7:9533:: with SMTP id c19mr14347289pfp.153.1567118473386;
-        Thu, 29 Aug 2019 15:41:13 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id q8sm3882531pjd.28.2019.08.29.15.41.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 15:41:12 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 1/4] dt-bindings: tpm: document properties for cr50
-Date:   Thu, 29 Aug 2019 15:41:07 -0700
-Message-Id: <20190829224110.91103-2-swboyd@chromium.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-In-Reply-To: <20190829224110.91103-1-swboyd@chromium.org>
-References: <20190829224110.91103-1-swboyd@chromium.org>
+        Thu, 29 Aug 2019 20:09:32 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7U07LfO111295;
+        Thu, 29 Aug 2019 20:09:29 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2upna1f03b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 20:09:28 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7U04jrk002048;
+        Fri, 30 Aug 2019 00:09:28 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma02dal.us.ibm.com with ESMTP id 2un65kb7fm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Aug 2019 00:09:28 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7U09QQl57082294
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 00:09:27 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DBDBD136059;
+        Fri, 30 Aug 2019 00:09:26 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F50813604F;
+        Fri, 30 Aug 2019 00:09:26 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 30 Aug 2019 00:09:26 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        linux-stable@vger.kernel.org
+Subject: [PATCH] tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+Date:   Thu, 29 Aug 2019 20:09:06 -0400
+Message-Id: <20190830000906.2369009-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-29_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=954 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908290242
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Andrey Pronin <apronin@chromium.org>
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Add TPM2.0 PTP FIFO compatible SPI interface for chips with Cr50
-firmware.
+The tpm_tis_core has to set the TPM_CHIP_FLAG_IRQ before probing for
+interrupts since there is no other place in the code that would set
+it.
 
-Cc: Andrey Pronin <apronin@chromium.org>
-Cc: Duncan Laurie <dlaurie@chromium.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Guenter Roeck <groeck@chromium.org>
-Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Andrey Pronin <apronin@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Cc: linux-stable@vger.kernel.org
+Fixes: 570a36097f30 ("tpm: drop 'irq' from struct tpm_vendor_specific")
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- .../bindings/security/tpm/google,cr50.txt     | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/security/tpm/google,cr50.txt
+ drivers/char/tpm/tpm_tis_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/security/tpm/google,cr50.txt b/Documentation/devicetree/bindings/security/tpm/google,cr50.txt
-new file mode 100644
-index 000000000000..cd69c2efdd37
---- /dev/null
-+++ b/Documentation/devicetree/bindings/security/tpm/google,cr50.txt
-@@ -0,0 +1,19 @@
-+* H1 Secure Microcontroller with Cr50 Firmware on SPI Bus.
-+
-+H1 Secure Microcontroller running Cr50 firmware provides several
-+functions, including TPM-like functionality. It communicates over
-+SPI using the FIFO protocol described in the PTP Spec, section 6.
-+
-+Required properties:
-+- compatible: Should be "google,cr50".
-+- spi-max-frequency: Maximum SPI frequency.
-+
-+Example:
-+
-+&spi0 {
-+	tpm@0 {
-+		compatible = "google,cr50";
-+		reg = <0>;
-+		spi-max-frequency = <800000>;
-+	};
-+};
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index ffa9048d8f6c..270f43acbb77 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -981,6 +981,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 		}
+ 
+ 		tpm_chip_start(chip);
++		chip->flags |= TPM_CHIP_FLAG_IRQ;
+ 		if (irq) {
+ 			tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
+ 						 irq);
 -- 
-Sent by a computer through tubes
+2.14.5
 
