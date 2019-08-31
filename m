@@ -6,29 +6,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94968C3A59F
-	for <linux-integrity@archiver.kernel.org>; Sat, 31 Aug 2019 04:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF56DC3A59F
+	for <linux-integrity@archiver.kernel.org>; Sat, 31 Aug 2019 05:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C9BC23697
-	for <linux-integrity@archiver.kernel.org>; Sat, 31 Aug 2019 04:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAF8223697
+	for <linux-integrity@archiver.kernel.org>; Sat, 31 Aug 2019 05:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725815AbfHaEZr (ORCPT
+        id S1725899AbfHaFL2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 31 Aug 2019 00:25:47 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:48286 "EHLO
+        Sat, 31 Aug 2019 01:11:28 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:35994 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfHaEZr (ORCPT
+        with ESMTP id S1725298AbfHaFL2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 31 Aug 2019 00:25:47 -0400
+        Sat, 31 Aug 2019 01:11:28 -0400
 Received: from localhost.localdomain (c-67-168-100-174.hsd1.wa.comcast.net [67.168.100.174])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 51D4820B7186
-        for <linux-integrity@vger.kernel.org>; Fri, 30 Aug 2019 21:25:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 51D4820B7186
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5E8BD20B7186;
+        Fri, 30 Aug 2019 22:11:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E8BD20B7186
 From:   Jordan Hand <jorhand@linux.microsoft.com>
-To:     linux-integrity@vger.kernel.org
-Subject: [PATCH v3] tpm: Parse event log from TPM2 ACPI table
-Date:   Fri, 30 Aug 2019 21:25:29 -0700
-Message-Id: <20190831042529.1424-1-jorhand@linux.microsoft.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     Jordan Hand <jorhand@linux.microsoft.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] tpm: Parse event log from TPM2 ACPI table
+Date:   Fri, 30 Aug 2019 22:10:27 -0700
+Message-Id: <20190831051027.11544-1-jorhand@linux.microsoft.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
