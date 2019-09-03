@@ -2,106 +2,104 @@ Return-Path: <SRS0=0lVg=W6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE303C3A5A7
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE31FC3A5A2
+	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 16:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC160215EA
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567528238;
-	bh=q4Y2kzB82rNvxd7A/88puPWBLD394Qg63gorAKZR084=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nHw7qWd5HWjm91Y+4uEYIYzb2kuEkccAs8zvFzxOPuR7D2AA75BnbCf/N9gktE0SJ
-	 5ZCyy5jALFhDRP1GSh64KQyq4S5t8sHdgpb3gs7/PmlTRD0ATEaBpTS+ifkOqlSlIu
-	 L5G3ur0yrjBaZhKSuyXyXuwuyOios6euGKNSt4bQ=
+	by mail.kernel.org (Postfix) with ESMTP id B09C823400
+	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 16:40:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbfICQah (ORCPT
+        id S1730567AbfICQj5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 Sep 2019 12:30:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51236 "EHLO mail.kernel.org"
+        Tue, 3 Sep 2019 12:39:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:46920 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731186AbfICQ2v (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:28:51 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75FEB23789;
-        Tue,  3 Sep 2019 16:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528131;
-        bh=q4Y2kzB82rNvxd7A/88puPWBLD394Qg63gorAKZR084=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yO0+zYbuv2h4CO87zleZ8yOGSIFR5f69v9ATYY37yBFE9pnKKfao4P3YUMrKMuvlo
-         Nnuk2xlbCSwMt4GdswPfC9tZqNFvwp6whhYpnO+OQoAA1Qj8Zy1//iINFH08KFBT+h
-         ojp03Qigxr1hH5YY4vO2EVb04FG7eZV1Ira2qDes=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vadim Sukhomlinov <sukhomlinov@google.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 126/167] tpm: Fix TPM 1.2 Shutdown sequence to prevent future TPM operations
-Date:   Tue,  3 Sep 2019 12:24:38 -0400
-Message-Id: <20190903162519.7136-126-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
-References: <20190903162519.7136-1-sashal@kernel.org>
+        id S1729953AbfICQj5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:39:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 09:39:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
+   d="scan'208";a="183621162"
+Received: from vkuppusa-mobl2.ger.corp.intel.com ([10.252.39.67])
+  by fmsmga007.fm.intel.com with ESMTP; 03 Sep 2019 09:39:52 -0700
+Message-ID: <a950f3986375ee4893dff156dc2f9554338c27d8.camel@linux.intel.com>
+Subject: Re: [PATCH v6 4/4] tpm: tpm_tis_spi: Support cr50 devices
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Boyd <swboyd@chromium.org>, Peter Huewe <peterhuewe@gmx.de>
+Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Date:   Tue, 03 Sep 2019 19:39:51 +0300
+In-Reply-To: <20190829224110.91103-5-swboyd@chromium.org>
+References: <20190829224110.91103-1-swboyd@chromium.org>
+         <20190829224110.91103-5-swboyd@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2-1 
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Vadim Sukhomlinov <sukhomlinov@google.com>
+On Thu, 2019-08-29 at 15:41 -0700, Stephen Boyd wrote:
+> From: Andrey Pronin <apronin@chromium.org>
+> 
+> Add TPM2.0 PTP FIFO compatible SPI interface for chips with Cr50
+> firmware. The firmware running on the currently supported H1 Secure
+> Microcontroller requires a special driver to handle its specifics:
+> 
+>  - need to ensure a certain delay between SPI transactions, or else
+>    the chip may miss some part of the next transaction
+>  - if there is no SPI activity for some time, it may go to sleep,
+>    and needs to be waken up before sending further commands
+>  - access to vendor-specific registers
+> 
+> Cr50 firmware has a requirement to wait for the TPM to wakeup before
+> sending commands over the SPI bus. Otherwise, the firmware could be in
+> deep sleep and not respond. The method to wait for the device to wakeup
+> is slightly different than the usual flow control mechanism described in
+> the TCG SPI spec. Add a completion to tpm_tis_spi_transfer() before we
+> start a SPI transfer so we can keep track of the last time the TPM
+> driver accessed the SPI bus to support the flow control mechanism.
+> 
+> Split the cr50 logic off into a different file to keep it out of the
+> normal code flow of the existing SPI driver while making it all part of
+> the same module when the code is optionally compiled into the same
+> module. Export a new function, tpm_tis_spi_init(), and the associated
+> read/write/transfer APIs so that we can do this. Make the cr50 code wrap
+> the tpm_tis_spi_phy struct with its own struct to override the behavior
+> of tpm_tis_spi_transfer() by supplying a custom flow control hook. This
+> shares the most code between the core driver and the cr50 support
+> without combining everything into the core driver or exporting module
+> symbols.
+> 
+> Signed-off-by: Andrey Pronin <apronin@chromium.org>
+> Cc: Andrey Pronin <apronin@chromium.org>
+> Cc: Duncan Laurie <dlaurie@chromium.org>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Guenter Roeck <groeck@chromium.org>
+> Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
+> Cc: Heiko Stuebner <heiko@sntech.de>
 
-[ Upstream commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 ]
+Had to time to look at this patch set after all before LPC. I just
+realized that the kconfig has taken away. Not sure why is that
+because there's been only request to not have a new LKM. There
+still should be ability opt-out to have Cr50 support in vmlinux.
 
-TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-future TPM operations. TPM 1.2 behavior was different, future TPM
-operations weren't disabled, causing rare issues. This patch ensures
-that future TPM operations are disabled.
-
-Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-[dianders: resolved merge conflicts with mainline]
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/char/tpm/tpm-chip.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 46caadca916a0..0b01eb7b14e53 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -187,12 +187,13 @@ static int tpm_class_shutdown(struct device *dev)
- {
- 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, dev);
- 
-+	down_write(&chip->ops_sem);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		down_write(&chip->ops_sem);
- 		tpm2_shutdown(chip, TPM2_SU_CLEAR);
- 		chip->ops = NULL;
--		up_write(&chip->ops_sem);
- 	}
-+	chip->ops = NULL;
-+	up_write(&chip->ops_sem);
- 
- 	return 0;
- }
--- 
-2.20.1
+/Jarkko
 
