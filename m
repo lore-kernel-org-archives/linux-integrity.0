@@ -2,65 +2,92 @@ Return-Path: <SRS0=0lVg=W6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CADC3A5A2
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 15:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2657C3A5A2
+	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 15:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B61B023697
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 15:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A7F122CF8
+	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 15:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbfICPx0 (ORCPT
+        id S1729005AbfICPyw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 Sep 2019 11:53:26 -0400
-Received: from mga14.intel.com ([192.55.52.115]:25926 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729053AbfICPx0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:53:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 08:53:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="182169421"
-Received: from vkuppusa-mobl2.ger.corp.intel.com ([10.252.39.67])
-  by fmsmga008.fm.intel.com with ESMTP; 03 Sep 2019 08:53:23 -0700
-Message-ID: <3e7265a4f11ca0f822633cf961466253e3661373.camel@linux.intel.com>
-Subject: Re: [PATCH v4 2/3] tpm: provide a way to override the chip returned
- durations
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Date:   Tue, 03 Sep 2019 18:53:18 +0300
-In-Reply-To: <20190902142735.6280-3-jsnitsel@redhat.com>
-References: <20190902142735.6280-1-jsnitsel@redhat.com>
-         <20190902142735.6280-3-jsnitsel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2-1 
+        Tue, 3 Sep 2019 11:54:52 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45092 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728679AbfICPyw (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 3 Sep 2019 11:54:52 -0400
+Received: from [10.200.157.26] (unknown [131.107.147.154])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7249B20B7186;
+        Tue,  3 Sep 2019 08:54:51 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7249B20B7186
+Subject: Re: [PATCH 0/1] KEYS: Measure keys in trusted keyring
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>
+Cc:     jamorris@linux.microsoft.com, sashal@kernel.org,
+        kgoldman@us.ibm.com,
+        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20190828002735.31025-1-nramas@linux.microsoft.com>
+ <1567041083.6115.133.camel@linux.ibm.com>
+ <ec8d7cd5-a83a-c344-eaa6-9bd2cef08772@linux.microsoft.com>
+ <1567190507.10024.134.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <2cd27f52-1029-bcea-c73b-7d3d002cf030@linux.microsoft.com>
+Date:   Tue, 3 Sep 2019 08:54:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1567190507.10024.134.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-09-02 at 07:27 -0700, Jerry Snitselaar wrote:
-> Patch adds method ->update_durations to override returned
-> durations in case TPM chip misbehaves for TPM 1.2 drivers.
-> 
-> Cc: Peter Huewe <peterhuewe@gmx.de>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Alexey Klimov <aklimov@redhat.com>
-> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On 8/30/19 11:41 AM, Mimi Zohar wrote:
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> (!update_durations path)
+> No, the measurement list ima-sig template record contains both the
+> file hash and signature.  There's no need to maintain a white list of
+> either the file hashes or signed hashes.  All that is needed is the
+> set of permitted public keys (eg. keys on the trusted IMA keyring).
 
-/Jarkko
+You are right - Thanks for the info.
+
+> Even though on the local system, files signed by the system owner
+> would be permitted, the attestation server would be able to control
+> access to whatever service.  For example, Trusted Network Connect
+> (TNC) could control network access.  By measuring the keys on the
+> builtin/secondary keyrings, that control is not based on who signed
+> the software package, but based on who signed the certificate of the
+> key that signed the software package.  My concern is how this level of
+> indirection could be abused.
+Since the signer of certificate of the key that signed the software 
+package changes much less frequently compared to the certificate of the 
+key used to sign the software package, the operational overhead on the 
+server side is significantly reduced.
+
+I understand there is another level of indirection here. But I am also 
+not clear how this can be abused.
+
+> All of this would still be true, if you measured the keys on the
+> trusted IMA keyring, but without the level of indirection described
+> above.  Depending on your use case scenario, the problem with this
+> approach is maintaining a list of all the certificates that have been
+> signed by keys on the builtin, and if enabled, the secondary keyrings.
+
+Yes - that is the issue we are trying to avoid. Especially since the 
+list of signing certificates can grow faster than the signer of those 
+certificates (that are present in the builtin/secondary keyrings)
+
+> In the last LSS-NA BoF, Monty suggested, for a different use case, one
+> that needs to seal keys, measuring keys and extending a separate PCR.
+Thanks for the info. I will gather more information on this one.
+
+  -lakshmi
 
