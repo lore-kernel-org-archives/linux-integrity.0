@@ -2,80 +2,77 @@ Return-Path: <SRS0=0lVg=W6=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F4DC3A5A2
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 15:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9268EC3A5A5
+	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 16:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D80623697
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 15:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6650922CF8
+	for <linux-integrity@archiver.kernel.org>; Tue,  3 Sep 2019 16:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbfICPyy (ORCPT
+        id S1729109AbfICQK4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 Sep 2019 11:54:54 -0400
-Received: from mga07.intel.com ([134.134.136.100]:13511 "EHLO mga07.intel.com"
+        Tue, 3 Sep 2019 12:10:56 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60358 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728679AbfICPyx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:54:53 -0400
+        id S1728679AbfICQK4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:10:56 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 08:54:52 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 09:10:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="184796465"
+   d="scan'208";a="184803149"
 Received: from vkuppusa-mobl2.ger.corp.intel.com ([10.252.39.67])
-  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2019 08:54:51 -0700
-Message-ID: <dc2926f6ac1abbf785b627e6186d75eaaf2f9371.camel@linux.intel.com>
-Subject: Re: [PATCH v4 3/3] tpm_tis: override durations for STM tpm with
- firmware 1.2.8.28
+  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2019 09:10:51 -0700
+Message-ID: <f73c8da9fe417eb07137baac9c96dc0e0b6f63a3.camel@linux.intel.com>
+Subject: Re: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping mechanism
+ for supporting AMD's fTPM
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-In-Reply-To: <20190902142735.6280-4-jsnitsel@redhat.com>
-References: <20190902142735.6280-1-jsnitsel@redhat.com>
-         <20190902142735.6280-4-jsnitsel@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
- Espoo
+To:     Seunghun Han <kkamagui@gmail.com>
+Cc:     "Safford, David (GE Global Research, US)" <david.safford@ge.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 03 Sep 2019 19:10:50 +0300
+In-Reply-To: <CAHjaAcR4H6CnHxzR3NHLpMCgdafVHYuKCp4qxUd8b+K0SN34BQ@mail.gmail.com>
+References: <20190830095639.4562-1-kkamagui@gmail.com>
+         <20190830095639.4562-3-kkamagui@gmail.com>
+         <20190830124334.GA10004@ziepe.ca>
+         <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
+         <BCA04D5D9A3B764C9B7405BBA4D4A3C035F1CC59@ALPMBAPA12.e2k.ad.ge.com>
+         <CAHjaAcQu3jOSj0QV3u4GSgnhpkTmJTMqckY_cnuzeTY-HNUWcA@mail.gmail.com>
+         <BCA04D5D9A3B764C9B7405BBA4D4A3C035F1CD06@ALPMBAPA12.e2k.ad.ge.com>
+         <20190902135348.3pndbtbi6hpgjpjn@linux.intel.com>
+         <CAHjaAcR4H6CnHxzR3NHLpMCgdafVHYuKCp4qxUd8b+K0SN34BQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Date:   Tue, 03 Sep 2019 18:54:41 +0300
 User-Agent: Evolution 3.32.2-1 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2019-09-02 at 07:27 -0700, Jerry Snitselaar wrote:
-> There was revealed a bug in the STM TPM chipset used in Dell R415s.
-> Bug is observed so far only on chipset firmware 1.2.8.28
-> (1.2 TPM, device-id 0x0, rev-id 78). After some number of
-> operations chipset hangs and stays in inconsistent state:
-> 
-> tpm_tis 00:09: Operation Timed out
-> tpm_tis 00:09: tpm_transmit: tpm_send: error -5
-> 
-> Durations returned by the chip are the same like on other
-> firmware revisions but apparently with specifically 1.2.8.28 fw
-> durations should be reset to 2 minutes to enable tpm chip work
-> properly. No working way of updating firmware was found.
-> 
-> This patch adds implementation of ->update_durations method
-> that matches only STM devices with specific firmware version.
-> 
-> Cc: Peter Huewe <peterhuewe@gmx.de>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Signed-off-by: Alexey Klimov <aklimov@redhat.com>
-> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Tue, 2019-09-03 at 07:42 +0900, Seunghun Han wrote:
+> I have a question. Do you think this patch is not enough to handle
+> AMD's fTPM problem? If so, would you tell me about it? I will change
+> my patch.
 
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> (!update_durations path)
+I have no new feedback to give at this point and no absolutely time to
+brainstorm new ideas.
+
+You've now sent the same patch set version twice. The one that was
+sent 8-30 has the same patch version and no change log so no action
+taken from my part.
+
+Please version your patch sets and keep the change log in the cover
+letter.
 
 /Jarkko
 
