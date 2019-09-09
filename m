@@ -2,82 +2,80 @@ Return-Path: <SRS0=0FG/=XE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A4CC4740A
-	for <linux-integrity@archiver.kernel.org>; Mon,  9 Sep 2019 21:39:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DEAC4740A
+	for <linux-integrity@archiver.kernel.org>; Mon,  9 Sep 2019 23:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B4921D79
-	for <linux-integrity@archiver.kernel.org>; Mon,  9 Sep 2019 21:39:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568065182;
-	bh=+nUsbZO4jDJQKcj0U8bhaPUEL9Ppt9f9/QlIFDNBlZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Wl8iQliiNurZt9gpy3W974FermpNIHpMHuorcF689yTX5wTDXKad73NYob0ab1/IR
-	 +lUMCxa2yQleJWeWw2qOESUQG4vNdG97HMrOGeO2Gh4u6rBjzVu1iVUG58fj+VjM2H
-	 GIiyxhX36CX3WMOe7EF06rYI9Md5/Ruhdws3nAyY=
+	by mail.kernel.org (Postfix) with ESMTP id 811C721D6C
+	for <linux-integrity@archiver.kernel.org>; Mon,  9 Sep 2019 23:19:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfIIVjm (ORCPT
+        id S1730900AbfIIXTA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 9 Sep 2019 17:39:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726804AbfIIVjm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Sep 2019 17:39:42 -0400
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 272BD21924;
-        Mon,  9 Sep 2019 21:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568065181;
-        bh=+nUsbZO4jDJQKcj0U8bhaPUEL9Ppt9f9/QlIFDNBlZo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=twaohtH3xoKch2HMq/i9HVENozwbITC9sJ5WAC3reHThd59txrZjOMIerExBu/7lH
-         /HgH1sJXxuUEdsP07RzvjWwjSJETSWH2zvTKHSYF0vpC6JlCf9IULO11R0YtGM6IDg
-         AoFd4c7VbvrhRjQ7ONfdhd7hLZEIgVn9KCXA+JbA=
-Date:   Mon, 9 Sep 2019 14:39:39 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Janne Karhunen <janne.karhunen@gmail.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
-        Konsta Karsisto <konsta.karsisto@gmail.com>
-Subject: Re: [PATCH 1/3] ima: keep the integrity state of open files up to
- date
-Message-ID: <20190909213938.GA105935@gmail.com>
-Mail-Followup-To: Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk,
-        Konsta Karsisto <konsta.karsisto@gmail.com>
-References: <20190902094540.12786-1-janne.karhunen@gmail.com>
+        Mon, 9 Sep 2019 19:19:00 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:50680 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726474AbfIIXTA (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 9 Sep 2019 19:19:00 -0400
+Received: from [10.200.156.146] (unknown [167.220.2.18])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5FAD420B7186;
+        Mon,  9 Sep 2019 16:18:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5FAD420B7186
+Subject: Re: [RFC][PATCH 1/1] Carry ima measurement log for arm64 via
+ kexec_file_load
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-integrity@vger.kernel.org, jmorris@namei.org
+References: <20190829200532.13545-1-prsriva@linux.microsoft.com>
+ <20190829200532.13545-2-prsriva@linux.microsoft.com>
+ <87r252kxc8.fsf@morokweng.localdomain>
+ <0c7453d4-620d-2d98-3fda-f902b18da535@linux.microsoft.com>
+ <1567985476.4614.224.camel@linux.ibm.com>
+From:   prsriva <prsriva@linux.microsoft.com>
+Message-ID: <cb7840de-b26b-7e56-9d9a-dac5ccd8692f@linux.microsoft.com>
+Date:   Mon, 9 Sep 2019 16:18:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902094540.12786-1-janne.karhunen@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1567985476.4614.224.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 12:45:38PM +0300, Janne Karhunen wrote:
-> When a file is open for writing, kernel crash or power outage
-> is guaranteed to corrupt the inode integrity state leading to
-> file appraisal failure on the subsequent boot. Add some basic
-> infrastructure to keep the integrity measurements up to date
-> as the files are written to.
-> 
-> Core file operations (open, close, sync, msync, truncate) are
-> now allowed to update the measurement immediately. In order
-> to maintain sufficient write performance for writes, add a
-> latency tunable delayed work workqueue for computing the
-> measurements.
-> 
 
-This still doesn't make it crash-safe.  So why is it okay?
+On 9/8/19 4:31 PM, Mimi Zohar wrote:
+> Hi Prakhar,
+> "Carrying over the ima log during kexec_file_load" was originally
+> posted on 5/10 and 5/31 without a cover letter. On 8/29 it was
+> reposted as an RFC with a cover letter.  The cover letter was v1, but
+> the patch itself was not.  In the future, please use the "git format-
+> patch "-subject-prefix" option to add the version number to both the
+> cover letter and the patches.
+>
+> The comments you received were based on the 8/29 version.  I haven't
+> seen anything after that.
+>
+> Mimi
 
-- Eric
+Added the correct subject prefix, resent patches.
+
+I resent the patches sent at 5/31, since i had no response.
+
+v1 version addresses the comments in the RFC patch.
+
+I have cc-ed you to the email, hopefully its not missed again.
+
+Thankyou for pointing it out.
+
+Thanks,
+
+Prakhar Srivastava
+
