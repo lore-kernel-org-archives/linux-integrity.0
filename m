@@ -1,81 +1,93 @@
-Return-Path: <SRS0=0FG/=XE=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Ztmh=XF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DEAC4740A
-	for <linux-integrity@archiver.kernel.org>; Mon,  9 Sep 2019 23:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C64C3A5A2
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Sep 2019 05:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 811C721D6C
-	for <linux-integrity@archiver.kernel.org>; Mon,  9 Sep 2019 23:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2619321670
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Sep 2019 05:13:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dDI98vuE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730900AbfIIXTA (ORCPT
+        id S1730422AbfIJFNm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 9 Sep 2019 19:19:00 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:50680 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbfIIXTA (ORCPT
+        Tue, 10 Sep 2019 01:13:42 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43621 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390663AbfIJFNm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Sep 2019 19:19:00 -0400
-Received: from [10.200.156.146] (unknown [167.220.2.18])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5FAD420B7186;
-        Mon,  9 Sep 2019 16:18:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5FAD420B7186
-Subject: Re: [RFC][PATCH 1/1] Carry ima measurement log for arm64 via
- kexec_file_load
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-integrity@vger.kernel.org, jmorris@namei.org
-References: <20190829200532.13545-1-prsriva@linux.microsoft.com>
- <20190829200532.13545-2-prsriva@linux.microsoft.com>
- <87r252kxc8.fsf@morokweng.localdomain>
- <0c7453d4-620d-2d98-3fda-f902b18da535@linux.microsoft.com>
- <1567985476.4614.224.camel@linux.ibm.com>
-From:   prsriva <prsriva@linux.microsoft.com>
-Message-ID: <cb7840de-b26b-7e56-9d9a-dac5ccd8692f@linux.microsoft.com>
-Date:   Mon, 9 Sep 2019 16:18:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 10 Sep 2019 01:13:42 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q27so12345401lfo.10
+        for <linux-integrity@vger.kernel.org>; Mon, 09 Sep 2019 22:13:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cbhnljMSvrm4Eb/KXzc+RpovBmrskcbXiFtPe30EOeo=;
+        b=dDI98vuEiKdWP044Aq60Rfs0oVNhOMLnqb+v8cd/nTLiWGWoxrC7bK0bJlXRGRLBWl
+         OkruDqTbEF1MnjTQ6LzIql/IbBNIRZemt+ZekjNNAlLCnGNGHw5R6WdjyzVFf7CGPDVc
+         PsMjA2VoJvMCymcb6foSlZXXaG72LlL1wV+1USmkdEO44wBORSJ+x4HP2Gw4+GFOsUZt
+         fxW7SavC5G3u0iF5rRcCYdV5Y2tOpnk2HcgI8z1MIdSdwNbdHxSWBlmCEpsTYA4hx5vI
+         57rqDjmabd8C+dThEAzBiAJgAUCE0u+iGYrXDMHwb7xoTfjlax833P1oVLn6rP0yifyl
+         jZYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cbhnljMSvrm4Eb/KXzc+RpovBmrskcbXiFtPe30EOeo=;
+        b=dJpM3ED8+S/07y9QCrUgKT4M63JM/RzSJHX67nFEJD/M670uLz6ntMDkt+uGzn3AQy
+         x+HQnLebnUtbmbFtfCvFgx866LaZ+edfWHYyKybN3F6kc0leNCnt90XEYOOv84g+m2ei
+         +9wJRqJCcArxL6aX6HFDEWC2ndDoIwN4D8FI9ZspYz+TMEn+PGSxwVge3mgvcMVmF70g
+         mgZPkYtA1Ag/8WRhFNVltXoC9mDLWWu8jxVSoJyK9EenZ/6P9UhXfJd1eUCCoxLyAPm1
+         yEo4NW44B7wzHdowFmZYJCNu0FUeRp8Kfv6pBDW5Jh9T0uUYcFDm5nWlZi6+zgzJZA3s
+         aPKw==
+X-Gm-Message-State: APjAAAUQxHXVbWbuKW3KV6vHipJjuv9tdF5gRBM7MpGkV2iF/kjEEN70
+        eEqjT7xBW7xLonMy1zOWH+lRg9vDsPMKahGP9Wjagw==
+X-Google-Smtp-Source: APXvYqyu4qmBvYdKY60qaEbXVW0h3uzrHlcJ4EuNULoC/qTrXN/8mpok0DsyaFuatghwy6m3s6/T0/Rwhw152lylZqY=
+X-Received: by 2002:a19:f806:: with SMTP id a6mr18607616lff.151.1568092420328;
+ Mon, 09 Sep 2019 22:13:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1567985476.4614.224.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <c253ca7292b397f1352d2ee00fce0b011f84abff.camel@linux.intel.com>
+ <1567952431.4614.140.camel@linux.ibm.com> <CAFA6WYPq8Tq6=jTqnWQf9w9pzdJu8AcX-CFBWPwoVmMaLEJKhg@mail.gmail.com>
+ <20190909163643.qxmzpcggi567hmhv@linux.intel.com>
+In-Reply-To: <20190909163643.qxmzpcggi567hmhv@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue, 10 Sep 2019 10:43:27 +0530
+Message-ID: <CAFA6WYP6enHJBSsgzvTqzFEQwaW3ye2NrdnaxDMRCS1BC8mpsw@mail.gmail.com>
+Subject: Re: KEYS-TRUSTED git
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        jejb@linux.ibm.com, dhowells@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-On 9/8/19 4:31 PM, Mimi Zohar wrote:
-> Hi Prakhar,
-> "Carrying over the ima log during kexec_file_load" was originally
-> posted on 5/10 and 5/31 without a cover letter. On 8/29 it was
-> reposted as an RFC with a cover letter.  The cover letter was v1, but
-> the patch itself was not.  In the future, please use the "git format-
-> patch "-subject-prefix" option to add the version number to both the
-> cover letter and the patches.
+On Mon, 9 Sep 2019 at 22:06, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
 >
-> The comments you received were based on the 8/29 version.  I haven't
-> seen anything after that.
+> On Mon, Sep 09, 2019 at 11:57:45AM +0530, Sumit Garg wrote:
+> > For Trusted Execution Environment (TEE) as a new "trust" method, I
+> > have tried to document it here [1]. Please share your thoughts on this
+> > patch [1] in case I missed something. I would be happy to incorporate
+> > your feedback. Also, can you elaborate on "comparison to the TPM",
+> > what specifics parameters are you looking for documentation?
 >
-> Mimi
+> I think the right order is actually:
+>
+> 1. Set up the GIT tree.
+> 2. Merge your TEE patches (when they pass the review phase).
+> 3. Come up with the documentation.
 
-Added the correct subject prefix, resent patches.
+Sounds good to me.
 
-I resent the patches sent at 5/31, since i had no response.
+-Sumit
 
-v1 version addresses the comments in the RFC patch.
-
-I have cc-ed you to the email, hopefully its not missed again.
-
-Thankyou for pointing it out.
-
-Thanks,
-
-Prakhar Srivastava
-
+>
+> /Jarkko
