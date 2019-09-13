@@ -1,175 +1,74 @@
-Return-Path: <SRS0=3gWa=XG=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=D15z=XI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BA8C5ACAE
-	for <linux-integrity@archiver.kernel.org>; Wed, 11 Sep 2019 21:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 541F1C49ED7
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 13:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121E62082C
-	for <linux-integrity@archiver.kernel.org>; Wed, 11 Sep 2019 21:29:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3293E20717
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 13:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbfIKV3d (ORCPT
+        id S2390669AbfIMNcf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 11 Sep 2019 17:29:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42804 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728319AbfIKV3d (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Sep 2019 17:29:33 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x8BLHhIP132004
-        for <linux-integrity@vger.kernel.org>; Wed, 11 Sep 2019 17:29:32 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uy7gqjc6x-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 11 Sep 2019 17:29:32 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 11 Sep 2019 22:29:30 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Sep 2019 22:29:27 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x8BLT1Ee38535424
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Sep 2019 21:29:01 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9819A11C04A;
-        Wed, 11 Sep 2019 21:29:26 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0F45711C050;
-        Wed, 11 Sep 2019 21:29:26 +0000 (GMT)
-Received: from dhcp-9-31-103-196.watson.ibm.com (unknown [9.31.103.196])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Sep 2019 21:29:25 +0000 (GMT)
-Subject: [GIT PULL] integrity subsystem updates for v5.4
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Wed, 11 Sep 2019 17:29:25 -0400
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Fri, 13 Sep 2019 09:32:35 -0400
+Received: from mga03.intel.com ([134.134.136.65]:41513 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390444AbfIMNce (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:32:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 06:32:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
+   d="scan'208";a="176281584"
+Received: from unknown (HELO localhost) ([10.249.39.126])
+  by orsmga007.jf.intel.com with ESMTP; 13 Sep 2019 06:32:30 -0700
+Date:   Fri, 13 Sep 2019 14:32:28 +0100
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     dhowells@redhat.com, linux-integrity@vger.kernel.org,
+        jejb@linux.ibm.com, sumit.garg@linaro.org
+Subject: Re: KEYS-TRUSTED git
+Message-ID: <20190913133228.GE7412@linux.intel.com>
+References: <c253ca7292b397f1352d2ee00fce0b011f84abff.camel@linux.intel.com>
+ <1567952431.4614.140.camel@linux.ibm.com>
+ <20190909165200.npxq3hkft4bddv6v@linux.intel.com>
+ <1568049898.4614.349.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19091121-0008-0000-0000-00000314850B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19091121-0009-0000-0000-00004A32F24B
-Message-Id: <1568237365.5783.39.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-11_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909110188
+In-Reply-To: <1568049898.4614.349.camel@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Linus,
+On Mon, Sep 09, 2019 at 01:24:58PM -0400, Mimi Zohar wrote:
+> On Mon, 2019-09-09 at 17:52 +0100, Jarkko Sakkinen wrote:
+> > On Sun, Sep 08, 2019 at 10:20:31AM -0400, Mimi Zohar wrote:
+> > > Thanks, Jarkko.  Agreed, trusted keys is becoming more than just TPM
+> > > based keys.  Now would be a good time to set up at least a separate
+> > > branch or GIT repo.
+> > 
+> > I created a tree for trusted keys:
+> > 
+> > http://git.infradead.org/users/jjs/linux-trusted-keys.git
+> > 
+> > The remaining issue before I send a patch to update MAINTAINERS is whether
+> > the flow goes through David to Linus or directly to Linus.
+> 
+> David?
 
-The major feature in this pull request is IMA support for measuring
-and appraising appended file signatures. Â In addition are a couple of
-bug fixes and code cleanup to use struct_size().
+I think using tpmdd tree makes sense because there is so much
+correlation.
 
-In addition to the PE/COFF and IMA xattr signatures, the kexec kernel
-image may be signed with an appended signature, using the same
-scripts/sign-file tool that is used to sign kernel modules.
-Â Similarly, the initramfs may contain an appended signature.
-
-(Stephen is carrying a patch to address a merge conflict with the
-security tree.)
-
-thanks,
-
-Mimi
-
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
-
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-
-for you to fetch changes up to 2a7f0e53daf29ca6dc9fbe2a27158f13474ec1b5:
-
-  ima: ima_api: Use struct_size() in kzalloc() (2019-08-29 14:23:30 -0400)
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (2):
-      ima: use struct_size() in kzalloc()
-      ima: ima_api: Use struct_size() in kzalloc()
-
-Mimi Zohar (2):
-      ima: initialize the "template" field with the default template
-      sefltest/ima: support appended signatures (modsig)
-
-Sascha Hauer (2):
-      ima: always return negative code for error
-      ima: fix freeing ongoing ahash_request
-
-Stephen Rothwell (1):
-      MODSIGN: make new include file self contained
-
-Thiago Jung Bauermann (11):
-      MODSIGN: Export module signature definitions
-      PKCS#7: Refactor verify_pkcs7_signature()
-      PKCS#7: Introduce pkcs7_get_digest()
-      integrity: Select CONFIG_KEYS instead of depending on it
-      ima: Add modsig appraise_type option for module-style appended signatures
-      ima: Factor xattr_verify() out of ima_appraise_measurement()
-      ima: Implement support for module-style appended signatures
-      ima: Collect modsig
-      ima: Define ima-modsig template
-      ima: Store the measurement again when appraising a modsig
-      ima: Fix use after free in ima_read_modsig()
-
- Documentation/ABI/testing/ima_policy               |   6 +-
- Documentation/security/IMA-templates.rst           |   3 +
- arch/s390/Kconfig                                  |   2 +-
- arch/s390/kernel/machine_kexec_file.c              |  24 +--
- certs/system_keyring.c                             |  61 +++++--
- crypto/asymmetric_keys/pkcs7_verify.c              |  33 ++++
- include/crypto/pkcs7.h                             |   4 +
- include/linux/module.h                             |   3 -
- include/linux/module_signature.h                   |  46 +++++
- include/linux/verification.h                       |  10 ++
- init/Kconfig                                       |   6 +-
- kernel/Makefile                                    |   1 +
- kernel/module.c                                    |   1 +
- kernel/module_signature.c                          |  46 +++++
- kernel/module_signing.c                            |  56 +-----
- scripts/Makefile                                   |   2 +-
- security/integrity/Kconfig                         |   2 +-
- security/integrity/digsig.c                        |  43 ++++-
- security/integrity/ima/Kconfig                     |  13 ++
- security/integrity/ima/Makefile                    |   1 +
- security/integrity/ima/ima.h                       |  60 ++++++-
- security/integrity/ima/ima_api.c                   |  27 ++-
- security/integrity/ima/ima_appraise.c              | 194 ++++++++++++++-------
- security/integrity/ima/ima_crypto.c                |  10 +-
- security/integrity/ima/ima_main.c                  |  24 ++-
- security/integrity/ima/ima_modsig.c                | 168 ++++++++++++++++++
- security/integrity/ima/ima_policy.c                |  71 ++++++--
- security/integrity/ima/ima_template.c              |  31 +++-
- security/integrity/ima/ima_template_lib.c          |  64 ++++++-
- security/integrity/ima/ima_template_lib.h          |   4 +
- security/integrity/integrity.h                     |  20 +++
- .../selftests/kexec/test_kexec_file_load.sh        |  38 +++-
- 32 files changed, 871 insertions(+), 203 deletions(-)
- create mode 100644 include/linux/module_signature.h
- create mode 100644 kernel/module_signature.c
- create mode 100644 security/integrity/ima/ima_modsig.c
-
+/Jarkko
