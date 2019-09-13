@@ -2,76 +2,124 @@ Return-Path: <SRS0=D15z=XI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53EF9C49ED7
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 17:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CA6C4CEC8
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 18:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28ED2206BB
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 17:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 319092089F
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 18:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388528AbfIMRlZ (ORCPT
+        id S2389961AbfIMSwC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Sep 2019 13:41:25 -0400
-Received: from smtprelay0063.hostedemail.com ([216.40.44.63]:44769 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726822AbfIMRlZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Sep 2019 13:41:25 -0400
-X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Sep 2019 13:41:24 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id ECA6C180013F1;
-        Fri, 13 Sep 2019 17:36:19 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 73C7218225E0A;
-        Fri, 13 Sep 2019 17:36:18 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: part18_19b2e2b09e449
-X-Filterd-Recvd-Size: 1675
-Received: from XPS-9350.home (unknown [47.151.152.152])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 13 Sep 2019 17:36:16 +0000 (UTC)
-Message-ID: <33da71451cbc5836efd61ccf125be89c6e946253.camel@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: Add a git and a maintainer entry to
- keyring subsystems
-From:   Joe Perches <joe@perches.com>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 13 Sep 2019 10:36:15 -0700
-In-Reply-To: <11580.1568387033@warthog.procyon.org.uk>
-References: <20190910143228.30305-1-jarkko.sakkinen@linux.intel.com>
-         <11580.1568387033@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Fri, 13 Sep 2019 14:52:02 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33303 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389946AbfIMSwC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Sep 2019 14:52:02 -0400
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 7C8E0838EB7978359F1B;
+        Fri, 13 Sep 2019 19:51:59 +0100 (IST)
+Received: from A170120444-LP.china.huawei.com (10.47.67.210) by
+ smtpsuk.huawei.com (10.201.108.42) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Fri, 13 Sep 2019 19:51:49 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <jsnitsel@redhat.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v4] KEYS: trusted: correctly initialize digests and fix locking issue
+Date:   Fri, 13 Sep 2019 20:51:36 +0200
+Message-ID: <20190913185136.780-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.47.67.210]
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-09-13 at 16:03 +0100, David Howells wrote:
-> Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> 
-> > Subject: [PATCH] MAINTAINERS: Add a git and a maintainer entry to keyring subsystems
-> 
-> I would recommend splitting the patch in two and putting something like:
-> 
-> 	keys: Add Jarkko Sakkinen as co-maintainer
-> 
-> as the subject of the keyrings maintainership one.
+Commit 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to
+tpm_pcr_extend()") modifies tpm_pcr_extend() to accept a digest for each
+PCR bank. After modification, tpm_pcr_extend() expects that digests are
+passed in the same order as the algorithms set in chip->allocated_banks.
 
-Why is there utility in micro splitting such a trivial patch?
+This patch fixes two issues introduced in the last iterations of the patch
+set: missing initialization of the TPM algorithm ID in the tpm_digest
+structures passed to tpm_pcr_extend() by the trusted key module, and
+unreleased locks in the TPM driver due to returning from tpm_pcr_extend()
+without calling tpm_put_ops().
 
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Fixes: 0b6cf6b97b7e ("tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()")
+---
+ drivers/char/tpm/tpm-interface.c | 14 +++++++++-----
+ security/keys/trusted.c          |  5 +++++
+ 2 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1b4f95c13e00..d9ace5480665 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -320,18 +320,22 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ 	if (!chip)
+ 		return -ENODEV;
+ 
+-	for (i = 0; i < chip->nr_allocated_banks; i++)
+-		if (digests[i].alg_id != chip->allocated_banks[i].alg_id)
+-			return -EINVAL;
++	for (i = 0; i < chip->nr_allocated_banks; i++) {
++		if (digests[i].alg_id != chip->allocated_banks[i].alg_id) {
++			rc = EINVAL;
++			goto out;
++		}
++	}
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		rc = tpm2_pcr_extend(chip, pcr_idx, digests);
+-		tpm_put_ops(chip);
+-		return rc;
++		goto out;
+ 	}
+ 
+ 	rc = tpm1_pcr_extend(chip, pcr_idx, digests[0].digest,
+ 			     "attempting extend a PCR value");
++
++out:
+ 	tpm_put_ops(chip);
+ 	return rc;
+ }
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ade699131065..1fbd77816610 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -1228,11 +1228,16 @@ static int __init trusted_shash_alloc(void)
+ 
+ static int __init init_digests(void)
+ {
++	int i;
++
+ 	digests = kcalloc(chip->nr_allocated_banks, sizeof(*digests),
+ 			  GFP_KERNEL);
+ 	if (!digests)
+ 		return -ENOMEM;
+ 
++	for (i = 0; i < chip->nr_allocated_banks; i++)
++		digests[i].alg_id = chip->allocated_banks[i].alg_id;
++
+ 	return 0;
+ }
+ 
+-- 
+2.17.1
 
