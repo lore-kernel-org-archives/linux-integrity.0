@@ -2,49 +2,48 @@ Return-Path: <SRS0=D15z=XI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B97C49ED7
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 13:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9694EC4CEC5
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 13:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B4820640
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 13:34:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7891F20717
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Sep 2019 13:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388618AbfIMNex (ORCPT
+        id S2389293AbfIMNkI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Sep 2019 09:34:53 -0400
-Received: from mga14.intel.com ([192.55.52.115]:37316 "EHLO mga14.intel.com"
+        Fri, 13 Sep 2019 09:40:08 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21563 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388524AbfIMNex (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Sep 2019 09:34:53 -0400
+        id S2388387AbfIMNkI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 13 Sep 2019 09:40:08 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 06:34:52 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Sep 2019 06:40:06 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,492,1559545200"; 
-   d="scan'208";a="179675437"
-Received: from unknown (HELO localhost) ([10.249.39.126])
-  by orsmga008.jf.intel.com with ESMTP; 13 Sep 2019 06:34:48 -0700
-Date:   Fri, 13 Sep 2019 14:34:46 +0100
+X-IronPort-AV: E=Sophos;i="5.64,489,1559545200"; 
+   d="scan'208";a="386387608"
+Received: from ltudorx-wtg.ger.corp.intel.com (HELO localhost) ([10.252.37.39])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Sep 2019 06:40:01 -0700
+Date:   Fri, 13 Sep 2019 14:39:59 +0100
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        jejb@linux.ibm.com, dhowells@redhat.com
-Subject: Re: KEYS-TRUSTED git
-Message-ID: <20190913133446.GF7412@linux.intel.com>
-References: <c253ca7292b397f1352d2ee00fce0b011f84abff.camel@linux.intel.com>
- <1567952431.4614.140.camel@linux.ibm.com>
- <CAFA6WYPq8Tq6=jTqnWQf9w9pzdJu8AcX-CFBWPwoVmMaLEJKhg@mail.gmail.com>
- <20190909163643.qxmzpcggi567hmhv@linux.intel.com>
- <CAFA6WYP6enHJBSsgzvTqzFEQwaW3ye2NrdnaxDMRCS1BC8mpsw@mail.gmail.com>
+To:     Petr Vorel <petr.vorel@gmail.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests/tpm2: Add the missing TEST_FILES assignment
+Message-ID: <20190913133732.GG7412@linux.intel.com>
+References: <20190910222523.8116-1-jarkko.sakkinen@linux.intel.com>
+ <20190911092005.GA22492@dell5510>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFA6WYP6enHJBSsgzvTqzFEQwaW3ye2NrdnaxDMRCS1BC8mpsw@mail.gmail.com>
+In-Reply-To: <20190911092005.GA22492@dell5510>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,27 +51,18 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Sep 10, 2019 at 10:43:27AM +0530, Sumit Garg wrote:
-> On Mon, 9 Sep 2019 at 22:06, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Mon, Sep 09, 2019 at 11:57:45AM +0530, Sumit Garg wrote:
-> > > For Trusted Execution Environment (TEE) as a new "trust" method, I
-> > > have tried to document it here [1]. Please share your thoughts on this
-> > > patch [1] in case I missed something. I would be happy to incorporate
-> > > your feedback. Also, can you elaborate on "comparison to the TPM",
-> > > what specifics parameters are you looking for documentation?
-> >
-> > I think the right order is actually:
-> >
-> > 1. Set up the GIT tree.
-> > 2. Merge your TEE patches (when they pass the review phase).
-> > 3. Come up with the documentation.
+On Wed, Sep 11, 2019 at 11:20:06AM +0200, Petr Vorel wrote:
+> Hi Jarkko,
 > 
-> Sounds good to me.
+> > The Python files required by the selftests are not packaged because of
+> > the missing assignment to TEST_FILES. Add the assignment.
+> 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 6ea3dfe1e073 ("selftests: add TPM 2.0 tests")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> 
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
 
-Come to 2nd thoughts. As long as the master has your changes, James
-should be fine and James' changes also work as a test bed for your
-changes. Decided to postpone.
+Thank you.
 
 /Jarkko
