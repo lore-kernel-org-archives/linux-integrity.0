@@ -2,150 +2,145 @@ Return-Path: <SRS0=mlK8=XL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B7EC49ED7
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 07:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F780C4CEC7
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 08:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFC5214AF
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 07:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D8C206A4
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 08:18:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QO3u+29K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deQhvMCB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfIPHtG (ORCPT
+        id S1728736AbfIPISr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 16 Sep 2019 03:49:06 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47469 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726648AbfIPHtF (ORCPT
+        Mon, 16 Sep 2019 04:18:47 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:36230 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbfIPISr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Sep 2019 03:49:05 -0400
-X-Greylist: delayed 394 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Sep 2019 03:49:05 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1568620145;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fMjxedG6j/Sqvf7X/seo3H3aOlm3bMRW95XYZ+qiDnY=;
-        b=QO3u+29KYR1IwBolVWrPsPtlnBCl2WdqY1lFA8lgn4QlJuH7xyBSoKoh95kDQzT/nqbB7S
-        tqyvYmQpxYbl5ihv4khVRINAqWv1y0xYatphV+oVNwFxblRCKxJ6VCVHSnk9UQQwHtxgxG
-        x7MLx0IlhCWBBaTxnMJl3RilP++/mwY=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-193-RLThyT3uNtOs2PhvZuTwBQ-1; Mon, 16 Sep 2019 03:42:29 -0400
-Received: by mail-pg1-f197.google.com with SMTP id h10so4067467pgh.11
-        for <linux-integrity@vger.kernel.org>; Mon, 16 Sep 2019 00:42:29 -0700 (PDT)
+        Mon, 16 Sep 2019 04:18:47 -0400
+Received: by mail-yw1-f67.google.com with SMTP id x64so12636433ywg.3;
+        Mon, 16 Sep 2019 01:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wYIjQncYfsETIi+DqmO+J0VFI6PHXpC/ptBO4q7LLeo=;
+        b=deQhvMCBxsHyXHAMmNd7fHzNXCctNc3oDgqe9Z0W6Fk10S+RdJjh+wN2Lb7FfHqQ03
+         JkgqiG6+zy+uZOgTUAf+HBefgc0ttp+iahCy0rsqF4JDXdjnbczh26JMJn+7iIV+0YV6
+         UmTgqTKXFiBlk+Opvl5KtyGeS5JARiQx6ZHQR//uw03v8KGbAnYYprABRsyUa+E1cXWX
+         hljSgCXbRCBLk3NzbxlcE8RFFW19bf5HI0XbF04BIAexyBk4hQawJW8IIPG2RIvFG2/i
+         dFQf2n/OC3wvf4XRcKolZf1VjBCfZeKUwSwT/IUtgnMEiFXu2UV06L3ly3gNXuJyo8LI
+         wLXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=qJ2XTavf6xVfCeXhsCAHQas4XZ5kl+p1989SW7A7oqQ=;
-        b=K8BG1GB4ql1FT2VxQQN+ooJvp0+4ng8GbdYxPZu/U7345O7/J5eUmAA9P5vQ+xGcKE
-         XG/55/3/M8YcZ7DFFJMih8YNRv3VsRiO22TZi1etUbF98h3kMaksX3ZBe+tqxP5haZ0v
-         2+hdinUR95fKH9ZKk4W9paEQ95fyThhscpywKZKwYmmfC+vyFn94FjJ2CJebYv7YIFwc
-         gqveZjM9Yygew68wzDF+pq6z/V1m1RwBGs/e0kIPbmuDPH0TOB/Uf0GEVIxFQKp0VadP
-         F9C+72nvDIH33t6SvWiwkdBx4yLHKtIyuJmgZR24Sw+oPHUbF/FhUkbTvlpZex8h64sp
-         9Pfg==
-X-Gm-Message-State: APjAAAXAMqSPIutsKXmvzgisBLgg3mBX44sLHzfAVmOgCckYDNHgLMpF
-        euDtxp1zS6sSJ3BroNPlHosyHRLJvy7WEyj1z4/OlD4ugv1riFLj2UB+iob89nJW4rS/D5bZ/9j
-        s9T+vbDmIXcZNxVhh/sAWKUHWeMOa
-X-Received: by 2002:a17:90a:332c:: with SMTP id m41mr7277852pjb.22.1568619747796;
-        Mon, 16 Sep 2019 00:42:27 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzl1MY0H4oL9NJZ/e4bdULzxRM7J9QfEJZpCZa4TK38YBNrdK5lM7zavCuuhOYQC+W/uTIrlg==
-X-Received: by 2002:a17:90a:332c:: with SMTP id m41mr7277832pjb.22.1568619747444;
-        Mon, 16 Sep 2019 00:42:27 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id 30sm11584042pjk.25.2019.09.16.00.42.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Sep 2019 00:42:26 -0700 (PDT)
-Date:   Mon, 16 Sep 2019 00:42:25 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Petr Vorel <pvorel@suse.cz>
-Subject: Re: [PATCH] selftest/trustedkeys: TPM 1.2 trusted keys test
-Message-ID: <20190916074225.fouluhpylge6fmlj@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <1568157511-5464-1-git-send-email-zohar@linux.ibm.com>
- <1568157876.4991.3.camel@linux.ibm.com>
- <1568203240.5783.8.camel@linux.ibm.com>
- <20190913140820.GC29755@linux.intel.com>
- <1568580742.5055.0.camel@linux.ibm.com>
- <1568604471.4975.8.camel@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wYIjQncYfsETIi+DqmO+J0VFI6PHXpC/ptBO4q7LLeo=;
+        b=sy6fj0zB+fVc6gbkuZj1M/1LKb5ZpTuWD+/HM8Bqe6VDwKP3a7g6wZVf6NbAtkEJGZ
+         Y54s2O1tLTiwuyuvSQS2vgaz2enzvMj6uriX3SwWX6XBlGZ6h5oQaG2PzDkMz7/USG/f
+         Oln/otSut5FBUlE7kxmozDe2xx/Ffmx/g6EfjiWmiRKr4mfwVwVBogZqjjZ54aaPgAp4
+         WCG4YOYqJRUdhFdo9E2NMmLfSNyoFAwdceeXwu1BQxoeK+KBBZDGZokuElvBj/H+5FQ+
+         buaoW5AUz6RrfuF76tPtDXVDeF4tmyIqiYn72eepuDMrWCb8W6Z5jwkejpFWJHjeHUGi
+         kxVQ==
+X-Gm-Message-State: APjAAAVU90weNCXbWhNwI/MhxJKfZJvUiXv0FtqOC9H3wMRU66zsF4Qd
+        zaWOuzZC8Qh59sjFvDiPZG+zRJAgQh2/WujKZfI=
+X-Google-Smtp-Source: APXvYqxd+o9Zw9GnFd6zl9mo8U29h38L34xFlnr1sy5yK6zpIphmj1vjnp2giE1B7z4j2KcVl8MJjlLszyslm0U9nw8=
+X-Received: by 2002:a0d:ccc9:: with SMTP id o192mr42913277ywd.346.1568621924554;
+ Mon, 16 Sep 2019 01:18:44 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1568604471.4975.8.camel@linux.ibm.com>
-User-Agent: NeoMutt/20180716
-X-MC-Unique: RLThyT3uNtOs2PhvZuTwBQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+References: <20190909090906.28700-1-kkamagui@gmail.com> <20190909090906.28700-3-kkamagui@gmail.com>
+ <20190910144215.GA30780@linux.intel.com> <20190910150342.GA1920@linux.intel.com>
+ <CAHjaAcRf3fcJMp6AwVRTrVaABZVzSkhBwRcpKZogAS4SSDK3zg@mail.gmail.com> <20190913131234.GA7412@linux.intel.com>
+In-Reply-To: <20190913131234.GA7412@linux.intel.com>
+From:   Seunghun Han <kkamagui@gmail.com>
+Date:   Mon, 16 Sep 2019 17:18:33 +0900
+Message-ID: <CAHjaAcQ07nDbb1NAg4m7bK8szSKVi7b55m7epzxPJjxxttaT0A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] tpm: tpm_crb: enhance resource mapping mechanism
+ for supporting AMD's fTPM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vanya Lazeev <ivan.lazeev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun Sep 15 19, Mimi Zohar wrote:
->On Sun, 2019-09-15 at 16:52 -0400, Mimi Zohar wrote:
->> On Fri, 2019-09-13 at 15:08 +0100, Jarkko Sakkinen wrote:
->> > On Wed, Sep 11, 2019 at 08:00:40AM -0400, Mimi Zohar wrote:
->> > > On Tue, 2019-09-10 at 19:24 -0400, Mimi Zohar wrote:
->> > > > On Tue, 2019-09-10 at 19:18 -0400, Mimi Zohar wrote:
->> > > > > Create, save and load trusted keys test
->> > > >
->> > > > Creating trusted keys is failing with the following messages.  Any=
- idea why?
->> > > >
->> > > > [  147.014653] tpm tpm0: A TPM error (34) occurred attempting to a=
- send a command
->> > > > [  147.014678] trusted_key: srkseal failed (-1)
->> > > > [  147.014687] trusted_key: key_seal failed (-1)
->> > >
->> > > This is a regression, that needs to be resolved. =A0The test works o=
-n
->> > > kernels prior to 5.1.
->> >
->> > It breaks on 5.2?
->>
->> No, the regression is in 5.1.
->>
->> >
->> > Can you bisect the failing commit?
->>
->> git bisect start -- drivers/char/tpm/
->> git bisect bad
->> git bisect good v5.0=A0
->>
->> # first bad commit: [412eb585587a1dc43c9622db79de9663b6c4c238] tpm:
->> use tpm_buf in tpm_transmit_cmd() as the IO parameter
+> > > Matthew pointed out that having a hook in NVS driver is better solution
+> > > because it is nil functionality if the TPM driver is loaded. We need
+> > > functions to:
+> > >
+> > > 1. Request a region from the NVS driver (when tpm_crb loads)
+> > > 2. Release a region back to the NVS Driver (when tpm_crb unloads).
+> > >
+> > > My proposal would unnecessarily duplicate code and also leave a
+> > > side-effect when TPM is not used in the first place.
+> > >
+> > > I see this as the overally best solution. If you can come up with a
+> > > patch for the NVS side and changes to CRB drivers to utilize the new
+> > > hooks, then combined with Vanya's changes we have a sustainable solution
+> > > for AMD fTPM.
+> >
+> > It's a great solution. I will update this patch on your advice and
+> > send it to you soon.
+> >
+> > By the way, I have a question about your advice.
+> > If we handle the NVS region with NVS driver, calling devm_ioremap()
+> > function is fine like crb_ioremap_resource() function in this patch?
 >
->In tpm_send(), setting buf.data directly to cmd, instead of calling
->tpm_buf_init() fixes the problem.
+> No, you should reclaim the resource that conflicts and return it back
+> when tpm_crb is unregistered (e.g. rmmod tpm_crb).
 >
->Mimi
+> I would try something like enumerating iomem resources with
+> walk_iomem_res_desc(). I would advice to peek at arch/x86/kernel/crash.c
+> for an example how to use this for NVS regions
 >
->
+> Then you could __release_region() to unallocate the source. When tpm_crb
+> is removed you can then allocate and insert a resource with data
+> matching it had.
 
-The problem is that the command buffer is copied into the tpm_buf with
-the memcpy, but after the tpm_transmit_cmd, nothing gets copied back
-to be used by the code path that called tpm_send. There is code that
-looks at that buffer after trusted_tpm_send returns. Both
-security/keys/trusted.c and crypto/asymmetric_keys/asym_tpm.c run into
-this.
+Thank you for your sincere advice, and I have some questions about it.
+As you know, the core reason of this ACPI NVS problem is that a busy
+bit is set to the ACPI NVS area. So, devm_ioremap_resource() function
+fails because of it.
 
-While playing around with it, adding a memcpy() after the transmit
-call worked for me as well as setting buf.data directly instead of the
-tpm_buf_init/memcpy/tpm_buf_destroy calls.
+If we want to call devm_ioremap_resource() for this case, we maybe
+need to rearrange the existing memory layout from the child
+relationship to the sibling relationship below. We also need to get
+back when tpm_crb unloads.
+[ ACPI NVS (parent) [ TPM CMD buffer (child of NVS) ] [ TPM RSP buffer
+(child of NVS) ] ]   <--->   [ ACPI NVS head ] [ CMD buffer ] [ NVS
+middle ] [ RSP buffer ] [ NVS tails ]
 
-I'm wondering if it would be worthwhile to convert the
-security/keys/trusted.c and crypto/asymmertic_keys/aym_tpm.c code to
-use the same tpm_buf and tpm_buf manipulation code as gets used in
-drivers/char/tpm.
+Our concern is a race condition between NVS driver and TPM CRB driver.
+In my view, we could solve this problem if we only make and call the
+functions you said, requesting and releasing a region from NVS driver.
+NVS driver doesn't rely on iomem layout, and it relies on internal
+nvs_list data.
 
+Therefore, I added some details to your guide. How about this sequence?
+1) When tpm_crb driver loads, the driver checks if command/response
+buffers are in ACPI NVS area. If so, it requests (or removes) the
+buffer regions from NVS driver's nvs_list (with
+suspend_nvs_unregister() function I will add to the nvs.c driver).
+
+2) If command/response buffers are in ACPI NVS area, tpm_crb driver
+calls devm_ioremap() instead of devm_ioremap_resource() like this
+patch.
+
+3) When tpm_crb driver unloads, the driver releases (or adds) the
+buffer regions to NVS driver's nvs_list (with existing
+suspend_nvs_register() function in the nvs.c driver).
+
+I think the sequence could solve the problem we concerned.
+What do you think about the sequence?
+
+Seunghun
