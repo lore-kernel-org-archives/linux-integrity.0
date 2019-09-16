@@ -2,152 +2,92 @@ Return-Path: <SRS0=mlK8=XL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09B5C49ED7
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 18:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F86C49ED7
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 20:00:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66CA206C2
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 18:29:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 142892067B
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Sep 2019 20:00:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJYgS+nI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390363AbfIPS3o (ORCPT
+        id S2391137AbfIPUAk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 16 Sep 2019 14:29:44 -0400
-Received: from 2.mo1.mail-out.ovh.net ([178.32.119.250]:36953 "EHLO
-        2.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfIPS3n (ORCPT
+        Mon, 16 Sep 2019 16:00:40 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41223 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732982AbfIPUAk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Sep 2019 14:29:43 -0400
-X-Greylist: delayed 8817 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Sep 2019 14:29:41 EDT
-Received: from player693.ha.ovh.net (unknown [10.109.159.35])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 8102218FC11
-        for <linux-integrity@vger.kernel.org>; Mon, 16 Sep 2019 18:02:42 +0200 (CEST)
-Received: from 3mdeb.com (85-222-117-222.dynamic.chello.pl [85.222.117.222])
-        (Authenticated sender: piotr.krol@3mdeb.com)
-        by player693.ha.ovh.net (Postfix) with ESMTPSA id 5155D9D825CE;
-        Mon, 16 Sep 2019 16:02:36 +0000 (UTC)
-Subject: Re: LPC System Boot and Security Microconference (subject change)
-To:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-References: <20190916073535.25117-1-jarkko.sakkinen@linux.intel.com>
- <20190916074657.GA26795@linux.intel.com>
- <1568635613.4975.40.camel@linux.ibm.com>
- <20190916134437.dx7aniyzsmoal45l@cantor>
-From:   =?UTF-8?Q?Piotr_Kr=c3=b3l?= <piotr.krol@3mdeb.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=piotr.krol@3mdeb.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <4a51563d-3d8b-24b6-a529-1fbe8f60678e@3mdeb.com>
-Date:   Mon, 16 Sep 2019 18:02:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 16 Sep 2019 16:00:40 -0400
+Received: by mail-ed1-f68.google.com with SMTP id z9so1178027edq.8;
+        Mon, 16 Sep 2019 13:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=3NU9keS+SwIYzzTr5Kb8nPLd/tRCzLXZhLQOjpJIlOo=;
+        b=OJYgS+nIgWZGa6CyEVpIltqa5IfUHkCob1tR2roCdO8FujUZcii3oF1PYElg5Jwwkr
+         RKOCy4z2ym6a9VPGKa59i7JPMv4ihyTTpuonASObUV/g+lbSRpQRq8SAy2j+q62IsMGW
+         2zulTCqlwnN9QJWX0qLTQfh9OB2kvMA1W3enfz120fe7b1UZUC6HsepgZeM6OvnbnfqY
+         /YpHtw7DslD9kqEEJHJ7IdbhSGy75D9n1sUv9O79CHO1kyub4MDPEvH6kHCaNJ1LgNeZ
+         +GTamxQIkVZYUmnqOK/FZbVE451CQYStus59kh6V/w67EPv3dM1SSV1RStiCUK0k7Qag
+         2n6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3NU9keS+SwIYzzTr5Kb8nPLd/tRCzLXZhLQOjpJIlOo=;
+        b=LYdSwdHq6B4Ruk3b3B+JMCVwDS3Km+wfdlOJ3yoiTdxVBHwzb7bk3d2t2ZId8S434w
+         OXIDLhZc3omktYYQef+hpdXF2AuvyUDnQp8l7jXEg7HSThKgI1yPYkWVt6n4cCt3gZQO
+         /XZv7rG9+V4VA9z3zqnujjDDru5HR6dIAs7jacHnHLIIciE8uwP6fVX0YC7fXa2B+R/s
+         +rxuyHZGZKtfaEc6faHQh6BN0ziF5Z2aYj9IQW2dJXRGmVVIPytJjRmrcpPADvEwGKs4
+         sE8p3Tc3ecLy1NYAZ+cFAjcTMiA3u5+7hanvCmSEF1x6jXsFOxzbx2EqD1WjObOsjqyX
+         /6Pg==
+X-Gm-Message-State: APjAAAUyI/cedfUHRTC76OCP4hX5v0X6w4r24R9mDTHXYDR1aIiFSVmG
+        ScduEaCkBs7n2Us8SU7eG9RhbCs4
+X-Google-Smtp-Source: APXvYqwpkelb6C3nybdWnYGEBMpoPa4/s0IWmUMsANxj9jB+16BzyjzX6lvq7jOAs02HwABOEL+3tQ==
+X-Received: by 2002:a17:907:411d:: with SMTP id nw21mr1636272ejb.8.1568664038562;
+        Mon, 16 Sep 2019 13:00:38 -0700 (PDT)
+Received: from hv-1.home ([5.3.191.207])
+        by smtp.gmail.com with ESMTPSA id x12sm3664544ejv.69.2019.09.16.13.00.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 13:00:37 -0700 (PDT)
+Date:   Mon, 16 Sep 2019 23:00:30 +0300
+From:   Vanya Lazeev <ivan.lazeev@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] tpm_crb: fix fTPM on AMD Zen+ CPUs
+Message-ID: <20190916200029.GA27567@hv-1.home>
+References: <20190914171743.22786-1-ivan.lazeev@gmail.com>
+ <20190916055130.GA7925@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190916134437.dx7aniyzsmoal45l@cantor>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 12835821888172706887
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrudefgdeljecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190916055130.GA7925@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA512
-
-
-
-On 9/16/19 3:44 PM, Jerry Snitselaar wrote:
-> On Mon Sep 16 19, Mimi Zohar wrote:
-
-Hi Mimi,
-
->> On Mon, 2019-09-16 at 10:46 +0300, Jarkko Sakkinen wrote:
->>> My excuse is the overnight flight last night (no sleep).
->> 
->> Sorry I couldn't make LPC.  Did anyone takes notes of the LPC
->> System Boot and Security microconference?
->> 
->> thanks,
->> 
->> Mimi
->> 
+On Mon, Sep 16, 2019 at 08:51:30AM +0300, Jarkko Sakkinen wrote:
+> On Sat, Sep 14, 2019 at 08:17:44PM +0300, ivan.lazeev@gmail.com wrote:
+> > +	struct list_head acpi_resources, crb_resources;
 > 
-> There is an etherpad somewhere, but I haven't found a link to it
-> yet, and there will eventually be videos posted as well.
-> 
+> Please do not create crb_resources. I said this already last time.
 
-Link to etherpad:
-https://etherpad.net/p/LPC2019_System_Boot_and_Security
-
-Best Regards,
-- -- 
-Piotr Król
-Embedded Systems Consultant
-GPG: B2EE71E967AA9E4C
-https://3mdeb.com | @3mdeb_com
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE4DCbLYWmfoRjKeNLsu5x6WeqnkwFAl1/shoACgkQsu5x6Weq
-nkwYGBAAr6PSE1F0Cr3f0izrkmq+RA60aSG1/UHvDrie/kVCsrbFPb7UFYrqePBr
-+tw4fUSeVu5+8dSHoKjtT+AXaUo3AO4ChCCI/9Z57gaIu/35Qt+qtGu+Jo6mnK5x
-wAI/2Lr+7uO+KL3AmBVkAMta2hpKkMdWv/9Lnd3MvVO4DUnp5QRiVTBCWQvLa8SW
-3Z0KNudpz5iRVieRJBXHR5y6ZKXK2jq5PSvsp2UjtLo6oajH0Syh0L2LBbzPp27n
-rd7k2sMWlLcTKgRZYETRrkzwHXjKNiUhqaWBjRDVTFQLQoa+8s+O1JI/qDIZb274
-6CtypT20xArSZGqGE9GhXEodBUXa9QTOWtHhwe8r/ImO3e42U+mW8xuwA4g4aTju
-Axcg4FIAyVRN/Egp5aFncJE6N2f5vfu3thMzSPmPzSrxHA3tc3fSip+UlpMiO5f+
-xM+8GIjnbkyK408SGvS577xOgu7TJOlT0y9HCjy1pQlNSlTy6tTEVzgwvM5ntZSv
-TGsRzy1j0SIPBJCh4+MNPQk3CyLui4uSAi6G2olu9swS8Qcu+enAYLIfaCtfadMd
-F1FKnSYIa0je9Nx3kjOVzl8/1Q4jHIWKTq8YxFftLKGWDxd7yMzLH01W0hkWQfJT
-aknsSKTDy5WPh9pFKNxl4znSfFyarSn7t7Ro8IiiZwXtjpooY6Y=
-=IjQC
------END PGP SIGNATURE-----
+But then, if I'm not mistaken, it will be impossible to track pointers
+to multiple remaped regions. In this particular case, it
+doesn't matter, because both buffers are in different ACPI regions,
+and using acpi_resources only to fix buffer will be enough.
+However, this creates incosistency between single- and
+multiple-region cases: in the latter iobase field of struct crb_priv
+doesn't make any difference. Am I understanding the situation correctly?
+Will such fix be ok?
