@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D8AECE58A
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Oct 2019 16:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72BCECE587
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Oct 2019 17:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DC62168B
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Oct 2019 16:59:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 950562168B
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Oct 2019 17:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569949143;
-	bh=6vs+mxOj8LdnxQhig/ZrlnZJRypReXhz9Lk/p8RpLM8=;
+	s=default; t=1569949481;
+	bh=uOi64M7D10KweumGcEk7pWtgTYT8TAKC8lUsJlYhmAQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Lvvo+UXVH1E4Souc1UkqpiCRRbIA5T5ZA3Vun81cRsmA+DKs7pYunco08DmmUwM91
-	 cy4odkSp3ORNPx6MByIcf6pD9zfLibuKdZzYZwHhx/fIjc3xLB3no+MdBKpn/+7eh8
-	 KyQLj8sLvi1d69p3HfdHwVXJ/3KgPrBTYDfe4YSw=
+	b=t1dIyIzCnmwYdt3vitxnBF1wEV+XDD/+guCrppiESspVbfTUtM5K9ofrgylIU2J3b
+	 JL3G1v752uwqh4gI3cZXz4cT99W6M4xUSDEPUHWwWjGzXGZCGs96loNf8VLX6H1emN
+	 K8IkL/JG3ICVpIxpOtou0pH4fcfIhzxlHBn5wxAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbfJAQ6w (ORCPT
+        id S1726063AbfJAREg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Oct 2019 12:58:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53012 "EHLO mail.kernel.org"
+        Tue, 1 Oct 2019 13:04:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730941AbfJAQl3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Oct 2019 12:41:29 -0400
+        id S1727670AbfJAQj0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 1 Oct 2019 12:39:26 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1DB32168B;
-        Tue,  1 Oct 2019 16:41:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAB5421872;
+        Tue,  1 Oct 2019 16:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569948088;
-        bh=6vs+mxOj8LdnxQhig/ZrlnZJRypReXhz9Lk/p8RpLM8=;
+        s=default; t=1569947966;
+        bh=uOi64M7D10KweumGcEk7pWtgTYT8TAKC8lUsJlYhmAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qbfGs+npIO3cHCmu/sZF3MGlvzQ6LFbAjW91OpFuWCtHHw9jzaaSyORfWmBOp+hKl
-         zcJflDo8YglPt6bCt1Wqfr1XD3DplK171SeRucuM2vYUj3KBr9dKkQz2pckScYTkzm
-         c12DH/4sx3BCTZrdcHaHMeyNk0F/tD5SQD+GOLIQ=
+        b=vWboagiD+P2IhT7gOaPDHpZfsjH4akDoCvpn8AIVxTe1UuSD8ct6qFNY35Twp38Pp
+         1kT2zIniwtPqIol7veeJQ2hOMpeQZVy21wmLTMgxQWOlWTvLSDPUYxeSqj8qPZfWo1
+         SOItGf4NlbwOR8qDJ4AVy/WMDVQC7AslFurN+UGY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
@@ -46,12 +46,12 @@ Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 02/63] ima: always return negative code for error
-Date:   Tue,  1 Oct 2019 12:40:24 -0400
-Message-Id: <20191001164125.15398-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 03/71] ima: fix freeing ongoing ahash_request
+Date:   Tue,  1 Oct 2019 12:38:13 -0400
+Message-Id: <20191001163922.14735-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191001164125.15398-1-sashal@kernel.org>
-References: <20191001164125.15398-1-sashal@kernel.org>
+In-Reply-To: <20191001163922.14735-1-sashal@kernel.org>
+References: <20191001163922.14735-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,40 +63,38 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Sascha Hauer <s.hauer@pengutronix.de>
 
-[ Upstream commit f5e1040196dbfe14c77ce3dfe3b7b08d2d961e88 ]
+[ Upstream commit 4ece3125f21b1d42b84896c5646dbf0e878464e1 ]
 
-integrity_kernel_read() returns the number of bytes read. If this is
-a short read then this positive value is returned from
-ima_calc_file_hash_atfm(). Currently this is only indirectly called from
-ima_calc_file_hash() and this function only tests for the return value
-being zero or nonzero and also doesn't forward the return value.
-Nevertheless there's no point in returning a positive value as an error,
-so translate a short read into -EINVAL.
+integrity_kernel_read() can fail in which case we forward to call
+ahash_request_free() on a currently running request. We have to wait
+for its completion before we can free the request.
+
+This was observed by interrupting a "find / -type f -xdev -print0 | xargs -0
+cat 1>/dev/null" with ctrl-c on an IMA enabled filesystem.
 
 Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/integrity/ima/ima_crypto.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_crypto.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index d4c7b8e1b083d..7532b062be594 100644
+index 7532b062be594..73044fc6a9521 100644
 --- a/security/integrity/ima/ima_crypto.c
 +++ b/security/integrity/ima/ima_crypto.c
-@@ -268,8 +268,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
- 		rbuf_len = min_t(loff_t, i_size - offset, rbuf_size[active]);
- 		rc = integrity_kernel_read(file, offset, rbuf[active],
- 					   rbuf_len);
--		if (rc != rbuf_len)
-+		if (rc != rbuf_len) {
-+			if (rc >= 0)
-+				rc = -EINVAL;
+@@ -271,6 +271,11 @@ static int ima_calc_file_hash_atfm(struct file *file,
+ 		if (rc != rbuf_len) {
+ 			if (rc >= 0)
+ 				rc = -EINVAL;
++			/*
++			 * Forward current rc, do not overwrite with return value
++			 * from ahash_wait()
++			 */
++			ahash_wait(ahash_rc, &wait);
  			goto out3;
-+		}
+ 		}
  
- 		if (rbuf[1] && offset) {
- 			/* Using two buffers, and it is not the first
 -- 
 2.20.1
 
