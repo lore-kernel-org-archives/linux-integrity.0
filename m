@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA5FC35280
-	for <linux-integrity@archiver.kernel.org>; Wed,  2 Oct 2019 10:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE40BC352AA
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Oct 2019 10:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6A6A21920
-	for <linux-integrity@archiver.kernel.org>; Wed,  2 Oct 2019 10:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D05621924
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Oct 2019 10:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbfJBKoW (ORCPT
+        id S1728025AbfJBKpi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 2 Oct 2019 06:44:22 -0400
-Received: from mga03.intel.com ([134.134.136.65]:19132 "EHLO mga03.intel.com"
+        Wed, 2 Oct 2019 06:45:38 -0400
+Received: from mga18.intel.com ([134.134.136.126]:12114 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725851AbfJBKoV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 Oct 2019 06:44:21 -0400
+        id S1728023AbfJBKph (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 2 Oct 2019 06:45:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 03:44:20 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Oct 2019 03:45:37 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,574,1559545200"; 
-   d="scan'208";a="366669613"
+   d="scan'208";a="366670022"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.158])
-  by orsmga005.jf.intel.com with ESMTP; 02 Oct 2019 03:44:16 -0700
+  by orsmga005.jf.intel.com with ESMTP; 02 Oct 2019 03:45:31 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
@@ -40,9 +40,9 @@ Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2] tpm: Detach page allocation from tpm_buf
-Date:   Wed,  2 Oct 2019 13:44:11 +0300
-Message-Id: <20191002104411.7401-1-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v2,RESEND] tpm: Detach page allocation from tpm_buf
+Date:   Wed,  2 Oct 2019 13:45:30 +0300
+Message-Id: <20191002104530.7679-1-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -67,9 +67,6 @@ Cc: Sumit Garg <sumit.garg@linaro.org>
 Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
-v2:
-* In tpm2_get_random(), TPM2_CC_GET_RANDOM was accidently switched to
-  TPM2_CC_PCR_EXTEND. Now it has been switched back.
  drivers/char/tpm/tpm-sysfs.c      |  19 ++-
  drivers/char/tpm/tpm.h            |  40 ++---
  drivers/char/tpm/tpm1-cmd.c       | 114 +++++++++----
@@ -445,7 +442,7 @@ index 149e953ca369..2753699454ab 100644
  }
  
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index ba9acae83bff..50674710aed0 100644
+index ba9acae83bff..33aec240ce92 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
 @@ -175,13 +175,14 @@ struct tpm2_pcr_read_out {
@@ -563,7 +560,7 @@ index ba9acae83bff..50674710aed0 100644
  	do {
 -		tpm_buf_reset(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
 +		tpm_buf_reset(&buf, data_ptr, PAGE_SIZE,
-+			      TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_EXTEND);
++			      TPM2_ST_NO_SESSIONS, TPM2_CC_GET_RANDOM);
 +
  		tpm_buf_append_u16(&buf, num_bytes);
  		err = tpm_transmit_cmd(chip, &buf,
