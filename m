@@ -1,333 +1,188 @@
-Return-Path: <SRS0=aMgY=X2=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=/H73=X3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1D1ECE58B
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Oct 2019 23:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F68C352AA
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Oct 2019 00:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB98C21D81
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Oct 2019 23:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2496B20815
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Oct 2019 00:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfJAXmX (ORCPT
+        id S1726721AbfJBAX7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Oct 2019 19:42:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28454 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728960AbfJAXmW (ORCPT
+        Tue, 1 Oct 2019 20:23:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21078 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725765AbfJBAX7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Oct 2019 19:42:22 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x91Ng7Y3170475
-        for <linux-integrity@vger.kernel.org>; Tue, 1 Oct 2019 19:42:21 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2vcdgpn9a6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 01 Oct 2019 19:42:20 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Wed, 2 Oct 2019 00:42:18 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 2 Oct 2019 00:42:14 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x91NgCF631850678
+        Tue, 1 Oct 2019 20:23:59 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x920MDcf155641;
+        Tue, 1 Oct 2019 20:23:39 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vbsjt75s7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 20:23:39 -0400
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x920MEUP155678;
+        Tue, 1 Oct 2019 20:23:38 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vbsjt75re-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Oct 2019 20:23:38 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x920H4E2032344;
+        Wed, 2 Oct 2019 00:23:35 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma02wdc.us.ibm.com with ESMTP id 2v9y587q2v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 02 Oct 2019 00:23:35 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x920NYta41812442
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Oct 2019 23:42:12 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 722C5A4062;
-        Tue,  1 Oct 2019 23:42:12 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D63A6A4054;
-        Tue,  1 Oct 2019 23:42:09 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.80.224.222])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Oct 2019 23:42:09 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
+        Wed, 2 Oct 2019 00:23:34 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 47D4BBE05A;
+        Wed,  2 Oct 2019 00:23:34 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85469BE054;
+        Wed,  2 Oct 2019 00:23:29 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.154.167])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Wed,  2 Oct 2019 00:23:29 +0000 (GMT)
+References: <1569594360-7141-1-git-send-email-nayna@linux.ibm.com> <1569594360-7141-4-git-send-email-nayna@linux.ibm.com> <877e5pwa1b.fsf@morokweng.localdomain> <84f057d0-6a0b-d486-0eb6-f1590f32e377@linux.vnet.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Nayna <nayna@linux.vnet.ibm.com>
+Cc:     Nayna Jain <nayna@linux.ibm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-efi@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
         Eric Ricther <erichte@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        linuxppc-dev@ozlabs.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Paul Mackerras <paulus@samba.org>, Jeremy Kerr <jk@ozlabs.org>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
         "Oliver O'Halloran" <oohall@gmail.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v4 3/4] x86/efi: move common keyring handler functions to new file
-Date:   Tue,  1 Oct 2019 19:41:50 -0400
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1569973311-3047-1-git-send-email-nayna@linux.ibm.com>
-References: <1569973311-3047-1-git-send-email-nayna@linux.ibm.com>
+        linux-integrity@vger.kernel.org,
+        George Wilson <gcwilson@linux.ibm.com>
+Subject: Re: [PATCH v6 3/9] powerpc: add support to initialize ima policy rules
+In-reply-to: <84f057d0-6a0b-d486-0eb6-f1590f32e377@linux.vnet.ibm.com>
+Date:   Tue, 01 Oct 2019 21:23:25 -0300
+Message-ID: <87eezwvvuq.fsf@morokweng.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain
 X-TM-AS-GCONF: 00
-x-cbid: 19100123-4275-0000-0000-0000036D236C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19100123-4276-0000-0000-000038802451
-Message-Id: <1569973311-3047-4-git-send-email-nayna@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-01_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910010202
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910020000
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The handlers to add the keys to the .platform keyring and blacklisted
-hashes to the .blacklist keyring is common for both the uefi and powerpc
-mechanisms of loading the keys/hashes from the firmware.
 
-This patch moves the common code from load_uefi.c to keyring_handler.c
+Hi Nayna,
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/Makefile                   |  3 +-
- .../platform_certs/keyring_handler.c          | 80 +++++++++++++++++++
- .../platform_certs/keyring_handler.h          | 32 ++++++++
- security/integrity/platform_certs/load_uefi.c | 67 +---------------
- 4 files changed, 115 insertions(+), 67 deletions(-)
- create mode 100644 security/integrity/platform_certs/keyring_handler.c
- create mode 100644 security/integrity/platform_certs/keyring_handler.h
+Nayna <nayna@linux.vnet.ibm.com> writes:
 
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 19faace69644..525bf1d6e0db 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -11,7 +11,8 @@ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
- integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
- integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
--					platform_certs/load_uefi.o
-+				      platform_certs/load_uefi.o \
-+				      platform_certs/keyring_handler.o
- integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
- $(obj)/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
- 
-diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
-new file mode 100644
-index 000000000000..c5ba695c10e3
---- /dev/null
-+++ b/security/integrity/platform_certs/keyring_handler.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/kernel.h>
-+#include <linux/sched.h>
-+#include <linux/cred.h>
-+#include <linux/err.h>
-+#include <linux/efi.h>
-+#include <linux/slab.h>
-+#include <keys/asymmetric-type.h>
-+#include <keys/system_keyring.h>
-+#include "../integrity.h"
-+
-+static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
-+static efi_guid_t efi_cert_x509_sha256_guid __initdata =
-+	EFI_CERT_X509_SHA256_GUID;
-+static efi_guid_t efi_cert_sha256_guid __initdata = EFI_CERT_SHA256_GUID;
-+
-+/*
-+ * Blacklist a hash.
-+ */
-+static __init void uefi_blacklist_hash(const char *source, const void *data,
-+				       size_t len, const char *type,
-+				       size_t type_len)
-+{
-+	char *hash, *p;
-+
-+	hash = kmalloc(type_len + len * 2 + 1, GFP_KERNEL);
-+	if (!hash)
-+		return;
-+	p = memcpy(hash, type, type_len);
-+	p += type_len;
-+	bin2hex(p, data, len);
-+	p += len * 2;
-+	*p = 0;
-+
-+	mark_hash_blacklisted(hash);
-+	kfree(hash);
-+}
-+
-+/*
-+ * Blacklist an X509 TBS hash.
-+ */
-+static __init void uefi_blacklist_x509_tbs(const char *source,
-+					   const void *data, size_t len)
-+{
-+	uefi_blacklist_hash(source, data, len, "tbs:", 4);
-+}
-+
-+/*
-+ * Blacklist the hash of an executable.
-+ */
-+static __init void uefi_blacklist_binary(const char *source,
-+					 const void *data, size_t len)
-+{
-+	uefi_blacklist_hash(source, data, len, "bin:", 4);
-+}
-+
-+/*
-+ * Return the appropriate handler for particular signature list types found in
-+ * the UEFI db and MokListRT tables.
-+ */
-+__init efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type)
-+{
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
-+		return add_to_platform_keyring;
-+	return 0;
-+}
-+
-+/*
-+ * Return the appropriate handler for particular signature list types found in
-+ * the UEFI dbx and MokListXRT tables.
-+ */
-+__init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type)
-+{
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_sha256_guid) == 0)
-+		return uefi_blacklist_x509_tbs;
-+	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
-+		return uefi_blacklist_binary;
-+	return 0;
-+}
-diff --git a/security/integrity/platform_certs/keyring_handler.h b/security/integrity/platform_certs/keyring_handler.h
-new file mode 100644
-index 000000000000..2462bfa08fe3
---- /dev/null
-+++ b/security/integrity/platform_certs/keyring_handler.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef PLATFORM_CERTS_INTERNAL_H
-+#define PLATFORM_CERTS_INTERNAL_H
-+
-+#include <linux/efi.h>
-+
-+void blacklist_hash(const char *source, const void *data,
-+		    size_t len, const char *type,
-+		    size_t type_len);
-+
-+/*
-+ * Blacklist an X509 TBS hash.
-+ */
-+void blacklist_x509_tbs(const char *source, const void *data, size_t len);
-+
-+/*
-+ * Blacklist the hash of an executable.
-+ */
-+void blacklist_binary(const char *source, const void *data, size_t len);
-+
-+/*
-+ * Return the handler for particular signature list types found in the db.
-+ */
-+efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type);
-+
-+/*
-+ * Return the handler for particular signature list types found in the dbx.
-+ */
-+efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type);
-+
-+#endif
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index 81b19c52832b..4369204a19cd 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -9,6 +9,7 @@
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
- #include "../integrity.h"
-+#include "keyring_handler.h"
- 
- static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
- static efi_guid_t efi_cert_x509_sha256_guid __initdata =
-@@ -67,72 +68,6 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
- 	return db;
- }
- 
--/*
-- * Blacklist a hash.
-- */
--static __init void uefi_blacklist_hash(const char *source, const void *data,
--				       size_t len, const char *type,
--				       size_t type_len)
--{
--	char *hash, *p;
--
--	hash = kmalloc(type_len + len * 2 + 1, GFP_KERNEL);
--	if (!hash)
--		return;
--	p = memcpy(hash, type, type_len);
--	p += type_len;
--	bin2hex(p, data, len);
--	p += len * 2;
--	*p = 0;
--
--	mark_hash_blacklisted(hash);
--	kfree(hash);
--}
--
--/*
-- * Blacklist an X509 TBS hash.
-- */
--static __init void uefi_blacklist_x509_tbs(const char *source,
--					   const void *data, size_t len)
--{
--	uefi_blacklist_hash(source, data, len, "tbs:", 4);
--}
--
--/*
-- * Blacklist the hash of an executable.
-- */
--static __init void uefi_blacklist_binary(const char *source,
--					 const void *data, size_t len)
--{
--	uefi_blacklist_hash(source, data, len, "bin:", 4);
--}
--
--/*
-- * Return the appropriate handler for particular signature list types found in
-- * the UEFI db and MokListRT tables.
-- */
--static __init efi_element_handler_t get_handler_for_db(const efi_guid_t *
--						       sig_type)
--{
--	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
--		return add_to_platform_keyring;
--	return 0;
--}
--
--/*
-- * Return the appropriate handler for particular signature list types found in
-- * the UEFI dbx and MokListXRT tables.
-- */
--static __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *
--							sig_type)
--{
--	if (efi_guidcmp(*sig_type, efi_cert_x509_sha256_guid) == 0)
--		return uefi_blacklist_x509_tbs;
--	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
--		return uefi_blacklist_binary;
--	return 0;
--}
--
- /*
-  * Load the certs contained in the UEFI databases into the platform trusted
-  * keyring and the UEFI blacklisted X.509 cert SHA256 hashes into the blacklist
--- 
-2.20.1
+> On 09/30/2019 09:04 PM, Thiago Jung Bauermann wrote:
+>>> diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
+>>> new file mode 100644
+>>> index 000000000000..39401b67f19e
+>>> --- /dev/null
+>>> +++ b/arch/powerpc/kernel/ima_arch.c
+>>> @@ -0,0 +1,33 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (C) 2019 IBM Corporation
+>>> + * Author: Nayna Jain
+>>> + */
+>>> +
+>>> +#include <linux/ima.h>
+>>> +#include <asm/secure_boot.h>
+>>> +
+>>> +bool arch_ima_get_secureboot(void)
+>>> +{
+>>> +	return is_powerpc_os_secureboot_enabled();
+>>> +}
+>>> +
+>>> +/* Defines IMA appraise rules for secureboot */
+>>> +static const char *const arch_rules[] = {
+>>> +	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig",
+>>> +#if !IS_ENABLED(CONFIG_MODULE_SIG)
+>>> +	"appraise func=MODULE_CHECK appraise_type=imasig|modsig",
+>>> +#endif
+>>> +	NULL
+>>> +};
+>>> +
+>>> +/*
+>>> + * Returns the relevant IMA arch policies based on the system secureboot state.
+>>> + */
+>>> +const char *const *arch_get_ima_policy(void)
+>>> +{
+>>> +	if (is_powerpc_os_secureboot_enabled())
+>>> +		return arch_rules;
+>>> +
+>>> +	return NULL;
+>>> +}
+>> If CONFIG_MODULE_SIG is enabled but module signatures aren't enforced,
+>> then IMA won't enforce module signature either. x86's
+>> arch_get_ima_policy() calls set_module_sig_enforced(). Doesn't the
+>> powerpc version need to do that as well?
+>>
+>> On the flip side, if module signatures are enforced by the module
+>> subsystem then IMA will verify the signature a second time since there's
+>> no sharing of signature verification results between the module
+>> subsystem and IMA (this was observed by Mimi).
+>>
+>> IMHO this is a minor issue, since module loading isn't a hot path and
+>> the duplicate work shouldn't impact anything. But it could be avoided by
+>> having a NULL entry in arch_rules, which arch_get_ima_policy() would
+>> dynamically update with the "appraise func=MODULE_CHECK" rule if
+>> is_module_sig_enforced() is true.
+>
+> Thanks Thiago for reviewing.  I am wondering that this will give two meanings
+> for NULL.
 
+What are the two meanings? My understanding is that it only means "end
+of array". The additional NULL just allows arch_get_ima_policy() to
+dynamically append one item to the array.
+
+But I hadn't thought of your other alternatives. They should work just
+as well. Among those, I think option 1 is cleaner.
+
+This addresses the second issue I mentioned, but not the first.
+
+Also, one other thing I just noticed is that x86's arch policy has
+measure rules but powerpc's policy doesn't. What is different in our
+case?
+
+> Can we do something like below, there are possibly two options ?
+>
+> 1. Set IMA_APPRAISED in the iint->flags if is_module_sig_enforced().
+>
+> OR
+>
+> 2. Let ima_get_action() check for is_module_sig_enforced() when policy is
+> appraise and func is MODULE_CHECK.
+>
+> Thanks & Regards,
+>    - Nayna
+
+
+--
+Thiago Jung Bauermann
+IBM Linux Technology Center
