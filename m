@@ -2,97 +2,85 @@ Return-Path: <SRS0=u8Fu=X5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00381C4360C
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Oct 2019 17:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0450C4360C
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Oct 2019 18:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C508D20862
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Oct 2019 17:41:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="nbt7KltF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sQnuD25a"
+	by mail.kernel.org (Postfix) with ESMTP id 6F462215EA
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Oct 2019 18:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387928AbfJDRlq (ORCPT
+        id S1725775AbfJDSUQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Oct 2019 13:41:46 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59140 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387428AbfJDRlq (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Oct 2019 13:41:46 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 23C988EE21D;
-        Fri,  4 Oct 2019 10:41:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1570210905;
-        bh=y8xVxeb1DPLNLrDZFN+unjwHoSTFwPC/Cd11izdlLAQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=nbt7KltFzo16aqLKNy9oVeUZIgtOvuYOBq7C0N5+S/2m/+2EhYTJCQ1nbPzJgwdPx
-         XJyT5FsShIR7Ht9vZUhXKX2YD8g+WQkZ+RpLmfMpWMG9X+2lr6Api+GQ834actiEfw
-         0T1Gcv5+uK+wHD9+weCeVB8PxeVa3D5baVXQNfLE=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id gr9W5rhU80Li; Fri,  4 Oct 2019 10:41:44 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3E71B8EE0EE;
-        Fri,  4 Oct 2019 10:41:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1570210904;
-        bh=y8xVxeb1DPLNLrDZFN+unjwHoSTFwPC/Cd11izdlLAQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sQnuD25aRhJ5dz5g6P8NxE8n+RNDS4c0UiDrBplsp6Q79HYORhVGkHsYUT7kX3JHd
-         s4H9wMX19V4E4JiITW7FUB3HqVpzwaJN+y+YDRTUoUed02E8HTJS2/CRgurje8YLar
-         s26TaVdwX0BsbQ9BFoyEhxvY/VU0Z2dOJlteRH34=
-Message-ID: <1570210902.3563.19.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 2/2] tpm: Detach page allocation from tpm_buf
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 4 Oct 2019 14:20:16 -0400
+Received: from mga07.intel.com ([134.134.136.100]:15752 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfJDSUP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 4 Oct 2019 14:20:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Oct 2019 11:20:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.67,257,1566889200"; 
+   d="scan'208";a="205910170"
+Received: from nzaki1-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.4.57])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Oct 2019 11:20:08 -0700
+Date:   Fri, 4 Oct 2019 21:20:07 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     David Safford <david.safford@ge.com>,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:CRYPTO API" <linux-crypto@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 04 Oct 2019 10:41:42 -0700
-In-Reply-To: <1570210647.5046.78.camel@linux.ibm.com>
-References: <20191003185103.26347-1-jarkko.sakkinen@linux.intel.com>
-         <20191003185103.26347-3-jarkko.sakkinen@linux.intel.com>
-         <1570207062.3563.17.camel@HansenPartnership.com>
-         <1570210647.5046.78.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] KEYS: asym_tpm: Switch to get_random_bytes()
+Message-ID: <20191004182007.GA6945@linux.intel.com>
+References: <20190926171601.30404-1-jarkko.sakkinen@linux.intel.com>
+ <1570024819.4999.119.camel@linux.ibm.com>
+ <20191003114119.GF8933@linux.intel.com>
+ <1570107752.4421.183.camel@linux.ibm.com>
+ <20191003175854.GB19679@linux.intel.com>
+ <1570128827.5046.19.camel@linux.ibm.com>
+ <20191003215125.GA30511@linux.intel.com>
+ <20191003215743.GB30511@linux.intel.com>
+ <1570140491.5046.33.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1570140491.5046.33.camel@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2019-10-04 at 13:37 -0400, Mimi Zohar wrote:
-> On Fri, 2019-10-04 at 09:37 -0700, James Bottomley wrote:
-> > On Thu, 2019-10-03 at 21:51 +0300, Jarkko Sakkinen wrote:
-> > > As has been seen recently, binding the buffer allocation and
-> > > tpm_buf
-> > > together is sometimes far from optimal.
+On Thu, Oct 03, 2019 at 06:08:11PM -0400, Mimi Zohar wrote:
+> > At the time when trusted keys was introduced I'd say that it was a wrong
+> > design decision and badly implemented code. But you are right in that as
+> > far that code is considered it would unfair to speak of a regression.
 > > 
-> > Can you elaborate on this a bit more?  I must have missed the
-> > discussion.
+> > asym-tpm.c on the other hand this is fresh new code. There has been
+> > *countless* of discussions over the years that random numbers should
+> > come from multiple sources of entropy. There is no other categorization
+> > than a bug for the tpm_get_random() there.
 > 
-> Refer to e13cd21ffd50 ("tpm: Wrap the buffer from the caller to
-> tpm_buf in tpm_send()") for the details.
+> This week's LWN article on "5.4 Merge window, part 2" discusses "boot-
+> time entropy".  This article couldn't have been more perfectly timed.
 
-Yes, I get that, but to my mind that calls for moving the
-tpm_init/destroy_buf into the callers of tpm_send (which, for the most
-part, already exist), which means there's no need to separate the buf
-and data lifetimes.
+Do not see any obvious relation to this dicussion. Are you saying that
+you should not use the defacto kernel API's but instead bake your own
+hacks because even defacto stuff bumps into issues from time to time?
 
-James
+And BTW, at the time you call tpm_get_random(), TPM driver is already
+contributing to the entropy pool (registered as hwrng).
 
+/Jarkko
