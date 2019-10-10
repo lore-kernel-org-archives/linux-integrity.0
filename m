@@ -2,74 +2,69 @@ Return-Path: <SRS0=iaEy=YD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9756EC4360C
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Oct 2019 08:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AAC9C4360C
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Oct 2019 16:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC1621D7A
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Oct 2019 08:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570696106;
-	bh=L5is3Avng3rknWFuaXu0mMsht9z+QsEW6JsvwMdFvA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hDfkSqo0bb39HrNHyUQ0Azm7TEIdEZvMTDaMJmnZq78THrcVoPH6DbNl6fn/+/vcT
-	 p9ZY7DCgVwkxNiFll5+37tyZk3nb18vXvwCB/GEN/dwXvllXSxMGpXL6gQiTXjnTwB
-	 dJvRlBTDGF2/pLgyw315nQuGxo6yrfCy36sknYhQ=
+	by mail.kernel.org (Postfix) with ESMTP id 7B9E3208C3
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Oct 2019 16:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733089AbfJJI20 (ORCPT
+        id S1726091AbfJJQDV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Oct 2019 04:28:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfJJI20 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Oct 2019 04:28:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E39982190F;
-        Thu, 10 Oct 2019 08:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570696105;
-        bh=L5is3Avng3rknWFuaXu0mMsht9z+QsEW6JsvwMdFvA0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BfBBTPYw33qgR9u4E5Mc7HStrgmcfJEHHXzSTD9gWbhGpoOpzRIl6av3RrVBsyLvh
-         M2IdxTjDr75uEBGOb173VkhYPFsbAnfjqMFgkSVUNX4+qKlMBJxh3/6QbidG0qdyIC
-         qlrRpxRf8KI8WZJQb9aoLhTi6sf0DUCR6+fvlNGc=
-Date:   Thu, 10 Oct 2019 10:28:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
+        Thu, 10 Oct 2019 12:03:21 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57178 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726088AbfJJQDV (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 10 Oct 2019 12:03:21 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1iIauH-0004t3-Se; Thu, 10 Oct 2019 18:03:13 +0200
+Date:   Thu, 10 Oct 2019 18:03:13 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-stable@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Vadim Sukhomlinov <sukhomlinov@google.com>,
+Cc:     linux-integrity@vger.kernel.org, tglx@linutronix.de,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] tpm: Fix TPM 1.2 Shutdown sequence to prevent
- future TPM operations
-Message-ID: <20191010082822.GD326087@kroah.com>
-References: <20191009212831.29081-1-jarkko.sakkinen@linux.intel.com>
+        Philip Tricca <philip.b.tricca@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>
+Subject: Re: [PATCH] tpm: remove tpm_dev_wq_lock
+Message-ID: <20191010160313.pdf6ue4r2intbgoh@linutronix.de>
+References: <20190211105835.16851-1-bigeasy@linutronix.de>
+ <20190211141145.GD8431@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191009212831.29081-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20190211141145.GD8431@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 12:28:28AM +0300, Jarkko Sakkinen wrote:
-> commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream
+On 2019-02-11 16:11:45 [+0200], Jarkko Sakkinen wrote:
+> On Mon, Feb 11, 2019 at 11:58:35AM +0100, Sebastian Andrzej Siewior wrote:
+> > Added in commit
+> > 
+> >   9e1b74a63f776 ("tpm: add support for nonblocking operation")
+> > 
+> > but never actually used it.
+> > 
+> > Cc: Philip Tricca <philip.b.tricca@intel.com>
+> > Cc: Tadeusz Struk <tadeusz.struk@intel.com>
+> > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > 
-> This backport is for v4.14 and v4.19 The backport requires non-racy
-> behaviour from TPM 1.x sysfs code. Thus, the dependecies for that
-> are included.
+> You should use Fixes-tag e.g.
 > 
-> NOTE: 1/3 is only needed for v4.14.
+> Fixes: <12 first chars from SHA-1> ("<short summary>")
 
-How can a 0/X have a git commit id?
+Is this the only reason why it has not been picked up? A fixes line
+which triggers stable backports for something that does need to be
+backported?
 
-:)
+> /Jarkko
 
-greg k-h
+Sebastian
