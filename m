@@ -2,508 +2,158 @@ Return-Path: <SRS0=hrhM=YE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356ABECE58D
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Oct 2019 17:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2355DECE58E
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Oct 2019 21:05:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F243B21A4A
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Oct 2019 17:35:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IJT+bIAD"
+	by mail.kernel.org (Postfix) with ESMTP id F344B2084C
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Oct 2019 21:05:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfJKRfy (ORCPT
+        id S1728006AbfJKVFV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Oct 2019 13:35:54 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53904 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbfJKRfy (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Oct 2019 13:35:54 -0400
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.147.154])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 256D320B7116;
-        Fri, 11 Oct 2019 10:35:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 256D320B7116
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1570815352;
-        bh=kmx2GF0QcO6nLD4ICAjBZ6ex4bB+NyDztRHzFzqLM18=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJT+bIAD5R+90xwpH4aMZBz6P2dPwfE1T32yKlQ+UXynOqUwWWnOHSwNAuaF2sFdQ
-         adxUfFhuumZNS76AvvlOTjqNeIU8JljaiOF2qBfd+FhNgvgdoK+pVCqm4fInyJa9Ib
-         qhhUCfI4fLNdK/586goymmTYwwOBefIbci3tzLcM=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        kgoldman@us.ibm.com, mjg59@google.com, dhowells@redhat.com
-Cc:     balajib@linux.microsoft.com, prsriva@linux.microsoft.com,
-        jorhand@linux.microsoft.com, patatash@linux.microsoft.com
-Subject: [PATCH v0 1/2] KEYS: Measure keys added to builtin or secondary trusted keys keyring
-Date:   Fri, 11 Oct 2019 10:35:46 -0700
-Message-Id: <20191011173547.3200-2-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191011173547.3200-1-nramas@linux.microsoft.com>
-References: <20191011173547.3200-1-nramas@linux.microsoft.com>
+        Fri, 11 Oct 2019 17:05:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53578 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727500AbfJKVFV (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 11 Oct 2019 17:05:21 -0400
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F3A7B3CA20
+        for <linux-integrity@vger.kernel.org>; Fri, 11 Oct 2019 21:05:20 +0000 (UTC)
+Received: by mail-io1-f71.google.com with SMTP id z10so16387397ioj.1
+        for <linux-integrity@vger.kernel.org>; Fri, 11 Oct 2019 14:05:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=T6nN5QVk09gIDvkOFTEMQ2zlhiOadfEsIkZwkKFcinc=;
+        b=CKZSkvOSnw8/ES8d139w9VcmeatqrVW+BAWOLl48vTsTuHfgxMBu9QTzzYFna3VAih
+         rV/QSj1jqpCu6j6FGJbkgarxwzNhOcJCwKFtkksh6m1TsSEjhLfE1C3E89A3LKkHJJA0
+         3oE6Sv9BUrN4hcoPxofzot0GlfllzHjPa1so6vpiCpuqEZVNrUrSY4e7hntxNoS/UqlO
+         QNZDzlzBcKrsffYFScxEFLA4dofbstKaiOsetp1adqQQ+Wne+B/zRg7TGYgAnZDS51Lb
+         HHzcUkLlolaNrb7f/mvJRDZRzAALWQW7R6SXyivMHjnt5Zqz3L/itqiLXyRlPIywMOD2
+         AMqw==
+X-Gm-Message-State: APjAAAXD/goFpNBXRj+b1PIAIaOjgigV+BQtwufPxPvw4oD1h4flOS0W
+        M4v+/0E9T4en8Y+3yGaOtwEgbRc/R2OotSvRpR9vshnys+LaREoHkHkCmk3sKXFHZqvg3hnAVJw
+        1trOWQNR6jNoMBwvTl5z+gdiNYuEx
+X-Received: by 2002:a02:cb52:: with SMTP id k18mr19911874jap.97.1570827920183;
+        Fri, 11 Oct 2019 14:05:20 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxEVW3IbyR5eo7Y7vjH1MySickb9sECy4da7QTB9xvqhAM+inaAIj9NElVpvE+wQ+LlOfYACg==
+X-Received: by 2002:a02:cb52:: with SMTP id k18mr19911826jap.97.1570827919801;
+        Fri, 11 Oct 2019 14:05:19 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id a25sm5765883iod.62.2019.10.11.14.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2019 14:05:19 -0700 (PDT)
+Date:   Fri, 11 Oct 2019 14:05:17 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Sumit Garg <sumit.garg@linaro.org>, dhowells@redhat.com,
+        peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, daniel.thompson@linaro.org
+Subject: Re: [Patch v7 0/4] Create and consolidate trusted keys subsystem
+Message-ID: <20191011210517.qxjemugqczsvscu6@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sumit Garg <sumit.garg@linaro.org>, dhowells@redhat.com,
+        peterhuewe@gmx.de, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jgg@ziepe.ca, arnd@arndb.de,
+        gregkh@linuxfoundation.org, jejb@linux.ibm.com, zohar@linux.ibm.com,
+        jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org,
+        daniel.thompson@linaro.org
+References: <1570425935-7435-1-git-send-email-sumit.garg@linaro.org>
+ <20191011123757.GD3129@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191011123757.GD3129@linux.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-IMA hook TRUSTED_KEYS to measure keys added to builtin or secondary
-trusted keys keyring. This can be enabled through IMA policy.
+On Fri Oct 11 19, Jarkko Sakkinen wrote:
+>On Mon, Oct 07, 2019 at 10:55:31AM +0530, Sumit Garg wrote:
+>> This patch-set does restructuring of trusted keys code to create and
+>> consolidate trusted keys subsystem.
+>>
+>> Also, patch #2 replaces tpm1_buf code used in security/keys/trusted.c and
+>> crypto/asymmertic_keys/asym_tpm.c files to use the common tpm_buf code.
+>>
+>> Changes in v7:
+>> 1. Rebased to top of tpmdd/master
+>> 2. Patch #4: update tpm2 trusted keys code to use tpm_send() instead of
+>>    tpm_transmit_cmd() which is an internal function.
+>>
+>> Changes in v6:
+>> 1. Switch TPM asymmetric code also to use common tpm_buf code. These
+>>    changes required patches #1 and #2 update, so I have dropped review
+>>    tags from those patches.
+>> 2. Incorporated miscellaneous comments from Jarkko.
+>>
+>> Changes in v5:
+>> 1. Drop 5/5 patch as its more relavant along with TEE patch-set.
+>> 2. Add Reviewed-by tag for patch #2.
+>> 3. Fix build failure when "CONFIG_HEADER_TEST" and
+>>    "CONFIG_KERNEL_HEADER_TEST" config options are enabled.
+>> 4. Misc changes to rename files.
+>>
+>> Changes in v4:
+>> 1. Separate patch for export of tpm_buf code to include/linux/tpm.h
+>> 2. Change TPM1.x trusted keys code to use common tpm_buf
+>> 3. Keep module name as trusted.ko only
+>>
+>> Changes in v3:
+>>
+>> Move TPM2 trusted keys code to trusted keys subsystem.
+>>
+>> Changes in v2:
+>>
+>> Split trusted keys abstraction patch for ease of review.
+>>
+>> Sumit Garg (4):
+>>   tpm: Move tpm_buf code to include/linux/
+>>   KEYS: Use common tpm_buf for trusted and asymmetric keys
+>>   KEYS: trusted: Create trusted keys subsystem
+>>   KEYS: trusted: Move TPM2 trusted keys code
+>>
+>>  crypto/asymmetric_keys/asym_tpm.c                  | 101 +++----
+>>  drivers/char/tpm/tpm-interface.c                   |  56 ----
+>>  drivers/char/tpm/tpm.h                             | 226 ---------------
+>>  drivers/char/tpm/tpm2-cmd.c                        | 307 --------------------
+>>  include/Kbuild                                     |   1 -
+>>  include/keys/{trusted.h => trusted_tpm.h}          |  49 +---
+>>  include/linux/tpm.h                                | 251 ++++++++++++++--
+>>  security/keys/Makefile                             |   2 +-
+>>  security/keys/trusted-keys/Makefile                |   8 +
+>>  .../{trusted.c => trusted-keys/trusted_tpm1.c}     |  96 +++----
+>>  security/keys/trusted-keys/trusted_tpm2.c          | 314 +++++++++++++++++++++
+>>  11 files changed, 652 insertions(+), 759 deletions(-)
+>>  rename include/keys/{trusted.h => trusted_tpm.h} (77%)
+>>  create mode 100644 security/keys/trusted-keys/Makefile
+>>  rename security/keys/{trusted.c => trusted-keys/trusted_tpm1.c} (94%)
+>>  create mode 100644 security/keys/trusted-keys/trusted_tpm2.c
+>>
+>> --
+>> 2.7.4
+>>
+>
+>I fixed a merge conflict caused by James' commit. Already pushed.
+>Compiling test kernel ATM i.e. tested-by's will follow later.
+>
+>/Jarkko
 
-The key data is queued up if IMA is not yet initialized and measured
-when IMA is initialized. If IMA is initialized then the key is
-measured immediately.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy |   1 +
- include/linux/ima.h                  |  10 ++
- security/integrity/ima/ima.h         |  14 ++
- security/integrity/ima/ima_api.c     |   2 +-
- security/integrity/ima/ima_init.c    |  11 +-
- security/integrity/ima/ima_main.c    | 230 ++++++++++++++++++++++-----
- security/integrity/ima/ima_policy.c  |   4 +-
- 7 files changed, 226 insertions(+), 46 deletions(-)
-
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index fc376a323908..cc25c0f41d6e 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,6 +29,7 @@ Description:
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
- 				[KEXEC_CMDLINE]
-+				[TRUSTED_KEYS]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index a20ad398d260..eb95743ada7d 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -25,6 +25,9 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_kexec_cmdline(const void *buf, int size);
- 
-+extern int ima_post_key_create_or_update(struct key *keyring,
-+					 struct key *key,
-+					 bool builtin_or_secondary);
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
-@@ -91,6 +94,13 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
- }
- 
- static inline void ima_kexec_cmdline(const void *buf, int size) {}
-+
-+static inline int ima_post_key_create_or_update(struct key *keyring,
-+						struct key *key,
-+						bool builtin_or_secondary)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 011b91c79351..f0c1801da890 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -21,6 +21,7 @@
- #include <linux/tpm.h>
- #include <linux/audit.h>
- #include <crypto/hash_info.h>
-+#include <keys/asymmetric-type.h>
- 
- #include "../integrity.h"
- 
-@@ -52,6 +53,7 @@ extern int ima_policy_flag;
- extern int ima_hash_algo;
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
-+extern bool ima_initialized;
- 
- /* IMA event related data */
- struct ima_event_data {
-@@ -104,6 +106,16 @@ struct ima_queue_entry {
- };
- extern struct list_head ima_measurements;	/* list of all measurements */
- 
-+/*
-+ * To track trusted keys that need to be measured when IMA is initialized.
-+ */
-+struct ima_trusted_key_entry {
-+	struct list_head list;
-+	void *public_key;
-+	u32  public_key_len;
-+	char *key_description;
-+};
-+
- /* Some details preceding the binary serialized measurement list */
- struct ima_kexec_hdr {
- 	u16 version;
-@@ -158,6 +170,7 @@ void ima_init_template_list(void);
- int __init ima_init_digests(void);
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
- 			  void *lsm_data);
-+void ima_measure_queued_trusted_keys(void);
- 
- /*
-  * used to protect h_table and sha_table
-@@ -189,6 +202,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
- 	hook(KEXEC_CMDLINE)		\
-+	hook(TRUSTED_KEYS)		\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index f614e22bf39f..704a048ff925 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -174,7 +174,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-- *	| KEXEC_CMDLINE
-+ *	| KEXEC_CMDLINE | TRUSTED_KEYS
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 5d55ade5f3b9..32b9147fe410 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -23,6 +23,7 @@
- /* name for boot aggregate entry */
- static const char boot_aggregate_name[] = "boot_aggregate";
- struct tpm_chip *ima_tpm_chip;
-+bool ima_initialized;
- 
- /* Add the boot aggregate to the IMA measurement list and extend
-  * the PCR register.
-@@ -131,5 +132,13 @@ int __init ima_init(void)
- 
- 	ima_init_policy();
- 
--	return ima_fs_init();
-+	rc = ima_fs_init();
-+	if (rc != 0)
-+		return rc;
-+
-+	ima_initialized = true;
-+
-+	ima_measure_queued_trusted_keys();
-+
-+	return 0;
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 584019728660..b0ee5c82207a 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -27,6 +27,7 @@
- #include <linux/ima.h>
- #include <linux/iversion.h>
- #include <linux/fs.h>
-+#include <crypto/public_key.h>
- 
- #include "ima.h"
- 
-@@ -43,6 +44,13 @@ static struct notifier_block ima_lsm_policy_notifier = {
- 	.notifier_call = ima_lsm_policy_change,
- };
- 
-+/*
-+ * Used to synchronize access to the list of trusted keys (ima_trusted_keys)
-+ * that need to be measured when IMA is initialized.
-+ */
-+static DEFINE_MUTEX(ima_trusted_keys_mutex);
-+static LIST_HEAD(ima_trusted_keys);
-+
- static int __init hash_setup(char *str)
- {
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
-@@ -351,6 +359,65 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	return 0;
- }
- 
-+
-+/*
-+ * process_buffer_measurement - Measure the buffer to ima log.
-+ * @buf: pointer to the buffer that needs to be added to the log.
-+ * @size: size of buffer(in bytes).
-+ * @eventname: event name to be used for the buffer entry.
-+ * @func: IMA Hook function
-+ * @cred: a pointer to a credentials structure for user validation.
-+ * @secid: the secid of the task to be validated.
-+ *
-+ * Based on policy, the buffer is measured into the ima log.
-+ */
-+static void process_buffer_measurement(const void *buf, u32 size,
-+				       const char *eventname,
-+				       enum ima_hooks func,
-+				       const struct cred *cred, u32 secid)
-+{
-+	int ret = 0;
-+	struct ima_template_entry *entry = NULL;
-+	struct integrity_iint_cache iint = {};
-+	struct ima_event_data event_data = {.iint = &iint,
-+					    .filename = eventname,
-+					    .buf = buf,
-+					    .buf_len = size};
-+	struct ima_template_desc *template_desc = ima_template_desc_current();
-+	struct {
-+		struct ima_digest_data hdr;
-+		char digest[IMA_MAX_DIGEST_SIZE];
-+	} hash = {};
-+	int violation = 0;
-+	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	int action = 0;
-+
-+	action = ima_get_action(NULL, cred, secid, 0, func, &pcr,
-+				&template_desc);
-+	if (!(action & IMA_MEASURE))
-+		return;
-+
-+	iint.ima_hash = &hash.hdr;
-+	iint.ima_hash->algo = ima_hash_algo;
-+	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
-+
-+	ret = ima_calc_buffer_hash(buf, size, iint.ima_hash);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = ima_alloc_init_template(&event_data, &entry, template_desc);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = ima_store_template(entry, violation, NULL, buf, pcr);
-+
-+	if (ret < 0)
-+		ima_free_template_entry(entry);
-+
-+out:
-+	return;
-+}
-+
- /**
-  * ima_file_mmap - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured (May be NULL)
-@@ -605,60 +672,136 @@ int ima_load_data(enum kernel_load_data_id id)
- 	return 0;
- }
- 
-+static void ima_free_trusted_key_entry(struct ima_trusted_key_entry *entry)
-+{
-+	if (entry != NULL) {
-+		if (entry->public_key != NULL)
-+			kzfree(entry->public_key);
-+		if (entry->key_description != NULL)
-+			kzfree(entry->key_description);
-+		kzfree(entry);
-+	}
-+}
-+
-+static struct ima_trusted_key_entry *ima_alloc_trusted_queue_entry(
-+	struct key *key)
-+{
-+	int rc = 0;
-+	const struct public_key *pk;
-+	size_t key_description_len;
-+	struct ima_trusted_key_entry *entry = NULL;
-+
-+	pk = key->payload.data[asym_crypto];
-+	key_description_len = strlen(key->description) + 1;
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (entry != NULL) {
-+		entry->public_key = kzalloc(pk->keylen, GFP_KERNEL);
-+		entry->key_description =
-+			kzalloc(key_description_len, GFP_KERNEL);
-+	}
-+
-+	if ((entry == NULL) || (entry->public_key == NULL) ||
-+	    (entry->key_description == NULL)) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	strcpy(entry->key_description, key->description);
-+	memcpy(entry->public_key, pk->key, pk->keylen);
-+	entry->public_key_len = pk->keylen;
-+	rc = 0;
-+
-+out:
-+	if (rc) {
-+		ima_free_trusted_key_entry(entry);
-+		entry = NULL;
-+	}
-+
-+	return entry;
-+}
-+
- /*
-- * process_buffer_measurement - Measure the buffer to ima log.
-- * @buf: pointer to the buffer that needs to be added to the log.
-- * @size: size of buffer(in bytes).
-- * @eventname: event name to be used for the buffer entry.
-- * @cred: a pointer to a credentials structure for user validation.
-- * @secid: the secid of the task to be validated.
-+ * ima_post_key_create_or_update
-+ *     @keyring points to the keyring to which the key belongs
-+ *     @key points to the key being created or updated
-+ *     @builtin_or_secondary flag indicating whether
-+ *     the keyring to which the key belongs is the builtin
-+ *     or secondary trusted keys keyring
-+ * Measure keys added to the builtin or secondary trusted keyring
-  *
-- * Based on policy, the buffer is measured into the ima log.
-+ * On success return 0.
-+ * Return appropriate error code on error
-  */
--static void process_buffer_measurement(const void *buf, int size,
--				       const char *eventname,
--				       const struct cred *cred, u32 secid)
-+int ima_post_key_create_or_update(struct key *keyring,
-+				  struct key *key,
-+				  bool builtin_or_secondary)
- {
--	int ret = 0;
--	struct ima_template_entry *entry = NULL;
--	struct integrity_iint_cache iint = {};
--	struct ima_event_data event_data = {.iint = &iint,
--					    .filename = eventname,
--					    .buf = buf,
--					    .buf_len = size};
--	struct ima_template_desc *template_desc = NULL;
--	struct {
--		struct ima_digest_data hdr;
--		char digest[IMA_MAX_DIGEST_SIZE];
--	} hash = {};
--	int violation = 0;
--	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
--	int action = 0;
-+	int rc = 0;
-+	struct ima_trusted_key_entry *entry = NULL;
-+	const struct public_key *pk;
-+	u32 secid;
-+	bool queued = false;
- 
--	action = ima_get_action(NULL, cred, secid, 0, KEXEC_CMDLINE, &pcr,
--				&template_desc);
--	if (!(action & IMA_MEASURE))
--		return;
-+	/*
-+	 * We only measure asymmetric keys added to either
-+	 * the builtin or the secondary trusted keys keyring.
-+	 */
-+	if (!builtin_or_secondary ||
-+	    (key->type != &key_type_asymmetric))
-+		return 0;
- 
--	iint.ima_hash = &hash.hdr;
--	iint.ima_hash->algo = ima_hash_algo;
--	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
-+	mutex_lock(&ima_trusted_keys_mutex);
- 
--	ret = ima_calc_buffer_hash(buf, size, iint.ima_hash);
--	if (ret < 0)
--		goto out;
-+	if (!ima_initialized) {
-+		entry = ima_alloc_trusted_queue_entry(key);
-+		if (entry != NULL) {
-+			INIT_LIST_HEAD(&entry->list);
-+			list_add_tail(&entry->list, &ima_trusted_keys);
-+			queued = true;
-+		} else
-+			rc = -ENOMEM;
-+	}
- 
--	ret = ima_alloc_init_template(&event_data, &entry, template_desc);
--	if (ret < 0)
--		goto out;
-+	mutex_unlock(&ima_trusted_keys_mutex);
- 
--	ret = ima_store_template(entry, violation, NULL, buf, pcr);
-+	if ((rc == 0) && !queued) {
-+		security_task_getsecid(current, &secid);
-+		pk = key->payload.data[asym_crypto];
-+		process_buffer_measurement(pk->key, pk->keylen,
-+					   key->description,
-+					   TRUSTED_KEYS,
-+					   current_cred(), secid);
-+	}
- 
--	if (ret < 0)
--		ima_free_template_entry(entry);
-+	return rc;
-+}
- 
--out:
--	return;
-+void ima_measure_queued_trusted_keys(void)
-+{
-+	struct ima_trusted_key_entry *entry, *tmp;
-+	u32 secid;
-+
-+	mutex_lock(&ima_trusted_keys_mutex);
-+
-+	security_task_getsecid(current, &secid);
-+	list_for_each_entry_safe(entry, tmp, &ima_trusted_keys, list) {
-+		if ((entry != NULL) &&
-+		    (entry->public_key != NULL) &&
-+		    (entry->key_description != NULL)) {
-+
-+			process_buffer_measurement(entry->public_key,
-+						   entry->public_key_len,
-+						   entry->key_description,
-+						   TRUSTED_KEYS,
-+						   current_cred(),
-+						   secid);
-+		}
-+
-+		list_del(&entry->list);
-+		ima_free_trusted_key_entry(entry);
-+	}
-+
-+	mutex_unlock(&ima_trusted_keys_mutex);
- }
- 
- /**
-@@ -675,6 +818,7 @@ void ima_kexec_cmdline(const void *buf, int size)
- 	if (buf && size != 0) {
- 		security_task_getsecid(current, &secid);
- 		process_buffer_measurement(buf, size, "kexec-cmdline",
-+					   KEXEC_CMDLINE,
- 					   current_cred(), secid);
- 	}
- }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 6df7f641ff66..1752f7bd1717 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -370,7 +370,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if (func == KEXEC_CMDLINE) {
-+	if ((func == KEXEC_CMDLINE) || (func == TRUSTED_KEYS)) {
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func))
- 			return true;
- 		return false;
-@@ -959,6 +959,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
-+			else if (strcmp(args[0].from, "TRUSTED_KEYS") == 0)
-+				entry->func = TRUSTED_KEYS;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.17.1
-
+Are you missing patch 4 on master?
