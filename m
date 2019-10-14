@@ -2,53 +2,49 @@ Return-Path: <SRS0=Tr54=YH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68233C4CECE
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Oct 2019 10:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3883AECE587
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Oct 2019 10:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491562084B
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Oct 2019 10:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AFAC20663
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Oct 2019 10:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbfJNKiG (ORCPT
+        id S1731557AbfJNKjc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Oct 2019 06:38:06 -0400
-Received: from mga04.intel.com ([192.55.52.120]:47070 "EHLO mga04.intel.com"
+        Mon, 14 Oct 2019 06:39:32 -0400
+Received: from mga01.intel.com ([192.55.52.88]:35291 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731249AbfJNKiG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Oct 2019 06:38:06 -0400
+        id S1731305AbfJNKj3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 14 Oct 2019 06:39:29 -0400
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 03:38:05 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Oct 2019 03:39:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.67,295,1566889200"; 
-   d="scan'208";a="188990196"
+   d="scan'208";a="199368456"
 Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.126])
-  by orsmga008.jf.intel.com with ESMTP; 14 Oct 2019 03:38:01 -0700
-Date:   Mon, 14 Oct 2019 13:38:02 +0300
+  by orsmga006.jf.intel.com with ESMTP; 14 Oct 2019 03:39:26 -0700
+Date:   Mon, 14 Oct 2019 13:39:26 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-stable@vger.kernel.org,
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-stable@vger.kernel.org, linux-integrity@vger.kernel.org,
         Vadim Sukhomlinov <sukhomlinov@google.com>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] tpm: Fix TPM 1.2 Shutdown sequence to prevent
+Subject: Re: [PATCH v4 0/3] tpm: Fix TPM 1.2 Shutdown sequence to prevent
  future TPM operations
-Message-ID: <20191014103802.GA12301@linux.intel.com>
+Message-ID: <20191014103926.GB12301@linux.intel.com>
 References: <20191009212831.29081-1-jarkko.sakkinen@linux.intel.com>
- <20191009212831.29081-4-jarkko.sakkinen@linux.intel.com>
- <20191010082807.GC326087@kroah.com>
+ <20191010082822.GD326087@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191010082807.GC326087@kroah.com>
+In-Reply-To: <20191010082822.GD326087@kroah.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -56,30 +52,24 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 10, 2019 at 10:28:07AM +0200, Greg Kroah-Hartman wrote:
-> On Thu, Oct 10, 2019 at 12:28:31AM +0300, Jarkko Sakkinen wrote:
-> > From: Vadim Sukhomlinov <sukhomlinov@google.com>
-> > 
+On Thu, Oct 10, 2019 at 10:28:22AM +0200, Greg KH wrote:
+> On Thu, Oct 10, 2019 at 12:28:28AM +0300, Jarkko Sakkinen wrote:
 > > commit db4d8cb9c9f2af71c4d087817160d866ed572cc9 upstream
 > > 
-> > TPM 2.0 Shutdown involve sending TPM2_Shutdown to TPM chip and disabling
-> > future TPM operations. TPM 1.2 behavior was different, future TPM
-> > operations weren't disabled, causing rare issues. This patch ensures
-> > that future TPM operations are disabled.
+> > This backport is for v4.14 and v4.19 The backport requires non-racy
+> > behaviour from TPM 1.x sysfs code. Thus, the dependecies for that
+> > are included.
 > > 
-> > Fixes: d1bd4a792d39 ("tpm: Issue a TPM2_Shutdown for TPM2 devices.")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Vadim Sukhomlinov <sukhomlinov@google.com>
-> > [dianders: resolved merge conflicts with mainline]
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  drivers/char/tpm/tpm-chip.c | 9 ++++-----
-> >  1 file changed, 4 insertions(+), 5 deletions(-)
+> > NOTE: 1/3 is only needed for v4.14.
 > 
-> This is already in the 4.14.148 4.19.78 5.1.18 5.2.1 5.3 releases.
+> How can a 0/X have a git commit id?
+> 
+> :)
+> 
+> greg k-h
 
-There was one extra NULL assigment (non op). Nothing critical.
+It cannot. I just mentioned it here because the whole purpose
+of two other dependecies is to support the backport of that
+upstream commit.
 
-/Jarkko
+/Jarkko.
