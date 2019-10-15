@@ -2,101 +2,90 @@ Return-Path: <SRS0=4Kou=YI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB79C10F14
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Oct 2019 18:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E89AC10F14
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Oct 2019 20:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 843DE20872
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Oct 2019 18:47:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="DWS32Jsm"
+	by mail.kernel.org (Postfix) with ESMTP id 5959820663
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Oct 2019 20:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfJOSrd (ORCPT
+        id S1726775AbfJOUXZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 15 Oct 2019 14:47:33 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43300 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728258AbfJOSrc (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 Oct 2019 14:47:32 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r9so19001134edl.10
-        for <linux-integrity@vger.kernel.org>; Tue, 15 Oct 2019 11:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Pfvg+FTtrisg7B2S8oM0CWu26E9e8Sf1gXQfTf34924=;
-        b=DWS32JsmOlg5VgikKYtVcPLKwn3b9Q4/V0KNahVXNAMx9O+6dQVwKcEF+Lndyz/cUP
-         T8qVbCzzI3QD4vSRPTkIfkRWU0VtopbR5bmjoK4EhIeo9z9nHu8Y2+S4WUCHESEGLueY
-         kZnycdUuYFT92OAHv90YZyjrMLD64mqJ+UjTBIxOfJG0g2TXBBHtiI1uNutceqDunni7
-         83OPAVIphlgUTv6vOQ4XNmhn+EIzhha33eHjbIWmFxMuCd9Q36GIFYhc2Df2CVCFka+j
-         tj76RJeVAtrK9OBMXa9y9PmMSeCS5tBi6bId/9RNBVnNplRBX3EyVTbe+cvZFAJ/BjE7
-         ZpZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Pfvg+FTtrisg7B2S8oM0CWu26E9e8Sf1gXQfTf34924=;
-        b=pSS28FK1D6sNKxqh38DgZ45lcwqjmt7ltDXruP9rv6E6RkcGZiLbQ/vh2l6KHWfHCT
-         BWHMvNxFFGnw+s8uyu+y4DmrzfxVJwl/msLJ3ND/bGdp3ZmXXpSiX8d9zuN1e8SWeX8X
-         1P4ZNnxhHTc3cdxPOX7t5uQFysjW/rI0j0ZCe7bXFxF2zkk569pjA8yhD7Sm/xxnqCiD
-         fhEqxPKzj0PG75Xr2WpLYG9K5AsEF+DIzAEWEd9n3hNeWWukVfZA7Dogs3Lf06MxM8EM
-         nnfr84IP7fx7Qc5vs6T/Jiufw12YOQr7wyMg3pqfJlwOzYj96BvYLmdZE3IGQiHP5gTc
-         Ds8w==
-X-Gm-Message-State: APjAAAW5QwIcbwrpihKDgKPpw8ryVz8qNl2VCqr7+Zn+gLKX14XmCAOZ
-        SwpltzxmeDMi9YQl1SdIlHO8/XxoFgSmgKsqpcfJtg==
-X-Google-Smtp-Source: APXvYqwYBNXfzf8UL1/6WH3Lzo2PnVa4eH7g/2iw18YIH4cRXry4dS5x/CxY7akvONtDlQt0LutAiqvmrk0BHlBahoo=
-X-Received: by 2002:a05:6402:2022:: with SMTP id ay2mr34963109edb.219.1571165249255;
- Tue, 15 Oct 2019 11:47:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191011003600.22090-1-prsriva@linux.microsoft.com>
- <87d92514-e5e4-a79f-467f-f24a4ed279b6@arm.com> <b35b239c-990c-0d5b-0298-8f9e35064e2b@linux.microsoft.com>
- <0053eb68-0905-4679-c97a-00c5cb6f1abb@arm.com>
-In-Reply-To: <0053eb68-0905-4679-c97a-00c5cb6f1abb@arm.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Tue, 15 Oct 2019 14:47:18 -0400
-Message-ID: <CA+CK2bBVcE91YbJx1f_BkNqbD03wGLNtyane7PjCnEu8i_cH2Q@mail.gmail.com>
-Subject: Re: [PATCH V4 0/2] Add support for arm64 to carry ima measurement
-To:     James Morse <james.morse@arm.com>
-Cc:     prsriva <prsriva@linux.microsoft.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Tue, 15 Oct 2019 16:23:25 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:39422 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbfJOUXY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 15 Oct 2019 16:23:24 -0400
+Received: from remote.shanghaihotelholland.com ([46.44.148.63] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iKTLm-00085H-4l; Tue, 15 Oct 2019 22:23:22 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        kexec mailing list <kexec@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>, jean-philippe@linaro.org,
-        arnd@arndb.de, takahiro.akashi@linaro.org, sboyd@kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>, zohar@linux.ibm.com,
-        Masahiro Yamada <yamada.masahiro@socionext.com>, duwe@lst.de,
-        bauerman@linux.ibm.com, Thomas Gleixner <tglx@linutronix.de>,
-        allison@lohutok.net, Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v7 0/6] tpm: Add driver for cr50
+Date:   Tue, 15 Oct 2019 22:23:15 +0200
+Message-ID: <11998737.dOvWaeisEJ@phil>
+In-Reply-To: <20191014195607.GK15552@linux.intel.com>
+References: <20190920183240.181420-1-swboyd@chromium.org> <4042311.vcUrecXYXX@diego> <20191014195607.GK15552@linux.intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> I think the UEFI persistent-memory-reservations thing is a better fit for this [0][1].
+Hi,
 
-Hi James,
+Am Montag, 14. Oktober 2019, 21:56:30 CEST schrieb Jarkko Sakkinen:
+> On Fri, Oct 11, 2019 at 09:50:27AM +0200, Heiko Stübner wrote:
+> > Am Montag, 7. Oktober 2019, 00:39:00 CEST schrieb Jarkko Sakkinen:
+> > > On Fri, Sep 20, 2019 at 11:32:34AM -0700, Stephen Boyd wrote:
+> > > > This patch series adds support for the H1 secure microcontroller
+> > > > running cr50 firmware found on various recent Chromebooks. This driver
+> > > > is necessary to boot into a ChromeOS userspace environment. It
+> > > > implements support for several functions, including TPM-like
+> > > > functionality over a SPI interface.
+> > > > 
+> > > > The last time this was series sent looks to be [1]. I've looked over the
+> > > > patches and review comments and tried to address any feedback that
+> > > > Andrey didn't address (really minor things like newlines). I've reworked
+> > > > the patches from the last version to layer on top of the existing TPM
+> > > > TIS SPI implementation in tpm_tis_spi.c. Hopefully this is more
+> > > > palatable than combining the two drivers together into one file.
+> > > > 
+> > > > Please review so we can get the approach to supporting this device
+> > > > sorted out.
+> > > > 
+> > > > [1] https://lkml.kernel.org/r/1469757314-116169-1-git-send-email-apronin@chromium.org
+> > 
+> > [...]
+> > 
+> > > OK, so, I put these to my master in hopes to get testing exposure.
+> > > I think the changes are in great shape now. Thank you.
+> > 
+> > on a rk3399-gru-bob it works nicely for me, so
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> 
+> Thank you! I updated my tree with your tag. Mind if I also add
+> reviewed-by's?
 
-Thank you for your thought. As I understand you propose the to use the
-existing method as such:
-1. Use the existing kexec ABI to pass reservation from kernel to
-kernel using EFI the same as is done for GICv3 tables.
-2. Allow this memory to be reservable only during first Linux boot via
-EFI memory reserve
-3. Allow to have this memory pre-reserved by firmware or to be
-embedded into device tree.
+I think I did spent enough time with the patches to warrant that, so
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-A question I have is how to tell that a reserved region is reserved
-for IMA use. With GICv3 it is done by reading the registers, finding
-the interrupt tables memory, and check that the memory ranges are
-indeed pre-reserved.
+Heiko
 
-Is there a way to name memory with the current ABI that you think is acceptable?
 
-Thank you,
-Pasha
