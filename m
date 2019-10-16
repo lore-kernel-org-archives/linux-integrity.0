@@ -2,129 +2,82 @@ Return-Path: <SRS0=N1Ie=YJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EA3FA372C
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Oct 2019 22:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF33FA372B
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Oct 2019 23:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D245121925
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Oct 2019 22:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571263890;
-	bh=8Em2bsmIAcI/tf3Ihod02Uq15PYbjOQsMAOdNwSUvTk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iPEGlB9Z+jXZT2ijHtSfKiuqon0ZzLWeDdiRVqgehhxTxVe/wBSey43myXK+BNyFd
-	 GKA7fz1DSwgETODVi643dBwoM8dylvCBSk0AAmV6pvu+TfghK3fHFk/KyseZ877ghN
-	 obFunZ9hbJ794kJTUditWNV6PZ1WfNRLdvhQMT8o=
+	by mail.kernel.org (Postfix) with ESMTP id E830621848
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Oct 2019 23:25:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395426AbfJPV4o (ORCPT
+        id S2390305AbfJPXZ2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Oct 2019 17:56:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2395417AbfJPV4o (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Oct 2019 17:56:44 -0400
-Received: from localhost (unknown [192.55.54.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1E8A21D7D;
-        Wed, 16 Oct 2019 21:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571263003;
-        bh=8Em2bsmIAcI/tf3Ihod02Uq15PYbjOQsMAOdNwSUvTk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HcPXBAAKzTiqlPdXsQ6seV/3ICMFLT4Qpban1IyigTKtBzCfgt5P65YO37F3O3v7L
-         115jhdnO1eOvCapNQ9BaQqyro7pZpDiSZHsimnEjBD2DlbvkVt3NAF4Lug3PEgGRwn
-         a/Nxgs84SkUIknWDgtafhvNOTO2ig+7SHUOFlD0s=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Scott Talbert <swt@techie.net>,
+        Wed, 16 Oct 2019 19:25:28 -0400
+Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:56242 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725970AbfJPXZ2 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Oct 2019 19:25:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id B26C85832;
+        Wed, 16 Oct 2019 23:25:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: flock47_2f3f58b870741
+X-Filterd-Recvd-Size: 2044
+Received: from XPS-9350.home (unknown [47.151.152.152])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 16 Oct 2019 23:25:24 +0000 (UTC)
+Message-ID: <3f2feed96a3569e2a27051864ae5e8a84ce634b4.camel@perches.com>
+Subject: Re: [PATCH v3] x86, efi: never relocate kernel below lowest
+ acceptable address
+From:   Joe Perches <joe@perches.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Dave Young <dyoung@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Lukas Wunner <lukas@wunner.de>, Lyude Paul <lyude@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Octavian Purdila <octavian.purdila@intel.com>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 43/65] efivar/ssdt: Dont iterate over EFI vars if no SSDT override was specified
-Date:   Wed, 16 Oct 2019 14:50:57 -0700
-Message-Id: <20191016214832.914076532@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016214756.457746573@linuxfoundation.org>
-References: <20191016214756.457746573@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Ingo Molnar <mingo@redhat.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 16 Oct 2019 16:25:23 -0700
+In-Reply-To: <20191016154842.GJ1138@zn.tnic>
+References: <20191012034421.25027-1-kasong@redhat.com>
+         <20191014101419.GA4715@zn.tnic> <20191014202111.GP15552@linux.intel.com>
+         <20191014211825.GJ4715@zn.tnic> <20191016152014.GC4261@linux.intel.com>
+         <fb0e7c13da405970d5cbd59c10005daaf970b8da.camel@perches.com>
+         <20191016154842.GJ1138@zn.tnic>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+On Wed, 2019-10-16 at 17:48 +0200, Borislav Petkov wrote:
+> On Wed, Oct 16, 2019 at 08:23:56AM -0700, Joe Perches wrote:
+> > ?  examples please.
+> 
+> From this very thread:
+> 
+> \sEfi\s, \sefi\s, \seFI\s etc should be "EFI"
+> 
+> I'm thinking perhaps start conservatively and catch the most often
+> misspelled ones in commit messages or comments. "CPU", "SMT", "MCE",
+> "MCA", "PCI" etc come to mind.
+> 
+> > checkpatch has a db for misspellings, I supposed another for
+> > acronyms could be added,
+> 
+> Doesn't have to be another one - established acronyms are part of the
+> dictionary too.
 
-commit c05f8f92b701576b615f30aac31fabdc0648649b upstream.
-
-The kernel command line option efivar_ssdt= allows the name to be
-specified of an EFI variable containing an ACPI SSDT table that should
-be loaded into memory by the OS, and treated as if it was provided by
-the firmware.
-
-Currently, that code will always iterate over the EFI variables and
-compare each name with the provided name, even if the command line
-option wasn't set to begin with.
-
-So bail early when no variable name was provided. This works around a
-boot regression on the 2012 Mac Pro, as reported by Scott.
-
-Tested-by: Scott Talbert <swt@techie.net>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.9+
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lukas Wunner <lukas@wunner.de>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Matthew Garrett <mjg59@google.com>
-Cc: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Peter Jones <pjones@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Fixes: 475fb4e8b2f4 ("efi / ACPI: load SSTDs from EFI variables")
-Link: https://lkml.kernel.org/r/20191002165904.8819-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/firmware/efi/efi.c |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -266,6 +266,9 @@ static __init int efivar_ssdt_load(void)
- 	void *data;
- 	int ret;
- 
-+	if (!efivar_ssdt[0])
-+		return 0;
-+
- 	ret = efivar_init(efivar_ssdt_iter, &entries, true, &entries);
- 
- 	list_for_each_entry_safe(entry, aux, &entries, list) {
+Couldn't work.  The dictionary is case insensitive.
 
 
