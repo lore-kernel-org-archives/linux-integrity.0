@@ -2,99 +2,129 @@ Return-Path: <SRS0=cQvz=YL=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5DE8CA9EA9
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Oct 2019 20:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9E8CA9EA0
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Oct 2019 22:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3D492054F
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Oct 2019 20:38:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TwPL4Ddg"
+	by mail.kernel.org (Postfix) with ESMTP id 3C8E822468
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Oct 2019 22:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571436535;
+	bh=BtPthEbFZO7N9aUGHPdmlHuHW+pZd5gl9U2hNUPHWCw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uP9bDn3Vd2ZtDe/Jpfc7ZnP8guTwUIFMOUBw2Or9WiHP8vT+I7wt6wRUf/4OKyYYO
+	 1I4kTcyMILjFsgcwonEgpH/giobrvF8EikErdkckM4Cx0/N+lx9diVsTuA9cq7puD8
+	 NtBsRv0wLKBTiGOoCRUyXsYhmUIDZvCakrUULW9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502988AbfJRUiO (ORCPT
+        id S2388299AbfJRWIy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Oct 2019 16:38:14 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44000 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731326AbfJRUiN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Oct 2019 16:38:13 -0400
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 47DF4200871E;
-        Fri, 18 Oct 2019 13:38:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 47DF4200871E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1571431092;
-        bh=t/0Ocm7mOruVR9iO0ZzF4XqusnlGjzTV5TbKjXjaLYY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TwPL4DdglDaPi/JqvU/7StYcfvAHj2ZUF58ekIbpWtMGN7E9y+y/e82XDFn23KdOn
-         6JgxKpTmR5WcXsQ+VYcTV2JwFhawD0RMSbsTJ3r/AcHzG187xz+M0ZYEJcLPlaqH3H
-         8M/cdHyQcoYVSgoEhZlzKNWYPBUZ0+AlvEHSyvrM=
-Subject: Re: [PATCH v0] KEYS: Security LSM Hook for key_create_or_update
-To:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
-        dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        sashal@kernel.org, jamorris@linux.microsoft.com
-Cc:     msft-linux-kernel@linux.microsoft.com, prsriva@linux.microsoft.com
-References: <20191018195328.6704-1-nramas@linux.microsoft.com>
- <e5ffe76e-ff9f-7542-2ff7-3ede4f911c2a@schaufler-ca.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <48a4db30-853b-ef6b-9d35-77ae0450b65d@linux.microsoft.com>
-Date:   Fri, 18 Oct 2019 13:38:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 18 Oct 2019 18:08:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388271AbfJRWIx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 18 Oct 2019 18:08:53 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 879262245A;
+        Fri, 18 Oct 2019 22:08:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571436532;
+        bh=BtPthEbFZO7N9aUGHPdmlHuHW+pZd5gl9U2hNUPHWCw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fmo7MIizcvVfIYsRbgzxGl2h9a0qhqwODcNxcxL5/EaN0D4HYG+k6M1q2dH2WO0x8
+         i0i1Y3/t73Bwik3CC7h2HxTI6MBPnd5h2+5TnlQExQGHi5FT/GEke0i1KH1lYJc+nT
+         QoBQhF5FmJO9kTIf2SHlvDU7zXo+VIuDTVKZz9ow=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Dave Young <dyoung@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Lyude Paul <lyude@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Octavian Purdila <octavian.purdila@intel.com>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Scott Talbert <swt@techie.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 37/56] efi/cper: Fix endianness of PCIe class code
+Date:   Fri, 18 Oct 2019 18:07:34 -0400
+Message-Id: <20191018220753.10002-37-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191018220753.10002-1-sashal@kernel.org>
+References: <20191018220753.10002-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e5ffe76e-ff9f-7542-2ff7-3ede4f911c2a@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 10/18/19 1:25 PM, Casey Schaufler wrote:
+From: Lukas Wunner <lukas@wunner.de>
 
->> Problem Statement:
->> key_create_or_update function currently does not have
->> a security LSM hook. The hook is needed to allow security
->> subsystems to use key create or update information.
-> 
-> What security module(s) do you expect to use this?
+[ Upstream commit 6fb9367a15d1a126d222d738b2702c7958594a5f ]
 
-SELinux is one that I can think of - it has hooks for key_alloc, 
-key_free, etc. But does not have one for key_create_or_update.
-> IMA is not a Linux Security Module.
+The CPER parser assumes that the class code is big endian, but at least
+on this edk2-derived Intel Purley platform it's little endian:
 
-Agree. But ima utilizes LSM to hook into system operations (such as 
-read_file given below).
-int security_kernel_post_read_file(struct file *file, char *buf,
-                                    loff_t size,
-				   enum kernel_read_file_id id)
-{
-	int ret;
+    efi: EFI v2.50 by EDK II BIOS ID:PLYDCRB1.86B.0119.R05.1701181843
+    DMI: Intel Corporation PURLEY/PURLEY, BIOS PLYDCRB1.86B.0119.R05.1701181843 01/18/2017
 
-	ret = call_int_hook(kernel_post_read_file, 0, file,
-                             buf, size, id);
-	if (ret)
-		return ret;
-	return ima_post_read_file(file, buf, size, id);
-}
+    {1}[Hardware Error]:   device_id: 0000:5d:00.0
+    {1}[Hardware Error]:   slot: 0
+    {1}[Hardware Error]:   secondary_bus: 0x5e
+    {1}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x2030
+    {1}[Hardware Error]:   class_code: 000406
+                                       ^^^^^^ (should be 060400)
 
-I am currently working on an ima function to measure keys. The change 
-set I have submitted today is in preparation for that.
-> You don't have a security module that provides this hook.
-> We don't accept interfaces without users.
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Matthew Garrett <mjg59@google.com>
+Cc: Octavian Purdila <octavian.purdila@intel.com>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Scott Talbert <swt@techie.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Link: https://lkml.kernel.org/r/20191002165904.8819-2-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/firmware/efi/cper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Like I have mentioned above, that change in ima will be submitted for 
-review shortly.
+diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
+index db404aab82b2a..209dc5aefc310 100644
+--- a/drivers/firmware/efi/cper.c
++++ b/drivers/firmware/efi/cper.c
+@@ -498,7 +498,7 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
+ 		printk("%s""vendor_id: 0x%04x, device_id: 0x%04x\n", pfx,
+ 		       pcie->device_id.vendor_id, pcie->device_id.device_id);
+ 		p = pcie->device_id.class_code;
+-		printk("%s""class_code: %02x%02x%02x\n", pfx, p[0], p[1], p[2]);
++		printk("%s""class_code: %02x%02x%02x\n", pfx, p[2], p[1], p[0]);
+ 	}
+ 	if (pcie->validation_bits & CPER_PCIE_VALID_SERIAL_NUMBER)
+ 		printk("%s""serial number: 0x%04x, 0x%04x\n", pfx,
+-- 
+2.20.1
 
-If you have suggestions for a better way to hook into key create\update 
-that ima can use to measure keys, I'll be happy to investigate that.
-
-thanks,
-  -lakshmi
