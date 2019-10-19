@@ -2,79 +2,206 @@ Return-Path: <SRS0=IDZZ=YM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0595CA9EAC
-	for <linux-integrity@archiver.kernel.org>; Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47758CA9EB0
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Oct 2019 18:06:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 920142082F
-	for <linux-integrity@archiver.kernel.org>; Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27249222D2
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Oct 2019 18:06:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbfJSJpc (ORCPT
+        id S1726164AbfJSSGo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 19 Oct 2019 05:45:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725294AbfJSJpc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 19 Oct 2019 05:45:32 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1364389F301;
-        Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
-Received: from shalem.localdomain.com (ovpn-116-37.ams2.redhat.com [10.36.116.37])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4509B19481;
-        Sat, 19 Oct 2019 09:45:30 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Sat, 19 Oct 2019 14:06:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15316 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726155AbfJSSGo (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 19 Oct 2019 14:06:44 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9JI6g6o146525
+        for <linux-integrity@vger.kernel.org>; Sat, 19 Oct 2019 14:06:43 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vqy0mb8w9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Sat, 19 Oct 2019 14:06:43 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
+        Sat, 19 Oct 2019 19:06:37 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 19 Oct 2019 19:06:31 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9JI6U6F60489764
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 19 Oct 2019 18:06:30 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1086F5204E;
+        Sat, 19 Oct 2019 18:06:30 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.146.216])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 581495204F;
+        Sat, 19 Oct 2019 18:06:27 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, stable@vger.kernel.org
-Subject: [PATCH] tpm: Switch to platform_get_irq_optional()
-Date:   Sat, 19 Oct 2019 11:45:28 +0200
-Message-Id: <20191019094528.27850-1-hdegoede@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Subject: [PATCH v8 1/8] powerpc: detect the secure boot mode of the system
+Date:   Sat, 19 Oct 2019 14:06:10 -0400
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1571508377-23603-1-git-send-email-nayna@linux.ibm.com>
+References: <1571508377-23603-1-git-send-email-nayna@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19101918-0020-0000-0000-0000037B06EA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19101918-0021-0000-0000-000021D1391E
+Message-Id: <1571508377-23603-2-git-send-email-nayna@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-19_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910190171
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Since commit 7723f4c5ecdb ("driver core: platform: Add an error message to
-platform_get_irq*()"), platform_get_irq() will call dev_err() on an error,
-as the IRQ usage in the tpm_tis driver is optional, this is undesirable.
+This patch defines a function to detect the secure boot state of a
+PowerNV system.
 
-Specifically this leads to this new false-positive error being logged:
-[    5.135413] tpm_tis MSFT0101:00: IRQ index 0 not found
+The PPC_SECURE_BOOT config represents the base enablement of secure boot
+for powerpc.
 
-This commit switches to platform_get_irq_optional(), which does not log
-an error, fixing this.
-
-Cc: <stable@vger.kernel.org> # 5.4.x
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 ---
- drivers/char/tpm/tpm_tis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/Kconfig                   | 10 +++++++++
+ arch/powerpc/include/asm/secure_boot.h | 23 ++++++++++++++++++++
+ arch/powerpc/kernel/Makefile           |  2 ++
+ arch/powerpc/kernel/secure_boot.c      | 30 ++++++++++++++++++++++++++
+ 4 files changed, 65 insertions(+)
+ create mode 100644 arch/powerpc/include/asm/secure_boot.h
+ create mode 100644 arch/powerpc/kernel/secure_boot.c
 
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index e4fdde93ed4c..e7df342a317d 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -286,7 +286,7 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
- 	}
- 	tpm_info.res = *res;
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 3e56c9c2f16e..56ea0019b616 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -934,6 +934,16 @@ config PPC_MEM_KEYS
  
--	tpm_info.irq = platform_get_irq(pdev, 0);
-+	tpm_info.irq = platform_get_irq_optional(pdev, 0);
- 	if (tpm_info.irq <= 0) {
- 		if (pdev != force_pdev)
- 			tpm_info.irq = -1;
+ 	  If unsure, say y.
+ 
++config PPC_SECURE_BOOT
++	prompt "Enable secure boot support"
++	bool
++	depends on PPC_POWERNV
++	help
++	  Systems with firmware secure boot enabled need to define security
++	  policies to extend secure boot to the OS. This config allows a user
++	  to enable OS secure boot on systems that have firmware support for
++	  it. If in doubt say N.
++
+ endmenu
+ 
+ config ISA_DMA_API
+diff --git a/arch/powerpc/include/asm/secure_boot.h b/arch/powerpc/include/asm/secure_boot.h
+new file mode 100644
+index 000000000000..07d0fe0ca81f
+--- /dev/null
++++ b/arch/powerpc/include/asm/secure_boot.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Secure boot definitions
++ *
++ * Copyright (C) 2019 IBM Corporation
++ * Author: Nayna Jain
++ */
++#ifndef _ASM_POWER_SECURE_BOOT_H
++#define _ASM_POWER_SECURE_BOOT_H
++
++#ifdef CONFIG_PPC_SECURE_BOOT
++
++bool is_ppc_secureboot_enabled(void);
++
++#else
++
++static inline bool is_ppc_secureboot_enabled(void)
++{
++	return false;
++}
++
++#endif
++#endif
+diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+index a7ca8fe62368..e2a54fa240ac 100644
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -161,6 +161,8 @@ ifneq ($(CONFIG_PPC_POWERNV)$(CONFIG_PPC_SVM),)
+ obj-y				+= ucall.o
+ endif
+ 
++obj-$(CONFIG_PPC_SECURE_BOOT)	+= secure_boot.o
++
+ # Disable GCOV, KCOV & sanitizers in odd or sensitive code
+ GCOV_PROFILE_prom_init.o := n
+ KCOV_INSTRUMENT_prom_init.o := n
+diff --git a/arch/powerpc/kernel/secure_boot.c b/arch/powerpc/kernel/secure_boot.c
+new file mode 100644
+index 000000000000..99bba7915629
+--- /dev/null
++++ b/arch/powerpc/kernel/secure_boot.c
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 IBM Corporation
++ * Author: Nayna Jain
++ */
++#include <linux/types.h>
++#include <linux/of.h>
++#include <asm/secure_boot.h>
++
++bool is_ppc_secureboot_enabled(void)
++{
++	struct device_node *node;
++	bool enabled = false;
++
++	node = of_find_compatible_node(NULL, NULL, "ibm,secvar-v1");
++	if (!of_device_is_available(node)) {
++		pr_err("Cannot find secure variable node in device tree; failing to secure state\n");
++		goto out;
++	}
++
++	/*
++	 * secureboot is enabled if os-secure-enforcing property exists,
++	 * else disabled.
++	 */
++	enabled = of_property_read_bool(node, "os-secure-enforcing");
++
++out:
++	pr_info("Secure boot mode %s\n", enabled ? "enabled" : "disabled");
++	return enabled;
++}
 -- 
-2.23.0
+2.20.1
 
