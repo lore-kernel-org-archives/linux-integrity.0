@@ -1,130 +1,80 @@
-Return-Path: <SRS0=cQvz=YL=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=IDZZ=YM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26941CA9EAB
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Oct 2019 22:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0595CA9EAC
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3A020659
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Oct 2019 22:25:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571437559;
-	bh=FrzwZv6FVNvvAr07Vc1/1PA+4MPp/UssWIY/WONUOQo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KjdoeljM4/Dc1SIcFkOnR2bpMXld1dw+bFqN838OgT2UyNv50Ub3V7Uput/hk2dcZ
-	 E+aEg3vp2DT5ZCFNgXzqsgMCzk6QBoGmhGcEIaklt0gw5E2oAwS2G23a9wqEbpBdKg
-	 gC0Z2H8tah3KeAyvBnHNu3XS137fmSaRfU9ogdxo=
+	by mail.kernel.org (Postfix) with ESMTP id 920142082F
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394675AbfJRWZy (ORCPT
+        id S1725938AbfJSJpc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Oct 2019 18:25:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36100 "EHLO mail.kernel.org"
+        Sat, 19 Oct 2019 05:45:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47164 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728205AbfJRWE2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:04:28 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725294AbfJSJpc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 19 Oct 2019 05:45:32 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88068222C3;
-        Fri, 18 Oct 2019 22:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436267;
-        bh=FrzwZv6FVNvvAr07Vc1/1PA+4MPp/UssWIY/WONUOQo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LKpfSIixH6I86iLZqeL5cnQ+1fheAdULtWAoLgg+ltCawi0fKrt0TRdnkCF+PubKx
-         IIXF4+lEzOS38xAc6PMQYvDf/kDCZZD7FD+EQjJMnXK0kRbV0/wtNiJY1l4KCQEA3P
-         isgTA2A6NqSW169ULn+g2nTHSpyDlBbHfy2oiKJQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Dave Young <dyoung@redhat.com>,
+        by mx1.redhat.com (Postfix) with ESMTPS id 1364389F301;
+        Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-37.ams2.redhat.com [10.36.116.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4509B19481;
+        Sat, 19 Oct 2019 09:45:30 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Lyude Paul <lyude@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Octavian Purdila <octavian.purdila@intel.com>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Scott Talbert <swt@techie.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 48/89] efi/cper: Fix endianness of PCIe class code
-Date:   Fri, 18 Oct 2019 18:02:43 -0400
-Message-Id: <20191018220324.8165-48-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018220324.8165-1-sashal@kernel.org>
-References: <20191018220324.8165-1-sashal@kernel.org>
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] tpm: Switch to platform_get_irq_optional()
+Date:   Sat, 19 Oct 2019 11:45:28 +0200
+Message-Id: <20191019094528.27850-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Sat, 19 Oct 2019 09:45:32 +0000 (UTC)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+Since commit 7723f4c5ecdb ("driver core: platform: Add an error message to
+platform_get_irq*()"), platform_get_irq() will call dev_err() on an error,
+as the IRQ usage in the tpm_tis driver is optional, this is undesirable.
 
-[ Upstream commit 6fb9367a15d1a126d222d738b2702c7958594a5f ]
+Specifically this leads to this new false-positive error being logged:
+[    5.135413] tpm_tis MSFT0101:00: IRQ index 0 not found
 
-The CPER parser assumes that the class code is big endian, but at least
-on this edk2-derived Intel Purley platform it's little endian:
+This commit switches to platform_get_irq_optional(), which does not log
+an error, fixing this.
 
-    efi: EFI v2.50 by EDK II BIOS ID:PLYDCRB1.86B.0119.R05.1701181843
-    DMI: Intel Corporation PURLEY/PURLEY, BIOS PLYDCRB1.86B.0119.R05.1701181843 01/18/2017
-
-    {1}[Hardware Error]:   device_id: 0000:5d:00.0
-    {1}[Hardware Error]:   slot: 0
-    {1}[Hardware Error]:   secondary_bus: 0x5e
-    {1}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x2030
-    {1}[Hardware Error]:   class_code: 000406
-                                       ^^^^^^ (should be 060400)
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Matthew Garrett <mjg59@google.com>
-Cc: Octavian Purdila <octavian.purdila@intel.com>
-Cc: Peter Jones <pjones@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Scott Talbert <swt@techie.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191002165904.8819-2-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: <stable@vger.kernel.org> # 5.4.x
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- drivers/firmware/efi/cper.c | 2 +-
+ drivers/char/tpm/tpm_tis.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index addf0749dd8b6..b1af0de2e1008 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -381,7 +381,7 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
- 		printk("%s""vendor_id: 0x%04x, device_id: 0x%04x\n", pfx,
- 		       pcie->device_id.vendor_id, pcie->device_id.device_id);
- 		p = pcie->device_id.class_code;
--		printk("%s""class_code: %02x%02x%02x\n", pfx, p[0], p[1], p[2]);
-+		printk("%s""class_code: %02x%02x%02x\n", pfx, p[2], p[1], p[0]);
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index e4fdde93ed4c..e7df342a317d 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -286,7 +286,7 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
  	}
- 	if (pcie->validation_bits & CPER_PCIE_VALID_SERIAL_NUMBER)
- 		printk("%s""serial number: 0x%04x, 0x%04x\n", pfx,
+ 	tpm_info.res = *res;
+ 
+-	tpm_info.irq = platform_get_irq(pdev, 0);
++	tpm_info.irq = platform_get_irq_optional(pdev, 0);
+ 	if (tpm_info.irq <= 0) {
+ 		if (pdev != force_pdev)
+ 			tpm_info.irq = -1;
 -- 
-2.20.1
+2.23.0
 
