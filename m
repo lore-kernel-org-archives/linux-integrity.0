@@ -1,99 +1,93 @@
-Return-Path: <SRS0=oES/=YP=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=CT41=YQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F34CA9EA0
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Oct 2019 23:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE1EDCA9EA0
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5AC2064B
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Oct 2019 23:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C18F02184C
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="iJS0BO5Z"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nQfxB7Rh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389724AbfJVXim (ORCPT
+        id S1732234AbfJWASZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Oct 2019 19:38:42 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:35347 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732854AbfJVXim (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Oct 2019 19:38:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46yVM30KZ7z9sP3;
-        Wed, 23 Oct 2019 10:38:39 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1571787519;
-        bh=ami4f9vYKglFSg2kDdmqUNRGc0PgB16FBNgszZYiGT8=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=iJS0BO5Zt/5UnZpboy9Fexepcv5UxfOTmUBHzEbwB/BblzxTYNspikCD5UaCMR91e
-         f15rhAPDNUBW6y4Tor1tzB4i77fVRALpb+PgigrOTkMVHa+fLDz6+teRjwks8R2K4H
-         BA3jub/ckFJsXyIIybAF0gIbX7nsDILWm6ncQ4PGN6N0MSZ2C1r69Aj3sigiDO+5h7
-         MsBi7VOWstM54ck9npR7g7Wfo7iru0Ovs8QwCVdCbtR4OyLbOlonmHCazRoiHaeLeO
-         p6OcrSNJoTAmwzTF55V8Tax4wHJ1+SWFIfY/bWTPzDZFBdJDXxofABlAUaB2BijTsE
-         nJNwdofapNTKw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeremy Kerr <jk@ozlabs.org>,
-        Matthew Garret <matthew.garret@nebula.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Eric Ricther <erichte@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Subject: Re: [PATCH v8 3/8] powerpc: detect the trusted boot state of the system
-In-Reply-To: <1571508377-23603-4-git-send-email-nayna@linux.ibm.com>
-References: <1571508377-23603-1-git-send-email-nayna@linux.ibm.com> <1571508377-23603-4-git-send-email-nayna@linux.ibm.com>
-Date:   Wed, 23 Oct 2019 10:38:38 +1100
-Message-ID: <87wocw5p1d.fsf@mpe.ellerman.id.au>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 22 Oct 2019 20:18:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45252 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732218AbfJWASZ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 22 Oct 2019 20:18:25 -0400
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 4E0AA2010AC3;
+        Tue, 22 Oct 2019 17:18:24 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4E0AA2010AC3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1571789904;
+        bh=ZxF80hLmpS4odHnXd8DZjntedVTyJ3tH1vjLMOXe8os=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nQfxB7Rh3YN88VbtVbjqd7vP5nGaCHsKqZgVYm3tXgm6uFu/1QF1Ovv9OhP0f3I2B
+         3HOdT/Yjw3cGFebSmHU3Z17BB34MGPkkotsW/fghalngocZmk/mHAat/sfsasfq1qg
+         W2JfR9lx+ZSRtYHRaRFTv+7GG2IomNjKpwzRHpIA=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     nramas@linux.microsoft.com
+Subject: [PATCH v1 1/6] KEYS: Helper function to check if the given keyring is builtin_trusted_keys
+Date:   Tue, 22 Oct 2019 17:18:13 -0700
+Message-Id: <20191023001818.3684-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191023001818.3684-1-nramas@linux.microsoft.com>
+References: <20191023001818.3684-1-nramas@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Nayna Jain <nayna@linux.ibm.com> writes:
-> diff --git a/arch/powerpc/kernel/secure_boot.c b/arch/powerpc/kernel/secure_boot.c
-> index 99bba7915629..9753470ab08a 100644
-> --- a/arch/powerpc/kernel/secure_boot.c
-> +++ b/arch/powerpc/kernel/secure_boot.c
-> @@ -28,3 +39,16 @@ bool is_ppc_secureboot_enabled(void)
->  	pr_info("Secure boot mode %s\n", enabled ? "enabled" : "disabled");
->  	return enabled;
->  }
-> +
-> +bool is_ppc_trustedboot_enabled(void)
-> +{
-> +	struct device_node *node;
-> +	bool enabled = false;
-> +
-> +	node = get_ppc_fw_sb_node();
-> +	enabled = of_property_read_bool(node, "trusted-enabled");
+Helper function to check if the given keyring is
+the builtin_trusted_keys keyring.
 
-Also here you need:
+This function is used by ima to determine if a key is
+added to the builtin_trusted_keys keyring.
 
-	of_node_put(node);
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ certs/system_keyring.c        | 5 +++++
+ include/keys/system_keyring.h | 2 ++
+ 2 files changed, 7 insertions(+)
 
-> +
-> +	pr_info("Trusted boot mode %s\n", enabled ? "enabled" : "disabled");
-> +
-> +	return enabled;
-> +}
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 1eba08a1af82..5533c7f92fef 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -283,3 +283,8 @@ void __init set_platform_trusted_keys(struct key *keyring)
+ 	platform_trusted_keys = keyring;
+ }
+ #endif
++
++inline bool is_builtin_trusted_keyring(struct key *keyring)
++{
++	return (keyring == builtin_trusted_keys);
++}
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index c1a96fdf598b..2bc0aaa07f05 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -66,4 +66,6 @@ static inline void set_platform_trusted_keys(struct key *keyring)
+ }
+ #endif
+ 
++extern bool is_builtin_trusted_keyring(struct key *keyring);
++
+ #endif /* _KEYS_SYSTEM_KEYRING_H */
+-- 
+2.17.1
 
-cheers
