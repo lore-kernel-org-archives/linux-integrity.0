@@ -2,206 +2,212 @@ Return-Path: <SRS0=CT41=YQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8233CA9EBB
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 23:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536A6CA9EB9
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 23:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836132084C
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 23:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1626A21906
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 23:39:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GsXl7K2m"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jtlTG7GM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436986AbfJWXUr (ORCPT
+        id S2392756AbfJWXj5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Oct 2019 19:20:47 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:55617 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2436985AbfJWXUq (ORCPT
+        Wed, 23 Oct 2019 19:39:57 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51362 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392751AbfJWXj5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Oct 2019 19:20:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1571872846;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=O1gIIOpWX0kmuV8pGcMJNBdk7solK8ew7ygNzM9f9h4=;
-        b=GsXl7K2m4xriGUP6ceO2hR3D5552Qa3vzA0rYtVygl1UmKlxKRsPQkK8THAgfNivz0AaLg
-        Xw171WHJSmyTEe0E97LTRed8SeT9PrdTrbWe0Hf2j0eiuVjFa7WtKCvb35w+6EAIP5Wmwr
-        4z3udoOIYUAVgN1efzyrtdHz0cFQgis=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-256-gfyGILhMPp6Rr8T_Y_xPmA-1; Wed, 23 Oct 2019 19:20:42 -0400
-Received: by mail-il1-f198.google.com with SMTP id w9so13873064ilo.12
-        for <linux-integrity@vger.kernel.org>; Wed, 23 Oct 2019 16:20:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=BNl9Uy1RmdYWPElsAHF3OHYdNrnKgMqhpn5Eaj07V2k=;
-        b=DhZQ8Ha+bCAZQ1xe9HLdOOuIxlzcOzGmr1lRuplWNqyw41nMJj78GETVz7WwgVjAtM
-         kYmoswm4jYnIqoKy//uFY7ovhZiIfFEzxkZOBsHkP9ajtXgqMAFMpDBDhzrC5oPfJURb
-         KT+WOmWH7IRq6GzaTFGY73Wpz2ClyeYp7ddymzhiyzYAFWKV/raRoa/3o3dewtW4wWrO
-         ctfd5Ma4uE4lGLAsrRhJk2XgWJDkQLnaWW+cSFLOPi4AHs/5+5Z+SyGPwAm3DIf5QUIR
-         0yxqUEWdY4RZH+434EetvzTkd7y3hbURewB2475GvT3ox8TgR3Gv+pQETVwHbxXVPTh3
-         GTlA==
-X-Gm-Message-State: APjAAAXgSEzyXX+BumMPqnH8X6VPjTt5bR6tbDi2pl6j/WLWEQz/QuEO
-        vJQ5L9Ay7gf3ciWhGMyt/Pw3/hk7c3U3ls71FQETTI/TlPB0KP3bMBQk7DhlTRfaw6fz5BbuIPo
-        NX6kMiZOyrhEQOGpkTkBd+UWqlFH9
-X-Received: by 2002:a6b:ab03:: with SMTP id u3mr553333ioe.158.1571872841765;
-        Wed, 23 Oct 2019 16:20:41 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyF7qrGiVvCscTOw+aNfXxqYquTIiaVJdbtw612TTKl3QtQMeOf7yuOTCKu3ac4j7p0IUWriw==
-X-Received: by 2002:a6b:ab03:: with SMTP id u3mr553307ioe.158.1571872841493;
-        Wed, 23 Oct 2019 16:20:41 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id u124sm7731617ioe.63.2019.10.23.16.20.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2019 16:20:40 -0700 (PDT)
-Date:   Wed, 23 Oct 2019 16:20:35 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     ivan.lazeev@gmail.com, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8] tpm_crb: fix fTPM on AMD Zen+ CPUs
-Message-ID: <20191023232035.ir7hmed4m3emovyx@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        ivan.lazeev@gmail.com, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191016182814.18350-1-ivan.lazeev@gmail.com>
- <20191021155735.GA7387@linux.intel.com>
- <20191023115151.GF21973@linux.intel.com>
-MIME-Version: 1.0
-In-Reply-To: <20191023115151.GF21973@linux.intel.com>
-User-Agent: NeoMutt/20180716
-X-MC-Unique: gfyGILhMPp6Rr8T_Y_xPmA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+        Wed, 23 Oct 2019 19:39:57 -0400
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0E21620106BF;
+        Wed, 23 Oct 2019 16:39:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0E21620106BF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1571873996;
+        bh=sVeuaw2KRkAf1CvJ/ee/ODALLBzP3mWEgOPtKKrnY/I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jtlTG7GMBYyeG0YstbTm8AEZu6XEkwEXnUXUl0pE6ekT99VgzJbBHG3xg9OfLyc2/
+         9oT9Ov6uB77ZKD/kpMaPk5s6us16qm4xATgKrbFkSbRptdjihUut6S1OlqqTYL/grM
+         Dc/IVCXAjz4OB7cIrxDFkqz5PFg8jTYaBAF4t45I=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     nramas@linux.microsoft.com
+Subject: [PATCH v2 1/4] KEYS: Defined an ima hook for measuring keys on key create or update
+Date:   Wed, 23 Oct 2019 16:39:47 -0700
+Message-Id: <20191023233950.22072-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191023233950.22072-1-nramas@linux.microsoft.com>
+References: <20191023233950.22072-1-nramas@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed Oct 23 19, Jarkko Sakkinen wrote:
->On Mon, Oct 21, 2019 at 06:57:35PM +0300, Jarkko Sakkinen wrote:
->> Almost tested this today. Unfortunately the USB stick at hand was
->> broken.  I'll retry tomorrow or Wed depending on which day I visit at
->> the office and which day I WFH.
->>
->> At least the AMI BIOS had all the TPM stuff in it. The hardware I'll be
->> using is Udoo Bolt V8 (thanks Jerry for pointing me out this device)
->> with AMD Ryzen Embedded V1605B [1]
->>
->> Thanks for the patience with your patch.
->>
->> [1] https://en.wikichip.org/wiki/amd/ryzen_embedded/v1605b
->
->Jerry, are you confident to give this tested-by?
->
->I'm still in process of finding what I should put to .config in order
->to get USB keyboard working with UDOO BOLT.
->
->/Jarkko
+Defined an ima hook to measure keys created or updated in the system.
 
-I ran it through the tpm2 kselftests and it passed:
+Call this ima hook from key_create_or_update function when a new key
+is created or an existing key is updated.
 
-TAP version 13
-1..2
-# selftests: tpm2: test_smoke.sh
-# test_read_partial_overwrite (tpm2_tests.SmokeTest) ... ok
-# test_read_partial_resp (tpm2_tests.SmokeTest) ... ok
-# test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-# test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-# test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-# test_send_two_cmds (tpm2_tests.SmokeTest) ... ok
-# test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-# test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-# test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
-#
-# ----------------------------------------------------------------------
-# Ran 9 tests in 12.305s
-#
-# OK
-ok 1 selftests: tpm2: test_smoke.sh
-# selftests: tpm2: test_space.sh
-# test_flush_context (tpm2_tests.SpaceTest) ... ok
-# test_get_handles (tpm2_tests.SpaceTest) ... ok
-# test_invalid_cc (tpm2_tests.SpaceTest) ... ok
-# test_make_two_spaces (tpm2_tests.SpaceTest) ... ok
-#
-# ----------------------------------------------------------------------
-# Ran 4 tests in 11.355s
-#
-# OK
-ok 2 selftests: tpm2: test_space.sh
+ima hook calls process_buffer_measurement function to measure the key
+if ima is initialized. If ima is not yet initialized, the ima hook
+currently does nothing. The change to queue the key for measurement
+and measure after ima is initialized is implemented in a later patch.
 
+This patch set depends on the following patch set provided by
+Nayna Jain from IBM (nayna@linux.ibm.com). That patch set is
+currently being reviewed:
 
-I also did some other testing of tpm2-tools commands, creating a
-trusted key and encrypted key, and running rngtest against /dev/random
-with the current hwrng being tpm-rng-0.
+[PATCH v8 5/8] ima: make process_buffer_measurement() generic
+https://lore.kernel.org/linux-integrity/1569594360-7141-7-git-send-email-nayna@linux.ibm.com/
 
-I ran the selftests on an intel nuc as well:
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ include/linux/ima.h               |  8 ++++++++
+ security/integrity/ima/ima.h      |  3 +++
+ security/integrity/ima/ima_init.c |  1 +
+ security/integrity/ima/ima_main.c | 26 ++++++++++++++++++++++++++
+ security/keys/key.c               |  9 +++++++++
+ 5 files changed, 47 insertions(+)
 
-TAP version 13
-1..2
-# selftests: tpm2: test_smoke.sh
-# test_read_partial_overwrite (tpm2_tests.SmokeTest) ... ok
-# test_read_partial_resp (tpm2_tests.SmokeTest) ... ok
-# test_seal_with_auth (tpm2_tests.SmokeTest) ... ok
-# test_seal_with_policy (tpm2_tests.SmokeTest) ... ok
-# test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ok
-# test_send_two_cmds (tpm2_tests.SmokeTest) ... ok
-# test_too_short_cmd (tpm2_tests.SmokeTest) ... ok
-# test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ok
-# test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ok
-#=20
-# ----------------------------------------------------------------------
-# Ran 9 tests in 29.620s
-#=20
-# OK
-ok 1 selftests: tpm2: test_smoke.sh
-# selftests: tpm2: test_space.sh
-# test_flush_context (tpm2_tests.SpaceTest) ... ok
-# test_get_handles (tpm2_tests.SpaceTest) ... ok
-# test_invalid_cc (tpm2_tests.SpaceTest) ... ok
-# test_make_two_spaces (tpm2_tests.SpaceTest) ... ok
-#=20
-# ----------------------------------------------------------------------
-# Ran 4 tests in 26.337s
-#=20
-# OK
-ok 2 selftests: tpm2: test_space.sh
-
-
-So,
-
-Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-
-
-
-One thing I've noticed on the bolt and the nuc:
-
-[    0.808935] tpm_tis MSFT0101:00: IRQ index 0 not found
-
-I'm guessing this is Stefan's patches causing this?
-
-1ea32c83c699 | 2019-09-02 | tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before prob=
-ing for interrupts (Stefan Berger)
-5b359c7c4372 | 2019-09-02 | tpm_tis_core: Turn on the TPM before probing IR=
-Q's (Stefan Berger)
-
-I've never noticed tpm_tis messages before on a tpm_crb system, and doublec=
-hecked that I don't see it with 5.3.
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index a20ad398d260..4df39aefcd06 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -24,6 +24,9 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern void ima_kexec_cmdline(const void *buf, int size);
++extern void ima_post_key_create_or_update(struct key *keyring,
++					  struct key *key,
++					  unsigned long flags, bool create);
+ 
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+@@ -91,6 +94,11 @@ static inline void ima_post_path_mknod(struct dentry *dentry)
+ }
+ 
+ static inline void ima_kexec_cmdline(const void *buf, int size) {}
++
++static inline void ima_post_key_create_or_update(struct key *keyring,
++						 struct key *key,
++						 unsigned long flags,
++						 bool create) {}
+ #endif /* CONFIG_IMA */
+ 
+ #ifndef CONFIG_IMA_KEXEC
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 997a57137351..2d4130ff5655 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -21,6 +21,8 @@
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
+ #include <crypto/hash_info.h>
++#include <crypto/public_key.h>
++#include <keys/asymmetric-type.h>
+ 
+ #include "../integrity.h"
+ 
+@@ -52,6 +54,7 @@ extern int ima_policy_flag;
+ extern int ima_hash_algo;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
++extern bool ima_initialized;
+ 
+ /* IMA event related data */
+ struct ima_event_data {
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 5d55ade5f3b9..52847ce765a4 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -23,6 +23,7 @@
+ /* name for boot aggregate entry */
+ static const char boot_aggregate_name[] = "boot_aggregate";
+ struct tpm_chip *ima_tpm_chip;
++bool ima_initialized;
+ 
+ /* Add the boot aggregate to the IMA measurement list and extend
+  * the PCR register.
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2b60d8fd017a..8bde12385912 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -693,6 +693,32 @@ void ima_kexec_cmdline(const void *buf, int size)
+ 	}
+ }
+ 
++/**
++ * ima_post_key_create_or_update - measure keys
++ * @keyring: keyring to which the key is linked to
++ * @key: created or updated key
++ * @flags: key flags
++ * @create: flag indicating whether the key was created or updated
++ *
++ * Keys can only be measured, not appraised.
++ */
++void ima_post_key_create_or_update(struct key *keyring, struct key *key,
++				   unsigned long flags, bool create)
++{
++	const struct public_key *pk;
++
++	if (key->type != &key_type_asymmetric)
++		return;
++
++	if (!ima_initialized)
++		return;
++
++	pk = key->payload.data[asym_crypto];
++	process_buffer_measurement(pk->key, pk->keylen,
++				   key->description,
++				   NONE, 0);
++}
++
+ static int __init init_ima(void)
+ {
+ 	int error;
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 764f4c57913e..7c39054d8da6 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -13,6 +13,7 @@
+ #include <linux/security.h>
+ #include <linux/workqueue.h>
+ #include <linux/random.h>
++#include <linux/ima.h>
+ #include <linux/err.h>
+ #include "internal.h"
+ 
+@@ -936,6 +937,9 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 		goto error_link_end;
+ 	}
+ 
++	/* let the ima module know about the created key. */
++	ima_post_key_create_or_update(keyring, key, flags, true);
++
+ 	key_ref = make_key_ref(key, is_key_possessed(keyring_ref));
+ 
+ error_link_end:
+@@ -965,6 +969,11 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 	}
+ 
+ 	key_ref = __key_update(key_ref, &prep);
++	if (!IS_ERR(key_ref)) {
++		/* let the ima module know about the updated key. */
++		ima_post_key_create_or_update(keyring, key, flags, false);
++	}
++
+ 	goto error_free_prep;
+ }
+ EXPORT_SYMBOL(key_create_or_update);
+-- 
+2.17.1
 
