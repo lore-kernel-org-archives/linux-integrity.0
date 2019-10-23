@@ -2,148 +2,64 @@ Return-Path: <SRS0=CT41=YQ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AF8CA9EB7
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 523D7CA9EB6
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 11:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33AD02184C
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 00:18:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BlBqLSaB"
+	by mail.kernel.org (Postfix) with ESMTP id 32F622084B
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Oct 2019 11:33:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732315AbfJWASo (ORCPT
+        id S2404947AbfJWLdB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Oct 2019 20:18:44 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:45260 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732221AbfJWASZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Oct 2019 20:18:25 -0400
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 746FA2010AC4;
-        Tue, 22 Oct 2019 17:18:24 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 746FA2010AC4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1571789904;
-        bh=XMnesZyw0QRVpbTGsE9Hc/rqUu5GYJWuVQuZdKM+XUs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BlBqLSaBU2u6bMM8N2CJLmtSSyrj8x+DxdgP4YQcrsfxPrZOnClZCgPZOYF2YcAHc
-         3ppV4GSQ+xO1NVy1kN7rB4MTn03tNVepQIOL/FALEZqDoaOoHL3eoArCEClDX+gfEL
-         zRe+Ml5aK0gq0sJyT3c3XZGCdwsAMuJmUBdQ2lRY=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com, casey@schaufler-ca.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     nramas@linux.microsoft.com
-Subject: [PATCH v1 2/6] KEYS: ima: Refactored process_buffer_measurement function so that it can measure any buffer (and not just KEXEC_CMDLINE one)
-Date:   Tue, 22 Oct 2019 17:18:14 -0700
-Message-Id: <20191023001818.3684-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023001818.3684-1-nramas@linux.microsoft.com>
-References: <20191023001818.3684-1-nramas@linux.microsoft.com>
+        Wed, 23 Oct 2019 07:33:01 -0400
+Received: from mga03.intel.com ([134.134.136.65]:47664 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404612AbfJWLdB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 23 Oct 2019 07:33:01 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Oct 2019 04:32:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.68,220,1569308400"; 
+   d="scan'208";a="398013206"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.121])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Oct 2019 04:32:48 -0700
+Date:   Wed, 23 Oct 2019 14:32:48 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] tpm: Switch to platform_get_irq_optional()
+Message-ID: <20191023113248.GA21973@linux.intel.com>
+References: <20191019094528.27850-1-hdegoede@redhat.com>
+ <20191021140502.GA25178@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191021140502.GA25178@ziepe.ca>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-process_buffer_measurement currently supports measuring kexec command line
-only. This function has been refactored to support more than kexec_cmdline.
-With this change this function can be used for measuring any buffer.
-This function is now also used by ima to measure keys besides used for
-measuring kexec command line.
+On Mon, Oct 21, 2019 at 11:05:02AM -0300, Jason Gunthorpe wrote:
+> On Sat, Oct 19, 2019 at 11:45:28AM +0200, Hans de Goede wrote:
+> > Since commit 7723f4c5ecdb ("driver core: platform: Add an error message to
+> > platform_get_irq*()"), platform_get_irq() will call dev_err() on an error,
+> > as the IRQ usage in the tpm_tis driver is optional, this is undesirable.
+> 
+> This should have a fixes line for the above, or maybe the commit that
+> addtion the _optional version..
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima.h      |  3 +++
- security/integrity/ima/ima_main.c | 29 ++++++++++++++---------------
- 2 files changed, 17 insertions(+), 15 deletions(-)
+Is this fixing something?
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 011b91c79351..b6847ee1f47a 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -209,6 +209,9 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, int pcr,
- 			   struct ima_template_desc *template_desc);
-+void process_buffer_measurement(const void *buf, int size,
-+				const char *eventname, int pcr,
-+				struct ima_template_desc *template_desc);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 584019728660..8e965d18fb21 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -610,14 +610,14 @@ int ima_load_data(enum kernel_load_data_id id)
-  * @buf: pointer to the buffer that needs to be added to the log.
-  * @size: size of buffer(in bytes).
-  * @eventname: event name to be used for the buffer entry.
-- * @cred: a pointer to a credentials structure for user validation.
-- * @secid: the secid of the task to be validated.
-+ * @pcr: pcr to extend the measurement
-+ * @template_desc: template description
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
--static void process_buffer_measurement(const void *buf, int size,
--				       const char *eventname,
--				       const struct cred *cred, u32 secid)
-+void process_buffer_measurement(const void *buf, int size,
-+				const char *eventname, int pcr,
-+				struct ima_template_desc *template_desc)
- {
- 	int ret = 0;
- 	struct ima_template_entry *entry = NULL;
-@@ -626,19 +626,11 @@ static void process_buffer_measurement(const void *buf, int size,
- 					    .filename = eventname,
- 					    .buf = buf,
- 					    .buf_len = size};
--	struct ima_template_desc *template_desc = NULL;
- 	struct {
- 		struct ima_digest_data hdr;
- 		char digest[IMA_MAX_DIGEST_SIZE];
- 	} hash = {};
- 	int violation = 0;
--	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
--	int action = 0;
--
--	action = ima_get_action(NULL, cred, secid, 0, KEXEC_CMDLINE, &pcr,
--				&template_desc);
--	if (!(action & IMA_MEASURE))
--		return;
- 
- 	iint.ima_hash = &hash.hdr;
- 	iint.ima_hash->algo = ima_hash_algo;
-@@ -670,12 +662,19 @@ static void process_buffer_measurement(const void *buf, int size,
-  */
- void ima_kexec_cmdline(const void *buf, int size)
- {
-+	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
-+	struct ima_template_desc *template_desc = ima_template_desc_current();
-+	int action;
- 	u32 secid;
- 
- 	if (buf && size != 0) {
- 		security_task_getsecid(current, &secid);
--		process_buffer_measurement(buf, size, "kexec-cmdline",
--					   current_cred(), secid);
-+		action = ima_get_action(NULL, current_cred(), secid, 0,
-+					KEXEC_CMDLINE, &pcr, &template_desc);
-+		if (!(action & IMA_MEASURE))
-+			return;
-+		process_buffer_measurement(buf, size, "kexec-cmdline", pcr,
-+					   template_desc);
- 	}
- }
- 
--- 
-2.17.1
-
+/Jarkko
