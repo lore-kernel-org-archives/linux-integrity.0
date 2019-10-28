@@ -1,105 +1,145 @@
-Return-Path: <SRS0=b11c=YU=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=E3L3=YV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ED5CA9EAF
-	for <linux-integrity@archiver.kernel.org>; Sun, 27 Oct 2019 23:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7553FCA9EC0
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Oct 2019 11:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70A7620873
-	for <linux-integrity@archiver.kernel.org>; Sun, 27 Oct 2019 23:01:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="TbBh1/Z/"
+	by mail.kernel.org (Postfix) with ESMTP id 4CC3B208C0
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Oct 2019 11:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfJ0XBL (ORCPT
+        id S2388727AbfJ1LzK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 27 Oct 2019 19:01:11 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46808 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbfJ0XBK (ORCPT
+        Mon, 28 Oct 2019 07:55:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62758 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728802AbfJ1LzK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 27 Oct 2019 19:01:10 -0400
-Received: by mail-qt1-f195.google.com with SMTP id u22so11920027qtq.13
-        for <linux-integrity@vger.kernel.org>; Sun, 27 Oct 2019 16:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AwrnCk33OKRxa26glgi+iRF9d8YrVAmHFL04ybB9rB8=;
-        b=TbBh1/Z/9/SbYwLKwU+beCIrux7qplvlOuNsleSyxV55/iBzDBRUS07BA5aBHmLF1U
-         yM3AwJ96V0P15wsZ1HWZ3Hy20fB986J1ddjDuOdenJnh/sIR7Rn1aFINWBmI2AkioVZc
-         M3/FX9i0eX38Plcd/dEOn9ergcpC9Dg/9IvEIkwhMq3Qshe/dYfyzC+Gz21gfvAIxMI3
-         mhVdt8xu7aGgtr0h3aiModVEgqMmaSmvao/C3k2ShifTXk9Qmyoaq3UC70IJtnJcgc/9
-         SANwu5yGYPoJ1y9QkTBMS1Pftmy/pG/Q1uoql32FD8Zx9sqfMVj9MToE7VQLGu8tlfIR
-         NJAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AwrnCk33OKRxa26glgi+iRF9d8YrVAmHFL04ybB9rB8=;
-        b=Dkjp32jskFOAeooBEx++9fRCBo3VTZDOTRCEHkdQKvfR4KyXEqio1Q57x6r0KahzpR
-         OzJtUBuVd1s8X70Z4Z9dApRZPJ9Qes/+qhGokpBjB9SUEbcQlWJMErRqPKJ+lGUpgiab
-         ZXyJsqQnnRXWuVLloG2zsCza6wTyDJbztajaGu/eHiKarjik+GxLMkBKm/dR06EU6kw+
-         q/h+UXcqssdXEz5uKraD6jtfJdlnabfY0npcByR1OIQKRnu5WUBxB8tHClz3y1NDH2SD
-         tCBafBJH9hETLaQLDGBfZGXt+zwwnNRJ5sERJb/5WI0qAfIme9UulmFe7Q6HaEGNVC2w
-         a11g==
-X-Gm-Message-State: APjAAAWfGHoZ2+FTel0BA8hKoyN1Anb/zwNhtUL3N6ppOItSdLINxl11
-        mfG4Ha+B2uk3YntihTE3thFT9Q==
-X-Google-Smtp-Source: APXvYqyGf9PFRActmzbyn0Z6XSmTBjkBRZniZGllMFbOhlp4zSMyW5uv/ERR5NhQx1S06O+A9zGKrA==
-X-Received: by 2002:ac8:682:: with SMTP id f2mr14655008qth.149.1572217269836;
-        Sun, 27 Oct 2019 16:01:09 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-180.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.180])
-        by smtp.gmail.com with ESMTPSA id v137sm4947654qka.64.2019.10.27.16.01.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 27 Oct 2019 16:01:09 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1iOrX2-0006D2-SD; Sun, 27 Oct 2019 20:01:08 -0300
-Date:   Sun, 27 Oct 2019 20:01:08 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Mimi Zohar <zohar@linux.ibm.com>
+        Mon, 28 Oct 2019 07:55:10 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9SBqmZ8135343
+        for <linux-integrity@vger.kernel.org>; Mon, 28 Oct 2019 07:55:08 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2vwwggcmc0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 28 Oct 2019 07:55:08 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 28 Oct 2019 11:55:06 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Oct 2019 11:55:01 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9SBsxh127263030
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 28 Oct 2019 11:55:00 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D430E11C050;
+        Mon, 28 Oct 2019 11:54:59 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7AD1811C04A;
+        Mon, 28 Oct 2019 11:54:57 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.151.87])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Oct 2019 11:54:57 +0000 (GMT)
+Subject: Re: [PATCH v9 2/8] powerpc/ima: add support to initialize ima
+ policy rules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.vnet.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] tpm: Add major_version sysfs file
-Message-ID: <20191027230108.GK23952@ziepe.ca>
-References: <20191025142847.14931-1-jsnitsel@redhat.com>
- <1572027516.4532.41.camel@linux.ibm.com>
- <20191025184522.5txabdikcrn2dgvj@cantor>
- <20191025193243.GI23952@ziepe.ca>
- <1572032562.4532.74.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1572032562.4532.74.camel@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>
+Date:   Mon, 28 Oct 2019 07:54:56 -0400
+In-Reply-To: <1572133923.4532.79.camel@linux.ibm.com>
+References: <20191024034717.70552-1-nayna@linux.ibm.com>
+         <20191024034717.70552-3-nayna@linux.ibm.com>
+         <dd7e04fc-25e8-280f-b565-bdb031939655@linux.microsoft.com>
+         <27dbe08e-5473-4dd0-d2ad-2df591e23f5e@linux.vnet.ibm.com>
+         <1572133923.4532.79.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19102811-0012-0000-0000-0000035E5E70
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19102811-0013-0000-0000-000021999B74
+Message-Id: <1572263696.4532.240.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-28_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910280122
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Oct 25, 2019 at 03:42:42PM -0400, Mimi Zohar wrote:
-> On Fri, 2019-10-25 at 16:32 -0300, Jason Gunthorpe wrote:
-> > On Fri, Oct 25, 2019 at 11:45:22AM -0700, Jerry Snitselaar wrote:
-> > > On Fri Oct 25 19, Mimi Zohar wrote:
-> > > Yes, there should be an entry added to
-> > > Documentation/ABI/stable/sysfs-class-tpm.
-> > > I will fix that up and the TCG not being uppercase in a v2.
-> > > 
-> > > Should Documentation/ABI/stable/sysfs-class-tpm updated in
-> > > some way to reflect that those are all links under device
-> > > now and not actually there.
+On Sat, 2019-10-26 at 19:52 -0400, Mimi Zohar wrote:
+> On Fri, 2019-10-25 at 12:02 -0500, Nayna Jain wrote:
+> > On 10/24/19 12:35 PM, Lakshmi Ramasubramanian wrote:
+> > > On 10/23/2019 8:47 PM, Nayna Jain wrote:
+> > >
+> > >> +/*
+> > >> + * The "secure_rules" are enabled only on "secureboot" enabled systems.
+> > >> + * These rules verify the file signatures against known good values.
+> > >> + * The "appraise_type=imasig|modsig" option allows the known good 
+> > >> signature
+> > >> + * to be stored as an xattr or as an appended signature.
+> > >> + *
+> > >> + * To avoid duplicate signature verification as much as possible, 
+> > >> the IMA
+> > >> + * policy rule for module appraisal is added only if 
+> > >> CONFIG_MODULE_SIG_FORCE
+> > >> + * is not enabled.
+> > >> + */
+> > >> +static const char *const secure_rules[] = {
+> > >> +    "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig",
+> > >> +#ifndef CONFIG_MODULE_SIG_FORCE
+> > >> +    "appraise func=MODULE_CHECK appraise_type=imasig|modsig",
+> > >> +#endif
+> > >> +    NULL
+> > >> +};
+> > >
+> > > Is there any way to not use conditional compilation in the above array 
+> > > definition? Maybe define different functions to get "secure_rules" for 
+> > > when CONFIG_MODULE_SIG_FORCE is defined and when it is not defined.
 > > 
-> > Applications should not use the link version, that path was a
-> > mistake. The link is for compatability with old userspace.
+> > How will you decide which function to be called ?
 > 
-> Are you suggesting that userspace has to search for the device info? 
-> That makes no sense.
+> You could call "is_module_sig_enforced()".
 
-Why would it have to search?
+Calling is_module_sig_enforce() would prevent verifying the same
+kernel module appended signature twice, when CONFIG_MODULE_SIG is
+enabled, but not CONFIG_MODULE_SIG_FORCE.  This comes at the expense
+of having to define additional policies.
 
-Jason
+Unlike for the kernel image, there is no coordination between lockdown
+and IMA for kernel modules signature verification.  I suggest
+deferring defining additional policies to when the lockdown/IMA
+coordination is addressed.
+
+Mimi
+
