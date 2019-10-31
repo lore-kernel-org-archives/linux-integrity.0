@@ -2,96 +2,139 @@ Return-Path: <SRS0=Ddzc=YY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5B6CA9ECB
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 12:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE87CA9ECB
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 13:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB232080F
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 12:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DCAF2087E
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 13:59:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5Nzzfdy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfJaMMx (ORCPT
+        id S1727777AbfJaN7c (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 31 Oct 2019 08:12:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55204 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726779AbfJaMMx (ORCPT
+        Thu, 31 Oct 2019 09:59:32 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35115 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727766AbfJaN7c (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 31 Oct 2019 08:12:53 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9VCCRfn073948
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Oct 2019 08:12:52 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2vyya3g5rw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 31 Oct 2019 08:12:45 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 31 Oct 2019 12:10:47 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Oct 2019 12:10:44 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9VCAhee29425716
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Oct 2019 12:10:43 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48040AE04D;
-        Thu, 31 Oct 2019 12:10:43 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F36AAAE045;
-        Thu, 31 Oct 2019 12:10:41 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.194.174])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Oct 2019 12:10:41 +0000 (GMT)
-Subject: Re: [PATCH v3 2/9] KEYS: Defined functions to queue and dequeue
- keys for measurement
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     prsriva@linux.microsoft.com
-Date:   Thu, 31 Oct 2019 08:10:41 -0400
-In-Reply-To: <20191031011910.2574-3-nramas@linux.microsoft.com>
-References: <20191031011910.2574-1-nramas@linux.microsoft.com>
-         <20191031011910.2574-3-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19103112-0028-0000-0000-000003B173E5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19103112-0029-0000-0000-00002473BD8E
-Message-Id: <1572523841.5028.44.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-31_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=892 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1908290000 definitions=main-1910310125
+        Thu, 31 Oct 2019 09:59:32 -0400
+Received: by mail-pg1-f196.google.com with SMTP id c8so4130118pgb.2
+        for <linux-integrity@vger.kernel.org>; Thu, 31 Oct 2019 06:59:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=FInjRudIZ1nBXyYRthwNUoyrlLqGhK39QJ4i7rNkC2w=;
+        b=q5NzzfdyvqU9FJ8L/8YVWhVw3zm/TD9+GmoDJBcQbO9fthEhMN0aA0zr1Jrn1Pe7Xv
+         3yxVpV1aCIy2BlbrmcRSI52doE+NBDvyhqGBcl545OAR+xdAP/8XKGa9aYsXyxpC6c4r
+         u/dLASdI5rFuj8KWg0Vg1ucxIfzi2SA6p0SEDwT5MaAY46LtvSjOArYaKC/ICMwgAn7L
+         5yuRCDkCXiEplKpIc1i196ovUMs+7c/jfyoF8FuXwJS2nhJb0Wx7IK586+yvbVU7V+hM
+         Z6T46N/XjF+k5fnSVRUiPTy/WMYlR9bd07WIAjbDF892AolQA4/q3VfGdCWxQIZ0w7m6
+         3cgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FInjRudIZ1nBXyYRthwNUoyrlLqGhK39QJ4i7rNkC2w=;
+        b=MHZ2MxlpmRD1F9oDgQ6UDWDmSNPqu4Al3ZUr4BQe0I+Ceft731GeuH+vZn6niuqvHz
+         Hq7fDa2KZIZdtjTWkhCMwSTgh5upiXx4er/pUOHKn8cV7AbZ2e/HaTvioxoWuVwXKBny
+         bSoiRc5Gcu5R71eO/zO7x11gKqYQf7vPh6iPCCOj/a5WQUyVzN3218IN970XOmI0kj1m
+         FQ9XODSz0IPwDbGu6yyT4n8/PAng6xpHfPxI9mneO5LRnnZLlj08dWZioEva/sxXI2lW
+         dYwQAHop2IvOUMtPkBZkz2vm/1eyNJZnABh0BgHCb5QzrWnvioYfkxW9jnTKfwfPese9
+         d+2g==
+X-Gm-Message-State: APjAAAUwRMINXHxWbI6j3zyFgISKp7jZSapVE91J5y61n4dbPgUXBMGQ
+        zokmh1paUrsJ/CR34Jjl7Mtj6A==
+X-Google-Smtp-Source: APXvYqzSpyD3GqbjVXKqKIxqLX3kf+eG/s3lqHhViq0jkE0RgoF86gbfk8pNgZ03UDv+V7aDn7oogg==
+X-Received: by 2002:aa7:8817:: with SMTP id c23mr7024726pfo.162.1572530371532;
+        Thu, 31 Oct 2019 06:59:31 -0700 (PDT)
+Received: from localhost.localdomain ([117.252.69.143])
+        by smtp.gmail.com with ESMTPSA id i16sm3522441pfa.184.2019.10.31.06.59.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 31 Oct 2019 06:59:30 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jens.wiklander@linaro.org, jarkko.sakkinen@linux.intel.com,
+        dhowells@redhat.com
+Cc:     corbet@lwn.net, jejb@linux.ibm.com, zohar@linux.ibm.com,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        stuart.yoder@arm.com, janne.karhunen@gmail.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        tee-dev@lists.linaro.org, Sumit Garg <sumit.garg@linaro.org>
+Subject: [Patch v3 0/7] Introduce TEE based Trusted Keys support
+Date:   Thu, 31 Oct 2019 19:28:36 +0530
+Message-Id: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2019-10-30 at 18:19 -0700, Lakshmi Ramasubramanian wrote:
-> Key measurements cannot be done if the IMA hook to measure keys is
-> called before IMA is initialized. Key measurement needs to be deferred
-> if IMA is not yet initialized. Queued keys need to be processed when
-> IMA initialization is completed.
-> 
-> This patch defines functions to queue and de-queue keys for measurement.
+Add support for TEE based trusted keys where TEE provides the functionality
+to seal and unseal trusted keys using hardware unique key. Also, this is
+an alternative in case platform doesn't possess a TPM device.
 
-I would defer this patch until later in the patch set, after having
-the basic measuring of keys in place.
+This series also adds some TEE features like:
 
-Mimi
+Patch #1, #2 enables support for registered kernel shared memory with TEE.
+
+Patch #3 enables support for private kernel login method required for
+cases like trusted keys where we don't wan't user-space to directly access
+TEE service to retrieve trusted key contents.
+
+Rest of the patches from #4 to #7 adds support for TEE based trusted keys.
+
+This patch-set has been tested with OP-TEE based pseudo TA which can be
+found here [1].
+
+[1] https://github.com/OP-TEE/optee_os/pull/3082
+
+Changes in v3:
+1. Update patch #2 to support registration of multiple kernel pages.
+2. Incoporate dependency patch #4 in this patch-set:
+   https://patchwork.kernel.org/patch/11091435/
+3. Rebased to latest tpmdd-master.
+
+Changes in v2:
+1. Add reviewed-by tags for patch #1 and #2.
+2. Incorporate comments from Jens for patch #3.
+3. Switch to use generic trusted keys framework.
+
+Sumit Garg (7):
+  tee: optee: allow kernel pages to register as shm
+  tee: enable support to register kernel memory
+  tee: add private login method for kernel clients
+  KEYS: trusted: Add generic trusted keys framework
+  KEYS: trusted: Introduce TEE based Trusted Keys
+  doc: keys: Document usage of TEE based Trusted Keys
+  MAINTAINERS: Add entry for TEE based Trusted Keys
+
+ Documentation/security/keys/index.rst       |   1 +
+ Documentation/security/keys/tee-trusted.rst |  93 ++++++++
+ MAINTAINERS                                 |   9 +
+ drivers/tee/optee/call.c                    |   7 +
+ drivers/tee/tee_core.c                      |   6 +
+ drivers/tee/tee_shm.c                       |  26 ++-
+ include/keys/trusted-type.h                 |  48 ++++
+ include/keys/trusted_tee.h                  |  66 ++++++
+ include/keys/trusted_tpm.h                  |  15 --
+ include/linux/tee_drv.h                     |   1 +
+ include/uapi/linux/tee.h                    |   8 +
+ security/keys/Kconfig                       |   3 +
+ security/keys/trusted-keys/Makefile         |   2 +
+ security/keys/trusted-keys/trusted_common.c | 346 ++++++++++++++++++++++++++++
+ security/keys/trusted-keys/trusted_tee.c    | 282 +++++++++++++++++++++++
+ security/keys/trusted-keys/trusted_tpm1.c   | 345 +++++----------------------
+ 16 files changed, 954 insertions(+), 304 deletions(-)
+ create mode 100644 Documentation/security/keys/tee-trusted.rst
+ create mode 100644 include/keys/trusted_tee.h
+ create mode 100644 security/keys/trusted-keys/trusted_common.c
+ create mode 100644 security/keys/trusted-keys/trusted_tee.c
+
+-- 
+2.7.4
 
