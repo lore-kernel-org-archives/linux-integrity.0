@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D88CA9EC9
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E329CA9EC7
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CC820873
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 034F520874
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jATu4MK3"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="g9+j14v2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbfJaBTS (ORCPT
+        id S1726859AbfJaBTf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Oct 2019 21:19:18 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:34448 "EHLO
+        Wed, 30 Oct 2019 21:19:35 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:34476 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfJaBTS (ORCPT
+        with ESMTP id S1726650AbfJaBTS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Wed, 30 Oct 2019 21:19:18 -0400
 Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5FBE820B4905;
+        by linux.microsoft.com (Postfix) with ESMTPSA id D4E3C20B4908;
         Wed, 30 Oct 2019 18:19:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5FBE820B4905
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D4E3C20B4908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1572484757;
-        bh=jKdr0i575psSffuW6tVfQvBwkPEFTHm7RfRhZzLOb6E=;
+        bh=NrzLIoduZG0xLmcBn5wdB+MoVcXmuYzqcWG35CXtXSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jATu4MK3A3ylU/E0k6trxZ3oQMU+wLM3JPimqzDIgTWagtcvPK1v3mF/e3EO3D8+m
-         O06pnP+RjDLzc9m3jSCh/5QlAViOCiwZ1XBgn8hu+/v8rMOyTaiq0dOrittY/NC2FF
-         jegrwioZDYptNcu+16Raeig/XrOltXXA5ZV3I0tk=
+        b=g9+j14v2JuNo8dzZv8oJyLtyVuqk6oWW8UcVF2rw2+MK6RhmZPCYapWNYoMKZ9LTZ
+         dsXxGEuZkHObRyb1/7+Is+9mOpdvdwiZ/jqSPL+OASEjy9nhsmO9Ld81nIcVhKOtw3
+         qyXtzy31+zw6ehHa+SqSDWLBQdFfnbCesEu9NcGY=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com,
         matthewgarrett@google.com, sashal@kernel.org,
@@ -41,9 +41,9 @@ To:     zohar@linux.ibm.com, dhowells@redhat.com,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
 Cc:     prsriva@linux.microsoft.com
-Subject: [PATCH v3 5/9] KEYS: Updated ima_get_action() to return keyrings if specified in the policy
-Date:   Wed, 30 Oct 2019 18:19:06 -0700
-Message-Id: <20191031011910.2574-6-nramas@linux.microsoft.com>
+Subject: [PATCH v3 8/9] KEYS: Added a boolean flag for IMA initialization status.
+Date:   Wed, 30 Oct 2019 18:19:09 -0700
+Message-Id: <20191031011910.2574-9-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191031011910.2574-1-nramas@linux.microsoft.com>
 References: <20191031011910.2574-1-nramas@linux.microsoft.com>
@@ -52,101 +52,70 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Information regarding what keyrings need to be measured is missing.
-ima_get_action() needs to retrieve the keyrings, if specified for
-KEYRING_CHECK. 
+IMA hook does not know whether a key can be measured right away or
+the key needs to be queued to be measured at a later time.
 
-This patch adds a new out parameter to ima_get_action() to return
-keyrings read from the policy.
+This patch defines a flag to indicate the IMA initialization status.
+IMA hook will use this flag to determine if a key can be measured
+right away or the key needs to be queued to be measured at a later time.
+
+ima_policy_flag cannot be relied upon for knowing IMA initialization
+status because ima_policy_flag will be set to 0 when either IMA
+is not initialized or the IMA policy itself is empty.
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima.h      | 3 ++-
- security/integrity/ima/ima_api.c  | 6 ++++--
- security/integrity/ima/ima_main.c | 8 ++++++--
- 3 files changed, 12 insertions(+), 5 deletions(-)
+ security/integrity/ima/ima.h      | 1 +
+ security/integrity/ima/ima_init.c | 3 +++
+ security/integrity/ima/ima_main.c | 2 +-
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 3539a159a7ac..ded78af94e69 100644
+index f8bf5c24e0d0..5abc5a0b4591 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -212,7 +212,8 @@ struct ima_measure_key_entry {
- /* LIM API function definitions */
- int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 		   int mask, enum ima_hooks func, int *pcr,
--		   struct ima_template_desc **template_desc);
-+		   struct ima_template_desc **template_desc,
-+		   char **keyrings);
- int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
- int ima_collect_measurement(struct integrity_iint_cache *iint,
- 			    struct file *file, void *buf, loff_t size,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index f488d1cead79..77ac076672e1 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -169,6 +169,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  * @func: caller identifier
-  * @pcr: pointer filled in if matched measure policy sets pcr=
-  * @template_desc: pointer filled in if matched measure policy sets template=
-+ * @keyrings: pointer filled in if matched measure policy sets keyrings=
-  *
-  * The policy is defined in terms of keypairs:
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-@@ -184,14 +185,15 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  */
- int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 		   int mask, enum ima_hooks func, int *pcr,
--		   struct ima_template_desc **template_desc)
-+		   struct ima_template_desc **template_desc,
-+		   char **keyrings)
- {
- 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
+@@ -54,6 +54,7 @@ extern int ima_policy_flag;
+ extern int ima_hash_algo;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
++extern bool ima_initialized;
  
- 	flags &= ima_policy_flag;
+ /* IMA event related data */
+ struct ima_event_data {
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 91eaa5f2d008..8734ed5322c7 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -23,6 +23,7 @@
+ /* name for boot aggregate entry */
+ static const char boot_aggregate_name[] = "boot_aggregate";
+ struct tpm_chip *ima_tpm_chip;
++bool ima_initialized;
  
- 	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr,
--				template_desc, NULL);
-+				template_desc, keyrings);
+ /* Add the boot aggregate to the IMA measurement list and extend
+  * the PCR register.
+@@ -135,6 +136,8 @@ int __init ima_init(void)
+ 	if (rc != 0)
+ 		return rc;
+ 
++	ima_initialized = true;
++
+ 	ima_measure_queued_keys();
+ 	return 0;
  }
- 
- /*
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 72ae0878ec5d..cbc7de87106f 100644
+index 2ad05563542c..e4c5e7150611 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -214,7 +214,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	 * Included is the appraise submask.
- 	 */
- 	action = ima_get_action(inode, cred, secid, mask, func, &pcr,
--				&template_desc);
-+				&template_desc, NULL);
- 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
- 			   (ima_policy_flag & IMA_MEASURE));
- 	if (!action && !violation_check)
-@@ -627,6 +627,7 @@ void process_buffer_measurement(const void *buf, int size,
- 					    .buf = buf,
- 					    .buf_len = size};
- 	struct ima_template_desc *template = NULL;
-+	char *keyrings = NULL;
- 	struct {
- 		struct ima_digest_data hdr;
- 		char digest[IMA_MAX_DIGEST_SIZE];
-@@ -641,11 +642,14 @@ void process_buffer_measurement(const void *buf, int size,
- 	if (func) {
- 		security_task_getsecid(current, &secid);
- 		action = ima_get_action(NULL, current_cred(), secid, 0, func,
--					&pcr, &template);
-+					&pcr, &template, &keyrings);
- 		if (!(action & IMA_MEASURE))
- 			return;
+@@ -732,7 +732,7 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	if (key->type != &key_type_asymmetric)
+ 		return;
+ 
+-	if (!ima_policy_flag) {
++	if (!ima_initialized) {
+ 		ima_queue_key_for_measurement(keyring, key);
+ 		return;
  	}
- 
-+	if (keyrings != NULL)
-+		keyrings = NULL;
-+
- 	if (!pcr)
- 		pcr = CONFIG_IMA_MEASURE_PCR_IDX;
- 
 -- 
 2.17.1
 
