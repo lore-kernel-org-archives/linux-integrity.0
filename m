@@ -2,236 +2,235 @@ Return-Path: <SRS0=Ddzc=YY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B27B7CA9EC7
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 738EECA9EC3
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 03:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D4B2087F
-	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:20:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="W4xoXvW7"
+	by mail.kernel.org (Postfix) with ESMTP id 3DE232080F
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 03:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbfJaBT7 (ORCPT
+        id S1726755AbfJaDbt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Oct 2019 21:19:59 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:34438 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726540AbfJaBTS (ORCPT
+        Wed, 30 Oct 2019 23:31:49 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14114 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726527AbfJaDbt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Oct 2019 21:19:18 -0400
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 38EF620B4904;
-        Wed, 30 Oct 2019 18:19:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 38EF620B4904
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1572484757;
-        bh=XlQLoUx/R/OlQ6F/D8Ody7ZjhmjwsfFRD9rGHtKdnZU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W4xoXvW7Jef9sPGEsiw9ByZaydA07Uth+2dkpPRx8ES94qbzco6NK2hmqRE1FhjjT
-         xeDXD9oDFJhRYL6aBME+Rl80JAQmSZJnd8M1OBNyx+MX8Ks4WxHY0D0D+ClF1rrU3p
-         oDddkpdz0/TWT5H73xMW9++DaW9/5qNBxrgPU/0Q=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     prsriva@linux.microsoft.com
-Subject: [PATCH v3 4/9] KEYS: Updated IMA policy functions for handling key measurement
-Date:   Wed, 30 Oct 2019 18:19:05 -0700
-Message-Id: <20191031011910.2574-5-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191031011910.2574-1-nramas@linux.microsoft.com>
-References: <20191031011910.2574-1-nramas@linux.microsoft.com>
+        Wed, 30 Oct 2019 23:31:49 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x9V3U2pe015331
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Oct 2019 23:31:48 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2vyj02hg1u-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Oct 2019 23:31:48 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 31 Oct 2019 03:31:45 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Oct 2019 03:31:41 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x9V3VeBN43516074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 31 Oct 2019 03:31:40 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A80BA4060;
+        Thu, 31 Oct 2019 03:31:40 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8486CA405B;
+        Thu, 31 Oct 2019 03:31:38 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.85.201.217])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 31 Oct 2019 03:31:38 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v10 0/9] powerpc: Enabling IMA arch specific secure boot policies
+Date:   Wed, 30 Oct 2019 23:31:25 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 19103103-4275-0000-0000-00000379641C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19103103-4276-0000-0000-0000388CA068
+Message-Id: <1572492694-6520-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-10-31_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1910310031
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Information regarding what keyrings need to be measured is missing.
+This patchset extends the previous version[1] by adding support for
+checking against a blacklist of binary hashes.
 
-A new field in the IMA policy, namely, keyrings is added to
-convey what keyrings need to be measured.
+The IMA subsystem supports custom, built-in, arch-specific policies to
+define the files to be measured and appraised. These policies are honored
+based on priority, where arch-specific policy is the highest and custom
+is the lowest.
 
-This patch updates the IMA function to retrieve keyrings from the policy.
+PowerNV system uses a Linux-based bootloader to kexec the OS. The
+bootloader kernel relies on IMA for signature verification of the OS
+kernel before doing the kexec. This patchset adds support for powerpc
+arch-specific IMA policies that are conditionally defined based on a
+system's secure boot and trusted boot states. The OS secure boot and
+trusted boot states are determined via device-tree properties.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima.h          |  6 ++--
- security/integrity/ima/ima_api.c      |  3 +-
- security/integrity/ima/ima_appraise.c |  2 +-
- security/integrity/ima/ima_policy.c   | 40 +++++++++++++++++++++++++--
- 4 files changed, 45 insertions(+), 6 deletions(-)
+The verification needs to be performed only for binaries that are not
+blacklisted. The kernel currently only checks against the blacklist of
+keys. However, doing so results in blacklisting all the binaries that
+are signed by the same key. In order to prevent just one particular
+binary from being loaded, it must be checked against a blacklist of
+binary hashes. This patchset also adds support to IMA for checking
+against a hash blacklist for files. signed by appended signature.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 12e9ec6847b5..3539a159a7ac 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -240,8 +240,10 @@ void ima_measure_queued_keys(void);
- 
- /* IMA policy related functions */
- int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
--		     enum ima_hooks func, int mask, int flags, int *pcr,
--		     struct ima_template_desc **template_desc);
-+		     enum ima_hooks func, int mask,
-+		     int flags, int *pcr,
-+		     struct ima_template_desc **template_desc,
-+		     char **keyrings);
- void ima_init_policy(void);
- void ima_update_policy(void);
- void ima_update_policy_flag(void);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index f614e22bf39f..f488d1cead79 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -175,6 +175,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-  *	| KEXEC_CMDLINE
-+ *      | KEYRING_CHECK
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-@@ -190,7 +191,7 @@ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 	flags &= ima_policy_flag;
- 
- 	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr,
--				template_desc);
-+				template_desc, NULL);
- }
- 
- /*
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 89b83194d1dc..5bed19be0f6a 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -54,7 +54,7 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
- 
- 	security_task_getsecid(current, &secid);
- 	return ima_match_policy(inode, current_cred(), secid, func, mask,
--				IMA_APPRAISE | IMA_HASH, NULL, NULL);
-+				IMA_APPRAISE | IMA_HASH, NULL, NULL, NULL);
- }
- 
- static int ima_fix_xattr(struct dentry *dentry,
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 0cc49f2d5233..b972a32ccb1b 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -31,6 +31,7 @@
- #define IMA_EUID	0x0080
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
-+#define IMA_KEYRINGS	0x0400
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -76,6 +77,7 @@ struct ima_rule_entry {
- 		int type;	/* audit type */
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
-+	char *keyrings; /* Keyrings to measure */
- 	struct ima_template_desc *template;
- };
- 
-@@ -476,6 +478,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-  * @pcr: set the pcr to extend
-  * @template_desc: the template that should be used for this rule
-+ * @keyrings: keyrings for this rule, if specified
-  *
-  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
-  * conditions.
-@@ -486,7 +489,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  */
- int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
- 		     enum ima_hooks func, int mask, int flags, int *pcr,
--		     struct ima_template_desc **template_desc)
-+		     struct ima_template_desc **template_desc,
-+		     char **keyrings)
- {
- 	struct ima_rule_entry *entry;
- 	int action = 0, actmask = flags | (flags << 1);
-@@ -518,6 +522,9 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
- 		if ((pcr) && (entry->flags & IMA_PCR))
- 			*pcr = entry->pcr;
- 
-+		if ((keyrings) && (entry->flags & IMA_KEYRINGS))
-+			*keyrings = entry->keyrings;
-+
- 		if (template_desc && entry->template)
- 			*template_desc = entry->template;
- 		else if (template_desc)
-@@ -761,7 +768,7 @@ enum {
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_permit_directio,
--	Opt_pcr, Opt_template, Opt_err
-+	Opt_pcr, Opt_template, Opt_keyrings, Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -796,6 +803,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
-+	{Opt_keyrings, "keyrings=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -959,6 +967,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
-+			else if (strcmp(args[0].from, "KEYRING_CHECK") == 0)
-+				entry->func = KEYRING_CHECK;
- 			else
- 				result = -EINVAL;
- 			if (!result)
-@@ -1011,6 +1021,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			result = 0;
- 			entry->flags |= IMA_FSNAME;
- 			break;
-+		case Opt_keyrings:
-+			ima_log_string(ab, "keyrings", args[0].from);
-+
-+			if ((entry->keyrings) ||
-+			    (entry->action != MEASURE) ||
-+			    (entry->func != KEYRING_CHECK)) {
-+				result = -EINVAL;
-+				break;
-+			}
-+			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->keyrings) {
-+				result = -ENOMEM;
-+				break;
-+			}
-+			result = 0;
-+			entry->flags |= IMA_KEYRINGS;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1371,6 +1398,15 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_KEYRINGS) {
-+		if (entry->keyrings != NULL)
-+			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
-+		else
-+			snprintf(tbuf, sizeof(tbuf), "%s", "All keyrings");
-+		seq_printf(m, pt(Opt_keyrings), tbuf);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
+[1] http://patchwork.ozlabs.org/cover/1149262/ 
+
+Changelog:
+
+v10: (Mimi posting patch set on Nayna's behalf)
+- Minor patch description changes
+- Include comment in process_buffer_measurement()
+- Additional patch: Enforcing kernel module appended signatures should
+be reflected in "/sys/module/module/parameters/sig_enforce".
+- Trimmed Cc list.
+
+v9:
+* Includes feedbacks from Michael
+  * fix the missing of_node_put()
+* Includes Mimi's feedbacks
+  * fix the policy show() function to display check_blacklist
+  * fix the other comment related and patch description
+  * add the example of blacklist in the Patch 7/8
+Note: Patch 7/8 is giving errors when checkpatch.pl is run because
+of the format of showing measurement record as part of the example. I am
+not very sure if that can be fixed as we need to represent the
+measurements as is.
+
+v8:
+* Updates the Patch Description as per Michael's and Mimi's feedback
+* Includes feedbacks from Michael for the device tree and policies
+  * removes the arch-policy hack by defining three arrays.
+  * fixes related to device-tree calls 
+  * other code specific feedbacks
+* Includes feedbacks from Mimi on the blacklist
+  * generic blacklist function is modified than previous version
+  * other coding fixes
+
+v7:
+* Removes patch related to dt-bindings as per input from Rob Herring. 
+* fixes Patch 1/8 to use new device-tree updates as per Oliver
+  feedback to device-tree documentation in skiboot mailing list.
+(https://lists.ozlabs.org/pipermail/skiboot/2019-September/015329.html)
+* Includes feedbacks from Mimi, Thiago
+  * moves function get_powerpc_fw_sb_node() from Patch 1 to Patch 3 
+  * fixes Patch 2/8 to use CONFIG_MODULE_SIG_FORCE.
+  * updates Patch description in Patch 5/8
+  * adds a new patch to add wrapper is_binary_blacklisted()
+  * removes the patch that deprecated permit_directio
+
+v6:
+* includes feedbacks from Michael Ellerman on the patchset v5
+  * removed email ids from comments
+  * add the doc for the device-tree
+  * renames the secboot.c to secure_boot.c and secboot.h to secure_boot.h
+  * other code specific fixes
+* split the patches to differentiate between secureboot and trustedboot
+state of the system
+* adds the patches to support the blacklisting of the binary hash.
+
+v5:
+* secureboot state is now read via device tree entry rather than OPAL
+secure variables
+* ima arch policies are updated to use policy based template for
+measurement rules
+
+v4:
+* Fixed the build issue as reported by Satheesh Rajendran.
+
+v3:
+* OPAL APIs in Patch 1 are updated to provide generic interface based on
+key/keylen. This patchset updates kernel OPAL APIs to be compatible with
+generic interface.
+* Patch 2 is cleaned up to use new OPAL APIs.
+* Since OPAL can support different types of backend which can vary in the
+variable interpretation, the Patch 2 is updated to add a check for the
+backend version
+* OPAL API now expects consumer to first check the supported backend version
+before calling other secvar OPAL APIs. This check is now added in patch 2.
+* IMA policies in Patch 3 is updated to specify appended signature and
+per policy template.
+* The patches now are free of any EFIisms.
+
+v2:
+
+* Removed Patch 1: powerpc/include: Override unneeded early ioremap
+functions
+* Updated Subject line and patch description of the Patch 1 of this series
+* Removed dependency of OPAL_SECVAR on EFI, CPU_BIG_ENDIAN and UCS2_STRING
+* Changed OPAL APIs from static to non-static. Added opal-secvar.h for the
+same
+* Removed EFI hooks from opal_secvar.c
+* Removed opal_secvar_get_next(), opal_secvar_enqueue() and
+opal_query_variable_info() function
+* get_powerpc_sb_mode() in secboot.c now directly calls OPAL Runtime API
+rather than via EFI hooks.
+* Fixed log messages in get_powerpc_sb_mode() function.
+* Added dependency for PPC_SECURE_BOOT on configs PPC64 and OPAL_SECVAR
+* Replaced obj-$(CONFIG_IMA) with obj-$(CONFIG_PPC_SECURE_BOOT) in
+arch/powerpc/kernel/Makefile
+
+Mimi Zohar (1):
+  powerpc/ima: indicate kernel modules appended signatures are enforced
+
+Nayna Jain (8):
+  powerpc: detect the secure boot mode of the system
+  powerpc/ima: add support to initialize ima policy rules
+  powerpc: detect the trusted boot state of the system
+  powerpc/ima: define trusted boot policy
+  ima: make process_buffer_measurement() generic
+  certs: add wrapper function to check blacklisted binary hash
+  ima: check against blacklisted hashes for files with modsig
+  powerpc/ima: update ima arch policy to check for blacklist
+
+ Documentation/ABI/testing/ima_policy   |  4 ++
+ arch/powerpc/Kconfig                   | 11 +++++
+ arch/powerpc/include/asm/secure_boot.h | 29 +++++++++++++
+ arch/powerpc/kernel/Makefile           |  2 +
+ arch/powerpc/kernel/ima_arch.c         | 78 ++++++++++++++++++++++++++++++++++
+ arch/powerpc/kernel/secure_boot.c      | 58 +++++++++++++++++++++++++
+ certs/blacklist.c                      |  9 ++++
+ include/keys/system_keyring.h          |  6 +++
+ include/linux/ima.h                    |  3 +-
+ security/integrity/ima/ima.h           | 11 +++++
+ security/integrity/ima/ima_appraise.c  | 33 ++++++++++++++
+ security/integrity/ima/ima_main.c      | 70 ++++++++++++++++++++----------
+ security/integrity/ima/ima_policy.c    | 12 +++++-
+ security/integrity/integrity.h         |  1 +
+ 14 files changed, 302 insertions(+), 25 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/secure_boot.h
+ create mode 100644 arch/powerpc/kernel/ima_arch.c
+ create mode 100644 arch/powerpc/kernel/secure_boot.c
+
 -- 
-2.17.1
+2.7.5
 
