@@ -1,175 +1,126 @@
-Return-Path: <SRS0=1RdM=YX=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Ddzc=YY=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72585CA9EC7
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Oct 2019 22:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B20BECA9EC7
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4493520874
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Oct 2019 22:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 842742087E
+	for <linux-integrity@archiver.kernel.org>; Thu, 31 Oct 2019 01:19:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vrc27cvy"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="g7lu73QS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfJ3W6u (ORCPT
+        id S1726554AbfJaBTR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Oct 2019 18:58:50 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:57903 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726837AbfJ3W6t (ORCPT
+        Wed, 30 Oct 2019 21:19:17 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:34404 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfJaBTR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Oct 2019 18:58:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1572476328;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=nzz7sPab5APnqYMyjw2jhY5UVs1dF5WZgMMoICv2W90=;
-        b=Vrc27cvyqkPhdEcqcz4RyoI6WnZ2bdcgPrYawj9jdVjF1ITW3RYgNttDoTDYbmY+L1A40I
-        Op9mJ778DdC41ilhicnfHTvU/c+rfzfpdg0VXwbeznb72ikVEqafnKceHKj/aQPOX98m3h
-        8aN3NFR9hfnt3cPT3cDcOdDVO7AHgW0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-276-yma7WaZvPoWPAOsDcfcQ0A-1; Wed, 30 Oct 2019 18:58:46 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 007471005500;
-        Wed, 30 Oct 2019 22:58:45 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-116-32.phx2.redhat.com [10.3.116.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9791C5D6D6;
-        Wed, 30 Oct 2019 22:58:44 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
-Subject: [PATCH v4] tpm: Add tpm_version_major sysfs file
-Date:   Wed, 30 Oct 2019 15:58:43 -0700
-Message-Id: <20191030225843.23366-1-jsnitsel@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-MC-Unique: yma7WaZvPoWPAOsDcfcQ0A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+        Wed, 30 Oct 2019 21:19:17 -0400
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id B0CB22010AC0;
+        Wed, 30 Oct 2019 18:19:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B0CB22010AC0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1572484756;
+        bh=RqMz75eioSPQPfWpUYryf90rJHg/WjOPYhEZZl7VA8U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=g7lu73QSWsjqmDPwqqNimRTunhhlVKf5Rp4COY+BU9Ybmcem+q4On7oOhJZ7ePvTz
+         iuQj3HMspram5CCthGBj0zoS6W/pyMLv1tYbt7r0dFI2YtKgbTED+s9z4qXWO1jS8w
+         914I0vofydvtlGiInXeChrf25Xm5c33kiRy6O1Qw=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     prsriva@linux.microsoft.com
+Subject: [PATCH v3 1/9] KEYS: Defined an IMA hook to measure keys on key create or update
+Date:   Wed, 30 Oct 2019 18:19:02 -0700
+Message-Id: <20191031011910.2574-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191031011910.2574-1-nramas@linux.microsoft.com>
+References: <20191031011910.2574-1-nramas@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Easily determining what TCG version a tpm device implements
-has been a pain point for userspace for a long time, so
-add a sysfs file to report the TCG major version of a tpm device.
+Asymmetric keys used for verifying file signatures or certificates
+are currently not included in the IMA measurement list.
 
-Also add an entry to Documentation/ABI/stable/sysfs-class-tpm
-describing the new file.
+This patch defines a new IMA hook namely ima_post_key_create_or_update()
+to measure asymmetric keys.
 
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
-v4: - Change file name to tpm_version_major
-    - Actually display just the major version.
-    - change structs to tpm1_* & tpm2_*
-      instead of tpm12_* tpm20_*.
-v3: - Change file name to version_major.
-v2: - Fix TCG usage in commit message.
-    - Add entry to sysfs-class-tpm in Documentation/ABI/stable
+ security/integrity/ima/ima.h      |  2 ++
+ security/integrity/ima/ima_main.c | 26 ++++++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
 
- Documentation/ABI/stable/sysfs-class-tpm | 11 ++++++++
- drivers/char/tpm/tpm-sysfs.c             | 34 +++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 7 deletions(-)
-
-diff --git a/Documentation/ABI/stable/sysfs-class-tpm b/Documentation/ABI/s=
-table/sysfs-class-tpm
-index c0e23830f56a..5468fedc493c 100644
---- a/Documentation/ABI/stable/sysfs-class-tpm
-+++ b/Documentation/ABI/stable/sysfs-class-tpm
-@@ -183,3 +183,14 @@ Description:=09The "timeouts" property shows the 4 ven=
-dor-specific values
- =09=09The four timeout values are shown in usecs, with a trailing
- =09=09"[original]" or "[adjusted]" depending on whether the values
- =09=09were scaled by the driver to be reported in usec from msecs.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 997a57137351..22d0628faf56 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -21,6 +21,8 @@
+ #include <linux/tpm.h>
+ #include <linux/audit.h>
+ #include <crypto/hash_info.h>
++#include <crypto/public_key.h>
++#include <keys/asymmetric-type.h>
+ 
+ #include "../integrity.h"
+ 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 492b8f241d39..18e1bc105be7 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -635,6 +635,9 @@ void process_buffer_measurement(const void *buf, int size,
+ 	int action = 0;
+ 	u32 secid;
+ 
++	if (!ima_policy_flag)
++		return;
 +
-+What:=09=09/sys/class/tpm/tpmX/tpm_version_major
-+Date:=09=09October 2019
-+KernelVersion:=095.5
-+Contact:=09linux-integrity@vger.kernel.org
-+Description:=09The "tpm_version_major" property shows the TCG spec major v=
-ersion
-+=09=09implemented by the TPM device.
-+
-+=09=09Example output:
-+
-+=09=092
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index edfa89160010..12da71e72488 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -309,7 +309,17 @@ static ssize_t timeouts_show(struct device *dev, struc=
-t device_attribute *attr,
+ 	if (func) {
+ 		security_task_getsecid(current, &secid);
+ 		action = ima_get_action(NULL, current_cred(), secid, 0, func,
+@@ -695,6 +698,29 @@ void ima_kexec_cmdline(const void *buf, int size)
+ 	}
  }
- static DEVICE_ATTR_RO(timeouts);
-=20
--static struct attribute *tpm_dev_attrs[] =3D {
-+static ssize_t tpm_version_major_show(struct device *dev,
-+=09=09=09=09  struct device_attribute *attr, char *buf)
+ 
++/**
++ * ima_post_key_create_or_update - measure asymmetric keys
++ * @keyring: keyring to which the key is linked to
++ * @key: created or updated key
++ * @flags: key flags
++ * @create: flag indicating whether the key was created or updated
++ *
++ * Keys can only be measured, not appraised.
++ */
++void ima_post_key_create_or_update(struct key *keyring, struct key *key,
++				   unsigned long flags, bool create)
 +{
-+=09struct tpm_chip *chip =3D to_tpm_chip(dev);
++	const struct public_key *pk;
 +
-+=09return sprintf(buf, "%s\n", chip->flags & TPM_CHIP_FLAG_TPM2
-+=09=09       ? "2" : "1");
++	if (key->type != &key_type_asymmetric)
++		return;
++
++	pk = key->payload.data[asym_crypto];
++	process_buffer_measurement(pk->key, pk->keylen,
++				   keyring->description,
++				   NONE, 0);
 +}
-+static DEVICE_ATTR_RO(tpm_version_major);
 +
-+static struct attribute *tpm1_dev_attrs[] =3D {
- =09&dev_attr_pubek.attr,
- =09&dev_attr_pcrs.attr,
- =09&dev_attr_enabled.attr,
-@@ -320,18 +330,28 @@ static struct attribute *tpm_dev_attrs[] =3D {
- =09&dev_attr_cancel.attr,
- =09&dev_attr_durations.attr,
- =09&dev_attr_timeouts.attr,
-+=09&dev_attr_tpm_version_major.attr,
- =09NULL,
- };
-=20
--static const struct attribute_group tpm_dev_group =3D {
--=09.attrs =3D tpm_dev_attrs,
-+static struct attribute *tpm2_dev_attrs[] =3D {
-+=09&dev_attr_tpm_version_major.attr,
-+=09NULL
-+};
-+
-+static const struct attribute_group tpm1_dev_group =3D {
-+=09.attrs =3D tpm1_dev_attrs,
-+};
-+
-+static const struct attribute_group tpm2_dev_group =3D {
-+=09.attrs =3D tpm2_dev_attrs,
- };
-=20
- void tpm_sysfs_add_device(struct tpm_chip *chip)
+ static int __init init_ima(void)
  {
--=09if (chip->flags & TPM_CHIP_FLAG_TPM2)
--=09=09return;
--
- =09WARN_ON(chip->groups_cnt !=3D 0);
--=09chip->groups[chip->groups_cnt++] =3D &tpm_dev_group;
-+=09if (chip->flags & TPM_CHIP_FLAG_TPM2)
-+=09=09chip->groups[chip->groups_cnt++] =3D &tpm2_dev_group;
-+=09else
-+=09=09chip->groups[chip->groups_cnt++] =3D &tpm1_dev_group;
- }
---=20
-2.23.0
+ 	int error;
+-- 
+2.17.1
 
