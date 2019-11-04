@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10556CA9ED4
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Nov 2019 22:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D87CA9ED4
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Nov 2019 22:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9385214E0
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Nov 2019 22:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C51C204EC
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Nov 2019 22:23:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572905661;
-	bh=FrzwZv6FVNvvAr07Vc1/1PA+4MPp/UssWIY/WONUOQo=;
+	s=default; t=1572906233;
+	bh=BQznuFgVQfqp84u8/GPWmIUgThSN1012WBeQa99r7uE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v4qdIbv3uGHDpVOTsYmHHHaH6gl0mf4aFdDVjBeOvacmPMKk7vCZ4COiv+VsqwpPp
-	 4hmUzlIOrOrsrNDKqBCAGnR87cSIDdpB9/7dd40lDbdxtoM4SsZ3qMY1F1GxlseWya
-	 K9bbWI8h4bFUHhchveauuDCQe/89P2jCRAEzOqwo=
+	b=ij1Lo4UXMONaESJ1MMInkoQ3dcetnFGVt2FGPer3eS64MQUsOra1HzSUZ0Dcevq4P
+	 S86Ez1f1ErAeJn02gsPfWy1iq8ZW8phwJOZxPjeHEILtV5IaP3nxpNPMalEroADHXI
+	 kQMAnlp++Wv4ZJmwrK2UcCPuS2zl8W3Ym6qdDyGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389462AbfKDWIM (ORCPT
+        id S2387470AbfKDVxv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Nov 2019 17:08:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40842 "EHLO mail.kernel.org"
+        Mon, 4 Nov 2019 16:53:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388489AbfKDWIJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Nov 2019 17:08:09 -0500
+        id S2387588AbfKDVxu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Nov 2019 16:53:50 -0500
 Received: from localhost (6.204-14-84.ripe.coltfrance.com [84.14.204.6])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCDBE205C9;
-        Mon,  4 Nov 2019 22:08:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADE0321D81;
+        Mon,  4 Nov 2019 21:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572905286;
-        bh=FrzwZv6FVNvvAr07Vc1/1PA+4MPp/UssWIY/WONUOQo=;
+        s=default; t=1572904429;
+        bh=BQznuFgVQfqp84u8/GPWmIUgThSN1012WBeQa99r7uE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lkl57Kl/3efiw8Rc3IKSlgdJQp4Dlv7Ag+KsByN21eHf+03HhZz3gE1TXCR65ZpQR
-         WTcsLEs32Py/PB5LUpFGaRRtO5e98rwNXSGyc/xJKMjoOai2mfqcILGNs55tcrlO3d
-         /WtDnkogd+4uEPzx29/KDUAyBXSDqHVTSVoMvIv0=
+        b=U1yKKV1YC6Gfe2u1DPFZIokSkBsXcVf3lFEhAdwcAgG1EwXAdbRX8O62HtY1pXKHo
+         /x4/h8+EeCzzG+eeoKd2R6FYx3P+jwpgSZ/kUYXnkU5fVqqNI+m30q43/mk88epzks
+         7GqG2T7wy8zP3TEoN9Z28V+UcIzDvak1KAHO9WZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matthew Garrett <mjg59@google.com>,
         Ben Dooks <ben.dooks@codethink.co.uk>,
-        Dave Young <dyoung@redhat.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jerry Snitselaar <jsnitsel@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Lyude Paul <lyude@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
+        Lukas Wunner <lukas@wunner.de>, Lyude Paul <lyude@redhat.com>,
         Octavian Purdila <octavian.purdila@intel.com>,
         Peter Jones <pjones@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -58,12 +57,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 051/163] efi/cper: Fix endianness of PCIe class code
-Date:   Mon,  4 Nov 2019 22:44:01 +0100
-Message-Id: <20191104212143.869392738@linuxfoundation.org>
+Subject: [PATCH 4.14 42/95] efi/x86: Do not clean dummy variable in kexec path
+Date:   Mon,  4 Nov 2019 22:44:40 +0100
+Message-Id: <20191104212101.999539577@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191104212140.046021995@linuxfoundation.org>
-References: <20191104212140.046021995@linuxfoundation.org>
+In-Reply-To: <20191104212038.056365853@linuxfoundation.org>
+References: <20191104212038.056365853@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -73,32 +72,31 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Dave Young <dyoung@redhat.com>
 
-[ Upstream commit 6fb9367a15d1a126d222d738b2702c7958594a5f ]
+[ Upstream commit 2ecb7402cfc7f22764e7bbc80790e66eadb20560 ]
 
-The CPER parser assumes that the class code is big endian, but at least
-on this edk2-derived Intel Purley platform it's little endian:
+kexec reboot fails randomly in UEFI based KVM guest.  The firmware
+just resets while calling efi_delete_dummy_variable();  Unfortunately
+I don't know how to debug the firmware, it is also possible a potential
+problem on real hardware as well although nobody reproduced it.
 
-    efi: EFI v2.50 by EDK II BIOS ID:PLYDCRB1.86B.0119.R05.1701181843
-    DMI: Intel Corporation PURLEY/PURLEY, BIOS PLYDCRB1.86B.0119.R05.1701181843 01/18/2017
+The intention of the efi_delete_dummy_variable is to trigger garbage collection
+when entering virtual mode.  But SetVirtualAddressMap can only run once
+for each physical reboot, thus kexec_enter_virtual_mode() is not necessarily
+a good place to clean a dummy object.
 
-    {1}[Hardware Error]:   device_id: 0000:5d:00.0
-    {1}[Hardware Error]:   slot: 0
-    {1}[Hardware Error]:   secondary_bus: 0x5e
-    {1}[Hardware Error]:   vendor_id: 0x8086, device_id: 0x2030
-    {1}[Hardware Error]:   class_code: 000406
-                                       ^^^^^^ (should be 060400)
+Drop the efi_delete_dummy_variable so that kexec reboot can work.
 
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Dave Young <dyoung@redhat.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Matthew Garrett <mjg59@google.com>
 Cc: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Dave Young <dyoung@redhat.com>
 Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc: Jerry Snitselaar <jsnitsel@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Lukas Wunner <lukas@wunner.de>
 Cc: Lyude Paul <lyude@redhat.com>
-Cc: Matthew Garrett <mjg59@google.com>
 Cc: Octavian Purdila <octavian.purdila@intel.com>
 Cc: Peter Jones <pjones@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -106,26 +104,27 @@ Cc: Scott Talbert <swt@techie.net>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-efi@vger.kernel.org
 Cc: linux-integrity@vger.kernel.org
-Link: https://lkml.kernel.org/r/20191002165904.8819-2-ard.biesheuvel@linaro.org
+Link: https://lkml.kernel.org/r/20191002165904.8819-8-ard.biesheuvel@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/cper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/platform/efi/efi.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index addf0749dd8b6..b1af0de2e1008 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -381,7 +381,7 @@ static void cper_print_pcie(const char *pfx, const struct cper_sec_pcie *pcie,
- 		printk("%s""vendor_id: 0x%04x, device_id: 0x%04x\n", pfx,
- 		       pcie->device_id.vendor_id, pcie->device_id.device_id);
- 		p = pcie->device_id.class_code;
--		printk("%s""class_code: %02x%02x%02x\n", pfx, p[0], p[1], p[2]);
-+		printk("%s""class_code: %02x%02x%02x\n", pfx, p[2], p[1], p[0]);
- 	}
- 	if (pcie->validation_bits & CPER_PCIE_VALID_SERIAL_NUMBER)
- 		printk("%s""serial number: 0x%04x, 0x%04x\n", pfx,
+diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
+index 9061babfbc83d..335a62e74a2e9 100644
+--- a/arch/x86/platform/efi/efi.c
++++ b/arch/x86/platform/efi/efi.c
+@@ -893,9 +893,6 @@ static void __init kexec_enter_virtual_mode(void)
+ 
+ 	if (efi_enabled(EFI_OLD_MEMMAP) && (__supported_pte_mask & _PAGE_NX))
+ 		runtime_code_page_mkexec();
+-
+-	/* clean DUMMY object */
+-	efi_delete_dummy_variable();
+ #endif
+ }
+ 
 -- 
 2.20.1
 
