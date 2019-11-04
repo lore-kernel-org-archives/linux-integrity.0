@@ -1,37 +1,66 @@
-Return-Path: <SRS0=2YMP=YZ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=vVxc=Y4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC67CA9ED0
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Nov 2019 20:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A40CA9ECF
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Nov 2019 06:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 226632086D
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Nov 2019 20:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E1A92245D
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Nov 2019 06:59:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vvdCJc1R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbfKAUUH (ORCPT
+        id S1727327AbfKDG7C (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Nov 2019 16:20:07 -0400
-Received: from mga11.intel.com ([192.55.52.93]:55656 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbfKAUUH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Nov 2019 16:20:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Nov 2019 13:20:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.68,256,1569308400"; 
-   d="scan'208";a="226138430"
-Received: from bklaps-mobl.ger.corp.intel.com (HELO localhost) ([10.252.27.20])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Nov 2019 13:19:58 -0700
-Date:   Fri, 1 Nov 2019 22:19:57 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
+        Mon, 4 Nov 2019 01:59:02 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36961 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727322AbfKDG7B (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Nov 2019 01:59:01 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v2so16303606lji.4
+        for <linux-integrity@vger.kernel.org>; Sun, 03 Nov 2019 22:58:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ef40HtgLagkWmNMc93ySVU+8+raGbvhremm/3vIkPJs=;
+        b=vvdCJc1RINMcL5JoJz312DaAniIDfMzCcnwAI/nzlhioj8GGGYgW5khIKfb5WKPoih
+         qMp+vCbDbemdWq8i0Mf58v3uh/mu8EhKBMgRhulZLShXtK+MNVeAUm7PQ2aQiAtYd/+j
+         Jg6nmlI9XTaqFYG/d/qIJDVf1ikfm6/i0iK1k912esWDVF1151DSFoBkdr1dAOlWvfmC
+         jsn+40LPewRJA3SIUnwPlyony4u564JLgwa29HfMy3fBdaUY2d1amOC0D3N4Y4FXSyEs
+         uXfrP9qkdne00KhZwEYKvXolsJ2gV5a0/Mi5PvdRJEwJ90Nr/tnHijeE3ql/YqVMQM1K
+         AvmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ef40HtgLagkWmNMc93ySVU+8+raGbvhremm/3vIkPJs=;
+        b=SH3U7ysPK3uKM7V1MN8jnXxEJS2bUY4JCkf+xR4RwHqZ4qSvhnrWGr7LoChz0cfqoB
+         wzE7etsXBg1f8rLqoD5/jYnsrbg9LEcXrbJlIYRyM37g5t/fBHpKkZtcwN6Ix7QY48bx
+         nG6aWXUbJi5KtEKQD+Ll00z0suNGjnbhL5tttR0IHDzgEgOudm4vjB/FsKxxLLQM0rJ+
+         DJoqVMVpndQF0q253Qq4un8Uz4795tji+CpdMrX669LJ25f+iznBM/PSB9Odd/uqW5MS
+         uOi7ftMBS8uwpo+WtIFfrF7BlYsN/ySpzo8/ewiUJn7ycU5btkkNMJThFiasL0TBiOpm
+         O4rQ==
+X-Gm-Message-State: APjAAAVEuWkVLTJnXPeM5S5ZsKG5FOZsIehf/l7TELvOgTYmqMy1xT+j
+        gGmenNV/CP5TRILLmJvBDJ7Kg1ogBTXZzkc/JUagMQ==
+X-Google-Smtp-Source: APXvYqwDEcaV1wOC5X14ad1vPw2VW4B5zXbZYrai12akzfGxkCIeR+UrJYYWYChUz2q1aw4cIzuU9bUsn4PO7ZkCq3g=
+X-Received: by 2002:a2e:9a12:: with SMTP id o18mr9966567lji.191.1572850738786;
+ Sun, 03 Nov 2019 22:58:58 -0800 (PST)
+MIME-Version: 1.0
+References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
+ <1572530323-14802-7-git-send-email-sumit.garg@linaro.org> <20191031214745.GG10507@linux.intel.com>
+ <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com> <20191101201957.GA8369@linux.intel.com>
+In-Reply-To: <20191101201957.GA8369@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 4 Nov 2019 12:28:47 +0530
+Message-ID: <CAFA6WYNwSSaZv5OM=q+LCyn0mEdpg7K+W_v2_NBHhtktg1BFXw@mail.gmail.com>
+Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted Keys
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
         Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
         Mimi Zohar <zohar@linux.ibm.com>,
@@ -49,34 +78,34 @@ Cc:     Jens Wiklander <jens.wiklander@linaro.org>, dhowells@redhat.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Subject: Re: [Patch v3 6/7] doc: keys: Document usage of TEE based Trusted
- Keys
-Message-ID: <20191101201957.GA8369@linux.intel.com>
-References: <1572530323-14802-1-git-send-email-sumit.garg@linaro.org>
- <1572530323-14802-7-git-send-email-sumit.garg@linaro.org>
- <20191031214745.GG10507@linux.intel.com>
- <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYMkE928v-v76gGtWmsS0PwRp-OHUtkS0+Ts4V6x0AKBqQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Nov 01, 2019 at 03:04:18PM +0530, Sumit Garg wrote:
- 
-> Isn't this statement contradicting with your earlier statement
-> regarding the right order would be to complete TEE patches review
-> first and then come up with documentation here [2]?
-> 
-> [1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
-> [2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
+On Sat, 2 Nov 2019 at 01:50, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Fri, Nov 01, 2019 at 03:04:18PM +0530, Sumit Garg wrote:
+>
+> > Isn't this statement contradicting with your earlier statement
+> > regarding the right order would be to complete TEE patches review
+> > first and then come up with documentation here [2]?
+> >
+> > [1] https://lore.kernel.org/linux-integrity/1568025601.4614.253.camel@linux.ibm.com/
+> > [2] https://lore.kernel.org/linux-integrity/20190909163643.qxmzpcggi567hmhv@linux.intel.com/
+>
+> With the intersecting issues, namely key generation and conflicting
+> keyctl parameters, that was not a well considered statement.
 
-With the intersecting issues, namely key generation and conflicting
-keyctl parameters, that was not a well considered statement.
+Okay, let me work on documentation first, but I think resending whole
+patch-set just for documentation review and rework would be an
+overkill. Would minor revisions of this patch only like v3.1, v3.2
+etc. work for you? And later I could send next version of this
+patch-set once we agree on documentation.
 
-/Jarkko
+-Sumit
+
+>
+> /Jarkko
