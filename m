@@ -2,111 +2,147 @@ Return-Path: <SRS0=D9SW=ZD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 171A6C17445
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0357EC43331
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E516A21655
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0F72184C
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eBXUregc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727528AbfKKTYT (ORCPT
+        id S1727616AbfKKTdM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Nov 2019 14:24:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48806 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727196AbfKKTYS (ORCPT
+        Mon, 11 Nov 2019 14:33:12 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:44862 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727555AbfKKTdL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Nov 2019 14:24:18 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xABJNS0Y057967
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Nov 2019 14:24:15 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2w7bmjw7c9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 11 Nov 2019 14:24:15 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <patrickc@linux.ibm.com>;
-        Mon, 11 Nov 2019 19:24:13 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Nov 2019 19:24:10 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xABJO9xR49873012
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Nov 2019 19:24:09 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDAFA4C04A;
-        Mon, 11 Nov 2019 19:24:08 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 404B84C044;
-        Mon, 11 Nov 2019 19:24:08 +0000 (GMT)
-Received: from oc3746452103.ibm.com (unknown [9.60.73.196])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Nov 2019 19:24:08 +0000 (GMT)
-From:   Patrick Callaghan <patrickc@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Patrick Callaghan <patrickc@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH] ima: avoid appraise error for hash calc interrupt
-Date:   Mon, 11 Nov 2019 14:23:48 -0500
-X-Mailer: git-send-email 2.8.3
-X-TM-AS-GCONF: 00
-x-cbid: 19111119-0012-0000-0000-00000362BE21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111119-0013-0000-0000-0000219E2A8E
-Message-Id: <20191111192348.30535-1-patrickc@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-11_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1910280000 definitions=main-1911110173
+        Mon, 11 Nov 2019 14:33:11 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 53FAA20B490A;
+        Mon, 11 Nov 2019 11:33:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 53FAA20B490A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1573500790;
+        bh=vVWpClEcFcpAowfWbFY2ESxzTm/YP//DDYRJ/xxk6To=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=eBXUregc316UFl+Gocc0g/Qz8shfEDGUumHzIXECKiuau/UHXD1f/sSvmnq/QCC6w
+         0M/bqLtrDMaNRbIfkZD57YN32hpwV5HcIaFWRczObp6ggXfk8I56CWuMb2HKL7p+xS
+         Zi9562Li+ETyvfuBFk9r1jvdffzu970JHHthru9s=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 10/10] IMA: Call queue and dequeue functions to measure keys.
+Date:   Mon, 11 Nov 2019 11:33:03 -0800
+Message-Id: <20191111193303.12781-11-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191111193303.12781-1-nramas@linux.microsoft.com>
+References: <20191111193303.12781-1-nramas@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The integrity_kernel_read() call in ima_calc_file_hash_tfm() can return
-a value of 0 before all bytes of the file are read. A value of 0 would
-normally indicate an EOF. This has been observed if a user process is
-causing a file appraisal and is terminated with a SIGTERM signal. The
-most common occurrence of seeing the problem is if a shutdown or systemd
-reload is initiated while files are being appraised.
+Keys should be queued for measurement if custom IMA policies have
+not been applied. Keys queued for measurement, if any, need to be
+processed when custom IMA policies have been applied.
 
-The problem is similar to commit <f5e1040196db> (ima: always return
-negative code for error) that fixed the problem in
-ima_calc_file_hash_atfm().
+This patch adds the call to ima_queue_key_for_measurement in the IMA hook
+function and the call to ima_process_queued_keys_for_measurement when
+custom IMA policies have been applied.
 
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Patrick Callaghan <patrickc@linux.ibm.com>
+NOTE:
+If the kernel is built with CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS
+then the IMA policy for measuring keys should be applied as part of
+custom IMA policies. Keys will be queued up until custom policies
+are applied and processed when applied.
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima_crypto.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_asymmetric_keys.c | 31 ++++++++++++++++++--
+ security/integrity/ima/ima_policy.c          | 12 ++++++++
+ 2 files changed, 41 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 73044fc..7967a69 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -362,8 +362,10 @@ static int ima_calc_file_hash_tfm(struct file *file,
- 			rc = rbuf_len;
- 			break;
- 		}
--		if (rbuf_len == 0)
-+		if (rbuf_len == 0) {	/* unexpected EOF */
-+			rc = -EINVAL;
- 			break;
-+		}
- 		offset += rbuf_len;
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index 4a38b4957b8c..fab1d4672715 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -158,15 +158,42 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 				   unsigned long flags, bool create)
+ {
+ 	const struct public_key *pk;
++	bool key_queued = false;
  
- 		rc = crypto_shash_update(shash, rbuf, rbuf_len);
+-	/* Only asymmetric keys are handled */
++	/* Only asymmetric keys are handled by this hook. */
+ 	if (key->type != &key_type_asymmetric)
+ 		return;
+ 
++	if (!ima_process_keys_for_measurement)
++		key_queued = ima_queue_key_for_measurement(keyring, key);
++
+ 	/*
+-	 * Get the public_key of the given asymmetric key to measure.
++	 * Need to check again if the key was queued or not because
++	 * ima_process_keys_for_measurement could have flipped from
++	 * false to true after it was checked above, but before the key
++	 * could be queued by ima_queue_key_for_measurement().
+ 	 */
++	if (key_queued)
++		return;
++
++	/* Public key of the given asymmetric key is measured. */
+ 	pk = key->payload.data[asym_crypto];
++
++	/*
++	 * keyring->description points to the name of the keyring
++	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
++	 * which the given key is linked to.
++	 *
++	 * The name of the keyring is passed in the "eventname"
++	 * parameter to process_buffer_measurement() and is set
++	 * in the "eventname" field in ima_event_data for
++	 * the key measurement IMA event.
++	 *
++	 * The name of the keyring is also passed in the "keyring"
++	 * parameter to process_buffer_measurement() to check
++	 * if the IMA policy is configured to measure a key linked
++	 * to the given keyring.
++	 */
+ 	process_buffer_measurement(pk->key, pk->keylen,
+ 				   keyring->description,
+ 				   KEYRING_CHECK, 0,
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index d1889eee9287..d130bdcbc174 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -759,6 +759,18 @@ void ima_update_policy(void)
+ 		kfree(arch_policy_entry);
+ 	}
+ 	ima_update_policy_flag();
++
++	/*
++	 * Custom IMA policies have been setup.
++	 * Process key(s) queued up for measurement now.
++	 *
++	 * NOTE:
++	 *   Custom IMA policies always overwrite builtin policies
++	 *   (policies compiled in code). If one wants measurement
++	 *   of asymmetric keys then it has to be configured in
++	 *   custom policies and updated here.
++	 */
++	ima_process_queued_keys_for_measurement();
+ }
+ 
+ /* Keep the enumeration in sync with the policy_tokens! */
 -- 
-2.8.3
+2.17.1
 
