@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9ECCC17447
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97C7C17441
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A895222CD
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2197206C3
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 19:33:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Cnwcd4DR"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="q9MNsiYx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfKKTdT (ORCPT
+        id S1727551AbfKKTdf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Nov 2019 14:33:19 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:44854 "EHLO
+        Mon, 11 Nov 2019 14:33:35 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:44846 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfKKTdK (ORCPT
+        with ESMTP id S1727495AbfKKTdK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Mon, 11 Nov 2019 14:33:10 -0500
 Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 053DA20B4908;
-        Mon, 11 Nov 2019 11:33:10 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 053DA20B4908
+        by linux.microsoft.com (Postfix) with ESMTPSA id AA23920B4906;
+        Mon, 11 Nov 2019 11:33:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AA23920B4906
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1573500790;
-        bh=ePsjQTqjabrtYSzuz3htfRqLy4c1Eqq3aG19Es0tUO0=;
+        s=default; t=1573500789;
+        bh=TbueFcT61GF2z3Tx3i2usZTf2xULkk+T2gjdlpez5ls=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Cnwcd4DR0Xzj2Wx9JWSq8u6Rw98rxRpzP4lNuxvQsy/4RgDfJMJK2yRPqXGs+U/Gl
-         3zx7k/FqCrc5zfS3lA9G5XiG+4MGqi0o055vOMU/Upq1+kkozpymdl5pC5yf1esz+t
-         X3RQC8b56SvdK48gFSxc2XA/pAHpQxk0iSxZk1OI=
+        b=q9MNsiYxWVFc6Yf+9sS+KmSHc4McqHSyDQXxrf8yc2p9IAEODppPCVn8Bg+pgQVpi
+         ynMDYhSs7MCPexaPPdejcY3ft+xz6WYWqcxdBLZKryi9KA9ZezjYqtWA6++8CV82OK
+         ijeTtGFrCf2695CI0fcH5fNsJEFsxKuQEX4kc7Co=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, dhowells@redhat.com,
         matthewgarrett@google.com, sashal@kernel.org,
         jamorris@linux.microsoft.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 08/10] IMA: Added a flag to determine whether IMA hook can process the key now or has to queue for processing later
-Date:   Mon, 11 Nov 2019 11:33:01 -0800
-Message-Id: <20191111193303.12781-9-nramas@linux.microsoft.com>
+Subject: [PATCH v5 06/10] IMA: Defined an IMA hook to measure keys on key create or update
+Date:   Mon, 11 Nov 2019 11:32:59 -0800
+Message-Id: <20191111193303.12781-7-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191111193303.12781-1-nramas@linux.microsoft.com>
 References: <20191111193303.12781-1-nramas@linux.microsoft.com>
@@ -51,34 +51,118 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Keys should be processed only if custom IMA policies have been
-applied. Prior to that the keys should be queued for processing later.
+Asymmetric keys used for verifying file signatures or certificates
+are currently not included in the IMA measurement list.
 
-This patch defines a flag namely ima_process_keys_for_measurement
-to check if the key should be processed immediately or should be queued.
+This patch defines a new IMA hook namely ima_post_key_create_or_update()
+to measure asymmetric keys.
 
-ima_policy_flag cannot be relied upon because ima_policy_flag will
-be set to 0 when either IMA is not initialized or the IMA policy
-itself is empty.
+The IMA hook is defined in a new file namely ima_asymmetric_keys.c
+
+Note that currently IMA subsystem can be enabled without
+enabling KEYS subsystem.
+
+Adding support for measuring asymmetric keys in IMA requires KEYS
+subsystem to be enabled. To handle this dependency a new config
+namely CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS has been added. Enabling
+this config requires the following configs to be enabled:
+    CONFIG_IMA, CONFIG_KEYS, CONFIG_ASYMMETRIC_KEY_TYPE, and
+    CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE.
+
+The new file ima_asymmetric_keys.c is built only if
+CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is enabled.
+
+This config is turned off by default.
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima_asymmetric_keys.c | 2 ++
- 1 file changed, 2 insertions(+)
+ security/integrity/ima/Kconfig               | 14 +++++++
+ security/integrity/ima/Makefile              |  1 +
+ security/integrity/ima/ima_asymmetric_keys.c | 44 ++++++++++++++++++++
+ 3 files changed, 59 insertions(+)
+ create mode 100644 security/integrity/ima/ima_asymmetric_keys.c
 
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index 7d6603bfcc06..61c42d06a636 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -15,6 +15,8 @@
- #include <keys/asymmetric-type.h>
- #include "ima.h"
- 
-+bool ima_process_keys_for_measurement;
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 838476d780e5..c6d14884bc19 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -310,3 +310,17 @@ config IMA_APPRAISE_SIGNED_INIT
+ 	default n
+ 	help
+ 	   This option requires user-space init to be signed.
 +
- /**
-  * ima_post_key_create_or_update - measure asymmetric keys
-  * @keyring: keyring to which the key is linked to
++config IMA_MEASURE_ASYMMETRIC_KEYS
++	bool "Enable measuring asymmetric keys on key create or update"
++	depends on IMA
++	depends on KEYS
++	depends on ASYMMETRIC_KEY_TYPE
++	depends on ASYMMETRIC_PUBLIC_KEY_SUBTYPE
++	default n
++	help
++	   This option enables measuring asymmetric keys when
++	   the key is created or updated. Additionally, IMA policy
++	   needs to be configured to either measure keys linked to
++	   any keyring or only measure keys linked to the keyrings
++	   specified in the IMA policy through the keyrings= option.
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index 31d57cdf2421..3e9d0ad68c7b 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -12,3 +12,4 @@ ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+ ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
++obj-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+new file mode 100644
+index 000000000000..7d6603bfcc06
+--- /dev/null
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019 Microsoft Corporation
++ *
++ * Author: Lakshmi Ramasubramanian (nramas@linux.microsoft.com)
++ *
++ * File: ima_asymmetric_keys.c
++ *       Defines an IMA hook to measure asymmetric keys on key
++ *       create or update.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <crypto/public_key.h>
++#include <keys/asymmetric-type.h>
++#include "ima.h"
++
++/**
++ * ima_post_key_create_or_update - measure asymmetric keys
++ * @keyring: keyring to which the key is linked to
++ * @key: created or updated key
++ * @flags: key flags
++ * @create: flag indicating whether the key was created or updated
++ *
++ * Keys can only be measured, not appraised.
++ */
++void ima_post_key_create_or_update(struct key *keyring, struct key *key,
++				   unsigned long flags, bool create)
++{
++	const struct public_key *pk;
++
++	/* Only asymmetric keys are handled */
++	if (key->type != &key_type_asymmetric)
++		return;
++
++	/*
++	 * Get the public_key of the given asymmetric key to measure.
++	 */
++	pk = key->payload.data[asym_crypto];
++	process_buffer_measurement(pk->key, pk->keylen,
++				   keyring->description,
++				   KEYRING_CHECK, 0,
++				   keyring->description);
++}
 -- 
 2.17.1
 
