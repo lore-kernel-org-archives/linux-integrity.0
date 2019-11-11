@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3D0C17441
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 03:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D27CC43331
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 03:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F24062075C
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 03:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 184772075C
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Nov 2019 03:11:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfKKDK6 (ORCPT
+        id S1726994AbfKKDLH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 10 Nov 2019 22:10:58 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1528 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726756AbfKKDK6 (ORCPT
+        Sun, 10 Nov 2019 22:11:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47350 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726957AbfKKDLG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 10 Nov 2019 22:10:58 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAB38F70126017
-        for <linux-integrity@vger.kernel.org>; Sun, 10 Nov 2019 22:10:57 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2w6pjen1vk-1
+        Sun, 10 Nov 2019 22:11:06 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id xAB38EUE027716
+        for <linux-integrity@vger.kernel.org>; Sun, 10 Nov 2019 22:11:05 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2w6ua1xq34-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Sun, 10 Nov 2019 22:10:57 -0500
+        for <linux-integrity@vger.kernel.org>; Sun, 10 Nov 2019 22:11:05 -0500
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Mon, 11 Nov 2019 03:10:54 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 11 Nov 2019 03:11:03 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 11 Nov 2019 03:10:50 -0000
+        Mon, 11 Nov 2019 03:10:59 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAB3AnDX38207496
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAB3AvcO54657082
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Nov 2019 03:10:49 GMT
+        Mon, 11 Nov 2019 03:10:57 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0AA804C059;
-        Mon, 11 Nov 2019 03:10:49 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 8F0034C04E;
+        Mon, 11 Nov 2019 03:10:57 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AEA2D4C046;
-        Mon, 11 Nov 2019 03:10:45 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 62B224C044;
+        Mon, 11 Nov 2019 03:10:54 +0000 (GMT)
 Received: from mhp50.ibm.com (unknown [9.80.199.87])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 11 Nov 2019 03:10:45 +0000 (GMT)
+        Mon, 11 Nov 2019 03:10:54 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
         linux-integrity@vger.kernel.org
@@ -66,16 +66,16 @@ Cc:     linux-kernel@vger.kernel.org,
         Eric Ricther <erichte@linux.ibm.com>,
         "Oliver O'Halloran" <oohall@gmail.com>,
         Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v9 1/4] powerpc/powernv: Add OPAL API interface to access secure variable
-Date:   Sun, 10 Nov 2019 21:10:33 -0600
+Subject: [PATCH v9 3/4] x86/efi: move common keyring handler functions to new file
+Date:   Sun, 10 Nov 2019 21:10:35 -0600
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1573441836-3632-1-git-send-email-nayna@linux.ibm.com>
 References: <1573441836-3632-1-git-send-email-nayna@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19111103-0008-0000-0000-0000032D56B9
+x-cbid: 19111103-0012-0000-0000-000003627F59
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19111103-0009-0000-0000-00004A4C63F0
-Message-Id: <1573441836-3632-2-git-send-email-nayna@linux.ibm.com>
+x-cbparentid: 19111103-0013-0000-0000-0000219DE886
+Message-Id: <1573441836-3632-4-git-send-email-nayna@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-11-10_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -88,327 +88,247 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The X.509 certificates trusted by the platform and required to secure boot
-the OS kernel are wrapped in secure variables, which are controlled by
-OPAL.
+The handlers to add the keys to the .platform keyring and blacklisted
+hashes to the .blacklist keyring is common for both the uefi and powerpc
+mechanisms of loading the keys/hashes from the firmware.
 
-This patch adds firmware/kernel interface to read and write OPAL secure
-variables based on the unique key.
+This patch moves the common code from load_uefi.c to keyring_handler.c
 
-This support can be enabled using CONFIG_OPAL_SECVAR.
-
-Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Eric Richter <erichte@linux.ibm.com>
 ---
- arch/powerpc/include/asm/opal-api.h          |   5 +-
- arch/powerpc/include/asm/opal.h              |   7 ++
- arch/powerpc/include/asm/secvar.h            |  35 +++++++
- arch/powerpc/kernel/Makefile                 |   2 +-
- arch/powerpc/kernel/secvar-ops.c             |  16 +++
- arch/powerpc/platforms/powernv/Makefile      |   2 +-
- arch/powerpc/platforms/powernv/opal-call.c   |   3 +
- arch/powerpc/platforms/powernv/opal-secvar.c | 140 +++++++++++++++++++++++++++
- arch/powerpc/platforms/powernv/opal.c        |   3 +
- 9 files changed, 210 insertions(+), 3 deletions(-)
- create mode 100644 arch/powerpc/include/asm/secvar.h
- create mode 100644 arch/powerpc/kernel/secvar-ops.c
- create mode 100644 arch/powerpc/platforms/powernv/opal-secvar.c
+ security/integrity/Makefile                        |  3 +-
+ .../integrity/platform_certs/keyring_handler.c     | 80 ++++++++++++++++++++++
+ .../integrity/platform_certs/keyring_handler.h     | 32 +++++++++
+ security/integrity/platform_certs/load_uefi.c      | 67 +-----------------
+ 4 files changed, 115 insertions(+), 67 deletions(-)
+ create mode 100644 security/integrity/platform_certs/keyring_handler.c
+ create mode 100644 security/integrity/platform_certs/keyring_handler.h
 
-diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-index 378e3997845a..c1f25a760eb1 100644
---- a/arch/powerpc/include/asm/opal-api.h
-+++ b/arch/powerpc/include/asm/opal-api.h
-@@ -211,7 +211,10 @@
- #define OPAL_MPIPL_UPDATE			173
- #define OPAL_MPIPL_REGISTER_TAG			174
- #define OPAL_MPIPL_QUERY_TAG			175
--#define OPAL_LAST				175
-+#define OPAL_SECVAR_GET				176
-+#define OPAL_SECVAR_GET_NEXT			177
-+#define OPAL_SECVAR_ENQUEUE_UPDATE		178
-+#define OPAL_LAST				178
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 35e6ca773734..351c9662994b 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -11,7 +11,8 @@ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+ integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+-					platform_certs/load_uefi.o
++				      platform_certs/load_uefi.o \
++				      platform_certs/keyring_handler.o
+ integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
  
- #define QUIESCE_HOLD			1 /* Spin all calls at entry */
- #define QUIESCE_REJECT			2 /* Fail all calls with OPAL_BUSY */
-diff --git a/arch/powerpc/include/asm/opal.h b/arch/powerpc/include/asm/opal.h
-index a0cf8fba4d12..9986ac34b8e2 100644
---- a/arch/powerpc/include/asm/opal.h
-+++ b/arch/powerpc/include/asm/opal.h
-@@ -298,6 +298,13 @@ int opal_sensor_group_clear(u32 group_hndl, int token);
- int opal_sensor_group_enable(u32 group_hndl, int token, bool enable);
- int opal_nx_coproc_init(uint32_t chip_id, uint32_t ct);
- 
-+int opal_secvar_get(const char *key, uint64_t key_len, u8 *data,
-+		    uint64_t *data_size);
-+int opal_secvar_get_next(const char *key, uint64_t *key_len,
-+			 uint64_t key_buf_size);
-+int opal_secvar_enqueue_update(const char *key, uint64_t key_len, u8 *data,
-+			       uint64_t data_size);
-+
- s64 opal_mpipl_update(enum opal_mpipl_ops op, u64 src, u64 dest, u64 size);
- s64 opal_mpipl_register_tag(enum opal_mpipl_tags tag, u64 addr);
- s64 opal_mpipl_query_tag(enum opal_mpipl_tags tag, u64 *addr);
-diff --git a/arch/powerpc/include/asm/secvar.h b/arch/powerpc/include/asm/secvar.h
+ obj-$(CONFIG_IMA)			+= ima/
+diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
 new file mode 100644
-index 000000000000..4cc35b58b986
+index 000000000000..c5ba695c10e3
 --- /dev/null
-+++ b/arch/powerpc/include/asm/secvar.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2019 IBM Corporation
-+ * Author: Nayna Jain
-+ *
-+ * PowerPC secure variable operations.
-+ */
-+#ifndef SECVAR_OPS_H
-+#define SECVAR_OPS_H
-+
-+#include <linux/types.h>
-+#include <linux/errno.h>
-+
-+extern const struct secvar_operations *secvar_ops;
-+
-+struct secvar_operations {
-+	int (*get)(const char *key, uint64_t key_len, u8 *data,
-+		   uint64_t *data_size);
-+	int (*get_next)(const char *key, uint64_t *key_len,
-+			uint64_t keybufsize);
-+	int (*set)(const char *key, uint64_t key_len, u8 *data,
-+		   uint64_t data_size);
-+};
-+
-+#ifdef CONFIG_PPC_SECURE_BOOT
-+
-+extern void set_secvar_ops(const struct secvar_operations *ops);
-+
-+#else
-+
-+static inline void set_secvar_ops(const struct secvar_operations *ops) { }
-+
-+#endif
-+
-+#endif
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index e8eb2955b7d5..3cf26427334f 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -161,7 +161,7 @@ ifneq ($(CONFIG_PPC_POWERNV)$(CONFIG_PPC_SVM),)
- obj-y				+= ucall.o
- endif
- 
--obj-$(CONFIG_PPC_SECURE_BOOT)	+= secure_boot.o ima_arch.o
-+obj-$(CONFIG_PPC_SECURE_BOOT)	+= secure_boot.o ima_arch.o secvar-ops.o
- 
- # Disable GCOV, KCOV & sanitizers in odd or sensitive code
- GCOV_PROFILE_prom_init.o := n
-diff --git a/arch/powerpc/kernel/secvar-ops.c b/arch/powerpc/kernel/secvar-ops.c
-new file mode 100644
-index 000000000000..4cfa7dbd8850
---- /dev/null
-+++ b/arch/powerpc/kernel/secvar-ops.c
-@@ -0,0 +1,16 @@
++++ b/security/integrity/platform_certs/keyring_handler.c
+@@ -0,0 +1,80 @@
 +// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/kernel.h>
++#include <linux/sched.h>
++#include <linux/cred.h>
++#include <linux/err.h>
++#include <linux/efi.h>
++#include <linux/slab.h>
++#include <keys/asymmetric-type.h>
++#include <keys/system_keyring.h>
++#include "../integrity.h"
++
++static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
++static efi_guid_t efi_cert_x509_sha256_guid __initdata =
++	EFI_CERT_X509_SHA256_GUID;
++static efi_guid_t efi_cert_sha256_guid __initdata = EFI_CERT_SHA256_GUID;
++
 +/*
-+ * Copyright (C) 2019 IBM Corporation
-+ * Author: Nayna Jain
-+ *
-+ * This file initializes secvar operations for PowerPC Secureboot
++ * Blacklist a hash.
 + */
-+
-+#include <asm/secvar.h>
-+
-+const struct secvar_operations *secvar_ops;
-+
-+void set_secvar_ops(const struct secvar_operations *ops)
++static __init void uefi_blacklist_hash(const char *source, const void *data,
++				       size_t len, const char *type,
++				       size_t type_len)
 +{
-+	secvar_ops = ops;
++	char *hash, *p;
++
++	hash = kmalloc(type_len + len * 2 + 1, GFP_KERNEL);
++	if (!hash)
++		return;
++	p = memcpy(hash, type, type_len);
++	p += type_len;
++	bin2hex(p, data, len);
++	p += len * 2;
++	*p = 0;
++
++	mark_hash_blacklisted(hash);
++	kfree(hash);
 +}
-diff --git a/arch/powerpc/platforms/powernv/Makefile b/arch/powerpc/platforms/powernv/Makefile
-index a3ac9646119d..f9c4fa99e8b9 100644
---- a/arch/powerpc/platforms/powernv/Makefile
-+++ b/arch/powerpc/platforms/powernv/Makefile
-@@ -4,7 +4,7 @@ obj-y			+= idle.o opal-rtc.o opal-nvram.o opal-lpc.o opal-flash.o
- obj-y			+= rng.o opal-elog.o opal-dump.o opal-sysparam.o opal-sensor.o
- obj-y			+= opal-msglog.o opal-hmi.o opal-power.o opal-irqchip.o
- obj-y			+= opal-kmsg.o opal-powercap.o opal-psr.o opal-sensor-groups.o
--obj-y			+= ultravisor.o
-+obj-y			+= ultravisor.o opal-secvar.o
- 
- obj-$(CONFIG_SMP)	+= smp.o subcore.o subcore-asm.o
- obj-$(CONFIG_FA_DUMP)	+= opal-fadump.o
-diff --git a/arch/powerpc/platforms/powernv/opal-call.c b/arch/powerpc/platforms/powernv/opal-call.c
-index a2aa5e433ac8..5cd0f52d258f 100644
---- a/arch/powerpc/platforms/powernv/opal-call.c
-+++ b/arch/powerpc/platforms/powernv/opal-call.c
-@@ -290,3 +290,6 @@ OPAL_CALL(opal_nx_coproc_init,			OPAL_NX_COPROC_INIT);
- OPAL_CALL(opal_mpipl_update,			OPAL_MPIPL_UPDATE);
- OPAL_CALL(opal_mpipl_register_tag,		OPAL_MPIPL_REGISTER_TAG);
- OPAL_CALL(opal_mpipl_query_tag,			OPAL_MPIPL_QUERY_TAG);
-+OPAL_CALL(opal_secvar_get,			OPAL_SECVAR_GET);
-+OPAL_CALL(opal_secvar_get_next,			OPAL_SECVAR_GET_NEXT);
-+OPAL_CALL(opal_secvar_enqueue_update,		OPAL_SECVAR_ENQUEUE_UPDATE);
-diff --git a/arch/powerpc/platforms/powernv/opal-secvar.c b/arch/powerpc/platforms/powernv/opal-secvar.c
-new file mode 100644
-index 000000000000..14133e120bdd
---- /dev/null
-+++ b/arch/powerpc/platforms/powernv/opal-secvar.c
-@@ -0,0 +1,140 @@
-+// SPDX-License-Identifier: GPL-2.0
++
 +/*
-+ * PowerNV code for secure variables
-+ *
-+ * Copyright (C) 2019 IBM Corporation
-+ * Author: Claudio Carvalho
-+ *         Nayna Jain
-+ *
-+ * APIs to access secure variables managed by OPAL.
++ * Blacklist an X509 TBS hash.
 + */
-+
-+#define pr_fmt(fmt) "secvar: "fmt
-+
-+#include <linux/types.h>
-+#include <linux/platform_device.h>
-+#include <linux/of_platform.h>
-+#include <asm/opal.h>
-+#include <asm/secvar.h>
-+#include <asm/secure_boot.h>
-+
-+static int opal_status_to_err(int rc)
++static __init void uefi_blacklist_x509_tbs(const char *source,
++					   const void *data, size_t len)
 +{
-+	int err;
-+
-+	switch (rc) {
-+	case OPAL_SUCCESS:
-+		err = 0;
-+		break;
-+	case OPAL_UNSUPPORTED:
-+		err = -ENXIO;
-+		break;
-+	case OPAL_PARAMETER:
-+		err = -EINVAL;
-+		break;
-+	case OPAL_RESOURCE:
-+		err = -ENOSPC;
-+		break;
-+	case OPAL_HARDWARE:
-+		err = -EIO;
-+		break;
-+	case OPAL_NO_MEM:
-+		err = -ENOMEM;
-+		break;
-+	case OPAL_EMPTY:
-+		err = -ENOENT;
-+		break;
-+	case OPAL_PARTIAL:
-+		err = -EFBIG;
-+		break;
-+	default:
-+		err = -EINVAL;
-+	}
-+
-+	return err;
++	uefi_blacklist_hash(source, data, len, "tbs:", 4);
 +}
 +
-+static int opal_get_variable(const char *key, uint64_t ksize,
-+			     u8 *data, uint64_t *dsize)
++/*
++ * Blacklist the hash of an executable.
++ */
++static __init void uefi_blacklist_binary(const char *source,
++					 const void *data, size_t len)
 +{
-+	int rc;
-+
-+	if (!key || !dsize)
-+		return -EINVAL;
-+
-+	*dsize = cpu_to_be64(*dsize);
-+
-+	rc = opal_secvar_get(key, ksize, data, dsize);
-+
-+	*dsize = be64_to_cpu(*dsize);
-+
-+	return opal_status_to_err(rc);
++	uefi_blacklist_hash(source, data, len, "bin:", 4);
 +}
 +
-+static int opal_get_next_variable(const char *key, uint64_t *keylen,
-+				  uint64_t keybufsize)
++/*
++ * Return the appropriate handler for particular signature list types found in
++ * the UEFI db and MokListRT tables.
++ */
++__init efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type)
 +{
-+	int rc;
-+
-+	if (!key || !keylen)
-+		return -EINVAL;
-+
-+	*keylen = cpu_to_be64(*keylen);
-+
-+	rc = opal_secvar_get_next(key, keylen, keybufsize);
-+
-+	*keylen = be64_to_cpu(*keylen);
-+
-+	return opal_status_to_err(rc);
-+}
-+
-+static int opal_set_variable(const char *key, uint64_t ksize, u8 *data,
-+			     uint64_t dsize)
-+{
-+	int rc;
-+
-+	if (!key || !data)
-+		return -EINVAL;
-+
-+	rc = opal_secvar_enqueue_update(key, ksize, data, dsize);
-+
-+	return opal_status_to_err(rc);
-+}
-+
-+static const struct secvar_operations opal_secvar_ops = {
-+	.get = opal_get_variable,
-+	.get_next = opal_get_next_variable,
-+	.set = opal_set_variable,
-+};
-+
-+static int opal_secvar_probe(struct platform_device *pdev)
-+{
-+	if (!opal_check_token(OPAL_SECVAR_GET)
-+			|| !opal_check_token(OPAL_SECVAR_GET_NEXT)
-+			|| !opal_check_token(OPAL_SECVAR_ENQUEUE_UPDATE)) {
-+		pr_err("OPAL doesn't support secure variables\n");
-+		return -ENODEV;
-+	}
-+
-+	set_secvar_ops(&opal_secvar_ops);
-+
++	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
++		return add_to_platform_keyring;
 +	return 0;
 +}
 +
-+static const struct of_device_id opal_secvar_match[] = {
-+	{ .compatible = "ibm,secvar-backend",},
-+	{},
-+};
-+
-+static struct platform_driver opal_secvar_driver = {
-+	.driver = {
-+		.name = "secvar",
-+		.of_match_table = opal_secvar_match,
-+	},
-+};
-+
-+static int __init opal_secvar_init(void)
++/*
++ * Return the appropriate handler for particular signature list types found in
++ * the UEFI dbx and MokListXRT tables.
++ */
++__init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type)
 +{
-+	return platform_driver_probe(&opal_secvar_driver, opal_secvar_probe);
++	if (efi_guidcmp(*sig_type, efi_cert_x509_sha256_guid) == 0)
++		return uefi_blacklist_x509_tbs;
++	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
++		return uefi_blacklist_binary;
++	return 0;
 +}
-+device_initcall(opal_secvar_init);
-diff --git a/arch/powerpc/platforms/powernv/opal.c b/arch/powerpc/platforms/powernv/opal.c
-index 38e90270280b..8355bcd00f93 100644
---- a/arch/powerpc/platforms/powernv/opal.c
-+++ b/arch/powerpc/platforms/powernv/opal.c
-@@ -1002,6 +1002,9 @@ static int __init opal_init(void)
- 	/* Initialise OPAL Power control interface */
- 	opal_power_control_init();
- 
-+	/* Initialize OPAL secure variables */
-+	opal_pdev_init("ibm,secvar-backend");
+diff --git a/security/integrity/platform_certs/keyring_handler.h b/security/integrity/platform_certs/keyring_handler.h
+new file mode 100644
+index 000000000000..2462bfa08fe3
+--- /dev/null
++++ b/security/integrity/platform_certs/keyring_handler.h
+@@ -0,0 +1,32 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
- 	return 0;
++#ifndef PLATFORM_CERTS_INTERNAL_H
++#define PLATFORM_CERTS_INTERNAL_H
++
++#include <linux/efi.h>
++
++void blacklist_hash(const char *source, const void *data,
++		    size_t len, const char *type,
++		    size_t type_len);
++
++/*
++ * Blacklist an X509 TBS hash.
++ */
++void blacklist_x509_tbs(const char *source, const void *data, size_t len);
++
++/*
++ * Blacklist the hash of an executable.
++ */
++void blacklist_binary(const char *source, const void *data, size_t len);
++
++/*
++ * Return the handler for particular signature list types found in the db.
++ */
++efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type);
++
++/*
++ * Return the handler for particular signature list types found in the dbx.
++ */
++efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type);
++
++#endif
+diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+index 81b19c52832b..4369204a19cd 100644
+--- a/security/integrity/platform_certs/load_uefi.c
++++ b/security/integrity/platform_certs/load_uefi.c
+@@ -9,6 +9,7 @@
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include "../integrity.h"
++#include "keyring_handler.h"
+ 
+ static efi_guid_t efi_cert_x509_guid __initdata = EFI_CERT_X509_GUID;
+ static efi_guid_t efi_cert_x509_sha256_guid __initdata =
+@@ -68,72 +69,6 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
  }
- machine_subsys_initcall(powernv, opal_init);
+ 
+ /*
+- * Blacklist a hash.
+- */
+-static __init void uefi_blacklist_hash(const char *source, const void *data,
+-				       size_t len, const char *type,
+-				       size_t type_len)
+-{
+-	char *hash, *p;
+-
+-	hash = kmalloc(type_len + len * 2 + 1, GFP_KERNEL);
+-	if (!hash)
+-		return;
+-	p = memcpy(hash, type, type_len);
+-	p += type_len;
+-	bin2hex(p, data, len);
+-	p += len * 2;
+-	*p = 0;
+-
+-	mark_hash_blacklisted(hash);
+-	kfree(hash);
+-}
+-
+-/*
+- * Blacklist an X509 TBS hash.
+- */
+-static __init void uefi_blacklist_x509_tbs(const char *source,
+-					   const void *data, size_t len)
+-{
+-	uefi_blacklist_hash(source, data, len, "tbs:", 4);
+-}
+-
+-/*
+- * Blacklist the hash of an executable.
+- */
+-static __init void uefi_blacklist_binary(const char *source,
+-					 const void *data, size_t len)
+-{
+-	uefi_blacklist_hash(source, data, len, "bin:", 4);
+-}
+-
+-/*
+- * Return the appropriate handler for particular signature list types found in
+- * the UEFI db and MokListRT tables.
+- */
+-static __init efi_element_handler_t get_handler_for_db(const efi_guid_t *
+-						       sig_type)
+-{
+-	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0)
+-		return add_to_platform_keyring;
+-	return 0;
+-}
+-
+-/*
+- * Return the appropriate handler for particular signature list types found in
+- * the UEFI dbx and MokListXRT tables.
+- */
+-static __init efi_element_handler_t get_handler_for_dbx(const efi_guid_t *
+-							sig_type)
+-{
+-	if (efi_guidcmp(*sig_type, efi_cert_x509_sha256_guid) == 0)
+-		return uefi_blacklist_x509_tbs;
+-	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) == 0)
+-		return uefi_blacklist_binary;
+-	return 0;
+-}
+-
+-/*
+  * Load the certs contained in the UEFI databases into the platform trusted
+  * keyring and the UEFI blacklisted X.509 cert SHA256 hashes into the blacklist
+  * keyring.
 -- 
 2.13.6
 
