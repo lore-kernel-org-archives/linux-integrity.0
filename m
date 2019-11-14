@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C93AC43215
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFEFC43141
 	for <linux-integrity@archiver.kernel.org>; Thu, 14 Nov 2019 09:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E30FA2071B
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Nov 2019 09:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43B642071B
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Nov 2019 09:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbfKNJIa (ORCPT
+        id S1727315AbfKNJI2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Nov 2019 04:08:30 -0500
-Received: from ozlabs.org ([203.11.71.1]:39105 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfKNJI2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
         Thu, 14 Nov 2019 04:08:28 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:59753 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727281AbfKNJI1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 14 Nov 2019 04:08:27 -0500
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 47DFyK2l6Jz9sSl; Thu, 14 Nov 2019 20:08:24 +1100 (AEDT)
+        id 47DFyH4L62z9sPT; Thu, 14 Nov 2019 20:08:23 +1100 (AEDT)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 2702809a4a1ab414d75c00936cda70ea77c8234e
-In-Reply-To: <e9eeee6b-b9bf-1e41-2954-61dbd6fbfbcf@linux.ibm.com>
+X-powerpc-patch-commit: 1a8916ee3ac29054322cdac687d36e1b5894d272
+In-Reply-To: <46b003b9-3225-6bf7-9101-ed6580bb748c@linux.ibm.com>
 To:     Eric Richter <erichte@linux.ibm.com>,
         Mimi Zohar <zohar@linux.ibm.com>, linuxppc-dev@ozlabs.org,
         linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
@@ -32,31 +32,28 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
         Paul Mackerras <paulus@samba.org>, Jeremy Kerr <jk@ozlabs.org>,
         Oliver O'Halloran <oohall@gmail.com>
-Subject: Re: [PATCH v10a 3/9] powerpc: detect the trusted boot state of the system
-Message-Id: <47DFyK2l6Jz9sSl@ozlabs.org>
-Date:   Thu, 14 Nov 2019 20:08:24 +1100 (AEDT)
+Subject: Re: [PATCH v10a 1/9] powerpc: detect the secure boot mode of the system
+Message-Id: <47DFyH4L62z9sPT@ozlabs.org>
+Date:   Thu, 14 Nov 2019 20:08:23 +1100 (AEDT)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-11-05 at 23:02:07 UTC, Eric Richter wrote:
+On Tue, 2019-11-05 at 23:00:22 UTC, Eric Richter wrote:
 > From: Nayna Jain <nayna@linux.ibm.com>
 > 
-> While secure boot permits only properly verified signed kernels to be
-> booted, trusted boot calculates the file hash of the kernel image and
-> stores the measurement prior to boot, that can be subsequently compared
-> against good known values via attestation services.
+> This patch defines a function to detect the secure boot state of a
+> PowerNV system.
 > 
-> This patch reads the trusted boot state of a PowerNV system. The state
-> is used to conditionally enable additional measurement rules in the IMA
-> arch-specific policies.
+> The PPC_SECURE_BOOT config represents the base enablement of secure boot
+> for powerpc.
 > 
 > Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 > Signed-off-by: Eric Richter <erichte@linux.ibm.com>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/2702809a4a1ab414d75c00936cda70ea77c8234e
+https://git.kernel.org/powerpc/c/1a8916ee3ac29054322cdac687d36e1b5894d272
 
 cheers
