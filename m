@@ -2,50 +2,52 @@ Return-Path: <SRS0=PgS3=ZK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE6DC432C0
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Nov 2019 17:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8EAC432C0
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Nov 2019 18:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9E02186D
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Nov 2019 17:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2044421939
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Nov 2019 18:07:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfKRR72 (ORCPT
+        id S1726336AbfKRSH6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 18 Nov 2019 12:59:28 -0500
-Received: from mga02.intel.com ([134.134.136.20]:53198 "EHLO mga02.intel.com"
+        Mon, 18 Nov 2019 13:07:58 -0500
+Received: from mga09.intel.com ([134.134.136.24]:52329 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbfKRR72 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 Nov 2019 12:59:28 -0500
+        id S1726314AbfKRSH6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Nov 2019 13:07:58 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 09:59:27 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2019 10:07:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.68,321,1569308400"; 
-   d="scan'208";a="208926876"
+   d="scan'208";a="380735807"
 Received: from cooperwu-mobl.gar.corp.intel.com (HELO localhost) ([10.252.3.195])
-  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2019 09:59:25 -0800
-Date:   Mon, 18 Nov 2019 19:59:24 +0200
+  by orsmga005.jf.intel.com with ESMTP; 18 Nov 2019 10:07:54 -0800
+Date:   Mon, 18 Nov 2019 20:07:53 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, jsnitsel@redhat.com,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
- tpm_tis_probe_irq_single
-Message-ID: <20191118175924.GA5984@linux.intel.com>
-References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
- <20191114164151.GB9528@linux.intel.com>
- <20191114164426.GC9528@linux.intel.com>
- <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+To:     David Binderman <dcb314@hotmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-5.4-rc8/drivers/char/tpm/tpm1-cmd.c:735: possible missing
+ return value check
+Message-ID: <20191118180753.GE5984@linux.intel.com>
+References: <DB7PR08MB3801D9F4D5822D36E57282F39C4D0@DB7PR08MB3801.eurprd08.prod.outlook.com>
+ <20191118092721.GA154812@kroah.com>
+ <DB7PR08MB38017F9C07DA5D40B3133AED9C4D0@DB7PR08MB3801.eurprd08.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DB7PR08MB38017F9C07DA5D40B3133AED9C4D0@DB7PR08MB3801.eurprd08.prod.outlook.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -53,27 +55,27 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Nov 16, 2019 at 09:32:06AM -0500, Stefan Berger wrote:
-> On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
-> > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
-> > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
-> > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > 
-> > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
-> > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
-> > > > This move handles error conditions better that may arise if anything
-> > > > before fails in tpm_tis_probe_irq_single.
-> > > > 
-> > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > What about just changing the condition?
-> > Also cannot take this since it is not a bug (no fixes tag).
+On Mon, Nov 18, 2019 at 09:42:01AM +0000, David Binderman wrote:
+> Hello there Greg,
 > 
-> I'll repost but will wait until Jerry has tested it on that machine.
+> >Great, how about you submit a patch to resolve this?  That way you can
+> >get the full credit for finding and resolveing the issue?
+> 
+> No thanks. I gave up bothering to send in patches when I found
+> out my emails cc'ing to the linux kernel mailing list get bounced.
+> I am happy for someone else to invent a patch.
+> 
+> BTW, more of the same here:
+> 
+> linux-5.4-rc8/drivers/char/tpm/tpm_infineon.c:173:10: style: Variable 'status' is reassigned a value before the old one has been used. [redundantAssignment]
+> 
+> 
+> Regards
+> 
+> David
 
-OK, great, thank you.
+I'm fine with adding reported-by from you unless you want to send a fix.
 
-This is really needs some reasoning on why this was the right way to
-fix the issue. In addition, a source code comment might make sense.
+I'll create a fix after 5.5-rc1 is out.
 
 /Jarkko
