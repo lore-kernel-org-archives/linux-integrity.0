@@ -1,126 +1,83 @@
-Return-Path: <SRS0=gJr8=ZJ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=PgS3=ZK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6A6C432C0
-	for <linux-integrity@archiver.kernel.org>; Sun, 17 Nov 2019 18:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7FDC432C3
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Nov 2019 09:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AB5D20700
-	for <linux-integrity@archiver.kernel.org>; Sun, 17 Nov 2019 18:08:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TNBP7Y9z"
+	by mail.kernel.org (Postfix) with ESMTP id 321072073A
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Nov 2019 09:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574069246;
+	bh=Rps6VHNZkf0Vw651PAQcvS5aj/kdFjBNct/TEC/byN4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fZzMNjM6iIApild7KoW4quIzYzOf0G4BH9o+uc9V8nwxD+nSzMWRfI0ihx5Z2+BOw
+	 xf+RKMq7XIAZN1JCHsb5itEmtTqmuIUrwG2g8CQ/OG6ddRmMLUYMj/m4h6OaxpAK41
+	 Hvob1up7S6yiFgLimGq+etx378+H4Nd19Z7Hq5+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726062AbfKQSIy (ORCPT
+        id S1726464AbfKRJ1Z (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 17 Nov 2019 13:08:54 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44607 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726128AbfKQSIy (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 17 Nov 2019 13:08:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1574014132;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eSxCHgdI3j2NAMCC1olhatH3DrTY9N/2Xvc86ib3ruI=;
-        b=TNBP7Y9zbDW7+ix1gsBLW/eXAjU3p7MrRHFijhA562tHtvuHsCjqTRVAh5rwTHdQxUmcRu
-        vXQ1PzKGg115ok/cGORpBG9Yu9jBc1WLupfLFlbg1WIU33MTfuJyxE+JQ9v9A6ijK3yRCJ
-        yW2r0qFxjg5ej1bhbS+nAQ8gvzLq03g=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-389-e8tV7BNNPT20y44f56SIWg-1; Sun, 17 Nov 2019 13:08:51 -0500
-Received: by mail-pg1-f200.google.com with SMTP id 14so2405847pgv.16
-        for <linux-integrity@vger.kernel.org>; Sun, 17 Nov 2019 10:08:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=nhPTTch4TLiEOOJDKHZfBwdD5XFDvnafgmAjZS61rz8=;
-        b=MwQ5UOZDnauxSSyBv5knS3xUXTvStMSE7iv7hYdZPjxpTIe6CUhDbFUYzyx6L/kwFb
-         Ylzm7ZDdKuqy+YhmmvoVh0HjAxjYvj6dI6qDf9D3bWaa92VCZ+pQhmXCvMXpbUaPxdfy
-         iLPbBgm5E2Fw5+PWMdXTsv4muZITGRyfjqBCpHhdA/qfhMQGEcT0Ejxisfj7Fgqz3QTV
-         DXvX1eTDyGCcrJqMGK4FIazqgMmIXf1MaS9nnkqNo8vrihRGjAGG9DJsq8TuPbcXDufV
-         jv6b30HrBSETXkrPoYmpuS9SbimpJmZdvyGuWcYW4Sc20ehWKy9A312GkST1KdPcR38m
-         Uutg==
-X-Gm-Message-State: APjAAAXNHr0OJ/iOoJ+GX+rlD3Bfc45Fe7ilwo0ctzpk1glcV/FUaRPC
-        os2fiPal3+owfMiaV6ntD3MRYMxLEkDgkKgQEz5xOziErRfAUHEMtHLUTMYdrb+asRMDHFBKU9W
-        KU+zNbU4vnLO7KmRBgu6DIFlzg573
-X-Received: by 2002:a63:cc56:: with SMTP id q22mr10365499pgi.439.1574014130314;
-        Sun, 17 Nov 2019 10:08:50 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxg590xxVEGOOIe1dNaEgjxSEw82NPd5dgH3ztF+eBVj9rHMhiez57C0XKIHEcdFsYXYYKOBA==
-X-Received: by 2002:a63:cc56:: with SMTP id q22mr10365473pgi.439.1574014130039;
-        Sun, 17 Nov 2019 10:08:50 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id j186sm17803718pfg.161.2019.11.17.10.08.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2019 10:08:48 -0800 (PST)
-Date:   Sun, 17 Nov 2019 11:08:47 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into
- tpm_tis_probe_irq_single
-Message-ID: <20191117180847.322467cqngpbpael@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Stefan Berger <stefanb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
- <20191114164151.GB9528@linux.intel.com>
- <20191114164426.GC9528@linux.intel.com>
- <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
+        Mon, 18 Nov 2019 04:27:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726460AbfKRJ1Z (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 Nov 2019 04:27:25 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8500520727;
+        Mon, 18 Nov 2019 09:27:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574069245;
+        bh=Rps6VHNZkf0Vw651PAQcvS5aj/kdFjBNct/TEC/byN4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JdlMt0eutnDFaTXmS4gGFIT/SNFiG3KL7VQ3A+tyzTo69xBX/HJBUYh789u8geWPS
+         8y11hoOFVLMo++Klgx3tuBbQONJVkQEzMMaGSqA3GUsnRgEazMdTW0oXpvTtU1WO8K
+         k1WAP2xMOCTNXKSFTr8YT5AfjjkGID/hg1v9Wzn8=
+Date:   Mon, 18 Nov 2019 10:27:21 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     David Binderman <dcb314@hotmail.com>
+Cc:     "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-5.4-rc8/drivers/char/tpm/tpm1-cmd.c:735: possible missing
+ return value check
+Message-ID: <20191118092721.GA154812@kroah.com>
+References: <DB7PR08MB3801D9F4D5822D36E57282F39C4D0@DB7PR08MB3801.eurprd08.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com>
-X-MC-Unique: e8tV7BNNPT20y44f56SIWg-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <DB7PR08MB3801D9F4D5822D36E57282F39C4D0@DB7PR08MB3801.eurprd08.prod.outlook.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat Nov 16 19, Stefan Berger wrote:
->On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
->>On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
->>>On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
->>>>From: Stefan Berger <stefanb@linux.ibm.com>
->>>>
->>>>Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
->>>>tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
->>>>This move handles error conditions better that may arise if anything
->>>>before fails in tpm_tis_probe_irq_single.
->>>>
->>>>Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>>Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
->>>What about just changing the condition?
->>Also cannot take this since it is not a bug (no fixes tag).
->
->I'll repost but will wait until Jerry has tested it on that machine.
->
->=A0=A0 Stefan
->
+On Mon, Nov 18, 2019 at 09:24:32AM +0000, David Binderman wrote:
+> Hello there,
+> 
+> linux-5.4-rc8/drivers/char/tpm/tpm1-cmd.c:735:5: style: Variable 'rc' is reassigned a value before the old one has been used. [redundantAssignment]
+> 
+> Source code is
+> 
+>     if (tpm_suspend_pcr)
+>         rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
+>                      "extending dummy pcr before suspend");
+> 
+>     rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
+> 
+> Suggest add test of rc after call to tpm1_pcr_extend.
 
-Sorry, I'm still waiting to hear back from the reporter, and logistics
-for some reason has been silent on my request so far.
+Great, how about you submit a patch to resolve this?  That way you can
+get the full credit for finding and resolveing the issue?
 
->
->>
->>/Jarkko
->
->
+thanks,
 
+greg k-h
