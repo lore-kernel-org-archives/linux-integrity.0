@@ -2,138 +2,86 @@ Return-Path: <SRS0=X9IB=ZO=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5027DC432C0
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Nov 2019 17:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAB5C432C0
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Nov 2019 19:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E70C20721
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Nov 2019 17:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85DD72068F
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Nov 2019 19:32:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="V9radRWR";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="V9radRWR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfKVRjt (ORCPT
+        id S1726698AbfKVTcd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Nov 2019 12:39:49 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726802AbfKVRjs (ORCPT
+        Fri, 22 Nov 2019 14:32:33 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:45942 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726695AbfKVTcd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Nov 2019 12:39:48 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xAMHdgPg113570
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Nov 2019 12:39:47 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wdqmjj0jr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 22 Nov 2019 12:39:44 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 22 Nov 2019 17:38:23 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 22 Nov 2019 17:38:20 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xAMHcJBh57737226
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 22 Nov 2019 17:38:19 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF0F1AE045;
-        Fri, 22 Nov 2019 17:38:19 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16B0DAE051;
-        Fri, 22 Nov 2019 17:38:19 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.167.163])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 22 Nov 2019 17:38:18 +0000 (GMT)
+        Fri, 22 Nov 2019 14:32:33 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6EF3A8EE10C;
+        Fri, 22 Nov 2019 11:32:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1574451152;
+        bh=xdLz5DF3jZUJH3dAWBzid+6iO9QipRNxmg3J/qvCpvY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=V9radRWRD+0oglBjw8cBB1scw4eXeG1oRV4+i06VT7g3zYC4a2kbacGgHzn16DdTQ
+         RRuw+OOPhJvscBiBwt80vzIFKduYtUfBKSbscgyJjjdCiM5gkIj7Y2XN13RVHZXRpE
+         IEkHr+zM+PmolQTQfmyyOc1BxYauoPMGii7y1XY0=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id jYutBcUoMBku; Fri, 22 Nov 2019 11:32:32 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D61C48EE0EF;
+        Fri, 22 Nov 2019 11:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1574451152;
+        bh=xdLz5DF3jZUJH3dAWBzid+6iO9QipRNxmg3J/qvCpvY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=V9radRWRD+0oglBjw8cBB1scw4eXeG1oRV4+i06VT7g3zYC4a2kbacGgHzn16DdTQ
+         RRuw+OOPhJvscBiBwt80vzIFKduYtUfBKSbscgyJjjdCiM5gkIj7Y2XN13RVHZXRpE
+         IEkHr+zM+PmolQTQfmyyOc1BxYauoPMGii7y1XY0=
+Message-ID: <1574451150.11063.3.camel@HansenPartnership.com>
 Subject: Re: IMA: Data included in the key measurement
-From:   Mimi Zohar <zohar@linux.ibm.com>
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     James Morris <jamorris@linuxonhyperv.com>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Date:   Fri, 22 Nov 2019 12:38:18 -0500
-In-Reply-To: <19242774-688e-58ff-40f8-e346d6ba4339@linux.microsoft.com>
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, dhowells@redhat.com
+Cc:     James Morris <jamorris@linuxonhyperv.com>
+Date:   Fri, 22 Nov 2019 11:32:30 -0800
+In-Reply-To: <19554a75-06c3-f234-f27e-25f65dbecd1f@linux.microsoft.com>
 References: <19242774-688e-58ff-40f8-e346d6ba4339@linux.microsoft.com>
+         <1574354333.3277.27.camel@HansenPartnership.com>
+         <b4257d08-f6cf-19a0-f6f0-99c962ededac@linux.microsoft.com>
+         <1574439451.3331.14.camel@HansenPartnership.com>
+         <19554a75-06c3-f234-f27e-25f65dbecd1f@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19112217-0016-0000-0000-000002CAEBA3
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19112217-0017-0000-0000-0000332CB7FA
-Message-Id: <1574444298.4793.202.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-11-22_03:2019-11-21,2019-11-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 adultscore=0 mlxlogscore=999 priorityscore=1501
- suspectscore=0 impostorscore=0 mlxscore=0 clxscore=1015 spamscore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1911220150
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[Cc'ing David Howells, James Bottomley]
+On Fri, 2019-11-22 at 09:39 -0800, Lakshmi Ramasubramanian wrote:
+> On 11/22/19 8:17 AM, James Bottomley wrote:
+> 
+> Thanks for the info James. I'll investigate further.
 
-On Thu, 2019-11-21 at 08:17 -0800, Lakshmi Ramasubramanian wrote:
-> Hi Mimi,
-> 
->  >>> everything needed for verifying a signature is included in
->  >>> the key measurement.
-> 
-> Regarding the requirement you had stated above, I would like some 
-> clarification.
-> 
-> When I started this change to measure keys through IMA, the use case we 
-> had in mind was enabling an attestation service, for instance, to verify 
-> if the client has only known good (trusted) keys - for example, in 
-> keyrings such as ".builtin_trusted_keys", ".ima", etc.
-> 
-> On the client IMA verifies the signature of system binaries using keys 
-> in the IMA keyring. And, if the config namely 
-> CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY is enabled, 
-> only keys signed by a built-in trusted key can be added to the IMA keyring.
-> 
-> An attestation service can keep a list of public keys of "known good 
-> (trusted)" keys for various keyrings, and verify against the measurement 
-> data provided by the client.
+It strikes me that for attestation purposes, the hash of the
+TBSCertificate, which is the thing that the issuer signs so we have it
+anyway (well modulo us wanting a different hash algorithm), is a
+complete and unique identifier for the certificate; can't we just use
+that ... and perhaps we should add it to the ids stored in the key
+payload[2]?
 
-Right, that's true, assuming the attestation server is aware of all
-possible public keys, which was the original reason you provided for
-measuring the keys on the builtin trusted keyring, not the IMA
-keyring.
-
-> 
-> To achieve the above we decided to include only the public key in the 
-> key measurement buffer.
-> 
-> I would like to know what benefit we'd get by including "everything 
-> needed for verifying a signature in the key measurement"?
-> 
->  From testing point of view, if we have the certificate (like the .DER 
-> file), we can validate the key measurement data in the IMA log.
-> 
-> Do you see a need to include more data or the entire cert for the 
-> product code?
-
-Your code has come a long way, since you first started.  Please don't
-go back to what you originally intended/wanted to do.  Measuring keys
-just on the builtin trusted keyring, as you did, was a non starter.
- It would never have been accepted upstream by me and doubtfully by
-David.  The current measuring of keys is more generic and properly
-isolated to IMA.  This is what I would have expected from the very
-beginning.  Only now are the patches at the point, where there is
-something to even discuss.
-
-Now that you understand what patches should look like in order to be upstreamed, please look outside of your use-case scenario and think about the bigger picture.  Remember changing the "key" measurement in the future would cause a userspace regression.  So we need to fully understand what is needed, *before* it is upstreamed.  Yes, changing what is measured might change the IMA hook placement.
-
-James Bottomley already started the discussion in this thread...
-
-Mimi
+James
 
