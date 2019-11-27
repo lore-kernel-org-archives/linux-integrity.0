@@ -2,114 +2,138 @@ Return-Path: <SRS0=jDa8=ZT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5A9C432C0
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 21:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9229BC43215
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 21:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E46D215A5
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 21:26:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="vThlKJNp"
+	by mail.kernel.org (Postfix) with ESMTP id 7281D215A5
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 21:27:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfK0V0T (ORCPT
+        id S1728188AbfK0V1h (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Nov 2019 16:26:19 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33640 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727488AbfK0V0T (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Nov 2019 16:26:19 -0500
-Received: by mail-oi1-f196.google.com with SMTP id x21so14329260oic.0
-        for <linux-integrity@vger.kernel.org>; Wed, 27 Nov 2019 13:26:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FvIzR24kHBea1uxOpKKhJOT4jJB8qq3HQYSkFgo3U3E=;
-        b=vThlKJNpDRPL9EvkUMfozZ8dvzrN+pb71NRt9M+FbIHb/Xz+9FcrMIu4yHm1PEauZa
-         I8eA2C10V6PS8qQEX8q22qTBiZ2eac763UwVTnYdKf3iE8vNrP914cHwDmWr0JuiusFq
-         VI+Ps4ttc9N082Q70yjK9ZE2HHyAXYmKHiwGC2sU7GZXpTEAp/J6vH7eZJBJ7ppr+x3M
-         ufcUicdg/5jdYNyBDasulrzj0g8Xf9nTla0fm1rVwJO0cRZ8Gq8O3MwocCqwAymu3E6V
-         FTgEkxA9Uhq59tv2287Qz+s4W8TZdwaDOTg4LnJhfFfIPK+Puei6JaW0O2gb+x5eAI9V
-         YAaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FvIzR24kHBea1uxOpKKhJOT4jJB8qq3HQYSkFgo3U3E=;
-        b=DxCmJ3brkDk1J4c9vVPqjVEw/6eeuBcZOoxd75vchw4pOSp+zuKHXq4Wz6/l1TGmv+
-         jUvDSTwDLHQY4ajMhqiop7Knz1XoWYyRtQkZNBCilPp5qZfXC4iNBoutRJ/csMGgeAQR
-         7P+dWfFJH/C0Bf0k3bEiZCINgvNIKjoiOdGbhoV0njMw9AgZk00zBUB0WWWFbge3mnCn
-         E3A59ksoFKI/aRVw4oNMgH2mkdh3HhtEpLfX++ORNXoHDAUhcC0amRDEZ9/v1Fc1iav/
-         joiGTRSmqQxgpeKUwvEgNdag0hjmJLO9EaGHQ05D7DV/I3kJC4Z7lNAVsDZWSus50QVB
-         VMQg==
-X-Gm-Message-State: APjAAAWCJ2k1rkeqqP/AI+gBt+YlncKYZl6vYO5hqXEtq7wk1QLLiEtJ
-        9ImBGlB7XvfWk2E4GeEqVVYR3q5kfn6dW/VCzEWqPg==
-X-Google-Smtp-Source: APXvYqzjfv3uRACCOCg93jfSkR/I+DVeAiPls/NFEqGCYZ38KdgrJFBtLtMlmlxnWDacs2YcTvlXPCF13m2/1pu3CJ0=
-X-Received: by 2002:a05:6808:20c:: with SMTP id l12mr1738564oie.105.1574889978465;
- Wed, 27 Nov 2019 13:26:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20191112202725.3009814-1-stefanb@linux.vnet.ibm.com>
- <20191114164151.GB9528@linux.intel.com> <20191114164426.GC9528@linux.intel.com>
- <185664a9-58f2-2a4b-4e6b-8d7750a35690@linux.ibm.com> <20191121184949.yvw2gwzlkhjzko64@cantor>
- <20191127211109.GF14290@linux.intel.com>
-In-Reply-To: <20191127211109.GF14290@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 27 Nov 2019 13:26:07 -0800
-Message-ID: <CAPcyv4gO2T4xcZjYSYJ8-0kDPRnVYWhX_df5E94Cjyksx6WFbg@mail.gmail.com>
-Subject: Re: [PATCH] tpm_tis: Move setting of TPM_CHIP_FLAG_IRQ into tpm_tis_probe_irq_single
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
+        Wed, 27 Nov 2019 16:27:37 -0500
+Received: from mga06.intel.com ([134.134.136.31]:23224 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731392AbfK0U7T (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 27 Nov 2019 15:59:19 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Nov 2019 12:59:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,250,1571727600"; 
+   d="scan'208";a="383616943"
+Received: from gtau-mobl.ger.corp.intel.com (HELO localhost) ([10.251.83.243])
+  by orsmga005.jf.intel.com with ESMTP; 27 Nov 2019 12:59:14 -0800
+Date:   Wed, 27 Nov 2019 22:59:12 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, jsnitsel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [GIT PULL] tpmdd updates for Linux v5.4
+Message-ID: <20191127205912.GB14290@linux.intel.com>
+References: <20190902143121.pjnykevzlajlcrh6@linux.intel.com>
+ <CAA9_cmeLnHK4y+usQaWo72nUG3RNsripuZnS-koY4XTRC+mwJA@mail.gmail.com>
+ <20191127205800.GA14290@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191127205800.GA14290@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[ add Jerry ]
+On Wed, Nov 27, 2019 at 10:58:00PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 20, 2019 at 08:48:25PM -0800, Dan Williams wrote:
+> > On Mon, Sep 2, 2019 at 7:34 AM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > Hi
+> > >
+> > > A new driver for fTPM living inside ARM TEE was added this round. In
+> > > addition to that, there is three bug fixes and one clean up.
+> > >
+> > > /Jarkko
+> > >
+> > > The following changes since commit 8fb8e9e46261e0117cb3cffb6dd8bb7e08f8649b:
+> > >
+> > >   Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-08-30 09:23:45 -0700)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20190902
+> > >
+> > > for you to fetch changes up to e8bd417aab0c72bfb54465596b16085702ba0405:
+> > >
+> > >   tpm/tpm_ftpm_tee: Document fTPM TEE driver (2019-09-02 17:08:35 +0300)
+> > >
+> > > ----------------------------------------------------------------
+> > > tpmdd updates for Linux v5.4
+> > >
+> > > ----------------------------------------------------------------
+> > > Jarkko Sakkinen (1):
+> > >       tpm: Remove a deprecated comments about implicit sysfs locking
+> > >
+> > > Lukas Bulwahn (1):
+> > >       MAINTAINERS: fix style in KEYS-TRUSTED entry
+> > >
+> > > Sasha Levin (2):
+> > >       tpm/tpm_ftpm_tee: A driver for firmware TPM running inside TEE
+> > >       tpm/tpm_ftpm_tee: Document fTPM TEE driver
+> > >
+> > > Stefan Berger (2):
+> > >       tpm_tis_core: Turn on the TPM before probing IRQ's
+> > >       tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+> > 
+> > Hi Jarrko,
+> > 
+> > I'm replying here because I can't find the patches to reply to
+> > directly from LKML.
+> > 
+> > Commit 7f064c378e2c "tpm_tis_core: Turn on the TPM before probing
+> > IRQ's" in the v5.3-stable tree caused a regression on a pre-release
+> > platform with a TPM2 device. The interrupt starts screaming when the
+> > driver is loaded and does not stop until the device is force unbond
+> > from the driver by:
+> > 
+> >      echo IFX0740:00 > /sys/bus/platform/drivers/tpm_tis/unbind
+> > 
+> > I checked v5.4-rc8 and it has the same problem. I tried reverting:
+> > 
+> > 1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+> > 5b359c7c4372 tpm_tis_core: Turn on the TPM before probing IRQ's
+> > 
+> > Which silenced the screaming interrupt problem, but now the TPM is reporting:
+> > 
+> > [    3.725131] tpm_tis IFX0740:00: 2.0 TPM (device-id 0x1B, rev-id 16)
+> > [    3.725358] tpm tpm0: tpm_try_transmit: send(): error -5
+> > [    3.725359] tpm tpm0: [Firmware Bug]: TPM interrupt not working,
+> > polling instead
+> > 
+> > ...at load, where it was not reporting this previously. Can you take a look?
+> 
+> It is already in WiP:
+> 
+> https://patchwork.kernel.org/patch/11240111/
+> 
+> Stefan also sent patches that revert to changes that you described:
+> 
+> https://patchwork.kernel.org/cover/11262363/
+> 
+> Probably better first to fix the issue on top of master before deciding
+> actions.
 
-On Wed, Nov 27, 2019 at 1:11 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Thu, Nov 21, 2019 at 11:49:49AM -0700, Jerry Snitselaar wrote:
-> > On Sat Nov 16 19, Stefan Berger wrote:
-> > > On 11/14/19 11:44 AM, Jarkko Sakkinen wrote:
-> > > > On Thu, Nov 14, 2019 at 06:41:51PM +0200, Jarkko Sakkinen wrote:
-> > > > > On Tue, Nov 12, 2019 at 03:27:25PM -0500, Stefan Berger wrote:
-> > > > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > >
-> > > > > > Move the setting of the TPM_CHIP_FLAG_IRQ for irq probing into
-> > > > > > tpm_tis_probe_irq_single before calling tpm_tis_gen_interrupt.
-> > > > > > This move handles error conditions better that may arise if anything
-> > > > > > before fails in tpm_tis_probe_irq_single.
-> > > > > >
-> > > > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > > Suggested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > What about just changing the condition?
-> > > > Also cannot take this since it is not a bug (no fixes tag).
-> > >
-> > > I'll repost but will wait until Jerry has tested it on that machine.
-> > >
-> > >    Stefan
-> > >
-> > >
-> > > >
-> > > > /Jarkko
-> > >
-> > >
-> >
-> > It appears they still have the problem. I'm still waiting on logistics
-> > to send me a system to debug.
->
-> Which hardware is guaranteed to ignite this? I can try to get test hw
-> for this from somewhere. Kind of looking into this blinded ATM. Dan?
+... and apologies for late response.
 
-Jerry had mentioned that this was also occurring on T490s. Otherwise
-I'll ping you offline about the system I saw this on internally.
+/Jarkko
