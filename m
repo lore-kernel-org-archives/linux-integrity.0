@@ -2,123 +2,77 @@ Return-Path: <SRS0=jDa8=ZT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39321C432C0
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 01:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4251C432C0
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 02:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EAA8207DD
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 01:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E3E620684
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Nov 2019 02:09:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WMYoQG9W"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="faogmiWb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfK0B5F (ORCPT
+        id S1726576AbfK0CJK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 26 Nov 2019 20:57:05 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:54464 "EHLO
+        Tue, 26 Nov 2019 21:09:10 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58922 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbfK0B5E (ORCPT
+        with ESMTP id S1725940AbfK0CJK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 26 Nov 2019 20:57:04 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 159EA20B4900;
-        Tue, 26 Nov 2019 17:57:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 159EA20B4900
+        Tue, 26 Nov 2019 21:09:10 -0500
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5534820B7185;
+        Tue, 26 Nov 2019 18:09:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5534820B7185
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1574819824;
-        bh=L4puKXt7OmrSagN42Huxd1vQTKOco/JYM8kKj45zf2k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMYoQG9WHtZ0hB4PRgf16yChjYX6bz917ovKRu85etAEK6XZJrjmYdxMQJDaDpbeO
-         s5DlDbrk9i/kYlif26j/bZGCL+Virqw6BU/JNT8NyUYVxj9Rn5UVWhpQwDrBOySbfw
-         WpR6FZoP2BXNT2PnfTBfCQPEzjePqMruGkBvLb3E=
+        s=default; t=1574820549;
+        bh=Ie1xSJ1/5sqVUEbyENfv1rfOxps/a2dGL+tHgWZBWxM=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=faogmiWbIjF6VvlXYwKJvg/78V1MAfEHdbHLQ4AHo7/dp8pgxSMWgZiu4eUtS9UQI
+         6FBZZyYRMzTWbFqMQF+uBY4/poj9fatavTjRf+Hgd4Qwc3m/wa4zmboQmh4fhmYtRU
+         X/BHeA+ZrJD6CHsRcTSmfTJnWl1HyLJ959RuHiNY=
+Subject: Re: [PATCH v0] IMA: Check IMA policy flag
+To:     Mimi Zohar <zohar@linux.ibm.com>, eric.snowberg@oracle.com,
+        linux-integrity@vger.kernel.org
+References: <20191121171444.2797-1-nramas@linux.microsoft.com>
+ <5a43ec9d-af82-9a31-3546-76e8328ff213@linux.microsoft.com>
+ <1574706618.4793.218.camel@linux.ibm.com>
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Subject: [PATCH v9 2/6] IMA: Add KEY_CHECK func to measure keys
-Date:   Tue, 26 Nov 2019 17:56:50 -0800
-Message-Id: <20191127015654.3744-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191127015654.3744-1-nramas@linux.microsoft.com>
-References: <20191127015654.3744-1-nramas@linux.microsoft.com>
+Message-ID: <6b51b7ff-ac8b-7cd9-1d0c-1358eab0fb6f@linux.microsoft.com>
+Date:   Tue, 26 Nov 2019 18:09:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <1574706618.4793.218.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Measure keys loaded onto any keyring.
+On 11/25/19 10:30 AM, Mimi Zohar wrote:
 
-This patch defines a new IMA policy func namely KEY_CHECK to
-measure keys. Updated ima_match_rules() to check for KEY_CHECK
-and ima_parse_rule() to handle KEY_CHECK.
+>>
+>> Please let me know if the above change would be accepted as a standalone
+>> patch (like the one in this patch),
+>> or, I should include this change as one of the patches in the "Key
+>> Measurement" patch set?
+> 
+> As I'm not planning on sending a pull request this open window, so
+> that it doesn't get lost/forgotten, please include it as the first
+> patch in this patch set.
+> 
+> Mimi
+> 
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy | 6 +++++-
- security/integrity/ima/ima.h         | 1 +
- security/integrity/ima/ima_policy.c  | 4 +++-
- 3 files changed, 9 insertions(+), 2 deletions(-)
+I have included the change to check ima_policy_flag in 
+process_buffer_measurement() as the 1st patch (PATCH v9 1/6) in the 
+updated patch set I posted today.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 29aaedf33246..066d32797500 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
--				[KEXEC_CMDLINE]
-+				[KEXEC_CMDLINE] [KEY_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-@@ -113,3 +113,7 @@ Description:
- 		Example of appraise rule allowing modsig appended signatures:
- 
- 			appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
-+
-+		Example of measure rule using KEY_CHECK to measure all keys:
-+
-+			measure func=KEY_CHECK
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index df4ca482fb53..fe6c698617bd 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -193,6 +193,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
- 	hook(KEXEC_CMDLINE)		\
-+	hook(KEY_CHECK)			\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f19a895ad7cd..1525a28fd705 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -373,7 +373,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if (func == KEXEC_CMDLINE) {
-+	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func))
- 			return true;
- 		return false;
-@@ -997,6 +997,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
-+			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
-+				entry->func = KEY_CHECK;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.17.1
-
+thanks,
+  -lakshmi
