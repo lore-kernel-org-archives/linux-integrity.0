@@ -1,115 +1,103 @@
-Return-Path: <SRS0=rFYW=ZW=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=lBzM=ZX=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740EBC43141
-	for <linux-integrity@archiver.kernel.org>; Sat, 30 Nov 2019 00:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6632CC432C0
+	for <linux-integrity@archiver.kernel.org>; Sun,  1 Dec 2019 23:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47EC024650
-	for <linux-integrity@archiver.kernel.org>; Sat, 30 Nov 2019 00:13:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YPpupQLw"
+	by mail.kernel.org (Postfix) with ESMTP id 3CA9F21774
+	for <linux-integrity@archiver.kernel.org>; Sun,  1 Dec 2019 23:54:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfK3ANB (ORCPT
+        id S1727279AbfLAXyz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 29 Nov 2019 19:13:01 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:31903 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727209AbfK3ANA (ORCPT
+        Sun, 1 Dec 2019 18:54:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15056 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727266AbfLAXyz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 Nov 2019 19:13:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1575072778;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mKbyuOkS3PW2MGMOCeB8esOqQ/aSq2T37sj0B9rPVCA=;
-        b=YPpupQLwnM2rvB7pFDAmXibdB7tk/ZoFv1e0HH2jGMyVGVY568PUwpLqk7LtP28lxHhbna
-        aBZBn8Izb9hvbYvT1MxU9nmWcUeWunw4JlTBSu2ag8HQdkUj+rtBGFkmZrnsub9SMT2gFy
-        y5k952BG62WNLOG7h0Ykl5OgceoAhuQ=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-296-IHNVjXxnPF-_FeRdQmT_wg-1; Fri, 29 Nov 2019 19:12:57 -0500
-Received: by mail-pj1-f72.google.com with SMTP id c23so15534296pjs.16
-        for <linux-integrity@vger.kernel.org>; Fri, 29 Nov 2019 16:12:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=H5rAN0lVb9RDPiR1/dzryPNeMEEOLBOdHyVpcyv58Ps=;
-        b=snDyUGjDWlt+3bXtZseXiCI+lCGY41WVSihF2jbkrR1lZT/ZqESOzZfGbaOhXm2vot
-         lT4h25VkIeFNkjdpUdPvdSt/rMB7ZBY4JYYEFtskFdejUPILCP9wjoxj/nBV1T8X7bwn
-         S1gZ/WoVLRB3zIpRtsxdimgmxXlM5z5tajJeOOC+q+9OtLXqmJnUKGWv0pDv5TkAguyM
-         o4Jiez9oiuAfrExHz0TwGBruugEaOEm+Lk8v0I79ypgpRzi+DDzosZ21GW7ZlKygQJBR
-         UsdQ5WCbrKFj740aJ5dhW5WKlYGrDBSvy84w2yLm0NLwGjmTg7EtL9Z1HDyemXEHIoOP
-         U2nw==
-X-Gm-Message-State: APjAAAVdmnbrQtn/ZiHe7u7LSrMxa6izkxgsUkmrYKYi3Nsw225CvIFU
-        VA0H+wiCpRd7P9DKd8936vkdm/PQpPrpzoypOHKDmblnsqeS89sUeT5G9HfotmbEfAYy88NI4QE
-        Zn/Dx7yKX14KcBfpIRxib8dIGrPEs
-X-Received: by 2002:a17:902:a516:: with SMTP id s22mr16707428plq.295.1575072776009;
-        Fri, 29 Nov 2019 16:12:56 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzMwyPTp0Icx4kxymsXV5XAdBQ+nWGUPwk3u+Z2NJVehlr1bkBur/T2EmX4WPTg2gVS98kU8A==
-X-Received: by 2002:a17:902:a516:: with SMTP id s22mr16707389plq.295.1575072775364;
-        Fri, 29 Nov 2019 16:12:55 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id q6sm13863724pfl.140.2019.11.29.16.12.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 16:12:54 -0800 (PST)
-Date:   Fri, 29 Nov 2019 17:12:53 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [GIT PULL] tpmdd updates for Linux v5.4
-Message-ID: <20191130001253.rtovohtfbg25uifm@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>
-References: <20190902143121.pjnykevzlajlcrh6@linux.intel.com>
- <CAA9_cmeLnHK4y+usQaWo72nUG3RNsripuZnS-koY4XTRC+mwJA@mail.gmail.com>
- <20191127205800.GA14290@linux.intel.com>
- <20191127205912.GB14290@linux.intel.com>
- <20191128012055.f3a6gq7bjpvuierx@cantor>
- <20191129235322.GB21546@linux.intel.com>
+        Sun, 1 Dec 2019 18:54:55 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xB1NqUqU104695;
+        Sun, 1 Dec 2019 18:54:53 -0500
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wm6sm59du-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 01 Dec 2019 18:54:53 -0500
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xB1No2sl023106;
+        Sun, 1 Dec 2019 23:54:52 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma04wdc.us.ibm.com with ESMTP id 2wkg265vsc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 01 Dec 2019 23:54:52 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xB1Nspo047251850
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 1 Dec 2019 23:54:51 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25DCC7805F;
+        Sun,  1 Dec 2019 23:54:51 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9A1217805C;
+        Sun,  1 Dec 2019 23:54:50 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Sun,  1 Dec 2019 23:54:50 +0000 (GMT)
+Subject: Re: [PATCH 0/2] Revert patches fixing probing of interrupts
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20191126131753.3424363-1-stefanb@linux.vnet.ibm.com>
+ <20191129223418.GA15726@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <6f6f60a2-3b55-e76d-c11a-4677fcb72c16@linux.ibm.com>
+Date:   Sun, 1 Dec 2019 18:54:45 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191129235322.GB21546@linux.intel.com>
-X-MC-Unique: IHNVjXxnPF-_FeRdQmT_wg-1
-X-Mimecast-Spam-Score: 0
+In-Reply-To: <20191129223418.GA15726@linux.intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-01_04:2019-11-29,2019-12-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=0 clxscore=1011 malwarescore=0 adultscore=0 impostorscore=0
+ phishscore=0 mlxlogscore=845 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912010215
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat Nov 30 19, Jarkko Sakkinen wrote:
->On Wed, Nov 27, 2019 at 06:20:55PM -0700, Jerry Snitselaar wrote:
->> There also was that other issue reported on the list about
->> tpm_tis_core_init failing when calling tpm_get_timeouts due to the
->> power gating changes.
->
->Please add a (lore.ko) link for reference to this thread.
->
->/Jarkko
->
+On 11/29/19 5:37 PM, Jarkko Sakkinen wrote:
+> On Tue, Nov 26, 2019 at 08:17:51AM -0500, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Revert the patches that were fixing the probing of interrupts due
+>> to reports of interrupt stroms on some systems
+> Can you explain how reverting is going to fix the issue?
 
-https://lore.kernel.org/linux-integrity/a60dadce-3650-44ce-8785-2f737ab9b99=
-3@www.fastmail.com/
+
+The reverts fix 'the interrupt storm issue' that they are causing on 
+some systems but don't fix the issue with the interrupt mode not being 
+used. I was hoping Jerry would get access to a system faster but this 
+didn't seem to be the case. So sending these patches seemed the better 
+solution than leaving 5.4.x with the problem but going back to when it 
+worked 'better.'
+
+
+>
+> This is wrong way to move forward. The root cause must be identified
+> first and then decide actions like always in any situation.
+>
+> /Jarkko
+
 
