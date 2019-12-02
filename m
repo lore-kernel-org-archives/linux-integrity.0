@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052E3C432C0
-	for <linux-integrity@archiver.kernel.org>; Mon,  2 Dec 2019 13:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8532C432C0
+	for <linux-integrity@archiver.kernel.org>; Mon,  2 Dec 2019 13:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D098220833
-	for <linux-integrity@archiver.kernel.org>; Mon,  2 Dec 2019 13:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BE5520833
+	for <linux-integrity@archiver.kernel.org>; Mon,  2 Dec 2019 13:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbfLBNer (ORCPT
+        id S1727535AbfLBNeq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 2 Dec 2019 08:34:47 -0500
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:45896 "EHLO
+        Mon, 2 Dec 2019 08:34:46 -0500
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:45898 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727451AbfLBNer (ORCPT
+        with ESMTP id S1727391AbfLBNeq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 2 Dec 2019 08:34:47 -0500
+        Mon, 2 Dec 2019 08:34:46 -0500
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id xB2DYI7C015795;
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id xB2DYIRD015797;
         Mon, 2 Dec 2019 15:34:18 +0200
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id B50316032A; Mon,  2 Dec 2019 15:34:18 +0200 (IST)
+        id C66DA6032F; Mon,  2 Dec 2019 15:34:18 +0200 (IST)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -37,14 +37,14 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         ayna@linux.vnet.ibm.com, Dan.Morav@nuvoton.com,
         oren.tanami@nuvoton.com, shmulik.hager@nuvoton.com,
         amir.mizinski@nuvoton.com, Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v2 2/5] char: tpm: Add check_data handle to tpm_tis_phy_ops in order to check data integrity
-Date:   Mon,  2 Dec 2019 15:33:29 +0200
-Message-Id: <20191202133332.178110-3-amirmizi6@gmail.com>
+Subject: [PATCH v2 4/5] dt-bindings: tpm: Add YAML schema for TPM TIS I2C options
+Date:   Mon,  2 Dec 2019 15:33:31 +0200
+Message-Id: <20191202133332.178110-5-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191202133332.178110-1-amirmizi6@gmail.com>
 References: <20191202133332.178110-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -52,188 +52,62 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-In order to compute the crc over the data sent in lower layer (I2C for instance),
-tpm_tis_check_data() calls an operation (if available) to check data integrity.
-If data integrity cannot be verified, a retry attempt to save the sent/recieved data is implemented.
-
-The current steps are done when sending a command:
-    1. Host writes to TPM_STS.commandReady.
-    2. Host writes command.
-    3. Host checks that TPM received data is valid.
-    4. If data is currupted go to step 1.
-
-When receiving data:
-    1. Host checks that TPM_STS.dataAvail is set.
-    2. Host saves recieved data.
-    3. Host checks that received data is correct.
-    4. If data is currupted Host writes to TPM_STS.responseRetry and go to step 1.
-
-This commit is based on previous work by Christophe Richard.
+Added a YAML schema to support tpm tis i2c realted dt-bindings for the I2c =
+PTP based physical layer.
 
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 101 +++++++++++++++++++++++++---------------
- drivers/char/tpm/tpm_tis_core.h |   3 ++
- 2 files changed, 66 insertions(+), 38 deletions(-)
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         | 38 ++++++++++++++++++=
+++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-=
+i2c.yaml
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index c3181ea..43784fd 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -242,6 +242,15 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
- 	return status;
- }
- 
-+static bool tpm_tis_check_data(struct tpm_chip *chip, const u8 *buf, size_t len)
-+{
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-+
-+	if (priv->phy_ops->check_data)
-+		return priv->phy_ops->check_data(priv, buf, len);
-+	return true;
-+}
-+
- static void tpm_tis_ready(struct tpm_chip *chip)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-@@ -308,47 +317,58 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int size = 0;
--	int status;
-+	int status, i;
- 	u32 expected;
-+	bool check_data = false;
- 
--	if (count < TPM_HEADER_SIZE) {
--		size = -EIO;
--		goto out;
--	}
-+	for (i = 0; i < TPM_RETRY; i++) {
-+		if (count < TPM_HEADER_SIZE) {
-+			size = -EIO;
-+			goto out;
-+		}
- 
--	size = recv_data(chip, buf, TPM_HEADER_SIZE);
--	/* read first 10 bytes, including tag, paramsize, and result */
--	if (size < TPM_HEADER_SIZE) {
--		dev_err(&chip->dev, "Unable to read header\n");
--		goto out;
--	}
-+		size = recv_data(chip, buf, TPM_HEADER_SIZE);
-+		/* read first 10 bytes, including tag, paramsize, and result */
-+		if (size < TPM_HEADER_SIZE) {
-+			dev_err(&chip->dev, "Unable to read header\n");
-+			goto out;
-+		}
- 
--	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count || expected < TPM_HEADER_SIZE) {
--		size = -EIO;
--		goto out;
--	}
-+		expected = be32_to_cpu(*(__be32 *) (buf + 2));
-+		if (expected > count || expected < TPM_HEADER_SIZE) {
-+			size = -EIO;
-+			goto out;
-+		}
- 
--	size += recv_data(chip, &buf[TPM_HEADER_SIZE],
--			  expected - TPM_HEADER_SIZE);
--	if (size < expected) {
--		dev_err(&chip->dev, "Unable to read remainder of result\n");
--		size = -ETIME;
--		goto out;
--	}
-+		size += recv_data(chip, &buf[TPM_HEADER_SIZE],
-+				  expected - TPM_HEADER_SIZE);
-+		if (size < expected) {
-+			dev_err(&chip->dev, "Unable to read remainder of result\n");
-+			size = -ETIME;
-+			goto out;
-+		}
- 
--	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--				&priv->int_queue, false) < 0) {
--		size = -ETIME;
--		goto out;
-+		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-+				      &priv->int_queue, false) < 0) {
-+			size = -ETIME;
-+			goto out;
-+		}
-+
-+		status = tpm_tis_status(chip);
-+		if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
-+			dev_err(&chip->dev, "Error left over data\n");
-+			size = -EIO;
-+			goto out;
-+		}
-+
-+		check_data = tpm_tis_check_data(chip, buf, size);
-+		if (!check_data)
-+			tpm_tis_write8(priv, TPM_STS(priv->locality),
-+				       TPM_STS_RESPONSE_RETRY);
-+		else break;
- 	}
--	status = tpm_tis_status(chip);
--	if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
--		dev_err(&chip->dev, "Error left over data\n");
-+	if (!check_data)
- 		size = -EIO;
--		goto out;
--	}
--
- out:
- 	tpm_tis_ready(chip);
- 	return size;
-@@ -453,14 +473,19 @@ static void disable_interrupts(struct tpm_chip *chip)
- static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--	int rc;
-+	int rc, i;
- 	u32 ordinal;
- 	unsigned long dur;
-+	bool data_valid = false;
- 
--	rc = tpm_tis_send_data(chip, buf, len);
--	if (rc < 0)
--		return rc;
--
-+	for (i = 0; i < TPM_RETRY && !data_valid; i++) {
-+		rc = tpm_tis_send_data(chip, buf, len);
-+		if (rc < 0)
-+			return rc;
-+		data_valid = tpm_tis_check_data(chip, buf, len);
-+	}
-+	if (!data_valid)
-+		return -EIO;
- 	/* go and do it */
- 	rc = tpm_tis_write8(priv, TPM_STS(priv->locality), TPM_STS_GO);
- 	if (rc < 0)
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index d06c65b..486c2e9 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -34,6 +34,7 @@ enum tis_status {
- 	TPM_STS_GO = 0x20,
- 	TPM_STS_DATA_AVAIL = 0x10,
- 	TPM_STS_DATA_EXPECT = 0x08,
-+	TPM_STS_RESPONSE_RETRY = 0x02,
- };
- 
- enum tis_int_flags {
-@@ -106,6 +107,8 @@ struct tpm_tis_phy_ops {
- 	int (*read16)(struct tpm_tis_data *data, u32 addr, u16 *result);
- 	int (*read32)(struct tpm_tis_data *data, u32 addr, u32 *result);
- 	int (*write32)(struct tpm_tis_data *data, u32 addr, u32 src);
-+	bool (*check_data)(struct tpm_tis_data *data, const u8 *buf,
-+			   size_t len);
- };
- 
- static inline int tpm_tis_read_bytes(struct tpm_tis_data *data, u32 addr,
--- 
+diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yam=
+l b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+new file mode 100644
+index 0000000..bb18917
+--- /dev/null
++++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: GPL-2.0=0D
++%YAML 1.2=0D
++---=0D
++$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#=0D
++$schema: http://devicetree.org/meta-schemas/core.yaml#=0D
++=0D
++title: I2C PTP based TPM Device Tree Bindings=0D
++=0D
++maintainers:=0D
++  - Amir Mizinski <amirmizi6@gmail.com>=0D
++=0D
++description:=0D
++  The TCG defines hardware protocol, registers and interface (based=0D
++  on the TPM Interface Specification) for accessing TPM devices=0D
++  implemented with an I2C interface.=0D
++  Refer to the 'I2C Interface Definition' section in 'TCG PC Client=0D
++  PlatformTPMProfile(PTP) Specification' publication for specification.=0D
++  Designed for Raspberry Pie 3 Board with Nuvoton's NPCT75X (2.0)=0D
++  =0D
++properties:=0D
++  compatible:=0D
++    contains:=0D
++      const: tcg,tpm-tis-i2c=0D
++      =0D
++  reg:=0D
++    maxItems: 1=0D
++    =0D
++required:=0D
++  - compatible=0D
++  - reg  =0D
++    =0D
++    =0D
++examples:=0D
++  - |=0D
++    tpm-tis-i2c: tpm-tis-i2c@2e {=0D
++       compatible =3D "tcg,tpm-tis-i2c";=0D
++       reg =3D <0x2e>;=0D
++    };=0D
+--=20
 2.7.4
 
