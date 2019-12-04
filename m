@@ -2,116 +2,162 @@ Return-Path: <SRS0=NiqC=Z2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,PDS_BTC_ID,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE991C43603
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 13:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87519C43603
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 15:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7C32073C
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 13:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D5B020833
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 15:40:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="MnN7qOb/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfLDN5R (ORCPT
+        id S1728557AbfLDPkn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 Dec 2019 08:57:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52596 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727850AbfLDN5R (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:57:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7396EAD2B
-        for <linux-integrity@vger.kernel.org>; Wed,  4 Dec 2019 13:57:15 +0000 (UTC)
-Date:   Wed, 4 Dec 2019 14:57:15 +0100
-From:   Matthias Gerstner <mgerstner@suse.de>
-To:     linux-integrity@vger.kernel.org
-Subject: Ramifications of INTEGRITY_PLATFORM_KEYRING
-Message-ID: <20191204135715.GB11974@f195.suse.de>
+        Wed, 4 Dec 2019 10:40:43 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34602 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728555AbfLDPkn (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 4 Dec 2019 10:40:43 -0500
+Received: by mail-qk1-f194.google.com with SMTP id d202so323038qkb.1
+        for <linux-integrity@vger.kernel.org>; Wed, 04 Dec 2019 07:40:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=TKYIamcANZtYnmd1DLMg7mRBVJgMxnDC2sAqJEPIU6o=;
+        b=MnN7qOb/Aw5hzyId41e+MvM96sCf/2c9FL9dits2novfdCy38l1/jJBsE1+wc4CuQQ
+         wJ6Niv+OzgPFjhdWNvF5jLiIqcA7oN//EoCsfCB2ZNOzcq2M0zI0Orgz+dmeNVH+GvJA
+         gOc3ooWHdDMsuUfWywZwnY2gzvT3IzCIpuqxFfrlccfJKdFW91lXLM9Y1u/dy9s7T3KN
+         I6AgMBz1p0Pf1QQ+UK8fEJlZv5SO1z74BKGRINlVNqAT55wfRmGFV5SECzpLWjlYfb2b
+         FCgn29hXTwL/HXrrQzMlDGu/tGJqh/6IB/UcRDvmaC1OeHDCYh5IHIA7Z096X8tbng5F
+         Wmyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TKYIamcANZtYnmd1DLMg7mRBVJgMxnDC2sAqJEPIU6o=;
+        b=P3V1fWbPxFLqrm85zKdJRBDDDd66e/TBaccTwblWCVpwYdhOGT5M/YDy+prRoL6sFS
+         mZIm8YRj7CO6KIDXPHfoH80GJHLpJY8ZVY5iT0BsOQaG/+Wgu+G9r0YxREt8ht0nxudP
+         74FD+6F0tyRZM5qbOrveaW42QHJfwvxPaBscNHicl2qDYHnJnQU+FoVSQPhV7BQGO5BX
+         nQhQ+u2zwNpE69iRAvoQuJJk9dV2hEfxKgn11zuJUovfPhtIx9b5p6mvSw2dFZFHxd44
+         JHkQRmqXvrMkJ89/C/sl+yq8TmaEaMN0XOVNYG1Yla5tolmAn4PmcJzRWSDh1Ss+VUBS
+         QVVw==
+X-Gm-Message-State: APjAAAVGkVSUHKVhJ7U3A9RcmBMgE33G5x+BTRHLKAqnPXiOWOwl0KUB
+        c5ti7Nu9GVnjF2MY4nS6vbZvdQ==
+X-Google-Smtp-Source: APXvYqzaHMZ7ljtRRla518W1B2GOaSGHFhofv7ElsnTVyzHk/MSaxlYFr3gvMJQ2QFU6avcGGFW/IA==
+X-Received: by 2002:a37:7186:: with SMTP id m128mr3526332qkc.384.1575474042150;
+        Wed, 04 Dec 2019 07:40:42 -0800 (PST)
+Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
+        by smtp.gmail.com with ESMTPSA id y28sm3937692qtk.65.2019.12.04.07.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 07:40:41 -0800 (PST)
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@microsoft.com,
+        thiruan@microsoft.com, bryankel@microsoft.com,
+        tee-dev@lists.linaro.org, ilias.apalodimas@linaro.org,
+        sumit.garg@linaro.org, rdunlap@infradead.org
+Subject: [PATCH v4 1/1] tpm/tpm_ftpm_tee: add shutdown call back
+Date:   Wed,  4 Dec 2019 10:40:38 -0500
+Message-Id: <20191204154038.2276810-2-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191204154038.2276810-1-pasha.tatashin@soleen.com>
+References: <20191204154038.2276810-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="WhfpMioaduB5tiZL"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Add shutdown call back to close existing session with fTPM TA
+to support kexec scenario.
 
---WhfpMioaduB5tiZL
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add parentheses to function names in comments as specified in kdoc.
 
-Hi,
+Signed-off-by: Thirupathaiah Annapureddy <thiruan@microsoft.com>
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/char/tpm/tpm_ftpm_tee.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
 
-at SUSE we implemented an integration test for our enterprise kernels
-that checks the functionality of various IMA/EVM related features like
-IMA appraisal with digital signatures. To do this a custom CA
-certificate is enrolled as a MOK certificate in the system. The
-according public key is then loaded into the .ima kernel keyring to be
-used for verification of security.ima signatures.
+diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+index 6640a14dbe48..22bf553ccf9d 100644
+--- a/drivers/char/tpm/tpm_ftpm_tee.c
++++ b/drivers/char/tpm/tpm_ftpm_tee.c
+@@ -32,7 +32,7 @@ static const uuid_t ftpm_ta_uuid =
+ 		  0x82, 0xCB, 0x34, 0x3F, 0xB7, 0xF3, 0x78, 0x96);
+ 
+ /**
+- * ftpm_tee_tpm_op_recv - retrieve fTPM response.
++ * ftpm_tee_tpm_op_recv() - retrieve fTPM response.
+  * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h.
+  * @buf:	the buffer to store data.
+  * @count:	the number of bytes to read.
+@@ -61,7 +61,7 @@ static int ftpm_tee_tpm_op_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ }
+ 
+ /**
+- * ftpm_tee_tpm_op_send - send TPM commands through the TEE shared memory.
++ * ftpm_tee_tpm_op_send() - send TPM commands through the TEE shared memory.
+  * @chip:	the tpm_chip description as specified in driver/char/tpm/tpm.h
+  * @buf:	the buffer to send.
+  * @len:	the number of bytes to send.
+@@ -208,7 +208,7 @@ static int ftpm_tee_match(struct tee_ioctl_version_data *ver, const void *data)
+ }
+ 
+ /**
+- * ftpm_tee_probe - initialize the fTPM
++ * ftpm_tee_probe() - initialize the fTPM
+  * @pdev: the platform_device description.
+  *
+  * Return:
+@@ -298,7 +298,7 @@ static int ftpm_tee_probe(struct platform_device *pdev)
+ }
+ 
+ /**
+- * ftpm_tee_remove - remove the TPM device
++ * ftpm_tee_remove() - remove the TPM device
+  * @pdev: the platform_device description.
+  *
+  * Return:
+@@ -328,6 +328,19 @@ static int ftpm_tee_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++/**
++ * ftpm_tee_shutdown() - shutdown the TPM device
++ * @pdev: the platform_device description.
++ */
++static void ftpm_tee_shutdown(struct platform_device *pdev)
++{
++	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
++
++	tee_shm_free(pvt_data->shm);
++	tee_client_close_session(pvt_data->ctx, pvt_data->session);
++	tee_client_close_context(pvt_data->ctx);
++}
++
+ static const struct of_device_id of_ftpm_tee_ids[] = {
+ 	{ .compatible = "microsoft,ftpm" },
+ 	{ }
+@@ -341,6 +354,7 @@ static struct platform_driver ftpm_tee_driver = {
+ 	},
+ 	.probe = ftpm_tee_probe,
+ 	.remove = ftpm_tee_remove,
++	.shutdown = ftpm_tee_shutdown,
+ };
+ 
+ module_platform_driver(ftpm_tee_driver);
+-- 
+2.24.0
 
-With a recent update we did from kernel version 4.12 to version 5.3 a
-regression in this integration test was reported by our QA team. As it
-turned out the reason is kernel option INTEGRITY_PLATFORM_KEYRING=3Dy,
-which is the default setting our kernel engineers took over. With this
-option enabled a couple of platform certificates are no longer loaded
-into the .secondary_trusted_keys keyring but into the new .platform
-keyring. And IMA only uses those keys to verify things like kexec any
-more.
-
-The certificate we enrolled as MOK in the system is now also part for
-the .platform keyring, causing us to be unable to load the required
-public key into the .ima keyring.
-
-I was able to still get things to work by building my own custom kernel
-with the custom CA being built into the kernel which is a lot of more
-effort, however, and a scenario we can't easily support for our
-customers.
-
-I can understand the reasoning of that new option, that trusting
-arbitrary platform certificates shipped with the hardware might not be a
-good idea. I wonder, however, whether moving these certificates from
-=2Esecondary_trusted_keys to .platform doesn't also affect other
-components than just IMA?
-
-I would be interested in your view on this and any advice.
-
-Cheers
-
-Matthias
-
---=20
-Matthias Gerstner <matthias.gerstner@suse.de>
-Dipl.-Wirtsch.-Inf. (FH), Security Engineer
-https://www.suse.com/security
-Phone: +49 911 740 53 290
-GPG Key ID: 0x14C405C971923553
-
-SUSE Software Solutions Germany GmbH
-HRB 36809, AG N=FCrnberg
-Gesch=E4ftsf=FChrer: Felix Imend=F6rffer
-
---WhfpMioaduB5tiZL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE82oG1A8ab1eESZdjFMQFyXGSNVMFAl3nuzgACgkQFMQFyXGS
-NVP6dg//eujTIxXlLctLYoNV/0kg0lmuNM/ZZdNU9C54KgD/A3hTVY17HNvUDbCL
-r8fMCOlFu/EQsH4UjSjKmXIrBHFPE9tudQ23BjoORWv+pxZYq8D15bqEHetkKdQh
-uAnVpwXO+l7K3qkQdSOUevRdrVdswIWBvq75AZxIyDBxT6T210uGJYrLkd+8qtJ5
-GAfX0o1SLy9tm/OdbnCREIDrXlLyNOB+te95tXrWy42krE8qlgRSA2cSErGFWOmm
-kSrS3Zft9pxDh+55RuzbLdPnavrvDyEgRptTMHKAXc3hivYllO0K+HDmrbVZK+HV
-HUphVwGR6BRmTCJMgf/pBQAJy2/o9XV2XYHCKIrfW7w4WUvMdcsmlFU/0A6rV+dX
-kyeBXBqIc71b5h/NljnBrJf0Tds3q66qW15HGRT6Cy9SmSb0fwiXFw06Rav/XI31
-F5vC4Ybo4a+XGe1D253v03abitvcDzrFjPVes4CazFFR3JguAhGV/Fox/kmurTGF
-DslyTsSkspy3jbNHaocC9jt2+dRIhBpI+gozjfEoYes9WgKgHWoYblm/XKqQtJM0
-S6ICeXvZ8WZ956LijGn4PyHspObKFxVZONR82P82bPk8Se0UIpUQLbLEK8kTaiDJ
-s+pYfgyxmRR02rEtwxMGkW9JalN3dRlSb+s7VSaynnT9N/7eaZY=
-=479n
------END PGP SIGNATURE-----
-
---WhfpMioaduB5tiZL--
