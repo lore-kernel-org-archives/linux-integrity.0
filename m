@@ -2,123 +2,90 @@ Return-Path: <SRS0=NiqC=Z2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A553AC43603
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 22:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EA8C43603
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 22:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79637206DF
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 22:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 094D4206DF
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 22:44:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Buek2F9l"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jXiBx/p3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbfLDWl7 (ORCPT
+        id S1728121AbfLDWoE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 Dec 2019 17:41:59 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:50140 "EHLO
+        Wed, 4 Dec 2019 17:44:04 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:51090 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728284AbfLDWli (ORCPT
+        with ESMTP id S1728072AbfLDWoE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Dec 2019 17:41:38 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5003120B4762;
-        Wed,  4 Dec 2019 14:41:37 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5003120B4762
+        Wed, 4 Dec 2019 17:44:04 -0500
+Received: from [10.137.112.108] (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3FC0320BE482;
+        Wed,  4 Dec 2019 14:44:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3FC0320BE482
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1575499297;
-        bh=L4puKXt7OmrSagN42Huxd1vQTKOco/JYM8kKj45zf2k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Buek2F9ll8/bUHrhBgsViGYaRaAayGefcfg1p/6jSG8lGyFdn74jFOjDhLIGv0lth
-         OCPEHjH59CUe33w0Kp3t+PNuLKCkzSWHVmQK6EA+cY937+VB3Qmwbh8V/Le2lpN222
-         FfYcp8C8jRBqumLtEZyRmM/sWX8Hp6ameMe8rhPo=
+        s=default; t=1575499443;
+        bh=6IUNk4Ucj8w6gtQy1jEid7FoUFDc03WlbVxiK/Geq8E=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jXiBx/p3hqoEt9I8rMoEDAIfYNF7XedjvEBfknuJvB2V5HuurZXlZTRnCWe479VEl
+         Crk0zp0+qd4nadLfglt9S6bBod62nQnIsVu8MWY2ZaqKOx0tbAPru1uoMp+WGOhr9B
+         6sESv2vxRhXi9TCCzsJjl9nXdRUUBRP1BQY98hAk=
+Subject: Re: [PATCH v9 5/6] IMA: Add support to limit measuring keys
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
+        eric.snowberg@oracle.com, dhowells@redhat.com,
+        matthewgarrett@google.com, sashal@kernel.org,
+        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org
+References: <20191127015654.3744-1-nramas@linux.microsoft.com>
+ <20191127015654.3744-6-nramas@linux.microsoft.com>
+ <1575375945.5241.16.camel@linux.ibm.com>
+ <2d20ce36-e24e-e238-4a82-286db9eeab97@linux.microsoft.com>
+ <1575403616.5241.76.camel@linux.ibm.com>
+ <89bb3226-3a2e-c7fa-fff9-3a422739481c@linux.microsoft.com>
+ <1575458192.5241.99.camel@linux.ibm.com>
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v10 2/6] IMA: Add KEY_CHECK func to measure keys
-Date:   Wed,  4 Dec 2019 14:41:27 -0800
-Message-Id: <20191204224131.3384-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191204224131.3384-1-nramas@linux.microsoft.com>
-References: <20191204224131.3384-1-nramas@linux.microsoft.com>
+Message-ID: <2c613462-825e-a3d1-9bf2-2314f0c1a4da@linux.microsoft.com>
+Date:   Wed, 4 Dec 2019 14:43:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
+MIME-Version: 1.0
+In-Reply-To: <1575458192.5241.99.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Measure keys loaded onto any keyring.
+On 12/4/19 3:16 AM, Mimi Zohar wrote:
 
-This patch defines a new IMA policy func namely KEY_CHECK to
-measure keys. Updated ima_match_rules() to check for KEY_CHECK
-and ima_parse_rule() to handle KEY_CHECK.
+Hi Mimi,
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy | 6 +++++-
- security/integrity/ima/ima.h         | 1 +
- security/integrity/ima/ima_policy.c  | 4 +++-
- 3 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> The integrity subsystem, and other concepts upstreamed to support it,
+> are being used by different people/companies in different ways.  I
+> know some of the ways, but not all, as how it is being used.  For
+> example, Mat Martineau gave an LSS2019-NA talk titled "Using and
+> Implementing Keyring Restrictions for Userspace".  I don't know if he
+> would be interested in measuring keys on these restricted userspace
+> keyrings, but before we limit how a new feature works, we should at
+> least look to see if that limitation is really necessary.
+> 
+> Mimi
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 29aaedf33246..066d32797500 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
--				[KEXEC_CMDLINE]
-+				[KEXEC_CMDLINE] [KEY_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-@@ -113,3 +113,7 @@ Description:
- 		Example of appraise rule allowing modsig appended signatures:
- 
- 			appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig|modsig
-+
-+		Example of measure rule using KEY_CHECK to measure all keys:
-+
-+			measure func=KEY_CHECK
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index df4ca482fb53..fe6c698617bd 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -193,6 +193,7 @@ static inline unsigned long ima_hash_key(u8 *digest)
- 	hook(KEXEC_INITRAMFS_CHECK)	\
- 	hook(POLICY_CHECK)		\
- 	hook(KEXEC_CMDLINE)		\
-+	hook(KEY_CHECK)			\
- 	hook(MAX_CHECK)
- #define __ima_hook_enumify(ENUM)	ENUM,
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index f19a895ad7cd..1525a28fd705 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -373,7 +373,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- {
- 	int i;
- 
--	if (func == KEXEC_CMDLINE) {
-+	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func))
- 			return true;
- 		return false;
-@@ -997,6 +997,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
-+			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
-+				entry->func = KEY_CHECK;
- 			else
- 				result = -EINVAL;
- 			if (!result)
--- 
-2.17.1
+I have updated the patch per your suggestion - if uid is specified in 
+the policy for key measurement, then it is checked against the current 
+user's credential.
+
+Please review the updated patch set (v10).
+
+thanks,
+  -lakshmi
+
 
