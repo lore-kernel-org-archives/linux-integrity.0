@@ -1,119 +1,238 @@
-Return-Path: <SRS0=NiqC=Z2=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=1fZR=Z4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5417AC43603
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 23:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8A1C43603
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Dec 2019 01:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EBC02073C
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Dec 2019 23:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E0802245C
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Dec 2019 01:29:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AWm/FWPM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728011AbfLDXZv (ORCPT
+        id S1726278AbfLFB3q (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 Dec 2019 18:25:51 -0500
-Received: from mga06.intel.com ([134.134.136.31]:65086 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbfLDXZu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Dec 2019 18:25:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Dec 2019 15:25:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,278,1571727600"; 
-   d="scan'208";a="208994240"
-Received: from pminglan-mobl.amr.corp.intel.com ([10.251.2.222])
-  by fmsmga007.fm.intel.com with ESMTP; 04 Dec 2019 15:25:49 -0800
-Date:   Wed, 4 Dec 2019 15:25:48 -0800 (PST)
-From:   Mat Martineau <mathew.j.martineau@linux.intel.com>
-X-X-Sender: mjmartin@pminglan-mobl.amr.corp.intel.com
-To:     Mimi Zohar <zohar@linux.ibm.com>
-cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org, eric.snowberg@oracle.com,
-        dhowells@redhat.com, matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Subject: Re: [PATCH v9 5/6] IMA: Add support to limit measuring keys
-In-Reply-To: <1575458192.5241.99.camel@linux.ibm.com>
-Message-ID: <alpine.OSX.2.21.1912041411100.45746@pminglan-mobl.amr.corp.intel.com>
-References: <20191127015654.3744-1-nramas@linux.microsoft.com>  <20191127015654.3744-6-nramas@linux.microsoft.com>  <1575375945.5241.16.camel@linux.ibm.com>  <2d20ce36-e24e-e238-4a82-286db9eeab97@linux.microsoft.com>  <1575403616.5241.76.camel@linux.ibm.com>
-  <89bb3226-3a2e-c7fa-fff9-3a422739481c@linux.microsoft.com> <1575458192.5241.99.camel@linux.ibm.com>
-User-Agent: Alpine 2.21 (OSX 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="0-1154282419-1575501949=:45746"
+        Thu, 5 Dec 2019 20:29:46 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:47354 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbfLFB3o (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 5 Dec 2019 20:29:44 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2542520B4760;
+        Thu,  5 Dec 2019 17:29:42 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2542520B4760
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1575595782;
+        bh=zavtAVUb8jhlEWuhuT292HazV3lrluxzOQcYA1RMySg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AWm/FWPM0fIdISo3LCJ5KAUtRE4hzGPpGIWZePMVPi5x43RfcZGnBdM8qInoL52VQ
+         6W0oGVzdP9vlwhqUWxzG1yzBf45lX0dynUAEkWKuYwn1LSfcm27XJlLN0W/YStJga/
+         s8sVhoZARbnpd/C9TzuEuojdIdaMiyRBOLz5hGOA=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v1 1/2] IMA: Define workqueue for early boot "key" measurements
+Date:   Thu,  5 Dec 2019 17:29:35 -0800
+Message-Id: <20191206012936.2814-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191206012936.2814-1-nramas@linux.microsoft.com>
+References: <20191206012936.2814-1-nramas@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Measuring keys requires a custom IMA policy to be loaded.
+Keys created or updated before a custom IMA policy is loaded should
+be queued and the keys should be processed after a custom policy
+is loaded.
 
---0-1154282419-1575501949=:45746
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+This patch defines workqueue for queuing keys when a custom IMA policy
+has not yet been loaded.
 
+A flag namely ima_process_keys_for_measurement is used to check
+if the key should be queued or should be processed immediately.
+This flag is set to true when queued keys are processed.
+If this flag is set to true, keys created or updated
+will be measured immediately (not queued).
 
-On Wed, 4 Dec 2019, Mimi Zohar wrote:
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/ima.h                 |  15 +++
+ security/integrity/ima/ima_asymmetric_keys.c | 125 +++++++++++++++++++
+ 2 files changed, 140 insertions(+)
 
-> [Cc'ing Mat Martineau]
->
-> On Tue, 2019-12-03 at 15:37 -0800, Lakshmi Ramasubramanian wrote:
->> On 12/3/2019 12:06 PM, Mimi Zohar wrote:
->>
->>> Suppose both root and uid 1000 define a keyring named "foo".  The
->>> current "keyrings=foo" will measure all keys added to either keyring
->>> named "foo".  There needs to be a way to limit measuring keys to a
->>> particular keyring named "foo".
->>>
->>> Mimi
->>
->> Thanks for clarifying.
->>
->> Suppose two different non-root users create keyring with the same name
->> "foo" and, say, both are measured, how would we know which keyring
->> measurement belongs to which user?
->>
->> Wouldn't it be sufficient to include only keyrings created by "root"
->> (UID value 0) in the key measurement? This will include all the builtin
->> trusted keyrings (such as .builtin_trusted_keys,
->> .secondary_trusted_keys, .ima, .evm, etc.).
->>
->> What would be the use case for including keyrings created by non-root
->> users in key measurement?
->>
->> Also, since the UID for non-root users can be any integer value (greater
->> than 0), can an an administrator craft a generic IMA policy that would
->> be applicable to all clients in an enterprise?
->
-> The integrity subsystem, and other concepts upstreamed to support it,
-> are being used by different people/companies in different ways.  I
-> know some of the ways, but not all, as how it is being used.  For
-> example, Mat Martineau gave an LSS2019-NA talk titled "Using and
-> Implementing Keyring Restrictions for Userspace".  I don't know if he
-> would be interested in measuring keys on these restricted userspace
-> keyrings, but before we limit how a new feature works, we should at
-> least look to see if that limitation is really necessary.
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index f06238e41a7c..f86371647707 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -205,6 +205,21 @@ extern const char *const func_tokens[];
+ 
+ struct modsig;
+ 
++#ifdef CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE
++/*
++ * To track keys that need to be measured.
++ */
++struct ima_measure_key_entry {
++	struct list_head list;
++	void *payload;
++	size_t payload_len;
++	char *keyring_name;
++};
++void ima_process_queued_keys_for_measurement(void);
++#else
++static inline void ima_process_queued_keys_for_measurement(void) {}
++#endif /* CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE */
++
+ /* LIM API function definitions */
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index fea2e7dd3b09..fbdbe9c261cb 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -14,6 +14,131 @@
+ #include <keys/asymmetric-type.h>
+ #include "ima.h"
+ 
++/*
++ * Flag to indicate whether a key can be processed
++ * right away or should be queued for processing later.
++ */
++bool ima_process_keys_for_measurement;
++
++/*
++ * To synchronize access to the list of keys that need to be measured
++ */
++static DEFINE_MUTEX(ima_measure_keys_mutex);
++static LIST_HEAD(ima_measure_keys);
++
++static void ima_free_measure_key_entry(struct ima_measure_key_entry *entry)
++{
++	if (entry) {
++		kfree(entry->payload);
++		kfree(entry->keyring_name);
++		kfree(entry);
++	}
++}
++
++static struct ima_measure_key_entry *ima_alloc_measure_key_entry(
++	struct key *keyring,
++	const void *payload, size_t payload_len)
++{
++	int rc = 0;
++	struct ima_measure_key_entry *entry;
++
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (entry) {
++		entry->payload = kmemdup(payload, payload_len, GFP_KERNEL);
++		entry->keyring_name = kstrdup(keyring->description,
++					      GFP_KERNEL);
++		entry->payload_len = payload_len;
++	}
++
++	if ((entry == NULL) || (entry->payload == NULL) ||
++	    (entry->keyring_name == NULL)) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	INIT_LIST_HEAD(&entry->list);
++
++out:
++	if (rc) {
++		ima_free_measure_key_entry(entry);
++		entry = NULL;
++	}
++
++	return entry;
++}
++
++bool ima_queue_key_for_measurement(struct key *keyring,
++				   const void *payload, size_t payload_len)
++{
++	bool queued = false;
++	struct ima_measure_key_entry *entry;
++
++	entry = ima_alloc_measure_key_entry(keyring, payload, payload_len);
++	if (!entry)
++		return false;
++
++	/*
++	 * ima_measure_keys_mutex should be taken before checking
++	 * ima_process_keys_for_measurement flag to avoid the race
++	 * condition between the IMA hook checking this flag and
++	 * calling ima_queue_key_for_measurement() to queue
++	 * the key and ima_process_queued_keys_for_measurement()
++	 * setting this flag.
++	 */
++	mutex_lock(&ima_measure_keys_mutex);
++	if (!ima_process_keys_for_measurement) {
++		list_add_tail(&entry->list, &ima_measure_keys);
++		queued = true;
++	}
++	mutex_unlock(&ima_measure_keys_mutex);
++
++	if (!queued)
++		ima_free_measure_key_entry(entry);
++
++	return queued;
++}
++
++void ima_process_queued_keys_for_measurement(void)
++{
++	struct ima_measure_key_entry *entry, *tmp;
++	LIST_HEAD(temp_ima_measure_keys);
++
++	if (ima_process_keys_for_measurement)
++		return;
++
++	/*
++	 * Any queued keys will be processed now. From here on
++	 * keys should be processed right away.
++	 */
++	ima_process_keys_for_measurement = true;
++
++	/*
++	 * To avoid holding the mutex when processing queued keys,
++	 * transfer the queued keys with the mutex held to a temp list,
++	 * release the mutex, and then process the queued keys from
++	 * the temp list.
++	 *
++	 * Since ima_process_keys_for_measurement is set to true above,
++	 * any new key will be processed immediately and not be queued.
++	 */
++	INIT_LIST_HEAD(&temp_ima_measure_keys);
++
++	mutex_lock(&ima_measure_keys_mutex);
++
++	list_for_each_entry_safe(entry, tmp, &ima_measure_keys, list)
++		list_move_tail(&entry->list, &temp_ima_measure_keys);
++
++	mutex_unlock(&ima_measure_keys_mutex);
++
++	list_for_each_entry_safe(entry, tmp, &temp_ima_measure_keys, list) {
++		process_buffer_measurement(entry->payload, entry->payload_len,
++					   entry->keyring_name, KEY_CHECK, 0,
++					   entry->keyring_name);
++		list_del(&entry->list);
++		ima_free_measure_key_entry(entry);
++	}
++}
++
+ /**
+  * ima_post_key_create_or_update - measure asymmetric keys
+  * @keyring: keyring to which the key is linked to
+-- 
+2.17.1
 
-The use cases I'm most familiar with could have a use for key measurement 
-for something like enterprise Wi-Fi root certificates. I'm not sure of the 
-best way to uniquely identify a key to measure in that scenario, it could 
-be anchored in various ways (process, session, thread, or user keyrings, 
-for example) and may be owned by a non-root user. As Lakshmi noted above, 
-key names are not unique, and I'll add that namespace considerations may 
-come in to play too.
-
-Keys (including keyrings like .builtin_trusted_keys, .ima, etc) can be 
-linked to multiple keyrings, maybe you could create a system-level 
-.ima_measured keyring. You could measure keys that are accessible from 
-that keyring, and opt in more keys for measurement by linking them to 
-.ima_measured or a keyring nested within .ima_measured.
-
---
-Mat Martineau
-Intel
---0-1154282419-1575501949=:45746--
