@@ -2,112 +2,78 @@ Return-Path: <SRS0=1fZR=Z4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F338C43603
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Dec 2019 01:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4BFC43603
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Dec 2019 20:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E258A2466E
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Dec 2019 01:29:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB5E024670
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Dec 2019 20:50:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Fc8OwaK3"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="R+dtclcH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726088AbfLFB3n (ORCPT
+        id S1726352AbfLFUu3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 5 Dec 2019 20:29:43 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:47348 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfLFB3m (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Dec 2019 20:29:42 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id EE1F82010BBB;
-        Thu,  5 Dec 2019 17:29:41 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EE1F82010BBB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1575595782;
-        bh=KYKqmpyu2/KqQw/Kgh5Hw9D6cv4w2gT1WEMOUZ51dOU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Fc8OwaK3Uno1CtieRVB5j2+9/MR0KfBD4iqD6bdydfWV/06dTYbAc326ZmZNyCZ+P
-         HcjAxnPxr5RQNMuaI4YZxAttMv+WHChxbziMLS4o6DCd1lWdAPCPIVmIZE2vvMv51m
-         J1LE/HZBwRrty/aOxKrOlHHfaoALuSF+cPzqE+LM=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v1 0/2] IMA: Deferred measurement of keys
-Date:   Thu,  5 Dec 2019 17:29:34 -0800
-Message-Id: <20191206012936.2814-1-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 6 Dec 2019 15:50:29 -0500
+Received: from mail.kapsi.fi ([91.232.154.25]:47563 "EHLO mail.kapsi.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726330AbfLFUu3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 6 Dec 2019 15:50:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=ss6UfLsoQmlcXA1yqDJIpAvJTqCrLBwtxtjz5VAGhuQ=; b=R+dtclcHRqeov4Dce1CQnJ7hJM
+        759RwUrjteFz+C/iud8n8WNcHrFmOzlFtcRcdVfZex3QqnAVio+yYaEsGLNDrqjNmuiUJLj8AShGT
+        F8Wk7bztimAtWvqV8R4uNA6hO795Spj+7alT0yhYzhu8A9hflbH/r/no7IMrO2i1ob+v9WO/gcNbs
+        kw1I0d+n06BGfLrGqJI4FIaU7uYEoPo23OPfuQSlyp9LGJRxMo2Moyi1y4vM8bzyjgxrmwfdc0Skr
+        Mvry3gUnqUJyZNglmfm5w7w4f8WS5r2RfcVj0ez6lNcoRi41QrAmHTiwsG3ut84LcCL0UYXT87QIE
+        28rEDEsw==;
+Received: from 91-154-92-5.elisa-laajakaista.fi ([91.154.92.5] helo=localhost)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jarkko.sakkinen@linux.intel.com>)
+        id 1idKYO-0002PB-SQ; Fri, 06 Dec 2019 22:50:20 +0200
+Date:   Fri, 6 Dec 2019 22:50:20 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [GIT PULL] tpmdd updates for Linux v5.4
+Message-ID: <20191206205020.GB9971@linux.intel.com>
+References: <20190902143121.pjnykevzlajlcrh6@linux.intel.com>
+ <CAA9_cmeLnHK4y+usQaWo72nUG3RNsripuZnS-koY4XTRC+mwJA@mail.gmail.com>
+ <20191122161836.ry3cbon2iy22ftoc@cantor>
+ <20191129210400.GB12055@linux.intel.com>
+ <20191129232249.bgj25rlwrcg3afj5@cantor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191129232249.bgj25rlwrcg3afj5@cantor>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 91.154.92.5
+X-SA-Exim-Mail-From: jarkko.sakkinen@linux.intel.com
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patchset extends the previous version[1] by adding support for
-deferred processing of keys.
+On Fri, Nov 29, 2019 at 04:22:49PM -0700, Jerry Snitselaar wrote:
+> I still don't have access to one of the laptops, but looking online
+> they should have one of the following: i5-8265U, i5-8365U, i7-8565U,
+> or i7-8665U. The tpm is discrete, so I don't know that the cpu will
+> matter. Looking at a log, in the t490s case it is an STMicroelectronics
+> chip. So both Infineon and STM so far.
 
-With the patchset referenced above, the IMA subsystem supports
-measuring asymmetric keys when the key is created or updated.
-But keys created or updated before a custom IMA policy is loaded
-are currently not measured. This includes keys added to, for instance,
-.builtin_trusted_keys which happens early in the boot process.
+Still also seeking a local system.
 
-This change adds support for queuing keys created or updated before
-a custom IMA policy is loaded. The queued keys are processed when
-a custom policy is loaded. Keys created or updated after a custom policy
-is loaded are measured immediately (not queued).
-
-If the kernel is built with both CONFIG_IMA and
-CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE enabled then the IMA policy
-must be applied as a custom policy. Not providing a custom policy
-in the above configuration would result in asymmeteric keys being queued
-until a custom policy is loaded. This is by design.
-
-[1] https://lore.kernel.org/linux-integrity/20191204224131.3384-1-nramas@linux.microsoft.com/
-
-Testing performed:
-
-  * Booted the kernel with this change.
-  * Added .builtin_trusted_keys in "keyrings=" option in
-    the IMA policy and verified the keys added to this
-    keyring are measured.
-  * Specified only func=KEY_CHECK and not "keyrings=" option,
-    and verified the keys added to builtin_trusted_keys keyring
-    are processed.
-  * Added keys at runtime and verified they are measured
-    if the IMA policy permitted.
-      => For example, added keys to .ima keyring and verified.
-
-Changelog:
-
-  v1
-
-  => Code cleanup
-
-  v0
-
-  => Based changes on v5.4-rc8
-  => The following patchsets should be applied in that order
-     https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
-     https://lore.kernel.org/linux-integrity/20191204224131.3384-1-nramas@linux.microsoft.com/
-  => Added functions to queue and dequeue keys, and process
-     the queued keys when custom IMA policies are applied.
-
-Lakshmi Ramasubramanian (2):
-  IMA: Define workqueue for early boot "key" measurements
-  IMA: Call workqueue functions to measure queued keys
-
- security/integrity/ima/ima.h                 |  15 +++
- security/integrity/ima/ima_asymmetric_keys.c | 134 +++++++++++++++++++
- security/integrity/ima/ima_policy.c          |   6 +
- 3 files changed, 155 insertions(+)
-
--- 
-2.17.1
-
+/Jarkko
