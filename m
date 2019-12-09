@@ -2,60 +2,88 @@ Return-Path: <SRS0=WyGQ=Z7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F86C43603
-	for <linux-integrity@archiver.kernel.org>; Mon,  9 Dec 2019 20:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A9EC43603
+	for <linux-integrity@archiver.kernel.org>; Mon,  9 Dec 2019 20:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF40C205C9
-	for <linux-integrity@archiver.kernel.org>; Mon,  9 Dec 2019 20:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7346F205C9
+	for <linux-integrity@archiver.kernel.org>; Mon,  9 Dec 2019 20:57:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="BqK4sU0Y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="BqK4sU0Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfLIUxI (ORCPT
+        id S1726532AbfLIU5J (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 9 Dec 2019 15:53:08 -0500
-Received: from mga17.intel.com ([192.55.52.151]:10294 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbfLIUxI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Dec 2019 15:53:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Dec 2019 12:20:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,296,1571727600"; 
-   d="scan'208";a="215206749"
-Received: from nshalmon-mobl.ger.corp.intel.com (HELO localhost) ([10.252.8.146])
-  by orsmga006.jf.intel.com with ESMTP; 09 Dec 2019 12:20:26 -0800
-Date:   Mon, 9 Dec 2019 22:20:24 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
+        Mon, 9 Dec 2019 15:57:09 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34370 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726483AbfLIU5J (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 9 Dec 2019 15:57:09 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 73D098EE112;
+        Mon,  9 Dec 2019 12:57:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575925028;
+        bh=EniOcEMFZZZS0LCHITKvY44oObdcidMrDvbzkr++vyo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BqK4sU0YRloZcN9cSC5FH8phBPQADv5hSZOxr85qJ1/OsIDwz0UnV74yfjF4yXHTJ
+         VOcb7wvuSCDCNHCL/8t3KutqcPzNV1ZaVGSox5SKJsPyS+m3ZspCOpL6tZQyn49P2U
+         NzvtIRtfNWCJQVyHkh4j8Ju7jB5XqRreUlnzfurE=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8WkMDGQV39O9; Mon,  9 Dec 2019 12:57:08 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 01A748EE0FC;
+        Mon,  9 Dec 2019 12:57:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1575925028;
+        bh=EniOcEMFZZZS0LCHITKvY44oObdcidMrDvbzkr++vyo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=BqK4sU0YRloZcN9cSC5FH8phBPQADv5hSZOxr85qJ1/OsIDwz0UnV74yfjF4yXHTJ
+         VOcb7wvuSCDCNHCL/8t3KutqcPzNV1ZaVGSox5SKJsPyS+m3ZspCOpL6tZQyn49P2U
+         NzvtIRtfNWCJQVyHkh4j8Ju7jB5XqRreUlnzfurE=
+Message-ID: <1575925024.31378.28.camel@HansenPartnership.com>
 Subject: Re: [PATCH 0/8] Fix TPM 2.0 trusted keys
-Message-ID: <20191209202024.GJ19243@linux.intel.com>
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
+Date:   Mon, 09 Dec 2019 12:57:04 -0800
+In-Reply-To: <20191209202024.GJ19243@linux.intel.com>
 References: <1575781600.14069.8.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575781600.14069.8.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+         <20191209202024.GJ19243@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Dec 07, 2019 at 09:06:40PM -0800, James Bottomley wrote:
-> The big problem with this patch is still that we can't yet combine
-> policy with authorization because that requires proper session
-> handling, but at least with this rewrite it becomes possible (whereas
-> it was never possible with the old external policy session code). 
-> Thus, when we have the TPM 2.0 security patch upstream, we'll be able
-> to use the session logic from that patch to imlement authorizations.
+On Mon, 2019-12-09 at 22:20 +0200, Jarkko Sakkinen wrote:
+> On Sat, Dec 07, 2019 at 09:06:40PM -0800, James Bottomley wrote:
+> > The big problem with this patch is still that we can't yet combine
+> > policy with authorization because that requires proper session
+> > handling, but at least with this rewrite it becomes possible
+> > (whereas it was never possible with the old external policy session
+> > code). Thus, when we have the TPM 2.0 security patch upstream,
+> > we'll be able to use the session logic from that patch to imlement
+> > authorizations.
+> 
+> This essentially means that this is an RFC, not something that can be
+> merged at this point before whatever you mean by proper has been
+> landed.
 
-This essentially means that this is an RFC, not something that can be
-merged at this point before whatever you mean by proper has been landed.
+No it doesn't.  It just means we have a limitation in the keys that
+needs to be removed at a later time when we have the authentication
+mechanisms.  Since there will simply be a feature added with no
+backward compat problems, it's not a merge blocker.
 
-/Jarkko
+James
+
