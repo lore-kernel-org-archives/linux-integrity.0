@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53618C43603
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Dec 2019 19:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C665FC43603
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Dec 2019 21:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31B6320838
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Dec 2019 19:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C47022B48
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Dec 2019 21:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfLJTE6 (ORCPT
+        id S1728807AbfLJVRw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 10 Dec 2019 14:04:58 -0500
-Received: from mga09.intel.com ([134.134.136.24]:50106 "EHLO mga09.intel.com"
+        Tue, 10 Dec 2019 16:17:52 -0500
+Received: from mga01.intel.com ([192.55.52.88]:58566 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbfLJTE6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 10 Dec 2019 14:04:58 -0500
+        id S1727528AbfLJVRv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 10 Dec 2019 16:17:51 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 11:04:58 -0800
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Dec 2019 13:17:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,300,1571727600"; 
-   d="scan'208";a="203294114"
+   d="scan'208";a="210505395"
 Received: from tstruk-mobl1.jf.intel.com (HELO [127.0.1.1]) ([10.7.196.67])
-  by orsmga007.jf.intel.com with ESMTP; 10 Dec 2019 11:04:58 -0800
-Subject: [PATCH] tpm: selftest: add test covering async mode
+  by fmsmga007.fm.intel.com with ESMTP; 10 Dec 2019 13:17:50 -0800
+Subject: [PATCH] tpm: fix WARNING: lock held when returning to user space
 From:   Tadeusz Struk <tadeusz.struk@intel.com>
 To:     jarkko.sakkinen@linux.intel.com
 Cc:     tadeusz.struk@intel.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, jgg@ziepe.ca, mingo@redhat.com,
-        jeffrin@rajagiritech.edu.in, linux-integrity@vger.kernel.org,
-        will@kernel.org, peterhuewe@gmx.de
-Date:   Tue, 10 Dec 2019 11:04:59 -0800
-Message-ID: <157600469924.5042.14784541627191833405.stgit@tstruk-mobl1>
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org, jgg@ziepe.ca,
+        mingo@redhat.com, jeffrin@rajagiritech.edu.in,
+        linux-integrity@vger.kernel.org, will@kernel.org, peterhuewe@gmx.de
+Date:   Tue, 10 Dec 2019 13:17:51 -0800
+Message-ID: <157601267151.12904.7408818232910113434.stgit@tstruk-mobl1>
 In-Reply-To: <34e5340f-de75-f20e-7898-6142eac45c13@intel.com>
 References: <34e5340f-de75-f20e-7898-6142eac45c13@intel.com>
 User-Agent: StGit/0.17.1-dirty
@@ -48,96 +48,51 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add a test that sends a tpm cmd in an asyn mode.
-Currently there is a gap in test coverage with regards
-to this functionality.
+When an application sends TPM commands in NONBLOCKING mode
+the driver holds chip->tpm_mutex returning from write(),
+which triggers WARNING: lock held when returning to user space!
+To silence this warning the driver needs to release the mutex
+and acquire it again in tpm_dev_async_work() before sending
+the command.
 
+Cc: stable@vger.kernel.org
+Fixes: 9e1b74a63f776 (tpm: add support for nonblocking operation)
 Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 ---
- tools/testing/selftests/tpm2/test_smoke.sh |    1 +
- tools/testing/selftests/tpm2/tpm2.py       |   19 +++++++++++++++++--
- tools/testing/selftests/tpm2/tpm2_tests.py |   13 +++++++++++++
- 3 files changed, 31 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-dev-common.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
-index 80521d46220c..cb54ab637ea6 100755
---- a/tools/testing/selftests/tpm2/test_smoke.sh
-+++ b/tools/testing/selftests/tpm2/test_smoke.sh
-@@ -2,3 +2,4 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 2ec47a69a2a6..b23b0b999232 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -61,6 +61,12 @@ static void tpm_dev_async_work(struct work_struct *work)
  
- python -m unittest -v tpm2_tests.SmokeTest
-+python -m unittest -v tpm2_tests.AsyncTest
-diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
-index 828c18584624..d0fcb66a88a6 100644
---- a/tools/testing/selftests/tpm2/tpm2.py
-+++ b/tools/testing/selftests/tpm2/tpm2.py
-@@ -6,8 +6,8 @@ import socket
- import struct
- import sys
- import unittest
--from fcntl import ioctl
--
-+import fcntl
-+import select
- 
- TPM2_ST_NO_SESSIONS = 0x8001
- TPM2_ST_SESSIONS = 0x8002
-@@ -352,6 +352,7 @@ def hex_dump(d):
- class Client:
-     FLAG_DEBUG = 0x01
-     FLAG_SPACE = 0x02
-+    FLAG_NONBLOCK = 0x04
-     TPM_IOC_NEW_SPACE = 0xa200
- 
-     def __init__(self, flags = 0):
-@@ -362,13 +363,27 @@ class Client:
-         else:
-             self.tpm = open('/dev/tpmrm0', 'r+b', buffering=0)
- 
-+        if (self.flags & Client.FLAG_NONBLOCK):
-+            flags = fcntl.fcntl(self.tpm, fcntl.F_GETFL)
-+            flags |= os.O_NONBLOCK
-+            fcntl.fcntl(self.tpm, fcntl.F_SETFL, flags)
-+            self.tpm_poll = select.poll()
+ 	mutex_lock(&priv->buffer_mutex);
+ 	priv->command_enqueued = false;
++	ret = tpm_try_get_ops(priv->chip);
++	if (ret) {
++		priv->response_length = ret;
++		goto out;
++	}
 +
-     def close(self):
-         self.tpm.close()
- 
-     def send_cmd(self, cmd):
-         self.tpm.write(cmd)
-+
-+        if (self.flags & Client.FLAG_NONBLOCK):
-+            self.tpm_poll.register(self.tpm, select.POLLIN)
-+            self.tpm_poll.poll(10000)
-+
-         rsp = self.tpm.read()
- 
-+        if (self.flags & Client.FLAG_NONBLOCK):
-+            self.tpm_poll.unregister(self.tpm)
-+
-         if (self.flags & Client.FLAG_DEBUG) != 0:
-             sys.stderr.write('cmd' + os.linesep)
-             sys.stderr.write(hex_dump(cmd) + os.linesep)
-diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
-index d4973be53493..728be7c69b76 100644
---- a/tools/testing/selftests/tpm2/tpm2_tests.py
-+++ b/tools/testing/selftests/tpm2/tpm2_tests.py
-@@ -288,3 +288,16 @@ class SpaceTest(unittest.TestCase):
- 
-         self.assertEqual(rc, tpm2.TPM2_RC_COMMAND_CODE |
-                          tpm2.TSS2_RESMGR_TPM_RC_LAYER)
-+
-+class AsyncTest(unittest.TestCase):
-+    def setUp(self):
-+        logging.basicConfig(filename='AsyncTest.log', level=logging.DEBUG)
-+
-+    def test_async(self):
-+        log = logging.getLogger(__name__)
-+        log.debug(sys._getframe().f_code.co_name)
-+
-+        async_client = tpm2.Client(tpm2.Client.FLAG_NONBLOCK)
-+        log.debug("Calling get_cap in a NON_BLOCKING mode")
-+        async_client.get_cap(tpm2.TPM2_CAP_HANDLES, tpm2.HR_LOADED_SESSION)
-+        async_client.close()
+ 	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
+ 			       sizeof(priv->data_buffer));
+ 	tpm_put_ops(priv->chip);
+@@ -68,6 +74,7 @@ static void tpm_dev_async_work(struct work_struct *work)
+ 		priv->response_length = ret;
+ 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
+ 	}
++out:
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	wake_up_interruptible(&priv->async_wait);
+ }
+@@ -204,6 +211,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 	if (file->f_flags & O_NONBLOCK) {
+ 		priv->command_enqueued = true;
+ 		queue_work(tpm_dev_wq, &priv->async_work);
++		tpm_put_ops(priv->chip);
+ 		mutex_unlock(&priv->buffer_mutex);
+ 		return size;
+ 	}
 
