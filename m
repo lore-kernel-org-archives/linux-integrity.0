@@ -2,48 +2,45 @@ Return-Path: <SRS0=LpXc=2B=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E49B4C43603
-	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 17:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B4AC43603
+	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 17:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2AEA20409
-	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 17:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 893C620409
+	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 17:58:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbfLKR5t (ORCPT
+        id S1730267AbfLKR6K (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 11 Dec 2019 12:57:49 -0500
-Received: from mga14.intel.com ([192.55.52.115]:28533 "EHLO mga14.intel.com"
+        Wed, 11 Dec 2019 12:58:10 -0500
+Received: from mga11.intel.com ([192.55.52.93]:46936 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729228AbfLKR5t (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Dec 2019 12:57:49 -0500
+        id S1729228AbfLKR6K (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 11 Dec 2019 12:58:10 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 09:37:18 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 09:58:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,302,1571727600"; 
-   d="scan'208";a="225610402"
+   d="scan'208";a="225618649"
 Received: from cmclough-mobl.ger.corp.intel.com (HELO localhost) ([10.251.85.152])
-  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2019 09:37:13 -0800
-Date:   Wed, 11 Dec 2019 19:37:12 +0200
+  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2019 09:58:07 -0800
+Date:   Wed, 11 Dec 2019 19:58:05 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de
-Subject: Re: [PATCH V2] tpm_tis_spi: use new `delay` structure for SPI
- transfer delays
-Message-ID: <20191211173700.GE4516@linux.intel.com>
-References: <20191204080049.32701-1-alexandru.ardelean@analog.com>
- <20191210065619.7395-1-alexandru.ardelean@analog.com>
+To:     Tadeusz Struk <tadeusz.struk@intel.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: selftests: cleanup after unseal with wrong policy
+ test
+Message-ID: <20191211175805.GL4516@linux.intel.com>
+References: <157601492070.15343.464606544465753590.stgit@tstruk-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191210065619.7395-1-alexandru.ardelean@analog.com>
+In-Reply-To: <157601492070.15343.464606544465753590.stgit@tstruk-mobl1>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -51,18 +48,15 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 08:56:19AM +0200, Alexandru Ardelean wrote:
-> In a recent change to the SPI subsystem [1], a new `delay` struct was added
-> to replace the `delay_usecs`. This change replaces the current `delay_usecs`
-> with `delay` for this driver.
+On Tue, Dec 10, 2019 at 01:55:20PM -0800, Tadeusz Struk wrote:
+> Unseal with wrong policy tests affects DA lockout and eventually
+> causes to fail with:
+> "ProtocolError: TPM_RC_LOCKOUT: cc=0x00000153, rc=0x00000921",
+> when the test runs multiple times. Send tpm clear command
+> after the test to reset the DA counters.
 > 
-> The `spi_transfer_delay_exec()` function [in the SPI framework] makes sure
-> that both `delay_usecs` & `delay` are used (in this order to preserve
-> backwards compatibility).
-> 
-> [1] commit bebcfd272df6485 ("spi: introduce `delay` field for
-> `spi_transfer` + spi_transfer_delay_exec()")
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
 
-Not sure why you use ` and not '?
+You could pick this also to the same patch set.
 
 /Jarkko
