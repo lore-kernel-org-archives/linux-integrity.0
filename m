@@ -2,129 +2,86 @@ Return-Path: <SRS0=LpXc=2B=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 652CBC00454
-	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 16:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C83C3F68F
+	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 17:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAD921556
-	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 16:47:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="idUboWCj"
+	by mail.kernel.org (Postfix) with ESMTP id 2A02D22527
+	for <linux-integrity@archiver.kernel.org>; Wed, 11 Dec 2019 17:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730999AbfLKQrj (ORCPT
+        id S1730751AbfLKRMc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 11 Dec 2019 11:47:39 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:38768 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbfLKQrP (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 11 Dec 2019 11:47:15 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 578EE20B71AD;
-        Wed, 11 Dec 2019 08:47:15 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 578EE20B71AD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576082835;
-        bh=KJn3Zp501nKBSZf5EQB9MYQOthw+bgPAllE5fe8Yjs4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=idUboWCjolLNjidzXiSZh8W8wOxlnyewn6QsLdw1aJs5eOFTWqRCh4JqIlQN9n7CD
-         EQhv9O/2+RjL/iuURJOml7NUBMVaCJJaCc6nXraVgIrV7TZbmgns2hGII71SqEtP1X
-         fR42Xps/Y/yyBEwb4p1zAM72s3vIgyjW3y0edjQo=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v11 4/6] KEYS: Call the IMA hook to measure keys
-Date:   Wed, 11 Dec 2019 08:47:05 -0800
-Message-Id: <20191211164707.4698-5-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191211164707.4698-1-nramas@linux.microsoft.com>
-References: <20191211164707.4698-1-nramas@linux.microsoft.com>
+        Wed, 11 Dec 2019 12:12:32 -0500
+Received: from mga03.intel.com ([134.134.136.65]:46794 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730158AbfLKRMc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 11 Dec 2019 12:12:32 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2019 09:12:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,302,1571727600"; 
+   d="scan'208";a="414924854"
+Received: from cebrenes-mobl1.amr.corp.intel.com (HELO localhost) ([10.251.85.152])
+  by fmsmga006.fm.intel.com with ESMTP; 11 Dec 2019 09:12:23 -0800
+Date:   Wed, 11 Dec 2019 19:12:22 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        "Zhao, Shirley" <shirley.zhao@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        'Mauro Carvalho Chehab' <mchehab+samsung@kernel.org>,
+        "Zhu, Bing" <bing.zhu@intel.com>,
+        "Chen, Luhai" <luhai.chen@intel.com>
+Subject: Re: One question about trusted key of keyring in Linux kernel.
+Message-ID: <20191211171222.GA4516@linux.intel.com>
+References: <A888B25CD99C1141B7C254171A953E8E4909BA3B@shsmsx102.ccr.corp.intel.com>
+ <1575260220.4080.17.camel@linux.ibm.com>
+ <A888B25CD99C1141B7C254171A953E8E4909D360@shsmsx102.ccr.corp.intel.com>
+ <1575267453.4080.26.camel@linux.ibm.com>
+ <A888B25CD99C1141B7C254171A953E8E4909E381@shsmsx102.ccr.corp.intel.com>
+ <1575269075.4080.31.camel@linux.ibm.com>
+ <A888B25CD99C1141B7C254171A953E8E4909E399@shsmsx102.ccr.corp.intel.com>
+ <1575312932.24227.13.camel@linux.ibm.com>
+ <20191209194715.GD19243@linux.intel.com>
+ <1575926334.4557.17.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1575926334.4557.17.camel@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Call the IMA hook from key_create_or_update() function to measure
-the payload when a new key is created or an existing key is updated.
+On Mon, Dec 09, 2019 at 04:18:54PM -0500, Mimi Zohar wrote:
+> On Mon, 2019-12-09 at 21:47 +0200, Jarkko Sakkinen wrote:
+> > On Mon, Dec 02, 2019 at 10:55:32AM -0800, James Bottomley wrote:
+> > > blob but it looks like we need to fix the API.  I suppose the good news
+> > > is given this failure that we have the opportunity to rewrite the API
+> > > since no-one else can have used it for anything because of this.  The
+> > 
+> > I did successfully run this test when I wrote it 5 years ago:
+> > 
+> > https://github.com/jsakkine-intel/tpm2-scripts/blob/master/keyctl-smoke.sh
+> 
+> Thanks, Jarkko.  Is this test still working or is there a regression?
 
-This patch adds the call to the IMA hook from key_create_or_update()
-function to measure the key on key create or update.
+I will run it and in addition to that I will make a patch out of it.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- include/linux/ima.h | 14 ++++++++++++++
- security/keys/key.c | 10 ++++++++++
- 2 files changed, 24 insertions(+)
+Any suggestions for the script name (should probably have 'tpm2' in
+it at least)?
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 6d904754d858..3b89136bc218 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -101,6 +101,20 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
- {}
- #endif
- 
-+#if defined(CONFIG_IMA) && defined(CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE)
-+extern void ima_post_key_create_or_update(struct key *keyring,
-+					  struct key *key,
-+					  const void *payload, size_t plen,
-+					  unsigned long flags, bool create);
-+#else
-+static inline void ima_post_key_create_or_update(struct key *keyring,
-+						 struct key *key,
-+						 const void *payload,
-+						 size_t plen,
-+						 unsigned long flags,
-+						 bool create) {}
-+#endif  /* CONFIG_IMA && CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE */
-+
- #ifdef CONFIG_IMA_APPRAISE
- extern bool is_ima_appraise_enabled(void);
- extern void ima_inode_post_setattr(struct dentry *dentry);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 764f4c57913e..718bf7217420 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -13,6 +13,7 @@
- #include <linux/security.h>
- #include <linux/workqueue.h>
- #include <linux/random.h>
-+#include <linux/ima.h>
- #include <linux/err.h>
- #include "internal.h"
- 
-@@ -936,6 +937,9 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 		goto error_link_end;
- 	}
- 
-+	ima_post_key_create_or_update(keyring, key, payload, plen,
-+				      flags, true);
-+
- 	key_ref = make_key_ref(key, is_key_possessed(keyring_ref));
- 
- error_link_end:
-@@ -965,6 +969,12 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
- 	}
- 
- 	key_ref = __key_update(key_ref, &prep);
-+
-+	if (!IS_ERR(key_ref))
-+		ima_post_key_create_or_update(keyring, key,
-+					      payload, plen,
-+					      flags, false);
-+
- 	goto error_free_prep;
- }
- EXPORT_SYMBOL(key_create_or_update);
--- 
-2.17.1
-
+/Jarkko
