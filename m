@@ -2,44 +2,52 @@ Return-Path: <SRS0=nL9b=2H=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B64E8C43603
-	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 11:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122C0C43603
+	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 12:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91FCD20733
-	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 11:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E14DF207FF
+	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 12:05:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbfLQLRM (ORCPT
+        id S1726383AbfLQMFO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 17 Dec 2019 06:17:12 -0500
-Received: from mga07.intel.com ([134.134.136.100]:23166 "EHLO mga07.intel.com"
+        Tue, 17 Dec 2019 07:05:14 -0500
+Received: from mga05.intel.com ([192.55.52.43]:2665 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726824AbfLQLRM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:17:12 -0500
+        id S1726275AbfLQMFO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:05:14 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 03:17:11 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 04:05:13 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
-   d="scan'208";a="205441884"
+   d="scan'208";a="221746321"
 Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
-  by orsmga007.jf.intel.com with ESMTP; 17 Dec 2019 03:17:09 -0800
-Message-ID: <8e3a747111a60ec4e4b8b0ce5f079eade9750735.camel@linux.intel.com>
-Subject: Re: [PATCH] drivers: char: tpm: remove unneeded MODULE_VERSION()
- usage
+  by fmsmga001.fm.intel.com with ESMTP; 17 Dec 2019 04:05:10 -0800
+Message-ID: <5d0763334def7d7ae1e7cf931ef9b14184dce238.camel@linux.intel.com>
+Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of
+ tpm_tis_core_init
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 17 Dec 2019 13:17:07 +0200
-In-Reply-To: <1a68db2aee382a1b0472cf0b81a809bc089e622d.camel@linux.intel.com>
-References: <20191216084230.31412-1-info@metux.net>
-         <1a68db2aee382a1b0472cf0b81a809bc089e622d.camel@linux.intel.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
+Date:   Tue, 17 Dec 2019 14:05:08 +0200
+In-Reply-To: <CAPcyv4iepQup4bwMuWzq6r5gdx83hgYckUWFF7yF=rszjz3dtQ@mail.gmail.com>
+References: <20191211231758.22263-1-jsnitsel@redhat.com>
+         <20191211235455.24424-1-jsnitsel@redhat.com>
+         <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
+         <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
+         <20191217020022.knh7uxt4pn77wk5m@cantor>
+         <CAPcyv4iepQup4bwMuWzq6r5gdx83hgYckUWFF7yF=rszjz3dtQ@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.1-2 
@@ -50,27 +58,64 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-12-17 at 13:16 +0200, Jarkko Sakkinen wrote:
-> On Mon, 2019-12-16 at 09:42 +0100, Enrico Weigelt, metux IT consult wrote:
-> > Remove MODULE_VERSION(), as it isn't needed at all: the only version
-> > making sense is the kernel version.
+On Mon, 2019-12-16 at 18:14 -0800, Dan Williams wrote:
+> On Mon, Dec 16, 2019 at 6:00 PM Jerry Snitselaar <jsnitsel@redhat.com> wrote:
+> > On Mon Dec 16 19, Dan Williams wrote:
+> > > On Mon, Dec 16, 2019 at 4:59 PM Jarkko Sakkinen
+> > > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > > On Wed, 2019-12-11 at 16:54 -0700, Jerry Snitselaar wrote:
+> > > > > Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
+> > > > > issuing commands to the tpm during initialization, just reserve the
+> > > > > chip after wait_startup, and release it when we are ready to call
+> > > > > tpm_chip_register.
+> > > > > 
+> > > > > Cc: Christian Bundy <christianbundy@fraction.io>
+> > > > > Cc: Dan Williams <dan.j.williams@intel.com>
+> > > > > Cc: Peter Huewe <peterhuewe@gmx.de>
+> > > > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> > > > > Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> > > > > Cc: stable@vger.kernel.org
+> > > > > Cc: linux-integrity@vger.kernel.org
+> > > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> > > > > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
+> > > > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > > 
+> > > > I pushed to my master with minor tweaks and added my tags.
+> > > > 
+> > > > Please check before I put it to linux-next.
+> > > 
+> > > I don't see it yet here:
+> > > 
+> > > http://git.infradead.org/users/jjs/linux-tpmdd.git/shortlog/refs/heads/master
+> > > 
+> > > However, I wanted to make sure you captured that this does *not* fix
+> > > the interrupt issue. I.e. make sure you remove the "Fixes:
+> > > 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")"
+> > > tag.
+> > > 
+> > > With that said, are you going to include the revert of:
+> > > 
+> > > 1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+> > 
+> > Dan, with the above reverted do you still get the screaming interrupt?
 > 
-> Take the following line away:
+> Yes, the screaming interrupt goes away, although it is replaced by
+> these messages when the driver starts:
 > 
-> > See also: https://lkml.org/lkml/2017/11/22/480
+> [    3.725131] tpm_tis IFX0740:00: 2.0 TPM (device-id 0x1B, rev-id 16)
+> [    3.725358] tpm tpm0: tpm_try_transmit: send(): error -5
+> [    3.725359] tpm tpm0: [Firmware Bug]: TPM interrupt not working,
+> polling instead
 > 
-> And just before SOB:
+> If the choice is "error message + polled-mode" vs "pinning a cpu with
+> interrupts" I'd accept the former, but wanted Jarkko with his
+> maintainer hat to weigh in.
 > 
-> Link: https://lkml.org/lkml/2017/11/22/480
-> > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> 
-> You have some extra cruft there. It should be:
-> 
-> Signed-off-by: Enrico Weigelt <info@metux.net>
+> Is there a simple sanity check I can run to see if the TPM is still
+> operational in this state?
 
-Also, the email that you are sending this patch from incorrectly
-formatted email address. Please configure your email client to
-have just Firstname Lastname as the email.
+What about T490S?
 
 /Jarkko
 
