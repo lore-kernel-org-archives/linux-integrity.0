@@ -2,70 +2,88 @@ Return-Path: <SRS0=nL9b=2H=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C344BC43603
-	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 12:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEADC43603
+	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 12:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99950207FF
-	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 12:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 160022082E
+	for <linux-integrity@archiver.kernel.org>; Tue, 17 Dec 2019 12:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfLQMG2 (ORCPT
+        id S1727648AbfLQMPR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 17 Dec 2019 07:06:28 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46177 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfLQMG2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:06:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 04:06:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
-   d="scan'208";a="221746459"
-Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Dec 2019 04:06:24 -0800
-Message-ID: <9991700815c02b3227a5902e4cae1afe5200b0ff.camel@linux.intel.com>
-Subject: Re: [PATCH V3] tpm_tis_spi: use new 'delay' structure for SPI
- transfer delays
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de
-In-Reply-To: <20191217091615.12764-1-alexandru.ardelean@analog.com>
-References: <20191204080049.32701-1-alexandru.ardelean@analog.com>
-         <20191217091615.12764-1-alexandru.ardelean@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
- Espoo
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Dec 2019 07:15:17 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:37105 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726690AbfLQMPR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:15:17 -0500
+Received: from [192.168.0.5] (ip5f5bf3f4.dynamic.kabel-deutschland.de [95.91.243.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id D2D6B206441CD;
+        Tue, 17 Dec 2019 13:15:14 +0100 (CET)
+Subject: Re: [PATCH] tpm: Don't make log failures fatal
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Matthew Garrett <mjg59@google.com>, stable@vger.kernel.org
+References: <20191213225748.11256-1-matthewgarrett@google.com>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <3a472005-83a7-9787-0bfc-35673702be09@molgen.mpg.de>
+Date:   Tue, 17 Dec 2019 13:15:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Date:   Tue, 17 Dec 2019 14:04:29 +0200
-User-Agent: Evolution 3.34.1-2 
+In-Reply-To: <20191213225748.11256-1-matthewgarrett@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-12-17 at 11:16 +0200, Alexandru Ardelean wrote:
-> In a recent change to the SPI subsystem [1], a new 'delay' struct was added
-> to replace the 'delay_usecs'. This change replaces the current
-> 'delay_usecs' with 'delay' for this driver.
-> 
-> The 'spi_transfer_delay_exec()' function [in the SPI framework] makes sure
-> that both 'delay_usecs' & 'delay' are used (in this order to preserve
-> backwards compatibility).
-> 
-> [1] commit bebcfd272df6485 ("spi: introduce `delay` field for
-> `spi_transfer` + spi_transfer_delay_exec()")
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Dear Matthew,
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-/Jarkko
+Am 13.12.19 um 23:57 schrieb Matthew Garrett:
+> If a TPM is in disabled state, it's reasonable for it to have an empty
+> log. Bailing out of probe in this case means that the PPI interface
+> isn't available, so there's no way to then enable the TPM from the OS.
+> In general it seems reasonable to ignore log errors - they shouldn't
+> itnerfere with any other TPM functionality.
 
+interfere
+
+Can this be tested with QEMU somehow?
+
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Cc: stable@vger.kernel.org
+> ---
+>   drivers/char/tpm/tpm-chip.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 3d6d394a8661..58073836b555 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -596,9 +596,7 @@ int tpm_chip_register(struct tpm_chip *chip)
+>   
+>   	tpm_sysfs_add_device(chip);
+>   
+> -	rc = tpm_bios_log_setup(chip);
+> -	if (rc != 0 && rc != -ENODEV)
+> -		return rc;
+> +	tpm_bios_log_setup(chip);
+>   
+>   	tpm_add_ppi(chip);
+
+Acked-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
