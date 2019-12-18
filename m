@@ -2,119 +2,138 @@ Return-Path: <SRS0=o83+=2I=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA03C43603
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 15:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62705C43603
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 16:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AA5F2146E
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 15:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 308FE2146E
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 16:44:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="iWhjT4BT"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fPjvMO4I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfLRPxi (ORCPT
+        id S1727511AbfLRQol (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 18 Dec 2019 10:53:38 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:53050 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727031AbfLRPxh (ORCPT
+        Wed, 18 Dec 2019 11:44:41 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:45142 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727215AbfLRQol (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:53:37 -0500
-X-Greylist: delayed 308 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Dec 2019 10:53:37 EST
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 47dKDD63nsz9vcSB
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Dec 2019 15:48:28 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id GmsiTC23ozmH for <linux-integrity@vger.kernel.org>;
-        Wed, 18 Dec 2019 09:48:28 -0600 (CST)
-Received: from mail-yw1-f69.google.com (mail-yw1-f69.google.com [209.85.161.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 47dKDD51mJz9vcRK
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Dec 2019 09:48:28 -0600 (CST)
-Received: by mail-yw1-f69.google.com with SMTP id y188so1608783ywa.4
-        for <linux-integrity@vger.kernel.org>; Wed, 18 Dec 2019 07:48:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=24iL5/uUkW8WBrQ+DwpF6Dwk7XjHT1zZjAzHIUDTH/4=;
-        b=iWhjT4BTr9LLloEH90ZsH1TvIWOH57cw1MQgcHeDYwOIDfS2k/tzc3ep0QbbE1E1/0
-         a3PXogSZAAdSAYBtNaacCxr8oPsRDVX+7p89iaFIspNqEjFU01luRm2avI+bUsbf7pLB
-         J56L1XiP+cBb4qlGzneNwYGeEZzMf+HMwzFyi7L2CWEivK6Gwj4BFQ4zBCLEh21Mp5al
-         vQzZhSPGrvFmZOEMIyuNUrLoziYSjQkHZDONVva7a++X+SwD4hLw08bg/Euyl05egjHd
-         OCHNKwDx4YXZFTyzOlftoV5C9+zmCh1YY/5g6EVOimzmScpjd+hmeezAjXmOXZfZhjnn
-         SsJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=24iL5/uUkW8WBrQ+DwpF6Dwk7XjHT1zZjAzHIUDTH/4=;
-        b=TKKRRYzPfZisKwxpYG6hUyCv0o9QgcwdqcdAcKUIz4Y7kE2uoluHLVDsWdhfPkrkX6
-         q+dVXnGGm6VzGgF1CnEPvnBcYUFPMZEl9D4Kf34IMMaeD80ubP5EM/0DoB6XYJpywhv8
-         6zG+eWdVIRQK5zFEc2ja6hejrOrkUwAgNDhlxvmqlF8tjKK2yIrLlBjjGD+wSxCP3L6w
-         7csgzJ3kbiSWz2wHXwFg73JNfmlAlkDxNswvWkV82yGGBYyYZTNn7r4UnmWqUAIv0ujt
-         qjoMym1pW7i6QMJUzFILNe6EPpqCG04+rlembQcMr6v1t0xjKX4yoCHXXYI9RU5K8SKX
-         DgHQ==
-X-Gm-Message-State: APjAAAUXvHXw4G4YQSBj5mtJEETJhAQFFlU1mSEFAZc1DVCFC24zFkWN
-        9cG0PPJ+qzpxlTeO7pP5XgCJmIgNtCcuemsVR1MjNfM/6CFyopQ0oXuOB4oaexqzxFFVhPV3n2G
-        PQ7Rs7xyo229hGxH99PtvcpuZXZ+0/8fX
-X-Received: by 2002:a25:df15:: with SMTP id w21mr2537599ybg.7.1576684108469;
-        Wed, 18 Dec 2019 07:48:28 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyUs2lA5D65kMHLl6/mRZQTuLTuD4Ghfd2R8mcUBxkI5G82Qt7wVJf30S63EhVsq0vzQPq5Yw==
-X-Received: by 2002:a25:df15:: with SMTP id w21mr2537588ybg.7.1576684108258;
-        Wed, 18 Dec 2019 07:48:28 -0800 (PST)
-Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id j4sm1050738ywd.103.2019.12.18.07.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 07:48:27 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm/ppi: remove impossible assertion in tpm_eval_dsm
-Date:   Wed, 18 Dec 2019 09:48:25 -0600
-Message-Id: <20191218154825.11634-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 18 Dec 2019 11:44:41 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3149C20B479A;
+        Wed, 18 Dec 2019 08:44:40 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3149C20B479A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1576687480;
+        bh=7oX3VjVjQ+qxdF/mzYJ1sOnrnFWgeNPXNB/HYkY5A+o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fPjvMO4IVlR7+CgLSY1M2HhFQ1ROTpZvGRHi1qfqL8CzE0hqNupbB0pZ43rnxJnFk
+         B+WFd2WNyWdimKHuAxoySIwa0nuEevouCXPicgntJA5AO7C4sdwCw68OMk6r0/CfkT
+         PFUjkatRILjXDgqzqL4uGX/1f4inXsDHEE59c9yU=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v5 2/2] IMA: Call workqueue functions to measure queued keys
+Date:   Wed, 18 Dec 2019 08:44:34 -0800
+Message-Id: <20191218164434.2877-3-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191218164434.2877-1-nramas@linux.microsoft.com>
+References: <20191218164434.2877-1-nramas@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-In tpm_eval_dsm, BUG_ON on ppi_handle is used as an assertion.
-However, if ppi_handle is NULL, the kernel crashes. The patch
-removes the unnecessary check.
+Measuring keys requires a custom IMA policy to be loaded.
+Keys should be queued for measurement if a custom IMA policy
+is not yet loaded. Keys queued for measurement, if any, should be
+processed when a custom IMA policy is loaded.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
-v1: replaced the recovery code to completely eliminate the check,
-as suggested by Jason Gunthorpe.
----
- drivers/char/tpm/tpm_ppi.c | 1 -
- 1 file changed, 1 deletion(-)
+This patch updates the IMA hook function ima_post_key_create_or_update()
+to queue the key if a custom IMA policy has not yet been loaded.
+And, ima_update_policy() function, which is called when
+a custom IMA policy is loaded, is updated to process queued keys.
 
-diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
-index b2dab941cb7f..603f7806f9af 100644
---- a/drivers/char/tpm/tpm_ppi.c
-+++ b/drivers/char/tpm/tpm_ppi.c
-@@ -42,7 +42,6 @@ static inline union acpi_object *
- tpm_eval_dsm(acpi_handle ppi_handle, int func, acpi_object_type type,
- 	     union acpi_object *argv4, u64 rev)
+Sample "key" measurement rule in the IMA policy:
+
+measure func=KEY_CHECK uid=0 keyrings=.ima|.builtin_trusted_keys template=ima-buf
+
+If the kernel is built with one or more built-in trusted certificates,
+IMA measurement should list all the keys imported from those certificates.
+
+Display "key" measurement in the IMA measurement list:
+
+cat /sys/kernel/security/ima/ascii_runtime_measurements
+
+10 faf3...e702 ima-buf sha256:27c915b8ddb9fae7214cf0a8a7043cc3eeeaa7539bcb136f8427067b5f6c3b7b .builtin_trusted_keys 308202863082...4aee
+
+Verify "key" measurement data for a key added to ".builtin_trusted_keys" keyring:
+
+cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | grep -m 1 "\.builtin_trusted_keys" | cut -d' ' -f 6 | xxd -r -p |tee btk-cert.der | sha256sum | cut -d' ' -f 1
+
+The output of the above command should match the template hash
+of the first "key" measurement entry in the IMA measurement list for
+the key added to ".builtin_trusted_keys" keyring.
+
+The file namely "btk-cert.der" generated by the above command
+should be a valid x509 certificate (in DER format) and should match
+the one that was used to import the key to the ".builtin_trusted_keys" keyring.
+The certificate file can be verified using openssl tool.
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/ima_asymmetric_keys.c | 8 ++++++++
+ security/integrity/ima/ima_policy.c          | 3 +++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index d520a67180d8..4124f10ff0c2 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -145,6 +145,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 				   const void *payload, size_t payload_len,
+ 				   unsigned long flags, bool create)
  {
--	BUG_ON(!ppi_handle);
- 	return acpi_evaluate_dsm_typed(ppi_handle, &tpm_ppi_guid,
- 				       rev, func, argv4, type);
++	bool queued = false;
++
+ 	/* Only asymmetric keys are handled by this hook. */
+ 	if (key->type != &key_type_asymmetric)
+ 		return;
+@@ -152,6 +154,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	if (!payload || (payload_len == 0))
+ 		return;
+ 
++	if (!ima_process_keys)
++		queued = ima_queue_key(keyring, payload, payload_len);
++
++	if (queued)
++		return;
++
+ 	/*
+ 	 * keyring->description points to the name of the keyring
+ 	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index a4dde9d575b2..04b9c6c555de 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -807,6 +807,9 @@ void ima_update_policy(void)
+ 		kfree(arch_policy_entry);
+ 	}
+ 	ima_update_policy_flag();
++
++	/* Custom IMA policy has been loaded */
++	ima_process_queued_keys();
  }
+ 
+ /* Keep the enumeration in sync with the policy_tokens! */
 -- 
-2.20.1
+2.17.1
 
