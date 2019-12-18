@@ -2,139 +2,135 @@ Return-Path: <SRS0=o83+=2I=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D19C43603
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 23:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544E1C43603
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 23:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCCBF2176D
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 23:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24187218AC
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 23:10:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="XRegRvA0";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="E+4i7fbm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfLRXGw (ORCPT
+        id S1726716AbfLRXK5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 18 Dec 2019 18:06:52 -0500
-Received: from mga06.intel.com ([134.134.136.31]:27557 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfLRXGw (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Dec 2019 18:06:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 15:06:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="240952181"
-Received: from jtreacy-mobl1.ger.corp.intel.com ([10.251.82.127])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Dec 2019 15:06:47 -0800
-Message-ID: <37f4ed0d6145dbe1e8724a5d05d0da82b593bf9c.camel@linux.intel.com>
-Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of
- tpm_tis_core_init
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christian Bundy <christianbundy@fraction.io>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
-Date:   Thu, 19 Dec 2019 01:06:40 +0200
-In-Reply-To: <20191217171844.huqlj5csr262zkkk@cantor>
-References: <20191211231758.22263-1-jsnitsel@redhat.com>
-         <20191211235455.24424-1-jsnitsel@redhat.com>
-         <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
-         <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
-         <20191217020022.knh7uxt4pn77wk5m@cantor>
-         <CAPcyv4iepQup4bwMuWzq6r5gdx83hgYckUWFF7yF=rszjz3dtQ@mail.gmail.com>
-         <5d0763334def7d7ae1e7cf931ef9b14184dce238.camel@linux.intel.com>
-         <20191217171844.huqlj5csr262zkkk@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Wed, 18 Dec 2019 18:10:57 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59472 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726463AbfLRXK5 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 18 Dec 2019 18:10:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2065F8EE18E;
+        Wed, 18 Dec 2019 15:10:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576710657;
+        bh=MDhbV1o2xpYcsqqMu8J0sKQYDH8FA/xM8so+4cqgZ+g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XRegRvA09fMjdshzFEFix+t77cViqzhrjJWiTbeTCGFmkg7S3AJUcMKqHiVSLF+47
+         OrdGxZ1bVuEIOq/J8GPGbEZ/YJI6pbfs/jMb1HjKqHnVarVNcrGoUBRa7OGBSFd/0J
+         0rRzsfv+V24uD/2ZPCkm3tDo5vLnpS0QZ7Quqc/Q=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ICF7B5_y9INX; Wed, 18 Dec 2019 15:10:56 -0800 (PST)
+Received: from [172.20.4.137] (122x212x32x58.ap122.ftth.ucom.ne.jp [122.212.32.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C2C658EE007;
+        Wed, 18 Dec 2019 15:10:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1576710656;
+        bh=MDhbV1o2xpYcsqqMu8J0sKQYDH8FA/xM8so+4cqgZ+g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=E+4i7fbmMMPVForFJBwr0xKr0lzB2wEFmVl1//lVb0PcQREPGRdHACoXOM6Kfwxes
+         P39X971J/uEPIA2KkueLT1YT5lSaX8zPNvy2ZvUsQTidDr43PFKYob4zX3pa9p//wr
+         GksDBBDc3xkXBYOqo9bJ5kR9asoyrmfYa9Evkfo4=
+Message-ID: <1576710652.3396.18.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 2/8] lib: add asn.1 encoder
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        keyrings@vger.kernel.org
+Date:   Thu, 19 Dec 2019 08:10:52 +0900
+In-Reply-To: <26946.1576666216@warthog.procyon.org.uk>
+References: <1576069352.2812.1.camel@HansenPartnership.com>
+         <1575984010.3459.4.camel@HansenPartnership.com>
+         <1575936272.31378.50.camel@HansenPartnership.com>
+         <1575936367.31378.52.camel@HansenPartnership.com>
+         <932257121039494734d97e290abb9159b1f5ca28.camel@infradead.org>
+         <10037.1575986929@warthog.procyon.org.uk>
+         <1576004020.3647.13.camel@HansenPartnership.com>
+         <35B37965-359E-40E0-8F44-836A56EC4756@infradead.org>
+         <26946.1576666216@warthog.procyon.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2019-12-17 at 10:18 -0700, Jerry Snitselaar wrote:
-> On Tue Dec 17 19, Jarkko Sakkinen wrote:
-> > On Mon, 2019-12-16 at 18:14 -0800, Dan Williams wrote:
-> > > On Mon, Dec 16, 2019 at 6:00 PM Jerry Snitselaar <jsnitsel@redhat.com> wrote:
-> > > > On Mon Dec 16 19, Dan Williams wrote:
-> > > > > On Mon, Dec 16, 2019 at 4:59 PM Jarkko Sakkinen
-> > > > > <jarkko.sakkinen@linux.intel.com> wrote:
-> > > > > > On Wed, 2019-12-11 at 16:54 -0700, Jerry Snitselaar wrote:
-> > > > > > > Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
-> > > > > > > issuing commands to the tpm during initialization, just reserve the
-> > > > > > > chip after wait_startup, and release it when we are ready to call
-> > > > > > > tpm_chip_register.
-> > > > > > > 
-> > > > > > > Cc: Christian Bundy <christianbundy@fraction.io>
-> > > > > > > Cc: Dan Williams <dan.j.williams@intel.com>
-> > > > > > > Cc: Peter Huewe <peterhuewe@gmx.de>
-> > > > > > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > > > > > > Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > Cc: linux-integrity@vger.kernel.org
-> > > > > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> > > > > > > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
-> > > > > > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > > > > 
-> > > > > > I pushed to my master with minor tweaks and added my tags.
-> > > > > > 
-> > > > > > Please check before I put it to linux-next.
-> > > > > 
-> > > > > I don't see it yet here:
-> > > > > 
-> > > > > http://git.infradead.org/users/jjs/linux-tpmdd.git/shortlog/refs/heads/master
-> > > > > 
-> > > > > However, I wanted to make sure you captured that this does *not* fix
-> > > > > the interrupt issue. I.e. make sure you remove the "Fixes:
-> > > > > 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")"
-> > > > > tag.
-> > > > > 
-> > > > > With that said, are you going to include the revert of:
-> > > > > 
-> > > > > 1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
-> > > > 
-> > > > Dan, with the above reverted do you still get the screaming interrupt?
-> > > 
-> > > Yes, the screaming interrupt goes away, although it is replaced by
-> > > these messages when the driver starts:
-> > > 
-> > > [    3.725131] tpm_tis IFX0740:00: 2.0 TPM (device-id 0x1B, rev-id 16)
-> > > [    3.725358] tpm tpm0: tpm_try_transmit: send(): error -5
-> > > [    3.725359] tpm tpm0: [Firmware Bug]: TPM interrupt not working,
-> > > polling instead
-> > > 
-> > > If the choice is "error message + polled-mode" vs "pinning a cpu with
-> > > interrupts" I'd accept the former, but wanted Jarkko with his
-> > > maintainer hat to weigh in.
-> > > 
-> > > Is there a simple sanity check I can run to see if the TPM is still
-> > > operational in this state?
-> > 
-> > What about T490S?
-> > 
-> > /Jarkko
-> > 
+On Wed, 2019-12-18 at 10:50 +0000, David Howells wrote:
+> James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
 > 
-> Hi Jarkko, I'm waiting to hear back from the t490s user, but I imagine
-> it still has the problem as well.
+> > +/**
+> > + * asn1_encode_octet_string - encode an ASN.1 OCTET STRING
+> > + * @data: pointer to encode at
+> > + * @data_len: bytes remaining in @data buffer
+> > + * @string: string to be encoded
+> > + * @len: length of string
+> > + *
+> > + * Note ASN.1 octet strings may contain zeros, so the length is
+> > obligatory.
+> > + */
+> > +int asn1_encode_octet_string(unsigned char **data, int *data_len,
+> > +			     const unsigned char *string, u32 len)
 > 
-> Christian, were you able to try this patch and verify it still
-> resolves the issue you were having with the kernel failing to get the
-> timeouts and durations from the tpm?
+> I wonder if it makes more sense to pass in an end pointer and return
+> the new data pointer (or an error), ie.:
+> 
+> unsigned char *asn1_encode_octet_string(unsigned char *data,
+> 				        unsigned char *data_end,
+> 					const unsigned char *string,
+> u32 len)
 
-Including those reverts would be a bogus change at this point.
+On the first point: people are prone to get off by one confusion on
+data_end pointers (should they point to the last byte in the buffer or
+one beyond).  If I look at how I use the API, I've no real use for
+either length remaining or the end pointer, so I think it makes no
+difference to the consumer, it's just stuff you have to do for the API.
+ If I look at the internal API use, we definitely need the length
+remaining, so I've a marginal preference for that format, but since
+it's easy to work out it is very marginal.
 
-The fix that I already applied obviously fixes an issue even if
-it does not fix all the issues.
+> Further, I wonder - does it actually make more sense to encode
+> backwards, ie. start at the end of the buffer and do the last element
+> first, working towards the front.
 
-/Jarkko
+Heh, let me ask you this: do you use a reverse polish notation
+calculator ... The problem is that it makes the ASN.1 hard to construct
+ for the API user and hard to read for the reviewer because of the
+order reversal.  Debugging is going to be a pain because you're going
+to get the output of asn1parse and have to read it backwards to see
+where the problems are.
+
+> The disadvantage being that the data start would likely not be
+> coincident with the buffer start.
+
+This would be a big issue: in several routines I allocate a buffer,
+fill it with ASN.1 and pass it back and the receiving routine has to
+free it.  Now the buffer won't be freeable by the pointer I pass back
+because that may not be where the allocation was done.
+
+For these two reasons, I'd like to keep the work forwards behaviour. 
+I'm reasonably ambivalent on the end pointer with a marginal preference
+for passing in the length remaining instead.
+
+James
 
