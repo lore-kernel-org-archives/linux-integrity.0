@@ -2,225 +2,165 @@ Return-Path: <SRS0=o83+=2I=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1FBC2D0BF
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 16:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0FCC43603
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 16:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1990A2146E
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 16:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E74A12176D
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Dec 2019 16:56:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qxnt133Q"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G5yC8bKm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfLRQol (ORCPT
+        id S1727328AbfLRQ4e (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 18 Dec 2019 11:44:41 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45132 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfLRQok (ORCPT
+        Wed, 18 Dec 2019 11:56:34 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39574 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbfLRQ4d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:44:40 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0896F20B4798;
-        Wed, 18 Dec 2019 08:44:40 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0896F20B4798
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576687480;
-        bh=26/PqYgoXKGyL3G1FiobmwvKJvqO4GWGXSQQ44RkqkY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qxnt133QZObIjJBWdsEPf9UNgrphzL8WUz3MPAnTFnJXNXbTzeAWB+8QRuYaNV6I1
-         XuU1trlz0jvjyfIYWq80CXph/u89KuLFKLXEgtdljvQiCmWpj7kYJaG+ePybgFQoSL
-         W1mhr92SJnpKLvGRc9Odz2DTBZVQBbWKp++IXglk=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v5 1/2] IMA: Define workqueue for early boot "key" measurements
-Date:   Wed, 18 Dec 2019 08:44:33 -0800
-Message-Id: <20191218164434.2877-2-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191218164434.2877-1-nramas@linux.microsoft.com>
-References: <20191218164434.2877-1-nramas@linux.microsoft.com>
+        Wed, 18 Dec 2019 11:56:33 -0500
+Received: by mail-wr1-f66.google.com with SMTP id y11so3074698wrt.6
+        for <linux-integrity@vger.kernel.org>; Wed, 18 Dec 2019 08:56:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=qbVTsR54H6AMQsB5QLZrbdwDN4kpS+HACD311JISl7w=;
+        b=G5yC8bKma8+W7VtY4hg6xyyFd3mz0mCVxUsDitnVTyxu4+nXkGRN8CcA13briD5Fro
+         DgS8gSIIjVh3ocDahCyGpBSYEf/YYQXWG+fxvRl38YFxBbIewwkogD8gzprUdfGtVO1s
+         CjWDu4DeiDdYCGyHVW/CNI2JB4im1puSz4rAM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=qbVTsR54H6AMQsB5QLZrbdwDN4kpS+HACD311JISl7w=;
+        b=H5ek8laXBov8O56Oe+TlOx1znJhG2EOuuIZJxldwTZHFQpHlr1e+qRXe8CMK/FvNYy
+         6sZcQIZV7oLl9H+dhRXi0vchSR63OWDsvXlAaHm2d03HXahxoxX6HxzdQ1NHfw1j4E0E
+         KOqE5BLHihM2aBSVX8hVPEuqnd/ov+CoKRzwIBesz7DpFAH5N0c+sa5vHXVfu6fj9W/X
+         5BYYI2hRu6bgY5qn/WZ7rEFCS3gPjmvnSwdVQORJdQPWMODt+SlHKYLE8fKcwugkySIJ
+         5bpJ3bUovy6UqhGehfU/8+ipqk7lOmWk+gsF3rxCFArJpwfzUKyVRQOu0RFs5tznZFqL
+         lzKA==
+X-Gm-Message-State: APjAAAVHsSawGYw/UrAJ/2bfGKkWW/phceJmd2aj//XyQoqQmNmpbJiy
+        +mFH7Dl8RWAdQnn/sy4BFuYl+Q==
+X-Google-Smtp-Source: APXvYqy5xx6yDW4obLgxNVFChNHjAfYmmMhvCzmCKywobZ5xBBVjS7ZeoAytl4J+w+NgwcEstGBX8w==
+X-Received: by 2002:adf:fd87:: with SMTP id d7mr3985830wrr.226.1576688191510;
+        Wed, 18 Dec 2019 08:56:31 -0800 (PST)
+Received: from ?IPv6:2620:0:105f:304:c29:4454:35de:5c04? ([2620:0:105f:304:c29:4454:35de:5c04])
+        by smtp.gmail.com with ESMTPSA id q68sm3556726wme.14.2019.12.18.08.56.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 08:56:30 -0800 (PST)
+Message-ID: <63f057fb98351324c8fc6210c42f3cbd76e85a68.camel@chromium.org>
+Subject: Re: [PATCH] integrity: Expose data structures required for
+ include/linux/integrity.h
+From:   Florent Revest <revest@chromium.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-integrity@vger.kernel.org, Matthew Garrett <mjg59@google.com>
+Cc:     jmorris@namei.org, serge@hallyn.com, revest@google.com,
+        allison@lohutok.net, armijn@tjaldur.nl, bauerman@linux.ibm.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kpsingh@chromium.org
+Date:   Wed, 18 Dec 2019 17:56:29 +0100
+In-Reply-To: <1576679307.4579.401.camel@linux.ibm.com>
+References: <20191217134748.198011-1-revest@chromium.org>
+         <e9e366d3-6c5d-743b-ffde-6b95b85884a2@schaufler-ca.com>
+         <1576624105.4579.379.camel@linux.ibm.com>
+         <2ae5127d76cbf78140fb2d6108c9ec70c7d8ae5d.camel@chromium.org>
+         <1576676087.4579.396.camel@linux.ibm.com>
+         <1576679307.4579.401.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Measuring keys requires a custom IMA policy to be loaded.
-Keys created or updated before a custom IMA policy is loaded should
-be queued and the keys should be processed after a custom policy
-is loaded.
+On Wed, 2019-12-18 at 09:28 -0500, Mimi Zohar wrote:
+> [Cc'ing Matthew]
+> 
+> On Wed, 2019-12-18 at 08:34 -0500, Mimi Zohar wrote:
+> > On Wed, 2019-12-18 at 12:03 +0100, Florent Revest wrote:
+> > > On Tue, 2019-12-17 at 18:08 -0500, Mimi Zohar wrote:
+> > > > On Tue, 2019-12-17 at 08:25 -0800, Casey Schaufler wrote:
+> > > > > On 12/17/2019 5:47 AM, Florent Revest wrote:
+> > > > > > From: Florent Revest <revest@google.com>
+> > > > > > 
+> > > > > > include/linux/integrity.h exposes the prototype of
+> > > > > > integrity_inode_get().
+> > > > > > However, it relies on struct integrity_iint_cache which is
+> > > > > > currently
+> > > > > > defined in an internal header,
+> > > > > > security/integrity/integrity.h.
+> > > > > > 
+> > > > > > To allow the rest of the kernel to use integrity_inode_get,
+> > > > > 
+> > > > > Why do you want to do this?
+> > > > 
+> > > > ditto
+> > > 
+> > > My team works on KRSI (eBPF MAC policies presented at LSS by KP
+> > > Singh).
+> > > https://lkml.org/lkml/2019/9/10/393 We identified file hashes
+> > > gathered
+> > > from the integrity subsystem as an interesting field that we
+> > > could
+> > > potentially someday expose to eBPF programs through helpers.
+> > > 
+> > > One of the reason behind writing KRSI is to replace a custom
+> > > kernel
+> > > auditing module that currently needs to redefine those structures
+> > > to
+> > > access them. I imagine other kernel modules could benefit from a
+> > > file
+> > > hash API too.
+> > > 
+> > > This is the least intrusive patch I could come up with that
+> > > allows us
+> > > to lookup a hash from an inode. I was surprised to find that
+> > > integrity_inode_get was exposed but not the structures it
+> > > returns.
+> > > 
+> > > If the community is interested in a different file hash API, I'd
+> > > be
+> > > happy to iterate on this patch based on your feedback.
+> > 
+> > There's a major difference between returning just the file hash and
+> > making the integrity_iint_cache structure public. 
 
-This patch defines workqueue for queuing keys when a custom IMA policy
-has not yet been loaded.
+Certainly!
+I am new to this subsystem so I just wanted to get the discussion
+started. I am happy to make a more specific function.
 
-A flag namely ima_process_keys is used to check if the key should be
-queued or should be processed immediately.
+> > Peter Moody's original code queried the cache[1].  Why do you need
+> > access to the structure itself?
+> > FYI, if/when we get to IMA namespacing, the cache structure will
+> > change.
+> > 
+> > [1] ima: add the ability to query ima for the hash of a given file.
+> 
+> If you're using Peter's patch, or something similar, I'd appreciate
+> your taking the time to upstream it.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima.h                 |  15 +++
- security/integrity/ima/ima_asymmetric_keys.c | 115 +++++++++++++++++++
- 2 files changed, 130 insertions(+)
+Thank you for pointing me to Peter's patch! No one in my team was aware
+of his work on this. Ugh!
+It appears that Peter left the company while trying to upstream his
+patch and the situation just got stuck there for 4+ years now.
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index f06238e41a7c..97f8a4078483 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -205,6 +205,21 @@ extern const char *const func_tokens[];
- 
- struct modsig;
- 
-+#ifdef CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE
-+/*
-+ * To track keys that need to be measured.
-+ */
-+struct ima_key_entry {
-+	struct list_head list;
-+	void *payload;
-+	size_t payload_len;
-+	char *keyring_name;
-+};
-+void ima_process_queued_keys(void);
-+#else
-+static inline void ima_process_queued_keys(void) {}
-+#endif /* CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE */
-+
- /* LIM API function definitions */
- int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
- 		   int mask, enum ima_hooks func, int *pcr,
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index fea2e7dd3b09..d520a67180d8 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -14,6 +14,121 @@
- #include <keys/asymmetric-type.h>
- #include "ima.h"
- 
-+/*
-+ * Flag to indicate whether a key can be processed
-+ * right away or should be queued for processing later.
-+ */
-+static bool ima_process_keys;
-+
-+/*
-+ * To synchronize access to the list of keys that need to be measured
-+ */
-+static DEFINE_MUTEX(ima_keys_mutex);
-+static LIST_HEAD(ima_keys);
-+
-+static void ima_free_key_entry(struct ima_key_entry *entry)
-+{
-+	if (entry) {
-+		kfree(entry->payload);
-+		kfree(entry->keyring_name);
-+		kfree(entry);
-+	}
-+}
-+
-+static struct ima_key_entry *ima_alloc_key_entry(
-+	struct key *keyring,
-+	const void *payload, size_t payload_len)
-+{
-+	int rc = 0;
-+	struct ima_key_entry *entry;
-+
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (entry) {
-+		entry->payload = kmemdup(payload, payload_len, GFP_KERNEL);
-+		entry->keyring_name = kstrdup(keyring->description,
-+					      GFP_KERNEL);
-+		entry->payload_len = payload_len;
-+	}
-+
-+	if ((entry == NULL) || (entry->payload == NULL) ||
-+	    (entry->keyring_name == NULL)) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	INIT_LIST_HEAD(&entry->list);
-+
-+out:
-+	if (rc) {
-+		ima_free_key_entry(entry);
-+		entry = NULL;
-+	}
-+
-+	return entry;
-+}
-+
-+bool ima_queue_key(struct key *keyring, const void *payload,
-+		   size_t payload_len)
-+{
-+	bool queued = false;
-+	struct ima_key_entry *entry;
-+
-+	entry = ima_alloc_key_entry(keyring, payload, payload_len);
-+	if (!entry)
-+		return false;
-+
-+	mutex_lock(&ima_keys_mutex);
-+	if (!ima_process_keys) {
-+		list_add_tail(&entry->list, &ima_keys);
-+		queued = true;
-+	}
-+	mutex_unlock(&ima_keys_mutex);
-+
-+	if (!queued)
-+		ima_free_key_entry(entry);
-+
-+	return queued;
-+}
-+
-+/*
-+ * ima_process_queued_keys() - process keys queued for measurement
-+ *
-+ * This function sets ima_process_keys to true and processes queued keys.
-+ * From here on keys will be processed right away (not queued).
-+ */
-+void ima_process_queued_keys(void)
-+{
-+	struct ima_key_entry *entry, *tmp;
-+	bool process = false;
-+
-+	if (ima_process_keys)
-+		return;
-+
-+	/*
-+	 * Since ima_process_keys is set to true, any new key will be
-+	 * processed immediately and not be queued to ima_keys list.
-+	 * First one setting the ima_process_keys flag to true will
-+	 * process the queued keys.
-+	 */
-+	mutex_lock(&ima_keys_mutex);
-+	if (!ima_process_keys) {
-+		ima_process_keys = true;
-+		process = true;
-+	}
-+	mutex_unlock(&ima_keys_mutex);
-+
-+	if (!process)
-+		return;
-+
-+	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
-+		process_buffer_measurement(entry->payload, entry->payload_len,
-+					   entry->keyring_name, KEY_CHECK, 0,
-+					   entry->keyring_name);
-+		list_del(&entry->list);
-+		ima_free_key_entry(entry);
-+	}
-+}
-+
- /**
-  * ima_post_key_create_or_update - measure asymmetric keys
-  * @keyring: keyring to which the key is linked to
--- 
-2.17.1
+If you are still positive about the idea of a ima_file_hash function, I
+will take his v6 patch (this is the latest I could find on the
+sourceforce archives of linux-ima-devel), rebase it, take your comments
+into account and send a new version by the end of the week.
+
+> Mimi
+> 
+> > > > > >  this patch
+> > > > > > moves the definition of the necessary structures from a
+> > > > > > private
+> > > > > > header
+> > > > > > to a global kernel header.
 
