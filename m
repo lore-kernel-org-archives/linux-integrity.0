@@ -1,250 +1,113 @@
-Return-Path: <SRS0=cBny=2N=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=jzVh=2O=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBC5C2D0C0
-	for <linux-integrity@archiver.kernel.org>; Mon, 23 Dec 2019 19:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46400C2D0CF
+	for <linux-integrity@archiver.kernel.org>; Tue, 24 Dec 2019 15:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4AAF206CB
-	for <linux-integrity@archiver.kernel.org>; Mon, 23 Dec 2019 19:47:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A3A520706
+	for <linux-integrity@archiver.kernel.org>; Tue, 24 Dec 2019 15:35:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="SN8HwSqp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lnio4XvL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfLWTrF (ORCPT
+        id S1726171AbfLXPf3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 23 Dec 2019 14:47:05 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41134 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726805AbfLWTrF (ORCPT
+        Tue, 24 Dec 2019 10:35:29 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:39988 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbfLXPf3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 23 Dec 2019 14:47:05 -0500
-Received: by mail-ot1-f65.google.com with SMTP id r27so23362430otc.8
-        for <linux-integrity@vger.kernel.org>; Mon, 23 Dec 2019 11:47:04 -0800 (PST)
+        Tue, 24 Dec 2019 10:35:29 -0500
+Received: by mail-qv1-f67.google.com with SMTP id dp13so7571823qvb.7;
+        Tue, 24 Dec 2019 07:35:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zFugXbNXjuTa6MUeYElsmTqLleXZtVtXWa7qU/dvhHs=;
-        b=SN8HwSqpq/VHn71r5rosiHbn3JAeoPbdRMlzYznGgDelpBcJ1uXQQzmcNQGLuoDJ/J
-         DjgfzxVK2KrWxwM6Nhh7rwPitEWDF7dj3Q2VmEkNvKkPv58eyB81CCoHm5gHxvdSVaid
-         IfACfR9Yy7bHPA9K1sNnL5ARUsWrgVcBrLGMjvXZHpucgPrCh8yEZOvHXMT/LAcMMLJY
-         p9/6yDTWTNTnKmdfzt/aW0+jrLe5cT/AMPpBErNLjj3QA36jNpu/yn1vIUv5aCGLLqz1
-         tGnpyDsiEw2aGsyzGL34leDVlBBvSp1A0Rvm9LaKcTEJPaoYXKHi0KETPdbHkzs+i8RJ
-         XE4A==
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=24Mou9rUEJOpcYmYKS0Hm/+2PJ8APwN2cqEy3AtA8oM=;
+        b=Lnio4XvLe4Jy8BQW1CAkxzUqavo6W+k6TFl0+FA0Q33WAWTOLQI8ov1IAFnVyxL5tq
+         AFNog7IaeeK54CVJME3kGDxLzWCs9TlX590QO6MGiwznpdAtIqQ04JmPxMC7y4uZKTEp
+         3NHH0RyGaeiX6ZfSl6GhtmwMSlzR6sIzaTbUFGkzV4fs5DLGHOeiahNWQ7pkyIiO8YFX
+         pDTGBDC+HHEt2xTilsnPC4x0g8WijHN4d5CbuGcP4WzykWFhkg57krXotZyhRz20MXdk
+         8aKyHqVp8bSHD8KUDdasPijse2MoQCmAOSpK/me/7Xsu8IdzyEFvciWvwx9IZKtl57q6
+         atdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zFugXbNXjuTa6MUeYElsmTqLleXZtVtXWa7qU/dvhHs=;
-        b=XXJWg/f+iAyMHYXsMb7q6zRzj6Es2+dw+3+pvx7fGNIKpGVwkCYdSqapCxutAAPzFk
-         D3xu1pyEPEKiPZujOh5JMYnbompxga5A1NQR6wGu9drFDr10s3D81P/KsoMkYd/0KOct
-         e9+OHVoGVdx9vgamAdY+ftwCS4SiHvSj5SE+R7A0oWwWMW54EWlhRvu+T7D2Sifbqnha
-         oaLH1jxtgeQORZlHfPqDWEXBgzrk4knQzUw1Y7LQLQy5a6xljmhAt6KoYpdqKK0pJkUy
-         y+3iivIOsLyNsVwlekTNYIraKMKeGBZ35GsgzRjWKvPd02DXNVCMpz1UUHKZN2HSkIH6
-         iOYQ==
-X-Gm-Message-State: APjAAAU0CY/TffiBirOPlpj+pWqP5RB1rDLv7IItc/4dbJ5HxM52LxEM
-        WIT/9MxQSwDQD5FcnzbClcvjvpjleM1nXemti2JK3w==
-X-Google-Smtp-Source: APXvYqyfMS95KOfmTenlUkjlprOqnr5a++lMI//c8tYJXN+PxN7viHyNmp3UYd9kVKO3vHUToL6ZZtVWwTDGUd7WYRU=
-X-Received: by 2002:a9d:7852:: with SMTP id c18mr28016742otm.247.1577130424187;
- Mon, 23 Dec 2019 11:47:04 -0800 (PST)
-MIME-Version: 1.0
-References: <1577122577157232@kroah.com>
-In-Reply-To: <1577122577157232@kroah.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 23 Dec 2019 11:46:53 -0800
-Message-ID: <CAPcyv4jfpOX85GWgNTyugWksU=e-j=RhU_fcrcHBo4GMZ8_bhw@mail.gmail.com>
-Subject: Re: Patch "tpm_tis: reserve chip for duration of tpm_tis_core_init"
- has been added to the 5.4-stable tree
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christian Bundy <christianbundy@fraction.io>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable-commits@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=24Mou9rUEJOpcYmYKS0Hm/+2PJ8APwN2cqEy3AtA8oM=;
+        b=NeecQjOY5VDIsP2TlLmVMGETXQaXPRc6zM0uLzGZH2kXH5TEjcalhnC7aTPw1eAqx5
+         E4qPy9zUK2Ge67NkHH1+ldXrUF9PCqJ/29DGA38nT4g19EknBpmB/uq7Q10/wto1U3MV
+         jVkZko6KOJ0FHAeIRLF/tsD9EHvKdXA7Hc23rw13x+3M+aqIrNBmDUfQNbAzRKbwH3kw
+         ptcFljKMPKl8VJTpjmkChnNDJ3kLMWYM6yHdASOpvtV7+QAJxRjw1Jkt0aQ0gB76/Cug
+         ab9xLWTATIM1rtOLSkLi9kQ5is4SFT16JqHmQ5miAnzEUF+nvXA1sZZHV1bhHyVr4NvN
+         /RQg==
+X-Gm-Message-State: APjAAAWsi+jYan/Dn4fxcV3BULH55qBefOJXuc/NF9N7TbM4i4t6b9Ij
+        nAvrxE8nExtdQq+KoCUy5oE=
+X-Google-Smtp-Source: APXvYqzbxxJxY0BT4hrLYTEkyPoRqSgjX3ZZrSZXSNxN9WfjJts0mH5/vQd/T6nEQuCdMtTBiH3lfQ==
+X-Received: by 2002:a0c:e80e:: with SMTP id y14mr29392065qvn.139.1577201726654;
+        Tue, 24 Dec 2019 07:35:26 -0800 (PST)
+Received: from localhost.localdomain (pool-100-37-119-75.nycmny.fios.verizon.net. [100.37.119.75])
+        by smtp.gmail.com with ESMTPSA id 65sm3689290qtf.95.2019.12.24.07.35.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Dec 2019 07:35:25 -0800 (PST)
+Message-ID: <f2bc130034b6e1ca66c3f18dfa3a4fa68fcbc82a.camel@gmail.com>
+Subject: Re: [PATCH v1 - RFC] ima: export the measurement list when needed
+From:   david.safford@gmail.com
+To:     Janne Karhunen <janne.karhunen@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ken Goldman <kgold@linux.ibm.com>, monty.wiseman@ge.com
+Date:   Tue, 24 Dec 2019 10:35:24 -0500
+In-Reply-To: <CAE=NcrZUyLe1Ftk5wOuEMJBPnw+DBx9LACbk1JPJcpg8VdDiJQ@mail.gmail.com>
+References: <20191220074929.8191-1-janne.karhunen@gmail.com>
+         <1576850665.5241.52.camel@linux.ibm.com>
+         <CAE=NcrZUyLe1Ftk5wOuEMJBPnw+DBx9LACbk1JPJcpg8VdDiJQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Greg,
+On Sat, 2019-12-21 at 12:41 +0200, Janne Karhunen wrote:
+> On Fri, Dec 20, 2019 at 4:04 PM Mimi Zohar <zohar@linux.ibm.com>
+> wrote:
+> 
+> > Should the kernel be involved in writing the IMA measurement list
+> > to a
+> > file or, as Dave suggested, this should be delegated to a userspace
+> > application?
+> 
+> That is a good question. I went this way as it did not feel right to
+> me that the kernel would depend on periodic, reliable userspace
+> functionality to stay running (we would have a circular dependency).
+> The thing is, once the kernel starts to run low on memory, it may
+> kill
+> that periodic daemon flushing the data for reasons unrelated to IMA.
+> 
 
-Please drop the:
+I'm happy with either way (kernel writing, or userspace reading) the
+data, but with the v1 patch, there is no way for userspace to force
+that the list be flushed - it only flushes on full. I think it is 
+important for userspace to be able to trigger a flush, such as just
+prior to a kexec, or prior to an attestation. 
 
-   Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
+Perhaps you could simply remove the length test in ima_export_list(),
+and export anytime the filename is provided? This could simplify
+attestation clients, which could ask for different files each time
+(list.1, list.2...), for automatic log maintenance. Since the template
+format does not have sequence numbers, this would also help keep
+track which records have already been seen.
 
-...tag. I had asked Jarkko to do that here:
+dave
 
-https://lore.kernel.org/r/CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com/
 
-...but it didn't get picked up.
-
-On Mon, Dec 23, 2019 at 9:37 AM <gregkh@linuxfoundation.org> wrote:
->
->
-> This is a note to let you know that I've just added the patch titled
->
->     tpm_tis: reserve chip for duration of tpm_tis_core_init
->
-> to the 5.4-stable tree which can be found at:
->     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
->
-> The filename of the patch is:
->      tpm_tis-reserve-chip-for-duration-of-tpm_tis_core_init.patch
-> and it can be found in the queue-5.4 subdirectory.
->
-> If you, or anyone else, feels it should not be added to the stable tree,
-> please let <stable@vger.kernel.org> know about it.
->
->
-> From 21df4a8b6018b842d4db181a8b24166006bad3cd Mon Sep 17 00:00:00 2001
-> From: Jerry Snitselaar <jsnitsel@redhat.com>
-> Date: Wed, 11 Dec 2019 16:54:55 -0700
-> Subject: tpm_tis: reserve chip for duration of tpm_tis_core_init
->
-> From: Jerry Snitselaar <jsnitsel@redhat.com>
->
-> commit 21df4a8b6018b842d4db181a8b24166006bad3cd upstream.
->
-> Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
-> issuing commands to the tpm during initialization, just reserve the
-> chip after wait_startup, and release it when we are ready to call
-> tpm_chip_register.
->
-> Cc: Christian Bundy <christianbundy@fraction.io>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Peter Huewe <peterhuewe@gmx.de>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> Cc: stable@vger.kernel.org
-> Cc: linux-integrity@vger.kernel.org
-> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> ---
->  drivers/char/tpm/tpm_tis_core.c |   35 ++++++++++++++++++-----------------
->  1 file changed, 18 insertions(+), 17 deletions(-)
->
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -899,13 +899,13 @@ int tpm_tis_core_init(struct device *dev
->
->         if (wait_startup(chip, 0) != 0) {
->                 rc = -ENODEV;
-> -               goto out_err;
-> +               goto err_start;
->         }
->
->         /* Take control of the TPM's interrupt hardware and shut it off */
->         rc = tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
->         if (rc < 0)
-> -               goto out_err;
-> +               goto err_start;
->
->         intmask |= TPM_INTF_CMD_READY_INT | TPM_INTF_LOCALITY_CHANGE_INT |
->                    TPM_INTF_DATA_AVAIL_INT | TPM_INTF_STS_VALID_INT;
-> @@ -914,21 +914,21 @@ int tpm_tis_core_init(struct device *dev
->
->         rc = tpm_chip_start(chip);
->         if (rc)
-> -               goto out_err;
-> +               goto err_start;
-> +
->         rc = tpm2_probe(chip);
-> -       tpm_chip_stop(chip);
->         if (rc)
-> -               goto out_err;
-> +               goto err_probe;
->
->         rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
->         if (rc < 0)
-> -               goto out_err;
-> +               goto err_probe;
->
->         priv->manufacturer_id = vendor;
->
->         rc = tpm_tis_read8(priv, TPM_RID(0), &rid);
->         if (rc < 0)
-> -               goto out_err;
-> +               goto err_probe;
->
->         dev_info(dev, "%s TPM (device-id 0x%X, rev-id %d)\n",
->                  (chip->flags & TPM_CHIP_FLAG_TPM2) ? "2.0" : "1.2",
-> @@ -937,13 +937,13 @@ int tpm_tis_core_init(struct device *dev
->         probe = probe_itpm(chip);
->         if (probe < 0) {
->                 rc = -ENODEV;
-> -               goto out_err;
-> +               goto err_probe;
->         }
->
->         /* Figure out the capabilities */
->         rc = tpm_tis_read32(priv, TPM_INTF_CAPS(priv->locality), &intfcaps);
->         if (rc < 0)
-> -               goto out_err;
-> +               goto err_probe;
->
->         dev_dbg(dev, "TPM interface capabilities (0x%x):\n",
->                 intfcaps);
-> @@ -977,10 +977,9 @@ int tpm_tis_core_init(struct device *dev
->                 if (tpm_get_timeouts(chip)) {
->                         dev_err(dev, "Could not get TPM timeouts and durations\n");
->                         rc = -ENODEV;
-> -                       goto out_err;
-> +                       goto err_probe;
->                 }
->
-> -               tpm_chip_start(chip);
->                 chip->flags |= TPM_CHIP_FLAG_IRQ;
->                 if (irq) {
->                         tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
-> @@ -991,18 +990,20 @@ int tpm_tis_core_init(struct device *dev
->                 } else {
->                         tpm_tis_probe_irq(chip, intmask);
->                 }
-> -               tpm_chip_stop(chip);
->         }
->
-> +       tpm_chip_stop(chip);
-> +
->         rc = tpm_chip_register(chip);
->         if (rc)
-> -               goto out_err;
-> -
-> -       if (chip->ops->clk_enable != NULL)
-> -               chip->ops->clk_enable(chip, false);
-> +               goto err_start;
->
->         return 0;
-> -out_err:
-> +
-> +err_probe:
-> +       tpm_chip_stop(chip);
-> +
-> +err_start:
->         if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
->                 chip->ops->clk_enable(chip, false);
->
->
->
-> Patches currently in stable-queue which might be from jsnitsel@redhat.com are
->
-> queue-5.4/iommu-fix-kasan-use-after-free-in-iommu_insert_resv_region.patch
-> queue-5.4/iommu-vt-d-fix-dmar-pte-read-access-not-set-error.patch
-> queue-5.4/iommu-set-group-default-domain-before-creating-direct-mappings.patch
-> queue-5.4/tpm_tis-reserve-chip-for-duration-of-tpm_tis_core_init.patch
-> queue-5.4/iommu-vt-d-allocate-reserved-region-for-isa-with-correct-permission.patch
-> queue-5.4/iommu-vt-d-set-isa-bridge-reserved-region-as-relaxable.patch
