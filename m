@@ -2,73 +2,83 @@ Return-Path: <SRS0=WAfd=2P=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32B1C3F68F
-	for <linux-integrity@archiver.kernel.org>; Wed, 25 Dec 2019 04:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91374C2D0CF
+	for <linux-integrity@archiver.kernel.org>; Wed, 25 Dec 2019 06:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E4720730
-	for <linux-integrity@archiver.kernel.org>; Wed, 25 Dec 2019 04:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 494BB20643
+	for <linux-integrity@archiver.kernel.org>; Wed, 25 Dec 2019 06:43:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UclcU4/j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbfLYEya (ORCPT
+        id S1725865AbfLYGn2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 24 Dec 2019 23:54:30 -0500
-Received: from mga17.intel.com ([192.55.52.151]:61021 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbfLYEya (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 24 Dec 2019 23:54:30 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Dec 2019 20:54:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,353,1571727600"; 
-   d="scan'208";a="392040361"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 24 Dec 2019 20:54:28 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ijygl-00057O-U7; Wed, 25 Dec 2019 12:54:27 +0800
-Date:   Wed, 25 Dec 2019 12:54:15 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+        Wed, 25 Dec 2019 01:43:28 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:54060 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725847AbfLYGn1 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 25 Dec 2019 01:43:27 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1EAD420106B8;
+        Tue, 24 Dec 2019 22:43:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1EAD420106B8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1577256207;
+        bh=baLoyGkhawESeoveePMUdxJp7tHJKE5SxoKCegCjQBA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UclcU4/jc2ZtDxv/N330UlJ+l35gf45ePAqWOIRgsagRdiaBymEJ1XGq+P9+n/hvu
+         z/3OqrBC+KRfkzCw4prpVqDHq4jYntwKoo5AYaaZd3mBeHW6XZcsFSaFvevZP2jw4O
+         +6Dv5gfbdBl9BFRjFQZXkLmakPmOdQxudwcWeRnk=
+Subject: Re: [RFC PATCH integrity] IMA: ima_queue_key() can be static
+To:     kbuild test robot <lkp@intel.com>
 Cc:     kbuild-all@lists.01.org, linux-integrity@vger.kernel.org,
         Mimi Zohar <zohar@linux.ibm.com>
-Subject: [integrity:next-integrity-testing 3/5]
- security/integrity/ima/ima_asymmetric_keys.c:70:6: sparse: sparse: symbol
- 'ima_queue_key' was not declared. Should it be static?
-Message-ID: <201912251234.hUAOr3cc%lkp@intel.com>
+References: <201912251234.hUAOr3cc%lkp@intel.com>
+ <20191225045416.34tsl75acckhabsr@4978f4969bb8>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <c31a5f8b-2db9-f8ad-51f6-b6e471b05737@linux.microsoft.com>
+Date:   Tue, 24 Dec 2019 22:43:48 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191225045416.34tsl75acckhabsr@4978f4969bb8>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity-testing
-head:   11b771ffff8fc0bfc176b829d986896a7d97a44c
-commit: 466a4c055a9b9efc8704591bbfa9041c77f66c46 [3/5] IMA: Define workqueue for early boot "key" measurements
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-129-g341daf20-dirty
-        git checkout 466a4c055a9b9efc8704591bbfa9041c77f66c46
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+Hi Mimi,
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+On 12/24/2019 8:54 PM, kbuild test robot wrote:
+> 
+> Fixes: 466a4c055a9b ("IMA: Define workqueue for early boot "key" measurements")
+> Signed-off-by: kbuild test robot <lkp@intel.com>
+> ---
+>   ima_asymmetric_keys.c |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>   
+> -bool ima_queue_key(struct key *keyring, const void *payload,
+> -		   size_t payload_len)
+> +static bool ima_queue_key(struct key *keyring, const void *payload,
+> +			  size_t payload_len)
+>   {
+>   	bool queued = false;
+>   	struct ima_key_entry *entry;
+> 
 
+I'd defined ima_queue_key() as non-static when it could have been 
+defined as static.
 
-sparse warnings: (new ones prefixed by >>)
+ From this patch I understand this change is done. Is there anything I 
+need to do to address this issue?
 
->> security/integrity/ima/ima_asymmetric_keys.c:70:6: sparse: sparse: symbol 'ima_queue_key' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+thanks,
+  -lakshmi
