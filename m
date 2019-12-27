@@ -1,72 +1,88 @@
-Return-Path: <SRS0=uJJC=2Q=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=hS36=2R=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D993C3F68F
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Dec 2019 18:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FF6CC2D0C3
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Dec 2019 05:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3761E208C4
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Dec 2019 18:33:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NebnD6df"
+	by mail.kernel.org (Postfix) with ESMTP id E4A1920882
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Dec 2019 05:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfLZSc6 (ORCPT
+        id S1725854AbfL0FJR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Dec 2019 13:32:58 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:57536 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbfLZSc6 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Dec 2019 13:32:58 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 451E92010ACB;
-        Thu, 26 Dec 2019 10:32:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 451E92010ACB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1577385177;
-        bh=Ks2uqU/zXG4QN1jPsTtYVXcZbM2+fajpkP/NKcHdHO8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NebnD6dfHXKKjwclYoBMRlAeD7c58g6yp4w0YmGwH437LomHLRXO4dSoye4rmp3C6
-         fh7H0Po4htorEtch5rRf+xJfoPanfbcXrs/muZdO8P2LnKdYiNl3s822EYgdG7Xsrl
-         RNvgX5vhHVfCngaykdZl2KYKCxKgCfgXvF3UfANE=
-Subject: Re: [RFC PATCH integrity] IMA: ima_queue_key() can be static
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org
-References: <201912251234.hUAOr3cc%lkp@intel.com>
- <20191225045416.34tsl75acckhabsr@4978f4969bb8>
- <c31a5f8b-2db9-f8ad-51f6-b6e471b05737@linux.microsoft.com>
- <1577370477.4487.11.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <c720e040-e57e-9e5c-6ac5-883b07f6eca7@linux.microsoft.com>
-Date:   Thu, 26 Dec 2019 10:33:17 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Fri, 27 Dec 2019 00:09:17 -0500
+Received: from mga12.intel.com ([192.55.52.136]:37820 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfL0FJQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 27 Dec 2019 00:09:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2019 21:09:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,361,1571727600"; 
+   d="scan'208";a="220420469"
+Received: from psklarow-mobl.ger.corp.intel.com ([10.252.31.109])
+  by orsmga003.jf.intel.com with ESMTP; 26 Dec 2019 21:09:12 -0800
+Message-ID: <f0406ed23a9a64bd7c5dc0e0b403151d6157a8cf.camel@linux.intel.com>
+Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of
+ tpm_tis_core_init
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
+Date:   Fri, 27 Dec 2019 07:09:06 +0200
+In-Reply-To: <20191219100747.fhbqmzk7xby3tt3l@cantor>
+References: <20191211231758.22263-1-jsnitsel@redhat.com>
+         <20191211235455.24424-1-jsnitsel@redhat.com>
+         <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
+         <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
+         <20191217020022.knh7uxt4pn77wk5m@cantor>
+         <CAPcyv4iepQup4bwMuWzq6r5gdx83hgYckUWFF7yF=rszjz3dtQ@mail.gmail.com>
+         <5d0763334def7d7ae1e7cf931ef9b14184dce238.camel@linux.intel.com>
+         <20191217171844.huqlj5csr262zkkk@cantor>
+         <37f4ed0d6145dbe1e8724a5d05d0da82b593bf9c.camel@linux.intel.com>
+         <CAPcyv4h8sK+geVvBb1534V9CgdvOnkpPeStV3B8Q1Qdve3is0A@mail.gmail.com>
+         <20191219100747.fhbqmzk7xby3tt3l@cantor>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <1577370477.4487.11.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 12/26/2019 6:27 AM, Mimi Zohar wrote:
-
->>
->>   From this patch I understand this change is done. Is there anything I
->> need to do to address this issue?
+On Thu, 2019-12-19 at 03:07 -0700, Jerry Snitselaar wrote:
+> > These patches take a usable system and make it unusable:
+> > 
+> > 1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+> > 5b359c7c4372 tpm_tis_core: Turn on the TPM before probing IRQ's
+> > 
+> > ...they need to be reverted, or the regression needs to be fixed, but
+> > asserting that you fixed something else unrelated does not help.
+> > 
 > 
-> No, I'll squash this patch with the original patch, adding the
-> requested tags.
-> 
-> Mimi
+> Reverting 1ea32c83c699 ("tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before
+> probing for interrupts") would at least allow people impacted by this
+> to boot their systems without disabling the tpm, or blacklisting the
+> module while we figure this out. From what I can tell the tpm_tis code
+> was operating in that state since 570a36097f30 ("tpm: drop 'irq' from
+> struct tpm_vendor_specific") until Stefan's patch.
 
-Thanks a lot for your help Mimi.
+I'll formalize a fix based on the reverts.
 
-  -lakshmi
+Sorry for the holiday latency.
+
+/Jarkko
+
