@@ -2,112 +2,127 @@ Return-Path: <SRS0=9D2J=2Y=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90878C2D0CE
-	for <linux-integrity@archiver.kernel.org>; Fri,  3 Jan 2020 19:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B23FDC2D0C2
+	for <linux-integrity@archiver.kernel.org>; Fri,  3 Jan 2020 20:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E31222C4
-	for <linux-integrity@archiver.kernel.org>; Fri,  3 Jan 2020 19:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8141D20866
+	for <linux-integrity@archiver.kernel.org>; Fri,  3 Jan 2020 20:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BmV/F8pB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="giBmq6w8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728698AbgACTyx (ORCPT
+        id S1728380AbgACUZG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 3 Jan 2020 14:54:53 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:35980 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728564AbgACTyn (ORCPT
+        Fri, 3 Jan 2020 15:25:06 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33594 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728376AbgACUZF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 3 Jan 2020 14:54:43 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 50EF920B479A;
-        Fri,  3 Jan 2020 11:54:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 50EF920B479A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1578081282;
-        bh=G7JsHkOv/dsWoA1W1YI9qCN8w3wlw2Y2hEWkl92HWFk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BmV/F8pBcuU0wThe5VP4CVKiOITLJn1dXzJti/SidAHmpwsXpSl3LQCNYD2Zj+6UJ
-         MxwmiPJG94xZ3XTeZ9UKPboUf+GG8+KTnh2KURJT/qp3eEYWU3I17EF0ikzBXKl+DM
-         eMvBuPgcT8Uo5BQz8HQp5tGGb1O4fPW+9zWqUcqA=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     James.Bottomley@HansenPartnership.com, eric.snowberg@oracle.com,
-        dhowells@redhat.com, mathew.j.martineau@linux.intel.com,
-        matthewgarrett@google.com, sashal@kernel.org,
-        jamorris@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org
-Subject: [PATCH v7 2/3] IMA: Call workqueue functions to measure queued keys
-Date:   Fri,  3 Jan 2020 11:54:34 -0800
-Message-Id: <20200103195435.2647-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200103195435.2647-1-nramas@linux.microsoft.com>
-References: <20200103195435.2647-1-nramas@linux.microsoft.com>
+        Fri, 3 Jan 2020 15:25:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1578083105;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:in-reply-to:in-reply-to:  references:references;
+        bh=vIYQkD20DtDkAZnR5HqwGi0y1CPUBys+0A8WZjYWNOA=;
+        b=giBmq6w8robY7ZbKIAXR1AfZfBXC5Pn4Ea+1+O93uOJFB24IkXDymOFMy4e7FbclLJKmiv
+        4fsCA0ZyFtZbCtXKxqguSHBcOUgHJzJ5SgKVOxz+C9ALHwdmrJlE91XvK8wZaYcj+OuPCe
+        lq83J1z7ZobXNdyOu52C8veNaL3asc8=
+Received: from mail-yw1-f69.google.com (mail-yw1-f69.google.com
+ [209.85.161.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-195-KHJKG4EzPs-BgprnHdf9Ww-1; Fri, 03 Jan 2020 15:25:01 -0500
+X-MC-Unique: KHJKG4EzPs-BgprnHdf9Ww-1
+Received: by mail-yw1-f69.google.com with SMTP id r189so35114846ywf.13
+        for <linux-integrity@vger.kernel.org>; Fri, 03 Jan 2020 12:25:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=vIYQkD20DtDkAZnR5HqwGi0y1CPUBys+0A8WZjYWNOA=;
+        b=P8Q3rrjmolR5GKM1of2+RazbA71brHlBdWhaot5hu8VOu6ieXHIPM25obWXXd/wxzD
+         Hwz0rGk1Nzmj5fHfSvPIhWGeSgWsL3pb9lfGUIJIJyJIH6Ey1KwzjFPh03d6KRgZHl/z
+         2zhO/scg1FO7oTydRHXlpVuAS2bOOwfOwqo2YE94l28HDkl9WTEEmdCtvniU5fAD/5TH
+         6NXK0G26+JPOaJvceAnglUd7C6rR5LSkmuw9HAZ76YvvIMhaqn1qetYSJM7VRslgSlEb
+         1QgHT0TXFLhT97LaaR7722OjTeYWLF7fE7Bu5GMU1hV2X1cVj97Glr/I2jAwMfDuwQRv
+         B/qg==
+X-Gm-Message-State: APjAAAV+7ki5S86c9v2/yE7Kxl0/n8/i6wqq1iUjRnkHfVHN1F0odNGW
+        nRFj6QRjYELHSPcHBqxO6T4yvbAbqRdJ1u9WvYb150pA0nc1MxxX4RkTBVVgzxCmsbNPIml5pY3
+        +QdPTcisLZOH/u8XIj+5tmMQE4XGX
+X-Received: by 2002:a25:9309:: with SMTP id f9mr70238567ybo.43.1578083101429;
+        Fri, 03 Jan 2020 12:25:01 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwZ8DLvTkRCvsFLSCltnpCvU/x9tELkKy1E6VFlp20keNhZqqn+vEyv92etdhVLppcchXVF5Q==
+X-Received: by 2002:a25:9309:: with SMTP id f9mr70238553ybo.43.1578083101116;
+        Fri, 03 Jan 2020 12:25:01 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id c84sm24230987ywa.1.2020.01.03.12.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2020 12:25:00 -0800 (PST)
+Date:   Fri, 3 Jan 2020 13:24:58 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Christian Bundy <christianbundy@fraction.io>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable-commits@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Patch "tpm_tis: reserve chip for duration of tpm_tis_core_init"
+ has been added to the 5.4-stable tree
+Message-ID: <20200103202458.lhd5qu2onl67kilb@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable-commits@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <c6ce34b130210d2d1330fc4079d6d82bd74dcef1.camel@linux.intel.com>
+ <50217a688ffa56cf5f150ffd358daba2a88cad48.camel@linux.intel.com>
+ <20191228151526.GA6971@linux.intel.com>
+ <CAPcyv4i_frm8jZeknniPexp8AAmGsaq0_DHegmL4XZHQi1ThxA@mail.gmail.com>
+ <CAPcyv4iyQeXBWvp8V_UPBsOk29cfmTVZGYrrDgyYYqzsQvTjNA@mail.gmail.com>
+ <2c4a80e0d30bf1dfe89c6e3469d1dbfb008275fa.camel@linux.intel.com>
+ <20191231010256.kymv4shwmx5jcmey@cantor>
+ <20191231155944.GA4790@linux.intel.com>
+ <be07a1e4-c290-4185-8c23-d97050279564@www.fastmail.com>
+ <20200102171922.GA20989@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200102171922.GA20989@linux.intel.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Measuring keys requires a custom IMA policy to be loaded.
-Keys should be queued for measurement if a custom IMA policy
-is not yet loaded. Keys queued for measurement, if any, should be
-processed when a custom IMA policy is loaded.
+On Thu Jan 02 20, Jarkko Sakkinen wrote:
+>On Tue, Dec 31, 2019 at 11:47:37AM -0800, Christian Bundy wrote:
+>> > Christian, were you having any issues with interrupts? You system was going
+>> > into this code as well.
+>>
+>> Unfortunately I'm now unable to test, sorry for the trouble. I replaced my BIOS
+>> with UEFI firmware and the problem has disappeared. Please let me know if there
+>> is anything else I can do to help.
+>>
+>> Christian
+>
+>Takashi wrote yesterday [*]:
+>
+>"I'm building a test kernel package based on 5.5-rc4 with Jarkko's revert
+>patches"
+>
+>[*] https://bugzilla.kernel.org/show_bug.cgi?id=205935
+>
+>/Jarkko
+>
 
-This patch updates the IMA hook function ima_post_key_create_or_update()
-to queue the key if a custom IMA policy has not yet been loaded.
-And, ima_update_policy() function, which is called when
-a custom IMA policy is loaded, is updated to process queued keys.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_asymmetric_keys.c | 8 ++++++++
- security/integrity/ima/ima_policy.c          | 3 +++
- 2 files changed, 11 insertions(+)
-
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index 1d56f003f1a7..eb71cbf224c1 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -145,6 +145,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   const void *payload, size_t payload_len,
- 				   unsigned long flags, bool create)
- {
-+	bool queued = false;
-+
- 	/* Only asymmetric keys are handled by this hook. */
- 	if (key->type != &key_type_asymmetric)
- 		return;
-@@ -152,6 +154,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	if (!payload || (payload_len == 0))
- 		return;
- 
-+	if (!ima_process_keys)
-+		queued = ima_queue_key(keyring, payload, payload_len);
-+
-+	if (queued)
-+		return;
-+
- 	/*
- 	 * keyring->description points to the name of the keyring
- 	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index a4dde9d575b2..04b9c6c555de 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -807,6 +807,9 @@ void ima_update_policy(void)
- 		kfree(arch_policy_entry);
- 	}
- 	ima_update_policy_flag();
-+
-+	/* Custom IMA policy has been loaded */
-+	ima_process_queued_keys();
- }
- 
- /* Keep the enumeration in sync with the policy_tokens! */
--- 
-2.17.1
+You can add my ack to the reverts.
 
