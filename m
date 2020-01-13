@@ -5,78 +5,78 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2523FC33CAF
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 10:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 984B5C33CAD
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 10:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD6920661
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 10:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B7AE20661
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 10:51:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dmdaEKfL"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oKkpYKtv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbgAMKse (ORCPT
+        id S1726163AbgAMKvE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 13 Jan 2020 05:48:34 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34225 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728643AbgAMKse (ORCPT
+        Mon, 13 Jan 2020 05:51:04 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43779 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgAMKvE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 13 Jan 2020 05:48:34 -0500
-Received: by mail-wm1-f67.google.com with SMTP id w5so9478591wmi.1
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Jan 2020 02:48:32 -0800 (PST)
+        Mon, 13 Jan 2020 05:51:04 -0500
+Received: by mail-wr1-f68.google.com with SMTP id d16so8013769wre.10
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Jan 2020 02:51:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Q72nxyYifHuN/2SoRmUuohcGv85roM34W+YCiMDzhOU=;
-        b=dmdaEKfLffOvuwT8MuhA2MntZz1aFWQRQRH8ewU8dUHRnXYtyeD/Ic2FRFbsUl2JEo
-         wRVAvMLgz56QLfUc9K9i0YKOv53V959l6eJRvB8tkUxsxv8uDfztCiT+ZIA9co3ov44f
-         l0TvwnZi0XDy7U1MIpI2r7RPLoBB5FkY0zCx0=
+        bh=rX6hYkQTcPkxFSQTp22iI/GTbRzDTSn2mT2N78MPltg=;
+        b=oKkpYKtvG22DswPrnQPe4mDphOZzPeWS9Fm/gBtPFXIi/eh1IzHY8X22AlrD5VKaYE
+         s+qOTZJe21UPh7e2M2/VVXjI1lW86ypWRIgklVRlnZXV2m3TNbBYjdeCk1bOikndC3V+
+         aTL2Zqv9kyPeC8epB3SLemTlwjlE2X2XmGN7A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q72nxyYifHuN/2SoRmUuohcGv85roM34W+YCiMDzhOU=;
-        b=dF0OxvjuVYLqZEWM0vO6euirrft1jvhksjt6YfbRyVs9ZktmgHPsOO6Z6+1QLmb9ET
-         8v2QE0Rq0l4X2eh6HA943+vaVAGdqX23/h4wApL431OVh5X/kcyxFLHowFcVWCXgEgZk
-         y5iqBnCN/M87CjbM5tYzGPmxTAl5ig1aColrmz2Ceu9EETS09x+mIHae2o32aS/mkJDA
-         jbkzKw/SB7O4zIZv0SxEpGxZkcb7lcqGPkYfMak0bgYDHetKV0fbS4rrzbVrIpOCfVjA
-         0MloXiv13Ctc2SS8+JVhxC2rqkeHySRDcfJXghSJjzaxENtqNwEAb6wplJ41khr+VwNG
-         vBCw==
-X-Gm-Message-State: APjAAAV09QY+LPxKhqbb3QgUMqjzC7DxJGXKgJbKFdFru+NFPnjmuc+V
-        k8+ZGLvx4SBrozBh6LussBZ30G+1bmVrMw==
-X-Google-Smtp-Source: APXvYqxNeOGAz2aOzj9D5YgGs3DM/AjYyoLeykfRXdr8x4952mDTvGKJPdy/xh9j5SZPBakRbNV3TQ==
-X-Received: by 2002:a7b:c38c:: with SMTP id s12mr19266314wmj.96.1578912512152;
-        Mon, 13 Jan 2020 02:48:32 -0800 (PST)
+        bh=rX6hYkQTcPkxFSQTp22iI/GTbRzDTSn2mT2N78MPltg=;
+        b=UBrDQ/KO6YrV+rH2j7/BeclwX8npnOXYbLsyS0zjV9PEhqz3kB71t97Flds6T4X2YU
+         9lBggz9FFUrVHCGAN0WqJ+WutrjGDlrhMj8nVaLJd8VuhcIKoNsZk8NpoqCEi1TjDZ4s
+         bxPDRjIMFmd5QYD6MC7mSwBr3JQbRlNd8RXa0NBrx2gn95hUvBrfd7eM/2IwGF4pLmm2
+         ju7FejCrloEh2d+q7MOwSidZy/ZjgsKIcIk3XNAnvKSXTobZH6vswNeeTPXNbA+xzWUa
+         hUUpyltOeFL44MBZr2+Cp0RAXcVx85ZDb1wDG6rQCoAniRtMErT4lWNV6/0RZ3TjKEXl
+         QgYw==
+X-Gm-Message-State: APjAAAXgFS+0zaPDnOcgmff03Pe7wQbmRokbIHPakr1xZffkhIXO+s6e
+        qjQ9EneddUYORfsXkH1M8RQaL9Fbz5pEJw==
+X-Google-Smtp-Source: APXvYqzk/HkmF6+cavSIKEIJ+Fq8mnrnSFzOKUU4OvMZdAPLWjQsZPS2kwS1LaOaiSPQQo0ar0Br5A==
+X-Received: by 2002:adf:ef8b:: with SMTP id d11mr12548851wro.45.1578912662627;
+        Mon, 13 Jan 2020 02:51:02 -0800 (PST)
 Received: from google.com ([2a00:79e0:42:204:8a21:ba0c:bb42:75ec])
-        by smtp.gmail.com with ESMTPSA id q14sm14239337wmj.14.2020.01.13.02.48.31
+        by smtp.gmail.com with ESMTPSA id s3sm13791867wmh.25.2020.01.13.02.51.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 02:48:31 -0800 (PST)
+        Mon, 13 Jan 2020 02:51:02 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
 X-Google-Original-From: KP Singh <kpsingh>
-Date:   Mon, 13 Jan 2020 11:48:30 +0100
+Date:   Mon, 13 Jan 2020 11:51:00 +0100
 To:     Florent Revest <revest@chromium.org>
 Cc:     linux-integrity@vger.kernel.org, kpsingh@chromium.org,
         mjg59@google.com, zohar@linux.ibm.com, nramas@linux.microsoft.com,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Florent Revest <revest@google.com>
-Subject: Re: [PATCH v2] ima: add the ability to query the hash of a given
- file.
-Message-ID: <20200113104830.GA28588@google.com>
-References: <20200106162524.164650-1-revest@chromium.org>
+Subject: Re: [PATCH v3] ima: add the ability to query the cached hash of a
+ given file
+Message-ID: <20200113105100.GA31000@google.com>
+References: <20200113094244.26678-1-revest@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200106162524.164650-1-revest@chromium.org>
+In-Reply-To: <20200113094244.26678-1-revest@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 06-Jan 17:25, Florent Revest wrote:
+On 13-Jan 10:42, Florent Revest wrote:
 > From: Florent Revest <revest@google.com>
 > 
 > This allows other parts of the kernel (perhaps a stacked LSM allowing
@@ -86,8 +86,11 @@ On 06-Jan 17:25, Florent Revest wrote:
 > It's true that the existence of the hash means that it's also in the
 > audit logs or in /sys/kernel/security/ima/ascii_runtime_measurements,
 > but it can be difficult to pull that information out for every
-> subsequent exec.  This is especially true if a given host has been up
+> subsequent exec. This is especially true if a given host has been up
 > for a long time and the file was first measured a long time ago.
+> 
+> It should be kept in mind that this function gives access to cached
+> entries which can be removed, for instance on security_inode_free().
 > 
 > This is based on Peter Moody's patch:
 >  https://sourceforge.net/p/linux-ima/mailman/message/33036180/
@@ -96,17 +99,15 @@ On 06-Jan 17:25, Florent Revest wrote:
 > 
 > Signed-off-by: Florent Revest <revest@google.com>
 
-Thanks for adding this Florent!
-
 Reviewed-by: KP Singh <kpsingh@chromium.org>
 
 > ---
 >  include/linux/ima.h               |  6 ++++
->  security/integrity/ima/ima_main.c | 46 +++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
+>  security/integrity/ima/ima_main.c | 49 +++++++++++++++++++++++++++++++
+>  2 files changed, 55 insertions(+)
 > 
 > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 6d904754d858..d621c65ba9a5 100644
+> index f4644c54f648..1659217e9b60 100644
 > --- a/include/linux/ima.h
 > +++ b/include/linux/ima.h
 > @@ -23,6 +23,7 @@ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
@@ -130,15 +131,16 @@ Reviewed-by: KP Singh <kpsingh@chromium.org>
 >  #endif /* CONFIG_IMA */
 >  
 > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index d7e987baf127..3799b6c6c3b8 100644
+> index 2272c3255c7d..9fe949c6a530 100644
 > --- a/security/integrity/ima/ima_main.c
 > +++ b/security/integrity/ima/ima_main.c
-> @@ -445,6 +445,52 @@ int ima_file_check(struct file *file, int mask)
+> @@ -445,6 +445,55 @@ int ima_file_check(struct file *file, int mask)
 >  }
 >  EXPORT_SYMBOL_GPL(ima_file_check);
 >  
 > +/**
-> + * ima_file_hash - return the stored measurement if a file has been hashed.
+> + * ima_file_hash - return the stored measurement if a file has been hashed and
+> + * is in the iint cache.
 > + * @file: pointer to the file
 > + * @buf: buffer in which to store the hash
 > + * @buf_size: length of the buffer
@@ -147,7 +149,9 @@ Reviewed-by: KP Singh <kpsingh@chromium.org>
 > + * If buf is not NULL, this function also outputs the hash into buf.
 > + * If the hash is larger than buf_size, then only buf_size bytes will be copied.
 > + * It generally just makes sense to pass a buffer capable of holding the largest
-> + * possible hash: IMA_MAX_DIGEST_SIZE
+> + * possible hash: IMA_MAX_DIGEST_SIZE.
+> + * The file hash returned is based on the entire file, including the appended
+> + * signature.
 > + *
 > + * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
 > + * If the parameters are incorrect, return -EINVAL.
@@ -187,5 +191,5 @@ Reviewed-by: KP Singh <kpsingh@chromium.org>
 >   * ima_post_create_tmpfile - mark newly created tmpfile as new
 >   * @file : newly created tmpfile
 > -- 
-> 2.24.1.735.g03f4e72817-goog
+> 2.25.0.rc1.283.g88dfdc4193-goog
 > 
