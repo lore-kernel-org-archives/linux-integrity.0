@@ -2,51 +2,48 @@ Return-Path: <SRS0=qoUO=3C=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAD3C33CA9
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 00:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3604C33CAA
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 00:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB48C222D9
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 00:07:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92528206DA
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 00:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387504AbgAMAHO (ORCPT
+        id S2387519AbgAMAI2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 12 Jan 2020 19:07:14 -0500
-Received: from mga04.intel.com ([192.55.52.120]:27165 "EHLO mga04.intel.com"
+        Sun, 12 Jan 2020 19:08:28 -0500
+Received: from mga11.intel.com ([192.55.52.93]:52692 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387503AbgAMAHO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 12 Jan 2020 19:07:14 -0500
+        id S2387460AbgAMAI2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 12 Jan 2020 19:08:28 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 16:07:13 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jan 2020 16:08:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,426,1571727600"; 
-   d="scan'208";a="247554391"
+   d="scan'208";a="247554545"
 Received: from akurtz1-mobl.ger.corp.intel.com (HELO localhost) ([10.252.10.99])
-  by fmsmga004.fm.intel.com with ESMTP; 12 Jan 2020 16:07:10 -0800
-Date:   Mon, 13 Jan 2020 02:07:09 +0200
+  by fmsmga004.fm.intel.com with ESMTP; 12 Jan 2020 16:08:25 -0800
+Date:   Mon, 13 Jan 2020 02:08:24 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-integrity@vger.kernel.org,
-        labbott@redhat.com
-Subject: Re: [PATCH] tpm: handle negative priv->response_len in
- tpm_common_read
-Message-ID: <20200113000709.GB16145@linux.intel.com>
-References: <b85fa669-d3aa-f6c9-9631-988ae47e392c@redhat.com>
- <157843468820.24718.10808226634364669421.stgit@tstruk-mobl1>
- <b469b7e8454a69402529cc8e25244860e136308e.camel@linux.intel.com>
- <80272f0259d967fe61dacd1036cbbd9f555b8402.camel@linux.intel.com>
- <d1ee03ce-c8bd-75ab-e348-8a05fb6be69d@intel.com>
+To:     linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v4] tpm: Add tpm_version_major sysfs file
+Message-ID: <20200113000824.GC16145@linux.intel.com>
+References: <20191030225843.23366-1-jsnitsel@redhat.com>
+ <20191128010826.w4ixlix3s3ovta3m@cantor>
+ <20191129235131.GA21546@linux.intel.com>
+ <20200109214935.ud7p7uwjimilxvi7@cantor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d1ee03ce-c8bd-75ab-e348-8a05fb6be69d@intel.com>
+In-Reply-To: <20200109214935.ud7p7uwjimilxvi7@cantor>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -54,14 +51,50 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 08, 2020 at 09:47:31AM -0800, Tadeusz Struk wrote:
-> On 1/8/20 8:04 AM, Jarkko Sakkinen wrote:
-> > Applied but had to fix bunch of typos, missing punctaction and
-> > missing parentheses in the commit message. Even checkpatch.pl
-> > was complaining :-/
+On Thu, Jan 09, 2020 at 02:49:35PM -0700, Jerry Snitselaar wrote:
+> On Sat Nov 30 19, Jarkko Sakkinen wrote:
+> > On Wed, Nov 27, 2019 at 06:08:26PM -0700, Jerry Snitselaar wrote:
+> > > On Wed Oct 30 19, Jerry Snitselaar wrote:
+> > > > Easily determining what TCG version a tpm device implements
+> > > > has been a pain point for userspace for a long time, so
+> > > > add a sysfs file to report the TCG major version of a tpm device.
+> > > >
+> > > > Also add an entry to Documentation/ABI/stable/sysfs-class-tpm
+> > > > describing the new file.
+> > > >
+> > > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > > Cc: Mimi Zohar <zohar@linux.ibm.com>
+> > > > Cc: Peter Huewe <peterhuewe@gmx.de>
+> > > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> > > > Cc: linux-integrity@vger.kernel.org
+> > > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > > ---
+> > > > v4: - Change file name to tpm_version_major
+> > > >    - Actually display just the major version.
+> > > >    - change structs to tpm1_* & tpm2_*
+> > > >      instead of tpm12_* tpm20_*.
+> > > > v3: - Change file name to version_major.
+> > > > v2: - Fix TCG usage in commit message.
+> > > >    - Add entry to sysfs-class-tpm in Documentation/ABI/stable
+> > > >
+> > > > Documentation/ABI/stable/sysfs-class-tpm | 11 ++++++++
+> > > > drivers/char/tpm/tpm-sysfs.c             | 34 +++++++++++++++++++-----
+> > > > 2 files changed, 38 insertions(+), 7 deletions(-)
+> > > >
+> > > 
+> > > Anyone else have feedback?
+> > 
+> > I can apply this after the issues on hand have been sorted out.
+> > 
+> > /Jarkko
+> > 
 > 
-> Forgot about the checkpatch.pl thing. Sorry.
+> Hi Jarkko,
+> 
+> Will this get queued up for 5.6?
 
-NP, just mentioning this for the future patches.
+Thanks for reminding and apologies for forgetting this!
+
+I'll see what I can do.
 
 /Jarkko
