@@ -2,94 +2,230 @@ Return-Path: <SRS0=qoUO=3C=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4860C32771
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 03:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3619C33CA8
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 09:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89D5821556
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 03:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8029921744
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Jan 2020 09:42:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LONkt8qU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733091AbgAMDPE (ORCPT
+        id S1728759AbgAMJmW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 12 Jan 2020 22:15:04 -0500
-Received: from mail01.vodafone.es ([217.130.24.71]:47174 "EHLO
-        mail01.vodafone.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733064AbgAMDPD (ORCPT
+        Mon, 13 Jan 2020 04:42:22 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38630 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728741AbgAMJmV (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 12 Jan 2020 22:15:03 -0500
-IronPort-SDR: 8iplrnjvZfOIR4koA25CFqWhCjK6xSmkl+MpUxBbTZpFfTVx82NtNUDCzCwVKgq4vdTDJFVAEW
- vNVz751xoDSg==
-IronPort-PHdr: =?us-ascii?q?9a23=3AGHngYRbeX8myOt/NHKvXcXP/LSx+4OfEezUN45?=
- =?us-ascii?q?9isYplN5qZrsy/bnLW6fgltlLVR4KTs6sC17ON9fq+CCddvt6oizMrSNR0TR?=
- =?us-ascii?q?gLiMEbzUQLIfWuLgnFFsPsdDEwB89YVVVorDmROElRH9viNRWJ+iXhpTEdFQ?=
- =?us-ascii?q?/iOgVrO+/7BpDdj9it1+C15pbffxhEiCCybL9vIhi6txvdu8gSjIdtKqs8yA?=
- =?us-ascii?q?bCr2dVdehR2W5mP0+YkQzm5se38p5j8iBQtOwk+sVdT6j0fLk2QKJBAjg+PG?=
- =?us-ascii?q?87+MPktR/YTQuS/XQcSXkZkgBJAwfe8h73WIr6vzbguep83CmaOtD2TawxVD?=
- =?us-ascii?q?+/4apnVAPkhSEaPDI/923Zl9B/g7heoBOhvhBy3YnUYJuNNPp5ZKPSZ88aSn?=
- =?us-ascii?q?RYUslPUSxNG5+xb5cTD+UbIelYr5fyp14Qohu4GQmgHf3gyjlRinHx2q061f?=
- =?us-ascii?q?ouEAHf0AM+GdIFrXDYodvpOKsOVOy4yrTDwzfeYPNMwTrz5ojGcgo/r/+PQL?=
- =?us-ascii?q?x/ftbex0Y0GgPZjFiftZDpMy+J2ugTtWWQ8upuVfioi24iswx/uCagxtsyhY?=
- =?us-ascii?q?nTm4kaylfE9SN2wI0oItC4UFB0YcK6H5tKuSCaMI12Qsw5TmFooyY10aEJtY?=
- =?us-ascii?q?SncygNzZQr3R7fa/+efoWO/xntV/6RLC9miH54er+znQu+/Ea8xuHmSMW530?=
- =?us-ascii?q?xGoyRFn9TKq3sDzQbc6tKdRft45kqh3DGP2B3N5excOkA0kLbbK4Ymwr4tip?=
- =?us-ascii?q?ofqUTDETHymEXxlKKWc18r+ums6+T9fLrmooOQOoBuhgHgNaQhh9awAeo/Mg?=
- =?us-ascii?q?gIQWeX4/qz1Kb78U34RrVFkOE2n7HHvJzHJ8kXvLO1DgFJ3oo59RqyAC2q3d?=
- =?us-ascii?q?oYkHUfKVJKYhOHj4znO1HUJ/D4CO+yg0yynzd32f/GJLPgApLLLnjMi7rhfa?=
- =?us-ascii?q?195FVAxwYp0d9f4JdUBqsBIPLwQkPxrsDXDgclMwyoxObqENF91oIYWWKSDa?=
- =?us-ascii?q?6VKaLSsVmU5u0xLOmMfo4VuCr9KvU++f7ugmE2mUUHcamqw5QXcna4EepiI0?=
- =?us-ascii?q?mDZnrsmNgBQi82uV86Ter3mBiDVyJeaGyzQ7MU+D42EsSlAJ3FS4Trh6aOjx?=
- =?us-ascii?q?22BplHWmcTMl2QHG2gSIKCVL9YcC+OL9V+lToLVbuhUIUq/R6rvQ7+jbFgK7?=
- =?us-ascii?q?yH1DcfsMfb2cR4/aXskhc9vWhsAtiQyX6KSW5cnngCTHk926U5oU8rmQTL6r?=
- =?us-ascii?q?Rxn/ENTI8b3PhOSApvbsaEwg=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GUIwCo3xtemCMYgtlNGBoBAQEBAQE?=
- =?us-ascii?q?BAQEDAQEBAREBAQECAgEBAQGBewIBGAEBgS6BTVIgEpNQgU0fg0OLY4EAgx4?=
- =?us-ascii?q?VhggTDIFbDQEBAQEBNQIBAYRATgEXgQ8kOgQNAgMNAQEFAQEBAQEFBAEBAhA?=
- =?us-ascii?q?BAQEBAQYNCwYphUqCHQweAQQBAQEBAwMDAQEMAYNdBxkPOUpMAQ4BU4MEgks?=
- =?us-ascii?q?BATOcbwGNBA0NAoUdgkkECoEJgRojgTYBjBgagUE/gSMhgisIAYIBgn8BEgF?=
- =?us-ascii?q?sgkiCWQSNQhIhgQeIKZgXgkEEdolMjAKCNwEPiAGEMQMQgkUPgQmIA4ROgX2?=
- =?us-ascii?q?jN1eBDA16cTMagiYagSBPGA2IG44tQIEWEAJPiS6CMgEB?=
-X-IPAS-Result: =?us-ascii?q?A2GUIwCo3xtemCMYgtlNGBoBAQEBAQEBAQEDAQEBAREBA?=
- =?us-ascii?q?QECAgEBAQGBewIBGAEBgS6BTVIgEpNQgU0fg0OLY4EAgx4VhggTDIFbDQEBA?=
- =?us-ascii?q?QEBNQIBAYRATgEXgQ8kOgQNAgMNAQEFAQEBAQEFBAEBAhABAQEBAQYNCwYph?=
- =?us-ascii?q?UqCHQweAQQBAQEBAwMDAQEMAYNdBxkPOUpMAQ4BU4MEgksBATOcbwGNBA0NA?=
- =?us-ascii?q?oUdgkkECoEJgRojgTYBjBgagUE/gSMhgisIAYIBgn8BEgFsgkiCWQSNQhIhg?=
- =?us-ascii?q?QeIKZgXgkEEdolMjAKCNwEPiAGEMQMQgkUPgQmIA4ROgX2jN1eBDA16cTMag?=
- =?us-ascii?q?iYagSBPGA2IG44tQIEWEAJPiS6CMgEB?=
-X-IronPort-AV: E=Sophos;i="5.69,427,1571695200"; 
-   d="scan'208";a="304478847"
-Received: from mailrel04.vodafone.es ([217.130.24.35])
-  by mail01.vodafone.es with ESMTP; 13 Jan 2020 04:15:01 +0100
-Received: (qmail 24910 invoked from network); 12 Jan 2020 05:00:24 -0000
-Received: from unknown (HELO 192.168.1.3) (quesosbelda@[217.217.179.17])
-          (envelope-sender <peterwong@hsbc.com.hk>)
-          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
-          for <linux-integrity@vger.kernel.org>; 12 Jan 2020 05:00:24 -0000
-Date:   Sun, 12 Jan 2020 06:00:19 +0100 (CET)
-From:   Peter Wong <peterwong@hsbc.com.hk>
-Reply-To: Peter Wong <peterwonghkhsbc@gmail.com>
-To:     linux-integrity@vger.kernel.org
-Message-ID: <2060469.460950.1578805224018.JavaMail.cash@217.130.24.55>
-Subject: Investment opportunity
+        Mon, 13 Jan 2020 04:42:21 -0500
+Received: by mail-wr1-f65.google.com with SMTP id y17so7800340wrh.5
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Jan 2020 01:42:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=/AnYXrXWYvNhwGCXjTJAreL3RYx7ZKU0okhiknvPq1k=;
+        b=LONkt8qUSVzgSpJ3vYRz5tdEdUTiIp7lBSpk8CgEbr+mU66cFuYcwYwY0Gt33ed63d
+         Za4k2QokkwkSZrYzZ458SxLbyR6U5j4nYTd1ZGpkw/SI17H4TkFXcEXQ4D3KzgxNTSn+
+         bxLdeS1EG1MKd28ac5FKeVtvQ/x1eACkxMXNg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/AnYXrXWYvNhwGCXjTJAreL3RYx7ZKU0okhiknvPq1k=;
+        b=d6Jukeoa/3WPmF1vMeOp7GHH48qj2VZrENjeJ3jIW1LLancdy/0c72Iqn+iFdEkleL
+         tsvKr7rXbfn9Ey6FlDvXEUEY9Pzn0nB8Ttc/WtMPz4V8uEvXL4Or3ImPmEersrXOJYPq
+         ruJC6fRpEBYaXUN2SdQVDEXSHhE45OcbAZsoisSjbLXKQocP9HnTTfBy9tptwitkj6oT
+         qHynWMpYphHa3gooqfrMz97MrfAnDuEGjjaXPq8Fu1WIMarPxp4VywS5pcQe7mdIhuvu
+         A612RAXcihNsWDdjKu3pZYPQYfT3rD0eC5jcAb2UFAltnOpe1bLTUN8tG6fkHrXVl9IG
+         yCXw==
+X-Gm-Message-State: APjAAAWE8/DtrAzWSj6iNHLTa1uCtqeLW4nx+1u/ffpvJ7AqOWEtXewj
+        ADpAuYE4cbFSZVkL/qBNpKISxA==
+X-Google-Smtp-Source: APXvYqxxI6qdgEBxTJuEUk3JhYcPPt1IsOdKJoSHupf9NxOVFJcQPh2xufJhPakK9fflGvmxnk0P3g==
+X-Received: by 2002:a5d:608a:: with SMTP id w10mr16362892wrt.136.1578908539527;
+        Mon, 13 Jan 2020 01:42:19 -0800 (PST)
+Received: from ?IPv6:2a00:79e0:42:204:51d1:d96e:f72e:c8c0? ([2a00:79e0:42:204:51d1:d96e:f72e:c8c0])
+        by smtp.gmail.com with ESMTPSA id e18sm14474206wrr.95.2020.01.13.01.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 01:42:19 -0800 (PST)
+Message-ID: <a8d344e7d9c4683ad87ec0aaf32eabcbfb0f48fb.camel@chromium.org>
+Subject: Re: [PATCH v2] ima: add the ability to query the hash of a given
+ file.
+From:   Florent Revest <revest@chromium.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc:     kpsingh@chromium.org, mjg59@google.com, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Florent Revest <revest@google.com>
+Date:   Mon, 13 Jan 2020 10:42:18 +0100
+In-Reply-To: <1578499556.5222.157.camel@linux.ibm.com>
+References: <20200106162524.164650-1-revest@chromium.org>
+         <1578499556.5222.157.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Greetings,
-Please read the attached investment proposal and reply for more details.
-Are you interested in loan?
-Sincerely: Peter Wong
+On Wed, 2020-01-08 at 11:05 -0500, Mimi Zohar wrote:
+> On Mon, 2020-01-06 at 17:25 +0100, Florent Revest wrote:
+> > From: Florent Revest <revest@google.com>
+> > 
+> > This allows other parts of the kernel (perhaps a stacked LSM
+> > allowing
+> > system monitoring, eg. the proposed KRSI LSM [1]) to retrieve the
+> > hash
+> > of a given file from IMA if it's present in the iint cache.
+> > 
+> > It's true that the existence of the hash means that it's also in
+> > the
+> > audit logs or in
+> > /sys/kernel/security/ima/ascii_runtime_measurements,
+> > but it can be difficult to pull that information out for every
+> > subsequent exec.  This is especially true if a given host has been
+> > up
+> > for a long time and the file was first measured a long time ago.
+> > 
+> > This is based on Peter Moody's patch:
+> >  https://sourceforge.net/p/linux-ima/mailman/message/33036180/
+> 
+> FYI, but unlike the audit log/IMA measurement list, the iint cache
+> entries can be removed.  Refer to security_inode_free().  Perhaps
+> mention of this difference should be included, here, in the patch
+> description.
 
+Sure, I added a comment about this in a v3.
 
+> > [1] https://lkml.org/lkml/2019/9/10/393
+> > 
+> > Signed-off-by: Florent Revest <revest@google.com>
+> 
+> Assuming, with the above difference, you're still interested in
+> having this feature upstreamed and addressing the comments above and
+> below:
+> 
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
+Thank you. Yes we are still interested in this feature!
 
-----------------------------------------------------
-This email was sent by the shareware version of Postman Professional.
+> > ---
+> >  include/linux/ima.h               |  6 ++++
+> >  security/integrity/ima/ima_main.c | 46
+> > +++++++++++++++++++++++++++++++
+> >  2 files changed, 52 insertions(+)
+> > 
+> > diff --git a/include/linux/ima.h b/include/linux/ima.h
+> > index 6d904754d858..d621c65ba9a5 100644
+> > --- a/include/linux/ima.h
+> > +++ b/include/linux/ima.h
+> > @@ -23,6 +23,7 @@ extern int ima_read_file(struct file *file, enum
+> > kernel_read_file_id id);
+> >  extern int ima_post_read_file(struct file *file, void *buf, loff_t
+> > size,
+> >  			      enum kernel_read_file_id id);
+> >  extern void ima_post_path_mknod(struct dentry *dentry);
+> > +extern int ima_file_hash(struct file *file, char *buf, size_t
+> > buf_size);
+> >  extern void ima_kexec_cmdline(const void *buf, int size);
+> >  
+> >  #ifdef CONFIG_IMA_KEXEC
+> > @@ -91,6 +92,11 @@ static inline void ima_post_path_mknod(struct
+> > dentry *dentry)
+> >  	return;
+> >  }
+> >  
+> > +static inline int ima_file_hash(struct file *file, char *buf,
+> > size_t buf_size)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> >  static inline void ima_kexec_cmdline(const void *buf, int size) {}
+> >  #endif /* CONFIG_IMA */
+> >  
+> > diff --git a/security/integrity/ima/ima_main.c
+> > b/security/integrity/ima/ima_main.c
+> > index d7e987baf127..3799b6c6c3b8 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -445,6 +445,52 @@ int ima_file_check(struct file *file, int
+> > mask)
+> >  }
+> >  EXPORT_SYMBOL_GPL(ima_file_check);
+> >  
+> > +/**
+> > + * ima_file_hash - return the stored measurement if a file has
+> > been hashed.
+> > + * @file: pointer to the file
+> > + * @buf: buffer in which to store the hash
+> > + * @buf_size: length of the buffer
+> > + *
+> > + * On success, return the hash algorithm (as defined in the enum
+> > hash_algo).
+> > + * If buf is not NULL, this function also outputs the hash into
+> > buf.
+> 
+> As of Linux 5.4.y, IMA support for appended file signatures was
+> added. Should we indicate that the file hash returned is based on the
+> entire file, including the appended signature?
+> 
+> Mimi
+
+Of course it never hurts to add a comment. :) I'll send a v3 with this
+added.
+
+> 
+> > + * If the hash is larger than buf_size, then only buf_size bytes
+> > will be copied.
+> > + * It generally just makes sense to pass a buffer capable of
+> > holding the largest
+> > + * possible hash: IMA_MAX_DIGEST_SIZE
+> > + *
+> > + * If IMA is disabled or if no measurement is available, return
+> > -EOPNOTSUPP.
+> > + * If the parameters are incorrect, return -EINVAL.
+> > + */
+> > +int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+> > +{
+> > +	struct inode *inode;
+> > +	struct integrity_iint_cache *iint;
+> > +	int hash_algo;
+> > +
+> > +	if (!file)
+> > +		return -EINVAL;
+> > +
+> > +	if (!ima_policy_flag)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	inode = file_inode(file);
+> > +	iint = integrity_iint_find(inode);
+> > +	if (!iint)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	mutex_lock(&iint->mutex);
+> > +	if (buf) {
+> > +		size_t copied_size;
+> > +
+> > +		copied_size = min_t(size_t, iint->ima_hash->length,
+> > buf_size);
+> > +		memcpy(buf, iint->ima_hash->digest, copied_size);
+> > +	}
+> > +	hash_algo = iint->ima_hash->algo;
+> > +	mutex_unlock(&iint->mutex);
+> > +
+> > +	return hash_algo;
+> > +}
+> > +EXPORT_SYMBOL_GPL(ima_file_hash);
+> > +
+> >  /**
+> >   * ima_post_create_tmpfile - mark newly created tmpfile as new
+> >   * @file : newly created tmpfile
 
