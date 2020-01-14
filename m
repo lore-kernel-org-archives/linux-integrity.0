@@ -2,52 +2,55 @@ Return-Path: <SRS0=el+A=3D=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A600C33CB1
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 Jan 2020 14:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5D7C47409
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Jan 2020 14:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F03452468C
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 Jan 2020 14:17:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35A524692
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Jan 2020 14:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579011425;
-	bh=Vs5vp9Q0pO/rYvjiF2G3gSvq89rNmL0cw1LbNBbTuZk=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=LVGSDDc4qlJrCjmkWnEzUCt2GIg3lHqUWfUpU2eCrADDdWPyeF26W0EDgRzpLKNmA
-	 c4XfRyCaV3FkvbV0tygg6MMO9KAynAO2HHqzSlNpLyhjY+fjh1YMc8JLMy/nCu37X2
-	 MfsPqV+NREMgUfV0nTTzRYxTunytD/5C70/lVOCQ=
+	s=default; t=1579011433;
+	bh=aXlNmzU3c4DebfOZqxQIuf2kGpmEOcf7xtmQHre7OJk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=q1NQc2HhuQK9STCMtctxgaYdXA3+ly/KraaJ4egbdWOAEfXwmsdajNziVWYwf/eR3
+	 d4Tuqj4Qk3+1+jqa3nkkU44K6D+daExH1j1eNCdSW0A00Lzci9moKfnIUtYGBkHZkb
+	 GNNAoTz9ntF6gAUcl9bqsQ7zkWMJF8tjgnQFFOEI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgANORE (ORCPT
+        id S1728939AbgANORJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 14 Jan 2020 09:17:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33834 "EHLO mail.kernel.org"
+        Tue, 14 Jan 2020 09:17:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgANORE (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Jan 2020 09:17:04 -0500
+        id S1725994AbgANORI (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 14 Jan 2020 09:17:08 -0500
 Received: from localhost.localdomain (aaubervilliers-681-1-7-206.w90-88.abo.wanadoo.fr [90.88.129.206])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20F7D24680;
-        Tue, 14 Jan 2020 14:17:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56EB92468B;
+        Tue, 14 Jan 2020 14:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579011423;
-        bh=Vs5vp9Q0pO/rYvjiF2G3gSvq89rNmL0cw1LbNBbTuZk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zAfYuw+DRSckBl1J8CDfyssuIGNNADGPIq+IlafAMdRa9CDb5ylpO4WgVUI0AO0in
-         2pbR/6QA2Pj1MJkrUn/6keNgeNff43d8N3FWlV6rQ4aUzYoVbaCtyO+I/6lYQF2Mk0
-         rq69AeBDAi3s5AA45dz3dOpNSuRUOT61cyjvwzkM=
+        s=default; t=1579011428;
+        bh=aXlNmzU3c4DebfOZqxQIuf2kGpmEOcf7xtmQHre7OJk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=y283MTURx/bz6qeJVYlyRxufy4OQzwRT+/RKaZbTkKKPRx9KkNxYxa38ldJI0MKTo
+         PhpPPic7On2n9h6QQ9BLKYRT/QN22QiLOMPlfe3cz/ABncAt3LpdvnQjdQ8vGtIQ6W
+         BwiFPQdK6rxTp6N2ALcE9tN9FEp57I+DthIxGnt4=
 From:   Ard Biesheuvel <ardb@kernel.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ard Biesheuvel <ardb@kernel.org>, jarkko.sakkinen@linux.intel.com,
         linux-arm-kernel@lists.infradead.org, masahisa.kojima@linaro.org,
         devicetree@vger.kernel.org, linux-integrity@vger.kernel.org,
         peterhuewe@gmx.de, jgg@ziepe.ca
-Subject: [PATCH v2 0/2] synquacer: add TPM support
-Date:   Tue, 14 Jan 2020 15:16:45 +0100
-Message-Id: <20200114141647.109347-1-ardb@kernel.org>
+Subject: [PATCH v2 2/2] tpm: tis: add support for MMIO TPM on SynQuacer
+Date:   Tue, 14 Jan 2020 15:16:47 +0100
+Message-Id: <20200114141647.109347-3-ardb@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200114141647.109347-1-ardb@kernel.org>
+References: <20200114141647.109347-1-ardb@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -55,30 +58,113 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This adds support for driving the TPM on Socionext SynQuacer platforms
-using the existing driver for a memory mapped TIS frame.
+When fitted, the SynQuacer platform exposes its SPI TPM via a MMIO
+window that is backed by the SPI command sequencer in the SPI bus
+controller. This arrangement has the limitation that only byte size
+accesses are supported, and so we'll need to provide a separate set
+of read and write accessors that take this into account.
 
-v2:
-- don't use read/write_bytes() to implement read/write16/32 since that uses
-  the wrong address
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ drivers/char/tpm/tpm_tis.c | 50 +++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 2 deletions(-)
 
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: masahisa.kojima@linaro.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: peterhuewe@gmx.de
-Cc: jgg@ziepe.ca
-
-Ard Biesheuvel (2):
-  dt-bindings: tpm-tis-mmio: add compatible string for SynQuacer TPM
-  tpm: tis: add support for MMIO TPM on SynQuacer
-
- Documentation/devicetree/bindings/security/tpm/tpm_tis_mmio.txt |  1 +
- drivers/char/tpm/tpm_tis.c                                      | 50 +++++++++++++++++++-
- 2 files changed, 49 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index e7df342a317d..2466295fcfe8 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -32,6 +32,7 @@
+ 
+ struct tpm_info {
+ 	struct resource res;
++	const struct tpm_tis_phy_ops *ops;
+ 	/* irq > 0 means: use irq $irq;
+ 	 * irq = 0 means: autoprobe for an irq;
+ 	 * irq = -1 means: no irq support
+@@ -186,6 +187,48 @@ static const struct tpm_tis_phy_ops tpm_tcg = {
+ 	.write32 = tpm_tcg_write32,
+ };
+ 
++static int tpm_tcg_read16_bw(struct tpm_tis_data *data, u32 addr, u16 *result)
++{
++	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
++
++	*result = (ioread8(phy->iobase + addr)) |
++		  (ioread8(phy->iobase + addr + 1) << 8);
++
++	return 0;
++}
++
++static int tpm_tcg_read32_bw(struct tpm_tis_data *data, u32 addr, u32 *result)
++{
++	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
++
++	*result = (ioread8(phy->iobase + addr)) |
++		  (ioread8(phy->iobase + addr + 1) << 8) |
++		  (ioread8(phy->iobase + addr + 2) << 16) |
++		  (ioread8(phy->iobase + addr + 3) << 24);
++
++	return 0;
++}
++
++static int tpm_tcg_write32_bw(struct tpm_tis_data *data, u32 addr, u32 value)
++{
++	struct tpm_tis_tcg_phy *phy = to_tpm_tis_tcg_phy(data);
++
++	iowrite8(value, phy->iobase + addr);
++	iowrite8(value >> 8, phy->iobase + addr + 1);
++	iowrite8(value >> 16, phy->iobase + addr + 2);
++	iowrite8(value >> 24, phy->iobase + addr + 3);
++
++	return 0;
++}
++
++static const struct tpm_tis_phy_ops tpm_tcg_bw = {
++	.read_bytes	= tpm_tcg_read_bytes,
++	.write_bytes	= tpm_tcg_write_bytes,
++	.read16		= tpm_tcg_read16_bw,
++	.read32		= tpm_tcg_read32_bw,
++	.write32	= tpm_tcg_write32_bw,
++};
++
+ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
+ {
+ 	struct tpm_tis_tcg_phy *phy;
+@@ -210,7 +253,7 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
+ 	if (itpm || is_itpm(ACPI_COMPANION(dev)))
+ 		phy->priv.flags |= TPM_TIS_ITPM_WORKAROUND;
+ 
+-	return tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
++	return tpm_tis_core_init(dev, &phy->priv, irq, tpm_info->ops,
+ 				 ACPI_HANDLE(dev));
+ }
+ 
+@@ -219,7 +262,7 @@ static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
+ static int tpm_tis_pnp_init(struct pnp_dev *pnp_dev,
+ 			    const struct pnp_device_id *pnp_id)
+ {
+-	struct tpm_info tpm_info = {};
++	struct tpm_info tpm_info = { .ops = &tpm_tcg };
+ 	struct resource *res;
+ 
+ 	res = pnp_get_resource(pnp_dev, IORESOURCE_MEM, 0);
+@@ -295,6 +338,8 @@ static int tpm_tis_plat_probe(struct platform_device *pdev)
+ 			tpm_info.irq = 0;
+ 	}
+ 
++	tpm_info.ops = of_device_get_match_data(&pdev->dev) ?: &tpm_tcg;
++
+ 	return tpm_tis_init(&pdev->dev, &tpm_info);
+ }
+ 
+@@ -311,6 +356,7 @@ static int tpm_tis_plat_remove(struct platform_device *pdev)
+ #ifdef CONFIG_OF
+ static const struct of_device_id tis_of_platform_match[] = {
+ 	{.compatible = "tcg,tpm-tis-mmio"},
++	{.compatible = "socionext,synquacer-tpm-mmio", .data = &tpm_tcg_bw},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, tis_of_platform_match);
 -- 
 2.20.1
 
