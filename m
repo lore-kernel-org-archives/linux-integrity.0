@@ -2,120 +2,126 @@ Return-Path: <SRS0=ac69=3K=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8000AC2D0CE
-	for <linux-integrity@archiver.kernel.org>; Tue, 21 Jan 2020 19:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DF9C2D0CE
+	for <linux-integrity@archiver.kernel.org>; Tue, 21 Jan 2020 19:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B229217F4
-	for <linux-integrity@archiver.kernel.org>; Tue, 21 Jan 2020 19:14:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A70124673
+	for <linux-integrity@archiver.kernel.org>; Tue, 21 Jan 2020 19:52:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LfmAYBdF";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="LfmAYBdF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgAUTOD (ORCPT
+        id S1728899AbgAUTwe (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 21 Jan 2020 14:14:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1512 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727523AbgAUTOC (ORCPT
+        Tue, 21 Jan 2020 14:52:34 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34568 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727383AbgAUTwe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 21 Jan 2020 14:14:02 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00LJ7KJR017265
-        for <linux-integrity@vger.kernel.org>; Tue, 21 Jan 2020 14:14:01 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2xp2jeup5b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 21 Jan 2020 14:14:01 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 21 Jan 2020 19:13:59 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 21 Jan 2020 19:13:57 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00LJDuIZ56754334
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Jan 2020 19:13:56 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B21C811C05B;
-        Tue, 21 Jan 2020 19:13:56 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1341F11C04C;
-        Tue, 21 Jan 2020 19:13:56 +0000 (GMT)
-Received: from dhcp-9-31-103-231.watson.ibm.com (unknown [9.31.103.231])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 21 Jan 2020 19:13:55 +0000 (GMT)
+        Tue, 21 Jan 2020 14:52:34 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DB1108EE180;
+        Tue, 21 Jan 2020 11:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1579636353;
+        bh=M85fHEK3EDsUo/Rv6a9VBeWoJ6p5EGcRxfPwIERa8tw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LfmAYBdFolmGBonfM4Y/tZQqZMPvpmHmwAV5x0Mi6HiiAvkPVchq2Q7z5MG9n9xTJ
+         aPKt99MjtpYkN1/MS1prvVVDV52uFM18rPOU/XYKRn/mIhxhwPgn9w2mjpNQzV7fqm
+         Q1g1YWtTqKxivuM7ZCosEmzHeNGcI55OD9O/hdxo=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nlBuNbZXxagS; Tue, 21 Jan 2020 11:52:33 -0800 (PST)
+Received: from jarvis.lan (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 072468EE0C9;
+        Tue, 21 Jan 2020 11:52:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1579636353;
+        bh=M85fHEK3EDsUo/Rv6a9VBeWoJ6p5EGcRxfPwIERa8tw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LfmAYBdFolmGBonfM4Y/tZQqZMPvpmHmwAV5x0Mi6HiiAvkPVchq2Q7z5MG9n9xTJ
+         aPKt99MjtpYkN1/MS1prvVVDV52uFM18rPOU/XYKRn/mIhxhwPgn9w2mjpNQzV7fqm
+         Q1g1YWtTqKxivuM7ZCosEmzHeNGcI55OD9O/hdxo=
+Message-ID: <1579636351.3390.35.camel@HansenPartnership.com>
 Subject: Re: [PATCH] IMA: Turn IMA_MEASURE_ASYMMETRIC_KEYS off by default
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         linux-integrity@vger.kernel.org
 Cc:     sashal@kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 21 Jan 2020 14:13:55 -0500
-In-Reply-To: <1579628090.3390.28.camel@HansenPartnership.com>
+Date:   Tue, 21 Jan 2020 11:52:31 -0800
+In-Reply-To: <1579634035.5125.311.camel@linux.ibm.com>
 References: <20200121171302.4935-1-nramas@linux.microsoft.com>
          <1579628090.3390.28.camel@HansenPartnership.com>
+         <1579634035.5125.311.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20012119-0012-0000-0000-0000037F727F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20012119-0013-0000-0000-000021BBB361
-Message-Id: <1579634035.5125.311.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.634
- definitions=2020-01-21_06:2020-01-21,2020-01-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 impostorscore=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 adultscore=0 suspectscore=3
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-2001210143
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2020-01-21 at 09:34 -0800, James Bottomley wrote:
-> On Tue, 2020-01-21 at 09:13 -0800, Lakshmi Ramasubramanian wrote:
-> > Enabling IMA and ASYMMETRIC_PUBLIC_KEY_SUBTYPE configs will
-> > automatically enable the IMA hook to measure asymmetric keys. Keys
-> > created or updated early in the boot process are queued up whether
-> > or not a custom IMA policy is provided. Although the queued keys will
-> > be freed if a custom IMA policy is not loaded within 5 minutes, it
-> > could still cause significant performance impact on smaller systems.
+On Tue, 2020-01-21 at 14:13 -0500, Mimi Zohar wrote:
+> On Tue, 2020-01-21 at 09:34 -0800, James Bottomley wrote:
+> > On Tue, 2020-01-21 at 09:13 -0800, Lakshmi Ramasubramanian wrote:
+> > > Enabling IMA and ASYMMETRIC_PUBLIC_KEY_SUBTYPE configs will
+> > > automatically enable the IMA hook to measure asymmetric keys.
+> > > Keys created or updated early in the boot process are queued up
+> > > whether or not a custom IMA policy is provided. Although the
+> > > queued keys will be freed if a custom IMA policy is not loaded
+> > > within 5 minutes, it could still cause significant performance
+> > > impact on smaller systems.
+> > 
+> > What exactly do you expect distributions to do with this?  I can
+> > tell you that most of them will take the default option, so this
+> > gets set to N and you may as well not have got the patches upstream
+> > because you won't be able to use them in any distro with this
+> > setting.
+> > 
+> > > This patch turns the config IMA_MEASURE_ASYMMETRIC_KEYS off by
+> > > default.  Since a custom IMA policy that defines key measurement
+> > > is required to measure keys, systems that require key measurement
+> > > can enable this config option in addition to providing a custom
+> > > IMA policy.
+> > 
+> > Well, no they can't ... it's rather rare nowadays for people to
+> > build their own kernels.  The vast majority of Linux consumers take
+> > what the distros give them.  Think carefully before you decide a
+> > config option is the solution to this problem.
 > 
-> What exactly do you expect distributions to do with this?  I can tell
-> you that most of them will take the default option, so this gets set to
-> N and you may as well not have got the patches upstream because you
-> won't be able to use them in any distro with this setting.
+> James, up until now IMA could be configured, but there wouldn't be
+> any performance penalty for enabling IMA until a policy was loaded.
+>  With IMA and asymmetric keys enabled, whether or not an IMA policy
+> is loaded, certificates will be queued.
 > 
-> > This patch turns the config IMA_MEASURE_ASYMMETRIC_KEYS off by
-> > default.  Since a custom IMA policy that defines key measurement is
-> > required to measure keys, systems that require key measurement can
-> > enable this config option in addition to providing a custom IMA
-> > policy.
-> 
-> Well, no they can't ... it's rather rare nowadays for people to build
-> their own kernels.  The vast majority of Linux consumers take what the
-> distros give them.  Think carefully before you decide a config option
-> is the solution to this problem.
+> My concern is:
+> - changing the expected behavior
 
-James, up until now IMA could be configured, but there wouldn't be any
-performance penalty for enabling IMA until a policy was loaded.  With
-IMA and asymmetric keys enabled, whether or not an IMA policy is
-loaded, certificates will be queued.
+In general config options for this are a really bad idea because if the
+tools only cope with one setting, no-one should ever use the other and
+if they work with everything there's no need for the option.
 
-My concern is:
-- changing the expected behavior
-- really small devices/sensors being able to queue certificates
+> - really small devices/sensors being able to queue certificates
 
-This change permits disabling queueing certificates.  Whether the
-default should be "disabled" is a separate question.  I'm open to
-comments/suggestions.
+seems like the answer to this one would be don't queue.  I realise it's
+after the submit design, but what about measuring when the key is added
+if there's a policy otherwise measure the keyring when the policy is
+added ... that way no queueing.
 
-Mimi
+> This change permits disabling queueing certificates.  Whether the
+> default should be "disabled" is a separate question.  I'm open to
+> comments/suggestions.
+
+I'm just giving the general rule of thumb for boolean config options. 
+If it's default Y there likely shouldn't be a config option and if it's
+default N the feature should likely not be in the kernel at all.
+
 
