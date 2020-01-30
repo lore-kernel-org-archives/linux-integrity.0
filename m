@@ -2,164 +2,79 @@ Return-Path: <SRS0=FyWX=3T=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43386C2D0DB
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 16:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16221C2D0DB
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 16:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 169C4206D5
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 16:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD1472083E
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 16:53:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JsHO66/2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbgA3QXR (ORCPT
+        id S1727191AbgA3QxX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 30 Jan 2020 11:23:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727332AbgA3QXK (ORCPT
+        Thu, 30 Jan 2020 11:53:23 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:48128 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727158AbgA3QxX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 Jan 2020 11:23:10 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 00UGIdZm120318
-        for <linux-integrity@vger.kernel.org>; Thu, 30 Jan 2020 11:23:09 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2xuvd5n3qq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 30 Jan 2020 11:23:09 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 30 Jan 2020 16:23:07 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 30 Jan 2020 16:23:04 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 00UGN3nB39780488
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Jan 2020 16:23:03 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2CC1742041;
-        Thu, 30 Jan 2020 16:23:03 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 746F54203F;
-        Thu, 30 Jan 2020 16:23:02 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.199.205])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 30 Jan 2020 16:23:02 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
+        Thu, 30 Jan 2020 11:53:23 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8F9FC2008823;
+        Thu, 30 Jan 2020 08:53:22 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8F9FC2008823
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1580403202;
+        bh=6u2e4utCv06M2/EwYUSUx/pCN776xEEyDnF/FBecuMo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JsHO66/2/Zk8xjQZsETKMnysO4RHQBlhEE32CKoz12JcE9hp3ahExAllWTt4WVHNq
+         WiC5IyWPZgb7R7XV8mZsxVpzzpi/AZyQxTUIh1RtXAxrowX3iP1QAXqXZ7e6PfP4RR
+         0fIRArL6Q3oUVnLy/jw50jaaoq2+5SQ/1m9pDGYA=
+Subject: Re: [PATCH v3 2/2] ima: support calculating the boot_aggregate based
+ on different TPM banks
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
 Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-kernel@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v3 1/2] ima: support calculating the boot aggregate based on non-SHA1 algorithms
-Date:   Thu, 30 Jan 2020 11:22:42 -0500
-X-Mailer: git-send-email 2.7.5
-X-TM-AS-GCONF: 00
-x-cbid: 20013016-0016-0000-0000-000002E23C14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20013016-0017-0000-0000-00003345077F
-Message-Id: <1580401363-5593-1-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-01-30_05:2020-01-28,2020-01-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 priorityscore=1501 phishscore=0 suspectscore=1
- impostorscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1911200001 definitions=main-2001300114
+        linux-kernel@vger.kernel.org
+References: <1580401363-5593-1-git-send-email-zohar@linux.ibm.com>
+ <1580401363-5593-2-git-send-email-zohar@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <480498cc-861b-7efa-de6a-52bc651aad01@linux.microsoft.com>
+Date:   Thu, 30 Jan 2020 08:53:45 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
+MIME-Version: 1.0
+In-Reply-To: <1580401363-5593-2-git-send-email-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The boot aggregate is a cumulative SHA1 hash over TPM registers 0 - 7.
-NIST has depreciated the usage of SHA1 in most instances.  Instead of
-continuing to use SHA1 to calculate the boot_aggregate, use the same
-hash algorithm for reading the TPM PCRs as for calculating the boot
-aggregate digest.  Preference is given to the configured IMA default
-hash algorithm.
+On 1/30/2020 8:22 AM, Mimi Zohar wrote:
 
-Although the IMA measurement list boot_aggregate template data contains
-the hash algorithm followed by the digest, allowing verifiers (e.g.
-attesttaion servers) to calculate and verify the boot_aggregate, the
-verifiers might not have the knowledge of what constitutes a good value
-based on a different hash algorithm.
+> +static enum hash_algo get_hash_algo(const char *algname)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < HASH_ALGO__LAST; i++) {
+> +		if (strcmp(algname, hash_algo_name[i]) == 0)
+> +			break;
+> +	}
+> +
+> +	return i;
+> +}
+> +
 
-Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>  # using common alg
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/ima_init.c | 41 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 36 insertions(+), 5 deletions(-)
+ima_digest_data is passed to ima_calc_boot_aggregate(). This struct 
+contains the hash_algo. Can that be passed to 
+ima_calc_boot_aggregate_tfm() instead of using the above function to get 
+the hash_algo?
 
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 195cb4079b2b..e79fdd8cc860 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -27,7 +27,7 @@ struct tpm_chip *ima_tpm_chip;
- /* Add the boot aggregate to the IMA measurement list and extend
-  * the PCR register.
-  *
-- * Calculate the boot aggregate, a SHA1 over tpm registers 0-7,
-+ * Calculate the boot aggregate, a hash over tpm registers 0-7,
-  * assuming a TPM chip exists, and zeroes if the TPM chip does not
-  * exist.  Add the boot aggregate measurement to the measurement
-  * list and extend the PCR register.
-@@ -49,18 +49,49 @@ static int __init ima_add_boot_aggregate(void)
- 					     .filename = boot_aggregate_name };
- 	int result = -ENOMEM;
- 	int violation = 0;
-+	int i;
- 	struct {
- 		struct ima_digest_data hdr;
--		char digest[TPM_DIGEST_SIZE];
-+		char digest[TPM_MAX_DIGEST_SIZE];
- 	} hash;
- 
- 	memset(iint, 0, sizeof(*iint));
- 	memset(&hash, 0, sizeof(hash));
- 	iint->ima_hash = &hash.hdr;
--	iint->ima_hash->algo = HASH_ALGO_SHA1;
--	iint->ima_hash->length = SHA1_DIGEST_SIZE;
--
-+	iint->ima_hash->algo = ima_hash_algo;	/* preferred algorithm */
-+	iint->ima_hash->length = hash_digest_size[ima_hash_algo];
-+
-+	/*
-+	 * With TPM 2.0 hash agility, TPM chips could support multiple TPM
-+	 * PCR banks, allowing firmware to configure and enable different
-+	 * banks.  The SHA1 bank is not necessarily enabled.
-+	 *
-+	 * Use the same hash algorithm for reading the TPM PCRs as for
-+	 * calculating the boot aggregate digest.  Preference is given to
-+	 * the configured IMA default hash algorithm.  Otherwise, use the
-+	 * TPM required banks - SHA256 for TPM 2.0, SHA1 for TPM 1.2.
-+	 */
- 	if (ima_tpm_chip) {
-+		for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++) {
-+			if (ima_hash_algo ==
-+			    ima_tpm_chip->allocated_banks[i].crypto_id)
-+				break;
-+		}
-+
-+		/*
-+		 * The IMA default hash algo is not an enabled TPM PCR
-+		 * bank, use the TPM required bank.
-+		 */
-+		if (i == ima_tpm_chip->nr_allocated_banks) {
-+			if (ima_tpm_chip->flags & TPM_CHIP_FLAG_TPM2) {
-+				iint->ima_hash->algo = HASH_ALGO_SHA256;
-+				iint->ima_hash->length = SHA256_DIGEST_SIZE;
-+			} else {
-+				iint->ima_hash->algo = HASH_ALGO_SHA1;
-+				iint->ima_hash->length = SHA1_DIGEST_SIZE;
-+			}
-+		}
-+
- 		result = ima_calc_boot_aggregate(&hash.hdr);
- 		if (result < 0) {
- 			audit_cause = "hashing_error";
--- 
-2.7.5
-
+  -lakshmi
