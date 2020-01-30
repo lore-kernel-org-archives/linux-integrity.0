@@ -2,261 +2,122 @@ Return-Path: <SRS0=FyWX=3T=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,TRACKER_ID,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C986C33C9E
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 10:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29637C35240
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 15:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC462082E
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 10:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="a/5vHoxF"
+	by mail.kernel.org (Postfix) with ESMTP id 092C12083E
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 15:27:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726922AbgA3K0Z (ORCPT
+        id S1727191AbgA3P11 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 30 Jan 2020 05:26:25 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58162 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726873AbgA3K0Y (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:26:24 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8BFD48EE15F;
-        Thu, 30 Jan 2020 02:26:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1580379984;
-        bh=E7A9rxqJCYWhGKJHrVCUf5EIaNdcgc0ex+Yo5fpTRWs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a/5vHoxF0Ay7WNYppvVieptOR86N8rtoqmaN0VbToGXZdRFx4NbiNw5ViC7B3Xnh+
-         MyalUgz0b3BBMQsc8WU2Udg45t3DCW7UOUxgv/58arCzjKXcHaveSSJ0tSe4znXUPk
-         V68gwl9SXRUe39RseDE3OY53Xl2oSp6DhDGjCZUM=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id stJNiJvJUP-g; Thu, 30 Jan 2020 02:26:24 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 166808EE0CD;
-        Thu, 30 Jan 2020 02:26:22 -0800 (PST)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org
-Subject: [PATCH v5 6/6] security: keys: trusted: implement counter/timer policy
-Date:   Thu, 30 Jan 2020 11:18:12 +0100
-Message-Id: <20200130101812.6271-7-James.Bottomley@HansenPartnership.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200130101812.6271-1-James.Bottomley@HansenPartnership.com>
-References: <20200130101812.6271-1-James.Bottomley@HansenPartnership.com>
+        Thu, 30 Jan 2020 10:27:27 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2329 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727186AbgA3P11 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Jan 2020 10:27:27 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 193B34E794727836E010;
+        Thu, 30 Jan 2020 15:27:25 +0000 (GMT)
+Received: from fraeml715-chm.china.huawei.com (10.206.15.34) by
+ LHREML711-CAH.china.huawei.com (10.201.108.34) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 30 Jan 2020 15:27:24 +0000
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 30 Jan 2020 16:27:24 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
+ Thu, 30 Jan 2020 16:27:24 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>
+CC:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] ima: use the IMA configured hash algo to calculate
+ the boot aggregate
+Thread-Topic: [PATCH 1/2] ima: use the IMA configured hash algo to calculate
+ the boot aggregate
+Thread-Index: AQHV1SsskZfHgOFdME+uHgUEG6qPTKf+632AgAALuoCAAkpuAIAA8HoAgADpZbA=
+Date:   Thu, 30 Jan 2020 15:27:24 +0000
+Message-ID: <2e3ec5f5a4e748a898baeac8a88487ab@huawei.com>
+References: <1580140919-6127-1-git-send-email-zohar@linux.ibm.com>
+         <20200127204941.2ewman4y5nzvkjqe@cantor>
+         <1580160699.5088.64.camel@linux.ibm.com>
+ <20200129083034.GA387@dell5510> <1580338276.4790.8.camel@linux.ibm.com>
+In-Reply-To: <1580338276.4790.8.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This is actually a generic policy allowing a range of comparisons
-against any value set in the TPM Clock, which includes things like the
-reset count, a monotonic millisecond count and the restart count.  The
-most useful comparison is against the millisecond count for expiring
-keys.  However, you have to remember that currently Linux doesn't try
-to sync the epoch timer with the TPM, so the expiration is actually
-measured in how long the TPM itself has been powered on ... the TPM
-timer doesn't count while the system is powered down.  The millisecond
-counter is a u64 quantity found at offset 8 in the timer structure,
-and the <= comparision operand is 9, so a policy set to expire after the
-TPM has been up for 100 seconds would look like
-
-0000016d00000000000f424000080009
-
-Where 0x16d is the counter timer policy code and 0xf4240 is 100 000 in
-hex.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- Documentation/security/keys/trusted-encrypted.rst | 29 ++++++++++++++++
- include/linux/tpm.h                               |  1 +
- security/keys/trusted-keys/tpm2-policy.c          | 40 ++++++++++++++++++++++-
- security/keys/trusted-keys/trusted_tpm2.c         | 36 +++++++++++++++++++-
- 4 files changed, 104 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index b68d3eb73f00..53a6196c7df9 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -241,3 +241,32 @@ about the usage can be found in the file
- Another new format 'enc32' has been defined in order to support encrypted keys
- with payload size of 32 bytes. This will initially be used for nvdimm security
- but may expand to other usages that require 32 bytes payload.
-+
-+Appendix
-+--------
-+
-+TPM 2.0 Policies
-+----------------
-+
-+The current TPM supports PCR lock policies as documented above and
-+CounterTimer policies which can be used to create expiring keys.  One
-+caveat with expiring keys is that the TPM millisecond counter does not
-+update while a system is powered off and Linux does not sync the TPM
-+millisecond count with its internal clock, so the best you can expire
-+in is in terms of how long any given TPM has been powered on.  (FIXME:
-+Linux should simply update the millisecond clock to the current number
-+of seconds past the epoch on boot).
-+
-+A CounterTimer policy is expressed in terms of length and offset
-+against the TPM clock structure (TPMS_TIME_INFO), which looks like the
-+packed structure::
-+
-+    struct tpms_time_info {
-+            u64 uptime;       /* time in ms since last start or reset */
-+	    u64 clock;        /* cumulative uptime in ms */
-+	    u32 resetcount;   /* numer of times the TPM has been reset */
-+	    u32 restartcount; /* number of times the TPM has been restarted */
-+	    u8  safe          /* time was safely loaded from NVRam */
-+    };
-+
-+The usual comparison for expiring keys is against clock, at offset 8.
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index e32e9728adce..5026a06977e1 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -233,6 +233,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_PCR_EXTEND	        = 0x0182,
- 	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
- 	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
-+	TPM2_CC_POLICY_PASSWORD		= 0x018c,
- 	TPM2_CC_CREATE_LOADED           = 0x0191,
- 	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
- };
-diff --git a/security/keys/trusted-keys/tpm2-policy.c b/security/keys/trusted-keys/tpm2-policy.c
-index 4cc478feaeb1..90da9fa4ca02 100644
---- a/security/keys/trusted-keys/tpm2-policy.c
-+++ b/security/keys/trusted-keys/tpm2-policy.c
-@@ -197,7 +197,8 @@ int tpm2_generate_policy_digest(struct tpm2_policies *pols,
- 			len = *plen;
- 		}
- 
--		crypto_shash_update(sdesc, policy, len);
-+		if (len)
-+			crypto_shash_update(sdesc, policy, len);
- 
- 		/* now output the intermediate to the policydigest */
- 		crypto_shash_final(sdesc, policydigest);
-@@ -332,6 +333,16 @@ int tpm2_get_policy_session(struct tpm_chip *chip, struct tpm2_policies *pols,
- 		u32 cmd = pols->code[i];
- 		struct tpm_buf buf;
- 
-+		if (cmd == TPM2_CC_POLICY_AUTHVALUE)
-+			/*
-+			 * both PolicyAuthValue and PolicyPassword
-+			 * hash to the same thing, but one triggers
-+			 * HMAC authentication and the other simple
-+			 * authentication.  Since we have no HMAC
-+			 * code, we're choosing the simple
-+			 */
-+			cmd = TPM2_CC_POLICY_PASSWORD;
-+
- 		rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, cmd);
- 		if (rc)
- 			return rc;
-@@ -352,8 +363,35 @@ int tpm2_get_policy_session(struct tpm_chip *chip, struct tpm2_policies *pols,
- 			tpm_buf_append(&buf, pols->policies[i],
- 				       pols->len[i] - pols->hash_size);
- 			break;
-+
-+		case TPM2_CC_POLICY_COUNTER_TIMER: {
-+			/*
-+			 * the format of this is the last two u16
-+			 * quantities are the offset and operation
-+			 * respectively.  The rest is operandB which
-+			 * must be zero padded in a hash digest
-+			 */
-+			u16 opb_len = pols->len[i] - 4;
-+
-+			if (opb_len > pols->hash_size)
-+				return -EINVAL;
-+
-+			tpm_buf_append_u16(&buf, opb_len);
-+			tpm_buf_append(&buf, pols->policies[i], opb_len);
-+
-+			/* offset and operand*/
-+			tpm_buf_append(&buf, pols->policies[i] + opb_len, 4);
-+			failure = "Counter Timer";
-+
-+			break;
-+		}
-+
- 		default:
- 			failure = "unknown policy";
-+			if (pols->len[i])
-+				tpm_buf_append(&buf, pols->policies[i],
-+					       pols->len[i]);
-+
- 			break;
- 		}
- 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 293db0aaada6..63b0ff1d3385 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -248,6 +248,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 	u32 flags;
- 	int i;
- 	int rc;
-+	static const int POLICY_SIZE = 2 * PAGE_SIZE;
- 
- 	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
- 		if (options->hash == tpm2_hash_map[i].crypto_id) {
-@@ -268,7 +269,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		/* 4 array len, 2 hash alg */
- 		const int len = 4 + 2 + options->pcrinfo_len;
- 
--		pols = kmalloc(sizeof(*pols) + len, GFP_KERNEL);
-+		pols = kmalloc(POLICY_SIZE, GFP_KERNEL);
- 		if (!pols)
- 			return -ENOMEM;
- 
-@@ -289,6 +290,39 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * if we already have a policy, we have to add authorization
-+	 * to it.  If we don't, we can simply follow the usual
-+	 * non-policy route.
-+	 */
-+	if (options->blobauth_len != 0 && payload->policies) {
-+		struct tpm2_policies *pols;
-+		static u8 *scratch;
-+		int i;
-+		bool found = false;
-+
-+		pols = payload->policies;
-+
-+		/* make sure it's not already in policy */
-+		for (i = 0; i < pols->count; i++) {
-+			if (pols->code[i] == TPM2_CC_POLICY_AUTHVALUE) {
-+				found = true;
-+
-+				break;
-+			}
-+		}
-+
-+		if (!found) {
-+			i = pols->count++;
-+			scratch = pols->policies[i - 1] + pols->len[i - 1];
-+
-+			/* the TPM2_PolicyPassword command has no payload */
-+			pols->policies[i] = scratch;
-+			pols->len[i] = 0;
-+			pols->code[i] = TPM2_CC_POLICY_AUTHVALUE;
-+		}
-+	}
-+
- 	if (payload->policies) {
- 		rc = tpm2_generate_policy_digest(payload->policies,
- 						 options->hash,
--- 
-2.16.4
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1pbnRlZ3JpdHktb3du
+ZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgtaW50ZWdyaXR5LQ0KPiBvd25lckB2Z2Vy
+Lmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBNaW1pIFpvaGFyDQo+IFNlbnQ6IFdlZG5lc2RheSwg
+SmFudWFyeSAyOSwgMjAyMCAxMTo1MSBQTQ0KPiBUbzogUGV0ciBWb3JlbCA8cHZvcmVsQHN1c2Uu
+Y3o+DQo+IENjOiBKZXJyeSBTbml0c2VsYWFyIDxqc25pdHNlbEByZWRoYXQuY29tPjsgbGludXgt
+aW50ZWdyaXR5QHZnZXIua2VybmVsLm9yZzsNCj4gSmFtZXMgQm90dG9tbGV5IDxKYW1lcy5Cb3R0
+b21sZXlAaGFuc2VucGFydG5lcnNoaXAuY29tPjsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc7IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT4NCj4gU3ViamVj
+dDogUmU6IFtQQVRDSCAxLzJdIGltYTogdXNlIHRoZSBJTUEgY29uZmlndXJlZCBoYXNoIGFsZ28g
+dG8gY2FsY3VsYXRlDQo+IHRoZSBib290IGFnZ3JlZ2F0ZQ0KPiANCj4gT24gV2VkLCAyMDIwLTAx
+LTI5IGF0IDA5OjMwICswMTAwLCBQZXRyIFZvcmVsIHdyb3RlOg0KPiA+IEhpIE1pbWksDQo+ID4N
+Cj4gPiBSZXZpZXdlZC1ieTogUGV0ciBWb3JlbCA8cHZvcmVsQHN1c2UuY3o+DQo+ID4NCj4gPiA+
+IFRoZSBvcmlnaW5hbCBMVFAgaW1hX2Jvb3RfYWdncmVnYXRlLmMgdGVzdCBuZWVkZWQgdG8gYmUg
+dXBkYXRlZCB0bw0KPiA+ID4gc3VwcG9ydCBUUE0gMi4wIGJlZm9yZSB0aGlzIGNoYW5nZS4gwqBG
+b3IgVFBNIDIuMCwgdGhlIFBDUnMgYXJlIG5vdA0KPiA+ID4gZXhwb3J0ZWQuIMKgV2l0aCB0aGlz
+IGNoYW5nZSwgdGhlIGtlcm5lbCBjb3VsZCBiZSByZWFkaW5nIFBDUnMgZnJvbSBhDQo+ID4gPiBU
+UE0gYmFuayBvdGhlciB0aGFuIFNIQTEgYW5kIGNhbGN1bGF0aW5nIHRoZSBib290X2FnZ3JlZ2F0
+ZSBiYXNlZCBvbg0KPiBhDQo+ID4gPiBkaWZmZXJlbnQgaGFzaCBhbGdvcml0aG0gYXMgd2VsbC4g
+wqBJJ20gbm90IHN1cmUgaG93IGEgcmVtb3RlIHZlcmlmaWVyDQo+ID4gPiB3b3VsZCBrbm93IHdo
+aWNoIFRQTSBiYW5rIHdhcyByZWFkLCB3aGVuIGNhbGN1bGF0aW5nIHRoZSBib290LQ0KPiA+ID4g
+YWdncmVnYXRlLg0KPiA+IE1pbWksIGRvIHlvdSBwbGFuIHRvIGRvIHVwZGF0ZSBMVFAgdGVzdD8N
+Cj4gDQo+IEluIG9yZGVyIHRvIHRlc3QgUm9iZXJ0bydzIHBhdGNoZXMgdGhhdCBjYWxjdWxhdGVz
+IGFuZCBleHRlbmRzIHRoZQ0KPiBkaWZmZXJlbnQgVFBNIGJhbmtzIHdpdGggdGhlIGFwcHJvcHJp
+YXRlIGhhc2hlcywgd2UnbGwgbmVlZCBzb21lIHRlc3QNCj4gdG8gdmVyaWZ5IHRoYXQgaXQgaXMg
+d29ya2luZyBwcm9wZXJseS4gwqBBcyB0byB3aGV0aGVyIHRoaXMgd2lsbCBiZSBpbg0KPiBMVFAg
+b3IgaW1hLWV2bS11dGlscywgSSdtIG5vdCBzdXJlLg0KDQphdHRlc3QtdG9vbHMgKGh0dHBzOi8v
+Z2l0aHViLmNvbS9ldWxlcm9zL2F0dGVzdC10b29scywgYnJhbmNoIDAuMi1kZXZlbCkgaGFzIHRo
+ZQ0KYWJpbGl0eSB0byBwYXJzZSB0aGUgQklPUyBhbmQgSU1BIGV2ZW50IGxvZ3MsIGFuZCB0byBj
+b21wYXJlIGJvb3RfYWdncmVnYXRlDQp3aXRoIHRoZSBkaWdlc3Qgb2YgZmluYWwgUENSIHZhbHVl
+cyBvYnRhaW5lZCBieSBwZXJmb3JtaW5nIGluIHNvZnR3YXJlIHRoZSBQQ1INCmV4dGVuZCBvcGVy
+YXRpb24gd2l0aCBkaWdlc3RzIGluIHRoZSBCSU9TIGV2ZW50IGxvZy4NCg0KVG8gcGVyZm9ybSB0
+aGUgdGVzdCwgaXQgaXMgbmVjZXNzYXJ5IHRvIGhhdmUgYSBjb21wbGV0ZSBCSU9TIGV2ZW50IGxv
+Zy4NCg0KQ3JlYXRlIHJlcS5qc29uIHdpdGggdGhpcyBjb250ZW50Og0KLS0tDQp7DQogICJyZXFz
+Ijp7DQogICAgImR1bW15fHZlcmlmeSI6IiIsDQogICAgImltYV9ib290X2FnZ3JlZ2F0ZXx2ZXJp
+ZnkiOiIiDQogIH0NCn0NCi0tLQ0KDQpXaXRoIHRoZSByZXF1aXJlbWVudHMgYWJvdmUsIHdlIGFy
+ZSB0ZWxsaW5nIGF0dGVzdC10b29scyB0byB2ZXJpZnkgb25seQ0KYm9vdF9hZ2dyZWdhdGUuIFdp
+dGhvdXQgdGhlIGR1bW15IHJlcXVpcmVtZW50LCB2ZXJpZmljYXRpb24gd291bGQNCmZhaWwgKEJJ
+T1MgYW5kIHJlbWFpbmluZyBJTUEgbWVhc3VyZW1lbnQgZW50cmllcyBhcmUgbm90IHByb2Nlc3Nl
+ZCkuDQoNCk9uIHNlcnZlciBzaWRlIHJ1bjoNCiMgYXR0ZXN0X3JhX3NlcnZlciAtcCAxMCAtciBy
+ZXEuanNvbiAtcyAtaQ0KDQotcyBkaXNhYmxlcyBUUE0gc2lnbmF0dXJlIHZlcmlmaWNhdGlvbg0K
+LWkgYWxsb3dzIElNQSB2aW9sYXRpb25zDQoNClRvIGVuYWJsZSBUUE0gc2lnbmF0dXJlIHZlcmlm
+aWNhdGlvbiBpdCBpcyBuZWNlc3NhcnkgdG8gaGF2ZSBhIHZhbGlkIEFLDQpjZXJ0aWZpY2F0ZS4g
+SXQgY2FuIGJlIG9idGFpbmVkIGJ5IGZvbGxvd2luZyB0aGUgaW5zdHJ1Y3Rpb25zIGF0Og0KDQpo
+dHRwczovL2dpdGh1Yi5jb20vZXVsZXJvcy9hdHRlc3QtdG9vbHMvYmxvYi8wLjItZGV2ZWwvUkVB
+RE1FDQoNCk9uIGNsaWVudCBzaWRlIHJ1bjoNCiMgZWNobyB0ZXN0ID4gYWlrX2NlcnQucGVtDQoj
+IGVjaG8gYWlrX2NlcnQucGVtID4gbGlzdF9wcml2YWN5X2NhDQojIGF0dGVzdF9yYV9jbGllbnQg
+LUENCg0KVGhlIGNvbW1hbmQgYWJvdmUgZ2VuZXJhdGVzIGFuIEFLLg0KDQojIGF0dGVzdF9yYV9j
+bGllbnQgLXMgPHNlcnZlciBJUD4gLXEgLXAgMTAgLVAgPFBDUiBhbGdvPiAtYiAtaQ0KDQpUaGUg
+Y29tbWFuZCBhYm92ZSBzZW5kcyB0aGUgVFBNIHF1b3RlIGFuZCB0aGUgZXZlbnQgbG9ncw0KdG8g
+dGhlIFJBIHNlcnZlciBhbmQgZ2V0cyB0aGUgcmVzcG9uc2UgKHN1Y2Nlc3NmdWwvZmFpbGVkDQp2
+ZXJpZmljYXRpb24pLg0KDQotYiBpbmNsdWRlcyB0aGUgQklPUyBldmVudCBsb2cgZnJvbSBzZWN1
+cml0eWZzDQotaSBpbmNsdWRlcyB0aGUgSU1BIGV2ZW50IGxvZyBmcm9tIHNlY3VyaXR5ZnMNCg0K
+VG8gY2hlY2sgdGhhdCBib290X2FnZ3JlZ2F0ZSBpcyBjYWxjdWxhdGVkIHByb3Blcmx5LCB1c2Ug
+LVAgc2hhMjU2DQppbiBhdHRlc3RfcmFfY2xpZW50IGFuZCBzZXQgaW1hX2hhc2g9c2hhMjU2IGlu
+IHRoZSBrZXJuZWwgY29tbWFuZA0KbGluZS4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9H
+SUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBl
+bmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
