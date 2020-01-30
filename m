@@ -2,174 +2,85 @@ Return-Path: <SRS0=FyWX=3T=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E1EC33C9E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F14C35240
 	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 10:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442262082E
+	by mail.kernel.org (Postfix) with ESMTP id 99044206D5
 	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jan 2020 10:23:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="i0DoB8N2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgA3KXY (ORCPT
+        id S1727036AbgA3KXY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Thu, 30 Jan 2020 05:23:24 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58002 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727036AbgA3KXX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 30 Jan 2020 05:23:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5CC108EE15F;
-        Thu, 30 Jan 2020 02:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1580379803;
-        bh=2iOKaZHGP0uDfMPHBn9NrDHpR8S/DQ7NPGktSuyYFXo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i0DoB8N2zIeadwSPJGQ6gxpbnN9QCEJE7X+BtLNTu+CaWkxHuZ15xThbKy0BW4p6j
-         dAf/LgnZUd01ugPC6SgWTpxRHk8WbMvXRaJiOyvTEfO0AuJ2/WoZKpFBIE0Srf/2OP
-         +bcy+ayOEd6fny7MTEvTOo24lTXFFq8tH199/0Kc=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WRCUf0rOqjFq; Thu, 30 Jan 2020 02:23:22 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DDEEC8EE0CD;
-        Thu, 30 Jan 2020 02:23:20 -0800 (PST)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+Received: from relay.sw.ru ([185.231.240.75]:49630 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726922AbgA3KXY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Jan 2020 05:23:24 -0500
+Received: from vvs-ws.sw.ru ([172.16.24.21])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <vvs@virtuozzo.com>)
+        id 1ix6yj-0003u1-Mp; Thu, 30 Jan 2020 13:23:17 +0300
+From:   Vasily Averin <vvs@virtuozzo.com>
+Subject: [PATCH v2 1/2] tpm: tpm1_bios_measurements_next should increase
+ position index
 To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org
-Subject: [PATCH v5 3/6] security: keys: trusted fix tpm2 authorizations
-Date:   Thu, 30 Jan 2020 11:18:09 +0100
-Message-Id: <20200130101812.6271-4-James.Bottomley@HansenPartnership.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200130101812.6271-1-James.Bottomley@HansenPartnership.com>
-References: <20200130101812.6271-1-James.Bottomley@HansenPartnership.com>
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <e72b6fda6c4ff0d54af37d064d66b883d7ea48e7.camel@linux.intel.com>
+Message-ID: <3f4f2483-66cf-8693-986d-bf2821cdd879@virtuozzo.com>
+Date:   Thu, 30 Jan 2020 13:23:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <e72b6fda6c4ff0d54af37d064d66b883d7ea48e7.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-In TPM 1.2 an authorization was a 20 byte number.  The spec actually
-recommended you to hash variable length passwords and use the sha1
-hash as the authorization.  Because the spec doesn't require this
-hashing, the current authorization for trusted keys is a 40 digit hex
-number.  For TPM 2.0 the spec allows the passing in of variable length
-passwords and passphrases directly, so we should allow that in trusted
-keys for ease of use.  Update the 'blobauth' parameter to take this
-into account, so we can now use plain text passwords for the keys.
+If seq_file .next function does not change position index,
+read after non-zero lseek can generate unexpected output.
+In case of /sys/kernel/security/tpm0/ascii_bios_measurements
+and binary_bios_measurements:
+1) read after lseek beyond end of file generates whole last line.
+2) read after lseek to middle of last line generates
+expected end of last line and unexpected whole last line once again.
 
-so before
-
-keyctl add trusted kmk "new 32 blobauth=f572d396fae9206628714fb2ce00f72e94f2258f"
-
-after we will accept both the old hex sha1 form as well as a new
-directly supplied password:
-
-keyctl add trusted kmk "new 32 blobauth=hello keyhandle=81000001"
-
-Since a sha1 hex code must be exactly 40 bytes long and a direct
-password must be 20 or less, we use the length as the discriminator
-for which form is input.
-
-Note this is both and enhancement and a potential bug fix.  The TPM
-2.0 spec requires us to strip leading zeros, meaning empyty
-authorization is a zero length HMAC whereas we're currently passing in
-20 bytes of zeros.  A lot of TPMs simply accept this as OK, but the
-Microsoft TPM emulator rejects it with TPM_RC_BAD_AUTH, so this patch
-makes the Microsoft TPM emulator work with trusted keys.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: stable@vger.kernel.org
+Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- include/keys/trusted-type.h               |  1 +
- security/keys/trusted-keys/trusted_tpm1.c | 26 +++++++++++++++++++++-----
- security/keys/trusted-keys/trusted_tpm2.c | 10 ++++++----
- 3 files changed, 28 insertions(+), 9 deletions(-)
+ drivers/char/tpm/eventlog/tpm1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
-index a94c03a61d8f..b2ed3481c6a0 100644
---- a/include/keys/trusted-type.h
-+++ b/include/keys/trusted-type.h
-@@ -30,6 +30,7 @@ struct trusted_key_options {
- 	uint16_t keytype;
- 	uint32_t keyhandle;
- 	unsigned char keyauth[TPM_DIGEST_SIZE];
-+	uint32_t blobauth_len;
- 	unsigned char blobauth[TPM_DIGEST_SIZE];
- 	uint32_t pcrinfo_len;
- 	unsigned char pcrinfo[MAX_PCRINFO_SIZE];
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index d2c5ec1e040b..3f33d3f74d3c 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -781,12 +781,28 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
- 				return -EINVAL;
- 			break;
- 		case Opt_blobauth:
--			if (strlen(args[0].from) != 2 * SHA1_DIGEST_SIZE)
--				return -EINVAL;
--			res = hex2bin(opt->blobauth, args[0].from,
--				      SHA1_DIGEST_SIZE);
--			if (res < 0)
-+			/*
-+			 * TPM 1.2 authorizations are sha1 hashes
-+			 * passed in as hex strings.  TPM 2.0
-+			 * authorizations are simple passwords
-+			 * (although it can take a hash as well)
-+			 */
-+			opt->blobauth_len = strlen(args[0].from);
-+			if (opt->blobauth_len == 2 * TPM_DIGEST_SIZE) {
-+				res = hex2bin(opt->blobauth, args[0].from,
-+					      TPM_DIGEST_SIZE);
-+				if (res < 0)
-+					return -EINVAL;
-+
-+				opt->blobauth_len = TPM_DIGEST_SIZE;
-+			} else if (tpm2 &&
-+				   opt->blobauth_len <= sizeof(opt->blobauth)) {
-+				memcpy(opt->blobauth, args[0].from,
-+				       opt->blobauth_len);
-+			} else {
- 				return -EINVAL;
-+			}
-+
- 			break;
- 		case Opt_migratable:
- 			if (*args[0].from == '0')
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 08ec7f48f01d..b4a5058107c2 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -91,10 +91,12 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 			     TPM_DIGEST_SIZE);
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 739b1d9..2c96977 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -115,6 +115,7 @@ static void *tpm1_bios_measurements_next(struct seq_file *m, void *v,
+ 	u32 converted_event_size;
+ 	u32 converted_event_type;
  
- 	/* sensitive */
--	tpm_buf_append_u16(&buf, 4 + TPM_DIGEST_SIZE + payload->key_len + 1);
-+	tpm_buf_append_u16(&buf, 4 + options->blobauth_len + payload->key_len + 1);
-+
-+	tpm_buf_append_u16(&buf, options->blobauth_len);
-+	if (options->blobauth_len)
-+		tpm_buf_append(&buf, options->blobauth, options->blobauth_len);
++	(*pos)++;
+ 	converted_event_size = do_endian_conversion(event->event_size);
  
--	tpm_buf_append_u16(&buf, TPM_DIGEST_SIZE);
--	tpm_buf_append(&buf, options->blobauth, TPM_DIGEST_SIZE);
- 	tpm_buf_append_u16(&buf, payload->key_len + 1);
- 	tpm_buf_append(&buf, payload->key, payload->key_len);
- 	tpm_buf_append_u8(&buf, payload->migratable);
-@@ -258,7 +260,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
- 			     NULL /* nonce */, 0,
- 			     TPM2_SA_CONTINUE_SESSION,
- 			     options->blobauth /* hmac */,
--			     TPM_DIGEST_SIZE);
-+			     options->blobauth_len);
+ 	v += sizeof(struct tcpa_event) + converted_event_size;
+@@ -132,7 +133,6 @@ static void *tpm1_bios_measurements_next(struct seq_file *m, void *v,
+ 	    ((v + sizeof(struct tcpa_event) + converted_event_size) > limit))
+ 		return NULL;
  
- 	rc = tpm_send(chip, buf.data, tpm_buf_length(&buf));
- 	if (rc > 0)
+-	(*pos)++;
+ 	return v;
+ }
+ 
 -- 
-2.16.4
+1.8.3.1
 
