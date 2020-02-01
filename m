@@ -1,87 +1,74 @@
-Return-Path: <SRS0=MZQ1=3U=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Ioev=3V=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6199C2D0DB
-	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jan 2020 15:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28CB1C33CB3
+	for <linux-integrity@archiver.kernel.org>; Sat,  1 Feb 2020 17:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4C8206D5
-	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jan 2020 15:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 013DE206E3
+	for <linux-integrity@archiver.kernel.org>; Sat,  1 Feb 2020 17:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbgAaPVu convert rfc822-to-8bit (ORCPT
+        id S1726789AbgBARDc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 31 Jan 2020 10:21:50 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2342 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728860AbgAaPVt (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 31 Jan 2020 10:21:49 -0500
-Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 5C4899BEC3CCF11B7645;
-        Fri, 31 Jan 2020 15:21:47 +0000 (GMT)
-Received: from fraeml701-chm.china.huawei.com (10.206.15.50) by
- lhreml705-cah.china.huawei.com (10.201.108.46) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 31 Jan 2020 15:21:47 +0000
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml701-chm.china.huawei.com (10.206.15.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Fri, 31 Jan 2020 16:21:46 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1713.004;
- Fri, 31 Jan 2020 16:21:46 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "james.bottomley@hansenpartnership.com" 
-        <james.bottomley@hansenpartnership.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH 8/8] ima: switch to ima_hash_algo for boot aggregate
-Thread-Topic: [PATCH 8/8] ima: switch to ima_hash_algo for boot aggregate
-Thread-Index: AQHV1TQ/cbv5dz78j0O1U+btlk5ShagE6FxQ
-Date:   Fri, 31 Jan 2020 15:21:46 +0000
-Message-ID: <acb84e249d524ee5a6feddfacc674531@huawei.com>
-References: <20200127170443.21538-1-roberto.sassu@huawei.com>
- <20200127170443.21538-9-roberto.sassu@huawei.com>
-In-Reply-To: <20200127170443.21538-9-roberto.sassu@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Sat, 1 Feb 2020 12:03:32 -0500
+Received: from mga07.intel.com ([134.134.136.100]:38216 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726708AbgBARDc (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 1 Feb 2020 12:03:32 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2020 09:03:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,390,1574150400"; 
+   d="scan'208";a="278352085"
+Received: from mtaylo3-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.87.188])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Feb 2020 09:03:30 -0800
+Date:   Sat, 1 Feb 2020 19:03:29 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v2 2/2] tpm: tpm2_bios_measurements_next should increase
+ position index
+Message-ID: <20200201170329.GA14875@linux.intel.com>
+References: <e72b6fda6c4ff0d54af37d064d66b883d7ea48e7.camel@linux.intel.com>
+ <16bde2d6-4208-e478-0ac3-163b5c3a1eaa@virtuozzo.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <16bde2d6-4208-e478-0ac3-163b5c3a1eaa@virtuozzo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> -----Original Message-----
-> From: Roberto Sassu
-> Sent: Monday, January 27, 2020 6:05 PM
-> To: zohar@linux.ibm.com; jarkko.sakkinen@linux.intel.com;
-> james.bottomley@hansenpartnership.com; linux-integrity@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org; linux-kernel@vger.kernel.org;
-> Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>; Roberto Sassu
-> <roberto.sassu@huawei.com>
-> Subject: [PATCH 8/8] ima: switch to ima_hash_algo for boot aggregate
+On Thu, Jan 30, 2020 at 01:23:21PM +0300, Vasily Averin wrote:
+> If seq_file .next function does not change position index,
+> read after non-zero lseek can generate unexpected output.
 
-I will remove this patch from the patch set.
+Is it unwanted or unexpected? Unexpected would be mean random
+output. I don't think that is the case. Please describe more
+throughly.
 
-[PATCH v3 1/2] ima: support calculating the boot aggregate based on non-SHA1 algorithms
-[PATCH v3 2/2] ima: support calculating the boot_aggregate based on different TPM banks
+> For /sys/kernel/security/tpm0/binary_bios_measurements:
+> 1) read after lseek beyond end of file generates whole last line.
+> 2) read after lseek to middle of last line generates
+> expected end of last line and unexpected whole last line once again.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+> 
+No empty line here.
 
-by Mimi will provide similar functionality.
+> https://bugzilla.kernel.org/show_bug.cgi?id=206283
 
-Roberto
+"Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283"
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+/Jarkko
