@@ -1,74 +1,76 @@
-Return-Path: <SRS0=6rDo=3W=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=DCcM=3X=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBA7C35249
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Feb 2020 00:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C88BC33C9E
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Feb 2020 05:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E4C2067C
-	for <linux-integrity@archiver.kernel.org>; Sun,  2 Feb 2020 00:19:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=guzman.io header.i=@guzman.io header.b="XMxTWIy/"
+	by mail.kernel.org (Postfix) with ESMTP id EDD1620661
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Feb 2020 05:15:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbgBBATP (ORCPT
+        id S1726018AbgBCFPJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 1 Feb 2020 19:19:15 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42452 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbgBBATP (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 1 Feb 2020 19:19:15 -0500
-Received: by mail-lj1-f196.google.com with SMTP id d10so10909750ljl.9
-        for <linux-integrity@vger.kernel.org>; Sat, 01 Feb 2020 16:19:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=guzman.io; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=vb60b9fB1hi2breaQKh2O/9Swlzf9GYb2tT75kQEfaw=;
-        b=XMxTWIy/k0UW5CwCevAleDrqFno+ELgfTgVOnRGaYqgSrrwok0fH46IepYIb31gRM3
-         T7opIICxXYg73oXIiEq2w02Y1FifRlXqDNQrOzDOoZPs77862ge9RyUYK7wMP3Dje+hj
-         yKm0iORmMAIBnTs7kcg9u9Vyb3+LYu4o9HUPE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=vb60b9fB1hi2breaQKh2O/9Swlzf9GYb2tT75kQEfaw=;
-        b=NwmptAWDS4WNM59O0GQB/fh2Dp4zT14+NQPhYh4gy/YcQaUkwqiQT2ICM67PZMePMZ
-         Ev7lSsG6oaK/oS4KR00iVxh3FTsGXQOc1WKnd5j1wn0y2YdhDlwJp34Tojo2Nv0p58xh
-         UJYOIJoGfT9w61+BaXfxoNWafxxS/8yN0BdaPOsvW+1tB0U2fqCCP6efCl8KWDOVyAAJ
-         ihaFKd8e07dHWIVv3bR4NxVnz36dTptbzDXAcyCEsU11rIECEgXpxDqA6YHNnlQljpts
-         fY5vVI9dU2Btx/Y7KsY33EfDDciXkbgZclQzeyHhvAw8oNvkDtQE5YGDniitgFqEm3M0
-         1f4Q==
-X-Gm-Message-State: APjAAAXWnDuvv43EXbXbHStcgeyHRbmnS7Ydsr3khVgnH71kuqqjC1C5
-        ovyd4YTllAJ1q5E/CDQ86+NzHzara7LnCb4LOrnPpaO7KFPpBQ==
-X-Google-Smtp-Source: APXvYqyQCWMs/pZyt7sO00Vg+ucrqJkdslFH2CDzv26m15lk6F4ZtUdncjyG3O/ZvykegCrGMtIF2JWbjzpNGorJKDE=
-X-Received: by 2002:a2e:9ad8:: with SMTP id p24mr9562407ljj.148.1580602751580;
- Sat, 01 Feb 2020 16:19:11 -0800 (PST)
+        Mon, 3 Feb 2020 00:15:09 -0500
+Received: from relay.sw.ru ([185.231.240.75]:44952 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725768AbgBCFPJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 3 Feb 2020 00:15:09 -0500
+Received: from vvs-ws.sw.ru ([172.16.24.21])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <vvs@virtuozzo.com>)
+        id 1iyU4V-0002zD-4G; Mon, 03 Feb 2020 08:14:55 +0300
+Subject: Re: [PATCH v2 2/2] tpm: tpm2_bios_measurements_next should increase
+ position index
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <e72b6fda6c4ff0d54af37d064d66b883d7ea48e7.camel@linux.intel.com>
+ <16bde2d6-4208-e478-0ac3-163b5c3a1eaa@virtuozzo.com>
+ <20200201170329.GA14875@linux.intel.com>
+From:   Vasily Averin <vvs@virtuozzo.com>
+Message-ID: <3ffb8968-fccc-9f2e-7931-01c634932d5e@virtuozzo.com>
+Date:   Mon, 3 Feb 2020 08:14:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-From:   Alex Guzman <alex@guzman.io>
-Date:   Sat, 1 Feb 2020 16:19:01 -0800
-Message-ID: <CAJ7-PMaLw_H8Fc1tyoT95f5EWpS3nvJt1Wx9=xpuiSotJ2h9VA@mail.gmail.com>
-Subject: Debugging errors with Dell XPS 9560 TPM
-To:     linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200201170329.GA14875@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hey there! I reported a bug on the bug tracker a bit ago but haven't
-seen any movement, so I figured I'd drop in here. My XPS 9560 has been
-having issues with its TPM, and all commands will fail with error 1
-when operating on the TPM device. I managed to bisect it back to
-commit 4d6ebc4c4950595414722dfadd0b361f5a05d37e (tpm: fix invalid
-locking in NONBLOCKING mode) though it began failing with error 14
-(bad address) at that point.
+On 2/1/20 8:03 PM, Jarkko Sakkinen wrote:
+> On Thu, Jan 30, 2020 at 01:23:21PM +0300, Vasily Averin wrote:
+>> If seq_file .next function does not change position index,
+>> read after non-zero lseek can generate unexpected output.
+> 
+> Is it unwanted or unexpected? Unexpected would be mean random
+> output. I don't think that is the case. Please describe more
+> throughly.
 
-I reported the bug at
-https://bugzilla.kernel.org/show_bug.cgi?id=206275 and attached some
-dmesg logs from boot there. Does anyone have any suggestions for
-additional debugging or such to figure out what's happening here?
+If .next function does not change position index, 
+following .show function will repeat output related to current position index.
 
-- Alex
+>> For /sys/kernel/security/tpm0/binary_bios_measurements:
+>> 1) read after lseek beyond end of file generates whole last line.
+>> 2) read after lseek to middle of last line generates
+>> expected end of last line and unexpected whole last line once again.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
+>>
+> No empty line here.
+> 
+>> https://bugzilla.kernel.org/show_bug.cgi?id=206283
+> 
+> "Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283"
+> 
+> /Jarkko
+> 
