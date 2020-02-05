@@ -2,72 +2,93 @@ Return-Path: <SRS0=tL6x=3Z=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7354C35247
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Feb 2020 22:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B429C35247
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Feb 2020 23:41:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9247E217BA
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Feb 2020 22:04:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12BD920730
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Feb 2020 23:41:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbgBEWEC (ORCPT
+        id S1727496AbgBEXls (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 5 Feb 2020 17:04:02 -0500
-Received: from mga02.intel.com ([134.134.136.20]:57820 "EHLO mga02.intel.com"
+        Wed, 5 Feb 2020 18:41:48 -0500
+Received: from mga06.intel.com ([134.134.136.31]:21263 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727033AbgBEWEB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 5 Feb 2020 17:04:01 -0500
+        id S1727170AbgBEXls (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 5 Feb 2020 18:41:48 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 14:04:01 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 15:41:47 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,407,1574150400"; 
-   d="scan'208";a="404291428"
-Received: from gtobin-mobl1.ger.corp.intel.com (HELO localhost) ([10.251.85.85])
-  by orsmga005.jf.intel.com with ESMTP; 05 Feb 2020 14:04:00 -0800
-Date:   Thu, 6 Feb 2020 00:03:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH v2 2/2] tpm: tpm2_bios_measurements_next should increase
- position index
-Message-ID: <20200205220359.GA28111@linux.intel.com>
-References: <e72b6fda6c4ff0d54af37d064d66b883d7ea48e7.camel@linux.intel.com>
- <16bde2d6-4208-e478-0ac3-163b5c3a1eaa@virtuozzo.com>
- <20200201170329.GA14875@linux.intel.com>
- <3ffb8968-fccc-9f2e-7931-01c634932d5e@virtuozzo.com>
+   d="scan'208";a="432036325"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Feb 2020 15:41:45 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1izUIj-0004su-6l; Thu, 06 Feb 2020 07:41:45 +0800
+Date:   Thu, 6 Feb 2020 07:41:18 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     kbuild-all@lists.01.org, zohar@linux.ibm.com,
+        James.Bottomley@HansenPartnership.com,
+        jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v2 6/8] ima: Allocate and initialize tfm for each PCR bank
+Message-ID: <202002060720.CVTYGnC7%lkp@intel.com>
+References: <20200205103317.29356-7-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3ffb8968-fccc-9f2e-7931-01c634932d5e@virtuozzo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200205103317.29356-7-roberto.sassu@huawei.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 03, 2020 at 08:14:53AM +0300, Vasily Averin wrote:
-> On 2/1/20 8:03 PM, Jarkko Sakkinen wrote:
-> > On Thu, Jan 30, 2020 at 01:23:21PM +0300, Vasily Averin wrote:
-> >> If seq_file .next function does not change position index,
-> >> read after non-zero lseek can generate unexpected output.
-> > 
-> > Is it unwanted or unexpected? Unexpected would be mean random
-> > output. I don't think that is the case. Please describe more
-> > throughly.
-> 
-> If .next function does not change position index, 
-> following .show function will repeat output related to current position index.
+Hi Roberto,
 
-Thank you. That is clear and concise.
+Thank you for the patch! Perhaps something to improve:
 
-Then, please put that to the commit message instead of "unexpected
-output".
+[auto build test WARNING on integrity/next-integrity]
+[also build test WARNING on jss-tpmdd/next v5.5 next-20200205]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-/Jarkko
+url:    https://github.com/0day-ci/linux/commits/Roberto-Sassu/ima-support-stronger-algorithms-for-attestation/20200205-233901
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-154-g1dc00f87-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> security/integrity/ima/ima_crypto.c:72:12: sparse: sparse: symbol 'ima_init_ima_crypto' was not declared. Should it be static?
+   security/integrity/ima/ima_crypto.c:545:36: sparse: sparse: invalid assignment: |=
+   security/integrity/ima/ima_crypto.c:545:36: sparse:    left side has type unsigned int
+   security/integrity/ima/ima_crypto.c:545:36: sparse:    right side has type restricted fmode_t
+   security/integrity/ima/ima_crypto.c:565:28: sparse: sparse: invalid assignment: &=
+   security/integrity/ima/ima_crypto.c:565:28: sparse:    left side has type unsigned int
+   security/integrity/ima/ima_crypto.c:565:28: sparse:    right side has type restricted fmode_t
+   security/integrity/ima/ima_crypto.c:592:52: sparse: sparse: restricted __le32 degrades to integer
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
