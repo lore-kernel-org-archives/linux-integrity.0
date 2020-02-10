@@ -1,78 +1,135 @@
-Return-Path: <SRS0=bwqG=35=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=E1tO=36=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53129C2BA83
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Feb 2020 21:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049FBC2BA83
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 02:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA302080C
-	for <linux-integrity@archiver.kernel.org>; Sun,  9 Feb 2020 21:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8A0A2086A
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 02:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbgBIVJz (ORCPT
+        id S1726910AbgBJCxQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 9 Feb 2020 16:09:55 -0500
-Received: from mga02.intel.com ([134.134.136.20]:17871 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727416AbgBIVJz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 9 Feb 2020 16:09:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Feb 2020 13:09:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,422,1574150400"; 
-   d="scan'208";a="221361012"
-Received: from jradtke-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.22.75])
-  by orsmga007.jf.intel.com with ESMTP; 09 Feb 2020 13:09:51 -0800
-Date:   Sun, 9 Feb 2020 23:09:51 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>, stable@vger.kernel.org,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: Revert tpm_tis_spi_mod.ko to tpm_tis_spi.ko.
-Message-ID: <20200209210951.GA31002@linux.intel.com>
-References: <20200205203818.4679-1-jarkko.sakkinen@linux.intel.com>
- <5e3c6784.1c69fb81.34ded.0a42@mx.google.com>
- <20200209210133.GA3702@linux.intel.com>
+        Sun, 9 Feb 2020 21:53:16 -0500
+Received: from smtprelay0112.hostedemail.com ([216.40.44.112]:49188 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726935AbgBJCxO (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 9 Feb 2020 21:53:14 -0500
+X-Greylist: delayed 344 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Feb 2020 21:53:14 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id 3E984181C9642
+        for <linux-integrity@vger.kernel.org>; Mon, 10 Feb 2020 02:47:31 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id DE317182CED34;
+        Mon, 10 Feb 2020 02:47:29 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: kite03_7b80b4af9b301
+X-Filterd-Recvd-Size: 3446
+Received: from XPS-9350.home (unknown [47.151.143.254])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 10 Feb 2020 02:47:28 +0000 (UTC)
+Message-ID: <da7bd0441ef3044cb40d705b8bb176bfdf391557.camel@perches.com>
+Subject: Re: [PATCH] IMA: Add log statements for failure conditions.
+From:   Joe Perches <joe@perches.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org
+Date:   Sun, 09 Feb 2020 18:46:13 -0800
+In-Reply-To: <1581253027.5585.671.camel@linux.ibm.com>
+References: <20200207195346.4017-1-tusharsu@linux.microsoft.com>
+         <20200207195346.4017-2-tusharsu@linux.microsoft.com>
+         <1581253027.5585.671.camel@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200209210133.GA3702@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 09, 2020 at 11:01:33PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Feb 06, 2020 at 11:22:44AM -0800, Stephen Boyd wrote:
-> > Quoting Jarkko Sakkinen (2020-02-05 12:38:18)
-> > > Revert tpm_tis_spi_mod.ko back to tpm_tis_spi.ko as the rename could break
-> > > the build script. This can be achieved by renaming tpm_tis_spi.c as
+On Sun, 2020-02-09 at 07:57 -0500, Mimi Zohar wrote:
+> Hi Tushar,
+> 
+> On Fri, 2020-02-07 at 11:53 -0800, Tushar Sugandhi wrote:
+> > process_buffer_measurement() and ima_alloc_key_entry()
+> > functions do not have log messages for failure conditions.
 > > 
-> > Do you mean userspace scripts?
+> > This change adds log statements in the above functions. 
+> > 
+> > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> > Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 > 
-> Yes. I'll fix the commit message before merging.
+> The two patches you posted are related.  Please group them as a patch
+> set, making this patch 2/2.
 > 
-> Thanks for the review.
+> In addition, as Shuah Khan suggested for the security/integrity/
+> directory, "there is an opportunity here to add #define pr_fmt(fmt)
+> KBUILD_MODNAME ": " fmt to integrity.h and get rid of duplicate
+> defines."  With Joe Perches patch (waiting for it to be re-posted),
+> are all the pr_fmt definitions needed in each file in the
+> integrity/ima directory?
 
-The commit message is now fixed in my master:
+btw Tushar and Lakshmi:
 
-git://git.infradead.org/users/jjs/linux-tpmdd.git
+I am not formally submitting a patch here.
 
-I also added your and Alexander's tags.
+I was just making suggestions and please do
+with it as you think appropriate.
 
-I'll send a PR after rc1 is out. Thank you.
+and welcome, cheers, Joe
 
-/Jarkko
+> > ---
+> >  security/integrity/ima/ima_main.c       | 4 ++++
+> >  security/integrity/ima/ima_queue_keys.c | 2 ++
+> >  2 files changed, 6 insertions(+)
+> > 
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > index 9fe949c6a530..afab796fb765 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -757,6 +757,10 @@ void process_buffer_measurement(const void *buf, int size,
+> >  		ima_free_template_entry(entry);
+> >  
+> >  out:
+> > +	if (ret < 0)
+> > +		pr_err("Process buffer measurement failed, result: %d\n",
+> > +			ret);
+> 
+> There's no reason to split the statement like this.  The joined line
+> is less than 80 characters.
+> 
+> > +
+> >  	return;
+> >  }
+> >  
+> > diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
+> > index c87c72299191..2cc52f17ea81 100644
+> > --- a/security/integrity/ima/ima_queue_keys.c
+> > +++ b/security/integrity/ima/ima_queue_keys.c
+> > @@ -90,6 +90,8 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
+> >  
+> >  out:
+> >  	if (rc) {
+> > +		pr_err("Key entry allocation failed, result: %d\n",
+> > +			rc);
+> 
+> ditto
+> 
+> >  		ima_free_key_entry(entry);
+> >  		entry = NULL;
+> >  	}
+> 
+> thanks,
+> 
+> Mimi
+> 
+
