@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 818DDC352A5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61A3C352A4
 	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 590FF214DB
+	by mail.kernel.org (Postfix) with ESMTP id 8089F20842
 	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 17:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbgBJRKC (ORCPT
+        id S1728119AbgBJRKF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 Feb 2020 12:10:02 -0500
+        Mon, 10 Feb 2020 12:10:05 -0500
 Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:36755 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727536AbgBJRKB (ORCPT
+        with ESMTP id S1727536AbgBJRKE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:10:01 -0500
+        Mon, 10 Feb 2020 12:10:04 -0500
 X-Greylist: delayed 2425 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 12:09:57 EST
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 01AGT59E011291;
-        Mon, 10 Feb 2020 18:29:05 +0200
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 01AGT8JK011300;
+        Mon, 10 Feb 2020 18:29:08 +0200
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id A5BBF6032E; Mon, 10 Feb 2020 18:29:05 +0200 (IST)
+        id 820EB6032E; Mon, 10 Feb 2020 18:29:08 +0200 (IST)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -38,9 +38,9 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
         Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v3 3/7] char: tpm: rewrite "tpm_tis_req_canceled()"
-Date:   Mon, 10 Feb 2020 18:28:34 +0200
-Message-Id: <20200210162838.173903-4-amirmizi6@gmail.com>
+Subject: [PATCH v3 6/7] dt-bindings: tpm: Add YAML schema for TPM TIS I2C options
+Date:   Mon, 10 Feb 2020 18:28:37 +0200
+Message-Id: <20200210162838.173903-7-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200210162838.173903-1-amirmizi6@gmail.com>
 References: <20200210162838.173903-1-amirmizi6@gmail.com>
@@ -53,41 +53,70 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Using this function while read/write data resulted in aborted operation.
-After investigating according to TCG TPM Profile (PTP) Specifications, i
- found cancel should happen only if TPM_STS.commandReady bit is lit and
- couldn't find a case when the current condition is valid.
-Also only cmdReady bit need to be compared instead of the full lower status
- register byte.
+Added a YAML schema to support tpm tis i2c realted dt-bindings for the I2c
+ PTP based physical layer.
+
+This patch adds the documentation for corresponding device tree bindings of
+ I2C based Physical TPM.
+Refer to the 'I2C Interface Definition' section in
+ 'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
+ for specification.
 
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 6c4f232..18b9dc4 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -710,17 +710,7 @@ static int probe_itpm(struct tpm_chip *chip)
- 
- static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
- {
--	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--
--	switch (priv->manufacturer_id) {
--	case TPM_VID_WINBOND:
--		return ((status == TPM_STS_VALID) ||
--			(status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
--	case TPM_VID_STM:
--		return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
--	default:
--		return (status == TPM_STS_COMMAND_READY);
--	}
-+	return ((status & TPM_STS_COMMAND_READY) == TPM_STS_COMMAND_READY);
- }
- 
- static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+new file mode 100644
+index 0000000..ca16b59
+--- /dev/null
++++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: I2C PTP based TPM Device Tree Bindings
++
++maintainers:
++  - Amir Mizinski <amirmizi6@gmail.com>
++
++description:
++  Device Tree Bindings for I2C based Trusted Platform Module(TPM).
++
++properties:
++  compatible:
++    contains:
++      const: tcg,tpm-tis-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  crc-checksum:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      CRC checksum enable.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++examples:
++  - |
++    tpm-tis-i2c: tpm-tis-i2c@2e {
++       compatible = "tcg,tpm-tis-i2c";
++       reg = <0x2e>;
++       interrupts = <&gpio 24 GPIO_ACTIVE_HIGH>;
++       crc-checksum;
++    };
 -- 
 2.7.4
 
