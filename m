@@ -2,134 +2,121 @@ Return-Path: <SRS0=E1tO=36=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049FBC2BA83
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 02:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF00C2BA83
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 03:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8A0A2086A
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 02:53:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2153221739
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 03:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581304655;
+	bh=4+xrRrrol/aiyGAllkyxm+BcBdBXEdtB/xYpBE5mqp0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=MF3VRTFCSEEeuWX+9+dAOiVROJgPFBNeZdX8MRaMxF8KnBQRLCM3jE12XpmMXyGXs
+	 q6SikjhmjF0Oa3rVWSZW82rHir/21KHB1rFctAHk8cQ/Q//8kZAOqSZCyfEdT3x74W
+	 attukdAdrVkGDbjP9MlwJ0Sk6k2TgFA2wqmyUyxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbgBJCxQ (ORCPT
+        id S1726961AbgBJDRa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 9 Feb 2020 21:53:16 -0500
-Received: from smtprelay0112.hostedemail.com ([216.40.44.112]:49188 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726935AbgBJCxO (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 9 Feb 2020 21:53:14 -0500
-X-Greylist: delayed 344 seconds by postgrey-1.27 at vger.kernel.org; Sun, 09 Feb 2020 21:53:14 EST
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id 3E984181C9642
-        for <linux-integrity@vger.kernel.org>; Mon, 10 Feb 2020 02:47:31 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id DE317182CED34;
-        Mon, 10 Feb 2020 02:47:29 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: kite03_7b80b4af9b301
-X-Filterd-Recvd-Size: 3446
-Received: from XPS-9350.home (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf14.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 10 Feb 2020 02:47:28 +0000 (UTC)
-Message-ID: <da7bd0441ef3044cb40d705b8bb176bfdf391557.camel@perches.com>
-Subject: Re: [PATCH] IMA: Add log statements for failure conditions.
-From:   Joe Perches <joe@perches.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
-        linux-kernel@vger.kernel.org
-Date:   Sun, 09 Feb 2020 18:46:13 -0800
-In-Reply-To: <1581253027.5585.671.camel@linux.ibm.com>
-References: <20200207195346.4017-1-tusharsu@linux.microsoft.com>
-         <20200207195346.4017-2-tusharsu@linux.microsoft.com>
-         <1581253027.5585.671.camel@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.34.1-2 
+        Sun, 9 Feb 2020 22:17:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726958AbgBJDRa (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 9 Feb 2020 22:17:30 -0500
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24D7A20870;
+        Mon, 10 Feb 2020 03:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581304649;
+        bh=4+xrRrrol/aiyGAllkyxm+BcBdBXEdtB/xYpBE5mqp0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZY3kL5ThzVIfNdnLnxnWJF8NCVdguistyR88GLQzeaLdSldvkzWM0WyvKl7S7//l2
+         h5CyQ8dnqSJ6Efw9f9tk5mkx4zoPvPz4vob/qxmC05uRe/5Cu6uam5Y2Ru8O1XGBik
+         yhe3fqyYtW+mYcZH3HutsVZ1Qs3A+LfbR5eQKDag=
+Date:   Sun, 9 Feb 2020 19:17:17 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] crypto: sm3 - add a new alias name sm3-256
+Message-ID: <20200210031717.GA5198@sol.localdomain>
+References: <20200207092219.115056-1-tianjia.zhang@linux.alibaba.com>
+ <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200207092219.115056-2-tianjia.zhang@linux.alibaba.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, 2020-02-09 at 07:57 -0500, Mimi Zohar wrote:
-> Hi Tushar,
+On Fri, Feb 07, 2020 at 05:22:18PM +0800, Tianjia Zhang wrote:
+> The name sm3-256 is defined in hash_algo_name in hash_info, but the
+> algorithm name implemented in sm3_generic.c is sm3, which will cause
+> the sm3-256 algorithm to be not found in some application scenarios of
+> the hash algorithm, and an ENOENT error will occur. For example,
+> IMA, keys, and other subsystems that reference hash_algo_name cannot use
+> the hash algorithm of sm3. This patch adds an alias name sm3-256 to sm3,
+> which can better solve the above problems.
 > 
-> On Fri, 2020-02-07 at 11:53 -0800, Tushar Sugandhi wrote:
-> > process_buffer_measurement() and ima_alloc_key_entry()
-> > functions do not have log messages for failure conditions.
-> > 
-> > This change adds log statements in the above functions. 
-> > 
-> > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
+>  crypto/sm3_generic.c | 21 +++++++++++++++++----
+>  1 file changed, 17 insertions(+), 4 deletions(-)
 > 
-> The two patches you posted are related.  Please group them as a patch
-> set, making this patch 2/2.
-> 
-> In addition, as Shuah Khan suggested for the security/integrity/
-> directory, "there is an opportunity here to add #define pr_fmt(fmt)
-> KBUILD_MODNAME ": " fmt to integrity.h and get rid of duplicate
-> defines."  With Joe Perches patch (waiting for it to be re-posted),
-> are all the pr_fmt definitions needed in each file in the
-> integrity/ima directory?
+> diff --git a/crypto/sm3_generic.c b/crypto/sm3_generic.c
+> index 3468975215ca..ded41031bd5f 100644
+> --- a/crypto/sm3_generic.c
+> +++ b/crypto/sm3_generic.c
+> @@ -163,7 +163,7 @@ int crypto_sm3_finup(struct shash_desc *desc, const u8 *data,
+>  }
+>  EXPORT_SYMBOL(crypto_sm3_finup);
+>  
+> -static struct shash_alg sm3_alg = {
+> +static struct shash_alg sm3_algs[2] = { {
+>  	.digestsize	=	SM3_DIGEST_SIZE,
+>  	.init		=	sm3_base_init,
+>  	.update		=	crypto_sm3_update,
+> @@ -176,16 +176,28 @@ static struct shash_alg sm3_alg = {
+>  		.cra_blocksize	 =	SM3_BLOCK_SIZE,
+>  		.cra_module	 =	THIS_MODULE,
+>  	}
+> -};
+> +}, {
+> +	.digestsize	=	SM3_DIGEST_SIZE,
+> +	.init		=	sm3_base_init,
+> +	.update		=	crypto_sm3_update,
+> +	.final		=	sm3_final,
+> +	.finup		=	crypto_sm3_finup,
+> +	.descsize	=	sizeof(struct sm3_state),
+> +	.base		=	{
+> +		.cra_name	 =	"sm3-256",
+> +		.cra_blocksize	 =	SM3_BLOCK_SIZE,
+> +		.cra_module	 =	THIS_MODULE,
+> +	}
+> +} };
 
-btw Tushar and Lakshmi:
+According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+SM3 always produces a 256-bit hash value.  E.g., it says:
 
-I am not formally submitting a patch here.
+	"SM3 produces an output hash value of 256 bits long"
 
-I was just making suggestions and please do
-with it as you think appropriate.
+and
 
-and welcome, cheers, Joe
+	"SM3 is a hash function that generates a 256-bit hash value."
 
-> > ---
-> >  security/integrity/ima/ima_main.c       | 4 ++++
-> >  security/integrity/ima/ima_queue_keys.c | 2 ++
-> >  2 files changed, 6 insertions(+)
-> > 
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> > index 9fe949c6a530..afab796fb765 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -757,6 +757,10 @@ void process_buffer_measurement(const void *buf, int size,
-> >  		ima_free_template_entry(entry);
-> >  
-> >  out:
-> > +	if (ret < 0)
-> > +		pr_err("Process buffer measurement failed, result: %d\n",
-> > +			ret);
-> 
-> There's no reason to split the statement like this.  The joined line
-> is less than 80 characters.
-> 
-> > +
-> >  	return;
-> >  }
-> >  
-> > diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-> > index c87c72299191..2cc52f17ea81 100644
-> > --- a/security/integrity/ima/ima_queue_keys.c
-> > +++ b/security/integrity/ima/ima_queue_keys.c
-> > @@ -90,6 +90,8 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
-> >  
-> >  out:
-> >  	if (rc) {
-> > +		pr_err("Key entry allocation failed, result: %d\n",
-> > +			rc);
-> 
-> ditto
-> 
-> >  		ima_free_key_entry(entry);
-> >  		entry = NULL;
-> >  	}
-> 
-> thanks,
-> 
-> Mimi
-> 
+I don't see any mention of "SM3-256".
 
+So why not just keep it as "sm3" and change hash_info.c instead?
+Since the name there is currently wrong, no one can be using it yet.
+
+- Eric
