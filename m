@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D31C352A3
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 17:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 818DDC352A5
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6DA620842
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 17:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 590FF214DB
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Feb 2020 17:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgBJRJ7 (ORCPT
+        id S1728098AbgBJRKC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 Feb 2020 12:09:59 -0500
+        Mon, 10 Feb 2020 12:10:02 -0500
 Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:36755 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727536AbgBJRJ6 (ORCPT
+        with ESMTP id S1727536AbgBJRKB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Feb 2020 12:09:58 -0500
+        Mon, 10 Feb 2020 12:10:01 -0500
 X-Greylist: delayed 2425 seconds by postgrey-1.27 at vger.kernel.org; Mon, 10 Feb 2020 12:09:57 EST
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 01AGT7qd011297;
-        Mon, 10 Feb 2020 18:29:07 +0200
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 01AGT59E011291;
+        Mon, 10 Feb 2020 18:29:05 +0200
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id B87046032E; Mon, 10 Feb 2020 18:29:07 +0200 (IST)
+        id A5BBF6032E; Mon, 10 Feb 2020 18:29:05 +0200 (IST)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -38,9 +38,9 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
         Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v3 5/7] tpm: Handle an exception for TPM Firmware Update mode.
-Date:   Mon, 10 Feb 2020 18:28:36 +0200
-Message-Id: <20200210162838.173903-6-amirmizi6@gmail.com>
+Subject: [PATCH v3 3/7] char: tpm: rewrite "tpm_tis_req_canceled()"
+Date:   Mon, 10 Feb 2020 18:28:34 +0200
+Message-Id: <20200210162838.173903-4-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200210162838.173903-1-amirmizi6@gmail.com>
 References: <20200210162838.173903-1-amirmizi6@gmail.com>
@@ -53,45 +53,41 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-An extra precaution for TPM Firmware Update Mode.
- For example if TPM power was cut while in Firmware update, platform
- should ignore selftest failure and skip TPM initialization sequence.
-
-This improvment was suggested by Benoit Houyere.
+Using this function while read/write data resulted in aborted operation.
+After investigating according to TCG TPM Profile (PTP) Specifications, i
+ found cancel should happen only if TPM_STS.commandReady bit is lit and
+ couldn't find a case when the current condition is valid.
+Also only cmdReady bit need to be compared instead of the full lower status
+ register byte.
 
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 ---
- drivers/char/tpm/tpm2-cmd.c | 4 ++++
- include/linux/tpm.h         | 1 +
- 2 files changed, 5 insertions(+)
+ drivers/char/tpm/tpm_tis_core.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 13696de..997b11e 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -725,6 +725,10 @@ int tpm2_auto_startup(struct tpm_chip *chip)
- 		goto out;
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 6c4f232..18b9dc4 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -710,17 +710,7 @@ static int probe_itpm(struct tpm_chip *chip)
  
- 	rc = tpm2_do_selftest(chip);
-+
-+	if ((rc == TPM2_RC_UPGRADE) || (rc == TPM2_RC_COMMAND_CODE))
-+		return 0;
-+
- 	if (rc && rc != TPM2_RC_INITIALIZE)
- 		goto out;
+ static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
+ {
+-	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+-
+-	switch (priv->manufacturer_id) {
+-	case TPM_VID_WINBOND:
+-		return ((status == TPM_STS_VALID) ||
+-			(status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
+-	case TPM_VID_STM:
+-		return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
+-	default:
+-		return (status == TPM_STS_COMMAND_READY);
+-	}
++	return ((status & TPM_STS_COMMAND_READY) == TPM_STS_COMMAND_READY);
+ }
  
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 03e9b18..5a2e031 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -199,6 +199,7 @@ enum tpm2_return_codes {
- 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
- 	TPM2_RC_FAILURE		= 0x0101,
- 	TPM2_RC_DISABLED	= 0x0120,
-+	TPM2_RC_UPGRADE         = 0x012D,
- 	TPM2_RC_COMMAND_CODE    = 0x0143,
- 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
- 	TPM2_RC_REFERENCE_H0	= 0x0910,
+ static irqreturn_t tis_int_handler(int dummy, void *dev_id)
 -- 
 2.7.4
 
