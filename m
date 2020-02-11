@@ -4,44 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5F1C35242
-	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10370C3B187
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CED2206DB
+	by mail.kernel.org (Postfix) with ESMTP id C069C2082F
 	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:14:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="H3U7GEBU"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RY0jWAqc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbgBKXO1 (ORCPT
+        id S1727912AbgBKXO1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Tue, 11 Feb 2020 18:14:27 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36378 "EHLO
+Received: from linux.microsoft.com ([13.77.154.182]:36386 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727821AbgBKXO1 (ORCPT
+        with ESMTP id S1727838AbgBKXO1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 11 Feb 2020 18:14:27 -0500
 Received: from tusharsu-Ubuntu.corp.microsoft.com (unknown [131.107.147.225])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7EC7520B9C2F;
+        by linux.microsoft.com (Postfix) with ESMTPSA id A17422010ADD;
         Tue, 11 Feb 2020 15:14:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7EC7520B9C2F
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A17422010ADD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1581462866;
-        bh=XHJmcrml0bOhkfiWegb1wXW/R0Kk93NkGo6uSyYSInU=;
+        bh=v/89WOXLO/d+H6Z62W0I37EIbuMATJH4Hf50Leyxn5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H3U7GEBUoYB072zwIWuSQI7AJc+KMY3wpadX8KcrfXNCKs8rredIEsKgDKg4EpeDS
-         tVM9RQv8Rm4PbHCC8djMwiSZuI4vFKmI3TkD6Wy25TfOH/RDAU7e+GzR9OBMEBfJzZ
-         hRMxyjbknl2IMAzl04N61PUBAPZ46z0OOxp5Asc8=
+        b=RY0jWAqcb4fz7CmUheh+dsU9vasyPY+GxNMUlo4eUA3evCoLB8XEnp6pn61v9CV28
+         Id/oORvPkvzZBBPWkCVkC+GTXn+gepgLuc71HxiNNN/xb9U4PEU1gMh5pMX7L6wlIP
+         6cyi53mF2dwvmaJpZQLmia11iqjGISgA+/A8rGj4=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, joe@perches.com, skhan@linuxfoundation.org,
         linux-integrity@vger.kernel.org
 Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/3] IMA: Update KBUILD_MODNAME for IMA files to ima
-Date:   Tue, 11 Feb 2020 15:14:12 -0800
-Message-Id: <20200211231414.6640-2-tusharsu@linux.microsoft.com>
+Subject: [PATCH v3 2/3] IMA: Add log statements for failure conditions.
+Date:   Tue, 11 Feb 2020 15:14:13 -0800
+Message-Id: <20200211231414.6640-3-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
 References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
@@ -50,33 +50,32 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Log statements from ima_mok.c, ima_asymmetric_keys.c, and
-ima_queue_keys.c are prefixed with the respective file names
-and not with the string "ima". 
+process_buffer_measurement() does not have log messages for failure
+conditions.
 
-This change fixes the log statement prefix to be consistent with the rest
-of the IMA files.
+This change adds a log statement in the above function. 
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Joe Perches <joe@perches.com>
 ---
- security/integrity/ima/Makefile | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ security/integrity/ima/ima_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
-index 064a256f8725..67dabca670e2 100644
---- a/security/integrity/ima/Makefile
-+++ b/security/integrity/ima/Makefile
-@@ -11,6 +11,6 @@ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
- ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
- ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
- ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
--obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
--obj-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
--obj-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
-+ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
-+ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
-+ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9fe949c6a530..6e1576d9eb48 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -757,6 +757,9 @@ void process_buffer_measurement(const void *buf, int size,
+ 		ima_free_template_entry(entry);
+ 
+ out:
++	if (ret < 0)
++		pr_err("%s: failed, result: %d\n", __func__, ret);
++
+ 	return;
+ }
+ 
 -- 
 2.17.1
 
