@@ -2,176 +2,81 @@ Return-Path: <SRS0=Yr3x=37=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D47C35242
-	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5F1C35242
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93239206DB
-	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CED2206DB
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 Feb 2020 23:14:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="H3U7GEBU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbgBKXKn (ORCPT
+        id S1727868AbgBKXO1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 11 Feb 2020 18:10:43 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23046 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727787AbgBKXKn (ORCPT
+        Tue, 11 Feb 2020 18:14:27 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36378 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727821AbgBKXO1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 11 Feb 2020 18:10:43 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01BNAe2g008503
-        for <linux-integrity@vger.kernel.org>; Tue, 11 Feb 2020 18:10:41 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y3wxdg62u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 11 Feb 2020 18:10:41 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 11 Feb 2020 23:10:20 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Feb 2020 23:10:19 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01BNAI4Q53674148
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Feb 2020 23:10:18 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15D85A405C;
-        Tue, 11 Feb 2020 23:10:18 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EFAE2A4054;
-        Tue, 11 Feb 2020 23:10:16 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.128.4])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Feb 2020 23:10:16 +0000 (GMT)
-Subject: Re: [PATCH v2] ima: export the measurement list when needed
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     david.safford@gmail.com, Janne Karhunen <janne.karhunen@gmail.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Cc:     Ken Goldman <kgold@linux.ibm.com>, monty.wiseman@ge.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Tue, 11 Feb 2020 18:10:16 -0500
-In-Reply-To: <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
-References: <20200108111743.23393-1-janne.karhunen@gmail.com>
-         <CAE=NcrZrbRinOAbB+k1rjhcae3nqfJ8snC_EnY8njMDioM7=vg@mail.gmail.com>
-         <1580998432.5585.411.camel@linux.ibm.com>
-         <40f780ffe2ddc879e5fa4443c098c0f1d331390f.camel@gmail.com>
-         <1581366258.5585.891.camel@linux.ibm.com>
-         <fab03a0b8cc9dc93f2d0db51071521ce82e2b96b.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 20021123-4275-0000-0000-000003A03FA9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20021123-4276-0000-0000-000038B4789A
-Message-Id: <1581462616.5125.69.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-11_07:2020-02-11,2020-02-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- malwarescore=0 suspectscore=2 clxscore=1015 mlxscore=0 priorityscore=1501
- bulkscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002110149
+        Tue, 11 Feb 2020 18:14:27 -0500
+Received: from tusharsu-Ubuntu.corp.microsoft.com (unknown [131.107.147.225])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7EC7520B9C2F;
+        Tue, 11 Feb 2020 15:14:26 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7EC7520B9C2F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1581462866;
+        bh=XHJmcrml0bOhkfiWegb1wXW/R0Kk93NkGo6uSyYSInU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=H3U7GEBUoYB072zwIWuSQI7AJc+KMY3wpadX8KcrfXNCKs8rredIEsKgDKg4EpeDS
+         tVM9RQv8Rm4PbHCC8djMwiSZuI4vFKmI3TkD6Wy25TfOH/RDAU7e+GzR9OBMEBfJzZ
+         hRMxyjbknl2IMAzl04N61PUBAPZ46z0OOxp5Asc8=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, joe@perches.com, skhan@linuxfoundation.org,
+        linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/3] IMA: Update KBUILD_MODNAME for IMA files to ima
+Date:   Tue, 11 Feb 2020 15:14:12 -0800
+Message-Id: <20200211231414.6640-2-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
+References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2020-02-11 at 11:10 -0500, david.safford@gmail.com wrote:
-> On Mon, 2020-02-10 at 15:24 -0500, Mimi Zohar wrote:
-> > On Mon, 2020-02-10 at 13:18 -0500, david.safford@gmail.com wrote:
-> > > On Thu, 2020-02-06 at 09:13 -0500, Mimi Zohar wrote:
-> > > > Hi Janne,
-> > > > 
-> > > > On Fri, 2020-01-10 at 10:48 +0200, Janne Karhunen wrote:
-> > > > > On Wed, Jan 8, 2020 at 1:18 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
-> > > > > > Some systems can end up carrying lots of entries in the ima
-> > > > > > measurement list. Since every entry is using a bit of kernel
-> > > > > > memory, allow the sysadmin to export the measurement list to
-> > > > > > the filesystem to free up some memory.
-> > > > > 
-> > > > > Hopefully this addressed comments from everyone. The flush event can
-> > > > > now be triggered by the admin anytime and unique file names can be
-> > > > > used for each flush (log.1, log.2, ...) etc, so getting to the correct
-> > > > > item should be easy.
-> > > > > 
-> > > > > While it can now be argued that since this is an admin-driven event,
-> > > > > kernel does not need to write the file. However, the intention is to
-> > > > > bring out a second patch a bit later that adds a variable to define
-> > > > > the max number of entries to be kept in the kernel memory and
-> > > > > workqueue based automatic flushing. In those cases the kernel has to
-> > > > > be able to write the file without any help from the admin..
-> > > > 
-> > > > The implications of exporting and removing records from the IMA-
-> > > > measurement list needs to be considered carefully.  Verifying a TPM
-> > > > quote will become dependent on knowing where the measurements are
-> > > > stored.  The existing measurement list is stored in kernel memory and,
-> > > > barring a kernel memory attack, is protected from modification.
-> > > >  Before upstreaming this or a similar patch, there needs to be a
-> > > > discussion as to how the measurement list will be protected once is it
-> > > > exported to userspace.
-> > > 
-> > > "Protected" here can mean two different aspects: cryptographically
-> > > protected from tampering, which is covered with the TPM_QUOTE, and
-> > > availability protected from even accidental deletion, which is what
-> > > I suspect you are concerned about. Certainly my original TLV patches
-> > > were too flippant about this, as userspace had to be trusted not to
-> > > drop any records. In this patch, the kernel writes the data in an
-> > > atomic fashion. Either all records are successfully written, or none
-> > > are, and an error is returned.
-> > 
-> > A third aspect, which I'm concerned about, is removing records from
-> > the measurement list.  This changes the existing userspace
-> > expectations of returning the entire measurement list.  Now userspace
-> > will need some out of band method of knowing where to look for the
-> > measurements.
-> 
-> This is a feature, not a bug. :-)
-> There is no reason to resend the same data for every attestation,
-> nor is there any reason to store already attested measurements anywhere
-> on the client. By versioning the log file names, userspace gets a
-> simple way to know what has and has not been attested, and for small
-> embedded devices we don't need to waste memory or filesystem space
-> on the data already attested.
+Log statements from ima_mok.c, ima_asymmetric_keys.c, and
+ima_queue_keys.c are prefixed with the respective file names
+and not with the string "ima". 
 
-This new feature will require setting up some infrastructure for
-storing the partial measurement list(s) in order to validate a TPM
-quote.  Userspace already can save partial measurement list(s) without
-any kernel changes.  The entire measurement list does not need to be
-read each time.  lseek can read past the last record previously read.
- The only new aspect is truncating the in kernel measurement list in
-order to free kernel memory.
+This change fixes the log statement prefix to be consistent with the rest
+of the IMA files.
 
-< snip> 
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> > > > Instead of exporting the measurement records, one option as suggested
-> > > > by Amir Goldstein, would be to use a vfs_tmpfile() to get an anonymous
-> > > > file for backing store.  The existing securityfs measurement lists
-> > > > would then read from this private copy of the anonymous file.
-> > > 
-> > > This doesn't help in use cases where we really do want to
-> > > export to a persistent file, without userspace help.
-> > 
-> > Is to prevent needing to carry the measurement list across kexec the
-> > only reason for the kernel needing to write to a persistent file?
-> 
-> Well, that and the other reasons mentioned, such as completely freeing
-> the data from the client after attestation, and simplicity of the
-> mechanism.
-
-Until there is proof that the measurement list can be exported to a
-file before kexec, instead of carrying the measurement list across
-kexec, and a TPM quote can be validated after the kexec, there isn't a
-compelling reason for the kernel needing to truncate the measurement
-list.
-
-Mimi
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index 064a256f8725..67dabca670e2 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -11,6 +11,6 @@ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+ ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+ ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+-obj-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+-obj-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+-obj-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
++ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
++ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
++ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
+-- 
+2.17.1
 
