@@ -2,141 +2,93 @@ Return-Path: <SRS0=cptE=4B=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A06C3B18D
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Feb 2020 20:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DA4C352A3
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Feb 2020 21:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E60024682
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Feb 2020 20:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1532320848
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Feb 2020 21:01:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sEQ+8hWw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgBMUXt (ORCPT
+        id S1728142AbgBMVBl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Feb 2020 15:23:49 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4760 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727772AbgBMUXi (ORCPT
+        Thu, 13 Feb 2020 16:01:41 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:43008 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728028AbgBMVBl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:23:38 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01DKKmCv024831;
-        Thu, 13 Feb 2020 15:23:33 -0500
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y3u5304qw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 15:23:33 -0500
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01DKKOS4030226;
-        Thu, 13 Feb 2020 20:23:32 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma01wdc.us.ibm.com with ESMTP id 2y5bbyrv5k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Feb 2020 20:23:32 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01DKNVvT15598476
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Feb 2020 20:23:31 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78858112061;
-        Thu, 13 Feb 2020 20:23:31 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 60C2A112063;
-        Thu, 13 Feb 2020 20:23:31 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Feb 2020 20:23:31 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
-        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
-        gcwilson@linux.ibm.com, jgg@ziepe.ca,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 2/4] tpm: ibmvtpm: Wait for buffer to be set before proceeding
-Date:   Thu, 13 Feb 2020 15:23:27 -0500
-Message-Id: <20200213202329.898607-3-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
-References: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
+        Thu, 13 Feb 2020 16:01:41 -0500
+Received: from [10.137.112.97] (unknown [131.107.147.225])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9E23C20B9C02;
+        Thu, 13 Feb 2020 13:01:40 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9E23C20B9C02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1581627700;
+        bh=RlVWb6B2Yj5GqYRUZdm6taeMRNIqKiey+W202nGiIi8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=sEQ+8hWw3mCob7DpFUrzstr0mHNKXIzgk7YCHHKxnad3EuL1PSvJ4/EcAn1fifSV4
+         e9DBmztMMlimpTymNMkLXIKDWemAl1hmLs3FCnMQ1As1aazzoK/UalcVXqAsLWWCOK
+         6yf3Faot+AUezvwkOFfltihcEeoEM0ONhClB3vj4=
+Subject: Re: [PATCH v3 2/3] IMA: Add log statements for failure conditions.
+To:     Mimi Zohar <zohar@linux.ibm.com>, joe@perches.com,
+        skhan@linuxfoundation.org, linux-integrity@vger.kernel.org
+Cc:     sashal@kernel.org, nramas@linux.microsoft.com,
+        linux-kernel@vger.kernel.org
+References: <20200211231414.6640-1-tusharsu@linux.microsoft.com>
+ <20200211231414.6640-3-tusharsu@linux.microsoft.com>
+ <1581518823.8515.49.camel@linux.ibm.com>
+ <ce89d382-8e8b-71d0-5271-4db83d324f94@linux.microsoft.com>
+ <1581553311.8515.96.camel@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <c224c5a7-6e77-4ebf-7c91-2ec0c078a6f8@linux.microsoft.com>
+Date:   Thu, 13 Feb 2020 13:01:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
+In-Reply-To: <1581553311.8515.96.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-13_08:2020-02-12,2020-02-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 suspectscore=1 phishscore=0 adultscore=0 malwarescore=0
- bulkscore=0 impostorscore=0 mlxscore=0 clxscore=1015 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002130143
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
 
-Synchronize with the results from the CRQs before continuing with
-the initialization. This avoids trying to send TPM commands while
-the rtce buffer has not been allocated, yet.
 
-This patch fixes an existing race condition that may occurr if the
-hypervisor does not quickly respond to the VTPM_GET_RTCE_BUFFER_SIZE
-request sent during initialization and therefore the ibmvtpm->rtce_buf
-has not been allocated at the time the first TPM command is sent.
-
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm_ibmvtpm.c | 9 +++++++++
- drivers/char/tpm/tpm_ibmvtpm.h | 1 +
- 2 files changed, 10 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 78cc52690177..eee566eddb35 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -571,6 +571,7 @@ static irqreturn_t ibmvtpm_interrupt(int irq, void *vtpm_instance)
- 	 */
- 	while ((crq = ibmvtpm_crq_get_next(ibmvtpm)) != NULL) {
- 		ibmvtpm_crq_process(crq, ibmvtpm);
-+		wake_up_interruptible(&ibmvtpm->crq_queue.wq);
- 		crq->valid = 0;
- 		smp_wmb();
- 	}
-@@ -618,6 +619,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	}
- 
- 	crq_q->num_entry = CRQ_RES_BUF_SIZE / sizeof(*crq_q->crq_addr);
-+	init_waitqueue_head(&crq_q->wq);
- 	ibmvtpm->crq_dma_handle = dma_map_single(dev, crq_q->crq_addr,
- 						 CRQ_RES_BUF_SIZE,
- 						 DMA_BIDIRECTIONAL);
-@@ -670,6 +672,13 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	if (rc)
- 		goto init_irq_cleanup;
- 
-+	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
-+				ibmvtpm->rtce_buf != NULL,
-+				HZ)) {
-+		dev_err(dev, "Initialization failed\n");
-+		goto init_irq_cleanup;
-+	}
-+
- 	return tpm_chip_register(chip);
- init_irq_cleanup:
- 	do {
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
-index 7983f1a33267..b92aa7d3e93e 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.h
-+++ b/drivers/char/tpm/tpm_ibmvtpm.h
-@@ -26,6 +26,7 @@ struct ibmvtpm_crq_queue {
- 	struct ibmvtpm_crq *crq_addr;
- 	u32 index;
- 	u32 num_entry;
-+	wait_queue_head_t wq;
- };
- 
- struct ibmvtpm_dev {
--- 
-2.23.0
-
+On 2020-02-12 4:21 p.m., Mimi Zohar wrote:
+> On Wed, 2020-02-12 at 14:30 -0800, Tushar Sugandhi wrote:
+>>
+>> On 2020-02-12 6:47 a.m., Mimi Zohar wrote:
+>>> Hi Tushar,
+>>>
+>>> Please remove the period at the end of the  Subject line.
+>> Thanks. I will fix it in the next iteration.
+>>>
+>>> On Tue, 2020-02-11 at 15:14 -0800, Tushar Sugandhi wrote:
+>>>> process_buffer_measurement() does not have log messages for failure
+>>>> conditions.
+>>>>
+>>>> This change adds a log statement in the above function.
+>>>
+>>> I agree some form of notification needs to be added.  The question is
+>>> whether the failure should be audited or a kernel message emitted.
+>>>    IMA emits audit messages (integrity_audit_msg) for a number of
+>>> reasons - on failure to calculate a file hash, invalid policy rules,
+>>> failure to communicate with the TPM, signature verification errors,
+>>> etc.
+>> I believe both IMA audit messages and kernel message should be emitted -
+>> for better discoverability and diagnosability.
+> 
+> Like file measurement failures, failure to measure a key or the boot
+> command line should be audited as well.  For debugging purposes, you
+> could make this message pr_devel.
+Ok. I will change this to pr_devel in next iteration.
+> 
+> Mimi
+> 
