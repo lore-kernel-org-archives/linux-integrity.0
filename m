@@ -6,126 +6,140 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46195C3565D
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8A1C3565B
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27D9B24650
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F650222C4
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbgBUSjR (ORCPT
+        id S1728442AbgBUSjU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Feb 2020 13:39:17 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4346 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726066AbgBUSjR (ORCPT
+        Fri, 21 Feb 2020 13:39:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:18642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726066AbgBUSjT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:39:17 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LIO2oO094387
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:16 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2y92xftskn-1
+        Fri, 21 Feb 2020 13:39:19 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LIKciu109979
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:18 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2y9tkdacy1-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:15 -0500
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:17 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 21 Feb 2020 18:39:13 -0000
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 21 Feb 2020 18:39:16 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Feb 2020 18:39:11 -0000
+        Fri, 21 Feb 2020 18:39:14 -0000
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01LIdA2P43909470
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01LIdD6952953326
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Feb 2020 18:39:10 GMT
+        Fri, 21 Feb 2020 18:39:13 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE6E7AE053;
-        Fri, 21 Feb 2020 18:39:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 8B6F4AE04D;
+        Fri, 21 Feb 2020 18:39:13 +0000 (GMT)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DBC9FAE045;
-        Fri, 21 Feb 2020 18:39:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 79A39AE045;
+        Fri, 21 Feb 2020 18:39:12 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.202.88])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Feb 2020 18:39:09 +0000 (GMT)
+        Fri, 21 Feb 2020 18:39:12 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
         Vitaly Chikunov <vt@altlinux.org>,
         Patrick Uiterwijk <puiterwi@redhat.com>,
         Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [RFC PATCH 4/8] ima-evm-utils: add support in tpm2_read_pcrs to read different TPM banks
-Date:   Fri, 21 Feb 2020 13:38:54 -0500
+Subject: [RFC PATCH 6/8] ima-evm-utils: compare re-calculated PCRs with the TPM values
+Date:   Fri, 21 Feb 2020 13:38:56 -0500
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1582310338-1562-1-git-send-email-zohar@linux.ibm.com>
 References: <1582310338-1562-1-git-send-email-zohar@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 20022118-0012-0000-0000-00000389153F
+x-cbid: 20022118-0020-0000-0000-000003AC6646
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022118-0013-0000-0000-000021C5AFD2
-Message-Id: <1582310338-1562-5-git-send-email-zohar@linux.ibm.com>
+x-cbparentid: 20022118-0021-0000-0000-00002204717C
+Message-Id: <1582310338-1562-7-git-send-email-zohar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-21_06:2020-02-21,2020-02-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0
- suspectscore=3 malwarescore=0 priorityscore=1501 impostorscore=0
- mlxlogscore=940 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=1 spamscore=0 malwarescore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 mlxscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002210140
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-tpm2_read_pcrs() reads the sha1 PCRs in order to verify the measurmeent
-list.  This patch adds support for reading other TPM banks.
+After walking the measurement list, re-calculating and extending the TPM
+PCRs with the appropriate template digest for each bank, compare the
+re-calculated PCR values for each TPM bank with the actual TPM values.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ src/evmctl.c | 36 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 61a0e15c8dd7..1eeab1d8268b 100644
+index 3e512cf4e3d2..9e21d3963556 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -1423,14 +1423,16 @@ static int tpm_pcr_read(int idx, uint8_t *pcr, int len)
+@@ -1701,6 +1701,38 @@ static struct tpm_bank_info *init_tpm_banks(int *num_banks)
+ 	return banks;
  }
  
- #ifdef HAVE_TSSPCRREAD
--static int tpm2_pcr_read(int idx, uint8_t *hwpcr, int len, char **errmsg)
-+static int tpm2_pcr_read(const char *algo_name, int idx, uint8_t *hwpcr,
-+			 int len, char **errmsg)
- {
- 	FILE *fp;
- 	char pcr[100];	/* may contain an error */
- 	char cmd[50];
- 	int ret;
++static int compare_tpm_banks(int num_banks, struct tpm_bank_info *bank,
++			     struct tpm_bank_info *tpm_bank)
++{
++	int i, j;
++	int ret = 0;
++
++	for (i = 0; i < num_banks; i++) {
++		if (!bank[i].supported || !tpm_bank[i].supported)
++			continue;
++		for (j = 0; j < NUM_PCRS; j++) {
++			if (memcmp(bank[i].pcr[j], zero, bank[i].digest_size)
++			    == 0)
++				continue;
++			log_info("%s: PCRAgg  %d: ", bank[i].algo_name, j);
++			log_dump(bank[i].pcr[j], bank[i].digest_size);
++
++			log_info("%s: TPM PCR-%d: ", tpm_bank[i].algo_name, j);
++			log_dump(tpm_bank[i].pcr[j], tpm_bank[i].digest_size);
++
++			ret = memcmp(bank[i].pcr[j], tpm_bank[i].pcr[j],
++				     bank[i].digest_size);
++			if (!ret)
++				log_info("%s PCR-%d: succeed\n",
++					 bank[i].algo_name, j);
++			else
++				log_info("%s: PCRAgg %d does not match TPM PCR-%d\n",
++					 bank[i].algo_name, i, i);
++		}
++	}
++	return ret;
++}
++
+ /* Calculate the template hash for a particular hash algorithm */
+ static int calculate_template_digest(EVP_MD_CTX *pctx, const EVP_MD *md,
+ 				     struct template_entry *entry,
+@@ -1959,8 +1991,10 @@ static int ima_measurement(const char *file)
  
--	sprintf(cmd, "tsspcrread -halg sha1 -ha %d -ns 2> /dev/null", idx);
-+	sprintf(cmd, "tsspcrread -halg %s -ha %d -ns 2> /dev/null",
-+		algo_name, idx);
- 	fp = popen(cmd, "r");
- 	if (!fp) {
- 		ret = asprintf(errmsg, "popen failed: %s", strerror(errno));
-@@ -1456,7 +1458,7 @@ static int tpm2_pcr_read(int idx, uint8_t *hwpcr, int len, char **errmsg)
- 		ret = -1;
- 
- 	if (!ret)
--		hex2bin(hwpcr, pcr, SHA_DIGEST_LENGTH);
-+		hex2bin(hwpcr, pcr, len);
+ 	if (!verify_failed)
+ 		err = 0;
++	else if (read_tpm_banks(num_banks, tpm_banks) != 0)
++		log_info("Failed to read TPM 2.0 PCRs\n");
  	else
- 		*errmsg = strndup(pcr, strlen(pcr) - 1); /* remove newline */
+-		read_tpm_banks(num_banks, tpm_banks);
++		err = compare_tpm_banks(num_banks, pseudo_banks, tpm_banks);
  
-@@ -1885,7 +1887,8 @@ static int ima_measurement(const char *file)
- #ifdef HAVE_TSSPCRREAD
- 			char *errmsg = NULL;
- 
--			err = tpm2_pcr_read(i, hwpcr, sizeof(hwpcr), &errmsg);
-+			err = tpm2_pcr_read("sha1", i, hwpcr, sizeof(hwpcr),
-+					    &errmsg);
- 			if (err) {
- 				log_info("Failed to read PCRs: (%s)\n", errmsg);
- 				free(errmsg);
+ out:
+ 	fclose(fp);
 -- 
 2.7.5
 
