@@ -6,126 +6,126 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2330C3565B
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46195C3565D
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1D0B24650
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D9B24650
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Feb 2020 18:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbgBUSjQ (ORCPT
+        id S1727656AbgBUSjR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Feb 2020 13:39:16 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45364 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726066AbgBUSjQ (ORCPT
+        Fri, 21 Feb 2020 13:39:17 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4346 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726066AbgBUSjR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:39:16 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LIKcip109979
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:14 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2y9tkdacwe-1
+        Fri, 21 Feb 2020 13:39:17 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01LIO2oO094387
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:16 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2y92xftskn-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:14 -0500
+        for <linux-integrity@vger.kernel.org>; Fri, 21 Feb 2020 13:39:15 -0500
 Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 21 Feb 2020 18:39:12 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 21 Feb 2020 18:39:13 -0000
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 21 Feb 2020 18:39:09 -0000
+        Fri, 21 Feb 2020 18:39:11 -0000
 Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01LId8DT45744364
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01LIdA2P43909470
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Feb 2020 18:39:08 GMT
+        Fri, 21 Feb 2020 18:39:10 GMT
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6ECC7AE053;
-        Fri, 21 Feb 2020 18:39:08 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id CE6E7AE053;
+        Fri, 21 Feb 2020 18:39:10 +0000 (GMT)
 Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 55238AE045;
-        Fri, 21 Feb 2020 18:39:07 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id DBC9FAE045;
+        Fri, 21 Feb 2020 18:39:09 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.202.88])
         by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Feb 2020 18:39:07 +0000 (GMT)
+        Fri, 21 Feb 2020 18:39:09 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
         Vitaly Chikunov <vt@altlinux.org>,
         Patrick Uiterwijk <puiterwi@redhat.com>,
         Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [RFC PATCH 2/8] ima-evm-utils: increase the size of "zero" and "fox" variables
-Date:   Fri, 21 Feb 2020 13:38:52 -0500
+Subject: [RFC PATCH 4/8] ima-evm-utils: add support in tpm2_read_pcrs to read different TPM banks
+Date:   Fri, 21 Feb 2020 13:38:54 -0500
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1582310338-1562-1-git-send-email-zohar@linux.ibm.com>
 References: <1582310338-1562-1-git-send-email-zohar@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 20022118-4275-0000-0000-000003A443FB
+x-cbid: 20022118-0012-0000-0000-00000389153F
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022118-4276-0000-0000-000038B853EA
-Message-Id: <1582310338-1562-3-git-send-email-zohar@linux.ibm.com>
+x-cbparentid: 20022118-0013-0000-0000-000021C5AFD2
+Message-Id: <1582310338-1562-5-git-send-email-zohar@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-21_06:2020-02-21,2020-02-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 suspectscore=1 spamscore=0 malwarescore=0 adultscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 mlxscore=0
- mlxlogscore=918 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0
+ suspectscore=3 malwarescore=0 priorityscore=1501 impostorscore=0
+ mlxlogscore=940 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002210140
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Opening a file for write when it is already opened for read, results in
-a time of measure, time of use (ToMToU) error.  Similarly, when opening
-a file for read, when it is already opened for write, results in a file
-measurement error.  These violations are flagged by including 0x00's as
-the template digest in the measurement list, but extending the TPM with
-0xFF's.
-
-In preparation of extending the TPM banks with bank specific digest
-values, increase the "zero" and "fox" variable sizes.
+tpm2_read_pcrs() reads the sha1 PCRs in order to verify the measurmeent
+list.  This patch adds support for reading other TPM banks.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ src/evmctl.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 704615694cec..9c8544a95b6a 100644
+index 61a0e15c8dd7..1eeab1d8268b 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -1477,8 +1477,8 @@ struct template_entry {
- 	int template_buf_len;
- };
+@@ -1423,14 +1423,16 @@ static int tpm_pcr_read(int idx, uint8_t *pcr, int len)
+ }
  
--static uint8_t zero[SHA_DIGEST_LENGTH];
--static uint8_t fox[SHA_DIGEST_LENGTH];
-+static uint8_t zero[MAX_DIGEST_SIZE];
-+static uint8_t fox[MAX_DIGEST_SIZE];
- 
- int validate = 1;
- 
-@@ -1499,7 +1499,7 @@ static int ima_verify_template_hash(struct template_entry *entry)
+ #ifdef HAVE_TSSPCRREAD
+-static int tpm2_pcr_read(int idx, uint8_t *hwpcr, int len, char **errmsg)
++static int tpm2_pcr_read(const char *algo_name, int idx, uint8_t *hwpcr,
++			 int len, char **errmsg)
  {
- 	uint8_t digest[SHA_DIGEST_LENGTH];
+ 	FILE *fp;
+ 	char pcr[100];	/* may contain an error */
+ 	char cmd[50];
+ 	int ret;
  
--	if (!memcmp(zero, entry->header.digest, sizeof(zero)))
-+	if (!memcmp(zero, entry->header.digest, sizeof(digest)))
- 		return 0;
+-	sprintf(cmd, "tsspcrread -halg sha1 -ha %d -ns 2> /dev/null", idx);
++	sprintf(cmd, "tsspcrread -halg %s -ha %d -ns 2> /dev/null",
++		algo_name, idx);
+ 	fp = popen(cmd, "r");
+ 	if (!fp) {
+ 		ret = asprintf(errmsg, "popen failed: %s", strerror(errno));
+@@ -1456,7 +1458,7 @@ static int tpm2_pcr_read(int idx, uint8_t *hwpcr, int len, char **errmsg)
+ 		ret = -1;
  
- 	SHA1(entry->template, entry->template_len, digest);
-@@ -1658,8 +1658,8 @@ static int ima_measurement(const char *file)
- 	int i;
+ 	if (!ret)
+-		hex2bin(hwpcr, pcr, SHA_DIGEST_LENGTH);
++		hex2bin(hwpcr, pcr, len);
+ 	else
+ 		*errmsg = strndup(pcr, strlen(pcr) - 1); /* remove newline */
  
- 	errno = 0;
--	memset(zero, 0, SHA_DIGEST_LENGTH);
--	memset(fox, 0xff, SHA_DIGEST_LENGTH);
-+	memset(zero, 0, MAX_DIGEST_SIZE);
-+	memset(fox, 0xff, MAX_DIGEST_SIZE);
+@@ -1885,7 +1887,8 @@ static int ima_measurement(const char *file)
+ #ifdef HAVE_TSSPCRREAD
+ 			char *errmsg = NULL;
  
- 	log_debug("Initial PCR value: ");
- 	log_debug_dump(pcr, sizeof(pcr));
+-			err = tpm2_pcr_read(i, hwpcr, sizeof(hwpcr), &errmsg);
++			err = tpm2_pcr_read("sha1", i, hwpcr, sizeof(hwpcr),
++					    &errmsg);
+ 			if (err) {
+ 				log_info("Failed to read PCRs: (%s)\n", errmsg);
+ 				free(errmsg);
 -- 
 2.7.5
 
