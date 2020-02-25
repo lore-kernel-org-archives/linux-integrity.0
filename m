@@ -2,72 +2,70 @@ Return-Path: <SRS0=6Z2D=4N=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D396EC35E0E
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 20:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E29C35E15
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 20:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A4524680
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 20:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B40E12176D
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 20:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbgBYUxT (ORCPT
+        id S1728367AbgBYUxS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Feb 2020 15:53:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62992 "EHLO
+        Tue, 25 Feb 2020 15:53:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61582 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729130AbgBYUxS (ORCPT
+        by vger.kernel.org with ESMTP id S1729117AbgBYUxS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 25 Feb 2020 15:53:18 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01PKoDnR056523;
-        Tue, 25 Feb 2020 15:53:13 -0500
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yd1q8mgxh-1
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01PKpxQT105746;
+        Tue, 25 Feb 2020 15:53:09 -0500
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2yb1asytrw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Feb 2020 15:53:13 -0500
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01PKgF1B013333;
-        Tue, 25 Feb 2020 20:53:12 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma01dal.us.ibm.com with ESMTP id 2yaux6xxj3-1
+        Tue, 25 Feb 2020 15:53:09 -0500
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01PKgMQ3021084;
+        Tue, 25 Feb 2020 20:53:09 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma03wdc.us.ibm.com with ESMTP id 2yaux6f2xm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Feb 2020 20:53:12 +0000
+        Tue, 25 Feb 2020 20:53:09 +0000
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01PKrA3k45941180
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01PKr7pH29032846
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Feb 2020 20:53:10 GMT
+        Tue, 25 Feb 2020 20:53:07 GMT
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BE3F2136053;
-        Tue, 25 Feb 2020 20:53:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 88FEC136059;
+        Tue, 25 Feb 2020 20:53:07 +0000 (GMT)
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C0DE136051;
-        Tue, 25 Feb 2020 20:53:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D1A84136053;
+        Tue, 25 Feb 2020 20:53:06 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 25 Feb 2020 20:53:10 +0000 (GMT)
+        Tue, 25 Feb 2020 20:53:06 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
 To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
 Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
         linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
         gcwilson@linux.ibm.com, jgg@ziepe.ca,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 4/4] tpm: ibmvtpm: Add support for TPM 2
-Date:   Tue, 25 Feb 2020 15:53:05 -0500
-Message-Id: <20200225205305.3948001-5-stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v3 0/4]  Enable vTPM 2.0 for the IBM vTPM driver
+Date:   Tue, 25 Feb 2020 15:53:01 -0500
+Message-Id: <20200225205305.3948001-1-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200225205305.3948001-1-stefanb@linux.vnet.ibm.com>
-References: <20200225205305.3948001-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
  definitions=2020-02-25_08:2020-02-25,2020-02-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 mlxlogscore=999 clxscore=1015 bulkscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxlogscore=999 malwarescore=0 mlxscore=0 adultscore=0
+ phishscore=0 bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2001150001 definitions=main-2002250145
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
@@ -76,38 +74,36 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Stefan Berger <stefanb@linux.ibm.com>
 
-Support TPM 2 in the IBM vTPM driver. The hypervisor tells us what
-version of TPM is connected through the vio_device_id.
+QEMU 5.0 will support the PAPR vTPM device model for TPM 1.2 and TPM 2.0.
+This series of patches enables vTPM 2.0 support for the IBM vTPM driver.
 
-In case a TPM 2 is found, we set the TPM_CHIP_FLAG_TPM2 flag.
+Regards,
+   Stefan
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
- 1 file changed, 4 insertions(+)
+- v2->v3:
+  - Added fixes tag to patch 2/4; the race seems to have existed
+    since the driver was first added
+  - Renamed tpm2_init to tpm2_init_commands in 3/4
 
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index eee566eddb35..0df815f9a6c5 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -29,6 +29,7 @@ static const char tpm_ibmvtpm_driver_name[] = "tpm_ibmvtpm";
- 
- static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
- 	{ "IBM,vtpm", "IBM,vtpm"},
-+	{ "IBM,vtpm", "IBM,vtpm20"},
- 	{ "", "" }
- };
- MODULE_DEVICE_TABLE(vio, tpm_ibmvtpm_device_table);
-@@ -672,6 +673,9 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	if (rc)
- 		goto init_irq_cleanup;
- 
-+	if (!strcmp(id->compat, "IBM,vtpm20"))
-+		chip->flags |= TPM_CHIP_FLAG_TPM2;
-+
- 	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
- 				ibmvtpm->rtce_buf != NULL,
- 				HZ)) {
+- v1->v2:
+  - Addressed comments to v1; added patch 3 to handle case when
+    TPM_OPS_AUTO_STARTUP is not set
+
+
+Stefan Berger (4):
+  tpm: of: Handle IBM,vtpm20 case when getting log parameters
+  tpm: ibmvtpm: Wait for buffer to be set before proceeding
+  tpm: Implement tpm2_init_commands to use in non-auto startup case
+  tpm: ibmvtpm: Add support for TPM 2
+
+ drivers/char/tpm/eventlog/of.c   |  8 +++++++-
+ drivers/char/tpm/tpm-interface.c |  5 ++++-
+ drivers/char/tpm/tpm.h           |  1 +
+ drivers/char/tpm/tpm2-cmd.c      | 14 ++++++++++++++
+ drivers/char/tpm/tpm_ibmvtpm.c   | 13 +++++++++++++
+ drivers/char/tpm/tpm_ibmvtpm.h   |  1 +
+ 6 files changed, 40 insertions(+), 2 deletions(-)
+
 -- 
 2.23.0
 
