@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B10C35DF2
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 06:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF6DC35DF2
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 06:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92EF52176D
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 06:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70D622176D
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Feb 2020 06:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbgBYG0V (ORCPT
+        id S1728994AbgBYG00 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Feb 2020 01:26:21 -0500
-Received: from relay.sw.ru ([185.231.240.75]:39114 "EHLO relay.sw.ru"
+        Tue, 25 Feb 2020 01:26:26 -0500
+Received: from relay.sw.ru ([185.231.240.75]:39126 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbgBYG0V (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 Feb 2020 01:26:21 -0500
+        id S1725783AbgBYG00 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 25 Feb 2020 01:26:26 -0500
 Received: from vvs-ws.sw.ru ([172.16.24.21])
         by relay.sw.ru with esmtp (Exim 4.92.3)
         (envelope-from <vvs@virtuozzo.com>)
-        id 1j6TfV-0004iy-LG; Tue, 25 Feb 2020 09:26:09 +0300
+        id 1j6Tfi-0004j8-FN; Tue, 25 Feb 2020 09:26:22 +0300
 From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v3 1/2] tpm: tpm1_bios_measurements_next should increase
+Subject: [PATCH v3 2/2] tpm: tpm2_bios_measurements_next should increase
  position index
 To:     linux-integrity@vger.kernel.org
 Cc:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         Jason Gunthorpe <jgg@ziepe.ca>
 References: <20200205220359.GA28111@linux.intel.com>
-Message-ID: <5d5c4779-0754-7ca2-8f3b-d7e6fa3f67ad@virtuozzo.com>
-Date:   Tue, 25 Feb 2020 09:26:08 +0300
+Message-ID: <e619d577-715f-9fe7-f43f-89e4a76de726@virtuozzo.com>
+Date:   Tue, 25 Feb 2020 09:26:22 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
@@ -49,8 +49,7 @@ If .next function does not change position index,
 following .show function will repeat output related
 to current position index.
 
-In case of /sys/kernel/security/tpm0/ascii_bios_measurements
-and binary_bios_measurements:
+For /sys/kernel/security/tpm0/binary_bios_measurements:
 1) read after lseek beyound end of file generates whole last line.
 2) read after lseek to middle of last line generates
 expected end of last line and unexpected whole last line once again.
@@ -60,23 +59,23 @@ Fixes: 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code ...")
 Link: https://bugzilla.kernel.org/show_bug.cgi?id=206283
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- drivers/char/tpm/eventlog/tpm1.c | 2 +-
+ drivers/char/tpm/eventlog/tpm2.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-index 739b1d9..2c96977 100644
---- a/drivers/char/tpm/eventlog/tpm1.c
-+++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -115,6 +115,7 @@ static void *tpm1_bios_measurements_next(struct seq_file *m, void *v,
- 	u32 converted_event_size;
- 	u32 converted_event_type;
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index b9aeda1..e741b11 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -94,6 +94,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 	size_t event_size;
+ 	void *marker;
  
 +	(*pos)++;
- 	converted_event_size = do_endian_conversion(event->event_size);
+ 	event_header = log->bios_event_log;
  
- 	v += sizeof(struct tcpa_event) + converted_event_size;
-@@ -132,7 +133,6 @@ static void *tpm1_bios_measurements_next(struct seq_file *m, void *v,
- 	    ((v + sizeof(struct tcpa_event) + converted_event_size) > limit))
+ 	if (v == SEQ_START_TOKEN) {
+@@ -118,7 +119,6 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 	if (((v + event_size) >= limit) || (event_size == 0))
  		return NULL;
  
 -	(*pos)++;
