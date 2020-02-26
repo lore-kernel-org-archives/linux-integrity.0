@@ -2,51 +2,51 @@ Return-Path: <SRS0=f8G7=4O=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 373F3C4BA13
-	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 15:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7509C4BA12
+	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 15:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0637A24688
-	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 15:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B734824685
+	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 15:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbgBZPAz (ORCPT
+        id S1727444AbgBZPDC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 26 Feb 2020 10:00:55 -0500
-Received: from mga04.intel.com ([192.55.52.120]:30051 "EHLO mga04.intel.com"
+        Wed, 26 Feb 2020 10:03:02 -0500
+Received: from mga02.intel.com ([134.134.136.20]:23955 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbgBZPAz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:00:55 -0500
+        id S1726148AbgBZPDC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 26 Feb 2020 10:03:02 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 07:00:54 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 07:03:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,488,1574150400"; 
-   d="scan'208";a="231425508"
+   d="scan'208";a="238058625"
 Received: from avgorshk-mobl.ccr.corp.intel.com (HELO localhost) ([10.252.15.208])
-  by orsmga008.jf.intel.com with ESMTP; 26 Feb 2020 07:00:51 -0800
-Date:   Wed, 26 Feb 2020 17:00:51 +0200
+  by orsmga003.jf.intel.com with ESMTP; 26 Feb 2020 07:02:57 -0800
+Date:   Wed, 26 Feb 2020 17:02:55 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     Stefan Berger <stefanb@linux.ibm.com>
 Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org, aik@ozlabs.ru,
         david@gibson.dropbear.id.au, linux-kernel@vger.kernel.org,
         nayna@linux.vnet.ibm.com, gcwilson@linux.ibm.com, jgg@ziepe.ca
-Subject: Re: [PATCH v2 2/4] tpm: ibmvtpm: Wait for buffer to be set before
- proceeding
-Message-ID: <20200226150051.GA3407@linux.intel.com>
+Subject: Re: [PATCH v2 3/4] tpm: Implement tpm2_init to call when
+ TPM_OPS_AUTO_STARTUP is not set
+Message-ID: <20200226150255.GB3407@linux.intel.com>
 References: <20200213202329.898607-1-stefanb@linux.vnet.ibm.com>
- <20200213202329.898607-3-stefanb@linux.vnet.ibm.com>
- <20200225165744.GD15662@linux.intel.com>
- <8b61d1b4-8503-88e7-271f-da2ea0fc437f@linux.ibm.com>
+ <20200213202329.898607-4-stefanb@linux.vnet.ibm.com>
+ <20200225170015.GE15662@linux.intel.com>
+ <3813980a-6c5e-c99f-7b37-b20b72eb6a8a@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8b61d1b4-8503-88e7-271f-da2ea0fc437f@linux.ibm.com>
+In-Reply-To: <3813980a-6c5e-c99f-7b37-b20b72eb6a8a@linux.ibm.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
@@ -54,28 +54,28 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 01:14:32PM -0500, Stefan Berger wrote:
-> On 2/25/20 11:57 AM, Jarkko Sakkinen wrote:
-> > On Thu, Feb 13, 2020 at 03:23:27PM -0500, Stefan Berger wrote:
+On Tue, Feb 25, 2020 at 01:20:39PM -0500, Stefan Berger wrote:
+> On 2/25/20 12:00 PM, Jarkko Sakkinen wrote:
+> > On Thu, Feb 13, 2020 at 03:23:28PM -0500, Stefan Berger wrote:
 > > > From: Stefan Berger <stefanb@linux.ibm.com>
 > > > 
-> > > Synchronize with the results from the CRQs before continuing with
-> > > the initialization. This avoids trying to send TPM commands while
-> > > the rtce buffer has not been allocated, yet.
-> > What is CRQ anyway an acronym of?
+> > > Implement tpm2_init() that gets the TPM 2 timeouts and command durations
+> > > and command code attributes. This function is to be called in case the
+> > > TPM_OPS_AUTO_STARTUP flag is not set and therefore tpm2_auto_startup()
+> > > is not called.
+> > > 
+> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > The commit makes zero effort trying to explain what the heck tpm_init()
+> > is and when it should be used and why the function name tpm2_init().
 > 
-> Command request queue.
-> 
-> 
-> > 
-> > > This patch fixes an existing race condition that may occurr if the
-> > > hypervisor does not quickly respond to the VTPM_GET_RTCE_BUFFER_SIZE
-> > > request sent during initialization and therefore the ibmvtpm->rtce_buf
-> > > has not been allocated at the time the first TPM command is sent.
-> > If it fixes a race condition, why doesn't it have a fixes tag?
-> 
-> Which commit should I mention?
+> Are you saying the explanation of when to use tpm2_init above is not enough?
+> 'bviously we are trying to cover the case of using the TPM 2 by a driver
+> that doesn't use the TPM_OPS_AUTO_STARTUP flag and therefore the TPM 2
+> timeouts and command durations and command code attributes are not set as
+> they would be if tpm2_auto_startup() was to be called and tpm2_init() is the
+> alternative to call. I didn't like tpm2_init() either... any suggestions for
+> a better name?
 
-The one that introduced the race condition if there is such.
+I'm not getting what this commit is trying to do in the first place.
 
 /Jarkko
