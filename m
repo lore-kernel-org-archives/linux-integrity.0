@@ -2,175 +2,80 @@ Return-Path: <SRS0=f8G7=4O=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20113C4BA21
-	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 19:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5258BC4BA24
+	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 19:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 007392067C
-	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 19:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E62E24683
+	for <linux-integrity@archiver.kernel.org>; Wed, 26 Feb 2020 19:21:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sP90uYz+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbgBZTKp (ORCPT
+        id S1727134AbgBZTVB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 26 Feb 2020 14:10:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14784 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727049AbgBZTKp (ORCPT
+        Wed, 26 Feb 2020 14:21:01 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:35750 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbgBZTVB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Feb 2020 14:10:45 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01QJAUcQ021768
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Feb 2020 14:10:44 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ydqf7qyen-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 26 Feb 2020 14:10:42 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-integrity@vger.kernel.org> from <nayna@linux.ibm.com>;
-        Wed, 26 Feb 2020 19:10:18 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 26 Feb 2020 19:10:15 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01QJAEhm53674226
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 26 Feb 2020 19:10:14 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0150C11C04C;
-        Wed, 26 Feb 2020 19:10:14 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71B3111C058;
-        Wed, 26 Feb 2020 19:10:11 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.160.92.140])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 26 Feb 2020 19:10:11 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-efi@vger.kernel.org, linux-s390@vger.kernel.org
+        Wed, 26 Feb 2020 14:21:01 -0500
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 01E7E20B9C02;
+        Wed, 26 Feb 2020 11:21:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 01E7E20B9C02
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1582744860;
+        bh=W5JGlWfBcPkXP7GPkcMwkkT4Bh9pLTkThoAlCVPwyRQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=sP90uYz+6s+BSypzgsp9eYDewZcb3nzcjwkoUZPDiJcQlBfut+kdr1zeFmQHWh1/Z
+         +9CCAIkM1znTN/EcRfAb2OLHvdncSDza5XnDZ3KvVN53OHh+iPP6ONDSj9fX0B2V4E
+         ZdtGrhFm20v1aAMh41WfyHskx9YNOblByQHjRXtQ=
+Subject: Re: [PATCH] ima: add a new CONFIG for loading arch-specific policies
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-efi@vger.kernel.org,
+        linux-s390@vger.kernel.org
 Cc:     Ard Biesheuvel <ardb@kernel.org>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Philipp Rudo <prudo@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH] ima: add a new CONFIG for loading arch-specific policies
-Date:   Wed, 26 Feb 2020 14:10:07 -0500
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 20022619-0008-0000-0000-00000356B53E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 20022619-0009-0000-0000-00004A77D515
-Message-Id: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-02-26_07:2020-02-26,2020-02-26 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- mlxlogscore=999 bulkscore=0 priorityscore=1501 impostorscore=0
- phishscore=0 malwarescore=0 adultscore=0 clxscore=1011 lowpriorityscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2001150001 definitions=main-2002260119
+        linux-kernel@vger.kernel.org
+References: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <94fe39a9-db9e-211d-d9b7-4cfe1a270e6f@linux.microsoft.com>
+Date:   Wed, 26 Feb 2020 11:21:28 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <1582744207-25969-1-git-send-email-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Every time a new architecture defines the IMA architecture specific
-functions - arch_ima_get_secureboot() and arch_ima_get_policy(), the IMA
-include file needs to be updated. To avoid this "noise", this patch
-defines a new IMA Kconfig IMA_SECURE_AND_OR_TRUSTED_BOOT option, allowing
-the different architectures to select it.
+Hi Nayna,
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Philipp Rudo <prudo@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/Kconfig           | 2 +-
- arch/s390/Kconfig              | 1 +
- arch/x86/Kconfig               | 1 +
- include/linux/ima.h            | 3 +--
- security/integrity/ima/Kconfig | 9 +++++++++
- 5 files changed, 13 insertions(+), 3 deletions(-)
+> +
+> +config IMA_SECURE_AND_OR_TRUSTED_BOOT
+> +	bool
+> +	depends on IMA
+> +	depends on IMA_ARCH_POLICY
+> +	default n
+> +	help
+> +	   This option is selected by architectures to enable secure and/or
+> +	   trusted boot based on IMA runtime policies.
+> 
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 497b7d0b2d7e..b8ce1b995633 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -246,6 +246,7 @@ config PPC
- 	select SYSCTL_EXCEPTION_TRACE
- 	select THREAD_INFO_IN_TASK
- 	select VIRT_TO_BUS			if !PPC64
-+	select IMA_SECURE_AND_OR_TRUSTED_BOOT	if PPC_SECURE_BOOT
- 	#
- 	# Please keep this list sorted alphabetically.
- 	#
-@@ -978,7 +979,6 @@ config PPC_SECURE_BOOT
- 	prompt "Enable secure boot support"
- 	bool
- 	depends on PPC_POWERNV
--	depends on IMA_ARCH_POLICY
- 	help
- 	  Systems with firmware secure boot enabled need to define security
- 	  policies to extend secure boot to the OS. This config allows a user
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 8abe77536d9d..90ff3633ade6 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -195,6 +195,7 @@ config S390
- 	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
- 	select SWIOTLB
- 	select GENERIC_ALLOCATOR
-+	select IMA_SECURE_AND_OR_TRUSTED_BOOT
- 
- 
- config SCHED_OMIT_FRAME_POINTER
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index beea77046f9b..cafa66313fe2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -230,6 +230,7 @@ config X86
- 	select VIRT_TO_BUS
- 	select X86_FEATURE_NAMES		if PROC_FS
- 	select PROC_PID_ARCH_STATUS		if PROC_FS
-+	select IMA_SECURE_AND_OR_TRUSTED_BOOT	if EFI
- 
- config INSTRUCTION_DECODER
- 	def_bool y
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 1659217e9b60..aefe758f4466 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,8 +30,7 @@ extern void ima_kexec_cmdline(const void *buf, int size);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
--#if (defined(CONFIG_X86) && defined(CONFIG_EFI)) || defined(CONFIG_S390) \
--	|| defined(CONFIG_PPC_SECURE_BOOT)
-+#ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
- extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 3f3ee4e2eb0d..d17972aa413a 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -327,3 +327,12 @@ config IMA_QUEUE_EARLY_BOOT_KEYS
- 	depends on IMA_MEASURE_ASYMMETRIC_KEYS
- 	depends on SYSTEM_TRUSTED_KEYRING
- 	default y
-+
-+config IMA_SECURE_AND_OR_TRUSTED_BOOT
-+	bool
-+	depends on IMA
-+	depends on IMA_ARCH_POLICY
-+	default n
-+	help
-+	   This option is selected by architectures to enable secure and/or
-+	   trusted boot based on IMA runtime policies.
--- 
-2.18.1
+Why is the default for this new config "n"?
+Is there any reason to not turn on this config if both IMA and 
+IMA_ARCH_POLICY are set to y?
+
+thanks,
+  -lakshmi
 
