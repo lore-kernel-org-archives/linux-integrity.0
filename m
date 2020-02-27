@@ -2,142 +2,142 @@ Return-Path: <SRS0=cwPV=4P=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F7EC4BA24
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Feb 2020 00:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B97C4BA33
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Feb 2020 00:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA97524672
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Feb 2020 00:25:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAvdWDWa"
+	by mail.kernel.org (Postfix) with ESMTP id B10BA21D7E
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Feb 2020 00:27:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbgB0AZH (ORCPT
+        id S1728122AbgB0A1E (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 26 Feb 2020 19:25:07 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37611 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbgB0AZH (ORCPT
+        Wed, 26 Feb 2020 19:27:04 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1442 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728003AbgB0A1D (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Feb 2020 19:25:07 -0500
-Received: by mail-pf1-f195.google.com with SMTP id p14so644178pfn.4;
-        Wed, 26 Feb 2020 16:25:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=S3CadKvM+eCMUxmC/eeBKQK/q7RdQUMJE+pGfasasc0=;
-        b=eAvdWDWa4oIsZt/4lu6e6OLMh3JPN60GBnGWYZuD7+i5Ayp8Li4BnUCXtumPefXKwe
-         EJEKh9Kddo5aeD8Zy6AmZuoQqyQAZCfHHwuu8SKVXostYsmRvHW3imFfhkRtOjVJ5WZQ
-         zebz+DHmlUZtm/LoPIuC/x9NeGROmexu9qiJVskF84Bippje0NKGB07w31MjfpAQMumD
-         0sMrBR/btgs57xNdxJXTVVUTZC7KmPk0rkNOzW0tJw19Uagg5Z0Ymvi87tWgs7Iye4y0
-         Bs7D0IuBCBMvQUFhJRBiMfrpBEqub2AqaZlh+B2iEYC+T1LveoseoY2mQR0ude+FEkla
-         Jaig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=S3CadKvM+eCMUxmC/eeBKQK/q7RdQUMJE+pGfasasc0=;
-        b=q2ZXypJncpcH7f1BRiiBx/YROPJW8PkWqnMdjioyjwle69OJ9qvzjXYlD+3gjCWpKC
-         s0QI+iXc6iUJnU2DxuXWTZ0qhA2IK5CSqPtJ2dNhuygKdO00EiYEWwN7SHug64DCxn2X
-         AdwmIpVntUHb+7ERvIJ9gYiZV8dZItArWwucwWYtfpDFjF79KzVP0nz1P9gANgCGiIgd
-         CKWymtPZ0luhgckpRUG0RG+mlsc0CAV/8ZXtbF3OC+4gIt2OF4+NSJmdkwwW0zt0kWSI
-         2yGVoEQvOWxI/nI0oRpmtbNawzoR53zISFhAiW/aViycG3yp7eyvxoC9R5wug6zWlar8
-         SpJw==
-X-Gm-Message-State: APjAAAX8TTCKgUlSkRkFFIGkyXSt4kxZKCXrCC5xCTq1V622QP9Kx8JF
-        OF9UHLjBf0B5ro0KD46X9+Q=
-X-Google-Smtp-Source: APXvYqwBunRBcHBLq+dmv6mUtoq2op4kUNwYTpW7OgBcn4LrCXVlNEaV8iTwe61ev3QmYvVOPz+eSg==
-X-Received: by 2002:a05:6a00:5b:: with SMTP id i27mr1374646pfk.112.1582763105984;
-        Wed, 26 Feb 2020 16:25:05 -0800 (PST)
-Received: from jprestwo-test.jf.intel.com (jfdmzpr04-ext.jf.intel.com. [134.134.137.73])
-        by smtp.googlemail.com with ESMTPSA id d23sm4332535pfo.176.2020.02.26.16.25.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 26 Feb 2020 16:25:05 -0800 (PST)
-Message-ID: <f9b64fe39eb71a1560ca2d1887238d0b4f9f111a.camel@gmail.com>
-Subject: Re: [PATCH v5 4/6] security: keys: trusted: use ASN.1 TPM2 key
- format for the blobs
-From:   James Prestwood <prestwoj@gmail.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, keyrings@vger.kernel.org
-Date:   Wed, 26 Feb 2020 16:20:38 -0800
-In-Reply-To: <1582761736.4245.12.camel@HansenPartnership.com>
-References: <20200130101812.6271-1-James.Bottomley@HansenPartnership.com>
-         <20200130101812.6271-5-James.Bottomley@HansenPartnership.com>
-         <5c593b6f23ae41e90e6b3799141ea68944bb4034.camel@gmail.com>
-         <1582761736.4245.12.camel@HansenPartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 26 Feb 2020 19:27:03 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01R0Kfxe036693;
+        Wed, 26 Feb 2020 19:26:57 -0500
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ydcnh0vfg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 26 Feb 2020 19:26:57 -0500
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 01R0AF1Q018267;
+        Thu, 27 Feb 2020 00:26:56 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma02dal.us.ibm.com with ESMTP id 2ydcmkuf9r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 27 Feb 2020 00:26:56 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 01R0QttM50856304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 27 Feb 2020 00:26:55 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D61EB28059;
+        Thu, 27 Feb 2020 00:26:55 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BD73128058;
+        Thu, 27 Feb 2020 00:26:55 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 27 Feb 2020 00:26:55 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
+Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
+        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
+        gcwilson@linux.ibm.com, jgg@ziepe.ca,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v3 2/4] tpm: ibmvtpm: Wait for buffer to be set before proceeding
+Date:   Wed, 26 Feb 2020 19:26:52 -0500
+Message-Id: <20200227002654.7536-3-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200227002654.7536-1-stefanb@linux.vnet.ibm.com>
+References: <20200227002654.7536-1-stefanb@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-26_09:2020-02-26,2020-02-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015
+ mlxscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2001150001 definitions=main-2002270000
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> > I have been using your set of patches in order to get this ASN.1
-> > parser/definition. I am implementing an asymmetric key parser/type
-> > TPM2
-> > keys for enc/dec/sign/verify using keyctl. Note that this
-> > implementation goes in crypto/asymmetric_keys/, and your patches
-> > sit
-> > in
-> > security/keys/trusted-keys/.
-> > 
-> > Currently I am just including "../../security/keys/trusted-
-> > keys/{tpm2key.asn1.h,tpm2-policy.h}" in order to use the ASN.1
-> > parser
-> > to verify my keys, but this obviously isn't going to fly.
-> > 
-> > Do you (or anyone) have any ideas as to how both trusted keys and
-> > asymmetric keys could share this ASN.1 parser/definition? Some
-> > common
-> > area that both security and crypto could include? Or maybe there is
-> > some common way the kernel does things like this?
-> 
-> Actually TPM2 asymmetric keys was also on my list.  I was going to
-> use
-> the existing template and simply move it somewhere everyone could
-> use. 
-> I also think you need the policy parser pieces because at least one
-> implementation we'd need to be compatible with supports key policy.
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-In terms of policy, I haven't looked into that at all for asymmetric
-keys. I do already have enc/dec/sign/verify asymmetric key operations
-all working, and used your ASN1 template for parsing (just copied it
-into asymmetric_keys for now). Since the asymmetric operations use HMAC
-sessions I didn't see much carry over from your patches (but this could
-change if policy stuff gets introduced).
+Synchronize with the results from the CRQs before continuing with
+the initialization. This avoids trying to send TPM commands while
+the rtce buffer has not been allocated, yet.
 
-This will go in the eventual RFC soon but while I have you here:
+This patch fixes an existing race condition that may occurr if the
+hypervisor does not quickly respond to the VTPM_GET_RTCE_BUFFER_SIZE
+request sent during initialization and therefore the ibmvtpm->rtce_buf
+has not been allocated at the time the first TPM command is sent.
 
-I also implemented key wrapping. Exposing this as a keyctl API may take
-some rework, hopefully with some help from others in this subsystem. As
-it stand now you have to padd a key pair, then do a (new) pkey_wrap
-operation on it. This returns a DER with the wrapped TPM2 key. This
-required modifying the public_key type, which I really did not like
-since it now depends on TPM. Not sure if the route I went is gonna fly
-without tweaking, but this is all new to me :) Again, some guidance for
-how this should be is needed.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Fixes: 132f76294744 ("Add new device driver to support IBM vTPM")
+---
+ drivers/char/tpm/tpm_ibmvtpm.c | 9 +++++++++
+ drivers/char/tpm/tpm_ibmvtpm.h | 1 +
+ 2 files changed, 10 insertions(+)
 
-Before I send these patches I need to get some testing done on real
-TPM2 hardware. So far its just been emulation. But these patches should
-be coming very soon.
-
-Thanks,
-James
-
-
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 78cc52690177..eee566eddb35 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -571,6 +571,7 @@ static irqreturn_t ibmvtpm_interrupt(int irq, void *vtpm_instance)
+ 	 */
+ 	while ((crq = ibmvtpm_crq_get_next(ibmvtpm)) != NULL) {
+ 		ibmvtpm_crq_process(crq, ibmvtpm);
++		wake_up_interruptible(&ibmvtpm->crq_queue.wq);
+ 		crq->valid = 0;
+ 		smp_wmb();
+ 	}
+@@ -618,6 +619,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 	}
  
-
-> 
-> Regards,
-> 
-> James
-> 
+ 	crq_q->num_entry = CRQ_RES_BUF_SIZE / sizeof(*crq_q->crq_addr);
++	init_waitqueue_head(&crq_q->wq);
+ 	ibmvtpm->crq_dma_handle = dma_map_single(dev, crq_q->crq_addr,
+ 						 CRQ_RES_BUF_SIZE,
+ 						 DMA_BIDIRECTIONAL);
+@@ -670,6 +672,13 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 	if (rc)
+ 		goto init_irq_cleanup;
+ 
++	if (!wait_event_timeout(ibmvtpm->crq_queue.wq,
++				ibmvtpm->rtce_buf != NULL,
++				HZ)) {
++		dev_err(dev, "Initialization failed\n");
++		goto init_irq_cleanup;
++	}
++
+ 	return tpm_chip_register(chip);
+ init_irq_cleanup:
+ 	do {
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
+index 7983f1a33267..b92aa7d3e93e 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.h
++++ b/drivers/char/tpm/tpm_ibmvtpm.h
+@@ -26,6 +26,7 @@ struct ibmvtpm_crq_queue {
+ 	struct ibmvtpm_crq *crq_addr;
+ 	u32 index;
+ 	u32 num_entry;
++	wait_queue_head_t wq;
+ };
+ 
+ struct ibmvtpm_dev {
+-- 
+2.23.0
 
