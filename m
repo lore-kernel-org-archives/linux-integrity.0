@@ -1,122 +1,91 @@
-Return-Path: <SRS0=WCTa=45=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=i/3v=46=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1CCC10DCE
-	for <linux-integrity@archiver.kernel.org>; Thu, 12 Mar 2020 15:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DDEC10DCE
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Mar 2020 01:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1BE206E7
-	for <linux-integrity@archiver.kernel.org>; Thu, 12 Mar 2020 15:56:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37282206EB
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Mar 2020 01:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbgCLP4o (ORCPT
+        id S1726834AbgCMBEh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 12 Mar 2020 11:56:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56332 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726571AbgCLP4o (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Mar 2020 11:56:44 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02CFqMTq095906;
-        Thu, 12 Mar 2020 11:55:36 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2yqpyau4a1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Mar 2020 11:55:35 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02CFlGWq019512;
-        Thu, 12 Mar 2020 15:53:33 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma01wdc.us.ibm.com with ESMTP id 2ypjxr5yvr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 12 Mar 2020 15:53:33 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02CFrXqQ13632068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Mar 2020 15:53:33 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D1DEAE05C;
-        Thu, 12 Mar 2020 15:53:33 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E8337AE05F;
-        Thu, 12 Mar 2020 15:53:32 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Mar 2020 15:53:32 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
-Cc:     aik@ozlabs.ru, david@gibson.dropbear.id.au,
-        linux-kernel@vger.kernel.org, nayna@linux.vnet.ibm.com,
-        gcwilson@linux.ibm.com, jgg@ziepe.ca,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v7 0/3] Enable vTPM 2.0 for the IBM vTPM driver
-Date:   Thu, 12 Mar 2020 11:53:29 -0400
-Message-Id: <20200312155332.671464-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
+        Thu, 12 Mar 2020 21:04:37 -0400
+Received: from mga09.intel.com ([134.134.136.24]:58736 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbgCMBEh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:04:37 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Mar 2020 18:04:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,546,1574150400"; 
+   d="scan'208";a="243218144"
+Received: from seyal2-mobl.ger.corp.intel.com (HELO localhost) ([10.254.147.27])
+  by orsmga003.jf.intel.com with ESMTP; 12 Mar 2020 18:04:27 -0700
+Date:   Fri, 13 Mar 2020 03:04:25 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>
+Subject: Re: [PATCH v2 1/2] KEYS: Don't write out to userspace while holding
+ key semaphore
+Message-ID: <20200313010425.GA11360@linux.intel.com>
+References: <20200308170410.14166-1-longman@redhat.com>
+ <20200308170410.14166-2-longman@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
- definitions=2020-03-12_07:2020-03-11,2020-03-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- suspectscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 adultscore=0
- phishscore=0 mlxscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2001150001
- definitions=main-2003120082
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200308170410.14166-2-longman@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Sun, Mar 08, 2020 at 01:04:09PM -0400, Waiman Long wrote:
+> +		/*
+> +		 * Read methods will just return the required length
+> +		 * without any copying if the provided length isn't big
+> +		 * enough.
+> +		 */
+> +		if ((ret > 0) && (ret <= buflen) && buffer &&
+> +		    copy_to_user(buffer, tmpbuf, ret))
+> +			ret = -EFAULT;
 
-QEMU 5.0 will support the PAPR vTPM device model for TPM 1.2 and TPM 2.0.
-This series of patches enables vTPM 2.0 support for the IBM vTPM driver.
+Please, reorg and remove redundant parentheses:
 
-Regards,
-   Stefan
+/*
+ * Read methods will just return the required length
+ * without any copying if the provided length isn't big
+ * enough.
+ */
+if (ret > 0 && ret <= buflen) {
+	if (buffer && copy_to_user(buffer, tmpbuf, ret))
+		ret = -EFAULT;
+}
 
-- v6->v7:
-  - reverted changes in 1/3 due to xtensa not supporting API call;
-    removed Jarrko's Acked-by
-  - Added Nayna's Acked-by adn Tested-by to all patches
+Now the comment is attached to the exact right thing. The previous
+organization is a pain to look at when backtracking commits for
+whatever reason in the future.
 
-- v5->v6:
-  - Nits in commit texts
+I'm also wondering, would it be possible to rework the code in a way
+that you don't have check whether buffer is valid on a constant basis?
 
-- v4->v5:
-  - Added error path in case tpm2_get_cc_attrs_tbl() fails
-
-- v3->v4:
-  - Dropped patch 3; getting command code attributes table in IBM driver
-
-- v2->v3:
-  - Added fixes tag to patch 2/4; the race seems to have existed
-    since the driver was first added
-  - Renamed tpm2_init to tpm2_init_commands in 3/4
-
-- v1->v2:
-  - Addressed comments to v1; added patch 3 to handle case when
-    TPM_OPS_AUTO_STARTUP is not set
-
-
-
-Stefan Berger (3):
-  tpm: of: Handle IBM,vtpm20 case when getting log parameters
-  tpm: ibmvtpm: Wait for buffer to be set before proceeding
-  tpm: ibmvtpm: Add support for TPM2
-
- drivers/char/tpm/eventlog/of.c |  3 ++-
- drivers/char/tpm/tpm.h         |  1 +
- drivers/char/tpm/tpm2-cmd.c    |  2 +-
- drivers/char/tpm/tpm_ibmvtpm.c | 17 +++++++++++++++++
- drivers/char/tpm/tpm_ibmvtpm.h |  1 +
- 5 files changed, 22 insertions(+), 2 deletions(-)
-
--- 
-2.23.0
-
+/Jarkko
