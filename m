@@ -1,78 +1,102 @@
-Return-Path: <SRS0=5Dof=5B=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=va9F=5C=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D83C0044D
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Mar 2020 22:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2623C18E5B
+	for <linux-integrity@archiver.kernel.org>; Tue, 17 Mar 2020 13:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5207920674
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Mar 2020 22:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C1820738
+	for <linux-integrity@archiver.kernel.org>; Tue, 17 Mar 2020 13:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732779AbgCPWTQ (ORCPT
+        id S1726016AbgCQNJl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 16 Mar 2020 18:19:16 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8995 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732716AbgCPWTQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Mar 2020 18:19:16 -0400
-IronPort-SDR: 50B5skU+j+Nj1lVld8103PDJDfNRKXrwiRt9I9zOcFZzv4zy41d2+IH9+yb+gnz2grMjBzzPLi
- QQ47P+iljhow==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2020 15:19:15 -0700
-IronPort-SDR: wHdjhQsSeIkJPsCQJhsjtIcOOiIgXAqbgU0O4XenBzYIj+MmxXSWgF/lOJ5GbfUYJTmvXmfzca
- mtU12ZLuOkLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,561,1574150400"; 
-   d="scan'208";a="247617968"
-Received: from oaizenbe-mobl.ger.corp.intel.com ([10.254.149.199])
-  by orsmga006.jf.intel.com with ESMTP; 16 Mar 2020 15:19:06 -0700
-Message-ID: <f89b41ea8fc1ab84cc19fd1c1f9b048457bbc28d.camel@linux.intel.com>
-Subject: Re: [PATCH v3 3/3] KEYS: Use kvmalloc() to better handle large
- buffer allocation
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     David Howells <dhowells@redhat.com>,
-        Waiman Long <longman@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Chris von Recklinghausen <crecklin@redhat.com>
-Date:   Tue, 17 Mar 2020 00:19:06 +0200
-In-Reply-To: <1809107.1584368672@warthog.procyon.org.uk>
-References: <20200313152102.1707-4-longman@redhat.com>
-         <20200313152102.1707-1-longman@redhat.com>
-         <1809107.1584368672@warthog.procyon.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.35.92-1 
+        Tue, 17 Mar 2020 09:09:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29880 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725872AbgCQNJk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 17 Mar 2020 09:09:40 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02HD4bKK062147;
+        Tue, 17 Mar 2020 09:08:25 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ytuqr6w52-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Mar 2020 09:08:25 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02HD3eBe005980;
+        Tue, 17 Mar 2020 13:08:24 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma02wdc.us.ibm.com with ESMTP id 2yrpw6r7j3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 17 Mar 2020 13:08:24 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02HD8OpJ16253868
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Mar 2020 13:08:24 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1FD40112062;
+        Tue, 17 Mar 2020 13:08:24 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 08468112061;
+        Tue, 17 Mar 2020 13:08:24 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Mar 2020 13:08:23 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     jarkko.sakkinen@linux.intel.com, linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sachinp@linux.vnet.ibm.com,
+        mpe@ellerman.id.au, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] tpm2: Export tpm2_get_cc_attrs_tbl for ibmvtpm driver as module
+Date:   Tue, 17 Mar 2020 09:08:19 -0400
+Message-Id: <20200317130819.720318-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.645
+ definitions=2020-03-17_04:2020-03-17,2020-03-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxscore=0
+ phishscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ suspectscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2003020000 definitions=main-2003170056
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2020-03-16 at 14:24 +0000, David Howells wrote:
-> I wonder if it's worth merging this into patch 2.  I'm not sure it's really
-> worth its own patch.  If you want to generalise kvzfree(), then that could go
-> as its own patch first.
-> 
-> David
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Also in the sense that there is no senseful situation where you'd
-only wanted to pick either but not both.
+This patch fixes the following problem when the ibmvtpm driver
+is built as a module:
 
-/Jarkko
+ERROR: modpost: "tpm2_get_cc_attrs_tbl" [drivers/char/tpm/tpm_ibmvtpm.ko] undefined!
+make[1]: *** [scripts/Makefile.modpost:94: __modpost] Error 1
+make: *** [Makefile:1298: modules] Error 2
+
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 76f67b155bd5..eff1f12d981a 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -681,6 +681,7 @@ int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
+ 		rc = -ENODEV;
+ 	return rc;
+ }
++EXPORT_SYMBOL_GPL(tpm2_get_cc_attrs_tbl);
+ 
+ /**
+  * tpm2_startup - turn on the TPM
+-- 
+2.23.0
 
