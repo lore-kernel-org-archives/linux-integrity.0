@@ -2,113 +2,205 @@ Return-Path: <SRS0=XJb8=5F=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50866C4332D
-	for <linux-integrity@archiver.kernel.org>; Fri, 20 Mar 2020 17:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94890C43333
+	for <linux-integrity@archiver.kernel.org>; Fri, 20 Mar 2020 19:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D81720786
-	for <linux-integrity@archiver.kernel.org>; Fri, 20 Mar 2020 17:59:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584727188;
-	bh=m85KmfGIa5J6kHFrbVlcvE04dIaNYgTd2clrhmeL70k=;
-	h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:
-	 List-ID:From;
-	b=FKLXETiZWIgSom/bAGiheqIketEW2psJGPKnBXt0OdmvTM4jSpyO09DtzBLB44IAp
-	 HvB0sh/ZsPIOSmGqKUSpM9bElBKfxWy138nvkYZgsq6oCJhp0fkJwd39q6PtNJCYmW
-	 6eibYIS/f1ebKk5vQ1uBwP+SUB3MGRhAKwGLfdWI=
+	by mail.kernel.org (Postfix) with ESMTP id 6B9ED20739
+	for <linux-integrity@archiver.kernel.org>; Fri, 20 Mar 2020 19:19:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="anm9V0gj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbgCTR7r (ORCPT
+        id S1727244AbgCTTT2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 20 Mar 2020 13:59:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbgCTR7q (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:59:46 -0400
-Received: from localhost (unknown [137.135.114.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 20 Mar 2020 15:19:28 -0400
+Received: from us-smtp-delivery-74.mimecast.com ([63.128.21.74]:30647 "EHLO
+        us-smtp-delivery-74.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727345AbgCTTT1 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 20 Mar 2020 15:19:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1584731966;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=QRTCx7iUFxWApQLdwBhGyDxdNRfn8szKdemehtnU9Mo=;
+        b=anm9V0gjYxDmr+c16m7VLEOcZ71+magfFYQkppIBsaGpZW4FJCJh486lTI5+YN+CkYxf9x
+        DRGvthGyv55UwMzXbgon5NgWpK8Nyyt4OVksKKikYBs35pFlJZsIWutnDb3vCAo2SP4x/0
+        54WLheAsMFnCBlfzA6ZUeFy7EBea9Dg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-358-oi80VyK-P_SJHLTY9NPDjQ-1; Fri, 20 Mar 2020 15:19:22 -0400
+X-MC-Unique: oi80VyK-P_SJHLTY9NPDjQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B8F920663;
-        Fri, 20 Mar 2020 17:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584727185;
-        bh=m85KmfGIa5J6kHFrbVlcvE04dIaNYgTd2clrhmeL70k=;
-        h=Date:From:To:To:To:Cc:Cc:Cc:Subject:In-Reply-To:References:From;
-        b=NTbJ/ctoChWlfVnXNUb+odQWShz8p41aNye1ayNP9Hs89E+UImKUWBytFkjwin8Zy
-         CB75xNcxL9Z/lV0axsrVio0h9IZqqR1gQuwPemq1Jj/QUXS6Y0/lbj6yerLDvNSAix
-         Z5hm3lnyhW4uMI6UGxKqjlMOGyV2AfBNtBglwhTg=
-Date:   Fri, 20 Mar 2020 17:59:44 +0000
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-To:     George Wilson <gcwilson@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     stable@vger.kernel.org
-Cc:     stable@vger.kernel.org
-Subject: Re: [PATCH v4] tpm: ibmvtpm: retry on H_CLOSED in tpm_ibmvtpm_send()
-In-Reply-To: <20200320032758.228088-1-gcwilson@linux.ibm.com>
-References: <20200320032758.228088-1-gcwilson@linux.ibm.com>
-Message-Id: <20200320175945.6B8F920663@mail.kernel.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C1A1800D53;
+        Fri, 20 Mar 2020 19:19:20 +0000 (UTC)
+Received: from llong.com (ovpn-118-190.rdu2.redhat.com [10.10.118.190])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 308A45C1AB;
+        Fri, 20 Mar 2020 19:19:18 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
+        linux-afs@lists.infradead.org, Sumit Garg <sumit.garg@linaro.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v6 2/2] KEYS: Avoid false positive ENOMEM error on key read
+Date:   Fri, 20 Mar 2020 15:19:03 -0400
+Message-Id: <20200320191903.19494-3-longman@redhat.com>
+In-Reply-To: <20200320191903.19494-1-longman@redhat.com>
+References: <20200320191903.19494-1-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi
+By allocating a kernel buffer with a user-supplied buffer length, it
+is possible that a false positive ENOMEM error may be returned because
+the user-supplied length is just too large even if the system do have
+enough memory to hold the actual key data.
 
-[This is an automated email]
+Moreover, if the buffer length is larger than the maximum amount of
+memory that can be returned by kmalloc() (2^(MAX_ORDER-1) number of
+pages), a warning message will also be printed.
 
-This commit has been processed because it contains a "Fixes:" tag
-fixing commit: 132f76294744 ("drivers/char/tpm: Add new device driver to support IBM vTPM").
+To reduce this possibility, we set a threshold (page size) over which we
+do check the actual key length first before allocating a buffer of the
+right size to hold it. The threshold is arbitrary, it is just used to
+trigger a buffer length check. It does not limit the actual key length
+as long as there is enough memory to satisfy the memory request.
 
-The bot has tested the following trees: v5.5.10, v5.4.26, v4.19.111, v4.14.173, v4.9.216, v4.4.216.
+To further avoid large buffer allocation failure due to page
+fragmentation, kvmalloc() is used to allocate the buffer so that vmapped
+pages can be used when there is not a large enough contiguous set of
+pages available for allocation.
 
-v5.5.10: Build OK!
-v5.4.26: Build OK!
-v4.19.111: Build OK!
-v4.14.173: Build OK!
-v4.9.216: Failed to apply! Possible dependencies:
-    02ae1382882f ("tpm: redefine read_log() to handle ACPI/OF at runtime")
-    2528a64664f8 ("tpm: define a generic open() method for ascii & bios measurements")
-    402149c6470d ("tpm: vtpm_proxy: Suppress error logging when in closed state")
-    4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
-    745b361e989a ("tpm: infrastructure for TPM spaces")
-    748935eeb72c ("tpm: have event log use the tpm_chip")
-    7518a21a9da3 ("tpm: drop tpm1_chip_register(/unregister)")
-    b1a9b7b602c5 ("tpm: replace symbolic permission with octal for securityfs files")
-    cd9b7631a888 ("tpm: replace dynamically allocated bios_dir with a static array")
-    f5595f5baa30 ("tpm: Unify the send callback behaviour")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ security/keys/internal.h | 12 ++++++++++++
+ security/keys/keyctl.c   | 39 +++++++++++++++++++++++++++++++--------
+ 2 files changed, 43 insertions(+), 8 deletions(-)
 
-v4.4.216: Failed to apply! Possible dependencies:
-    02ae1382882f ("tpm: redefine read_log() to handle ACPI/OF at runtime")
-    036bb38ffb3e ("tpm_tis: Ensure interrupts are disabled when the driver starts")
-    23d06ff700f5 ("tpm: drop tpm_atmel specific fields from tpm_vendor_specific")
-    25112048cd59 ("tpm: rework tpm_get_timeouts()")
-    402149c6470d ("tpm: vtpm_proxy: Suppress error logging when in closed state")
-    41a5e1cf1fe1 ("tpm/tpm_tis: Split tpm_tis driver into a core and TCG TIS compliant phy")
-    4d627e672bd0 ("tpm_tis: Do not fall back to a hardcoded address for TPM2")
-    4eea703caaac ("tpm: drop 'iobase' from struct tpm_vendor_specific")
-    51dd43dff74b ("tpm_tis: Use devm_ioremap_resource")
-    55a889c2cb13 ("tpm_crb: Use the common ACPI definition of struct acpi_tpm2")
-    56671c893e0e ("tpm: drop 'locality' from struct tpm_vendor_specific")
-    570a36097f30 ("tpm: drop 'irq' from struct tpm_vendor_specific")
-    57dacc2b4ce5 ("tpm: tpm_tis: Share common data between phys")
-    745b361e989a ("tpm: infrastructure for TPM spaces")
-    7ab4032fa579 ("tpm_tis: Get rid of the duplicate IRQ probing code")
-    d30b8e4f68ef ("tpm: cleanup tpm_tis_remove()")
-    d4956524f1b0 ("tpm: drop manufacturer_id from struct tpm_vendor_specific")
-    e3837e74a06d ("tpm_tis: Refactor the interrupt setup")
-    ee1779840d09 ("tpm: drop 'base' from struct tpm_vendor_specific")
-    ef7b81dc7864 ("tpm_tis: Disable interrupt auto probing on a per-device basis")
-    f5595f5baa30 ("tpm: Unify the send callback behaviour")
-
-
-NOTE: The patch will not be queued to stable trees until it is upstream.
-
-How should we proceed with this patch?
-
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index ba3e2da14cef..6d0ca48ae9a5 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -16,6 +16,8 @@
+ #include <linux/keyctl.h>
+ #include <linux/refcount.h>
+ #include <linux/compat.h>
++#include <linux/mm.h>
++#include <linux/vmalloc.h>
+ 
+ struct iovec;
+ 
+@@ -349,4 +351,14 @@ static inline void key_check(const struct key *key)
+ 
+ #endif
+ 
++/*
++ * Helper function to clear and free a kvmalloc'ed memory object.
++ */
++static inline void __kvzfree(const void *addr, size_t len)
++{
++	if (addr) {
++		memset((void *)addr, 0, len);
++		kvfree(addr);
++	}
++}
+ #endif /* _INTERNAL_H */
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 5a0794cb8815..ded69108db0d 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -339,7 +339,7 @@ long keyctl_update_key(key_serial_t id,
+ 	payload = NULL;
+ 	if (plen) {
+ 		ret = -ENOMEM;
+-		payload = kmalloc(plen, GFP_KERNEL);
++		payload = kvmalloc(plen, GFP_KERNEL);
+ 		if (!payload)
+ 			goto error;
+ 
+@@ -360,7 +360,7 @@ long keyctl_update_key(key_serial_t id,
+ 
+ 	key_ref_put(key_ref);
+ error2:
+-	kzfree(payload);
++	__kvzfree(payload, plen);
+ error:
+ 	return ret;
+ }
+@@ -877,13 +877,23 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 		 * transferring them to user buffer to avoid potential
+ 		 * deadlock involving page fault and mmap_sem.
+ 		 */
+-		char *key_data = kmalloc(buflen, GFP_KERNEL);
++		char *key_data = NULL;
++		size_t key_data_len = buflen;
+ 
+-		if (!key_data) {
+-			ret = -ENOMEM;
+-			goto error2;
++		/*
++		 * When the user-supplied key length is larger than
++		 * PAGE_SIZE, we get the actual key length first before
++		 * allocating a right-sized key data buffer.
++		 */
++		if (buflen <= PAGE_SIZE) {
++allocbuf:
++			key_data = kvmalloc(key_data_len, GFP_KERNEL);
++			if (!key_data) {
++				ret = -ENOMEM;
++				goto error2;
++			}
+ 		}
+-		ret = __keyctl_read_key(key, key_data, buflen);
++		ret = __keyctl_read_key(key, key_data, key_data_len);
+ 
+ 		/*
+ 		 * Read methods will just return the required length
+@@ -891,10 +901,23 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+ 		 * enough.
+ 		 */
+ 		if (ret > 0 && ret <= buflen) {
++			/*
++			 * The key may change (unlikely) in between 2
++			 * consecutive __keyctl_read_key() calls. We will
++			 * need to allocate a larger buffer and redo the key
++			 * read when key_data_len < ret <= buflen.
++			 */
++			if (!key_data || unlikely(ret > key_data_len)) {
++				if (unlikely(key_data))
++					__kvzfree(key_data, key_data_len);
++				key_data_len = ret;
++				goto allocbuf;
++			}
++
+ 			if (copy_to_user(buffer, key_data, ret))
+ 				ret = -EFAULT;
+ 		}
+-		kzfree(key_data);
++		__kvzfree(key_data, key_data_len);
+ 	}
+ 
+ error2:
 -- 
-Thanks
-Sasha
+2.18.1
+
