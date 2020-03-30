@@ -2,145 +2,102 @@ Return-Path: <SRS0=3Bx3=5P=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC641C43331
-	for <linux-integrity@archiver.kernel.org>; Mon, 30 Mar 2020 15:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D83C43331
+	for <linux-integrity@archiver.kernel.org>; Mon, 30 Mar 2020 15:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84795206F5
-	for <linux-integrity@archiver.kernel.org>; Mon, 30 Mar 2020 15:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0375F205ED
+	for <linux-integrity@archiver.kernel.org>; Mon, 30 Mar 2020 15:46:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbgC3PQt (ORCPT
+        id S1729099AbgC3Pqu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 30 Mar 2020 11:16:49 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64172 "EHLO
+        Mon, 30 Mar 2020 11:46:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33490 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727942AbgC3PQt (ORCPT
+        by vger.kernel.org with ESMTP id S1728594AbgC3Pqu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 30 Mar 2020 11:16:49 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UF4kGK033477;
-        Mon, 30 Mar 2020 11:15:39 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 301ygv18ff-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Mar 2020 11:15:39 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 02UFFGRn013176;
-        Mon, 30 Mar 2020 15:15:38 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma02wdc.us.ibm.com with ESMTP id 301x76hn09-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Mar 2020 15:15:38 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02UFFcHO54198616
+        Mon, 30 Mar 2020 11:46:50 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 02UFXDO9119514
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Mar 2020 11:46:49 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30206x9kmc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 30 Mar 2020 11:46:49 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 30 Mar 2020 16:46:41 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 30 Mar 2020 16:46:39 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 02UFki3j45613374
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Mar 2020 15:15:38 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 034E7B2066;
-        Mon, 30 Mar 2020 15:15:38 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E940FB205F;
-        Mon, 30 Mar 2020 15:15:37 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 30 Mar 2020 15:15:37 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 2/3] tpm: Rearrange ACPI log code to easier extend for TPM2 case
-Date:   Mon, 30 Mar 2020 11:15:35 -0400
-Message-Id: <20200330151536.871700-3-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200330151536.871700-1-stefanb@linux.vnet.ibm.com>
-References: <20200330151536.871700-1-stefanb@linux.vnet.ibm.com>
-MIME-Version: 1.0
+        Mon, 30 Mar 2020 15:46:44 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 51D0A52051;
+        Mon, 30 Mar 2020 15:46:44 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.180.158])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B6D7D52054;
+        Mon, 30 Mar 2020 15:46:43 +0000 (GMT)
+Subject: Re: Immutable metadata
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Mon, 30 Mar 2020 11:46:43 -0400
+In-Reply-To: <1585534223.5188.408.camel@linux.ibm.com>
+References: <ff12bbbd945545a988ef84d6e4d3b83d@huawei.com>
+         <1585534223.5188.408.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
+x-cbid: 20033015-0012-0000-0000-0000039B07AC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20033015-0013-0000-0000-000021D81037
+Message-Id: <1585583203.5188.418.camel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
  definitions=2020-03-30_06:2020-03-30,2020-03-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 adultscore=0 bulkscore=0
- mlxlogscore=999 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2003020000 definitions=main-2003300139
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ spamscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999 suspectscore=0
+ bulkscore=0 phishscore=0 priorityscore=1501 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2003300142
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Sun, 2020-03-29 at 22:10 -0400, Mimi Zohar wrote:
+> Hi Roberto,
+> 
+> On Sat, 2020-03-28 at 11:18 +0000, Roberto Sassu wrote:
+> > Hi Matthew, Mimi
+> > 
+> > I have a question about portable signatures. Is there any particular reason
+> > why a write to a file is not denied by IMA if metadata are immutable?
+> 
+> As much as possible, IMA and EVM should be independent of each other.
+>  EVM is responsible for the integrity of file metadata, so it needs to
+> read other security xattrs, but IMA shouldn't be looking at the EVM
+> xattr.
+> 
+> Like any other security xattr, responsibility for maintaining the
+> xattr is left up to the particular LSM.  In this case, EVM would need
+> to prevent the file from being opened rw.  Should that be hard coded
+> or based on an EVM policy?
 
-Rearrange the ACPI table based log code to allow for easier extension
-for the TPM2 case.
+Thinking about this a bit more, evm_verifyxattr() is already returning
+INTEGRITY_PASS_IMMUTABLE.  I guess IMA could make decisions based on
+it.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/eventlog/acpi.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 63ada5e53f13..1ef2267c9378 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -50,9 +50,6 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	u64 len, start;
- 	struct tpm_bios_log *log;
- 
--	if (chip->flags & TPM_CHIP_FLAG_TPM2)
--		return -ENODEV;
--
- 	log = &chip->log;
- 
- 	/* Unfortuntely ACPI does not associate the event log with a specific
-@@ -61,23 +58,27 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	if (!chip->acpi_dev_handle)
- 		return -ENODEV;
- 
--	/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
--	status = acpi_get_table(ACPI_SIG_TCPA, 1,
--				(struct acpi_table_header **)&buff);
--
--	if (ACPI_FAILURE(status))
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- 		return -ENODEV;
--
--	switch(buff->platform_class) {
--	case BIOS_SERVER:
--		len = buff->server.log_max_len;
--		start = buff->server.log_start_addr;
--		break;
--	case BIOS_CLIENT:
--	default:
--		len = buff->client.log_max_len;
--		start = buff->client.log_start_addr;
--		break;
-+	} else {
-+		/* Find TCPA entry in RSDT (ACPI_LOGICAL_ADDRESSING) */
-+		status = acpi_get_table(ACPI_SIG_TCPA, 1,
-+					(struct acpi_table_header **)&buff);
-+
-+		if (ACPI_FAILURE(status))
-+			return -ENODEV;
-+
-+		switch (buff->platform_class) {
-+		case BIOS_SERVER:
-+			len = buff->server.log_max_len;
-+			start = buff->server.log_start_addr;
-+			break;
-+		case BIOS_CLIENT:
-+		default:
-+			len = buff->client.log_max_len;
-+			start = buff->client.log_start_addr;
-+			break;
-+		}
- 	}
- 	if (!len) {
- 		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
--- 
-2.14.5
+Mimi
 
