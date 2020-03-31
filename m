@@ -2,42 +2,42 @@ Return-Path: <SRS0=8Fnf=5Q=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6E4C2D0E8
-	for <linux-integrity@archiver.kernel.org>; Tue, 31 Mar 2020 11:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7175C2D0F3
+	for <linux-integrity@archiver.kernel.org>; Tue, 31 Mar 2020 11:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE43208E0
-	for <linux-integrity@archiver.kernel.org>; Tue, 31 Mar 2020 11:46:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 807DB21775
+	for <linux-integrity@archiver.kernel.org>; Tue, 31 Mar 2020 11:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbgCaLq0 convert rfc822-to-8bit (ORCPT
+        id S1730697AbgCaLqZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 31 Mar 2020 07:46:26 -0400
-Received: from maillog.nuvoton.com ([202.39.227.15]:40908 "EHLO
+        Tue, 31 Mar 2020 07:46:25 -0400
+Received: from maillog.nuvoton.com ([202.39.227.15]:40906 "EHLO
         maillog.nuvoton.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730645AbgCaLq0 (ORCPT
+        with ESMTP id S1730617AbgCaLqZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 31 Mar 2020 07:46:26 -0400
+        Tue, 31 Mar 2020 07:46:25 -0400
 Received: from NTHCCAS02.nuvoton.com (nthccas02.nuvoton.com [10.1.8.29])
-        by maillog.nuvoton.com (Postfix) with ESMTP id 1E4EE1C80E4B;
-        Tue, 31 Mar 2020 19:34:57 +0800 (CST)
+        by maillog.nuvoton.com (Postfix) with ESMTP id 153561C80E1D;
+        Tue, 31 Mar 2020 19:33:03 +0800 (CST)
 Received: from NTILML02.nuvoton.com (10.190.1.46) by NTHCCAS02.nuvoton.com
  (10.1.8.29) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Tue, 31 Mar 2020
- 19:34:56 +0800
+ 19:33:02 +0800
 Received: from NTILML02.nuvoton.com (10.190.1.47) by NTILML02.nuvoton.com
  (10.190.1.47) with Microsoft SMTP Server (TLS) id 15.0.1130.7; Tue, 31 Mar
- 2020 14:34:54 +0300
+ 2020 14:32:59 +0300
 Received: from taln70.nuvoton.co.il (10.191.1.70) by NTILML02.nuvoton.com
  (10.190.1.46) with Microsoft SMTP Server id 15.0.1130.7 via Frontend
- Transport; Tue, 31 Mar 2020 14:34:54 +0300
+ Transport; Tue, 31 Mar 2020 14:32:59 +0300
 Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-        by taln70.nuvoton.co.il (Postfix) with ESMTP id 3A7EA250;
-        Tue, 31 Mar 2020 14:34:54 +0300 (IDT)
+        by taln70.nuvoton.co.il (Postfix) with ESMTP id 199B8250;
+        Tue, 31 Mar 2020 14:33:00 +0300 (IDT)
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 2CA4C639B0; Tue, 31 Mar 2020 14:34:24 +0300 (IDT)
+        id DF0B0639AF; Tue, 31 Mar 2020 14:32:29 +0300 (IDT)
 From:   <amirmizi6@gmail.com>
 To:     <Eyal.Cohen@nuvoton.com>, <jarkko.sakkinen@linux.intel.com>,
         <oshrialkoby85@gmail.com>, <alexander.steffen@infineon.com>,
@@ -49,12 +49,10 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <kgoldman@us.ibm.com>, <Dan.Morav@nuvoton.com>,
         <oren.tanami@nuvoton.com>, <shmulik.hager@nuvoton.com>,
         <amir.mizinski@nuvoton.com>, Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v4 3/7] tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-Date:   Tue, 31 Mar 2020 14:32:03 +0300
-Message-ID: <20200331113207.107080-4-amirmizi6@gmail.com>
+Subject: [PATCH v4 0/7] Add tpm i2c ptp driver
+Date:   Tue, 31 Mar 2020 14:32:00 +0300
+Message-ID: <20200331113207.107080-1-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200331113207.107080-1-amirmizi6@gmail.com>
-References: <20200331113207.107080-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain
@@ -65,41 +63,79 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Using this function while read/write data resulted in aborted operation.
-After investigating according to TCG TPM Profile (PTP) Specifications,
-i found cancel should happen only if TPM_STS.commandReady bit is lit and
-couldn't find a case when the current condition is valid.
-Also only cmdReady bit need to be compared instead of the full lower status
-register byte.
+This patch set adds support for TPM devices that implement the I2C.
+Interface defined by TCG PTP specification:
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
 
-Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
----
- drivers/char/tpm/tpm_tis_core.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 6c4f232..18b9dc4 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -710,17 +710,7 @@ static int probe_itpm(struct tpm_chip *chip)
+Interrupts are not implemented yet, preparing it for the next patch.
+This patch is based on initial work by oshri Alkoby, Alexander Steffen and Christophe Ricard
 
- static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
- {
--       struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--
--       switch (priv->manufacturer_id) {
--       case TPM_VID_WINBOND:
--               return ((status == TPM_STS_VALID) ||
--                       (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
--       case TPM_VID_STM:
--               return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
--       default:
--               return (status == TPM_STS_COMMAND_READY);
--       }
-+       return ((status & TPM_STS_COMMAND_READY) == TPM_STS_COMMAND_READY);
- }
+Changes since version 1:
+-"char:tpm:Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
+        - Fixed and extended commit description.
+        - Fixed an issue regarding handling max retries.
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options":
+        -Converted "tpm_tis_i2c.txt" to "tpm-tis-i2c.yaml".
+        - Renamed "tpm_tis-i2c" to "tpm-tis-i2c".
+        - Removed interrupts properties.
+-"char: tpm: add tpm_tis_i2c driver"
+        - Replaced "tpm_tis-i2c" with "tpm-tis-i2c" in "tpm_tis_i2c.c".
+Addressed comments from:
+ - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11236257/
+ - Rob Herring: https://patchwork.kernel.org/patch/11236253/
 
- static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+Changes since version 2:
+- Added 2 new commits with improvements suggested by Benoit Houyere.
+        -"Fix expected bit handling  and send all bytes in one shot without last byte in exception"
+        -"Handle an exeption for TPM Firmware Update mode."
+- Updated patch to latest v5.5
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
+        - Added "interrupts" and "crc-checksum" to properties.
+        - Updated binding description and commit info.
+-"char: tpm: add tpm_tis_i2c driver" (suggested by Benoit Houyere)
+        - Added repeat I2C frame after NACK.
+        - Checksum I2C feature activation in DTS file configuration.
+Addressed comments from:
+ - Rob Herring: https://lore.kernel.org/patchwork/patch/1161287/
+
+Changes since version 3:
+- Updated patch to latest v5.6
+- Updated commits headlines and development credit format by Jarkko Sakkinen suggestion
+-"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
+        - Updated commit description.
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
+        - Fixed 'make dt_binding_check' errors on YAML file.
+        - Removed interrupts from required and examples since there is no use for them in current patch.
+Addressed comments from:
+ - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1192101/
+ - Rob Herring: https://lore.kernel.org/patchwork/patch/1192099/
+
+Amir Mizinski (7):
+  tpm: tpm_tis: Make implementation of read16 read32 write32 optional
+  tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops      in order
+    to check data integrity
+  tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
+  tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot
+    without last byte in exception
+  tpm: Handle an exception for TPM Firmware Update mode.
+  dt-bindings: tpm: Add YAML schema for TPM TIS I2C options
+  tpm: tpm_tis: add tpm_tis_i2c driver
+
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         |  43 +++
+ drivers/char/tpm/Kconfig                           |  12 +
+ drivers/char/tpm/Makefile                          |   1 +
+ drivers/char/tpm/tpm2-cmd.c                        |   4 +
+ drivers/char/tpm/tpm_tis_core.c                    | 182 ++++++-------
+ drivers/char/tpm/tpm_tis_core.h                    |  41 ++-
+ drivers/char/tpm/tpm_tis_i2c.c                     | 292 +++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_spi_main.c                |  41 ---
+ include/linux/tpm.h                                |   1 +
+ 9 files changed, 482 insertions(+), 135 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+ create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
+
 --
 2.7.4
 
