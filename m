@@ -2,500 +2,207 @@ Return-Path: <SRS0=xAwW=5R=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853C9C43331
-	for <linux-integrity@archiver.kernel.org>; Wed,  1 Apr 2020 13:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F33AC43331
+	for <linux-integrity@archiver.kernel.org>; Wed,  1 Apr 2020 18:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2E82073B
-	for <linux-integrity@archiver.kernel.org>; Wed,  1 Apr 2020 13:30:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 004B220719
+	for <linux-integrity@archiver.kernel.org>; Wed,  1 Apr 2020 18:01:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732529AbgDANaA (ORCPT
+        id S1732256AbgDASBD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 1 Apr 2020 09:30:00 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:60500 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732587AbgDANaA (ORCPT
+        Wed, 1 Apr 2020 14:01:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6002 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730420AbgDASBD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 1 Apr 2020 09:30:00 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id A83C972CCEF;
-        Wed,  1 Apr 2020 16:29:28 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [83.220.44.62])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 6605A4A4A16;
-        Wed,  1 Apr 2020 16:29:28 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Wed, 1 Apr 2020 14:01:03 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 031HYAiP066441
+        for <linux-integrity@vger.kernel.org>; Wed, 1 Apr 2020 14:01:02 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 304g86mfbq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 01 Apr 2020 14:01:02 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-integrity@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 1 Apr 2020 19:00:58 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 1 Apr 2020 19:00:55 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 031I0uW040436062
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 1 Apr 2020 18:00:56 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93AAE11C052;
+        Wed,  1 Apr 2020 18:00:56 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C62A311C069;
+        Wed,  1 Apr 2020 18:00:55 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.185.67])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  1 Apr 2020 18:00:55 +0000 (GMT)
+Subject: Re: [PATCH v8 2/2] ima-evm-utils: Add sign/verify tests for evmctl
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v9 1/2] ima-evm-utils: Add some tests for evmctl
-Date:   Wed,  1 Apr 2020 16:29:11 +0300
-Message-Id: <20200401132912.11058-2-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200401132912.11058-1-vt@altlinux.org>
-References: <20200401132912.11058-1-vt@altlinux.org>
-MIME-Version: 1.0
+Date:   Wed, 01 Apr 2020 14:00:55 -0400
+In-Reply-To: <20200327042515.22315-3-vt@altlinux.org>
+References: <20200327042515.22315-1-vt@altlinux.org>
+         <20200327042515.22315-3-vt@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 20040118-0028-0000-0000-000003F02CE5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 20040118-0029-0000-0000-000024B5B408
+Message-Id: <1585764055.5188.652.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-01_03:2020-03-31,2020-04-01 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ mlxlogscore=999 bulkscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004010146
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Run `make check' to execute the tests.
-This commit only adds ima_hash test.
+On Fri, 2020-03-27 at 07:25 +0300, Vitaly Chikunov wrote:
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
----
- .gitignore          |   2 +-
- Makefile.am         |   2 +-
- configure.ac        |   1 +
- tests/.gitignore    |  16 +++
- tests/Makefile.am   |   7 ++
- tests/functions.sh  | 273 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- tests/ima_hash.test |  80 +++++++++++++++
- 7 files changed, 379 insertions(+), 2 deletions(-)
- create mode 100644 tests/.gitignore
- create mode 100644 tests/Makefile.am
- create mode 100755 tests/functions.sh
- create mode 100755 tests/ima_hash.test
+<snip>
 
-diff --git a/.gitignore b/.gitignore
-index cb82166..c579199 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -21,7 +21,7 @@ missing
- compile
- libtool
- ltmain.sh
--
-+test-driver
- 
- # Compiled executables
- *.o
-diff --git a/Makefile.am b/Makefile.am
-index dba408d..45c6f82 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -1,4 +1,4 @@
--SUBDIRS = src
-+SUBDIRS = src tests
- dist_man_MANS = evmctl.1
- 
- doc_DATA =  examples/ima-genkey-self.sh examples/ima-genkey.sh examples/ima-gen-local-ca.sh
-diff --git a/configure.ac b/configure.ac
-index 099c3b1..f246182 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -72,6 +72,7 @@ EVMCTL_MANPAGE_DOCBOOK_XSL
- 
- AC_CONFIG_FILES([Makefile
- 		src/Makefile
-+		tests/Makefile
- 		packaging/ima-evm-utils.spec
- 		])
- AC_OUTPUT
-diff --git a/tests/.gitignore b/tests/.gitignore
-new file mode 100644
-index 0000000..9ecc984
---- /dev/null
-+++ b/tests/.gitignore
-@@ -0,0 +1,16 @@
-+# Generated by test driver
-+*.log
-+*.trs
-+
-+# Generated by tests
-+*.txt
-+*.out
-+*.sig
-+*.sig2
-+
-+# Generated certs and keys (by gen-keys.sh)
-+*.cer
-+*.pub
-+*.key
-+*.conf
-+
-diff --git a/tests/Makefile.am b/tests/Makefile.am
-new file mode 100644
-index 0000000..e37b958
---- /dev/null
-+++ b/tests/Makefile.am
-@@ -0,0 +1,7 @@
-+check_SCRIPTS =
-+TESTS = $(check_SCRIPTS)
-+
-+check_SCRIPTS += ima_hash.test
-+
-+clean-local:
-+	-rm -f *.txt *.out *.sig *.sig2
-diff --git a/tests/functions.sh b/tests/functions.sh
-new file mode 100755
-index 0000000..a04bf36
---- /dev/null
-+++ b/tests/functions.sh
-@@ -0,0 +1,273 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# ima-evm-utils tests bash functions
-+#
-+# Copyright (C) 2020 Vitaly Chikunov <vt@altlinux.org>
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License as published by
-+# the Free Software Foundation; either version 2, or (at your option)
-+# any later version.
-+#
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+
-+# Tests accounting
-+declare -i testspass=0 testsfail=0 testsskip=0
-+
-+# Exit codes (compatible with automake)
-+declare -r OK=0
-+declare -r FAIL=1
-+declare -r HARDFAIL=99 # hard failure no matter testing mode
-+declare -r SKIP=77
-+
-+# You can set env VERBOSE=1 to see more output from evmctl
-+VERBOSE=${VERBOSE:-0}
-+V=vvvv
-+V=${V:0:$VERBOSE}
-+V=${V:+-$V}
-+
-+# Exit if env FAILEARLY is defined.
-+# Used in expect_{pass,fail}.
-+exit_early() {
-+  if [ "$FAILEARLY" ]; then
-+    exit "$1"
-+  fi
-+}
-+
-+# Require particular executables to be present
-+_require() {
-+  ret=
-+  for i; do
-+    if ! type $i; then
-+      echo "$i is required for test"
-+      ret=1
-+    fi
-+  done
-+  [ $ret ] && exit $HARDFAIL
-+}
-+
-+# Non-TTY output is never colored
-+if [ -t 1 ]; then
-+     RED=$'\e[1;31m'
-+   GREEN=$'\e[1;32m'
-+  YELLOW=$'\e[1;33m'
-+    BLUE=$'\e[1;34m'
-+    CYAN=$'\e[1;36m'
-+    NORM=$'\e[m'
-+fi
-+
-+# Test mode determined by TFAIL variable:
-+#   undefined: to success testing
-+#   defined: failure testing
-+TFAIL=
-+TMODE=+ # mode character to prepend running command in log
-+declare -i TNESTED=0 # just for sanity checking
-+
-+# Run positive test (one that should pass) and account its result
-+expect_pass() {
-+  local ret
-+
-+  if [ $TNESTED -gt 0 ]; then
-+    echo $RED"expect_pass should not be run nested"$NORM
-+    testsfail+=1
-+    exit $HARDFAIL
-+  fi
-+  TFAIL=
-+  TMODE=+
-+  TNESTED+=1
-+  [ "$VERBOSE" -gt 1 ] && echo "____ START positive test: $*"
-+  "$@"
-+  ret=$?
-+  [ "$VERBOSE" -gt 1 ] && echo "^^^^ STOP ($ret) positive test: $*"
-+  TNESTED+=-1
-+  case $ret in
-+    0)  testspass+=1 ;;
-+    77) testsskip+=1 ;;
-+    99) testsfail+=1; exit_early 1 ;;
-+    *)  testsfail+=1; exit_early 2 ;;
-+  esac
-+  return $ret
-+}
-+
-+# Eval negative test (one that should fail) and account its result
-+expect_fail() {
-+  local ret
-+
-+  if [ $TNESTED -gt 0 ]; then
-+    echo $RED"expect_fail should not be run nested"$NORM
-+    testsfail+=1
-+    exit $HARDFAIL
-+  fi
-+
-+  TFAIL=yes
-+  TMODE=-
-+  TNESTED+=1
-+  [ "$VERBOSE" -gt 1 ] && echo "____ START negative test: $*"
-+  "$@"
-+  ret=$?
-+  [ "$VERBOSE" -gt 1 ] && echo "^^^^ STOP ($ret) negative test: $*"
-+  TNESTED+=-1
-+  case $ret in
-+    0)  testsfail+=1; exit_early 3 ;;
-+    77) testsskip+=1 ;;
-+    99) testsfail+=1; exit_early 4 ;;
-+    *)  testspass+=1 ;;
-+  esac
-+  # Restore defaults (as in positive tests)
-+  # for tests to run without wrappers
-+  TFAIL=
-+  TMODE=+
-+  return $ret
-+}
-+
-+# return true if current test is positive
-+_test_expected_to_pass() {
-+  [ ! $TFAIL ]
-+}
-+
-+# return true if current test is negative
-+_test_expected_to_fail() {
-+  [ $TFAIL ]
-+}
-+
-+# Show blank line and color following text to red
-+# if it's real error (ie we are in expect_pass mode).
-+color_red_on_failure() {
-+  if _test_expected_to_pass; then
-+    echo $RED
-+    COLOR_RESTORE=true
-+  fi
-+}
-+
-+# For hard errors
-+color_red() {
-+  echo $RED
-+  COLOR_RESTORE=true
-+}
-+
-+color_restore() {
-+  [ $COLOR_RESTORE ] && echo $NORM
-+  COLOR_RESTORE=
-+}
-+
-+ADD_DEL=
-+ADD_TEXT_FOR=
-+# _evmctl_run should be run as `_evmctl_run ... || return'
-+_evmctl_run() {
-+  local op=$1 out=$1-$$.out
-+  local text_for=${FOR:+for $ADD_TEXT_FOR}
-+  # Additional parameters:
-+  # ADD_DEL: additional files to rm on failure
-+  # ADD_TEXT_FOR: append to text as 'for $ADD_TEXT_FOR'
-+
-+  cmd="evmctl $V $EVMCTL_ENGINE $*"
-+  echo $YELLOW$TMODE "$cmd"$NORM
-+  $cmd >"$out" 2>&1
-+  ret=$?
-+
-+  # Shell special and signal exit codes (except 255)
-+  if [ $ret -ge 126 ] && [ $ret -lt 255 ]; then
-+    color_red
-+    echo "evmctl $op failed hard with ($ret) $text_for"
-+    sed 's/^/  /' "$out"
-+    color_restore
-+    rm "$out" $ADD_DEL
-+    ADD_DEL=
-+    ADD_TEXT_FOR=
-+    return $HARDFAIL
-+  elif [ $ret -gt 0 ]; then
-+    color_red_on_failure
-+    echo "evmctl $op failed" ${TFAIL:+properly} "with ($ret) $text_for"
-+    # Show evmctl output only in verbose mode or if real failure.
-+    if _test_expected_to_pass || [ "$VERBOSE" ]; then
-+      sed 's/^/  /' "$out"
-+    fi
-+    color_restore
-+    rm "$out" $ADD_DEL
-+    ADD_DEL=
-+    ADD_TEXT_FOR=
-+    return $FAIL
-+  elif _test_expected_to_fail; then
-+    color_red
-+    echo "evmctl $op wrongly succeeded $text_for"
-+    sed 's/^/  /' "$out"
-+    color_restore
-+  else
-+    [ "$VERBOSE" ] && sed 's/^/  /' "$out"
-+  fi
-+  rm "$out"
-+  ADD_DEL=
-+  ADD_TEXT_FOR=
-+  return $OK
-+}
-+
-+# Extract xattr $attr from $file into $out file skipping $pref'ix
-+_extract_xattr() {
-+  local file=$1 attr=$2 out=$3 pref=$4
-+
-+  getfattr -n "$attr" -e hex "$file" \
-+    | grep "^$attr=" \
-+    | sed "s/^$attr=$pref//" \
-+    | xxd -r -p > "$out"
-+}
-+
-+# Test if xattr $attr in $file matches $pref'ix
-+# Show error and fail otherwise.
-+_test_xattr() {
-+  local file=$1 attr=$2 pref=$3
-+  local text_for=${ADD_TEXT_FOR:+ for $ADD_TEXT_FOR}
-+
-+  if ! getfattr -n "$attr" -e hex "$file" | egrep -qx "$attr=$pref"; then
-+    color_red_on_failure
-+    echo "Did not find expected hash$text_for:"
-+    echo "    $attr=$pref"
-+    echo ""
-+    echo "Actual output below:"
-+    getfattr -n "$attr" -e hex "$file" | sed 's/^/    /'
-+    color_restore
-+    rm "$file"
-+    ADD_TEXT_FOR=
-+    return $FAIL
-+  fi
-+  ADD_TEXT_FOR=
-+}
-+
-+# Try to enable gost-engine if needed.
-+_enable_gost_engine() {
-+  # Do not enable if it's already working (enabled by user)
-+  if ! openssl md_gost12_256 /dev/null >/dev/null 2>&1 \
-+    && openssl engine gost >/dev/null 2>&1; then
-+    EVMCTL_ENGINE="--engine gost"
-+    OPENSSL_ENGINE="-engine gost"
-+  fi
-+}
-+
-+# Show test stats and exit into automake test system
-+# with proper exit code (same as ours).
-+_report_exit() {
-+  if [ $testsfail -gt 0 ]; then
-+    echo "================================="
-+    echo " Run with FAILEARLY=1 $0 $*"
-+    echo " To stop after first failure"
-+    echo "================================="
-+  fi
-+  [ $testspass -gt 0 ] && echo -n $GREEN || echo -n $NORM
-+  echo -n "PASS: $testspass"
-+  [ $testsskip -gt 0 ] && echo -n $YELLOW || echo -n $NORM
-+  echo -n " SKIP: $testsskip"
-+  [ $testsfail -gt 0 ] && echo -n $RED || echo -n $NORM
-+  echo " FAIL: $testsfail"
-+  echo $NORM
-+  if [ $testsfail -gt 0 ]; then
-+    exit $FAIL
-+  elif [ $testspass -gt 0 ]; then
-+    exit $OK
-+  else
-+    exit $SKIP
-+  fi
-+}
-+
-diff --git a/tests/ima_hash.test b/tests/ima_hash.test
-new file mode 100755
-index 0000000..a3e81a6
---- /dev/null
-+++ b/tests/ima_hash.test
-@@ -0,0 +1,80 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# evmctl ima_hash tests
-+#
-+# Copyright (C) 2020 Vitaly Chikunov <vt@altlinux.org>
-+#
-+# This program is free software; you can redistribute it and/or modify
-+# it under the terms of the GNU General Public License as published by
-+# the Free Software Foundation; either version 2, or (at your option)
-+# any later version.
-+#
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY; without even the implied warranty of
-+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+# GNU General Public License for more details.
-+
-+cd "$(dirname "$0")" || exit 1
-+PATH=../src:$PATH
-+source ./functions.sh
-+_require evmctl openssl getfattr
-+
-+trap _report_exit EXIT
-+set -f # disable globbing
-+
-+check() {
-+  local alg=$1 pref=$2 chash=$3 hash
-+  local file=$alg-hash.txt
-+
-+  rm -f "$file"
-+  touch "$file"
-+  # Generate hash with openssl, if it failed skip test,
-+  # unless it's negative test, then pass to evmctl
-+  cmd="openssl dgst $OPENSSL_ENGINE -$alg $file"
-+  echo - "$cmd"
-+  hash=$(set -o pipefail; $cmd 2>/dev/null | cut -d' ' -f2)
-+  if [ $? -ne 0 ] && _test_expected_to_pass; then
-+    echo $CYAN"$alg test is skipped"$NORM
-+    rm "$file"
-+    return $SKIP
-+  fi
-+  if [ "$chash" ] && [ "$chash" != "$hash" ]; then
-+    color_red
-+    echo "Invalid hash for $alg from openssl"
-+    echo "Expected: $chash"
-+    echo "Returned: $hash"
-+    color_restore
-+    rm "$file"
-+    return $HARDFAIL
-+  fi
-+
-+  ADD_TEXT_FOR=$alg ADD_DEL=$file \
-+    _evmctl_run ima_hash --hashalgo "$alg" --xattr-user "$file" || return
-+  ADD_TEXT_FOR=$alg \
-+    _test_xattr "$file" user.ima "$pref$hash" || return
-+  rm "$file"
-+  return $OK
-+}
-+
-+# check args: algo hdr-prefix canonic-hash
-+expect_pass check  md4        0x01 31d6cfe0d16ae931b73c59d7e0c089c0
-+expect_pass check  md5        0x01 d41d8cd98f00b204e9800998ecf8427e
-+expect_pass check  sha1       0x01 da39a3ee5e6b4b0d3255bfef95601890afd80709
-+expect_fail check  SHA1       0x01 # uppercase
-+expect_fail check  sha512-224 0x01 # valid for pkcs1
-+expect_fail check  sha512-256 0x01 # valid for pkcs1
-+expect_fail check  unknown    0x01 # nonexistent
-+expect_pass check  sha224     0x0407 d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f
-+expect_pass check  sha256     0x0404 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-+expect_pass check  sha384     0x0405 38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b
-+expect_pass check  sha512     0x0406 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e
-+expect_pass check  rmd160     0x0403 9c1185a5c5e9fc54612808977ee8f548b2258d31
-+expect_fail check  sm3        0x01
-+expect_fail check  sm3-256    0x01
-+_enable_gost_engine
-+expect_pass check  md_gost12_256 0x0412 3f539a213e97c802cc229d474c6aa32a825a360b2a933a949fd925208d9ce1bb
-+expect_pass check  streebog256   0x0412 3f539a213e97c802cc229d474c6aa32a825a360b2a933a949fd925208d9ce1bb
-+expect_pass check  md_gost12_512 0x0413 8e945da209aa869f0455928529bcae4679e9873ab707b55315f56ceb98bef0a7362f715528356ee83cda5f2aac4c6ad2ba3a715c1bcd81cb8e9f90bf4c1c1a8a
-+expect_pass check  streebog512   0x0413 8e945da209aa869f0455928529bcae4679e9873ab707b55315f56ceb98bef0a7362f715528356ee83cda5f2aac4c6ad2ba3a715c1bcd81cb8e9f90bf4c1c1a8a
-+
--- 
-2.11.0
+> +# Perform sign and verify ima and evm testing
+> +sign_verify() {
+> +  local key=$1 alg=$2 pref="$3" opts="$4"
+> +  local file=$alg.txt
+> +
+> +  # Set defaults:
+> +  # Public key is different for v1 and v2 (where x509 cert is used).
+> +  if [[ $opts =~ --rsa ]]; then
+> +    KEY=test-$key.pub
+> +  else
+> +    KEY=test-$key.cer
+> +  fi
+> +  ALG=$alg
+> +  PREF=$pref
+> +  OPTS=$opts
+> +  FILE=$file
+> +
+> +  TYPE=ima
+> +  if expect_pass check_sign; then
+> +
+> +    # Normal verify with proper key should pass
+> +    expect_pass check_verify
+> +
+> +    # Multiple files and some don't verify
+> +    expect_fail check_verify FILE=/dev/null,$file
+
+The comment and the code don't seem to be in sync.  This seems to be a
+single file, for example, named "/dev/null,sha1.txt", which properly
+fails.
+
+____ START positive test: check_verify
++ evmctl -vvv ima_verify --key test-rsa1024.pub --xattr-user --rsa
+sha1.txt
+  hash-v1: da39a3ee5e6b4b0d3255bfef95601890afd80709
+  sighash: e34807780b93cc17bdac89573df40ee4a3e984f1
+  sha1.txt: verification is OK
+^^^^ STOP (0) positive test: check_verify
+____ START negative test: check_verify FILE=/dev/null,sha1.txt
+- evmctl -vvv ima_verify --key test-rsa1024.pub --xattr-user --rsa
+/dev/null,sha1.txt
+evmctl ima_verify failed properly with (1)
+  getxattr failed: /dev/null,sha1.txt
+  errno: No such file or directory (2)
+^^^^ STOP (1) negative test: check_verify FILE=/dev/null,sha1.txt
+
+> +  fi
+> +
+> +  TYPE=evm
+> +  # Avoid running blkid for evm tests which may require root
+> +  # No generation on overlayfs:
+> +  # ioctl(3, FS_IOC_GETVERSION, 0x7ffd8e0bd628) = -1 ENOTTY (Inappropriate ioctl for device)
+> +  OPTS="$opts --uuid --generation 0"
+> +  if expect_pass check_sign; then
+> +
+> +    # Normal verify with proper key
+> +    expect_pass check_verify
+> +
+> +    # Verify with wrong key
+> +    expect_fail check_verify KEY=rsa2048
+> +  fi
+> +
+> +  # Note: Leaving TYPE=evm and file is evm signed
+> +}
+> +
+> +# Test --keys
+> +try_different_keys() {
+> +  # This run after sign_verify which leaves
+> +  # TYPE=evm and file is evm signed
+> +
+> +  # v2 signing can work with multiple keys in --key option
+> +  if [[ ! $OPTS =~ --rsa ]]; then
+> +
+> +    # Have correct key in the key list
+> +    expect_pass check_verify KEY=test-rsa2048.cer,$KEY
+> +    expect_pass check_verify KEY=/dev/null,$KEY,
+
+First test has multiple keys in the key list.  The key list with
+"/dev/null" obviously fails to add the first key, so it lands up being
+a single key on the list.
+
+> +  fi
+> +
+> +  # Try key that is not used for signing
+> +  expect_fail check_verify KEY=rsa2048
+> +
+> +  # Try completely wrong key files
+> +  expect_fail check_verify KEY=/dev/null
+> +  expect_fail check_verify KEY=/dev/zero
+> +}
+> +
+> +try_different_sigs() {
+> +  # TYPE=evm and file is evm signed
+> +
+> +  # Test --imasig
+> +  if expect_pass check_sign OPTS="$OPTS --imasig"; then
+> +
+> +    # Verify both evm and ima sigs
+> +    expect_pass check_verify
+> +    expect_pass check_verify TYPE=ima
+> +  fi
+> +
+> +  # Test --imahash
+> +  if expect_pass check_sign OPTS="$OPTS --imahash"; then
+> +
+> +    expect_pass check_verify
+> +
+> +    # IMA hash is not verifiable by ima_verify
+> +    expect_fail check_verify TYPE=ima
+> +  fi
+> +
+> +  # Test --portable
+> +  expect_pass check_sign OPTS="$OPTS --portable" PREF=0x05
+> +  # Cannot be verified
+
+True, evmctl does not support verifying portable signatures, but it
+should be possible not only locally, but remotely to verify a portable
+signature.  That's the whole point of having portable EVM signatures.
+ The comment is a bit misleading and could say something to that
+effect - "todo: add support for evmctl portable signature
+verification".
+
+Mimi
 
