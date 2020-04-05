@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97168C2D0F4
-	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708A5C2D0F4
+	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77803206B8
-	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5244B20738
+	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgDEMzc (ORCPT
+        id S1726712AbgDEMzj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 5 Apr 2020 08:55:32 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40236 "EHLO
+        Sun, 5 Apr 2020 08:55:39 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40253 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726473AbgDEMzc (ORCPT
+        with ESMTP id S1726473AbgDEMzj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 5 Apr 2020 08:55:32 -0400
+        Sun, 5 Apr 2020 08:55:39 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 035CtCQk005490;
-        Sun, 5 Apr 2020 15:55:12 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 035CtMiD005496;
+        Sun, 5 Apr 2020 15:55:22 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 89DA9639B0; Sun,  5 Apr 2020 15:55:12 +0300 (IDT)
+        id C8349639B0; Sun,  5 Apr 2020 15:55:22 +0300 (IDT)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -38,10 +38,11 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v5 3/7] tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-Date:   Sun,  5 Apr 2020 15:53:48 +0300
-Message-Id: <20200405125352.183693-4-amirmizi6@gmail.com>
+        Amir Mizinski <amirmizi6@gmail.com>,
+        Benoit Houyere <benoit.houyere@st.com>
+Subject: [PATCH v5 5/7] tpm: Handle an exception for TPM Firmware Update mode.
+Date:   Sun,  5 Apr 2020 15:53:50 +0300
+Message-Id: <20200405125352.183693-6-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200405125352.183693-1-amirmizi6@gmail.com>
 References: <20200405125352.183693-1-amirmizi6@gmail.com>
@@ -54,40 +55,44 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Using this function while read/write data resulted in aborted operation.
-After investigating according to TCG TPM Profile (PTP) Specifications,
-i found cancel should happen only if TPM_STS.commandReady bit is lit and
-couldn't find a case when the current condition is valid.
-So i'm removing the case for "TPM_VID_WINBOND" since we have no need for it
+An extra precaution for TPM Firmware Update Mode.
+For example if TPM power was cut while in Firmware update, platform
+should ignore selftest failure and skip TPM initialization sequence.
 
-Also default comparison is wrong. only cmdReady bit need to be compared
-instead of the full lower status register byte.
-
-Fixes: 1f86605 (tpm: Fix cancellation of TPM commands (polling mode))
+Suggested-by: Benoit Houyere <benoit.houyere@st.com>
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/char/tpm/tpm2-cmd.c | 4 ++++
+ include/linux/tpm.h         | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 6c4f232..453d7ef 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -713,13 +713,10 @@ static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 7603295..b77e394 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -727,6 +727,10 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		goto out;
  
- 	switch (priv->manufacturer_id) {
--	case TPM_VID_WINBOND:
--		return ((status == TPM_STS_VALID) ||
--			(status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
- 	case TPM_VID_STM:
- 		return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
- 	default:
--		return (status == TPM_STS_COMMAND_READY);
-+		return ((status & TPM_STS_COMMAND_READY) == TPM_STS_COMMAND_READY);
- 	}
- }
+ 	rc = tpm2_do_selftest(chip);
++
++	if ((rc == TPM2_RC_UPGRADE) || (rc == TPM2_RC_COMMAND_CODE))
++		return 0;
++
+ 	if (rc && rc != TPM2_RC_INITIALIZE)
+ 		goto out;
  
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 03e9b18..5a2e031 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -199,6 +199,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+ 	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_UPGRADE         = 0x012D,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
 -- 
 2.7.4
 
