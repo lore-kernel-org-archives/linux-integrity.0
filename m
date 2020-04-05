@@ -2,30 +2,31 @@ Return-Path: <SRS0=Y3PO=5V=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A934EC2BA1B
-	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C16BC2BA2B
+	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79EB62083E
-	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63BC0206B8
+	for <linux-integrity@archiver.kernel.org>; Sun,  5 Apr 2020 12:55:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgDEMzE (ORCPT
+        id S1726556AbgDEMzF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 5 Apr 2020 08:55:04 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40202 "EHLO
+        Sun, 5 Apr 2020 08:55:05 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40203 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726556AbgDEMzE (ORCPT
+        with ESMTP id S1726473AbgDEMzE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Sun, 5 Apr 2020 08:55:04 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 035CsQd0005467;
-        Sun, 5 Apr 2020 15:54:26 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 035CsWYv005473;
+        Sun, 5 Apr 2020 15:54:32 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 22D97639AF; Sun,  5 Apr 2020 15:54:26 +0300 (IDT)
+        id 95F1E639B0; Sun,  5 Apr 2020 15:54:32 +0300 (IDT)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -38,11 +39,14 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: Add tpm i2c ptp driver
-Date:   Sun,  5 Apr 2020 15:53:45 +0300
-Message-Id: <20200405125352.183693-1-amirmizi6@gmail.com>
+        Amir Mizinski <amirmizi6@gmail.com>,
+        Christophe Ricard <christophe-h.ricard@st.com>
+Subject: [PATCH v5 2/7] tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops in order to check data integrity
+Date:   Sun,  5 Apr 2020 15:53:47 +0300
+Message-Id: <20200405125352.183693-3-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200405125352.183693-1-amirmizi6@gmail.com>
+References: <20200405125352.183693-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,106 +56,191 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-This patch set adds support for TPM devices that implement the I2C.
-Interface defined by TCG PTP specification:
-https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
+In order to compute the crc over the data sent in lower layer
+(I2C for instance), tpm_tis_check_data() calls an operation (if available)
+to check data integrity. If data integrity cannot be verified, a retry
+attempt to save the sent/received data is implemented.
 
-The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
+The current steps are done when sending a command:
+   1. Host writes to TPM_STS.commandReady.
+   2. Host writes command.
+   3. Host checks that TPM received data is valid.
+   4. If data is currupted go to step 1.
 
-Interrupts are not implemented yet, preparing it for the next patch.
-This patch is based on initial work by oshri Alkoby, Alexander Steffen and Christophe Ricard
+When receiving data:
+   1. Host checks that TPM_STS.dataAvail is set.
+   2. Host saves received data.
+   3. Host checks that received data is correct.
+   4. If data is currupted Host writes to TPM_STS.responseRetry and go to
+      step 1.
 
-Changes since version 1:
--"char:tpm:Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
-        - Fixed and extended commit description.
-        - Fixed an issue regarding handling max retries.
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options":
-        -Converted "tpm_tis_i2c.txt" to "tpm-tis-i2c.yaml".
-        - Renamed "tpm_tis-i2c" to "tpm-tis-i2c".
-        - Removed interrupts properties.
--"char: tpm: add tpm_tis_i2c driver"
-        - Replaced "tpm_tis-i2c" with "tpm-tis-i2c" in "tpm_tis_i2c.c".
-Addressed comments from:
- - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11236257/
- - Rob Herring: https://patchwork.kernel.org/patch/11236253/
+Co-developed-by: Christophe Ricard <christophe-h.ricard@st.com>
+Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
+Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+---
+ drivers/char/tpm/tpm_tis_core.c | 102 +++++++++++++++++++++++++---------------
+ drivers/char/tpm/tpm_tis_core.h |   3 ++
+ 2 files changed, 67 insertions(+), 38 deletions(-)
 
-Changes since version 2:
-- Added 2 new commits with improvements suggested by Benoit Houyere.
-        -"Fix expected bit handling  and send all bytes in one shot without last byte in exception"
-        -"Handle an exeption for TPM Firmware Update mode."
-- Updated patch to latest v5.5
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
-        - Added "interrupts" and "crc-checksum" to properties.
-        - Updated binding description and commit info.
--"char: tpm: add tpm_tis_i2c driver" (suggested by Benoit Houyere)
-        - Added repeat I2C frame after NACK.
-        - Checksum I2C feature activation in DTS file configuration.
-Addressed comments from:
- - Rob Herring: https://lore.kernel.org/patchwork/patch/1161287/
-
-Changes since version 3:
-- Updated patch to latest v5.6
-- Updated commits headlines and development credit format by Jarkko Sakkinen suggestion
--"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
-        - Updated commit description.
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
-        - Fixed 'make dt_binding_check' errors on YAML file.
-        - Removed interrupts from required and examples since there is no use for them in current patch.
-Addressed comments from:
- - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1192101/
- - Rob Herring: https://lore.kernel.org/patchwork/patch/1192099/
-
-Changes since version 4:
--"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
-        -Reviewed-by:
--"tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
-        -fixed credit typos.
--"tpm: tpm_tis: rewrite "tpm_tis_req_canceled()""
-        -added fixes tag and removed changes for STM
--"tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
-        -fixed typos, edited description to be more clear, and added a "Suggested-by" tag.
--"tpm: Handle an exception for TPM Firmware Update mode."
-        -added a "Suggested-by" tag.
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
-        -fixed 'make dt_binding_check' errors
--"tpm: tpm_tis: add tpm_tis_i2c driver"
-	-added tested-by tag by Eddie James
-        -fixed indent in Kconfig file
-        -fixed 'MODULE_DESCRIPTION'
-Addressed comments from:
- - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11467645/
-		https://patchwork.kernel.org/patch/11467655/
-		https://patchwork.kernel.org/patch/11467643/
-		https://patchwork.kernel.org/patch/11467659/
-		https://patchwork.kernel.org/patch/11467651/
- - Rob Herring:	https://patchwork.kernel.org/patch/11467653/
- - Randy Dunlap: https://patchwork.kernel.org/patch/11467651/
- - Eddie James:	https://lore.kernel.org/patchwork/patch/1192104/
-
-Amir Mizinski (7):
-  tpm: tpm_tis: Make implementation of read16 read32 write32 optional
-  tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops in order to
-    check data integrity
-  tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-  tpm: tpm_tis: Fix expected bit handling and send all      bytes in one
-    shot without last byte in exception
-  tpm: Handle an exception for TPM Firmware Update mode.
-  dt-bindings: tpm: Add YAML schema for TPM TIS I2C options
-  tpm: tpm_tis: add tpm_tis_i2c driver
-
- .../bindings/security/tpm/tpm-tis-i2c.yaml         |  47 ++++
- drivers/char/tpm/Kconfig                           |  12 +
- drivers/char/tpm/Makefile                          |   1 +
- drivers/char/tpm/tpm2-cmd.c                        |   4 +
- drivers/char/tpm/tpm_tis_core.c                    | 175 ++++++------
- drivers/char/tpm/tpm_tis_core.h                    |  41 ++-
- drivers/char/tpm/tpm_tis_i2c.c                     | 292 +++++++++++++++++++++
- drivers/char/tpm/tpm_tis_spi_main.c                |  41 ---
- include/linux/tpm.h                                |   1 +
- 9 files changed, 486 insertions(+), 128 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
- create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
-
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 27c6ca0..6c4f232 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -242,6 +242,15 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
+ 	return status;
+ }
+ 
++static bool tpm_tis_check_data(struct tpm_chip *chip, const u8 *buf, size_t len)
++{
++	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
++
++	if (priv->phy_ops->check_data)
++		return priv->phy_ops->check_data(priv, buf, len);
++	return true;
++}
++
+ static void tpm_tis_ready(struct tpm_chip *chip)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+@@ -308,47 +317,59 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int size = 0;
+-	int status;
++	int status, i;
+ 	u32 expected;
++	bool check_data = false;
+ 
+-	if (count < TPM_HEADER_SIZE) {
+-		size = -EIO;
+-		goto out;
+-	}
++	for (i = 0; i < TPM_RETRY; i++) {
++		if (count < TPM_HEADER_SIZE) {
++			size = -EIO;
++			goto out;
++		}
+ 
+-	size = recv_data(chip, buf, TPM_HEADER_SIZE);
+-	/* read first 10 bytes, including tag, paramsize, and result */
+-	if (size < TPM_HEADER_SIZE) {
+-		dev_err(&chip->dev, "Unable to read header\n");
+-		goto out;
+-	}
++		size = recv_data(chip, buf, TPM_HEADER_SIZE);
++		/* read first 10 bytes, including tag, paramsize, and result */
++		if (size < TPM_HEADER_SIZE) {
++			dev_err(&chip->dev, "Unable to read header\n");
++			goto out;
++		}
+ 
+-	expected = be32_to_cpu(*(__be32 *) (buf + 2));
+-	if (expected > count || expected < TPM_HEADER_SIZE) {
+-		size = -EIO;
+-		goto out;
+-	}
++		expected = be32_to_cpu(*(__be32 *) (buf + 2));
++		if (expected > count || expected < TPM_HEADER_SIZE) {
++			size = -EIO;
++			goto out;
++		}
+ 
+-	size += recv_data(chip, &buf[TPM_HEADER_SIZE],
+-			  expected - TPM_HEADER_SIZE);
+-	if (size < expected) {
+-		dev_err(&chip->dev, "Unable to read remainder of result\n");
+-		size = -ETIME;
+-		goto out;
+-	}
++		size += recv_data(chip, &buf[TPM_HEADER_SIZE],
++				  expected - TPM_HEADER_SIZE);
++		if (size < expected) {
++			dev_err(&chip->dev, "Unable to read remainder of result\n");
++			size = -ETIME;
++			goto out;
++		}
+ 
+-	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-				&priv->int_queue, false) < 0) {
+-		size = -ETIME;
+-		goto out;
++		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
++				      &priv->int_queue, false) < 0) {
++			size = -ETIME;
++			goto out;
++		}
++
++		status = tpm_tis_status(chip);
++		if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
++			dev_err(&chip->dev, "Error left over data\n");
++			size = -EIO;
++			goto out;
++		}
++
++		check_data = tpm_tis_check_data(chip, buf, size);
++		if (!check_data)
++			tpm_tis_write8(priv, TPM_STS(priv->locality),
++				       TPM_STS_RESPONSE_RETRY);
++		else
++			break;
+ 	}
+-	status = tpm_tis_status(chip);
+-	if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
+-		dev_err(&chip->dev, "Error left over data\n");
++	if (!check_data)
+ 		size = -EIO;
+-		goto out;
+-	}
+-
+ out:
+ 	tpm_tis_ready(chip);
+ 	return size;
+@@ -453,14 +474,19 @@ static void disable_interrupts(struct tpm_chip *chip)
+ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+ {
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+-	int rc;
++	int rc, i;
+ 	u32 ordinal;
+ 	unsigned long dur;
++	bool data_valid = false;
+ 
+-	rc = tpm_tis_send_data(chip, buf, len);
+-	if (rc < 0)
+-		return rc;
+-
++	for (i = 0; i < TPM_RETRY && !data_valid; i++) {
++		rc = tpm_tis_send_data(chip, buf, len);
++		if (rc < 0)
++			return rc;
++		data_valid = tpm_tis_check_data(chip, buf, len);
++	}
++	if (!data_valid)
++		return -EIO;
+ 	/* go and do it */
+ 	rc = tpm_tis_write8(priv, TPM_STS(priv->locality), TPM_STS_GO);
+ 	if (rc < 0)
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index d06c65b..486c2e9 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -34,6 +34,7 @@ enum tis_status {
+ 	TPM_STS_GO = 0x20,
+ 	TPM_STS_DATA_AVAIL = 0x10,
+ 	TPM_STS_DATA_EXPECT = 0x08,
++	TPM_STS_RESPONSE_RETRY = 0x02,
+ };
+ 
+ enum tis_int_flags {
+@@ -106,6 +107,8 @@ struct tpm_tis_phy_ops {
+ 	int (*read16)(struct tpm_tis_data *data, u32 addr, u16 *result);
+ 	int (*read32)(struct tpm_tis_data *data, u32 addr, u32 *result);
+ 	int (*write32)(struct tpm_tis_data *data, u32 addr, u32 src);
++	bool (*check_data)(struct tpm_tis_data *data, const u8 *buf,
++			   size_t len);
+ };
+ 
+ static inline int tpm_tis_read_bytes(struct tpm_tis_data *data, u32 addr,
 -- 
 2.7.4
 
