@@ -2,162 +2,261 @@ Return-Path: <SRS0=fdZ3=5W=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DCFC2BA19
-	for <linux-integrity@archiver.kernel.org>; Mon,  6 Apr 2020 11:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4170C2BA1E
+	for <linux-integrity@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABB8206F5
-	for <linux-integrity@archiver.kernel.org>; Mon,  6 Apr 2020 11:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92081206F8
+	for <linux-integrity@archiver.kernel.org>; Mon,  6 Apr 2020 17:59:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmHfjmg4"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BM2q7hn6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbgDFLZN (ORCPT
+        id S1727307AbgDFR7Y (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 6 Apr 2020 07:25:13 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38717 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbgDFLZN (ORCPT
+        Mon, 6 Apr 2020 13:59:24 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:51628 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726787AbgDFR7Y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 6 Apr 2020 07:25:13 -0400
-Received: by mail-wm1-f67.google.com with SMTP id f20so6348411wmh.3
-        for <linux-integrity@vger.kernel.org>; Mon, 06 Apr 2020 04:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=p01tcQYIV50I3M1bLTva1fqAmJhQog5D8h+bmFXeBpk=;
-        b=CmHfjmg4x18ZbT8wwzwwGVd7bfIHu20ZfmW19dzskPh37RE8Z8ytNYvioug3ZnzVe+
-         NKVBt83dM/3AyLdwfU48kEYvkIrWh1VGT5WcbJrqKFMkWHqA3977U7nRixTBLsB/XjYE
-         FhAs0p6GKBy05GYS6pDBEZOqv6ZaorXKThXQF3s2St+PTq1LoicGs5UWo5SaGohnSyXn
-         9zaggOj04NYfeSD3PpYQrvQ8jK7upKrQEuubTKXHdtQSr+ZwnRLqzpnJ/GwM9xiaS4KN
-         cifACHi/z5S+lDJBNpZU1nUXbnWKkWZiS5R5wzUpIjUkB43tOBI7bpG3cxtzUsxv/7nK
-         uf3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=p01tcQYIV50I3M1bLTva1fqAmJhQog5D8h+bmFXeBpk=;
-        b=X4R3n5bF/2mdTYx9RB1LT8m9WDgAYlvOaeoCUmfOc8SJlIKKmVn1p92oMou6WLP7A6
-         Q8A0l1OBQHpKrxF02CTuhj2LG229ONV0S5Cjy8vrpLR5CBIOwV9rt4H22BSIMDyHlee0
-         l5h+eBF1Si6M5hDqw9xDzcpDMdi15yH27V7+E5iuhVXJHjXNl/x858pOzHZ4zVDX0H2V
-         auWNTO2Pvh8qoxqMzc2PpuZTv68o3wjWWRcBX6JPo879gfumbuo0TBOcHqwHuGeM1G8U
-         M/M74WtG2/BRY6sZbLdIOLchal+zUCBOlvSBzi8JIsR6f0DWnIxGiwJhZAwkyI1Okhfd
-         idMw==
-X-Gm-Message-State: AGi0PuZFTVVmT3/oPIcm+aBgSDi/NCSvrpRmsD8w97yyCtS+DDb7wPtO
-        cnRuh07zYP736OBWMLFV3RjEWLdzvmM=
-X-Google-Smtp-Source: APiQypLzIvS3yVZOMjLL9JBLMSyjc1Mh1MJ7PQ/h2bnnjfbF/ew7cBekz/RzQz0OAjjqDwp224OGzQ==
-X-Received: by 2002:a1c:2489:: with SMTP id k131mr22930907wmk.86.1586172310458;
-        Mon, 06 Apr 2020 04:25:10 -0700 (PDT)
-Received: from localhost ([87.71.128.21])
-        by smtp.gmail.com with ESMTPSA id b7sm26789215wrn.67.2020.04.06.04.25.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 06 Apr 2020 04:25:09 -0700 (PDT)
-Date:   Mon, 6 Apr 2020 14:25:08 +0300
-From:   Lev Olshvang <levonshe@gmail.com>
-To:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        linux-integrity@vger.kernel.org
-Subject: [RFC PATCH] integrity : Preserve i_flags of inode in signature hash
-Message-ID: <20200406112507.GA20611@kl>
+        Mon, 6 Apr 2020 13:59:24 -0400
+Received: from dede-linux.corp.microsoft.com (unknown [131.107.147.242])
+        by linux.microsoft.com (Postfix) with ESMTPSA id F1FE52072955;
+        Mon,  6 Apr 2020 10:59:22 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F1FE52072955
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586195963;
+        bh=1PF/ShPN4ojALJPkpCvH1fBtV3IR9aL7+GRD4lEL+Es=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BM2q7hn61sgw2I8AOb7TKeT8byFgDQ2Gby36bTcx0NGZYBZTR4ic6MZGkE9sKA6jL
+         O1exWydXPWFwwWnLD3XxAdPHQjtwVLE1c/4vlW+kKnXx/BP9tCkO9Aew/Ugg2Gg2PN
+         VBQRJ6kIzJ3URF2LHbinXHf9kJnkSwEKL5+o7fQs=
+From:   deven.desai@linux.microsoft.com
+To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.org,
+        linux-block@vger.kernel.org
+Cc:     tyhicks@linux.microsoft.com, pasha.tatashin@soleen.com,
+        mdsakib@microsoft.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com
+Subject: [PATCH 01/11] scripts: add ipe tooling to generate boot policy
+Date:   Mon,  6 Apr 2020 10:59:08 -0700
+Message-Id: <20200406175919.1023205-2-deven.desai@linux.microsoft.com>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200406175919.1023205-1-deven.desai@linux.microsoft.com>
+References: <20200406175919.1023205-1-deven.desai@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-From af94cf8c8e0976dfc7889d7f3d83dd1c9db96e59 Mon Sep 17 00:00:00 2001
-From: Lev Olshvang <levonshe@gmail.com>
-Date: Mon, 30 Mar 2020 16:00:27 +0300
-Subject: [RFC PATCH v1] integrity - add inode's i_flags to signature
+Add a tool for the generation of an IPE policy to be compiled into the
+kernel. This policy will be enforced until userland deploys and activates
+a new policy.
 
-Add more inode fields to inode HMAC : attributes [i_flags].
-Naming is a but confusing - chattr, lsattr utilities uses
-attributes term, while inside inode they are stored in i_flags.
-
-File/directory attributes define (affect) how User space and
-filesystem behaves and should be considered therefore as
-file metadata content.
-
-For example immutable flag preserve file from removal or change.
-Files in ext4 filesystem might have encrypted attribute and
-in ubifs filesystem compressed attribute might be used.
-In a total 32 attributes might be in use.
-It is important to verify these attributes were not changed.
-
-Function hmac_add_misc() ignored errors from crypto functions
-This patch changes hmac_add_misc() not to be silent about errors
-
-Signed-off-by: Lev Olshvang <levonshe@gmail.com>
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- security/integrity/evm/evm_crypto.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ scripts/Makefile              |   1 +
+ scripts/ipe/Makefile          |   2 +
+ scripts/ipe/polgen/.gitignore |   1 +
+ scripts/ipe/polgen/Makefile   |   7 ++
+ scripts/ipe/polgen/polgen.c   | 136 ++++++++++++++++++++++++++++++++++
+ 5 files changed, 147 insertions(+)
+ create mode 100644 scripts/ipe/Makefile
+ create mode 100644 scripts/ipe/polgen/.gitignore
+ create mode 100644 scripts/ipe/polgen/Makefile
+ create mode 100644 scripts/ipe/polgen/polgen.c
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index d485f6fc908e..927fab54c67c 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -139,15 +139,17 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
-  * (Additional directory/file metadata needs to be added for more complete
-  * protection.)
-  */
--static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
-+static int hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 			  char type, char *digest)
- {
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 5e75802b1a44..9338017a3b6e 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -38,6 +38,7 @@ hostprogs += unifdef
+ subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+ subdir-$(CONFIG_MODVERSIONS) += genksyms
+ subdir-$(CONFIG_SECURITY_SELINUX) += selinux
++subdir-$(CONFIG_SECURITY_IPE) += ipe
+ 
+ # Let clean descend into subdirs
+ subdir-	+= basic dtc gdb kconfig mod
+diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
+new file mode 100644
+index 000000000000..e87553fbb8d6
+--- /dev/null
++++ b/scripts/ipe/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++subdir-y := polgen
+diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
+new file mode 100644
+index 000000000000..80f32f25d200
+--- /dev/null
++++ b/scripts/ipe/polgen/.gitignore
+@@ -0,0 +1 @@
++polgen
+diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
+new file mode 100644
+index 000000000000..a519b594e13c
+--- /dev/null
++++ b/scripts/ipe/polgen/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++hostprogs-y	:= polgen
++HOST_EXTRACFLAGS += \
++	-I$(srctree)/include \
++	-I$(srctree)/include/uapi \
++
++always		:= $(hostprogs-y)
+diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+new file mode 100644
+index 000000000000..a80fffe1b27c
+--- /dev/null
++++ b/scripts/ipe/polgen/polgen.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <stdlib.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <errno.h>
++
++static void usage(const char *const name)
++{
++	printf("Usage: %s OutputFile (PolicyFile)\n", name);
++	exit(EINVAL);
++}
++
++static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
++{
 +	int rc = 0;
- 	struct h_misc {
- 		unsigned long ino;
- 		__u32 generation;
- 		uid_t uid;
- 		gid_t gid;
- 		umode_t mode;
-+		__u32   flags;
- 	} hmac_misc;
-
- 	memset(&hmac_misc, 0, sizeof(hmac_misc));
-@@ -169,11 +171,18 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 	hmac_misc.uid = from_kuid(&init_user_ns, inode->i_uid);
- 	hmac_misc.gid = from_kgid(&init_user_ns, inode->i_gid);
- 	hmac_misc.mode = inode->i_mode;
--	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
-+	hmac_misc.flags = inode->i_flags;
-+	rc = crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
-+	if (unlikely(!rc))
-+		return rc;
- 	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
--	    type != EVM_XATTR_PORTABLE_DIGSIG)
--		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
--	crypto_shash_final(desc, digest);
-+	    type != EVM_XATTR_PORTABLE_DIGSIG) {
-+		rc = crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
-+		if (unlikely(!rc))
-+			return rc;
++	FILE *fd;
++	char *lbuf;
++	size_t fsize;
++	size_t read;
++
++	fd = fopen(pathname, "r");
++	if (!fd) {
++		rc = errno;
++		goto out;
 +	}
-+	rc = crypto_shash_final(desc, digest);
++
++	fseek(fd, 0, SEEK_END);
++	fsize = ftell(fd);
++	rewind(fd);
++
++	lbuf = malloc(fsize);
++	if (!lbuf) {
++		rc = ENOMEM;
++		goto out_close;
++	}
++
++	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
++	if (read != fsize) {
++		rc = -1;
++		goto out_free;
++	}
++
++	*buffer = lbuf;
++	*size = fsize;
++	fclose(fd);
++
 +	return rc;
- }
-
- /*
-@@ -239,7 +248,9 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 		if (is_ima)
- 			ima_present = true;
- 	}
--	hmac_add_misc(desc, inode, type, data->digest);
-+	error = hmac_add_misc(desc, inode, type, data->digest);
-+	if (error < 0)
-+		return error;
-
- 	/* Portable EVM signatures must include an IMA hash */
- 	if (type == EVM_XATTR_PORTABLE_DIGSIG && !ima_present)
---
-2.17.1
++
++out_free:
++	free(lbuf);
++out_close:
++	fclose(fd);
++out:
++	return rc;
++}
++
++static int write_boot_policy(const char *pathname, const char *buf, size_t size)
++{
++	FILE *fd;
++	size_t i;
++
++	fd = fopen(pathname, "w");
++	if (!fd)
++		goto err;
++
++	fprintf(fd, "/* This file is automatically generated.");
++	fprintf(fd, " Do not edit. */\n");
++	fprintf(fd, "#include <stddef.h>\n");
++	fprintf(fd, "const char *const ipe_boot_policy =\n");
++
++	if (!buf || size == 0) {
++		fprintf(fd, "\tNULL;\n");
++		fclose(fd);
++		return 0;
++	}
++
++	for (i = 0; i < size; ++i) {
++		if (i == 0)
++			fprintf(fd, "\t\"");
++
++		switch (buf[i]) {
++		case '"':
++			fprintf(fd, "\\\"");
++			break;
++		case '\'':
++			fprintf(fd, "'");
++			break;
++		case '\n':
++			fprintf(fd, "\\n\"\n\t\"");
++			break;
++		case '\\':
++			fprintf(fd, "\\\\");
++			break;
++		default:
++			fprintf(fd, "%c", buf[i]);
++		}
++	}
++	fprintf(fd, "\";\n");
++	fclose(fd);
++
++	return 0;
++
++err:
++	if (fd)
++		fclose(fd);
++	return errno;
++}
++
++int main(int argc, const char *argv[])
++{
++	int rc = 0;
++	size_t len = 0;
++	char *policy = NULL;
++
++	if (argc < 2)
++		usage(argv[0]);
++
++	if (argc > 2) {
++		rc = policy_to_buffer(argv[2], &policy, &len);
++		if (rc != 0)
++			goto cleanup;
++	}
++
++	rc = write_boot_policy(argv[1], policy, len);
++cleanup:
++	if (policy)
++		free(policy);
++	if (rc != 0)
++		perror("An error occurred during policy conversion: ");
++	return rc;
++}
+-- 
+2.26.0
 
