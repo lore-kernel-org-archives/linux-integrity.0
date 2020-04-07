@@ -2,30 +2,31 @@ Return-Path: <SRS0=4d71=5X=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A094C2BA1A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33665C2BB85
 	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 16:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D030C2075E
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 16:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E44B20771
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 16:21:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbgDGQVd (ORCPT
+        id S1728229AbgDGQVc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 7 Apr 2020 12:21:33 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40603 "EHLO
+        Tue, 7 Apr 2020 12:21:32 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40602 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728101AbgDGQV1 (ORCPT
+        with ESMTP id S1726637AbgDGQV1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 7 Apr 2020 12:21:27 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 037GKnQp002260;
-        Tue, 7 Apr 2020 19:20:50 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 037GKtrw002272;
+        Tue, 7 Apr 2020 19:20:55 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id D5EA7639B0; Tue,  7 Apr 2020 19:20:49 +0300 (IDT)
+        id B221E639B0; Tue,  7 Apr 2020 19:20:55 +0300 (IDT)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -36,11 +37,14 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v6 0/7] Add tpm i2c ptp driver
-Date:   Tue,  7 Apr 2020 19:20:37 +0300
-Message-Id: <20200407162044.168890-1-amirmizi6@gmail.com>
+        Amir Mizinski <amirmizi6@gmail.com>,
+        Benoit Houyere <benoit.houyere@st.com>
+Subject: [PATCH v6 4/7] tpm: tpm_tis: Fix expected bit handling and send all  bytes in one shot without last byte in exception
+Date:   Tue,  7 Apr 2020 19:20:41 +0300
+Message-Id: <20200407162044.168890-5-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200407162044.168890-1-amirmizi6@gmail.com>
+References: <20200407162044.168890-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -50,111 +54,182 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-This patch set adds support for TPM devices that implement the I2C.
-Interface defined by TCG PTP specification:
-https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
+Incorrect implementation to send message has been detected. We check
+and loop only on TPM_STS.stsValid bit and next we single check
+TPM_STS.expect bit value.
+TPM_STS.expected bit should be checked in the same time of
+TPM_STS.stsValid, and shall be repeated until timeout_A.
 
-The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
+To detect TPM_STS.expected bit reset "wait_for_tpm_stat" function is
+modified to "wait_for_tpm_stat_result". This function read regularly
+status register and check bit defined by "mask" to reach value defined in
+"mask_result".
 
-Interrupts are not implemented yet, preparing it for the next patch.
-This patch is based on initial work by oshri Alkoby, Alexander Steffen and Christophe Ricard
+This correct implementation is mandatory to use new CRC calculation on I2C
+TPM command bytes or I2C TPM answer bytes. TPM_STS.expected bit is reset
+after all bytes acquired and CRC result inserted in dedicated register. It
+introduces a normal latency to have TPM_STS.expected bit reset.
 
-Changes since version 1:
--"char:tpm:Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
-        - Fixed and extended commit description.
-        - Fixed an issue regarding handling max retries.
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options":
-        -Converted "tpm_tis_i2c.txt" to "tpm-tis-i2c.yaml".
-        - Renamed "tpm_tis-i2c" to "tpm-tis-i2c".
-        - Removed interrupts properties.
--"char: tpm: add tpm_tis_i2c driver"
-        - Replaced "tpm_tis-i2c" with "tpm-tis-i2c" in "tpm_tis_i2c.c".
-Addressed comments from:
- - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11236257/
- - Rob Herring: https://patchwork.kernel.org/patch/11236253/
+Respectively, to send message as defined in
+TCG_DesignPrinciples_TPM2p0Driver_vp24_pubrev.pdf, all bytes should be
+sent in one shot instead of sending last byte in exception.
 
-Changes since version 2:
-- Added 2 new commits with improvements suggested by Benoit Houyere.
-        -"Fix expected bit handling  and send all bytes in one shot without last byte in exception"
-        -"Handle an exeption for TPM Firmware Update mode."
-- Updated patch to latest v5.5
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
-        - Added "interrupts" and "crc-checksum" to properties.
-        - Updated binding description and commit info.
--"char: tpm: add tpm_tis_i2c driver" (suggested by Benoit Houyere)
-        - Added repeat I2C frame after NACK.
-        - Checksum I2C feature activation in DTS file configuration.
-Addressed comments from:
- - Rob Herring: https://lore.kernel.org/patchwork/patch/1161287/
+Suggested-by: Benoit Houyere <benoit.houyere@st.com>
+Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+---
+ drivers/char/tpm/tpm_tis_core.c | 72 ++++++++++++++++-------------------------
+ 1 file changed, 28 insertions(+), 44 deletions(-)
 
-Changes since version 3:
-- Updated patch to latest v5.6
-- Updated commits headlines and development credit format by Jarkko Sakkinen suggestion
--"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
-        - Updated commit description.
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
-        - Fixed 'make dt_binding_check' errors on YAML file.
-        - Removed interrupts from required and examples since there is no use for them in current patch.
-Addressed comments from:
- - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1192101/
- - Rob Herring: https://lore.kernel.org/patchwork/patch/1192099/
-
-Changes since version 4:
--"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
-        -Added a "Reviewed-by" tag:
--"tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
-        -Fixed credit typos.
--"tpm: tpm_tis: rewrite "tpm_tis_req_canceled()""
-        -Added fixes tag and removed changes for STM.
--"tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
-        -Fixed typos, edited description to be more clear, and added a "Suggested-by" tag.
--"tpm: Handle an exception for TPM Firmware Update mode."
-        -Added a "Suggested-by" tag.
--"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
-        -Fixed 'make dt_binding_check' errors.
--"tpm: tpm_tis: add tpm_tis_i2c driver"
-        -Added tested-by tag by Eddie James.
-        -Fixed indent in Kconfig file.
-        -Fixed 'MODULE_DESCRIPTION'.
-Addressed comments from:
- - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11467645/
-                https://patchwork.kernel.org/patch/11467655/
-                https://patchwork.kernel.org/patch/11467643/
-                https://patchwork.kernel.org/patch/11467659/
-                https://patchwork.kernel.org/patch/11467651/
- - Rob Herring: https://patchwork.kernel.org/patch/11467653/
- - Randy Dunlap: https://patchwork.kernel.org/patch/11467651/
- - Eddie James: https://lore.kernel.org/patchwork/patch/1192104/
-
-Changes since version 5:
--"tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops"
-	-Updated short description and fixed long description to be more clear.
-Addressed comments from:
- - Jarkko Sakkinen: https://lkml.org/lkml/2020/4/6/748
-
-Amir Mizinski (7):
-  tpm: tpm_tis: Make implementation of read16 read32 write32 optional
-  tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops
-  tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-  tpm: tpm_tis: Fix expected bit handling and send all      bytes in one
-    shot without last byte in exception
-  tpm: Handle an exception for TPM Firmware Update mode.
-  dt-bindings: tpm: Add YAML schema for TPM TIS I2C options
-  tpm: tpm_tis: add tpm_tis_i2c driver
-
- .../bindings/security/tpm/tpm-tis-i2c.yaml         |  47 ++++
- drivers/char/tpm/Kconfig                           |  12 +
- drivers/char/tpm/Makefile                          |   1 +
- drivers/char/tpm/tpm2-cmd.c                        |   4 +
- drivers/char/tpm/tpm_tis_core.c                    | 175 ++++++------
- drivers/char/tpm/tpm_tis_core.h                    |  41 ++-
- drivers/char/tpm/tpm_tis_i2c.c                     | 292 +++++++++++++++++++++
- drivers/char/tpm/tpm_tis_spi_main.c                |  41 ---
- include/linux/tpm.h                                |   1 +
- 9 files changed, 486 insertions(+), 128 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
- create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
-
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 453d7ef..0a340c0 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -44,9 +44,10 @@ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
+ 	return false;
+ }
+ 
+-static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+-		unsigned long timeout, wait_queue_head_t *queue,
+-		bool check_cancel)
++static int wait_for_tpm_stat_result(struct tpm_chip *chip, u8 mask,
++				    u8 mask_result, unsigned long timeout,
++				    wait_queue_head_t *queue,
++				    bool check_cancel)
+ {
+ 	unsigned long stop;
+ 	long rc;
+@@ -55,7 +56,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 
+ 	/* check current status */
+ 	status = chip->ops->status(chip);
+-	if ((status & mask) == mask)
++	if ((status & mask) == mask_result)
+ 		return 0;
+ 
+ 	stop = jiffies + timeout;
+@@ -83,7 +84,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 			usleep_range(TPM_TIMEOUT_USECS_MIN,
+ 				     TPM_TIMEOUT_USECS_MAX);
+ 			status = chip->ops->status(chip);
+-			if ((status & mask) == mask)
++			if ((status & mask) == mask_result)
+ 				return 0;
+ 		} while (time_before(jiffies, stop));
+ 	}
+@@ -290,10 +291,11 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	int size = 0, burstcnt, rc;
+ 
+ 	while (size < count) {
+-		rc = wait_for_tpm_stat(chip,
+-				 TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+-				 chip->timeout_c,
+-				 &priv->read_queue, true);
++		rc = wait_for_tpm_stat_result(chip,
++					TPM_STS_DATA_AVAIL | TPM_STS_VALID,
++					TPM_STS_DATA_AVAIL | TPM_STS_VALID,
++					chip->timeout_c,
++					&priv->read_queue, true);
+ 		if (rc < 0)
+ 			return rc;
+ 		burstcnt = get_burstcount(chip);
+@@ -348,8 +350,9 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 			goto out;
+ 		}
+ 
+-		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-				      &priv->int_queue, false) < 0) {
++		if (wait_for_tpm_stat_result(chip, TPM_STS_VALID,
++					     TPM_STS_VALID, chip->timeout_c,
++					     &priv->int_queue, false) < 0) {
+ 			size = -ETIME;
+ 			goto out;
+ 		}
+@@ -385,61 +388,40 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+ 	int rc, status, burstcnt;
+ 	size_t count = 0;
+-	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
+ 
+ 	status = tpm_tis_status(chip);
+ 	if ((status & TPM_STS_COMMAND_READY) == 0) {
+ 		tpm_tis_ready(chip);
+-		if (wait_for_tpm_stat
+-		    (chip, TPM_STS_COMMAND_READY, chip->timeout_b,
+-		     &priv->int_queue, false) < 0) {
++		if (wait_for_tpm_stat_result(chip, TPM_STS_COMMAND_READY,
++					     TPM_STS_COMMAND_READY,
++					     chip->timeout_b,
++					     &priv->int_queue, false) < 0) {
+ 			rc = -ETIME;
+ 			goto out_err;
+ 		}
+ 	}
+ 
+-	while (count < len - 1) {
++	while (count < len) {
+ 		burstcnt = get_burstcount(chip);
+ 		if (burstcnt < 0) {
+ 			dev_err(&chip->dev, "Unable to read burstcount\n");
+ 			rc = burstcnt;
+ 			goto out_err;
+ 		}
+-		burstcnt = min_t(int, burstcnt, len - count - 1);
++		burstcnt = min_t(int, burstcnt, len - count);
+ 		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
+ 					 burstcnt, buf + count);
+ 		if (rc < 0)
+ 			goto out_err;
+ 
+ 		count += burstcnt;
+-
+-		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-					&priv->int_queue, false) < 0) {
+-			rc = -ETIME;
+-			goto out_err;
+-		}
+-		status = tpm_tis_status(chip);
+-		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
+-			rc = -EIO;
+-			goto out_err;
+-		}
+ 	}
+-
+-	/* write last byte */
+-	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
+-	if (rc < 0)
+-		goto out_err;
+-
+-	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+-				&priv->int_queue, false) < 0) {
++	if (wait_for_tpm_stat_result(chip, TPM_STS_VALID | TPM_STS_DATA_EXPECT,
++				     TPM_STS_VALID, chip->timeout_a,
++				     &priv->int_queue, false) < 0) {
+ 		rc = -ETIME;
+ 		goto out_err;
+ 	}
+-	status = tpm_tis_status(chip);
+-	if (!itpm && (status & TPM_STS_DATA_EXPECT) != 0) {
+-		rc = -EIO;
+-		goto out_err;
+-	}
+ 
+ 	return 0;
+ 
+@@ -496,9 +478,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
+ 
+ 		dur = tpm_calc_ordinal_duration(chip, ordinal);
+-		if (wait_for_tpm_stat
+-		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
+-		     &priv->read_queue, false) < 0) {
++		if (wait_for_tpm_stat_result(chip,
++					     TPM_STS_DATA_AVAIL | TPM_STS_VALID,
++					     TPM_STS_DATA_AVAIL | TPM_STS_VALID,
++					     dur,
++					     &priv->read_queue, false) < 0) {
+ 			rc = -ETIME;
+ 			goto out_err;
+ 		}
 -- 
 2.7.4
 
