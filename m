@@ -2,90 +2,123 @@ Return-Path: <SRS0=4d71=5X=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922E2C2BB55
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 16:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6BC7C2D0EC
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 21:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66FD220730
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 16:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A226920769
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Apr 2020 21:32:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbgDGQWS (ORCPT
+        id S1726428AbgDGVcO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 7 Apr 2020 12:22:18 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40622 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727707AbgDGQWR (ORCPT
+        Tue, 7 Apr 2020 17:32:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726395AbgDGVcO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Apr 2020 12:22:17 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 037GKs1W002269;
-        Tue, 7 Apr 2020 19:20:54 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id A8684639B0; Tue,  7 Apr 2020 19:20:54 +0300 (IDT)
-From:   amirmizi6@gmail.com
-To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
-        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
-        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
-        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v6 3/7] tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
-Date:   Tue,  7 Apr 2020 19:20:40 +0300
-Message-Id: <20200407162044.168890-4-amirmizi6@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200407162044.168890-1-amirmizi6@gmail.com>
-References: <20200407162044.168890-1-amirmizi6@gmail.com>
+        Tue, 7 Apr 2020 17:32:14 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 037L4hap104014;
+        Tue, 7 Apr 2020 17:31:59 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3082hh5qp2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Apr 2020 17:31:59 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 037LRsL0015276;
+        Tue, 7 Apr 2020 17:31:59 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3082hh5qng-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Apr 2020 17:31:59 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 037LUbr1023206;
+        Tue, 7 Apr 2020 21:31:57 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma04dal.us.ibm.com with ESMTP id 306hv69vxa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Apr 2020 21:31:57 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 037LVuCl12845986
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Apr 2020 21:31:56 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C7712B2066;
+        Tue,  7 Apr 2020 21:31:56 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 66031B2068;
+        Tue,  7 Apr 2020 21:31:55 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.65.198.190])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  7 Apr 2020 21:31:55 +0000 (GMT)
+Subject: Re: [RFC PATCH v2 00/12] Integrity Policy Enforcement LSM (IPE)
+To:     deven.desai@linux.microsoft.com
+Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, tyhicks@linux.microsoft.com,
+        pasha.tatashin@soleen.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
+        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org
+References: <20200406221439.1469862-1-deven.desai@linux.microsoft.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <c1466cc8-8a08-708a-4629-234485bb833e@linux.vnet.ibm.com>
+Date:   Tue, 7 Apr 2020 17:31:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200406221439.1469862-1-deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-04-07_09:2020-04-07,2020-04-07 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 spamscore=0 clxscore=1011 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=1 mlxscore=0 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2003020000 definitions=main-2004070166
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Amir Mizinski <amirmizi6@gmail.com>
 
-Using this function while read/write data resulted in aborted operation.
-After investigating according to TCG TPM Profile (PTP) Specifications,
-i found cancel should happen only if TPM_STS.commandReady bit is lit and
-couldn't find a case when the current condition is valid.
-So i'm removing the case for "TPM_VID_WINBOND" since we have no need for it
+On 4/6/20 6:14 PM, deven.desai@linux.microsoft.com wrote:
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
+>
+> Changelog:
+> ------------------------------------
+>
+> v1: Introduced
+>
+> v2:
+>    Split the second patch of the previous series into two.
+>    Minor corrections in the cover-letter and documentation
+>    comments regarding CAP_MAC_ADMIN checks in IPE.
+>
+> Overview:
+> ------------------------------------
+> IPE is a Linux Security Module, which allows for a configurable
+> policy to enforce integrity requirements on the whole system. It
+> attempts to solve the issue of Code Integrity: that any code being
+> executed (or files being read), are identical to the version that
+> was built by a trusted source.
 
-Also default comparison is wrong. only cmdReady bit need to be compared
-instead of the full lower status register byte.
+Can you please clarify the "motivation" for this patch set more clearly? 
+It seems to define a policy layer on top of dm-verity, which may be 
+compiled into the kernel. In the motivation, can you please also make it 
+explicit why existing mechanisms cannot be extended to achieve your purpose?
 
-Fixes: 1f86605 (tpm: Fix cancellation of TPM commands (polling mode))
-Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
----
- drivers/char/tpm/tpm_tis_core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Also, AFIK, the changelog should be moved to the end of the patch 
+description.
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 6c4f232..453d7ef 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -713,13 +713,10 @@ static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	switch (priv->manufacturer_id) {
--	case TPM_VID_WINBOND:
--		return ((status == TPM_STS_VALID) ||
--			(status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
- 	case TPM_VID_STM:
- 		return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
- 	default:
--		return (status == TPM_STS_COMMAND_READY);
-+		return ((status & TPM_STS_COMMAND_READY) == TPM_STS_COMMAND_READY);
- 	}
- }
- 
--- 
-2.7.4
+Thanks & Regards,
+
+     - Nayna
 
