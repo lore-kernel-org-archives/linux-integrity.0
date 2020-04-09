@@ -2,72 +2,112 @@ Return-Path: <SRS0=BWXy=5Z=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9815C2BBFD
-	for <linux-integrity@archiver.kernel.org>; Thu,  9 Apr 2020 10:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CA0C2BA2B
+	for <linux-integrity@archiver.kernel.org>; Thu,  9 Apr 2020 16:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A78420757
-	for <linux-integrity@archiver.kernel.org>; Thu,  9 Apr 2020 10:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6025A20678
+	for <linux-integrity@archiver.kernel.org>; Thu,  9 Apr 2020 16:26:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SVIUfVQP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbgDIKer (ORCPT
+        id S1726796AbgDIQZ6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 9 Apr 2020 06:34:47 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:50441 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725828AbgDIKer (ORCPT
+        Thu, 9 Apr 2020 12:25:58 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54992 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbgDIQZ6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Apr 2020 06:34:47 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0Tv2Jng._1586428480;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Tv2Jng._1586428480)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 09 Apr 2020 18:34:41 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, zhangliguang@linux.alibaba.com,
-        zhang.jia@linux.alibaba.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tianjia.zhang@linux.alibaba.com
-Subject: [PATCH v2 0/2] support to read and tune appraise mode in runtime
-Date:   Thu,  9 Apr 2020 18:34:38 +0800
-Message-Id: <20200409103440.47946-1-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 9 Apr 2020 12:25:58 -0400
+Received: from [10.137.106.115] (unknown [131.107.174.243])
+        by linux.microsoft.com (Postfix) with ESMTPSA id CC37A2007679;
+        Thu,  9 Apr 2020 09:25:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CC37A2007679
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1586449558;
+        bh=mxgHZSJk9nY2+sfPQybAXK1hYlxOn5wF6OLSUaiTeXQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SVIUfVQPfYXivTtnf81II2+cuX+VuuFT/cdRyrSfPQa/NspfBGhnRo9yWKcDnzRbk
+         LJ3Ki75Ows6uAhw3zh0yXVdiT1bgycAFmEUG1RPPnFEYcitcKAqCmE0Cd8qQo22Fey
+         1mwwxBUG5vr/LHYHNEZymvqJ6fmpTEryjbQU2kPw=
+Subject: Re: [RFC PATCH v2 00/12] Integrity Policy Enforcement LSM (IPE)
+To:     Nayna <nayna@linux.vnet.ibm.com>
+Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, tyhicks@linux.microsoft.com,
+        pasha.tatashin@soleen.com, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, nramas@linux.microsoft.com,
+        mdsakib@linux.microsoft.com, linux-kernel@vger.kernel.org
+References: <20200406221439.1469862-1-deven.desai@linux.microsoft.com>
+ <c1466cc8-8a08-708a-4629-234485bb833e@linux.vnet.ibm.com>
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+Message-ID: <35afdffe-179c-aedd-333a-9dfc20635fc3@linux.microsoft.com>
+Date:   Thu, 9 Apr 2020 09:25:57 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <c1466cc8-8a08-708a-4629-234485bb833e@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Support the read and write operations of ima_appraise by adding a
-securifyfs file 'appraise_mode'.
+On 4/7/2020 2:31 PM, Nayna wrote:
 
-In order to tune appraise mode in runtime, writing a PKCS#7 signature
-corresponding the signed content is required. The content should be off,
-enforce, log or fix. Given a simple way to archive this:
+>
+> On 4/6/20 6:14 PM, deven.desai@linux.microsoft.com wrote:
+>> From: Deven Bowers <deven.desai@linux.microsoft.com>
+>>
+>> Changelog:
+>> ------------------------------------
+>>
+>> v1: Introduced
+>>
+>> v2:
+>>    Split the second patch of the previous series into two.
+>>    Minor corrections in the cover-letter and documentation
+>>    comments regarding CAP_MAC_ADMIN checks in IPE.
+>>
+>> Overview:
+>> ------------------------------------
+>> IPE is a Linux Security Module, which allows for a configurable
+>> policy to enforce integrity requirements on the whole system. It
+>> attempts to solve the issue of Code Integrity: that any code being
+>> executed (or files being read), are identical to the version that
+>> was built by a trusted source.
+>
+> Can you please clarify the "motivation" for this patch set more 
+> clearly? It seems to define a policy layer on top of dm-verity, which 
+> may be compiled into the kernel. In the motivation, can you please 
+> also make it explicit why existing mechanisms cannot be extended to 
+> achieve your purpose?
+>
+This LSM was born out of a motivation to provide strong integrity 
+guarantees without a dependency on file-metadata, allow the integrity 
+claims to be configurable on a hot system, and allow for the mechanisms 
+for ensuring integrity to be extendable.
 
-$ echo -n off > mode
-$ openssl smime -sign -nocerts -noattr -binary \
-    -in mode -inkey <system_trusted_key> \
-    -signer <cert> -outform der -out mode.p7s
-$ sudo cat mode.p7s \
-    > /sys/kernel/security/ima/appraise_mode
+This naturally had to be an LSM, as controlling execution at the block 
+or filesystem layer does not make sense. Existing LSM implementations 
+use filesystem metadata, and since one of IPE's goals is to secure file 
+metadata, it is circular to depend on the file metadata itself to make 
+decisions about whether the file has been modified.
 
-Note that the signing key must be a trust key located in
-system trusted keyring. So even the root privilege cannot
-simply disable the enforcement.
+Additionally, IPE while IPE currently provides dm-verity support and the 
+trust root support, it can be easily extended to other implementations 
+such as fs-verity. At it's core, IPE is attempting to separate mechanism 
+(dm-verity, fs-verity, etc.) from policy (IPE).
 
----
-v2 change: fix build error.
-
-Tianjia Zhang (2):
-  ima: support to read appraise mode
-  ima: support to tune appraise mode in runtime
-
- security/integrity/ima/ima_fs.c | 140 +++++++++++++++++++++++++++++++-
- 1 file changed, 139 insertions(+), 1 deletion(-)
-
--- 
-2.17.1
-
+> Also, AFIK, the changelog should be moved to the end of the patch 
+> description.
+>
+Thanks! I'll move the changelog.
