@@ -7,61 +7,64 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E003DC352B6
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 Apr 2020 11:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6756DC2BA19
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Apr 2020 11:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C82F42076B
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 Apr 2020 11:42:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BB22206D5
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Apr 2020 11:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439492AbgDNLmj (ORCPT
+        id S2439606AbgDNLtQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 14 Apr 2020 07:42:39 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:52198 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2439489AbgDNLmi (ORCPT
+        Tue, 14 Apr 2020 07:49:16 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:49953 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729470AbgDNLtP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Apr 2020 07:42:38 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04397;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0TvX5Wi8_1586864546;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TvX5Wi8_1586864546)
+        Tue, 14 Apr 2020 07:49:15 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01419;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TvX41bQ_1586864931;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0TvX41bQ_1586864931)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 14 Apr 2020 19:42:27 +0800
+          Tue, 14 Apr 2020 19:48:52 +0800
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, zhangliguang@linux.alibaba.com,
         zhang.jia@linux.alibaba.com
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tianjia.zhang@linux.alibaba.com
-Subject: [PATCH] tpm: fix wrong return value in tpm_pcr_extend
-Date:   Tue, 14 Apr 2020 19:42:26 +0800
-Message-Id: <20200414114226.96691-1-tianjia.zhang@linux.alibaba.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tianjia.zhang@linux.alibaba.com
+Subject: [PATCH 1/2] ima: simplify function ima_store_template
+Date:   Tue, 14 Apr 2020 19:48:49 +0800
+Message-Id: <20200414114850.98622-2-tianjia.zhang@linux.alibaba.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200414114850.98622-1-tianjia.zhang@linux.alibaba.com>
+References: <20200414114850.98622-1-tianjia.zhang@linux.alibaba.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-For the algorithm that does not match the bank, a positive
-value EINVAL is returned here. I think this is a typo error.
-It is necessary to return an error value.
+The 'result' here is not necessary, remove redundant code,
+the code is more concise.
 
 Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 ---
- drivers/char/tpm/tpm-interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ security/integrity/ima/ima_api.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index a438b1206fcb..1621ce818705 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -323,7 +323,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 
- 	for (i = 0; i < chip->nr_allocated_banks; i++) {
- 		if (digests[i].alg_id != chip->allocated_banks[i].alg_id) {
--			rc = EINVAL;
-+			rc = -EINVAL;
- 			goto out;
- 		}
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index f6bc00914aa5..9121257c9dc6 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -118,8 +118,7 @@ int ima_store_template(struct ima_template_entry *entry,
+ 		memcpy(entry->digest, hash.hdr.digest, hash.hdr.length);
  	}
+ 	entry->pcr = pcr;
+-	result = ima_add_template_entry(entry, violation, op, inode, filename);
+-	return result;
++	return ima_add_template_entry(entry, violation, op, inode, filename);
+ }
+ 
+ /*
 -- 
 2.17.1
 
