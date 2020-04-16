@@ -2,76 +2,94 @@ Return-Path: <SRS0=//sE=6A=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCF9C352BE
-	for <linux-integrity@archiver.kernel.org>; Thu, 16 Apr 2020 13:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E97AAC2BB55
+	for <linux-integrity@archiver.kernel.org>; Thu, 16 Apr 2020 16:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BDEE21D7F
-	for <linux-integrity@archiver.kernel.org>; Thu, 16 Apr 2020 13:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C817B2223E
+	for <linux-integrity@archiver.kernel.org>; Thu, 16 Apr 2020 16:07:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2894972AbgDPNOD (ORCPT
+        id S1729618AbgDPQH5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 16 Apr 2020 09:14:03 -0400
-Received: from mga14.intel.com ([192.55.52.115]:27289 "EHLO mga14.intel.com"
+        Thu, 16 Apr 2020 12:07:57 -0400
+Received: from mga01.intel.com ([192.55.52.88]:4097 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2894939AbgDPNOC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Apr 2020 09:14:02 -0400
-IronPort-SDR: CcmgXTLjx0NJ1DluPc8qvyzD++5ZOQo8ZhR4P5O+DATiRMyqdPHLkv/SUgOhVYm5BdJYBNgA/I
- /PwBQCvCF3Kw==
+        id S1727936AbgDPQH4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 16 Apr 2020 12:07:56 -0400
+IronPort-SDR: m7tWarmFe+1Mosl1bTmCMsboutHLJ+vjbRH3KsnnzvrVEr6HJ1jYNTJD2Dw4sicISrLRA+6CHg
+ d7qcFhI6qmaQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 06:13:42 -0700
-IronPort-SDR: WvI81BDYmtxqUsTDFRbJ7tWkzpztLdDLQPZXYSdcA4+j62BciXmPy3JbTTpOaVrSVcm/25Ai/b
- yJajpsV9fqOg==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:07:55 -0700
+IronPort-SDR: TNgaKRRtQ9LfEjhIISP0lM172r9WHdiZ+hjv6CM4z/xUS01YSx3wyOj+hmu4ZfPIhIrKvoGCNT
+ g1+jK/L+8flw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
-   d="scan'208";a="332834202"
+   d="scan'208";a="244436404"
 Received: from otazetdi-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.42.128])
-  by orsmga001.jf.intel.com with ESMTP; 16 Apr 2020 06:13:39 -0700
-Date:   Thu, 16 Apr 2020 16:13:39 +0300
+  by fmsmga007.fm.intel.com with ESMTP; 16 Apr 2020 09:07:53 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-integrity@vger.kernel.org, stable@vger.kernel.org,
+To:     linux-integrity@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
         Peter Huewe <peterhuewe@gmx.de>,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm/tpm_tis: Free IRQ if probing fails
-Message-ID: <20200416131339.GB65786@linux.intel.com>
-References: <20200412170412.324200-1-jarkko.sakkinen@linux.intel.com>
- <b909aaee-3fff-4dca-40f4-4c5348474426@redhat.com>
- <20200413180732.GA11147@linux.intel.com>
- <7df7f8bd-c65e-1435-7e82-b9f4ecd729de@redhat.com>
- <20200414071349.GA8403@linux.intel.com>
- <d6684575-ce91-fe72-6035-11834a05cd54@redhat.com>
- <20200414160404.GA32775@linux.intel.com>
- <20200414164542.GC32775@linux.intel.com>
- <df580835-f887-1918-c933-6509e5a1ad47@redhat.com>
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] tpm/tpm_tis: Free IRQ if probing fails
+Date:   Thu, 16 Apr 2020 19:07:50 +0300
+Message-Id: <20200416160751.180791-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df580835-f887-1918-c933-6509e5a1ad47@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 07:15:08PM +0200, Hans de Goede wrote:
-> Sounds good, I guess it would be best to combine that with a:
-> 
-> 	if (priv->irq == 0)
-> 		return;
-> 
-> At the top of disable_interrupts() and then unconditionally
-> call disable_interrupts() where your v1 of this patch
-> calls devm_free_irq(). That would be a reasonable clean
-> solution I think.
+Call disable_interrupts() if we have to revert to polling in order not to
+unnecessarily reserve the IRQ for the life-cycle of the driver.
 
-Great, this was my plan (just wanted to double check).
+Cc: stable@vger.kernel.org # 4.5.x
+Reported-by: Hans de Goede <hdegoede@redhat.com>
+Fixes: e3837e74a06d ("tpm_tis: Refactor the interrupt setup")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm_tis_core.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 27c6ca031e23..2435216bd10a 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -433,6 +433,9 @@ static void disable_interrupts(struct tpm_chip *chip)
+ 	u32 intmask;
+ 	int rc;
+ 
++	if (priv->irq == 0)
++		return;
++
+ 	rc = tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
+ 	if (rc < 0)
+ 		intmask = 0;
+@@ -1062,9 +1065,12 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 		if (irq) {
+ 			tpm_tis_probe_irq_single(chip, intmask, IRQF_SHARED,
+ 						 irq);
+-			if (!(chip->flags & TPM_CHIP_FLAG_IRQ))
++			if (!(chip->flags & TPM_CHIP_FLAG_IRQ)) {
+ 				dev_err(&chip->dev, FW_BUG
+ 					"TPM interrupt not working, polling instead\n");
++
++				disable_interrupts(chip);
++			}
+ 		} else {
+ 			tpm_tis_probe_irq(chip, intmask);
+ 		}
+-- 
+2.25.1
+
