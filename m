@@ -6,40 +6,41 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75381C55199
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C3FC55199
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F1E6206D4
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4799206D4
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgD0Kby (ORCPT
+        id S1727124AbgD0KcA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 27 Apr 2020 06:31:54 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2109 "EHLO huawei.com"
+        Mon, 27 Apr 2020 06:32:00 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2106 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727058AbgD0Kbo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Apr 2020 06:31:44 -0400
-Received: from lhreml726-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 06CEB882E7E7C5ABDB47;
-        Mon, 27 Apr 2020 11:31:43 +0100 (IST)
+        id S1726786AbgD0Kbm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 27 Apr 2020 06:31:42 -0400
+Received: from lhreml723-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id AC11C564B7EF5C0124A8;
+        Mon, 27 Apr 2020 11:31:40 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml726-chm.china.huawei.com (10.201.108.77) with Microsoft SMTP Server
+ lhreml723-chm.china.huawei.com (10.201.108.74) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 27 Apr 2020 11:31:42 +0100
+ 15.1.1913.5; Mon, 27 Apr 2020 11:31:40 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 27 Apr 2020 12:31:41 +0200
+ 15.1.1913.5; Mon, 27 Apr 2020 12:31:39 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <rgoldwyn@suse.de>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        <krzysztof.struczynski@huawei.com>, <stable@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 5/6] ima: Set again build_ima_appraise variable
-Date:   Mon, 27 Apr 2020 12:28:59 +0200
-Message-ID: <20200427102900.18887-5-roberto.sassu@huawei.com>
+        <krzysztof.struczynski@huawei.com>,
+        "Roberto Sassu" <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2 2/6] evm: Check also if *tfm is an error pointer in init_desc()
+Date:   Mon, 27 Apr 2020 12:28:56 +0200
+Message-ID: <20200427102900.18887-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200427102900.18887-1-roberto.sassu@huawei.com>
 References: <20200427102900.18887-1-roberto.sassu@huawei.com>
@@ -54,53 +55,41 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+This patch avoids a kernel panic due to accessing an error pointer set by
+crypto_alloc_shash(). It occurs especially when there are many files that
+require an unsupported algorithm, as it would increase the likelihood of
+the following race condition:
 
-After adding the new add_rule() function in commit c52657d93b05
-("ima: refactor ima_init_policy()"), all appraisal flags are added to the
-temp_ima_appraise variable. Revert to the previous behavior instead of
-removing build_ima_appraise, to benefit from the protection offered by
-__ro_after_init.
+Task A: *tfm = crypto_alloc_shash() <= error pointer
+Task B: if (*tfm == NULL) <= *tfm is not NULL, use it
+Task B: rc = crypto_shash_init(desc) <= panic
+Task A: *tfm = NULL
 
-The mentioned commit introduced a bug, as it makes all the flags
-modifiable, while build_ima_appraise flags can be protected with
-__ro_after_init.
+This patch uses the IS_ERR_OR_NULL macro to determine whether or not a new
+crypto context must be created.
 
-Changelog
-
-v1:
-- set build_ima_appraise instead of removing it (suggested by Mimi)
-
-Cc: stable@vger.kernel.org # 5.0.x
-Fixes: c52657d93b05 ("ima: refactor ima_init_policy()")
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: stable@vger.kernel.org
+Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
+Co-developed-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_policy.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ security/integrity/evm/evm_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ea9b991f0232..ef7f68cc935e 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -643,8 +643,14 @@ static void add_rules(struct ima_rule_entry *entries, int count,
- 
- 			list_add_tail(&entry->list, &ima_policy_rules);
- 		}
--		if (entries[i].action == APPRAISE)
--			temp_ima_appraise |= ima_appraise_flag(entries[i].func);
-+		if (entries[i].action == APPRAISE) {
-+			if (entries != build_appraise_rules)
-+				temp_ima_appraise |=
-+					ima_appraise_flag(entries[i].func);
-+			else
-+				build_ima_appraise |=
-+					ima_appraise_flag(entries[i].func);
-+		}
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 35682852ddea..77ad1e5a93e4 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -91,7 +91,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ 		algo = hash_algo_name[hash_algo];
  	}
- }
  
+-	if (*tfm == NULL) {
++	if (IS_ERR_OR_NULL(*tfm)) {
+ 		mutex_lock(&mutex);
+ 		if (*tfm)
+ 			goto out;
 -- 
 2.17.1
 
