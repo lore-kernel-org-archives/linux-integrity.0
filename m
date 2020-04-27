@@ -6,42 +6,43 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 749F4C54FD0
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68B4C5519A
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 532B4206B6
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8F0206D9
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbgD0Kbm (ORCPT
+        id S1727102AbgD0Kbo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 27 Apr 2020 06:31:42 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2105 "EHLO huawei.com"
+        Mon, 27 Apr 2020 06:31:44 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2107 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726537AbgD0Kbl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Apr 2020 06:31:41 -0400
-Received: from lhreml724-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id E1F57895E276EE888944;
-        Mon, 27 Apr 2020 11:31:39 +0100 (IST)
+        id S1726955AbgD0Kbn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 27 Apr 2020 06:31:43 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 7B7784AEC8FCA8D2792F;
+        Mon, 27 Apr 2020 11:31:41 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml724-chm.china.huawei.com (10.201.108.75) with Microsoft SMTP Server
+ lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 27 Apr 2020 11:31:39 +0100
+ 15.1.1913.5; Mon, 27 Apr 2020 11:31:41 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 27 Apr 2020 12:31:38 +0200
+ 15.1.1913.5; Mon, 27 Apr 2020 12:31:40 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <rgoldwyn@suse.de>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        <krzysztof.struczynski@huawei.com>,
-        "Roberto Sassu" <roberto.sassu@huawei.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v2 1/6] ima: Set file->f_mode instead of file->f_flags in ima_calc_file_hash()
-Date:   Mon, 27 Apr 2020 12:28:55 +0200
-Message-ID: <20200427102900.18887-1-roberto.sassu@huawei.com>
+        <krzysztof.struczynski@huawei.com>, <stable@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 3/6] ima: Fix ima digest hash table key calculation
+Date:   Mon, 27 Apr 2020 12:28:57 +0200
+Message-ID: <20200427102900.18887-3-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200427102900.18887-1-roberto.sassu@huawei.com>
+References: <20200427102900.18887-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.204.65.160]
@@ -53,69 +54,50 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Commit a408e4a86b36 ("ima: open a new file instance if no read
-permissions") tries to create a new file descriptor to calculate a file
-digest if the file has not been opened with O_RDONLY flag. However, if a
-new file descriptor cannot be obtained, it sets the FMODE_READ flag to
-file->f_flags instead of file->f_mode.
+From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-This patch fixes this issue by replacing f_flags with f_mode as it was
-before that commit.
+Function hash_long() accepts unsigned long, while currently only one byte
+is passed from ima_hash_key(), which calculates a key for ima_htable.
 
-Changelog
+Given that hashing the digest does not give clear benefits compared to
+using the digest itself, remove hash_long() and return the modulus
+calculated on the beginning of the digest with the number of slots. Also
+reduce the depth of the hash table by doubling the number of slots.
 
-v1:
-- fix comment for f_mode change (suggested by Mimi)
-- rename modified_flags variable to modified_mode (suggested by Mimi)
-
-Cc: stable@vger.kernel.org # 4.20.x
-Fixes: a408e4a86b36 ("ima: open a new file instance if no read permissions")
+Cc: stable@vger.kernel.org
+Fixes: 3323eec921ef ("integrity: IMA as an integrity service provider")
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- security/integrity/ima/ima_crypto.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 5201f5ec2ce4..f3a7f4eb1fc1 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -537,7 +537,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 	loff_t i_size;
- 	int rc;
- 	struct file *f = file;
--	bool new_file_instance = false, modified_flags = false;
-+	bool new_file_instance = false, modified_mode = false;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 467dfdbea25c..6ee458cf124a 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -36,7 +36,7 @@ enum tpm_pcrs { TPM_PCR0 = 0, TPM_PCR8 = 8 };
+ #define IMA_DIGEST_SIZE		SHA1_DIGEST_SIZE
+ #define IMA_EVENT_NAME_LEN_MAX	255
  
- 	/*
- 	 * For consistency, fail file's opened with the O_DIRECT flag on
-@@ -557,13 +557,13 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- 		f = dentry_open(&file->f_path, flags, file->f_cred);
- 		if (IS_ERR(f)) {
- 			/*
--			 * Cannot open the file again, lets modify f_flags
-+			 * Cannot open the file again, lets modify f_mode
- 			 * of original and continue
- 			 */
- 			pr_info_ratelimited("Unable to reopen file for reading.\n");
- 			f = file;
--			f->f_flags |= FMODE_READ;
--			modified_flags = true;
-+			f->f_mode |= FMODE_READ;
-+			modified_mode = true;
- 		} else {
- 			new_file_instance = true;
- 		}
-@@ -581,8 +581,8 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
- out:
- 	if (new_file_instance)
- 		fput(f);
--	else if (modified_flags)
--		f->f_flags &= ~FMODE_READ;
-+	else if (modified_mode)
-+		f->f_mode &= ~FMODE_READ;
- 	return rc;
+-#define IMA_HASH_BITS 9
++#define IMA_HASH_BITS 10
+ #define IMA_MEASURE_HTABLE_SIZE (1 << IMA_HASH_BITS)
+ 
+ #define IMA_TEMPLATE_FIELD_ID_MAX_LEN	16
+@@ -179,9 +179,9 @@ struct ima_h_table {
+ };
+ extern struct ima_h_table ima_htable;
+ 
+-static inline unsigned long ima_hash_key(u8 *digest)
++static inline unsigned int ima_hash_key(u8 *digest)
+ {
+-	return hash_long(*digest, IMA_HASH_BITS);
++	return (*(unsigned int *)digest % IMA_MEASURE_HTABLE_SIZE);
  }
  
+ #define __ima_hooks(hook)		\
 -- 
 2.17.1
 
