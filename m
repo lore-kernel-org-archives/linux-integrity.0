@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95797C54FD0
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 12:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4970DC5519A
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 12:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B483206D4
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 12:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33EAD206D4
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Apr 2020 12:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726539AbgD0MwJ (ORCPT
+        id S1727872AbgD0MwV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 27 Apr 2020 08:52:09 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:47785 "EHLO
+        Mon, 27 Apr 2020 08:52:21 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:47798 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727823AbgD0MwJ (ORCPT
+        with ESMTP id S1727860AbgD0MwU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Apr 2020 08:52:09 -0400
+        Mon, 27 Apr 2020 08:52:20 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 03RCpfMg024055;
-        Mon, 27 Apr 2020 15:51:41 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 03RCpmfZ024064;
+        Mon, 27 Apr 2020 15:51:48 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id C9286639B1; Mon, 27 Apr 2020 15:51:41 +0300 (IDT)
+        id 2D0B1639B1; Mon, 27 Apr 2020 15:51:48 +0300 (IDT)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -38,9 +38,9 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
         Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v7 3/7] tpm: tpm_tis: Rewrite "tpm_tis_req_canceled()"
-Date:   Mon, 27 Apr 2020 15:49:27 +0300
-Message-Id: <20200427124931.115697-4-amirmizi6@gmail.com>
+Subject: [PATCH v7 6/7] tpm: Add YAML schema for TPM TIS I2C options
+Date:   Mon, 27 Apr 2020 15:49:30 +0300
+Message-Id: <20200427124931.115697-7-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200427124931.115697-1-amirmizi6@gmail.com>
 References: <20200427124931.115697-1-amirmizi6@gmail.com>
@@ -53,44 +53,74 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Using this function while reading/writing data resulted in an aborted
-operation.
-After investigating the issue according to the TCG TPM Profile (PTP)
-Specifications, I found that "request to cancel" should occur only if
-TPM_STS.commandReady bit is lit.
-Note that i couldn't find a case where the present condition
-(in the linux kernel) is valid, so I'm removing the case for
-"TPM_VID_WINBOND" since we have no need for it.
+Added a YAML schema to support tpm tis i2c related dt-bindings for the I2c
+PTP based physical layer.
 
-Also, the default comparison is wrong. Only cmdReady bit needs to be
-compared instead of the full lower status register byte.
+This patch adds the documentation for corresponding device tree bindings of
+I2C based Physical TPM.
+Refer to the 'I2C Interface Definition' section in
+'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
+for specification.
 
-Fixes: 1f86605 (tpm: Fix cancellation of TPM commands (polling mode))
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 ---
- drivers/char/tpm/tpm_tis_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         | 47 ++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 5dd5604..682f950 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -715,13 +715,11 @@ static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	switch (priv->manufacturer_id) {
--	case TPM_VID_WINBOND:
--		return ((status == TPM_STS_VALID) ||
--			(status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
- 	case TPM_VID_STM:
- 		return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
- 	default:
--		return (status == TPM_STS_COMMAND_READY);
-+		return ((status & TPM_STS_COMMAND_READY) ==
-+			TPM_STS_COMMAND_READY);
- 	}
- }
- 
+diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+new file mode 100644
+index 0000000..2ab8b80
+--- /dev/null
++++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: I2C PTP based TPM Device Tree Bindings
++
++maintainers:
++  - Amir Mizinski <amirmizi6@gmail.com>
++
++description:
++  Device Tree Bindings for I2C based Trusted Platform Module(TPM).
++
++properties:
++  compatible:
++    contains:
++      const: tcg,tpm-tis-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupt:
++    maxItems: 1
++
++  crc-checksum:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Set this flag to enable CRC checksum.
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      tpm_tis@2e {
++        compatible = "tcg,tpm-tis-i2c";
++        reg = <0x2e>;
++        crc-checksum;
++      };
++    };
++...
 -- 
 2.7.4
 
