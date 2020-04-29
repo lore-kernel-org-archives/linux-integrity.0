@@ -2,261 +2,168 @@ Return-Path: <SRS0=+I/L=6N=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BDFC83004
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 07:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A406C83003
+	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 10:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCB02083B
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 07:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CCFE2082E
+	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 10:04:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePmnNTXM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbgD2HmM (ORCPT
+        id S1726457AbgD2KEk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Apr 2020 03:42:12 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2125 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726477AbgD2HmL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Apr 2020 03:42:11 -0400
-Received: from lhreml709-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id B962F5BF6C391C3AAF11;
-        Wed, 29 Apr 2020 08:42:09 +0100 (IST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml709-chm.china.huawei.com (10.201.108.58) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Wed, 29 Apr 2020 08:42:09 +0100
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Wed, 29 Apr 2020 09:42:08 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <david.safford@gmail.com>,
-        <viro@zeniv.linux.org.uk>, <jmorris@namei.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
-Date:   Wed, 29 Apr 2020 09:39:33 +0200
-Message-ID: <20200429073935.11913-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 29 Apr 2020 06:04:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbgD2KEk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 29 Apr 2020 06:04:40 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5926AC03C1AD
+        for <linux-integrity@vger.kernel.org>; Wed, 29 Apr 2020 03:04:40 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id v2so665494plp.9
+        for <linux-integrity@vger.kernel.org>; Wed, 29 Apr 2020 03:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eecAU/rt9RZknTnm/PAmmN8SMXp6BryKeJ9nWNcdGRI=;
+        b=ePmnNTXMGHjiW6NFQrS8b1RTYzXxRgy4Zjcd324h1xe5C6jJSY2VNE5nN9EXAlCRcG
+         9g0yHLyEtHRXZPovkM7hPxtzQMVE1f6/QeBuEaw9OZLi0qWbd7l7Nz0dA6sN6+ONnNqP
+         68wYyG6qiN63vAbjKppUrwtME4RlVAd/5vmO5gjOGlqQs0LFq1TOxw3DOPCuma5W9Jsv
+         rwAmhQPVN89ZHQDyCSWfi3CKBHnVX+FzWxZ6zZ5Srz4B/YNBTUebK197l5gERvWebH8B
+         +ugKGfLbtnuNUzwCuOklCHxKP/tse/TbRVtIPTETSw4fVwsOrSApfQqvL4w/bFYgnTbx
+         k8Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eecAU/rt9RZknTnm/PAmmN8SMXp6BryKeJ9nWNcdGRI=;
+        b=GWnjgiYT9Ydc3Q0+Hgz+UDP9NNNRTOFDzKzjj1IaYf/W0byhFWbVIxnGy1Yuu0jgf0
+         WdY1LvXeLG343eVfhwCu9LlQ7ueCzPusfqx1PcDDyLNvACyRP1GycS44L313fuRRFNfh
+         weqHUyKgMRaIaIGHFgZ1S0DDU5G/LKa1DmnnReJKy5CIsQYU9gSi+E19GTtpnDDDpdQv
+         lalDTlnbBPSMVWvSfKDDz2MCSd90kAd/fVbMD+UhH3bWSaA2ZBzEXs1e+W4IGIwTzm+c
+         52b69IsVBl8d6il545u2uFdnqBDhdzsqLAHOldHZOfCn6xFMdLtAMB4M0/C8WPwEgUEY
+         stZg==
+X-Gm-Message-State: AGi0PuY0pK3eyuaElleFe+/r/q4P6+pwacvBY2fbiQXR7n61My5N5g4n
+        6Rjpsf3M2576HIgjMfy50g==
+X-Google-Smtp-Source: APiQypI7Tu7Glo2467+EyF45f/x9HpKfOrHY6a6/tlUKGw8w0uKIB8qli9TVnGoqhRpvJ8KpTAEp2A==
+X-Received: by 2002:a17:90a:8a09:: with SMTP id w9mr2243621pjn.95.1588154679702;
+        Wed, 29 Apr 2020 03:04:39 -0700 (PDT)
+Received: from madhuparna-HP-Notebook ([2402:3a80:13a5:c7ca:2591:468a:ee81:9c85])
+        by smtp.gmail.com with ESMTPSA id i128sm749978pfc.149.2020.04.29.03.04.36
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 29 Apr 2020 03:04:38 -0700 (PDT)
+From:   Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>
+X-Google-Original-From: Madhuparna Bhowmik <change_this_user_name@gmail.com>
+Date:   Wed, 29 Apr 2020 15:34:33 +0530
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Madhuparna Bhowmik <madhuparnabhowmik10@gmail.com>,
+        jmorris@namei.org, serge@hallyn.com,
+        linux-integrity@vger.kernel.org, Matthew Garrett <mjg59@google.com>
+Subject: Re: Fwd: a8d5875ce5 ("Default enable RCU list lockdep debugging with
+ .."): WARNING: suspicious RCU usage
+Message-ID: <20200429100432.GB3465@madhuparna-HP-Notebook>
+References: <5ea3a0e3.ruR9Zw9VIGN+NGIb%lkp@intel.com>
+ <CAD=jOEYd-pAQMo3hukx6AhXN7CbH8yGLVLHe2=92wCq-HWS++Q@mail.gmail.com>
+ <1588035506.16086.25.camel@linux.ibm.com>
+ <20200428112349.GA19116@madhuparna-HP-Notebook>
+ <1588078741.5195.6.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.160]
-X-ClientProxiedBy: lhreml701-chm.china.huawei.com (10.201.108.50) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1588078741.5195.6.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-EVM is a module for the protection of the integrity of file metadata. It
-protects security-relevant extended attributes, and some file attributes
-such as the UID and the GID. It protects their integrity with an HMAC or
-with a signature.
+On Tue, Apr 28, 2020 at 08:59:01AM -0400, Mimi Zohar wrote:
+> On Tue, 2020-04-28 at 16:53 +0530, Madhuparna Bhowmik wrote:
+> > On Mon, Apr 27, 2020 at 08:58:26PM -0400, Mimi Zohar wrote:
+> > > [Cc'ing Matthew Garrett)
+> > > 
+> > > Hi Madhuparna,
+> > > 
+> > > On Sat, 2020-04-25 at 16:33 +0530, Madhuparna Bhowmik wrote:
+> > > > Hi,
+> > > > 
+> > > > This is regarding the warning reported by kernel test bot regarding
+> > > > suspicious RCU usage.
+> > > > Using a simple git grep, I can only see the following usage of RCU:
+> > > > 
+> > > > evm_crypto.c:   list_for_each_entry_rcu(xattr, &evm_config_xattrnames,
+> > > > list) {
+> > > > evm_main.c:     list_for_each_entry_rcu(xattr, &evm_config_xattrnames,
+> > > > list) {
+> > > > evm_main.c:     list_for_each_entry_rcu(xattr, &evm_config_xattrnames,
+> > > > list) {
+> > > > evm_secfs.c:    list_add_tail_rcu(&xattr->list, &evm_config_xattrnames);
+> > > > 
+> > > > So, the evm_config_xattrnames list is traversed using
+> > > > list_for_each_entry_rcu() but without the protection of rcu_read_lock()?
+> > > > If these are not really RCU read-side CS, and other locks are held then
+> > > > there is no need to use list_for_each_entry_rcu().
+> > > > And maybe we can completely remove the usage of rcu primitives here.
+> > > > Or if there is a bug and rcu_read_lock() should be held, please let me know
+> > > > and I can try fixing this.
+> > > 
+> > > Thank you for forwarding this report.  The list of EVM xattrs is
+> > > protected by the xattr_list_mutex, which is used when reading or
+> > > appending to the EVM list itself.  Entries in the list can not be
+> > > removed.
+> > >
+> > Hi Mimi,
+> > 
+> > Thank you for your reply.
+> > So, if the list is protected by xattr_list mutex and it is used during
+> > both reading and writing to the list, can we remove the usage of RCU
+> > here? 
+> 
+> I should have said the mutex is used when cat'ing the securityfs file
+> (security/integrity/evm/evm_xattrs) and when adding to the list, but
+> not in the above cases when walking the list.
+>
+> > Since the read side critical section is already protected by the
+> > xattr_list mutex, we do not need list_for_each_entry_rcu() to read the
+> > list. Also, we can just simply add to the list using list_add_tail(),
+> > RCU primitives are not really required here.
+> > 
+> > Please let me know is this is fine, and I can send a patch removing the
+> > usage of RCU here.
+> 
+> Matthew, please correct me if I'm wrong, the reason it is safe, is not
+> because there is a mutex, but because entries are never removed from
+> the list.
+>
+Alright, I understood the case here. So entries are only added to the
+tail of the list and never deleted. And that's why it is safe for
+readers and writers to execute concurrently even without the mutex.
 
-What makes EVM different from other LSMs is that it makes a security
-decision depending on multiple pieces of information, which cannot be
-managed atomically by the system.
+However, RCU would still complain if no lock or rcu_read_lock is not
+held.
 
-Example: cp -a file.orig file.dest
+Should I cc Paul McKenney about this case, he is the RCU Maintainer and
+usually replies pretty fast.
+He would be able to correctly suggest how to fix the RCU usage here.
 
-If security.selinux, security.ima and security.evm must be preserved, cp
-will invoke setxattr() for each xattr, and EVM performs a verification
-during each operation. The problem is that copying security.evm from
-file.orig to file.dest will likely break the following EVM verifications if
-some metadata still have to be copied. EVM has no visibility on the
-metadata of the source file, so it cannot determine when the copy can be
-considered complete.
+Let me know if this is okay.
 
-On the other hand, EVM has to check metadata during every operation to
-ensure that there is no transition from corrupted metadata, e.g. after an
-offline attack, to valid ones after the operation. An HMAC update would
-prevent the corruption to be detected, as the HMAC on the new values would
-be correct. Thus, to avoid this issue, EVM has to return an error to the
-system call so that its execution will be interrupted.
+Thank you,
+Madhuparna
 
-A solution that would satisfy both requirements, not breaking user space
-applications and detecting corrupted metadata is to let metadata operations
-be completed successfully and to pass the result of the EVM verification
-from the pre hooks to the post hooks. In this way, the HMAC update can be
-avoided if the verification wasn't successful.
-
-This approach will bring another important benefit: it is no longer
-required that every file has a valid HMAC or signature. Instead of always
-enforcing metadata integrity, even when it is not relevant for IMA, EVM
-will let IMA decide for files selected with the appraisal policy,
-depending on the result of the requested verification.
-
-The main problem is that the result of the verification currently cannot be
-passed from the pre hooks to the post hooks, due to how the LSM API is
-defined. A possible solution would be to use integrity_iint_cache for this
-purpose, but it will increase the memory pressure, as new structures will
-be allocated also for metadata operations, not only for measurement,
-appraisal and audit. Another solution would be to extend the LSM API, but
-it seems not worthwhile as EVM would be the only module getting a benefit
-from this change.
-
-Given that pre and post hooks are called from the same system call, a more
-efficient solution seems to move the hooks outside the LSM infrastructure,
-so that the return value of the pre hooks can be passed to the post hooks.
-A predefined error (-EAGAIN) will be used to signal to the system call to
-continue the execution. Otherwise, if the pre hooks return -EPERM, the
-system calls will behave as before and will immediately return before
-metadata are changed.
-
-Overview of the changes:
-
-evm_inode_init_security()	LSM (no change)
-evm_inode_setxattr()		LSM -> vfs_setxattr()
-evm_inode_post_setxattr()	LSM -> vfs_setxattr()
-evm_inode_removexattr()		LSM -> vfs_removexattr()
-evm_inode_post_removexattr()	vfs_removexattr() (no change)
-evm_inode_setattr()		LSM -> vfs_setattr()
-evm_inode_post_setattr()	vfs_setattr() (no change)
-evm_verifyxattr()		outside LSM (no change)
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- fs/attr.c           |  5 ++++-
- fs/xattr.c          | 17 +++++++++++++++--
- security/security.c | 18 +++---------------
- 3 files changed, 22 insertions(+), 18 deletions(-)
-
-diff --git a/fs/attr.c b/fs/attr.c
-index b4bbdbd4c8ca..8f26d7d2e3b4 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -224,7 +224,7 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- {
- 	struct inode *inode = dentry->d_inode;
- 	umode_t mode = inode->i_mode;
--	int error;
-+	int error, evm_error;
- 	struct timespec64 now;
- 	unsigned int ia_valid = attr->ia_valid;
- 
-@@ -328,6 +328,9 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
- 	error = security_inode_setattr(dentry, attr);
- 	if (error)
- 		return error;
-+	evm_error = evm_inode_setattr(dentry, attr);
-+	if (evm_error)
-+		return evm_error;
- 	error = try_break_deleg(inode, delegated_inode);
- 	if (error)
- 		return error;
-diff --git a/fs/xattr.c b/fs/xattr.c
-index e13265e65871..3b323b75b741 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -183,6 +183,7 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
- 			fsnotify_xattr(dentry);
- 			security_inode_post_setxattr(dentry, name, value,
- 						     size, flags);
-+			evm_inode_post_setxattr(dentry, name, value, size);
- 		}
- 	} else {
- 		if (unlikely(is_bad_inode(inode)))
-@@ -210,7 +211,7 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
- 		size_t size, int flags)
- {
- 	struct inode *inode = dentry->d_inode;
--	int error;
-+	int error, evm_error;
- 
- 	error = xattr_permission(inode, name, MAY_WRITE);
- 	if (error)
-@@ -221,6 +222,12 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
- 	if (error)
- 		goto out;
- 
-+	evm_error = evm_inode_setxattr(dentry, name, value, size);
-+	if (evm_error) {
-+		error = evm_error;
-+		goto out;
-+	}
-+
- 	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
- 
- out:
-@@ -382,7 +389,7 @@ int
- vfs_removexattr(struct dentry *dentry, const char *name)
- {
- 	struct inode *inode = dentry->d_inode;
--	int error;
-+	int error, evm_error;
- 
- 	error = xattr_permission(inode, name, MAY_WRITE);
- 	if (error)
-@@ -393,6 +400,12 @@ vfs_removexattr(struct dentry *dentry, const char *name)
- 	if (error)
- 		goto out;
- 
-+	evm_error = evm_inode_removexattr(dentry, name);
-+	if (evm_error) {
-+		error = evm_error;
-+		goto out;
-+	}
-+
- 	error = __vfs_removexattr(dentry, name);
- 
- 	if (!error) {
-diff --git a/security/security.c b/security/security.c
-index 7fed24b9d57e..e1368ab34cee 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1255,14 +1255,9 @@ int security_inode_permission(struct inode *inode, int mask)
- 
- int security_inode_setattr(struct dentry *dentry, struct iattr *attr)
- {
--	int ret;
--
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	ret = call_int_hook(inode_setattr, 0, dentry, attr);
--	if (ret)
--		return ret;
--	return evm_inode_setattr(dentry, attr);
-+	return call_int_hook(inode_setattr, 0, dentry, attr);
- }
- EXPORT_SYMBOL_GPL(security_inode_setattr);
- 
-@@ -1291,10 +1286,7 @@ int security_inode_setxattr(struct dentry *dentry, const char *name,
- 		ret = cap_inode_setxattr(dentry, name, value, size, flags);
- 	if (ret)
- 		return ret;
--	ret = ima_inode_setxattr(dentry, name, value, size);
--	if (ret)
--		return ret;
--	return evm_inode_setxattr(dentry, name, value, size);
-+	return ima_inode_setxattr(dentry, name, value, size);
- }
- 
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
-@@ -1303,7 +1295,6 @@ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return;
- 	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
--	evm_inode_post_setxattr(dentry, name, value, size);
- }
- 
- int security_inode_getxattr(struct dentry *dentry, const char *name)
-@@ -1335,10 +1326,7 @@ int security_inode_removexattr(struct dentry *dentry, const char *name)
- 		ret = cap_inode_removexattr(dentry, name);
- 	if (ret)
- 		return ret;
--	ret = ima_inode_removexattr(dentry, name);
--	if (ret)
--		return ret;
--	return evm_inode_removexattr(dentry, name);
-+	return ima_inode_removexattr(dentry, name);
- }
- 
- int security_inode_need_killpriv(struct dentry *dentry)
--- 
-2.17.1
-
+> Mimi
+> 
+> > > The examples, above, are all readers, which walk the EVM xattr list in
+> > > order to calculate or verify a file's security.evm xattr.
+> 
+> 
