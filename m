@@ -2,112 +2,189 @@ Return-Path: <SRS0=+I/L=6N=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E5EC83003
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 06:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 873FAC83008
+	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 07:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3ADBC20731
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 06:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 671032085B
+	for <linux-integrity@archiver.kernel.org>; Wed, 29 Apr 2020 07:42:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgD2Gnh (ORCPT
+        id S1726683AbgD2HmP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Apr 2020 02:43:37 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2124 "EHLO huawei.com"
+        Wed, 29 Apr 2020 03:42:15 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2127 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726158AbgD2Gng (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Apr 2020 02:43:36 -0400
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 0529315BC91E05DB2692;
-        Wed, 29 Apr 2020 07:43:35 +0100 (IST)
-Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
- LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
- (TLS) id 14.3.487.0; Wed, 29 Apr 2020 07:43:34 +0100
-Received: from lhreml722-chm.china.huawei.com (10.201.108.73) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+        id S1726554AbgD2HmN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 29 Apr 2020 03:42:13 -0400
+Received: from lhreml707-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 4A1DB5F8236ABC6C97AB;
+        Wed, 29 Apr 2020 08:42:11 +0100 (IST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ lhreml707-chm.china.huawei.com (10.201.108.56) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Wed, 29 Apr 2020 08:43:33 +0200
-Received: from lhreml722-chm.china.huawei.com ([10.201.108.73]) by
- lhreml722-chm.china.huawei.com ([10.201.108.73]) with mapi id 15.01.1913.007;
- Wed, 29 Apr 2020 07:43:33 +0100
-From:   Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
+ 15.1.1913.5; Wed, 29 Apr 2020 08:42:10 +0100
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Wed, 29 Apr 2020 09:42:10 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <david.safford@gmail.com>,
+        <viro@zeniv.linux.org.uk>, <jmorris@namei.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [PATCH v2 6/6] ima: Fix return value of ima_write_policy()
-Thread-Topic: [PATCH v2 6/6] ima: Fix return value of ima_write_policy()
-Thread-Index: AQHWHH9bJMB74MHPBU+JlJn2oiegG6iOwCwAgADnE9A=
-Date:   Wed, 29 Apr 2020 06:43:33 +0000
-Message-ID: <cee0cd9d63864ed4a39422c6be818e36@huawei.com>
-References: <20200427102900.18887-1-roberto.sassu@huawei.com>
-         <20200427103128.19229-1-roberto.sassu@huawei.com>
- <1588095998.5195.49.camel@linux.ibm.com>
-In-Reply-To: <1588095998.5195.49.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.9.247]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 3/3] evm: Return -EAGAIN to ignore verification failures
+Date:   Wed, 29 Apr 2020 09:39:35 +0200
+Message-ID: <20200429073935.11913-3-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200429073935.11913-1-roberto.sassu@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.160]
+X-ClientProxiedBy: lhreml701-chm.china.huawei.com (10.201.108.50) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
 X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-SGkgTWltaSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBNaW1pIFpv
-aGFyIFttYWlsdG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gU2VudDogVHVlc2RheSwgQXByaWwg
-MjgsIDIwMjAgNzo0NyBQTQ0KPiBUbzogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3
-ZWkuY29tPjsgS3J6eXN6dG9mIFN0cnVjenluc2tpDQo+IDxrcnp5c3p0b2Yuc3RydWN6eW5za2lA
-aHVhd2VpLmNvbT4NCj4gQ2M6IGxpbnV4LWludGVncml0eUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
-LXNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmc7IFNpbHZpdSBWbGFzY2VhbnUNCj4gPFNpbHZpdS5WbGFzY2VhbnVAaHVhd2VpLmNv
-bT47IEtyenlzenRvZiBTdHJ1Y3p5bnNraQ0KPiA8a3J6eXN6dG9mLnN0cnVjenluc2tpQGh1YXdl
-aS5jb20+OyBzdGFibGVAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjIg
-Ni82XSBpbWE6IEZpeCByZXR1cm4gdmFsdWUgb2YgaW1hX3dyaXRlX3BvbGljeSgpDQo+IA0KPiBI
-aSBSb2JlcnRvLA0KPiANCj4gT24gTW9uLCAyMDIwLTA0LTI3IGF0IDEyOjMxICswMjAwLCBSb2Jl
-cnRvIFNhc3N1IHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggZml4ZXMgdGhlIHJldHVybiB2YWx1ZSBv
-ZiBpbWFfd3JpdGVfcG9saWN5KCkgd2hlbiBhIG5ldw0KPiA+IHBvbGljeSBpcyBkaXJlY3RseSBw
-YXNzZWQgdG8gSU1BIGFuZCB0aGUgY3VycmVudCBwb2xpY3kgcmVxdWlyZXMNCj4gPiBhcHByYWlz
-YWwgb2YgdGhlIGZpbGUgY29udGFpbmluZyB0aGUgcG9saWN5LiBDdXJyZW50bHksIGlmIGFwcHJh
-aXNhbA0KPiA+IGlzIG5vdCBpbiBFTkZPUkNFIG1vZGUsDQo+ID4gaW1hX3dyaXRlX3BvbGljeSgp
-IHJldHVybnMgMCBhbmQgbGVhZHMgdXNlciBzcGFjZSBhcHBsaWNhdGlvbnMgdG8gYW4NCj4gPiBl
-bmRsZXNzIGxvb3AuIEZpeCB0aGlzIGlzc3VlIGJ5IGRlbnlpbmcgdGhlIG9wZXJhdGlvbiByZWdh
-cmRsZXNzIG9mDQo+ID4gdGhlIGFwcHJhaXNhbCBtb2RlLg0KPiA+DQo+ID4gQ2hhbmdlbG9nDQo+
-ID4NCj4gPiB2MToNCj4gPiAtIGRlbnkgdGhlIG9wZXJhdGlvbiBpbiBhbGwgY2FzZXMgKHN1Z2dl
-c3RlZCBieSBNaW1pLCBLcnp5c3p0b2YpDQo+IA0KPiBSZWxhdGl2ZWx5IHJlY2VudGx5LCBwZW9w
-bGUgaGF2ZSBtb3ZlZCBhd2F5IGZyb20gaW5jbHVkaW5nIHRoZSAiQ2hhbmdlbG9nIg0KPiBpbiB0
-aGUgdXBzdHJlYW0gY29tbWl0LiAoSSdtIHJlbW92aW5nIHRoZW0gbm93LikNCj4gDQo+ID4NCj4g
-PiBDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZyAjIDQuMTAueA0KPiA+IEZpeGVzOiAxOWY4YTg0
-NzEzZWRjICgiaW1hOiBtZWFzdXJlIGFuZCBhcHByYWlzZSB0aGUgSU1BIHBvbGljeQ0KPiA+IGl0
-c2VsZiIpDQo+ID4gU2lnbmVkLW9mZi1ieTogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBo
-dWF3ZWkuY29tPg0KPiANCj4gV2l0aG91dCB0aGUgQ2hhbmdlbG9nLCB0aGUgb25seSB3YXkgb2Yg
-YWNrbm93bGVkZ2luZyBwZW9wbGUncyBjb250cmlidXRpb25zDQo+IGlzIGJ5IGluY2x1ZGluZyB0
-aGVpciB0YWdzLiDCoEtyenlzenRvZiwgZGlkIHlvdSB3YW50IHRvIGFkZCB5b3VyICJSZXZpZXdl
-ZC1ieSINCj4gdGFnPw0KDQpQbGVhc2UgYWRkOg0KUmV2aWV3ZWQtYnk6IEtyenlzenRvZiBTdHJ1
-Y3p5bnNraSA8a3J6eXN6dG9mLnN0cnVjenluc2tpQGh1YXdlaS5jb20+DQoNClRoYW5rcywNCkty
-enlzenRvZg0KDQo+IA0KPiA+IC0tLQ0KPiANCj4gUGVvcGxlIGhhdmUgc3RhcnRlZCBwdXR0aW5n
-IHRoZSBDaGFuZ2Vsb2cgb3IgYW55IGNvbW1lbnRzIGltbWVkaWF0ZWx5DQo+IGJlbG93IHRoZSBz
-ZXBhcmF0b3IgIi0tLSIgaGVyZS4NCj4gDQo+IHRoYW5rcywNCj4gDQo+IE1pbWkNCj4gDQo+ID4g
-IHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX2ZzLmMgfCAzICstLQ0KPiA+ICAxIGZpbGUgY2hh
-bmdlZCwgMSBpbnNlcnRpb24oKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0
-IGEvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfZnMuYw0KPiA+IGIvc2VjdXJpdHkvaW50ZWdy
-aXR5L2ltYS9pbWFfZnMuYyBpbmRleCA4YjAzMGExYzVlMGQuLmUzZmNhZDg3MTg2MQ0KPiA+IDEw
-MDY0NA0KPiA+IC0tLSBhL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX2ZzLmMNCj4gPiArKysg
-Yi9zZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV9mcy5jDQo+ID4gQEAgLTMzOCw4ICszMzgsNyBA
-QCBzdGF0aWMgc3NpemVfdCBpbWFfd3JpdGVfcG9saWN5KHN0cnVjdCBmaWxlICpmaWxlLCBjb25z
-dA0KPiBjaGFyIF9fdXNlciAqYnVmLA0KPiA+ICAJCWludGVncml0eV9hdWRpdF9tc2coQVVESVRf
-SU5URUdSSVRZX1NUQVRVUywgTlVMTCwgTlVMTCwNCj4gPiAgCQkJCSAgICAicG9saWN5X3VwZGF0
-ZSIsICJzaWduZWQgcG9saWN5IHJlcXVpcmVkIiwNCj4gPiAgCQkJCSAgICAxLCAwKTsNCj4gPiAt
-CQlpZiAoaW1hX2FwcHJhaXNlICYgSU1BX0FQUFJBSVNFX0VORk9SQ0UpDQo+ID4gLQkJCXJlc3Vs
-dCA9IC1FQUNDRVM7DQo+ID4gKwkJcmVzdWx0ID0gLUVBQ0NFUzsNCj4gPiAgCX0gZWxzZSB7DQo+
-ID4gIAkJcmVzdWx0ID0gaW1hX3BhcnNlX2FkZF9ydWxlKGRhdGEpOw0KPiA+ICAJfQ0KDQo=
+By default, EVM maintains the same behavior as before hooks were moved
+outside the LSM infrastructure. When EVM returns -EPERM, callers stop their
+execution and return the error to user space.
+
+This patch introduces a new mode, called ignore, that changes the return
+value of the pre hooks from -EPERM to -EAGAIN. It also modifies the callers
+of pre and post hooks to continue the execution if -EAGAIN is returned. The
+error is then handled by the post hooks.
+
+The only error that is not ignored is when user space is trying to modify a
+portable signature. Once that signature has been validated with the current
+values of metadata, there is no valid reason to change them.
+
+From user space perspective, operations on corrupted metadata are
+successfully performed but post hooks didn't update the HMAC. At the next
+IMA verification, when evm_verifyxattr() is called, corruption will be
+detected and access will be denied.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ fs/attr.c                         |  2 +-
+ fs/xattr.c                        |  4 ++--
+ security/integrity/evm/evm_main.c | 23 +++++++++++++++++------
+ 3 files changed, 20 insertions(+), 9 deletions(-)
+
+diff --git a/fs/attr.c b/fs/attr.c
+index 6ce60e1eba34..6370e2f3704d 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -329,7 +329,7 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ 	if (error)
+ 		return error;
+ 	evm_error = evm_inode_setattr(dentry, attr);
+-	if (evm_error)
++	if (evm_error && evm_error != -EAGAIN)
+ 		return evm_error;
+ 	error = try_break_deleg(inode, delegated_inode);
+ 	if (error)
+diff --git a/fs/xattr.c b/fs/xattr.c
+index b1fd2aa481a8..73f0f3cd6c45 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -229,7 +229,7 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+ 		goto out;
+ 
+ 	evm_error = evm_inode_setxattr(dentry, name, value, size);
+-	if (evm_error) {
++	if (evm_error && evm_error != -EAGAIN) {
+ 		error = evm_error;
+ 		goto out;
+ 	}
+@@ -408,7 +408,7 @@ vfs_removexattr(struct dentry *dentry, const char *name)
+ 		goto out;
+ 
+ 	evm_error = evm_inode_removexattr(dentry, name);
+-	if (evm_error) {
++	if (evm_error && evm_error != -EAGAIN) {
+ 		error = evm_error;
+ 		goto out;
+ 	}
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index ca9eaef7058b..ef09caa3bbcf 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -54,11 +54,13 @@ static struct xattr_list evm_config_default_xattrnames[] = {
+ 
+ LIST_HEAD(evm_config_xattrnames);
+ 
+-static int evm_fixmode;
++static int evm_fixmode, evm_ignoremode __ro_after_init;
+ static int __init evm_set_fixmode(char *str)
+ {
+ 	if (strncmp(str, "fix", 3) == 0)
+ 		evm_fixmode = 1;
++	if (strncmp(str, "ignore", 6) == 0)
++		evm_ignoremode = 1;
+ 	return 0;
+ }
+ __setup("evm=", evm_set_fixmode);
+@@ -311,6 +313,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 			     const void *xattr_value, size_t xattr_value_len)
+ {
+ 	enum integrity_status evm_status;
++	int rc = -EPERM;
+ 
+ 	if (strcmp(xattr_name, XATTR_NAME_EVM) == 0) {
+ 		if (!capable(CAP_SYS_ADMIN))
+@@ -345,12 +348,17 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 				    -EPERM, 0);
+ 	}
+ out:
+-	if (evm_status != INTEGRITY_PASS)
++	if (evm_status != INTEGRITY_PASS) {
++		if (evm_ignoremode && evm_status != INTEGRITY_PASS_IMMUTABLE)
++			rc = -EAGAIN;
++
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+ 				    integrity_status_msg[evm_status],
+-				    -EPERM, 0);
+-	return evm_status == INTEGRITY_PASS ? 0 : -EPERM;
++				    rc, 0);
++	}
++
++	return evm_status == INTEGRITY_PASS ? 0 : rc;
+ }
+ 
+ /**
+@@ -482,6 +490,7 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ {
+ 	unsigned int ia_valid = attr->ia_valid;
+ 	enum integrity_status evm_status;
++	int rc = -EPERM;
+ 
+ 	/* Policy permits modification of the protected attrs even though
+ 	 * there's no HMAC key loaded
+@@ -495,10 +504,12 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	if ((evm_status == INTEGRITY_PASS) ||
+ 	    (evm_status == INTEGRITY_NOXATTRS))
+ 		return 0;
++	if (evm_ignoremode && evm_status != INTEGRITY_PASS_IMMUTABLE)
++		rc = -EAGAIN;
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+-			    integrity_status_msg[evm_status], -EPERM, 0);
+-	return -EPERM;
++			    integrity_status_msg[evm_status], rc, 0);
++	return rc;
+ }
+ 
+ /**
+-- 
+2.17.1
+
