@@ -2,132 +2,102 @@ Return-Path: <SRS0=GhFS=6T=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CAFC47254
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 15:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 925C9C47254
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 16:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32C3B2073B
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 15:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7154D20838
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 16:12:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1588695153;
+	bh=OMHKJSIPDPRNNrS/RWfaSOA46Dxl/+H8MIneOgNjauA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tj5wjrsExrD11zaBCgJvu9duoDI6CvARRjVes/ASy/GofWGcdx0qTI4FZJ4fP2X+B
+	 uLp+b9b20flBWvPNmEtrhsqa47pgbPoWiHlbu3/x+2tUeQvhomOQw0d6QppfpZ0RHZ
+	 Tn6vgzgmu5cbKt/ylPHM8UoTki9Jki161zd0KnJY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729464AbgEEPrU (ORCPT
+        id S1729765AbgEEQMa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 May 2020 11:47:20 -0400
-Received: from smtp-190c.mail.infomaniak.ch ([185.125.25.12]:55737 "EHLO
-        smtp-190c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729317AbgEEPrU (ORCPT
+        Tue, 5 May 2020 12:12:30 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33694 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729171AbgEEQM3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 May 2020 11:47:20 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49GkMz6zCDzlhnlg;
-        Tue,  5 May 2020 17:36:15 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49GkMy4bmmzlvfCB;
-        Tue,  5 May 2020 17:36:14 +0200 (CEST)
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-To:     linux-kernel@vger.kernel.org
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200505153156.925111-1-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <d4616bc0-39df-5d6c-9f5b-d84cf6e65960@digikod.net>
-Date:   Tue, 5 May 2020 17:36:14 +0200
-User-Agent: 
+        Tue, 5 May 2020 12:12:29 -0400
+Received: by mail-oi1-f195.google.com with SMTP id o24so2463642oic.0;
+        Tue, 05 May 2020 09:12:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P4uwIg6IznWYSiI4J+LB8KzTkIyPs2Mm/1Ia9wDW3Qw=;
+        b=Uf8Fm/+RQarS5djAk3ZuSuDk6ZIUfYeLVqqmBudontM/TxqpniBnxtKoJA077F4RNI
+         /iGW0UXRPytSUB+KHaeR9oep4tqisrQiKi7JGoKmMaNT9W4kyVmb0Hk2wXuEJ/xRlG8Q
+         BfGXpc20gzqBqKvcjg+rEk29K/o/Cbi0V6cFzcGO3TkVT2tVv8fDl6YPQIZ6Qmi87ydY
+         QvWOoi67TTwjGRiJGh6yTOGqXV/JrOHKpcPMflcvA1Gn8WEU/Vk0M7bx+5hG/N/Ka/BH
+         TbL8bdVznQ1E/dIewk/OvpbiF2kIyziU2Xe04EwIRLiVgV2vsLYkFnuJldupPz562DjE
+         gACw==
+X-Gm-Message-State: AGi0Pua5KQb338WRPQVMrTBRYQmZsmR+Np3ZooBSlFCPxTxNRarsZ4N4
+        hmJztXUlC8VBl3UtzA9Kpw==
+X-Google-Smtp-Source: APiQypLPTfyCDSQGXksszy6DzFalq0KOuLxkfmgzhJ5Qd4+1aprQV9wF6sc3emzl0a6+rBGzs5/Z+w==
+X-Received: by 2002:aca:ed13:: with SMTP id l19mr1736131oih.132.1588695148437;
+        Tue, 05 May 2020 09:12:28 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t20sm698707ott.51.2020.05.05.09.12.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 May 2020 09:12:27 -0700 (PDT)
+Received: (nullmailer pid 21692 invoked by uid 1000);
+        Tue, 05 May 2020 16:12:26 -0000
+Date:   Tue, 5 May 2020 11:12:26 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     amirmizi6@gmail.com
+Cc:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org, benoit.houyere@st.com,
+        eajames@linux.ibm.com, joel@jms.id.au, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        oshri.alkoby@nuvoton.com, tmaimon77@gmail.com, gcwilson@us.ibm.com,
+        kgoldman@us.ibm.com, Dan.Morav@nuvoton.com,
+        oren.tanami@nuvoton.com, shmulik.hager@nuvoton.com,
+        amir.mizinski@nuvoton.com
+Subject: Re: [PATCH v7 6/7] tpm: Add YAML schema for TPM TIS I2C options
+Message-ID: <20200505161226.GA555@bogus>
+References: <20200427124931.115697-1-amirmizi6@gmail.com>
+ <20200427124931.115697-7-amirmizi6@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200505153156.925111-1-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200427124931.115697-7-amirmizi6@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Mon, Apr 27, 2020 at 03:49:30PM +0300, amirmizi6@gmail.com wrote:
+> From: Amir Mizinski <amirmizi6@gmail.com>
+> 
+> Added a YAML schema to support tpm tis i2c related dt-bindings for the I2c
+> PTP based physical layer.
+> 
+> This patch adds the documentation for corresponding device tree bindings of
+> I2C based Physical TPM.
+> Refer to the 'I2C Interface Definition' section in
+> 'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
+> for specification.
 
-On 05/05/2020 17:31, Mickaël Salaün wrote:
-> Hi,
-> 
-> This fifth patch series add new kernel configurations (OMAYEXEC_STATIC,
-> OMAYEXEC_ENFORCE_MOUNT, and OMAYEXEC_ENFORCE_FILE) to enable to
-> configure the security policy at kernel build time.  As requested by
-> Mimi Zohar, I completed the series with one of her patches for IMA.
-> 
-> The goal of this patch series is to enable to control script execution
-> with interpreters help.  A new O_MAYEXEC flag, usable through
-> openat2(2), is added to enable userspace script interpreter to delegate
-> to the kernel (and thus the system security policy) the permission to
-> interpret/execute scripts or other files containing what can be seen as
-> commands.
-> 
-> A simple system-wide security policy can be enforced by the system
-> administrator through a sysctl configuration consistent with the mount
-> points or the file access rights.  The documentation patch explains the
-> prerequisites.
-> 
-> Furthermore, the security policy can also be delegated to an LSM, either
-> a MAC system or an integrity system.  For instance, the new kernel
-> MAY_OPENEXEC flag closes a major IMA measurement/appraisal interpreter
-> integrity gap by bringing the ability to check the use of scripts [1].
-> Other uses are expected, such as for openat2(2) [2], SGX integration
-> [3], bpffs [4] or IPE [5].
-> 
-> Userspace needs to adapt to take advantage of this new feature.  For
-> example, the PEP 578 [6] (Runtime Audit Hooks) enables Python 3.8 to be
-> extended with policy enforcement points related to code interpretation,
-> which can be used to align with the PowerShell audit features.
-> Additional Python security improvements (e.g. a limited interpreter
-> withou -c, stdin piping of code) are on their way.
-> 
-> The initial idea come from CLIP OS 4 and the original implementation has
-> been used for more than 12 years:
-> https://github.com/clipos-archive/clipos4_doc
-> 
-> An introduction to O_MAYEXEC was given at the Linux Security Summit
-> Europe 2018 - Linux Kernel Security Contributions by ANSSI:
-> https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
-> The "write xor execute" principle was explained at Kernel Recipes 2018 -
-> CLIP OS: a defense-in-depth OS:
-> https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
-> 
-> This patch series can be applied on top of v5.7-rc4.  This can be tested
-> with CONFIG_SYSCTL.  I would really appreciate constructive comments on
-> this patch series.
-> 
-> Previous version:
-> https://lore.kernel.org/lkml/20200428175129.634352-1-mic@digikod.net/
+Again, DT bindings describe h/w devices, not just a protocol. A device 
+is more than just a protocol interface. There's clocks, power rails, 
+resets, interrupts, firmware, etc. 
 
-The previous version (v4) is
-https://lore.kernel.org/lkml/20200430132320.699508-1-mic@digikod.net/
+Unless there's something special about TPM chips that makes none of this 
+applicable and no chip will ever have any quirks (or extensions) in 
+their protocol to work-around, then you need compatible string(s) that 
+are specific to the TPM chip. You can have tcg,tpm-tis-i2c as a 
+fallback, but you need specific compatible to handle any quirks.
+
+Rob
