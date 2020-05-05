@@ -2,337 +2,153 @@ Return-Path: <SRS0=GhFS=6T=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BB0C47261
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 15:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7986C47247
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 15:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9766621835
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 15:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A40A52078C
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 May 2020 15:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbgEEPcq (ORCPT
+        id S1730021AbgEEPdW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 May 2020 11:32:46 -0400
-Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:33973 "EHLO
-        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729281AbgEEPc0 (ORCPT
+        Tue, 5 May 2020 11:33:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3206 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730347AbgEEPdQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 May 2020 11:32:26 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 49GkHV5NLFzlhTQ0;
-        Tue,  5 May 2020 17:32:22 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 49GkHV1kgPzlsV51;
-        Tue,  5 May 2020 17:32:22 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec through O_MAYEXEC
-Date:   Tue,  5 May 2020 17:31:53 +0200
-Message-Id: <20200505153156.925111-4-mic@digikod.net>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200505153156.925111-1-mic@digikod.net>
-References: <20200505153156.925111-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Tue, 5 May 2020 11:33:16 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 045FV0Vs191030;
+        Tue, 5 May 2020 11:33:12 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30u9aybp9w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 May 2020 11:33:12 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 045FVenr193308;
+        Tue, 5 May 2020 11:33:11 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 30u9aybp8r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 May 2020 11:33:10 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 045FUr9J031283;
+        Tue, 5 May 2020 15:33:08 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 30s0g5q982-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 05 May 2020 15:33:08 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 045FX6Do55967892
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 5 May 2020 15:33:06 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B9EFA405B;
+        Tue,  5 May 2020 15:33:06 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D7BFA405C;
+        Tue,  5 May 2020 15:33:05 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.200.227])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  5 May 2020 15:33:05 +0000 (GMT)
+Message-ID: <1588692785.5157.11.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH] ima: verify mprotect change is consistent with mmap
+ policy
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Cc:     Jann Horn <jannh@google.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 05 May 2020 11:33:05 -0400
+In-Reply-To: <7812a3a7-f47d-c924-c12e-f417bb6f43dc@linux.microsoft.com>
+References: <1588627060-7399-1-git-send-email-zohar@linux.ibm.com>
+         <7812a3a7-f47d-c924-c12e-f417bb6f43dc@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
+ definitions=2020-05-05_08:2020-05-04,2020-05-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
+ malwarescore=0 clxscore=1015 mlxscore=0 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2005050121
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Enable to forbid access to files open with O_MAYEXEC.  Thanks to the
-noexec option from the underlying VFS mount, or to the file execute
-permission, userspace can enforce these execution policies.  This may
-allow script interpreters to check execution permission before reading
-commands from a file, or dynamic linkers to allow shared object loading.
+On Mon, 2020-05-04 at 15:51 -0700, Lakshmi Ramasubramanian wrote:
+> On 5/4/20 2:17 PM, Mimi Zohar wrote:
+> 
+> Hi Mimi,
+> 
+> > +int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+> > +{
+> > +	struct ima_template_desc *template;
+> > +	struct inode *inode;
+> > +	int result = 0;
+> > +	int action;
+> > +	u32 secid;
+> > +	int pcr;
+> > +
+> > +	if (vma->vm_file && (prot & PROT_EXEC) && !(vma->vm_flags & VM_EXEC)) {
+> 
+> Just a suggestion:
+> Maybe you could do the negative of the above check and return, so that 
+> the block within the if statement doesn't have to be indented.
 
-Add a new sysctl fs.open_mayexec_enforce to enable system administrators
-to enforce two complementary security policies according to the
-installed system: enforce the noexec mount option, and enforce
-executable file permission.  Indeed, because of compatibility with
-installed systems, only system administrators are able to check that
-this new enforcement is in line with the system mount points and file
-permissions.  A following patch adds documentation.
+Good suggestion.
 
-For tailored Linux distributions, it is possible to enforce such
-restriction at build time thanks to the CONFIG_OMAYEXEC_STATIC option.
-The policy can then be configured with CONFIG_OMAYEXEC_ENFORCE_MOUNT and
-CONFIG_OMAYEXEC_ENFORCE_FILE.
+> 
+> > +		inode = file_inode(vma->vm_file);
+> > +
+> > +		security_task_getsecid(current, &secid);
+> > +		action = ima_get_action(inode, current_cred(), secid, MAY_EXEC,
+> > +					MMAP_CHECK, &pcr, &template, 0);
+> > +
+> > +		if (action & IMA_APPRAISE_SUBMASK)
+> > +			result = -EPERM;
+> > +
+> > +		if ((action & IMA_APPRAISE_SUBMASK) || (action & IMA_MEASURE)) {
+> 
+> action is checked for IMA_APPRAISE_SUBMASK bits in the previous if 
+> statement. Does it need to be checked again in the above if statement?
 
-Being able to restrict execution also enables to protect the kernel by
-restricting arbitrary syscalls that an attacker could perform with a
-crafted binary or certain script languages.  It also improves multilevel
-isolation by reducing the ability of an attacker to use side channels
-with specific code.  These restrictions can natively be enforced for ELF
-binaries (with the noexec mount option) but require this kernel
-extension to properly handle scripts (e.g., Python, Perl).  To get a
-consistent execution policy, additional memory restrictions should also
-be enforced (e.g. thanks to SELinux).
+Agreed, the code should be cleaned up here too.  In either the
+measurement or the appraisal case, mprotect modifying the execute mmap
+flag should be audited, but only in the appraisal case is the request
+denied.
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>
----
+Mimi
 
-Changes since v4:
-* Add kernel configuration options to enforce O_MAYEXEC at build time,
-  and disable the sysctl in such case (requested by James Morris).
-* Reword commit message.
-
-Changes since v3:
-* Update comment with O_MAYEXEC.
-
-Changes since v2:
-* Cosmetic changes.
-
-Changes since v1:
-* Move code from Yama to the FS subsystem (suggested by Kees Cook).
-* Make omayexec_inode_permission() static (suggested by Jann Horn).
-* Use mode 0600 for the sysctl.
-* Only match regular files (not directories nor other types), which
-  follows the same semantic as commit 73601ea5b7b1 ("fs/open.c: allow
-  opening only regular files during execve()").
----
- fs/namei.c         | 87 +++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/fs.h |  5 +++
- kernel/sysctl.c    |  9 +++++
- security/Kconfig   | 26 ++++++++++++++
- 4 files changed, 126 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 33b6d372e74a..70f179f6bc6c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -39,6 +39,7 @@
- #include <linux/bitops.h>
- #include <linux/init_task.h>
- #include <linux/uaccess.h>
-+#include <linux/sysctl.h>
- 
- #include "internal.h"
- #include "mount.h"
-@@ -411,10 +412,90 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
- 	return 0;
- }
- 
-+#define OMAYEXEC_ENFORCE_NONE	0
-+#define OMAYEXEC_ENFORCE_MOUNT	(1 << 0)
-+#define OMAYEXEC_ENFORCE_FILE	(1 << 1)
-+#define _OMAYEXEC_LAST		OMAYEXEC_ENFORCE_FILE
-+#define _OMAYEXEC_MASK		((_OMAYEXEC_LAST << 1) - 1)
-+
-+#ifdef CONFIG_OMAYEXEC_STATIC
-+const int sysctl_omayexec_enforce =
-+#ifdef CONFIG_OMAYEXEC_ENFORCE_MOUNT
-+	OMAYEXEC_ENFORCE_MOUNT |
-+#endif
-+#ifdef CONFIG_OMAYEXEC_ENFORCE_FILE
-+	OMAYEXEC_ENFORCE_FILE |
-+#endif
-+	OMAYEXEC_ENFORCE_NONE;
-+#else /* CONFIG_OMAYEXEC_STATIC */
-+int sysctl_omayexec_enforce __read_mostly = OMAYEXEC_ENFORCE_NONE;
-+#endif /* CONFIG_OMAYEXEC_STATIC */
-+
-+/*
-+ * Handle open_mayexec_enforce sysctl
-+ */
-+#if defined(CONFIG_SYSCTL) && !defined(CONFIG_OMAYEXEC_STATIC)
-+int proc_omayexec(struct ctl_table *table, int write, void __user *buffer,
-+		size_t *lenp, loff_t *ppos)
-+{
-+	int error;
-+
-+	if (write) {
-+		struct ctl_table table_copy;
-+		int tmp_mayexec_enforce;
-+
-+		if (!capable(CAP_MAC_ADMIN))
-+			return -EPERM;
-+
-+		tmp_mayexec_enforce = *((int *)table->data);
-+		table_copy = *table;
-+		/* Do not erase sysctl_omayexec_enforce. */
-+		table_copy.data = &tmp_mayexec_enforce;
-+		error = proc_dointvec(&table_copy, write, buffer, lenp, ppos);
-+		if (error)
-+			return error;
-+
-+		if ((tmp_mayexec_enforce | _OMAYEXEC_MASK) != _OMAYEXEC_MASK)
-+			return -EINVAL;
-+
-+		*((int *)table->data) = tmp_mayexec_enforce;
-+	} else {
-+		error = proc_dointvec(table, write, buffer, lenp, ppos);
-+		if (error)
-+			return error;
-+	}
-+	return 0;
-+}
-+#endif
-+
-+/**
-+ * omayexec_inode_permission - Check O_MAYEXEC before accessing an inode
-+ *
-+ * @inode: Inode to check permission on
-+ * @mask: Right to check for (%MAY_OPENEXEC, %MAY_EXECMOUNT, %MAY_EXEC)
-+ *
-+ * Returns 0 if access is permitted, -EACCES otherwise.
-+ */
-+static inline int omayexec_inode_permission(struct inode *inode, int mask)
-+{
-+	if (!(mask & MAY_OPENEXEC))
-+		return 0;
-+
-+	if ((sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT) &&
-+			!(mask & MAY_EXECMOUNT))
-+		return -EACCES;
-+
-+	if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
-+		return generic_permission(inode, MAY_EXEC);
-+
-+	return 0;
-+}
-+
- /**
-  * inode_permission - Check for access rights to a given inode
-  * @inode: Inode to check permission on
-- * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
-+ * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, %MAY_OPENEXEC,
-+ *        %MAY_EXECMOUNT)
-  *
-  * Check for read/write/execute permissions on an inode.  We use fs[ug]id for
-  * this, letting us set arbitrary permissions for filesystem access without
-@@ -454,6 +535,10 @@ int inode_permission(struct inode *inode, int mask)
- 	if (retval)
- 		return retval;
- 
-+	retval = omayexec_inode_permission(inode, mask);
-+	if (retval)
-+		return retval;
-+
- 	return security_inode_permission(inode, mask);
- }
- EXPORT_SYMBOL(inode_permission);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 79435fca6c3e..39c80a64d054 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -83,6 +83,9 @@ extern int sysctl_protected_symlinks;
- extern int sysctl_protected_hardlinks;
- extern int sysctl_protected_fifos;
- extern int sysctl_protected_regular;
-+#ifndef CONFIG_OMAYEXEC_STATIC
-+extern int sysctl_omayexec_enforce;
-+#endif
- 
- typedef __kernel_rwf_t rwf_t;
- 
-@@ -3545,6 +3548,8 @@ int proc_nr_dentry(struct ctl_table *table, int write,
- 		  void __user *buffer, size_t *lenp, loff_t *ppos);
- int proc_nr_inodes(struct ctl_table *table, int write,
- 		   void __user *buffer, size_t *lenp, loff_t *ppos);
-+int proc_omayexec(struct ctl_table *table, int write, void __user *buffer,
-+		size_t *lenp, loff_t *ppos);
- int __init get_filesystem_list(char *buf);
- 
- #define __FMODE_EXEC		((__force int) FMODE_EXEC)
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 8a176d8727a3..29bbf79f444c 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1892,6 +1892,15 @@ static struct ctl_table fs_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &two,
- 	},
-+#ifndef CONFIG_OMAYEXEC_STATIC
-+	{
-+		.procname       = "open_mayexec_enforce",
-+		.data           = &sysctl_omayexec_enforce,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0600,
-+		.proc_handler   = proc_omayexec,
-+	},
-+#endif
- #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
- 	{
- 		.procname	= "binfmt_misc",
-diff --git a/security/Kconfig b/security/Kconfig
-index cd3cc7da3a55..d8fac9240d14 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -230,6 +230,32 @@ config STATIC_USERMODEHELPER_PATH
- 	  If you wish for all usermode helper programs to be disabled,
- 	  specify an empty string here (i.e. "").
- 
-+menuconfig OMAYEXEC_STATIC
-+	tristate "Configure O_MAYEXEC behavior at build time"
-+	---help---
-+	  Enable to enforce O_MAYEXEC at build time, and disable the dedicated
-+	  fs.open_mayexec_enforce sysctl.
-+
-+	  See Documentation/admin-guide/sysctl/fs.rst for more details.
-+
-+if OMAYEXEC_STATIC
-+
-+config OMAYEXEC_ENFORCE_MOUNT
-+	bool "Mount restriction"
-+	default y
-+	---help---
-+	  Forbid opening files with the O_MAYEXEC option if their underlying VFS is
-+	  mounted with the noexec option or if their superblock forbids execution
-+	  of its content (e.g., /proc).
-+
-+config OMAYEXEC_ENFORCE_FILE
-+	bool "File permission restriction"
-+	---help---
-+	  Forbid opening files with the O_MAYEXEC option if they are not marked as
-+	  executable for the current process (e.g., POSIX permissions).
-+
-+endif # OMAYEXEC_STATIC
-+
- source "security/selinux/Kconfig"
- source "security/smack/Kconfig"
- source "security/tomoyo/Kconfig"
--- 
-2.26.2
+> 
+> > +			struct file *file = vma->vm_file;
+> > +			char *pathbuf = NULL;
+> > +			const char *pathname;
+> > +			char filename[NAME_MAX];
+> > +
+> > +			pathname = ima_d_path(&file->f_path, &pathbuf,
+> > +					      filename);
+> > +			integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+> > +					    pathname, "collect_data",
+> > +					    "failed-mprotect", result, 0);
+> > +
+> > +			if (pathbuf)
+> > +				__putname(pathbuf);
+> > +		}
+> > +	}
+> > +	return result;
+> > +}
+> 
+> thanks,
+>   -lakshmi
+> 
 
