@@ -2,617 +2,147 @@ Return-Path: <SRS0=yQ5C=6V=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ADFC35280
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ED4C35280
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 647CE215A4
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F4F2208D6
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:12:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cIILYz9w"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eeq7SMMc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgEGXMV (ORCPT
+        id S1726612AbgEGXMj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 May 2020 19:12:21 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33340 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726514AbgEGXMU (ORCPT
+        Thu, 7 May 2020 19:12:39 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:25937 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726514AbgEGXMj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 May 2020 19:12:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 40B058EE268;
-        Thu,  7 May 2020 16:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1588893140;
-        bh=fqTqNY8hjRoMFkjRW3cqUwC3W4GatO+E/Tk+h8mD7ZI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cIILYz9wkLcJr2J3jSandvrHz6Mf5d6H/KdF3DWbCdhHnwcupASJ4Tj6CAOnQYTVi
-         KzIoqYrsIA52isvC1hKIgGUPBGCUMiJJlTYI+VG1ocOElvA4uTH+7pa7n90Q3Kq+1G
-         FL/BcTTCJhfWwPmsIxeRnQqXnBuzMVPjjp9H0KXo=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yJUztL9AcC7a; Thu,  7 May 2020 16:12:19 -0700 (PDT)
-Received: from jarvis.lan (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6E34A8EE181;
-        Thu,  7 May 2020 16:12:19 -0700 (PDT)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Thu, 7 May 2020 19:12:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1588893157;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rdRFLYYJMNCbccjIYx9pUAfHwyQ1QtQrFmV7wZWi5j4=;
+        b=eeq7SMMcTZfW1RflMn3uSRdRs/XU9IjJpb1OYMp5u58WnRHtXmArNNHY9en6US0KCnB5Yx
+        qXxEmyQJJ0aCluy8YS71j/CuYpCaWugGBKL2EQlPJH3I9rIm6PmElK+27UsPd7+5wp12+8
+        hyH1Kfp7nf/LEZly3rh+9M6TsoBC/t8=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-463-CJwfQuj7NN2RGDwVSk8d4w-1; Thu, 07 May 2020 19:12:35 -0400
+X-MC-Unique: CJwfQuj7NN2RGDwVSk8d4w-1
+Received: by mail-qt1-f198.google.com with SMTP id v18so8649461qtq.22
+        for <linux-integrity@vger.kernel.org>; Thu, 07 May 2020 16:12:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=rdRFLYYJMNCbccjIYx9pUAfHwyQ1QtQrFmV7wZWi5j4=;
+        b=g1dNQyNobgbozaa6DmwPbL296eh3/cL8Twv9s89FabI+T4hUNl8VqiMwdyC5R31/om
+         qiy+YirsPs1YGrZmnfMuPl8p+zbfAZOmjojawCbsSw8n4FSauP56lnYki68RviLg+pVj
+         w/8nIFqlW4qQT7ErNkugf13iI1+G/Zn4fybdJ08mYjZ7aLfXTM2d56hZHQer5y0n81Fu
+         u0KUjjrjyjPD7vhZ5jw7q5DqTJ4xsIvYAngNySlxgidoaS6ii3V85gOymSEPEXmTmDbg
+         Kcs8vo03JMkwtTbd3zLeUVAC+kLx8LF5rdz37mTgnmD6vMYD8NKR7vRU+mDh3GT6Woq+
+         bXqQ==
+X-Gm-Message-State: AGi0PuZQM76b9KkfbcypTNrewYrDEA64nDIqg7F1QhT1CK4dCmTPFQZb
+        ZVi5WE4sVQicrYzYw1sueH8wULmzkSDdNaEj23mLpTZuQvpOzm/9WkligtXQSoZeutHfTbuoyyj
+        5SBfLPY7RvbT32H8U06scMi3sSG2z
+X-Received: by 2002:aed:3f21:: with SMTP id p30mr16381173qtf.335.1588893154365;
+        Thu, 07 May 2020 16:12:34 -0700 (PDT)
+X-Google-Smtp-Source: APiQypIHHumXlMugE+qZp9PnjMskuvAbMSHHncUCYOm0qs205cQodLrMSGfj9yALgQObwpJlrY93Vg==
+X-Received: by 2002:aed:3f21:: with SMTP id p30mr16381150qtf.335.1588893154044;
+        Thu, 07 May 2020 16:12:34 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id e27sm4473355qkl.47.2020.05.07.16.12.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 May 2020 16:12:33 -0700 (PDT)
+Date:   Thu, 7 May 2020 16:12:31 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Ken Goldman <kgold@linux.ibm.com>, linux-integrity@vger.kernel.org,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: [PATCH v9 1/8] lib: add ASN.1 encoder
-Date:   Thu,  7 May 2020 16:11:40 -0700
-Message-Id: <20200507231147.27025-2-James.Bottomley@HansenPartnership.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200507231147.27025-1-James.Bottomley@HansenPartnership.com>
-References: <20200507231147.27025-1-James.Bottomley@HansenPartnership.com>
+        Matthew Garrett <mjg59@google.com>,
+        Ken Goldman <kgoldman@us.ibm.com>
+Subject: Re: Disparity in tpm pcr5 value
+Message-ID: <20200507231231.vi5he2my42ngnbm4@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+References: <20200505222731.whnkisag7tlrbcie@cantor>
+ <4b3be2e9-35f7-d730-8e3b-b252ba5cb095@linux.ibm.com>
+ <20200507073548.zpyv3u7rv3u7jqrs@cantor>
+ <1588863053.5685.62.camel@linux.ibm.com>
+ <20200507162624.4eqi6tvfmfabn6vj@cantor>
+ <1588885034.5685.121.camel@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1588885034.5685.121.camel@linux.ibm.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-We have a need in the TPM2 trusted keys to return the ASN.1 form of
-the TPM key blob so it can be operated on by tools outside of the
-kernel.  The specific tools are the openssl_tpm2_engine, openconnect
-and the Intel tpm2-tss-engine.  To do that, we have to be able to read
-and write the same binary key format the tools use.  The current ASN.1
-decoder does fine for reading, but we need pieces of an ASN.1 encoder
-to write the key blob in binary compatible form.
+On Thu May 07 20, Mimi Zohar wrote:
+>On Thu, 2020-05-07 at 09:26 -0700, Jerry Snitselaar wrote:
+>> On Thu May 07 20, Mimi Zohar wrote:
+>> >On Thu, 2020-05-07 at 00:35 -0700, Jerry Snitselaar wrote:
+>> >> On Wed May 06 20, Ken Goldman wrote:
+>> >> >On 5/5/2020 6:27 PM, Jerry Snitselaar wrote:
+>> >> >>On some systems we've had reports of the value of pcr5 doesn't match
+>> >> >>the digests in the tpm event log.
+>> >> >>It looks like I'm able to reproduce here with 5.7-rc4 on a dell
+>> >> >>system using this parser:
+>> >> >>
+>> >> >>https://github.com/ValdikSS/binary_bios_measurements_parser
+>> >> >>
+>> >> >>Any thoughts on where to start digging? Is there another tool I
+>> >> >>should use to parse this?
+>> >> >
+>> >> >If you email me the event log in binary, I can run it through the IBM
+>> >> >calculator and see if I get the same error.
+>> >> >
+>> >> >
+>> >>
+>> >> A couple other data points:
+>> >>
+>> >> - On the Dell system where I did this if I change it in the bios to use sha256
+>> >>    instead of sha1, then using tsseventextend to parse matches the value in the tpm.
+>> >>    In the sha256 case there is a final events log.
+>> >>
+>> >> - I have a nuc5 here, which also extends into sha1, and the parse matches there.
+>> >>
+>> >> - Javier has also reproduced it when passing through swtpm to a vm.
+>> >>
+>> >> - I added some debugging code, and there is nothing extending pcr5 with tpm_pcr_extend.
+>> >>
+>> >> - Ken's parse of the log also shows the disparity, which I've now done as well with
+>> >>    the tpm1.2 version of the tsseventextend tool.
+>> >
+>> >Thanks, Jerry.  You've eliminated the kernel extending into the PCR.
+>> > For SHA256, the event log has to be TPM 2.0 format.  I've seen TPM
+>> >2.0's for SHA1 use the TPM 1.2 event log format.  When using SHA1, is
+>> >it a TPM 1.2 or 2.0 event log format?
+>>
+>> It is the 1.2 event log format.
+>
+>From everything you've said, it sounds like buggy firmware.  Either an
+>additional event is added to the list, but does not extend the TPM.
+> Or an event extends the TPM, but is not added to the event log.  This
+>isn't a kernel problem and can't be addressed by the kernel.
+> Hopefully the vendor will be willing to address it.
+>
+>Mimi
+>
 
-For backwards compatibility, the trusted key reader code will still
-accept the two TPM2B quantities that it uses today, but the writer
-will only output the ASN.1 form.
-
-The current implementation only encodes the ASN.1 bits we actually need.
-
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
----
-
-v2: updated API to use indefinite length, and made symbol exports gpl
-v3: add data length error handling
-v4: use end_data instead of data_len pointer
-v5: mention tools and space out code
-v7: reverse christmas tree variable definitions and better spacing
-v9: update comments, remove indefinite length, make encoder config dependent
----
- include/linux/asn1_encoder.h |  32 +++
- lib/Kconfig                  |   3 +
- lib/Makefile                 |   1 +
- lib/asn1_encoder.c           | 454 +++++++++++++++++++++++++++++++++++
- 4 files changed, 490 insertions(+)
- create mode 100644 include/linux/asn1_encoder.h
- create mode 100644 lib/asn1_encoder.c
-
-diff --git a/include/linux/asn1_encoder.h b/include/linux/asn1_encoder.h
-new file mode 100644
-index 000000000000..08cd0c2ad34f
---- /dev/null
-+++ b/include/linux/asn1_encoder.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef _LINUX_ASN1_ENCODER_H
-+#define _LINUX_ASN1_ENCODER_H
-+
-+#include <linux/types.h>
-+#include <linux/asn1.h>
-+#include <linux/asn1_ber_bytecode.h>
-+#include <linux/bug.h>
-+
-+#define asn1_oid_len(oid) (sizeof(oid)/sizeof(u32))
-+unsigned char *
-+asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
-+		    s64 integer);
-+unsigned char *
-+asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
-+		u32 oid[], int oid_len);
-+unsigned char *
-+asn1_encode_tag(unsigned char *data, const unsigned char *end_data,
-+		u32 tag, const unsigned char *string, int len);
-+unsigned char *
-+asn1_encode_octet_string(unsigned char *data,
-+			 const unsigned char *end_data,
-+			 const unsigned char *string, u32 len);
-+unsigned char *
-+asn1_encode_sequence(unsigned char *data, const unsigned char *end_data,
-+		     const unsigned char *seq, int len);
-+unsigned char *
-+asn1_encode_boolean(unsigned char *data, const unsigned char *end_data,
-+		    bool val);
-+
-+#endif
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 5d53f9609c25..93be3bf6e8db 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -670,3 +670,6 @@ config GENERIC_LIB_CMPDI2
- 
- config GENERIC_LIB_UCMPDI2
- 	bool
-+
-+config ASN1_ENCODER
-+       tristate
-diff --git a/lib/Makefile b/lib/Makefile
-index 685aee60de1d..12ab0381a50a 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -245,6 +245,7 @@ obj-$(CONFIG_INTERVAL_TREE_TEST) += interval_tree_test.o
- obj-$(CONFIG_PERCPU_TEST) += percpu_test.o
- 
- obj-$(CONFIG_ASN1) += asn1_decoder.o
-+obj-$(CONFIG_ASN1_ENCODER) += asn1_encoder.o
- 
- obj-$(CONFIG_FONT_SUPPORT) += fonts/
- 
-diff --git a/lib/asn1_encoder.c b/lib/asn1_encoder.c
-new file mode 100644
-index 000000000000..41e71aae3ef6
---- /dev/null
-+++ b/lib/asn1_encoder.c
-@@ -0,0 +1,454 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Simple encoder primitives for ASN.1 BER/DER/CER
-+ *
-+ * Copyright (C) 2019 James.Bottomley@HansenPartnership.com
-+ */
-+
-+#include <linux/asn1_encoder.h>
-+#include <linux/bug.h>
-+#include <linux/string.h>
-+#include <linux/module.h>
-+
-+/**
-+ * asn1_encode_integer() - encode positive integer to ASN.1
-+ * @data:	pointer to the pointer to the data
-+ * @end_data:	end of data pointer, points one beyond last usable byte in @data
-+ * @integer:	integer to be encoded
-+ *
-+ * This is a simplified encoder: it only currently does
-+ * positive integers, but it should be simple enough to add the
-+ * negative case if a use comes along.
-+ */
-+unsigned char *
-+asn1_encode_integer(unsigned char *data, const unsigned char *end_data,
-+		    s64 integer)
-+{
-+	int data_len = end_data - data;
-+	unsigned char *d = &data[2];
-+	bool found = false;
-+	int i;
-+
-+	if (WARN(integer < 0,
-+		 "BUG: integer encode only supports positive integers"))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (IS_ERR(data))
-+		return data;
-+
-+	/* need at least 3 bytes for tag, length and integer encoding */
-+	if (data_len < 3)
-+		return ERR_PTR(-EINVAL);
-+
-+	/* remaining length where at d (the start of the integer encoding) */
-+	data_len -= 2;
-+
-+	data[0] = _tag(UNIV, PRIM, INT);
-+	if (integer == 0) {
-+		*d++ = 0;
-+		goto out;
-+	}
-+
-+	for (i = sizeof(integer); i > 0 ; i--) {
-+		int byte = integer >> (8 * (i - 1));
-+
-+		if (!found && byte == 0)
-+			continue;
-+
-+		/*
-+		 * for a positive number the first byte must have bit
-+		 * 7 clear in two's complement (otherwise it's a
-+		 * negative number) so prepend a leading zero if
-+		 * that's not the case
-+		 */
-+		if (!found && (byte & 0x80)) {
-+			/*
-+			 * no check needed here, we already know we
-+			 * have len >= 1
-+			 */
-+			*d++ = 0;
-+			data_len--;
-+		}
-+
-+		found = true;
-+		if (data_len == 0)
-+			return ERR_PTR(-EINVAL);
-+
-+		*d++ = byte;
-+		data_len--;
-+	}
-+
-+ out:
-+	data[1] = d - data - 2;
-+
-+	return d;
-+}
-+EXPORT_SYMBOL_GPL(asn1_encode_integer);
-+
-+/* calculate the base 128 digit values setting the top bit of the first octet */
-+static int asn1_encode_oid_digit(unsigned char **_data, int *data_len, u32 oid)
-+{
-+	unsigned char *data = *_data;
-+	int start = 7 + 7 + 7 + 7;
-+	int ret = 0;
-+
-+	if (*data_len < 1)
-+		return -EINVAL;
-+
-+	/* quick case */
-+	if (oid == 0) {
-+		*data++ = 0x80;
-+		(*data_len)--;
-+		goto out;
-+	}
-+
-+	while (oid >> start == 0)
-+		start -= 7;
-+
-+	while (start > 0 && *data_len > 0) {
-+		u8 byte;
-+
-+		byte = oid >> start;
-+		oid = oid - (byte << start);
-+		start -= 7;
-+		byte |= 0x80;
-+		*data++ = byte;
-+		(*data_len)--;
-+	}
-+
-+	if (*data_len > 0) {
-+		*data++ = oid;
-+		(*data_len)--;
-+	} else {
-+		ret = -EINVAL;
-+	}
-+
-+ out:
-+	*_data = data;
-+	return ret;
-+}
-+
-+/**
-+ * asn1_encode_oid() - encode an oid to ASN.1
-+ * @data:	position to begin encoding at
-+ * @end_data:	end of data pointer, points one beyond last usable byte in @data
-+ * @oid:	array of oids
-+ * @oid_len:	length of oid array
-+ *
-+ * this encodes an OID up to ASN.1 when presented as an array of OID values
-+ */
-+unsigned char *
-+asn1_encode_oid(unsigned char *data, const unsigned char *end_data,
-+		u32 oid[], int oid_len)
-+{
-+	int data_len = end_data - data;
-+	unsigned char *d = data + 2;
-+	int i, ret;
-+
-+	if (WARN(oid_len < 2, "OID must have at least two elements"))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (WARN(oid_len > 32, "OID is too large"))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (IS_ERR(data))
-+		return data;
-+
-+
-+	/* need at least 3 bytes for tag, length and OID encoding */
-+	if (data_len < 3)
-+		return ERR_PTR(-EINVAL);
-+
-+	data[0] = _tag(UNIV, PRIM, OID);
-+	*d++ = oid[0] * 40 + oid[1];
-+
-+	data_len -= 3;
-+
-+	ret = 0;
-+
-+	for (i = 2; i < oid_len; i++) {
-+		ret = asn1_encode_oid_digit(&d, &data_len, oid[i]);
-+		if (ret < 0)
-+			return ERR_PTR(ret);
-+	}
-+
-+	data[1] = d - data - 2;
-+
-+	return d;
-+}
-+EXPORT_SYMBOL_GPL(asn1_encode_oid);
-+
-+/**
-+ * asn1_encode_length() - encode a length to follow an ASN.1 tag
-+ * @data: pointer to encode at
-+ * @data_len: pointer to remaning length (adjusted by routine)
-+ * @len: length to encode
-+ *
-+ * This routine can encode lengths up to 65535 using the ASN.1 rules.
-+ * It will accept a negative length and place a zero length tag
-+ * instead (to keep the ASN.1 valid).  This convention allows other
-+ * encoder primitives to accept negative lengths as singalling the
-+ * sequence will be re-encoded when the length is known.
-+ */
-+static int asn1_encode_length(unsigned char **data, int *data_len, int len)
-+{
-+	if (*data_len < 1)
-+		return -EINVAL;
-+
-+	if (len < 0) {
-+		*((*data)++) = 0;
-+		(*data_len)--;
-+		return 0;
-+	}
-+
-+	if (len <= 0x7f) {
-+		*((*data)++) = len;
-+		(*data_len)--;
-+		return 0;
-+	}
-+
-+	if (*data_len < 2)
-+		return -EINVAL;
-+
-+	if (len <= 0xff) {
-+		*((*data)++) = 0x81;
-+		*((*data)++) = len & 0xff;
-+		*data_len -= 2;
-+		return 0;
-+	}
-+
-+	if (*data_len < 3)
-+		return -EINVAL;
-+
-+	if (len <= 0xffff) {
-+		*((*data)++) = 0x82;
-+		*((*data)++) = (len >> 8) & 0xff;
-+		*((*data)++) = len & 0xff;
-+		*data_len -= 3;
-+		return 0;
-+	}
-+
-+	if (WARN(len > 0xffffff, "ASN.1 length can't be > 0xffffff"))
-+		return -EINVAL;
-+
-+	if (*data_len < 4)
-+		return -EINVAL;
-+	*((*data)++) = 0x83;
-+	*((*data)++) = (len >> 16) & 0xff;
-+	*((*data)++) = (len >> 8) & 0xff;
-+	*((*data)++) = len & 0xff;
-+	*data_len -= 4;
-+
-+	return 0;
-+}
-+
-+/**
-+ * asn1_encode_tag() - add a tag for optional or explicit value
-+ * @data:	pointer to place tag at
-+ * @end_data:	end of data pointer, points one beyond last usable byte in @data
-+ * @tag:	tag to be placed
-+ * @string:	the data to be tagged
-+ * @len:	the length of the data to be tagged
-+ *
-+ * Note this currently only handles short form tags < 31.
-+ *
-+ * Standard usage is to pass in a @tag, @string and @length and the
-+ * @string will be ASN.1 encoded with @tag and placed into @data.  If
-+ * the encoding would put data past @end_data then an error is
-+ * returned, otherwise a pointer to a position one beyond the encoding
-+ * is returned.
-+ *
-+ * To encode in place pass a NULL @string and -1 for @len and the
-+ * maximum allowable beginning and end of the data; all this will do
-+ * is add the current maximum length and update the data pointer to
-+ * the place where the tag contents should be placed is returned.  The
-+ * data should be copied in by the calling routine which should then
-+ * repeat the prior statement but now with the known length.  In order
-+ * to avoid having to keep both before and after pointers, the repeat
-+ * expects to be called with @data pointing to where the first encode
-+ * returned it and still NULL for @string but the real length in @len.
-+ */
-+unsigned char *
-+asn1_encode_tag(unsigned char *data, const unsigned char *end_data,
-+		u32 tag, const unsigned char *string, int len)
-+{
-+	int data_len = end_data - data;
-+	int ret;
-+
-+	if (WARN(tag > 30, "ASN.1 tag can't be > 30"))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!string && WARN(len > 127,
-+			    "BUG: recode tag is too big (>127)"))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (IS_ERR(data))
-+		return data;
-+
-+	if (!string && len > 0) {
-+		/*
-+		 * we're recoding, so move back to the start of the
-+		 * tag and install a dummy length because the real
-+		 * data_len should be NULL
-+		 */
-+		data -= 2;
-+		data_len = 2;
-+	}
-+
-+	if (data_len < 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	*(data++) = _tagn(CONT, CONS, tag);
-+	data_len--;
-+	ret = asn1_encode_length(&data, &data_len, len);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
-+	if (!string)
-+		return data;
-+
-+	if (data_len < len)
-+		return ERR_PTR(-EINVAL);
-+
-+	memcpy(data, string, len);
-+	data += len;
-+
-+	return data;
-+}
-+EXPORT_SYMBOL_GPL(asn1_encode_tag);
-+
-+/**
-+ * asn1_encode_octet_string() - encode an ASN.1 OCTET STRING
-+ * @data:	pointer to encode at
-+ * @end_data:	end of data pointer, points one beyond last usable byte in @data
-+ * @string:	string to be encoded
-+ * @len:	length of string
-+ *
-+ * Note ASN.1 octet strings may contain zeros, so the length is obligatory.
-+ */
-+unsigned char *
-+asn1_encode_octet_string(unsigned char *data,
-+			 const unsigned char *end_data,
-+			 const unsigned char *string, u32 len)
-+{
-+	int data_len = end_data - data;
-+	int ret;
-+
-+	if (IS_ERR(data))
-+		return data;
-+
-+	/* need minimum of 2 bytes for tag and length of zero length string */
-+	if (data_len < 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	*(data++) = _tag(UNIV, PRIM, OTS);
-+	data_len--;
-+
-+	ret = asn1_encode_length(&data, &data_len, len);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	if (data_len < len)
-+		return ERR_PTR(-EINVAL);
-+
-+	memcpy(data, string, len);
-+	data += len;
-+
-+	return data;
-+}
-+EXPORT_SYMBOL_GPL(asn1_encode_octet_string);
-+
-+/**
-+ * asn1_encode_sequence() - wrap a byte stream in an ASN.1 SEQUENCE
-+ * @data:	pointer to encode at
-+ * @end_data:	end of data pointer, points one beyond last usable byte in @data
-+ * @seq:	data to be encoded as a sequence
-+ * @len:	length of the data to be encoded as a sequence
-+ *
-+ * Fill in a sequence.  To encode in place, pass NULL for @seq and -1
-+ * for @len; then call again once the length is known (still with NULL
-+ * for @seq). In order to avoid having to keep both before and after
-+ * pointers, the repeat expects to be called with @data pointing to
-+ * where the first encode placed it.
-+ */
-+unsigned char *
-+asn1_encode_sequence(unsigned char *data, const unsigned char *end_data,
-+		     const unsigned char *seq, int len)
-+{
-+	int data_len = end_data - data;
-+	int ret;
-+
-+	if (!seq && WARN(len > 127,
-+			 "BUG: recode sequence is too big (>127)"))
-+		return ERR_PTR(-EINVAL);
-+
-+	if (IS_ERR(data))
-+		return data;
-+
-+	if (!seq && len >= 0) {
-+		/*
-+		 * we're recoding, so move back to the start of the
-+		 * sequence and install a dummy length because the
-+		 * real length should be NULL
-+		 */
-+		data -= 2;
-+		data_len = 2;
-+	}
-+
-+	if (data_len < 2)
-+		return ERR_PTR(-EINVAL);
-+
-+	*(data++) = _tag(UNIV, CONS, SEQ);
-+	data_len--;
-+
-+	ret = asn1_encode_length(&data, &data_len, len);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	if (!seq)
-+		return data;
-+
-+	if (data_len < len)
-+		return ERR_PTR(-EINVAL);
-+
-+	memcpy(data, seq, len);
-+	data += len;
-+
-+	return data;
-+}
-+EXPORT_SYMBOL_GPL(asn1_encode_sequence);
-+
-+/**
-+ * asn1_encode_boolean() - encode a boolean value to ASN.1
-+ * @data:	pointer to encode at
-+ * @end_data:	end of data pointer, points one beyond last usable byte in @data
-+ * @val:	the boolean true/false value
-+ */
-+unsigned char *
-+asn1_encode_boolean(unsigned char *data, const unsigned char *end_data,
-+		    bool val)
-+{
-+	int data_len = end_data - data;
-+
-+	if (IS_ERR(data))
-+		return data;
-+
-+	/* booleans are 3 bytes: tag, length == 1 and value == 0 or 1 */
-+	if (data_len < 3)
-+		return ERR_PTR(-EINVAL);
-+
-+	*(data++) = _tag(UNIV, PRIM, BOOL);
-+	data_len--;
-+
-+	asn1_encode_length(&data, &data_len, 1);
-+
-+	if (val)
-+		*(data++) = 1;
-+	else
-+		*(data++) = 0;
-+
-+	return data;
-+}
-+EXPORT_SYMBOL_GPL(asn1_encode_boolean);
-+
-+MODULE_LICENSE("GPL");
--- 
-2.26.1
+It appears to be the latter case. The value in the tpm doesn't show up
+in the intermediate values of the parse. Yeah, it doesn't seem to be
+an issue on the kernel side.
 
