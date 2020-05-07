@@ -2,197 +2,215 @@ Return-Path: <SRS0=yQ5C=6V=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCD4C35280
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36BA1C35280
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BDB321582
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F613208E4
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 23:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UsylxGh1"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kIQu0OEu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgEGXOA (ORCPT
+        id S1727113AbgEGXOG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 May 2020 19:14:00 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58479 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726792AbgEGXOA (ORCPT
+        Thu, 7 May 2020 19:14:06 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33514 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726531AbgEGXOG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 May 2020 19:14:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588893237;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:in-reply-to:in-reply-to:  references:references;
-        bh=S3swpeKU7anYk/AhJX551amM33lErjjBBuezyw+S+iQ=;
-        b=UsylxGh1Fz7fEBtGpDG1iba1iNJ4YzcEdI12e3SIJKYMNLImBUUlN8JOATqIBW7W3QzVVl
-        VU77Mwx0JJ8gI47wEKicYE3jo/urTfD/B/oCVnGIKvJyh1+dIKaP8QpU43YfSJhufnjM8N
-        4jyPJgEB8AfQqhn1orZJiJzNYYIbcoY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-432-mrHionEaNoKQFK10Z9xBEA-1; Thu, 07 May 2020 19:13:55 -0400
-X-MC-Unique: mrHionEaNoKQFK10Z9xBEA-1
-Received: by mail-qv1-f72.google.com with SMTP id m20so7535041qvy.13
-        for <linux-integrity@vger.kernel.org>; Thu, 07 May 2020 16:13:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=S3swpeKU7anYk/AhJX551amM33lErjjBBuezyw+S+iQ=;
-        b=atgwqPRUzN2Rty69H8i0PGjz9rGxFouljCAzEGNEb5h9N/LiS1LOLURoD1TEjmsrT0
-         VOGsYvB7CktRnb29Mq/1tSg7qqCuNFhvNAwLqRn0tyGDhLrLJnTinnoh5hXoCVFr/pyl
-         fyMUC15BhnVVt+G2XQrzrg97k9xNvD0HaWemTw043b1okw0olQTXZ9t+Agb6H3KUZ5Fg
-         wV84xi9kYZ7U079fzC8v0RixeD2/G9zo1wWIENkCLoKjv3Su3iWXUCU9DXd/dfXU+zi1
-         bPUDzVHjzNTacOGgrMWp0IZUVUF/G9x2wJ6y1u/+0+K+Y/W0gEap2v8fkuAZARJqqvS6
-         KvfA==
-X-Gm-Message-State: AGi0PuYM6K6hNYnrwNJD5oyuMKSAqwj1v1UMNIRGiOsZeR9EezHTxBFT
-        va12SV6icZqzJSN4hGNR8Uo/ZThOaL2/5MOPP3sIv/472OgZlwy7Yo9QvAkuaIIhHah396Ftnro
-        4hiQ8z8ONA/eot/6q6P46d0fPQwbW
-X-Received: by 2002:aed:234f:: with SMTP id i15mr17772173qtc.249.1588893234325;
-        Thu, 07 May 2020 16:13:54 -0700 (PDT)
-X-Google-Smtp-Source: APiQypIl+sPOu/sBQVgRVXPE29Jn5kfL6yBTNamoh0rMTyvB4E/H5l4vePEseee0I765dyiPeejFlg==
-X-Received: by 2002:aed:234f:: with SMTP id i15mr17772150qtc.249.1588893234086;
-        Thu, 07 May 2020 16:13:54 -0700 (PDT)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id 127sm5422724qkj.59.2020.05.07.16.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2020 16:13:53 -0700 (PDT)
-Date:   Thu, 7 May 2020 16:13:50 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Thu, 7 May 2020 19:14:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 53EAE8EE269;
+        Thu,  7 May 2020 16:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1588893246;
+        bh=YPDAYxRn04P8OgOGn7kh2WaVHgtgma0ft7gLnPuF+6I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kIQu0OEufWoI4v3cd9eYhrqmoDIXkD8DMGJy5EAH9D1zKmet/aYRdMXUrz7kg8vV1
+         HYCo/KxFLFV8qbQ4SxrD4PqvBXNDD9JbKXWLoyz2ygSAA3X21BhcT775255IcvleHA
+         BsR/EBbVwpoRSoTFXb0Wza4AVkoiZ+2KbJWC2XOA=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id J3K_f6xF59ND; Thu,  7 May 2020 16:14:06 -0700 (PDT)
+Received: from jarvis.lan (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D8D008EE181;
+        Thu,  7 May 2020 16:14:05 -0700 (PDT)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, Mark Pearson <mpearson@lenovo.com>
-Subject: Re: [PATCH] tpm_tis_core: Disable broken IRQ handling code
-Message-ID: <20200507231350.axzswbmc5v672mit@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-References: <20200409211044.21625-1-hdegoede@redhat.com>
- <20200410210652.GA16905@linux.intel.com>
- <b8865c10-3733-7179-c524-afa4c4386de6@redhat.com>
- <20200507141707.pltaa6dxkqkopjoa@cantor>
- <CAPcyv4j4-GRkwdSHNVUGLzehBVC6hUR4pNeez_=E6FKjS_DmNQ@mail.gmail.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH v9 5/8] security: keys: trusted: Make sealed key properly interoperable
+Date:   Thu,  7 May 2020 16:11:44 -0700
+Message-Id: <20200507231147.27025-6-James.Bottomley@HansenPartnership.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200507231147.27025-1-James.Bottomley@HansenPartnership.com>
+References: <20200507231147.27025-1-James.Bottomley@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4j4-GRkwdSHNVUGLzehBVC6hUR4pNeez_=E6FKjS_DmNQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu May 07 20, Dan Williams wrote:
->On Thu, May 7, 2020 at 7:17 AM Jerry Snitselaar <jsnitsel@redhat.com> wrote:
->>
->> On Thu May 07 20, Hans de Goede wrote:
->> >Hi All,
->> >
->> >On 4/10/20 11:06 PM, Jarkko Sakkinen wrote:
->> >>On Thu, Apr 09, 2020 at 11:10:44PM +0200, Hans de Goede wrote:
->> >>>Since commit dda8b2af395b ("tpm: Revert "tpm_tis_core: Set
->> >>>TPM_CHIP_FLAG_IRQ before probing for interrupts"") we no longer set
->> >>>the TPM_CHIP_FLAG_IRQ ever.
->> >>>
->> >>>So the whole IRQ probing code is not useful, worse we rely on the
->> >>>IRQ-test path of tpm_tis_send() to call disable_interrupts() if
->> >>>interrupts do not work, but that path never gets entered because we
->> >>>never set the TPM_CHIP_FLAG_IRQ.
->> >>>
->> >>>So the remaining IRQ probe code calls request_irq() and never calls
->> >>>free_irq() even when the interrupt is not working.
->> >>>
->> >>>On some systems, e.g. the Lenovo X1 8th gen,  the interrupt we try
->> >>>to use and never free creates an interrupt storm followed by
->> >>>an "irq XX: nobody cared" oops.
->> >>>
->> >>>Since it is non-functional at the moment anyways, lets just completely
->> >>>disable the IRQ code in tpm_tis_core for now.
->> >>>
->> >>>Fixes: dda8b2af395b ("tpm: Revert "tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts"")
->> >>>Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> >>>---
->> >>>Note I'm working with Lenovo to try and get to the bottom of this.
->> >>>---
->> >>
->> >>OK if I recall correctly the reason for reverting was that the fixes
->> >>Stefan was sending were broken and no access to hardware were the
->> >>issues would be visible. The reason for not doing anything til this
->> >>day is that we don't have T490 available.
->> >
->> >So as promised I have been in contact with Lenovo about this.
->> >
->> >Specifically I have been in contact with Lenovo about seeing an
->> >IRQ storm when the tpm_tis code tries to use the IRQ on a X1 carbon
->> >8th gen (X1C8), because of the now public plan that Lenovo will
->> >offer ordering this model with Fedora pre-installed:
->> >https://lwn.net/Articles/818595/
->> >
->> >On the X1C8 the problem has been diagnosed to be a misconfigured
->> >GPIO pin on the CPU (the SoC). The X1C8 uses an SPI connected
->> >TPM chip with its IRQ connected to a GPIO on the SoC which is
->> >configured in Direct IRQ mode, so that it directly asserts
->> >IRQs on one of the APIC IRQs.  The problem is that due to the
->> >misconfiguration as soon as the IRQ is enabled it fires
->> >continuously.
->> >
->> >For the X1C8 this should be fixed in the BIOS of the first
->> >batch which gets shipped out to customers so there we should
->> >not have to worry about this.
->> >
->> >It is likely (but not yet confirmed) that the issue on the T490
->> >is the same, although on my test X1C8 device I got an IRQ storm,
->> >followed by the kernel disabling the IRQ, not a non booting system.
->> >I guess this might be due to kernel configuration differences.
->> >
->> >Assuming that the issue on the T490 is the same, we might see a
->> >BIOS update fixing this, but given that non-booting is
->> >'not good ("tm")' even if there will be a BIOS fix we should
->> >still do something at the kernel level to also work with the
->> >older unfixed BIOS which is already out there.
->> >
->> >I've been thinking about this and I'm afraid that the only thing
->> >what we can do is add a DMI product-name (product-version for Lenovo)
->> >string based blacklist for IRQ usage to drivers/char/tpm/tpm_tis.c
->> >and set tpm_info.irq = -1 for devices on that list.
->> >
->> >My plan is to prepare a RFC patch of such a blacklist, while we
->> >wait for confirmation that the root cause on the T490 is the same
->> >as on the X1C8, but before I work on that I'm wondering if
->> >people agree that that is the best approach, or if there are
->> >other suggestions for dealing with this ?
->> >
->> >Regards,
->> >
->> >Hans
->> >
->>
->> Dan,
->>
->> Could this be the cause of the problem on the system you were
->> seeing the issue with, or was that using PTT?
->
->It sounds similar, I'm just not immediately aware of where I can find
->out how the GPIOs are routed on that development board. I'll poke
->around.
->
->What's PTT?
->
+The current implementation appends a migratable flag to the end of a
+key, meaning the format isn't exactly interoperable because the using
+party needs to know to strip this extra byte.  However, all other
+consumers of TPM sealed blobs expect the unseal to return exactly the
+key.  Since TPM2 keys have a key property flag that corresponds to
+migratable, use that flag instead and make the actual key the only
+sealed quantity.  This is secure because the key properties are bound
+to a hash in the private part, so if they're altered the key won't
+load.
 
-PTT is Intel's firmware based TPM.
+Backwards compatibility is implemented by detecting whether we're
+loading a new format key or not and correctly setting migratable from
+the last byte of old format keys.
 
->My concern with a blacklist is that the existing tpm_tis module
->parameter to disable interrupts, IIRC, did not help mitigate this
->problem. So I would think that if there is a blackilst it should at
->least be amenable by module parameter for new platforms, or that
->specifying "interrupts=0" to tpm_tis.ko behaves identically to the
->device being placed on the list.
->
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+
+---
+
+v2: added length checks to untrusted payload
+v8: recover patch
+---
+ include/linux/tpm.h                       |  2 +
+ security/keys/trusted-keys/trusted_tpm2.c | 53 ++++++++++++++++-------
+ 2 files changed, 40 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 03e9b184411b..cd46ab27baa5 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -297,6 +297,8 @@ struct tpm_buf {
+ };
+ 
+ enum tpm2_object_attributes {
++	TPM2_OA_FIXED_TPM		= BIT(1),
++	TPM2_OA_FIXED_PARENT		= BIT(4),
+ 	TPM2_OA_USER_WITH_AUTH		= BIT(6),
+ };
+ 
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index e8dcc47b3388..905c5ca4d51c 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -231,6 +231,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 	unsigned int blob_len;
+ 	struct tpm_buf buf;
+ 	u32 hash;
++	u32 flags;
+ 	int i;
+ 	int rc;
+ 
+@@ -259,31 +260,32 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 			     TPM_DIGEST_SIZE);
+ 
+ 	/* sensitive */
+-	tpm_buf_append_u16(&buf, 4 + options->blobauth_len + payload->key_len + 1);
++	tpm_buf_append_u16(&buf, 4 + options->blobauth_len + payload->key_len);
+ 
+ 	tpm_buf_append_u16(&buf, options->blobauth_len);
+ 	if (options->blobauth_len)
+ 		tpm_buf_append(&buf, options->blobauth, options->blobauth_len);
+ 
+-	tpm_buf_append_u16(&buf, payload->key_len + 1);
++	tpm_buf_append_u16(&buf, payload->key_len);
+ 	tpm_buf_append(&buf, payload->key, payload->key_len);
+-	tpm_buf_append_u8(&buf, payload->migratable);
+ 
+ 	/* public */
+ 	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
+ 	tpm_buf_append_u16(&buf, TPM_ALG_KEYEDHASH);
+ 	tpm_buf_append_u16(&buf, hash);
+ 
++	/* key properties */
++	flags = 0;
++	flags |= options->policydigest_len ? 0 : TPM2_OA_USER_WITH_AUTH;
++	flags |= payload->migratable ? (TPM2_OA_FIXED_TPM |
++					TPM2_OA_FIXED_PARENT) : 0;
++	tpm_buf_append_u32(&buf, flags);
++
+ 	/* policy */
+-	if (options->policydigest_len) {
+-		tpm_buf_append_u32(&buf, 0);
+-		tpm_buf_append_u16(&buf, options->policydigest_len);
++	tpm_buf_append_u16(&buf, options->policydigest_len);
++	if (options->policydigest_len)
+ 		tpm_buf_append(&buf, options->policydigest,
+ 			       options->policydigest_len);
+-	} else {
+-		tpm_buf_append_u32(&buf, TPM2_OA_USER_WITH_AUTH);
+-		tpm_buf_append_u16(&buf, 0);
+-	}
+ 
+ 	/* public parameters */
+ 	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
+@@ -356,8 +358,9 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	unsigned int private_len;
+ 	unsigned int public_len;
+ 	unsigned int blob_len;
+-	u8 *blob;
++	u8 *blob, *pub;
+ 	int rc;
++	u32 attrs;
+ 
+ 	rc = tpm2_key_decode(payload, options, &blob);
+ 	if (rc) {
+@@ -384,6 +387,16 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	if (private_len + 2 + public_len + 2 > payload->blob_len)
+ 		return -E2BIG;
+ 
++	pub = blob + 2 + private_len + 2;
++	/* key attributes are always at offset 4 */
++	attrs = get_unaligned_be32(pub + 4);
++
++	if ((attrs & (TPM2_OA_FIXED_TPM | TPM2_OA_FIXED_PARENT)) ==
++	    (TPM2_OA_FIXED_TPM | TPM2_OA_FIXED_PARENT))
++		payload->migratable = 0;
++	else
++		payload->migratable = 1;
++
+ 	blob_len = private_len + public_len + 4;
+ 	if (blob_len > payload->blob_len)
+ 		return -E2BIG;
+@@ -464,7 +477,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 	if (!rc) {
+ 		data_len = be16_to_cpup(
+ 			(__be16 *) &buf.data[TPM_HEADER_SIZE + 4]);
+-		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE + 1) {
++		if (data_len < MIN_KEY_SIZE ||  data_len > MAX_KEY_SIZE) {
+ 			rc = -EFAULT;
+ 			goto out;
+ 		}
+@@ -475,9 +488,19 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 		}
+ 		data = &buf.data[TPM_HEADER_SIZE + 6];
+ 
+-		memcpy(payload->key, data, data_len - 1);
+-		payload->key_len = data_len - 1;
+-		payload->migratable = data[data_len - 1];
++		if (payload->old_format) {
++			/* migratable flag is at the end of the key */
++			memcpy(payload->key, data, data_len - 1);
++			payload->key_len = data_len - 1;
++			payload->migratable = data[data_len - 1];
++		} else {
++			/*
++			 * migratable flag already collected from key
++			 * attributes
++			 */
++			memcpy(payload->key, data, data_len);
++			payload->key_len = data_len;
++		}
+ 	}
+ 
+ out:
+-- 
+2.26.1
 
