@@ -2,169 +2,179 @@ Return-Path: <SRS0=yQ5C=6V=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D097C54E49
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04B5CC38A2A
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58F0A207DD
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D43222075E
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:17:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="en7IuiTD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y5b6OQBe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbgEGOCp (ORCPT
+        id S1726268AbgEGORR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 May 2020 10:02:45 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58582 "EHLO
+        Thu, 7 May 2020 10:17:17 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34056 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726913AbgEGOCo (ORCPT
+        with ESMTP id S1726093AbgEGORR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 May 2020 10:02:44 -0400
+        Thu, 7 May 2020 10:17:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588860163;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FJAQX97h/73fz6F5oJeyWiUgnE5xCKILGZxmqYUzLLw=;
-        b=en7IuiTDS5/PSRhfwhjBNzr7TLOwqbCUhUzWL+yakbjRg1fENKIK9dsnV0CfmWhA8XKefA
-        x83a23JQHSOO6c+wi2RXXEl2j91rk4H4Cd/xA/d1KheGhl2DV+m+1IlrmpnuZtPr6s/hN9
-        GXEoYUa/K9DoY8rmOOb25ReQWiZbROI=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-253-uynt-HXVMwqmtKAwYH0Hsg-1; Thu, 07 May 2020 10:02:32 -0400
-X-MC-Unique: uynt-HXVMwqmtKAwYH0Hsg-1
-Received: by mail-wm1-f72.google.com with SMTP id f17so2580741wmm.5
-        for <linux-integrity@vger.kernel.org>; Thu, 07 May 2020 07:02:32 -0700 (PDT)
+        s=mimecast20190719; t=1588861035;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:in-reply-to:in-reply-to:  references:references;
+        bh=MkVjBpFB+K39VBpb0bY5Pdj1N9GI4auTevm5oLBvRZY=;
+        b=Y5b6OQBevsNttVOhr+GBrS7aemU62O+R243GcxmonPubj/zfjseloJgveu8V0OMUYIiZGn
+        rEU3bKhVgKV64FhizWGATJkfLkwegTa9cMBAu6mimKc7h/9VtiFFGMzketFz//NLsexn4S
+        GbIac4HReLg+cHeOWXa6WVpEVTgSf4s=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-233-dbbPHNqlOimLDEErtR_U2A-1; Thu, 07 May 2020 10:17:11 -0400
+X-MC-Unique: dbbPHNqlOimLDEErtR_U2A-1
+Received: by mail-qv1-f72.google.com with SMTP id ce16so6008298qvb.15
+        for <linux-integrity@vger.kernel.org>; Thu, 07 May 2020 07:17:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FJAQX97h/73fz6F5oJeyWiUgnE5xCKILGZxmqYUzLLw=;
-        b=lO1pwwxpq9FBkNuSeNIpsKZtjqt3rJmW2M04ezx9Lz6wb5pEzkVbMZHsh4Q3/LpB04
-         LJYYe06mYVxVNNZmsFpVp12Jox7vTj4HbotPmEIVUNZtxQ5fIlUEoEdRl/Mx2YPZZlBE
-         7FlOcB8njv+EbA17H6e1vFUcrbTL/6lH9lx+xt9v0TRUEQ6um6RngoGijsmDjPCjtqUf
-         E1cxFLFKzy6YPm2R7FBQqJC3iUnGHHMZAYCP5cNht7lfXqxPY4PKRDZf871XEkWdG3Hw
-         AFcVk/YOcIomsSmXALaM9v763cJ+iOYGhKeeoxtm+LIDDdQxDhupdc6tZmdM91WQmfZL
-         6bcw==
-X-Gm-Message-State: AGi0PuYI2VHxYnEqk6q3PX8qXKq7t4Qs/btUCd0x6MGNsfuReEdZOvBt
-        l6lANSNmVth+geSlZ2otwV/L9UH95uuT1I014joplJRSaNz3o6jPZnL9C5q+r1YdcX50MxUIaWO
-        H3S71VI6L10K10auFNnP1CgG0SxHR
-X-Received: by 2002:adf:ff89:: with SMTP id j9mr15492650wrr.245.1588860150949;
-        Thu, 07 May 2020 07:02:30 -0700 (PDT)
-X-Google-Smtp-Source: APiQypIPvoaYCurDekntvYlLb8+t0hGTWO84sSUT3CbR82pBqkKg39Q+0URvwlu0H+uaRnQnW4IjfQ==
-X-Received: by 2002:adf:ff89:: with SMTP id j9mr15492614wrr.245.1588860150652;
-        Thu, 07 May 2020 07:02:30 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id v5sm8386756wrr.93.2020.05.07.07.02.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 May 2020 07:02:29 -0700 (PDT)
-Subject: Re: [PATCH] tpm_tis_core: Disable broken IRQ handling code
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=MkVjBpFB+K39VBpb0bY5Pdj1N9GI4auTevm5oLBvRZY=;
+        b=krql70nO0dF9Lsogw9TLXFvIuWv7v3mHIF6sfiMLyzj4zoeTcUptjLsFFEZxR6hI2O
+         5X8WjbxkQ/zOF1qE7T+8rf52Bn/rlbazQl8+5vhH31y5rkDySmP0pm5eSSglSos5X9+n
+         jnAXh1/rh9cN2Rz+T69cPzFWsSFjmJLOxt7jPDV0AWVkllf90LtWDexLCJWFNRkWDCIM
+         dAV37HxXJBp9gjWbxh/6ggqpY5jLR3eS0LSQMCHTNFDl4caxLYEPV6CeEP9yltr/A2/q
+         raxtTW2IP0BGOWhb63nPHcIcFzH0rvfFyKxxeRfHJQH9AgugT1B+6Wt0VLj7rPCZLddD
+         kTZg==
+X-Gm-Message-State: AGi0PuZZctXp0rOTSKqL97sS7LwwNjQ4cdgpZySJKDtBgX8G/eaynI3O
+        guNZWrzu4lFYOqHZLMwpNwK0YvD/dbAgoqjEJwecIEJO4pnTEuHwla2o8hATgR0IIXEWNwvmMsD
+        Ofg5GZdmKPDFzKXe0UmyvKB7NryX9
+X-Received: by 2002:a37:b587:: with SMTP id e129mr14485439qkf.226.1588861030398;
+        Thu, 07 May 2020 07:17:10 -0700 (PDT)
+X-Google-Smtp-Source: APiQypJkopxidOuO0GycucYmYGFtO57cMU0f8nNVuhONMx6MVth9caui97OMsRePesD0vNonSYVaXg==
+X-Received: by 2002:a37:b587:: with SMTP id e129mr14485408qkf.226.1588861030126;
+        Thu, 07 May 2020 07:17:10 -0700 (PDT)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id i5sm4186653qtw.97.2020.05.07.07.17.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 May 2020 07:17:09 -0700 (PDT)
+Date:   Thu, 7 May 2020 07:17:07 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
         Stefan Berger <stefanb@linux.ibm.com>,
         Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, Mark Pearson <mpearson@lenovo.com>
+        linux-integrity@vger.kernel.org,
+        Mark Pearson <mpearson@lenovo.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH] tpm_tis_core: Disable broken IRQ handling code
+Message-ID: <20200507141707.pltaa6dxkqkopjoa@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
 References: <20200409211044.21625-1-hdegoede@redhat.com>
  <20200410210652.GA16905@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <f2ac1770-56aa-0ce0-5451-6f1816abca73@redhat.com>
-Date:   Thu, 7 May 2020 16:02:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+ <b8865c10-3733-7179-c524-afa4c4386de6@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20200410210652.GA16905@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <b8865c10-3733-7179-c524-afa4c4386de6@redhat.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi All,
-
-On 4/10/20 11:06 PM, Jarkko Sakkinen wrote:
-> On Thu, Apr 09, 2020 at 11:10:44PM +0200, Hans de Goede wrote:
->> Since commit dda8b2af395b ("tpm: Revert "tpm_tis_core: Set
->> TPM_CHIP_FLAG_IRQ before probing for interrupts"") we no longer set
->> the TPM_CHIP_FLAG_IRQ ever.
+On Thu May 07 20, Hans de Goede wrote:
+>Hi All,
+>
+>On 4/10/20 11:06 PM, Jarkko Sakkinen wrote:
+>>On Thu, Apr 09, 2020 at 11:10:44PM +0200, Hans de Goede wrote:
+>>>Since commit dda8b2af395b ("tpm: Revert "tpm_tis_core: Set
+>>>TPM_CHIP_FLAG_IRQ before probing for interrupts"") we no longer set
+>>>the TPM_CHIP_FLAG_IRQ ever.
+>>>
+>>>So the whole IRQ probing code is not useful, worse we rely on the
+>>>IRQ-test path of tpm_tis_send() to call disable_interrupts() if
+>>>interrupts do not work, but that path never gets entered because we
+>>>never set the TPM_CHIP_FLAG_IRQ.
+>>>
+>>>So the remaining IRQ probe code calls request_irq() and never calls
+>>>free_irq() even when the interrupt is not working.
+>>>
+>>>On some systems, e.g. the Lenovo X1 8th gen,  the interrupt we try
+>>>to use and never free creates an interrupt storm followed by
+>>>an "irq XX: nobody cared" oops.
+>>>
+>>>Since it is non-functional at the moment anyways, lets just completely
+>>>disable the IRQ code in tpm_tis_core for now.
+>>>
+>>>Fixes: dda8b2af395b ("tpm: Revert "tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts"")
+>>>Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+>>>---
+>>>Note I'm working with Lenovo to try and get to the bottom of this.
+>>>---
 >>
->> So the whole IRQ probing code is not useful, worse we rely on the
->> IRQ-test path of tpm_tis_send() to call disable_interrupts() if
->> interrupts do not work, but that path never gets entered because we
->> never set the TPM_CHIP_FLAG_IRQ.
->>
->> So the remaining IRQ probe code calls request_irq() and never calls
->> free_irq() even when the interrupt is not working.
->>
->> On some systems, e.g. the Lenovo X1 8th gen,  the interrupt we try
->> to use and never free creates an interrupt storm followed by
->> an "irq XX: nobody cared" oops.
->>
->> Since it is non-functional at the moment anyways, lets just completely
->> disable the IRQ code in tpm_tis_core for now.
->>
->> Fixes: dda8b2af395b ("tpm: Revert "tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts"")
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->> Note I'm working with Lenovo to try and get to the bottom of this.
->> ---
-> 
-> OK if I recall correctly the reason for reverting was that the fixes
-> Stefan was sending were broken and no access to hardware were the
-> issues would be visible. The reason for not doing anything til this
-> day is that we don't have T490 available.
+>>OK if I recall correctly the reason for reverting was that the fixes
+>>Stefan was sending were broken and no access to hardware were the
+>>issues would be visible. The reason for not doing anything til this
+>>day is that we don't have T490 available.
+>
+>So as promised I have been in contact with Lenovo about this.
+>
+>Specifically I have been in contact with Lenovo about seeing an
+>IRQ storm when the tpm_tis code tries to use the IRQ on a X1 carbon
+>8th gen (X1C8), because of the now public plan that Lenovo will
+>offer ordering this model with Fedora pre-installed:
+>https://lwn.net/Articles/818595/
+>
+>On the X1C8 the problem has been diagnosed to be a misconfigured
+>GPIO pin on the CPU (the SoC). The X1C8 uses an SPI connected
+>TPM chip with its IRQ connected to a GPIO on the SoC which is
+>configured in Direct IRQ mode, so that it directly asserts
+>IRQs on one of the APIC IRQs.  The problem is that due to the
+>misconfiguration as soon as the IRQ is enabled it fires
+>continuously.
+>
+>For the X1C8 this should be fixed in the BIOS of the first
+>batch which gets shipped out to customers so there we should
+>not have to worry about this.
+>
+>It is likely (but not yet confirmed) that the issue on the T490
+>is the same, although on my test X1C8 device I got an IRQ storm,
+>followed by the kernel disabling the IRQ, not a non booting system.
+>I guess this might be due to kernel configuration differences.
+>
+>Assuming that the issue on the T490 is the same, we might see a
+>BIOS update fixing this, but given that non-booting is
+>'not good ("tm")' even if there will be a BIOS fix we should
+>still do something at the kernel level to also work with the
+>older unfixed BIOS which is already out there.
+>
+>I've been thinking about this and I'm afraid that the only thing
+>what we can do is add a DMI product-name (product-version for Lenovo)
+>string based blacklist for IRQ usage to drivers/char/tpm/tpm_tis.c
+>and set tpm_info.irq = -1 for devices on that list.
+>
+>My plan is to prepare a RFC patch of such a blacklist, while we
+>wait for confirmation that the root cause on the T490 is the same
+>as on the X1C8, but before I work on that I'm wondering if
+>people agree that that is the best approach, or if there are
+>other suggestions for dealing with this ?
+>
+>Regards,
+>
+>Hans
+>
 
-So as promised I have been in contact with Lenovo about this.
+Dan,
 
-Specifically I have been in contact with Lenovo about seeing an
-IRQ storm when the tpm_tis code tries to use the IRQ on a X1 carbon
-8th gen (X1C8), because of the now public plan that Lenovo will
-offer ordering this model with Fedora pre-installed:
-https://lwn.net/Articles/818595/
-
-On the X1C8 the problem has been diagnosed to be a misconfigured
-GPIO pin on the CPU (the SoC). The X1C8 uses an SPI connected
-TPM chip with its IRQ connected to a GPIO on the SoC which is
-configured in Direct IRQ mode, so that it directly asserts
-IRQs on one of the APIC IRQs.  The problem is that due to the
-misconfiguration as soon as the IRQ is enabled it fires
-continuously.
-
-For the X1C8 this should be fixed in the BIOS of the first
-batch which gets shipped out to customers so there we should
-not have to worry about this.
-
-It is likely (but not yet confirmed) that the issue on the T490
-is the same, although on my test X1C8 device I got an IRQ storm,
-followed by the kernel disabling the IRQ, not a non booting system.
-I guess this might be due to kernel configuration differences.
-
-Assuming that the issue on the T490 is the same, we might see a
-BIOS update fixing this, but given that non-booting is
-'not good ("tm")' even if there will be a BIOS fix we should
-still do something at the kernel level to also work with the
-older unfixed BIOS which is already out there.
-
-I've been thinking about this and I'm afraid that the only thing
-what we can do is add a DMI product-name (product-version for Lenovo)
-string based blacklist for IRQ usage to drivers/char/tpm/tpm_tis.c
-and set tpm_info.irq = -1 for devices on that list.
-
-My plan is to prepare a RFC patch of such a blacklist, while we
-wait for confirmation that the root cause on the T490 is the same
-as on the X1C8, but before I work on that I'm wondering if
-people agree that that is the best approach, or if there are
-other suggestions for dealing with this ?
+Could this be the cause of the problem on the system you were
+seeing the issue with, or was that using PTT?
 
 Regards,
-
-Hans
+Jerry
 
