@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9FCC4724C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D097C54E49
 	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F08372082E
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:02:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F0A207DD
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 May 2020 14:02:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dT6Ih1uz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="en7IuiTD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727099AbgEGOCo (ORCPT
+        id S1726531AbgEGOCp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 May 2020 10:02:44 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59504 "EHLO
+        Thu, 7 May 2020 10:02:45 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58582 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726531AbgEGOCo (ORCPT
+        with ESMTP id S1726913AbgEGOCo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Thu, 7 May 2020 10:02:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1588860162;
+        s=mimecast20190719; t=1588860163;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
         bh=FJAQX97h/73fz6F5oJeyWiUgnE5xCKILGZxmqYUzLLw=;
-        b=dT6Ih1uzP9kLmkaZKw+MnlCSnQbmwFYL27Ft0fjTHT7Hsj0XL3w/qjuTM02ml1mZWMVmg4
-        nmXsDBnsYokme8ZJpFu0jV8JFEnGSG2ibeP5Rt08cbRnlsm6xBuxs8VGL9WGVEIsAHY3i+
-        KeHBZa2CGcE7ZebEz4PLdmHKmXDkn/E=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-105-UM6Lm_u3OdeDBM7_v5Md6A-1; Thu, 07 May 2020 10:02:36 -0400
-X-MC-Unique: UM6Lm_u3OdeDBM7_v5Md6A-1
-Received: by mail-wm1-f71.google.com with SMTP id l21so3453710wmh.2
-        for <linux-integrity@vger.kernel.org>; Thu, 07 May 2020 07:02:36 -0700 (PDT)
+        b=en7IuiTDS5/PSRhfwhjBNzr7TLOwqbCUhUzWL+yakbjRg1fENKIK9dsnV0CfmWhA8XKefA
+        x83a23JQHSOO6c+wi2RXXEl2j91rk4H4Cd/xA/d1KheGhl2DV+m+1IlrmpnuZtPr6s/hN9
+        GXEoYUa/K9DoY8rmOOb25ReQWiZbROI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-253-uynt-HXVMwqmtKAwYH0Hsg-1; Thu, 07 May 2020 10:02:32 -0400
+X-MC-Unique: uynt-HXVMwqmtKAwYH0Hsg-1
+Received: by mail-wm1-f72.google.com with SMTP id f17so2580741wmm.5
+        for <linux-integrity@vger.kernel.org>; Thu, 07 May 2020 07:02:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
         bh=FJAQX97h/73fz6F5oJeyWiUgnE5xCKILGZxmqYUzLLw=;
-        b=HZILdXQfVy5xqPi0w/IySyqMk0yDUwTUgfdbmghIPRfg7648y1Y45OxbcwZ+Acgyag
-         anyPSYTHqTdauzcIjQu4c1pGbJPu9Gwh6f18o6PQGsCNCa/M5DxgqnL2++MiBYWTSq0l
-         3qqLxPoBav2RbIBlAvP2okzJsYe5rOQ5ZLYhp2OTIyO597SKPuiwJ+i26SbE+i78zitn
-         Ulhz/H8xT3EGSJzwm17C/v0pPW0e6QUpyz5wBkZSo6wB+/ENcS9AsSUPiMEqqlHj/15w
-         8rHkqff0ekT1ur7ocCqBPp7tp6T2q22AKpUkAXTc8IDInL3uC7fUHPujr7JDcUUsdG8C
-         CFeA==
-X-Gm-Message-State: AGi0PuaEhJlSa6tKrFEqZzI4aSrAkBDBbwF/1vY3wPnaRohRQ56A8eAX
-        BqXJm8AYdi7PmC55czPb3p0wMC0CydYKwlwHo6JcUNkl24vMYtXWECjiEgaGkEHwV9jLd6Z7CQA
-        fU9ezCwLL9AsIRc2G/Jurx2EvJNny
-X-Received: by 2002:adf:f6cb:: with SMTP id y11mr15545732wrp.304.1588860154892;
-        Thu, 07 May 2020 07:02:34 -0700 (PDT)
-X-Google-Smtp-Source: APiQypIjK3s4MPodWh8D9FIW0+i/ROF0Ztx0GYV4Jo7FVNYI5hkK6TbsbSdZaJiQffY3WzwnIVfxog==
-X-Received: by 2002:adf:f6cb:: with SMTP id y11mr15545655wrp.304.1588860154206;
-        Thu, 07 May 2020 07:02:34 -0700 (PDT)
+        b=lO1pwwxpq9FBkNuSeNIpsKZtjqt3rJmW2M04ezx9Lz6wb5pEzkVbMZHsh4Q3/LpB04
+         LJYYe06mYVxVNNZmsFpVp12Jox7vTj4HbotPmEIVUNZtxQ5fIlUEoEdRl/Mx2YPZZlBE
+         7FlOcB8njv+EbA17H6e1vFUcrbTL/6lH9lx+xt9v0TRUEQ6um6RngoGijsmDjPCjtqUf
+         E1cxFLFKzy6YPm2R7FBQqJC3iUnGHHMZAYCP5cNht7lfXqxPY4PKRDZf871XEkWdG3Hw
+         AFcVk/YOcIomsSmXALaM9v763cJ+iOYGhKeeoxtm+LIDDdQxDhupdc6tZmdM91WQmfZL
+         6bcw==
+X-Gm-Message-State: AGi0PuYI2VHxYnEqk6q3PX8qXKq7t4Qs/btUCd0x6MGNsfuReEdZOvBt
+        l6lANSNmVth+geSlZ2otwV/L9UH95uuT1I014joplJRSaNz3o6jPZnL9C5q+r1YdcX50MxUIaWO
+        H3S71VI6L10K10auFNnP1CgG0SxHR
+X-Received: by 2002:adf:ff89:: with SMTP id j9mr15492650wrr.245.1588860150949;
+        Thu, 07 May 2020 07:02:30 -0700 (PDT)
+X-Google-Smtp-Source: APiQypIPvoaYCurDekntvYlLb8+t0hGTWO84sSUT3CbR82pBqkKg39Q+0URvwlu0H+uaRnQnW4IjfQ==
+X-Received: by 2002:adf:ff89:: with SMTP id j9mr15492614wrr.245.1588860150652;
+        Thu, 07 May 2020 07:02:30 -0700 (PDT)
 Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id v5sm8387076wrr.93.2020.05.07.07.02.33
+        by smtp.gmail.com with ESMTPSA id v5sm8386756wrr.93.2020.05.07.07.02.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 May 2020 07:02:33 -0700 (PDT)
+        Thu, 07 May 2020 07:02:29 -0700 (PDT)
 Subject: Re: [PATCH] tpm_tis_core: Disable broken IRQ handling code
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
@@ -74,8 +74,8 @@ Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
 References: <20200409211044.21625-1-hdegoede@redhat.com>
  <20200410210652.GA16905@linux.intel.com>
 From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <b8865c10-3733-7179-c524-afa4c4386de6@redhat.com>
-Date:   Thu, 7 May 2020 16:02:32 +0200
+Message-ID: <f2ac1770-56aa-0ce0-5451-6f1816abca73@redhat.com>
+Date:   Thu, 7 May 2020 16:02:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.6.0
 MIME-Version: 1.0
