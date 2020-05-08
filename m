@@ -2,135 +2,148 @@ Return-Path: <SRS0=d1CJ=6W=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 169D1C47247
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 May 2020 14:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D2DCC4724C
+	for <linux-integrity@archiver.kernel.org>; Fri,  8 May 2020 15:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02BBF20736
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 May 2020 14:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDEBA24953
+	for <linux-integrity@archiver.kernel.org>; Fri,  8 May 2020 15:36:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="srCBSzZw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbgEHOCc (ORCPT
+        id S1727896AbgEHPgm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 8 May 2020 10:02:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60260 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726636AbgEHOCc (ORCPT
+        Fri, 8 May 2020 11:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58388 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbgEHPgk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 May 2020 10:02:32 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 048DYap3030733;
-        Fri, 8 May 2020 10:01:19 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30vtsr5dtv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 May 2020 10:01:18 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 048DYi4n031919;
-        Fri, 8 May 2020 10:01:17 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 30vtsr5dsa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 May 2020 10:01:17 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 048Dt2vA010653;
-        Fri, 8 May 2020 14:01:14 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma01fra.de.ibm.com with ESMTP id 30s0g5dhkb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 08 May 2020 14:01:14 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 048E1CFE43319440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 8 May 2020 14:01:12 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E49F311C064;
-        Fri,  8 May 2020 14:01:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2A93011C052;
-        Fri,  8 May 2020 14:01:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.139.55])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  8 May 2020 14:01:08 +0000 (GMT)
-Message-ID: <1588946467.5146.6.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/6] Add support for O_MAYEXEC
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Lev R. Oshvang ." <levonshe@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     David Laight <David.Laight@aculab.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date:   Fri, 08 May 2020 10:01:07 -0400
-In-Reply-To: <CAP22eLFmNkeQNbmQ_SAbnrDUnv2W-zYJ+ijnE22C3ph2vUiQiQ@mail.gmail.com>
-References: <20200505153156.925111-1-mic@digikod.net>
-         <20b24b9ca0a64afb9389722845738ec8@AcuMS.aculab.com>
-         <907109c8-9b19-528a-726f-92c3f61c1563@digikod.net>
-         <ad28ab5fe7854b41a575656e95b4da17@AcuMS.aculab.com>
-         <64426377-7fc4-6f37-7371-2e2a584e3032@digikod.net>
-         <635df0655b644408ac4822def8900383@AcuMS.aculab.com>
-         <1ced6f5f-7181-1dc5-2da7-abf4abd5ad23@digikod.net>
-         <CAP22eLFmNkeQNbmQ_SAbnrDUnv2W-zYJ+ijnE22C3ph2vUiQiQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Fri, 8 May 2020 11:36:40 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE5C2C061A0C;
+        Fri,  8 May 2020 08:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=6EYCyTrFxa9+uQHjnJOrj9adSL4387IIusv8CGn+u5c=; b=srCBSzZwpa/R8vT9FGb8MSiNzT
+        Qqn1uYSRLBeu5tyD/4XSsT0mYDn4lLbRdOf4moLFs/SGTwShV9DVJofzbIoBQmBoBJiCsWqkwHDqS
+        6ifMQM06Uy05ogqQUznA5cW2YOrFFIeJ5LsIJcSd7jpMi1tvx7P3FtVwCveS1aikMR4WbSiyK0LT7
+        /969LGJr0wCQLH7KzkFKs+MMOy8JW/daxQoggK4NgoMsrtAgwQEv7YMXtPvYU5W4jXBe7XEl/OQ1p
+        uHAT3dFwh9mYW4W9MObM6CGHUmn/fWgH3Ylz2U2jryjURgP+RE+6QKq4EsiRP1gW7DDlgIA4OYoga
+        wlnUSMRw==;
+Received: from [2001:4bb8:180:9d3f:90d7:9df8:7cd:3504] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jX53I-00047B-4u; Fri, 08 May 2020 15:36:40 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH 01/12] fd: add a new __anon_inode_getfd helper
+Date:   Fri,  8 May 2020 17:36:23 +0200
+Message-Id: <20200508153634.249933-2-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200508153634.249933-1-hch@lst.de>
+References: <20200508153634.249933-1-hch@lst.de>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-08_13:2020-05-08,2020-05-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=932
- lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1011
- adultscore=0 phishscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2005080116
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2020-05-08 at 10:15 +0300, Lev R. Oshvang . wrote:
+Add a helper that is equivalent to anon_inode_getfd minus the final
+fd_install.
 
-> I can suggest something better ( I believe)
-> Some time ago I proposed patch to IMA -  Add suffix in IMA policy rule criteria
-> It allows IMA to verify scripts, configuration files and even single file.
-> It is very simple and does not depend on open flags.
-> Mimi Zohar decided not to include this patch on the reason it tries to
-> protect the file name.
-> ( Why ??).
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/anon_inodes.c            | 41 ++++++++++++++++++++++---------------
+ include/linux/anon_inodes.h |  2 ++
+ 2 files changed, 26 insertions(+), 17 deletions(-)
 
-Your patch relies on the filename, but does nothing to protect it. 
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 89714308c25b8..1b2acd2bbaa32 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -106,6 +106,26 @@ struct file *anon_inode_getfile(const char *name,
+ }
+ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+ 
++int __anon_inode_getfd(const char *name, const struct file_operations *fops,
++		     void *priv, int flags, struct file **file)
++{
++	int fd;
++
++	fd = get_unused_fd_flags(flags);
++	if (fd < 0)
++		return fd;
++
++	*file = anon_inode_getfile(name, fops, priv, flags);
++	if (IS_ERR(*file))
++		goto err_put_unused_fd;
++	return fd;
++
++err_put_unused_fd:
++	put_unused_fd(fd);
++	return PTR_ERR(*file);
++}
++EXPORT_SYMBOL_GPL(__anon_inode_getfd);
++
+ /**
+  * anon_inode_getfd - creates a new file instance by hooking it up to an
+  *                    anonymous inode, and a dentry that describe the "class"
+@@ -125,26 +145,13 @@ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags)
+ {
+-	int error, fd;
+ 	struct file *file;
++	int fd;
+ 
+-	error = get_unused_fd_flags(flags);
+-	if (error < 0)
+-		return error;
+-	fd = error;
+-
+-	file = anon_inode_getfile(name, fops, priv, flags);
+-	if (IS_ERR(file)) {
+-		error = PTR_ERR(file);
+-		goto err_put_unused_fd;
+-	}
+-	fd_install(fd, file);
+-
++	fd = __anon_inode_getfd(name, fops, priv, flags, &file);
++	if (fd >= 0)
++		fd_install(fd, file);
+ 	return fd;
+-
+-err_put_unused_fd:
+-	put_unused_fd(fd);
+-	return error;
+ }
+ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+ 
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index d0d7d96261adf..338449d06b617 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -16,6 +16,8 @@ struct file *anon_inode_getfile(const char *name,
+ 				void *priv, int flags);
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags);
++int __anon_inode_getfd(const char *name, const struct file_operations *fops,
++		     void *priv, int flags, struct file **file);
+ 
+ #endif /* _LINUX_ANON_INODES_H */
+ 
+-- 
+2.26.2
 
-Mimi
