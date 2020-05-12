@@ -2,173 +2,197 @@ Return-Path: <SRS0=rf2w=62=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E67C54E4A
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 13:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE7FC54E8E
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 14:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1AB20675
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 13:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B556020736
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 14:15:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbgELNnz convert rfc822-to-8bit (ORCPT
+        id S1730339AbgELOPq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 May 2020 09:43:55 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2198 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726891AbgELNnz (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 May 2020 09:43:55 -0400
-Received: from lhreml718-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 661F7554DE7C1AF8E32F;
-        Tue, 12 May 2020 14:43:53 +0100 (IST)
-Received: from fraeml704-chm.china.huawei.com (10.206.15.53) by
- lhreml718-chm.china.huawei.com (10.201.108.69) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Tue, 12 May 2020 14:43:53 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Tue, 12 May 2020 15:43:52 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Tue, 12 May 2020 15:43:52 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-CC:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH] evm: Fix a small race in init_desc()
-Thread-Topic: [PATCH] evm: Fix a small race in init_desc()
-Thread-Index: AQHWKGALS6wWEHovpU+0Qv/QmQu7IqikdX+g
-Date:   Tue, 12 May 2020 13:43:52 +0000
-Message-ID: <c7743ab21a574eeeac40d783e0b8581c@huawei.com>
-References: <20200512130410.GB2056@kadam> <20200512131917.GA287386@mwanda>
-In-Reply-To: <20200512131917.GA287386@mwanda>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.12.77]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 12 May 2020 10:15:46 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:48554 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730219AbgELOPq (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 May 2020 10:15:46 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 04CEF9ug011240;
+        Tue, 12 May 2020 17:15:09 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
+        id 75925639BE; Tue, 12 May 2020 17:15:09 +0300 (IDT)
+From:   amirmizi6@gmail.com
+To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        robh+dt@kernel.org,
+        "benoit.houyere@st.com--to=mark.rutland"@arm.com,
+        peterhuewe@gmx.de, christophe-h.richard@st.com, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
+        Amir Mizinski <amirmizi6@gmail.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: [PATCH v8 1/8] tpm: tpm_tis: Make implementation of read16, read32 and write32 optional
+Date:   Tue, 12 May 2020 17:14:24 +0300
+Message-Id: <20200512141431.83833-2-amirmizi6@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20200512141431.83833-1-amirmizi6@gmail.com>
+References: <20200512141431.83833-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> From: linux-integrity-owner@vger.kernel.org [mailto:linux-integrity-
-> owner@vger.kernel.org] On Behalf Of Dan Carpenter
-> Sent: Tuesday, May 12, 2020 3:19 PM
-> Subject: [PATCH] evm: Fix a small race in init_desc()
-> 
-> The IS_ERR_OR_NULL() function has two conditions and if we got really
-> unlucky we could hit a race where "ptr" started as an error pointer and
-> then was set to NULL.  Both conditions would be false even though the
-> pointer at the end was NULL.
-> 
-> This patch fixes the problem by ensuring that "*tfm" can only be NULL
-> or valid.  I have introduced a "tmp_tfm" variable to make that work.  I
-> also reversed a condition and pulled the code in one tab.
-> 
-> Reported-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Fixes: 53de3b080d5e: "evm: Check also if *tfm is an error pointer in
-> init_desc()"
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
-> I just had a go at the fix.  I'm not super wedded to this solution, but
-> I hoped it was nice.
+From: Amir Mizinski <amirmizi6@gmail.com>
 
-Thanks. I think you can merge both patches in one, as the first one
-is not yet pulled.
+Only tpm_tis can use memory-mapped I/O, which is truly mapped into
+the kernel's memory space. Therefore, using ioread16/ioread32/iowrite32
+turns into a straightforward pointer dereference.
+Every other driver requires more complicated operations to read more than
+one byte at a time and will just fall back to read_bytes/write_bytes.
+Therefore, move this common code out of tpm_tis_spi and into tpm_tis_core
+so that it is used automatically when low-level drivers do not implement
+the specialized methods.
 
-Roberto
+Co-developed-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm_tis_core.h     | 38 +++++++++++++++++++++++++++++++---
+ drivers/char/tpm/tpm_tis_spi_main.c | 41 -------------------------------------
+ 2 files changed, 35 insertions(+), 44 deletions(-)
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-
->  security/integrity/evm/evm_crypto.c | 44 ++++++++++++++---------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c
-> b/security/integrity/evm/evm_crypto.c
-> index 5d3789edab71f..168c3b78ac47b 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t
-> hash_algo)
->  {
->  	long rc;
->  	const char *algo;
-> -	struct crypto_shash **tfm;
-> +	struct crypto_shash **tfm, *tmp_tfm;
->  	struct shash_desc *desc;
-> 
->  	if (type == EVM_XATTR_HMAC) {
-> @@ -91,31 +91,31 @@ static struct shash_desc *init_desc(char type, uint8_t
-> hash_algo)
->  		algo = hash_algo_name[hash_algo];
->  	}
-> 
-> -	if (IS_ERR_OR_NULL(*tfm)) {
-> -		mutex_lock(&mutex);
-> -		if (*tfm)
-> -			goto out;
-> -		*tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-> -		if (IS_ERR(*tfm)) {
-> -			rc = PTR_ERR(*tfm);
-> -			pr_err("Can not allocate %s (reason: %ld)\n", algo,
-> rc);
-> -			*tfm = NULL;
-> +	if (*tfm)
-> +		goto alloc;
-> +	mutex_lock(&mutex);
-> +	if (*tfm)
-> +		goto unlock;
-> +
-> +	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
-> +	if (IS_ERR(tmp_tfm)) {
-> +		pr_err("Can not allocate %s (reason: %ld)\n", algo,
-> +		       PTR_ERR(tmp_tfm));
-> +		mutex_unlock(&mutex);
-> +		return ERR_CAST(tmp_tfm);
-> +	}
-> +	if (type == EVM_XATTR_HMAC) {
-> +		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
-> +		if (rc) {
-> +			crypto_free_shash(tmp_tfm);
->  			mutex_unlock(&mutex);
->  			return ERR_PTR(rc);
->  		}
-> -		if (type == EVM_XATTR_HMAC) {
-> -			rc = crypto_shash_setkey(*tfm, evmkey,
-> evmkey_len);
-> -			if (rc) {
-> -				crypto_free_shash(*tfm);
-> -				*tfm = NULL;
-> -				mutex_unlock(&mutex);
-> -				return ERR_PTR(rc);
-> -			}
-> -		}
-> -out:
-> -		mutex_unlock(&mutex);
->  	}
-> -
-> +	*tfm = tmp_tfm;
-> +unlock:
-> +	mutex_unlock(&mutex);
-> +alloc:
->  	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
->  			GFP_KERNEL);
->  	if (!desc)
-> --
-> 2.26.2
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index 7337819..d06c65b 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -122,13 +122,35 @@ static inline int tpm_tis_read8(struct tpm_tis_data *data, u32 addr, u8 *result)
+ static inline int tpm_tis_read16(struct tpm_tis_data *data, u32 addr,
+ 				 u16 *result)
+ {
+-	return data->phy_ops->read16(data, addr, result);
++	__le16 result_le;
++	int rc;
++
++	if (data->phy_ops->read16)
++		return data->phy_ops->read16(data, addr, result);
++
++	rc = data->phy_ops->read_bytes(data, addr, sizeof(u16),
++				       (u8 *)&result_le);
++	if (!rc)
++		*result = le16_to_cpu(result_le);
++
++	return rc;
+ }
+ 
+ static inline int tpm_tis_read32(struct tpm_tis_data *data, u32 addr,
+ 				 u32 *result)
+ {
+-	return data->phy_ops->read32(data, addr, result);
++	__le32 result_le;
++	int rc;
++
++	if (data->phy_ops->read32)
++		return data->phy_ops->read32(data, addr, result);
++
++	rc = data->phy_ops->read_bytes(data, addr, sizeof(u32),
++				       (u8 *)&result_le);
++	if (!rc)
++		*result = le32_to_cpu(result_le);
++
++	return rc;
+ }
+ 
+ static inline int tpm_tis_write_bytes(struct tpm_tis_data *data, u32 addr,
+@@ -145,7 +167,17 @@ static inline int tpm_tis_write8(struct tpm_tis_data *data, u32 addr, u8 value)
+ static inline int tpm_tis_write32(struct tpm_tis_data *data, u32 addr,
+ 				  u32 value)
+ {
+-	return data->phy_ops->write32(data, addr, value);
++	__le32 value_le;
++	int rc;
++
++	if (data->phy_ops->write32)
++		return data->phy_ops->write32(data, addr, value);
++
++	value_le = cpu_to_le32(value);
++	rc = data->phy_ops->write_bytes(data, addr, sizeof(u32),
++					(u8 *)&value_le);
++
++	return rc;
+ }
+ 
+ static inline bool is_bsw(void)
+diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
+index d1754fd..95fef9d 100644
+--- a/drivers/char/tpm/tpm_tis_spi_main.c
++++ b/drivers/char/tpm/tpm_tis_spi_main.c
+@@ -152,44 +152,6 @@ static int tpm_tis_spi_write_bytes(struct tpm_tis_data *data, u32 addr,
+ 	return tpm_tis_spi_transfer(data, addr, len, NULL, value);
+ }
+ 
+-int tpm_tis_spi_read16(struct tpm_tis_data *data, u32 addr, u16 *result)
+-{
+-	__le16 result_le;
+-	int rc;
+-
+-	rc = data->phy_ops->read_bytes(data, addr, sizeof(u16),
+-				       (u8 *)&result_le);
+-	if (!rc)
+-		*result = le16_to_cpu(result_le);
+-
+-	return rc;
+-}
+-
+-int tpm_tis_spi_read32(struct tpm_tis_data *data, u32 addr, u32 *result)
+-{
+-	__le32 result_le;
+-	int rc;
+-
+-	rc = data->phy_ops->read_bytes(data, addr, sizeof(u32),
+-				       (u8 *)&result_le);
+-	if (!rc)
+-		*result = le32_to_cpu(result_le);
+-
+-	return rc;
+-}
+-
+-int tpm_tis_spi_write32(struct tpm_tis_data *data, u32 addr, u32 value)
+-{
+-	__le32 value_le;
+-	int rc;
+-
+-	value_le = cpu_to_le32(value);
+-	rc = data->phy_ops->write_bytes(data, addr, sizeof(u32),
+-					(u8 *)&value_le);
+-
+-	return rc;
+-}
+-
+ int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy,
+ 		     int irq, const struct tpm_tis_phy_ops *phy_ops)
+ {
+@@ -205,9 +167,6 @@ int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy,
+ static const struct tpm_tis_phy_ops tpm_spi_phy_ops = {
+ 	.read_bytes = tpm_tis_spi_read_bytes,
+ 	.write_bytes = tpm_tis_spi_write_bytes,
+-	.read16 = tpm_tis_spi_read16,
+-	.read32 = tpm_tis_spi_read32,
+-	.write32 = tpm_tis_spi_write32,
+ };
+ 
+ static int tpm_tis_spi_probe(struct spi_device *dev)
+-- 
+2.7.4
 
