@@ -2,235 +2,140 @@ Return-Path: <SRS0=rf2w=62=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9774C54E4A
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 14:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B796C54E4A
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 14:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7EE206F5
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 14:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02372206F5
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 May 2020 14:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbgELOQS (ORCPT
+        id S1730012AbgELORa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 May 2020 10:16:18 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:48578 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728085AbgELOQR (ORCPT
+        Tue, 12 May 2020 10:17:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2956 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729336AbgELORa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 May 2020 10:16:17 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 04CEFBaO011243;
-        Tue, 12 May 2020 17:15:11 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id D777D639BE; Tue, 12 May 2020 17:15:11 +0300 (IDT)
-From:   amirmizi6@gmail.com
-To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
-        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
-        robh+dt@kernel.org,
-        "benoit.houyere@st.com--to=mark.rutland"@arm.com,
-        peterhuewe@gmx.de, christophe-h.richard@st.com, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
-        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>,
-        Christophe Ricard <christophe-h.ricard@st.com>
-Subject: [PATCH v8 2/8] tpm: tpm_tis: Add verify_data_integrity handle toy tpm_tis_phy_ops
-Date:   Tue, 12 May 2020 17:14:25 +0300
-Message-Id: <20200512141431.83833-3-amirmizi6@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200512141431.83833-1-amirmizi6@gmail.com>
-References: <20200512141431.83833-1-amirmizi6@gmail.com>
-MIME-Version: 1.0
+        Tue, 12 May 2020 10:17:30 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04CEBH1m009256;
+        Tue, 12 May 2020 10:17:12 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30ws5f45jh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 10:17:12 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 04CEBVxM010678;
+        Tue, 12 May 2020 10:17:11 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 30ws5f45gf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 10:17:11 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 04CEGHW2001007;
+        Tue, 12 May 2020 14:17:09 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 30wm55en15-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 May 2020 14:17:09 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 04CEH7du46203022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 May 2020 14:17:07 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAF424C064;
+        Tue, 12 May 2020 14:17:06 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC2FB4C046;
+        Tue, 12 May 2020 14:17:05 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.144.67])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 12 May 2020 14:17:05 +0000 (GMT)
+Message-ID: <1589293025.5098.53.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH 1/3] evm: Move hooks outside LSM infrastructure
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "david.safford@gmail.com" <david.safford@gmail.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        John Johansen <john.johansen@canonical.com>,
+        "matthewgarrett@google.com" <matthewgarrett@google.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Tue, 12 May 2020 10:17:05 -0400
+In-Reply-To: <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+References: <20200429073935.11913-1-roberto.sassu@huawei.com>
+         <1588794293.4624.21.camel@linux.ibm.com>
+         <1588799408.4624.28.camel@linux.ibm.com>
+         <ab879f9e66874736a40e9c566cadc272@huawei.com>
+         <1588864628.5685.78.camel@linux.ibm.com>
+         <750ab4e0990f47e4aea10d0e580b1074@huawei.com>
+         <1588884313.5685.110.camel@linux.ibm.com>
+         <84e6acad739a415aa3e2457b5c37979f@huawei.com>
+         <1588957684.5146.70.camel@linux.ibm.com>
+         <414644a0be9e4af880452f4b5079aba1@huawei.com>
+         <1589233010.5091.49.camel@linux.ibm.com>
+         <09ee169cfd70492cb526bcb30f99d693@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
+ definitions=2020-05-12_03:2020-05-11,2020-05-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ phishscore=0 spamscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 adultscore=0 priorityscore=1501 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2003020000
+ definitions=main-2005120106
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Amir Mizinski <amirmizi6@gmail.com>
+On Tue, 2020-05-12 at 07:54 +0000, Roberto Sassu wrote:
+> > > > Roberto, EVM is only triggered by IMA, unless you've modified the
+> > > > kernel to do otherwise.
+> > >
+> > > EVM would deny xattr/attr operations even if IMA is disabled in the
+> > > kernel configuration. For example, evm_setxattr() returns the value
+> > > from evm_protect_xattr(). IMA is not involved there.
+> > 
+> > Commit ae1ba1676b88 ("EVM: Allow userland to permit modification of
+> > EVM-protected metadata") introduced EVM_ALLOW_METADATA_WRITES
+> > to allow writing the EVM portable and immutable file signatures.
+> 
+> According to Documentation/ABI/testing/evm:
+> 
+> Note that once a key has been loaded, it will no longer be
+> possible to enable metadata modification.
 
-To validate data integrity we need to compute the CRC over the data
-sent at a lower layer (I2C for instance).
-To do this, tpm_tis_verify_data_integrity() calls a "verify_data_integrity"
-operation (if available).
-If the data integrity check fails, a retry to save the sent/received
-data is implemented in the tpm_tis_send_main()/tpm_tis_recv() functions.
+Not any key, but the HMAC key.
+ 
+2         Permit modification of EVM-protected metadata at
+          runtime. Not supported if HMAC validation and
+          creation is enabled.
 
-Co-developed-by: Christophe Ricard <christophe-h.ricard@st.com>
-Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
-Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
----
- drivers/char/tpm/tpm_tis_core.c | 104 +++++++++++++++++++++++++---------------
- drivers/char/tpm/tpm_tis_core.h |   3 ++
- 2 files changed, 69 insertions(+), 38 deletions(-)
+Each time the EVM protected file metadata is updated, the EVM HMAC is
+updated, assuming the existing EVM HMAC is valid.  Userspace should
+not have access to the HMAC key, so we only allow writing EVM
+signatures.
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 27c6ca0..5dd5604 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -242,6 +242,17 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
- 	return status;
- }
- 
-+static bool tpm_tis_verify_data_integrity(struct tpm_chip *chip, const u8 *buf,
-+					  size_t len)
-+{
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-+
-+	if (priv->phy_ops->verify_data_integrity)
-+		return priv->phy_ops->verify_data_integrity(priv, buf, len);
-+
-+	return true;
-+}
-+
- static void tpm_tis_ready(struct tpm_chip *chip)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-@@ -308,47 +319,59 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int size = 0;
--	int status;
-+	int status, i;
- 	u32 expected;
-+	bool data_valid = false;
- 
--	if (count < TPM_HEADER_SIZE) {
--		size = -EIO;
--		goto out;
--	}
-+	for (i = 0; i < TPM_RETRY; i++) {
-+		if (count < TPM_HEADER_SIZE) {
-+			size = -EIO;
-+			goto out;
-+		}
- 
--	size = recv_data(chip, buf, TPM_HEADER_SIZE);
--	/* read first 10 bytes, including tag, paramsize, and result */
--	if (size < TPM_HEADER_SIZE) {
--		dev_err(&chip->dev, "Unable to read header\n");
--		goto out;
--	}
-+		size = recv_data(chip, buf, TPM_HEADER_SIZE);
-+		/* read first 10 bytes, including tag, paramsize, and result */
-+		if (size < TPM_HEADER_SIZE) {
-+			dev_err(&chip->dev, "Unable to read header\n");
-+			goto out;
-+		}
- 
--	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count || expected < TPM_HEADER_SIZE) {
--		size = -EIO;
--		goto out;
--	}
-+		expected = be32_to_cpu(*(__be32 *) (buf + 2));
-+		if (expected > count || expected < TPM_HEADER_SIZE) {
-+			size = -EIO;
-+			goto out;
-+		}
- 
--	size += recv_data(chip, &buf[TPM_HEADER_SIZE],
--			  expected - TPM_HEADER_SIZE);
--	if (size < expected) {
--		dev_err(&chip->dev, "Unable to read remainder of result\n");
--		size = -ETIME;
--		goto out;
--	}
-+		size += recv_data(chip, &buf[TPM_HEADER_SIZE],
-+				  expected - TPM_HEADER_SIZE);
-+		if (size < expected) {
-+			dev_err(&chip->dev, "Unable to read remainder of result\n");
-+			size = -ETIME;
-+			goto out;
-+		}
- 
--	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--				&priv->int_queue, false) < 0) {
--		size = -ETIME;
--		goto out;
-+		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-+				      &priv->int_queue, false) < 0) {
-+			size = -ETIME;
-+			goto out;
-+		}
-+
-+		status = tpm_tis_status(chip);
-+		if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
-+			dev_err(&chip->dev, "Error left over data\n");
-+			size = -EIO;
-+			goto out;
-+		}
-+
-+		data_valid = tpm_tis_verify_data_integrity(chip, buf, size);
-+		if (!data_valid)
-+			tpm_tis_write8(priv, TPM_STS(priv->locality),
-+				       TPM_STS_RESPONSE_RETRY);
-+		else
-+			break;
- 	}
--	status = tpm_tis_status(chip);
--	if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
--		dev_err(&chip->dev, "Error left over data\n");
-+	if (!data_valid)
- 		size = -EIO;
--		goto out;
--	}
--
- out:
- 	tpm_tis_ready(chip);
- 	return size;
-@@ -453,14 +476,19 @@ static void disable_interrupts(struct tpm_chip *chip)
- static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--	int rc;
-+	int rc, i;
- 	u32 ordinal;
- 	unsigned long dur;
-+	bool data_valid = false;
- 
--	rc = tpm_tis_send_data(chip, buf, len);
--	if (rc < 0)
--		return rc;
--
-+	for (i = 0; i < TPM_RETRY && !data_valid; i++) {
-+		rc = tpm_tis_send_data(chip, buf, len);
-+		if (rc < 0)
-+			return rc;
-+		data_valid = tpm_tis_verify_data_integrity(chip, buf, len);
-+	}
-+	if (!data_valid)
-+		return -EIO;
- 	/* go and do it */
- 	rc = tpm_tis_write8(priv, TPM_STS(priv->locality), TPM_STS_GO);
- 	if (rc < 0)
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index d06c65b..cd97c01 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -34,6 +34,7 @@ enum tis_status {
- 	TPM_STS_GO = 0x20,
- 	TPM_STS_DATA_AVAIL = 0x10,
- 	TPM_STS_DATA_EXPECT = 0x08,
-+	TPM_STS_RESPONSE_RETRY = 0x02,
- };
- 
- enum tis_int_flags {
-@@ -106,6 +107,8 @@ struct tpm_tis_phy_ops {
- 	int (*read16)(struct tpm_tis_data *data, u32 addr, u16 *result);
- 	int (*read32)(struct tpm_tis_data *data, u32 addr, u32 *result);
- 	int (*write32)(struct tpm_tis_data *data, u32 addr, u32 src);
-+	bool (*verify_data_integrity)(struct tpm_tis_data *data, const u8 *buf,
-+				      size_t len);
- };
- 
- static inline int tpm_tis_read_bytes(struct tpm_tis_data *data, u32 addr,
--- 
-2.7.4
+The only difference between writing the original EVM signature and the
+new portable and immutable signature is the security.ima xattr
+requirement.  Since the new EVM signature does not include the
+filesystem specific data, something else needs to bind the file
+metadata to the file data.  Thus the IMA xattr requirement.
 
+Assuming that the new EVM signature is written last, as long as there
+is an IMA xattr, there shouldn't be a problem writing the new EVM
+signature.
+
+Mimi
