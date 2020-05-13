@@ -2,47 +2,65 @@ Return-Path: <SRS0=+O7K=63=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C36DC433DF
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 19:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84253C433E0
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 19:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEE8D20690
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 19:03:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589396599;
-	bh=JI6Bcx1e5I0b//i3CRdT98HUPH8i1BeSBewHUjyc5Gc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
-	b=JdhMtm6VN4QUoL+n71Qa2PtoKIqq9KLJGNScShYFzuVk+4rz2cgH2cTzIJUSd8LM/
-	 mNiPweNSbqyh6L36y+YuxwMBnovFzs0v3tsGf/rN6AlLbsdIHrtcKSxgLqpZ4WG+WD
-	 80uMbG1ZsRIsHjebIhUNqR+bbytO7bb5P7mhpThk=
+	by mail.kernel.org (Postfix) with ESMTP id 3CE5420708
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 19:18:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PKR2BUB+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390275AbgEMTDR (ORCPT
+        id S1733166AbgEMTSg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 May 2020 15:03:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390021AbgEMTDR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 May 2020 15:03:17 -0400
-Received: from localhost.localdomain (pool-96-246-152-186.nycmny.fios.verizon.net [96.246.152.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E31F20671;
-        Wed, 13 May 2020 19:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589396597;
-        bh=JI6Bcx1e5I0b//i3CRdT98HUPH8i1BeSBewHUjyc5Gc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=z59eA5eRAiyCiuxUQzprR/t+ePsfTbHqMebUvWR9hw+6ql5W3gWarFW8b+usW31Wk
-         9ViZb7sqp8IyDK/8aHlqMQSKcDNHrtP5NGhtQU1iYj/UDBdR+PyEtkVFhZcEqYiJ5D
-         d1pMsiBjZ5JNPWirsmOYIKSiy+7o2LmuHO9bVfCs=
-Message-ID: <1589396593.5098.166.camel@kernel.org>
+        Wed, 13 May 2020 15:18:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53506 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390370AbgEMTSd (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 13 May 2020 15:18:33 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC3CC061A0C
+        for <linux-integrity@vger.kernel.org>; Wed, 13 May 2020 12:18:33 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id t16so206543plo.7
+        for <linux-integrity@vger.kernel.org>; Wed, 13 May 2020 12:18:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=qcgpVTGY9wq1jzZvcaJkFQL+JrVfapS8nFhj9eA+ABc=;
+        b=PKR2BUB+pog2PEu9p/br0Lry5EXdc2KN6bOwJFyF1W4C+jUuMVRpfoHaza2pnCSoJC
+         C3/3pubb5sNA2c5ilG2xU+VRIP6IPZjNTi8SGl4twLBbc40AOYPQkQbFX4agaa6J5I2p
+         kQkSAiHTagcd7+07Xjd3fGOAZRu3XLx6/Wy0Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=qcgpVTGY9wq1jzZvcaJkFQL+JrVfapS8nFhj9eA+ABc=;
+        b=YHX7IjKlAqIHV+aHB8jDVvABtHkEyHEYHpq1SQ8BKrhhWEkX8vrEi+/GJ7olc4aFp6
+         jJ3LUX1M/S7HDDBcm9MRTOgp0QEmNVNTpJavDh0n6Sodiqm8HANXtzKKfISzbXU6Z8lw
+         sz/078qK794QWZz7fxtCl906zLp/QwpnzaScZQhLNArXuxfgRSBd7xM1VXL+hvjgg/D6
+         AZLJCNx8JpJtdu/M4EpXZa4smk2T7OZgSo20PQ3C2DI9wdfQx4iHBPGPmDpMGdQ3Yaz6
+         uw50B8VbutpcLhu5QYkemIwEp7wP93TFw73ixEw3XiAgTKQC8KrN2I/lF2SSQB84LgZu
+         Mu6Q==
+X-Gm-Message-State: AOAM532sHQbn1Kwi2D02zxsr7RUrwIP0WCZS1L9I2G6uE0azDgblOldn
+        FUSqgl96dzHJqbjVOi0i2GMrPjWhi/MyngWf3P2aWZxXHVyxuOCntdYXFaxc0V8IFI03iPz8172
+        Td7mjsTckNgIAIv93bHARlxDqTpiGMfAXkGpFWXfFxluiYKCqy44NVbGqZkGgQ2voZS/zXu7lZj
+        b1xllHRhhqXQuo
+X-Google-Smtp-Source: ABdhPJxJVr3lxhEfVIbkG1ij/W35rEZtckIrZ7uIVDMxUKUrxWF05zoes3fP2LI5LZG41vLjul9Jjg==
+X-Received: by 2002:a17:902:ec04:: with SMTP id l4mr669377pld.6.1589397511978;
+        Wed, 13 May 2020 12:18:31 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id y6sm15938924pjw.15.2020.05.13.12.18.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 May 2020 12:18:31 -0700 (PDT)
 Subject: Re: [PATCH v5 1/7] fs: introduce kernel_pread_file* support
-From:   Mimi Zohar <zohar@kernel.org>
-To:     Scott Branden <scott.branden@broadcom.com>,
+To:     Mimi Zohar <zohar@kernel.org>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Brown <david.brown@linaro.org>,
@@ -63,75 +81,90 @@ Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
         Andy Gross <agross@kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Wed, 13 May 2020 15:03:13 -0400
-In-Reply-To: <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
 References: <20200508002739.19360-1-scott.branden@broadcom.com>
-         <20200508002739.19360-2-scott.branden@broadcom.com>
-         <1589395153.5098.158.camel@kernel.org>
-         <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+ <20200508002739.19360-2-scott.branden@broadcom.com>
+ <1589395153.5098.158.camel@kernel.org>
+ <0e6b5f65-8c61-b02e-7d35-b4ae52aebcf3@broadcom.com>
+ <1589396593.5098.166.camel@kernel.org>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <e1b92047-7003-0615-3d58-1388ec27c78a@broadcom.com>
+Date:   Wed, 13 May 2020 12:18:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <1589396593.5098.166.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
-> Hi Mimi,
-> 
-> On 2020-05-13 11:39 a.m., Mimi Zohar wrote:
-> > [Cc'ing linux-security-module, linux-integrity]
-> >
-> > On Thu, 2020-05-07 at 17:27 -0700, Scott Branden wrote:
-> >> Add kernel_pread_file* support to kernel to allow for partial read
-> >> of files with an offset into the file.  Existing kernel_read_file
-> >> functions call new kernel_pread_file functions with offset=0 and
-> >> flags=KERNEL_PREAD_FLAG_WHOLE.
-> >>
-> >> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> >> ---
-> > <snip>
-> >
-> >> @@ -941,14 +955,16 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
-> The checkpatch shows this as kernel_read_file when it is actually the 
-> new function kernel_pread_file.
-> Please see the call to kernel_pread_file from kernel_read_file in the 
-> complete patch rather this snippet.
-> >>   
-> >>   		if (bytes == 0)
-> >>   			break;
-> >> +
-> >> +		buf_pos += bytes;
-> >>   	}
-> >>   
-> >> -	if (pos != i_size) {
-> >> +	if (pos != read_end) {
-> >>   		ret = -EIO;
-> >>   		goto out_free;
-> >>   	}
-> >>   
-> >> -	ret = security_kernel_post_read_file(file, *buf, i_size, id);
-> >> +	ret = security_kernel_post_read_file(file, *buf, alloc_size, id);
-> >>   	if (!ret)
-> >>   		*size = pos;
-> > Prior to the patch set that introduced this security hook, firmware
-> > would be read twice, once for measuring/appraising the firmware and
-> > again reading the file contents into memory.  Partial reads will break
-> > both IMA's measuring the file and appraising the file signatures.
-> The partial file read support is needed for request_firmware_into_buf 
-> from drivers.  The EXPORT_SYMBOL_GPL is being removed so that
-> there can be no abuse of the partial file read support.  Such file 
-> integrity checks are not needed for this use case.  The partial file 
-> (firmware image) is actually downloaded in portions and verified on the 
-> device it is loaded to.
 
-It's all fine that the device will verify the firmware, but shouldn't
-the kernel be able to also verify the firmware file signature it is
-providing to the device, before providing it?
 
-The device firmware is being downloaded piecemeal from somewhere and
-won't be measured?
+On 2020-05-13 12:03 p.m., Mimi Zohar wrote:
+> On Wed, 2020-05-13 at 11:53 -0700, Scott Branden wrote:
+>> Hi Mimi,
+>>
+>> On 2020-05-13 11:39 a.m., Mimi Zohar wrote:
+>>> [Cc'ing linux-security-module, linux-integrity]
+>>>
+>>> On Thu, 2020-05-07 at 17:27 -0700, Scott Branden wrote:
+>>>> Add kernel_pread_file* support to kernel to allow for partial read
+>>>> of files with an offset into the file.  Existing kernel_read_file
+>>>> functions call new kernel_pread_file functions with offset=0 and
+>>>> flags=KERNEL_PREAD_FLAG_WHOLE.
+>>>>
+>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>>>> ---
+>>> <snip>
+>>>
+>>>> @@ -941,14 +955,16 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+>> The checkpatch shows this as kernel_read_file when it is actually the
+>> new function kernel_pread_file.
+>> Please see the call to kernel_pread_file from kernel_read_file in the
+>> complete patch rather this snippet.
+>>>>    
+>>>>    		if (bytes == 0)
+>>>>    			break;
+>>>> +
+>>>> +		buf_pos += bytes;
+>>>>    	}
+>>>>    
+>>>> -	if (pos != i_size) {
+>>>> +	if (pos != read_end) {
+>>>>    		ret = -EIO;
+>>>>    		goto out_free;
+>>>>    	}
+>>>>    
+>>>> -	ret = security_kernel_post_read_file(file, *buf, i_size, id);
+>>>> +	ret = security_kernel_post_read_file(file, *buf, alloc_size, id);
+>>>>    	if (!ret)
+>>>>    		*size = pos;
+>>> Prior to the patch set that introduced this security hook, firmware
+>>> would be read twice, once for measuring/appraising the firmware and
+>>> again reading the file contents into memory.  Partial reads will break
+>>> both IMA's measuring the file and appraising the file signatures.
+>> The partial file read support is needed for request_firmware_into_buf
+>> from drivers.  The EXPORT_SYMBOL_GPL is being removed so that
+>> there can be no abuse of the partial file read support.  Such file
+>> integrity checks are not needed for this use case.  The partial file
+>> (firmware image) is actually downloaded in portions and verified on the
+>> device it is loaded to.
+> It's all fine that the device will verify the firmware, but shouldn't
+> the kernel be able to also verify the firmware file signature it is
+> providing to the device, before providing it?
+Even if the kernel successfully verified the firmware file signature it
+would just be wasting its time.  The kernel in these use cases is not always
+trusted.  The device needs to authenticate the firmware image itself.
+>
+> The device firmware is being downloaded piecemeal from somewhere and
+> won't be measured?
+It doesn't need to be measured for current driver needs.
+If someone has such need the infrastructure could be added to the kernel
+at a later date.  Existing functionality is not broken in any way by 
+this patch series.
+>
+> Mimi
 
-Mimi
