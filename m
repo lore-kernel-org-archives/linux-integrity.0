@@ -2,56 +2,56 @@ Return-Path: <SRS0=+O7K=63=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E11E2C433DF
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B87FC433E1
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 055312065D
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D58120659
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:21:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589383276;
-	bh=qm8/y6y+63tITpbO30DHvyvE0+SlDvX2OoosaE42pCY=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=1yS2fjg6hoJc89jfN8fO6cCDhfibtumRtipvzfYPF8NAHqRiJ4K1r7g/ZH8ZiSQGC
-	 mIwyOjC8A854L7/Qedmc3RmJdIFlGloHv3Je3UeJq2v1UWBXZZ53GcvmhnEa95uqoK
-	 WWH1wnnnB4iUuDSNy8Q/Wnm/4+LsGI7wqwp4jrfo=
+	s=default; t=1589383288;
+	bh=ppbpJ/tiGc6AAsfEyrLUH1GG5EABg4BNhApQAkuqWOw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=u/Ukam0exrDvdcTnvUztmWqvAg1/+Z0XvkjJ5igYcaqYGM4cJVVjdLJudAQ2K9i1D
+	 0PYP4wN5yMyhdM08BONT6G55GHc6gCLm6mCCiuVPU2+YLWkQB2qlNXD4IYeaHWxBPK
+	 vMco9anmObC5GoU4hE0FEklnbiVSF1/tSxK1mTLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389176AbgEMPVP (ORCPT
+        id S2389219AbgEMPVU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 May 2020 11:21:15 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34255 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729153AbgEMPVO (ORCPT
+        Wed, 13 May 2020 11:21:20 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45436 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389208AbgEMPVS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 May 2020 11:21:14 -0400
-Received: by mail-pf1-f193.google.com with SMTP id x15so7550192pfa.1;
-        Wed, 13 May 2020 08:21:14 -0700 (PDT)
+        Wed, 13 May 2020 11:21:18 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r22so6331688pga.12;
+        Wed, 13 May 2020 08:21:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vd8mN5eu82jR3IAsdSL8KCAElLuY0QvMKLQ4DV4/fDM=;
-        b=oa7V1C/MEjzWRxJ/2JF4W0oUPiHG2ulxUCEGfDQYTB1hP8DEeRYLYF/KEpNrYLNIEm
-         AlRDxsACr+ZrAm5kLxC1bFvATuECgIQYgtDVgHYhLLKOVwePgB2gGorgX3Z/UpFlEoA+
-         TeAKx/9YWYhHWAT43uoe4YbrzETSc+imU6UP3TP0d+wIsgP7X+uOJ9atY1zbrrZ7/Gni
-         GobE91AgpQg3AMpj40PqHrFnuzbEZ7ZiUGOeBT1cMfQVuDnrNA2HBfI4r7b+Vj0Q9BLH
-         oDVjMSrZpMMSb7yquwEqXaHtqqDEXxGlKiZo80R+9yduwacCOsosNxyR7L/Sm6I5p/zG
-         SM6A==
-X-Gm-Message-State: AOAM533rtKtwbp0am2isPGeZ2rPWoKzhuOa/k3jM6dAlkKXXbWJRkbfi
-        sQ0y6Ifqonu2xaFCdgqeOa0=
-X-Google-Smtp-Source: ABdhPJz8JCGMh8sRdwYyCHudRzQBKdwiDqQQhE20Xn802xN18geL+qldVFqyq1i08EE9ulujdjpfQg==
-X-Received: by 2002:a63:a01:: with SMTP id 1mr16798874pgk.428.1589383273914;
-        Wed, 13 May 2020 08:21:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sVPbNXCCooK7xs5q4tPUuYOkgiYvbFLYSsM11573Kow=;
+        b=YhDWrrl2YmwuH6C/D6LSsdpjxidKPlizPVkQWMRXllgx3ceBr1IntjbXMl+ifzoTgR
+         aizwY8YDCsWmkTD7K8C9/kivgxMwnQux5aKY8JenJKS03v0FG0HFkhDNudYu02LpQys6
+         uUV0FwO1GEZJ/DbCJuA07svfqThOgwRcC8gXcG+NYmc/xyg/s6SN6gT6XT46DYB3s8fC
+         0nLIBE3rEF22KDUq1G3ixdZE3pAyptD/8DEAxcA+gZLe45GbFLz6HYV5kTsGRuUXag0x
+         u3Wvd01dxdkBUFxg4tJC4c6/89w8bSSwdhOt6ywUp2aYYnLc9KFPwrpA7CM/mP5z+kl/
+         TH7Q==
+X-Gm-Message-State: AGi0PuZLuVf1EFRDhDUZWmNPZCkJcBFjgNqn5zVWX/2dUBFxFxQM8ZjR
+        IniRsMUxCEKVz47lxsO0Uv/VccKXZBxNuQ==
+X-Google-Smtp-Source: APiQypKJxNQFZPpCeObFfzlvgoO/y5iJXbbt0fp6k+Bh0324QO2zLbObQGGHUWDJ+UruNtob9Uv7wQ==
+X-Received: by 2002:aa7:80cf:: with SMTP id a15mr28046474pfn.124.1589383276926;
+        Wed, 13 May 2020 08:21:16 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id a2sm45859pgh.57.2020.05.13.08.21.12
+        by smtp.gmail.com with ESMTPSA id n23sm15605462pjq.18.2020.05.13.08.21.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 08:21:12 -0700 (PDT)
+        Wed, 13 May 2020 08:21:13 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 3FC514063E; Wed, 13 May 2020 15:21:12 +0000 (UTC)
+        id 7045741D95; Wed, 13 May 2020 15:21:12 +0000 (UTC)
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
         rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
@@ -65,10 +65,12 @@ Cc:     scott.branden@broadcom.com, dan.carpenter@oracle.com,
         kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
         selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 0/3] fs: reduce export usage of kerne_read*() calls
-Date:   Wed, 13 May 2020 15:21:05 +0000
-Message-Id: <20200513152108.25669-1-mcgrof@kernel.org>
+Subject: [PATCH 3/3] fs: move kernel_read*() calls to its own symbol namespace
+Date:   Wed, 13 May 2020 15:21:08 +0000
+Message-Id: <20200513152108.25669-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1
+In-Reply-To: <20200513152108.25669-1-mcgrof@kernel.org>
+References: <20200513152108.25669-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -76,43 +78,173 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-While reviewing Scott Branden's submission of the new Broadcom VK driver
-driver upstream [0], part of which included 4 new pread varaints of the
-existing kernel_read*(), calls I grew shivers of the possibility of drivers
-using these exported symbols loosely. If we're going to grow these, it
-seems best to restrict the symbols to a namespace so drivers and
-subsystem maintainers don't use these carelessly.
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ drivers/base/firmware_loader/main.c | 1 +
+ fs/exec.c                           | 6 +++---
+ kernel/kexec_file.c                 | 2 ++
+ kernel/module.c                     | 1 +
+ security/integrity/digsig.c         | 3 +++
+ security/integrity/ima/ima_fs.c     | 3 +++
+ security/integrity/ima/ima_main.c   | 2 ++
+ security/loadpin/loadpin.c          | 2 ++
+ security/security.c                 | 2 ++
+ security/selinux/hooks.c            | 2 ++
+ 10 files changed, 21 insertions(+), 3 deletions(-)
 
-This should also help with making it easier to audit future locations in
-the kernel such read calls happen by just looking at the imports of the
-namespace.
-
-This goes compile tested with allyesconfig and allmodconfig on x86_64.
-0-day should have a report on build status with other configs later of
-my branch [1].
-
-[0] https://lkml.kernel.org/r/20200508002739.19360-1-scott.branden@broadcom.com
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux-next.git/log/?h=20200513-kernel-read-sym
-
-Luis Chamberlain (3):
-  fs: unexport kernel_read_file()
-  security: add symbol namespace for reading file data
-  fs: move kernel_read*() calls to its own symbol namespace
-
- drivers/base/firmware_loader/fallback.c | 1 +
- drivers/base/firmware_loader/main.c     | 1 +
- fs/exec.c                               | 9 +++++----
- kernel/kexec.c                          | 2 ++
- kernel/kexec_file.c                     | 2 ++
- kernel/module.c                         | 3 +++
- security/integrity/digsig.c             | 3 +++
- security/integrity/ima/ima_fs.c         | 3 +++
- security/integrity/ima/ima_main.c       | 2 ++
- security/loadpin/loadpin.c              | 2 ++
- security/security.c                     | 8 +++++---
- security/selinux/hooks.c                | 2 ++
- 12 files changed, 31 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 5296aaca35cf..a5ed796a9166 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -44,6 +44,7 @@
+ MODULE_AUTHOR("Manuel Estrada Sainz");
+ MODULE_DESCRIPTION("Multi purpose firmware loading support");
+ MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS(CORE_FS_READ);
+ 
+ struct firmware_cache {
+ 	/* firmware_buf instance will be added into the below list */
+diff --git a/fs/exec.c b/fs/exec.c
+index 30bd800ab1d6..bbe2a35ea2e0 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1008,7 +1008,7 @@ int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
+ 	fput(file);
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
++EXPORT_SYMBOL_NS_GPL(kernel_read_file_from_path, CORE_FS_READ);
+ 
+ int kernel_read_file_from_path_initns(const char *path, void **buf,
+ 				      loff_t *size, loff_t max_size,
+@@ -1034,7 +1034,7 @@ int kernel_read_file_from_path_initns(const char *path, void **buf,
+ 	fput(file);
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
++EXPORT_SYMBOL_NS_GPL(kernel_read_file_from_path_initns, CORE_FS_READ);
+ 
+ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+ 			     enum kernel_read_file_id id)
+@@ -1050,7 +1050,7 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
+ 	fdput(f);
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
++EXPORT_SYMBOL_NS_GPL(kernel_read_file_from_fd, CORE_FS_READ);
+ 
+ ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
+ {
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index bb05fd52de85..d96b7c05b0a5 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -28,6 +28,8 @@
+ #include <linux/vmalloc.h>
+ #include "kexec_internal.h"
+ 
++MODULE_IMPORT_NS(CORE_FS_READ);
++
+ static int kexec_calculate_store_digests(struct kimage *image);
+ 
+ /*
+diff --git a/kernel/module.c b/kernel/module.c
+index 8973a463712e..f14868980080 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -60,6 +60,7 @@
+ #include "module-internal.h"
+ 
+ MODULE_IMPORT_NS(SECURITY_READ);
++MODULE_IMPORT_NS(CORE_FS_READ);
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/module.h>
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..d68ef41a3987 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -13,11 +13,14 @@
+ #include <linux/key-type.h>
+ #include <linux/digsig.h>
+ #include <linux/vmalloc.h>
++#include <linux/module.h>
+ #include <crypto/public_key.h>
+ #include <keys/system_keyring.h>
+ 
+ #include "integrity.h"
+ 
++MODULE_IMPORT_NS(CORE_FS_READ);
++
+ static struct key *keyring[INTEGRITY_KEYRING_MAX];
+ 
+ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index e3fcad871861..41fd03281ae1 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -20,6 +20,9 @@
+ #include <linux/rcupdate.h>
+ #include <linux/parser.h>
+ #include <linux/vmalloc.h>
++#include <linux/module.h>
++
++MODULE_IMPORT_NS(CORE_FS_READ);
+ 
+ #include "ima.h"
+ 
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index f96f151294e6..ffa7a14deef1 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -28,6 +28,8 @@
+ 
+ #include "ima.h"
+ 
++MODULE_IMPORT_NS(CORE_FS_READ);
++
+ #ifdef CONFIG_IMA_APPRAISE
+ int ima_appraise = IMA_APPRAISE_ENFORCE;
+ #else
+diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
+index ee5cb944f4ad..ca2022ad5f88 100644
+--- a/security/loadpin/loadpin.c
++++ b/security/loadpin/loadpin.c
+@@ -17,6 +17,8 @@
+ #include <linux/sched.h>	/* current */
+ #include <linux/string_helpers.h>
+ 
++MODULE_IMPORT_NS(CORE_FS_READ);
++
+ static void report_load(const char *origin, struct file *file, char *operation)
+ {
+ 	char *cmdline, *pathname;
+diff --git a/security/security.c b/security/security.c
+index bdbd1fc5105a..c865f1de4b03 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -29,6 +29,8 @@
+ #include <linux/msg.h>
+ #include <net/flow.h>
+ 
++MODULE_IMPORT_NS(CORE_FS_READ);
++
+ #define MAX_LSM_EVM_XATTR	2
+ 
+ /* How many LSMs were built into the kernel? */
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 9979b45e0a34..6dc4abfbfb78 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -103,6 +103,8 @@
+ #include "audit.h"
+ #include "avc_ss.h"
+ 
++MODULE_IMPORT_NS(CORE_FS_READ);
++
+ struct selinux_state selinux_state;
+ 
+ /* SECMARK reference count */
 -- 
 2.26.2
 
