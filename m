@@ -2,102 +2,210 @@ Return-Path: <SRS0=+O7K=63=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A026FC433E3
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E3BC433E4
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B024A20659
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:21:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589383295;
-	bh=1azQTu3YqUrPqAvVCaCfWApr5s4YVo2LJ3vdz6ZXYXs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qTMkUvIb2Oxq798S2UUGHrHeWgVzAibxu0ctzxf+AU9NLEFMrWcjCOGI+vfQPC/4S
-	 6Zat169348rop2QYpe+ggvQfVZtGP8vrxGc4YafFqYZXy6coBcRCaFO8xBhJIr823q
-	 zmLf92hd6JVvfOhKE7Y6f1fohG2/SDgc1tTh+4w8=
+	by mail.kernel.org (Postfix) with ESMTP id 2743B205CB
+	for <linux-integrity@archiver.kernel.org>; Wed, 13 May 2020 15:37:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErjuYfLQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389196AbgEMPVQ (ORCPT
+        id S2388493AbgEMPh2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 May 2020 11:21:16 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35644 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389170AbgEMPVP (ORCPT
+        Wed, 13 May 2020 11:37:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729483AbgEMPh2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 May 2020 11:21:15 -0400
-Received: by mail-pf1-f195.google.com with SMTP id n18so645016pfa.2;
-        Wed, 13 May 2020 08:21:15 -0700 (PDT)
+        Wed, 13 May 2020 11:37:28 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B667C061A0C;
+        Wed, 13 May 2020 08:37:28 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id p127so2301511oia.13;
+        Wed, 13 May 2020 08:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=JesLt0wnnXQRtMcIHg+I5khr0BA/8cCmiohenjE2ta4=;
+        b=ErjuYfLQPK801OItCcYqBQDTNpGUtD2W7nLO68xLL9Zs3t7SXdMHPvJFYcFXgU0oY4
+         tVKWCqPzr0IjBic4LQ7O5s3+CKc1XmGPgyzgrkGteK2wp7Uh5ppMeJRJrbbkILA8gGTE
+         YxH9X5yYsM6dJbD68EAxWQx07chav4YEvVZnvf4BgcXmcsp2lkQzBshZbjMvlXhtj2pF
+         dwhbeaKI3v+dx4HUbbm/1DAkLRFTqi+Bd3u2xHt/K5RGIEzi0OetKzpz/MPsOL7cJirm
+         jfgiLNLDsUOub1+/Hm3NxIpAytmgc0YR6KH+CgSTqkq1pJiz4MeFvGI3nYbPY9U6X4m8
+         saIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=L2EmjNUNQ4Z5jimRhohvy5E6UFn8J7/n3AurcqTssfc=;
-        b=pKjK5/uLwvB1l4zaIfTdJJfWUmJTFDpuGrtJJT9esp2duuPlmJHlIB+eh+as55fii3
-         hOi9By7XgiF6KLzjMvn4WxVV/J1fOo6sXLVpN5q//IH3Fmv/ctS88Zbc5s3j3B7iFnkn
-         vgj4SJ3pdB2g8nEOXbLDjGw+ZYhGwsgZo46SEk31JbOgq9r4Uk99oq6LK97B8UZ6ABNE
-         qImx4R2WBKdMwV8VLDbMmbftbdfsHv9VkLGbW+ZDZ+oAIQs6hvDAz0UWXicdGfk3ZjrF
-         tbZE2KgusOnxRYswn9tmEi1uLgNqPw7SnusG0rpXVyK3W1Fr6ttvPPKkK/OP18E+amuU
-         BHJQ==
-X-Gm-Message-State: AGi0PuaeTKJyhXUfDAy2HW3Hf0hZ5lRqSaLOSMRgHj3HdicUT0yDZjXt
-        JO0pmqF04pzZUpNm/7Qdpp0=
-X-Google-Smtp-Source: APiQypLjceC/PEfdNROkTqxbFVK4lToQw5U4tMxxK9Fb2TK7BTD2Imz/M+WiRtr+fq6JB7P+q54wFA==
-X-Received: by 2002:a63:1361:: with SMTP id 33mr23946447pgt.265.1589383274907;
-        Wed, 13 May 2020 08:21:14 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j2sm15315389pfb.73.2020.05.13.08.21.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 May 2020 08:21:12 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 4BEB0418C0; Wed, 13 May 2020 15:21:12 +0000 (UTC)
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        rafael@kernel.org, ebiederm@xmission.com, jeyu@kernel.org,
-        jmorris@namei.org, keescook@chromium.org, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        nayna@linux.ibm.com, zohar@linux.ibm.com
-Cc:     scott.branden@broadcom.com, dan.carpenter@oracle.com,
-        skhan@linuxfoundation.org, geert@linux-m68k.org,
-        tglx@linutronix.de, bauerman@linux.ibm.com, dhowells@redhat.com,
-        linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 1/3] fs: unexport kernel_read_file()
-Date:   Wed, 13 May 2020 15:21:06 +0000
-Message-Id: <20200513152108.25669-2-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20200513152108.25669-1-mcgrof@kernel.org>
-References: <20200513152108.25669-1-mcgrof@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=JesLt0wnnXQRtMcIHg+I5khr0BA/8cCmiohenjE2ta4=;
+        b=efsib6pjLc5zA6dlp8jlXiebMN/7+ANfsOjGybf1n2LwzkxbQmMrBxkEjH4MMsJHc5
+         MPq96GuXf0pqv//4MFFYJsmAl3kAye+cadCq0gqI7+JSvOUzOJCzn7oo9dY0RM3aAXAl
+         BRnv0IdRrE6mkiUN0LTvub0T6dmHih9/1+DwqiNGm+TNnJ7EGvsCx4vfcKQVY07TINhz
+         Nmm6ncpTYfGxsvCgcjTwVLNEj/4vsHip2prsZktbcfjGjxd8saQk/O23bo+6U6LO0LcB
+         ax+qqDaWhCIpiKPWlk8BoRa2TeiYLT/7Z8bpvFcDk+MtXSK8gAl5YHt659vwH9Yych1a
+         XmuQ==
+X-Gm-Message-State: AGi0PuakD9+X1SVfK/Lsprqx95SGoxxkVkLL0+8MG7kncfZiCzXSftQo
+        J1s5aHgJAwbsuX1TKoH7tOZGLhU/H8UpiTxLjzc=
+X-Google-Smtp-Source: APiQypI+NDJoITHYfkqfEHsy2flEkLfDB5ZZom8ahxgSAc1RCzwvPgqRJlVhbVAW3EqoZWFQfSQrU6Gi8kmLlaY03xI=
+X-Received: by 2002:aca:5e0b:: with SMTP id s11mr26174094oib.160.1589384247535;
+ Wed, 13 May 2020 08:37:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200505153156.925111-1-mic@digikod.net> <20200505153156.925111-4-mic@digikod.net>
+In-Reply-To: <20200505153156.925111-4-mic@digikod.net>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 13 May 2020 11:37:16 -0400
+Message-ID: <CAEjxPJ7y2G5hW0WTH0rSrDZrorzcJ7nrQBjfps2OWV5t1BUYHw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/6] fs: Enable to enforce noexec mounts or file exec
+ through O_MAYEXEC
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There are no modular uses of kernel_read_file(), so just unexport it.
+On Tue, May 5, 2020 at 11:33 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+>
+> Enable to forbid access to files open with O_MAYEXEC.  Thanks to the
+> noexec option from the underlying VFS mount, or to the file execute
+> permission, userspace can enforce these execution policies.  This may
+> allow script interpreters to check execution permission before reading
+> commands from a file, or dynamic linkers to allow shared object loading.
+>
+> Add a new sysctl fs.open_mayexec_enforce to enable system administrators
+> to enforce two complementary security policies according to the
+> installed system: enforce the noexec mount option, and enforce
+> executable file permission.  Indeed, because of compatibility with
+> installed systems, only system administrators are able to check that
+> this new enforcement is in line with the system mount points and file
+> permissions.  A following patch adds documentation.
+>
+> For tailored Linux distributions, it is possible to enforce such
+> restriction at build time thanks to the CONFIG_OMAYEXEC_STATIC option.
+> The policy can then be configured with CONFIG_OMAYEXEC_ENFORCE_MOUNT and
+> CONFIG_OMAYEXEC_ENFORCE_FILE.
+>
+> Being able to restrict execution also enables to protect the kernel by
+> restricting arbitrary syscalls that an attacker could perform with a
+> crafted binary or certain script languages.  It also improves multilevel
+> isolation by reducing the ability of an attacker to use side channels
+> with specific code.  These restrictions can natively be enforced for ELF
+> binaries (with the noexec mount option) but require this kernel
+> extension to properly handle scripts (e.g., Python, Perl).  To get a
+> consistent execution policy, additional memory restrictions should also
+> be enforced (e.g. thanks to SELinux).
+>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Kees Cook <keescook@chromium.org>
+> ---
 
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- fs/exec.c | 1 -
- 1 file changed, 1 deletion(-)
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 33b6d372e74a..70f179f6bc6c 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -411,10 +412,90 @@ static int sb_permission(struct super_block *sb, st=
+ruct inode *inode, int mask)
+<snip>
+> +#if defined(CONFIG_SYSCTL) && !defined(CONFIG_OMAYEXEC_STATIC)
+> +int proc_omayexec(struct ctl_table *table, int write, void __user *buffe=
+r,
+> +               size_t *lenp, loff_t *ppos)
+> +{
+> +       int error;
+> +
+> +       if (write) {
+> +               struct ctl_table table_copy;
+> +               int tmp_mayexec_enforce;
+> +
+> +               if (!capable(CAP_MAC_ADMIN))
+> +                       return -EPERM;
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 23dc2b45d590..9791b9eef9ce 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -988,7 +988,6 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 	allow_write_access(file);
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(kernel_read_file);
- 
- int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
- 			       loff_t max_size, enum kernel_read_file_id id)
--- 
-2.26.2
+Not fond of using CAP_MAC_ADMIN here (or elsewhere outside of security
+modules).  The ability to set this sysctl is not equivalent to being
+able to load a MAC policy, set arbitrary MAC labels on
+processes/files, etc.
 
+> + * omayexec_inode_permission - Check O_MAYEXEC before accessing an inode
+> + *
+> + * @inode: Inode to check permission on
+> + * @mask: Right to check for (%MAY_OPENEXEC, %MAY_EXECMOUNT, %MAY_EXEC)
+> + *
+> + * Returns 0 if access is permitted, -EACCES otherwise.
+> + */
+> +static inline int omayexec_inode_permission(struct inode *inode, int mas=
+k)
+> +{
+> +       if (!(mask & MAY_OPENEXEC))
+> +               return 0;
+> +
+> +       if ((sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_MOUNT) &&
+> +                       !(mask & MAY_EXECMOUNT))
+> +               return -EACCES;
+> +
+> +       if (sysctl_omayexec_enforce & OMAYEXEC_ENFORCE_FILE)
+> +               return generic_permission(inode, MAY_EXEC);
+> +
+> +       return 0;
+> +}
+
+I'm wondering if this is being done at the wrong level.  I would think
+that OMAYEXEC_ENFORCE_FILE would mean to check file execute permission
+with respect to all mechanisms/policies, including DAC,
+filesystem-specific checking (inode->i_op->permission), security
+modules, etc.  That requires more than just calling
+generic_permission() with MAY_EXEC, which only covers the default
+DAC/ACL logic; you'd need to take the handling up a level to
+inode_permission() and re-map MAY_OPENEXEC to MAY_EXEC for
+do_inode_permission() and security_inode_permission() at least.
+Alternatively, we can modify each individual filesystem (that
+implements its own i_op->permission) and security module to start
+handling MAY_OPENEXEC and have them choose to remap it to a file
+execute check (or not) independent of the sysctl.  Not sure of your
+intent.  As it stands, selinux_inode_permission() will ignore the new
+MAY_OPENEXEC flag until someone updates it.  Likewise for Smack.
+AppArmor/TOMOYO would probably need to check and handle FMODE_EXEC in
+their file_open hooks since they don't implement inode_permission().
