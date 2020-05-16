@@ -1,132 +1,138 @@
-Return-Path: <SRS0=HrVK=65=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=L4gi=66=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E74D0C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 May 2020 23:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54947C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat, 16 May 2020 09:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C57FE20756
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 May 2020 23:23:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ua90IXcc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ua90IXcc"
+	by mail.kernel.org (Postfix) with ESMTP id 3AACC2076A
+	for <linux-integrity@archiver.kernel.org>; Sat, 16 May 2020 09:59:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbgEOXXM (ORCPT
+        id S1726042AbgEPJ7k (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 May 2020 19:23:12 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55706 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbgEOXXM (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 May 2020 19:23:12 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8BA9C8EE2CA;
-        Fri, 15 May 2020 16:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1589584991;
-        bh=ymkONZXFvhdNnpPtY8Q0bGiYA4GZZsgJujtY6WG/iM8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ua90IXccRPjdyWtWuPrTnTGBZSrdXEXTzOZQKTMES3saTNghba2ihkHxW7e1tOM/z
-         0ip+DGhvx3PdZN98a0vF56oMR8TRrhTxA2I4lvxR6mf5RMEYqlPLv5jPs/0bd0qijG
-         zhgtTS/rnBYMSw/ZGX9eLJBWgEXSR/k+z6Jfijxc=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vQ3AgkwYdWPD; Fri, 15 May 2020 16:23:11 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DACB98EE25D;
-        Fri, 15 May 2020 16:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1589584991;
-        bh=ymkONZXFvhdNnpPtY8Q0bGiYA4GZZsgJujtY6WG/iM8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ua90IXccRPjdyWtWuPrTnTGBZSrdXEXTzOZQKTMES3saTNghba2ihkHxW7e1tOM/z
-         0ip+DGhvx3PdZN98a0vF56oMR8TRrhTxA2I4lvxR6mf5RMEYqlPLv5jPs/0bd0qijG
-         zhgtTS/rnBYMSw/ZGX9eLJBWgEXSR/k+z6Jfijxc=
-Message-ID: <1589584989.30847.20.camel@HansenPartnership.com>
+        Sat, 16 May 2020 05:59:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:15794 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725917AbgEPJ7k (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 16 May 2020 05:59:40 -0400
+IronPort-SDR: AKop5e2fIh0vKS1BVtA6VkCFqF6Mr+96E/AP45RyU7nSO0GKYE71KwK/bsvSv9KkiykfUj26Qe
+ 8C9p2me3fc+A==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2020 02:59:39 -0700
+IronPort-SDR: +hPc1VAvToZKqa+d2SYbYDTSV68pLKQhQ9KZGHaiQkLWlDilVCnl0h8+V2pVKOBA5th4rlP/1c
+ UxAhz2NZVwjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.73,398,1583222400"; 
+   d="scan'208";a="281482321"
+Received: from dbobocel-mobl1.ger.corp.intel.com ([10.252.55.115])
+  by orsmga002.jf.intel.com with ESMTP; 16 May 2020 02:59:35 -0700
+Message-ID: <1668d149a6604c598f87368a3ef7a9140cf7eb51.camel@linux.intel.com>
 Subject: Re: [PATCH v9 0/8] TPM 2.0 trusted keys with attached policy
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     "Kayaalp, Mehmet" <Mehmet.Kayaalp@unh.edu>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
         David Woodhouse <dwmw2@infradead.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Date:   Fri, 15 May 2020 16:23:09 -0700
-In-Reply-To: <1589581169.30847.5.camel@HansenPartnership.com>
+        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Date:   Sat, 16 May 2020 12:59:34 +0300
+In-Reply-To: <20200515093000.naogi4a7j22bzggz@cantor>
 References: <20200507231147.27025-1-James.Bottomley@HansenPartnership.com>
          <23639de13874c00e6bb2b816b4db0b586c9a074c.camel@linux.intel.com>
          <483c4f1af7be41c8d091b11d4484b606ebd319b7.camel@linux.intel.com>
          <1589514263.5759.25.camel@HansenPartnership.com>
          <20200515084702.GA3404@linux.intel.com>
-         <20200515191758.ieojyk5xhsx2hzzd@cantor>
-         <1589571278.3653.22.camel@HansenPartnership.com>
-         <1589573417.3653.28.camel@HansenPartnership.com>
-         <56688CD4-A4A5-4D98-8724-6CBA10C7E1CE@unh.edu>
-         <1589581169.30847.5.camel@HansenPartnership.com>
+         <20200515093000.naogi4a7j22bzggz@cantor>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+User-Agent: Evolution 3.36.1-2 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2020-05-15 at 15:19 -0700, James Bottomley wrote:
-> On Fri, 2020-05-15 at 21:03 +0000, Kayaalp, Mehmet wrote:
-> > > On May 15, 2020, at 4:10 PM, James Bottomley <James.Bottomley@han
-> > > se
-> > > npartnership.com> wrote:
+On Fri, 2020-05-15 at 02:30 -0700, Jerry Snitselaar wrote:
+> On Fri May 15 20, Jarkko Sakkinen wrote:
+> > On Thu, May 14, 2020 at 08:44:23PM -0700, James Bottomley wrote:
+> > > On Fri, 2020-05-15 at 05:22 +0300, Jarkko Sakkinen wrote:
+> > > > On Thu, 2020-05-14 at 17:31 +0300, Jarkko Sakkinen wrote:
+> > > > > I'm compiling now kernel with all series included.
+> > > > > 
+> > > > > Kind of checking if I could just take the whole series. Let see.
+> > > > > 
+> > > > > In all cases I want the style errors in 3/8 to be fixes with a
+> > > > > helper
+> > > > > but maybe better to hold before sending anything. Possibly that is
+> > > > > all
+> > > > > needed I'll just carve that patch myself.
+> > > > > 
+> > > > > Please don't do anything for the moment.
+> > > > 
+> > > > This is what I tried first (with the full series applied):
+> > > > 
+> > > > #!/bin/sh
+> > > > 
+> > > > die()
+> > > > {
+> > > > 	keyctl clear @u
+> > > > 	./tpm2-flush --all-transient
+> > > > 	exit $1
+> > > > }
+> > > > 
+> > > > KEYHANDLE=$(./tpm2-root-key || die 1)
+> > > > KEYID=$(keyctl add trusted kmk "new 32 keyhandle=$KEYHANDLE
+> > > > hash=sha256" @u || die 1)
+> > > > 
+> > > > echo "$KEYID ($KEYHANDLE)"
+> > > > 
+> > > > keyctl pipe $KEYID > blob.hex || die 1
+> > > > keyctl clear @u || die 1
+> > > > 
+> > > > echo "Import key from blob"
+> > > > 
+> > > > keyctl add trusted kmk "load `cat blob.hex` keyhandle=$KEYHANDLE" @u
+> > > > > > die 1
+> > > > 
+> > > > die 0
+> > > > 
+> > > > Result:
+> > > > 
+> > > > sudo ./keyctl-smoke.sh
+> > > > 566201053 (0x80000000)
+> > > > keyctl_read_alloc: Permission denied
 > > > 
-> > > I think that means the solution is not to run the smoke test
-> > > under sudo but to do sudo -s and then run it.
+> > > Well, it's clearly failing in keyctl pipe
 > > > 
-> > > James
+> > > I do confess to never having tested a volatile primary, but I just did
+> > > so and it works for me.  I will also add the keyhandle in the load
+> > > isn't necessary, because it should be in the blob, but there should
+> > > also be no harm (just tested).
+> > > 
+> > > However, I don't have keyctl_read_alloc in my tree, so it may be an
+> > > incompatibility with another patch set.  What's your base and what
+> > > other patches do you have applied?
 > > 
-> > How about "sudo -i":
+> > http://git.infradead.org/users/jjs/linux-tpmdd.git
 > > 
-> > https://askubuntu.com/questions/376199/sudo-su-vs-sudo-i-vs-sudo-
-> > bin-bash-when-does-it-matter-which-is-used
+> > Or exactly:
+> > 
+> > git://git.infradead.org/users/jjs/linux-tpmdd.git (master)
+> > 
+> > /Jarkko
+> > 
 > 
-> Actually, no that doesn't work either:
+> keyctl_read_alloc is in the userspace keyctl program, right?
 > 
-> jejb@testdeb> sudo -i keyctl list @s
-> 1 key in keyring:
-> 1041514063: ---lswrv  1000 65534 keyring: _uid.1000
-> 
-> I suspect this might be a very subtle bug to do with when you get a
-> new session keyring.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git
 
-It turns out to be incredibly subtle, but I'm not sure if it's a bug or
-not.  the util-linux sudo like commands have special pam profiles
+Yes.
 
-/etc/pam.d/su-l 
-/etc/pam.d/runuser-l
-
-These special profiles call pam_keyinit.so with flags to install a new
-session keyring.  sudo doesn't have this, so it never, on its own, even
-when called with -i or -s, installs a new session keyring. This does
-strike me as a bizarre oversight which leads directly to this weird
-keyctl pipe behaviour.
-
-I'm also not sure the keyctl pipe behaviour is correct: why should
-keyctl pipe deny access to root to read a key just because it's in a
-different session keyring?  It defintely seems intentional, because if
-I create a key as a non root user and try to print it by id as root I
-get EPERM.
-
-The weirdest behaviour, though seems to be keyctl:  keyctl add ... @u
-will add to the session keyrings of the actual uid regardless of what
-session keyring the creator actually has, which is why keyctl add ...
-@u works under sudo but you get EPERM back trying to pipe it by id.
- 
-James
+/Jarkko
 
