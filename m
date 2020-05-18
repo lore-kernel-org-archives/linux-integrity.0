@@ -2,98 +2,69 @@ Return-Path: <SRS0=+IDv=7A=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0D3C433DF
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 May 2020 18:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0476C433E0
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 May 2020 18:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A27D320643
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 May 2020 18:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72ED0207F5
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 May 2020 18:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589826274;
-	bh=yNeBVavJCgJ/bhT6Hh3lmuWKw1YLhDe1PyfyvLek4IU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=p4in+AkKOr2zzu32hYBmsw/o5hI3B4POSvsa52S0pLVIrSf7tp7QiNwYVAfBrPPcO
-	 1KbSUyitJ2Ixt9r7lT4mDvDh59UBqzoRVh9TVoFqGUax6QsZsOYarIiMfEZArfgTsM
-	 FeCV+OZImGKXXnTp9cheYKzLYA9DqSEVtd7y6W40=
+	s=default; t=1589828103;
+	bh=4btdnUDZKtSjiUjC2dUR+3nLvzFmMXPnFFKB4s9bMeU=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=0S9sB90NkJYQn1HXxo3iNXnz2CGZrrsIS6U8SjpyWf0mVp70vTlwZcFra+XduS/iL
+	 zGMvaoEDXRPdlejBseK+DTVQG7bRXMT7ZI3pSrJoSxTgE+3BAXdl3eeJroqov15BPM
+	 3MmMpdNULK1VLJ6lueHDVlpnnhkHS1VamjpYc1eo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbgERRrp (ORCPT
+        id S1729287AbgERSzD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 18 May 2020 13:47:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730255AbgERRro (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 18 May 2020 13:47:44 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5F23C061A0C
-        for <linux-integrity@vger.kernel.org>; Mon, 18 May 2020 10:47:43 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id u6so10809032ljl.6
-        for <linux-integrity@vger.kernel.org>; Mon, 18 May 2020 10:47:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ilFS0djlykVy1P5eI7mmIHkWUV2TLGO3S4u/3xid4pg=;
-        b=f+uZ9XMvjcg7Pj2CajPFupJFIDSr9ddFhQhrxBb0RA/bsuI7ZzuATo0+/ylZltsOVJ
-         R22A7vytwMouhLrIf/3AATPF8b9+0quvf7roPc6/setO6Sv4SVM72UAdlF/UGkInI0XA
-         1uTfX87HNlIdTTPW3uw5dFcty9O5kBfWhOOwA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ilFS0djlykVy1P5eI7mmIHkWUV2TLGO3S4u/3xid4pg=;
-        b=Z7zpGV36VwxadmHBNnkmKq7WiqrCmDcjNyGViIhvDSWMmKiwcsVARU9AbdIYutRBpK
-         Un+ElbBUds6S1WpuoY8OmBhDBMnmZLxVbwEj1otnyl1ydrII96lkbzTKeXpTxXl7NQ4X
-         aEMBWGSHcR+r1Oxjm8hb4JsJmRzhKF3pmFYDd8llmfIDX2W+SoZMHs8NJ0jmlls3A8qm
-         id9gZGt++JZ07qbABv5LGc4drdhOsDAYsR2pUSvFOlWzGZrCtLwpDI9uhRCyY4sYFjhJ
-         E44lRf0H0KzkRSaetrskJhgFioxMUDWRO7JcSbSGrtT3gIxSbnuREb25a3CM/VZARylk
-         6+3A==
-X-Gm-Message-State: AOAM533QenWyr44Bk+2zX3oWgPKL5KmjHguxjHwgTtzlIfZnd5z6QV0S
-        jQvj+yJYDLEHmYeLdbx9xLC2Nbm6ajA=
-X-Google-Smtp-Source: ABdhPJxrbDThm60CSlViitBqAZDfuO4n11SvbtZh8zXJVS/U8XTv1PT/U/+eifHJwSZqrl0AKAC5dg==
-X-Received: by 2002:a05:651c:3ce:: with SMTP id f14mr2786786ljp.232.1589824061941;
-        Mon, 18 May 2020 10:47:41 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id h3sm7380985lfk.3.2020.05.18.10.47.40
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 May 2020 10:47:41 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id v5so8819275lfp.13
-        for <linux-integrity@vger.kernel.org>; Mon, 18 May 2020 10:47:40 -0700 (PDT)
-X-Received: by 2002:a19:d52:: with SMTP id 79mr11576675lfn.125.1589824060570;
- Mon, 18 May 2020 10:47:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <1589816971.5111.113.camel@linux.ibm.com>
-In-Reply-To: <1589816971.5111.113.camel@linux.ibm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 18 May 2020 10:47:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh_Zw7ug+iMALAKfQkdyVAUWC0UB0bfRRPMOCC7U5uTFQ@mail.gmail.com>
-Message-ID: <CAHk-=wh_Zw7ug+iMALAKfQkdyVAUWC0UB0bfRRPMOCC7U5uTFQ@mail.gmail.com>
+        Mon, 18 May 2020 14:55:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728830AbgERSzD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 18 May 2020 14:55:03 -0400
 Subject: Re: [GIT PULL] integrity subsystem fixes for v5.7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589828102;
+        bh=4btdnUDZKtSjiUjC2dUR+3nLvzFmMXPnFFKB4s9bMeU=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=GQhKT3q01gs40Ze7Y7CtGwZPXPHdWHgi/+inPxrawBHduQuZ547diGa0Y7v6XJ++l
+         BsYAtdBGW4JTzgLS5jIavZeh3cY79jbpdo2lAN5Bn4R223anmRSWTigqc9faQrSRQG
+         PpOOLGzWGHFoMsSnko4dA9YAGW3vxZ/9oQ6IUKZE=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <1589816971.5111.113.camel@linux.ibm.com>
+References: <1589816971.5111.113.camel@linux.ibm.com>
+X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
+X-PR-Tracked-Message-Id: <1589816971.5111.113.camel@linux.ibm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+ next-integrity.fixes
+X-PR-Tracked-Commit-Id: 8433856947217ebb5697a8ff9c4c9cad4639a2cf
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 642b151f45dd54809ea00ecd3976a56c1ec9b53d
+Message-Id: <158982810253.23134.7314950463770880232.pr-tracker-bot@kernel.org>
+Date:   Mon, 18 May 2020 18:55:02 +0000
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, May 18, 2020 at 8:49 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity.fixes
+The pull request you sent on Mon, 18 May 2020 11:49:31 -0400:
 
-No such head.
+> git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity.fixes
 
-It looks like the plain 'fixes' branch has the same commit ID, but
-there's no next-integrity.fixes.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/642b151f45dd54809ea00ecd3976a56c1ec9b53d
 
-Btw, any chance you could start using signed tags? I've been
-encouraging people to do that even on kernel.org, and we've got fairly
-high coverage these days..
+Thank you!
 
-             Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
