@@ -2,75 +2,167 @@ Return-Path: <SRS0=PAXR=7B=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EAEC433E1
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 May 2020 19:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9840BC433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 May 2020 22:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A901620823
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 May 2020 19:00:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 611E8205CB
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 May 2020 22:44:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589928257;
+	bh=KV1br4RP62dfaY+YojzIIXCxa+4QL84xTnfa3sI135I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=v43j+sTbObNcPd5uuMua+gdTXTK7qIRQrNW3O2gRtj23GYD6Bz7rSYiCnWUiJwitF
+	 lzymTKk2SxkxyJWINegpAVFX3oKRhQr0cEu8p4gTX156FTDP/DALqQBlXH/Y5PsYS1
+	 22K7sxBKOaOuWTKuhFVcD9n/IHgM+a/5DuNvS+Oo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726502AbgESTAp (ORCPT
+        id S1726723AbgESWoN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 May 2020 15:00:45 -0400
-Received: from mga06.intel.com ([134.134.136.31]:62691 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbgESTAp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 May 2020 15:00:45 -0400
-IronPort-SDR: vwky50IiyfCMFHsyjHNDpyQF6ffQBzJJo3cGzp8HGLJAQqSg8h/cNVvxzd85wObH2EjGclJMeB
- Y/XGOHHkqB+g==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2020 12:00:44 -0700
-IronPort-SDR: DPcoO8JWQyzvNdTE+i+NjsSRehFDDEuS8LYC9YUWq1IQeAtof4lmJM2bG07+MnU58PZIh1qInD
- p/nEVByMNVFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,410,1583222400"; 
-   d="scan'208";a="264407484"
-Received: from joelin3-mobl.gar.corp.intel.com (HELO localhost) ([10.249.42.57])
-  by orsmga003.jf.intel.com with ESMTP; 19 May 2020 12:00:40 -0700
-Date:   Tue, 19 May 2020 22:00:36 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nikita Sobolev <Nikita.Sobolev@synopsys.com>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Joey Pabalinas <joeypabalinas@gmail.com>,
-        Petr Vorel <petr.vorel@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        linux-snps-arc@lists.infradead.org
-Subject: Re: [PATCH v2] Kernel selftests: Add check if tpm devices are
- supported
-Message-ID: <20200519190023.GA22852@linux.intel.com>
-References: <20200519120743.41358-1-Nikita.Sobolev@synopsys.com>
+        Tue, 19 May 2020 18:44:13 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37324 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgESWoN (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 19 May 2020 18:44:13 -0400
+Received: by mail-io1-f67.google.com with SMTP id t15so1043888ios.4;
+        Tue, 19 May 2020 15:44:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N1lmJuXT33q6aZH18d7DfYmv0StosYI0OPktchqqKbA=;
+        b=OtUsF+RqRV1tX9pbf5h7C6lMXhObFIJe4jmotw3LJPDpxAtsNGhbvo5tmcpmdcXaQS
+         C37YIE4vnrUNaY9BijeQPF+ZhJ8lB1RrTVkulGWHZLleOtlFZwGjjAAjgifljgSiJge8
+         KGNc4tHwR9ASBDAVUmJxJhugByWm47bggakCs14unNpmWngcwdk0ncubZIDQYn5WqY3B
+         q4t2ECyNl0HSCDb3xh4IaM6bPXGhrbA9QroZxH2hRcHQUI6FH6g/D3UZLeKrdp8g5EKa
+         scDu0UOVRXs2ckwFiMjLpqLURfQlXKbJtsrLjrZZGWg7i7EB9GT0eLBuLSoYGT4mkSd1
+         yXbQ==
+X-Gm-Message-State: AOAM533PNk+0kb5xu+0IFsgg2m74VgjV+BNfEW0y/1/Ln3qh596JxtFM
+        KuZvoJwq+meJIBF3r7pW2A==
+X-Google-Smtp-Source: ABdhPJxKQ/TzQq03uf2VEzCewTAUROD8cEguB2dRtrUO2bJaC96i0KsUN7VLp2Hv2j6a2B1DjXP6BA==
+X-Received: by 2002:a02:76c4:: with SMTP id z187mr1922106jab.72.1589928252182;
+        Tue, 19 May 2020 15:44:12 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id b7sm366733ioq.40.2020.05.19.15.44.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2020 15:44:11 -0700 (PDT)
+Received: (nullmailer pid 827084 invoked by uid 1000);
+        Tue, 19 May 2020 22:44:10 -0000
+Date:   Tue, 19 May 2020 16:44:10 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     amirmizi6@gmail.com
+Cc:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        peterhuewe@gmx.de, christophe-h.richard@st.com, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com
+Subject: Re: [PATCH v8 7/8] tpm: Add YAML schema for TPM TIS I2C options
+Message-ID: <20200519224410.GA824372@bogus>
+References: <20200512141431.83833-1-amirmizi6@gmail.com>
+ <20200512141431.83833-8-amirmizi6@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200519120743.41358-1-Nikita.Sobolev@synopsys.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200512141431.83833-8-amirmizi6@gmail.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, May 19, 2020 at 03:07:43PM +0300, Nikita Sobolev wrote:
-> tpm2 tests set uses /dev/tpm0 and /dev/tpmrm0 without check if they
-> are available. In case, when these devices are not available test
-> fails, but expected behaviour is skipped test.
+On Tue, May 12, 2020 at 05:14:30PM +0300, amirmizi6@gmail.com wrote:
+> From: Amir Mizinski <amirmizi6@gmail.com>
 > 
-> Signed-off-by: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
+> Added a YAML schema to support tpm tis i2c related dt-bindings for the I2c
+> PTP based physical layer.
+> 
+> This patch adds the documentation for corresponding device tree bindings of
+> I2C based Physical TPM.
+> Refer to the 'I2C Interface Definition' section in
+> 'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
+> for specification.
+> 
+> Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+> ---
+>  .../bindings/security/tpm/tpm-tis-i2c.yaml         | 51 ++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+> new file mode 100644
+> index 0000000..628c8f3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-See
+Dual license new bindings please:
 
-https://lore.kernel.org/linux-kselftest/20200519134838.GA17129@linux.intel.com/T/#mf762512a67f0b23db5663d6d67746cb94b812931
+(GPL-2.0-only OR BSD-2-Clause)
 
-The comments about the fixes tag and acronym spelling were not
-addressed. The code change looks great tho now, thanks.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: I2C PTP based TPM Device Tree Bindings
+> +
+> +maintainers:
+> +  - Amir Mizinski <amirmizi6@gmail.com>
+> +
+> +description:
+> +  Device Tree Bindings for I2C based Trusted Platform Module(TPM).
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
 
-/Jarkko
+You don't need 'oneOf'.
+
+> +          - enum:
+> +              # Nuvoton's Trusted Platform Module (TPM) (NPCT75x)
+> +              - nuvoton,npct75x
+> +          - const: tcg,tpm-tis-i2c
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupt:
+> +    maxItems: 1
+> +
+> +  crc-checksum:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Set this flag to enable CRC checksum.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      tpm_tis@2e {
+
+tpm@2e
+
+> +        compatible = "nuvoton,npct75x", "tcg,tpm-tis-i2c";
+> +        reg = <0x2e>;
+> +        crc-checksum;
+> +      };
+> +    };
+> +...
+> -- 
+> 2.7.4
+> 
