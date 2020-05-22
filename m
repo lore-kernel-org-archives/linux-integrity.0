@@ -2,82 +2,72 @@ Return-Path: <SRS0=IAFg=7E=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40944C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 May 2020 15:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D66C433E1
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 May 2020 16:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19A2120663
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 May 2020 15:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FE1520679
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 May 2020 16:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730326AbgEVP6K (ORCPT
+        id S1730325AbgEVQhS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 May 2020 11:58:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:44577 "EHLO mga01.intel.com"
+        Fri, 22 May 2020 12:37:18 -0400
+Received: from mga02.intel.com ([134.134.136.20]:10483 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730197AbgEVP6K (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 May 2020 11:58:10 -0400
-IronPort-SDR: kzZO4hNQgtnHm9zy2XtkNZfjq79tHzZbaVlIbnSLwS7AO1ZNr7z6o8JVwt3HylXpYIm9+tmqIe
- MGWPZeoUIhXQ==
+        id S1729040AbgEVQhR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 May 2020 12:37:17 -0400
+IronPort-SDR: 1QtKuzXxy09gjlss3IrGdLLb8GCyZSlFpWrR0I3rvOBijZmSoBCNwKJ2wJL2ONhMdVDOFybskA
+ 7bz7gIStYOZQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2020 08:58:08 -0700
-IronPort-SDR: pkK/fLJCumwrB+oyEPmtCK6vCTNlGzgU8s2v3iqTADOPYUBjuVlau2cK9bmkOEsbr+pAUrX7Wi
- y0YDZuyjMvKw==
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 May 2020 09:37:16 -0700
+IronPort-SDR: JEidF67PYSgBq5aX5xATp9ya5JSrCiRO+JzkEuIQOb6UmY6yIawRJ1h3RwT9Xv4uv4rOtOTBEX
+ sbadxAt4klzg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,422,1583222400"; 
-   d="scan'208";a="440893711"
+   d="scan'208";a="300722038"
 Received: from omillerx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.43.59])
-  by orsmga005.jf.intel.com with ESMTP; 22 May 2020 08:58:06 -0700
-Date:   Fri, 22 May 2020 18:58:06 +0300
+  by fmsmga002.fm.intel.com with ESMTP; 22 May 2020 09:37:12 -0700
+Date:   Fri, 22 May 2020 19:37:14 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jmorris@namei.org, dhowells@redhat.com
-Subject: [GIT PULL] tpmdd updates for Linux v5.8
-Message-ID: <20200522155806.GA9053@linux.intel.com>
+To:     Nikita Sobolev <Nikita.Sobolev@synopsys.com>
+Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        Petr Vorel <petr.vorel@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-snps-arc@lists.infradead.org
+Subject: Re: [PATCH v3] Kernel selftests: Add check if TPM devices are
+ supported
+Message-ID: <20200522163714.GA10319@linux.intel.com>
+References: <20200521144344.1886-1-Nikita.Sobolev@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20200521144344.1886-1-Nikita.Sobolev@synopsys.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+On Thu, May 21, 2020 at 05:43:44PM +0300, Nikita Sobolev wrote:
+> TPM2 tests set uses /dev/tpm0 and /dev/tpmrm0 without check if they
+> are available. In case, when these devices are not available test
+> fails, but expected behaviour is skipped test.
+> 
+> Signed-off-by: Nikita Sobolev <Nikita.Sobolev@synopsys.com>
 
-Updates for Linux v5.8.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+Thank you.
 
 /Jarkko
-
-The following changes since commit 051143e1602d90ea71887d92363edd539d411de5:
-
-  Merge tag 'apparmor-pr-2020-05-21' of git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor (2020-05-21 16:43:35 -0700)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/users/jjs/linux-tpmdd.git tags/tpmdd-next-20200522
-
-for you to fetch changes up to ab91c2a89f86be2898cee208d492816ec238b2cf:
-
-  tpm: eventlog: Replace zero-length array with flexible-array member (2020-05-22 18:50:12 +0300)
-
-----------------------------------------------------------------
-tpmdd updates for Linux v5.8
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      tpm/tpm_ftpm_tee: Use UUID API for exporting the UUID
-
-Gustavo A. R. Silva (1):
-      tpm: eventlog: Replace zero-length array with flexible-array member
-
- drivers/char/tpm/eventlog/tpm2.c | 12 +++++-------
- drivers/char/tpm/tpm_ftpm_tee.c  |  2 +-
- include/linux/tpm_eventlog.h     |  2 +-
- 3 files changed, 7 insertions(+), 9 deletions(-)
