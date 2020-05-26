@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF707C433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 May 2020 14:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C7FC433E0
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 May 2020 14:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDFBE207CB
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 May 2020 14:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08739207CB
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 May 2020 14:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbgEZOSA (ORCPT
+        id S1728942AbgEZOSA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Tue, 26 May 2020 10:18:00 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:49594 "EHLO
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:49590 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727997AbgEZOSA (ORCPT
+        with ESMTP id S1727976AbgEZOSA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 26 May 2020 10:18:00 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 04QEHZAU008687;
-        Tue, 26 May 2020 17:17:35 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 04QEHYro008680;
+        Tue, 26 May 2020 17:17:34 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id EA22A639BE; Tue, 26 May 2020 17:17:35 +0300 (IDT)
+        id BBEA9639BE; Tue, 26 May 2020 17:17:34 +0300 (IDT)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -38,10 +38,11 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v9 7/8] tpm: Add YAML schema for TPM TIS I2C options
-Date:   Tue, 26 May 2020 17:16:57 +0300
-Message-Id: <20200526141658.157801-8-amirmizi6@gmail.com>
+        Amir Mizinski <amirmizi6@gmail.com>,
+        Benoit Houyere <benoit.houyere@st.com>
+Subject: [PATCH v9 5/8] tpm: Handle an exception for TPM Firmware Update mode.
+Date:   Tue, 26 May 2020 17:16:55 +0300
+Message-Id: <20200526141658.157801-6-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200526141658.157801-1-amirmizi6@gmail.com>
 References: <20200526141658.157801-1-amirmizi6@gmail.com>
@@ -54,77 +55,44 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Added a YAML schema to support tpm tis i2c related dt-bindings for the I2c
-PTP based physical layer.
+An extra precaution for TPM Firmware Update Mode.
+For example if TPM power was cut while in Firmware update, platform
+should ignore "selftest" failure and skip TPM initialization sequence.
 
-This patch adds the documentation for corresponding device tree bindings of
-I2C based Physical TPM.
-Refer to the 'I2C Interface Definition' section in
-'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
-for specification.
-
+Suggested-by: Benoit Houyere <benoit.houyere@st.com>
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 ---
- .../bindings/security/tpm/tpm-tis-i2c.yaml         | 50 ++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+ drivers/char/tpm/tpm2-cmd.c | 4 ++++
+ include/linux/tpm.h         | 1 +
+ 2 files changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
-new file mode 100644
-index 0000000..68b13d5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 7603295..6e42946 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -727,6 +727,10 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 
+ 	rc = tpm2_do_selftest(chip);
 +
-+title: I2C PTP based TPM Device Tree Bindings
++	if (rc == TPM2_RC_UPGRADE || rc == TPM2_RC_COMMAND_CODE)
++		return 0;
 +
-+maintainers:
-+  - Amir Mizinski <amirmizi6@gmail.com>
-+
-+description:
-+  Device Tree Bindings for I2C based Trusted Platform Module(TPM).
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          # Nuvoton's Trusted Platform Module (TPM) (NPCT75x)
-+          - nuvoton,npct75x
-+      - const: tcg,tpm-tis-i2c
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupt:
-+    maxItems: 1
-+
-+  crc-checksum:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Set this flag to enable CRC checksum.
-+
-+required:
-+  - compatible
-+  - reg
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      tpm@2e {
-+        compatible = "nuvoton,npct75x", "tcg,tpm-tis-i2c";
-+        reg = <0x2e>;
-+        crc-checksum;
-+      };
-+    };
-+...
+ 	if (rc && rc != TPM2_RC_INITIALIZE)
+ 		goto out;
+ 
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 03e9b18..5a2e031 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -199,6 +199,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+ 	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_UPGRADE         = 0x012D,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
 -- 
 2.7.4
 
