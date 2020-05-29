@@ -7,260 +7,213 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983E4C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri, 29 May 2020 08:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A038BC433E0
+	for <linux-integrity@archiver.kernel.org>; Fri, 29 May 2020 08:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72F8D2075A
-	for <linux-integrity@archiver.kernel.org>; Fri, 29 May 2020 08:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E4122075A
+	for <linux-integrity@archiver.kernel.org>; Fri, 29 May 2020 08:27:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mvZnjn9x"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fMixoOPZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbgE2I1Y (ORCPT
+        id S1726877AbgE2I1a (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 29 May 2020 04:27:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40610 "EHLO
+        Fri, 29 May 2020 04:27:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbgE2I1X (ORCPT
+        with ESMTP id S1726857AbgE2I10 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 29 May 2020 04:27:23 -0400
+        Fri, 29 May 2020 04:27:26 -0400
 Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 941B6C03E969
-        for <linux-integrity@vger.kernel.org>; Fri, 29 May 2020 01:27:22 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id k5so1521258lji.11
-        for <linux-integrity@vger.kernel.org>; Fri, 29 May 2020 01:27:22 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA070C08C5C6
+        for <linux-integrity@vger.kernel.org>; Fri, 29 May 2020 01:27:25 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id s1so1584778ljo.0
+        for <linux-integrity@vger.kernel.org>; Fri, 29 May 2020 01:27:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GD1xOkqu8g05RnnmG4kL93iITTCz/UawAKS6BNf7nuw=;
-        b=mvZnjn9x4WPgj5i1nN7kNGVgyim1CRgFXzrIIpiosZlgLsYMovUM5TonHSgUC0l+MF
-         sUek9n766jP3nFi5danATXG1mvgxejnSme+IVMV7nFxXUX60Dv1+xhq3R4p06q+FWuwb
-         q2aUhimJJrjLduAiSRBqSLaYx76jo0ZZ200ogjpcml+FUBZ/3hlJx4EB0qJhqBwjVu5r
-         prsIICu693sxP1MnVoKtgtw3tJ+AP2WGn1TsdIwUn7E6Mg5NDpueVawNihyuZLLDqRYu
-         uDkrkSd/VT5s6UeeBwYyUoQKEVqtKU8DR8I6Vv7C06RBk81mZs2gF6G0ir4d0hp8p87m
-         XA/Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Ly/hqC+OpwfmKTz5BxiBCk11qr5IjD5u5LkJ+5oge9k=;
+        b=fMixoOPZX9wwxzXYWIK3T9u257kMOLufFfxlZ6VG7Xi5Aiw6k1i08rE/cCqEgFBuYs
+         kDYZRtQyZj16hXmhfq2TJpjZP2Jahqy6RXjl4dtwq5ApR7QRfo7oYCZwGCLDw1L/EUc2
+         O1dNAXdCUbIc9XeHW8Kk+m9AQEiIm5ObrL1v/ynzHLwl0jbLMzfwa3xuxIRbbswuIkG9
+         8zh/mt8BIRGga9pC8An7dICBAdY47HsPYLyQsZLIh72GOSXU7RoHhm9K+F1szaj4gvFu
+         SG0V5dUZ3CsFiRpppHPk3mWZqFbe1USvDIdcQdYsdeneJMtN9Dkr7+IUD8r+gADBNYKZ
+         s3Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GD1xOkqu8g05RnnmG4kL93iITTCz/UawAKS6BNf7nuw=;
-        b=EYqcXf24h1tFr5nglbDzEZaLYUKnBXKeE2dMWo5gaXhF9Liyw54/sncRKs3g+Cicac
-         jD2KzaCsm/MEICQjwyT+FcztjBcg+XdArlFecoLTef0luAXEYZrqD3Xf5wqyUtOys4jd
-         CMMnaKbDoAlDAD2njsd4F1PLv8sNjHRAZOb3POAz5Ibq0Tmq7byBXXb9LmfL8wDTmvyL
-         LQZlElzRPuyJ7OqAXMbCIMLRzfpWoPiA6ENrdZVX9metJSdjqz35lnD2QNhDQxjl/V0a
-         5xpycX80DQ6szkm6PRgb8Y4RHO8+i3H3iiHXpTkMZJbQ7SLpJW18xAZp7Znl0D5QOqJs
-         ba/A==
-X-Gm-Message-State: AOAM532xmU3X5JFpzgtmOrw7WuLHvf4dLsV/yhePx1STczVOOHmOKUmr
-        4prioM2PoMR3RlU/MiZSLT/OQQ==
-X-Google-Smtp-Source: ABdhPJySbMLGu6LHBb0xkzhK3qr9+Ugvg7j1p1JSZZrSOGbfVyKhwBvkpIKGM4nBxOMHgKJMcDpj7w==
-X-Received: by 2002:a2e:890e:: with SMTP id d14mr3501516lji.216.1590740840985;
-        Fri, 29 May 2020 01:27:20 -0700 (PDT)
+         :references;
+        bh=Ly/hqC+OpwfmKTz5BxiBCk11qr5IjD5u5LkJ+5oge9k=;
+        b=dlquyuKC0PwFVxCgTDaP2WWSG87/aaH5P9sS64TCAac1GNd76SUl6depzYrkXzq8Ax
+         OyX+WKlcXJfQdS9AepuUkTBymk2/4zCr3XelpgwiEFVPBHvlVce07o35cmScGTB5zwH3
+         P6x9+2yaHFTgQdKUuh25poRxG3HKo5Ez5LZBAoZsrbYnEdbZ7UQKpFYuj+Di3Az2krAF
+         9I/UH8smKm56rKAbUmEuYZESLn5KBkTQ+r6uX6xsxatpQJjXIKw2f5IGTIJcVAz2iFpF
+         PROVXIO8HD13SeriM5boBPXlkTLzigL4JZh1KIowGW84v8WiKiefjPMg/AZQNjAzmFYQ
+         BqCQ==
+X-Gm-Message-State: AOAM532r1eArugQf3UUkSkrv5uSXzoOhP7jjnzP74M4Tp9uYQswQSu48
+        L757asJgkK/evC9sV0/xW0k93w==
+X-Google-Smtp-Source: ABdhPJz/Iw8lBOjnYoGclA3SoKAUkYMHpXffSMuQbyC0cSy5cch0eUUf3a6JK59YZDC+1JKnlZoX/A==
+X-Received: by 2002:a2e:998c:: with SMTP id w12mr3622599lji.143.1590740844214;
+        Fri, 29 May 2020 01:27:24 -0700 (PDT)
 Received: from localhost.localdomain ([176.59.41.83])
-        by smtp.gmail.com with ESMTPSA id y20sm1878450lji.31.2020.05.29.01.27.19
+        by smtp.gmail.com with ESMTPSA id y20sm1878450lji.31.2020.05.29.01.27.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 01:27:20 -0700 (PDT)
+        Fri, 29 May 2020 01:27:23 -0700 (PDT)
 From:   Maxim Uvarov <maxim.uvarov@linaro.org>
 To:     linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
 Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
         gregkh@linuxfoundation.org, jens.wiklander@linaro.org,
         linux-integrity@vger.kernel.org, arnd@linaro.org,
         sumit.garg@linaro.org, Maxim Uvarov <maxim.uvarov@linaro.org>
-Subject: [PATCHv5 1/3] optee: do drivers initialization before and after tee-supplicant run
-Date:   Fri, 29 May 2020 11:26:59 +0300
-Message-Id: <20200529082701.13457-2-maxim.uvarov@linaro.org>
+Subject: [PATCHv5 3/3] tpm_ftpm_tee: register driver on TEE bus
+Date:   Fri, 29 May 2020 11:27:01 +0300
+Message-Id: <20200529082701.13457-4-maxim.uvarov@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200529082701.13457-1-maxim.uvarov@linaro.org>
 References: <20200529082701.13457-1-maxim.uvarov@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Some drivers (like ftpm) can operate only after tee-supplicant
-runs because of tee-supplicant provides things like storage
-services.  This patch splits probe of non tee-supplicant dependable
-drivers to the early stage, and after tee-supplicant run probe other
-drivers.
+Register driver on the TEE bus. The module tee registers bus,
+and module optee calls optee_enumerate_devices() to scan
+all devices on the bus. Trusted Application for this driver
+can be Early TA's (can be compiled into optee-os). In that
+case it will be on OPTEE bus before linux booting. Also
+optee-suplicant application is needed to be loaded between
+OPTEE module and ftpm module to maintain functionality
+for fTPM driver.
 
 Signed-off-by: Maxim Uvarov <maxim.uvarov@linaro.org>
 Suggested-by: Sumit Garg <sumit.garg@linaro.org>
 Suggested-by: Arnd Bergmann <arnd@linaro.org>
 ---
- drivers/tee/optee/core.c          | 24 +++++++++++++++++++++---
- drivers/tee/optee/device.c        | 17 +++++++++++------
- drivers/tee/optee/optee_private.h | 10 +++++++++-
- 3 files changed, 41 insertions(+), 10 deletions(-)
+ drivers/char/tpm/tpm_ftpm_tee.c | 70 ++++++++++++++++++++++++++++-----
+ 1 file changed, 60 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-index 99698b8a3a74..bf0851fdf108 100644
---- a/drivers/tee/optee/core.c
-+++ b/drivers/tee/optee/core.c
-@@ -17,6 +17,7 @@
- #include <linux/tee_drv.h>
- #include <linux/types.h>
- #include <linux/uaccess.h>
-+#include <linux/workqueue.h>
- #include "optee_private.h"
- #include "optee_smc.h"
- #include "shm_pool.h"
-@@ -218,6 +219,11 @@ static void optee_get_version(struct tee_device *teedev,
- 	*vers = v;
- }
- 
-+static void optee_bus_scan(struct work_struct *work)
-+{
-+	WARN_ON(optee_enumerate_devices(PTA_CMD_GET_DEVICES_SUPP));
-+}
-+
- static int optee_open(struct tee_context *ctx)
- {
- 	struct optee_context_data *ctxdata;
-@@ -241,8 +247,18 @@ static int optee_open(struct tee_context *ctx)
- 			kfree(ctxdata);
- 			return -EBUSY;
- 		}
--	}
- 
-+		if (!optee->scan_bus_done) {
-+			INIT_WORK(&optee->scan_bus_work, optee_bus_scan);
-+			optee->scan_bus_wq = create_workqueue("optee_bus_scan");
-+			if (!optee->scan_bus_wq) {
-+				kfree(ctxdata);
-+				return -ECHILD;
-+			}
-+			queue_work(optee->scan_bus_wq, &optee->scan_bus_work);
-+			optee->scan_bus_done = true;
-+		}
-+	}
- 	mutex_init(&ctxdata->mutex);
- 	INIT_LIST_HEAD(&ctxdata->sess_list);
- 
-@@ -296,8 +312,10 @@ static void optee_release(struct tee_context *ctx)
- 
- 	ctx->data = NULL;
- 
--	if (teedev == optee->supp_teedev)
-+	if (teedev == optee->supp_teedev) {
-+		destroy_workqueue(optee->scan_bus_wq);
- 		optee_supp_release(&optee->supp);
-+	}
- }
- 
- static const struct tee_driver_ops optee_ops = {
-@@ -675,7 +693,7 @@ static int optee_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, optee);
- 
--	rc = optee_enumerate_devices();
-+	rc = optee_enumerate_devices(PTA_CMD_GET_DEVICES);
- 	if (rc) {
- 		optee_remove(pdev);
- 		return rc;
-diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
-index e3a148521ec1..d4931dad07aa 100644
---- a/drivers/tee/optee/device.c
-+++ b/drivers/tee/optee/device.c
-@@ -21,7 +21,6 @@
-  * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
-  * TEE_ERROR_SHORT_BUFFER - Output buffer size less than required
+diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+index 22bf553ccf9d..28da638360d8 100644
+--- a/drivers/char/tpm/tpm_ftpm_tee.c
++++ b/drivers/char/tpm/tpm_ftpm_tee.c
+@@ -214,11 +214,10 @@ static int ftpm_tee_match(struct tee_ioctl_version_data *ver, const void *data)
+  * Return:
+  *	On success, 0. On failure, -errno.
   */
--#define PTA_CMD_GET_DEVICES		0x0
- 
- static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+-static int ftpm_tee_probe(struct platform_device *pdev)
++static int ftpm_tee_probe(struct device *dev)
  {
-@@ -32,7 +31,8 @@ static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
- }
+ 	int rc;
+ 	struct tpm_chip *chip;
+-	struct device *dev = &pdev->dev;
+ 	struct ftpm_tee_private *pvt_data = NULL;
+ 	struct tee_ioctl_open_session_arg sess_arg;
  
- static int get_devices(struct tee_context *ctx, u32 session,
--		       struct tee_shm *device_shm, u32 *shm_size)
-+		       struct tee_shm *device_shm, u32 *shm_size,
-+		       u32 func)
- {
- 	int ret = 0;
- 	struct tee_ioctl_invoke_arg inv_arg;
-@@ -42,7 +42,7 @@ static int get_devices(struct tee_context *ctx, u32 session,
- 	memset(&param, 0, sizeof(param));
- 
- 	/* Invoke PTA_CMD_GET_DEVICES function */
--	inv_arg.func = PTA_CMD_GET_DEVICES;
-+	inv_arg.func = func;
- 	inv_arg.session = session;
- 	inv_arg.num_params = 4;
- 
-@@ -87,7 +87,7 @@ static int optee_register_device(const uuid_t *device_uuid, u32 device_id)
+@@ -297,6 +296,13 @@ static int ftpm_tee_probe(struct platform_device *pdev)
  	return rc;
  }
  
--int optee_enumerate_devices(void)
-+static int __optee_enumerate_devices(u32 func)
- {
- 	const uuid_t pta_uuid =
- 		UUID_INIT(0x7011a688, 0xddde, 0x4053,
-@@ -118,7 +118,7 @@ int optee_enumerate_devices(void)
- 		goto out_ctx;
- 	}
- 
--	rc = get_devices(ctx, sess_arg.session, NULL, &shm_size);
-+	rc = get_devices(ctx, sess_arg.session, NULL, &shm_size, func);
- 	if (rc < 0 || !shm_size)
- 		goto out_sess;
- 
-@@ -130,7 +130,7 @@ int optee_enumerate_devices(void)
- 		goto out_sess;
- 	}
- 
--	rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size);
-+	rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size, func);
- 	if (rc < 0)
- 		goto out_shm;
- 
-@@ -158,3 +158,8 @@ int optee_enumerate_devices(void)
- 
- 	return rc;
- }
-+
-+int optee_enumerate_devices(u32 func)
++static int ftpm_plat_tee_probe(struct platform_device *pdev)
 +{
-+	return  __optee_enumerate_devices(func);
++	struct device *dev = &pdev->dev;
++
++	return ftpm_tee_probe(dev);
 +}
-diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
-index d9c5037b4e03..8b71839a357e 100644
---- a/drivers/tee/optee/optee_private.h
-+++ b/drivers/tee/optee/optee_private.h
-@@ -78,6 +78,9 @@ struct optee_supp {
-  * @memremaped_shm	virtual address of memory in shared memory pool
-  * @sec_caps:		secure world capabilities defined by
-  *			OPTEE_SMC_SEC_CAP_* in optee_smc.h
-+ * @scan_bus_done	flag if device registation was already done.
-+ * @scan_bus_wq		workqueue to scan optee bus and register optee drivers
-+ * @scan_bus_work	workq to scan optee bus and register optee drivers
++
+ /**
+  * ftpm_tee_remove() - remove the TPM device
+  * @pdev: the platform_device description.
+@@ -304,9 +310,9 @@ static int ftpm_tee_probe(struct platform_device *pdev)
+  * Return:
+  *	0 always.
   */
- struct optee {
- 	struct tee_device *supp_teedev;
-@@ -89,6 +92,9 @@ struct optee {
- 	struct tee_shm_pool *pool;
- 	void *memremaped_shm;
- 	u32 sec_caps;
-+	bool   scan_bus_done;
-+	struct workqueue_struct *scan_bus_wq;
-+	struct work_struct scan_bus_work;
+-static int ftpm_tee_remove(struct platform_device *pdev)
++static int ftpm_tee_remove(struct device *dev)
+ {
+-	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
++	struct ftpm_tee_private *pvt_data = dev_get_drvdata(dev);
+ 
+ 	/* Release the chip */
+ 	tpm_chip_unregister(pvt_data->chip);
+@@ -328,11 +334,18 @@ static int ftpm_tee_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int ftpm_plat_tee_remove(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++
++	return ftpm_tee_remove(dev);
++}
++
+ /**
+  * ftpm_tee_shutdown() - shutdown the TPM device
+  * @pdev: the platform_device description.
+  */
+-static void ftpm_tee_shutdown(struct platform_device *pdev)
++static void ftpm_plat_tee_shutdown(struct platform_device *pdev)
+ {
+ 	struct ftpm_tee_private *pvt_data = dev_get_drvdata(&pdev->dev);
+ 
+@@ -347,17 +360,54 @@ static const struct of_device_id of_ftpm_tee_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, of_ftpm_tee_ids);
+ 
+-static struct platform_driver ftpm_tee_driver = {
++static struct platform_driver ftpm_tee_plat_driver = {
+ 	.driver = {
+ 		.name = "ftpm-tee",
+ 		.of_match_table = of_match_ptr(of_ftpm_tee_ids),
+ 	},
+-	.probe = ftpm_tee_probe,
+-	.remove = ftpm_tee_remove,
+-	.shutdown = ftpm_tee_shutdown,
++	.shutdown = ftpm_plat_tee_shutdown,
++	.probe = ftpm_plat_tee_probe,
++	.remove = ftpm_plat_tee_remove,
++};
++
++/* UUID of the fTPM TA */
++static const struct tee_client_device_id optee_ftpm_id_table[] = {
++	{UUID_INIT(0xbc50d971, 0xd4c9, 0x42c4,
++		   0x82, 0xcb, 0x34, 0x3f, 0xb7, 0xf3, 0x78, 0x96)},
++	{}
  };
  
- struct optee_session {
-@@ -173,7 +179,9 @@ void optee_free_pages_list(void *array, size_t num_entries);
- void optee_fill_pages_list(u64 *dst, struct page **pages, int num_pages,
- 			   size_t page_offset);
+-module_platform_driver(ftpm_tee_driver);
++MODULE_DEVICE_TABLE(tee, optee_ftpm_id_table);
++
++static struct tee_client_driver ftpm_tee_driver = {
++	.id_table	= optee_ftpm_id_table,
++	.driver		= {
++		.name		= "optee-ftpm",
++		.bus		= &tee_bus_type,
++		.probe		= ftpm_tee_probe,
++		.remove		= ftpm_tee_remove,
++	},
++};
++
++static int __init ftpm_mod_init(void)
++{
++	int rc;
++
++	rc = platform_driver_register(&ftpm_tee_plat_driver);
++	if (rc)
++		return rc;
++
++	return driver_register(&ftpm_tee_driver.driver);
++}
++
++static void __exit ftpm_mod_exit(void)
++{
++	platform_driver_unregister(&ftpm_tee_plat_driver);
++	driver_unregister(&ftpm_tee_driver.driver);
++}
++
++module_init(ftpm_mod_init);
++module_exit(ftpm_mod_exit);
  
--int optee_enumerate_devices(void);
-+#define PTA_CMD_GET_DEVICES		0x0
-+#define PTA_CMD_GET_DEVICES_SUPP	0x1
-+int optee_enumerate_devices(u32 func);
- 
- /*
-  * Small helpers
+ MODULE_AUTHOR("Thirupathaiah Annapureddy <thiruan@microsoft.com>");
+ MODULE_DESCRIPTION("TPM Driver for fTPM TA in TEE");
 -- 
 2.17.1
 
