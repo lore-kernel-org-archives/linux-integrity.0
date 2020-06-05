@@ -2,60 +2,59 @@ Return-Path: <SRS0=VH3P=7S=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF8FC433E5
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Jun 2020 23:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE89C433E1
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Jun 2020 23:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B96FC206A2
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Jun 2020 23:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C459206FA
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Jun 2020 23:01:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="X9Xd39sM"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DddQCiXR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbgFEXAu (ORCPT
+        id S1728539AbgFEXA1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Jun 2020 19:00:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46448 "EHLO
+        Fri, 5 Jun 2020 19:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbgFEXAe (ORCPT
+        with ESMTP id S1728504AbgFEXAX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Jun 2020 19:00:34 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2484EC08C5CB
-        for <linux-integrity@vger.kernel.org>; Fri,  5 Jun 2020 16:00:34 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id y18so4267812plr.4
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Jun 2020 16:00:34 -0700 (PDT)
+        Fri, 5 Jun 2020 19:00:23 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C326BC08C5C6
+        for <linux-integrity@vger.kernel.org>; Fri,  5 Jun 2020 16:00:23 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id w20so5839181pga.6
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Jun 2020 16:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5lbYp8Ah5PsaIVi4QJJDeodrUyhJmdB2XhNayDLcqg4=;
-        b=X9Xd39sMlyaFaDsKVcJ8nmOkzZyJ3sF0+ia3NlMgbiPN/DjckV6mw691tNQX5Eh/fX
-         iFU9jT5lWR8S6FCQkBWpOKGw3n3aIiukA2UCdHfPC1IPwPji8KyaIlFMbkFNEJG0ek+/
-         r2rW2WvDkIaQFixit5DMC0B8gT0N/0roYnqzY=
+        bh=JPCDjhWyTHrRtN+IrpzH/X2NJ9wHqJH6zPza8eFFddg=;
+        b=DddQCiXRX1Ff2VjJue5029khE7zXTPVOk4i+DChznThHLDeXlzG3+nvkXj6POMuacx
+         /eRQIscx6ELQ1tOSpsNWu/DTbYWenBGkNgLwCgp3TEntHPXj+XzM91HLMps6eoy05kRh
+         7kiDFmG4F4kh0v2oSO0tlMVuHdQJXQsAwU/4E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5lbYp8Ah5PsaIVi4QJJDeodrUyhJmdB2XhNayDLcqg4=;
-        b=jTCdh9yDjzBDLE0kFrt+stKToqa+6DHAWLc+eKtQS+gFm2uaOgIKHwdte9lKgxUheM
-         ZI98/eR7k2u23TYwuQjR0mIiUL8BnlNwrTFVPYXBAC1ar69jPy94llD6ivfGBrcifENf
-         Fj0ZhWkQ8oYUfyE5RppK4QiWqmThNrNrMK0O9YIj4A+frYvdFVZU3320hEc4VhQlUbxe
-         98fUEJktX7KLiqfsNRwl7RSC4VRU/DQ5gi33qEiVvnjeF34eivKxmQMGTkd834F2D0Lr
-         BD6xfujEGY3nCnpKv9DXHp7sHHO15wo6tf9dIwr+tUz6p220bzBLw1OKQm3uGFGFbHi9
-         oyQg==
-X-Gm-Message-State: AOAM530VIZ1PG9q/8Ef84X2LoAv4QhSRnpY4iC2Yr0FHhLDnp7sMkrWw
-        3HPY5kQQkRhFAeSelSbNWc5GbA==
-X-Google-Smtp-Source: ABdhPJzgVYLQyOZxOcb7SX3uvv2pqjz1hQwvUTTdKJpGNev9cMW+7bhSDkMdJrOjyWI0ETUi+YJusA==
-X-Received: by 2002:a17:90a:d3d7:: with SMTP id d23mr5266002pjw.233.1591398033613;
-        Fri, 05 Jun 2020 16:00:33 -0700 (PDT)
+        bh=JPCDjhWyTHrRtN+IrpzH/X2NJ9wHqJH6zPza8eFFddg=;
+        b=kQztIZNuMgs2+SzsOkwCkwqOFbsaa1Z3zk+ZX6SWjJHHF7dfscBBfIc8OdY/cQHBES
+         LcZ3GfclQ5DYHfUvWAifkNpbeeaoF1cvoYHcvmu16IV/5ydpjLGT1pe43D6KgDcffB+j
+         6B8FzGCt8GH381R0aMcp/p6qps8HT7wW7YDzEGm8PwoqTCzcJwB6h1ioCcszGluPhXvD
+         iPZd+O8c1oHTMEud3uyStTH1PdYM1xwb0NXXdzhYA5GtFGsG77NwnNaSmKiiU2nh8992
+         ITb9Jv0KGUpw7JBpgEMdIrStFGtGie62d/CIlVP9ThkWCRqf6iNOWcJ12oAWRUi86/lM
+         vRZw==
+X-Gm-Message-State: AOAM532kKsQXxb0PtkYX0vZnGesPXPKYc5dJPSGy31UKWqYPCRVZl28Z
+        ZaxuYuXU7+2yPCdvRY56fLONoA==
+X-Google-Smtp-Source: ABdhPJyTPXETXSC+SDrmIjf0gnNUpufJi6Oy/4CmnBDCfqCwUDWV86SBReuy8swdd2AyratRREv+ww==
+X-Received: by 2002:a62:770d:: with SMTP id s13mr12085282pfc.266.1591398023080;
+        Fri, 05 Jun 2020 16:00:23 -0700 (PDT)
 Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b140sm568974pfb.119.2020.06.05.16.00.30
+        by smtp.gmail.com with ESMTPSA id b140sm568974pfb.119.2020.06.05.16.00.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jun 2020 16:00:32 -0700 (PDT)
+        Fri, 05 Jun 2020 16:00:22 -0700 (PDT)
 From:   Scott Branden <scott.branden@broadcom.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -79,9 +78,9 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v6 7/8] MAINTAINERS: bcm-vk: add maintainer for Broadcom VK Driver
-Date:   Fri,  5 Jun 2020 15:59:58 -0700
-Message-Id: <20200605225959.12424-8-scott.branden@broadcom.com>
+Subject: [PATCH v6 4/8] firmware: test partial file reads of request_firmware_into_buf
+Date:   Fri,  5 Jun 2020 15:59:55 -0700
+Message-Id: <20200605225959.12424-5-scott.branden@broadcom.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200605225959.12424-1-scott.branden@broadcom.com>
 References: <20200605225959.12424-1-scott.branden@broadcom.com>
@@ -90,31 +89,125 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add maintainer entry for new Broadcom VK Driver
+Add firmware tests for partial file reads of request_firmware_into_buf.
 
 Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../selftests/firmware/fw_filesystem.sh       | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b045b70e54df..9fbf255fe093 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3656,6 +3656,13 @@ L:	netdev@vger.kernel.org
- S:	Supported
- F:	drivers/net/ethernet/broadcom/tg3.*
+diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
+index fcc281373b4d..38e89ba1b4d3 100755
+--- a/tools/testing/selftests/firmware/fw_filesystem.sh
++++ b/tools/testing/selftests/firmware/fw_filesystem.sh
+@@ -149,6 +149,26 @@ config_unset_into_buf()
+ 	echo 0 >  $DIR/config_into_buf
+ }
  
-+BROADCOM VK DRIVER
-+M:	Scott Branden <scott.branden@broadcom.com>
-+L:	bcm-kernel-feedback-list@broadcom.com
-+S:	Supported
-+F:	drivers/misc/bcm-vk/
-+F:	include/uapi/linux/misc/bcm_vk.h
++config_set_buf_size()
++{
++	echo $1 >  $DIR/config_buf_size
++}
 +
- BROCADE BFA FC SCSI DRIVER
- M:	Anil Gurumurthy <anil.gurumurthy@qlogic.com>
- M:	Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
++config_set_file_offset()
++{
++	echo $1 >  $DIR/config_file_offset
++}
++
++config_set_partial()
++{
++	echo 1 >  $DIR/config_partial
++}
++
++config_unset_partial()
++{
++	echo 0 >  $DIR/config_partial
++}
++
+ config_set_sync_direct()
+ {
+ 	echo 1 >  $DIR/config_sync_direct
+@@ -207,6 +227,35 @@ read_firmwares()
+ 	done
+ }
+ 
++read_firmwares_partial()
++{
++	if [ "$(cat $DIR/config_into_buf)" == "1" ]; then
++		fwfile="${FW_INTO_BUF}"
++	else
++		fwfile="${FW}"
++	fi
++
++	if [ "$1" = "xzonly" ]; then
++		fwfile="${fwfile}-orig"
++	fi
++
++	# Strip fwfile down to match partial offset and length
++	partial_data="$(cat $fwfile)"
++	partial_data="${partial_data:$2:$3}"
++
++	for i in $(seq 0 3); do
++		config_set_read_fw_idx $i
++
++		read_firmware="$(cat $DIR/read_firmware)"
++
++		# Verify the contents are what we expect.
++		if [ $read_firmware != $partial_data ]; then
++			echo "request #$i: partial firmware was not loaded" >&2
++			exit 1
++		fi
++	done
++}
++
+ read_firmwares_expect_nofile()
+ {
+ 	for i in $(seq 0 3); do
+@@ -319,6 +368,21 @@ test_batched_request_firmware_into_buf()
+ 	echo "OK"
+ }
+ 
++test_batched_request_firmware_into_buf_partial()
++{
++	echo -n "Batched request_firmware_into_buf_partial() $2 off=$3 size=$4 try #$1: "
++	config_reset
++	config_set_name $TEST_FIRMWARE_INTO_BUF_FILENAME
++	config_set_into_buf
++	config_set_partial
++	config_set_buf_size $4
++	config_set_file_offset $3
++	config_trigger_sync
++	read_firmwares_partial $2 $3 $4
++	release_all_firmware
++	echo "OK"
++}
++
+ test_batched_request_firmware_direct()
+ {
+ 	echo -n "Batched request_firmware_direct() $2 try #$1: "
+@@ -371,6 +435,22 @@ for i in $(seq 1 5); do
+ 	test_batched_request_firmware_into_buf $i normal
+ done
+ 
++for i in $(seq 1 5); do
++	test_batched_request_firmware_into_buf_partial $i normal 0 10
++done
++
++for i in $(seq 1 5); do
++	test_batched_request_firmware_into_buf_partial $i normal 0 5
++done
++
++for i in $(seq 1 5); do
++	test_batched_request_firmware_into_buf_partial $i normal 1 6
++done
++
++for i in $(seq 1 5); do
++	test_batched_request_firmware_into_buf_partial $i normal 2 10
++done
++
+ for i in $(seq 1 5); do
+ 	test_batched_request_firmware_direct $i normal
+ done
 -- 
 2.17.1
 
