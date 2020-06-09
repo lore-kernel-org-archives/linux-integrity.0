@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE68EC433DF
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C6CC433DF
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8941820734
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BE6220760
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ByJPGZ0f"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RSCYouRT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbgFIW6U (ORCPT
+        id S1728960AbgFIW6q (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 9 Jun 2020 18:58:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60754 "EHLO
+        Tue, 9 Jun 2020 18:58:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729031AbgFIW5q (ORCPT
+        with ESMTP id S1728472AbgFIW5a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Jun 2020 18:57:46 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D8CC00862C
-        for <linux-integrity@vger.kernel.org>; Tue,  9 Jun 2020 15:57:36 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id h185so226127pfg.2
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Jun 2020 15:57:36 -0700 (PDT)
+        Tue, 9 Jun 2020 18:57:30 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9F32C008632
+        for <linux-integrity@vger.kernel.org>; Tue,  9 Jun 2020 15:57:22 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id b16so202337pfi.13
+        for <linux-integrity@vger.kernel.org>; Tue, 09 Jun 2020 15:57:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cM+rCpZobNDrkDN9s+cJ/Q1XgGFeWXzm3UzYtFYpyy4=;
-        b=ByJPGZ0fwC+pHYx4+jr86EPnUJT03kDN80FFAKD7I5rX+wsF2f7csCPEgbu0Vv5JXD
-         ZyLWQTOAA/02+ZV08uuMrd6LxZHpZq8t+zpNoZQcJEL4vViRm5Z4Qrylf4XzyxMH9i+e
-         6RPwx+6tj/r3KDMiIgbqsv1cvcx5htVk6ttBo=
+        bh=sbyKrRW4jzkycRQ+AN5ObGaOSkiAmVbPRVaakkLPnrs=;
+        b=RSCYouRTVQme/oye/dD+eYbjykynXM6pZrpoJht84BG8sOQFmmktoX6n+nTmuRfWsZ
+         zUTRaFbBUiRvdvZXWXuQhZTJtl5zjNpm2PP0xrn3UprLwSFPDQU+CGecbV73c9aDJC3A
+         P+glRcPAT8mNOP3NA8BZjC03fKUSxb7iT5h30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cM+rCpZobNDrkDN9s+cJ/Q1XgGFeWXzm3UzYtFYpyy4=;
-        b=tU4gPYWu28PEg3ZttC8YXBdIrfracZravbUk2M/N3uATeWQUF8nZwsiAyQns1Jnr5x
-         PLTqHlRJKOJy+wpPgY7rUZzkMfKXH0X69D1cKAGDtpve0RhuJW3MNTYP7RZUrX3jScLi
-         II3uAAhUF3CZFuZ4m4yBxhOguK/2b2J0MSnqudaWL979Vz1nT6NwCiHWlfO/tegJCqWW
-         1fRyWrx5G26Ft+bjHAJQXdJ3jh2z0GUbtAnqKfIM1XhSMrWDv7tc2HYOXDDCdu5+3hYu
-         LW4w6Wu/LYDf7SrbhUoaBl8BX/wl+N86vC6GFeDoi+xb+DTlDHQH7YT+OtEsLux7Vexu
-         uESA==
-X-Gm-Message-State: AOAM532B1nztxSz8gH9JuypGUUc6y8OVilYX3ZyguNvbTRlrM5vzh+xZ
-        erlo2Ax8v9HE5LLpL+jyPsDEmg==
-X-Google-Smtp-Source: ABdhPJzt2on8TT/VRipqTfFNR4O9ShRqcpSzbecmhCO8fd5EePg4uWMnzAa84LqTYB4Rh0Gh65kwjA==
-X-Received: by 2002:a63:145f:: with SMTP id 31mr212923pgu.383.1591743455670;
-        Tue, 09 Jun 2020 15:57:35 -0700 (PDT)
+        bh=sbyKrRW4jzkycRQ+AN5ObGaOSkiAmVbPRVaakkLPnrs=;
+        b=uhJObRtsZ848Yesjtmxtr8iSBU1B5JzaTWFkPvAHvbj9hk0zITr73x0XCfN8h/Y7K6
+         cm1dQ0m5VzjzJHZISvKtePYnRkaoukmdaX2jxPhdf35ndjyVEnsXSqhjkgQehN7motPN
+         HdQQK0Sb3TtVdgM1qouo2Q7BDohYdFBHHgd9dPs6eNj1jadPaX8wsVm5PDfxoFRChNSI
+         I8zVGtkMSGvhpRw95K/Fz0deFPZsO9qULPQdaxOpmiM1WLFE0+P3esBiYNUIJ38yIGFr
+         cFygm5SLVxVvBYxlVcyrcgJthBn2jnBixCze4AyrrT9J1BwxEDP5E8ccOJu9eEgw1W9U
+         +6Dw==
+X-Gm-Message-State: AOAM533qO3ppNCuWtcWMaX6IQjE03md4G95Vq2ouyWCVue335Xf69ljK
+        CMeVIfvusMB2S8KTy460d/8ygQ==
+X-Google-Smtp-Source: ABdhPJyYlpAqo9x0fF+jqv8HBPz2t/v+Q/HNDAEZ3vwcbr1fMgD8krB8CsiCT83vMvibTPSXW8qvqA==
+X-Received: by 2002:aa7:93b4:: with SMTP id x20mr97288pff.9.1591743441343;
+        Tue, 09 Jun 2020 15:57:21 -0700 (PDT)
 Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p8sm9104978pgs.29.2020.06.09.15.57.32
+        by smtp.gmail.com with ESMTPSA id p8sm9104978pgs.29.2020.06.09.15.57.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 15:57:34 -0700 (PDT)
+        Tue, 09 Jun 2020 15:57:20 -0700 (PDT)
 From:   Scott Branden <scott.branden@broadcom.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>,
         Wolfram Sang <wsa@kernel.org>,
@@ -79,9 +79,9 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v8 8/8] ima: add FIRMWARE_PARTIAL_READ support
-Date:   Tue,  9 Jun 2020 15:56:56 -0700
-Message-Id: <20200609225656.18663-9-scott.branden@broadcom.com>
+Subject: [PATCH v8 4/8] firmware: test partial file reads of request_firmware_into_buf
+Date:   Tue,  9 Jun 2020 15:56:52 -0700
+Message-Id: <20200609225656.18663-5-scott.branden@broadcom.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200609225656.18663-1-scott.branden@broadcom.com>
 References: <20200609225656.18663-1-scott.branden@broadcom.com>
@@ -90,67 +90,125 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add FIRMWARE_PARTIAL_READ support for integrity
-measurement on partial reads of firmware files.
+Add firmware tests for partial file reads of request_firmware_into_buf.
 
 Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 ---
- security/integrity/ima/ima_main.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ .../selftests/firmware/fw_filesystem.sh       | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 800fb3bba418..fc5134807acf 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -609,6 +609,9 @@ void ima_post_path_mknod(struct dentry *dentry)
-  */
- int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- {
-+	enum ima_hooks func;
-+	u32 secid;
-+
- 	/*
- 	 * READING_FIRMWARE_PREALLOC_BUFFER
- 	 *
-@@ -617,11 +620,27 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
- 	 * of IMA's signature verification any more than when using two
- 	 * buffers?
- 	 */
--	return 0;
-+	if (read_id != READING_FIRMWARE_PARTIAL_READ)
-+		return 0;
-+
-+	if (!file) {
-+		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
-+		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
-+			pr_err("Prevent firmware loading_store.\n");
-+			return -EACCES;	/* INTEGRITY_UNKNOWN */
-+		}
-+		return 0;
-+	}
-+
-+	func = read_idmap[read_id] ?: FILE_CHECK;
-+	security_task_getsecid(current, &secid);
-+	return process_measurement(file, current_cred(), secid, NULL,
-+				   0, MAY_READ, func);
+diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
+index fcc281373b4d..afc2e469ac06 100755
+--- a/tools/testing/selftests/firmware/fw_filesystem.sh
++++ b/tools/testing/selftests/firmware/fw_filesystem.sh
+@@ -149,6 +149,26 @@ config_unset_into_buf()
+ 	echo 0 >  $DIR/config_into_buf
  }
  
- const int read_idmap[READING_MAX_ID] = {
- 	[READING_FIRMWARE] = FIRMWARE_CHECK,
-+	[READING_FIRMWARE_PARTIAL_READ] = FIRMWARE_CHECK,
- 	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
- 	[READING_MODULE] = MODULE_CHECK,
- 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
-@@ -648,6 +667,9 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 	enum ima_hooks func;
- 	u32 secid;
- 
-+	if (read_id == READING_FIRMWARE_PARTIAL_READ)
-+		return 0;
++config_set_buf_size()
++{
++	echo $1 >  $DIR/config_buf_size
++}
 +
- 	if (!file && read_id == READING_FIRMWARE) {
- 		if ((ima_appraise & IMA_APPRAISE_FIRMWARE) &&
- 		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
++config_set_file_offset()
++{
++	echo $1 >  $DIR/config_file_offset
++}
++
++config_set_partial()
++{
++	echo 1 >  $DIR/config_partial
++}
++
++config_unset_partial()
++{
++	echo 0 >  $DIR/config_partial
++}
++
+ config_set_sync_direct()
+ {
+ 	echo 1 >  $DIR/config_sync_direct
+@@ -207,6 +227,35 @@ read_firmwares()
+ 	done
+ }
+ 
++read_partial_firmwares()
++{
++	if [ "$(cat $DIR/config_into_buf)" == "1" ]; then
++		fwfile="${FW_INTO_BUF}"
++	else
++		fwfile="${FW}"
++	fi
++
++	if [ "$1" = "xzonly" ]; then
++		fwfile="${fwfile}-orig"
++	fi
++
++	# Strip fwfile down to match partial offset and length
++	partial_data="$(cat $fwfile)"
++	partial_data="${partial_data:$2:$3}"
++
++	for i in $(seq 0 3); do
++		config_set_read_fw_idx $i
++
++		read_firmware="$(cat $DIR/read_firmware)"
++
++		# Verify the contents are what we expect.
++		if [ $read_firmware != $partial_data ]; then
++			echo "request #$i: partial firmware was not loaded" >&2
++			exit 1
++		fi
++	done
++}
++
+ read_firmwares_expect_nofile()
+ {
+ 	for i in $(seq 0 3); do
+@@ -319,6 +368,21 @@ test_batched_request_firmware_into_buf()
+ 	echo "OK"
+ }
+ 
++test_batched_request_partial_firmware_into_buf()
++{
++	echo -n "Batched request_partial_firmware_into_buf() $2 off=$3 size=$4 try #$1: "
++	config_reset
++	config_set_name $TEST_FIRMWARE_INTO_BUF_FILENAME
++	config_set_into_buf
++	config_set_partial
++	config_set_buf_size $4
++	config_set_file_offset $3
++	config_trigger_sync
++	read_partial_firmwares $2 $3 $4
++	release_all_firmware
++	echo "OK"
++}
++
+ test_batched_request_firmware_direct()
+ {
+ 	echo -n "Batched request_firmware_direct() $2 try #$1: "
+@@ -371,6 +435,22 @@ for i in $(seq 1 5); do
+ 	test_batched_request_firmware_into_buf $i normal
+ done
+ 
++for i in $(seq 1 5); do
++	test_batched_request_partial_firmware_into_buf $i normal 0 10
++done
++
++for i in $(seq 1 5); do
++	test_batched_request_partial_firmware_into_buf $i normal 0 5
++done
++
++for i in $(seq 1 5); do
++	test_batched_request_partial_firmware_into_buf $i normal 1 6
++done
++
++for i in $(seq 1 5); do
++	test_batched_request_partial_firmware_into_buf $i normal 2 10
++done
++
+ for i in $(seq 1 5); do
+ 	test_batched_request_firmware_direct $i normal
+ done
 -- 
 2.17.1
 
