@@ -1,335 +1,263 @@
-Return-Path: <SRS0=9Zl0=7W=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=hV4h=7X=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BE1C433E1
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD30C433E0
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Jun 2020 17:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC64C2076A
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Jun 2020 22:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F5A204EC
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 Jun 2020 17:01:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NeIH+vrf"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rK7OW27t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbgFIW6s (ORCPT
+        id S1728121AbgFJRBl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 9 Jun 2020 18:58:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbgFIW53 (ORCPT
+        Wed, 10 Jun 2020 13:01:41 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:57110 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbgFJRBk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Jun 2020 18:57:29 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCEDC0A88B4
-        for <linux-integrity@vger.kernel.org>; Tue,  9 Jun 2020 15:57:18 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id x22so225665pfn.3
-        for <linux-integrity@vger.kernel.org>; Tue, 09 Jun 2020 15:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oEagKHQfVZx0qdrYMa0dmoo1zYusLN9mgZl9FtDlBHc=;
-        b=NeIH+vrfN4cZXSsFgfJJBlW5vXLPso8ES5K1s09V6HLo9WoXGSLRcsF8Y6NsqFlxSN
-         rrlpl9CcNAjDy2X7DPlehg6vK9F/PgB9fukbufYwwE/u6VMwcEjIcT5G4rTluYnqNaSi
-         XZPkis/kHXF3v0rXYo2oMXKynczH3+7CqafGU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oEagKHQfVZx0qdrYMa0dmoo1zYusLN9mgZl9FtDlBHc=;
-        b=RNS+Ldvf9+oF8O39hyWHOBY15xhUdPaIqd46UODU1puVKDfpB6UCNU4IIFOcO/T8bv
-         d9gY+T3O7/SGUkYGLUVqe3AGf40B+s6BX9haGdXylfRJ27T07KZIryCnfta1W9soxyrt
-         rz0vTTPe0cqoQ+XZ5bvdMJq07Hqxp/nYK4nBk57svlF+IRywfq/LKojOa9MV/YY4FADI
-         4prlOelAnyv86n0c0Us/HSiPVf7A52+Sk4LpTnhw/RxPKAV4NFmpbJ8sYA66mZs3FMt2
-         dH6E0iUFwLC1ohAM3hIi0F7f59Phxscx9GDOs8GfwEP7cSSW4/rFo2cHnQJg7UiXtMuM
-         n6gg==
-X-Gm-Message-State: AOAM532YWIWWUOxlMH/1T0bfhkwd2bncPSaFDNCnSxaoNufS/MfvupLN
-        siVJqAooRO8e2l+oYJcRhbgIFA==
-X-Google-Smtp-Source: ABdhPJyFipcfqgEYG9bZZZAf3PmjyTcJZiZCNb7sc8hY6kL8TjcCie8ZpBQEEqX1Ole43jhLoNBs/g==
-X-Received: by 2002:a65:4489:: with SMTP id l9mr220170pgq.223.1591743437934;
-        Tue, 09 Jun 2020 15:57:17 -0700 (PDT)
-Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id p8sm9104978pgs.29.2020.06.09.15.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jun 2020 15:57:17 -0700 (PDT)
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+        Wed, 10 Jun 2020 13:01:40 -0400
+Received: by linux.microsoft.com (Postfix, from userid 1066)
+        id A9CCC20B717B; Wed, 10 Jun 2020 10:01:38 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A9CCC20B717B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1591808498;
+        bh=WMQaTFjsDys7H+llhCW8y8ZAuZgeIZ+2G1N2e811lF0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rK7OW27tRzg5Zz9HSSKaHQfWUVKDHt/IehW4IAh8t7j4fLKUX1wRUWmKOrC9FocCs
+         NS7fcPiD66XEtSLQh/vPBqzLF1rm7jaSL/gA/n727GzXwhpPd2b9jAUN8XWtuGuXzb
+         zFPvRW/Kt41h9DilM8oagvzybglHUoL3eyXH0dvA=
+From:   Lachlan Sneff <t-josne@linux.microsoft.com>
+To:     ltp@lists.linux.it, pvorel@suse.cz, zohar@linux.ibm.com
+Cc:     nramas@linux.microsoft.com, balajib@linux.microsoft.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v8 3/8] test_firmware: add partial read support for request_firmware_into_buf
-Date:   Tue,  9 Jun 2020 15:56:51 -0700
-Message-Id: <20200609225656.18663-4-scott.branden@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200609225656.18663-1-scott.branden@broadcom.com>
-References: <20200609225656.18663-1-scott.branden@broadcom.com>
+        Lachlan Sneff <t-josne@linux.microsoft.com>
+Subject: [PATCH 1/2] IMA: Add a test to verify measurment of keys
+Date:   Wed, 10 Jun 2020 10:01:22 -0700
+Message-Id: <1591808483-22040-1-git-send-email-t-josne@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add additional hooks to test_firmware to pass in support
-for partial file read using request_firmware_into_buf.
-buf_size: size of buffer to request firmware into
-partial: indicates that a partial file request is being made
-file_offset: to indicate offset into file to request
+Add a testcase that verifies that the IMA subsystem has correctly
+measured keys added to keyrings specified in the IMA policy file.
 
-Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Additionally, add support for handling a new IMA template descriptor,
+namely ima-buf[1], in the IMA measurement tests.
+
+[1]: https://www.kernel.org/doc/html/latest/security/IMA-templates.html#use
+
+Signed-off-by: Lachlan Sneff <t-josne@linux.microsoft.com>
 ---
- lib/test_firmware.c | 154 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 142 insertions(+), 12 deletions(-)
+ runtest/ima                                   |  1 +
+ .../integrity/ima/tests/compute_digest.sh     | 38 ++++++++++
+ .../security/integrity/ima/tests/ima_keys.sh  | 72 +++++++++++++++++++
+ .../integrity/ima/tests/ima_measurements.sh   | 37 +---------
+ 4 files changed, 113 insertions(+), 35 deletions(-)
+ create mode 100644 testcases/kernel/security/integrity/ima/tests/compute_digest.sh
+ create mode 100644 testcases/kernel/security/integrity/ima/tests/ima_keys.sh
 
-diff --git a/lib/test_firmware.c b/lib/test_firmware.c
-index 9fee2b93a8d1..48d8a3d5bea9 100644
---- a/lib/test_firmware.c
-+++ b/lib/test_firmware.c
-@@ -50,6 +50,9 @@ struct test_batched_req {
-  * @name: the name of the firmware file to look for
-  * @into_buf: when the into_buf is used if this is true
-  *	request_firmware_into_buf() will be used instead.
-+ * @buf_size: size of buf to allocate when into_buf is true
-+ * @file_offset: file offset to request when calling request_firmware_into_buf
-+ * @partial: partial read opt when calling request_firmware_into_buf
-  * @sync_direct: when the sync trigger is used if this is true
-  *	request_firmware_direct() will be used instead.
-  * @send_uevent: whether or not to send a uevent for async requests
-@@ -89,6 +92,9 @@ struct test_batched_req {
- struct test_config {
- 	char *name;
- 	bool into_buf;
-+	size_t buf_size;
-+	size_t file_offset;
-+	bool partial;
- 	bool sync_direct;
- 	bool send_uevent;
- 	u8 num_requests;
-@@ -183,6 +189,9 @@ static int __test_firmware_config_init(void)
- 	test_fw_config->num_requests = TEST_FIRMWARE_NUM_REQS;
- 	test_fw_config->send_uevent = true;
- 	test_fw_config->into_buf = false;
-+	test_fw_config->buf_size = TEST_FIRMWARE_BUF_SIZE;
-+	test_fw_config->file_offset = 0;
-+	test_fw_config->partial = false;
- 	test_fw_config->sync_direct = false;
- 	test_fw_config->req_firmware = request_firmware;
- 	test_fw_config->test_result = 0;
-@@ -236,28 +245,35 @@ static ssize_t config_show(struct device *dev,
- 			dev_name(dev));
- 
- 	if (test_fw_config->name)
--		len += scnprintf(buf+len, PAGE_SIZE - len,
-+		len += scnprintf(buf + len, PAGE_SIZE - len,
- 				"name:\t%s\n",
- 				test_fw_config->name);
- 	else
--		len += scnprintf(buf+len, PAGE_SIZE - len,
-+		len += scnprintf(buf + len, PAGE_SIZE - len,
- 				"name:\tEMTPY\n");
- 
--	len += scnprintf(buf+len, PAGE_SIZE - len,
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
- 			"num_requests:\t%u\n", test_fw_config->num_requests);
- 
--	len += scnprintf(buf+len, PAGE_SIZE - len,
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
- 			"send_uevent:\t\t%s\n",
- 			test_fw_config->send_uevent ?
- 			"FW_ACTION_HOTPLUG" :
- 			"FW_ACTION_NOHOTPLUG");
--	len += scnprintf(buf+len, PAGE_SIZE - len,
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
- 			"into_buf:\t\t%s\n",
- 			test_fw_config->into_buf ? "true" : "false");
--	len += scnprintf(buf+len, PAGE_SIZE - len,
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
-+			"buf_size:\t%zu\n", test_fw_config->buf_size);
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
-+			"file_offset:\t%zu\n", test_fw_config->file_offset);
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
-+			"partial:\t\t%s\n",
-+			test_fw_config->partial ? "true" : "false");
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
- 			"sync_direct:\t\t%s\n",
- 			test_fw_config->sync_direct ? "true" : "false");
--	len += scnprintf(buf+len, PAGE_SIZE - len,
-+	len += scnprintf(buf + len, PAGE_SIZE - len,
- 			"read_fw_idx:\t%u\n", test_fw_config->read_fw_idx);
- 
- 	mutex_unlock(&test_fw_mutex);
-@@ -315,6 +331,30 @@ static ssize_t test_dev_config_show_bool(char *buf, bool val)
- 	return snprintf(buf, PAGE_SIZE, "%d\n", val);
- }
- 
-+static int test_dev_config_update_size_t(const char *buf,
-+					 size_t size,
-+					 size_t *cfg)
+diff --git a/runtest/ima b/runtest/ima
+index f3ea88cf0..939fb40f0 100644
+--- a/runtest/ima
++++ b/runtest/ima
+@@ -4,3 +4,4 @@ ima_policy ima_policy.sh
+ ima_tpm ima_tpm.sh
+ ima_violations ima_violations.sh
+ evm_overlay evm_overlay.sh
++ima_keys ima_keys.sh
+diff --git a/testcases/kernel/security/integrity/ima/tests/compute_digest.sh b/testcases/kernel/security/integrity/ima/tests/compute_digest.sh
+new file mode 100644
+index 000000000..85f6bf3da
+--- /dev/null
++++ b/testcases/kernel/security/integrity/ima/tests/compute_digest.sh
+@@ -0,0 +1,38 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++# Copyright (c) 2009 IBM Corporation
++# Copyright (c) 2018-2020 Petr Vorel <pvorel@suse.cz>
++# Author: Mimi Zohar <zohar@linux.ibm.com>
++
++# TODO: find support for rmd128 rmd256 rmd320 wp256 wp384 tgr128 tgr160
++compute_digest()
 +{
-+	int ret;
-+	long new;
++	local algorithm="$1"
++	local file="$2"
++	local digest
 +
-+	ret = kstrtol(buf, 10, &new);
-+	if (ret)
-+		return ret;
++	digest="$(${algorithm}sum $file 2>/dev/null | cut -f1 -d ' ')"
++	if [ -n "$digest" ]; then
++		echo "$digest"
++		return 0
++	fi
 +
-+	mutex_lock(&test_fw_mutex);
-+	*(size_t *)cfg = new;
-+	mutex_unlock(&test_fw_mutex);
++	digest="$(openssl $algorithm $file 2>/dev/null | cut -f2 -d ' ')"
++	if [ -n "$digest" ]; then
++		echo "$digest"
++		return 0
++	fi
 +
-+	/* Always return full write size even if we didn't consume all */
-+	return size;
++	# uncommon ciphers
++	local arg="$algorithm"
++	case "$algorithm" in
++	tgr192) arg="tiger" ;;
++	wp512) arg="whirlpool" ;;
++	esac
++
++	digest="$(rdigest --$arg $file 2>/dev/null | cut -f1 -d ' ')"
++	if [ -n "$digest" ]; then
++		echo "$digest"
++		return 0
++	fi
++	return 1
++}
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+new file mode 100644
+index 000000000..1b0dd0aed
+--- /dev/null
++++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+@@ -0,0 +1,72 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0-or-later
++# Copyright (c) 2020 Microsoft Corporation
++# Author: Lachlan Sneff <t-josne@linux.microsoft.com>
++#
++# Verify that keys are measured correctly based on policy.
++
++TST_NEEDS_CMDS="awk cut"
++TST_SETUP="setup"
++TST_CNT=1
++TST_NEEDS_DEVICE=1
++
++. ima_setup.sh
++. compute_digest.sh
++
++setup()
++{
++    TEST_FILE="$PWD/test.txt"
 +}
 +
-+static ssize_t test_dev_config_show_size_t(char *buf, size_t val)
++# Based on https://lkml.org/lkml/2019/12/13/564.
++test1()
 +{
-+	return snprintf(buf, PAGE_SIZE, "%zu\n", val);
++	local keyrings keycheck_line templates
++
++	tst_res TINFO "verifying key measurement for keyrings and \
++templates specified in ima policy file"
++
++	IMA_POLICY="$IMA_DIR/policy"
++	[ -f $IMA_POLICY ] || tst_brk TCONF "missing $IMA_POLICY"
++
++	keycheck_line=$(grep "func=KEY_CHECK" $IMA_POLICY)
++	if [ -z "$keycheck_line" ]; then
++		tst_brk TCONF "ima policy does not specify \"func=KEY_CHECK\""
++	fi
++
++	if echo "$keycheck_line" | grep -q "*keyrings*"; then
++		tst_brk TCONF "ima policy does not specify a keyrings to check"
++	fi
++
++	keyrings=$(echo "$keycheck_line" | tr " " "\n" | grep "keyrings" | \
++		sed "s/\./\\\./g" | cut -d'=' -f2)
++	if [ -z "$keyrings" ]; then
++		tst_brk TCONF "ima policy has a keyring key-value specifier, \
++but no specified keyrings"
++	fi
++
++	templates=$(echo "$keycheck_line" | tr " " "\n" | grep "template" | \
++		cut -d'=' -f2)
++
++	grep -E "($templates)*($keyrings)" $ASCII_MEASUREMENTS | while read line
++	do
++		local digest expected_digest algorithm
++
++		digest=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
++		algorithm=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f1)
++
++		echo "$line" | cut -d' ' -f6 | xxd -r -p > $TEST_FILE
++
++		expected_digest="$(compute_digest $algorithm $TEST_FILE)" || \
++			tst_brk TCONF "cannot compute digest for $algorithm"
++
++		if [ "$digest" != "$expected_digest" ]; then
++			tst_res TFAIL "incorrect digest was found for the \
++$(echo "$line" | cut -d' ' -f5) keyring"
++		fi
++	done
++
++	tst_res TPASS "specified keyrings were measured correctly"
 +}
 +
- static ssize_t test_dev_config_show_int(char *buf, int val)
++tst_run
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+index 54237d688..0a58d021d 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+@@ -12,6 +12,7 @@ TST_CNT=3
+ TST_NEEDS_DEVICE=1
+ 
+ . ima_setup.sh
++. compute_digest.sh
+ 
+ setup()
  {
- 	return snprintf(buf, PAGE_SIZE, "%d\n", val);
-@@ -400,6 +440,83 @@ static ssize_t config_into_buf_show(struct device *dev,
+@@ -28,7 +29,7 @@ setup()
+ 	# parse digest index
+ 	# https://www.kernel.org/doc/html/latest/security/IMA-templates.html#use
+ 	case "$template" in
+-	ima|ima-ng|ima-sig) DIGEST_INDEX=4 ;;
++	ima|ima-ng|ima-sig|ima-buf) DIGEST_INDEX=4 ;;
+ 	*)
+ 		# using ima_template_fmt kernel parameter
+ 		local IFS="|"
+@@ -46,40 +47,6 @@ setup()
+ 		"Cannot find digest index (template: '$template')"
  }
- static DEVICE_ATTR_RW(config_into_buf);
  
-+static ssize_t config_buf_size_store(struct device *dev,
-+				     struct device_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	int rc;
-+
-+	mutex_lock(&test_fw_mutex);
-+	if (test_fw_config->reqs) {
-+		pr_err("Must call release_all_firmware prior to changing config\n");
-+		rc = -EINVAL;
-+		mutex_unlock(&test_fw_mutex);
-+		goto out;
-+	}
-+	mutex_unlock(&test_fw_mutex);
-+
-+	rc = test_dev_config_update_size_t(buf, count,
-+					   &test_fw_config->buf_size);
-+
-+out:
-+	return rc;
-+}
-+
-+static ssize_t config_buf_size_show(struct device *dev,
-+				    struct device_attribute *attr,
-+				    char *buf)
-+{
-+	return test_dev_config_show_size_t(buf, test_fw_config->buf_size);
-+}
-+static DEVICE_ATTR_RW(config_buf_size);
-+
-+static ssize_t config_file_offset_store(struct device *dev,
-+					struct device_attribute *attr,
-+					const char *buf, size_t count)
-+{
-+	int rc;
-+
-+	mutex_lock(&test_fw_mutex);
-+	if (test_fw_config->reqs) {
-+		pr_err("Must call release_all_firmware prior to changing config\n");
-+		rc = -EINVAL;
-+		mutex_unlock(&test_fw_mutex);
-+		goto out;
-+	}
-+	mutex_unlock(&test_fw_mutex);
-+
-+	rc = test_dev_config_update_size_t(buf, count,
-+					   &test_fw_config->file_offset);
-+
-+out:
-+	return rc;
-+}
-+
-+static ssize_t config_file_offset_show(struct device *dev,
-+				       struct device_attribute *attr,
-+				       char *buf)
-+{
-+	return test_dev_config_show_size_t(buf, test_fw_config->file_offset);
-+}
-+static DEVICE_ATTR_RW(config_file_offset);
-+
-+static ssize_t config_partial_store(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	return test_dev_config_update_bool(buf,
-+					   count,
-+					   &test_fw_config->partial);
-+}
-+
-+static ssize_t config_partial_show(struct device *dev,
-+				   struct device_attribute *attr,
-+				   char *buf)
-+{
-+	return test_dev_config_show_bool(buf, test_fw_config->partial);
-+}
-+static DEVICE_ATTR_RW(config_partial);
-+
- static ssize_t config_sync_direct_store(struct device *dev,
- 					struct device_attribute *attr,
- 					const char *buf, size_t count)
-@@ -650,11 +767,21 @@ static int test_fw_run_batch_request(void *data)
- 		if (!test_buf)
- 			return -ENOSPC;
- 
--		req->rc = request_firmware_into_buf(&req->fw,
--						    req->name,
--						    req->dev,
--						    test_buf,
--						    TEST_FIRMWARE_BUF_SIZE);
-+		if (test_fw_config->partial)
-+			req->rc = request_partial_firmware_into_buf
-+						(&req->fw,
-+						 req->name,
-+						 req->dev,
-+						 test_buf,
-+						 test_fw_config->buf_size,
-+						 test_fw_config->file_offset);
-+		else
-+			req->rc = request_firmware_into_buf
-+						(&req->fw,
-+						 req->name,
-+						 req->dev,
-+						 test_buf,
-+						 test_fw_config->buf_size);
- 		if (!req->fw)
- 			kfree(test_buf);
- 	} else {
-@@ -927,6 +1054,9 @@ static struct attribute *test_dev_attrs[] = {
- 	TEST_FW_DEV_ATTR(config_name),
- 	TEST_FW_DEV_ATTR(config_num_requests),
- 	TEST_FW_DEV_ATTR(config_into_buf),
-+	TEST_FW_DEV_ATTR(config_buf_size),
-+	TEST_FW_DEV_ATTR(config_file_offset),
-+	TEST_FW_DEV_ATTR(config_partial),
- 	TEST_FW_DEV_ATTR(config_sync_direct),
- 	TEST_FW_DEV_ATTR(config_send_uevent),
- 	TEST_FW_DEV_ATTR(config_read_fw_idx),
+-# TODO: find support for rmd128 rmd256 rmd320 wp256 wp384 tgr128 tgr160
+-compute_digest()
+-{
+-	local algorithm="$1"
+-	local file="$2"
+-	local digest
+-
+-	digest="$(${algorithm}sum $file 2>/dev/null | cut -f1 -d ' ')"
+-	if [ -n "$digest" ]; then
+-		echo "$digest"
+-		return 0
+-	fi
+-
+-	digest="$(openssl $algorithm $file 2>/dev/null | cut -f2 -d ' ')"
+-	if [ -n "$digest" ]; then
+-		echo "$digest"
+-		return 0
+-	fi
+-
+-	# uncommon ciphers
+-	local arg="$algorithm"
+-	case "$algorithm" in
+-	tgr192) arg="tiger" ;;
+-	wp512) arg="whirlpool" ;;
+-	esac
+-
+-	digest="$(rdigest --$arg $file 2>/dev/null | cut -f1 -d ' ')"
+-	if [ -n "$digest" ]; then
+-		echo "$digest"
+-		return 0
+-	fi
+-	return 1
+-}
+-
+ ima_check()
+ {
+ 	local delimiter=':'
 -- 
-2.17.1
+2.25.1
 
