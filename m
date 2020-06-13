@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E74C433E0
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF05C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46E0B20739
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F136206A4
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Scd1TnUF"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TsbozQNP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbgFMC0s (ORCPT
+        id S1726404AbgFMClh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Jun 2020 22:26:48 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:49302 "EHLO
+        Fri, 12 Jun 2020 22:41:37 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54106 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgFMC0r (ORCPT
+        with ESMTP id S1726397AbgFMClh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Jun 2020 22:26:47 -0400
+        Fri, 12 Jun 2020 22:41:37 -0400
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2C12D20B4781;
-        Fri, 12 Jun 2020 19:26:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2C12D20B4781
+        by linux.microsoft.com (Postfix) with ESMTPSA id 783EF20B4781;
+        Fri, 12 Jun 2020 19:41:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 783EF20B4781
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592015206;
-        bh=7HTc8RLWhW9XP/JSH6hgV/Kbct0cpAJs6l1my2UPmDU=;
+        s=default; t=1592016096;
+        bh=h/7e7zImKiPAs9gLjjN0MWOthBgeaRk9JTCgA2PStTY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Scd1TnUFOdQ0DnVdJdyE9G0N3eIqWg5DEhPrfJ44uuv/Pxf0xpio67eLKj6OZ8D1D
-         5+1IpUHgen4UD6zRCRY1lZIcN15WdAI13bZuQIhR1/smnH90Rg+obT0xjtuvR6ceX3
-         xMKbIBC3S1WYedZoV7IOFBPtqjqFJI7L1rW/MsbI=
+        b=TsbozQNPeiFK7RNK/QjbJhy9+Sw4DCK3i1rNYqVyO9gH5Pnm/R+fiNzWpAZFesotY
+         X0SJaSzez0aBKNTXipAEHX7UbI90sNLdSNcyTATW0PbizY75B2OvQZ48hnS1rPSPxp
+         3BAUF/TZdi39bQ9iR/Tb0Oy+nVS0LMIjDcjD0nMo=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, sgrubb@redhat.com, paul@paul-moore.com
-Cc:     rgb@redhat.com, linux-integrity@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] IMA: Add audit log for failure conditions
-Date:   Fri, 12 Jun 2020 19:26:33 -0700
-Message-Id: <20200613022633.3129-2-nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley@gmail.com,
+        casey@schaufler-ca.com
+Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] IMA: Define an IMA hook to measure LSM data
+Date:   Fri, 12 Jun 2020 19:41:27 -0700
+Message-Id: <20200613024130.3356-3-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200613022633.3129-1-nramas@linux.microsoft.com>
-References: <20200613022633.3129-1-nramas@linux.microsoft.com>
+In-Reply-To: <20200613024130.3356-1-nramas@linux.microsoft.com>
+References: <20200613024130.3356-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -51,175 +52,85 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-process_buffer_measurement() and ima_alloc_key_entry() functions need to
-log an audit message for auditing integrity measurement failures.
+LSM requires an IMA hook to be defined by the IMA subsystem to measure
+the data gathered from the security modules.
 
-Add audit message in these two functions. Remove "pr_devel" log message
-in process_buffer_measurement().
+Define a new IMA hook, namely ima_lsm_state(), that the LSM will call
+to measure the data gathered from the security modules.
 
-Sample audit messages:
+Sample IMA log entry for LSM measurement:
 
-[    6.415374] audit: type=1804 audit(1592005945.627:2): pid=1 uid=0 auid=4294967295 ses=4294967295 subj=kernel op=measuring_kexec_cmdline cause=alloc_entry comm="swapper/0" name="kexec-cmdline" res=0 result=-12
-
-[    8.085456] audit: type=1802 audit(1592005947.297:9): pid=1 uid=0 auid=4294967295 ses=4294967295 subj=system_u:system_r:init_t:s0 op=policy_update cause=completed comm="systemd" res=1 result=0
-
-[    8.128004] audit: type=1804 audit(1592005947.341:11): pid=1 uid=0 auid=4294967295 ses=4294967295 subj=system_u:system_r:init_t:s0 op=measuring_key cause=hashing_error comm="systemd" name=".builtin_trusted_keys" res=0 result=-22
+10 47eed9... ima-buf sha256:402f6b... lsm-state:selinux 656e61626c65643d313b656e666f7263696e673d30
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/ima/ima.h            | 48 ++++++++++++++++---------
- security/integrity/ima/ima_main.c       | 18 +++++++---
- security/integrity/ima/ima_policy.c     |  2 +-
- security/integrity/ima/ima_queue_keys.c |  5 +++
- 4 files changed, 51 insertions(+), 22 deletions(-)
+ include/linux/ima.h               |  4 ++++
+ security/integrity/ima/ima_main.c | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index df93ac258e01..c3a32e181b48 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -186,27 +186,43 @@ static inline unsigned int ima_hash_key(u8 *digest)
- 	return (digest[0] | digest[1] << 8) % IMA_MEASURE_HTABLE_SIZE;
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 9164e1534ec9..56681a648b3d 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -26,6 +26,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+ extern void ima_kexec_cmdline(const void *buf, int size);
++extern void ima_lsm_state(const char *lsm_name, const void *buf, int size);
+ 
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+@@ -104,6 +105,9 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
  }
  
--#define __ima_hooks(hook)		\
--	hook(NONE)			\
--	hook(FILE_CHECK)		\
--	hook(MMAP_CHECK)		\
--	hook(BPRM_CHECK)		\
--	hook(CREDS_CHECK)		\
--	hook(POST_SETATTR)		\
--	hook(MODULE_CHECK)		\
--	hook(FIRMWARE_CHECK)		\
--	hook(KEXEC_KERNEL_CHECK)	\
--	hook(KEXEC_INITRAMFS_CHECK)	\
--	hook(POLICY_CHECK)		\
--	hook(KEXEC_CMDLINE)		\
--	hook(KEY_CHECK)			\
--	hook(MAX_CHECK)
--#define __ima_hook_enumify(ENUM)	ENUM,
-+#define __ima_hooks(hook)				\
-+	hook(NONE, none)				\
-+	hook(FILE_CHECK, file)				\
-+	hook(MMAP_CHECK, mmap)				\
-+	hook(BPRM_CHECK, bprm)				\
-+	hook(CREDS_CHECK, creds)			\
-+	hook(POST_SETATTR, post_setattr)		\
-+	hook(MODULE_CHECK, module)			\
-+	hook(FIRMWARE_CHECK, firmware)			\
-+	hook(KEXEC_KERNEL_CHECK, kexec_kernel)		\
-+	hook(KEXEC_INITRAMFS_CHECK, kexec_initramfs)	\
-+	hook(POLICY_CHECK, policy)			\
-+	hook(KEXEC_CMDLINE, kexec_cmdline)		\
-+	hook(KEY_CHECK, key)				\
-+	hook(MAX_CHECK, none)
+ static inline void ima_kexec_cmdline(const void *buf, int size) {}
 +
-+#define __ima_hook_enumify(ENUM, str)	ENUM,
-+#define __ima_stringify(arg) (#arg)
-+#define __ima_hook_measuring_stringify(ENUM, str) \
-+		(__ima_stringify(measuring_ ##str)),
++static inline void ima_lsm_state(const char *lsm_name,
++				 const void *buf, int size) {}
+ #endif /* CONFIG_IMA */
  
- enum ima_hooks {
- 	__ima_hooks(__ima_hook_enumify)
- };
- 
-+static const char * const ima_hooks_measure_str[] = {
-+	__ima_hooks(__ima_hook_measuring_stringify)
-+};
-+
-+static inline const char *func_measure_str(enum ima_hooks func)
-+{
-+	if (func >= MAX_CHECK)
-+		return ima_hooks_measure_str[NONE];
-+
-+	return ima_hooks_measure_str[func];
-+}
-+
- extern const char *const func_tokens[];
- 
- struct modsig;
+ #ifndef CONFIG_IMA_KEXEC
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c1583d98c5e5..8a001aa8e592 100644
+index c1583d98c5e5..34be962054fb 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -740,6 +740,7 @@ void process_buffer_measurement(const void *buf, int size,
- 				int pcr, const char *keyring)
- {
- 	int ret = 0;
-+	const char *audit_cause = "ENOMEM";
- 	struct ima_template_entry *entry = NULL;
- 	struct integrity_iint_cache iint = {};
- 	struct ima_event_data event_data = {.iint = &iint,
-@@ -794,21 +795,28 @@ void process_buffer_measurement(const void *buf, int size,
- 	iint.ima_hash->length = hash_digest_size[ima_hash_algo];
- 
- 	ret = ima_calc_buffer_hash(buf, size, iint.ima_hash);
--	if (ret < 0)
-+	if (ret < 0) {
-+		audit_cause = "hashing_error";
- 		goto out;
-+	}
- 
- 	ret = ima_alloc_init_template(&event_data, &entry, template);
--	if (ret < 0)
-+	if (ret < 0) {
-+		audit_cause = "alloc_entry";
- 		goto out;
-+	}
- 
- 	ret = ima_store_template(entry, violation, NULL, buf, pcr);
--
--	if (ret < 0)
-+	if (ret < 0) {
-+		audit_cause = "store_entry";
- 		ima_free_template_entry(entry);
-+	}
- 
- out:
- 	if (ret < 0)
--		pr_devel("%s: failed, result: %d\n", __func__, ret);
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL, eventname,
-+				    func_measure_str(func),
-+				    audit_cause, ret, 0);
- 
- 	return;
- }
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e493063a3c34..66aa3e17a888 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1414,7 +1414,7 @@ void ima_delete_rules(void)
- 	}
+@@ -827,6 +827,36 @@ void ima_kexec_cmdline(const void *buf, int size)
+ 					   KEXEC_CMDLINE, 0, NULL);
  }
  
--#define __ima_hook_stringify(str)	(#str),
-+#define __ima_hook_stringify(func, str)	(#func),
- 
- const char *const func_tokens[] = {
- 	__ima_hooks(__ima_hook_stringify)
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index cb3e3f501593..631fd7ab2dcd 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -68,6 +68,7 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
- 						 size_t payload_len)
++/**
++ * ima_lsm_state - measure LSM specific state
++ * @lsm_name: Name of the LSM
++ * @buf: pointer to buffer containing LSM specific state
++ * @size: Number of bytes in buf
++ *
++ * Buffers can only be measured, not appraised.
++ */
++void ima_lsm_state(const char *lsm_name, const void *buf, int size)
++{
++	const char *eventname = "lsm-state:";
++	char *lsmstatestring;
++	int lsmstatelen;
++
++	if (!lsm_name || !buf || !size)
++		return;
++
++	lsmstatelen = strlen(eventname) + strlen(lsm_name) + 1;
++	lsmstatestring = kzalloc(lsmstatelen, GFP_KERNEL);
++	if (!lsmstatestring)
++		return;
++
++	strcpy(lsmstatestring, eventname);
++	strcat(lsmstatestring, lsm_name);
++
++	process_buffer_measurement(buf, size, lsmstatestring,
++				   LSM_STATE, 0, NULL);
++	kfree(lsmstatestring);
++}
++
+ static int __init init_ima(void)
  {
- 	int rc = 0;
-+	const char *audit_cause = "ENOMEM";
- 	struct ima_key_entry *entry;
- 
- 	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-@@ -88,6 +89,10 @@ static struct ima_key_entry *ima_alloc_key_entry(struct key *keyring,
- 
- out:
- 	if (rc) {
-+		integrity_audit_msg(AUDIT_INTEGRITY_PCR, NULL,
-+				    keyring->description,
-+				    func_measure_str(KEY_CHECK),
-+				    audit_cause, rc, 0);
- 		ima_free_key_entry(entry);
- 		entry = NULL;
- 	}
+ 	int error;
 -- 
 2.27.0
 
