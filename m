@@ -2,49 +2,47 @@ Return-Path: <SRS0=QkZy=72=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF05C433E0
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ECD5C433E2
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F136206A4
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 019ED20791
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TsbozQNP"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BAKdp5qO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726404AbgFMClh (ORCPT
+        id S1726450AbgFMCli (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Jun 2020 22:41:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54106 "EHLO
+        Fri, 12 Jun 2020 22:41:38 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54094 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbgFMClh (ORCPT
+        with ESMTP id S1726290AbgFMClg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Jun 2020 22:41:37 -0400
+        Fri, 12 Jun 2020 22:41:36 -0400
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 783EF20B4781;
-        Fri, 12 Jun 2020 19:41:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 783EF20B4781
+        by linux.microsoft.com (Postfix) with ESMTPSA id D7C17205DDA3;
+        Fri, 12 Jun 2020 19:41:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7C17205DDA3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1592016096;
-        bh=h/7e7zImKiPAs9gLjjN0MWOthBgeaRk9JTCgA2PStTY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TsbozQNPeiFK7RNK/QjbJhy9+Sw4DCK3i1rNYqVyO9gH5Pnm/R+fiNzWpAZFesotY
-         X0SJaSzez0aBKNTXipAEHX7UbI90sNLdSNcyTATW0PbizY75B2OvQZ48hnS1rPSPxp
-         3BAUF/TZdi39bQ9iR/Tb0Oy+nVS0LMIjDcjD0nMo=
+        bh=vaFIY848bzauzFCfpzzjSbZuqVCA6KD5jaD7Y2KRWaw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BAKdp5qOjEIdRsnotGep4dozpflsun+0alY4C689o3x6bOSyty8ObzTOMLaKYa/hF
+         HY+jssMDf0f/1MHeyVHhMJWQ0ItLnNAevC51ndvv/2gn0nZTAAH87nhGrmfbPrpiDm
+         /R2RQR2nvr+P7AQfH/xIT05T1FQ1bJt1DwX/GtxY=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley@gmail.com,
         casey@schaufler-ca.com
 Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] IMA: Define an IMA hook to measure LSM data
-Date:   Fri, 12 Jun 2020 19:41:27 -0700
-Message-Id: <20200613024130.3356-3-nramas@linux.microsoft.com>
+Subject: [PATCH 0/5] LSM: Measure security module state
+Date:   Fri, 12 Jun 2020 19:41:25 -0700
+Message-Id: <20200613024130.3356-1-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200613024130.3356-1-nramas@linux.microsoft.com>
-References: <20200613024130.3356-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -52,85 +50,45 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-LSM requires an IMA hook to be defined by the IMA subsystem to measure
-the data gathered from the security modules.
+Critical data structures of security modules are currently not measured.
+Therefore an attestation service, for instance, would not be able to
+attest whether security modules are always operating with the policies
+and configuration that the system administrator had setup. The policies
+and configuration for the security modules could be tampered with by
+malware by exploiting Kernel vulnerabilities or modified through some
+inadvertent actions on the system. Measuring such critical data would
+enable an attestation service to better assess the state of the system.
 
-Define a new IMA hook, namely ima_lsm_state(), that the LSM will call
-to measure the data gathered from the security modules.
+IMA measures system files, command line arguments passed to kexec,
+boot aggregate, keys, etc. It can be used to measure critical
+data structures of security modules as well.
 
-Sample IMA log entry for LSM measurement:
+This change aims to address measuring critical data structures
+of security modules when they are initialized, when they are updated
+at runtime, and also periodically to detect any tampering.
 
-10 47eed9... ima-buf sha256:402f6b... lsm-state:selinux 656e61626c65643d313b656e666f7263696e673d30
+This change set is based off of Linux Kernel version 5.8-rc1
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- include/linux/ima.h               |  4 ++++
- security/integrity/ima/ima_main.c | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+Lakshmi Ramasubramanian (5):
+  IMA: Add LSM_STATE func to measure LSM data
+  IMA: Define an IMA hook to measure LSM data
+  LSM: Add security_state function pointer in lsm_info struct
+  LSM: Define SELinux function to measure security state
+  LSM: Define workqueue for measuring security module state
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 9164e1534ec9..56681a648b3d 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -26,6 +26,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(const void *buf, int size);
-+extern void ima_lsm_state(const char *lsm_name, const void *buf, int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -104,6 +105,9 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
- }
- 
- static inline void ima_kexec_cmdline(const void *buf, int size) {}
-+
-+static inline void ima_lsm_state(const char *lsm_name,
-+				 const void *buf, int size) {}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c1583d98c5e5..34be962054fb 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -827,6 +827,36 @@ void ima_kexec_cmdline(const void *buf, int size)
- 					   KEXEC_CMDLINE, 0, NULL);
- }
- 
-+/**
-+ * ima_lsm_state - measure LSM specific state
-+ * @lsm_name: Name of the LSM
-+ * @buf: pointer to buffer containing LSM specific state
-+ * @size: Number of bytes in buf
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+void ima_lsm_state(const char *lsm_name, const void *buf, int size)
-+{
-+	const char *eventname = "lsm-state:";
-+	char *lsmstatestring;
-+	int lsmstatelen;
-+
-+	if (!lsm_name || !buf || !size)
-+		return;
-+
-+	lsmstatelen = strlen(eventname) + strlen(lsm_name) + 1;
-+	lsmstatestring = kzalloc(lsmstatelen, GFP_KERNEL);
-+	if (!lsmstatestring)
-+		return;
-+
-+	strcpy(lsmstatestring, eventname);
-+	strcat(lsmstatestring, lsm_name);
-+
-+	process_buffer_measurement(buf, size, lsmstatestring,
-+				   LSM_STATE, 0, NULL);
-+	kfree(lsmstatestring);
-+}
-+
- static int __init init_ima(void)
- {
- 	int error;
+ Documentation/ABI/testing/ima_policy |  6 +-
+ include/linux/ima.h                  |  4 ++
+ include/linux/lsm_hooks.h            |  5 ++
+ security/integrity/ima/ima.h         |  1 +
+ security/integrity/ima/ima_api.c     |  2 +-
+ security/integrity/ima/ima_main.c    | 30 +++++++++
+ security/integrity/ima/ima_policy.c  | 28 +++++++--
+ security/security.c                  | 91 +++++++++++++++++++++++++++-
+ security/selinux/hooks.c             | 43 +++++++++++++
+ security/selinux/include/security.h  |  2 +
+ security/selinux/selinuxfs.c         |  1 +
+ 11 files changed, 205 insertions(+), 8 deletions(-)
+
 -- 
 2.27.0
 
