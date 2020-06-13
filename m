@@ -2,168 +2,124 @@ Return-Path: <SRS0=QkZy=72=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EC3C433E1
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1709DC433DF
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 14:18:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A0702074B
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 02:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A316207BC
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Jun 2020 14:18:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="m2gr/iG2"
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="o3yLir7g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbgFMCl6 (ORCPT
+        id S1726278AbgFMOSj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Jun 2020 22:41:58 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54118 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbgFMClh (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Jun 2020 22:41:37 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C47BB20B4782;
-        Fri, 12 Jun 2020 19:41:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C47BB20B4782
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592016097;
-        bh=F0KUrRtb3r8N9EtpYLjSg6CNnVGLSPMem/gwYtUR/WI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m2gr/iG2sDvLPc/au9Hl+dRZpsiOGNRoPgChg3DgH5M9LMgbYfilZPeZEcM4JpVZ6
-         /iz8aU+FgTF+u7tCebedOxCYTqJJtxLshjrkxpKEJ0TPmw0xae3bllzXw2gHUG9xKM
-         uGAJ7iahyFf+mawyGmdkyNeaPH9Bo/2RK5mRSF+0=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley@gmail.com,
-        casey@schaufler-ca.com
-Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] LSM: Add security_state function pointer in lsm_info struct
-Date:   Fri, 12 Jun 2020 19:41:28 -0700
-Message-Id: <20200613024130.3356-4-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200613024130.3356-1-nramas@linux.microsoft.com>
-References: <20200613024130.3356-1-nramas@linux.microsoft.com>
+        Sat, 13 Jun 2020 10:18:39 -0400
+Received: from mail-eopbgr60091.outbound.protection.outlook.com ([40.107.6.91]:58168
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726132AbgFMOSi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 13 Jun 2020 10:18:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RIgwSsbPHSgIQlWoDuqanegW9TYms7HFX2oFpFZvkPMZrW/bMzTwI4oauToJE4Y1p+sLIldD1qMCXwS31XPc16o9yYpFVXo7MEWLx6UTwtyKM/x3prsA1MPuroMxzEUtu1ollvBQ5Iq7z57MSplFvAUXJJwroQmjKU4Qhe69OUZQ33A84Up2SOc674IE19hB9z27DXjaeymoNCxQgcHgZJPuDkWxV6F+kr6p4FLcYnd0pz0LlOKTT1FFhFl/bddOjs05VLh+wAbA6xDp68ehD/fb7tqIi0uhDe+wsPWK4rdJFN2qv88YIRKi7BpAX2uP0qFq2Q7nTtzaKYSLT2FtBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XxvmxYBLwhu3F0XUVIT6NorZxiDlqgNzAAtpeIK60E0=;
+ b=mh7kpHlePdvGkOgDbi1qx1k2/kvd5cBDuPl4K0+BZEPjygp8U1sh4bWQNYxkbrT0vOCNfLjCaGg3hbHAb1ixATV2nM4OjtWNT2Fhb2LLgqiZEI9yB3vg2IOIm3u1uQTjD0uHVXGQHHtZdwfNe28ppZ+Ywj4MKGMC/Cw2jqiTAsTmaTCGkxtrT/xBX8AEj5BR6UgGkMeZDsaTRCuoEP/foMTI+Ar8i+wEhRvsSnTcxym9tLvCoOLdgbuwgZJXiI31Xr5OJWxTi1ekVooqAL7y/FeLipXKuS9men2qxK4vSUH2s49IQgIPmIjkWBtI8A+I6iWH+VwTv1xhrJ3GvKovvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XxvmxYBLwhu3F0XUVIT6NorZxiDlqgNzAAtpeIK60E0=;
+ b=o3yLir7gJ4RYaVcM7pKgqKqKKWZ0276SYmW4HgtU4PMk9rATJ3I4KdXmuYCZl1q2eSI18yFKO904z8phDJhTA0o8kZAeJC/3n+5n+23cNnPY4W8ekw0eZmxr6Mzi9J3siaO5jwJlDO9FWwQQYPwCMVM5mo1NiDvjDmLnTfJrobM=
+Authentication-Results: ziepe.ca; dkim=none (message not signed)
+ header.d=none;ziepe.ca; dmarc=none action=none header.from=virtuozzo.com;
+Received: from AM0PR08MB5140.eurprd08.prod.outlook.com (2603:10a6:208:162::17)
+ by AM0PR08MB4402.eurprd08.prod.outlook.com (2603:10a6:208:147::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3088.21; Sat, 13 Jun
+ 2020 14:18:35 +0000
+Received: from AM0PR08MB5140.eurprd08.prod.outlook.com
+ ([fe80::189d:9569:dbb8:2783]) by AM0PR08MB5140.eurprd08.prod.outlook.com
+ ([fe80::189d:9569:dbb8:2783%6]) with mapi id 15.20.3088.026; Sat, 13 Jun 2020
+ 14:18:35 +0000
+From:   Vasily Averin <vvs@virtuozzo.com>
+Subject: [PATCH] tpm_tis: extra chip->ops check on error path in
+ tpm_tis_core_init
+To:     linux-integrity@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Message-ID: <8d6e3656-1662-dc71-8876-c7f0f11a11b1@virtuozzo.com>
+Date:   Sat, 13 Jun 2020 17:18:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM0PR10CA0087.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:208:15::40) To AM0PR08MB5140.eurprd08.prod.outlook.com
+ (2603:10a6:208:162::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.16.24.21] (185.231.240.5) by AM0PR10CA0087.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:208:15::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3088.19 via Frontend Transport; Sat, 13 Jun 2020 14:18:34 +0000
+X-Originating-IP: [185.231.240.5]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 13d0cadd-9572-410c-f315-08d80fa4a897
+X-MS-TrafficTypeDiagnostic: AM0PR08MB4402:
+X-Microsoft-Antispam-PRVS: <AM0PR08MB4402F49784AB0EFE47AE67D1AA9E0@AM0PR08MB4402.eurprd08.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-Forefront-PRVS: 0433DB2766
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: wPtA0tewdquBmajtrqVTRTklahZ268jUrPMfEGha0O34QqIyXJaAYSqYT4fH0RsD/cPwK7K3D1FlMj7DABohkFokpLW4FrYQBifUumCs6hCZ6daqB3fIqlyL+vepSEM/hFJgw/XQ4F+y+YY9JiMeBtUnrJLKj5wPjEx6Pwl4MaSo3a0pqZ9m30Cvhh++NFjCGm1ooeu22NW1HCe5DwlOmu0flVBzwQUar5Kq777h05RLsNJkQ1HJ9leWNFwKlwr3fKFKssBYUnUtOsXktJX13s/EIDpSrQLWiw5IV9GmPG0+kXHSCMehgw9nCk/CHT32iHWBfhpthfe9oUKaS/PXVGuoX3wA3JayPVW9u0W4Ld4y9VsvuRe38Jc40bdAFwzD
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB5140.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(376002)(39840400004)(396003)(136003)(366004)(346002)(316002)(956004)(5660300002)(478600001)(8936002)(83380400001)(36756003)(52116002)(2616005)(2906002)(186003)(16576012)(31696002)(86362001)(54906003)(31686004)(26005)(6486002)(4744005)(4326008)(8676002)(66946007)(16526019)(66556008)(66476007)(6916009)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData: tsN8WOgESux271552M7DQxouRvG5PbOQ/ZYrFSMkbb/70LuMvo6iOLjVdnRTOtCvDCKYw6A2McDH5igHu8fmWqjIbV8tUfS5CEedz8+FyjpZ42w2y6nvt42uQWTGkpeS1ZKwx3OTkXDrTL1/Hk4vsQpfMpfAj3Pd+TLR34/dZ9NQkG4oGCyUmwtwhisyQpMvjVoF1PWNM6YxxOGYD2AB7q3gAMUhM9oMLHF0wytVq85dHZ9bea253Ju1kPYK09tiRjntauGwsu7Jujb5dgC/SxkxbEcGVsNdMWhxivORfh4uJJbP4yILPD71C8GfVi1D6EjhHJZGQVsY2WqiKn8+Aleqj/RC5bpQQfEGSH5A1PD9yXKj/v0l9iV+YZ6+bghVdG5D+UXT58et+31hXi+Y5PeBpVX0+ptLQlMEixrhUlIIsvSqlRB19O03tMx0zBeVM07D2Mv9qsWhzUIiGCxaCBQdt566pCNKATOJH5Tvid8=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13d0cadd-9572-410c-f315-08d80fa4a897
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2020 14:18:35.1528
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ocM6glBVUY3Sez4HTKBDSZ9WtBF8qVwYP61BJTm+TcetBdvmyKQ4RTPmZl5zMZ80y8e1i72ehTmMEXsgCMEuJQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB4402
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The security modules that require their data to be measured need to
-define a function that the LSM can call to gather the data.
+Found by smatch:
+drivers/char/tpm/tpm_tis_core.c:1088 tpm_tis_core_init() warn:
+ variable dereferenced before check 'chip->ops' (see line 979)
 
-Add a function pointer field namely security_state in lsm_info structure.
-Update LSM to call this security module function, if defined, to gather
-data and measure it by calling the IMA hook ima_lsm_state().
+'chip->ops' is assigned in the beginning of function
+in tpmm_chip_alloc->tpm_chip_alloc
+and is used before first possible goto to error path.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- include/linux/lsm_hooks.h |  2 ++
- security/security.c       | 60 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 61 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm_tis_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 3e62dab77699..da248c3fd4ac 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1568,6 +1568,8 @@ struct lsm_info {
- 	int *enabled;		/* Optional: controlled by CONFIG_LSM */
- 	int (*init)(void);	/* Required. */
- 	struct lsm_blob_sizes *blobs; /* Optional: for blob sharing. */
-+	int (*security_state)(char **lsm_name, void **state,
-+			      int *state_len); /*Optional */
- };
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 2435216..65ab1b0 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -1085,7 +1085,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
  
- extern struct lsm_info __start_lsm_info[], __end_lsm_info[];
-diff --git a/security/security.c b/security/security.c
-index e0290b7e6a08..a6e2d1cd95af 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -86,6 +86,9 @@ static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
- static __initdata struct lsm_info **ordered_lsms;
- static __initdata struct lsm_info *exclusive;
+ 	return 0;
+ out_err:
+-	if ((chip->ops != NULL) && (chip->ops->clk_enable != NULL))
++	if (chip->ops->clk_enable != NULL)
+ 		chip->ops->clk_enable(chip, false);
  
-+static struct lsm_info *security_state_lsms;
-+static int security_state_lsms_count;
-+
- static __initdata bool debug;
- #define init_debug(...)						\
- 	do {							\
-@@ -235,6 +238,57 @@ static void __init initialize_lsm(struct lsm_info *lsm)
- 	}
- }
- 
-+static int measure_security_state(struct lsm_info *lsm)
-+{
-+	char *lsm_name = NULL;
-+	void *state = NULL;
-+	int state_len = 0;
-+	int rc;
-+
-+	if (!lsm->security_state)
-+		return 0;
-+
-+	rc = lsm->security_state(&lsm_name, &state, &state_len);
-+	if ((rc == 0) && (state_len > 0)) {
-+		ima_lsm_state(lsm_name, state, state_len);
-+		kfree(state);
-+		kfree(lsm_name);
-+	}
-+
-+	return rc;
-+}
-+
-+static void __init initialize_security_state_lsms(void)
-+{
-+	struct lsm_info **lsm;
-+	int count = 0;
-+	int inx;
-+
-+	for (lsm = ordered_lsms; *lsm; lsm++) {
-+		if ((*lsm)->security_state)
-+			count++;
-+	}
-+
-+	if (count == 0)
-+		return;
-+
-+	security_state_lsms = kcalloc(count, sizeof(struct lsm_info),
-+				      GFP_KERNEL);
-+	if (!security_state_lsms)
-+		return;
-+
-+	inx = 0;
-+	for (lsm = ordered_lsms; *lsm; lsm++) {
-+		if ((*lsm)->security_state) {
-+			security_state_lsms[inx].security_state =
-+				(*lsm)->security_state;
-+			inx++;
-+		}
-+	}
-+
-+	security_state_lsms_count = count;
-+}
-+
- /* Populate ordered LSMs list from comma-separated LSM name list. */
- static void __init ordered_lsm_parse(const char *order, const char *origin)
- {
-@@ -352,8 +406,12 @@ static void __init ordered_lsm_init(void)
- 
- 	lsm_early_cred((struct cred *) current->cred);
- 	lsm_early_task(current);
--	for (lsm = ordered_lsms; *lsm; lsm++)
-+	for (lsm = ordered_lsms; *lsm; lsm++) {
- 		initialize_lsm(*lsm);
-+		measure_security_state(*lsm);
-+	}
-+
-+	initialize_security_state_lsms();
- 
- 	kfree(ordered_lsms);
- }
+ 	tpm_tis_remove(chip);
 -- 
-2.27.0
+1.8.3.1
 
