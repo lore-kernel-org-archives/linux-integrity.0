@@ -2,118 +2,143 @@ Return-Path: <SRS0=e4Xp=75=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3329DC433E0
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 08:56:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E30C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 09:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12C9920767
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 08:56:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C4E4207DD
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 09:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592298531;
+	bh=mMcZbBKDIEf5QDbJvhcjb8NySIKsPG7Fhgc8LiSbKCo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=uKFLummpvOL2nPeNtvRhv/yI3i7QwChCrpIdUj4P1Xpri7ThZOLtAxMAAWVluHFQq
+	 kRa2IIqYuRWYR9CDyev1LCL/D0DSjsvoTXV2hY7P0mcSXDdW5mAFipzYKay5Gnt1pN
+	 s/nqBVJ3A9G/r3cao/ivY2tonPWdIcd7hgxWxCV4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgFPI46 (ORCPT
+        id S1727819AbgFPJIv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Jun 2020 04:56:58 -0400
-Received: from lucky1.263xmail.com ([211.157.147.133]:58748 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725896AbgFPI46 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Jun 2020 04:56:58 -0400
-Received: from localhost (unknown [192.168.167.69])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 36604C47B5;
-        Tue, 16 Jun 2020 16:56:52 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED: 0
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.246.122.242])
-        by smtp.263.net (postfix) whith ESMTP id P15426T140188619613952S1592297803848419_;
-        Tue, 16 Jun 2020 16:56:51 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <1f0f6afe8b019b13bdb200eb8d8e73e5>
-X-RL-SENDER: zhoubinbin@uniontech.com
-X-SENDER: zhoubinbin@uniontech.com
-X-LOGIN-NAME: zhoubinbin@uniontech.com
-X-FST-TO: peterhuewe@gmx.de
-X-SENDER-IP: 58.246.122.242
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-From:   Binbin Zhou <zhoubinbin@uniontech.com>
-To:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca
-Cc:     linux-integrity@vger.kernel.org, christophe.ricard@gmail.com,
-        zhoubb.aaron@gmail.com, Binbin Zhou <zhoubinbin@uniontech.com>
-Subject: [RESEND PATCH] tpm/st33zp24: fix spelling mistake "drescription" -> "description"
-Date:   Tue, 16 Jun 2020 16:56:42 +0800
-Message-Id: <20200616085642.7009-1-zhoubinbin@uniontech.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 16 Jun 2020 05:08:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727804AbgFPJIu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 16 Jun 2020 05:08:50 -0400
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C272A207DD;
+        Tue, 16 Jun 2020 09:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592298529;
+        bh=mMcZbBKDIEf5QDbJvhcjb8NySIKsPG7Fhgc8LiSbKCo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QAbJhmj34S2Fh7X92lHNNV0g9TgINhpbE+Xi01XOpZGNnKr1JQOzc8zJFa/Q/IWIE
+         KUXLzFRoNnTDPXxxfw5nMVDVRRo5OGfYUCr1Uu+PHiRMjg+ihC/RhWsE2s9n/dd3g0
+         4HFqrjPh5o76I0Mk0irL6v+qQWIW1zQYLLpbow1A=
+Received: by mail-oi1-f176.google.com with SMTP id a137so18611837oii.3;
+        Tue, 16 Jun 2020 02:08:49 -0700 (PDT)
+X-Gm-Message-State: AOAM532iBcwy8DQnU/c6AeEDsaRJC0okNSv1M7hOKPjTmTBuLeg5FPR0
+        tulR5SBG+4hKCDmeyhe9hKWIAUAr0/AYstUiE8M=
+X-Google-Smtp-Source: ABdhPJwa1K5xO9vLA3j1dAI/megl1vvVrIUpuNpiiEU3U5egWn6I8rCdX4OdQEugsG4Pg25O6pqrL++03BNz9mew+r8=
+X-Received: by 2002:aca:ba03:: with SMTP id k3mr2525490oif.33.1592298529095;
+ Tue, 16 Jun 2020 02:08:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200615232504.1848159-1-tyhicks@linux.microsoft.com>
+In-Reply-To: <20200615232504.1848159-1-tyhicks@linux.microsoft.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Tue, 16 Jun 2020 11:08:38 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHJbsxA2-jqpbLnUeeNfM0oC8Sh70+axOKoBCFMJ8+jKQ@mail.gmail.com>
+Message-ID: <CAMj1kXHJbsxA2-jqpbLnUeeNfM0oC8Sh70+axOKoBCFMJ8+jKQ@mail.gmail.com>
+Subject: Re: [PATCH] tpm: Require that all digests are present in
+ TCG_PCR_EVENT2 structures
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Peter Jones <pjones@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Petr Vandrovec <petr@vmware.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Thirupathaiah Annapureddy <thiruan@microsoft.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Trivial fix, the spelling of "drescription" is incorrect in function comment.
-Fix this.
+(cc Matthew and Peter)
 
-Signed-off-by: Binbin Zhou <zhoubinbin@uniontech.com>
----
- drivers/char/tpm/st33zp24/i2c.c      | 2 +-
- drivers/char/tpm/st33zp24/spi.c      | 4 ++--
- drivers/char/tpm/st33zp24/st33zp24.c | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+On Tue, 16 Jun 2020 at 01:28, Tyler Hicks <tyhicks@linux.microsoft.com> wrote:
+>
+> Require that the TCG_PCR_EVENT2.digests.count value strictly matches the
+> value of TCG_EfiSpecIdEvent.numberOfAlgorithms in the event field of the
+> TCG_PCClientPCREvent event log header. Also require that
+> TCG_EfiSpecIdEvent.numberOfAlgorithms is non-zero.
+>
+> The TCG PC Client Platform Firmware Profile Specification section 9.1
+> (Family "2.0", Level 00 Revision 1.04) states:
+>
+>  For each Hash algorithm enumerated in the TCG_PCClientPCREvent entry,
+>  there SHALL be a corresponding digest in all TCG_PCR_EVENT2 structures.
+>  Note: This includes EV_NO_ACTION events which do not extend the PCR.
+>
+> Section 9.4.5.1 provides this description of
+> TCG_EfiSpecIdEvent.numberOfAlgorithms:
+>
+>  The number of Hash algorithms in the digestSizes field. This field MUST
+>  be set to a value of 0x01 or greater.
+>
+> Enforce these restrictions, as required by the above specification, in
+> order to better identify and ignore invalid sequences of bytes at the
+> end of an otherwise valid TPM2 event log. Firmware doesn't always have
+> the means necessary to inform the kernel of the actual event log size so
+> the kernel's event log parsing code should be stringent when parsing the
+> event log for resiliency against firmware bugs. This is true, for
+> example, when firmware passes the event log to the kernel via a reserved
+> memory region described in device tree.
+>
 
-diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
-index 35333b65acd1..7c617edff4ca 100644
---- a/drivers/char/tpm/st33zp24/i2c.c
-+++ b/drivers/char/tpm/st33zp24/i2c.c
-@@ -210,7 +210,7 @@ static int st33zp24_i2c_request_resources(struct i2c_client *client)
- 
- /*
-  * st33zp24_i2c_probe initialize the TPM device
-- * @param: client, the i2c_client drescription (TPM I2C description).
-+ * @param: client, the i2c_client description (TPM I2C description).
-  * @param: id, the i2c_device_id struct.
-  * @return: 0 in case of success.
-  *	 -1 in other case.
-diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
-index 26e09de50f1e..a75dafd39445 100644
---- a/drivers/char/tpm/st33zp24/spi.c
-+++ b/drivers/char/tpm/st33zp24/spi.c
-@@ -329,7 +329,7 @@ static int st33zp24_spi_request_resources(struct spi_device *dev)
- 
- /*
-  * st33zp24_spi_probe initialize the TPM device
-- * @param: dev, the spi_device drescription (TPM SPI description).
-+ * @param: dev, the spi_device description (TPM SPI description).
-  * @return: 0 in case of success.
-  *	 or a negative value describing the error.
-  */
-@@ -378,7 +378,7 @@ static int st33zp24_spi_probe(struct spi_device *dev)
- 
- /*
-  * st33zp24_spi_remove remove the TPM device
-- * @param: client, the spi_device drescription (TPM SPI description).
-+ * @param: client, the spi_device description (TPM SPI description).
-  * @return: 0 in case of success.
-  */
- static int st33zp24_spi_remove(struct spi_device *dev)
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
-index 37bb13f516be..4ec10ab5e576 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.c
-+++ b/drivers/char/tpm/st33zp24/st33zp24.c
-@@ -502,7 +502,7 @@ static const struct tpm_class_ops st33zp24_tpm = {
- 
- /*
-  * st33zp24_probe initialize the TPM device
-- * @param: client, the i2c_client drescription (TPM I2C description).
-+ * @param: client, the i2c_client description (TPM I2C description).
-  * @param: id, the i2c_device_id struct.
-  * @return: 0 in case of success.
-  *	 -1 in other case.
--- 
-2.17.1
+When does this happen? Do we have code in mainline that does this?
 
+> Prior to this patch, a single bit set in the offset corresponding to
+> either the TCG_PCR_EVENT2.eventType or TCG_PCR_EVENT2.eventSize fields,
+> after the last valid event log entry, could confuse the parser into
+> thinking that an additional entry is present in the event log. This
+> patch raises the bar on how difficult it is for stale memory to confuse
+> the kernel's event log parser but there's still a reliance on firmware
+> to properly initialize the remainder of the memory region reserved for
+> the event log as the parser cannot be expected to detect a stale but
+> otherwise properly formatted firmware event log entry.
+>
+> Fixes: fd5c78694f3f ("tpm: fix handling of the TPM 2.0 event logs")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> ---
 
+I am all for stringent checks, but this could potentially break
+measured boot on systems that are working fine today, right?
 
+>  include/linux/tpm_eventlog.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+> index 4f8c90c93c29..d83eb9fd5614 100644
+> --- a/include/linux/tpm_eventlog.h
+> +++ b/include/linux/tpm_eventlog.h
+> @@ -201,7 +201,7 @@ static inline int __calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+>         efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
+>
+>         /* Check if event is malformed. */
+> -       if (count > efispecid->num_algs) {
+> +       if (!efispecid->num_algs || count != efispecid->num_algs) {
+>                 size = 0;
+>                 goto out;
+>         }
+> --
+> 2.25.1
+>
