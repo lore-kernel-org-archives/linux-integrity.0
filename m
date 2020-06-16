@@ -2,125 +2,240 @@ Return-Path: <SRS0=e4Xp=75=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9342CC433E1
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BF4C433E0
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 797212098B
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8767F2098B
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:08:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="anxZyJva"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qdUR/4w/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732633AbgFPQHY (ORCPT
+        id S1732599AbgFPQIR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:07:24 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:50629 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732269AbgFPPrE (ORCPT
+        Tue, 16 Jun 2020 12:08:17 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42876 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732678AbgFPQIQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Jun 2020 11:47:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592322422;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=djkgmBs6vxKrnF2svfHTCwO6iJZv0MD8YpKSjFl2MGs=;
-        b=anxZyJvaFpuLChSMwUR/a7qLSGGcT0Nzy4aiSkqCpI/xVk6zVIcE9J7iV1341dFYQpdAwe
-        QNobub7hXN4Ms1OW18fOfvph9zqDj6d3Es9xcqmAm7V7WWOGLDbJFRK2rhytEAPFfTLrAb
-        z8prG6hZN2mOJEmSXgQ9/SksTn2gcSw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-218-nWeeH7oNN9eY6skcHYs3nQ-1; Tue, 16 Jun 2020 11:46:56 -0400
-X-MC-Unique: nWeeH7oNN9eY6skcHYs3nQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B3678DEEE2;
-        Tue, 16 Jun 2020 15:46:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EC3B60C05;
-        Tue, 16 Jun 2020 15:46:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <56c2304c-73cc-8f48-d8d0-5dd6c39f33f3@redhat.com>
-References: <56c2304c-73cc-8f48-d8d0-5dd6c39f33f3@redhat.com> <20200616015718.7812-1-longman@redhat.com> <20200616015718.7812-2-longman@redhat.com> <20200616033035.GB902@sol.localdomain>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
-        David Howells <dhowells@redhat.com>,
+        Tue, 16 Jun 2020 12:08:16 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3BC7C8EE2A2;
+        Tue, 16 Jun 2020 09:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1592323696;
+        bh=uMGaSmZBnBLyo5Ip5SSU2UOO614t+MkZrnTC+AU7YWQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qdUR/4w/rHCUo6tyJCiNGz+QetRnQ7WLXw/ZZoD4KTUCGDTiDh22F1QHDj1C/ltuH
+         lIiit53AiYneJmVV1O9jd+YrOldTrjXtDLWjsduXA/NIJrMQoiXnkECVsuIoaDCFCo
+         0LuMrfjH3V6C0juZpCZUBd+AaW2yByD+2OzU2NVg=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Al423jV7VF8G; Tue, 16 Jun 2020 09:08:16 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9740C8EE188;
+        Tue, 16 Jun 2020 09:08:15 -0700 (PDT)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        David Sterba <dsterba@suse.cz>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mm@kvack.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
-        linux-wireless@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, ecryptfs@vger.kernel.org,
-        kasan-dev@googlegroups.com, linux-bluetooth@vger.kernel.org,
-        linux-wpan@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] mm/slab: Use memzero_explicit() in kzfree()
+        David Woodhouse <dwmw2@infradead.org>,
+        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH v10 7/8] security: keys: trusted: add ability to specify arbitrary policy
+Date:   Tue, 16 Jun 2020 09:02:28 -0700
+Message-Id: <20200616160229.8018-8-James.Bottomley@HansenPartnership.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200616160229.8018-1-James.Bottomley@HansenPartnership.com>
+References: <20200616160229.8018-1-James.Bottomley@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <879078.1592322400.1@warthog.procyon.org.uk>
-Date:   Tue, 16 Jun 2020 16:46:40 +0100
-Message-ID: <879079.1592322400@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Waiman Long <longman@redhat.com> wrote:
+This patch adds a policy= argument to key creation.  The policy is the
+standard tss policymaker format and each separate policy line must
+have a newline after it.
 
-> The kzfree() function is normally used to clear some sensitive
-> information, like encryption keys, in the buffer before freeing it back
-> to the pool. Memset()
+Thus to construct a policy requiring authorized value and pcr 16
+locking using a sha256 hash, the policy (policy.txt) file would be two
+lines:
 
-"memset()" is all lowercase.
+0000017F00000001000B03000001303095B49BE85E381E5B20E557E46363EF55B0F43B132C2D8E3DE9AC436656F2
+0000016b
 
-> is currently used for buffer clearing. However unlikely, there is still a
-> non-zero probability
+This can be inserted into the key with
 
-I'd say "a possibility".
+keyctl add trusted kmk "new 32 policy=`cat policy.txt` keyhandle=0x81000001 hash=sha256" @u
 
-> that
+Note that although a few policies work like this, most require special
+handling which must be added to the kernel policy construction
+routine.
 
-and I'd move "in [the] future" here.
+Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+---
+ .../security/keys/trusted-encrypted.rst       | 16 ++++++
+ security/keys/trusted-keys/tpm2-policy.c      | 53 +++++++++++++++++++
+ security/keys/trusted-keys/tpm2-policy.h      |  1 +
+ security/keys/trusted-keys/trusted_tpm1.c     | 15 ++++++
+ 4 files changed, 85 insertions(+)
 
-> the compiler may choose to optimize away the
-> memory clearing especially if LTO is being used in the future. To make sure
-> that this optimization will never happen
-
-"in these cases"
-
-> , memzero_explicit(), which is introduced in v3.18, is now used in
-
-"instead of"?
-
-> kzfree() to future-proof it.
-
-Davod
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 053344c4df5b..b68d3eb73f00 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -76,6 +76,9 @@ Usage::
+        policyhandle= handle to an authorization policy session that defines the
+                      same policy and with the same hash algorithm as was used to
+                      seal the key.
++       policy=       specify an arbitrary set of policies.  These must
++                     be in policymaker format with each separate
++                     policy line newline terminated.
+ 
+ "keyctl print" returns an ascii hex copy of the sealed key, which is in standard
+ TPM_STORED_DATA format.  The key length for new keys are always in bytes.
+@@ -168,6 +171,19 @@ zeros (the value of PCR 16)::
+     $ dd if=/dev/zero bs=1 count=20 2>/dev/null|sha1sum
+     6768033e216468247bd031a0a2d9876d79818f8f
+ 
++You can also specify arbitrary policy in policymaker format, so a two
++value policy (the pcr example above and authvalue) would look like
++this in policymaker format::
++
++    0000017F000000010004030000016768033e216468247bd031a0a2d9876d79818f8f
++    0000016b
++
++This can be placed in a file (say policy.txt) and then added to the key as::
++
++    $ keyctl add trusted kmk "new 32 keyhandle=0x81000001 hash=sha1 policy=`cat policy.txt`" @u
++
++The newlines in the file policy.txt will be automatically processed.
++
+ Reseal a trusted key under new pcr values::
+ 
+     $ keyctl update 268728824 "update pcrinfo=`cat pcr.blob`"
+diff --git a/security/keys/trusted-keys/tpm2-policy.c b/security/keys/trusted-keys/tpm2-policy.c
+index 080a76e879fd..87a13e607eca 100644
+--- a/security/keys/trusted-keys/tpm2-policy.c
++++ b/security/keys/trusted-keys/tpm2-policy.c
+@@ -370,3 +370,56 @@ int tpm2_get_policy_session(struct tpm_chip *chip, struct tpm2_policies *pols,
+ 
+ 	return 0;
+ }
++
++int tpm2_parse_policies(struct tpm2_policies **ppols, char *str)
++{
++	struct tpm2_policies *pols;
++	char *p;
++	u8 *ptr;
++	int i = 0, left = PAGE_SIZE, res;
++
++	pols = kmalloc(left, GFP_KERNEL);
++	if (!pols)
++		return -ENOMEM;
++
++	ptr = (u8 *)(pols + 1);
++	left -= ptr - (u8 *)pols;
++
++	while ((p = strsep(&str, "\n"))) {
++		if (*p == '\0' || *p == '\n')
++			continue;
++
++		pols->len[i] = strlen(p)/2;
++		if (pols->len[i] > left) {
++			res = -E2BIG;
++			goto err;
++		}
++
++		res = hex2bin(ptr, p, pols->len[i]);
++		if (res)
++			goto err;
++
++		/* get command code and skip past */
++		pols->code[i] = get_unaligned_be32(ptr);
++		pols->policies[i] = ptr + 4;
++		ptr += pols->len[i];
++		left -= pols->len[i];
++		pols->len[i] -= 4;
++
++		/*
++		 * FIXME: this does leave the code embedded in dead
++		 * regions of the memory, but it's easier than
++		 * hexdumping to a temporary or copying over
++		 */
++		i++;
++	}
++
++	pols->count = i;
++	*ppols = pols;
++
++	return 0;
++
++ err:
++	kfree(pols);
++	return res;
++}
+diff --git a/security/keys/trusted-keys/tpm2-policy.h b/security/keys/trusted-keys/tpm2-policy.h
+index 46bf1f0a9325..0da013116c1c 100644
+--- a/security/keys/trusted-keys/tpm2-policy.h
++++ b/security/keys/trusted-keys/tpm2-policy.h
+@@ -28,3 +28,4 @@ int tpm2_generate_policy_digest(struct tpm2_policies *pols, u32 hash,
+ int tpm2_encode_policy(struct tpm2_policies *pols, u8 **data, u32 *len);
+ int tpm2_get_policy_session(struct tpm_chip *chip, struct tpm2_policies *pols,
+ 			    u32 *handle);
++int tpm2_parse_policies(struct tpm2_policies **ppols, char *str);
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index 9f735bbe9eef..d8b073ebe167 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -29,6 +29,8 @@
+ 
+ #include <keys/trusted_tpm.h>
+ 
++#include "tpm2-policy.h"
++
+ static const char hmac_alg[] = "hmac(sha1)";
+ static const char hash_alg[] = "sha1";
+ static struct tpm_chip *chip;
+@@ -709,6 +711,7 @@ enum {
+ 	Opt_hash,
+ 	Opt_policydigest,
+ 	Opt_policyhandle,
++	Opt_policy,
+ };
+ 
+ static const match_table_t key_tokens = {
+@@ -724,6 +727,7 @@ static const match_table_t key_tokens = {
+ 	{Opt_hash, "hash=%s"},
+ 	{Opt_policydigest, "policydigest=%s"},
+ 	{Opt_policyhandle, "policyhandle=%s"},
++	{Opt_policy, "policy=%s"},
+ 	{Opt_err, NULL}
+ };
+ 
+@@ -855,6 +859,17 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 				return -EINVAL;
+ 			opt->policyhandle = handle;
+ 			break;
++
++		case Opt_policy:
++			if (pay->policies)
++				return -EINVAL;
++			if (!tpm2)
++				return -EINVAL;
++			res = tpm2_parse_policies(&pay->policies, args[0].from);
++			if (res)
++				return res;
++			break;
++
+ 		default:
+ 			return -EINVAL;
+ 		}
+-- 
+2.26.2
 
