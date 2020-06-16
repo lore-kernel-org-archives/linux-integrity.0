@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CC2C433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06663C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:02:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A9982071A
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC5322071A
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:02:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZvV/zFcD"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="VF/jq1He"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732496AbgFPQCf (ORCPT
+        id S1732821AbgFPQCh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:02:35 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42456 "EHLO
+        Tue, 16 Jun 2020 12:02:37 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42256 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732363AbgFPQCd (ORCPT
+        by vger.kernel.org with ESMTP id S1732201AbgFPPvO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:02:33 -0400
+        Tue, 16 Jun 2020 11:51:14 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1CADD8EE2A2;
-        Tue, 16 Jun 2020 09:02:33 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DB3518EE2A2;
+        Tue, 16 Jun 2020 08:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1592323353;
+        s=20151216; t=1592322673;
         bh=O6krlYQQz+UkxS0mXwz3JwoCS7CCDjDc27drY2jBIA0=;
         h=From:To:Cc:Subject:Date:From;
-        b=ZvV/zFcDnjgJP6VcrRx/e1YzyAw69Xnm6fPrlzj+1qrcBwwrflwKvvPRN7lHTj/3z
-         b2NCCBSVl+Cv80als0AEnKmx1KdJNP/j+MMl34+jOzE6jiWlNNsxyUdrF5X96pJNqk
-         SWF6X9NiD60MqvI3ahLEaeU61uegbS00DqNOlHOM=
+        b=VF/jq1HeMlcy1+v4LyoLg1FLvotzFTeSR3jNUxo0DBsUPj0iFEhXxwhDUe7fCZYE7
+         rjTCDQUfPCEKDS4Dc0P+qZsysBBZZ/Vrt+WjvSlbY9RPkqUWl4rPqgqWb3l05il8lU
+         xE3bS7+K4ArAo4k/+nKA1g7ya+SzuSoso8uxuuBg=
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id dK8B4gWMng2a; Tue, 16 Jun 2020 09:02:33 -0700 (PDT)
+        with ESMTP id 5A8juJx9XThC; Tue, 16 Jun 2020 08:51:13 -0700 (PDT)
 Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 705718EE188;
-        Tue, 16 Jun 2020 09:02:32 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 38F0E8EE188;
+        Tue, 16 Jun 2020 08:51:13 -0700 (PDT)
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
@@ -46,8 +46,8 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         David Woodhouse <dwmw2@infradead.org>,
         keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
 Subject: [PATCH v10 0/8] TPM 2.0 trusted keys with attached policy
-Date:   Tue, 16 Jun 2020 09:02:21 -0700
-Message-Id: <20200616160229.8018-1-James.Bottomley@HansenPartnership.com>
+Date:   Tue, 16 Jun 2020 08:49:54 -0700
+Message-Id: <20200616155002.7405-1-James.Bottomley@HansenPartnership.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
