@@ -2,107 +2,118 @@ Return-Path: <SRS0=e4Xp=75=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 585E4C433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 15:56:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CC2C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A03B21534
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 15:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A9982071A
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Jun 2020 16:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rix2pl7O"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ZvV/zFcD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730157AbgFPP4A (ORCPT
+        id S1732496AbgFPQCf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Jun 2020 11:56:00 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41206 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733131AbgFPPz5 (ORCPT
+        Tue, 16 Jun 2020 12:02:35 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42456 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732363AbgFPQCd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Jun 2020 11:55:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592322956;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GMvFt9x/GME+tYUTng0QoYKwCh/XoVUUjz+YXccVf9k=;
-        b=Rix2pl7O64W4uD1zXV3b8GB/hQEG/jiMJ/dnB1avC8mVxFsaDtckW9Xon74ExM1FicfEf1
-        4olhmdwo4cCqoq7yDX2zd4cJkTLPvqjIJ3SZE0F7iIaG1rTIV87AHehTB9hWaJD13WOEet
-        AXxuZQgWmLU8NpjiyeEJAsHAbb0uHfk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-240-Vc28Lxq8P5CWEsmSzSE5_g-1; Tue, 16 Jun 2020 11:55:52 -0400
-X-MC-Unique: Vc28Lxq8P5CWEsmSzSE5_g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D2B8DE918;
-        Tue, 16 Jun 2020 15:55:50 +0000 (UTC)
-Received: from x2.localnet (ovpn-113-82.phx2.redhat.com [10.3.113.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 845DE60C05;
-        Tue, 16 Jun 2020 15:55:44 +0000 (UTC)
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        rgb@redhat.com, linux-integrity@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] integrity: Add errno field in audit message
-Date:   Tue, 16 Jun 2020 11:55:42 -0400
-Message-ID: <1717101.NiBDiG0Zly@x2>
-Organization: Red Hat
-In-Reply-To: <958966b6-9972-051f-a7d5-cd6d1beb3244@linux.microsoft.com>
-References: <20200611000400.3771-1-nramas@linux.microsoft.com> <6643272.rC52FQZPYE@x2> <958966b6-9972-051f-a7d5-cd6d1beb3244@linux.microsoft.com>
+        Tue, 16 Jun 2020 12:02:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1CADD8EE2A2;
+        Tue, 16 Jun 2020 09:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1592323353;
+        bh=O6krlYQQz+UkxS0mXwz3JwoCS7CCDjDc27drY2jBIA0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZvV/zFcDnjgJP6VcrRx/e1YzyAw69Xnm6fPrlzj+1qrcBwwrflwKvvPRN7lHTj/3z
+         b2NCCBSVl+Cv80als0AEnKmx1KdJNP/j+MMl34+jOzE6jiWlNNsxyUdrF5X96pJNqk
+         SWF6X9NiD60MqvI3ahLEaeU61uegbS00DqNOlHOM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id dK8B4gWMng2a; Tue, 16 Jun 2020 09:02:33 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 705718EE188;
+        Tue, 16 Jun 2020 09:02:32 -0700 (PDT)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH v10 0/8] TPM 2.0 trusted keys with attached policy
+Date:   Tue, 16 Jun 2020 09:02:21 -0700
+Message-Id: <20200616160229.8018-1-James.Bottomley@HansenPartnership.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tuesday, June 16, 2020 11:43:31 AM EDT Lakshmi Ramasubramanian wrote:
-> On 6/16/20 8:29 AM, Steve Grubb wrote:
-> >>>>> The idea is a good idea, but you're assuming that "result" is always
-> >>>>> errno.  That was probably true originally, but isn't now.  For
-> >>>>> example, ima_appraise_measurement() calls xattr_verify(), which
-> >>>>> compares the security.ima hash with the calculated file hash.  On
-> >>>>> failure, it returns the result of memcmp().  Each and every code path
-> >>>>> will need to be checked.
-> >>>> 
-> >>>> Good catch Mimi.
-> >>>> 
-> >>>> Instead of "errno" should we just use "result" and log the value given
-> >>>> in the result parameter?
-> >>> 
-> >>> That would likely collide with another field of the same name which is
-> >>> the
-> >>> operation's results. If it really is errno, the name is fine. It's
-> >>> generic
-> >>> enough that it can be reused on other events if that mattered.
-> >> 
-> >> Steve, what is the historical reason why we have both "res" and
-> >> "result" for indicating a boolean success/fail?  I'm just curious how
-> >> we ended up this way, and who may still be using "result".
-> > 
-> > I think its pam and some other user space things did this. But because of
-> > mixed machines in datacenters supporting multiple versions of OS, we have
-> > to leave result alone. It has to be 0,1 or success/fail. We cannot use
-> > it for errno.
-> 
-> As Mimi had pointed out, since the value passed in result parameter is
-> not always an error code, "errno" is not an appropriate name.
-> 
-> Can we add a new field, say, "op_result" to report the result of the
-> specified operation?
+This is pretty much the same as the last time around except for a
+couple of folded lines and some added reviews/acks.
 
-Sure. But since it is errno sometimes, how would we know when to translate 
-it?
+General cover letter:
 
--Steve
+This patch updates the trusted key code to export keys in the ASN.1
+format used by current TPM key tools (openssl_tpm2_engine and
+openconnect).  It also simplifies the use of policy with keys because
+the ASN.1 format is designed to carry a description of how to
+construct the policy, with the result that simple policies (like
+authorization and PCR locking) can now be constructed and used in the
+kernel, bringing the TPM 2.0 policy use into line with how TPM 1.2
+works.
 
+The key format is designed to be compatible with our two openssl
+engine implementations as well as with the format used by openconnect.
+I've added seal/unseal to my engine so I can use it for
+interoperability testing and I'll later use this for sealed symmetric
+keys via engine:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/
+
+James
+
+---
+
+James Bottomley (8):
+  lib: add ASN.1 encoder
+  oid_registry: Add TCG defined OIDS for TPM keys
+  security: keys: trusted: fix TPM2 authorizations
+  security: keys: trusted: use ASN.1 TPM2 key format for the blobs
+  security: keys: trusted: Make sealed key properly interoperable
+  security: keys: trusted: add PCR policy to TPM2 keys
+  security: keys: trusted: add ability to specify arbitrary policy
+  security: keys: trusted: implement counter/timer policy
+
+ .../security/keys/trusted-encrypted.rst       |  64 ++-
+ include/keys/trusted-type.h                   |   7 +-
+ include/linux/asn1_encoder.h                  |  32 ++
+ include/linux/oid_registry.h                  |   5 +
+ include/linux/tpm.h                           |   8 +
+ lib/Kconfig                                   |   3 +
+ lib/Makefile                                  |   1 +
+ lib/asn1_encoder.c                            | 454 +++++++++++++++++
+ security/keys/Kconfig                         |   3 +
+ security/keys/trusted-keys/Makefile           |   2 +-
+ security/keys/trusted-keys/tpm2-policy.c      | 463 ++++++++++++++++++
+ security/keys/trusted-keys/tpm2-policy.h      |  31 ++
+ security/keys/trusted-keys/tpm2key.asn1       |  23 +
+ security/keys/trusted-keys/trusted_tpm1.c     |  57 ++-
+ security/keys/trusted-keys/trusted_tpm2.c     | 370 +++++++++++++-
+ 15 files changed, 1487 insertions(+), 36 deletions(-)
+ create mode 100644 include/linux/asn1_encoder.h
+ create mode 100644 lib/asn1_encoder.c
+ create mode 100644 security/keys/trusted-keys/tpm2-policy.c
+ create mode 100644 security/keys/trusted-keys/tpm2-policy.h
+ create mode 100644 security/keys/trusted-keys/tpm2key.asn1
+
+-- 
+2.26.2
 
