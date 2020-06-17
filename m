@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 019CAC433E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 17 Jun 2020 00:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA18C433DF
+	for <linux-integrity@archiver.kernel.org>; Wed, 17 Jun 2020 01:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0BC02100A
-	for <linux-integrity@archiver.kernel.org>; Wed, 17 Jun 2020 00:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77B132080D
+	for <linux-integrity@archiver.kernel.org>; Wed, 17 Jun 2020 01:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbgFQAhj (ORCPT
+        id S1726620AbgFQBBP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 16 Jun 2020 20:37:39 -0400
-Received: from mga01.intel.com ([192.55.52.88]:35560 "EHLO mga01.intel.com"
+        Tue, 16 Jun 2020 21:01:15 -0400
+Received: from mga17.intel.com ([192.55.52.151]:27658 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbgFQAhi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 16 Jun 2020 20:37:38 -0400
-IronPort-SDR: 6btyEopYtcWhQIIfwVIMkuBwT0xT1Xt3erNtWipWo7a+2XBgHYk4xefjBwHFOLrP0gUmqkU/54
- 5g0L3LU3TqSQ==
+        id S1726600AbgFQBBO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 16 Jun 2020 21:01:14 -0400
+IronPort-SDR: 7zCaFnrtO1zmJR5K9faS7qk/pUE0gHExivuPc+SsW5fnE6L6BcHjzvIOSxPDZ/n8/iVt3tdwD2
+ ueJUAHK+7JLA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 17:37:37 -0700
-IronPort-SDR: lODsoQHi8rVMcS8JBOZM22ZQFpr+o4U38aSiRKsTumXaHJosXss88z+9i8pLOq+lgsd28ULTQN
- e1b3CvWqFPDw==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jun 2020 18:01:12 -0700
+IronPort-SDR: tYvItSxVa5vDgDLWIUJSj5xJUFsh7xyAL+jXQk9M76uVpbPTgE7boUdpPWPRIEj6Ks1Oo/JLiG
+ HoAumagWExOA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,520,1583222400"; 
-   d="scan'208";a="351914039"
-Received: from mjlewis-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.33.151])
-  by orsmga001.jf.intel.com with ESMTP; 16 Jun 2020 17:37:27 -0700
-Date:   Wed, 17 Jun 2020 03:37:26 +0300
+   d="scan'208";a="291253132"
+Received: from carusoal-mobl.ger.corp.intel.com (HELO localhost) ([10.252.48.130])
+  by orsmga002.jf.intel.com with ESMTP; 16 Jun 2020 18:01:04 -0700
+Date:   Wed, 17 Jun 2020 04:01:03 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     amirmizi6@gmail.com
 Cc:     Eyal.Cohen@nuvoton.com, oshrialkoby85@gmail.com,
@@ -43,45 +43,51 @@ Cc:     Eyal.Cohen@nuvoton.com, oshrialkoby85@gmail.com,
         linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com
-Subject: Re: [PATCH v10 1/8] tpm: Make read{16, 32}() and write32() in
- tpm_tis_phy_ops optional
-Message-ID: <20200617003726.GA3646@linux.intel.com>
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
+        Benoit Houyere <benoit.houyere@st.com>
+Subject: Re: [PATCH v10 2/8] tpm: tpm_tis: Fix expected bit handling and send
+ all bytes in one shot without last byte in exception
+Message-ID: <20200617010050.GA5100@linux.intel.com>
 References: <20200604134713.157951-1-amirmizi6@gmail.com>
- <20200604134713.157951-2-amirmizi6@gmail.com>
+ <20200604134713.157951-3-amirmizi6@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200604134713.157951-2-amirmizi6@gmail.com>
+In-Reply-To: <20200604134713.157951-3-amirmizi6@gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 04:47:06PM +0300, amirmizi6@gmail.com wrote:
+On Thu, Jun 04, 2020 at 04:47:07PM +0300, amirmizi6@gmail.com wrote:
 > From: Amir Mizinski <amirmizi6@gmail.com>
 > 
-> Only tpm_tis can use memory-mapped I/O, which is truly mapped into
-> the kernel's memory space. Therefore, using ioread16/ioread32/iowrite32
-> turns into a straightforward pointer dereference.
-> Every other driver requires more complicated operations to read more than
-> one byte at a time and will just fall back to read_bytes/write_bytes.
-> Therefore, move this common code out of tpm_tis_spi and into tpm_tis_core
-> so that it is used automatically when low-level drivers do not implement
-> the specialized methods.
+> Detected the following incorrect implementation of the send command:
+> polling on the TPM_STS.stsValid field followed by checking the
+> TPM_STS.expect field only once. Since TPM_STS.stsValid represents the
+> TPM_STS.expect validity, both fields should be polled at the same time.
 > 
-> Co-developed-by: Alexander Steffen <Alexander.Steffen@infineon.com>
-> Signed-off-by: Alexander Steffen <Alexander.Steffen@infineon.com>
+> This fix modifies the signature of wait_for_tpm_stat(), adding an
+> additional "mask_result" parameter to its call. wait_for_tpm_stat() is now
+> polling the TPM_STS with a mask and waits for the value in mask_result.
+> The fix adds the ability to check if certain TPM_STS bits have been
+> cleared.
+> 
+> This change is also aligned to verifying the CRC on I2C TPM. The CRC
+> verification should be done after the TPM_STS.expect field is cleared
+> (TPM received all expected command bytes and set the calculated CRC value
+> in the register).
+> 
+> In addition, the send command was changed to comply with
+> TCG_DesignPrinciples_TPM2p0Driver_vp24_pubrev.pdf as follows:
+> - send all command bytes in one loop
+> - remove special handling of the last byte
+> 
+> Suggested-by: Benoit Houyere <benoit.houyere@st.com>
 > Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-I tested this with my T480 ThinkPad, which has Infineon SLB 9670 TPM
-chip according to TPM_PT_VENDOR_STRING_* [*]
-
-[*] tpm2_getcap properties-fixed from tpm2-tools package to fetch this
-    information.
+Just wondering how did you come up with that name since you are not
+masking anything with 'mask_result'?
 
 /Jarkko
