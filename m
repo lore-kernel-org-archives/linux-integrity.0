@@ -2,157 +2,88 @@ Return-Path: <SRS0=tgSf=77=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0433EC433E1
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 13:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E40C433DF
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 16:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D467A2080D
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 13:53:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fODOZVVA"
+	by mail.kernel.org (Postfix) with ESMTP id 645672075E
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 16:04:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbgFRNxa (ORCPT
+        id S1728538AbgFRQEQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 18 Jun 2020 09:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49476 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730258AbgFRNw5 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jun 2020 09:52:57 -0400
-Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77418C0613EE
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jun 2020 06:52:57 -0700 (PDT)
-Received: by mail-lj1-x233.google.com with SMTP id q19so7357065lji.2
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jun 2020 06:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9P1JCHrt7FUW+xiuM5vRud2sFx/m9qpZviiIZWSxrs0=;
-        b=fODOZVVAnIrwoUAGSdktk0kNRi39TD3Lykb/NupWJ2fkCd44VpIcQ3OX6t7gFZc8bv
-         9mkwvZ5UOQt9GsXUcQhK6Anuggx62lhuOCS4LMARk8o5hYREwyQChzBoKG5ohuca9Gfu
-         0sHcIPcV4k7pQCIDqLEHPkYlOEwxMVR1KnC383+RumsOcY/yRwcIItVdUkaCX5aCKSKS
-         in5FTKhUADwrQfDy3FcD2qcW0tqfRCF+uOMSo3RTkuBuXIEcvA/dK+1IoJetlpLm6366
-         MB9g77DSsG5kxYlIlToWw7tpxgjTC4LI7hOqg9DEd8mg2oTmInUJOdeVoFF0U+PXVKcR
-         FbDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9P1JCHrt7FUW+xiuM5vRud2sFx/m9qpZviiIZWSxrs0=;
-        b=Ms6vTx9cR9AcdXKCNqIHmfGAm7tsyHIxrFTq76EW/QcXt+52o01D/xMRocj2ESu5F1
-         EStibYcvbFoXODpZEnL5y2vgEpahYJaW2fkrRA431l9YkHyME8G1JRfd1ChlWlKN7kyK
-         jgj3cskBDR/3ywG96/uK0ldyz29wvPTIlmfTbDlXnodwYpoK5qY+Q8/Z4snboGUn0i9a
-         gBjQCfVPuqZ2dZX3mASbqnQ3+N60doCF4y7hJwP7VdWYtmG4B5+13xmIcI9WybkR2IcH
-         1u+1vMH/v+FtK94aFPV1JHfFVFkpS3xFcKgy4Je4b+TaBVVscoKQWkwE3kmduohteeT6
-         CaPQ==
-X-Gm-Message-State: AOAM533QsL2U70DoxkLl8eRslSXg+gAO/5rfOeRFH7Pr1ngCF4Yh2v6+
-        Dm3gdntYGIC9RkzNYCV0blWk7Q==
-X-Google-Smtp-Source: ABdhPJyCXiCIvGCC262AeAojPgSkk69Vv7ksw/of2eKCXEYedcwranKM17EXQYCe8ycY+gsWuOgfHQ==
-X-Received: by 2002:a05:651c:108:: with SMTP id a8mr2424578ljb.326.1592488375701;
-        Thu, 18 Jun 2020 06:52:55 -0700 (PDT)
-Received: from maximlap.d-systems.local ([185.75.190.112])
-        by smtp.gmail.com with ESMTPSA id f2sm768324lfc.11.2020.06.18.06.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jun 2020 06:52:55 -0700 (PDT)
-From:   Maxim Uvarov <maxim.uvarov@linaro.org>
-To:     linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        gregkh@linuxfoundation.org, jens.wiklander@linaro.org,
-        linux-integrity@vger.kernel.org, arnd@linaro.org,
-        sumit.garg@linaro.org, Maxim Uvarov <maxim.uvarov@linaro.org>
-Subject: [PATCHv9 1/3] optee: use uuid for sysfs driver entry
-Date:   Thu, 18 Jun 2020 16:52:49 +0300
-Message-Id: <20200618135251.5761-2-maxim.uvarov@linaro.org>
+        Thu, 18 Jun 2020 12:04:16 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2330 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728134AbgFRQEP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Jun 2020 12:04:15 -0400
+Received: from lhreml743-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 50781EC1761F9D513D02;
+        Thu, 18 Jun 2020 17:04:13 +0100 (IST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ lhreml743-chm.china.huawei.com (10.201.108.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Thu, 18 Jun 2020 17:04:13 +0100
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Thu, 18 Jun 2020 18:04:12 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH 01/11] evm: Execute evm_inode_init_security() only when the HMAC key is loaded
+Date:   Thu, 18 Jun 2020 18:01:23 +0200
+Message-ID: <20200618160133.937-1-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200618135251.5761-1-maxim.uvarov@linaro.org>
-References: <20200618135251.5761-1-maxim.uvarov@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.160]
+X-ClientProxiedBy: lhreml704-chm.china.huawei.com (10.201.108.53) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-With the evolving use-cases for TEE bus, now it's required to support
-multi-stage enumeration process. But using a simple index doesn't
-suffice this requirement and instead leads to duplicate sysfs entries.
-So instead switch to use more informative device UUID for sysfs entry
-like:
-/sys/bus/tee/devices/optee-ta-<uuid>
+evm_inode_init_security() requires the HMAC key to calculate the HMAC on
+initial xattrs provided by LSMs. Unfortunately, with the evm_key_loaded()
+check, the function continues even if the HMAC key is not loaded
+(evm_key_loaded() returns true also if EVM has been initialized only with a
+public key). If the HMAC key is not loaded, evm_inode_init_security()
+returns an error later when it calls evm_init_hmac().
 
-Signed-off-by: Maxim Uvarov <maxim.uvarov@linaro.org>
-Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Sumit Garg <sumit.garg@linaro.org>
+Thus, this patch replaces the evm_key_loaded() check with a check of the
+EVM_INIT_HMAC flag in evm_initialized, so that evm_inode_init_security()
+returns 0 instead of an error.
+
+Cc: stable@vger.kernel.org # 4.5.x
+Fixes: 26ddabfe96b ("evm: enable EVM when X509 certificate is loaded")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/ABI/testing/sysfs-bus-optee-devices | 8 ++++++++
- MAINTAINERS                                       | 1 +
- drivers/tee/optee/device.c                        | 9 ++++++---
- 3 files changed, 15 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-bus-optee-devices
+ security/integrity/evm/evm_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-optee-devices b/Documentation/ABI/testing/sysfs-bus-optee-devices
-new file mode 100644
-index 000000000000..0f58701367b6
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-bus-optee-devices
-@@ -0,0 +1,8 @@
-+What:		/sys/bus/tee/devices/optee-ta-<uuid>/
-+Date:           May 2020
-+KernelVersion   5.8
-+Contact:        op-tee@lists.trustedfirmware.org
-+Description:
-+		OP-TEE bus provides reference to registered drivers under this directory. The <uuid>
-+		matches Trusted Application (TA) driver and corresponding TA in secure OS. Drivers
-+		are free to create needed API under optee-ta-<uuid> directory.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 301330e02bca..b9536cb5b8b9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12697,6 +12697,7 @@ OP-TEE DRIVER
- M:	Jens Wiklander <jens.wiklander@linaro.org>
- L:	tee-dev@lists.linaro.org
- S:	Maintained
-+F:	Documentation/ABI/testing/sysfs-bus-optee-devices
- F:	drivers/tee/optee/
- 
- OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
-diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
-index e3a148521ec1..e91b7db5f49e 100644
---- a/drivers/tee/optee/device.c
-+++ b/drivers/tee/optee/device.c
-@@ -65,7 +65,7 @@ static int get_devices(struct tee_context *ctx, u32 session,
- 	return 0;
- }
- 
--static int optee_register_device(const uuid_t *device_uuid, u32 device_id)
-+static int optee_register_device(const uuid_t *device_uuid)
- {
- 	struct tee_client_device *optee_device = NULL;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 0d36259b690d..744c105b48d1 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -521,7 +521,8 @@ int evm_inode_init_security(struct inode *inode,
+ 	struct evm_xattr *xattr_data;
  	int rc;
-@@ -75,7 +75,10 @@ static int optee_register_device(const uuid_t *device_uuid, u32 device_id)
- 		return -ENOMEM;
  
- 	optee_device->dev.bus = &tee_bus_type;
--	dev_set_name(&optee_device->dev, "optee-clnt%u", device_id);
-+	if (dev_set_name(&optee_device->dev, "optee-ta-%pUb", device_uuid)) {
-+		kfree(optee_device);
-+		return -ENOMEM;
-+	}
- 	uuid_copy(&optee_device->id.uuid, device_uuid);
+-	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
++	if (!(evm_initialized & EVM_INIT_HMAC) ||
++	    !evm_protected_xattr(lsm_xattr->name))
+ 		return 0;
  
- 	rc = device_register(&optee_device->dev);
-@@ -144,7 +147,7 @@ int optee_enumerate_devices(void)
- 	num_devices = shm_size / sizeof(uuid_t);
- 
- 	for (idx = 0; idx < num_devices; idx++) {
--		rc = optee_register_device(&device_uuid[idx], idx);
-+		rc = optee_register_device(&device_uuid[idx]);
- 		if (rc)
- 			goto out_shm;
- 	}
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
 -- 
 2.17.1
 
