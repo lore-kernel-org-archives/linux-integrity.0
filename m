@@ -4,45 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72917C433E1
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 16:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8556C433DF
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 16:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 523C52075E
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 16:04:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA9620776
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 16:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbgFRQET (ORCPT
+        id S1728203AbgFRQHh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 18 Jun 2020 12:04:19 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2331 "EHLO huawei.com"
+        Thu, 18 Jun 2020 12:07:37 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2336 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731700AbgFRQER (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jun 2020 12:04:17 -0400
-Received: from lhreml744-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id D46BD41D2136EAC63843;
-        Thu, 18 Jun 2020 17:04:15 +0100 (IST)
+        id S1728008AbgFRQHh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Jun 2020 12:07:37 -0400
+Received: from lhreml716-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 6E01FC6A77EDF1299CED;
+        Thu, 18 Jun 2020 17:07:35 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml744-chm.china.huawei.com (10.201.108.194) with Microsoft SMTP Server
+ lhreml716-chm.china.huawei.com (10.201.108.67) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Thu, 18 Jun 2020 17:04:15 +0100
+ 15.1.1913.5; Thu, 18 Jun 2020 17:07:35 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Thu, 18 Jun 2020 18:04:14 +0200
+ 15.1.1913.5; Thu, 18 Jun 2020 18:07:34 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 02/11] evm: Load EVM key in ima_load_x509() to avoid appraisal
-Date:   Thu, 18 Jun 2020 18:01:24 +0200
-Message-ID: <20200618160133.937-2-roberto.sassu@huawei.com>
+Subject: [PATCH 06/11] evm: Allow setxattr() and setattr() if metadata digest won't change
+Date:   Thu, 18 Jun 2020 18:04:53 +0200
+Message-ID: <20200618160458.1579-6-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200618160133.937-1-roberto.sassu@huawei.com>
-References: <20200618160133.937-1-roberto.sassu@huawei.com>
+In-Reply-To: <20200618160329.1263-2-roberto.sassu@huawei.com>
+References: <20200618160329.1263-2-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.204.65.160]
@@ -54,52 +53,130 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Public keys do not need to be appraised by IMA as the restriction on the
-IMA/EVM keyrings ensures that a key is loaded only if it is signed with a
-key in the primary or secondary keyring.
+If metadata are immutable, they cannot be changed. If metadata are already
+set to the final value before cp and tar restore the value from the source,
+those applications display an error even if the operation is legitimate
+(they don't change the value).
 
-However, when evm_load_x509() is loaded, appraisal is already enabled and
-a valid IMA signature must be added to the EVM key to pass verification.
-
-Since the restriction is applied on both IMA and EVM keyrings, it is safe
-to disable appraisal also when the EVM key is loaded. This patch calls
-evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
+This patch determines whether setxattr()/setattr() change metadata and, if
+not, allows the operations even if metadata are immutable.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/iint.c         | 2 ++
- security/integrity/ima/ima_init.c | 4 ++++
- 2 files changed, 6 insertions(+)
+ security/integrity/evm/evm_main.c | 72 +++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index e12c4900510f..4765a266ba96 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -212,7 +212,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- void __init integrity_load_keys(void)
- {
- 	ima_load_x509();
-+#ifndef CONFIG_IMA_LOAD_X509
- 	evm_load_x509();
-+#endif
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 30072030f05d..41cc6a4aaaab 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -18,6 +18,7 @@
+ #include <linux/integrity.h>
+ #include <linux/evm.h>
+ #include <linux/magic.h>
++#include <linux/posix_acl_xattr.h>
+ 
+ #include <crypto/hash.h>
+ #include <crypto/hash_info.h>
+@@ -305,6 +306,56 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+ 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
  }
  
- static int __init integrity_fs_init(void)
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 4902fe7bd570..9d29a1680da8 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -106,6 +106,10 @@ void __init ima_load_x509(void)
++static int evm_xattr_acl_change(struct dentry *dentry, const char *xattr_name,
++				const void *xattr_value, size_t xattr_value_len)
++{
++	umode_t mode;
++	struct posix_acl *acl = NULL, *acl_res;
++	struct inode *inode = d_backing_inode(dentry);
++	int rc;
++
++	/* UID/GID in ACL have been already converted from user to init ns */
++	acl = posix_acl_from_xattr(&init_user_ns, xattr_value, xattr_value_len);
++	if (!acl)
++		return 1;
++
++	acl_res = acl;
++	rc = posix_acl_update_mode(inode, &mode, &acl_res);
++
++	posix_acl_release(acl);
++
++	if (rc)
++		return 1;
++
++	if (acl_res && inode->i_mode != mode)
++		return 1;
++
++	return 0;
++}
++
++static int evm_xattr_change(struct dentry *dentry, const char *xattr_name,
++			    const void *xattr_value, size_t xattr_value_len)
++{
++	char *xattr_data = NULL;
++	int rc = 0;
++
++	if (posix_xattr_acl(xattr_name))
++		return evm_xattr_acl_change(dentry, xattr_name, xattr_value,
++					    xattr_value_len);
++
++	rc = vfs_getxattr_alloc(dentry, xattr_name, &xattr_data, 0, GFP_NOFS);
++	if (rc < 0)
++		return 1;
++
++	if (rc == xattr_value_len)
++		rc = memcmp(xattr_value, xattr_data, rc);
++	else
++		rc = 1;
++
++	kfree(xattr_data);
++	return rc;
++}
++
+ /*
+  * evm_protect_xattr - protect the EVM extended attribute
+  *
+@@ -361,6 +412,10 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
+ 		return 0;
  
- 	ima_policy_flag &= ~unset_flags;
- 	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_xattr_change(dentry, xattr_name, xattr_value, xattr_value_len))
++		return 0;
 +
-+	/* load also EVM key to avoid appraisal */
-+	evm_load_x509();
-+
- 	ima_policy_flag |= unset_flags;
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -477,6 +532,19 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
  }
- #endif
+ 
++static int evm_attr_change(struct dentry *dentry, struct iattr *attr)
++{
++	struct inode *inode = d_backing_inode(dentry);
++	unsigned int ia_valid = attr->ia_valid;
++
++	if ((!(ia_valid & ATTR_UID) || uid_eq(attr->ia_uid, inode->i_uid)) &&
++	    (!(ia_valid & ATTR_GID) || gid_eq(attr->ia_gid, inode->i_gid)) &&
++	    (!(ia_valid & ATTR_MODE) || attr->ia_mode == inode->i_mode))
++		return 0;
++
++	return 1;
++}
++
+ /**
+  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
+  * @dentry: pointer to the affected dentry
+@@ -506,6 +574,10 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	    (evm_status == INTEGRITY_FAIL_IMMUTABLE))
+ 		return 0;
+ 
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_attr_change(dentry, attr))
++		return 0;
++
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+ 			    integrity_status_msg[evm_status], -EPERM, 0);
 -- 
 2.17.1
 
