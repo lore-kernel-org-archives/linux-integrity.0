@@ -2,96 +2,113 @@ Return-Path: <SRS0=tgSf=77=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D77C433DF
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 13:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF88C433DF
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 13:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F37220885
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 13:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5BFE207E8
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Jun 2020 13:53:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ulPrDM6Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbgFRNos (ORCPT
+        id S1730520AbgFRNw7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 18 Jun 2020 09:44:48 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:50924 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730272AbgFRNor (ORCPT
+        Thu, 18 Jun 2020 09:52:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49468 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730426AbgFRNw4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Jun 2020 09:44:47 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 05IDiSd2001781;
-        Thu, 18 Jun 2020 16:44:29 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id E9771639BF; Thu, 18 Jun 2020 16:44:28 +0300 (IDT)
-From:   amirmizi6@gmail.com
-To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
-        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
-        robh+dt@kernel.org,
-        "benoit.houyere@st.com--to=mark.rutland"@arm.com,
-        peterhuewe@gmx.de, christophe-h.richard@st.com, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
-        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v11 4/8] tpm: tpm_tis: Rewrite "tpm_tis_req_canceled()"
-Date:   Thu, 18 Jun 2020 16:43:39 +0300
-Message-Id: <20200618134344.243537-5-amirmizi6@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200618134344.243537-1-amirmizi6@gmail.com>
-References: <20200618134344.243537-1-amirmizi6@gmail.com>
+        Thu, 18 Jun 2020 09:52:56 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30267C06174E
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Jun 2020 06:52:56 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id y11so7325639ljm.9
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Jun 2020 06:52:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qj3LT34tWN51iOOJ4mJdNrdJmQibtyKe/xjeI2mJQFQ=;
+        b=ulPrDM6YGm23/CCKuij/YFME1OgWjz12T6he4JmOYnNTklxP5k0EmK7cZUyaC8YxAq
+         6TdEyDL8Zl9bypcF0DRwnjAHwopEollw/H01rMgntDUrVjSJx/qn3QNhKz3G21klYbc/
+         eXbBH48QAoP4DCvhacxL2wrSU1HLQxd8auFqTIiYBTackiw9ZW7XsvbIS1kGLFpFqRAN
+         6MpjGkyG3MwxuWuURobYFu6lYztOye341rdgyq4i9GcxQEdv8Rf+OxrYDP+ZIIDPIlz0
+         w1l/c2bSUQ0kH46r7qElgSjh89MhYQhQlF0y1MR6SCQeOe8YmIfHeerIb4dNTROeVIeY
+         EMjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Qj3LT34tWN51iOOJ4mJdNrdJmQibtyKe/xjeI2mJQFQ=;
+        b=jS/wDLyrfNYGqxfC4py80k/mplcIUIbaQMLBOmkDg+WaOyKP9lpR9t19Zf+n2TOios
+         vlo0lvono/gSorhVzMBA+TLlkwONonfIwj03SKmcp1sjackdhfn3dXaAU2L6cr4Ez0Zn
+         oPpLV6crV2oktZn2BVh7yuZ36oNIKYQJUf8z8hrwmkdPBtVRW2PEZL94ZZWwXbL4uBwl
+         AUf0jJd7EjQWGBn6G0hwWTiKmHk4lLWUDpal7yTW2OQ/63jUGPl8JtOTYHZ0V3FILICs
+         yAilKmaU1ZXkr+kfszmOndwA/QyjcQgaI980xZWBGPepg786z4BbbOrjgiHMrrcG3kaz
+         F+eA==
+X-Gm-Message-State: AOAM532R3a0Wv7zJ2yOZOIHS4ydLazR4Bf6i3UIqP/qeYU1PZaiet3Oy
+        ApFAh8TR3PWGjSuaGahuDlSEug==
+X-Google-Smtp-Source: ABdhPJwaMJiel+UnL81pH7RKKu0ZzlHkyaNhB0u/XhfY7cznaMGmnZfRuXmOYmLSbjrorIzuICtysQ==
+X-Received: by 2002:a2e:b0c3:: with SMTP id g3mr2326087ljl.31.1592488374584;
+        Thu, 18 Jun 2020 06:52:54 -0700 (PDT)
+Received: from maximlap.d-systems.local ([185.75.190.112])
+        by smtp.gmail.com with ESMTPSA id f2sm768324lfc.11.2020.06.18.06.52.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jun 2020 06:52:54 -0700 (PDT)
+From:   Maxim Uvarov <maxim.uvarov@linaro.org>
+To:     linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        gregkh@linuxfoundation.org, jens.wiklander@linaro.org,
+        linux-integrity@vger.kernel.org, arnd@linaro.org,
+        sumit.garg@linaro.org, Maxim Uvarov <maxim.uvarov@linaro.org>
+Subject: [PATCHv9 0/3] optee: register drivers on optee bus
+Date:   Thu, 18 Jun 2020 16:52:48 +0300
+Message-Id: <20200618135251.5761-1-maxim.uvarov@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Amir Mizinski <amirmizi6@gmail.com>
+v9: - new mailing list in Docs, update kernel version (Jens Wiklander)
+    - use Big Endian format to print UUID (Sumit Garg)
+v8: - fix v7 check.
+v7: - check return value of dev_set_name() (Jarkko Sakkinen)
+v6: - description, comments, patches reorder and destroy workqueue (Sumit Garg)
+v5: - removed pr_err and fix typos in description (Jarkko Sakkinen)
+    - added missed kfree in optee_open()
+v4: - sysfs entry is optee-ta-uuid (Jerome Forissier, Sumit Garg)
+    - added Documentation/ABI/testing/sysfs-bus-optee-devices (Greg Kroah-Hartman)
+v3: - support tee-suppicant restart (Jens Wiklander)
+    - description and comments (Jarkko Sakkinen)
+    - do not name optee drivers by index in sysfs (Sumit Garg)
+v2: - write TEE with capital letters.
+    - declare __optee_enumerate_device() as static.
 
-Using this function while reading/writing data resulted in an aborted
-operation.
-After investigating the issue according to the TCG TPM Profile (PTP)
-Specifications, I found that "request to cancel" should occur only if
-TPM_STS.commandReady bit is lit.
-Note that i couldn't find a case where the present condition
-(in the linux kernel) is valid, so I'm removing the case for
-"TPM_VID_WINBOND" since we have no need for it.
+Maxim Uvarov (3):
+  optee: use uuid for sysfs driver entry
+  optee: enable support for multi-stage bus enumeration
+  tpm_ftpm_tee: register driver on TEE bus
+Maxim Uvarov (3):
+  optee: use uuid for sysfs driver entry
+  optee: enable support for multi-stage bus enumeration
+  tpm_ftpm_tee: register driver on TEE bus
 
-Also, the default comparison is wrong. Only cmdReady bit needs to be
-compared instead of the full lower status register byte.
+ .../ABI/testing/sysfs-bus-optee-devices       |  8 +++
+ MAINTAINERS                                   |  1 +
+ drivers/char/tpm/tpm_ftpm_tee.c               | 70 ++++++++++++++++---
+ drivers/tee/optee/core.c                      | 27 ++++++-
+ drivers/tee/optee/device.c                    | 38 +++++-----
+ drivers/tee/optee/optee_private.h             | 10 ++-
+ 6 files changed, 119 insertions(+), 35 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-optee-devices
 
-Fixes: 1f866057291f (tpm: Fix cancellation of TPM commands (polling mode))
-Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
----
- drivers/char/tpm/tpm_tis_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 14ffee4..2636ec7 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -699,13 +699,11 @@ static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 
- 	switch (priv->manufacturer_id) {
--	case TPM_VID_WINBOND:
--		return ((status == TPM_STS_VALID) ||
--			(status == (TPM_STS_VALID | TPM_STS_COMMAND_READY)));
- 	case TPM_VID_STM:
- 		return (status == (TPM_STS_VALID | TPM_STS_COMMAND_READY));
- 	default:
--		return (status == TPM_STS_COMMAND_READY);
-+		return ((status & TPM_STS_COMMAND_READY) ==
-+			TPM_STS_COMMAND_READY);
- 	}
- }
- 
 -- 
-2.7.4
+2.17.1
 
