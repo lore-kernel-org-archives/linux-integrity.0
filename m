@@ -2,106 +2,118 @@ Return-Path: <SRS0=eeP6=AE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BBDC433E0
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 21:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CD0C433E0
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 23:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D69F320738
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 21:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4076D20780
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 23:04:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aqX51ZCY"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="L8dwrHDx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393376AbgFWVRH (ORCPT
+        id S2388142AbgFWXE2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Jun 2020 17:17:07 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52275 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2390450AbgFWU1B (ORCPT
+        Tue, 23 Jun 2020 19:04:28 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60658 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388020AbgFWXE1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Jun 2020 16:27:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592944020;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=LsRPxMKdg3wg3/L+rwnuc4Avfs5K49uylfJOpJywC20=;
-        b=aqX51ZCYV3UDvqTsUUgO2awydbpLkONCAlaEZcuMKgl/OnC/RhP6KyWsMdc/WOaDRe1xGa
-        48syNEhRB17Eneg6MbCwyd+lM6mW90C4Y7h/tzYSq/OdzhyORf4seUy2E1/sWqGWkbyqKz
-        lEL5rmOCv25T27RLDoOLKDOXgRf1eKo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-410-84sBE2vBO8mcm2IjICeKGw-1; Tue, 23 Jun 2020 16:26:58 -0400
-X-MC-Unique: 84sBE2vBO8mcm2IjICeKGw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CDD86363F8;
-        Tue, 23 Jun 2020 20:26:46 +0000 (UTC)
-Received: from localhost (ovpn-116-10.gru2.redhat.com [10.97.116.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 10B7A70C37;
-        Tue, 23 Jun 2020 20:26:42 +0000 (UTC)
-From:   Bruno Meneguele <bmeneg@redhat.com>
-To:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zohar@linux.ibm.com, erichte@linux.ibm.com, nayna@linux.ibm.com,
-        Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH v3 0/2] ima: make appraisal state runtime dependent on secure boot
-Date:   Tue, 23 Jun 2020 17:26:38 -0300
-Message-Id: <20200623202640.4936-1-bmeneg@redhat.com>
+        Tue, 23 Jun 2020 19:04:27 -0400
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2887C20B7192;
+        Tue, 23 Jun 2020 16:04:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2887C20B7192
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1592953466;
+        bh=vzZAZrsVkwFhLFQvSrdEJZIr64CbwDvMPQLlWesUQc8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=L8dwrHDxQZ7xqGFZyuOfCYAgdkBdbnsFx24QnlxfM/vEoAAo/au6Yuk8UXxo3Wz+g
+         wbqxyBRbqs19GTUhUC0vaSTCBTmjqiyF8fYk0ol56lPKd7mxe65Z8OuD366qkNxIzw
+         CjRhspmaOgZXdZytBufsh8khs4bldncTpK6e6k74=
+Date:   Tue, 23 Jun 2020 18:04:24 -0500
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Prakhar Srivastava <prsriva02@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Janne Karhunen <janne.karhunen@gmail.com>
+Subject: Re: [PATCH 01/12] ima: Have the LSM free its audit rule
+Message-ID: <20200623230424.GB6048@sequoia>
+References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
+ <20200623003236.830149-2-tyhicks@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200623003236.830149-2-tyhicks@linux.microsoft.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-To switch APPRAISE_BOOTPARAM and ARCH_POLICY dependency from compile time to
-run time the secure boot checking code (specific to each arch) had to be
-slightly modified to include, in the PowerPC arch, the Trusted Boot state,
-which is also relevant to the arch policy choice and also required the
-ima_appraise to be enforced. 
+On 2020-06-22 19:32:25, Tyler Hicks wrote:
+> Ask the LSM to free its audit rule rather than directly calling kfree().
+> Both AppArmor and SELinux do additional work in their audit_rule_free()
+> hooks. Fix memory leaks by allowing the LSMs to perform necessary work.
+> 
+> Fixes: b16942455193 ("ima: use the lsm policy update notifier")
+> Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> Cc: Janne Karhunen <janne.karhunen@gmail.com>
+> ---
+>  security/integrity/ima/ima.h        | 6 ++++++
+>  security/integrity/ima/ima_policy.c | 2 +-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index df93ac258e01..de05d7f1d3ec 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -404,6 +404,7 @@ static inline void ima_free_modsig(struct modsig *modsig)
+>  #ifdef CONFIG_IMA_LSM_RULES
+>  
+>  #define security_filter_rule_init security_audit_rule_init
+> +#define security_filter_rule_free security_audit_rule_free
+>  #define security_filter_rule_match security_audit_rule_match
+>  
+>  #else
+> @@ -414,6 +415,11 @@ static inline int security_filter_rule_init(u32 field, u32 op, char *rulestr,
+>  	return -EINVAL;
+>  }
+>  
+> +static inline void security_filter_rule_free(void *lsmrule)
+> +{
+> +	return -EINVAL;
 
-With that I changed the checking order: instead of first check the
-arch_policy and then the secure/trusted boot state, now we first check the
-boot state, set ima_appraise to be enforced and then the existence of arch
-policy. In other words, whenever secure/trusted boot is enabled,
-(ima_appraise & IMA_APPRAISE_ENFORCE) == true.
+Bah, I introduced a build warning here when CONFIG_IMA_LSM_RULES is
+disabled. This function should return nothing. I'll wait for additional
+feedback before spinning a v2.
 
-I've tested these patches in a x86_64 platform with and without secure boot
-enabled and in a PowerPC without secure boot enabled:
+Tyler
 
-1) with secure boot enabled (x86_64) and ima_policy=appraise_tcb, the
-ima_appraise= options were completly ignored and the boot always failed with
-"missing-hash" for /sbin/init, which is the expected result;
-
-2) with secure boot enabled (x86_64), but no ima_policy:
-
-[    1.396111] ima: Allocated hash algorithm: sha256
-[    1.424025] ima: setting IMA appraisal to enforced
-[    1.424039] audit: type=1807 audit(1592927955.557:2): action=measure func=KEXEC_KERNEL_CHECK res=1
-[    1.424040] audit: type=1807 audit(1592927955.557:3): action=measure func=MODULE_CHECK res=1
-
-3) with secure boot disabled (PowerPC and x86_64) and
-"ima_policy=appraise_tcb ima_appraise=fix", audit messages were triggered
-with "op=appraisal_data cause=missing-hash" but the system worked fine due
-to "fix".
-
-Bruno Meneguele (2):
-  arch/ima: extend secure boot check to include trusted boot
-  ima: move APPRAISE_BOOTPARAM dependency on ARCH_POLICY to runtime
-
- arch/powerpc/kernel/ima_arch.c      |  5 +++--
- arch/s390/kernel/ima_arch.c         |  2 +-
- arch/x86/kernel/ima_arch.c          |  4 ++--
- include/linux/ima.h                 |  4 ++--
- security/integrity/ima/Kconfig      |  2 +-
- security/integrity/ima/ima_main.c   |  2 +-
- security/integrity/ima/ima_policy.c | 20 ++++++++++++++------
- 7 files changed, 24 insertions(+), 15 deletions(-)
-
--- 
-2.26.2
-
+> +}
+> +
+>  static inline int security_filter_rule_match(u32 secid, u32 field, u32 op,
+>  					     void *lsmrule)
+>  {
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index e493063a3c34..236a731492d1 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -258,7 +258,7 @@ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+>  	int i;
+>  
+>  	for (i = 0; i < MAX_LSM_RULES; i++) {
+> -		kfree(entry->lsm[i].rule);
+> +		security_filter_rule_free(entry->lsm[i].rule);
+>  		kfree(entry->lsm[i].args_p);
+>  	}
+>  	kfree(entry);
+> -- 
+> 2.25.1
