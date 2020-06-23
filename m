@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-17.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C68C433E1
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF64C433E0
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5DA20720
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEF9320720
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Jun 2020 00:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="p8I54MFO"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BayDO+uA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbgFWAeq (ORCPT
+        id S1731998AbgFWAeX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 22 Jun 2020 20:34:46 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47544 "EHLO
+        Mon, 22 Jun 2020 20:34:23 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47504 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732009AbgFWAeY (ORCPT
+        with ESMTP id S1731927AbgFWAeW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 Jun 2020 20:34:24 -0400
+        Mon, 22 Jun 2020 20:34:22 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7D5C820B7192;
-        Mon, 22 Jun 2020 17:34:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D5C820B7192
+        by linux.microsoft.com (Postfix) with ESMTPSA id B433620B7192;
+        Mon, 22 Jun 2020 17:34:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B433620B7192
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1592872464;
-        bh=EIfQa71W+wSH28J/gAtVyVwZP6jN6OZSnsojTGHhpic=;
+        s=default; t=1592872461;
+        bh=ezz4s3uOPz8Mcn01u6sEHjTUJKKCcNFUFhLQPxlyvX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p8I54MFObjdsFyRtrc3RrhsboG9BU+0JnbS0PSdcE++h8wp8dp3T6HijlXsuyxZBq
-         8rfyjIBvTLiVOWzIgowFzyMGwzxgRMjp5LmX3kY8gg9eizLjx3ZpO8jG3MbVjbw2JM
-         KWFzYLA2SdX0C7IJY+jAwp1aCcSq+jBLch7k/rnM=
+        b=BayDO+uAqIG1o1otFsdXeto+CR9kn3dWZuJJ9u2WvmB+3LlQU6SaEMdNQHGm//30b
+         bOSPCvK/JLV1Wqr+BYC78CnVaX6Ot1bBkLQ98R1REseKpWF/yahNw/vszo4dZcuyle
+         tqdCnxnPcjBJDEQJanSyhJpEm9ncqAOyD+hocUms=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -43,9 +43,9 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH 08/12] ima: Shallow copy the args_p member of ima_rule_entry.lsm elements
-Date:   Mon, 22 Jun 2020 19:32:32 -0500
-Message-Id: <20200623003236.830149-9-tyhicks@linux.microsoft.com>
+Subject: [PATCH 06/12] ima: Fail rule parsing when the KEXEC_CMDLINE hook is combined with an invalid cond
+Date:   Mon, 22 Jun 2020 19:32:30 -0500
+Message-Id: <20200623003236.830149-7-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
 References: <20200623003236.830149-1-tyhicks@linux.microsoft.com>
@@ -56,50 +56,70 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The args_p member is a simple string that is allocated by
-ima_rule_init(). Shallow copy it like other non-LSM references in
-ima_rule_entry structs.
+The KEXEC_CMDLINE hook function only supports the pcr conditional. Make
+this clear at policy load so that IMA policy authors don't assume that
+other conditionals are supported.
 
-There are no longer any necessary error path cleanups to do in
-ima_lsm_copy_rule() so reference ownership from entry to nentry becomes
-easier.
+Since KEXEC_CMDLINE's inception, ima_match_rules() has always returned
+true on any loaded KEXEC_CMDLINE rule without any consideration for
+other conditionals present in the rule. Make it clear that pcr is the
+only supported KEXEC_CMDLINE conditional by returning an error during
+policy load.
 
+An example of why this is a problem can be explained with the following
+rule:
+
+ dont_measure func=KEXEC_CMDLINE obj_type=foo_t
+
+An IMA policy author would have assumed that rule is valid because the
+parser accepted it but the result was that measurements for all
+KEXEC_CMDLINE operations would be disabled.
+
+Fixes: b0935123a183 ("IMA: Define a new hook to measure the kexec boot command line arguments")
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 ---
- security/integrity/ima/ima_policy.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ security/integrity/ima/ima_policy.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e33347148aa9..e9c7d318fdd4 100644
+index ecc234b956a2..83975ad22907 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -306,10 +306,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 			continue;
- 
- 		nentry->lsm[i].type = entry->lsm[i].type;
--		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
--						GFP_KERNEL);
--		if (!nentry->lsm[i].args_p)
--			goto out_err;
-+		nentry->lsm[i].args_p = entry->lsm[i].args_p;
-+		entry->lsm[i].args_p = NULL;
- 
- 		security_filter_rule_init(nentry->lsm[i].type,
- 					  Audit_equal,
-@@ -325,13 +323,6 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 	entry->keyrings = NULL;
- 	entry->template = NULL;
- 	return nentry;
--
--out_err:
--	nentry->fsname = NULL;
--	nentry->keyrings = NULL;
--	nentry->template = NULL;
--	ima_free_rule(nentry);
--	return NULL;
+@@ -349,6 +349,17 @@ static int ima_lsm_update_rule(struct ima_rule_entry *entry)
+ 	return 0;
  }
  
- static int ima_lsm_update_rule(struct ima_rule_entry *entry)
++static bool ima_rule_contains_lsm_cond(struct ima_rule_entry *entry)
++{
++	int i;
++
++	for (i = 0; i < MAX_LSM_RULES; i++)
++		if (entry->lsm[i].args_p)
++			return true;
++
++	return false;
++}
++
+ /*
+  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
+  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
+@@ -999,6 +1010,16 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 		case POLICY_CHECK:
+ 			break;
+ 		case KEXEC_CMDLINE:
++			if (entry->action & ~(MEASURE | DONT_MEASURE))
++				return false;
++
++			if (entry->flags & ~(IMA_FUNC | IMA_PCR))
++				return false;
++
++			if (ima_rule_contains_lsm_cond(entry))
++				return false;
++
++			break;
+ 		case KEY_CHECK:
+ 			if (entry->action & ~(MEASURE | DONT_MEASURE))
+ 				return false;
 -- 
 2.25.1
 
