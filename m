@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A6BC433DF
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Jun 2020 14:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02243C433E0
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Jun 2020 14:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0492B20775
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Jun 2020 14:48:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5466206C0
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Jun 2020 14:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405521AbgFYOsK (ORCPT
+        id S2405551AbgFYOsS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Jun 2020 10:48:10 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51435 "EHLO
+        Thu, 25 Jun 2020 10:48:18 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:51450 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2405367AbgFYOsJ (ORCPT
+        with ESMTP id S2405537AbgFYOsR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Jun 2020 10:48:09 -0400
+        Thu, 25 Jun 2020 10:48:17 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 05PElm22015282;
-        Thu, 25 Jun 2020 17:47:48 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 05PElqMw015300;
+        Thu, 25 Jun 2020 17:47:52 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 3A497639BE; Thu, 25 Jun 2020 17:47:48 +0300 (IDT)
+        id 5D5A4639BE; Thu, 25 Jun 2020 17:47:52 +0300 (IDT)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
         oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
@@ -39,14 +39,16 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
         Amir Mizinski <amirmizi6@gmail.com>,
-        Christophe Ricard <christophe-h.ricard@st.com>
-Subject: [PATCH v12 3/9] tpm: tpm_tis: Add retry in case of protocol failure.
-Date:   Thu, 25 Jun 2020 17:46:43 +0300
-Message-Id: <20200625144650.269719-4-amirmizi6@gmail.com>
+        Eddie James <eajames@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>
+Subject: [PATCH v12 9/9] tpm: tpm_tis: add tpm_tis_i2c driver
+Date:   Thu, 25 Jun 2020 17:46:49 +0300
+Message-Id: <20200625144650.269719-10-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20200625144650.269719-1-amirmizi6@gmail.com>
 References: <20200625144650.269719-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
@@ -55,187 +57,352 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Added a retry mechanism on any protocol error when sending a command or
-receiving a response. This was changed to comply with
-the TCG PC Client Device Driver Design Principles for TPM 2.0.
+Implements the functionality needed to communicate with an I2C TPM
+according to the TCG TPM I2C Interface Specification.
 
-When sending a command, a loop is added in "tpm_tis_send_main()" that calls
-"tpm_tis_send_data()" and then issues a retry attempt if any error occurs.
-When receiving a response, the following new function derived from
-"tpm_tis_recv()" is added: "__tpm_tis_recv()". "tpm_tis_recv()" is modified
-to call "__tpm_tis_recv()" in a loop. If any error occurs, a retry is
-initiated by setting TPM_STS.responseRetry and "__tpm_tis_recv()" is
-called again.
-In both cases a retry is attempted up to "TPM_RETRY" times.
-
-Co-developed-by: Christophe Ricard <christophe-h.ricard@st.com>
-Signed-off-by: Christophe Ricard <christophe-h.ricard@st.com>
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+Tested-by: Eddie James <eajames@linux.ibm.com>
+Tested-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/char/tpm/tpm_tis_core.c | 62 ++++++++++++++++++++++++++---------------
- drivers/char/tpm/tpm_tis_core.h |  1 +
- 2 files changed, 41 insertions(+), 22 deletions(-)
+ drivers/char/tpm/Kconfig       |  12 ++
+ drivers/char/tpm/Makefile      |   1 +
+ drivers/char/tpm/tpm_tis_i2c.c | 292 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 305 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 6b33620..e136467 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -305,29 +305,24 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
- 	return size;
- }
+diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+index aacdeed..2116d94 100644
+--- a/drivers/char/tpm/Kconfig
++++ b/drivers/char/tpm/Kconfig
+@@ -74,6 +74,18 @@ config TCG_TIS_SPI_CR50
+ 	  If you have a H1 secure module running Cr50 firmware on SPI bus,
+ 	  say Yes and it will be accessible from within Linux.
  
--static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-+static int __tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int size = 0;
- 	int status;
- 	u32 expected;
- 
--	if (count < TPM_HEADER_SIZE) {
--		size = -EIO;
--		goto out;
--	}
--
- 	size = recv_data(chip, buf, TPM_HEADER_SIZE);
- 	/* read first 10 bytes, including tag, paramsize, and result */
- 	if (size < TPM_HEADER_SIZE) {
- 		dev_err(&chip->dev, "Unable to read header\n");
--		goto out;
-+		return size;
- 	}
- 
- 	expected = be32_to_cpu(*(__be32 *) (buf + 2));
- 	if (expected > count || expected < TPM_HEADER_SIZE) {
- 		size = -EIO;
--		goto out;
-+		return size;
- 	}
- 
- 	size += recv_data(chip, &buf[TPM_HEADER_SIZE],
-@@ -335,22 +330,45 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 	if (size < expected) {
- 		dev_err(&chip->dev, "Unable to read remainder of result\n");
- 		size = -ETIME;
--		goto out;
-+		return size;
- 	}
- 
- 	if (tpm_tis_wait_for_stat(chip, TPM_STS_VALID, TPM_STS_VALID,
- 				  chip->timeout_c, &priv->int_queue,
- 				  false) < 0) {
- 		size = -ETIME;
--		goto out;
-+		return size;
- 	}
++config TCG_TIS_I2C
++	tristate "TPM I2C Interface Specification"
++	depends on I2C
++	select CRC_CCITT
++	select TCG_TIS_CORE
++	help
++	  If you have a TPM security chip which is connected to a regular
++	  I2C master (i.e. most embedded platforms) that is compliant with the
++	  TCG TPM I2C Interface Specification say Yes and it will be accessible from
++	  within Linux. To compile this driver as a module, choose  M here;
++	  the module will be called tpm_tis_i2c.
 +
- 	status = tpm_tis_status(chip);
- 	if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
- 		dev_err(&chip->dev, "Error left over data\n");
- 		size = -EIO;
-+		return size;
-+	}
+ config TCG_TIS_I2C_ATMEL
+ 	tristate "TPM Interface Specification 1.2 Interface (I2C - Atmel)"
+ 	depends on I2C
+diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+index 9567e51..97999cf 100644
+--- a/drivers/char/tpm/Makefile
++++ b/drivers/char/tpm/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
+ tpm_tis_spi-y := tpm_tis_spi_main.o
+ tpm_tis_spi-$(CONFIG_TCG_TIS_SPI_CR50) += tpm_tis_spi_cr50.o
+ 
++obj-$(CONFIG_TCG_TIS_I2C) += tpm_tis_i2c.o
+ obj-$(CONFIG_TCG_TIS_I2C_ATMEL) += tpm_i2c_atmel.o
+ obj-$(CONFIG_TCG_TIS_I2C_INFINEON) += tpm_i2c_infineon.o
+ obj-$(CONFIG_TCG_TIS_I2C_NUVOTON) += tpm_i2c_nuvoton.o
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+new file mode 100644
+index 0000000..4c9bad0
+--- /dev/null
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -0,0 +1,292 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2014-2019 Nuvoton Technology corporation
++ *
++ * TPM TIS I2C
++ *
++ * TPM TIS I2C Device Driver Interface for devices that implement the TPM I2C
++ * Interface defined by TCG PC Client Platform TPM Profile (PTP) Specification
++ * Revision 01.03 v22 at www.trustedcomputinggroup.org
++ */
 +
-+	return size;
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/slab.h>
++#include <linux/interrupt.h>
++#include <linux/wait.h>
++#include <linux/acpi.h>
++#include <linux/freezer.h>
++#include <linux/crc-ccitt.h>
++
++#include <linux/module.h>
++#include <linux/i2c.h>
++#include <linux/gpio.h>
++#include <linux/of_irq.h>
++#include <linux/of_gpio.h>
++#include <linux/tpm.h>
++#include "tpm.h"
++#include "tpm_tis_core.h"
++
++#define TPM_LOC_SEL                    0x04
++#define TPM_I2C_INTERFACE_CAPABILITY   0x30
++#define TPM_I2C_DEVICE_ADDRESS         0x38
++#define TPM_DATA_CSUM_ENABLE           0x40
++#define TPM_DATA_CSUM                  0x44
++#define TPM_I2C_DID_VID                        0x48
++#define TPM_I2C_RID                    0x4C
++
++//#define I2C_IS_TPM2 1
++
++struct tpm_tis_i2c_phy {
++	struct tpm_tis_data priv;
++	struct i2c_client *i2c_client;
++	bool data_csum;
++	u8 *iobuf;
++};
++
++static inline struct tpm_tis_i2c_phy *to_tpm_tis_i2c_phy(struct tpm_tis_data
++							 *data)
++{
++	return container_of(data, struct tpm_tis_i2c_phy, priv);
 +}
 +
-+static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
++static u8 address_to_register(u32 addr)
 +{
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-+	int size;
-+	int i;
++	addr &= 0xFFF;
 +
-+	if (count < TPM_HEADER_SIZE) {
-+		size = -EIO;
- 		goto out;
- 	}
- 
-+	for (i = 0; i < TPM_RETRY; i++) {
-+		size = __tpm_tis_recv(chip, buf, count);
-+		if (size <= 0)
-+			tpm_tis_write8(priv, TPM_STS(priv->locality),
-+				       TPM_STS_RESPONSE_RETRY);
-+		else
-+			goto out;
++	switch (addr) {
++		// adapt register addresses that have changed compared to
++		// older TIS versions
++	case TPM_ACCESS(0):
++		return 0x04;
++	case TPM_LOC_SEL:
++		return 0x00;
++	case TPM_DID_VID(0):
++		return 0x48;
++	case TPM_RID(0):
++		return 0x4C;
++	default:
++		return addr;
 +	}
- out:
- 	tpm_tis_ready(chip);
- 	return size;
-@@ -375,7 +393,7 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 					  chip->timeout_b, &priv->int_queue,
- 					  false) < 0) {
- 			rc = -ETIME;
--			goto out_err;
-+			return rc;
- 		}
- 	}
- 
-@@ -384,13 +402,13 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 		if (burstcnt < 0) {
- 			dev_err(&chip->dev, "Unable to read burstcount\n");
- 			rc = burstcnt;
--			goto out_err;
-+			return rc;
- 		}
- 		burstcnt = min_t(int, burstcnt, len - count);
- 		rc = tpm_tis_write_bytes(priv, TPM_DATA_FIFO(priv->locality),
- 					 burstcnt, buf + count);
- 		if (rc < 0)
--			goto out_err;
-+			return rc;
- 
- 		count += burstcnt;
- 	}
-@@ -398,14 +416,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 				  TPM_STS_VALID, chip->timeout_a,
- 				  &priv->int_queue, false) < 0) {
- 		rc = -ETIME;
--		goto out_err;
++}
++
++static int tpm_tis_i2c_read_bytes(struct tpm_tis_data *data, u32 addr,
++				  u16 len, u8 *result)
++{
++	struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
++	int ret = 0;
++	int i = 0;
++	u8 reg = address_to_register(addr);
++	struct i2c_msg msgs[] = {
++		{
++			.addr = phy->i2c_client->addr,
++			.len = sizeof(reg),
++			.buf = &reg,
++		},
++		{
++			.addr = phy->i2c_client->addr,
++			.len = len,
++			.buf = result,
++			.flags = I2C_M_RD,
++		},
++	};
++
++	do {
++		ret = i2c_transfer(phy->i2c_client->adapter, msgs,
++				   ARRAY_SIZE(msgs));
++		usleep_range(250, 300); // wait default GUARD_TIME of 250µs
++
++	} while (ret < 0 && i++ < TPM_RETRY);
++
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int tpm_tis_i2c_write_bytes(struct tpm_tis_data *data, u32 addr,
++				   u16 len, const u8 *value)
++{
++	struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
++	int ret = 0;
++	int i = 0;
++
++	if (phy->iobuf) {
++		if (len > TPM_BUFSIZE - 1)
++			return -EIO;
++
++		phy->iobuf[0] = address_to_register(addr);
++		memcpy(phy->iobuf + 1, value, len);
++
++		{
++			struct i2c_msg msgs[] = {
++				{
++					.addr = phy->i2c_client->addr,
++					.len = len + 1,
++					.buf = phy->iobuf,
++				},
++			};
++
++			do {
++				ret = i2c_transfer(phy->i2c_client->adapter,
++						   msgs, ARRAY_SIZE(msgs));
++				// wait default GUARD_TIME of 250µs
++				usleep_range(250, 300);
++			} while (ret < 0 && i++ < TPM_RETRY);
++		}
++	} else {
++		u8 reg = address_to_register(addr);
++
++		struct i2c_msg msgs[] = {
++			{
++				.addr = phy->i2c_client->addr,
++				.len = sizeof(reg),
++				.buf = &reg,
++			},
++			{
++				.addr = phy->i2c_client->addr,
++				.len = len,
++				.buf = (u8 *)value,
++				.flags = I2C_M_NOSTART,
++			},
++		};
++		do {
++			ret = i2c_transfer(phy->i2c_client->adapter, msgs,
++					   ARRAY_SIZE(msgs));
++			// wait default GUARD_TIME of 250µs
++			usleep_range(250, 300);
++		} while (ret < 0 && i++ < TPM_RETRY);
++	}
++
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static bool tpm_tis_i2c_verify_data_integrity(struct tpm_tis_data *data,
++					      const u8 *buf, size_t len)
++{
++	struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
++	u16 crc, crc_tpm;
++	int rc;
++
++	if (phy->data_csum) {
++		crc = crc_ccitt(0x0000, buf, len);
++		rc = tpm_tis_read16(data, TPM_DATA_CSUM, &crc_tpm);
++		if (rc < 0)
++			return false;
++
++		crc_tpm = be16_to_cpu(crc_tpm);
++		return crc == crc_tpm;
++	}
++
++	return true;
++}
++
++static SIMPLE_DEV_PM_OPS(tpm_tis_pm, tpm_pm_suspend, tpm_tis_resume);
++
++static int csum_state_store(struct tpm_tis_data *data, u8 new_state)
++{
++	struct tpm_tis_i2c_phy *phy = to_tpm_tis_i2c_phy(data);
++	u8 cur_state;
++	int rc;
++
++	rc = tpm_tis_i2c_write_bytes(&phy->priv, TPM_DATA_CSUM_ENABLE,
++				     1, &new_state);
++	if (rc < 0)
 +		return rc;
- 	}
- 
- 	return 0;
--
--out_err:
--	tpm_tis_ready(chip);
--	return rc;
- }
- 
- static void disable_interrupts(struct tpm_chip *chip)
-@@ -434,13 +448,17 @@ static void disable_interrupts(struct tpm_chip *chip)
- static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
--	int rc;
-+	int rc, i;
- 	u32 ordinal;
- 	unsigned long dur;
- 
--	rc = tpm_tis_send_data(chip, buf, len);
--	if (rc < 0)
--		return rc;
-+	for (i = 0; i < TPM_RETRY; i++) {
-+		rc = tpm_tis_send_data(chip, buf, len);
-+		if (rc >= 0)
-+			break;
++
++	rc = tpm_tis_i2c_read_bytes(&phy->priv, TPM_DATA_CSUM_ENABLE,
++				    1, &cur_state);
++	if (rc < 0)
++		return rc;
++
++	if (new_state == cur_state)
++		phy->data_csum = (bool)new_state;
++
++	return rc;
++}
++
++static const struct tpm_tis_phy_ops tpm_i2c_phy_ops = {
++	.read_bytes = tpm_tis_i2c_read_bytes,
++	.write_bytes = tpm_tis_i2c_write_bytes,
++	.verify_data_integrity = tpm_tis_i2c_verify_data_integrity,
++};
++
++static int tpm_tis_i2c_probe(struct i2c_client *dev,
++			     const struct i2c_device_id *id)
++{
++	struct tpm_tis_i2c_phy *phy;
++	int rc;
++	int crc_checksum = 0;
++	const u8 loc_init = 0;
++	struct device_node *np;
++
++	phy = devm_kzalloc(&dev->dev, sizeof(struct tpm_tis_i2c_phy),
++			   GFP_KERNEL);
++	if (!phy)
++		return -ENOMEM;
++
++	phy->i2c_client = dev;
++
++	if (!i2c_check_functionality(dev->adapter, I2C_FUNC_NOSTART)) {
++		phy->iobuf = devm_kmalloc(&dev->dev, TPM_BUFSIZE, GFP_KERNEL);
++		if (!phy->iobuf)
++			return -ENOMEM;
 +	}
-+	if (i == TPM_RETRY)
-+		goto out_err;
- 
- 	/* go and do it */
- 	rc = tpm_tis_write8(priv, TPM_STS(priv->locality), TPM_STS_GO);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index d06c65b..6cc6b76 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -34,6 +34,7 @@ enum tis_status {
- 	TPM_STS_GO = 0x20,
- 	TPM_STS_DATA_AVAIL = 0x10,
- 	TPM_STS_DATA_EXPECT = 0x08,
-+	TPM_STS_RESPONSE_RETRY = 0x02,
- };
- 
- enum tis_int_flags {
++
++	// select locality 0 (the driver will access only via locality 0)
++	rc = tpm_tis_i2c_write_bytes(&phy->priv, TPM_LOC_SEL, 1, &loc_init);
++	if (rc < 0)
++		return rc;
++
++	// set CRC checksum calculation enable
++	np = dev->dev.of_node;
++	if (of_property_read_bool(np, "crc-checksum"))
++		crc_checksum = 1;
++
++	rc = csum_state_store(&phy->priv, crc_checksum);
++	if (rc < 0)
++		return rc;
++
++	return tpm_tis_core_init(&dev->dev, &phy->priv, -1, &tpm_i2c_phy_ops,
++					NULL);
++}
++
++static const struct i2c_device_id tpm_tis_i2c_id[] = {
++	{"tpm_tis_i2c", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(i2c, tpm_tis_i2c_id);
++
++static const struct of_device_id of_tis_i2c_match[] = {
++	{ .compatible = "nuvoton,npct75x", },
++	{ .compatible = "tcg,tpm-tis-i2c", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, of_tis_i2c_match);
++
++static const struct acpi_device_id acpi_tis_i2c_match[] = {
++	{"SMO0768", 0},
++	{}
++};
++MODULE_DEVICE_TABLE(acpi, acpi_tis_i2c_match);
++
++static struct i2c_driver tpm_tis_i2c_driver = {
++	.driver = {
++		.owner = THIS_MODULE,
++		.name = "tpm_tis_i2c",
++		.pm = &tpm_tis_pm,
++		.of_match_table = of_match_ptr(of_tis_i2c_match),
++		.acpi_match_table = ACPI_PTR(acpi_tis_i2c_match),
++	},
++	.probe = tpm_tis_i2c_probe,
++	.id_table = tpm_tis_i2c_id,
++};
++
++module_i2c_driver(tpm_tis_i2c_driver);
++
++MODULE_DESCRIPTION("TPM Driver");
++MODULE_LICENSE("GPL");
 -- 
 2.7.4
 
