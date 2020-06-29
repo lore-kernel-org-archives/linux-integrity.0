@@ -2,122 +2,116 @@ Return-Path: <SRS0=Gmok=AK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED9BC433E0
-	for <linux-integrity@archiver.kernel.org>; Mon, 29 Jun 2020 18:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 996CFC433E0
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Jun 2020 18:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2A22063A
-	for <linux-integrity@archiver.kernel.org>; Mon, 29 Jun 2020 18:40:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A03620656
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Jun 2020 18:52:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbgF2Skk (ORCPT
+        id S1729716AbgF2SwQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 29 Jun 2020 14:40:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60072 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728391AbgF2Skf (ORCPT
+        Mon, 29 Jun 2020 14:52:16 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40828 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727854AbgF2SwP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Jun 2020 14:40:35 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05TGXkNW147767;
-        Mon, 29 Jun 2020 12:57:45 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31ydjwpppk-1
+        Mon, 29 Jun 2020 14:52:15 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05TF3Y9n183022;
+        Mon, 29 Jun 2020 11:27:19 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 31ycj95mkv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 29 Jun 2020 12:57:45 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05TGYWfM152459;
-        Mon, 29 Jun 2020 12:57:44 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31ydjwppnf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 29 Jun 2020 12:57:44 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05TGexbZ020434;
-        Mon, 29 Jun 2020 16:57:42 GMT
+        Mon, 29 Jun 2020 11:27:18 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05TFG1Mf006442;
+        Mon, 29 Jun 2020 15:27:17 GMT
 Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06fra.de.ibm.com with ESMTP id 31wwcgs7qb-1
+        by ppma02fra.de.ibm.com with ESMTP id 31wwr7s67s-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 29 Jun 2020 16:57:42 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05TGveue39518286
+        Mon, 29 Jun 2020 15:27:16 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05TFRE9647186124
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Jun 2020 16:57:40 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 31AA811C04C;
-        Mon, 29 Jun 2020 16:57:40 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 57B4411C04A;
-        Mon, 29 Jun 2020 16:57:39 +0000 (GMT)
+        Mon, 29 Jun 2020 15:27:14 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BEEE7A4055;
+        Mon, 29 Jun 2020 15:27:14 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 07673A4040;
+        Mon, 29 Jun 2020 15:27:14 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.137.220])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 29 Jun 2020 16:57:39 +0000 (GMT)
-Message-ID: <1593449858.5085.24.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 2/2] IMA: Add audit log for failure conditions
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 29 Jun 2020 15:27:13 +0000 (GMT)
+Message-ID: <1593444433.5085.15.camel@linux.ibm.com>
+Subject: [GIT PULL] integrity additional change v5.8 (#2)
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     sgrubb@redhat.com, rgb@redhat.com, linux-integrity@vger.kernel.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Jun 2020 12:57:38 -0400
-In-Reply-To: <CAHC9VhRQru30WtA-CMeqq=0GBtZ-Ut20ecHwpYfbEu5qCFqgDg@mail.gmail.com>
-References: <20200618211012.2823-1-nramas@linux.microsoft.com>
-         <20200618211012.2823-2-nramas@linux.microsoft.com>
-         <1592942295.5389.9.camel@linux.ibm.com>
-         <39d66bdc-55be-984a-42a0-34d0a011e0fb@linux.microsoft.com>
-         <CAHC9VhRQru30WtA-CMeqq=0GBtZ-Ut20ecHwpYfbEu5qCFqgDg@mail.gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Maurizio Drocco <maurizio.drocco@ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Date:   Mon, 29 Jun 2020 11:27:13 -0400
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-06-29_18:2020-06-29,2020-06-29 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 spamscore=0 mlxscore=0 cotscore=-2147483648 bulkscore=0
- suspectscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006290106
+ definitions=2020-06-29_15:2020-06-29,2020-06-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 suspectscore=0 adultscore=0
+ cotscore=-2147483648 bulkscore=0 clxscore=1011 mlxscore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006290103
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2020-06-25 at 15:14 -0400, Paul Moore wrote:
-> On Wed, Jun 24, 2020 at 1:25 PM Lakshmi Ramasubramanian
-> <nramas@linux.microsoft.com> wrote:
-> >
-> > On 6/23/20 12:58 PM, Mimi Zohar wrote:
-> >
-> > Hi Steve\Paul,
-> >
-> > >> Sample audit messages:
-> > >>
-> > >> [    6.303048] audit: type=1804 audit(1592506281.627:2): pid=1 uid=0
-> > >> auid=4294967295 ses=4294967295 subj=kernel op=measuring_key
-> > >> cause=ENOMEM comm="swapper/0" name=".builtin_trusted_keys" res=0
-> > >> errno=-12
-> > >
-> > > My only concern is that auditing -ENOMEM will put additional memory
-> > > pressure on the system.  I'm not sure if this is a concern and, if so,
-> > > how it should be handled.
-> >
-> > Do you have any concerns with respect to adding audit messages in low
-> > memory conditions?
-> 
-> Assuming the system is not completely toast, the allocation failure
-> could be a very transient issue; I wouldn't worry too much about it.
+Hi Linus,
 
-There was a major clean up of removing ENOMEM error messages through
-out the kernel a while ago by Wolfram Sang.  The subject lines
-included "don't print error when allocating XXX fails".  As it turns
-out, they were being removed because "kmalloc will print enough
-information in case of failure."  It had nothing to do with memory
-pressure on the system.
+Prior to Linux 5.8 the SHA1 "boot_aggregate" value was padded with 0's
+and extended into the other TPM 2.0 banks.  Included in the Linux 5.8
+open window, TPM 2.0 PCR bank specific "boot_aggregate" values (PCRs 0
+- 7) are calculated and extended into the TPM banks.
 
-Thanks, Paul.  I think we're good.
+Distro releases are now shipping grub2 with TPM support, which extend
+PCRs 8 & 9.  I'd like for PCRs 8 & 9 to be included in the new
+"boot_aggregate" calculations.  For backwards compatibility, PCRs 8 &
+9 are not included in the SHA1 TPM bank "boot_aggregate" calculation.
+
+I'd appreciate your merging this additional change.
+
+thanks,
 
 Mimi
 
+The following changes since commit 48778464bb7d346b47157d21ffde2af6b2d39110:
+
+  Linux 5.8-rc2 (2020-06-21 15:45:29 -0700)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v5.8-fix-2
+
+for you to fetch changes up to 20c59ce010f84300f6c655d32db2610d3433f85c:
+
+  ima: extend boot_aggregate with kernel measurements (2020-06-24 20:47:24 -0400)
+
+----------------------------------------------------------------
+Include PCRs 8 & 9 in per TPM 2.0 bank boot_aggregate calculation
+
+----------------------------------------------------------------
+Maurizio Drocco (1):
+      ima: extend boot_aggregate with kernel measurements
+
+ security/integrity/ima/ima.h        |  2 +-
+ security/integrity/ima/ima_crypto.c | 15 ++++++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
