@@ -2,87 +2,138 @@ Return-Path: <SRS0=Ev+g=AS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E854C433E1
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 02:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18FDC433DF
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 02:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C886206F6
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 02:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A7FA20708
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 02:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgGGCZD (ORCPT
+        id S1728053AbgGGC0v (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 6 Jul 2020 22:25:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:32345 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbgGGCZD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 6 Jul 2020 22:25:03 -0400
-IronPort-SDR: 0LqR8Wb5eY8/vl51YwQ8WdLPj5a9ML5aJOeZVRWOYsMtZz8OitYdUeuHs+k/iTwH4lUosIF2Ar
- 4XUiDNYuEwUQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="145629222"
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="145629222"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 19:25:02 -0700
-IronPort-SDR: 1wYLUVuTMqVaskelX9SarE9+v2Xj8qmB6QfJkpS20xcYkOdYp971MRD90JjROQ79Dnmj14XuXQ
- 9CnWYz7UHNnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
-   d="scan'208";a="323392999"
-Received: from pakumpul-mobl.ger.corp.intel.com (HELO localhost) ([10.252.52.16])
-  by orsmga007.jf.intel.com with ESMTP; 06 Jul 2020 19:24:58 -0700
-Date:   Tue, 7 Jul 2020 05:24:57 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
- TPM2 ACPI table
-Message-ID: <20200707022457.GD112019@linux.intel.com>
-References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
- <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
- <20200706230914.GC20770@linux.intel.com>
- <87mu4cjixj.fsf@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87mu4cjixj.fsf@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Mon, 6 Jul 2020 22:26:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35018 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727120AbgGGC0u (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 6 Jul 2020 22:26:50 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06721uBZ186810;
+        Mon, 6 Jul 2020 22:26:45 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 322nunhqnm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Jul 2020 22:26:45 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06722YWS189963;
+        Mon, 6 Jul 2020 22:26:45 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 322nunhqmv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 06 Jul 2020 22:26:45 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0672QgqA022428;
+        Tue, 7 Jul 2020 02:26:42 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 322h1h2uju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 07 Jul 2020 02:26:42 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0672PJGm24707546
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 7 Jul 2020 02:25:19 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5415D4C040;
+        Tue,  7 Jul 2020 02:26:40 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A81FC4C04A;
+        Tue,  7 Jul 2020 02:26:39 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.174.194])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  7 Jul 2020 02:26:39 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
+        Bruno Meneguele <bmeneg@redhat.com>,
+        Vitaly Chikunov <vt@altlinux.org>
+Subject: [PATCH 3/6] ima-evm-utils: don't hardcode validating the IMA measurement list
+Date:   Mon,  6 Jul 2020 22:26:28 -0400
+Message-Id: <1594088791-27370-4-git-send-email-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1594088791-27370-1-git-send-email-zohar@linux.ibm.com>
+References: <1594088791-27370-1-git-send-email-zohar@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-06_20:2020-07-06,2020-07-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0
+ cotscore=-2147483648 lowpriorityscore=0 clxscore=1015 suspectscore=1
+ priorityscore=1501 impostorscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 phishscore=0 adultscore=0 spamscore=0 classifier=spam
+ adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2007070010
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jul 06, 2020 at 04:57:28PM -0700, Jerry Snitselaar wrote:
-> 
-> Jarkko Sakkinen @ 2020-07-06 16:09 MST:
-> 
-> > On Mon, Jul 06, 2020 at 02:19:53PM -0400, Stefan Berger wrote:
-> >> From: Stefan Berger <stefanb@linux.ibm.com>
-> >> 
-> >> In case a TPM2 is attached, search for a TPM2 ACPI table when trying
-> >> to get the event log from ACPI. If one is found, use it to get the
-> >> start and length of the log area. This allows non-UEFI systems, such
-> >> as SeaBIOS, to pass an event log when using a TPM2.
-> >> 
-> >> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> >
-> > Do you think that QEMU with TPM 1.2 emulator turned on would be a viable
-> > way to test this?
-> >
-> > I'm anyway more worried about breaking existing TPM 1.2 functionality
-> > and that requires only QEMU without extras.
-> >
-> > /Jarkko
-> 
-> The 1.2 bits should be functionally the same as before, right?
+File time of measure, time of use (ToMToU) violations are annotated in
+the measurement list by including a template data digest of zeroes, but
+extending the TPM with 0xFF's.  This causes validating the measurement
+against the TPM PCRs to fail.  To validate the measurement list against
+the PCRs requires replacing the zero template data digest with OxFF's.
 
-Yes. You should be able to read event log with TPM 1.2 as before.
+The default behavior, unless specifically requested, should be to fail
+the measurement list verification.  Support validating the measurement
+list based on a "--validate" option.
 
-/Jarkko
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ src/evmctl.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 71712d91703a..3c4483ef2b0e 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -1412,7 +1412,7 @@ struct template_entry {
+ static uint8_t zero[MAX_DIGEST_SIZE];
+ static uint8_t fox[MAX_DIGEST_SIZE];
+ 
+-int validate = 1;
++static int validate = 0;
+ 
+ static int ima_verify_template_hash(struct template_entry *entry)
+ {
+@@ -2156,7 +2156,7 @@ struct command cmds[] = {
+ 	{"ima_verify", cmd_verify_ima, 0, "file", "Verify IMA signature (for debugging).\n"},
+ 	{"ima_setxattr", cmd_setxattr_ima, 0, "[--sigfile file]", "Set IMA signature from sigfile\n"},
+ 	{"ima_hash", cmd_hash_ima, 0, "file", "Make file content hash.\n"},
+-	{"ima_measurement", cmd_ima_measurement, 0, "file", "Verify measurement list (experimental).\n"},
++	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] file", "Verify measurement list (experimental).\n"},
+ 	{"ima_boot_aggregate", cmd_ima_bootaggr, 0, "", "Calculate per TPM bank boot_aggregate digests\n"},
+ 	{"ima_fix", cmd_ima_fix, 0, "[-t fdsxm] path", "Recursively fix IMA/EVM xattrs in fix mode.\n"},
+ 	{"ima_clear", cmd_ima_clear, 0, "[-t fdsxm] path", "Recursively remove IMA/EVM xattrs.\n"},
+@@ -2195,6 +2195,7 @@ static struct option opts[] = {
+ 	{"list", 0, 0, 138},
+ 	{"engine", 1, 0, 139},
+ 	{"xattr-user", 0, 0, 140},
++	{"validate", 0, 0, 141},
+ 	{}
+ 
+ };
+@@ -2373,6 +2374,9 @@ int main(int argc, char *argv[])
+ 			xattr_ima = "user.ima";
+ 			xattr_evm = "user.evm";
+ 			break;
++		case 141: /* --validate */
++			validate = 1;
++			break;
+ 		case '?':
+ 			exit(1);
+ 			break;
+-- 
+2.7.5
+
