@@ -2,117 +2,131 @@ Return-Path: <SRS0=Ev+g=AS=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C14C433DF
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 04:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552A1C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 08:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7EC20708
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 04:09:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30DCF206C3
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Jul 2020 08:19:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bTBN7lfi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbgGGEJP (ORCPT
+        id S1727995AbgGGITc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 7 Jul 2020 00:09:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17568 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725766AbgGGEJO (ORCPT
+        Tue, 7 Jul 2020 04:19:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51474 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbgGGITc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Jul 2020 00:09:14 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06741rt4112843;
-        Tue, 7 Jul 2020 00:09:13 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32486cdutp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 00:09:13 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0673xPjL028027;
-        Tue, 7 Jul 2020 04:09:12 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02dal.us.ibm.com with ESMTP id 322hd922tf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 04:09:12 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06749Bs045678944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Jul 2020 04:09:11 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A57BDAC062;
-        Tue,  7 Jul 2020 04:09:11 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 93B8FAC05F;
-        Tue,  7 Jul 2020 04:09:11 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Jul 2020 04:09:11 +0000 (GMT)
-Subject: Re: [PATCH v9 2/2] tpm: Add support for event log pointer found in
- TPM2 ACPI table
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20200706181953.3592084-1-stefanb@linux.vnet.ibm.com>
- <20200706181953.3592084-3-stefanb@linux.vnet.ibm.com>
- <20200706230914.GC20770@linux.intel.com>
- <78ec872f-89b3-6464-6ede-bd0a46fe5c4c@linux.ibm.com>
- <20200707022416.GC112019@linux.intel.com>
- <f3e0fb50-8617-da40-1456-158531a070cb@linux.ibm.com>
- <20200707040325.GB143804@linux.intel.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <85c27199-df55-eecc-855c-dedcea64f89e@linux.ibm.com>
-Date:   Tue, 7 Jul 2020 00:09:11 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 7 Jul 2020 04:19:32 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E871EC08C5DB
+        for <linux-integrity@vger.kernel.org>; Tue,  7 Jul 2020 01:19:31 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id x72so8680550pfc.6
+        for <linux-integrity@vger.kernel.org>; Tue, 07 Jul 2020 01:19:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3/TGGX2kn2NKL/BgEqb75l7336ZUov57vqrEk8SkHU4=;
+        b=bTBN7lfilcJGYJdlbwQDX/rqp45HFb8HgJGAGBOBV9CKgL4pKePubhej06HA9A/RP4
+         GYmlJTS16HrfkuEjFWhk2UBxLPGgXCrjCJm0sfYpW7tUAiCXQijLn14wMx50qyTlAyIa
+         KcmWeWhBMi7HFssd/6ma4MzBpKX5m9i8fZazg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3/TGGX2kn2NKL/BgEqb75l7336ZUov57vqrEk8SkHU4=;
+        b=Zaj34adKbyCEdk18DpDgBkvpsynnQyrelm49sCkSAznduYkn/Hg57EUxZjpPrCho9L
+         TEQag/ZzCLAfE1OZxJLnW3fmRO+Y34F4LSUHsSgY6kdfdEYhkL7x5Lsxw1iqxoLlf7g5
+         dUouia8yfJt5dztGESsP41AO6cidKbjaWAVyk0Bx6540sYClagV4R1kTmn7NNGtFetjS
+         tjav5wbZM0B7oyKXK728rdkNVYlQGCAe0WZ90OisCOGzixjfrpYM0fzuxXoQVwDdbBNZ
+         sOGmxMhBBawdwGTh24eoxYSiv6ieJogB/xQypArI+38N3EMQ+s6YeWrs68J4SSLB3QgJ
+         15bw==
+X-Gm-Message-State: AOAM531VEA8TVoXXD/xzbyeWpKn4OqkcaisgRIQq8p5h6m6Gk26y3vzR
+        LIERDlaybWf/RyitquEU2o0fDA==
+X-Google-Smtp-Source: ABdhPJziQGymUuXunuRD3Hljwo1v5DLu/Rvol9Qs1TKP88U1Ya5951qLD2hP+Du4ykBwwluuy8bk1A==
+X-Received: by 2002:a63:df54:: with SMTP id h20mr42712026pgj.319.1594109971059;
+        Tue, 07 Jul 2020 01:19:31 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id r8sm20795455pfh.29.2020.07.07.01.19.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jul 2020 01:19:30 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 4/4] module: Add hook for security_kernel_post_read_file()
+Date:   Tue,  7 Jul 2020 01:19:26 -0700
+Message-Id: <20200707081926.3688096-5-keescook@chromium.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
+References: <20200707081926.3688096-1-keescook@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20200707040325.GB143804@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-07_01:2020-07-06,2020-07-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- impostorscore=0 mlxscore=0 clxscore=1015 adultscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0
- cotscore=-2147483648 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2004280000 definitions=main-2007070025
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 7/7/20 12:03 AM, Jarkko Sakkinen wrote:
-> On Mon, Jul 06, 2020 at 11:08:12PM -0400, Stefan Berger wrote:
->> On 7/6/20 10:24 PM, Jarkko Sakkinen wrote:
->>> On Mon, Jul 06, 2020 at 07:55:26PM -0400, Stefan Berger wrote:
->>>> On 7/6/20 7:09 PM, Jarkko Sakkinen wrote:
->>>>> On Mon, Jul 06, 2020 at 02:19:53PM -0400, Stefan Berger wrote:
->>>>>> From: Stefan Berger <stefanb@linux.ibm.com>
->>>>>>
->>>>>> In case a TPM2 is attached, search for a TPM2 ACPI table when trying
->>>>>> to get the event log from ACPI. If one is found, use it to get the
->>>>>> start and length of the log area. This allows non-UEFI systems, such
->>>>>> as SeaBIOS, to pass an event log when using a TPM2.
->>>>>>
->>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>>> Do you think that QEMU with TPM 1.2 emulator turned on would be a viable
->>>>> way to test this?
->>>> Yes.
->>> Is the emulator bundled with QEMU or does it have to be installed
->>> separately?
->> It has to be installed separately. On Fedora 31 it would just be a `sudo dnf
->> -y install swtpm-tools` and you should be good to go with libvirt /
->> virt-manager.
-> Is there some packaging for Debian/Ubuntu available?
+Calls to security_kernel_load_data() should be paired with a call to
+security_kernel_post_read_file() with a NULL file argument. Add the
+missing call so the module contents are visible to the LSMs interested
+in measuring the module content. (This also paves the way for moving
+module signature checking out of the module core and into an LSM.)
 
+Cc: Jessica Yu <jeyu@kernel.org>
+Fixes: c77b8cdf745d ("module: replace the existing LSM hook in init_module")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ kernel/module.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-So far may not be available yet. I had *experimented* with a PPA once: 
-https://launchpad.net/~stefanberger/+archive/ubuntu/swtpm-focal
-
-
-
-> /Jarkko
-
+diff --git a/kernel/module.c b/kernel/module.c
+index 0c6573b98c36..af9679f8e5c6 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2980,7 +2980,12 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
+ 		return -EFAULT;
+ 	}
+ 
+-	return 0;
++	err = security_kernel_post_read_file(NULL, (char *)info->hdr,
++					     info->len, READING_MODULE);
++	if (err)
++		vfree(info->hdr);
++
++	return err;
+ }
+ 
+ static void free_copy(struct load_info *info)
+-- 
+2.25.1
 
