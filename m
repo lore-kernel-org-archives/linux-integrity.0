@@ -2,182 +2,109 @@ Return-Path: <SRS0=10M6=AT=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3450C433E2
-	for <linux-integrity@archiver.kernel.org>; Wed,  8 Jul 2020 11:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F2CC433DF
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Jul 2020 13:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2CB32065C
-	for <linux-integrity@archiver.kernel.org>; Wed,  8 Jul 2020 11:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D12E120772
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Jul 2020 13:15:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ffD/zdjq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wFobAKv2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbgGHL65 (ORCPT
+        id S1729329AbgGHNPR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 8 Jul 2020 07:58:57 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:37388 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728864AbgGHL64 (ORCPT
+        Wed, 8 Jul 2020 09:15:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbgGHNPR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 8 Jul 2020 07:58:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594209534;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QkevNhBGyNEaCjar4U2+U0onC84LFT4MZtwJK+TdKxE=;
-        b=ffD/zdjqMg3bfhcDz62RK+h0rhyd91r/55vYGWVYF+JDJ5Qeg1dCX8NwKjIQ+8NCPR0gML
-        BAzmWvw6r6xG6d9o7ZlI3/i8LJNVs6f00stihGI2djFFlwKH0rGzze8DXUaKfuUEF/b4k6
-        JbARrwXfeXRQ+LbEsjIy5PEfQHKFjsc=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-379-gkq-Fzy6NVmgSF68svG-hw-1; Wed, 08 Jul 2020 07:58:50 -0400
-X-MC-Unique: gkq-Fzy6NVmgSF68svG-hw-1
-Received: by mail-ed1-f72.google.com with SMTP id m12so57657846edv.3
-        for <linux-integrity@vger.kernel.org>; Wed, 08 Jul 2020 04:58:50 -0700 (PDT)
+        Wed, 8 Jul 2020 09:15:17 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 200E6C08E6DC
+        for <linux-integrity@vger.kernel.org>; Wed,  8 Jul 2020 06:15:17 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id t6so21680342pgq.1
+        for <linux-integrity@vger.kernel.org>; Wed, 08 Jul 2020 06:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tD3yXXYrZBDZiaasLSPTnCbaqXGiYzdMQ85B623c77c=;
+        b=wFobAKv2fT2uz6kMUx+BoKMuaaC9GeYTNAITsfnBxD5OxcSBP3lSHFma1Zj7S0Hdzr
+         UUfRWmQoQYcTB+hsGTrWsU7I+y7638a6nsTQxMtdVFFK1fsPNBN4krGRdeNuVulwjRuE
+         OHNZXEtwipyidnhcJ51Xupi8Ta3PdZge9j4fXhYfEGRlpbozVbKy4fLvRcM7c/5WDLxc
+         8LHaU2GnOISiSLqyWjApu1HNN1Ihr1TwYya3zOyWRA8K6Kzcj/50ETqgNKPF1WOnEjq1
+         /cJIyv6FvWucuNoq9NdtrX1yw4kjqa8vVNA5QBznOK7B11GyvBusp73UOk6uurZbLq8K
+         KXig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=QkevNhBGyNEaCjar4U2+U0onC84LFT4MZtwJK+TdKxE=;
-        b=uLXRs6rRXI2hduri9THPkaC9cXdTpI2bU6vIhoNr+qHpjh1D5TK7zND+o7QhJ+7Vi/
-         H5uOrhdY96rMfm88cbEY1w1KlUKVdce/KEq3G1taM0B1K+eRfD5EbahON9ypkjs71x7T
-         EifvrvKbvpBU8lfkv5OMs5cUCbuJw7CRwBG8mXzYqil+GKOOmYODjtaCHdv/tdya5yL8
-         L8xicMp4mKxuLC64+5HUebGXvTL0p38xDqUXFmbHUA8k3Z+oD+Ez6JS6EUw4AHy85lqn
-         R+7Eo4EstySErcbQkD0JtrPKB55YugkqvJcH1xtnaotWECMAXk0fh9cLAu0eaLMXAqcs
-         a2iQ==
-X-Gm-Message-State: AOAM532R2xgAjx3kWymeAH46ulwzHI2fXlfRBiXqgjxXJCmflkESeZiu
-        UufQvz0HcM72LIiP03IWdqtvc6v0qoFm2ReZHfFXD8s712m1kdGA2whjdLGi+MAY+kKd5eQSAoK
-        4CzNw6cfGL8JtOUE0DMJoEdSMVGw3
-X-Received: by 2002:a17:906:12cd:: with SMTP id l13mr52498665ejb.96.1594209529420;
-        Wed, 08 Jul 2020 04:58:49 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxOaKMnLhyOtq9Iubps/WQ3eLjQjfBe1IKlNFBH5VgFaQrN+6p11ckWrUzF75y/UxOFmva1gw==
-X-Received: by 2002:a17:906:12cd:: with SMTP id l13mr52498652ejb.96.1594209529173;
-        Wed, 08 Jul 2020 04:58:49 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id u2sm28953481edq.29.2020.07.08.04.58.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 04:58:48 -0700 (PDT)
-Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20200707081926.3688096-1-keescook@chromium.org>
- <3c01073b-c422-dd97-0677-c16fe1158907@redhat.com>
- <f5e65f73-2c94-3614-2479-69b2bfda9775@redhat.com>
- <20200708115517.GF4332@42.do-not-panic.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <8766279d-0ebe-1f64-c590-4a71a733609b@redhat.com>
-Date:   Wed, 8 Jul 2020 13:58:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        bh=tD3yXXYrZBDZiaasLSPTnCbaqXGiYzdMQ85B623c77c=;
+        b=I+3vOSr/CoYUCYdhMOl6BLynV2DOoJJ/CN1iXWEnJOW3Qs5fkuSoeqaigOl1Ix5yzb
+         PO4PfvCDeDUkQrBZDoUdYLwui1wCF78hDjyHyS/6aLa/WcwO8agkVQIt70+iTMDsd7EK
+         xyOxPO4+cJ+afIGLRHMBk31KoWXN25vKktgWH+R2TrfnnFo6jXCUeufUCZkLUfSTl7Hy
+         /uBZImlaTMkMeTt8kDSV9AYZjmYhL9zWN0yJmJ9qToK4UPDVwQjDTMhAPQ5VMdVcWXxZ
+         yQp1pOrF2GahOntSjmJK5yXggTGxNMKJjO3yp8b4oq9gTLhKblZKH63GxMpHBWCsdU32
+         VZBg==
+X-Gm-Message-State: AOAM5321tpOKqzc/+c4atnGJB4LLCK97QC/DZ/wNoICsJaXMXJ5jdp6b
+        QWvOV5SpPqr05SkWvqm6O7Lg0w==
+X-Google-Smtp-Source: ABdhPJykPhQKyVU2AtTCF2en4Y3XBqA9jCD1yPwNFMAwKzsHQRe5TeVYiQ/+HRtFM+9k7DKHXkJnjw==
+X-Received: by 2002:a65:5649:: with SMTP id m9mr48046978pgs.279.1594214116713;
+        Wed, 08 Jul 2020 06:15:16 -0700 (PDT)
+Received: from debian.flets-east.jp ([2400:2411:502:a100:c84b:19e2:9b53:48bb])
+        by smtp.gmail.com with ESMTPSA id y63sm4096366pgb.49.2020.07.08.06.15.13
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 08 Jul 2020 06:15:15 -0700 (PDT)
+From:   Masahisa Kojima <masahisa.kojima@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     masahisa.kojima@linaro.org, jarkko.sakkinen@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, ardb@kernel.org,
+        devicetree@vger.kernel.org, linux-integrity@vger.kernel.org,
+        peterhuewe@gmx.de, jgg@ziepe.ca
+Subject: [PATCH v3 0/2] synquacer: add TPM support
+Date:   Wed,  8 Jul 2020 22:14:22 +0900
+Message-Id: <20200708131424.18729-1-masahisa.kojima@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20200708115517.GF4332@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+This adds support for driving the TPM on Socionext SynQuacer platform
+using the driver for a memory mapped TIS frame.
 
-On 7/8/20 1:55 PM, Luis Chamberlain wrote:
-> On Wed, Jul 08, 2020 at 01:37:41PM +0200, Hans de Goede wrote:
->> Hi,
->>
->> On 7/8/20 1:01 PM, Hans de Goede wrote:
->>> Hi,
->>>
->>> On 7/7/20 10:19 AM, Kees Cook wrote:
->>>> Hi,
->>>>
->>>> In looking for closely at the additions that got made to the
->>>> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
->>>> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
->>>> *kinds* of files for the LSM to reason about. They are a "how" and
->>>> "where", respectively. Remove these improper aliases and refactor the
->>>> code to adapt to the changes.
->>>>
->>>> Additionally adds in missing calls to security_kernel_post_read_file()
->>>> in the platform firmware fallback path (to match the sysfs firmware
->>>> fallback path) and in module loading. I considered entirely removing
->>>> security_kernel_post_read_file() hook since it is technically unused,
->>>> but IMA probably wants to be able to measure EFI-stored firmware images,
->>>> so I wired it up and matched it for modules, in case anyone wants to
->>>> move the module signature checks out of the module core and into an LSM
->>>> to avoid the current layering violations.
->>>>
->>>> This touches several trees, and I suspect it would be best to go through
->>>> James's LSM tree.
->>>>
->>>> Thanks!
->>>
->>>
->>> I've done some quick tests on this series to make sure that
->>> the efi embedded-firmware support did not regress.
->>> That still works fine, so this series is;
->>>
->>> Tested-by: Hans de Goede <hdegoede@redhat.com>
->>
->> I made a mistake during testing I was not actually running the
->> kernel with the patches added.
->>
->> After fixing that I did find a problem, patch 4/4:
->> "module: Add hook for security_kernel_post_read_file()"
->>
->> Breaks module-loading for me. This is with the 4 patches
->> on top of 5.8.0-rc4, so this might just be because I'm
->> not using the right base.
->>
->> With patch 4/4 reverted things work fine for me.
->>
->> So, please only add my Tested-by to patches 1-3.
-> 
-> BTW is there any testing covered by the selftests for the firmware
-> laoder which would have caputured this? If not can you extend
-> it with something to capture this case you ran into?
+v3:
+- prepare new module to handle TPM MMIO access on SynQuacer platform
 
-This was not a firmware-loading issue. For me in my tests,
-which were limited to 1 device, patch 4/4, which only touches
-the module-loading code, stopped module loading from working.
+v2:
+- don't use read/write_bytes() to implement read/write16/32 since that uses
+  the wrong address
 
-Since my test device has / on an eMMC and the kernel config
-I'm using has mmc-block as a module, things just hung in the
-initrd since no modules could be loaded, so I did not debug
-this any further. Dropping  patch 4/4 from my local tree
-solved this.
+Cc: jarkko.sakkinen@linux.intel.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: ardb@kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: peterhuewe@gmx.de
+Cc: jgg@ziepe.ca
 
-Regards,
+Masahisa Kojima (2):
+  tpm: tis: add support for MMIO TPM on SynQuacer
+  dt-bindings: Add SynQucer TPM MMIO as a trivial device
 
-Hans
+ .../devicetree/bindings/trivial-devices.yaml  |   2 +
+ drivers/char/tpm/Kconfig                      |  12 ++
+ drivers/char/tpm/Makefile                     |   1 +
+ drivers/char/tpm/tpm_tis_synquacer.c          | 196 ++++++++++++++++++
+ 4 files changed, 211 insertions(+)
+ create mode 100644 drivers/char/tpm/tpm_tis_synquacer.c
+
+-- 
+2.20.1
 
