@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 890E6C433E0
-	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A9EC433E0
+	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 643432070E
-	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04AFC20672
+	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CI3VBB9l"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KJKtKRLU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgGIGUF (ORCPT
+        id S1726662AbgGIGUP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:20:05 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37982 "EHLO
+        Thu, 9 Jul 2020 02:20:15 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38110 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgGIGUC (ORCPT
+        with ESMTP id S1726624AbgGIGUN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:20:02 -0400
+        Thu, 9 Jul 2020 02:20:13 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AEE8E20B4908;
-        Wed,  8 Jul 2020 23:20:00 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AEE8E20B4908
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6076D20B4908;
+        Wed,  8 Jul 2020 23:20:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6076D20B4908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594275601;
-        bh=mFsiCcE03UNZBsGBJ7WJA9xJRygPO23LFXkCIABirYs=;
+        s=default; t=1594275613;
+        bh=b/gDO+rf9EfxqDQma9/U3xASpX0quKJnLQDBOzf+I4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CI3VBB9llqU6KKQKyOH1s75SThDSfhmh/I+xrwByx4CB2dE2tzxku+HvARmu0bx6f
-         1MGXnjGk76xC/vWslwW19xAM4XUlTYn5n06pd1ed/CcmsfLXsFd9hMc2/mZ/wm6vxO
-         4kY46RZuSJRtBydQqhK+q8Ie4xtQlUPjJUrV6hqo=
+        b=KJKtKRLUoa5UEYM0CWjDMPyGH0lii/OV71RzS5iuN2qnZhRPXaExoAD/Gfw/Yc4hb
+         ScuFZ46zLV61LaA/TtWMBdCXHfKDDy9SB2BhQV9ody45FZbuFU+qJ1IQfrLPuZXwRT
+         K90uNkcAvqV9QUJsDKTUpWOMkF9gq82xm9+LxGo8=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -43,9 +43,9 @@ Cc:     James Morris <jmorris@namei.org>,
         Prakhar Srivastava <prsriva02@gmail.com>,
         linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v3 03/12] ima: Free the entire rule if it fails to parse
-Date:   Thu,  9 Jul 2020 01:19:02 -0500
-Message-Id: <20200709061911.954326-4-tyhicks@linux.microsoft.com>
+Subject: [PATCH v3 09/12] ima: Use correct type for the args_p member of ima_rule_entry.lsm elements
+Date:   Thu,  9 Jul 2020 01:19:08 -0500
+Message-Id: <20200709061911.954326-10-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
 References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
@@ -56,36 +56,10 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Use ima_free_rule() to fix memory leaks of allocated ima_rule_entry
-members, such as .fsname and .keyrings, when an error is encountered
-during rule parsing.
+Make args_p be of the char pointer type rather than have it be a void
+pointer that gets casted to char pointer when it is used. It is a simple
+NUL-terminated string as returned by match_strdup().
 
-Set the args_p pointer to NULL after freeing it in the error path of
-ima_lsm_rule_init() so that it isn't freed twice.
-
-This fixes a memory leak seen when loading an rule that contains an
-additional piece of allocated memory, such as an fsname, followed by an
-invalid conditional:
-
- # echo "measure fsname=tmpfs bad=cond" > /sys/kernel/security/ima/policy
- -bash: echo: write error: Invalid argument
- # echo scan > /sys/kernel/debug/kmemleak
- # cat /sys/kernel/debug/kmemleak
- unreferenced object 0xffff98e7e4ece6c0 (size 8):
-   comm "bash", pid 672, jiffies 4294791843 (age 21.855s)
-   hex dump (first 8 bytes):
-     74 6d 70 66 73 00 6b a5                          tmpfs.k.
-   backtrace:
-     [<00000000abab7413>] kstrdup+0x2e/0x60
-     [<00000000f11ede32>] ima_parse_add_rule+0x7d4/0x1020
-     [<00000000f883dd7a>] ima_write_policy+0xab/0x1d0
-     [<00000000b17cf753>] vfs_write+0xde/0x1d0
-     [<00000000b8ddfdea>] ksys_write+0x68/0xe0
-     [<00000000b8e21e87>] do_syscall_64+0x56/0xa0
-     [<0000000089ea7b98>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: f1b08bbcbdaf ("ima: define a new policy condition based on the filesystem name")
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
 Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 ---
 
@@ -94,30 +68,74 @@ Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 * v2
   - No change
 
- security/integrity/ima/ima_policy.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_policy.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index bf00b966e87f..e458cd47c099 100644
+index b02e1ffd10c9..13a178c70b44 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -913,6 +913,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+@@ -74,7 +74,7 @@ struct ima_rule_entry {
+ 	int pcr;
+ 	struct {
+ 		void *rule;	/* LSM file metadata specific */
+-		void *args_p;	/* audit value */
++		char *args_p;	/* audit value */
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
+ 	char *fsname;
+@@ -314,7 +314,7 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+ 					  &nentry->lsm[i].rule);
+ 		if (!nentry->lsm[i].rule)
+ 			pr_warn("rule for LSM \'%s\' is undefined\n",
+-				(char *)entry->lsm[i].args_p);
++				entry->lsm[i].args_p);
+ 	}
+ 	return nentry;
+ }
+@@ -918,7 +918,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+ 					   &entry->lsm[lsm_rule].rule);
+ 	if (!entry->lsm[lsm_rule].rule) {
+ 		pr_warn("rule for LSM \'%s\' is undefined\n",
+-			(char *)entry->lsm[lsm_rule].args_p);
++			entry->lsm[lsm_rule].args_p);
  
  		if (ima_rules == &ima_default_rules) {
  			kfree(entry->lsm[lsm_rule].args_p);
-+			entry->lsm[lsm_rule].args_p = NULL;
- 			result = -EINVAL;
- 		} else
- 			result = 0;
-@@ -1404,7 +1405,7 @@ ssize_t ima_parse_add_rule(char *rule)
- 
- 	result = ima_parse_rule(p, entry);
- 	if (result) {
--		kfree(entry);
-+		ima_free_rule(entry);
- 		integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL,
- 				    NULL, op, "invalid-policy", result,
- 				    audit_info);
+@@ -1682,27 +1682,27 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 			switch (i) {
+ 			case LSM_OBJ_USER:
+ 				seq_printf(m, pt(Opt_obj_user),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_OBJ_ROLE:
+ 				seq_printf(m, pt(Opt_obj_role),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_OBJ_TYPE:
+ 				seq_printf(m, pt(Opt_obj_type),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_SUBJ_USER:
+ 				seq_printf(m, pt(Opt_subj_user),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_SUBJ_ROLE:
+ 				seq_printf(m, pt(Opt_subj_role),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			case LSM_SUBJ_TYPE:
+ 				seq_printf(m, pt(Opt_subj_type),
+-					   (char *)entry->lsm[i].args_p);
++					   entry->lsm[i].args_p);
+ 				break;
+ 			}
+ 			seq_puts(m, " ");
 -- 
 2.25.1
 
