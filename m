@@ -2,160 +2,158 @@ Return-Path: <SRS0=WIic=AU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E9A2C433E1
-	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A7BC433E0
+	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 08:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1ED420672
-	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 06:20:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="O4RNW+Dr"
+	by mail.kernel.org (Postfix) with ESMTP id 1D49120672
+	for <linux-integrity@archiver.kernel.org>; Thu,  9 Jul 2020 08:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgGIGUF (ORCPT
+        id S1726509AbgGIIkX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 9 Jul 2020 02:20:05 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37996 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726356AbgGIGUD (ORCPT
+        Thu, 9 Jul 2020 04:40:23 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:40464 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726247AbgGIIkX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Jul 2020 02:20:03 -0400
-Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1AF3320B4909;
-        Wed,  8 Jul 2020 23:20:02 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1AF3320B4909
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594275602;
-        bh=yI0/g2aB0s9h4ACzf3IyT+lQGzmQDlqQ6wtp8tod5FU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O4RNW+DrHFkTk1qvxZmSQHwG7aRBQp4vhDsW1yFMPo79ZpRJ8OOVgj4kYg6+mERq+
-         tuRJfg5xOoluwdQYo5LFqbRK/juKp98ioIe5aT2QKHwT3atagUB2EelWMZ2ELjos63
-         ph6+ujmrG9pZwEhRoL4DOgdpq6xRHWPTAGk3cbSc=
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v3 04/12] ima: Fail rule parsing when buffer hook functions have an invalid action
-Date:   Thu,  9 Jul 2020 01:19:03 -0500
-Message-Id: <20200709061911.954326-5-tyhicks@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-References: <20200709061911.954326-1-tyhicks@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 9 Jul 2020 04:40:23 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07425;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0U2BKMOd_1594284015;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U2BKMOd_1594284015)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 09 Jul 2020 16:40:16 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dhowells@redhat.com, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, jmorris@namei.org, serge@hallyn.com,
+        nramas@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        zohar@linux.ibm.com, vt@altlinux.org, gilad@benyossef.com,
+        pvanleeuwen@rambus.com, zhang.jia@linux.alibaba.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, tianjia.zhang@linux.alibaba.com
+Subject: [PATCH v5 0/8] crpyto: introduce OSCCA certificate and SM2 asymmetric algorithm 
+Date:   Thu,  9 Jul 2020 16:40:07 +0800
+Message-Id: <20200709084015.21886-1-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Buffer based hook functions, such as KEXEC_CMDLINE and KEY_CHECK, can
-only measure. The process_buffer_measurement() function quietly ignores
-all actions except measure so make this behavior clear at the time of
-policy load.
+Hello all,
 
-The parsing of the keyrings conditional had a check to ensure that it
-was only specified with measure actions but the check should be on the
-hook function and not the keyrings conditional since
-"appraise func=KEY_CHECK" is not a valid rule.
+This new module implement the OSCCA certificate and SM2 public key
+algorithm. It was published by State Encryption Management Bureau, China.
+List of specifications for OSCCA certificate and SM2 elliptic curve
+public key cryptography:
 
-Fixes: b0935123a183 ("IMA: Define a new hook to measure the kexec boot command line arguments")
-Fixes: 5808611cccb2 ("IMA: Add KEY_CHECK func to measure keys")
-Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+* GM/T 0003.1-2012
+* GM/T 0003.2-2012
+* GM/T 0003.3-2012
+* GM/T 0003.4-2012
+* GM/T 0003.5-2012
+* GM/T 0015-2012
+* GM/T 0009-2012 
+
+IETF: https://tools.ietf.org/html/draft-shen-sm2-ecdsa-02
+oscca: http://www.oscca.gov.cn/sca/xxgk/2010-12/17/content_1002386.shtml
+scctc: http://www.gmbz.org.cn/main/bzlb.html
+
+These patchs add the OID object identifier defined by OSCCA. The
+x509 certificate supports sm2-with-sm3 type certificate parsing
+and verification.
+
+The sm2 algorithm is based on libgcrypt's mpi implementation, and has
+made some additions to the kernel's original mpi library, and added the
+implementation of ec to better support elliptic curve-like algorithms.
+
+sm2 has good support in both openssl and gnupg projects, and sm3 and sm4
+of the OSCCA algorithm family have also been implemented in the kernel.
+
+Among them, sm3 and sm4 have been well implemented in the kernel.
+This group of patches has newly introduced sm2. In order to implement
+sm2 more perfectly, I expanded the mpi library and introduced the
+ec implementation of the mpi library as the basic algorithm. Compared
+to the kernel's crypto/ecc.c, the implementation of mpi/ec.c is more
+complete and elegant, sm2 is implemented based on these algorithms.
+
 ---
+v5 changes:
+  1. fix compilation failure when SM2 is configured as a module.
+  2. simplify the mpi and ec code, remove unused functions reported by test robot.
 
-* v3
-  - Add comments to ima_validate_rule() to separate/explain the types of
-    validation checks (section for action checks, section for hook
-    function checks, soon to be a section for combination of options
-    checks, etc.)
-  - Removed the "if (entry->flags & IMA_FUNC)" conditional around the
-    switch statement in ima_validate_rule() which reduced the overall indention
-    by a tab. This could be removed because entry->func is NONE when the
-    IMA_FUNC flag is not set. We'll explicitly enforce and then leverage
-    that property in a later patch when we start validating all hook
-    functions in ima_validate_rule().
-  - Add comment explicitly stating that all hook functions except
-    KEXEC_CMDLINE and KEY_CHECK are still being validated in
-    ima_parse_rule().
-* v2
-  - No change
+v4 changes:
+  1. Pass data directly when calculating sm2 certificate digest
+  2. rebase on mainline.
 
- security/integrity/ima/ima_policy.c | 40 +++++++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+v3 changes:
+  1. integrity asymmetric digsig support sm2-with-sm3 algorithm.
+  2. remove unused sm2_set_priv_key().
+  3. rebase on mainline.
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e458cd47c099..40c28f1a6a5a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -973,6 +973,43 @@ static void check_template_modsig(const struct ima_template_desc *template)
- #undef MSG
- }
- 
-+static bool ima_validate_rule(struct ima_rule_entry *entry)
-+{
-+	/* Ensure that the action is set */
-+	if (entry->action == UNKNOWN)
-+		return false;
-+
-+	/*
-+	 * Ensure that the hook function is compatible with the other
-+	 * components of the rule
-+	 */
-+	switch (entry->func) {
-+	case NONE:
-+	case FILE_CHECK:
-+	case MMAP_CHECK:
-+	case BPRM_CHECK:
-+	case CREDS_CHECK:
-+	case POST_SETATTR:
-+	case MODULE_CHECK:
-+	case FIRMWARE_CHECK:
-+	case KEXEC_KERNEL_CHECK:
-+	case KEXEC_INITRAMFS_CHECK:
-+	case POLICY_CHECK:
-+		/* Validation of these hook functions is in ima_parse_rule() */
-+		break;
-+	case KEXEC_CMDLINE:
-+	case KEY_CHECK:
-+		if (entry->action & ~(MEASURE | DONT_MEASURE))
-+			return false;
-+
-+		break;
-+	default:
-+		return false;
-+	}
-+
-+	return true;
-+}
-+
- static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- {
- 	struct audit_buffer *ab;
-@@ -1150,7 +1187,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			keyrings_len = strlen(args[0].from) + 1;
- 
- 			if ((entry->keyrings) ||
--			    (entry->action != MEASURE) ||
- 			    (entry->func != KEY_CHECK) ||
- 			    (keyrings_len < 2)) {
- 				result = -EINVAL;
-@@ -1356,7 +1392,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			break;
- 		}
- 	}
--	if (!result && (entry->action == UNKNOWN))
-+	if (!result && !ima_validate_rule(entry))
- 		result = -EINVAL;
- 	else if (entry->action == APPRAISE)
- 		temp_ima_appraise |= ima_appraise_flag(entry->func);
+v2 changes:
+  1. simplify the sm2 algorithm and only retain the verify function.
+  2. extract the sm2 certificate code into a separate file.
+
+Tianjia Zhang (8):
+  crypto: sm3 - export crypto_sm3_final function
+  lib/mpi: Extend the MPI library
+  lib/mpi: Introduce ec implementation to MPI library
+  crypto: sm2 - introduce OSCCA SM2 asymmetric cipher algorithm
+  crypto: testmgr - support test with different ciphertext per
+    encryption
+  X.509: support OSCCA certificate parse
+  X.509: support OSCCA sm2-with-sm3 certificate verification
+  integrity: Asymmetric digsig supports SM2-with-SM3 algorithm
+
+ crypto/Kconfig                            |   17 +
+ crypto/Makefile                           |    8 +
+ crypto/asymmetric_keys/Makefile           |    1 +
+ crypto/asymmetric_keys/public_key.c       |    6 +
+ crypto/asymmetric_keys/public_key_sm2.c   |   61 +
+ crypto/asymmetric_keys/x509_cert_parser.c |   14 +-
+ crypto/asymmetric_keys/x509_public_key.c  |    3 +
+ crypto/sm2.c                              |  473 +++++++
+ crypto/sm2signature.asn1                  |    4 +
+ crypto/sm3_generic.c                      |    7 +-
+ crypto/testmgr.c                          |    7 +-
+ include/crypto/public_key.h               |   15 +
+ include/crypto/sm2.h                      |   25 +
+ include/crypto/sm3.h                      |    2 +
+ include/linux/mpi.h                       |  193 +++
+ include/linux/oid_registry.h              |    6 +
+ lib/mpi/Makefile                          |    6 +
+ lib/mpi/ec.c                              | 1509 +++++++++++++++++++++
+ lib/mpi/mpi-add.c                         |  207 +++
+ lib/mpi/mpi-bit.c                         |  251 ++++
+ lib/mpi/mpi-cmp.c                         |   46 +-
+ lib/mpi/mpi-div.c                         |  238 ++++
+ lib/mpi/mpi-internal.h                    |   53 +
+ lib/mpi/mpi-inv.c                         |  143 ++
+ lib/mpi/mpi-mod.c                         |  155 +++
+ lib/mpi/mpi-mul.c                         |   94 ++
+ lib/mpi/mpicoder.c                        |  336 +++++
+ lib/mpi/mpih-div.c                        |  294 ++++
+ lib/mpi/mpih-mul.c                        |   25 +
+ lib/mpi/mpiutil.c                         |  204 +++
+ security/integrity/digsig_asymmetric.c    |   14 +-
+ 31 files changed, 4399 insertions(+), 18 deletions(-)
+ create mode 100644 crypto/asymmetric_keys/public_key_sm2.c
+ create mode 100644 crypto/sm2.c
+ create mode 100644 crypto/sm2signature.asn1
+ create mode 100644 include/crypto/sm2.h
+ create mode 100644 lib/mpi/ec.c
+ create mode 100644 lib/mpi/mpi-add.c
+ create mode 100644 lib/mpi/mpi-div.c
+ create mode 100644 lib/mpi/mpi-inv.c
+ create mode 100644 lib/mpi/mpi-mod.c
+ create mode 100644 lib/mpi/mpi-mul.c
+
 -- 
-2.25.1
+2.17.1
 
