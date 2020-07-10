@@ -2,170 +2,139 @@ Return-Path: <SRS0=qoUz=AV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC0AC433E1
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 16:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2271C433E5
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 17:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC3F6206C3
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 16:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96A6B20725
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 17:23:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbgGJQIA (ORCPT
+        id S1728316AbgGJRXn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 10 Jul 2020 12:08:00 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5168 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726828AbgGJQIA (ORCPT
+        Fri, 10 Jul 2020 13:23:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25512 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726950AbgGJRXm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 Jul 2020 12:08:00 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06AG7QY2180906;
-        Fri, 10 Jul 2020 12:07:58 -0400
+        Fri, 10 Jul 2020 13:23:42 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06AGXXIK035408;
+        Fri, 10 Jul 2020 13:23:32 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 326b8yg8uc-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 326j83u61m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jul 2020 12:07:57 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06AFaQXl098907;
-        Fri, 10 Jul 2020 12:02:58 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 326b8yg86k-1
+        Fri, 10 Jul 2020 13:23:31 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06AGsp6t109873;
+        Fri, 10 Jul 2020 13:23:31 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 326j83u60m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jul 2020 12:02:56 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06AG1D99030445;
-        Fri, 10 Jul 2020 16:02:28 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma02fra.de.ibm.com with ESMTP id 326bcf0sha-1
+        Fri, 10 Jul 2020 13:23:31 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06AHGIBY017599;
+        Fri, 10 Jul 2020 17:23:29 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03ams.nl.ibm.com with ESMTP id 326bc30t54-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jul 2020 16:02:28 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06AG1BqG28049610
+        Fri, 10 Jul 2020 17:23:28 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06AHNQ2461735024
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Jul 2020 16:01:11 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 041614204D;
-        Fri, 10 Jul 2020 16:01:11 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 71CB042049;
-        Fri, 10 Jul 2020 16:01:10 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.158.149])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Jul 2020 16:01:10 +0000 (GMT)
+        Fri, 10 Jul 2020 17:23:26 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15FA44C046;
+        Fri, 10 Jul 2020 17:23:26 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DD254C044;
+        Fri, 10 Jul 2020 17:23:24 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.206.93])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Jul 2020 17:23:24 +0000 (GMT)
+Message-ID: <1594401804.14405.8.camel@linux.ibm.com>
+Subject: Re: [PATCH v5] ima: move APPRAISE_BOOTPARAM dependency on
+ ARCH_POLICY to runtime
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
-        Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH v2 7/8] ima-evm-utils: optionally verify the template data file signature
-Date:   Fri, 10 Jul 2020 12:00:58 -0400
-Message-Id: <1594396859-9232-8-git-send-email-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
-References: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
+To:     Bruno Meneguele <bmeneg@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     erichte@linux.ibm.com, nayna@linux.ibm.com, stable@vger.kernel.org
+Date:   Fri, 10 Jul 2020 13:23:24 -0400
+In-Reply-To: <20200709164647.45153-1-bmeneg@redhat.com>
+References: <20200709164647.45153-1-bmeneg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-10_13:2020-07-10,2020-07-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- lowpriorityscore=0 phishscore=0 mlxscore=0 spamscore=0 adultscore=0
- impostorscore=0 bulkscore=0 priorityscore=1501 suspectscore=1
- malwarescore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2006250000 definitions=main-2007100109
+ definitions=2020-07-10_10:2020-07-10,2020-07-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1011 malwarescore=0 phishscore=0 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 impostorscore=0 suspectscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007100111
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Rename "--list" to "verify-sig" to optionally verify the file signature
-contained in the template data based on the supplied set of keys.
+On Thu, 2020-07-09 at 13:46 -0300, Bruno Meneguele wrote:
+> APPRAISE_BOOTPARAM has been marked as dependent on !ARCH_POLICY in compile
+> time, enforcing the appraisal whenever the kernel had the arch policy option
+> enabled.
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- README       |  3 ++-
- src/evmctl.c | 12 ++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
+> However it breaks systems where the option is set but the system didn't
+> boot in a "secure boot" platform. In this scenario, anytime an appraisal
+> policy (i.e. ima_policy=appraisal_tcb) is used it will be forced, without
+> giving the user the opportunity to label the filesystem, before enforcing
+> integrity.
+> 
+> Considering the ARCH_POLICY is only effective when secure boot is actually
+> enabled this patch remove the compile time dependency and move it to a
+> runtime decision, based on the secure boot state of that platform.
 
-diff --git a/README b/README
-index 3603ae8a6084..374b748c59bf 100644
---- a/README
-+++ b/README
-@@ -31,7 +31,7 @@ COMMANDS
-  ima_sign [--sigfile] [--key key] [--pass password] file
-  ima_verify file
-  ima_hash file
-- ima_measurement [--key "key1, key2, ..."] [--list] file
-+ ima_measurement [--verify-sig [--key "key1, key2, ..."]] file
-  ima_fix [-t fdsxm] path
-  sign_hash [--key key] [--pass password]
-  hmac [--imahash | --imasig ] file
-@@ -59,6 +59,7 @@ OPTIONS
-       --m32          force EVM hmac/signature for 32 bit target system
-       --m64          force EVM hmac/signature for 64 bit target system
-       --engine e     preload OpenSSL engine e (such as: gost)
-+      --verify-sig   verify the template data file signature
-   -v                 increase verbosity level
-   -h, --help         display this help and exit
- 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 88fd8e4c31f0..90a3eebc4431 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -125,7 +125,7 @@ static char *caps_str;
- static char *ima_str;
- static char *selinux_str;
- static char *search_type;
--static int measurement_list;
-+static int verify_list_sig;
- static int recursive;
- static int msize;
- static dev_t fs_dev;
-@@ -1566,7 +1566,7 @@ void ima_ng_show(struct template_entry *entry)
- 			log_info(" ");
- 			log_dump(sig, sig_len);
- 		}
--		if (measurement_list)
-+		if (verify_list_sig)
- 			err = ima_verify_signature(path, sig, sig_len,
- 						   digest, digest_len);
- 		else
-@@ -2367,7 +2367,7 @@ static void usage(void)
- 		"      --ima          use custom IMA signature for EVM\n"
- 		"      --selinux      use custom Selinux label for EVM\n"
- 		"      --caps         use custom Capabilities for EVM(unspecified: from FS, empty: do not use)\n"
--		"      --list         measurement list verification\n"
-+		"      --verify-sig   verify measurement list signatures\n"
- 		"      --engine e     preload OpenSSL engine e (such as: gost)\n"
- 		"  -v                 increase verbosity level\n"
- 		"  -h, --help         display this help and exit\n"
-@@ -2385,7 +2385,7 @@ struct command cmds[] = {
- 	{"ima_verify", cmd_verify_ima, 0, "file", "Verify IMA signature (for debugging).\n"},
- 	{"ima_setxattr", cmd_setxattr_ima, 0, "[--sigfile file]", "Set IMA signature from sigfile\n"},
- 	{"ima_hash", cmd_hash_ima, 0, "file", "Make file content hash.\n"},
--	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] [--verify] [--pcrs file] file", "Verify measurement list (experimental).\n"},
-+	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] [--verify] [--verify-sig [--key key1, key2, ...]] [--pcrs file] file", "Verify measurement list (experimental).\n"},
- 	{"ima_boot_aggregate", cmd_ima_bootaggr, 0, "[file]", "Calculate per TPM bank boot_aggregate digests\n"},
- 	{"ima_fix", cmd_ima_fix, 0, "[-t fdsxm] path", "Recursively fix IMA/EVM xattrs in fix mode.\n"},
- 	{"ima_clear", cmd_ima_clear, 0, "[-t fdsxm] path", "Recursively remove IMA/EVM xattrs.\n"},
-@@ -2421,7 +2421,7 @@ static struct option opts[] = {
- 	{"ima", 1, 0, 135},
- 	{"selinux", 1, 0, 136},
- 	{"caps", 2, 0, 137},
--	{"list", 0, 0, 138},
-+	{"verify-sig", 0, 0, 138},
- 	{"engine", 1, 0, 139},
- 	{"xattr-user", 0, 0, 140},
- 	{"validate", 0, 0, 141},
-@@ -2586,7 +2586,7 @@ int main(int argc, char *argv[])
- 			hmac_flags |= HMAC_FLAG_CAPS_SET;
- 			break;
- 		case 138:
--			measurement_list = 1;
-+			verify_list_sig = 1;
- 			break;
- 		case 139: /* --engine e */
- 			eng = ENGINE_by_id(optarg);
--- 
-2.7.5
+Perhaps we could simplify this patch description a bit?
+
+The IMA_APPRAISE_BOOTPARAM config allows enabling different
+"ima_appraise=" modes - log, fix, enforce - at run time, but not when
+IMA architecture specific policies are enabled.  This prevents
+properly labeling the filesystem on systems where secure boot is
+supported, but not enabled on the platform.  Only when secure boot is
+enabled, should these IMA appraise modes be disabled.
+
+This patch removes the compile time dependency and makes it a runtime
+decision, based on the secure boot state of that platform.
+
+<snip>
+
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index a9649b04b9f1..884de471b38a 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -19,6 +19,11 @@
+>  static int __init default_appraise_setup(c
+
+> har *str)
+>  {
+>  #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+> +	if (arch_ima_get_secureboot()) {
+> +		pr_info("appraise boot param ignored: secure boot enabled");
+
+Instead of a generic statement, is it possible to include the actual
+option being denied?  Perhaps something like: "Secure boot enabled,
+ignoring %s boot command line option"
+
+Mimi
+
+> +		return 1;
+> +	}
+> +
+>  	if (strncmp(str, "off", 3) == 0)
+>  		ima_appraise = 0;
+>  	else if (strncmp(str, "log", 3) == 0)
 
