@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB97C433E8
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 16:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0A5C433E7
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 16:01:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81DE0207BB
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 16:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0AD42078B
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Jul 2020 16:01:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbgGJQBR (ORCPT
+        id S1727999AbgGJQBQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 10 Jul 2020 12:01:17 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33080 "EHLO
+        Fri, 10 Jul 2020 12:01:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6326 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727998AbgGJQBQ (ORCPT
+        by vger.kernel.org with ESMTP id S1727952AbgGJQBQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 10 Jul 2020 12:01:16 -0400
 Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06AFWoLV156659;
-        Fri, 10 Jul 2020 12:01:14 -0400
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06AFWmTe156449;
+        Fri, 10 Jul 2020 12:01:13 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 326bpk8ur8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jul 2020 12:01:14 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06AFXGwG159652;
-        Fri, 10 Jul 2020 12:01:14 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 326bpk8uph-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 326bpk8uq2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 10 Jul 2020 12:01:13 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06AG0lqh003422;
-        Fri, 10 Jul 2020 16:01:11 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma03ams.nl.ibm.com with ESMTP id 326bc30rk8-1
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06AFjQ4q013009;
+        Fri, 10 Jul 2020 12:01:12 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 326bpk8una-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jul 2020 16:01:11 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06AG197763111332
+        Fri, 10 Jul 2020 12:01:12 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06AG0S7p003359;
+        Fri, 10 Jul 2020 16:01:10 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03ams.nl.ibm.com with ESMTP id 326bc30rk5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Jul 2020 16:01:10 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06AG18hW65077392
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Jul 2020 16:01:09 GMT
+        Fri, 10 Jul 2020 16:01:08 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7320F4204C;
-        Fri, 10 Jul 2020 16:01:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id E834142047;
+        Fri, 10 Jul 2020 16:01:07 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D72B14203F;
-        Fri, 10 Jul 2020 16:01:08 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 461ED4203F;
+        Fri, 10 Jul 2020 16:01:07 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.158.149])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Jul 2020 16:01:08 +0000 (GMT)
+        Fri, 10 Jul 2020 16:01:07 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
         Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH v2 5/8] ima-evm-utils: guarantee the measurement list contains all the records
-Date:   Fri, 10 Jul 2020 12:00:56 -0400
-Message-Id: <1594396859-9232-6-git-send-email-zohar@linux.ibm.com>
+Subject: [PATCH v2 3/8] ima-evm-utils: support providing the TPM 1.2 PCRs as a file
+Date:   Fri, 10 Jul 2020 12:00:54 -0400
+Message-Id: <1594396859-9232-4-git-send-email-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
 References: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
@@ -78,54 +78,84 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Reading the TPM PCRs before walking the measurement list guarantees
-the measurement list contains all the records.
+"evmctl ima_measurement" walks the IMA measurement list calculating the
+PCRs and verifies the calculated values against the system's PCRs.
+Instead of reading the system's PCRs, provide the PCRs as a file.  For
+TPM 1.2 the PCRs are exported via a securityfs file.
+
+Verifying the IMA measurement list against the exported TPM 1.2 PCRs
+file may be used remotely for regression testing.  If used in a
+production environment, the provided TPM PCRs must be compared with
+those included in the TPM 1.2 quote as well.
+
+This patch defines an evmctl ima_measurement "--pcrs <filename>" option.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ src/evmctl.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index fac6a270794f..5787887882b4 100644
+index 814aa6b75571..21ae1c7ca5a7 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -1876,6 +1876,7 @@ static int ima_measurement(const char *file)
- 	struct tpm_bank_info *tpm_banks;
- 	int is_ima_template, cur_template_fmt;
- 	int num_banks = 0;
-+	int tpmbanks = 1;
- 	int first_record = 1;
+@@ -160,6 +160,8 @@ struct tpm_bank_info {
+ 	uint8_t pcr[NUM_PCRS][MAX_DIGEST_SIZE];
+ };
  
- 	struct template_entry entry = { .template = 0 };
-@@ -1901,6 +1902,14 @@ static int ima_measurement(const char *file)
- 	else				/* assume read pubkey from x509 cert */
- 		init_public_keys("/etc/keys/x509_evm.der");
- 
-+	/*
-+	 * Reading the PCRs before walking the IMA measurement list
-+	 * guarantees that all of the measurements are included in
-+	 * the PCRs.
-+	 */
-+	if (read_tpm_banks(num_banks, tpm_banks) != 0)
-+		tpmbanks = 0;
++static char *pcrfile;
 +
- 	while (fread(&entry.header, sizeof(entry.header), 1, fp)) {
- 		if (entry.header.name_len > TCG_EVENT_NAME_LEN_MAX) {
- 			log_err("%d ERROR: event name too long!\n",
-@@ -1999,10 +2008,9 @@ static int ima_measurement(const char *file)
- 			ima_ng_show(&entry);
- 	}
+ static int bin2file(const char *file, const char *ext, const unsigned char *data, int len)
+ {
+ 	FILE *fp;
+@@ -1377,12 +1379,18 @@ static char *misc_pcrs = "/sys/class/misc/tpm0/device/pcrs";
+ /* Read all of the TPM 1.2 PCRs */
+ static int tpm_pcr_read(struct tpm_bank_info *tpm_banks, int len)
+ {
+-	FILE *fp;
++	FILE *fp = NULL;
+ 	char *p, pcr_str[7], buf[70]; /* length of the TPM string */
+ 	int result = -1;
+ 	int i = 0;
  
--	if (read_tpm_banks(num_banks, tpm_banks) != 0) {
--		err = 0;
-+	if (tpmbanks == 0)
- 		log_info("Failed to read any TPM PCRs\n");
--	} else {
-+	else {
- 		err = compare_tpm_banks(num_banks, pseudo_banks, tpm_banks);
- 		if (!err)
- 			log_info("Matched per TPM bank calculated digest(s).\n");
+-	fp = fopen(pcrs, "r");
++	/* Use the provided TPM 1.2 pcrs file */
++	if (pcrfile)
++		fp = fopen(pcrfile, "r");
++
++	if (!fp)
++		fp = fopen(pcrs, "r");
++
+ 	if (!fp)
+ 		fp = fopen(misc_pcrs, "r");
+ 
+@@ -2347,7 +2355,7 @@ struct command cmds[] = {
+ 	{"ima_verify", cmd_verify_ima, 0, "file", "Verify IMA signature (for debugging).\n"},
+ 	{"ima_setxattr", cmd_setxattr_ima, 0, "[--sigfile file]", "Set IMA signature from sigfile\n"},
+ 	{"ima_hash", cmd_hash_ima, 0, "file", "Make file content hash.\n"},
+-	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] [--verify] file", "Verify measurement list (experimental).\n"},
++	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] [--verify] [--pcrs file] file", "Verify measurement list (experimental).\n"},
+ 	{"ima_boot_aggregate", cmd_ima_bootaggr, 0, "[file]", "Calculate per TPM bank boot_aggregate digests\n"},
+ 	{"ima_fix", cmd_ima_fix, 0, "[-t fdsxm] path", "Recursively fix IMA/EVM xattrs in fix mode.\n"},
+ 	{"ima_clear", cmd_ima_clear, 0, "[-t fdsxm] path", "Recursively remove IMA/EVM xattrs.\n"},
+@@ -2388,6 +2396,7 @@ static struct option opts[] = {
+ 	{"xattr-user", 0, 0, 140},
+ 	{"validate", 0, 0, 141},
+ 	{"verify", 0, 0, 142},
++	{"pcrs", 1, 0, 143},
+ 	{}
+ 
+ };
+@@ -2572,6 +2581,9 @@ int main(int argc, char *argv[])
+ 		case 142: /* --verify */
+ 			verify = 1;
+ 			break;
++		case 143:
++			pcrfile = optarg;
++			break;
+ 		case '?':
+ 			exit(1);
+ 			break;
 -- 
 2.7.5
 
