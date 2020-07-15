@@ -2,82 +2,95 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA23CC433E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 21:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5584C433E5
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 22:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9744206F4
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 21:39:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZUhZup1L"
+	by mail.kernel.org (Postfix) with ESMTP id 911FE2067D
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 22:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbgGOVjR (ORCPT
+        id S1726765AbgGOWag (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 17:39:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:42265 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726479AbgGOVjR (ORCPT
+        Wed, 15 Jul 2020 18:30:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726479AbgGOWag (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 17:39:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594849156;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=EM6yxRSPKU4x0QOObOuZNirW5SXQQqWbMpXS9w5Yb4k=;
-        b=ZUhZup1Lxp8PDO83353fn2+ON0EfI2E9aGsM2QGLuD7dIfiBT+knnP6Jy3JlM/hr3qdk0H
-        e2RjPVbODnU7ZGEZABfePJs9N2aNi1rgdIduLSScFMAj1NhLXRHiJPZMfliIZOAI6cP2zU
-        /YIgEDPmr0fg/JvsLFEpquAyWNyNq/E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-120-9yMkxd9HMnKupUE22sNJ_Q-1; Wed, 15 Jul 2020 17:39:13 -0400
-X-MC-Unique: 9yMkxd9HMnKupUE22sNJ_Q-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6DE038015FB;
-        Wed, 15 Jul 2020 21:39:12 +0000 (UTC)
-Received: from localhost (ovpn-116-38.gru2.redhat.com [10.97.116.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 32D9910013C2;
-        Wed, 15 Jul 2020 21:39:09 +0000 (UTC)
-From:   Bruno Meneguele <bmeneg@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH 0/3] ima-evm-utils: miscellanous bug fixes
-Date:   Wed, 15 Jul 2020 18:39:03 -0300
-Message-Id: <20200715213906.194041-1-bmeneg@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Wed, 15 Jul 2020 18:30:36 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06FM2dmF010488;
+        Wed, 15 Jul 2020 18:30:32 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32991g5h8p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 18:30:32 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06FMPFrw079074;
+        Wed, 15 Jul 2020 18:30:32 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32991g5h7t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 18:30:31 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06FMTcEn028873;
+        Wed, 15 Jul 2020 22:30:29 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma02fra.de.ibm.com with ESMTP id 327527w1u7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 22:30:29 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06FMURCx2883868
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jul 2020 22:30:27 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 384034C044;
+        Wed, 15 Jul 2020 22:30:27 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8CF4F4C04E;
+        Wed, 15 Jul 2020 22:30:26 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.155.184])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Jul 2020 22:30:26 +0000 (GMT)
+Message-ID: <1594852226.12900.351.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/3] ima-evm-utils: miscellanous bug fixes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Bruno Meneguele <bmeneg@redhat.com>,
+        linux-integrity@vger.kernel.org
+Cc:     Petr Vorel <pvorel@suse.cz>, Vitaly Chikunov <vt@altlinux.org>
+Date:   Wed, 15 Jul 2020 18:30:26 -0400
+In-Reply-To: <20200715213906.194041-1-bmeneg@redhat.com>
+References: <20200715213906.194041-1-bmeneg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-15_12:2020-07-15,2020-07-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 spamscore=0 impostorscore=0 mlxscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007150161
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-While testing in RHEL7 the latest 'next-testing' branch changes the build
-failed due to an "out" label being placed at the end of the function
-calc_bootaggr() with no instructions for systems with OpenSSL version less
-then 1.1. Corrected it by putting a simple no-op 'return' there (the
-function returns nothing).
+On Wed, 2020-07-15 at 18:39 -0300, Bruno Meneguele wrote:
+> While testing in RHEL7 the latest 'next-testing' branch changes the build
+> failed due to an "out" label being placed at the end of the function
+> calc_bootaggr() with no instructions for systems with OpenSSL version less
+> then 1.1. Corrected it by putting a simple no-op 'return' there (the
+> function returns nothing).
+> 
+> The other bugs are a simple memory leak, also on calc_bootaggr(), when
+> _DigestUpdate() returns error; and an overflow while reading the
+> boot_aggregate buffer due to the lack of the null char at the end.
 
-The other bugs are a simple memory leak, also on calc_bootaggr(), when
-_DigestUpdate() returns error; and an overflow while reading the
-boot_aggregate buffer due to the lack of the null char at the end.
+Applied, thanks!
 
-Bruno Meneguele (3):
-  ima-evm-utils: fix empty label at end of function.
-  ima-evm-utils: fix memory leak in case of error
-  ima-evm-utils: fix overflow on printing boot_aggregate
-
- src/evmctl.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
--- 
-2.26.2
-
+Mimi
