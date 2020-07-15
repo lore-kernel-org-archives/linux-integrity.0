@@ -2,184 +2,205 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB499C433E5
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 15:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A653C433E2
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 17:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81A0D2071B
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 15:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0557620656
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 17:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ihxt9tMz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1R8OVVC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725897AbgGOPvJ (ORCPT
+        id S1725909AbgGORo3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 11:51:09 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:46236 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbgGOPvI (ORCPT
+        Wed, 15 Jul 2020 13:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgGORo3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 11:51:08 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7D47F20B4908;
-        Wed, 15 Jul 2020 08:51:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7D47F20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594828268;
-        bh=PqZS5ckYTWkUACXW2CzkMAhIn3QNaBv0Mq12LReLoVA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ihxt9tMz48bY6B/jpDdTs1dTPvX52ZyIF7gncnLawsjwkY8neLeNQ90iRqXzFY0qz
-         CklPsjPHf7QPev7+Dm/MnlgjsGs4h2iNl95bh4lACsae+lEsqrIpv6VZ4dVk7j0wlJ
-         +KtXNOzw4JHsh6HXps2KOQIz9mK+TqUDUszBeiU8=
-Date:   Wed, 15 Jul 2020 10:50:53 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Ard Biesheuvel <ardb@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Petr Vandrovec <petr@vmware.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Thirupathaiah Annapureddy <thiruan@microsoft.com>,
-        linux-integrity@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Jones <pjones@redhat.com>
-Subject: Re: [PATCH v2] tpm: Require that all digests are present in
- TCG_PCR_EVENT2 structures
-Message-ID: <20200715155053.GA3673@sequoia>
-References: <20200710192955.23333-1-tyhicks@linux.microsoft.com>
- <20200713205719.GA1419951@linux.intel.com>
+        Wed, 15 Jul 2020 13:44:29 -0400
+Received: from mail-oo1-xc44.google.com (mail-oo1-xc44.google.com [IPv6:2607:f8b0:4864:20::c44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1887DC061755;
+        Wed, 15 Jul 2020 10:44:29 -0700 (PDT)
+Received: by mail-oo1-xc44.google.com with SMTP id x2so632602oog.5;
+        Wed, 15 Jul 2020 10:44:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GFlWCMXT1McclKUDiU9FJWNsfLXEuQwJM+Zc8tDAILE=;
+        b=A1R8OVVC9vVfiBTU8FBD4g/7FAbDqOTl5RcE40gueHg0iu1oi6Z+QI63vMrc60ccEg
+         g4fbcm9RdmVBHISRj5nrInNkpM0neIAUHOhCxUobMwfLt/WnJRzj1fZCx2heNrdLQdXf
+         lO3VJTS4O9MH5MRIKrlVs7XTGVHSOrdsiKl22C56iYC74V5wSb2fts2Y27u8p8awc9YH
+         eGGxWmBCh8aKNm8ND87Ix1zGKAjdr8wwhe9YeKPPF64GZS5aiFisu5XF8ik2zFTF6J4b
+         4KWSzGSToha8gQ9Hr3qzr8F1fZrTuXl4D3uvEromBp/ibpUrt5jSzfSuWoStb76eHmpe
+         Wc7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GFlWCMXT1McclKUDiU9FJWNsfLXEuQwJM+Zc8tDAILE=;
+        b=OxKMMe0DYgdqGYlcQ6soJ5pa+XHEfBL21gY7wUgr/BdG/w3N7PSpcvMCdy5Ty/YoHg
+         cwkq+2bUB3WQiPdp2n/MENWKkZsGpS9w2RcvQwdBE+4Sb+nA412+gaxUCA0OTtrnoKaD
+         aoAOI0lPNkM4PQZSMPHHrzkrjwc7xCC3OAwLbuWEuKtlMnLjCV9F61+2L4QdOSolK8Fq
+         /xiB2O1+lOGeeZYv1lLrhcL0rwbZkCLiFJDUy1/XpvCJIEiokploNF9ScYGUtutudXos
+         +f0U1orRJLBQJNzABHJNQ+JWKvKBDYF6lWZfWB9ngeARJljRxEQQmaZRbIJ+CRWF5m/y
+         k2gw==
+X-Gm-Message-State: AOAM532bGYmiyph+A82GYVa8flkbiQMkg3ypgYpawUimY+NeIrujE04W
+        vOPn2WH1YDJBuIJ2HPtoK/0sNm3eSb+ecTy3XnM=
+X-Google-Smtp-Source: ABdhPJwLe3zpc1iO8/plW7H06lE30/eXcr+XQ0aXN5z8ePAZR0S2zFdXre5n68MuXktaZx4+4nkPOXL84ctbz5uMfUY=
+X-Received: by 2002:a4a:b006:: with SMTP id f6mr304583oon.13.1594835068421;
+ Wed, 15 Jul 2020 10:44:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200713205719.GA1419951@linux.intel.com>
+References: <20200715154853.23374-1-nramas@linux.microsoft.com> <20200715154853.23374-5-nramas@linux.microsoft.com>
+In-Reply-To: <20200715154853.23374-5-nramas@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 15 Jul 2020 14:04:52 -0400
+Message-ID: <CAEjxPJ6UsK9QqFTpMKjgSin2Q6D-5NCNDS0enuRNuixVP9H2wQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/5] LSM: Define SELinux function to measure security state
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2020-07-13 23:57:19, Jarkko Sakkinen wrote:
-> On Fri, Jul 10, 2020 at 02:29:55PM -0500, Tyler Hicks wrote:
-> > Require that the TCG_PCR_EVENT2.digests.count value strictly matches the
-> > value of TCG_EfiSpecIdEvent.numberOfAlgorithms in the event field of the
-> > TCG_PCClientPCREvent event log header. Also require that
-> > TCG_EfiSpecIdEvent.numberOfAlgorithms is non-zero.
-> > 
-> > The TCG PC Client Platform Firmware Profile Specification section 9.1
-> > (Family "2.0", Level 00 Revision 1.04) states:
-> > 
-> >  For each Hash algorithm enumerated in the TCG_PCClientPCREvent entry,
-> >  there SHALL be a corresponding digest in all TCG_PCR_EVENT2 structures.
-> >  Note: This includes EV_NO_ACTION events which do not extend the PCR.
-> > 
-> > Section 9.4.5.1 provides this description of
-> > TCG_EfiSpecIdEvent.numberOfAlgorithms:
-> > 
-> >  The number of Hash algorithms in the digestSizes field. This field MUST
-> >  be set to a value of 0x01 or greater.
-> > 
-> > Enforce these restrictions, as required by the above specification, in
-> > order to better identify and ignore invalid sequences of bytes at the
-> > end of an otherwise valid TPM2 event log. Firmware doesn't always have
-> > the means necessary to inform the kernel of the actual event log size so
-> > the kernel's event log parsing code should be stringent when parsing the
-> > event log for resiliency against firmware bugs. This is true, for
-> > example, when firmware passes the event log to the kernel via a reserved
-> > memory region described in device tree.
-> > 
-> > POWER and some ARM systems use the "linux,sml-base" and "linux,sml-size"
-> > device tree properties to describe the memory region used to pass the
-> > event log from firmware to the kernel. Unfortunately, the
-> > "linux,sml-size" property describes the size of the entire reserved
-> > memory region rather than the size of the event long within the memory
-> > region and the event log format does not include information describing
-> > the size of the event log.
-> > 
-> > tpm_read_log_of(), in drivers/char/tpm/eventlog/of.c, is where the
-> > "linux,sml-size" property is used. At the end of that function,
-> > log->bios_event_log_end is pointing at the end of the reserved memory
-> > region. That's typically 0x10000 bytes offset from "linux,sml-base",
-> > depending on what's defined in the device tree source.
-> > 
-> > The firmware event log only fills a portion of those 0x10000 bytes and
-> > the rest of the memory region should be zeroed out by firmware. Even in
-> > the case of a properly zeroed bytes in the remainder of the memory
-> > region, the only thing allowing the kernel's event log parser to detect
-> > the end of the event log is the following conditional in
-> > __calc_tpm2_event_size():
-> > 
-> >         if (event_type == 0 && event_field->event_size == 0)
-> >                 size = 0;
-> > 
-> > If that wasn't there, __calc_tpm2_event_size() would think that a 16
-> > byte sequence of zeroes, following an otherwise valid event log, was
-> > a valid event.
-> > 
-> > However, problems can occur if a single bit is set in the offset
-> > corresponding to either the TCG_PCR_EVENT2.eventType or
-> > TCG_PCR_EVENT2.eventSize fields, after the last valid event log entry.
-> > This could confuse the parser into thinking that an additional entry is
-> > present in the event log and exposing this invalid entry to userspace in
-> > the /sys/kernel/security/tpm0/binary_bios_measurements file. Such
-> > problems have been seen if firmware does not fully zero the memory
-> > region upon a warm reboot.
-> > 
-> > This patch significantly raises the bar on how difficult it is for
-> > stale/invalid memory to confuse the kernel's event log parser but
-> > there's still, ultimately, a reliance on firmware to properly initialize
-> > the remainder of the memory region reserved for the event log as the
-> > parser cannot be expected to detect a stale but otherwise properly
-> > formatted firmware event log entry.
-> > 
-> > Fixes: fd5c78694f3f ("tpm: fix handling of the TPM 2.0 event logs")
-> > Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > ---
-> > 
-> > * v2
-> >   - Rebase the patch on top of the TPM next branch, commit 786a2aa281f4
-> >     ("Revert commit e918e570415c ("tpm_tis: Remove the HID IFX0102")")
-> >   - Expand on the technical reasoning for needing strict event
-> >     validation in the commit message
-> >   - Improve the inline comment explaining the need for detecting
-> >     malformed events
-> > 
-> >  include/linux/tpm_eventlog.h | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-> > index 64356b199e94..739ba9a03ec1 100644
-> > --- a/include/linux/tpm_eventlog.h
-> > +++ b/include/linux/tpm_eventlog.h
-> > @@ -211,9 +211,16 @@ static inline int __calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
-> >  
-> >  	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
-> >  
-> > -	/* Check if event is malformed. */
-> > +	/*
-> > +	 * Perform validation of the event in order to identify malformed
-> > +	 * events. This function may be asked to parse arbitrary byte sequences
-> > +	 * immediately following a valid event log. The caller expects this
-> > +	 * function to recognize that the byte sequence is not a valid event
-> > +	 * and to return an event size of 0.
-> > +	 */
-> >  	if (memcmp(efispecid->signature, TCG_SPECID_SIG,
-> > -		   sizeof(TCG_SPECID_SIG)) || count > efispecid->num_algs) {
-> > +		   sizeof(TCG_SPECID_SIG)) ||
-> > +	    !efispecid->num_algs || count != efispecid->num_algs) {
-> >  		size = 0;
-> >  		goto out;
-> >  	}
-> > -- 
-> > 2.25.1
-> > 
-> 
-> 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+On Wed, Jul 15, 2020 at 11:48 AM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+>
+> SELinux configuration and policy are some of the critical data for this
+> security module that needs to be measured. To enable this measurement
+> SELinux needs to implement the interface function, security_state(), that
+> the LSM can call.
+>
+> Define the security_state() function in SELinux to measure SELinux
+> configuration and policy. Call this function to measure SELinux data
+> when there is a change in the security module's state.
+>
+> Sample measurement of SELinux state and hash of the policy:
+>
+> 10 e32e...5ac3 ima-buf sha256:86e8...4594 selinux-state 656e61626c65643d3=
+13b656e666f7263696e673d303b636865636b72657170726f743d313b6e6574706565723d31=
+3b6f70656e7065726d3d313b657874736f636b636c6173733d313b616c776179736e6574776=
+f726b3d303b6367726f75707365636c6162656c3d313b6e6e706e6f737569647472616e7369=
+74696f6e3d313b67656e66737365636c6162656c73796d6c696e6b3d303b
+> 10 f4a7...9408 ima-buf sha256:4941...68fc selinux-policy-hash 8d1d...1834
+>
+> The data for selinux-state in the above measurement is:
+> enabled=3D1;enforcing=3D0;checkreqprot=3D1;netpeer=3D1;openperm=3D1;extso=
+ckclass=3D1;alwaysnetwork=3D0;cgroupseclabel=3D1;nnpnosuidtransition=3D1;ge=
+nfsseclabelsymlink=3D0;
+>
+> The data for selinux-policy-hash in the above measurement is
+> the SHA256 hash of the SELinux policy.
+>
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
 
-Thanks for the review. Do you plan to take this through the linux-tpmdd
-tree or are you expecting someone else to pick up this patch?
+> diff --git a/security/selinux/include/security.h b/security/selinux/inclu=
+de/security.h
+> index b0e02cfe3ce1..691c7e35f82a 100644
+> --- a/security/selinux/include/security.h
+> +++ b/security/selinux/include/security.h
+> @@ -222,16 +222,35 @@ static inline bool selinux_policycap_genfs_seclabel=
+_symlinks(void)
+>         return state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLIN=
+KS];
+>  }
+>
+> +static inline bool selinux_checkreqprot(void)
+> +{
+> +       struct selinux_state *state =3D &selinux_state;
+> +
+> +       return state->checkreqprot;
+> +}
 
-Tyler
+Probably should use READ_ONCE().
 
-> 
-> /Jarkko
+> diff --git a/security/selinux/measure.c b/security/selinux/measure.c
+> new file mode 100644
+> index 000000000000..b909e8e61542
+> --- /dev/null
+> +++ b/security/selinux/measure.c
+> @@ -0,0 +1,122 @@
+> +int selinux_security_state(void)
+
+Let's call this selinux_measure_state() or similar.  Needs a verb. And
+pass it a struct selinux_state * pointer argument to be measured, even
+though initially it will always be passed &selinux_state.  The
+encapsulation of selinux state within selinux_state was to support
+multiple selinux namespaces in the future, each with their own state.
+
+> +{
+> +       int rc =3D 0;
+> +       int count;
+> +       size_t buflen;
+> +       int policy_hash_len;
+> +       char *state =3D NULL;
+> +       void *policy =3D NULL;
+> +       void *policy_hash =3D NULL;
+> +       static char *security_state_string =3D
+> +                       "enabled=3D%d;enforcing=3D%d;checkreqprot=3D%d;" =
+       \
+> +                       "netpeer=3D%d;openperm=3D%d;extsockclass=3D%d;"  =
+       \
+> +                       "alwaysnetwork=3D%d;cgroupseclabel=3D%d;"        =
+     \
+> +                       "nnpnosuidtransition=3D%d;genfsseclabelsymlink=3D=
+%d;";
+
+Rather than hardcoding policy capability names here, I would recommend
+using the selinux_policycap_names[] array for the names and the
+selinux_state.policycap[] array for the values.  Also recommend
+passing in a struct selinux_state * here to allow for future case
+where there are multiple selinux states, one per selinux namespace.
+
+> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/service=
+s.c
+> index ef0afd878bfc..0c289d13ef6a 100644
+> --- a/security/selinux/ss/services.c
+> +++ b/security/selinux/ss/services.c
+> @@ -3724,10 +3724,11 @@ int security_netlbl_sid_to_secattr(struct selinux=
+_state *state,
+>   * security_read_policy - read the policy.
+>   * @data: binary policy data
+>   * @len: length of data in bytes
+> - *
+> + * @alloc_kernel_memory: flag to indicate memory allocation
+>   */
+> -int security_read_policy(struct selinux_state *state,
+> -                        void **data, size_t *len)
+> +int security_read_selinux_policy(struct selinux_state *state,
+> +                                void **data, size_t *len,
+> +                                bool alloc_kernel_memory)
+
+Instead of passing in a boolean to control how the memory is
+allocated, split this into a helper function that takes an
+already-allocated buffer and two
+different front-end wrappers, one for kernel-internal use and one for
+userspace use.
+
+> @@ -3738,7 +3739,10 @@ int security_read_policy(struct selinux_state *sta=
+te,
+>
+>         *len =3D security_policydb_len(state);
+>
+> -       *data =3D vmalloc_user(*len);
+> +       if (alloc_kernel_memory)
+> +               *data =3D kzalloc(*len, GFP_KERNEL);
+
+You need vmalloc() since policy image size may exceed kmalloc max (or
+at least that used to be the case).
