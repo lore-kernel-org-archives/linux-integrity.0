@@ -2,159 +2,129 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7567DC433E6
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9C5C433E3
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C4F52065F
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAA432065F
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:38:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ijKpH2WT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbgGOUhc (ORCPT
+        id S1727090AbgGOUit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:37:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41108 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726650AbgGOUhb (ORCPT
+        Wed, 15 Jul 2020 16:38:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbgGOUir (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:37:31 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06FKWRIc064071;
-        Wed, 15 Jul 2020 16:37:28 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 329xq84pns-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 16:37:28 -0400
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06FKWU4c064462;
-        Wed, 15 Jul 2020 16:37:28 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 329xq84pnd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 16:37:28 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06FKRS96010090;
-        Wed, 15 Jul 2020 20:37:26 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06fra.de.ibm.com with ESMTP id 328rbqs8cm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 20:37:26 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06FKbOV428836280
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jul 2020 20:37:24 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 31986A4040;
-        Wed, 15 Jul 2020 20:37:24 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B773A404D;
-        Wed, 15 Jul 2020 20:37:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.155.184])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Jul 2020 20:37:23 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
-        Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH 1/3] ima-evm-utils: address new compiler complaints
-Date:   Wed, 15 Jul 2020 16:37:13 -0400
-Message-Id: <1594845435-19164-1-git-send-email-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.7.5
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-15_12:2020-07-15,2020-07-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1 phishscore=0
- adultscore=0 impostorscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007150154
+        Wed, 15 Jul 2020 16:38:47 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED7FC08C5DB
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:38:46 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id w2so3662388pgg.10
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:38:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=qTkObtIP1JOxTsAafQAu4JRP/2PqoQenw/nsfCYT+XA=;
+        b=ijKpH2WTKasm1SeJa7YfW41RoND4SGhxfWW8WIrBUyWAJo5mncDz3F6DsdpLNbN9yM
+         zimIQJdAwdsoIuaoAmdGi8bqgFGbI1ImDdJTj84SXvxwzifKGWR/ToGmegNpJJRYxabz
+         0Mzoe5AOfjDlUoukmWy/DGwdgH+42OpxYqawc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=qTkObtIP1JOxTsAafQAu4JRP/2PqoQenw/nsfCYT+XA=;
+        b=izXtA1AcfCUEoFpZEtiWnuyat5wrd9Lj8nynu5Gz0W8v5CdDicJbtT5zSdRHI4Odzf
+         ad/SE79v6yMn+R5J/0NvUO8psaEk2HzBPGVOsGMf2mUP8AXiqnWouov/9cBMRx/lxAoH
+         TWMKYwmK6Jfw7BSkSTEbcv3U0UOOg3PZK6mDkJaomAPAbO/tSVnAm0t8MC35IwhjRObH
+         HB4jdSgSdxhUoFWP5AFKi5N5cAcVv48hhW94vothoIwiLxsIypR5vbivh14s0yhIyuMw
+         bGoPnKYvmChC7GDHEm+efGLTO5xMg63eLBA4WIvH8VXYFRNABgHWUIFyagNVHAFt0Rze
+         oOqA==
+X-Gm-Message-State: AOAM5325eEyhDfd8DuOkg2qM23XvHos9qZNPYDT1pScB/MLpRynf5hlE
+        EzcPGOQkyBqJKcJdK22EnLm/4w==
+X-Google-Smtp-Source: ABdhPJyOe9mUdiu/xb+eBR+7MVDzMD0v9uEBAElvlLK4fUJtk8fgRzbG6NWh1tQpT587gudq9JBjRg==
+X-Received: by 2002:a62:cdc4:: with SMTP id o187mr922387pfg.200.1594845526528;
+        Wed, 15 Jul 2020 13:38:46 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m3sm2962482pfk.171.2020.07.15.13.38.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 13:38:45 -0700 (PDT)
+Date:   Wed, 15 Jul 2020 13:38:44 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 6/7] selftest/openat2: Add tests for O_MAYEXEC
+ enforcing
+Message-ID: <202007151337.2A113F8C@keescook>
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-7-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200714181638.45751-7-mic@digikod.net>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Address the new compiler complaints:
-- while reading the template data
-- while reading the exported TPM 1.2 PCRs
-- while reading the TPM event log
+On Tue, Jul 14, 2020 at 08:16:37PM +0200, Mickaël Salaün wrote:
+> Test propagation of noexec mount points or file executability through
+> files open with or without O_MAYEXEC, thanks to the
+> fs.open_mayexec_enforce sysctl.
+> 
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Shuah Khan <shuah@kernel.org>
 
-Reported-by: Petr Vorel <pvorel@suse.cz>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- src/evmctl.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+Yay variants! :)
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 8439bec0d7ee..cd5d96f1714b 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -1380,7 +1380,7 @@ static char *misc_pcrs = "/sys/class/misc/tpm0/device/pcrs";
- static int tpm_pcr_read(struct tpm_bank_info *tpm_banks, int len)
- {
- 	FILE *fp = NULL;
--	char *p, pcr_str[7], buf[70]; /* length of the TPM string */
-+	char *p, pcr_str[8], buf[70]; /* length of the TPM string */
- 	int result = -1;
- 	int i = 0;
- 
-@@ -1399,7 +1399,7 @@ static int tpm_pcr_read(struct tpm_bank_info *tpm_banks, int len)
- 
- 	for (;;) {
- 		p = fgets(buf, sizeof(buf), fp);
--		if (!p)
-+		if (!p || i > 99)
- 			break;
- 		sprintf(pcr_str, "PCR-%2.2d", i);
- 		if (!strncmp(p, pcr_str, 6))
-@@ -1980,11 +1980,21 @@ static int ima_measurement(const char *file)
- 			 * in the template data hash calculation.
- 			 */
- 			len = fread(&field_len, sizeof(field_len), 1, fp);
--			if (field_len > TCG_EVENT_NAME_LEN_MAX)
-+			if (len <= 0) {
-+				log_errno("Failed reading file name length\n");
-+				goto out;
-+			}
-+			if (field_len > TCG_EVENT_NAME_LEN_MAX) {
- 				log_err("file pathname is too long\n");
-+				goto out;
-+			}
- 
--			fread(entry.template + SHA_DIGEST_LENGTH,
--			      field_len, 1, fp);
-+			len = fread(entry.template + SHA_DIGEST_LENGTH,
-+				    field_len, 1, fp);
-+			if (len != field_len) {
-+				log_errno("Failed reading file name\n");
-+				goto out;
-+			}
- 
- 			/*
- 			 * The template data is fixed sized, zero out
-@@ -2069,6 +2079,7 @@ static int read_binary_bios_measurements(char *file, struct tpm_bank_info *bank)
- 	FILE *fp;
- 	SHA_CTX c;
- 	int err = 0;
-+	int len;
- 	int i;
- 
- 	fp = fopen(file, "r");
-@@ -2100,7 +2111,11 @@ static int read_binary_bios_measurements(char *file, struct tpm_bank_info *bank)
- 			err = 1;
- 			break;
- 		}
--		fread(event.data, event.header.len, 1, fp);
-+		len = fread(event.data, event.header.len, 1, fp);
-+		if (len != event.header.len) {
-+			log_errno("Failed reading event data (short read)\n");
-+			break;
-+		}
- 	}
- 	fclose(fp);
- 
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
 -- 
-2.7.5
-
+Kees Cook
