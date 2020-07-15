@@ -2,177 +2,146 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37326C433E2
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 17:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1B9C433E5
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 18:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D56620663
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 17:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B461620672
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 18:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXAmoJrS"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ENfLP4xn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbgGOR6r (ORCPT
+        id S1726803AbgGOSeJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 13:58:47 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58922 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725861AbgGOR6r (ORCPT
+        Wed, 15 Jul 2020 14:34:09 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38982 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbgGOSeJ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 13:58:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594835925;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XKXIzFLVY5trhCImGyR7UYr06iPeeq+jKXev7ABWDRA=;
-        b=bXAmoJrSr9cGTXyLBESkin4yAHkH9BZiaAErV1El1eqZLhQpshcJZ86pf1GytJVbJTOMr7
-        /4MOKNbLXapoGH9xcq1kI+po/Z3tXvj8FjXeO7kT1e0Y/BKj3kl9UKERytrdfvKrEwe0pv
-        FDX+PqMAlsU+KH2/7tamJwCLAnZisHc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-507-caOpOX_2OQ-WHeeGQ8LXTw-1; Wed, 15 Jul 2020 13:58:32 -0400
-X-MC-Unique: caOpOX_2OQ-WHeeGQ8LXTw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABCAC18FF692;
-        Wed, 15 Jul 2020 17:58:31 +0000 (UTC)
-Received: from localhost (ovpn-116-38.gru2.redhat.com [10.97.116.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D9646FDD1;
-        Wed, 15 Jul 2020 17:58:31 +0000 (UTC)
-Date:   Wed, 15 Jul 2020 14:58:29 -0300
-From:   Bruno Meneguele <bmeneg@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Vitaly Chikunov <vt@altlinux.org>
-Subject: Re: [PATCH 6/6] ima-evm-utils: define a basic hash_info.h file
-Message-ID: <20200715175829.GG3720@glitch>
-References: <1594088791-27370-1-git-send-email-zohar@linux.ibm.com>
- <1594088791-27370-7-git-send-email-zohar@linux.ibm.com>
+        Wed, 15 Jul 2020 14:34:09 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0456D20B4908;
+        Wed, 15 Jul 2020 11:34:07 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0456D20B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1594838048;
+        bh=h/hY55Q0qtm8L3rDWYxgRPeKHyFR7vIM/95MK08uoXY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ENfLP4xnfL87tgV8bYKfz92gup/o0XmaYAr+T2UGIZhJW860xPQ5YxZUznSchJTxn
+         GHmpXHtBTgrY48padhK2h6/aqsJrBj6X9abd+M9RE+9iyXjHt5b43Q/u3EbyiYhWvZ
+         aOX3AM4xbrCHDMgVdUB3IWeUaHkvalD8r3+0cpGg=
+Subject: Re: [PATCH v1 4/5] LSM: Define SELinux function to measure security
+ state
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20200715154853.23374-1-nramas@linux.microsoft.com>
+ <20200715154853.23374-5-nramas@linux.microsoft.com>
+ <CAEjxPJ6UsK9QqFTpMKjgSin2Q6D-5NCNDS0enuRNuixVP9H2wQ@mail.gmail.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <fec80278-1306-787d-a8ed-615a3709ae77@linux.microsoft.com>
+Date:   Wed, 15 Jul 2020 11:34:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <1594088791-27370-7-git-send-email-zohar@linux.ibm.com>
-X-PGP-Key: http://keys.gnupg.net/pks/lookup?op=get&search=0x3823031E4660608D
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IuhbYIxU28t+Kd57"
-Content-Disposition: inline
+In-Reply-To: <CAEjxPJ6UsK9QqFTpMKjgSin2Q6D-5NCNDS0enuRNuixVP9H2wQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
---IuhbYIxU28t+Kd57
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/15/20 11:04 AM, Stephen Smalley wrote:
 
-Hi Mimi,
+>> +static inline bool selinux_checkreqprot(void)
+>> +{
+>> +       struct selinux_state *state = &selinux_state;
+>> +
+>> +       return state->checkreqprot;
+>> +}
+> 
+> Probably should use READ_ONCE().
+Will do.
 
-On Mon, Jul 06, 2020 at 10:26:31PM -0400, Mimi Zohar wrote:
-> Some older system kernel header packages don't necessarily include
-> hash_info.h.
->=20
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  src/Makefile.am   |  2 +-
->  src/hash_info.gen | 43 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 44 insertions(+), 1 deletion(-)
->=20
-> diff --git a/src/Makefile.am b/src/Makefile.am
-> index 36652427a8ec..9bbff5034ef4 100644
-> --- a/src/Makefile.am
-> +++ b/src/Makefile.am
-> @@ -34,5 +34,5 @@ endif
-> =20
->  AM_CPPFLAGS =3D -I$(top_srcdir) -include config.h
-> =20
-> -CLEANFILES =3D hash_info.h
-> +CLEANFILES =3D hash_info.h tmp_hash_info.h
->  DISTCLEANFILES =3D @DISTCLEANFILES@
-> diff --git a/src/hash_info.gen b/src/hash_info.gen
-> index 54532ca5b847..5f7a97fb3117 100755
-> --- a/src/hash_info.gen
-> +++ b/src/hash_info.gen
-> @@ -18,11 +18,54 @@ KERNEL_HEADERS=3D$1
->  HASH_INFO_H=3Duapi/linux/hash_info.h
->  HASH_INFO=3D$KERNEL_HEADERS/include/$HASH_INFO_H
-> =20
-> +TMPHASHINFO=3D"./tmp_hash_info.h"
-> +gen_hashinfo() {
-> +cat << __EOF__ >$TMPHASHINFO
-> +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-> +/*
-> + * Hash Info: Hash algorithms information
-> + *
-> + * Copyright (c) 2013 Dmitry Kasatkin <d.kasatkin@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms of the GNU General Public License as published by the=
- Free
-> + * Software Foundation; either version 2 of the License, or (at your opt=
-ion)
-> + * any later version.
-> + *
-> + */
-> +
-> +enum hash_algo {
-> +=09HASH_ALGO_MD4,
-> +=09HASH_ALGO_MD5,
-> +=09HASH_ALGO_SHA1,
-> +=09HASH_ALGO_RIPE_MD_160,
-> +=09HASH_ALGO_SHA256,
-> +=09HASH_ALGO_SHA384,
-> +=09HASH_ALGO_SHA512,
-> +=09HASH_ALGO_SHA224,
-> +=09HASH_ALGO_RIPE_MD_128,
-> +=09HASH_ALGO_RIPE_MD_256,
-> +=09HASH_ALGO_RIPE_MD_320,
-> +=09HASH_ALGO_WP_256,
-> +=09HASH_ALGO_WP_384,
-> +=09HASH_ALGO_WP_512,
-> +=09HASH_ALGO_TGR_128,
-> +=09HASH_ALGO_TGR_160,
-> +=09HASH_ALGO_TGR_192,
-> +=09HASH_ALGO_SM3_256,
-> +=09HASH_ALGO__LAST
-> +};
-> +__EOF__
+> 
+>> diff --git a/security/selinux/measure.c b/security/selinux/measure.c
+>> new file mode 100644
+>> index 000000000000..b909e8e61542
+>> --- /dev/null
+>> +++ b/security/selinux/measure.c
+>> @@ -0,0 +1,122 @@
+>> +int selinux_security_state(void)
+> 
+> Let's call this selinux_measure_state() or similar.  Needs a verb. And
+> pass it a struct selinux_state * pointer argument to be measured, even
+> though initially it will always be passed &selinux_state.  The
+> encapsulation of selinux state within selinux_state was to support
+> multiple selinux namespaces in the future, each with their own state.
+Will do.
 
-Just a minor point on HASH_ALGO_SM3_256:
+>> +       static char *security_state_string =
+>> +                       "enabled=%d;enforcing=%d;checkreqprot=%d;"        \
+>> +                       "netpeer=%d;openperm=%d;extsockclass=%d;"         \
+>> +                       "alwaysnetwork=%d;cgroupseclabel=%d;"             \
+>> +                       "nnpnosuidtransition=%d;genfsseclabelsymlink=%d;";
+> 
+> Rather than hardcoding policy capability names here, I would recommend
+> using the selinux_policycap_names[] array for the names and the
+> selinux_state.policycap[] array for the values.  Also recommend
+> passing in a struct selinux_state * here to allow for future case
+> where there are multiple selinux states, one per selinux namespace.
+Will do.
 
-The old kernels that didn't export hash_info.h uapi didn't support
-HASH_ALGO_SM3_256 as well. Wouldn't it be better to also not include it
-in the tmp_hash_info considering it'll be used only by those running
-older kernels without SM3 support?
+> 
+>> diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+>> index ef0afd878bfc..0c289d13ef6a 100644
+>> --- a/security/selinux/ss/services.c
+>> +++ b/security/selinux/ss/services.c
+>> @@ -3724,10 +3724,11 @@ int security_netlbl_sid_to_secattr(struct selinux_state *state,
+>>    * security_read_policy - read the policy.
+>>    * @data: binary policy data
+>>    * @len: length of data in bytes
+>> - *
+>> + * @alloc_kernel_memory: flag to indicate memory allocation
+>>    */
+>> -int security_read_policy(struct selinux_state *state,
+>> -                        void **data, size_t *len)
+>> +int security_read_selinux_policy(struct selinux_state *state,
+>> +                                void **data, size_t *len,
+>> +                                bool alloc_kernel_memory)
+> 
+> Instead of passing in a boolean to control how the memory is
+> allocated, split this into a helper function that takes an
+> already-allocated buffer and two
+> different front-end wrappers, one for kernel-internal use and one for
+> userspace use.
+Will do.
 
-Keeping it won't cause any issues though. So I'm fine with it either
-way.
+> 
+>> @@ -3738,7 +3739,10 @@ int security_read_policy(struct selinux_state *state,
+>>
+>>          *len = security_policydb_len(state);
+>>
+>> -       *data = vmalloc_user(*len);
+>> +       if (alloc_kernel_memory)
+>> +               *data = kzalloc(*len, GFP_KERNEL);
+> 
+> You need vmalloc() since policy image size may exceed kmalloc max (or
+> at least that used to be the case).
+Will do.
 
---=20
-bmeneg=20
-PGP Key: http://bmeneg.com/pubkey.txt
+thanks,
+  -lakshmi
 
---IuhbYIxU28t+Kd57
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEdWo6nTbnZdbDmXutYdRkFR+RokMFAl8PQ8UACgkQYdRkFR+R
-okMcHgf+Ioz40mf+1enk+c+Njo2QmWCl632B34Owj6DoVno7XT25gmORDPO/mqnz
-GJA7gzGuJVc4U8qieWMfZJSQ5bWrumpbxvWdWCvFDT0lnj5A0v71nIqjPXqT1hZj
-ZxvNwK5iRouOHsP3nxLdEcfOeNWG2118XLb7fZprVuWUuck2VcqHn86+0VL2wCDJ
-lODWwVDIBsU9vSIFKYpkLp2GJTZnGzSavhFranBtc7BvNHom+eq2OODxZeVtH3Fw
-+lfElnyM8oqgzxsVk0bd4/R67vhWlMpSRGaHjwUyJmhxwtIZwoU5Id0Cp2YOpqfB
-4XRgRZ4jHbCvt/yi81vQYVXuXAM/wQ==
-=pTZy
------END PGP SIGNATURE-----
-
---IuhbYIxU28t+Kd57--
 
