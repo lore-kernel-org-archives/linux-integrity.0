@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF63C4345B
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 15:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABAE9C4345A
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 15:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5013F2065E
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 15:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AFE12065E
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 15:49:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="V8Z90u3n"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bZ8yXgGD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgGOPtm (ORCPT
+        id S1727931AbgGOPti (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 11:49:42 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:45900 "EHLO
+        Wed, 15 Jul 2020 11:49:38 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45944 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbgGOPs7 (ORCPT
+        with ESMTP id S1726962AbgGOPtA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 11:48:59 -0400
+        Wed, 15 Jul 2020 11:49:00 -0400
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D03CB20B4909;
-        Wed, 15 Jul 2020 08:48:58 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D03CB20B4909
+        by linux.microsoft.com (Postfix) with ESMTPSA id D3AAA20B490E;
+        Wed, 15 Jul 2020 08:48:59 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D3AAA20B490E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1594828139;
-        bh=JPlRumbOfvyOco8L8nkT1d2Rp+0/lx8FfGi5jva830E=;
+        s=default; t=1594828140;
+        bh=mt9WRyN0K0mzACad6GlGI3HgDlUI75SH8oC6SKEyiMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V8Z90u3n3Edtg4DNq9sdR21/qS4DM3+DhjPKfEzdx22E2qNsyPmUqqBOCk6pwmgVO
-         naeoyfb93tlv0K16kntLc5r2JWk1OAGmpzaiZXNA9QQBz8DpsFKGa1RyNWiLyPMn5u
-         76U29TvGvk09P3mvIUXPQjup/USv/mMc5QIMVYPY=
+        b=bZ8yXgGDaH7urVxRxxM++HSvnS6y6t2xPiZ3xpoXfjiJ5nKL3fB0zrdqtU8Y+p5Hd
+         FenGfLez3cKpkI9GZ4rc3vLDj5nhUFk3VBwR7qLpBGTCCgqLcOG5dgFk3pG+uxk4kY
+         u5uINadxvFX/hr6XYygFY1GOE0a9zfWaMP+a3qAQ=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
         casey@schaufler-ca.com
 Cc:     jmorris@namei.org, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/5] IMA: Add LSM_STATE func to measure LSM data
-Date:   Wed, 15 Jul 2020 08:48:49 -0700
-Message-Id: <20200715154853.23374-2-nramas@linux.microsoft.com>
+Subject: [PATCH v1 5/5] LSM: Define workqueue for measuring security module state
+Date:   Wed, 15 Jul 2020 08:48:53 -0700
+Message-Id: <20200715154853.23374-6-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200715154853.23374-1-nramas@linux.microsoft.com>
 References: <20200715154853.23374-1-nramas@linux.microsoft.com>
@@ -53,121 +53,77 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Critical data structures of security modules need to be measured to
-enable an attestation service to verify if the policies and
-configuration have been setup correctly and that they haven't been
-tampered with at runtime. A new IMA policy is required for handling
-this measurement.
+Data structures critical to the functioning of a security module could
+be tampered with by malware or changed inadvertently at runtime
+thereby disabling or reducing the security guarantees provided by
+the security module. Such critical data need to be periodically checked
+and measured, if there is any change. This would enable an attestation
+service, for instance, to verify that the security modules are operating
+with the configuration and policy setup by the system administrator.
 
-Define a new IMA policy func namely LSM_STATE to measure data provided
-by security modules. Update ima_match_rules() to check for LSM_STATE
-and ima_parse_rule() to handle LSM_STATE.
+Define a workqueue in the LSM and invoke the security modules in
+the workqueue handler to check their data and measure.
+
+Note that the data given by the security module would be measured by
+the IMA subsystem only if it has changed since the last time it was
+measured.
 
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- Documentation/ABI/testing/ima_policy |  6 +++++-
- security/integrity/ima/ima.h         |  1 +
- security/integrity/ima/ima_api.c     |  2 +-
- security/integrity/ima/ima_policy.c  | 29 +++++++++++++++++++++++-----
- 4 files changed, 31 insertions(+), 7 deletions(-)
+ security/security.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index cd572912c593..355bc3eade33 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -29,7 +29,7 @@ Description:
- 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
- 				[FIRMWARE_CHECK]
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
--				[KEXEC_CMDLINE] [KEY_CHECK]
-+				[KEXEC_CMDLINE] [KEY_CHECK] [LSM_STATE]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
- 			       [[^]MAY_EXEC]
- 			fsmagic:= hex value
-@@ -125,3 +125,7 @@ Description:
- 		keys added to .builtin_trusted_keys or .ima keyring:
+diff --git a/security/security.c b/security/security.c
+index 3fbabc2e6ddb..6a0ceff815a2 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -89,6 +89,11 @@ static __initdata struct lsm_info *exclusive;
+ static struct lsm_info *security_state_lsms;
+ static int security_state_lsms_count;
  
- 			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
++static long security_state_timeout = 300000; /* 5 Minutes */
++static void security_state_handler(struct work_struct *work);
++static DECLARE_DELAYED_WORK(security_state_delayed_work,
++			    security_state_handler);
 +
-+		Example of measure rule using LSM_STATE to measure LSM data:
-+
-+			measure func=LSM_STATE
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 4515975cc540..880fda11a61b 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -200,6 +200,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
- 	hook(POLICY_CHECK, policy)			\
- 	hook(KEXEC_CMDLINE, kexec_cmdline)		\
- 	hook(KEY_CHECK, key)				\
-+	hook(LSM_STATE, lsm_state)			\
- 	hook(MAX_CHECK, none)
+ static __initdata bool debug;
+ #define init_debug(...)						\
+ 	do {							\
+@@ -277,6 +282,26 @@ static void __init initialize_security_state_lsms(void)
+ 	security_state_lsms_count = count;
+ }
  
- #define __ima_hook_enumify(ENUM, str)	ENUM,
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index bf22de8b7ce0..0cebd2404dcf 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
-  *		subj=, obj=, type=, func=, mask=, fsmagic=
-  *	subj,obj, and type: are LSM specific.
-  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
-- *	| KEXEC_CMDLINE | KEY_CHECK
-+ *	| KEXEC_CMDLINE | KEY_CHECK | LSM_STATE
-  *	mask: contains the permission mask
-  *	fsmagic: hex value
-  *
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 66aa3e17a888..fc8457d9242b 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -417,15 +417,31 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 			    const char *keyring)
++static void initialize_security_state_monitor(void)
++{
++	if (security_state_lsms_count == 0)
++		return;
++
++	schedule_delayed_work(&security_state_delayed_work,
++			      msecs_to_jiffies(security_state_timeout));
++}
++
++static void security_state_handler(struct work_struct *work)
++{
++	int inx;
++
++	for (inx = 0; inx < security_state_lsms_count; inx++)
++		measure_security_state(&(security_state_lsms[inx]));
++
++	schedule_delayed_work(&security_state_delayed_work,
++			      msecs_to_jiffies(security_state_timeout));
++}
++
+ /* Populate ordered LSMs list from comma-separated LSM name list. */
+ static void __init ordered_lsm_parse(const char *order, const char *origin)
  {
- 	int i;
-+	int funcmatch = 0;
- 
--	if ((func == KEXEC_CMDLINE) || (func == KEY_CHECK)) {
-+	switch (func) {
-+	case KEXEC_CMDLINE:
-+	case KEY_CHECK:
-+	case LSM_STATE:
- 		if ((rule->flags & IMA_FUNC) && (rule->func == func)) {
- 			if (func == KEY_CHECK)
--				return ima_match_keyring(rule, keyring, cred);
--			return true;
--		}
--		return false;
-+				funcmatch = ima_match_keyring(rule, keyring,
-+							      cred) ? 1 : -1;
-+			else
-+				funcmatch = 1;
-+		} else
-+			funcmatch = -1;
-+
-+		break;
-+
-+	default:
-+		funcmatch = 0;
-+		break;
+@@ -400,6 +425,7 @@ static void __init ordered_lsm_init(void)
  	}
-+
-+	if (funcmatch)
-+		return (funcmatch == 1) ? true : false;
-+
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
-@@ -1068,6 +1084,9 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = KEXEC_CMDLINE;
- 			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
- 				entry->func = KEY_CHECK;
-+			else if (strcmp(args[0].from, "LSM_STATE") == 0)
-+				entry->func = LSM_STATE;
-+
- 			else
- 				result = -EINVAL;
- 			if (!result)
+ 
+ 	initialize_security_state_lsms();
++	initialize_security_state_monitor();
+ 
+ 	kfree(ordered_lsms);
+ }
 -- 
 2.27.0
 
