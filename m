@@ -2,97 +2,194 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A809C433E2
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A80DC433E3
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15E5F2065D
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 447A220663
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:18:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OIIke9+y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgGOUM1 (ORCPT
+        id S1726878AbgGOUSv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:12:27 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20224 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727790AbgGOUM0 (ORCPT
+        Wed, 15 Jul 2020 16:18:51 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:21276 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726863AbgGOUSu (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:12:26 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06FK2Zl6095261;
-        Wed, 15 Jul 2020 16:12:23 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 329r1j72j2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 16:12:23 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06FK2eVs095808;
-        Wed, 15 Jul 2020 16:12:23 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 329r1j72hk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 16:12:23 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06FK6g1u012103;
-        Wed, 15 Jul 2020 20:12:21 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma02fra.de.ibm.com with ESMTP id 327527vxtk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 20:12:21 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06FKB42R23134470
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jul 2020 20:11:04 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 680CD4C04E;
-        Wed, 15 Jul 2020 20:11:04 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C146B4C044;
-        Wed, 15 Jul 2020 20:11:03 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.155.184])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Jul 2020 20:11:03 +0000 (GMT)
-Message-ID: <1594843863.12900.344.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 2/8] ima_evm_utils: support extending TPM 2.0 banks
- w/original SHA1 padded digest
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Bruno Meneguele <bmeneg@redhat.com>
-Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>
-Date:   Wed, 15 Jul 2020 16:11:03 -0400
-In-Reply-To: <1594842468.12900.339.camel@linux.ibm.com>
-References: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
-         <1594396859-9232-3-git-send-email-zohar@linux.ibm.com>
-         <20200715184327.GH3720@glitch> <1594842468.12900.339.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-15_12:2020-07-15,2020-07-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- priorityscore=1501 spamscore=0 mlxlogscore=940 lowpriorityscore=0
- impostorscore=0 adultscore=0 mlxscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007150149
+        Wed, 15 Jul 2020 16:18:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594844329;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=phrbhMhaBabv8zcLDvpxEIm8lLjGHbe+t3Kj2H5UaLE=;
+        b=OIIke9+yQbjM4oSPDiVQMJhMQ98TPX0Y1Maw4q9p9G0osjMkCzB8Sh8MZLsjWQCPSCO7t2
+        3+dILJQXuz08End4jxSGoH0nWUEYmB9Mf2Y8xUg43v8056FxlWJWoYP+GGJXBpwdXJOytc
+        vvAFPN+aaw500mEX4Utz1bWV9Ze9aSA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-495-IukstKO-OCikptKgm-eH0A-1; Wed, 15 Jul 2020 16:18:44 -0400
+X-MC-Unique: IukstKO-OCikptKgm-eH0A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9ABC1080;
+        Wed, 15 Jul 2020 20:18:43 +0000 (UTC)
+Received: from localhost (ovpn-116-38.gru2.redhat.com [10.97.116.38])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B4D77980F;
+        Wed, 15 Jul 2020 20:18:43 +0000 (UTC)
+Date:   Wed, 15 Jul 2020 17:18:42 -0300
+From:   Bruno Meneguele <bmeneg@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Vitaly Chikunov <vt@altlinux.org>
+Subject: Re: [PATCH 6/6] ima-evm-utils: define a basic hash_info.h file
+Message-ID: <20200715201842.GJ3720@glitch>
+References: <1594088791-27370-1-git-send-email-zohar@linux.ibm.com>
+ <1594088791-27370-7-git-send-email-zohar@linux.ibm.com>
+ <20200715175829.GG3720@glitch>
+ <1594841338.12900.330.camel@linux.ibm.com>
+MIME-Version: 1.0
+In-Reply-To: <1594841338.12900.330.camel@linux.ibm.com>
+X-PGP-Key: http://keys.gnupg.net/pks/lookup?op=get&search=0x3823031E4660608D
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="P6YfpwaDcfcOCJkJ"
+Content-Disposition: inline
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2020-07-15 at 15:47 -0400, Mimi Zohar wrote:
-> Hi Bruno,
-> 
-> On Wed, 2020-07-15 at 15:43 -0300, Bruno Meneguele wrote:
-> <snip>
-> 
-> If this patch was in next-testing, I could simply update it.  Please
-> send a new patch to remove fox.
+--P6YfpwaDcfcOCJkJ
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Oh, it is in next-testing.  I'll fix it up.
+On Wed, Jul 15, 2020 at 03:28:58PM -0400, Mimi Zohar wrote:
+> On Wed, 2020-07-15 at 14:58 -0300, Bruno Meneguele wrote:
+> > Hi Mimi,
+> >=20
+> > On Mon, Jul 06, 2020 at 10:26:31PM -0400, Mimi Zohar wrote:
+> > > Some older system kernel header packages don't necessarily include
+> > > hash_info.h.
+> > >=20
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > ---
+> > >  src/Makefile.am   |  2 +-
+> > >  src/hash_info.gen | 43 +++++++++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 44 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/src/Makefile.am b/src/Makefile.am
+> > > index 36652427a8ec..9bbff5034ef4 100644
+> > > --- a/src/Makefile.am
+> > > +++ b/src/Makefile.am
+> > > @@ -34,5 +34,5 @@ endif
+> > > =20
+> > >  AM_CPPFLAGS =3D -I$(top_srcdir) -include config.h
+> > > =20
+> > > -CLEANFILES =3D hash_info.h
+> > > +CLEANFILES =3D hash_info.h tmp_hash_info.h
+> > >  DISTCLEANFILES =3D @DISTCLEANFILES@
+> > > diff --git a/src/hash_info.gen b/src/hash_info.gen
+> > > index 54532ca5b847..5f7a97fb3117 100755
+> > > --- a/src/hash_info.gen
+> > > +++ b/src/hash_info.gen
+> > > @@ -18,11 +18,54 @@ KERNEL_HEADERS=3D$1
+> > >  HASH_INFO_H=3Duapi/linux/hash_info.h
+> > >  HASH_INFO=3D$KERNEL_HEADERS/include/$HASH_INFO_H
+> > > =20
+> > > +TMPHASHINFO=3D"./tmp_hash_info.h"
+> > > +gen_hashinfo() {
+> > > +cat << __EOF__ >$TMPHASHINFO
+> > > +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+> > > +/*
+> > > + * Hash Info: Hash algorithms information
+> > > + *
+> > > + * Copyright (c) 2013 Dmitry Kasatkin <d.kasatkin@samsung.com>
+> > > + *
+> > > + * This program is free software; you can redistribute it and/or mod=
+ify it
+> > > + * under the terms of the GNU General Public License as published by=
+ the Free
+> > > + * Software Foundation; either version 2 of the License, or (at your=
+ option)
+> > > + * any later version.
+> > > + *
+> > > + */
+> > > +
+> > > +enum hash_algo {
+> > > +=09HASH_ALGO_MD4,
+> > > +=09HASH_ALGO_MD5,
+> > > +=09HASH_ALGO_SHA1,
+> > > +=09HASH_ALGO_RIPE_MD_160,
+> > > +=09HASH_ALGO_SHA256,
+> > > +=09HASH_ALGO_SHA384,
+> > > +=09HASH_ALGO_SHA512,
+> > > +=09HASH_ALGO_SHA224,
+> > > +=09HASH_ALGO_RIPE_MD_128,
+> > > +=09HASH_ALGO_RIPE_MD_256,
+> > > +=09HASH_ALGO_RIPE_MD_320,
+> > > +=09HASH_ALGO_WP_256,
+> > > +=09HASH_ALGO_WP_384,
+> > > +=09HASH_ALGO_WP_512,
+> > > +=09HASH_ALGO_TGR_128,
+> > > +=09HASH_ALGO_TGR_160,
+> > > +=09HASH_ALGO_TGR_192,
+> > > +=09HASH_ALGO_SM3_256,
+> > > +=09HASH_ALGO__LAST
+> > > +};
+> > > +__EOF__
+> >=20
+> > Just a minor point on HASH_ALGO_SM3_256:
+> >=20
+> > The old kernels that didn't export hash_info.h uapi didn't support
+> > HASH_ALGO_SM3_256 as well. Wouldn't it be better to also not include it
+> > in the tmp_hash_info considering it'll be used only by those running
+> > older kernels without SM3 support?
+> >=20
+> > Keeping it won't cause any issues though. So I'm fine with it either
+> > way.
+>=20
+> I was debating which version to use, but couldn't decide.
+>=20
+> For distros that probably is true, but I'm not sure about embedded.
+> =A0Commit=A0ceecb28d3b52 ("ima-evm-utils: add SM3 to pkey_hash_algo
+> algorithm list") updated pkey_hash_algo[].
+>=20
+> As it doesn't hurt, let's just keep it.
+>=20
 
-thanks!
+That's fine with me.
 
-Mimi
+Thanks.
+
+--=20
+bmeneg=20
+PGP Key: http://bmeneg.com/pubkey.txt
+
+--P6YfpwaDcfcOCJkJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEdWo6nTbnZdbDmXutYdRkFR+RokMFAl8PZKIACgkQYdRkFR+R
+okMOXAgAk4aDtt8YEf9uRGtXBJfnZyZyfPop+8v5rZIqt6/E6+hqpCU0t/8+rFaH
+U9K7N2FxEvllNxbV4SMBBJzWv2lSHkLmflV8AOa7/JyqjYHicMhzMNCxxr/aZcK5
+QW5wzLfezTCnJuajGqCngcZyX+DIZ9G0B7fomSrFa3wC1DybTzHqtBUuKI5GxSX/
+AkPb5LlvdY4td6wWa7ls7jxmGtEjGC7mMhk2VhuQJTD6IMPIC/2FNdxXqvkoCS2D
+TDc8VpW/TkNoFgs82cZTfMQGBCutLuzy235IZoN5zZ/HEKStsh4igFmyT8psjsAQ
+UuqqqweyuE+1t1utAj0JUpNSqndB8A==
+=ZWBX
+-----END PGP SIGNATURE-----
+
+--P6YfpwaDcfcOCJkJ--
+
