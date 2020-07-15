@@ -2,134 +2,97 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7591EC433E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832D9C433E5
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 21:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5574E20672
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54203207BB
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 21:39:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="W6JWWMnC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FTF8iuEP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbgGOUkR (ORCPT
+        id S1726736AbgGOVjX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgGOUkQ (ORCPT
+        Wed, 15 Jul 2020 17:39:23 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:37677 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726479AbgGOVjW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:40:16 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B3E2C08C5DE
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:40:16 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id b9so2878017plx.6
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=3RdpnHt4YFQNegHM71xCSPo+5hGEKA55j9DzkLX+zEI=;
-        b=W6JWWMnCCKRoZOrZTqxAVNCpWdse7JHrhl955F5ofkWIbY8yj0WiYEYIrzGnCpQmPr
-         nebzAR1cLp77bQPydJtMWmGvGL1DOx/5b1SD2FJ+owpHkt8+SixM1Gqmi5haJ+ZpVK/l
-         ohTNaS/ycfxJ7NhhCYIL+fq/TdpwR9jTHXNUw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=3RdpnHt4YFQNegHM71xCSPo+5hGEKA55j9DzkLX+zEI=;
-        b=NWuVICIQTjpvngExXnehHeHPbJWp93EpjTweMJpDilG+xpDs9mIdpj+ZhdRnrhfK0w
-         oUSmJwUVs4CH8WP5cWtbgSBzUfmL+VE+wg9rrECF/VadL/aAFemneG1QOiauIptmxWRy
-         3Zs9KaPmH8i5oopsZDQx4laqfkcpkjHQF0NQoZllqKd29mGqV+29a9oDI3BoJhSW0fRH
-         iLN6UWXGEHWElVB9datNEBEgdDWKICxAOz78Q/jkP6W8968pwsg3BOCXJxvjndvJ4+lp
-         iT3b8iBJ1n9WBGERYWbP1F0D16EZDwc3Ljs3dKnviTbmfJ3u7rX3JRXzZ/AgFqyPaWEB
-         cEpw==
-X-Gm-Message-State: AOAM530slNYfz9L6ehgnR9zaRLiUOKT3fflMOW0Y9DT+gZq8j6FB3pxf
-        YYLOVpaMzWezVQZO5iBgYhPtbw==
-X-Google-Smtp-Source: ABdhPJy0QMC5q+2qYD6o7SHOebREIiw8ISqB8EjezF/XGzbblfIdGbOr3hMolHLPO5Yp/fgvt7Nt3A==
-X-Received: by 2002:a17:90b:8d7:: with SMTP id ds23mr1507273pjb.148.1594845616072;
-        Wed, 15 Jul 2020 13:40:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 66sm2720207pfd.93.2020.07.15.13.40.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 13:40:15 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 13:40:14 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 7/7] ima: add policy support for the new file open
- MAY_OPENEXEC flag
-Message-ID: <202007151339.283D7CD@keescook>
-References: <20200714181638.45751-1-mic@digikod.net>
- <20200714181638.45751-8-mic@digikod.net>
+        Wed, 15 Jul 2020 17:39:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594849161;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9GrxYDQymSUTUExdcHo8UnPT4Tg+lIHrVDIxKR9A+1M=;
+        b=FTF8iuEPh5sGLznbQriAjQ1lnYbwE8keMh4kZJii9jRanCQZPJRi9EQF0xR/2SUlPvahkc
+        F2i8ieNE9KYsn/Zb9WUpv4OhZzyR7PIC/S+a3cQJIJ95hf/H2idNjv/k/kRDoGAIdvOfo/
+        vqvLKeaLrQS4KHgWBtXgoq3TLpUD4oA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-406-3fMB8tkbPyuZ21w1LEUmHQ-1; Wed, 15 Jul 2020 17:39:19 -0400
+X-MC-Unique: 3fMB8tkbPyuZ21w1LEUmHQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9939E18FF662;
+        Wed, 15 Jul 2020 21:39:18 +0000 (UTC)
+Received: from localhost (ovpn-116-38.gru2.redhat.com [10.97.116.38])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2EBC15FC38;
+        Wed, 15 Jul 2020 21:39:17 +0000 (UTC)
+From:   Bruno Meneguele <bmeneg@redhat.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Bruno Meneguele <bmeneg@redhat.com>
+Subject: [PATCH 2/3] ima-evm-utils: fix memory leak in case of error
+Date:   Wed, 15 Jul 2020 18:39:05 -0300
+Message-Id: <20200715213906.194041-3-bmeneg@redhat.com>
+In-Reply-To: <20200715213906.194041-1-bmeneg@redhat.com>
+References: <20200715213906.194041-1-bmeneg@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200714181638.45751-8-mic@digikod.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 08:16:38PM +0200, Mickaël Salaün wrote:
-> From: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> The kernel has no way of differentiating between a file containing data
-> or code being opened by an interpreter.  The proposed O_MAYEXEC
-> openat2(2) flag bridges this gap by defining and enabling the
-> MAY_OPENEXEC flag.
-> 
-> This patch adds IMA policy support for the new MAY_OPENEXEC flag.
-> 
-> Example:
-> measure func=FILE_CHECK mask=^MAY_OPENEXEC
-> appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Acked-by: Mickaël Salaün <mic@digikod.net>
+OpenSSL context should be freed in case of versions >= 1.1 before leaving
+the function in case EVP_DigestUpdate() returns any error.
 
-(Process nit: if you're sending this on behalf of another author, then
-this should be Signed-off-by rather than Acked-by.)
+Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
+---
+ src/evmctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/src/evmctl.c b/src/evmctl.c
+index d974ba6..2f5bd52 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -2143,7 +2143,7 @@ static void calc_bootaggr(struct tpm_bank_info *bank)
+ 		err = EVP_DigestUpdate(pctx, bank->pcr[i], bank->digest_size);
+ 		if (!err) {
+ 			log_err("EVP_DigestUpdate() failed\n");
+-			return;
++			goto out;
+ 		}
+ 	}
+ 
+@@ -2152,7 +2152,7 @@ static void calc_bootaggr(struct tpm_bank_info *bank)
+ 			err = EVP_DigestUpdate(pctx, bank->pcr[i], bank->digest_size);
+ 			if (!err) {
+ 				log_err("EVP_DigestUpdate() failed\n");
+-				return;
++				goto out;
+ 			}
+ 		}
+ 	}
 -- 
-Kees Cook
+2.26.2
+
