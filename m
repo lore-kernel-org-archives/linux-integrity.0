@@ -2,119 +2,250 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D63C433DF
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0ABC433E5
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A51D32065F
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACA6C2065F
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:37:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DoS4qAc9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l9A5pBS/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725917AbgGOURN (ORCPT
+        id S1726941AbgGOUhV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:17:13 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56396 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725881AbgGOURN (ORCPT
+        Wed, 15 Jul 2020 16:37:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbgGOUhS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:17:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594844232;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/ECQpcS75PonDZ7fp90ndKSKSNb5liLIZ+aQ+E0rkQk=;
-        b=DoS4qAc9xoAusLC+WJcv4A9wWD+RVWgnkLAWEF2JTWwYbvMld83TMm6qNltBQeVqWNWpYw
-        TXrY15Xq/2Iv6RGKnQ5wX6VO85ZP99xLMgNP7q6ftav/Iqc73EeyEyj2SWAPFf9uwKEgA9
-        OXMVstJJ160YjsnQDfgB32deb8RXUbw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-398-5HYPn9YANtCYGq4OPAYIeQ-1; Wed, 15 Jul 2020 16:17:07 -0400
-X-MC-Unique: 5HYPn9YANtCYGq4OPAYIeQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5140110059AC;
-        Wed, 15 Jul 2020 20:17:06 +0000 (UTC)
-Received: from localhost (ovpn-116-38.gru2.redhat.com [10.97.116.38])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC8E5710A1;
-        Wed, 15 Jul 2020 20:17:05 +0000 (UTC)
-Date:   Wed, 15 Jul 2020 17:17:04 -0300
-From:   Bruno Meneguele <bmeneg@redhat.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>
-Subject: Re: [PATCH v2 2/8] ima_evm_utils: support extending TPM 2.0 banks
- w/original SHA1 padded digest
-Message-ID: <20200715201704.GI3720@glitch>
-References: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
- <1594396859-9232-3-git-send-email-zohar@linux.ibm.com>
- <20200715184327.GH3720@glitch>
- <1594842468.12900.339.camel@linux.ibm.com>
- <1594843863.12900.344.camel@linux.ibm.com>
+        Wed, 15 Jul 2020 16:37:18 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89E4C08C5DB
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:37:18 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id s189so3650723pgc.13
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Zaaf8OFN0Mkv/43hLUAJDeNUstQbcnrUeWnNFq9ntQY=;
+        b=l9A5pBS/4KP4RTCNxMaKKaV+072X9gd7LEGM/3JWklkcz/Drht5gd7TJiFK4GxBxVr
+         jZCmb1notoEqLmxKu0+ocLrw9VKEKpjvh8Va1zKB5Pza0ifi8AupC34OGZedIFseHjn/
+         1r7EhDpsHB1nsJQkfGVNJefFs23IWUf/8byNs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Zaaf8OFN0Mkv/43hLUAJDeNUstQbcnrUeWnNFq9ntQY=;
+        b=Y3/HHdzE2a1F3+xKi2vtBF6ZSMqBWUwObAccSZ1O8mo2Nr4hEpwUxeNiOpWzWhdD0X
+         RD4nb2vsGfWvs6fHv6VKhF+h8YP/IjAhOQY3Xnx1wlsW6kWoAKSUDL1WswbfVA7zarDh
+         dJt9Wvo1a3QQEHjtjRTl/cUnjuO8RGlZ8Jf0XsxtP78P/68X/Yk/6O6lKfqGwxfM8QVP
+         cEmvuiFK+nYPeg7TvbVxYH7EyggLKpF3ZGVoIBUm1/U1cdqCF0d7pTW/UK32A3VpuTyj
+         DwQVJLgoTfcyanoEnPN8UKcfPb2Jvb0S3K9lGhHoiBbGBT0H3tsyCvuIlnXOkETXWwnq
+         jERQ==
+X-Gm-Message-State: AOAM533Uwu2oHYnHUZCxB/zXM8HNLE7XQtNDrNcblqnR8hgJgL5oH8mB
+        vIol3yqO5oh0v1/6R5VUj2zoKg==
+X-Google-Smtp-Source: ABdhPJzwZ1pGNMV72yuIGcVlwa7f4Vu3SViQldrIVyIwMBZnJrwaLmWw/w85VJ0XhTGIWtU4XLlfyA==
+X-Received: by 2002:a63:7c4d:: with SMTP id l13mr1353283pgn.12.1594845437856;
+        Wed, 15 Jul 2020 13:37:17 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id h15sm2871918pfo.192.2020.07.15.13.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 13:37:16 -0700 (PDT)
+Date:   Wed, 15 Jul 2020 13:37:15 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 5/7] fs,doc: Enable to enforce noexec mounts or file
+ exec through O_MAYEXEC
+Message-ID: <202007151312.C28D112013@keescook>
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-6-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <1594843863.12900.344.camel@linux.ibm.com>
-X-PGP-Key: http://keys.gnupg.net/pks/lookup?op=get&search=0x3823031E4660608D
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1E1Oui4vdubnXi3o"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200714181638.45751-6-mic@digikod.net>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
---1E1Oui4vdubnXi3o
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 14, 2020 at 08:16:36PM +0200, Mickaël Salaün wrote:
+> @@ -2849,7 +2855,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  	case S_IFLNK:
+>  		return -ELOOP;
+>  	case S_IFDIR:
+> -		if (acc_mode & (MAY_WRITE | MAY_EXEC))
+> +		if (acc_mode & (MAY_WRITE | MAY_EXEC | MAY_OPENEXEC))
+>  			return -EISDIR;
+>  		break;
 
-On Wed, Jul 15, 2020 at 04:11:03PM -0400, Mimi Zohar wrote:
-> On Wed, 2020-07-15 at 15:47 -0400, Mimi Zohar wrote:
-> > Hi Bruno,
-> >=20
-> > On Wed, 2020-07-15 at 15:43 -0300, Bruno Meneguele wrote:
-> > <snip>
-> >=20
-> > If this patch was in next-testing, I could simply update it. =A0Please
-> > send a new patch to remove fox.
->=20
-> Oh, it is in next-testing.  I'll fix it up.
->=20
+(I need to figure out where "open for reading" rejects S_IFDIR, since
+it's clearly not here...)
 
-Yes :)
+>  	case S_IFBLK:
+> @@ -2859,13 +2865,26 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  		fallthrough;
+>  	case S_IFIFO:
+>  	case S_IFSOCK:
+> -		if (acc_mode & MAY_EXEC)
+> +		if (acc_mode & (MAY_EXEC | MAY_OPENEXEC))
+>  			return -EACCES;
+>  		flag &= ~O_TRUNC;
+>  		break;
 
-Thanks.
+This will immediately break a system that runs code with MAY_OPENEXEC
+set but reads from a block, char, fifo, or socket, even in the case of
+a sysadmin leaving the "file" sysctl disabled.
 
-> thanks!
->=20
-> Mimi
->=20
+>  	case S_IFREG:
+> -		if ((acc_mode & MAY_EXEC) && path_noexec(path))
+> -			return -EACCES;
+> +		if (path_noexec(path)) {
+> +			if (acc_mode & MAY_EXEC)
+> +				return -EACCES;
+> +			if ((acc_mode & MAY_OPENEXEC) &&
+> +					(sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_MOUNT))
+> +				return -EACCES;
+> +		}
+> +		if ((acc_mode & MAY_OPENEXEC) &&
+> +				(sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_FILE))
+> +			/*
+> +			 * Because acc_mode may change here, the next and only
+> +			 * use of acc_mode should then be by the following call
+> +			 * to inode_permission().
+> +			 */
+> +			acc_mode |= MAY_EXEC;
+>  		break;
+>  	}
 
---=20
-bmeneg=20
-PGP Key: http://bmeneg.com/pubkey.txt
+Likely very minor, but I'd like to avoid the path_noexec() call in the
+fast-path (it dereferences a couple pointers where as doing bit tests on
+acc_mode is fast).
 
---1E1Oui4vdubnXi3o
-Content-Type: application/pgp-signature; name="signature.asc"
+Given that and the above observations, I think that may_open() likely
+needs to start with:
 
------BEGIN PGP SIGNATURE-----
+	if (acc_mode & MAY_OPENEXEC) {
+		/* Reject all file types when mount enforcement set. */
+		if ((sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_MOUNT) &&
+		    path_noexec(path))
+			return -EACCES;
+		/* Treat the same as MAY_EXEC. */
+		if (sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_FILE))
+			acc_mode |= MAY_EXEC;
+	}
 
-iQEzBAEBCAAdFiEEdWo6nTbnZdbDmXutYdRkFR+RokMFAl8PZEAACgkQYdRkFR+R
-okMdJAf/dUrrkfHzimrZyA27P1a2txfkpsNe/kNCD/a0OLxDOOR0Tra/vcyN3q9M
-NsJ/uBVtf8Hahvbud7c3COAyEsnzoyAeFLIyevppmf8lAFQ0pI5mmWCvUsyzobxw
-AukNO2XdKTDuSQT4K9VGorHPgmMP9lIo8CakyKnEHpapfEy8/SOAAuQS970+iefn
-vWRpZiL7aRVcb0JT9r+h73J3rC28ciPiDmxA1gIqFjXQfcOcXWBd5w38QO/yBjoT
-Bek+y9JGxHAiB7fX4BYFg+pJ/cWv15j+sxj2MxUGlcq7bA44hTx7TJzynsPqZV8t
-qzXSBKRFt5MgUTdjb9xwHXTy7lx7cw==
-=zUn7
------END PGP SIGNATURE-----
+(Though I'm not 100% sure that path_noexec() is safe to be called for
+all file types: i.e. path->mnt and path->-mnt->mnt_sb *always* non-NULL?)
 
---1E1Oui4vdubnXi3o--
+This change would also imply that OPEN_MAYEXEC_ENFORCE_FILE *includes*
+OPEN_MAYEXEC_ENFORCE_MOUNT (i.e. the sysctl should not be a bitfield),
+since path_noexec() would get checked for S_ISREG. I can't come up with
+a rationale where one would want OPEN_MAYEXEC_ENFORCE_FILE but _not_
+OPEN_MAYEXEC_ENFORCE_MOUNT?
 
+(I can absolutely see wanting only OPEN_MAYEXEC_ENFORCE_MOUNT, or
+suddenly one has to go mark every loaded thing with the exec bit and
+most distros haven't done this to, for example, shared libraries. But
+setting the exec bit and then NOT wanting to enforce the mount check
+seems... not sensible?)
+
+Outside of this change, yes, I like this now -- it's much cleaner
+because we have all the checks in the same place where they belong. :)
+
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index db1ce7af2563..5008a2566e79 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -113,6 +113,7 @@ static int sixty = 60;
+>  
+>  static int __maybe_unused neg_one = -1;
+>  static int __maybe_unused two = 2;
+> +static int __maybe_unused three = 3;
+>  static int __maybe_unused four = 4;
+>  static unsigned long zero_ul;
+>  static unsigned long one_ul = 1;
+
+Oh, are these still here? I thought they got removed (or at least made
+const). Where did that series go? Hmpf, see sysctl_vals, but yes, for
+now, this is fine.
+
+> @@ -888,7 +889,6 @@ static int proc_taint(struct ctl_table *table, int write,
+>  	return err;
+>  }
+>  
+> -#ifdef CONFIG_PRINTK
+>  static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>  				void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> @@ -897,7 +897,6 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>  
+>  	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+>  }
+> -#endif
+>  
+>  /**
+>   * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+> @@ -3264,6 +3263,15 @@ static struct ctl_table fs_table[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= &two,
+>  	},
+> +	{
+> +		.procname       = "open_mayexec_enforce",
+> +		.data           = &sysctl_open_mayexec_enforce,
+> +		.maxlen         = sizeof(int),
+> +		.mode           = 0600,
+> +		.proc_handler	= proc_dointvec_minmax_sysadmin,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= &three,
+> +	},
+>  #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
+>  	{
+>  		.procname	= "binfmt_misc",
+> -- 
+> 2.27.0
+> 
+
+-- 
+Kees Cook
