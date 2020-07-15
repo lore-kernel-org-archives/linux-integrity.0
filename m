@@ -2,65 +2,67 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A3AC433E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 19:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C22C433E3
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 19:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15B6220657
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 19:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F388C20657
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 19:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgGOTlG (ORCPT
+        id S1728032AbgGOTr4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 15:41:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50428 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726661AbgGOTlG (ORCPT
+        Wed, 15 Jul 2020 15:47:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20954 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727948AbgGOTr4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 15:41:06 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06FJXbbx096489;
-        Wed, 15 Jul 2020 15:40:59 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 329uehsv6k-1
+        Wed, 15 Jul 2020 15:47:56 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06FJWlsT140115;
+        Wed, 15 Jul 2020 15:47:53 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 329apxy774-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 15:40:59 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06FJc6qX024220;
-        Wed, 15 Jul 2020 19:40:56 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06ams.nl.ibm.com with ESMTP id 3274pgvp0t-1
+        Wed, 15 Jul 2020 15:47:53 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06FJWtHC140906;
+        Wed, 15 Jul 2020 15:47:53 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 329apxy76d-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 19:40:56 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06FJesgI43843690
+        Wed, 15 Jul 2020 15:47:53 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06FJk8bT009340;
+        Wed, 15 Jul 2020 19:47:51 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03fra.de.ibm.com with ESMTP id 327527jeu4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 19:47:51 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06FJln2m57737412
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 15 Jul 2020 19:40:54 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 924864C04A;
-        Wed, 15 Jul 2020 19:40:54 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73CDA4C044;
-        Wed, 15 Jul 2020 19:40:53 +0000 (GMT)
+        Wed, 15 Jul 2020 19:47:49 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 61A6552051;
+        Wed, 15 Jul 2020 19:47:49 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.85.155.184])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 15 Jul 2020 19:40:53 +0000 (GMT)
-Message-ID: <1594842052.12900.337.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/2] IMA: Verify that the kernel cmdline is passed and
- measured correctly through the kexec barrier.
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id D3D345204E;
+        Wed, 15 Jul 2020 19:47:48 +0000 (GMT)
+Message-ID: <1594842468.12900.339.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 2/8] ima_evm_utils: support extending TPM 2.0 banks
+ w/original SHA1 padded digest
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lachlan Sneff <t-josne@linux.microsoft.com>, pvorel@suse.cz,
-        ltp@lists.linux.it
-Cc:     nramas@linux.microsoft.com, balajib@linux.microsoft.com,
-        linux-integrity@vger.kernel.org
-Date:   Wed, 15 Jul 2020 15:40:52 -0400
-In-Reply-To: <53323968-55b9-68ae-dc3f-de9cbd223ff1@linux.microsoft.com>
-References: <20200702153545.3126-1-t-josne@linux.microsoft.com>
-         <20200702153545.3126-2-t-josne@linux.microsoft.com>
-         <1594774692.12900.220.camel@linux.ibm.com>
-         <53323968-55b9-68ae-dc3f-de9cbd223ff1@linux.microsoft.com>
+To:     Bruno Meneguele <bmeneg@redhat.com>
+Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>
+Date:   Wed, 15 Jul 2020 15:47:48 -0400
+In-Reply-To: <20200715184327.GH3720@glitch>
+References: <1594396859-9232-1-git-send-email-zohar@linux.ibm.com>
+         <1594396859-9232-3-git-send-email-zohar@linux.ibm.com>
+         <20200715184327.GH3720@glitch>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
 Mime-Version: 1.0
@@ -68,44 +70,51 @@ Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-07-15_12:2020-07-15,2020-07-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 spamscore=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 clxscore=1015 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007150147
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007150147
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2020-07-15 at 15:38 -0400, Lachlan Sneff wrote:
-> On 7/14/20 8:58 PM, Mimi Zohar wrote:
-> > On Thu, 2020-07-02 at 11:35 -0400, Lachlan Sneff wrote:
-> >> Add a testcase that verifies that kexec correctly logs the
-> >> kernel command line to the IMA buffer and that the command
-> >> line is then correctly measured.
-> >>
-> >> This test must be run standalone, since it runs kexec
-> >> multiple times (and therefore reboots several times).
-> > Verifying the kexec boot command line doesn't require rebooting.  Just
-> > loading the kexec kernel image should be enough (kexec -s -l).
-> >   Verifying that the measurement list, including the kexec boot command
-> > line, is carried across kexec could be a separate test.
-> 
-> This is true. However, it only appends to the IMA log once, even if you 
-> unload (`kexec -u`) the kexec kernel after `kexec -s -l ...`.
-> 
-> Therefore, the test would only be able to check kexec with the cmdline 
-> supplied in one way.
-> 
-> I will have to check internally if that's the right way to go. If it 
-> didn't need to reboot, then the test could be integrated into the normal 
-> IMA tests,
-> which would definitely be a good thing.
+Hi Bruno,
 
-For files, there is a single measurement unless the file changes.  I
-would assume that would be the same for the kexec command line as
-well.  You could modify the command line a bit to force it to be re-
-measured.
+On Wed, 2020-07-15 at 15:43 -0300, Bruno Meneguele wrote:
+<snip>
+
+If this patch was in next-testing, I could simply update it.  Please
+send a new patch to remove fox.
+
+thanks,
 
 Mimi
+
+> 'fox' is not being used in the code anymore. It could be totally removed
+> afaics.
+> 
+> diff --git a/src/evmctl.c b/src/evmctl.c
+> index 90a3eeb..ae513b0 100644
+> --- a/src/evmctl.c
+> +++ b/src/evmctl.c
+> @@ -1425,7 +1425,6 @@ struct template_entry {
+>  };
+> 
+>  static uint8_t zero[MAX_DIGEST_SIZE];
+> -static uint8_t fox[MAX_DIGEST_SIZE];
+> 
+>  static int validate = 0;
+>  static int verify = 0;
+> @@ -1886,7 +1885,6 @@ static int ima_measurement(const char *file)
+> 
+>         errno = 0;
+>         memset(zero, 0, MAX_DIGEST_SIZE);
+> -       memset(fox, 0xff, MAX_DIGEST_SIZE);
+> 
+>         pseudo_padded_banks = init_tpm_banks(&num_banks);
+>         pseudo_banks = init_tpm_banks(&num_banks);
+> 
+> 
+
