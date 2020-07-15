@@ -2,129 +2,109 @@ Return-Path: <SRS0=nr5y=A2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9C5C433E3
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DBCC433E8
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BAA432065F
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:38:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ijKpH2WT"
+	by mail.kernel.org (Postfix) with ESMTP id 1C8D32065F
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Jul 2020 20:38:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgGOUit (ORCPT
+        id S1727774AbgGOUiw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726945AbgGOUir (ORCPT
+        Wed, 15 Jul 2020 16:38:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53388 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726491AbgGOUiv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:38:47 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED7FC08C5DB
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:38:46 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id w2so3662388pgg.10
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Jul 2020 13:38:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=qTkObtIP1JOxTsAafQAu4JRP/2PqoQenw/nsfCYT+XA=;
-        b=ijKpH2WTKasm1SeJa7YfW41RoND4SGhxfWW8WIrBUyWAJo5mncDz3F6DsdpLNbN9yM
-         zimIQJdAwdsoIuaoAmdGi8bqgFGbI1ImDdJTj84SXvxwzifKGWR/ToGmegNpJJRYxabz
-         0Mzoe5AOfjDlUoukmWy/DGwdgH+42OpxYqawc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=qTkObtIP1JOxTsAafQAu4JRP/2PqoQenw/nsfCYT+XA=;
-        b=izXtA1AcfCUEoFpZEtiWnuyat5wrd9Lj8nynu5Gz0W8v5CdDicJbtT5zSdRHI4Odzf
-         ad/SE79v6yMn+R5J/0NvUO8psaEk2HzBPGVOsGMf2mUP8AXiqnWouov/9cBMRx/lxAoH
-         TWMKYwmK6Jfw7BSkSTEbcv3U0UOOg3PZK6mDkJaomAPAbO/tSVnAm0t8MC35IwhjRObH
-         HB4jdSgSdxhUoFWP5AFKi5N5cAcVv48hhW94vothoIwiLxsIypR5vbivh14s0yhIyuMw
-         bGoPnKYvmChC7GDHEm+efGLTO5xMg63eLBA4WIvH8VXYFRNABgHWUIFyagNVHAFt0Rze
-         oOqA==
-X-Gm-Message-State: AOAM5325eEyhDfd8DuOkg2qM23XvHos9qZNPYDT1pScB/MLpRynf5hlE
-        EzcPGOQkyBqJKcJdK22EnLm/4w==
-X-Google-Smtp-Source: ABdhPJyOe9mUdiu/xb+eBR+7MVDzMD0v9uEBAElvlLK4fUJtk8fgRzbG6NWh1tQpT587gudq9JBjRg==
-X-Received: by 2002:a62:cdc4:: with SMTP id o187mr922387pfg.200.1594845526528;
-        Wed, 15 Jul 2020 13:38:46 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id m3sm2962482pfk.171.2020.07.15.13.38.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 13:38:45 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 13:38:44 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 6/7] selftest/openat2: Add tests for O_MAYEXEC
- enforcing
-Message-ID: <202007151337.2A113F8C@keescook>
-References: <20200714181638.45751-1-mic@digikod.net>
- <20200714181638.45751-7-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200714181638.45751-7-mic@digikod.net>
+        Wed, 15 Jul 2020 16:38:51 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06FKWI0U022086;
+        Wed, 15 Jul 2020 16:38:46 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32792wj0w4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 16:38:46 -0400
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06FKWPDU022330;
+        Wed, 15 Jul 2020 16:38:46 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32792wj0ur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 16:38:45 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06FKVlPX005711;
+        Wed, 15 Jul 2020 20:38:43 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma02fra.de.ibm.com with ESMTP id 327527vycw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 15 Jul 2020 20:38:42 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06FKbQgG60030996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jul 2020 20:37:26 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A8E9A4053;
+        Wed, 15 Jul 2020 20:37:26 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F08FA404D;
+        Wed, 15 Jul 2020 20:37:25 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.85.155.184])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 15 Jul 2020 20:37:25 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
+        Bruno Meneguele <bmeneg@redhat.com>,
+        Patrick Uiterwijk <patrick@puiterwijk.org>
+Subject: [PATCH 3/3] ima-evm-utils: add missing license info
+Date:   Wed, 15 Jul 2020 16:37:15 -0400
+Message-Id: <1594845435-19164-3-git-send-email-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1594845435-19164-1-git-send-email-zohar@linux.ibm.com>
+References: <1594845435-19164-1-git-send-email-zohar@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-15_12:2020-07-15,2020-07-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1
+ mlxlogscore=999 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ adultscore=0 impostorscore=0 spamscore=0 malwarescore=0 bulkscore=0
+ mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007150154
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 08:16:37PM +0200, Mickaël Salaün wrote:
-> Test propagation of noexec mount points or file executability through
-> files open with or without O_MAYEXEC, thanks to the
-> fs.open_mayexec_enforce sysctl.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Cc: Aleksa Sarai <cyphar@cyphar.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Shuah Khan <shuah@kernel.org>
+src/utils.c contains some common functions.
 
-Yay variants! :)
+Fixes: 03f99ea6d05b ("ima-evm-utils: Add support for Intel TSS2 for PCR reading")
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Reported-by: Petr Vorel <pvorel@suse.cz>
+Cc: Patrick Uiterwijk <patrick@puiterwijk.org>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ src/utils.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
+diff --git a/src/utils.c b/src/utils.c
+index 416a88c6dbe4..fbb6a4b540af 100644
+--- a/src/utils.c
++++ b/src/utils.c
+@@ -1,3 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * utils: set of common functions
++ *
++ * Copyright (C) 2020 Patrick Uiterwijk <patrick@puiterwijk.org>
++ * Copyright (C) 2010 Cyril Hrubis <chrubis@suse.cz>
++ */
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
 -- 
-Kees Cook
+2.7.5
+
