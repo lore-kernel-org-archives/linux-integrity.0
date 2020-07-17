@@ -7,67 +7,74 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A87EC433E2
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 11:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E22C433E0
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 12:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20F00208DB
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 11:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B6C02065F
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 12:04:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgGQLwi (ORCPT
+        id S1726040AbgGQMEa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 17 Jul 2020 07:52:38 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58392 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726013AbgGQLwi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Jul 2020 07:52:38 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7AD5A89B4757263A6469;
-        Fri, 17 Jul 2020 19:52:36 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.487.0; Fri, 17 Jul 2020 19:52:26 +0800
-From:   Hanjun Guo <guohanjun@huawei.com>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     <linux-integrity@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>
-Subject: [PATCH 1/3] tpm: Put the TCPA table buf after using it
-Date:   Fri, 17 Jul 2020 19:45:46 +0800
-Message-ID: <1594986348-52258-1-git-send-email-guohanjun@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Fri, 17 Jul 2020 08:04:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57142 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725950AbgGQME3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 17 Jul 2020 08:04:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id DF8FBB03F;
+        Fri, 17 Jul 2020 12:04:32 +0000 (UTC)
+From:   Petr Vorel <pvorel@suse.cz>
+To:     linux-integrity@vger.kernel.org
+Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH ima-evm-utils] Add sanity check for file parameter of ima_boot_aggregate
+Date:   Fri, 17 Jul 2020 14:04:22 +0200
+Message-Id: <20200717120422.71299-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.27.0.rc0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The acpi_get_table() should be coupled with acpi_put_table() if
-the mapped table is not used for runtime to release the table
-mapping, put the TCPA table buf after using it.
+Parameter expects to be a copy of
+/sys/kernel/security/tpm0/binary_bios_measurements (i.e. regular file,
+not a directory, block or character device, socket, ...)
 
-Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+Fixes: f49e982 ("ima-evm-utils: read the TPM 1.2 binary_bios_measurements")
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
- drivers/char/tpm/eventlog/acpi.c | 3 +++
- 1 file changed, 3 insertions(+)
+Hi Mimi,
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 63ada5e..e8ac30b 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -79,6 +79,9 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 		start = buff->client.log_start_addr;
- 		break;
- 	}
+feel free to modify this patchset to fits your needs (unless I'm wrong
+and this should not be applied at all).
+
+Kind regards,
+Petr
+
+ src/evmctl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 04dc2ad..3ad5039 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -2082,6 +2082,13 @@ static int read_binary_bios_measurements(char *file, struct tpm_bank_info *bank)
+ 	int len;
+ 	int i;
+ 
++	struct stat s;
++	stat(file, &s);
++	if (!S_ISREG(s.st_mode)) {
++		log_errno("Not a regular file or link to regular file.\n");
++		return 1;
++	}
 +
-+	acpi_put_table((struct acpi_table_header *)buff);
-+
- 	if (!len) {
- 		dev_warn(&chip->dev, "%s: TCPA log area empty\n", __func__);
- 		return -EIO;
+ 	fp = fopen(file, "r");
+ 	if (!fp) {
+ 		log_errno("Failed to open TPM 1.2 event log.\n");
 -- 
-1.7.12.4
+2.27.0.rc0
 
