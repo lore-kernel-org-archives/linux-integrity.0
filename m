@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9726FC43478
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 17:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A818C4345A
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 17:44:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 790ED20775
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 17:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE6F20B1F
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jul 2020 17:44:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WxPHrXXF"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vmebw9xz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgGQRog (ORCPT
+        id S1728259AbgGQRoj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 17 Jul 2020 13:44:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
+        Fri, 17 Jul 2020 13:44:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbgGQRnQ (ORCPT
+        with ESMTP id S1727040AbgGQRnP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Jul 2020 13:43:16 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84934C0619D6
-        for <linux-integrity@vger.kernel.org>; Fri, 17 Jul 2020 10:43:16 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id u185so5765831pfu.1
-        for <linux-integrity@vger.kernel.org>; Fri, 17 Jul 2020 10:43:16 -0700 (PDT)
+        Fri, 17 Jul 2020 13:43:15 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65A6DC0619D7
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Jul 2020 10:43:15 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id f16so6751118pjt.0
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Jul 2020 10:43:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7gESCYHdeEc18WmSHoFiRlcOM8qkMy02/gtCzbZTAqQ=;
-        b=WxPHrXXFANimi0wbvfcJ6Cfo6RILGM8zrzptr/i4wicbfpzxjVf9s2PSObmLwcn9aq
-         SbUDJlkCbpwtWAmmR9A2NZpribK1YDkwqAQ5TTgN4F0z1JKluyrZrKxbZBHXSmRh0PPQ
-         ei15QxSWG1ELter/xoH0l0moiUBAi1WUPtXtc=
+        bh=wrxYLXP2oheEEaGsKNp0stRrknyVueRaJu8i8kSptew=;
+        b=Vmebw9xzyFrFLgnwLQyPbu9sUxIvT3iz/LZhlggPZzdK8yi/sNJp1ISZhzAODP/aQq
+         DA1aJsmMOF5WM3+KxOc/jJOdCUMwDEegiUHYTk5QHuuuSDkU5ULxP6uWFu0Zgzte/hrz
+         inlXJ3TzZ7dygl/RRmbqjrIF3idceAZR9MaU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7gESCYHdeEc18WmSHoFiRlcOM8qkMy02/gtCzbZTAqQ=;
-        b=o4eojoyq2Cq1135rr37W9RhoLDm5VrYb9BzrxHalQFCrxuSN5iJp/FXFp2t1KW2fTF
-         qUEKpMNuSX3uDS7OqLeSTOQZUo8lkPmVY2BKSfUTzFi+07ozw4UHZsqHgeB72a8Y1tdl
-         uH2ek2AQkrVg2XAPbhOViBp916P0NJ/p4DqhTFgOGOHX7+EYenzghO2gaKhpPKM1kNgj
-         lYBt4ZQIZSUEb7EQdI25My2hVsDDceYBlo+iYrRsM7zo+IEZ7nYlc0UrfHOnns56rmEC
-         lAzK15zhYWYgBqsQoO9W1Sswqh2tVy0XuNOPpRv2h6y2Rcqu4p6OGjgaNaQNzU4/SQyg
-         WiMA==
-X-Gm-Message-State: AOAM5319436iBupTKYe07pU4CS0Nu54lIdfq6bEwvU52WvMM+QmpGeEg
-        Lcrw350SmSL+P7x0ahNTO2ha5Q==
-X-Google-Smtp-Source: ABdhPJysbKI9KHmH4JZipg0ZRO74vc0Q1f/poXmDdT5wVjf46XMdV4SEDnNnhl9+P92e4T6IX1H7yg==
-X-Received: by 2002:a63:338c:: with SMTP id z134mr9360703pgz.245.1595007796077;
-        Fri, 17 Jul 2020 10:43:16 -0700 (PDT)
+        bh=wrxYLXP2oheEEaGsKNp0stRrknyVueRaJu8i8kSptew=;
+        b=DIAiBZN3gz8G+r6Y5ecs5XkIuIZDbFKaCnRkHyiw/sfEUTybLLAtNW43YwPGmBT6Mr
+         7IYGogkwPIvnOjc+tvHVi3a74sGqn3vwfh+rj01c6p7gM4JGwYeJuyJwkv9+e24bdzRw
+         IL3jKyUz1MDxaPHdz3iuaCEx8MG62eXjL7Pu7Te3lwQ5uSVjfvPdnYDf9JhoSxAqUAfa
+         WPdFfMQa7U8uxyS8gsk8qsZmvzSyiO5TeCtmW2zzOiYG1fMKjcZyT4I09oSYT5Vg+XtG
+         5Ff+DRk4hvBmdVdoKUghuoNlHCW0FSBLkpSCia0Ku/mXD/Qu1Bp2CQRm6GXQ8BMo14oC
+         +Z1g==
+X-Gm-Message-State: AOAM533VXjb7Zw4KL2JPVFIWkMu2GqBM2vsm6AuE2e4x9ZgSCio3H4Or
+        RssmucBon8Uy5+2P4HqrdqwGJg==
+X-Google-Smtp-Source: ABdhPJwUg0XMxYDUbRjKGsYc4z6GZTjsdq+bfOADQJjU8WjIWVN4iFhFlTSQL5o2BTwLAVb1iIGijw==
+X-Received: by 2002:a17:90a:9f4a:: with SMTP id q10mr11275946pjv.139.1595007795012;
+        Fri, 17 Jul 2020 10:43:15 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c139sm8072372pfb.65.2020.07.17.10.43.12
+        by smtp.gmail.com with ESMTPSA id d9sm8187840pfd.133.2020.07.17.10.43.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 17 Jul 2020 10:43:13 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -88,9 +88,9 @@ Cc:     Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/13] fs/kernel_read_file: Remove FIRMWARE_EFI_EMBEDDED enum
-Date:   Fri, 17 Jul 2020 10:42:58 -0700
-Message-Id: <20200717174309.1164575-4-keescook@chromium.org>
+Subject: [PATCH 01/13] firmware_loader: EFI firmware loader must handle pre-allocated buffer
+Date:   Fri, 17 Jul 2020 10:42:56 -0700
+Message-Id: <20200717174309.1164575-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200717174309.1164575-1-keescook@chromium.org>
 References: <20200717174309.1164575-1-keescook@chromium.org>
@@ -101,52 +101,37 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The "FIRMWARE_EFI_EMBEDDED" enum is a "where", not a "what". It
-should not be distinguished separately from just "FIRMWARE", as this
-confuses the LSMs about what is being loaded. Additionally, there was
-no actual validation of the firmware contents happening.
+The EFI platform firmware fallback would clobber any pre-allocated
+buffers. Instead, correctly refuse to reallocate when too small (as
+already done in the sysfs fallback), or perform allocation normally
+when needed.
 
-Fixes: e4c2c0ff00ec ("firmware: Add new platform fallback mechanism and firmware_request_platform()")
+Fixes: e4c2c0ff00ec ("firmware: Add new platform fallback mechanism and firm ware_request_platform()")
 Cc: stable@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
 To aid in backporting, this change is made before moving
 kernel_read_file() to separate header/source files.
 ---
- drivers/base/firmware_loader/fallback_platform.c | 2 +-
- include/linux/fs.h                               | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/base/firmware_loader/fallback_platform.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/base/firmware_loader/fallback_platform.c b/drivers/base/firmware_loader/fallback_platform.c
-index 685edb7dd05a..6958ab1a8059 100644
+index cdd2c9a9f38a..685edb7dd05a 100644
 --- a/drivers/base/firmware_loader/fallback_platform.c
 +++ b/drivers/base/firmware_loader/fallback_platform.c
-@@ -17,7 +17,7 @@ int firmware_fallback_platform(struct fw_priv *fw_priv, u32 opt_flags)
- 	if (!(opt_flags & FW_OPT_FALLBACK_PLATFORM))
- 		return -ENOENT;
- 
--	rc = security_kernel_load_data(LOADING_FIRMWARE_EFI_EMBEDDED);
-+	rc = security_kernel_load_data(LOADING_FIRMWARE);
+@@ -25,7 +25,10 @@ int firmware_fallback_platform(struct fw_priv *fw_priv, u32 opt_flags)
  	if (rc)
- 		return rc;
+ 		return rc; /* rc == -ENOENT when the fw was not found */
  
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 95fc775ed937..f50a35d54a61 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2993,11 +2993,10 @@ static inline void i_readcount_inc(struct inode *inode)
- #endif
- extern int do_pipe_flags(int *, int);
+-	fw_priv->data = vmalloc(size);
++	if (fw_priv->data && size > fw_priv->allocated_size)
++		return -ENOMEM;
++	if (!fw_priv->data)
++		fw_priv->data = vmalloc(size);
+ 	if (!fw_priv->data)
+ 		return -ENOMEM;
  
--/* This is a list of *what* is being read, not *how*. */
-+/* This is a list of *what* is being read, not *how* nor *where*. */
- #define __kernel_read_file_id(id) \
- 	id(UNKNOWN, unknown)		\
- 	id(FIRMWARE, firmware)		\
--	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
 -- 
 2.25.1
 
