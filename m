@@ -1,136 +1,81 @@
-Return-Path: <SRS0=JrnQ=A6=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=WCvd=A7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AC6C433DF
-	for <linux-integrity@archiver.kernel.org>; Sun, 19 Jul 2020 16:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF701C433E1
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 Jul 2020 02:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC633207EA
-	for <linux-integrity@archiver.kernel.org>; Sun, 19 Jul 2020 16:02:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB4522B51
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 Jul 2020 02:04:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="K+4absWZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbgGSQCY (ORCPT
+        id S1726846AbgGTCE6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 19 Jul 2020 12:02:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22414 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726109AbgGSQCY (ORCPT
+        Sun, 19 Jul 2020 22:04:58 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:55234 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726626AbgGTCE6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 19 Jul 2020 12:02:24 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06JFXPmm088482;
-        Sun, 19 Jul 2020 12:02:21 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32bvy3bqq8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 19 Jul 2020 12:02:21 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06JFmTnV114328;
-        Sun, 19 Jul 2020 12:02:21 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32bvy3bqp8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 19 Jul 2020 12:02:21 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06JG0V8r019802;
-        Sun, 19 Jul 2020 16:02:19 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03fra.de.ibm.com with ESMTP id 32brq80qek-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 19 Jul 2020 16:02:19 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06JG2GfH65208788
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 19 Jul 2020 16:02:17 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF18BAE053;
-        Sun, 19 Jul 2020 16:02:16 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D233AE058;
-        Sun, 19 Jul 2020 16:02:16 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.150.54])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 19 Jul 2020 16:02:16 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
-        Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH 2/3] ima-evm-utils: output specific "unknown keyid" file msg based on log level
-Date:   Sun, 19 Jul 2020 12:02:03 -0400
-Message-Id: <1595174524-4976-2-git-send-email-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1595174524-4976-1-git-send-email-zohar@linux.ibm.com>
-References: <1595174524-4976-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-19_02:2020-07-17,2020-07-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=1
- impostorscore=0 phishscore=0 clxscore=1015 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 spamscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007190119
+        Sun, 19 Jul 2020 22:04:58 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 50DB320B4909;
+        Sun, 19 Jul 2020 19:04:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 50DB320B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595210697;
+        bh=zRG1ESiLAHDyNiv0B4tmWGwGfmW3Odsif5Z4IcufgBY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=K+4absWZa2gX4t8pSglBLKmy/9E9YldShr3PWP/443G4ykMhPoClGFe6LPQLlAz1Z
+         7wtteeoDMdm3MhE7YxZUJYW7Vpbnhg56YIBwY3+Url2otVTqvZ8qZUC5zIGh91QDZU
+         zNFBIl6ZDaZDBnk4jkUi8AycwnLUjaJgGD3xypcE=
+Subject: Re: [PATCH v3 4/5] LSM: Define SELinux function to measure security
+ state
+To:     kernel test robot <lkp@intel.com>, zohar@linux.ibm.com,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
+Cc:     kbuild-all@lists.01.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200717222819.26198-5-nramas@linux.microsoft.com>
+ <202007181027.UwJXCNXk%lkp@intel.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <61a4c849-5cb7-0a58-2bb9-61f55a98657a@linux.microsoft.com>
+Date:   Sun, 19 Jul 2020 19:04:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <202007181027.UwJXCNXk%lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-When the IMA measurement list contains file signatures, the file
-signatures are verified either by calculating the local file data hash
-or based on the file hash contained in the measurement list.  In either
-case a list of trusted public keys needs to be provided.
+On 7/17/20 8:14 PM, kernel test robot wrote:
+> Hi Lakshmi,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on integrity/next-integrity]
+> [cannot apply to pcmoore-selinux/next security/next-testing linus/master v5.8-rc5 next-20200717]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch]
 
-In addition to the list of known/unknown public keys needed to verify
-the measurement list being output, the specific files signed by an
-unknown public key are output as well.
+Thank you for catching this.
 
-Output the individual "unknown keyid" file messages based on log level.
+I did not see these failures with the compiler and make options I'd used.
 
-Example 1: "ima_measurement" list of known/unknown public keys
+Am able to reproduce the errors with the instructions you'd provided.
+Will post the updated patches shortly.
 
-Verify the provided IMA measurement list against the provided TPM 1.2
-PCRs.
---validate: ignore measurement violations.
---verify: calculate and verify the template digest against the template
-data.
---verify-sig: verify the file signature against the file hash stored
-in the template data.
-
-$ evmctl ima_measurement /tmp/local_binary_runtime_measurements --pcrs
-/tmp/local_pcrs_new --validate --verify --verify-sig
-key 1: 14c2d147 /etc/keys/x509_evm.der
-key 2: 6e6c1046 (unknown keyid)
-key 3: c4e2426e (unknown keyid)
-Matched per TPM bank calculated digest(s).
-
-Example 2: verbose mode (-v) includes specific unknown files.
-
-/usr/bin/evmctl: verification failed: unknown keyid 6e6c1046
-
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- src/libimaevm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 16e07e82b9e3..fa6c27858d0f 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -512,8 +512,9 @@ static int verify_hash_v2(const char *file, const unsigned char *hash, int size,
- 	if (!pkey) {
- 		uint32_t keyid = hdr->keyid;
- 
--		log_info("%s: verification failed: unknown keyid %x\n",
--			 file, __be32_to_cpup(&keyid));
-+		if (imaevm_params.verbose > LOG_INFO)
-+			log_info("%s: verification failed: unknown keyid %x\n",
-+				 file, __be32_to_cpup(&keyid));
- 		return -1;
- 	}
- 
--- 
-2.7.5
+thanks,
+  -lakshmi
 
