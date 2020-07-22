@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AA1C433DF
-	for <linux-integrity@archiver.kernel.org>; Wed, 22 Jul 2020 10:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E9BC433DF
+	for <linux-integrity@archiver.kernel.org>; Wed, 22 Jul 2020 10:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4864420771
-	for <linux-integrity@archiver.kernel.org>; Wed, 22 Jul 2020 10:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97279206F5
+	for <linux-integrity@archiver.kernel.org>; Wed, 22 Jul 2020 10:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726028AbgGVKrj (ORCPT
+        id S1726028AbgGVKwJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 22 Jul 2020 06:47:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49806 "EHLO mx2.suse.de"
+        Wed, 22 Jul 2020 06:52:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52046 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbgGVKri (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 22 Jul 2020 06:47:38 -0400
+        id S1725847AbgGVKwJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 22 Jul 2020 06:52:09 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 30AE0AC12;
-        Wed, 22 Jul 2020 10:47:45 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 7D669ACDB;
+        Wed, 22 Jul 2020 10:52:15 +0000 (UTC)
 From:   Petr Vorel <pvorel@suse.cz>
 To:     linux-integrity@vger.kernel.org
 Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH ima-evm-utils] pcr_tss: Fix compilation for old compilers
-Date:   Wed, 22 Jul 2020 12:47:32 +0200
-Message-Id: <20200722104732.26064-1-pvorel@suse.cz>
+Subject: [PATCH ima-evm-utils v2] pcr_tss: Fix compilation for old compilers
+Date:   Wed, 22 Jul 2020 12:52:02 +0200
+Message-Id: <20200722105202.32507-1-pvorel@suse.cz>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,25 +52,21 @@ reading")
 
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
-Hi Mimi,
+Changes v1->v2:
+Add also j
 
-sorry for not spotting this during testing.
-
-Kind regards,
-Petr
-
- src/pcr_tss.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ src/pcr_tss.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/src/pcr_tss.c b/src/pcr_tss.c
-index 11b247b..bf1a574 100644
+index 11b247b..feb1ff7 100644
 --- a/src/pcr_tss.c
 +++ b/src/pcr_tss.c
-@@ -68,9 +68,12 @@ int tpm2_pcr_supported(void)
+@@ -68,14 +68,17 @@ int tpm2_pcr_supported(void)
  
  static int pcr_selections_match(TPML_PCR_SELECTION *a, TPML_PCR_SELECTION *b)
  {
-+	int i;
++	int i, j;
 +
  	if (a->count != b->count)
  		return 0;
@@ -80,6 +76,12 @@ index 11b247b..bf1a574 100644
  		if (a->pcrSelections[i].hash != b->pcrSelections[i].hash)
  			return 0;
  		if (a->pcrSelections[i].sizeofSelect != b->pcrSelections[i].sizeofSelect)
+ 			return 0;
+-		for (int j = 0; j < a->pcrSelections[i].sizeofSelect; j++) {
++		for (j = 0; j < a->pcrSelections[i].sizeofSelect; j++) {
+ 			if (a->pcrSelections[i].pcrSelect[j] != b->pcrSelections[i].pcrSelect[j])
+ 				return 0;
+ 		}
 -- 
 2.27.0
 
