@@ -8,69 +8,69 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2846FC43465
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E2EC43469
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 040E22070E
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C268206EB
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 21:38:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nc4diiOS"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IghqIwoB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbgGXVic (ORCPT
+        id S1726962AbgGXVif (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 24 Jul 2020 17:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57772 "EHLO
+        Fri, 24 Jul 2020 17:38:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbgGXVgt (ORCPT
+        with ESMTP id S1726942AbgGXVgs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 24 Jul 2020 17:36:49 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 230D8C0619D3
-        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 14:36:49 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id m22so6132282pgv.9
-        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 14:36:49 -0700 (PDT)
+        Fri, 24 Jul 2020 17:36:48 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B7D3C05BD0F
+        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 14:36:48 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id a9so6114232pjd.3
+        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 14:36:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vcN9YX8ekyRngE6bYuM+DpwcbgbhaICM+gIK3/spxEo=;
-        b=Nc4diiOSieMuCnwFnM1yLq67WkmNMLzX2630xjI5cNAoihRYSscqjCh5iq+xIqV8Rf
-         C/nzz1nmc+3U8+Im2MKoaswgBHNvpJxQ3RTT0CH0MqwRrrRlXHub57dfzOjxLRMe/pUb
-         BbFOK0m7fuKN+YQoWATIv6L6EH0a2FruUCsI0=
+        bh=2/kBhrQPbzovHh41OSaPnXat9qGyJUFnv0iXtUuMMKE=;
+        b=IghqIwoBfKGdBHowpyxVljQEPV4EvfpdQWYORYH5ljggyOoUB93bDQtlXhE3tkR1xG
+         NqF6JhgR17Y5MKkkypz0qY7Odys1mTMmr5e+6P8C5CnGiggDf6CucxbUm93J2hL0KjhG
+         WQJk6B8gXZFngzLozgAGQtzopAVTs2DRYO93s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vcN9YX8ekyRngE6bYuM+DpwcbgbhaICM+gIK3/spxEo=;
-        b=STbpcA4aLqXKVBUq2pfTw/ohHs6Of6asOsvBtwZehJN8yObwg8WJNwTM/6WITSKKjM
-         Lbv0J3fg1e0bj35xeDyTXnBMrag/dNTS8TkJlRoC7ZUoiwET4JBtXI7Tv7TUxby1FEff
-         W1ZQRzYXD38QYv84V8AHHJA9AkJzZpnqwJm7Du7Jhgq0Cex3ODJ2B8nT+Tg0UQWc7h3C
-         dqNLDmTgoX9gjU2sOlDnugS+e7NfTh5ScFPTlRq1iGgRubU20cq7q7l601D7YkxuZ/G8
-         9SyNUlwaSkvbQhhcvVK1cTYJ2ftg81odx2sMrmUCeZ/idnaJQ8ao0Y58ldXueF3vhBZk
-         rEZw==
-X-Gm-Message-State: AOAM533fBKedro7nCyK/NPa95893L5Fp+0IjlTUHtKdIvyrXt1eSJscs
-        3qdCDbNKPxx0VluziU0m1cWTE4SFt9Q=
-X-Google-Smtp-Source: ABdhPJyJrXi5k9Qloae7/gFl16disQrz+TOWjexj7lVgRQuvGP6252jBRHdY/u/NQrhbtwjiKq8yXA==
-X-Received: by 2002:a62:a217:: with SMTP id m23mr10629324pff.291.1595626608680;
-        Fri, 24 Jul 2020 14:36:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q24sm6722845pgg.3.2020.07.24.14.36.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=2/kBhrQPbzovHh41OSaPnXat9qGyJUFnv0iXtUuMMKE=;
+        b=Q3EDO6pbkwU0eKMZQKuocbW9a0A48AVrfYXR0qYyMl52TQwACSAKHBGOF5qb5UpLwm
+         Jt0k72IVlBUsnstGVMSVYYhy8opftE2sXkSDkNA8gVXyb4/GjSlHQILktstGW2SLjDm9
+         fP69+jLrAUv8SAbYBRRZDnRqLlkjexkZ91DMIptJIGwafnNld+u2BFZGsd5J6qahnvRf
+         SuD0tV+U6qsW+LkzVWeIv8Vyzy2sZ9AdGma2CIUQzdJz2td8nY4lu2Fgz8uXDJ6gJQer
+         xFQuqndQU5zgdwa726mlAMbulMctFkPyaxBh7pE+5yU9ap3ikoZ0y5yCY7nTnnOQXMdi
+         mLZw==
+X-Gm-Message-State: AOAM5308BcdYVk1djjGYIv8cYIAkmMY8H8NyncXJU2OeP0zmyc7fEQYP
+        G8w1t/D6A0PFKqZhbTxEN1k9mA==
+X-Google-Smtp-Source: ABdhPJzPJqhzQYIlmFMm0JvuP6Chr0PhV314mA4W5L786J7f7YtpqYDyRBviJfOTvbrBAVr9J0xosQ==
+X-Received: by 2002:a17:90b:338d:: with SMTP id ke13mr7268603pjb.60.1595626607402;
         Fri, 24 Jul 2020 14:36:47 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id x10sm7377865pfp.80.2020.07.24.14.36.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jul 2020 14:36:43 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
+Cc:     Kees Cook <keescook@chromium.org>,
+        SeongJae Park <sjpark@amazon.de>,
         Scott Branden <scott.branden@broadcom.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
-        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
+        Jessica Yu <jeyu@kernel.org>, KP Singh <kpsingh@chromium.org>,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 05/19] fs/kernel_read_file: Remove FIRMWARE_EFI_EMBEDDED enum
-Date:   Fri, 24 Jul 2020 14:36:26 -0700
-Message-Id: <20200724213640.389191-6-keescook@chromium.org>
+Subject: [PATCH v3 02/19] selftest/firmware: Add selftest timeout in settings
+Date:   Fri, 24 Jul 2020 14:36:23 -0700
+Message-Id: <20200724213640.389191-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200724213640.389191-1-keescook@chromium.org>
 References: <20200724213640.389191-1-keescook@chromium.org>
@@ -81,53 +81,58 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The "FIRMWARE_EFI_EMBEDDED" enum is a "where", not a "what". It
-should not be distinguished separately from just "FIRMWARE", as this
-confuses the LSMs about what is being loaded. Additionally, there was
-no actual validation of the firmware contents happening.
+The firmware tests would always time out for me. Add a correct timeout,
+including details on how the value was reached. Additionally allow the
+test harness to skip comments in settings files and report how long a
+given timeout was.
 
-Fixes: e4c2c0ff00ec ("firmware: Add new platform fallback mechanism and firmware_request_platform()")
-Cc: stable@vger.kernel.org
+Reviewed-by: SeongJae Park <sjpark@amazon.de>
 Acked-by: Scott Branden <scott.branden@broadcom.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
-To aid in backporting, this change is made before moving
-kernel_read_file() to separate header/source files.
----
- drivers/base/firmware_loader/fallback_platform.c | 2 +-
- include/linux/fs.h                               | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ tools/testing/selftests/firmware/settings   | 8 ++++++++
+ tools/testing/selftests/kselftest/runner.sh | 6 +++++-
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/firmware/settings
 
-diff --git a/drivers/base/firmware_loader/fallback_platform.c b/drivers/base/firmware_loader/fallback_platform.c
-index 685edb7dd05a..6958ab1a8059 100644
---- a/drivers/base/firmware_loader/fallback_platform.c
-+++ b/drivers/base/firmware_loader/fallback_platform.c
-@@ -17,7 +17,7 @@ int firmware_fallback_platform(struct fw_priv *fw_priv, u32 opt_flags)
- 	if (!(opt_flags & FW_OPT_FALLBACK_PLATFORM))
- 		return -ENOENT;
- 
--	rc = security_kernel_load_data(LOADING_FIRMWARE_EFI_EMBEDDED);
-+	rc = security_kernel_load_data(LOADING_FIRMWARE);
- 	if (rc)
- 		return rc;
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 95fc775ed937..f50a35d54a61 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2993,11 +2993,10 @@ static inline void i_readcount_inc(struct inode *inode)
- #endif
- extern int do_pipe_flags(int *, int);
- 
--/* This is a list of *what* is being read, not *how*. */
-+/* This is a list of *what* is being read, not *how* nor *where*. */
- #define __kernel_read_file_id(id) \
- 	id(UNKNOWN, unknown)		\
- 	id(FIRMWARE, firmware)		\
--	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
- 	id(MODULE, kernel-module)		\
- 	id(KEXEC_IMAGE, kexec-image)		\
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
+diff --git a/tools/testing/selftests/firmware/settings b/tools/testing/selftests/firmware/settings
+new file mode 100644
+index 000000000000..085e664ee093
+--- /dev/null
++++ b/tools/testing/selftests/firmware/settings
+@@ -0,0 +1,8 @@
++# The async firmware timeout is set to 1 second (but ends up being effectively
++# 2 seconds). There are 3 test configs, each done with and without firmware
++# present, each with 2 "nowait" functions tested 5 times. Expected time for a
++# normal execution should be 2 * 3 * 2 * 2 * 5 = 120 seconds for those alone.
++# Additionally, fw_fallback may take 5 seconds for internal timeouts in each
++# of the 3 configs, so at least another 15 seconds are needed. Add another
++# 10 seconds for each testing config: 120 + 15 + 30
++timeout=165
+diff --git a/tools/testing/selftests/kselftest/runner.sh b/tools/testing/selftests/kselftest/runner.sh
+index 676b3a8b114d..cd5ddf979f15 100644
+--- a/tools/testing/selftests/kselftest/runner.sh
++++ b/tools/testing/selftests/kselftest/runner.sh
+@@ -53,6 +53,10 @@ run_one()
+ 	settings="$BASE_DIR/$DIR/settings"
+ 	if [ -r "$settings" ] ; then
+ 		while read line ; do
++			# Skip comments.
++			if echo "$line" | grep -q '^#'; then
++				continue
++			fi
+ 			field=$(echo "$line" | cut -d= -f1)
+ 			value=$(echo "$line" | cut -d= -f2-)
+ 			eval "kselftest_$field"="$value"
+@@ -80,7 +84,7 @@ run_one()
+ 			echo "not ok $test_num $TEST_HDR_MSG # SKIP"
+ 		elif [ $rc -eq $timeout_rc ]; then \
+ 			echo "#"
+-			echo "not ok $test_num $TEST_HDR_MSG # TIMEOUT"
++			echo "not ok $test_num $TEST_HDR_MSG # TIMEOUT $kselftest_timeout seconds"
+ 		else
+ 			echo "not ok $test_num $TEST_HDR_MSG # exit=$rc"
+ 		fi)
 -- 
 2.25.1
 
