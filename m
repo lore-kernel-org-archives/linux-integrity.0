@@ -2,136 +2,226 @@ Return-Path: <SRS0=84RI=BD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E00C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 19:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6998C433E1
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 19:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB49206F6
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 19:04:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YJdzU2vs"
+	by mail.kernel.org (Postfix) with ESMTP id 9778D206F0
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 19:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgGXTEk (ORCPT
+        id S1726639AbgGXTNP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 24 Jul 2020 15:04:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33968 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbgGXTEk (ORCPT
+        Fri, 24 Jul 2020 15:13:15 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15434 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726416AbgGXTNP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 24 Jul 2020 15:04:40 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38886C0619E6
-        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 12:04:40 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id p3so5837510pgh.3
-        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 12:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=LrMXrDf7YIZaoWeBKOjSOSMpqfT8SAqX0JXj+wrASIM=;
-        b=YJdzU2vsfQm7AZSEbQDHOGAXkb0FDmlYvGdDHcCBV0Mb+I/0YGXEnNHZP0ITEGdZnq
-         rMUzebIoCugRClDH5RJXQ2VNELpwlavB8ApMKzNJeTwVnKrJanhG9XCaDVo5IwEReNVE
-         3/qzt3XofNbnyZe3522KpHnb11vBLC4noGHZA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=LrMXrDf7YIZaoWeBKOjSOSMpqfT8SAqX0JXj+wrASIM=;
-        b=mARopm56i402CR7tbN3SSPWiSl+2eTHPSnF+VWI9xXXSXDQN64cNZLC2iTUvjXTZRR
-         6AXbwmTPxtu2q8z4BWrWSKlAb0xl4OKOYrvKs/2d9sw0JHCfxnCcGr427u46+ArMiiDq
-         ZhD5DHy5/p0t+kCNKD57WeN0uQ2Hm537DbAOdxxm+q32lwA0CM4j6qifsDRaWLo5lnT6
-         oT7+LHo2w4k6JtV7JzKIFgyFf19a3Z6R4b6M1Q55gLf7MbMIGWCScwxKN3JOzehHz5gS
-         Ze5njgMZ6C99WaL6m7LQJ9VItM1Jb+//zgEknN0+eqzYUasAgRNiag4te2ev5plXUeQM
-         6jng==
-X-Gm-Message-State: AOAM5317CTdO89LuLjDeud9jVUSRG2r33GKVuZgtL7dxsDDEY2+wi05/
-        cuu0caJ9GDLLT4KsUEJpCwf/cw==
-X-Google-Smtp-Source: ABdhPJwByOH/4ROCOy3QCc3kWU3xI1XY75NRzmOAdHNrzalnVxff+4jx3AjnVMN92eX9iE8obAmE4g==
-X-Received: by 2002:a62:5297:: with SMTP id g145mr10327624pfb.28.1595617479754;
-        Fri, 24 Jul 2020 12:04:39 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y7sm6228743pjp.47.2020.07.24.12.04.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2020 12:04:38 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 12:04:38 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 7/7] ima: add policy support for the new file open
- MAY_OPENEXEC flag
-Message-ID: <202007241204.3DD9B905E@keescook>
-References: <20200723171227.446711-1-mic@digikod.net>
- <20200723171227.446711-8-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Fri, 24 Jul 2020 15:13:15 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06OJDEeF043933
+        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 15:13:14 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32faj4muaw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 15:13:14 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06OJDDhP043845
+        for <linux-integrity@vger.kernel.org>; Fri, 24 Jul 2020 15:13:13 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32faj4mu6p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 24 Jul 2020 15:13:13 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06OJ27H5008581;
+        Fri, 24 Jul 2020 19:12:51 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 32brbh7fxb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 24 Jul 2020 19:12:51 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06OJCmFF34340970
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 24 Jul 2020 19:12:48 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A839BAE051;
+        Fri, 24 Jul 2020 19:12:48 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20430AE053;
+        Fri, 24 Jul 2020 19:12:48 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.236.7])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 24 Jul 2020 19:12:48 +0000 (GMT)
+Message-ID: <1595617967.5017.31.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 ima-evm-utils] extend ima_measurement --pcrs option
+ to support per-bank pcr files
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     linux-integrity@vger.kernel.org, bill.c.roberts@gmail.com
+Date:   Fri, 24 Jul 2020 15:12:47 -0400
+In-Reply-To: <20200724145242.31178-1-stephen.smalley.work@gmail.com>
+References: <20200724145242.31178-1-stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200723171227.446711-8-mic@digikod.net>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-07-24_08:2020-07-24,2020-07-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0 clxscore=1015
+ spamscore=0 adultscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007240138
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 07:12:27PM +0200, Micka�l Sala�n wrote:
-> From: Mimi Zohar <zohar@linux.ibm.com>
+On Fri, 2020-07-24 at 10:52 -0400, Stephen Smalley wrote:
+> Extend the ima_measurement --pcrs option to support per-bank pcr files.
+> The extended syntax is "--pcrs algorithm,pathname".  If no algorithm
+> is specified, it defaults to sha1 as before.  Multiple --pcrs options
+> are now supported, one per bank of PCRs. The file format remains
+> unchanged.  If --pcrs is specified, only try to read PCRs from the
+> specified file(s); do not fall back to trying to read from sysfs
+> or the TPM itself in this case since the user requested use of
+> the files.
 > 
-> The kernel has no way of differentiating between a file containing data
-> or code being opened by an interpreter.  The proposed O_MAYEXEC
-> openat2(2) flag bridges this gap by defining and enabling the
-> MAY_OPENEXEC flag.
+> Create per-bank pcr files, depends on "tpm: add sysfs exports for all
+> banks of PCR registers" kernel patch:
+> $ cat tpm2pcrread.sh
+> #!/bin/sh
+> for alg in sha1 sha256
+> do
+>   rm -f pcr-$alg
+>   pcr=0;
+>   while [ $pcr -lt 24 ];
+>   do
+>     printf "PCR-%02d: " $pcr >> pcr-$alg;
+>     cat /sys/class/tpm/tpm0/pcr-$alg/$pcr >> pcr-$alg;
+>     pcr=$[$pcr+1];
+>   done
+> done
+> $ sh ./tpm2pcrread.sh
 > 
-> This patch adds IMA policy support for the new MAY_OPENEXEC flag.
+> Pass only the sha1 PCRs to evmctl defaulting to sha1:
+> $ sudo evmctl ima_measurement --pcrs pcr-sha1 /sys/kernel/security/integrity/ima/binary_runtime_measurements
 > 
-> Example:
-> measure func=FILE_CHECK mask=^MAY_OPENEXEC
-> appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
+> Pass only the sha1 PCRs to evmctl with explicit selection of sha1:
+> $ sudo evmctl ima_measurement --pcrs sha1,pcr-sha1 /sys/kernel/security/integrity/ima/binary_runtime_measurements
 > 
-> Signed-off-by: Micka�l Sala�n <mic@digikod.net>
+> Pass both sha1 and sha256 PCRs to evmctl:
+> $ sudo evmctl ima_measurement --pcrs sha1,pcr-sha1 --pcrs sha256,pcr-sha256 /sys/kernel/security/integrity/ima/binary_runtime_measurements
+> 
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-^^^ this S-o-b should the last in the fields.
+I reviewed the patch and everything looks good, other than a few
+comments below.  Weirdly the order in which the TPM bank files
+containing the PCRs are supplied on the command line is affecting
+being able to verify the measurement list - sha1, sha256 versus
+sha256, sha1.  Perhaps during the time it takes to read the different
+banks, the PCRs have changed?  Not quite sure what is happening.
+ 
+> ---
+> v3 splits reading the pcr files and the sysfs files into two separate functions
+> each called from read_tpm_banks() with different error handling. Thus, if
+> --pcrs is specified, then evmctl will only try to read from the specified
+> file(s) and any errors will cause it to fail rather than trying to read
+> directly from the TPM.  If --pcrs is not specified, then evmctl will try
+> to read from the sysfs files and then fall back to reading directly
+> from the TPM if that fails. v3 also reduces the limit on the number of
+> PCRs read from the files to NUM_PCRS since otherwise it will overflow
+> the pcrs[] array.  Further improvements to the file parser are deferred
+> to future patches.
+> 
+> @@ -1829,20 +1783,108 @@ static void extend_tpm_banks(struct template_entry *entry, int num_banks,
+>  #endif
+>  }
+>  
+> -/* Read TPM 1.2 PCRs */
+> -static int read_tpm_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+> +static int read_one_bank(struct tpm_bank_info *tpm_bank, FILE *fp)
+>  {
+> -	int i;
+> +	char *p, pcr_str[8], buf[80];
 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/1588167523-7866-3-git-send-email-zohar@linux.ibm.com
+As log as we're changing this from 70 to 80, might as well define it
+as MAX_DITEST_SIZE * 2 + X.  I'm pretty sure support for additional,
+larger digests will be added.  This can be deferred to the subsequent
+patch. 
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+> +	int i = 0;
+> +	int result = -1;
+> +	for (;;) {
+> +		p = fgets(buf, sizeof(buf), fp);
+> +		if (!p || i >= NUM_PCRS)
+> +			break;
+> +		sprintf(pcr_str, "PCR-%2.2d", i);
+> +		if (!strncmp(p, pcr_str, 6))
+> +			hex2bin(tpm_bank->pcr[i++], p + 7, tpm_bank->digest_size);
+> +		result = 0;
+> +	}
+> +	return result;
+> +}
+> +
+> +static char *pcrs = "/sys/class/tpm/tpm0/device/pcrs";  /* Kernels >= 4.0 */
+> +static char *misc_pcrs = "/sys/class/misc/tpm0/device/pcrs";
+> +
+> +/* Read one of the TPM 1.2 sysfs files if present */
+> +static int read_sysfs_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+> +{
+> +	FILE *fp;
+> +	int i, result;
+>  
+> -	if (tpm_pcr_read(tpm_banks, SHA_DIGEST_LENGTH)) {
+> -		log_debug("Failed to read TPM 1.2 PCRs.\n");
+> +	fp = fopen(pcrs, "r");
+> +	if (!fp)
+> +		fp = fopen(misc_pcrs, "r");
+> +	if (!fp)
+>  		return -1;
+> -	}
+>  
+> +	result = read_one_bank(&tpm_banks[0], fp);
+> +	fclose(fp);
+> +	if (result < 0)
+> +		return result;
+>  	tpm_banks[0].supported = 1;
+>  	for (i = 1; i < num_banks; i++)
+>  		tpm_banks[i].supported = 0;
+>  	return 0;
+> +
+> +}
+> +
+> +/* Read PCRs from per-bank file(s) specified via --pcrs */
+> +static int read_file_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+> +{
+> +	struct stat s;
+> +	FILE *fp;
+> +	char *p;
+> +	const char *alg, *path;
+> +	int i, j, bank, result;
+> +
+> +	for (i = 0; i < num_banks; i++)
+> +		tpm_banks[i].supported = 0;
+> +
+> +	for (i = 0; i < npcrfile; i++) {
 
--- 
-Kees Cook
+Being able to provide more PCR files than banks is a bit strange.  I
+guess the TPM could export additional banks, than what is currently
+supported by ima-evm-utils, and programmatically supply them to ima-
+evm-utils.
+
+Mimi
+
+> +		p = strchr(pcrfile[i], ',');
+> +		if (p) {
+> +			*p = 0;
+> +			alg = pcrfile[i];
+> +			path = ++p;
+> +		} else {
+> 
