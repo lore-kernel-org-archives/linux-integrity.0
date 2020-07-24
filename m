@@ -2,94 +2,91 @@ Return-Path: <SRS0=84RI=BD=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 068EAC433E4
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 07:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EC8AC433E3
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 11:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3A512074F
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 07:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 645832065F
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jul 2020 11:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgGXHD2 (ORCPT
+        id S1726567AbgGXLU0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 24 Jul 2020 03:03:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58900 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726739AbgGXHAp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 24 Jul 2020 03:00:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D4785AC20;
-        Fri, 24 Jul 2020 07:00:52 +0000 (UTC)
-From:   Petr Vorel <pvorel@suse.cz>
-To:     ltp@lists.linux.it
-Cc:     Petr Vorel <pvorel@suse.cz>,
-        Lachlan Sneff <t-josne@linux.microsoft.com>,
+        Fri, 24 Jul 2020 07:20:26 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35217 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgGXLU0 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 24 Jul 2020 07:20:26 -0400
+X-Originating-IP: 90.63.246.187
+Received: from gandi.net (laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr [90.63.246.187])
+        (Authenticated sender: thibaut.sautereau@clip-os.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id D40D7FF80A;
+        Fri, 24 Jul 2020 11:20:14 +0000 (UTC)
+Date:   Fri, 24 Jul 2020 13:20:14 +0200
+From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        balajib@linux.microsoft.com, linux-integrity@vger.kernel.org
-Subject: [PATCH v4 1/2] IMA: Fix policy readability check
-Date:   Fri, 24 Jul 2020 09:00:37 +0200
-Message-Id: <20200724070038.29491-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.27.0
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] Add support for O_MAYEXEC
+Message-ID: <20200724112014.GB38720@gandi.net>
+References: <20200723171227.446711-1-mic@digikod.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200723171227.446711-1-mic@digikod.net>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Check with cat, because file attributes were fixed in
-ffb122de9a60 ("ima: Reflect correct permissions for policy")
-in v4.18.
+On Thu, Jul 23, 2020 at 07:12:20PM +0200, Mickaël Salaün wrote:
 
-Added into ima_setup.sh as it'll be used next commit in another test.
+> This patch series can be applied on top of v5.8-rc5 .
 
-Fixes: d2768c84e ("IMA: Add a test to verify measurement of keys")
+v5.8-rc6, actually.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- testcases/kernel/security/integrity/ima/tests/ima_keys.sh | 4 +---
- .../kernel/security/integrity/ima/tests/ima_setup.sh      | 8 ++++++++
- 2 files changed, 9 insertions(+), 3 deletions(-)
+> Previous version:
+> https://lore.kernel.org/lkml/20200505153156.925111-1-mic@digikod.net/
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-index 904b7515b..26b8eaf84 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-@@ -19,9 +19,7 @@ test1()
- 
- 	tst_res TINFO "verifying key measurement for keyrings and templates specified in IMA policy file"
- 
--	[ -f $IMA_POLICY ] || tst_brk TCONF "missing $IMA_POLICY"
--
--	[ -r $IMA_POLICY ] || tst_brk TCONF "cannot read IMA policy (CONFIG_IMA_READ_POLICY=y required)"
-+	check_policy_readable
- 
- 	keycheck_lines=$(grep "func=KEY_CHECK" $IMA_POLICY)
- 	if [ -z "$keycheck_lines" ]; then
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index 8ae477c1c..458f67c30 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-@@ -111,6 +111,14 @@ print_ima_config()
- 	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
- }
- 
-+check_policy_readable()
-+{
-+	[ -f $IMA_POLICY ] || tst_brk TCONF "missing $IMA_POLICY"
-+
-+	cat $IMA_POLICY > /dev/null 2>/dev/null || \
-+		tst_brk TCONF "cannot read IMA policy (CONFIG_IMA_READ_POLICY=y required)"
-+}
-+
- ima_setup()
- {
- 	SECURITYFS="$(mount_helper securityfs $SYSFS/kernel/security)"
+This is v5.
+v6 is at https://lore.kernel.org/lkml/20200714181638.45751-1-mic@digikod.net/
+
 -- 
-2.27.0
-
+Thibaut Sautereau
+CLIP OS developer
