@@ -2,38 +2,38 @@ Return-Path: <SRS0=p1mE=BG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBECC43459
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC6FC433F8
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E699F20719
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D776620719
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lz5Tn0sm"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Lg4IwShA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733023AbgG0OkC (ORCPT
+        id S1728852AbgG0OJO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 27 Jul 2020 10:40:02 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53218 "EHLO
+        Mon, 27 Jul 2020 10:09:14 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:53186 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbgG0OJU (ORCPT
+        with ESMTP id S1729576AbgG0OJN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Jul 2020 10:09:20 -0400
+        Mon, 27 Jul 2020 10:09:13 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1D0C420B490C;
-        Mon, 27 Jul 2020 07:09:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1D0C420B490C
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7CA6520B4908;
+        Mon, 27 Jul 2020 07:09:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7CA6520B4908
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595858959;
-        bh=TojaKA1D2bkgSvEtbI6kYJOINajUXiJCFMf+z5sO/JQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lz5Tn0sm1IzQZ1ivUGl55HsNtgLm9JrFalLP6KB8PaOGy/cMdp//VBy2HXc3Kvj8e
-         513MuEEb5DlQ32PSGav+mjEkH0LFKHp7NdtnSxjQ9/s+EIlXcGDy8kLQc9eJiAMn/t
-         Hyu2V1PUciKf3kn07uOQVVZsHW09V9z4pxJ8H+uo=
+        s=default; t=1595858953;
+        bh=RI9OjMpT7wMC5gT81EsD8X2qDIaOFyrvt8WWKKu6l9g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Lg4IwShAgGT6iQ+2TqIuqm/DwHEFPecAPRo2UL+8av/4jOYMji9G6XcVdjrkcxdz3
+         Iu4ThfYyoxzhOsm2qxVQ/cU+L3quvtWwBIK9lhZqTD8MqApjNqtVOFe9/PluQHniAt
+         3dIncUce+myctKw6bhLWuEqVvc1CZUzlVRrL8tio=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
@@ -44,12 +44,10 @@ Cc:     James Morris <jmorris@namei.org>,
         Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH 2/2] ima: Fail rule parsing when asymmetric key measurement isn't supportable
-Date:   Mon, 27 Jul 2020 09:08:31 -0500
-Message-Id: <20200727140831.64251-3-tyhicks@linux.microsoft.com>
+Subject: [PATCH 0/2] ima: Fix keyrings race condition and other key related bugs
+Date:   Mon, 27 Jul 2020 09:08:29 -0500
+Message-Id: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
-References: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
@@ -57,46 +55,50 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Measuring keys is currently only supported for asymmetric keys. In the
-future, this might change.
+Nayna pointed out that the "keyrings=" option in an IMA policy rule
+should only be accepted when CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is
+enabled:
 
-For now, the "func=KEY_CHECK" and "keyrings=" options are only
-appropriate when CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is enabled. Make
-this clear at policy load so that IMA policy authors don't assume that
-these policy language constructs are supported.
+ https://lore.kernel.org/linux-integrity/336cc947-1f70-0286-6506-6df3d1d23a1d@linux.vnet.ibm.com/
 
-Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
-Fixes: 5808611cccb2 ("IMA: Add KEY_CHECK func to measure keys")
-Suggested-by: Nayna Jain <nayna@linux.ibm.com>
-Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
----
- security/integrity/ima/ima_policy.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+While fixing this, the compiler warned me about the potential for the
+ima_keyrings pointer to be NULL despite it being used, without a check
+for NULL, as the destination address for the strcpy() in
+ima_match_keyring().
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index c328cfa0fc49..05f012fd3dca 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1233,7 +1233,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->func = POLICY_CHECK;
- 			else if (strcmp(args[0].from, "KEXEC_CMDLINE") == 0)
- 				entry->func = KEXEC_CMDLINE;
--			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
-+			else if (IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) &&
-+				 strcmp(args[0].from, "KEY_CHECK") == 0)
- 				entry->func = KEY_CHECK;
- 			else
- 				result = -EINVAL;
-@@ -1290,7 +1291,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 		case Opt_keyrings:
- 			ima_log_string(ab, "keyrings", args[0].from);
- 
--			if (entry->keyrings) {
-+			if (!IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) ||
-+			    entry->keyrings) {
- 				result = -EINVAL;
- 				break;
- 			}
+It also became apparent that there was not adequate locking around the
+use of the pre-allocated buffer that ima_keyrings points to. The kernel
+keyring has a lock (.sem member of struct key) that ensures only one key
+can be added to a given keyring at a time but there's no protection
+against adding multiple keys to different keyrings at the same time.
+
+The first patch in this series fixes both ima_keyrings related issues by
+parsing the list of keyrings in a KEY_CHECK rule at policy load time
+rather than deferring the parsing to policy check time. Once that fix is
+in place, the second patch can enforce that
+CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS must be enabled in order to use
+"func=KEY_CHECK" or "keyrings=" options in IMA policy.
+
+The new "keyrings=" value handling is done in a generic manner that can
+be reused by other options in the future. This seems to make sense as
+"appraise_type=" has similar style (though it doesn't need to be fully
+parsed at this time) and using "|" as an alternation delimiter is
+becoming the norm in IMA policy.
+
+This series is based on commit 311aa6aafea4 ("ima: move
+APPRAISE_BOOTPARAM dependency on ARCH_POLICY to runtime") in
+next-integrity.
+
+Tyler
+
+Tyler Hicks (2):
+  ima: Pre-parse the list of keyrings in a KEY_CHECK rule
+  ima: Fail rule parsing when asymmetric key measurement isn't
+    supportable
+
+ security/integrity/ima/ima_policy.c | 142 +++++++++++++++++++---------
+ 1 file changed, 96 insertions(+), 46 deletions(-)
+
 -- 
 2.25.1
 
