@@ -2,117 +2,342 @@ Return-Path: <SRS0=p1mE=BG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56617C433DF
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918EBC433ED
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33CA62173E
-	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E0A92083B
+	for <linux-integrity@archiver.kernel.org>; Mon, 27 Jul 2020 14:40:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ujmHUbDi"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KvtvY1fx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbgG0OfF (ORCPT
+        id S1729609AbgG0OJU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 27 Jul 2020 10:35:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732900AbgG0OfE (ORCPT
+        Mon, 27 Jul 2020 10:09:20 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:53206 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbgG0OJU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Jul 2020 10:35:04 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33487C061794
-        for <linux-integrity@vger.kernel.org>; Mon, 27 Jul 2020 07:35:04 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id 12so14521614oir.4
-        for <linux-integrity@vger.kernel.org>; Mon, 27 Jul 2020 07:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t7X7FPGH5H0c9dZWv197rYgtNXFl+3Ivir3hCBfGjV8=;
-        b=ujmHUbDiY47JMXKjG+kx5U4gbKFMJv1IV9PXcPHe+cNKJhyHg+qiAiM6ZKHy+Peb9S
-         MCqiwgJjc251e+SXBTbLKKW820BJ2gY9D6IRJaI8zX++CNJJ9ZfYU/88vUSAFFnrnbMG
-         cbl+OI57MD5Oe87PBAGfV44EXIhrGww3mRB4OdjAE2x0S5rcdSKWoIANMAyFlbtJyGm4
-         QjbG8FNxdiuxO9o5xeYl+gCNVwiqQszEnzZ0WImzPXJUPEQzjR0xrZLa+qkRvZYTst7g
-         FIoiEZhQ335wujU0DGnH2zhNRDbFk1LSLlGTsmkGBf5IAR4VrJdOaVoPIfkb4qWEyOir
-         3Yiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t7X7FPGH5H0c9dZWv197rYgtNXFl+3Ivir3hCBfGjV8=;
-        b=COwcMX+kFAt0a45Wns6Yq+wtVDSFB0WFqZOwBSZGbQV4cEstYqYaqegOdBYFaguOkg
-         x3wWoRaVncDKL6k56Ea74MC3jRGm+rv/WcJ/W33XrSvA2E269ovYIGbesiV7IE3FD0pA
-         vS4kolNBKWMcHVclmr+8Igzq3HG3xwNyt4ulGCdXV1hSSoEauew8RLPna8WVcRttUD6p
-         9uNPekJCgK08XKnPcYlqFpRHDQFgAtNFX6kmvZPEeDyVOHTnkzy09L0GzCm5+VfbkGah
-         TOT23TzfA9ZD2GDDdkdBGtAiCBLA0nk0l6JzDPsIYVOhC/53jcovCDjcsmC3KlEQFwoj
-         +Pww==
-X-Gm-Message-State: AOAM533ZPFmCrhu4OyCezSB+X5+DXtG3YkJ/WRf3wyb66/HLlerVaM/u
-        qDoW100Fu30jHbhn6/PyAAixARxg1BM3fczf2us=
-X-Google-Smtp-Source: ABdhPJwCJHO/PRG3HvP5qgdYc7vSzpII5sOpN0d6DlDJvT9kLadXXIXjAeXbyM1MQbKyRW1fn+NcK1ykvdMwMReqKDc=
-X-Received: by 2002:aca:c4cc:: with SMTP id u195mr17297301oif.160.1595860503596;
- Mon, 27 Jul 2020 07:35:03 -0700 (PDT)
+        Mon, 27 Jul 2020 10:09:20 -0400
+Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id A6C9F20B4909;
+        Mon, 27 Jul 2020 07:09:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A6C9F20B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595858958;
+        bh=gQfNPjbMtiLw79tGj9bRmOj5FZFZE/TY/VjUKPcR7xs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KvtvY1fxBnHUPZsItNgIsxWH0mzf/2BASXXWLWY5jNXE1tX77MlmoEaiNS8Jg9dFt
+         VkARKG+GVvUElRV9k2+fbxy2q3wLw8GTd8YALP4IqaHqSydRktTqNvCojcjGQ+Bz/4
+         WcrlzumesAnv2wfirwvr2wXf5L6EyhsiZgTlduPU=
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Nayna Jain <nayna@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 1/2] ima: Pre-parse the list of keyrings in a KEY_CHECK rule
+Date:   Mon, 27 Jul 2020 09:08:30 -0500
+Message-Id: <20200727140831.64251-2-tyhicks@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
+References: <20200727140831.64251-1-tyhicks@linux.microsoft.com>
 MIME-Version: 1.0
-References: <20200727132110.5057-1-stephen.smalley.work@gmail.com> <1595859338.4841.116.camel@kernel.org>
-In-Reply-To: <1595859338.4841.116.camel@kernel.org>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 27 Jul 2020 10:34:52 -0400
-Message-ID: <CAEjxPJ66--SytmNQpHF-DOkoWsE3ri-Ni6nA0k3YmY1fqU-0qQ@mail.gmail.com>
-Subject: Re: [PATCH v4 ima-evm-utils] extend ima_measurement --pcrs option to
- support per-bank pcr files
-To:     Mimi Zohar <zohar@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        William Roberts <bill.c.roberts@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 10:15 AM Mimi Zohar <zohar@kernel.org> wrote:
->
-> On Mon, 2020-07-27 at 09:21 -0400, Stephen Smalley wrote:
->
-> > ---
-> > v4 updates the usage in the README and usage message, reduces MAX_NPCRFILE
-> > to 2 (for sha1 and sha256) and changes the buffer size to
-> > MAX_DIGEST_SIZE * 2 + 8 for the lines read from the pcrs file(s).
-> >
-> > One thing that is unclear to me is correct/expected usage of the
-> > --verify and --validate options to evmctl ima_measurement. For an
-> > appraisal of a remote attestation, when would one NOT want to use
-> > --verify (i.e. doesn't lack of --verify render the result insecure)
-> > and when would one want to use --validate (i.e. doesn't use of --validate
-> > render the result insecure)? And shouldn't the default in both cases
-> > be the more secure case (i.e. verify = 1, validate = 0)?  The naming of
-> > --validate is also confusing since one might expect it to mean
-> > to validate/check the result as opposed to ignore violations?
->
-> Yes, agreed.  Thank you for reviewing and commenting on the code.
->
-> While adding support for these features, originally in LTP and the
-> standalone version, they should be cleaned up.  Should "--verify" just
-> be dropped?
+The ima_keyrings buffer was used as a work buffer for strsep()-based
+parsing of the "keyrings=" option of an IMA policy rule. This parsing
+was re-performed each time an asymmetric key was added to a kernel
+keyring for each loaded policy rule that contained a "keyrings=" option.
 
-Unless there is some reason to not always verify during
-ima_measurement, I'd drop the option and just always do it.
+An example rule specifying this option is:
 
-> Without a custom policy, with just the builtin
-> "ima_policy=tcb" policy, a few files are read while being opened for
-> write (e.g. audit, log, print files).  Perhaps rename "validate" to
-> something like "force-validate".
+ measure func=KEY_CHECK keyrings=a|b|c
 
-As long as there isn't a backward compatibility concern, that makes
-more sense to me. Or "ignore-violations".
+The rule says to measure asymmetric keys added to any of the kernel
+keyrings named "a", "b", or "c". The size of the buffer size was
+equal to the size of the largest "keyrings=" value seen in a previously
+loaded rule (5 + 1 for the NUL-terminator in the previous example) and
+the buffer was pre-allocated at the time of policy load.
 
-> I forgot to add "evmctl boot_aggregate" to the README.  The supplied
-> pcrs could also be used to calculate the "boot_aggregate" value(s).
+The pre-allocated buffer approach suffered from a couple bugs:
 
-I guess that support is automatically picked up since nothing
-restricts usage of the --pcrs option to only ima_measurement and both
-call read_tpm_banks(), which includes the pcr file support.  So just a
-matter of updating the usage message and README?  That can be done as
-a separate patch IMHO.
+1) There was no locking around the use of the buffer so concurrent key
+   add operations, to two different keyrings, would result in the
+   strsep() loop of ima_match_keyring() to modify the buffer at the same
+   time. This resulted in unexpected results from ima_match_keyring()
+   and, therefore, could cause unintended keys to be measured or keys to
+   not be measured when IMA policy intended for them to be measured.
+
+2) If the kstrdup() that initialized entry->keyrings in ima_parse_rule()
+   failed, the ima_keyrings buffer was freed and set to NULL even when a
+   valid KEY_CHECK rule was previously loaded. The next KEY_CHECK event
+   would trigger a call to strcpy() with a NULL destination pointer and
+   crash the kernel.
+
+Remove the need for a pre-allocated global buffer by parsing the list of
+keyrings in a KEY_CHECK rule at the time of policy load. The
+ima_rule_entry will contain an array of string pointers which point to
+the name of each keyring specified in the rule. No string processing
+needs to happen at the time of asymmetric key add so iterating through
+the list and doing a string comparison is all that's required at the
+time of policy check.
+
+In the process of changing how the "keyrings=" policy option is handled,
+a couple additional bugs were fixed:
+
+1) The rule parser accepted rules containing invalid "keyrings=" values
+   such as "a|b||c", "a|b|", or simply "|".
+
+2) The /sys/kernel/security/ima/policy file did not display the entire
+   "keyrings=" value if the list of keyrings was longer than what could
+   fit in the fixed size tbuf buffer in ima_policy_show().
+
+Fixes: 5c7bac9fb2c5 ("IMA: pre-allocate buffer to hold keyrings string")
+Fixes: 2b60c0ecedf8 ("IMA: Read keyrings= option from the IMA policy")
+Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+---
+ security/integrity/ima/ima_policy.c | 138 +++++++++++++++++++---------
+ 1 file changed, 93 insertions(+), 45 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 07f033634b27..c328cfa0fc49 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -59,6 +59,11 @@ enum policy_types { ORIGINAL_TCB = 1, DEFAULT_TCB };
+ 
+ enum policy_rule_list { IMA_DEFAULT_POLICY = 1, IMA_CUSTOM_POLICY };
+ 
++struct ima_rule_opt_list {
++	size_t count;
++	char *items[];
++};
++
+ struct ima_rule_entry {
+ 	struct list_head list;
+ 	int action;
+@@ -78,7 +83,7 @@ struct ima_rule_entry {
+ 		int type;	/* audit type */
+ 	} lsm[MAX_LSM_RULES];
+ 	char *fsname;
+-	char *keyrings; /* Measure keys added to these keyrings */
++	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+ 	struct ima_template_desc *template;
+ };
+ 
+@@ -206,10 +211,6 @@ static LIST_HEAD(ima_policy_rules);
+ static LIST_HEAD(ima_temp_rules);
+ static struct list_head *ima_rules = &ima_default_rules;
+ 
+-/* Pre-allocated buffer used for matching keyrings. */
+-static char *ima_keyrings;
+-static size_t ima_keyrings_len;
+-
+ static int ima_policy __initdata;
+ 
+ static int __init default_measure_policy_setup(char *str)
+@@ -253,6 +254,72 @@ static int __init default_appraise_policy_setup(char *str)
+ }
+ __setup("ima_appraise_tcb", default_appraise_policy_setup);
+ 
++static struct ima_rule_opt_list *ima_alloc_rule_opt_list(const substring_t *src)
++{
++	struct ima_rule_opt_list *opt_list;
++	size_t count = 0;
++	char *src_copy;
++	char *cur, *next;
++	size_t i;
++
++	src_copy = match_strdup(src);
++	if (!src_copy)
++		return NULL;
++
++	next = src_copy;
++	while ((cur = strsep(&next, "|"))) {
++		/* Don't accept an empty list item */
++		if (!(*cur)) {
++			kfree(src_copy);
++			return ERR_PTR(-EINVAL);
++		}
++		count++;
++	}
++
++	/* Don't accept an empty list */
++	if (!count) {
++		kfree(src_copy);
++		return ERR_PTR(-EINVAL);
++	}
++
++	opt_list = kzalloc(struct_size(opt_list, items, count), GFP_KERNEL);
++	if (!opt_list) {
++		kfree(src_copy);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	/*
++	 * strsep() has already replaced all instances of '|' with '\0',
++	 * leaving a byte sequence of NUL-terminated strings. Reference each
++	 * string with the array of items.
++	 *
++	 * IMPORTANT: Ownership of the allocated buffer is transferred from
++	 * src_copy to the first element in the items array. To free the
++	 * buffer, kfree() must only be called on the first element of the
++	 * array.
++	 */
++	for (i = 0, cur = src_copy; i < count; i++) {
++		opt_list->items[i] = cur;
++		cur = strchr(cur, '\0') + 1;
++	}
++	opt_list->count = count;
++
++	return opt_list;
++}
++
++static void ima_free_rule_opt_list(struct ima_rule_opt_list *opt_list)
++{
++	if (!opt_list)
++		return;
++
++	if (opt_list->count) {
++		kfree(opt_list->items[0]);
++		opt_list->count = 0;
++	}
++
++	kfree(opt_list);
++}
++
+ static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+ {
+ 	int i;
+@@ -274,7 +341,7 @@ static void ima_free_rule(struct ima_rule_entry *entry)
+ 	 * the defined_templates list and cannot be freed here
+ 	 */
+ 	kfree(entry->fsname);
+-	kfree(entry->keyrings);
++	ima_free_rule_opt_list(entry->keyrings);
+ 	ima_lsm_free_rule(entry);
+ 	kfree(entry);
+ }
+@@ -394,8 +461,8 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ static bool ima_match_keyring(struct ima_rule_entry *rule,
+ 			      const char *keyring, const struct cred *cred)
+ {
+-	char *next_keyring, *keyrings_ptr;
+ 	bool matched = false;
++	size_t i;
+ 
+ 	if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
+ 		return false;
+@@ -406,15 +473,8 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
+ 	if (!keyring)
+ 		return false;
+ 
+-	strcpy(ima_keyrings, rule->keyrings);
+-
+-	/*
+-	 * "keyrings=" is specified in the policy in the format below:
+-	 * keyrings=.builtin_trusted_keys|.ima|.evm
+-	 */
+-	keyrings_ptr = ima_keyrings;
+-	while ((next_keyring = strsep(&keyrings_ptr, "|")) != NULL) {
+-		if (!strcmp(next_keyring, keyring)) {
++	for (i = 0; i < rule->keyrings->count; i++) {
++		if (!strcmp(rule->keyrings->items[i], keyring)) {
+ 			matched = true;
+ 			break;
+ 		}
+@@ -1065,7 +1125,6 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 	bool uid_token;
+ 	struct ima_template_desc *template_desc;
+ 	int result = 0;
+-	size_t keyrings_len;
+ 
+ 	ab = integrity_audit_log_start(audit_context(), GFP_KERNEL,
+ 				       AUDIT_INTEGRITY_POLICY_RULE);
+@@ -1231,37 +1290,18 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 		case Opt_keyrings:
+ 			ima_log_string(ab, "keyrings", args[0].from);
+ 
+-			keyrings_len = strlen(args[0].from) + 1;
+-
+-			if ((entry->keyrings) ||
+-			    (keyrings_len < 2)) {
++			if (entry->keyrings) {
+ 				result = -EINVAL;
+ 				break;
+ 			}
+ 
+-			if (keyrings_len > ima_keyrings_len) {
+-				char *tmpbuf;
+-
+-				tmpbuf = krealloc(ima_keyrings, keyrings_len,
+-						  GFP_KERNEL);
+-				if (!tmpbuf) {
+-					result = -ENOMEM;
+-					break;
+-				}
+-
+-				ima_keyrings = tmpbuf;
+-				ima_keyrings_len = keyrings_len;
+-			}
+-
+-			entry->keyrings = kstrdup(args[0].from, GFP_KERNEL);
+-			if (!entry->keyrings) {
+-				kfree(ima_keyrings);
+-				ima_keyrings = NULL;
+-				ima_keyrings_len = 0;
+-				result = -ENOMEM;
++			entry->keyrings = ima_alloc_rule_opt_list(args);
++			if (IS_ERR(entry->keyrings)) {
++				result = PTR_ERR(entry->keyrings);
++				entry->keyrings = NULL;
+ 				break;
+ 			}
+-			result = 0;
++
+ 			entry->flags |= IMA_KEYRINGS;
+ 			break;
+ 		case Opt_fsuuid:
+@@ -1574,6 +1614,15 @@ static void policy_func_show(struct seq_file *m, enum ima_hooks func)
+ 		seq_printf(m, "func=%d ", func);
+ }
+ 
++static void ima_show_rule_opt_list(struct seq_file *m,
++				   const struct ima_rule_opt_list *opt_list)
++{
++	size_t i;
++
++	for (i = 0; i < opt_list->count; i++)
++		seq_printf(m, "%s%s", i ? "|" : "", opt_list->items[i]);
++}
++
+ int ima_policy_show(struct seq_file *m, void *v)
+ {
+ 	struct ima_rule_entry *entry = v;
+@@ -1630,9 +1679,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 	}
+ 
+ 	if (entry->flags & IMA_KEYRINGS) {
+-		if (entry->keyrings != NULL)
+-			snprintf(tbuf, sizeof(tbuf), "%s", entry->keyrings);
+-		seq_printf(m, pt(Opt_keyrings), tbuf);
++		seq_puts(m, "keyrings=");
++		ima_show_rule_opt_list(m, entry->keyrings);
+ 		seq_puts(m, " ");
+ 	}
+ 
+-- 
+2.25.1
+
