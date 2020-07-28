@@ -2,118 +2,282 @@ Return-Path: <SRS0=eRvW=BH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-25.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E32FEC433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 20:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DE6C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 21:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB73820656
-	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 20:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A275C20656
+	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 21:36:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KXX8Mkn7"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Hi3C/U1V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbgG1UM3 (ORCPT
+        id S1729535AbgG1Vg2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 28 Jul 2020 16:12:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60674 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728347AbgG1UM2 (ORCPT
+        Tue, 28 Jul 2020 17:36:28 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47180 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729406AbgG1Vg1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 28 Jul 2020 16:12:28 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5846C0619D4
-        for <linux-integrity@vger.kernel.org>; Tue, 28 Jul 2020 13:12:28 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id t10so5235250plz.10
-        for <linux-integrity@vger.kernel.org>; Tue, 28 Jul 2020 13:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lGODvQAyFgiIakAvcuOrB55CdYdcOaQbABBPHmSlK8A=;
-        b=KXX8Mkn7MNftP6mJ42ju7ovK7oMAAX0wGRB0ry7w+mD/hsCbKEyPUIfLQgdll+U1Hq
-         4xQS018nhgkGgLPtgROQlYsblo5NoExjDQhzJknpZmFPr1lJDow/rdW50/9T5e1TGb0u
-         4gJoD0vzQnv64fwnh0m/ejgnfnf0ndm6GA1nQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lGODvQAyFgiIakAvcuOrB55CdYdcOaQbABBPHmSlK8A=;
-        b=ZhIFrPZECzLW5vx7tdmRu3onKHu7PtpTH5ZQCj7UqywimdX1eSpEIM8p5p9wQxrz82
-         5/94z3Qlh3k+wbhfli0PyeEgDCmLE1YU2UHs7kzfXIDf5erczzqsnluZVbht50wzzzrR
-         HwbGqQsYYsfXdXrVNXfvaDsxS+2WdshD+7/rBpKCoNj+ZjVsScqGM+Sx+4MdCZ1Aou7Z
-         BfNpeG1tGnut/AGC2XVvaTK0nt5Qu/lZIFiKbAIbXr6JF1WDsiCCK8Y/c/V5Ak3E58Bu
-         82clxaHz2R1YEUWHC3DsX5nHTUOFRn/cHzRR+WmBay5fKefVZHzqTBzUbNO+ZPrcExEr
-         lPWw==
-X-Gm-Message-State: AOAM530zfV6EkarGD3j3aWbiM/RztkPOCQ03J17+vrQSqTqIdmEjib47
-        4Ef+P/+BTJ+ScGZng28dSzpjgg==
-X-Google-Smtp-Source: ABdhPJyFIgRmVJfBhFlzPKJj5terbzmemlEZoh3fyIw7tCG0VwJkPldmQbeJoogxX3pMzlVW5vctfw==
-X-Received: by 2002:a17:90a:2207:: with SMTP id c7mr6611771pje.206.1595967148091;
-        Tue, 28 Jul 2020 13:12:28 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q17sm22220199pfk.0.2020.07.28.13.12.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2020 13:12:27 -0700 (PDT)
-Date:   Tue, 28 Jul 2020 13:12:26 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mimi Zohar <zohar@kernel.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
-        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
+        Tue, 28 Jul 2020 17:36:27 -0400
+Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
+        by linux.microsoft.com (Postfix) with ESMTPSA id BC67820B4909;
+        Tue, 28 Jul 2020 14:36:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BC67820B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595972186;
+        bh=niLnryC/ki7dRHPj2XKH5asljHfPy4m6fPyqjWlcQsQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Hi3C/U1ViYHsgVhUSAGVCW4zEpm4S5qenoRy8Lu4dC/vOa4+w+2atY5P+tNoADzF9
+         rE1sjhta/PuMrS6tcmyolio1Rznne8FEOAxtwDwkaYcjv+LZVoeCHxHV8HfQwtw0ZR
+         BX7JNgccEWVZ+B6i4VZZLK721UJfInsW3F5PwKh0=
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        viro@zeniv.linux.org.uk, paul@paul-moore.com, eparis@redhat.com,
+        jannh@google.com, dm-devel@redhat.com,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 15/19] IMA: Add support for file reads without contents
-Message-ID: <202007281311.F2F5A7ED5@keescook>
-References: <20200724213640.389191-1-keescook@chromium.org>
- <20200724213640.389191-16-keescook@chromium.org>
- <1595856214.4841.86.camel@kernel.org>
- <202007281244.2F2681AE9@keescook>
- <20200728195640.GA342741@kroah.com>
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-audit@redhat.com
+Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
+        nramas@linux.microsoft.com, pasha.tatashin@soleen.com
+Subject: [RFC PATCH v5 01/11] scripts: add ipe tooling to generate boot policy
+Date:   Tue, 28 Jul 2020 14:36:01 -0700
+Message-Id: <20200728213614.586312-2-deven.desai@linux.microsoft.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200728195640.GA342741@kroah.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 09:56:40PM +0200, Greg Kroah-Hartman wrote:
-> On Tue, Jul 28, 2020 at 12:44:50PM -0700, Kees Cook wrote:
-> > On Mon, Jul 27, 2020 at 09:23:34AM -0400, Mimi Zohar wrote:
-> > > On Fri, 2020-07-24 at 14:36 -0700, Kees Cook wrote:
-> > > > From: Scott Branden <scott.branden@broadcom.com>
-> > > > 
-> > > > When the kernel_read_file LSM hook is called with contents=false, IMA
-> > > > can appraise the file directly, without requiring a filled buffer. When
-> > > > such a buffer is available, though, IMA can continue to use it instead
-> > > > of forcing a double read here.
-> > > > 
-> > > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> > > > Link: https://lore.kernel.org/lkml/20200706232309.12010-10-scott.branden@broadcom.com/
-> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > 
-> > > After adjusting the comment below.
-> > > 
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > 
-> > Sure!
-> > 
-> > Greg, shall I send a v4 with added Reviews and the comment change or is
-> > that minor enough that you're able to do it?
-> 
-> v4 is needed, as this series is a mess of reviewes and you will have to
-> redo at least one patch and drop some others, right?
+Add a tool for the generation of an IPE policy to be compiled into the
+kernel. This policy will be enforced until userland deploys and activates
+a new policy.
 
-Well, I wasn't sure what your desire was, given the weirdness of taking
-some and reverting others. I will do a v4 based on driver-core-next.
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+---
+ MAINTAINERS                   |   6 ++
+ scripts/Makefile              |   1 +
+ scripts/ipe/Makefile          |   2 +
+ scripts/ipe/polgen/.gitignore |   1 +
+ scripts/ipe/polgen/Makefile   |   7 ++
+ scripts/ipe/polgen/polgen.c   | 136 ++++++++++++++++++++++++++++++++++
+ 6 files changed, 153 insertions(+)
+ create mode 100644 scripts/ipe/Makefile
+ create mode 100644 scripts/ipe/polgen/.gitignore
+ create mode 100644 scripts/ipe/polgen/Makefile
+ create mode 100644 scripts/ipe/polgen/polgen.c
 
-Thanks!
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d53db30d1365..86450be5437b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8579,6 +8579,12 @@ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+ F:	security/integrity/ima/
+ 
++INTEGRITY POLICY ENFORCEMENT (IPE)
++M:	Deven Bowers <deven.desai@linux.microsoft.com>
++L:	linux-integrity@vger.kernel.org
++S:	Supported
++F:	scripts/ipe/
++
+ INTEL 810/815 FRAMEBUFFER DRIVER
+ M:	Antonino Daplas <adaplas@gmail.com>
+ L:	linux-fbdev@vger.kernel.org
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 95ecf970c74c..b3c1882fd6dd 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -34,6 +34,7 @@ hostprogs += unifdef
+ subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+ subdir-$(CONFIG_MODVERSIONS) += genksyms
+ subdir-$(CONFIG_SECURITY_SELINUX) += selinux
++subdir-$(CONFIG_SECURITY_IPE) += ipe
+ 
+ # Let clean descend into subdirs
+ subdir-	+= basic dtc gdb kconfig mod
+diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
+new file mode 100644
+index 000000000000..e87553fbb8d6
+--- /dev/null
++++ b/scripts/ipe/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++subdir-y := polgen
+diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
+new file mode 100644
+index 000000000000..80f32f25d200
+--- /dev/null
++++ b/scripts/ipe/polgen/.gitignore
+@@ -0,0 +1 @@
++polgen
+diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
+new file mode 100644
+index 000000000000..a519b594e13c
+--- /dev/null
++++ b/scripts/ipe/polgen/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++hostprogs-y	:= polgen
++HOST_EXTRACFLAGS += \
++	-I$(srctree)/include \
++	-I$(srctree)/include/uapi \
++
++always		:= $(hostprogs-y)
+diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+new file mode 100644
+index 000000000000..a80fffe1b27c
+--- /dev/null
++++ b/scripts/ipe/polgen/polgen.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <stdlib.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <errno.h>
++
++static void usage(const char *const name)
++{
++	printf("Usage: %s OutputFile (PolicyFile)\n", name);
++	exit(EINVAL);
++}
++
++static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
++{
++	int rc = 0;
++	FILE *fd;
++	char *lbuf;
++	size_t fsize;
++	size_t read;
++
++	fd = fopen(pathname, "r");
++	if (!fd) {
++		rc = errno;
++		goto out;
++	}
++
++	fseek(fd, 0, SEEK_END);
++	fsize = ftell(fd);
++	rewind(fd);
++
++	lbuf = malloc(fsize);
++	if (!lbuf) {
++		rc = ENOMEM;
++		goto out_close;
++	}
++
++	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
++	if (read != fsize) {
++		rc = -1;
++		goto out_free;
++	}
++
++	*buffer = lbuf;
++	*size = fsize;
++	fclose(fd);
++
++	return rc;
++
++out_free:
++	free(lbuf);
++out_close:
++	fclose(fd);
++out:
++	return rc;
++}
++
++static int write_boot_policy(const char *pathname, const char *buf, size_t size)
++{
++	FILE *fd;
++	size_t i;
++
++	fd = fopen(pathname, "w");
++	if (!fd)
++		goto err;
++
++	fprintf(fd, "/* This file is automatically generated.");
++	fprintf(fd, " Do not edit. */\n");
++	fprintf(fd, "#include <stddef.h>\n");
++	fprintf(fd, "const char *const ipe_boot_policy =\n");
++
++	if (!buf || size == 0) {
++		fprintf(fd, "\tNULL;\n");
++		fclose(fd);
++		return 0;
++	}
++
++	for (i = 0; i < size; ++i) {
++		if (i == 0)
++			fprintf(fd, "\t\"");
++
++		switch (buf[i]) {
++		case '"':
++			fprintf(fd, "\\\"");
++			break;
++		case '\'':
++			fprintf(fd, "'");
++			break;
++		case '\n':
++			fprintf(fd, "\\n\"\n\t\"");
++			break;
++		case '\\':
++			fprintf(fd, "\\\\");
++			break;
++		default:
++			fprintf(fd, "%c", buf[i]);
++		}
++	}
++	fprintf(fd, "\";\n");
++	fclose(fd);
++
++	return 0;
++
++err:
++	if (fd)
++		fclose(fd);
++	return errno;
++}
++
++int main(int argc, const char *argv[])
++{
++	int rc = 0;
++	size_t len = 0;
++	char *policy = NULL;
++
++	if (argc < 2)
++		usage(argv[0]);
++
++	if (argc > 2) {
++		rc = policy_to_buffer(argv[2], &policy, &len);
++		if (rc != 0)
++			goto cleanup;
++	}
++
++	rc = write_boot_policy(argv[1], policy, len);
++cleanup:
++	if (policy)
++		free(policy);
++	if (rc != 0)
++		perror("An error occurred during policy conversion: ");
++	return rc;
++}
 -- 
-Kees Cook
+2.27.0
+
