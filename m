@@ -2,118 +2,130 @@ Return-Path: <SRS0=eRvW=BH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A692C433E1
-	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 03:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3D9C433E8
+	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 10:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60EED207CD
-	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 03:15:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MfTig2D+"
+	by mail.kernel.org (Postfix) with ESMTP id 46A6D20775
+	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jul 2020 10:32:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726739AbgG1DPD (ORCPT
+        id S1728580AbgG1Kce (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 27 Jul 2020 23:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbgG1DPC (ORCPT
+        Tue, 28 Jul 2020 06:32:34 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34184 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbgG1Kcd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 27 Jul 2020 23:15:02 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE955C061794
-        for <linux-integrity@vger.kernel.org>; Mon, 27 Jul 2020 20:15:01 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id ha11so3387683pjb.1
-        for <linux-integrity@vger.kernel.org>; Mon, 27 Jul 2020 20:15:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=tqvPFptaXrqNLR/xpVd6gqyLWNSPgfU8K5sYlQ8u1qk=;
-        b=MfTig2D+aYwwa+XQpMSjtudJi6GMDOHV1l6mBKV7hAMMghTpxbq478ZNPNMlVsOeWi
-         yLsYPYGtEXOT2mrDzUb6BJx5lUg1V3gn6YdRJKKv1GUHL90KDPfHOfGINlaagEi/0hPC
-         3llxQQkuycFFeX7edCokUFbc5zSCiBKd6eZAYpIxPbCyYoxtGOgHWataeD38y9F14qGQ
-         TNx3jvz+sVvHBP3oT7jwF69qV4NA0tNRv9f7FZnUTKAJqTgSVNlfLdh+R3poOjPBqXzR
-         3BtmMml7SQBYhiG/ZFMCZ4nIZ1kIPOjvT/OAUchfyurXVgTWk856aYaZCf0zYEsHaXnv
-         OLxg==
+        Tue, 28 Jul 2020 06:32:33 -0400
+Received: by mail-lj1-f196.google.com with SMTP id q7so20570421ljm.1
+        for <linux-integrity@vger.kernel.org>; Tue, 28 Jul 2020 03:32:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:reply-to:cc:to:from:autocrypt:subject:message-id
+         :date:user-agent:mime-version:content-language
          :content-transfer-encoding;
-        bh=tqvPFptaXrqNLR/xpVd6gqyLWNSPgfU8K5sYlQ8u1qk=;
-        b=B4dFIUb+bLqATEOERj71xfEn9ywAUI1uArToepbKGT78nc7GAGZ9C5KGEqiXSYTAQR
-         LOC9FgXnJ0JxpQXmoKfiTH+xJS5/ZXReeKwCAwwDuPGY9ypckCUjf4MzkVQBzjvhA70y
-         Ubf7Rlbzq37s8Y7nhxwLCSTwTEP6VWCFs5ypt8h52xbwEkF/dg42nya591u4UGRaU9hK
-         KQRmebp9Z9duIcQy4h4cCjQG7zNgWlLqJdsLFM+12ZEyntg2EjP0IxNlUmHmGxLF5XBI
-         2HEJDgiYGpPmvJPgEGOCHivtwsDK+PiZqnX/3PmfJa+TwCXIH1+aUpZXeZohaokUkYrl
-         Zv2g==
-X-Gm-Message-State: AOAM533xRc2MUJKK+oFJHso0X1gSFOZXOhrAXhw4Fw5AB0u6p7nSlr9A
-        rjywnwMy/8QLLIy87S+dhuCh1Q==
-X-Google-Smtp-Source: ABdhPJxs1jdMEm+AIUYt11RFJG6KlKTFv/6nraFuHw6vmYq4NWdqisr5zlsOqt5+h+EYMaUvuXwCvQ==
-X-Received: by 2002:a17:902:b18b:: with SMTP id s11mr21796119plr.152.1595906101384;
-        Mon, 27 Jul 2020 20:15:01 -0700 (PDT)
-Received: from debian.flets-east.jp ([2400:2411:502:a100:c84b:19e2:9b53:48bb])
-        by smtp.gmail.com with ESMTPSA id s10sm3895285pjf.3.2020.07.27.20.14.58
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Jul 2020 20:15:00 -0700 (PDT)
-From:   Masahisa Kojima <masahisa.kojima@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     masahisa.kojima@linaro.org, jarkko.sakkinen@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, ardb@kernel.org,
-        devicetree@vger.kernel.org, linux-integrity@vger.kernel.org,
-        peterhuewe@gmx.de, jgg@ziepe.ca
-Subject: [PATCH v5 0/2] synquacer: add TPM support
-Date:   Tue, 28 Jul 2020 12:14:30 +0900
-Message-Id: <20200728031433.3370-1-masahisa.kojima@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        bh=3QX9JLdom00JZsV5FU2q6ORA3eX5WpDBTV/Ti2B6414=;
+        b=a46N4p9Ifm1LqcxUFiWr7zO0fYZjRjnkEXWTT+MJvY17ie4rhw+bLTV93V9IUjDD/5
+         J6kZGIvk9REfYwpGAv+u8XoxGIWs8RhORAwTjCdRSR8XY0pqx7kbI2nVgdCR7Y/FuXLG
+         qHspC1bKFSteRRnqhu+IYH4WPVKjkfg6LlCd08XEOfb/u3HUGMwhDeeUjpQesZ9vEREB
+         xWyoHYeLpZk/iyBXCdoDSK5ApysXMEydMD5SG65JMjBXOnXtNlrLivNfVhNwrnNP8xKf
+         zOJPzZdCcd9OeI6WC+55B1dIDNxaj0LaW7FuuM30MtG1g42haosyImFpaYFLV1ifrxyV
+         W9vA==
+X-Gm-Message-State: AOAM5301GweRyPuDnIjBhKgMxxq1Nd9T+ND0odEcAGrPUgKFRVawrJmj
+        cJum2/f+BXIDbAkGyt4jMws=
+X-Google-Smtp-Source: ABdhPJxivuA/+HsK2cCZDHWZV2DTW0/rpk9CdiP8WItE8w8XCS35J2ZFR0P+MqPSn7t3lMUtozda9w==
+X-Received: by 2002:a2e:874f:: with SMTP id q15mr12770542ljj.16.1595932351143;
+        Tue, 28 Jul 2020 03:32:31 -0700 (PDT)
+Received: from [10.68.32.147] (broadband-37-110-38-130.ip.moscow.rt.ru. [37.110.38.130])
+        by smtp.gmail.com with ESMTPSA id v5sm2869376lji.75.2020.07.28.03.32.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jul 2020 03:32:30 -0700 (PDT)
+Reply-To: efremov@linux.com
+Cc:     Dmitry Vyukov <dvyukov@google.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+From:   Denis Efremov <efremov@linux.com>
+Autocrypt: addr=efremov@linux.com; keydata=
+ mQINBFsJUXwBEADDnzbOGE/X5ZdHqpK/kNmR7AY39b/rR+2Wm/VbQHV+jpGk8ZL07iOWnVe1
+ ZInSp3Ze+scB4ZK+y48z0YDvKUU3L85Nb31UASB2bgWIV+8tmW4kV8a2PosqIc4wp4/Qa2A/
+ Ip6q+bWurxOOjyJkfzt51p6Th4FTUsuoxINKRMjHrs/0y5oEc7Wt/1qk2ljmnSocg3fMxo8+
+ y6IxmXt5tYvt+FfBqx/1XwXuOSd0WOku+/jscYmBPwyrLdk/pMSnnld6a2Fp1zxWIKz+4VJm
+ QEIlCTe5SO3h5sozpXeWS916VwwCuf8oov6706yC4MlmAqsQpBdoihQEA7zgh+pk10sCvviX
+ FYM4gIcoMkKRex/NSqmeh3VmvQunEv6P+hNMKnIlZ2eJGQpz/ezwqNtV/przO95FSMOQxvQY
+ 11TbyNxudW4FBx6K3fzKjw5dY2PrAUGfHbpI3wtVUNxSjcE6iaJHWUA+8R6FLnTXyEObRzTS
+ fAjfiqcta+iLPdGGkYtmW1muy/v0juldH9uLfD9OfYODsWia2Ve79RB9cHSgRv4nZcGhQmP2
+ wFpLqskh+qlibhAAqT3RQLRsGabiTjzUkdzO1gaNlwufwqMXjZNkLYu1KpTNUegx3MNEi2p9
+ CmmDxWMBSMFofgrcy8PJ0jUnn9vWmtn3gz10FgTgqC7B3UvARQARAQABtCFEZW5pcyBFZnJl
+ bW92IDxlZnJlbW92QGxpbnV4LmNvbT6JAlcEEwEIAEECGwMFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4ACGQEWIQR2VAM2ApQN8ZIP5AO1IpWwM1AwHwUCXsQtuwUJB31DPwAKCRC1IpWwM1Aw
+ H3dQD/9E/hFd2yPwWA5cJ5jmBeQt4lBi5wUXd2+9Y0mBIn40F17Xrjebo+D8E5y6S/wqfImW
+ nSDYaMfIIljdjmUUanR9R7Cxd/Z548Qaa4F1AtB4XN3W1L49q21h942iu0yxSLZtq9ayeja6
+ flCB7a+gKjHMWFDB4nRi4gEJvZN897wdJp2tAtUfErXvvxR2/ymKsIf5L0FZBnIaGpqRbfgG
+ Slu2RSpCkvxqlLaYGeYwGODs0QR7X2i70QGeEzznN1w1MGKLOFYw6lLeO8WPi05fHzpm5pK6
+ mTKkpZ53YsRfWL/HY3kLZPWm1cfAxa/rKvlhom+2V8cO4UoLYOzZLNW9HCFnNxo7zHoJ1shR
+ gYcCq8XgiJBF6jfM2RZYkOAJd6E3mVUxctosNq6av3NOdsp1Au0CYdQ6Whi13azZ81pDlJQu
+ Hdb0ZpDzysJKhORsf0Hr0PSlYKOdHuhl8fXKYOGQxpYrWpOnjrlEORl7NHILknXDfd8mccnf
+ 4boKIZP7FbqSLw1RSaeoCnqH4/b+ntsIGvY3oJjzbQVq7iEpIhIoQLxeklFl1xvJAOuSQwII
+ I9S0MsOm1uoT/mwq+wCYux4wQhALxSote/EcoUxK7DIW9ra4fCCo0bzaX7XJ+dJXBWb0Ixxm
+ yLl39M+7gnhvZyU+wkTYERp1qBe9ngjd0QTZNVi7MbkCDQRbCVF8ARAA3ITFo8OvvzQJT2cY
+ nPR718Npm+UL6uckm0Jr0IAFdstRZ3ZLW/R9e24nfF3A8Qga3VxJdhdEOzZKBbl1nadZ9kKU
+ nq87te0eBJu+EbcuMv6+njT4CBdwCzJnBZ7ApFpvM8CxIUyFAvaz4EZZxkfEpxaPAivR1Sa2
+ 2x7OMWH/78laB6KsPgwxV7fir45VjQEyJZ5ac5ydG9xndFmb76upD7HhV7fnygwf/uIPOzNZ
+ YVElGVnqTBqisFRWg9w3Bqvqb/W6prJsoh7F0/THzCzp6PwbAnXDedN388RIuHtXJ+wTsPA0
+ oL0H4jQ+4XuAWvghD/+RXJI5wcsAHx7QkDcbTddrhhGdGcd06qbXe2hNVgdCtaoAgpCEetW8
+ /a8H+lEBBD4/iD2La39sfE+dt100cKgUP9MukDvOF2fT6GimdQ8TeEd1+RjYyG9SEJpVIxj6
+ H3CyGjFwtIwodfediU/ygmYfKXJIDmVpVQi598apSoWYT/ltv+NXTALjyNIVvh5cLRz8YxoF
+ sFI2VpZ5PMrr1qo+DB1AbH00b0l2W7HGetSH8gcgpc7q3kCObmDSa3aTGTkawNHzbceEJrL6
+ mRD6GbjU4GPD06/dTRIhQatKgE4ekv5wnxBK6v9CVKViqpn7vIxiTI9/VtTKndzdnKE6C72+
+ jTwSYVa1vMxJABtOSg8AEQEAAYkCPAQYAQgAJgIbDBYhBHZUAzYClA3xkg/kA7UilbAzUDAf
+ BQJexC4MBQkHfUOQAAoJELUilbAzUDAfPYoQAJdBGd9WZIid10FCoI30QXA82SHmxWe0Xy7h
+ r4bbZobDPc7GbTHeDIYmUF24jI15NZ/Xy9ADAL0TpEg3fNVad2eslhCwiQViWfKOGOLLMe7v
+ zod9dwxYdGXnNRlW+YOCdFNVPMvPDr08zgzXaZ2+QJjp44HSyzxgONmHAroFcqCFUlfAqUDO
+ T30gV5bQ8BHqvfWyEhJT+CS3JJyP8BmmSgPa0Adlp6Do+pRsOO1YNNO78SYABhMi3fEa7X37
+ WxL31TrNCPnIauTgZtf/KCFQJpKaakC3ffEkPhyTjEl7oOE9xccNjccZraadi+2uHV0ULA1m
+ ycHhb817A03n1I00QwLf2wOkckdqTqRbFFI/ik69hF9hemK/BmAHpShI+z1JsYT9cSs8D7wb
+ aF/jQVy4URensgAPkgXsRiboqOj/rTz9F5mpd/gPU/IOUPFEMoo4TInt/+dEVECHioU3RRrW
+ EahrGMfRngbdp/mKs9aBR56ECMfFFUPyI3VJsNbgpcIJjV/0N+JdJKQpJ/4uQ2zNm0wH/RU8
+ CRJvEwtKemX6fp/zLI36Gvz8zJIjSBIEqCb7vdgvWarksrhmi6/Jay5zRZ03+k6YwiqgX8t7
+ ANwvYa1h1dQ36OiTqm1cIxRCGl4wrypOVGx3OjCar7sBLD+NkwO4RaqFvdv0xuuy4x01VnOF
+Subject: IMA/EVM interfaces
+Message-ID: <bf04bf15-cddd-ce22-926a-8459c1f92779@linux.com>
+Date:   Tue, 28 Jul 2020 13:32:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This adds support for driving the TPM on Socionext SynQuacer platform
-using the driver for a memory mapped TIS frame.
+Hi,
 
-v5:
-- modify multi-line comment style
-- remove MODULE_AUTHOR() and MODULE_VERSION()
+I've started to add integrity interfaces descriptions to syzkaller
+(https://github.com/google/syzkaller/pull/1970).
 
-v4:
-- add ACPI support
-- modify function and structure name
+I've got a question, if you don't mind:
 
-v3:
-- prepare new module to handle TPM MMIO access on SynQuacer platform
+If I write 2 to /sys/kernel/security/integrity/evm/evm before loading keys,
+subsequent fs operations will fail with -ENOKEY.
 
-v2:
-- don't use read/write_bytes() to implement read/write16/32 since that uses
-  the wrong address
+$ echo 2 > /sys/kernel/security/integrity/evm/evm
+$ touch test.txt
+[  526.976855][ T5771] evm: HMAC key is not set
+[  526.977892][ T5771] evm: init_desc failed
+touch: cannot touch 'test.txt': Required key not available
 
-Cc: jarkko.sakkinen@linux.intel.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: ardb@kernel.org
-Cc: devicetree@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: peterhuewe@gmx.de
-Cc: jgg@ziepe.ca
+Is this a desired behavior? Should there be a check in evm_write_key()
+for loaded keys (encrypted evm-key, keys in _evm, _ima keyrings) before
+changing the evm_initialized bit? Is it correct to set second bit without
+first bit?
 
-Masahisa Kojima (2):
-  tpm: tis: add support for MMIO TPM on SynQuacer
-  dt-bindings: Add SynQucer TPM MMIO as a trivial device
-
- .../devicetree/bindings/trivial-devices.yaml  |   2 +
- drivers/char/tpm/Kconfig                      |  12 +
- drivers/char/tpm/Makefile                     |   1 +
- drivers/char/tpm/tpm_tis_synquacer.c          | 208 ++++++++++++++++++
- 4 files changed, 223 insertions(+)
- create mode 100644 drivers/char/tpm/tpm_tis_synquacer.c
-
--- 
-2.20.1
-
+Thanks,
+Denis
