@@ -8,69 +8,70 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8B9C433ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432DFC433E1
 	for <linux-integrity@archiver.kernel.org>; Wed, 29 Jul 2020 17:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72FAE20838
+	by mail.kernel.org (Postfix) with ESMTP id 28C4722B47
 	for <linux-integrity@archiver.kernel.org>; Wed, 29 Jul 2020 17:59:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PeYr3jVB"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZZB5JK//"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbgG2R7e (ORCPT
+        id S1727937AbgG2R7d (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Jul 2020 13:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
+        Wed, 29 Jul 2020 13:59:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbgG2R7F (ORCPT
+        with ESMTP id S1727936AbgG2R7H (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Jul 2020 13:59:05 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CEFEC0619DA
-        for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2020 10:59:05 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id p3so14673080pgh.3
-        for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2020 10:59:05 -0700 (PDT)
+        Wed, 29 Jul 2020 13:59:07 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F59C0619E3
+        for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2020 10:59:06 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id o13so14698806pgf.0
+        for <linux-integrity@vger.kernel.org>; Wed, 29 Jul 2020 10:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2dckHYDBSef92hBk0hdLw37DCCWMtjung/PzGLRIGlQ=;
-        b=PeYr3jVB7W6UcW212/oJZmLRi4czVPcQjfijK3aeH7rdxGYPMC62JtlyIoOxj7gwy5
-         c2dWpHJMjKgNg5+GOs7lE5ptFlJbitvkjzFCMkK2BuSsglPWQHHRYHbZXOmZVOOvVeL9
-         AXbaJuHNrbC7ktjkX3HyAY7OqVwqAjEvn/WKk=
+        bh=d+cxh7Adx01Lz+PZ0BqdBZD0tuhqHe+fIcb3T8VVshI=;
+        b=ZZB5JK//OYdCgnZb/fU8QzTjp427UrGSGiw79T8stn6rtJuQa9EpnWg2nqhPKWluxW
+         W6G5fG+ztYpEQLf1lCq0MlQ9zNk4q/Y5m3gxLuSfvTXmmiKW5Rv4D1MaN0sW3Ja7Djt+
+         EOHWd0VX606jZjeyOdUtx/H0g56YaQIalcg6A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2dckHYDBSef92hBk0hdLw37DCCWMtjung/PzGLRIGlQ=;
-        b=cEZcjaom9aN20gWhO5WQyjBmimIMmIFBl0csHkMZ4Q6po608PhKZhd94zdmFU4u7/5
-         vCX1sjI1zbpO3rrp/0NIcBDrtB3tjXd4Cagdbd1f74fftKV5FORFVi9cenuLAefvRsjG
-         a2LYVxOxStqSntofuubFQtK2LhTiJ8DeJC5s9zPnqaJbOXdc/utT1bFdNU73k8zkJPXF
-         BE5aP7FX01tt1avggRCA1QiEsZS6qH2vsj7DP35nZD7VMEZpojf7j/C9p6iWYYYLtnaB
-         8k+ZI4le1cFrcVKwChbUziM2vhfTBKiesRfiRDj+e0470jRX4JY8LqsXt3zQl8W31x/O
-         GCgA==
-X-Gm-Message-State: AOAM532nNPzzKrQKCdShizEttUjlL9wQClm3dx57Eo5yRvKAFN+4L+mN
-        iExhFb6R7LJNtVrBvs6OtAsEbw==
-X-Google-Smtp-Source: ABdhPJx0d4Pms05JWWdUqTfjeGaSa2h+B6c1vOgjK6stye4AbmKSEHfAQSNgfmrRFdWMcscCi/9fDQ==
-X-Received: by 2002:a65:64c5:: with SMTP id t5mr30425186pgv.28.1596045544724;
-        Wed, 29 Jul 2020 10:59:04 -0700 (PDT)
+        bh=d+cxh7Adx01Lz+PZ0BqdBZD0tuhqHe+fIcb3T8VVshI=;
+        b=nU3AapdfPWADf17fw33xokw6qnEQcX90Ps+uaFhLV2Q+ypm6TgLs9TBZXtrebXJNJb
+         4++tdNIuW5td83WHLFEfS98B6tM8Vm4+fTL3uC4cuMN+jVOflQOfJJRE7bbpXxLaVMDf
+         7OkzDGyGzae0+iBFb6klsDu6uqFM7CneCcwOKbVW7mcEkBdj/WilGmM8yBmt0qhZmH/w
+         fYQ6TZHV1fN8KbCiupLadLOGi5yx6Wddt7bguy9oJB+d0M/S/jB60LwUZTyXbZD4oXOS
+         /mU0HJaOqs2SfQ2G/BOU37Ew7jissTFtNi2uQtsPznzWk8uruzg0OG51Zn55JV9zH9sG
+         Ds3w==
+X-Gm-Message-State: AOAM533gcHZqBlFhFTGMsu4TKtyduKCsiLUlT/5hjXe4aqhH5InwCUnx
+        jOz8rEsIkJL2HsQ62eEtpyHqCg==
+X-Google-Smtp-Source: ABdhPJzwV8yZ+vHoQE7rb6HkYEvIykxXV/ucl+4R0uhyvLJBDEppIOQPIpaDe7F8tvEjOO8IV+mKow==
+X-Received: by 2002:a63:ce41:: with SMTP id r1mr31178572pgi.203.1596045546377;
+        Wed, 29 Jul 2020 10:59:06 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t73sm3172293pfc.78.2020.07.29.10.58.57
+        by smtp.gmail.com with ESMTPSA id y10sm3081590pff.187.2020.07.29.10.58.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2020 10:58:58 -0700 (PDT)
+        Wed, 29 Jul 2020 10:59:04 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>,
+Cc:     Kees Cook <keescook@chromium.org>,
         Scott Branden <scott.branden@broadcom.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>, SeongJae Park <sjpark@amazon.de>,
+        Takashi Iwai <tiwai@suse.de>, Jessica Yu <jeyu@kernel.org>,
+        SeongJae Park <sjpark@amazon.de>,
         KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 11/17] module: Call security_kernel_post_load_data()
-Date:   Wed, 29 Jul 2020 10:58:39 -0700
-Message-Id: <20200729175845.1745471-12-keescook@chromium.org>
+Subject: [PATCH v4 13/17] IMA: Add support for file reads without contents
+Date:   Wed, 29 Jul 2020 10:58:41 -0700
+Message-Id: <20200729175845.1745471-14-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200729175845.1745471-1-keescook@chromium.org>
 References: <20200729175845.1745471-1-keescook@chromium.org>
@@ -81,49 +82,61 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Now that there is an API for checking loaded contents for modules
-loaded without a file, call into the LSM hooks.
+From: Scott Branden <scott.branden@broadcom.com>
 
-Cc: Jessica Yu <jeyu@kernel.org>
+When the kernel_read_file LSM hook is called with contents=false, IMA
+can appraise the file directly, without requiring a filled buffer. When
+such a buffer is available, though, IMA can continue to use it instead
+of forcing a double read here.
+
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+Link: https://lore.kernel.org/lkml/20200706232309.12010-10-scott.branden@broadcom.com/
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- kernel/module.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ security/integrity/ima/ima_main.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index d773f32f8dfd..72e33e25d7b9 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2970,7 +2970,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
- 	if (info->len < sizeof(*(info->hdr)))
- 		return -ENOEXEC;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dc4f90660aa6..de57fce5bced 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -613,11 +613,8 @@ void ima_post_path_mknod(struct dentry *dentry)
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+ 		  bool contents)
+ {
+-	/* Reject all partial reads during appraisal. */
+-	if (!contents) {
+-		if (ima_appraise & IMA_APPRAISE_ENFORCE)
+-			return -EACCES;
+-	}
++	enum ima_hooks func;
++	u32 secid;
  
--	err = security_kernel_load_data(LOADING_MODULE, false);
-+	err = security_kernel_load_data(LOADING_MODULE, true);
- 	if (err)
- 		return err;
- 
-@@ -2980,11 +2980,17 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
- 		return -ENOMEM;
- 
- 	if (copy_chunked_from_user(info->hdr, umod, info->len) != 0) {
--		vfree(info->hdr);
--		return -EFAULT;
-+		err = -EFAULT;
-+		goto out;
- 	}
- 
+ 	/*
+ 	 * Do devices using pre-allocated memory run the risk of the
+@@ -626,7 +623,20 @@ int ima_read_file(struct file *file, enum kernel_read_file_id read_id,
+ 	 * buffers? It may be desirable to include the buffer address
+ 	 * in this API and walk all the dma_map_single() mappings to check.
+ 	 */
 -	return 0;
-+	err = security_kernel_post_load_data((char *)info->hdr, info->len,
-+					     LOADING_MODULE);
-+out:
-+	if (err)
-+		vfree(info->hdr);
 +
-+	return err;
++	/*
++	 * There will be a call made to ima_post_read_file() with
++	 * a filled buffer, so we don't need to perform an extra
++	 * read early here.
++	 */
++	if (contents)
++		return 0;
++
++	/* Read entire file for all partial reads. */
++	func = read_idmap[read_id] ?: FILE_CHECK;
++	security_task_getsecid(current, &secid);
++	return process_measurement(file, current_cred(), secid, NULL,
++				   0, MAY_READ, func);
  }
  
- static void free_copy(struct load_info *info)
+ const int read_idmap[READING_MAX_ID] = {
 -- 
 2.25.1
 
