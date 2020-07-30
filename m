@@ -2,38 +2,39 @@ Return-Path: <SRS0=cYPt=BJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-25.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 052E7C433EB
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 00:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF32C433E1
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 00:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D787D2082E
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 00:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C3E32082E
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 00:32:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="c6MB2iC5"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Nol/SQau"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbgG3AcP (ORCPT
+        id S1728287AbgG3AbU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Jul 2020 20:32:15 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54148 "EHLO
+        Wed, 29 Jul 2020 20:31:20 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:54004 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728275AbgG3AbV (ORCPT
+        with ESMTP id S1728112AbgG3AbU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Jul 2020 20:31:21 -0400
+        Wed, 29 Jul 2020 20:31:20 -0400
 Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 6342620B490F;
-        Wed, 29 Jul 2020 17:31:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6342620B490F
+        by linux.microsoft.com (Postfix) with ESMTPSA id 16B2620B4909;
+        Wed, 29 Jul 2020 17:31:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 16B2620B4909
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596069080;
-        bh=+61YBSjOP4ZQrvaK6jew3ITHo5Th5B0Y1X96EWC3CeE=;
+        s=default; t=1596069079;
+        bh=5r88m8tcUXiyScfgzQMHwRZLIt4HBAVPLHZslW/JgqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c6MB2iC5YpjPOBp774dDuSE7Wzv34z0ERFqgb4MbETlNZmmgELjrrtDvWkZL0NYzi
-         j3Lc/2iY2UTduS+1EuPBHRzhQt/scEmOlCrgGSH1211sjaRgwOcFPfJVm1tSX3vYF1
-         0nOIdFu2NJmmxYk+4H7wja+RQudVAQj2xBnOV5zE=
+        b=Nol/SQau/JZewjOq0QYKhM2OWR0FRCM0HNPrFmz+PMJxdki3NU2PD7nf6S0186HCZ
+         oj42P3Olt2RgBzsqUKUyO6NlxmZiFz8pnCgbp9AX4hZsTEyHiEjqGRExWTcRT7nzMj
+         cQxllHvIJQK2VtHsflC25rz6G9m/t2SQJrp8ped4=
 From:   Deven Bowers <deven.desai@linux.microsoft.com>
 To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
         jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
@@ -47,9 +48,9 @@ Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
         corbet@lwn.net, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
         nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-Subject: [RFC PATCH v6 06/11] dm-verity: add bdev_setsecurity hook for dm-verity signature
-Date:   Wed, 29 Jul 2020 17:31:08 -0700
-Message-Id: <20200730003113.2561644-7-deven.desai@linux.microsoft.com>
+Subject: [RFC PATCH v6 01/11] scripts: add ipe tooling to generate boot policy
+Date:   Wed, 29 Jul 2020 17:31:03 -0700
+Message-Id: <20200730003113.2561644-2-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200730003113.2561644-1-deven.desai@linux.microsoft.com>
 References: <20200730003113.2561644-1-deven.desai@linux.microsoft.com>
@@ -60,110 +61,223 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add a security hook call to set a security property of a block_device
-in dm-verity with the results of a verified, signed root-hash.
+Add a tool for the generation of an IPE policy to be compiled into the
+kernel. This policy will be enforced until userland deploys and activates
+a new policy.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- drivers/md/dm-verity-target.c     |  2 +-
- drivers/md/dm-verity-verify-sig.c | 14 +++++++++++---
- drivers/md/dm-verity-verify-sig.h | 10 ++++++----
- include/linux/device-mapper.h     |  2 ++
- 4 files changed, 20 insertions(+), 8 deletions(-)
+ MAINTAINERS                   |   6 ++
+ scripts/Makefile              |   1 +
+ scripts/ipe/Makefile          |   2 +
+ scripts/ipe/polgen/.gitignore |   1 +
+ scripts/ipe/polgen/Makefile   |   7 ++
+ scripts/ipe/polgen/polgen.c   | 136 ++++++++++++++++++++++++++++++++++
+ 6 files changed, 153 insertions(+)
+ create mode 100644 scripts/ipe/Makefile
+ create mode 100644 scripts/ipe/polgen/.gitignore
+ create mode 100644 scripts/ipe/polgen/Makefile
+ create mode 100644 scripts/ipe/polgen/polgen.c
 
-diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-index eec9f252e935..9970488e67ed 100644
---- a/drivers/md/dm-verity-target.c
-+++ b/drivers/md/dm-verity-target.c
-@@ -1134,7 +1134,7 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
- 	}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f0569cf304ca..d29c2e4612e4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8580,6 +8580,12 @@ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+ F:	security/integrity/ima/
  
- 	/* Root hash signature is  a optional parameter*/
--	r = verity_verify_root_hash(root_hash_digest_to_validate,
-+	r = verity_verify_root_hash(v, root_hash_digest_to_validate,
- 				    strlen(root_hash_digest_to_validate),
- 				    verify_args.sig,
- 				    verify_args.sig_size);
-diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
-index 614e43db93aa..2cd9f8c85449 100644
---- a/drivers/md/dm-verity-verify-sig.c
-+++ b/drivers/md/dm-verity-verify-sig.c
-@@ -8,7 +8,10 @@
- #include <linux/device-mapper.h>
- #include <linux/verification.h>
- #include <keys/user-type.h>
-+#include <linux/security.h>
-+#include <linux/list.h>
- #include <linux/module.h>
-+#include "dm-core.h"
- #include "dm-verity.h"
- #include "dm-verity-verify-sig.h"
- 
-@@ -103,8 +106,9 @@ int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
-  * @sig_len: Size of the signature.
-  *
-  */
--int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
--			    const void *sig_data, size_t sig_len)
-+int verity_verify_root_hash(struct dm_verity *v, const void *root_hash,
-+			    size_t root_hash_len, const void *sig_data,
-+			    size_t sig_len)
- {
- 	int ret;
- 
-@@ -121,8 +125,12 @@ int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
- 	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
- 				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
- 				NULL, NULL);
-+	if (ret)
-+		return ret;
- 
--	return ret;
-+	return security_bdev_setsecurity(dm_table_get_md(v->ti->table)->bdev,
-+					 DM_VERITY_SIGNATURE_SEC_NAME,
-+					 sig_data, sig_len);
- }
- 
- void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
-diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
-index 19b1547aa741..6b7de1d48e5a 100644
---- a/drivers/md/dm-verity-verify-sig.h
-+++ b/drivers/md/dm-verity-verify-sig.h
-@@ -20,8 +20,9 @@ struct dm_verity_sig_opts {
- 
- #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
- 
--int verity_verify_root_hash(const void *data, size_t data_len,
--			    const void *sig_data, size_t sig_len);
-+int verity_verify_root_hash(struct dm_verity *v, const void *data,
-+			    size_t data_len, const void *sig_data,
-+			    size_t sig_len);
- bool verity_verify_is_sig_opt_arg(const char *arg_name);
- 
- int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
-@@ -34,8 +35,9 @@ void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
- 
- #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 0
- 
--int verity_verify_root_hash(const void *data, size_t data_len,
--			    const void *sig_data, size_t sig_len)
-+int verity_verify_root_hash(struct dm_verity *v, const void *data,
-+			    size_t data_len, const void *sig_data,
-+			    size_t sig_len)
- {
- 	return 0;
- }
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index 73dec4b5d5be..ab6b8eb0a150 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -625,4 +625,6 @@ static inline unsigned long to_bytes(sector_t n)
- 	return (n << SECTOR_SHIFT);
- }
- 
-+#define DM_VERITY_SIGNATURE_SEC_NAME DM_NAME	".verity-sig"
++INTEGRITY POLICY ENFORCEMENT (IPE)
++M:	Deven Bowers <deven.desai@linux.microsoft.com>
++L:	linux-integrity@vger.kernel.org
++S:	Supported
++F:	scripts/ipe/
 +
- #endif	/* _LINUX_DEVICE_MAPPER_H */
+ INTEL 810/815 FRAMEBUFFER DRIVER
+ M:	Antonino Daplas <adaplas@gmail.com>
+ L:	linux-fbdev@vger.kernel.org
+diff --git a/scripts/Makefile b/scripts/Makefile
+index 95ecf970c74c..b3c1882fd6dd 100644
+--- a/scripts/Makefile
++++ b/scripts/Makefile
+@@ -34,6 +34,7 @@ hostprogs += unifdef
+ subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
+ subdir-$(CONFIG_MODVERSIONS) += genksyms
+ subdir-$(CONFIG_SECURITY_SELINUX) += selinux
++subdir-$(CONFIG_SECURITY_IPE) += ipe
+ 
+ # Let clean descend into subdirs
+ subdir-	+= basic dtc gdb kconfig mod
+diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
+new file mode 100644
+index 000000000000..e87553fbb8d6
+--- /dev/null
++++ b/scripts/ipe/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++subdir-y := polgen
+diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
+new file mode 100644
+index 000000000000..80f32f25d200
+--- /dev/null
++++ b/scripts/ipe/polgen/.gitignore
+@@ -0,0 +1 @@
++polgen
+diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
+new file mode 100644
+index 000000000000..a519b594e13c
+--- /dev/null
++++ b/scripts/ipe/polgen/Makefile
+@@ -0,0 +1,7 @@
++# SPDX-License-Identifier: GPL-2.0
++hostprogs-y	:= polgen
++HOST_EXTRACFLAGS += \
++	-I$(srctree)/include \
++	-I$(srctree)/include/uapi \
++
++always		:= $(hostprogs-y)
+diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+new file mode 100644
+index 000000000000..a80fffe1b27c
+--- /dev/null
++++ b/scripts/ipe/polgen/polgen.c
+@@ -0,0 +1,136 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <stdlib.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <unistd.h>
++#include <errno.h>
++
++static void usage(const char *const name)
++{
++	printf("Usage: %s OutputFile (PolicyFile)\n", name);
++	exit(EINVAL);
++}
++
++static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
++{
++	int rc = 0;
++	FILE *fd;
++	char *lbuf;
++	size_t fsize;
++	size_t read;
++
++	fd = fopen(pathname, "r");
++	if (!fd) {
++		rc = errno;
++		goto out;
++	}
++
++	fseek(fd, 0, SEEK_END);
++	fsize = ftell(fd);
++	rewind(fd);
++
++	lbuf = malloc(fsize);
++	if (!lbuf) {
++		rc = ENOMEM;
++		goto out_close;
++	}
++
++	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
++	if (read != fsize) {
++		rc = -1;
++		goto out_free;
++	}
++
++	*buffer = lbuf;
++	*size = fsize;
++	fclose(fd);
++
++	return rc;
++
++out_free:
++	free(lbuf);
++out_close:
++	fclose(fd);
++out:
++	return rc;
++}
++
++static int write_boot_policy(const char *pathname, const char *buf, size_t size)
++{
++	FILE *fd;
++	size_t i;
++
++	fd = fopen(pathname, "w");
++	if (!fd)
++		goto err;
++
++	fprintf(fd, "/* This file is automatically generated.");
++	fprintf(fd, " Do not edit. */\n");
++	fprintf(fd, "#include <stddef.h>\n");
++	fprintf(fd, "const char *const ipe_boot_policy =\n");
++
++	if (!buf || size == 0) {
++		fprintf(fd, "\tNULL;\n");
++		fclose(fd);
++		return 0;
++	}
++
++	for (i = 0; i < size; ++i) {
++		if (i == 0)
++			fprintf(fd, "\t\"");
++
++		switch (buf[i]) {
++		case '"':
++			fprintf(fd, "\\\"");
++			break;
++		case '\'':
++			fprintf(fd, "'");
++			break;
++		case '\n':
++			fprintf(fd, "\\n\"\n\t\"");
++			break;
++		case '\\':
++			fprintf(fd, "\\\\");
++			break;
++		default:
++			fprintf(fd, "%c", buf[i]);
++		}
++	}
++	fprintf(fd, "\";\n");
++	fclose(fd);
++
++	return 0;
++
++err:
++	if (fd)
++		fclose(fd);
++	return errno;
++}
++
++int main(int argc, const char *argv[])
++{
++	int rc = 0;
++	size_t len = 0;
++	char *policy = NULL;
++
++	if (argc < 2)
++		usage(argv[0]);
++
++	if (argc > 2) {
++		rc = policy_to_buffer(argv[2], &policy, &len);
++		if (rc != 0)
++			goto cleanup;
++	}
++
++	rc = write_boot_policy(argv[1], policy, len);
++cleanup:
++	if (policy)
++		free(policy);
++	if (rc != 0)
++		perror("An error occurred during policy conversion: ");
++	return rc;
++}
 -- 
 2.27.0
 
