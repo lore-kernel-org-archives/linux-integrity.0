@@ -2,217 +2,103 @@ Return-Path: <SRS0=cYPt=BJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2721C433DF
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 03:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C49C433E0
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 06:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9482206E6
-	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 03:47:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZfhQxxF+"
+	by mail.kernel.org (Postfix) with ESMTP id 64120207F5
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jul 2020 06:50:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbgG3Drq (ORCPT
+        id S1726261AbgG3Guu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Jul 2020 23:47:46 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53434 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbgG3Dra (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Jul 2020 23:47:30 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 8194D20B490A;
-        Wed, 29 Jul 2020 20:47:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8194D20B490A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596080849;
-        bh=g8P3tVPFZK672hTvxoboLR7QmXQ2fY2BSiKz+mu9g08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZfhQxxF+oSD31YlSb3OqN0hz2FEojL2tyh8RZ6OmqhZg/KpjkiGri677MWn6NkKOd
-         TYQvn4ZxpJBelxUrcEYU+Hi9YnYuBZEPzPx/qA6HWJoAvVc1SlYUFtPePmQ9b//dPv
-         9M3glWGXPG3YLV+at7ed43S9Ddh0MAlF+lTflDHw=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/4] IMA: Define IMA hooks to measure LSM state and policy
-Date:   Wed, 29 Jul 2020 20:47:22 -0700
-Message-Id: <20200730034724.3298-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200730034724.3298-1-nramas@linux.microsoft.com>
-References: <20200730034724.3298-1-nramas@linux.microsoft.com>
+        Thu, 30 Jul 2020 02:50:50 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2549 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725892AbgG3Guu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Jul 2020 02:50:50 -0400
+Received: from lhreml721-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 3311F5EC5D86FCE7C827;
+        Thu, 30 Jul 2020 07:50:48 +0100 (IST)
+Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
+ lhreml721-chm.china.huawei.com (10.201.108.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Thu, 30 Jul 2020 07:50:47 +0100
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Thu, 30 Jul 2020 08:50:47 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Thu, 30 Jul 2020 08:50:47 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "efremov@linux.com" <efremov@linux.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>
+CC:     Dmitry Vyukov <dvyukov@google.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: IMA/EVM interfaces
+Thread-Topic: IMA/EVM interfaces
+Thread-Index: AQHWZMpr83sXYkAPt0yzElAzGYKB66kdIV3QgAHagACAALU/0A==
+Date:   Thu, 30 Jul 2020 06:50:46 +0000
+Message-ID: <425db984e96241f0a28a0b650aaa0b1d@huawei.com>
+References: <bf04bf15-cddd-ce22-926a-8459c1f92779@linux.com>
+ <ef2745fddaec4f859cf9852028f650df@huawei.com>
+ <b3d93ebd-80a0-4aea-15ef-8bd22241e19f@linux.com>
+In-Reply-To: <b3d93ebd-80a0-4aea-15ef-8bd22241e19f@linux.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-IMA subsystem needs to define IMA hooks that the security modules can
-call to measure state and policy data.
-
-Define two new IMA hooks, namely ima_lsm_state() and ima_lsm_policy(),
-that the security modules can call to measure LSM state and LSM policy
-respectively. Return the status of the measurement operation from these
-two IMA hooks.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- include/linux/ima.h               | 14 +++++++++
- security/integrity/ima/ima.h      |  6 ++--
- security/integrity/ima/ima_main.c | 50 ++++++++++++++++++++++++++-----
- 3 files changed, 60 insertions(+), 10 deletions(-)
-
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index d15100de6cdd..442ca0dce3c8 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -26,6 +26,10 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
- extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
-+extern int ima_measure_lsm_state(const char *lsm_event_name, const void *buf,
-+				 int size);
-+extern int ima_measure_lsm_policy(const char *lsm_event_name, const void *buf,
-+				  int size);
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-@@ -104,6 +108,16 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
- }
- 
- static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
-+static inline int ima_measure_lsm_state(const char *lsm_event_name,
-+					const void *buf, int size)
-+{
-+	return -EOPNOTSUPP;
-+}
-+static inline int ima_measure_lsm_policy(const char *lsm_event_name,
-+					 const void *buf, int size)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 1b5f4b2f17d0..8ed9f5e1dd40 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -267,9 +267,9 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, const struct modsig *modsig, int pcr,
- 			   struct ima_template_desc *template_desc);
--void process_buffer_measurement(struct inode *inode, const void *buf, int size,
--				const char *eventname, enum ima_hooks func,
--				int pcr, const char *keyring);
-+int process_buffer_measurement(struct inode *inode, const void *buf, int size,
-+			       const char *eventname, enum ima_hooks func,
-+			       int pcr, const char *keyring);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8a91711ca79b..74d421e40c8f 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -736,9 +736,9 @@ int ima_load_data(enum kernel_load_data_id id)
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
--void process_buffer_measurement(struct inode *inode, const void *buf, int size,
--				const char *eventname, enum ima_hooks func,
--				int pcr, const char *keyring)
-+int process_buffer_measurement(struct inode *inode, const void *buf, int size,
-+			       const char *eventname, enum ima_hooks func,
-+			       int pcr, const char *keyring)
- {
- 	int ret = 0;
- 	const char *audit_cause = "ENOMEM";
-@@ -758,7 +758,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 	u32 secid;
- 
- 	if (!ima_policy_flag)
--		return;
-+		return 0;
- 
- 	/*
- 	 * Both LSM hooks and auxilary based buffer measurements are
-@@ -772,7 +772,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 		action = ima_get_action(inode, current_cred(), secid, 0, func,
- 					&pcr, &template, keyring);
- 		if (!(action & IMA_MEASURE))
--			return;
-+			return 0;
- 	}
- 
- 	if (!pcr)
-@@ -787,7 +787,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 			pr_err("template %s init failed, result: %d\n",
- 			       (strlen(template->name) ?
- 				template->name : template->fmt), ret);
--			return;
-+			return ret;
- 		}
- 	}
- 
-@@ -819,7 +819,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 					func_measure_str(func),
- 					audit_cause, ret, 0, ret);
- 
--	return;
-+	return ret;
- }
- 
- /**
-@@ -846,6 +846,42 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- 	fdput(f);
- }
- 
-+/**
-+ * ima_measure_lsm_state - measure LSM specific state
-+ * @lsm_event_name: LSM event
-+ * @buf: pointer to buffer containing LSM specific state
-+ * @size: Number of bytes in buf
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+int ima_measure_lsm_state(const char *lsm_event_name, const void *buf,
-+			  int size)
-+{
-+	if (!lsm_event_name || !buf || !size)
-+		return -EINVAL;
-+
-+	return process_buffer_measurement(NULL, buf, size, lsm_event_name,
-+					  LSM_STATE, 0, NULL);
-+}
-+
-+/**
-+ * ima_measure_lsm_policy - measure LSM specific policy
-+ * @lsm_event_name: LSM event
-+ * @buf: pointer to buffer containing LSM specific policy
-+ * @size: Number of bytes in buf
-+ *
-+ * Buffers can only be measured, not appraised.
-+ */
-+int ima_measure_lsm_policy(const char *lsm_event_name, const void *buf,
-+			   int size)
-+{
-+	if (!lsm_event_name || !buf || !size)
-+		return -EINVAL;
-+
-+	return process_buffer_measurement(NULL, buf, size, lsm_event_name,
-+					  LSM_POLICY, 0, NULL);
-+}
-+
- static int __init init_ima(void)
- {
- 	int error;
--- 
-2.27.0
-
+PiBGcm9tOiBEZW5pcyBFZnJlbW92IFttYWlsdG86ZWZyZW1vdkBsaW51eC5jb21dDQo+IFNlbnQ6
+IFdlZG5lc2RheSwgSnVseSAyOSwgMjAyMCAxMTo1OSBQTQ0KPiANCj4gDQo+IA0KPiBPbiA3LzI4
+LzIwIDY6NDMgUE0sIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4+IEZyb206IGxpbnV4LWludGVn
+cml0eS1vd25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1pbnRlZ3JpdHktDQo+ID4+
+IG93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIERlbmlzIEVmcmVtb3YNCj4gPj4g
+U2VudDogVHVlc2RheSwgSnVseSAyOCwgMjAyMCAxMjozMiBQTQ0KPiA+PiBIaSwNCj4gPj4NCj4g
+Pj4gSSd2ZSBzdGFydGVkIHRvIGFkZCBpbnRlZ3JpdHkgaW50ZXJmYWNlcyBkZXNjcmlwdGlvbnMg
+dG8gc3l6a2FsbGVyDQo+ID4+IChodHRwczovL2dpdGh1Yi5jb20vZ29vZ2xlL3N5emthbGxlci9w
+dWxsLzE5NzApLg0KPiA+Pg0KPiA+PiBJJ3ZlIGdvdCBhIHF1ZXN0aW9uLCBpZiB5b3UgZG9uJ3Qg
+bWluZDoNCj4gPj4NCj4gPj4gSWYgSSB3cml0ZSAyIHRvIC9zeXMva2VybmVsL3NlY3VyaXR5L2lu
+dGVncml0eS9ldm0vZXZtIGJlZm9yZSBsb2FkaW5nDQo+IGtleXMsDQo+ID4+IHN1YnNlcXVlbnQg
+ZnMgb3BlcmF0aW9ucyB3aWxsIGZhaWwgd2l0aCAtRU5PS0VZLg0KPiA+Pg0KPiA+PiAkIGVjaG8g
+MiA+IC9zeXMva2VybmVsL3NlY3VyaXR5L2ludGVncml0eS9ldm0vZXZtDQo+ID4+ICQgdG91Y2gg
+dGVzdC50eHQNCg0KTG9va3MgZ29vZC4gTWltaSwgY291bGQgeW91IHBsZWFzZSB0YWtlIHRoaXMg
+cGF0Y2gsIGFuZCBpZg0KcG9zc2libGUsIHRoZSBvdGhlcnMgaW4gdGhlIHBhdGNoIHNldD8NCg0K
+VGhhbmtzDQoNClJvYmVydG8NCg0KSFVBV0VJIFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJI
+LCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVjdG9yOiBMaSBQZW5nLCBMaSBKaWFuLCBTaGkgWWFu
+bGkNCg0KPiA+PiBbICA1MjYuOTc2ODU1XVsgVDU3NzFdIGV2bTogSE1BQyBrZXkgaXMgbm90IHNl
+dA0KPiA+PiBbICA1MjYuOTc3ODkyXVsgVDU3NzFdIGV2bTogaW5pdF9kZXNjIGZhaWxlZA0KPiA+
+PiB0b3VjaDogY2Fubm90IHRvdWNoICd0ZXN0LnR4dCc6IFJlcXVpcmVkIGtleSBub3QgYXZhaWxh
+YmxlDQo+ID4+DQo+ID4+IElzIHRoaXMgYSBkZXNpcmVkIGJlaGF2aW9yPyBTaG91bGQgdGhlcmUg
+YmUgYSBjaGVjayBpbiBldm1fd3JpdGVfa2V5KCkNCj4gPj4gZm9yIGxvYWRlZCBrZXlzIChlbmNy
+eXB0ZWQgZXZtLWtleSwga2V5cyBpbiBfZXZtLCBfaW1hIGtleXJpbmdzKQ0KPiBiZWZvcmUNCj4g
+Pj4gY2hhbmdpbmcgdGhlIGV2bV9pbml0aWFsaXplZCBiaXQ/IElzIGl0IGNvcnJlY3QgdG8gc2V0
+IHNlY29uZCBiaXQgd2l0aG91dA0KPiA+PiBmaXJzdCBiaXQ/DQo+ID4NCj4gPiBIaSBEZW5pcw0K
+PiA+DQo+ID4gY2FuIHlvdSBwbGVhc2UgdHJ5IHRoaXMgcGF0Y2g/DQo+ID4NCj4gPiBodHRwczov
+L2xvcmUua2VybmVsLm9yZy9saW51eC1pbnRlZ3JpdHkvMjAyMDA2MTgxNjAxMzMuOTM3LTEtDQo+
+IHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbS8NCj4gPg0KPiA+DQo+IA0KPiAkIGNhdCAvcHJvYy9j
+bWRsaW5lDQo+IGNvbnNvbGU9dHR5UzAgcm9vdD0vZGV2L3NkYSBlYXJseXByaW50az1zZXJpYWwg
+aW1hX2FwcHJhaXNlPWZpeCBldm09Zml4DQo+ICQgZWNobyAyID4gL3N5cy9rZXJuZWwvc2VjdXJp
+dHkvaW50ZWdyaXR5L2V2bS9ldm0NCj4gWyAgIDQ0LjExNjA4NF1bIFQ0MTA4XSBldm06IEhNQUMg
+a2V5IGlzIG5vdCBzZXQNCj4gJCB0b3VjaCB0ZXN0LnR4dA0KPiAkIGNhdCAvc3lzL2tlcm5lbC9z
+ZWN1cml0eS9pbnRlZ3JpdHkvZXZtL2V2bQ0KPiAyDQo+ICQga2V5Y3RsIGFkZCB1c2VyIGttay11
+c2VyICJgY2F0IC9ldGMva2V5cy9rbWstdXNlci5ibG9iYCIgQHUNCj4gJCBrZXljdGwgYWRkIGVu
+Y3J5cHRlZCBldm0ta2V5ICJsb2FkIGBjYXQgL2V0Yy9rZXlzL2V2bS11c2VyLmJsb2JgIiBAdQ0K
+PiAkIGVjaG8gMSA+IC9zeXMva2VybmVsL3NlY3VyaXR5L2ludGVncml0eS9ldm0vZXZtDQo+IFsg
+IDU3NC4zMjgyNjJdIGV2bToga2V5IGluaXRpYWxpemVkDQo+IA0KPiBSZWdhcmRzLA0KPiBEZW5p
+cw0K
