@@ -7,190 +7,126 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A6DC433DF
-	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 14:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 673CFC433E3
+	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 14:15:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2E172087C
-	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 14:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DEB92087C
+	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 14:15:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbgGaOPE (ORCPT
+        id S1729020AbgGaOPG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 31 Jul 2020 10:15:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14860 "EHLO
+        Fri, 31 Jul 2020 10:15:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36276 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728752AbgGaOPD (ORCPT
+        by vger.kernel.org with ESMTP id S1728997AbgGaOPF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 31 Jul 2020 10:15:03 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06VE21G4068130;
-        Fri, 31 Jul 2020 10:14:58 -0400
+        Fri, 31 Jul 2020 10:15:05 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06VE2pmG127583;
+        Fri, 31 Jul 2020 10:15:01 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32mgkhqpx8-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32mg7b01wf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Jul 2020 10:14:58 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06VE2nI8071819;
-        Fri, 31 Jul 2020 10:14:58 -0400
+        Fri, 31 Jul 2020 10:15:01 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06VE44Cr132684;
+        Fri, 31 Jul 2020 10:15:01 -0400
 Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32mgkhqpwc-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32mg7b01t1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Jul 2020 10:14:58 -0400
+        Fri, 31 Jul 2020 10:15:01 -0400
 Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06VE9rng013694;
-        Fri, 31 Jul 2020 14:14:55 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04fra.de.ibm.com with ESMTP id 32gcpwcgmn-1
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06VE9TO6013654;
+        Fri, 31 Jul 2020 14:14:58 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04fra.de.ibm.com with ESMTP id 32gcpwcgmp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Jul 2020 14:14:55 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06VEErhw11534754
+        Fri, 31 Jul 2020 14:14:58 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06VEDUCg57016796
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Jul 2020 14:14:53 GMT
+        Fri, 31 Jul 2020 14:13:30 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C94942047;
-        Fri, 31 Jul 2020 14:14:53 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 3910F4203F;
+        Fri, 31 Jul 2020 14:14:56 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF3D942049;
-        Fri, 31 Jul 2020 14:14:51 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 5D02E42049;
+        Fri, 31 Jul 2020 14:14:55 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.38.42])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 31 Jul 2020 14:14:51 +0000 (GMT)
+        Fri, 31 Jul 2020 14:14:55 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
         Vitaly Chikunov <vt@altlinux.org>,
         Bruno Meneguele <bmeneg@redhat.com>
-Subject: [ima-evm-utils: PATCH 1/3] Drop the ima_measurement "--verify" option
-Date:   Fri, 31 Jul 2020 10:14:30 -0400
-Message-Id: <20200731141432.668318-2-zohar@linux.ibm.com>
+Subject: [ima-evm-utils: PATCH 3/3] Update the ima_boot_aggregate apsects of the "README" and "help" files
+Date:   Fri, 31 Jul 2020 10:14:32 -0400
+Message-Id: <20200731141432.668318-4-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.18.4
 In-Reply-To: <20200731141432.668318-1-zohar@linux.ibm.com>
 References: <20200731141432.668318-1-zohar@linux.ibm.com>
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
  definitions=2020-07-31_04:2020-07-31,2020-07-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 phishscore=0 priorityscore=1501 mlxscore=0
- bulkscore=0 clxscore=1015 malwarescore=0 suspectscore=1 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007310101
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=1 impostorscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ spamscore=0 clxscore=1015 phishscore=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007310104
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-While walking the IMA measurement list re-calculating the PCRS,
-ima_measurement should always re-calculate the template data digest
-and verify it against the measurement list value.
+Add the missing "evmctl ima_boot_aggregate" info to the README.  Update
+the "help" to include the new "--pcrs" option.  In addition, replace
+the "file" option with "TPM 1.2 BIOS event log".  The new format is:
 
-This patch removes the "--verify" option.
+ima_boot_aggregate [--pcrs hash-algorithm,file] [TPM 1.2 BIOS event log]
 
-On success, return 0.
+Reminder: calculating the TPM PCRs based on the BIOS event log and
+comparing them with the TPM PCRs should be done prior to calculating the
+possible boot_aggregate value(s).
 
-Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+For TPM 1.2, the TPM 1.2 BIOS event log may be provided as an option
+when calculating the ima_boot_aggregate.  For TPM 2.0, "tsseventextend
+-sim -if <binary_bios_measurements> -ns -v", may be used to validate
+the TPM 2.0 event log.
+
+(Note: some TPM 2.0's export the BIOS event log in the TPM 1.2 format.)
+
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- README       |  3 +--
- src/evmctl.c | 23 ++++++++---------------
- 2 files changed, 9 insertions(+), 17 deletions(-)
+ README       | 1 +
+ src/evmctl.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/README b/README
-index 73b38a1f35ba..d8b8f404534b 100644
+index b37325f31802..321045d9d52b 100644
 --- a/README
 +++ b/README
-@@ -31,7 +31,7 @@ COMMANDS
+@@ -28,6 +28,7 @@ COMMANDS
+  import [--rsa] pubkey keyring
+  sign [-r] [--imahash | --imasig ] [--portable] [--key key] [--pass password] file
+  verify file
++ ima_boot_aggregate [--pcrs hash-algorithm,file] [TPM 1.2 BIOS event log]
   ima_sign [--sigfile] [--key key] [--pass password] file
   ima_verify file
   ima_hash file
-- ima_measurement [--validate] [--verify] [--verify-sig [--key "key1, key2, ..."]]  [--pcrs [hash-algorithm,]file [--pcrs hash-algorithm,file] ...] file
-+ ima_measurement [--validate] [--verify-sig [--key "key1, key2, ..."]]  [--pcrs [hash-algorithm,]file [--pcrs hash-algorithm,file] ...] file
-  ima_fix [-t fdsxm] path
-  sign_hash [--key key] [--pass password]
-  hmac [--imahash | --imasig ] file
-@@ -61,7 +61,6 @@ OPTIONS
-       --engine e     preload OpenSSL engine e (such as: gost)
-       --pcrs         file containing TPM pcrs, one per hash-algorithm/bank
-       --validate     ignore ToMToU measurement violations
--      --verify       verify the template data digest
-       --verify-sig   verify the file signature based on the file hash, both
-                      stored in the template data.
-   -v                 increase verbosity level
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 448e4a9c8d78..b4d2333fb880 100644
+index 7ad11507487f..de7299d41b2c 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -1393,7 +1393,6 @@ struct template_entry {
- static uint8_t zero[MAX_DIGEST_SIZE];
- 
- static int validate = 0;
--static int verify = 0;
- 
- static int ima_verify_template_hash(struct template_entry *entry)
- {
-@@ -1945,7 +1944,7 @@ static int ima_measurement(const char *file)
- 
- 	struct template_entry entry = { .template = 0 };
- 	FILE *fp;
--	int verified_template_digest = 0;
-+	int invalid_template_digest = 0;
- 	int err_padded = -1;
- 	int err = -1;
- 
-@@ -2075,11 +2074,9 @@ static int ima_measurement(const char *file)
- 				 pseudo_padded_banks);
- 
- 		/* Recalculate and verify template data digest */
--		if (verify) {
--			err = ima_verify_template_hash(&entry);
--			if (err)
--				verified_template_digest = 1;
--		}
-+		err = ima_verify_template_hash(&entry);
-+		if (err)
-+			invalid_template_digest = 1;
- 
- 		if (is_ima_template)
- 			ima_show(&entry);
-@@ -2116,7 +2113,7 @@ static int ima_measurement(const char *file)
- 			log_info("Failed to match per TPM bank or SHA1 padded TPM digest(s).\n");
- 	}
- 
--	if (verified_template_digest) {
-+	if (invalid_template_digest) {
- 		log_info("Failed to verify template data digest.\n");
- 		err = 1;
- 	}
-@@ -2486,7 +2483,7 @@ struct command cmds[] = {
- 	{"ima_verify", cmd_verify_ima, 0, "file", "Verify IMA signature (for debugging).\n"},
+@@ -2485,7 +2485,7 @@ struct command cmds[] = {
  	{"ima_setxattr", cmd_setxattr_ima, 0, "[--sigfile file]", "Set IMA signature from sigfile\n"},
  	{"ima_hash", cmd_hash_ima, 0, "file", "Make file content hash.\n"},
--	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] [--verify] [--verify-sig [--key key1, key2, ...]] [--pcrs [hash-algorithm,]file [--pcrs hash-algorithm,file] ...] file", "Verify measurement list (experimental).\n"},
-+	{"ima_measurement", cmd_ima_measurement, 0, "[--validate] [--verify-sig [--key key1, key2, ...]] [--pcrs [hash-algorithm,]file [--pcrs hash-algorithm,file] ...] file", "Verify measurement list (experimental).\n"},
- 	{"ima_boot_aggregate", cmd_ima_bootaggr, 0, "[file]", "Calculate per TPM bank boot_aggregate digests\n"},
+ 	{"ima_measurement", cmd_ima_measurement, 0, "[--ignore-violations] [--verify-sig [--key key1, key2, ...]] [--pcrs [hash-algorithm,]file [--pcrs hash-algorithm,file] ...] file", "Verify measurement list (experimental).\n"},
+-	{"ima_boot_aggregate", cmd_ima_bootaggr, 0, "[file]", "Calculate per TPM bank boot_aggregate digests\n"},
++	{"ima_boot_aggregate", cmd_ima_bootaggr, 0, "[--pcrs hash-algorithm,file] [TPM 1.2 BIOS event log]", "Calculate per TPM bank boot_aggregate digests\n"},
  	{"ima_fix", cmd_ima_fix, 0, "[-t fdsxm] path", "Recursively fix IMA/EVM xattrs in fix mode.\n"},
  	{"ima_clear", cmd_ima_clear, 0, "[-t fdsxm] path", "Recursively remove IMA/EVM xattrs.\n"},
-@@ -2526,8 +2523,7 @@ static struct option opts[] = {
- 	{"engine", 1, 0, 139},
- 	{"xattr-user", 0, 0, 140},
- 	{"validate", 0, 0, 141},
--	{"verify", 0, 0, 142},
--	{"pcrs", 1, 0, 143},
-+	{"pcrs", 1, 0, 142},
- 	{}
- 
- };
-@@ -2709,10 +2705,7 @@ int main(int argc, char *argv[])
- 		case 141: /* --validate */
- 			validate = 1;
- 			break;
--		case 142: /* --verify */
--			verify = 1;
--			break;
--		case 143:
-+		case 142:
- 			if (npcrfile >= MAX_PCRFILE) {
- 				log_err("too many --pcrfile options\n");
- 				exit(1);
+ 	{"sign_hash", cmd_sign_hash, 0, "[--key key] [--pass [password]", "Sign hashes from shaXsum output.\n"},
 -- 
 2.18.4
 
