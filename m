@@ -2,58 +2,76 @@ Return-Path: <SRS0=JU8H=BK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB5DC433E0
-	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 20:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F81C433E0
+	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 20:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4362A208E4
-	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 20:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 813D42087C
+	for <linux-integrity@archiver.kernel.org>; Fri, 31 Jul 2020 20:26:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgGaUTQ (ORCPT
+        id S1729014AbgGaU0m (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 31 Jul 2020 16:19:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46148 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727074AbgGaUTP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 31 Jul 2020 16:19:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 246C9ACA9;
-        Fri, 31 Jul 2020 20:19:28 +0000 (UTC)
-Date:   Fri, 31 Jul 2020 22:19:13 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, Vitaly Chikunov <vt@altlinux.org>,
+        Fri, 31 Jul 2020 16:26:42 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:56266 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727917AbgGaU0l (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 31 Jul 2020 16:26:41 -0400
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 0B18772CCDC;
+        Fri, 31 Jul 2020 23:26:39 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id E8E5E4A4AE7;
+        Fri, 31 Jul 2020 23:26:38 +0300 (MSK)
+Date:   Fri, 31 Jul 2020 23:26:38 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Petr Vorel <pvorel@suse.cz>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
         Bruno Meneguele <bmeneg@redhat.com>
-Subject: Re: [ima-evm-utils: PATCH 0/5] initial travis support
-Message-ID: <20200731201913.GB27841@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
+Subject: Re: [ima-evm-utils: PATCH 5/5] ima-evm-utils: travis: openssl gost
+ engine
+Message-ID: <20200731202638.x5mnkz7hcpgbveu2@altlinux.org>
 References: <20200731182408.696931-1-zohar@linux.ibm.com>
+ <20200731182408.696931-6-zohar@linux.ibm.com>
+ <20200731185633.kqgcz4dwfa4ruyld@altlinux.org>
+ <20200731201808.GA27841@dell5510>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <20200731182408.696931-1-zohar@linux.ibm.com>
+In-Reply-To: <20200731201808.GA27841@dell5510>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Mimi,
+Petr,
 
-> Support for multiple TSS and crypto libraries resulted in needing to
-> test different software package combinations.  Although this is a
-> first attempt at using travis matrix, I've been asked to include the
-> travis.yml file in the git repo.  Before doing so, I'd appreciate
-> some sort of review.
+On Fri, Jul 31, 2020 at 10:18:08PM +0200, Petr Vorel wrote:
+> > > +++ b/tests/install-gost-engine.sh
+> > > @@ -0,0 +1,10 @@
+> > > +#!/bin/sh
+> > > +
+> > > +openssl version
+> > > +
+> > > +git clone https://github.com/gost-engine/engine.git
+> 
+> > gost-engine master branch corresponds to openssl-3.0 which is probably
+> > not on Travis systems yet. I think branch `openssl_1_1_0` should be used.
+> 
+> >   git clone --branch openssl_1_1_0 https://github.com/gost-engine/engine.git
+> 
+> FYI: it work on current setup.
+> https://travis-ci.org/github/pevik/ima-evm-utils/builds/713815774
 
-Thanks for implementing it!
-LGTM.
-Tested-by: Petr Vorel <pvorel@suse.cz>
+I think `install-gost-engine.sh` is not executed in this line:
 
-I'll try to find time soon to convert it to Docker based Travis CI.
+  257 $ if [ "${SSL}" = "openssl" ]; then ./tests/install-gost-engine.sh; openssl version; fi   0.00s
 
-Kind regards,
-Petr
+> 
+> Kind regards,
+> Petr
