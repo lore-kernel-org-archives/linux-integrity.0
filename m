@@ -2,41 +2,41 @@ Return-Path: <SRS0=ghDQ=BN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D8EC433E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FE3C433E1
 	for <linux-integrity@archiver.kernel.org>; Mon,  3 Aug 2020 15:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F34F420775
+	by mail.kernel.org (Postfix) with ESMTP id E000B208C7
 	for <linux-integrity@archiver.kernel.org>; Mon,  3 Aug 2020 15:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbgHCPP5 (ORCPT
+        id S1727928AbgHCPP5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Mon, 3 Aug 2020 11:15:57 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2562 "EHLO huawei.com"
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2560 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728023AbgHCPP5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        id S1726707AbgHCPP5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
         Mon, 3 Aug 2020 11:15:57 -0400
-Received: from lhreml723-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id E7F70D021A538B952AE1;
-        Mon,  3 Aug 2020 16:15:55 +0100 (IST)
+Received: from lhreml721-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id DDDC8B0F2CA1B972FFBF;
+        Mon,  3 Aug 2020 16:15:54 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml723-chm.china.huawei.com (10.201.108.74) with Microsoft SMTP Server
+ lhreml721-chm.china.huawei.com (10.201.108.72) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 3 Aug 2020 16:15:55 +0100
+ 15.1.1913.5; Mon, 3 Aug 2020 16:15:54 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Mon, 3 Aug 2020 17:15:55 +0200
+ 15.1.1913.5; Mon, 3 Aug 2020 17:15:54 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-Subject: [RFC][PATCH 3/3] evm: Add support for digest lists of metadata
-Date:   Mon, 3 Aug 2020 17:13:13 +0200
-Message-ID: <20200803151313.17510-4-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 1/3] ima: Add support for measurement with digest lists
+Date:   Mon, 3 Aug 2020 17:13:11 +0200
+Message-ID: <20200803151313.17510-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
 In-Reply-To: <20200803151313.17510-1-roberto.sassu@huawei.com>
 References: <20200803151313.17510-1-roberto.sassu@huawei.com>
@@ -52,204 +52,336 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch adds support in EVM to verify file metadata digest with digest
-lists. Metadata digest, calculated in the same way as for portable
-signatures, is searched in the digest lists only if the file has the
-security.evm xattr with type EVM_IMA_XATTR_DIGEST_LIST.
+IMA-Measure creates a new measurement entry every time a file is measured,
+unless the same entry is already in the measurement list.
 
-If the found digest is marked as immutable, content and xattr/attr updates
-are not allowed. Otherwise, after verification, the existing security.evm
-with the new type will be replaced with an HMAC, similarly to non-portable
-signatures.
+This patch introduces a new type of measurement list, recognizable by the
+PCR number specified with the new ima_digest_list_pcr= kernel option. This
+type of measurement list includes measurements of digest lists and files
+not found in those lists.
+
+The benefit of this patch is the availability of a predictable PCR that
+can be used to seal data or TPM keys to the OS software. Unlike standard
+measurements, digest list measurements only indicate that files with a
+digest in those lists could have been accessed, but not if and when. With
+standard measurements, however, the chosen PCR is unlikely predictable.
+
+Both standard and digest list measurements can be generated at the same
+time by adding '+' as a prefix to the value of ima_digest_list_pcr=
+(example: with ima_digest_list_pcr=+11, IMA generates standard measurements
+with PCR 10 and digest list measurements with PCR 11).
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/evm/evm_crypto.c |  9 ++--
- security/integrity/evm/evm_main.c   | 82 ++++++++++++++++++++++++++---
- 2 files changed, 81 insertions(+), 10 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  9 ++++
+ security/integrity/ima/ima.h                  |  9 ++--
+ security/integrity/ima/ima_api.c              | 42 +++++++++++++++----
+ security/integrity/ima/ima_digest_list.c      | 25 +++++++++++
+ security/integrity/ima/ima_init.c             |  2 +-
+ security/integrity/ima/ima_main.c             | 18 +++++++-
+ security/integrity/ima/ima_policy.c           |  3 +-
+ security/integrity/integrity.h                |  1 +
+ 8 files changed, 95 insertions(+), 14 deletions(-)
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 168c3b78ac47..9b4b07811e97 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -152,7 +152,8 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 	/* Don't include the inode or generation number in portable
- 	 * signatures
- 	 */
--	if (type != EVM_XATTR_PORTABLE_DIGSIG) {
-+	if (type != EVM_XATTR_PORTABLE_DIGSIG &&
-+	    type != EVM_IMA_XATTR_DIGEST_LIST) {
- 		hmac_misc.ino = inode->i_ino;
- 		hmac_misc.generation = inode->i_generation;
- 	}
-@@ -169,7 +170,8 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- 	hmac_misc.mode = inode->i_mode;
- 	crypto_shash_update(desc, (const u8 *)&hmac_misc, sizeof(hmac_misc));
- 	if ((evm_hmac_attrs & EVM_ATTR_FSUUID) &&
--	    type != EVM_XATTR_PORTABLE_DIGSIG)
-+	    type != EVM_XATTR_PORTABLE_DIGSIG &&
-+	    type != EVM_IMA_XATTR_DIGEST_LIST)
- 		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid, UUID_SIZE);
- 	crypto_shash_final(desc, digest);
- }
-@@ -282,7 +284,8 @@ static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
- 			return 0;
- 		return rc;
- 	}
--	if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG)
-+	if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG ||
-+	    xattr_data->type == EVM_IMA_XATTR_DIGEST_LIST)
- 		rc = 1;
- 	else
- 		rc = 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index d4d918183094..3c5247154811 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -89,7 +89,7 @@ static bool evm_key_loaded(void)
- 	return (bool)(evm_initialized & EVM_KEY_MASK);
- }
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 2647c5622f0f..6a44594c10d7 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1696,6 +1696,15 @@
+ 			Use the canonical format for the binary runtime
+ 			measurements, instead of host native format.
  
--static int evm_find_protected_xattrs(struct dentry *dentry)
-+static int evm_find_protected_xattrs(struct dentry *dentry, int *ima_present)
- {
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct xattr_list *xattr;
-@@ -106,6 +106,8 @@ static int evm_find_protected_xattrs(struct dentry *dentry)
- 				continue;
- 			return error;
- 		}
-+		if (!strcmp(xattr->name, XATTR_NAME_IMA))
-+			*ima_present = 1;
- 		count++;
- 	}
- 
-@@ -134,9 +136,14 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 	struct evm_ima_xattr_data *xattr_data = NULL;
- 	struct signature_v2_hdr *hdr;
- 	enum integrity_status evm_status = INTEGRITY_PASS;
-+	enum integrity_status saved_evm_status = INTEGRITY_UNKNOWN;
- 	struct evm_digest digest;
-+	struct ima_digest *found_digest;
- 	struct inode *inode;
--	int rc, xattr_len, evm_immutable = 0;
-+	struct signature_v2_hdr evm_fake_xattr = {
-+				.type = EVM_IMA_XATTR_DIGEST_LIST,
-+				.version = 2, .hash_algo = HASH_ALGO_SHA256 };
-+	int rc, xattr_len, evm_immutable = 0, ima_present = 0;
- 
- 	if (iint && (iint->evm_status == INTEGRITY_PASS ||
- 		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
-@@ -150,7 +157,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 	if (rc <= 0) {
- 		evm_status = INTEGRITY_FAIL;
- 		if (rc == -ENODATA) {
--			rc = evm_find_protected_xattrs(dentry);
-+			rc = evm_find_protected_xattrs(dentry, &ima_present);
- 			if (rc > 0)
- 				evm_status = INTEGRITY_NOLABEL;
- 			else if (rc == 0)
-@@ -158,7 +165,20 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 		} else if (rc == -EOPNOTSUPP) {
- 			evm_status = INTEGRITY_UNKNOWN;
- 		}
--		goto out;
-+		/* IMA added a fake xattr, set also EVM fake xattr */
-+		if (!ima_present && xattr_name &&
-+		    !strcmp(xattr_name, XATTR_NAME_IMA) &&
-+		    xattr_value_len >= sizeof(struct evm_ima_xattr_data)) {
-+			evm_fake_xattr.hash_algo =
-+			  ((struct evm_ima_xattr_data *)xattr_value)->data[0];
-+			xattr_data =
-+			  (struct evm_ima_xattr_data *)&evm_fake_xattr;
-+			rc = sizeof(evm_fake_xattr);
-+		}
-+		if (xattr_data != (struct evm_ima_xattr_data *)&evm_fake_xattr)
-+			goto out;
++	ima_digest_list_pcr=
++			[IMA]
++			Specify which PCR is extended when file digests are
++			not found in the loaded digest lists. If '+' is not
++			specified, no measurement entry is created if the
++			digest is found. Otherwise, IMA creates also entries
++			with PCR 10, according to the existing behavior.
++			Format: { [+]<unsigned int> }
 +
-+		saved_evm_status = evm_status;
+ 	ima_hash=	[IMA]
+ 			Format: { md5 | sha1 | rmd160 | sha256 | sha384
+ 				   | sha512 | ... }
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 0a5d1f813f36..7af7620b770a 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -57,6 +57,8 @@ extern int ima_hash_algo_idx __ro_after_init;
+ extern int ima_extra_slots __ro_after_init;
+ extern int ima_appraise;
+ extern struct tpm_chip *ima_tpm_chip;
++extern int ima_digest_list_pcr;
++extern bool ima_plus_standard_pcr;
+ extern const char boot_aggregate_name[];
+ extern int ima_digest_list_actions;
+ 
+@@ -250,7 +252,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
+ 			   const unsigned char *filename,
+ 			   struct evm_ima_xattr_data *xattr_value,
+ 			   int xattr_len, const struct modsig *modsig, int pcr,
+-			   struct ima_template_desc *template_desc);
++			   struct ima_template_desc *template_desc,
++			   struct ima_digest *digest);
+ void process_buffer_measurement(const void *buf, int size,
+ 				const char *eventname, enum ima_hooks func,
+ 				int pcr, const char *keyring);
+@@ -260,8 +263,8 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 			    struct ima_template_entry **entry,
+ 			    struct ima_template_desc *template_desc);
+ int ima_store_template(struct ima_template_entry *entry, int violation,
+-		       struct inode *inode,
+-		       const unsigned char *filename, int pcr);
++		       struct inode *inode, const unsigned char *filename,
++		       int pcr, struct ima_digest *digest);
+ void ima_free_template_entry(struct ima_template_entry *entry);
+ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
+ 
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index bf22de8b7ce0..45a2ce2f1fe2 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -101,11 +101,13 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+  */
+ int ima_store_template(struct ima_template_entry *entry,
+ 		       int violation, struct inode *inode,
+-		       const unsigned char *filename, int pcr)
++		       const unsigned char *filename, int pcr,
++		       struct ima_digest *digest)
+ {
+ 	static const char op[] = "add_template_measure";
+ 	static const char audit_cause[] = "hashing_error";
+ 	char *template_name = entry->template_desc->name;
++	struct ima_template_entry *duplicated_entry = NULL;
+ 	int result;
+ 
+ 	if (!violation) {
+@@ -118,8 +120,26 @@ int ima_store_template(struct ima_template_entry *entry,
+ 			return result;
+ 		}
+ 	}
++
++	if (ima_plus_standard_pcr && !digest) {
++		duplicated_entry = kmemdup(entry,
++			sizeof(*entry) + entry->template_desc->num_fields *
++			sizeof(struct ima_field_data), GFP_KERNEL);
++		if (duplicated_entry)
++			duplicated_entry->pcr = ima_digest_list_pcr;
++	} else if (!ima_plus_standard_pcr && ima_digest_list_pcr >= 0) {
++		pcr = ima_digest_list_pcr;
++	}
++
+ 	entry->pcr = pcr;
+ 	result = ima_add_template_entry(entry, violation, op, inode, filename);
++	if (!result && duplicated_entry) {
++		result = ima_add_template_entry(duplicated_entry, violation, op,
++						inode, filename);
++		if (result < 0)
++			kfree(duplicated_entry);
++	}
++
+ 	return result;
+ }
+ 
+@@ -151,8 +171,8 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 		result = -ENOMEM;
+ 		goto err_out;
+ 	}
+-	result = ima_store_template(entry, violation, inode,
+-				    filename, CONFIG_IMA_MEASURE_PCR_IDX);
++	result = ima_store_template(entry, violation, inode, filename,
++				    CONFIG_IMA_MEASURE_PCR_IDX, NULL);
+ 	if (result < 0)
+ 		ima_free_template_entry(entry);
+ err_out:
+@@ -297,13 +317,14 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 			   struct file *file, const unsigned char *filename,
+ 			   struct evm_ima_xattr_data *xattr_value,
+ 			   int xattr_len, const struct modsig *modsig, int pcr,
+-			   struct ima_template_desc *template_desc)
++			   struct ima_template_desc *template_desc,
++			   struct ima_digest *digest)
+ {
+ 	static const char op[] = "add_template_measure";
+ 	static const char audit_cause[] = "ENOMEM";
+ 	int result = -ENOMEM;
+ 	struct inode *inode = file_inode(file);
+-	struct ima_template_entry *entry;
++	struct ima_template_entry *entry = NULL;
+ 	struct ima_event_data event_data = { .iint = iint,
+ 					     .file = file,
+ 					     .filename = filename,
+@@ -321,6 +342,11 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 	if (iint->measured_pcrs & (0x1 << pcr) && !modsig)
+ 		return;
+ 
++	if (digest && !ima_plus_standard_pcr && ima_digest_list_pcr >= 0) {
++		result = -EEXIST;
++		goto out;
++	}
++
+ 	result = ima_alloc_init_template(&event_data, &entry, template_desc);
+ 	if (result < 0) {
+ 		integrity_audit_msg(AUDIT_INTEGRITY_PCR, inode, filename,
+@@ -328,12 +354,14 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 		return;
  	}
  
- 	xattr_len = rc;
-@@ -216,19 +236,66 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
- 			}
- 		}
+-	result = ima_store_template(entry, violation, inode, filename, pcr);
++	result = ima_store_template(entry, violation, inode, filename, pcr,
++				    digest);
++out:
+ 	if ((!result || result == -EEXIST) && !(file->f_flags & O_DIRECT)) {
+ 		iint->flags |= IMA_MEASURED;
+ 		iint->measured_pcrs |= (0x1 << pcr);
+ 	}
+-	if (result < 0)
++	if (result < 0 && entry)
+ 		ima_free_template_entry(entry);
+ }
+ 
+diff --git a/security/integrity/ima/ima_digest_list.c b/security/integrity/ima/ima_digest_list.c
+index 607a33ba52ee..7e901bdb4340 100644
+--- a/security/integrity/ima/ima_digest_list.c
++++ b/security/integrity/ima/ima_digest_list.c
+@@ -28,6 +28,31 @@ struct ima_h_table ima_digests_htable = {
+ 	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
+ };
+ 
++static int __init digest_list_pcr_setup(char *str)
++{
++	int pcr, ret;
++
++	ret = kstrtouint(str, 10, &pcr);
++	if (ret) {
++		pr_err("Invalid PCR number %s\n", str);
++		return 1;
++	}
++
++	if (pcr == CONFIG_IMA_MEASURE_PCR_IDX) {
++		pr_err("Default PCR cannot be used for digest lists\n");
++		return 1;
++	}
++
++	ima_digest_list_pcr = pcr;
++	ima_digest_list_actions |= IMA_MEASURE;
++
++	if (*str == '+')
++		ima_plus_standard_pcr = true;
++
++	return 1;
++}
++__setup("ima_digest_list_pcr=", digest_list_pcr_setup);
++
+ /*************************
+  * Get/add/del functions *
+  *************************/
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 4902fe7bd570..5b5edd3a6b9e 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -86,7 +86,7 @@ static int __init ima_add_boot_aggregate(void)
+ 
+ 	result = ima_store_template(entry, violation, NULL,
+ 				    boot_aggregate_name,
+-				    CONFIG_IMA_MEASURE_PCR_IDX);
++				    CONFIG_IMA_MEASURE_PCR_IDX, NULL);
+ 	if (result < 0) {
+ 		ima_free_template_entry(entry);
+ 		audit_cause = "store_entry";
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index e14632cf5c1b..ca80e7c5b885 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -27,6 +27,7 @@
+ #include <linux/fs.h>
+ 
+ #include "ima.h"
++#include "ima_digest_list.h"
+ 
+ #ifdef CONFIG_IMA_APPRAISE
+ int ima_appraise = IMA_APPRAISE_ENFORCE;
+@@ -38,6 +39,10 @@ int ima_hash_algo = HASH_ALGO_SHA1;
+ 
+ /* Actions (measure/appraisal) for which digest lists can be used */
+ int ima_digest_list_actions;
++/* PCR used for digest list measurements */
++int ima_digest_list_pcr = -1;
++/* Flag to include standard measurement if digest list PCR is specified */
++bool ima_plus_standard_pcr;
+ 
+ static int hash_setup_done;
+ 
+@@ -162,6 +167,8 @@ static enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 			return ima_hash_algo;
+ 		return sig->hash_algo;
  		break;
 +	case EVM_IMA_XATTR_DIGEST_LIST:
-+		if (xattr_len < offsetof(struct signature_v2_hdr, keyid)) {
-+			evm_status = INTEGRITY_FAIL;
-+			goto out;
-+		}
-+
-+		hdr = (struct signature_v2_hdr *)xattr_data;
-+		digest.hdr.algo = hdr->hash_algo;
-+		rc = evm_calc_hash(dentry, xattr_name, xattr_value,
-+				   xattr_value_len, xattr_data->type, &digest);
-+		if (rc)
-+			break;
-+
-+		found_digest = ima_lookup_digest(digest.digest, hdr->hash_algo,
-+						 COMPACT_METADATA);
-+		if (!found_digest) {
-+			rc = -ENOENT;
-+			break;
-+		}
-+
-+		if (!ima_digest_allow(found_digest, IMA_APPRAISE)) {
-+			rc = -EACCES;
-+			break;
-+		}
-+
-+		if (ima_digest_is_immutable(found_digest)) {
-+			evm_immutable = 1;
-+
-+			if (iint)
-+				iint->flags |= EVM_IMMUTABLE_DIGSIG;
-+			evm_status = INTEGRITY_PASS_IMMUTABLE;
-+		} else {
-+			inode = d_backing_inode(dentry);
-+			if (!IS_RDONLY(inode) &&
-+			    !(inode->i_sb->s_readonly_remount) &&
-+			    !IS_IMMUTABLE(inode)) {
-+				rc = __vfs_removexattr(dentry, XATTR_NAME_EVM);
-+				if (!rc)
-+					evm_update_evmxattr(dentry, xattr_name,
-+							    xattr_value,
-+							    xattr_value_len);
-+			}
-+		}
-+		break;
- 	default:
- 		rc = -EINVAL;
- 		break;
- 	}
++		fallthrough;
+ 	case IMA_XATTR_DIGEST_NG:
+ 		/* first byte contains algorithm id */
+ 		ret = xattr_value->data[0];
+@@ -255,6 +262,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	const char *pathname = NULL;
+ 	int rc = 0, action, must_appraise = 0;
+ 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
++	struct ima_digest *found_digest;
+ 	struct evm_ima_xattr_data *xattr_value = NULL;
+ 	struct modsig *modsig = NULL;
+ 	int xattr_len = 0;
+@@ -384,10 +392,16 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	if (!pathbuf)	/* ima_rdwr_violation possibly pre-fetched */
+ 		pathname = ima_d_path(&file->f_path, &pathbuf, filename);
  
--	if (rc)
-+	if (rc && xattr_data == (struct evm_ima_xattr_data *)&evm_fake_xattr)
-+		evm_status = saved_evm_status;
-+	else if (rc)
- 		evm_status = (rc == -ENODATA) ?
- 				INTEGRITY_NOXATTRS : evm_immutable ?
- 				INTEGRITY_FAIL_IMMUTABLE : INTEGRITY_FAIL;
- out:
- 	if (iint)
- 		iint->evm_status = evm_status;
--	kfree(xattr_data);
-+	if (xattr_data != (struct evm_ima_xattr_data *)&evm_fake_xattr)
-+		kfree(xattr_data);
- 	return evm_status;
- }
++	found_digest = ima_lookup_digest(iint->ima_hash->digest, hash_algo,
++					 COMPACT_FILE);
++
+ 	if (action & IMA_MEASURE)
+ 		ima_store_measurement(iint, file, pathname,
+ 				      xattr_value, xattr_len, modsig, pcr,
+-				      template_desc);
++				      template_desc,
++				      ima_digest_allow(found_digest,
++						       IMA_MEASURE));
++
+ 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
+ 		rc = ima_check_blacklist(iint, modsig, pcr);
+ 		if (rc != -EPERM) {
+@@ -858,7 +872,7 @@ void process_buffer_measurement(const void *buf, int size,
+ 	if (ret < 0)
+ 		goto out;
  
-@@ -452,7 +519,8 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		if (!xattr_value_len)
- 			return -EINVAL;
- 		if (xattr_data->type != EVM_IMA_XATTR_DIGSIG &&
--		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG)
-+		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG &&
-+		    xattr_data->type != EVM_IMA_XATTR_DIGEST_LIST)
- 			return -EPERM;
- 	}
- 	return evm_protect_xattr(dentry, xattr_name, xattr_value,
+-	ret = ima_store_template(entry, violation, NULL, buf, pcr);
++	ret = ima_store_template(entry, violation, NULL, buf, pcr, NULL);
+ 
+ 	if (ret < 0)
+ 		ima_free_template_entry(entry);
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index dd7f22a846a2..4af9c1613c8e 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1305,7 +1305,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			ima_log_string(ab, "pcr", args[0].from);
+ 
+ 			result = kstrtoint(args[0].from, 10, &entry->pcr);
+-			if (result || INVALID_PCR(entry->pcr))
++			if (result || INVALID_PCR(entry->pcr) ||
++			    entry->pcr == ima_digest_list_pcr)
+ 				result = -EINVAL;
+ 			else
+ 				entry->flags |= IMA_PCR;
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 041edd217829..3525f2d185b3 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -78,6 +78,7 @@ enum evm_ima_xattr_type {
+ 	EVM_IMA_XATTR_DIGSIG,
+ 	IMA_XATTR_DIGEST_NG,
+ 	EVM_XATTR_PORTABLE_DIGSIG,
++	EVM_IMA_XATTR_DIGEST_LIST,
+ 	IMA_XATTR_LAST
+ };
+ 
 -- 
 2.27.GIT
 
