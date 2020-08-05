@@ -2,103 +2,185 @@ Return-Path: <SRS0=MoMd=BP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE85C433E0
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 19:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD11C433E1
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 19:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD25D2075D
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 19:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11D8E21D95
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 19:48:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="B1prvCHa";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="B1prvCHa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbgHET1e (ORCPT
+        id S1728412AbgHETsI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:27:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65210 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728649AbgHERNE (ORCPT
+        Wed, 5 Aug 2020 15:48:08 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39006 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728145AbgHEQ6y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:13:04 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 075BXXuJ178180;
-        Wed, 5 Aug 2020 08:00:44 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qst1vrkv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 08:00:44 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 075BZrpK184019;
-        Wed, 5 Aug 2020 08:00:43 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32qst1vrj7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 08:00:43 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 075BuB2d019265;
-        Wed, 5 Aug 2020 12:00:41 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma02fra.de.ibm.com with ESMTP id 32n018ameg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 05 Aug 2020 12:00:40 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 075C0cZX26870164
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 5 Aug 2020 12:00:38 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2487D4C05A;
-        Wed,  5 Aug 2020 12:00:38 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F2D04C050;
-        Wed,  5 Aug 2020 12:00:35 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.95.205])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  5 Aug 2020 12:00:35 +0000 (GMT)
-Message-ID: <1624d016e4110cf903e4b3d22f253edc34c6b39c.camel@linux.ibm.com>
-Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 05 Aug 2020 08:00:33 -0400
-In-Reply-To: <20200805004331.20652-1-nramas@linux.microsoft.com>
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+        Wed, 5 Aug 2020 12:58:54 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D79E28EE1DD;
+        Wed,  5 Aug 2020 08:01:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1596639691;
+        bh=5KjscTjJ2rT9ybNg+PHjihmjqEcOr8OKbSKYiE1mN1I=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=B1prvCHaxEOP6CSKSR0sHnRVt+H7uKCtNBlJKR80V92AyV4g/UjhOaObGhccE1cxU
+         h67RP5SGz6mKGuFNlGpONxtoRbl7VGSuPWAch2yCZ1IyNcoEJYsxbLlHDD3W5DNw4C
+         EiJrjXIJ5VmBGYjtG0XlF6FaVWV2wOa28tr7BgzY=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FBfBPUShTYhM; Wed,  5 Aug 2020 08:01:31 -0700 (PDT)
+Received: from [153.66.254.194] (unknown [50.35.76.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3D9978EE0F8;
+        Wed,  5 Aug 2020 08:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1596639691;
+        bh=5KjscTjJ2rT9ybNg+PHjihmjqEcOr8OKbSKYiE1mN1I=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=B1prvCHaxEOP6CSKSR0sHnRVt+H7uKCtNBlJKR80V92AyV4g/UjhOaObGhccE1cxU
+         h67RP5SGz6mKGuFNlGpONxtoRbl7VGSuPWAch2yCZ1IyNcoEJYsxbLlHDD3W5DNw4C
+         EiJrjXIJ5VmBGYjtG0XlF6FaVWV2wOa28tr7BgzY=
+Message-ID: <1596639689.3457.17.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>
+Cc:     snitzer@redhat.com, zohar@linux.ibm.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, jmorris@namei.org, nramas@linux.microsoft.com,
+        serge@hallyn.com, pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Date:   Wed, 05 Aug 2020 08:01:29 -0700
+In-Reply-To: <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+         <20200802143143.GB20261@amd>
+         <1596386606.4087.20.camel@HansenPartnership.com>
+         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-05_08:2020-08-03,2020-08-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=840
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
- adultscore=0 clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008050097
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
-> Critical data structures of security modules are currently not measured.
-> Therefore an attestation service, for instance, would not be able to
-> attest whether the security modules are always operating with the policies
-> and configuration that the system administrator had setup. The policies
-> and configuration for the security modules could be tampered with by
-> malware by exploiting kernel vulnerabilities or modified through some
-> inadvertent actions on the system. Measuring such critical data would
-> enable an attestation service to better assess the state of the system.
+On Tue, 2020-08-04 at 09:07 -0700, Deven Bowers wrote:
+> On 8/2/2020 9:43 AM, James Bottomley wrote:
+> > On Sun, 2020-08-02 at 16:31 +0200, Pavel Machek wrote:
+> > > On Sun 2020-08-02 10:03:00, Sasha Levin wrote:
+> > > > On Sun, Aug 02, 2020 at 01:55:45PM +0200, Pavel Machek wrote:
+> > > > > Hi!
+> > > > > 
+> > > > > > IPE is a Linux Security Module which allows for a
+> > > > > > configurable policy to enforce integrity requirements on
+> > > > > > the whole system. It attempts to solve the issue of Code
+> > > > > > Integrity: that any code being executed (or files being
+> > > > > > read), are identical to the version that was built by a
+> > > > > > trusted source.
+> > > > > 
+> > > > > How is that different from security/integrity/ima?
+> > > > 
+> > > > Maybe if you would have read the cover letter all the way down
+> > > > to the 5th paragraph which explains how IPE is different from
+> > > > IMA we could avoided this mail exchange...
+> > > 
+> > > "
+> > > IPE differs from other LSMs which provide integrity checking (for
+> > > instance, IMA), as it has no dependency on the filesystem
+> > > metadata itself.
+> > > The attributes that IPE checks are deterministic properties that
+> > > exist solely in the kernel. Additionally, IPE provides no
+> > > additional mechanisms of verifying these files (e.g. IMA
+> > > Signatures) - all of the attributes of verifying files are
+> > > existing features within the kernel, such as dm-verity
+> > > or fsverity.
+> > > "
+> > > 
+> > > That is not really helpful.
+> 
+> Perhaps I can explain (and re-word this paragraph) a bit better.
+> 
+> As James indicates, IPE does try to close the gap of the IMA
+> limitation with xattr. I honestly wasn’t familiar with the appended
+> signatures, which seems fine.
+> 
+> Regardless, this isn’t the larger benefit that IPE provides. The
+> larger benefit of this is how IPE separates _mechanisms_ (properties)
+> to enforce integrity requirements, from _policy_. The LSM provides
+> policy, while things like dm-verity provide mechanism.
 
-From a high level review, "Critical data structures" should be the
-focus of this patch set.  Measuring "critical data structures" should
-be independent of measuring the "policy" being loaded.   The in memory
-policy hash could be an example of  data included in the "critical data
-structures". 
+Colour me confused here, but I thought that's exactly what IMA does. 
+The mechanism is the gates and the policy is simply a list of rules
+which are applied when a gate is triggered.  The policy necessarily has
+to be tailored to the information available at the gate (so the bprm
+exec gate knows filesystem things like the inode for instance) but the
+whole thing looks very extensible.
 
-Keep this patch set simple.
+> So to speak, IPE acts as the glue for other mechanisms to leverage a
+> customizable, system-wide policy to enforce. While this initial
+> patchset only onboards dm-verity, there’s also potential for MAC
+> labels, fs-verity, authenticated BTRFS, dm-integrity, etc. IPE
+> leverages existing systems in the kernel, while IMA uses its own.
 
-Mimi
+Is this about who does the measurement?  I think there's no reason at
+all why IMA can't leverage existing measurements, it's just nothing to
+leverage existed when it was created.
+
+> Another difference is the general coverage. IMA has some difficulties
+> in covering mprotect[1], IPE doesn’t (the MAP_ANONYMOUS indicated by
+> Jann in that thread would be denied as the file struct would be null,
+> with IPE’s current set of supported mechanisms. mprotect would
+> continue to function as expected if you change to PROT_EXEC).
+
+I don't really think a debate over who does what and why is productive
+at this stage.  I just note that IMA policy could be updated to deny
+MAP_ANONYMOUS, but no-one's asked for that (probably because of the
+huge application breakage that would ensue).  The policy is a product
+of the use case and the current use case for IMA is working with
+existing filesystem semantics.
+
+> > Perhaps the big question is: If we used the existing IMA appended
+> > signature for detached signatures (effectively becoming the
+> > "properties" referred to in the cover letter) and hooked IMA into
+> > device mapper using additional policy terms, would that satisfy all
+> > the requirements this new LSM has?
+> 
+> Well, Mimi, what do you think? Should we integrate all the features
+> of IPE into IMA, or do you think they are sufficiently different in
+> architecture that it would be worth it to keep the code base in
+> separate LSMs?
+
+I'll leave Mimi to answer, but really this is exactly the question that
+should have been asked before writing IPE.  However, since we have the
+cart before the horse, let me break the above down into two specific
+questions.
+
+   1. Could we implement IPE in IMA (as in would extensions to IMA cover
+      everything).  I think the answers above indicate this is a "yes".
+   2. Should we extend IMA to implement it?  This is really whether from a
+      usability standpoint two seperate LSMs would make sense to cover the
+      different use cases.  I've got to say the least attractive thing
+      about separation is the fact that you now both have a policy parser.
+       You've tried to differentiate yours by making it more Kconfig
+      based, but policy has a way of becoming user space supplied because
+      the distros hate config options, so I think you're going to end up
+      with a policy parser very like IMAs.
+
+James
 
