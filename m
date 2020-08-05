@@ -2,75 +2,122 @@ Return-Path: <SRS0=MoMd=BP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EDFC433E0
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9D3C433DF
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5AE22B42
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596658157;
-	bh=dbGVB80eYa/nySFVWDJFfLJakBsIbNOmiAZCGTFt7no=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=u0s8tMMQu/4bJ9/C4LJrXsCYo9hUARACkojvZ3IE7sP0v443Fk4DRRwsPfkJghAfv
-	 rXAFDaDE7pb4udsPuaWpbTKE0cKTRga6je4LjNFlF3mjoN4Bm6NuF+CzN57RDRxbRu
-	 QJ8pTDB882Q2c/FwY6PDjN4C/RJGMyS5H9HjIEpg=
+	by mail.kernel.org (Postfix) with ESMTP id 1ED5F22CA1
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:09:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tAdrgRN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbgHEUJP (ORCPT
+        id S1729714AbgHEUJO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:09:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726881AbgHEQce (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 5 Aug 2020 16:09:14 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:44774 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbgHEQce (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
         Wed, 5 Aug 2020 12:32:34 -0400
-Received: from linux-8ccs (p57a236d4.dip0.t-ipconnect.de [87.162.54.212])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 611972332B;
-        Wed,  5 Aug 2020 14:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596639229;
-        bh=dbGVB80eYa/nySFVWDJFfLJakBsIbNOmiAZCGTFt7no=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aiidoivW6Ka39wLtz4Rev/xfeu3gn/KqTPMWcMp2RpfkimMpyH9umMo3mqAjVizCX
-         4Ba9g+JuEE+1F2LMpKt9MJ3zqjc4VcDw6pIvqAxnAD31JOGx1wKeMHMd1vmu70PBnT
-         21BTAUo97qU7VTMydLFvMz/JsKrurSCZF9fPrfuM=
-Date:   Wed, 5 Aug 2020 16:53:43 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>, SeongJae Park <sjpark@amazon.de>,
-        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/17] module: Call security_kernel_post_load_data()
-Message-ID: <20200805145342.GA22100@linux-8ccs>
-References: <20200729175845.1745471-1-keescook@chromium.org>
- <20200729175845.1745471-12-keescook@chromium.org>
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 33C1D20B4916;
+        Wed,  5 Aug 2020 09:21:25 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 33C1D20B4916
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596644485;
+        bh=GzAsE7yIveqCecXCvd87U4xE2Iv3TtxhwzS/oH7sMZQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=tAdrgRN+aiLODwPD2Pu1t/IPAMRAiJp2U3MWvDjOQx4AmOIgoovl6hWOOeVMDJtJt
+         srJScwliKGlB05ubxJW3Wzi7YO2eKzS+pomSQSUqJxynjqI9F3S5cW+JA1RfOPWOoS
+         r5NxUGUp0TBH7UejIn8B1uTkrKsu2u62Nak4Higk=
+Subject: Re: [PATCH v6 0/4] LSM: Measure security module data
+To:     Tyler Hicks <tyhicks@linux.microsoft.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>, zohar@linux.ibm.com,
+        stephen.smalley.work@gmail.com, sashal@kernel.org,
+        jmorris@namei.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <f3971f35-309d-c3e5-9126-69add7ad4c11@schaufler-ca.com>
+ <50587a3e-bcb5-c68e-c16c-41baf68b4d4a@linux.microsoft.com>
+ <c7c168f2-e30b-d2c5-abcb-1b6919197474@schaufler-ca.com>
+ <20200805154504.GB4365@sequoia>
+ <7c7a076b-6ba7-2e8d-409a-b3b4e4738c41@linux.microsoft.com>
+ <20200805161449.GC4365@sequoia>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <ae80581d-a34c-51f4-d4f9-94c1e341fd15@linux.microsoft.com>
+Date:   Wed, 5 Aug 2020 09:21:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20200729175845.1745471-12-keescook@chromium.org>
-X-OS:   Linux linux-8ccs 5.8.0-rc6-lp150.12.61-default+ x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200805161449.GC4365@sequoia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-+++ Kees Cook [29/07/20 10:58 -0700]:
->Now that there is an API for checking loaded contents for modules
->loaded without a file, call into the LSM hooks.
->
->Cc: Jessica Yu <jeyu@kernel.org>
->Signed-off-by: Kees Cook <keescook@chromium.org>
+On 8/5/20 9:14 AM, Tyler Hicks wrote:
+> On 2020-08-05 09:07:48, Lakshmi Ramasubramanian wrote:
+>> On 8/5/20 8:45 AM, Tyler Hicks wrote:
+>>> On 2020-08-05 08:36:40, Casey Schaufler wrote:
+>>>> On 8/4/2020 6:14 PM, Lakshmi Ramasubramanian wrote:
+>>>>> On 8/4/20 6:04 PM, Casey Schaufler wrote:
+>>>>>> On 8/4/2020 5:43 PM, Lakshmi Ramasubramanian wrote:
+>>>>>>> Critical data structures of security modules are currently not measured.
+>>>>>>> Therefore an attestation service, for instance, would not be able to
+>>>>>>> attest whether the security modules are always operating with the policies
+>>>>>>> and configuration that the system administrator had setup. The policies
+>>>>>>> and configuration for the security modules could be tampered with by
+>>>>>>> malware by exploiting kernel vulnerabilities or modified through some
+>>>>>>> inadvertent actions on the system. Measuring such critical data would
+>>>>>>> enable an attestation service to better assess the state of the system.
+>>>>>>
+>>>>>> I still wonder why you're calling this an LSM change/feature when
+>>>>>> all the change is in IMA and SELinux. You're not putting anything
+>>>>>> into the LSM infrastructure, not are you using the LSM infrastructure
+>>>>>> to achieve your ends. Sure, you *could* support other security modules
+>>>>>> using this scheme, but you have a configuration dependency on
+>>>>>> SELinux, so that's at best going to be messy. If you want this to
+>>>>>> be an LSM "feature" you need to use the LSM hooking mechanism.
+>>>>>
+>>>>>>
+>>>>>> I'm not objecting to the feature. It adds value. But as you've
+>>>>>> implemented it it is either an IMA extension to SELinux, or an
+>>>>>> SELiux extension to IMA. Could AppArmor add hooks for this without
+>>>>>> changing the IMA code? It doesn't look like it to me.
+>>>>>
+>>>>> The check in IMA to allow the new IMA hook func LSM_STATE and LSM_POLICY when SELinux is enabled is just because SELinux is the only security module using these hooks now.
+>>>>>
+>>>>> To enable AppArmor, for instance, to use the new IMA hooks to measure state and policy would just require adding the check for CONFIG_SECURITY_APPARMOR. Other than that, there are no IMA changes needed to support AppArmor or other such security modules.
+>>>>
+>>>> This is exactly what I'm objecting to. What if a system has both SELinux
+>>>> and AppArmor compiled in? What if it has both enabled?
+>>>
+>>> The SELinux state and policy would be measured but the AppArmor
+>>> state/policy would be silently ignored. This isn't ideal as the IMA
+>>> policy author would need to read the kernel code to figure out which
+>>> LSMs are going to be measured.
+>>
+>> Tyler - I am not sure why AppArmor state\policy would be ignored when both
+>> SELinux and AppArmor are enabled. Could you please clarify?
+> 
+> I think Casey is talking about now (when AppArmor is not supported by
+> this feature) and you're talking about the future (when AppArmor may be
+> supported by this feature).
 
-Acked-by: Jessica Yu <jeyu@kernel.org>
+Got it - thanks for clarifying.
+
+But with the current code if SELinux is enabled on the system, but 
+AppArmor is not and the IMA policy contains "measure func=LSM_STATE" 
+then the policy will be rejected as "-EINVAL".
+So the policy author would get a feedback even now.
+Correct me if I am wrong.
+
+  -lakshmi
