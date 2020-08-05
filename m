@@ -1,137 +1,189 @@
-Return-Path: <SRS0=2xC7=BO=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=MoMd=BP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 809B4C433DF
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Aug 2020 18:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F40BDC433E1
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 00:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51AB520792
-	for <linux-integrity@archiver.kernel.org>; Tue,  4 Aug 2020 18:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75EF20792
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 00:43:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SwPdfQBv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbgHDSL5 (ORCPT
+        id S1726721AbgHEAnj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 4 Aug 2020 14:11:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725826AbgHDSL5 (ORCPT
+        Tue, 4 Aug 2020 20:43:39 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38366 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbgHEAnh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 4 Aug 2020 14:11:57 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 074I3Q19052181;
-        Tue, 4 Aug 2020 14:11:53 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32q9sm5v7m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Aug 2020 14:11:52 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 074I5JOG058694;
-        Tue, 4 Aug 2020 14:11:52 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32q9sm5v72-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Aug 2020 14:11:52 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 074HoMn8016363;
-        Tue, 4 Aug 2020 18:11:50 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma03ams.nl.ibm.com with ESMTP id 32n0183jeg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 04 Aug 2020 18:11:49 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 074IBlXQ26542426
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 4 Aug 2020 18:11:47 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0FF811C04A;
-        Tue,  4 Aug 2020 18:11:47 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C94211C05C;
-        Tue,  4 Aug 2020 18:11:46 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.44.248])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  4 Aug 2020 18:11:45 +0000 (GMT)
-Message-ID: <e2f9d32846f5fda89b138439b6cbec2c9dcfe643.camel@linux.ibm.com>
-Subject: Re: [ima-evm-utils: PATCH v1 5/5] ima-evm-utils: travis: openssl
- gost engine
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
-        Bruno Meneguele <bmeneg@redhat.com>
-Date:   Tue, 04 Aug 2020 14:11:44 -0400
-In-Reply-To: <20200804144554.6y3c44popmu6nha7@altlinux.org>
-References: <20200731182408.696931-1-zohar@linux.ibm.com>
-         <20200731182408.696931-6-zohar@linux.ibm.com>
-         <70b421b26c7073dcc7d9b8f210ba2900ecf2b8d3.camel@linux.ibm.com>
-         <20200804144554.6y3c44popmu6nha7@altlinux.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-04_04:2020-08-03,2020-08-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- spamscore=0 malwarescore=0 suspectscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 mlxscore=0 phishscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008040131
+        Tue, 4 Aug 2020 20:43:37 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id ED0F120B490A;
+        Tue,  4 Aug 2020 17:43:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ED0F120B490A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596588216;
+        bh=SF9nLu7J2HUvWV7Tl+ZwVBSS+d5Qa91rslKFBRAWfq0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SwPdfQBvdVK2gPdIEwEvbF0H4ed7PrBGla5VF04p65M5fa0kMmJozKIJy+EBsm4ED
+         IoSdqWDBoALJYHcJ6hvC2/wdNxRGXfVPt7hz8sGMGtppNduc8lPxSpMBISIjFkhIv2
+         XDlpO2YBoYk8MMgQ1tz4Fmm2OiglfUiHd95jSzLs=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 1/4] IMA: Add func to measure LSM state and policy
+Date:   Tue,  4 Aug 2020 17:43:28 -0700
+Message-Id: <20200805004331.20652-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200805004331.20652-1-nramas@linux.microsoft.com>
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2020-08-04 at 17:45 +0300, Vitaly Chikunov wrote:
-> Mimi,
-> 
-> On Tue, Aug 04, 2020 at 08:05:31AM -0400, Mimi Zohar wrote:
-> > The openssl version might not have gost openssl engine support.
-> > Download from source, rebuild and install local version.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> >  .travis.yml                  | 10 ++++++++++
-> >  tests/install-gost-engine.sh | 10 ++++++++++
-> >  2 files changed, 20 insertions(+)
-> >  create mode 100755 tests/install-gost-engine.sh
-> > 
-> > diff --git a/.travis.yml b/.travis.yml
-> > index 11a827c02f0a..887f6bbea9b9 100644
-> > --- a/.travis.yml
-> > +++ b/.travis.yml
-> > @@ -15,6 +15,13 @@ matrix:
-> >     include:
-> >       - env: TSS=ibmtss
-> >       - env: TSS=tpm2-tss
-> > +
-> > +before_install:
-> > +   - if [ "${SSL}" = "openssl" ]; then
-> > +        ./tests/install-gost-engine.sh;
-> > +        openssl version;
-> > +     fi
-> > +
-> >  install:
-> >     - if [ "${TSS}" = "tpm2-tss" ]; then
-> >             sudo apt-get install lcov pandoc autoconf-archive liburiparser-dev;
-> > @@ -30,6 +37,9 @@ install:
-> >  script:
-> >     - export LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib;
-> >     - export PATH=$PATH:/usr/local/bin;
-> > +   - if [ "${SSL}" = "openssl" ]; then
-> > +        export OPENSSL_ENGINES="$OPENSSL_ENGINES:$PWD/engines/bin";
-> 
-> Should be `export OPENSSL_ENGINES=$PWD/engines/bin` since
-> OPENSSL_ENGINES is not PATH-like variable, but just a path to engines
-> dir.
+Critical data structures of security modules need to be measured to
+enable an attestation service to verify if the configuration and
+policies for the security modules have been setup correctly and
+that they haven't been tampered with at runtime. A new IMA policy is
+required for handling this measurement.
 
-Done, thanks.  Assuming there is nothing else, I'll release v1.3.1
-tomorrow.
+Define two new IMA policy func namely LSM_STATE and LSM_POLICY to
+measure the state and the policy provided by the security modules.
+Update ima_match_rules() and ima_validate_rule() to check for
+the new func and ima_parse_rule() to handle the new func.
 
-thanks!
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ Documentation/ABI/testing/ima_policy |  9 ++++++++
+ security/integrity/ima/ima.h         |  2 ++
+ security/integrity/ima/ima_api.c     |  2 +-
+ security/integrity/ima/ima_policy.c  | 34 ++++++++++++++++++++++++----
+ 4 files changed, 42 insertions(+), 5 deletions(-)
 
-Mimi
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index cd572912c593..b7c7fb548c0c 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -30,6 +30,7 @@ Description:
+ 				[FIRMWARE_CHECK]
+ 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+ 				[KEXEC_CMDLINE] [KEY_CHECK]
++				[LSM_STATE] [LSM_POLICY]
+ 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+ 			       [[^]MAY_EXEC]
+ 			fsmagic:= hex value
+@@ -125,3 +126,11 @@ Description:
+ 		keys added to .builtin_trusted_keys or .ima keyring:
+ 
+ 			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
++
++		Example of measure rule using LSM_STATE to measure LSM state:
++
++			measure func=LSM_STATE template=ima-buf
++
++		Example of measure rule using LSM_POLICY to measure LSM policy:
++
++			measure func=LSM_POLICY template=ima-ng
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 38043074ce5e..1b5f4b2f17d0 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -200,6 +200,8 @@ static inline unsigned int ima_hash_key(u8 *digest)
+ 	hook(POLICY_CHECK, policy)			\
+ 	hook(KEXEC_CMDLINE, kexec_cmdline)		\
+ 	hook(KEY_CHECK, key)				\
++	hook(LSM_STATE, lsm_state)			\
++	hook(LSM_POLICY, lsm_policy)			\
+ 	hook(MAX_CHECK, none)
+ 
+ #define __ima_hook_enumify(ENUM, str)	ENUM,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 4f39fb93f278..8c8b4e4a6493 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+  *	subj,obj, and type: are LSM specific.
+  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
+- *	| KEXEC_CMDLINE | KEY_CHECK
++ *	| KEXEC_CMDLINE | KEY_CHECK | LSM_STATE | LSM_POLICY
+  *	mask: contains the permission mask
+  *	fsmagic: hex value
+  *
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 07f033634b27..e4de581442d5 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -442,13 +442,21 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ {
+ 	int i;
+ 
+-	if (func == KEY_CHECK) {
+-		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
+-		       ima_match_keyring(rule, keyring, cred);
+-	}
+ 	if ((rule->flags & IMA_FUNC) &&
+ 	    (rule->func != func && func != POST_SETATTR))
+ 		return false;
++
++	switch (func) {
++	case KEY_CHECK:
++		return ((rule->func == func) &&
++			ima_match_keyring(rule, keyring, cred));
++	case LSM_STATE:
++	case LSM_POLICY:
++		return (rule->func == func);
++	default:
++		break;
++	}
++
+ 	if ((rule->flags & IMA_MASK) &&
+ 	    (rule->mask != mask && func != POST_SETATTR))
+ 		return false;
+@@ -1044,6 +1052,18 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 		if (ima_rule_contains_lsm_cond(entry))
+ 			return false;
+ 
++		break;
++	case LSM_STATE:
++	case LSM_POLICY:
++		if (entry->action & ~(MEASURE | DONT_MEASURE))
++			return false;
++
++		if (entry->flags & ~(IMA_FUNC | IMA_PCR))
++			return false;
++
++		if (ima_rule_contains_lsm_cond(entry))
++			return false;
++
+ 		break;
+ 	default:
+ 		return false;
+@@ -1176,6 +1196,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 				entry->func = KEXEC_CMDLINE;
+ 			else if (strcmp(args[0].from, "KEY_CHECK") == 0)
+ 				entry->func = KEY_CHECK;
++			else if (IS_ENABLED(CONFIG_SECURITY_SELINUX) &&
++				 strcmp(args[0].from, "LSM_STATE") == 0)
++				entry->func = LSM_STATE;
++			else if (IS_ENABLED(CONFIG_SECURITY_SELINUX) &&
++				 strcmp(args[0].from, "LSM_POLICY") == 0)
++				entry->func = LSM_POLICY;
+ 			else
+ 				result = -EINVAL;
+ 			if (!result)
+-- 
+2.27.0
 
