@@ -4,103 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605A5C433E0
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43B9C433E0
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 23:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 453FF22B42
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8416321D95
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 23:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbgHEUN0 (ORCPT
+        id S1726551AbgHEXwZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:13:26 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:37800 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgHEQX2 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:23:28 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 4D97E72CCE9;
-        Wed,  5 Aug 2020 19:23:05 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 39D1E4A4AE7;
-        Wed,  5 Aug 2020 19:23:05 +0300 (MSK)
-Date:   Wed, 5 Aug 2020 19:23:05 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
+        Wed, 5 Aug 2020 19:52:25 -0400
+Received: from namei.org ([65.99.196.166]:57738 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbgHEXwY (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 5 Aug 2020 19:52:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 075Npvex020649;
+        Wed, 5 Aug 2020 23:51:57 GMT
+Date:   Thu, 6 Aug 2020 09:51:57 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org,
-        Bruno Meneguele <bmeneg@redhat.com>
-Subject: Re: [ima-evm-utils: PATCH 5/5] ima-evm-utils: travis: openssl gost
- engine
-Message-ID: <20200805162304.kxs62fi3lkuqzhxk@altlinux.org>
-References: <1157c464d49cb6297fc2f20771d73a4cf7ce6599.camel@linux.ibm.com>
- <20200803130755.GA30440@dell5510>
- <22a744e9520237907312d1f71293df0dd809805f.camel@linux.ibm.com>
- <20200803164635.GB4914@dell5510>
- <bc771e16d4afd3454dea37537f759343452c6446.camel@linux.ibm.com>
- <20200804072234.GA4337@dell5510>
- <20200804075453.GA7285@dell5510>
- <980a1c491dcc03606635cdddce8b19e7a2e041c5.camel@linux.ibm.com>
- <20200805094215.GA32709@dell5510>
- <e01f39f3e0abc9f799bbe0a50e803287b9458888.camel@linux.ibm.com>
+cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
+        pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+In-Reply-To: <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.2008060949410.20084@namei.org>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>   <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>   <20200802143143.GB20261@amd>   <1596386606.4087.20.camel@HansenPartnership.com>   <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+  <1596639689.3457.17.camel@HansenPartnership.com>  <alpine.LRH.2.21.2008050934060.28225@namei.org> <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <e01f39f3e0abc9f799bbe0a50e803287b9458888.camel@linux.ibm.com>
-User-Agent: NeoMutt/20171215-106-ac61c7
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Mimi,
+On Wed, 5 Aug 2020, Mimi Zohar wrote:
 
-On Wed, Aug 05, 2020 at 09:31:40AM -0400, Mimi Zohar wrote:
-> On Wed, 2020-08-05 at 11:42 +0200, Petr Vorel wrote:
-> > Hi Mimi, Vitaly,
-> > 
-> > ...
-> > > "[PATCH v3 1/1] tpm: add sysfs exports for all banks of PCR registers"
-> > > was posted here on the linux-integrity mailing list[1].  It's important
-> > > to get this patch upstreamed, but I think the PCR file format is useful
-> > > on its own.  For this reason, I'm going to backtrack and include it in
-> > > 1.3.1.
-> > Thanks a lot for info!
-> > 
-> > > I've posted a new version of "travis: openssl gost engine" addressing
-> > > the branch version and lack of an install target.   It assumes that
-> > > openssl was built with engine support and builds the gost engine
-> > > support from the git repo.  The environment variable is set, but has
-> > > not been tested.
-> > > Everything, including this change, should now be in the next-testing
-> > > branch.
-> > Nice, thanks! Tested:
-> > https://travis-ci.org/github/pevik/ima-evm-utils
+> If block layer integrity was enough, there wouldn't have been a need
+> for fs-verity.   Even fs-verity is limited to read only filesystems,
+> which makes validating file integrity so much easier.  From the
+> beginning, we've said that fs-verity signatures should be included in
+> the measurement list.  (I thought someone signed on to add that support
+> to IMA, but have not yet seen anything.)
 > 
-> >From the log, I see I somehow re-introduced testing "${SSL}" =
-> "openssl".  I've removed it again and pushed out the update version.
+> Going forward I see a lot of what we've accomplished being incorporated
+> into the filesystems.  When IMA will be limited to defining a system
+> wide policy, I'll have completed my job.
 
-Maybe I am fetching wrong, but it's still there.
+What are your thoughts on IPE being a standalone LSM? Would you prefer to 
+see its functionality integrated into IMA?
 
-origin is https://git.code.sf.net/p/linux-ima/ima-evm-utils
-
-  $ git fetch origin
-  $ git show -m origin/next-testing
-  commit 76121b08b479f60a773653889070546002c2e826
-  ...
-  +before_install:
-  +   - if [ "${SSL}" = "openssl" ]; then
-  +        ./tests/install-gost-engine.sh;
-  +        openssl version;
-  +     fi
-
-Thanks,
-
-
-> 
-> > I hope I'll have time for docker based travis patch next week.
-> 
-> Thanks!
-> 
-> Mimi
