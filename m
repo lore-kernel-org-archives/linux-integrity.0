@@ -2,131 +2,153 @@ Return-Path: <SRS0=MoMd=BP=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31896C433E3
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 19:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E66C433E3
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A39822CA0
-	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 19:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D517922CA1
+	for <linux-integrity@archiver.kernel.org>; Wed,  5 Aug 2020 20:06:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMnzX/Bk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hnBfreEj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbgHET5l (ORCPT
+        id S1728428AbgHEUF7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:57:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45406 "EHLO
+        Wed, 5 Aug 2020 16:05:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbgHEQns (ORCPT
+        with ESMTP id S1727079AbgHEQfG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:43:48 -0400
-Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E86C034612;
-        Wed,  5 Aug 2020 05:46:04 -0700 (PDT)
-Received: by mail-qt1-x841.google.com with SMTP id c12so24490446qtn.9;
-        Wed, 05 Aug 2020 05:46:03 -0700 (PDT)
+        Wed, 5 Aug 2020 12:35:06 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7A40C008688;
+        Wed,  5 Aug 2020 07:27:54 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id z22so9160331oid.1;
+        Wed, 05 Aug 2020 07:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=th4R0mCDoEKdxtP92DcRMWCvQNUwMm704tc+tQsZ6e8=;
-        b=CMnzX/BkmrlbcfiKr7JDmYk704xsWGknJKvd+HQfxigZlMYUd2JDxLZZJ7AM4TB3Tu
-         xU1b2tTVbUxTEcVS0keHcGIOcvDbg0Mc9e44uwsdob+ZBmNGkINJPYUrbXW1+jGpvTLK
-         q6HKh3ivwm3nAHOgsJQDTdhdUercSIIvr6v7SehaOwRjst4uDAortgK+6vcDK5Dt5wZ8
-         7kUHi9Unn4E4nmWDGVLlM94Hu3Od0H2KdOl1Ckkp64W9ckafVFOmZQUWzAWqj8Ku24va
-         Sz1jmJ4MtajaF/nWDfSRh9FPkplHRF/31M1d8qwy/IO2PlKYQYUCF5z60bd5zaEURRNn
-         opGA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Blb5cBgplWWvh2yRMDcotzJrK1boXBQTYj1dnOWWj6w=;
+        b=hnBfreEjxoFcyyZNt3AUYdaPJlBEboB8o3t+lXk2upTSKgdswAGiWu9jg/0bjDKIRn
+         IxbZJyTdY5mBsKV2E+uLOpB1HJoAyGRTm3bsB96MFoSVhNKhiGr+4TzQjw9V4R1Au2Rd
+         614CJo1wYqs8liVDXesynQ6TiV5Ogr8/eto23NlJStfFnxz4eD0KTQeNrmJZ4le97+39
+         hlWODirNQ18FJITf4CF9EKWyKlGpA0diDIDbqpITq2JLYI1x+EoKQAl6+cQOx2m/EMBm
+         hnqk6nBDt22HVn/BE+HPMZyYdTdZGzk0seX96HYBeTtARnZqpcTYd6vEvqwGsqTwSN0A
+         Nr8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=th4R0mCDoEKdxtP92DcRMWCvQNUwMm704tc+tQsZ6e8=;
-        b=PJU27bSOqH20mghqx6QETZ0jSO+leoLP6wgwFCxeCMoJxxR1avg5sGLxBV5C+cPUlc
-         DWT59RCsiIlY1lNKB2ljAAxaaye8nYTELA9ol90rCBwnZ4fRp3mypKEu4ClarcOlNlo/
-         Mj5hbDAFi2xQ1B9ayJsfebza8jQN/03qzPHK4pD58uZlkqzVokPhxZ+jiG4PctwxOjkL
-         o5GmfBbc9GkYf7yef6Jd0KTixNhiE6um2UNKuFWC7xQEfVGkC86IYOm2RJYVlOfYePhi
-         s0sT/DQyDxxqH440UK1xmxoCxUCQEtLeMFR9C2+65b5SWVkUO/2o7UierPSmAlPjdwao
-         NSuQ==
-X-Gm-Message-State: AOAM5328/6BBHHHxelk2/fXz5Nva/BZcrwv045lqswa5StGURkOzNZQl
-        DqdRMnnhaq0sKbou7glOiZG7CberAiY=
-X-Google-Smtp-Source: ABdhPJxrH4/VsLOKixqcHuZDqId9PnSjHLiReskUJRab0cl4DnJUCIsc2KvflzT6+UowANCjwPVYXw==
-X-Received: by 2002:ac8:6f51:: with SMTP id n17mr3057373qtv.233.1596631562731;
-        Wed, 05 Aug 2020 05:46:02 -0700 (PDT)
-Received: from [192.168.1.190] (pool-96-244-118-111.bltmmd.fios.verizon.net. [96.244.118.111])
-        by smtp.gmail.com with ESMTPSA id j15sm1410469qkl.63.2020.08.05.05.46.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Aug 2020 05:46:01 -0700 (PDT)
-Subject: Re: [PATCH v6 1/4] IMA: Add func to measure LSM state and policy
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200805004331.20652-1-nramas@linux.microsoft.com>
- <20200805004331.20652-2-nramas@linux.microsoft.com>
- <4b9d2715d3ef3c8f915ef03867cfb1a39c0abc54.camel@linux.ibm.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Message-ID: <f88bf25e-37ef-7f00-6162-215838961bb0@gmail.com>
-Date:   Wed, 5 Aug 2020 08:46:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Blb5cBgplWWvh2yRMDcotzJrK1boXBQTYj1dnOWWj6w=;
+        b=Ter8kW3QSibscGmf0NtxclMgqcchavT9cxnI/5pDUm965qj0GRjXXYqt2btLdu3gBb
+         E0VCdreZSXoPzbpbu4ciqRxWWkbrNKLfhvcxXwSh7EBAs+HfaolWYp37PVwOIGOA/DAE
+         XzC1uHyEnIKTtxM3Vjvp4ZacmwU6EsipSsl9gGGSiyl43MarfJbU9vZmc5eAqX5brMzb
+         DKs848CWCB6IRxl156Yp45aHRbRDOT6QzdXQA/cC56us1C4VzHzNy/GVbgM63Nw4U391
+         Tim2kRjMQaYALAZi2uYvx2KMQQwiOUF5rREJ7tbLiEkWMr/2b05qv2ma1z1EDrC+bdF8
+         xwHw==
+X-Gm-Message-State: AOAM531YkgQkUiuLHGQhXRRKNLE8Lp9MpCa2leHMWKRD3bv0LfQG7eS2
+        5RxMk80BoyGtnFrP46DL03/T9UxuwtT/UcSKFfA=
+X-Google-Smtp-Source: ABdhPJwFLSLQMTNN17lzT9UhVboQK3lYQxDoK1SockjPL3YMW5lU1bWcdLTvmy9j25FkcOgQ4oWRA65Xwk+KGDif2X8=
+X-Received: by 2002:a54:4817:: with SMTP id j23mr2968773oij.140.1596637674297;
+ Wed, 05 Aug 2020 07:27:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <4b9d2715d3ef3c8f915ef03867cfb1a39c0abc54.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200805004331.20652-1-nramas@linux.microsoft.com>
+ <20200805004331.20652-2-nramas@linux.microsoft.com> <4b9d2715d3ef3c8f915ef03867cfb1a39c0abc54.camel@linux.ibm.com>
+ <f88bf25e-37ef-7f00-6162-215838961bb0@gmail.com> <31d00876438d2652890ab8bf6ba2e80f554ca7a4.camel@linux.ibm.com>
+ <CAEjxPJ6X+Cqd5QtZBmNm2cujwbg-STfRF7_8i=Ny8yuc6z9BwQ@mail.gmail.com> <b7df114e8e0d276e66575b6970a1e459d1dd4196.camel@linux.ibm.com>
+In-Reply-To: <b7df114e8e0d276e66575b6970a1e459d1dd4196.camel@linux.ibm.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 5 Aug 2020 10:27:43 -0400
+Message-ID: <CAEjxPJ7d1yg659OCU6diXXGqegc_jSzO4ZPhkRqQtJnRn-kC0g@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] IMA: Add func to measure LSM state and policy
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>, sashal@kernel.org,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 8/4/20 11:25 PM, Mimi Zohar wrote:
-
-> Hi Lakshmi,
+On Wed, Aug 5, 2020 at 9:20 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
 >
-> There's still  a number of other patch sets needing to be reviewed
-> before my getting to this one.  The comment below is from a high level.
+> On Wed, 2020-08-05 at 09:03 -0400, Stephen Smalley wrote:
+> > On Wed, Aug 5, 2020 at 8:57 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > On Wed, 2020-08-05 at 08:46 -0400, Stephen Smalley wrote:
+> > > > On 8/4/20 11:25 PM, Mimi Zohar wrote:
+> > > >
+> > > > > Hi Lakshmi,
+> > > > >
+> > > > > There's still  a number of other patch sets needing to be reviewed
+> > > > > before my getting to this one.  The comment below is from a high level.
+> > > > >
+> > > > > On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
+> > > > > > Critical data structures of security modules need to be measured to
+> > > > > > enable an attestation service to verify if the configuration and
+> > > > > > policies for the security modules have been setup correctly and
+> > > > > > that they haven't been tampered with at runtime. A new IMA policy is
+> > > > > > required for handling this measurement.
+> > > > > >
+> > > > > > Define two new IMA policy func namely LSM_STATE and LSM_POLICY to
+> > > > > > measure the state and the policy provided by the security modules.
+> > > > > > Update ima_match_rules() and ima_validate_rule() to check for
+> > > > > > the new func and ima_parse_rule() to handle the new func.
+> > > > > I can understand wanting to measure the in kernel LSM memory state to
+> > > > > make sure it hasn't changed, but policies are stored as files.  Buffer
+> > > > > measurements should be limited  to those things that are not files.
+> > > > >
+> > > > > Changing how data is passed to the kernel has been happening for a
+> > > > > while.  For example, instead of passing the kernel module or kernel
+> > > > > image in a buffer, the new syscalls - finit_module, kexec_file_load -
+> > > > > pass an open file descriptor.  Similarly, instead of loading the IMA
+> > > > > policy data, a pathname may be provided.
+> > > > >
+> > > > > Pre and post security hooks already exist for reading files.   Instead
+> > > > > of adding IMA support for measuring the policy file data, update the
+> > > > > mechanism for loading the LSM policy.  Then not only will you be able
+> > > > > to measure the policy, you'll also be able to require the policy be
+> > > > > signed.
+> > > >
+> > > > To clarify, the policy being measured by this patch series is a
+> > > > serialized representation of the in-memory policy data structures being
+> > > > enforced by SELinux.  Not the file that was loaded.  Hence, this
+> > > > measurement would detect tampering with the in-memory policy data
+> > > > structures after the policy has been loaded.  In the case of SELinux,
+> > > > one can read this serialized representation via /sys/fs/selinux/policy.
+> > > > The result is not byte-for-byte identical to the policy file that was
+> > > > loaded but can be semantically compared via sediff and other tools to
+> > > > determine whether it is equivalent.
+> > >
+> > > Thank you for the clarification.   Could the policy hash be included
+> > > with the other critical data?  Does it really need to be measured
+> > > independently?
+> >
+> > They were split into two separate functions because we wanted to be
+> > able to support using different templates for them (ima-buf for the
+> > state variables so that the measurement includes the original buffer,
+> > which is small and relatively fixed-size, and ima-ng for the policy
+> > because it is large and we just want to capture the hash for later
+> > comparison against known-good).  Also, the state variables are
+> > available for measurement always from early initialization, whereas
+> > the policy is only available for measurement once we have loaded an
+> > initial policy.
 >
-> On Tue, 2020-08-04 at 17:43 -0700, Lakshmi Ramasubramanian wrote:
->> Critical data structures of security modules need to be measured to
->> enable an attestation service to verify if the configuration and
->> policies for the security modules have been setup correctly and
->> that they haven't been tampered with at runtime. A new IMA policy is
->> required for handling this measurement.
->>
->> Define two new IMA policy func namely LSM_STATE and LSM_POLICY to
->> measure the state and the policy provided by the security modules.
->> Update ima_match_rules() and ima_validate_rule() to check for
->> the new func and ima_parse_rule() to handle the new func.
-> I can understand wanting to measure the in kernel LSM memory state to
-> make sure it hasn't changed, but policies are stored as files.  Buffer
-> measurements should be limited  to those things that are not files.
->
-> Changing how data is passed to the kernel has been happening for a
-> while.  For example, instead of passing the kernel module or kernel
-> image in a buffer, the new syscalls - finit_module, kexec_file_load -
-> pass an open file descriptor.  Similarly, instead of loading the IMA
-> policy data, a pathname may be provided.
->
-> Pre and post security hooks already exist for reading files.   Instead
-> of adding IMA support for measuring the policy file data, update the
-> mechanism for loading the LSM policy.  Then not only will you be able
-> to measure the policy, you'll also be able to require the policy be
-> signed.
+> Ok, measuring the policy separately from other critical data makes
+> sense.  Instead of measuring the policy, which is large, measure the
+> policy hash.
 
-To clarify, the policy being measured by this patch series is a 
-serialized representation of the in-memory policy data structures being 
-enforced by SELinux.  Not the file that was loaded.  Hence, this 
-measurement would detect tampering with the in-memory policy data 
-structures after the policy has been loaded.  In the case of SELinux, 
-one can read this serialized representation via /sys/fs/selinux/policy.  
-The result is not byte-for-byte identical to the policy file that was 
-loaded but can be semantically compared via sediff and other tools to 
-determine whether it is equivalent.
-
-
+I think that was the original approach.  However, I had concerns with
+adding code to SELinux to compute a hash over the policy versus
+leaving that to IMA's existing policy and mechanism.  If that's
+preferred I guess we can do it that way but seems less flexible and
+duplicative.
