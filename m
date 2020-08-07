@@ -2,70 +2,89 @@ Return-Path: <SRS0=qkAG=BR=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E326C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Aug 2020 14:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37F8C433DF
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Aug 2020 14:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8067620866
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 Aug 2020 14:15:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA59B20866
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 Aug 2020 14:19:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="eqyVzfeS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbgHGOP3 (ORCPT
+        id S1725970AbgHGOTh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 7 Aug 2020 10:15:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58244 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbgHGOP2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 Aug 2020 10:15:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id C9D2DAC41;
-        Fri,  7 Aug 2020 14:15:45 +0000 (UTC)
-Date:   Fri, 7 Aug 2020 16:15:24 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     ltp@lists.linux.it
+        Fri, 7 Aug 2020 10:19:37 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:37968 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbgHGOTh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 7 Aug 2020 10:19:37 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7A27420B4908;
+        Fri,  7 Aug 2020 07:19:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A27420B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596809976;
+        bh=9UTKQRLLAv9PZnTXUwjNrOzFDyjSffWMD+Uhbj7o5Y4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eqyVzfeSKUxwkTRZzpEOwAAVXq4Zn4jWSv6SMoWhJYULxCOkPhKHSkuR20J0TjMjx
+         9Z1A2uTsiEvDehBbQjBCnBQf32ZmOp6v3wZB8NAqbC0xNlvci+rU15vyOC/rKVgMaE
+         /tBww1X295wBXF0tSL+M3mRuldnmzMCoF17mx8rI=
+Subject: Re: [PATCH 1/1] IMA/ima_keys.sh Fix policy content check usage
+To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
 Cc:     Lachlan Sneff <t-josne@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org, Cyril Hrubis <chrubis@suse.cz>
-Subject: Re: [PATCH 1/1] IMA/ima_keys.sh Fix policy content check usage
-Message-ID: <20200807141524.GA3247@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
 References: <20200807112929.8984-1-pvorel@suse.cz>
+ <20200807141524.GA3247@dell5510>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <51daca31-72b6-2a59-bed2-40609af9e420@linux.microsoft.com>
+Date:   Fri, 7 Aug 2020 07:19:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200807112929.8984-1-pvorel@suse.cz>
+In-Reply-To: <20200807141524.GA3247@dell5510>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi all,
+On 8/7/20 7:15 AM, Petr Vorel wrote:
+> Hi all,
+> 
+> ...
+>> --- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+>> +++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+>> @@ -16,11 +16,14 @@ TST_NEEDS_DEVICE=1
+>>   # (450d0fd51564 - "IMA: Call workqueue functions to measure queued keys")
+>>   test1()
+>>   {
+>> -	local keyrings keycheck_lines keycheck_line templates test_file="file.txt"
+>> +	local keyrings keycheck_lines keycheck_line templates
+>> +	local policy="func=KEY_CHECK"
+>> +	local test_file="file.txt"
+> 
+>>   	tst_res TINFO "verifying key measurement for keyrings and templates specified in IMA policy file"
+> 
+>> -	keycheck_lines=$(require_ima_policy_content "func=KEY_CHECK" "")
+>> +	require_ima_policy_content $policy
+>> +	keycheck_lines=$(check_ima_policy_content $policy "")
+>>   	keycheck_line=$(echo "$keycheck_lines" | grep "keyrings" | head -n1)
+> While working on this patchset, I wonder, why we don't check for
+> 'func=KEY_CHECK.*keyrings' in single grep call instead of grepping it twice.
+> IMHO single grep call is enough. Or am I missing something?
+> 
 
-...
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-> +++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-> @@ -16,11 +16,14 @@ TST_NEEDS_DEVICE=1
->  # (450d0fd51564 - "IMA: Call workqueue functions to measure queued keys")
->  test1()
->  {
-> -	local keyrings keycheck_lines keycheck_line templates test_file="file.txt"
-> +	local keyrings keycheck_lines keycheck_line templates
-> +	local policy="func=KEY_CHECK"
-> +	local test_file="file.txt"
+Instead require_ima_policy_content calling "tst_brk" in error condition, 
+it can just return false and the caller can handle it as appropriate. 
+Would that avoid two grep calls?
 
->  	tst_res TINFO "verifying key measurement for keyrings and templates specified in IMA policy file"
-
-> -	keycheck_lines=$(require_ima_policy_content "func=KEY_CHECK" "")
-> +	require_ima_policy_content $policy
-> +	keycheck_lines=$(check_ima_policy_content $policy "")
->  	keycheck_line=$(echo "$keycheck_lines" | grep "keyrings" | head -n1)
-While working on this patchset, I wonder, why we don't check for
-'func=KEY_CHECK.*keyrings' in single grep call instead of grepping it twice.
-IMHO single grep call is enough. Or am I missing something?
-
-Kind regards,
-Petr
+thanks,
+  -lakshmi
