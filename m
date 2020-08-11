@@ -2,126 +2,146 @@ Return-Path: <SRS0=43T4=BV=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAD_ENC_HEADER,BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0DBC433E0
-	for <linux-integrity@archiver.kernel.org>; Tue, 11 Aug 2020 18:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514C6C433E1
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 Aug 2020 19:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 891782076C
-	for <linux-integrity@archiver.kernel.org>; Tue, 11 Aug 2020 18:28:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="f8kSFMTU";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="OSDLkaQV"
+	by mail.kernel.org (Postfix) with ESMTP id 268DD20781
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 Aug 2020 19:03:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgHKS2e (ORCPT
+        id S1726274AbgHKTD2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 11 Aug 2020 14:28:34 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:43170 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725889AbgHKS2d (ORCPT
+        Tue, 11 Aug 2020 15:03:28 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:49030 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbgHKTDZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 11 Aug 2020 14:28:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 12B4B8EE19D;
-        Tue, 11 Aug 2020 11:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597170512;
-        bh=3WEnw6QUJlA/ul3OQNUWXjoU13+yLZLQS09srF5MAho=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=f8kSFMTUDNJBODH89PuFjILL2FIdhsJg734xkqUR/cnDMS0KoMreMUczSAhnUyPMA
-         FTeH0AYqaAUb8S0lZlH/2MKXOBNx4BiGB+ITLubur3uSRnr1jBTuyfUMErztSAvCOK
-         o6mPwANArB0pQb+2/z1bhs18+blmHF0lRNFSsct0=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zuQo8S5FYJFD; Tue, 11 Aug 2020 11:28:31 -0700 (PDT)
-Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7EF748EE149;
-        Tue, 11 Aug 2020 11:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597170511;
-        bh=3WEnw6QUJlA/ul3OQNUWXjoU13+yLZLQS09srF5MAho=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OSDLkaQVZ4KRYf4a0s5X94LSMaapheTMG3B7iv1TDO9dOQ2MOULwugwtLeHe6qdeF
-         qJgkWRBhCi9y0UIGoySKjkb+RHhMP2bUFkZ9nJkEdlUyNr1yc428zvmYrJhUC4gJZu
-         kZoLKW8vwf99sZFDKUvV19sDo8EBD6kP0uULOtBM=
-Message-ID: <1597170509.4325.55.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Chuck Lever <chucklever@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Tue, 11 Aug 2020 15:03:25 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k5ZYK-006qgE-65; Tue, 11 Aug 2020 13:03:16 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k5ZYJ-0006gu-5w; Tue, 11 Aug 2020 13:03:15 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Date:   Tue, 11 Aug 2020 11:28:29 -0700
-In-Reply-To: <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
-         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
-         <20200802143143.GB20261@amd>
-         <1596386606.4087.20.camel@HansenPartnership.com>
-         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-         <1596639689.3457.17.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.2008050934060.28225@namei.org>
-         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
-         <1597073737.3966.12.camel@HansenPartnership.com>
-         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
-         <1597124623.30793.14.camel@HansenPartnership.com>
-         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200723171227.446711-1-mic@digikod.net>
+        <20200723171227.446711-2-mic@digikod.net>
+Date:   Tue, 11 Aug 2020 13:59:48 -0500
+In-Reply-To: <20200723171227.446711-2-mic@digikod.net> (=?utf-8?Q?=22Micka?=
+ =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
+        message of "Thu, 23 Jul 2020 19:12:21 +0200")
+Message-ID: <87eeodnh3v.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1k5ZYJ-0006gu-5w;;;mid=<87eeodnh3v.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19Ak6/vsLtopnFYs9ZfaNrZr8Zt2Ow/qiA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v7 1/7] exec: Change uselib(2) IS_SREG() failure to EACCES
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-> Mimi's earlier point is that any IMA metadata format that involves
-> unsigned digests is exposed to an alteration attack at rest or in
-> transit, thus will not provide a robust end-to-end integrity
-> guarantee.
+Mickaël Salaün <mic@digikod.net> writes:
 
-I don't believe that is Mimi's point, because it's mostly not correct:
-the xattr mechanism does provide this today.  The point is the
-mechanism we use for storing IMA hashes and signatures today is xattrs
-because they have robust security properties for local filesystems that
-the kernel enforces.  This use goes beyond IMA, selinux labels for
-instance use this property as well.
+> From: Kees Cook <keescook@chromium.org>
+>
+> Change uselib(2)' S_ISREG() error return to EACCES instead of EINVAL so
+> the behavior matches execve(2), and the seemingly documented value.
+> The "not a regular file" failure mode of execve(2) is explicitly
+> documented[1], but it is not mentioned in uselib(2)[2] which does,
+> however, say that open(2) and mmap(2) errors may apply. The documentation
+> for open(2) does not include a "not a regular file" error[3], but mmap(2)
+> does[4], and it is EACCES.
 
-What I think you're saying is that NFS can't provide the robust
-security for xattrs we've been relying on, so you need some other
-mechanism for storing them.
+Do you have enough visibility into uselib to be certain this will change
+will not cause regressions?
 
-I think Mimi's other point is actually that IMA uses a flat hash which
-we derive by reading the entire file and then watching for mutations. 
-Since you cannot guarantee we get notice of mutation with NFS, the
-entire IMA mechanism can't really be applied in its current form and we
-have to resort to chunk at a time verifications that a Merkel tree
-would provide.  Doesn't this make moot any thinking about
-standardisation in NFS for the current IMA flat hash mechanism because
-we simply can't use it ... If I were to construct a prototype I'd have
-to work out and securely cache the hash of ever chunk when verifying
-the flat hash so I could recheck on every chunk read.  I think that's
-infeasible for large files.
+My sense of uselib is that it would be easier to remove the system call
+entirely (I think it's last use was in libc5) than to validate that a
+change like this won't cause problems for the users of uselib.
 
-James
+For the kernel what is important are real world users and the manpages
+are only important as far as they suggest what the real world users do.
 
+Eric
+
+
+> [1] http://man7.org/linux/man-pages/man2/execve.2.html#ERRORS
+> [2] http://man7.org/linux/man-pages/man2/uselib.2.html#ERRORS
+> [3] http://man7.org/linux/man-pages/man2/open.2.html#ERRORS
+> [4] http://man7.org/linux/man-pages/man2/mmap.2.html#ERRORS
+>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Link: https://lore.kernel.org/r/20200605160013.3954297-2-keescook@chromium.org
+> ---
+>  fs/exec.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index e6e8a9a70327..d7c937044d10 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -141,11 +141,10 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+>  	if (IS_ERR(file))
+>  		goto out;
+>  
+> -	error = -EINVAL;
+> +	error = -EACCES;
+>  	if (!S_ISREG(file_inode(file)->i_mode))
+>  		goto exit;
+>  
+> -	error = -EACCES;
+>  	if (path_noexec(&file->f_path))
+>  		goto exit;
