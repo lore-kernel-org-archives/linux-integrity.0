@@ -2,257 +2,226 @@ Return-Path: <SRS0=uwT9=B3=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C53C433DF
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Aug 2020 13:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F70CC433E1
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Aug 2020 14:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07E1D2072E
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Aug 2020 13:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2732020729
+	for <linux-integrity@archiver.kernel.org>; Mon, 17 Aug 2020 14:31:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FkocTtEt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgHQNJ2 (ORCPT
+        id S1728912AbgHQObh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 17 Aug 2020 09:09:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36892 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728284AbgHQNJ0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Aug 2020 09:09:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 09F89B1AF;
-        Mon, 17 Aug 2020 13:09:49 +0000 (UTC)
-From:   Petr Vorel <pvorel@suse.cz>
-To:     ltp@lists.linux.it
-Cc:     Lachlan Sneff <t-josne@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>
-Subject: [PATCH v3 3/4] IMA: Add a test to verify measurement of certificate imported into a keyring
-Date:   Mon, 17 Aug 2020 15:09:15 +0200
-Message-Id: <20200817130916.27634-4-pvorel@suse.cz>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200817130916.27634-1-pvorel@suse.cz>
-References: <20200817130916.27634-1-pvorel@suse.cz>
+        Mon, 17 Aug 2020 10:31:37 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:33706 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728849AbgHQObh (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 17 Aug 2020 10:31:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597674695;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mxgabpDEFYNht1MiJtKJMyP7n1c8XeUJ7wKYseTKexo=;
+        b=FkocTtEtGE8IkiMMEXB7bgUOSjDJWh59+PSlLJ2qNTPDO38ZR4rh6279P2XKmoe/K5of1F
+        /VtMCjA+CyT964qu3XXm5BFqHQrYHgKRSmxOhyAMW/4LpELTKfD7J+OZ77vKOUVBME56pz
+        JO/KBP2kBdJthV8aRtFSlEu42zS6KV0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-372-v4T9_47sMCG3ZjexfYeFEw-1; Mon, 17 Aug 2020 10:31:25 -0400
+X-MC-Unique: v4T9_47sMCG3ZjexfYeFEw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6ADF9100CF76;
+        Mon, 17 Aug 2020 14:31:22 +0000 (UTC)
+Received: from localhost (ovpn-116-138.gru2.redhat.com [10.97.116.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 001987A3BD;
+        Mon, 17 Aug 2020 14:31:21 +0000 (UTC)
+Date:   Mon, 17 Aug 2020 11:31:20 -0300
+From:   Bruno Meneguele <bmeneg@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Vitaly Chikunov <vt@altlinux.org>
+Subject: Re: [ima-evm-utils][PATCH] Install the swtpm package, if available
+Message-ID: <20200817143120.GB4781@glitch>
+References: <20200816193627.73935-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200816193627.73935-1-zohar@linux.ibm.com>
+X-PGP-Key: http://keys.gnupg.net/pks/lookup?op=get&search=0x3823031E4660608D
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=bmeneg@redhat.com
+X-Mimecast-Spam-Score: 0.001
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
+Content-Disposition: inline
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Lachlan Sneff <t-josne@linux.microsoft.com>
+--f2QGlHpHGjS2mn6Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The IMA subsystem supports measuring certificates that have been
-imported into either system built-in or user-defined keyrings.
-A test to verify measurement of a certificate imported
-into a keyring is required.
+On Sun, Aug 16, 2020 at 03:36:27PM -0400, Mimi Zohar wrote:
+> The "boot_aggregate.test" requires either a hardware or software TPM.
+> Support using the swtpm, if packaged for the distro, in addition to
+> tpm_server.
+>=20
+> Note: Some travis/<distro>.sh scripts are links to other scripts.
+> Don't fail the build of the linked script if the swtpm package doesn't
+> exist.
+>=20
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  .travis.yml               |  2 +-
+>  tests/boot_aggregate.test | 40 ++++++++++++++++++++++++++++-----------
+>  travis/fedora.sh          |  1 +
+>  3 files changed, 31 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/.travis.yml b/.travis.yml
+> index 849fcb6ba822..9bea5d19bd0e 100644
+> --- a/.travis.yml
+> +++ b/.travis.yml
+> @@ -75,4 +75,4 @@ before_install:
+>  script:
+>      - INSTALL=3D"${DISTRO%%:*}"
+>      - INSTALL=3D"${INSTALL%%/*}"
+> -    - docker run -t ima-evm-utils /bin/sh -c "cd travis && if [ \"$VARIA=
+NT\" ]; then ARCH=3D\"$ARCH\" ./$INSTALL.$VARIANT.sh; fi && ARCH=3D\"$ARCH\=
+" CC=3D\"$CC\" TSS=3D\"$TSS\" ./$INSTALL.sh && if [ ! \"$VARIANT\" ]; then =
+which tpm_server || ../tests/install-swtpm.sh; fi && CC=3D\"$CC\" VARIANT=
+=3D\"$VARIANT\" ../build.sh"
+> +    - docker run -t ima-evm-utils /bin/sh -c "cd travis && if [ \"$VARIA=
+NT\" ]; then ARCH=3D\"$ARCH\" ./$INSTALL.$VARIANT.sh; fi && ARCH=3D\"$ARCH\=
+" CC=3D\"$CC\" TSS=3D\"$TSS\" ./$INSTALL.sh && if [ ! \"$VARIANT\" ]; then =
+which tpm_server || which swtpm || ../tests/install-swtpm.sh; fi && CC=3D\"=
+$CC\" VARIANT=3D\"$VARIANT\" ../build.sh"
+> diff --git a/tests/boot_aggregate.test b/tests/boot_aggregate.test
+> index 43de67de1468..ce310b6ae5b4 100755
+> --- a/tests/boot_aggregate.test
+> +++ b/tests/boot_aggregate.test
+> @@ -33,6 +33,10 @@ else
+>  =09ASCII_RUNTIME_MEASUREMENTS=3D"./sample-ascii_runtime_measurements-pcr=
+s-8-9"
+>  =09export TPM_INTERFACE_TYPE=3D"socsim"
+>  =09export TPM_COMMAND_PORT=3D2321
+> +=09export TPM_PLATFORM_PORT=3D2322
+> +=09export TPM_SERVER_NAME=3D"localhost"
+> +=09export TPM_SERVER_TYPE=3D"raw"
+> +
+>  fi
+> =20
+>  # Only stop this test's software TPM.  Preferred method: "tsstpmcmd -sto=
+p"
+> @@ -48,22 +52,36 @@ cleanup() {
+> =20
+>  # Try to start a software TPM if needed.
+>  swtpm_start() {
+> -=09local swtpm
+> +=09local swtpm swtpm1
+> =20
+>  =09swtpm=3D"$(which tpm_server)"
+> -=09if [ -z "${swtpm}" ]; then
+> -=09=09echo "${CYAN}SKIP: Softare TPM (tpm_server) not found${NORM}"
+> +=09swtpm1=3D"$(which swtpm)"
+> +=09if [ -z "${swtpm}" ] && [ -z "${swptm1}" ]; then
+> +=09=09echo "${CYAN}SKIP: Softare TPM (tpm_server and swtpm) not found${N=
+ORM}"
+>  =09=09return "$SKIP"
+>  =09fi
+> =20
+> -=09pgrep tpm_server
+> -=09if [ $? -eq 0 ]; then
+> -=09=09echo "INFO: Software TPM (tpm_server) already running"
+> -=09=09return 114
+> -=09else
+> -=09=09echo "INFO: Starting software TPM: ${swtpm}"
+> -=09=09${swtpm} > /dev/null 2>&1 &
+> -=09=09SWTPM_PPID=3D$!
+> +=09if [ ! -z "${swtpm1}" ]; then
+> +=09=09pgrep swtpm1
+> +=09=09if [ $? -eq 0 ]; then
+> +=09=09=09echo "INFO: Software TPM (swtpm) already running"
+> +=09=09=09return 114
+> +=09=09else
+> +=09=09=09echo "INFO: Starting software TPM: ${swtpm1}"
+> +=09=09=09mkdir ./myvtpm
+> +=09=09=09${swtpm1} socket --tpmstate dir=3D./myvtpm --tpm2 --ctrl type=
+=3Dtcp,port=3D2322 --server type=3Dtcp,port=3D2321 --flags not-need-init > =
+/dev/null 2>&1 &
+> +=09=09=09SWTPM_PPID=3D$!
+> +=09=09fi
+> +=09elif [ ! -z "${swtpm}" ]; then
+> +=09=09pgrep swtpm
+> +=09=09if [ $? -eq 0 ]; then
+> +=09=09=09echo "INFO: Software TPM (tpm_server) already running"
+> +=09=09=09return 114
+> +=09=09else
+> +=09=09=09echo "INFO: Starting software TPM: ${swtpm}"
+> +=09=09=09${swtpm} > /dev/null 2>&1 &
+> +=09=09=09SWTPM_PPID=3D$!
+> +=09=09fi
+>  =09fi
+>  =09return 0
+>  }
+> diff --git a/travis/fedora.sh b/travis/fedora.sh
+> index d3459e408d81..f9ee9bed7bc1 100755
+> --- a/travis/fedora.sh
+> +++ b/travis/fedora.sh
+> @@ -41,6 +41,7 @@ yum -y install \
+>  =09which
+> =20
+>  yum -y install docbook5-style-xsl || true
+> +yum -y install swtpm || true
+> =20
 
-Add an IMA measurement test that verifies that an x509 certificate
-can be imported into a newly-created, user-defined keyring and measured
-correctly by the IMA subsystem.
+just fyi..
 
-A certificate used by the test is included in the `datafiles/keys`
-directory.
+centos:7 doesn't has swtpm while centos:{latest,8} does.
+Should we consider getting it built manually? I can take a look on it if
+desirable.
 
-There can be restrictions on importing a certificate into a builtin
-trusted keyring. For example, the `.ima` keyring requires that
-imported certs be signed by a kernel private key in certain
-kernel configurations. For this reason, this test defines
-a user-defined keyring and imports a certificate into that.
+>  # FIXME: debug
+>  echo "find /tss2_esys.h"
+> --=20
+> 2.18.4
+>=20
 
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
-Signed-off-by: Lachlan Sneff <t-josne@linux.microsoft.com>
-[ pvorel: Added key_import_test into keycheck.policy, reword
-instructions in README.md, LTP API related fixes ]
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
-The same as v2.
+With "swptm1" fixed:
 
- .../kernel/security/integrity/ima/README.md   |  12 ++--
- .../integrity/ima/datafiles/ima_keys/Makefile |   2 +-
- .../ima/datafiles/ima_keys/keycheck.policy    |   2 +-
- .../ima/datafiles/ima_keys/x509_ima.der       | Bin 0 -> 650 bytes
- .../security/integrity/ima/tests/ima_keys.sh  |  68 +++++++++++++++---
- 5 files changed, 70 insertions(+), 14 deletions(-)
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_keys/x509_ima.der
+Acked-by: Bruno Meneguele <bmeneg@redhat.com>
 
-diff --git a/testcases/kernel/security/integrity/ima/README.md b/testcases/kernel/security/integrity/ima/README.md
-index 392e1e868..68d046678 100644
---- a/testcases/kernel/security/integrity/ima/README.md
-+++ b/testcases/kernel/security/integrity/ima/README.md
-@@ -16,11 +16,15 @@ space, may contain equivalent measurement tcb rules, detecting them would
- require `IMA_READ_POLICY=y` therefore ignore this option.
- 
- ### IMA key test
--`ima_keys.sh` requires a readable IMA policy, as well as a loaded policy
--with `func=KEY_CHECK keyrings=...`, see example in `keycheck.policy`.
-+The measuring keys test (first test) in `ima_keys.sh` requires a readable IMA
-+policy, as well as a loaded measure policy with `func=KEY_CHECK keyrings=...`.
- 
--As well as what's required for the IMA tests, the following are also required
---in the kernel configuration:
-+The certificate import test (second test) require measure policy with
-+`func=KEY_CHECK keyrings=key_import_test`. Valid policy for both is in
-+`keycheck.policy`.
-+
-+As well as what's required for the IMA tests, key tests require reading the IMA
-+policy allowed in the kernel configuration:
- ```
- CONFIG_IMA_READ_POLICY=y
- ```
-diff --git a/testcases/kernel/security/integrity/ima/datafiles/ima_keys/Makefile b/testcases/kernel/security/integrity/ima/datafiles/ima_keys/Makefile
-index 452321843..ac7ce33ab 100644
---- a/testcases/kernel/security/integrity/ima/datafiles/ima_keys/Makefile
-+++ b/testcases/kernel/security/integrity/ima/datafiles/ima_keys/Makefile
-@@ -6,6 +6,6 @@ top_srcdir	?= ../../../../../../..
- include	$(top_srcdir)/include/mk/env_pre.mk
- 
- INSTALL_DIR		:= testcases/data/ima_keys
--INSTALL_TARGETS	:= *.policy
-+INSTALL_TARGETS	:= *.policy x509_ima.der
- 
- include $(top_srcdir)/include/mk/generic_leaf_target.mk
-diff --git a/testcases/kernel/security/integrity/ima/datafiles/ima_keys/keycheck.policy b/testcases/kernel/security/integrity/ima/datafiles/ima_keys/keycheck.policy
-index 3f1934a3d..623162002 100644
---- a/testcases/kernel/security/integrity/ima/datafiles/ima_keys/keycheck.policy
-+++ b/testcases/kernel/security/integrity/ima/datafiles/ima_keys/keycheck.policy
-@@ -1 +1 @@
--measure func=KEY_CHECK keyrings=.ima|.evm|.builtin_trusted_keys|.blacklist template=ima-buf
-+measure func=KEY_CHECK keyrings=.ima|.evm|.builtin_trusted_keys|.blacklist|key_import_test template=ima-buf
-diff --git a/testcases/kernel/security/integrity/ima/datafiles/ima_keys/x509_ima.der b/testcases/kernel/security/integrity/ima/datafiles/ima_keys/x509_ima.der
-new file mode 100644
-index 0000000000000000000000000000000000000000..92be058da22adffa9d6b6e51efa0c737ebbbbdcd
-GIT binary patch
-literal 650
-zcmXqLVrnyJVtl`VnTe5!NhJD#vj69`9|BBf8}FEsx@^_9$Clp>c-c6$+C196^D;7W
-zvoaV27z!HjvoVLVaPe?t<QJFZCFZ6YN*hRmgqV4R$}{p4b2Al+Gt=`j^U@WvQ!5SS
-z3}oO&a59SVLzFncG#ki?^BP(jSQr@@7#Ud_7)6Qm8W{k&hEOgIY;2s5>?=lA2Ij_I
-z27|^<rp88wchfeduxmMW^j9qUxkIugeev4q7u7yrJR_rW$*!>VOo=tim8DK0r^FsU
-zl)K`}`+CO4@4KBkoLmcj?fH`%wbDvU<d=4Z>6-SMf6Eh}{&)1rdsOoNQ-1fgBQ1t{
-zVTqGwuK95LlFE)6i{@=vlP6!2`Y}x<BF&oXU_nlDxy@C+CNp&=W=00a#jys_20XwZ
-zl@(@W{LjK<z+k`);_<VvFf*|?7|4P+d@N!tBCNWX-0#?!UAx9s`mgFmW+nI2#6kmk
-zkhC(3gn?Lt$m4W@56wQ)?QVKW<nOtpT)HJrB?Q^`z&K?FdV8b(y8m)~mOOvswu^9m
-z-o7mOwCAzaT*~`Y4wxFtmNA_89`W;j{r#iww*5OC5vgEziqD_%=ki$*`;s}`Pfwi{
-zbotZ0X`ckHOmaVLm85n@E9hN_K;~PUB>DFAzh(;(UoMln9V>g;W#-LUGS7A`nYQKY
-WBem{7L5JThS+;$vggi%(*E;~nlJ80Y
+Thanks Mimi.
 
-literal 0
-HcmV?d00001
+--=20
+bmeneg=20
+PGP Key: http://bmeneg.com/pubkey.txt
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-index 53c289054..30950904e 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-@@ -6,8 +6,8 @@
- #
- # Verify that keys are measured correctly based on policy.
- 
--TST_NEEDS_CMDS="cut grep sed tr xxd"
--TST_CNT=1
-+TST_NEEDS_CMDS="cmp cut grep sed tr xxd"
-+TST_CNT=2
- TST_NEEDS_DEVICE=1
- 
- . ima_setup.sh
-@@ -20,20 +20,22 @@ test1()
- 	local pattern="func=KEY_CHECK"
- 	local test_file="file.txt"
- 
--	tst_res TINFO "verifying key measurement for keyrings and templates specified in IMA policy file"
-+	tst_res TINFO "verify key measurement for keyrings and templates specified in IMA policy"
- 
- 	require_ima_policy_content "$pattern"
- 	keycheck_lines=$(check_ima_policy_content "$pattern" "")
- 	keycheck_line=$(echo "$keycheck_lines" | grep "keyrings" | head -n1)
- 
- 	if [ -z "$keycheck_line" ]; then
--		tst_brk TCONF "ima policy does not specify a keyrings to check"
-+		tst_res TCONF "IMA policy does not specify a keyrings to check"
-+		return
- 	fi
- 
- 	keyrings=$(echo "$keycheck_line" | tr " " "\n" | grep "keyrings" | \
- 		sed "s/\./\\\./g" | cut -d'=' -f2)
- 	if [ -z "$keyrings" ]; then
--		tst_brk TCONF "ima policy has a keyring key-value specifier, but no specified keyrings"
-+		tst_res TCONF "IMA policy has a keyring key-value specifier, but no specified keyrings"
-+		return
- 	fi
- 
- 	templates=$(echo "$keycheck_line" | tr " " "\n" | grep "template" | \
-@@ -49,11 +51,13 @@ test1()
- 
- 		echo "$line" | cut -d' ' -f6 | xxd -r -p > $test_file
- 
--		expected_digest="$(compute_digest $algorithm $test_file)" || \
--			tst_brk TCONF "cannot compute digest for $algorithm"
-+		if ! expected_digest="$(compute_digest $algorithm $test_file)"; then
-+			tst_res TCONF "cannot compute digest for $algorithm"
-+			return
-+		fi
- 
- 		if [ "$digest" != "$expected_digest" ]; then
--			tst_res TFAIL "incorrect digest was found for the ($keyring) keyring"
-+			tst_res TFAIL "incorrect digest was found for $keyring keyring"
- 			return
- 		fi
- 	done
-@@ -61,4 +65,52 @@ test1()
- 	tst_res TPASS "specified keyrings were measured correctly"
- }
- 
-+# Create a new keyring, import a certificate into it, and verify
-+# that the certificate is measured correctly by IMA.
-+test2()
-+{
-+	tst_require_cmds evmctl keyctl openssl
-+
-+	local cert_file="$TST_DATAROOT/x509_ima.der"
-+	local keyring_name="key_import_test"
-+	local temp_file="file.txt"
-+	local keyring_id
-+
-+	tst_res TINFO "verify measurement of certificate imported into a keyring"
-+
-+	if ! check_ima_policy_content "^measure.*func=KEY_CHECK.*keyrings=.*$keyring_name"; then
-+		tst_brk TCONF "IMA policy does not contain $keyring_name keyring"
-+	fi
-+
-+	keyctl new_session > /dev/null
-+
-+	keyring_id=$(keyctl newring $keyring_name @s) || \
-+		tst_brk TBROK "unable to create a new keyring"
-+
-+	tst_is_num $keyring_id || \
-+		tst_brk TBROK "unable to parse the new keyring id"
-+
-+	evmctl import $cert_file $keyring_id > /dev/null || \
-+		tst_brk TBROK "unable to import a certificate into $keyring_name keyring"
-+
-+	grep $keyring_name $ASCII_MEASUREMENTS | tail -n1 | cut -d' ' -f6 | \
-+		xxd -r -p > $temp_file
-+
-+	if [ ! -s $temp_file ]; then
-+		tst_res TFAIL "keyring $keyring_name not found in $ASCII_MEASUREMENTS"
-+		return
-+	fi
-+
-+	if ! openssl x509 -in $temp_file -inform der > /dev/null; then
-+		tst_res TFAIL "logged certificate is not a valid x509 certificate"
-+		return
-+	fi
-+
-+	if cmp -s $temp_file $cert_file; then
-+		tst_res TPASS "logged certificate matches the original"
-+	else
-+		tst_res TFAIL "logged certificate does not match original"
-+	fi
-+}
-+
- tst_run
--- 
-2.28.0
+--f2QGlHpHGjS2mn6Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEdWo6nTbnZdbDmXutYdRkFR+RokMFAl86lLgACgkQYdRkFR+R
+okOqGAf/SUppt5VddcD7j28AD5/KsbwQwj1Qiws62al8Y22kHmhWY4Nz5T2zV/QV
+zNNhGjpnIOdiyMA28gbszZqUOpQMR56adKwk/P11jjfGnYd4ZHQB9dCad/ro7dTU
+1QXaRMWUWar6mHryj8RrluQNTWmvG4v/BxJn5musvLF+pXZpKJaJRginB+6DHIMB
+2HH8jLXIHB0icNDil1m/lG6s50JLJZYvo8eRKVdM8F72+G9KHuLbysxHqHV9JhZV
+LGfemDyNAqz98cD3UQQMnwOLj2UrzAoVKZl+q+MYJ3b75WoIf9K2Q7ZIxJmB8iiT
+Al6FNOHb45LbthRLtqHnfMYm3jU0GQ==
+=2/j+
+-----END PGP SIGNATURE-----
+
+--f2QGlHpHGjS2mn6Y--
 
