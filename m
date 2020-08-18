@@ -2,87 +2,311 @@ Return-Path: <SRS0=AHf6=B4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA4BC433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBE1C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3717B2083B
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 077572080C
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgHRPyI (ORCPT
+        id S1728071AbgHRPve (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:54:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49103 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbgHRPyD (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:54:03 -0400
-Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k83vr-0003fb-1J; Tue, 18 Aug 2020 15:53:51 +0000
-Date:   Tue, 18 Aug 2020 17:53:50 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     krzysztof.struczynski@huawei.com
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        stefanb@linux.vnet.ibm.com, sunyuqiong1988@gmail.com,
-        mkayaalp@cs.binghamton.edu, dmitry.kasatkin@gmail.com,
-        serge@hallyn.com, jmorris@namei.org, christian@brauner.io,
-        silviu.vlasceanu@huawei.com, roberto.sassu@huawei.com
-Subject: Re: [RFC PATCH 00/30] ima: Introduce IMA namespace
-Message-ID: <20200818155350.oy3axodt3vj5k7ij@wittgenstein>
-References: <N>
- <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
+        Tue, 18 Aug 2020 11:51:34 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2650 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728236AbgHRPsF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:48:05 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 9C8BD5D5C87FB618FA08;
+        Tue, 18 Aug 2020 16:48:03 +0100 (IST)
+Received: from kstruczy-linux-box (10.204.65.138) by
+ lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Tue, 18 Aug 2020 16:48:01 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:04 +0200
+From:   <krzysztof.struczynski@huawei.com>
+To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <containers@lists.linux-foundation.org>,
+        <linux-security-module@vger.kernel.org>
+CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
+        <sunyuqiong1988@gmail.com>, <mkayaalp@cs.binghamton.edu>,
+        <dmitry.kasatkin@gmail.com>, <serge@hallyn.com>,
+        <jmorris@namei.org>, <christian@brauner.io>,
+        <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 27/30] integrity: Add key domain tag to the search criteria
+Date:   Tue, 18 Aug 2020 17:42:27 +0200
+Message-ID: <20200818154230.14016-18-krzysztof.struczynski@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
+References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.65.138]
+X-ClientProxiedBy: fraeml707-chm.china.huawei.com (10.206.15.35) To
+ lhreml722-chm.china.huawei.com (10.201.108.73)
+X-CFilter-Loop: Reflected
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 05:20:07PM +0200, krzysztof.struczynski@huawei.com wrote:
-> From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-> 
-> IMA has not been designed to work with containers. It handles every
-> process in the same way, and it cannot distinguish if a process belongs to
-> a container or not.
-> 
-> Containers use namespaces to make it appear to the processes in the
-> containers that they have their own isolated instance of the global
-> resource. For IMA as well, it is desirable to let processes in the
-> containers have IMA functionality independent from other containers:
-> separate policy rules, measurement list, additional appraisal keys to
-> verify the container image, separate audit logs.
-> 
-> As previous work done in this area, this patch series introduces the IMA
-> namespace, which is a separate instance of IMA to handle a subset of
-> processes that belong to a container.
-> 
-> The IMA namespace is created using clone3() or unshare() system calls. It
-> is important to configure the namespace before any process appears in it,
-> so that the new policy rules apply to the very first process in the
-> namespace. To achieve that, the intermediate namespace ima_ns_for_children
-> is used. It stores the configuration and becomes active on the next fork
-> or when the first process enters it using the setns() system call. The
-> similar process is used for the time namespace.
-> 
-> The IMA namespace can be configured using the new securityfs directory
-> entries that allow the user to set the policy rules, x509 certificate for
-> appraisal and pass IMA configuration parameters normally included in the
-> kernel command line parameters. It is intended to extend the clone_args to
-> allow configuration from clone3() syscall.
+From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Not to be the downer right away but just as an fyi, if this patchset
-makes it, clone3() will not allow to be extended with any real
-second-level pointers. That will see a hard NAK from me and several
-other maintainers.
+Add key domain tag to the search criteria in digsig module. If the
+domain tag is not set for the keys from the given keyring, it is set to
+NULL and the behaviour is unchanged.
 
-Christian
+The key domain tag is added to the ima appraisal keys loaded to the
+system ima keyring.
+
+Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+---
+ include/linux/digsig.h                 | 11 ++++---
+ lib/digsig.c                           | 11 +++----
+ security/integrity/digsig.c            | 40 ++++++++++++++++++++++----
+ security/integrity/digsig_asymmetric.c | 20 ++++++++-----
+ security/integrity/integrity.h         | 11 ++++---
+ 5 files changed, 67 insertions(+), 26 deletions(-)
+
+diff --git a/include/linux/digsig.h b/include/linux/digsig.h
+index 2ace69e41088..9e4121253899 100644
+--- a/include/linux/digsig.h
++++ b/include/linux/digsig.h
+@@ -44,13 +44,16 @@ struct signature_hdr {
+ 
+ #if defined(CONFIG_SIGNATURE) || defined(CONFIG_SIGNATURE_MODULE)
+ 
+-int digsig_verify(struct key *keyring, const char *sig, int siglen,
+-					const char *digest, int digestlen);
++int digsig_verify(struct key *keyring, struct key_tag *domain_tag,
++		  const char *sig, int siglen, const char *digest,
++		  int digestlen);
+ 
+ #else
+ 
+-static inline int digsig_verify(struct key *keyring, const char *sig,
+-				int siglen, const char *digest, int digestlen)
++static inline int digsig_verify(struct key *keyring,
++				struct key_tag *domain_tag,
++				const char *sig, int siglen, const char *digest,
++				int digestlen)
+ {
+ 	return -EOPNOTSUPP;
+ }
+diff --git a/lib/digsig.c b/lib/digsig.c
+index e0627c3e53b2..bd234b1abb4f 100644
+--- a/lib/digsig.c
++++ b/lib/digsig.c
+@@ -196,8 +196,8 @@ static int digsig_verify_rsa(struct key *key,
+  * Normally hash of the content is used as a data for this function.
+  *
+  */
+-int digsig_verify(struct key *keyring, const char *sig, int siglen,
+-						const char *data, int datalen)
++int digsig_verify(struct key *keyring, struct key_tag *domain_tag,
++		  const char *sig, int siglen, const char *data, int datalen)
+ {
+ 	int err = -ENOMEM;
+ 	struct signature_hdr *sh = (struct signature_hdr *)sig;
+@@ -217,14 +217,15 @@ int digsig_verify(struct key *keyring, const char *sig, int siglen,
+ 	if (keyring) {
+ 		/* search in specific keyring */
+ 		key_ref_t kref;
+-		kref = keyring_search(make_key_ref(keyring, 1UL),
+-				      &key_type_user, name, true);
++		kref = keyring_search_tag(make_key_ref(keyring, 1UL),
++					  &key_type_user, name,
++					  domain_tag, true);
+ 		if (IS_ERR(kref))
+ 			key = ERR_CAST(kref);
+ 		else
+ 			key = key_ref_to_ptr(kref);
+ 	} else {
+-		key = request_key(&key_type_user, name, NULL);
++		key = request_key_tag(&key_type_user, name, domain_tag, NULL);
+ 	}
+ 	if (IS_ERR(key)) {
+ 		pr_err("key not found, id: %s\n", name);
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..523fc786c4d7 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -15,6 +15,7 @@
+ #include <linux/vmalloc.h>
+ #include <crypto/public_key.h>
+ #include <keys/system_keyring.h>
++#include <linux/ima.h>
+ 
+ #include "integrity.h"
+ 
+@@ -31,6 +32,16 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+ 	".platform",
+ };
+ 
++static unsigned long keyring_alloc_flags[INTEGRITY_KEYRING_MAX] = {
++	KEY_ALLOC_NOT_IN_QUOTA,
++#ifdef CONFIG_IMA_NS
++	KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_DOMAIN_IMA,
++#else
++	KEY_ALLOC_NOT_IN_QUOTA,
++#endif
++	KEY_ALLOC_NOT_IN_QUOTA,
++};
++
+ #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+ #define restrict_link_to_ima restrict_link_by_builtin_and_secondary_trusted
+ #else
+@@ -56,10 +67,22 @@ static struct key *integrity_keyring_from_id(const unsigned int id)
+ 	return keyring[id];
+ }
+ 
++static struct key_tag *domain_tag_from_id(const unsigned int id)
++{
++	if (id >= INTEGRITY_KEYRING_MAX)
++		return ERR_PTR(-EINVAL);
++
++	if (id == INTEGRITY_KEYRING_IMA)
++		return current->nsproxy->ima_ns->key_domain;
++
++	return NULL;
++}
++
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 			    const char *digest, int digestlen)
+ {
+ 	struct key *keyring;
++	struct key_tag *domain_tag;
+ 
+ 	if (siglen < 2)
+ 		return -EINVAL;
+@@ -68,14 +91,18 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 	if (IS_ERR(keyring))
+ 		return PTR_ERR(keyring);
+ 
++	domain_tag = domain_tag_from_id(id);
++	if (IS_ERR(domain_tag))
++		return PTR_ERR(domain_tag);
++
+ 	switch (sig[1]) {
+ 	case 1:
+ 		/* v1 API expect signature without xattr type */
+-		return digsig_verify(keyring, sig + 1, siglen - 1, digest,
+-				     digestlen);
++		return digsig_verify(keyring, domain_tag,
++				     sig + 1, siglen - 1, digest, digestlen);
+ 	case 2:
+-		return asymmetric_verify(keyring, sig, siglen, digest,
+-					 digestlen);
++		return asymmetric_verify(keyring, domain_tag, sig, siglen,
++					 digest, digestlen);
+ 	}
+ 
+ 	return -EOPNOTSUPP;
+@@ -101,7 +128,8 @@ static int __init __integrity_init_keyring(const unsigned int id,
+ 
+ 	keyring[id] = keyring_alloc(keyring_name[id], KUIDT_INIT(0),
+ 				    KGIDT_INIT(0), cred, perm,
+-				    KEY_ALLOC_NOT_IN_QUOTA, restriction, NULL);
++				    keyring_alloc_flags[id],
++				    restriction, NULL);
+ 	if (IS_ERR(keyring[id])) {
+ 		err = PTR_ERR(keyring[id]);
+ 		pr_info("Can't allocate %s keyring (%d)\n",
+@@ -153,7 +181,7 @@ int __init integrity_add_key(const unsigned int id, const void *data,
+ 
+ 	key = key_create_or_update(make_key_ref(keyring[id], 1), "asymmetric",
+ 				   NULL, data, size, perm,
+-				   KEY_ALLOC_NOT_IN_QUOTA);
++				   keyring_alloc_flags[id]);
+ 	if (IS_ERR(key)) {
+ 		rc = PTR_ERR(key);
+ 		pr_err("Problem loading X.509 certificate %d\n", rc);
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index cfa4127d0518..4994a9773247 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -19,7 +19,9 @@
+ /*
+  * Request an asymmetric key.
+  */
+-static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
++static struct key *request_asymmetric_key(struct key *keyring,
++					  struct key_tag *domain_tag,
++					  uint32_t keyid)
+ {
+ 	struct key *key;
+ 	char name[12];
+@@ -44,14 +46,16 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 		/* search in specific keyring */
+ 		key_ref_t kref;
+ 
+-		kref = keyring_search(make_key_ref(keyring, 1),
+-				      &key_type_asymmetric, name, true);
++		kref = keyring_search_tag(make_key_ref(keyring, 1),
++					  &key_type_asymmetric, name,
++					  domain_tag, true);
+ 		if (IS_ERR(kref))
+ 			key = ERR_CAST(kref);
+ 		else
+ 			key = key_ref_to_ptr(kref);
+ 	} else {
+-		key = request_key(&key_type_asymmetric, name, NULL);
++		key = request_key_tag(&key_type_asymmetric,
++				      name, domain_tag, NULL);
+ 	}
+ 
+ 	if (IS_ERR(key)) {
+@@ -73,8 +77,9 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
+ 	return key;
+ }
+ 
+-int asymmetric_verify(struct key *keyring, const char *sig,
+-		      int siglen, const char *data, int datalen)
++int asymmetric_verify(struct key *keyring, struct key_tag *domain_tag,
++		      const char *sig, int siglen,
++		      const char *data, int datalen)
+ {
+ 	struct public_key_signature pks;
+ 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
+@@ -92,7 +97,8 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 	if (hdr->hash_algo >= HASH_ALGO__LAST)
+ 		return -ENOPKG;
+ 
+-	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
++	key = request_asymmetric_key(keyring, domain_tag,
++				     be32_to_cpu(hdr->keyid));
+ 	if (IS_ERR(key))
+ 		return PTR_ERR(key);
+ 
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index c2981a98547e..207a1aef28e4 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -212,11 +212,14 @@ static inline int __init integrity_load_cert(const unsigned int id,
+ #endif /* CONFIG_INTEGRITY_SIGNATURE */
+ 
+ #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+-int asymmetric_verify(struct key *keyring, const char *sig,
+-		      int siglen, const char *data, int datalen);
++int asymmetric_verify(struct key *keyring, struct key_tag *domain_tag,
++		      const char *sig, int siglen,
++		      const char *data, int datalen);
+ #else
+-static inline int asymmetric_verify(struct key *keyring, const char *sig,
+-				    int siglen, const char *data, int datalen)
++static inline int asymmetric_verify(struct key *keyring,
++				    struct key_tag *domain_tag,
++				    const char *sig, int siglen,
++				    const char *data, int datalen)
+ {
+ 	return -EOPNOTSUPP;
+ }
+-- 
+2.20.1
+
