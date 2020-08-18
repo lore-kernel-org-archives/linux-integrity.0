@@ -2,232 +2,87 @@ Return-Path: <SRS0=AHf6=B4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6440BC433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA4BC433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4483C2080C
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:52:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3717B2083B
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbgHRPve (ORCPT
+        id S1728327AbgHRPyI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:51:34 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2651 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728239AbgHRPsH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:48:07 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id C18A762DD92823577DEB;
-        Tue, 18 Aug 2020 16:48:05 +0100 (IST)
-Received: from kstruczy-linux-box (10.204.65.138) by
- lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:48:04 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:06 +0200
-From:   <krzysztof.struczynski@huawei.com>
-To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <containers@lists.linux-foundation.org>,
-        <linux-security-module@vger.kernel.org>
-CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
-        <sunyuqiong1988@gmail.com>, <mkayaalp@cs.binghamton.edu>,
-        <dmitry.kasatkin@gmail.com>, <serge@hallyn.com>,
-        <jmorris@namei.org>, <christian@brauner.io>,
-        <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
-        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 28/30] ima: Load per ima namespace x509 certificate
-Date:   Tue, 18 Aug 2020 17:42:28 +0200
-Message-ID: <20200818154230.14016-19-krzysztof.struczynski@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
-References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
+        Tue, 18 Aug 2020 11:54:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49103 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbgHRPyD (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:54:03 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k83vr-0003fb-1J; Tue, 18 Aug 2020 15:53:51 +0000
+Date:   Tue, 18 Aug 2020 17:53:50 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     krzysztof.struczynski@huawei.com
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
+        stefanb@linux.vnet.ibm.com, sunyuqiong1988@gmail.com,
+        mkayaalp@cs.binghamton.edu, dmitry.kasatkin@gmail.com,
+        serge@hallyn.com, jmorris@namei.org, christian@brauner.io,
+        silviu.vlasceanu@huawei.com, roberto.sassu@huawei.com
+Subject: Re: [RFC PATCH 00/30] ima: Introduce IMA namespace
+Message-ID: <20200818155350.oy3axodt3vj5k7ij@wittgenstein>
+References: <N>
+ <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.65.138]
-X-ClientProxiedBy: fraeml707-chm.china.huawei.com (10.206.15.35) To
- lhreml722-chm.china.huawei.com (10.201.108.73)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+On Tue, Aug 18, 2020 at 05:20:07PM +0200, krzysztof.struczynski@huawei.com wrote:
+> From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+> 
+> IMA has not been designed to work with containers. It handles every
+> process in the same way, and it cannot distinguish if a process belongs to
+> a container or not.
+> 
+> Containers use namespaces to make it appear to the processes in the
+> containers that they have their own isolated instance of the global
+> resource. For IMA as well, it is desirable to let processes in the
+> containers have IMA functionality independent from other containers:
+> separate policy rules, measurement list, additional appraisal keys to
+> verify the container image, separate audit logs.
+> 
+> As previous work done in this area, this patch series introduces the IMA
+> namespace, which is a separate instance of IMA to handle a subset of
+> processes that belong to a container.
+> 
+> The IMA namespace is created using clone3() or unshare() system calls. It
+> is important to configure the namespace before any process appears in it,
+> so that the new policy rules apply to the very first process in the
+> namespace. To achieve that, the intermediate namespace ima_ns_for_children
+> is used. It stores the configuration and becomes active on the next fork
+> or when the first process enters it using the setns() system call. The
+> similar process is used for the time namespace.
+> 
+> The IMA namespace can be configured using the new securityfs directory
+> entries that allow the user to set the policy rules, x509 certificate for
+> appraisal and pass IMA configuration parameters normally included in the
+> kernel command line parameters. It is intended to extend the clone_args to
+> allow configuration from clone3() syscall.
 
-If configured, load the x509 certificate when the first process is
-born into the new ima namespace. User can set the path to the
-certificate by writing to the x509_for_children entry in the ima
-securityfs.
+Not to be the downer right away but just as an fyi, if this patchset
+makes it, clone3() will not allow to be extended with any real
+second-level pointers. That will see a hard NAK from me and several
+other maintainers.
 
-Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
----
- security/integrity/digsig.c     |  6 +--
- security/integrity/ima/ima_ns.c | 69 ++++++++++++++++++++++++++++-----
- security/integrity/integrity.h  |  2 +-
- 3 files changed, 63 insertions(+), 14 deletions(-)
-
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 523fc786c4d7..8cd54bc83892 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -170,8 +170,8 @@ int __init integrity_init_keyring(const unsigned int id)
- 	return __integrity_init_keyring(id, perm, restriction);
- }
- 
--int __init integrity_add_key(const unsigned int id, const void *data,
--			     off_t size, key_perm_t perm)
-+int integrity_add_key(const unsigned int id, const void *data,
-+		      off_t size, key_perm_t perm)
- {
- 	key_ref_t key;
- 	int rc = 0;
-@@ -195,7 +195,7 @@ int __init integrity_add_key(const unsigned int id, const void *data,
- 
- }
- 
--int __init integrity_load_x509(const unsigned int id, const char *path)
-+int integrity_load_x509(const unsigned int id, const char *path)
- {
- 	void *data;
- 	loff_t size;
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 872dc6a96a96..11e1d896f603 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -48,6 +48,30 @@ static void dec_ima_namespaces(struct ucounts *ucounts)
- 	return dec_ucount(ucounts, UCOUNT_IMA_NAMESPACES);
- }
- 
-+#ifdef CONFIG_IMA_LOAD_X509
-+static int ima_ns_load_x509(struct ima_namespace *ima_ns)
-+{
-+	int res = 0;
-+	int unset_flags =
-+		ima_ns->policy_data->ima_policy_flag & IMA_APPRAISE;
-+
-+	if (!ima_ns->x509_path_for_children)
-+		return res;
-+
-+	ima_ns->policy_data->ima_policy_flag &= ~unset_flags;
-+	res = integrity_load_x509(INTEGRITY_KEYRING_IMA,
-+				  ima_ns->x509_path_for_children);
-+	ima_ns->policy_data->ima_policy_flag |= unset_flags;
-+
-+	return res;
-+}
-+#else
-+static inline int ima_ns_load_x509(struct ima_namespace *ima_ns)
-+{
-+	return 0;
-+}
-+#endif
-+
- static struct ima_namespace *ima_ns_alloc(void)
- {
- 	struct ima_namespace *ima_ns;
-@@ -365,6 +389,10 @@ static int imans_activate(struct ima_namespace *ima_ns)
- 	if (res < 0)
- 		goto out;
- 
-+	res = ima_ns_load_x509(ima_ns);
-+	if (res < 0)
-+		goto out;
-+
- 	ima_ns->frozen = true;
- 
- 	/* Set current last element as list's head */
-@@ -388,6 +416,7 @@ static int imans_install(struct nsset *nsset, struct ns_common *new)
- 	int res;
- 	struct nsproxy *nsproxy = nsset->nsproxy;
- 	struct ima_namespace *ns = to_ima_ns(new);
-+	struct ima_namespace *old_ns = nsproxy->ima_ns;
- 
- 	if (!current_is_single_threaded())
- 		return -EUSERS;
-@@ -396,14 +425,24 @@ static int imans_install(struct nsset *nsset, struct ns_common *new)
- 	    !ns_capable(nsset->cred->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	res = imans_activate(ns);
--	if (res)
--		return res;
--
- 	get_ima_ns(ns);
--	put_ima_ns(nsproxy->ima_ns);
-+	put_ima_ns(old_ns);
- 	nsproxy->ima_ns = ns;
- 
-+	/* The activation has to take place, after attaching the new namespace
-+	 * to the nsproxy. This is because one part of the activation process,
-+	 * is loading the appraisal keys, which temporary disables appraisal in
-+	 * the current ima namespace, and it must not happen for the "old" ima
-+	 * namespace.
-+	 */
-+	res = imans_activate(ns);
-+	if (res) {
-+		get_ima_ns(old_ns);
-+		put_ima_ns(ns);
-+		nsproxy->ima_ns = old_ns;
-+		return res;
-+	}
-+
- 	get_ima_ns(ns);
- 	put_ima_ns(nsproxy->ima_ns_for_children);
- 	nsproxy->ima_ns_for_children = ns;
-@@ -416,6 +455,7 @@ int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
- {
- 	int res;
- 	struct ima_namespace *ima_ns = nsproxy->ima_ns_for_children;
-+	struct ima_namespace *old_ima_ns = nsproxy->ima_ns;
- 
- 	/* create_new_namespaces() already incremented the ref counter */
- 	if (nsproxy->ima_ns == ima_ns)
-@@ -431,14 +471,23 @@ int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
- 			return res;
- 	}
- 
--	res = imans_activate(ima_ns);
--	if (res)
--		return res;
--
- 	get_ima_ns(ima_ns);
--	put_ima_ns(nsproxy->ima_ns);
-+	put_ima_ns(old_ima_ns);
- 	nsproxy->ima_ns = ima_ns;
- 
-+	/* The activation has to take place, after attaching the new namespace
-+	 * to the nsproxy. This is because one part of the activation process,
-+	 * is loading the appraisal keys, which temporary disables appraisal in
-+	 * the current ima namespace, and it must not happen for the "old" ima
-+	 * namespace.
-+	 */
-+	res = imans_activate(ima_ns);
-+	if (res) {
-+		get_ima_ns(old_ima_ns);
-+		put_ima_ns(ima_ns);
-+		nsproxy->ima_ns = old_ima_ns;
-+	}
-+
- 	return res;
- }
- 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 207a1aef28e4..9b080b9fe242 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -179,7 +179,7 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- int integrity_modsig_verify(unsigned int id, const struct modsig *modsig);
- 
- int __init integrity_init_keyring(const unsigned int id);
--int __init integrity_load_x509(const unsigned int id, const char *path);
-+int integrity_load_x509(const unsigned int id, const char *path);
- int __init integrity_load_cert(const unsigned int id, const char *source,
- 			       const void *data, size_t len, key_perm_t perm);
- #else
--- 
-2.20.1
-
+Christian
