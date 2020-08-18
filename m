@@ -2,49 +2,46 @@ Return-Path: <SRS0=AHf6=B4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6244C433E5
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A40C433DF
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98DCB207DA
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:26:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B753E207DA
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728153AbgHRP0z (ORCPT
+        id S1726624AbgHRPoZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:26:55 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2625 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:44:25 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2633 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727791AbgHRP0L (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:26:11 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 225CE751D64D2FEE2140;
-        Tue, 18 Aug 2020 16:26:10 +0100 (IST)
+        id S1726585AbgHRPoZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:44:25 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id EA1DB868795C484C0F5B;
+        Tue, 18 Aug 2020 16:44:22 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:26:08 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:26:10 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:44:21 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:44:23 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
         <linux-security-module@vger.kernel.org>
-CC:     Krzysztof Struczynski <krzysztof.struczynski@huawei.com>,
-        <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
+CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <sunyuqiong1988@gmail.com>, <mkayaalp@cs.binghamton.edu>,
         <dmitry.kasatkin@gmail.com>, <serge@hallyn.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
-        <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>
-Subject: [RFC PATCH 02/30] ima: Add a list of the installed ima namespaces
-Date:   Tue, 18 Aug 2020 17:20:09 +0200
-Message-ID: <20200818152037.11869-3-krzysztof.struczynski@huawei.com>
+        <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
+        Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 10/30] ima: Add ima namespace ID to the ima ML related structures
+Date:   Tue, 18 Aug 2020 17:42:10 +0200
+Message-ID: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
-References: <N>
- <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -59,293 +56,298 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Add a list of the installed ima namespaces. IMA namespace is considered
-installed, if there is at least one process born in that namespace.
+Add ima namespace ID to the ima_event_data and ima_template_entry. This
+is done so that the ima namespace ID can be tracked per entry and
+included in the hash. The following patch will add a new template that
+will utilize it.
 
-This list will be used to check the read-write violations and to detect
-any object related changes relevant across namespaces.
+IMA namespace ID is simply an inode number allocated to the namespace
+when it's created and therefore it can be re-used once the namespace is
+destroyed.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/ima.h               |   8 ++-
- security/integrity/ima/ima.h      |  11 ++++
- security/integrity/ima/ima_init.c |   5 ++
- security/integrity/ima/ima_main.c |   3 +
- security/integrity/ima/ima_ns.c   | 101 ++++++++++++++++++++++++++++--
- 5 files changed, 122 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima.h          | 19 ++++++++++++++++++-
+ security/integrity/ima/ima_api.c      |  9 ++++++++-
+ security/integrity/ima/ima_fs.c       | 17 +++++++++++------
+ security/integrity/ima/ima_init.c     |  2 ++
+ security/integrity/ima/ima_kexec.c    |  4 +++-
+ security/integrity/ima/ima_main.c     |  5 +++--
+ security/integrity/ima/ima_template.c | 10 +++++++---
+ 7 files changed, 52 insertions(+), 14 deletions(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 4a9c29d4d056..5b6235b97603 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -10,10 +10,12 @@
- #include <linux/fs.h>
- #include <linux/security.h>
- #include <linux/kexec.h>
--struct linux_binprm;
- 
-+struct linux_binprm;
- struct nsproxy;
- struct task_struct;
-+struct list_head;
-+struct llist_node;
- 
- #ifdef CONFIG_IMA
- extern int ima_bprm_check(struct linux_binprm *bprm);
-@@ -176,6 +178,10 @@ struct ima_namespace {
- 	struct ns_common ns;
- 	struct ucounts *ucounts;
- 	struct user_namespace *user_ns;
-+	struct list_head list;
-+	struct llist_node cleanup_list; /* namespaces on a death row */
-+	atomic_t inactive; /* set only when ns is added to the cleanup list */
-+	bool frozen;
- } __randomize_layout;
- 
- extern struct ima_namespace init_ima_ns;
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 603da5b2db08..092e87190c6d 100644
+index 33b4a8295c41..7b7252d35d5a 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -372,12 +372,23 @@ static inline int ima_read_xattr(struct dentry *dentry,
+@@ -75,6 +75,7 @@ struct ima_event_data {
+ 	const char *violation;
+ 	const void *buf;
+ 	int buf_len;
++	unsigned int ns_id;
+ };
  
- #endif /* CONFIG_IMA_APPRAISE */
+ /* IMA template field data definition */
+@@ -103,6 +104,7 @@ struct ima_template_desc {
  
-+extern struct list_head ima_ns_list;
-+extern struct rw_semaphore ima_ns_list_lock;
-+
- #ifdef CONFIG_IMA_NS
-+int __init ima_init_namespace(void);
-+
- static inline struct ima_namespace *get_current_ns(void)
- {
- 	return current->nsproxy->ima_ns;
- }
- #else
-+static inline int __init ima_init_namespace(void)
+ struct ima_template_entry {
+ 	int pcr;
++	unsigned int ns_id;
+ 	struct tpm_digest *digests;
+ 	struct ima_template_desc *template_desc; /* template descriptor */
+ 	u32 template_data_len;
+@@ -129,8 +131,17 @@ extern const int read_idmap[];
+ 
+ #ifdef CONFIG_HAVE_IMA_KEXEC
+ void ima_load_kexec_buffer(void);
++extern const u16 kexec_header_version;
++static inline u16 get_kexec_header_version(void)
 +{
-+	list_add_tail(&init_ima_ns.list, &ima_ns_list);
-+	return 0;
++	return kexec_header_version;
++}
+ #else
+ static inline void ima_load_kexec_buffer(void) {}
++static inline u16 get_kexec_header_version(void)
++{
++	return 1;
++}
+ #endif /* CONFIG_HAVE_IMA_KEXEC */
+ 
+ /*
+@@ -153,7 +164,8 @@ int ima_calc_field_array_hash(struct ima_field_data *field_data,
+ int ima_calc_boot_aggregate(struct ima_digest_data *hash);
+ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 		       struct integrity_iint_cache *iint,
+-		       const char *op, const char *cause);
++		       const char *op, const char *cause,
++		       struct ima_namespace *ima_ns);
+ int ima_init_crypto(void);
+ void ima_putc(struct seq_file *m, void *data, int datalen);
+ void ima_print_digest(struct seq_file *m, u8 *digest, u32 size);
+@@ -415,6 +427,11 @@ extern struct ima_policy_setup_data init_policy_setup_data;
+ extern struct list_head ima_ns_list;
+ extern struct rw_semaphore ima_ns_list_lock;
+ 
++static inline unsigned int get_ns_id(const struct ima_namespace *ima_ns)
++{
++	return ima_ns->ns.inum;
 +}
 +
- static inline struct ima_namespace *get_current_ns(void)
+ #ifdef CONFIG_IMA_NS
+ int __init ima_init_namespace(void);
+ 
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 8d7b0d4635fc..1f4411fffa45 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -76,6 +76,8 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 		(*entry)->template_data_len += sizeof(len);
+ 		(*entry)->template_data_len += len;
+ 	}
++
++	(*entry)->ns_id = event_data->ns_id;
+ 	return 0;
+ out:
+ 	ima_free_template_entry(*entry);
+@@ -132,7 +134,8 @@ int ima_store_template(struct ima_template_entry *entry,
+  */
+ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 		       struct integrity_iint_cache *iint,
+-		       const char *op, const char *cause)
++		       const char *op, const char *cause,
++		       struct ima_namespace *ima_ns)
  {
- 	return &init_ima_ns;
+ 	struct ima_template_entry *entry;
+ 	struct inode *inode = file_inode(file);
+@@ -143,6 +146,8 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ 	int violation = 1;
+ 	int result;
+ 
++	event_data.ns_id = get_ns_id(ima_ns);
++
+ 	/* can overflow, only indicator */
+ 	atomic_long_inc(&ima_htable.violations);
+ 
+@@ -313,7 +318,9 @@ void ima_store_measurement(struct integrity_iint_cache *iint,
+ 					     .xattr_len = xattr_len,
+ 					     .modsig = modsig };
+ 	int violation = 0;
++	struct ima_namespace *ima_ns = get_current_ns();
+ 
++	event_data.ns_id = get_ns_id(ima_ns);
+ 	/*
+ 	 * We still need to store the measurement in the case of MODSIG because
+ 	 * we only have its contents to put in the list at the time of
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index 3839b9eaecab..4758e14c4a7b 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -117,6 +117,7 @@ void ima_putc(struct seq_file *m, void *data, int datalen)
+ 
+ /* print format:
+  *       32bit-le=pcr#
++ *       32bit-le=namespace id
+  *       char[20]=template digest
+  *       32bit-le=template name size
+  *       char[n]=template name
+@@ -129,7 +130,7 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	struct ima_queue_entry *qe = v;
+ 	struct ima_template_entry *e;
+ 	char *template_name;
+-	u32 pcr, namelen, template_data_len; /* temporary fields */
++	u32 pcr, ns_id, namelen, template_data_len; /* temporary fields */
+ 	bool is_ima_template = false;
+ 	int i;
+ 
+@@ -149,18 +150,22 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 	pcr = !ima_canonical_fmt ? e->pcr : cpu_to_le32(e->pcr);
+ 	ima_putc(m, &pcr, sizeof(e->pcr));
+ 
+-	/* 2nd: template digest */
++	/* 2nd: ima namespace id */
++	ns_id = !ima_canonical_fmt ? e->ns_id : cpu_to_le32(e->ns_id);
++	ima_putc(m, &ns_id, sizeof(e->ns_id));
++
++	/* 3rd: template digest */
+ 	ima_putc(m, e->digests[ima_sha1_idx].digest, TPM_DIGEST_SIZE);
+ 
+-	/* 3rd: template name size */
++	/* 4th: template name size */
+ 	namelen = !ima_canonical_fmt ? strlen(template_name) :
+ 		cpu_to_le32(strlen(template_name));
+ 	ima_putc(m, &namelen, sizeof(namelen));
+ 
+-	/* 4th:  template name */
++	/* 5th:  template name */
+ 	ima_putc(m, template_name, strlen(template_name));
+ 
+-	/* 5th:  template length (except for 'ima' template) */
++	/* 6th:  template length (except for 'ima' template) */
+ 	if (strcmp(template_name, IMA_TEMPLATE_IMA_NAME) == 0)
+ 		is_ima_template = true;
+ 
+@@ -170,7 +175,7 @@ int ima_measurements_show(struct seq_file *m, void *v)
+ 		ima_putc(m, &template_data_len, sizeof(e->template_data_len));
+ 	}
+ 
+-	/* 6th:  template specific data */
++	/* 7th:  template specific data */
+ 	for (i = 0; i < e->template_desc->num_fields; i++) {
+ 		enum ima_show_type show = IMA_SHOW_BINARY;
+ 		const struct ima_template_field *field =
 diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 013bbec16849..0ba04a1a68cc 100644
+index d042b08cc4d7..d63ecb02b032 100644
 --- a/security/integrity/ima/ima_init.c
 +++ b/security/integrity/ima/ima_init.c
-@@ -32,6 +32,7 @@ struct ima_namespace init_ima_ns = {
- #ifdef CONFIG_IMA_NS
- 	.ns.ops = &imans_operations,
- #endif
-+	.frozen = true
- };
- EXPORT_SYMBOL(init_ima_ns);
+@@ -68,6 +68,8 @@ static int __init ima_add_boot_aggregate(void)
+ 		char digest[TPM_MAX_DIGEST_SIZE];
+ 	} hash;
  
-@@ -154,6 +155,10 @@ int __init ima_init(void)
- 
- 	ima_init_policy();
- 
-+	rc = ima_init_namespace();
-+	if (rc != 0)
-+		return rc;
++	event_data.ns_id = get_ns_id(&init_ima_ns);
 +
- 	rc = ima_fs_init();
- 	if (rc != 0)
- 		return rc;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8a91711ca79b..d800e73c8b62 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -37,6 +37,9 @@ int ima_appraise;
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-+DECLARE_RWSEM(ima_ns_list_lock);
-+LIST_HEAD(ima_ns_list);
-+
- static struct notifier_block ima_lsm_policy_notifier = {
- 	.notifier_call = ima_lsm_policy_change,
- };
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index 8f5f301406a2..3a98cd536d05 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -21,9 +21,20 @@
- #include <linux/user_namespace.h>
- #include <linux/nsproxy.h>
- #include <linux/sched.h>
-+#include <linux/list.h>
-+#include <linux/llist.h>
-+#include <linux/rwsem.h>
-+#include <linux/workqueue.h>
-+#include <linux/mutex.h>
- 
+ 	memset(iint, 0, sizeof(*iint));
+ 	memset(&hash, 0, sizeof(hash));
+ 	iint->ima_hash = &hash.hdr;
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 121de3e04af2..1fefa59cf9b1 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -13,6 +13,8 @@
  #include "ima.h"
  
-+static LLIST_HEAD(cleanup_list);
-+static struct workqueue_struct *imans_wq;
+ #ifdef CONFIG_IMA_KEXEC
++const u16 kexec_header_version = 2;
 +
-+/* Protects tasks entering the same, not yet active namespace */
-+static DEFINE_MUTEX(frozen_lock);
-+
- static struct ucounts *inc_ima_namespaces(struct user_namespace *ns)
+ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 				     unsigned long segment_size)
  {
- 	return inc_ucount(ns, current_euid(), UCOUNT_IMA_NAMESPACES);
-@@ -78,6 +89,7 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
- 	ns->ns.ops = &imans_operations;
- 	ns->user_ns = get_user_ns(user_ns);
- 	ns->ucounts = ucounts;
-+	ns->frozen = false;
+@@ -33,7 +35,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 	file.count = sizeof(khdr);	/* reserved space */
  
- 	return ns;
+ 	memset(&khdr, 0, sizeof(khdr));
+-	khdr.version = 1;
++	khdr.version = kexec_header_version;
+ 	list_for_each_entry_rcu(qe, &ima_measurements, later) {
+ 		if (file.count < file.size) {
+ 			khdr.count++;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 80b1737a3369..fa63780ae76e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -134,10 +134,10 @@ static void ima_rdwr_violation_check(struct file *file,
  
-@@ -109,6 +121,19 @@ struct ima_namespace *copy_ima_ns(unsigned long flags,
- 	return clone_ima_ns(user_ns, old_ns);
+ 	if (send_tomtou)
+ 		ima_add_violation(file, *pathname, iint,
+-				  "invalid_pcr", "ToMToU");
++				  "invalid_pcr", "ToMToU", ima_ns);
+ 	if (send_writers)
+ 		ima_add_violation(file, *pathname, iint,
+-				  "invalid_pcr", "open_writers");
++				  "invalid_pcr", "open_writers", ima_ns);
  }
  
-+int __init ima_init_namespace(void)
-+{
-+	/* Create workqueue for cleanup */
-+	imans_wq = create_singlethread_workqueue("imans");
-+	if (unlikely(!imans_wq))
-+		return -ENOMEM;
-+
-+	/* No other reader or writer at this stage */
-+	list_add_tail(&init_ima_ns.list, &ima_ns_list);
-+
-+	return 0;
-+}
-+
- static void destroy_ima_ns(struct ima_namespace *ns)
- {
- 	dec_ima_namespaces(ns->ucounts);
-@@ -117,13 +142,46 @@ static void destroy_ima_ns(struct ima_namespace *ns)
- 	kfree(ns);
- }
+ static void ima_check_active_ns(struct ima_namespace *current_ima_ns,
+@@ -923,6 +923,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 		goto out;
+ 	}
  
-+static void cleanup_ima(struct work_struct *work)
-+{
-+	struct ima_namespace *ima_ns, *tmp;
-+	struct llist_node *ima_kill_list;
-+
-+	/* Atomically snapshot the list of namespaces to cleanup */
-+	ima_kill_list = llist_del_all(&cleanup_list);
-+
-+	/* Remove ima namespace from the namespace list */
-+	down_write(&ima_ns_list_lock);
-+	llist_for_each_entry(ima_ns, ima_kill_list, cleanup_list)
-+		list_del(&ima_ns->list);
-+	up_write(&ima_ns_list_lock);
-+
-+	/* After removing ima namespace from the ima_ns_list, memory can be
-+	 * freed. At this stage nothing should keep a reference to the given
-+	 * namespace.
-+	 */
-+	llist_for_each_entry_safe(ima_ns, tmp, ima_kill_list, cleanup_list)
-+		destroy_ima_ns(ima_ns);
-+}
-+
-+static DECLARE_WORK(ima_cleanup_work, cleanup_ima);
-+
- void free_ima_ns(struct kref *kref)
- {
--	struct ima_namespace *ns;
-+	struct ima_namespace *ima_ns;
++	event_data.ns_id = get_ns_id(ima_ns);
+ 	ret = ima_alloc_init_template(&event_data, &entry, template);
+ 	if (ret < 0) {
+ 		audit_cause = "alloc_entry";
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index 5a2def40a733..945e70fafd2e 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -13,7 +13,7 @@
+ #include "ima.h"
+ #include "ima_template_lib.h"
  
--	ns = container_of(kref, struct ima_namespace, kref);
-+	ima_ns = container_of(kref, struct ima_namespace, kref);
-+	/* Namespace can be destroyed instantly if no process ever was born
-+	 * into it - it was never added to the ima_ns_list.
-+	 */
-+	if (!ima_ns->frozen) {
-+		destroy_ima_ns(ima_ns);
-+		return;
-+	}
+-enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
++enum header_fields { HDR_PCR, HDR_NS_ID, HDR_DIGEST, HDR_TEMPLATE_NAME,
+ 		     HDR_TEMPLATE_DATA, HDR__LAST };
  
--	destroy_ima_ns(ns);
-+	atomic_set(&ima_ns->inactive, 1);
-+	if (llist_add(&ima_ns->cleanup_list, &cleanup_list))
-+		queue_work(imans_wq, &ima_cleanup_work);
- }
+ static struct ima_template_desc builtin_templates[] = {
+@@ -362,6 +362,7 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 	struct ima_kexec_hdr *khdr = buf;
+ 	struct ima_field_data hdr[HDR__LAST] = {
+ 		[HDR_PCR] = {.len = sizeof(u32)},
++		[HDR_NS_ID] = {.len = sizeof(u32)},
+ 		[HDR_DIGEST] = {.len = TPM_DIGEST_SIZE},
+ 	};
  
- static inline struct ima_namespace *to_ima_ns(struct ns_common *ns)
-@@ -168,8 +226,32 @@ static void imans_put(struct ns_common *ns)
- 	put_ima_ns(to_ima_ns(ns));
- }
+@@ -382,7 +383,7 @@ int ima_restore_measurement_list(loff_t size, void *buf)
+ 		khdr->buffer_size = le64_to_cpu(khdr->buffer_size);
+ 	}
  
-+static int imans_activate(struct ima_namespace *ima_ns)
-+{
-+	if (ima_ns == &init_ima_ns)
-+		return 0;
-+
-+	if (ima_ns->frozen)
-+		return 0;
-+
-+	mutex_lock(&frozen_lock);
-+	if (ima_ns->frozen)
-+		goto out;
-+
-+	ima_ns->frozen = true;
-+
-+	down_write(&ima_ns_list_lock);
-+	list_add_tail(&ima_ns->list, &ima_ns_list);
-+	up_write(&ima_ns_list_lock);
-+out:
-+	mutex_unlock(&frozen_lock);
-+
-+	return 0;
-+}
-+
- static int imans_install(struct nsset *nsset, struct ns_common *new)
- {
-+	int res;
- 	struct nsproxy *nsproxy = nsset->nsproxy;
- 	struct ima_namespace *ns = to_ima_ns(new);
+-	if (khdr->version != 1) {
++	if (khdr->version != get_kexec_header_version()) {
+ 		pr_err("attempting to restore a incompatible measurement list");
+ 		return -EINVAL;
+ 	}
+@@ -394,11 +395,12 @@ int ima_restore_measurement_list(loff_t size, void *buf)
  
-@@ -180,6 +262,10 @@ static int imans_install(struct nsset *nsset, struct ns_common *new)
- 	    !ns_capable(nsset->cred->user_ns, CAP_SYS_ADMIN))
- 		return -EPERM;
+ 	bitmap_zero(hdr_mask, HDR__LAST);
+ 	bitmap_set(hdr_mask, HDR_PCR, 1);
++	bitmap_set(hdr_mask, HDR_NS_ID, 1);
+ 	bitmap_set(hdr_mask, HDR_DIGEST, 1);
  
-+	res = imans_activate(ns);
-+	if (res)
-+		return res;
-+
- 	get_ima_ns(ns);
- 	put_ima_ns(nsproxy->ima_ns);
- 	nsproxy->ima_ns = ns;
-@@ -188,11 +274,12 @@ static int imans_install(struct nsset *nsset, struct ns_common *new)
- 	put_ima_ns(nsproxy->ima_ns_for_children);
- 	nsproxy->ima_ns_for_children = ns;
+ 	/*
+ 	 * ima kexec buffer prefix: version, buffer size, count
+-	 * v1 format: pcr, digest, template-name-len, template-name,
++	 * v2 format: pcr, ns_id, digest, template-name-len, template-name,
+ 	 *	      template-data-size, template-data
+ 	 */
+ 	bufendp = buf + khdr->buffer_size;
+@@ -470,6 +472,8 @@ int ima_restore_measurement_list(loff_t size, void *buf)
  
--	return 0;
-+	return res;
- }
- 
- int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
- {
-+	int res;
- 	struct ns_common *nsc = &nsproxy->ima_ns_for_children->ns;
- 	struct ima_namespace *ns = to_ima_ns(nsc);
- 
-@@ -200,11 +287,15 @@ int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
- 	if (nsproxy->ima_ns == nsproxy->ima_ns_for_children)
- 		return 0;
- 
-+	res = imans_activate(ns);
-+	if (res)
-+		return res;
-+
- 	get_ima_ns(ns);
- 	put_ima_ns(nsproxy->ima_ns);
- 	nsproxy->ima_ns = ns;
- 
--	return 0;
-+	return res;
- }
- 
- static struct user_namespace *imans_owner(struct ns_common *ns)
+ 		entry->pcr = !ima_canonical_fmt ? *(hdr[HDR_PCR].data) :
+ 			     le32_to_cpu(*(hdr[HDR_PCR].data));
++		entry->ns_id = !ima_canonical_fmt ? *(hdr[HDR_NS_ID].data) :
++			     le32_to_cpu(*(hdr[HDR_NS_ID].data));
+ 		ret = ima_restore_measurement_entry(entry);
+ 		if (ret < 0)
+ 			break;
 -- 
 2.20.1
 
