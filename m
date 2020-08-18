@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EAAEC433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2163DC433E5
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3252A207D3
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:44:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B9220885
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:45:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbgHRPov (ORCPT
+        id S1728029AbgHRPpy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:44:51 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2637 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:45:54 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2641 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726971AbgHRPoe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:44:34 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id F38319593CBDEE2F0A10;
-        Tue, 18 Aug 2020 16:44:32 +0100 (IST)
+        id S1726834AbgHRPpo (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:45:44 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id A69F3321DE040DAE081E;
+        Tue, 18 Aug 2020 16:45:42 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:44:31 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:44:33 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:45:41 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:45:43 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -38,9 +38,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 14/30] ima: Add per namespace view of the measurement list
-Date:   Tue, 18 Aug 2020 17:42:14 +0200
-Message-ID: <20200818154230.14016-5-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 18/30] ima: Change the owning user namespace of the ima namespace if necessary
+Date:   Tue, 18 Aug 2020 17:42:18 +0200
+Message-ID: <20200818154230.14016-9-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,161 +58,125 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Modify ima securityfs interface, so that only measurement list entries
-that belong to the given ima namespace are visible/counted. The initial
-ima namespace is an exception, its processes have access to all
-measurement list entries.
+It's possible that the user first unshares the ima namespace and then
+creates a new user namespace using clone3(). In that case the owning
+user namespace is the newly created one, because it is associated with
+the first process in the new ima namespace.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/ima.h                |  1 +
- security/integrity/ima/ima_fs.c    | 57 ++++++++++++++++++++++++++----
- security/integrity/ima/ima_init.c  |  1 +
- security/integrity/ima/ima_ns.c    |  1 +
- security/integrity/ima/ima_queue.c |  8 +++++
- 5 files changed, 61 insertions(+), 7 deletions(-)
+ include/linux/ima.h             |  6 +++--
+ kernel/nsproxy.c                |  2 +-
+ security/integrity/ima/ima_ns.c | 42 +++++++++++++++++++++++++++------
+ 3 files changed, 40 insertions(+), 10 deletions(-)
 
 diff --git a/include/linux/ima.h b/include/linux/ima.h
-index df22143ffe30..d59ed38a4305 100644
+index 7eb7a008c5fe..4b5b832417b0 100644
 --- a/include/linux/ima.h
 +++ b/include/linux/ima.h
-@@ -203,6 +203,7 @@ struct ima_namespace {
- 	struct ima_policy_data *policy_data;
- 	struct integrity_iint_tree *iint_tree;
- 	struct list_head *measurements;
-+	atomic_long_t ml_len; /* number of stored measurements in the list */
- } __randomize_layout;
+@@ -216,7 +216,8 @@ struct ima_namespace *copy_ima_ns(unsigned long flags,
  
- extern struct ima_namespace init_ima_ns;
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 4758e14c4a7b..e2893f0b0f31 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -63,7 +63,9 @@ static ssize_t ima_show_measurements_count(struct file *filp,
- 					   char __user *buf,
- 					   size_t count, loff_t *ppos)
+ void free_ima_ns(struct kref *kref);
+ 
+-int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk);
++int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
++		  struct user_namespace *user_ns);
+ 
+ static inline struct ima_namespace *get_ima_ns(struct ima_namespace *ns)
  {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
-+	struct ima_namespace *ima_ns = get_current_ns();
-+
-+	return ima_show_htable_value(buf, count, ppos, &ima_ns->ml_len);
- 
+@@ -239,7 +240,8 @@ static inline struct ima_namespace *copy_ima_ns(unsigned long flags,
  }
  
-@@ -77,10 +79,36 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
+ static inline int imans_on_fork(struct nsproxy *nsproxy,
+-				struct task_struct *tsk)
++				struct task_struct *tsk,
++				struct user_namespace *user_ns)
  {
- 	loff_t l = *pos;
- 	struct ima_queue_entry *qe;
-+	struct ima_namespace *ima_ns = get_current_ns();
-+	unsigned int ns_id = get_ns_id(ima_ns);
-+
-+	if (ima_ns == &init_ima_ns) {
-+		/* we need a lock since pos could point beyond last element */
-+		rcu_read_lock();
-+		list_for_each_entry_rcu(qe, &ima_measurements, later) {
-+			if (!l--) {
-+				rcu_read_unlock();
-+				return qe;
-+			}
-+		}
-+		rcu_read_unlock();
-+		return NULL;
-+	}
- 
--	/* we need a lock since pos could point beyond last element */
- 	rcu_read_lock();
--	list_for_each_entry_rcu(qe, &ima_measurements, later) {
-+	qe = list_next_or_null_rcu(&ima_measurements,
-+				   ima_ns->measurements,
-+				   struct ima_queue_entry,
-+				   later);
-+	if (!qe) {
-+		rcu_read_unlock();
-+		return NULL;
-+	}
-+
-+	list_for_each_entry_from_rcu(qe, &ima_measurements, later) {
-+		if (ns_id != qe->entry->ns_id)
-+			continue;
-+
- 		if (!l--) {
- 			rcu_read_unlock();
- 			return qe;
-@@ -93,12 +121,27 @@ static void *ima_measurements_start(struct seq_file *m, loff_t *pos)
- static void *ima_measurements_next(struct seq_file *m, void *v, loff_t *pos)
- {
- 	struct ima_queue_entry *qe = v;
-+	struct ima_namespace *ima_ns = get_current_ns();
-+	unsigned int ns_id = get_ns_id(ima_ns);
-+
-+	if (ima_ns == &init_ima_ns) {
-+		/* lock protects when reading beyond last element
-+		 * against concurrent list-extension
-+		 */
-+		rcu_read_lock();
-+		qe = list_entry_rcu(qe->later.next, struct ima_queue_entry,
-+				    later);
-+		rcu_read_unlock();
-+		(*pos)++;
-+
-+		return (&qe->later == &ima_measurements) ? NULL : qe;
-+	}
- 
--	/* lock protects when reading beyond last element
--	 * against concurrent list-extension
--	 */
- 	rcu_read_lock();
--	qe = list_entry_rcu(qe->later.next, struct ima_queue_entry, later);
-+	list_for_each_entry_continue_rcu(qe, &ima_measurements, later) {
-+		if (ns_id == qe->entry->ns_id)
-+			break;
-+	}
- 	rcu_read_unlock();
- 	(*pos)++;
- 
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 2100ee341dfc..ac9509d8c0f0 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -36,6 +36,7 @@ struct ima_namespace init_ima_ns = {
- 	.policy_data = &init_policy_data,
- 	.iint_tree = &init_iint_tree,
- 	.measurements = &ima_measurements,
-+	.ml_len = ATOMIC_LONG_INIT(0),
- };
- EXPORT_SYMBOL(init_ima_ns);
- 
-diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
-index f331187a4d3c..81de492baa99 100644
---- a/security/integrity/ima/ima_ns.c
-+++ b/security/integrity/ima/ima_ns.c
-@@ -126,6 +126,7 @@ static struct ima_namespace *clone_ima_ns(struct user_namespace *user_ns,
- 	ns->user_ns = get_user_ns(user_ns);
- 	ns->ucounts = ucounts;
- 	ns->frozen = false;
-+	atomic_long_set(&ns->ml_len, 0);
- 
- 	rwlock_init(&ns->iint_tree->lock);
- 	ns->iint_tree->root = RB_ROOT;
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index bd890778c5be..ec5b3ca3ef92 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -227,6 +227,14 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
- 		goto out;
+ 	return 0;
+ }
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 791efffd7a03..4b1ecf405f11 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -204,7 +204,7 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
+ 		return ret;
  	}
  
-+	/* Initial ima namespace has access to all measurement list entries,
-+	 * therefore always increment its measurement list length. Other
-+	 * namespaces can see only their own entries.
-+	 */
-+	if (ima_ns != &init_ima_ns)
-+		atomic_long_inc(&ima_ns->ml_len);
-+	atomic_long_inc(&init_ima_ns.ml_len);
-+
- 	if (violation)		/* invalidate pcr */
- 		digests_arg = digests;
+-	ret = imans_on_fork(new_ns, tsk);
++	ret = imans_on_fork(new_ns, tsk, user_ns);
+ 	if (ret) {
+ 		free_nsproxy(new_ns);
+ 		return ret;
+diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+index 3012287b22d2..b8bfab39b55b 100644
+--- a/security/integrity/ima/ima_ns.c
++++ b/security/integrity/ima/ima_ns.c
+@@ -92,6 +92,24 @@ static void ima_set_ns_policy(struct ima_namespace *ima_ns,
+ 	ima_init_ns_policy(ima_ns, &setup_data);
+ }
  
++static int ima_swap_user_ns(struct ima_namespace *ima_ns,
++			    struct user_namespace *user_ns)
++{
++	struct ucounts *ucounts;
++
++	dec_ima_namespaces(ima_ns->ucounts);
++	put_user_ns(ima_ns->user_ns);
++
++	ucounts = inc_ima_namespaces(user_ns);
++	if (!ucounts)
++		return -ENOSPC;
++
++	ima_ns->user_ns = get_user_ns(user_ns);
++	ima_ns->ucounts = ucounts;
++
++	return 0;
++}
++
+ /**
+  * Clone a new ns copying an original ima namespace, setting refcount to 1
+  *
+@@ -337,23 +355,33 @@ static int imans_install(struct nsset *nsset, struct ns_common *new)
+ 	return res;
+ }
+ 
+-int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
++int imans_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk,
++		  struct user_namespace *user_ns)
+ {
+ 	int res;
+-	struct ns_common *nsc = &nsproxy->ima_ns_for_children->ns;
+-	struct ima_namespace *ns = to_ima_ns(nsc);
++	struct ima_namespace *ima_ns = nsproxy->ima_ns_for_children;
+ 
+ 	/* create_new_namespaces() already incremented the ref counter */
+-	if (nsproxy->ima_ns == nsproxy->ima_ns_for_children)
++	if (nsproxy->ima_ns == ima_ns)
+ 		return 0;
+ 
+-	res = imans_activate(ns);
++	/* It's possible that the user first unshares the IMA namespace and
++	 * then creates a new user namespace on clone3(). In that case swap
++	 * user namespace for the "current" one.
++	 */
++	if (ima_ns->user_ns != user_ns) {
++		res = ima_swap_user_ns(ima_ns, user_ns);
++		if (res)
++			return res;
++	}
++
++	res = imans_activate(ima_ns);
+ 	if (res)
+ 		return res;
+ 
+-	get_ima_ns(ns);
++	get_ima_ns(ima_ns);
+ 	put_ima_ns(nsproxy->ima_ns);
+-	nsproxy->ima_ns = ns;
++	nsproxy->ima_ns = ima_ns;
+ 
+ 	return res;
+ }
 -- 
 2.20.1
 
