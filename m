@@ -1,82 +1,65 @@
-Return-Path: <SRS0=uwT9=B3=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=AHf6=B4=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58691C433E3
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Aug 2020 23:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33887C433E3
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 05:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D47C2065C
-	for <linux-integrity@archiver.kernel.org>; Mon, 17 Aug 2020 23:45:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="e0vOwyRU"
+	by mail.kernel.org (Postfix) with ESMTP id 17E322063A
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 05:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgHQXph (ORCPT
+        id S1726583AbgHRFdy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 17 Aug 2020 19:45:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:35252 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726328AbgHQXph (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 17 Aug 2020 19:45:37 -0400
-Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 34CB320B4908;
-        Mon, 17 Aug 2020 16:45:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 34CB320B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597707936;
-        bh=ODLtHxuph/xu3RT5nAzZUsfuC4XcphwPvbtr8zOIZzg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=e0vOwyRUKbxX3Qa2qnnDFomljqdWRcOMXJPHRiWMnZTHllxiWh7XdZHsR51MPESsz
-         8HUgrN9PAhKC8Yj5RJtVtgv7vnWHio9/5Ue4vDH5+fbyQVHwIwmf8p+ehE7g0DYOXT
-         R4YjmXC7WNa68PrUnwHBKoiWNHEZBHEiDOdB6Bj8=
-Subject: Re: [PATCH 2/3] IMA: add policy to support measuring critical data
- from kernel components
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        nramas@linux.microsoft.com
-References: <20200812193102.18636-1-tusharsu@linux.microsoft.com>
- <20200812193102.18636-3-tusharsu@linux.microsoft.com>
- <591b5f09c7df8ef0378866eaf3afde7a7cb4e82f.camel@linux.ibm.com>
- <5275268e-2ce8-0129-b11d-8419ac384262@linux.microsoft.com>
- <97d25609b6a87f104cc88a2ff8ae52d3f2e4e387.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <0d3a1cbc-9c11-37f3-6316-01f5b43909c1@linux.microsoft.com>
-Date:   Mon, 17 Aug 2020 16:45:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 18 Aug 2020 01:33:54 -0400
+Received: from mga09.intel.com ([134.134.136.24]:46036 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726228AbgHRFdy (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Aug 2020 01:33:54 -0400
+IronPort-SDR: hI1YyZYjp3i79eIOL9Uq04M3K9PU8WWpqB19f/BKXbJHD2GsnHhtzw1sVZ9I/B7wym2AWWjIy2
+ haix+f9Rlv/g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9716"; a="155927573"
+X-IronPort-AV: E=Sophos;i="5.76,326,1592895600"; 
+   d="scan'208";a="155927573"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2020 22:33:53 -0700
+IronPort-SDR: Gc5840vEE4FMpm/UFXJFoa4mP4vObW0VhhCGp2hoppQWzWTT8y8C3XE+x7/gUDl1ceixRFH8UF
+ e+lMadhAskMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.76,326,1592895600"; 
+   d="scan'208";a="441108338"
+Received: from lcrossx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.46.217])
+  by orsmga004.jf.intel.com with ESMTP; 17 Aug 2020 22:33:52 -0700
+Date:   Tue, 18 Aug 2020 08:33:51 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v1] tpm: use %*ph to print small buffer
+Message-ID: <20200818053351.GA119714@linux.intel.com>
+References: <20200730161613.41607-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <97d25609b6a87f104cc88a2ff8ae52d3f2e4e387.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200730161613.41607-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Thu, Jul 30, 2020 at 07:16:13PM +0300, Andy Shevchenko wrote:
+> Use %*ph format to print small buffer as hex string.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+Oh, this is handy, thanks.
 
-On 2020-08-17 4:43 p.m., Mimi Zohar wrote:
-> On Mon, 2020-08-17 at 15:27 -0700, Tushar Sugandhi wrote:
-> 
->>> scripts/Lindent isn't as prevalent as it used to be, but it's still
->>> included in Documentation/process/coding-style.rst.  Use it as a guide.
->> Thanks for the pointer. We'll use scripts/Lindent going forward
-> 
-> Please don't change existing code to conform to it.  Use it as a
-> guide/suggestion for new code.
-> 
-> Mimi
-> 
-> 
-Will do.
-Again, appreciate your feedback.
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
