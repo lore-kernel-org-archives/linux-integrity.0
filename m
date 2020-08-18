@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBE1C433DF
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A949C433E3
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 077572080C
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:55:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E952920825
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Aug 2020 15:56:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbgHRPve (ORCPT
+        id S1728122AbgHRPrG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Aug 2020 11:51:34 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2650 "EHLO huawei.com"
+        Tue, 18 Aug 2020 11:47:06 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2644 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728236AbgHRPsF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Aug 2020 11:48:05 -0400
-Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 9C8BD5D5C87FB618FA08;
-        Tue, 18 Aug 2020 16:48:03 +0100 (IST)
+        id S1727108AbgHRPqx (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:46:53 -0400
+Received: from lhreml722-chm.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 72D5DD3BE118E0003501;
+        Tue, 18 Aug 2020 16:46:49 +0100 (IST)
 Received: from kstruczy-linux-box (10.204.65.138) by
  lhreml722-chm.china.huawei.com (10.201.108.73) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Tue, 18 Aug 2020 16:48:01 +0100
-Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:48:04 +0200
+ 15.1.1913.5; Tue, 18 Aug 2020 16:46:47 +0100
+Received: by kstruczy-linux-box (sSMTP sendmail emulation); Tue, 18 Aug 2020 17:46:50 +0200
 From:   <krzysztof.struczynski@huawei.com>
 To:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <containers@lists.linux-foundation.org>,
@@ -38,9 +38,9 @@ CC:     <zohar@linux.ibm.com>, <stefanb@linux.vnet.ibm.com>,
         <jmorris@namei.org>, <christian@brauner.io>,
         <silviu.vlasceanu@huawei.com>, <roberto.sassu@huawei.com>,
         Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-Subject: [RFC PATCH 27/30] integrity: Add key domain tag to the search criteria
-Date:   Tue, 18 Aug 2020 17:42:27 +0200
-Message-ID: <20200818154230.14016-18-krzysztof.struczynski@huawei.com>
+Subject: [RFC PATCH 21/30] user namespace: Add function that checks if the UID map is defined
+Date:   Tue, 18 Aug 2020 17:42:21 +0200
+Message-ID: <20200818154230.14016-12-krzysztof.struczynski@huawei.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
 References: <20200818154230.14016-1-krzysztof.struczynski@huawei.com>
@@ -58,255 +58,61 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 
-Add key domain tag to the search criteria in digsig module. If the
-domain tag is not set for the keys from the given keyring, it is set to
-NULL and the behaviour is unchanged.
-
-The key domain tag is added to the ima appraisal keys loaded to the
-system ima keyring.
+Add function that checks if the UID map is defined. It will be used by
+ima to check if ID remapping in subject-based rules is necessary.
 
 Signed-off-by: Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
 ---
- include/linux/digsig.h                 | 11 ++++---
- lib/digsig.c                           | 11 +++----
- security/integrity/digsig.c            | 40 ++++++++++++++++++++++----
- security/integrity/digsig_asymmetric.c | 20 ++++++++-----
- security/integrity/integrity.h         | 11 ++++---
- 5 files changed, 67 insertions(+), 26 deletions(-)
+ include/linux/user_namespace.h |  6 ++++++
+ kernel/user_namespace.c        | 11 +++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/include/linux/digsig.h b/include/linux/digsig.h
-index 2ace69e41088..9e4121253899 100644
---- a/include/linux/digsig.h
-+++ b/include/linux/digsig.h
-@@ -44,13 +44,16 @@ struct signature_hdr {
- 
- #if defined(CONFIG_SIGNATURE) || defined(CONFIG_SIGNATURE_MODULE)
- 
--int digsig_verify(struct key *keyring, const char *sig, int siglen,
--					const char *digest, int digestlen);
-+int digsig_verify(struct key *keyring, struct key_tag *domain_tag,
-+		  const char *sig, int siglen, const char *digest,
-+		  int digestlen);
- 
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index d9759c54fead..bcb21c41c910 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -138,6 +138,7 @@ extern bool in_userns(const struct user_namespace *ancestor,
+ 		       const struct user_namespace *child);
+ extern bool current_in_userns(const struct user_namespace *target_ns);
+ struct ns_common *ns_get_owner(struct ns_common *ns);
++extern bool userns_set_uidmap(const struct user_namespace *ns);
  #else
  
--static inline int digsig_verify(struct key *keyring, const char *sig,
--				int siglen, const char *digest, int digestlen)
-+static inline int digsig_verify(struct key *keyring,
-+				struct key_tag *domain_tag,
-+				const char *sig, int siglen, const char *digest,
-+				int digestlen)
+ static inline struct user_namespace *get_user_ns(struct user_namespace *ns)
+@@ -182,6 +183,11 @@ static inline struct ns_common *ns_get_owner(struct ns_common *ns)
  {
- 	return -EOPNOTSUPP;
+ 	return ERR_PTR(-EPERM);
  }
-diff --git a/lib/digsig.c b/lib/digsig.c
-index e0627c3e53b2..bd234b1abb4f 100644
---- a/lib/digsig.c
-+++ b/lib/digsig.c
-@@ -196,8 +196,8 @@ static int digsig_verify_rsa(struct key *key,
-  * Normally hash of the content is used as a data for this function.
-  *
-  */
--int digsig_verify(struct key *keyring, const char *sig, int siglen,
--						const char *data, int datalen)
-+int digsig_verify(struct key *keyring, struct key_tag *domain_tag,
-+		  const char *sig, int siglen, const char *data, int datalen)
- {
- 	int err = -ENOMEM;
- 	struct signature_hdr *sh = (struct signature_hdr *)sig;
-@@ -217,14 +217,15 @@ int digsig_verify(struct key *keyring, const char *sig, int siglen,
- 	if (keyring) {
- 		/* search in specific keyring */
- 		key_ref_t kref;
--		kref = keyring_search(make_key_ref(keyring, 1UL),
--				      &key_type_user, name, true);
-+		kref = keyring_search_tag(make_key_ref(keyring, 1UL),
-+					  &key_type_user, name,
-+					  domain_tag, true);
- 		if (IS_ERR(kref))
- 			key = ERR_CAST(kref);
- 		else
- 			key = key_ref_to_ptr(kref);
- 	} else {
--		key = request_key(&key_type_user, name, NULL);
-+		key = request_key_tag(&key_type_user, name, domain_tag, NULL);
- 	}
- 	if (IS_ERR(key)) {
- 		pr_err("key not found, id: %s\n", name);
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index e9cbadade74b..523fc786c4d7 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -15,6 +15,7 @@
- #include <linux/vmalloc.h>
- #include <crypto/public_key.h>
- #include <keys/system_keyring.h>
-+#include <linux/ima.h>
- 
- #include "integrity.h"
- 
-@@ -31,6 +32,16 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
- 	".platform",
- };
- 
-+static unsigned long keyring_alloc_flags[INTEGRITY_KEYRING_MAX] = {
-+	KEY_ALLOC_NOT_IN_QUOTA,
-+#ifdef CONFIG_IMA_NS
-+	KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_DOMAIN_IMA,
-+#else
-+	KEY_ALLOC_NOT_IN_QUOTA,
-+#endif
-+	KEY_ALLOC_NOT_IN_QUOTA,
-+};
 +
- #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
- #define restrict_link_to_ima restrict_link_by_builtin_and_secondary_trusted
- #else
-@@ -56,10 +67,22 @@ static struct key *integrity_keyring_from_id(const unsigned int id)
- 	return keyring[id];
- }
- 
-+static struct key_tag *domain_tag_from_id(const unsigned int id)
++static inline bool userns_set_uidmap(const struct user_namespace *ns)
 +{
-+	if (id >= INTEGRITY_KEYRING_MAX)
-+		return ERR_PTR(-EINVAL);
++	return true;
++}
+ #endif
+ 
+ #endif /* _LINUX_USER_H */
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index 87804e0371fe..e38f9f11a589 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -1232,6 +1232,17 @@ bool current_in_userns(const struct user_namespace *target_ns)
+ }
+ EXPORT_SYMBOL(current_in_userns);
+ 
++bool userns_set_uidmap(const struct user_namespace *ns)
++{
++	bool mapping_defined;
 +
-+	if (id == INTEGRITY_KEYRING_IMA)
-+		return current->nsproxy->ima_ns->key_domain;
++	mutex_lock(&userns_state_mutex);
++	mapping_defined = ns->uid_map.nr_extents != 0;
++	mutex_unlock(&userns_state_mutex);
 +
-+	return NULL;
++	return mapping_defined;
 +}
 +
- int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 			    const char *digest, int digestlen)
+ static inline struct user_namespace *to_user_ns(struct ns_common *ns)
  {
- 	struct key *keyring;
-+	struct key_tag *domain_tag;
- 
- 	if (siglen < 2)
- 		return -EINVAL;
-@@ -68,14 +91,18 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
- 	if (IS_ERR(keyring))
- 		return PTR_ERR(keyring);
- 
-+	domain_tag = domain_tag_from_id(id);
-+	if (IS_ERR(domain_tag))
-+		return PTR_ERR(domain_tag);
-+
- 	switch (sig[1]) {
- 	case 1:
- 		/* v1 API expect signature without xattr type */
--		return digsig_verify(keyring, sig + 1, siglen - 1, digest,
--				     digestlen);
-+		return digsig_verify(keyring, domain_tag,
-+				     sig + 1, siglen - 1, digest, digestlen);
- 	case 2:
--		return asymmetric_verify(keyring, sig, siglen, digest,
--					 digestlen);
-+		return asymmetric_verify(keyring, domain_tag, sig, siglen,
-+					 digest, digestlen);
- 	}
- 
- 	return -EOPNOTSUPP;
-@@ -101,7 +128,8 @@ static int __init __integrity_init_keyring(const unsigned int id,
- 
- 	keyring[id] = keyring_alloc(keyring_name[id], KUIDT_INIT(0),
- 				    KGIDT_INIT(0), cred, perm,
--				    KEY_ALLOC_NOT_IN_QUOTA, restriction, NULL);
-+				    keyring_alloc_flags[id],
-+				    restriction, NULL);
- 	if (IS_ERR(keyring[id])) {
- 		err = PTR_ERR(keyring[id]);
- 		pr_info("Can't allocate %s keyring (%d)\n",
-@@ -153,7 +181,7 @@ int __init integrity_add_key(const unsigned int id, const void *data,
- 
- 	key = key_create_or_update(make_key_ref(keyring[id], 1), "asymmetric",
- 				   NULL, data, size, perm,
--				   KEY_ALLOC_NOT_IN_QUOTA);
-+				   keyring_alloc_flags[id]);
- 	if (IS_ERR(key)) {
- 		rc = PTR_ERR(key);
- 		pr_err("Problem loading X.509 certificate %d\n", rc);
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index cfa4127d0518..4994a9773247 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -19,7 +19,9 @@
- /*
-  * Request an asymmetric key.
-  */
--static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
-+static struct key *request_asymmetric_key(struct key *keyring,
-+					  struct key_tag *domain_tag,
-+					  uint32_t keyid)
- {
- 	struct key *key;
- 	char name[12];
-@@ -44,14 +46,16 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
- 		/* search in specific keyring */
- 		key_ref_t kref;
- 
--		kref = keyring_search(make_key_ref(keyring, 1),
--				      &key_type_asymmetric, name, true);
-+		kref = keyring_search_tag(make_key_ref(keyring, 1),
-+					  &key_type_asymmetric, name,
-+					  domain_tag, true);
- 		if (IS_ERR(kref))
- 			key = ERR_CAST(kref);
- 		else
- 			key = key_ref_to_ptr(kref);
- 	} else {
--		key = request_key(&key_type_asymmetric, name, NULL);
-+		key = request_key_tag(&key_type_asymmetric,
-+				      name, domain_tag, NULL);
- 	}
- 
- 	if (IS_ERR(key)) {
-@@ -73,8 +77,9 @@ static struct key *request_asymmetric_key(struct key *keyring, uint32_t keyid)
- 	return key;
- }
- 
--int asymmetric_verify(struct key *keyring, const char *sig,
--		      int siglen, const char *data, int datalen)
-+int asymmetric_verify(struct key *keyring, struct key_tag *domain_tag,
-+		      const char *sig, int siglen,
-+		      const char *data, int datalen)
- {
- 	struct public_key_signature pks;
- 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
-@@ -92,7 +97,8 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	if (hdr->hash_algo >= HASH_ALGO__LAST)
- 		return -ENOPKG;
- 
--	key = request_asymmetric_key(keyring, be32_to_cpu(hdr->keyid));
-+	key = request_asymmetric_key(keyring, domain_tag,
-+				     be32_to_cpu(hdr->keyid));
- 	if (IS_ERR(key))
- 		return PTR_ERR(key);
- 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index c2981a98547e..207a1aef28e4 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -212,11 +212,14 @@ static inline int __init integrity_load_cert(const unsigned int id,
- #endif /* CONFIG_INTEGRITY_SIGNATURE */
- 
- #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
--int asymmetric_verify(struct key *keyring, const char *sig,
--		      int siglen, const char *data, int datalen);
-+int asymmetric_verify(struct key *keyring, struct key_tag *domain_tag,
-+		      const char *sig, int siglen,
-+		      const char *data, int datalen);
- #else
--static inline int asymmetric_verify(struct key *keyring, const char *sig,
--				    int siglen, const char *data, int datalen)
-+static inline int asymmetric_verify(struct key *keyring,
-+				    struct key_tag *domain_tag,
-+				    const char *sig, int siglen,
-+				    const char *data, int datalen)
- {
- 	return -EOPNOTSUPP;
- }
+ 	return container_of(ns, struct user_namespace, ns);
 -- 
 2.20.1
 
