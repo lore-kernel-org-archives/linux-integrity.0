@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AB8C433E3
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 17:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C52FC433DF
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 17:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68C3B206FA
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 17:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E2B8208C7
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 17:21:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fW6jb+tR"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="exTof0A5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbgHSRVs (ORCPT
+        id S1726723AbgHSRVs (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Wed, 19 Aug 2020 13:21:48 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44498 "EHLO
+Received: from linux.microsoft.com ([13.77.154.182]:44410 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbgHSRVn (ORCPT
+        with ESMTP id S1726461AbgHSRVm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Aug 2020 13:21:43 -0400
+        Wed, 19 Aug 2020 13:21:42 -0400
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 910BD20B4916;
-        Wed, 19 Aug 2020 10:21:42 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 910BD20B4916
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2F96920B490F;
+        Wed, 19 Aug 2020 10:21:41 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2F96920B490F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597857703;
-        bh=fljryF0I/Ht+D5c1kVdiKKq9Z25pMaEkJlo1mGLnMrI=;
+        s=default; t=1597857701;
+        bh=dyVJPjIPeKuDvPutEebyYsHKnrEeEtP1po8wjqtmprQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fW6jb+tRnM1hq1xsXmMTfPba27XXydZeALzfXHrm2Yz77iPq3ats5hQmzDXrxWO2e
-         r+PawBNHgN14OiyzJ7bawFPgtgIWlX63fYJ9wqZKvDryzQOK0rDLdC4+zWfTw3dsZo
-         cO8OoxPlyUwFBS9Sjwo77ccDk1BWbC8PL5sh7s+c=
+        b=exTof0A5i2tmM9Z/hvphRiahvZ8BQ7eipXw3KtWZDbjQdRNFREyjfke3waK+W0bLy
+         qpcUVEqTIx/o9rTGqL9vwXaqIiPyUwx7M4WxoOGtKuGegnzm/tsM5eyTfcdZyJldWr
+         EWC53cc8RF4bvONZbEF1EIR9+YJmGnat9FTWN9xI=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         gregkh@linuxfoundation.org, james.morse@arm.com,
@@ -50,9 +50,9 @@ To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
         balajib@linux.microsoft.com
-Subject: [PATCH v4 5/5] arm64: Add IMA kexec buffer to DTB
-Date:   Wed, 19 Aug 2020 10:21:34 -0700
-Message-Id: <20200819172134.11243-6-nramas@linux.microsoft.com>
+Subject: [PATCH v4 3/5] IMA: Refactor do_get_kexec_buffer() to call of_ functions directly
+Date:   Wed, 19 Aug 2020 10:21:32 -0700
+Message-Id: <20200819172134.11243-4-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200819172134.11243-1-nramas@linux.microsoft.com>
 References: <20200819172134.11243-1-nramas@linux.microsoft.com>
@@ -63,57 +63,62 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The address and size of the current kernel's IMA measurement log
-need to be added to the device tree's IMA kexec buffer node for
-the log to be carried over to the next kernel on the kexec call.
+do_get_kexec_buffer() calls another local function get_addr_size_cells()
+to get the address and size of the IMA measurement log buffer stored in
+the device tree. get_addr_size_cells() is small enough that it can be
+merged into do_get_kexec_buffer() and a function call can be avoided.
 
-Add the IMA measurement log buffer properties to the device tree for
-ARM64. Update CONFIG_KEXEC_FILE to select CONFIG_HAVE_IMA_KEXEC to
-indicate that the IMA measurement log information is present in
-the device tree.
+Refactor do_get_kexec_buffer() to call of_ functions directly instead
+of calling get_addr_size_cells() and remove get_addr_size_cells().
 
 Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- arch/arm64/Kconfig                     |  1 +
- arch/arm64/kernel/machine_kexec_file.c | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+ security/integrity/ima/ima_kexec.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 6d232837cbee..9f03c8245e5b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1077,6 +1077,7 @@ config KEXEC
- config KEXEC_FILE
- 	bool "kexec file based system call"
- 	select KEXEC_CORE
-+	select HAVE_IMA_KEXEC
- 	help
- 	  This is new version of kexec system call. This system call is
- 	  file based and takes file descriptors as system call argument
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 4c54723e7a04..8488f8e87d1a 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -153,6 +153,17 @@ static int setup_dtb(struct kimage *image,
- 				FDT_PROP_KASLR_SEED);
- 	}
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 25d79d521597..283631098b48 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -15,31 +15,21 @@
+ #include <linux/libfdt.h>
+ #include "ima.h"
  
-+	/* add ima-kexec-buffer */
-+	if (image->arch.ima_buffer_size > 0) {
-+
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_IMA_KEXEC_BUFFER,
-+				image->arch.ima_buffer_addr,
-+				image->arch.ima_buffer_size);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	}
-+
- 	/* add rng-seed */
- 	if (rng_is_initialized()) {
- 		void *rng_seed;
+-static int get_addr_size_cells(int *addr_cells, int *size_cells)
++static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
++			       size_t *size)
+ {
++	int addr_cells, size_cells;
+ 	struct device_node *root;
+ 
+ 	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return -EINVAL;
+ 
+-	*addr_cells = of_n_addr_cells(root);
+-	*size_cells = of_n_size_cells(root);
++	addr_cells = of_n_addr_cells(root);
++	size_cells = of_n_size_cells(root);
+ 
+ 	of_node_put(root);
+ 
+-	return 0;
+-}
+-
+-static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
+-			       size_t *size)
+-{
+-	int ret, addr_cells, size_cells;
+-
+-	ret = get_addr_size_cells(&addr_cells, &size_cells);
+-	if (ret)
+-		return ret;
+-
+ 	if (len < 4 * (addr_cells + size_cells))
+ 		return -ENOENT;
+ 
 -- 
 2.28.0
 
