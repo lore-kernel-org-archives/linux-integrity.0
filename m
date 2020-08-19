@@ -2,91 +2,111 @@ Return-Path: <SRS0=mfW3=B5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4CEC433E1
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 15:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0313C433E1
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 15:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED252076E
-	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 15:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C295D208B3
+	for <linux-integrity@archiver.kernel.org>; Wed, 19 Aug 2020 15:17:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Wvtm21nX";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Wvtm21nX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbgHSPBr (ORCPT
+        id S1728604AbgHSPRS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 19 Aug 2020 11:01:47 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:59044 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726187AbgHSPBq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 19 Aug 2020 11:01:46 -0400
-X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Aug 2020 11:01:46 EDT
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 51F8AF0A; Wed, 19 Aug 2020 09:56:24 -0500 (CDT)
-Date:   Wed, 19 Aug 2020 09:56:24 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org
+        Wed, 19 Aug 2020 11:17:18 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:41398 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728664AbgHSPRO (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 19 Aug 2020 11:17:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9DCEB8EE1F3;
+        Wed, 19 Aug 2020 08:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597850233;
+        bh=u8eA+UrKm7Oa+OhwxVTGmaX8Rvfjzz/S18lGSJoKESA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Wvtm21nX4yRbrL5AM/oZ9DiDQrZ2Pb5uA4Do2S2Qa6/B1c20JzBNIGtEy52/xRyuF
+         lSaV3e23b7FDRBE1oOZd3qHg6wPp+rYyj6cl74pJoRONr6Gktix4mqmOAFb3737Lve
+         5T9B0NJpbfXwMc6qN3mau/8S68JSpqdcGJz3PR88=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id js-7jB_ASmDR; Wed, 19 Aug 2020 08:17:13 -0700 (PDT)
+Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 11A818EE0E9;
+        Wed, 19 Aug 2020 08:17:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597850233;
+        bh=u8eA+UrKm7Oa+OhwxVTGmaX8Rvfjzz/S18lGSJoKESA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Wvtm21nX4yRbrL5AM/oZ9DiDQrZ2Pb5uA4Do2S2Qa6/B1c20JzBNIGtEy52/xRyuF
+         lSaV3e23b7FDRBE1oOZd3qHg6wPp+rYyj6cl74pJoRONr6Gktix4mqmOAFb3737Lve
+         5T9B0NJpbfXwMc6qN3mau/8S68JSpqdcGJz3PR88=
+Message-ID: <1597850231.3875.13.camel@HansenPartnership.com>
 Subject: Re: [PATCH v4 1/1] tpm: add sysfs exports for all banks of PCR
  registers
-Message-ID: <20200819145624.GA11771@mail.hallyn.com>
-References: <20200818161207.GC137138@linux.intel.com>
- <20200818161955.GD137138@linux.intel.com>
- <20200818162630.GE137138@linux.intel.com>
- <20200818164602.GZ1152540@nvidia.com>
- <39eb6b408e7f060ab241954102d06f97d1f99611.camel@linux.ibm.com>
- <20200818183603.GC1152540@nvidia.com>
- <14eaf21a808e333ca414c954d8f3a2f7b6dbf2ca.camel@linux.ibm.com>
- <20200819120238.GD1152540@nvidia.com>
- <59f983156fed466d568c324de72ef733c1a15d76.camel@linux.ibm.com>
- <20200819140943.GH1152540@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200819140943.GH1152540@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>, Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Date:   Wed, 19 Aug 2020 08:17:11 -0700
+In-Reply-To: <20200819120238.GD1152540@nvidia.com>
+References: <20200817213506.4474-1-James.Bottomley@HansenPartnership.com>
+         <20200817213506.4474-2-James.Bottomley@HansenPartnership.com>
+         <20200818161207.GC137138@linux.intel.com>
+         <20200818161955.GD137138@linux.intel.com>
+         <20200818162630.GE137138@linux.intel.com>
+         <20200818164602.GZ1152540@nvidia.com>
+         <39eb6b408e7f060ab241954102d06f97d1f99611.camel@linux.ibm.com>
+         <20200818183603.GC1152540@nvidia.com>
+         <14eaf21a808e333ca414c954d8f3a2f7b6dbf2ca.camel@linux.ibm.com>
+         <20200819120238.GD1152540@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 11:09:43AM -0300, Jason Gunthorpe wrote:
-> On Wed, Aug 19, 2020 at 09:27:33AM -0400, Mimi Zohar wrote:
-> > On Wed, 2020-08-19 at 09:02 -0300, Jason Gunthorpe wrote:
-> > > On Tue, Aug 18, 2020 at 02:55:50PM -0400, Mimi Zohar wrote:
-> > > 
-> > > > The problem is that there isn't just one single userspace library or
-> > > > application for reading PCRs.  So now not only is there the kernel
-> > > > "boot_aggregate" regression testing, but regression testing of the tool
-> > > > itself to support multiple methods of reading the PCRs.
-> > > 
-> > > I was thinking just open code 
-> > >   open("/dev/tpm")
-> > >   write(read_pcrs_cmd)
-> > >   read(read_pcrs_cmd)
-> > >  
-> > > It isn't particularly hard to retrive the PCRs, don't really need to
-> > > depend on a library.
-> > 
-> > Ok, do you want to contribute it to ima-evm-utils?  While you're at it,
-> > do you also have code to parse the TPM 2.0 event log that you could
-> > contribute?
-> > 
-> > Seriously, we shouldn't be (re-)writing code to do this.
+On Wed, 2020-08-19 at 09:02 -0300, Jason Gunthorpe wrote:
+> On Tue, Aug 18, 2020 at 02:55:50PM -0400, Mimi Zohar wrote:
 > 
-> The kernel should not be used a dumping ground to work around a
-> dysfunctional userspace either. :(
+> > The problem is that there isn't just one single userspace library
+> > or application for reading PCRs.  So now not only is there the
+> > kernel "boot_aggregate" regression testing, but regression testing
+> > of the tool itself to support multiple methods of reading the PCRs.
 > 
-> You've basicaly said you can't rely on a sane userspace library
-> because *reasons* so we need to dump stuff in the kernel instead.
-> 
-> It is not a good justification to add new uAPI.
-> 
-> James seems to have the same basic conclusion too, unfortunately.
+> I was thinking just open code 
+>   open("/dev/tpm")
+>   write(read_pcrs_cmd)
 
-It seems to me the point is that we often want to do these things in
-very early and/or stripped-down userspaces.
+That's rather an over simplification.  The command takes a
+TPML_PCR_SELECTION structure which is, in turn, a packed array of
+TPMS_PCR_SELECTION which is a hash type and big endian packed bitmap.
 
-I'm definately also in favor of having sysfs provide these.
+>   read(read_pcrs_cmd)
+
+And the return is a TPML_PCR_SELECTION, in case the system couldn't
+provide something you asked for followed by TPML_DIGEST structure which
+is a counted array of TPM2B packed digests.
+
+This is a marshal/unmarshal nightmare for the uninitiated.  It is *not*
+simple or even straightforward.
+
+> It isn't particularly hard to retrive the PCRs, don't really need to
+> depend on a library.
+
+Well, having a PhD in Theoretical Physics, I find quantum field theory
+remarkably easy to understand.  My friends tell me this is just me and
+they'd rather I not talk about it at parties ...
+
+James
+
