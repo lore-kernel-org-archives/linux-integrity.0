@@ -2,201 +2,197 @@ Return-Path: <SRS0=vxdq=CC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFE3C433E1
-	for <linux-integrity@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2952AC433E1
+	for <linux-integrity@archiver.kernel.org>; Mon, 24 Aug 2020 14:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2F36214F1
-	for <linux-integrity@archiver.kernel.org>; Mon, 24 Aug 2020 13:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2D8A20838
+	for <linux-integrity@archiver.kernel.org>; Mon, 24 Aug 2020 14:00:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HfpJdQn6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8uvweuk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726218AbgHXNDe (ORCPT
+        id S1725976AbgHXOAV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 24 Aug 2020 09:03:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18870 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726820AbgHXND3 (ORCPT
+        Mon, 24 Aug 2020 10:00:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbgHXOAS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 24 Aug 2020 09:03:29 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OD2Xeb094901;
-        Mon, 24 Aug 2020 09:03:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=/Berv+RXYni/EpfBinvlSS7q5Og6GZMPUA3Mdr4e7C8=;
- b=HfpJdQn6BQdd8P8bPquOAqj2zw2uWBs+uEUVJrdxZzTnp4Q1ZR4ws0gUQV8I/oNuAMof
- Sd31HJe/+T0yKdU/Xbdv5kzm+oKTLrufjxuWoJQoO8XFCsaaYFz7pokhP3czRRD2/IbU
- QyokIhC7ZLEsVLcZmhyJGxVLUwjjNI3yvClnsxPPn2sDpeXet/0uk1rOICS7Jx40I0TB
- ZKtsZM8+o39LDP25SmZctx7CvPicpoNB6jne/9xxOqbDBX0owwYRt+ThsVvhCHHJHpFe
- 9tPNviMNToxF1ik6o5jIMpKcEazJ4ExIp3Bbldtxt2ZItVlV82VxdXktpNd4lyBXi6R3 lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5nc1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 09:03:02 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07OD2tAH096823;
-        Mon, 24 Aug 2020 09:02:55 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 334b5c5msx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 09:02:54 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07OCwQTa009904;
-        Mon, 24 Aug 2020 13:02:13 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06fra.de.ibm.com with ESMTP id 332uweseew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Aug 2020 13:02:13 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07OD0ebv33817084
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 Aug 2020 13:00:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1B5CAE056;
-        Mon, 24 Aug 2020 13:02:10 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 582E4AE05D;
-        Mon, 24 Aug 2020 13:02:09 +0000 (GMT)
-Received: from sig-9-65-254-31.ibm.com (unknown [9.65.254.31])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 24 Aug 2020 13:02:09 +0000 (GMT)
-Message-ID: <32ef47317871a27f24287e48a2f6ac5a7e552943.camel@linux.ibm.com>
-Subject: Re: [PATCH 08/11] ima: Allow imasig requirement to be satisfied by
- EVM portable signatures
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Mon, 24 Aug 2020 09:02:08 -0400
-In-Reply-To: <20200618160458.1579-8-roberto.sassu@huawei.com>
-References: <20200618160329.1263-2-roberto.sassu@huawei.com>
-         <20200618160458.1579-8-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-24_11:2020-08-24,2020-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- adultscore=0 spamscore=0 impostorscore=0 suspectscore=3 clxscore=1015
- phishscore=0 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008240099
+        Mon, 24 Aug 2020 10:00:18 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89841C061573;
+        Mon, 24 Aug 2020 07:00:18 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id j18so3454733oig.5;
+        Mon, 24 Aug 2020 07:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=a8tt+CMGp7q/HOS53VXK8umX/MA6yVJ2CpHA9QlQNUw=;
+        b=j8uvweukLv7148MhKVNormlhapYg2r0+5kfglczLY9e1LRAzzw1ydGewupqwmMvSU9
+         0SjUkT2GcExDoXKcNevn7vGcs0xGz2h1N4tCpeSa0iXNchm6UQrqjss8wj8iqknBoa+S
+         4MyIoD7O1E/7jGZ1HXXTiSnTZI3z75OxzfwbLWooVh5tkB9F7CVR106kj2K77Gh7i9XF
+         R4rRhqAGQvSFYzETpRYZQRJ6IgM/bI2fHoUXs2zfGtW/xvFSxFiN3NLS1+UM9fAiOcBA
+         a11bZrRB4MWND2aPR8LFcTFIthLCJPUkn3jleIrczBllIiwRIWw7tpwZbx1P6n/krn/Q
+         xt3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=a8tt+CMGp7q/HOS53VXK8umX/MA6yVJ2CpHA9QlQNUw=;
+        b=kGZk87T8Cc1h4YPI6UyNdqulXpbOOc2kfJZ6cKMhnOY9uVN7+9/13q6oQ1BY6K+A3k
+         U+js+qnbrND0F0whi1XLTmcZ9T0hfP9VWKdcH5EclQI0NfNN/iqWBjTL+jmVT8qJw3Th
+         l2g7tanKvTwyWf6cTTaQdtFRVewtNGvYcpUABZsCLnKVey1RgEBlYE9aiuIeat3W7WKV
+         LDqz1OMGPAimTaMErloh+R6j02f5Sn8f5ApSWQ+QaaDyxPzf7l6r31tBXsPdof44zkEm
+         LF5N0pzTGHRTVUq33IP5yd05JkpaQavTtGKYek61aSx3KACgzH03tkaefPA+bApL/BR3
+         Ih4Q==
+X-Gm-Message-State: AOAM531IaKNpScUfaFa9kdFKZDZA0d0j7NeoZWfqKRTKB/+Y1hLdAqZy
+        MJFcJxSrMl/guOYlsyFGwGOYoz/S7eB3kE2CqG8=
+X-Google-Smtp-Source: ABdhPJzSCgmgjsf4aPA4dULiOZlq9CD+b2wfdzyohpAoZ/AbfGHUt43p6iguzyk+upLrdXl8pepvjautteI5JHkkAOQ=
+X-Received: by 2002:a54:4817:: with SMTP id j23mr3170930oij.140.1598277617933;
+ Mon, 24 Aug 2020 07:00:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200822010018.19453-1-nramas@linux.microsoft.com>
+In-Reply-To: <20200822010018.19453-1-nramas@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 24 Aug 2020 10:00:07 -0400
+Message-ID: <CAEjxPJ5Kok-TBfS=XQ+NUC5tuaZRkyLBOawG4UDky51_bsMnGw@mail.gmail.com>
+Subject: Re: [PATCH] SELinux: Measure state and hash of policy using IMA
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        tusharsu@linux.microsoft.com, sashal@kernel.org,
+        James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2020-06-18 at 18:04 +0200, Roberto Sassu wrote:
-> System administrators can require that all accessed files have a signature
-> by specifying appraise_type=imasig in a policy rule.
-> 
-> Currently, only IMA signatures satisfy this requirement.
-
-Appended signatures may also satisfy this requirement, but are not
-applicable as ...
-
-> IMA signatures
-> ensure data source authentication for file content and prevent any change.
-> EVM signatures instead ensure data source authentication for file metadata.
-> Given that the digest or signature of the file content must be included in
-> the metadata, EVM signatures provide at least the same guarantees of IMA
-> signatures.
-
-^provide the same file data guarantees of IMA signatures, as well as
-providing file metadata guarantees.
-
-> 
-> This patch lets systems protected with EVM signatures pass appraisal
-> verification if the appraise_type=imasig requirement is specified in the
-> policy. This facilitates deployment in the scenarios where only EVM
-> signatures are available.
-> 
-> The patch makes the following changes:
-> 
-> file xattr types:
-> security.ima: IMA_XATTR_DIGEST/IMA_XATTR_DIGEST_NG
-> security.evm: EVM_XATTR_PORTABLE_DIGSIG
-> 
-> execve(), mmap(), open() behavior (with appraise_type=imasig):
-> before: denied (file without IMA signature, imasig requirement not met)
-> after: allowed (file with EVM portable signature, imasig requirement met)
-> 
-> open(O_WRONLY) behavior (without appraise_type=imasig):
-> before: allowed (file without IMA signature, not immutable)
-> after: denied (file with EVM portable signature, immutable)
-> 
-> In addition, similarly to IMA signatures, this patch temporarily allows
-> new files without or with incomplete metadata to be opened so that content
-> can be written.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-
-After addressing the comments above and below,
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
+On Fri, Aug 21, 2020 at 9:00 PM Lakshmi Ramasubramanian
+<nramas@linux.microsoft.com> wrote:
+>
+> Critical data structures of security modules are currently not measured.
+> Therefore an attestation service, for instance, would not be able to
+> attest whether the security modules are always operating with the policie=
+s
+> and configuration that the system administrator had setup. The policies
+> and configuration for the security modules could be tampered with by
+> rogue user mode agents or modified through some inadvertent actions on
+> the system. Measuring such critical data would enable an attestation
+> service to reliably assess the security configuration of the system.
+>
+> SELinux configuration and policy are some of the critical data for this
+> security module that needs to be measured. This measurement can be used
+> by an attestation service, for instance, to verify if the configuration
+> and policies have been setup correctly and that they haven't been tampere=
+d
+> with at runtime.
+>
+> Measure SELinux configuration, policy capabilities settings, and the hash
+> of the loaded policy by calling the IMA hook ima_measure_critical_data().
+> Since the size of the loaded policy can be quite large, hash of the polic=
+y
+> is measured instead of the entire policy to avoid bloating the IMA log.
+>
+> Enable early boot measurement for SELinux in IMA since SELinux
+> initializes its state and policy before custom IMA policy is loaded.
+>
+> Sample measurement of SELinux state and hash of the policy:
+>
+> 10 e32e...5ac3 ima-buf sha256:86e8...4594 selinux-state-1595389364:287899=
+386 696e697469616c697a65643d313b656e61626c65643d313b656e666f7263696e673d303=
+b636865636b72657170726f743d313b6e6574776f726b5f706565725f636f6e74726f6c733d=
+313b6f70656e5f7065726d733d313b657874656e6465645f736f636b65745f636c6173733d3=
+13b616c776179735f636865636b5f6e6574776f726b3d303b6367726f75705f7365636c6162=
+656c3d313b6e6e705f6e6f737569645f7472616e736974696f6e3d313b67656e66735f73656=
+36c6162656c5f73796d6c696e6b733d303
+> 10 9e81...0857 ima-buf sha256:4941...68fc selinux-policy-hash-1597335667:=
+462051628 8d1d...1834
+>
+> To verify the measurement check the following:
+>
+> Execute the following command to extract the measured data
+> from the IMA log for SELinux configuration (selinux-state).
+>
+>   grep -m 1 "selinux-state" /sys/kernel/security/integrity/ima/ascii_runt=
+ime_measurements | cut -d' ' -f 6 | xxd -r -p
+>
+> The output should be the list of key-value pairs. For example,
+>  initialized=3D1;enabled=3D1;enforcing=3D0;checkreqprot=3D1;network_peer_=
+controls=3D1;open_perms=3D1;extended_socket_class=3D1;always_check_network=
+=3D0;cgroup_seclabel=3D1;nnp_nosuid_transition=3D1;genfs_seclabel_symlinks=
+=3D0;
+>
+> To verify the measured data with the current SELinux state:
+>
+>  =3D> enabled should be set to 1 if /sys/fs/selinux folder exists,
+>     0 otherwise
+>
+> For other entries, compare the integer value in the files
+>  =3D> /sys/fs/selinux/enforce
+>  =3D> /sys/fs/selinux/checkreqprot
+> And, each of the policy capabilities files under
+>  =3D> /sys/fs/selinux/policy_capabilities
+>
+> For selinux-policy-hash, the hash of SELinux policy is included
+> in the IMA log entry.
+>
+> To verify the measured data with the current SELinux policy run
+> the following commands and verify the output hash values match.
+>
+>   sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
+>
+>   grep -m 1 "selinux-policy-hash" /sys/kernel/security/integrity/ima/asci=
+i_runtime_measurements | cut -d' ' -f 6
+>
+> This patch is dependent on the following patch series:
+>         https://patchwork.kernel.org/patch/11709527/
+>         https://patchwork.kernel.org/patch/11730193/
+>         https://patchwork.kernel.org/patch/11730757/
+>
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Reported-by: kernel test robot <lkp@intel.com> # error: implicit declarat=
+ion of function 'vfree'
+> Reported-by: kernel test robot <lkp@intel.com> # error: implicit declarat=
+ion of function 'crypto_alloc_shash'
+> Reported-by: kernel test robot <lkp@intel.com> # sparse: symbol 'security=
+_read_selinux_policy' was not declared. Should it be static?
 > ---
->  security/integrity/ima/ima_appraise.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 21bda264fc30..9505bb390d90 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -219,12 +219,16 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
->  		hash_start = 1;
->  		/* fall through */
->  	case IMA_XATTR_DIGEST:
-> -		if (iint->flags & IMA_DIGSIG_REQUIRED) {
-> -			*cause = "IMA-signature-required";
-> -			*status = INTEGRITY_FAIL;
-> -			break;
-> +		if (*status != INTEGRITY_PASS_IMMUTABLE) {
-> +			if (iint->flags & IMA_DIGSIG_REQUIRED) {
-> +				*cause = "IMA-signature-required";
-> +				*status = INTEGRITY_FAIL;
-> +				break;
-> +			}
-> +			clear_bit(IMA_DIGSIG, &iint->atomic_flags);
-> +		} else {
-> +			set_bit(IMA_DIGSIG, &iint->atomic_flags);
->  		}
-> -		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
->  		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
->  				iint->ima_hash->length)
->  			/*
-> @@ -394,6 +398,8 @@ int ima_appraise_measurement(enum ima_hooks func,
->  		cause = "missing-HMAC";
->  		goto out;
->  	case INTEGRITY_FAIL_IMMUTABLE:
-> +		set_bit(IMA_DIGSIG, &iint->atomic_flags);
-> +		fallthrough;
->  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
->  		cause = "invalid-HMAC";
->  		goto out;
-> @@ -437,9 +443,9 @@ int ima_appraise_measurement(enum ima_hooks func,
->  				status = INTEGRITY_PASS;
->  		}
->  
-> -		/* Permit new files with file signatures, but without data. */
-> +		/* Permit new files marked as immutable, but without data. */
 
-This comment isn't quite right.
+> +int security_read_policy_kernel(struct selinux_state *state,
+> +                               void **data, size_t *len)
+> +{
+> +       int rc;
+> +
+> +       rc =3D security_read_policy_len(state, len);
+> +       if (rc)
+> +               return rc;
+> +
+> +       *data =3D vmalloc(*len);
+> +       if (!*data)
+> +               return -ENOMEM;
+>
+> +       return security_read_selinux_policy(state, data, len);
+>  }
 
->  		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
-> -		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
-> +		    test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
->  			status = INTEGRITY_PASS;
->  		}
->  
+See the discussion here:
+https://lore.kernel.org/selinux/20200824113015.1375857-1-omosnace@redhat.co=
+m/T/#t
 
-
+In order for this to be safe, you need to ensure that all callers of
+security_read_policy_kernel() have taken fsi->mutex in selinuxfs and
+any use of security_read_policy_len() occurs while holding the mutex.
+Otherwise, the length can change between security_read_policy_len()
+and security_read_selinux_policy() if policy is reloaded.
