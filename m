@@ -2,130 +2,159 @@ Return-Path: <SRS0=XrN0=CF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B63C433E1
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 14:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A13C433E1
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 15:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF2E22BF5
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 14:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F66222BEB
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 15:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j/lZ/Af1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXPOeRMI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbgH0Oyc (ORCPT
+        id S1726867AbgH0PZG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 27 Aug 2020 10:54:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727124AbgH0NLT (ORCPT
+        Thu, 27 Aug 2020 11:25:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38558 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbgH0PZF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 27 Aug 2020 09:11:19 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07RD2ufG012233;
-        Thu, 27 Aug 2020 09:10:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=0jkqVoBjl8OMYPBJk+Af10MNs/hhkJn3XMX7JyTNZv0=;
- b=j/lZ/Af1YQYbHrk2TkKLQORvKEvSvMnIGPM0g0J5ELCxZBP8j7HzCqN88vu+zGU3C/+u
- 20QFxnEQPqRZ0hcj/cey8PqreSuIlmOm87Yti909JFIBWMSIDBo/LKdZSx3yGLxEY7oh
- qK8vc3JCLi2TDZdY4/+Rpw1U9eJGOle4WUU6yIo5Ikh9LYUVhyf6GsMUVNpbmdlrhyzt
- PFG2gEWG7srycZwzC9OHpxupPh/A8cvfiX5UbVnPXiyyDlWeGaQ7naINTBIOuwdnZmXO
- jKFxwnOdi83afgkys0OI3r2UFez0pSUoedr5UkLfPN4alWBfWHL2e5QQvWpEpEonr4/X LA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 336aeke0ce-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 09:10:58 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07RD3ASq013524;
-        Thu, 27 Aug 2020 09:10:57 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 336aeke0au-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 09:10:57 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07RD9Hm4020543;
-        Thu, 27 Aug 2020 13:10:55 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma05fra.de.ibm.com with ESMTP id 335j270xrr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 13:10:54 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07RD9MsH62521618
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Aug 2020 13:09:22 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EF9852078;
-        Thu, 27 Aug 2020 13:10:52 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.6.101])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0882952079;
-        Thu, 27 Aug 2020 13:10:50 +0000 (GMT)
-Message-ID: <b5f33cb7880932bc1e6bbd3d3988bfad3e943036.camel@linux.ibm.com>
-Subject: Re: IMA metadata format to support fs-verity
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>
-Date:   Thu, 27 Aug 2020 09:10:50 -0400
-In-Reply-To: <20200827010016.GA2387969@gmail.com>
-References: <760DF127-CA5F-4E86-9703-596E95CEF12F@oracle.com>
-         <20200826183116.GC2239109@gmail.com>
-         <6C2D16FB-C098-43F3-A7D3-D8AC783D1AB5@oracle.com>
-         <20200826192403.GD2239109@gmail.com>
-         <E7A87987-AF41-42AC-8244-0D07AA68A6E7@oracle.com>
-         <20200826205143.GE2239109@gmail.com>
-         <ced0c57308b0056396d4795a639e6d9686f0e163.camel@linux.ibm.com>
-         <20200827010016.GA2387969@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-27_07:2020-08-27,2020-08-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=947
- malwarescore=0 mlxscore=0 suspectscore=0 bulkscore=0 phishscore=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008270094
+        Thu, 27 Aug 2020 11:25:05 -0400
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94299C061264
+        for <linux-integrity@vger.kernel.org>; Thu, 27 Aug 2020 08:25:05 -0700 (PDT)
+Received: by mail-qt1-x841.google.com with SMTP id t20so4792225qtr.8
+        for <linux-integrity@vger.kernel.org>; Thu, 27 Aug 2020 08:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=Km+0VritnjkBe1TttSbRAg7QrI7KHuBAc0afzDcqO98=;
+        b=UXPOeRMIQ0GaYur+EdRgWE9I8VjWUv0/1BuBrQ1UvTvhNcFwmbfRWtn68CrjL32LLf
+         XyV1d79Hzo2SeL/mfyNvhOlbj3eO/Qb8gSOas8h4pBKz8pWfinufWvvuppIABqPS2C3L
+         mT6tFZN3zyquUT2G77rlsWP7SwgtsQsTZjYrkUgntkLHMBq30gl6iHkR9q0W5IffTRFc
+         D0UIVuJVRsC5HO7Int2mKsm3qDlly0E8ghsnBSdsvsSmenV+bQz3IRybLs8vwSuSMbfi
+         aniz6kxKSBW4PiqPLkT2LzTTEuM1Hm8dF9pgdUENiykahDSlUKalyHkkwlJP0Y6rvnvG
+         8R9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Km+0VritnjkBe1TttSbRAg7QrI7KHuBAc0afzDcqO98=;
+        b=rauPW0ZBiM8qdSY1Y3/7zelK2ZYAA7QAgsEHzgcN8iBM/JMyun0kQRRk64iK7cTZwU
+         2xeGyU98tzS8fqEE941OLdn/5DjovnOk9U5N4jwvGYsNSbOPPmJi+cbXMTtTKA8M5jKi
+         475tbf82w94kR9HximnBMyqzeF5L0CsxE4AGR9HSkqCoS4t39ixuvGoa8azomBbv8tL5
+         QOonhDpY8OIO+dYsY3q93Lhx1fLLPmP47NtJCU/mC427hjBw3Gj/pfJIKoOCdzIeegl6
+         0i2+HdXwQBkuT4ZWn4UahFblyfneTloQeik2l07XpeasChFxPsEDGY/5O6wnklQBXS2I
+         l7xQ==
+X-Gm-Message-State: AOAM533mS+Ukqv0ENQqH40xKqmmgyuiKXrK0ev+QMBDI4nvN4RAqBNRO
+        +beuo9KdH11HIl8CHKouxSXeRBb6q5k=
+X-Google-Smtp-Source: ABdhPJwtEqr6UyEwBlpiwqYZ68o4FhEiITT1txOwnb/Jl/CnSFhWk2OuO3rb7pHvGjr67zuOVBZfwA==
+X-Received: by 2002:ac8:441a:: with SMTP id j26mr1936486qtn.286.1598541904729;
+        Thu, 27 Aug 2020 08:25:04 -0700 (PDT)
+Received: from pm2-ws13.praxislan02.com ([2001:470:8:67e:ba27:ebff:fee8:ce27])
+        by smtp.gmail.com with ESMTPSA id j190sm2022776qkd.22.2020.08.27.08.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2020 08:25:04 -0700 (PDT)
+From:   Jason Andryuk <jandryuk@gmail.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm_tis: work around status register bug in STMicroelectronics TPM
+Date:   Thu, 27 Aug 2020 11:24:45 -0400
+Message-Id: <20200827152445.15439-1-jandryuk@gmail.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <1586994699.3931.18.camel@HansenPartnership.com>
+References: <1586994699.3931.18.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2020-08-26 at 18:00 -0700, Eric Biggers wrote:
-> On Wed, Aug 26, 2020 at 08:53:33PM -0400, Mimi Zohar wrote:
-> > On Wed, 2020-08-26 at 13:51 -0700, Eric Biggers wrote:
-> > > Of course, the bytes that are actually signed need to include not just the hash
-> > > itself, but also the type of hash algorithm that was used.  Else it's ambiguous
-> > > what the signer intended to sign.
-> > > 
-> > > Unfortunately, currently EVM appears to sign a raw hash, which means it is
-> > > broken, as the hash algorithm is not authenticated.  I.e. if the bytes
-> > > e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 are signed,
-> > > there's no way to prove that the signer meant to sign a SHA-256 hash, as opposed
-> > > to, say, a Streebog hash.  So that will need to be fixed anyway.  While doing
-> > > so, you should reserve some fields so that there's also a flag available to
-> > > indicate whether the hash is a traditional full file hash or a fs-verity hash.
-> > 
-> > The original EVM HMAC is still sha1, but the newer portable & immutable
-> > EVM signature supports different hash algorithms.
-> > 
-> 
-> Read what I wrote again.  I'm talking about the bytes that are actually signed.
+James Bottomley wrote:
+>On Wed, 2020-04-15 at 15:45 -0700, Omar Sandoval wrote:
+>> From: Omar Sandoval <osandov@fb.com>
+>> 
+>> We've encountered a particular model of STMicroelectronics TPM that
+>> transiently returns a bad value in the status register. This causes
+>> the kernel to believe that the TPM is ready to receive a command when
+>> it actually isn't, which in turn causes the send to time out in
+>> get_burstcount(). In testing, reading the status register one extra
+>> time convinces the TPM to return a valid value.
+>
+>Interesting, I've got a very early upgradeable nuvoton that seems to be
+>behaving like this.
+>
+>> Signed-off-by: Omar Sandoval <osandov@fb.com>
+>> ---
+>>  drivers/char/tpm/tpm_tis_core.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
+>> 
+>> diff --git a/drivers/char/tpm/tpm_tis_core.c
+>> b/drivers/char/tpm/tpm_tis_core.c
+>> index 27c6ca031e23..277a21027fc7 100644
+>> --- a/drivers/char/tpm/tpm_tis_core.c
+>> +++ b/drivers/char/tpm/tpm_tis_core.c
+>> @@ -238,6 +238,18 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
+>>  	rc = tpm_tis_read8(priv, TPM_STS(priv->locality), &status);
+>>  	if (rc < 0)
+>>  		return 0;
+>> +	/*
+>> +	 * Some STMicroelectronics TPMs have a bug where the status
+>> register is
+>> +	 * sometimes bogus (all 1s) if read immediately after the
+>> access
+>> +	 * register is written to. Bits 0, 1, and 5 are always
+>> supposed to read
+>> +	 * as 0, so this is clearly invalid. Reading the register a
+>> second time
+>> +	 * returns a valid value.
+>> +	 */
+>> +	if (unlikely(status == 0xff)) {
+>> +		rc = tpm_tis_read8(priv, TPM_STS(priv->locality),
+>> &status);
+>> +		if (rc < 0)
+>> +			return 0;
+>> +	}
+>
+>You theorize that your case is fixed by the second read, but what if it
+>isn't and the second read also returns 0xff?  Shouldn't we have a line
+>here saying
+>
+>if (unlikely(status == 0xff))
+>	status = 0;
+>
+>So if we get a second 0xff we just pretend the thing isn't ready?
 
-I agree including the hash algorithm in the digest would be
-preferrable, but it isn't per-se broken.   The file signature and the
-file metadata hash algorithms are the same, otherwise signature
-verification fails[1].   The same tool calculates the file metadata
-digest and then signs the digest, using the same hash algorithm.  In
-terms of the HMAC, it is (still) limited to SHA1.
+Thanks for the fix, Omar!
 
-Mimi
+I tried the patch and it helps with STM TPM2 issues where commands fail
+with the kernel reporting:
+tpm tpm0: Unable to read burstcount
+tpm tpm0: tpm_try_transmit: send(): error -16
 
-[1] commit 5feeb61183dd ("evm: Allow non-SHA1 digital signatures")
+My testing was with 5.4, and I'd like to see this CC-ed stable.
 
+When trying to diagnose the issue before finding this patch, I found it
+was timing sensitive.  I was seeing failures in the OpenXT installer.
+The system is basically idle when issuing TPM commands which frequently
+failed.  The same hardware booted into a Fedora Live USB image didn't
+have any TPM command failures.  One notable difference between the two
+is Fedora is CONFIG_PREEMPT=y and OpenXT is CONFIG_PREEMPT_NONE=y.
+Switching OpenXT to PREEMPT=y helped some, but there were still some
+issues with commands failing.  The second interesting thing was running tpm
+commands in OpenXT under trace-cmd let them succeed.  I guess that was enough
+to throw the timing off.
+
+Anyway, I'd like to see this patch applied, please.
+
+Thanks,
+Jason
