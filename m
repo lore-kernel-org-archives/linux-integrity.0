@@ -2,84 +2,106 @@ Return-Path: <SRS0=XrN0=CF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA09BC433DF
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 01:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAA2C433E3
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 14:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9210D20B1F
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 01:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598490018;
-	bh=MuJK6Fq+nQHmaii7dvnYwwfnvKbk+kTDRV/j52dDGiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=D/LluONm2NK/D1gRk2bLEy6I6T8T+VEGtVvCvWrCMRaexZFlAr/X1k2rQwLcXUMqc
-	 iRxmXGVdnukRWauKBZrb0YIvPyjuz7it4y5EZ4W4HAjhVLJF0enJ+sI8i4GdNdLgUg
-	 HnRNuu4dFbeWxeb7STkon1llOquJ0SWPTrSFIkEg=
+	by mail.kernel.org (Postfix) with ESMTP id 5D7B02177B
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Aug 2020 14:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgH0BAS (ORCPT
+        id S1728071AbgH0Oo1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 26 Aug 2020 21:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46934 "EHLO mail.kernel.org"
+        Thu, 27 Aug 2020 10:44:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57470 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbgH0BAR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 26 Aug 2020 21:00:17 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B5DA20791;
-        Thu, 27 Aug 2020 01:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598490017;
-        bh=MuJK6Fq+nQHmaii7dvnYwwfnvKbk+kTDRV/j52dDGiI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IKgkjyjizAHqIEOeRAxxLaUn5tt7PDAwnqjns7AwvKMNXVmzm3mBAMGlDZuE0CilN
-         SX3CfQPQtP5PAXoNxSvWfCSGMwbu/LL1CJEbDRgFR0/Ut13F3kP+cnbglGrmGscX+Q
-         H/3PtTLYAT8bN8Z+tvLdeColWwcPQdKzaN1SK8cI=
-Date:   Wed, 26 Aug 2020 18:00:16 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
+        id S1728070AbgH0Ono (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 27 Aug 2020 10:43:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id EB1B7ACB0;
+        Thu, 27 Aug 2020 13:55:36 +0000 (UTC)
+Date:   Thu, 27 Aug 2020 15:55:03 +0200
+From:   Petr Vorel <pvorel@suse.cz>
 To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        linux-fscrypt@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: IMA metadata format to support fs-verity
-Message-ID: <20200827010016.GA2387969@gmail.com>
-References: <760DF127-CA5F-4E86-9703-596E95CEF12F@oracle.com>
- <20200826183116.GC2239109@gmail.com>
- <6C2D16FB-C098-43F3-A7D3-D8AC783D1AB5@oracle.com>
- <20200826192403.GD2239109@gmail.com>
- <E7A87987-AF41-42AC-8244-0D07AA68A6E7@oracle.com>
- <20200826205143.GE2239109@gmail.com>
- <ced0c57308b0056396d4795a639e6d9686f0e163.camel@linux.ibm.com>
+Cc:     ltp@lists.linux.it, Lachlan Sneff <t-josne@linux.microsoft.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [LTP v4 4/5] IMA: Add a test to verify measurement of
+ certificate imported into a keyring
+Message-ID: <20200827135503.GA11990@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20200820090824.3033-1-pvorel@suse.cz>
+ <20200820090824.3033-5-pvorel@suse.cz>
+ <b58057275ecdc06bb512d39ea46118197f33c33f.camel@linux.ibm.com>
+ <20200827132354.GA20439@dell5510>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ced0c57308b0056396d4795a639e6d9686f0e163.camel@linux.ibm.com>
+In-Reply-To: <20200827132354.GA20439@dell5510>
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 08:53:33PM -0400, Mimi Zohar wrote:
-> On Wed, 2020-08-26 at 13:51 -0700, Eric Biggers wrote:
-> > Of course, the bytes that are actually signed need to include not just the hash
-> > itself, but also the type of hash algorithm that was used.  Else it's ambiguous
-> > what the signer intended to sign.
-> > 
-> > Unfortunately, currently EVM appears to sign a raw hash, which means it is
-> > broken, as the hash algorithm is not authenticated.  I.e. if the bytes
-> > e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 are signed,
-> > there's no way to prove that the signer meant to sign a SHA-256 hash, as opposed
-> > to, say, a Streebog hash.  So that will need to be fixed anyway.  While doing
-> > so, you should reserve some fields so that there's also a flag available to
-> > indicate whether the hash is a traditional full file hash or a fs-verity hash.
-> 
-> The original EVM HMAC is still sha1, but the newer portable & immutable
-> EVM signature supports different hash algorithms.
-> 
+Hi Mimi,
 
-Read what I wrote again.  I'm talking about the bytes that are actually signed.
+> ...
+> > > +	if ! tst_is_num $KEYRING_ID; then
+> > > +		tst_brk TBROK "unable to parse the new keyring id ('$KEYRING_ID')"
+> > > +	fi
+> > > +
 
-- Eric
+> > Instead of using TST_DATAROOT, which is defined as
+> > "$LTPROOT/datafiles", use LTPROOT directly to define the path to the
+> > cert.  Adding the following will allow the test to run from the build
+> > directory.
+
+> >       if [ ! -f $cert_file ]; then
+> >               cert_file="$LTPROOT/../datafiles/ima_keys/x509_ima.der"
+> >       fi
+> Yes, this will work if you set LTPROOT to <ltp git>/testcases/kernel/security/integrity/ima/tests/:
+
+> $ cd <ltp git>/testcases/kernel/security/integrity/ima/tests/
+> $ LTPROOT=$PWD PATH="../../../../../lib/:.:$PATH" ./ima_keys.sh
+
+> But, according to doc [1] $LTPROOT is "Prefix for installed LTP, the default is
+> /opt/ltp.". Using it like this is confusing (if we want to misuse $LTPROOT, one
+> would expect it's a cloned git root directory). Running from git root it'd have
+> to be:
+
+> $ cd <ltp git>
+> $ LTPROOT=$PWD/testcases/kernel/security/integrity/ima/tests/ \
+> PATH="testcases/lib:testcases/kernel/security/integrity/ima/tests/:$PATH" ima_keys.sh
+
+> TL;DR: I'd really prefer people run IMA from installed LTP (make && make install
+> in both testcases/lib and testcases/kernel/security/integrity/ima/ is just enough),
+> but I'll add this hack to make your testing easier :). But fixing this in
+> tst_test.sh is really needed.
+
+Suggesting this diff from v4:
+
++	# hack when running ima_keys.sh locally from ima_keys.sh directory
++	# LTPROOT=$PWD PATH="../../../../../lib/:.:$PATH" ./ima_keys.sh
++	if [ ! -f "$cert_file" ]; then
++		cert_file="$LTPROOT/../datafiles/ima_keys/x509_ima.der"
++	fi
+
+Visible also on
+https://github.com/pevik/ltp/tree/Lachlan_Sneff/ima_keys.sh-second-test.v4.fixes
+
+Not sure if you still doing review & testing, thus waiting for your comments
+or tags.
+
+Kind regards,
+Petr
+
+> > Mimi
+
+> Kind regards,
+> Petr
+
+> [1] https://github.com/linux-test-project/ltp/wiki/User-Guidelines
