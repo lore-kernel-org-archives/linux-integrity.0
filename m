@@ -2,38 +2,38 @@ Return-Path: <SRS0=GcCo=CG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B056C433E2
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 17:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D2AC433E2
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 17:43:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6649E2098B
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 17:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2340B20DD4
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 17:43:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kJxyjpGZ"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Eb1mFosa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbgH1RlF (ORCPT
+        id S1726947AbgH1RnF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 28 Aug 2020 13:41:05 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:56974 "EHLO
+        Fri, 28 Aug 2020 13:43:05 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:57268 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbgH1RlE (ORCPT
+        with ESMTP id S1725814AbgH1RnE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 28 Aug 2020 13:41:04 -0400
+        Fri, 28 Aug 2020 13:43:04 -0400
 Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C868220B7178;
-        Fri, 28 Aug 2020 10:41:02 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C868220B7178
+        by linux.microsoft.com (Postfix) with ESMTPSA id D77FF20B7178;
+        Fri, 28 Aug 2020 10:43:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D77FF20B7178
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1598636463;
-        bh=B5UrEdKDUH9jR7Ae1rEu3ipYxtxUO5TupJFw9Ld6H34=;
+        s=default; t=1598636583;
+        bh=R1teKYMBu8vqBarNApY+0V5H5gqlUpnadI+DlmuIfsE=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=kJxyjpGZXpgz/YZTr4JpGPULSjbavcGe/BP8zJO2pLyO2Txe97CE+o9uT928hiyDo
-         pt/EplTowulkW7Ooj+R7raJMvQCOK/ecQqBfj1LEsCddVsCTZZE4mYAtlvfFNjb6OY
-         hSmGdxieqHZcIN0Q11pWLHcqs8mvm2PWdYu8rwCw=
+        b=Eb1mFosaUNV1b7GJ+N7ycdSRcKkXRNZk2TPFWumkuIBTMLHmYXvUsakCrI/APb6NE
+         1BQJx48cUzUhwM1mYG3IbKLdRaHjhSTU/JppL9Gzg4Q14y9xprUO3hD+u8blF6P7QG
+         5yyVKJuMIRIxHE848wVLyijPOwOmJHyyNfxRENWU=
 Subject: Re: [PATCH v4 1/5] powerpc: Refactor kexec functions to move arch
  independent code to IMA
 To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
@@ -52,14 +52,14 @@ Cc:     zohar@linux.ibm.com, robh@kernel.org, gregkh@linuxfoundation.org,
         prsriva@linux.microsoft.com, balajib@linux.microsoft.com
 References: <20200819172134.11243-1-nramas@linux.microsoft.com>
  <20200819172134.11243-2-nramas@linux.microsoft.com>
- <875z938xwy.fsf@morokweng.localdomain>
+ <87wo1j7ed0.fsf@morokweng.localdomain>
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <3897c55e-11d2-113a-5cef-db750b33772f@linux.microsoft.com>
-Date:   Fri, 28 Aug 2020 10:40:58 -0700
+Message-ID: <80c4ee1b-6bab-237e-503d-556f344f7df9@linux.microsoft.com>
+Date:   Fri, 28 Aug 2020 10:43:02 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <875z938xwy.fsf@morokweng.localdomain>
+In-Reply-To: <87wo1j7ed0.fsf@morokweng.localdomain>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,53 +68,82 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 8/27/20 4:35 PM, Thiago Jung Bauermann wrote:
+On 8/27/20 6:23 PM, Thiago Jung Bauermann wrote:
 > 
 > Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
 > 
->> The functions ima_get_kexec_buffer() and ima_free_kexec_buffer() that
->> handle carrying forward the IMA measurement logs on kexec for powerpc
->> do not have architecture specific code, but they are currently defined
->> for powerpc only.
->>
->> Move these functions to IMA subsystem so that it can be used for other
->> architectures as well. A later patch in this series will use these
->> functions for carrying forward the IMA measurement log for ARM64.
->>
->> Define FDT_PROP_IMA_KEXEC_BUFFER for the chosen node, namely
->> "linux,ima-kexec-buffer", that is added to the DTB to hold
->> the address and the size of the memory reserved to carry
->> the IMA measurement log.
->>
->> Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
->> Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
->> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+>> +/**
+>> + * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+>> + * @addr:	On successful return, set to point to the buffer contents.
+>> + * @size:	On successful return, set to the buffer size.
+>> + *
+>> + * Return: 0 on success, negative errno on error.
+>> + */
+>> +int ima_get_kexec_buffer(void **addr, size_t *size)
 > 
-> This patch removes two functions from arch/powerpc/kexec/ima.c, but adds
-> four to security/integrity/ima/ima_kexec.c. The extra ones are
-> get_addr_size_cells() and do_get_kexec_buffer(), which are being copied
-> from the powerpc code but can't be removed yet because they're still
-> used there by remove_ima_buffer() and setup_ima_buffer().
-> 
-> On the next patch you remove the need for these functions in powerpc
-> code and therefore delete them. This confused me at first, so I think it
-> would be cleared if you put patch 2 first in the series and then on this
-> patch you can simply move the four functions and delete them from
-> arch/powerpc/kexec/ima.c.
-> 
-> If you prefer to keep the current order, it's worth mentioning on the
-> commit log where get_addr_size_cells() and do_get_kexec_buffer() are
-> coming from.
-> 
-> Regardless:
-> 
-> Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> 
+> I just noticed that this function is only called from within
+> ima_kexec.c, so it can be made static.
 
-Thanks for reviewing the changes Thiago.
+Will do.
 
-I'll update the commit log to describe the changes related to 
-get_addr_size_cells() and do_get_kexec_buffer().
+> 
+>> +{
+>> +	int ret, len;
+>> +	unsigned long tmp_addr;
+>> +	size_t tmp_size;
+>> +	const void *prop;
+>> +
+>> +	prop = of_get_property(of_chosen, FDT_PROP_IMA_KEXEC_BUFFER, &len);
+>> +	if (!prop)
+>> +		return -ENOENT;
+>> +
+>> +	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	*addr = __va(tmp_addr);
+>> +	*size = tmp_size;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +/**
+>> + * ima_free_kexec_buffer - free memory used by the IMA buffer
+>> + */
+>> +int ima_free_kexec_buffer(void)
+> 
+> This one can be static as well.
+
+Will do.
 
   -lakshmi
+
+> 
+>> +{
+>> +	int ret;
+>> +	unsigned long addr;
+>> +	size_t size;
+>> +	struct property *prop;
+>> +
+>> +	prop = of_find_property(of_chosen, FDT_PROP_IMA_KEXEC_BUFFER, NULL);
+>> +	if (!prop)
+>> +		return -ENOENT;
+>> +
+>> +	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = of_remove_property(of_chosen, prop);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return memblock_free(addr, size);
+>> +
+>> +}
+>> +
+>>   #ifdef CONFIG_IMA_KEXEC
+>>   static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>>   				     unsigned long segment_size)
+> 
+> 
 
