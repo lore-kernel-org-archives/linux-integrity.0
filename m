@@ -2,202 +2,119 @@ Return-Path: <SRS0=GcCo=CG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F91C43461
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 16:01:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B056C433E2
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 17:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 535BF20DD4
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 16:01:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6649E2098B
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 17:41:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jNbbYAAw"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kJxyjpGZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbgH1QA7 (ORCPT
+        id S1726654AbgH1RlF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 28 Aug 2020 12:00:59 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44752 "EHLO
+        Fri, 28 Aug 2020 13:41:05 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:56974 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728338AbgH1QAe (ORCPT
+        with ESMTP id S1725979AbgH1RlE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 28 Aug 2020 12:00:34 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C8D502056538;
-        Fri, 28 Aug 2020 09:00:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C8D502056538
+        Fri, 28 Aug 2020 13:41:04 -0400
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id C868220B7178;
+        Fri, 28 Aug 2020 10:41:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C868220B7178
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1598630433;
-        bh=OVsLX7cMAA0hODgZXzEJKAhHMWh2W75uRXiZplng/RA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jNbbYAAwii8KuAcqgAiF25AQ3u/kPK8agQQzs+mt5pjjEqfKgZ47yZJuySB7b57QA
-         mkOM+7RZiihu2s3WaE8wixAIGbCIqPI/Pq9zyHDjQSNPC0MTyA8N6IiRskwJ/QKN/z
-         iPs7AHJF7n6mu/faxDbl330zdOqKGTrmkmrIW3DU=
+        s=default; t=1598636463;
+        bh=B5UrEdKDUH9jR7Ae1rEu3ipYxtxUO5TupJFw9Ld6H34=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kJxyjpGZXpgz/YZTr4JpGPULSjbavcGe/BP8zJO2pLyO2Txe97CE+o9uT928hiyDo
+         pt/EplTowulkW7Ooj+R7raJMvQCOK/ecQqBfj1LEsCddVsCTZZE4mYAtlvfFNjb6OY
+         hSmGdxieqHZcIN0Q11pWLHcqs8mvm2PWdYu8rwCw=
+Subject: Re: [PATCH v4 1/5] powerpc: Refactor kexec functions to move arch
+ independent code to IMA
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     zohar@linux.ibm.com, robh@kernel.org, gregkh@linuxfoundation.org,
+        james.morse@arm.com, catalin.marinas@arm.com, sashal@kernel.org,
+        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com
+References: <20200819172134.11243-1-nramas@linux.microsoft.com>
+ <20200819172134.11243-2-nramas@linux.microsoft.com>
+ <875z938xwy.fsf@morokweng.localdomain>
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com
-Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
-        sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] IMA: Support measurement of generic data during early boot
-Date:   Fri, 28 Aug 2020 09:00:20 -0700
-Message-Id: <20200828160021.11537-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200828160021.11537-1-nramas@linux.microsoft.com>
-References: <20200828160021.11537-1-nramas@linux.microsoft.com>
+Message-ID: <3897c55e-11d2-113a-5cef-db750b33772f@linux.microsoft.com>
+Date:   Fri, 28 Aug 2020 10:40:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <875z938xwy.fsf@morokweng.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Early boot measurement of data is currently very specific to key
-measurement. To make it generic to handle any early boot data
-measurement, additional arguments need to be saved in the queue
-for deferred processing. This includes the IMA hook func,
-data specific to the given func, and a boolean flag to indicate
-whether the given payload needs to be measured or a hash of
-the payload needs to be measured.
+On 8/27/20 4:35 PM, Thiago Jung Bauermann wrote:
+> 
+> Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
+> 
+>> The functions ima_get_kexec_buffer() and ima_free_kexec_buffer() that
+>> handle carrying forward the IMA measurement logs on kexec for powerpc
+>> do not have architecture specific code, but they are currently defined
+>> for powerpc only.
+>>
+>> Move these functions to IMA subsystem so that it can be used for other
+>> architectures as well. A later patch in this series will use these
+>> functions for carrying forward the IMA measurement log for ARM64.
+>>
+>> Define FDT_PROP_IMA_KEXEC_BUFFER for the chosen node, namely
+>> "linux,ima-kexec-buffer", that is added to the DTB to hold
+>> the address and the size of the memory reserved to carry
+>> the IMA measurement log.
+>>
+>> Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+>> Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+>> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> 
+> This patch removes two functions from arch/powerpc/kexec/ima.c, but adds
+> four to security/integrity/ima/ima_kexec.c. The extra ones are
+> get_addr_size_cells() and do_get_kexec_buffer(), which are being copied
+> from the powerpc code but can't be removed yet because they're still
+> used there by remove_ima_buffer() and setup_ima_buffer().
+> 
+> On the next patch you remove the need for these functions in powerpc
+> code and therefore delete them. This confused me at first, so I think it
+> would be cleared if you put patch 2 first in the series and then on this
+> patch you can simply move the four functions and delete them from
+> arch/powerpc/kexec/ima.c.
+> 
+> If you prefer to keep the current order, it's worth mentioning on the
+> commit log where get_addr_size_cells() and do_get_kexec_buffer() are
+> coming from.
+> 
+> Regardless:
+> 
+> Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> 
 
-Add new fields to ima_data_entry struct to pass additional data for
-the deferred handling of queued data. Update the queue functions to
-handle the new data saved in the ima_data_entry struct.
+Thanks for reviewing the changes Thiago.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima.h                 | 11 ++++++--
- security/integrity/ima/ima_asymmetric_keys.c |  3 ++-
- security/integrity/ima/ima_queue_data.c      | 28 ++++++++++++++------
- 3 files changed, 31 insertions(+), 11 deletions(-)
+I'll update the commit log to describe the changes related to 
+get_addr_size_cells() and do_get_kexec_buffer().
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 872a06821c98..422fe833037d 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -266,18 +266,25 @@ struct ima_data_entry {
- 	void *payload;
- 	size_t payload_len;
- 	const char *event_name;
-+	const char *event_data;
-+	enum ima_hooks func;
-+	bool measure_payload_hash;
- };
- void ima_init_data_queue(void);
- bool ima_should_queue_data(void);
- bool ima_queue_data(const char *event_name, const void *payload,
--		    size_t payload_len);
-+		    size_t payload_len, const char *event_data,
-+		    enum ima_hooks func, bool measure_payload_hash);
- void ima_process_queued_data(void);
- #else
- static inline void ima_init_data_queue(void) {}
- static inline bool ima_should_queue_data(void) { return false; }
- static inline bool ima_queue_data(const char *event_name,
- 				  const void *payload,
--				  size_t payload_len) { return false; }
-+				  size_t payload_len,
-+				  const char *event_data,
-+				  enum ima_hooks func,
-+				  bool measure_payload_hash) { return false; }
- static inline void ima_process_queued_data(void) {}
- #endif /* CONFIG_IMA_QUEUE_EARLY_BOOT_DATA */
- 
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index d91fddec5ae8..65423754765f 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -39,7 +39,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 
- 	if (ima_should_queue_data())
- 		queued = ima_queue_data(keyring->description, payload,
--					payload_len);
-+					payload_len, keyring->description,
-+					KEY_CHECK, false);
- 	if (queued)
- 		return;
- 
-diff --git a/security/integrity/ima/ima_queue_data.c b/security/integrity/ima/ima_queue_data.c
-index 563e26f66180..d466ee742377 100644
---- a/security/integrity/ima/ima_queue_data.c
-+++ b/security/integrity/ima/ima_queue_data.c
-@@ -60,6 +60,7 @@ static void ima_free_data_entry(struct ima_data_entry *entry)
- 
- 	kvfree(entry->payload);
- 	kfree(entry->event_name);
-+	kfree(entry->event_data);
- 	kfree(entry);
- }
- 
-@@ -74,7 +75,10 @@ static void *ima_kvmemdup(const void *src, size_t len)
- 
- static struct ima_data_entry *ima_alloc_data_entry(const char *event_name,
- 						   const void *payload,
--						   size_t payload_len)
-+						   size_t payload_len,
-+						   const char *event_data,
-+						   enum ima_hooks func,
-+						   bool measure_payload_hash)
- {
- 	struct ima_data_entry *entry;
- 
-@@ -88,9 +92,15 @@ static struct ima_data_entry *ima_alloc_data_entry(const char *event_name,
- 	 */
- 	entry->payload = ima_kvmemdup(payload, payload_len);
- 	entry->event_name = kstrdup(event_name, GFP_KERNEL);
-+	if (event_data)
-+		entry->event_data = kstrdup(event_data, GFP_KERNEL);
-+
- 	entry->payload_len = payload_len;
-+	entry->func = func;
-+	entry->measure_payload_hash = measure_payload_hash;
- 
--	if (!entry->payload || !entry->event_name)
-+	if (!entry->payload || !entry->event_name ||
-+		(event_data && !entry->event_data))
- 		goto out;
- 
- 	INIT_LIST_HEAD(&entry->list);
-@@ -98,19 +108,21 @@ static struct ima_data_entry *ima_alloc_data_entry(const char *event_name,
- 
- out:
- 	integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL,
--				event_name, func_measure_str(KEY_CHECK),
-+				event_name, func_measure_str(func),
- 				"ENOMEM", -ENOMEM, 0, -ENOMEM);
- 	ima_free_data_entry(entry);
- 	return NULL;
- }
- 
- bool ima_queue_data(const char *event_name, const void *payload,
--		    size_t payload_len)
-+		    size_t payload_len, const char *event_data,
-+		    enum ima_hooks func, bool measure_payload_hash)
- {
- 	bool queued = false;
- 	struct ima_data_entry *entry;
- 
--	entry = ima_alloc_data_entry(event_name, payload, payload_len);
-+	entry = ima_alloc_data_entry(event_name, payload, payload_len,
-+				     event_data, func, measure_payload_hash);
- 	if (!entry)
- 		return false;
- 
-@@ -165,9 +177,9 @@ void ima_process_queued_data(void)
- 			process_buffer_measurement(NULL, entry->payload,
- 						   entry->payload_len,
- 						   entry->event_name,
--						   KEY_CHECK, 0,
--						   entry->event_name,
--						   false);
-+						   entry->func, 0,
-+						   entry->event_data,
-+						   entry->measure_payload_hash);
- 		list_del(&entry->list);
- 		ima_free_data_entry(entry);
- 	}
--- 
-2.28.0
+  -lakshmi
 
