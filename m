@@ -2,115 +2,97 @@ Return-Path: <SRS0=GcCo=CG=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F9A2C433E6
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 15:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 038BEC433E6
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 16:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AEEE208C9
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 15:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC2752075B
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 Aug 2020 16:00:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HCsGMJXC"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KzpF/wd+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgH1PVg (ORCPT
+        id S1728371AbgH1QAq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 28 Aug 2020 11:21:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33696 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726321AbgH1PVd (ORCPT
+        Fri, 28 Aug 2020 12:00:46 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:44760 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728358AbgH1QAe (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 28 Aug 2020 11:21:33 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07SFGXxX087777;
-        Fri, 28 Aug 2020 11:21:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=yicidRyoJZ1fhRB5cX7JDTm2M+VljN1Fr8mAUNnnRRU=;
- b=HCsGMJXCA8HyN6HRw1QGLKGwnFanAsLoZuAa0OHqXwJpt3tOC81qC5V8C7SgCm5ssUrg
- K0tTZ6oit+QSjZHwy+e2oTUgaStw/L2Xab2OGeRkG4agIvdAhE5V+xeVOdqbazutS6eJ
- yXFkCiLOSBTvKERfNaWzFREE/vgLH5T5I3ZTjOjF4ZWVC9FY062KwhNHIyW4z+pS9t6G
- SJ1JIKOFQ3c0yYSZVrDoYRHUzRZZDRvhSMf5JsbyaYAKhIY3Unxt7jCZXjkFenTwn1+p
- NEvOUYRLwycclUTPJxRhzUSMb58jzq5UPYf4XNw5BsR7Z/GUMefIXowmLBVk4R73DstD PA== 
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3374e3g2hu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Aug 2020 11:21:26 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07SFDNnA005750;
-        Fri, 28 Aug 2020 15:21:24 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma03ams.nl.ibm.com with ESMTP id 336buh19wh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Aug 2020 15:21:24 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07SFLLnE28705154
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 28 Aug 2020 15:21:22 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DCD0C42045;
-        Fri, 28 Aug 2020 15:21:21 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41DA84203F;
-        Fri, 28 Aug 2020 15:21:20 +0000 (GMT)
-Received: from sig-9-65-214-13.ibm.com (unknown [9.65.214.13])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 28 Aug 2020 15:21:20 +0000 (GMT)
-Message-ID: <889c90c2777e2683749ab6d339e25aa85b192407.camel@linux.ibm.com>
-Subject: Re: [LTP v4 4/5] IMA: Add a test to verify measurement of
- certificate imported into a keyring
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Petr Vorel <pvorel@suse.cz>
-Cc:     ltp@lists.linux.it, Lachlan Sneff <t-josne@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Date:   Fri, 28 Aug 2020 11:21:19 -0400
-In-Reply-To: <20200828124924.GB15355@dell5510>
-References: <20200820090824.3033-1-pvorel@suse.cz>
-         <20200820090824.3033-5-pvorel@suse.cz>
-         <b58057275ecdc06bb512d39ea46118197f33c33f.camel@linux.ibm.com>
-         <20200827132354.GA20439@dell5510> <20200827135503.GA11990@dell5510>
-         <b72657042d13f9b8f30d5bdea7e2d06835e4a1d1.camel@linux.ibm.com>
-         <20200827225417.GA29921@dell5510>
-         <d6087ee43d18605ee6cdc6b80450b0024af14fb6.camel@linux.ibm.com>
-         <20200828060554.GB15251@dell5510>
-         <3c720a7060a846088f8e60ce8b5c032467e97f23.camel@linux.ibm.com>
-         <20200828124924.GB15355@dell5510>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-28_09:2020-08-28,2020-08-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- phishscore=0 mlxlogscore=600 suspectscore=4 lowpriorityscore=0 bulkscore=0
- priorityscore=1501 spamscore=0 malwarescore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008280112
+        Fri, 28 Aug 2020 12:00:34 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 2023D20B36E7;
+        Fri, 28 Aug 2020 09:00:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2023D20B36E7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1598630433;
+        bh=rFS7E9EDFK2NArtUO3BlDUuIRiMcxaSWtbaQ0LSrhHI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KzpF/wd+aA6rwHO+q6X+ytLf4Zit/tOWra0KBylE8WuFSrDJsCGifaBLh+1RUbbTl
+         FBPLmMJ/ckkMURFTfM3isJnTZi4vEDBjKHrjqiNxN13CtDifFool7ToFXkHLE1kKlS
+         c46W67h1IpWckpArWJXeeeHxMcFXc7L8tLQCqu1U=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com
+Cc:     tyhicks@linux.microsoft.com, tusharsu@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] IMA: Support early boot measurement of critical data
+Date:   Fri, 28 Aug 2020 09:00:21 -0700
+Message-Id: <20200828160021.11537-4-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200828160021.11537-1-nramas@linux.microsoft.com>
+References: <20200828160021.11537-1-nramas@linux.microsoft.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2020-08-28 at 14:49 +0200, Petr Vorel wrote:
-> > On Fri, 2020-08-28 at 08:05 +0200, Petr Vorel wrote:
-> > > BTW there are also plans for reboot support [1] [2], that could be used as
-> > > workaround for configuration without CONFIG_IMA_READ_POLICY=y and
-> > > CONFIG_IMA_WRITE_POLICY=y.
-> > The reboot support could also be used for carrying the IMA measurement
-> > list across kexec and verifying the TPM PCRs.
+The IMA hook, namely ima_measure_critical_data(), to measure kernel
+critical data requires a custom IMA policy to be loaded.
 
-> Adding into my TODO list. I'd just run whole test ima_kexec.sh twice and reboot
-> in between.
+Update ima_measure_critical_data() to utilize early boot measurement
+support to defer processing data if a custom IMA policy is not yet
+loaded.
 
-The ima_kexec.sh tests measures the kexec boot cmdline and kernel
-image.   What's needed is walking the measurement list re-calculating
-the PCRs and then verifying them against the actual TPM PCRs.  Maybe
-running the ima_tpm.sh test twice.
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ security/integrity/ima/ima_main.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Mimi
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 41be4d1d839e..ce0ef310c575 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -885,12 +885,22 @@ int ima_measure_critical_data(const char *event_name,
+ 			      const void *buf, int buf_len,
+ 			      bool measure_buf_hash)
+ {
++	bool queued = false;
++
+ 	if (!event_name || !event_data_source || !buf || !buf_len)
+ 		return -EINVAL;
+ 
+ 	if (!ima_kernel_data_source_is_supported(event_data_source))
+ 		return -EPERM;
+ 
++	if (ima_should_queue_data())
++		queued = ima_queue_data(event_name, buf, buf_len,
++					event_data_source, CRITICAL_DATA,
++					measure_buf_hash);
++
++	if (queued)
++		return 0;
++
+ 	return process_buffer_measurement(NULL, buf, buf_len, event_name,
+ 					  CRITICAL_DATA, 0, event_data_source,
+ 					  measure_buf_hash);
+-- 
+2.28.0
 
