@@ -2,301 +2,222 @@ Return-Path: <SRS0=rJiC=CK=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6576FC43461
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Sep 2020 19:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04212C433E2
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Sep 2020 21:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8E2214F1
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Sep 2020 19:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B05162078B
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Sep 2020 21:32:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ADUoRz76"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="msgF3b5p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbgIATuu (ORCPT
+        id S1727778AbgIAVcQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Sep 2020 15:50:50 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47390 "EHLO
+        Tue, 1 Sep 2020 17:32:16 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60048 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729712AbgIATuh (ORCPT
+        with ESMTP id S1726521AbgIAVcO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Sep 2020 15:50:37 -0400
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 4209820B7179;
-        Tue,  1 Sep 2020 12:50:35 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4209820B7179
+        Tue, 1 Sep 2020 17:32:14 -0400
+Received: from [192.168.1.12] (c-24-16-6-251.hsd1.wa.comcast.net [24.16.6.251])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 93DAB20B7178;
+        Tue,  1 Sep 2020 14:32:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93DAB20B7178
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1598989835;
-        bh=yNzHWDM5Ed8f46M0DceObkP2f0uphEuYaBRctca3MNk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ADUoRz76938G7tZM1Ai+avVDFv6Dmq4/TMxDVGgqZ4NWHzF058cCtxsH02sI5c3tH
-         qTZxksMjmN4enJBlcDVcWZyOL6m2CWOGdC5PP6Ps3+JLxN/XoHRVh2ufMrpv6cDoZV
-         gRWFr7CItuLsMtW7VGAX+CcVuagmplZiQywN7a6M=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
-        gregkh@linuxfoundation.org, james.morse@arm.com,
-        catalin.marinas@arm.com, sashal@kernel.org, will@kernel.org,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        robh+dt@kernel.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
-        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
-        christophe.leroy@c-s.fr
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
-        balajib@linux.microsoft.com
-Subject: [PATCH v5 1/3] powerpc: Refactor kexec functions to move arch independent code to IMA
-Date:   Tue,  1 Sep 2020 12:50:27 -0700
-Message-Id: <20200901195029.30039-2-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200901195029.30039-1-nramas@linux.microsoft.com>
-References: <20200901195029.30039-1-nramas@linux.microsoft.com>
+        s=default; t=1598995933;
+        bh=JAaJXVnKujKnz+p/xg0+3VGguQE8NSekFFqAm7oNx1s=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=msgF3b5puOsoYTH48ientBW/kKcsa1HUnQp3xA8mzV4fHHgYYizrX+wCBcb7XhOeJ
+         xEQn4x80D0mZ3k2Iv1pbMWaAGJOlaMBjdXEx6pcCJwV+xuKwPLj7wWUVF2UX/7mlp+
+         MBJ5VZxU5k62otNGorlqbF6UPsOr9dnfZkE/5X5o=
+Subject: Re: [RFC] ima: export the measurement list when needed
+To:     Janne Karhunen <janne.karhunen@gmail.com>
+Cc:     linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
+        "Wiseman, Monty (GE Global Research, US)" <monty.wiseman@ge.com>
+References: <436e3951-d6d5-014a-dde1-8a6398dfe7a1@linux.microsoft.com>
+ <57e0095a-ff6f-e5dc-6250-1320bd6518cb@linux.microsoft.com>
+ <CAE=NcrYOy56_mRNUvvOBX5v=zGsNXwqmz9Q6q3Ovu0vfCRKBpQ@mail.gmail.com>
+ <CAE=NcraZDd=8GPGYYuKOVtk++yk5iquPHkCa_h4VbUyH-OP6AQ@mail.gmail.com>
+ <CAE=NcraN5+K_mNiaDdi7tFn2PFDbXtfaF0K-ozrdq0=_nKtuFA@mail.gmail.com>
+ <341c60a8-d037-1b84-d579-e27634c34e68@linux.microsoft.com>
+ <CAE=NcrZzFZeuG0f_otk4p6vU5S+KaPdeuq6srvDe8huKFYRVPQ@mail.gmail.com>
+From:   Raphael Gianotti <raphgi@linux.microsoft.com>
+Message-ID: <eb2b5e27-e5b3-7735-6d6d-367ae167e7cd@linux.microsoft.com>
+Date:   Tue, 1 Sep 2020 14:32:13 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
+In-Reply-To: <CAE=NcrZzFZeuG0f_otk4p6vU5S+KaPdeuq6srvDe8huKFYRVPQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The functions ima_get_kexec_buffer() and ima_free_kexec_buffer() that
-handle carrying forward the IMA measurement logs on kexec for powerpc
-do not have architecture specific code, but they are currently defined
-for powerpc only.
+Hi Janne,
 
-Move these functions to IMA subsystem so that it can be used for other
-architectures as well. A later patch in this series will use these
-functions for carrying forward the IMA measurement log for ARM64.
+As I mentioned previously I know very little about the approach you had 
+mentioned. I read a little more on it and I think now I understand it a 
+little better and yes, it should actually work.
 
-Define FDT_PROP_IMA_KEXEC_BUFFER for the chosen node, namely
-"linux,ima-kexec-buffer", that is added to the DTB to hold
-the address and the size of the memory reserved to carry
-the IMA measurement log.
+  I will spend some time familiarizing myself with how this would work 
+so I can actually compare both approaches myself on a technical level 
+and have a more well informed opinion on the matter before moving on 
+with either sending an RFC for the first approach (based on your code 
+from last year) or starting some work using the new approach you brought up.
 
-Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- arch/powerpc/include/asm/ima.h     |  3 --
- arch/powerpc/kexec/ima.c           | 60 ++--------------------
- include/linux/libfdt.h             |  3 ++
- security/integrity/ima/ima_kexec.c | 82 ++++++++++++++++++++++++++++++
- 4 files changed, 88 insertions(+), 60 deletions(-)
+Thanks,
 
-diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
-index ead488cf3981..bc27fd94de52 100644
---- a/arch/powerpc/include/asm/ima.h
-+++ b/arch/powerpc/include/asm/ima.h
-@@ -4,9 +4,6 @@
- 
- struct kimage;
- 
--int ima_get_kexec_buffer(void **addr, size_t *size);
--int ima_free_kexec_buffer(void);
--
- #ifdef CONFIG_IMA
- void remove_ima_buffer(void *fdt, int chosen_node);
- #else
-diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
-index 720e50e490b6..f5112ee4bb0b 100644
---- a/arch/powerpc/kexec/ima.c
-+++ b/arch/powerpc/kexec/ima.c
-@@ -46,60 +46,6 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
- 	return 0;
- }
- 
--/**
-- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-- * @addr:	On successful return, set to point to the buffer contents.
-- * @size:	On successful return, set to the buffer size.
-- *
-- * Return: 0 on success, negative errno on error.
-- */
--int ima_get_kexec_buffer(void **addr, size_t *size)
--{
--	int ret, len;
--	unsigned long tmp_addr;
--	size_t tmp_size;
--	const void *prop;
--
--	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
--	if (!prop)
--		return -ENOENT;
--
--	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
--	if (ret)
--		return ret;
--
--	*addr = __va(tmp_addr);
--	*size = tmp_size;
--
--	return 0;
--}
--
--/**
-- * ima_free_kexec_buffer - free memory used by the IMA buffer
-- */
--int ima_free_kexec_buffer(void)
--{
--	int ret;
--	unsigned long addr;
--	size_t size;
--	struct property *prop;
--
--	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
--	if (!prop)
--		return -ENOENT;
--
--	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
--	if (ret)
--		return ret;
--
--	ret = of_remove_property(of_chosen, prop);
--	if (ret)
--		return ret;
--
--	return memblock_free(addr, size);
--
--}
--
- /**
-  * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
-  *
-@@ -113,12 +59,12 @@ void remove_ima_buffer(void *fdt, int chosen_node)
- 	size_t size;
- 	const void *prop;
- 
--	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
-+	prop = fdt_getprop(fdt, chosen_node, FDT_PROP_IMA_KEXEC_BUFFER, &len);
- 	if (!prop)
- 		return;
- 
- 	ret = do_get_kexec_buffer(prop, len, &addr, &size);
--	fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
-+	fdt_delprop(fdt, chosen_node, FDT_PROP_IMA_KEXEC_BUFFER);
- 	if (ret)
- 		return;
- 
-@@ -201,7 +147,7 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
- 	if (ret)
- 		return ret;
- 
--	ret = fdt_setprop(fdt, chosen_node, "linux,ima-kexec-buffer", value,
-+	ret = fdt_setprop(fdt, chosen_node, FDT_PROP_IMA_KEXEC_BUFFER, value,
- 			  entry_size);
- 	if (ret < 0)
- 		return -EINVAL;
-diff --git a/include/linux/libfdt.h b/include/linux/libfdt.h
-index 90ed4ebfa692..75fb40aa013b 100644
---- a/include/linux/libfdt.h
-+++ b/include/linux/libfdt.h
-@@ -5,4 +5,7 @@
- #include <linux/libfdt_env.h>
- #include "../../scripts/dtc/libfdt/libfdt.h"
- 
-+/* Common device tree properties */
-+#define FDT_PROP_IMA_KEXEC_BUFFER	"linux,ima-kexec-buffer"
-+
- #endif /* _INCLUDE_LIBFDT_H_ */
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 121de3e04af2..d092285446c2 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -10,8 +10,90 @@
- #include <linux/seq_file.h>
- #include <linux/vmalloc.h>
- #include <linux/kexec.h>
-+#include <linux/of.h>
-+#include <linux/memblock.h>
-+#include <linux/libfdt.h>
-+#include <linux/ima.h>
- #include "ima.h"
- 
-+static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
-+			       size_t *size)
-+{
-+	int addr_cells, size_cells;
-+	struct device_node *root;
-+
-+	root = of_find_node_by_path("/");
-+	if (!root)
-+		return -EINVAL;
-+
-+	addr_cells = of_n_addr_cells(root);
-+	size_cells = of_n_size_cells(root);
-+
-+	of_node_put(root);
-+
-+	if (len < 4 * (addr_cells + size_cells))
-+		return -ENOENT;
-+
-+	*addr = of_read_number(prop, addr_cells);
-+	*size = of_read_number(prop + 4 * addr_cells, size_cells);
-+
-+	return 0;
-+}
-+
-+/**
-+ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-+ * @addr:	On successful return, set to point to the buffer contents.
-+ * @size:	On successful return, set to the buffer size.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+static int ima_get_kexec_buffer(void **addr, size_t *size)
-+{
-+	int ret, len;
-+	unsigned long tmp_addr;
-+	size_t tmp_size;
-+	const void *prop;
-+
-+	prop = of_get_property(of_chosen, FDT_PROP_IMA_KEXEC_BUFFER, &len);
-+	if (!prop)
-+		return -ENOENT;
-+
-+	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
-+	if (ret)
-+		return ret;
-+
-+	*addr = __va(tmp_addr);
-+	*size = tmp_size;
-+
-+	return 0;
-+}
-+
-+/**
-+ * ima_free_kexec_buffer - free memory used by the IMA buffer
-+ */
-+static int ima_free_kexec_buffer(void)
-+{
-+	int ret;
-+	unsigned long addr;
-+	size_t size;
-+	struct property *prop;
-+
-+	prop = of_find_property(of_chosen, FDT_PROP_IMA_KEXEC_BUFFER, NULL);
-+	if (!prop)
-+		return -ENOENT;
-+
-+	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_remove_property(of_chosen, prop);
-+	if (ret)
-+		return ret;
-+
-+	return memblock_free(addr, size);
-+
-+}
-+
- #ifdef CONFIG_IMA_KEXEC
- static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 				     unsigned long segment_size)
--- 
-2.28.0
+-Raphael
 
+On 8/31/2020 11:52 PM, Janne Karhunen wrote:
+> Hi Raphael,
+>
+> It depends how well you make it, if you do it right you would not lose
+> them. If the pagefile has a readable format it should all be safe,
+> right?
+>
+>
+> --
+> Janne
+>
+> On Mon, Aug 31, 2020 at 7:49 PM Raphael Gianotti
+> <raphgi@linux.microsoft.com> wrote:
+>> Hi Janne,
+>>
+>> Thanks for your response, I didn't reply right away as I hadn't used mm
+>> and vmarea via vfs_tmpfile before, so I wanted to read some code to
+>> familiarize myself with it. Correct me if I am misunderstanding the
+>> approach you mentioned, but in it, we would still lose the logs accross
+>> kexec/cold boots as we do today, is that correct? It feels like this
+>> approach would solely solve the issue where we can potentially run out
+>> of memory for ima logs.
+>>
+>> For the original approach, I have a prototype version that I intend to
+>> send as an RFC soon (I will link you and it's based off of your original
+>> RFC from late last year).
+>>
+>> - Raphael
+>>
+>> On 8/26/2020 7:12 AM, Janne Karhunen wrote:
+>>> Hi,
+>>>
+>>> Come to think of it, there could be a MM trap though as I'm not sure
+>>> this has been done before. This new file vmarea would sit in the
+>>> kernel virtual memory area somewhere above the page_offset and the mm
+>>> code might assume that there is no need to look for dirty pages there
+>>> when running the PTE scan. But that shouldn't be more than one line
+>>> patch if that is the only trap..
+>>>
+>>>
+>>> --
+>>> Janne
+>>>
+>>> On Wed, Aug 26, 2020 at 4:40 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
+>>>> Hi,
+>>>>
+>>>> Attached a variant of the patch from that time that only does the
+>>>> element free and relies on the userspace reading the data.
+>>>>
+>>>> The reason why I stopped working on this at the time was that below
+>>>> was sufficient for my needs. However, after a discussion between Mimi
+>>>> and myself (based on a suggestion by Amir Goldstein) we realized that
+>>>> we could do something considerably more elegant through vfs_tmpfile.
+>>>> It's also much more work.
+>>>>
+>>>> The way this could probably work the best is if we would implement a
+>>>> new allocator that would pull pages from a vmarea tied to a
+>>>> vfs_tmpfile and the file could be opened by the kernel itself during
+>>>> the ima init. Now if all the measurement list data blobs would be
+>>>> allocated through this allocator the pages would never be permanently
+>>>> resident in the kernel, they would only visit the memory for a while
+>>>> when someone reads the data. If done this way the allocator probably
+>>>> does not even need a 'free' and the mm code would do all the real work
+>>>> pushing the data out.
+>>>>
+>>>> The benefits would be that no-one would ever have to poll from
+>>>> userspace (kernel does not depend on the userspace to work) and we
+>>>> would never OOM because of IMA as long as the filesystem is writable.
+>>>> Also we would never lose any data as long as the file system is
+>>>> functioning.
+>>>>
+>>>> Thoughts?
+>>>>
+>>>>
+>>>> --
+>>>> Janne
+>>>>
+>>>> On Wed, Aug 26, 2020 at 11:14 AM Janne Karhunen
+>>>> <janne.karhunen@gmail.com> wrote:
+>>>>> Hi Raphael,
+>>>>>
+>>>>> Sorry I missed the reply. I'm not working on this right now, feel free
+>>>>> to grab. Please copy me with the results, thank you.
+>>>>>
+>>>>>
+>>>>> --
+>>>>> Janne
+>>>>>
+>>>>> On Tue, Aug 18, 2020 at 12:30 AM Raphael Gianotti
+>>>>> <raphgi@linux.microsoft.com> wrote:
+>>>>>> Hi Janne,
+>>>>>>
+>>>>>> Subject: Re: [RFC] ima: export the measurement list when needed
+>>>>>>> Date: Wed, 18 Dec 2019 17:11:22 +0200
+>>>>>>> From: Janne Karhunen <janne.karhunen@gmail.com>
+>>>>>>> To: linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
+>>>>>>> CC: Ken Goldman <kgold@linux.ibm.com>, david.safford@gmail.com,
+>>>>>>> monty.wiseman@ge.com
+>>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> Have in mind that below is the first trial draft that booted and
+>>>>>>> seemingly accomplished the task once, it was not really tested at all
+>>>>>>> yet. I will make a polished and tested version if people like the
+>>>>>>> concept.
+>>>>>>>
+>>>>>>> Note that the code (almost) supports pushing and pulling of the
+>>>>>>> entries. This variant is a simple pull given that the list size is
+>>>>>>> above the defined limits. Pushing can be put in place if the recursion
+>>>>>>> with the list extend_list_mutex is cleared, maybe this could be done
+>>>>>>> via another patch later on when we have a workqueue for the export
+>>>>>>> task? The workqueue might be the best context for the export job since
+>>>>>>> clearing the list is a heavy operation (and it's not entirely correct
+>>>>>>> here AFAIK, there is no rcu sync before the template free).
+>>>>>>>
+>>>>>>>
+>>>>>>> -- Janne
+>>>>>>>
+>>>>>>> On Wed, Dec 18, 2019 at 2:53 PM Janne Karhunen
+>>>>>>> <janne.karhunen@gmail.com> wrote:
+>>>>>>>> Some systems can end up carrying lots of entries in the ima
+>>>>>>>> measurement list. Since every entry is using a bit of kernel
+>>>>>>>> memory, add a new Kconfig variable to allow the sysadmin to
+>>>>>>>> define the maximum measurement list size and the location
+>>>>>>>> of the exported list.
+>>>>>>>>
+>>>>>>>> The list is written out in append mode, so the system will
+>>>>>>>> keep writing new entries as long as it stays running or runs
+>>>>>>>> out of space. File is also automatically truncated on startup.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+>>>>>>>> ---
+>>>>>>>>    security/integrity/ima/Kconfig     |  10 ++
+>>>>>>>>    security/integrity/ima/ima.h       |   7 +-
+>>>>>>>>    security/integrity/ima/ima_fs.c    | 178 +++++++++++++++++++++++++++++
+>>>>>>>>    security/integrity/ima/ima_queue.c |   2 +-
+>>>>>>>>    4 files changed, 192 insertions(+), 5 deletions(-)
+>>>>>> I've been looking into a solution to this same issue you started some
+>>>>>> work on. I was wondering if you are still working on it. I was
+>>>>>> considering taking your initial prototyping on this and extending it
+>>>>>> into a final solution, but I wanted to reply here first and check if you
+>>>>>> are currently working on this.
+>>>>>>
