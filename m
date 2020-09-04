@@ -2,149 +2,189 @@ Return-Path: <SRS0=uLxa=CN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B9EC433E2
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 09:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A533C28E83
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 11:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 668A820DD4
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 09:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6473D2074D
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 11:47:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E8HMmcq7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbgIDJcA (ORCPT
+        id S1729897AbgIDLrb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Sep 2020 05:32:00 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2763 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730113AbgIDJbb (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Sep 2020 05:31:31 -0400
-Received: from lhreml727-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 5CD0B895E4646F83E718;
-        Fri,  4 Sep 2020 10:31:30 +0100 (IST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml727-chm.china.huawei.com (10.201.108.78) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 10:31:29 +0100
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
- by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 11:31:29 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 10/12] ima: Allow imasig requirement to be satisfied by EVM portable signatures
-Date:   Fri, 4 Sep 2020 11:26:41 +0200
-Message-ID: <20200904092643.20013-6-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.27.GIT
-In-Reply-To: <20200904092339.19598-1-roberto.sassu@huawei.com>
-References: <20200904092339.19598-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.65.160]
-X-ClientProxiedBy: lhreml709-chm.china.huawei.com (10.201.108.58) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+        Fri, 4 Sep 2020 07:47:31 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53672 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729297AbgIDLr3 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 4 Sep 2020 07:47:29 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 084BX1Mu180994;
+        Fri, 4 Sep 2020 07:47:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=4Sbnt809dMBXF6cKluyEYXfuJYTsWdN/zlL8Yb9u6rY=;
+ b=E8HMmcq7MTFKqRrv7/lvPB7s8oTwc6WBUQ6cz2ETXBs29yrBiUN5azhCdUKrfM5O0duc
+ M5c7wjfZRPpw+lin9pmpfOED8q5Ti6TuomZtDJ2Evb+uJkLd28japrdPH95Uhe4hggxA
+ YRWJpSciy3IfJT/5u+m7DN9F71oIPxo74nKHtUSt+irBwVG85OuGKASRjAJgTkMxj4ve
+ jhty50GvknBZDPKd+GgRzwFugbaQtrX95KJDh11dDRk0avcPU+vmjfSxZG1hxkp6mqBx
+ neuQK+dyYmugDeGglXZ+zpPW6WesdT+JzR7dVJFItyOqy8dn8RVZtfHZFDEPyTJLF835 Rg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33bmh5rtvu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Sep 2020 07:47:14 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 084BX1FF180986;
+        Fri, 4 Sep 2020 07:47:14 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33bmh5rtuy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Sep 2020 07:47:13 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 084BfjPk029412;
+        Fri, 4 Sep 2020 11:47:11 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06fra.de.ibm.com with ESMTP id 337e9h46es-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Sep 2020 11:47:11 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 084Bl8lV32112904
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 4 Sep 2020 11:47:08 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B684FAE053;
+        Fri,  4 Sep 2020 11:47:08 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 76F45AE045;
+        Fri,  4 Sep 2020 11:47:06 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.87.223])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  4 Sep 2020 11:47:06 +0000 (GMT)
+Message-ID: <f18986930ddc2823994b549f1ff1cd742706e188.camel@linux.ibm.com>
+Subject: Re: [PATCH 5/6] arm64/ima: add ima arch support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Chester Lin <clin@suse.com>, ardb@kernel.org,
+        catalin.marinas@arm.com, will@kernel.org,
+        dmitry.kasatkin@gmail.com, corbet@lwn.net, mark.rutland@arm.com,
+        vincenzo.frascino@arm.com, samitolvanen@google.com,
+        masahiroy@kernel.org, mingo@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        jlee@suse.com
+Date:   Fri, 04 Sep 2020 07:47:05 -0400
+In-Reply-To: <20200904072905.25332-6-clin@suse.com>
+References: <20200904072905.25332-1-clin@suse.com>
+         <20200904072905.25332-6-clin@suse.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-04_06:2020-09-04,2020-09-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ adultscore=0 suspectscore=0 clxscore=1011 phishscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009040106
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-System administrators can require that all accessed files have a signature
-by specifying appraise_type=imasig in a policy rule.
+On Fri, 2020-09-04 at 15:29 +0800, Chester Lin wrote:
+> Add arm64 IMA arch support. The arch policy is inherited from x86.
+> 
+> Signed-off-by: Chester Lin <clin@suse.com>
 
-Currently, IMA signatures satisfy this requirement. Appended signatures may
-also satisfy this requirement, but are not applicable as IMA signatures.
-IMA/appended signatures ensure data source authentication for file content
-and prevent any change. EVM signatures instead ensure data source
-authentication for file metadata. Given that the digest or signature of the
-file content must be included in the metadata, EVM signatures provide the
-same file data guarantees of IMA signatures, as well as providing file
-metadata guarantees.
+The "secureboot arch rules" comment should be updated to reflect that
+the policy is both "secure and trusted boot arch rules", both here and
+in x86.
 
-This patch lets systems protected with EVM signatures pass appraisal
-verification if the appraise_type=imasig requirement is specified in the
-policy. This facilitates deployment in the scenarios where only EVM
-signatures are available.
-
-The patch makes the following changes:
-
-file xattr types:
-security.ima: IMA_XATTR_DIGEST/IMA_XATTR_DIGEST_NG
-security.evm: EVM_XATTR_PORTABLE_DIGSIG
-
-execve(), mmap(), open() behavior (with appraise_type=imasig):
-before: denied (file without IMA signature, imasig requirement not met)
-after: allowed (file with EVM portable signature, imasig requirement met)
-
-open(O_WRONLY) behavior (without appraise_type=imasig):
-before: allowed (file without IMA signature, not immutable)
-after: denied (file with EVM portable signature, immutable)
-
-In addition, similarly to IMA signatures, this patch temporarily allows
-new files without or with incomplete metadata to be opened so that content
-can be written.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/ima_appraise.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 4d682bc3a77f..95c7a1fc0d01 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -225,12 +225,16 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
- 		hash_start = 1;
- 		fallthrough;
- 	case IMA_XATTR_DIGEST:
--		if (iint->flags & IMA_DIGSIG_REQUIRED) {
--			*cause = "IMA-signature-required";
--			*status = INTEGRITY_FAIL;
--			break;
-+		if (*status != INTEGRITY_PASS_IMMUTABLE) {
-+			if (iint->flags & IMA_DIGSIG_REQUIRED) {
-+				*cause = "IMA-signature-required";
-+				*status = INTEGRITY_FAIL;
-+				break;
-+			}
-+			clear_bit(IMA_DIGSIG, &iint->atomic_flags);
-+		} else {
-+			set_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		}
--		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
- 				iint->ima_hash->length)
- 			/*
-@@ -400,6 +404,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		cause = "missing-HMAC";
- 		goto out;
- 	case INTEGRITY_FAIL_IMMUTABLE:
-+		set_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		fallthrough;
- 	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
- 		cause = "invalid-HMAC";
-@@ -444,9 +449,12 @@ int ima_appraise_measurement(enum ima_hooks func,
- 				status = INTEGRITY_PASS;
- 		}
- 
--		/* Permit new files with file signatures, but without data. */
-+		/*
-+		 * Permit new files with file/EVM portable signatures, but
-+		 * without data.
-+		 */
- 		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
--		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
-+		    test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
- 			status = INTEGRITY_PASS;
- 		}
- 
--- 
-2.27.GIT
+thanks,
+
+Mimi
+
+> ---
+>  arch/arm64/Kconfig           |  1 +
+>  arch/arm64/kernel/Makefile   |  2 ++
+>  arch/arm64/kernel/ima_arch.c | 37 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 40 insertions(+)
+>  create mode 100644 arch/arm64/kernel/ima_arch.c
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 6d232837cbee..b5518e7b604d 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -196,6 +196,7 @@ config ARM64
+>  	select SWIOTLB
+>  	select SYSCTL_EXCEPTION_TRACE
+>  	select THREAD_INFO_IN_TASK
+> +	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+>  	help
+>  	  ARM 64-bit (AArch64) Linux support.
+>  
+> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+> index a561cbb91d4d..0300ab60785d 100644
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -71,3 +71,5 @@ extra-y					+= $(head-y) vmlinux.lds
+>  ifeq ($(CONFIG_DEBUG_EFI),y)
+>  AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
+>  endif
+> +
+> +obj-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT)	+= ima_arch.o
+> diff --git a/arch/arm64/kernel/ima_arch.c b/arch/arm64/kernel/ima_arch.c
+> new file mode 100644
+> index 000000000000..46f5641c3da5
+> --- /dev/null
+> +++ b/arch/arm64/kernel/ima_arch.c
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright (C) 2018 IBM Corporation
+> + */
+> +#include <linux/efi.h>
+> +#include <linux/module.h>
+> +
+> +bool arch_ima_get_secureboot(void)
+> +{
+> +	if (efi_enabled(EFI_SECURE_BOOT))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +/* secureboot arch rules */
+> +static const char * const sb_arch_rules[] = {
+> +#if !IS_ENABLED(CONFIG_KEXEC_SIG)
+> +	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> +#endif /* CONFIG_KEXEC_SIG */
+> +	"measure func=KEXEC_KERNEL_CHECK",
+> +#if !IS_ENABLED(CONFIG_MODULE_SIG)
+> +	"appraise func=MODULE_CHECK appraise_type=imasig",
+> +#endif
+> +	"measure func=MODULE_CHECK",
+> +	NULL
+> +};
+> +
+> +const char * const *arch_get_ima_policy(void)
+> +{
+> +	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+> +		if (IS_ENABLED(CONFIG_MODULE_SIG))
+> +			set_module_sig_enforced();
+> +		return sb_arch_rules;
+> +	}
+> +	return NULL;
+> +}
+
 
