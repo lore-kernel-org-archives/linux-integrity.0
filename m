@@ -2,44 +2,48 @@ Return-Path: <SRS0=uLxa=CN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC14C2D0A7
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28FF8C433E2
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 09:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 519D32098B
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 09:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 062E620770
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Sep 2020 09:30:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730021AbgIDJ1W (ORCPT
+        id S1729995AbgIDJaV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Sep 2020 05:27:22 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2753 "EHLO huawei.com"
+        Fri, 4 Sep 2020 05:30:21 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2759 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728205AbgIDJ1V (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Sep 2020 05:27:21 -0400
-Received: from lhreml740-chm.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id EC5356981EE86CB54334;
-        Fri,  4 Sep 2020 10:27:19 +0100 (IST)
+        id S1730251AbgIDJaR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 4 Sep 2020 05:30:17 -0400
+Received: from lhreml724-chm.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id AB700FA363A68C7F4490;
+        Fri,  4 Sep 2020 10:30:15 +0100 (IST)
 Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- lhreml740-chm.china.huawei.com (10.201.108.190) with Microsoft SMTP Server
+ lhreml724-chm.china.huawei.com (10.201.108.75) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 10:27:19 +0100
+ 15.1.1913.5; Fri, 4 Sep 2020 10:30:15 +0100
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.160)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Fri, 4 Sep 2020 11:27:18 +0200
+ 15.1.1913.5; Fri, 4 Sep 2020 11:30:14 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 00/12] IMA/EVM fixes
-Date:   Fri, 4 Sep 2020 11:23:27 +0200
-Message-ID: <20200904092339.19598-1-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2 06/12] evm: Refuse EVM_ALLOW_METADATA_WRITES only if the HMAC key is loaded
+Date:   Fri, 4 Sep 2020 11:26:37 +0200
+Message-ID: <20200904092643.20013-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
+In-Reply-To: <20200904092339.19598-1-roberto.sassu@huawei.com>
+References: <20200904092339.19598-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -52,65 +56,54 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch set includes various fixes for IMA and EVM.
+EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be set to
+temporarily disable metadata verification until all xattrs/attrs necessary
+to verify an EVM portable signature are copied to the file. This flag is
+cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
+calculated on unverified xattrs/attrs.
 
-Patches 1-3 are trivial fixes. The remaining improve support and usability
-of EVM portable signatures. In particular patch 4 allows EVM to be used
-without an HMAC key. Patch 5 avoids appraisal verification of public keys
-(they are already verified by the key subsystem).
+Currently EVM unnecessarily denies setting this flag if EVM is initialized
+with public key, which is not a concern as it cannot be used to trust
+xattrs/attrs updates. This patch removes this limitation.
 
-Patches 6-7 allow metadata verification to be turned off when the HMAC key
-is not already loaded and to use this mode in a safe way (by ensuring that
-IMA revalidates metadata when there is a change).
+Cc: stable@vger.kernel.org # 4.16.x
+Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ Documentation/ABI/testing/evm      | 6 ++++--
+ security/integrity/evm/evm_secfs.c | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-Patches 8-9 make portable signatures more usable if metadata verification
-cannot be turned off (because the HMAC key is loaded) by accepting any
-metadata modification until signature verification succeeds (useful when
-xattrs/attrs are copied in a sequence from a source) and by allowing
-operations that don't change metadata.
-
-Patch 10 makes it possible to use portable signatures when the IMA policy
-requires file signatures and patch 11 shows portable signatures when the
-ima-sig measurement list template is selected.
-
-Lastly, patch 12 avoids undesired removal of security.ima when a file is
-not selected by the IMA policy.
-
-Roberto Sassu (12):
-  ima: Don't ignore errors from crypto_shash_update()
-  ima: Remove semicolon at the end of ima_get_binary_runtime_size()
-  evm: Check size of security.evm before using it
-  evm: Execute evm_inode_init_security() only when the HMAC key is
-    loaded
-  evm: Load EVM key in ima_load_x509() to avoid appraisal
-  evm: Refuse EVM_ALLOW_METADATA_WRITES only if the HMAC key is loaded
-  evm: Introduce EVM_RESET_STATUS atomic flag
-  evm: Allow xattr/attr operations for portable signatures if check
-    fails
-  evm: Allow setxattr() and setattr() if metadata digest won't change
-  ima: Allow imasig requirement to be satisfied by EVM portable
-    signatures
-  ima: Introduce template field evmsig and write to field sig as
-    fallback
-  ima: Don't remove security.ima if file must not be appraised
-
- Documentation/ABI/testing/evm             |   6 +-
- Documentation/security/IMA-templates.rst  |   4 +-
- include/linux/integrity.h                 |   1 +
- security/integrity/evm/evm_main.c         | 151 ++++++++++++++++++++--
- security/integrity/evm/evm_secfs.c        |   2 +-
- security/integrity/iint.c                 |   2 +
- security/integrity/ima/ima_appraise.c     |  26 ++--
- security/integrity/ima/ima_crypto.c       |   2 +
- security/integrity/ima/ima_init.c         |   4 +
- security/integrity/ima/ima_main.c         |   8 +-
- security/integrity/ima/ima_queue.c        |   2 +-
- security/integrity/ima/ima_template.c     |   2 +
- security/integrity/ima/ima_template_lib.c |  39 +++++-
- security/integrity/ima/ima_template_lib.h |   2 +
- security/integrity/integrity.h            |   1 +
- 15 files changed, 225 insertions(+), 27 deletions(-)
-
+diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+index 201d10319fa1..cbb50ab09c78 100644
+--- a/Documentation/ABI/testing/evm
++++ b/Documentation/ABI/testing/evm
+@@ -42,8 +42,10 @@ Description:
+ 		modification of EVM-protected metadata and
+ 		disable all further modification of policy
+ 
+-		Note that once a key has been loaded, it will no longer be
+-		possible to enable metadata modification.
++		Note that once HMAC validation and creation is enabled,
++		it will no longer be possible to enable metadata modification
++		and if metadata modification is already enabled, it will be
++		disabled.
+ 
+ 		Until key loading has been signaled EVM can not create
+ 		or validate the 'security.evm' xattr, but returns
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index cfc3075769bb..92fe26ace797 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -84,7 +84,7 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+ 	 * keys are loaded.
+ 	 */
+ 	if ((i & EVM_ALLOW_METADATA_WRITES) &&
+-	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
++	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
+ 	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+ 		return -EPERM;
+ 
 -- 
 2.27.GIT
 
