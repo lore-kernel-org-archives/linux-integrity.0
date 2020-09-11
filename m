@@ -2,209 +2,157 @@ Return-Path: <SRS0=BCzh=CU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 426BCC43461
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 15:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48395C433E2
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 16:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9BE1206E9
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 15:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0854221EF
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 16:20:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T6krThn3"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FsBXu82E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbgIKPfG (ORCPT
+        id S1726265AbgIKQUZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Sep 2020 11:35:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38632 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726536AbgIKPeu (ORCPT
+        Fri, 11 Sep 2020 12:20:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:58712 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbgIKQTI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Sep 2020 11:34:50 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08BEAsde079402;
-        Fri, 11 Sep 2020 10:21:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=4jdpabALJcRG0Ff54RGULkHc+H8aLYR/WaE/focejS8=;
- b=T6krThn3DJ2NcA05aGPAy5TS3GbYDbLlVV9Q6G+YBwzDNr0H5uoRMZtuWYRf+hpmCZHZ
- EWfK3eBwMF3Qc8Os9XQo5cOuPPZ3w3Eu2yzNbDKEUfBJxCetBmwCmBrCE8WNG9qqoPa8
- iE3yMCMa7Alket0YEwB+6YnIKscSqNNkx5h1Zg/w+5gjelRknLv4ce0TLG5JAzMMl+mi
- BmJ+0aLDGaKiSr+/A0OFOIRJxSlqOe+/ST4+qFWEhsLazSk+nCfNSzoI/ojzQRAjxLFG
- +WTVqERAYMnxl3+Eu1f3f7cOrZkqN0Rj2TOrPfuNIWizvGSehH2z/RaFFO0uv3Pd459b 2w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33gaerh2qr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 10:21:29 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08BEDuYl092454;
-        Fri, 11 Sep 2020 10:21:28 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 33gaerh2pr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 10:21:28 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08BEGrBR003842;
-        Fri, 11 Sep 2020 14:21:26 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma04ams.nl.ibm.com with ESMTP id 33c2a8faqy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 14:21:26 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08BELNS025559396
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Sep 2020 14:21:23 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CCEB4C059;
-        Fri, 11 Sep 2020 14:21:23 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 99F404C050;
-        Fri, 11 Sep 2020 14:21:22 +0000 (GMT)
-Received: from sig-9-65-251-51.ibm.com (unknown [9.65.251.51])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 11 Sep 2020 14:21:22 +0000 (GMT)
-Message-ID: <7bc45e11c9af3fe65a08a379d7690866264a13e5.camel@linux.ibm.com>
-Subject: Re: Potential IMA Signing Bug
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Alexander Gaidis <alexander_gaidis@brown.edu>,
-        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com
-Date:   Fri, 11 Sep 2020 10:21:21 -0400
-In-Reply-To: <322722b2-4253-3069-4cbc-c15e5924f5fc@brown.edu>
-References: <322722b2-4253-3069-4cbc-c15e5924f5fc@brown.edu>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-11_05:2020-09-10,2020-09-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- adultscore=0 impostorscore=0 bulkscore=0 clxscore=1011 suspectscore=3
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009110114
+        Fri, 11 Sep 2020 12:19:08 -0400
+Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id BADE820716FA;
+        Fri, 11 Sep 2020 09:19:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BADE820716FA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1599841143;
+        bh=IGrl9wd59ouiSwrHZJue38Gb4uezQLGVnD6HcWU/o80=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FsBXu82EbG6MT9yrcRvWBKCe/fCu0gn4AeEUk/dfZHITC7I1H5MCCf54UkUgHic+Q
+         Q6RJ62GCP+uXr5rTl3rBDSNCjuooLp9aVofY2HZwXFj/+dwATBdWZ4oRCjIs0kWFaH
+         hJ/BhkB7cn3gds8zgReSqdEySHPgV159fhuezYAs=
+Subject: Re: [PATCH v3 1/6] IMA: generalize keyring specific measurement
+ constructs
+To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20200828015704.6629-1-tusharsu@linux.microsoft.com>
+ <20200828015704.6629-2-tusharsu@linux.microsoft.com>
+ <4802c73c2ed22c64ea4f315d3115ead919c3205e.camel@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <1a456a10-bb49-206b-9fb9-cc996eea6e29@linux.microsoft.com>
+Date:   Fri, 11 Sep 2020 09:19:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <4802c73c2ed22c64ea4f315d3115ead919c3205e.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2020-09-09 at 13:13 -0600, Alexander Gaidis wrote:
-> I am wondering if the following behavior is a bug.
-> 
-> My system is Debian Buster with Linux kernel v5.7.13 running on x86_64
-> Intel hardware. My kernel's configuration file has the following
-> relevant security options (+ their dependencies) turned on:
-> 
-> ```
-> CONFIG_INTEGRITY=y
-> CONFIG_INTEGRITY_SIGNATURE=y
-> CONFIG_INTEGRITY_ASYMMETRIC_KEYS=y
-> CONFIG_INTEGRITY_AUDIT=y
-> CONFIG_IMA=y
-> CONFIG_IMA_MEASURE_PCR_IDX=10
-> CONFIG_IMA_LSM_RULES=y
-> CONFIG_IMA_NG_TEMPLATE=y
-> CONFIG_IMA_DEFAULT_TEMPLATE="ima-ng"
-> CONFIG_IMA_DEFAULT_HASH_SHA256=y
-> CONFIG_IMA_DEFAULT_HASH="sha256"
-> CONFIG_IMA_WRITE_POLICY=y
-> CONFIG_IMA_READ_POLICY=y
-> CONFIG_IMA_APPRAISE=y
-> CONFIG_IMA_APPRAISE_BOOTPARAM=y
-> CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS=y
-> # CONFIG_INTEGRITY_TRUSTED_KEYRING is not set
-> # CONFIG_INTEGRITY_PLATFORM_KEYRING is not set
-> CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS=y
-> CONFIG_EVM=y
-> CONFIG_EVM_ATTR_FSUUID=y
-> ```
-> 
-> and I updated GRUB to include `ima_appraise=fix` to the boot parameters.
-> The policy I load looks like the following:
-> 
-> ```
-> measure fowner=1000
-> appraise fowner=1000 appraise_type=imasig
-> ```
-> 
-> To sign IMA hashes I load an x509 certificate onto root's `_ima` keyring
-> via the following procedure (assume I have the file x509_ima.genkey as
-> in the `evmctl` manpage):
-> 
-> ```
-> root@deb:~# openssl req -new -nodes -utf8 -sha1 -days 36500 -batch \
-> >    	        -x509 -config x509_ima.genkey \
-> >	        -outform DER -out x509_ima.der -keyout privkey_ima.pem
-> Generating a RSA private key
-> ......+++++
-> ....+++++
-> writing new private key to 'privkey_ima.pem'
-> -----
-> root@deb:~# ima_id=`keyctl newring _ima @u`
-> root@deb:~# cat x509_ima.der | keyctl padd asymmetric 'ima_cert' $ima_id
-> 282969187
-> root@deb:~# keyctl show
-> Session Keyring
->  727602364 --alswrv      0     0  keyring: _ses
->   17430979 --alswrv      0 65534   \_ keyring: _uid.0
->  822262864 --alswrv      0     0       \_ keyring: _ima
->  282969187 --als--v      0     0           \_ asymmetric: ima_cert
-> ```
-> 
-> I have a simple executable, `hello`, that prints a simple "Hello world!"
-> message. Using the matching private key of the x509 certificate above
-> and `evmctl` I can hash and sign the executable:
-> 
-> ```
-> user@deb:~$ sudo evmctl -v ima_sign --key /root/privkey_ima.pem hello
-> hash: 4409ab55775b430524cf9c9bbe798a8213de740e
-> evm/ima signature: 136 bytes
-> 03020277de1ee90080696c392a74513afcff14208fe5c3a56b466a360becf7ca5aa11a502fd249fc7fa04d7631d9cd10602ba460c0133773ce3c33562e5e0d9770b3c0714f7b19bba4e4de0b88b12d512b7fa99732118de59a3fc098e1655d531a60a3c6052c434959ab739d740a5125f435bf0550eb57c9d09195816c6749a0ab6390196893ef9164
-> user@deb:~$ getfattr -m . -d hello
-> # file: hello
-> security.ima=0sAwICd94e6QCAaWw5KnRROvz/FCCP5cOla0ZqNgvs98paoRpQL9JJ/H+gTXYx2c0QYCukYMATN3POPDNWLl4Nl3CzwHFPexm7pOTeC4ixLVErf6mXMhGN5Zo/wJjhZV1TGmCjxgUsQ0lZq3OddApRJfQ1vwVQ61fJ0JGVgWxnSaCrY5AZaJPvkWQ=
-> ```
-> 
-> After rebooting the machine in appraisal mode and loading the keys and
-> policy I am unable to run the file as a user:
-> 
-> ```
-> user@deb:~$ ./hello
-> -bash: ./hello: Permission denied
-> user@deb:~$ sudo dmesg | tail
-> ...
-> [   78.593140] integrity: no _ima keyring: -126
-> [   78.593343] audit: type=1800 audit(1599673725.324:11): pid=582
-> uid=1000 auid=1000 ses=1 subj==unconfined op=appraise_data
-> cause=invalid-signature comm="bash" name="/home/user/hello" dev="sda1"
-> ino=796088 res=0
-> ```
-> 
-> However, after running the file as root and switching back to my user
-> profile I am able to run the file just fine due to the caching of the
-> integrity status of the file.
 
-For some reason as a user you can't access the _ima keyring -
-"integrity: no _ima keyring: -126".   Please create an additional
-signed file and try accessing that one as user, after accessing the
-original signed one succeeds.
+
+On 2020-08-31 4:55 a.m., Mimi Zohar wrote:
+> On Thu, 2020-08-27 at 18:56 -0700, Tushar Sugandhi wrote:
+>> IMA functions such as ima_match_keyring(), process_buffer_measurement(),
+>> ima_match_policy() etc. handle data specific to keyrings. Currently,
+>> these constructs are not generic to handle any func specific data.
+>> This makes it harder to extend without code duplication.
+>>
+>> Refactor the keyring specific measurement constructs to be generic and
+>> reusable in other measurement scenarios.
+> 
+> Mostly this patch changes the variable name from keyring to func_data,
+> which is good.  Other changes should be minimized.
+> 
+The only other change in this patch is introduction of
+bool allow_empty_opt_list, which is needed as per my comment below.
+
+Maybe I can move "allow_empty_opt_list" to a new patch after this one in
+this series.
+
+>>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> ---
+> 
+> <snip>
+> 
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index fe1df373c113..8866e84d0062 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -451,15 +451,21 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+>>   }
+>>   
+>>   /**
+>> - * ima_match_keyring - determine whether the keyring matches the measure rule
+>> - * @rule: a pointer to a rule
+>> - * @keyring: name of the keyring to match against the measure rule
+>> + * ima_match_rule_data - determine whether the given func_data matches
+>> + *			 the measure rule data
+>> + * @rule: IMA policy rule
+>> + * @opt_list: rule data to match func_data against
+>> + * @func_data: data to match against the measure rule data
+>> + * @allow_empty_opt_list: If true matches all func_data
+>>    * @cred: a pointer to a credentials structure for user validation
+>>    *
+>> - * Returns true if keyring matches one in the rule, false otherwise.
+>> + * Returns true if func_data matches one in the rule, false otherwise.
+>>    */
+>> -static bool ima_match_keyring(struct ima_rule_entry *rule,
+>> -			      const char *keyring, const struct cred *cred)
+>> +static bool ima_match_rule_data(struct ima_rule_entry *rule,
+>> +				const struct ima_rule_opt_list *opt_list,
+> 
+> Ok
+> 
+>> +				const char *func_data,
+>> +				bool allow_empty_opt_list,
+> 
+> As the policy is loaded, shouldn't the rules should be checked, not
+> here on usage?
+> 
+> Mimi
+
+Since "keyrings=" is optional, I cannot check the rule at load time for
+keyrings. func=KEY_CHECK may or may not have "keyrings=", and both are
+valid scenarios.
+
+However "critical_kernel_data_sources=" is mandatory for 
+func=CRITICAL_DATA.
+
+So I am already making that check at policy load time.
+
+See patch 5/6 – function ima_match_rules(), where I check for
+IMA_DATA_SOURCES.
+
++       case CRITICAL_DATA:
+<snip>
++               if (!(entry->flags & IMA_DATA_SOURCES) ||
+<snip>
++                       return false;
++
+
+Since ima_match_rule_data (this function) handles both func=KEY_CHECK 
+and func=CRITICAL_DATA, we have to use the bool "allow_empty_opt_list"
+to differentiate between the two scenarios – whether the rule is
+optional or not for a given func.
 
 > 
-> It seems to me that if a user doesn't have access to the key that signs
-> a file, they should not be able to access the file. Is this a correct
-> assessment of IMA's behavior? If this is a deliberate design choice, can
-> you please explain why?
-
-A signed file is a signed file.   Who signed it shouldn't make a
-difference.   The public key needs to be on the appropriate keyring and
-accessible by the kernel.
-
-Have you tried automatically loading the public key(s) via dracut or
-systemd on boot?  Does that make a difference?
-
-thanks,
-
-Mimi
-
+>> +				const struct cred *cred)
+>>   {
+>>   	bool matched = false;
+>>   	size_t i;
+>>
