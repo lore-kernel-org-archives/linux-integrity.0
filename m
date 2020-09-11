@@ -2,106 +2,164 @@ Return-Path: <SRS0=BCzh=CU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11095C43461
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 16:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38499C43461
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 17:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAE59206A2
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 16:46:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pNdvej3J"
+	by mail.kernel.org (Postfix) with ESMTP id F29152220A
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Sep 2020 17:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599843874;
+	bh=HtLkUWXhl5XAX6D7GAvZ5uZ8WYlaoexr13YPMrhinX8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=O0dmFnKZB7PEL3UBfDmjdlJgGYlceslCkf9A6EsmQFpS4YlvNvWaPp9OBAA5ZLM9f
+	 uQ+4i0Lx7NG8EEikCXRZdGmmS/YS1PvRJdEvYhdHTGfaGsaMthu9HxqMweJYvEC46N
+	 OKFTymMh+z627P/QSmFT9bfJrTMpPm/xLKnrTrEs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726389AbgIKQq0 (ORCPT
+        id S1726230AbgIKREb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Sep 2020 12:46:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10784 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726371AbgIKPIE (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Sep 2020 11:08:04 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08BF27Y6177662;
-        Fri, 11 Sep 2020 11:07:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=78N6boiP7sSbNGznqK9poUrt9X7Jx1+BBrB8pMxTczE=;
- b=pNdvej3JrKE1JilpUaFBqYqF9cNuyjXLd3D33QvRkaRMEHR7PsLyz/zWwh00IVjg6ByI
- 6oJ25BEAZ5JoHlk+QsRu26CtyfwaPZmPrgRhQEBuSWmqvubvJnQHc5BK462vudVzTVgq
- v0OUNDHobSHDm02SZxU42gA0cJo3Q9qz/OnmlrOW06wz0czTKWw78EWquylr4zBkCN/U
- 6h2OdJRzR7DV7n+TNqaVt2GLt3gdw/nr+gwNMH8AEGNPzB3qjxyhlTJm7OWhws2KXIPZ
- VQgm2gxSIqhLSfY9wqjkcuTzhmMLGIG7WIO48eh2FQX62mjgllUz+rQbhzhdaxWQ5/g1 5Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33gbdmrdyk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 11:07:49 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08BF2cJI180340;
-        Fri, 11 Sep 2020 11:07:49 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33gbdmrdy2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 11:07:49 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08BF2bhB028777;
-        Fri, 11 Sep 2020 15:07:47 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06fra.de.ibm.com with ESMTP id 33e5gmt7n2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Sep 2020 15:07:47 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08BF7jr134931038
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Sep 2020 15:07:45 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08D2B5204F;
-        Fri, 11 Sep 2020 15:07:45 +0000 (GMT)
-Received: from sig-9-65-251-51.ibm.com (unknown [9.65.251.51])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EAB5B52051;
-        Fri, 11 Sep 2020 15:07:43 +0000 (GMT)
-Message-ID: <d5cc5da578dfcf00adb3c344316677ff1099b591.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 3/4] ima: limit secure boot feedback scope for
- appraise
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 11 Sep 2020 11:07:43 -0400
-In-Reply-To: <20200905012020.7024-1-bmeneg@redhat.com>
-References: <20200904194100.761848-4-bmeneg@redhat.com>
-         <20200905012020.7024-1-bmeneg@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-09-11_05:2020-09-10,2020-09-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 mlxscore=0 spamscore=0 phishscore=0 impostorscore=0
- malwarescore=0 suspectscore=3 bulkscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009110120
+        Fri, 11 Sep 2020 13:04:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726256AbgIKPCf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 11 Sep 2020 11:02:35 -0400
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96F3E2244C;
+        Fri, 11 Sep 2020 15:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599836481;
+        bh=HtLkUWXhl5XAX6D7GAvZ5uZ8WYlaoexr13YPMrhinX8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m2hilndopgpM3i5Zr85FVrHoQiXHTDnClGX8KRviAY9HEr77R/8UGRPTAjCfWD7NW
+         cMGT0YRkENBOhhs6s66uohG28ICbHaNthrJfjGTlIbVMtDzesDvy0svVkVT30QhP8n
+         4K3pTPXwBJ8w8GP6r2X9LYf2sYI902a8P9r/9cXc=
+Received: by mail-ot1-f53.google.com with SMTP id g96so8553340otb.12;
+        Fri, 11 Sep 2020 08:01:21 -0700 (PDT)
+X-Gm-Message-State: AOAM531UFkJjKx4XGGsA8Fggh2QAbrsh4UX3VfpK1VsPR7FmPY1WP1HR
+        prZXUkXrbaLuANgMS91XxScF7K7+iZm55C/PXck=
+X-Google-Smtp-Source: ABdhPJxBvUOnWvNWSxd3QQ6q9HAFDX1c50DdJzWPSuvJpfyOY08Sgy4lcuMwSkGA/qIXDW6vtgunB8B+AY4P1aKEKoo=
+X-Received: by 2002:a9d:69c9:: with SMTP id v9mr1381498oto.90.1599836480811;
+ Fri, 11 Sep 2020 08:01:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200904072905.25332-1-clin@suse.com> <20200904072905.25332-2-clin@suse.com>
+In-Reply-To: <20200904072905.25332-2-clin@suse.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Fri, 11 Sep 2020 18:01:09 +0300
+X-Gmail-Original-Message-ID: <CAMj1kXEXvmO5mrTcKpqYUASBAQB-1=xLa0vg7KwmvOHMjaQ34w@mail.gmail.com>
+Message-ID: <CAMj1kXEXvmO5mrTcKpqYUASBAQB-1=xLa0vg7KwmvOHMjaQ34w@mail.gmail.com>
+Subject: Re: [PATCH 1/6] efistub: pass uefi secureboot flag via fdt params
+To:     Chester Lin <clin@suse.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Bruno,
+On Fri, 4 Sep 2020 at 10:29, Chester Lin <clin@suse.com> wrote:
+>
+> Add a new UEFI parameter: "linux,uefi-secure-boot" in fdt boot params
+> as other architectures have done in their own boot data. For example,
+> the boot_params->secure_boot in x86.
+>
+> Signed-off-by: Chester Lin <clin@suse.com>
 
-On Fri, 2020-09-04 at 22:20 -0300, Bruno Meneguele wrote:
-> Only prompt the unknown/invalid appraisal option if secureboot is enabled and
-> if the current appraisal state is different from the original one.
-> 
-> Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
+Why do we need this flag? Can't the OS simply check the variable directly?
 
-Thanks.  I tweaked this patch description and that of 4/4.  This patch
-set is in next-integrity-testing.  Please take a look.
-
-thanks,
-
-Mimi
-
+> ---
+>  drivers/firmware/efi/libstub/fdt.c | 39 +++++++++++++++++++++++++++++-
+>  1 file changed, 38 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+> index 11ecf3c4640e..c9a341e4715f 100644
+> --- a/drivers/firmware/efi/libstub/fdt.c
+> +++ b/drivers/firmware/efi/libstub/fdt.c
+> @@ -136,6 +136,10 @@ static efi_status_t update_fdt(void *orig_fdt, unsigned long orig_fdt_size,
+>         if (status)
+>                 goto fdt_set_fail;
+>
+> +       status = fdt_setprop_var(fdt, node, "linux,uefi-secure-boot", fdt_val32);
+> +       if (status)
+> +               goto fdt_set_fail;
+> +
+>         if (IS_ENABLED(CONFIG_RANDOMIZE_BASE)) {
+>                 efi_status_t efi_status;
+>
+> @@ -199,6 +203,24 @@ static efi_status_t update_fdt_memmap(void *fdt, struct efi_boot_memmap *map)
+>         return EFI_SUCCESS;
+>  }
+>
+> +static efi_status_t update_fdt_secboot(void *fdt, u32 secboot)
+> +{
+> +       int node = fdt_path_offset(fdt, "/chosen");
+> +       u32 fdt_val32;
+> +       int err;
+> +
+> +       if (node < 0)
+> +               return EFI_LOAD_ERROR;
+> +
+> +       fdt_val32 = cpu_to_fdt32(secboot);
+> +
+> +       err = fdt_setprop_inplace_var(fdt, node, "linux,uefi-secure-boot", fdt_val32);
+> +       if (err)
+> +               return EFI_LOAD_ERROR;
+> +
+> +       return EFI_SUCCESS;
+> +}
+> +
+>  struct exit_boot_struct {
+>         efi_memory_desc_t       *runtime_map;
+>         int                     *runtime_entry_count;
+> @@ -208,6 +230,9 @@ struct exit_boot_struct {
+>  static efi_status_t exit_boot_func(struct efi_boot_memmap *map,
+>                                    void *priv)
+>  {
+> +       efi_status_t status;
+> +       enum efi_secureboot_mode secboot_status;
+> +       u32 secboot_var = 0;
+>         struct exit_boot_struct *p = priv;
+>         /*
+>          * Update the memory map with virtual addresses. The function will also
+> @@ -217,7 +242,19 @@ static efi_status_t exit_boot_func(struct efi_boot_memmap *map,
+>         efi_get_virtmap(*map->map, *map->map_size, *map->desc_size,
+>                         p->runtime_map, p->runtime_entry_count);
+>
+> -       return update_fdt_memmap(p->new_fdt_addr, map);
+> +       status = update_fdt_memmap(p->new_fdt_addr, map);
+> +
+> +       if (status != EFI_SUCCESS)
+> +               return status;
+> +
+> +       secboot_status = efi_get_secureboot();
+> +
+> +       if (secboot_status == efi_secureboot_mode_enabled)
+> +               secboot_var = 1;
+> +
+> +       status = update_fdt_secboot(p->new_fdt_addr, secboot_var);
+> +
+> +       return status;
+>  }
+>
+>  #ifndef MAX_FDT_SIZE
+> --
+> 2.26.1
+>
