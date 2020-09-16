@@ -2,158 +2,121 @@ Return-Path: <SRS0=IUvC=CZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD24C43461
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Sep 2020 20:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69018C433E2
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Sep 2020 21:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 012E621941
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Sep 2020 20:58:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DF021D24
+	for <linux-integrity@archiver.kernel.org>; Wed, 16 Sep 2020 21:02:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fbB6UXDp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726326AbgIPU6f (ORCPT
+        id S1726384AbgIPVCT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:58:35 -0400
-Received: from mga18.intel.com ([134.134.136.126]:22936 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbgIPQbi (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:31:38 -0400
-IronPort-SDR: Y/0A2LAR0GMjMATsNnqZ0D+rst8Zi4zlHJHt6Wr3fsoMjggmncasDP90Y5ShmHTRbo1e8SPdST
- D4kV4bIH5zYA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9746"; a="147262150"
-X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
-   d="scan'208";a="147262150"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 09:27:12 -0700
-IronPort-SDR: FIvyFKROnFtuDNmzXBPU2pkeO2gEwzdrYXSM4ShGzRB7hBNa/xHIaQcRReX9XCcvsyWY2w0IVi
- PNHGWT3xW+nQ==
-X-IronPort-AV: E=Sophos;i="5.76,433,1592895600"; 
-   d="scan'208";a="451920217"
-Received: from scusackx-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.45.87])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Sep 2020 09:27:09 -0700
-Date:   Wed, 16 Sep 2020 19:27:07 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        kernel test robot <lkp@intel.com>,
-        linux-integrity@vger.kernel.org, kbuild-all@lists.01.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v11 4/5] security: keys: trusted: use ASN.1 TPM2 key
- format for the blobs
-Message-ID: <20200916162707.GF21026@linux.intel.com>
-References: <20200912172643.9063-5-James.Bottomley@HansenPartnership.com>
- <202009131413.8dt8QEc8%lkp@intel.com>
- <1600016571.7833.9.camel@HansenPartnership.com>
- <20200915091140.GC3612@linux.intel.com>
- <CAKwvOdnDJKPJ__sVKX2HmLUWyNPo=b0ccLvyBLyWoFfC0EFkiA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdnDJKPJ__sVKX2HmLUWyNPo=b0ccLvyBLyWoFfC0EFkiA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Wed, 16 Sep 2020 17:02:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726502AbgIPQTJ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 16 Sep 2020 12:19:09 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08GG2RVq051537;
+        Wed, 16 Sep 2020 12:15:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=cPFcV4rzKB/0Ttq4UdnaRFgFQtnB3Rt6bFZmoLbN3TA=;
+ b=fbB6UXDp4J6Nh7LIFvNSPUqmT1WQkclkByz0A/4/8RPFctgDRTVIHJP/lptuWf6Q1YS6
+ eRcWZtzthv/BudMssP5pO2gK8YJxsrur/IcF7FtFz8HjxLojViWlOdVvrYsSKyjodaG/
+ prahTgontzzogWT3mKPaMwlGXMOZZHCrNFdU/ivLBrdMu9wC4fN3be3333rFhYieUU6l
+ QdtFViyeYY4yGF5ss5lGdyDI3Rt5rOMPelfzwuKSW/iEMPYNNMsuvqZfEF3KdinkBkL6
+ 0YkLbk/xQGVbPuM6I6WiwW5bmRnXhWlgnJQpVcV/Oc/E34kSYReeLsqTYWyGXqpLfcCx uw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33knk1h39v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Sep 2020 12:15:27 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08GG3Fpd057597;
+        Wed, 16 Sep 2020 12:15:26 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33knk1h38g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Sep 2020 12:15:26 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08GGEbEP025728;
+        Wed, 16 Sep 2020 16:15:23 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 33k6esgth3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 16 Sep 2020 16:15:23 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08GGFLW922479182
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 16 Sep 2020 16:15:21 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 061B04C05A;
+        Wed, 16 Sep 2020 16:15:21 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4457B4C04E;
+        Wed, 16 Sep 2020 16:15:19 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.98.9])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 16 Sep 2020 16:15:19 +0000 (GMT)
+Message-ID: <3183edb20e3a84c29be6f3e3b459bf51c3355b6b.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 04/12] evm: Execute evm_inode_init_security() only
+ when the HMAC key is loaded
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Wed, 16 Sep 2020 12:15:18 -0400
+In-Reply-To: <20200904092339.19598-5-roberto.sassu@huawei.com>
+References: <20200904092339.19598-1-roberto.sassu@huawei.com>
+         <20200904092339.19598-5-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-16_10:2020-09-16,2020-09-16 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ spamscore=0 suspectscore=0 mlxscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009160114
 Sender: linux-integrity-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 01:20:20PM -0700, Nick Desaulniers wrote:
-> On Tue, Sep 15, 2020 at 2:11 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Sun, Sep 13, 2020 at 10:02:51AM -0700, James Bottomley wrote:
-> > > On Sun, 2020-09-13 at 14:26 +0800, kernel test robot wrote:
-> > > > Hi James,
-> > > >
-> > > > I love your patch! Yet something to improve:
-> > > >
-> > > > [auto build test ERROR on integrity/next-integrity]
-> > > > [also build test ERROR on linus/master v5.9-rc4 next-20200911]
-> > > > [cannot apply to security/next-testing dhowells-fs/fscache-next]
-> > > > [If your patch is applied to the wrong git tree, kindly drop us a
-> > > > note.
-> > > > And when submitting patch, we suggest to use '--base' as documented
-> > > > in
-> > > > https://git-scm.com/docs/git-format-patch]
-> > > >
-> > > > url:    https://github.com/0day-ci/linux/commits/James-Bottomley/TPM-
-> > > > 2-0-trusted-key-rework/20200913-013201
-> > > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-i
-> > > > ntegrity.git next-integrity
-> > > > config: arm-randconfig-r013-20200913 (attached as .config)
-> 
-> arm-randconfig ^  You'll need to download and gunzip then use the config file.
-> 
-> > > > compiler: clang version 12.0.0 (https://github.com/llvm/llvm-project
-> > > > 3170d54842655d6d936aae32b7d0bc92fce7f22e)
-> > > > reproduce (this is a W=1 build):
-> > > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master
-> > > > /sbin/make.cross -O ~/bin/make.cross
-> > > >         chmod +x ~/bin/make.cross
-> > > >         # install arm cross compiling tool for clang build
-> > > >         # apt-get install binutils-arm-linux-gnueabi
-> > > >         # save the attached .config to linux build tree
-> > > >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross
-> > > > ARCH=arm
-> > > >
-> > > > If you fix the issue, kindly add following tag as appropriate
-> > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > >
-> > > > All errors (new ones prefixed by >>):
-> > > >
-> > > > > > security/keys/trusted-keys/trusted_tpm2.c:19:10: fatal error:
-> > > > > > 'tpm2key.asn1.h' file not found
-> > > >
-> > > >    #include "tpm2key.asn1.h"
-> > > >             ^~~~~~~~~~~~~~~~
-> > > >    1 error generated.
-> > >
-> > > Do you have the actual build log for this?  On x86 the build process
-> > > builds any precursors first, which is the tpm2key.asn1.o, which
-> > > generates that header file, so we see:
-> > >
-> > >   ASN.1   security/keys/trusted-keys/tpm2key.asn1.[ch]
-> > >   CC [M]  security/keys/trusted-keys/trusted_tpm2.o
-> > >   CC [M]  security/keys/trusted-keys/tpm2-policy.o
-> > >   CC [M]  security/keys/trusted-keys/tpm2key.asn1.o
-> > >   LD [M]  security/keys/trusted-keys/trusted.o
-> > >
-> > > Is ARM doing a lazier version of that?  In which case the fix might be
-> > > to move trusted_tpm2.o to after tpm2key.asn1.o in the Makefile, this
-> > > line:
-> > >
-> > > trusted-y += trusted_tpm2.o tpm2key.asn1.o
-> > >
-> > > James
-> >
-> > You can try to reproduce the arm build with BuildRoot. That's what I
-> > usually do when bumping something like this with arm.
-> 
-> You shouldn't need buildroot for build failures (we use buildroot, for
-> boot testing).
-> 
-> For an arm build, you should be able to cross compile with:
-> $ ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- make CC=clang -j
-> 
-> (You can try without CC=clang first, may not be clang specific)
-> (You should install arm-linux-gnueabihf-gcc and the same for binutils.
-> Some distros have separate target triples without `hf` in them; either
-> should be fine for the kernel as long as your invocation of make
-> matches what you have installed).
-> -- 
-> Thanks,
-> ~Nick Desaulniers
+Hi Roberto,
 
-Hmm... How do I get a cross compiler in the first place for ARM?
-I use BuildRoot just to get the cross compile chain.
+On Fri, 2020-09-04 at 11:23 +0200, Roberto Sassu wrote:
+> evm_inode_init_security() requires the HMAC key to calculate the HMAC on
+> initial xattrs provided by LSMs. Unfortunately, with the evm_key_loaded()
+> check, the function continues even if the HMAC key is not loaded
+> (evm_key_loaded() returns true also if EVM has been initialized only with a
+> public key). If the HMAC key is not loaded, evm_inode_init_security()
+> returns an error later when it calls evm_init_hmac().
 
-The compiler that you use in your example is unfortunately not
-preincluded to my Ubuntu installation...
+This is all true, but the context for why it wasn't an issue previously
+is missing.
 
-/Jarkko
+The original usecase for allowing signature verificaton prior to
+loading the HMAC key was a fully signed, possibly immutable, initrd. 
+No new files were created or, at least, were in policy until the HMAC
+key was loaded.   More recently support for requiring an EVM HMAC key
+was removed.  Files having a portable and immutable signature were
+given additional privileges.
+
+Please update the patch description with the context of what has
+changed.
+
+Mimi
+
