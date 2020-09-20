@@ -2,143 +2,107 @@ Return-Path: <SRS0=A54V=C5=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4546EC43463
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Sep 2020 16:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496F9C43465
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Sep 2020 16:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 167EF214F1
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Sep 2020 16:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB210214F1
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Sep 2020 16:33:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="hMkn+c0R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbgITQWO (ORCPT
+        id S1726311AbgITQd6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 20 Sep 2020 12:22:14 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:47448 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726375AbgITQWA (ORCPT
+        Sun, 20 Sep 2020 12:33:58 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42102 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726267AbgITQd6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 20 Sep 2020 12:22:00 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0U9VME2p_1600618867;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U9VME2p_1600618867)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 21 Sep 2020 00:21:07 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
+        Sun, 20 Sep 2020 12:33:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C7B238EE1C3;
+        Sun, 20 Sep 2020 09:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1600619637;
+        bh=dJCCx6emeShuTI19LmYiADaWvZz8J6xU7s7ioY2/PWc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hMkn+c0RZQxqVoLC+NVqpuaI/dVXB2Xp6AMILPLmVNuC4K3LJskqkeiFy9iaxqQ/i
+         osIY4BzcABasQiwshex3YwWcgwzFnurAZfCvcOYyuqTsI8YTMjsKoz+cSwpbRFaUmW
+         m9o6LTokLaSmuimWFm29MkHZn/zv9IJenLuJIhTc=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Mn5rpNTaX-qV; Sun, 20 Sep 2020 09:33:57 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3EB1F8EE107;
+        Sun, 20 Sep 2020 09:33:57 -0700 (PDT)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        "Gilad Ben-Yossef" <gilad@benyossef.com>,
-        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v7 06/10] crypto: testmgr - Fix potential memory leak in test_akcipher_one()
-Date:   Mon, 21 Sep 2020 00:20:59 +0800
-Message-Id: <20200920162103.83197-7-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.3.ge56e4f7
-In-Reply-To: <20200920162103.83197-1-tianjia.zhang@linux.alibaba.com>
-References: <20200920162103.83197-1-tianjia.zhang@linux.alibaba.com>
+        David Woodhouse <dwmw2@infradead.org>,
+        keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
+Subject: [PATCH v12 0/5] TPM 2.0 trusted key rework
+Date:   Sun, 20 Sep 2020 09:33:46 -0700
+Message-Id: <20200920163351.11293-1-James.Bottomley@HansenPartnership.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-When the 'key' allocation fails, the 'req' will not be released,
-which will cause memory leakage on this path. This patch adds a
-'free_req' tag used to solve this problem, and two new err values
-are added to reflect the real reason of the error.
+Update to fix blobauth parsing problem.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+General cover letter minus policy bit:
+
+This patch updates the trusted key code to export keys in the ASN.1
+format used by current TPM key tools (openssl_tpm2_engine and
+openconnect).  The current code will try to load keys containing
+policy, but being unable to formulate the policy commands necessary to
+load them, the unseal will always fail unless the policy is executed
+in user space and a pre-formed policy session passed in.
+
+The key format is designed to be compatible with our two openssl
+engine implementations as well as with the format used by openconnect.
+I've added seal/unseal to my engine so I can use it for
+interoperability testing and I'll later use this for sealed symmetric
+keys via engine:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/
+
+James
+
 ---
- crypto/testmgr.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index cd002a030af5..ed8e29efe280 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3954,7 +3954,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	key = kmalloc(vecs->key_len + sizeof(u32) * 2 + vecs->param_len,
- 		      GFP_KERNEL);
- 	if (!key)
--		goto free_xbuf;
-+		goto free_req;
- 	memcpy(key, vecs->key, vecs->key_len);
- 	ptr = key + vecs->key_len;
- 	ptr = test_pack_u32(ptr, vecs->algo);
-@@ -3966,7 +3966,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	else
- 		err = crypto_akcipher_set_priv_key(tfm, key, vecs->key_len);
- 	if (err)
--		goto free_req;
-+		goto free_key;
- 
- 	/*
- 	 * First run test which do not require a private key, such as
-@@ -3976,7 +3976,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	out_len_max = crypto_akcipher_maxsize(tfm);
- 	outbuf_enc = kzalloc(out_len_max, GFP_KERNEL);
- 	if (!outbuf_enc)
--		goto free_req;
-+		goto free_key;
- 
- 	if (!vecs->siggen_sigver_test) {
- 		m = vecs->m;
-@@ -3995,6 +3995,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 		op = "verify";
- 	}
- 
-+	err = -E2BIG;
- 	if (WARN_ON(m_size > PAGE_SIZE))
- 		goto free_all;
- 	memcpy(xbuf[0], m, m_size);
-@@ -4061,6 +4062,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 		c_size = req->dst_len;
- 	}
- 
-+	err = -E2BIG;
- 	op = vecs->siggen_sigver_test ? "sign" : "decrypt";
- 	if (WARN_ON(c_size > PAGE_SIZE))
- 		goto free_all;
-@@ -4097,9 +4099,10 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- free_all:
- 	kfree(outbuf_dec);
- 	kfree(outbuf_enc);
-+free_key:
-+	kfree(key);
- free_req:
- 	akcipher_request_free(req);
--	kfree(key);
- free_xbuf:
- 	testmgr_free_buf(xbuf);
- 	return err;
+James Bottomley (5):
+  lib: add ASN.1 encoder
+  oid_registry: Add TCG defined OIDS for TPM keys
+  security: keys: trusted: fix TPM2 authorizations
+  security: keys: trusted: use ASN.1 TPM2 key format for the blobs
+  security: keys: trusted: Make sealed key properly interoperable
+
+ .../security/keys/trusted-encrypted.rst       |  58 +++
+ include/keys/trusted-type.h                   |   2 +
+ include/linux/asn1_encoder.h                  |  32 ++
+ include/linux/oid_registry.h                  |   5 +
+ include/linux/tpm.h                           |   2 +
+ lib/Kconfig                                   |   3 +
+ lib/Makefile                                  |   1 +
+ lib/asn1_encoder.c                            | 454 ++++++++++++++++++
+ security/keys/Kconfig                         |   1 +
+ security/keys/trusted-keys/Makefile           |   2 +-
+ security/keys/trusted-keys/tpm2key.asn1       |  11 +
+ security/keys/trusted-keys/trusted_tpm1.c     |  34 +-
+ security/keys/trusted-keys/trusted_tpm2.c     | 266 +++++++++-
+ 13 files changed, 840 insertions(+), 31 deletions(-)
+ create mode 100644 include/linux/asn1_encoder.h
+ create mode 100644 lib/asn1_encoder.c
+ create mode 100644 security/keys/trusted-keys/tpm2key.asn1
+
 -- 
-2.19.1.3.ge56e4f7
+2.26.2
 
