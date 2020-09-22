@@ -1,153 +1,108 @@
-Return-Path: <SRS0=63nm=C6=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=GpUp=C7=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D014C4363C
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Sep 2020 21:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA65C4346E
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Sep 2020 02:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1860F23A61
-	for <linux-integrity@archiver.kernel.org>; Mon, 21 Sep 2020 21:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A4CF23A75
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Sep 2020 02:28:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="m5Kqn221";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JDpWeIg5"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="D9HMXojr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgIUVbj (ORCPT
+        id S1729616AbgIVC2N (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 21 Sep 2020 17:31:39 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54318 "EHLO
+        Mon, 21 Sep 2020 22:28:13 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:35624 "EHLO
         bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726930AbgIUVbj (ORCPT
+        by vger.kernel.org with ESMTP id S1728949AbgIVC2N (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 21 Sep 2020 17:31:39 -0400
+        Mon, 21 Sep 2020 22:28:13 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 28CF98EE194;
-        Mon, 21 Sep 2020 14:31:38 -0700 (PDT)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id B650D8EE194;
+        Mon, 21 Sep 2020 19:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1600723898;
-        bh=p71+JgwogRw2iWBePs1UqpzC6HsL3jZwWKcEVepmafM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=m5Kqn221FR1QojQGaBtPCoMX2hqNotE/7zL8eXFlbxBQG0fWSzH8VQowQa8jDMBim
-         q6ZxAm0f2wF2qIjsxdrw3O2lAqKFtkk3lkh5ubT1+K+5zVqUDqR5axiR/WOyntP2HJ
-         Iv887jWTqBqH/Zi5lz/kQ/sr2MI+BAIgNbAGJo4U=
+        s=20151216; t=1600741692;
+        bh=7L2UktFYKAFj7EsYb2zzL57xZpe3m1TuQMkBDDO3Zn4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D9HMXojrRePe5iWEISu5tPdso7/xMw+lY/sQqZzAiLIO1TpEoMsBj9+dDbQcylyDE
+         QgrxOESDhgL/lUsGXkHF6uVEyal1CvigW3NyTM6LvG9gUSGP7OcDxg1M62nPczRghv
+         sxnyn2btVdZqjx8CKQVsqPJkXDLD9i9qpD/l5LmQ=
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 1_w9Ny52yK9i; Mon, 21 Sep 2020 14:31:38 -0700 (PDT)
-Received: from jarvis (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 646D98EE0CF;
-        Mon, 21 Sep 2020 14:31:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1600723897;
-        bh=p71+JgwogRw2iWBePs1UqpzC6HsL3jZwWKcEVepmafM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=JDpWeIg5o4b9DBD3Yw3ssI27FTff850qKtncQxRSzCCijldxpJVTvz9wUtOFrj14Y
-         zRRFtt7c3z6oPss/a1nsPWxXSO8fsdtpLXd4719IinCB5H6CMEXaPL8g+SoIISkLIL
-         5tqdnn3G702XphduMzURi7OCBex6JOe/0fUhYdfY=
-Message-ID: <2d395d924b70fba7f1867eb83946497ce1f6eb47.camel@HansenPartnership.com>
-Subject: Re: [PATCH v12 4/5] security: keys: trusted: use ASN.1 TPM2 key
- format for the blobs
+        with ESMTP id UAHQKGLfl0X5; Mon, 21 Sep 2020 19:28:12 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 22AE68EE0CF;
+        Mon, 21 Sep 2020 19:28:12 -0700 (PDT)
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     kernel test robot <lkp@intel.com>, linux-integrity@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
-        Mimi Zohar <zohar@linux.ibm.com>,
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         David Woodhouse <dwmw2@infradead.org>,
         keyrings@vger.kernel.org, David Howells <dhowells@redhat.com>
-Date:   Mon, 21 Sep 2020 14:31:35 -0700
-In-Reply-To: <202009210844.KCwzdqmx%lkp@intel.com>
-References: <20200920163351.11293-5-James.Bottomley@HansenPartnership.com>
-         <202009210844.KCwzdqmx%lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+Subject: [PATCH v13 0/5] TPM 2.0 trusted key rework
+Date:   Mon, 21 Sep 2020 19:28:04 -0700
+Message-Id: <20200922022809.7105-1-James.Bottomley@HansenPartnership.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2020-09-21 at 08:07 +0800, kernel test robot wrote:
-> Hi James,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on integrity/next-integrity]
-> [also build test ERROR on linus/master v5.9-rc5 next-20200918]
-> [cannot apply to security/next-testing dhowells-fs/fscache-next]
-> [If your patch is applied to the wrong git tree, kindly drop us a
-> note. And when submitting patch, we suggest to use '--base' as
-> documented in https://git-scm.com/docs/git-format-patch]
-> 
-> url:    
-> https://github.com/0day-ci/linux/commits/James-Bottomley/TPM-2-0-trusted-key-rework/20200921-003922
-> base:   
-> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-> next-integrity
-> config: x86_64-randconfig-a003-20200921 (attached as .config)
-> compiler: clang version 12.0.0 (https://github.com/llvm/llvm-project
-> f4e554180962aa6bc93678898b6933ea712bde50)
-> reproduce (this is a W=1 build):
->         wget 
-> https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
-> -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # install x86_64 cross compiling tool for clang build
->         # apt-get install binutils-x86-64-linux-gnu
->         # save the attached .config to linux build tree
->         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross
-> ARCH=x86_64 
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
-> > > make[4]: *** No rule to make target 'security/keys/trusted-
-> > > keys/tpm2key.asn1.o', needed by 'security/keys/trusted-
-> > > keys/built-in.a'.
->    make[4]: *** [scripts/Makefile.build:283: security/keys/trusted-
-> keys/trusted_tpm2.o] Error 1
->    make[4]: Target '__build' not remade because of errors.
+Updated to fix compile problem identified by 0day
 
+General cover letter minus policy bit:
 
-So can I still add that tracking this down involved installing an
-entirely unnecessary ARM build environment, which was a huge effort I
-didn't need to do if you'd just provided the build log which fingered
-the ASN.1 compiler problem if you know what to look for.
+This patch updates the trusted key code to export keys in the ASN.1
+format used by current TPM key tools (openssl_tpm2_engine and
+openconnect).  The current code will try to load keys containing
+policy, but being unable to formulate the policy commands necessary to
+load them, the unseal will always fail unless the policy is executed
+in user space and a pre-formed policy session passed in.
 
-The reason for the problem is because ASN1 isn't selected in the
-Kconfig which causes the ASN.1 compiler not to be built.  The way our
-current build rules are structured causes the make rule for this simply
-to be skipped, which means you have to know to look for the absence of
-ASN.1 in the build log.  I propose adding this to the build rules,
-which produces the much more explicit:
+The key format is designed to be compatible with our two openssl
+engine implementations as well as with the format used by openconnect.
+I've added seal/unseal to my engine so I can use it for
+interoperability testing and I'll later use this for sealed symmetric
+keys via engine:
 
-/home/jejb/git/linux-build/scripts/Makefile.build:387: *** CONFIG_ASN1 must be defined for the asn1_compiler.  Stop.
-make[3]: *** [/home/jejb/git/linux-build/scripts/Makefile.build:505: security/keys/trusted-keys] Error 2
+https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/
 
 James
 
 ---
 
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index a467b9323442..bca7003beac8 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -382,6 +382,11 @@ quiet_cmd_asn1_compiler = ASN.1   $(basename $@).[ch]
-       cmd_asn1_compiler = $(objtree)/scripts/asn1_compiler $< \
- 				$(basename $@).c $(basename $@).h
- 
-+ifndef CONFIG_ASN1
-+$(objtree)/scripts/asn1_compiler:
-+	$(error CONFIG_ASN1 must be defined for the asn1_compiler)
-+endif
-+
- $(obj)/%.asn1.c $(obj)/%.asn1.h: $(src)/%.asn1 $(objtree)/scripts/asn1_compiler
- 	$(call cmd,asn1_compiler)
- 
+James Bottomley (5):
+  lib: add ASN.1 encoder
+  oid_registry: Add TCG defined OIDS for TPM keys
+  security: keys: trusted: fix TPM2 authorizations
+  security: keys: trusted: use ASN.1 TPM2 key format for the blobs
+  security: keys: trusted: Make sealed key properly interoperable
+
+ .../security/keys/trusted-encrypted.rst       |  58 +++
+ include/keys/trusted-type.h                   |   2 +
+ include/linux/asn1_encoder.h                  |  32 ++
+ include/linux/oid_registry.h                  |   5 +
+ include/linux/tpm.h                           |   2 +
+ lib/Kconfig                                   |   3 +
+ lib/Makefile                                  |   1 +
+ lib/asn1_encoder.c                            | 454 ++++++++++++++++++
+ security/keys/Kconfig                         |   2 +
+ security/keys/trusted-keys/Makefile           |   4 +-
+ security/keys/trusted-keys/tpm2key.asn1       |  11 +
+ security/keys/trusted-keys/trusted_tpm1.c     |  34 +-
+ security/keys/trusted-keys/trusted_tpm2.c     | 266 +++++++++-
+ 13 files changed, 843 insertions(+), 31 deletions(-)
+ create mode 100644 include/linux/asn1_encoder.h
+ create mode 100644 lib/asn1_encoder.c
+ create mode 100644 security/keys/trusted-keys/tpm2key.asn1
+
+-- 
+2.26.2
 
