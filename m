@@ -2,203 +2,172 @@ Return-Path: <SRS0=7pxT=DA=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5595C47427
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Sep 2020 19:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 986C3C4727E
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Sep 2020 19:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 894EB235FD
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Sep 2020 19:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A5F220BED
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Sep 2020 19:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oaU1G+GL"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kGXISa+f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgIWTUn (ORCPT
+        id S1726582AbgIWTlI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Sep 2020 15:20:43 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47388 "EHLO
+        Wed, 23 Sep 2020 15:41:08 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:50450 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbgIWTUW (ORCPT
+        with ESMTP id S1726156AbgIWTlH (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Sep 2020 15:20:22 -0400
-Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 450352089E57;
-        Wed, 23 Sep 2020 12:20:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 450352089E57
+        Wed, 23 Sep 2020 15:41:07 -0400
+Received: from [192.168.254.38] (unknown [47.187.206.220])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 24DE220B7179;
+        Wed, 23 Sep 2020 12:41:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 24DE220B7179
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600888820;
-        bh=pcLyMA0uNkykd7e9lq2gKboYQH9AWY9Kdkta8tpqSsw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oaU1G+GL318AUbfV78EANkWork+aJE4AVqJfgsfPA3yWu/1Mh3HIzMJ4PpkXXFBb0
-         x7B3wZD/g22immRpaIe9Tab93VohJy3idzPfNjeCyf0kOEzuZOGzzzEIjafVp2w7Hu
-         Lr0jpcN1n8mURwrDPh6fyILxUK3T6U4IBVkrobCI=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v4 3/6] IMA: update process_buffer_measurement to measure buffer hash
-Date:   Wed, 23 Sep 2020 12:20:08 -0700
-Message-Id: <20200923192011.5293-4-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
-References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
+        s=default; t=1600890066;
+        bh=SHLv6M19mTEA3Q+HMwGO2d17v134ff6kOkHWg2oExmk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kGXISa+fmD0BCDpEQnnCH9Pq25TnzBLU7eNC7j4udIn/khcedGMZt32Iq7JAPGchg
+         luAP/WHcUq9x1xW1/50YFmrTM0/nW5osVqFkqlgScNmlE+wnu2v0ZixY9PaCUGo0Y4
+         MRQIBAlfv+g5G8+XBslF45bPRw9XRky7bkjKl3Bc=
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Solar Designer <solar@openwall.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net,
+        Rich Felker <dalias@libc.org>
+References: <20200922215326.4603-1-madvenka@linux.microsoft.com>
+ <20200923081426.GA30279@amd> <20200923091456.GA6177@openwall.com>
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Message-ID: <1c3acf03-94af-1d5e-00c6-d874ee0ef330@linux.microsoft.com>
+Date:   Wed, 23 Sep 2020 14:41:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200923091456.GA6177@openwall.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-process_buffer_measurement() currently only measures the input buffer.
-In case of SeLinux policy measurement, the policy being measured could
-be large (several MB). This may result in a large entry in IMA
-measurement log.
 
-Introduce a boolean parameter measure_buf_hash to support measuring
-hash of a buffer, which would be much smaller, instead of the buffer
-itself.
 
-To use the functionality introduced in this patch, the attestation
-client and the server changes need to go hand in hand. The
-client/kernel would know what data is being measured as-is
-(e.g. KEXEC_CMDLINE), and what data has it’s hash measured (e.g. SeLinux
-Policy). And the attestation server should verify data/hash accordingly.
+On 9/23/20 4:14 AM, Solar Designer wrote:
+>>> The W^X implementation today is not complete. There exist many user level
+>>> tricks that can be used to load and execute dynamic code. E.g.,
+>>>
+>>> - Load the code into a file and map the file with R-X.
+>>>
+>>> - Load the code in an RW- page. Change the permissions to R--. Then,
+>>>   change the permissions to R-X.
+>>>
+>>> - Load the code in an RW- page. Remap the page with R-X to get a separate
+>>>   mapping to the same underlying physical page.
+>>>
+>>> IMO, these are all security holes as an attacker can exploit them to inject
+>>> his own code.
+>> IMO, you are smoking crack^H^H very seriously misunderstanding what
+>> W^X is supposed to protect from.
+>>
+>> W^X is not supposed to protect you from attackers that can already do
+>> system calls. So loading code into a file then mapping the file as R-X
+>> is in no way security hole in W^X.
+>>
+>> If you want to provide protection from attackers that _can_ do system
+>> calls, fine, but please don't talk about W^X and please specify what
+>> types of attacks you want to prevent and why that's good thing.
+> On one hand, Pavel is absolutely right.  It is ridiculous to say that
+> "these are all security holes as an attacker can exploit them to inject
+> his own code."
+> 
 
-Just like the data being measured in other cases, the attestation server
-will know what are possible values of the large buffers being measured.
-e.g. the possible valid SeLinux policy values that are being pushed to
-the client. The attestation server will have to maintain the hash of
-those buffer values.
+Why? Isn't it possible that an attacker can exploit some vulnerability such
+as buffer overflow and overwrite the buffer that contains the dynamic code?
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
----
- security/integrity/ima/ima.h                 |  3 ++-
- security/integrity/ima/ima_appraise.c        |  2 +-
- security/integrity/ima/ima_asymmetric_keys.c |  2 +-
- security/integrity/ima/ima_main.c            | 25 ++++++++++++++++++--
- security/integrity/ima/ima_queue_keys.c      |  3 ++-
- 5 files changed, 29 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 8875085db689..0f77e0b697a3 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -267,7 +267,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct ima_template_desc *template_desc);
- void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
--				int pcr, const char *func_data);
-+				int pcr, const char *func_data,
-+				bool measure_buf_hash);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 372d16382960..20adffe5bf58 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -336,7 +336,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
- 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
- 			process_buffer_measurement(NULL, digest, digestsize,
- 						   "blacklisted-hash", NONE,
--						   pcr, NULL);
-+						   pcr, NULL, false);
- 	}
- 
- 	return rc;
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index 1c68c500c26f..a74095793936 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -60,5 +60,5 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	 */
- 	process_buffer_measurement(NULL, payload, payload_len,
- 				   keyring->description, KEY_CHECK, 0,
--				   keyring->description);
-+				   keyring->description, false);
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c870fd6d2f83..6888fc372abf 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -733,12 +733,15 @@ int ima_load_data(enum kernel_load_data_id id)
-  * @func: IMA hook
-  * @pcr: pcr to extend the measurement
-  * @func_data: private data specific to @func, can be NULL.
-+ * @measure_buf_hash: if set to true - will measure hash of the buf,
-+ *                    instead of buf
-  *
-  * Based on policy, the buffer is measured into the ima log.
-  */
- void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
--				int pcr, const char *func_data)
-+				int pcr, const char *func_data,
-+				bool measure_buf_hash)
- {
- 	int ret = 0;
- 	const char *audit_cause = "ENOMEM";
-@@ -753,6 +756,8 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 		struct ima_digest_data hdr;
- 		char digest[IMA_MAX_DIGEST_SIZE];
- 	} hash = {};
-+	char digest_hash[IMA_MAX_DIGEST_SIZE];
-+	int hash_len = hash_digest_size[ima_hash_algo];
- 	int violation = 0;
- 	int action = 0;
- 	u32 secid;
-@@ -801,6 +806,21 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
- 		goto out;
- 	}
- 
-+	if (measure_buf_hash) {
-+		memcpy(digest_hash, hash.hdr.digest, hash_len);
-+
-+		ret = ima_calc_buffer_hash(digest_hash,
-+					   hash_len,
-+					   iint.ima_hash);
-+		if (ret < 0) {
-+			audit_cause = "measure_buf_hash_error";
-+			goto out;
-+		}
-+
-+		event_data.buf = digest_hash;
-+		event_data.buf_len = hash_len;
-+	}
-+
- 	ret = ima_alloc_init_template(&event_data, &entry, template);
- 	if (ret < 0) {
- 		audit_cause = "alloc_entry";
-@@ -842,7 +862,8 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- 		return;
- 
- 	process_buffer_measurement(file_inode(f.file), buf, size,
--				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL);
-+				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL,
-+				   false);
- 	fdput(f);
- }
- 
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index 69a8626a35c0..c2f2ad34f9b7 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -162,7 +162,8 @@ void ima_process_queued_keys(void)
- 						   entry->payload_len,
- 						   entry->keyring_name,
- 						   KEY_CHECK, 0,
--						   entry->keyring_name);
-+						   entry->keyring_name,
-+						   false);
- 		list_del(&entry->list);
- 		ima_free_key_entry(entry);
- 	}
--- 
-2.17.1
+> On the other hand, "what W^X is supposed to protect from" depends on how
+> the term W^X is defined (historically, by PaX and OpenBSD).  It may be
+> that W^X is partially not a feature to defeat attacks per se, but also a
+> policy enforcement feature preventing use of dangerous techniques (JIT).
+> 
+> Such policy might or might not make sense.  It might make sense for ease
+> of reasoning, e.g. "I've flipped this setting, and now I'm certain the
+> system doesn't have JIT within a process (can still have it through
+> dynamically creating and invoking an entire new program), so there are
+> no opportunities for an attacker to inject code nor generate previously
+> non-existing ROP gadgets into an executable mapping within a process."
+> 
+> I do find it questionable whether such policy and such reasoning make
+> sense beyond academia.
+> 
+> Then, there might be even more ways in which W^X is not perfect enough
+> to enable such reasoning.  What about using ptrace(2) to inject code?
+> Should enabling W^X also disable ability to debug programs by non-root?
+> We already have Yama ptrace_scope, which can achieve that at the highest
+> setting, although that's rather inconvenient and is probably unexpected
+> by most to be a requirement for having (ridiculously?) full W^X allowing
+> for the academic reasoning.
+> 
 
+I am not suggesting that W^X be fixed. That is up to the maintainers of that
+code. I am saying that if the security subsystem is enhanced in the future with
+policies and settings that prevent the user tricks I mentioned, then it becomes
+impossible to execute dynamic code except by making security exceptions on a case
+by case basis.
+
+As an alternative to making security exceptions, one could convert dynamic code
+to static code which can then be authenticated.
+
+> Personally, I am for policies that make more practical sense.  For
+> example, years ago I advocated here on kernel-hardening that we should
+> have a mode where ELF flags enabling/disabling executable stack are
+> ignored, and non-executable stack is always enforced.  This should also
+> be extended to default (at program startup) permissions on more than
+> just stack (but also on .bss, typical libcs' heap allocations, etc.)
+> However, I am not convinced there's enough value in extending the policy
+> to restricting explicit uses of mprotect(2).
+> 
+> Yes, PaX did that, and its emutramp.txt said "runtime code generation is
+> by its nature incompatible with PaX's PAGEEXEC/SEGMEXEC and MPROTECT
+> features, therefore the real solution is not in emulation but by
+> designing a kernel API for runtime code generation and modifying
+> userland to make use of it."  However, not being convinced in the
+> MPROTECT feature having enough practical value, I am also not convinced
+> "a kernel API for runtime code generation and modifying userland to make
+> use of it" is the way to go.
+> 
+
+In a separate email, I will try to answer this and provide justification
+for why it is better to do it in the kernel.
+
+> Having static instead of dynamically-generated trampolines in userland
+> code where possible (and making other userland/ABI changes to make that
+> possible in more/all cases) is an obvious improvement, and IMO should be
+> a priority over the above.
+>
+
+> While I share my opinion here, I don't mean that to block Madhavan's
+> work.  I'd rather defer to people more knowledgeable in current userland
+> and ABI issues/limitations and plans on dealing with those, especially
+> to Florian Weimer.  I haven't seen Florian say anything specific for or
+> against Madhavan's proposal, and I'd like to.  (Have I missed that?)
+> It'd be wrong to introduce a kernel API that userland doesn't need, and
+> it'd be right to introduce one that userland actually intends to use.
+> 
+> I've also added Rich Felker to CC here, for musl libc and its possible
+> intent to use the proposed API.  (My guess is there's no such need, and
+> thus no intent, but Rich might want to confirm that or correct me.)
+> 
+> Alexander
+
+Madhavan
