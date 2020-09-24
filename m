@@ -2,246 +2,323 @@ Return-Path: <SRS0=Yu55=DB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991F8C4363D
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 15:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D3C4363D
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 15:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C4DA206B2
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 15:02:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dJZAnOWH"
+	by mail.kernel.org (Postfix) with ESMTP id 159192311A
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 15:32:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbgIXPCJ (ORCPT
+        id S1728514AbgIXPcr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 24 Sep 2020 11:02:09 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:60638 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgIXPCI (ORCPT
+        Thu, 24 Sep 2020 11:32:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39530 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728502AbgIXPcq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 Sep 2020 11:02:08 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OF062S123345;
-        Thu, 24 Sep 2020 15:00:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2020-01-29;
- bh=cELzVuMzCPT3axjaAeiEoxE5gCcx4JGS/89qgFwwGjc=;
- b=dJZAnOWHg7MuyRDw+xyXx9dYFAt67GAK28MGWTMHNeQaJuAAhC4nRWLIVbDvexjWcwga
- kFyFy4k4gQBiv+DVLi+56UBgJtbn/H2TVUXcHkA0I17daxAXRcTjwkgQLCXhU+Dc3qxp
- MQILaP4wqnAtRewoOW5OO5V2mZE0fX0FzNmmc5jTJ/LpElcZPCzlJY3pRLTVhVDTPxBB
- tJeCzMJ1basCoNJHFwY8KQ+1ZGpfwIzsBQZf5l0PzS8ZEtUk8zC+FcvA3YMOw3agzOyI
- BKtyddq9PRnrSTeLYDmAc4RxhlMuH2krmAcnjixiVhZejRV43sn5vs80uHNMdGXddzvg rQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2130.oracle.com with ESMTP id 33qcpu5qqj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Sep 2020 15:00:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OEu93S177146;
-        Thu, 24 Sep 2020 14:58:12 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 33r28x3vg9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Sep 2020 14:58:12 +0000
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08OEw7CH022535;
-        Thu, 24 Sep 2020 14:58:07 GMT
-Received: from disposition.us.oracle.com (/10.152.32.81)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 24 Sep 2020 07:58:07 -0700
-From:   Ross Philipson <ross.philipson@oracle.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        luto@amacapital.net, trenchboot-devel@googlegroups.com
-Subject: [PATCH 00/13] x86: Trenchboot secure dynamic launch Linux kernel support
-Date:   Thu, 24 Sep 2020 10:58:28 -0400
-Message-Id: <1600959521-24158-1-git-send-email-ross.philipson@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- suspectscore=0 adultscore=0 bulkscore=0 malwarescore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009240114
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 spamscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009240115
+        Thu, 24 Sep 2020 11:32:46 -0400
+Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fad])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37109C0613D3;
+        Thu, 24 Sep 2020 08:32:46 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BxzZN3MsSzlhS6g;
+        Thu, 24 Sep 2020 17:32:44 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BxzZM5Qlbzlppyp;
+        Thu, 24 Sep 2020 17:32:43 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: [PATCH v10 2/3] arch: Wire up trusted_for(2)
+Date:   Thu, 24 Sep 2020 17:32:27 +0200
+Message-Id: <20200924153228.387737-3-mic@digikod.net>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200924153228.387737-1-mic@digikod.net>
+References: <20200924153228.387737-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The Trenchboot project focus on boot security has led to the enabling of
-the Linux kernel to be directly invocable by the x86 Dynamic Launch
-instruction(s) for establishing a Dynamic Root of Trust for Measurement
-(DRTM). The dynamic launch will be initiated by a boot loader with
-associated support added to it, for example the first targeted boot
-loader will be GRUB2. An integral part of establishing the DRTM involves
-measuring everything that is intended to be run (kernel image, initrd,
-etc) and everything that will configure that kernel to run (command
-line, boot params, etc) into specific PCRs, the DRTM PCRs (17-22), in
-the TPM. Another key aspect is the dynamic launch is rooted in hardware,
-that is to say the hardware (CPU) is what takes the first measurement
-for the chain of integrity measurements. On Intel this is done using
-the GETSEC instruction provided by Intel's TXT and the SKINIT
-instruction provided by AMD's AMD-V. Information on these technologies
-can be readily found online. This patchset introduces Intel TXT support.
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-To enable the kernel to be launched by GETSEC, a stub must be built
-into the setup section of the compressed kernel to handle the specific
-state that the dynamic launch process leaves the BSP in. This is
-analogous to the EFI stub that is found in the same area. Also this stub
-must measure everything that is going to be used as early as possible.
-This stub code and subsequent code must also deal with the specific
-state that the dynamic launch leaves the APs in.
+Wire up trusted_for(2) for all architectures.
 
-A quick note on terminology. The larger open source project itself is
-called Trenchboot, which is hosted on Github (links below). The kernel
-feature enabling the use of the x86 technology is referred to as "Secure
-Launch" within the kernel code. As such the prefixes sl_/SL_ or
-slaunch/SLAUNCH will be seen in the code. The stub code discussed above
-is referred to as the SL stub.
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+---
 
-The basic flow is:
+Changes since v9:
+* Rename introspect_access(2) to trusted_for(2).
+* Increase syscall number to leave space for memfd_secret(2) in -next.
 
- - Entry from the dynamic launch jumps to the SL stub
- - SL stub fixes up the world on the BSP
- - For TXT, SL stub wakes the APs, fixes up their worlds
- - For TXT, APs are left halted waiting for an NMI to wake them
- - SL stub jumps to startup_32
- - SL main runs to measure configuration and module information into the
-   DRTM PCRs. It also locates the TPM event log.
- - Kernel boot proceeds normally from this point.
- - During early setup, slaunch_setup() runs to finish some validation
-   and setup tasks.
- - The SMP bringup code is modified to wake the waiting APs. APs vector
-   to rmpiggy and start up normally from that point.
- - Kernel boot finishes booting normally
- - SL securityfs module is present to allow reading and writing of the
-   TPM event log.
- - SEXIT support to leave SMX mode is present on the kexec path and
-   the various reboot paths (poweroff, reset, halt).
+Changes since v7:
+* New patch for the new syscall.
+* Increase syscall numbers by 2 to leave space for new ones (in
+  linux-next): watch_mount(2) and process_madvise(2).
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
+ arch/arm/tools/syscall.tbl                  | 1 +
+ arch/arm64/include/asm/unistd.h             | 2 +-
+ arch/arm64/include/asm/unistd32.h           | 2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
+ arch/s390/kernel/syscalls/syscall.tbl       | 1 +
+ arch/sh/kernel/syscalls/syscall.tbl         | 1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
+ include/uapi/asm-generic/unistd.h           | 4 +++-
+ 19 files changed, 22 insertions(+), 2 deletions(-)
 
-Links:
-
-The Trenchboot project including documentation:
-
-https://github.com/trenchboot
-
-Intel TXT is documented in its own specification and in the SDM Instruction Set volume:
-
-https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
-https://software.intel.com/en-us/articles/intel-sdm
-
-AMD SKINIT is documented in the System Programming manual:
-
-https://www.amd.com/system/files/TechDocs/24593.pdf
-
-GRUB2 pre-launch support patchset (WIP):
-
-https://lists.gnu.org/archive/html/grub-devel/2020-05/msg00011.html
-
-Thanks
-Ross Philipson and Daniel P. Smith
-
-Daniel P. Smith (4):
-  x86: Add early TPM TIS/CRB interface support for Secure Launch
-  x86: Add early TPM1.2/TPM2.0 interface support for Secure Launch
-  x86: Add early general TPM interface support for Secure Launch
-  x86: Secure Launch adding event log securityfs
-
-Ross Philipson (9):
-  x86: Secure Launch Kconfig
-  x86: Secure Launch main header file
-  x86: Add early SHA support for Secure Launch early measurements
-  x86: Secure Launch kernel early boot stub
-  x86: Secure Launch kernel late boot stub
-  x86: Secure Launch SMP bringup support
-  kexec: Secure Launch kexec SEXIT support
-  reboot: Secure Launch SEXIT support on reboot paths
-  tpm: Allow locality 2 to be set when initializing the TPM for Secure
-    Launch
-
- Documentation/x86/boot.rst                    |   9 +
- arch/x86/Kconfig                              |  36 ++
- arch/x86/boot/compressed/Makefile             |   8 +
- arch/x86/boot/compressed/early_sha1.c         | 104 ++++
- arch/x86/boot/compressed/early_sha1.h         |  17 +
- arch/x86/boot/compressed/early_sha256.c       |   6 +
- arch/x86/boot/compressed/early_sha512.c       |   6 +
- arch/x86/boot/compressed/head_64.S            |  34 +
- arch/x86/boot/compressed/kernel_info.S        |   7 +
- arch/x86/boot/compressed/sl_main.c            | 390 ++++++++++++
- arch/x86/boot/compressed/sl_stub.S            | 606 ++++++++++++++++++
- arch/x86/boot/compressed/tpm/crb.c            | 304 +++++++++
- arch/x86/boot/compressed/tpm/crb.h            |  20 +
- arch/x86/boot/compressed/tpm/tis.c            | 215 +++++++
- arch/x86/boot/compressed/tpm/tis.h            |  46 ++
- arch/x86/boot/compressed/tpm/tpm.c            | 145 +++++
- arch/x86/boot/compressed/tpm/tpm.h            |  48 ++
- arch/x86/boot/compressed/tpm/tpm1.h           | 112 ++++
- arch/x86/boot/compressed/tpm/tpm1_cmds.c      |  99 +++
- arch/x86/boot/compressed/tpm/tpm2.h           |  89 +++
- arch/x86/boot/compressed/tpm/tpm2_auth.c      |  44 ++
- arch/x86/boot/compressed/tpm/tpm2_auth.h      |  21 +
- arch/x86/boot/compressed/tpm/tpm2_cmds.c      | 145 +++++
- arch/x86/boot/compressed/tpm/tpm2_constants.h |  66 ++
- arch/x86/boot/compressed/tpm/tpm_buff.c       | 121 ++++
- arch/x86/boot/compressed/tpm/tpm_common.h     | 127 ++++
- arch/x86/boot/compressed/tpm/tpmbuff.h        |  34 +
- arch/x86/boot/compressed/tpm/tpmio.c          |  51 ++
- arch/x86/include/asm/realmode.h               |   3 +
- arch/x86/kernel/Makefile                      |   1 +
- arch/x86/kernel/asm-offsets.c                 |  16 +
- arch/x86/kernel/reboot.c                      |  10 +
- arch/x86/kernel/setup.c                       |   3 +
- arch/x86/kernel/slaunch.c                     | 856 ++++++++++++++++++++++++++
- arch/x86/kernel/smpboot.c                     |  86 +++
- arch/x86/realmode/rm/header.S                 |   3 +
- arch/x86/realmode/rm/trampoline_64.S          |  37 ++
- drivers/char/tpm/tpm-chip.c                   |  13 +-
- drivers/iommu/intel/dmar.c                    |   4 +
- include/linux/sha512.h                        |  21 +
- include/linux/slaunch.h                       | 544 ++++++++++++++++
- kernel/kexec_core.c                           |   4 +
- lib/sha1.c                                    |   4 +
- lib/sha512.c                                  | 209 +++++++
- 44 files changed, 4722 insertions(+), 2 deletions(-)
- create mode 100644 arch/x86/boot/compressed/early_sha1.c
- create mode 100644 arch/x86/boot/compressed/early_sha1.h
- create mode 100644 arch/x86/boot/compressed/early_sha256.c
- create mode 100644 arch/x86/boot/compressed/early_sha512.c
- create mode 100644 arch/x86/boot/compressed/sl_main.c
- create mode 100644 arch/x86/boot/compressed/sl_stub.S
- create mode 100644 arch/x86/boot/compressed/tpm/crb.c
- create mode 100644 arch/x86/boot/compressed/tpm/crb.h
- create mode 100644 arch/x86/boot/compressed/tpm/tis.c
- create mode 100644 arch/x86/boot/compressed/tpm/tis.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm.c
- create mode 100644 arch/x86/boot/compressed/tpm/tpm.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm1.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm1_cmds.c
- create mode 100644 arch/x86/boot/compressed/tpm/tpm2.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm2_auth.c
- create mode 100644 arch/x86/boot/compressed/tpm/tpm2_auth.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm2_cmds.c
- create mode 100644 arch/x86/boot/compressed/tpm/tpm2_constants.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpm_buff.c
- create mode 100644 arch/x86/boot/compressed/tpm/tpm_common.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpmbuff.h
- create mode 100644 arch/x86/boot/compressed/tpm/tpmio.c
- create mode 100644 arch/x86/kernel/slaunch.c
- create mode 100644 include/linux/sha512.h
- create mode 100644 include/linux/slaunch.h
- create mode 100644 lib/sha512.c
-
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index ec8bed9e7b75..0175cfc0f66f 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 547	common	openat2				sys_openat2
+ 548	common	pidfd_getfd			sys_pidfd_getfd
+ 549	common	faccessat2			sys_faccessat2
++553	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 171077cbf419..db9c8d35e75b 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -453,3 +453,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 3b859596840d..d1f7d35f986e 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		440
++#define __NR_compat_syscalls		444
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 734860ac7cf9..33716dd2c04c 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -887,6 +887,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trusted_for 443
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index f52a41f4c340..68e56436b611 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -360,3 +360,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 81fc799d8392..67f0bc2fc4d0 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index b4e263916f41..acd3057886b7 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -445,3 +445,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index f9df9edb67a4..8164dc51ebf8 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -378,3 +378,4 @@
+ 437	n32	openat2				sys_openat2
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
+ 439	n32	faccessat2			sys_faccessat2
++443	n32	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 557f9954a2b9..28bc5bb76987 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -354,3 +354,4 @@
+ 437	n64	openat2				sys_openat2
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
+ 439	n64	faccessat2			sys_faccessat2
++443	n64	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 195b43cf27c8..6a62cc5b4999 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -427,3 +427,4 @@
+ 437	o32	openat2				sys_openat2
+ 438	o32	pidfd_getfd			sys_pidfd_getfd
+ 439	o32	faccessat2			sys_faccessat2
++443	o32	trusted_for			sys_trusted_for
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index def64d221cd4..654707acfa6c 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -437,3 +437,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index c2d737ff2e7b..eb1c6d7655e6 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -529,3 +529,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 10456bc936fb..6e77640e2976 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437  common	openat2			sys_openat2			sys_openat2
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
+ 439  common	faccessat2		sys_faccessat2			sys_faccessat2
++443  common	trusted_for		sys_trusted_for			sys_trusted_for
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index ae0a00beea5f..f5fd0d63b43b 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index 4af114e84f20..70806eb828b8 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -485,3 +485,4 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 9d1102873666..a0824f88fcfb 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -444,3 +444,4 @@
+ 437	i386	openat2			sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd
+ 439	i386	faccessat2		sys_faccessat2
++443	i386	trusted_for		sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f30d6ae9a688..0b0ce536acf1 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -361,6 +361,7 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
++443	common	trusted_for		sys_trusted_for
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 6276e3c2d3fc..22fd070f2565 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -410,3 +410,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 995b36c2ea7d..6b55804d9df9 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trusted_for 443
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 440
++#define __NR_syscalls 444
+ 
+ /*
+  * 32 bit systems traditionally used different
 -- 
-1.8.3.1
+2.28.0
 
