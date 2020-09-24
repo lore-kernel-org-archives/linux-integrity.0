@@ -2,56 +2,56 @@ Return-Path: <SRS0=Yu55=DB=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3CEC4727D
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 14:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85227C47423
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 14:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C9D42311B
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 14:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A45206C3
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Sep 2020 14:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i47qAal2"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QOMLsak1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbgIXO6k (ORCPT
+        id S1728408AbgIXO7L (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 24 Sep 2020 10:58:40 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:57272 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728406AbgIXO6j (ORCPT
+        Thu, 24 Sep 2020 10:59:11 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55920 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728409AbgIXO6k (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 Sep 2020 10:58:39 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OEriXw101671;
-        Thu, 24 Sep 2020 14:58:18 GMT
+        Thu, 24 Sep 2020 10:58:40 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OEtNw4037511;
+        Thu, 24 Sep 2020 14:58:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
- bh=3RB2GjK9ADEmAIr+xoSAWhTF8Rk2yEY/ISVfaoeNfBs=;
- b=i47qAal2g2PSZT09qgQ22BTMzKVLAaudUpojAuRafVDiFoWkCs9/nyqtZmW65zzD9DC5
- 2U/rwye04mKjbGyGKdvJGX5/JjyssqYgdsyVSgyrEFy7Vom8dMb47tV2lucyYKIBebmV
- qWiotEMA1JCEmqQIsyyHvJrtd4BMFDb39vbN8KUHTy1IFfK0YER3DgRGDIpt+5p85lR1
- SVadiDJRRr82xNt4TkCqLxbUZZxV5wa2JnuChyxMcNA2EhsSAUbPOnb0NZwlSJMDh9lx
- eoFCN79O1LyDe81uG8/kVKa8d6e+3nWCxjjFgRdYFu+vpvhy6cXz8fwVZ3/CWeYzDF/8 og== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2130.oracle.com with ESMTP id 33qcpu5qcp-1
+ bh=qOx/WyIlX35flcYkRZF1E+iVsPY37zuDH5frIC2qMd0=;
+ b=QOMLsak1AaK0UlwuJY54v7vqFZhJeJDEfG7OAoqaAdCwdOpo3GmutTgMAFVB7qwZLybv
+ LP1GDNgDy72KIPR9c5u5zDWZNIPgY2WhFP2rz+V0blWtmy1YG0XKU+g8HJhvwNh5H3/o
+ VeN40E9SUsjzYa2/loEK0YmoJ2cTLk0RKpOs9kj8RpI33Nx+9ZXsojGB5wjqYW7Z0RVH
+ s8StFAWWGl3+4xAJI9P4CclJizomjyNFmrvSs0ogBG3O31dYYWs1awf3drMkPZxL4R4v
+ +8M/2KuBH/LTtlGn/0bzvHXFZqssU/NjKe2Vj3LaMVbnkUUYxf7KV77I6geveHAYwhnB BQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 33q5rgq588-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Sep 2020 14:58:18 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OEuT6E126286;
-        Thu, 24 Sep 2020 14:58:18 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 33nujr18dk-1
+        Thu, 24 Sep 2020 14:58:20 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08OEuTdp096380;
+        Thu, 24 Sep 2020 14:58:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 33nurw9x6n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Sep 2020 14:58:18 +0000
+        Thu, 24 Sep 2020 14:58:19 +0000
 Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 08OEwD0q016152;
-        Thu, 24 Sep 2020 14:58:13 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08OEwHYF000852;
+        Thu, 24 Sep 2020 14:58:17 GMT
 Received: from disposition.us.oracle.com (/10.152.32.81)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 24 Sep 2020 07:58:12 -0700
+        with ESMTP ; Thu, 24 Sep 2020 07:58:17 -0700
 From:   Ross Philipson <ross.philipson@oracle.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
@@ -59,205 +59,137 @@ To:     linux-kernel@vger.kernel.org, x86@kernel.org,
 Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         luto@amacapital.net, trenchboot-devel@googlegroups.com
-Subject: [PATCH 06/13] x86: Add early general TPM interface support for Secure Launch
-Date:   Thu, 24 Sep 2020 10:58:34 -0400
-Message-Id: <1600959521-24158-7-git-send-email-ross.philipson@oracle.com>
+Subject: [PATCH 11/13] kexec: Secure Launch kexec SEXIT support
+Date:   Thu, 24 Sep 2020 10:58:39 -0400
+Message-Id: <1600959521-24158-12-git-send-email-ross.philipson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1600959521-24158-1-git-send-email-ross.philipson@oracle.com>
 References: <1600959521-24158-1-git-send-email-ross.philipson@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 adultscore=0 spamscore=0 suspectscore=2
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ phishscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2006250000 definitions=main-2009240114
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9753 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 mlxlogscore=999
- adultscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- phishscore=0 spamscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009240114
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 impostorscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009240114
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Prior to running the next kernel via kexec, the Secure Launch code
+closes down private SMX resources and does an SEXIT. This allows the
+next kernel to start normally without any issues starting the APs etc.
 
-This commit exposes a minimal general interface for the compressed
-kernel to request the required TPM operations to send measurements to
-a TPM.
-
-Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
 Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 ---
- arch/x86/boot/compressed/Makefile  |   2 +-
- arch/x86/boot/compressed/tpm/tpm.c | 145 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 146 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/boot/compressed/tpm/tpm.c
+ arch/x86/kernel/slaunch.c | 70 +++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/kexec_core.c       |  4 +++
+ 2 files changed, 74 insertions(+)
 
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index a4308d5..35947b9 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -101,7 +101,7 @@ vmlinux-objs-$(CONFIG_SECURE_LAUNCH_SHA256) += $(obj)/early_sha256.o
- vmlinux-objs-$(CONFIG_SECURE_LAUNCH_SHA512) += $(obj)/early_sha512.o
- vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/tpm/tpmio.o $(obj)/tpm/tpm_buff.o \
- 	$(obj)/tpm/tis.o $(obj)/tpm/crb.o $(obj)/tpm/tpm1_cmds.o \
--	$(obj)/tpm/tpm2_cmds.o $(obj)/tpm/tpm2_auth.o
-+	$(obj)/tpm/tpm2_cmds.o $(obj)/tpm/tpm2_auth.o $(obj)/tpm/tpm.o
+diff --git a/arch/x86/kernel/slaunch.c b/arch/x86/kernel/slaunch.c
+index 7bdb89e..b2221d8 100644
+--- a/arch/x86/kernel/slaunch.c
++++ b/arch/x86/kernel/slaunch.c
+@@ -784,3 +784,73 @@ static void __exit slaunch_exit(void)
+ late_initcall(slaunch_late_init);
  
- # The compressed kernel is built with -fPIC/-fPIE so that a boot loader
- # can place it anywhere in memory and it will still run. However, since
-diff --git a/arch/x86/boot/compressed/tpm/tpm.c b/arch/x86/boot/compressed/tpm/tpm.c
-new file mode 100644
-index 0000000..0fe62d2
---- /dev/null
-+++ b/arch/x86/boot/compressed/tpm/tpm.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2020 Apertus Solutions, LLC
-+ *
-+ * Author(s):
-+ *      Daniel P. Smith <dpsmith@apertussolutions.com>
-+ *
-+ */
+ __exitcall(slaunch_exit);
 +
-+#include <linux/types.h>
-+#include <linux/const.h>
-+#include <linux/string.h>
-+#include <linux/errno.h>
-+#include "tpm.h"
-+#include "tpmbuff.h"
-+#include "tis.h"
-+#include "crb.h"
-+#include "tpm_common.h"
-+#include "tpm1.h"
-+#include "tpm2.h"
-+#include "tpm2_constants.h"
-+
-+static struct tpm tpm;
-+
-+static void find_interface_and_family(struct tpm *t)
++static inline void smx_getsec_sexit(void)
 +{
-+	struct tpm_interface_id intf_id;
-+	struct tpm_intf_capability intf_cap;
++	asm volatile (".byte 0x0f,0x37\n"
++		      : : "a" (SMX_X86_GETSEC_SEXIT));
++}
 +
-+	/* Sort out whether if it is 1.2 */
-+	intf_cap.val = tpm_read32(TPM_INTF_CAPABILITY_0);
-+	if ((intf_cap.interface_version == TPM12_TIS_INTF_12) ||
-+	    (intf_cap.interface_version == TPM12_TIS_INTF_13)) {
-+		t->family = TPM12;
-+		t->intf = TPM_TIS;
++void slaunch_finalize(int do_sexit)
++{
++	void __iomem *config;
++	u64 one = 1, val;
++
++	if (!(slaunch_get_flags() & (SL_FLAG_ACTIVE|SL_FLAG_ARCH_TXT)))
++		return;
++
++	config = ioremap(TXT_PRIV_CONFIG_REGS_BASE, TXT_NR_CONFIG_PAGES *
++			 PAGE_SIZE);
++	if (!config) {
++		pr_emerg("Error SEXIT failed to ioremap TXT private reqs\n");
 +		return;
 +	}
 +
-+	/* Assume that it is 2.0 and TIS */
-+	t->family = TPM20;
-+	t->intf = TPM_TIS;
++	/* Clear secrets bit for SEXIT */
++	memcpy_toio(config + TXT_CR_CMD_NO_SECRETS, &one, sizeof(u64));
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(u64));
 +
-+	/* Check if the interface is CRB */
-+	intf_id.val = tpm_read32(TPM_INTERFACE_ID_0);
-+	if (intf_id.interface_type == TPM_CRB_INTF_ACTIVE)
-+		t->intf = TPM_CRB;
-+}
++	/* Unlock memory configurations */
++	memcpy_toio(config + TXT_CR_CMD_UNLOCK_MEM_CONFIG, &one, sizeof(u64));
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(u64));
 +
-+struct tpm *enable_tpm(void)
-+{
-+	struct tpm *t = &tpm;
++	/* Close the TXT private register space */
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(u64));
++	memcpy_toio(config + TXT_CR_CMD_CLOSE_PRIVATE, &one, sizeof(u64));
 +
-+	find_interface_and_family(t);
++	/*
++	 * Calls to iounmap are not being done because of the state of the
++	 * system this late in the kexec process. Local IRQs are disabled and
++	 * iounmap causes a TLB flush which in turn causes a warning. Leaving
++	 * thse mappings is not an issue since the next kernel is going to
++	 * completely re-setup memory management.
++	 */
 +
-+	switch (t->intf) {
-+	case TPM_TIS:
-+		if (!tis_init(t))
-+			return NULL;
-+		break;
-+	case TPM_CRB:
-+		if (!crb_init(t))
-+			return NULL;
-+		break;
++	/* Map public registers and do a final read fence */
++	config = ioremap(TXT_PUB_CONFIG_REGS_BASE, TXT_NR_CONFIG_PAGES *
++			 PAGE_SIZE);
++	if (!config) {
++		pr_emerg("Error SEXIT failed to ioremap TXT public reqs\n");
++		return;
 +	}
 +
-+	return t;
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(u64));
++
++	pr_emerg("TXT clear secrets bit and unlock memory complete.");
++
++	if (!do_sexit)
++		return;
++
++	if (smp_processor_id() != 0) {
++		pr_emerg("Error TXT SEXIT must be called on CPU 0\n");
++		return;
++	}
++
++	/* Disable SMX mode */
++	cr4_set_bits(X86_CR4_SMXE);
++
++	/* Do the SEXIT SMX operation */
++	smx_getsec_sexit();
++
++	pr_emerg("TXT SEXIT complete.");
 +}
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index c19c0da..6b9ac11 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -37,6 +37,7 @@
+ #include <linux/compiler.h>
+ #include <linux/hugetlb.h>
+ #include <linux/frame.h>
++#include <linux/slaunch.h>
+ 
+ #include <asm/page.h>
+ #include <asm/sections.h>
+@@ -1179,6 +1180,9 @@ int kernel_kexec(void)
+ 		cpu_hotplug_enable();
+ 		pr_notice("Starting new kernel\n");
+ 		machine_shutdown();
 +
-+u8 tpm_request_locality(struct tpm *t, u8 l)
-+{
-+	u8 ret = TPM_NO_LOCALITY;
-+
-+	ret = t->ops.request_locality(l);
-+
-+	if (ret < TPM_MAX_LOCALITY)
-+		t->buff = alloc_tpmbuff(t->intf, ret);
-+
-+	return ret;
-+}
-+
-+void tpm_relinquish_locality(struct tpm *t)
-+{
-+	t->ops.relinquish_locality();
-+
-+	free_tpmbuff(t->buff, t->intf);
-+}
-+
-+#define MAX_TPM_EXTEND_SIZE 70 /* TPM2 SHA512 is the largest */
-+int tpm_extend_pcr(struct tpm *t, u32 pcr, u16 algo,
-+		u8 *digest)
-+{
-+	int ret = 0;
-+
-+	if (t->buff == NULL)
-+		return -EINVAL;
-+
-+	if (t->family == TPM12) {
-+		struct tpm_digest d;
-+
-+		if (algo != TPM_ALG_SHA1)
-+			return -EINVAL;
-+
-+		d.pcr = pcr;
-+		memcpy((void *)d.digest.sha1.digest,
-+			digest, SHA1_DIGEST_SIZE);
-+
-+		ret = tpm1_pcr_extend(t, &d);
-+	} else if (t->family == TPM20) {
-+		struct tpml_digest_values *d;
-+		u8 buf[MAX_TPM_EXTEND_SIZE];
-+
-+		d = (struct tpml_digest_values *) buf;
-+		d->count = 1;
-+		d->digests->alg = algo;
-+		switch (algo) {
-+		case TPM_ALG_SHA1:
-+			memcpy(d->digests->digest, digest, SHA1_SIZE);
-+			break;
-+		case TPM_ALG_SHA256:
-+			memcpy(d->digests->digest, digest, SHA256_SIZE);
-+			break;
-+		case TPM_ALG_SHA384:
-+			memcpy(d->digests->digest, digest, SHA384_SIZE);
-+			break;
-+		case TPM_ALG_SHA512:
-+			memcpy(d->digests->digest, digest, SHA512_SIZE);
-+			break;
-+		case TPM_ALG_SM3_256:
-+			memcpy(d->digests->digest, digest, SM3256_SIZE);
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		ret = tpm2_extend_pcr(t, pcr, d);
-+	} else
-+		ret = -EINVAL;
-+
-+	return ret;
-+}
-+
-+void free_tpm(struct tpm *t)
-+{
-+	tpm_relinquish_locality(t);
-+}
++		/* Finalize TXT registers and do SEXIT */
++		slaunch_finalize(1);
+ 	}
+ 
+ 	machine_kexec(kexec_image);
 -- 
 1.8.3.1
 
