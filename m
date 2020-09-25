@@ -2,247 +2,183 @@ Return-Path: <SRS0=jYeu=DC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D16C47420
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Sep 2020 18:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300DEC4727E
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Sep 2020 20:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACC19208B6
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Sep 2020 18:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D55FC20838
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Sep 2020 20:38:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="evGNDMO9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgIYSul (ORCPT
+        id S1728856AbgIYUig (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 25 Sep 2020 14:50:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33882 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729644AbgIYSul (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 25 Sep 2020 14:50:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B8B40AF5D;
-        Fri, 25 Sep 2020 18:50:39 +0000 (UTC)
-From:   Petr Vorel <pvorel@suse.cz>
-To:     ltp@lists.linux.it
-Cc:     Petr Vorel <pvorel@suse.cz>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH v2 2/4] IMA: Rewrite ima_boot_aggregate.c to new API
-Date:   Fri, 25 Sep 2020 20:50:32 +0200
-Message-Id: <20200925185034.24155-3-pvorel@suse.cz>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200925185034.24155-1-pvorel@suse.cz>
-References: <20200925185034.24155-1-pvorel@suse.cz>
+        Fri, 25 Sep 2020 16:38:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54734 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbgIYUif (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 25 Sep 2020 16:38:35 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02529C0613DC;
+        Fri, 25 Sep 2020 12:18:45 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id 16so3946716qkf.4;
+        Fri, 25 Sep 2020 12:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6TNafuoIllawQn6PtbN92TdSRIqwBFFijyaKCHiMRO8=;
+        b=evGNDMO9ibKnC9IIMxSY5gCKLneXJCbZAtYKRb+b0eqbtNY+YPD55HKTcNzDrgLW7B
+         RDI6+vqyV/HAqRXBFq/YlLucPTE0KaXPDrzz9e2ieTaRQl6qSQ5ZtA7SzkBwSGwbXCnt
+         kudr+3GWAme8v2znAjGDdFg/jW+i7u3VQLoGfFrfICTqU9KUqBRTmPoTIGw5+GGyIts+
+         35hF4aK3bac5Aph6CKLm3caeYXfhSkUxTb3PJuZQyAUzzubotV8eGFy7JGwn603R6O1U
+         rz/ExJnyViO8FarBZtevTaGxv4x3fJq6ApLwi/xBUaNxc1ClP7weeQ2yFiTp/YLSTdUv
+         8N1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=6TNafuoIllawQn6PtbN92TdSRIqwBFFijyaKCHiMRO8=;
+        b=ll8plYjvT01w0kETz9vNh1Z2UtL3AoXYJkbrGNxrZd9w3GMGLnzBpO6Q00uvLXy55N
+         mtXj2kpG6kOaGqiL3z3dDT+NlTS9f18Gqq8FWDTnu8gflRuTZTqkNE/UuzUbhSguxpEr
+         DYTmlIeRP1IfKR22qzhxBPrG1DxUataQqO1UmRWsUKa97AHknalFcb8VwBEM1XO40n1R
+         /QLfpzBfxrGaB0CiSgMIicBhTbAnwW0sbx30klqChGnD322dLBPnJk88XDcTFAARksMl
+         9Gar3RPjWCekdVX65HLveNUp3El396C0gen74REwCla0og46gtti8o0t2J+d6arUb0te
+         ttPQ==
+X-Gm-Message-State: AOAM530k+QL2ZeWnFTFHay/LhFF1WK2TPYJ06sGFiBN12nGjcTYhjK2p
+        3wCKAIsOSkg3indsXQHYOZDdo+rxziU/Mg==
+X-Google-Smtp-Source: ABdhPJwbT6a2ae209myBNEn/nx0a/Kuv0M3OuuZlwlLfKUbyg927V++WNXIMfomx0jAiRi2e2zd2xw==
+X-Received: by 2002:a37:5cc2:: with SMTP id q185mr1437063qkb.35.1601061524669;
+        Fri, 25 Sep 2020 12:18:44 -0700 (PDT)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id m67sm2217409qkf.98.2020.09.25.12.18.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Sep 2020 12:18:44 -0700 (PDT)
+Sender: Arvind Sankar <niveditas98@gmail.com>
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Fri, 25 Sep 2020 15:18:42 -0400
+To:     Ross Philipson <ross.philipson@oracle.com>
+Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        luto@amacapital.net, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH 07/13] x86: Secure Launch kernel early boot stub
+Message-ID: <20200925191842.GA643740@rani.riverdale.lan>
+References: <1600959521-24158-1-git-send-email-ross.philipson@oracle.com>
+ <1600959521-24158-8-git-send-email-ross.philipson@oracle.com>
+ <20200924173801.GA103726@rani.riverdale.lan>
+ <c9ab2edf-1aaf-a1c9-92d5-2d37382a3163@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c9ab2edf-1aaf-a1c9-92d5-2d37382a3163@oracle.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The main reason was to see TCONF messages, which are printed into stderr
-in new API (but to stdout in legacy API) and thus visible as the output
-is redirected into the variable.
+On Fri, Sep 25, 2020 at 10:56:43AM -0400, Ross Philipson wrote:
+> On 9/24/20 1:38 PM, Arvind Sankar wrote:
+> > On Thu, Sep 24, 2020 at 10:58:35AM -0400, Ross Philipson wrote:
+> > 
+> >> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> >> index 97d37f0..42043bf 100644
+> >> --- a/arch/x86/boot/compressed/head_64.S
+> >> +++ b/arch/x86/boot/compressed/head_64.S
+> >> @@ -279,6 +279,21 @@ SYM_INNER_LABEL(efi32_pe_stub_entry, SYM_L_LOCAL)
+> >>  SYM_FUNC_END(efi32_stub_entry)
+> >>  #endif
+> >>  
+> >> +#ifdef CONFIG_SECURE_LAUNCH
+> >> +SYM_FUNC_START(sl_stub_entry)
+> >> +	/*
+> >> +	 * On entry, %ebx has the entry abs offset to sl_stub_entry. To
+> >> +	 * find the beginning of where we are loaded, sub off from the
+> >> +	 * beginning.
+> >> +	 */
+> > 
+> > This requirement should be added to the documentation. Is it necessary
+> > or can this stub just figure out the address the same way as the other
+> > 32-bit entry points, using the scratch space in bootparams as a little
+> > stack?
+> 
+> It is based on the state of the BSP when TXT vectors to the measured
+> launch environment. It is documented in the TXT spec and the SDMs.
+> 
 
-Changing boot_aggregate: to sha1: to be compatible with evmctl
-ima_boot_aggregate.
+I think it would be useful to add to the x86 boot documentation how
+exactly this new entry point is called, even if it's just adding a link
+to some section of those specs. The doc should also say that an
+mle_header_offset of 0 means the kernel isn't secure launch enabled.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- .../integrity/ima/src/ima_boot_aggregate.c    | 113 +++++++++---------
- .../security/integrity/ima/tests/ima_tpm.sh   |   2 +-
- 2 files changed, 57 insertions(+), 58 deletions(-)
+> > 
+> > For the 32-bit assembler code that's being added, tip/master now has
+> > changes that prevent the compressed kernel from having any runtime
+> > relocations.  You'll need to revise some of the code and the data
+> > structures initial values to avoid creating relocations.
+> 
+> Could you elaborate on this some more? I am not sure I see places in the
+> secure launch asm that would be creating relocations like this.
+> 
+> Thank you,
+> Ross
+> 
 
-diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-index 98893b99a..67f97ea04 100644
---- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-+++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
-@@ -1,19 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
- /*
--* Copyright (c) International Business Machines  Corp., 2009
--*
--* Authors:
--* Mimi Zohar <zohar@us.ibm.com>
--*
--* This program is free software; you can redistribute it and/or
--* modify it under the terms of the GNU General Public License as
--* published by the Free Software Foundation, version 2 of the
--* License.
--*
--* File: ima_boot_aggregate.c
--*
--* Calculate a SHA1 boot aggregate value based on the TPM
--* binary_bios_measurements.
--*/
-+ * Copyright (c) International Business Machines  Corp., 2009
-+ * Copyright (c) 2016-2019 Petr Vorel <pvorel@suse.cz>
-+ *
-+ * Authors: Mimi Zohar <zohar@us.ibm.com>
-+ *
-+ * Calculate a SHA1 boot aggregate value based on the TPM 1.2
-+ * binary_bios_measurements.
-+ */
-+
-+#include "config.h"
- #include <stdio.h>
- #include <stdlib.h>
- #include <sys/types.h>
-@@ -23,10 +19,8 @@
- #include <unistd.h>
- #include <limits.h>
- 
--#include "config.h"
--#include "test.h"
--
--char *TCID = "ima_boot_aggregate";
-+#include "tst_test.h"
-+#include "tst_safe_stdio.h"
- 
- #if HAVE_LIBCRYPTO
- #include <openssl/sha.h>
-@@ -36,7 +30,24 @@ char *TCID = "ima_boot_aggregate";
- #define MAX_EVENT_DATA_SIZE (MAX_EVENT_SIZE - EVENT_HEADER_SIZE)
- #define NUM_PCRS 8		/*  PCR registers 0-7 in boot aggregate */
- 
--int TST_TOTAL = 1;
-+static char *debug;
-+static char *file;
-+
-+static unsigned char boot_aggregate[SHA_DIGEST_LENGTH];
-+
-+static struct {
-+	struct {
-+		u_int32_t pcr;
-+		u_int32_t type;
-+		u_int8_t digest[SHA_DIGEST_LENGTH];
-+		u_int32_t len;
-+	} header __attribute__ ((packed));
-+	char *data;
-+} event;
-+
-+static struct {
-+	unsigned char digest[SHA_DIGEST_LENGTH];
-+} pcr[NUM_PCRS];
- 
- static void display_sha1_digest(unsigned char *pcr)
- {
-@@ -47,45 +58,24 @@ static void display_sha1_digest(unsigned char *pcr)
- 	printf("\n");
- }
- 
--int main(int argc, char *argv[])
-+static void do_test(void)
- {
--	unsigned char boot_aggregate[SHA_DIGEST_LENGTH];
--	struct {
--		struct {
--			u_int32_t pcr;
--			u_int32_t type;
--			u_int8_t digest[SHA_DIGEST_LENGTH];
--			u_int32_t len;
--		} header __attribute__ ((packed));
--		char *data;
--	} event;
--	struct {
--		unsigned char digest[SHA_DIGEST_LENGTH];
--	} pcr[NUM_PCRS];
- 	FILE *fp;
--	int i;
--	int debug = 0;
- 	SHA_CTX c;
-+	int i;
- 
--	if (argc != 2) {
--		printf("format: %s binary_bios_measurement file\n", argv[0]);
--		return 1;
--	}
--	fp = fopen(argv[1], "r");
--	if (!fp) {
--		perror("unable to open pcr file\n");
--		return 1;
--	}
-+	if (!file)
-+		tst_brk(TBROK, "missing binary_bios_measurement file, specify with -f");
-+
-+	fp = SAFE_FOPEN(file, "r");
- 
- 	/* Initialize psuedo PCR registers 0 - 7 */
- 	for (i = 0; i < NUM_PCRS; i++)
- 		memset(&pcr[i].digest, 0, SHA_DIGEST_LENGTH);
- 
- 	event.data = malloc(MAX_EVENT_DATA_SIZE);
--	if (!event.data) {
--		printf("Cannot allocate memory\n");
--		return 1;
--	}
-+	if (!event.data)
-+		tst_brk(TBROK, "cannot allocate memory");
- 
- 	/* Extend the pseudo PCRs with the event digest */
- 	while (fread(&event, sizeof(event.header), 1, fp)) {
-@@ -105,13 +95,14 @@ int main(int argc, char *argv[])
- 
- #if MAX_EVENT_DATA_SIZE < USHRT_MAX
- 		if (event.header.len > MAX_EVENT_DATA_SIZE) {
--			printf("Error event too long\n");
-+			tst_res(TWARN, "error event too long");
- 			break;
- 		}
- #endif
- 		fread(event.data, event.header.len, 1, fp);
- 	}
--	fclose(fp);
-+
-+	SAFE_FCLOSE(fp);
- 	free(event.data);
- 
- 	/* Extend the boot aggregate with the pseudo PCR digest values */
-@@ -126,14 +117,22 @@ int main(int argc, char *argv[])
- 	}
- 	SHA1_Final(boot_aggregate, &c);
- 
--	printf("boot_aggregate:");
-+	printf("sha1:");
- 	display_sha1_digest(boot_aggregate);
--	tst_exit();
-+	tst_res(TPASS, "found sha1 hash");
- }
- 
-+static struct tst_option options[] = {
-+	{"d", &debug, "-d       enable debug"},
-+	{"f:", &file, "-f x     binary_bios_measurement file (required)\n"},
-+	{NULL, NULL, NULL}
-+};
-+
-+static struct tst_test test = {
-+	.test_all = do_test,
-+	.options = options,
-+};
-+
- #else
--int main(void)
--{
--	tst_brkm(TCONF, NULL, "test requires libcrypto and openssl development packages");
--}
-+TST_TEST_TCONF("libcrypto and openssl development packages required");
- #endif
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-index c69f891f1..dc958eb5c 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-@@ -33,7 +33,7 @@ test1()
- 			tst_res TFAIL "bios boot aggregate is not 0"
- 		fi
- 	else
--		boot_aggregate=$(ima_boot_aggregate $tpm_bios | grep "boot_aggregate:" | cut -d':' -f2)
-+		boot_aggregate=$(ima_boot_aggregate -f $tpm_bios | grep "sha1:" | cut -d':' -f2)
- 		if [ "$boot_hash" = "$boot_aggregate" ]; then
- 			tst_res TPASS "bios aggregate matches IMA boot aggregate"
- 		else
--- 
-2.28.0
+You should see them if you do
+	readelf -r arch/x86/boot/compressed/vmlinux
 
+In terms of the code, things like:
+
+	addl    %ebx, (sl_gdt_desc + 2)(%ebx)
+
+will create a relocation, because the linker interprets this as wanting
+the runtime address of sl_gdt_desc, rather than just the offset from
+startup_32.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/arch/x86/boot/compressed/head_64.S#n48
+
+has a comment with some explanation and a macro that the 32-bit code in
+startup_32 uses to avoid creating relocations.
+
+Since the SL code is in a different assembler file (and a different
+section), you can't directly use the same macro. I would suggest getting
+rid of sl_stub_entry and entering directly at sl_stub, and then the code
+in sl_stub.S can use sl_stub for the base address, defining the rva()
+macro there as
+
+	#define rva(X) ((X) - sl_stub)
+
+You will also need to avoid initializing data with symbol addresses.
+
+	.long mle_header
+	.long sl_stub_entry
+	.long sl_gdt
+
+will create relocations. The third one is easy, just replace it with
+sl_gdt - sl_gdt_desc and initialize it at runtime with
+
+	leal	rva(sl_gdt_desc)(%ebx), %eax
+	addl	%eax, 2(%eax)
+	lgdt	(%eax)
+
+The other two are more messy, unfortunately there is no easy way to tell
+the linker what we want here. The other entry point addresses (for the
+EFI stub) are populated in a post-processing step after the compressed
+kernel has been linked, we could teach it to also update kernel_info.
+
+Without that, for kernel_info, you could change it to store the offset
+of the MLE header from kernel_info, instead of from the start of the
+image.
+
+For the MLE header, it could be moved to .head.text in head_64.S, and
+initialized with
+	.long rva(sl_stub)
+This will also let it be placed at a fixed offset from startup_32, so
+that kernel_info can just be populated with a constant.
