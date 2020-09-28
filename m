@@ -2,112 +2,101 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CA7C4346E
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 01:22:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C653AC2D0A8
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CEB623A33
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 01:22:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64A3E221EC
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mqaW3Pwc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="mqaW3Pwc"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="F8PplHXI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgI1BWd (ORCPT
+        id S1726421AbgI1D4T (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 27 Sep 2020 21:22:33 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51342 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726387AbgI1BWd (ORCPT
+        Sun, 27 Sep 2020 23:56:19 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39226 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgI1D4T (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 27 Sep 2020 21:22:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A9BD08EE17F;
-        Sun, 27 Sep 2020 18:22:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1601256152;
-        bh=yoHIHM3+Su6TOLDsV9bLyo6wb/q8x7fR8ORf1mIC/QI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mqaW3PwczvahHGO2n+c8gTA28ei4nSKyxypJ/dja9Kp/et1p+GZGLVoLMjU6mVbE9
-         U2Km0YFUY+/Xruo/5+Slq7prrE6P9wmjoHmFNFIkvejBpUzVCRhVxFJu66kT3iEEoL
-         T9Qy7XfAi1JUwIdE72ncZxJil2DdhRi1VZJNQj0s=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id MaCHzYzCib9D; Sun, 27 Sep 2020 18:22:32 -0700 (PDT)
-Received: from jarvis (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0D2458EE012;
-        Sun, 27 Sep 2020 18:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1601256152;
-        bh=yoHIHM3+Su6TOLDsV9bLyo6wb/q8x7fR8ORf1mIC/QI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=mqaW3PwczvahHGO2n+c8gTA28ei4nSKyxypJ/dja9Kp/et1p+GZGLVoLMjU6mVbE9
-         U2Km0YFUY+/Xruo/5+Slq7prrE6P9wmjoHmFNFIkvejBpUzVCRhVxFJu66kT3iEEoL
-         T9Qy7XfAi1JUwIdE72ncZxJil2DdhRi1VZJNQj0s=
-Message-ID: <0c896ca8eb0e30d6e75843cfbf2aa627ddc63feb.camel@HansenPartnership.com>
-Subject: Re: [PATCH] Fix Atmel TPM crash caused by too frequent queries
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Hao Wu <hao.wu@rubrik.com>
-Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org,
-        Hamza Attak <hamza@hpe.com>, nayna@linux.vnet.ibm.com,
-        why2jjj.linux@gmail.com, zohar@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Ken Goldman <kgold@linux.ibm.com>,
-        Seungyeop Han <seungyeop.han@rubrik.com>,
-        Shrihari Kalkar <shrihari.kalkar@rubrik.com>,
-        Anish Jhaveri <anish.jhaveri@rubrik.com>
-Date:   Sun, 27 Sep 2020 18:22:30 -0700
-In-Reply-To: <E6E3C07D-57F4-48F5-B4A9-50868B82E779@rubrik.com>
-References: <20200926223150.109645-1-hao.wu@rubrik.com>
-         <73405d14d7665e8a4e3e9defde7fb12aeae7784c.camel@HansenPartnership.com>
-         <DFD7629C-05BF-46C1-B3D7-92FBBC176D9E@rubrik.com>
-         <cf5c8035b7183522fb8a5df4baa95bd24288e61f.camel@HansenPartnership.com>
-         <E6E3C07D-57F4-48F5-B4A9-50868B82E779@rubrik.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 27 Sep 2020 23:56:19 -0400
+Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id BCECB20B7178;
+        Sun, 27 Sep 2020 20:56:18 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BCECB20B7178
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1601265379;
+        bh=/ZKbn+BtdcYwqnMPh/CImefmolSKnKyfq10Qq7zbHdE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F8PplHXIjEOHGi7H/NErKYjuXhYbC344HjpTmKTcLkLWUyybK+1UCGN/7nyd3cFfI
+         tzBEMBP8o43/3vfW+YfTXx7mJYKpbtPvgBwebqP6DLDt9xy4xL616KoGdm+tEgpP+G
+         svAaDFwQ9ngxmSbjpHE7whQeq8HdpPWCL9Zz7EZE=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, pvorel@suse.cz
+Cc:     nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        dm-devel@redhat.com, ltp@lists.linux.it
+Subject: [PATCH v2 0/2] IMA: Add test for dm-crypt measurement
+Date:   Sun, 27 Sep 2020 20:56:03 -0700
+Message-Id: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, 2020-09-27 at 17:11 -0700, Hao Wu wrote:
-> Hi James,
-> 
-> Maybe there is a misunderstanding. Here I am using tpm_msleep, not
-> msleep. tpm_msleep is using usleep underlaying. See
-> https://github.com/torvalds/linux/blob/master/drivers/char/tpm/tpm.h#L188
+New functionality is being added to IMA to measure data provided by
+kernel components. With this feature, IMA policy can be set to enable
+measuring data provided by device-mapper targets. Currently one such
+device-mapper target - dm-crypt, is being updated to use this
+functionality. This new functionality needs test automation in LTP.
 
-Right, I had missed that.
+Some of the existing functionality in ima_keys.sh can be reused for
+this, but it needs to be refactored into generic functions first.
 
-> The reasons I choose 15ms, is because before 
-> https://github.com/torvalds/linux/commit/9f3fc7bcddcb51234e23494531f93ab60475e1c3
-> (Where msleep is changed to tpm_msleep (which is essentially
-> usleep)), The actual sleep time is 15ms, thus here we change this
-> back to 15ms to fix regression.
+Add a testcase which verifies that the IMA subsystem correctly measures
+the data coming from a device-mapper target - dm-crypt.
+Refactor common functionality in ima_keys.sh for this, and move the
+generic functions to ima_setup.sh.
 
-Right now most TIS TPMs operate successfully with a sleep in there of
-the range 0.1-0.5ms.  Upping that to 15ms introduces a 100x delay in
-our status wait for the TPM to become ready, potentially slowing down
-all TIS TPM operations by 100x, which will hit us most with the PCR
-writes we do for IMA logging ... that seems like a bad bargain for a
-single TPM family manufacturer.
+This series needs a kernel built on the following repo/branch/patches:
+ repo: https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+ branch: next-integrity
+ commit aa662fc04f5b ("ima: Fix NULL pointer dereference in ima_file_hash")
 
-However, there is another possibility: it's something to do with the
-byte read; I notice you don't require the same slowdown for the burst
-count read, which actually reads the status register and burst count as
-a read32.  If that really is the case, for the atmel would substituting
-a read32 and just throwing the upper bytes away in tpm_tis_status()
-allow us to keep the current timings?  I can actually try doing this
-and see if it fixes my nuvoton.
+And the following patch series should be applied in the following order:
+ 1. https://patchwork.kernel.org/patch/11795559/
+ 2. https://patchwork.kernel.org/patch/11801525/
+ 3. https://patchwork.kernel.org/patch/11743715/
 
-James
+Change Log v2:
+Incorporated feedback from Petr Vorel on v1.
+ - Updated TST_NEEDS_CMDS to correctly reflects commands used in tests.
+ - Removed unnecessary debugging info.
+ - Refactored common functionality in ima_keys.sh, and moved the generic
+   functions to ima_setup.sh.
+ - Removed the use of eval, and replaced it with the recommended ROD()
+   function.
+ - All temporary files now get created under $TST_TMPDIR, instead of
+   current directory.
+ - Removed unnecessary TFAIL, to avoid double counting failures.
+ - Updated log messages to be consistent.
+ - Moved code to cleanup() to avoid code duplication.
 
+Tushar Sugandhi (2):
+  IMA: generalize key measurement tests
+  IMA: Add test for dm-crypt measurement
+
+ runtest/ima                                   |  1 +
+ .../kernel/security/integrity/ima/README.md   | 20 +++++
+ .../integrity/ima/tests/ima_dm_crypt.sh       | 60 ++++++++++++++
+ .../security/integrity/ima/tests/ima_keys.sh  | 62 +++------------
+ .../security/integrity/ima/tests/ima_setup.sh | 79 +++++++++++++++++++
+ 5 files changed, 173 insertions(+), 49 deletions(-)
+ create mode 100755 testcases/kernel/security/integrity/ima/tests/ima_dm_crypt.sh
+
+-- 
+2.17.1
 
