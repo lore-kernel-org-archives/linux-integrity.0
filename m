@@ -2,71 +2,170 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A943BC2D0A8
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 18:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A71F1C2D0A8
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 18:26:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57F8A2076A
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 18:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B01206C3
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 18:26:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jhxIMy3P";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="jhxIMy3P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbgI1SWg (ORCPT
+        id S1726500AbgI1S0m (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Sep 2020 14:22:36 -0400
-Received: from l2mail1.panix.com ([166.84.1.75]:56017 "EHLO l2mail1.panix.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726552AbgI1SWf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 Sep 2020 14:22:35 -0400
-X-Greylist: delayed 1012 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Sep 2020 14:22:35 EDT
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-        by l2mail1.panix.com (Postfix) with ESMTPS id 4C0Vn40HcfzDS8;
-        Mon, 28 Sep 2020 14:05:43 -0400 (EDT)
-Received: from xps-7390 (cpe-23-242-39-94.socal.res.rr.com [23.242.39.94])
-        by mailbackend.panix.com (Postfix) with ESMTPSA id 4C0Vn164GYzmWW;
-        Mon, 28 Sep 2020 14:05:41 -0400 (EDT)
-Date:   Mon, 28 Sep 2020 11:05:39 -0700 (PDT)
-From:   "Kenneth R. Crudup" <kenny@panix.com>
-Reply-To: "Kenneth R. Crudup" <kenny@panix.com>
+        Mon, 28 Sep 2020 14:26:42 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:33642 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726497AbgI1S0m (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 Sep 2020 14:26:42 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 327888EE17F;
+        Mon, 28 Sep 2020 11:26:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1601317602;
+        bh=Y+K5aPh4W5C83LEsG0viF/cwBpcp+43MwPXnYLEy2QQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jhxIMy3PKzuut0hbG3gfpw97SixiVSTO+luHHqwUnW0X6ZQgMZI7eFWcveURMD9v4
+         ABjKx+rNRnvHQdLGGLB7hloCj2TXJ6yEljGKSHDehwWUediC/o1yQXZuZB/6afRAvZ
+         ihU0m0ldwb9+9Y/g7fcmCkv07u/1KQEENJqF1mfM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id R6j5sC-2o_Y4; Mon, 28 Sep 2020 11:26:42 -0700 (PDT)
+Received: from jarvis (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D942F8EE0F5;
+        Mon, 28 Sep 2020 11:26:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1601317602;
+        bh=Y+K5aPh4W5C83LEsG0viF/cwBpcp+43MwPXnYLEy2QQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=jhxIMy3PKzuut0hbG3gfpw97SixiVSTO+luHHqwUnW0X6ZQgMZI7eFWcveURMD9v4
+         ABjKx+rNRnvHQdLGGLB7hloCj2TXJ6yEljGKSHDehwWUediC/o1yQXZuZB/6afRAvZ
+         ihU0m0ldwb9+9Y/g7fcmCkv07u/1KQEENJqF1mfM=
+Message-ID: <6720ff958180a9e040c655dcfc281b3260fe88f2.camel@HansenPartnership.com>
+Subject: Re: [PATCH] tpm: only export stand alone version of flush context
+ command
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-cc:     Ard Biesheuvel <ardb@kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>, tweek@google.com
-Subject: Re: [Regression] "tpm: Require that all digests are present in
- TCG_PCR_EVENT2 structures" causes null pointer dereference
-In-Reply-To: <20200928171238.GB119268@linux.intel.com>
-Message-ID: <alpine.DEB.2.23.453.2009281104310.3261@xps-7390>
-References: <E1FDCCCB-CA51-4AEE-AC83-9CDE995EAE52@canonical.com> <20200928140623.GA69515@linux.intel.com> <BB63B86E-CA44-4EB7-A5D1-21B0E9EB2850@canonical.com> <20200928155215.GA92669@linux.intel.com> <CAMj1kXF-hOTZ62_Tf_GAN9_w7ztngdVp_atNrowH5Y0SwSjCAw@mail.gmail.com>
- <20200928171238.GB119268@linux.intel.com>
-User-Agent: Alpine 2.23 (DEB 453 2020-06-18)
+Cc:     linux-integrity@vger.kernel.org
+Date:   Mon, 28 Sep 2020 11:26:41 -0700
+In-Reply-To: <20200928181304.GB122104@linux.intel.com>
+References: <e63012add04eee75d67d15f55fe4f6b68fb1d6ed.camel@HansenPartnership.com>
+         <20200928001138.GE5283@linux.intel.com>
+         <4b5a58aedb596937618dd7d8fecda9743371d101.camel@HansenPartnership.com>
+         <20200928112046.GA14051@linux.intel.com>
+         <3f369592267e8f502f435584b9220e81263eae2c.camel@HansenPartnership.com>
+         <20200928163114.GC92669@linux.intel.com>
+         <20200928170720.GA119268@linux.intel.com>
+         <d44256f102c7be01808c5186d2c23b685ff090b7.camel@HansenPartnership.com>
+         <20200928181304.GB122104@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Mon, 2020-09-28 at 21:13 +0300, Jarkko Sakkinen wrote:
+> On Mon, Sep 28, 2020 at 10:40:55AM -0700, James Bottomley wrote:
+> > On Mon, 2020-09-28 at 20:07 +0300, Jarkko Sakkinen wrote:
+> > > On Mon, Sep 28, 2020 at 07:31:18PM +0300, Jarkko Sakkinen wrote:
+> > > > > Well, um, that's precisely what this function originally did
+> > > > > when it was inside drivers/char/tpm.  You told the guy who
+> > > > > did the move into security/keys/trusted-keys to convert
+> > > > > everything to use tpm_send which encapsulates the get/put
+> > > > > operation, which is why we now have the flush bug.  If you
+> > > > > really want it done like this, then I'd recommend moving
+> > > > > everything back to drivers/char/tpm so we don't have to do a
+> > > > > global exposure of a load of tpm internal functions (i.e.
+> > > > > move them from drivers/char/tmp.h to include/linux/tpm.h and
+> > > > > do an export on them).
+> > > > 
+> > > > My BuildRoot test image did not include the patch. I was
+> > > > wondering why I did not bump into deadlock with the fix
+> > > > candidate :-/
+> > > >  Forgot export LINUX_OVERRIDE_SRCDIR.
+> > > > 
+> > > > But you are absolutely correct, thanks for recalling. I made a
+> > > > mistake there.
+> > > > 
+> > > > I do disagree though that this should be moved back to
+> > > > drivers/char/tpm, as also TPM 1.x code lives in trusted-keys.
+> > > > It is good to have API for doing sequences TPM commands and
+> > > > keep the core in drivers/char/tpm.
+> > 
+> > I think tpm2_load_cmd is likely going to have to move back anyway
+> > just because more things than trusted keys need to use it.  I can't
+> > really see any other use for the seal/unseal so they can stay in
+> > trusted keys until someone finds a use for them.
+> 
+> We can obviously do that if there are multiple customers for it.
 
-On Mon, 28 Sep 2020, Jarkko Sakkinen wrote:
+Yes, let's just leave everything where it is until there's a use case
+for moving it.
 
-> That's a good guess. Just a bit confused how that particular patch can
-> have the effect: it has two deferences to efispecid instead of one in
-> the same statement. Would be interesting to hear if the bug is triggered
-> in Kenneth's environment by the exact same commit.
+> > > > If you look at tpm_send() it is in essence just simply locking
+> > > > TPM and and calling tpm_transmit_cmd(). And tpm_transmit_cmd()
+> > > > is already an exported symbol. It only needs to be declared in
+> > > > include/linux/tpm.h.
+> > > > 
+> > > > I'd suggest that I refine my series to call tpm_transmit_cmd()
+> > > > and we have a fairly clean solution where the load sequence is
+> > > > atomic.
+> > > 
+> > > I see that it is perfectly fine to make tpm_transmit_cmd()
+> > > globally callable. It is already used by tpm_vtpm_proxy and does
+> > > have clear semantics.
+> > > 
+> > > The way you use it is just:
+> > > 
+> > > 1. tpm_try_get_ops
+> > > 2. Use tpm_transmit_cmd() N times.
+> > > 3. tpm_put_ops
+> > > 
+> > > If we moved TPM 2.x trusted keys code back to
+> > > drivers/char/tpm,for the sake of consistency the same would have
+> > > to be done for TPM 1.2 code. I'd rather fix the regression and be
+> > > done with it.
+> > > 
+> > > Or if reverted like that, also asym_tpm.c code should also live
+> > > inside the TPM driver directory.
+> > > 
+> > > All this work with tpm_buf and the locking functions makes most
+> > > sense if it gives ability for callers to build their own TPM
+> > > commands
+> > > 
+> > > I'm right now building test image with v3 of my fixes (this time
+> > > properly included to the kernel image). I also uploaded the
+> > > (untested) patches over here:
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/?h=trusted-fix
+> > 
+> > I think we can do that ... in which case the fix for the tis
+> > interrupt trigger also becomes a get/put ops around the
+> > tpm2_get_tpm_pt.
+> > 
+> > After the transformation is complete, tpm_send() becomes obsolete,
+> > doesn't it, so it can be removed?
+> 
+> Yes.
+> 
+> BTW, while doing this I think I noticed what was wrong in my test
+> kernel when I tested your series that introduces ASN.1 keys. I'll
+> test both before sending update to my fix. Hopefully I can give today
+> tested-by tags to that series.
 
-I can confirm that reverting 7f3d176f5f stops my kernel from panic()ing:
+Great ... the trusted key code doesn't use tpm_send, but the policy
+additions do so the latter will need updating (again).
 
-$ sudo fwupdtpmevlog
-[sudo] password for kenny:
-Failed to parse file: attempted to read 0x10 bytes from buffer of 0x00
-$
+James
 
-It would normally OOPS at that point.
 
-	-Kenny
-
--- 
-Kenneth R. Crudup  Sr. SW Engineer, Scott County Consulting, Orange County CA
