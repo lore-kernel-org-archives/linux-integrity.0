@@ -2,83 +2,147 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA4BC4727E
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 14:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8122BC2D0A8
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 14:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A26BD23977
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 14:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8E2221E8
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 14:23:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbgI1OQR (ORCPT
+        id S1726327AbgI1OXF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Sep 2020 10:16:17 -0400
-Received: from mga05.intel.com ([192.55.52.43]:54532 "EHLO mga05.intel.com"
+        Mon, 28 Sep 2020 10:23:05 -0400
+Received: from mga04.intel.com ([192.55.52.120]:42270 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726461AbgI1OQQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 Sep 2020 10:16:16 -0400
-IronPort-SDR: rjUu92lA+djZnfzEAs01y5BaCGaCYBTPB7B9sCzpV3vyUbbd/nsIzeKZkuzSTRN95Br/6pfQhW
- 9FPI4EaWXY3g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9757"; a="246740439"
+        id S1726325AbgI1OXF (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 Sep 2020 10:23:05 -0400
+IronPort-SDR: wGEzRi1fMh39GIt3WIW6Pr7Z4lzVW7ypVEINpU9r/GXZhG9M6jsm2xcabLP9pRKpiDCykZ/8kb
+ fnYileett1qA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9757"; a="159380168"
 X-IronPort-AV: E=Sophos;i="5.77,313,1596524400"; 
-   d="scan'208";a="246740439"
+   d="scan'208";a="159380168"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 07:16:16 -0700
-IronPort-SDR: Y1N4FP+h9NfmFZLps4jLAQPrnr9h6SrT7eQcEYcOxqlRlOFq/MNOy4nUBwbyfAvF3u67uT4Td+
- GmahZ5rKr2eQ==
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 07:09:57 -0700
+IronPort-SDR: YHKFCeCMdY+V43id/m9w5v+iLoHJB+6rsO9/fuI+9KrFSlgtL8srMAz2VH3zvDGshvmrjsrV+h
+ IF8kcM28ZpTw==
 X-IronPort-AV: E=Sophos;i="5.77,313,1596524400"; 
-   d="scan'208";a="488597261"
+   d="scan'208";a="514269821"
 Received: from schuethe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.34.214])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 07:16:12 -0700
-Date:   Mon, 28 Sep 2020 17:16:13 +0300
+  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 07:09:54 -0700
+Date:   Mon, 28 Sep 2020 17:09:55 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Hao Wu <hao.wu@rubrik.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>, peterhuewe@gmx.de,
-        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org,
-        Hamza Attak <hamza@hpe.com>, why2jjj.linux@gmail.com,
-        zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Ken Goldman <kgold@linux.ibm.com>,
-        Seungyeop Han <seungyeop.han@rubrik.com>,
-        Shrihari Kalkar <shrihari.kalkar@rubrik.com>,
-        Anish Jhaveri <anish.jhaveri@rubrik.com>
-Subject: Re: [PATCH] Fix Atmel TPM crash caused by too frequent queries
-Message-ID: <20200928141613.GB70098@linux.intel.com>
-References: <20200926223150.109645-1-hao.wu@rubrik.com>
- <73405d14d7665e8a4e3e9defde7fb12aeae7784c.camel@HansenPartnership.com>
- <DFD7629C-05BF-46C1-B3D7-92FBBC176D9E@rubrik.com>
- <cf5c8035b7183522fb8a5df4baa95bd24288e61f.camel@HansenPartnership.com>
- <20200928010835.GD6704@linux.intel.com>
- <1F6A3D58-6B60-4FCB-A629-34CE8813E04C@rubrik.com>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
+        <linuxppc-dev@lists.ozlabs.org>, Peter Huewe <peterhuewe@gmx.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: of: avoid __va() translation for event log address
+Message-ID: <20200928140955.GA70098@linux.intel.com>
+References: <20200922094128.26245-1-ardb@kernel.org>
+ <20200925055626.GC165011@linux.intel.com>
+ <CAMj1kXFLWsFz7HV4sHLbwBkuiEu0gT4esSH8umVrvDDrJaOLrQ@mail.gmail.com>
+ <20200925102920.GA180915@linux.intel.com>
+ <20200925120018.GH9916@ziepe.ca>
+ <20200927234434.GA5283@linux.intel.com>
+ <9be9c7e7-c424-d241-2255-ad854221bd2e@csgroup.eu>
+ <CAMj1kXGxNgixUEocma-9F3fYgdJJJADh=bvyrCziXkuArErWdA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1F6A3D58-6B60-4FCB-A629-34CE8813E04C@rubrik.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMj1kXGxNgixUEocma-9F3fYgdJJJADh=bvyrCziXkuArErWdA@mail.gmail.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Sep 27, 2020 at 11:03:47PM -0700, Hao Wu wrote:
-> Hi Jarkko,
+On Mon, Sep 28, 2020 at 08:20:18AM +0200, Ard Biesheuvel wrote:
+> On Mon, 28 Sep 2020 at 07:56, Christophe Leroy
+> <christophe.leroy@csgroup.eu> wrote:
+> >
+> >
+> >
+> > Le 28/09/2020 à 01:44, Jarkko Sakkinen a écrit :
+> > > On Fri, Sep 25, 2020 at 09:00:18AM -0300, Jason Gunthorpe wrote:
+> > >> On Fri, Sep 25, 2020 at 01:29:20PM +0300, Jarkko Sakkinen wrote:
+> > >>> On Fri, Sep 25, 2020 at 09:00:56AM +0200, Ard Biesheuvel wrote:
+> > >>>> On Fri, 25 Sep 2020 at 07:56, Jarkko Sakkinen
+> > >>>> <jarkko.sakkinen@linux.intel.com> wrote:
+> > >>>>>
+> > >>>>> On Tue, Sep 22, 2020 at 11:41:28AM +0200, Ard Biesheuvel wrote:
+> > >>>>>> The TPM event log is provided to the OS by the firmware, by loading
+> > >>>>>> it into an area in memory and passing the physical address via a node
+> > >>>>>> in the device tree.
+> > >>>>>>
+> > >>>>>> Currently, we use __va() to access the memory via the kernel's linear
+> > >>>>>> map: however, it is not guaranteed that the linear map covers this
+> > >>>>>> particular address, as we may be running under HIGHMEM on a 32-bit
+> > >>>>>> architecture, or running firmware that uses a memory type for the
+> > >>>>>> event log that is omitted from the linear map (such as EfiReserved).
+> > >>>>>
+> > >>>>> Makes perfect sense to the level that I wonder if this should have a
+> > >>>>> fixes tag and/or needs to be backported to the stable kernels?
+> > >>>>>
+> > >>>>
+> > >>>> AIUI, the code was written specifically for ppc64, which is a
+> > >>>> non-highmem, non-EFI architecture. However, when we start reusing this
+> > >>>> driver for ARM, this issue could pop up.
+> > >>>>
+> > >>>> The code itself has been refactored a couple of times, so I think it
+> > >>>> will require different versions of the patch for different generations
+> > >>>> of stable kernels.
+> > >>>>
+> > >>>> So perhaps just add Cc: <stable@vger.kernel.org>, and wait and see how
+> > >>>> far back it applies cleanly?
+> > >>>
+> > >>> Yeah, I think I'll cc it with some note before the diffstat.
+> > >>>
+> > >>> I'm thinking to cap it to only 5.x kernels (at least first) unless it is
+> > >>> dead easy to backport below that.
+> > >>
+> > >> I have this vauge recollection of pointing at this before and being
+> > >> told that it had to be __va for some PPC reason?
+> > >>
+> > >> Do check with the PPC people first, I see none on the CC list.
+> > >>
+> > >> Jason
+> > >
+> > > Thanks, added arch/powerpc maintainers.
+> > >
+> >
+> > As far as I can see, memremap() won't work on PPC32 at least:
+> >
+> > IIUC, memremap() calls arch_memremap_wb()
+> > arch_memremap_wb() calls ioremap_cache()
+> > In case of failure, then ioremap_wt() and ioremap_wc() are tried.
+> >
+> > All ioremap calls end up in __ioremap_caller() which will return NULL in case you try to ioremap RAM.
+> >
+> > So the statement "So instead, use memremap(), which will reuse the linear mapping if
+> > it is valid, or create another mapping otherwise." seems to be wrong, at least for PPC32.
+> >
+> > Even for PPC64 which doesn't seem to have the RAM check, I can't see that it will "reuse the linear
+> > mapping".
+> >
 > 
-> Just to be clear it is not caused by that single commit, but a few accumulated commits
-> https://github.com/torvalds/linux/commit/9f3fc7bcddcb51234e23494531f93ab60475e1c3
-> https://github.com/torvalds/linux/commit/cf151a9a44d52a63332e8e926234574fe5a5d784
-> https://github.com/torvalds/linux/commit/59f5a6b07f6434efac0057dc2f303a96b871811b
-> https://github.com/torvalds/linux/commit/424eaf910c329ab06ad03a527ef45dcf6a328f00
+> It is there, please look again. Before any of the above happens,
+> memremap() will call try_ram_remap() for regions that are covered by a
+> IORESOURCE_SYSTEM_RAM, and map it using __va() if its PFN is valid and
+> it is not highmem.
 > 
-> The easy way is probably just apply the patch I provided, and then revisit the value
-> for TPM_TIMEOUT_WAIT_STAT  
+> So as far as I can tell, this change has no effect on PPC at all
+> unless its RAM is not described as IORESOURCE_SYSTEM_RAM.
 
-When you response, please quote properly, and do not top post.  The
-discussion is impossible to follow this way.
-
-I'm not sure if I buy that. Which one is the first failing commit?
+Any chance for someone to test this on PPC32?
 
 /Jarkko
