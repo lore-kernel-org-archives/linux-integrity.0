@@ -2,193 +2,186 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEA3C2D0A8
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55697C4727C
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 05:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 749CF23998
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:58:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F08AE207E8
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 05:59:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rubrik.com header.i=@rubrik.com header.b="GVR8pUin"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgI1D6r (ORCPT
+        id S1726478AbgI1F7g (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 27 Sep 2020 23:58:47 -0400
-Received: from mga04.intel.com ([192.55.52.120]:37232 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726380AbgI1D6r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 27 Sep 2020 23:58:47 -0400
-IronPort-SDR: H0KbsDqAC4HwYYWhF4B8HLoGQ+oTkMBuRrvak6uX5WY/Qv3m8uruD0OOvMLdtg2IQdr+5hwUB/
- 6ncvDHrgCV1w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9757"; a="159301856"
-X-IronPort-AV: E=Sophos;i="5.77,312,1596524400"; 
-   d="scan'208";a="159301856"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2020 17:15:30 -0700
-IronPort-SDR: G3bpv15SFxQpqfe6ZKKSZv8GJxri1qhrVgk4q5TGUyr/hE1AtVcKIlrwKvYKdU/UUfgru/zG9f
- 1Xvot87pKjGg==
-X-IronPort-AV: E=Sophos;i="5.77,312,1596524400"; 
-   d="scan'208";a="488343287"
-Received: from memara-mobl.ger.corp.intel.com (HELO localhost) ([10.252.49.157])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2020 17:15:28 -0700
-Date:   Mon, 28 Sep 2020 03:15:30 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Mon, 28 Sep 2020 01:59:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45788 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725290AbgI1F7g (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 Sep 2020 01:59:36 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75294C0613CE
+        for <linux-integrity@vger.kernel.org>; Sun, 27 Sep 2020 22:59:36 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id a9so2961126pjg.1
+        for <linux-integrity@vger.kernel.org>; Sun, 27 Sep 2020 22:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rubrik.com; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=solfXapgbg+iuv30WemFtClyAffk/cNrWlhqezcPjc4=;
+        b=GVR8pUin16qFydgY7wqnOlVN9SlHRYIp5/TYxyrkRXJwd/RTeYK1H2Tnrc7wgFNS/P
+         y6ImunhgtqFLOTsreDlTm8xoFz0WPvnDXtnpPAf35Qp2hl4kr/6/5YfPZu2SIWqDUk61
+         Ffzwra6YN4m4VSKMp/2nyTsquJWDtFsGbTsmE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=solfXapgbg+iuv30WemFtClyAffk/cNrWlhqezcPjc4=;
+        b=WoWdhxa+7lwdkTeoK0NLjyaHYuHZArnvMXQBW22Z8gu/kUJ9ZoSGmrH+O30hf3qC71
+         eBFW8I2TRRWRivdv7op2Nb+qrLF2fa901zh1JZtbT4N6NtYPwUmnHqKVvkiOTx8Lkitr
+         4zbtwfbL5OWNqd8zisWs/WiBkQNKf8t1HLExGI5QOT6ksJSEtbdO2nOcaeVLwcNIxAk/
+         xRjDxpZ4eRSa5i7sVUuLYXeeoUePxMoI3SgHGv7c2Y5m6Pr7tjTIfLFchysnEN4pAQOb
+         p6QWf4zzjSat1oAy7qsqYIMDzPSEG1E6KRLsdbIF8omGtOW8or1SWAslrD5TfnPLZ+Pe
+         +Pmg==
+X-Gm-Message-State: AOAM532e75UHoK/WZ8xQ49Zyj7VXIgguO7aistBgUuK9WACmTXBx2zSN
+        8uteRzJj2jeoCgq/1QayJQNPKA==
+X-Google-Smtp-Source: ABdhPJx5Vm84twcDoOJ03H1pP2wO/wkkNOBwdZhNLk5vRY/9aDJKqZG8t8E3T6g02pM8QY3P2plEgw==
+X-Received: by 2002:a17:90a:cf07:: with SMTP id h7mr7832036pju.142.1601272775345;
+        Sun, 27 Sep 2020 22:59:35 -0700 (PDT)
+Received: from ?IPv6:2601:647:4200:3be0:5808:e111:eba3:c439? ([2601:647:4200:3be0:5808:e111:eba3:c439])
+        by smtp.gmail.com with ESMTPSA id h10sm8371575pgm.65.2020.09.27.22.59.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Sep 2020 22:59:34 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.1\))
+Subject: Re: [PATCH] Fix Atmel TPM crash caused by too frequent queries
+From:   Hao Wu <hao.wu@rubrik.com>
+In-Reply-To: <0c896ca8eb0e30d6e75843cfbf2aa627ddc63feb.camel@HansenPartnership.com>
+Date:   Sun, 27 Sep 2020 22:59:33 -0700
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org,
+        Hamza Attak <hamza@hpe.com>, nayna@linux.vnet.ibm.com,
+        why2jjj.linux@gmail.com, zohar@linux.vnet.ibm.com,
         linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: Re: [PATCH 2/2] tpm: Revert "tpm_tis_core: Turn on the TPM before
- probing IRQ's"
-Message-ID: <20200928001530.GF5283@linux.intel.com>
-References: <20191126131753.3424363-1-stefanb@linux.vnet.ibm.com>
- <20191126131753.3424363-3-stefanb@linux.vnet.ibm.com>
- <1de642865a142dfbf9d7ef0da398c98d52228943.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1de642865a142dfbf9d7ef0da398c98d52228943.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        Seungyeop Han <seungyeop.han@rubrik.com>,
+        Shrihari Kalkar <shrihari.kalkar@rubrik.com>,
+        Anish Jhaveri <anish.jhaveri@rubrik.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <246A111F-C72C-4CA2-B439-A6BBE0E85087@rubrik.com>
+References: <20200926223150.109645-1-hao.wu@rubrik.com>
+ <73405d14d7665e8a4e3e9defde7fb12aeae7784c.camel@HansenPartnership.com>
+ <DFD7629C-05BF-46C1-B3D7-92FBBC176D9E@rubrik.com>
+ <cf5c8035b7183522fb8a5df4baa95bd24288e61f.camel@HansenPartnership.com>
+ <E6E3C07D-57F4-48F5-B4A9-50868B82E779@rubrik.com>
+ <0c896ca8eb0e30d6e75843cfbf2aa627ddc63feb.camel@HansenPartnership.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+X-Mailer: Apple Mail (2.3608.120.23.2.1)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Sep 27, 2020 at 01:06:03PM -0700, James Bottomley wrote:
-> On Tue, 2019-11-26 at 08:17 -0500, Stefan Berger wrote:
-> > From: Stefan Berger <stefanb@linux.ibm.com>
-> > 
-> > Revert the patch that was turning the TPM on before probing for IRQs.
-> > 
-> > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing
-> > IRQ's")
-> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  drivers/char/tpm/tpm_tis_core.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_tis_core.c
-> > b/drivers/char/tpm/tpm_tis_core.c
-> > index 5dc52c4e2292..27c6ca031e23 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.c
-> > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > @@ -1059,7 +1059,6 @@ int tpm_tis_core_init(struct device *dev,
-> > struct tpm_tis_data *priv, int irq,
-> >  			goto out_err;
-> >  		}
-> >  
-> > -		tpm_chip_start(chip);
-> >  		if (irq) {
-> >  			tpm_tis_probe_irq_single(chip, intmask,
-> > IRQF_SHARED,
-> >  						 irq);
-> > @@ -1069,7 +1068,6 @@ int tpm_tis_core_init(struct device *dev,
-> > struct tpm_tis_data *priv, int irq,
-> >  		} else {
-> >  			tpm_tis_probe_irq(chip, intmask);
-> >  		}
-> > -		tpm_chip_stop(chip);
-> >  	}
-> >  
-> >  	rc = tpm_chip_register(chip);
-> 
-> This patch is completely bogus: it's not a full revert of what it
-> claims to be.  With this patch applied all my TIS TPMs are returning
-> 0xff to the status reads because the locality hasn't been properly
-> requested.  The chip has to be started somewhere for the interrupt
-> probe to work on these TPMs ... what the original patch did was
-> eliminate a bunch of start/stops for a global one.  However, if the
-> global one isn't working we should have gone back to the bunch of
-> smaller ones i.e. a full revert.
-> 
-> The only real manifestation of the problems this patch causes is that
-> interrupts never get enabled on TIS TPMs that have this issue, but they
-> still work via polling.
-> 
-> The below is what fixes this for me with the minimum possible extend of
-> additional chip start/stop in the code.  This should be checked against
-> the previous failing laptops.
-> 
+Hi James,
+
+>  Upping that to 15ms introduces a 100x delay in
+> our status wait for the TPM to become ready, potentially slowing down
+> all TIS TPM operations by 100x, which will hit us most with the PCR
+> writes we do for IMA logging ... that seems like a bad bargain for a
+> single TPM family manufacturer.
+1. It is unlike to be 100x delay=20
+According to=20
+=
+https://github.com/torvalds/linux/commit/59f5a6b07f6434efac0057dc2f303a96b=
+871811b
+=
+https://github.com/torvalds/linux/commit/424eaf910c329ab06ad03a527ef45dcf6=
+a328f00
+It only optimize from 14sec to 7sec. Which is only a 2x speed up by =
+using sleep time from 5ms to >1ms.
+Here we change it back to 15 ms is very unlikely to have 100x delay.=20
+The optimization does not worth to have a breakage on chip from one =
+manufacturer.
+
+2. In my opinion, the kernel should support all manufacturers which were =
+supported before.=20
+Not supporting any of them would lead to kernel divergence, because =
+those chip users have to
+Use it anyway. Maybe we can see the maintainers=E2=80=99 opinion on =
+this.
+
+3. I am kind of opposing to coming up smaller values without doing =
+comprehensive
+qualification on all supported manufacturers. Stable is probably more =
+important for such software.
+Looking back to these commits that introduced the breakages, only one or =
+two
+chips are tested. If that is a common case, probably we should refactor
+the TPM driver to better support per-manufacturer configuration?   =20
+
+> However, there is another possibility: it's something to do with the
+> byte read; I notice you don't require the same slowdown for the burst
+> count read, which actually reads the status register and burst count =
+as
+> a read32.  If that really is the case, for the atmel would =
+substituting
+> a read32 and just throwing the upper bytes away in tpm_tis_status()
+> allow us to keep the current timings?  I can actually try doing this
+> and see if it fixes my nuvoton.
+
+If would be helpful if you can find the solution without reducing =
+performance.
+I think it is a separate problem to address though. Maybe not worth to =
+mix
+them in the same fix.
+
+Thanks
+Hao
+
+> On Sep 27, 2020, at 6:22 PM, James Bottomley =
+<James.Bottomley@HansenPartnership.com> wrote:
+>=20
+> On Sun, 2020-09-27 at 17:11 -0700, Hao Wu wrote:
+>> Hi James,
+>>=20
+>> Maybe there is a misunderstanding. Here I am using tpm_msleep, not
+>> msleep. tpm_msleep is using usleep underlaying. See
+>> =
+https://github.com/torvalds/linux/blob/master/drivers/char/tpm/tpm.h#L188
+>=20
+> Right, I had missed that.
+>=20
+>> The reasons I choose 15ms, is because before=20
+>> =
+https://github.com/torvalds/linux/commit/9f3fc7bcddcb51234e23494531f93ab60=
+475e1c3
+>> (Where msleep is changed to tpm_msleep (which is essentially
+>> usleep)), The actual sleep time is 15ms, thus here we change this
+>> back to 15ms to fix regression.
+>=20
+> Right now most TIS TPMs operate successfully with a sleep in there of
+> the range 0.1-0.5ms.  Upping that to 15ms introduces a 100x delay in
+> our status wait for the TPM to become ready, potentially slowing down
+> all TIS TPM operations by 100x, which will hit us most with the PCR
+> writes we do for IMA logging ... that seems like a bad bargain for a
+> single TPM family manufacturer.
+>=20
+> However, there is another possibility: it's something to do with the
+> byte read; I notice you don't require the same slowdown for the burst
+> count read, which actually reads the status register and burst count =
+as
+> a read32.  If that really is the case, for the atmel would =
+substituting
+> a read32 and just throwing the upper bytes away in tpm_tis_status()
+> allow us to keep the current timings?  I can actually try doing this
+> and see if it fixes my nuvoton.
+>=20
 > James
-> 
-> ---
-> 
-> From: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Subject: [PATCH] tpm_tis: fix interrupt probing
-> 
-> When we send a command into the TPM core, the TPM must be started
-> otherwise the register reads can be bogus.  There have been several
-> bug reports about doing this inside the TIS core, so fix the issue by
-> adding an external version of the tpm2_get_tpm_pt() call which adds a
-> tpm ops get/put to set up the TPM correctly before the command is
-> sent.
-> 
-> Fixes: aa4a63dd9816 (tpm: Revert "tpm_tis_core: Turn on the TPM before probing IRQ's")
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> ---
->  drivers/char/tpm/tpm.h          |  2 ++
->  drivers/char/tpm/tpm2-cmd.c     | 30 ++++++++++++++++++++++++++++++
->  drivers/char/tpm/tpm_tis_core.c |  2 +-
->  3 files changed, 33 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 947d1db0a5cc..041b0b5bd2a5 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -223,6 +223,8 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->  int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
->  ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
->  			u32 *value, const char *desc);
-> +ssize_t tpm2_get_tpm_pt_cmd(struct tpm_chip *chip, u32 property_id,
-> +			    u32 *value, const char *desc);
->  
->  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
->  int tpm2_auto_startup(struct tpm_chip *chip);
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index eff1f12d981a..9b84158c5a9e 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -407,6 +407,36 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
->  }
->  EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
->  
-> +/**
-> + * tpm2_get_tpm_pt_cmd() - get value of a TPM_CAP_TPM_PROPERTIES type property
-> + * @chip:		a &tpm_chip instance
-> + * @property_id:	property ID.
-> + * @value:		output variable.
-> + * @desc:		passed to tpm_transmit_cmd()
-> + *
-> + * This calls the necessary tpm_try_get_ops()/tpm_put_ops() around
-> + * tpm2_get_tpm_pt() and must be called where it is used stand alone
-> + * outside the core code.
-> + *
-> + * Return:
-> + *   0 on success,
-> + *   -errno or a TPM return code otherwise
-> + */
-> +ssize_t tpm2_get_tpm_pt_cmd(struct tpm_chip *chip, u32 property_id,  u32 *value,
-> +			    const char *desc)
-> +{
-> +	ssize_t rc;
-> +
-> +	rc = tpm_try_get_ops(chip);
-> +	if (rc)
-> +		return rc;
-> +	rc = tpm2_get_tpm_pt(chip, property_id, value, desc);
-> +	tpm_put_ops(chip);
-> +
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt_cmd);
+>=20
+>=20
 
-Hi, same comment as for the other, i.e. rename the function that does
-not have get/put_ops as __tpm2_get_tpm_pt(). Otherwise, fine. Thank
-you.
-
-/Jarkko
