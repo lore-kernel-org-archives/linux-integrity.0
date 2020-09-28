@@ -2,261 +2,193 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95A7C47420
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEA3C2D0A8
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:58:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 840A7221EC
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LQJezkr1"
+	by mail.kernel.org (Postfix) with ESMTP id 749CF23998
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgI1D4V (ORCPT
+        id S1726440AbgI1D6r (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 27 Sep 2020 23:56:21 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39234 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbgI1D4V (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 27 Sep 2020 23:56:21 -0400
-Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1F3FD20B7179;
-        Sun, 27 Sep 2020 20:56:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1F3FD20B7179
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1601265379;
-        bh=Q+AR4+wYqWDncmubPVjCyGk6Ulpg/QxqmyQCuo+LxaI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LQJezkr1R554wfVFhTs9isZ6ug3aXbQpySMHUxlZHtRsxbsuL+ob+s2RTwvBhhdD8
-         JfZdA+RRsk27v0uAbtNIBeBOusSV9nDMZ4fS1+kx1lqj9/pOchHwienE1TpdMFylCl
-         /C8uhE0F8cIpREkpC/XLdK9rF4e+h6xazxFkQoVQ=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, pvorel@suse.cz
-Cc:     nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        dm-devel@redhat.com, ltp@lists.linux.it
-Subject: [PATCH v2 1/2] IMA: generalize key measurement tests
-Date:   Sun, 27 Sep 2020 20:56:04 -0700
-Message-Id: <20200928035605.22701-2-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
-References: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
+        Sun, 27 Sep 2020 23:58:47 -0400
+Received: from mga04.intel.com ([192.55.52.120]:37232 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726380AbgI1D6r (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 27 Sep 2020 23:58:47 -0400
+IronPort-SDR: H0KbsDqAC4HwYYWhF4B8HLoGQ+oTkMBuRrvak6uX5WY/Qv3m8uruD0OOvMLdtg2IQdr+5hwUB/
+ 6ncvDHrgCV1w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9757"; a="159301856"
+X-IronPort-AV: E=Sophos;i="5.77,312,1596524400"; 
+   d="scan'208";a="159301856"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2020 17:15:30 -0700
+IronPort-SDR: G3bpv15SFxQpqfe6ZKKSZv8GJxri1qhrVgk4q5TGUyr/hE1AtVcKIlrwKvYKdU/UUfgru/zG9f
+ 1Xvot87pKjGg==
+X-IronPort-AV: E=Sophos;i="5.77,312,1596524400"; 
+   d="scan'208";a="488343287"
+Received: from memara-mobl.ger.corp.intel.com (HELO localhost) ([10.252.49.157])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2020 17:15:28 -0700
+Date:   Mon, 28 Sep 2020 03:15:30 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: Re: [PATCH 2/2] tpm: Revert "tpm_tis_core: Turn on the TPM before
+ probing IRQ's"
+Message-ID: <20200928001530.GF5283@linux.intel.com>
+References: <20191126131753.3424363-1-stefanb@linux.vnet.ibm.com>
+ <20191126131753.3424363-3-stefanb@linux.vnet.ibm.com>
+ <1de642865a142dfbf9d7ef0da398c98d52228943.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1de642865a142dfbf9d7ef0da398c98d52228943.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-New functionality is being added in IMA to measure data provided by
-kernel components. Tests have to be added in LTP to validate this new
-feature. The functionality in ima_keys.sh can be reused to test this new
-feature if it is made generic.
+On Sun, Sep 27, 2020 at 01:06:03PM -0700, James Bottomley wrote:
+> On Tue, 2019-11-26 at 08:17 -0500, Stefan Berger wrote:
+> > From: Stefan Berger <stefanb@linux.ibm.com>
+> > 
+> > Revert the patch that was turning the TPM on before probing for IRQs.
+> > 
+> > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing
+> > IRQ's")
+> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  drivers/char/tpm/tpm_tis_core.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm_tis_core.c
+> > b/drivers/char/tpm/tpm_tis_core.c
+> > index 5dc52c4e2292..27c6ca031e23 100644
+> > --- a/drivers/char/tpm/tpm_tis_core.c
+> > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > @@ -1059,7 +1059,6 @@ int tpm_tis_core_init(struct device *dev,
+> > struct tpm_tis_data *priv, int irq,
+> >  			goto out_err;
+> >  		}
+> >  
+> > -		tpm_chip_start(chip);
+> >  		if (irq) {
+> >  			tpm_tis_probe_irq_single(chip, intmask,
+> > IRQF_SHARED,
+> >  						 irq);
+> > @@ -1069,7 +1068,6 @@ int tpm_tis_core_init(struct device *dev,
+> > struct tpm_tis_data *priv, int irq,
+> >  		} else {
+> >  			tpm_tis_probe_irq(chip, intmask);
+> >  		}
+> > -		tpm_chip_stop(chip);
+> >  	}
+> >  
+> >  	rc = tpm_chip_register(chip);
+> 
+> This patch is completely bogus: it's not a full revert of what it
+> claims to be.  With this patch applied all my TIS TPMs are returning
+> 0xff to the status reads because the locality hasn't been properly
+> requested.  The chip has to be started somewhere for the interrupt
+> probe to work on these TPMs ... what the original patch did was
+> eliminate a bunch of start/stops for a global one.  However, if the
+> global one isn't working we should have gone back to the bunch of
+> smaller ones i.e. a full revert.
+> 
+> The only real manifestation of the problems this patch causes is that
+> interrupts never get enabled on TIS TPMs that have this issue, but they
+> still work via polling.
+> 
+> The below is what fixes this for me with the minimum possible extend of
+> additional chip start/stop in the code.  This should be checked against
+> the previous failing laptops.
+> 
+> James
+> 
+> ---
+> 
+> From: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Subject: [PATCH] tpm_tis: fix interrupt probing
+> 
+> When we send a command into the TPM core, the TPM must be started
+> otherwise the register reads can be bogus.  There have been several
+> bug reports about doing this inside the TIS core, so fix the issue by
+> adding an external version of the tpm2_get_tpm_pt() call which adds a
+> tpm ops get/put to set up the TPM correctly before the command is
+> sent.
+> 
+> Fixes: aa4a63dd9816 (tpm: Revert "tpm_tis_core: Turn on the TPM before probing IRQ's")
+> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> ---
+>  drivers/char/tpm/tpm.h          |  2 ++
+>  drivers/char/tpm/tpm2-cmd.c     | 30 ++++++++++++++++++++++++++++++
+>  drivers/char/tpm/tpm_tis_core.c |  2 +-
+>  3 files changed, 33 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 947d1db0a5cc..041b0b5bd2a5 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -223,6 +223,8 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+>  int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+>  ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
+>  			u32 *value, const char *desc);
+> +ssize_t tpm2_get_tpm_pt_cmd(struct tpm_chip *chip, u32 property_id,
+> +			    u32 *value, const char *desc);
+>  
+>  ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
+>  int tpm2_auto_startup(struct tpm_chip *chip);
+> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> index eff1f12d981a..9b84158c5a9e 100644
+> --- a/drivers/char/tpm/tpm2-cmd.c
+> +++ b/drivers/char/tpm/tpm2-cmd.c
+> @@ -407,6 +407,36 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+>  }
+>  EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt);
+>  
+> +/**
+> + * tpm2_get_tpm_pt_cmd() - get value of a TPM_CAP_TPM_PROPERTIES type property
+> + * @chip:		a &tpm_chip instance
+> + * @property_id:	property ID.
+> + * @value:		output variable.
+> + * @desc:		passed to tpm_transmit_cmd()
+> + *
+> + * This calls the necessary tpm_try_get_ops()/tpm_put_ops() around
+> + * tpm2_get_tpm_pt() and must be called where it is used stand alone
+> + * outside the core code.
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -errno or a TPM return code otherwise
+> + */
+> +ssize_t tpm2_get_tpm_pt_cmd(struct tpm_chip *chip, u32 property_id,  u32 *value,
+> +			    const char *desc)
+> +{
+> +	ssize_t rc;
+> +
+> +	rc = tpm_try_get_ops(chip);
+> +	if (rc)
+> +		return rc;
+> +	rc = tpm2_get_tpm_pt(chip, property_id, value, desc);
+> +	tpm_put_ops(chip);
+> +
+> +	return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(tpm2_get_tpm_pt_cmd);
 
-Refactor check_keys_policy() and test1() implemented in ima_keys.sh to
-make it generic, and move the functionality to ima_setup.sh as new
-functions - check_policy_pattern() and check_ima_ascii_log_for_policy().
+Hi, same comment as for the other, i.e. rename the function that does
+not have get/put_ops as __tpm2_get_tpm_pt(). Otherwise, fine. Thank
+you.
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
----
- .../security/integrity/ima/tests/ima_keys.sh  | 62 +++------------
- .../security/integrity/ima/tests/ima_setup.sh | 79 +++++++++++++++++++
- 2 files changed, 92 insertions(+), 49 deletions(-)
-
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-index c9eef4b68..c2120358a 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
-@@ -6,7 +6,7 @@
- #
- # Verify that keys are measured correctly based on policy.
- 
--TST_NEEDS_CMDS="cmp cut grep sed xxd"
-+TST_NEEDS_CMDS="cmp cut grep xxd"
- TST_CNT=2
- TST_NEEDS_DEVICE=1
- TST_SETUP=setup
-@@ -28,64 +28,28 @@ cleanup()
- 	tst_is_num $KEYRING_ID && keyctl clear $KEYRING_ID
- }
- 
--check_keys_policy()
--{
--	local pattern="$1"
--
--	if ! grep -E "$pattern" $TST_TMPDIR/policy.txt; then
--		tst_res TCONF "IMA policy must specify $pattern, $FUNC_KEYCHECK, $TEMPLATE_BUF"
--		return 1
--	fi
--	return 0
--}
--
- # Based on https://lkml.org/lkml/2019/12/13/564.
- # (450d0fd51564 - "IMA: Call workqueue functions to measure queued keys")
- test1()
- {
- 	local keycheck_lines i keyrings templates
- 	local pattern='keyrings=[^[:space:]]+'
--	local test_file="file.txt" tmp_file="file2.txt"
-+	local policy="keyrings"
-+	local tmp_file="$TST_TMPDIR/keycheck_tmp_file.txt"
-+	local res
- 
- 	tst_res TINFO "verify key measurement for keyrings and templates specified in IMA policy"
- 
--	check_keys_policy "$pattern" > $tmp_file || return
--	keycheck_lines=$(cat $tmp_file)
--	keyrings=$(for i in $keycheck_lines; do echo "$i" | grep "keyrings" | \
--		sed "s/\./\\\./g" | cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
--	if [ -z "$keyrings" ]; then
--		tst_res TCONF "IMA policy has a keyring key-value specifier, but no specified keyrings"
--		return
--	fi
--
--	templates=$(for i in $keycheck_lines; do echo "$i" | grep "template" | \
--		cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
--
--	tst_res TINFO "keyrings: '$keyrings'"
--	tst_res TINFO "templates: '$templates'"
--
--	grep -E "($templates).*($keyrings)" $ASCII_MEASUREMENTS | while read line
--	do
--		local digest expected_digest algorithm
--
--		digest=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
--		algorithm=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f1)
--		keyring=$(echo "$line" | cut -d' ' -f5)
-+	check_policy_pattern "$pattern" $FUNC_KEYCHECK $TEMPLATE_BUF > $tmp_file || return
- 
--		echo "$line" | cut -d' ' -f6 | xxd -r -p > $test_file
-+	res="$(check_ima_ascii_log_for_policy $policy $tmp_file)"
- 
--		if ! expected_digest="$(compute_digest $algorithm $test_file)"; then
--			tst_res TCONF "cannot compute digest for $algorithm"
--			return
--		fi
--
--		if [ "$digest" != "$expected_digest" ]; then
--			tst_res TFAIL "incorrect digest was found for $keyring keyring"
--			return
--		fi
--	done
-+	if [ "$res" = "0" ]; then
-+		tst_res TPASS "specified keyrings were measured correctly"
-+	else
-+		tst_res TFAIL "failed to measure specified keyrings"
-+	fi
- 
--	tst_res TPASS "specified keyrings were measured correctly"
- }
- 
- # Create a new keyring, import a certificate into it, and verify
-@@ -97,11 +61,11 @@ test2()
- 	local cert_file="$TST_DATAROOT/x509_ima.der"
- 	local keyring_name="key_import_test"
- 	local pattern="keyrings=[^[:space:]]*$keyring_name"
--	local temp_file="file.txt"
-+	local temp_file="$TST_TMPDIR/key_import_test_file.txt"
- 
- 	tst_res TINFO "verify measurement of certificate imported into a keyring"
- 
--	check_keys_policy "$pattern" >/dev/null || return
-+	check_policy_pattern "$pattern" $FUNC_KEYCHECK $TEMPLATE_BUF >/dev/null || return
- 
- 	KEYRING_ID=$(keyctl newring $keyring_name @s) || \
- 		tst_brk TBROK "unable to create a new keyring"
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index 1f17aa707..2841d7df5 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-@@ -54,6 +54,85 @@ compute_digest()
- 	return 1
- }
- 
-+check_policy_pattern()
-+{
-+	local pattern="$1"
-+	local func="$2"
-+	local template="$3"
-+
-+	if ! grep -E "$pattern" $TST_TMPDIR/policy.txt; then
-+		tst_res TCONF "IMA policy must specify $pattern, $func, $template"
-+		return 1
-+	fi
-+	return 0
-+}
-+
-+check_ima_ascii_log_for_policy()
-+{
-+	local test_file="$TST_TMPDIR/ascii_log_test_file.txt"
-+	local grep_file="$TST_TMPDIR/ascii_log_grep_file.txt"
-+	local func_lines sources templates i src 
-+	local input_digest_res=1
-+	local policy_option="$1"
-+	local input_digest="$3"
-+
-+	func_lines=$(cat $2)
-+
-+	sources=$(for i in $func_lines; do echo "$i" | grep "$policy_option" | \
-+		sed "s/\./\\\./g" | cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
-+	if [ -z "$sources" ]; then
-+		tst_res TCONF "IMA policy $policy_option is a key-value specifier, but no values specified"
-+		echo "1"
-+		return
-+	fi
-+
-+	templates=$(for i in $func_lines; do echo "$i" | grep "template" | \
-+		cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
-+
-+	tst_res TINFO "policy sources: '$sources'"
-+	tst_res TINFO "templates: '$templates'"
-+
-+	grep -E "($templates).*($sources)" $ASCII_MEASUREMENTS > $grep_file
-+
-+	while read line
-+	do
-+		local digest expected_digest algorithm
-+
-+		digest=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
-+		algorithm=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f1)
-+		src_line=$(echo "$line" | cut -d' ' -f5)
-+
-+		echo "$line" | cut -d' ' -f6 | xxd -r -p > $test_file
-+
-+		if ! expected_digest="$(compute_digest $algorithm $test_file)"; then
-+			tst_res TCONF "cannot compute digest for $algorithm"
-+			echo "1"
-+			return
-+		fi
-+
-+		if [ "$digest" != "$expected_digest" ]; then
-+			tst_res TINFO "incorrect digest was found for $src_line $policy_option"
-+			echo "1"	
-+			return
-+		fi
-+
-+		if [ "$input_digest" ]; then
-+			if [ "$digest" = "$input_digest" ]; then
-+				input_digest_res=0
-+			fi
-+		fi
-+
-+	done < $grep_file
-+
-+	if [ "$input_digest" ]; then
-+		echo "$input_digest_res"
-+		return
-+	else
-+		echo "0"
-+		return
-+	fi
-+}
-+
- check_policy_readable()
- {
- 	if [ ! -f $IMA_POLICY ]; then
--- 
-2.17.1
-
+/Jarkko
