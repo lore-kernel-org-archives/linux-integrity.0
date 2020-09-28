@@ -2,97 +2,81 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B37C2D0A8
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 21:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD5CC4741F
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 23:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75FA0208FE
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 21:15:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qCCxQPy7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="qCCxQPy7"
+	by mail.kernel.org (Postfix) with ESMTP id ED94323A5A
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 23:15:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbgI1VPg (ORCPT
+        id S1727339AbgI1XPU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Sep 2020 17:15:36 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:36096 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726565AbgI1VPf (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 Sep 2020 17:15:35 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 7011B8EE17F;
-        Mon, 28 Sep 2020 14:15:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1601327735;
-        bh=cd9UlN+XhmBbNgrcBt64nxLtOQ+3Su4wIg8oMd1CwVU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qCCxQPy7VuyP/c11Fq/mC21TRQPIRMnt/Pb46D8A03BUPxH/cIkrgn0KVjkei47Cf
-         aFBPuahpNRwVpBfbuDp9ojUbMImGl8Qr5f1XDYuLbNd2TFqbdr7gLuTVx71noPIANd
-         sAmjBP8zrEF9/84z9Na8EMTay5LC0D4sEhdtZxQY=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YT76NM0OnY9S; Mon, 28 Sep 2020 14:15:35 -0700 (PDT)
-Received: from jarvis (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id DA94D8EE0F5;
-        Mon, 28 Sep 2020 14:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1601327735;
-        bh=cd9UlN+XhmBbNgrcBt64nxLtOQ+3Su4wIg8oMd1CwVU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qCCxQPy7VuyP/c11Fq/mC21TRQPIRMnt/Pb46D8A03BUPxH/cIkrgn0KVjkei47Cf
-         aFBPuahpNRwVpBfbuDp9ojUbMImGl8Qr5f1XDYuLbNd2TFqbdr7gLuTVx71noPIANd
-         sAmjBP8zrEF9/84z9Na8EMTay5LC0D4sEhdtZxQY=
-Message-ID: <f0dcade667d226e982db89389fd0d86368c67ba9.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm_tis: Add a check for invalid status
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-integrity@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Date:   Mon, 28 Sep 2020 14:15:33 -0700
-In-Reply-To: <20200928183351.GA587339@ziepe.ca>
-References: <9bad3da0c31ae2620aaae0d75748c3387afa3d47.camel@HansenPartnership.com>
-         <20200928183351.GA587339@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Mon, 28 Sep 2020 19:15:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43373 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726458AbgI1XPU (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 28 Sep 2020 19:15:20 -0400
+IronPort-SDR: MzaTRTEU7O549N1iVOg0Ho0Z2QXbZ/VWnNTSbhN0Ga3HlmIohvOx4zr77dwO+knSqef/1Q4qUz
+ nwI4/P+M4Dvg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9758"; a="161299359"
+X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
+   d="scan'208";a="161299359"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 15:12:05 -0700
+IronPort-SDR: ZI2krDy7kZ+beEy4ZmSSIHWOMd/Yk9o0NZOgvuU5LzRGKcNieeQL7dCOJOaEfQWWuMGwbqLXBB
+ 9eQ3j/xnupjA==
+X-IronPort-AV: E=Sophos;i="5.77,315,1596524400"; 
+   d="scan'208";a="457013032"
+Received: from jlasecki-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.49.78])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2020 15:12:04 -0700
+Date:   Tue, 29 Sep 2020 01:12:02 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org
+Subject: Re: [PATCH] tpm: only export stand alone version of flush context
+ command
+Message-ID: <20200928221202.GH2705@linux.intel.com>
+References: <e63012add04eee75d67d15f55fe4f6b68fb1d6ed.camel@HansenPartnership.com>
+ <20200928001138.GE5283@linux.intel.com>
+ <4b5a58aedb596937618dd7d8fecda9743371d101.camel@HansenPartnership.com>
+ <20200928112046.GA14051@linux.intel.com>
+ <3f369592267e8f502f435584b9220e81263eae2c.camel@HansenPartnership.com>
+ <20200928163114.GC92669@linux.intel.com>
+ <20200928170720.GA119268@linux.intel.com>
+ <d44256f102c7be01808c5186d2c23b685ff090b7.camel@HansenPartnership.com>
+ <20200928181304.GB122104@linux.intel.com>
+ <6720ff958180a9e040c655dcfc281b3260fe88f2.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6720ff958180a9e040c655dcfc281b3260fe88f2.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2020-09-28 at 15:33 -0300, Jason Gunthorpe wrote:
-> On Mon, Sep 28, 2020 at 11:00:12AM -0700, James Bottomley wrote:
-> > Some TIS based TPMs can return 0xff to status reads if the locality
-> > hasn't been properly requested.  Detect this condition by checking
-> > the bits that the TIS spec specifies must return zero are clear and
-> > return zero in that case.  Also drop a warning so the problem can
-> > be identified in the calling path and fixed (usually a missing
-> > try_get_ops()).
+On Mon, Sep 28, 2020 at 11:26:41AM -0700, James Bottomley wrote:
+> > Yes.
 > > 
-> > Signed-off-by: James Bottomley <
-> > James.Bottomley@HansenPartnership.com>
-> > 
-> > This is the patch I've been using to catch and kill all the points
-> > in the stack where we're not properly using get/put ops on the tpm
-> > chip.
+> > BTW, while doing this I think I noticed what was wrong in my test
+> > kernel when I tested your series that introduces ASN.1 keys. I'll
+> > test both before sending update to my fix. Hopefully I can give today
+> > tested-by tags to that series.
 > 
-> If this is a problem add a lockdep on ops_sem in various places too?
+> Great ... the trusted key code doesn't use tpm_send, but the policy
+> additions do so the latter will need updating (again).
 
-It's not really possible because of the init issue with checking the
-interrupt.  That originally had no locking at all (it doesn't need any
-because the TPM device isn't publicly exposed at the point the check is
-done).  If the patch to add get/put around the tpm2_get_tpm_pt is
-acceptable, then perhaps we could because I think that's the last
-unguarded use of tpm_tis_status.
+Yes, I know. I can still test both by separately applying them on top
+of the current master. If you can after that do the update (and after
+the fixes have been applied), I can still get everything to the same
+PR.
 
-James
+Sorry for latency because of some SGX discussions (this time retpoline
+and CET collision), I'll try to get the testing done ASAP.
 
-
+/Jarkko
