@@ -2,47 +2,50 @@ Return-Path: <SRS0=r8GU=DF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C653AC2D0A8
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C120C4741F
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64A3E221EC
+	by mail.kernel.org (Postfix) with ESMTP id F1FFD23998
 	for <linux-integrity@archiver.kernel.org>; Mon, 28 Sep 2020 03:56:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="F8PplHXI"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="S+ur5vCf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbgI1D4T (ORCPT
+        id S1726440AbgI1D4U (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 27 Sep 2020 23:56:19 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39226 "EHLO
+        Sun, 27 Sep 2020 23:56:20 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39246 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgI1D4T (ORCPT
+        with ESMTP id S1726380AbgI1D4U (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 27 Sep 2020 23:56:19 -0400
+        Sun, 27 Sep 2020 23:56:20 -0400
 Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id BCECB20B7178;
-        Sun, 27 Sep 2020 20:56:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BCECB20B7178
+        by linux.microsoft.com (Postfix) with ESMTPSA id 73DD9208ABC7;
+        Sun, 27 Sep 2020 20:56:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 73DD9208ABC7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1601265379;
-        bh=/ZKbn+BtdcYwqnMPh/CImefmolSKnKyfq10Qq7zbHdE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=F8PplHXIjEOHGi7H/NErKYjuXhYbC344HjpTmKTcLkLWUyybK+1UCGN/7nyd3cFfI
-         tzBEMBP8o43/3vfW+YfTXx7mJYKpbtPvgBwebqP6DLDt9xy4xL616KoGdm+tEgpP+G
-         svAaDFwQ9ngxmSbjpHE7whQeq8HdpPWCL9Zz7EZE=
+        bh=rzh9do29mmz5gxBiNXt0gG2p7pXuvKOF0Ny99h/ur8o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=S+ur5vCfr4zMrfzvWHeoy9ro+gwLce9UZ0zvY+d69GNtc5cnHfEgjfx8lZQJWoRkE
+         dMtizeiTeu4zbjfz57Fpq4vXEysjsn6QVzFaYmKBp9Oo2q6HHiGfr4ZcWX2avFzIY9
+         ESM+6vBee947haVG4G2oWmzN+HMK2IrwJFbOBWxM=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, agk@redhat.com, snitzer@redhat.com,
         gmazyland@gmail.com, pvorel@suse.cz
 Cc:     nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         dm-devel@redhat.com, ltp@lists.linux.it
-Subject: [PATCH v2 0/2] IMA: Add test for dm-crypt measurement
-Date:   Sun, 27 Sep 2020 20:56:03 -0700
-Message-Id: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
+Subject: [PATCH v2 2/2] IMA: Add test for dm-crypt measurement
+Date:   Sun, 27 Sep 2020 20:56:05 -0700
+Message-Id: <20200928035605.22701-3-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
+References: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
@@ -53,50 +56,124 @@ measuring data provided by device-mapper targets. Currently one such
 device-mapper target - dm-crypt, is being updated to use this
 functionality. This new functionality needs test automation in LTP.
 
-Some of the existing functionality in ima_keys.sh can be reused for
-this, but it needs to be refactored into generic functions first.
-
 Add a testcase which verifies that the IMA subsystem correctly measures
 the data coming from a device-mapper target - dm-crypt.
-Refactor common functionality in ima_keys.sh for this, and move the
-generic functions to ima_setup.sh.
 
-This series needs a kernel built on the following repo/branch/patches:
- repo: https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- branch: next-integrity
- commit aa662fc04f5b ("ima: Fix NULL pointer dereference in ima_file_hash")
-
-And the following patch series should be applied in the following order:
- 1. https://patchwork.kernel.org/patch/11795559/
- 2. https://patchwork.kernel.org/patch/11801525/
- 3. https://patchwork.kernel.org/patch/11743715/
-
-Change Log v2:
-Incorporated feedback from Petr Vorel on v1.
- - Updated TST_NEEDS_CMDS to correctly reflects commands used in tests.
- - Removed unnecessary debugging info.
- - Refactored common functionality in ima_keys.sh, and moved the generic
-   functions to ima_setup.sh.
- - Removed the use of eval, and replaced it with the recommended ROD()
-   function.
- - All temporary files now get created under $TST_TMPDIR, instead of
-   current directory.
- - Removed unnecessary TFAIL, to avoid double counting failures.
- - Updated log messages to be consistent.
- - Moved code to cleanup() to avoid code duplication.
-
-Tushar Sugandhi (2):
-  IMA: generalize key measurement tests
-  IMA: Add test for dm-crypt measurement
-
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
  runtest/ima                                   |  1 +
- .../kernel/security/integrity/ima/README.md   | 20 +++++
- .../integrity/ima/tests/ima_dm_crypt.sh       | 60 ++++++++++++++
- .../security/integrity/ima/tests/ima_keys.sh  | 62 +++------------
- .../security/integrity/ima/tests/ima_setup.sh | 79 +++++++++++++++++++
- 5 files changed, 173 insertions(+), 49 deletions(-)
+ .../kernel/security/integrity/ima/README.md   | 20 +++++++
+ .../integrity/ima/tests/ima_dm_crypt.sh       | 60 +++++++++++++++++++
+ 3 files changed, 81 insertions(+)
  create mode 100755 testcases/kernel/security/integrity/ima/tests/ima_dm_crypt.sh
 
+diff --git a/runtest/ima b/runtest/ima
+index 5f4b4a7a1..123b6c8b0 100644
+--- a/runtest/ima
++++ b/runtest/ima
+@@ -5,4 +5,5 @@ ima_tpm ima_tpm.sh
+ ima_violations ima_violations.sh
+ ima_keys ima_keys.sh
+ ima_kexec ima_kexec.sh
++ima_dm_crypt ima_dm_crypt.sh
+ evm_overlay evm_overlay.sh
+diff --git a/testcases/kernel/security/integrity/ima/README.md b/testcases/kernel/security/integrity/ima/README.md
+index 68d046678..007662fae 100644
+--- a/testcases/kernel/security/integrity/ima/README.md
++++ b/testcases/kernel/security/integrity/ima/README.md
+@@ -37,6 +37,26 @@ see example in `kexec.policy`.
+ The test attempts to kexec the existing running kernel image.
+ To kexec a different kernel image export `IMA_KEXEC_IMAGE=<pathname>`.
+ 
++### IMA DM target (dm-crypt) measurement test
++
++To enable IMA to measure device-mapper target - dm-crypt,
++`ima_dm_crypt.sh` requires a readable IMA policy, as well as
++a loaded measure policy with
++`func=CRITICAL_DATA data_sources=dm-crypt`
++
++As well as what's required for the IMA tests, dm-crypt measurement test require
++reading the IMA policy allowed in the kernel configuration:
++```
++CONFIG_IMA_READ_POLICY=y
++```
++
++The following kernel configuration is also required. It enables compiling
++the device-mapper target module dm-crypt, which allows to create a device
++that transparently encrypts the data on it.
++```
++CONFIG_DM_CRYPT
++```
++
+ ## EVM tests
+ 
+ `evm_overlay.sh` requires a builtin IMA appraise tcb policy (e.g. `ima_policy=appraise_tcb`
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_dm_crypt.sh b/testcases/kernel/security/integrity/ima/tests/ima_dm_crypt.sh
+new file mode 100755
+index 000000000..396033f8d
+--- /dev/null
++++ b/testcases/kernel/security/integrity/ima/tests/ima_dm_crypt.sh
+@@ -0,0 +1,60 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0-or-later
++# Copyright (c) 2020 Microsoft Corporation
++# Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
++#
++# Verify that DM target dm-crypt are measured correctly based on policy.
++
++TST_NEEDS_CMDS="dmsetup"
++TST_CNT=1
++TST_NEEDS_DEVICE=1
++TST_SETUP=setup
++TST_CLEANUP=cleanup
++
++. ima_setup.sh
++
++FUNC_CRIT_DATA='func=CRITICAL_DATA'
++TEMPLATE_BUF='template=ima-buf'
++REQUIRED_POLICY="^measure.*($FUNC_CRIT_DATA.*$TEMPLATE_BUF|$TEMPLATE_BUF.*$FUNC_CRIT_DATA)"
++
++setup()
++{
++	require_ima_policy_content "$REQUIRED_POLICY" '-E' > $TST_TMPDIR/policy.txt
++}
++
++cleanup()
++{
++	ROD "dmsetup remove test-crypt"
++}
++
++test1()
++{
++	local input_digest="039d8ff71918608d585adca3e5aab2e3f41f84d6"
++	local pattern='data_sources=[^[:space:]]+'
++	local tmp_file="$TST_TMPDIR/dm_crypt_tmp.txt"
++	local policy="data_sources"
++	local arg key res
++
++	tst_res TINFO "verifying dm target - dmcrypt gets measured correctly"
++
++	check_policy_pattern "$pattern" $FUNC_CRIT_DATA $TEMPLATE_BUF > $tmp_file || return
++
++	tgt="crypt"
++	key="faf453b4ee938cff2f0d2c869a0b743f59125c0a37f5bcd8f1dbbd911a78abaa"
++
++	arg="'0 1953125 crypt aes-xts-plain64 "
++	arg="$arg $key 0 "
++	arg="$arg /dev/loop0 0 1 allow_discards'"
++
++	ROD "dmsetup create test-crypt --table $arg"
++
++	res="$(check_ima_ascii_log_for_policy $policy $tmp_file $input_digest)"
++
++	if [ $res = "0" ]; then
++		tst_res TPASS "dm-crypt target verification passed"
++	else
++		tst_res TFAIL "dm-crypt target verification failed"
++	fi
++}
++
++tst_run
 -- 
 2.17.1
 
