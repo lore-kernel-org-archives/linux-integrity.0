@@ -7,23 +7,23 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFA0C47425
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Sep 2020 16:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6F4C47423
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Sep 2020 16:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9D320C09
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Sep 2020 16:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8822B206F7
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Sep 2020 16:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgI2Qu3 (ORCPT
+        id S1729519AbgI2Qu2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 29 Sep 2020 12:50:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43388 "EHLO mx2.suse.de"
+        Tue, 29 Sep 2020 12:50:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43346 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728385AbgI2Qu3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 Sep 2020 12:50:29 -0400
+        id S1728392AbgI2Qu1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 29 Sep 2020 12:50:27 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 35FBFB289;
-        Tue, 29 Sep 2020 16:50:27 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id AC591B279;
+        Tue, 29 Sep 2020 16:50:26 +0000 (UTC)
 From:   Petr Vorel <pvorel@suse.cz>
 To:     ltp@lists.linux.it
 Cc:     Petr Vorel <pvorel@suse.cz>,
@@ -31,9 +31,9 @@ Cc:     Petr Vorel <pvorel@suse.cz>,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH v3 3/4] ima_tpm.sh: Fix calculating boot aggregate
-Date:   Tue, 29 Sep 2020 18:50:20 +0200
-Message-Id: <20200929165021.11731-4-pvorel@suse.cz>
+Subject: [PATCH v3 1/4] IMA: Move get_algorithm_digest(), set_digest_index() to ima_setup.sh
+Date:   Tue, 29 Sep 2020 18:50:18 +0200
+Message-Id: <20200929165021.11731-2-pvorel@suse.cz>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200929165021.11731-1-pvorel@suse.cz>
 References: <20200929165021.11731-1-pvorel@suse.cz>
@@ -43,215 +43,193 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-for TPM 2.0 or kernel >= v5.8-rc1:
-6f1a1d103b48 ima: ("Switch to ima_hash_algo for boot aggregate")
+To be reusable by more tests (preparation for next commit).
 
-Test still fails with TPM 2.0 on kernel < v5.8-rc1.
-
-Test was failing, because it expect SHA1 hash, but for TPM 2.0 is
-now used IMA default hash algorithm (by default default SHA256).
-This is similar for entries in IMA measurement list so we can reuse
-already existing code.
-
-Reading other algorithms than sha1 or TPM 2.0 requires evmctl >= 1.3.
-Although recent evmctl is recommended, to support older kernels when
-sha1 is used, get boot aggregate with old our legacy ima_boot_aggregate.c.
-
-Also fixed test without TPM device (when IMA TPM-bypass is tested)
-as some TPM 2.0 devices does not export event log
-(/sys/kernel/security/tpm0/binary_bios_measurements).
-This does not require evmctl at all.
+Call set_digest_index() inside get_algorithm_digest() if needed
+instead of expecting get_algorithm_digest() caller to call
+set_digest_index() before.
 
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
 Changes v2->v3:
-* separate testing real HW and IMA TPM-bypass into it's own functions
-* fixed checking in check_evmctl
-* improve get_tpm_version to not depend on having dmesg on IMA TPM-bypass
+none
 
-Kind regards,
-Petr
+ .../integrity/ima/tests/ima_measurements.sh   | 62 ++--------------
+ .../security/integrity/ima/tests/ima_setup.sh | 70 +++++++++++++++++++
+ 2 files changed, 76 insertions(+), 56 deletions(-)
 
- .../security/integrity/ima/tests/ima_tpm.sh   | 153 +++++++++++++++---
- 1 file changed, 131 insertions(+), 22 deletions(-)
-
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-index dc958eb5c..7eb3a9409 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_tpm.sh
-@@ -7,41 +7,150 @@
- # Verify the boot and PCR aggregates.
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+index 9a7500c76..1927e937c 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+@@ -6,7 +6,7 @@
+ #
+ # Verify that measurements are added to the measurement list based on policy.
  
- TST_CNT=2
--TST_NEEDS_CMDS="awk cut ima_boot_aggregate"
-+TST_NEEDS_CMDS="awk cut"
-+TST_SETUP="setup"
+-TST_NEEDS_CMDS="awk cut"
++TST_NEEDS_CMDS="awk cut sed"
+ TST_SETUP="setup"
+ TST_CNT=3
+ TST_NEEDS_DEVICE=1
+@@ -20,72 +20,22 @@ setup()
+ 	TEST_FILE="$PWD/test.txt"
+ 	POLICY="$IMA_DIR/policy"
+ 	[ -f "$POLICY" ] || tst_res TINFO "not using default policy"
+-	DIGEST_INDEX=
+-
+-	local template="$(tail -1 $ASCII_MEASUREMENTS | cut -d' ' -f 3)"
+-	local i
+-
+-	# parse digest index
+-	# https://www.kernel.org/doc/html/latest/security/IMA-templates.html#use
+-	case "$template" in
+-	ima|ima-ng|ima-sig|ima-buf) DIGEST_INDEX=4 ;;
+-	*)
+-		# using ima_template_fmt kernel parameter
+-		local IFS="|"
+-		i=4
+-		for word in $template; do
+-			if [ "$word" = 'd' -o "$word" = 'd-ng' ]; then
+-				DIGEST_INDEX=$i
+-				break
+-			fi
+-			i=$((i+1))
+-		done
+-	esac
+-
+-	[ -z "$DIGEST_INDEX" ] && tst_brk TCONF \
+-		"Cannot find digest index (template: '$template')"
+ }
  
- . ima_setup.sh
+ ima_check()
+ {
+-	local delimiter=':'
+-	local algorithm digest expected_digest line
++	local algorithm digest expected_digest line tmp
  
--test1()
--{
--	tst_res TINFO "verify boot aggregate"
-+EVMCTL_REQUIRED='1.3'
-+ERRMSG_EVMCTL="install evmctl >= $EVMCTL_REQUIRED"
+ 	# need to read file to get updated $ASCII_MEASUREMENTS
+ 	cat $TEST_FILE > /dev/null
  
--	local zero="0000000000000000000000000000000000000000"
--	local tpm_bios="$SECURITYFS/tpm0/binary_bios_measurements"
--	local ima_measurements="$ASCII_MEASUREMENTS"
--	local boot_aggregate boot_hash line
-+setup()
-+{
-+	local line tmp
+ 	line="$(grep $TEST_FILE $ASCII_MEASUREMENTS | tail -1)"
+-	if [ -z "$line" ]; then
+-		tst_res TFAIL "cannot find measurement record for '$TEST_FILE'"
+-		return
+-	fi
+-	tst_res TINFO "measurement record: '$line'"
  
--	# IMA boot aggregate
--	read line < $ima_measurements
--	boot_hash=$(echo $line | awk '{print $(NF-1)}' | cut -d':' -f2)
-+	read line < $ASCII_MEASUREMENTS
+-	digest=$(echo "$line" | cut -d' ' -f $DIGEST_INDEX)
+-	if [ -z "$digest" ]; then
+-		tst_res TFAIL "cannot find digest (index: $DIGEST_INDEX)"
+-		return
+-	fi
+-
+-	if [ "${digest#*$delimiter}" != "$digest" ]; then
+-		algorithm=$(echo "$digest" | cut -d $delimiter -f 1)
+-		digest=$(echo "$digest" | cut -d $delimiter -f 2)
 +	if tmp=$(get_algorithm_digest "$line"); then
-+		ALGORITHM=$(echo "$tmp" | cut -d'|' -f1)
-+		DIGEST=$(echo "$tmp" | cut -d'|' -f2)
-+	else
-+		tst_res TBROK "failed to get algorithm/digest: $tmp"
-+	fi
-+	tst_res TINFO "used algorithm: $ALGORITHM"
- 
--	if [ ! -f "$tpm_bios" ]; then
--		tst_res TINFO "TPM Hardware Support not enabled in kernel or no TPM chip found"
-+	TPM_VERSION="$(get_tpm_version)"
-+	if [ "$TPM_VERSION" ]; then
-+		tst_res TINFO "TMP major version: $TPM_VERSION"
-+	fi
- 
--		if [ "$boot_hash" = "$zero" ]; then
--			tst_res TPASS "bios boot aggregate is 0"
--		else
--			tst_res TFAIL "bios boot aggregate is not 0"
-+	if ! check_evmctl $EVMCTL_REQUIRED; then
-+		if [ "$ALGORITHM" != "sha1" ]; then
-+			tst_brk TCONF "algorithm not sha1 ($ALGORITHM), $ERRMSG_EVMCTL"
- 		fi
-+		MISSING_EVMCTL=1
-+	fi
-+}
-+
-+# check_evmctl REQUIRED_TPM_VERSION
-+# return: 0: evmctl is new enough, 1: too old version (or version > v0.9)
-+check_evmctl()
-+{
-+	local required="$1"
-+
-+	local r1="$(echo $required | cut -d. -f1)"
-+	local r2="$(echo $required | cut -d. -f2)"
-+	local r3="$(echo $required | cut -d. -f3)"
-+	[ -z "$r3" ] && r3=0
-+
-+	tst_is_int "$r1" || tst_brk TBROK "required major version not int ($v1)"
-+	tst_is_int "$r2" || tst_brk TBROK "required minor version not int ($v2)"
-+	tst_is_int "$r3" || tst_brk TBROK "required patch version not int ($v3)"
-+
-+	tst_check_cmds evmctl || return 1
-+
-+	local v="$(evmctl --version | cut -d' ' -f2)"
-+	[ -z "$v" ] && return 1
-+	tst_res TINFO "evmctl version: $v"
-+
-+	local v1="$(echo $v | cut -d. -f1)"
-+	local v2="$(echo $v | cut -d. -f2)"
-+	local v3="$(echo $v | cut -d. -f3)"
-+	[ -z "$v3" ] && v3=0
-+
-+	if [ $v1 -lt $r1 ] || [ $v1 -eq $r1 -a $v2 -lt $r2 ] || \
-+		[ $v1 -eq $r1 -a $v2 -eq $r2 -a $v3 -lt $r3 ]; then
-+		return 1
-+	fi
-+	return 0
-+}
-+
-+# prints major version 1: TPM 1.2, 2: TPM 2.0
-+# or nothing when version not detected (no TPM device)
-+get_tpm_version()
-+{
-+	if [ -f /sys/class/tpm/tpm0/tpm_version_major ]; then
-+		cat /sys/class/tpm/tpm0/tpm_version_major
-+		return
-+	fi
-+
-+	if [ -f /sys/class/tpm/tpm0/device/caps -o \
-+		-f /sys/class/misc/tpm0/device/caps ]; then
-+		echo 1
-+		return
-+	fi
-+
-+	if [ ! -d /sys/class/tpm/tpm0/ -a ! -d /sys/class/misc/tpm0/ ]; then
-+		return
-+	fi
-+
-+	tst_check_cmds dmesg || return
-+	if dmesg | grep -q '1\.2 TPM (device-id'; then
-+		echo 1
-+	elif dmesg | grep -q '2\.0 TPM (device-id'; then
-+		echo 2
-+	fi
-+}
-+
-+test1_virtual_tpm()
-+{
-+	local zero=$(echo $DIGEST | awk '{gsub(/./, "0")}; {print}')
-+
-+	tst_res TINFO "TPM hardware support not enabled in kernel or no TPM chip found, testing TPM-bypass"
-+
-+	if [ "$DIGEST" = "$zero" ]; then
-+		tst_res TPASS "bios boot aggregate is $zero"
++		algorithm=$(echo "$tmp" | cut -d'|' -f1)
++		digest=$(echo "$tmp" | cut -d'|' -f2)
  	else
--		boot_aggregate=$(ima_boot_aggregate -f $tpm_bios | grep "sha1:" | cut -d':' -f2)
--		if [ "$boot_hash" = "$boot_aggregate" ]; then
--			tst_res TPASS "bios aggregate matches IMA boot aggregate"
--		else
--			tst_res TFAIL "bios aggregate does not match IMA boot aggregate"
-+		tst_res TFAIL "bios boot aggregate is not $zero ($DIGEST)"
-+	fi
-+}
-+
-+test1_hw_tpm()
-+{
-+	local tpm_bios="$SECURITYFS/tpm0/binary_bios_measurements"
-+	local cmd="evmctl ima_boot_aggregate"
-+	local boot_aggregate
-+
-+	if [ "$MISSING_EVMCTL" = 1 ]; then
-+		if [ ! -f "$tpm_bios" ]; then
-+			tst_res TCONF "missing $tpm_bios, $ERRMSG_EVMCTL"
-+			return
- 		fi
-+		tst_check_cmds ima_boot_aggregate || return
-+		cmd="ima_boot_aggregate -f $tpm_bios"
-+	fi
-+	tst_res TINFO "using command: $cmd"
-+
-+	boot_aggregate=$($cmd | grep "$ALGORITHM:" | cut -d':' -f2)
-+	if [ -z "$boot_aggregate" ]; then
-+		tst_res TBROK "failed to get boot aggregate"
-+		return
-+	fi
-+	tst_res TINFO "IMA boot aggregate: '$boot_aggregate'"
-+
-+	if [ "$DIGEST" = "$boot_aggregate" ]; then
-+		tst_res TPASS "bios boot aggregate matches IMA boot aggregate"
-+	else
-+		tst_res TFAIL "bios boot aggregate does not match IMA boot aggregate ($DIGEST)"
+-		case "${#digest}" in
+-		32) algorithm="md5" ;;
+-		40) algorithm="sha1" ;;
+-		*)
+-			tst_res TFAIL "algorithm must be either md5 or sha1 (digest: '$digest')"
+-			return ;;
+-		esac
+-	fi
+-	if [ -z "$algorithm" ]; then
+-		tst_res TFAIL "cannot find algorithm"
+-		return
+-	fi
+-	if [ -z "$digest" ]; then
+-		tst_res TFAIL "cannot find digest"
+-		return
++		tst_res TBROK "failed to get algorithm/digest for '$TEST_FILE': $tmp"
+ 	fi
+ 
+ 	tst_res TINFO "computing digest for $algorithm algorithm"
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+index 1f17aa707..83ea62d4f 100644
+--- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+@@ -191,6 +191,76 @@ ima_cleanup()
  	fi
  }
  
-+test1()
++set_digest_index()
 +{
-+	tst_res TINFO "verify boot aggregate"
++	DIGEST_INDEX=
 +
-+	[ -z "$TPM_VERSION" ] && test1_virtual_tpm || test1_hw_tpm
++	local template="$(tail -1 $ASCII_MEASUREMENTS | cut -d' ' -f 3)"
++	local i word
++
++	# parse digest index
++	# https://www.kernel.org/doc/html/latest/security/IMA-templates.html#use
++	case "$template" in
++	ima|ima-ng|ima-sig) DIGEST_INDEX=4 ;;
++	*)
++		# using ima_template_fmt kernel parameter
++		local IFS="|"
++		i=4
++		for word in $template; do
++			if [ "$word" = 'd' -o "$word" = 'd-ng' ]; then
++				DIGEST_INDEX=$i
++				break
++			fi
++			i=$((i+1))
++		done
++	esac
++
++	[ -z "$DIGEST_INDEX" ] && tst_brk TCONF \
++		"Cannot find digest index (template: '$template')"
 +}
 +
- # Probably cleaner to programmatically read the PCR values directly
- # from the TPM, but that would require a TPM library. For now, use
- # the PCR values from /sys/devices.
++get_algorithm_digest()
++{
++	local line="$1"
++	local delimiter=':'
++	local algorithm digest
++
++	if [ -z "$line" ]; then
++		echo "measurement record not found"
++		return 1
++	fi
++
++	[ -z "$DIGEST_INDEX" ] && set_digest_index
++	digest=$(echo "$line" | cut -d' ' -f $DIGEST_INDEX)
++	if [ -z "$digest" ]; then
++		echo "digest not found (index: $DIGEST_INDEX, line: '$line')"
++		return 1
++	fi
++
++	if [ "${digest#*$delimiter}" != "$digest" ]; then
++		algorithm=$(echo "$digest" | cut -d $delimiter -f 1)
++		digest=$(echo "$digest" | cut -d $delimiter -f 2)
++	else
++		case "${#digest}" in
++		32) algorithm="md5" ;;
++		40) algorithm="sha1" ;;
++		*)
++			echo "algorithm must be either md5 or sha1 (digest: '$digest')"
++			return 1 ;;
++		esac
++	fi
++	if [ -z "$algorithm" ]; then
++		echo "algorithm not found"
++		return 1
++	fi
++	if [ -z "$digest" ]; then
++		echo "digest not found"
++		return 1
++	fi
++
++	echo "$algorithm|$digest"
++}
++
+ # loop device is needed to use only for tmpfs
+ TMPDIR="${TMPDIR:-/tmp}"
+ if [ "$(df -T $TMPDIR | tail -1 | awk '{print $2}')" != "tmpfs" -a -n "$TST_NEEDS_DEVICE" ]; then
 -- 
 2.28.0
 
