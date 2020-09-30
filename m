@@ -2,38 +2,38 @@ Return-Path: <SRS0=v9j2=DH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB23C4363D
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Sep 2020 21:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EEAC47420
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Sep 2020 21:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC8620759
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Sep 2020 21:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B72D20759
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Sep 2020 21:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="EL5M6ofW"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HkRrxFMV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730333AbgI3VAD (ORCPT
+        id S1730441AbgI3U7w (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Sep 2020 17:00:03 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:52912 "EHLO
+        Wed, 30 Sep 2020 16:59:52 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:52728 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbgI3U7y (ORCPT
+        with ESMTP id S1725355AbgI3U7w (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Sep 2020 16:59:54 -0400
+        Wed, 30 Sep 2020 16:59:52 -0400
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2EE2A20BBF7F;
-        Wed, 30 Sep 2020 13:59:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2EE2A20BBF7F
+        by linux.microsoft.com (Postfix) with ESMTPSA id 4A8CC20B7178;
+        Wed, 30 Sep 2020 13:59:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4A8CC20B7178
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1601499593;
-        bh=GY0zcMb9riPZWPjUXcZO2QO/IujwSqKax40jmESu6yE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EL5M6ofW4to5So+D80BbLAJkvUtpuuoJqGLKRbGOA0rlXo8C2H/IufQ0V8oo/Jadw
-         9KwKVcpITSQoySDxzFjslf06QLXn4/6RlATgoJj/XoQNUsQv7ahnAl544I0dWMMAS7
-         Swg6vGew1ZbNJGQpmGBgjrSgHPsMRsgZf8pTFz7I=
+        s=default; t=1601499590;
+        bh=qvgkPGBizXaaXnHEthW/sLaFgOCl0/8IRpOIIBFaZrQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HkRrxFMVKEyd9oaq5RIKCcyaOJko7LUZwG0nQt2XndmOihFcWmkKHbWOQ0BDfWWTB
+         EJrdYjAgXhUhzTznQg4Pje2FG9/PfIsJLvP3yocoefm3/b7U4NQO3vX1+rqLIMlg8T
+         u/uKDj8rGxUt+bW54P4tVN7rISlLChLGsdz4xZ8g=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         gregkh@linuxfoundation.org, james.morse@arm.com,
@@ -50,101 +50,145 @@ To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
         balajib@linux.microsoft.com
-Subject: [PATCH v7 4/4] arm64: Add IMA kexec buffer to DTB
-Date:   Wed, 30 Sep 2020 13:59:41 -0700
-Message-Id: <20200930205941.1576-5-nramas@linux.microsoft.com>
+Subject: [PATCH v7 0/3] Carry forward IMA measurement log on kexec on ARM64
+Date:   Wed, 30 Sep 2020 13:59:37 -0700
+Message-Id: <20200930205941.1576-1-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200930205941.1576-1-nramas@linux.microsoft.com>
-References: <20200930205941.1576-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Any existing FDT_PROP_IMA_KEXEC_BUFFER property in the device tree
-needs to be removed and its corresponding memory reservation in
-the currently running kernel needs to be freed.
+On kexec file load Integrity Measurement Architecture (IMA) subsystem
+may verify the IMA signature of the kernel and initramfs, and measure
+it. The command line parameters passed to the kernel in the kexec call
+may also be measured by IMA. A remote attestation service can verify
+the measurement through the IMA log and the TPM PCR data. This can be
+achieved only if the IMA measurement log is carried over from
+the current kernel to the next kernel across the kexec call.
+However in the current implementation the IMA measurement logs are not
+carried over on ARM64 platforms. Therefore a remote attestation service
+cannot verify the authenticity of the running kernel on ARM64 platforms
+when the kernel is updated through the kexec system call.
 
-The address and size of the current kernel's IMA measurement log need
-to be added to the device tree's IMA kexec buffer node and memory for
-the buffer needs to be reserved for the log to be carried over to
-the next kernel on the kexec call.
+This patch series adds support for carrying forward the IMA measurement
+log on kexec on ARM64. powerpc already supports carrying forward
+the IMA measurement log on kexec.
 
-Remove any existing FDT_PROP_IMA_KEXEC_BUFFER property in the device
-tree and free the corresponding memory reservation in the currently
-running kernel. Add FDT_PROP_IMA_KEXEC_BUFFER property to the device
-tree and reserve the memory for storing the IMA log that needs to be
-passed from the current kernel to the next one.
+This series refactors the platform independent code defined for powerpc
+such that it can be reused for ARM64 as well. A chosen node namely
+"linux,ima-kexec-buffer" is added to the DTB for ARM64 to hold
+the address and the size of the memory reserved to carry
+the IMA measurement log.
 
-Update CONFIG_KEXEC_FILE to select CONFIG_HAVE_IMA_KEXEC to indicate
-that the IMA measurement log information is present in the device tree
-for ARM64.
+This patch series has been tested for ARM64 platform using QEMU.
+I would like help from the community for testing this change on powerpc.
+Thanks.
 
-Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- arch/arm64/Kconfig                     |  1 +
- arch/arm64/kernel/machine_kexec_file.c | 18 ++++++++++++++++++
- 2 files changed, 19 insertions(+)
+This patch series is based on
+commit 02de58b24d2e ("Merge tag 'devicetree-fixes-for-5.9-3' of git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux")
+in https://github.com/torvalds/linux "master" branch.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 6d232837cbee..9f03c8245e5b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1077,6 +1077,7 @@ config KEXEC
- config KEXEC_FILE
- 	bool "kexec file based system call"
- 	select KEXEC_CORE
-+	select HAVE_IMA_KEXEC
- 	help
- 	  This is new version of kexec system call. This system call is
- 	  file based and takes file descriptors as system call argument
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 361a1143e09e..e9a02e551bca 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -21,6 +21,7 @@
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
-+#include <linux/ima.h>
- #include <asm/byteorder.h>
- 
- /* relevant device tree properties */
-@@ -62,6 +63,8 @@ static int setup_dtb(struct kimage *image,
- 
- 	off = ret;
- 
-+	remove_ima_kexec_buffer(dtb, ret);
-+
- 	ret = fdt_delprop(dtb, off, FDT_PROP_KEXEC_ELFHDR);
- 	if (ret && ret != -FDT_ERR_NOTFOUND)
- 		goto out;
-@@ -136,6 +139,21 @@ static int setup_dtb(struct kimage *image,
- 				FDT_PROP_KASLR_SEED);
- 	}
- 
-+	/* add ima-kexec-buffer */
-+	if (image->arch.ima_buffer_size > 0) {
-+		ret = fdt_appendprop_addrrange(dtb, 0, off,
-+				FDT_PROP_IMA_KEXEC_BUFFER,
-+				image->arch.ima_buffer_addr,
-+				image->arch.ima_buffer_size);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+
-+		ret = fdt_add_mem_rsv(dtb, image->arch.ima_buffer_addr,
-+				      image->arch.ima_buffer_size);
-+		if (ret)
-+			goto out;
-+	}
-+
- 	/* add rng-seed */
- 	if (rng_is_initialized()) {
- 		void *rng_seed;
+Changelog:
+
+v7:
+  - Renamed remove_ima_buffer() to remove_ima_kexec_buffer() and moved
+    this function definition to kernel.
+  - Moved delete_fdt_mem_rsv() definition to kernel
+  - Moved ima_dump_measurement_list() and ima_add_kexec_buffer() to
+    a new file namely ima_kexec_fdt.c in IMA
+
+v6:
+  - Remove any existing FDT_PROP_IMA_KEXEC_BUFFER property in the device
+    tree and also its corresponding memory reservation in the currently
+    running kernel.
+  - Moved the function remove_ima_buffer() defined for powerpc to IMA
+    and renamed the function to ima_remove_kexec_buffer(). Also, moved
+    delete_fdt_mem_rsv() from powerpc to IMA.
+
+v5:
+  - Merged get_addr_size_cells() and do_get_kexec_buffer() into a single
+    function when moving the arch independent code from powerpc to IMA
+  - Reverted the change to use FDT functions in powerpc code and added
+    back the original code in get_addr_size_cells() and
+    do_get_kexec_buffer() for powerpc.
+  - Added fdt_add_mem_rsv() for ARM64 to reserve the memory for
+    the IMA log buffer during kexec.
+  - Fixed the warning reported by kernel test bot for ARM64
+    arch_ima_add_kexec_buffer() - moved this function to a new file
+    namely arch/arm64/kernel/ima_kexec.c
+
+v4:
+  - Submitting the patch series on behalf of the original author
+    Prakhar Srivastava <prsriva@linux.microsoft.com>
+  - Moved FDT_PROP_IMA_KEXEC_BUFFER ("linux,ima-kexec-buffer") to
+    libfdt.h so that it can be shared by multiple platforms.
+
+v3:
+Breakup patches further into separate patches.
+  - Refactoring non architecture specific code out of powerpc
+  - Update powerpc related code to use fdt functions
+  - Update IMA buffer read related code to use of functions
+  - Add support to store the memory information of the IMA
+    measurement logs to be carried forward.
+  - Update the property strings to align with documented nodes
+    https://github.com/devicetree-org/dt-schema/pull/46
+
+v2:
+  Break patches into separate patches.
+  - Powerpc related Refactoring
+  - Updating the docuemntation for chosen node
+  - Updating arm64 to support IMA buffer pass
+
+v1:
+  Refactoring carrying over IMA measuremnet logs over Kexec. This patch
+    moves the non-architecture specific code out of powerpc and adds to
+    security/ima.(Suggested by Thiago)
+  Add Documentation regarding the ima-kexec-buffer node in the chosen
+    node documentation
+
+v0:
+  Add a layer of abstraction to use the memory reserved by device tree
+    for ima buffer pass.
+  Add support for ima buffer pass using reserved memory for arm64 kexec.
+    Update the arch sepcific code path in kexec file load to store the
+    ima buffer in the reserved memory. The same reserved memory is read
+    on kexec or cold boot.
+
+Lakshmi Ramasubramanian (4):
+  powerpc: Refactor kexec functions to move arch independent code to
+    kernel
+  powerpc: Refactor kexec functions to move arch independent code to ima
+  arm64: Store IMA log information in kimage used for kexec
+  arm64: Add IMA kexec buffer to DTB
+
+ arch/arm64/Kconfig                     |   1 +
+ arch/arm64/include/asm/ima.h           |  18 +++
+ arch/arm64/include/asm/kexec.h         |   3 +
+ arch/arm64/kernel/Makefile             |   1 +
+ arch/arm64/kernel/ima_kexec.c          |  34 ++++++
+ arch/arm64/kernel/machine_kexec_file.c |  18 +++
+ arch/powerpc/include/asm/ima.h         |  13 +--
+ arch/powerpc/include/asm/kexec.h       |   1 -
+ arch/powerpc/kexec/Makefile            |   7 +-
+ arch/powerpc/kexec/file_load.c         |  33 +-----
+ arch/powerpc/kexec/ima.c               | 111 ++----------------
+ include/linux/kexec.h                  |  24 ++++
+ include/linux/libfdt.h                 |   3 +
+ kernel/Makefile                        |   3 +-
+ kernel/ima_kexec.c                     |  85 ++++++++++++++
+ kernel/kexec_file_fdt.c                |  55 +++++++++
+ security/integrity/ima/Makefile        |   1 +
+ security/integrity/ima/ima_kexec.c     | 154 +++++++------------------
+ security/integrity/ima/ima_kexec_fdt.c | 136 ++++++++++++++++++++++
+ 19 files changed, 438 insertions(+), 263 deletions(-)
+ create mode 100644 arch/arm64/include/asm/ima.h
+ create mode 100644 arch/arm64/kernel/ima_kexec.c
+ create mode 100644 kernel/ima_kexec.c
+ create mode 100644 kernel/kexec_file_fdt.c
+ create mode 100644 security/integrity/ima/ima_kexec_fdt.c
+
 -- 
 2.28.0
 
