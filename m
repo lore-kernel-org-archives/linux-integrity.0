@@ -2,153 +2,320 @@ Return-Path: <SRS0=swML=DI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E37C4727C
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Oct 2020 15:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F7BC4727E
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Oct 2020 17:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CED3620872
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Oct 2020 15:58:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="HY+J6Tic";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="fXdYWB5U"
+	by mail.kernel.org (Postfix) with ESMTP id 052A8208C7
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Oct 2020 17:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732342AbgJAP63 (ORCPT
+        id S1732882AbgJARDC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Oct 2020 11:58:29 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49098 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732213AbgJAP63 (ORCPT
+        Thu, 1 Oct 2020 13:03:02 -0400
+Received: from smtp-190f.mail.infomaniak.ch ([185.125.25.15]:35239 "EHLO
+        smtp-190f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732159AbgJARC6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Oct 2020 11:58:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4E89F8EE17F;
-        Thu,  1 Oct 2020 08:58:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1601567908;
-        bh=rSPPZ8/oZgy5hChynAOVFoajICqrGtoregQlaW4X26g=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HY+J6TicjkT5Cb7ZUkSE+jHyQbVZfVmVUjLivWFdMHXXOJWbIV28CeUqAMHIya0Fh
-         wwB3F5lR+BqX5wtIfc94+GMcYyvTeB0dosvQKOcmloL2kwemYHD2HcazRbluB8L0Dz
-         R0x8drfsHkscfod4JkOYqgl3gUiW018qv7+H5jtc=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zM40LH2b4MAa; Thu,  1 Oct 2020 08:58:27 -0700 (PDT)
-Received: from jarvis (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D7FE78EE0DA;
-        Thu,  1 Oct 2020 08:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1601567907;
-        bh=rSPPZ8/oZgy5hChynAOVFoajICqrGtoregQlaW4X26g=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=fXdYWB5UuX4qRuKZlmWpF5DJxtQIoy+3WWPT8WPlh9JPt8XGzQ5jpfHoP3/siEXmZ
-         nHUuz7F5yYzGRUQ4WEHmv8fHZggrA0WO/JSeaRqBx91YilT93OcIhaFFxOG3HkrJ8+
-         lvkNKQJbqaHei6KaSXAfu56vxW1XDfdtkwiQrPcw=
-Message-ID: <635963b53711cdf9c7e1b6534eeb3f172969d1b2.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/4] tpm_tis: Clean up locality release
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Laurent Bigonville <bigon@debian.org>
-Date:   Thu, 01 Oct 2020 08:58:25 -0700
-In-Reply-To: <87h7reddat.fsf@jsnitsel.users.ipa.redhat.com>
-References: <20200929223216.22584-1-James.Bottomley@HansenPartnership.com>
-         <20200929223216.22584-2-James.Bottomley@HansenPartnership.com>
-         <87eemjgdy3.fsf@jsnitsel.users.ipa.redhat.com>
-         <8ed5a80a9b2cfa37f0b8348906d292a7b1a1c02e.camel@HansenPartnership.com>
-         <87h7reddat.fsf@jsnitsel.users.ipa.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Thu, 1 Oct 2020 13:02:58 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4C2KFC3BcrzlhJMv;
+        Thu,  1 Oct 2020 19:02:55 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4C2KFB6xw2zlh8TM;
+        Thu,  1 Oct 2020 19:02:54 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: [PATCH v11 2/3] arch: Wire up trusted_for(2)
+Date:   Thu,  1 Oct 2020 19:02:31 +0200
+Message-Id: <20201001170232.522331-3-mic@digikod.net>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201001170232.522331-1-mic@digikod.net>
+References: <20201001170232.522331-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2020-09-30 at 17:01 -0700, Jerry Snitselaar wrote:
-> James Bottomley @ 2020-09-30 16:03 MST:
-> 
-> > On Wed, 2020-09-30 at 14:19 -0700, Jerry Snitselaar wrote:
-> > > James Bottomley @ 2020-09-29 15:32 MST:
-> > > 
-> > > > The current release locality code seems to be based on the
-> > > > misunderstanding that the TPM interrupts when a locality is
-> > > > released: it doesn't, only when the locality is acquired.
-> > > > 
-> > > > Furthermore, there seems to be no point in waiting for the
-> > > > locality to be released.  All it does is penalize the last TPM
-> > > > user.  However, if there's no next TPM user, this is a
-> > > > pointless wait and if there is a next TPM user, they'll pay the
-> > > > penalty waiting for the new locality (or possibly not if it's
-> > > > the same as the old locality).
-> > > > 
-> > > > Fix the code by making release_locality as simple write to
-> > > > release with no waiting for completion.
-> > [...]
-> > > My recollection is that this was added because there were some
-> > > chips that took so long to release locality that a subsequent
-> > > request_locality call was seeing the locality as already active,
-> > > moving on, and then the locality was getting released out from
-> > > under the user.
-> > 
-> > Well, I could simply dump the interrupt code, which can never work
-> > and we could always poll.
-> > 
-> > However, there also appears to be a bug in our locality requesting
-> > code.  We write the request and wait for the grant, but a grant
-> > should be signalled by not only the ACCESS_ACTIVE_LOCALITY being 1
-> > but also the ACCESS_REQUEST_USE going to 0.  As you say, if we're
-> > slow to relinquish, ACCESS_ACTIVE_LOCALITY could already be 1 and
-> > we'd think we were granted, but ACCESS_REQUEST_USE should stay 1
-> > until the TPM actually grants the next request.
-> > 
-> > If I code up a fix is there any chance you still have access to a
-> > problem TPM?  Mine all seem to grant and release localities fairly
-> > instantaneously.
-> > 
-> > James
-> 
-> Sorry, I seemed to make a mess of it. I don't have access to a system
-> where it occurred, but cc'ing Laurent since he reported the problem
-> and might still have access to the system.
-> 
-> I'd say fix up the check for locality request to look at
-> ACCESS_REQUEST_USE, and go with this patch to clean up locality
-> release. Hopefully Laurent still has access and can test. I do have a
-> laptop now where I should be able to test the other bits in your
-> patchset since this is one of the models that hit interrupt storm
-> problem when Stefan's 2 patches were originally applied. Lenovo
-> applied a fix to their bios, but this should still have the older one
-> version that has the issue. I'm on PTO this week, but I will try to
-> spend some time in the next couple days reproducing and then trying
-> your patches.
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Thanks.  I think the patch to fix to request access is very simple ...
-it's just to check the request bit has gone to zero, so I've attached
-it below.  It seems to work fine for me.
+Wire up trusted_for(2) for all architectures.
 
-James
-
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
 ---
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 0a86cf392466..5e56e8c67791 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -168,7 +168,8 @@ static bool check_locality(struct tpm_chip *chip, int l)
- 	if (rc < 0)
- 		return false;
+Changes since v9:
+* Rename introspect_access(2) to trusted_for(2).
+* Increase syscall number to leave space for memfd_secret(2) in -next.
+
+Changes since v7:
+* New patch for the new syscall.
+* Increase syscall numbers by 2 to leave space for new ones (in
+  linux-next): watch_mount(2) and process_madvise(2).
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
+ arch/arm/tools/syscall.tbl                  | 1 +
+ arch/arm64/include/asm/unistd.h             | 2 +-
+ arch/arm64/include/asm/unistd32.h           | 2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
+ arch/s390/kernel/syscalls/syscall.tbl       | 1 +
+ arch/sh/kernel/syscalls/syscall.tbl         | 1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
+ include/uapi/asm-generic/unistd.h           | 4 +++-
+ 19 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index ec8bed9e7b75..0175cfc0f66f 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 547	common	openat2				sys_openat2
+ 548	common	pidfd_getfd			sys_pidfd_getfd
+ 549	common	faccessat2			sys_faccessat2
++553	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 171077cbf419..db9c8d35e75b 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -453,3 +453,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 3b859596840d..d1f7d35f986e 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
  
--	if ((access & (TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID)) ==
-+	if ((access & (TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID
-+		       | TPM_ACCESS_REQUEST_USE)) ==
- 	    (TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID)) {
- 		priv->locality = l;
- 		return true;
+-#define __NR_compat_syscalls		440
++#define __NR_compat_syscalls		444
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 734860ac7cf9..33716dd2c04c 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -887,6 +887,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trusted_for 443
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index f52a41f4c340..68e56436b611 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -360,3 +360,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 81fc799d8392..67f0bc2fc4d0 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index b4e263916f41..acd3057886b7 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -445,3 +445,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index f9df9edb67a4..8164dc51ebf8 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -378,3 +378,4 @@
+ 437	n32	openat2				sys_openat2
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
+ 439	n32	faccessat2			sys_faccessat2
++443	n32	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 557f9954a2b9..28bc5bb76987 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -354,3 +354,4 @@
+ 437	n64	openat2				sys_openat2
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
+ 439	n64	faccessat2			sys_faccessat2
++443	n64	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 195b43cf27c8..6a62cc5b4999 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -427,3 +427,4 @@
+ 437	o32	openat2				sys_openat2
+ 438	o32	pidfd_getfd			sys_pidfd_getfd
+ 439	o32	faccessat2			sys_faccessat2
++443	o32	trusted_for			sys_trusted_for
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index def64d221cd4..654707acfa6c 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -437,3 +437,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index c2d737ff2e7b..eb1c6d7655e6 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -529,3 +529,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 10456bc936fb..6e77640e2976 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437  common	openat2			sys_openat2			sys_openat2
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
+ 439  common	faccessat2		sys_faccessat2			sys_faccessat2
++443  common	trusted_for		sys_trusted_for			sys_trusted_for
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index ae0a00beea5f..f5fd0d63b43b 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index 4af114e84f20..70806eb828b8 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -485,3 +485,4 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 9d1102873666..a0824f88fcfb 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -444,3 +444,4 @@
+ 437	i386	openat2			sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd
+ 439	i386	faccessat2		sys_faccessat2
++443	i386	trusted_for		sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f30d6ae9a688..0b0ce536acf1 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -361,6 +361,7 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
++443	common	trusted_for		sys_trusted_for
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 6276e3c2d3fc..22fd070f2565 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -410,3 +410,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 995b36c2ea7d..6b55804d9df9 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trusted_for 443
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 440
++#define __NR_syscalls 444
+ 
+ /*
+  * 32 bit systems traditionally used different
+-- 
+2.28.0
 
