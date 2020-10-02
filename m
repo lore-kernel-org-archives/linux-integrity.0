@@ -2,118 +2,249 @@ Return-Path: <SRS0=1KMW=DJ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FA1C47423
-	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 07:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864DDC4363C
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 17:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 403E520719
-	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 07:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E69E2085B
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 17:38:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P86pB/HX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbgJBHSa (ORCPT
+        id S2388316AbgJBRie (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 2 Oct 2020 03:18:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44766 "EHLO
+        Fri, 2 Oct 2020 13:38:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725961AbgJBHS3 (ORCPT
+        with ESMTP id S1726224AbgJBRie (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 2 Oct 2020 03:18:29 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5303AC0613D0
-        for <linux-integrity@vger.kernel.org>; Fri,  2 Oct 2020 00:18:29 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4C2hDM26gTzlhSjh;
-        Fri,  2 Oct 2020 09:18:27 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4C2hDL58YNzllmgM;
-        Fri,  2 Oct 2020 09:18:26 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>,
-        Milan Broz <gmazyland@gmail.com>, dm-devel@redhat.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v1] dm verity: Add support for signature verification with 2nd keyring
-Date:   Fri,  2 Oct 2020 09:18:02 +0200
-Message-Id: <20201002071802.535023-1-mic@digikod.net>
-X-Mailer: git-send-email 2.28.0
+        Fri, 2 Oct 2020 13:38:34 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E56DC0613E3
+        for <linux-integrity@vger.kernel.org>; Fri,  2 Oct 2020 10:38:34 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id e10so1192870pfj.1
+        for <linux-integrity@vger.kernel.org>; Fri, 02 Oct 2020 10:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zaz5SJSv7A3XIuY8irUlDYqrESCe7gCcbO5tyaj03YU=;
+        b=P86pB/HXvB1w66ujMKVlopbZUXuUA9r/mPIuYxOvuiet70Gi6UIgoN+Kxio24CM2/7
+         JfgmdRD8tgSfN3CFJ4Y75Bc4bn3m64UX/3OdRDLmD2nFCO6GweQosA22/MJXNgddI2Ip
+         1C480tVdsX9QUYYwIHMsDzV2XEJnCWfTsf7Xc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zaz5SJSv7A3XIuY8irUlDYqrESCe7gCcbO5tyaj03YU=;
+        b=dHNEPuWbYJN5Rde1+vyN2aVErdatfl5Y3CxfhXyBx84UfdeyaWyvySDrY8mHBRKOWm
+         lsouWcSqJh8YEHiOvpiuI7JsKEPe+l2x44KoXGcGuD05hRlikY+hpNjsNE9oqI1cnaNB
+         gRGiZi8ALLOYrg25AadOnmdkqytCfjbXdO/ud3B2ZVam6aWH2dV33aj8cgcHMIDL94e9
+         YM4+tYb0muMZfXnaKkrs3/2cYbMEqpnzt0y9rDFZxsbbCJ/F0LQ+6L1/dv6R7nafidgx
+         C1lzHw5p7SBKKNmK5qHvIkQocNAS6dZX8dOQHBbgTe9bJ4UMbA9efh6mEvszdYlXNhnX
+         wkRA==
+X-Gm-Message-State: AOAM533LRwwvEBxWLKcgX7kDnAEpEnXbV8drghrGQr6Ts/pppwrFQMM6
+        4EmulFC7beCP6qiKe50RF2vCfw==
+X-Google-Smtp-Source: ABdhPJxJZ5x2VgwvjB+CQFTtiG0FWPNxJc97Kyr4F/xETn9n8wWrhHY845HJDJm4z1m1PHBe9jXOTw==
+X-Received: by 2002:a63:121f:: with SMTP id h31mr3361167pgl.274.1601660313889;
+        Fri, 02 Oct 2020 10:38:33 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id j25sm2609285pfn.212.2020.10.02.10.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Oct 2020 10:38:33 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Scott Branden <scott.branden@broadcom.com>,
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Jessica Yu <jeyu@kernel.org>, SeongJae Park <sjpark@amazon.de>,
+        KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 01/16] fs/kernel_read_file: Remove FIRMWARE_PREALLOC_BUFFER enum
+Date:   Fri,  2 Oct 2020 10:38:13 -0700
+Message-Id: <20201002173828.2099543-2-keescook@chromium.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201002173828.2099543-1-keescook@chromium.org>
+References: <20201002173828.2099543-1-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+FIRMWARE_PREALLOC_BUFFER is a "how", not a "what", and confuses the LSMs
+that are interested in filtering between types of things. The "how"
+should be an internal detail made uninteresting to the LSMs.
 
-Add a new DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING configuration
-to enable dm-verity signatures to be verified against the secondary
-trusted keyring.  This allows certificate updates without kernel update
-and reboot, aligning with module and kernel (kexec) signature
-verifications.
-
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Cc: Jaskaran Khurana <jaskarankhurana@linux.microsoft.com>
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Milan Broz <gmazyland@gmail.com>
+Fixes: a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer")
+Fixes: fd90bc559bfb ("ima: based on policy verify firmware signatures (pre-allocated buffer)")
+Fixes: 4f0496d8ffa3 ("ima: based on policy warn about loading firmware (pre-allocated buffer)")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Acked-by: Scott Branden <scott.branden@broadcom.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/md/Kconfig                | 13 ++++++++++++-
- drivers/md/dm-verity-verify-sig.c |  9 +++++++--
- 2 files changed, 19 insertions(+), 3 deletions(-)
+ drivers/base/firmware_loader/main.c | 5 ++---
+ fs/exec.c                           | 7 ++++---
+ include/linux/fs.h                  | 2 +-
+ kernel/module.c                     | 2 +-
+ security/integrity/digsig.c         | 2 +-
+ security/integrity/ima/ima_fs.c     | 2 +-
+ security/integrity/ima/ima_main.c   | 6 ++----
+ 7 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/md/Kconfig b/drivers/md/Kconfig
-index 30ba3573626c..63870fdfe8ce 100644
---- a/drivers/md/Kconfig
-+++ b/drivers/md/Kconfig
-@@ -530,11 +530,22 @@ config DM_VERITY_VERIFY_ROOTHASH_SIG
- 	bool "Verity data device root hash signature verification support"
- 	depends on DM_VERITY
- 	select SYSTEM_DATA_VERIFICATION
--	  help
-+	---help---
- 	  Add ability for dm-verity device to be validated if the
- 	  pre-generated tree of cryptographic checksums passed has a pkcs#7
- 	  signature file that can validate the roothash of the tree.
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 63b9714a0154..b0ec2721f55d 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -470,14 +470,12 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
+ 	int i, len;
+ 	int rc = -ENOENT;
+ 	char *path;
+-	enum kernel_read_file_id id = READING_FIRMWARE;
+ 	size_t msize = INT_MAX;
+ 	void *buffer = NULL;
  
-+	  By default, rely on the builtin trusted keyring.
-+
-+	  If unsure, say N.
-+
-+config DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING
-+	bool "Verity data device root hash signature verification with secondary keyring"
-+	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
-+	depends on SECONDARY_TRUSTED_KEYRING
-+	---help---
-+	  Rely on the secondary trusted keyring to verify dm-verity signatures.
-+
- 	  If unsure, say N.
- 
- config DM_VERITY_FEC
-diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
-index 614e43db93aa..29385dc470d5 100644
---- a/drivers/md/dm-verity-verify-sig.c
-+++ b/drivers/md/dm-verity-verify-sig.c
-@@ -119,8 +119,13 @@ int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
+ 	/* Already populated data member means we're loading into a buffer */
+ 	if (!decompress && fw_priv->data) {
+ 		buffer = fw_priv->data;
+-		id = READING_FIRMWARE_PREALLOC_BUFFER;
+ 		msize = fw_priv->allocated_size;
  	}
  
- 	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
--				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
--				NULL, NULL);
-+				sig_len,
-+#ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING
-+				VERIFY_USE_SECONDARY_KEYRING,
-+#else
-+				NULL,
-+#endif
-+				VERIFYING_UNSPECIFIED_SIGNATURE, NULL, NULL);
+@@ -501,7 +499,8 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
  
- 	return ret;
+ 		/* load firmware files from the mount namespace of init */
+ 		rc = kernel_read_file_from_path_initns(path, &buffer,
+-						       &size, msize, id);
++						       &size, msize,
++						       READING_FIRMWARE);
+ 		if (rc) {
+ 			if (rc != -ENOENT)
+ 				dev_warn(device, "loading %s failed with error %d\n",
+diff --git a/fs/exec.c b/fs/exec.c
+index a91003e28eaa..9233cd50dc4c 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -954,6 +954,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ {
+ 	loff_t i_size, pos;
+ 	ssize_t bytes = 0;
++	void *allocated = NULL;
+ 	int ret;
+ 
+ 	if (!S_ISREG(file_inode(file)->i_mode) || max_size < 0)
+@@ -977,8 +978,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 		goto out;
+ 	}
+ 
+-	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
+-		*buf = vmalloc(i_size);
++	if (!*buf)
++		*buf = allocated = vmalloc(i_size);
+ 	if (!*buf) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -1007,7 +1008,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
+ 
+ out_free:
+ 	if (ret < 0) {
+-		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
++		if (allocated) {
+ 			vfree(*buf);
+ 			*buf = NULL;
+ 		}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7519ae003a08..7336e22d0c5d 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2858,10 +2858,10 @@ static inline void i_readcount_inc(struct inode *inode)
+ #endif
+ extern int do_pipe_flags(int *, int);
+ 
++/* This is a list of *what* is being read, not *how*. */
+ #define __kernel_read_file_id(id) \
+ 	id(UNKNOWN, unknown)		\
+ 	id(FIRMWARE, firmware)		\
+-	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+ 	id(FIRMWARE_EFI_EMBEDDED, firmware)	\
+ 	id(MODULE, kernel-module)		\
+ 	id(KEXEC_IMAGE, kexec-image)		\
+diff --git a/kernel/module.c b/kernel/module.c
+index 1c5cff34d9f2..b2808acac46b 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -4035,7 +4035,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
+ {
+ 	struct load_info info = { };
+ 	loff_t size;
+-	void *hdr;
++	void *hdr = NULL;
+ 	int err;
+ 
+ 	err = may_init_module();
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index e9cbadade74b..ac02b7632353 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -169,7 +169,7 @@ int __init integrity_add_key(const unsigned int id, const void *data,
+ 
+ int __init integrity_load_x509(const unsigned int id, const char *path)
+ {
+-	void *data;
++	void *data = NULL;
+ 	loff_t size;
+ 	int rc;
+ 	key_perm_t perm;
+diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
+index e3fcad871861..15a44c5022f7 100644
+--- a/security/integrity/ima/ima_fs.c
++++ b/security/integrity/ima/ima_fs.c
+@@ -272,7 +272,7 @@ static const struct file_operations ima_ascii_measurements_ops = {
+ 
+ static ssize_t ima_read_policy(char *path)
+ {
+-	void *data;
++	void *data = NULL;
+ 	char *datap;
+ 	loff_t size;
+ 	int rc, pathlen = strlen(path);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 8a91711ca79b..2f187784c5bc 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -611,19 +611,17 @@ void ima_post_path_mknod(struct dentry *dentry)
+ int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
+ {
+ 	/*
+-	 * READING_FIRMWARE_PREALLOC_BUFFER
+-	 *
+ 	 * Do devices using pre-allocated memory run the risk of the
+ 	 * firmware being accessible to the device prior to the completion
+ 	 * of IMA's signature verification any more than when using two
+-	 * buffers?
++	 * buffers? It may be desirable to include the buffer address
++	 * in this API and walk all the dma_map_single() mappings to check.
+ 	 */
+ 	return 0;
  }
+ 
+ const int read_idmap[READING_MAX_ID] = {
+ 	[READING_FIRMWARE] = FIRMWARE_CHECK,
+-	[READING_FIRMWARE_PREALLOC_BUFFER] = FIRMWARE_CHECK,
+ 	[READING_MODULE] = MODULE_CHECK,
+ 	[READING_KEXEC_IMAGE] = KEXEC_KERNEL_CHECK,
+ 	[READING_KEXEC_INITRAMFS] = KEXEC_INITRAMFS_CHECK,
 -- 
-2.28.0
+2.25.1
 
