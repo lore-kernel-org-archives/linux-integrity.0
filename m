@@ -8,71 +8,70 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE61C4363C
-	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 17:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C76DC35257
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 17:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DEC42145D
-	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 17:38:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E38D20758
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Oct 2020 17:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dhTPr3Hf"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SDW1aCXs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388385AbgJBRij (ORCPT
+        id S2388409AbgJBRiz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 2 Oct 2020 13:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55782 "EHLO
+        Fri, 2 Oct 2020 13:38:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbgJBRii (ORCPT
+        with ESMTP id S2388411AbgJBRip (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 2 Oct 2020 13:38:38 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43B0C0613E7
-        for <linux-integrity@vger.kernel.org>; Fri,  2 Oct 2020 10:38:38 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id x22so1729276pfo.12
-        for <linux-integrity@vger.kernel.org>; Fri, 02 Oct 2020 10:38:38 -0700 (PDT)
+        Fri, 2 Oct 2020 13:38:45 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F1BC0613E2
+        for <linux-integrity@vger.kernel.org>; Fri,  2 Oct 2020 10:38:45 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 5so1238245pgf.5
+        for <linux-integrity@vger.kernel.org>; Fri, 02 Oct 2020 10:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lZhM0u1Ixh6Kh+HXvNSm8TOvqXs6GWG/DhLCwiIZPAQ=;
-        b=dhTPr3HfrcE87niKjHnrsTeF1TcXrwE3MtOzEVE6zgIgOvNW2rTQI9z3LOdcFoyVDM
-         SBGNwTYXUuqJM/f0GmpP0X0+JEVgSuETIXvn6XfOmQ/TeXGBd3DyqhtRg4DFLO1+L2Mr
-         i558wv0fKdwpBIUsFJJ9VnuXXiUIkFoFIk9vk=
+        bh=WHTJVbq+NEdOn0KG7xTVbIO+EPWzmJJD7edvoSx0fhQ=;
+        b=SDW1aCXsi7GB1NUdEmgnrp+bHwHQoGoSWJOyLP0qTqqUQlVSknq7NxFIPEVQ9Y2j+P
+         QIaJOySy3FRN2lvGV0GXbU/VyifBQ99x9nCJ2UBKC3L31TPgViV4h+DoOFY1gS5NfQyc
+         8+LKzKpNMC3OpSEL4GuhCkElvCK6DRm03gm9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lZhM0u1Ixh6Kh+HXvNSm8TOvqXs6GWG/DhLCwiIZPAQ=;
-        b=Lo2jeXYDiU37yrbBwC8ptLMRMJW0n5EbYYeIFPzwjV8xLSxk1HT4HRvmtiNI/bPlLP
-         KV+xFDRfa+Zpg7aZke1tBxyaEW4edttSciR3OTbQMZNk3tUUM7HPFlsL1frNjL22XgFu
-         DoBtYrWlvpqf2487BeLVLK6KyAYpTyYPtlVHvaaip5VWTXt4qxvPVO2dBXYOeEk1tgRn
-         uPKC7pIH6g/Zwj82TyldnjCv/Ttzj2YumaBX8Q6XPiuzQtm7qLB2kcgpsllvr2iN2lic
-         409GbM5mIFwD5OwCcKIgu88eAFq/qeUdtdgebbfzPOezkyrgfJ0FvBSd9heyLp9fntf1
-         AOsg==
-X-Gm-Message-State: AOAM530izLLn25GaCfj2llEgYnrEa1AsuJixp5EIeP3BDM/Zg+wN3Sjd
-        LJ0pfPv1ON9KHtFDJcf2IqXDDw==
-X-Google-Smtp-Source: ABdhPJwaD4NElc+GQ4IINbv7oc2YCpYC1zsjIXxVz9EyAd0B1Cyyi5Hk2RJaUftxrf7tj37r6wGe1A==
-X-Received: by 2002:a62:3382:0:b029:150:bde9:d408 with SMTP id z124-20020a6233820000b0290150bde9d408mr4200055pfz.12.1601660318157;
-        Fri, 02 Oct 2020 10:38:38 -0700 (PDT)
+        bh=WHTJVbq+NEdOn0KG7xTVbIO+EPWzmJJD7edvoSx0fhQ=;
+        b=PPQBqT8CZoyYYsA+xGgcG6SOEOSPKfwMdKHwO2aeH9HL49VCyZ5M2DRUcpTOZE3q1i
+         JWxPksro+pFCbdCc10aE4WnfHRfvB80YnWDtBf1VCerC8lXJUodNIYrpSb9UmORWlqnS
+         ub64YC6l9D3U2LYHTuSoMZum9TTxJEoVFjWAmptvynFlPS+RsJPjx3xK4gudrZcL1f8m
+         YQdzGwBQWHSYxiV/0um+lbm0ijBhz2jDBGi5T4UrXrCV3HqcWrNC5uHJOjvctsnhMssG
+         dasgtE4RvXN5VvSLFjtQulve798yx3MfR45HLVqEQYPULKd7gkhpn13pcIaT5g/NRw59
+         UU/w==
+X-Gm-Message-State: AOAM532f7BBwN+thv5wOiyywzYceWMOEmgdnVvfqzsltfPag2CECz9G/
+        4TZiOCMLpuY2iA3fDf/L03lO5A==
+X-Google-Smtp-Source: ABdhPJxsFl7w0eHssgJAlItrXZUpI3j4cF+J9i83MBIGzUru+Nf9hzhT67KCdEEp/s/JO0pwtKcNbw==
+X-Received: by 2002:aa7:8f21:0:b029:142:2501:39e0 with SMTP id y1-20020aa78f210000b0290142250139e0mr3924207pfr.47.1601660324643;
+        Fri, 02 Oct 2020 10:38:44 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l10sm2157310pgp.25.2020.10.02.10.38.34
+        by smtp.gmail.com with ESMTPSA id r19sm2104873pjz.23.2020.10.02.10.38.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Oct 2020 10:38:36 -0700 (PDT)
+        Fri, 02 Oct 2020 10:38:42 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Kees Cook <keescook@chromium.org>,
+        Scott Branden <scott.branden@broadcom.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Scott Branden <scott.branden@broadcom.com>,
         Takashi Iwai <tiwai@suse.de>, Jessica Yu <jeyu@kernel.org>,
         SeongJae Park <sjpark@amazon.de>,
         KP Singh <kpsingh@chromium.org>, linux-efi@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 05/16] fs/kernel_read_file: Remove redundant size argument
-Date:   Fri,  2 Oct 2020 10:38:17 -0700
-Message-Id: <20201002173828.2099543-6-keescook@chromium.org>
+Subject: [PATCH v5 14/16] firmware: Store opt_flags in fw_priv
+Date:   Fri,  2 Oct 2020 10:38:26 -0700
+Message-Id: <20201002173828.2099543-15-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201002173828.2099543-1-keescook@chromium.org>
 References: <20201002173828.2099543-1-keescook@chromium.org>
@@ -82,291 +81,220 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-In preparation for refactoring kernel_read_file*(), remove the redundant
-"size" argument which is not needed: it can be included in the return
-code, with callers adjusted. (VFS reads already cannot be larger than
-INT_MAX.)
+Instead of passing opt_flags around so much, store it in the private
+structure so it can be examined by internals without needing to add more
+arguments to functions.
 
+Co-developed-by: Scott Branden <scott.branden@broadcom.com>
+Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-Acked-by: Scott Branden <scott.branden@broadcom.com>
 ---
- drivers/base/firmware_loader/main.c | 10 ++++++----
- fs/kernel_read_file.c               | 20 +++++++++-----------
- include/linux/kernel_read_file.h    |  8 ++++----
- kernel/kexec_file.c                 | 14 +++++++-------
- kernel/module.c                     |  7 +++----
- security/integrity/digsig.c         |  5 +++--
- security/integrity/ima/ima_fs.c     |  6 ++++--
- 7 files changed, 36 insertions(+), 34 deletions(-)
+ drivers/base/firmware_loader/fallback.c       | 11 +++-----
+ drivers/base/firmware_loader/fallback.h       |  5 ++--
+ .../base/firmware_loader/fallback_platform.c  |  4 +--
+ drivers/base/firmware_loader/firmware.h       |  3 ++-
+ drivers/base/firmware_loader/main.c           | 25 +++++++++++--------
+ 5 files changed, 25 insertions(+), 23 deletions(-)
 
+diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+index 251d92fc8bae..c4765461a951 100644
+--- a/drivers/base/firmware_loader/fallback.c
++++ b/drivers/base/firmware_loader/fallback.c
+@@ -490,13 +490,11 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
+ /**
+  * fw_load_sysfs_fallback() - load a firmware via the sysfs fallback mechanism
+  * @fw_sysfs: firmware sysfs information for the firmware to load
+- * @opt_flags: flags of options, FW_OPT_*
+  * @timeout: timeout to wait for the load
+  *
+  * In charge of constructing a sysfs fallback interface for firmware loading.
+  **/
+-static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
+-				  u32 opt_flags, long timeout)
++static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs, long timeout)
+ {
+ 	int retval = 0;
+ 	struct device *f_dev = &fw_sysfs->dev;
+@@ -518,7 +516,7 @@ static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
+ 	list_add(&fw_priv->pending_list, &pending_fw_head);
+ 	mutex_unlock(&fw_lock);
+ 
+-	if (opt_flags & FW_OPT_UEVENT) {
++	if (fw_priv->opt_flags & FW_OPT_UEVENT) {
+ 		fw_priv->need_uevent = true;
+ 		dev_set_uevent_suppress(f_dev, false);
+ 		dev_dbg(f_dev, "firmware: requesting %s\n", fw_priv->fw_name);
+@@ -580,10 +578,10 @@ static int fw_load_from_user_helper(struct firmware *firmware,
+ 	}
+ 
+ 	fw_sysfs->fw_priv = firmware->priv;
+-	ret = fw_load_sysfs_fallback(fw_sysfs, opt_flags, timeout);
++	ret = fw_load_sysfs_fallback(fw_sysfs, timeout);
+ 
+ 	if (!ret)
+-		ret = assign_fw(firmware, device, opt_flags);
++		ret = assign_fw(firmware, device);
+ 
+ out_unlock:
+ 	usermodehelper_read_unlock();
+@@ -625,7 +623,6 @@ static bool fw_run_sysfs_fallback(u32 opt_flags)
+  * @fw: pointer to firmware image
+  * @name: name of firmware file to look for
+  * @device: device for which firmware is being loaded
+- * @opt_flags: options to control firmware loading behaviour
+  * @ret: return value from direct lookup which triggered the fallback mechanism
+  *
+  * This function is called if direct lookup for the firmware failed, it enables
+diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
+index 2afdb6adb23f..3af7205b302f 100644
+--- a/drivers/base/firmware_loader/fallback.h
++++ b/drivers/base/firmware_loader/fallback.h
+@@ -67,10 +67,9 @@ static inline void unregister_sysfs_loader(void)
+ #endif /* CONFIG_FW_LOADER_USER_HELPER */
+ 
+ #ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
+-int firmware_fallback_platform(struct fw_priv *fw_priv, u32 opt_flags);
++int firmware_fallback_platform(struct fw_priv *fw_priv);
+ #else
+-static inline int firmware_fallback_platform(struct fw_priv *fw_priv,
+-					     u32 opt_flags)
++static inline int firmware_fallback_platform(struct fw_priv *fw_priv)
+ {
+ 	return -ENOENT;
+ }
+diff --git a/drivers/base/firmware_loader/fallback_platform.c b/drivers/base/firmware_loader/fallback_platform.c
+index 8bdf88043079..00af99f0aff2 100644
+--- a/drivers/base/firmware_loader/fallback_platform.c
++++ b/drivers/base/firmware_loader/fallback_platform.c
+@@ -8,13 +8,13 @@
+ #include "fallback.h"
+ #include "firmware.h"
+ 
+-int firmware_fallback_platform(struct fw_priv *fw_priv, u32 opt_flags)
++int firmware_fallback_platform(struct fw_priv *fw_priv)
+ {
+ 	const u8 *data;
+ 	size_t size;
+ 	int rc;
+ 
+-	if (!(opt_flags & FW_OPT_FALLBACK_PLATFORM))
++	if (!(fw_priv->opt_flags & FW_OPT_FALLBACK_PLATFORM))
+ 		return -ENOENT;
+ 
+ 	rc = security_kernel_load_data(LOADING_FIRMWARE, true);
+diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
+index d08efc77cf16..f86de5d7e0d7 100644
+--- a/drivers/base/firmware_loader/firmware.h
++++ b/drivers/base/firmware_loader/firmware.h
+@@ -68,6 +68,7 @@ struct fw_priv {
+ 	void *data;
+ 	size_t size;
+ 	size_t allocated_size;
++	u32 opt_flags;
+ #ifdef CONFIG_FW_LOADER_PAGED_BUF
+ 	bool is_paged_buf;
+ 	struct page **pages;
+@@ -136,7 +137,7 @@ static inline void fw_state_done(struct fw_priv *fw_priv)
+ 	__fw_state_set(fw_priv, FW_STATUS_DONE);
+ }
+ 
+-int assign_fw(struct firmware *fw, struct device *device, u32 opt_flags);
++int assign_fw(struct firmware *fw, struct device *device);
+ 
+ #ifdef CONFIG_FW_LOADER_PAGED_BUF
+ void fw_free_paged_buf(struct fw_priv *fw_priv);
 diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 8c6ea389afcf..6df1bdcfeb9d 100644
+index 79f86466d472..78c8e44c08cb 100644
 --- a/drivers/base/firmware_loader/main.c
 +++ b/drivers/base/firmware_loader/main.c
-@@ -467,7 +467,7 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
- 					     size_t in_size,
- 					     const void *in_buffer))
- {
--	loff_t size;
-+	size_t size;
- 	int i, len;
- 	int rc = -ENOENT;
- 	char *path;
-@@ -499,10 +499,9 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
- 		fw_priv->size = 0;
+@@ -168,7 +168,9 @@ static int fw_cache_piggyback_on_request(const char *name);
  
- 		/* load firmware files from the mount namespace of init */
--		rc = kernel_read_file_from_path_initns(path, &buffer,
--						       &size, msize,
-+		rc = kernel_read_file_from_path_initns(path, &buffer, msize,
- 						       READING_FIRMWARE);
--		if (rc) {
-+		if (rc < 0) {
- 			if (rc != -ENOENT)
- 				dev_warn(device, "loading %s failed with error %d\n",
- 					 path, rc);
-@@ -511,6 +510,9 @@ fw_get_filesystem_firmware(struct device *device, struct fw_priv *fw_priv,
- 					 path);
- 			continue;
+ static struct fw_priv *__allocate_fw_priv(const char *fw_name,
+ 					  struct firmware_cache *fwc,
+-					  void *dbuf, size_t size)
++					  void *dbuf,
++					  size_t size,
++					  u32 opt_flags)
+ {
+ 	struct fw_priv *fw_priv;
+ 
+@@ -186,6 +188,7 @@ static struct fw_priv *__allocate_fw_priv(const char *fw_name,
+ 	fw_priv->fwc = fwc;
+ 	fw_priv->data = dbuf;
+ 	fw_priv->allocated_size = size;
++	fw_priv->opt_flags = opt_flags;
+ 	fw_state_init(fw_priv);
+ #ifdef CONFIG_FW_LOADER_USER_HELPER
+ 	INIT_LIST_HEAD(&fw_priv->pending_list);
+@@ -210,8 +213,10 @@ static struct fw_priv *__lookup_fw_priv(const char *fw_name)
+ /* Returns 1 for batching firmware requests with the same name */
+ static int alloc_lookup_fw_priv(const char *fw_name,
+ 				struct firmware_cache *fwc,
+-				struct fw_priv **fw_priv, void *dbuf,
+-				size_t size, u32 opt_flags)
++				struct fw_priv **fw_priv,
++				void *dbuf,
++				size_t size,
++				u32 opt_flags)
+ {
+ 	struct fw_priv *tmp;
+ 
+@@ -227,7 +232,7 @@ static int alloc_lookup_fw_priv(const char *fw_name,
  		}
-+		size = rc;
-+		rc = 0;
-+
- 		dev_dbg(device, "Loading firmware from %s\n", path);
- 		if (decompress) {
- 			dev_dbg(device, "f/w decompressing %s\n",
-diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-index 54d972d4befc..dc28a8def597 100644
---- a/fs/kernel_read_file.c
-+++ b/fs/kernel_read_file.c
-@@ -5,7 +5,7 @@
- #include <linux/security.h>
- #include <linux/vmalloc.h>
- 
--int kernel_read_file(struct file *file, void **buf, loff_t *size,
-+int kernel_read_file(struct file *file, void **buf,
- 		     loff_t max_size, enum kernel_read_file_id id)
- {
- 	loff_t i_size, pos;
-@@ -29,7 +29,7 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 		ret = -EINVAL;
- 		goto out;
- 	}
--	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
-+	if (i_size > INT_MAX || (max_size > 0 && i_size > max_size)) {
- 		ret = -EFBIG;
- 		goto out;
- 	}
-@@ -59,8 +59,6 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
  	}
  
- 	ret = security_kernel_post_read_file(file, *buf, i_size, id);
--	if (!ret)
--		*size = pos;
- 
- out_free:
- 	if (ret < 0) {
-@@ -72,11 +70,11 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
- 
- out:
- 	allow_write_access(file);
--	return ret;
-+	return ret == 0 ? pos : ret;
+-	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size);
++	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size, opt_flags);
+ 	if (tmp) {
+ 		INIT_LIST_HEAD(&tmp->list);
+ 		if (!(opt_flags & FW_OPT_NOCACHE))
+@@ -640,7 +645,7 @@ static int fw_add_devm_name(struct device *dev, const char *name)
  }
- EXPORT_SYMBOL_GPL(kernel_read_file);
+ #endif
  
--int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
-+int kernel_read_file_from_path(const char *path, void **buf,
- 			       loff_t max_size, enum kernel_read_file_id id)
+-int assign_fw(struct firmware *fw, struct device *device, u32 opt_flags)
++int assign_fw(struct firmware *fw, struct device *device)
  {
- 	struct file *file;
-@@ -89,14 +87,14 @@ int kernel_read_file_from_path(const char *path, void **buf, loff_t *size,
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
--	ret = kernel_read_file(file, buf, size, max_size, id);
-+	ret = kernel_read_file(file, buf, max_size, id);
- 	fput(file);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
- 
- int kernel_read_file_from_path_initns(const char *path, void **buf,
--				      loff_t *size, loff_t max_size,
-+				      loff_t max_size,
- 				      enum kernel_read_file_id id)
- {
- 	struct file *file;
-@@ -115,13 +113,13 @@ int kernel_read_file_from_path_initns(const char *path, void **buf,
- 	if (IS_ERR(file))
- 		return PTR_ERR(file);
- 
--	ret = kernel_read_file(file, buf, size, max_size, id);
-+	ret = kernel_read_file(file, buf, max_size, id);
- 	fput(file);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
- 
--int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
-+int kernel_read_file_from_fd(int fd, void **buf, loff_t max_size,
- 			     enum kernel_read_file_id id)
- {
- 	struct fd f = fdget(fd);
-@@ -130,7 +128,7 @@ int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, loff_t max_size,
- 	if (!f.file)
- 		goto out;
- 
--	ret = kernel_read_file(f.file, buf, size, max_size, id);
-+	ret = kernel_read_file(f.file, buf, max_size, id);
- out:
- 	fdput(f);
- 	return ret;
-diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
-index 78cf3d7dc835..0ca0bdbed1bd 100644
---- a/include/linux/kernel_read_file.h
-+++ b/include/linux/kernel_read_file.h
-@@ -36,16 +36,16 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
- }
- 
- int kernel_read_file(struct file *file,
--		     void **buf, loff_t *size, loff_t max_size,
-+		     void **buf, loff_t max_size,
- 		     enum kernel_read_file_id id);
- int kernel_read_file_from_path(const char *path,
--			       void **buf, loff_t *size, loff_t max_size,
-+			       void **buf, loff_t max_size,
- 			       enum kernel_read_file_id id);
- int kernel_read_file_from_path_initns(const char *path,
--				      void **buf, loff_t *size, loff_t max_size,
-+				      void **buf, loff_t max_size,
- 				      enum kernel_read_file_id id);
- int kernel_read_file_from_fd(int fd,
--			     void **buf, loff_t *size, loff_t max_size,
-+			     void **buf, loff_t max_size,
- 			     enum kernel_read_file_id id);
- 
- #endif /* _LINUX_KERNEL_READ_FILE_H */
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 1cc82557f4c1..b20cfde8a01d 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -220,13 +220,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- {
+ 	struct fw_priv *fw_priv = fw->priv;
  	int ret;
- 	void *ldata;
--	loff_t size;
+@@ -659,8 +664,8 @@ int assign_fw(struct firmware *fw, struct device *device, u32 opt_flags)
+ 	 * should be fixed in devres or driver core.
+ 	 */
+ 	/* don't cache firmware handled without uevent */
+-	if (device && (opt_flags & FW_OPT_UEVENT) &&
+-	    !(opt_flags & FW_OPT_NOCACHE)) {
++	if (device && (fw_priv->opt_flags & FW_OPT_UEVENT) &&
++	    !(fw_priv->opt_flags & FW_OPT_NOCACHE)) {
+ 		ret = fw_add_devm_name(device, fw_priv->fw_name);
+ 		if (ret) {
+ 			mutex_unlock(&fw_lock);
+@@ -672,7 +677,7 @@ int assign_fw(struct firmware *fw, struct device *device, u32 opt_flags)
+ 	 * After caching firmware image is started, let it piggyback
+ 	 * on request firmware.
+ 	 */
+-	if (!(opt_flags & FW_OPT_NOCACHE) &&
++	if (!(fw_priv->opt_flags & FW_OPT_NOCACHE) &&
+ 	    fw_priv->fwc->state == FW_LOADER_START_CACHE) {
+ 		if (fw_cache_piggyback_on_request(fw_priv->fw_name))
+ 			kref_get(&fw_priv->ref);
+@@ -783,7 +788,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+ #endif
  
- 	ret = kernel_read_file_from_fd(kernel_fd, &image->kernel_buf,
--				       &size, INT_MAX, READING_KEXEC_IMAGE);
--	if (ret)
-+				       INT_MAX, READING_KEXEC_IMAGE);
-+	if (ret < 0)
- 		return ret;
--	image->kernel_buf_len = size;
-+	image->kernel_buf_len = ret;
+ 	if (ret == -ENOENT)
+-		ret = firmware_fallback_platform(fw->priv, opt_flags);
++		ret = firmware_fallback_platform(fw->priv);
  
- 	/* Call arch image probe handlers */
- 	ret = arch_kexec_kernel_image_probe(image, image->kernel_buf,
-@@ -243,11 +242,12 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 	/* It is possible that there no initramfs is being loaded */
- 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
- 		ret = kernel_read_file_from_fd(initrd_fd, &image->initrd_buf,
--					       &size, INT_MAX,
-+					       INT_MAX,
- 					       READING_KEXEC_INITRAMFS);
--		if (ret)
-+		if (ret < 0)
- 			goto out;
--		image->initrd_buf_len = size;
-+		image->initrd_buf_len = ret;
-+		ret = 0;
- 	}
+ 	if (ret) {
+ 		if (!(opt_flags & FW_OPT_NO_WARN))
+@@ -792,7 +797,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+ 				 name, ret);
+ 		ret = firmware_fallback_sysfs(fw, name, device, opt_flags, ret);
+ 	} else
+-		ret = assign_fw(fw, device, opt_flags);
++		ret = assign_fw(fw, device);
  
- 	if (cmdline_len) {
-diff --git a/kernel/module.c b/kernel/module.c
-index 4218abd272ee..9faa6322f17b 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -4035,7 +4035,6 @@ SYSCALL_DEFINE3(init_module, void __user *, umod,
- SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
- {
- 	struct load_info info = { };
--	loff_t size;
- 	void *hdr = NULL;
- 	int err;
- 
-@@ -4049,12 +4048,12 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char __user *, uargs, int, flags)
- 		      |MODULE_INIT_IGNORE_VERMAGIC))
- 		return -EINVAL;
- 
--	err = kernel_read_file_from_fd(fd, &hdr, &size, INT_MAX,
-+	err = kernel_read_file_from_fd(fd, &hdr, INT_MAX,
- 				       READING_MODULE);
--	if (err)
-+	if (err < 0)
- 		return err;
- 	info.hdr = hdr;
--	info.len = size;
-+	info.len = err;
- 
- 	return load_module(&info, uargs, flags);
- }
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index f8869be45d8f..97661ffabc4e 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -171,16 +171,17 @@ int __init integrity_add_key(const unsigned int id, const void *data,
- int __init integrity_load_x509(const unsigned int id, const char *path)
- {
- 	void *data = NULL;
--	loff_t size;
-+	size_t size;
- 	int rc;
- 	key_perm_t perm;
- 
--	rc = kernel_read_file_from_path(path, &data, &size, 0,
-+	rc = kernel_read_file_from_path(path, &data, 0,
- 					READING_X509_CERTIFICATE);
- 	if (rc < 0) {
- 		pr_err("Unable to open file: %s (%d)", path, rc);
- 		return rc;
- 	}
-+	size = rc;
- 
- 	perm = (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW | KEY_USR_READ;
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index e13ffece3726..602f52717757 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -275,7 +275,7 @@ static ssize_t ima_read_policy(char *path)
- {
- 	void *data = NULL;
- 	char *datap;
--	loff_t size;
-+	size_t size;
- 	int rc, pathlen = strlen(path);
- 
- 	char *p;
-@@ -284,11 +284,13 @@ static ssize_t ima_read_policy(char *path)
- 	datap = path;
- 	strsep(&datap, "\n");
- 
--	rc = kernel_read_file_from_path(path, &data, &size, 0, READING_POLICY);
-+	rc = kernel_read_file_from_path(path, &data, 0, READING_POLICY);
- 	if (rc < 0) {
- 		pr_err("Unable to open file: %s (%d)", path, rc);
- 		return rc;
- 	}
-+	size = rc;
-+	rc = 0;
- 
- 	datap = data;
- 	while (size > 0 && (p = strsep(&datap, "\n"))) {
+  out:
+ 	if (ret < 0) {
 -- 
 2.25.1
 
