@@ -6,69 +6,72 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253B7C4363A
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 17:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC6BC4363A
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 18:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9EF020796
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 17:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30D1920853
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 18:57:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727814AbgJERJX (ORCPT
+        id S1729214AbgJES5s (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Oct 2020 13:09:23 -0400
-Received: from mga01.intel.com ([192.55.52.88]:23042 "EHLO mga01.intel.com"
+        Mon, 5 Oct 2020 14:57:48 -0400
+Received: from mga02.intel.com ([134.134.136.20]:38375 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbgJERJX (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Oct 2020 13:09:23 -0400
-IronPort-SDR: nxWCBMYQ9ZRKeOfQE3kfru8pAGGsgrP+IzIDVNo1UXtzFCGxvctYqLe58uGcBeEPCjIPmINJ9Q
- BPv3PgpyvgLg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="181596980"
+        id S1726657AbgJES5s (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Oct 2020 14:57:48 -0400
+IronPort-SDR: egey4e/OjL6iUY16bYWwn03Ofrx9KCZTrr958AfkLQwm2FXrWLENFlRIxDcyPp0rvdXpoWEE95
+ cRogg9d+99jw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="151136656"
 X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="181596980"
+   d="scan'208";a="151136656"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 10:06:07 -0700
-IronPort-SDR: 9+478EWewl0HYFtTSp5EVLWHBKy90rV2LPTYIDhRC9lxrwwdjXKORhsI2IjBtATyIahzUv9z+z
- Teg/vM/9gsKQ==
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 11:57:42 -0700
+IronPort-SDR: ysuBJkKAjr6J9XYhUvNzxnSfS7e6qT+3zF2Vw7gXICUZMgL6wGwFP6r4mr5167Tg2cndHryKeY
+ c4nalbp6oi2A==
 X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="296356736"
+   d="scan'208";a="459758656"
 Received: from unknown (HELO localhost) ([10.249.32.156])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 10:05:58 -0700
-Date:   Mon, 5 Oct 2020 20:05:56 +0300
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 10:02:42 -0700
+Date:   Mon, 5 Oct 2020 20:02:19 +0300
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc:     linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
         Jerry Snitselaar <jsnitsel@redhat.com>,
         Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [PATCH v2 4/5] tpm_tis: fix IRQ probing
-Message-ID: <20201005170556.GF6232@linux.intel.com>
+Subject: Re: [PATCH v2 2/5] tpm_tis: Clean up locality release
+Message-ID: <20201005170219.GC6232@linux.intel.com>
 References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
- <20201001180925.13808-5-James.Bottomley@HansenPartnership.com>
+ <20201001180925.13808-3-James.Bottomley@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201001180925.13808-5-James.Bottomley@HansenPartnership.com>
+In-Reply-To: <20201001180925.13808-3-James.Bottomley@HansenPartnership.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 11:09:24AM -0700, James Bottomley wrote:
-> There are two problems with our current interrupt probing: firstly the
-> TPM_CHIP_FLAG_IRQ never gets set initially, so a check for interrupts
-> is never done.  Fix this by setting the flag before we generate and
-> interrupt for probing.  Secondly our IRQ setup may be ineffective on a
-> TPM without legacy access cycles becuase according to the TPM
-> Interface Specification the interrupt registers are only writeable in
-> the current locality, so issue a request_locality before setting up
-> the interrupts.
+On Thu, Oct 01, 2020 at 11:09:22AM -0700, James Bottomley wrote:
+> The current release locality code seems to be based on the
+> misunderstanding that the TPM interrupts when a locality is released:
+> it doesn't, only when the locality is acquired.
 > 
+> Furthermore, there seems to be no point in waiting for the locality to
+> be released.  All it does is penalize the last TPM user.  However, if
+> there's no next TPM user, this is a pointless wait and if there is a
+> next TPM user, they'll pay the penalty waiting for the new locality
+> (or possibly not if it's the same as the old locality).
+> 
+> Fix the code by making release_locality as simple write to release
+> with no waiting for completion.
+> 
+> Fixes: 33bafe90824b ("tpm_tis: verify locality released before returning from release_locality")
 > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> 
-> ---
-> 
-> v2: improved description
 
-Ditto.
+So, if I got it right this is dependent on 1/5 to address Jerry's
+issue? I.e. if this has a fixes tag and previous does not, it will
+not fully fix the situation when backporting?
 
 /Jarkko
