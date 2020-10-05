@@ -2,78 +2,126 @@ Return-Path: <SRS0=Mch0=DM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6A9C4363A
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 18:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B437C4363A
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 19:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5B020E65
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 18:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCD820E65
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Oct 2020 19:00:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="g3Ay6oZq";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="g3Ay6oZq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbgJES6P (ORCPT
+        id S1727397AbgJETA7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Oct 2020 14:58:15 -0400
-Received: from mga17.intel.com ([192.55.52.151]:13106 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbgJES6O (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Oct 2020 14:58:14 -0400
-IronPort-SDR: qBzxd600PAAKXuWcZmv5KkLhWAyiiA5Gw2jzK9cuWBfshjEnW7IhxIGx4vc6YkknMyCYSUR5O6
- 3Zps/4lJf2Aw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="143777232"
-X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="143777232"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 11:57:51 -0700
-IronPort-SDR: XQFzy1nWECI8gWCy9rU+Z8fMRwiGb5ejws9ZmtpsDf+uX9GgRB4Z1Ztxh21rSTDiL0Z24oZdrE
- y6jWTAE4o1nQ==
-X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="459759036"
-Received: from unknown (HELO localhost) ([10.249.32.156])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 10:03:51 -0700
-Date:   Mon, 5 Oct 2020 20:03:32 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+        Mon, 5 Oct 2020 15:00:59 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49968 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727247AbgJETA7 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 5 Oct 2020 15:00:59 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 679128EE1CB;
+        Mon,  5 Oct 2020 12:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1601924458;
+        bh=8m1l0vBnng+DIhzgcnyPcN0anwtH9OM88LwtUb7oHwI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=g3Ay6oZq3leVTkPbuhs1sPSBhVnss44zHt+KjIivQA2piYmYlBWxsgjEPnBY5x8q1
+         C0Adi8heozZ4GfFZEDklueEtgNhF2AO3s1AMFkXpEFrezQivjZzAkdZTgVSYFWchSH
+         PijOoOvWBjf59N9ZnB8bP5l6sOSfFLRK12jEwYiY=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HZdrgX4jiS5u; Mon,  5 Oct 2020 12:00:58 -0700 (PDT)
+Received: from jarvis (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D14388EE173;
+        Mon,  5 Oct 2020 12:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1601924458;
+        bh=8m1l0vBnng+DIhzgcnyPcN0anwtH9OM88LwtUb7oHwI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=g3Ay6oZq3leVTkPbuhs1sPSBhVnss44zHt+KjIivQA2piYmYlBWxsgjEPnBY5x8q1
+         C0Adi8heozZ4GfFZEDklueEtgNhF2AO3s1AMFkXpEFrezQivjZzAkdZTgVSYFWchSH
+         PijOoOvWBjf59N9ZnB8bP5l6sOSfFLRK12jEwYiY=
+Message-ID: <14edea1f5092c2b8442165756b2ee32e56bed1eb.camel@HansenPartnership.com>
+Subject: Re: [PATCH v2 1/5] tpm_tis: Fix check_locality for correct locality
+ acquisition
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
         Jerry Snitselaar <jsnitsel@redhat.com>,
         Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [PATCH v2 2/5] tpm_tis: Clean up locality release
-Message-ID: <20201005170332.GD6232@linux.intel.com>
+Date:   Mon, 05 Oct 2020 12:00:57 -0700
+In-Reply-To: <20201005153418.GB6232@linux.intel.com>
 References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
- <20201001180925.13808-3-James.Bottomley@HansenPartnership.com>
+         <20201001180925.13808-2-James.Bottomley@HansenPartnership.com>
+         <20201005153418.GB6232@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201001180925.13808-3-James.Bottomley@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 01, 2020 at 11:09:22AM -0700, James Bottomley wrote:
-> The current release locality code seems to be based on the
-> misunderstanding that the TPM interrupts when a locality is released:
-> it doesn't, only when the locality is acquired.
+On Mon, 2020-10-05 at 18:34 +0300, Jarkko Sakkinen wrote:
+> On Thu, Oct 01, 2020 at 11:09:21AM -0700, James Bottomley wrote:
+> > The TPM TIS specification says the TPM signals the acquisition of
+> > locality when the TMP_ACCESS_REQUEST_USE bit goes to one *and* the
+> > TPM_ACCESS_REQUEST_USE bit goes to zero.  Currently we only check
+> > the
 > 
-> Furthermore, there seems to be no point in waiting for the locality to
-> be released.  All it does is penalize the last TPM user.  However, if
-> there's no next TPM user, this is a pointless wait and if there is a
-> next TPM user, they'll pay the penalty waiting for the new locality
-> (or possibly not if it's the same as the old locality).
+> Put a reference to the section.
 > 
-> Fix the code by making release_locality as simple write to release
-> with no waiting for completion.
+> I'm *guessing* that the spec is
 > 
-> Fixes: 33bafe90824b ("tpm_tis: verify locality released before returning from release_locality")
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> https://trustedcomputinggroup.org/resource/pc-client-work-group-pc-client-specific-tpm-interface-specification-tis
 > 
-> ---
-> 
-> v2: added fixes
+> Please have this and also location in this spec.
 
-Also, this should go to cover letter (with some detail on the fixes).
+I can, but the TCG reorganizes its website every few months, so no URLs
+like that are permanent.
 
-/Jarkko
+> > former not the latter, so check both.  Adding the check on
+> > TPM_ACCESS_REQUEST_USE should fix the case where the locality is
+> > re-requested before the TPM has released it.  In this case the
+> > locality may get released briefly before it is reacquired, which
+> > causes all sorts of problems. However, with the added check,
+> > TPM_ACCESS_REQUEST_USE should remain 1 until the second request for
+> > the locality is granted.
+> 
+> The description is really good and understandable otherwise.
+> 
+> For me it is not obvious at all, why this is missing a fixes
+> tag?
+
+It's been there ever since the initial commit:
+
+commit 27084efee0c3dc0eb15b5ed750aa9f1adb3983c3
+Author: Leendert van Doorn <leendert@watson.ibm.com>
+Date:   Sat Apr 22 02:38:03 2006 -0700
+
+    [PATCH] tpm: driver for next generation TPM chips
+
+> > Signed-off-by: James Bottomley <
+> > James.Bottomley@HansenPartnership.com>
+> > 
+> > ---
+> > 
+> > v2: added this patch
+> 
+> Use the cover letter for the changelog. I'm afraid that I might
+> miss these otherwise.
+
+Submitting patches actually recommends doing this ... I think we want
+to keep to standard kernel process, but I can gather them in the cover
+letter as well.
+
+James
+
+
