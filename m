@@ -2,86 +2,72 @@ Return-Path: <SRS0=q+cf=DN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00576C41604
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 10:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B875C46466
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 14:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4DEF20674
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 10:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5812E2054F
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 14:29:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725942AbgJFKBf (ORCPT
+        id S1726013AbgJFO3S (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 6 Oct 2020 06:01:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43962 "EHLO mx2.suse.de"
+        Tue, 6 Oct 2020 10:29:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33460 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726410AbgJFKBd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Oct 2020 06:01:33 -0400
+        id S1725906AbgJFO3S (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Oct 2020 10:29:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 00B15B215;
-        Tue,  6 Oct 2020 10:01:31 +0000 (UTC)
-Date:   Tue, 6 Oct 2020 12:01:30 +0200
+        by mx2.suse.de (Postfix) with ESMTP id 68770B297;
+        Tue,  6 Oct 2020 14:29:16 +0000 (UTC)
 From:   Petr Vorel <pvorel@suse.cz>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v3 0/4] TPM 2.0 fixes in IMA tests
-Message-ID: <20201006100130.GA14868@dell5510>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20200929165021.11731-1-pvorel@suse.cz>
- <20200929231118.GA805493@linux.intel.com>
- <20200930055314.GA21664@dell5510>
- <20200930115939.GB7612@linux.intel.com>
- <20201001120125.GE32109@dell5510>
- <20201001183104.GA15664@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH 1/1] travis: Fix Tumbleweed installation
+Date:   Tue,  6 Oct 2020 16:28:23 +0200
+Message-Id: <20201006142824.12152-1-pvorel@suse.cz>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201001183104.GA15664@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Jarkko,
+to prevent fail the job when /usr/lib/ibmtss/tpm_server does not exist.
 
-can rely on /dev/tpm0 and /dev/tpmrm0 for TPM detection?
-i.e.:
-/dev/tpmrm0 => TPM 2.0
-/dev/tpm0 => both TPM 1.2 or 2.0
-none of them => No TPM device
+Fixes: 6c78911 travis: Switch to docker based builds
 
-I'm trying to get reliably TPM version (1, 2 or no TPM) for various kernel
-versions (including very old ones like 3.x):
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+Hi,
 
-So far I have:
+fixed: https://travis-ci.org/github/pevik/ima-evm-utils/jobs/733339306
+broken: https://travis-ci.org/github/pevik/ima-evm-utils/jobs/733310157
 
-cat /sys/class/tpm/tpm0/tpm_version_major
-
-[ -f /sys/class/tpm/tpm0/device/caps -o -f /sys/class/misc/tpm0/device/caps ] => TPM 1.2
-
-[ ! -d /sys/class/tpm/tpm0/ -a ! -d /sys/class/misc/tpm0/ ] => no TPM
-
-Then I grep
-dmesg | grep -q 'activating TPM-bypass' => no TPM
-dmesg | grep -q '1\.2 TPM (device-id' => TPM 1.2
-dmesg | grep -q '2\.0 TPM (device-id' => TPM 2.0
-
-But according to Mimi there are still some TPM 2.0 devices which does not export
-sysfs files.
-
-And I'd prefer avoid using dmesg (not on some embedded targets and not sure if
-reliable for all TPM devices).
-
-If I understand James's commit fdc915f7f719 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
-from v4.12-rc1 correctly /dev/tpmrm0 is really for TPM 2.0. But how to detect it
-for v4.0 - v4.11 when /sys/class/tpm detection fails?
-I haven't found anything obvious in drivers/char/tpm/tpm2-cmd.c from v4.0.
-
-Thanks for info.
+Sorry for not catching obvious error when using 'set -e'.
 
 Kind regards,
 Petr
+
+ travis/tumbleweed.sh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/travis/tumbleweed.sh b/travis/tumbleweed.sh
+index ec4dc43..ecd2372 100755
+--- a/travis/tumbleweed.sh
++++ b/travis/tumbleweed.sh
+@@ -42,4 +42,6 @@ zypper --non-interactive install --force-resolution --no-recommends \
+ 	which \
+ 	xsltproc
+ 
+-[ -f /usr/lib/ibmtss/tpm_server ] && ln -s /usr/lib/ibmtss/tpm_server /usr/local/bin
++if [ -f /usr/lib/ibmtss/tpm_server ]; then
++	ln -s /usr/lib/ibmtss/tpm_server /usr/local/bin
++fi
+-- 
+2.28.0
+
