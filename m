@@ -2,98 +2,86 @@ Return-Path: <SRS0=q+cf=DN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE923C4363A
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 00:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00576C41604
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 10:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5C21206F4
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 00:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4DEF20674
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Oct 2020 10:01:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbgJFAFC (ORCPT
+        id S1725942AbgJFKBf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Oct 2020 20:05:02 -0400
-Received: from mga07.intel.com ([134.134.136.100]:27494 "EHLO mga07.intel.com"
+        Tue, 6 Oct 2020 06:01:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43962 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbgJFAFB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Oct 2020 20:05:01 -0400
-IronPort-SDR: vjLFyHaAJ80cQ2EZtPOx5DspRM+hRI2IaBRCZL7HCNm75qtUV7xGYKYaEVzrBI833Rwj2qBdCR
- dNsU+ifJa4JQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9765"; a="228315228"
-X-IronPort-AV: E=Sophos;i="5.77,341,1596524400"; 
-   d="scan'208";a="228315228"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP; 05 Oct 2020 16:08:09 -0700
-IronPort-SDR: J40Uh6ZbUasPYeZbClXCNZUeeTMOXuM06Run0H3ONaIrOwaEjdT+ZyS+PUc4ELjG8Tq2jB4EAT
- 7EH0Qn4hPIYA==
-X-IronPort-AV: E=Sophos;i="5.77,340,1596524400"; 
-   d="scan'208";a="460072579"
-Received: from gtudori-mobl.ger.corp.intel.com (HELO localhost) ([10.252.34.57])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Oct 2020 13:34:36 -0700
-Date:   Mon, 5 Oct 2020 23:34:30 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [PATCH v2 2/5] tpm_tis: Clean up locality release
-Message-ID: <20201005203430.GB45618@linux.intel.com>
-References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
- <20201001180925.13808-3-James.Bottomley@HansenPartnership.com>
- <20201005170219.GC6232@linux.intel.com>
- <aa9bf3f821ab8f3ed8dc663112c67ca0f8e96c81.camel@HansenPartnership.com>
+        id S1726410AbgJFKBd (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 6 Oct 2020 06:01:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 00B15B215;
+        Tue,  6 Oct 2020 10:01:31 +0000 (UTC)
+Date:   Tue, 6 Oct 2020 12:01:30 +0200
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] TPM 2.0 fixes in IMA tests
+Message-ID: <20201006100130.GA14868@dell5510>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20200929165021.11731-1-pvorel@suse.cz>
+ <20200929231118.GA805493@linux.intel.com>
+ <20200930055314.GA21664@dell5510>
+ <20200930115939.GB7612@linux.intel.com>
+ <20201001120125.GE32109@dell5510>
+ <20201001183104.GA15664@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aa9bf3f821ab8f3ed8dc663112c67ca0f8e96c81.camel@HansenPartnership.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20201001183104.GA15664@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Oct 05, 2020 at 12:05:07PM -0700, James Bottomley wrote:
-> On Mon, 2020-10-05 at 20:02 +0300, Jarkko Sakkinen wrote:
-> > On Thu, Oct 01, 2020 at 11:09:22AM -0700, James Bottomley wrote:
-> > > The current release locality code seems to be based on the
-> > > misunderstanding that the TPM interrupts when a locality is
-> > > released: it doesn't, only when the locality is acquired.
-> > > 
-> > > Furthermore, there seems to be no point in waiting for the locality
-> > > to be released.  All it does is penalize the last TPM
-> > > user.  However, if there's no next TPM user, this is a pointless
-> > > wait and if there is a next TPM user, they'll pay the penalty
-> > > waiting for the new locality (or possibly not if it's the same as
-> > > the old locality).
-> > > 
-> > > Fix the code by making release_locality as simple write to release
-> > > with no waiting for completion.
-> > > 
-> > > Fixes: 33bafe90824b ("tpm_tis: verify locality released before
-> > > returning from release_locality")
-> > > Signed-off-by: James Bottomley <
-> > > James.Bottomley@HansenPartnership.com>
-> > 
-> > So, if I got it right this is dependent on 1/5 to address Jerry's
-> > issue? I.e. if this has a fixes tag and previous does not, it will
-> > not fully fix the situation when backporting?
-> 
-> Yes, exactly.  Technically 1/5 isn't really fixing anything at all,
-> it's changing from the current fix where we wait for the locality to be
-> released at the back end of a TIS TPM operation to a new fix where we
-> correctly check the conditions in the locality acquisition.  After the
-> new fix is done, we can eliminate all the wait code in locality
-> release.
-> 
-> James
+Hi Jarkko,
 
-OK, ignore my changelog etc. cosmectic comments unless there is need
-for another revision. I will add the necessary tags.
+can rely on /dev/tpm0 and /dev/tpmrm0 for TPM detection?
+i.e.:
+/dev/tpmrm0 => TPM 2.0
+/dev/tpm0 => both TPM 1.2 or 2.0
+none of them => No TPM device
 
-I'm holding with reviewed-by up until Jerry can get ack for these
-changes. If he ack's, the it's all good as far as I'm concerned.
+I'm trying to get reliably TPM version (1, 2 or no TPM) for various kernel
+versions (including very old ones like 3.x):
 
-/Jarkko
+So far I have:
+
+cat /sys/class/tpm/tpm0/tpm_version_major
+
+[ -f /sys/class/tpm/tpm0/device/caps -o -f /sys/class/misc/tpm0/device/caps ] => TPM 1.2
+
+[ ! -d /sys/class/tpm/tpm0/ -a ! -d /sys/class/misc/tpm0/ ] => no TPM
+
+Then I grep
+dmesg | grep -q 'activating TPM-bypass' => no TPM
+dmesg | grep -q '1\.2 TPM (device-id' => TPM 1.2
+dmesg | grep -q '2\.0 TPM (device-id' => TPM 2.0
+
+But according to Mimi there are still some TPM 2.0 devices which does not export
+sysfs files.
+
+And I'd prefer avoid using dmesg (not on some embedded targets and not sure if
+reliable for all TPM devices).
+
+If I understand James's commit fdc915f7f719 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
+from v4.12-rc1 correctly /dev/tpmrm0 is really for TPM 2.0. But how to detect it
+for v4.0 - v4.11 when /sys/class/tpm detection fails?
+I haven't found anything obvious in drivers/char/tpm/tpm2-cmd.c from v4.0.
+
+Thanks for info.
+
+Kind regards,
+Petr
