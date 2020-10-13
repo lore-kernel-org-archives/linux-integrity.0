@@ -2,120 +2,65 @@ Return-Path: <SRS0=T3zP=DU=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4945AC433E7
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Oct 2020 15:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70364C433E7
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Oct 2020 15:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7C6F2491E
-	for <linux-integrity@archiver.kernel.org>; Tue, 13 Oct 2020 15:24:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="D4XSs4TJ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="D4XSs4TJ"
+	by mail.kernel.org (Postfix) with ESMTP id 3BAD7251BE
+	for <linux-integrity@archiver.kernel.org>; Tue, 13 Oct 2020 15:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgJMPYU (ORCPT
+        id S1726819AbgJMPao (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 13 Oct 2020 11:24:20 -0400
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:52846 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726657AbgJMPYU (ORCPT
+        Tue, 13 Oct 2020 11:30:44 -0400
+Received: from smtprelay0161.hostedemail.com ([216.40.44.161]:54280 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726749AbgJMPao (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Oct 2020 11:24:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 9A1B91280272;
-        Tue, 13 Oct 2020 08:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1602602659;
-        bh=Cd1YhT96M8VV5VN2ax0tr/6gEumQ2k794R5vK929ags=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=D4XSs4TJCb1qtGB2lBYJRw5E03ETCQon7OyGyqzCG3RdoZ81CgCRfxdK5Ti70UaNO
-         htiMVmrS7m6zaYW+IG2wjXh/5OPeF0STUHNs6S4Z7lNcmsSJCPNsqQvqN1aFuplLMS
-         h/WrmYVu50JMCTYS7LYkPd9dkzPICdR216syN7zU=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id LkSvGhDhKzjB; Tue, 13 Oct 2020 08:24:19 -0700 (PDT)
-Received: from jarvis.int.hansenpartnership.com (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1CDF91280271;
-        Tue, 13 Oct 2020 08:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1602602659;
-        bh=Cd1YhT96M8VV5VN2ax0tr/6gEumQ2k794R5vK929ags=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=D4XSs4TJCb1qtGB2lBYJRw5E03ETCQon7OyGyqzCG3RdoZ81CgCRfxdK5Ti70UaNO
-         htiMVmrS7m6zaYW+IG2wjXh/5OPeF0STUHNs6S4Z7lNcmsSJCPNsqQvqN1aFuplLMS
-         h/WrmYVu50JMCTYS7LYkPd9dkzPICdR216syN7zU=
-Message-ID: <e6930fa6df318ee2f51e13f6402d264fedb5d9ab.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 0/5] tpm_tis: fix interrupts (again)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>, equired@linux.intel.com,
-        justmentioningitbecauseIthinkthatwouldbeagood@linux.intel.com
-Cc:     linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nayna Jain <nayna@linux.ibm.com>
-Date:   Tue, 13 Oct 2020 08:24:18 -0700
-In-Reply-To: <87tuuyf97r.fsf@jsnitsel.users.ipa.redhat.com>
-References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
-         <20201013011745.GA41176@linux.intel.com>
-         <87tuuyf97r.fsf@jsnitsel.users.ipa.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Tue, 13 Oct 2020 11:30:44 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 75E3B837F24D;
+        Tue, 13 Oct 2020 15:30:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: kiss33_4a0b51627204
+X-Filterd-Recvd-Size: 1377
+Received: from XPS-9350.home (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 13 Oct 2020 15:30:41 +0000 (UTC)
+Message-ID: <dce9442565fc3176ad770788bc1cf76b02080486.camel@perches.com>
+Subject: Re: [PATCH] MAINTAINERS: jarkko.sakkinen@linux.intel.com ->
+ jarkko@kernel.org
+From:   Joe Perches <joe@perches.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-sgx@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>
+Date:   Tue, 13 Oct 2020 08:30:38 -0700
+In-Reply-To: <20201013104705.140127-1-jarkko.sakkinen@linux.intel.com>
+References: <20201013104705.140127-1-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2020-10-13 at 08:15 -0700, Jerry Snitselaar wrote:
-> Jarkko Sakkinen @ 2020-10-12 18:17 MST:
-> 
-> > On Thu, Oct 01, 2020 at 11:09:20AM -0700, James Bottomley wrote:
-> > > The current state of the TIS TPM is that interrupts have been
-> > > globally disabled by various changes.  The problems we got
-> > > reported the last time they were enabled was interrupt
-> > > storms.  With my own TIS TPM, I've found that this is caused
-> > > because my TPM doesn't do legacy cycles, The TIS spec (chapter
-> > > 6.1 "Locality Usage Per Register") requires any TIS TPM without
-> > > legacy cycles not to act on any write to an interrupt register
-> > > unless the locality is enabled.  This means if an interrupt fires
-> > > after we relinquish the locality, the TPM_EOI in the interrupt
-> > > routine is ineffective meaning the same interrupt triggers over
-> > > and over again.  This problem also means we can have trouble
-> > > setting up interrupts on TIS TPMs because the current init
-> > > code does the setup before the locality is claimed for the first
-> > > time.
-> > > 
-> > > James
-> > 
-> > You should consider expanding the audience.
+On Tue, 2020-10-13 at 13:46 +0300, Jarkko Sakkinen wrote:
+> Use korg address as the main communications end point. Update the
+> corresponding M-entries.
 
-Well, most people interested in testing this sort of thing are already
-on the integrity list.
+Maybe add an equivalent entry to .mailmap?
 
-> >  Jerry, once you have some bandwidth (no rush, does not land before
-> > rc2), it would be great that if you could try this. I'm emphasizing
-> > this just because of the intersection. I think it would also make
-> > senset to get tested-by from Nayna.
-> 
-> I will run some tests on some other systems I have access to. As
-> noted in the other email I did a quick test with a t490s with an
-> older bios that exhibits the problem originally reported when
-> Stefan's patch enabled interrupts.
-
-Well, it means there's still some other problem.  I was hoping that
-because the rainbow pass system originally exhibited the same symptoms
-(interrupt storm) fixing it would also fix the t490 and the ineffective
-EOI bug looked like a great candidate for being the root cause.
-
-How amenable are you to debugging this?  I originally figured out the
-problem with the rainbow pass by putting ratelimited printks in the
-interrupt routine and most of the TIS transmission ones, but it's
-somewhat labour intensive doing it this way.
-
-James
+> diff --git a/MAINTAINERS b/MAINTAINERS
+[]
+> -M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> +M:	Jarkko Sakkinen <jarkko@kernel.org>
 
 
