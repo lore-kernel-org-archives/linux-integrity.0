@@ -2,97 +2,163 @@ Return-Path: <SRS0=zuG1=DZ=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AFEEC433E7
-	for <linux-integrity@archiver.kernel.org>; Sun, 18 Oct 2020 21:05:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76716C433E7
+	for <linux-integrity@archiver.kernel.org>; Sun, 18 Oct 2020 21:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B058D22280
-	for <linux-integrity@archiver.kernel.org>; Sun, 18 Oct 2020 21:05:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603055143;
-	bh=BRpAzeVmAiwonfBXoWJUAJa6cC+Wi6yHfH8JcBIvdYA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hkit0+wCk87yX3ZlPlOrxDtNstkh269m70VXq0Y0rwm0HMeQjfrc7aMA5acAUZqtx
-	 KzSSeATDQU6rEtD2EvhnLZ7+C4Ua5llRFwN8M4h6tHRP5U0PyODuVyJ6vlB5es4H7l
-	 ayzZwuLpJORrMeD0JvVrC7VPU5lljUugwGOu6iLg=
+	by mail.kernel.org (Postfix) with ESMTP id BDB4822280
+	for <linux-integrity@archiver.kernel.org>; Sun, 18 Oct 2020 21:11:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Lb3hFbiK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbgJRVFn (ORCPT
+        id S1726977AbgJRVLq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 18 Oct 2020 17:05:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726977AbgJRVFm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 18 Oct 2020 17:05:42 -0400
-Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA88F22245;
-        Sun, 18 Oct 2020 21:05:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603055142;
-        bh=BRpAzeVmAiwonfBXoWJUAJa6cC+Wi6yHfH8JcBIvdYA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ofIXRkASRkohjfDIw4fHAB+xgigywccjoZAAGEVEkC148C76ho+ZLcSXCqDwIFyUa
-         yx8wtB/NU2z99hYiZMLp5zLvR5169R43LYsk5xXgKbFobPAIvfg9nrgOuGZHl7x7au
-         BiZoQZz47jhPPslo6rbR1WI11hhHrZ6DEsek0t38=
-Date:   Mon, 19 Oct 2020 00:05:39 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
+        Sun, 18 Oct 2020 17:11:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbgJRVLq (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 18 Oct 2020 17:11:46 -0400
+X-Greylist: delayed 125 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 18 Oct 2020 14:11:45 PDT
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9A45C061755;
+        Sun, 18 Oct 2020 14:11:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=rwlD0i+Gji/DQfCWgJihttK1p3QsdOsw/Q0vx5uztvU=; b=Lb3hFbiK2JW6hqjPMwPt7dpAFo
+        X99d5Yc0bNqX+pmMiQAQz3Sqpr0n8dPLtP/shdnBS/X3BfFEW1jwSYu8yqcFsPJJbnwDkgNYrgC5h
+        IUswxA+x9UPo0sqVlosKX3ggVmUjdTDmH9XXzXHXS+nlKe078OIn82LL/JPV7Uy+vlx7C+WbLNk34
+        Z2/ONHI199dCH9S8o84OWEA0vGv+xZOBR587K4RawVJ0FTvnFGDOzrLiv2jvd9XskG2H2AK2tROIm
+        PGRnCtQ3VN9Ik2Hc7JnpuBkQyCcjkzUqoWSZ8zTNlVgWG0oQ4zPpWiYpy4SpYP3EtZsw2F6kDw0PR
+        3fdW8Dbg==;
+Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jarkko.sakkinen@iki.fi>)
+        id 1kUFxw-0002fn-5e; Mon, 19 Oct 2020 00:11:44 +0300
+Date:   Mon, 19 Oct 2020 00:11:43 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
 To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     equired@linux.intel.com,
-        justmentioningitbecauseIthinkthatwouldbeagood@linux.intel.com,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [PATCH v2 0/5] tpm_tis: fix interrupts (again)
-Message-ID: <20201018210539.GA575510@kapsi.fi>
-References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
- <20201013011745.GA41176@linux.intel.com>
- <87tuuyf97r.fsf@jsnitsel.users.ipa.redhat.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jarkko@kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Hans de Goede <hdegoede@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: [PATCH] tpm_tis: Disable interrupts on ThinkPad T490s
+Message-ID: <20201018211143.GC575510@kapsi.fi>
+References: <20201015214430.17937-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87tuuyf97r.fsf@jsnitsel.users.ipa.redhat.com>
+In-Reply-To: <20201015214430.17937-1-jsnitsel@redhat.com>
+X-SA-Exim-Connect-IP: 83.245.197.237
+X-SA-Exim-Mail-From: jarkko.sakkinen@iki.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Oct 13, 2020 at 08:15:36AM -0700, Jerry Snitselaar wrote:
+On Thu, Oct 15, 2020 at 02:44:30PM -0700, Jerry Snitselaar wrote:
+> There is a misconfiguration in the bios of the gpio pin used for the
+> interrupt in the T490s. When interrupts are enabled in the tpm_tis
+> driver code this results in an interrupt storm. This was initially
+> reported when we attempted to enable the interrupt code in the tpm_tis
+> driver, which previously wasn't setting a flag to enable it. Due to
+> the reports of the interrupt storm that code was reverted and we went back
+> to polling instead of using interrupts. Now that we know the T490s problem
+> is a firmware issue, add code to check if the system is a T490s and
+> disable interrupts if that is the case. This will allow us to enable
+> interrupts for everyone else. If the user has a fixed bios they can
+> force the enabling of interrupts with tpm_tis.interrupts=1 on the
+> kernel command line.
 > 
-> Jarkko Sakkinen @ 2020-10-12 18:17 MST:
-> 
-> > On Thu, Oct 01, 2020 at 11:09:20AM -0700, James Bottomley wrote:
-> >> The current state of the TIS TPM is that interrupts have been globally
-> >> disabled by various changes.  The problems we got reported the last
-> >> time they were enabled was interrupt storms.  With my own TIS TPM,
-> >> I've found that this is caused because my TPM doesn't do legacy
-> >> cycles, The TIS spec (chapter 6.1 "Locality Usage Per Register")
-> >> requires any TIS TPM without legacy cycles not to act on any write to
-> >> an interrupt register unless the locality is enabled.  This means if
-> >> an interrupt fires after we relinquish the locality, the TPM_EOI in
-> >> the interrupt routine is ineffective meaning the same interrupt
-> >> triggers over and over again.  This problem also means we can have
-> >> trouble setting up interrupts on TIS TPMs because the current init
-> >> code does the setup before the locality is claimed for the first time.
-> >> 
-> >> James
-> >
-> > You should consider expanding the audience. Jerry, once you have some
-> > bandwidth (no rush, does not land before rc2), it would be great that if
-> > you could try this. I'm emphasizing this just because of the
-> > intersection. I think it would also make senset to get tested-by from
-> > Nayna.
-> 
-> I will run some tests on some other systems I have access to. As noted
-> in the other email I did a quick test with a t490s with an older bios
-> that exhibits the problem originally reported when Stefan's patch
-> enabled interrupts.
+> Cc: jarkko@kernel.org
+> Cc: Peter Huewe <peterhuewe@gmx.de>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-Thank you. As said, I can make a pull request to rc2 or even rc3, if
-needed.
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+I'll apply this and make it available in linux-next.
 
 /Jarkko
+
+> ---
+>  drivers/char/tpm/tpm_tis.c | 29 +++++++++++++++++++++++++++--
+>  1 file changed, 27 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+> index 0b214963539d..4ed6e660273a 100644
+> --- a/drivers/char/tpm/tpm_tis.c
+> +++ b/drivers/char/tpm/tpm_tis.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+>  #include <linux/kernel.h>
+> +#include <linux/dmi.h>
+>  #include "tpm.h"
+>  #include "tpm_tis_core.h"
+>  
+> @@ -49,8 +50,8 @@ static inline struct tpm_tis_tcg_phy *to_tpm_tis_tcg_phy(struct tpm_tis_data *da
+>  	return container_of(data, struct tpm_tis_tcg_phy, priv);
+>  }
+>  
+> -static bool interrupts = true;
+> -module_param(interrupts, bool, 0444);
+> +static int interrupts = -1;
+> +module_param(interrupts, int, 0444);
+>  MODULE_PARM_DESC(interrupts, "Enable interrupts");
+>  
+>  static bool itpm;
+> @@ -63,6 +64,28 @@ module_param(force, bool, 0444);
+>  MODULE_PARM_DESC(force, "Force device probe rather than using ACPI entry");
+>  #endif
+>  
+> +static int tpm_tis_disable_irq(const struct dmi_system_id *d)
+> +{
+> +	if (interrupts == -1) {
+> +		pr_notice("tpm_tis: %s detected: disabling interrupts.\n", d->ident);
+> +		interrupts = 0;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct dmi_system_id tpm_tis_dmi_table[] = {
+> +	{
+> +		.callback = tpm_tis_disable_irq,
+> +		.ident = "ThinkPad T490s",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad T490s"),
+> +		},
+> +	},
+> +	{}
+> +};
+> +
+>  #if defined(CONFIG_PNP) && defined(CONFIG_ACPI)
+>  static int has_hid(struct acpi_device *dev, const char *hid)
+>  {
+> @@ -192,6 +215,8 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
+>  	int irq = -1;
+>  	int rc;
+>  
+> +	dmi_check_system(tpm_tis_dmi_table);
+> +
+>  	rc = check_acpi_tpm2(dev);
+>  	if (rc)
+>  		return rc;
+> -- 
+> 2.28.0
+> 
+> 
