@@ -1,191 +1,126 @@
-Return-Path: <SRS0=zuG1=DZ=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=Eeq+=D2=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1508C433E7
-	for <linux-integrity@archiver.kernel.org>; Sun, 18 Oct 2020 21:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A422FC433DF
+	for <linux-integrity@archiver.kernel.org>; Mon, 19 Oct 2020 09:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4378222268
-	for <linux-integrity@archiver.kernel.org>; Sun, 18 Oct 2020 21:39:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="1b/3/guH"
+	by mail.kernel.org (Postfix) with ESMTP id 4D4CA22284
+	for <linux-integrity@archiver.kernel.org>; Mon, 19 Oct 2020 09:30:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgJRVjf (ORCPT
+        id S1727333AbgJSJab convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 18 Oct 2020 17:39:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54114 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbgJRVje (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 18 Oct 2020 17:39:34 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995EBC061755
-        for <linux-integrity@vger.kernel.org>; Sun, 18 Oct 2020 14:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=HOtKMmGXOBkbcW7jf+XVTB4IS9IYOkiwOpD68vmgVCs=; b=1b/3/guH+51RYEAULGqnQb/yzU
-        xvuuVNRm4eHX6bnv6dQEatSv8rhcapiz+LCKBkJIDV9PN8nvjsT2i/ZDRMBAW6Z/kC02OXUkmYXuZ
-        k3v4XWu6FDpmeutEhx331Iex/MZj3CG0qSucAseagsZEKUwlJk4Zg9LEojzsecpv9vMg3z+66y85G
-        A6Mi2AQIe50hlS9E8pzUfHdGmUBkbXkpJH9DS4Tr9cunZONJUfgbMZzOm/GTdQRPOTFkhGhw8SrZG
-        C/G6eMF5MjG5MAEh8KrDxI+a+dNml2b1JdagXivgPY/wWKxtUdalNMJyV+ViypkGa6+Kls6Y6NxDa
-        dHcCx8Uw==;
-Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jarkko.sakkinen@iki.fi>)
-        id 1kUFvg-0002HG-6A; Mon, 19 Oct 2020 00:09:24 +0300
-Date:   Mon, 19 Oct 2020 00:09:23 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        equired@linux.intel.com,
-        justmentioningitbecauseIthinkthatwouldbeagood@linux.intel.com,
-        linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Hans de Goede <jwrdegoede@fedoraproject.org>
-Subject: Re: [PATCH v2 0/5] tpm_tis: fix interrupts (again)
-Message-ID: <20201018210923.GB575510@kapsi.fi>
-References: <87tuuyf97r.fsf@jsnitsel.users.ipa.redhat.com>
- <e6930fa6df318ee2f51e13f6402d264fedb5d9ab.camel@HansenPartnership.com>
- <87lfgaf6ww.fsf@jsnitsel.users.ipa.redhat.com>
- <5f9ead56-78ff-e8b4-d646-654c9a08c519@redhat.com>
- <82a5c6e4a9f7fe037f12cd2eba7512bd8b04f21a.camel@HansenPartnership.com>
- <cd221dae-1c37-76d9-8ba2-1e4ceb528292@redhat.com>
- <87ft6gg41b.fsf@jsnitsel.users.ipa.redhat.com>
- <2553a8f3-6a71-7b05-52ab-8c346e2cb6ec@redhat.com>
- <87sgagv82r.fsf@jsnitsel.users.ipa.redhat.com>
- <b6863c56-fc13-d0e4-6747-ae09ea3d45a3@redhat.com>
+        Mon, 19 Oct 2020 05:30:31 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2985 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726015AbgJSJab (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 19 Oct 2020 05:30:31 -0400
+Received: from lhreml717-chm.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 4877FC634ACB4260299F;
+        Mon, 19 Oct 2020 10:30:29 +0100 (IST)
+Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
+ lhreml717-chm.china.huawei.com (10.201.108.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.1913.5; Mon, 19 Oct 2020 10:30:29 +0100
+Received: from lhreml722-chm.china.huawei.com (10.201.108.73) by
+ fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Mon, 19 Oct 2020 11:30:28 +0200
+Received: from lhreml722-chm.china.huawei.com ([10.201.108.73]) by
+ lhreml722-chm.china.huawei.com ([10.201.108.73]) with mapi id 15.01.1913.007;
+ Mon, 19 Oct 2020 10:30:27 +0100
+From:   Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+CC:     Christian Brauner <christian.brauner@ubuntu.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stefanb@linux.vnet.ibm.com" <stefanb@linux.vnet.ibm.com>,
+        "sunyuqiong1988@gmail.com" <sunyuqiong1988@gmail.com>,
+        "mkayaalp@cs.binghamton.edu" <mkayaalp@cs.binghamton.edu>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "James Morris" <jmorris@namei.org>,
+        "christian@brauner.io" <christian@brauner.io>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "luto@amacapital.net" <luto@amacapital.net>,
+        "jannh@google.com" <jannh@google.com>,
+        "nick.dusek@gmail.com" <nick.dusek@gmail.com>,
+        "Dr. Greg" <greg@enjellic.com>, Luke Hinds <lhinds@redhat.com>
+Subject: RE: [RFC PATCH 00/30] ima: Introduce IMA namespace
+Thread-Topic: [RFC PATCH 00/30] ima: Introduce IMA namespace
+Thread-Index: AQHWdXPBkpeRDLdh20+fyp1BiEOjYak+A3mAgBfGuwCABhxpgIABN8iAgAG3kgCACVyMsIA21JGg
+Date:   Mon, 19 Oct 2020 09:30:27 +0000
+Message-ID: <a75a6541991d4f8dbaa30e0af517b829@huawei.com>
+References: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
+         <20200818164943.va3um7toztazcfud@wittgenstein>
+         <d77a6cd783319702fddd06783cb84fdeb86210a6.camel@linux.ibm.com>
+         <20200906171413.GA8305@wind.enjellic.com>
+         <CAKrSGQR3Pw=Rad2RgUuCHqr0r2Nc6x2nLoo2cVAkD+_8Vbmd7A@mail.gmail.com>
+ <d405bab0d262b32fd16e85444791b6c49d820aa2.camel@linux.ibm.com> 
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.222.63]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6863c56-fc13-d0e4-6747-ae09ea3d45a3@redhat.com>
-X-SA-Exim-Connect-IP: 83.245.197.237
-X-SA-Exim-Mail-From: jarkko.sakkinen@iki.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Oct 15, 2020 at 09:38:24AM +0200, Hans de Goede wrote:
-> Hi,
+> From: Krzysztof Struczynski
+> Sent: Monday, September 14, 2020 2:08 PM
+> > When Roberto Sassu and Krzysztof Struczynski contacted me about the
+> > status of Stefan Berger's patch set, based on Yuqiong Sun's work, I was
+> > under the impression that they would be rebasing it on the latest
+> > kernel and going forward from there.   Obviously things changed.  I
+> > pointed out to them resolving the "IMA namespacing" issue would be the
+> > first thing that needs to be addressed.  So here we are.
+> >
 > 
-> On 10/14/20 10:58 PM, Jerry Snitselaar wrote:
-> > 
-> > Hans de Goede @ 2020-10-14 09:46 MST:
-> > 
-> > > Hi,
-> > > 
-> > > On 10/14/20 6:34 PM, Jerry Snitselaar wrote:
-> > > > Hans de Goede @ 2020-10-14 09:04 MST:
-> > > > 
-> > > > > Hi,
-> > > > > 
-> > > > > On 10/14/20 5:23 PM, James Bottomley wrote:
-> > > > > > On Wed, 2020-10-14 at 17:03 +0200, Hans de Goede wrote:
-> > > > > > > On 10/13/20 6:05 PM, Jerry Snitselaar wrote:
-> > > > > > > > James Bottomley @ 2020-10-13 08:24 MST:
-> > > > > > > > > On Tue, 2020-10-13 at 08:15 -0700, Jerry Snitselaar wrote:
-> > > > > > > > > > Jarkko Sakkinen @ 2020-10-12 18:17 MST:
-> > > > > > [...]
-> > > > > > > > > > >      Jerry, once you have some bandwidth (no rush, does not land
-> > > > > > > > > > > before rc2), it would be great that if you could try this.
-> > > > > > > > > > > I'm emphasizing this just because of the intersection. I
-> > > > > > > > > > > think it would also make senset to get tested-by from Nayna.
-> > > > > > > > > > 
-> > > > > > > > > > I will run some tests on some other systems I have access to.
-> > > > > > > > > > As noted in the other email I did a quick test with a t490s
-> > > > > > > > > > with an older bios that exhibits the problem originally
-> > > > > > > > > > reported when Stefan's patch enabled interrupts.
-> > > > > > > > > 
-> > > > > > > > > Well, it means there's still some other problem.  I was hoping
-> > > > > > > > > that because the rainbow pass system originally exhibited the
-> > > > > > > > > same symptoms (interrupt storm) fixing it would also fix the t490
-> > > > > > > > > and the ineffective EOI bug looked like a great candidate for
-> > > > > > > > > being the root cause.
-> > > > > > > > > 
-> > > > > > > > 
-> > > > > > > > Adding Hans to the list.
-> > > > > > > > 
-> > > > > > > > IIUC in the t490s case the problem lies with the hardware itself.
-> > > > > > > > Hans, is that correct?
-> > > > > > > 
-> > > > > > > More or less. AFAIK / have been told by Lenovo it is an issue with
-> > > > > > > the configuration of the inerrupt-type of the GPIO pin used for the
-> > > > > > > IRQ, which is a firmware issue which could be fixed by a BIOS update
-> > > > > > > (the pin is setup as a direct-irq pin for the APIC, so the OS has no
-> > > > > > > control of the IRQ type since with APIC irqs this is all supposed to
-> > > > > > > be setup properly before hand).
-> > > > > > > 
-> > > > > > > But it is a model specific issue, if we denylist IRQ usage on this
-> > > > > > > Lenovo model (and probably a few others) then we should be able to
-> > > > > > > restore the IRQ code to normal functionality for all other device
-> > > > > > > models which declare an IRQ in their resource tables.
-> > > > > > I can do that with a quirk, but how do I identify the device?  TPM
-> > > > > > manufacturer and version? or do I have to use something like the ACPI
-> > > > > > bios version?
-> > > > > 
-> > > > > I'm not sure if the TPM ids are unique to one model/series of laptops.
-> > > > > 
-> > > > > So my idea for this was to match on DMI strings, specifically
-> > > > > use a DMI match on the DMI_SYS_VENDOR and DMI_PRODUCT_VERSION
-> > > > > strings (normally one would use DMI_PRODUCT_NAME but for Lenovo
-> > > > > devices the string which you expect to be in DMI_PRODUCT_NAME
-> > > > > is actually in DMI_PRODUCT_VERSION).
-> > > > > 
-> > > > > You can easily get the strings for your device by doing:
-> > > > > 
-> > > > > cat /sys/class/dmi/id/sys_vendor
-> > > > > cat /sys/class/dmi/id/product_version
-> > > > > 
-> > > > > Regards,
-> > > > > 
-> > > > > Hans
-> > > > Plus use dmi_get_date(DMI_BIOS_DATE,...) to check
-> > > > if the bios is older than the fixed bios? Has Lenovo
-> > > > released the fixed bios?
-> > > 
-> > > Maybe, the fixed BIOS-es which I have seen (for the X1C8,
-> > > broken BIOS was a pre-production BIOS) "fixed" this by
-> > > no longer listing an IRQ in the ACPI resources for the TPM.
-> > > 
-> > > Which means that the new BIOS still being on the deny list
-> > > does not matter since the IRQ support won't work anyways as
-> > > we no longer get an IRQ assigned.
-> > > 
-> > > So I don't think this is necessary and it will just complicate
-> > > things unnecessarily. This whole saga has already taken way
-> > > too long to fix. So IMHO the simplest fix where we just deny
-> > > list the broken models independent of BIOS versions and move
-> > > on seems best.
-> > > 
-> > > Regards,
-> > > 
-> > > Hans
-> > 
-> > This worked for me:
+> The concept of the IMA namespace as a separate namespace, not attached to
+> the user or mount namespace, remains the same as in the last set of
+> Stefan's patches. The creation and configuration mechanism changed,
+> partially because of the changes in the upstream kernel like extension of
+> the CLONE_ flags, that facilitated other solutions. The main inspiration
+> in this regard was the new time namespace.
 > 
-> That looks good to me, can you submit this upstream please ?
+> The implemented mechanism is intended to make the configuration of the
+> IMA
+> namespace as similar as possible to the upstream IMA implementation and
+> allows to configure the new IMA namespace before any process enters that
+> namespace, so the very first actions can be measured/appraised/audited.
 > 
-> If you Cc me I'll give it my Reviewed-by.
-> 
-> Regards,
-> 
-> Hans
+> In this implementation many design points formulated by Stefan still stand.
+> The significant difference in the presented design is the threat model.
+> The actions of the host's root and any other user within the container are
+> measured/appraised/audited according to the container's policy. However,
+> every action that affects objects in the root namespace, is detected when
+> processes from the root namespace access them.
 
-Yes, this does look like sustainable patch.
+Do you think that the above proposal addresses the aforementioned "IMA
+namespacing" issue? If it doesn't, would you please clarify what are the
+main, outstanding problems?
+ 
+> > Definitely, let's have this discussion.
 
-PS. Email has been migration ongoing. That's the reason for inconsistent
-responses.
+Shall we continue the discussion here, or in addition use a format similar
+to the Stefan's "drawing board":
+https://kernsec.org/wiki/index.php/IMA_Namespacing_design_considerations
 
-/Jarkko
+Best regards,
+Krzysztof Struczynski
