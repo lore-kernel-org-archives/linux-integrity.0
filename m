@@ -2,110 +2,141 @@ Return-Path: <SRS0=1ies=EC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51379C4363A
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 18:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EC3C388F9
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 19:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5526C21527
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 18:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2C2C21556
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 19:07:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="qTslcug1"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YH94LE4D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897398AbgJ0S5z (ORCPT
+        id S1829396AbgJ0THP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Oct 2020 14:57:55 -0400
-Received: from mail.rosalinux.ru ([195.19.76.54]:35980 "EHLO mail.rosalinux.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2897368AbgJ0S5y (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Oct 2020 14:57:54 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.rosalinux.ru (Postfix) with ESMTP id 97124DC8993C4;
-        Tue, 27 Oct 2020 21:51:55 +0300 (MSK)
-Received: from mail.rosalinux.ru ([127.0.0.1])
-        by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id r0Oc8ydLUol1; Tue, 27 Oct 2020 21:51:55 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.rosalinux.ru (Postfix) with ESMTP id 1FF54DC8993C5;
-        Tue, 27 Oct 2020 21:51:55 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru 1FF54DC8993C5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
-        s=A1AAD92A-9767-11E6-A27F-AC75C9F78EF4; t=1603824715;
-        bh=e6fK8X1XngjpqP8g53zG471V314227VjboyO4KjWlHw=;
-        h=To:From:Message-ID:Date:MIME-Version;
-        b=qTslcug10Ki3eGEZN49CC+gaM/OVy3jhJ0c7HPYdVB5vE7b7hutQwCQhhkcDoVvzx
-         v3UdEITt08a0IgJVd+f+C4YXxQWJ1vGlO89YZL/iHQnDgQhZM4qR1ee6XlhC6wVBO+
-         ri0ftjb44jcvZVN4B1IZp0FLx4xIhQ5/HLhGYVQfK7ld9GMC8tszEman1aWtiTug9e
-         6lHAKFujBe0XtJ3MhOEEuQxpkKJNhEMwSfbpFv6fias6DuekDV8wd/vGtcJ/VLXgN6
-         1P5vf2L8jfeokWpksllEml4lPl5JnQdABwB8QXJ3OX2tHeGmPXPe6dgNxrqQh7afEZ
-         YNSXTtwaWLtjA==
-X-Virus-Scanned: amavisd-new at rosalinux.ru
-Received: from mail.rosalinux.ru ([127.0.0.1])
-        by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id neJH_KrNmFi5; Tue, 27 Oct 2020 21:51:55 +0300 (MSK)
-Received: from [192.168.1.173] (broadband-90-154-70-7.ip.moscow.rt.ru [90.154.70.7])
-        by mail.rosalinux.ru (Postfix) with ESMTPSA id 97242DC8993C4;
-        Tue, 27 Oct 2020 21:51:54 +0300 (MSK)
-Subject: Re: [PATCH ima-evm-utils] boot_aggregate.test: Skip if CONFIG_IMA not
- enabled
-To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Tue, 27 Oct 2020 15:07:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52608 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2902408AbgJ0THP (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Oct 2020 15:07:15 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09RJ2BPf095690;
+        Tue, 27 Oct 2020 15:06:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=wrqPoi6ZU2Fj+Hc8kvhewdQN8S6Jr8BOn32nnAT4PTY=;
+ b=YH94LE4DeC5gnvRwWNwHKCUTOENYCK0h7t10DnCpvhMvUUmW42uVZydFwbiuYiGySeLj
+ rbEpOLUO67xbB/BU4omROdS3ZbaRMQ9rTTz2K58V3sqN+J320jaysZACEMoA7Bs2DLGI
+ vOtMWFMupnNMkc0TwBcUZDA/TKqURMK4O4l4pcYwfDLqk1dkw7DAqWEiAJkxPTXALjtm
+ 4VvUi9G4rCoVHkeWIldbWGhhlzIzRO7y8TSumlRWqg0uGf8b8DipGQlkKQT72g8Avrc0
+ kvqPKwvZSbovDt4dk0/jnVL9Eo11WJio7ykQ25BzDXsb9y1Uf8w2KYn/srCjH3iAxkus OA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34ekqddkex-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Oct 2020 15:06:59 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09RJ3BjI100857;
+        Tue, 27 Oct 2020 15:06:59 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34ekqddke2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Oct 2020 15:06:59 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09RIqo89007295;
+        Tue, 27 Oct 2020 19:06:57 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06ams.nl.ibm.com with ESMTP id 34cbhh3pan-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Oct 2020 19:06:57 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09RJ6t2T30015994
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Oct 2020 19:06:55 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2FB6CAE055;
+        Tue, 27 Oct 2020 19:06:55 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9C3EAE04D;
+        Tue, 27 Oct 2020 19:06:53 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.14.152])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Oct 2020 19:06:53 +0000 (GMT)
+Message-ID: <6d213e5decd0bf1290ae37e2da353aae504f2581.camel@linux.ibm.com>
+Subject: Re: [PATCH ima-evm-utils] boot_aggregate.test: Skip if CONFIG_IMA
+ not enabled
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Mikhail Novosyolov <m.novosyolov@rosalinux.ru>,
         Petr Vorel <petr.vorel@gmail.com>,
         Wartan Hachaturow <wart@debian.org>
 Cc:     linux-integrity@vger.kernel.org,
         Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Date:   Tue, 27 Oct 2020 15:06:52 -0400
+In-Reply-To: <d0d1ad6c-5569-486c-3131-9b4845bd6495@rosalinux.ru>
 References: <20201019200803.35255-1-petr.vorel@gmail.com>
- <e274a823ca408f33c11ea03878442189e62d9f9b.camel@linux.ibm.com>
- <20201020180231.GA14580@dell5510>
- <26b4d298f9a71a796793f2ce730a95ebec442f29.camel@linux.ibm.com>
-From:   Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
-Message-ID: <d0d1ad6c-5569-486c-3131-9b4845bd6495@rosalinux.ru>
-Date:   Tue, 27 Oct 2020 21:51:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <26b4d298f9a71a796793f2ce730a95ebec442f29.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: ru-RU
-Content-Transfer-Encoding: quoted-printable
+         <e274a823ca408f33c11ea03878442189e62d9f9b.camel@linux.ibm.com>
+         <20201020180231.GA14580@dell5510>
+         <26b4d298f9a71a796793f2ce730a95ebec442f29.camel@linux.ibm.com>
+         <d0d1ad6c-5569-486c-3131-9b4845bd6495@rosalinux.ru>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-10-27_10:2020-10-26,2020-10-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 adultscore=0 malwarescore=0 clxscore=1011
+ phishscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010270109
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello,
+On Tue, 2020-10-27 at 21:51 +0300, Mikhail Novosyolov wrote:
+> Hello,
+> 
+> 27.10.2020 19:06, Mimi Zohar пишет:
+> > [Cc'ing Wartan Hachaturow]
+> >
+> > Hi Wartan,
+> >
+> > On Tue, 2020-10-20 at 20:02 +0200, Petr Vorel wrote:
+> >>>> [1] https://bugs.debian.org/972459 linux: Reenable CONFIG_IMA
+> >>> I wasn't aware that because of lockdown, IMA was disabled.  Thank you
+> >>> for reporting and updating the IMA w/lockdown status.
+> >> Feel free to comment it, please. It'd be nice to have IMA in Debian (not sure
+> >> about Ubuntu status).
+> >>
+> >> @Dmitry: do you plan to update Debian package? (you're the listed maintainer,
+> >> although the package was signed by Wartan Hachaturow).
+> > Earlier this year Dmitry Eremin-Solenikov posted a patch to add
+> > libressl support to ima-evm-utils.  Part of the reason for our adding
+> > travis support was in order to create a testing matrix for testing
+> > openssl, libressl, ibmtss and tpm2-tss, which further led to the
+> > travis-docker distro support.  (Due to some issues, the libressl
+> > support was not upstreamed.)
+> 
+> Mimi, it was me who posted patch for LibreSSL ("[PATCH] ima-evm-
+> utils: Fix compatibility with LibreSSL"), but unfortunately I did not
+> have enough time to finish it properly (I am very sorry...).
+> 
+> I was just going to try a newer version of ima-evm-utils and, if
+> possible, continue upstreamizing support of LibreSSL. also, a
+> colleague of mine made an additional patch which requires separate
+> upstreamization. Was there another patch from Dmitry about which I do
+> not know
 
-27.10.2020 19:06, Mimi Zohar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> [Cc'ing Wartan Hachaturow]
->
-> Hi Wartan,
->
-> On Tue, 2020-10-20 at 20:02 +0200, Petr Vorel wrote:
->>>> [1] https://bugs.debian.org/972459 linux: Reenable CONFIG_IMA
->>> I wasn't aware that because of lockdown, IMA was disabled.  Thank you
->>> for reporting and updating the IMA w/lockdown status.
->> Feel free to comment it, please. It'd be nice to have IMA in Debian (n=
-ot sure
->> about Ubuntu status).
->>
->> @Dmitry: do you plan to update Debian package? (you're the listed main=
-tainer,
->> although the package was signed by Wartan Hachaturow).
-> Earlier this year Dmitry Eremin-Solenikov posted a patch to add
-> libressl support to ima-evm-utils.  Part of the reason for our adding
-> travis support was in order to create a testing matrix for testing
-> openssl, libressl, ibmtss and tpm2-tss, which further led to the
-> travis-docker distro support.  (Due to some issues, the libressl
-> support was not upstreamed.)
+Mikhail, my mistake.  Thank you for the correction!   Testing the
+libressl changes should be a lot easier now.  Please remember to
+include a distro travis.yml example.
 
-Mimi, it was me who posted patch for LibreSSL ("[PATCH] ima-evm-utils: Fi=
-x compatibility with LibreSSL"), but unfortunately I did not have enough =
-time to finish it properly (I am very sorry...).
+thanks,
 
-I was just going to try a newer version of ima-evm-utils and, if possible=
-, continue upstreamizing support of LibreSSL. also, a colleague of mine m=
-ade an additional patch which requires separate upstreamization. Was ther=
-e another patch from Dmitry about which I do not know
+Mimi
 
