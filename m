@@ -2,114 +2,94 @@ Return-Path: <SRS0=1ies=EC=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6301C4363A
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 18:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F92C4363A
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 18:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D06D207DE
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 18:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0952C20878
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Oct 2020 18:57:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QeXXkBqJ"
+	dkim=pass (2048-bit key) header.d=rosalinux.ru header.i=@rosalinux.ru header.b="Wu1KHJ8h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1829152AbgJ0St4 (ORCPT
+        id S371300AbgJ0S50 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Oct 2020 14:49:56 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:59762 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1829143AbgJ0Stw (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Oct 2020 14:49:52 -0400
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 71EF520C27C5;
-        Tue, 27 Oct 2020 11:49:51 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 71EF520C27C5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1603824591;
-        bh=UCqR8kmyvQ0FXKqJhCb0mbrqDtMWWtwjtNpTAWZi0CE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QeXXkBqJFZ4o4JS2eSSKWDo91NZioycspBg4MtM0r8Rza0FWgX/KVEATGe2UW07pd
-         f87Uyrpd5MDppghwpFM529K5HVWCTGrZ9b71iW9v0DMVn9uN0D5JkMhxj5fOX31X7w
-         Y02px0ZOINQ2UxhdrdYRfBkV1gVrr/uEWSA/Yvuw=
-Date:   Tue, 27 Oct 2020 13:49:33 -0500
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Petr Vorel <petr.vorel@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Subject: Re: [PATCH ima-evm-utils] boot_aggregate.test: Skip if CONFIG_IMA
- not enabled
-Message-ID: <20201027184933.GA5210@sequoia>
+        Tue, 27 Oct 2020 14:57:26 -0400
+Received: from mail.rosalinux.ru ([195.19.76.54]:35748 "EHLO mail.rosalinux.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S371299AbgJ0S5Z (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Oct 2020 14:57:25 -0400
+X-Greylist: delayed 327 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Oct 2020 14:57:24 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.rosalinux.ru (Postfix) with ESMTP id C735DDC8993D8;
+        Tue, 27 Oct 2020 21:57:22 +0300 (MSK)
+Received: from mail.rosalinux.ru ([127.0.0.1])
+        by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id iTeuNSPj9jIP; Tue, 27 Oct 2020 21:57:22 +0300 (MSK)
+Received: from localhost (localhost [127.0.0.1])
+        by mail.rosalinux.ru (Postfix) with ESMTP id 475E3DC8993DA;
+        Tue, 27 Oct 2020 21:57:22 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rosalinux.ru 475E3DC8993DA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosalinux.ru;
+        s=A1AAD92A-9767-11E6-A27F-AC75C9F78EF4; t=1603825042;
+        bh=gHSjuv4zqufkD8/M6KiP8rH4zr24xcIEfcNGQH7ILFI=;
+        h=To:From:Message-ID:Date:MIME-Version;
+        b=Wu1KHJ8h+4lBlRYFK68EE7vkfqnwSM9pzynuPYRkbfSurosBkk8ruo7hCGgZ0p4UU
+         ji2np1MwIJb5HFJ79pVTLnCJbD9RSgop7U1V9RWuO+CIDi4DrXIaHYApXkg6P2VN84
+         boPfsWGpVyO5N77zzos8SU0T4TFaKs32pG67h+z5PFzfOsffUBnuCNZSM6drEmtOnn
+         Xtoci25/zMuCivCwP5/8CXkNT+MSIBqVuHpjElwFZpy2/FfLwlocObA3Zx7L1mzGkm
+         srJRdbeC/bJtRpXog8xiNfQD39zbrFBrjR1fbZZ/2O2kZmBRIJvn5KUq67MZ9aw9C4
+         8dx+OiuM1FGZA==
+X-Virus-Scanned: amavisd-new at rosalinux.ru
+Received: from mail.rosalinux.ru ([127.0.0.1])
+        by localhost (mail.rosalinux.ru [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id UzshRGyib86J; Tue, 27 Oct 2020 21:57:22 +0300 (MSK)
+Received: from [192.168.1.173] (broadband-90-154-70-7.ip.moscow.rt.ru [90.154.70.7])
+        by mail.rosalinux.ru (Postfix) with ESMTPSA id D2552DC8993D8;
+        Tue, 27 Oct 2020 21:57:21 +0300 (MSK)
+Subject: Re: [PATCH ima-evm-utils] boot_aggregate.test: Skip if CONFIG_IMA not
+ enabled
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>
 References: <20201019200803.35255-1-petr.vorel@gmail.com>
  <e274a823ca408f33c11ea03878442189e62d9f9b.camel@linux.ibm.com>
- <20201020180231.GA14580@dell5510>
+ <20201020180231.GA14580@dell5510> <20201027184933.GA5210@sequoia>
+From:   Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
+Message-ID: <96983bdf-9f0a-b936-f24b-95161201da3a@rosalinux.ru>
+Date:   Tue, 27 Oct 2020 21:57:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201020180231.GA14580@dell5510>
+In-Reply-To: <20201027184933.GA5210@sequoia>
+Content-Type: text/plain; charset=utf-8
+Content-Language: ru-RU
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2020-10-20 20:02:31, Petr Vorel wrote:
-> Hi Mimi, Dmitry,
-> 
-> > [Cc'ing Dmitry Eremin-Solenikov]
-> 
-> > Hi Petr,
-> 
-> > On Mon, 2020-10-19 at 22:08 +0200, Petr Vorel wrote:
-> > > This is required, because when TPM HW available (i.e. -c /dev/tpm0),
-> > > evmctl ima_boot_aggregate returns sha1:xxxx.
-> 
-> > > skip requires to move cleanup().
-> 
-> > > Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
-> 
-> > Nice.
-> > > ---
-> > > Hi Mimi,
-> 
-> > > this Fixes problems on current Debian, which has still disabled CONFIG_IMA
-> > > (FYI [1]). I was not able to figure out how to get it working with
-> > > sample-* files, but maybe there is a way.
-> 
-> > > Although it sound strange, people may want to build and check evmctl
-> > > even on a system with disabled CONFIG_IMA (both Debian and Ubuntu have
-> > > outdated ima-evm-utils (1.1)).
-> 
-> > Oops, I need to keep Dmitry in the loop better.  I'm hoping to release
-> > v1.3 shortly.
-> Thanks!
-> @Dmitry do you wish to be Cc: before release or any other time?
-> 
-> > > Kind regards,
-> > > Petr
-> 
-> > > [1] https://bugs.debian.org/972459 linux: Reenable CONFIG_IMA
-> 
-> > I wasn't aware that because of lockdown, IMA was disabled.  Thank you
-> > for reporting and updating the IMA w/lockdown status.
-> Feel free to comment it, please. It'd be nice to have IMA in Debian (not sure
-> about Ubuntu status).
+27.10.2020 21:49, Tyler Hicks =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> I can help with the Ubuntu status. IMA is still enabled there. You can
+> see CONFIG_IMA set to 'y' in the 20.04 LTS (Focal) and most recent 20.1=
+0
+> release (Groovy):
+>
+> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/foca=
+l/tree/debian.master/config/annotations#n12861
+> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/groo=
+vy/tree/debian.master/config/annotations#n13173
+>
+> Tyler
 
-I can help with the Ubuntu status. IMA is still enabled there. You can
-see CONFIG_IMA set to 'y' in the 20.04 LTS (Focal) and most recent 20.10
-release (Groovy):
+Sorry for a bit offtop, by the way, does any Linux distro ship packages w=
+ith IMA-signed files?
 
-https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/focal/tree/debian.master/config/annotations#n12861
-https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/groovy/tree/debian.master/config/annotations#n13173
+I know that work was done to support it in DEB and RPM and at least in RP=
+M it was upstreamized.
 
-Tyler
+We are going to try shipping IMA-signed packages in ROSA, it would be nic=
+e to study experience of other distros if there is any.
 
-> 
-> @Dmitry: do you plan to update Debian package? (you're the listed maintainer,
-> although the package was signed by Wartan Hachaturow).
-> 
-> > Mimi
-> 
-> Kind regards,
-> Petr
