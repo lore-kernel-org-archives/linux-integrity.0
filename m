@@ -1,129 +1,154 @@
-Return-Path: <SRS0=d1kl=ED=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=yqN6=EE=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C5AC388F7
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Oct 2020 22:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0BEC388F7
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Oct 2020 00:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 398D120735
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Oct 2020 22:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56F4A20791
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Oct 2020 00:35:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbgJ1WoZ convert rfc822-to-8bit (ORCPT
+        id S1731663AbgJ2Af2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:44:25 -0400
-Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:64496 "EHLO
-        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389277AbgJ1Wmq (ORCPT
+        Wed, 28 Oct 2020 20:35:28 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60621 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730334AbgJ2Af0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:42:46 -0400
-X-Greylist: delayed 3237 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Oct 2020 18:42:46 EDT
-Received: from pps.filterd (m0048299.ppops.net [127.0.0.1])
-        by m0048299.ppops.net-00176a03. (8.16.0.42/8.16.0.42) with SMTP id 09SJH7HE007403
-        for <linux-integrity@vger.kernel.org>; Wed, 28 Oct 2020 15:32:03 -0400
-From:   "Ahmed, Safayet (GE Research, US)" <Safayet.Ahmed@ge.com>
-To:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: evmctl argument parsing, HMAC algorithm, HMAC replacement
-Thread-Topic: evmctl argument parsing, HMAC algorithm, HMAC replacement
-Thread-Index: AdatSwxlcXMoK+W2SsCwyvuGMpS9oAAFIN1A
-Date:   Wed, 28 Oct 2020 19:31:59 +0000
-Message-ID: <4256e1cc5c5340eba005039e13fcbd5a@ge.com>
-References: <85ea42e260344f5bb7e21daec5f2d3d0@ge.com>
-In-Reply-To: <85ea42e260344f5bb7e21daec5f2d3d0@ge.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcMjAwMDE5OTI1?=
- =?us-ascii?Q?XGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0?=
- =?us-ascii?Q?YmEyOWUzNWJcbXNnc1xtc2ctMzAzM2Y2ZTktMTk1NC0xMWViLTkyY2QtNWM1?=
- =?us-ascii?Q?ZjY3YjU2ZWFkXGFtZS10ZXN0XDMwMzNmNmViLTE5NTQtMTFlYi05MmNkLTVj?=
- =?us-ascii?Q?NWY2N2I1NmVhZGJvZHkudHh0IiBzej0iMTc1MSIgdD0iMTMyNDgzODcwOTUx?=
- =?us-ascii?Q?ODYxMzg3IiBoPSJ5YkN1dkdGcnVvY29UTE0rK2dqOW9welhYRG89IiBpZD0i?=
- =?us-ascii?Q?IiBibD0iMCIgYm89IjEiIGNpPSJjQUFBQUVSSFUxUlNSVUZOQ2dVQUFDUUVB?=
- =?us-ascii?Q?QUNMN0kzeVlLM1dBU0VVVWUvK1RTNzBJUlJSNy81Tkx2UUdBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBSEFBQUFDMEF3QUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBRUFBUUFCQUFBQVBzcXFNd0FBQUFBQUFBQUFBQUFBQUo0QUFBQm5BR1VB?=
- =?us-ascii?Q?WHdCakFHOEFiZ0JtQUdrQVpBQmxBRzRBZEFCcEFHRUFiQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdjQVpRQmZBR2dBYVFCbkFHZ0Fi?=
- =?us-ascii?Q?QUI1QUdNQWJ3QnVBR1lBYVFCa0FHVUFiZ0IwQUdrQVlRQnNBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQUNB?=
- =?us-ascii?Q?QUFBQUFDZUFBQUFad0JsQUY4QWJnQnZBRzRBY0FCMUFHSUFiQUJwQUdNQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFCbkFH?=
- =?us-ascii?Q?VUFYd0J3QUc4QWR3QmZBR01BYndCdUFHWUFhUUJrQUdVQWJnQjBBR2tBWVFC?=
- =?us-ascii?Q?c0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR2NBWlFCZkFIQUFid0IzQUY4?=
- =?us-ascii?Q?QWFBQnBBR2NBYUFCc0FIa0FYd0JqQUc4QWJnQm1BR2tBWkFCbEFHNEFkQUJw?=
- =?us-ascii?Q?QUdFQWJBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFB?=
- =?us-ascii?Q?Q0FBQUFBQUNlQUFBQWNBQnZBSGNBWlFCeUFGOEFaQUJsQUhNQWFRQm5BRzRB?=
- =?us-ascii?Q?WHdCd0FISUFZUUJqQUhRQWFRQmpBR1VBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
- =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFBPT0iLz48?=
- =?us-ascii?Q?L21ldGE+?=
-x-dg-rorf: true
-x-originating-ip: [3.202.188.220]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 28 Oct 2020 20:35:26 -0400
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kXvuN-0008Ep-Br; Thu, 29 Oct 2020 00:35:15 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 02/34] namespace: only take read lock in do_reconfigure_mnt()
+Date:   Thu, 29 Oct 2020 01:32:20 +0100
+Message-Id: <20201029003252.2128653-3-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.29.0
+In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-10-28_09:2020-10-28,2020-10-28 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
- malwarescore=0 clxscore=1011 impostorscore=0 mlxscore=0 spamscore=0
- mlxlogscore=987 bulkscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010280122
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello,
+do_reconfigure_mnt() used to take the down_write(&sb->s_umount) lock
+which seems unnecessary since we're not changing the superblock. We're
+only checking whether it is already read-only. Setting other mount
+attributes is protected by lock_mount_hash() afaict and not by s_umount.
 
-I just had a few questions:
+So I think the history of down_write(&sb->s_umount) lock being taken
+when setting mount attributes dates back to the introduction of
+MNT_READONLY in [2]. Afaict, this introduced the concept of having
+read-only mounts in contrast to just having a read-only superblock. When
+it got introduced it was simply plumbed into do_remount() which already
+took down_write(&sb->s_umount) because it was only used to actually
+change the superblock before [2]. Afaict, it would've already been
+possible back then to only use down_read(&sb->s_umount) for
+MS_BIND | MS_REMOUNT since actual mount options were protected by
+the vfsmount lock already. But that would've meant special casing the
+locking for MS_BIND | MS_REMOUNT in do_remount() which people might not
+have considered worth it.
+Then in [1] MS_BIND | MS_REMOUNT mount option changes were split out of
+do_remount() into do_reconfigure_mnt() but the down_write(&sb->s_umount)
+lock was simply copied over.
+Now that we have this be a separate helper only take
+the down_read(&sb->s_umount) lock since we're only interested in
+checking whether the super block is currently read-only and blocking any
+writers from changing it. Essentially, checking that the super block is
+read-only has the advantage that we can avoid having to go into the
+slowpath and through MNT_WRITE_HOLD and can simply set the read-only
+flag on the mount in set_mount_attributes().
 
-1) evmctl utility source, "evmctl.c", in "sign_ima_file" function on line 713:
-the default signing-key path is set to "/etc/keys/privkey_evm.pem".
-Should that be "/etc/keys/privkey_ima.pem"?
+[1]: commit 43f5e655eff7 ("vfs: Separate changing mount flags full remount")
+[2]: commit 2e4b7fcd9260 ("[PATCH] r/o bind mounts: honor mount writer counts at remount")
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ fs/namespace.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-2) Currently, the hashing algorithm for HMAC signatures in the kernel is hardcoded to SHA1.
-SHA1 is considered too short to provide protection against collision attacks. (Such attacks have been demonstrated).
-Are there plans to move to more secure hashing algorithms?
-
-3) Is there any document that lists the events that cause the kernel to update asymmetric EVM signatures with HMAC signatures?
-
-I thnk this update happens in "evm_update_evmxattr".
-This function is called directly by "evm_verify_hmac", but I didn't fully understand the set of conditions that need to be satisfied before the replacement is performed.
-
-There is a call chain from IMA's "process_measurement" function to "evm_verify_hmac".
-
-I did some experiments where I
-- check the "security.evm" extended attribute using the "getfattr" utility on a script with an IMA and EVM RSA signature.
-- perform an operation
-- check the extended attribute again to see if it's replaced with something much shorter.
-
-In my experiment, just calling the script (which should eventually invoke ""process_measurement") doesn't cause the EVM RSA signature to be replaced with an HMAC signature.
-
-However, I've been able to force the replacement by changing file attributes. I suspect changes to extended attributes will achieve the same as well.
-
-Thank you for your help,
-
-Safayet N. Ahmed Ph.D
-Lead Engineer
-Embedded Computing Group
-GE Research
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 20ee291a7af4..6e0d5bb63197 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2507,10 +2507,6 @@ static int change_mount_ro_state(struct mount *mnt, unsigned int mnt_flags)
+ 	return __mnt_unmake_readonly(mnt);
+ }
+ 
+-/*
+- * Update the user-settable attributes on a mount.  The caller must hold
+- * sb->s_umount for writing.
+- */
+ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ {
+ 	mnt_flags |= mnt->mnt.mnt_flags & ~MNT_USER_SETTABLE_MASK;
+@@ -2560,13 +2556,17 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ 	if (!can_change_locked_flags(mnt, mnt_flags))
+ 		return -EPERM;
+ 
+-	down_write(&sb->s_umount);
++	/*
++	 * We're only checking whether the superblock is read-only not changing
++	 * it, so only take down_read(&sb->s_umount).
++	 */
++	down_read(&sb->s_umount);
+ 	lock_mount_hash();
+ 	ret = change_mount_ro_state(mnt, mnt_flags);
+ 	if (ret == 0)
+ 		set_mount_attributes(mnt, mnt_flags);
+ 	unlock_mount_hash();
+-	up_write(&sb->s_umount);
++	up_read(&sb->s_umount);
+ 
+ 	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+ 
+-- 
+2.29.0
 
