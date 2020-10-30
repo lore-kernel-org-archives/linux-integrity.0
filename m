@@ -2,75 +2,178 @@ Return-Path: <SRS0=Sidp=EF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59DC4C00A89
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 16:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1146C5517A
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 17:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E462E20756
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 16:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58CCC22202
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 17:45:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hk5vG6G8"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kOHnDYEM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbgJ3QnP (ORCPT
+        id S1727050AbgJ3Rov (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 30 Oct 2020 12:43:15 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:42548 "EHLO
+        Fri, 30 Oct 2020 13:44:51 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:50276 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbgJ3QnP (ORCPT
+        with ESMTP id S1726704AbgJ3Rot (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 30 Oct 2020 12:43:15 -0400
-Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 6DB2820B4905;
-        Fri, 30 Oct 2020 09:43:14 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6DB2820B4905
+        Fri, 30 Oct 2020 13:44:49 -0400
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8109020B36E7;
+        Fri, 30 Oct 2020 10:44:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8109020B36E7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1604076194;
-        bh=IaotcXMpeIJAOCC8PWk+3p2VsFBW9Ups0sK9vDE+00k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hk5vG6G8Al3QxurWYrUGXqSAQ+3w04Az1PgUaOLf8xwTrTMMmR5sjqwK/Pqlnf59j
-         SSLvMpp4DjrfNLT6ctT1RSSjzQO3JzBYq/h4tKqo13Y2QyxCqg+Rke8IhEdhylpHV3
-         8dzLBo7QaFTurX5PWmqKIvdosJ3SHshWXH3Ecp78=
-Subject: Re: [RFC] Finding the right target branch for patches that span IMA
- and SeLinux
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        paul@paul-moore.com
-Cc:     SELinux <selinux@vger.kernel.org>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-References: <703ced1a-3a48-f29e-9141-af78415d8402@linux.microsoft.com>
- <f99f0f03aecc778826d79eb83d60cfd1a95196c5.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <2ea3d341-6299-ec40-b553-f9f59a36cfb3@linux.microsoft.com>
-Date:   Fri, 30 Oct 2020 09:43:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        s=default; t=1604079888;
+        bh=3dUJIHzhlXEbEQFUC3xEtuLLnV47qTGMOpoy/Csxy8s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kOHnDYEMAZ3P2Ysm/P3HGTl2RVDN+q5OQaoB2v0mM7RRWccmpGGPDsvIQZg0vb45q
+         edMDJk5XbzzvzwuwQGPmX28N3fZlA6GqPnsRm4yRinmKoHoFcSMcy8GN9tjJrzlTSE
+         uZvkvHf3FIOtVrq32I6KbY9GF7gjuiI0wI5rURdY=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        gregkh@linuxfoundation.org, james.morse@arm.com,
+        catalin.marinas@arm.com, sashal@kernel.org, will@kernel.org,
+        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
+        robh+dt@kernel.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
+        balajib@linux.microsoft.com
+Subject: [PATCH v8 3/4] arm64: Store IMA log information in kimage used for kexec
+Date:   Fri, 30 Oct 2020 10:44:28 -0700
+Message-Id: <20201030174429.29893-4-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.29.0
+In-Reply-To: <20201030174429.29893-1-nramas@linux.microsoft.com>
+References: <20201030174429.29893-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <f99f0f03aecc778826d79eb83d60cfd1a95196c5.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> Unless this patch set is specifically dependent on the two patches in
-> the SELinux tree beyond v5.10.0-rc1, please base it on v5.10.0-rc1.
-> 
-Thanks Mimi. We don't have dependencies on those two patches in SELinux 
-tree.
+Address and size of the buffer containing the IMA measurement log need
+to be passed from the current kernel to the next kernel on kexec.
 
-We'll base our changes on v5.10.0-rc1 in SELinux tree.
+Add address and size fields to "struct kimage_arch" for ARM64 platform
+to hold the address and size of the IMA measurement log buffer.
+Define an architecture specific function for ARM64 namely
+arch_ima_add_kexec_buffer() that will set the address and size of
+the current kernel's IMA buffer to be passed to the next kernel on kexec.
 
-Thanks for the quick response.
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+---
+ arch/arm64/include/asm/ima.h   | 18 ++++++++++++++++++
+ arch/arm64/include/asm/kexec.h |  3 +++
+ arch/arm64/kernel/Makefile     |  1 +
+ arch/arm64/kernel/ima_kexec.c  | 34 ++++++++++++++++++++++++++++++++++
+ 4 files changed, 56 insertions(+)
+ create mode 100644 arch/arm64/include/asm/ima.h
+ create mode 100644 arch/arm64/kernel/ima_kexec.c
 
-~Tushar
+diff --git a/arch/arm64/include/asm/ima.h b/arch/arm64/include/asm/ima.h
+new file mode 100644
+index 000000000000..507fc94ddaba
+--- /dev/null
++++ b/arch/arm64/include/asm/ima.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) 2019 Microsoft Corporation
++ *
++ * Author: Prakhar Srivastava <prsriva@linux.microsoft.com>
++ *
++ */
++#ifndef _ASM_ARCH_IMA_H
++#define _ASM_ARCH_IMA_H
++
++struct kimage;
++
++#ifdef CONFIG_IMA_KEXEC
++int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
++			      size_t size);
++#endif /* CONFIG_IMA_KEXEC */
++
++#endif /* _ASM_ARCH_IMA_H */
+diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
+index d24b527e8c00..7bd60c185ad3 100644
+--- a/arch/arm64/include/asm/kexec.h
++++ b/arch/arm64/include/asm/kexec.h
+@@ -100,6 +100,9 @@ struct kimage_arch {
+ 	void *elf_headers;
+ 	unsigned long elf_headers_mem;
+ 	unsigned long elf_headers_sz;
++
++	phys_addr_t ima_buffer_addr;
++	size_t ima_buffer_size;
+ };
+ 
+ extern const struct kexec_file_ops kexec_image_ops;
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index bbaf0bc4ad60..1cddf55fb601 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -60,6 +60,7 @@ obj-$(CONFIG_ARM_SDE_INTERFACE)		+= sdei.o
+ obj-$(CONFIG_ARM64_PTR_AUTH)		+= pointer_auth.o
+ obj-$(CONFIG_SHADOW_CALL_STACK)		+= scs.o
+ obj-$(CONFIG_ARM64_MTE)			+= mte.o
++obj-$(CONFIG_IMA_KEXEC)			+= ima_kexec.o
+ 
+ obj-y					+= vdso/ probes/
+ obj-$(CONFIG_COMPAT_VDSO)		+= vdso32/
+diff --git a/arch/arm64/kernel/ima_kexec.c b/arch/arm64/kernel/ima_kexec.c
+new file mode 100644
+index 000000000000..1847f1230710
+--- /dev/null
++++ b/arch/arm64/kernel/ima_kexec.c
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2019 Microsoft Corporation
++ *
++ * Author: Prakhar Srivastava <prsriva@linux.microsoft.com>
++ *
++ * File: ima_kexec.c
++ *       Defines IMA kexec functions.
++ */
++
++#include <linux/kernel.h>
++#include <linux/kexec.h>
++#include <linux/types.h>
++#include <asm/ima.h>
++
++/**
++ * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
++ *
++ * @image: kimage structure to set ima buffer information in for kexec
++ * @load_addr: Start address of the IMA buffer
++ * @size: size of the IMA buffer
++ *
++ * Architectures should use this function to pass on the IMA buffer
++ * information to the next kernel.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
++			      size_t size)
++{
++	image->arch.ima_buffer_addr = load_addr;
++	image->arch.ima_buffer_size = size;
++	return 0;
++}
+-- 
+2.29.0
 
-> thanks,
-> 
-> Mimi
-> 
