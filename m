@@ -4,330 +4,137 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F93AC00A89
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 12:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6E9C4363A
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 12:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7F7020729
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 12:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FB512076E
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 12:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604059337;
-	bh=iAlwuTdtaIWHAl/BzByU2/AHOTw8WNQf01j7i+WfeTc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=g0wSLk/YUtxTqMEd3G0Y5Vvu3aLJV1oakWkcQKnlSxExESvdLDdde0Eq0CvZH0U2c
-	 wskBlt5GDrITPd5F6ixz6hzyR811XeiZVtRVOIJ77VUtIhdd4O+eY2vmxoSJRL3rvI
-	 xHhtyVAcvLaapg5rPChrzj9MWw7qfeApG15oqXcY=
+	s=default; t=1604059994;
+	bh=3aafmMIYaD9wNsBCgEYX3b5JWYI/mztmdku0ITqVSoU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KHJbJS4gnMioP9KmWybTKzO19CFEWITzo3qDic0qgubJQUoo3mbjG6gMatzblejTC
+	 Xp6EA9AaNEXbnUX+Q6NZNhVj1dIAW8Tvx+xqWD1Vdwv+SDph6nzJTpvMTVoQ5Nfd0w
+	 KkqJN4PlCV09A6SZqiPDinBUN1h2o+F8R/rj35WU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgJ3MCN (ORCPT
+        id S1725808AbgJ3MNN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 30 Oct 2020 08:02:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42038 "EHLO mail.kernel.org"
+        Fri, 30 Oct 2020 08:13:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725993AbgJ3MCK (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 30 Oct 2020 08:02:10 -0400
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725355AbgJ3MNN (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 30 Oct 2020 08:13:13 -0400
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0EB222241;
-        Fri, 30 Oct 2020 11:51:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D6B4206E9;
+        Fri, 30 Oct 2020 12:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604058683;
-        bh=iAlwuTdtaIWHAl/BzByU2/AHOTw8WNQf01j7i+WfeTc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=a+Hus/IAXtz6Y0C7bc2/VW4IC2S75Usph/HU0NsgKNAO79sTCVe/Bv1LxFnfMibHO
-         +tfvm9uXIfxcFUGdCiPAjG1xwSBkIc1klLG0S9fygtxlDNSyN8UY5kDiAUrwTPxZiu
-         LxDeo5GrEkxfE4gtzCiXpAxusxZ8Z2fHNpEd59Ks=
-Received: by mail-oi1-f177.google.com with SMTP id m128so6360958oig.7;
-        Fri, 30 Oct 2020 04:51:22 -0700 (PDT)
-X-Gm-Message-State: AOAM532dRz8YaIEnIcVq9SDX8maJRSM/VpFjnEwxli7Jlh9I/fSsuqRB
-        4VCQeQ5+b+gDxkaLct4ZPkwQmCZb41uOoUViGj0=
-X-Google-Smtp-Source: ABdhPJxIeLsTOfSSrXskv1BVND+IRksJHTYNIXmsLhSPevTBgNsUNCa+yGIYO+eV7Mi8Vsn/9SuBRAbBcBLXm7WDkRo=
-X-Received: by 2002:aca:2310:: with SMTP id e16mr1215934oie.47.1604058681854;
- Fri, 30 Oct 2020 04:51:21 -0700 (PDT)
+        s=default; t=1604059992;
+        bh=3aafmMIYaD9wNsBCgEYX3b5JWYI/mztmdku0ITqVSoU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ySpoJq09NPan1KPgJyzgyFfxGNyg5rZQF2KfB1JWA+8vIIK/LkbGyZ/XSRUpLmmEV
+         ovNI2Cxsfn26duRJc6TDFcFSBebsk14rVu5/Z2GZdbMyqZFm2QokBiDp9/xwCzyw9U
+         AehCOICtBu6pAKozrF3/Mtelz3+PHhyC+iHx4gAw=
+Date:   Fri, 30 Oct 2020 14:13:07 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>
+Subject: Re: [PATCH v2 1/5] tpm_tis: Fix check_locality for correct locality
+ acquisition
+Message-ID: <20201030121307.GA522355@kernel.org>
+References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
+ <20201001180925.13808-2-James.Bottomley@HansenPartnership.com>
+ <878sc1hkmn.fsf@redhat.com>
+ <20201024120744.GA32607@kernel.org>
 MIME-Version: 1.0
-References: <20201030060840.1810-1-clin@suse.com> <20201030060840.1810-2-clin@suse.com>
-In-Reply-To: <20201030060840.1810-2-clin@suse.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri, 30 Oct 2020 12:51:10 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFaARnhvnSKSFvAXXY1TKfv=_hG3z=B2j=G3p7qLeQaYw@mail.gmail.com>
-Message-ID: <CAMj1kXFaARnhvnSKSFvAXXY1TKfv=_hG3z=B2j=G3p7qLeQaYw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] efi: generalize efi_get_secureboot
-To:     Chester Lin <clin@suse.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, X86 ML <x86@kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201024120744.GA32607@kernel.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello Chester,
+On Sat, Oct 24, 2020 at 03:07:44PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Oct 19, 2020 at 04:16:32PM -0700, Jerry Snitselaar wrote:
+> > 
+> > James Bottomley @ 2020-10-01 11:09 MST:
+> > 
+> > > The TPM TIS specification says the TPM signals the acquisition of
+> > > locality when the TMP_ACCESS_REQUEST_USE bit goes to one *and* the
+> > > TPM_ACCESS_REQUEST_USE bit goes to zero.  Currently we only check the
+> > > former not the latter, so check both.  Adding the check on
+> > > TPM_ACCESS_REQUEST_USE should fix the case where the locality is
+> > > re-requested before the TPM has released it.  In this case the
+> > > locality may get released briefly before it is reacquired, which
+> > > causes all sorts of problems. However, with the added check,
+> > > TPM_ACCESS_REQUEST_USE should remain 1 until the second request for
+> > > the locality is granted.
+> > >
+> > > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > >
+> > > ---
+> > >
+> > > v2: added this patch
+> > > ---
+> > >  drivers/char/tpm/tpm_tis_core.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> > > index 92c51c6cfd1b..f3ecde8df47d 100644
+> > > --- a/drivers/char/tpm/tpm_tis_core.c
+> > > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > > @@ -125,7 +125,8 @@ static bool check_locality(struct tpm_chip *chip, int l)
+> > >  	if (rc < 0)
+> > >  		return false;
+> > >  
+> > > -	if ((access & (TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID)) ==
+> > > +	if ((access & (TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID
+> > > +		       | TPM_ACCESS_REQUEST_USE)) ==
+> > >  	    (TPM_ACCESS_ACTIVE_LOCALITY | TPM_ACCESS_VALID)) {
+> > >  		priv->locality = l;
+> > >  		return true;
+> > 
+> > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> 
+> Thank you.
+> 
+> James, few minor remarks.
+> 
+> Given that the failing commit is in the GIT, just for reference
+> 
+>   Fixes: 27084efee0c3 ("[PATCH] tpm: driver for next generation TPM chips")
+>   Cc: stable@ger.kernel.org
+> 
+> I want fixes tags for everything that has a legit Git commit, even
+> if it spans through all the existing stable kernels. It's valuable
+> information to have in the Git log.
+> 
+> Another thing I noticed is that would be less ugly put everything
+> in the same line, as checkpatch requirement have been relaxed.
+> 
+> Finally, please put a verbose inline comment before the condition.
+> tpm_tis driver is complicated enough that it should be better
+> documented. After months pass things tend to fade away and wrong
+> decisions might be made because of that. You can probably derive
+> it from the already nice and verbose commit message, so let's
+> take advantage of it.
+> 
+> About recent debate on patch changelogs. I talked with Dave Hansen
+> about this, and he said that in x86 tree, they are the standard, but
+> the practice depends per tree.
+> 
+> After thinking about this, and writing per patch changelogs for the
+> next iteration of the SGX patch set, my standing point is that either
+> works as it is properly written and maintained.
 
-Thanks again for looking into this.
+This can be merged immediately once the remarks have been taken care
+of (i.e. do not except tested-by for 1/5).
 
-On Fri, 30 Oct 2020 at 07:09, Chester Lin <clin@suse.com> wrote:
->
-> Generalize the efi_get_secureboot() function so not only efistub but also
-> other subsystems can use it.
->
-> Signed-off-by: Chester Lin <clin@suse.com>
-> ---
->  drivers/firmware/efi/libstub/Makefile     |  2 +-
->  drivers/firmware/efi/libstub/efi-stub.c   |  2 +-
->  drivers/firmware/efi/libstub/efistub.h    | 22 ++++---
->  drivers/firmware/efi/libstub/secureboot.c | 76 -----------------------
->  drivers/firmware/efi/libstub/x86-stub.c   |  2 +-
->  include/linux/efi.h                       | 41 +++++++++++-
->  6 files changed, 57 insertions(+), 88 deletions(-)
->  delete mode 100644 drivers/firmware/efi/libstub/secureboot.c
->
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> index 8a94388e38b3..88e47b0ca09d 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -49,7 +49,7 @@ OBJECT_FILES_NON_STANDARD     := y
->  # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
->  KCOV_INSTRUMENT                        := n
->
-> -lib-y                          := efi-stub-helper.o gop.o secureboot.o tpm.o \
-> +lib-y                          := efi-stub-helper.o gop.o tpm.o \
->                                    file.o mem.o random.o randomalloc.o pci.o \
->                                    skip_spaces.o lib-cmdline.o lib-ctype.o \
->                                    alignedmem.o relocate.o vsprintf.o
-> diff --git a/drivers/firmware/efi/libstub/efi-stub.c b/drivers/firmware/efi/libstub/efi-stub.c
-> index 914a343c7785..ad96f1d786a9 100644
-> --- a/drivers/firmware/efi/libstub/efi-stub.c
-> +++ b/drivers/firmware/efi/libstub/efi-stub.c
-> @@ -196,7 +196,7 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
->         /* Ask the firmware to clear memory on unclean shutdown */
->         efi_enable_reset_attack_mitigation();
->
-> -       secure_boot = efi_get_secureboot();
-> +       secure_boot = efi_get_secureboot(get_efi_var);
->
->         /*
->          * Unauthenticated device tree data is a security hazard, so ignore
-> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
-> index 2d7abcd99de9..b1833b51e6d6 100644
-> --- a/drivers/firmware/efi/libstub/efistub.h
-> +++ b/drivers/firmware/efi/libstub/efistub.h
-> @@ -91,14 +91,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
->         fdt_setprop((fdt), (node_offset), (name), &(var), sizeof(var))
->  #endif
->
-> -#define get_efi_var(name, vendor, ...)                         \
-> -       efi_rt_call(get_variable, (efi_char16_t *)(name),       \
-> -                   (efi_guid_t *)(vendor), __VA_ARGS__)
-> -
-> -#define set_efi_var(name, vendor, ...)                         \
-> -       efi_rt_call(set_variable, (efi_char16_t *)(name),       \
-> -                   (efi_guid_t *)(vendor), __VA_ARGS__)
-> -
->  #define efi_get_handle_at(array, idx)                                  \
->         (efi_is_native() ? (array)[idx]                                 \
->                 : (efi_handle_t)(unsigned long)((u32 *)(array))[idx])
-> @@ -112,6 +104,20 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
->                 ((handle = efi_get_handle_at((array), i)) || true);     \
->              i++)
->
-> +static inline
-> +efi_status_t get_efi_var(efi_char16_t *name, efi_guid_t *vendor, u32 *attr,
-> +                        unsigned long *size, void *data)
-> +{
-> +       return efi_rt_call(get_variable, name, vendor, attr, size, data);
-> +}
-> +
-> +static inline
-> +efi_status_t set_efi_var(efi_char16_t *name, efi_guid_t *vendor, u32 attr,
-> +                        unsigned long size, void *data)
-> +{
-> +       return efi_rt_call(set_variable, name, vendor, attr, size, data);
-> +}
-> +
->  static inline
->  void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
->  {
-> diff --git a/drivers/firmware/efi/libstub/secureboot.c b/drivers/firmware/efi/libstub/secureboot.c
-> deleted file mode 100644
-> index 5efc524b14be..000000000000
-> --- a/drivers/firmware/efi/libstub/secureboot.c
-> +++ /dev/null
-
-Please keep this file (see below)
-
-> @@ -1,76 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * Secure boot handling.
-> - *
-> - * Copyright (C) 2013,2014 Linaro Limited
-> - *     Roy Franz <roy.franz@linaro.org
-> - * Copyright (C) 2013 Red Hat, Inc.
-> - *     Mark Salter <msalter@redhat.com>
-> - */
-> -#include <linux/efi.h>
-> -#include <asm/efi.h>
-> -
-> -#include "efistub.h"
-> -
-> -/* BIOS variables */
-> -static const efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
-> -static const efi_char16_t efi_SecureBoot_name[] = L"SecureBoot";
-> -static const efi_char16_t efi_SetupMode_name[] = L"SetupMode";
-> -
-> -/* SHIM variables */
-> -static const efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
-> -static const efi_char16_t shim_MokSBState_name[] = L"MokSBState";
-> -
-> -/*
-> - * Determine whether we're in secure boot mode.
-> - *
-> - * Please keep the logic in sync with
-> - * arch/x86/xen/efi.c:xen_efi_get_secureboot().
-> - */
-> -enum efi_secureboot_mode efi_get_secureboot(void)
-> -{
-> -       u32 attr;
-> -       u8 secboot, setupmode, moksbstate;
-> -       unsigned long size;
-> -       efi_status_t status;
-> -
-> -       size = sizeof(secboot);
-> -       status = get_efi_var(efi_SecureBoot_name, &efi_variable_guid,
-> -                            NULL, &size, &secboot);
-> -       if (status == EFI_NOT_FOUND)
-> -               return efi_secureboot_mode_disabled;
-> -       if (status != EFI_SUCCESS)
-> -               goto out_efi_err;
-> -
-> -       size = sizeof(setupmode);
-> -       status = get_efi_var(efi_SetupMode_name, &efi_variable_guid,
-> -                            NULL, &size, &setupmode);
-> -       if (status != EFI_SUCCESS)
-> -               goto out_efi_err;
-> -
-> -       if (secboot == 0 || setupmode == 1)
-> -               return efi_secureboot_mode_disabled;
-> -
-> -       /*
-> -        * See if a user has put the shim into insecure mode. If so, and if the
-> -        * variable doesn't have the runtime attribute set, we might as well
-> -        * honor that.
-> -        */
-> -       size = sizeof(moksbstate);
-> -       status = get_efi_var(shim_MokSBState_name, &shim_guid,
-> -                            &attr, &size, &moksbstate);
-> -
-
-MokSBState is a boot time variable, so we cannot access it when
-running under the OS. Xen also has a code flow similar to this one,
-but it looks at MokSbStateRt instead (which may be a mistake but let's
-forget about that for now)
-
-So what we will need to do is factor out only the top part of this
-function (which, incidentally, is the only part that IMA uses in the
-first place)
-
-> -       /* If it fails, we don't care why. Default to secure */
-> -       if (status != EFI_SUCCESS)
-> -               goto secure_boot_enabled;
-> -       if (!(attr & EFI_VARIABLE_RUNTIME_ACCESS) && moksbstate == 1)
-> -               return efi_secureboot_mode_disabled;
-> -
-> -secure_boot_enabled:
-> -       efi_info("UEFI Secure Boot is enabled.\n");
-> -       return efi_secureboot_mode_enabled;
-> -
-> -out_efi_err:
-> -       efi_err("Could not determine UEFI Secure Boot status.\n");
-> -       return efi_secureboot_mode_unknown;
-> -}
-
-So let's keep this file, and also, let's put a wrapper function around
-get_efi_var() here, of which you can take the address and pass to the
-static inline function.
-
-> diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-> index 3672539cb96e..3f9b492c566b 100644
-> --- a/drivers/firmware/efi/libstub/x86-stub.c
-> +++ b/drivers/firmware/efi/libstub/x86-stub.c
-> @@ -781,7 +781,7 @@ unsigned long efi_main(efi_handle_t handle,
->          * otherwise we ask the BIOS.
->          */
->         if (boot_params->secure_boot == efi_secureboot_mode_unset)
-> -               boot_params->secure_boot = efi_get_secureboot();
-> +               boot_params->secure_boot = efi_get_secureboot(get_efi_var);
->
->         /* Ask the firmware to clear memory on unclean shutdown */
->         efi_enable_reset_attack_mitigation();
-> diff --git a/include/linux/efi.h b/include/linux/efi.h
-> index d7c0e73af2b9..cc2d3de39031 100644
-> --- a/include/linux/efi.h
-> +++ b/include/linux/efi.h
-> @@ -1089,7 +1089,46 @@ enum efi_secureboot_mode {
->         efi_secureboot_mode_disabled,
->         efi_secureboot_mode_enabled,
->  };
-> -enum efi_secureboot_mode efi_get_secureboot(void);
-> +
-> +static inline enum efi_secureboot_mode efi_get_secureboot(efi_get_variable_t *get_var)
-> +{
-> +       efi_guid_t var_guid = EFI_GLOBAL_VARIABLE_GUID;
-> +       efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
-> +       efi_status_t status;
-> +       unsigned long size;
-> +       u8 secboot, setupmode, moksbstate;
-> +       u32 attr;
-> +
-> +       size = sizeof(secboot);
-> +       status = get_var(L"SecureBoot", &var_guid, NULL, &size, &secboot);
-> +
-> +       if (status == EFI_NOT_FOUND)
-> +               return efi_secureboot_mode_disabled;
-> +       if (status != EFI_SUCCESS)
-> +               return efi_secureboot_mode_unknown;
-> +
-> +       size = sizeof(setupmode);
-> +       status = get_var(L"SetupMode", &var_guid, NULL, &size, &setupmode);
-> +
-> +       if (status != EFI_SUCCESS)
-> +               return efi_secureboot_mode_unknown;
-> +       if (secboot == 0 || setupmode == 1)
-> +               return efi_secureboot_mode_disabled;
-> +
-
-So keep until here and move the rest back into the .c file
-
-> +       /*
-> +        * See if a user has put the shim into insecure mode. If so, and if the
-> +        * variable doesn't have the runtime attribute set, we might as well
-> +        * honor that.
-> +        */
-> +       size = sizeof(moksbstate);
-> +       status = get_var(L"MokSBState", &shim_guid, &attr, &size, &moksbstate);
-> +       /* If it fails, we don't care why. Default to secure */
-> +       if (status == EFI_SUCCESS && moksbstate == 1
-> +           && !(attr & EFI_VARIABLE_RUNTIME_ACCESS))
-> +               return efi_secureboot_mode_disabled;
-> +
-> +       return efi_secureboot_mode_enabled;
-> +}
->
->  #ifdef CONFIG_RESET_ATTACK_MITIGATION
->  void efi_enable_reset_attack_mitigation(void);
-> --
-> 2.28.0
->
+/Jarkko
