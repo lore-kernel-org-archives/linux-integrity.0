@@ -2,118 +2,142 @@ Return-Path: <SRS0=Sidp=EF=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B7FC388F9
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 12:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD936C4363A
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 15:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12FC720756
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 12:43:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604061822;
-	bh=7lAxEhQrhJbso4MW6ti4aK3YXNMKdjk1481K/O+7EL8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XC/k9fLRxmbA8EfLjjnIrEWjJ7HsE87wVNsKF/oFrMSJE7v2doVRy3qMYM0WcNHjz
-	 +1maq9T8fpMCkdooC4HXTU4ehcwqPs7rgkGxmUOkUdCz3Cgxwyfc0NgycZwwIA8RxK
-	 5mwbPKMYKWQdZ1LxhIhKc72VGvmQToEm8ZN3uEeU=
+	by mail.kernel.org (Postfix) with ESMTP id 5FC5A20728
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Oct 2020 15:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgJ3Mnl (ORCPT
+        id S1726813AbgJ3PJX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 30 Oct 2020 08:43:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbgJ3Mnl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 30 Oct 2020 08:43:41 -0400
-Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6334A221EB;
-        Fri, 30 Oct 2020 12:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604061820;
-        bh=7lAxEhQrhJbso4MW6ti4aK3YXNMKdjk1481K/O+7EL8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LM5Qelkh+m0aFYlc4OQamim8NR4Vsknz9fSg7XenM/WmoqcS8OOFvBjZ/9v80aoqs
-         zZUypReGD6hAPYs279frgoGqdDXAhzFuR3HdmrSlHHiTg6cR4fPrl/wCZtCYWIIpyh
-         eQeXH4VMcimKrAzYZsePZfsDBofwMuFs8W9AaPZQ=
-Date:   Fri, 30 Oct 2020 14:43:35 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [PATCH v2 4/5] tpm_tis: fix IRQ probing
-Message-ID: <20201030124335.GD522355@kernel.org>
-References: <20201001180925.13808-1-James.Bottomley@HansenPartnership.com>
- <20201001180925.13808-5-James.Bottomley@HansenPartnership.com>
- <87zh4hg4wg.fsf@redhat.com>
- <20201024121718.GC32960@kernel.org>
+        Fri, 30 Oct 2020 11:09:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44565 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbgJ3PJX (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 30 Oct 2020 11:09:23 -0400
+Received: from mail-yb1-f198.google.com ([209.85.219.198])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <seth.forshee@canonical.com>)
+        id 1kYW0Q-0001sw-AI
+        for linux-integrity@vger.kernel.org; Fri, 30 Oct 2020 15:07:54 +0000
+Received: by mail-yb1-f198.google.com with SMTP id q8so6341155ybk.18
+        for <linux-integrity@vger.kernel.org>; Fri, 30 Oct 2020 08:07:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xa7Ya7WFCD66IO3n4EspVdAVBWL69bn4xyiCQC0MCNc=;
+        b=kX+68jpEvxCAhHOF+kCzN/rAZpq9qFk+II9Do+WtS5CdDCp6tcaipFf+l50KR1vUWi
+         fiTEFOemwXfXIQjhKnfkK/jZF0U044WurOeqHF9hpSBP3bzAiq7r53zXRMHW9FtTRBlX
+         Vc4JI2xvcAhvQqwg0XBCfsT9oot/s4QNz9HWcj6Lklcyoy68Ax83XnAQKxWIYU6HxUvg
+         9rxnd7nKgbtAV7EOiIQZRXEhV3LYjNU4DwnUW6y3xr/QDrCA2e+TMEN0gamWn3oRDIRQ
+         hurKytCJeDR3EDtxcNPdW7s8IxXQ9FnUyz4sG9XDBHQbk+TQr21YejJZYakxkYA0D4nW
+         u8DA==
+X-Gm-Message-State: AOAM531jeXzpitX4bVPxxAVlnlUZ1ZKSbqCL/Ak1MnCYSrcmsQ21q3aw
+        PJ13R2dnDl6G+/BIcwnX5PLw51toVdlATsIT96hotCT8l7uHLm89VPXFpv7rLafLPuvvQmMU9sE
+        I9juRcYpV0owncIagrc+36eXwbuX4/rP1l7DP4qPtDeHIuA==
+X-Received: by 2002:a9d:7f90:: with SMTP id t16mr2120452otp.231.1604070472481;
+        Fri, 30 Oct 2020 08:07:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxrwanxbYDDJUUK4/p/rI4RmYyrOvYEAiYYd5ZsrwMuhegPWsvTXQZPd/YkhjdWXy2r86N00Q==
+X-Received: by 2002:a9d:7f90:: with SMTP id t16mr2120406otp.231.1604070472204;
+        Fri, 30 Oct 2020 08:07:52 -0700 (PDT)
+Received: from localhost ([2605:a601:ac0f:820:f03a:863:709:f18c])
+        by smtp.gmail.com with ESMTPSA id d22sm1412368oij.53.2020.10.30.08.07.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Oct 2020 08:07:49 -0700 (PDT)
+Date:   Fri, 30 Oct 2020 10:07:48 -0500
+From:   Seth Forshee <seth.forshee@canonical.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH 00/34] fs: idmapped mounts
+Message-ID: <20201030150748.GA176340@ubuntu-x1>
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+ <87pn51ghju.fsf@x220.int.ebiederm.org>
+ <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com>
+ <87361xdm4c.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201024121718.GC32960@kernel.org>
+In-Reply-To: <87361xdm4c.fsf@x220.int.ebiederm.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Oct 24, 2020 at 03:17:18PM +0300, Jarkko Sakkinen wrote:
-> On Mon, Oct 19, 2020 at 04:41:35PM -0700, Jerry Snitselaar wrote:
-> > 
-> > James Bottomley @ 2020-10-01 11:09 MST:
-> > 
-> > > There are two problems with our current interrupt probing: firstly the
-> > > TPM_CHIP_FLAG_IRQ never gets set initially, so a check for interrupts
-> > > is never done.  Fix this by setting the flag before we generate and
-> > > interrupt for probing.  Secondly our IRQ setup may be ineffective on a
-> > > TPM without legacy access cycles becuase according to the TPM
-> > > Interface Specification the interrupt registers are only writeable in
-> > > the current locality, so issue a request_locality before setting up
-> > > the interrupts.
-> > >
-> > > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> > >
-> > > ---
-> > >
-> > > v2: improved description
-> > > ---
-> > >  drivers/char/tpm/tpm_tis_core.c | 14 ++++++++++++++
-> > >  1 file changed, 14 insertions(+)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> > > index 0c07da8cd680..12b657ed3a39 100644
-> > > --- a/drivers/char/tpm/tpm_tis_core.c
-> > > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > > @@ -809,6 +809,19 @@ static int tpm_tis_probe_irq_single(struct tpm_chip *chip,
-> > >  	}
-> > >  	priv->irq = irq;
-> > >  
-> > > +	/*
-> > > +	 * note writes to the interrupt registers are only effective
-> > > +	 * when the TPM is in the active locality, so we have to
-> > > +	 * request the locality here to get the interrupt set up.
-> > > +	 * This request has no corresponding release, because the
-> > > +	 * locality will be relinquished at the end of the tpm command
-> > > +	 * that probes the interrupts
-> > > +	 */
-> > > +	if (request_locality(chip, 0) != 0) {
-> > > +		dev_err(&chip->dev, "failed to gain locality for irq probe\n");
-> > > +		return -EBUSY;
-> > > +	}
+On Thu, Oct 29, 2020 at 11:37:23AM -0500, Eric W. Biederman wrote:
+> First and foremost: A uid shift on write to a filesystem is a security
+> bug waiting to happen.  This is especially in the context of facilities
+> like iouring, that play very agressive games with how process context
+> makes it to  system calls.
 > 
-> Appreciate the comment a lot, but s/note/Note/
+> The only reason containers were not immediately exploitable when iouring
+> was introduced is because the mechanisms are built so that even if
+> something escapes containment the security properties still apply.
+> Changes to the uid when writing to the filesystem does not have that
+> property.  The tiniest slip in containment will be a security issue.
+> 
+> This is not even the least bit theoretical.  I have seem reports of how
+> shitfs+overlayfs created a situation where anyone could read
+> /etc/shadow.
 
-I tested this with:
+This bug was the result of a complex interaction with several
+contributing factors. It's fair to say that one component was overlayfs
+writing through an id-shifted mount, but the primary cause was related
+to how copy-up was done coupled with allowing unprivileged overlayfs
+mounts in a user ns. Checks that the mounter had access to the lower fs
+file were not done before copying data up, and so the file was copied up
+temporarily to the id shifted upperdir. Even though it was immediately
+removed, other factors made it possible for the user to get the file
+contents from the upperdir.
 
-- https://ark.intel.com/content/www/us/en/ark/products/84861/intel-nuc-kit-nuc5i5myhe.html
-  dTPM 1.2
-- https://ark.intel.com/content/www/us/en/ark/products/74483/intel-nuc-kit-dc53427hye.html
-  dTPM 2.0
+Regardless, I do think you raise a good point. We need to be wary of any
+place the kernel could open files through a shifted mount, especially
+when the open could be influenced by userspace.
 
-I did not get "TPM interrupt not working, polling instead" to klog.
-But I neither see tpm0 in /proc/interrupts. What I'm doing wrong?
+Perhaps kernel file opens through shifted mounts should to be opt-in.
+I.e. unless a flag is passed, or a different open interface used, the
+open will fail if the dentry being opened is subject to id shifting.
+This way any kernel writes which would be subject to id shifting will
+only happen through code which as been written to take it into account.
 
-/Jarkko
+Seth
