@@ -2,39 +2,38 @@ Return-Path: <SRS0=VMMd=EH=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B70C2D0A3
-	for <linux-integrity@archiver.kernel.org>; Sun,  1 Nov 2020 22:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB363C4742C
+	for <linux-integrity@archiver.kernel.org>; Sun,  1 Nov 2020 22:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5F5A2225B
-	for <linux-integrity@archiver.kernel.org>; Sun,  1 Nov 2020 22:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 803FD2225B
+	for <linux-integrity@archiver.kernel.org>; Sun,  1 Nov 2020 22:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="prDJDlJx"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="fTDqpbD+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbgKAW0q (ORCPT
+        id S1727280AbgKAW06 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 1 Nov 2020 17:26:46 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:42048 "EHLO
+        Sun, 1 Nov 2020 17:26:58 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:42006 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727448AbgKAW0j (ORCPT
+        with ESMTP id S1727359AbgKAW0j (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Sun, 1 Nov 2020 17:26:39 -0500
 Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A228920C1713;
-        Sun,  1 Nov 2020 14:26:38 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A228920C1713
+        by linux.microsoft.com (Postfix) with ESMTPSA id D7A1220B36E7;
+        Sun,  1 Nov 2020 14:26:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7A1220B36E7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1604269599;
-        bh=zb4UDSBV3isYH/aJEYYnL9CuQ4SANzldEATSI7kIE8M=;
+        s=default; t=1604269597;
+        bh=ykK8xizKxPwawSU0A4Yf3HkpQD34UbP8niKQC8VOGaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=prDJDlJxIbH1nch3ZcUMxWUbZ3DzeVuFknKMVmEC1Gp0FJjl+W3PZ3r5g7v/66aa8
-         DsrQjEpiHGV39tndV6Kx/gsB7C2mWj/aAjl5V2guE7vsOnIn596jsn2+CfeDDVd0mm
-         ur5s2sMTgBuuyAL9YwLZ5ZRG32jGUykmhrs48pDM=
+        b=fTDqpbD++mQJd8/E7aT0dnt2AQTzITTdMcq7LW1EN4i/YdIN8St6OTkU6Kf70hIoy
+         PpT/KJ0/y4/K2j02b2C92JJkJlAKiWqnG3EdiEfsHHcm5fWQdKLQFkpMIqOmG5y4kY
+         +gzhDMFOjHT7Cb7I4qF8FtHwUKmIuAUtXLkg+jg0=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
         casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
@@ -43,9 +42,9 @@ Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
         nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v5 6/7] IMA: add critical_data to the built-in policy rules
-Date:   Sun,  1 Nov 2020 14:26:25 -0800
-Message-Id: <20201101222626.6111-7-tusharsu@linux.microsoft.com>
+Subject: [PATCH v5 3/7] IMA: add hook to measure critical data
+Date:   Sun,  1 Nov 2020 14:26:22 -0800
+Message-Id: <20201101222626.6111-4-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
 References: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
@@ -53,96 +52,157 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Currently, IMA does not provide a generic function for kernel subsystems
+to measure their critical data. Examples of critical data in this context
+could be kernel in-memory r/o structures, hash of the memory structures,
+or data that represents a linux kernel subsystem state change. The 
+critical data, if accidentally or maliciously altered, can compromise
+the integrity of the system.
 
-The IMA hook to measure kernel critical data, namely
-ima_measure_critical_data(), could be called before a custom IMA policy
-is loaded. For example, SELinux calls ima_measure_critical_data() to
-measure its state and policy when they are initialized. This occurs
-before a custom IMA policy is loaded, and hence IMA hook will not
-measure the data. A built-in policy is therefore needed to measure
-critical data provided by callers before a custom IMA policy is loaded.
+A generic function provided by IMA to measure critical data would enable
+various subsystems with easier and faster on-boarding to use IMA
+infrastructure and would also avoid code duplication.
 
-Add CRITICAL_DATA to built-in IMA rules if the kernel command line
-contains "ima_policy=critical_data". Set the IMA template for this rule
-to "ima-buf" since ima_measure_critical_data() measures a buffer.
+Add a new IMA func CRITICAL_DATA and a corresponding IMA hook
+ima_measure_critical_data() to support measuring critical data for 
+various kernel subsystems. 
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 ---
- security/integrity/ima/ima_policy.c | 32 +++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ Documentation/ABI/testing/ima_policy |  2 +-
+ include/linux/ima.h                  |  8 ++++++
+ security/integrity/ima/ima.h         |  1 +
+ security/integrity/ima/ima_api.c     |  2 +-
+ security/integrity/ima/ima_main.c    | 38 ++++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c  |  2 ++
+ 6 files changed, 51 insertions(+), 2 deletions(-)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index ec99e0bb6c6f..dc8fe969d3fe 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -206,6 +206,10 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
- };
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index cd572912c593..3de6c774c37e 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -29,7 +29,7 @@ Description:
+ 		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
+ 				[FIRMWARE_CHECK]
+ 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+-				[KEXEC_CMDLINE] [KEY_CHECK]
++				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
+ 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+ 			       [[^]MAY_EXEC]
+ 			fsmagic:= hex value
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 8fa7bcfb2da2..60ba073f1575 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -30,6 +30,10 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+ extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
++extern void ima_measure_critical_data(const char *event_data_source,
++				      const char *event_name,
++				      const void *buf, int buf_len,
++				      bool measure_buf_hash);
  
-+static struct ima_rule_entry critical_data_rules[] __ro_after_init = {
-+	{.action = MEASURE, .func = CRITICAL_DATA, .flags = IMA_FUNC},
-+};
-+
- /* An array of architecture specific rules */
- static struct ima_rule_entry *arch_policy_entry __ro_after_init;
- 
-@@ -228,6 +232,7 @@ __setup("ima_tcb", default_measure_policy_setup);
- 
- static bool ima_use_appraise_tcb __initdata;
- static bool ima_use_secure_boot __initdata;
-+static bool ima_use_critical_data __ro_after_init;
- static bool ima_fail_unverifiable_sigs __ro_after_init;
- static int __init policy_setup(char *str)
- {
-@@ -242,6 +247,8 @@ static int __init policy_setup(char *str)
- 			ima_use_appraise_tcb = true;
- 		else if (strcmp(p, "secure_boot") == 0)
- 			ima_use_secure_boot = true;
-+		else if (strcmp(p, "critical_data") == 0)
-+			ima_use_critical_data = true;
- 		else if (strcmp(p, "fail_securely") == 0)
- 			ima_fail_unverifiable_sigs = true;
- 		else
-@@ -813,6 +820,8 @@ static int __init ima_init_arch_policy(void)
- void __init ima_init_policy(void)
- {
- 	int build_appraise_entries, arch_entries;
-+	struct ima_template_desc *template = NULL;
-+	int ret = 0;
- 
- 	/* if !ima_policy, we load NO default rules */
- 	if (ima_policy)
-@@ -875,6 +884,29 @@ void __init ima_init_policy(void)
- 			  ARRAY_SIZE(default_appraise_rules),
- 			  IMA_DEFAULT_POLICY);
- 
-+	if (ima_use_critical_data) {
-+		template = lookup_template_desc("ima-buf");
-+		if (!template) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		ret = template_desc_init_fields(template->fmt,
-+						&(template->fields),
-+						&(template->num_fields));
-+		if (ret)
-+			goto out;
-+
-+		critical_data_rules[0].template = template;
-+		add_rules(critical_data_rules,
-+			  ARRAY_SIZE(critical_data_rules),
-+			  IMA_DEFAULT_POLICY);
-+	}
-+
-+out:
-+	if (ret)
-+		pr_err("%s failed, result: %d\n", __func__, ret);
-+
- 	ima_update_policy_flag();
+ #ifdef CONFIG_IMA_KEXEC
+ extern void ima_add_kexec_buffer(struct kimage *image);
+@@ -116,6 +120,10 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
  }
  
+ static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
++static inline void ima_measure_critical_data(const char *event_data_source,
++					     const char *event_name,
++					     const void *buf, int buf_len,
++					     bool measure_buf_hash) {}
+ #endif /* CONFIG_IMA */
+ 
+ #ifndef CONFIG_IMA_KEXEC
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 0f77e0b697a3..c1acf88e1b5d 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -200,6 +200,7 @@ static inline unsigned int ima_hash_key(u8 *digest)
+ 	hook(POLICY_CHECK, policy)			\
+ 	hook(KEXEC_CMDLINE, kexec_cmdline)		\
+ 	hook(KEY_CHECK, key)				\
++	hook(CRITICAL_DATA, critical_data)		\
+ 	hook(MAX_CHECK, none)
+ 
+ #define __ima_hook_enumify(ENUM, str)	ENUM,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index af218babd198..9917e1730cb6 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -176,7 +176,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+  *	subj,obj, and type: are LSM specific.
+  *	func: FILE_CHECK | BPRM_CHECK | CREDS_CHECK | MMAP_CHECK | MODULE_CHECK
+- *	| KEXEC_CMDLINE | KEY_CHECK
++ *	| KEXEC_CMDLINE | KEY_CHECK | CRITICAL_DATA
+  *	mask: contains the permission mask
+  *	fsmagic: hex value
+  *
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 4485d87c0aa5..6e1b11dcba53 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -921,6 +921,44 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+ 	fdput(f);
+ }
+ 
++/**
++ * ima_measure_critical_data - measure kernel subsystem data
++ * critical to integrity of the kernel
++ * @event_data_source: name of the data source being measured;
++ * typically it should be the name of the kernel subsystem that is sending
++ * the data for measurement
++ * @event_name: name of an event from the kernel subsystem that is sending
++ * the data for measurement
++ * @buf: pointer to buffer containing data to measure
++ * @buf_len: length of buffer(in bytes)
++ * @measure_buf_hash: if set to true - will measure hash of the buf,
++ *                    instead of buf
++ *
++ * A given kernel subsystem (event_data_source) may send
++ * data (buf) to be measured when the data or the subsystem state changes.
++ * The state/data change can be described by event_name.
++ * Examples of critical data (buf) could be kernel in-memory r/o structures,
++ * hash of the memory structures, or data that represents subsystem
++ * state change.
++ * measure_buf_hash can be used to save space, if the data being measured
++ * is too large.
++ * The data (buf) can only be measured, not appraised.
++ */
++void ima_measure_critical_data(const char *event_data_source,
++			       const char *event_name,
++			       const void *buf, int buf_len,
++			       bool measure_buf_hash)
++{
++	if (!event_name || !event_data_source || !buf || !buf_len) {
++		pr_err("Invalid arguments passed to %s().\n", __func__);
++		return;
++	}
++
++	process_buffer_measurement(NULL, buf, buf_len, event_name,
++				   CRITICAL_DATA, 0, event_data_source,
++				   measure_buf_hash);
++}
++
+ static int __init init_ima(void)
+ {
+ 	int error;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 4edc9be62048..f48e82450fe1 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -1251,6 +1251,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			else if (IS_ENABLED(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) &&
+ 				 strcmp(args[0].from, "KEY_CHECK") == 0)
+ 				entry->func = KEY_CHECK;
++			else if (strcmp(args[0].from, "CRITICAL_DATA") == 0)
++				entry->func = CRITICAL_DATA;
+ 			else
+ 				result = -EINVAL;
+ 			if (!result)
 -- 
 2.17.1
 
