@@ -1,195 +1,390 @@
-Return-Path: <SRS0=VMMd=EH=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=CkYI=EI=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFA8C5517A
-	for <linux-integrity@archiver.kernel.org>; Sun,  1 Nov 2020 22:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACE1C388F9
+	for <linux-integrity@archiver.kernel.org>; Mon,  2 Nov 2020 05:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7F3420706
-	for <linux-integrity@archiver.kernel.org>; Sun,  1 Nov 2020 22:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B3D22267
+	for <linux-integrity@archiver.kernel.org>; Mon,  2 Nov 2020 05:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="S2Y+i/Zg"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="DpDVGJyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbgKAW0h (ORCPT
+        id S1727029AbgKBFaw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 1 Nov 2020 17:26:37 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:41958 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727081AbgKAW0h (ORCPT
+        Mon, 2 Nov 2020 00:30:52 -0500
+Received: from de-smtp-delivery-102.mimecast.com ([51.163.158.102]:38875 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725955AbgKBFau (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 1 Nov 2020 17:26:37 -0500
-Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 18EAE20B4905;
-        Sun,  1 Nov 2020 14:26:35 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 18EAE20B4905
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1604269595;
-        bh=WKX3QB46xa8E3s1P7/tqGrnQWnDqQ2+xdJnkN9CdMlc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=S2Y+i/ZgfC4U9KRX1JoQvlLoKBFHeEAd/HgpiLyAeHmE5Tb+SHaQsHAwsNV41dFLA
-         Z8LdKsJG2shWC2gDRfK/e/ymri+ze5xJBV8Qlgpein5m3Gl4rIJD/nlaa0Qy4X8aIQ
-         8p8W7/8eAqyS1JPK/Ql0IdOoho020345LjZqFU+Q=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v5 0/7] IMA: Infrastructure for measurement of critical kernel data
-Date:   Sun,  1 Nov 2020 14:26:19 -0800
-Message-Id: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 2 Nov 2020 00:30:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1604295046;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XedrgsPWHSVjUUGO8ZU81QjTkXW6pQHWB272YdGVruc=;
+        b=DpDVGJyXeDkFG1DumF+WPhH4Cd+xyqxx10lhVMVdl+xwNf6L0JpqcCEhJgKkeudlsPSRJT
+        SrQfU8hIB/kQ8jiMvojRKiFTPSTSurEIbaaj0vpI2oIdbg0a97l7XnTQhCF+w7VAascWxD
+        NkIz6JWivbvdt45TXA/2iXCyvmOsXCM=
+Received: from EUR02-VE1-obe.outbound.protection.outlook.com
+ (mail-ve1eur02lp2058.outbound.protection.outlook.com [104.47.6.58]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ de-mta-13-y9Isd1hJNseHwfZTyl_4QA-1; Mon, 02 Nov 2020 06:30:45 +0100
+X-MC-Unique: y9Isd1hJNseHwfZTyl_4QA-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UmOtjZBVB4yfVADobCb9lx4VDBBlMF+FumbiZG2SMD+e+brZVdyF0soGcDUyJVNFX2G1REPthXCUmhaVvLj58S8Er65LHBpLVxvAiar4sBzBUgoGQO1G+uTjmG94Cxem4QSuXatt+RhgqRUX9wZlA03VEiDVZrAt7DkUrh8nGrZnqwtJXzw+HQFktl2cYdKcc6mlQBmgHDK0rJWyRvCGQ7VN2yQPNdtbU9IDoP7y7ZrnWVb+bSjxP+q9WN4GQeVDsn0YYU3PyWNH5agpXwqlOcMPUIjQE4U9tLaqSpflwJbItOG87Iosm2bFJcgwHkaiVHvTdx0mHIaMbud7OwUfOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XedrgsPWHSVjUUGO8ZU81QjTkXW6pQHWB272YdGVruc=;
+ b=Z4wroomFwBQ/8kPTzzmSXDspYbiZRJXVI8RTcbjGo4zBIdG8q6XEtcL1DB9efDYhtgKLvoQCFQE1nhoAfGx9Xy9s8PmGS32O+yD5R59mGozn7w1rTrGi9ld7NfMSVmBxV9g02MnPL3VOWXYEFXt1ToWiD8G9BRb/AzjOLrUWadvBNHn4oGURNrWddS+qFoEsZyIJd0urrl+Xy8puvLSd7coiPlCW2N5oSg+pt5xIjH4gJJp1clvNGyJ3QT86jowWwJHjAqdqXNcJfauSahue4Vrb2c2qtLlbowsrUD5KFaafTrqSDMgZyt1mBM+U9tVDEg493FhLmtm2zHIGmnD0aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=suse.com;
+Received: from VI1PR04MB4928.eurprd04.prod.outlook.com (2603:10a6:803:57::13)
+ by VI1PR04MB4286.eurprd04.prod.outlook.com (2603:10a6:803:46::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Mon, 2 Nov
+ 2020 05:30:42 +0000
+Received: from VI1PR04MB4928.eurprd04.prod.outlook.com
+ ([fe80::255b:d25c:3a2b:1e8f]) by VI1PR04MB4928.eurprd04.prod.outlook.com
+ ([fe80::255b:d25c:3a2b:1e8f%7]) with mapi id 15.20.3499.030; Mon, 2 Nov 2020
+ 05:30:42 +0000
+Date:   Mon, 2 Nov 2020 13:30:25 +0800
+From:   Chester Lin <clin@suse.com>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, X86 ML <x86@kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>
+Subject: Re: [PATCH v3 1/3] efi: generalize efi_get_secureboot
+Message-ID: <20201102052907.GA31148@linux-8mug>
+References: <20201030060840.1810-1-clin@suse.com>
+ <20201030060840.1810-2-clin@suse.com>
+ <CAMj1kXFaARnhvnSKSFvAXXY1TKfv=_hG3z=B2j=G3p7qLeQaYw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXFaARnhvnSKSFvAXXY1TKfv=_hG3z=B2j=G3p7qLeQaYw@mail.gmail.com>
+X-Originating-IP: [118.166.48.44]
+X-ClientProxiedBy: AM4PR0701CA0042.eurprd07.prod.outlook.com
+ (2603:10a6:200:42::52) To VI1PR04MB4928.eurprd04.prod.outlook.com
+ (2603:10a6:803:57::13)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from linux-8mug (118.166.48.44) by AM4PR0701CA0042.eurprd07.prod.outlook.com (2603:10a6:200:42::52) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3541.10 via Frontend Transport; Mon, 2 Nov 2020 05:30:36 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a516c1f8-f034-49f0-7b5f-08d87ef07081
+X-MS-TrafficTypeDiagnostic: VI1PR04MB4286:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <VI1PR04MB4286318FC6E9D387C9CD87AEAD100@VI1PR04MB4286.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: EaalbUSbgYOjpuIQ5wVdgze7usyJu+OSoBZ5vBGDMhgiX749AL3H4QihPWAt4f/M6qFxfBjCICAc7X49EfpHlRnN5GejTZMTGeomn+3uBK8xQh2L+ultOEhQ8uwVZEtuKnNUslk/4oP3ImKOTQUWF+nNpwdUEI2XgyHmNOz0631ipVNI2noIYK+YAX+9zn6WGVglZYr96u+1zYTlu5sp+DmAAIZx92ayjILl4wNAOnMLscejQvUNr8xnvy3Od9wORJBPueXL96tpyCadAkPdkETp92tKAEaXZhKiTHYcNTYNEzKFdQUf0wK0Qfy/DNYoF9SZoUC2TLVaLvfca+5/+g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB4928.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(396003)(136003)(366004)(346002)(376002)(8936002)(956004)(55016002)(66476007)(16526019)(7416002)(4326008)(83380400001)(66556008)(1076003)(8676002)(6916009)(55236004)(478600001)(45080400002)(5660300002)(6666004)(52116002)(33656002)(26005)(186003)(86362001)(54906003)(9686003)(316002)(2906002)(33716001)(6496006)(66946007)(107886003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: 3NzWc5yUPGemi0SFl1yRPSTQbBfzYducL39IfcLmNmPI5kaznMKdTGALKqz4YVUJz6JlYcc83KglhK9cgM3u+yTz1fXbKFtTZC6URjfBVhBcsY1wSon/8JylBd0LYNJ2dOGTo6KI6bOKkQp4kBS8nP7hOLP/oD8CHzLbuokm3s2VE/undNSljJ8ps4Tu6T0s1nI/AoiDoQO8smziU7ollo1xs6SZqLbhtDTIZ6lbMJ0N5JhoRd+5x92d696p+bEKYNFQruVWk5hjVnrOck9M52d6L1Yeq2e6ASlJOwUws+Bp6wnsQ0NaSotFpMhrJMjwz6J1juETtu0GjeKFgCa4R66gWpTvNhuNKYXyJ05XhNCfR0J9eOiIFX2IZi6k12WsPmlfkOPX9cm9DGM8NPfgifbq6WYbQsE0mSTlUtvFKk0pGJGLHjvszG2+1PG2RIiwKTyamnLjThSCpxa00Y588q9+R5tJucLuGSX7Y3qUyVfdJ8n6DWHPjuHS4VLbZuKLEIaUb8OT0e27nPgYD0ijaaQUTssLQdn+d091YiVTjExAqyOEKt7VWvJml/Q852nIjSjoJ9W6FEQ7T0CHAHfR0qXWY0Wz15YnxQTnNE+HDkBAjy1Ocddjvlo0s0+K108M/y99ifKEijoGJ5/9zj5h3Q==
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a516c1f8-f034-49f0-7b5f-08d87ef07081
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR04MB4928.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2020 05:30:42.6664
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w3VL8/k6SjTkDU2dfTvXnwf67nE2Pvj941YBUtiOidZ15eBCgvnf0/Dpk/tn0LKj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4286
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There are several kernel subsystems that contain critical data which if
-accidentally or maliciously altered, can compromise the integrity of the
-system. Examples of such subsystems would include LSMs like SELinux, or
-AppArmor; or device-mapper targets like dm-crypt, dm-verity etc. 
-"critical data" in this context is kernel subsystem specific information
-that is stored in kernel memory. Examples of critical data could be
-kernel in-memory r/o structures, hash of the memory structures, or
-data that represents a linux kernel subsystem state.
+Hi Ard,
 
-This patch set defines a new IMA hook namely CRITICAL_DATA, and a
-function ima_measure_critical_data() - to measure the critical data. 
-Kernel subsystems can use this functionality, to take advantage of IMA's
-measuring and quoting abilities - thus ultimately enabling remote
-attestation for the subsystem specific information stored in the kernel
-memory.
+Thanks for your time and reviewing.
 
-The functionality is generic enough to measure the data of any kernel
-subsystem at run-time. To ensure that only data from supported sources
-are measured, the kernel subsystem needs to be added to a compile-time
-list of supported sources (an "allowed list of components"). IMA
-validates the source passed to ima_measure_critical_data() against this
-allowed list at run-time.
+On Fri, Oct 30, 2020 at 12:51:10PM +0100, Ard Biesheuvel wrote:
+> Hello Chester,
+> 
+> Thanks again for looking into this.
+> 
+> On Fri, 30 Oct 2020 at 07:09, Chester Lin <clin@suse.com> wrote:
+> >
+> > Generalize the efi_get_secureboot() function so not only efistub but also
+> > other subsystems can use it.
+> >
+> > Signed-off-by: Chester Lin <clin@suse.com>
+> > ---
+> >  drivers/firmware/efi/libstub/Makefile     |  2 +-
+> >  drivers/firmware/efi/libstub/efi-stub.c   |  2 +-
+> >  drivers/firmware/efi/libstub/efistub.h    | 22 ++++---
+> >  drivers/firmware/efi/libstub/secureboot.c | 76 -----------------------
+> >  drivers/firmware/efi/libstub/x86-stub.c   |  2 +-
+> >  include/linux/efi.h                       | 41 +++++++++++-
+> >  6 files changed, 57 insertions(+), 88 deletions(-)
+> >  delete mode 100644 drivers/firmware/efi/libstub/secureboot.c
+> >
+> > diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> > index 8a94388e38b3..88e47b0ca09d 100644
+> > --- a/drivers/firmware/efi/libstub/Makefile
+> > +++ b/drivers/firmware/efi/libstub/Makefile
+> > @@ -49,7 +49,7 @@ OBJECT_FILES_NON_STANDARD     := y
+> >  # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
+> >  KCOV_INSTRUMENT                        := n
+> >
+> > -lib-y                          := efi-stub-helper.o gop.o secureboot.o tpm.o \
+> > +lib-y                          := efi-stub-helper.o gop.o tpm.o \
+> >                                    file.o mem.o random.o randomalloc.o pci.o \
+> >                                    skip_spaces.o lib-cmdline.o lib-ctype.o \
+> >                                    alignedmem.o relocate.o vsprintf.o
+> > diff --git a/drivers/firmware/efi/libstub/efi-stub.c b/drivers/firmware/efi/libstub/efi-stub.c
+> > index 914a343c7785..ad96f1d786a9 100644
+> > --- a/drivers/firmware/efi/libstub/efi-stub.c
+> > +++ b/drivers/firmware/efi/libstub/efi-stub.c
+> > @@ -196,7 +196,7 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+> >         /* Ask the firmware to clear memory on unclean shutdown */
+> >         efi_enable_reset_attack_mitigation();
+> >
+> > -       secure_boot = efi_get_secureboot();
+> > +       secure_boot = efi_get_secureboot(get_efi_var);
+> >
+> >         /*
+> >          * Unauthenticated device tree data is a security hazard, so ignore
+> > diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+> > index 2d7abcd99de9..b1833b51e6d6 100644
+> > --- a/drivers/firmware/efi/libstub/efistub.h
+> > +++ b/drivers/firmware/efi/libstub/efistub.h
+> > @@ -91,14 +91,6 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+> >         fdt_setprop((fdt), (node_offset), (name), &(var), sizeof(var))
+> >  #endif
+> >
+> > -#define get_efi_var(name, vendor, ...)                         \
+> > -       efi_rt_call(get_variable, (efi_char16_t *)(name),       \
+> > -                   (efi_guid_t *)(vendor), __VA_ARGS__)
+> > -
+> > -#define set_efi_var(name, vendor, ...)                         \
+> > -       efi_rt_call(set_variable, (efi_char16_t *)(name),       \
+> > -                   (efi_guid_t *)(vendor), __VA_ARGS__)
+> > -
+> >  #define efi_get_handle_at(array, idx)                                  \
+> >         (efi_is_native() ? (array)[idx]                                 \
+> >                 : (efi_handle_t)(unsigned long)((u32 *)(array))[idx])
+> > @@ -112,6 +104,20 @@ efi_status_t __efiapi efi_pe_entry(efi_handle_t handle,
+> >                 ((handle = efi_get_handle_at((array), i)) || true);     \
+> >              i++)
+> >
+> > +static inline
+> > +efi_status_t get_efi_var(efi_char16_t *name, efi_guid_t *vendor, u32 *attr,
+> > +                        unsigned long *size, void *data)
+> > +{
+> > +       return efi_rt_call(get_variable, name, vendor, attr, size, data);
+> > +}
+> > +
+> > +static inline
+> > +efi_status_t set_efi_var(efi_char16_t *name, efi_guid_t *vendor, u32 attr,
+> > +                        unsigned long size, void *data)
+> > +{
+> > +       return efi_rt_call(set_variable, name, vendor, attr, size, data);
+> > +}
+> > +
+> >  static inline
+> >  void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
+> >  {
+> > diff --git a/drivers/firmware/efi/libstub/secureboot.c b/drivers/firmware/efi/libstub/secureboot.c
+> > deleted file mode 100644
+> > index 5efc524b14be..000000000000
+> > --- a/drivers/firmware/efi/libstub/secureboot.c
+> > +++ /dev/null
+> 
+> Please keep this file (see below)
+> 
+> > @@ -1,76 +0,0 @@
+> > -// SPDX-License-Identifier: GPL-2.0
+> > -/*
+> > - * Secure boot handling.
+> > - *
+> > - * Copyright (C) 2013,2014 Linaro Limited
+> > - *     Roy Franz <roy.franz@linaro.org
+> > - * Copyright (C) 2013 Red Hat, Inc.
+> > - *     Mark Salter <msalter@redhat.com>
+> > - */
+> > -#include <linux/efi.h>
+> > -#include <asm/efi.h>
+> > -
+> > -#include "efistub.h"
+> > -
+> > -/* BIOS variables */
+> > -static const efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
+> > -static const efi_char16_t efi_SecureBoot_name[] = L"SecureBoot";
+> > -static const efi_char16_t efi_SetupMode_name[] = L"SetupMode";
+> > -
+> > -/* SHIM variables */
+> > -static const efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
+> > -static const efi_char16_t shim_MokSBState_name[] = L"MokSBState";
+> > -
+> > -/*
+> > - * Determine whether we're in secure boot mode.
+> > - *
+> > - * Please keep the logic in sync with
+> > - * arch/x86/xen/efi.c:xen_efi_get_secureboot().
+> > - */
+> > -enum efi_secureboot_mode efi_get_secureboot(void)
+> > -{
+> > -       u32 attr;
+> > -       u8 secboot, setupmode, moksbstate;
+> > -       unsigned long size;
+> > -       efi_status_t status;
+> > -
+> > -       size = sizeof(secboot);
+> > -       status = get_efi_var(efi_SecureBoot_name, &efi_variable_guid,
+> > -                            NULL, &size, &secboot);
+> > -       if (status == EFI_NOT_FOUND)
+> > -               return efi_secureboot_mode_disabled;
+> > -       if (status != EFI_SUCCESS)
+> > -               goto out_efi_err;
+> > -
+> > -       size = sizeof(setupmode);
+> > -       status = get_efi_var(efi_SetupMode_name, &efi_variable_guid,
+> > -                            NULL, &size, &setupmode);
+> > -       if (status != EFI_SUCCESS)
+> > -               goto out_efi_err;
+> > -
+> > -       if (secboot == 0 || setupmode == 1)
+> > -               return efi_secureboot_mode_disabled;
+> > -
+> > -       /*
+> > -        * See if a user has put the shim into insecure mode. If so, and if the
+> > -        * variable doesn't have the runtime attribute set, we might as well
+> > -        * honor that.
+> > -        */
+> > -       size = sizeof(moksbstate);
+> > -       status = get_efi_var(shim_MokSBState_name, &shim_guid,
+> > -                            &attr, &size, &moksbstate);
+> > -
+> 
+> MokSBState is a boot time variable, so we cannot access it when
+> running under the OS. Xen also has a code flow similar to this one,
+> but it looks at MokSbStateRt instead (which may be a mistake but let's
+> forget about that for now)
+> 
+> So what we will need to do is factor out only the top part of this
+> function (which, incidentally, is the only part that IMA uses in the
+i> first place)
+> 
 
-System administrators may want to pick and choose which kernel
-subsystem information they would want to enable for measurements,
-quoting, and remote attestation. To enable that, a new IMA policy is
-introduced.
+Thanks for the reminder. I will take this change into next revision.
 
-This patch set also addresses the need for the kernel subsystems to
-measure their data before a custom IMA policy is loaded - by providing
-a builtin IMA policy.
+> > -       /* If it fails, we don't care why. Default to secure */
+> > -       if (status != EFI_SUCCESS)
+> > -               goto secure_boot_enabled;
+> > -       if (!(attr & EFI_VARIABLE_RUNTIME_ACCESS) && moksbstate == 1)
+> > -               return efi_secureboot_mode_disabled;
+> > -
+> > -secure_boot_enabled:
+> > -       efi_info("UEFI Secure Boot is enabled.\n");
+> > -       return efi_secureboot_mode_enabled;
+> > -
+> > -out_efi_err:
+> > -       efi_err("Could not determine UEFI Secure Boot status.\n");
+> > -       return efi_secureboot_mode_unknown;
+> > -}
+> 
+> So let's keep this file, and also, let's put a wrapper function around
+> get_efi_var() here, of which you can take the address and pass to the
+> static inline function.
 
-And lastly, the use of the overall functionality is demonstrated by
-measuring the kernel in-memory data for one such subsystem - SeLinux.
+If I understand correctly, that means it's better to define a new wrapper
+function around the get_efi_var() rather than changing it from a macro to
+an inline function. Please feel free to let me know if I misunderstand it.
 
-This series is based on the following repo/branch:
-
- repo: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
- branch: next
- commit 3650b228f83a ("Linux 5.10-rc1")
-
-
-Change Log v5:
-(1) Incorporated feedback from Stephen on the last SeLinux patch.
- SeLinux Patch: https://patchwork.kernel.org/patch/11801585/
- - Freed memory in the reverse order of allocation in 
-   selinux_measure_state().
- - Used scnprintf() instead of snprintf() to create the string for
-   selinux state.
- - Allocated event name passed to ima_measure_critical_data() before
-   gathering selinux state and policy information for measuring.
-
-(2) Incorporated feedback from Mimi on v4 of this series.
- V4 of this Series: https://patchwork.kernel.org/project/linux-integrity/list/?series=354437
-
- - Removed patch "[v4,2/6] IMA: conditionally allow empty rule data"
- - Reversed the order of following patches.
-      [v4,4/6] IMA: add policy to measure critical data from kernel components
-      [v4,5/6] IMA: add hook to measure critical data from kernel components
-   and renamed them to remove "from kernel components"
- - Added a new patch to this series - 
-       IMA: add critical_data to built-in policy rules
-
- - Added the next version of SeLinux patch (mentioned above) to this
-   series 
-       selinux: measure state and hash of the policy using IMA
-
- - Updated cover-letter description to give broader perspective of the
-   feature, rearranging paragraphs, removing unnecessary info, clarifying
-   terms etc.
- - Got rid of opt_list param from ima_match_rule_data().
- - Updated the documentation to remove sources that don't yet exist.
- - detailed IMA hook description added to ima_measure_critical_data(),
-   as well as elaborating terms event_name, event_data_source. 
- - "data_sources:=" is not a mandatory policy option for 
-   func=CRITICAL_DATA anymore. If not present, all the data sources
-   specified in __ima_supported_kernel_data_sources will be measured.
-
-Change Log v4:
-Incorporated feedback from Mimi on v3.
- - Split patch #1 into two patches to move introduction of bool
-   allow_empty_opt_list into the 2nd patch.
- - Reverted return type of process_buffer_measurement() from int to void
-   which got rid of patch #2 from the v3 of the series.
- - Renamed the policy "critical_kernel_data_sources" to "data_sources".
- - Updated process_buffer_measurement() to avoid code and variable
-   duplication in the if(measure_buf_hash) block.
- - Changed return type of ima_measure_critical_data() from int to void.
- - Updated patch description for patch #3 and #4 as per Mimi's feedback.
-
-Change Log v3:
-Incorporated feedback from Mimi on v2.
- - Renamed the policy "data_sources" to
-   "critical_kernel_data_sources".
- - Added "critical_kernel_data_sources" description in
-   Documentation/ima-policy.
- - Split CRITICAL_DATA + critical_kernel_data_sources into two separate
-   patches.
- - Merged hook ima_measure_critical_data() + CRITICAL_DATA into a single
-   patch.
- - Added functionality to validate data sources before measurement.
-
-Change Log v2:
- - Reverted the unnecessary indentations in existing #define.
- - Updated the description to replace the word 'enlightened' with
-   'supported'.
- - Reverted the unnecessary rename of attribute size to buf_len.
- - Introduced a boolean parameter measure_buf_hash as per community
-   feedback to support measuring hash of the buffer, instead of the
-   buffer itself.
-
-Lakshmi Ramasubramanian (2):
-  IMA: add critical_data to the built-in policy rules
-  selinux: measure state and hash of the policy using IMA
-
-Tushar Sugandhi (5):
-  IMA: generalize keyring specific measurement constructs
-  IMA: update process_buffer_measurement to measure buffer hash
-  IMA: add hook to measure critical data
-  IMA: add policy to measure critical data
-  IMA: validate supported kernel data sources before measurement
-
- Documentation/ABI/testing/ima_policy         |  10 +-
- include/linux/ima.h                          |   8 +
- security/integrity/ima/ima.h                 |  38 ++++-
- security/integrity/ima/ima_api.c             |   8 +-
- security/integrity/ima/ima_appraise.c        |   2 +-
- security/integrity/ima/ima_asymmetric_keys.c |   2 +-
- security/integrity/ima/ima_main.c            |  79 +++++++++-
- security/integrity/ima/ima_policy.c          | 143 ++++++++++++++---
- security/integrity/ima/ima_queue_keys.c      |   3 +-
- security/selinux/Makefile                    |   2 +
- security/selinux/hooks.c                     |   3 +
- security/selinux/include/security.h          |  11 +-
- security/selinux/measure.c                   | 157 +++++++++++++++++++
- security/selinux/selinuxfs.c                 |   9 ++
- security/selinux/ss/services.c               |  71 +++++++--
- 15 files changed, 499 insertions(+), 47 deletions(-)
- create mode 100644 security/selinux/measure.c
-
--- 
-2.17.1
+> 
+> > diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+> > index 3672539cb96e..3f9b492c566b 100644
+> > --- a/drivers/firmware/efi/libstub/x86-stub.c
+> > +++ b/drivers/firmware/efi/libstub/x86-stub.c
+> > @@ -781,7 +781,7 @@ unsigned long efi_main(efi_handle_t handle,
+> >          * otherwise we ask the BIOS.
+> >          */
+> >         if (boot_params->secure_boot == efi_secureboot_mode_unset)
+> > -               boot_params->secure_boot = efi_get_secureboot();
+> > +               boot_params->secure_boot = efi_get_secureboot(get_efi_var);
+> >
+> >         /* Ask the firmware to clear memory on unclean shutdown */
+> >         efi_enable_reset_attack_mitigation();
+> > diff --git a/include/linux/efi.h b/include/linux/efi.h
+> > index d7c0e73af2b9..cc2d3de39031 100644
+> > --- a/include/linux/efi.h
+> > +++ b/include/linux/efi.h
+> > @@ -1089,7 +1089,46 @@ enum efi_secureboot_mode {
+> >         efi_secureboot_mode_disabled,
+> >         efi_secureboot_mode_enabled,
+> >  };
+> > -enum efi_secureboot_mode efi_get_secureboot(void);
+> > +
+> > +static inline enum efi_secureboot_mode efi_get_secureboot(efi_get_variable_t *get_var)
+> > +{
+> > +       efi_guid_t var_guid = EFI_GLOBAL_VARIABLE_GUID;
+> > +       efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
+> > +       efi_status_t status;
+> > +       unsigned long size;
+> > +       u8 secboot, setupmode, moksbstate;
+> > +       u32 attr;
+> > +
+> > +       size = sizeof(secboot);
+> > +       status = get_var(L"SecureBoot", &var_guid, NULL, &size, &secboot);
+> > +
+> > +       if (status == EFI_NOT_FOUND)
+> > +               return efi_secureboot_mode_disabled;
+> > +       if (status != EFI_SUCCESS)
+> > +               return efi_secureboot_mode_unknown;
+> > +
+> > +       size = sizeof(setupmode);
+> > +       status = get_var(L"SetupMode", &var_guid, NULL, &size, &setupmode);
+> > +
+> > +       if (status != EFI_SUCCESS)
+> > +               return efi_secureboot_mode_unknown;
+> > +       if (secboot == 0 || setupmode == 1)
+> > +               return efi_secureboot_mode_disabled;
+> > +
+> 
+> So keep until here and move the rest back into the .c file
+> 
+> > +       /*
+> > +        * See if a user has put the shim into insecure mode. If so, and if the
+> > +        * variable doesn't have the runtime attribute set, we might as well
+> > +        * honor that.
+> > +        */
+> > +       size = sizeof(moksbstate);
+> > +       status = get_var(L"MokSBState", &shim_guid, &attr, &size, &moksbstate);
+> > +       /* If it fails, we don't care why. Default to secure */
+> > +       if (status == EFI_SUCCESS && moksbstate == 1
+> > +           && !(attr & EFI_VARIABLE_RUNTIME_ACCESS))
+> > +               return efi_secureboot_mode_disabled;
+> > +
+> > +       return efi_secureboot_mode_enabled;
+> > +}
+> >
+> >  #ifdef CONFIG_RESET_ATTACK_MITIGATION
+> >  void efi_enable_reset_attack_mitigation(void);
+> > --
+> > 2.28.0
+> >
+> 
 
