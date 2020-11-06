@@ -2,85 +2,68 @@ Return-Path: <SRS0=oZFa=EM=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599B8C2D0A3
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Nov 2020 16:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BA8C2D0A3
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Nov 2020 21:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9BC9217A0
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Nov 2020 16:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4018C20B80
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Nov 2020 21:13:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604679959;
-	bh=VtRmxqvZFt8z4aGq8o2hPztnn9cvXvtOAj4xVPgOahU=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=VxQaVs/ws/LBX89IpsDfi2jBFvL+AoGluSRJeVbINAQVmsTVDKm9DdQJpLfaqGWwD
-	 j1S3rkW1b1v5oXnCWdrPp0xaSiE3An2xFXfHHgxCOsCOWshD4IakeuxNQ4e6AhjrQB
-	 0Vlm1L72ulAh3vJKEuYWnNTpp0kI9fybMFHJa45E=
+	s=default; t=1604697227;
+	bh=g/0tITjlKhXWV7bBiuGKrhqxg8yXFOQ6MjnngtQmOsk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=KN5iwgfzNZWbY/Kt6tenlVLZd2lshEyC93DUZZRQYoG/8MwqESj8O4ZP5T6UPpPJD
+	 gJIZyVMT+F5+TMu1AIUS1MG9v7hUbfMHDjoNkVH88aV+/zREBpr4Q27jKmd6u3xKXO
+	 rNJRQ3bERjiUxl2onL7BQZ/xjwkGVmVHX122PBqk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726250AbgKFQZ6 (ORCPT
+        id S1728111AbgKFVNb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 6 Nov 2020 11:25:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36012 "EHLO mail.kernel.org"
+        Fri, 6 Nov 2020 16:13:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726176AbgKFQZ6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 6 Nov 2020 11:25:58 -0500
-Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8670C2151B;
-        Fri,  6 Nov 2020 16:25:56 +0000 (UTC)
+        id S1728131AbgKFVN0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 6 Nov 2020 16:13:26 -0500
+Subject: Re: [GIT PULL] tpmdd updates for v5.10-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604679958;
-        bh=VtRmxqvZFt8z4aGq8o2hPztnn9cvXvtOAj4xVPgOahU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EboiWL8iO7ZiSYO4H7wbsCThopHFR9rTNwe6gzgvr53TIRDlIHjK4DsJgV+0lwAFm
-         kB7B6UEoelky9JPqI10GgQZxQt/PyFOJ7ufsYyjT+h/fwaw/IZVPFtYZpUPY12m/fQ
-         yTYoKpxcsu0Twj5bOw68Zo6Y9U6Eyh2lP+1TAE6U=
-Date:   Fri, 6 Nov 2020 18:25:52 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        s=default; t=1604697205;
+        bh=g/0tITjlKhXWV7bBiuGKrhqxg8yXFOQ6MjnngtQmOsk=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=jI2HRILGOxTurdH1o1swy/Z7LVdfU/2GOsIay0SNH36S2xwHuY8HmIo66z39DRmKN
+         zJ0CIXNVSyfEBlY1EIT/EaEjKWQoDg2t9etomlsYkHuVrILCcRPsl8QA1D8PJHW5DO
+         h+y3Y5RJ9z+03VgHykKR7U8j6IqjU/ao/UEhwl6E=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20201106162552.GA50264@kernel.org>
+References: <20201106162552.GA50264@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20201106162552.GA50264@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v5.10-rc4
+X-PR-Tracked-Commit-Id: 8ffd778aff45be760292225049e0141255d4ad6e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 28ced768a4262bc81c61c8244e0e57048afc18d1
+Message-Id: <160469720546.14190.13296096196953432263.pr-tracker-bot@kernel.org>
+Date:   Fri, 06 Nov 2020 21:13:25 +0000
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>, jmorris@namei.org,
         dhowells@redhat.com, peterhuewe@gmx.de
-Subject: [GIT PULL] tpmdd updates for v5.10-rc4
-Message-ID: <20201106162552.GA50264@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Here's two critical bug fixes. 'rc4' because it is only two days
-before rc3 is getting released.
+The pull request you sent on Fri, 6 Nov 2020 18:25:52 +0200:
 
-/Jarkko
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v5.10-rc4
 
-The following changes since commit 521b619acdc8f1f5acdac15b84f81fd9515b2aff:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/28ced768a4262bc81c61c8244e0e57048afc18d1
 
-  Merge tag 'linux-kselftest-kunit-fixes-5.10-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest (2020-11-05 11:52:17 -0800)
+Thank you!
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-v5.10-rc4
-
-for you to fetch changes up to 8ffd778aff45be760292225049e0141255d4ad6e:
-
-  tpm: efi: Don't create binary_bios_measurements file for an empty log (2020-11-06 18:21:08 +0200)
-
-----------------------------------------------------------------
-tpmdd updates for Linux v5.10-rc4
-
-----------------------------------------------------------------
-Jerry Snitselaar (1):
-      tpm_tis: Disable interrupts on ThinkPad T490s
-
-Tyler Hicks (1):
-      tpm: efi: Don't create binary_bios_measurements file for an empty log
-
- drivers/char/tpm/eventlog/efi.c |  5 +++++
- drivers/char/tpm/tpm_tis.c      | 29 +++++++++++++++++++++++++++--
- 2 files changed, 32 insertions(+), 2 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
