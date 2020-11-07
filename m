@@ -1,176 +1,81 @@
-Return-Path: <SRS0=oZFa=EM=vger.kernel.org=linux-integrity-owner@kernel.org>
+Return-Path: <SRS0=UdQc=EN=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A0FC4741F
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Nov 2020 23:52:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F8FC388F9
+	for <linux-integrity@archiver.kernel.org>; Sat,  7 Nov 2020 12:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7AC82071A
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Nov 2020 23:52:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ex4EsTrt"
+	by mail.kernel.org (Postfix) with ESMTP id C5BA4206F4
+	for <linux-integrity@archiver.kernel.org>; Sat,  7 Nov 2020 12:10:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728111AbgKFXwQ (ORCPT
+        id S1727264AbgKGMKL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 6 Nov 2020 18:52:16 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:35246 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbgKFXv5 (ORCPT
+        Sat, 7 Nov 2020 07:10:11 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:54613 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727298AbgKGMKI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 6 Nov 2020 18:51:57 -0500
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 65C7C20B4905;
-        Fri,  6 Nov 2020 15:51:56 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 65C7C20B4905
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1604706716;
-        bh=kxGG60RxNjicxicPDbW3b+qxMgL79W4w0YXfA5Y3vXU=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=ex4EsTrt+j5vt4L1eNjZYdFgpeTFKDoZ5jgR2zpjEXTnRPKKHXcfm+Ynn9jNE9hvc
-         NwVziSgFGzqJfvGTP9cytdr4U6rByB3I49bfWK3vXJZSrSfWDqjltnJgYD04Tksm/k
-         Gr8k8DbOaTjLewSUY1EooTrwSI9KK+zMWouAhXG4=
-Subject: Re: [PATCH v5 6/7] IMA: add critical_data to the built-in policy
- rules
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
-        paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
- <20201101222626.6111-7-tusharsu@linux.microsoft.com>
- <7219f4404bc1bed6eb090b94363c283ec3266a17.camel@linux.ibm.com>
- <cdcd63f7-ce1f-4463-f886-c36832d7a706@linux.microsoft.com>
-Message-ID: <d92869b5-7244-e29e-5d30-c0e06cf45be1@linux.microsoft.com>
-Date:   Fri, 6 Nov 2020 15:51:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 7 Nov 2020 07:10:08 -0500
+Received: by mail-il1-f200.google.com with SMTP id u129so2942953ilc.21
+        for <linux-integrity@vger.kernel.org>; Sat, 07 Nov 2020 04:10:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=bEPCOFw5S5rBelNwysXtchmzidY5p8w+fdQ9rPQh+s4=;
+        b=BLBhVjIHJAgC08G38QuYzRyZesH/WjYXTTF1Vlo+2ApeqmdQs5aaxexwOKB/eue8dX
+         rV2QnCALwVgOBK0bfcoDycb2xp9q8AdgFIeB8adFGP7X7yxfH8zKttbyudDD/EPbNU7R
+         XdLKkVVMR1Pml3novlviRdGznQdGabuJh41LcG+8JFi0uKdyPDSTOL9fNL8Vk+Mh6wPF
+         dZ6hStoGRPwYOm5c6+hzWF+mx/sjNuhWrvLd+JrGTD1hcNGUqbytrnhzFwaBwJ+4uGsF
+         m6NDdwOOZZu29Kg/tb00Z16jZtQRUcKB5DYC8k59pS6OBgfkLhWxVrPcJTE/MLS+qP+d
+         RdHg==
+X-Gm-Message-State: AOAM530vQifA5mVMwXNU9lNa0YJ/d987el1pOalkvefpUYvBejDhXRe7
+        TWv5eghR6hEw7OPoLoP5W5wh05T97ndx9xRl83gibGxwNYYs
+X-Google-Smtp-Source: ABdhPJy/fr/95Krh7za4yiITJhgfJeU+W90NQEYDsQN2T1cH8wGjrelyVfzoWNnPmSrQoa+mWN3xe4S+Mr6tLRiC6Ft6svXkCXrw
 MIME-Version: 1.0
-In-Reply-To: <cdcd63f7-ce1f-4463-f886-c36832d7a706@linux.microsoft.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:11a4:: with SMTP id 4mr359864ilj.141.1604751006170;
+ Sat, 07 Nov 2020 04:10:06 -0800 (PST)
+Date:   Sat, 07 Nov 2020 04:10:06 -0800
+In-Reply-To: <000000000000d03eea0571adfe83@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ad052105b383350a@google.com>
+Subject: Re: possible deadlock in mnt_want_write
+From:   syzbot <syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, ast@kernel.org, dvyukov@google.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com, rgoldwyn@suse.de,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, zohar@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 11/6/20 7:37 AM, Lakshmi Ramasubramanian wrote:
+syzbot suspects this issue was fixed by commit:
 
-Hi Mimi,
+commit 146d62e5a5867fbf84490d82455718bfb10fe824
+Author: Amir Goldstein <amir73il@gmail.com>
+Date:   Thu Apr 18 14:42:08 2019 +0000
 
-> 
->> Hi Lakshmi, Tushar,
->>
->> This patch defines a new critical_data builtin policy.  Please update
->> the Subject line.
->>
->> On Sun, 2020-11-01 at 14:26 -0800, Tushar Sugandhi wrote:
->>> From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->>>
->>> The IMA hook to measure kernel critical data, namely
->>> ima_measure_critical_data(), could be called before a custom IMA policy
->>> is loaded. For example, SELinux calls ima_measure_critical_data() to
->>> measure its state and policy when they are initialized. This occurs
->>> before a custom IMA policy is loaded, and hence IMA hook will not
->>> measure the data. A built-in policy is therefore needed to measure
->>> critical data provided by callers before a custom IMA policy is loaded.
->>
->> ^Define a new critical data builtin policy to allow measuring early
->> kernel integrity critical data before a custom IMA policy is loaded.
-> 
-> I will add the above line in the patch description.
-> 
->>
->> Either remove the references to SELinux or move this patch after the
->> subsequent patch which measures SELinux critical data.
-> 
-> I will remove the reference to SELinux.
-> I think it would be better to have this patch before the SELinux 
-> measurement patch.
-> 
->>
->>>
->>> Add CRITICAL_DATA to built-in IMA rules if the kernel command line
->>> contains "ima_policy=critical_data". Set the IMA template for this rule
->>> to "ima-buf" since ima_measure_critical_data() measures a buffer.
->>>
->>> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->>
->>> ---
->>>   security/integrity/ima/ima_policy.c | 32 +++++++++++++++++++++++++++++
->>>   1 file changed, 32 insertions(+)
->>>
->>> diff --git a/security/integrity/ima/ima_policy.c 
->>> b/security/integrity/ima/ima_policy.c
->>> index ec99e0bb6c6f..dc8fe969d3fe 100644
->>> --- a/security/integrity/ima/ima_policy.c
->>> +++ b/security/integrity/ima/ima_policy.c
->>
->>> @@ -875,6 +884,29 @@ void __init ima_init_policy(void)
->>>                 ARRAY_SIZE(default_appraise_rules),
->>>                 IMA_DEFAULT_POLICY);
->>> +    if (ima_use_critical_data) {
->>> +        template = lookup_template_desc("ima-buf");
->>> +        if (!template) {
->>> +            ret = -EINVAL;
->>> +            goto out;
->>> +        }
->>> +
->>> +        ret = template_desc_init_fields(template->fmt,
->>> +                        &(template->fields),
->>> +                        &(template->num_fields));
->>
->> The default IMA template when measuring buffer data is "ima_buf".   Is
->> there a reason for allocating and initializing it here and not
->> deferring it until process_buffer_measurement()?
->>
-> 
-> You are right - good catch.
-> I will remove the above and validate.
-> 
+    ovl: detect overlapping layers
 
-process_buffer_measurement() allocates and initializes "ima-buf" 
-template only when the parameter "func" is NONE. Currently, only 
-ima_check_blacklist() passes NONE for func when calling 
-process_buffer_measurement().
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11e40184500000
+start commit:   6d906f99 Merge tag 'arm64-fixes' of git://git.kernel.org/p..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=856fc6d0fbbeede9
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae82084b07d0297e566b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111767b7200000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1611ab2d200000
 
-If "func" is anything other than NONE, ima_match_policy() picks
-the default IMA template if the IMA policy rule does not specify a template.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-We need to add "ima-buf" in the built-in policy for critical_data so 
-that the default template is not used for buffer measurement.
+#syz fix: ovl: detect overlapping layers
 
-Please let me know if I am missing something.
-
-thanks,
-  -lakshmi
-
->>
->>> +        if (ret)
->>> +            goto out;
->>> +
->>> +        critical_data_rules[0].template = template;
->>> +        add_rules(critical_data_rules,
->>> +              ARRAY_SIZE(critical_data_rules),
->>> +              IMA_DEFAULT_POLICY);
->>> +    }
->>> +
->>> +out:
->>> +    if (ret)
->>> +        pr_err("%s failed, result: %d\n", __func__, ret);
->>> +
->>>       ima_update_policy_flag();
->>>   }
->>
-> 
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
