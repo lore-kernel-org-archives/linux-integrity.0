@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B03E3C4742C
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Nov 2020 04:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D86C388F7
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Nov 2020 04:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8C320657
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Nov 2020 04:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBE020663
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Nov 2020 04:04:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFfkCQiW"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tN5fIVDI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732692AbgKJEBQ (ORCPT
+        id S1731355AbgKJED0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 9 Nov 2020 23:01:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57078 "EHLO mail.kernel.org"
+        Mon, 9 Nov 2020 23:03:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733224AbgKJDzh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Nov 2020 22:55:37 -0500
+        id S1732741AbgKJDye (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 9 Nov 2020 22:54:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2B2821D46;
-        Tue, 10 Nov 2020 03:55:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE630208CA;
+        Tue, 10 Nov 2020 03:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604980536;
-        bh=wEyukaOv6IIkdkpz+Z6uNIT4pecAvMCdfZeRtCH3gIQ=;
+        s=default; t=1604980473;
+        bh=g6hcR8KXa4sk7YlxxQGgthyOR4P3XH3Wa0c7oWeuIUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MFfkCQiWnnxe4zHScVHWyT/1EPNSkW8iFEJSW3TR1nDI3bHfDze6+0RV2IRaYryxZ
-         FY7LiJ5Gdn9fikwEw3noPACtc7+2gKAAdTZqGyZGg0AVyvqWgghF0qJkBiS1PTJxQ9
-         YtH6LIFV+/oK4g2yhkYS/JLy1uYb0MXQI1nzt8/0=
+        b=tN5fIVDIDCYAyJfCScmwF7ApgDdQ21b2xLq6KoaGMkpiZckz35kmDxLdUmIAsb/z/
+         9bX9bp8RlTJNnxJh1EYz8CELXUKsgPybs8bma7hLGzogsGtab4w18LTb1uoJg+2TxF
+         snhFypVsgiZjyCYhajYDOgmhgl4pa/JP+GzTCsf4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
@@ -44,12 +44,12 @@ Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-integrity@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 40/42] tpm_tis: Disable interrupts on ThinkPad T490s
-Date:   Mon,  9 Nov 2020 22:54:38 -0500
-Message-Id: <20201110035440.424258-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.9 52/55] tpm_tis: Disable interrupts on ThinkPad T490s
+Date:   Mon,  9 Nov 2020 22:53:15 -0500
+Message-Id: <20201110035318.423757-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201110035440.424258-1-sashal@kernel.org>
-References: <20201110035440.424258-1-sashal@kernel.org>
+In-Reply-To: <20201110035318.423757-1-sashal@kernel.org>
+References: <20201110035318.423757-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -89,7 +89,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index e7df342a317d6..c722e3b3121a8 100644
+index 0b214963539de..4ed6e660273a4 100644
 --- a/drivers/char/tpm/tpm_tis.c
 +++ b/drivers/char/tpm/tpm_tis.c
 @@ -27,6 +27,7 @@
