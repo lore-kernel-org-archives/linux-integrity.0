@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 161BAC63697
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6861AC63777
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE77D22245
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16DC322240
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IJjmcO5H"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="a71MPBmk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726433AbgKMTXI (ORCPT
+        id S1726291AbgKMTWx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Nov 2020 14:23:08 -0500
+        Fri, 13 Nov 2020 14:22:53 -0500
 Received: from linux.microsoft.com ([13.77.154.182]:48866 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbgKMTWy (ORCPT
+        with ESMTP id S1726101AbgKMTWw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Nov 2020 14:22:54 -0500
+        Fri, 13 Nov 2020 14:22:52 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AFE4F20C28C9;
-        Fri, 13 Nov 2020 11:22:52 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AFE4F20C28C9
+        by linux.microsoft.com (Postfix) with ESMTPSA id A562B20C28BD;
+        Fri, 13 Nov 2020 11:22:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A562B20C28BD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1605295373;
-        bh=o/LsKz5KAP97Pjx2iDDFWvQb2qw6JOFYx+q03DLLVvo=;
+        s=default; t=1605295370;
+        bh=IkvO7dopBS6HRCfHMKHPze4rkcRKLBrZYHy+kX5uHHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJjmcO5Hy7dEb5cJFGX/Fwm0PcIY8wkVMQYUfb9UNo9b0BI92RJ0jQpEnOhswQcrt
-         FN5dBXfMb5jFotBmdk6GboUe6MiZyfIHy+IZiUvW18liITB1hiyvya69l6MSUD4zyA
-         rdyIOesvwQ0VPjvqkyn3Z8i13bEtiDeWKA/Z0p4g=
+        b=a71MPBmkLwJuqoYZBwntqI6aXkbO3QdBCK3d9eF+NhuWzm1lFpbOcczRia7Q5LGew
+         p4z5LWuWsYawG27OmvFzzkH9Q0GFxycVkUiBRseKIgphvVYNMaOCZOKzHKf445sOP0
+         A7ewB4xGEpHEaaQtUEBdxTnqS9yMHwHkLboH3TfY=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         gregkh@linuxfoundation.org, james.morse@arm.com,
@@ -50,9 +50,9 @@ To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
         balajib@linux.microsoft.com
-Subject: [PATCH v9 6/8] powerpc: Move ima_get_kexec_buffer() and ima_free_kexec_buffer() to ima
-Date:   Fri, 13 Nov 2020 11:22:41 -0800
-Message-Id: <20201113192243.1993-7-nramas@linux.microsoft.com>
+Subject: [PATCH v9 2/8] powerpc: Move delete_fdt_mem_rsv() to drivers/of
+Date:   Fri, 13 Nov 2020 11:22:37 -0800
+Message-Id: <20201113192243.1993-3-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201113192243.1993-1-nramas@linux.microsoft.com>
 References: <20201113192243.1993-1-nramas@linux.microsoft.com>
@@ -62,198 +62,181 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-ima_get_kexec_buffer() retrieves the address and size of the buffer
-used for carrying forward the IMA measurement logs on kexec from
-the device tree.
+delete_fdt_mem_rsv() retrieves the memory reserve map entry, for
+the given starting address and size, from the device tree blob, and
+removes the entry from the device tree blob. This function is called
+to free the resources reserved for the buffer used for carrying forward
+the IMA measurement logs on kexec. This function does not have
+architecture specific code, but is currently limited to powerpc.
 
-ima_free_kexec_buffer() removes the chosen node namely
-"linux,ima-kexec-buffer" from the device tree, and frees the buffer
-used for carrying forward the IMA measurement logs on kexec.
-
-These functions do not have architecture specific code, but are
-currently limited to powerpc.
-
-Move ima_get_kexec_buffer() and ima_free_kexec_buffer() to ima_kexec.c
-in IMA so that they are accessible for other architectures as well.
-
-With the above change the functions in arch/powerpc/kexec/ima.c are
-defined only when the kernel config CONFIG_IMA_KEXEC is enabled.
-Update the Makefile to build arch/powerpc/kexec/ima.c only when
-CONFIG_IMA_KEXEC is enabled and remove "#ifdef CONFIG_IMA_KEXEC"
-in arch/powerpc/kexec/ima.c.
+Move delete_fdt_mem_rsv() to "drivers/of/kexec_fdt.c" so that it is
+accessible for other architectures as well.
 
 Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- arch/powerpc/include/asm/ima.h     |  3 --
- arch/powerpc/kexec/Makefile        |  7 +---
- arch/powerpc/kexec/ima.c           | 50 -----------------------------
- security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 59 deletions(-)
+ arch/powerpc/include/asm/kexec.h |  1 -
+ arch/powerpc/kexec/file_load.c   | 32 -------------------
+ drivers/of/Makefile              |  6 ++++
+ drivers/of/kexec_fdt.c           | 55 ++++++++++++++++++++++++++++++++
+ include/linux/kexec.h            | 11 +++++++
+ 5 files changed, 72 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/of/kexec_fdt.c
 
-diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
-index a2fc71bc3b23..d8444d27f0d8 100644
---- a/arch/powerpc/include/asm/ima.h
-+++ b/arch/powerpc/include/asm/ima.h
-@@ -6,9 +6,6 @@
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index 55d6ede30c19..7c223031ecdd 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -126,7 +126,6 @@ int setup_purgatory(struct kimage *image, const void *slave_code,
+ int setup_new_fdt(const struct kimage *image, void *fdt,
+ 		  unsigned long initrd_load_addr, unsigned long initrd_len,
+ 		  const char *cmdline);
+-int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size);
  
- struct kimage;
- 
--int ima_get_kexec_buffer(void **addr, size_t *size);
--int ima_free_kexec_buffer(void);
--
- #ifdef CONFIG_IMA_KEXEC
- int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
- 			      size_t size);
-diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
-index 4aff6846c772..f54a9dbff4c8 100644
---- a/arch/powerpc/kexec/Makefile
-+++ b/arch/powerpc/kexec/Makefile
-@@ -9,12 +9,7 @@ obj-$(CONFIG_PPC32)		+= relocate_32.o
- 
- obj-$(CONFIG_KEXEC_FILE)	+= file_load.o ranges.o file_load_$(BITS).o elf_$(BITS).o
- 
--ifdef CONFIG_HAVE_IMA_KEXEC
--ifdef CONFIG_IMA
--obj-y				+= ima.o
--endif
--endif
--
-+obj-$(CONFIG_IMA_KEXEC)		+= ima.o
- 
- # Disable GCOV, KCOV & sanitizers in odd or sensitive code
- GCOV_PROFILE_core_$(BITS).o := n
-diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
-index baa95d1a8304..6a96ed0a90e8 100644
---- a/arch/powerpc/kexec/ima.c
-+++ b/arch/powerpc/kexec/ima.c
-@@ -13,55 +13,6 @@
- #include <linux/libfdt.h>
- #include <asm/ima.h>
- 
--/**
-- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-- * @addr:	On successful return, set to point to the buffer contents.
-- * @size:	On successful return, set to the buffer size.
-- *
-- * Return: 0 on success, negative errno on error.
-- */
--int ima_get_kexec_buffer(void **addr, size_t *size)
--{
--	int ret;
--	unsigned long tmp_addr;
--	size_t tmp_size;
--
--	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
--	if (ret)
--		return ret;
--
--	*addr = __va(tmp_addr);
--	*size = tmp_size;
--
--	return 0;
--}
--
--/**
-- * ima_free_kexec_buffer - free memory used by the IMA buffer
-- */
--int ima_free_kexec_buffer(void)
--{
--	int ret;
--	unsigned long addr;
--	size_t size;
--	struct property *prop;
--
--	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
--	if (!prop)
--		return -ENOENT;
--
--	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
--	if (ret)
--		return ret;
--
--	ret = of_remove_property(of_chosen, prop);
--	if (ret)
--		return ret;
--
--	return memblock_free(addr, size);
--}
--
--#ifdef CONFIG_IMA_KEXEC
- static int get_addr_size_cells(int *addr_cells, int *size_cells)
- {
- 	struct device_node *root;
-@@ -170,4 +121,3 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
- 
+ #ifdef CONFIG_PPC64
+ struct kexec_buf;
+diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
+index 9a232bc36c8f..9efc98b1e2ae 100644
+--- a/arch/powerpc/kexec/file_load.c
++++ b/arch/powerpc/kexec/file_load.c
+@@ -109,38 +109,6 @@ int setup_purgatory(struct kimage *image, const void *slave_code,
  	return 0;
  }
--#endif /* CONFIG_IMA_KEXEC */
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 121de3e04af2..3f0fa2673dd3 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -9,9 +9,60 @@
  
- #include <linux/seq_file.h>
- #include <linux/vmalloc.h>
-+#include <linux/memblock.h>
-+#include <linux/of.h>
- #include <linux/kexec.h>
-+#include <linux/ima.h>
- #include "ima.h"
+-/**
+- * delete_fdt_mem_rsv - delete memory reservation with given address and size
+- *
+- * Return: 0 on success, or negative errno on error.
+- */
+-int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size)
+-{
+-	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
+-
+-	for (i = 0; i < num_rsvs; i++) {
+-		uint64_t rsv_start, rsv_size;
+-
+-		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
+-		if (ret) {
+-			pr_err("Malformed device tree.\n");
+-			return -EINVAL;
+-		}
+-
+-		if (rsv_start == start && rsv_size == size) {
+-			ret = fdt_del_mem_rsv(fdt, i);
+-			if (ret) {
+-				pr_err("Error deleting device tree reservation.\n");
+-				return -EINVAL;
+-			}
+-
+-			return 0;
+-		}
+-	}
+-
+-	return -ENOENT;
+-}
+-
+ /*
+  * setup_new_fdt - modify /chosen and memory reservation for the next kernel
+  * @image:		kexec image being loaded.
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index 6e1e5212f058..5f42aa3bbac6 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -14,4 +14,10 @@ obj-$(CONFIG_OF_RESOLVE)  += resolver.o
+ obj-$(CONFIG_OF_OVERLAY) += overlay.o
+ obj-$(CONFIG_OF_NUMA) += of_numa.o
  
-+/**
-+ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-+ * @addr:	On successful return, set to point to the buffer contents.
-+ * @size:	On successful return, set to the buffer size.
++ifdef CONFIG_OF_FLATTREE
++ifdef CONFIG_KEXEC_FILE
++obj-y += kexec_fdt.o
++endif
++endif
++
+ obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+diff --git a/drivers/of/kexec_fdt.c b/drivers/of/kexec_fdt.c
+new file mode 100644
+index 000000000000..995d0ad22d0f
+--- /dev/null
++++ b/drivers/of/kexec_fdt.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2020 Microsoft Corporation
 + *
-+ * Return: 0 on success, negative errno on error.
++ * Author: Lakshmi Ramasubramanian (nramas@linux.microsoft.com)
++ *
++ * File: kexec_fdt.c
++ *	Defines functions to handle memory reservation for buffers
++ *	used to carry data across kexec system call.
 + */
-+static int ima_get_kexec_buffer(void **addr, size_t *size)
++
++#define pr_fmt(fmt)	"OF: kexec-fdt: " fmt
++
++#include <linux/slab.h>
++#include <linux/kexec.h>
++#include <linux/of_fdt.h>
++#include <linux/libfdt.h>
++
++/**
++ * delete_fdt_mem_rsv - delete memory reservation with given address and size
++ *
++ * @fdt: Flattened Device Tree to update
++ * @start: Starting address of the reservation to delete
++ * @size: Size of the reservation to delete
++ *
++ * Return: 0 on success, or negative errno on error.
++ */
++int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size)
 +{
-+	int ret;
-+	unsigned long tmp_addr;
-+	size_t tmp_size;
++	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
 +
-+	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
-+	if (ret)
-+		return ret;
++	for (i = 0; i < num_rsvs; i++) {
++		uint64_t rsv_start, rsv_size;
 +
-+	*addr = __va(tmp_addr);
-+	*size = tmp_size;
++		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
++		if (ret) {
++			pr_err("Malformed device tree.\n");
++			return -EINVAL;
++		}
 +
++		if (rsv_start == start && rsv_size == size) {
++			ret = fdt_del_mem_rsv(fdt, i);
++			if (ret) {
++				pr_err("Error deleting device tree reservation.\n");
++				return -EINVAL;
++			}
++
++			pr_debug("Freed reserved memory at %lu of size %lu\n",
++				 start, size);
++			return 0;
++		}
++	}
++
++	return -ENOENT;
++}
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 9e93bef52968..4ce09ccf2628 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -407,6 +407,17 @@ static inline int kexec_crash_loaded(void) { return 0; }
+ #define kexec_in_progress false
+ #endif /* CONFIG_KEXEC_CORE */
+ 
++#if defined(CONFIG_OF_FLATTREE) && defined(CONFIG_KEXEC_FILE)
++extern int delete_fdt_mem_rsv(void *fdt, unsigned long start,
++			      unsigned long size);
++#else
++static inline int delete_fdt_mem_rsv(void *fdt, unsigned long start,
++				     unsigned long size)
++{
 +	return 0;
 +}
++#endif /* CONFIG_OF_FLATTREE && CONFIG_KEXEC_FILE */
 +
-+/**
-+ * ima_free_kexec_buffer - free memory used by the IMA buffer
-+ */
-+static int ima_free_kexec_buffer(void)
-+{
-+	int ret;
-+	unsigned long addr;
-+	size_t size;
-+	struct property *prop;
-+
-+	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
-+	if (!prop)
-+		return -ENOENT;
-+
-+	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_remove_property(of_chosen, prop);
-+	if (ret)
-+		return ret;
-+
-+	return memblock_free(addr, size);
-+}
-+
- #ifdef CONFIG_IMA_KEXEC
- static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 				     unsigned long segment_size)
+ #endif /* !defined(__ASSEBMLY__) */
+ 
+ #endif /* LINUX_KEXEC_H */
 -- 
 2.29.2
 
