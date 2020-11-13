@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DA3C55ABD
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25110C63697
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91DF122240
+	by mail.kernel.org (Postfix) with ESMTP id CCE6122242
 	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="X2DAhVJp"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gs4Qky8C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgKMTXR (ORCPT
+        id S1726286AbgKMTWw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Nov 2020 14:23:17 -0500
+        Fri, 13 Nov 2020 14:22:52 -0500
 Received: from linux.microsoft.com ([13.77.154.182]:48918 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgKMTWx (ORCPT
+        with ESMTP id S1726228AbgKMTWw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Nov 2020 14:22:53 -0500
+        Fri, 13 Nov 2020 14:22:52 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E54DF20C28C6;
-        Fri, 13 Nov 2020 11:22:51 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E54DF20C28C6
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6A43B20C28C0;
+        Fri, 13 Nov 2020 11:22:50 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6A43B20C28C0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1605295372;
-        bh=As5x7eyArPRnO995ZhTECQJT5CoCqQXZIxILVcOXTkY=;
+        s=default; t=1605295371;
+        bh=Qh7VUYPFclMMyWjaiJKYdfprvYeY0xzrb/fwOTNg+5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X2DAhVJph47pTcV4K/YZRke9lGnHnz3J3NHNlSzXP77mlxIZcleA9zX5O1D6oLs7j
-         qQ8x9PJzyZHK2asNcWm3e+3Vpb1kslMw39Tz2TlXVLyMSPMC//UWkXX5lTav5++wS8
-         vaaCkLbIshfy6l0QP/pJzGz+5qHI/te85HCTYizE=
+        b=gs4Qky8C+MDiORLtu9E9p35ld+uossKJVpx6IWJQ4otQXaY4iFDWm/yVEISJblcSG
+         0NqPof29nsJDYsXSZQeUHXbtki+kNvzXj39XsdFlesibHBKGkTtEzQqYmVhWtGNv69
+         0jgsuwKrEy3QMa/b4D4V7+LV4bFgVsuEngeOmhhc=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         gregkh@linuxfoundation.org, james.morse@arm.com,
@@ -50,9 +50,9 @@ To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
         balajib@linux.microsoft.com
-Subject: [PATCH v9 5/8] powerpc: Move remove_ima_buffer() to drivers/of
-Date:   Fri, 13 Nov 2020 11:22:40 -0800
-Message-Id: <20201113192243.1993-6-nramas@linux.microsoft.com>
+Subject: [PATCH v9 3/8] ima: Define get_ima_kexec_buffer() in drivers/of
+Date:   Fri, 13 Nov 2020 11:22:38 -0800
+Message-Id: <20201113192243.1993-4-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201113192243.1993-1-nramas@linux.microsoft.com>
 References: <20201113192243.1993-1-nramas@linux.microsoft.com>
@@ -62,139 +62,136 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-remove_ima_buffer() removes the chosen node, namely
-"linux,ima-kexec-buffer", from the device tree and frees the memory
-reserved for carrying forward the IMA measurement logs on kexec.
-This function does not have architecture specific code, but is currently
-limited to powerpc.
+The function do_get_kexec_buffer(), defined in arch/powerpc/kexec/ima.c,
+retrieves the address and size of the given property from the device
+tree blob. This function does not have architecture specific code, but is
+currently limited to powerpc. This function correctly handles a device
+tree property that is a child node of the root node, but not anything
+other than the immediate root child nodes.
 
-Move remove_ima_buffer() to "drivers/of/ima_kexec.c" so that it is
-accessible for other architectures as well.
+Define an architecture independent function, namely
+get_ima_kexec_buffer(), in "drivers/of/ima_kexec.c". This function
+retrieves the chosen node, namely "linux,ima-kexec-buffer", from
+the device tree, and returns the address and size of the buffer used
+for carrying forward the IMA measurement log across kexec system call.
 
 Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- arch/powerpc/include/asm/ima.h |  8 ++------
- arch/powerpc/kexec/ima.c       | 26 --------------------------
- drivers/of/ima_kexec.c         | 26 ++++++++++++++++++++++++++
- include/linux/kexec.h          |  2 ++
- 4 files changed, 30 insertions(+), 32 deletions(-)
+ drivers/of/Makefile    |  3 ++
+ drivers/of/ima_kexec.c | 65 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/kexec.h  | 11 +++++++
+ 3 files changed, 79 insertions(+)
+ create mode 100644 drivers/of/ima_kexec.c
 
-diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
-index ead488cf3981..a2fc71bc3b23 100644
---- a/arch/powerpc/include/asm/ima.h
-+++ b/arch/powerpc/include/asm/ima.h
-@@ -2,17 +2,13 @@
- #ifndef _ASM_POWERPC_IMA_H
- #define _ASM_POWERPC_IMA_H
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index 5f42aa3bbac6..5b4af994fed0 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -18,6 +18,9 @@ ifdef CONFIG_OF_FLATTREE
+ ifdef CONFIG_KEXEC_FILE
+ obj-y += kexec_fdt.o
+ endif
++ifdef CONFIG_HAVE_IMA_KEXEC
++obj-y += ima_kexec.o
++endif
+ endif
  
+ obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+diff --git a/drivers/of/ima_kexec.c b/drivers/of/ima_kexec.c
+new file mode 100644
+index 000000000000..9c14777404f2
+--- /dev/null
++++ b/drivers/of/ima_kexec.c
+@@ -0,0 +1,65 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2020 Microsoft Corporation
++ *
++ * Author: Lakshmi Ramasubramanian (nramas@linux.microsoft.com)
++ *
++ * File: ima_kexec.c
++ *	Defines functions to handle IMA measurement list across
++ *	kexec system call.
++ */
++
++#define pr_fmt(fmt)	"OF: ima-kexec: " fmt
++
++#include <linux/kernel.h>
++#include <linux/memblock.h>
++#include <linux/of.h>
++#include <linux/of_fdt.h>
++#include <linux/sizes.h>
++#include <linux/string.h>
++#include <linux/errno.h>
++#include <linux/libfdt.h>
 +#include <linux/kexec.h>
 +
- struct kimage;
- 
- int ima_get_kexec_buffer(void **addr, size_t *size);
- int ima_free_kexec_buffer(void);
- 
--#ifdef CONFIG_IMA
--void remove_ima_buffer(void *fdt, int chosen_node);
--#else
--static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
--#endif
--
- #ifdef CONFIG_IMA_KEXEC
- int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
- 			      size_t size);
-diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
-index df491fab5d4b..baa95d1a8304 100644
---- a/arch/powerpc/kexec/ima.c
-+++ b/arch/powerpc/kexec/ima.c
-@@ -61,32 +61,6 @@ int ima_free_kexec_buffer(void)
- 	return memblock_free(addr, size);
- }
- 
--/**
-- * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
-- *
-- * @fdt: Flattened Device Tree to update
-- * @chosen_node: Offset to the chosen node in the device tree
-- *
-- * The IMA measurement buffer is of no use to a subsequent kernel, so we always
-- * remove it from the device tree.
-- */
--void remove_ima_buffer(void *fdt, int chosen_node)
--{
--	int ret;
--	unsigned long addr;
--	size_t size;
--
--	ret = get_ima_kexec_buffer(fdt, chosen_node, &addr, &size);
--	if (ret)
--		return;
--
--	fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
--
--	ret = delete_fdt_mem_rsv(fdt, addr, size);
--	if (!ret)
--		pr_debug("Removed old IMA buffer reservation.\n");
--}
--
- #ifdef CONFIG_IMA_KEXEC
- static int get_addr_size_cells(int *addr_cells, int *size_cells)
- {
-diff --git a/drivers/of/ima_kexec.c b/drivers/of/ima_kexec.c
-index 9c14777404f2..a063a8b4dcb4 100644
---- a/drivers/of/ima_kexec.c
-+++ b/drivers/of/ima_kexec.c
-@@ -63,3 +63,29 @@ int get_ima_kexec_buffer(void *fdt, int chosen_node,
- 
- 	return 0;
- }
-+
 +/**
-+ * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
++ * get_ima_kexec_buffer - Get address and size of IMA kexec buffer
 + *
-+ * @fdt: Flattened Device Tree to update
-+ * @chosen_node: Offset to the chosen node in the device tree
-+ *
-+ * The IMA measurement buffer is of no use to a subsequent kernel, so we always
-+ * remove it from the device tree.
++ * @fdt: Flattened Device Tree
++ * @chosen_node: Offset of chosen node in the FDT
++ * @addr: Return address of the node
++ * @size: Return size of the node
 + */
-+void remove_ima_buffer(void *fdt, int chosen_node)
++int get_ima_kexec_buffer(void *fdt, int chosen_node,
++			 unsigned long *addr, size_t *size)
 +{
-+	int ret;
-+	unsigned long addr;
-+	size_t size;
++	const void *prop;
++	int addr_cells, size_cells, prop_len;
++	struct device_node *root;
 +
-+	ret = get_ima_kexec_buffer(fdt, chosen_node, &addr, &size);
-+	if (ret)
-+		return;
++	root = of_find_node_by_path("/");
++	if (!root)
++		return -EINVAL;
 +
-+	fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
++	addr_cells = of_n_addr_cells(root);
++	size_cells = of_n_size_cells(root);
 +
-+	ret = delete_fdt_mem_rsv(fdt, addr, size);
-+	if (!ret)
-+		pr_debug("Removed old IMA buffer reservation.\n");
++	of_node_put(root);
++
++	if (fdt)
++		prop = fdt_getprop(fdt, chosen_node,
++				   "linux,ima-kexec-buffer", &prop_len);
++	else
++		prop = of_get_property(of_chosen,
++				       "linux,ima-kexec-buffer", &prop_len);
++
++	if (!prop)
++		return -ENOENT;
++
++	if (prop_len < 4 * (addr_cells + size_cells))
++		return -EINVAL;
++
++	*addr = of_read_number(prop, addr_cells);
++	*size = of_read_number(prop + 4 * addr_cells, size_cells);
++
++	return 0;
 +}
 diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index a4f248caa483..152e5a56bb35 100644
+index 4ce09ccf2628..a4f248caa483 100644
 --- a/include/linux/kexec.h
 +++ b/include/linux/kexec.h
-@@ -410,12 +410,14 @@ static inline int kexec_crash_loaded(void) { return 0; }
- #if defined(CONFIG_OF_FLATTREE) && defined(CONFIG_HAVE_IMA_KEXEC)
- extern int get_ima_kexec_buffer(void *fdt, int chosen_node,
- 				unsigned long *addr, size_t *size);
-+extern void remove_ima_buffer(void *fdt, int chosen_node);
- #else
- static inline int get_ima_kexec_buffer(void *fdt, int chosen_node,
- 				       unsigned long *addr, size_t *size)
- {
- 	return -EOPNOTSUPP;
- }
-+static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
- #endif /* CONFIG_OF_FLATTREE && CONFIG_HAVE_IMA_KEXEC */
+@@ -407,6 +407,17 @@ static inline int kexec_crash_loaded(void) { return 0; }
+ #define kexec_in_progress false
+ #endif /* CONFIG_KEXEC_CORE */
  
++#if defined(CONFIG_OF_FLATTREE) && defined(CONFIG_HAVE_IMA_KEXEC)
++extern int get_ima_kexec_buffer(void *fdt, int chosen_node,
++				unsigned long *addr, size_t *size);
++#else
++static inline int get_ima_kexec_buffer(void *fdt, int chosen_node,
++				       unsigned long *addr, size_t *size)
++{
++	return -EOPNOTSUPP;
++}
++#endif /* CONFIG_OF_FLATTREE && CONFIG_HAVE_IMA_KEXEC */
++
  #if defined(CONFIG_OF_FLATTREE) && defined(CONFIG_KEXEC_FILE)
+ extern int delete_fdt_mem_rsv(void *fdt, unsigned long start,
+ 			      unsigned long size);
 -- 
 2.29.2
 
