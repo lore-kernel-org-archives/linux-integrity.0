@@ -2,206 +2,243 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864E2C63777
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE578C5519F
+	for <linux-integrity@archiver.kernel.org>; Sat, 14 Nov 2020 04:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E45A2223F
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Nov 2020 19:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53D0322275
+	for <linux-integrity@archiver.kernel.org>; Sat, 14 Nov 2020 04:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="DLpl/OyA"
+	dkim=pass (1024-bit key) header.d=rubrik.com header.i=@rubrik.com header.b="B8qSDtgY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbgKMTWv (ORCPT
+        id S1726228AbgKNEje (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Nov 2020 14:22:51 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:48774 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbgKMTWu (ORCPT
+        Fri, 13 Nov 2020 23:39:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50676 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbgKNEje (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Nov 2020 14:22:50 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 29BFC20C28A4;
-        Fri, 13 Nov 2020 11:22:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 29BFC20C28A4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1605295368;
-        bh=m0MyMkys5ovStzp4k3nvzOlTXOU2Kk5+gezRRqQPzFM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DLpl/OyAC4YbjeYc1eZ4nxuoXFaHKWJ0jtDZDow1s2kZ0+zlgr1TbXiKhy+YJLoFL
-         e08p3Xaqh16c+ALCLZBC79rN8HgFVYwuA7wkjQ0DqcJpgztZg9LbZsBv0fie0eebjF
-         m16lG6aHf2QWFjUPvaGW0IPfJGrSaNDecGpbuUtM=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
-        gregkh@linuxfoundation.org, james.morse@arm.com,
-        catalin.marinas@arm.com, sashal@kernel.org, will@kernel.org,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        robh+dt@kernel.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
-        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
-        christophe.leroy@c-s.fr
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
-        balajib@linux.microsoft.com
-Subject: [PATCH v9 0/8] Carry forward IMA measurement log on kexec on ARM64
-Date:   Fri, 13 Nov 2020 11:22:35 -0800
-Message-Id: <20201113192243.1993-1-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.29.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 13 Nov 2020 23:39:34 -0500
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87A62C0613D1
+        for <linux-integrity@vger.kernel.org>; Fri, 13 Nov 2020 20:39:32 -0800 (PST)
+Received: by mail-pf1-x444.google.com with SMTP id w6so9333203pfu.1
+        for <linux-integrity@vger.kernel.org>; Fri, 13 Nov 2020 20:39:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rubrik.com; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=h2SmTo2VVuPol42bbBljNT/XftAlZHcVhwYRAkkRSK8=;
+        b=B8qSDtgYlompAYQbM0RzN4ucspR3V94OQH8jDaTInnwjcJ2rQzCn5ReFHM7W0EaDRr
+         EOR8ILcfh8rSJAtqPqmt2FNNEPGQ1UqRYKbKI3hv+9omqC+8ou25dLYqhAKgZf4hsLR4
+         Bb9SPCHbkDNMCJBuZylLbk3oreoqcWmewEKvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=h2SmTo2VVuPol42bbBljNT/XftAlZHcVhwYRAkkRSK8=;
+        b=VLYmCQBX5pdU4Us3eW2lJDxqgdbExv+bG4PuFDwWIfawtEgHSN2yCrKCRup4FNcxv6
+         Gc+XrBvQ356lVgpi6g42SSd+gHXO5g3q+mMM98/OGJYggHrCP76sc2U9LnrA5HLi2ghv
+         VasowJ5AAe8vt6H24WwPt5n1OidUoPFfvouG31DgPL6pRVyW0PKR/Z53UPdnOfdI+p4j
+         4ixqGaEyn2x+Fi47TAY1k907R5WXiFE7dSV3Ya7LZkeqObke1iCJIqU1OyaQ3FmTr9Ke
+         NGNwH9DkwvgneH8sDpkTQW5/yleTa1yCxUT3qto/611QUs+thechUl5oyiCTU76ETeeV
+         expw==
+X-Gm-Message-State: AOAM533qhLO+m2Bu+xfp6A01ACwGecKB2cKDOGuowZVHXJ8ELVn9dCdb
+        jVPaiJsNQ/9ms0ABV28ziz+jwA==
+X-Google-Smtp-Source: ABdhPJyxjTV+jkVk86Fe8aMp4QbC9zycY8vsKuvFLejvT7wsa3+0ABOvg1RP+gdC0RWSwsa7/L4SNA==
+X-Received: by 2002:a63:2cd4:: with SMTP id s203mr4507749pgs.54.1605328771651;
+        Fri, 13 Nov 2020 20:39:31 -0800 (PST)
+Received: from ?IPv6:2601:647:4200:3be0:1843:53b1:ef78:c159? ([2601:647:4200:3be0:1843:53b1:ef78:c159])
+        by smtp.gmail.com with ESMTPSA id h9sm12864525pjs.26.2020.11.13.20.39.29
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Nov 2020 20:39:31 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [PATCH] Fix Atmel TPM crash caused by too frequent queries
+From:   Hao Wu <hao.wu@rubrik.com>
+In-Reply-To: <53B75B06-FD89-4B00-BC3F-46C5B28DC201@rubrik.com>
+Date:   Fri, 13 Nov 2020 20:39:28 -0800
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, peterhuewe@gmx.de,
+        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org,
+        Hamza Attak <hamza@hpe.com>, why2jjj.linux@gmail.com,
+        zohar@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Ken Goldman <kgold@linux.ibm.com>,
+        Seungyeop Han <seungyeop.han@rubrik.com>,
+        Shrihari Kalkar <shrihari.kalkar@rubrik.com>,
+        Anish Jhaveri <anish.jhaveri@rubrik.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9E249567-4901-4FA4-BA89-EF6DE51F7E7A@rubrik.com>
+References: <20200930153715.GC52739@linux.intel.com>
+ <95aafaa1e3037cb7b99ae0e76c02a419d366a407.camel@HansenPartnership.com>
+ <20200930210956.GC65339@linux.intel.com>
+ <6e7b54c268d25a86f8f969bcc01729eaadef6530.camel@HansenPartnership.com>
+ <20201001015051.GA5971@linux.intel.com>
+ <1aed1b0734435959d5e53b8a4b3c18558243e6b8.camel@HansenPartnership.com>
+ <19de5527-2d56-6a07-3ce7-ba216b208090@linux.vnet.ibm.com>
+ <38e165055bae62d4e97f702c05e3a76ccdeeac0f.camel@HansenPartnership.com>
+ <20201001230426.GA26517@linux.intel.com>
+ <FCA90A49-CCE3-4DDF-A876-230C42744D2A@rubrik.com>
+ <20201018050951.GL68722@linux.intel.com>
+ <53B75B06-FD89-4B00-BC3F-46C5B28DC201@rubrik.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On kexec file load Integrity Measurement Architecture (IMA) subsystem
-may verify the IMA signature of the kernel and initramfs, and measure
-it. The command line parameters passed to the kernel in the kexec call
-may also be measured by IMA. A remote attestation service can verify
-a TPM quote based on the TPM event log, the IMA measurement list, and
-the TPM PCR data. This can be achieved only if the IMA measurement log
-is carried over from the current kernel to the next kernel across
-the kexec call.
+> On Oct 17, 2020, at 10:20 PM, Hao Wu <hao.wu@rubrik.com> wrote:
+>=20
+>> On Oct 17, 2020, at 10:09 PM, Jarkko Sakkinen =
+<jarkko.sakkinen@linux.intel.com> wrote:
+>>=20
+>> On Fri, Oct 16, 2020 at 11:11:37PM -0700, Hao Wu wrote:
+>>>> On Oct 1, 2020, at 4:04 PM, Jarkko Sakkinen =
+<jarkko.sakkinen@linux.intel.com> wrote:
+>>>>=20
+>>>> On Thu, Oct 01, 2020 at 11:32:59AM -0700, James Bottomley wrote:
+>>>>> On Thu, 2020-10-01 at 14:15 -0400, Nayna wrote:
+>>>>>> On 10/1/20 12:53 AM, James Bottomley wrote:
+>>>>>>> On Thu, 2020-10-01 at 04:50 +0300, Jarkko Sakkinen wrote:
+>>>>>>>> On Wed, Sep 30, 2020 at 03:31:20PM -0700, James Bottomley =
+wrote:
+>>>>>>>>> On Thu, 2020-10-01 at 00:09 +0300, Jarkko Sakkinen wrote:
+>>>>> [...]
+>>>>>>>>>> I also wonder if we could adjust the frequency dynamically.
+>>>>>>>>>> I.e. start with optimistic value and lower it until finding
+>>>>>>>>>> the sweet spot.
+>>>>>>>>>=20
+>>>>>>>>> The problem is the way this crashes: the TPM seems to be
+>>>>>>>>> unrecoverable. If it were recoverable without a hard reset of
+>>>>>>>>> the entire machine, we could certainly play around with it.  I
+>>>>>>>>> can try alternative mechanisms to see if anything's viable, =
+but
+>>>>>>>>> to all intents and purposes, it looks like my TPM simply stops
+>>>>>>>>> responding to the TIS interface.
+>>>>>>>>=20
+>>>>>>>> A quickly scraped idea probably with some holes in it but I was
+>>>>>>>> thinking something like
+>>>>>>>>=20
+>>>>>>>> 1. Initially set slow value for latency, this could be the
+>>>>>>>> original 15 ms.
+>>>>>>>> 2. Use this to read TPM_PT_VENDOR_STRING_*.
+>>>>>>>> 3. Lookup based vendor string from a fixup table a latency that
+>>>>>>>> works
+>>>>>>>>  (the fallback latency could be the existing latency).
+>>>>>>>=20
+>>>>>>> Well, yes, that was sort of what I was thinking of doing for the
+>>>>>>> Atmel ... except I was thinking of using the TIS VID (16 byte
+>>>>>>> assigned vendor ID) which means we can get the information to =
+set
+>>>>>>> the timeout before we have to do any TPM operations.
+>>>>>>=20
+>>>>>> I wonder if the timeout issue exists for all TPM commands for the
+>>>>>> same manufacturer.  For example, does the ATMEL TPM also crash =
+when=20
+>>>>>> extending  PCRs ?
+>>>>>>=20
+>>>>>> In addition to defining a per TPM vendor based lookup table for
+>>>>>> timeout, would it be a good idea to also define a Kconfig/boot =
+param
+>>>>>> option to allow timeout setting.  This will enable to set the =
+timeout
+>>>>>> based on the specific use.
+>>>>>=20
+>>>>> I don't think we need go that far (yet).  The timing change has =
+been in
+>>>>> upstream since:
+>>>>>=20
+>>>>> commit 424eaf910c329ab06ad03a527ef45dcf6a328f00
+>>>>> Author: Nayna Jain <nayna@linux.vnet.ibm.com>
+>>>>> Date:   Wed May 16 01:51:25 2018 -0400
+>>>>>=20
+>>>>>  tpm: reduce polling time to usecs for even finer granularity
+>>>>>=20
+>>>>> Which was in the released kernel 4.18: over two years ago.  In all =
+that
+>>>>> time we've discovered two problems: mine which looks to be an =
+artifact
+>>>>> of an experimental upgrade process in a new nuvoton and the Atmel.=20=
 
-powerpc already supports carrying forward the IMA measurement log on
-kexec. This patch set adds support for carrying forward the IMA
-measurement log on kexec on ARM64. 
+>>>>> That means pretty much every other TPM simply works with the =
+existing
+>>>>> timings
+>>>>>=20
+>>>>>> I was also thinking how will we decide the lookup table values =
+for
+>>>>>> each vendor ?
+>>>>>=20
+>>>>> I wasn't thinking we would.  I was thinking I'd do a simple =
+exception
+>>>>> for the Atmel and nothing else.  I don't think my Nuvoton is in =
+any way
+>>>>> characteristic.  Indeed my pluggable TPM rainbow bridge system =
+works
+>>>>> just fine with a Nuvoton and the current timings.
+>>>>>=20
+>>>>> We can add additional exceptions if they actually turn up.
+>>>>=20
+>>>> I'd add a table and fallback.
+>>>>=20
+>>>=20
+>>> Hi folks,
+>>>=20
+>>> I want to follow up this a bit and check whether we reached a =
+consensus=20
+>>> on how to fix the timeout issue for Atmel chip.
+>>>=20
+>>> Should we revert the changes or introduce the lookup table for =
+chips.
+>>>=20
+>>> Is there anything I can help from Rubrik side.
+>>>=20
+>>> Thanks
+>>> Hao
+>>=20
+>> There is nothing to revert as the previous was not applied but I'm
+>> of course ready to review any new attempts.
+>>=20
+>=20
+> Hi Jarkko,
+>=20
+> By =E2=80=9Crevert=E2=80=9D I meant we revert the timeout value =
+changes by applying
+> the patch I proposed, as the timeout value discussed does cause =
+issues.
+>=20
+> Why don=E2=80=99t we apply the patch and improve the perf in the way =
+of not
+> breaking TPMs ?=20
+>=20
+> Hao
 
-This patch set moves the platform independent code defined for powerpc
-such that it can be reused for other platforms as well. A chosen node
-namely "linux,ima-kexec-buffer" is added to the DTB for ARM64 to hold
-the address and the size of the memory reserved to carry
-the IMA measurement log.
+Hi Jarkko and folks,
 
-This patch set has been tested for ARM64 platform using QEMU.
-I would like help from the community for testing this change on powerpc.
-Thanks.
+It=E2=80=99s being a while since our last discussion. I want to push a =
+fix in the upstream for ateml chip.=20
+It looks like we currently have following choices:
+1.  generic fix for all vendors: have a lookup table for sleep time of =
+wait_for_tpm_stat=20
+  (i.e. TPM_TIMEOUT_WAIT_STAT in my proposed patch)=20
+2.  quick fix for the regression: change the sleep time of =
+wait_for_tpm_stat back to 15ms.
+  It is the current proposed patch
+3. Fix regression by making exception for ateml chip. =20
 
-This patch set is based on
-commit af5043c89a8e ("Merge tag 'acpi-5.10-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm")
-in https://github.com/torvalds/linux "master" branch.
+Should we reach consensus on which one we want to pursue before dig into =
+implementation
+of the patch? In my opinion, I prefer to fix the regression with 2, and =
+then pursue 1 as long-term
+solution. 3 is hacky.
 
-Changelog:
+Let me know what do you guys think
 
-v9
-  - Moved delete_fdt_mem_rsv() to drivers/of/kexec_fdt.c
-  - Defined a new function get_ima_kexec_buffer() in
-    drivers/of/ima_kexec.c to replace do_get_kexec_buffer()
-  - Changed remove_ima_kexec_buffer() to the original function name
-    remove_ima_buffer()
-  - Moved remove_ima_buffer() to drivers/of/ima_kexec.c
-  - Moved ima_get_kexec_buffer() and ima_free_kexec_buffer()
-    to security/integrity/ima/ima_kexec.c
-
-v8:
-  - Moved remove_ima_kexec_buffer(), do_get_kexec_buffer(), and
-    delete_fdt_mem_rsv() to drivers/of/fdt.c
-  - Moved ima_dump_measurement_list() and ima_add_kexec_buffer()
-    back to security/integrity/ima/ima_kexec.c
-
-v7:
-  - Renamed remove_ima_buffer() to remove_ima_kexec_buffer() and moved
-    this function definition to kernel.
-  - Moved delete_fdt_mem_rsv() definition to kernel
-  - Moved ima_dump_measurement_list() and ima_add_kexec_buffer() to
-    a new file namely ima_kexec_fdt.c in IMA
-
-v6:
-  - Remove any existing FDT_PROP_IMA_KEXEC_BUFFER property in the device
-    tree and also its corresponding memory reservation in the currently
-    running kernel.
-  - Moved the function remove_ima_buffer() defined for powerpc to IMA
-    and renamed the function to ima_remove_kexec_buffer(). Also, moved
-    delete_fdt_mem_rsv() from powerpc to IMA.
-
-v5:
-  - Merged get_addr_size_cells() and do_get_kexec_buffer() into a single
-    function when moving the arch independent code from powerpc to IMA
-  - Reverted the change to use FDT functions in powerpc code and added
-    back the original code in get_addr_size_cells() and
-    do_get_kexec_buffer() for powerpc.
-  - Added fdt_add_mem_rsv() for ARM64 to reserve the memory for
-    the IMA log buffer during kexec.
-  - Fixed the warning reported by kernel test bot for ARM64
-    arch_ima_add_kexec_buffer() - moved this function to a new file
-    namely arch/arm64/kernel/ima_kexec.c
-
-v4:
-  - Submitting the patch series on behalf of the original author
-    Prakhar Srivastava <prsriva@linux.microsoft.com>
-  - Moved FDT_PROP_IMA_KEXEC_BUFFER ("linux,ima-kexec-buffer") to
-    libfdt.h so that it can be shared by multiple platforms.
-
-v3:
-Breakup patches further into separate patches.
-  - Refactoring non architecture specific code out of powerpc
-  - Update powerpc related code to use fdt functions
-  - Update IMA buffer read related code to use of functions
-  - Add support to store the memory information of the IMA
-    measurement logs to be carried forward.
-  - Update the property strings to align with documented nodes
-    https://github.com/devicetree-org/dt-schema/pull/46
-
-v2:
-  Break patches into separate patches.
-  - Powerpc related Refactoring
-  - Updating the docuemntation for chosen node
-  - Updating arm64 to support IMA buffer pass
-
-v1:
-  Refactoring carrying over IMA measuremnet logs over Kexec. This patch
-    moves the non-architecture specific code out of powerpc and adds to
-    security/ima.(Suggested by Thiago)
-  Add Documentation regarding the ima-kexec-buffer node in the chosen
-    node documentation
-
-v0:
-  Add a layer of abstraction to use the memory reserved by device tree
-    for ima buffer pass.
-  Add support for ima buffer pass using reserved memory for arm64 kexec.
-    Update the arch sepcific code path in kexec file load to store the
-    ima buffer in the reserved memory. The same reserved memory is read
-    on kexec or cold boot.
-
-Lakshmi Ramasubramanian (8):
-  powerpc: fix compiler warnings and errors
-  powerpc: Move delete_fdt_mem_rsv() to drivers/of
-  ima: Define get_ima_kexec_buffer() in drivers/of
-  powerpc: Use get_ima_kexec_buffer to get ima kexec buffer
-  powerpc: Move remove_ima_buffer() to drivers/of
-  powerpc: Move ima_get_kexec_buffer() and ima_free_kexec_buffer() to
-    ima
-  arm64: Store IMA log information in kimage used for kexec
-  arm64: Add IMA kexec buffer to DTB
-
- arch/arm64/Kconfig                     |   1 +
- arch/arm64/include/asm/ima.h           |  18 +++++
- arch/arm64/include/asm/kexec.h         |   3 +
- arch/arm64/kernel/Makefile             |   1 +
- arch/arm64/kernel/ima_kexec.c          |  34 ++++++++
- arch/arm64/kernel/machine_kexec_file.c |  18 +++++
- arch/powerpc/include/asm/ima.h         |  11 +--
- arch/powerpc/include/asm/kexec.h       |   1 -
- arch/powerpc/kexec/Makefile            |   7 +-
- arch/powerpc/kexec/file_load.c         |  32 --------
- arch/powerpc/kexec/ima.c               | 106 ++-----------------------
- drivers/of/Makefile                    |   9 +++
- drivers/of/ima_kexec.c                 |  91 +++++++++++++++++++++
- drivers/of/kexec_fdt.c                 |  55 +++++++++++++
- include/linux/kexec.h                  |  24 ++++++
- security/integrity/ima/ima_kexec.c     |  51 ++++++++++++
- 16 files changed, 313 insertions(+), 149 deletions(-)
- create mode 100644 arch/arm64/include/asm/ima.h
- create mode 100644 arch/arm64/kernel/ima_kexec.c
- create mode 100644 drivers/of/ima_kexec.c
- create mode 100644 drivers/of/kexec_fdt.c
-
--- 
-2.29.2
+Hao
+=20
 
