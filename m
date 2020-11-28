@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21D4C8303F
-	for <linux-integrity@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D03DC84117
+	for <linux-integrity@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A35C82231B
-	for <linux-integrity@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E5D22370
+	for <linux-integrity@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387909AbgK1VtN (ORCPT
+        id S1730349AbgK1WYx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 28 Nov 2020 16:49:13 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53652 "EHLO
+        Sat, 28 Nov 2020 17:24:53 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53701 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387821AbgK1VqV (ORCPT
+        with ESMTP id S2387842AbgK1Vql (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 28 Nov 2020 16:46:21 -0500
+        Sat, 28 Nov 2020 16:46:41 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kj828-0002aM-Kd; Sat, 28 Nov 2020 21:45:32 +0000
+        id 1kj82N-0002aM-Bw; Sat, 28 Nov 2020 21:45:47 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -62,9 +62,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 03/38] namespace: only take read lock in do_reconfigure_mnt()
-Date:   Sat, 28 Nov 2020 22:34:52 +0100
-Message-Id: <20201128213527.2669807-4-christian.brauner@ubuntu.com>
+Subject: [PATCH v3 08/38] capability: handle idmapped mounts
+Date:   Sat, 28 Nov 2020 22:34:57 +0100
+Message-Id: <20201128213527.2669807-9-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
 References: <20201128213527.2669807-1-christian.brauner@ubuntu.com>
@@ -74,36 +74,17 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-do_reconfigure_mnt() used to take the down_write(&sb->s_umount) lock
-which seems unnecessary since we're not changing the superblock. We're
-only checking whether it is already read-only. Setting other mount
-attributes is protected by lock_mount_hash() afaict and not by s_umount.
+In order to determine whether a caller holds privilege over a given inode the
+capability framework exposes the two helpers privileged_wrt_inode_uidgid() and
+capable_wrt_inode_uidgid(). The former verifies that the inode has a mapping in
+the caller's user namespace and the latter additionally verifies that the caller
+has the requested capability in their current user namespace.
+If the inode is accessed through an idmapped mount we simply need to map it
+according to the mount's user namespace. Afterwards the checks are identical to
+non-idmapped inodes. If the initial user namespace is passed all operations are
+a nop so non-idmapped mounts will not see a change in behavior and will also not
+see any performance impact.
 
-So I think the history of down_write(&sb->s_umount) lock being taken
-when setting mount attributes dates back to the introduction of
-MNT_READONLY in [2]. Afaict, this introduced the concept of having
-read-only mounts in contrast to just having a read-only superblock. When
-it got introduced it was simply plumbed into do_remount() which already
-took down_write(&sb->s_umount) because it was only used to actually
-change the superblock before [2]. Afaict, it would've already been
-possible back then to only use down_read(&sb->s_umount) for
-MS_BIND | MS_REMOUNT since actual mount options were protected by
-the vfsmount lock already. But that would've meant special casing the
-locking for MS_BIND | MS_REMOUNT in do_remount() which people might not
-have considered worth it.
-Then in [1] MS_BIND | MS_REMOUNT mount option changes were split out of
-do_remount() into do_reconfigure_mnt() but the down_write(&sb->s_umount)
-lock was simply copied over.
-Now that we have this be a separate helper only take
-the down_read(&sb->s_umount) lock since we're only interested in
-checking whether the super block is currently read-only and blocking any
-writers from changing it. Essentially, checking that the super block is
-read-only has the advantage that we can avoid having to go into the
-slowpath and through MNT_WRITE_HOLD and can simply set the read-only
-flag on the mount in set_mount_attributes().
-
-[1]: commit 43f5e655eff7 ("vfs: Separate changing mount flags full remount")
-[2]: commit 2e4b7fcd9260 ("[PATCH] r/o bind mounts: honor mount writer counts at remount")
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
@@ -111,49 +92,254 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+- Christoph Hellwig <hch@lst.de>:
+  - Don't pollute the vfs with additional helpers simply extend the existing
+    helpers with an additional argument and switch all callers.
 
 /* v3 */
 unchanged
 ---
- fs/namespace.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/attr.c                  |  8 ++++----
+ fs/exec.c                  |  2 +-
+ fs/inode.c                 |  2 +-
+ fs/namei.c                 | 13 ++++++++-----
+ fs/overlayfs/super.c       |  2 +-
+ fs/posix_acl.c             |  2 +-
+ fs/xfs/xfs_ioctl.c         |  2 +-
+ include/linux/capability.h |  7 +++++--
+ kernel/capability.c        | 14 +++++++++-----
+ security/commoncap.c       |  5 +++--
+ 10 files changed, 34 insertions(+), 23 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 798bbf4f48ad..8497d149ecaa 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2512,10 +2512,6 @@ static int change_mount_ro_state(struct mount *mnt, unsigned int mnt_flags)
+diff --git a/fs/attr.c b/fs/attr.c
+index b4bbdbd4c8ca..d270f640a192 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -23,7 +23,7 @@ static bool chown_ok(const struct inode *inode, kuid_t uid)
+ 	if (uid_eq(current_fsuid(), inode->i_uid) &&
+ 	    uid_eq(uid, inode->i_uid))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_CHOWN))
+ 		return true;
+ 	if (uid_eq(inode->i_uid, INVALID_UID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+@@ -36,7 +36,7 @@ static bool chgrp_ok(const struct inode *inode, kgid_t gid)
+ 	if (uid_eq(current_fsuid(), inode->i_uid) &&
+ 	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_CHOWN))
+ 		return true;
+ 	if (gid_eq(inode->i_gid, INVALID_GID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+@@ -92,7 +92,7 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 		/* Also check the setgid bit! */
+ 		if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
+ 				inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			attr->ia_mode &= ~S_ISGID;
+ 	}
+ 
+@@ -193,7 +193,7 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
+ 		umode_t mode = attr->ia_mode;
+ 
+ 		if (!in_group_p(inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
+ 	}
+diff --git a/fs/exec.c b/fs/exec.c
+index 547a2390baf5..8e75d7a33514 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1398,7 +1398,7 @@ void would_dump(struct linux_binprm *bprm, struct file *file)
+ 		/* Ensure mm->user_ns contains the executable */
+ 		user_ns = old = bprm->mm->user_ns;
+ 		while ((user_ns != &init_user_ns) &&
+-		       !privileged_wrt_inode_uidgid(user_ns, inode))
++		       !privileged_wrt_inode_uidgid(user_ns, &init_user_ns, inode))
+ 			user_ns = user_ns->parent;
+ 
+ 		if (old != user_ns) {
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d78c37b00b8..7a15372d9c2d 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2147,7 +2147,7 @@ void inode_init_owner(struct inode *inode, const struct inode *dir,
+ 			mode |= S_ISGID;
+ 		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+ 			 !in_group_p(inode->i_gid) &&
+-			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
++			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 	} else
+ 		inode->i_gid = current_fsgid();
+diff --git a/fs/namei.c b/fs/namei.c
+index d4a6dd772303..3f52730af6c5 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -357,10 +357,11 @@ int generic_permission(struct inode *inode, int mask)
+ 	if (S_ISDIR(inode->i_mode)) {
+ 		/* DACs are overridable for directories */
+ 		if (!(mask & MAY_WRITE))
+-			if (capable_wrt_inode_uidgid(inode,
++			if (capable_wrt_inode_uidgid(&init_user_ns, inode,
+ 						     CAP_DAC_READ_SEARCH))
+ 				return 0;
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_OVERRIDE))
+ 			return 0;
+ 		return -EACCES;
+ 	}
+@@ -370,7 +371,8 @@ int generic_permission(struct inode *inode, int mask)
+ 	 */
+ 	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
+ 	if (mask == MAY_READ)
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_READ_SEARCH))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_READ_SEARCH))
+ 			return 0;
+ 	/*
+ 	 * Read/write DACs are always overridable.
+@@ -378,7 +380,8 @@ int generic_permission(struct inode *inode, int mask)
+ 	 * at least one exec bit set.
+ 	 */
+ 	if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_OVERRIDE))
+ 			return 0;
+ 
+ 	return -EACCES;
+@@ -2657,7 +2660,7 @@ int __check_sticky(struct inode *dir, struct inode *inode)
+ 		return 0;
+ 	if (uid_eq(dir->i_uid, fsuid))
+ 		return 0;
+-	return !capable_wrt_inode_uidgid(inode, CAP_FOWNER);
++	return !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FOWNER);
+ }
+ EXPORT_SYMBOL(__check_sticky);
+ 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 290983bcfbb3..196fe3e3f02b 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -972,7 +972,7 @@ ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
+ 	if (unlikely(inode->i_mode & S_ISGID) &&
+ 	    handler->flags == ACL_TYPE_ACCESS &&
+ 	    !in_group_p(inode->i_gid) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_FSETID)) {
++	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID)) {
+ 		struct iattr iattr = { .ia_valid = ATTR_KILL_SGID };
+ 
+ 		err = ovl_setattr(dentry, &iattr);
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 95882b3f5f62..4ca6d53c6f0a 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -656,7 +656,7 @@ int posix_acl_update_mode(struct inode *inode, umode_t *mode_p,
+ 	if (error == 0)
+ 		*acl = NULL;
+ 	if (!in_group_p(inode->i_gid) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 		mode &= ~S_ISGID;
+ 	*mode_p = mode;
  	return 0;
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 3fbd98f61ea5..97bd29fc8c43 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1502,7 +1502,7 @@ xfs_ioctl_setattr(
+ 	 */
+ 
+ 	if ((VFS_I(ip)->i_mode & (S_ISUID|S_ISGID)) &&
+-	    !capable_wrt_inode_uidgid(VFS_I(ip), CAP_FSETID))
++	    !capable_wrt_inode_uidgid(&init_user_ns, VFS_I(ip), CAP_FSETID))
+ 		VFS_I(ip)->i_mode &= ~(S_ISUID|S_ISGID);
+ 
+ 	/* Change the ownerships and register project quota modifications */
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 1e7fe311cabe..041e336f3369 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -247,8 +247,11 @@ static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
+ 	return true;
+ }
+ #endif /* CONFIG_MULTIUSER */
+-extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode);
+-extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
++extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++					struct user_namespace *mnt_user_ns,
++					const struct inode *inode);
++extern bool capable_wrt_inode_uidgid(struct user_namespace *mnt_user_ns,
++				     const struct inode *inode, int cap);
+ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
+ extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
+ static inline bool perfmon_capable(void)
+diff --git a/kernel/capability.c b/kernel/capability.c
+index de7eac903a2a..28e3a599ff7a 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -484,10 +484,12 @@ EXPORT_SYMBOL(file_ns_capable);
+  *
+  * Return true if the inode uid and gid are within the namespace.
+  */
+-bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode)
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 struct user_namespace *mnt_user_ns,
++				 const struct inode *inode)
+ {
+-	return kuid_has_mapping(ns, inode->i_uid) &&
+-		kgid_has_mapping(ns, inode->i_gid);
++	return kuid_has_mapping(ns, i_uid_into_mnt(mnt_user_ns, inode)) &&
++	       kgid_has_mapping(ns, i_gid_into_mnt(mnt_user_ns, inode));
  }
  
--/*
-- * Update the user-settable attributes on a mount.  The caller must hold
-- * sb->s_umount for writing.
-- */
- static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ /**
+@@ -499,11 +501,13 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *
+  * its own user namespace and that the given inode's uid and gid are
+  * mapped into the current user namespace.
+  */
+-bool capable_wrt_inode_uidgid(const struct inode *inode, int cap)
++bool capable_wrt_inode_uidgid(struct user_namespace *mnt_user_ns,
++			      const struct inode *inode, int cap)
  {
- 	mnt_flags |= mnt->mnt.mnt_flags & ~MNT_USER_SETTABLE_MASK;
-@@ -2565,13 +2561,17 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
- 	if (!can_change_locked_flags(mnt, mnt_flags))
+ 	struct user_namespace *ns = current_user_ns();
+ 
+-	return ns_capable(ns, cap) && privileged_wrt_inode_uidgid(ns, inode);
++	return ns_capable(ns, cap) &&
++	       privileged_wrt_inode_uidgid(ns, mnt_user_ns, inode);
+ }
+ EXPORT_SYMBOL(capable_wrt_inode_uidgid);
+ 
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 59bf3c1674c8..4cd2bdfd0a8b 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -489,7 +489,7 @@ int cap_convert_nscap(struct dentry *dentry, void **ivalue, size_t size)
+ 		return -EINVAL;
+ 	if (!validheader(size, cap))
+ 		return -EINVAL;
+-	if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
++	if (!capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_SETFCAP))
  		return -EPERM;
- 
--	down_write(&sb->s_umount);
-+	/*
-+	 * We're only checking whether the superblock is read-only not changing
-+	 * it, so only take down_read(&sb->s_umount).
-+	 */
-+	down_read(&sb->s_umount);
- 	lock_mount_hash();
- 	ret = change_mount_ro_state(mnt, mnt_flags);
- 	if (ret == 0)
- 		set_mount_attributes(mnt, mnt_flags);
- 	unlock_mount_hash();
--	up_write(&sb->s_umount);
-+	up_read(&sb->s_umount);
- 
- 	mnt_warn_timestamp_expiry(path, &mnt->mnt);
- 
+ 	if (size == XATTR_CAPS_SZ_2)
+ 		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
+@@ -957,7 +957,8 @@ int cap_inode_removexattr(struct dentry *dentry, const char *name)
+ 		struct inode *inode = d_backing_inode(dentry);
+ 		if (!inode)
+ 			return -EINVAL;
+-		if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
++		if (!capable_wrt_inode_uidgid(&init_user_ns, inode,
++					      CAP_SETFCAP))
+ 			return -EPERM;
+ 		return 0;
+ 	}
 -- 
 2.29.2
 
