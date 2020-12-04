@@ -2,261 +2,124 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BE4C2BB3F
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 19:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE71C4361A
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 21:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80C0422CAF
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 19:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3E7822BE8
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 21:52:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbgLDTx1 (ORCPT
+        id S1725933AbgLDVwj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Dec 2020 14:53:27 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:52956 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730647AbgLDTxS (ORCPT
+        Fri, 4 Dec 2020 16:52:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50565 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725903AbgLDVwj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Dec 2020 14:53:18 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3EB2020B718B;
-        Fri,  4 Dec 2020 11:51:59 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3EB2020B718B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607111519;
-        bh=c9hfHV9xUhOxPKkKCPQSF8NLSo8arbAWLA6eKI8Sitc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f5rlirFjXGIEhNFVOMz2N0x0e3iCjqzeaz7YFF+NNooFvETzoWEslCHbtWMMNvY48
-         7SjCdlZf667+5ps92NgDwTrAfjv8xiW32ofWM4m5ZwmOVxw6A2HxYIOhR32ISkJe4r
-         aGjw4qkUlLEx39fvr6ON190AI5qVnBQzq//YnLec=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
-        gregkh@linuxfoundation.org, james.morse@arm.com,
-        catalin.marinas@arm.com, sashal@kernel.org, will@kernel.org,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        robh+dt@kernel.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
-        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
-        christophe.leroy@c-s.fr
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
-        balajib@linux.microsoft.com
-Subject: [PATCH v10 6/8] powerpc: Move ima_get_kexec_buffer() and ima_free_kexec_buffer() to ima
-Date:   Fri,  4 Dec 2020 11:51:47 -0800
-Message-Id: <20201204195149.611-7-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201204195149.611-1-nramas@linux.microsoft.com>
-References: <20201204195149.611-1-nramas@linux.microsoft.com>
+        Fri, 4 Dec 2020 16:52:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607118672;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xLlTqncBwZwcHkWwNvJzuIr6WcBCoeYcPybWMXBu9Ks=;
+        b=VaLB8+uKK1RkhnhSgpt+vKDl/SqNrv/HS6QAUeTEmynWuVR9LU7fdEKchccSEUiPzdM/j+
+        v1V2/fiv4Qq/lWgfFHg5ZNU44fjUz6J/D8SeoWAAm1osyA53oRAXXWn6xug3FGSPQerFXE
+        Mk9zQDsxopQc2XYN7kHZ2J47CBYOtCE=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-137-6b6YT0yeMNmgfUoXH1jYOw-1; Fri, 04 Dec 2020 16:51:09 -0500
+X-MC-Unique: 6b6YT0yeMNmgfUoXH1jYOw-1
+Received: by mail-qt1-f198.google.com with SMTP id l17so4859893qtj.18
+        for <linux-integrity@vger.kernel.org>; Fri, 04 Dec 2020 13:51:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=xLlTqncBwZwcHkWwNvJzuIr6WcBCoeYcPybWMXBu9Ks=;
+        b=ZMo1Q5CmELlMCSoxlItvZ6UctBba5OkCsdpSA08ESvX3lCeWFF9RbSy23TfssdiPAf
+         fr82S3qrdjrnpdu/nqgFutqx0LD2zAVMMhXVfUEK9K1Q/eo4IJ9za2H4JAeOzmPQ3qrL
+         Smj9hs9dveMJjlrUTroDVqwrqIjreXmSaBo0tVhVDWDFl/6/LMjeZtIrotBivwFdCY9c
+         rH5gTz3cnsyBnOW2kG1xdrlLVxl6VoZ3bwL3DzQXIiXj/zTJ4EMX3WWUrMtjSXJlL9UW
+         Hxf8be6wSqOhWq+e68KPYmqGOiKlcSSD0hGCauMWN+HNIwFL/lFVDpoxnc5IwupI3Bdb
+         0u4A==
+X-Gm-Message-State: AOAM530NmWrTysG8q8aXul7yz43hheZMXZU4gR9k4Eib8vjOAKDhBvWc
+        xWGG8TZGbSu5EgFXntPiykK6fdMbK3X65TU8tJWChMqk5Ih8A1h1StWRZXBc8FOLgQNbuMOj8Ps
+        ewezoNo7Av7HlKh4M5zq52CLEMCie
+X-Received: by 2002:aed:2f64:: with SMTP id l91mr11895049qtd.363.1607118668664;
+        Fri, 04 Dec 2020 13:51:08 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzmL3y7OiZ51x7xGIzxhm3KuqMNE96ZPjRd9yq+9AcHjVWyLBlmrQ7/ll36YGACBnBwBdyhFw==
+X-Received: by 2002:aed:2f64:: with SMTP id l91mr11895008qtd.363.1607118668388;
+        Fri, 04 Dec 2020 13:51:08 -0800 (PST)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id s30sm2263183qte.44.2020.12.04.13.51.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Dec 2020 13:51:07 -0800 (PST)
+References: <20201130232338.106892-1-jsnitsel@redhat.com>
+ <20201201025807.162241-1-jsnitsel@redhat.com> <87czzujjg1.fsf@redhat.com>
+ <878sahmh5w.fsf@redhat.com> <20201202164931.GA91318@kernel.org>
+ <87sg8noixh.fsf@redhat.com> <87lfefe7vm.fsf@redhat.com>
+ <87ft4mpryt.fsf@redhat.com>
+ <8a7d2fda891e45b098b603064d45dd7d53898fd4.camel@HansenPartnership.com>
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "Peter Huewe" <peterhuewe@gmx.de>,
+        Matthew Garrett <mjg59@google.com>,
+        "Hans de Goede" <hdegoede@redhat.com>
+Subject: Re: [PATCH v2] tpm_tis: Disable interrupts if interrupt storm detected
+In-reply-to: <8a7d2fda891e45b098b603064d45dd7d53898fd4.camel@HansenPartnership.com>
+Date:   Fri, 04 Dec 2020 14:51:05 -0700
+Message-ID: <87czzpw88m.fsf@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-ima_get_kexec_buffer() retrieves the address and size of the buffer
-used for carrying forward the IMA measurement logs on kexec from
-the device tree.
 
-ima_free_kexec_buffer() removes the chosen node
-"linux,ima-kexec-buffer" from the device tree, and frees the buffer
-used for carrying forward the IMA measurement logs on kexec.
+James Bottomley @ 2020-12-03 14:05 MST:
 
-These functions do not have architecture specific code, but are
-currently limited to powerpc. Move ima_get_kexec_buffer() and
-ima_free_kexec_buffer() to ima_kexec.c in IMA so that they are
-accessible for other architectures as well.
+> On Thu, 2020-12-03 at 13:14 -0700, Jerry Snitselaar wrote:
+>> Jerry Snitselaar @ 2020-12-02 23:11 MST:
+> [...]
+>> > The interrupt storm detection code works on the T490s. I'm not sure
+>> > what is going on with the L490. I will see if I can get access to
+>> > one.
+>> > 
+>> > Jerry
+>> 
+>> Lenovo verified that the L490 hangs.
+>
+> Just to confirm, that's this system:
+>
+> https://www.lenovo.com/us/en/laptops/thinkpad/thinkpad-l/ThinkPad-L490/p/22TP2TBL490
+>
+> We could ask if lenovo will give us one, but if not we could pull a
+> Jens.  [the backstory is that when Jens was doing queueing in the block
+> layer, there were lots of SATA devices that didn't work quite right but
+> you couldn't tell unless you actually tried them out.  Getting
+> manufacturers to send samples is rather arduous, so he took to ordering
+> them online, testing them out, and then returning them for a full
+> refund within the allowed window]
+>
+> It looks like Lenovo has a nice christmas returns policy:
+>
+> https://www.lenovo.com/us/en/shopping-faq/#returns
+>
+> James
 
-With the above change the functions in arch/powerpc/kexec/ima.c are
-defined only when the kernel config CONFIG_IMA_KEXEC is enabled.
-Update the Makefile to build arch/powerpc/kexec/ima.c only when
-CONFIG_IMA_KEXEC is enabled and remove "#ifdef CONFIG_IMA_KEXEC"
-in arch/powerpc/kexec/ima.c.
-
-Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- arch/powerpc/include/asm/ima.h     |  3 --
- arch/powerpc/kexec/Makefile        |  7 +---
- arch/powerpc/kexec/ima.c           | 50 -----------------------------
- security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++++++++++++++
- 4 files changed, 52 insertions(+), 59 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
-index a2fc71bc3b23..d8444d27f0d8 100644
---- a/arch/powerpc/include/asm/ima.h
-+++ b/arch/powerpc/include/asm/ima.h
-@@ -6,9 +6,6 @@
- 
- struct kimage;
- 
--int ima_get_kexec_buffer(void **addr, size_t *size);
--int ima_free_kexec_buffer(void);
--
- #ifdef CONFIG_IMA_KEXEC
- int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
- 			      size_t size);
-diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
-index 4aff6846c772..f54a9dbff4c8 100644
---- a/arch/powerpc/kexec/Makefile
-+++ b/arch/powerpc/kexec/Makefile
-@@ -9,12 +9,7 @@ obj-$(CONFIG_PPC32)		+= relocate_32.o
- 
- obj-$(CONFIG_KEXEC_FILE)	+= file_load.o ranges.o file_load_$(BITS).o elf_$(BITS).o
- 
--ifdef CONFIG_HAVE_IMA_KEXEC
--ifdef CONFIG_IMA
--obj-y				+= ima.o
--endif
--endif
--
-+obj-$(CONFIG_IMA_KEXEC)		+= ima.o
- 
- # Disable GCOV, KCOV & sanitizers in odd or sensitive code
- GCOV_PROFILE_core_$(BITS).o := n
-diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
-index 68017123b07d..bf7084c0c4da 100644
---- a/arch/powerpc/kexec/ima.c
-+++ b/arch/powerpc/kexec/ima.c
-@@ -13,55 +13,6 @@
- #include <linux/libfdt.h>
- #include <asm/ima.h>
- 
--/**
-- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-- * @addr:	On successful return, set to point to the buffer contents.
-- * @size:	On successful return, set to the buffer size.
-- *
-- * Return: 0 on success, negative errno on error.
-- */
--int ima_get_kexec_buffer(void **addr, size_t *size)
--{
--	int ret;
--	unsigned long tmp_addr;
--	size_t tmp_size;
--
--	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
--	if (ret)
--		return ret;
--
--	*addr = __va(tmp_addr);
--	*size = tmp_size;
--
--	return 0;
--}
--
--/**
-- * ima_free_kexec_buffer - free memory used by the IMA buffer
-- */
--int ima_free_kexec_buffer(void)
--{
--	int ret;
--	unsigned long addr;
--	size_t size;
--	struct property *prop;
--
--	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
--	if (!prop)
--		return -ENOENT;
--
--	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
--	if (ret)
--		return ret;
--
--	ret = of_remove_property(of_chosen, prop);
--	if (ret)
--		return ret;
--
--	return memblock_free(addr, size);
--}
--
--#ifdef CONFIG_IMA_KEXEC
- /**
-  * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
-  *
-@@ -154,4 +105,3 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
- 
- 	return 0;
- }
--#endif /* CONFIG_IMA_KEXEC */
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 121de3e04af2..4d354593aecf 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -9,7 +9,10 @@
- 
- #include <linux/seq_file.h>
- #include <linux/vmalloc.h>
-+#include <linux/memblock.h>
-+#include <linux/of.h>
- #include <linux/kexec.h>
-+#include <linux/ima.h>
- #include "ima.h"
- 
- #ifdef CONFIG_IMA_KEXEC
-@@ -133,6 +136,54 @@ void ima_add_kexec_buffer(struct kimage *image)
- }
- #endif /* IMA_KEXEC */
- 
-+/**
-+ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-+ * @addr:	On successful return, set to point to the buffer contents.
-+ * @size:	On successful return, set to the buffer size.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+static int ima_get_kexec_buffer(void **addr, size_t *size)
-+{
-+	int ret;
-+	unsigned long tmp_addr;
-+	size_t tmp_size;
-+
-+	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
-+	if (ret)
-+		return ret;
-+
-+	*addr = __va(tmp_addr);
-+	*size = tmp_size;
-+
-+	return 0;
-+}
-+
-+/**
-+ * ima_free_kexec_buffer - free memory used by the IMA buffer
-+ */
-+static int ima_free_kexec_buffer(void)
-+{
-+	int ret;
-+	unsigned long addr;
-+	size_t size;
-+	struct property *prop;
-+
-+	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
-+	if (!prop)
-+		return -ENOENT;
-+
-+	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_remove_property(of_chosen, prop);
-+	if (ret)
-+		return ret;
-+
-+	return memblock_free(addr, size);
-+}
-+
- /*
-  * Restore the measurement list from the previous kernel.
-  */
--- 
-2.29.2
+Yes, that is the one. I'm seeing if we have any located somewhere, or if
+Lenovo will loan me one. I think for the time being the patch that
+disabled interrupts for the T490s could be changed to it for the L490
+instead. I'll post a v3 of my current patchset. It would probably make
+sense for it to go in with your patches when they land.
 
