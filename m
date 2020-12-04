@@ -2,216 +2,201 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605B5C1B0D9
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 00:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C71EC433FE
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 02:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1850E222B6
-	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 00:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C8A422509
+	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 02:00:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502157AbgLDANT (ORCPT
+        id S1726028AbgLDCAf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Dec 2020 19:13:19 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:43400 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502147AbgLDANS (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:13:18 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkyYC-0007ka-U4; Fri, 04 Dec 2020 00:02:17 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
+        Thu, 3 Dec 2020 21:00:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58360 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725885AbgLDCAf (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 Dec 2020 21:00:35 -0500
+Date:   Fri, 4 Dec 2020 03:59:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607047194;
+        bh=PeZO2gjoa/V1mPB2S2eb4xzoKaQoCBQJNYYuC39RM/U=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fkPVj2iDVtcQDki1bXaBZyC6/JCAQ9EPTuEh/SqCW0QKTLeRLlNQEC+LzJpbpEy+j
+         R7uI5SZGvy/a7Zh/8eP1E9HGdQsWbTrXCTCYHggD5Hx+CVZUbdRa5OShE8p3zYh2Z/
+         iRlzDDhK/u2X5SqIWPMs3fJCUZLZI2Q7zX5SLFLbJHUfspXrtF68zgDl552wmo4+7v
+         E7VdL+jYGPJgaa4gZgABDwvRkrup7NH4XtF9rOergpT2DyezwMO8d9MVszhUABNV5r
+         L8RGU+u3PzNzRLDha4DbWc7GpxlZXmX4GnRi3Zb4yNhSoh4AKlUoGkO+1kyI7Iuk4B
+         Y4I4HsdX1a8sg==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>,
         James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 34/40] fat: handle idmapped mounts
-Date:   Fri,  4 Dec 2020 00:57:30 +0100
-Message-Id: <20201203235736.3528991-35-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
-References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
+        Matthew Garrett <mjg59@google.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2] tpm_tis: Disable interrupts if interrupt storm
+ detected
+Message-ID: <20201204015948.GA147710@kernel.org>
+References: <20201130232338.106892-1-jsnitsel@redhat.com>
+ <20201201025807.162241-1-jsnitsel@redhat.com>
+ <87czzujjg1.fsf@redhat.com>
+ <878sahmh5w.fsf@redhat.com>
+ <20201202164931.GA91318@kernel.org>
+ <87sg8noixh.fsf@redhat.com>
+ <87lfefe7vm.fsf@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lfefe7vm.fsf@redhat.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Let fat handle idmapped mounts. This allows to have the same fat mount
-appear in multiple locations with different id mappings. This allows to
-expose a vfat formatted USB stick to multiple user with different ids on
-the host or in user namespaces allowing for dac permissions:
+On Wed, Dec 02, 2020 at 11:11:41PM -0700, Jerry Snitselaar wrote:
+> 
+> Jerry Snitselaar @ 2020-12-02 17:02 MST:
+> 
+> > Jarkko Sakkinen @ 2020-12-02 09:49 MST:
+> >
+> >> On Tue, Dec 01, 2020 at 12:59:23PM -0700, Jerry Snitselaar wrote:
+> >>> 
+> >>> Jerry Snitselaar @ 2020-11-30 20:26 MST:
+> >>> 
+> >>> > Jerry Snitselaar @ 2020-11-30 19:58 MST:
+> >>> >
+> >>> >> When enabling the interrupt code for the tpm_tis driver we have
+> >>> >> noticed some systems have a bios issue causing an interrupt storm to
+> >>> >> occur. The issue isn't limited to a single tpm or system manufacturer
+> >>> >> so keeping a denylist of systems with the issue isn't optimal. Instead
+> >>> >> try to detect the problem occurring, disable interrupts, and revert to
+> >>> >> polling when it happens.
+> >>> >>
+> >>> >> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> >>> >> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> >>> >> Cc: Peter Huewe <peterhuewe@gmx.de>
+> >>> >> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> >>> >> Cc: Matthew Garrett <mjg59@google.com>
+> >>> >> Cc: Hans de Goede <hdegoede@redhat.com>
+> >>> >> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> >>> >> ---
+> >>> >> v2: drop tpm_tis specific workqueue and use just system_wq
+> >>> >>
+> >>> >> drivers/char/tpm/tpm_tis_core.c | 27 +++++++++++++++++++++++++++
+> >>> >>  drivers/char/tpm/tpm_tis_core.h |  2 ++
+> >>> >>  2 files changed, 29 insertions(+)
+> >>> >>
+> >>> >> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> >>> >> index 23b60583928b..72cc8a5a152c 100644
+> >>> >> --- a/drivers/char/tpm/tpm_tis_core.c
+> >>> >> +++ b/drivers/char/tpm/tpm_tis_core.c
+> >>> >> @@ -24,6 +24,8 @@
+> >>> >>  #include <linux/wait.h>
+> >>> >>  #include <linux/acpi.h>
+> >>> >>  #include <linux/freezer.h>
+> >>> >> +#include <linux/workqueue.h>
+> >>> >> +#include <linux/kernel_stat.h>
+> >>> >>  #include "tpm.h"
+> >>> >>  #include "tpm_tis_core.h"
+> >>> >>  
+> >>> >> @@ -745,9 +747,23 @@ static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+> >>> >>  {
+> >>> >>  	struct tpm_chip *chip = dev_id;
+> >>> >>  	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> >>> >> +	static bool check_storm = true;
+> >>> >> +	static unsigned int check_start;
+> >>> >>  	u32 interrupt;
+> >>> >>  	int i, rc;
+> >>> >>  
+> >>> >> +	if (unlikely(check_storm)) {
+> >>> >> +		if (!check_start) {
+> >>> >> +			check_start = jiffies_to_msecs(jiffies);
+> >>> >> +		} else if ((kstat_irqs(priv->irq) > 1000) &&
+> >>> >> +			   (jiffies_to_msecs(jiffies) - check_start < 500)) {
+> >>> >> +			check_storm = false;
+> >>> >> +			schedule_work(&priv->storm_work);
+> >>> >> +		} else if (jiffies_to_msecs(jiffies) - check_start >= 500) {
+> >>> >> +			check_storm = false;
+> >>> >> +		}
+> >>> >> +	}
+> >>> >> +
+> >>> >>  	rc = tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
+> >>> >>  	if (rc < 0)
+> >>> >>  		return IRQ_NONE;
+> >>> >> @@ -987,6 +1003,14 @@ static const struct tpm_class_ops tpm_tis = {
+> >>> >>  	.clk_enable = tpm_tis_clkrun_enable,
+> >>> >>  };
+> >>> >>  
+> >>> >> +static void tpm_tis_storm_work(struct work_struct *work)
+> >>> >> +{
+> >>> >> +	struct tpm_tis_data *priv = container_of(work, struct tpm_tis_data, storm_work);
+> >>> >> +
+> >>> >> +	disable_interrupts(priv->chip);
+> >>> >> +	dev_warn(&priv->chip->dev, "Interrupt storm detected, using polling.\n");
+> >>> >> +}
+> >>> >> +
+> >>> >>  int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+> >>> >>  		      const struct tpm_tis_phy_ops *phy_ops,
+> >>> >>  		      acpi_handle acpi_dev_handle)
+> >>> >> @@ -1003,6 +1027,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+> >>> >>  	if (IS_ERR(chip))
+> >>> >>  		return PTR_ERR(chip);
+> >>> >>  
+> >>> >> +	priv->chip = chip;
+> >>> >> +	INIT_WORK(&priv->storm_work, tpm_tis_storm_work);
+> >>> >> +
+> >>> >>  #ifdef CONFIG_ACPI
+> >>> >>  	chip->acpi_dev_handle = acpi_dev_handle;
+> >>> >>  #endif
+> >>> >> diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> >>> >> index edeb5dc61c95..5630f294dc0c 100644
+> >>> >> --- a/drivers/char/tpm/tpm_tis_core.h
+> >>> >> +++ b/drivers/char/tpm/tpm_tis_core.h
+> >>> >> @@ -95,6 +95,8 @@ struct tpm_tis_data {
+> >>> >>  	u16 clkrun_enabled;
+> >>> >>  	wait_queue_head_t int_queue;
+> >>> >>  	wait_queue_head_t read_queue;
+> >>> >> +	struct work_struct storm_work;
+> >>> >> +	struct tpm_chip *chip;
+> >>> >>  	const struct tpm_tis_phy_ops *phy_ops;
+> >>> >>  	unsigned short rng_quality;
+> >>> >>  };
+> >>> >
+> >>> > I've tested this with the Intel platform that has an Infineon chip that
+> >>> > I found the other week. It works, but isn't the complete fix. With this
+> >>> > on top of James' patchset I sometimes see the message "Lost Interrupt
+> >>> > waiting for TPM stat", so I guess there needs to be a check in
+> >>> > wait_for_tpm_stat and request_locality to see if interrupts were
+> >>> > disabled when the wait_event_interruptible_timeout call times out.
+> >>> 
+> >>> As kernel test robot pointed out. kstat_irqs isn't visible when tpm_tis
+> >>> builds as a module. It looks like it is only called by kstat_irq_usrs,
+> >>> and that is only by the fs/proc code. I have a patch to export it, but
+> >>> the i915 driver open codes their own version instead of using it. Is
+> >>> there any reason not to export it?
+> >>
+> >> If you add a patch that exports it, then for coherency it'd be better to
+> >> also patch i915 driver. Jani?
+> >>
+> >> /Jarkko
+> >
+> > It looks like this might not solve all cases. I'm having Lenovo test
+> > another build to make sure I gave them the right code, but they reported
+> > with the L490 that the system hangs right when it is initializing
+> > tpm_tis. I'm working on getting a build on the T490s I have to try there
+> > as well. With the Intel system it spits out that it detects the
+> > interrupt storm, and continues on its way.
+> 
+> The interrupt storm detection code works on the T490s. I'm not sure what
+> is going on with the L490. I will see if I can get access to one.
 
-mount -o uid=1000,gid=1000 /dev/sdb /mnt
+If you cannot, just send it. We can consider applying it, if it does
+not make life worse everyone else, even if it turned out to have some
+bad spots.
 
-u1001@f2-vm:/lower1$ ls -ln /mnt/
-total 4
--rwxr-xr-x 1 1000 1000 4 Oct 28 03:44 aaa
--rwxr-xr-x 1 1000 1000 0 Oct 28 01:09 bbb
--rwxr-xr-x 1 1000 1000 0 Oct 28 01:10 ccc
--rwxr-xr-x 1 1000 1000 0 Oct 28 03:46 ddd
--rwxr-xr-x 1 1000 1000 0 Oct 28 04:01 eee
-
-mount-idmapped --map-mount b:1000:1001:1
-
-u1001@f2-vm:/lower1$ ls -ln /lower1/
-total 4
--rwxr-xr-x 1 1001 1001 4 Oct 28 03:44 aaa
--rwxr-xr-x 1 1001 1001 0 Oct 28 01:09 bbb
--rwxr-xr-x 1 1001 1001 0 Oct 28 01:10 ccc
--rwxr-xr-x 1 1001 1001 0 Oct 28 03:46 ddd
--rwxr-xr-x 1 1001 1001 0 Oct 28 04:01 eee
-
-u1001@f2-vm:/lower1$ touch /lower1/fff
-
-u1001@f2-vm:/lower1$ ls -ln /lower1/fff
--rwxr-xr-x 1 1001 1001 0 Oct 28 04:03 /lower1/fff
-
-u1001@f2-vm:/lower1$ ls -ln /mnt/fff
--rwxr-xr-x 1 1000 1000 0 Oct 28 04:03 /mnt/fff
-
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-unchanged
-
-/* v3 */
-unchanged
-
-/* v4 */
-- Mauricio Vásquez Bernal <mauricio@kinvolk.io>:
-  - Fix mount example in commit message.
-
-- Serge Hallyn <serge@hallyn.com>:
-  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-    terminology consistent.
----
- fs/fat/file.c        | 15 ++++++++-------
- fs/fat/namei_msdos.c |  2 +-
- fs/fat/namei_vfat.c  |  2 +-
- 3 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 73acd0843d92..6a618e9450c8 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -398,7 +398,7 @@ int fat_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		struct kstat *stat, u32 request_mask, unsigned int flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(&init_user_ns, inode, stat);
-+	generic_fillattr(mnt_userns, inode, stat);
- 	stat->blksize = MSDOS_SB(inode->i_sb)->cluster_size;
- 
- 	if (MSDOS_SB(inode->i_sb)->options.nfs == FAT_NFS_NOSTALE_RO) {
-@@ -447,12 +447,13 @@ static int fat_sanitize_mode(const struct msdos_sb_info *sbi,
- 	return 0;
- }
- 
--static int fat_allow_set_time(struct msdos_sb_info *sbi, struct inode *inode)
-+static int fat_allow_set_time(struct user_namespace *mnt_userns,
-+			      struct msdos_sb_info *sbi, struct inode *inode)
- {
- 	umode_t allow_utime = sbi->options.allow_utime;
- 
--	if (!uid_eq(current_fsuid(), inode->i_uid)) {
--		if (in_group_p(inode->i_gid))
-+	if (!uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode))) {
-+		if (in_group_p(i_gid_into_mnt(mnt_userns, inode)))
- 			allow_utime >>= 3;
- 		if (allow_utime & MAY_WRITE)
- 			return 1;
-@@ -477,11 +478,11 @@ int fat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	/* Check for setting the inode time. */
- 	ia_valid = attr->ia_valid;
- 	if (ia_valid & TIMES_SET_FLAGS) {
--		if (fat_allow_set_time(sbi, inode))
-+		if (fat_allow_set_time(mnt_userns, sbi, inode))
- 			attr->ia_valid &= ~TIMES_SET_FLAGS;
- 	}
- 
--	error = setattr_prepare(&init_user_ns, dentry, attr);
-+	error = setattr_prepare(mnt_userns, dentry, attr);
- 	attr->ia_valid = ia_valid;
- 	if (error) {
- 		if (sbi->options.quiet)
-@@ -551,7 +552,7 @@ int fat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		fat_truncate_time(inode, &attr->ia_mtime, S_MTIME);
- 	attr->ia_valid &= ~(ATTR_ATIME|ATTR_CTIME|ATTR_MTIME);
- 
--	setattr_copy(&init_user_ns, inode, attr);
-+	setattr_copy(mnt_userns, inode, attr);
- 	mark_inode_dirty(inode);
- out:
- 	return error;
-diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index a8f3375d9d10..efba301d68ae 100644
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -667,7 +667,7 @@ static struct file_system_type msdos_fs_type = {
- 	.name		= "msdos",
- 	.mount		= msdos_mount,
- 	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("msdos");
- 
-diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-index 23936ecf79a5..5369d82e0bfb 100644
---- a/fs/fat/namei_vfat.c
-+++ b/fs/fat/namei_vfat.c
-@@ -1063,7 +1063,7 @@ static struct file_system_type vfat_fs_type = {
- 	.name		= "vfat",
- 	.mount		= vfat_mount,
- 	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("vfat");
- 
--- 
-2.29.2
-
+/Jarkko
