@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBC3C1B087
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BE4C2BB3F
 	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 19:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CE8D22CA1
+	by mail.kernel.org (Postfix) with ESMTP id 80C0422CAF
 	for <linux-integrity@archiver.kernel.org>; Fri,  4 Dec 2020 19:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730941AbgLDTxS (ORCPT
+        id S2388083AbgLDTx1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Dec 2020 14:53:18 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:52950 "EHLO
+        Fri, 4 Dec 2020 14:53:27 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:52956 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbgLDTxR (ORCPT
+        with ESMTP id S1730647AbgLDTxS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Dec 2020 14:53:17 -0500
+        Fri, 4 Dec 2020 14:53:18 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0001720B718C;
+        by linux.microsoft.com (Postfix) with ESMTPSA id 3EB2020B718B;
         Fri,  4 Dec 2020 11:51:59 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0001720B718C
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3EB2020B718B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607111520;
-        bh=RYcDmiClExarWqft2RPrsbd40L4/wuzZPH77VZjBycQ=;
+        s=default; t=1607111519;
+        bh=c9hfHV9xUhOxPKkKCPQSF8NLSo8arbAWLA6eKI8Sitc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s1qEpeOQTXn69iJ45FIdvBMZ2l4FJD8AfFgq9DYqKyOk5uSyHuj0Tg4FC+iTFebQH
-         DKhJz7gaGU1/+rpDiYUr7awiNGOyYbAkK6pMdJ0HqI3vT6E5YzNhZ130Lipj+xZx3Q
-         tYS4dIun10H4ziTrz+9I7z4hqzjqa1/rMch2g7Pc=
+        b=f5rlirFjXGIEhNFVOMz2N0x0e3iCjqzeaz7YFF+NNooFvETzoWEslCHbtWMMNvY48
+         7SjCdlZf667+5ps92NgDwTrAfjv8xiW32ofWM4m5ZwmOVxw6A2HxYIOhR32ISkJe4r
+         aGjw4qkUlLEx39fvr6ON190AI5qVnBQzq//YnLec=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         gregkh@linuxfoundation.org, james.morse@arm.com,
@@ -48,9 +48,9 @@ To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, prsriva@linux.microsoft.com,
         balajib@linux.microsoft.com
-Subject: [PATCH v10 7/8] powerpc: Move arch_ima_add_kexec_buffer to ima
-Date:   Fri,  4 Dec 2020 11:51:48 -0800
-Message-Id: <20201204195149.611-8-nramas@linux.microsoft.com>
+Subject: [PATCH v10 6/8] powerpc: Move ima_get_kexec_buffer() and ima_free_kexec_buffer() to ima
+Date:   Fri,  4 Dec 2020 11:51:47 -0800
+Message-Id: <20201204195149.611-7-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201204195149.611-1-nramas@linux.microsoft.com>
 References: <20201204195149.611-1-nramas@linux.microsoft.com>
@@ -60,101 +60,203 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-arch_ima_add_kexec_buffer() sets the address and size of the IMA
-measurement log in the architecture specific field in struct kimage.
-This function does not have architecture specific code, but is
-currently limited to powerpc.
+ima_get_kexec_buffer() retrieves the address and size of the buffer
+used for carrying forward the IMA measurement logs on kexec from
+the device tree.
 
-Move arch_ima_add_kexec_buffer() to
-security/integrity/ima/ima_kexec.c so that it is accessible for
-other architectures as well.
+ima_free_kexec_buffer() removes the chosen node
+"linux,ima-kexec-buffer" from the device tree, and frees the buffer
+used for carrying forward the IMA measurement logs on kexec.
 
+These functions do not have architecture specific code, but are
+currently limited to powerpc. Move ima_get_kexec_buffer() and
+ima_free_kexec_buffer() to ima_kexec.c in IMA so that they are
+accessible for other architectures as well.
+
+With the above change the functions in arch/powerpc/kexec/ima.c are
+defined only when the kernel config CONFIG_IMA_KEXEC is enabled.
+Update the Makefile to build arch/powerpc/kexec/ima.c only when
+CONFIG_IMA_KEXEC is enabled and remove "#ifdef CONFIG_IMA_KEXEC"
+in arch/powerpc/kexec/ima.c.
+
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- arch/powerpc/include/asm/ima.h     |  3 ---
- arch/powerpc/kexec/ima.c           | 21 ---------------------
- security/integrity/ima/ima_kexec.c | 22 ++++++++++++++++++++++
- 3 files changed, 22 insertions(+), 24 deletions(-)
+ arch/powerpc/include/asm/ima.h     |  3 --
+ arch/powerpc/kexec/Makefile        |  7 +---
+ arch/powerpc/kexec/ima.c           | 50 -----------------------------
+ security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+), 59 deletions(-)
 
 diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
-index d8444d27f0d8..d6ab5d944dcd 100644
+index a2fc71bc3b23..d8444d27f0d8 100644
 --- a/arch/powerpc/include/asm/ima.h
 +++ b/arch/powerpc/include/asm/ima.h
-@@ -7,9 +7,6 @@
+@@ -6,9 +6,6 @@
+ 
  struct kimage;
  
- #ifdef CONFIG_IMA_KEXEC
--int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
--			      size_t size);
+-int ima_get_kexec_buffer(void **addr, size_t *size);
+-int ima_free_kexec_buffer(void);
 -
- int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node);
- #else
- static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
+ #ifdef CONFIG_IMA_KEXEC
+ int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+ 			      size_t size);
+diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
+index 4aff6846c772..f54a9dbff4c8 100644
+--- a/arch/powerpc/kexec/Makefile
++++ b/arch/powerpc/kexec/Makefile
+@@ -9,12 +9,7 @@ obj-$(CONFIG_PPC32)		+= relocate_32.o
+ 
+ obj-$(CONFIG_KEXEC_FILE)	+= file_load.o ranges.o file_load_$(BITS).o elf_$(BITS).o
+ 
+-ifdef CONFIG_HAVE_IMA_KEXEC
+-ifdef CONFIG_IMA
+-obj-y				+= ima.o
+-endif
+-endif
+-
++obj-$(CONFIG_IMA_KEXEC)		+= ima.o
+ 
+ # Disable GCOV, KCOV & sanitizers in odd or sensitive code
+ GCOV_PROFILE_core_$(BITS).o := n
 diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
-index bf7084c0c4da..b2793be353a9 100644
+index 68017123b07d..bf7084c0c4da 100644
 --- a/arch/powerpc/kexec/ima.c
 +++ b/arch/powerpc/kexec/ima.c
-@@ -13,27 +13,6 @@
+@@ -13,55 +13,6 @@
  #include <linux/libfdt.h>
  #include <asm/ima.h>
  
 -/**
-- * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
-- *
-- * @image: kimage struct to set IMA buffer data
-- * @load_addr: Starting address where IMA buffer is loaded at
-- * @size: Number of bytes in the IMA buffer
-- *
-- * Architectures should use this function to pass on the IMA buffer
-- * information to the next kernel.
+- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+- * @addr:	On successful return, set to point to the buffer contents.
+- * @size:	On successful return, set to the buffer size.
 - *
 - * Return: 0 on success, negative errno on error.
 - */
--int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
--			      size_t size)
+-int ima_get_kexec_buffer(void **addr, size_t *size)
 -{
--	image->arch.ima_buffer_addr = load_addr;
--	image->arch.ima_buffer_size = size;
+-	int ret;
+-	unsigned long tmp_addr;
+-	size_t tmp_size;
+-
+-	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
+-	if (ret)
+-		return ret;
+-
+-	*addr = __va(tmp_addr);
+-	*size = tmp_size;
 -
 -	return 0;
 -}
 -
- static int write_number(void *p, u64 value, int cells)
- {
- 	if (cells == 1) {
+-/**
+- * ima_free_kexec_buffer - free memory used by the IMA buffer
+- */
+-int ima_free_kexec_buffer(void)
+-{
+-	int ret;
+-	unsigned long addr;
+-	size_t size;
+-	struct property *prop;
+-
+-	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
+-	if (!prop)
+-		return -ENOENT;
+-
+-	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
+-	if (ret)
+-		return ret;
+-
+-	ret = of_remove_property(of_chosen, prop);
+-	if (ret)
+-		return ret;
+-
+-	return memblock_free(addr, size);
+-}
+-
+-#ifdef CONFIG_IMA_KEXEC
+ /**
+  * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
+  *
+@@ -154,4 +105,3 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_IMA_KEXEC */
 diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 4d354593aecf..5263dafe8f4d 100644
+index 121de3e04af2..4d354593aecf 100644
 --- a/security/integrity/ima/ima_kexec.c
 +++ b/security/integrity/ima/ima_kexec.c
-@@ -74,6 +74,28 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 	return ret;
+@@ -9,7 +9,10 @@
+ 
+ #include <linux/seq_file.h>
+ #include <linux/vmalloc.h>
++#include <linux/memblock.h>
++#include <linux/of.h>
+ #include <linux/kexec.h>
++#include <linux/ima.h>
+ #include "ima.h"
+ 
+ #ifdef CONFIG_IMA_KEXEC
+@@ -133,6 +136,54 @@ void ima_add_kexec_buffer(struct kimage *image)
  }
+ #endif /* IMA_KEXEC */
  
 +/**
-+ * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
-+ *
-+ * @image: kimage struct to set IMA buffer data
-+ * @load_addr: Starting address where IMA buffer is loaded at
-+ * @size: Number of bytes in the IMA buffer
-+ *
-+ * Architectures should use this function to pass on the IMA buffer
-+ * information to the next kernel.
++ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
++ * @addr:	On successful return, set to point to the buffer contents.
++ * @size:	On successful return, set to the buffer size.
 + *
 + * Return: 0 on success, negative errno on error.
 + */
-+static int arch_ima_add_kexec_buffer(struct kimage *image,
-+				     unsigned long load_addr,
-+				     size_t size)
++static int ima_get_kexec_buffer(void **addr, size_t *size)
 +{
-+	image->arch.ima_buffer_addr = load_addr;
-+	image->arch.ima_buffer_size = size;
++	int ret;
++	unsigned long tmp_addr;
++	size_t tmp_size;
++
++	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
++	if (ret)
++		return ret;
++
++	*addr = __va(tmp_addr);
++	*size = tmp_size;
 +
 +	return 0;
 +}
 +
++/**
++ * ima_free_kexec_buffer - free memory used by the IMA buffer
++ */
++static int ima_free_kexec_buffer(void)
++{
++	int ret;
++	unsigned long addr;
++	size_t size;
++	struct property *prop;
++
++	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
++	if (!prop)
++		return -ENOENT;
++
++	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
++	if (ret)
++		return ret;
++
++	ret = of_remove_property(of_chosen, prop);
++	if (ret)
++		return ret;
++
++	return memblock_free(addr, size);
++}
++
  /*
-  * Called during kexec_file_load so that IMA can add a segment to the kexec
-  * image for the measurement list for the next kernel.
+  * Restore the measurement list from the previous kernel.
+  */
 -- 
 2.29.2
 
