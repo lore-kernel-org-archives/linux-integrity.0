@@ -2,47 +2,46 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C8AC4361A
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60C4C4361B
 	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 443CD22DBF
+	by mail.kernel.org (Postfix) with ESMTP id 78538230FE
 	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:45:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730908AbgLEBpP (ORCPT
+        id S1730933AbgLEBpQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Dec 2020 20:45:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:52027 "EHLO
+        Fri, 4 Dec 2020 20:45:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50972 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726508AbgLEBpP (ORCPT
+        by vger.kernel.org with ESMTP id S1727566AbgLEBpP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 4 Dec 2020 20:45:15 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607132628;
+        s=mimecast20190719; t=1607132629;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lW9KkMzFLYc1ojPEtP3p/Op0vdlWTjdG3yLjC3/7Lv4=;
-        b=HXkRCMFfsEXqiqaEklay0OiyaU4qYNYFfpfOvmqb2nXUUn5/Q4pfwYSfpbf35lFvmNMpPa
-        eatqJjkourcfO/q+HU0eOLlUy8IvTdaMP7IHz7UEk9h0VFf4/8xkqL4NpsHEwoWpOwZIxw
-        q+wK4n5hZ/rfaWJ1HOJA0kW0nAYqMU8=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=LW+4VRCw8R3F3WRgitjgSML8vOT8dg+Dh8HEUAO8kA4=;
+        b=W0OKCTNq7KGzu0ZLo7MCB4+jJ8N99EiX9JEoXJmykTZsvPP4BP69iRJBbOMdFLAqvHuW95
+        +ai63SBpSDahY1W5c4D4z8zfaZGtkeappsoctrFeSKVExmUJHaOEDUkRbBMbNW04P6dVcx
+        q8qMy9jfR4Tck302mL3s8zzNxrnotNY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-206-pQvmrQQvNZqgrpUQIkztzA-1; Fri, 04 Dec 2020 20:43:47 -0500
-X-MC-Unique: pQvmrQQvNZqgrpUQIkztzA-1
+ us-mta-101-85zLLKAcNpie_eVxFlDWIA-1; Fri, 04 Dec 2020 20:43:45 -0500
+X-MC-Unique: 85zLLKAcNpie_eVxFlDWIA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7E678518A;
-        Sat,  5 Dec 2020 01:43:45 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-114-119.phx2.redhat.com [10.3.114.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E086360918;
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2E6E0518E;
         Sat,  5 Dec 2020 01:43:43 +0000 (UTC)
+Received: from cantor.redhat.com (ovpn-114-119.phx2.redhat.com [10.3.114.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9787160936;
+        Sat,  5 Dec 2020 01:43:41 +0000 (UTC)
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-integrity@vger.kernel.org, intel-gfx@lists.freedesktop.org,
@@ -58,11 +57,9 @@ Cc:     linux-integrity@vger.kernel.org, intel-gfx@lists.freedesktop.org,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
         Matthew Garrett <mjg59@google.com>,
         Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v3 2/4] drm/i915/pmu: Use kstat_irqs to get interrupt count
-Date:   Fri,  4 Dec 2020 18:43:38 -0700
-Message-Id: <20201205014340.148235-3-jsnitsel@redhat.com>
-In-Reply-To: <20201205014340.148235-1-jsnitsel@redhat.com>
-References: <20201205014340.148235-1-jsnitsel@redhat.com>
+Subject: [PATCH v3 0/4] tpm_tis: Detect interrupt storms
+Date:   Fri,  4 Dec 2020 18:43:36 -0700
+Message-Id: <20201205014340.148235-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
@@ -70,8 +67,51 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Now that kstat_irqs is exported, get rid of count_interrupts in
-i915_pmu.c
+This patchset is an attempt to try and catch tpm_tis devices that have
+interrupt storm issues, disable the interrupt, and use polling. In
+2016 the tpm_tis interrupt code was accidently disabled, and polling
+was just being used. When we initially tried to enable interrupts
+again there were some reports of systems being hit with interrupt
+storms. It turned out that the ThinkPad T490s had misconfigured a gpio
+pin being used for the interrupt.  The problem is more widespread
+though, with interrupt storms also being seen on other platforms and
+different TPM vendors. With the L490 the system hangs at tpm_tis
+initialization even with the detection code, so change the earlier
+detection code that used dmi to look for the T490s to instead look for
+the L490 and disable interrupts.
+
+Since kstat_irqs needs to be exported to allow building of tpm_tis
+as a module, I've included a patch to change the i915_pmu code to
+use kstat_irqs where before it was using its own version. If this
+isn't desired it can be dropped.
+
+I've been testing this on top of James' proposed patchset which
+re-enables interrupts for tpm_tis. With the patchsets applied
+it detects the problem on the T490s and on the Ice Lake development
+system where I found the issue. I have Lenovo verifying that the
+dmi detection code will now detect the L490 and avoid the hang
+it experiences. I'm also working on getting access to an L490
+to see if I can figure out what the underlying issue is.
+
+
+
+Changes from v2:
+	- Export kstat_irqs to allow building tpm_tis as a module.
+    	- Change i915_pmu.c to use kstat_irqs instead of it's own
+      	  version count_interrupts.
+    	- Change include from linux/kernel_stat.h to linux/irq.h.
+    	- Change dmi checking code to now look for L490 instead of
+	  T490s.
+
+Changes from v1:
+	- drop tpm_tis specific workqueue and use just system_w.
+
+Jerry Snitselaar (4):
+  irq: export kstat_irqs
+  drm/i915/pmu: Use kstat_irqs to get interrupt count
+  tpm_tis: Disable interrupts if interrupt storm detected
+  tpm_tis: Disable Interrupts on the ThinkPad L490
+
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Jani Nikula <jani.nikula@linux.intel.com>
@@ -86,47 +126,16 @@ Cc: Peter Huewe <peterhuewe@gmx.de>
 Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
 Cc: Matthew Garrett <mjg59@google.com>
 Cc: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
- drivers/gpu/drm/i915/i915_pmu.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+Cc: linux-integrity@vger.kernel.org
 
-diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-index 69c0fa20eba1..a3e63f03da8c 100644
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -423,22 +423,6 @@ static enum hrtimer_restart i915_sample(struct hrtimer *hrtimer)
- 	return HRTIMER_RESTART;
- }
- 
--static u64 count_interrupts(struct drm_i915_private *i915)
--{
--	/* open-coded kstat_irqs() */
--	struct irq_desc *desc = irq_to_desc(i915->drm.pdev->irq);
--	u64 sum = 0;
--	int cpu;
--
--	if (!desc || !desc->kstat_irqs)
--		return 0;
--
--	for_each_possible_cpu(cpu)
--		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
--
--	return sum;
--}
--
- static void i915_pmu_event_destroy(struct perf_event *event)
- {
- 	struct drm_i915_private *i915 =
-@@ -581,7 +565,7 @@ static u64 __i915_pmu_event_read(struct perf_event *event)
- 				   USEC_PER_SEC /* to MHz */);
- 			break;
- 		case I915_PMU_INTERRUPTS:
--			val = count_interrupts(i915);
-+			val = kstat_irqs(i915->drm.pdev->irq);
- 			break;
- 		case I915_PMU_RC6_RESIDENCY:
- 			val = get_rc6(&i915->gt);
+ drivers/char/tpm/tpm_tis.c      |  4 ++--
+ drivers/char/tpm/tpm_tis_core.c | 27 +++++++++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_core.h |  2 ++
+ drivers/gpu/drm/i915/i915_pmu.c | 18 +-----------------
+ include/linux/irqdesc.h         |  1 +
+ kernel/irq/irqdesc.c            |  1 +
+ 6 files changed, 34 insertions(+), 19 deletions(-)
+
 -- 
 2.27.0
 
