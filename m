@@ -2,134 +2,101 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98691C4361A
-	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D36C433FE
+	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9AB22DD6
-	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59DFE23102
+	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:45:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726210AbgLEBWP (ORCPT
+        id S1726508AbgLEBpQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Dec 2020 20:22:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725300AbgLEBWP (ORCPT
+        Fri, 4 Dec 2020 20:45:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53228 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726210AbgLEBpP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Dec 2020 20:22:15 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B50XVas000872;
-        Fri, 4 Dec 2020 20:20:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=references : from : to :
- cc : subject : in-reply-to : date : message-id : mime-version :
- content-type; s=pp1; bh=xNnZ/ZkntbjED8A3awgVAApqgSCj5zVZ3LoHd65+kEA=;
- b=dlx58ryIncl/0bicYIpwkY7DRs1Uzoy5EGOn1XQtEigrPlfG5vFICpnicIRhQPoYKNro
- LFueyisOnXsD6g2KYYCyi5YLyzenpCHWkqYFej5SGYfPCLApriMoaSCcgesARkWdeGn9
- WY8QckvLz+ZhZOgq0futsGVj5R4Y0MCN2dnnfaUENY25xTDEzObqC7yVrG6TYg2T3Y7l
- bIkjyB0tL4AZDnXjS3zqrSUKkSx3xGdumZE82Z1VcXL7PkuakcVGLE1IFFrndbjIjiJn
- eQau1ec/Wmci2x27P1IHKLWeWbzWffHRAQbd9ALpPkq8UTDEiTPSFhXCVVtFYzNOHzLn Dw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 357yjc914v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Dec 2020 20:20:40 -0500
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B50oe75061768;
-        Fri, 4 Dec 2020 20:20:40 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 357yjc914a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 04 Dec 2020 20:20:39 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B51Fa1Q030816;
-        Sat, 5 Dec 2020 01:20:38 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma02wdc.us.ibm.com with ESMTP id 356cbf44j4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 05 Dec 2020 01:20:38 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B51Kb7C18547190
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 5 Dec 2020 01:20:37 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A675BE054;
-        Sat,  5 Dec 2020 01:20:37 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4125BE04F;
-        Sat,  5 Dec 2020 01:20:27 +0000 (GMT)
-Received: from manicouagan.localdomain (unknown [9.80.203.141])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Sat,  5 Dec 2020 01:20:27 +0000 (GMT)
-References: <20201204195149.611-1-nramas@linux.microsoft.com>
- <20201204195149.611-2-nramas@linux.microsoft.com>
-User-agent: mu4e 1.4.10; emacs 27.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com, robh@kernel.org, gregkh@linuxfoundation.org,
-        james.morse@arm.com, catalin.marinas@arm.com, sashal@kernel.org,
-        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
-        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
-        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
-        christophe.leroy@c-s.fr, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        prsriva@linux.microsoft.com, balajib@linux.microsoft.com
-Subject: Re: [PATCH v10 1/8] powerpc: fix compiler warnings and errors
-In-reply-to: <20201204195149.611-2-nramas@linux.microsoft.com>
-Date:   Fri, 04 Dec 2020 22:20:24 -0300
-Message-ID: <87mtytoxpj.fsf@manicouagan.localdomain>
+        Fri, 4 Dec 2020 20:45:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607132629;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6yJeqxIEHIleweaVW/dUcRgU3WNyCS7QJx1HMI0RKzA=;
+        b=E+vmUMgZtPMtMwAfS9SkaKA8irIAmRnLTIrDSCpLg6PdDXsWCGHNppAgKQvnBv3CC5sKVW
+        v54Uavq/LZJCHJFpd+pFuXZHLcD9UTYRhLOGeK0bu4j2y999+Kztm1q9UEa7iFF0nNXUF/
+        XHyBEYNaijIz41ML+dH5KormIaLgnF4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-282-dWcFxQouP0-k3JQfcGHuAQ-1; Fri, 04 Dec 2020 20:43:48 -0500
+X-MC-Unique: dWcFxQouP0-k3JQfcGHuAQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9903D180A099;
+        Sat,  5 Dec 2020 01:43:46 +0000 (UTC)
+Received: from cantor.redhat.com (ovpn-114-119.phx2.redhat.com [10.3.114.119])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EAD760936;
+        Sat,  5 Dec 2020 01:43:46 +0000 (UTC)
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH v3 4/4] tpm_tis: Disable Interrupts on the ThinkPad L490
+Date:   Fri,  4 Dec 2020 18:43:40 -0700
+Message-Id: <20201205014340.148235-5-jsnitsel@redhat.com>
+In-Reply-To: <20201205014340.148235-1-jsnitsel@redhat.com>
+References: <20201205014340.148235-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-04_13:2020-12-04,2020-12-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
- mlxscore=0 impostorscore=0 priorityscore=1501 suspectscore=0
- mlxlogscore=776 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012050000
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+The interrupt storm detection code detects the issue on the ThinkPad
+T490s, but the L490 still hangs at initialization. So swap out the
+T490s for the L490 in the dmi check.
 
-Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Peter Huewe <peterhuewe@gmx.de>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Matthew Garrett <mjg59@google.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+---
+ drivers/char/tpm/tpm_tis.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> The function prototype for the functions defined in ima.c for powerpc
-> are given in the header file ima.h. But this header file is not
-> included in ima.c resulting in compilation errors such as given below.
->
-> arch/powerpc/kexec/ima.c:56:5: error: no previous prototype for 'ima_get_kexec_buffer' [-Werror=missing-prototypes]
->    56 | int ima_get_kexec_buffer(void **addr, size_t *size)
->       |     ^~~~~~~~~~~~~~~~~~~~
->
-> The function parameters for remove_ima_buffer() and
-> arch_ima_add_kexec_buffer() are not described in the function header
-> resulting in warnings such as given below.
->
-> arch/powerpc/kexec/ima.c:111: warning: Function parameter or member 'fdt' not described in 'remove_ima_buffer'
->
-> Include ima.h in ima.c for powerpc. Describe the function parameters for
-> remove_ima_buffer() and arch_ima_add_kexec_buffer().
->
-> Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-> Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
-These warnings showed up when using `make W=1`, and this patch fixes
-them. Thanks!
-
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-
-
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 4ed6e660273a..7322e0986a83 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -77,10 +77,10 @@ static int tpm_tis_disable_irq(const struct dmi_system_id *d)
+ static const struct dmi_system_id tpm_tis_dmi_table[] = {
+ 	{
+ 		.callback = tpm_tis_disable_irq,
+-		.ident = "ThinkPad T490s",
++		.ident = "ThinkPad L490",
+ 		.matches = {
+ 			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad T490s"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L490"),
+ 		},
+ 	},
+ 	{}
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+2.27.0
+
