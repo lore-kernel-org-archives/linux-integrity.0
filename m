@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9B4C1B0E3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A48C1B0D9
 	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43B8722E02
+	by mail.kernel.org (Postfix) with ESMTP id 227FF22E03
 	for <linux-integrity@archiver.kernel.org>; Sat,  5 Dec 2020 01:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbgLEBp0 (ORCPT
+        id S1731018AbgLEBpT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 4 Dec 2020 20:45:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:37449 "EHLO
+        Fri, 4 Dec 2020 20:45:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:23087 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730890AbgLEBpQ (ORCPT
+        by vger.kernel.org with ESMTP id S1730941AbgLEBpR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 4 Dec 2020 20:45:16 -0500
+        Fri, 4 Dec 2020 20:45:17 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607132629;
+        s=mimecast20190719; t=1607132631;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=yfnbcXnKaxVtlJzzNRHF0Gxnxvp6ml+K62fOuuwG0xQ=;
-        b=gRUeIdQDaMZsuFSQMtjgh1JPCA7WbzzuGkomUlbmBBUBovboUUa0DM7m+cOP9YxqMvAXo7
-        rbkl1Be+9Bb+bY42HmcTMogE/jxHF1kMvDLasO2Aqpc2ga9PtZqnHixlgnyjwZbFB7lUZI
-        usRfzQOUNlogKbq0gV2xEoqPZB7Zu2g=
+        bh=3+TO2oSaQ81IHJLncB8OI5/1JnLZbRs6jJE1YPlG8SE=;
+        b=KieAOJFRFI49vwW1164gymvzk7Y5pFlsKzJ9pzBCAwiljbRLVHbFauf9Q0ARUvgT+cjSau
+        1ZSFrx/qXEq4EtjSmq3n/c4chzSBYUE5zpnjsB5TZhVywaICzxpvKA4TVE4umvhhHcghxN
+        WuMgXi+cAO3R/t9Dxb1qaLhl8hQ+JcY=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-453-4ZINpmTlOnSepeF3G2brOA-1; Fri, 04 Dec 2020 20:43:46 -0500
-X-MC-Unique: 4ZINpmTlOnSepeF3G2brOA-1
+ us-mta-42-AsaoKEgGMOyymeR2UkUFOA-1; Fri, 04 Dec 2020 20:43:47 -0500
+X-MC-Unique: AsaoKEgGMOyymeR2UkUFOA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D26CC80ED8A;
-        Sat,  5 Dec 2020 01:43:43 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 016A6107ACE4;
+        Sat,  5 Dec 2020 01:43:46 +0000 (UTC)
 Received: from cantor.redhat.com (ovpn-114-119.phx2.redhat.com [10.3.114.119])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C0F160917;
-        Sat,  5 Dec 2020 01:43:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BAC060917;
+        Sat,  5 Dec 2020 01:43:45 +0000 (UTC)
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-integrity@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, kernel test robot <lkp@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel@lists.freedesktop.org,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Jason Gunthorpe <jgg@ziepe.ca>,
         Peter Huewe <peterhuewe@gmx.de>,
         James Bottomley <James.Bottomley@HansenPartnership.com>,
         Matthew Garrett <mjg59@google.com>,
         Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH v3 1/4] irq: export kstat_irqs
-Date:   Fri,  4 Dec 2020 18:43:37 -0700
-Message-Id: <20201205014340.148235-2-jsnitsel@redhat.com>
+Subject: [PATCH v3 3/4] tpm_tis: Disable interrupts if interrupt storm detected
+Date:   Fri,  4 Dec 2020 18:43:39 -0700
+Message-Id: <20201205014340.148235-4-jsnitsel@redhat.com>
 In-Reply-To: <20201205014340.148235-1-jsnitsel@redhat.com>
 References: <20201205014340.148235-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
@@ -66,14 +65,13 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-To try and detect potential interrupt storms that
-have been occurring with tpm_tis devices it was suggested
-to use kstat_irqs() to get the number of interrupts.
-Since tpm_tis can be built as a module it needs kstat_irqs
-exported.
+When enabling the interrupt code for the tpm_tis driver we have
+noticed some systems have a bios issue causing an interrupt storm to
+occur. The issue isn't limited to a single tpm or system manufacturer
+so keeping a denylist of systems with the issue isn't optimal. Instead
+try to detect the problem occurring, disable interrupts, and revert to
+polling when it happens.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Jarkko Sakkinen <jarkko@kernel.org>
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Peter Huewe <peterhuewe@gmx.de>
@@ -82,34 +80,88 @@ Cc: Matthew Garrett <mjg59@google.com>
 Cc: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
 ---
- include/linux/irqdesc.h | 1 +
- kernel/irq/irqdesc.c    | 1 +
- 2 files changed, 2 insertions(+)
+v3: - Change include from linux/kernel_stat.h to linux/irq.h
+v2: - drop tpm_tis specific workqueue and use just system_w
 
-diff --git a/include/linux/irqdesc.h b/include/linux/irqdesc.h
-index 5745491303e0..fff88c1f1ac6 100644
---- a/include/linux/irqdesc.h
-+++ b/include/linux/irqdesc.h
-@@ -153,6 +153,7 @@ static inline void generic_handle_irq_desc(struct irq_desc *desc)
- }
+drivers/char/tpm/tpm_tis_core.c | 27 +++++++++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_core.h |  2 ++
+ 2 files changed, 29 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 92c51c6cfd1b..d817ff5664d1 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -24,6 +24,8 @@
+ #include <linux/wait.h>
+ #include <linux/acpi.h>
+ #include <linux/freezer.h>
++#include <linux/workqueue.h>
++#include <linux/irq.h>
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
  
- int generic_handle_irq(unsigned int irq);
-+unsigned int kstat_irqs(unsigned int irq);
+@@ -715,9 +717,23 @@ static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+ {
+ 	struct tpm_chip *chip = dev_id;
+ 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
++	static bool check_storm = true;
++	static unsigned int check_start;
+ 	u32 interrupt;
+ 	int i, rc;
  
- #ifdef CONFIG_HANDLE_DOMAIN_IRQ
- /*
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 1a7723604399..12398ef1796b 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -1000,6 +1000,7 @@ unsigned int kstat_irqs(unsigned int irq)
- 		sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
- 	return sum;
- }
-+EXPORT_SYMBOL_GPL(kstat_irqs);
++	if (unlikely(check_storm)) {
++		if (!check_start) {
++			check_start = jiffies_to_msecs(jiffies);
++		} else if ((kstat_irqs(priv->irq) > 1000) &&
++			   (jiffies_to_msecs(jiffies) - check_start < 500)) {
++			check_storm = false;
++			schedule_work(&priv->storm_work);
++		} else if (jiffies_to_msecs(jiffies) - check_start >= 500) {
++			check_storm = false;
++		}
++	}
++
+ 	rc = tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
+ 	if (rc < 0)
+ 		return IRQ_NONE;
+@@ -943,6 +959,14 @@ static const struct tpm_class_ops tpm_tis = {
+ 	.clk_enable = tpm_tis_clkrun_enable,
+ };
  
- /**
-  * kstat_irqs_usr - Get the statistics for an interrupt
++static void tpm_tis_storm_work(struct work_struct *work)
++{
++	struct tpm_tis_data *priv = container_of(work, struct tpm_tis_data, storm_work);
++
++	disable_interrupts(priv->chip);
++	dev_warn(&priv->chip->dev, "Interrupt storm detected, using polling.\n");
++}
++
+ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 		      const struct tpm_tis_phy_ops *phy_ops,
+ 		      acpi_handle acpi_dev_handle)
+@@ -959,6 +983,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+ 
++	priv->chip = chip;
++	INIT_WORK(&priv->storm_work, tpm_tis_storm_work);
++
+ #ifdef CONFIG_ACPI
+ 	chip->acpi_dev_handle = acpi_dev_handle;
+ #endif
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index 9b2d32a59f67..973297ee2e16 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -95,6 +95,8 @@ struct tpm_tis_data {
+ 	u16 clkrun_enabled;
+ 	wait_queue_head_t int_queue;
+ 	wait_queue_head_t read_queue;
++	struct work_struct storm_work;
++	struct tpm_chip *chip;
+ 	const struct tpm_tis_phy_ops *phy_ops;
+ 	unsigned short rng_quality;
+ };
 -- 
 2.27.0
 
