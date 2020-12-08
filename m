@@ -2,209 +2,153 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB05AC4361B
-	for <linux-integrity@archiver.kernel.org>; Tue,  8 Dec 2020 11:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D20C433FE
+	for <linux-integrity@archiver.kernel.org>; Tue,  8 Dec 2020 13:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B080823A9D
-	for <linux-integrity@archiver.kernel.org>; Tue,  8 Dec 2020 11:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BEA022242
+	for <linux-integrity@archiver.kernel.org>; Tue,  8 Dec 2020 13:38:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbgLHLwt (ORCPT
+        id S1729459AbgLHNh7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 8 Dec 2020 06:52:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41538 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgLHLws (ORCPT
+        Tue, 8 Dec 2020 08:37:59 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50496 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729020AbgLHNh6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 Dec 2020 06:52:48 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BF2C06179C
-        for <linux-integrity@vger.kernel.org>; Tue,  8 Dec 2020 03:52:08 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id r24so22572003lfm.8
-        for <linux-integrity@vger.kernel.org>; Tue, 08 Dec 2020 03:52:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=p3UOlT4T7w2iGiGz4zhACGCaX1lqFN/iswpw5ZnkzrM=;
-        b=K1JWSFkTy6XixhuEVjqMYIhYotaaw0q/FmwnMPxBVqxc3uSIdIQNYkJEUr0zLiMovp
-         Y0J20mo1QFGat7zPDCW9WuyHBkQfBpKMyRvu00gjUJNlb2GAUa17YVVVPqW0lFr9YbDB
-         Rvn30VX44R4T4AkOP2Y2aXUToxPR5Yu1LUL+aHc3tePoKK7BUMW+UqcdeZwpyHa80wQh
-         PTjCv5cb2fOmKBNmTlci7Qko2+3OLqE0zyjN3v/J0afe3bNXScVJI5FqsyXg+g1lmvBr
-         SQTpwTUMlSpA8Z90euuAlNPXWkOlDB2idVQthpeMFDdcIpQ57mTKAFl8wy6LwcJqGkJu
-         Gdqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=p3UOlT4T7w2iGiGz4zhACGCaX1lqFN/iswpw5ZnkzrM=;
-        b=scigH0JS+O6rrDjQNSOQNHFRxxrCbnIYDRwO6nwXoMCMGEqEozk/WLby5RU0FW47sh
-         377LD2tBu4iOtt3/AD2SsrrBPgk7FZb7JGUxKBHKmhBZSHK/sNZp1Ey4U1NreURqoGw3
-         6uqWUVn2rQRPVaBw9u6mza1++2LODpknsrLG4UZ03sbv2dJibFNQgatizeFrhExHKSP8
-         QlCd812tjVDWREQ5jjk1XLsO6NjQIIQ5K7lZ5T/U6dR/VkF7uvRmA7lFCgavqZGdbeD8
-         6V47UlbbWqZOGS71jcS1JfxsgqAuQfZzdR0+Jpqd4CA4YhQZktGuZFmxGPi0X3ekq4uc
-         XQYA==
-X-Gm-Message-State: AOAM531jhXuWYbBPH8q4e5pIjYLtZfnkTioKQhUafBc2ALYDMZNycoNy
-        uMRdd+ck+0yZA7iof1UOlyhLKfUFaRP3d+l+yiu+pQ==
-X-Google-Smtp-Source: ABdhPJyvGNe6OrrMd86DoarSRS4TSHMXGop3JNtQfwGOmMDdmgDiMAbQn68Ss0Jc/C7WgtMqQw0ZJt2BEbCZMlIgDP0=
-X-Received: by 2002:a19:6144:: with SMTP id m4mr10079549lfk.546.1607428324986;
- Tue, 08 Dec 2020 03:52:04 -0800 (PST)
-MIME-Version: 1.0
-References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
- <20201105050736.GA702944@kernel.org> <CAFA6WYPetvod-Wov2n_L5TL771j+-kt+_csyWYT-uM=haEKMZQ@mail.gmail.com>
- <20201106145252.GA10434@kernel.org> <20201204051642.GA154469@kernel.org>
-In-Reply-To: <20201204051642.GA154469@kernel.org>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 8 Dec 2020 17:21:53 +0530
-Message-ID: <CAFA6WYOxkAUxg05kKXAcu2F2YD97MXNSggYgL+uSG7wrBVKoMQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Dec 2020 08:37:58 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B8DWOUc096510;
+        Tue, 8 Dec 2020 08:37:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references; s=pp1;
+ bh=y7Rn1mFTwjD/+UcqdZUlXv9sotblfSHf8xeTD1DjzjI=;
+ b=Hb6cZuIsy6T7KmfIkrkXlaJQuBg89qEdHg7vNKiZqWyVlxvxmOqEG1qtljjfuRDtYTZz
+ 7qxNRtKn2MWyyQTJ2euTX21BHHyvLGxjwhTyjEJpcuS7WSYXbrpdbk8J2pL8ClhbKPC0
+ MoXHEoXGiGAnct4QYI735WuN4ywrYQdIZBJyKXa2zWgNhPX/Toe/Do16VfY6iUZXe8gM
+ W8F5CmEvcNicdj6LiSIVN1i+g43pd4JpGNIIGq8ocxyfaohcmv4L0tq9vUtPNLGM8uR8
+ KWTqbthetWtpTvQQFBRDzET0akxOBYky8VczvxALsg0WjWFIQngxdCqU1fmv3cR73Y6L UA== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 359qrpqhnr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 08:37:03 -0500
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B8Db1Yx006716;
+        Tue, 8 Dec 2020 13:37:01 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 3583svkghm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 13:37:01 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B8DaxFJ63635728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Dec 2020 13:36:59 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC92C42045;
+        Tue,  8 Dec 2020 13:36:58 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 70D0442049;
+        Tue,  8 Dec 2020 13:36:57 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.65.221.14])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Dec 2020 13:36:57 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Vitaly Chikunov <vt@altlinux.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [ima-evm-utils][PATCH 1/2] Add support for verifying portable EVM signatures
+Date:   Tue,  8 Dec 2020 08:36:38 -0500
+Message-Id: <20201208133639.538269-2-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.18.4
+In-Reply-To: <20201208133639.538269-1-zohar@linux.ibm.com>
+References: <20201208133639.538269-1-zohar@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2020-12-08_09:2020-12-08,2020-12-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ suspectscore=1 clxscore=1015 priorityscore=1501 phishscore=0 adultscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012080080
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Jarkko,
+Commit 4928548d9d87 ("Add support for portable EVM format") added
+support for generating portable and immutable signatures.  Support
+verifying them, using either the security.ima or the user.ima.
 
-Apologies for the delay in my response as I was busy with other high
-priority work.
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ src/evmctl.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-On Fri, 4 Dec 2020 at 10:46, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Fri, Nov 06, 2020 at 04:52:52PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Nov 06, 2020 at 03:02:41PM +0530, Sumit Garg wrote:
-> > > On Thu, 5 Nov 2020 at 10:37, Jarkko Sakkinen <jarkko@kernel.org> wrot=
-e:
-> > > >
-> > > > On Tue, Nov 03, 2020 at 09:31:42PM +0530, Sumit Garg wrote:
-> > > > > Add support for TEE based trusted keys where TEE provides the fun=
-ctionality
-> > > > > to seal and unseal trusted keys using hardware unique key. Also, =
-this is
-> > > > > an alternative in case platform doesn't possess a TPM device.
-> > > > >
-> > > > > This patch-set has been tested with OP-TEE based early TA which i=
-s already
-> > > > > merged in upstream [1].
-> > > >
-> > > > Is the new RPI400 computer a platform that can be used for testing
-> > > > patch sets like this? I've been looking for a while something ARM64
-> > > > based with similar convenience as Intel NUC's, and on the surface
-> > > > this new RPI product looks great for kernel testing purposes.
-> > >
-> > > Here [1] is the list of supported versions of Raspberry Pi in OP-TEE.
-> > > The easiest approach would be to pick up a supported version or else
-> > > do an OP-TEE port for an unsupported one (which should involve minima=
-l
-> > > effort).
-> > >
-> > > [1] https://optee.readthedocs.io/en/latest/building/devices/rpi3.html=
-#what-versions-of-raspberry-pi-will-work
-> > >
-> > > -Sumit
-> >
-> > If porting is doable, then I'll just order RPI 400, and test with QEMU
-> > up until either I port OP-TEE myself or someone else does it.
-> >
-> > For seldom ARM testing, RPI 400 is really convenient device with its
-> > boxed form factor.
->
-> I'm now a proud owner of Raspberry Pi 400 home computer :-)
->
-> I also found instructions on how to boot a custom OS from a USB stick:
->
-> https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/=
-msd.md
->
-> Also, my favorite build system BuildRoot has bunch of of the shelf
-> configs:
->
-> =E2=9E=9C  buildroot-sgx (master) =E2=9C=94 ls -1 configs | grep raspberr=
-y
-> raspberrypi0_defconfig
-> raspberrypi0w_defconfig
-> raspberrypi2_defconfig
-> raspberrypi3_64_defconfig
-> raspberrypi3_defconfig
-> raspberrypi3_qt5we_defconfig
-> raspberrypi4_64_defconfig
-> raspberrypi4_defconfig
-> raspberrypi_defconfig
->
-> I.e. I'm capable of compiling kernel and user space and boot it up
-> with it.
->
-> Further, I can select this compilation option:
->
-> BR2_TARGET_OPTEE_OS:                                                     =
-                                                                           =
-              =E2=94=82
->                                                                          =
-                                                                           =
-                 =E2=94=82
->    OP-TEE OS provides the secure world boot image and the trust          =
-                                                                           =
-                 =E2=94=82
->    application development kit of the OP-TEE project. OP-TEE OS          =
-                                                                           =
-                 =E2=94=82
->    also provides generic trusted application one can embedded            =
-                                                                           =
-                 =E2=94=82
->    into its system.                                                      =
-                                                                           =
-                 =E2=94=82
->                                                                          =
-                                                                           =
-                 =E2=94=82
->    http://github.com/OP-TEE/optee_os
->
-> Is that what I want? If I put this all together and apply your patches,
-> should the expectation be that I can use trusted keys?
->
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 1815f55d73e0..4fd0ed86e281 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -404,6 +404,8 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 	}
+ 
+ 	for (xattrname = evm_config_xattrnames; *xattrname != NULL; xattrname++) {
++		int use_xattr_ima = 0;
++
+ 		if (!strcmp(*xattrname, XATTR_NAME_SELINUX) && selinux_str) {
+ 			err = strlen(selinux_str) + 1;
+ 			if (err > sizeof(xattr_value)) {
+@@ -420,6 +422,15 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 				return -1;
+ 			}
+ 			hex2bin(xattr_value, ima_str, err);
++		} else if (!strcmp(*xattrname, XATTR_NAME_IMA) && evm_portable){
++			err = lgetxattr(file, xattr_ima, xattr_value,
++					sizeof(xattr_value));
++			if (err < 0) {
++				log_err("EVM portable sig: %s required\n",
++					xattr_ima);
++				return -1;
++			}
++			use_xattr_ima = 1;
+ 		} else if (!strcmp(*xattrname, XATTR_NAME_CAPS) && (hmac_flags & HMAC_FLAG_CAPS_SET)) {
+ 			if (!caps_str)
+ 				continue;
+@@ -442,7 +453,8 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 			}
+ 		}
+ 		/*log_debug("name: %s, value: %s, size: %d\n", *xattrname, xattr_value, err);*/
+-		log_info("name: %s, size: %d\n", *xattrname, err);
++		log_info("name: %s, size: %d\n",
++			 use_xattr_ima ? xattr_ima : *xattrname, err);
+ 		log_debug_dump(xattr_value, err);
+ 		err = EVP_DigestUpdate(pctx, xattr_value, err);
+ 		if (!err) {
+@@ -807,11 +819,20 @@ static int verify_evm(const char *file)
+ 		return len;
+ 	}
+ 
+-	if (sig[0] != 0x03) {
++	if ((sig[0] != EVM_IMA_XATTR_DIGSIG) &&
++	    (sig[0] != EVM_XATTR_PORTABLE_DIGSIG)) {
+ 		log_err("%s has no signature\n", xattr_evm);
+ 		return -1;
+ 	}
+ 
++	if (sig[0] == EVM_XATTR_PORTABLE_DIGSIG) {
++		if (sig[1] != DIGSIG_VERSION_2) {
++			log_err("Portable sig: invalid type\n");
++			return -1;
++		}
++		evm_portable = true;
++	}
++
+ 	sig_hash_algo = imaevm_hash_algo_from_sig(sig + 1);
+ 	if (sig_hash_algo < 0) {
+ 		log_err("unknown hash algo: %s\n", file);
+-- 
+2.18.4
 
-Firstly you need to do an OP-TEE port for RPI 400 (refer here [1] for
-guidelines). And then in order to boot up OP-TEE on RPI 400, you can
-refer to Raspberry Pi 3 build instructions [2].
-
-[1] https://optee.readthedocs.io/en/latest/architecture/porting_guidelines.=
-html
-[2] https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#build=
--instructions
-
-> Please note that I had a few remarks about your patches (minor but need
-> to be fixed), but this version is already solid enough for testing.
->
-
-Sure, I will incorporate your remarks and Randy's documentation
-comments in the next version.
-
--Sumit
-
-> /Jarkko
