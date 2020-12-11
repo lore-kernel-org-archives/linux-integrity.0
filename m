@@ -2,148 +2,219 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB3CC433FE
-	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 00:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CCBC1B0E3
+	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 01:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E77DA2336F
-	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 00:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C1D623770
+	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 01:01:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437922AbgLLAy5 (ORCPT
+        id S2407245AbgLKX7X (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Dec 2020 19:54:57 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:33700 "EHLO
+        Fri, 11 Dec 2020 18:59:23 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:54746 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437926AbgLLAy4 (ORCPT
+        with ESMTP id S2407239AbgLKX7B (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Dec 2020 19:54:56 -0500
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D7B8120B717A;
-        Fri, 11 Dec 2020 16:54:14 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7B8120B717A
+        Fri, 11 Dec 2020 18:59:01 -0500
+Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 20E0820B7185;
+        Fri, 11 Dec 2020 15:58:20 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 20E0820B7185
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607734455;
-        bh=ZTM/idn6P5IEpBxe4MiiCDIuG4Mf+65/Gf6iGB0ePnY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OT4GD6X6FzrliU2c+Z2miKvd634vRVb61q6tWwzQkew6S/0uDgSxQ7oO8gY7XKyiV
-         qhFcZIT0vSMInz54g2JcrCGsBCozLc3oFBwAIIBB6w3RKtCsXfMQ0NIue2GhdyTfSa
-         OvMSn5Q9fCDGKvtjpWWk2KkIXJW9z59Lbxtta5r0=
-Subject: Re: [RFC PATCH 1/4] powerpc: Rename kexec elfcorehdr_addr to
- elf_headers_mem
-To:     Rob Herring <robh@kernel.org>, takahiro.akashi@linaro.org,
-        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        zohar@linux.ibm.com, james.morse@arm.com, sashal@kernel.org,
-        benh@kernel.crashing.org, paulus@samba.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
-        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        prsriva@linux.microsoft.com, balajib@linux.microsoft.com
-References: <20201211221006.1052453-1-robh@kernel.org>
- <20201211221006.1052453-2-robh@kernel.org>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <39d0e68e-12f2-ddd0-4010-bb0ec216ac5d@linux.microsoft.com>
-Date:   Fri, 11 Dec 2020 16:54:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20201211221006.1052453-2-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        s=default; t=1607731100;
+        bh=YMcBvzxh4vZvZZy4mYIoV/jZCc5dSVAsYBLz+41Te+g=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RyTmwfWh+OGnn+bilsiQ2CSGMwrH996V4fdoVRLRoNhuO1DdlP/QxefHhYxT19mgF
+         fCtwB8x80Lg2KJfso9zaSUVQarBzoD9qPN1WhYzfuizjhFR78Bbl7DkpuDH12stXq4
+         DkWxwm7PC0J5UAQtM31UBL7sNHXYiQXhI5E6zUgI=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, paul@paul-moore.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: [PATCH v8 2/8] IMA: add support to measure buffer data hash
+Date:   Fri, 11 Dec 2020 15:58:01 -0800
+Message-Id: <20201211235807.30815-3-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201211235807.30815-1-tusharsu@linux.microsoft.com>
+References: <20201211235807.30815-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 12/11/20 2:10 PM, Rob Herring wrote:
+The original IMA buffer data measurement sizes were small (e.g. boot
+command line), but the new buffer data measurement use cases have data 
+sizes that are a lot larger.  Just as IMA measures the file data hash,
+not the file data, IMA should similarly support the option for measuring 
+the hash of the buffer data.
 
-Hi Rob,
+Measuring in-memory buffer-data/buffer-data-hash is different than
+measuring file-data/file-data-hash. For the file, IMA stores the
+measurements in both measurement log and the file's extended attribute -
+which can later be used for appraisal as well. For buffer, the
+measurements are only stored in the IMA log, since the buffer has no
+extended attributes associated with it.
 
-> Align with arm64 name so common code can use it.
+Introduce a boolean parameter measure_buf_hash to support measuring
+hash of a buffer, which would be much smaller, instead of the buffer
+itself.
 
-As you'd stated in the cover letter, a better patch description would be 
-good to have here.
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
+ security/integrity/ima/ima.h                 |  3 +-
+ security/integrity/ima/ima_appraise.c        |  2 +-
+ security/integrity/ima/ima_asymmetric_keys.c |  2 +-
+ security/integrity/ima/ima_main.c            | 38 +++++++++++++++++---
+ security/integrity/ima/ima_queue_keys.c      |  3 +-
+ 5 files changed, 39 insertions(+), 9 deletions(-)
 
-Code changes look good to me.
-
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-
-thanks,
-  -lakshmi
-
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   arch/powerpc/include/asm/kexec.h  | 2 +-
->   arch/powerpc/kexec/file_load.c    | 4 ++--
->   arch/powerpc/kexec/file_load_64.c | 4 ++--
->   3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-> index 55d6ede30c19..dbf09d2f36d0 100644
-> --- a/arch/powerpc/include/asm/kexec.h
-> +++ b/arch/powerpc/include/asm/kexec.h
-> @@ -108,7 +108,7 @@ struct kimage_arch {
->   	unsigned long backup_start;
->   	void *backup_buf;
->   
-> -	unsigned long elfcorehdr_addr;
-> +	unsigned long elf_headers_mem;
->   	unsigned long elf_headers_sz;
->   	void *elf_headers;
->   
-> diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
-> index 9a232bc36c8f..e452b11df631 100644
-> --- a/arch/powerpc/kexec/file_load.c
-> +++ b/arch/powerpc/kexec/file_load.c
-> @@ -45,7 +45,7 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
->   		return NULL;
->   
->   	elfcorehdr_strlen = sprintf(cmdline_ptr, "elfcorehdr=0x%lx ",
-> -				    image->arch.elfcorehdr_addr);
-> +				    image->arch.elf_headers_mem);
->   
->   	if (elfcorehdr_strlen + cmdline_len > COMMAND_LINE_SIZE) {
->   		pr_err("Appending elfcorehdr=<addr> exceeds cmdline size\n");
-> @@ -263,7 +263,7 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
->   		 * Avoid elfcorehdr from being stomped on in kdump kernel by
->   		 * setting up memory reserve map.
->   		 */
-> -		ret = fdt_add_mem_rsv(fdt, image->arch.elfcorehdr_addr,
-> +		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
->   				      image->arch.elf_headers_sz);
->   		if (ret) {
->   			pr_err("Error reserving elfcorehdr memory: %s\n",
-> diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
-> index c69bcf9b547a..a05c19b3cc60 100644
-> --- a/arch/powerpc/kexec/file_load_64.c
-> +++ b/arch/powerpc/kexec/file_load_64.c
-> @@ -815,7 +815,7 @@ static int load_elfcorehdr_segment(struct kimage *image, struct kexec_buf *kbuf)
->   		goto out;
->   	}
->   
-> -	image->arch.elfcorehdr_addr = kbuf->mem;
-> +	image->arch.elf_headers_mem = kbuf->mem;
->   	image->arch.elf_headers_sz = headers_sz;
->   	image->arch.elf_headers = headers;
->   out:
-> @@ -851,7 +851,7 @@ int load_crashdump_segments_ppc64(struct kimage *image,
->   		return ret;
->   	}
->   	pr_debug("Loaded elf core header at 0x%lx, bufsz=0x%lx memsz=0x%lx\n",
-> -		 image->arch.elfcorehdr_addr, kbuf->bufsz, kbuf->memsz);
-> +		 image->arch.elf_headers_mem, kbuf->bufsz, kbuf->memsz);
->   
->   	return 0;
->   }
-> 
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index e5622ce8cbb1..fa3044a7539f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -268,7 +268,8 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
+ 			   struct ima_template_desc *template_desc);
+ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 				const char *eventname, enum ima_hooks func,
+-				int pcr, const char *func_data);
++				int pcr, const char *func_data,
++				bool measure_buf_hash);
+ void ima_audit_measurement(struct integrity_iint_cache *iint,
+ 			   const unsigned char *filename);
+ int ima_alloc_init_template(struct ima_event_data *event_data,
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 8361941ee0a1..46ffa38bab12 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -352,7 +352,7 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
+ 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
+ 			process_buffer_measurement(NULL, digest, digestsize,
+ 						   "blacklisted-hash", NONE,
+-						   pcr, NULL);
++						   pcr, NULL, false);
+ 	}
+ 
+ 	return rc;
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index 1c68c500c26f..a74095793936 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -60,5 +60,5 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+ 	 */
+ 	process_buffer_measurement(NULL, payload, payload_len,
+ 				   keyring->description, KEY_CHECK, 0,
+-				   keyring->description);
++				   keyring->description, false);
+ }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index e76ef4bfd0f4..0f8409d77602 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -779,7 +779,7 @@ int ima_post_load_data(char *buf, loff_t size,
+ }
+ 
+ /*
+- * process_buffer_measurement - Measure the buffer to ima log.
++ * process_buffer_measurement - Measure the buffer or the buffer data hash
+  * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
+  * @buf: pointer to the buffer that needs to be added to the log.
+  * @size: size of buffer(in bytes).
+@@ -787,12 +787,23 @@ int ima_post_load_data(char *buf, loff_t size,
+  * @func: IMA hook
+  * @pcr: pcr to extend the measurement
+  * @func_data: private data specific to @func, can be NULL.
++ * @measure_buf_hash: measure buffer hash
+  *
+- * Based on policy, the buffer is measured into the ima log.
++ * Measure the buffer into the IMA log, and extend the @pcr.
++ *
++ * Determine what buffers are allowed to be measured, based on the policy rules
++ * and the IMA hook passed using @func.
++ *
++ * Use @func_data, if provided, to match against the measurement policy rule
++ * data for @func.
++ *
++ * If @measure_buf_hash is set to true - measure hash of the buffer data,
++ * else measure the buffer data itself.
+  */
+ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 				const char *eventname, enum ima_hooks func,
+-				int pcr, const char *func_data)
++				int pcr, const char *func_data,
++				bool measure_buf_hash)
+ {
+ 	int ret = 0;
+ 	const char *audit_cause = "ENOMEM";
+@@ -807,6 +818,8 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 		struct ima_digest_data hdr;
+ 		char digest[IMA_MAX_DIGEST_SIZE];
+ 	} hash = {};
++	char buf_hash[IMA_MAX_DIGEST_SIZE];
++	int buf_hash_len = hash_digest_size[ima_hash_algo];
+ 	int violation = 0;
+ 	int action = 0;
+ 	u32 secid;
+@@ -849,13 +862,27 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 		goto out;
+ 	}
+ 
++	if (measure_buf_hash) {
++		memcpy(buf_hash, hash.hdr.digest, buf_hash_len);
++
++		ret = ima_calc_buffer_hash(buf_hash, buf_hash_len,
++					   iint.ima_hash);
++		if (ret < 0) {
++			audit_cause = "measure_buf_hash_error";
++			goto out;
++		}
++
++		event_data.buf = buf_hash;
++		event_data.buf_len = buf_hash_len;
++	}
++
+ 	ret = ima_alloc_init_template(&event_data, &entry, template);
+ 	if (ret < 0) {
+ 		audit_cause = "alloc_entry";
+ 		goto out;
+ 	}
+ 
+-	ret = ima_store_template(entry, violation, NULL, buf, pcr);
++	ret = ima_store_template(entry, violation, NULL, event_data.buf, pcr);
+ 	if (ret < 0) {
+ 		audit_cause = "store_entry";
+ 		ima_free_template_entry(entry);
+@@ -890,7 +917,8 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+ 		return;
+ 
+ 	process_buffer_measurement(file_inode(f.file), buf, size,
+-				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL);
++				   "kexec-cmdline", KEXEC_CMDLINE, 0, NULL,
++				   false);
+ 	fdput(f);
+ }
+ 
+diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
+index 69a8626a35c0..c2f2ad34f9b7 100644
+--- a/security/integrity/ima/ima_queue_keys.c
++++ b/security/integrity/ima/ima_queue_keys.c
+@@ -162,7 +162,8 @@ void ima_process_queued_keys(void)
+ 						   entry->payload_len,
+ 						   entry->keyring_name,
+ 						   KEY_CHECK, 0,
+-						   entry->keyring_name);
++						   entry->keyring_name,
++						   false);
+ 		list_del(&entry->list);
+ 		ima_free_key_entry(entry);
+ 	}
+-- 
+2.17.1
 
