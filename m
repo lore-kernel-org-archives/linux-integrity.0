@@ -2,381 +2,269 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A526C433FE
-	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 01:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD7BC1B0E3
+	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 01:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEFCB23A7C
-	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 01:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D24323406
+	for <linux-integrity@archiver.kernel.org>; Sat, 12 Dec 2020 01:22:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406309AbgLLBTh (ORCPT
+        id S2406419AbgLLBVp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Dec 2020 20:19:37 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36752 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405263AbgLLBTS (ORCPT
+        Fri, 11 Dec 2020 20:21:45 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1920 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405926AbgLLBVl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Dec 2020 20:19:18 -0500
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A65D020B717A;
-        Fri, 11 Dec 2020 17:18:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A65D020B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607735917;
-        bh=L+sSAkNyKVg99f8bs8P0XtidfzP9K6JUhgjxWMuy8zU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=O0+EjY8JmRCvw0ikI+PgHAEt95LET9uFpYonHaDHkSrhS437xzwASjb3MY9SuuuaB
-         eK06Z/+aI3x6vxTPaRXcqyyRUrPXz0QxSqQ4T7slQNZ94asLwC5/QL0//HwBx5B20d
-         Z1mJPvqdQEhuOqhfLqECiw8+dv69Wl+bRQMqpxu8=
-Subject: Re: [RFC PATCH 2/4] of: Add a common kexec FDT setup function
-To:     Rob Herring <robh@kernel.org>, takahiro.akashi@linaro.org,
-        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        zohar@linux.ibm.com, james.morse@arm.com, sashal@kernel.org,
-        benh@kernel.crashing.org, paulus@samba.org, frowand.list@gmail.com,
+        Fri, 11 Dec 2020 20:21:41 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0BC12NCG178573;
+        Fri, 11 Dec 2020 20:20:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=references : from : to :
+ cc : subject : in-reply-to : date : message-id : mime-version :
+ content-type; s=pp1; bh=HBL6YEjgH3g4zygxbX7dbBaB7YYe9W0o/9VUK5Vahqo=;
+ b=WJbUDV8BVXDmfcfQk7tMakT3tTMA1nfxN5nwgByqBNqeNq4z+dL3pmyIxzK/TcIh8Lnb
+ XcTVyTlo3oZLQJXHhSWDKodUyMZpF/YtFSaEr9F25woxwppM+ReTr+MiK70jEO2L9g0N
+ upjbgzR6oSsMHvQkCVShL/mAeAWYukeFTROboRodneD6fAIfeBlIh+Yj0sqEO2obA4ct
+ /T/gyl4mOvX4k+ywmmBs+O/mXkVzxn+2mh2mgm87cs6nIA91i2BpPG8MfwlX8xlrSPAX
+ ENj+rj34FdDa3QWWZRVOYF6FK379F7jOXbWwqpEa4FHZOdMM4AaesJ8P3ZSBOBpr3tbE Fg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35ch7fkfax-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Dec 2020 20:20:08 -0500
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0BC1G3Q4020931;
+        Fri, 11 Dec 2020 20:20:08 -0500
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35ch7fkfaf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Dec 2020 20:20:07 -0500
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0BC11tu6010847;
+        Sat, 12 Dec 2020 01:15:05 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 3581ua57d6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 12 Dec 2020 01:15:05 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0BC1F5Hs19202330
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 12 Dec 2020 01:15:05 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1697112064;
+        Sat, 12 Dec 2020 01:15:04 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 850AE112065;
+        Sat, 12 Dec 2020 01:14:57 +0000 (GMT)
+Received: from manicouagan.localdomain (unknown [9.160.59.9])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Sat, 12 Dec 2020 01:14:57 +0000 (GMT)
+References: <20201204195149.611-1-nramas@linux.microsoft.com>
+ <20201204195149.611-3-nramas@linux.microsoft.com>
+ <87ft4louto.fsf@manicouagan.localdomain>
+ <40f8c03a-f08f-d49e-b404-9a6d79873dd1@linux.microsoft.com>
+ <4a8a9d8f-22b8-0961-7c31-39eb1fe9cb65@linux.microsoft.com>
+ <878sa49pdv.fsf@manicouagan.localdomain>
+ <f52375a3-c817-25ef-13b2-8b5ee6a528c1@linux.microsoft.com>
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com, robh@kernel.org, gregkh@linuxfoundation.org,
+        james.morse@arm.com, catalin.marinas@arm.com, sashal@kernel.org,
+        will@kernel.org, mpe@ellerman.id.au, benh@kernel.crashing.org,
+        paulus@samba.org, robh+dt@kernel.org, frowand.list@gmail.com,
         vincenzo.frascino@arm.com, mark.rutland@arm.com,
         dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
         pasha.tatashin@soleen.com, allison@lohutok.net,
-        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
-        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        kstewart@linuxfoundation.org, takahiro.akashi@linaro.org,
+        tglx@linutronix.de, masahiroy@kernel.org, bhsharma@redhat.com,
+        mbrugger@suse.com, hsinyi@chromium.org, tao.li@vivo.com,
+        christophe.leroy@c-s.fr, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         prsriva@linux.microsoft.com, balajib@linux.microsoft.com
-References: <20201211221006.1052453-1-robh@kernel.org>
- <20201211221006.1052453-3-robh@kernel.org>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <6934c005-d848-314d-cfee-23f2273c119d@linux.microsoft.com>
-Date:   Fri, 11 Dec 2020 17:18:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: Re: [PATCH v10 2/8] powerpc: Move delete_fdt_mem_rsv() to
+ drivers/of/kexec.c
+In-reply-to: <f52375a3-c817-25ef-13b2-8b5ee6a528c1@linux.microsoft.com>
+Date:   Fri, 11 Dec 2020 22:14:55 -0300
+Message-ID: <875z57akq8.fsf@manicouagan.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20201211221006.1052453-3-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2020-12-11_10:2020-12-11,2020-12-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 malwarescore=0
+ phishscore=0 spamscore=0 clxscore=1015 bulkscore=0 priorityscore=1501
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012120002
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 12/11/20 2:10 PM, Rob Herring wrote:
 
-Hi Rob,
+Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
 
-> Both arm64 and powerpc do essentially the same FDT /chosen setup for
-> kexec. We can simply combine everything each arch does. The differences
-> are either omissions that arm64 should have or additional properties
-> that will be ignored.
-> 
-> The differences relative to the arm64 version:
-> - If /chosen doesn't exist, it will be created (should never happen).
-> - Any old dtb and initrd reserved memory will be released.
-> - The new initrd and elfcorehdr are marked reserved.
-> - "linux,booted-from-kexec" is set.
-> 
-> The differences relative to the powerpc version:
-> - "kaslr-seed" and "rng-seed" may be set.
-> - "linux,elfcorehdr" is set.
-> - Any existing "linux,usable-memory-range" is removed.
-> 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> This could be taken a step further and do the allocation of the new
-> FDT. The difference is arm64 uses vmalloc and powerpc uses kmalloc. The
-> arm64 version also retries with a bigger allocation. That seems
-> unnecessary.
-> ---
->   drivers/of/Makefile |   1 +
->   drivers/of/kexec.c  | 228 ++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/of.h  |   5 +
->   3 files changed, 234 insertions(+)
->   create mode 100644 drivers/of/kexec.c
-> 
-> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-> index 6e1e5212f058..8ce11955afde 100644
-> --- a/drivers/of/Makefile
-> +++ b/drivers/of/Makefile
-> @@ -13,5 +13,6 @@ obj-$(CONFIG_OF_RESERVED_MEM) += of_reserved_mem.o
->   obj-$(CONFIG_OF_RESOLVE)  += resolver.o
->   obj-$(CONFIG_OF_OVERLAY) += overlay.o
->   obj-$(CONFIG_OF_NUMA) += of_numa.o
-> +obj-$(CONFIG_KEXEC_FILE) += kexec.o
+> On 12/11/20 10:19 AM, Thiago Jung Bauermann wrote:
+>> Hi Lakshmi,
+>> Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
+>> 
+>>> On 12/6/20 5:50 PM, Lakshmi Ramasubramanian wrote:
+>>>
+>>> Hi Thiago,
+>>>
+>>>> On 12/4/20 6:22 PM, Thiago Jung Bauermann wrote
+>>>>>
+>>>>> Hello Lakshmi,
+>>>>>
+>>>>> Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
+>>>>>
+>>>>>> delete_fdt_mem_rsv() retrieves the memory reserve map entry, for
+>>>>>> the given starting address and size, from the device tree blob, and
+>>>>>> removes the entry from the device tree blob. This function is called
+>>>>>> to free the resources reserved for the buffer used for carrying forward
+>>>>>> the IMA measurement logs on kexec. This function does not have
+>>>>>> architecture specific code, but is currently limited to powerpc.
+>>>>>>
+>>>>>> Move delete_fdt_mem_rsv() to "drivers/of/kexec_fdt.c" so that it is
+>>>>>
+>>>>> s/kexec_fdt.c/kexec.c/
+>>>> Missed that in the patch description. Will fix it. Thanks.
+>>>>
+>>>>>> accessible for other architectures as well.
+>>>>>>
+>>>>>> Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+>>>>>> Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+>>>>>> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+>>>>>> ---
+>>>>>>    arch/powerpc/include/asm/kexec.h |  1 -
+>>>>>>    arch/powerpc/kexec/file_load.c   | 32 -----------------
+>>>>>>    drivers/of/Makefile              |  1 +
+>>>>>>    drivers/of/kexec.c               | 61 ++++++++++++++++++++++++++++++++
+>>>>>>    include/linux/kexec.h            |  5 +++
+>>>>>>    5 files changed, 67 insertions(+), 33 deletions(-)
+>>>>>>    create mode 100644 drivers/of/kexec.c
+>>>>>>
+>>>>>> diff --git a/arch/powerpc/include/asm/kexec.h
+>>>>>> b/arch/powerpc/include/asm/kexec.h
+>>>>>> index 55d6ede30c19..7c223031ecdd 100644
+>>>>>> --- a/arch/powerpc/include/asm/kexec.h
+>>>>>> +++ b/arch/powerpc/include/asm/kexec.h
+>>>>>> @@ -126,7 +126,6 @@ int setup_purgatory(struct kimage *image, const void
+>>>>>> *slave_code,
+>>>>>>    int setup_new_fdt(const struct kimage *image, void *fdt,
+>>>>>>              unsigned long initrd_load_addr, unsigned long initrd_len,
+>>>>>>              const char *cmdline);
+>>>>>> -int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size);
+>>>>>>    #ifdef CONFIG_PPC64
+>>>>>>    struct kexec_buf;
+>>>>>> diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
+>>>>>> index 9a232bc36c8f..9efc98b1e2ae 100644
+>>>>>> --- a/arch/powerpc/kexec/file_load.c
+>>>>>> +++ b/arch/powerpc/kexec/file_load.c
+>>>>>> @@ -109,38 +109,6 @@ int setup_purgatory(struct kimage *image, const void
+>>>>>> *slave_code,
+>>>>>>        return 0;
+>>>>>>    }
+>>>>>> -/**
+>>>>>> - * delete_fdt_mem_rsv - delete memory reservation with given address and
+>>>>>> size
+>>>>>> - *
+>>>>>> - * Return: 0 on success, or negative errno on error.
+>>>>>> - */
+>>>>>> -int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size)
+>>>>>> -{
+>>>>>> -    int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
+>>>>>> -
+>>>>>> -    for (i = 0; i < num_rsvs; i++) {
+>>>>>> -        uint64_t rsv_start, rsv_size;
+>>>>>> -
+>>>>>> -        ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
+>>>>>> -        if (ret) {
+>>>>>> -            pr_err("Malformed device tree.\n");
+>>>>>> -            return -EINVAL;
+>>>>>> -        }
+>>>>>> -
+>>>>>> -        if (rsv_start == start && rsv_size == size) {
+>>>>>> -            ret = fdt_del_mem_rsv(fdt, i);
+>>>>>> -            if (ret) {
+>>>>>> -                pr_err("Error deleting device tree reservation.\n");
+>>>>>> -                return -EINVAL;
+>>>>>> -            }
+>>>>>> -
+>>>>>> -            return 0;
+>>>>>> -        }
+>>>>>> -    }
+>>>>>> -
+>>>>>> -    return -ENOENT;
+>>>>>> -}
+>>>>>> -
+>>>>>>    /*
+>>>>>>     * setup_new_fdt - modify /chosen and memory reservation for the next
+>>>>>> kernel
+>>>>>>     * @image:        kexec image being loaded.
+>>>>>> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+>>>>>> index 6e1e5212f058..77d24712c0c8 100644
+>>>>>> --- a/drivers/of/Makefile
+>>>>>> +++ b/drivers/of/Makefile
+>>>>>> @@ -13,5 +13,6 @@ obj-$(CONFIG_OF_RESERVED_MEM) += of_reserved_mem.o
+>>>>>>    obj-$(CONFIG_OF_RESOLVE)  += resolver.o
+>>>>>>    obj-$(CONFIG_OF_OVERLAY) += overlay.o
+>>>>>>    obj-$(CONFIG_OF_NUMA) += of_numa.o
+>>>>>> +obj-$(CONFIG_OF_FLATTREE) += kexec.o
+>>>>>
+>>>>> Isn't this too broad? kexec.o will only be useful to kernel configs
+>>>>> which enable CONFIG_KEXEC_FILE, so perhaps do:
+>>>>>
+>>>>> ifdef CONFIG_OF_FLATTREE
+>>>>> ifdef CONFIG_KEXEC_FILE
+>>>>> obj-y += kexec.o
+>>>>> endif
+>>>>> endif
+>>>>>
+>>>>> What do you think?
+>>>> Per Rob's feedback on v9 patch set, I have moved all the architecture
+>>>> independent ima kexec functions to a single file "drivers/of/kexec.c"
+>>>> Since these functions are enabled on different kernel CONFIGs, I have
+>>>> used IS_ENABLED(CONFIG_XYZ) macro instead of "#ifdef" in the C file to
+>>>> conditionally compile.
+>>> Per Rob's feedback on the v9 patch, I'll keep the ima kexec functions in a
+>>> single file (in "drivers/of/kexec.c") and use IS_ENABLED() macro to handle the
+>>> function calls.
+>>>
+>>> I'll make the other changes you'd suggested on v10 patches and will post v11
+>>> patch set shortly.
+>> 
+>>>From a cursory look at the use of functions in this file, I got the
+>> impression that there wouldn't be any reference to them in kernel
+>> configs that didn't have CONFIG_KEXEC_FILE enabled, which is why I
+>> suggested the change above. I think you can make it without any other
+>> changes to the code.
+>> I could be wrong though, and there could be some config which tried to
+>> use some of these functions even when CONFIG_KEXEC_FILE is disabled. In
+>> that case, the customary way to resolve it is to provide static inline
+>> stub versions in a header file (not in a .c file) of just those
+>> functions that are needed.
+>> The reason why placing stub functions in header files is better is that
+>> then the compiler has visibility of the dummy function when compiling
+>> the source file which uses the function, and is able to eliminate the
+>> dead code that arises from the function always returning one value.
+>
+> I agree with you Thiago.
+>
+> Is there a way to keep all the relevant functions in a single C file, not use
+> "#ifdef" in C file, and follow the coding pattern you've described above (i
+> mean, "defining a stub function in a header file when the config conditions are
+> not met")?
 
-For the functions moved from powerpc & arm64 to "drivers/of/kexec.c" in 
-this patch, compiling kexec.c when CONFIG_KEXEC_FILE is enabled is fine. 
-But when more functions (such as remove_ima_buffer()) are moved to this 
-file, Makefile needs to be updated for other ima kexec related CONFIGs.
+Like I said above, my impression is that you don't need any ifdefs since
+my understanding is that all funcitons in the C file are only used when
+CONFIG_KEXEC_FILE is set. Do you anticipate (or have found) problems
+with that?
 
-Why not compile kexec.c when CONFIG_OF_FLATTREE is enabled, and handle 
-other CONFIGs using IS_ENABLED (like you'd suggested earlier)?
-
->   
->   obj-$(CONFIG_OF_UNITTEST) += unittest-data/
-> diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-> new file mode 100644
-> index 000000000000..66787be081fe
-> --- /dev/null
-> +++ b/drivers/of/kexec.c
-> @@ -0,0 +1,228 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2020 Arm Limited
-> + *
-> + * Based on arch/arm64/kernel/machine_kexec_file.c:
-> + *  Copyright (C) 2018 Linaro Limited
-> + *
-> + * And arch/powerpc/kexec/file_load.c:
-> + *  Copyright (C) 2016  IBM Corporation
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/kexec.h>
-> +#include <linux/libfdt.h>
-> +#include <linux/of.h>
-> +#include <linux/of_fdt.h>
-> +#include <linux/random.h>
-> +#include <linux/types.h>
-> +
-> +/* relevant device tree properties */
-> +#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
-> +#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
-> +#define FDT_PROP_INITRD_START	"linux,initrd-start"
-> +#define FDT_PROP_INITRD_END	"linux,initrd-end"
-> +#define FDT_PROP_BOOTARGS	"bootargs"
-> +#define FDT_PROP_KASLR_SEED	"kaslr-seed"
-> +#define FDT_PROP_RNG_SEED	"rng-seed"
-> +#define RNG_SEED_SIZE		128
-
-> +
-> +/**
-> + * fdt_find_and_del_mem_rsv - delete memory reservation with given address and size
-> + *
-> + * Return: 0 on success, or negative errno on error.
-> + */
-> +static int fdt_find_and_del_mem_rsv(void *fdt, unsigned long start, unsigned long size)
-> +{
-> +	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
-> +
-> +	for (i = 0; i < num_rsvs; i++) {
-> +		u64 rsv_start, rsv_size;
-> +
-> +		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
-> +		if (ret) {
-> +			pr_err("Malformed device tree.\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (rsv_start == start && rsv_size == size) {
-> +			ret = fdt_del_mem_rsv(fdt, i);
-> +			if (ret) {
-> +				pr_err("Error deleting device tree reservation.\n");
-> +				return -EINVAL;
-> +			}
-> +
-> +			return 0;
-> +		}
-> +	}
-> +
-> +	return -ENOENT;
-> +}
-> +
-> +/*
-> + * of_kexec_setup_new_fdt - modify /chosen and memory reservation for the next kernel
-> + *
-> + * @image:		kexec image being loaded.
-> + * @fdt:		Flattened device tree for the next kernel.
-> + * @initrd_load_addr:	Address where the next initrd will be loaded.
-> + * @initrd_len:		Size of the next initrd, or 0 if there will be none.
-> + * @cmdline:		Command line for the next kernel, or NULL if there will
-> + *			be none.
-nit: alignment of the parameter description seems to be off. But it 
-could be due to my mail client.
-
-> + *
-> + * Return: 0 on success, or negative errno on error.
-> + */
-> +int of_kexec_setup_new_fdt(const struct kimage *image, void *fdt,
-> +			   unsigned long initrd_load_addr, unsigned long initrd_len,
-> +			   const char *cmdline)
-> +{
-> +	int ret, chosen_node;
-> +	const void *prop;
-> +
-> +	/* Remove memory reservation for the current device tree. */
-> +	ret = fdt_find_and_del_mem_rsv(fdt, __pa(initial_boot_params),
-> +				       fdt_totalsize(initial_boot_params));
-> +	if (ret == -EINVAL)
-> +		return ret;
-> +
-> +	chosen_node = fdt_path_offset(fdt, "/chosen");
-> +	if (chosen_node == -FDT_ERR_NOTFOUND)
-> +		chosen_node = fdt_add_subnode(fdt, fdt_path_offset(fdt, "/"),
-> +					      "chosen");
-> +	if (chosen_node < 0) {
-> +		ret = chosen_node;
-> +		goto out;
-> +	}
-> +
-> +	ret = fdt_delprop(fdt, chosen_node, FDT_PROP_KEXEC_ELFHDR);
-> +	if (ret && ret != -FDT_ERR_NOTFOUND)
-> +		goto out;
-> +	ret = fdt_delprop(fdt, chosen_node, FDT_PROP_MEM_RANGE);
-> +	if (ret && ret != -FDT_ERR_NOTFOUND)
-> +		goto out;
-> +
-> +	/* Did we boot using an initrd? */
-> +	prop = fdt_getprop(fdt, chosen_node, "linux,initrd-start", NULL);
-> +	if (prop) {
-> +		u64 tmp_start, tmp_end, tmp_size;
-> +
-> +		tmp_start = fdt64_to_cpu(*((const fdt64_t *) prop));
-> +
-> +		prop = fdt_getprop(fdt, chosen_node, "linux,initrd-end", NULL);
-> +		if (!prop)
-> +			return -EINVAL;
-> +
-> +		tmp_end = fdt64_to_cpu(*((const fdt64_t *) prop));
-> +
-> +		/*
-> +		 * kexec reserves exact initrd size, while firmware may
-> +		 * reserve a multiple of PAGE_SIZE, so check for both.
-> +		 */
-> +		tmp_size = tmp_end - tmp_start;
-> +		ret = fdt_find_and_del_mem_rsv(fdt, tmp_start, tmp_size);
-> +		if (ret == -ENOENT)
-> +			ret = fdt_find_and_del_mem_rsv(fdt, tmp_start,
-> +						       round_up(tmp_size, PAGE_SIZE));
-> +		if (ret == -EINVAL)
-> +			return ret;
-> +	}
-> +
-> +	/* add initrd-* */
-> +	if (initrd_load_addr) {
-> +		ret = fdt_setprop_u64(fdt, chosen_node, FDT_PROP_INITRD_START,
-> +				      initrd_load_addr);
-> +		if (ret)
-> +			goto out;
-> +
-> +		ret = fdt_setprop_u64(fdt, chosen_node, FDT_PROP_INITRD_END,
-> +				      initrd_load_addr + initrd_len);
-> +		if (ret)
-> +			goto out;
-> +
-> +		ret = fdt_add_mem_rsv(fdt, initrd_load_addr, initrd_len);
-> +		if (ret)
-> +			goto out;
-> +
-> +	} else {
-> +		ret = fdt_delprop(fdt, chosen_node, FDT_PROP_INITRD_START);
-> +		if (ret && (ret != -FDT_ERR_NOTFOUND))
-> +			goto out;
-> +
-> +		ret = fdt_delprop(fdt, chosen_node, FDT_PROP_INITRD_END);
-> +		if (ret && (ret != -FDT_ERR_NOTFOUND))
-> +			goto out;
-> +	}
-> +
-> +	if (image->type == KEXEC_TYPE_CRASH) {
-> +		/* add linux,elfcorehdr */
-> +		ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
-> +				FDT_PROP_KEXEC_ELFHDR,
-> +				image->arch.elf_headers_mem,
-> +				image->arch.elf_headers_sz);
-> +		if (ret)
-> +			goto out;
-> +
-> +		/*
-> +		 * Avoid elfcorehdr from being stomped on in kdump kernel by
-> +		 * setting up memory reserve map.
-> +		 */
-> +		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
-> +				      image->arch.elf_headers_sz);
-Return value from fdt_add_mem_rsv() should be checked.
-
-> +
-> +		/* add linux,usable-memory-range */
-> +		ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
-> +				FDT_PROP_MEM_RANGE,
-> +				crashk_res.start,
-> +				crashk_res.end - crashk_res.start + 1);
-> +		if (ret)
-> +			goto out;
-> +	}
-> +
-> +	/* add bootargs */
-> +	if (cmdline) {
-> +		ret = fdt_setprop_string(fdt, chosen_node, FDT_PROP_BOOTARGS, cmdline);
-> +		if (ret)
-> +			goto out;
-> +	} else {
-> +		ret = fdt_delprop(fdt, chosen_node, FDT_PROP_BOOTARGS);
-> +		if (ret && (ret != -FDT_ERR_NOTFOUND))
-> +			goto out;
-> +	}
-> +
-> +	/* add kaslr-seed */
-> +	ret = fdt_delprop(fdt, chosen_node, FDT_PROP_KASLR_SEED);
-> +	if (ret == -FDT_ERR_NOTFOUND)
-> +		ret = 0;
-> +	else if (ret)
-> +		goto out;
-> +
-> +	if (rng_is_initialized()) {
-> +		u64 seed = get_random_u64();
-> +		ret = fdt_setprop_u64(fdt, chosen_node, FDT_PROP_KASLR_SEED, seed);
-> +		if (ret)
-> +			goto out;
-> +	} else {
-> +		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
-> +				FDT_PROP_KASLR_SEED);
-> +	}
-> +
-> +	/* add rng-seed */
-> +	if (rng_is_initialized()) {
-> +		void *rng_seed;
-> +		ret = fdt_setprop_placeholder(fdt, chosen_node, FDT_PROP_RNG_SEED,
-> +				RNG_SEED_SIZE, &rng_seed);
-> +		if (ret)
-> +			goto out;
-> +		get_random_bytes(rng_seed, RNG_SEED_SIZE);
-> +	} else {
-> +		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
-> +				FDT_PROP_RNG_SEED);
-> +	}
-> +
-> +	ret = fdt_setprop(fdt, chosen_node, "linux,booted-from-kexec", NULL, 0);
-> +
-> +out:
-> +	if (ret)
-> +		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
-> +
-> +	return 0;
-> +}
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 5d51891cbf1a..3375f5295875 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -558,6 +558,11 @@ int of_map_id(struct device_node *np, u32 id,
->   	       const char *map_name, const char *map_mask_name,
->   	       struct device_node **target, u32 *id_out);
->   
-> +struct kimage;
-> +int of_kexec_setup_new_fdt(const struct kimage *image, void *fdt,
-> +			   unsigned long initrd_load_addr, unsigned long initrd_len,
-> +			   const char *cmdline);
-
-of_kexec_setup_new_fdt() should only be declared if CONFIG_KEXEC_FILE is 
-enabled. Right?
-
-  -lakshmi
-
-> +
->   #else /* CONFIG_OF */
->   
->   static inline void of_core_init(void)
-> 
-
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
