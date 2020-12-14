@@ -2,71 +2,195 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9036CC2BB48
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B040C2BB48
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47CB022582
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBE20224B0
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:25:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440629AbgLNTY6 (ORCPT
+        id S2408947AbgLNTUC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Dec 2020 14:24:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53852 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2440832AbgLNTYu (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Dec 2020 14:24:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A653FAC10;
-        Mon, 14 Dec 2020 19:24:07 +0000 (UTC)
-From:   Petr Vorel <pvorel@suse.cz>
-To:     linux-integrity@vger.kernel.org
-Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH ima-evm-utils] pcr_tsspcrread: Add missing new line
-Date:   Mon, 14 Dec 2020 20:23:59 +0100
-Message-Id: <20201214192359.9849-1-pvorel@suse.cz>
+        Mon, 14 Dec 2020 14:20:02 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58182 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2408917AbgLNTTu (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 14 Dec 2020 14:19:50 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9C02020B7187;
+        Mon, 14 Dec 2020 11:19:08 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9C02020B7187
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1607973549;
+        bh=hH4snP6KJu6Jo7DP/DJho2Glu0NJzsjpS7vkhVQL4/w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Fk8l0daeh4RAAw/wr7q+F326CBds8RLznKZLiFAnOZ+lTV+UKGx9zObme/uKCPUcE
+         p0ZnmrfMyTQtsE4/vd2dW0dOVBCqAT749w5Jm4Zq4R9FWAtvqjbNd9JM4Z1+VSgQjI
+         4fmIEXormdxY7UeCcV7weiyBsZIOztvFpSlfPi6s=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH v11 3/8] powerpc: Use ima kexec node functions
+Date:   Mon, 14 Dec 2020 11:18:49 -0800
+Message-Id: <20201214191854.9050-4-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201214191854.9050-1-nramas@linux.microsoft.com>
+References: <20201214191854.9050-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Fixes: 80d3fda ("ima-evm-utils: Check for tsspcrread in runtime")
+do_get_kexec_buffer() and get_addr_size_cells() are called by
+ima_get_kexec_buffer(), ima_free_kexec_buffer, and remove_ima_buffer()
+to retrieve the address and size of the buffer used for carrying
+forward the IMA measurement log across kexec system call. These
+functions correctly handle a device tree property that is a child node
+of the root node, but not anything other than the immediate root
+child nodes.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Use the architecture independent functions get_ima_kexec_buffer()
+and get_root_addr_size_cells() defined in "drivers/of/kexec.c",
+to get the address and size of the IMA measurement log buffer from
+the device tree. Remove do_get_kexec_buffer() and get_addr_size_cells()
+since they are not used anymore.
+
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
-Hi Mimi,
+ arch/powerpc/kexec/ima.c | 58 +++++-----------------------------------
+ 1 file changed, 7 insertions(+), 51 deletions(-)
 
-sorry for introducing error.
-
-Kind regards,
-Petr
- src/pcr_tsspcrread.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/src/pcr_tsspcrread.c b/src/pcr_tsspcrread.c
-index 462f270..183dfc2 100644
---- a/src/pcr_tsspcrread.c
-+++ b/src/pcr_tsspcrread.c
-@@ -60,11 +60,11 @@ int tpm2_pcr_supported(void)
- 		log_info("Using %s to read PCRs.\n", CMD);
+diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
+index a36c39db4b1a..906e8212435d 100644
+--- a/arch/powerpc/kexec/ima.c
++++ b/arch/powerpc/kexec/ima.c
+@@ -13,40 +13,6 @@
+ #include <linux/libfdt.h>
+ #include <asm/ima.h>
  
- 	if (get_cmd_path(CMD, path, sizeof(path))) {
--		log_debug("Couldn't find '%s' in $PATH", CMD);
-+		log_debug("Couldn't find '%s' in $PATH\n", CMD);
- 		return 0;
- 	}
+-static int get_addr_size_cells(int *addr_cells, int *size_cells)
+-{
+-	struct device_node *root;
+-
+-	root = of_find_node_by_path("/");
+-	if (!root)
+-		return -EINVAL;
+-
+-	*addr_cells = of_n_addr_cells(root);
+-	*size_cells = of_n_size_cells(root);
+-
+-	of_node_put(root);
+-
+-	return 0;
+-}
+-
+-static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
+-			       size_t *size)
+-{
+-	int ret, addr_cells, size_cells;
+-
+-	ret = get_addr_size_cells(&addr_cells, &size_cells);
+-	if (ret)
+-		return ret;
+-
+-	if (len < 4 * (addr_cells + size_cells))
+-		return -ENOENT;
+-
+-	*addr = of_read_number(prop, addr_cells);
+-	*size = of_read_number(prop + 4 * addr_cells, size_cells);
+-
+-	return 0;
+-}
+-
+ /**
+  * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+  * @addr:	On successful return, set to point to the buffer contents.
+@@ -56,16 +22,11 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
+  */
+ int ima_get_kexec_buffer(void **addr, size_t *size)
+ {
+-	int ret, len;
++	int ret;
+ 	unsigned long tmp_addr;
+ 	size_t tmp_size;
+-	const void *prop;
  
--	log_debug("Found '%s' in $PATH", CMD);
-+	log_debug("Found '%s' in $PATH\n", CMD);
- 	return 1;
+-	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
+-	if (!prop)
+-		return -ENOENT;
+-
+-	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
++	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -89,7 +50,7 @@ int ima_free_kexec_buffer(void)
+ 	if (!prop)
+ 		return -ENOENT;
+ 
+-	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
++	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -98,7 +59,6 @@ int ima_free_kexec_buffer(void)
+ 		return ret;
+ 
+ 	return memblock_free(addr, size);
+-
  }
+ 
+ /**
+@@ -112,19 +72,15 @@ int ima_free_kexec_buffer(void)
+  */
+ void remove_ima_buffer(void *fdt, int chosen_node)
+ {
+-	int ret, len;
++	int ret;
+ 	unsigned long addr;
+ 	size_t size;
+-	const void *prop;
+ 
+-	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
+-	if (!prop)
++	ret = get_ima_kexec_buffer(fdt, chosen_node, &addr, &size);
++	if (ret)
+ 		return;
+ 
+-	ret = do_get_kexec_buffer(prop, len, &addr, &size);
+ 	fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
+-	if (ret)
+-		return;
+ 
+ 	ret = delete_fdt_mem_rsv(fdt, addr, size);
+ 	if (!ret)
+@@ -191,7 +147,7 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+ 	if (!image->arch.ima_buffer_size)
+ 		return 0;
+ 
+-	ret = get_addr_size_cells(&addr_cells, &size_cells);
++	ret = get_root_addr_size_cells(&addr_cells, &size_cells);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.29.2
