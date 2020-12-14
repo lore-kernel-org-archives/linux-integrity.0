@@ -2,222 +2,85 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0872C1B0D8
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 09:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F2AC4361B
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 16:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B67522B48
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 09:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67EB22286
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 16:39:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727481AbgLNJvP (ORCPT
+        id S1729598AbgLNQiq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Dec 2020 04:51:15 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37250 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbgLNJvL (ORCPT
+        Mon, 14 Dec 2020 11:38:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36804 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbgLNQil (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Dec 2020 04:51:11 -0500
+        Mon, 14 Dec 2020 11:38:41 -0500
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F9FC0613D3;
+        Mon, 14 Dec 2020 08:38:01 -0800 (PST)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dafna)
-        with ESMTPSA id A3C301F44B46
-Subject: Re: [PATCH v2] tpm: ignore failed selftest in probe
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        enric.balletbo@collabora.com, kernel@collabora.com,
-        dafna3@gmail.com, Andrey Pronin <apronin@chromium.org>
-References: <20201207135710.17321-1-dafna.hirschfeld@collabora.com>
- <20201208173451.GA57585@kapsi.fi>
- <ca37d350-d79c-41ad-f221-55d8851437bc@collabora.com>
- <20201211175745.GA34718@kernel.org>
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Message-ID: <eea2618c-f22c-1e68-7502-dcbc2ae7c494@collabora.com>
-Date:   Mon, 14 Dec 2020 10:50:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        (Authenticated sender: aratiu)
+        with ESMTPSA id DE2D51F442AB
+From:   Adrian Ratiu <adrian.ratiu@collabora.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc:     linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        "dlaurie@chromium.org" <dlaurie@chromium.org>,
+        Helen Koike <helen.koike@collabora.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: Re: [PATCH v6] char: tpm: add i2c driver for cr50
+In-Reply-To: <20201211103443.GA12091@kernel.org>
+References: <20201207142016.482122-1-adrian.ratiu@collabora.com>
+ <20201208173906.GA58213@kernel.org> <87y2i7b186.fsf@collabora.com>
+ <20201211103443.GA12091@kernel.org>
+Date:   Mon, 14 Dec 2020 18:37:55 +0200
+Message-ID: <87v9d4baxo.fsf@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20201211175745.GA34718@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-
-Am 11.12.20 um 18:57 schrieb Jarkko Sakkinen:
-> On Fri, Dec 11, 2020 at 05:56:24PM +0100, Dafna Hirschfeld wrote:
->> Hi,
->>
->>
->> Am 08.12.20 um 18:34 schrieb Jarkko Sakkinen:
->>> On Mon, Dec 07, 2020 at 02:57:10PM +0100, Dafna Hirschfeld wrote:
->>>> From: Andrey Pronin <apronin@chromium.org>
->>>>
->>>> If a TPM firmware update is interrupted, e.g due to loss of power or a
->>>> reset while installing the update, you end with the TPM chip in failure
->>>> mode. TPM_ContinueSelfTest command is called when the device is probed.
->>>> It results in TPM_FAILEDSELFTEST error, and probe fails. The TPM device
->>>> is not created, and that prevents the OS from attempting any further
->>>> recover operations with the TPM. Instead, ignore the error code of the
->>>> TPM_ContinueSelfTest command, and create the device - the chip is out
->>>> there, it's just in failure mode.
->>>>
->>>> Testing:
->>>> Tested with the swtpm as TPM simulator and a patch in 'libtpms'
->>>> to enter failure mode
->>>>
->>>> With this settings, the '/dev/tpm0' is created but the tcsd daemon fails
->>>> to run.  In addition, the commands TPM_GetTestResult, TPM_GetCapability
->>>> and TPM_GetRandom were tested.
->>>>
->>>> A normal operation was tested with an Acer Chromebook R13 device
->>>> (also called Elm) running Debian.
->>>
->>> Move testing part to the stuff before diffstat.
->>>
->>>> Signed-off-by: Andrey Pronin <apronin@chromium.org>
->>>> [change the code to still fail in case of fatal error]
->>>
->>> What is this?
->>
->> In the original patch, any return value from 'tpm1_do_selftest'
->> is ignored. I change the original patch so that in case of system
->>   error (rc < 0) the error is not ignored since this error did not
->> come from the TPM but from the system.
->>
->>>
->>>> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
->>>>
->>>> ---
->>>> changes since v1:
->>>> - rewriting the commit message
->>>>
->>>> This commit comes from chromeos:
->>>> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/1065c2fe54d6%5E%21/
->>>>
->>>> In Chromeos, the selftest fails if the TPM firmware is updated during EC
->>>> reset. In that case the userspace wants to access the TPM for recovery.
->>>>
->>>> This patch is for TPM 1.2 only, I can also send a patch for TPM 2 if it
->>>> is required that the behaviour stays consistent among the versions.
->>>>
->>>> libtpms patch:
->>>> https://gitlab.collabora.com/dafna/libtpms/-/commit/42848f4a838636d01ddb5ed353b3990dad3f601d
->>>>
->>>> TPM tests:
->>>> https://gitlab.collabora.com/dafna/test-tpm1.git
->>>>
->>>>    drivers/char/tpm/tpm1-cmd.c | 17 ++++++++---------
->>>>    1 file changed, 8 insertions(+), 9 deletions(-)
->>>>
->>>> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
->>>> index ca7158fa6e6c..8b7997ef8d1c 100644
->>>> --- a/drivers/char/tpm/tpm1-cmd.c
->>>> +++ b/drivers/char/tpm/tpm1-cmd.c
->>>> @@ -697,6 +697,8 @@ EXPORT_SYMBOL_GPL(tpm1_do_selftest);
->>>>    /**
->>>>     * tpm1_auto_startup - Perform the standard automatic TPM initialization
->>>>     *                     sequence
->>>> + * NOTE: if tpm1_do_selftest returns with a TPM error code, we return 0 (success)
->>>> + *	 to allow userspace interaction with the TPM when it is on failure mode.
->>>>     * @chip: TPM chip to use
->>>
->>>
->>> Please do not use "we ...". Use imperative form.
->>>
->>> Also that is wrong place for the description:
->>>
->>> https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
->>>
->>>>     *
->>>>     * Returns 0 on success, < 0 in case of fatal error.
->>>> @@ -707,18 +709,15 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->>>>    	rc = tpm1_get_timeouts(chip);
->>>>    	if (rc)
->>>> -		goto out;
->>>> +		return rc < 0 ? rc : -ENODEV;
->>>
->>> Do not use ternary operators. Also we are interested on
->>> TPM_SELFTESTFAILED only (according to the commit message).
->>>
->>> I.e. afaik should be
->>>
->>> 	if (rc) {
->>> 		if (rc == TPM_SELFTESTFAILED)
->>> 			return -ENODEV;
->>> 		else
->>> 			return rc;
->>> 	}
->>
->> I read the description of TPM_ContinueSelfTest
->> in the spec file
->> https://trustedcomputinggroup.org/wp-content/uploads/TPM-Main-Part-3-Commands_v1.2_rev116_01032011.pdf
->>
->> It is stated there that when running a command C1 before running TPM_ContinueSelfTest
->> then the command might return error codes TPM_NEEDS_SELFTEST/TPM_DOING_SELFTEST.
->> In those cases the command tpm1_get_timeouts should be called again after  calling
->> 'tpm1_continue_selftest'.
->> So it seems that we can just move the the call to 'tpm1_get_timeouts' to
->> after the call to 'tpm1_continue_selftest'.
->>
->> I guess that the ChromeOS's TPM can support TPM_GetCapability for TPM_CAP_PROP_TIS_TIMEOUT, also
->> when it is on failure mode and this is why their patch ignores only the
->> result of 'tpm1_do_selftest' and not the result of 'tpm1_get_timeouts'.
->>
->> The idea of the patch is opposite than what you suggest.
->> If 'tpm1_get_timeouts' returns 'TPM_SELFTESTFAILED' then the code should not return '-ENODEV'
->> since we do want to have '/dev/tpm*' in that case.
->>
->> Thanks,
->> Dafna
->   
-> My mistake.
+On Fri, 11 Dec 2020, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> On Wed, Dec 09, 2020 at 02:41:45PM +0200, Adrian Ratiu wrote: 
+>> On Tue, 08 Dec 2020, Jarkko Sakkinen <jarkko@kernel.org> wrote: 
+>> > On Mon, Dec 07, 2020 at 04:20:16PM +0200, Adrian Ratiu wrote: 
+>> > > From: "dlaurie@chromium.org" <dlaurie@chromium.org>  Add 
+>> > > TPM 2.0 compatible I2C interface for chips with cr50 
+>> > > firmware. The firmware running on the currently supported 
+>> > > H1 MCU requires a special driver to handle its specific 
+>> > > protocol, and this makes it unsuitable to use 
+>> > > tpm_tis_core_* and instead it must implement the underlying 
+>> > > TPM protocol similar to the other I2C TPM drivers.   - All 
+>> > > 4 bytes of status register must be read/written at once.  - 
+>> > > FIFO and burst count is limited to 63 and must be drained 
+>> > > by AP.  - Provides an interrupt to indicate when read 
+>> > > response data is ready and when the TPM is finished 
+>> > > processing write data.   This driver is based on the 
+>> > > existing infineon I2C TPM driver, which most closely 
+>> > > matches the cr50 i2c protocol behavior. 
+>> >  Starts to look legit. Has anyone tested this? 
+>>  I tested on an x86_64 Chromebook EVE (aka Google Pixelbook) by 
+>> chainloading in legacy mode and booting into a Yocto-based 
+>> userspace (meta-chromebook) where I used tpm2-tools to 
+>> communicate with the chip and also built and tested a 
+>> ChromiumOS userspace in developer mode.   I do not have access 
+>> to other HW which has this chip, so it is about as much testing 
+>> I can do to confirm the driver works on this HW.   Adrian 
 > 
-> You only need to add two lines of code:
-> 
-> out:
-> 	if (rc == TPM_SELFTESTFAILED)
-> 		rc = 0;
-> 	if (rc > 0)
-> 		rc = -ENODEV;
-> 	return rc;
-> }
-> 
-> But how does this patch deal with TPM2?
+> So can you respond to this with tested-by. It's sufficient 
+> because collateral effects of driver failing are insignificant 
+> for the kernel as whole. 
 
-It doesn't, I was not sure if there is need to keep consistent behavior
-between 1.2 and 2. I can send next version with the same behavior for TPM 2.
+Tested-by: Adrian Ratiu <adrian.ratiu@collabora.com>
 
-> 
-> This should be opt-in feature or restricted to a narrow subset of TPM
-> commands. Please rephrase this for next iteration:
-> 
-> "The TPM device is not created, and that prevents the OS from attempting
-> any further recover operations with the TPM."
->
-
-In failure mode, the TPM should fail for almost all commands except for
-TPM_GetTestResult, and some params of TPM_GetCapability. So I don't see a
-reason to restrict the commands in the kernel.
-
-Can you be more clear, what should I rephrase in the above sentence?
-should I describe in detail the recovery steps?
-
-  
-> What you've sent works only as a PoC.
-
-Can you give more details of what should be added to the patch so
-it is not just a PoC ?
-
-Thanks,
-Dafna
-
-> 	
-> /Jarkko
-> 
+>  
+>  /Jarkko
