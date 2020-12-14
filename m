@@ -2,181 +2,90 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7F1C4361B
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 990B4C4361B
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 22:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4C60224B0
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C05222286
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 22:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440987AbgLNTZh (ORCPT
+        id S2408538AbgLNWIP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Dec 2020 14:25:37 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:58122 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408896AbgLNTTt (ORCPT
+        Mon, 14 Dec 2020 17:08:15 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:54656 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407337AbgLNWIJ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Dec 2020 14:19:49 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id EA49720B7185;
-        Mon, 14 Dec 2020 11:19:07 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EA49720B7185
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607973548;
-        bh=13oyFSjeebmBVRsX5qnb18X54SDtFubLxPq4ZGVsI8w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hCB9lgLh1jdL2MRlI/RAaPjwafQihv0aFHamvmZqwq223axDuTS3j3n/u3uOG6jO6
-         Rkpwen20NvQWotHMD8yISBOliqfm0W3jV06XA6pzzNh12hdmEbnZo6dhFlo444+OiY
-         9GYDdbyrvgdQMkPwPR9R13ibaD8W7RFXHbdxwBNU=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
-        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
-        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
-Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
-        paulus@samba.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
-        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
-        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH v11 2/8] powerpc: Move ima buffer functions to drivers/of/kexec.c
-Date:   Mon, 14 Dec 2020 11:18:48 -0800
-Message-Id: <20201214191854.9050-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201214191854.9050-1-nramas@linux.microsoft.com>
-References: <20201214191854.9050-1-nramas@linux.microsoft.com>
+        Mon, 14 Dec 2020 17:08:09 -0500
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1607983641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7ezHI9l+kJyPz4+IkqA521Mgz1A8PCaMz8TXfpyP64k=;
+        b=UiJoE4S0xruu3/jLQl/qA/h5S0bz7LoBe1+ugyZIDHt4vy2GVHBfu52GZmhLLal8fYJMyQ
+        ZcdHgi4uiTyPmZ3rYEYWzil+PpzNXieycFM8g43OmCT5XyPR6M0l3zE6CaXKrwF0w0slCp
+        kjVI9UE6+O1MfWLDYlfWVW2hM8TqKbB/o3Knpu00Z0/1DtPeQpJf+Wbujb85R0lytB4gzC
+        ncPHT+9Ykbv8aTNKRBmRpG8523CBRJ4UMd8XuTJhCqeI2tQVL/o5Tn9okl/6IQma7brWpS
+        0jRoU63vtczjXRfJR2mwGY9W8CV+5YIC42OJWldCbqEJL11ah14/ZDm3nOc53Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1607983641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7ezHI9l+kJyPz4+IkqA521Mgz1A8PCaMz8TXfpyP64k=;
+        b=C9tDNKj6P4rWLP8vR0PshIs3AFHMuif15+6Y8+sX/i1Y8X4bDFfCzUQBGm3RJxiitXjRJW
+        Ufxy/ZpEFlSEAoCw==
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-integrity@vger.kernel.org
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Philip Tricca <philip.b.tricca@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH V2] tpm: Remove tpm_dev_wq_lock
+In-Reply-To: <20190211105835.16851-1-bigeasy@linutronix.de>
+References: <20190211105835.16851-1-bigeasy@linutronix.de>
+Date:   Mon, 14 Dec 2020 23:07:21 +0100
+Message-ID: <87ft48doti.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The functions do_get_kexec_buffer() and get_addr_size_cells(),
-defined in arch/powerpc/kexec/ima.c, retrieve the address and size
-of the given property from the device tree blob. These functions do
-not have architecture specific code, but are currently limited to
-powerpc. do_get_kexec_buffer() correctly handles a device tree property
-that is a child node of the root node, but not anything other than
-the immediate root child nodes.
 
-Move architecture independent functions get_ima_kexec_buffer() and
-get_root_addr_size_cells() to "drivers/of/kexec.c". These functions
-retrieve the chosen node "linux,ima-kexec-buffer" from the device tree,
-and return the address and size of the buffer used for carrying forward
-the IMA measurement log across kexec system call.
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Never used since it was added.
+
+Fixes: 9e1b74a63f776 ("tpm: add support for nonblocking operation")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-integrity@vger.kernel.org
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Philip Tricca <philip.b.tricca@intel.com>
+Cc: Tadeusz Struk <tadeusz.struk@intel.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- drivers/of/kexec.c | 68 ++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/of.h |  3 ++
- 2 files changed, 71 insertions(+)
+V2: Reworded the change log so the !&!%#$ dispute over the formatting
+    is not longer in the way of getting this triviality done.
+---
+ drivers/char/tpm/tpm-dev-common.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-index 66787be081fe..9af5371340b1 100644
---- a/drivers/of/kexec.c
-+++ b/drivers/of/kexec.c
-@@ -30,6 +30,10 @@
- /**
-  * fdt_find_and_del_mem_rsv - delete memory reservation with given address and size
-  *
-+ * @fdt: Flattened Device Tree to update
-+ * @start: Starting address of the reservation to delete
-+ * @size: Size of the reservation to delete
-+ *
-  * Return: 0 on success, or negative errno on error.
-  */
- static int fdt_find_and_del_mem_rsv(void *fdt, unsigned long start, unsigned long size)
-@@ -226,3 +230,67 @@ int of_kexec_setup_new_fdt(const struct kimage *image, void *fdt,
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -20,7 +20,6 @@
+ #include "tpm-dev.h"
  
- 	return 0;
- }
-+
-+/**
-+ * get_root_addr_size_cells - Get address and size of root node
-+ *
-+ * @addr_cells: Return address of the root node
-+ * @size_cells: Return size of the root node
-+ *
-+ * Return: 0 on success, or negative errno on error.
-+ */
-+int get_root_addr_size_cells(int *addr_cells, int *size_cells)
-+{
-+	struct device_node *root;
-+
-+	root = of_find_node_by_path("/");
-+	if (!root)
-+		return -EINVAL;
-+
-+	*addr_cells = of_n_addr_cells(root);
-+	*size_cells = of_n_size_cells(root);
-+
-+	of_node_put(root);
-+
-+	return 0;
-+}
-+
-+/**
-+ * get_ima_kexec_buffer - Get address and size of IMA kexec buffer
-+ *
-+ * @fdt: Flattened Device Tree
-+ * @chosen_node: Offset of chosen node in the FDT
-+ * @addr: Return address of the node
-+ * @size: Return size of the node
-+ *
-+ * Return: 0 on success, or negative errno on error.
-+ */
-+int get_ima_kexec_buffer(void *fdt, int chosen_node,
-+			 unsigned long *addr, size_t *size)
-+{
-+	const void *prop;
-+	int addr_cells, size_cells, prop_len;
-+	int rc;
-+
-+	rc = get_root_addr_size_cells(&addr_cells, &size_cells);
-+	if (rc)
-+		return rc;
-+
-+	if (fdt)
-+		prop = fdt_getprop(fdt, chosen_node,
-+				   "linux,ima-kexec-buffer", &prop_len);
-+	else
-+		prop = of_get_property(of_chosen,
-+				       "linux,ima-kexec-buffer", &prop_len);
-+
-+	if (!prop)
-+		return -ENOENT;
-+
-+	if (prop_len < 4 * (addr_cells + size_cells))
-+		return -EINVAL;
-+
-+	*addr = of_read_number(prop, addr_cells);
-+	*size = of_read_number(prop + 4 * addr_cells, size_cells);
-+
-+	return 0;
-+}
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 3375f5295875..fb2ef274135d 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -562,6 +562,9 @@ struct kimage;
- int of_kexec_setup_new_fdt(const struct kimage *image, void *fdt,
- 			   unsigned long initrd_load_addr, unsigned long initrd_len,
- 			   const char *cmdline);
-+int get_root_addr_size_cells(int *addr_cells, int *size_cells);
-+int get_ima_kexec_buffer(void *fdt, int chosen_node,
-+			 unsigned long *addr, size_t *size);
+ static struct workqueue_struct *tpm_dev_wq;
+-static DEFINE_MUTEX(tpm_dev_wq_lock);
  
- #else /* CONFIG_OF */
- 
--- 
-2.29.2
-
+ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 				u8 *buf, size_t bufsiz)
