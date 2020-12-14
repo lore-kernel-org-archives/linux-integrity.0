@@ -2,107 +2,263 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CCFCC4361B
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 16:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA27AC2BB48
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBB322510
-	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 16:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 943FB22525
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Dec 2020 19:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440230AbgLNQzd (ORCPT
+        id S2502231AbgLNTUq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 14 Dec 2020 11:55:33 -0500
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:41066 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729493AbgLNQzd (ORCPT
+        Mon, 14 Dec 2020 14:20:46 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58466 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440884AbgLNTUg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 14 Dec 2020 11:55:33 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DEE47128098D;
-        Mon, 14 Dec 2020 08:54:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1607964892;
-        bh=UHUbxU8MjLcolafOQDhasLysUHkdYUG7xy2k16O+1GY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=IUYAI0PlYVLiS73KVZZk1m6bdkXkr7KN9YDFdABNmq/ehJl7I48hhE6x7snZBqHQj
-         Ys30nvM/s2v5usbAJuI3IfN/H9QBwq7ZQLPXUlvvOJR2gUNGy3KBmGSIuEdEn8TMMB
-         1m8gQuwCSwtYVXeZ88OF97M+S7Qk4F2AC/f3oRPU=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id EGkgHWQ1zIzl; Mon, 14 Dec 2020 08:54:52 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 51C9F128098B;
-        Mon, 14 Dec 2020 08:54:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1607964892;
-        bh=UHUbxU8MjLcolafOQDhasLysUHkdYUG7xy2k16O+1GY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=IUYAI0PlYVLiS73KVZZk1m6bdkXkr7KN9YDFdABNmq/ehJl7I48hhE6x7snZBqHQj
-         Ys30nvM/s2v5usbAJuI3IfN/H9QBwq7ZQLPXUlvvOJR2gUNGy3KBmGSIuEdEn8TMMB
-         1m8gQuwCSwtYVXeZ88OF97M+S7Qk4F2AC/f3oRPU=
-Message-ID: <80f02e5b510d6d11bf8e85be79a6db923c9037d1.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2] tpm: ignore failed selftest in probe
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-        linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        enric.balletbo@collabora.com, kernel@collabora.com,
-        dafna3@gmail.com, Andrey Pronin <apronin@chromium.org>
-Date:   Mon, 14 Dec 2020 08:54:51 -0800
-In-Reply-To: <eea2618c-f22c-1e68-7502-dcbc2ae7c494@collabora.com>
-References: <20201207135710.17321-1-dafna.hirschfeld@collabora.com>
-         <20201208173451.GA57585@kapsi.fi>
-         <ca37d350-d79c-41ad-f221-55d8851437bc@collabora.com>
-         <20201211175745.GA34718@kernel.org>
-         <eea2618c-f22c-1e68-7502-dcbc2ae7c494@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Mon, 14 Dec 2020 14:20:36 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0560320B718A;
+        Mon, 14 Dec 2020 11:19:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0560320B718A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1607973550;
+        bh=wRDctihRsmviTPy9E5NQPqpLOD2WoC6cSXwR/EfWCQU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jvoE5zUbjq370aqAJLu0S1P/+To2Db1y926vIwGxyX6Vl87UAZeT9Xy5Yq6a+yH2L
+         uWHUAB07L0v4zwni/eSwdZ5cBCaQgaGLy4spB4RzC/RKETGwN+6uW2m0aT9Ywn2FXz
+         uVtMqVNogsV5LDJJkz7MWvgFqYKUbibyo5BeVbvY=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH v11 5/8] powerpc: Move ima_get_kexec_buffer() and ima_free_kexec_buffer() to ima
+Date:   Mon, 14 Dec 2020 11:18:51 -0800
+Message-Id: <20201214191854.9050-6-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201214191854.9050-1-nramas@linux.microsoft.com>
+References: <20201214191854.9050-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2020-12-14 at 10:50 +0100, Dafna Hirschfeld wrote:
-> Am 11.12.20 um 18:57 schrieb Jarkko Sakkinen:
-[...]
-> > But how does this patch deal with TPM2?
-> 
-> It doesn't, I was not sure if there is need to keep consistent
-> behavior between 1.2 and 2. I can send next version with the same
-> behavior for TPM 2.
+ima_get_kexec_buffer() retrieves the address and size of the buffer
+used for carrying forward the IMA measurement logs on kexec from
+the device tree.
 
-This comes up a lot, so let me give my view that this really has to be
-our requirement going forward.  TPM 1.2 is pretty much a dead device
-and, thanks to being sha1 only, it's definitely not used to provide
-security in any serious devices anymore.  So effectively any patch
-which is TPM 1.2 only is either because there's a problem in a legacy
-system which was fixed in 2.0 or because for some reason the patch
-producer is working on a legacy system, but it also needs to be
-provided for TPM 2.0.
+ima_free_kexec_buffer() removes the chosen node
+"linux,ima-kexec-buffer" from the device tree, and frees the buffer
+used for carrying forward the IMA measurement logs on kexec.
 
-On this patch, I've got a TPM 2.0 which I can trigger into failure mode
-on demand (just not get it back again without a power cycle).  Since it
-does correctly respond TPM_RC_FAILURE to every command, it could be
-attached with no command restriction.  The problem is that TPM 2 is an
-agile device so we need to probe some of its characteristics on attach,
-which we can't if it's in a failed state.  So if we're going to attach
-a failed TPM 2, we're going to have to make assumptions about the
-probed values.  What do we use as the assumptions for things like
-number of PCRS (24 woud be reasonable) and hashes and banks (sha1 and
-sha256), attribute table?  The problem here is we only probe this at
-attach, so if the TPM somehow unfails, all of the assumptions are
-likely to be wrong and we're going to get issues ... this last bit
-argues that we should restrict the command list to make sure we don't
-send it a command with incorrect assumptions.
+These functions do not have architecture specific code, but are
+currently limited to powerpc. Move ima_get_kexec_buffer() and
+ima_free_kexec_buffer() to ima_kexec.c in IMA so that they are
+accessible for other architectures as well.
 
-James
+With the above change the functions in arch/powerpc/kexec/ima.c are
+defined only when the kernel config CONFIG_IMA_KEXEC is enabled.
+Update the Makefile to build arch/powerpc/kexec/ima.c only when
+CONFIG_IMA_KEXEC is enabled and remove "#ifdef CONFIG_IMA_KEXEC"
+in arch/powerpc/kexec/ima.c.
 
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ arch/powerpc/include/asm/ima.h     |  3 --
+ arch/powerpc/kexec/Makefile        |  7 +---
+ arch/powerpc/kexec/ima.c           | 51 -----------------------------
+ security/integrity/ima/ima_kexec.c | 52 ++++++++++++++++++++++++++++++
+ 4 files changed, 53 insertions(+), 60 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
+index fbc0c866b6bc..3875c9334d64 100644
+--- a/arch/powerpc/include/asm/ima.h
++++ b/arch/powerpc/include/asm/ima.h
+@@ -4,9 +4,6 @@
+ 
+ #include <linux/of.h>
+ 
+-int ima_get_kexec_buffer(void **addr, size_t *size);
+-int ima_free_kexec_buffer(void);
+-
+ #ifdef CONFIG_IMA_KEXEC
+ int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+ 			      size_t size);
+diff --git a/arch/powerpc/kexec/Makefile b/arch/powerpc/kexec/Makefile
+index 4aff6846c772..f54a9dbff4c8 100644
+--- a/arch/powerpc/kexec/Makefile
++++ b/arch/powerpc/kexec/Makefile
+@@ -9,12 +9,7 @@ obj-$(CONFIG_PPC32)		+= relocate_32.o
+ 
+ obj-$(CONFIG_KEXEC_FILE)	+= file_load.o ranges.o file_load_$(BITS).o elf_$(BITS).o
+ 
+-ifdef CONFIG_HAVE_IMA_KEXEC
+-ifdef CONFIG_IMA
+-obj-y				+= ima.o
+-endif
+-endif
+-
++obj-$(CONFIG_IMA_KEXEC)		+= ima.o
+ 
+ # Disable GCOV, KCOV & sanitizers in odd or sensitive code
+ GCOV_PROFILE_core_$(BITS).o := n
+diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
+index 68017123b07d..82730c13a4df 100644
+--- a/arch/powerpc/kexec/ima.c
++++ b/arch/powerpc/kexec/ima.c
+@@ -9,59 +9,9 @@
+ #include <linux/slab.h>
+ #include <linux/kexec.h>
+ #include <linux/of.h>
+-#include <linux/memblock.h>
+ #include <linux/libfdt.h>
+ #include <asm/ima.h>
+ 
+-/**
+- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+- * @addr:	On successful return, set to point to the buffer contents.
+- * @size:	On successful return, set to the buffer size.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int ima_get_kexec_buffer(void **addr, size_t *size)
+-{
+-	int ret;
+-	unsigned long tmp_addr;
+-	size_t tmp_size;
+-
+-	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
+-	if (ret)
+-		return ret;
+-
+-	*addr = __va(tmp_addr);
+-	*size = tmp_size;
+-
+-	return 0;
+-}
+-
+-/**
+- * ima_free_kexec_buffer - free memory used by the IMA buffer
+- */
+-int ima_free_kexec_buffer(void)
+-{
+-	int ret;
+-	unsigned long addr;
+-	size_t size;
+-	struct property *prop;
+-
+-	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
+-	if (!prop)
+-		return -ENOENT;
+-
+-	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
+-	if (ret)
+-		return ret;
+-
+-	ret = of_remove_property(of_chosen, prop);
+-	if (ret)
+-		return ret;
+-
+-	return memblock_free(addr, size);
+-}
+-
+-#ifdef CONFIG_IMA_KEXEC
+ /**
+  * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
+  *
+@@ -154,4 +104,3 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_IMA_KEXEC */
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 121de3e04af2..9527118939b8 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -9,7 +9,11 @@
+ 
+ #include <linux/seq_file.h>
+ #include <linux/vmalloc.h>
++#include <linux/memblock.h>
++#include <linux/of.h>
+ #include <linux/kexec.h>
++#include <linux/ima.h>
++
+ #include "ima.h"
+ 
+ #ifdef CONFIG_IMA_KEXEC
+@@ -133,6 +137,54 @@ void ima_add_kexec_buffer(struct kimage *image)
+ }
+ #endif /* IMA_KEXEC */
+ 
++/**
++ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
++ * @addr:	On successful return, set to point to the buffer contents.
++ * @size:	On successful return, set to the buffer size.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++static int ima_get_kexec_buffer(void **addr, size_t *size)
++{
++	int ret;
++	unsigned long tmp_addr;
++	size_t tmp_size;
++
++	ret = get_ima_kexec_buffer(NULL, 0, &tmp_addr, &tmp_size);
++	if (ret)
++		return ret;
++
++	*addr = __va(tmp_addr);
++	*size = tmp_size;
++
++	return 0;
++}
++
++/**
++ * ima_free_kexec_buffer - free memory used by the IMA buffer
++ */
++static int ima_free_kexec_buffer(void)
++{
++	int ret;
++	unsigned long addr;
++	size_t size;
++	struct property *prop;
++
++	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
++	if (!prop)
++		return -ENOENT;
++
++	ret = get_ima_kexec_buffer(NULL, 0, &addr, &size);
++	if (ret)
++		return ret;
++
++	ret = of_remove_property(of_chosen, prop);
++	if (ret)
++		return ret;
++
++	return memblock_free(addr, size);
++}
++
+ /*
+  * Restore the measurement list from the previous kernel.
+  */
+-- 
+2.29.2
 
