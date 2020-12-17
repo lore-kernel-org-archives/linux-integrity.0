@@ -2,154 +2,175 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC584C47434
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2969DC4361B
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Dec 2020 18:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93DCF238EF
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Dec 2020 18:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D66612389F
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Dec 2020 18:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731353AbgLQSNd (ORCPT
+        id S1729580AbgLQSaO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Dec 2020 13:13:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63646 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727543AbgLQSNb (ORCPT
+        Thu, 17 Dec 2020 13:30:14 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58442 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728180AbgLQSaL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Dec 2020 13:13:31 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0BHI0akt196523;
-        Thu, 17 Dec 2020 13:12:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=I5dav5ybtm5cOlvE0z4XiFssiO7SXZwXPyzsjqd6q1o=;
- b=mPD76X+kqQ9R2YR2OoxVTflGDoaLvUQHvFM+jj1uYtSqJMv3zs3WFVT0VdlA97khSau3
- JFnM3ESgxUb74QuGHonW0jFUeDJC6b+VpZywUZRg5lFNNFetNiHrdgXb+nXkxe9K1j6T
- Kio9cfe+OUS5JUNUFTfg2+4wZ5G0Im0oEBQGemwUOqg0iou4qnsoLJFfVcaL+xkz/TBg
- 6KK7LsFfguMnB5Xvssd6vR6LBaPMxrVCon57WxoOoIFMyTZD3puNFAdl09QEExex3Kvc
- lzjyVucBv5oz1bjJ/HhoNCCBBoWBAMlC+B6aHHMgS3U0TA1m01dHCW4/7qUWTKWaQLg+ Tw== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 35gc6s8frc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Dec 2020 13:12:43 -0500
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0BHI89X4020351;
-        Thu, 17 Dec 2020 18:12:42 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma05fra.de.ibm.com with ESMTP id 35fmywgkpy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Dec 2020 18:12:41 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0BHICdCx30474654
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Dec 2020 18:12:39 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9187A42041;
-        Thu, 17 Dec 2020 18:12:39 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4A8542042;
-        Thu, 17 Dec 2020 18:12:37 +0000 (GMT)
-Received: from sig-9-65-203-134.ibm.com (unknown [9.65.203.134])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 17 Dec 2020 18:12:37 +0000 (GMT)
-Message-ID: <25e41786777f814455780915dfe1bc2c769dc99c.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 3/4] ima_tpm.sh: Fix calculating boot aggregate
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Petr Vorel <pvorel@suse.cz>, ltp@lists.linux.it
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        linux-integrity@vger.kernel.org
-Date:   Thu, 17 Dec 2020 13:12:36 -0500
-In-Reply-To: <20201214221946.6340-4-pvorel@suse.cz>
-References: <20201214221946.6340-1-pvorel@suse.cz>
-         <20201214221946.6340-4-pvorel@suse.cz>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
+        Thu, 17 Dec 2020 13:30:11 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0B6E620B717A;
+        Thu, 17 Dec 2020 10:29:30 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0B6E620B717A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1608229770;
+        bh=GwfRqRu08UdwXtSUpS9V9mnLcj+rN1xicTZ0lOWPifs=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=Va0dDR8fH6oIFQsOLK4t9CSVal0ebVldzlYKaF7CNl2rfSNuhHp17P7L9q01f261u
+         ndOKIA66Pku3uWcsP9bumD5l/vEPT5t84v9tJgalSnBXq07ovsz6mNNVBpHAlebueH
+         OnT27wrw3DIoXQZ+LKgduXrjhaB6Jh/00eMCC+Fs=
+Subject: Re: [PATCH v12 1/4] powerpc: Use fdt_appendprop_addrrange() to add
+ ima buffer to FDT
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+References: <20201217173708.6940-1-nramas@linux.microsoft.com>
+ <20201217173708.6940-2-nramas@linux.microsoft.com>
+Message-ID: <37a62c46-cb43-0e71-ee79-8c497a11e159@linux.microsoft.com>
+Date:   Thu, 17 Dec 2020 10:29:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20201217173708.6940-2-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2020-12-17_11:2020-12-15,2020-12-17 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- suspectscore=0 adultscore=0 spamscore=0 impostorscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012170121
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Petr,
-
-On Mon, 2020-12-14 at 23:19 +0100, Petr Vorel wrote:
-> for TPM 2.0 or kernel >= v5.8-rc1:
-> 6f1a1d103b48 ima: ("Switch to ima_hash_algo for boot aggregate")
+On 12/17/20 9:37 AM, Lakshmi Ramasubramanian wrote:
+> fdt_appendprop_addrrange() function adds a property, with the given name,
+> to the device tree at the given node offset, and also sets the address
+> and size of the property. This function should be used to add
+> "linux,ima-kexec-buffer" property to the device tree and set the address
+> and size of the IMA measurement buffer, instead of using custom function.
 > 
-> Test still fails with newer TPM 2.0 on kernel < v5.8-rc1.
 
-The above commit was backported in stable.  Do you know if the failing
-systems backported the above patch?   I've recently asked for commit
-20c59ce010f8 ("ima: extend boot_aggregate with kernel measurements")
-also be backported.
+Typo in the email address of James Morse (ARM.com). Sorry about that.
+Adding the correct email address.
 
+  -lakshmi
+
+> Use fdt_appendprop_addrrange() to add  "linux,ima-kexec-buffer" property
+> to the device tree. This property holds the address and size of
+> the IMA measurement buffer that needs to be passed from the current
+> kernel to the next kernel across kexec system call.
 > 
-> Test was failing, because it expect SHA1 (we ignore MD5) hash, but for TPM 2.0
-> is now used IMA default hash algorithm (by default default SHA256).
-> This is similar for entries in IMA measurement list so we can reuse
-> already existing code.
+> Remove custom code that is used in setup_ima_buffer() to add
+> "linux,ima-kexec-buffer" property to the device tree.
 > 
-> Reading other algorithms than SHA1 or support TPM 2.0 requires evmctl
-> >= 1.3.1 (1.3 would also work for test1, but will be required for test2).
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+>   arch/powerpc/kexec/ima.c | 51 ++++++----------------------------------
+>   1 file changed, 7 insertions(+), 44 deletions(-)
 > 
-> Although recent evmctl is recommended, to support older kernels and TPMs
-> which support only SHA1, get boot aggregate with old our legacy
-> ima_boot_aggregate.c.
-
-^ the LTP legacy ima_boot_aggregate.c still works, without the evmctl
-dependency.
-
+> diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
+> index 720e50e490b6..d579d3da4715 100644
+> --- a/arch/powerpc/kexec/ima.c
+> +++ b/arch/powerpc/kexec/ima.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/of.h>
+>   #include <linux/memblock.h>
+>   #include <linux/libfdt.h>
+> +#include <asm/ima.h>
+>   
+>   static int get_addr_size_cells(int *addr_cells, int *size_cells)
+>   {
+> @@ -145,27 +146,6 @@ int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+>   	return 0;
+>   }
+>   
+> -static int write_number(void *p, u64 value, int cells)
+> -{
+> -	if (cells == 1) {
+> -		u32 tmp;
+> -
+> -		if (value > U32_MAX)
+> -			return -EINVAL;
+> -
+> -		tmp = cpu_to_be32(value);
+> -		memcpy(p, &tmp, sizeof(tmp));
+> -	} else if (cells == 2) {
+> -		u64 tmp;
+> -
+> -		tmp = cpu_to_be64(value);
+> -		memcpy(p, &tmp, sizeof(tmp));
+> -	} else
+> -		return -EINVAL;
+> -
+> -	return 0;
+> -}
+> -
+>   /**
+>    * setup_ima_buffer - add IMA buffer information to the fdt
+>    * @image:		kexec image being loaded.
+> @@ -176,35 +156,18 @@ static int write_number(void *p, u64 value, int cells)
+>    */
+>   int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+>   {
+> -	int ret, addr_cells, size_cells, entry_size;
+> -	u8 value[16];
+> +	int ret;
+>   
+>   	remove_ima_buffer(fdt, chosen_node);
+>   	if (!image->arch.ima_buffer_size)
+>   		return 0;
+>   
+> -	ret = get_addr_size_cells(&addr_cells, &size_cells);
+> +	ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
+> +				       "linux,ima-kexec-buffer",
+> +				       image->arch.ima_buffer_addr,
+> +				       image->arch.ima_buffer_size);
+>   	if (ret)
+> -		return ret;
+> -
+> -	entry_size = 4 * (addr_cells + size_cells);
+> -
+> -	if (entry_size > sizeof(value))
+> -		return -EINVAL;
+> -
+> -	ret = write_number(value, image->arch.ima_buffer_addr, addr_cells);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = write_number(value + 4 * addr_cells, image->arch.ima_buffer_size,
+> -			   size_cells);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = fdt_setprop(fdt, chosen_node, "linux,ima-kexec-buffer", value,
+> -			  entry_size);
+> -	if (ret < 0)
+> -		return -EINVAL;
+> +		return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
+>   
+>   	ret = fdt_add_mem_rsv(fdt, image->arch.ima_buffer_addr,
+>   			      image->arch.ima_buffer_size);
 > 
-> Also fixed cases:
-> * testing with no TPM device:
-> * TPM TPM 2.0 devices which does not export event log
-> (/sys/kernel/security/tpm0/binary_bios_measurements).
-
-^ firmware which does not export the TPM 2.0 binary event log
-
-> 
-> Also fixed test without TPM device (when IMA TPM-bypass is tested)
-> as some TPM 2.0 devices does not export event log
-> (/sys/kernel/security/tpm0/binary_bios_measurements).
-
-This looks like a duplicate of above.  Maybe just add another bullet
-*
-detecting IMA TPM-bypass mode
-
-> This does not require evmctl at all.
-
-I assume this comment refers to TPM 2.0 calculating the
-"boot_aggregate" based on the existing PCR values, as opposed to TPM
-1.2 which first walks the TPM event log, calculating the PCRs.
-
-> 
-> Also try best to detect TPM major version (1, 2 or none - assume
-> TPM-bypass). This fixes testing with TPM 2.0 device which does not
-> export event log (/sys/kernel/security/tpm0/binary_bios_measurements):
-> not wrongly assuming TPM-bypass when kernel didn't export other TPM
-> 2.0 files we check in get_tpm_version() but bios boot aggregate is
-> correct (i.e. not 0x00s). In that case evmctl ima_boot_aggregate can get
-> boot aggregate even without TPM event log.
-> 
-> Co-developed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
-
-Thanks, Petr!
-
-Mimi
 
