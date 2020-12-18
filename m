@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B61D6C4361B
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Dec 2020 22:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B5AC2BBD4
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Dec 2020 06:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70C9723434
-	for <linux-integrity@archiver.kernel.org>; Thu, 17 Dec 2020 22:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D04C222228
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Dec 2020 06:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727133AbgLQWL4 (ORCPT
+        id S1732659AbgLRG0P (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 17 Dec 2020 17:11:56 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:34500 "EHLO
+        Fri, 18 Dec 2020 01:26:15 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:41910 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbgLQWLz (ORCPT
+        with ESMTP id S1732647AbgLRG0P (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 17 Dec 2020 17:11:55 -0500
+        Fri, 18 Dec 2020 01:26:15 -0500
 Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E503220B717A;
-        Thu, 17 Dec 2020 14:11:13 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E503220B717A
+        by linux.microsoft.com (Postfix) with ESMTPSA id C95CC20B717A;
+        Thu, 17 Dec 2020 22:25:33 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C95CC20B717A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1608243074;
-        bh=QSosWZwtVMTcMn62nBnRz7ClBx5R8L8Yz9ALkNCQps8=;
+        s=default; t=1608272734;
+        bh=etZWIFSAunWvvTytCwaw4eRuJpjTSSwN3EVqRwxTxgo=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=iB98ytkLLq7AgvZAquE6qTkzmUDb+o+31aedBLPvq1Lmn/k0Com6XleZhRApsg7C1
-         ayIyKcrnJ/wTtkBYe/dMGz5HE7ODovuUGlX9iIqySfXrwGcwnXn//yeZFpd4DEijMZ
-         Z1l2dVHjQXDjA0x9nUmy4J90J0ElUAKTEwzXT8Vk=
+        b=dPeYTdzlbJyy71yFOMqIIPpxr4tH8rS154kSISMKYsrQ299j4AjVgYC8DJFV3V2zW
+         EUckcDbECnnMo+b9KomsWtVYJj2oS79xkCOdcjWtxtVs5CULWLV9KZn5z3r6OqO19P
+         90dxam6rHhIKp8WnQe2IMDyJw3W6j0heDI8ijGy8=
 Subject: Re: [PATCH v12 2/4] powerpc: Move arch independent ima kexec
  functions to drivers/of/kexec.c
 To:     Rob Herring <robh@kernel.org>
@@ -68,8 +68,8 @@ References: <20201217173708.6940-1-nramas@linux.microsoft.com>
  <0b17fbee-cfe9-8cb2-01d1-02b6a61a14f5@linux.microsoft.com>
  <CAL_Jsq+-HOkxtxOO=zyRbDuGVNZoMy589qoVANciNionsdsGCw@mail.gmail.com>
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <de64bbaf-1568-b4a4-d76d-fc07a91d7c27@linux.microsoft.com>
-Date:   Thu, 17 Dec 2020 14:11:13 -0800
+Message-ID: <5dda6968-ca14-1695-3058-7c12653521ba@linux.microsoft.com>
+Date:   Thu, 17 Dec 2020 22:25:33 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
@@ -82,16 +82,7 @@ List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 On 12/17/20 2:01 PM, Rob Herring wrote:
-> On Thu, Dec 17, 2020 at 2:52 PM Lakshmi Ramasubramanian
-> <nramas@linux.microsoft.com> wrote:
->>
->> On 12/17/20 12:05 PM, Rob Herring wrote:
->>> On Thu, Dec 17, 2020 at 09:37:06AM -0800, Lakshmi Ramasubramanian wrote:
->>>> The functions defined in "arch/powerpc/kexec/ima.c" handle setting up
->>>> and freeing the resources required to carry over the IMA measurement
->>>> list from the current kernel to the next kernel across kexec system call.
->>>> These functions do not have architecture specific code, but are
->>>> currently limited to powerpc.
+
 > 
 > [...]
 > 
@@ -124,13 +115,21 @@ On 12/17/20 2:01 PM, Rob Herring wrote:
 > specific, but that's a separate issue.
 > 
 
-okay - I'll move arch_ima_add_kexec_buffer() to asm/kexec.h
+Since "struct kimage" definition is not available in "asm/kexec.h", 
+defining arch_ima_add_kexec_buffer() in this header file results in the 
+following build error:
 
-Please let me know if you have any other comments on the patches.
-If you are done reviewing, I'll post the updated patches shortly.
+./arch/powerpc/include/asm/kexec.h: In function 'arch_ima_add_kexec_buffer':
+./arch/powerpc/include/asm/kexec.h:139:7: error: 'struct kimage' has no 
+member named 'arch'
+   139 |  image->arch.ima_buffer_addr = load_addr;
 
-Thanks for reviewing the changes.
+I think it would be appropriate to make arch_ima_add_kexec_buffer() a 
+static inline function in "security/integrity/ima/ima_kexec.c" - the 
+only file where this function is used.
 
+This will also enable sharing this function for powerpc and arm64 
+architectures.
+
+thanks,
   -lakshmi
-
-
