@@ -2,151 +2,160 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0157C4361B
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Dec 2020 18:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEF5C4361B
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Dec 2020 17:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 964F723B70
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Dec 2020 18:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FF0023602
+	for <linux-integrity@archiver.kernel.org>; Sat, 19 Dec 2020 17:58:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725895AbgLRSia (ORCPT
+        id S1727217AbgLSR6T (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Dec 2020 13:38:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45890 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726080AbgLRSia (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Dec 2020 13:38:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2D51BAC7B;
-        Fri, 18 Dec 2020 18:37:48 +0000 (UTC)
-Date:   Fri, 18 Dec 2020 19:37:46 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        paul@paul-moore.com, tusharsu@linux.microsoft.com,
-        ltp@lists.linux.it, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] ima: Add test for selinux measurement
-Message-ID: <X9z2+nXBdTMqHPgD@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20200928194730.20862-1-nramas@linux.microsoft.com>
- <20200928194730.20862-2-nramas@linux.microsoft.com>
+        Sat, 19 Dec 2020 12:58:19 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:51052 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727211AbgLSR6S (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 19 Dec 2020 12:58:18 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 916FE20B83F2;
+        Sat, 19 Dec 2020 09:57:37 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 916FE20B83F2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1608400658;
+        bh=gwhplyyF+cjb9TSe4cm7smlJWhMGIDPpcq9lIh4sTKo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=r1FkKJP0EdE7JLakwAeZcCnLu6/R46WagVmE0cXidwYwIJAvPa7rXE4dfi+QkATAo
+         n9tyX8FnJGs7DpHJ4TF69pnPOwDHIRqX+Afe9uZpBmtoq3lF0229/VqZywCZhCleKU
+         MdIac1VeeJlpi87sbIhYEx/MOF57o44yRqZf5ROM=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH v13 1/6] ima: Move arch_ima_add_kexec_buffer() to ima
+Date:   Sat, 19 Dec 2020 09:57:08 -0800
+Message-Id: <20201219175713.18888-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201219175713.18888-1-nramas@linux.microsoft.com>
+References: <20201219175713.18888-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200928194730.20862-2-nramas@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Lakshmi, Mimi, all,
+arch_ima_add_kexec_buffer() defined in "arch/powerpc/kexec/ima.c"
+sets up the address and size of the IMA measurement list in
+the architecture specific fields in kimage struct. This function does not
+have architecture specific code, but is currently limited to powerpc.
 
-@Lakshmi
-TL;DR: I added some fixes in my fork, branch ima/selinux.v2.draft,
-https://github.com/pevik/ltp/commits/ima/selinux.v2.draft
+Move arch_ima_add_kexec_buffer() to ima.
 
-+ added 3 additional commits, one of them as you as the author.
-I moved some functions to testcases/lib/tst_security.sh, renamed them.
-Can you please have a look and test? I don't have any SELinux machine.
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ arch/powerpc/include/asm/ima.h     |  3 ---
+ arch/powerpc/kexec/ima.c           | 17 -----------------
+ security/integrity/ima/ima_kexec.c | 22 ++++++++++++++++++++++
+ 3 files changed, 22 insertions(+), 20 deletions(-)
 
-@Mimi, all: any comment to this test? My changes are just LTP cleanup
-so you can comment it on this patchset.
-I suppose you get to this in January.
+diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
+index ead488cf3981..51f64fd06c19 100644
+--- a/arch/powerpc/include/asm/ima.h
++++ b/arch/powerpc/include/asm/ima.h
+@@ -14,9 +14,6 @@ static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
+ #endif
+ 
+ #ifdef CONFIG_IMA_KEXEC
+-int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+-			      size_t size);
+-
+ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node);
+ #else
+ static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
+diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
+index 720e50e490b6..7378d59c0c1e 100644
+--- a/arch/powerpc/kexec/ima.c
++++ b/arch/powerpc/kexec/ima.c
+@@ -128,23 +128,6 @@ void remove_ima_buffer(void *fdt, int chosen_node)
+ }
+ 
+ #ifdef CONFIG_IMA_KEXEC
+-/**
+- * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
+- *
+- * Architectures should use this function to pass on the IMA buffer
+- * information to the next kernel.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+-			      size_t size)
+-{
+-	image->arch.ima_buffer_addr = load_addr;
+-	image->arch.ima_buffer_size = size;
+-
+-	return 0;
+-}
+-
+ static int write_number(void *p, u64 value, int cells)
+ {
+ 	if (cells == 1) {
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 121de3e04af2..38bcd7543e27 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -10,6 +10,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/vmalloc.h>
+ #include <linux/kexec.h>
++#include <linux/ima.h>
+ #include "ima.h"
+ 
+ #ifdef CONFIG_IMA_KEXEC
+@@ -71,6 +72,27 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 	return ret;
+ }
+ 
++/**
++ * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
++ *
++ * @image: kimage struct to set IMA buffer data
++ * @load_addr: Starting address where IMA buffer is loaded at
++ * @size: Number of bytes in the IMA buffer
++ *
++ * Architectures should use this function to pass on the IMA buffer
++ * information to the next kernel.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++static int arch_ima_add_kexec_buffer(struct kimage *image,
++				     unsigned long load_addr, size_t size)
++{
++	image->arch.ima_buffer_addr = load_addr;
++	image->arch.ima_buffer_size = size;
++
++	return 0;
++}
++
+ /*
+  * Called during kexec_file_load so that IMA can add a segment to the kexec
+  * image for the measurement list for the next kernel.
+-- 
+2.29.2
 
-Some notes for my changes:
-
-As files are quite similar (checks etc), I put both tests into single
-file ima_selinux.sh.
-
-> New functionality is being added to IMA to measure data provided by
-> kernel components. With this feature, IMA policy can be set to enable
-> measuring data provided by Linux Security Modules (LSM). Currently one
-> such LSM namely selinux is being updated to use this functionality.
-> This new functionality needs test automation in LTP.
-
-> Add test cases which verify that the IMA subsystem correctly measures
-> the data provided by selinux.
-
-Could you please put into commit message and test kernel commit hash relevant
-for the test. Is that 8861d0af642c646c8e148ce34c294bdef6f32f6a (merged into
-v5.10-rc1) or there are more relevant commits?
-
-...
-> +### IMA SELinux test
-> +
-> +To enable IMA to measure SELinux state and policy, `ima_selinux_policy.sh`
-> +and `ima_selinux_state.sh` require a readable IMA policy, as well as
-> +a loaded measure policy with
-> +`measure func=CRITICAL_DATA data_sources=selinux template=ima-buf`
-I put this into
-testcases/kernel/security/integrity/ima/datafiles/ima_selinux/selinux.policy
-and mention it in docs.
-
-> +test1()
-> +{
-> +	local policy_digest expected_policy_digest algorithm
-> +	local data_source_name="selinux"
-> +	local pattern="data_sources=[^[:space:]]*$data_source_name"
-> +	local tmp_file="$TST_TMPDIR/selinux_policy_tmp_file.txt"
-> +
-> +	check_policy_pattern "$pattern" $FUNC_CRITICAL_DATA $TEMPLATE_BUF > $tmp_file || return
-> +
-> +	tst_res TINFO "Verifying selinux policy measurement"
-> +
-> +	#
-> +	# Trigger a measurement by changing selinux state
-> +	#
-> +	update_selinux_state
-Here I used tst_update_selinux_state.
-
-...
-> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-
-> +#
-> +# Update selinux state. This is used for validating IMA
-> +# measurement of selinux constructs.
-> +#
-> +update_selinux_state()
-> +{
-> +	local cur_val new_val
-> +
-> +	cur_val=$(cat $SELINUX_FOLDER/checkreqprot)
-> +
-> +	if [ $cur_val = 1 ]; then
-> +		new_val=0
-> +	else
-> +		new_val=1
-> +	fi
-> +
-> +	echo $new_val > $SELINUX_FOLDER/checkreqprot
-> +}
-> +
-> +#
-> +# Verify selinux is enabled in the system
-> +#
-> +check_selinux_state()
-> +{
-> +	[ -d $SELINUX_FOLDER ] || tst_brk TCONF "selinux is not enabled"
-> +}
-
-As I mentioned above, this is not needed as I put them under different names in
-testcases/lib/tst_security.sh.
-
->  mount_helper()
->  {
->  	local type="$1"
-> @@ -238,6 +265,7 @@ ima_setup()
->  	ASCII_MEASUREMENTS="$IMA_DIR/ascii_runtime_measurements"
->  	BINARY_MEASUREMENTS="$IMA_DIR/binary_runtime_measurements"
->  	IMA_POLICY="$IMA_DIR/policy"
-> +	SELINUX_FOLDER="$SYSFS/fs/selinux"
-
-nit: I renamed it to $SELINUX_DIR (for consistency with $IMA_DIR)
-and moved to ima_selinux.sh.
-
-Kind regards,
-Petr
