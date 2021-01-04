@@ -2,81 +2,213 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FD9C43381
-	for <linux-integrity@archiver.kernel.org>; Sat,  2 Jan 2021 23:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50813C433E0
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jan 2021 12:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DF4720798
-	for <linux-integrity@archiver.kernel.org>; Sat,  2 Jan 2021 23:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20023221F9
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jan 2021 12:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbhABXIs (ORCPT
+        id S1726360AbhADMQt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 2 Jan 2021 18:08:48 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:34411 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbhABXIs (ORCPT
+        Mon, 4 Jan 2021 07:16:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbhADMQs (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 2 Jan 2021 18:08:48 -0500
-Received: by mail-il1-f200.google.com with SMTP id c72so23421074ila.1
-        for <linux-integrity@vger.kernel.org>; Sat, 02 Jan 2021 15:08:32 -0800 (PST)
+        Mon, 4 Jan 2021 07:16:48 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1AC8C061574
+        for <linux-integrity@vger.kernel.org>; Mon,  4 Jan 2021 04:16:07 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id o19so63841357lfo.1
+        for <linux-integrity@vger.kernel.org>; Mon, 04 Jan 2021 04:16:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a6kBpRdFMzUaRTZHdbvHFwKqArYqPus66v0IiHDwd+I=;
+        b=UXAdh6B315kL1Bx1D2KkTnErKda1Xx3ZebKYt8RcJJxNfncnASDPuPDJepAAWGtbho
+         BRLQ+0xkYTcuVwA9uYVXvdz3iG55xdk0cnJi7cxxRkHBx9noocrTDB98GxholILTdHKc
+         OoQXSny++Nhyb1u6KDq3YrvRLNW7+kgdyqS77IUszoPdtyDiJanU+kv2e508X3SE1nz/
+         6hHdv33i+LXivbcJHA1uPVLHefibSkZDD/NgqRYE1eSY9nH/K5Fw617oy+Tx580bkTbV
+         Mg2BXOp/tXJk4TAxBla+mDuyoIf5SRt2XYbgjumZuo+Jjrqwp2tk0/aq7U2F2CEJToXZ
+         Jurw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=xiEz0zPMyUpnKzLhYUnlv16mJTBk47GYHjbMemvYGag=;
-        b=nXdn6OsgHM5ERZk6+qOaYDolv8gQJKmkqtmdglNaaXznkomDQj9uuZ1jrC2FhFH4rx
-         QrYV4epksQU2pd+gAZ2NYJar80Rgc7H6D8y5uueLZQ+CGgU6lFwSMYlzljY7SkTW00xj
-         jSyfcei8aCMoE8GAHztzuZ6BfrVpS9WLKKv1bUV8m/4I7HHB6J+YyS76wDr3UlIjzh7S
-         eWsRSAQ0otUOjxhLpr1ZEuY2cH2sS0bKuXHqR8BCBnp1kbAjmXj5BKL9I7MG6O/gJbdX
-         a2WvKEudqJg/XHKUax5oLsqG2QQy6Ol62d83gAD3PApJDHoKnEJDokiDF3xznnlCNcbm
-         RKDA==
-X-Gm-Message-State: AOAM533bo+KV+u67LFq5pc1ZDrJ8PwJKzg9HZMPYCO0u+6bZhiGOtit5
-        WK4dRh7kc1AMQXPjSEkJlowxsC/KggaOpaAL7GUeSCRYPP5G
-X-Google-Smtp-Source: ABdhPJw5aPB63tv+UKyWH6P3GLw1/joSnocDf9Va4zkVn9W6ovN0OmH9m4h5GDMUABDOGXo/PpQv9dQg0Tviuv4SPWoyM7fs5DD8
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a6kBpRdFMzUaRTZHdbvHFwKqArYqPus66v0IiHDwd+I=;
+        b=JAOSB3CxIyWKc0Y4njPZz3ppRAS/U0TSTjUVYl8UWUz82XLXQEj6qYVQXWfcSePGTi
+         OCramYQRjkxf8a2fI5pZuqaRrPtVeqohFY4n8Gtj/hCdB17EXaWEFgnqZ/tD/WiMRBOs
+         VZ0RMnBguOpBlkr4+BZUWAgbQMSdf3boHZnEwnIJC1AYomSpNaBNHetgEhwWOxn0D8Zc
+         ILjRt0sg0AXZzOZZOl1URBxQa+opkm8YU4TTRJYZlRuJu2WP4Je0vhDte0fecqI3p5IK
+         Ovi0WOp+ZxzYoD42PvPVbMHcve7vqblr7+Em53pAcnAILCX63ZiA77ofBCwf1GFr5bar
+         gBDw==
+X-Gm-Message-State: AOAM532ppi1vLsE+Zpg6m2jVta7TFrPRcAgzkWcvtQlkVELhZIIPYsLG
+        A/1WjFxbX0QtiLB854tfGr9iBL1YKLiuRcF7L9FMLw==
+X-Google-Smtp-Source: ABdhPJyMwmd4xLggKNR4PeTJOlVWrrnPTTtLpVU0/asp1g5Dxqmxrx6o7jh2+WBsYgh3eq278mTS7xBaLfcrgIB1x24=
+X-Received: by 2002:a19:e8a:: with SMTP id 132mr29939707lfo.108.1609762566403;
+ Mon, 04 Jan 2021 04:16:06 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a92:1508:: with SMTP id v8mr37962807ilk.162.1609628887224;
- Sat, 02 Jan 2021 15:08:07 -0800 (PST)
-Date:   Sat, 02 Jan 2021 15:08:07 -0800
-In-Reply-To: <000000000000880dcc0598bcfac9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000b157705b7f2eefd@google.com>
-Subject: Re: possible deadlock in process_measurement (2)
-From:   syzbot <syzbot+18a1619cceea30ed45af@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, bhe@redhat.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mike.kravetz@oracle.com,
-        richard.weiyang@linux.alibaba.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
-        zohar@linux.ibm.com
+References: <20201209164249.715178-1-zohar@linux.ibm.com>
+In-Reply-To: <20201209164249.715178-1-zohar@linux.ibm.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 4 Jan 2021 17:45:55 +0530
+Message-ID: <CAFA6WYPEGGDGqryu1UXNeBsN9NxShEbv8CVxOp=Pt9Vc1LXB4A@mail.gmail.com>
+Subject: Re: [PATCH] doc: trusted-encrypted: updates with TEE as a new trust
+ source (update)
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        George Wilson <gcwilson@us.ibm.com>, zgu@us.ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
+Hi Mimi and Elaine,
 
-commit 15a8d68e9dc23dc9def4bd7e9563db60f4f86580
-Author: Wei Yang <richard.weiyang@linux.alibaba.com>
-Date:   Tue Oct 13 23:56:33 2020 +0000
+Apologies for my delayed reply as I was busy with other high priority work.
 
-    mm/hugetlb: a page from buddy is not on any list
+On Wed, 9 Dec 2020 at 22:14, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> From: Elaine Palmer <erpalmer@us.ibm.com>
+>
+> Update trusted key documentation with additional comparisons between
+> discrete TPMs and TEE.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13612350d00000
-start commit:   1590a2e1 Merge tag 'acpi-5.8-rc3' of git://git.kernel.org/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf3aec367b9ab569
-dashboard link: https://syzkaller.appspot.com/bug?extid=18a1619cceea30ed45af
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c79dbb100000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=169bba3d100000
+Isn't this additional comparison limited to a particular type of TPM
+(discrete TPMs) and ignored other TPM implementations (virtual TPM,
+firmware TPM etc.)? I think your later comment about on-chip versus
+off-chip points at these missing pieces as well.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+I would rather suggest comparing TPM and TEE on the basis of
+interfaces and implementation guidelines provided by corresponding
+standards as I think this is the most relevant part to the kernel.
 
-#syz fix: mm/hugetlb: a page from buddy is not on any list
+>
+> Signed-off-by: Elaine Palmer <erpalmer@us.ibm.com>
+> ---
+>  .../security/keys/trusted-encrypted.rst       | 73 +++++++++++++++++--
+>  1 file changed, 65 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+> index 16042c8ff8ae..90c02105ab89 100644
+> --- a/Documentation/security/keys/trusted-encrypted.rst
+> +++ b/Documentation/security/keys/trusted-encrypted.rst
+> @@ -14,12 +14,14 @@ convenience, and are integrity verified.
+>  Trust Source
+>  ============
+>
+> -Trust Source provides the source of security for the Trusted Keys, on which
+> -basis Trusted Keys establishes a Trust model with its user. A Trust Source could
+> -differ from one system to another depending on its security requirements. It
+> -could be either an off-chip device or an on-chip device. Following section
+> -demostrates a list of supported devices along with their security properties/
+> -guarantees:
+> +A trust source provides the source of security for Trusted Keys.  This
+> +section lists currently supported trust sources, along with their security
+> +considerations.  Whether or not a trust source is sufficiently safe depends
+> +on the strength and correctness of its implementation, as well as the threat
+> +environment for a specific use case.  Since the kernel doesn't know what the
+> +environment is, and there is no metric of trust, it is dependent on the
+> +consumer of the Trusted Keys to determine if the trust source is sufficiently
+> +safe.
+>
+>    *  Root of trust for storage
+>
+> @@ -116,6 +118,59 @@ guarantees:
+>           Provides no protection by itself, relies on the underlying platform for
+>           features such as tamper resistance.
+>
+> +  *  Provisioning - the trust source's unique and verifiable cryptographic
+> +     identity is provisioned during manufacturing
+> +
+> +     (1) TPM
+> +
+> +         The unique and verifiable cryptographic identity is the endorsement
+> +         key (EK) or its primary seed.  A review of the generation of the EK
+> +         and its accompanying certificate is part of the Common Criteria
+> +         evaluation of the product's lifecycle processes (ALC_*).  See "TCG
+> +         Protection Profile for PC Client Specific TPM 2"
+> +
+> +     (2) TEE
+> +
+> +         A protection profile for TEEs does not yet exist.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Really? Have a look here [1].
+
+[1] https://globalplatform.org/specs-library/tee-protection-profile-v1-3/#
+
+>  Therefore, the
+> +         provisioning process that generates the Hardware Unique Key is not
+> +         evaluated by an independent third party and is highly dependent on
+> +         the manufacturing environment.
+> +
+> +
+> +  *  Cryptography
+> +
+> +     (1) TPM
+> +
+> +         As part of the TPM's mandatory Common Criteria evaluation, the
+> +         correctness of the TPM's implementation of cryptographic algorithms,
+> +         the protection of keys, and the generation of random numbers, and other
+> +         security-relevant functions must be documented, reviewed, and tested by
+> +         an independent third party evaluation agency.  It must meet the
+> +         requirements of FIPS 140-2, FIPS 140-3, or ISO/IEC 19790:2012.
+> +
+> +     (2) TEE
+> +
+> +         Evaluations of cryptographic modules within TEEs are not required, but
+> +         some are available for specific implementations within TEEs.
+> +
+> +
+> +  *  Interfaces and APIs
+> +
+> +     (1) TPM
+> +
+> +         TPMs have well-documented, standardized interfaces and APIs.
+> +
+> +     (2) TEE
+> +
+> +         Unless TEEs implement functionality such as a virtual TPM, they have
+> +         custom interfaces and APIs.
+> +
+
+Kernel interface to TEE is based on the standardized TEE client API
+specification from GlobalPlatform [2].
+
+[2] https://globalplatform.org/specs-library/tee-client-api-specification/
+
+-Sumit
+
+> +
+> +  *  Threat model
+> +
+> +     The strength and appropriateness of a particular TPM or TEE for a given
+> +     purpose must be assessed when using them to protect security-relevant data.
+> +
+>
+>  Key Generation
+>  ==============
+> @@ -123,8 +178,10 @@ Key Generation
+>  Trusted Keys
+>  ------------
+>
+> -New keys are created from trust source generated random numbers, and are
+> -encrypted/decrypted using trust source storage root key.
+> +New keys are created from random numbers generated in the trust source. They
+> +are encrypted/decrypted using a child key in the storage key hierarchy.
+> +Encryption and decryption of the child key must be protected by a strong
+> +access control policy within the trust source.
+>
+>    *  TPM (hardware device) based RNG
+>
+> --
+> 2.18.4
+>
