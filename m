@@ -2,92 +2,186 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F44C433DB
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jan 2021 18:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A06DC433DB
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jan 2021 19:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC45021D1B
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jan 2021 18:22:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10FB922286
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jan 2021 19:26:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbhADSWn (ORCPT
+        id S1727815AbhADT06 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Jan 2021 13:22:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727086AbhADSWn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Jan 2021 13:22:43 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6C5E22075E;
-        Mon,  4 Jan 2021 18:22:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609784522;
-        bh=khefqDNCRqsTnqMvRiZqw3JXlLS+Vu+7p0DiGH1epXQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=muvYH2tvuRZrBkyOTZYNaSDGkdzgeTqtyo0WXfcV0gbQE3HLNXEBwaMIIHBloL8Ic
-         91xR8zVdr3W/ETppkpYNSc2P+xGRLt+v4lHG62ZZRoOglfjywuuvLUNpE/R0x5bgwr
-         7c3DIFAlc5amO/PSQP21oy0iOYRp5VEfzPylS5JYfGE1kEjHY7mwysT9d3wRDnk7w6
-         dYLmv3mIeXSMZoHx3Si27kXkqvHqERToGi76tPRzT1guR+jhcq1FOBYfbLb91D82XF
-         aUUXhbvBdCBgUZXwdsDD8Fok+8lwIir0JQMPc2/pAfxnfTMEZUxbrZQBlJjXEtA5Zn
-         bs+oXd7kfiVRA==
-Date:   Mon, 4 Jan 2021 20:21:56 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        Philip Tricca <philip.b.tricca@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: [PATCH V2] tpm: Remove tpm_dev_wq_lock
-Message-ID: <20210104182156.GA7921@kernel.org>
-References: <20190211105835.16851-1-bigeasy@linutronix.de>
- <87ft48doti.fsf@nanos.tec.linutronix.de>
+        Mon, 4 Jan 2021 14:26:58 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:36618 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbhADT0z (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 4 Jan 2021 14:26:55 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7BD5720B6C44;
+        Mon,  4 Jan 2021 11:26:13 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7BD5720B6C44
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1609788374;
+        bh=QtA5ZG9+mfQLbU0zgq3RW/Zfvthx1wqVNrJpmA5Xovg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UO/aVBhfFcBbT+AIh8/ntP4BHIxr/pFExVVhnY+M2txpeCr72xP/MUyMKH6DpfMvV
+         TMyLdKl6+i6Lkfv6SY9mpCTvlSvEn21MJB/jHk/hXJj8ap6XoyGekraeFlC8kwZi5X
+         VYiY+fyWQ40F1m52YpleadWVCKNt0OuPgIDAbPxE=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@vger.kernel.org
+Subject: [PATCH v14 4/6] powerpc: Delete unused functions
+Date:   Mon,  4 Jan 2021 11:26:00 -0800
+Message-Id: <20210104192602.10131-5-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210104192602.10131-1-nramas@linux.microsoft.com>
+References: <20210104192602.10131-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ft48doti.fsf@nanos.tec.linutronix.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Dec 14, 2020 at 11:07:21PM +0100, Thomas Gleixner wrote:
-> 
-> From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> 
-> Never used since it was added.
+delete_fdt_mem_rsv() defined in "arch/powerpc/kexec/file_load.c"
+has been renamed to fdt_find_and_del_mem_rsv(), and moved to
+"drivers/of/kexec.c".
 
-Hi, apologies for this latency. I was in vacation during 12/14-12/20
-last month, and after that Christmas and New Year mixed up schedules a
-bit.
+Remove delete_fdt_mem_rsv() in "arch/powerpc/kexec/file_load.c".
 
-Applying today, thanks.
+Call of_kexec_setup_new_fdt() from setup_new_fdt_ppc64() and
+remove setup_new_fdt() in "arch/powerpc/kexec/file_load.c".
 
-/Jarkko
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ arch/powerpc/include/asm/kexec.h  |  4 ---
+ arch/powerpc/kexec/file_load.c    | 60 -------------------------------
+ arch/powerpc/kexec/file_load_64.c |  4 ++-
+ 3 files changed, 3 insertions(+), 65 deletions(-)
 
-> Fixes: 9e1b74a63f776 ("tpm: add support for nonblocking operation")
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-integrity@vger.kernel.org
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Philip Tricca <philip.b.tricca@intel.com>
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
-> V2: Reworded the change log so the !&!%#$ dispute over the formatting
->     is not longer in the way of getting this triviality done.
-> ---
->  drivers/char/tpm/tpm-dev-common.c |    1 -
->  1 file changed, 1 deletion(-)
-> 
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -20,7 +20,6 @@
->  #include "tpm-dev.h"
->  
->  static struct workqueue_struct *tpm_dev_wq;
-> -static DEFINE_MUTEX(tpm_dev_wq_lock);
->  
->  static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  				u8 *buf, size_t bufsiz)
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index dbf09d2f36d0..b8c270e08481 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -123,10 +123,6 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
+ int setup_purgatory(struct kimage *image, const void *slave_code,
+ 		    const void *fdt, unsigned long kernel_load_addr,
+ 		    unsigned long fdt_load_addr);
+-int setup_new_fdt(const struct kimage *image, void *fdt,
+-		  unsigned long initrd_load_addr, unsigned long initrd_len,
+-		  const char *cmdline);
+-int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size);
+ 
+ #ifdef CONFIG_PPC64
+ struct kexec_buf;
+diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
+index 9f3ec0b239ef..036c8fb48fc3 100644
+--- a/arch/powerpc/kexec/file_load.c
++++ b/arch/powerpc/kexec/file_load.c
+@@ -108,63 +108,3 @@ int setup_purgatory(struct kimage *image, const void *slave_code,
+ 
+ 	return 0;
+ }
+-
+-/**
+- * delete_fdt_mem_rsv - delete memory reservation with given address and size
+- *
+- * Return: 0 on success, or negative errno on error.
+- */
+-int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size)
+-{
+-	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
+-
+-	for (i = 0; i < num_rsvs; i++) {
+-		uint64_t rsv_start, rsv_size;
+-
+-		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
+-		if (ret) {
+-			pr_err("Malformed device tree.\n");
+-			return -EINVAL;
+-		}
+-
+-		if (rsv_start == start && rsv_size == size) {
+-			ret = fdt_del_mem_rsv(fdt, i);
+-			if (ret) {
+-				pr_err("Error deleting device tree reservation.\n");
+-				return -EINVAL;
+-			}
+-
+-			return 0;
+-		}
+-	}
+-
+-	return -ENOENT;
+-}
+-
+-/*
+- * setup_new_fdt - modify /chosen and memory reservation for the next kernel
+- * @image:		kexec image being loaded.
+- * @fdt:		Flattened device tree for the next kernel.
+- * @initrd_load_addr:	Address where the next initrd will be loaded.
+- * @initrd_len:		Size of the next initrd, or 0 if there will be none.
+- * @cmdline:		Command line for the next kernel, or NULL if there will
+- *			be none.
+- *
+- * Return: 0 on success, or negative errno on error.
+- */
+-int setup_new_fdt(const struct kimage *image, void *fdt,
+-		  unsigned long initrd_load_addr, unsigned long initrd_len,
+-		  const char *cmdline)
+-{
+-	int ret;
+-
+-	ret = of_kexec_setup_new_fdt(image, fdt, initrd_load_addr, initrd_len, cmdline);
+-	if (ret)
+-		goto err;
+-
+-	return 0;
+-
+-err:
+-	pr_err("Error setting up the new device tree.\n");
+-	return -EINVAL;
+-}
+diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
+index a05c19b3cc60..3cab318aa3b9 100644
+--- a/arch/powerpc/kexec/file_load_64.c
++++ b/arch/powerpc/kexec/file_load_64.c
+@@ -17,6 +17,7 @@
+ #include <linux/kexec.h>
+ #include <linux/of_fdt.h>
+ #include <linux/libfdt.h>
++#include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/memblock.h>
+ #include <linux/slab.h>
+@@ -944,7 +945,8 @@ int setup_new_fdt_ppc64(const struct kimage *image, void *fdt,
+ 	struct crash_mem *umem = NULL, *rmem = NULL;
+ 	int i, nr_ranges, ret;
+ 
+-	ret = setup_new_fdt(image, fdt, initrd_load_addr, initrd_len, cmdline);
++	ret = of_kexec_setup_new_fdt(image, fdt, initrd_load_addr, initrd_len,
++				     cmdline);
+ 	if (ret)
+ 		goto out;
+ 
+-- 
+2.29.2
+
