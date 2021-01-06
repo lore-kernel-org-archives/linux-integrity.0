@@ -2,144 +2,163 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BC9C433DB
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Jan 2021 09:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B17C433E9
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Jan 2021 10:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6212310C
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Jan 2021 09:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 821322310E
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Jan 2021 10:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725941AbhAFJrN (ORCPT
+        id S1725800AbhAFKsH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 6 Jan 2021 04:47:13 -0500
-Received: from mail-eopbgr60078.outbound.protection.outlook.com ([40.107.6.78]:39120
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725792AbhAFJrM (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Jan 2021 04:47:12 -0500
+        Wed, 6 Jan 2021 05:48:07 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:53596 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725788AbhAFKsG (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 6 Jan 2021 05:48:06 -0500
+Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
+        by mx0a-002e3701.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 106AhVau032206
+        for <linux-integrity@vger.kernel.org>; Wed, 6 Jan 2021 10:47:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=from : to : subject :
+ date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=pps0720; bh=q184SXQt0DSXBU8Gby+7QCE1pkIQNnJy4sAst+H2rx8=;
+ b=iIDg3MlDrz98Uq2zyDXgB2T78jWANW+ymJ/Ru9bRCenSsYBlBJ74Eo/ySNkFOHlWbHTY
+ 8YsjlWHyWy3pkaYN79ft8PGc8QnMTFZ9oOII9BbRTBePijPMCQ6gQbYBBgDgLiAmTe07
+ 7ZDK4hYakr9SHLFYjYblLG3kVHeIX0u5WWsAAOlp5hXopiPvzrrwcLF4WiPeXr81KJui
+ wbJnzpeaIUxHpB3WCeIW4OQdkjl9fDDmZMITyjAkiydLoI4xm88IWE1Jd5bPkDi8Bw6r
+ O5t9m18/AI97mrlLwSrJlSXnJBCJhbUtV1aBM3Jj4q5BSr84ZHuHS83bf+IVPKWmbVPj hg== 
+Received: from g2t2354.austin.hpe.com (g2t2354.austin.hpe.com [15.233.44.27])
+        by mx0a-002e3701.pphosted.com with ESMTP id 35w93612tc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 06 Jan 2021 10:47:25 +0000
+Received: from G1W8106.americas.hpqcorp.net (g1w8106.austin.hp.com [16.193.72.61])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2354.austin.hpe.com (Postfix) with ESMTPS id 12225B5
+        for <linux-integrity@vger.kernel.org>; Wed,  6 Jan 2021 10:47:25 +0000 (UTC)
+Received: from G4W9330.americas.hpqcorp.net (16.208.32.116) by
+ G1W8106.americas.hpqcorp.net (16.193.72.61) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 6 Jan 2021 10:47:25 +0000
+Received: from G2W6311.americas.hpqcorp.net (16.197.64.53) by
+ G4W9330.americas.hpqcorp.net (16.208.32.116) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Wed, 6 Jan 2021 10:47:24 +0000
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (15.241.52.10) by
+ G2W6311.americas.hpqcorp.net (16.197.64.53) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2 via Frontend Transport; Wed, 6 Jan 2021 10:47:24 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AiyUypGscHKcv/mhcBQz5Fg7VrIb1k4PxBUj83ZSS5Kdrkb6UJemLw77XzHVXYbd+05S1mh4c/C+j9vZsV/AgQkv7j5rZSsjTi0DUlkCwjBNpBYSQfku4rIUsKnrdqyHXQjGmG3eqiWwQGh3GaWpJBIqlyDLZaj1vfr7NAE+ZqmoaWy/YaJIz+Mr8AukCvYryFGz6fZtMHnfvBTK4dKIE46HyIUTV9Xd0ceP8vQwwjsMT9wTOtFjjoljz/x2N//LOcP23W5/rlNRQhsUos6LBSPmGLQBVEXDzfjY/Wiy/pyyAezKpxp9hiBoI8+lpgGq75+PpOyi5wGpkDVwcOiVhg==
+ b=d9h0jui5SSnE02zB6ZhKlIziEWP4f1zgFWq0tQVgsUrDXQJT7oyxzwZDa9E6C1NkLsQpFxLKwRkHLEQTLcWQtEu+krsyQj407OceDLLmxegr31cUA61I9/HRTYTKZ2OqtU0vYj85yNSClJInutV5fhYjAqrm6iAU5yMhQcfSXUhRass8Tf3u1N9CcEpz+5ktL4CJ+ovMqMiYe3QGZsOqhfOLhVOcYUtCAVtO6wGRdQUSVUKfNtGbeqswhDdhES0T+T3TuWlfC2ydHd7bXHwjYjtKmF/XZUzER/t/J0KXpB/cVU8cz9fGDvxk0tduS6lFN7sMlQaVzzMv2Wdx3+fhVA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nNKPypLTDj360lcIb2su2U9gc+ErcwrjHRxVp6W1HhM=;
- b=lDL39gcbh8f5v0EzrVSliHu+FkdsByxo1C5L+X9/2EdiVpkOXwxYU4jN0+LIGHoALm/QSdK20F6k0wtiVaPrVx7WJJVzFSqHUxeo73rNtVnRQMX9CwsQRm6Ooa/XyTDazkhlNVPsO8UuWYtY169OidQSrMr5hVVEhJITp+NlJuz6qCvne8WF+uFAR+uJY0F/iuPy5iZP99PyFMcehaXqkNO8LN8VhowSkpDJq1xAjTKZ/SiOcvdwRpFlpDHlcXuC3e2EH0P07DOCyzIoD+M4PdcxDx1obv2yvwqwSgtDKDhchE6evNp9I+nfTXVKky3otKhgJV9OGzQAVWlKDl3WWg==
+ bh=q184SXQt0DSXBU8Gby+7QCE1pkIQNnJy4sAst+H2rx8=;
+ b=d8R36W8HA3TozhLmLForKTdCRSPB3H1YqismN7zxMoNlHS192AiavdULoSRZcIHLC4Op5NbpnIvXF5zCAdx2SMWQ1mIa4/jeeVJDSxVjLR6MGlczNPScI5iSltfyqxKRoHrNfvrp/bOTwXnsKZjdHsSi9ItTvmtrRnldMCSi1cbriecQaZH9OvXEvWyR/5oBaJ4P0do2WyWijH4nVofCF8dVzUB5DtaUbovDtP46ewgCf8Rs5wyC/Q1PaD5lJcVQCmPROEIrmVt7ELJkbQ7NTB0lq7msIwgrVvw5BWGygRoKZDLMygDjqwaN6x3fsaWyofRQRu8Lal17TjkHInk2sA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=puiterwijk.org; dmarc=pass action=none
- header.from=puiterwijk.org; dkim=pass header.d=puiterwijk.org; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=puiterwijk.org;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nNKPypLTDj360lcIb2su2U9gc+ErcwrjHRxVp6W1HhM=;
- b=bTf1ynIdmh5bchnSrypK5XKfQiyW7YXO+W98eS+WwqHP7ZuJdiuQw2++rQWa+WxlGC5Te1JmFXF3aEuFJbUszU0r/NI4JH4rPGgUSTNeCEWJL4yiHVaqe+KQKMsDKJVhBb1JFkCdGgeL+boBI24vVIKRaN1lALjucTae3br5qsLA7AKo0vFU7eittwwTYa1Y4aPkDloE6ZzDH/oOu9bKvqfWhMRznmUVOfDM/OJI/QNq4M+Ydlhe/X+6xd9cM/ejXFTY9/8IRxCLVVrs4xkh1wSlEOJc2NsMsENgI6AMW8smvT+qPQpl4DIQWM2mVpn9Y/EGRArrybcwuy7gN29Hpw==
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none
- header.from=puiterwijk.org;
-Received: from AM0P191MB0721.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:15f::13)
- by AM9P191MB1367.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:1f3::16) with
- Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=hpe.com; dmarc=pass action=none header.from=hpe.com; dkim=pass
+ header.d=hpe.com; arc=none
+Received: from CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM
+ (2a01:111:e400:7515::20) by CS1PR8401MB0533.NAMPRD84.PROD.OUTLOOK.COM
+ (2a01:111:e400:7515::15) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6; Wed, 6 Jan
- 2021 09:45:55 +0000
-Received: from AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
- ([fe80::692e:dea5:e2e4:c09]) by AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
- ([fe80::692e:dea5:e2e4:c09%7]) with mapi id 15.20.3742.006; Wed, 6 Jan 2021
- 09:45:55 +0000
-From:   Patrick Uiterwijk <patrick@puiterwijk.org>
-To:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com
-Cc:     pbrobinson@redhat.com, Patrick Uiterwijk <patrick@puiterwijk.org>
-Subject: [PATCH 1/2] Fix sign_hash not observing the hashalgo argument
-Date:   Wed,  6 Jan 2021 10:43:34 +0100
-Message-Id: <20210106094335.3178261-2-patrick@puiterwijk.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210106094335.3178261-1-patrick@puiterwijk.org>
-References: <20210106094335.3178261-1-patrick@puiterwijk.org>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [2a10:3781:662:0:daf9:2c4e:f3f0:a740]
-X-ClientProxiedBy: AM0PR02CA0202.eurprd02.prod.outlook.com
- (2603:10a6:20b:28f::9) To AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:15f::13)
+ 2021 10:47:23 +0000
+Received: from CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::e5c4:596c:2965:3fa]) by CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::e5c4:596c:2965:3fa%11]) with mapi id 15.20.3721.024; Wed, 6 Jan 2021
+ 10:47:23 +0000
+From:   "Chang, Clay (HPS OE-Linux TDC)" <clayc@hpe.com>
+To:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: IMA appraisal with TPMv2?
+Thread-Topic: IMA appraisal with TPMv2?
+Thread-Index: AQHW5BkgR8eleHg4XE+Nmh6vH0Ewog==
+Date:   Wed, 6 Jan 2021 10:47:22 +0000
+Message-ID: <CS1PR8401MB036099EF243892F90D07D56CBCD00@CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=hpe.com;
+x-originating-ip: [2001:b011:30e0:1c2b:e975:6d3a:67bb:8369]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 55ddaf3a-f2f0-4987-c02f-08d8b2307330
+x-ms-traffictypediagnostic: CS1PR8401MB0533:
+x-microsoft-antispam-prvs: <CS1PR8401MB05333970E7E93BFE9CC3C889BCD00@CS1PR8401MB0533.NAMPRD84.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XDd6Nq+KJhmJiC1k44fve2rqa7EDo0+GXfIlyofHvcWwGHpGnBS3klYOFFOKlQDGH4LbHdkDl0lwZ2Ah2QLvI2rfBi83GI4WLqNasRWisdiB6LdWTP6cbIJWJUz/0x6ptIA9oRxbgvTYYPXL/8jUKnNnHhBK8NBdHKiKjzzFr7S/OLF6w1crpu00ajHVv3Yuz9e27zR7cN39fS/KnqFsbFzmnO8e/cPYVGjfQs84g21gqR2LK775+54UYSOcqJ4KsEpzXbVNKztjw2SDlEFhKwdGnvc0sVLub2/3+YkDsQjrn8Q3KtJKHe6IcOBKHZQkoh2EaEHDE3W2daftYC9MMuoj1lA1eMbKTHk9ZZAdNSIHPErUJujahGPVE6YVPRFaf0KcwMJ/mbkLJMYNCQ+AKg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(346002)(39860400002)(136003)(396003)(376002)(366004)(71200400001)(316002)(8936002)(55016002)(33656002)(9686003)(2906002)(5660300002)(8676002)(66556008)(66446008)(4744005)(186003)(478600001)(6916009)(76116006)(91956017)(83380400001)(86362001)(52536014)(6506007)(7696005)(66476007)(66946007)(64756008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: =?us-ascii?Q?eCT+iloEAeAkj0a3pzYueZb3/f9ak4RUlGmH8O9JCH/hviEsCSFRb4VE5TcZ?=
+ =?us-ascii?Q?HZy8oXGDvYWPo8kYKET9IjIp63jK7391az5kMDRbNMPoh5XJV7iP8cID+jdm?=
+ =?us-ascii?Q?fnIVZPB6SxYBpDLM46jQadRK9a7rGZ1noAAYWd4e6riJUGGQBRAxa9t+c7/K?=
+ =?us-ascii?Q?mdIWO937wRC/DwoQjy4EFUri9bKsN86lTHSzh8RBM9dpn0+LIFYn+QVwXPQ1?=
+ =?us-ascii?Q?ANTTq5WgHDsMM22BpGZE8fSTgtV/S5XcabyxndKGI2HwZ8uxt8iX2+TawV0c?=
+ =?us-ascii?Q?LHeZaSPyVUoIRt1UxqNMtULx3ZuzY+GwxNq/UstO/0XZrwTJPYWepG2v6nsm?=
+ =?us-ascii?Q?MXLfC1Td9gvusovNAJ07fAyO/BeGvCyUe1EBVxh3CdQ0UbYy7+OmRwuY5Oi9?=
+ =?us-ascii?Q?mnDfeinXpFxPVAy/aXKJGhOc4925QLgRbHko+j17PGCL7XQyjT5F6Ozy+kv8?=
+ =?us-ascii?Q?IkMDrhJW1JYvpaB8cvbgXl1skz0TH9Uw2Ll84Io/8TGpVZzty6VSO0oz5Ioq?=
+ =?us-ascii?Q?+hmSsN8KxrpSfgScm6H9C4PAe6fphjm3I48QUvQ2dvPgmFJ2OOR6VqUQJKlZ?=
+ =?us-ascii?Q?BaHkTghau2wXzn9JD4cWZAUn5vaL46Ohvh0KTMv0HvoWe1eMqGjEVnTI9qVI?=
+ =?us-ascii?Q?k6JQFAjgR+22AfRKlNQAd/VHGKI1psLRxRajUFD0oRa3oZpHXbG+zQNlKO76?=
+ =?us-ascii?Q?7Ng+7KrSrLiP4dx1tql6dxYPNubYlcXyf8Q8ZyBU/xzO1Ja1h+3X3AyyRRQZ?=
+ =?us-ascii?Q?UpSL3JfuEklSU/ThoFNcLzO+ZdK5+OjnopyU3iDw18ZUkhXwQz9BRRhrgEpe?=
+ =?us-ascii?Q?k6YWhqp9ctTYNZvZ5At92CggV6wUEPenxpSFF2TCv4+tcUnaVSurL8cyByva?=
+ =?us-ascii?Q?K+yluZgIC1uYqrFwfvU0dBmplzmYmx7cMAnvLze27d7+4XdTZZT7xOWeZ5kU?=
+ =?us-ascii?Q?OqZUcBqMTmW59g5OTsRcv5FJQIZaZRJJ1Oaz0nGbepsYy8J8qWa6m5QJHBV7?=
+ =?us-ascii?Q?s0cmZQ2UFnTVQ9JGFeudaPi4n1h0RrS1pokL6gKe+Vfh/R+JghFkkNZqH47p?=
+ =?us-ascii?Q?Ce1p1tdPHF4lzYrIoDTuUfNP8auNUA=3D=3D?=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from rowhammer.home.puiterwijk.org (2a10:3781:662:0:daf9:2c4e:f3f0:a740) by AM0PR02CA0202.eurprd02.prod.outlook.com (2603:10a6:20b:28f::9) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3742.6 via Frontend Transport; Wed, 6 Jan 2021 09:45:55 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4aca6e16-0503-40f8-b657-08d8b227dd27
-X-MS-TrafficTypeDiagnostic: AM9P191MB1367:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM9P191MB136791D9B18B2E6E3B48389DC8D00@AM9P191MB1367.EURP191.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:421;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2aFxMDnrg+TMtkkaM+XK8oW8XaY37sdgpQnFMAD0ozVE60xaodLIENG/0dKuv+0FzFa1pqVrnPSpfToGWkx0GThgwPdU9lRqimSTJEes8o0+A1sqbPNmmvzVT1T3OPtyal8vh09O3FiKIG1s8Fm9dcebaH9vpuFMyKESc93njFIwVP87/9RbJIpr925QMs5sd7OVvTbyR+1YcyKFPkx/R9YAkONWxD0zSD4ZVo9GzhRZM3iESbFifVGSESz4u4pbaThbn4LPf79nJSG4LFih9hL7y5M5QLD3JY29kD6ozWS/c3t+nWff7Bqg4jji2crXwIHxXdHFcjd0RGw9FCdBmiH0Dhgh8hJ3TCDKT1CnPYgdOSgNqxnJ9THhJPK2QGIkwNbPUraa7lEuxf4gND1HVw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0P191MB0721.EURP191.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(396003)(366004)(136003)(39830400003)(376002)(346002)(6486002)(16526019)(186003)(83380400001)(36756003)(316002)(52116002)(8936002)(7696005)(107886003)(4326008)(6666004)(86362001)(2906002)(1076003)(2616005)(66556008)(66476007)(66946007)(478600001)(5660300002)(8676002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?BZEYiQKgIfdTQc7W0c7tJ0O4cYqsHbFDafmizkgRmnz82XIgN8Tw7bcBI37l?=
- =?us-ascii?Q?ZzOyyI7UStP7sg4mtDHj618HfIRzVnlZC1/MflhX4IO20Xm/bbuBdzJ0m5kP?=
- =?us-ascii?Q?q3Fn4qtICbp+KhMPR811t4rzc/tkK9xf5Uo65tzbLozNzVlAa15QlWGHrOUU?=
- =?us-ascii?Q?SeGo6FqXSks2bu3nbF2IaBvB2QCnpXdApUZ0K5xpPnma2vSpe1qURjZ0j7Pp?=
- =?us-ascii?Q?ib3yRYeF0AG9/VfmdHWgbioB4oHPpvxwOer5HBBHneov4DjrbP6LysToGlRE?=
- =?us-ascii?Q?DFtL6iS8Ddj7Xl9JnkdmqI+x81x0N345a/Xk5v8gW6bMvZfP9n1r3pQhdAnr?=
- =?us-ascii?Q?sV+u27bFWB+XFBEM+kxO4ijsHVpUVsfh/HvZY8ePGrzFcstJtUc1IOANGNz7?=
- =?us-ascii?Q?VtW1iLiBvHTEzXZGU01pY1s41jNc8ag7FX9Fo+pXcK3s+jSUj4lBIsXLuT2t?=
- =?us-ascii?Q?GmnG2f7KO66EvVypViCfA+o5UqRSHCFT6L/BfUIknKLFcAlqpUACYX/8OmbY?=
- =?us-ascii?Q?VFWupDBSxYDA/MEYgd+M1T6OtYo1gB2Z2nAgitMyQLsEpbAk6SIzIk8OmzhM?=
- =?us-ascii?Q?0t2Pw+NC2Xdig6cLoA4bF21dASlBmjSsUHKhiIhgV8hNpt9vt6e86K2ewbn5?=
- =?us-ascii?Q?GbWFY4snyXhtw4euo/zwja0fic0GgQQbfwcHL26+6kQ5N1mJCYzPXMrmh5tQ?=
- =?us-ascii?Q?XI84zV5ExA4JXG15OeAUsKS+iU0cZ24G09rpcENuyKCty2PU/tlOd/CE9oOs?=
- =?us-ascii?Q?Hv4VfW8TA1C3zx7pOvyci2QZPbsFeXvq8tqATMJqEDfcALYEBKi7oMySaSjl?=
- =?us-ascii?Q?5evgeMFpFQspuE3aWVvYAJoGf3U72MVW4hMCRpD9jETGIKjbef/4+7v8VcTe?=
- =?us-ascii?Q?2DORXenEpzgiR3LnJTb2m0dDDsRkSrxM0zcPhJD4g4lGO6rFluuxzLTbGZtl?=
- =?us-ascii?Q?glq4bZ5zPwSl5aXDioSDuLQn5+4qQaU0+qSweAaavJGnLZPzhc7q/eT6iWZp?=
- =?us-ascii?Q?dbuzKD+7EesSTY9ZB/Z4yUEcFbbIXJv6PPO/I2mhTSq52lQ=3D?=
-X-OriginatorOrg: puiterwijk.org
-X-MS-Exchange-CrossTenant-AuthSource: AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2021 09:45:55.5178
+X-MS-Exchange-CrossTenant-AuthSource: CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55ddaf3a-f2f0-4987-c02f-08d8b2307330
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jan 2021 10:47:22.9466
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 963619a5-d7a7-4543-a254-29462dc51fb3
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4aca6e16-0503-40f8-b657-08d8b227dd27
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 91bv9M4bTllWCz4tCDLf6AiXI5YGrJUy3oLfiLlUmJUt6DSz61wYaIPqEEYPfeE3RVwfdhLZey3xIvCaXo/6hA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P191MB1367
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IjN67zYBX2fQvoV0TPZAu8eQ17NLzQgdvhWo2KcC8o0oK5UNpTKVulg/GeQQCFlZ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CS1PR8401MB0533
+X-OriginatorOrg: hpe.com
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-06_05:2021-01-06,2021-01-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ spamscore=0 mlxlogscore=643 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101060065
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This fixes sign_hash not using the correct algorithm for creating the
-signature, by ensuring it uses the passed in variable value.
+Hi,
 
-Signed-off-by: Patrick Uiterwijk <patrick@puiterwijk.org>
----
- src/libimaevm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+As I know, IMA appraisal with digital signature uses the public key on the =
+.ima=20
+keyring for verification, and the public key needs to be signed by a certif=
+icate=20
+embedded into the kernel (CONFIG_SYSTEM_EXTRA_CERTIFICATE). While this appr=
+oach=20
+looks fine, it requires kernel re-gen and re-sign in the context of secure =
+boot.
 
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index fa6c278..72d5e67 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -916,7 +916,7 @@ static int sign_hash_v2(const char *algo, const unsigned char *hash,
- 		return -1;
- 	}
- 
--	log_info("hash(%s): ", imaevm_params.hash_algo);
-+	log_info("hash(%s): ", algo);
- 	log_dump(hash, size);
- 
- 	pkey = read_priv_pkey(keyfile, imaevm_params.keypass);
-@@ -942,7 +942,7 @@ static int sign_hash_v2(const char *algo, const unsigned char *hash,
- 	if (!EVP_PKEY_sign_init(ctx))
- 		goto err;
- 	st = "EVP_get_digestbyname";
--	if (!(md = EVP_get_digestbyname(imaevm_params.hash_algo)))
-+	if (!(md = EVP_get_digestbyname(algo)))
- 		goto err;
- 	st = "EVP_PKEY_CTX_set_signature_md";
- 	if (!EVP_PKEY_CTX_set_signature_md(ctx, md))
--- 
-2.26.2
+My question is that for IMA appraisal, is it possible to verify the signatu=
+re=20
+with the TPMv2? My intention is leverage the TPMv2 device and to avoid the=
+=20
+kernel re-gen/re-sign.
 
+For signing, I know I need a tool that uses TPMv2 to sign the executable an=
+d=20
+write the signature to the xattr of the file.
+
+Thanks,
+Clay
