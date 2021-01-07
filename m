@@ -2,145 +2,121 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CA8C433DB
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Jan 2021 15:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B028C433E6
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Jan 2021 15:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B10A822B2B
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Jan 2021 15:10:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B8A3233F8
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Jan 2021 15:14:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbhAGPKy (ORCPT
+        id S1727590AbhAGPOl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 Jan 2021 10:10:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54214 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725960AbhAGPKy (ORCPT
+        Thu, 7 Jan 2021 10:14:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbhAGPOl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Jan 2021 10:10:54 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 107F66j0063772;
-        Thu, 7 Jan 2021 10:10:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=y58kjMyHwOCgCgW6y39MrTDIgCok9s904NOvAJKItMI=;
- b=UZHdUbpw1RIi8NV4JOCOJ/fUb78B/vy4KrJW76qoYxa15Cn2vWqtD2QHwLfC9mDXStk2
- /x6Emo4xsAELrFIedoe9mP7V833DyC9JtIs8OjBxVCZ3SWPkELvLHKkxBS+ELDzQby2z
- 1dvv7GpFDWs+DODSqiIoeanUN448XYOkISIv5BfJMgMJnuim0MbSzLlvVt5BW26+ZduB
- WnHziVPDz+KGnhQCpLylzKVlX+UUPTirAvT7hjNnOVuOzh0lL0H6UvekBR/veA50Yetl
- UjMB5X0SQz8uS62tzrCw/SUTR6bW4QUdxnLTkRTdPs4Hfyxf+DebDcOAtHFrL702oQ4e bg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 35x3pt2403-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jan 2021 10:10:11 -0500
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 107F6OWQ065019;
-        Thu, 7 Jan 2021 10:07:53 -0500
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 35x3pt1t8f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jan 2021 10:07:53 -0500
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 107F27wp005427;
-        Thu, 7 Jan 2021 15:06:37 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma02fra.de.ibm.com with ESMTP id 35tgf8ak15-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jan 2021 15:06:37 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 107F6UXC25821574
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jan 2021 15:06:31 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59113AE061;
-        Thu,  7 Jan 2021 15:06:34 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4BC4FAE04D;
-        Thu,  7 Jan 2021 15:06:32 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.37.241])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jan 2021 15:06:32 +0000 (GMT)
-Message-ID: <87127d502bcb9707dd4e7a43475ab6bed2fdd421.camel@linux.ibm.com>
-Subject: Re: [RFC] Persist ima logs to disk
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Raphael Gianotti <raphgi@linux.microsoft.com>,
-        janne.karhunen@gmail.com
-Cc:     linux-integrity@vger.kernel.org, tusharsu@linux.microsoft.com,
-        tyhicks@linux.microsoft.com, nramas@linux.microsoft.com,
-        balajib@linux.microsoft.com, Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 07 Jan 2021 10:06:31 -0500
-In-Reply-To: <20210105195742.2629-1-raphgi@linux.microsoft.com>
-References: <20210105195742.2629-1-raphgi@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-07_07:2021-01-07,2021-01-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 priorityscore=1501 adultscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 impostorscore=0 bulkscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101070091
+        Thu, 7 Jan 2021 10:14:41 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C60C0612F4
+        for <linux-integrity@vger.kernel.org>; Thu,  7 Jan 2021 07:14:00 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id u19so8128761edx.2
+        for <linux-integrity@vger.kernel.org>; Thu, 07 Jan 2021 07:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=puiterwijk.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PFGonR2aZoMBmk7HnCBDgn1XxArRm2sUbQ50E3+txGc=;
+        b=R/wWaPkXApi1gVL/p0k2WnsfkaVFDrliXZXBZSX/04wWlCddzo7S41nVga9VCJ64D8
+         Th1tl0RAwPCNcg+8YZbJ639J6iJt/M8mMypxcCHjZR+najk+XmCf3dvN14UA28zMDI6h
+         piJsHE8fXQ66nwz3sj5TqPk2Z2FMjkZG3EwEUcLWTGiUgy6/DdJcpYI1e4NtfCDEaoXQ
+         kJKh3Ync66zDtNHuh29JlHUR/lTsC+rI3JCmQ5Kj1eLt+MLR4L26ecP+Egj+TnRTF6tW
+         pCkBcYGK/M2hlLEHLchZBrzPkg4kxqh7gCqgQpcJqOZagDNry6L7Mk1C+zP7ImNOa+jr
+         7gIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PFGonR2aZoMBmk7HnCBDgn1XxArRm2sUbQ50E3+txGc=;
+        b=m4xEn7zBQAemkXXuTQ5txzcL+AoQQmXzjUUq7tQs9zMvWUnp7ksqxLYqoKGdBMqXTq
+         nJIUDRKBzaAH/1PJZeOhPBVP6LTyDLG8qPkmgm8X2XDwjRtbhVkGsr3RTLXfb5h1g+uL
+         vXDFajSYqOkYIsFJIVej6FDG6NlumuTVCRPHA4Jgcv8/bySFc0C5EXuWfrc0t03Q4v9H
+         M8PKlrCqpSScpHQT13Ka2a2WRppHco4nWzcARc2DJz9UQmP3hZAtEJ2odttsXsZE+2dh
+         rpcDY/lD6Famfq6jxn/67jhMW67ZZBzchYDWzYhyYgAjLdGpp9T8zY+sAn9N3JOARQD8
+         IvFQ==
+X-Gm-Message-State: AOAM530sj79xD1SYft2Mg0RZ4NaRKZjmTTyK6sBN0ZkgukPLfP6GBcsT
+        Mo3VttUU9oHiN3f8Q64foGcWj6FCEJDio7Qtpt/7EA==
+X-Google-Smtp-Source: ABdhPJxODlE63qV2qz+1I7B3YVqbHK2j3hmppFPfEl47DZ/CMddqP2Dd2fIIVQ3a9G8C94JHvbcJUZHKoW/SV490heU=
+X-Received: by 2002:aa7:df0f:: with SMTP id c15mr2055676edy.354.1610032439376;
+ Thu, 07 Jan 2021 07:13:59 -0800 (PST)
+MIME-Version: 1.0
+References: <20210106094335.3178261-1-patrick@puiterwijk.org>
+ <20210106094335.3178261-2-patrick@puiterwijk.org> <ed6980130453e529d5bc8a089a0d0082d2f471cd.camel@linux.ibm.com>
+ <20210107130816.wmzrcx5il4hdmah6@altlinux.org> <20210107131555.t7k4r2kytftj2nip@altlinux.org>
+In-Reply-To: <20210107131555.t7k4r2kytftj2nip@altlinux.org>
+From:   Patrick Uiterwijk <patrick@puiterwijk.org>
+Date:   Thu, 7 Jan 2021 16:13:48 +0100
+Message-ID: <CAJweMdbAeuVMmqdcUohZKWY7GC0oiU7-TL+nTi7282Yrip7Tsw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] Fix sign_hash not observing the hashalgo argument
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        pbrobinson@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[Cc: Amir Goldstein]
+On Thu, Jan 7, 2021 at 2:15 PM Vitaly Chikunov <vt@altlinux.org> wrote:
+>
+> On Thu, Jan 07, 2021 at 04:08:16PM +0300, Vitaly Chikunov wrote:
+> > Patrick, Mimi,
+> >
+> > On Thu, Jan 07, 2021 at 07:24:43AM -0500, Mimi Zohar wrote:
+> > > On Wed, 2021-01-06 at 10:43 +0100, Patrick Uiterwijk wrote:
+> > > > This fixes sign_hash not using the correct algorithm for creating the
+> > > > signature, by ensuring it uses the passed in variable value.
+> > > >
+> > > > Signed-off-by: Patrick Uiterwijk <patrick@puiterwijk.org>
+> > >
+> > > Thank you.  This is a regression first introduced in commit
+> > > 07e623b60848 ("ima-evm-utils: Convert sign_hash_v2 to EVP_PKEY API").
+> >
+> > Ah, when sign_hash() is used not via evmctl, but as a library
+> > imaevm_params may be not set.
+>
+> Thinking about imaevm_params -- it's still belong to a library and
+> extensively used in libimaevm.c, so I wonder if the fix is perfect.
+> Since, now there is hash_algo and algo duplication which one to prefer
+> and why?
+>
+> Maybe, it should be [also] set like keypass in sign_hash?
 
-On Tue, 2021-01-05 at 11:57 -0800, Raphael Gianotti wrote:
-> IMA measures files and buffer data and some systems may end up
-> generating lots of entries in the IMA measurement list. This list is
-> kept in kernel memoryc and as it grows in size it could end up taking
-> too many resources, causing the system to run out of available
-> memory. During kexec, the IMA measurement list can be carried over in
-> memory, but it's possible for the list to become too large for that
-> to happen.
-> 
-> The Kconfig introduced in this series enables admins to configure a
-> maximum number of entries and a file to export the IMA measurement
-> list to whenever the set limit is reached.
-> 
-> The list is written out in append mode, so the system will keep
-> writing new entries as long as it stays running or runs out of
-> space. Whenever the export file is set, it's truncated. If writing
-> to the export list fails, a flag is set to prevent further exports,
-> as the file is likely in a bad state. Setting a new export file
-> resets this flag, allowing exports to resume and giving admins a way
-> to recover from this state if necessary.
-> 
-> In the case of kexec, if the list is too large too be carried over in
-> memory and an export file is configured, the list will be exported,
-> preventing the measurements from being lost during kexec.
-> 
-> This code is based off of a previous RFC sent by Janne Karhunen[1],
-> and is intended to pick up where that was left off.
-> 
-> In a thread with Janne Karhunen[2], it was mentioned that another
-> approach, using mm had been considered. Upon some investigation the
-> approach used in this RFC still seemed adequate for solving this
-> problem.
-> 
-> [1] https://patchwork.kernel.org/project/linux-integrity/patch/201912
-> 20074929.8191-1-janne.karhunen@gmail.com/
-> [2] https://lore.kernel.org/linux-integrity/CAE=NcrbdS-3gVvnnEwdNSOLO
-> vTenLjyppDz2aJACGRgBYSh=Gw@mail.gmail.com/
-> 
-> Signed-off-by: Raphael Gianotti <raphgi@linux.microsoft.com>
+I had this exact diff as an initial version of this patch, but then
+personally thought that because "hashalgo" is passed to sign_hash_v2
+anyway, and sign_hash_v1 already prefers the argument (and ignores
+imaevm_params.hash_algo), keeping this behaviour in sync is more
+consistent.
+With my patch, imaevm_params.hash_algo is only used in verify_hash_v2
+and ima_calc_hash, both of which are primarily called by
+ima_verify_signature which sets it, as a way to pass the argument
+without having it explicit everywhere.
 
-My original concerns of truncating the IMA measurement list have not
-been addressed.  Once the IMA measurement list has been truncated,
-quoting and then verifying any of the PCRs contained in the measurement
-list will fail, unless the measurements have been preserved and are
-readily accessible.
-
-Amir's suggestion addresses kernel memory constraints without
-truncating the IMA measurement list.
-
-Mimi
-
+>
+>   int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig)
+>   {
+>           if (keypass)
+>                   imaevm_params.keypass = keypass;
+>
+> +         if (hashalgo)
+> +                 imaevm_params.hash_algo = hashalgo;
+>
+>           return imaevm_params.x509 ?
+>                   sign_hash_v2(hashalgo, hash, size, keyfile, sig) :
+>                   sign_hash_v1(hashalgo, hash, size, keyfile, sig);
+>   }
+>
+>
