@@ -2,185 +2,130 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 780C0C43217
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B1DC433E6
+	for <linux-integrity@archiver.kernel.org>; Fri,  8 Jan 2021 12:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D24623715
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C95A2235FF
+	for <linux-integrity@archiver.kernel.org>; Fri,  8 Jan 2021 12:39:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbhAHEIp (ORCPT
+        id S1725965AbhAHMjY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 Jan 2021 23:08:45 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:59247 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbhAHEIp (ORCPT
+        Fri, 8 Jan 2021 07:39:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25550 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbhAHMjY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Jan 2021 23:08:45 -0500
-Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id F12E520B6C44;
-        Thu,  7 Jan 2021 20:07:24 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F12E520B6C44
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610078845;
-        bh=oP4hs57Ovo2mWRRk2dcebbPVikngKbjBbImBel4Stjo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G7HhFWE2Q+GhEzDKvm2pshLCUMA3I880DIfAERIKxtYBJsuvzcpDLQLpsaBFQRQg6
-         GkaRh5fpPUYpnChAX7H5817+kvHf9ll9hWpS3gJ222wlzuPNtMcmWnMbWn4KPB8nWw
-         aIIEl6iNb3K6YhU1Drv8gkA5U0tmBuWS0MsolHN4=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v10 5/8] IMA: limit critical data measurement based on a label
-Date:   Thu,  7 Jan 2021 20:07:05 -0800
-Message-Id: <20210108040708.8389-6-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
-References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
+        Fri, 8 Jan 2021 07:39:24 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 108CWH1j129369;
+        Fri, 8 Jan 2021 07:38:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=9WUjq2a9S7jh0LFexPEehScoiNInFQI0hx81mT/OLgk=;
+ b=I9D40xaGHF4ZnXJS+oqwlT7zPcNv8VDxDT9RiQ29f0PtTiSVc+uzv5rAnO+mhlba3iSw
+ vYKcUOt0SRygv5ahFdpne1fs7A1awkT748b2IuIwGSCiWB1aCKef32rLHwvravVUvOFN
+ V68f7R1CYq2NIE3EMDQTrWQvBEKifagvWUawoULRhTsvOYH0X0a6d3ueI81aHVP9IJwU
+ thwD81aKu+m3PXg6DJu41RX/qWtKZamGhf7A5oeMPwDeT24kIcQZv5j+EQ4OfiiSZPbU
+ BPXMUm5Z/B1uQRp+BUnO9k+aLYMfoiOjg4vyZBgorjUfzae7yTC8szDBi4jQ0YubAU4j xw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35xqcc0aq7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Jan 2021 07:38:42 -0500
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 108CWRCx130095;
+        Fri, 8 Jan 2021 07:38:41 -0500
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35xqcc0apa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Jan 2021 07:38:41 -0500
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 108CWmhh003996;
+        Fri, 8 Jan 2021 12:38:39 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03ams.nl.ibm.com with ESMTP id 35tgf8e36y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 08 Jan 2021 12:38:39 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 108CcbZn42270978
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 8 Jan 2021 12:38:37 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0E840A4051;
+        Fri,  8 Jan 2021 12:38:37 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7388A405D;
+        Fri,  8 Jan 2021 12:38:34 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.88.40])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  8 Jan 2021 12:38:34 +0000 (GMT)
+Message-ID: <8c78437d0e9a4968996b834030661b6f567f87eb.camel@linux.ibm.com>
+Subject: Re: [RFC] Persist ima logs to disk
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Raphael Gianotti <raphgi@linux.microsoft.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        janne.karhunen@gmail.com
+Cc:     linux-integrity@vger.kernel.org, tusharsu@linux.microsoft.com,
+        tyhicks@linux.microsoft.com, nramas@linux.microsoft.com,
+        balajib@linux.microsoft.com, Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 08 Jan 2021 07:38:33 -0500
+In-Reply-To: <734adc26-0050-ce8f-4c8c-c8a907b569a6@linux.microsoft.com>
+References: <20210105195742.2629-1-raphgi@linux.microsoft.com>
+         <87127d502bcb9707dd4e7a43475ab6bed2fdd421.camel@linux.ibm.com>
+         <715a265180a092754ab9ea8522c39427645b25ad.camel@HansenPartnership.com>
+         <6e28c7a9742131cf508e77448bfee0a03b2c2e5e.camel@linux.ibm.com>
+         <3c50bc449aae2f09bd7d43c401cc9b292f9ec2ae.camel@HansenPartnership.com>
+         <570d54ca679b7a4f786fa65eb78601a2af91c397.camel@linux.ibm.com>
+         <13447f30db609d4bd77d5a826c5102dd5a931a19.camel@HansenPartnership.com>
+         <734adc26-0050-ce8f-4c8c-c8a907b569a6@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-08_07:2021-01-07,2021-01-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 spamscore=0 malwarescore=0 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101080069
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Integrity critical data may belong to a single subsystem or it may
-arise from cross subsystem interaction.  Currently there is no mechanism
-to group or limit the data based on certain label.  Limiting and
-grouping critical data based on a label would make it flexible and
-configurable to measure.
+On Thu, 2021-01-07 at 14:57 -0800, Raphael Gianotti wrote:
+> >>>> But this doesn't address where the offloaded measurement list
+> >>>> will be stored, how long the list will be retained, nor who
+> >>>> guarantees the integrity of the offloaded list.  In addition,
+> >>>> different form factors will have different requirements.
+> 
+> For how long the list would be retained, or in the case of a log segments, it
+> might make sense to have that be an admin decision, something that can be
+> configured to satisfy the needs of a specific system, as mentioned below by
+> James, does that seem correct?
 
-Define "label:=", a new IMA policy condition, for the IMA func
-CRITICAL_DATA to allow grouping and limiting measurement of integrity
-critical data.
+For the discussion on exporting and truncating the IMA measurement
+list, refer to: 
+https://lore.kernel.org/linux-integrity/1580998432.5585.411.camel@linux.ibm.com/
 
-Limit the measurement to the labels that are specified in the IMA
-policy - CRITICAL_DATA+"label:=".  If "label:=" is not provided with
-the func CRITICAL_DATA, measure all the input integrity critical data.
+> 
+> Given the possibility of keeping the logs around for an indefinite amount of
+> time, would using an expansion of the method present in this RFC be more
+> appropriate than going down the vfs_tmpfile route? Forgive my lack on expertise
+> on mm, but would the vfs_tmpfile approach work for keeping several log segments
+> across multiple kexecs?
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy |  2 ++
- security/integrity/ima/ima_policy.c  | 37 +++++++++++++++++++++++++---
- 2 files changed, 36 insertions(+), 3 deletions(-)
+With the "vfs_tmpfile" mechanism, breaking up and saving the log in
+segments isn't needed.  The existing mechanism for carrying the
+measurement list across kexec would still be used.  Currently, if the
+kernel cannot allocate the memory needed for carrying the measurement
+across kexec, it simply emits an error message, but continues with the
+kexec.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 6ec7daa87cba..54fe1c15ed50 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -52,6 +52,8 @@ Description:
- 			template:= name of a defined IMA template type
- 			(eg, ima-ng). Only valid when action is "measure".
- 			pcr:= decimal value
-+			label:= [data_label]
-+			data_label:= a unique string used for grouping and limiting critical data.
- 
- 		  default policy:
- 			# PROC_SUPER_MAGIC
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 96ba4273c4d0..2c9db2d0b434 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
- #define IMA_KEYRINGS	0x0400
-+#define IMA_LABEL	0x0800
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -85,6 +86,7 @@ struct ima_rule_entry {
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
- 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
-+	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
- 	struct ima_template_desc *template;
- };
- 
-@@ -479,7 +481,11 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
- 		opt_list = rule->keyrings;
- 		break;
- 	case CRITICAL_DATA:
--		return true;
-+		if (!rule->label)
-+			return true;
-+
-+		opt_list = rule->label;
-+		break;
- 	default:
- 		return false;
- 	}
-@@ -924,7 +930,7 @@ enum {
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
- 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
--	Opt_err
-+	Opt_label, Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -961,6 +967,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
- 	{Opt_keyrings, "keyrings=%s"},
-+	{Opt_label, "label=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1128,7 +1135,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		if (entry->action & ~(MEASURE | DONT_MEASURE))
- 			return false;
- 
--		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR))
-+		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-+				     IMA_LABEL))
- 			return false;
- 
- 		if (ima_rule_contains_lsm_cond(entry))
-@@ -1338,6 +1346,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 
- 			entry->flags |= IMA_KEYRINGS;
- 			break;
-+		case Opt_label:
-+			ima_log_string(ab, "label", args[0].from);
-+
-+			if (entry->label) {
-+				result = -EINVAL;
-+				break;
-+			}
-+
-+			entry->label = ima_alloc_rule_opt_list(args);
-+			if (IS_ERR(entry->label)) {
-+				result = PTR_ERR(entry->label);
-+				entry->label = NULL;
-+				break;
-+			}
-+
-+			entry->flags |= IMA_LABEL;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1718,6 +1743,12 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_LABEL) {
-+		seq_puts(m, "label=");
-+		ima_show_rule_opt_list(m, entry->label);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
--- 
-2.17.1
+Mimi
 
