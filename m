@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A2CC433DB
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199C4C433E9
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66AD523122
+	by mail.kernel.org (Postfix) with ESMTP id D411E23122
 	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438186AbhALWP7 (ORCPT
+        id S2405145AbhALWQn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Jan 2021 17:15:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44793 "EHLO
+        Tue, 12 Jan 2021 17:16:43 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44903 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438174AbhALWP5 (ORCPT
+        with ESMTP id S2405065AbhALWQg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:15:57 -0500
+        Tue, 12 Jan 2021 17:16:36 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRli-0003bd-Qe; Tue, 12 Jan 2021 22:04:02 +0000
+        id 1kzRlY-0003bd-G1; Tue, 12 Jan 2021 22:03:52 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -63,23 +63,24 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 29/42] ioctl: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:11 +0100
-Message-Id: <20210112220124.837960-30-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 25/42] utimes: handle idmapped mounts
+Date:   Tue, 12 Jan 2021 23:01:07 +0100
+Message-Id: <20210112220124.837960-26-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=kAwitCaU5Zsp+82CuxVVPm6U8xXlPPtQ0Z0Dh6WXu44=; m=VC5Xd0Zl8AGaO0BlP8YtVNixey9scChiBadwiGTSB5k=; p=oTgP29ybjPTdbnArRS0UjBd62m6f1UrtDPAozi+SHu8=; g=c32d9c1a69a581553f7de28602c01b53e63879e6
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcolFtAP9Jyut NCwljnX8YPYbEbH0TGh2ZGqdwFl7dwrXEioMjsgEAxXesyAYTyhhGHAHOKEZri1frriOo39vmk6H9 U/Lv1wg=
+X-Patch-Hashes: v=1; h=sha256; i=44kXqCfVtOQgFKzT2JXoGuiPGIT5dbn7iuHoFJrc8vE=; m=LQM4RPnFwSvNIhIHrHd9GN8FM7jR9LNFsdtd0ODUvQ8=; p=A0P/zt6uEDr1w25jXa/ofIfpcRMsG1sIVfCazVcwo4k=; g=2aba886660d69ecff7d291cf9012d148b5aa24f8
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtwAKCRCRxhvAZXjcokeYAP41/hz Zdc7sN+BOsTPZ8oQWCdYygCC6EH0EZzAextqIPgEApiED2cvRTrFjO+PfAcWe2SMhJM+bAsJDjwot Iac47gg=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Enable generic ioctls to handle idmapped mounts by passing down the
-mount's user namespace. If the initial user namespace is passed nothing
-changes so non-idmapped mounts will see identical behavior as before.
+Enable the vfs_utimes() helper to handle idmapped mounts by passing down
+the mount's user namespace. If the initial user namespace is passed
+nothing changes so non-idmapped mounts will see identical behavior as
+before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -88,7 +89,7 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch introduced
+unchanged
 
 /* v3 */
 unchanged
@@ -100,50 +101,33 @@ unchanged
 
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
-
-- Christoph Hellwig <hch@lst.de>:
-  - Use new file_userns_helper().
 ---
- fs/remap_range.c   | 7 +++++--
- fs/verity/enable.c | 2 +-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ fs/utimes.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 29a4a4dbfe12..dc68394ec9a1 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -432,13 +432,16 @@ EXPORT_SYMBOL(vfs_clone_file_range);
- /* Check whether we are allowed to dedupe the destination file */
- static bool allow_file_dedupe(struct file *file)
- {
-+	struct user_namespace *mnt_userns = file_user_ns(file);
-+	struct inode *inode = file_inode(file);
-+
- 	if (capable(CAP_SYS_ADMIN))
- 		return true;
- 	if (file->f_mode & FMODE_WRITE)
- 		return true;
--	if (uid_eq(current_fsuid(), file_inode(file)->i_uid))
-+	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
- 		return true;
--	if (!inode_permission(&init_user_ns, file_inode(file), MAY_WRITE))
-+	if (!inode_permission(mnt_userns, inode, MAY_WRITE))
- 		return true;
- 	return false;
- }
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index 6809cf8a99b7..9a221e368fa6 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
- 	 * has verity enabled, and to stabilize the data being hashed.
- 	 */
+diff --git a/fs/utimes.c b/fs/utimes.c
+index 1a4130bee157..33fa753bab3a 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -22,6 +22,7 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
+ 	struct iattr newattrs;
+ 	struct inode *inode = path->dentry->d_inode;
+ 	struct inode *delegated_inode = NULL;
++	struct user_namespace *mnt_userns;
  
--	err = inode_permission(&init_user_ns, inode, MAY_WRITE);
-+	err = inode_permission(file_user_ns(filp), inode, MAY_WRITE);
- 	if (err)
- 		return err;
- 
+ 	if (times) {
+ 		if (!nsec_valid(times[0].tv_nsec) ||
+@@ -61,8 +62,9 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
+ 		newattrs.ia_valid |= ATTR_TOUCH;
+ 	}
+ retry_deleg:
++	mnt_userns = mnt_user_ns(path->mnt);
+ 	inode_lock(inode);
+-	error = notify_change(&init_user_ns, path->dentry, &newattrs, &delegated_inode);
++	error = notify_change(mnt_userns, path->dentry, &newattrs, &delegated_inode);
+ 	inode_unlock(inode);
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
 -- 
 2.30.0
 
