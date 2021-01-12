@@ -2,222 +2,111 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E69C4161F
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084A2C43381
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2E52312A
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C9723122
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437109AbhALWPs (ORCPT
+        id S1729174AbhALW3i (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Jan 2021 17:15:48 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44480 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394514AbhALWNp (ORCPT
+        Tue, 12 Jan 2021 17:29:38 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62976 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2394596AbhALW3R (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:13:45 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRm0-0003bd-Q3; Tue, 12 Jan 2021 22:04:20 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 35/42] fat: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:17 +0100
-Message-Id: <20210112220124.837960-36-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
-References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+        Tue, 12 Jan 2021 17:29:17 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10CM27D9023082;
+        Tue, 12 Jan 2021 17:28:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=ivZjNQ6TuZE1AU/YgDm07Ccl03ImODR1VBP4C1GIM5w=;
+ b=rIccY9wnUJqq+xvYBbEY4RgzwRESGhIs6s1mrdkCWaS+g2AbmbPwhhDxoPqUo322KB5q
+ dEvjngTJEditi04iIE7dR4WxSr2OSOBwVc24+QVFSSGw2h4RIfyoZxzT0GQ/tyFTOCPL
+ V9mns2ZxQvwmvMjTM++W+zgDL1fiB/fUKPlvXpfIyxB4fbZsndq8c0vMZZwvhGA4uJ42
+ KnLR3u//7KP6RczB4lAXGdDRfsq7lQlpPkP55m9ViiQVgRd5Q9yBKEyuwuplu0By9JBK
+ TfZND6hHQy/aQYpls38jwHkXZq8AdXZeA1ShN/9lDGzHgyVqPlTBJcjRN5ub8DkdrXJG qA== 
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 361jsvaj8s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Jan 2021 17:28:34 -0500
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10CMNJ9W028039;
+        Tue, 12 Jan 2021 22:28:33 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma04wdc.us.ibm.com with ESMTP id 35y44916rp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Jan 2021 22:28:33 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10CMSXN639452966
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Jan 2021 22:28:33 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BD87AC05E;
+        Tue, 12 Jan 2021 22:28:33 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 51DB4AC05B;
+        Tue, 12 Jan 2021 22:28:33 +0000 (GMT)
+Received: from [9.80.236.95] (unknown [9.80.236.95])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Jan 2021 22:28:33 +0000 (GMT)
+Subject: Re: IMA appraisal with TPMv2?
+To:     "Chang, Clay (HPS OE-Linux TDC)" <clayc@hpe.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+References: <CS1PR8401MB036099EF243892F90D07D56CBCD00@CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM>
+From:   Ken Goldman <kgold@linux.ibm.com>
+Message-ID: <c94e3587-ca85-21ec-bafb-5bf1a9fc954e@linux.ibm.com>
+Date:   Tue, 12 Jan 2021 17:28:33 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Patch-Hashes: v=1; h=sha256; i=wF1t0OLeehpDD/Or8zja7KrHnkwazZpHv9hvAGPb0LU=; m=IzKHY5UlBsKA0pPEwB9A/OnVkasfk4B8OCNzZgzMRzQ=; p=W4xT6agIbCGbQ8L3psvuVW/ITKb4ltRLzEUwTwuzS3I=; g=b83c1538a9fca485d728fb60a703fb616e8fd418
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcou6sAQDySkZ L7ZLE/Uxetr6HsqPvqdlEn9zH1QTBH8F1nvuqfQEAh+rG7S7mSaekCQKygAYunPLO7s6jK3u5CuAr 8VVgEQA=
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CS1PR8401MB036099EF243892F90D07D56CBCD00@CS1PR8401MB0360.NAMPRD84.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-12_16:2021-01-12,2021-01-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ mlxlogscore=895 clxscore=1011 phishscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101120128
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Let fat handle idmapped mounts. This allows to have the same fat mount
-appear in multiple locations with different id mappings. This allows to
-expose a vfat formatted USB stick to multiple user with different ids on
-the host or in user namespaces allowing for dac permissions:
+On 1/6/2021 5:47 AM, Chang, Clay (HPS OE-Linux TDC) wrote:
+> Hi,
+> 
+> As I know, IMA appraisal with digital signature uses the public key on the .ima
+> keyring for verification, and the public key needs to be signed by a certificate
+> embedded into the kernel (CONFIG_SYSTEM_EXTRA_CERTIFICATE). While this approach
+> looks fine, it requires kernel re-gen and re-sign in the context of secure boot.
+> 
+> My question is that for IMA appraisal, is it possible to verify the signature
+> with the TPMv2? My intention is leverage the TPMv2 device and to avoid the
+> kernel re-gen/re-sign.
+> 
+> For signing, I know I need a tool that uses TPMv2 to sign the executable and
+> write the signature to the xattr of the file.
 
-mount -o uid=1000,gid=1000 /dev/sdb /mnt
+I don't understand the re-sign piece, so this may not make sense.
 
-u1001@f2-vm:/lower1$ ls -ln /mnt/
-total 4
--rwxr-xr-x 1 1000 1000 4 Oct 28 03:44 aaa
--rwxr-xr-x 1 1000 1000 0 Oct 28 01:09 bbb
--rwxr-xr-x 1 1000 1000 0 Oct 28 01:10 ccc
--rwxr-xr-x 1 1000 1000 0 Oct 28 03:46 ddd
--rwxr-xr-x 1 1000 1000 0 Oct 28 04:01 eee
+The TPM can certainly do signature verification as long as you can load the
+public key.  However
 
-mount-idmapped --map-mount b:1000:1001:1
+- It will be very slow compared to software.
+- If you can load the public key, can't you do the verification in SW?
 
-u1001@f2-vm:/lower1$ ls -ln /lower1/
-total 4
--rwxr-xr-x 1 1001 1001 4 Oct 28 03:44 aaa
--rwxr-xr-x 1 1001 1001 0 Oct 28 01:09 bbb
--rwxr-xr-x 1 1001 1001 0 Oct 28 01:10 ccc
--rwxr-xr-x 1 1001 1001 0 Oct 28 03:46 ddd
--rwxr-xr-x 1 1001 1001 0 Oct 28 04:01 eee
+The two main use cases for TPM signature verification are:
 
-u1001@f2-vm:/lower1$ touch /lower1/fff
-
-u1001@f2-vm:/lower1$ ls -ln /lower1/fff
--rwxr-xr-x 1 1001 1001 0 Oct 28 04:03 /lower1/fff
-
-u1001@f2-vm:/lower1$ ls -ln /mnt/fff
--rwxr-xr-x 1 1000 1000 0 Oct 28 04:03 /mnt/fff
-
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
-/* v2 */
-unchanged
-
-/* v3 */
-unchanged
-
-/* v4 */
-- Mauricio Vásquez Bernal <mauricio@kinvolk.io>:
-  - Fix mount example in commit message.
-
-- Serge Hallyn <serge@hallyn.com>:
-  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-    terminology consistent.
-
-/* v5 */
-base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
----
- fs/fat/file.c        | 15 ++++++++-------
- fs/fat/namei_msdos.c |  2 +-
- fs/fat/namei_vfat.c  |  2 +-
- 3 files changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 80fbf1b5bb6c..107e9ece1a7c 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -398,7 +398,7 @@ int fat_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		struct kstat *stat, u32 request_mask, unsigned int flags)
- {
- 	struct inode *inode = d_inode(path->dentry);
--	generic_fillattr(&init_user_ns, inode, stat);
-+	generic_fillattr(mnt_userns, inode, stat);
- 	stat->blksize = MSDOS_SB(inode->i_sb)->cluster_size;
- 
- 	if (MSDOS_SB(inode->i_sb)->options.nfs == FAT_NFS_NOSTALE_RO) {
-@@ -447,12 +447,13 @@ static int fat_sanitize_mode(const struct msdos_sb_info *sbi,
- 	return 0;
- }
- 
--static int fat_allow_set_time(struct msdos_sb_info *sbi, struct inode *inode)
-+static int fat_allow_set_time(struct user_namespace *mnt_userns,
-+			      struct msdos_sb_info *sbi, struct inode *inode)
- {
- 	umode_t allow_utime = sbi->options.allow_utime;
- 
--	if (!uid_eq(current_fsuid(), inode->i_uid)) {
--		if (in_group_p(inode->i_gid))
-+	if (!uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode))) {
-+		if (in_group_p(i_gid_into_mnt(mnt_userns, inode)))
- 			allow_utime >>= 3;
- 		if (allow_utime & MAY_WRITE)
- 			return 1;
-@@ -477,11 +478,11 @@ int fat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	/* Check for setting the inode time. */
- 	ia_valid = attr->ia_valid;
- 	if (ia_valid & TIMES_SET_FLAGS) {
--		if (fat_allow_set_time(sbi, inode))
-+		if (fat_allow_set_time(mnt_userns, sbi, inode))
- 			attr->ia_valid &= ~TIMES_SET_FLAGS;
- 	}
- 
--	error = setattr_prepare(&init_user_ns, dentry, attr);
-+	error = setattr_prepare(mnt_userns, dentry, attr);
- 	attr->ia_valid = ia_valid;
- 	if (error) {
- 		if (sbi->options.quiet)
-@@ -551,7 +552,7 @@ int fat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 		fat_truncate_time(inode, &attr->ia_mtime, S_MTIME);
- 	attr->ia_valid &= ~(ATTR_ATIME|ATTR_CTIME|ATTR_MTIME);
- 
--	setattr_copy(&init_user_ns, inode, attr);
-+	setattr_copy(mnt_userns, inode, attr);
- 	mark_inode_dirty(inode);
- out:
- 	return error;
-diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-index a8f3375d9d10..efba301d68ae 100644
---- a/fs/fat/namei_msdos.c
-+++ b/fs/fat/namei_msdos.c
-@@ -667,7 +667,7 @@ static struct file_system_type msdos_fs_type = {
- 	.name		= "msdos",
- 	.mount		= msdos_mount,
- 	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("msdos");
- 
-diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-index 23936ecf79a5..5369d82e0bfb 100644
---- a/fs/fat/namei_vfat.c
-+++ b/fs/fat/namei_vfat.c
-@@ -1063,7 +1063,7 @@ static struct file_system_type vfat_fs_type = {
- 	.name		= "vfat",
- 	.mount		= vfat_mount,
- 	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("vfat");
- 
--- 
-2.30.0
-
+- In environments where SW does not have crypto.
+- When the TPM is producing a ticket for a subsequent TPM operation.
