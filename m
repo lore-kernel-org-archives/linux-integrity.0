@@ -2,154 +2,167 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9F3C433DB
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 18:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09300C4360C
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D74DE22B51
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 18:47:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA62F223E0
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406189AbhALSqy (ORCPT
+        id S2393863AbhALWDg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Jan 2021 13:46:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24518 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726636AbhALSqy (ORCPT
+        Tue, 12 Jan 2021 17:03:36 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42906 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732008AbhALWDf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jan 2021 13:46:54 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10CIh4CD135115;
-        Tue, 12 Jan 2021 13:45:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=references : from : to :
- cc : subject : in-reply-to : date : message-id : mime-version :
- content-type; s=pp1; bh=8dn5n5mw4OQtpzK0N/CimN+ip41q9EcXbMAGPd2ftlk=;
- b=iExWTgecsIiGBmbNrC/PYfhGTtrXC/8EKM6P5HDKCDPQLWHvoIKiahPkjVV2EoA+jxGm
- NDgJF/LXnP80Aqngd/zz11WRrxEr3xz/lSDhyNyd80W/0sOtNw1KzMrs6zpTfLlu+0Qu
- M4POJJaw2qkJqY8Jps1A06eXPa/QGPczhovDzC6npQj88Tub9bCW4KT+BwLy/aajyvv0
- bCV9GTxEeaEnvGqde4OdBPtMLnbusdsX3CApW1RX7crA2aZmtNSqFAmtj+A8rvy+fSrb
- In5jw2rqezPJltGjvlDw924Z5szE2MkiKVqldnR9oUYivhyfKbYaU7fENWHJCMm1QJU9 Qw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 361h9pg1fr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Jan 2021 13:45:21 -0500
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10CIimKQ142380;
-        Tue, 12 Jan 2021 13:45:21 -0500
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 361h9pg1f0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Jan 2021 13:45:20 -0500
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10CIb8D2011352;
-        Tue, 12 Jan 2021 18:45:19 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03wdc.us.ibm.com with ESMTP id 35y449031x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Jan 2021 18:45:19 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10CIjIX19175636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jan 2021 18:45:18 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A900EAC062;
-        Tue, 12 Jan 2021 18:45:18 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3CC7BAC059;
-        Tue, 12 Jan 2021 18:45:11 +0000 (GMT)
-Received: from manicouagan.localdomain (unknown [9.85.136.171])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Tue, 12 Jan 2021 18:45:10 +0000 (GMT)
-References: <20210104192602.10131-1-nramas@linux.microsoft.com>
- <20210112144248.GA256955@robh.at.kernel.org>
- <601825013d67584b0d2de7a973b806ec3cbc05ca.camel@linux.ibm.com>
-User-agent: mu4e 1.4.10; emacs 27.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
-        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au,
-        james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
-        paulus@samba.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
-        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
-        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v14 0/6] Carry forward IMA measurement log on kexec on
- ARM64
-In-reply-to: <601825013d67584b0d2de7a973b806ec3cbc05ca.camel@linux.ibm.com>
-Date:   Tue, 12 Jan 2021 15:45:08 -0300
-Message-ID: <87eeiqro3v.fsf@manicouagan.localdomain>
+        Tue, 12 Jan 2021 17:03:35 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kzRkX-0003bd-At; Tue, 12 Jan 2021 22:02:49 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v5 03/42] namespace: only take read lock in do_reconfigure_mnt()
+Date:   Tue, 12 Jan 2021 23:00:45 +0100
+Message-Id: <20210112220124.837960-4-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-12_15:2021-01-12,2021-01-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 clxscore=1015
- adultscore=0 impostorscore=0 phishscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101120106
+X-Patch-Hashes: v=1; h=sha256; i=I7aJzwt0DpkJRJifO843fvdrR3C7hhJVdcz6GAHs5To=; m=pFvA/sIxPovFOvL9em8QbU7FxiEiTevq05Ka5h3gk34=; p=Jyijtz8vgV/Zoj912N+XZeHMn+BdnPGuVK4wO+FYPXU=; g=4b867e119349e7998894974d9276cd68c2183406
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtQAKCRCRxhvAZXjcouTiAQCeFtb d2bqimNQm810IlOVm6iJKI9bI8AWk3/b4Y2T1owD/b5lYIXjCBtWOwj9pOhdfES1jFk0/YBKnP+Ap kaoLxgM=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+do_reconfigure_mnt() used to take the down_write(&sb->s_umount) lock
+which seems unnecessary since we're not changing the superblock. We're
+only checking whether it is already read-only. Setting other mount
+attributes is protected by lock_mount_hash() afaict and not by s_umount.
 
-Mimi Zohar <zohar@linux.ibm.com> writes:
+So I think the history of down_write(&sb->s_umount) lock being taken
+when setting mount attributes dates back to the introduction of
+MNT_READONLY in [2]. Afaict, this introduced the concept of having
+read-only mounts in contrast to just having a read-only superblock. When
+it got introduced it was simply plumbed into do_remount() which already
+took down_write(&sb->s_umount) because it was only used to actually
+change the superblock before [2]. Afaict, it would've already been
+possible back then to only use down_read(&sb->s_umount) for MS_BIND |
+MS_REMOUNT since actual mount options were protected by the vfsmount
+lock already. But that would've meant special casing the locking for
+MS_BIND | MS_REMOUNT in do_remount() which people might not have
+considered worth it.
+Then in [1] MS_BIND | MS_REMOUNT mount option changes were split out of
+do_remount() into do_reconfigure_mnt() but the down_write(&sb->s_umount)
+lock was simply copied over.
+Now that we have this be a separate helper only take the
+down_read(&sb->s_umount) lock since we're only interested in checking
+whether the super block is currently read-only and blocking any writers
+from changing it. Essentially, checking that the super block is
+read-only has the advantage that we can avoid having to go into the
+slowpath and through MNT_WRITE_HOLD and can simply set the read-only
+flag on the mount in set_mount_attributes().
 
-> On Tue, 2021-01-12 at 08:42 -0600, Rob Herring wrote:
->> On Mon, Jan 04, 2021 at 11:25:56AM -0800, Lakshmi Ramasubramanian wrote:
->> > On kexec file load Integrity Measurement Architecture (IMA) subsystem
->> > may verify the IMA signature of the kernel and initramfs, and measure
->> > it. The command line parameters passed to the kernel in the kexec call
->> > may also be measured by IMA. A remote attestation service can verify
->> > a TPM quote based on the TPM event log, the IMA measurement list, and
->> > the TPM PCR data. This can be achieved only if the IMA measurement log
->> > is carried over from the current kernel to the next kernel across
->> > the kexec call.
->> > 
->> > powerpc already supports carrying forward the IMA measurement log on
->> > kexec. This patch set adds support for carrying forward the IMA
->> > measurement log on kexec on ARM64. 
->> > 
->> > This patch set moves the platform independent code defined for powerpc
->> > such that it can be reused for other platforms as well. A chosen node
->> > "linux,ima-kexec-buffer" is added to the DTB for ARM64 to hold
->> > the address and the size of the memory reserved to carry
->> > the IMA measurement log.
->> > 
->> > This patch set has been tested for ARM64 platform using QEMU.
->> > I would like help from the community for testing this change on powerpc.
->> > Thanks.
->> > 
->> > This patch set is based on
->> > commit a29a64445089 ("powerpc: Use common of_kexec_setup_new_fdt()")
->> > in https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
->> > "dt/kexec" branch.
->> 
->> This all looks good to me. I'd suggest you send the above patches out as 
->> part of this series because I don't plan to do so.
->> 
->> I would like to also resolve the vmalloc vs. kmalloc difference for 
->> allocating the FDT. Then we can further consolidate the DT kexec code.
->> 
->> It all needs some acks from arm64 and powerpc maintainers. As far as 
->> merging, I think via the integrity tree makes the most sense.
->
-> Thanks, Rob.  Lakshmi,  please update Rob's patches to include patch
-> descriptions before re-posting.
+[1]: commit 43f5e655eff7 ("vfs: Separate changing mount flags full remount")
+[2]: commit 2e4b7fcd9260 ("[PATCH] r/o bind mounts: honor mount writer counts at remount")
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+unchanged
 
-Also please update the powerpc mailing list address to
-linuxppc-dev@lists.ozlabs.org
+/* v3 */
+unchanged
 
+/* v4 */
+unchanged
+
+/* v5 */
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+---
+ fs/namespace.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8cb2c132525a..5177bf6d810e 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2515,10 +2515,6 @@ static int change_mount_ro_state(struct mount *mnt, unsigned int mnt_flags)
+ 	return 0;
+ }
+ 
+-/*
+- * Update the user-settable attributes on a mount.  The caller must hold
+- * sb->s_umount for writing.
+- */
+ static void set_mount_attributes(struct mount *mnt, unsigned int mnt_flags)
+ {
+ 	mnt_flags |= mnt->mnt.mnt_flags & ~MNT_USER_SETTABLE_MASK;
+@@ -2568,13 +2564,17 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ 	if (!can_change_locked_flags(mnt, mnt_flags))
+ 		return -EPERM;
+ 
+-	down_write(&sb->s_umount);
++	/*
++	 * We're only checking whether the superblock is read-only not changing
++	 * it, so only take down_read(&sb->s_umount).
++	 */
++	down_read(&sb->s_umount);
+ 	lock_mount_hash();
+ 	ret = change_mount_ro_state(mnt, mnt_flags);
+ 	if (ret == 0)
+ 		set_mount_attributes(mnt, mnt_flags);
+ 	unlock_mount_hash();
+-	up_write(&sb->s_umount);
++	up_read(&sb->s_umount);
+ 
+ 	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+ 
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+2.30.0
+
