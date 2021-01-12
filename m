@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04696C4332E
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D317EC433E9
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA70A23127
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 960EB23122
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:16:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405011AbhALWQc (ORCPT
+        id S2438236AbhALWQy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Jan 2021 17:16:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44823 "EHLO
+        Tue, 12 Jan 2021 17:16:54 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44947 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438195AbhALWQL (ORCPT
+        with ESMTP id S2438225AbhALWQr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:16:11 -0500
+        Tue, 12 Jan 2021 17:16:47 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRlg-0003bd-7c; Tue, 12 Jan 2021 22:04:00 +0000
+        id 1kzRln-0003bd-Qt; Tue, 12 Jan 2021 22:04:07 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -63,23 +63,28 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 28/42] init: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:10 +0100
-Message-Id: <20210112220124.837960-29-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 31/42] exec: handle idmapped mounts
+Date:   Tue, 12 Jan 2021 23:01:13 +0100
+Message-Id: <20210112220124.837960-32-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=K1Mmb+2iBnpojBmIU4SJaafXPX8O2CFx1CDw+utpuOU=; m=xvNrFhQ1y2dLwavhTa/L5ycYJlSyn9UahBsh8fnhzMg=; p=T84ylcJgm7jErZy8A3A4JEJzeX2Sy/VPnkeSnFEr7Mg=; g=463fa33c5c532e8c7af638fb27b57db52004da88
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcop8AAQCXD3D 4M62CMgvA6omdkdSEWaz7FL2OLzNdBtMvfUobNgEA/4AMHFZRBaM4sgnQsdBwRx8Ot748zQ6VHemO ok8YmwI=
+X-Patch-Hashes: v=1; h=sha256; i=z3V1fTqinwXFXuBPT/F1/hXfgz5+RFdSDv1+bqcElO4=; m=dSmUO4lNQY/1KQIljwSUZlys/r5kqPY0ATmQGa0aOgc=; p=VslHb3N0lBAUc5siOQWy6xbVTFXnD/IAUdtdf9hX2NI=; g=12460a0074314a05345e63a213e6770ca717a756
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcoqXaAP9jK4V c3Af5yoIa54Rl3S/RZYYPgS7UFFOz2yjdRyH/PwEA5dih9bTOIQNZdBDIQn+Chfmpxb1OyFx+xpcY mMXL4Q8=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Enable the init helpers to handle idmapped mounts by passing down the
-mount's user namespace. If the initial user namespace is passed nothing
-changes so non-idmapped mounts will see identical behavior as before.
+When executing a setuid binary the kernel will verify in bprm_fill_uid()
+that the inode has a mapping in the caller's user namespace before
+setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
+mounts. If the inode is accessed through an idmapped mount it is mapped
+according to the mount's user namespace. Afterwards the checks are
+identical to non-idmapped mounts. If the initial user namespace is
+passed nothing changes so non-idmapped mounts will see identical
+behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -88,109 +93,52 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch introduced
+unchanged
 
 /* v3 */
 unchanged
 
 /* v4 */
-unchanged
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 ---
- fs/init.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+ fs/exec.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/init.c b/fs/init.c
-index 06d8e52ce18e..1db2b392e4e6 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -49,7 +49,7 @@ int __init init_chdir(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, path.dentry->d_inode,
-+	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
- 				 MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &path);
-@@ -65,7 +65,7 @@ int __init init_chroot(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, path.dentry->d_inode,
-+	error = inode_permission(mnt_user_ns(path.mnt), path.dentry->d_inode,
- 				 MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
-@@ -120,7 +120,7 @@ int __init init_eaccess(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(&init_user_ns, d_inode(path.dentry),
-+	error = inode_permission(mnt_user_ns(path.mnt), d_inode(path.dentry),
- 				 MAY_ACCESS);
- 	path_put(&path);
- 	return error;
-@@ -160,8 +160,8 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
- 		mode &= ~current_umask();
- 	error = security_path_mknod(&path, dentry, mode, dev);
- 	if (!error)
--		error = vfs_mknod(&init_user_ns, path.dentry->d_inode, dentry,
--				  mode, new_decode_dev(dev));
-+		error = vfs_mknod(mnt_user_ns(path.mnt), path.dentry->d_inode,
-+				  dentry, mode, new_decode_dev(dev));
- 	done_path_create(&path, dentry);
- 	return error;
- }
-@@ -170,6 +170,7 @@ int __init init_link(const char *oldname, const char *newname)
+diff --git a/fs/exec.c b/fs/exec.c
+index 36a1b927a8ae..61ae826d5a16 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1580,6 +1580,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
+ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
  {
- 	struct dentry *new_dentry;
- 	struct path old_path, new_path;
+ 	/* Handle suid and sgid on files */
 +	struct user_namespace *mnt_userns;
- 	int error;
+ 	struct inode *inode;
+ 	unsigned int mode;
+ 	kuid_t uid;
+@@ -1596,13 +1597,15 @@ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
+ 	if (!(mode & (S_ISUID|S_ISGID)))
+ 		return;
  
- 	error = kern_path(oldname, 0, &old_path);
-@@ -184,14 +185,15 @@ int __init init_link(const char *oldname, const char *newname)
- 	error = -EXDEV;
- 	if (old_path.mnt != new_path.mnt)
- 		goto out_dput;
--	error = may_linkat(&init_user_ns, &old_path);
-+	mnt_userns = mnt_user_ns(new_path.mnt);
-+	error = may_linkat(mnt_userns, &old_path);
- 	if (unlikely(error))
- 		goto out_dput;
- 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
- 	if (error)
- 		goto out_dput;
--	error = vfs_link(old_path.dentry, &init_user_ns,
--			 new_path.dentry->d_inode, new_dentry, NULL);
-+	error = vfs_link(old_path.dentry, mnt_userns, new_path.dentry->d_inode,
-+			 new_dentry, NULL);
- out_dput:
- 	done_path_create(&new_path, new_dentry);
- out:
-@@ -210,7 +212,8 @@ int __init init_symlink(const char *oldname, const char *newname)
- 		return PTR_ERR(dentry);
- 	error = security_path_symlink(&path, dentry, oldname);
- 	if (!error)
--		error = vfs_symlink(&init_user_ns, path.dentry->d_inode, dentry, oldname);
-+		error = vfs_symlink(mnt_user_ns(path.mnt), path.dentry->d_inode,
-+				    dentry, oldname);
- 	done_path_create(&path, dentry);
- 	return error;
- }
-@@ -233,7 +236,8 @@ int __init init_mkdir(const char *pathname, umode_t mode)
- 		mode &= ~current_umask();
- 	error = security_path_mkdir(&path, dentry, mode);
- 	if (!error)
--		error = vfs_mkdir(&init_user_ns, path.dentry->d_inode, dentry, mode);
-+		error = vfs_mkdir(mnt_user_ns(path.mnt), path.dentry->d_inode,
-+				  dentry, mode);
- 	done_path_create(&path, dentry);
- 	return error;
- }
++	mnt_userns = mnt_user_ns(file->f_path.mnt);
++
+ 	/* Be careful if suid/sgid is set */
+ 	inode_lock(inode);
+ 
+ 	/* reload atomically mode/uid/gid now that lock held */
+ 	mode = inode->i_mode;
+-	uid = inode->i_uid;
+-	gid = inode->i_gid;
++	uid = i_uid_into_mnt(mnt_userns, inode);
++	gid = i_gid_into_mnt(mnt_userns, inode);
+ 	inode_unlock(inode);
+ 
+ 	/* We ignore suid/sgid if there are no mappings for them in the ns */
 -- 
 2.30.0
 
