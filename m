@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D317EC433E9
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A2CC433DB
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 960EB23122
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66AD523122
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Jan 2021 22:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438236AbhALWQy (ORCPT
+        id S2438186AbhALWP7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Jan 2021 17:16:54 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:44947 "EHLO
+        Tue, 12 Jan 2021 17:15:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44793 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438225AbhALWQr (ORCPT
+        with ESMTP id S2438174AbhALWP5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:16:47 -0500
+        Tue, 12 Jan 2021 17:15:57 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRln-0003bd-Qt; Tue, 12 Jan 2021 22:04:07 +0000
+        id 1kzRli-0003bd-Qe; Tue, 12 Jan 2021 22:04:02 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -63,28 +63,23 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 31/42] exec: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:13 +0100
-Message-Id: <20210112220124.837960-32-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 29/42] ioctl: handle idmapped mounts
+Date:   Tue, 12 Jan 2021 23:01:11 +0100
+Message-Id: <20210112220124.837960-30-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=z3V1fTqinwXFXuBPT/F1/hXfgz5+RFdSDv1+bqcElO4=; m=dSmUO4lNQY/1KQIljwSUZlys/r5kqPY0ATmQGa0aOgc=; p=VslHb3N0lBAUc5siOQWy6xbVTFXnD/IAUdtdf9hX2NI=; g=12460a0074314a05345e63a213e6770ca717a756
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcoqXaAP9jK4V c3Af5yoIa54Rl3S/RZYYPgS7UFFOz2yjdRyH/PwEA5dih9bTOIQNZdBDIQn+Chfmpxb1OyFx+xpcY mMXL4Q8=
+X-Patch-Hashes: v=1; h=sha256; i=kAwitCaU5Zsp+82CuxVVPm6U8xXlPPtQ0Z0Dh6WXu44=; m=VC5Xd0Zl8AGaO0BlP8YtVNixey9scChiBadwiGTSB5k=; p=oTgP29ybjPTdbnArRS0UjBd62m6f1UrtDPAozi+SHu8=; g=c32d9c1a69a581553f7de28602c01b53e63879e6
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YuAAKCRCRxhvAZXjcolFtAP9Jyut NCwljnX8YPYbEbH0TGh2ZGqdwFl7dwrXEioMjsgEAxXesyAYTyhhGHAHOKEZri1frriOo39vmk6H9 U/Lv1wg=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-When executing a setuid binary the kernel will verify in bprm_fill_uid()
-that the inode has a mapping in the caller's user namespace before
-setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
-mounts. If the inode is accessed through an idmapped mount it is mapped
-according to the mount's user namespace. Afterwards the checks are
-identical to non-idmapped mounts. If the initial user namespace is
-passed nothing changes so non-idmapped mounts will see identical
-behavior as before.
+Enable generic ioctls to handle idmapped mounts by passing down the
+mount's user namespace. If the initial user namespace is passed nothing
+changes so non-idmapped mounts will see identical behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -93,7 +88,7 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+patch introduced
 
 /* v3 */
 unchanged
@@ -105,40 +100,50 @@ unchanged
 
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
----
- fs/exec.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 36a1b927a8ae..61ae826d5a16 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1580,6 +1580,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
- static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
+- Christoph Hellwig <hch@lst.de>:
+  - Use new file_userns_helper().
+---
+ fs/remap_range.c   | 7 +++++--
+ fs/verity/enable.c | 2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index 29a4a4dbfe12..dc68394ec9a1 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -432,13 +432,16 @@ EXPORT_SYMBOL(vfs_clone_file_range);
+ /* Check whether we are allowed to dedupe the destination file */
+ static bool allow_file_dedupe(struct file *file)
  {
- 	/* Handle suid and sgid on files */
-+	struct user_namespace *mnt_userns;
- 	struct inode *inode;
- 	unsigned int mode;
- 	kuid_t uid;
-@@ -1596,13 +1597,15 @@ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
- 	if (!(mode & (S_ISUID|S_ISGID)))
- 		return;
- 
-+	mnt_userns = mnt_user_ns(file->f_path.mnt);
++	struct user_namespace *mnt_userns = file_user_ns(file);
++	struct inode *inode = file_inode(file);
 +
- 	/* Be careful if suid/sgid is set */
- 	inode_lock(inode);
+ 	if (capable(CAP_SYS_ADMIN))
+ 		return true;
+ 	if (file->f_mode & FMODE_WRITE)
+ 		return true;
+-	if (uid_eq(current_fsuid(), file_inode(file)->i_uid))
++	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
+ 		return true;
+-	if (!inode_permission(&init_user_ns, file_inode(file), MAY_WRITE))
++	if (!inode_permission(mnt_userns, inode, MAY_WRITE))
+ 		return true;
+ 	return false;
+ }
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 6809cf8a99b7..9a221e368fa6 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
+ 	 * has verity enabled, and to stabilize the data being hashed.
+ 	 */
  
- 	/* reload atomically mode/uid/gid now that lock held */
- 	mode = inode->i_mode;
--	uid = inode->i_uid;
--	gid = inode->i_gid;
-+	uid = i_uid_into_mnt(mnt_userns, inode);
-+	gid = i_gid_into_mnt(mnt_userns, inode);
- 	inode_unlock(inode);
+-	err = inode_permission(&init_user_ns, inode, MAY_WRITE);
++	err = inode_permission(file_user_ns(filp), inode, MAY_WRITE);
+ 	if (err)
+ 		return err;
  
- 	/* We ignore suid/sgid if there are no mappings for them in the ns */
 -- 
 2.30.0
 
