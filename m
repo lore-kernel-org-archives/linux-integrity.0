@@ -2,121 +2,106 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B91C433E0
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 02:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D50C433E9
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 02:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C305235F8
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 02:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ADC3235F8
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 02:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbhANCKd (ORCPT
+        id S1728448AbhANCLi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Jan 2021 21:10:33 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:4618 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730421AbhANCKT (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Jan 2021 21:10:19 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10E21gSP085411;
-        Wed, 13 Jan 2021 21:09:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=yO8Cs6Z6wq2Tuu/b+rcgyQuxeXhGRdj+H+Csv0c2SiU=;
- b=DOe2T7YgApNsyweg0SLA74KB279y6wTfUN+f1Ao4z/0Bof+7o9K7b1XukZYGEiaDKTyK
- e620iP2oLs/EEhQfhrvcx3qCkTFzA6WpDDWHqGQusxqk1xuIIrkhqoufDyzFrs6iyuU7
- ta7l//4+c1HbddcR0fcqW9MDVuydKACByrHA6NmYu4Epi8XpNgU+bC3CeQAIuERlxd2y
- fVY3HGecS3bpm0Bee8/0t8538NtRvwfNIbC5ne9J5G6Y50+RDcIEdiSxAWX6gL9PTB6/
- EZIpZHOTMWEtY5KZuqxsEWaWydNwDEUSp2aZzdQlaxkTlXtLta93H7hmgfj7qiIYVo55 oQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 362cqerc0e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jan 2021 21:09:32 -0500
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10E23Md7096659;
-        Wed, 13 Jan 2021 21:09:32 -0500
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 362cqerby2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jan 2021 21:09:32 -0500
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10E279c9018267;
-        Thu, 14 Jan 2021 02:09:30 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06fra.de.ibm.com with ESMTP id 361wgq8j0h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Jan 2021 02:09:30 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10E29Ms018809252
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jan 2021 02:09:22 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C101AA4055;
-        Thu, 14 Jan 2021 02:09:27 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69D46A4040;
-        Thu, 14 Jan 2021 02:09:24 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.57.196])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Jan 2021 02:09:24 +0000 (GMT)
-Message-ID: <73a82dff7be151298f51c0db6f3c4996ccf44a19.camel@linux.ibm.com>
-Subject: Re: [PATCH v10 5/8] IMA: limit critical data measurement based on a
- label
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
-        paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Wed, 13 Jan 2021 21:09:23 -0500
-In-Reply-To: <20210108040708.8389-6-tusharsu@linux.microsoft.com>
-References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
-         <20210108040708.8389-6-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-13_14:2021-01-13,2021-01-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 mlxlogscore=999 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101140003
+        Wed, 13 Jan 2021 21:11:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729251AbhAMWPS (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 13 Jan 2021 17:15:18 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC5B823339;
+        Wed, 13 Jan 2021 22:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610576069;
+        bh=YPaA0+QkNX7/eq1Wwg82C84x12V1KgYhdxKCWybAf+s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TPbBI+c5z5j8US2/+SnQvl6ws1oIjV/+5WO9kPgqQIB3iIqL0W4Fet3M7Wr79vg0o
+         HSrhF8H9OHK5Cx1wjuL4xisOUrfrbuMaMrTMl0qy+FmHI8sYkkiP59LbTWV23KH3HQ
+         4VOh4gizvB5yYUDLYwxQ/V92bNIZu8f94t5mARZxE1UJG9gQi6akxhvU0KdwvZCDXa
+         UPoiJhCjrnpBuWjV8d8B/YhKOwixKMs8vdai/30sHpjuURYIHYFqu5wka7eQzHiOko
+         sOom5LmkoFSrg61hPZDvksKoLJvKtxfrVOoZqmVVJaOAFq7capIIWJjzKd/KGFgAex
+         BaZ8v50WQkgzw==
+Date:   Thu, 14 Jan 2021 00:14:24 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc:     Greg KH <greg@kroah.com>, linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v5 1/1] tpm: add sysfs exports for all banks of PCR
+ registers
+Message-ID: <X/9wwEr477zSttED@kernel.org>
+References: <20210113015958.6685-1-James.Bottomley@HansenPartnership.com>
+ <20210113015958.6685-2-James.Bottomley@HansenPartnership.com>
+ <X/6lyuhqQ8TSXOSa@kroah.com>
+ <a6bdeef73f9271cca99585d3e855681cf6b6f589.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6bdeef73f9271cca99585d3e855681cf6b6f589.camel@HansenPartnership.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2021-01-07 at 20:07 -0800, Tushar Sugandhi wrote:
-> Integrity critical data may belong to a single subsystem or it may
-> arise from cross subsystem interaction.  Currently there is no mechanism
-> to group or limit the data based on certain label.  Limiting and
-> grouping critical data based on a label would make it flexible and
-> configurable to measure.
+On Wed, Jan 13, 2021 at 09:31:44AM -0800, James Bottomley wrote:
+> On Wed, 2021-01-13 at 08:48 +0100, Greg KH wrote:
+> > On Tue, Jan 12, 2021 at 05:59:58PM -0800, James Bottomley wrote:
+> > > Create sysfs per hash groups with 24 PCR files in them one group,
+> > > named pcr-<hash>, for each agile hash of the TPM.  The files are
+> > > plugged in to a PCR read function which is TPM version agnostic, so
+> > > this works also for TPM 1.2 but the hash is only sha1 in that case.
+> > > 
+> > > Note: the macros used to create the hashes emit spurious checkpatch
+> > > warnings.  Do not try to "fix" them as checkpatch recommends,
+> > > otherwise
+> > > they'll break.
+> > > 
+> > > Signed-off-by: James Bottomley <
+> > > James.Bottomley@HansenPartnership.com>
+> > > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> > > Tested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+> > > 
+> > > ---
+> > > 
+> > > v2: fix TPM 1.2 legacy links failure
+> > > v3: fix warn on and add note to tpm_algorithms
+> > > v4: reword commit and add tested-by
+> > > v5: algorithm spelling fix WARN->dev_err
+> > > ---
+> > >  drivers/char/tpm/tpm-sysfs.c | 179
+> > > +++++++++++++++++++++++++++++++++++
+> > >  include/linux/tpm.h          |   9 +-
+> > >  2 files changed, 187 insertions(+), 1 deletion(-)
+> > 
+> > You add new sysfs files, but do not add Documentation/ABI/ entries
+> > showing how they are used and what they contain :(
+> > 
+> > Please do that for the next version of this patch.
 > 
-> Define "label:=", a new IMA policy condition, for the IMA func
-> CRITICAL_DATA to allow grouping and limiting measurement of integrity
-> critical data.
+> It's a bit of a chicken and egg problem since I've no idea when this
+> will go upstream and the entries require that information making the
+> ABI more of a post accept type thing.  I can make a guess about the
+> values if Jarkko is going to but this in for the next merge window.
 > 
-> Limit the measurement to the labels that are specified in the IMA
-> policy - CRITICAL_DATA+"label:=".  If "label:=" is not provided with
-> the func CRITICAL_DATA, measure all the input integrity critical data.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> James
 
-This is looking a lot better.
+I agree with the ABI side, so you can safely include this to the patch set. 
+And yes, this looks like something I can include to the 5.12 PR.
 
-thanks,
+Did you address Greg's remarks about warns?
 
-Mimi
+Other than that, please send a version with ABI entries  so that
+we can move forward with this.
 
+/Jarkko
