@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB52C432C3
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 01:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0F1C433E6
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 01:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C65A12343B
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 01:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94B152343F
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 01:57:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbhANBUO (ORCPT
+        id S1727861AbhANB5O (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Jan 2021 20:20:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36404 "EHLO
+        Wed, 13 Jan 2021 20:57:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726787AbhANBT7 (ORCPT
+        with ESMTP id S1729551AbhAMXpH (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Jan 2021 20:19:59 -0500
+        Wed, 13 Jan 2021 18:45:07 -0500
 Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CE7C061794;
-        Wed, 13 Jan 2021 15:26:36 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B3F9C0617BD;
+        Wed, 13 Jan 2021 15:19:05 -0800 (PST)
 Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C996A1280507;
-        Wed, 13 Jan 2021 15:26:35 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 564A31280123;
+        Wed, 13 Jan 2021 15:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1610580395;
+        d=hansenpartnership.com; s=20151216; t=1610579943;
         bh=A4tTySHUmA3iIsjYOH6q0S4Z4LhKvBiJ468wy5vYyrc=;
         h=From:To:Subject:Date:Message-Id:From;
-        b=k9Fs24PjJWtAWePoGdSqxs+J0LWvSD/J5qdUhFX0oQKbpzo3Hz6AcBL+j8n2/xUks
-         vQWU98m/qNSEzKR2ifS4ZUaoHxJgdVe1jWQPcONM46tX9CPxOGlMrC37fsMvrBPpac
-         vdFiSvr+EhlaBucQc/7YSKcjAzdQUqeGe9EeCKZI=
+        b=b9ZdiLtI2UT0d78+wdZvzmWXDRcWqwxBUiEIfgk7vlufGI0MBlKsEvZPkD9OrvDr5
+         hKg4kUjJ37In7LW3ZhX1dLtt/Y4G/8nXLQVGMDWMNO+Jx9rAukKUX1mGPTdIgEV3+n
+         XvaHBBeV7oU070zNOo1OVayKRubR3rd5B9rmKIzU=
 Received: from bedivere.hansenpartnership.com ([127.0.0.1])
         by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id XXUN0Q7HCIYO; Wed, 13 Jan 2021 15:26:35 -0800 (PST)
+        with ESMTP id 2iJsp8V7DlS6; Wed, 13 Jan 2021 15:19:03 -0800 (PST)
 Received: from jarvis.int.hansenpartnership.com (jarvis.ext.hansenpartnership.com [153.66.160.226])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6BEFC12804FC;
-        Wed, 13 Jan 2021 15:26:35 -0800 (PST)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id EECC01280116;
+        Wed, 13 Jan 2021 15:19:02 -0800 (PST)
 From:   James Bottomley <James.Bottomley@HansenPartnership.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko@kernel.org>, linux-api@vger.kernel.org
 Subject: [PATCH v5 0/2] add sysfs exports for TPM 2 PCR registers
-Date:   Wed, 13 Jan 2021 15:26:32 -0800
-Message-Id: <20210113232634.23242-1-James.Bottomley@HansenPartnership.com>
+Date:   Wed, 13 Jan 2021 15:18:58 -0800
+Message-Id: <20210113231900.22883-1-James.Bottomley@HansenPartnership.com>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
