@@ -2,130 +2,144 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4ACC4332B
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 15:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DF8C433E9
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 16:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61B1A23B06
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 15:21:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A654723B40
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 16:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbhANPVZ (ORCPT
+        id S1726241AbhANQXc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Jan 2021 10:21:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729307AbhANPVY (ORCPT
+        Thu, 14 Jan 2021 11:23:32 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:33376 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbhANQXb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Jan 2021 10:21:24 -0500
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5798C0613CF
-        for <linux-integrity@vger.kernel.org>; Thu, 14 Jan 2021 07:19:57 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGnz24C0JzMr6dr;
-        Thu, 14 Jan 2021 16:19:10 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGnz21z4Szlh8TH;
-        Thu, 14 Jan 2021 16:19:10 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v3 05/10] certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
-Date:   Thu, 14 Jan 2021 16:19:04 +0100
-Message-Id: <20210114151909.2344974-6-mic@digikod.net>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210114151909.2344974-1-mic@digikod.net>
-References: <20210114151909.2344974-1-mic@digikod.net>
+        Thu, 14 Jan 2021 11:23:31 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id E852C20B6C40;
+        Thu, 14 Jan 2021 08:22:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E852C20B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1610641370;
+        bh=8KBsWFA0uQdPJalWO9bcjGILs5uqsg5GOYsPyXUXKMI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mTtI4JG+13FKeFJaS+lUZgtByd4Xfm/FOqBumNKjFfHRu+xm/LtQDQ/NM3rSc1xMG
+         IzpVB4HFbMfxv4HO1I61xiAJ70t9o2xTpczjlXT52C8R3cEw0o8bLbsJsQEkRJxNOp
+         8bWdTMDbEOSZXv1FxLuSKLURovAmUj7+izH48Dpw=
+Subject: Re: [PATCH v10 8/8] selinux: include a consumer of the new IMA
+ critical data hook
+To:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
+ <20210108040708.8389-9-tusharsu@linux.microsoft.com>
+ <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
+ <97328fc71687a0e1c327f6821548be9ba35bb193.camel@linux.ibm.com>
+ <CAHC9VhTzaQ_q8gJ0oeok_yJ54XLETNvOuhhKnyRwgqsqvpBLCw@mail.gmail.com>
+ <71cddb6c8676ccd63c89364d805cfca76d32cb6e.camel@linux.ibm.com>
+ <CAHC9VhRhYWEcK7TepZ=LK1m=9Zn_gtOZyAYfamP-TFU3rRH+zw@mail.gmail.com>
+ <e29a618645b0e73ec06960a02b6da465614689ff.camel@linux.ibm.com>
+ <CAHC9VhTHqwKem=MyQBY4TNAq-DOVhwEZS8pjrSE=4OxdEVm-GA@mail.gmail.com>
+ <3746bc7673df25354411151442a7772b867be396.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <fc80b1a1-ff4d-3bf2-59bd-2cb56135bf0f@linux.microsoft.com>
+Date:   Thu, 14 Jan 2021 08:22:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3746bc7673df25354411151442a7772b867be396.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On 1/13/21 6:49 PM, Mimi Zohar wrote:
 
-Align with the new macros and add appropriate include files.
+Hi Mimi,
 
-Cc: David Woodhouse <dwmw2@infradead.org>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+>>>>>>>> I remain concerned about the possibility of bypassing a measurement by
+>>>>>>>> tampering with the time, but I appear to be the only one who is
+>>>>>>>> worried about this so I'm not going to block this patch on those
+>>>>>>>> grounds.
+>>>>>>>>
+>>>>>>>> Acked-by: Paul Moore <paul@paul-moore.com>
+>>>>>>>
+>>>>>>> Thanks, Paul.
+>>>>>>>
+>>>>>>> Including any unique string would cause the buffer hash to change,
+>>>>>>> forcing a new measurement.  Perhaps they were concerned with
+>>>>>>> overflowing a counter.
+>>>>>>
+>>>>>> My understanding is that Lakshmi wanted to force a new measurement
+>>>>>> each time and felt using a timestamp would be the best way to do that.
+>>>>>> A counter, even if it wraps, would have a different value each time
+>>>>>> whereas a timestamp is vulnerable to time adjustments.  While a
+>>>>>> properly controlled and audited system could be configured and
+>>>>>> monitored to detect such an event (I *think*), why rely on that if it
+>>>>>> isn't necessary?
+>>>>>
+>>>>> Why are you saying that even if the counter wraps a new measurement is
+>>>>> guaranteed.   I agree with the rest of what you said.
+>>>>
+>>>> I was assuming that the IMA code simply compares the passed
+>>>> "policy_event_name" value to the previous value, if they are different
+>>>> a new measurement is taken, if they are the same the measurement
+>>>> request is ignored.  If this is the case the counter value is only
+>>>> important in as much as that it is different from the previous value,
+>>>> even simply toggling a single bit back and forth would suffice in this
+>>>> case.  IMA doesn't keep a record of every previous "policy_event_name"
+>>>> value does it?  Am I misunderstanding how
+>>>> ima_measure_critical_data(...) works?
+>>>
+>>> Originally, there was quite a bit of discussion as to how much or how
+>>> little should be measured for a number of reasons.  One reason is that
+>>> the TPM is relatively slow.  Another reason is to limit the size of the
+>>> measurement list.  For this reason, duplicate hashes aren't added to
+>>> the measurement list or extended into the TPM.
+>>>
+>>> When a dentry is removed from cache, its also removed from IMA's iint
+>>> cache.  A subsequent file read would result in adding the measurement
+>>> and extending the TPM again.  ima_lookup_digest_entry() is called to
+>>> prevent adding the duplicate entry.
+>>>
+>>> Lakshmi is trying to address the situation where an event changes a
+>>> value, but then is restored to the original value.  The original and
+>>> subsequent events are measured, but restoring to the original value
+>>> isn't re-measured.  This isn't any different than when a file is
+>>> modified and then reverted.
+>>>
+>>> Instead of changing the name like this, which doesn't work for files,
+>>> allowing duplicate measurements should be generic, based on policy.
+>>
+>> Perhaps it is just the end of the day and I'm a bit tired, but I just
+>> read all of the above and I have no idea what your current thoughts
+>> are regarding this patch.
+> 
+> Other than appending the timestamp, which is a hack, the patch is fine.
+> Support for re-measuring an event can be upstreamed independently.
+> 
 
-Changes since v2:
-* Cherry-pick v1 patch from
-  https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
-  to rebase on v5.11-rc3.
----
- certs/blacklist.c      | 4 ++--
- certs/system_keyring.c | 5 +++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+Thanks for clarifying the details related to duplicate measurement 
+detection and re-measuring.
 
-diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 029471947838..bffe4c6f4a9e 100644
---- a/certs/blacklist.c
-+++ b/certs/blacklist.c
-@@ -14,6 +14,7 @@
- #include <linux/ctype.h>
- #include <linux/err.h>
- #include <linux/seq_file.h>
-+#include <linux/uidgid.h>
- #include <keys/system_keyring.h>
- #include "blacklist.h"
- 
-@@ -156,8 +157,7 @@ static int __init blacklist_init(void)
- 
- 	blacklist_keyring =
- 		keyring_alloc(".blacklist",
--			      KUIDT_INIT(0), KGIDT_INIT(0),
--			      current_cred(),
-+			      GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, current_cred(),
- 			      (KEY_POS_ALL & ~KEY_POS_SETATTR) |
- 			      KEY_USR_VIEW | KEY_USR_READ |
- 			      KEY_USR_SEARCH,
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 798291177186..4b693da488f1 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -11,6 +11,7 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-+#include <linux/uidgid.h>
- #include <linux/verification.h>
- #include <keys/asymmetric-type.h>
- #include <keys/system_keyring.h>
-@@ -98,7 +99,7 @@ static __init int system_trusted_keyring_init(void)
- 
- 	builtin_trusted_keys =
- 		keyring_alloc(".builtin_trusted_keys",
--			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
-+			      GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, current_cred(),
- 			      ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
- 			      KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH),
- 			      KEY_ALLOC_NOT_IN_QUOTA,
-@@ -109,7 +110,7 @@ static __init int system_trusted_keyring_init(void)
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
- 	secondary_trusted_keys =
- 		keyring_alloc(".secondary_trusted_keys",
--			      KUIDT_INIT(0), KGIDT_INIT(0), current_cred(),
-+			      GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, current_cred(),
- 			      ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
- 			       KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH |
- 			       KEY_USR_WRITE),
--- 
-2.30.0
+I will keep the timestamp for the time being, even though its a hack, as 
+it helps with re-measuring state changes in SELinux. We will add support 
+for "policy driven" re-measurement as a subsequent patch series.
 
+thanks,
+  -lakshmi
