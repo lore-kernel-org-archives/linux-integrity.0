@@ -2,171 +2,182 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4306C433DB
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 08:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D81C4332B
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 15:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 722E0239EC
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 08:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B571023B03
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jan 2021 15:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727275AbhANIAX (ORCPT
+        id S1729520AbhANPUD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Jan 2021 03:00:23 -0500
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:57493 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727374AbhANIAW (ORCPT
+        Thu, 14 Jan 2021 10:20:03 -0500
+Received: from smtp-190a.mail.infomaniak.ch ([185.125.25.10]:56643 "EHLO
+        smtp-190a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729514AbhANPUB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Jan 2021 03:00:22 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.west.internal (Postfix) with ESMTP id 74652134E;
-        Thu, 14 Jan 2021 02:59:35 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 14 Jan 2021 02:59:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=yvYpFGO9MesyeqnSwFBmc3vHur3
-        55sBthcHVnzFujXs=; b=UfePJs0eheOLSmd5xKMtscaPFoPwO3soCz47oYNjLXl
-        71CGRQcThu/YdZgDlbUh5Wt7fqNkAONOSFV0XQkq9f94CEqZ8KFqPmMiEHrp9TXE
-        5l1n9kD2XXV5EoqcKLMojhk64FvecngmOVv2MMAXy3pz+obSXaRNUylQm5fmSxPG
-        YzDJm9Yb3oeQ72V9bAhXUw14OCO5NQDMdZ+BUDIHPc5JTn0mvieu02uOx0M1yVec
-        tzOxjo5pUcyRoEJFSSFYa6WiG6GZUQ6pJ/PuKImtxo+/DQII1AR4Pfic/vqsXgBr
-        M0JWHoYiKg54XimQAyX5T5RxsblicxHe7h39P2eFkiQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=yvYpFG
-        O9MesyeqnSwFBmc3vHur355sBthcHVnzFujXs=; b=b0DzXf79QV02B981kHGL27
-        t61bRrCD8rIkah/HR+mgFrMAfUKUOUBrCW5VrX1CYirL91FHTDY1XyMY5vhlhX4m
-        ABRBEr0yWOfdqVZ0WtFsFFbSEO/x85S8DviLpMXaE7PzBxi6DxyCc/cdwMiynQlH
-        sHFTz7hME7anvVP+dWKvqCHlHZzSSGX9YJfzkdrceup3Dp69MEJAwwmRcVp5htvj
-        f7MbcgEPPdGI/MJN1pPRx7thi9tmsEk/IshyyMTYC5jdu5i7LBNoQFKjxXFoRlDh
-        jMDPM12vTJndx6O/QV8lxexD0B+zhz4xVxs1DP50K01c0pj0bvDmiPBEWNS/GFpA
-        ==
-X-ME-Sender: <xms:5vn_X6jQsp1ymrE0683eFtxgmu9iWSOoBdE4gBhzuulzxQmAYoPlkg>
-    <xme:5vn_X7Djbx-P3TPDh3tTLi4aMT51mouxr-05mJDVxjvA5fXyxDz2SW8xZgQW4v1cn
-    rwH1kKT3ln_PQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedukedrtdeggdduudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucfkphepkeef
-    rdekiedrjeegrdeigeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:5vn_XyFq1GZzIDHLTColKMJ2PwhOa7to0_mpVgVw1B0rjaRqedBzLw>
-    <xmx:5vn_XzRCGlnTIp2qndWB0SajGzUOwhNd2FXLisvgL6Is92p30TwdWg>
-    <xmx:5vn_X3ys3ONFF5xSaKoQH0npThWVKICCDObL4e2_cu2pjmL_b1dtvg>
-    <xmx:5_n_Xy9NSh3wTmRxDUrNTUe26TvvK9CN83d14VIiO8RTnSCpqyBWKw>
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5BF0324005A;
-        Thu, 14 Jan 2021 02:59:34 -0500 (EST)
-Date:   Thu, 14 Jan 2021 08:59:32 +0100
-From:   Greg KH <greg@kroah.com>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] tpm: add sysfs exports for all banks of PCR
- registers
-Message-ID: <X//55I26mxVQKKOE@kroah.com>
-References: <20210113232634.23242-1-James.Bottomley@HansenPartnership.com>
- <20210113232634.23242-2-James.Bottomley@HansenPartnership.com>
+        Thu, 14 Jan 2021 10:20:01 -0500
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGnz64fzFzMq7M9;
+        Thu, 14 Jan 2021 16:19:14 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGnz62Jx7zlppyl;
+        Thu, 14 Jan 2021 16:19:14 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v3 08/10] certs: Check that builtin blacklist hashes are valid
+Date:   Thu, 14 Jan 2021 16:19:07 +0100
+Message-Id: <20210114151909.2344974-9-mic@digikod.net>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210114151909.2344974-1-mic@digikod.net>
+References: <20210114151909.2344974-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210113232634.23242-2-James.Bottomley@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jan 13, 2021 at 03:26:33PM -0800, James Bottomley wrote:
-> Create sysfs per hash groups with 24 PCR files in them one group,
-> named pcr-<hash>, for each agile hash of the TPM.  The files are
-> plugged in to a PCR read function which is TPM version agnostic, so
-> this works also for TPM 1.2 but the hash is only sha1 in that case.
-> 
-> Note: the macros used to create the hashes emit spurious checkpatch
-> warnings.  Do not try to "fix" them as checkpatch recommends, otherwise
-> they'll break.
-> 
-> Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> Tested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> 
-> ---
-> 
-> v2: fix TPM 1.2 legacy links failure
-> v3: fix warn on and add note to tpm_algorithms
-> v4: reword commit and add tested-by
-> v5: algorithm spelling fix WARN->dev_err
-> ---
->  drivers/char/tpm/tpm-sysfs.c | 179 +++++++++++++++++++++++++++++++++++
->  include/linux/tpm.h          |   9 +-
->  2 files changed, 187 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-> index e2ff0b273a0f..63f03cfb8e6a 100644
-> --- a/drivers/char/tpm/tpm-sysfs.c
-> +++ b/drivers/char/tpm/tpm-sysfs.c
-> @@ -337,11 +337,190 @@ static const struct attribute_group tpm2_dev_group = {
->  	.attrs = tpm2_dev_attrs,
->  };
->  
-> +struct tpm_pcr_attr {
-> +	int alg_id;
-> +	int pcr;
-> +	struct device_attribute attr;
-> +};
-> +
-> +#define to_tpm_pcr_attr(a) container_of(a, struct tpm_pcr_attr, attr)
-> +
-> +static ssize_t pcr_value_show(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      char *buf)
-> +{
-> +	struct tpm_pcr_attr *ha = to_tpm_pcr_attr(attr);
-> +	struct tpm_chip *chip = to_tpm_chip(dev);
-> +	struct tpm_digest digest;
-> +	int i;
-> +	int digest_size = 0;
-> +	int rc;
-> +	char *str = buf;
-> +
-> +	for (i = 0; i < chip->nr_allocated_banks; i++)
-> +		if (ha->alg_id == chip->allocated_banks[i].alg_id)
-> +			digest_size = chip->allocated_banks[i].digest_size;
-> +	/* should never happen */
-> +	if (!digest_size)
-> +		return -EINVAL;
-> +
-> +	digest.alg_id = ha->alg_id;
-> +	rc = tpm_pcr_read(chip, ha->pcr, &digest);
-> +	if (rc)
-> +		return rc;
-> +	for (i = 0; i < digest_size; i++)
-> +		str += sprintf(str, "%02X", digest.digest[i]);
-> +	str += sprintf(str, "\n");
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Please use sysfs_emit() and sysfs_emit_at() for new sysfs files.
+Add and use a check-blacklist-hashes.awk script to make sure that the
+builtin blacklist hashes will be approved by the run time blacklist
+description checks.  This is useful to debug invalid hash formats, and
+it make sure that previous hashes which could have been loaded in the
+kernel (but ignored) are now noticed and deal with by the user.
 
-> +/* ignore checkpatch warning about trailing ; in macro. */
-> +#define PCR_ATTR(_alg, _hash, _pcr)				   \
-> +	static struct tpm_pcr_attr dev_attr_pcr_##_hash##_##_pcr = {	\
-> +		.alg_id = _alg,					   \
-> +		.pcr = _pcr,					   \
-> +		.attr = {					   \
-> +			.attr = {				   \
-> +				.name = __stringify(_pcr),	   \
-> +				.mode = 0444			   \
-> +			},					   \
-> +			.show = pcr_value_show			   \
+Cc: David Howells <dhowells@redhat.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
 
-Can you use __ATTR_RO()?  "open" coding the sysfs mode is frowned apon
-these days.
+Changes since v2:
+* Add Jarkko's Acked-by.
 
-thanks,
+Changes since v1:
+* Prefix script path with $(scrtree)/ (suggested by David Howells).
+* Fix hexadecimal number check.
+---
+ MAINTAINERS                        |  1 +
+ certs/.gitignore                   |  1 +
+ certs/Makefile                     | 15 +++++++++++-
+ scripts/check-blacklist-hashes.awk | 37 ++++++++++++++++++++++++++++++
+ 4 files changed, 53 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/check-blacklist-hashes.awk
 
-greg k-h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cc1e6a5ee6e6..bda31ccbfad0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4120,6 +4120,7 @@ L:	keyrings@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/admin-guide/module-signing.rst
+ F:	certs/
++F:	scripts/check-blacklist-hashes.awk
+ F:	scripts/extract-cert.c
+ F:	scripts/sign-file.c
+ 
+diff --git a/certs/.gitignore b/certs/.gitignore
+index 2a2483990686..42cc2ac24b93 100644
+--- a/certs/.gitignore
++++ b/certs/.gitignore
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++blacklist_hashes_checked
+ x509_certificate_list
+diff --git a/certs/Makefile b/certs/Makefile
+index f4c25b67aad9..eb45407ff282 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -6,7 +6,20 @@
+ obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o
+ ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
++
++quiet_cmd_check_blacklist_hashes = CHECK   $(patsubst "%",%,$(2))
++      cmd_check_blacklist_hashes = $(AWK) -f $(srctree)/scripts/check-blacklist-hashes.awk $(2); touch $@
++
++$(eval $(call config_filename,SYSTEM_BLACKLIST_HASH_LIST))
++
++$(obj)/blacklist_hashes.o: $(obj)/blacklist_hashes_checked
++
++targets += blacklist_hashes_checked
++$(obj)/blacklist_hashes_checked: $(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(SYSTEM_BLACKLIST_HASH_LIST_FILENAME) scripts/check-blacklist-hashes.awk FORCE
++	$(call if_changed,check_blacklist_hashes,$(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(CONFIG_SYSTEM_BLACKLIST_HASH_LIST))
++
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_hashes.o
++
+ else
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_nohashes.o
+ endif
+@@ -29,7 +42,7 @@ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREF
+ 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
+ endif # CONFIG_SYSTEM_TRUSTED_KEYRING
+ 
+-clean-files := x509_certificate_list .x509.list
++clean-files := x509_certificate_list .x509.list blacklist_hashes_checked
+ 
+ ifeq ($(CONFIG_MODULE_SIG),y)
+ ###############################################################################
+diff --git a/scripts/check-blacklist-hashes.awk b/scripts/check-blacklist-hashes.awk
+new file mode 100755
+index 000000000000..107c1d3204d4
+--- /dev/null
++++ b/scripts/check-blacklist-hashes.awk
+@@ -0,0 +1,37 @@
++#!/usr/bin/awk -f
++# SPDX-License-Identifier: GPL-2.0
++#
++# Copyright © 2020, Microsoft Corporation. All rights reserved.
++#
++# Author: Mickaël Salaün <mic@linux.microsoft.com>
++#
++# Check that a CONFIG_SYSTEM_BLACKLIST_HASH_LIST file contains a valid array of
++# hash strings.  Such string must start with a prefix ("tbs" or "bin"), then a
++# colon (":"), and finally an even number of hexadecimal lowercase characters
++# (up to 128).
++
++BEGIN {
++	RS = ","
++}
++{
++	if (!match($0, "^[ \t\n\r]*\"([^\"]*)\"[ \t\n\r]*$", part1)) {
++		print "Not a string (item " NR "):", $0;
++		exit 1;
++	}
++	if (!match(part1[1], "^(tbs|bin):(.*)$", part2)) {
++		print "Unknown prefix (item " NR "):", part1[1];
++		exit 1;
++	}
++	if (!match(part2[2], "^([0-9a-f]+)$", part3)) {
++		print "Not a lowercase hexadecimal string (item " NR "):", part2[2];
++		exit 1;
++	}
++	if (length(part3[1]) > 128) {
++		print "Hash string too long (item " NR "):", part3[1];
++		exit 1;
++	}
++	if (length(part3[1]) % 2 == 1) {
++		print "Not an even number of hexadecimal characters (item " NR "):", part3[1];
++		exit 1;
++	}
++}
+-- 
+2.30.0
+
