@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16ADAC4361A
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3515CC433E0
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0AA2206D4
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06BC5206D4
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:32:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387406AbhAORbF (ORCPT
+        id S1732257AbhAORbq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Jan 2021 12:31:05 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:56356 "EHLO
+        Fri, 15 Jan 2021 12:31:46 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:56856 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbhAORbE (ORCPT
+        with ESMTP id S1729353AbhAORbp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:31:04 -0500
+        Fri, 15 Jan 2021 12:31:45 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2DABC20B6C40;
-        Fri, 15 Jan 2021 09:30:23 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2DABC20B6C40
+        by linux.microsoft.com (Postfix) with ESMTPSA id 687B420B6C48;
+        Fri, 15 Jan 2021 09:30:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 687B420B6C48
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610731823;
-        bh=wqW3xwsp9Cq77lvYiiXd1zv1yJERqbx7C93NSrMrSUg=;
+        s=default; t=1610731830;
+        bh=axPbEa6PnZm+iW25Zsi9IlEECBFRe6hBfmO2Ulu9IEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g1gOrpmHFl0EmbB7Z+7bReFZHAYoWUSHhH5VJVISvG+ioeDmuA6FMPsPkMQ1KC65j
-         xn5cOFvQfpH1gC+5g2Gw0z2qUMu+Fj2P3AQRBFBIvU/UDwvfAeGIVK6ZXLVHxxzu76
-         exzT3gxLy4ioHZNgjfAkX49zWoMcKvkuBZvPOzVw=
+        b=Jf5B9mbOV5Z9FseEFixwYoYT/sNPZ5VkfqSOIKX7Wxxb9AhFYZty+z0EHderu5hsO
+         Q0FbrBbSam7UfegH2wIKa7xQINuS9tmb0xkcOkg9PB81roGo2LGW+AA3EgUIL3fqq2
+         0nNAIysgt1rH6iOnFkvlf9vgxHXlYh1eXm2WkQ5E=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -47,9 +47,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v15 01/10] powerpc: Rename kexec elfcorehdr_addr to elf_headers_mem
-Date:   Fri, 15 Jan 2021 09:30:08 -0800
-Message-Id: <20210115173017.30617-2-nramas@linux.microsoft.com>
+Subject: [PATCH v15 09/10] arm64: Call kmalloc() to allocate DTB buffer
+Date:   Fri, 15 Jan 2021 09:30:16 -0800
+Message-Id: <20210115173017.30617-10-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210115173017.30617-1-nramas@linux.microsoft.com>
 References: <20210115173017.30617-1-nramas@linux.microsoft.com>
@@ -59,82 +59,66 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+create_dtb() function allocates kernel virtual memory for
+the device tree blob (DTB).  This is not consistent with other
+architectures, such as powerpc, which calls kmalloc() for allocating
+memory for the DTB.
 
-The architecture specific field, elfcorehdr_addr in struct kimage_arch,
-that holds the address of the buffer in memory for ELF core header for
-powerpc has a different name than the one used for arm64.  This makes
-it hard to have a common code for setting up the device tree for
-kexec system call.
+Call kmalloc() to allocate memory for the DTB, and kfree() to free
+the allocated memory.
 
-Rename elfcorehdr_addr to elf_headers_mem to align with arm64 name so
-common code can use it.
-
-Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- arch/powerpc/include/asm/kexec.h  | 2 +-
- arch/powerpc/kexec/file_load.c    | 4 ++--
- arch/powerpc/kexec/file_load_64.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/arm64/kernel/machine_kexec_file.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-index 55d6ede30c19..dbf09d2f36d0 100644
---- a/arch/powerpc/include/asm/kexec.h
-+++ b/arch/powerpc/include/asm/kexec.h
-@@ -108,7 +108,7 @@ struct kimage_arch {
- 	unsigned long backup_start;
- 	void *backup_buf;
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index 7de9c47dee7c..51c40143d6fa 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -29,7 +29,7 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
  
--	unsigned long elfcorehdr_addr;
-+	unsigned long elf_headers_mem;
- 	unsigned long elf_headers_sz;
- 	void *elf_headers;
+ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+ {
+-	vfree(image->arch.dtb);
++	kfree(image->arch.dtb);
+ 	image->arch.dtb = NULL;
  
-diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
-index 9a232bc36c8f..e452b11df631 100644
---- a/arch/powerpc/kexec/file_load.c
-+++ b/arch/powerpc/kexec/file_load.c
-@@ -45,7 +45,7 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
- 		return NULL;
+ 	vfree(image->arch.elf_headers);
+@@ -59,19 +59,21 @@ static int create_dtb(struct kimage *image,
+ 			+ cmdline_len + DTB_EXTRA_SPACE;
  
- 	elfcorehdr_strlen = sprintf(cmdline_ptr, "elfcorehdr=0x%lx ",
--				    image->arch.elfcorehdr_addr);
-+				    image->arch.elf_headers_mem);
+ 	for (;;) {
+-		buf = vmalloc(buf_size);
++		buf = kmalloc(buf_size, GFP_KERNEL);
+ 		if (!buf)
+ 			return -ENOMEM;
  
- 	if (elfcorehdr_strlen + cmdline_len > COMMAND_LINE_SIZE) {
- 		pr_err("Appending elfcorehdr=<addr> exceeds cmdline size\n");
-@@ -263,7 +263,7 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
- 		 * Avoid elfcorehdr from being stomped on in kdump kernel by
- 		 * setting up memory reserve map.
- 		 */
--		ret = fdt_add_mem_rsv(fdt, image->arch.elfcorehdr_addr,
-+		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
- 				      image->arch.elf_headers_sz);
+ 		/* duplicate a device tree blob */
+ 		ret = fdt_open_into(initial_boot_params, buf, buf_size);
+-		if (ret)
++		if (ret) {
++			kfree(buf);
+ 			return -EINVAL;
++		}
+ 
+ 		ret = of_kexec_setup_new_fdt(image, buf, initrd_load_addr,
+ 					     initrd_len, cmdline);
  		if (ret) {
- 			pr_err("Error reserving elfcorehdr memory: %s\n",
-diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
-index c69bcf9b547a..a05c19b3cc60 100644
---- a/arch/powerpc/kexec/file_load_64.c
-+++ b/arch/powerpc/kexec/file_load_64.c
-@@ -815,7 +815,7 @@ static int load_elfcorehdr_segment(struct kimage *image, struct kexec_buf *kbuf)
- 		goto out;
- 	}
- 
--	image->arch.elfcorehdr_addr = kbuf->mem;
-+	image->arch.elf_headers_mem = kbuf->mem;
- 	image->arch.elf_headers_sz = headers_sz;
- 	image->arch.elf_headers = headers;
- out:
-@@ -851,7 +851,7 @@ int load_crashdump_segments_ppc64(struct kimage *image,
- 		return ret;
- 	}
- 	pr_debug("Loaded elf core header at 0x%lx, bufsz=0x%lx memsz=0x%lx\n",
--		 image->arch.elfcorehdr_addr, kbuf->bufsz, kbuf->memsz);
-+		 image->arch.elf_headers_mem, kbuf->bufsz, kbuf->memsz);
- 
+-			vfree(buf);
++			kfree(buf);
+ 			if (ret == -ENOMEM) {
+ 				/* unlikely, but just in case */
+ 				buf_size += DTB_EXTRA_SPACE;
+@@ -217,6 +219,6 @@ int load_other_segments(struct kimage *image,
  	return 0;
+ 
+ out_err:
+-	vfree(dtb);
++	kfree(dtb);
+ 	return ret;
  }
 -- 
 2.30.0
