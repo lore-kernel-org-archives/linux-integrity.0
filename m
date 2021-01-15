@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11355C43333
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0ABC43332
 	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D112C206D4
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 162252339E
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387493AbhAORbH (ORCPT
+        id S2387452AbhAORbY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Jan 2021 12:31:07 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:56516 "EHLO
+        Fri, 15 Jan 2021 12:31:24 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:56414 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387452AbhAORbH (ORCPT
+        with ESMTP id S1731681AbhAORbF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:31:07 -0500
+        Fri, 15 Jan 2021 12:31:05 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5E52B20B6C43;
-        Fri, 15 Jan 2021 09:30:25 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5E52B20B6C43
+        by linux.microsoft.com (Postfix) with ESMTPSA id DA1AD20B6C41;
+        Fri, 15 Jan 2021 09:30:23 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DA1AD20B6C41
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610731826;
-        bh=Sd8T0e6P8u+loATpNeokWfqgEz2Z/zfdEmJ6vGkoVO0=;
+        s=default; t=1610731824;
+        bh=vHAhvsShRVjSLrHeSo091qWT3DwfOXcWjAOEMnwLTT8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ktUyR6WfaUt3tm6L1bWQ7aEaN75ohK6Vy3cFhF9qh2P/nDpZ1cqHHI6Chl5xnxb+0
-         J6n53fRktOiFEmPUfaMCBCKHBprjN5TyV3uEod1uTgFWZ4QPY2VcSqtzGs49ikj/Z8
-         XFxb1OIMj9HZMEp8zMm2Tvr8kr5Pwysb7cGvuq18=
+        b=RYbxmXcuX6wGNCSt3mFVuciSRdcY+OmofsaEKPgX0Q921NbQAbPkckJsFZ6SH5GRK
+         nLIiROJDC/v+lXVhsf12WGKFuIBAQdEmV0BgOjimQoJhnYt98knfjdoYbD35UyJQdy
+         PdQuzolUXRxRyWl7ByIrTIkOa0iqsE2clgAxNcdQ=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -47,9 +47,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v15 04/10] powerpc: Use common of_kexec_setup_new_fdt()
-Date:   Fri, 15 Jan 2021 09:30:11 -0800
-Message-Id: <20210115173017.30617-5-nramas@linux.microsoft.com>
+Subject: [PATCH v15 02/10] of: Add a common kexec FDT setup function
+Date:   Fri, 15 Jan 2021 09:30:09 -0800
+Message-Id: <20210115173017.30617-3-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210115173017.30617-1-nramas@linux.microsoft.com>
 References: <20210115173017.30617-1-nramas@linux.microsoft.com>
@@ -61,170 +61,305 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Rob Herring <robh@kernel.org>
 
-The code for setting up the /chosen node in the device tree
-and updating the memory reservation for the next kernel has been
-moved to of_kexec_setup_new_fdt() defined in "drivers/of/kexec.c".
+Both arm64 and powerpc do essentially the same FDT /chosen setup for
+kexec.  The differences are either omissions that arm64 should have
+or additional properties that will be ignored.  The setup code can be
+combined and shared by both powerpc and arm64.
 
-Use the common of_kexec_setup_new_fdt() to setup the device tree
-and update the memory reservation for kexec for powerpc.
+The differences relative to the arm64 version:
+ - If /chosen doesn't exist, it will be created (should never happen).
+ - Any old dtb and initrd reserved memory will be released.
+ - The new initrd and elfcorehdr are marked reserved.
+ - "linux,booted-from-kexec" is set.
+
+The differences relative to the powerpc version:
+ - "kaslr-seed" and "rng-seed" may be set.
+ - "linux,elfcorehdr" is set.
+ - Any existing "linux,usable-memory-range" is removed.
+
+Combine the code for setting up the /chosen node in the FDT and updating
+the memory reservation for kexec, for powerpc and arm64, in
+of_kexec_setup_new_fdt() and move it to "drivers/of/kexec.c".
 
 Signed-off-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- arch/powerpc/kexec/file_load.c | 125 ++-------------------------------
- 1 file changed, 6 insertions(+), 119 deletions(-)
+ drivers/of/Makefile |   1 +
+ drivers/of/kexec.c  | 236 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/of.h  |   5 +
+ 3 files changed, 242 insertions(+)
+ create mode 100644 drivers/of/kexec.c
 
-diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
-index e452b11df631..956bcb2d1ec2 100644
---- a/arch/powerpc/kexec/file_load.c
-+++ b/arch/powerpc/kexec/file_load.c
-@@ -16,6 +16,7 @@
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index 6e1e5212f058..8ce11955afde 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -13,5 +13,6 @@ obj-$(CONFIG_OF_RESERVED_MEM) += of_reserved_mem.o
+ obj-$(CONFIG_OF_RESOLVE)  += resolver.o
+ obj-$(CONFIG_OF_OVERLAY) += overlay.o
+ obj-$(CONFIG_OF_NUMA) += of_numa.o
++obj-$(CONFIG_KEXEC_FILE) += kexec.o
  
- #include <linux/slab.h>
- #include <linux/kexec.h>
+ obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+new file mode 100644
+index 000000000000..4afd3cc1c04a
+--- /dev/null
++++ b/drivers/of/kexec.c
+@@ -0,0 +1,236 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2020 Arm Limited
++ *
++ * Based on arch/arm64/kernel/machine_kexec_file.c:
++ *  Copyright (C) 2018 Linaro Limited
++ *
++ * And arch/powerpc/kexec/file_load.c:
++ *  Copyright (C) 2016  IBM Corporation
++ */
++
++#include <linux/kernel.h>
++#include <linux/kexec.h>
++#include <linux/libfdt.h>
 +#include <linux/of.h>
- #include <linux/of_fdt.h>
- #include <linux/libfdt.h>
- #include <asm/setup.h>
-@@ -156,132 +157,18 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
- 		  unsigned long initrd_load_addr, unsigned long initrd_len,
- 		  const char *cmdline)
- {
--	int ret, chosen_node;
--	const void *prop;
--
--	/* Remove memory reservation for the current device tree. */
--	ret = delete_fdt_mem_rsv(fdt, __pa(initial_boot_params),
--				 fdt_totalsize(initial_boot_params));
--	if (ret == 0)
--		pr_debug("Removed old device tree reservation.\n");
--	else if (ret != -ENOENT)
--		return ret;
--
--	chosen_node = fdt_path_offset(fdt, "/chosen");
--	if (chosen_node == -FDT_ERR_NOTFOUND) {
--		chosen_node = fdt_add_subnode(fdt, fdt_path_offset(fdt, "/"),
--					      "chosen");
--		if (chosen_node < 0) {
--			pr_err("Error creating /chosen.\n");
--			return -EINVAL;
--		}
--	} else if (chosen_node < 0) {
--		pr_err("Malformed device tree: error reading /chosen.\n");
--		return -EINVAL;
--	}
--
--	/* Did we boot using an initrd? */
--	prop = fdt_getprop(fdt, chosen_node, "linux,initrd-start", NULL);
--	if (prop) {
--		uint64_t tmp_start, tmp_end, tmp_size;
--
--		tmp_start = fdt64_to_cpu(*((const fdt64_t *) prop));
--
--		prop = fdt_getprop(fdt, chosen_node, "linux,initrd-end", NULL);
--		if (!prop) {
--			pr_err("Malformed device tree.\n");
--			return -EINVAL;
--		}
--		tmp_end = fdt64_to_cpu(*((const fdt64_t *) prop));
--
--		/*
--		 * kexec reserves exact initrd size, while firmware may
--		 * reserve a multiple of PAGE_SIZE, so check for both.
--		 */
--		tmp_size = tmp_end - tmp_start;
--		ret = delete_fdt_mem_rsv(fdt, tmp_start, tmp_size);
--		if (ret == -ENOENT)
--			ret = delete_fdt_mem_rsv(fdt, tmp_start,
--						 round_up(tmp_size, PAGE_SIZE));
--		if (ret == 0)
--			pr_debug("Removed old initrd reservation.\n");
--		else if (ret != -ENOENT)
--			return ret;
--
--		/* If there's no new initrd, delete the old initrd's info. */
--		if (initrd_len == 0) {
--			ret = fdt_delprop(fdt, chosen_node,
--					  "linux,initrd-start");
--			if (ret) {
--				pr_err("Error deleting linux,initrd-start.\n");
--				return -EINVAL;
--			}
--
--			ret = fdt_delprop(fdt, chosen_node, "linux,initrd-end");
--			if (ret) {
--				pr_err("Error deleting linux,initrd-end.\n");
--				return -EINVAL;
--			}
--		}
--	}
--
--	if (initrd_len) {
--		ret = fdt_setprop_u64(fdt, chosen_node,
--				      "linux,initrd-start",
--				      initrd_load_addr);
--		if (ret < 0)
--			goto err;
--
--		/* initrd-end is the first address after the initrd image. */
--		ret = fdt_setprop_u64(fdt, chosen_node, "linux,initrd-end",
--				      initrd_load_addr + initrd_len);
--		if (ret < 0)
--			goto err;
--
--		ret = fdt_add_mem_rsv(fdt, initrd_load_addr, initrd_len);
--		if (ret) {
--			pr_err("Error reserving initrd memory: %s\n",
--			       fdt_strerror(ret));
--			return -EINVAL;
--		}
--	}
--
--	if (cmdline != NULL) {
--		ret = fdt_setprop_string(fdt, chosen_node, "bootargs", cmdline);
--		if (ret < 0)
--			goto err;
--	} else {
--		ret = fdt_delprop(fdt, chosen_node, "bootargs");
--		if (ret && ret != -FDT_ERR_NOTFOUND) {
--			pr_err("Error deleting bootargs.\n");
--			return -EINVAL;
--		}
--	}
-+	int ret;
- 
--	if (image->type == KEXEC_TYPE_CRASH) {
--		/*
--		 * Avoid elfcorehdr from being stomped on in kdump kernel by
--		 * setting up memory reserve map.
--		 */
--		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
--				      image->arch.elf_headers_sz);
--		if (ret) {
--			pr_err("Error reserving elfcorehdr memory: %s\n",
--			       fdt_strerror(ret));
--			goto err;
--		}
--	}
-+	ret = of_kexec_setup_new_fdt(image, fdt, initrd_load_addr, initrd_len, cmdline);
++#include <linux/of_fdt.h>
++#include <linux/random.h>
++#include <linux/types.h>
++
++/* relevant device tree properties */
++#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
++#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
++#define FDT_PROP_INITRD_START	"linux,initrd-start"
++#define FDT_PROP_INITRD_END	"linux,initrd-end"
++#define FDT_PROP_BOOTARGS	"bootargs"
++#define FDT_PROP_KASLR_SEED	"kaslr-seed"
++#define FDT_PROP_RNG_SEED	"rng-seed"
++#define RNG_SEED_SIZE		128
++
++/**
++ * fdt_find_and_del_mem_rsv - delete memory reservation with given address and size
++ *
++ * @fdt:	Flattened device tree for the current kernel.
++ * @start:	Starting address of the reserved memory.
++ * @size:	Size of the reserved memory.
++ *
++ * Return: 0 on success, or negative errno on error.
++ */
++static int fdt_find_and_del_mem_rsv(void *fdt, unsigned long start, unsigned long size)
++{
++	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
++
++	for (i = 0; i < num_rsvs; i++) {
++		u64 rsv_start, rsv_size;
++
++		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
++		if (ret) {
++			pr_err("Malformed device tree.\n");
++			return -EINVAL;
++		}
++
++		if (rsv_start == start && rsv_size == size) {
++			ret = fdt_del_mem_rsv(fdt, i);
++			if (ret) {
++				pr_err("Error deleting device tree reservation.\n");
++				return -EINVAL;
++			}
++
++			return 0;
++		}
++	}
++
++	return -ENOENT;
++}
++
++/*
++ * of_kexec_setup_new_fdt - modify /chosen and memory reservation for the next kernel
++ *
++ * @image:		kexec image being loaded.
++ * @fdt:		Flattened device tree for the next kernel.
++ * @initrd_load_addr:	Address where the next initrd will be loaded.
++ * @initrd_len:		Size of the next initrd, or 0 if there will be none.
++ * @cmdline:		Command line for the next kernel, or NULL if there will
++ *			be none.
++ *
++ * Return: 0 on success, or negative errno on error.
++ */
++int of_kexec_setup_new_fdt(const struct kimage *image, void *fdt,
++			   unsigned long initrd_load_addr, unsigned long initrd_len,
++			   const char *cmdline)
++{
++	int ret, chosen_node;
++	const void *prop;
++
++	/* Remove memory reservation for the current device tree. */
++	ret = fdt_find_and_del_mem_rsv(fdt, __pa(initial_boot_params),
++				       fdt_totalsize(initial_boot_params));
++	if (ret == -EINVAL)
++		return ret;
++
++	chosen_node = fdt_path_offset(fdt, "/chosen");
++	if (chosen_node == -FDT_ERR_NOTFOUND)
++		chosen_node = fdt_add_subnode(fdt, fdt_path_offset(fdt, "/"),
++					      "chosen");
++	if (chosen_node < 0) {
++		ret = chosen_node;
++		goto out;
++	}
++
++	ret = fdt_delprop(fdt, chosen_node, FDT_PROP_KEXEC_ELFHDR);
++	if (ret && ret != -FDT_ERR_NOTFOUND)
++		goto out;
++	ret = fdt_delprop(fdt, chosen_node, FDT_PROP_MEM_RANGE);
++	if (ret && ret != -FDT_ERR_NOTFOUND)
++		goto out;
++
++	/* Did we boot using an initrd? */
++	prop = fdt_getprop(fdt, chosen_node, "linux,initrd-start", NULL);
++	if (prop) {
++		u64 tmp_start, tmp_end, tmp_size;
++
++		tmp_start = fdt64_to_cpu(*((const fdt64_t *) prop));
++
++		prop = fdt_getprop(fdt, chosen_node, "linux,initrd-end", NULL);
++		if (!prop)
++			return -EINVAL;
++
++		tmp_end = fdt64_to_cpu(*((const fdt64_t *) prop));
++
++		/*
++		 * kexec reserves exact initrd size, while firmware may
++		 * reserve a multiple of PAGE_SIZE, so check for both.
++		 */
++		tmp_size = tmp_end - tmp_start;
++		ret = fdt_find_and_del_mem_rsv(fdt, tmp_start, tmp_size);
++		if (ret == -ENOENT)
++			ret = fdt_find_and_del_mem_rsv(fdt, tmp_start,
++						       round_up(tmp_size, PAGE_SIZE));
++		if (ret == -EINVAL)
++			return ret;
++	}
++
++	/* add initrd-* */
++	if (initrd_load_addr) {
++		ret = fdt_setprop_u64(fdt, chosen_node, FDT_PROP_INITRD_START,
++				      initrd_load_addr);
++		if (ret)
++			goto out;
++
++		ret = fdt_setprop_u64(fdt, chosen_node, FDT_PROP_INITRD_END,
++				      initrd_load_addr + initrd_len);
++		if (ret)
++			goto out;
++
++		ret = fdt_add_mem_rsv(fdt, initrd_load_addr, initrd_len);
++		if (ret)
++			goto out;
++
++	} else {
++		ret = fdt_delprop(fdt, chosen_node, FDT_PROP_INITRD_START);
++		if (ret && (ret != -FDT_ERR_NOTFOUND))
++			goto out;
++
++		ret = fdt_delprop(fdt, chosen_node, FDT_PROP_INITRD_END);
++		if (ret && (ret != -FDT_ERR_NOTFOUND))
++			goto out;
++	}
++
++	if (image->type == KEXEC_TYPE_CRASH) {
++		/* add linux,elfcorehdr */
++		ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
++				FDT_PROP_KEXEC_ELFHDR,
++				image->arch.elf_headers_mem,
++				image->arch.elf_headers_sz);
++		if (ret)
++			goto out;
++
++		/*
++		 * Avoid elfcorehdr from being stomped on in kdump kernel by
++		 * setting up memory reserve map.
++		 */
++		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
++				      image->arch.elf_headers_sz);
++		if (ret)
++			goto out;
++
++		/* add linux,usable-memory-range */
++		ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
++				FDT_PROP_MEM_RANGE,
++				crashk_res.start,
++				crashk_res.end - crashk_res.start + 1);
++		if (ret)
++			goto out;
++	}
++
++	/* add bootargs */
++	if (cmdline) {
++		ret = fdt_setprop_string(fdt, chosen_node, FDT_PROP_BOOTARGS, cmdline);
++		if (ret)
++			goto out;
++	} else {
++		ret = fdt_delprop(fdt, chosen_node, FDT_PROP_BOOTARGS);
++		if (ret && (ret != -FDT_ERR_NOTFOUND))
++			goto out;
++	}
++
++	/* add kaslr-seed */
++	ret = fdt_delprop(fdt, chosen_node, FDT_PROP_KASLR_SEED);
++	if (ret == -FDT_ERR_NOTFOUND)
++		ret = 0;
++	else if (ret)
++		goto out;
++
++	if (rng_is_initialized()) {
++		u64 seed = get_random_u64();
++
++		ret = fdt_setprop_u64(fdt, chosen_node, FDT_PROP_KASLR_SEED, seed);
++		if (ret)
++			goto out;
++	} else {
++		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
++				FDT_PROP_KASLR_SEED);
++	}
++
++	/* add rng-seed */
++	if (rng_is_initialized()) {
++		void *rng_seed;
++
++		ret = fdt_setprop_placeholder(fdt, chosen_node, FDT_PROP_RNG_SEED,
++				RNG_SEED_SIZE, &rng_seed);
++		if (ret)
++			goto out;
++		get_random_bytes(rng_seed, RNG_SEED_SIZE);
++	} else {
++		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
++				FDT_PROP_RNG_SEED);
++	}
++
++	ret = fdt_setprop(fdt, chosen_node, "linux,booted-from-kexec", NULL, 0);
++
++out:
 +	if (ret)
-+		goto err;
++		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
++
++	return 0;
++}
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 5d51891cbf1a..3375f5295875 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -558,6 +558,11 @@ int of_map_id(struct device_node *np, u32 id,
+ 	       const char *map_name, const char *map_mask_name,
+ 	       struct device_node **target, u32 *id_out);
  
--	ret = setup_ima_buffer(image, fdt, chosen_node);
-+	ret = setup_ima_buffer(image, fdt, fdt_path_offset(fdt, "/chosen"));
- 	if (ret) {
- 		pr_err("Error setting up the new device tree.\n");
- 		return ret;
- 	}
++struct kimage;
++int of_kexec_setup_new_fdt(const struct kimage *image, void *fdt,
++			   unsigned long initrd_load_addr, unsigned long initrd_len,
++			   const char *cmdline);
++
+ #else /* CONFIG_OF */
  
--	ret = fdt_setprop(fdt, chosen_node, "linux,booted-from-kexec", NULL, 0);
--	if (ret)
--		goto err;
--
- 	return 0;
- 
- err:
+ static inline void of_core_init(void)
 -- 
 2.30.0
 
