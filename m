@@ -2,110 +2,233 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFD5C433E9
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A96CC433E6
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48A4723A9D
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79D9212CC
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:31:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbhAOR1k (ORCPT
+        id S2387474AbhAORbG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Jan 2021 12:27:40 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:55854 "EHLO
+        Fri, 15 Jan 2021 12:31:06 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:56474 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725818AbhAOR1k (ORCPT
+        with ESMTP id S2387437AbhAORbG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:27:40 -0500
-Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C7DDE20B7192;
-        Fri, 15 Jan 2021 09:26:58 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C7DDE20B7192
+        Fri, 15 Jan 2021 12:31:06 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9F6AB20B6C42;
+        Fri, 15 Jan 2021 09:30:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9F6AB20B6C42
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610731619;
-        bh=+VJnsF4kFMO6bAfGl4TRzpeiil80GFM1LYOrc/fFgg4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GcDkztX85xILiONq+dpyAyykK0sFFW73ywn6s2xpmwl+hgv6cCI5ts1pRJpXdOIUf
-         WJ8NdCyON6431Nmj0nJTdrsP53FIjNu/ynst/WTe54A0goPkQX95QdQJZKN3f1ulUi
-         djxo3L4EWQJu9LE92YwHmOGZg1RKdfNDumLiUWvc=
-Subject: Re: [PATCH v10 0/8] IMA: support for measuring kernel integrity
- critical data
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
- <5189c15054885863b1b5cb86a43bec09725d8650.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <e3deb1a0-a624-f85f-e2d2-3206fa609b64@linux.microsoft.com>
-Date:   Fri, 15 Jan 2021 09:26:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        s=default; t=1610731825;
+        bh=FhFWnPpy8oJRWrlyKtV01t+Pe1D+TI7yAFiQUcEq6mQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GrUv7lORJ1gtGJEJgjriY5jLabqIy33UBEI81NtEzKqFfVB6W57zyqA7lL+NvFRMd
+         k3mDNwq3Ju0lSE1Ja4j9FqvCsQT3YH5JGADXuwFVqgig0XxagH/vnftjkhT+N2GLn3
+         563gUin8PJDOCpQWngVrXtqZOYsdCsXIESpM9BD0=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v15 03/10] arm64: Use common of_kexec_setup_new_fdt()
+Date:   Fri, 15 Jan 2021 09:30:10 -0800
+Message-Id: <20210115173017.30617-4-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210115173017.30617-1-nramas@linux.microsoft.com>
+References: <20210115173017.30617-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <5189c15054885863b1b5cb86a43bec09725d8650.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+From: Rob Herring <robh@kernel.org>
 
+The code for setting up the /chosen node in the device tree
+and updating the memory reservation for the next kernel has been
+moved to of_kexec_setup_new_fdt() defined in "drivers/of/kexec.c".
 
-On 2021-01-15 4:54 a.m., Mimi Zohar wrote:
-> On Thu, 2021-01-07 at 20:07 -0800, Tushar Sugandhi wrote:
->> IMA measures files and buffer data such as keys, command-line arguments
->> passed to the kernel on kexec system call, etc.  While these measurements
->> are necessary for monitoring and validating the integrity of the system,
->> they are not sufficient.  Various data structures, policies, and states
->> stored in kernel memory also impact the integrity of the system.
->> Several kernel subsystems contain such integrity critical data -
->> e.g.  LSMs like SELinux, AppArmor etc.  or device-mapper targets like
->> dm-crypt, dm-verity, dm-integrity etc.  These kernel subsystems help
->> protect the integrity of a system.  Their integrity critical data is not
->> expected to change frequently during run-time.  Some of these structures
->> cannot be defined as __ro_after_init, because they are initialized later.
->>
->> For a given system, various external services/infrastructure tools
->> (including the attestation service) interact with it - both during the
->> setup and during rest of the system run-time.  They share sensitive data
->> and/or execute critical workload on that system.  The external services
->> may want to verify the current run-time state of the relevant kernel
->> subsystems before fully trusting the system with business critical
->> data/workload.  For instance, verifying that SELinux is in "enforce" mode
->> along with the expected policy, disks are encrypted with a certain
->> configuration, secure boot is enabled etc.
->>
->> This series provides the necessary IMA functionality for kernel
->> subsystems to ensure their configuration can be measured:
->>    - by kernel subsystems themselves,
->>    - in a tamper resistant way,
->>    - and re-measured - triggered on state/configuration change.
->>
->> This patch set:
->>    - defines a new IMA hook ima_measure_critical_data() to measure
->>      integrity critical data,
->>    - limits the critical data being measured based on a label,
->>    - defines a builtin critical data measurement policy,
->>    - and includes an SELinux consumer of the new IMA critical data hook.
-> 
-> Thanks Tushar, Lakshmi.  This patch set is queued in the next-
-> integrity-testing branch.
-> 
-> Mimi
-> 
-Hello Mimi, Paul, Stephen, Tyler,
-Thanks a lot for reviewing this series and providing all the valuable 
-feedback over the last few months.
+Use the common of_kexec_setup_new_fdt() to setup the device tree
+and update the memory reservation for kexec for arm64.
 
-We really really appreciate it.
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Acked-by: Will Deacon <will@kernel.org>
+---
+ arch/arm64/kernel/machine_kexec_file.c | 123 +------------------------
+ 1 file changed, 3 insertions(+), 120 deletions(-)
 
-Thanks,
-Tushar
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index 5b0e67b93cdc..7de9c47dee7c 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -15,23 +15,12 @@
+ #include <linux/kexec.h>
+ #include <linux/libfdt.h>
+ #include <linux/memblock.h>
++#include <linux/of.h>
+ #include <linux/of_fdt.h>
+-#include <linux/random.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
+ #include <linux/vmalloc.h>
+-#include <asm/byteorder.h>
+-
+-/* relevant device tree properties */
+-#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
+-#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
+-#define FDT_PROP_INITRD_START	"linux,initrd-start"
+-#define FDT_PROP_INITRD_END	"linux,initrd-end"
+-#define FDT_PROP_BOOTARGS	"bootargs"
+-#define FDT_PROP_KASLR_SEED	"kaslr-seed"
+-#define FDT_PROP_RNG_SEED	"rng-seed"
+-#define RNG_SEED_SIZE		128
+ 
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
+ 	&kexec_image_ops,
+@@ -50,112 +39,6 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+ 	return kexec_image_post_load_cleanup_default(image);
+ }
+ 
+-static int setup_dtb(struct kimage *image,
+-		     unsigned long initrd_load_addr, unsigned long initrd_len,
+-		     char *cmdline, void *dtb)
+-{
+-	int off, ret;
+-
+-	ret = fdt_path_offset(dtb, "/chosen");
+-	if (ret < 0)
+-		goto out;
+-
+-	off = ret;
+-
+-	ret = fdt_delprop(dtb, off, FDT_PROP_KEXEC_ELFHDR);
+-	if (ret && ret != -FDT_ERR_NOTFOUND)
+-		goto out;
+-	ret = fdt_delprop(dtb, off, FDT_PROP_MEM_RANGE);
+-	if (ret && ret != -FDT_ERR_NOTFOUND)
+-		goto out;
+-
+-	if (image->type == KEXEC_TYPE_CRASH) {
+-		/* add linux,elfcorehdr */
+-		ret = fdt_appendprop_addrrange(dtb, 0, off,
+-				FDT_PROP_KEXEC_ELFHDR,
+-				image->arch.elf_headers_mem,
+-				image->arch.elf_headers_sz);
+-		if (ret)
+-			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
+-
+-		/* add linux,usable-memory-range */
+-		ret = fdt_appendprop_addrrange(dtb, 0, off,
+-				FDT_PROP_MEM_RANGE,
+-				crashk_res.start,
+-				crashk_res.end - crashk_res.start + 1);
+-		if (ret)
+-			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
+-	}
+-
+-	/* add bootargs */
+-	if (cmdline) {
+-		ret = fdt_setprop_string(dtb, off, FDT_PROP_BOOTARGS, cmdline);
+-		if (ret)
+-			goto out;
+-	} else {
+-		ret = fdt_delprop(dtb, off, FDT_PROP_BOOTARGS);
+-		if (ret && (ret != -FDT_ERR_NOTFOUND))
+-			goto out;
+-	}
+-
+-	/* add initrd-* */
+-	if (initrd_load_addr) {
+-		ret = fdt_setprop_u64(dtb, off, FDT_PROP_INITRD_START,
+-				      initrd_load_addr);
+-		if (ret)
+-			goto out;
+-
+-		ret = fdt_setprop_u64(dtb, off, FDT_PROP_INITRD_END,
+-				      initrd_load_addr + initrd_len);
+-		if (ret)
+-			goto out;
+-	} else {
+-		ret = fdt_delprop(dtb, off, FDT_PROP_INITRD_START);
+-		if (ret && (ret != -FDT_ERR_NOTFOUND))
+-			goto out;
+-
+-		ret = fdt_delprop(dtb, off, FDT_PROP_INITRD_END);
+-		if (ret && (ret != -FDT_ERR_NOTFOUND))
+-			goto out;
+-	}
+-
+-	/* add kaslr-seed */
+-	ret = fdt_delprop(dtb, off, FDT_PROP_KASLR_SEED);
+-	if (ret == -FDT_ERR_NOTFOUND)
+-		ret = 0;
+-	else if (ret)
+-		goto out;
+-
+-	if (rng_is_initialized()) {
+-		u64 seed = get_random_u64();
+-		ret = fdt_setprop_u64(dtb, off, FDT_PROP_KASLR_SEED, seed);
+-		if (ret)
+-			goto out;
+-	} else {
+-		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
+-				FDT_PROP_KASLR_SEED);
+-	}
+-
+-	/* add rng-seed */
+-	if (rng_is_initialized()) {
+-		void *rng_seed;
+-		ret = fdt_setprop_placeholder(dtb, off, FDT_PROP_RNG_SEED,
+-				RNG_SEED_SIZE, &rng_seed);
+-		if (ret)
+-			goto out;
+-		get_random_bytes(rng_seed, RNG_SEED_SIZE);
+-	} else {
+-		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
+-				FDT_PROP_RNG_SEED);
+-	}
+-
+-out:
+-	if (ret)
+-		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
+-
+-	return 0;
+-}
+-
+ /*
+  * More space needed so that we can add initrd, bootargs, kaslr-seed,
+  * rng-seed, userable-memory-range and elfcorehdr.
+@@ -185,8 +68,8 @@ static int create_dtb(struct kimage *image,
+ 		if (ret)
+ 			return -EINVAL;
+ 
+-		ret = setup_dtb(image, initrd_load_addr, initrd_len,
+-				cmdline, buf);
++		ret = of_kexec_setup_new_fdt(image, buf, initrd_load_addr,
++					     initrd_len, cmdline);
+ 		if (ret) {
+ 			vfree(buf);
+ 			if (ret == -ENOMEM) {
+-- 
+2.30.0
+
