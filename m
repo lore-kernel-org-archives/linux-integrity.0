@@ -2,164 +2,118 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C49D9C43381
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:32:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C232C43381
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 909C42339E
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:32:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6439E23A5E
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Jan 2021 17:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387774AbhAORcD (ORCPT
+        id S1726151AbhAORxM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Jan 2021 12:32:03 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:56876 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732557AbhAORbq (ORCPT
+        Fri, 15 Jan 2021 12:53:12 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33202 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726402AbhAORxL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:31:46 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id F3A7720B6C46;
-        Fri, 15 Jan 2021 09:30:27 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F3A7720B6C46
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610731828;
-        bh=mxartZ0ayF3HrpCzJgjwsHpT/jq4bw00N6tRsCIOmXw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lMRs4lTfaPXobfqCsuOTlkr/T8ZcHETFR/6qSfFBGCXbT2Fe4XAQHVRqJ1YMYGN/N
-         VTAeVoSOzFbQmbi+enwJFqg6BeF2QROyuAiGCvnz4YCNlXbzQnw4ERnEu2Jx797yaH
-         ZSxkruBY+jCyVv3HaDMt81MOOXWPNb3n7O8BFlWo=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
-        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
-        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au
-Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
-        paulus@samba.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
-        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
-        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v15 07/10] kexec: Use fdt_appendprop_addrrange() to add ima buffer to FDT
-Date:   Fri, 15 Jan 2021 09:30:14 -0800
-Message-Id: <20210115173017.30617-8-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210115173017.30617-1-nramas@linux.microsoft.com>
-References: <20210115173017.30617-1-nramas@linux.microsoft.com>
+        Fri, 15 Jan 2021 12:53:11 -0500
+Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 10FHpKnV022119
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 15 Jan 2021 12:51:21 -0500
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 3494715C399F; Fri, 15 Jan 2021 12:51:20 -0500 (EST)
+Date:   Fri, 15 Jan 2021 12:51:20 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        St?phane Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v5 00/42] idmapped mounts
+Message-ID: <YAHWGMb9rTehRsRz@mit.edu>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+ <20210114171241.GA1164240@magnolia>
+ <20210114204334.GK331610@dread.disaster.area>
+ <20210115162423.GB2179337@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210115162423.GB2179337@infradead.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-fdt_appendprop_addrrange() function adds a property, with the given name,
-to the device tree at the given node offset, and also sets the address
-and size of the property.  This function should be used to add
-"linux,ima-kexec-buffer" property to the device tree and set the address
-and size of the IMA measurement buffer, instead of using custom function.
+On Fri, Jan 15, 2021 at 04:24:23PM +0000, Christoph Hellwig wrote:
+> 
+> That is what the capabilities are designed for and we already check
+> for them.
 
-Use fdt_appendprop_addrrange() to add  "linux,ima-kexec-buffer" property
-to the device tree.  This property holds the address and size of
-the IMA measurement buffer that needs to be passed from the current
-kernel to the next kernel across kexec system call.
+So perhaps I'm confused, but my understanding is that in the
+containers world, capabilities are a lot more complicated.  There is:
 
-Remove custom code that is used in setup_ima_buffer() to add
-"linux,ima-kexec-buffer" property to the device tree.
+1) The initial namespace capability set
 
-Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- drivers/of/kexec.c | 57 ++++------------------------------------------
- 1 file changed, 5 insertions(+), 52 deletions(-)
+2) The container's user-namespace capability set
 
-diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-index 450fa6128001..49183da2fc34 100644
---- a/drivers/of/kexec.c
-+++ b/drivers/of/kexec.c
-@@ -210,36 +210,6 @@ int ima_free_kexec_buffer(void)
- }
- 
- #ifdef CONFIG_IMA_KEXEC
--/**
-- * write_number - Convert number to big-endian format
-- *
-- * @p:		Buffer to write the number to
-- * @value:	Number to convert
-- * @cells:	Number of cells
-- *
-- * Return: 0 on success, or negative errno on error.
-- */
--static int write_number(void *p, u64 value, int cells)
--{
--	if (cells == 1) {
--		u32 tmp;
--
--		if (value > U32_MAX)
--			return -EINVAL;
--
--		tmp = cpu_to_be32(value);
--		memcpy(p, &tmp, sizeof(tmp));
--	} else if (cells == 2) {
--		u64 tmp;
--
--		tmp = cpu_to_be64(value);
--		memcpy(p, &tmp, sizeof(tmp));
--	} else
--		return -EINVAL;
--
--	return 0;
--}
--
- /**
-  * setup_ima_buffer - add IMA buffer information to the fdt
-  * @image:		kexec image being loaded.
-@@ -251,32 +221,15 @@ static int write_number(void *p, u64 value, int cells)
- static int setup_ima_buffer(const struct kimage *image, void *fdt,
- 			    int chosen_node)
- {
--	int ret, addr_cells, size_cells, entry_size;
--	u8 value[16];
-+	int ret;
- 
- 	if (!image->arch.ima_buffer_size)
- 		return 0;
- 
--	ret = get_addr_size_cells(&addr_cells, &size_cells);
--	if (ret)
--		return ret;
--
--	entry_size = 4 * (addr_cells + size_cells);
--
--	if (entry_size > sizeof(value))
--		return -EINVAL;
--
--	ret = write_number(value, image->arch.ima_buffer_addr, addr_cells);
--	if (ret)
--		return ret;
--
--	ret = write_number(value + 4 * addr_cells, image->arch.ima_buffer_size,
--			   size_cells);
--	if (ret)
--		return ret;
--
--	ret = fdt_setprop(fdt, chosen_node, "linux,ima-kexec-buffer", value,
--			  entry_size);
-+	ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
-+				       "linux,ima-kexec-buffer",
-+				       image->arch.ima_buffer_addr,
-+				       image->arch.ima_buffer_size);
- 	if (ret < 0)
- 		return -EINVAL;
- 
--- 
-2.30.0
+3) The namespace in which the file system is mounted --- which is
+      "usually, but not necessarily the initial namespace" and
+      presumably could potentially not necessarily be the current
+      container's user name space, is namespaces can be hierarchically
+      arranged.
 
+Is that correct?  If so, how does this patch set change things (if
+any), and and how does this interact with quota administration
+operations?
+
+On a related note, ext4 specifies a "reserved user" or "reserved
+group" which can access the reserved blocks.  If we have a file system
+which is mounted in a namespace running a container which is running
+RHEL or SLES, and in that container, we have a file system mounted (so
+it was not mounted in the initial namespace), with id-mapping --- and
+then there is a further sub-container created with its own user
+sub-namespace further mapping uids/gids --- will the right thing
+happen?  For that matter, how *is* the "right thing" defined?
+
+Sorry if this is a potentially stupid question, but I find user
+namespaces and id and capability mapping to be hopefully confusing for
+my tiny brain.  :-)
+
+						- Ted
