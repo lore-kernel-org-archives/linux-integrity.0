@@ -2,91 +2,179 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4BFC4332B
-	for <linux-integrity@archiver.kernel.org>; Sat, 16 Jan 2021 01:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A028C433E0
+	for <linux-integrity@archiver.kernel.org>; Sun, 17 Jan 2021 13:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41D0923A52
-	for <linux-integrity@archiver.kernel.org>; Sat, 16 Jan 2021 01:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E55C7224B8
+	for <linux-integrity@archiver.kernel.org>; Sun, 17 Jan 2021 13:26:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbhAPBZd (ORCPT
+        id S1728131AbhAQN0D (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Jan 2021 20:25:33 -0500
-Received: from mout.gmx.net ([212.227.15.15]:54637 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726103AbhAPBZQ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Jan 2021 20:25:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1610760218;
-        bh=RllRKwXuRdY908zIMhQCzfTVTvy1FyJcMAFll2CdYOg=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AfxmsLSqk+D3vpEqQj6urhp9UzC9A7+oSUlL0DuCy7Kz3cnUFuYw3tJNIKZidgCaE
-         w5vsL5zS4RftUWZav9AftqnZH/L8Sk1lsc9A8xkOzAcuItLsRtXCF2dh87erBnsx//
-         zKiYRrx8pm49HlTqQ1f2j8fb8viR9x93ApUaJE5w=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from Venus.fritz.box ([78.42.220.31]) by mail.gmx.com (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MYNJg-1lUomW0udW-00VQqZ; Sat, 16
- Jan 2021 02:23:38 +0100
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org
-Cc:     jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
+        Sun, 17 Jan 2021 08:26:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17386 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727480AbhAQN0C (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 17 Jan 2021 08:26:02 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10HD4MVu086084;
+        Sun, 17 Jan 2021 08:24:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=woqyHjUD+Wk6Ib5O7OUBZ1HHzA3VJ6QiDNMM6trQ8E0=;
+ b=tgEQN74HAtITOc3FbpINU+z+YxVXlSnqUggB0OwiPIKC9wCM6Mwp8cjbeNRwU2YHin0i
+ 4yOXlNUvogquWbyZn2U6sxLPttaeVp6rIZPvwRlTEZdPX5hSm+e3IEruuLJOZf8a4mwC
+ XJeuMZRVm0jBM5QDd7NjtdyO7TFbeZeiAC7a68GDMZ/qYljPz/GZoMAKtZnrH8B54erX
+ 8Ri5qdkVUJs/Q8XSucKsT1eq6GEOClJSZJCFwk+edGKwc20Zo32ekfBKhIbQ9sQYF0Nu
+ Zyq0xPV23CVtscYAvB9zJ1qtrv2Ao4dO4aMOX7TWRIjGeyIXbSjv34hF1+qeCP8nwgp9 UQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 364k16b0d9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 17 Jan 2021 08:24:07 -0500
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10HDKrL2160007;
+        Sun, 17 Jan 2021 08:24:06 -0500
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 364k16b0cu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 17 Jan 2021 08:24:06 -0500
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10HDJ04G021917;
+        Sun, 17 Jan 2021 13:24:04 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma03fra.de.ibm.com with ESMTP id 363qs88kdn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 17 Jan 2021 13:24:04 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10HDO1hV26804688
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 17 Jan 2021 13:24:01 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0B7B42041;
+        Sun, 17 Jan 2021 13:24:01 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C64FF4203F;
+        Sun, 17 Jan 2021 13:23:54 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.41.68])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun, 17 Jan 2021 13:23:54 +0000 (GMT)
+Message-ID: <3c920af2da0d2650bc80bf8099bed7c6c549ca5b.camel@linux.ibm.com>
+Subject: Re: [PATCH v15 09/10] arm64: Call kmalloc() to allocate DTB buffer
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, catalin.marinas@arm.com, mpe@ellerman.id.au,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LinoSanfilippo@gmx.de, p.rosenberger@kunbus.com,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: [PATCH 3/4] tpm: in tpm2_del_space check if ops pointer is still valid
-Date:   Sat, 16 Jan 2021 02:22:40 +0100
-Message-Id: <1610760161-21982-4-git-send-email-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1610760161-21982-1-git-send-email-LinoSanfilippo@gmx.de>
-References: <1610760161-21982-1-git-send-email-LinoSanfilippo@gmx.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:ZsvOIgcO2aTxCN/WelIU/Ca2Qcol1VSd4kBnXdZOdTWHNjn6uYr
- zSSpwUL0M0IG4ejhaoCwRoEIJ4QaqqNCJO2smcvfumFxDDvOWVAAnOdbrhdvLWdhFl2MsxI
- NTEq+UmhOJNvzIaZd7h08MObp9EJWoNWNtD6PWQqYhEwfSSY2LSo3LKIEJFjUGDqVM3UlXs
- I4z+mZFeAmVYWdK0Oaupg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:nvY53QdNuuI=:cFt/j42cwoIISNHFTDCWby
- amS0H8TQ+aLUeAd22WD7UdY164r6zopwXJs/pjUWULQ5sGDvEHYnNRljtwoyKKDQF6fxjf3DJ
- To5z90CiuebSnRkHwHs+29rSCaHIDlb3Gk7k3CSO2xn1xIyUbA6dIIdkV3w0Vq5kk1VpAd5Bk
- 3QE2VIkNd4GZ+rx/iUBLXJYuHXhep0l0lTcgf/QTtT0AHlrQZqnWkhzRVHNNHQC0cA9HLaGlB
- jKD3H3ybyMQLGjpXrUi9jFvbDcM09we/7NHT/lvL8uBDe4r5wNaWJIysenjqxX4czkJnPSw5d
- qNGlMR+E6s9730gcORmgAwRkNzRS5WqSineXZJFpc3ykvwL65pjg/WW27n6Oj+Y83GPVAGu5D
- zK0axK2/v2+sON1K/Zs973+/6xxhyR94lS4zdG+Zd+cnpKNA+mRoezjxVLL3aMBLZwKxVK2IC
- QcKEUIqYkU0ozFmrzyu/KdQPE4mtt8X78UdgnTkbPzPHWtZJ5QasjVqXruIxQWbyze2MKV7kC
- iPRT+AbKOF7ZquZ4ADfWruw2VjfrjDzmCeLw1jbYD14LW998KCpe/PqV3/bP5sjhxE0FKts2y
- 6lHJOonDTiAJLjVXVWhi5efJvGYyvIqAXeQrHUrV4/AhrxsPcymkv5Thhis8weRU6UmobDsmK
- JyvXhnvIu3Ch3LgEgffSSqq05B0PbABzJgT6DEdAudC003L1fydlloDxYx3/2+yZNvsY6X4co
- enp34S2ailm0hGNAUOXmYbHwlh7UNGmJXP6pTd8O2qDO7LbU/LXbi85D56wceuBEoHxrJH1Mq
- iiT9rIXSdR97oKH/e6BVmZ5zjtNy9+QL6+b2/B2NxrpTp6fmmD/MEBEnuF0cqA8BWvUPHrnpo
- doK7QOjFZEhOzNpm4LmQ==
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Sun, 17 Jan 2021 08:23:53 -0500
+In-Reply-To: <20210115173017.30617-10-nramas@linux.microsoft.com>
+References: <20210115173017.30617-1-nramas@linux.microsoft.com>
+         <20210115173017.30617-10-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-17_06:2021-01-15,2021-01-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0 adultscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101170082
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkluIHRwbTJf
-ZGVsX3NwYWNlKCkgdGhlIHNlc3Npb25zIGFyZSBmbHVzaGVkIGJ5IG1lYW5zIG9mIHRoZSB0cG1f
-Y2hpcApvcGVyYXRpb25zLiBIb3dldmVyIHRoZSBjb25jZXJuaW5nIG9wZXJhdGlvbnMgcG9pbnRl
-ciBteSBhbHJlYWR5IGJlIE5VTEwgYXQKdGhpcyB0aW1lIGluIGNhc2UgdGhhdCB0aGUgY2hpcCBo
-YXMgYmVlbiB1bnJlZ2lzdGVyZWQgKHNlZQp0cG1fY2hpcF91bnJlZ2lzdGVyKCkgd2hpY2ggY2Fs
-bHMgdHBtX2RlbF9jaGFyX2RldmljZSgpIHdoaWNoIHNldHMKY2hpcC0+b3BzIHRvIE5VTEwpLgpB
-dm9pZCB0aGUgTlVMTCBwb2ludGVyIGFjY2VzcyBieSBmaXJzdCBjYWxsaW5nIHRwbV90cnlfZ2V0
-X29wcygpIHRvIGNoZWNrCmlmIHRoZSBvcGVyYXRpb25zIHBvaW50ZXIgaXMgc3RpbGwgdmFsaWQg
-YW5kIHNraXBwaW5nIHRoZSBzZXNzaW9uIGZsdXNoaW5nCmluIGNhc2Ugb2YgYW4gdW5yZWdpc3Rl
-cmVkIGNoaXAuCgpTaWduZWQtb2ZmLWJ5OiBMaW5vIFNhbmZpbGlwcG8gPGwuc2FuZmlsaXBwb0Br
-dW5idXMuY29tPgotLS0KIGRyaXZlcnMvY2hhci90cG0vdHBtMi1zcGFjZS5jIHwgMiArLQogMSBm
-aWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9jaGFyL3RwbS90cG0yLXNwYWNlLmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3Bh
-Y2UuYwppbmRleCA3ODRiOGIzLi5lYTZlZWU5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2NoYXIvdHBt
-L3RwbTItc3BhY2UuYworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2UuYwpAQCAtNTks
-NyArNTksNyBAQCBpbnQgdHBtMl9pbml0X3NwYWNlKHN0cnVjdCB0cG1fc3BhY2UgKnNwYWNlLCB1
-bnNpZ25lZCBpbnQgYnVmX3NpemUpCiB2b2lkIHRwbTJfZGVsX3NwYWNlKHN0cnVjdCB0cG1fY2hp
-cCAqY2hpcCwgc3RydWN0IHRwbV9zcGFjZSAqc3BhY2UpCiB7CiAJbXV0ZXhfbG9jaygmY2hpcC0+
-dHBtX211dGV4KTsKLQlpZiAoIXRwbV9jaGlwX3N0YXJ0KGNoaXApKSB7CisJaWYgKCF0cG1fdHJ5
-X2dldF9vcHMoY2hpcCkgJiYgIXRwbV9jaGlwX3N0YXJ0KGNoaXApKSB7CiAJCXRwbTJfZmx1c2hf
-c2Vzc2lvbnMoY2hpcCwgc3BhY2UpOwogCQl0cG1fY2hpcF9zdG9wKGNoaXApOwogCX0KLS0gCjIu
-Ny40Cgo=
+Hi Ard,
+
+On Fri, 2021-01-15 at 09:30 -0800, Lakshmi Ramasubramanian wrote:
+> create_dtb() function allocates kernel virtual memory for
+> the device tree blob (DTB).  This is not consistent with other
+> architectures, such as powerpc, which calls kmalloc() for allocating
+> memory for the DTB.
+> 
+> Call kmalloc() to allocate memory for the DTB, and kfree() to free
+> the allocated memory.
+
+The vmalloc() function description says, "vmalloc - allocate virtually
+contiguous memory".  I'd appreciate your reviewing this patch, in
+particular, which replaces vmalloc() with kmalloc().
+
+thanks,
+
+Mimi
+
+> 
+> Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+> Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> ---
+>  arch/arm64/kernel/machine_kexec_file.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> index 7de9c47dee7c..51c40143d6fa 100644
+> --- a/arch/arm64/kernel/machine_kexec_file.c
+> +++ b/arch/arm64/kernel/machine_kexec_file.c
+> @@ -29,7 +29,7 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
+>  
+>  int arch_kimage_file_post_load_cleanup(struct kimage *image)
+>  {
+> -	vfree(image->arch.dtb);
+> +	kfree(image->arch.dtb);
+>  	image->arch.dtb = NULL;
+>  
+>  	vfree(image->arch.elf_headers);
+> @@ -59,19 +59,21 @@ static int create_dtb(struct kimage *image,
+>  			+ cmdline_len + DTB_EXTRA_SPACE;
+>  
+>  	for (;;) {
+> -		buf = vmalloc(buf_size);
+> +		buf = kmalloc(buf_size, GFP_KERNEL);
+>  		if (!buf)
+>  			return -ENOMEM;
+>  
+>  		/* duplicate a device tree blob */
+>  		ret = fdt_open_into(initial_boot_params, buf, buf_size);
+> -		if (ret)
+> +		if (ret) {
+> +			kfree(buf);
+>  			return -EINVAL;
+> +		}
+>  
+>  		ret = of_kexec_setup_new_fdt(image, buf, initrd_load_addr,
+>  					     initrd_len, cmdline);
+>  		if (ret) {
+> -			vfree(buf);
+> +			kfree(buf);
+>  			if (ret == -ENOMEM) {
+>  				/* unlikely, but just in case */
+>  				buf_size += DTB_EXTRA_SPACE;
+> @@ -217,6 +219,6 @@ int load_other_segments(struct kimage *image,
+>  	return 0;
+>  
+>  out_err:
+> -	vfree(dtb);
+> +	kfree(dtb);
+>  	return ret;
+>  }
+
+
