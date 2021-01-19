@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697B3C43603
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Jan 2021 21:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A03F7C433E6
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Jan 2021 22:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38761230FE
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Jan 2021 21:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 743AB23108
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Jan 2021 22:49:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbhASRth (ORCPT
+        id S2405110AbhASO3l (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Jan 2021 12:49:37 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35725 "EHLO
+        Tue, 19 Jan 2021 09:29:41 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:57716 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbhASO6Y (ORCPT
+        with ESMTP id S2391918AbhASLtU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Jan 2021 09:58:24 -0500
+        Tue, 19 Jan 2021 06:49:20 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l1sRR-0006A4-Nk; Tue, 19 Jan 2021 14:57:09 +0000
-Date:   Tue, 19 Jan 2021 15:57:05 +0100
+        id 1l1pQY-0005xg-BD; Tue, 19 Jan 2021 11:44:02 +0000
+Date:   Tue, 19 Jan 2021 12:43:57 +0100
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -61,22 +61,24 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 23/42] open: handle idmapped mounts
-Message-ID: <20210119145705.g2je6ec3lq42fffd@wittgenstein>
+        Christoph Hellwig <hch@lst.de>,
+        Mauricio V??squez Bernal <mauricio@kinvolk.io>
+Subject: Re: [PATCH v5 40/42] fs: introduce MOUNT_ATTR_IDMAP
+Message-ID: <20210119114357.w553czxsnelyph6g@wittgenstein>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-24-christian.brauner@ubuntu.com>
- <20210119093848.GH3364550@infradead.org>
+ <20210112220124.837960-41-christian.brauner@ubuntu.com>
+ <20210119094750.GQ3364550@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210119093848.GH3364550@infradead.org>
+In-Reply-To: <20210119094750.GQ3364550@infradead.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jan 19, 2021 at 09:38:48AM +0000, Christoph Hellwig wrote:
-> I think path_permission() and file_persmission() helpers would reduce
-> the clutter a lot here.
+On Tue, Jan 19, 2021 at 09:47:50AM +0000, Christoph Hellwig wrote:
+> Generally looks good, but wouldn't it make sense to introduce the
+> userns_fd in version 0 of the mount_attr structure instead of having
+> two versions from the start?
 
-Done.
+I agree.
