@@ -2,91 +2,136 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF99C433DB
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Jan 2021 22:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84186C433DB
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Jan 2021 00:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4406623108
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Jan 2021 22:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 395D223108
+	for <linux-integrity@archiver.kernel.org>; Wed, 20 Jan 2021 00:53:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391847AbhASO0N (ORCPT
+        id S1730795AbhATAxz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:26:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732998AbhASJ0l (ORCPT
+        Tue, 19 Jan 2021 19:53:55 -0500
+Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21123 "EHLO
+        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730094AbhATAxx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:26:41 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4B6C061573;
-        Tue, 19 Jan 2021 01:25:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=JaRoOhLk0sz+eJ7frOsF3JOEL4
-        OrLwcqSJGhJK1+3VKT5VcRbES4K1n/O/nDjT5gluROfgehv48KnvNYbdLnDY0ZXwImkTTxtzrjTAV
-        VP8oXDAh98GdKrEqARLsLmCebuUk11OJ3HRNfaxjW+9x5jFqoHHk6T55cP992DD+oDbOyxVaN0J5H
-        Le7qPnn7cV423yhdOArsoI1L0h1zEkt2mgoG/e9YEH+l1j5JicJQWmvHA63bQZyQQCvYpUO1TzyrA
-        vfvpTp5IAUslAFcPunb0k17O4KrthGHZawBjr5oqW5j7C8oMaHTXQltJnnhzLIfTYDjB/6NN3wxkx
-        ORPkz7aw==;
-Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1nGh-00E73z-TK; Tue, 19 Jan 2021 09:25:44 +0000
-Date:   Tue, 19 Jan 2021 09:25:43 +0000
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        St??phane Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 13/42] attr: handle idmapped mounts
-Message-ID: <20210119092543.GE3361757@infradead.org>
-References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-14-christian.brauner@ubuntu.com>
+        Tue, 19 Jan 2021 19:53:53 -0500
+X-Greylist: delayed 1120 seconds by postgrey-1.27 at vger.kernel.org; Tue, 19 Jan 2021 19:53:52 EST
+ARC-Seal: i=1; a=rsa-sha256; t=1611102836; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=bvfuEVpT4XhGIRZ7H3qUEKRtb4ThDEDdXfu0fGNznNoBq6hR3zJmUh1tILm8GWsl8Ncxbw2QP3QKCJ4GG3oQY1SWipvLA6G4ubbe6sep+36uX0KcX2vOvsF3CbK+ouvcFBMTujldMqYtnx8UNPsBWJ817z2Qnxaem7kN1GLaLIU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1611102836; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=Gy6cxAGpQV06imIwuB7h3MwRSZjSFn29L4jucGrojIM=; 
+        b=XQhTC1LH6c79yVxqK8zC2C5CgP2MuAgUhz6d0ZmZ+dBHrUTvn8RfVbISO2NGH+Oe9IP0kiK4OUmFf2nrsyPWpbJyM4+ZNncEB18ELEw6q2VPLXEGEwx5YPHb2OiK/TuG5+k6upE0999/PUUMxVFwNoCTO0xJb7Jwd+WgRK/n0TU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=apertussolutions.com;
+        spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+        dmarc=pass header.from=<dpsmith@apertussolutions.com> header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1611102836;
+        s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        bh=Gy6cxAGpQV06imIwuB7h3MwRSZjSFn29L4jucGrojIM=;
+        b=M18bUZgt44glWZutDwWxXMoUKnlHR3szHDABEv1f06QiOrszMJbrC5eSxYaGjY71
+        N8wIIuJa243I9uWPqrYABy00MzADpYLPbVCBvfKdP9qfllPFibUM97Y3F9/ROsszVSX
+        getsmT810S+BbVsH7VgnSy8+vUtsHKg1nbnvB2AE=
+Received: from [10.10.1.24] (c-73-129-147-140.hsd1.md.comcast.net [73.129.147.140]) by mx.zohomail.com
+        with SMTPS id 1611102834623926.0489869436618; Tue, 19 Jan 2021 16:33:54 -0800 (PST)
+Subject: Re: [PATCH 05/13] x86: Add early TPM1.2/TPM2.0 interface support for
+ Secure Launch
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Ross Philipson <ross.philipson@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, luto@amacapital.net,
+        trenchboot-devel@googlegroups.com
+References: <1600959521-24158-1-git-send-email-ross.philipson@oracle.com>
+ <1600959521-24158-6-git-send-email-ross.philipson@oracle.com>
+ <20200925054313.GB165011@linux.intel.com>
+From:   "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Message-ID: <933d9f3e-a509-bff4-54fe-20af44dc3ed0@apertussolutions.com>
+Date:   Tue, 19 Jan 2021 19:33:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210112220124.837960-14-christian.brauner@ubuntu.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200925054313.GB165011@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Looks good,
+On 9/25/20 1:43 AM, Jarkko Sakkinen wrote:
+> On Thu, Sep 24, 2020 at 10:58:33AM -0400, Ross Philipson wrote:
+>> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+>>
+>> This commit introduces an abstraction for TPM1.2 and TPM2.0 devices
+>> above the TPM hardware interface.
+>>
+>> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+>> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> 
+> This is way, way too PoC. I wonder why there is no RFC tag.
+> 
+> Please also read section 2 of
+> 
+> https://www.kernel.org/doc/html/v5.8/process/submitting-patches.html
+> 
+> You should leverage existing TPM code in a way or another. Refine it so
+> that it scales for your purpose and then compile it into your thing
+> (just include the necesary C-files with relative paths).
+> 
+> How it is now is never going to fly.
+> 
+> /Jarkko
+> 
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+After attempts to engage in finding alternative approaches, it appears
+that the only welcomed approach for sending measurements from the
+compressed kernel would be a major rewrite of the mainline TPM driver to:
+
+1. Abstract out the mainline kernel infrastructure that is used by the
+driver
+
+2. Find ways to introduce a minimal amount of the equivalent
+infrastructure into the compressed kernel, to make the driver code
+reusable within the compressed kernel.
+
+This approach would exceed the scope of changes we want to introduce to
+non-SecureLaunch code to enable direct DRTM launch for the Linux kernel.
+
+After careful consideration and discussions with colleagues from the
+trusted computing community, an alternative has been crafted. We aim to
+submit a version 2 with the following approach:
+
+1. SecureLaunch will take measurements in the compressed kernel as we do
+in version 1, but instead of immediately sending them to the TPM, they
+will be stored in the DRTM TPM event log.
+
+2. When the SecureLaunch module in the mainline kernel comes on line, it
+can send measurements to the TPM using the mainline TPM driver.
+
+While it would be ideal to record measurements at the time they are
+taken, the mainline kernel is measured alongside the compressed kernel
+as a single measurement. This means the same measured entity stays in
+control, prior to execution by any other entity within the system.
+
+At a later date, if the TPM maintainers refactor the TPM driver for
+reuse within the compressed kernel, then the sending of measurements can
+be revisited.
+
+For individuals and distributions that may prefer to record DRTM
+measurements earlier, the TrenchBoot project will do its best to
+maintain an external patch to provide that capability to a mainline LTS
+kernel.
+
+V/r,
+Daniel P. Smith
