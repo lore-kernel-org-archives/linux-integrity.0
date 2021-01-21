@@ -2,169 +2,119 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6554FC433E9
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0F2C433E9
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 17:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA2223A59
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09CD722527
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 17:31:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733029AbhAUQvJ (ORCPT
+        id S2388618AbhAURbJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Jan 2021 11:51:09 -0500
-Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:57787 "EHLO
-        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731359AbhAUP6H (ORCPT
+        Thu, 21 Jan 2021 12:31:09 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:57656 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388593AbhAURat (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jan 2021 10:58:07 -0500
-X-Greylist: delayed 102748 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Jan 2021 10:57:08 EST
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DM6Rh3kCQzMr37d;
-        Thu, 21 Jan 2021 16:55:28 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DM6Rh1G3Pzlpq00;
-        Thu, 21 Jan 2021 16:55:28 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH v4 04/10] certs: Fix blacklist flag type confusion
-Date:   Thu, 21 Jan 2021 16:55:07 +0100
-Message-Id: <20210121155513.539519-5-mic@digikod.net>
+        Thu, 21 Jan 2021 12:30:49 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0502320B6C40;
+        Thu, 21 Jan 2021 09:30:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0502320B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1611250209;
+        bh=n1S4TbdTz/yn+EbNkKnNYjNg0Ij/jNTpwezyFWx+1Wk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eAsCtlFB0Ga2tjsVs2efUQkBP05ADsVa3PFbpGHO6NxCZ9d+aeud6uOEVSBOeM0yy
+         wlgMATBedMKfgED6W2A9Hn2fuFadHgOjsAdLQqdOQsLGx7l4nAUhK7+tSUsXFhyfUV
+         Lqd/AjcKAYmtv/LX0PWPrEw3WUq+ulrfRj7UrN8w=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, sashal@kernel.org,
+        tyhicks@linux.microsoft.com
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 2/2] ima: Free IMA measurement buffer after kexec syscall
+Date:   Thu, 21 Jan 2021 09:30:03 -0800
+Message-Id: <20210121173003.18324-2-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210121155513.539519-1-mic@digikod.net>
-References: <20210121155513.539519-1-mic@digikod.net>
+In-Reply-To: <20210121173003.18324-1-nramas@linux.microsoft.com>
+References: <20210121173003.18324-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+IMA allocates kernel virtual memory to carry forward the measurement
+list, from the current kernel to the next kernel on kexec system call,
+in ima_add_kexec_buffer() function.  This buffer is not freed before
+completing the kexec system call resulting in memory leak.
 
-KEY_FLAG_KEEP is not meant to be passed to keyring_alloc() or
-key_alloc(), as these only take KEY_ALLOC_* flags.  KEY_FLAG_KEEP has
-the same value as KEY_ALLOC_BYPASS_RESTRICTION, but fortunately only
-key_create_or_update() uses it.  LSMs using the key_alloc hook don't
-check that flag.
+Add ima_buffer field in "struct kimage" to store the virtual address
+of the buffer allocated for the IMA measurement list.
+Free the memory allocated for the IMA measurement list in
+kimage_file_post_load_cleanup() function.
 
-KEY_FLAG_KEEP is then ignored but fortunately (again) the root user
-cannot write to the blacklist keyring, so it is not possible to remove a
-key/hash from it.
-
-Fix this by adding a KEY_ALLOC_SET_KEEP flag that tells key_alloc() to
-set KEY_FLAG_KEEP on the new key.  blacklist_init() can then, correctly,
-pass this to keyring_alloc().
-
-ima_mok_init() allocates another blacklist keyring (with different
-properties) dedicated to IMA.  We can also use KEY_ALLOC_SET_KEEP in
-ima_mok_init() rather than setting the flag manually.
-
-Note that this doesn't fix an observable bug with the current
-implementation but it is required to allow addition of new hashes to the
-blacklist in the future without making it possible for them to be
-removed or modified.
-
-Fixes: 734114f8782f ("KEYS: Add a system blacklist keyring")
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Reported-by: Mickaël Salaün <mic@linux.microsoft.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-[mic@linux.microsoft.com: Fix argument bit-ORing in ima_mok_init() and
-extend commit description]
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
 ---
+ include/linux/kexec.h              | 5 +++++
+ kernel/kexec_file.c                | 5 +++++
+ security/integrity/ima/ima_kexec.c | 2 ++
+ 3 files changed, 12 insertions(+)
 
-Changes since v3:
-* Extend ima_mok_init() description (suggested by Jarkko Sakkinen).
-* Add Acked-by Jarkko Sakkinen.
-
-Changes since v2:
-* Cherry-pick rewritten v1 patch from
-  https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
-  to rebase on v5.11-rc3 and fix ima_mok_init().
----
- certs/blacklist.c                | 2 +-
- include/linux/key.h              | 1 +
- security/integrity/ima/ima_mok.c | 4 +---
- security/keys/key.c              | 2 ++
- 4 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 4e1a58170d5c..446818e90b54 100644
---- a/certs/blacklist.c
-+++ b/certs/blacklist.c
-@@ -162,7 +162,7 @@ static int __init blacklist_init(void)
- 			      KEY_USR_VIEW | KEY_USR_READ |
- 			      KEY_USR_SEARCH,
- 			      KEY_ALLOC_NOT_IN_QUOTA |
--			      KEY_FLAG_KEEP,
-+			      KEY_ALLOC_SET_KEEP,
- 			      NULL, NULL);
- 	if (IS_ERR(blacklist_keyring))
- 		panic("Can't allocate system blacklist keyring\n");
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 0f2e24f13c2b..eed3ce139a32 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -289,6 +289,7 @@ extern struct key *key_alloc(struct key_type *type,
- #define KEY_ALLOC_BUILT_IN		0x0004	/* Key is built into kernel */
- #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
- #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
-+#define KEY_ALLOC_SET_KEEP		0x0020	/* Set the KEEP flag on the key/keyring */
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 9e93bef52968..5f61389f5f36 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -300,6 +300,11 @@ struct kimage {
+ 	/* Information for loading purgatory */
+ 	struct purgatory_info purgatory_info;
+ #endif
++
++#ifdef CONFIG_IMA_KEXEC
++	/* Virtual address of IMA measurement buffer for kexec syscall */
++	void *ima_buffer;
++#endif
+ };
  
- extern void key_revoke(struct key *key);
- extern void key_invalidate(struct key *key);
-diff --git a/security/integrity/ima/ima_mok.c b/security/integrity/ima/ima_mok.c
-index 36cadadbfba4..5594dd38ab04 100644
---- a/security/integrity/ima/ima_mok.c
-+++ b/security/integrity/ima/ima_mok.c
-@@ -38,13 +38,11 @@ __init int ima_mok_init(void)
- 				(KEY_POS_ALL & ~KEY_POS_SETATTR) |
- 				KEY_USR_VIEW | KEY_USR_READ |
- 				KEY_USR_WRITE | KEY_USR_SEARCH,
--				KEY_ALLOC_NOT_IN_QUOTA,
-+				KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_SET_KEEP,
- 				restriction, NULL);
+ /* kexec interface functions */
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index b02086d70492..5c3447cf7ad5 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -166,6 +166,11 @@ void kimage_file_post_load_cleanup(struct kimage *image)
+ 	vfree(pi->sechdrs);
+ 	pi->sechdrs = NULL;
  
- 	if (IS_ERR(ima_blacklist_keyring))
- 		panic("Can't allocate IMA blacklist keyring.");
--
--	set_bit(KEY_FLAG_KEEP, &ima_blacklist_keyring->flags);
- 	return 0;
++#ifdef CONFIG_IMA_KEXEC
++	vfree(image->ima_buffer);
++	image->ima_buffer = NULL;
++#endif /* CONFIG_IMA_KEXEC */
++
+ 	/* See if architecture has anything to cleanup post load */
+ 	arch_kimage_file_post_load_cleanup(image);
+ 
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 212145008a01..8eadd0674629 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -130,6 +130,8 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 		return;
+ 	}
+ 
++	image->ima_buffer = kexec_buffer;
++
+ 	pr_debug("kexec measurement buffer for the loaded kernel at 0x%lx.\n",
+ 		 kbuf.mem);
  }
- device_initcall(ima_mok_init);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index ebe752b137aa..c45afdd1dfbb 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -303,6 +303,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
- 		key->flags |= 1 << KEY_FLAG_BUILTIN;
- 	if (flags & KEY_ALLOC_UID_KEYRING)
- 		key->flags |= 1 << KEY_FLAG_UID_KEYRING;
-+	if (flags & KEY_ALLOC_SET_KEEP)
-+		key->flags |= 1 << KEY_FLAG_KEEP;
- 
- #ifdef KEY_DEBUGGING
- 	key->magic = KEY_DEBUG_MAGIC;
 -- 
 2.30.0
 
