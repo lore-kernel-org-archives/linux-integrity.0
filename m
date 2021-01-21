@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45E2C433E9
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39121C433E9
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F02F239FD
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5770239EB
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732054AbhAUNZM (ORCPT
+        id S1732884AbhAUPZ7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Jan 2021 08:25:12 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54038 "EHLO
+        Thu, 21 Jan 2021 10:25:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54575 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731926AbhAUNWN (ORCPT
+        with ESMTP id S1731852AbhAUNYt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jan 2021 08:22:13 -0500
+        Thu, 21 Jan 2021 08:24:49 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l2Zti-0005g7-6P; Thu, 21 Jan 2021 13:21:14 +0000
+        id 1l2Zuu-0005g7-0W; Thu, 21 Jan 2021 13:22:28 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
@@ -61,228 +61,97 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v6 13/40] namei: introduce struct renamedata
-Date:   Thu, 21 Jan 2021 14:19:32 +0100
-Message-Id: <20210121131959.646623-14-christian.brauner@ubuntu.com>
+Subject: [PATCH v6 30/40] mount: make {lock,unlock}_mount_hash() static
+Date:   Thu, 21 Jan 2021 14:19:49 +0100
+Message-Id: <20210121131959.646623-31-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=DrME+s5cbXF9S4yr7brVSPaVFvRXSfViGd8ACg/rzyM=; m=QWivwASVLmKH+IUTXaDxJAtBdj6EANp7NAExUON5KzU=; p=WIcVQsh2tiFX3BNLbkeUdQU5En8I9IUi6PkvUEdZgrI=; g=5384526ccb76bfa08891b1433543afffc98f2f0d
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pAAKCRCRxhvAZXjcov2AAQDFEOs uk2T7z3Zk+bPkSi8EdZih752gnAmRQY5PQ7WxqwEA2KSLxmSM9o6n+S0mL3CjbiEkcO9Np6f0a5QN auWX5wY=
+X-Patch-Hashes: v=1; h=sha256; i=vO6mqD1pvztvOW1otxIX/33XHCNZr+llU/zGWpmgRcU=; m=KhvaMUT1cjYCcf89U9v9dgojtWEDCI7+j8N/vrPJ2d8=; p=m+f5GyiYf302pJENuNE7M1OLXAwtO2DVQ+DZIMIfwu0=; g=a01f7f9b00b67a1698d6ed6ffbed46e285973451
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pgAKCRCRxhvAZXjcov5nAP417zG 11bQQEUJ0ysdrJok04PLyXR+Mhb6D2/2E4h91CgEAijXaDc6Gi6RigHFF4y2Xjov9EzuvRHTYz5It xL3Ybgw=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-In order to handle idmapped mounts we will extend the vfs rename helper
-to take two new arguments in follow up patches. Since this operations
-already takes a bunch of arguments add a simple struct renamedata and
-make the current helper use it before we extend it.
+The lock_mount_hash() and unlock_mount_hash() helpers are never called
+outside a single file. Remove them from the header and make them static
+to reflect this fact. There's no need to have them callable from other
+places right now, as Christoph observed.
 
-Link: https://lore.kernel.org/r/20210112220124.837960-21-christian.brauner@ubuntu.com
-Cc: Christoph Hellwig <hch@lst.de>
+Link: https://lore.kernel.org/r/20210112220124.837960-3-christian.brauner@ubuntu.com
 Cc: David Howells <dhowells@redhat.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
+Suggested-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-unchanged
+- Christoph Hellwig <hch@lst.de>:
+  - Add a patch to make {lock,unlock)_mount_hash() static.
 
 /* v3 */
 unchanged
 
 /* v4 */
-- Serge Hallyn <serge@hallyn.com>:
-  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
-    terminology consistent.
-
-- Christoph Hellwig <hch@lst.de>:
-  - Declare variable on separate lines instead of chaining them and
-    wrapping with weird indentation.
+unchanged
 
 /* v5 */
 unchanged
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 
 /* v6 */
+unchanged
 base-commit: 19c329f6808995b142b3966301f217c831e7cf31
-
-- Christoph Hellwig <hch@lst.de>:
-  - Remove "extern" from headers.
 ---
- fs/cachefiles/namei.c    |  9 +++++++--
- fs/ecryptfs/inode.c      | 10 +++++++---
- fs/namei.c               | 21 +++++++++++++++------
- fs/nfsd/vfs.c            |  8 +++++++-
- fs/overlayfs/overlayfs.h |  9 ++++++++-
- include/linux/fs.h       | 12 +++++++++++-
- 6 files changed, 55 insertions(+), 14 deletions(-)
+ fs/mount.h     | 10 ----------
+ fs/namespace.c | 10 ++++++++++
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index ecc8ecbbfa5a..7b987de0babe 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -412,9 +412,14 @@ static int cachefiles_bury_object(struct cachefiles_cache *cache,
- 	if (ret < 0) {
- 		cachefiles_io_error(cache, "Rename security error %d", ret);
- 	} else {
-+		struct renamedata rd = {
-+			.old_dir	= d_inode(dir),
-+			.old_dentry	= rep,
-+			.new_dir	= d_inode(cache->graveyard),
-+			.new_dentry	= grave,
-+		};
- 		trace_cachefiles_rename(object, rep, grave, why);
--		ret = vfs_rename(d_inode(dir), rep,
--				 d_inode(cache->graveyard), grave, NULL, 0);
-+		ret = vfs_rename(&rd);
- 		if (ret != 0 && ret != -ENOMEM)
- 			cachefiles_io_error(cache,
- 					    "Rename failed with error %d", ret);
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 385b5e8741c0..ff48abb09679 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -590,6 +590,7 @@ ecryptfs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	struct dentry *lower_new_dir_dentry;
- 	struct dentry *trap;
- 	struct inode *target_inode;
-+	struct renamedata rd = {};
+diff --git a/fs/mount.h b/fs/mount.h
+index ce6c376e0bc2..0b6e08cf8afb 100644
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -124,16 +124,6 @@ static inline void get_mnt_ns(struct mnt_namespace *ns)
  
- 	if (flags)
- 		return -EINVAL;
-@@ -619,9 +620,12 @@ ecryptfs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 		rc = -ENOTEMPTY;
- 		goto out_lock;
- 	}
--	rc = vfs_rename(d_inode(lower_old_dir_dentry), lower_old_dentry,
--			d_inode(lower_new_dir_dentry), lower_new_dentry,
--			NULL, 0);
-+
-+	rd.old_dir	= d_inode(lower_old_dir_dentry);
-+	rd.old_dentry	= lower_old_dentry;
-+	rd.new_dir	= d_inode(lower_new_dir_dentry);
-+	rd.new_dentry	= lower_new_dentry;
-+	rc = vfs_rename(&rd);
- 	if (rc)
- 		goto out_lock;
- 	if (target_inode)
-diff --git a/fs/namei.c b/fs/namei.c
-index 93fa7d803fb2..38ab51881247 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4311,12 +4311,15 @@ SYSCALL_DEFINE2(link, const char __user *, oldname, const char __user *, newname
-  *	   ->i_mutex on parents, which works but leads to some truly excessive
-  *	   locking].
+ extern seqlock_t mount_lock;
+ 
+-static inline void lock_mount_hash(void)
+-{
+-	write_seqlock(&mount_lock);
+-}
+-
+-static inline void unlock_mount_hash(void)
+-{
+-	write_sequnlock(&mount_lock);
+-}
+-
+ struct proc_mounts {
+ 	struct mnt_namespace *ns;
+ 	struct path root;
+diff --git a/fs/namespace.c b/fs/namespace.c
+index bdfb130f2c3c..5fceb2854395 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -87,6 +87,16 @@ EXPORT_SYMBOL_GPL(fs_kobj);
   */
--int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
--	       struct inode *new_dir, struct dentry *new_dentry,
--	       struct inode **delegated_inode, unsigned int flags)
-+int vfs_rename(struct renamedata *rd)
- {
- 	int error;
- 	struct user_namespace *mnt_userns = &init_user_ns;
-+	struct inode *old_dir = rd->old_dir, *new_dir = rd->new_dir;
-+	struct dentry *old_dentry = rd->old_dentry;
-+	struct dentry *new_dentry = rd->new_dentry;
-+	struct inode **delegated_inode = rd->delegated_inode;
-+	unsigned int flags = rd->flags;
- 	bool is_dir = d_is_dir(old_dentry);
- 	struct inode *source = old_dentry->d_inode;
- 	struct inode *target = new_dentry->d_inode;
-@@ -4442,6 +4445,7 @@ EXPORT_SYMBOL(vfs_rename);
- int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 		 struct filename *to, unsigned int flags)
- {
-+	struct renamedata rd;
- 	struct dentry *old_dentry, *new_dentry;
- 	struct dentry *trap;
- 	struct path old_path, new_path;
-@@ -4545,9 +4549,14 @@ int do_renameat2(int olddfd, struct filename *from, int newdfd,
- 				     &new_path, new_dentry, flags);
- 	if (error)
- 		goto exit5;
--	error = vfs_rename(old_path.dentry->d_inode, old_dentry,
--			   new_path.dentry->d_inode, new_dentry,
--			   &delegated_inode, flags);
-+
-+	rd.old_dir	   = old_path.dentry->d_inode;
-+	rd.old_dentry	   = old_dentry;
-+	rd.new_dir	   = new_path.dentry->d_inode;
-+	rd.new_dentry	   = new_dentry;
-+	rd.delegated_inode = &delegated_inode;
-+	rd.flags	   = flags;
-+	error = vfs_rename(&rd);
- exit5:
- 	dput(new_dentry);
- exit4:
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 37d85046b4d6..f7d83ff2b44e 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1798,7 +1798,13 @@ nfsd_rename(struct svc_rqst *rqstp, struct svc_fh *ffhp, char *fname, int flen,
- 		close_cached = true;
- 		goto out_dput_old;
- 	} else {
--		host_err = vfs_rename(fdir, odentry, tdir, ndentry, NULL, 0);
-+		struct renamedata rd = {
-+			.old_dir	= fdir,
-+			.old_dentry	= odentry,
-+			.new_dir	= tdir,
-+			.new_dentry	= ndentry,
-+		};
-+		host_err = vfs_rename(&rd);
- 		if (!host_err) {
- 			host_err = commit_metadata(tfhp);
- 			if (!host_err)
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 0002834f664a..426899681df7 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -214,9 +214,16 @@ static inline int ovl_do_rename(struct inode *olddir, struct dentry *olddentry,
- 				unsigned int flags)
- {
- 	int err;
-+	struct renamedata rd = {
-+		.old_dir 	= olddir,
-+		.old_dentry 	= olddentry,
-+		.new_dir 	= newdir,
-+		.new_dentry 	= newdentry,
-+		.flags 		= flags,
-+	};
+ __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
  
- 	pr_debug("rename(%pd2, %pd2, 0x%x)\n", olddentry, newdentry, flags);
--	err = vfs_rename(olddir, olddentry, newdir, newdentry, NULL, flags);
-+	err = vfs_rename(&rd);
- 	if (err) {
- 		pr_debug("...rename(%pd2, %pd2, ...) = %i\n",
- 			 olddentry, newdentry, err);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a27884af7222..430e457f67f1 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1775,7 +1775,17 @@ extern int vfs_symlink(struct inode *, struct dentry *, const char *);
- extern int vfs_link(struct dentry *, struct inode *, struct dentry *, struct inode **);
- extern int vfs_rmdir(struct inode *, struct dentry *);
- extern int vfs_unlink(struct inode *, struct dentry *, struct inode **);
--extern int vfs_rename(struct inode *, struct dentry *, struct inode *, struct dentry *, struct inode **, unsigned int);
++static inline void lock_mount_hash(void)
++{
++	write_seqlock(&mount_lock);
++}
 +
-+struct renamedata {
-+	struct inode *old_dir;
-+	struct dentry *old_dentry;
-+	struct inode *new_dir;
-+	struct dentry *new_dentry;
-+	struct inode **delegated_inode;
-+	unsigned int flags;
-+} __randomize_layout;
++static inline void unlock_mount_hash(void)
++{
++	write_sequnlock(&mount_lock);
++}
 +
-+int vfs_rename(struct renamedata *);
- 
- static inline int vfs_whiteout(struct inode *dir, struct dentry *dentry)
+ static inline struct hlist_head *m_hash(struct vfsmount *mnt, struct dentry *dentry)
  {
+ 	unsigned long tmp = ((unsigned long)mnt / L1_CACHE_BYTES);
 -- 
 2.30.0
 
