@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7282FC433E9
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 16:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DA2C433E9
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD4A23A5A
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 16:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0C0B23A3C
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387892AbhAUQsf (ORCPT
+        id S2387486AbhAUQuv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Jan 2021 11:48:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43518 "EHLO
+        Thu, 21 Jan 2021 11:50:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732426AbhAUP6j (ORCPT
+        with ESMTP id S1731726AbhAUP6I (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jan 2021 10:58:39 -0500
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE09C061221
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Jan 2021 07:57:19 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DM6Rm4WDMzMr6dq;
-        Thu, 21 Jan 2021 16:55:32 +0100 (CET)
+        Thu, 21 Jan 2021 10:58:08 -0500
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2C8C06178C;
+        Thu, 21 Jan 2021 07:55:28 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DM6Rf695LzMpwDb;
+        Thu, 21 Jan 2021 16:55:26 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DM6Rm1Cf9zlppys;
-        Thu, 21 Jan 2021 16:55:32 +0100 (CET)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DM6Rf43Fczlh8TL;
+        Thu, 21 Jan 2021 16:55:26 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -45,11 +45,10 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Alex Shi <alex.shi@linux.alibaba.com>,
         Ben Boeckel <mathstuf@gmail.com>
-Subject: [PATCH v4 07/10] certs/blacklist: fix kernel doc interface issue
-Date:   Thu, 21 Jan 2021 16:55:10 +0100
-Message-Id: <20210121155513.539519-8-mic@digikod.net>
+Subject: [PATCH v4 03/10] certs: Fix blacklisted hexadecimal hash string check
+Date:   Thu, 21 Jan 2021 16:55:06 +0100
+Message-Id: <20210121155513.539519-4-mic@digikod.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121155513.539519-1-mic@digikod.net>
 References: <20210121155513.539519-1-mic@digikod.net>
@@ -60,46 +59,48 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Alex Shi <alex.shi@linux.alibaba.com>
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-certs/blacklist.c:84: warning: Function parameter or member 'hash' not
-described in 'mark_hash_blacklisted'
+When looking for a blacklisted hash, bin2hex() is used to transform a
+binary hash to an ascii (lowercase) hexadecimal string.  This string is
+then search for in the description of the keys from the blacklist
+keyring.  When adding a key to the blacklist keyring,
+blacklist_vet_description() checks the hash prefix and the hexadecimal
+string, but not that this string is lowercase.  It is then valid to set
+hashes with uppercase hexadecimal, which will be silently ignored by the
+kernel.
+
+Add an additional check to blacklist_vet_description() to check that
+hexadecimal strings are in lowercase.
 
 Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: keyrings@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Ben Boeckel <mathstuf@gmail.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
 
-Changes since v3:
-* Add Reviewed-by Jarkko Sakkinen.
-
 Changes since v2:
-* Cherry-pick patch from
+* Cherry-pick v1 patch from
   https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
-  to avoid future merge conflicts.
-* Rearrange Signed-off-by and Reviewed-by order.
+  to rebase on v5.11-rc3.
+* Rearrange Cc order.
 ---
  certs/blacklist.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 069050884bd2..334ab7b964bc 100644
+index 6514f9ebc943..4e1a58170d5c 100644
 --- a/certs/blacklist.c
 +++ b/certs/blacklist.c
-@@ -105,7 +105,7 @@ static struct key_type key_type_blacklist = {
- 
- /**
-  * mark_hash_blacklisted - Add a hash to the system blacklist
-- * @hash - The hash as a hex string with a type prefix (eg. "tbs:23aa429783")
-+ * @hash: The hash as a hex string with a type prefix (eg. "tbs:23aa429783")
-  */
- int mark_hash_blacklisted(const char *hash)
- {
+@@ -37,7 +37,7 @@ static int blacklist_vet_description(const char *desc)
+ found_colon:
+ 	desc++;
+ 	for (; *desc; desc++) {
+-		if (!isxdigit(*desc))
++		if (!isxdigit(*desc) || isupper(*desc))
+ 			return -EINVAL;
+ 		n++;
+ 	}
 -- 
 2.30.0
 
