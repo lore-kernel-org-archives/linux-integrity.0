@@ -2,87 +2,95 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30888C433E6
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 17:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77C0C433E6
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 17:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D461822A85
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 17:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C26922A85
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 17:36:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387892AbhAURbI (ORCPT
+        id S2388671AbhAURgH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Jan 2021 12:31:08 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:57634 "EHLO
+        Thu, 21 Jan 2021 12:36:07 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58292 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388526AbhAURat (ORCPT
+        with ESMTP id S2388250AbhAURfv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Jan 2021 12:30:49 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AB70B20B7192;
-        Thu, 21 Jan 2021 09:30:08 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AB70B20B7192
+        Thu, 21 Jan 2021 12:35:51 -0500
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 42F1420B7192;
+        Thu, 21 Jan 2021 09:35:07 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 42F1420B7192
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1611250208;
-        bh=YiTmzmg5J73novUtm6vEd4VPk53XO64N4ccc6961PuA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ei/uUMtO1yzKPHNhK4bGp7mmR5GayhbwKrS3EaQbHeXn60i6nEtntPd7qCfgf2cdf
-         pgwGNK3FoG1agO97qcOj4fU3AF9pbBG0E5h2BxOmGKSa9UVTaO22SVQv8T4uCfmWo5
-         rR2i6wJylWw54R2/jOZYCiHov1HvoIsBhM8ymxEU=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com,
+        s=default; t=1611250508;
+        bh=a4cCNjrAKs4+vz3aERM9jzdT7vtf1mGZiPbZ15KjmZ0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mv27Noc+Ifs08rNXx4cDHhfoP90JPBkoo09HeG1CZZO8jknWGmb7GgjeaTSl0oYOi
+         v3HioJmVc+b9IQ2c0zBLrpNuOpnG7lpfrEvvg3Jd1Mcmqnm8GrbZme1tiLNFkjyhp4
+         jqvT18W+uz0o+3+iGcx6H049pKv3IpwIO+7B5P8A=
+Date:   Thu, 21 Jan 2021 11:35:05 -0600
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com, bauerman@linux.ibm.com,
         dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
         gregkh@linuxfoundation.org, sashal@kernel.org,
-        tyhicks@linux.microsoft.com
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 1/2] ima: Free IMA measurement buffer on error
-Date:   Thu, 21 Jan 2021 09:30:02 -0800
-Message-Id: <20210121173003.18324-1-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.30.0
+Subject: Re: [PATCH 1/2] ima: Free IMA measurement buffer on error
+Message-ID: <20210121173505.GE259508@sequoia>
+References: <20210121173003.18324-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121173003.18324-1-nramas@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-IMA allocates kernel virtual memory to carry forward the measurement
-list, from the current kernel to the next kernel on kexec system call,
-in ima_add_kexec_buffer() function.  In error code paths this memory
-is not freed resulting in memory leak.
+On 2021-01-21 09:30:02, Lakshmi Ramasubramanian wrote:
+> IMA allocates kernel virtual memory to carry forward the measurement
+> list, from the current kernel to the next kernel on kexec system call,
+> in ima_add_kexec_buffer() function.  In error code paths this memory
+> is not freed resulting in memory leak.
+> 
+> Free the memory allocated for the IMA measurement list in
+> the error code paths in ima_add_kexec_buffer() function.
+> 
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Suggested-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
 
-Free the memory allocated for the IMA measurement list in
-the error code paths in ima_add_kexec_buffer() function.
+Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Suggested-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
----
- security/integrity/ima/ima_kexec.c | 2 ++
- 1 file changed, 2 insertions(+)
+Tyler
 
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 121de3e04af2..212145008a01 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -119,12 +119,14 @@ void ima_add_kexec_buffer(struct kimage *image)
- 	ret = kexec_add_buffer(&kbuf);
- 	if (ret) {
- 		pr_err("Error passing over kexec measurement buffer.\n");
-+		vfree(kexec_buffer);
- 		return;
- 	}
- 
- 	ret = arch_ima_add_kexec_buffer(image, kbuf.mem, kexec_segment_size);
- 	if (ret) {
- 		pr_err("Error passing over kexec measurement buffer.\n");
-+		vfree(kexec_buffer);
- 		return;
- 	}
- 
--- 
-2.30.0
-
+> ---
+>  security/integrity/ima/ima_kexec.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 121de3e04af2..212145008a01 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -119,12 +119,14 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	ret = kexec_add_buffer(&kbuf);
+>  	if (ret) {
+>  		pr_err("Error passing over kexec measurement buffer.\n");
+> +		vfree(kexec_buffer);
+>  		return;
+>  	}
+>  
+>  	ret = arch_ima_add_kexec_buffer(image, kbuf.mem, kexec_segment_size);
+>  	if (ret) {
+>  		pr_err("Error passing over kexec measurement buffer.\n");
+> +		vfree(kexec_buffer);
+>  		return;
+>  	}
+>  
+> -- 
+> 2.30.0
+> 
