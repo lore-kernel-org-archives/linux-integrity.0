@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 132EAC433E0
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BCDC433E0
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ADE3C2073C
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A933823A1E
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Jan 2021 15:44:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731885AbhAUNVo (ORCPT
+        id S1733247AbhAUPnu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Jan 2021 08:21:44 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:53786 "EHLO
+        Thu, 21 Jan 2021 10:43:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53776 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731816AbhAUNVZ (ORCPT
+        with ESMTP id S1731806AbhAUNVZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Thu, 21 Jan 2021 08:21:25 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1l2Zt1-0005g7-TV; Thu, 21 Jan 2021 13:20:32 +0000
+        id 1l2Zsu-0005g7-3f; Thu, 21 Jan 2021 13:20:24 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
@@ -61,279 +61,179 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH v6 03/40] fs: add file and path permissions helpers
-Date:   Thu, 21 Jan 2021 14:19:22 +0100
-Message-Id: <20210121131959.646623-4-christian.brauner@ubuntu.com>
+Subject: [PATCH v6 01/40] mount: attach mappings to mounts
+Date:   Thu, 21 Jan 2021 14:19:20 +0100
+Message-Id: <20210121131959.646623-2-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=EPGeccrW2ND6sEpUnqQWbJwVn6//nORjnK8IWU4CF0s=; m=jt/t+jriCkeKCD//7Jka1ydzn2GvYl+uifElu/w/ryk=; p=3/e8UsyR5VgYfXV6lXbZvOEZRVy3SJYhqT7zv3IWG78=; g=781dcf4cb525770f61fcb94f6f378ed86904f06c
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9owAKCRCRxhvAZXjcom/7AP0aUrt 81FdUoZP/syHyN2DRxUz08P8UjRoZe1pjLq7DYgEAs/b6nrnXUBrctKKGN+rlnZHHSlNShp4uugis FcrYUwg=
+X-Patch-Hashes: v=1; h=sha256; i=RNdtgoKaLGCMkof4zQAU3N/xXjoHA/9IvgBRCO94lyQ=; m=v4JeDPlKw7+HRf6GkILParxKrCZxHiToEIxl1JpzBMc=; p=n8aTDgNwQFcuOq2vzScaJKTjpeZYHL89d0mK14Ql03I=; g=10886b981fa37e8daf7d1a3ab0dff6047323eaad
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9owAKCRCRxhvAZXjcoqEbAPwK333 ZnYjG/GuxGlrHWLqoKgSkX3uNx9F5O46VJfzTkAEAnmq+k+saVqcfu1A7GYLfR7gJVnb+J+yKtVd1 w115xwQ=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add two simple helpers to check permissions on a file and path
-respectively and convert over some callers. It simplifies quite a few
-codepaths and also reduces the churn in later patches quite a bit.
-Christoph also correctly points out that this makes codepaths (e.g.
-ioctls) way easier to follow that would otherwise have to do more
-complex argument passing than necessary.
+In order to support per-mount idmappings vfsmounts are marked with user
+namespaces. The idmapping of the user namespace will be used to map the
+ids of vfs objects when they are accessed through that mount. By default
+all vfsmounts are marked with the initial user namespace. The initial
+user namespace is used to indicate that a mount is not idmapped. All
+operations behave as before.
 
-Link: https://lore.kernel.org/r/20210112220124.837960-16-christian.brauner@ubuntu.com
+Based on prior discussions we want to attach the whole user namespace
+and not just a dedicated idmapping struct. This allows us to reuse all
+the helpers that already exist for dealing with idmappings instead of
+introducing a whole new range of helpers. In addition, if we decide in
+the future that we are confident enough to enable unprivileged users to
+setup idmapped mounts the permission checking can take into account
+whether the caller is privileged in the user namespace the mount is
+currently marked with.
+Later patches enforce that once a mount has been idmapped it can't be
+remapped. This keeps permission checking and life-cycle management
+simple. Users wanting to change the idmapped can always create a new
+detached mount with a different idmapping.
+
+Add a new mnt_userns member to vfsmount and two simple helpers to
+retrieve the mnt_userns from vfsmounts and files.
+
+The idea to attach user namespaces to vfsmounts has been floated around
+in various forms at Linux Plumbers in ~2018 with the original idea
+tracing back to a discussion in 2017 at a conference in St. Petersburg
+between Christoph, Tycho, and myself.
+
+Link: https://lore.kernel.org/r/20210112220124.837960-10-christian.brauner@ubuntu.com
+Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
-Suggested-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch not present
+patch introduced
+- Christoph Hellwig <hch@lst.de>:
+  - Split internal implementation into separate patch and move syscall
+    implementation later.
 
 /* v3 */
-patch not present
+- David Howells <dhowells@redhat.com>:
+  - Remove MNT_IDMAPPED flag. We can simply check the pointer and use
+    smp_load_acquire() in later patches.
+
+- Tycho Andersen <tycho@tycho.pizza>:
+  - Use READ_ONCE() in mnt_user_ns().
 
 /* v4 */
-patch not present
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
+
+- Christoph Hellwig <hch@lst.de>:
+  - Drop the READ_ONCE() from this patch. At this point in the series we
+    don't allowing changing the vfsmount's userns. The infra to do that
+    is only introduced as almost the last patch in the series and there
+    we immediately use smp_load_acquire() and smp_store_release().
 
 /* v5 */
-patch not present
+unchanged
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 
 /* v6 */
 base-commit: 19c329f6808995b142b3966301f217c831e7cf31
 
 - Christoph Hellwig <hch@lst.de>:
-  - Make file_user_ns() static inline.
-  - Add file_permission() and path_permission() helpers.
+  - Move file_mnt_user_ns() helper into this patch.
 ---
- fs/init.c                          | 6 +++---
- fs/notify/fanotify/fanotify_user.c | 2 +-
- fs/notify/inotify/inotify_user.c   | 2 +-
- fs/open.c                          | 6 +++---
- fs/udf/file.c                      | 2 +-
- fs/verity/enable.c                 | 2 +-
- include/linux/fs.h                 | 8 ++++++++
- kernel/bpf/inode.c                 | 2 +-
- kernel/sys.c                       | 2 +-
- mm/madvise.c                       | 2 +-
- mm/memcontrol.c                    | 2 +-
- mm/mincore.c                       | 2 +-
- net/unix/af_unix.c                 | 2 +-
- 13 files changed, 24 insertions(+), 16 deletions(-)
+ fs/namespace.c        | 9 +++++++++
+ include/linux/fs.h    | 6 ++++++
+ include/linux/mount.h | 6 ++++++
+ 3 files changed, 21 insertions(+)
 
-diff --git a/fs/init.c b/fs/init.c
-index e9c320a48cf1..02723bea8499 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -49,7 +49,7 @@ int __init init_chdir(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &path);
- 	path_put(&path);
-@@ -64,7 +64,7 @@ int __init init_chroot(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW | LOOKUP_DIRECTORY, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
- 	error = -EPERM;
-@@ -118,7 +118,7 @@ int __init init_eaccess(const char *filename)
- 	error = kern_path(filename, LOOKUP_FOLLOW, &path);
- 	if (error)
- 		return error;
--	error = inode_permission(d_inode(path.dentry), MAY_ACCESS);
-+	error = path_permission(&path, MAY_ACCESS);
- 	path_put(&path);
- 	return error;
- }
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index dcab112e1f00..64cfc1a3015d 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -702,7 +702,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 9d33909d0f9e..ecdc63ef881c 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -210,6 +210,7 @@ static struct mount *alloc_vfsmnt(const char *name)
+ 		INIT_HLIST_NODE(&mnt->mnt_mp_list);
+ 		INIT_LIST_HEAD(&mnt->mnt_umounting);
+ 		INIT_HLIST_HEAD(&mnt->mnt_stuck_children);
++		mnt->mnt.mnt_userns = &init_user_ns;
  	}
+ 	return mnt;
  
- 	/* you can only watch an inode if you have read permissions on it */
--	ret = inode_permission(path->dentry->d_inode, MAY_READ);
-+	ret = path_permission(path, MAY_READ);
- 	if (ret) {
- 		path_put(path);
- 		goto out;
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 59c177011a0f..e1155d32ef6f 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -352,7 +352,7 @@ static int inotify_find_inode(const char __user *dirname, struct path *path,
- 	if (error)
- 		return error;
- 	/* you can only watch an inode if you have read permissions on it */
--	error = inode_permission(path->dentry->d_inode, MAY_READ);
-+	error = path_permission(path, MAY_READ);
- 	if (error) {
- 		path_put(path);
- 		return error;
-diff --git a/fs/open.c b/fs/open.c
-index 1e06e443a565..cd1efd254cad 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -492,7 +492,7 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
- 	if (error)
- 		goto out;
+@@ -547,6 +548,11 @@ int sb_prepare_remount_readonly(struct super_block *sb)
  
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
+ static void free_vfsmnt(struct mount *mnt)
+ {
++	struct user_namespace *mnt_userns;
++
++	mnt_userns = mnt_user_ns(&mnt->mnt);
++	if (mnt_userns != &init_user_ns)
++		put_user_ns(mnt_userns);
+ 	kfree_const(mnt->mnt_devname);
+ #ifdef CONFIG_SMP
+ 	free_percpu(mnt->mnt_pcp);
+@@ -1055,6 +1061,9 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+ 	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
  
-@@ -521,7 +521,7 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
- 	if (!d_can_lookup(f.file->f_path.dentry))
- 		goto out_putf;
- 
--	error = inode_permission(file_inode(f.file), MAY_EXEC | MAY_CHDIR);
-+	error = file_permission(f.file, MAY_EXEC | MAY_CHDIR);
- 	if (!error)
- 		set_fs_pwd(current->fs, &f.file->f_path);
- out_putf:
-@@ -540,7 +540,7 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
- 	if (error)
- 		goto out;
- 
--	error = inode_permission(path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
-+	error = path_permission(&path, MAY_EXEC | MAY_CHDIR);
- 	if (error)
- 		goto dput_and_out;
- 
-diff --git a/fs/udf/file.c b/fs/udf/file.c
-index ad8eefad27d7..3671a40ed3c3 100644
---- a/fs/udf/file.c
-+++ b/fs/udf/file.c
-@@ -183,7 +183,7 @@ long udf_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	long old_block, new_block;
- 	int result;
- 
--	if (inode_permission(inode, MAY_READ) != 0) {
-+	if (file_permission(filp, MAY_READ) != 0) {
- 		udf_debug("no permission to access inode %lu\n", inode->i_ino);
- 		return -EPERM;
- 	}
-diff --git a/fs/verity/enable.c b/fs/verity/enable.c
-index f7e997a01ad0..77e159a0346b 100644
---- a/fs/verity/enable.c
-+++ b/fs/verity/enable.c
-@@ -369,7 +369,7 @@ int fsverity_ioctl_enable(struct file *filp, const void __user *uarg)
- 	 * has verity enabled, and to stabilize the data being hashed.
- 	 */
- 
--	err = inode_permission(inode, MAY_WRITE);
-+	err = file_permission(filp, MAY_WRITE);
- 	if (err)
- 		return err;
- 
+ 	atomic_inc(&sb->s_active);
++	mnt->mnt.mnt_userns = mnt_user_ns(&old->mnt);
++	if (mnt->mnt.mnt_userns != &init_user_ns)
++		mnt->mnt.mnt_userns = get_user_ns(mnt->mnt.mnt_userns);
+ 	mnt->mnt.mnt_sb = sb;
+ 	mnt->mnt.mnt_root = dget(root);
+ 	mnt->mnt_mountpoint = mnt->mnt.mnt_root;
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3165998e2294..bcd17097d441 100644
+index fd47deea7c17..fd0b80e6361d 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2812,6 +2812,14 @@ static inline int bmap(struct inode *inode,  sector_t *block)
- extern int notify_change(struct dentry *, struct iattr *, struct inode **);
- extern int inode_permission(struct inode *, int);
- extern int generic_permission(struct inode *, int);
-+static inline int file_permission(struct file *file, int mask)
+@@ -39,6 +39,7 @@
+ #include <linux/fs_types.h>
+ #include <linux/build_bug.h>
+ #include <linux/stddef.h>
++#include <linux/mount.h>
+ 
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
+@@ -2231,6 +2232,7 @@ struct file_system_type {
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+ #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
++#define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
+ #define FS_THP_SUPPORT		8192	/* Remove once all fs converted */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	int (*init_fs_context)(struct fs_context *);
+@@ -2517,6 +2519,10 @@ struct filename {
+ };
+ static_assert(offsetof(struct filename, iname) % sizeof(long) == 0);
+ 
++static inline struct user_namespace *file_mnt_user_ns(struct file *file)
 +{
-+	return inode_permission(file_inode(file), mask);
++	return mnt_user_ns(file->f_path.mnt);
 +}
-+static inline int path_permission(const struct path *path, int mask)
+ extern long vfs_truncate(const struct path *, loff_t);
+ extern int do_truncate(struct dentry *, loff_t start, unsigned int time_attrs,
+ 		       struct file *filp);
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index aaf343b38671..52de25e08319 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -72,8 +72,14 @@ struct vfsmount {
+ 	struct dentry *mnt_root;	/* root of the mounted tree */
+ 	struct super_block *mnt_sb;	/* pointer to superblock */
+ 	int mnt_flags;
++	struct user_namespace *mnt_userns;
+ } __randomize_layout;
+ 
++static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
 +{
-+	return inode_permission(d_inode(path->dentry), mask);
++	return mnt->mnt_userns;
 +}
- extern int __check_sticky(struct inode *dir, struct inode *inode);
- 
- static inline bool execute_ok(struct inode *inode)
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index dd4b7fd60ee7..8962f139521e 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -507,7 +507,7 @@ static void *bpf_obj_do_get(const char __user *pathname,
- 		return ERR_PTR(ret);
- 
- 	inode = d_backing_inode(path.dentry);
--	ret = inode_permission(inode, ACC_MODE(flags));
-+	ret = path_permission(&path, ACC_MODE(flags));
- 	if (ret)
- 		goto out;
- 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 51f00fe20e4d..138fb253b344 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -1848,7 +1848,7 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
- 	if (!S_ISREG(inode->i_mode) || path_noexec(&exe.file->f_path))
- 		goto exit;
- 
--	err = inode_permission(inode, MAY_EXEC);
-+	err = file_permission(exe.file, MAY_EXEC);
- 	if (err)
- 		goto exit;
- 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 6a660858784b..175c5582d8a9 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -540,7 +540,7 @@ static inline bool can_do_pageout(struct vm_area_struct *vma)
- 	 * opens a side channel.
- 	 */
- 	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
--		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-+	       file_permission(vma->vm_file, MAY_WRITE) == 0;
- }
- 
- static long madvise_pageout(struct vm_area_struct *vma,
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 605f671203ef..cf9076f58582 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4899,7 +4899,7 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
- 
- 	/* the process need read permission on control file */
- 	/* AV: shouldn't we check that it's been opened for read instead? */
--	ret = inode_permission(file_inode(cfile.file), MAY_READ);
-+	ret = file_permission(cfile.file, MAY_READ);
- 	if (ret < 0)
- 		goto out_put_cfile;
- 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index 02db1a834021..7bdb4673f776 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -167,7 +167,7 @@ static inline bool can_do_mincore(struct vm_area_struct *vma)
- 	 * mappings, which opens a side channel.
- 	 */
- 	return inode_owner_or_capable(file_inode(vma->vm_file)) ||
--		inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-+	       file_permission(vma->vm_file, MAY_WRITE) == 0;
- }
- 
- static const struct mm_walk_ops mincore_walk_ops = {
-diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-index 41c3303c3357..18453d15dddf 100644
---- a/net/unix/af_unix.c
-+++ b/net/unix/af_unix.c
-@@ -936,7 +936,7 @@ static struct sock *unix_find_other(struct net *net,
- 		if (err)
- 			goto fail;
- 		inode = d_backing_inode(path.dentry);
--		err = inode_permission(inode, MAY_WRITE);
-+		err = path_permission(&path, MAY_WRITE);
- 		if (err)
- 			goto put_fail;
++
+ struct file; /* forward dec */
+ struct path;
  
 -- 
 2.30.0
