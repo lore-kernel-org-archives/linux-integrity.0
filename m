@@ -2,76 +2,77 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE19C433DB
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Jan 2021 18:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F6BC433DB
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Jan 2021 18:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F9DE23A9C
-	for <linux-integrity@archiver.kernel.org>; Fri, 22 Jan 2021 18:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B692223AC0
+	for <linux-integrity@archiver.kernel.org>; Fri, 22 Jan 2021 18:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729238AbhAVSRf (ORCPT
+        id S1729616AbhAVSmp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Jan 2021 13:17:35 -0500
-Received: from verein.lst.de ([213.95.11.211]:37482 "EHLO verein.lst.de"
+        Fri, 22 Jan 2021 13:42:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729312AbhAVRYB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Jan 2021 12:24:01 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id ADBE468C4E; Fri, 22 Jan 2021 18:23:08 +0100 (CET)
-Date:   Fri, 22 Jan 2021 18:23:08 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 20/40] init: handle idmapped mounts
-Message-ID: <20210122172308.GC20347@lst.de>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-21-christian.brauner@ubuntu.com>
+        id S1728630AbhAVSTH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 22 Jan 2021 13:19:07 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 94D1C23A6A;
+        Fri, 22 Jan 2021 18:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611339507;
+        bh=KNhTFj4b/WjHeWypkT82xEpFT9PVrz9GAch5QmpPHO4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jhAgBJQXrcMcoqHefvG5loiFOINdoHPtPPQp73Ukao4L9S/90LjNnNVFp/EgeRnxx
+         jtc5UPB1ClAdSjAev2DKAz6MLfD29rmtFClcNRg4lNXwcVsuNEL24pQ9Jrpjpsze9/
+         rABszlpk2JSQhCJXyjU+TwWsDo5r9dRTi7SEb7+/tIKu1jXn0kt9/Eco17fHrH9b8P
+         Z1wu3z0LWuWTRlJjKedYcvmQffmb4TzHvgVokt1ZYtu4P6Bm9R8NoAqqMVduUgQxUP
+         Npsr5+jOKBmV+yBuKW6NQwNKLI8YZWgaCPZd9RDZ56EXPp/dsrj8l7Qv/qTO4VTsn0
+         ldxvffAhVIprg==
+Date:   Fri, 22 Jan 2021 20:18:24 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Song Liu <song@kernel.org>, kernel@pengutronix.de,
+        Jan =?iso-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Dmitry Baryshkov <dbaryshkov@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: Re: [PATCH 2/2] dm crypt: support using trusted keys
+Message-ID: <YAsW8DAt3vc68rLA@kernel.org>
+References: <20210122084321.24012-1-a.fatoum@pengutronix.de>
+ <20210122084321.24012-2-a.fatoum@pengutronix.de>
+ <YAsT/N8CHHNTZcj3@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210121131959.646623-21-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <YAsT/N8CHHNTZcj3@kernel.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Note that in the early init code the user namespace must be init_user_ns
-by definition.  But passing on the information from the file/path seem
-ok just in case someone copy and pastes this code..
+On Fri, Jan 22, 2021 at 08:05:51PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Jan 22, 2021 at 09:43:21AM +0100, Ahmad Fatoum wrote:
+> > Commit 27f5411a718c ("dm crypt: support using encrypted keys") extended
+> > dm-crypt to allow use of "encrypted" keys along with "user" and "logon".
+> > 
+> > Along the same lines, teach dm-crypt to support "trusted" keys as well.
+> > 
+> > Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> > ---
+> 
+> Is it possible to test run this with tmpfs? Would be a good test
+> target for Sumit's ARM-TEE trusted keys patches.
+> 
+> https://lore.kernel.org/linux-integrity/1604419306-26105-1-git-send-email-sumit.garg@linaro.org/
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Also, I would hold merging *this* patch up until we are able to
+test TEE trusted keys with TEE trusted keys.
+
+/Jarkko
