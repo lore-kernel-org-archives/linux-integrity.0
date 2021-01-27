@@ -2,213 +2,139 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E79D7C433E0
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Jan 2021 06:10:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6594C433E9
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Jan 2021 14:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2DE02064A
-	for <linux-integrity@archiver.kernel.org>; Wed, 27 Jan 2021 06:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C832221E8
+	for <linux-integrity@archiver.kernel.org>; Wed, 27 Jan 2021 14:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232744AbhA0GJm (ORCPT
+        id S232349AbhA0OJ2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 27 Jan 2021 01:09:42 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:60128 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235793AbhA0Fks (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 27 Jan 2021 00:40:48 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 93A58864; Tue, 26 Jan 2021 23:40:00 -0600 (CST)
-Date:   Tue, 26 Jan 2021 23:40:00 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v6 00/40] idmapped mounts
-Message-ID: <20210127054000.GA30832@mail.hallyn.com>
-References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 27 Jan 2021 09:09:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14382 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232364AbhA0OHW (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 27 Jan 2021 09:07:22 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10RE3ZBA085244;
+        Wed, 27 Jan 2021 09:04:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=+gfgqu1/y4U3OJv7ojaSu7rxLiM7tLb8oobzVquqwV4=;
+ b=nu2oJMrFm75kebCqEWQNyB1TugzytjW5QIwYfCD0IIDo7y73zN/7vtZUQEJf4iVu+itM
+ ErpMTmvJ0QUuWgpRNOoTxlNnrN1l9jfPvH/PrTus2qU7Bh8mSHgI9d8WvB/e+w+Sa+Z4
+ g3MAnpgore1BWi4feT939UWGPCUGno0bqBlaIYRNhVwRBRVYXMnaCRE2Xj2lDqpvRrAs
+ YpEmSfujcV3B+RhzHdUVnOCnVQnEHBqKAyh4d5wCEhNKBA4UYlVIv4LFkZ6M7nlY2qqc
+ 894zSyPT0gKqENWZwF+K7tSx/Eq5JW/GCBtyN9BQW8/BOcYqaLbB2YnuZrguPCnXrHMY 1Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 36b5aw7hc7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Jan 2021 09:04:12 -0500
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10RE3s3j087542;
+        Wed, 27 Jan 2021 09:04:10 -0500
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 36b5aw7ha2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Jan 2021 09:04:10 -0500
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10RE1aQo010034;
+        Wed, 27 Jan 2021 14:04:06 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma01fra.de.ibm.com with ESMTP id 368be820qn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 27 Jan 2021 14:04:06 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10RE3uca13238774
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Jan 2021 14:03:56 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C1B911C052;
+        Wed, 27 Jan 2021 14:04:03 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B24D11C050;
+        Wed, 27 Jan 2021 14:04:00 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.15.120])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 27 Jan 2021 14:03:59 +0000 (GMT)
+Message-ID: <61a0420790250807837b5a701bb52f3d63ff0c84.camel@linux.ibm.com>
+Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        dwmw2@infradead.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jmorris@namei.org, serge@hallyn.com,
+        nayna@linux.ibm.com, erichte@linux.ibm.com, mpe@ellerman.id.au,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com
+Date:   Wed, 27 Jan 2021 09:03:59 -0500
+In-Reply-To: <3063834.1611747971@warthog.procyon.org.uk>
+References: <YAjMm9Gq/FFOzQYG@kernel.org>
+         <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
+         <20200916004927.64276-1-eric.snowberg@oracle.com>
+         <1360578.1607593748@warthog.procyon.org.uk>
+         <2442460.1610463459@warthog.procyon.org.uk>
+         <X/9a8naM8p4tT5sO@linux.intel.com>
+         <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
+         <YAFdNiYZSWpB9vOw@kernel.org>
+         <CFBF6AEC-2832-44F7-9D7F-F20489498C33@oracle.com>
+         <YAgTawk3EENF/P6j@kernel.org>
+         <D9F5E0BD-E2FC-428F-91B3-35D2750493A0@oracle.com>
+         <3063834.1611747971@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-27_05:2021-01-27,2021-01-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 adultscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ phishscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101270074
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 02:19:19PM +0100, Christian Brauner wrote:
-> Hey everyone,
-> 
-> The only major change is the updated version of hch's pach to port xfs
-> to support idmapped mounts. Thanks again to Christoph for doing that
-> work.
-> (Otherwise Acked-bys and Reviewed-bys were added and the tree reordered
->  to decouple filesystem specific conversion from the vfs work so they
->  can proceed independent.
->  For a full list of major changes between versions see the end of this
->  cover letter. Please also note the large xfstests testsuite in patch 42
->  that has been kept as part of this series. It verifies correct vfs
->  behavior with and without idmapped mounts including covering newer vfs
->  features such as io_uring.
->  I currently still plan to target the v5.12 merge window.)
-> 
-> With this patchset we make it possible to attach idmappings to mounts,
-> i.e. simply put different bind mounts can expose the same file or
-> directory with different ownership.
-> Shifting of ownership on a per-mount basis handles a wide range of
-> long standing use-cases. Here are just a few:
-> - Shifting of a subset of ownership-less filesystems (vfat) for use by
->   multiple users, effectively allowing for DAC on such devices
->   (systemd, Android, ...)
-> - Allow remapping uid/gid on external filesystems or paths (USB sticks,
->   network filesystem, ...) to match the local system's user and groups.
->   (David Howells intends to port AFS as a first candidate.)
-> - Shifting of a container rootfs or base image without having to mangle
->   every file (runc, Docker, containerd, k8s, LXD, systemd ...)
-> - Sharing of data between host or privileged containers with
->   unprivileged containers (runC, Docker, containerd, k8s, LXD, ...)
-> - Data sharing between multiple user namespaces with incompatible maps
->   (LXD, k8s, ...)
-> 
-> There has been significant interest in this patchset as evidenced by
-> user commenting on previous version of this patchset. They include
-> containerd, ChromeOS, systemd, LXD and a range of others. There is
-> already a patchset up for containerd, the default Kubernetes container
-> runtime https://github.com/containerd/containerd/pull/4734
-> to make use of this. systemd intends to use it in their systemd-homed
-> implementation for portable home directories. ChromeOS wants to make use
-> of it to share data between the host and the Linux containers they run
-> on Chrome- and Pixelbooks. There's also a few talks that of people who
-> are going to make use of this. The most recent one was a CNCF webinar
-> https://www.cncf.io/wp-content/uploads/2020/12/Rootless-Containers-in-Gitpod.pdf
-> and upcoming talk during FOSDEM.
-> (Fwiw, for fun and since I wanted to do this for a long time I've ported
->  my home directory to be completely portable with a simple service file
->  that now mounts my home directory on an ext4 formatted usb stick with
->  an id mapping mapping all files to the random uid I'm assigned at
->  login.)
-> 
-> Making it possible to share directories and mounts between users with
-> different uids and gids is itself quite an important use-case in
-> distributed systems environments. It's of course especially useful in
-> general for portable usb sticks, sharing data between multiple users in,
-> and sharing home directories between multiple users. The last example is
-> now elegantly expressed in systemd's homed concept for portable home
-> directories. As mentioned above, idmapped mounts also allow data from
-> the host to be shared with unprivileged containers, between privileged
-> and unprivileged containers simultaneously and in addition also between
-> unprivileged containers with different idmappings whenever they are used
-> to isolate one container completely from another container.
-> 
-> We have implemented and proposed multiple solutions to this before. This
-> included the introduction of fsid mappings, a tiny filesystem I've
-> authored with Seth Forshee that is currently carried in Ubuntu that has
-> shown to be the wrong approach, and the conceptual hack of calling
-> override creds directly in the vfs. In addition, to some of these
-> solutions being hacky none of these solutions have covered all of the
-> above use-cases.
-> 
-> Idmappings become a property of struct vfsmount instead of tying it to a
-> process being inside of a user namespace which has been the case for all
-> other proposed approaches. It also allows to pass down the user
-> namespace into the filesystems which is a clean way instead of violating
-> calling conventions by strapping the user namespace information that is
-> a property of the mount to the caller's credentials or similar hacks.
-> Each mount can have a separate idmapping and idmapped mounts can even be
-> created in the initial user namespace unblocking a range of use-cases.
-> 
-> To this end the vfsmount struct gains a new struct user_namespace
-> member. The idmapping of the user namespace becomes the idmapping of the
-> mount. A caller that is privileged with respect to the user namespace of
-> the superblock of the underlying filesystem can create an idmapped
-> mount. In the future, we can enable unprivileged use-cases by checking
-> whether the caller is privileged wrt to the user namespace that an
-> already idmapped mount has been marked with, allowing them to change the
-> idmapping. For now, keep things simple until the need arises.
-> Note, that with syscall interception it is already possible to intercept
-> idmapped mount requests from unprivileged containers and handle them in
-> a sufficiently privileged container manager. Support for this is already
-> available in LXD and will be available in runC where syscall
-> interception is currently in the process of becoming part of the runtime
-> spec: https://github.com/opencontainers/runtime-spec/pull/1074.
-> 
-> The user namespace the mount will be marked with can be specified by
-> passing a file descriptor refering to the user namespace as an argument
-> to the new mount_setattr() syscall together with the new
-> MOUNT_ATTR_IDMAP flag. By default vfsmounts are marked with the initial
-> user namespace and no behavioral or performance changes are observed.
-> All mapping operations are nops for the initial user namespace. When a
-> file/inode is accessed through an idmapped mount the i_uid and i_gid of
-> the inode will be remapped according to the user namespace the mount has
-> been marked with.
-> 
-> In order to support idmapped mounts, filesystems need to be changed and
-> mark themselves with the FS_ALLOW_IDMAP flag in fs_flags. The initial
-> version contains fat, ext4, and xfs including a list of examples.
-> But patches for other filesystems are actively worked on and will be
-> sent out separately. We are here to see this through and there are
-> multiple people involved in converting filesystems. So filesystem
-> developers are not left alone with this and are provided with a large
-> testsuite to verify that their port is correct.
-> 
-> There is a simple tool available at
-> https://github.com/brauner/mount-idmapped that allows to create idmapped
-> mounts so people can play with this patch series. Here are a few
-> illustrations:
-> 
-> 1. Create a simple idmapped mount of another user's home directory
-> 
-> u1001@f2-vm:/$ sudo ./mount-idmapped --map-mount b:1000:1001:1 /home/ubuntu/ /mnt
-> u1001@f2-vm:/$ ls -al /home/ubuntu/
-> total 28
-> drwxr-xr-x 2 ubuntu ubuntu 4096 Oct 28 22:07 .
-> drwxr-xr-x 4 root   root   4096 Oct 28 04:00 ..
-> -rw------- 1 ubuntu ubuntu 3154 Oct 28 22:12 .bash_history
-> -rw-r--r-- 1 ubuntu ubuntu  220 Feb 25  2020 .bash_logout
-> -rw-r--r-- 1 ubuntu ubuntu 3771 Feb 25  2020 .bashrc
-> -rw-r--r-- 1 ubuntu ubuntu  807 Feb 25  2020 .profile
-> -rw-r--r-- 1 ubuntu ubuntu    0 Oct 16 16:11 .sudo_as_admin_successful
-> -rw------- 1 ubuntu ubuntu 1144 Oct 28 00:43 .viminfo
+[Cc'ing linux-integrity]
 
-So I assume this falls under the buyer beware warning, but it's
-probably important to warn people loudly of the fact that, at this
-point, the user with uid 1001 can chmod u+s any binary under /mnt
-and then run it from /home/ubuntu with euid=1000.  In other words,
-that while this has excellent uses, if you *can* use shared group
-membership, you should :)
+On Wed, 2021-01-27 at 11:46 +0000, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> 
+> > > I suppose a user space tool could be created. But wouldn’t what is
+> > > currently done in the kernel in this area need to be removed?
+> > 
+> > Right. I don't think this was a great idea in the first place to
+> > do to the kernel but since it exists, I guess the patch does make
+> > sense.
+> 
+> This information needs to be loaded from the UEFI tables before the system
+> starts loading any kernel modules or running any programs (if we do
+> verification of such, which I think IMA can do).
 
-Very cool though.
+There needs to a clear distinction between the pre-boot and post-boot
+keys.  UEFI has its own trust model, which should be limited to UEFI. 
+The .platform keyring was upstreamed and limited to verifying the kexec
+kernel image.   Any other usage of the .platform keyring keys is
+abusing its intended purpose.
+
+The cover letter says,   "Anytime the .platform keyring is used, the
+keys in the .blacklist keyring are referenced, if a matching key is
+found, the key will be rejected."   I don't have a problem with loading
+the UEFI X509 dbx entries as long as its usage is limited to verifying
+the kexec kernel image.
+
+Mimi
+
