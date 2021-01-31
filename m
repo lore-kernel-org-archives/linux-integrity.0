@@ -2,138 +2,141 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C93C433E0
-	for <linux-integrity@archiver.kernel.org>; Sun, 31 Jan 2021 04:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1D8C4332D
+	for <linux-integrity@archiver.kernel.org>; Sun, 31 Jan 2021 15:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E42A64E13
-	for <linux-integrity@archiver.kernel.org>; Sun, 31 Jan 2021 04:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6D0464E21
+	for <linux-integrity@archiver.kernel.org>; Sun, 31 Jan 2021 15:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbhAaETo (ORCPT
+        id S231618AbhAaPYy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 30 Jan 2021 23:19:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45290 "EHLO
+        Sun, 31 Jan 2021 10:24:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229842AbhAaETL (ORCPT
+        with ESMTP id S231625AbhAaOO5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 30 Jan 2021 23:19:11 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97D2CC061573;
-        Sat, 30 Jan 2021 20:18:29 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 155151280586;
-        Sat, 30 Jan 2021 20:18:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1612066709;
-        bh=Nbgoi+95+AcZmsgbWasTlZCJci+H2dmaEkCTxqsJ2Kg=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=igFPavvWYr/Boa3vIm6E0r6fC7fYamxgAigWmrGEy2OVTaX4iA0ZD/jV0ur1+ZWkX
-         RxksMXHzc2aMJNb+bFVbNYUm/Hjxe9TTWjHSNgHFmo03o7LoNXPCxNfWyNCvirjkft
-         E/8RwS+YWdUNlWqmaLpVEdz3xIf4oItfag1OvFno=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id DkaenQoIzObO; Sat, 30 Jan 2021 20:18:29 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 544911280582;
-        Sat, 30 Jan 2021 20:18:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1612066708;
-        bh=Nbgoi+95+AcZmsgbWasTlZCJci+H2dmaEkCTxqsJ2Kg=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=jjevaDCcS1E8tDTXk5F85vfVii8uzIpqjdnrEEcMDeM7htuJaFBBMdgg3+Hgqq5BV
-         lNeTI5HAE0rcC3b5EkXmy2AQvitL0XmpVRUgU0dGcLImsX4Ap2/uS536OduJsXjmsO
-         KEwPx6y1Mt91zkB4aqOQC+4tql6WbjrEeALOzDLQ=
-Message-ID: <486ef072bf19eaf70c5417282f499a7c48e09a07.camel@HansenPartnership.com>
-Subject: Re: [PATCH] tpm_tis: Add missing start/stop_tpm_chip calls
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
+        Sun, 31 Jan 2021 09:14:57 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD16CC06174A
+        for <linux-integrity@vger.kernel.org>; Sun, 31 Jan 2021 06:14:15 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1l6DUK-0003wo-6u; Sun, 31 Jan 2021 15:14:04 +0100
+Received: from localhost ([127.0.0.1])
+        by ptx.hi.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1l6DUJ-0004cG-5y; Sun, 31 Jan 2021 15:14:03 +0100
+Message-ID: <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
+Subject: Re: Migration to trusted keys: sealing user-provided key?
+From:   Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        =?UTF-8?Q?=C5=81ukasz?= Majczak <lma@semihalf.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Radoslaw Biernacki <rad@semihalf.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Alex Levin <levinale@google.com>
-Date:   Sat, 30 Jan 2021 20:18:27 -0800
-In-Reply-To: <57e79e19-fe5c-7d41-ff30-40afbaa7a96d@roeck-us.net>
-References: <20210123014247.989368-1-lma@semihalf.com>
-         <20210125171846.GA31929@roeck-us.net>
-         <CAFJ_xboNDcp-XrxfbrBjqTWjLZUdVWe1OJi4KK==ij+yivFeHA@mail.gmail.com>
-         <YBSTOrlgTPpzoblY@kernel.org>
-         <7a702108-ec9e-b2e2-be89-3590437c0eb5@roeck-us.net>
-         <bf4564a2f4f761a4c0a00857c7dc346fc43bcd92.camel@HansenPartnership.com>
-         <57e79e19-fe5c-7d41-ff30-40afbaa7a96d@roeck-us.net>
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel@pengutronix.de
+Date:   Sun, 31 Jan 2021 15:14:02 +0100
+In-Reply-To: <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
+References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
+         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
+         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+User-Agent: Evolution 3.38.2-1 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: jlu@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, 2021-01-30 at 19:36 -0800, Guenter Roeck wrote:
-> On 1/30/21 4:41 PM, James Bottomley wrote:
-> > On Sat, 2021-01-30 at 15:49 -0800, Guenter Roeck wrote:
-> > > On 1/29/21 2:59 PM, Jarkko Sakkinen wrote:
-> > > > On Tue, Jan 26, 2021 at 04:46:07PM +0100, Łukasz Majczak wrote:
-> > > > > Hi Jarkko, Guenter
-> > > > > 
-> > > > > Yes, here are the logs when failure occurs -
-> > > > > https://gist.github.com/semihalf-majczak-lukasz/1575461f585f1e7fb1e9366b8eceaab9
-> > > > > Look for a phrase "TPM returned invalid status"
-> > > > > 
-> > > > > Guenter - good suggestion - I will try to keep it as tight as
-> > > > > possible.
-> > > > > 
-> > > > > Best regards,
-> > > > > Lukasz
-> > > > 
-> > > > Is it possible for you try out with linux-next? Thanks. It's a
-> > > > known issue, which ought to be fixed by now.
-> > > > 
-> > > > The log message is harmless, it'a warning not panic, and does
-> > > > not endanger system stability. WARN()'s always dump stack
-> > > > trace. No oops is happening.
-> > > > 
+On Sun, 2021-01-31 at 07:09 -0500, Mimi Zohar wrote:
+> On Sat, 2021-01-30 at 19:53 +0200, Jarkko Sakkinen wrote:
+> > On Thu, 2021-01-28 at 18:31 +0100, Ahmad Fatoum wrote:
+> > > Hello,
 > > > 
-> > > There is a note in the kernel documentation which states:
+> > > I've been looking into how a migration to using trusted/encrypted keys
+> > > would look like (particularly with dm-crypt).
 > > > 
-> > > Note that the WARN()-family should only be used for "expected to
-> > > be unreachable" situations. If you want to warn about "reachable
-> > > but undesirable" situations, please use the pr_warn()-family of
-> > > functions.
+> > > Currently, it seems the the only way is to re-encrypt the partitions
+> > > because trusted/encrypted keys always generate their payloads from
+> > > RNG.
+> > > 
+> > > If instead there was a key command to initialize a new trusted/encrypted
+> > > key with a user provided value, users could use whatever mechanism they
+> > > used beforehand to get a plaintext key and use that to initialize a new
+> > > trusted/encrypted key. From there on, the key will be like any other
+> > > trusted/encrypted key and not be disclosed again to userspace.
+> > > 
+> > > What are your thoughts on this? Would an API like
+> > > 
+> > >   keyctl add trusted dmcrypt-key 'set <content>' # user-supplied content
+> > > 
+> > > be acceptable?
 > > 
-> > It fits the definition.  The warning only triggers if the access is
-> > in the wrong locality, which should be impossible, so the warning
-> > should be unreachable.
-> > 
-> Thanks a lot for the clarification. So a warning traceback in the
-> kernel doesn't necessarily suggest that there is a serious problem
-> that should be fixed; it only means that some code is executed which
-> should not be reachable (but is otherwise harmless).
+> > Maybe it's the lack of knowledge with dm-crypt, but why this would be
+> > useful? Just want to understand the bottleneck, that's all.
+
+Our goal in this case is to move away from having the dm-crypt key material
+accessible to user-space on embedded devices. For an existing dm-crypt volume,
+this key is fixed. A key can be loaded into user key type and used by dm-crypt
+(cryptsetup can already do it this way). But at this point, you can still do
+'keyctl read' on that key, exposing the key material to user space.
+
+Currently, with both encrypted and trusted keys, you can only generate new
+random keys, not import existing key material. 
+
+James Bottomley mentioned in the other reply that the key format will become
+compatible with the openssl_tpm2_engine, which would provide a workaround. This
+wouldn't work with OP-TEE-based trusted keys (see Sumit Garg's series), though.
+
+> We upstreamed "trusted" & "encrypted" keys together in order to address
+> this sort of problem.   Instead of directly using a "trusted" key for
+> persistent file signatures being stored as xattrs, the "encrypted" key
+> provides one level of indirection.   The "encrypted" key may be
+> encrypted/decrypted with either a TPM based "trusted" key or with a
+> "user" type symmetric key[1].
 > 
-> That makes me wonder, though, if it would make sense to mark such
-> harmless tracebacks differently. The terms "warning" and "harmless"
-> sound like a bit of a contradiction to me (especially for systems
-> where panic_on_warn is set).
+> Instead of modifying "trusted" keys, use a "user" type "encrypted" key.
 
-Well, it's not harmless; because it occurs at start of day, it means we
-clear the ineffective command and use default values and those happen
-to work fine for the TPM in question, so the problem is pretty much
-covered up.  If it had occurred anywhere else it would result in a loss
-of the command data with unknown ramifications to user space, possibly
-leading to a TPM failure.
+I don't see how this would help. When using dm-crypt with an encrypted key, I
+can't use my existing key material.
 
-Hopefully this means this is the only place we screwed up, but you can
-see why a scary warning and stack trace is appropriate: if it triggers,
-something in the kernel violated the TPM command model.
+Except for the migration aspect, trusted keys seem ideal. Only a single exported
+blob needs to be stored and can only be loaded/used again on the same (trusted)
+system. Userspace cannot extract the key material. 
 
-James
+To get to this point on systems in the field without re-encryption of the whole
+storage, only the initial trusted/encrypted key creation would need to allow
+passing in existing key material.
 
+> Mimi
+> 
+> [1] The ima-evm-utils README contains EVM examples of "trusted" and
+> "user" based "encrypted" keys.
+
+I assume you refer to
+https://sourceforge.net/p/linux-ima/ima-evm-utils/ci/master/tree/README#l143
+"Generate EVM encrypted keys" and "Generate EVM trusted keys (TPM based)"?
+
+In both cases, the key used by EVM is a *newly generated* random key. The only
+difference is whether it's encrypted to a user key or a (random) trusted key.
+
+Best regards
+Jan
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
