@@ -2,68 +2,68 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1BAC433DB
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Feb 2021 15:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAC5C433E0
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Feb 2021 15:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3D764EA9
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Feb 2021 15:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E5D264D9E
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Feb 2021 15:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231618AbhBAPUT (ORCPT
+        id S230179AbhBAPXh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 1 Feb 2021 10:20:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62142 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231152AbhBAPUL (ORCPT
+        Mon, 1 Feb 2021 10:23:37 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31322 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231180AbhBAPUM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 1 Feb 2021 10:20:11 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 111F6NRe130181;
+        Mon, 1 Feb 2021 10:20:12 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 111FCM0O031308;
         Mon, 1 Feb 2021 10:19:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=FkYuYW0lpNE5sfqJVu9Oc3er1eHA0pKAzOO57Ilbh0E=;
- b=DlYcbnZPAVLKtgERoxQY80cXxkV8lVjhgnuKBvLaaJJtQAI7B6VnWVfttIo3EhGmkswO
- iL3dwyL47DsuuGgLut2uVndpw9lBTQaak1NUc7a85UPaBYEoAfGq3EaJ24WLqufekJXr
- nRO3oS32W9CP/uKkPhhZ438bphWj+MkOeUFnH8jUvQdwL4WLVENkag+fV9em2q4lX7ot
- iWAtTIh3fChM/QQbdwm4MyD+hkhrP3af3VXq3k5gN0H/gRXHlo2eiBqoSlDzBoo6UJMw
- NMaQbiKPghIXayCd0Jv4BtzWeehjAoTzZAhwx/Ki4mv9E2R37QvO+AgHvJGMKDyMbSD8 QA== 
+ bh=1KiVvY0uZ3kqyy2p1kczsWyx17pJ+hFxKOOOeeok3sg=;
+ b=QL9qNOGFWWQYmpXk/Osr8EIfaRkTmq8gx++GlCnugPxY0nt2yabkG2r3yVPy876AvqvO
+ 7vAdp4odBGymscMB1sijcvPsDTzBXVrvtVGQpezefjXESBN6rMttmVsiKPEwRYbRF2xy
+ jgnHXtydj5cuAaw0DvsNSNWLE4UtGA1hvqcLznqtGQVMEFpAvawCFxw/xnP4YNnRS0PJ
+ LxIqw9E9Qocm5i63GqIiQciUrkwHM8+sfFNyacBitjucl5hVVL4I2gtknZKucfic+gyD
+ vmxRpdJSeV07EnU/xUEEbndJe+vxDCg9lv+S+YlU+HtlWkwZJk5H98HLYUxdnLjFh/HP rg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36eks8gusq-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36em2yr7v0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 01 Feb 2021 10:19:24 -0500
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 111F6diY131536;
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 111FCbQO032441;
         Mon, 1 Feb 2021 10:19:24 -0500
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36eks8guqn-1
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36em2yr7uc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 01 Feb 2021 10:19:23 -0500
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 111FEe6M019257;
-        Mon, 1 Feb 2021 15:19:21 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma02wdc.us.ibm.com with ESMTP id 36cy38yawb-1
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 111FBuNW016849;
+        Mon, 1 Feb 2021 15:19:22 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma03dal.us.ibm.com with ESMTP id 36ehek9evw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Feb 2021 15:19:20 +0000
+        Mon, 01 Feb 2021 15:19:22 +0000
 Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 111FJJBq23265754
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 111FJL7920185466
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 1 Feb 2021 15:19:19 GMT
+        Mon, 1 Feb 2021 15:19:21 GMT
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35ED46E05B;
-        Mon,  1 Feb 2021 15:19:19 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 5F1A56E05D;
+        Mon,  1 Feb 2021 15:19:21 +0000 (GMT)
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C44E46E062;
-        Mon,  1 Feb 2021 15:19:17 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 5FD7C6E05E;
+        Mon,  1 Feb 2021 15:19:20 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Feb 2021 15:19:17 +0000 (GMT)
+        Mon,  1 Feb 2021 15:19:20 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
         davem@davemloft.net, herbert@gondor.apana.org.au,
@@ -71,10 +71,12 @@ To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
 Cc:     linux-kernel@vger.kernel.org, patrick@puiterwijk.org,
         linux-integrity@vger.kernel.org,
         Stefan Berger <stefanb@linux.ibm.com>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v7 2/4] x509: Detect sm2 keys by their parameters OID
-Date:   Mon,  1 Feb 2021 10:19:08 -0500
-Message-Id: <20210201151910.1465705-3-stefanb@linux.ibm.com>
+        Vitaly Chikunov <vt@altlinux.org>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: [PATCH v7 4/4] ima: Support EC keys for signature verification
+Date:   Mon,  1 Feb 2021 10:19:10 -0500
+Message-Id: <20210201151910.1465705-5-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210201151910.1465705-1-stefanb@linux.ibm.com>
 References: <20210201151910.1465705-1-stefanb@linux.ibm.com>
@@ -83,102 +85,102 @@ Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
  definitions=2021-02-01_05:2021-01-29,2021-02-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 mlxscore=0 malwarescore=0 suspectscore=0 adultscore=0
- mlxlogscore=999 clxscore=1015 spamscore=0 phishscore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2102010077
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Detect whether a key is an sm2 type of key by its OID in the parameters
-array rather than assuming that everything under OID_id_ecPublicKey
-is sm2, which is not the case.
+Add support for IMA signature verification for EC keys. Since SHA type
+of hashes can be used by RSA and ECDSA signature schemes we need to
+look at the key and derive from the key which signature scheme to use.
+Since this can be applied to all types of keys, we change the selection
+of the encoding type to be driven by the key's signature scheme rather
+than by the hash type.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Vitaly Chikunov <vt@altlinux.org>
 Reviewed-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: Vitaly Chikunov <vt@altlinux.org>
+Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 Cc: David Howells <dhowells@redhat.com>
 Cc: keyrings@vger.kernel.org
 ---
- crypto/asymmetric_keys/x509_cert_parser.c | 12 +++++++++++-
- include/linux/oid_registry.h              |  1 +
- lib/oid_registry.c                        | 13 +++++++++++++
- 3 files changed, 25 insertions(+), 1 deletion(-)
+ include/keys/asymmetric-type.h         |  6 ++++++
+ security/integrity/digsig_asymmetric.c | 29 ++++++++++++--------------
+ 2 files changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 52c9b455fc7d..1621ceaf5c95 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -459,6 +459,7 @@ int x509_extract_key_data(void *context, size_t hdrlen,
- 			  const void *value, size_t vlen)
- {
- 	struct x509_parse_context *ctx = context;
-+	enum OID oid;
- 
- 	ctx->key_algo = ctx->last_oid;
- 	switch (ctx->last_oid) {
-@@ -470,7 +471,16 @@ int x509_extract_key_data(void *context, size_t hdrlen,
- 		ctx->cert->pub->pkey_algo = "ecrdsa";
- 		break;
- 	case OID_id_ecPublicKey:
--		ctx->cert->pub->pkey_algo = "sm2";
-+		if (parse_OID(ctx->params, ctx->params_size, &oid) != 0)
-+			return -EBADMSG;
-+
-+		switch (oid) {
-+		case OID_sm2:
-+			ctx->cert->pub->pkey_algo = "sm2";
-+			break;
-+		default:
-+			return -ENOPKG;
-+		}
- 		break;
- 	default:
- 		return -ENOPKG;
-diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
-index 59ad6109f918..f3b2c097c886 100644
---- a/include/linux/oid_registry.h
-+++ b/include/linux/oid_registry.h
-@@ -121,6 +121,7 @@ enum OID {
- };
- 
- extern enum OID look_up_OID(const void *data, size_t datasize);
-+extern int parse_OID(const void *data, size_t datasize, enum OID *oid);
- extern int sprint_oid(const void *, size_t, char *, size_t);
- extern int sprint_OID(enum OID, char *, size_t);
- 
-diff --git a/lib/oid_registry.c b/lib/oid_registry.c
-index f7ad43f28579..508e0b34b5f0 100644
---- a/lib/oid_registry.c
-+++ b/lib/oid_registry.c
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/errno.h>
- #include <linux/bug.h>
-+#include <linux/asn1.h>
- #include "oid_registry_data.c"
- 
- MODULE_DESCRIPTION("OID Registry");
-@@ -92,6 +93,18 @@ enum OID look_up_OID(const void *data, size_t datasize)
+diff --git a/include/keys/asymmetric-type.h b/include/keys/asymmetric-type.h
+index a29d3ff2e7e8..c432fdb8547f 100644
+--- a/include/keys/asymmetric-type.h
++++ b/include/keys/asymmetric-type.h
+@@ -72,6 +72,12 @@ const struct asymmetric_key_ids *asymmetric_key_ids(const struct key *key)
+ 	return key->payload.data[asym_key_ids];
  }
- EXPORT_SYMBOL_GPL(look_up_OID);
  
-+int parse_OID(const void *data, size_t datasize, enum OID *oid)
++static inline
++const struct public_key *asymmetric_key_public_key(const struct key *key)
 +{
-+	const unsigned char *v = data;
-+
-+	if (datasize < 2 || v[0] != ASN1_OID || v[1] != datasize - 2)
-+		return -EBADMSG;
-+
-+	*oid = look_up_OID(data + 2, datasize - 2);
-+	return 0;
++	return key->payload.data[asym_crypto];
 +}
-+EXPORT_SYMBOL_GPL(parse_OID);
 +
- /*
-  * sprint_OID - Print an Object Identifier into a buffer
-  * @data: The encoded OID to print
+ extern struct key *find_asymmetric_key(struct key *keyring,
+ 				       const struct asymmetric_key_id *id_0,
+ 				       const struct asymmetric_key_id *id_1,
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index a662024b4c70..29002d016607 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -84,6 +84,7 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ {
+ 	struct public_key_signature pks;
+ 	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
++	const struct public_key *pk;
+ 	struct key *key;
+ 	int ret;
+ 
+@@ -105,23 +106,19 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 	memset(&pks, 0, sizeof(pks));
+ 
+ 	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+-	switch (hdr->hash_algo) {
+-	case HASH_ALGO_STREEBOG_256:
+-	case HASH_ALGO_STREEBOG_512:
+-		/* EC-RDSA and Streebog should go together. */
+-		pks.pkey_algo = "ecrdsa";
+-		pks.encoding = "raw";
+-		break;
+-	case HASH_ALGO_SM3_256:
+-		/* SM2 and SM3 should go together. */
+-		pks.pkey_algo = "sm2";
+-		pks.encoding = "raw";
+-		break;
+-	default:
+-		pks.pkey_algo = "rsa";
++
++	pk = asymmetric_key_public_key(key);
++	pks.pkey_algo = pk->pkey_algo;
++	if (!strcmp(pk->pkey_algo, "rsa"))
+ 		pks.encoding = "pkcs1";
+-		break;
+-	}
++	else if (!strcmp(pk->pkey_algo, "ecdsa"))
++		pks.encoding = "x962";
++	else if (!strcmp(pk->pkey_algo, "ecrdsa") ||
++		   !strcmp(pk->pkey_algo, "sm2"))
++		pks.encoding = "raw";
++	else
++		return -ENOPKG;
++
+ 	pks.digest = (u8 *)data;
+ 	pks.digest_size = datalen;
+ 	pks.s = hdr->sig;
 -- 
 2.29.2
 
