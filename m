@@ -2,93 +2,85 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0EFC433E0
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C79CC433DB
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A0A964F63
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:11:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C8A564F7F
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234148AbhBBWLk (ORCPT
+        id S234328AbhBBWLm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Feb 2021 17:11:40 -0500
-Received: from mout.gmx.net ([212.227.17.21]:49509 "EHLO mout.gmx.net"
+        Tue, 2 Feb 2021 17:11:42 -0500
+Received: from mout.gmx.net ([212.227.17.21]:55091 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233941AbhBBWLh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        id S233598AbhBBWLh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 2 Feb 2021 17:11:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1612303792;
-        bh=kpbzdNODFnAbXuoY59f8MDbpPfxSMH2i07Z3601DVHk=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=brP2JX65mXnCFdr/ei65Iwwr9jgWvzCAClAC/vFyrBtYLmajTJi5bYwl98Z4mrDg0
-         PiyDpnUcz5D2X4R16tSc7oOtGvKLT9Yt7De9IaFTEATzkH++ueOCgOqwyWmWsmMHKu
-         vZ75gKBsIhycz56MX8QUA9Fi8a0qhylq8UHuDfO8=
+        s=badeba3b8450; t=1612303791;
+        bh=mmmvmqJRMdapP4z8zmy673XOwyd87Kegs4AcHgFei9I=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=CwvB3tnR6Uac23IXxAkG+KHCSXZbMH1S3ROqfQnH/f9ePujyn2bBW8zpEG7SIzxSU
+         c0H4PJj1EP1t9fpdSz1ve1Ra4chDctNUNg59BQCRQhL/1bslPY1dPhgVEeTvG4NDGx
+         ZMZo41GqWIfrC5GvlY10pFAyCXvW8sOSP/ZAyxtU=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from Venus.fritz.box ([78.42.220.31]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MvsJ5-1lz1V906Zr-00stp0; Tue, 02
- Feb 2021 23:09:52 +0100
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MSc1B-1lUwOl3gWP-00Ssg4; Tue, 02
+ Feb 2021 23:09:50 +0100
 From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
 To:     peterhuewe@gmx.de, jarkko@kernel.org
 Cc:     jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        LinoSanfilippo@gmx.de, Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: [PATCH v2 3/3] tpm: in tpm2_del_space check if ops pointer is still valid
-Date:   Tue,  2 Feb 2021 23:09:03 +0100
-Message-Id: <1612303743-29017-4-git-send-email-LinoSanfilippo@gmx.de>
+        LinoSanfilippo@gmx.de
+Subject: [PATCH v2 0/3] TPM fixes
+Date:   Tue,  2 Feb 2021 23:09:00 +0100
+Message-Id: <1612303743-29017-1-git-send-email-LinoSanfilippo@gmx.de>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1612303743-29017-1-git-send-email-LinoSanfilippo@gmx.de>
-References: <1612303743-29017-1-git-send-email-LinoSanfilippo@gmx.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:zmynfQP3JZaYqVs6nC0/Hn+6lj9knW7njjTftLILSh1/GVLGxhz
- 5nMGtjf60zyVSrK/1Unrhc6hbhd4OoC2GMvkywgGuR2JCCsJAiwIABwIOG0GvllthQB6JfU
- Ywleq9NThjSRlZrMpTwIP1/l7fF8FovBh7ObIdZY8/kuyio763HmFdJrmhIYobNM/6oztZK
- lW5PwR6XvMbu3A4t0kQVA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:kaR3qkK5XkY=:CzGRqcNemXwU/XCHjoppZT
- ffM3vm+6PTRSuPvPt9Y/W9M5s+ZOuoB3/H7mZyCjQGBL7jp+FW84Pep8rnSCJfzcyOh2OtYSf
- HmLuxC0WiRyq1WAO67uAhwpYkmSxeE4ib8wdTj9PtVakJHptZUpzPNQrTgFCR/s+nxG7ajpeB
- dbdWg95kcT4Mj3tzpP1DJiJNmqvilX/1bpME7KnOWV4rzg+4Df4hz+djOGxBPbikJVRpCtEGh
- 7ZmiOUQ3CBH/5BPAJLZzOWM2Do2RfSr5cb2QwVxKXmlLaKR1vAxM4OR4pV2Zd7rkigG9+RaV7
- cJs3TxUjMZga912NcyVB8v21bHwJNxbKPo3CWSD2NnEjrFcf/3K5/Hg8gDcP0vQ3B35WWHqAg
- rCvJO6mj9kdbQ8JpbbekhaQMOmctX7Vxzh+/EhEJTWsGuSmf6M+6FLK0HoB+ORwwzoaaX8L80
- SvM0FzsEm/gB6ARUd0rISDCOomBAcwpyd1MqOYhlfqFVEWi/zNdMz1Pxf7xMk4jfvP2IiBpx0
- T9w6taRTym684aD/AYAp6LcyV5EGo4cKYoQ2hYJYpRnXkETjMRT9id91HtnyjgiUH3bUkxkQr
- Q/O2F/WtLaqSHjMsxInOcSGQKqg2RcsPWKwaGzvdUb9YlWO0v1eTBXY7nm7F8Y/ozyD62kAC3
- 7VNprweiYXViq/BK97K284Zh2gxwcCoSWnhPQ/5JpLLPearPOd2ptCjs/y6ofB77GgrE1dCMw
- ya2RpBx/WYbB7zLy47xnvPlYIx9FjfvpMdfiToxfxdabdhIVNebBxwW2gik9AneCaCXPyNvaF
- mzQNteQSurfzfYDmIuIYQgxi8ijRTR0p5ISLixbGdKzT6mmeOulIVy321WswpDg9BwCJCwCI+
- /RGaE3GKqsQa9lUngMCg==
+X-Provags-ID: V03:K1:qZ9x3GSZd9i3RzYpVYe93PCWTPrCz18Qvf6YxOCb/QI1nWymCRj
+ eOETNajCP28iqRo5hhhiDfsc7deCHN1KPjmx31cAxdgfnYDyz17ogz3rqpszt0tvznSnlSP
+ LgPCF3r09eeTsdk5J737jN6A9eRbq/Z+TaQMrVdWkiwWSOCto/u275XjkxPNtQANksjiS2e
+ ILMpFfMHSzixT55MVNHlg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Pqm3vknyDkU=:CwxuwarfkDioQfbBWdIrfX
+ H0FbQ1D+DY1WwICXODDKmIKTLh+dkohzjQBfoVyfybivQViTXlBKpQeIWxjyi7emA2AsjuuhP
+ HZxYX2E9IdFHLiSNTwb7Mqf+Mmxr3ZNvRhl6sbf+3AuYnmKdVY0XCKdKSf4GxXkewMnhzr7It
+ F+ZdS1GoR9dDDjIGO+swGPmOw0ZRsc2G+n9R2cIod6+fkfxev2o9rgi5MoGviWwfleY3A8GjO
+ 2oEH6GoowdGn5QswxS7uMMifVahZHh8aBIU0LvyrATXq81WNcnroYsF4s0kQn639yQf3BdUCY
+ lDs7hzcsdZ/iN1TYQL52YaqBfcWznZLKMHBMFVsW+My0Cvd8Aig2Ngu81Dwm/cmrjOJEFupoG
+ Kt+eimH5AOO+rUXaLEwcla6ktDW5c1Mh2SV2YZi3STyESkt/PMrUpYPXirORwro9hWwuou5+e
+ PYCphXGchPxEydUkuYYGLTMXh8NYFSGxwk+DhEKWq6H9wryS7uPAiOn9pLLzCOEWiH2EfFuUk
+ 2sXu5MOaG0PP5F8G51uReOMedLlP8rKqEZJ6rpwAMAjfgSsz7CGDXJ3gyErnQi9zKc9UVSSq0
+ PK7FbL9Yp508KEdGTZ0Gc3EuKqXKcMxf11GI7LHWlMmIG8Volw+LCCrXfHQNVM5IE1ZNbTuNf
+ IANdutTLyDOwQuqPKlko81nEtvTgWjC2gQhz+P2ZrAPdc4P7IFukFH0UQHDCu7/Oj+U5NL1ur
+ hEuEscrE8foG1MREE9WomiKPBZf7UTjeebBpBUa29VwjkNWWLGlKC6VccZ/6+8+C5Ab+E1/Hz
+ 17kjufjR18hOkp7+p1BhkdFEpJi1vyqeL+beuiXZ6QpEOBYJYmZXfCssqQ7AGGD3eEH9R69Q4
+ muNR6laCNZOmM3Pp6k3w==
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkluIHRwbTJf
-ZGVsX3NwYWNlKCkgdGhlIHNlc3Npb25zIGFyZSBmbHVzaGVkIGJ5IG1lYW5zIG9mIHRoZSB0cG1f
-Y2hpcApvcGVyYXRpb25zLiBIb3dldmVyIHRoZSBjb25jZXJuaW5nIG9wZXJhdGlvbnMgcG9pbnRl
-ciBteSBhbHJlYWR5IGJlIE5VTEwgYXQKdGhpcyB0aW1lIGluIGNhc2UgdGhhdCB0aGUgY2hpcCBo
-YXMgYmVlbiB1bnJlZ2lzdGVyZWQgKHNlZQp0cG1fY2hpcF91bnJlZ2lzdGVyKCkgd2hpY2ggY2Fs
-bHMgdHBtX2RlbF9jaGFyX2RldmljZSgpIHdoaWNoIHNldHMKY2hpcC0+b3BzIHRvIE5VTEwpLgpC
-ZWZvcmUgYWNjZXNzaW5nIGNoaXAtPm9wcyBjaGVjayBpZiBpdCBpcyBzdGlsbCB2YWxpZC4gU2tp
-cCBmbHVzaGluZwp0aGUgc2Vzc2lvbnMgaW4gdGhpcyBjYXNlLgoKU2lnbmVkLW9mZi1ieTogTGlu
-byBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KLS0tCiBkcml2ZXJzL2NoYXIv
-dHBtL3RwbTItc3BhY2UuYyB8IDE1ICsrKysrKysrKystLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEw
-IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFy
-L3RwbS90cG0yLXNwYWNlLmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2UuYwppbmRleCA3
-ODRiOGIzLi45YTI5YTQwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2Uu
-YworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2UuYwpAQCAtNTgsMTIgKzU4LDE3IEBA
-IGludCB0cG0yX2luaXRfc3BhY2Uoc3RydWN0IHRwbV9zcGFjZSAqc3BhY2UsIHVuc2lnbmVkIGlu
-dCBidWZfc2l6ZSkKIAogdm9pZCB0cG0yX2RlbF9zcGFjZShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAs
-IHN0cnVjdCB0cG1fc3BhY2UgKnNwYWNlKQogewotCW11dGV4X2xvY2soJmNoaXAtPnRwbV9tdXRl
-eCk7Ci0JaWYgKCF0cG1fY2hpcF9zdGFydChjaGlwKSkgewotCQl0cG0yX2ZsdXNoX3Nlc3Npb25z
-KGNoaXAsIHNwYWNlKTsKLQkJdHBtX2NoaXBfc3RvcChjaGlwKTsKKwlkb3duX3JlYWQoJmNoaXAt
-Pm9wc19zZW0pOworCWlmIChjaGlwLT5vcHMpIHsKKwkJbXV0ZXhfbG9jaygmY2hpcC0+dHBtX211
-dGV4KTsKKwkJaWYgKCF0cG1fY2hpcF9zdGFydChjaGlwKSkgeworCQkJdHBtMl9mbHVzaF9zZXNz
-aW9ucyhjaGlwLCBzcGFjZSk7CisJCQl0cG1fY2hpcF9zdG9wKGNoaXApOworCQl9CisJCW11dGV4
-X3VubG9jaygmY2hpcC0+dHBtX211dGV4KTsKIAl9Ci0JbXV0ZXhfdW5sb2NrKCZjaGlwLT50cG1f
-bXV0ZXgpOworCXVwX3JlYWQoJmNoaXAtPm9wc19zZW0pOworCiAJa2ZyZWUoc3BhY2UtPmNvbnRl
-eHRfYnVmKTsKIAlrZnJlZShzcGFjZS0+c2Vzc2lvbl9idWYpOwogfQotLSAKMi43LjQKCg==
+VGhpcyBzZXJpZXMgZml4ZXMgYSByZWZlcmVuY2UgY291bnQgaXNzdWUgYW5kIGEgcG9zc2libGUg
+TlVMTCBwb2ludGVyIAphY2Nlc3MgaW4gdGhlIFRQTSBjb3JlIGNvZGUuCkl0IGFsc28gaW50cm9k
+dWNlcyBhIG5ldyBmdW5jdGlvbiB0cG1fY2hpcF9mcmVlKCkgd2hpY2ggaXMgdXNlZCBhcyB0aGUK
+Y291bnRlcnBhcnQgdG8gdHBtX2NoaXBfYWxsb2MoKS4gVGhlIGZ1bmN0aW9uIGlzIHN1cHBvc2Vk
+IHRvIGhpZGUgdGhlCmludGVybmFscyBvZiBhIHByb3BlciB0cG1fY2hpcCBkZWFsbG9jYXRpb24u
+CgpDaGFuZ2VzIGluIHYyOgotIGRyb3AgdGhlIHBhdGNoIHRoYXQgZXJyb25lb3VzbHkgY2xlYW5l
+ZCB1cCBhZnRlciBmYWlsZWQgaW5zdGFsbGF0aW9uIG9mCiAgYW4gYWN0aW9uIGhhbmRsZXIgbmkg
+dHBtbV9jaGlwX2FsbG9jKCkgKHBvaW50ZWQgb3V0IGJ5IEphcmtrbyBTYWtraW5lbikKLSBtYWtl
+IHRoZSBjb21taXQgbWVzc2FnZSBmb3IgcGF0Y2ggMSBtb3JlIGRldGFpbGVkCi0gYWRkIGZpeGVz
+IHRhZ3MgYW5kIGtlcm5lbCBsb2dzCgoKTGlubyBTYW5maWxpcHBvICgzKToKICB0cG06IGZpeCBy
+ZWZlcmVuY2UgY291bnRpbmcgZm9yIHN0cnVjdCB0cG1fY2hpcAogIHRwbTogUHJvdmlkZSBhIGZ1
+bmN0aW9uIHRwbV9jaGlwX2ZyZWUoKSB0byBmcmVlIHRwbSBjaGlwcwogIHRwbTogaW4gdHBtMl9k
+ZWxfc3BhY2UgY2hlY2sgaWYgb3BzIHBvaW50ZXIgaXMgc3RpbGwgdmFsaWQKCiBkcml2ZXJzL2No
+YXIvdHBtL3RwbS1jaGlwLmMgICAgICAgfCAzNCArKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrLS0tCiBkcml2ZXJzL2NoYXIvdHBtL3RwbS5oICAgICAgICAgICAgfCAgMSArCiBkcml2ZXJz
+L2NoYXIvdHBtL3RwbTItc3BhY2UuYyAgICAgfCAxNSArKysrKysrKysrLS0tLS0KIGRyaXZlcnMv
+Y2hhci90cG0vdHBtX2Z0cG1fdGVlLmMgICB8ICA0ICsrLS0KIGRyaXZlcnMvY2hhci90cG0vdHBt
+X3Z0cG1fcHJveHkuYyB8ICAyICstCiA1IGZpbGVzIGNoYW5nZWQsIDQ1IGluc2VydGlvbnMoKyks
+IDExIGRlbGV0aW9ucygtKQoKLS0gCjIuNy40Cgo=
