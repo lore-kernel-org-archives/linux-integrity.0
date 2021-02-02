@@ -2,89 +2,93 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85F0C433DB
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0EFC433E0
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84AD364F95
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A0A964F63
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 22:11:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234540AbhBBWHC (ORCPT
+        id S234148AbhBBWLk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Feb 2021 17:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59954 "EHLO mail.kernel.org"
+        Tue, 2 Feb 2021 17:11:40 -0500
+Received: from mout.gmx.net ([212.227.17.21]:49509 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231402AbhBBWG4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Feb 2021 17:06:56 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D44BE64F78;
-        Tue,  2 Feb 2021 22:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612303574;
-        bh=qsH2JTCJoBfXTwEuB3rOzMA5cizN7wSbKzDogYG2dtU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FhpiZIeAq6FJKTT6H1Bboy7sN1eumKiEQf0DV71RDns7BJYtm8l6ATfC6fzbeiPFF
-         yUd1QiO6Hj45spwTo8ZP/vqKQPHCtUmmZ1ADSXckaoW4Xpraa/LDDZRe3hg9x+W3Dk
-         XfiFw5yHmAxtR/OnAxujfjx6iJGFMkZzgBYZHhGz1BGpUYZAMSxiabbOzv/1/z4ZDR
-         JEUKvZMnDvwe9cbEPvaUdQqGvZD1GuaiCW6hrRVCyodjD2ZylnhTId4fIcTvdZHSNS
-         /NxRaE7HFdFkuq6qhwx6LiBcD4eQE4Nr1fYgc1Wh2p1Urlwq0sz4DiSX/XAbHY5mwX
-         ip0SSrOkSIUwg==
-Date:   Wed, 3 Feb 2021 00:06:07 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Wang Hai <wanghai38@huawei.com>
-Subject: Re: [PATCH] tpm: WARN_ONCE() -> pr_warn_once() in tpm_tis_status()
-Message-ID: <YBnMzwKeTCdM//Rv@kernel.org>
-References: <20210202153317.57749-1-jarkko@kernel.org>
- <3936843b-c0da-dd8c-8aa9-90aa3b49d525@linux.ibm.com>
+        id S233941AbhBBWLh (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 2 Feb 2021 17:11:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1612303792;
+        bh=kpbzdNODFnAbXuoY59f8MDbpPfxSMH2i07Z3601DVHk=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=brP2JX65mXnCFdr/ei65Iwwr9jgWvzCAClAC/vFyrBtYLmajTJi5bYwl98Z4mrDg0
+         PiyDpnUcz5D2X4R16tSc7oOtGvKLT9Yt7De9IaFTEATzkH++ueOCgOqwyWmWsmMHKu
+         vZ75gKBsIhycz56MX8QUA9Fi8a0qhylq8UHuDfO8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from Venus.fritz.box ([78.42.220.31]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MvsJ5-1lz1V906Zr-00stp0; Tue, 02
+ Feb 2021 23:09:52 +0100
+From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
+To:     peterhuewe@gmx.de, jarkko@kernel.org
+Cc:     jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LinoSanfilippo@gmx.de, Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Subject: [PATCH v2 3/3] tpm: in tpm2_del_space check if ops pointer is still valid
+Date:   Tue,  2 Feb 2021 23:09:03 +0100
+Message-Id: <1612303743-29017-4-git-send-email-LinoSanfilippo@gmx.de>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1612303743-29017-1-git-send-email-LinoSanfilippo@gmx.de>
+References: <1612303743-29017-1-git-send-email-LinoSanfilippo@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3936843b-c0da-dd8c-8aa9-90aa3b49d525@linux.ibm.com>
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:zmynfQP3JZaYqVs6nC0/Hn+6lj9knW7njjTftLILSh1/GVLGxhz
+ 5nMGtjf60zyVSrK/1Unrhc6hbhd4OoC2GMvkywgGuR2JCCsJAiwIABwIOG0GvllthQB6JfU
+ Ywleq9NThjSRlZrMpTwIP1/l7fF8FovBh7ObIdZY8/kuyio763HmFdJrmhIYobNM/6oztZK
+ lW5PwR6XvMbu3A4t0kQVA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kaR3qkK5XkY=:CzGRqcNemXwU/XCHjoppZT
+ ffM3vm+6PTRSuPvPt9Y/W9M5s+ZOuoB3/H7mZyCjQGBL7jp+FW84Pep8rnSCJfzcyOh2OtYSf
+ HmLuxC0WiRyq1WAO67uAhwpYkmSxeE4ib8wdTj9PtVakJHptZUpzPNQrTgFCR/s+nxG7ajpeB
+ dbdWg95kcT4Mj3tzpP1DJiJNmqvilX/1bpME7KnOWV4rzg+4Df4hz+djOGxBPbikJVRpCtEGh
+ 7ZmiOUQ3CBH/5BPAJLZzOWM2Do2RfSr5cb2QwVxKXmlLaKR1vAxM4OR4pV2Zd7rkigG9+RaV7
+ cJs3TxUjMZga912NcyVB8v21bHwJNxbKPo3CWSD2NnEjrFcf/3K5/Hg8gDcP0vQ3B35WWHqAg
+ rCvJO6mj9kdbQ8JpbbekhaQMOmctX7Vxzh+/EhEJTWsGuSmf6M+6FLK0HoB+ORwwzoaaX8L80
+ SvM0FzsEm/gB6ARUd0rISDCOomBAcwpyd1MqOYhlfqFVEWi/zNdMz1Pxf7xMk4jfvP2IiBpx0
+ T9w6taRTym684aD/AYAp6LcyV5EGo4cKYoQ2hYJYpRnXkETjMRT9id91HtnyjgiUH3bUkxkQr
+ Q/O2F/WtLaqSHjMsxInOcSGQKqg2RcsPWKwaGzvdUb9YlWO0v1eTBXY7nm7F8Y/ozyD62kAC3
+ 7VNprweiYXViq/BK97K284Zh2gxwcCoSWnhPQ/5JpLLPearPOd2ptCjs/y6ofB77GgrE1dCMw
+ ya2RpBx/WYbB7zLy47xnvPlYIx9FjfvpMdfiToxfxdabdhIVNebBxwW2gik9AneCaCXPyNvaF
+ mzQNteQSurfzfYDmIuIYQgxi8ijRTR0p5ISLixbGdKzT6mmeOulIVy321WswpDg9BwCJCwCI+
+ /RGaE3GKqsQa9lUngMCg==
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 11:05:36AM -0500, Stefan Berger wrote:
-> On 2/2/21 10:33 AM, jarkko@kernel.org wrote:
-> > From: Jarkko Sakkinen <jarkko@kernel.org>
-> > 
-> > An unexpected status from TPM chip is not irrecovable failure of the
-> > kernel. It's only undesirable situation. Thus, change the WARN_ONCE
-> > instance inside tpm_tis_status() to pr_warn_once().
-> > 
-> > In addition: print the status in the log message because it is actually
-> > useful information lacking from the existing log message.
-> > 
-> > Suggested-by:  Guenter Roeck <linux@roeck-us.net>
-> > Cc: stable@vger.kernel.org
-> > Fixes: 6f4f57f0b909 ("tpm: ibmvtpm: fix error return code in tpm_ibmvtpm_probe()")
-> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> >   drivers/char/tpm/tpm_tis_core.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> > index 431919d5f48a..21f67c6366cb 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.c
-> > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > @@ -202,7 +202,7 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
-> >   		 * acquired.  Usually because tpm_try_get_ops() hasn't
-> >   		 * been called before doing a TPM operation.
-> >   		 */
-> > -		WARN_ONCE(1, "TPM returned invalid status\n");
-> > +		pr_warn_once("TPM returned invalid status: 0x%x\n", status);
-> >   		return 0;
-> >   	}
-> 
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-
-Thank you.
-
-/Jarkko
+RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkluIHRwbTJf
+ZGVsX3NwYWNlKCkgdGhlIHNlc3Npb25zIGFyZSBmbHVzaGVkIGJ5IG1lYW5zIG9mIHRoZSB0cG1f
+Y2hpcApvcGVyYXRpb25zLiBIb3dldmVyIHRoZSBjb25jZXJuaW5nIG9wZXJhdGlvbnMgcG9pbnRl
+ciBteSBhbHJlYWR5IGJlIE5VTEwgYXQKdGhpcyB0aW1lIGluIGNhc2UgdGhhdCB0aGUgY2hpcCBo
+YXMgYmVlbiB1bnJlZ2lzdGVyZWQgKHNlZQp0cG1fY2hpcF91bnJlZ2lzdGVyKCkgd2hpY2ggY2Fs
+bHMgdHBtX2RlbF9jaGFyX2RldmljZSgpIHdoaWNoIHNldHMKY2hpcC0+b3BzIHRvIE5VTEwpLgpC
+ZWZvcmUgYWNjZXNzaW5nIGNoaXAtPm9wcyBjaGVjayBpZiBpdCBpcyBzdGlsbCB2YWxpZC4gU2tp
+cCBmbHVzaGluZwp0aGUgc2Vzc2lvbnMgaW4gdGhpcyBjYXNlLgoKU2lnbmVkLW9mZi1ieTogTGlu
+byBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KLS0tCiBkcml2ZXJzL2NoYXIv
+dHBtL3RwbTItc3BhY2UuYyB8IDE1ICsrKysrKysrKystLS0tLQogMSBmaWxlIGNoYW5nZWQsIDEw
+IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFy
+L3RwbS90cG0yLXNwYWNlLmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2UuYwppbmRleCA3
+ODRiOGIzLi45YTI5YTQwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2Uu
+YworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2UuYwpAQCAtNTgsMTIgKzU4LDE3IEBA
+IGludCB0cG0yX2luaXRfc3BhY2Uoc3RydWN0IHRwbV9zcGFjZSAqc3BhY2UsIHVuc2lnbmVkIGlu
+dCBidWZfc2l6ZSkKIAogdm9pZCB0cG0yX2RlbF9zcGFjZShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAs
+IHN0cnVjdCB0cG1fc3BhY2UgKnNwYWNlKQogewotCW11dGV4X2xvY2soJmNoaXAtPnRwbV9tdXRl
+eCk7Ci0JaWYgKCF0cG1fY2hpcF9zdGFydChjaGlwKSkgewotCQl0cG0yX2ZsdXNoX3Nlc3Npb25z
+KGNoaXAsIHNwYWNlKTsKLQkJdHBtX2NoaXBfc3RvcChjaGlwKTsKKwlkb3duX3JlYWQoJmNoaXAt
+Pm9wc19zZW0pOworCWlmIChjaGlwLT5vcHMpIHsKKwkJbXV0ZXhfbG9jaygmY2hpcC0+dHBtX211
+dGV4KTsKKwkJaWYgKCF0cG1fY2hpcF9zdGFydChjaGlwKSkgeworCQkJdHBtMl9mbHVzaF9zZXNz
+aW9ucyhjaGlwLCBzcGFjZSk7CisJCQl0cG1fY2hpcF9zdG9wKGNoaXApOworCQl9CisJCW11dGV4
+X3VubG9jaygmY2hpcC0+dHBtX211dGV4KTsKIAl9Ci0JbXV0ZXhfdW5sb2NrKCZjaGlwLT50cG1f
+bXV0ZXgpOworCXVwX3JlYWQoJmNoaXAtPm9wc19zZW0pOworCiAJa2ZyZWUoc3BhY2UtPmNvbnRl
+eHRfYnVmKTsKIAlrZnJlZShzcGFjZS0+c2Vzc2lvbl9idWYpOwogfQotLSAKMi43LjQKCg==
