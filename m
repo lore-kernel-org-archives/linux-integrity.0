@@ -2,161 +2,144 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5CEC433DB
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 15:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A400C433E6
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 15:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8560064F69
-	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 15:45:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C5564F4B
+	for <linux-integrity@archiver.kernel.org>; Tue,  2 Feb 2021 15:52:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235415AbhBBPpr (ORCPT
+        id S234919AbhBBPwR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Feb 2021 10:45:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43360 "EHLO
+        Tue, 2 Feb 2021 10:52:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235747AbhBBPnr (ORCPT
+        with ESMTP id S235088AbhBBPNI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Feb 2021 10:43:47 -0500
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E76E1C061573;
-        Tue,  2 Feb 2021 07:43:06 -0800 (PST)
-Received: by mail-oi1-x22d.google.com with SMTP id m13so23138097oig.8;
-        Tue, 02 Feb 2021 07:43:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+w+yZ/p48xay0OlkN5TzXx2Zo5SnBXLHahpBj4XaHXk=;
-        b=AkWEYo+QQC2ZdGq1qNcpUMBZOaYsP0tKyRBEm/AsOGGB9vwXh3vWxDVi48LN+YsvkQ
-         cv9gJT5MTMXLoFkq/OiqdcYhCjxPCUv6mfDuKA6V3RsFoC85gjVsdIJLN26Wo75ZQMa+
-         2ZziUjmFv360JW7h8BEsEQi3M2E8oDPoixSE9g98ncW8IuO4CsGnZQ8KcYjkhwK4pB4F
-         qZcr758NOLbhfcKEkzvo6wPQifB5G1dMn6yqLjjeTpiIZegWlFkOq122A6t4PwWG4vpE
-         ytv3BNTMrHHxJkNsLF0K5siNG2129Up6dfcKSF6r2g6yP1qKojHpYyLdoLr4QZIaZgGU
-         LYpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+w+yZ/p48xay0OlkN5TzXx2Zo5SnBXLHahpBj4XaHXk=;
-        b=covpr2Tyx2QCkyiQ/hi6yX7yFFP3Mh4NC0mtrH5tYbOyncx1FPQBYG2HilgR1c82LN
-         2ZQOzKD7ark2sfZsRp3PeXpuffjrLRDNx+TcSRsFQqVlhDl42ShN4bGkW21y8C3pyznE
-         a/AK26+BZN4PWWIXouIIJa8DF6A5jl+Ibh60v3mSpC0Qy4RqfK/gzcPpL8c2tc0+GcqU
-         S6HQF7h7qz423cv3dGaRfCMfgOryPTsD9fiWLbDN/3tWyzxqV+nQfWrNNslVmcqr4gvE
-         ue09JC6iz2C/JZLmyTHcq5WhfFjgbGbbuQACQCPmVkIoSnKKE47MIo3PqRlAAfPwRzpU
-         ZnbA==
-X-Gm-Message-State: AOAM530o5MmKQXzpmeXolNBiDbmbzTRGQSp9nON1F5ZRfj1OCpJQGxv/
-        /KyHVcC2/yKvzrpQYFsi0tHzCz4EjX8=
-X-Google-Smtp-Source: ABdhPJwk9lkt+UzlN3ZV5V/jwnWoCfF8dv54faSHt7iiU9lHub52U4+KIHU3313UEK6sBLQ/13Ixhw==
-X-Received: by 2002:aca:f1d4:: with SMTP id p203mr3166485oih.46.1612280586351;
-        Tue, 02 Feb 2021 07:43:06 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 3sm1325438otn.18.2021.02.02.07.43.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Feb 2021 07:43:05 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH] tpm: WARN_ONCE() -> pr_warn_once() in tpm_tis_status()
-To:     jarkko@kernel.org, linux-integrity@vger.kernel.org
-Cc:     stable@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Wang Hai <wanghai38@huawei.com>
-References: <20210202153317.57749-1-jarkko@kernel.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <f2c8ada9-cd62-c078-0371-fb2ae449f53f@roeck-us.net>
-Date:   Tue, 2 Feb 2021 07:43:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 2 Feb 2021 10:13:08 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713A4C061573
+        for <linux-integrity@vger.kernel.org>; Tue,  2 Feb 2021 07:12:28 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1l6xLu-0002oq-Ri; Tue, 02 Feb 2021 16:12:26 +0100
+Subject: Re: [PATCH 2/2] dm crypt: support using trusted keys
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        =?UTF-8?Q?Jan_L=c3=bcbbe?= <jlu@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Dmitry Baryshkov <dbaryshkov@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, Song Liu <song@kernel.org>,
+        dm-devel@redhat.com, keyrings@vger.kernel.org,
+        kernel@pengutronix.de, linux-integrity@vger.kernel.org,
+        Alasdair Kergon <agk@redhat.com>
+References: <20210122084321.24012-1-a.fatoum@pengutronix.de>
+ <20210122084321.24012-2-a.fatoum@pengutronix.de>
+ <YAsT/N8CHHNTZcj3@kernel.org> <YAsW8DAt3vc68rLA@kernel.org>
+ <5d44e50e-4309-830b-79f6-f5d888b1ef69@pengutronix.de>
+Message-ID: <8cd946c4-558d-ca66-7026-a574034b4757@pengutronix.de>
+Date:   Tue, 2 Feb 2021 16:12:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <20210202153317.57749-1-jarkko@kernel.org>
+In-Reply-To: <5d44e50e-4309-830b-79f6-f5d888b1ef69@pengutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/2/21 7:33 AM, jarkko@kernel.org wrote:
-> From: Jarkko Sakkinen <jarkko@kernel.org>
-> 
-> An unexpected status from TPM chip is not irrecovable failure of the
-> kernel. It's only undesirable situation. Thus, change the WARN_ONCE
-> instance inside tpm_tis_status() to pr_warn_once().
-> 
-> In addition: print the status in the log message because it is actually
-> useful information lacking from the existing log message.
-> 
-> Suggested-by:  Guenter Roeck <linux@roeck-us.net>
-> Cc: stable@vger.kernel.org
-> Fixes: 6f4f57f0b909 ("tpm: ibmvtpm: fix error return code in tpm_ibmvtpm_probe()")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+On 22.01.21 20:04, Ahmad Fatoum wrote:
+> On 22.01.21 19:18, Jarkko Sakkinen wrote:
+>> On Fri, Jan 22, 2021 at 08:05:51PM +0200, Jarkko Sakkinen wrote:
+>>> On Fri, Jan 22, 2021 at 09:43:21AM +0100, Ahmad Fatoum wrote:
+>>>> Commit 27f5411a718c ("dm crypt: support using encrypted keys") extended
+>>>> dm-crypt to allow use of "encrypted" keys along with "user" and "logon".
+>>>>
+>>>> Along the same lines, teach dm-crypt to support "trusted" keys as well.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Gentle ping.
+Is there anything further you require from me regarding these two patches?
 
-> ---
->  drivers/char/tpm/tpm_tis_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+>>>> ---
+>>>
+>>> Is it possible to test run this with tmpfs? Would be a good test
+>>> target for Sumit's ARM-TEE trusted keys patches.
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 431919d5f48a..21f67c6366cb 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -202,7 +202,7 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
->  		 * acquired.  Usually because tpm_try_get_ops() hasn't
->  		 * been called before doing a TPM operation.
->  		 */
-> -		WARN_ONCE(1, "TPM returned invalid status\n");
-> +		pr_warn_once("TPM returned invalid status: 0x%x\n", status);
->  		return 0;
->  	}
->  
+> I tested these on top of Sumit's patches with TPM and a CAAM blobifier
+> backend, I am preparing. The system I am developing these patches against
+> doesn't have a TEE.  Steps to test these changes:
+> 
+> #!/bin/sh
+> 
+> DEV=/dev/loop0
+> ALGO=aes-cbc-essiv:sha256
+> KEYNAME=kmk
+> BLOCKS=20
+> 
+> fallocate -l $((BLOCKS*512)) /tmp/loop0.img
+> losetup -P $DEV /tmp/loop0.img
+> mount -o remount,rw /
+> KEY="$(keyctl add trusted $KEYNAME 'new 32' @s)"
+> keyctl pipe $KEY >$HOME/kmk.blob
+> 
+> TABLE="0 $BLOCKS crypt $ALGO :32:trusted:$KEYNAME 0 $DEV 0 1 allow_discards"
+> echo $TABLE | dmsetup create mydev
+> echo $TABLE | dmsetup load mydev
+> dd if=/dev/zero of=/dev/mapper/mydev
+> echo "It works!" 1<> /dev/mapper/mydev
+> cryptsetup close mydev
+> 
+> reboot
+> 
+> DEV=/dev/loop0
+> ALGO=aes-cbc-essiv:sha256
+> KEYNAME=kmk
+> BLOCKS=20
+> 
+> losetup -P $DEV $HOME/loop0.img
+> keyctl add trusted $KEYNAME "load $(cat $HOME/kmk.blob)" @s
+> TABLE="0 $BLOCKS crypt $ALGO :32:trusted:$KEYNAME 0 $DEV 0 1 allow_discards"
+> echo $TABLE | dmsetup create mydev
+> echo $TABLE | dmsetup load mydev
+> 
+> # should print that It works!
+> hexdump -C /dev/mapper/mydev
+> 
+>>> https://lore.kernel.org/linux-integrity/1604419306-26105-1-git-send-email-sumit.garg@linaro.org/
+>>
+>> Also, I would hold merging *this* patch up until we are able to
+>> test TEE trusted keys with TEE trusted keys.
+> 
+> Which blocks which? I tested this with TPM-Trusted keys, so it's usable
+> as is. For convenient usage, it would be nice to have cryptsetup
+> support for trusted and encrypted keys. I intended to look at this next week.
+> 
+> Cheers,
+> Ahmad
+> 
+>>
+>> /Jarkko
+>>
 > 
 
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
