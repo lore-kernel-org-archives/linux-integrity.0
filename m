@@ -2,154 +2,208 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE18C433E0
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Feb 2021 01:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3507BC433DB
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Feb 2021 07:25:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 368B764F4C
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Feb 2021 01:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE29064F4A
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Feb 2021 07:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230038AbhBCB3e (ORCPT
+        id S231786AbhBCHZd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Feb 2021 20:29:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229778AbhBCB3b (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Feb 2021 20:29:31 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 04ABF64F4C;
-        Wed,  3 Feb 2021 01:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612315730;
-        bh=n/k8xGF6YjG7foOcHD5rJG7qc0kZXb2dYJ70lCaKG50=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bCZXegLWZazwiuvYKZatUZAWLDIdj5t/yc4Q/d9YvkaqcMxRwYHTnqa5upRZyqOkI
-         sjTdv4A2KkcaqalmJjLyGj0UNuhCeQ+Mk3lvAsotakn6KKIVfJgVcIe7DVDza1O4gI
-         T4HOSPH7PCJVK1yPTrdHhfz+cageosJDRNtDCCNJ4M8T/QNfnYKt5slYy9xtqTVljf
-         cW11JOBisZFlMT/xehM7Ps+sGN2hnTXkMlr4xyhBsK9VvL5BS/trYSDsyNk+XyTxxV
-         qXXIlWk5YBAZ8R79W+4LbRfnyOs+1dJbyc8+WZ+4ID1tVpD6DD+Lkqg2qRVliLKVUw
-         PME072/99vKGw==
-Date:   Wed, 3 Feb 2021 03:28:43 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH v2 2/3] tpm: Provide a function tpm_chip_free() to free
- tpm chips
-Message-ID: <YBn8S8rY2wvv9A8A@kernel.org>
-References: <1612303743-29017-1-git-send-email-LinoSanfilippo@gmx.de>
- <1612303743-29017-3-git-send-email-LinoSanfilippo@gmx.de>
+        Wed, 3 Feb 2021 02:25:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231654AbhBCHZc (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 3 Feb 2021 02:25:32 -0500
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 329C1C061573
+        for <linux-integrity@vger.kernel.org>; Tue,  2 Feb 2021 23:24:52 -0800 (PST)
+Received: by mail-il1-x134.google.com with SMTP id p15so20822197ilq.8
+        for <linux-integrity@vger.kernel.org>; Tue, 02 Feb 2021 23:24:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kXPie67aGWHPNgHF47uizQ310O1g0sk2Dck2gjccgw8=;
+        b=sjjHv52dlI9Y0slZMd04GVJKtCrTrdz2SR2wEtwnldo1mzcJ+SbnxKjAk5MFn6xV05
+         0B9uPqTD5ir0srolfrUQt5kb9fPsNkocbf4auxFuzEWxUieaB88p8qQ85l6xuZScy/lD
+         YTVjbUkF5xM6QtVKKiTBdbQc1HCOBeZPbOThDF8Dj5dqHTWo6zmGk4cW9+1e2jpF0Ogf
+         ZcdUQzu92PtvHlAMNsGYs1OU3nQbBSAsEjwOBfy+pXa247cjZAafOt22kakgQEwlwRLf
+         Dqp9NcOs8A3gxl0MJ4A86A1alkP836pn26AyIElUG+NUrnk6oCIRSSlaHXA0AJ3L/aPd
+         SHrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kXPie67aGWHPNgHF47uizQ310O1g0sk2Dck2gjccgw8=;
+        b=JAb2u66ecdVvvdSLk5chYffK2c/4C+vw5xNqcaNEPrmevq44LgVlUWR2Q4sFNwcN4b
+         c+oK9/YwPj/s+iP8ayEbZX7ryi14eSjMAxGZs5CiNtGnX9LIsyMD4PiJHrbjIT7KHgof
+         aE8kUQQoNvCVE409kXP+5SJ/G2Q1/0IkfTpQBktBcyTsBx+9XyiVrI7MI0sJAJ0931Bh
+         kOhL1fXeK7EUl/FX6RGEwoBRcZGcQQeR0uWkcIoTM2bC3ubETcesU/f3XwDMJurCB+LU
+         fTZd6Q4HE/lpbXTOqPM9LgzxTYpdn72N8fDmZA6V1UtQevCL5yS69BYMAt3uUiR2X4Hf
+         JEHw==
+X-Gm-Message-State: AOAM5310oliabSanRZK2gUt7GZBU0BHO3e72c/yMbXsprPTUc0ncV/ra
+        pPr2TleD6i7Nln856q8XhmskP3/j7usw48soy1Q=
+X-Google-Smtp-Source: ABdhPJxXX3IrxxT2IvvRaHyt9LITDTLYG70D5JNzrRoa54eH+wZ8pJnCTVkx74qFX9YNdlgRNTWDq95yFl6+Rm//EEM=
+X-Received: by 2002:a92:8e42:: with SMTP id k2mr1690557ilh.250.1612337091574;
+ Tue, 02 Feb 2021 23:24:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1612303743-29017-3-git-send-email-LinoSanfilippo@gmx.de>
+References: <20210105195742.2629-1-raphgi@linux.microsoft.com>
+ <87127d502bcb9707dd4e7a43475ab6bed2fdd421.camel@linux.ibm.com>
+ <715a265180a092754ab9ea8522c39427645b25ad.camel@HansenPartnership.com>
+ <6e28c7a9742131cf508e77448bfee0a03b2c2e5e.camel@linux.ibm.com>
+ <3c50bc449aae2f09bd7d43c401cc9b292f9ec2ae.camel@HansenPartnership.com>
+ <570d54ca679b7a4f786fa65eb78601a2af91c397.camel@linux.ibm.com>
+ <13447f30db609d4bd77d5a826c5102dd5a931a19.camel@HansenPartnership.com>
+ <734adc26-0050-ce8f-4c8c-c8a907b569a6@linux.microsoft.com>
+ <8c78437d0e9a4968996b834030661b6f567f87eb.camel@linux.ibm.com>
+ <fc9a5d48-dc29-0d5d-55dd-bacac346da10@linux.microsoft.com>
+ <3f76d250-6aa7-65c1-b903-5bc82f6f8845@linux.microsoft.com>
+ <CAOQ4uxj4Pv2Wr1wgvBCDR-tnA5dsZT3rvdDzKgAH1aEV_-r9Qg@mail.gmail.com>
+ <3f1571d5b9f2fbb6a8ff9a5fad75b54e2b597904.camel@linux.ibm.com>
+ <169af4d7-9f1a-69c9-44a8-9d30deab80cb@linux.microsoft.com> <2cab86154362ac145d3749d05a06a2d4340264f6.camel@linux.ibm.com>
+In-Reply-To: <2cab86154362ac145d3749d05a06a2d4340264f6.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 3 Feb 2021 09:24:40 +0200
+Message-ID: <CAOQ4uxiBAGKco1BKgyLOMY54r_Ck2jnvz8RCFODD-V87CGqLEw@mail.gmail.com>
+Subject: Re: [RFC] Persist ima logs to disk
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Raphael Gianotti <raphgi@linux.microsoft.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        janne.karhunen@gmail.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        tusharsu@linux.microsoft.com, tyhicks@linux.microsoft.com,
+        nramas@linux.microsoft.com, balajib@linux.microsoft.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Feb 02, 2021 at 11:09:02PM +0100, Lino Sanfilippo wrote:
-> From: Lino Sanfilippo <l.sanfilippo@kunbus.com>
-> 
-> Provide a function tpm_chip_free() as a counterpart to tpm_chip_alloc().
-> The function hides the internals of freeing a struct tpm_chip instance
-> by putting the device references which are part of this structure.
-> 
-> Use the new function at the appropriate places.
-> 
-> Signed-off-by: Lino Sanfilippo <l.sanfilippo@kunbus.com>
+On Wed, Feb 3, 2021 at 3:02 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> On Tue, 2021-02-02 at 10:14 -0800, Raphael Gianotti wrote:
+> > On 2/2/2021 5:07 AM, Mimi Zohar wrote:
+> > > On Tue, 2021-02-02 at 07:54 +0200, Amir Goldstein wrote:
+> > >> On Tue, Feb 2, 2021 at 12:53 AM Raphael Gianotti
+> > >> <raphgi@linux.microsoft.com> wrote:
+> > >>>
+> > >>> On 1/8/2021 9:58 AM, Raphael Gianotti wrote:
+> > >>>> On 1/8/2021 4:38 AM, Mimi Zohar wrote:
+> > >>>>> On Thu, 2021-01-07 at 14:57 -0800, Raphael Gianotti wrote:
+> > >>>>>>>>>> But this doesn't address where the offloaded measurement list
+> > >>>>>>>>>> will be stored, how long the list will be retained, nor who
+> > >>>>>>>>>> guarantees the integrity of the offloaded list.  In addition,
+> > >>>>>>>>>> different form factors will have different requirements.
+> > >>>>>> For how long the list would be retained, or in the case of a log
+> > >>>>>> segments, it
+> > >>>>>> might make sense to have that be an admin decision, something that
+> > >>>>>> can be
+> > >>>>>> configured to satisfy the needs of a specific system, as mentioned
+> > >>>>>> below by
+> > >>>>>> James, does that seem correct?
+> > >>>>> For the discussion on exporting and truncating the IMA measurement
+> > >>>>> list, refer to:
+> > >>>>> https://lore.kernel.org/linux-integrity/1580998432.5585.411.camel@linux.ibm.com/
+> > >>>>>
+> > >>>>>
+> > >>>>>> Given the possibility of keeping the logs around for an indefinite
+> > >>>>>> amount of
+> > >>>>>> time, would using an expansion of the method present in this RFC be
+> > >>>>>> more
+> > >>>>>> appropriate than going down the vfs_tmpfile route? Forgive my lack
+> > >>>>>> on expertise
+> > >>>>>> on mm, but would the vfs_tmpfile approach work for keeping several
+> > >>>>>> log segments
+> > >>>>>> across multiple kexecs?
+> > >>>>> With the "vfs_tmpfile" mechanism, breaking up and saving the log in
+> > >>>>> segments isn't needed.  The existing mechanism for carrying the
+> > >>>>> measurement list across kexec would still be used.  Currently, if the
+> > >>>>> kernel cannot allocate the memory needed for carrying the measurement
+> > >>>>> across kexec, it simply emits an error message, but continues with the
+> > >>>>> kexec.
+> > >>>> In this change I had introduced "exporting" the log to disk when the size
+> > >>>> of the measurement list was too large. Given part of the motivation
+> > >>>> behind
+> > >>>> moving the measurement list is the possibility of it growing too large
+> > >>>> and taking up too much of the kernel memory, that case would likely lead
+> > >>>> to kexec not being able to carry over the logs. Do you believe it's
+> > >>>> better
+> > >>>> to use the "vfs_tmpfile" mechanism for moving the logs to disk and worry
+> > >>>> about potential issues with kexec not being able to carry over the logs
+> > >>>> separately, given the "vfs_tempfile" approach seems to be preferred and
+> > >>>> also simplifies worries regarding truncating the logs?
+> > >>> After a chat with Mimi I went ahead and did some investigative
+> > >>> work in the vfs_tmpfile approach suggested, and I wanted to
+> > >>> restart this thread with some thoughts/questions that came up
+> > >>> from that.
+> > >>> For the work I did I simply created a tmp file during ima's
+> > >>> initialization and then tried to use vm_mmap to map it to memory,
+> > >>> with the goal of using that memory mapping to generate return
+> > >>> pointers to the code that writes the measurement entries to memory.
+> > >> I don't understand why you would want to do that. I might have misunderstood
+> > >> the requirements, but this was not how I meant for tmpfile to be used.
+> > >>
+> > >> Mimi explained to me that currently the IMA measurement list is entirely in
+> > >> memory and that you are looking for a way to dump it into a file in order to
+> > >> free up memory.
+> > >>
+> > >> What I suggested is this:
+> > >>
+> > >> - User opens an O_TMPFILE and passes fd to IMA to start export
+> > >> - IMA starts writing (exporting) records to that file using *kernel* write API
+> > >> - Every record written to the file is removed from the in-memory list
+> > >> - While list is being exported, IMA keeps in-memory count of exported entries
+> > >> - In ima_measurements_start, if export file exists, start iterator
+> > >> starts reading
+> > >>    records from the file
+> > >> - In ima_measurements_next(), when next iterator reaches the export count,
+> > >>    it switches over to iterate in-memory list
+> > >>
+> > >> This process can:
+> > >> 1. Continue forever without maintaining any in-memory list
+> > >> 2. Work in the background to periodically flush list to file
+> > >> 3. Controlled by explicit user commands
+> > >> 4. All of the above
+> > >>
+> > >> Is that understood? Did I understand the requirements correctly?
+> >
+> > Thanks for the clarification Amir, I never actually saw your initial mails,
+> > I apologize for the confusion, the use of mmap was something the original
+> > author of the export ima logs to disk mentioned had been suggested, which
+> > is why I went down that route.
+> > Given the actual suggestion you originally had given, I believe the coding
+> > of it is somewhat to the code I sent in the RFC in terms of approach (if we
+> > were to have it do periodic flushes, for example). With the addition of
+> > reads to the log starting with the file as the oldest logs will be there.
+> > I believe the only difference there is whether the list is kept in a tmp
+> > file or not, so with the tmp file approach it would be just to keep the
+> > list out of memory (either partially or permanently), where with a permanent
+> > file, the list would still be available after a cold boot for instance.
+>
+> With Amir's suggestion, userspace still accesses the entire measurement
+> list via the existing securityfs interface.  Only the kernel should be
+> able to append or access the file.
+>
 
-I prefer open coding here.
+This user API is not an important part of the suggestion:
 
-/Jarkko
+- User opens an O_TMPFILE and passes fd to IMA to start export
 
-> ---
->  drivers/char/tpm/tpm-chip.c       | 16 ++++++++++++++++
->  drivers/char/tpm/tpm.h            |  1 +
->  drivers/char/tpm/tpm_ftpm_tee.c   |  6 ++----
->  drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
->  4 files changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 3ace199..777baae 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -402,6 +402,22 @@ struct tpm_chip *tpm_chip_alloc(struct device *pdev,
->  EXPORT_SYMBOL_GPL(tpm_chip_alloc);
->  
->  /**
-> + * tpm_chip_free() - free an instance of struct tpm_chip that has been
-> + * allocated with tpm_chip_alloc() before.
-> + * @chip: chip to free
-> + *
-> + * Frees an instance of struct tpm_chip by releasing internal device references.
-> + * This function is used to hide the internals needed to free a struct tpm_chip
-> + * instance thas has been allocated with tpm_chip_alloc() before.
-> + */
-> +void tpm_chip_free(struct tpm_chip *chip)
-> +{
-> +	put_device(&chip->devs);
-> +	put_device(&chip->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(tpm_chip_free);
-> +
-> +/**
->   * tpmm_chip_alloc() - allocate a new struct tpm_chip instance
->   * @pdev: parent device to which the chip is associated
->   * @ops: struct tpm_class_ops instance
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 947d1db..e6bb6ae 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -199,6 +199,7 @@ void tpm_put_ops(struct tpm_chip *chip);
->  
->  struct tpm_chip *tpm_chip_alloc(struct device *dev,
->  				const struct tpm_class_ops *ops);
-> +void tpm_chip_free(struct tpm_chip *chip);
->  struct tpm_chip *tpmm_chip_alloc(struct device *pdev,
->  				 const struct tpm_class_ops *ops);
->  int tpm_chip_register(struct tpm_chip *chip);
-> diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
-> index 82858c2..47ffaae 100644
-> --- a/drivers/char/tpm/tpm_ftpm_tee.c
-> +++ b/drivers/char/tpm/tpm_ftpm_tee.c
-> @@ -285,8 +285,7 @@ static int ftpm_tee_probe(struct device *dev)
->  	return 0;
->  
->  out_chip:
-> -	put_device(&pvt_data->chip->dev);
-> -	put_device(&pvt_data->chip->devs);
-> +	tpm_chip_free(chip);
->  out_chip_alloc:
->  	tee_shm_free(pvt_data->shm);
->  out_shm_alloc:
-> @@ -319,8 +318,7 @@ static int ftpm_tee_remove(struct device *dev)
->  	tpm_chip_unregister(pvt_data->chip);
->  
->  	/* frees chip */
-> -	put_device(&pvt_data->chip->devs);
-> -	put_device(&pvt_data->chip->dev);
-> +	tpm_chip_free(pvt_data->chip);
->  
->  	/* Free the shared memory pool */
->  	tee_shm_free(pvt_data->shm);
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index 97b60f8..f887bb3 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -520,8 +520,7 @@ static struct proxy_dev *vtpm_proxy_create_proxy_dev(void)
->   */
->  static inline void vtpm_proxy_delete_proxy_dev(struct proxy_dev *proxy_dev)
->  {
-> -	put_device(&proxy_dev->chip->devs);
-> -	put_device(&proxy_dev->chip->dev); /* frees chip */
-> +	tpm_chip_free(proxy_dev->chip);
->  	kfree(proxy_dev);
->  }
->  
-> -- 
-> 2.7.4
-> 
+It is just how I understood the API should be.
+Kernel could open the O_TMPFILE or named file for that matter just as well.
+If the kernel opens an O_TMPFILE, userspace has no standard way to access
+that file. There are, as always, ways for privileged users to learn about that
+tmpfile and open it with open_by_handle_at().
+
+IMA is an LSM, so the best way to block unauthorized access to that file
+would be via LSM hooks. IMA keeps a reference to that file, so it can
+identify access to that file from userspace.
+
+Thanks,
+Amir.
