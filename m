@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DF8C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6416AC43381
 	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0894164F76
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:58:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A30564F70
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238123AbhBDQ6Q (ORCPT
+        id S237996AbhBDQ6W (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 4 Feb 2021 11:58:16 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:52900 "EHLO
+        Thu, 4 Feb 2021 11:58:22 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:52898 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238051AbhBDQn2 (ORCPT
+        with ESMTP id S238002AbhBDQn3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Feb 2021 11:43:28 -0500
+        Thu, 4 Feb 2021 11:43:29 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 328A120B6C4C;
-        Thu,  4 Feb 2021 08:42:07 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 328A120B6C4C
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7F26C20B6C4B;
+        Thu,  4 Feb 2021 08:42:06 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7F26C20B6C4B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1612456927;
-        bh=uiVKYIseEHzpQAjyAsk8T0lirRa8mLfkMkwkmqOk4tQ=;
+        bh=R8BSoAz4O99+MwKOCBSEJqidoIYHvab9F/MGd3nVG6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lbu5gALoRgSaXReMmtPcycRst+kL6XMr8NCDjD9KeRWNhr9UXJB2S1F1dC0AX+ZwE
-         mbPSbHP7zSwcNeP6caabCZ/EMH6OHIoksvIeXV7gCOHmPSpUS1zaANS2XVLDNyZgLg
-         TiUGogEtj8sWY8DArojhIs8p59z4uPsvhxDnQaZ8=
+        b=GifiFuavJDtdzH4ztHcwcHTo9y3RmXFT4omP/KDlkZnG6o++lLc78WYH45RBhaE10
+         JU5p7xbiZzm6eaG/rF8NLntPv7/WbXbp1FsXLXvXUEP+KraYHPh2IgFK2ZlB9r9OTI
+         loCWRWSvnpjj+eQqdPy5+ks+KLXlgT8Eb+q/2fdA=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -48,9 +48,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v16 12/12] arm64: Enable passing IMA log to next kernel on kexec
-Date:   Thu,  4 Feb 2021 08:41:35 -0800
-Message-Id: <20210204164135.29856-13-nramas@linux.microsoft.com>
+Subject: [PATCH v16 11/12] powerpc: Use OF alloc and free for FDT
+Date:   Thu,  4 Feb 2021 08:41:34 -0800
+Message-Id: <20210204164135.29856-12-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210204164135.29856-1-nramas@linux.microsoft.com>
 References: <20210204164135.29856-1-nramas@linux.microsoft.com>
@@ -60,29 +60,127 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Update CONFIG_KEXEC_FILE to select CONFIG_HAVE_IMA_KEXEC, if CONFIG_IMA
-is enabled, to indicate that the IMA measurement log information is
-present in the device tree for ARM64.
+of_alloc_and_init_fdt() and of_free_fdt() have been defined in
+drivers/of/kexec.c to allocate and free memory for FDT.
 
-Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Use of_alloc_and_init_fdt() and of_free_fdt() to allocate and
+initialize the FDT, and to free the FDT respectively.
+
+powerpc sets the FDT address in image_loader_data field in
+"struct kimage" and the memory is freed in
+kimage_file_post_load_cleanup().  This cleanup function uses kfree()
+to free the memory. But since of_alloc_and_init_fdt() uses kvmalloc()
+for allocation, the buffer needs to be freed using kvfree().
+
+Define "fdt" field in "struct kimage_arch" for powerpc to store
+the address of FDT, and free the memory in powerpc specific
+arch_kimage_file_post_load_cleanup().
+
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Rob Herring <robh@kernel.org>
+Suggested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ arch/powerpc/include/asm/kexec.h  |  2 ++
+ arch/powerpc/kexec/elf_64.c       | 26 ++++++++++++++++----------
+ arch/powerpc/kexec/file_load_64.c |  3 +++
+ 3 files changed, 21 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 05e17351e4f3..8a93573cebb6 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1093,6 +1093,7 @@ config KEXEC
- config KEXEC_FILE
- 	bool "kexec file based system call"
- 	select KEXEC_CORE
-+	select HAVE_IMA_KEXEC if IMA
- 	help
- 	  This is new version of kexec system call. This system call is
- 	  file based and takes file descriptors as system call argument
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index 2c0be93d239a..d7d13cac4d31 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -111,6 +111,8 @@ struct kimage_arch {
+ 	unsigned long elf_headers_mem;
+ 	unsigned long elf_headers_sz;
+ 	void *elf_headers;
++
++	void *fdt;
+ };
+ 
+ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
+diff --git a/arch/powerpc/kexec/elf_64.c b/arch/powerpc/kexec/elf_64.c
+index d0e459bb2f05..51d2d8eb6c1b 100644
+--- a/arch/powerpc/kexec/elf_64.c
++++ b/arch/powerpc/kexec/elf_64.c
+@@ -19,6 +19,7 @@
+ #include <linux/kexec.h>
+ #include <linux/libfdt.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/of_fdt.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+@@ -32,7 +33,7 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ 	unsigned int fdt_size;
+ 	unsigned long kernel_load_addr;
+ 	unsigned long initrd_load_addr = 0, fdt_load_addr;
+-	void *fdt;
++	void *fdt = NULL;
+ 	const void *slave_code;
+ 	struct elfhdr ehdr;
+ 	char *modified_cmdline = NULL;
+@@ -103,18 +104,12 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ 	}
+ 
+ 	fdt_size = fdt_totalsize(initial_boot_params) * 2;
+-	fdt = kmalloc(fdt_size, GFP_KERNEL);
++	fdt = of_alloc_and_init_fdt(fdt_size);
+ 	if (!fdt) {
+ 		pr_err("Not enough memory for the device tree.\n");
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	ret = fdt_open_into(initial_boot_params, fdt, fdt_size);
+-	if (ret < 0) {
+-		pr_err("Error setting up the new device tree.\n");
+-		ret = -EINVAL;
+-		goto out;
+-	}
+ 
+ 	ret = setup_new_fdt_ppc64(image, fdt, initrd_load_addr,
+ 				  initrd_len, cmdline);
+@@ -131,6 +126,10 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ 	ret = kexec_add_buffer(&kbuf);
+ 	if (ret)
+ 		goto out;
++
++	/* FDT will be freed in arch_kimage_file_post_load_cleanup */
++	image->arch.fdt = fdt;
++
+ 	fdt_load_addr = kbuf.mem;
+ 
+ 	pr_debug("Loaded device tree at 0x%lx\n", fdt_load_addr);
+@@ -145,8 +144,15 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
+ 	kfree(modified_cmdline);
+ 	kexec_free_elf_info(&elf_info);
+ 
+-	/* Make kimage_file_post_load_cleanup free the fdt buffer for us. */
+-	return ret ? ERR_PTR(ret) : fdt;
++	/*
++	 * Once FDT buffer has been successfully passed to kexec_add_buffer(),
++	 * the FDT buffer address is saved in image->arch.fdt. In that case,
++	 * the memory cannot be freed here in case of any other error.
++	 */
++	if (ret && !image->arch.fdt)
++		of_free_fdt(fdt);
++
++	return ret ? ERR_PTR(ret) : NULL;
+ }
+ 
+ const struct kexec_file_ops kexec_elf64_ops = {
+diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
+index 3cab318aa3b9..d9d5b5569a6d 100644
+--- a/arch/powerpc/kexec/file_load_64.c
++++ b/arch/powerpc/kexec/file_load_64.c
+@@ -1113,5 +1113,8 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
+ 	image->arch.elf_headers = NULL;
+ 	image->arch.elf_headers_sz = 0;
+ 
++	of_free_fdt(image->arch.fdt);
++	image->arch.fdt = NULL;
++
+ 	return kexec_image_post_load_cleanup_default(image);
+ }
 -- 
 2.30.0
 
