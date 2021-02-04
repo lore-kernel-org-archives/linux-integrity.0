@@ -2,92 +2,141 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84613C433E6
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BF9C433DB
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD6164F60
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A48064F58
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Feb 2021 16:42:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236781AbhBDPCf (ORCPT
+        id S237379AbhBDQmv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 4 Feb 2021 10:02:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237042AbhBDPAW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Feb 2021 10:00:22 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D9E1864F60;
-        Thu,  4 Feb 2021 14:58:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612450711;
-        bh=Gkl5QjMLL9cstN7D689exW6RO9F/yfq6ZQ1XMZN1V+k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r1FvdF0heZuFmuqdo0dHu3sLr8/I8cmWlT2CSDUdGkPM/JF0RyifSAFkwLaPLumqI
-         4sOOu4MH1lODcMRT4j5Ncjve0F5oGTNNamwSzKrdbYhzmd0K+5Dpc3nIuqaGI3OSpI
-         B4/xOw4I5xKsdGR9v6dqRwSDaPIPO2cNTrO9aZPONvd6sS+ksHXU56ovqPJk8Xqz4Y
-         9xuDQiz32W/CoLoiLjgOEBiuyUQOGW9A32jKRkPor9SCx9+Pw67Gs8PhhwKgifCOVy
-         RYyy7eTRduNvneoqUyJui+ZV1Jm2w2TNAJ+N+Nd2FbmMIKndRxSup9Fr7QAzNh8+Ga
-         AdXSDhTqCNbtA==
-Date:   Thu, 4 Feb 2021 16:58:23 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        Saulo Alessandre <saulo.alessandre@gmail.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        davem@davemloft.net, dhowells@redhat.com, zohar@linux.ibm.com,
-        linux-kernel@vger.kernel.org, patrick@puiterwijk.org,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v7 1/4] crypto: Add support for ECDSA signature
- verification
-Message-ID: <YBwLj+8kHIHMA3xH@kernel.org>
-References: <20210201151910.1465705-1-stefanb@linux.ibm.com>
- <20210201151910.1465705-2-stefanb@linux.ibm.com>
- <20210204052738.GA7086@gondor.apana.org.au>
+        Thu, 4 Feb 2021 11:42:51 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:52278 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237399AbhBDQmk (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 4 Feb 2021 11:42:40 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5DD6520B6C41;
+        Thu,  4 Feb 2021 08:41:59 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5DD6520B6C41
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1612456920;
+        bh=wqW3xwsp9Cq77lvYiiXd1zv1yJERqbx7C93NSrMrSUg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mWFoFLl6M2Hicore2jyHt0dK9WmvqpkDzCsp0uG1+DA7CnpzB7QJzszNDvQEThO5U
+         onUpXN6vxyk5Zlpbcy7LDFMlTgkl0j6cOYXq8dPdhBGMgLbpwkUh5jIKY7Pb8D9VUw
+         W+diOiJ5c2bBhL4uFD4lty4H2z+emPnCoM+d4DwU=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, joe@perches.com, catalin.marinas@arm.com,
+        mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, bhsharma@redhat.com, mbrugger@suse.com,
+        hsinyi@chromium.org, tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v16 01/12] powerpc: Rename kexec elfcorehdr_addr to elf_headers_mem
+Date:   Thu,  4 Feb 2021 08:41:24 -0800
+Message-Id: <20210204164135.29856-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210204164135.29856-1-nramas@linux.microsoft.com>
+References: <20210204164135.29856-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210204052738.GA7086@gondor.apana.org.au>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 04:27:39PM +1100, Herbert Xu wrote:
-> On Mon, Feb 01, 2021 at 10:19:07AM -0500, Stefan Berger wrote:
-> > Add support for parsing the parameters of a NIST P256 or NIST P192 key.
-> > Enable signature verification using these keys. The new module is
-> > enabled with CONFIG_ECDSA:
-> >   Elliptic Curve Digital Signature Algorithm (NIST P192, P256 etc.)
-> >   is A NIST cryptographic standard algorithm. Only signature verification
-> >   is implemented.
-> > 
-> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > Cc: "David S. Miller" <davem@davemloft.net>
-> > Cc: linux-crypto@vger.kernel.org
-> > ---
-> >  crypto/Kconfig               |  10 +
-> >  crypto/Makefile              |   6 +
-> >  crypto/ecc.c                 |  13 +-
-> >  crypto/ecc.h                 |  28 +++
-> >  crypto/ecdsa.c               | 361 +++++++++++++++++++++++++++++++++++
-> >  crypto/ecdsasignature.asn1   |   4 +
-> >  crypto/testmgr.c             |  12 ++
-> >  crypto/testmgr.h             | 267 ++++++++++++++++++++++++++
-> >  include/linux/oid_registry.h |   4 +
-> >  9 files changed, 694 insertions(+), 11 deletions(-)
-> >  create mode 100644 crypto/ecdsa.c
-> >  create mode 100644 crypto/ecdsasignature.asn1
+From: Rob Herring <robh@kernel.org>
 
+The architecture specific field, elfcorehdr_addr in struct kimage_arch,
+that holds the address of the buffer in memory for ELF core header for
+powerpc has a different name than the one used for arm64.  This makes
+it hard to have a common code for setting up the device tree for
+kexec system call.
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Rename elfcorehdr_addr to elf_headers_mem to align with arm64 name so
+common code can use it.
 
-Great, ECDSA has been lacking for a way too long. Just wanted to
-acknowledge support for this, I just now also skimmed the change
-from patchwrok (way too quickly for reviewed-by but well enough
-for ack).
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ arch/powerpc/include/asm/kexec.h  | 2 +-
+ arch/powerpc/kexec/file_load.c    | 4 ++--
+ arch/powerpc/kexec/file_load_64.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-/Jarkko
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index 55d6ede30c19..dbf09d2f36d0 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -108,7 +108,7 @@ struct kimage_arch {
+ 	unsigned long backup_start;
+ 	void *backup_buf;
+ 
+-	unsigned long elfcorehdr_addr;
++	unsigned long elf_headers_mem;
+ 	unsigned long elf_headers_sz;
+ 	void *elf_headers;
+ 
+diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
+index 9a232bc36c8f..e452b11df631 100644
+--- a/arch/powerpc/kexec/file_load.c
++++ b/arch/powerpc/kexec/file_load.c
+@@ -45,7 +45,7 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
+ 		return NULL;
+ 
+ 	elfcorehdr_strlen = sprintf(cmdline_ptr, "elfcorehdr=0x%lx ",
+-				    image->arch.elfcorehdr_addr);
++				    image->arch.elf_headers_mem);
+ 
+ 	if (elfcorehdr_strlen + cmdline_len > COMMAND_LINE_SIZE) {
+ 		pr_err("Appending elfcorehdr=<addr> exceeds cmdline size\n");
+@@ -263,7 +263,7 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
+ 		 * Avoid elfcorehdr from being stomped on in kdump kernel by
+ 		 * setting up memory reserve map.
+ 		 */
+-		ret = fdt_add_mem_rsv(fdt, image->arch.elfcorehdr_addr,
++		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
+ 				      image->arch.elf_headers_sz);
+ 		if (ret) {
+ 			pr_err("Error reserving elfcorehdr memory: %s\n",
+diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
+index c69bcf9b547a..a05c19b3cc60 100644
+--- a/arch/powerpc/kexec/file_load_64.c
++++ b/arch/powerpc/kexec/file_load_64.c
+@@ -815,7 +815,7 @@ static int load_elfcorehdr_segment(struct kimage *image, struct kexec_buf *kbuf)
+ 		goto out;
+ 	}
+ 
+-	image->arch.elfcorehdr_addr = kbuf->mem;
++	image->arch.elf_headers_mem = kbuf->mem;
+ 	image->arch.elf_headers_sz = headers_sz;
+ 	image->arch.elf_headers = headers;
+ out:
+@@ -851,7 +851,7 @@ int load_crashdump_segments_ppc64(struct kimage *image,
+ 		return ret;
+ 	}
+ 	pr_debug("Loaded elf core header at 0x%lx, bufsz=0x%lx memsz=0x%lx\n",
+-		 image->arch.elfcorehdr_addr, kbuf->bufsz, kbuf->memsz);
++		 image->arch.elf_headers_mem, kbuf->bufsz, kbuf->memsz);
+ 
+ 	return 0;
+ }
+-- 
+2.30.0
+
