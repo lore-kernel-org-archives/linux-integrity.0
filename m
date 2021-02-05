@@ -2,80 +2,74 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A40C433DB
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 05:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C3F2C433E0
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 06:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32B0864DE8
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 05:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C1B564F9D
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 06:52:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230296AbhBEF6H (ORCPT
+        id S231169AbhBEGvy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 00:58:07 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:12465 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230258AbhBEF6H (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 00:58:07 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4DX4R65g6czjKd5;
-        Fri,  5 Feb 2021 13:56:02 +0800 (CST)
-Received: from huawei.com (10.175.124.27) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.498.0; Fri, 5 Feb 2021
- 13:57:17 +0800
-From:   wanghongzhe <wanghongzhe@huawei.com>
-To:     <peterhuewe@gmx.de>, <jarkko@kernel.org>, <jgg@ziepe.ca>
-CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] tpm_tis_spi_main: set cs_change = 0 when timesout
-Date:   Fri, 5 Feb 2021 14:42:05 +0800
-Message-ID: <1612507325-2621-1-git-send-email-wanghongzhe@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        Fri, 5 Feb 2021 01:51:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230508AbhBEGvp (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 5 Feb 2021 01:51:45 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BA49864DD6;
+        Fri,  5 Feb 2021 06:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1612507865;
+        bh=X7GYbSfvvXJg6kAYNUBJ5Pi5+psXsNsp35yY3EsylEI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DbxaNwxkJqPzCiEqCCJG2SrKkfhzipmdETongyrD/E98ykjf/c0TiuPaqwyW9MB1H
+         dJYYCrEhGiYd/dXerkUmX/fSJ8tLo2xaytOuYviJj18G3KEYzNfvfLG7vVtxx+AZD3
+         xr22+pW+Dctn465DSn/MEs9s0Zbg25xmrTGnNV2c=
+Date:   Fri, 5 Feb 2021 07:51:02 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Cc:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        stefanb@linux.vnet.ibm.com, James.Bottomley@hansenpartnership.com,
+        stable@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Subject: Re: [PATCH v3 2/2] tpm: in tpm2_del_space check if ops pointer is
+ still valid
+Message-ID: <YBzq1trVOiBfxDVp@kroah.com>
+References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
+ <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.27]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-when i reach TPM_RETRY, the cs cannot  change back to 'high'.
-So the TPM chips thinks this communication is not over.
-And next times communication cannot be effective because
-the communications mixed up with the last time.
+On Fri, Feb 05, 2021 at 12:50:43AM +0100, Lino Sanfilippo wrote:
+> From: Lino Sanfilippo <l.sanfilippo@kunbus.com>
+> 
+> In tpm2_del_space() chip->ops is used for flushing the sessions. However
+> this function may be called after tpm_chip_unregister() which sets
+> the chip->ops pointer to NULL.
+> Avoid a possible NULL pointer dereference by checking if chip->ops is still
+> valid before accessing it.
+> 
+> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> Signed-off-by: Lino Sanfilippo <l.sanfilippo@kunbus.com>
+> ---
+>  drivers/char/tpm/tpm2-space.c | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
 
-Signed-off-by: wanghongzhe <wanghongzhe@huawei.com>
----
- drivers/char/tpm/tpm_tis_spi_main.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+<formletter>
 
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index 3856f6ebcb34..6c52cbb28881 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -64,8 +64,18 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
- 				break;
- 		}
- 
--		if (i == TPM_RETRY)
-+		if (i == TPM_RETRY) {
-+			/* change back to 'high',
-+			 * So the TPM chips thinks the last communication
-+			 * is done.
-+			 */
-+			spi_xfer.cs_change = 0;
-+			spi_xfer->len = 1;
-+			spi_message_init(&m);
-+			spi_message_add_tail(spi_xfer, &m);
-+			ret = spi_sync_locked(phy->spi_device, &m);
- 			return -ETIMEDOUT;
-+		}
- 	}
- 
- 	return 0;
--- 
-2.19.1
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
+</formletter>
