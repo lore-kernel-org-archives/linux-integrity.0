@@ -2,120 +2,90 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-25.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DE8C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 18:13:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E876BC433DB
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 19:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9E8A64FCC
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 18:13:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C8C964E40
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 19:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231446AbhBEQa4 (ORCPT
+        id S233412AbhBERhu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 11:30:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233346AbhBEQMt (ORCPT
+        Fri, 5 Feb 2021 12:37:50 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:57852 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233373AbhBEP5d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 11:12:49 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C785C0613D6;
-        Fri,  5 Feb 2021 09:54:31 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id F3B1A1280710;
-        Fri,  5 Feb 2021 09:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1612547671;
-        bh=PE2KsD5qLssJPf2TOCMDQXfom48gfBf0PZCJ8+JzFRI=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=wF8YwJT/b7g2SVeBvvLJKFESDGEizeKVxIAIxmHBnIT0QFk4QS9fny6G51iG6LSSw
-         7zt+d8VZltbAq49nitSKEoNscSgqJYRHg5v8/LWRcIfLITMAyezfceRTkcoxiKkiOS
-         hFnNqxO+1g7HXqrFOWeQkG9AU2TFglCMfUKWG2WE=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WWDtKxxITTrK; Fri,  5 Feb 2021 09:54:30 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5A9F312806FA;
-        Fri,  5 Feb 2021 09:54:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1612547670;
-        bh=PE2KsD5qLssJPf2TOCMDQXfom48gfBf0PZCJ8+JzFRI=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=uPHJZTPKFy1jq3i18W1/GpQwkxEDJ0ACwi2RbhJpptBO25WnDNxX2wj9Q22E/6jg8
-         Am85OBURiNgmgQV9lpPQOgVYw803pGqO8cp8122hNdAA2gN7VW6KMf1lNFb5kO6RMB
-         LEqbKkpuEz1Kn/HcLr1gxk6IgZ8vgftAbDNGfFQE=
-Message-ID: <89892a6152826e89276126fd2688b7c767484f41.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 2/2] tpm: in tpm2_del_space check if ops pointer is
- still valid
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>, peterhuewe@gmx.de,
-        stefanb@linux.vnet.ibm.com, stable@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Date:   Fri, 05 Feb 2021 09:54:29 -0800
-In-Reply-To: <20210205172528.GP4718@ziepe.ca>
-References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
-         <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
-         <7308e5e9f51501bd92cced8f28ff6130c976b3ed.camel@HansenPartnership.com>
-         <YByrCnswkIlz1w1t@kernel.org>
-         <ee4adfbb99273e1bdceca210bc1fa5f16a50c415.camel@HansenPartnership.com>
-         <20210205172528.GP4718@ziepe.ca>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Fri, 5 Feb 2021 10:57:33 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 72E6C20B6C40;
+        Fri,  5 Feb 2021 09:39:15 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 72E6C20B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1612546755;
+        bh=HhOAZD2n7Y5nUjPEAl7h3S686KemCI0DTcFZcZkv6EE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=pPLebMnDJH4+oF4Wosz3wKn0HGUpcCKpETnQ1382bqaeKGAtD2BOGcDKevTLA55e1
+         OsELd4GAKcCiA8pcT8fsjjgjrB1yeYfQGMhblNCu/1Du7oGfzkI/SrvdaYJ40LueW4
+         55pH9N2No/AMCipLzCvfMU/IaRxxL8Mlth5qxzbU=
+Subject: Re: [PATCH v2 1/2] ima: Free IMA measurement buffer on error
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     zohar@linux.ibm.com, bauerman@linux.ibm.com,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        sashal@kernel.org, tyhicks@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20210204174951.25771-1-nramas@linux.microsoft.com>
+ <YB0YdqbbdAdbEOQw@kroah.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <7000d128-272e-3654-8480-e46bf7dfad74@linux.microsoft.com>
+Date:   Fri, 5 Feb 2021 09:39:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <YB0YdqbbdAdbEOQw@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2021-02-05 at 13:25 -0400, Jason Gunthorpe wrote:
-> On Fri, Feb 05, 2021 at 08:48:11AM -0800, James Bottomley wrote:
-> > > Thanks for pointing this out. I'd strongly support Jason's
-> > > proposal:
-> > > 
-> > > https://lore.kernel.org/linux-integrity/20201215175624.GG5487@ziepe.ca/
-> > > 
-> > > It's the best long-term way to fix this.
-> > 
-> > Really, no it's not.  It introduces extra mechanism we don't need.
-> > To recap the issue: character devices already have an automatic
-> > mechanism which holds a reference to the struct device while the
-> > character node is open so the default is to release resources on
-> > final
-> > put of the struct device.
+On 2/5/21 2:05 AM, Greg KH wrote:
+> On Thu, Feb 04, 2021 at 09:49:50AM -0800, Lakshmi Ramasubramanian wrote:
+>> IMA allocates kernel virtual memory to carry forward the measurement
+>> list, from the current kernel to the next kernel on kexec system call,
+>> in ima_add_kexec_buffer() function.  In error code paths this memory
+>> is not freed resulting in memory leak.
+>>
+>> Free the memory allocated for the IMA measurement list in
+>> the error code paths in ima_add_kexec_buffer() function.
+>>
+>> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+>> Suggested-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+>> Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
+>> ---
+>>   security/integrity/ima/ima_kexec.c | 1 +
+>>   1 file changed, 1 insertion(+)
 > 
-> The refcount on the struct device only keeps the memory alive, it
-> doesn't say anything about the ops. We still need to lock and check
-> the ops each and every time they are used.
+> <formletter>
+> 
+> This is not the correct way to submit patches for inclusion in the
+> stable kernel tree.  Please read:
+>      https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> for how to do this properly.
+> 
+> </formletter>
+> 
 
-I think this is the crux of our disagreement: I think the ops doesn't
-matter because to call try_get_ops you have to have a chip structure
-and the only way you get a chip structure is if you hold a device
-containing it, in which case the device hold guarantees the chip can't
-be freed.  Or if you pass in TPM_ANY_NUM to an operation which calls 
-tpm_chip_find_get() which iterates the idr to find a chip under the idr
-lock.  If you find a chip device at the idr, you're guaranteed it
-exists, because elimination of it is the first thing the release does
-and if you find a dying dev (i.e. the release routine blocks on the idr
-mutex trying to kill the chip attachment), try_get_ops() fails because
-the ops are already NULL.
+Thanks for the info Greg.
 
-In either case, I think you get returned a device to which you hold a
-reference.  Is there any other case where you can get a chip without
-also getting a device reference?
+I will re-submit the two patches in the proper format.
 
-I'll answer the other point in a separate email, but I think the
-principle sounds OK: we could do the final put right after we del the
-char devices because that's called in the module release routine and
-thus not have to rely on the devm actions which, as you say, are an
-annoying complication.
-
-James
-
+  -lakshmi
 
