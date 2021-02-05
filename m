@@ -2,221 +2,120 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4015C433E0
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 18:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DE8C433E0
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 18:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4B664E4F
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 18:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9E8A64FCC
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 18:13:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233695AbhBEQ2k (ORCPT
+        id S231446AbhBEQa4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 11:28:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36828 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233602AbhBEQ0F (ORCPT
+        Fri, 5 Feb 2021 11:30:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233346AbhBEQMt (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 11:26:05 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 115I2t3h195926;
-        Fri, 5 Feb 2021 13:07:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=XuGkAeSFIed21LhreDtRggiHves309BF8OcSgh8DpmA=;
- b=mkxIll+GvtGy12tsSj3r16FCiwSaFwu+5psvfFmzujot8ncN15tQKh+oJMsDTmk8f8qc
- 3MuUKPBbpv3YV+1/O6NYpW148RXFUKQD3vCtFEjYjU2Kkg3Bpcwm80TzHymfYzknNzwG
- 7MkqP2Eq4/FvrjGp0OoIbV7v+FVB9ISr5KhZ3rSCOJq8rsWO9jGIAQivMNUb48D+O7uh
- FRmxH3KCn7XGQ6aIa5pg2yE/miNcpq3pUar6raNkXVF2AN4rP3iNV9vq/f1TxPNHIeB7
- 4d3JO4zEFHGaub0RBsM8TWlkRtxf/nK/mH1UKR9OrXoky2HWK0owfrC7H1P2G+2AxuaA Fw== 
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36hae5s6bb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Feb 2021 13:07:44 -0500
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 115I6O84026222;
-        Fri, 5 Feb 2021 18:07:43 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma01dal.us.ibm.com with ESMTP id 36eu8re21y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Feb 2021 18:07:43 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 115I7frc28049794
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 5 Feb 2021 18:07:41 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 753FEBE053;
-        Fri,  5 Feb 2021 18:07:41 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 08A02BE04F;
-        Fri,  5 Feb 2021 18:07:40 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri,  5 Feb 2021 18:07:40 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     zohar@linux.ibm.com, vt@altlinux.org,
-        linux-integrity@vger.kernel.org
-Cc:     Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH] ima-evm-utils: Improve ima_measurement matching on busy system with >1 banks
-Date:   Fri,  5 Feb 2021 13:07:39 -0500
-Message-Id: <20210205180739.676410-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.26.2
+        Fri, 5 Feb 2021 11:12:49 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C785C0613D6;
+        Fri,  5 Feb 2021 09:54:31 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id F3B1A1280710;
+        Fri,  5 Feb 2021 09:54:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1612547671;
+        bh=PE2KsD5qLssJPf2TOCMDQXfom48gfBf0PZCJ8+JzFRI=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=wF8YwJT/b7g2SVeBvvLJKFESDGEizeKVxIAIxmHBnIT0QFk4QS9fny6G51iG6LSSw
+         7zt+d8VZltbAq49nitSKEoNscSgqJYRHg5v8/LWRcIfLITMAyezfceRTkcoxiKkiOS
+         hFnNqxO+1g7HXqrFOWeQkG9AU2TFglCMfUKWG2WE=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WWDtKxxITTrK; Fri,  5 Feb 2021 09:54:30 -0800 (PST)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5A9F312806FA;
+        Fri,  5 Feb 2021 09:54:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1612547670;
+        bh=PE2KsD5qLssJPf2TOCMDQXfom48gfBf0PZCJ8+JzFRI=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=uPHJZTPKFy1jq3i18W1/GpQwkxEDJ0ACwi2RbhJpptBO25WnDNxX2wj9Q22E/6jg8
+         Am85OBURiNgmgQV9lpPQOgVYw803pGqO8cp8122hNdAA2gN7VW6KMf1lNFb5kO6RMB
+         LEqbKkpuEz1Kn/HcLr1gxk6IgZ8vgftAbDNGfFQE=
+Message-ID: <89892a6152826e89276126fd2688b7c767484f41.camel@HansenPartnership.com>
+Subject: Re: [PATCH v3 2/2] tpm: in tpm2_del_space check if ops pointer is
+ still valid
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>, peterhuewe@gmx.de,
+        stefanb@linux.vnet.ibm.com, stable@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Date:   Fri, 05 Feb 2021 09:54:29 -0800
+In-Reply-To: <20210205172528.GP4718@ziepe.ca>
+References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
+         <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
+         <7308e5e9f51501bd92cced8f28ff6130c976b3ed.camel@HansenPartnership.com>
+         <YByrCnswkIlz1w1t@kernel.org>
+         <ee4adfbb99273e1bdceca210bc1fa5f16a50c415.camel@HansenPartnership.com>
+         <20210205172528.GP4718@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-05_10:2021-02-05,2021-02-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- adultscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
- mlxscore=0 phishscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2102050111
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-When a system is very busy with IMA taking measurements into more than
-one bank, then we often do not get the PCR 10 values of the sha1 bank
-that represents the same log entry as the reading of the PCR value of
-the sha256 bank. In other words, the reading of the PCR 10 value from
-the sha1 bank may represent the PCR 10 state at the time of the
-n-th entry in the log while the reading of the PCR 10 value from the
-sha256 bank may represent the state at the time of the (n+1)-th entry.
-The result currently is that the PCR measurements do not match and
-on a busy system the tool may not easily report a successful match.
+On Fri, 2021-02-05 at 13:25 -0400, Jason Gunthorpe wrote:
+> On Fri, Feb 05, 2021 at 08:48:11AM -0800, James Bottomley wrote:
+> > > Thanks for pointing this out. I'd strongly support Jason's
+> > > proposal:
+> > > 
+> > > https://lore.kernel.org/linux-integrity/20201215175624.GG5487@ziepe.ca/
+> > > 
+> > > It's the best long-term way to fix this.
+> > 
+> > Really, no it's not.  It introduces extra mechanism we don't need.
+> > To recap the issue: character devices already have an automatic
+> > mechanism which holds a reference to the struct device while the
+> > character node is open so the default is to release resources on
+> > final
+> > put of the struct device.
+> 
+> The refcount on the struct device only keeps the memory alive, it
+> doesn't say anything about the ops. We still need to lock and check
+> the ops each and every time they are used.
 
-This patch fixes this issue by separating the TPM bank comparison for
-each one of the banks being looked and using a bit mask for checking
-which banks have already been matched. Once the mask has become 0
-all PCR banks have been successfully matched.
+I think this is the crux of our disagreement: I think the ops doesn't
+matter because to call try_get_ops you have to have a chip structure
+and the only way you get a chip structure is if you hold a device
+containing it, in which case the device hold guarantees the chip can't
+be freed.  Or if you pass in TPM_ANY_NUM to an operation which calls 
+tpm_chip_find_get() which iterates the idr to find a chip under the idr
+lock.  If you find a chip device at the idr, you're guaranteed it
+exists, because elimination of it is the first thing the release does
+and if you find a dying dev (i.e. the release routine blocks on the idr
+mutex trying to kill the chip attachment), try_get_ops() fails because
+the ops are already NULL.
 
-A run on a busy system may result in the output as follows indicating
-PCR bank matches at the n-th entry for the sha1 bank and at a later
-entry, possibly n + 1 or n + 2 or so, for the sha256 bank. The
-output is interleaved with a match of the sha1 bank against 'padded
-matching'.
+In either case, I think you get returned a device to which you hold a
+reference.  Is there any other case where you can get a chip without
+also getting a device reference?
 
-$ evmctl ima_measurement --ignore-violations /sys/kernel/security/ima/binary_runtime_measurements
-Matched bank number 1.
-Matched padded bank number 1.
-Matched bank number 2.
-Matched per TPM bank calculated digest(s).
+I'll answer the other point in a separate email, but I think the
+principle sounds OK: we could do the final put right after we del the
+char devices because that's called in the module release routine and
+thus not have to rely on the devm actions which, as you say, are an
+annoying complication.
 
-An idle system may report this here, indicating matches at the n-th
-entry.
+James
 
-$ evmctl ima_measurement --ignore-violations /sys/kernel/security/ima/binary_runtime_measurements
-Matched bank number 1.
-Matched bank number 2.
-Matched per TPM bank calculated digest(s).
-
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- src/evmctl.c | 55 +++++++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 44 insertions(+), 11 deletions(-)
-
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 1815f55..67a2407 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -1594,10 +1594,15 @@ static struct tpm_bank_info *init_tpm_banks(int *num_banks)
- 
- /*
-  * Compare the calculated TPM PCR banks against the PCR values read.
-+ * The banks_mask parameter allows to select which banks to consider.
-+ * A banks_maks of 0x3 would consider banks 1 and 2, 0x2 would only
-+ * consider the 2nd bank, ~0 would consider all banks.
-+ *
-  * On failure to match any TPM bank, fail comparison.
-  */
- static int compare_tpm_banks(int num_banks, struct tpm_bank_info *bank,
--			     struct tpm_bank_info *tpm_bank)
-+			     struct tpm_bank_info *tpm_bank,
-+			     unsigned int banks_mask)
- {
- 	int i, j;
- 	int ret = 0;
-@@ -1605,6 +1610,9 @@ static int compare_tpm_banks(int num_banks, struct tpm_bank_info *bank,
- 	for (i = 0; i < num_banks; i++) {
- 		if (!bank[i].supported || !tpm_bank[i].supported)
- 			continue;
-+		if ((banks_mask & (1 << i)) == 0)
-+			continue;
-+		/* do we need to look at the n-th bank ? */
- 		for (j = 0; j < NUM_PCRS; j++) {
- 			if (memcmp(bank[i].pcr[j], zero, bank[i].digest_size)
- 			    == 0)
-@@ -1941,6 +1949,8 @@ static int ima_measurement(const char *file)
- 	int num_banks = 0;
- 	int tpmbanks = 1;
- 	int first_record = 1;
-+	unsigned int pseudo_padded_banks_mask, pseudo_banks_mask;
-+	int c;
- 
- 	struct template_entry entry = { .template = 0 };
- 	FILE *fp;
-@@ -1974,6 +1984,10 @@ static int ima_measurement(const char *file)
- 	if (read_tpm_banks(num_banks, tpm_banks) != 0)
- 		tpmbanks = 0;
- 
-+	/* A mask where each bit represents the banks to check against */
-+	pseudo_banks_mask = (1 << num_banks) - 1;
-+	pseudo_padded_banks_mask = pseudo_banks_mask;
-+
- 	while (fread(&entry.header, sizeof(entry.header), 1, fp)) {
- 		if (entry.header.name_len > TCG_EVENT_NAME_LEN_MAX) {
- 			log_err("%d ERROR: event name too long!\n",
-@@ -2086,18 +2100,37 @@ static int ima_measurement(const char *file)
- 		if (!tpmbanks)
- 			continue;
- 
--		/* The measurement list might contain too many entries,
--		 * compare the re-calculated TPM PCR values after each
--		 * extend.
--		 */
--		err = compare_tpm_banks(num_banks, pseudo_banks, tpm_banks);
--		if (!err)
-+		for (c = 0; c < num_banks; c++) {
-+			if ((pseudo_banks_mask & (1 << c)) == 0)
-+				continue;
-+			/* The measurement list might contain too many entries,
-+			 * compare the re-calculated TPM PCR values after each
-+			 * extend.
-+			 */
-+			err = compare_tpm_banks(num_banks, pseudo_banks,
-+						tpm_banks, 1 << c);
-+			if (!err) {
-+				pseudo_banks_mask ^= (1 << c);
-+				log_info("Matched bank number %u.\n", c + 1);
-+			}
-+		}
-+		if (pseudo_banks_mask == 0)
- 			break;
- 
--		/* Compare against original SHA1 zero padded TPM PCR values */
--		err_padded = compare_tpm_banks(num_banks, pseudo_padded_banks,
--					       tpm_banks);
--		if (!err_padded)
-+		for (c = 0; c < num_banks; c++) {
-+			if ((pseudo_padded_banks_mask & (1 << c)) == 0)
-+				continue;
-+			/* Compare against original SHA1 zero padded TPM PCR values */
-+			err_padded = compare_tpm_banks(num_banks,
-+						       pseudo_padded_banks,
-+						       tpm_banks,
-+						       1 << c);
-+			if (!err_padded) {
-+				pseudo_padded_banks_mask ^= (1 << c);
-+				log_info("Matched padded bank number %u.\n", c + 1);
-+			}
-+		}
-+		if (pseudo_padded_banks_mask == 0)
- 			break;
- 	}
- 
--- 
-2.29.2
 
