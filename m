@@ -2,81 +2,182 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02610C433DB
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 23:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B387C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE51964FDE
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Feb 2021 23:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6042464F70
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbhBEXUP (ORCPT
+        id S230191AbhBFCdl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 18:20:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230198AbhBEKHB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 05:07:01 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DE67964FF1;
-        Fri,  5 Feb 2021 10:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1612519551;
-        bh=bs0XNM8gkt3RASjOhVZFNWk8DM7IhwKfz2bXsbWngbY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MbIfqWAXQsPNyAuKIieIdtVLPMHJ4NI+F0LTN+UJt9FrMnXbzvB3pKdCfS/t5MwSl
-         AK9Nuslo3MM1WLO3kiQenPY8+z6owyOWKcAu6jPwAgua3mIbi4ZH5luM6FwFl61tsH
-         qTu+hDP9uUVP1Zduw88mqpxLB8Okw811bmSy6tMU=
-Date:   Fri, 5 Feb 2021 11:05:48 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com, bauerman@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        sashal@kernel.org, tyhicks@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ima: Free IMA measurement buffer after kexec
- syscall
-Message-ID: <YB0YfGxfQPV2BqeO@kroah.com>
-References: <20210204174951.25771-1-nramas@linux.microsoft.com>
- <20210204174951.25771-2-nramas@linux.microsoft.com>
+        Fri, 5 Feb 2021 21:33:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230194AbhBFCco (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 5 Feb 2021 21:32:44 -0500
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28D61C033279
+        for <linux-integrity@vger.kernel.org>; Fri,  5 Feb 2021 17:34:48 -0800 (PST)
+Received: by mail-qt1-x832.google.com with SMTP id s11so2666907qtq.10
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Feb 2021 17:34:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=c7NsMFWXAbgJrmq9lbz3I8y5eHU0q144DUn20NC1IKM=;
+        b=S6lPx0SS3gQhH9rOWQ3D1LjhODu9VO1k55A0kHM/22O0snqF1jdNmNMGjlNzwHZLgD
+         vFyBs32wFEHTad3DyxAGhsm8gQLuawarOU0WTLl+UipgeIjwSDv6TVWCUPH/Lw1jp+a3
+         gN82dNS5S9O304HF3nX7cJ+IXmpXv8Q4jIGz1lpMLbMP6L9PmzsO6852PuRAZG9rNEof
+         RiIIHLBoegN2nKddlYut0HJdR9tXs9kbr8rLQhtOytQH39oe6dgQfw/8QxsfOkiyomTo
+         F2RpFdpGhBiswJlhz8Nilo2rqSzY2/WzGttNFeqqQSzlfPovrfpTCdBmJJJClwKux4Zg
+         nH5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=c7NsMFWXAbgJrmq9lbz3I8y5eHU0q144DUn20NC1IKM=;
+        b=fz+wmorxdTAjvm4T9rdESYKz06fDWyXNtVYqaMS+EAyuXYg0uxYhSuq1gQh0AX57AG
+         97qzUXvi2iAOkqVLjOBM12k23e5xDW71YX+mT4trXq29XUmJazP5smjMFhbRJ8byEuQi
+         Ts0e3aZDvdGxft+PMkvo+zl81RYYznC78F5eThlboEEDcNmuF3eV7u1iQ9eGoPDFXGja
+         IJk7UaLvUEX97GSAzVGf5jlEFvhApkgUyNzmGQVKmDeqo78wzZBaEz2lAX4vmrjmlPRd
+         jj8XoxBW9nwnDnQA5e/62ktUA3Xw76OJiZVWfPgPiA9aq6Zf3d2nZvgu5HIkXxPP69A1
+         Js3w==
+X-Gm-Message-State: AOAM532N1t7aGP9oCDGnSKkX7zkKU0qsGNY3b2/ZGdbHs0KRKH6mkDmN
+        qBM0LTIPgYHFby3yFyKqqq+OtQ==
+X-Google-Smtp-Source: ABdhPJx3sZsgyk2yV7Jx4MdCmCOEhMkkdvrKYS4rfl3u8AjlIruFaP2f3E0v4TUIOkEKT6IHgmed7w==
+X-Received: by 2002:aed:2f86:: with SMTP id m6mr6780191qtd.253.1612575286679;
+        Fri, 05 Feb 2021 17:34:46 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-162-115-133.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.115.133])
+        by smtp.gmail.com with ESMTPSA id i15sm11480451qka.103.2021.02.05.17.34.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Feb 2021 17:34:46 -0800 (PST)
+Received: from jgg by mlx with local (Exim 4.94)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1l8CUn-004C5U-9w; Fri, 05 Feb 2021 21:34:45 -0400
+Date:   Fri, 5 Feb 2021 21:34:45 -0400
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>, peterhuewe@gmx.de,
+        stefanb@linux.vnet.ibm.com, stable@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Subject: Re: [PATCH v3 2/2] tpm: in tpm2_del_space check if ops pointer is
+ still valid
+Message-ID: <20210206013445.GT4718@ziepe.ca>
+References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
+ <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
+ <7308e5e9f51501bd92cced8f28ff6130c976b3ed.camel@HansenPartnership.com>
+ <YByrCnswkIlz1w1t@kernel.org>
+ <ee4adfbb99273e1bdceca210bc1fa5f16a50c415.camel@HansenPartnership.com>
+ <20210205172528.GP4718@ziepe.ca>
+ <525fe9047ffd66e0c8635c7d65e91943eb71cd6a.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210204174951.25771-2-nramas@linux.microsoft.com>
+In-Reply-To: <525fe9047ffd66e0c8635c7d65e91943eb71cd6a.camel@HansenPartnership.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Feb 04, 2021 at 09:49:51AM -0800, Lakshmi Ramasubramanian wrote:
-> IMA allocates kernel virtual memory to carry forward the measurement
-> list, from the current kernel to the next kernel on kexec system call,
-> in ima_add_kexec_buffer() function.  This buffer is not freed before
-> completing the kexec system call resulting in memory leak.
+On Fri, Feb 05, 2021 at 05:08:20PM -0800, James Bottomley wrote:
+ 
+> Effectively all of this shuffles the tpmrm device allocation from
+> chip_alloc to chip_add ... I'm not averse to this but it does mean we
+> can suffer allocation failures now in the add routine and it makes
+> error handling a bit more complex.  
+
+We already have to handle failures here, so this doesn't seem any
+worse (and the existing error handling looked wrong, I fixed it)
+
+> >  		rc = cdev_device_add(&chip->cdevs, &chip->devs);
+> >  		if (rc) {
+> >  			dev_err(&chip->devs,
+> >  				"unable to cdev_device_add() %s, major
+> > %d, minor %d, err=%d\n",
+> >  				dev_name(&chip->devs), MAJOR(chip-
+> > >devs.devt),
+> >  				MINOR(chip->devs.devt), rc);
+> > -			return rc;
+> > +			goto out_put_devs;
+> >  		}
+> >  	}
+> >  
+> > @@ -460,6 +459,10 @@ static int tpm_add_char_device(struct tpm_chip
+> > *chip)
+> >  	idr_replace(&dev_nums_idr, chip, chip->dev_num);
+> >  	mutex_unlock(&idr_lock);
+> >  
+> > +out_put_devs:
+> > +	put_device(&chip->devs);
 > 
-> Add ima_buffer field in "struct kimage" to store the virtual address
-> of the buffer allocated for the IMA measurement list.
-> Free the memory allocated for the IMA measurement list in
-> kimage_file_post_load_cleanup() function.
+> I think there should be a if (chip->flags & TPM_CHIP_FLAG_TPM2) here.
 > 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-> Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
-> ---
->  include/linux/kexec.h              | 5 +++++
->  kernel/kexec_file.c                | 5 +++++
->  security/integrity/ima/ima_kexec.c | 2 ++
->  3 files changed, 12 insertions(+)
+> I realise you got everything semantically correct and you only ever go
+> to this label from somewhere that already has the check, but guess what
+> will happen when the bot rewriters get hold of this ...
 
-<formletter>
+Makes sense
+ 
+> > +out_del_dev:
+> > +	cdev_device_del(&chip->cdev);
+> >  	return rc;
+> >  }
+> >  
+> > @@ -640,8 +643,10 @@ void tpm_chip_unregister(struct tpm_chip *chip)
+> >  	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+> >  		hwrng_unregister(&chip->hwrng);
+> >  	tpm_bios_log_teardown(chip);
+> > -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> > +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> >  		cdev_device_del(&chip->cdevs, &chip->devs);
+> > +		put_device(&chip->devs);
+> > +	}
+> >  	tpm_del_char_device(chip);
+> 
+> Actually, I think you want to go further here.  If there's a 
+> 
+> put_device(&chips->dev)
+>
+> as the last statement (or moved into tpm_del_char_device) we should
+> now
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+The proper TPM driver remove sequence is:
 
-</formletter>
+remove()
+{
+   /* Upon return the core guarentees no driver callback is running or
+    * will ever run again */
+   tpm_chip_unregister()
+
+   // Safe to do this because nothing will now use the HW resources
+   free_irq(chip->XXX)
+   unmap_memory(chip->YYY)
+
+   // Now we are done with the memory
+   put_device(&chip-dev);
+}
+
+ie the general driver design should expect the chip memory to continue
+to exist after unregister because it will need to refer to it to
+destroy any driver resources.
+
+> have no active reference on the devices from the kernel and we can
+> eliminate the 
+>
+> 	rc = devm_add_action_or_reset(pdev,
+> 				      (void (*)(void *)) put_device,
+> 				      &chip->dev);
+
+This devm exists because adding the put_device to the error unwinds of
+every driver probe function was too daunting. It can be removed only
+if someone goes and updates every driver to correctly error-unwind
+tpm_chip_alloc() with put_device() in the driver probe function.
+
+Jason
