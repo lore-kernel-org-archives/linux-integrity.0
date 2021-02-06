@@ -6,162 +6,134 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE921C4332B
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C47C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 03:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF6C265019
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:47:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5AC64EEC
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 03:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbhBFCcJ (ORCPT
+        id S231621AbhBFDTN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 21:32:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37204 "EHLO
+        Fri, 5 Feb 2021 22:19:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229975AbhBFCcD (ORCPT
+        with ESMTP id S231613AbhBFCpn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 21:32:03 -0500
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A89CC03326F
-        for <linux-integrity@vger.kernel.org>; Fri,  5 Feb 2021 17:02:25 -0800 (PST)
-Received: by mail-qk1-x729.google.com with SMTP id l27so8827045qki.9
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Feb 2021 17:02:25 -0800 (PST)
+        Fri, 5 Feb 2021 21:45:43 -0500
+Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC8BC08EE79
+        for <linux-integrity@vger.kernel.org>; Fri,  5 Feb 2021 16:39:08 -0800 (PST)
+Received: by mail-qk1-x735.google.com with SMTP id d85so8827496qkg.5
+        for <linux-integrity@vger.kernel.org>; Fri, 05 Feb 2021 16:39:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ziepe.ca; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=FLppRaBxTaTBBqnUXgqhBfq/MXGjD2GePBnWu7V919s=;
-        b=Hg8QkEjqcz56CXhXkp1Dh9Snx4WRELdVyJ1HGayaJXyEm9EtREpftEmuj8C8KYDVWK
-         duiLaV84VItsT53GTqATLo39qU0ela1yL6ZhEq42LlNsjMMbsqjWuBvlzS0xWhBiw/ub
-         xB3CZUsemutHXa+PJyVBPnVsJBkWBpnrSxKTshS6UllhQ0CE6PQkq8/L5iRjuRy3gEVF
-         oSPCGXMjdR4DsFELb0c/t3f9o9/l1IK2EbmpIg8ykwy4w8Exj6ytk70ql4h5S3NxKmKD
-         7sXYejDowxGiniXcr7aHZTwJrQLkfiBZ4LzVIyeXLN3sDduL/cuO3ywRMdyB14q8uiqR
-         Lr5w==
+        bh=ciK0YLExn9NtmT/ujAAKYIWsGrGZcSbTE1owRjIeMgc=;
+        b=pAXnADSm+QJgLf+gcgZ5W2l/zhC6+B04AFwPHQBJz4JLGYPoDsNIc13ulxR0xi+VgA
+         5wdx+D1TXUPWmcbVeRB7X2AEER4H3vM5FxTtksbE8k/VgrgHLbfzEoVcvwWH/9UNzKYC
+         TOJHSec6umfecHTksMS0z7VcT0CXSWQZgehc3S4IfnhxK8aBgnifHSZuAt+8xKVErlMg
+         /phlaeoskSC1TmERgVjIE5naLkqyz8swVpMLGpzT/aQYhQTzwz/Bnpq8jeGVmQN2QVcn
+         718ES1nRFUVQxTCJDrWdwIkh3qAiApux5QFXfJC32k62ZjWBdEwBy5z3X4Y49fmwbZ+I
+         RCvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=FLppRaBxTaTBBqnUXgqhBfq/MXGjD2GePBnWu7V919s=;
-        b=lGaEopbJjoNAuUgHHfOjfs7nRNrPxP8rJsi7bCoZfblBs+zw7PIGInbOq7909OcdjT
-         uHVU/2q/WLzRlxYi8c5zGzgY9wIqRGkq2CBPwbIsJl5KnEzvUxdz2ls0mm5Q5QSxC4e3
-         q1Oq1OWnSk9domQLdAh/q0C8gZjf112Mtm3OLGZ2rOt7DMwAss4RZ8WB4/xKfIkYXfe5
-         S16vmjd8wxLspAmK3QA5VxeXhXqA2V0tRIR301I47uiDZzej2YDkAfAobChrSGht4zD6
-         BWGycaUfEg3PvJqM3sIMRNCGraUxN/4DmX43+oHKGkOjtoh1N5KMVmVtdTnfUq+fLPJD
-         tZtA==
-X-Gm-Message-State: AOAM530pXV/lusgmomO3jIYhUkOfe37QxjSCFC0HM2iGOBYW0WP8M4K1
-        /NatpqEQkuVPxA2G2AYFizlQig==
-X-Google-Smtp-Source: ABdhPJwVBr7etauHiCjhknPRB2gY/JQ/tVzQinXjOkvfahLLyY6HRmk6T/xCYpuxVmPJvC6gd44bQg==
-X-Received: by 2002:a37:a3d0:: with SMTP id m199mr6795926qke.497.1612573344787;
-        Fri, 05 Feb 2021 17:02:24 -0800 (PST)
+        bh=ciK0YLExn9NtmT/ujAAKYIWsGrGZcSbTE1owRjIeMgc=;
+        b=XDMr1eIzJLS+U6vF4lBYoK8XbPWtTD5ZFsLXnoVcprJ5HMz/Am++IrnP/dmfDhjaq9
+         LEBzEGxMQ1sNTlswjJ2TyyV+XKVIyWJ2eaKzqCqc63uNC7Ny2gK4LSj+HuLooVF5FvHw
+         Nn6tp9K4JhJZfJBm79wGYtH3e+4Wv3kvRjtgsV6K2xIH2Lfa2X+x9TYVBl9VvNg5ldky
+         oibOj5clOt8j01pfAr8K2RmhMuQg6YXqpchYJVHjjBsSuurivUkdDrPLEg2T5wRbX9lD
+         coiP0OwPhNMW2h2V5RVJ9W51yIXT4O5SJUVTIF4vEZCReycF2gg4kXz131fvPm/PAK25
+         BPww==
+X-Gm-Message-State: AOAM532Lx+kamjFvrQ3B0zNdJ4ARaRS5IDk8RF3raSfsdRrkDZ6MFL2n
+        1lYaKNtpM4MAjeIK2H6T3Mouyw==
+X-Google-Smtp-Source: ABdhPJwjSuDbU/cvRcr0S0nr4WF6ca/O+BI3ierMwVBkkMT8QdKr0frxBPIeCSqB/NMdwwQ0+hIPFg==
+X-Received: by 2002:a37:9c14:: with SMTP id f20mr7383034qke.82.1612571947693;
+        Fri, 05 Feb 2021 16:39:07 -0800 (PST)
 Received: from ziepe.ca (hlfxns017vw-142-162-115-133.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.115.133])
-        by smtp.gmail.com with ESMTPSA id d1sm7315887qtq.94.2021.02.05.17.02.24
+        by smtp.gmail.com with ESMTPSA id 199sm11376368qkm.126.2021.02.05.16.39.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Feb 2021 17:02:24 -0800 (PST)
+        Fri, 05 Feb 2021 16:39:06 -0800 (PST)
 Received: from jgg by mlx with local (Exim 4.94)
         (envelope-from <jgg@ziepe.ca>)
-        id 1l8BzT-004BbR-OL; Fri, 05 Feb 2021 21:02:23 -0400
-Date:   Fri, 5 Feb 2021 21:02:23 -0400
+        id 1l8Bcw-004BCu-4L; Fri, 05 Feb 2021 20:39:06 -0400
+Date:   Fri, 5 Feb 2021 20:39:06 -0400
 From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>, peterhuewe@gmx.de,
-        stefanb@linux.vnet.ibm.com, stable@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH v3 2/2] tpm: in tpm2_del_space check if ops pointer is
- still valid
-Message-ID: <20210206010223.GS4718@ziepe.ca>
+To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Cc:     Lino Sanfilippo <l.sanfilippo@kunbus.com>, peterhuewe@gmx.de,
+        jarkko@kernel.org, stefanb@linux.vnet.ibm.com,
+        James.Bottomley@hansenpartnership.com, stable@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] tpm: fix reference counting for struct tpm_chip
+Message-ID: <20210206003906.GR4718@ziepe.ca>
 References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
- <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
- <7308e5e9f51501bd92cced8f28ff6130c976b3ed.camel@HansenPartnership.com>
- <YByrCnswkIlz1w1t@kernel.org>
- <ee4adfbb99273e1bdceca210bc1fa5f16a50c415.camel@HansenPartnership.com>
- <20210205172528.GP4718@ziepe.ca>
- <89892a6152826e89276126fd2688b7c767484f41.camel@HansenPartnership.com>
+ <1612482643-11796-2-git-send-email-LinoSanfilippo@gmx.de>
+ <20210205130511.GI4718@ziepe.ca>
+ <3b821bf9-0f54-3473-d934-61c0c29f8957@kunbus.com>
+ <20210205151511.GM4718@ziepe.ca>
+ <f6e5dd7d-30df-26d9-c712-677c127a8026@kunbus.com>
+ <20210205155808.GO4718@ziepe.ca>
+ <db7c90c3-d86a-65c9-81a2-be1527b47e11@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <89892a6152826e89276126fd2688b7c767484f41.camel@HansenPartnership.com>
+In-Reply-To: <db7c90c3-d86a-65c9-81a2-be1527b47e11@gmx.de>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 05, 2021 at 09:54:29AM -0800, James Bottomley wrote:
-> On Fri, 2021-02-05 at 13:25 -0400, Jason Gunthorpe wrote:
-> > On Fri, Feb 05, 2021 at 08:48:11AM -0800, James Bottomley wrote:
-> > > > Thanks for pointing this out. I'd strongly support Jason's
-> > > > proposal:
-> > > > 
-> > > > https://lore.kernel.org/linux-integrity/20201215175624.GG5487@ziepe.ca/
-> > > > 
-> > > > It's the best long-term way to fix this.
-> > > 
-> > > Really, no it's not.  It introduces extra mechanism we don't need.
-> > > To recap the issue: character devices already have an automatic
-> > > mechanism which holds a reference to the struct device while the
-> > > character node is open so the default is to release resources on
-> > > final
-> > > put of the struct device.
-> > 
-> > The refcount on the struct device only keeps the memory alive, it
-> > doesn't say anything about the ops. We still need to lock and check
-> > the ops each and every time they are used.
+On Fri, Feb 05, 2021 at 10:50:02PM +0100, Lino Sanfilippo wrote:
+> On 05.02.21 at 16:58, Jason Gunthorpe wrote:
+> eference in the first place).
+> >
+> > No, they are all chained together because they are all in the same
+> > struct:
+> >
+> > struct tpm_chip {
+> > 	struct device dev;
+> > 	struct device devs;
+> > 	struct cdev cdev;
+> > 	struct cdev cdevs;
+> >
+> > dev holds the refcount on memory, when it goes 0 the whole thing is
+> > kfreed.
+> >
+> > The rule is dev's refcount can't go to zero while any other refcount
+> > is != 0.
+> >
+> > For instance devs holds a get on dev that is put back only when devs
+> > goes to 0:
+> >
+> > static void tpm_devs_release(struct device *dev)
+> > {
+> > 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, devs);
+> >
+> > 	/* release the master device reference */
+> > 	put_device(&chip->dev);
+> > }
+> >
+> > Both cdev elements do something similar inside the cdev layer.
 > 
-> I think this is the crux of our disagreement: I think the ops doesn't
-> matter because to call try_get_ops you have to have a chip structure
-> and the only way you get a chip structure is if you hold a device
-> containing it, in which case the device hold guarantees the chip can't
-> be freed.  
+> Well this chaining is exactly what does not work nowadays and what the patch is supposed
+> to fix: currently we dont ever take the extra ref (not even in TPM 2 case, note that
+> TPM_CHIP_FLAG_TMP2 is never set), so
+> 
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> -		get_device(&chip->dev);
+> +	get_device(&chip->dev);
 
-The get_device() only guarentees the chip memory hasn't been kfree'd.
+Oh, hah, yes that is busted up. The patch sketch I sent to James is
+the right way to handle it, feel free to take it up
 
-It doesn't mean tpm_chip_unregister() hasn't already run, completed
-and set ops == NULL.
+> and tpm_devs_release() is never called, since there is nothing that ever puts devs, so
 
-In the file path we have the get_device implicitly by the file's
-i_cdev pointing to that chain of refcounts that ends on the chip's
-main struct device. So we know the chip memory cannot be kfreed while
-the struct file exists.
+Yes, that is a pre-existing memory leak
 
-However, there is nothing preventing the struct file from living past
-tpm_chip_unregister(). cdev_device_del() does not wait for all files's
-to be closed, it only removes the ability to open new files. Open
-files do prevent removal of the module, but it does not prevent
-hot-unplug of the underling device, eg with sysfs unbind.
+> The race with only get_device()/putdevice() in tpm_common_open()/tpm_common_release() is:
 
-In fact, nothing about tpm_chip_unregister() excludes open files.
-
-So it is perfectly legal for tpm_chip_unregister() to return, the devm
-put_device to be called, and the refcount of the chip to still be
-positive - held by open files.
-
-In this situation ops will be NULL when file operations are called and
-eg doing a tpm_chip_start will crash on:
-
-	if (chip->ops->clk_enable)
-
-To use the TPM driver, the rules are you must hold a get_device() on a
-chip, and then upgrade it to a 'tpm_try_get_ops' before calling any
-driver functions. 
-
-Only the critical region formed by tpm_try_get_ops() will prevent
-tpm_chip_unregister() from completing. It is the thing that ensures
-the driver is actually present.
-
-> In either case, I think you get returned a device to which you hold a
-> reference.  Is there any other case where you can get a chip without
-> also getting a device reference?
-
-There should be no case where there is a struct chip pointer without
-something owning a reference for that pointer.
-
-> I'll answer the other point in a separate email, but I think the
-> principle sounds OK: we could do the final put right after we del the
-> char devices because that's called in the module release routine and
-> thus not have to rely on the devm actions which, as you say, are an
-> annoying complication.
-
-I think tpm_alloc() should have an error unwind that is only
-put_device(chip->dev), anything else breaks the basic programming
-pattern of alloc/register.
+The refcount handling is busted up and not working the way it is
+designed, when that is fixed there is no race.
 
 Jason
