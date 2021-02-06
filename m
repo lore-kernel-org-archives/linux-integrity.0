@@ -2,158 +2,266 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC158C433E6
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FD7C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD81364FE4
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41EBA64F91
+	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 02:45:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbhBFCiv convert rfc822-to-8bit (ORCPT
+        id S230104AbhBFCoq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 21:38:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38284 "EHLO
+        Fri, 5 Feb 2021 21:44:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229850AbhBFCf7 (ORCPT
+        with ESMTP id S231455AbhBFCkF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 21:35:59 -0500
-X-Greylist: delayed 400 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 05 Feb 2021 15:38:50 PST
-Received: from ithil.bigon.be (ithil.bigon.be [IPv6:2001:bc8:25f1:100::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C64EBC08ED84
-        for <linux-integrity@vger.kernel.org>; Fri,  5 Feb 2021 15:38:50 -0800 (PST)
-Received: from localhost (localhost [IPv6:::1])
-        by ithil.bigon.be (Postfix) with ESMTP id C660E1FCAE
-        for <linux-integrity@vger.kernel.org>; Sat,  6 Feb 2021 00:31:24 +0100 (CET)
-Received: from ithil.bigon.be ([IPv6:::1])
-        by localhost (ithil.bigon.be [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 7fQ3D5rH_7og for <linux-integrity@vger.kernel.org>;
-        Sat,  6 Feb 2021 00:31:24 +0100 (CET)
-Received: from [IPv6:2a02:a03f:65b8:4300:de23:9854:338b:84b3] (unknown [IPv6:2a02:a03f:65b8:4300:de23:9854:338b:84b3])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        Fri, 5 Feb 2021 21:40:05 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AAA5C033272;
+        Fri,  5 Feb 2021 17:09:02 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C4E0B1280978;
+        Fri,  5 Feb 2021 17:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1612573701;
+        bh=8buggqqJsrVnVBnD8cS/MsnjXH8kbSwhO0dtgWUSVT4=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=KPR8X6JVF1ai8MOI0Y6yVyuiPbwY3ElSnOgxl34aaTMtf0Tf0RVI9zqBm8XjJHN6r
+         y3wU8lutpH3pqD7nU75Ng2qtGLEMayhY3FMgzao9j4TkbZANqWhYiOIRUNBGnb5ufz
+         BeS8ZMgfMmGDGqyGhxGQ8RBZgD72vqN0TeRb2VcI=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 143TGuq5cmlv; Fri,  5 Feb 2021 17:08:21 -0800 (PST)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: bigon@bigon.be)
-        by ithil.bigon.be (Postfix) with ESMTPSA
-        for <linux-integrity@vger.kernel.org>; Sat,  6 Feb 2021 00:31:24 +0100 (CET)
-To:     linux-integrity@vger.kernel.org
-From:   Laurent Bigonville <bigon@debian.org>
-Subject: TPM returned invalid status
-Message-ID: <ee9c30b0-aff6-b1bd-2830-84b55a53b95e@debian.org>
-Date:   Sat, 6 Feb 2021 00:31:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 2B5AF1280976;
+        Fri,  5 Feb 2021 17:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1612573701;
+        bh=8buggqqJsrVnVBnD8cS/MsnjXH8kbSwhO0dtgWUSVT4=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=KPR8X6JVF1ai8MOI0Y6yVyuiPbwY3ElSnOgxl34aaTMtf0Tf0RVI9zqBm8XjJHN6r
+         y3wU8lutpH3pqD7nU75Ng2qtGLEMayhY3FMgzao9j4TkbZANqWhYiOIRUNBGnb5ufz
+         BeS8ZMgfMmGDGqyGhxGQ8RBZgD72vqN0TeRb2VcI=
+Message-ID: <525fe9047ffd66e0c8635c7d65e91943eb71cd6a.camel@HansenPartnership.com>
+Subject: Re: [PATCH v3 2/2] tpm: in tpm2_del_space check if ops pointer is
+ still valid
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Lino Sanfilippo <LinoSanfilippo@gmx.de>, peterhuewe@gmx.de,
+        stefanb@linux.vnet.ibm.com, stable@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Date:   Fri, 05 Feb 2021 17:08:20 -0800
+In-Reply-To: <20210205172528.GP4718@ziepe.ca>
+References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
+         <1612482643-11796-3-git-send-email-LinoSanfilippo@gmx.de>
+         <7308e5e9f51501bd92cced8f28ff6130c976b3ed.camel@HansenPartnership.com>
+         <YByrCnswkIlz1w1t@kernel.org>
+         <ee4adfbb99273e1bdceca210bc1fa5f16a50c415.camel@HansenPartnership.com>
+         <20210205172528.GP4718@ziepe.ca>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello,
+On Fri, 2021-02-05 at 13:25 -0400, Jason Gunthorpe wrote:
+> On Fri, Feb 05, 2021 at 08:48:11AM -0800, James Bottomley wrote:
+[...]
+> > The practical consequence of this model is that if you allocate a
+> > chip structure with tpm_chip_alloc() you have to release it again
+> > by doing a put of *both* devices.
+> 
+> The final put of the devs should be directly after the
+> cdev_device_del(), not in a devm. This became all confused because
+> the devs was created during alloc, not register. Having a device that
+> is initialized but will never be added is weird.
+> 
+> See sketch below.
+> 
+> > Stefan noticed the latter, so we got the bogus patch 8979b02aaf1d
+> > ("tpm: Fix reference count to main device") applied which simply
+> > breaks the master/slave model by not taking a reference on the
+> > master for the slave.  I'm not sure why I didn't notice the problem
+> > with this fix at the time, but attention must have been elsewhere.
+> 
+> Well, this is sort of OK because we never use the devs in TPM1, so we
+> end up freeing the chip with a positive refcount on the devs, which
+> is weird but not a functional bug.
+> 
+> Jason
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-
+> chip.c
+> index ddaeceb7e10910..e07193a0dd4438 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -344,7 +344,6 @@ struct tpm_chip *tpm_chip_alloc(struct device
+> *pdev,
+>  	chip->dev_num = rc;
+>  
+>  	device_initialize(&chip->dev);
+> -	device_initialize(&chip->devs);
+>  
+>  	chip->dev.class = tpm_class;
+>  	chip->dev.class->shutdown_pre = tpm_class_shutdown;
+> @@ -352,29 +351,12 @@ struct tpm_chip *tpm_chip_alloc(struct device
+> *pdev,
+>  	chip->dev.parent = pdev;
+>  	chip->dev.groups = chip->groups;
+>  
+> -	chip->devs.parent = pdev;
+> -	chip->devs.class = tpmrm_class;
+> -	chip->devs.release = tpm_devs_release;
+> -	/* get extra reference on main device to hold on
+> -	 * behalf of devs.  This holds the chip structure
+> -	 * while cdevs is in use.  The corresponding put
+> -	 * is in the tpm_devs_release (TPM2 only)
+> -	 */
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> -		get_device(&chip->dev);
+> -
+>  	if (chip->dev_num == 0)
+>  		chip->dev.devt = MKDEV(MISC_MAJOR, TPM_MINOR);
+>  	else
+>  		chip->dev.devt = MKDEV(MAJOR(tpm_devt), chip->dev_num);
+>  
+> -	chip->devs.devt =
+> -		MKDEV(MAJOR(tpm_devt), chip->dev_num +
+> TPM_NUM_DEVICES);
+> -
+>  	rc = dev_set_name(&chip->dev, "tpm%d", chip->dev_num);
+> -	if (rc)
+> -		goto out;
+> -	rc = dev_set_name(&chip->devs, "tpmrm%d", chip->dev_num);
+>  	if (rc)
+>  		goto out;
+>  
+> @@ -382,9 +364,7 @@ struct tpm_chip *tpm_chip_alloc(struct device
+> *pdev,
+>  		chip->flags |= TPM_CHIP_FLAG_VIRTUAL;
+>  
+>  	cdev_init(&chip->cdev, &tpm_fops);
+> -	cdev_init(&chip->cdevs, &tpmrm_fops);
+>  	chip->cdev.owner = THIS_MODULE;
+> -	chip->cdevs.owner = THIS_MODULE;
+>  
+>  	rc = tpm2_init_space(&chip->work_space,
+> TPM2_SPACE_BUFFER_SIZE);
+>  	if (rc) {
+> @@ -396,7 +376,6 @@ struct tpm_chip *tpm_chip_alloc(struct device
+> *pdev,
+>  	return chip;
+>  
+>  out:
+> -	put_device(&chip->devs);
+>  	put_device(&chip->dev);
+>  	return ERR_PTR(rc);
+>  }
+> @@ -445,13 +424,33 @@ static int tpm_add_char_device(struct tpm_chip
+> *chip)
+>  	}
+>  
+>  	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> +		device_initialize(&chip->devs);
+> +		chip->devs.parent = pdev;
+> +		chip->devs.class = tpmrm_class;
+> +		rc = dev_set_name(&chip->devs, "tpmrm%d", chip-
+> >dev_num);
+> +		if (rc)
+> +			goto out_put_devs;
+> +
+> +		/*
+> +                 * get extra reference on main device to hold on
+> behalf of devs.
+> +                 * This holds the chip structure while cdevs is in
+> use. The
+> +		 * corresponding put is in the tpm_devs_release.
+> +		 */
+> +		get_device(&chip->dev);
+> +		chip->devs.release = tpm_devs_release;
+> +
+> +		chip->devs.devt =
+> +			MKDEV(MAJOR(tpm_devt), chip->dev_num +
+> TPM_NUM_DEVICES);
+> +		cdev_init(&chip->cdevs, &tpmrm_fops);
+> +		chip->cdevs.owner = THIS_MODULE;
+> +
 
-I already posted that beginning of January in reply to "tpm_tis: Clean 
-up locality release", but I didn't really got a reply
+Effectively all of this shuffles the tpmrm device allocation from
+chip_alloc to chip_add ... I'm not averse to this but it does mean we
+can suffer allocation failures now in the add routine and it makes
+error handling a bit more complex.  On the other hand we can now check
+the TPM2 flag correctly, so it's swings and roundabouts.
 
-With debian unstable (Linux fornost 5.10.0-3-amd64 #1 SMP Debian 
-5.10.12-1 (2021-01-30) x86_64 GNU/Linux), I get the following error:
+>  		rc = cdev_device_add(&chip->cdevs, &chip->devs);
+>  		if (rc) {
+>  			dev_err(&chip->devs,
+>  				"unable to cdev_device_add() %s, major
+> %d, minor %d, err=%d\n",
+>  				dev_name(&chip->devs), MAJOR(chip-
+> >devs.devt),
+>  				MINOR(chip->devs.devt), rc);
+> -			return rc;
+> +			goto out_put_devs;
+>  		}
+>  	}
+>  
+> @@ -460,6 +459,10 @@ static int tpm_add_char_device(struct tpm_chip
+> *chip)
+>  	idr_replace(&dev_nums_idr, chip, chip->dev_num);
+>  	mutex_unlock(&idr_lock);
+>  
+> +out_put_devs:
+> +	put_device(&chip->devs);
 
-[   13.733866] ------------[ cut here ]------------
-[   13.733868] TPM returned invalid status
-[   13.733889] WARNING: CPU: 3 PID: 444 at 
-drivers/char/tpm/tpm_tis_core.c:249 tpm_tis_status+0x86/0xa0 [tpm_tis_core]
-[   13.733890] Modules linked in: libiscsi joydev libaes 
-scsi_transport_iscsi snd_timer snd soundcore i7core_edac pcc_cpufreq(-) 
-i5500_temp tpm_tis(+) tpm_tis_core asus_atk0110 tpm evdev rng_core loop 
-firewire_sbp2 msr parport_pc ppdev sunrpc lp parport fuse configfs 
-ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2 btrfs blake2b_generic 
-raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor 
-async_tx xor raid6_pq libcrc32c crc32c_generic raid1 raid0 multipath 
-linear md_mod dm_mod sd_mod t10_pi crc_t10dif crct10dif_generic sr_mod 
-cdrom crct10dif_common hid_generic usbhid hid amdgpu ahci libahci 
-gpu_sched i2c_algo_bit libata ttm drm_kms_helper psmouse scsi_mod 
-mxm_wmi crc32c_intel uhci_hcd i2c_i801 cec firewire_ohci i2c_smbus 
-ehci_pci ehci_hcd firewire_core drm lpc_ich crc_itu_t usbcore sky2 
-usb_common wmi button
-[   13.733954] CPU: 3 PID: 444 Comm: systemd-udevd Tainted: G          
-I       5.10.0-3-amd64 #1 Debian 5.10.12-1
-[   13.733956] Hardware name: System manufacturer System Product 
-Name/P6T DELUXE V2, BIOS 0406    04/24/2009
-[   13.733959] RIP: 0010:tpm_tis_status+0x86/0xa0 [tpm_tis_core]
-[   13.733962] Code: 00 75 30 48 83 c4 18 c3 31 c0 80 3d e3 48 00 00 00 
-75 e0 48 c7 c7 4c f3 20 c1 88 44 24 07 c6 05 cf 48 00 00 01 e8 9a 47 c6 
-f1 <0f> 0b 0f b6 44 24 07 eb c0 e8 3c be c9 f1 66 66 2e 0f 1f 84 00 00
-[   13.733963] RSP: 0018:ffffbf23808fbaa0 EFLAGS: 00010286
-[   13.733965] RAX: 0000000000000000 RBX: ffff979283e35000 RCX: 
-ffff97962dad8a08
-[   13.733967] RDX: 00000000ffffffd8 RSI: 0000000000000027 RDI: 
-ffff97962dad8a00
-[   13.733968] RBP: 00000000ffff5d8c R08: 0000000000000000 R09: 
-ffffbf23808fb8c0
-[   13.733970] R10: ffffbf23808fb8b8 R11: ffffffffb3ccb368 R12: 
-0000000000000016
-[   13.733971] R13: ffff9792c0128000 R14: 0000000000001000 R15: 
-ffffbf23808fbada
-[   13.733973] FS:  00007f06c63828c0(0000) GS:ffff97962dac0000(0000) 
-knlGS:0000000000000000
-[   13.733975] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   13.733976] CR2: 00007ffa0229121c CR3: 0000000110e60000 CR4: 
-00000000000006e0
-[   13.733978] Call Trace:
-[   13.733987]  tpm_transmit+0x15f/0x3d0 [tpm]
-[   13.733992]  tpm_transmit_cmd+0x25/0x90 [tpm]
-[   13.733997]  tpm2_probe+0xe2/0x140 [tpm]
-[   13.734000]  tpm_tis_core_init+0x1d5/0x2b0 [tpm_tis_core]
-[   13.734006]  ? tpm_tis_init.part.0+0x130/0x130 [tpm_tis]
-[   13.734008]  tpm_tis_pnp_init+0xe1/0x110 [tpm_tis]
-[   13.734016]  pnp_device_probe+0xaf/0x140
-[   13.734019]  really_probe+0xf2/0x440
-[   13.734021]  driver_probe_device+0xe1/0x150
-[   13.734024]  device_driver_attach+0xa1/0xb0
-[   13.734026]  __driver_attach+0x8a/0x150
-[   13.734027]  ? device_driver_attach+0xb0/0xb0
-[   13.734028]  ? device_driver_attach+0xb0/0xb0
-[   13.734030]  bus_for_each_dev+0x78/0xc0
-[   13.734032]  bus_add_driver+0x12b/0x1e0
-[   13.734034]  driver_register+0x8b/0xe0
-[   13.734036]  ? 0xffffffffc121a000
-[   13.734038]  init_tis+0xa0/0x1000 [tpm_tis]
-[   13.734042]  do_one_initcall+0x44/0x1d0
-[   13.734046]  ? do_init_module+0x23/0x260
-[   13.734048]  ? kmem_cache_alloc_trace+0xf5/0x200
-[   13.734050]  do_init_module+0x5c/0x260
-[   13.734052]  __do_sys_finit_module+0xb1/0x110
-[   13.734056]  do_syscall_64+0x33/0x80
-[   13.734059]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   13.734061] RIP: 0033:0x7f06c683b9b9
-[   13.734063] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 
-48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a7 54 0c 00 f7 d8 64 89 01 48
-[   13.734064] RSP: 002b:00007ffe3ac07978 EFLAGS: 00000246 ORIG_RAX: 
-0000000000000139
-[   13.734065] RAX: ffffffffffffffda RBX: 000055c0f90a7a10 RCX: 
-00007f06c683b9b9
-[   13.734066] RDX: 0000000000000000 RSI: 00007f06c69c6e2d RDI: 
-0000000000000012
-[   13.734067] RBP: 0000000000020000 R08: 0000000000000000 R09: 
-000055c0f8edcdc0
-[   13.734068] R10: 0000000000000012 R11: 0000000000000246 R12: 
-00007f06c69c6e2d
-[   13.734069] R13: 0000000000000000 R14: 000055c0f90a55f0 R15: 
-000055c0f90a7a10
-[   13.734071] ---[ end trace a34082fc50077847 ]---
-[   13.740689] tpm_tis 00:06: 1.2 TPM (device-id 0x6871, rev-id 1)
+I think there should be a if (chip->flags & TPM_CHIP_FLAG_TPM2) here.
 
-This is still a TPM 1.2 device and it seems to work as I can seal and 
-unseal data (tpm_sealdata and tpm_unsealdata)
+I realise you got everything semantically correct and you only ever go
+to this label from somewhere that already has the check, but guess what
+will happen when the bot rewriters get hold of this ...
 
-An idea what's happening?
+> +out_del_dev:
+> +	cdev_device_del(&chip->cdev);
+>  	return rc;
+>  }
+>  
+> @@ -640,8 +643,10 @@ void tpm_chip_unregister(struct tpm_chip *chip)
+>  	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+>  		hwrng_unregister(&chip->hwrng);
+>  	tpm_bios_log_teardown(chip);
+> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>  		cdev_device_del(&chip->cdevs, &chip->devs);
+> +		put_device(&chip->devs);
+> +	}
+>  	tpm_del_char_device(chip);
 
-Kind regards,
+Actually, I think you want to go further here.  If there's a 
 
-Laurent Bigonville
+put_device(&chips->dev)
+
+as the last statement (or moved into tpm_del_char_device) we should now
+have no active reference on the devices from the kernel and we can
+eliminate the 
+
+	rc = devm_add_action_or_reset(pdev,
+				      (void (*)(void *)) put_device,
+				      &chip->dev);
+
+In tpmm_chip_alloc().  That way both /dev/tpm and /dev/tpmrm have
+identical lifetime properties.
+
+James
 
 
