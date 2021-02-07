@@ -2,138 +2,101 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C47C433E0
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 03:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E068C433E6
+	for <linux-integrity@archiver.kernel.org>; Sun,  7 Feb 2021 23:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD5AC64EEC
-	for <linux-integrity@archiver.kernel.org>; Sat,  6 Feb 2021 03:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48D7E64E31
+	for <linux-integrity@archiver.kernel.org>; Sun,  7 Feb 2021 23:43:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231621AbhBFDTN (ORCPT
+        id S229681AbhBGXm6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Feb 2021 22:19:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39932 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231613AbhBFCpn (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Feb 2021 21:45:43 -0500
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC8BC08EE79
-        for <linux-integrity@vger.kernel.org>; Fri,  5 Feb 2021 16:39:08 -0800 (PST)
-Received: by mail-qk1-x735.google.com with SMTP id d85so8827496qkg.5
-        for <linux-integrity@vger.kernel.org>; Fri, 05 Feb 2021 16:39:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ciK0YLExn9NtmT/ujAAKYIWsGrGZcSbTE1owRjIeMgc=;
-        b=pAXnADSm+QJgLf+gcgZ5W2l/zhC6+B04AFwPHQBJz4JLGYPoDsNIc13ulxR0xi+VgA
-         5wdx+D1TXUPWmcbVeRB7X2AEER4H3vM5FxTtksbE8k/VgrgHLbfzEoVcvwWH/9UNzKYC
-         TOJHSec6umfecHTksMS0z7VcT0CXSWQZgehc3S4IfnhxK8aBgnifHSZuAt+8xKVErlMg
-         /phlaeoskSC1TmERgVjIE5naLkqyz8swVpMLGpzT/aQYhQTzwz/Bnpq8jeGVmQN2QVcn
-         718ES1nRFUVQxTCJDrWdwIkh3qAiApux5QFXfJC32k62ZjWBdEwBy5z3X4Y49fmwbZ+I
-         RCvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ciK0YLExn9NtmT/ujAAKYIWsGrGZcSbTE1owRjIeMgc=;
-        b=XDMr1eIzJLS+U6vF4lBYoK8XbPWtTD5ZFsLXnoVcprJ5HMz/Am++IrnP/dmfDhjaq9
-         LEBzEGxMQ1sNTlswjJ2TyyV+XKVIyWJ2eaKzqCqc63uNC7Ny2gK4LSj+HuLooVF5FvHw
-         Nn6tp9K4JhJZfJBm79wGYtH3e+4Wv3kvRjtgsV6K2xIH2Lfa2X+x9TYVBl9VvNg5ldky
-         oibOj5clOt8j01pfAr8K2RmhMuQg6YXqpchYJVHjjBsSuurivUkdDrPLEg2T5wRbX9lD
-         coiP0OwPhNMW2h2V5RVJ9W51yIXT4O5SJUVTIF4vEZCReycF2gg4kXz131fvPm/PAK25
-         BPww==
-X-Gm-Message-State: AOAM532Lx+kamjFvrQ3B0zNdJ4ARaRS5IDk8RF3raSfsdRrkDZ6MFL2n
-        1lYaKNtpM4MAjeIK2H6T3Mouyw==
-X-Google-Smtp-Source: ABdhPJwjSuDbU/cvRcr0S0nr4WF6ca/O+BI3ierMwVBkkMT8QdKr0frxBPIeCSqB/NMdwwQ0+hIPFg==
-X-Received: by 2002:a37:9c14:: with SMTP id f20mr7383034qke.82.1612571947693;
-        Fri, 05 Feb 2021 16:39:07 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-162-115-133.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.115.133])
-        by smtp.gmail.com with ESMTPSA id 199sm11376368qkm.126.2021.02.05.16.39.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Feb 2021 16:39:06 -0800 (PST)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1l8Bcw-004BCu-4L; Fri, 05 Feb 2021 20:39:06 -0400
-Date:   Fri, 5 Feb 2021 20:39:06 -0400
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Cc:     Lino Sanfilippo <l.sanfilippo@kunbus.com>, peterhuewe@gmx.de,
-        jarkko@kernel.org, stefanb@linux.vnet.ibm.com,
-        James.Bottomley@hansenpartnership.com, stable@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] tpm: fix reference counting for struct tpm_chip
-Message-ID: <20210206003906.GR4718@ziepe.ca>
-References: <1612482643-11796-1-git-send-email-LinoSanfilippo@gmx.de>
- <1612482643-11796-2-git-send-email-LinoSanfilippo@gmx.de>
- <20210205130511.GI4718@ziepe.ca>
- <3b821bf9-0f54-3473-d934-61c0c29f8957@kunbus.com>
- <20210205151511.GM4718@ziepe.ca>
- <f6e5dd7d-30df-26d9-c712-677c127a8026@kunbus.com>
- <20210205155808.GO4718@ziepe.ca>
- <db7c90c3-d86a-65c9-81a2-be1527b47e11@gmx.de>
+        Sun, 7 Feb 2021 18:42:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229565AbhBGXm5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 7 Feb 2021 18:42:57 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 7EF8C64DF5;
+        Sun,  7 Feb 2021 23:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612741337;
+        bh=Y2a27YQNjg/T/z0OzSCmnPs67jHJx1cU5KZDsx8cByg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KkoEMaPYzT5wN+uYsu6LktK1Ihd32tOs2AcmSv8Id2PvtO9KDEdz5aSNRF58twbEp
+         tNuWVH6cLNnHsub6wDZGAdkMG/Ocyv5KTcTlKy1I0iANOEQzD5USPMaQAcWZZARQPb
+         Ghk+CkaNukQdrKlbyiOE54RcWn009aGz04fdxcQyPa6/PcNonOJUeZ1VWZKHgg05ox
+         jTQd25rTdQFUjhOWEyVEAJvn6yKH2KXhYvGOYgCvHI/PtSVfY5IUfLwbkqp0kwIsLN
+         9tOfAypaaWlsLrIpLwQEkIv6p58Cne8ZUvJrbiR92qLhpw0DmsfqUKL3/pBOw91JCC
+         cyzbs/a4uKhQw==
+Date:   Mon, 8 Feb 2021 01:42:08 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     wanghongzhe <wanghongzhe@huawei.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] tpm_tis_spi_main: set cs_change = 0 when timesout
+Message-ID: <YCB60CRpdhb7/HZ+@kernel.org>
+References: <1612507325-2621-1-git-send-email-wanghongzhe@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <db7c90c3-d86a-65c9-81a2-be1527b47e11@gmx.de>
+In-Reply-To: <1612507325-2621-1-git-send-email-wanghongzhe@huawei.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 05, 2021 at 10:50:02PM +0100, Lino Sanfilippo wrote:
-> On 05.02.21 at 16:58, Jason Gunthorpe wrote:
-> eference in the first place).
-> >
-> > No, they are all chained together because they are all in the same
-> > struct:
-> >
-> > struct tpm_chip {
-> > 	struct device dev;
-> > 	struct device devs;
-> > 	struct cdev cdev;
-> > 	struct cdev cdevs;
-> >
-> > dev holds the refcount on memory, when it goes 0 the whole thing is
-> > kfreed.
-> >
-> > The rule is dev's refcount can't go to zero while any other refcount
-> > is != 0.
-> >
-> > For instance devs holds a get on dev that is put back only when devs
-> > goes to 0:
-> >
-> > static void tpm_devs_release(struct device *dev)
-> > {
-> > 	struct tpm_chip *chip = container_of(dev, struct tpm_chip, devs);
-> >
-> > 	/* release the master device reference */
-> > 	put_device(&chip->dev);
-> > }
-> >
-> > Both cdev elements do something similar inside the cdev layer.
+On Fri, Feb 05, 2021 at 02:42:05PM +0800, wanghongzhe wrote:
+> when i reach TPM_RETRY, the cs cannot  change back to 'high'.
+> So the TPM chips thinks this communication is not over.
+> And next times communication cannot be effective because
+> the communications mixed up with the last time.
 > 
-> Well this chaining is exactly what does not work nowadays and what the patch is supposed
-> to fix: currently we dont ever take the extra ref (not even in TPM 2 case, note that
-> TPM_CHIP_FLAG_TMP2 is never set), so
+> Signed-off-by: wanghongzhe <wanghongzhe@huawei.com>
+                 ~~~~~~~~~~~
+                 Firstname Lastname
+
+Please write legit sentences starting with capital letters etc.
+
+Please write the commit message in imperative form. E.g. "Do x because y
+..". I presume that *you* are not an actor in the sequence.
+
+You also would need to have a fixes tag and preferably some description
+of the failing sequence if possible.
+
+/Jarkko
+
+> ---
+>  drivers/char/tpm/tpm_tis_spi_main.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> -		get_device(&chip->dev);
-> +	get_device(&chip->dev);
-
-Oh, hah, yes that is busted up. The patch sketch I sent to James is
-the right way to handle it, feel free to take it up
-
-> and tpm_devs_release() is never called, since there is nothing that ever puts devs, so
-
-Yes, that is a pre-existing memory leak
-
-> The race with only get_device()/putdevice() in tpm_common_open()/tpm_common_release() is:
-
-The refcount handling is busted up and not working the way it is
-designed, when that is fixed there is no race.
-
-Jason
+> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
+> index 3856f6ebcb34..6c52cbb28881 100644
+> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+> @@ -64,8 +64,18 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
+>  				break;
+>  		}
+>  
+> -		if (i == TPM_RETRY)
+> +		if (i == TPM_RETRY) {
+> +			/* change back to 'high',
+> +			 * So the TPM chips thinks the last communication
+> +			 * is done.
+> +			 */
+> +			spi_xfer.cs_change = 0;
+> +			spi_xfer->len = 1;
+> +			spi_message_init(&m);
+> +			spi_message_add_tail(spi_xfer, &m);
+> +			ret = spi_sync_locked(phy->spi_device, &m);
+>  			return -ETIMEDOUT;
+> +		}
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.19.1
+> 
+> 
