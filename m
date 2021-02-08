@@ -2,134 +2,185 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659E1C433DB
-	for <linux-integrity@archiver.kernel.org>; Mon,  8 Feb 2021 04:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F647C433DB
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Feb 2021 14:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2466064E60
-	for <linux-integrity@archiver.kernel.org>; Mon,  8 Feb 2021 04:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2871464E84
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Feb 2021 14:40:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbhBHENw (ORCPT
+        id S232049AbhBHOjy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 7 Feb 2021 23:13:52 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:41769 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229537AbhBHENv (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 7 Feb 2021 23:13:51 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4DYt0t66nsz9sVF;
-        Mon,  8 Feb 2021 15:13:02 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
-        s=201909; t=1612757588;
-        bh=OO7xGWmsUnuYQgc3bx44I7oadxiJ3c+qloWk8zo8s/E=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=SQsvL45jlKpqUCEP8e1n03m12ASsrcsFM4rulmGn0o0JHZVPyDkisCyaZygcFW+w/
-         o+aNZskRfsTmGwMpW337LVHKl/7fzsO7W/0NkNFfBpab7Nq/iTWuLQYB5o7WrlGlgR
-         vrm9InatVSOATOiUKFPVdFYZ1JXjJqQkTzJjF+50Dkp6/IBYDj8ZWuJoomQ79smix5
-         Jb09M2DIY7piouMND8uNftwaBdOiAx0C8HFgF5ekV/3yH2poxd2WulSITdHQwwW01E
-         tXf52460TJkHIrDDaHHGbop5tjAoaZRaWZb+tWdI8YhTvmkDE9J66esGpcdkyVyXAX
-         oUG7BiZkbIKyw==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Rob Herring <robh@kernel.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Will Deacon <will@kernel.org>, Joe Perches <joe@perches.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        vincenzo.frascino@arm.com, Mark Rutland <mark.rutland@arm.com>,
-        dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Allison Randal <allison@lohutok.net>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>, tao.li@vivo.com,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Prakhar Srivastava <prsriva@linux.microsoft.com>,
-        balajib@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v16 11/12] powerpc: Use OF alloc and free for FDT
-In-Reply-To: <CAL_JsqK1Pb9nAeL84EP2U3MQgpBsm+E_0QXmzbigWXnS245WPQ@mail.gmail.com>
-References: <20210204164135.29856-1-nramas@linux.microsoft.com>
- <20210204164135.29856-12-nramas@linux.microsoft.com>
- <CAL_JsqK1Pb9nAeL84EP2U3MQgpBsm+E_0QXmzbigWXnS245WPQ@mail.gmail.com>
-Date:   Mon, 08 Feb 2021 15:12:59 +1100
-Message-ID: <87zh0fnqno.fsf@mpe.ellerman.id.au>
+        Mon, 8 Feb 2021 09:39:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232098AbhBHOjg (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 8 Feb 2021 09:39:36 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45CF1C06178A
+        for <linux-integrity@vger.kernel.org>; Mon,  8 Feb 2021 06:38:46 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1l97gU-0008Bl-Bs; Mon, 08 Feb 2021 15:38:38 +0100
+Received: from localhost ([127.0.0.1])
+        by ptx.hi.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1l97gT-0007SL-Cu; Mon, 08 Feb 2021 15:38:37 +0100
+Message-ID: <b6ee219924e7195070062b6453931595faa640af.camel@pengutronix.de>
+Subject: Re: Migration to trusted keys: sealing user-provided key?
+From:   Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel@pengutronix.de
+Date:   Mon, 08 Feb 2021 15:38:36 +0100
+In-Reply-To: <e9e7814c35d9ce5a6351a960081bf3c6b90bdca7.camel@linux.ibm.com>
+References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
+         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
+         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
+         <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
+         <d4eeefa0c13395e91850630e22d0d9e3690f43ac.camel@linux.ibm.com>
+         <64472434a367060ddce6e03425156b8312a5ad6c.camel@pengutronix.de>
+         <bd3246ebb4eae526c84efe2d27c6fadff662b0c8.camel@linux.ibm.com>
+         <0be34899c9686b95cd22aa016f466523579cbeed.camel@pengutronix.de>
+         <e9e7814c35d9ce5a6351a960081bf3c6b90bdca7.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.38.3-1 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: jlu@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Rob Herring <robh@kernel.org> writes:
-> On Thu, Feb 4, 2021 at 10:42 AM Lakshmi Ramasubramanian
-> <nramas@linux.microsoft.com> wrote:
-...
->> diff --git a/arch/powerpc/kexec/elf_64.c b/arch/powerpc/kexec/elf_64.c
->> index d0e459bb2f05..51d2d8eb6c1b 100644
->> --- a/arch/powerpc/kexec/elf_64.c
->> +++ b/arch/powerpc/kexec/elf_64.c
->> @@ -19,6 +19,7 @@
->>  #include <linux/kexec.h>
->>  #include <linux/libfdt.h>
->>  #include <linux/module.h>
->> +#include <linux/of.h>
->>  #include <linux/of_fdt.h>
->>  #include <linux/slab.h>
->>  #include <linux/types.h>
->> @@ -32,7 +33,7 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
->>         unsigned int fdt_size;
->>         unsigned long kernel_load_addr;
->>         unsigned long initrd_load_addr = 0, fdt_load_addr;
->> -       void *fdt;
->> +       void *fdt = NULL;
->>         const void *slave_code;
->>         struct elfhdr ehdr;
->>         char *modified_cmdline = NULL;
->> @@ -103,18 +104,12 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
->>         }
->>
->>         fdt_size = fdt_totalsize(initial_boot_params) * 2;
->> -       fdt = kmalloc(fdt_size, GFP_KERNEL);
->> +       fdt = of_alloc_and_init_fdt(fdt_size);
->>         if (!fdt) {
->>                 pr_err("Not enough memory for the device tree.\n");
->>                 ret = -ENOMEM;
->>                 goto out;
->>         }
->> -       ret = fdt_open_into(initial_boot_params, fdt, fdt_size);
->> -       if (ret < 0) {
->> -               pr_err("Error setting up the new device tree.\n");
->> -               ret = -EINVAL;
->> -               goto out;
->> -       }
->>
->>         ret = setup_new_fdt_ppc64(image, fdt, initrd_load_addr,
->
-> The first thing this function does is call setup_new_fdt() which first
-> calls of_kexec_setup_new_fdt(). (Note, I really don't understand the
-> PPC code split. It looks like there's a 32-bit and 64-bit split, but
-> 32-bit looks broken to me. Nothing ever calls setup_new_fdt() except
-> setup_new_fdt_ppc64()).
+On Mon, 2021-02-01 at 14:46 -0500, Mimi Zohar wrote:
+> On Mon, 2021-02-01 at 17:38 +0100, Jan Lübbe wrote:
+> > On Mon, 2021-02-01 at 11:11 -0500, Mimi Zohar wrote:
+> > > On Mon, 2021-02-01 at 16:31 +0100, Jan Lübbe wrote:
+> > > > On Sun, 2021-01-31 at 09:29 -0500, Mimi Zohar wrote:
+> > <snip>
+> > > > > Usage::
+> > > > > 
+> > > > >     keyctl add encrypted name "new [format] key-type:master-key-name keylen"
+> > > > >         ring
+> > > > >     keyctl add encrypted name "load hex_blob" ring
+> > > > 
+> > > > 'load' (as I understand the code) only accepts an encrypted blob.
+> > > > 
+> > > > So the only way I see to have an encrypted key with a non-random key data would
+> > > > be:
+> > > > - create a random temporary master key and load a copy as a user key
+> > > > - encrypt the chosen key data with the temporary master key (using a new
+> > > > userspace reimplementation of the kernel encrypted key blob format)
+> > > > - use keyctl add encrypted dmcrypt "load <encrypted blob>" <keyring>
+> > > > - create new trusted master key (OP-TEE or CAAM in our case) as 
+> > > > - use keyctl update to switch to the new trusted master key
+> > > > - use keyctl pipe on the trusted and encrypted keys and store both for loading
+> > > > on later boots
+> > > > 
+> > > > If we'd support importing a pre-existing key into a trusted or encrypted key,
+> > > > we'd do instead:
+> > > > - use keyctl add trusted dmcrypt "import <unencrypted key data>"
+> > > > - use keyctl pipe on the trusted key and store it for loading on later boots
+> > > > 
+> > > > This way, users wouldn't need to care which backend is used by trusted keys
+> > > > (TPM/OP-TEE/CAAM/...). That would make use-cases where a random key is not
+> > > > suitable as straight-forward as the those where a random key is OK.
+> > > 
+> > > As I said above, the "encrypted" key update doesn't change the key data
+> > > used for encrypting/decrypting storage in the dm-crypt case, it just
+> > > updates the key under which it is encrypted/signed.
+> > 
+> > Yes, that's clear. I only used it to demonstrate how a workaround for importing
+> > key material into an encrypted key could look like.
+> > 
+> > > Yes, the reason for using an encrypted "trusted" key, as opposed to an
+> > > encrypted "user" key, is that the "trusted" key is encrypted/decrypted
+> > > by the TPM and never exposed to userspace in the clear.
+> > 
+> > Yes, and that's the main reason I'd like to use trusted keys with dm-crypt: a
+> > much lower chance of exposing this key somewhere it could be extracted.
+> > 
+> > > It doesn't sound like you're wanting to update the storage key in the
+> > > field, just the key used to encrypt/decrypt that key.  So I'm still not
+> > > clear as to why you would want an initial non-random encrypted key. 
+> > > Providing that key on the command line certaining isn't a good idea.
+> > 
+> > Some of our customers have systems in the field which use non-mainline patches
+> > for access to the CAAM [1], which also have the downside of exposing the
+> > decrypted key material directly to userspace. In that thread you suggested to
+> > use trusted keys instead. With Sumit's work that rework is finally within reach.
+> > :)
+> > 
+> > 
+> > In those systems, we have data that's encrypted with a pre-existing dm-crypt or
+> > ecryptfs key. As we update those systems in the field to newer kernels, we want
+> > to get rid of those custom patches, but can't reencrypt everything.
+> > 
+> > So the approach would be to perform a one-time migration when updating a device:
+> > - use our old interface to decrypt the key and 'import' it into a trusted key
+> > - use keyctl pipe and save the re-encrypted key to disk
+> > - destroy the old encrypted key
+> > After this migration, the key material is no longer available to userspace (only
+> > to dm-crypt).
+> > 
+> > 
+> > Another use-case for supporting key import that we want to support is  analysis
+> > of broken devices returned from the field:
+> > - generate an encryption key per device in the factory
+> > - encrypt it to a private key in escrow and archive it for later use
+> > - import it into a trusted key on the device
+> > - keyctl pipe it to a file on the device for use on boot
+> > 
+> > Later, when you need to do an analysis, you can get the key from escrow even if
+> > the device cannot boot any longer.
+> 
+> The first use case doesn't sound like a valid reason for upstreaming
+> such support.  It's a one time update to migrate everyone to a newer
+> kernel.  That you can carry independently of upstream.  In terms of the
+> second use case, do you really want the ability and the resulting
+> responsibility of being able to decrypt user's data?   Please think
+> this through carefully, before you decide you really want/need this
+> feature.
 
-I think that's because 32-bit doesn't support kexec_file_load().
+As it seems that this feature would not be appropriate for all use-cases and
+threat models, I wonder if making it optional would be acceptable. Something
+like:
 
-cheers
+config TRUSTED_KEYS_IMPORT
+        bool "Allow creating TRUSTED KEYS from existing key material"
+        depends on TRUSTED_KEYS
+        help
+          This option adds support for creating new trusted keys from existing 
+          key material supplied by userspace, instead of using random numbers.
+          As with random trusted keys, userspace cannot extract the plain-text 
+          key material again and will only ever see encrypted blobs.
+          
+          This option should *only* be enabled for use in a trusted
+          environment (such as during debugging/development or in a secured
+          factory). Also, consider using 'keyctl padd' instead of 'keyctl add' 
+          to avoid exposing the plain-text key on the process command line.
+
+          If you are unsure as to whether this is required, answer N.
+
+Best regards,
+Jan
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
