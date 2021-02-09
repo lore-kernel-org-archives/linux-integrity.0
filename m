@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC39BC433E0
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Feb 2021 18:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803D2C433E9
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Feb 2021 18:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97EE364EC2
-	for <linux-integrity@archiver.kernel.org>; Tue,  9 Feb 2021 18:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F7DC64DBD
+	for <linux-integrity@archiver.kernel.org>; Tue,  9 Feb 2021 18:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233201AbhBIS3c (ORCPT
+        id S233336AbhBISiZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 9 Feb 2021 13:29:32 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:57666 "EHLO
+        Tue, 9 Feb 2021 13:38:25 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58432 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233365AbhBISXK (ORCPT
+        with ESMTP id S233423AbhBIS1k (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 Feb 2021 13:23:10 -0500
+        Tue, 9 Feb 2021 13:27:40 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 4BF462020E9D;
-        Tue,  9 Feb 2021 10:22:29 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4BF462020E9D
+        by linux.microsoft.com (Postfix) with ESMTPSA id DB69A20B57A3;
+        Tue,  9 Feb 2021 10:22:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DB69A20B57A3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1612894949;
-        bh=wqW3xwsp9Cq77lvYiiXd1zv1yJERqbx7C93NSrMrSUg=;
+        s=default; t=1612894953;
+        bh=1PgnddQ2denP3u/evhN8RhEqOoajx0h1kP3zVTQ82Cc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SrrgUTg0bZQW+g3u6ZlXP0I4yeCLtDpWmx/AeP0ePIv4JdJmZ4h6nQO9pF81gTrVA
-         tWLCms4R3CdXNwV6vEZqYb8TsK4JLwtfnBcMkC9pa2kJ0rdsAmey/xSpxIR7aEB79F
-         /1Z2XyD12UGPP6doQndmwaq4WH7IG6FRPURGOsAA=
+        b=bETR22szZ7gLkHN4LDX6j2oS/oTN1X+lb+XpWZoafspG+dBZdBOHn7ZcYmclzixFK
+         mY1bMKUq0iFdlsu6ARhIhAXyN/vRn3PCUlJOp2bZwMJCi6IPfaHf5HAQOa8s9O9sUx
+         QcB5JAdhIsOczhYDurCTQf60nG65yTuyhlxuZJ+Q=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -48,9 +48,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v17 01/10] powerpc: Rename kexec elfcorehdr_addr to elf_headers_mem
-Date:   Tue,  9 Feb 2021 10:21:51 -0800
-Message-Id: <20210209182200.30606-2-nramas@linux.microsoft.com>
+Subject: [PATCH v17 06/10] powerpc: Enable passing IMA log to next kernel on kexec
+Date:   Tue,  9 Feb 2021 10:21:56 -0800
+Message-Id: <20210209182200.30606-7-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210209182200.30606-1-nramas@linux.microsoft.com>
 References: <20210209182200.30606-1-nramas@linux.microsoft.com>
@@ -60,83 +60,33 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+CONFIG_HAVE_IMA_KEXEC is enabled to indicate that the IMA measurement
+log information is present in the device tree. This should be selected
+only if CONFIG_IMA is enabled.
 
-The architecture specific field, elfcorehdr_addr in struct kimage_arch,
-that holds the address of the buffer in memory for ELF core header for
-powerpc has a different name than the one used for arm64.  This makes
-it hard to have a common code for setting up the device tree for
-kexec system call.
+Update CONFIG_KEXEC_FILE to select CONFIG_HAVE_IMA_KEXEC, if CONFIG_IMA
+is enabled, to indicate that the IMA measurement log information is
+present in the device tree for powerpc.
 
-Rename elfcorehdr_addr to elf_headers_mem to align with arm64 name so
-common code can use it.
-
-Signed-off-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- arch/powerpc/include/asm/kexec.h  | 2 +-
- arch/powerpc/kexec/file_load.c    | 4 ++--
- arch/powerpc/kexec/file_load_64.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ arch/powerpc/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-index 55d6ede30c19..dbf09d2f36d0 100644
---- a/arch/powerpc/include/asm/kexec.h
-+++ b/arch/powerpc/include/asm/kexec.h
-@@ -108,7 +108,7 @@ struct kimage_arch {
- 	unsigned long backup_start;
- 	void *backup_buf;
- 
--	unsigned long elfcorehdr_addr;
-+	unsigned long elf_headers_mem;
- 	unsigned long elf_headers_sz;
- 	void *elf_headers;
- 
-diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
-index 9a232bc36c8f..e452b11df631 100644
---- a/arch/powerpc/kexec/file_load.c
-+++ b/arch/powerpc/kexec/file_load.c
-@@ -45,7 +45,7 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
- 		return NULL;
- 
- 	elfcorehdr_strlen = sprintf(cmdline_ptr, "elfcorehdr=0x%lx ",
--				    image->arch.elfcorehdr_addr);
-+				    image->arch.elf_headers_mem);
- 
- 	if (elfcorehdr_strlen + cmdline_len > COMMAND_LINE_SIZE) {
- 		pr_err("Appending elfcorehdr=<addr> exceeds cmdline size\n");
-@@ -263,7 +263,7 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
- 		 * Avoid elfcorehdr from being stomped on in kdump kernel by
- 		 * setting up memory reserve map.
- 		 */
--		ret = fdt_add_mem_rsv(fdt, image->arch.elfcorehdr_addr,
-+		ret = fdt_add_mem_rsv(fdt, image->arch.elf_headers_mem,
- 				      image->arch.elf_headers_sz);
- 		if (ret) {
- 			pr_err("Error reserving elfcorehdr memory: %s\n",
-diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
-index c69bcf9b547a..a05c19b3cc60 100644
---- a/arch/powerpc/kexec/file_load_64.c
-+++ b/arch/powerpc/kexec/file_load_64.c
-@@ -815,7 +815,7 @@ static int load_elfcorehdr_segment(struct kimage *image, struct kexec_buf *kbuf)
- 		goto out;
- 	}
- 
--	image->arch.elfcorehdr_addr = kbuf->mem;
-+	image->arch.elf_headers_mem = kbuf->mem;
- 	image->arch.elf_headers_sz = headers_sz;
- 	image->arch.elf_headers = headers;
- out:
-@@ -851,7 +851,7 @@ int load_crashdump_segments_ppc64(struct kimage *image,
- 		return ret;
- 	}
- 	pr_debug("Loaded elf core header at 0x%lx, bufsz=0x%lx memsz=0x%lx\n",
--		 image->arch.elfcorehdr_addr, kbuf->bufsz, kbuf->memsz);
-+		 image->arch.elf_headers_mem, kbuf->bufsz, kbuf->memsz);
- 
- 	return 0;
- }
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 107bb4319e0e..d6e593ad270e 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -554,7 +554,7 @@ config KEXEC
+ config KEXEC_FILE
+ 	bool "kexec file based system call"
+ 	select KEXEC_CORE
+-	select HAVE_IMA_KEXEC
++	select HAVE_IMA_KEXEC if IMA
+ 	select BUILD_BIN2C
+ 	select KEXEC_ELF
+ 	depends on PPC64
 -- 
 2.30.0
 
