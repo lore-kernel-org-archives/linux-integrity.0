@@ -2,327 +2,101 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887BCC433E0
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DF2C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 18:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 622B364E2C
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:13:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A7164E39
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 18:33:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229912AbhBMQNI (ORCPT
+        id S229713AbhBMScp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 13 Feb 2021 11:13:08 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36018 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229848AbhBMQM1 (ORCPT
+        Sat, 13 Feb 2021 13:32:45 -0500
+Received: from bedivere.hansenpartnership.com ([96.44.175.130]:59002 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229574AbhBMScn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 13 Feb 2021 11:12:27 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DD88920B57A6;
-        Sat, 13 Feb 2021 08:10:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DD88920B57A6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613232658;
-        bh=+ekBh8PFmZx2WTPRqFx8ENqa+iyEYnl2iF37cIuTI5o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lt4b0cgf83fmtw4RSmuyOcgDMcBBTDZeYUc2j9FyqiRmOz+U48KRaDQhDqr9xIPpg
-         W6koEtIFBRGi3BCbFDoUa9HOjAtNd7/BFVOcwfmRA4D0bOu8v3YYqLGp+7/Ih2+n/7
-         gTOdQOpL+BG7mJYTJkbLImGo301S0TybwsHIZ+L4=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
-        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
-        will@kernel.org, joe@perches.com, catalin.marinas@arm.com,
-        mpe@ellerman.id.au
-Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
-        paulus@samba.org, frowand.list@gmail.com,
-        vincenzo.frascino@arm.com, mark.rutland@arm.com,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        pasha.tatashin@soleen.com, allison@lohutok.net,
-        masahiroy@kernel.org, mbrugger@suse.com, hsinyi@chromium.org,
-        tao.li@vivo.com, christophe.leroy@c-s.fr,
-        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v18 05/11] powerpc: Use common of_kexec_alloc_and_setup_fdt()
-Date:   Sat, 13 Feb 2021 08:10:43 -0800
-Message-Id: <20210213161049.6190-6-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210213161049.6190-1-nramas@linux.microsoft.com>
-References: <20210213161049.6190-1-nramas@linux.microsoft.com>
+        Sat, 13 Feb 2021 13:32:43 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E4B26128026E;
+        Sat, 13 Feb 2021 10:32:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1613241122;
+        bh=YYvWfoR+Cc4TMMU3BMYF+pPdEXWwhmPsMs848IAtLX8=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=HScxP2+XVxELs/PxNmMEEu9v9J8DPpN3Bxn/G0GTuKZWPMv1FFBDbev+lQFTQElwj
+         muPUpVrSFaBuoznxRFdt7ceohP42/NgqpsWSkqFEbm5cpZLTZsWXBT2ymVBN0CYBFo
+         3+L5DDPHGZGs3Xj6Ewnye7vcfr4a/S0sFWqzfTl8=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3YCLuBbZEjxi; Sat, 13 Feb 2021 10:32:02 -0800 (PST)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 897531280267;
+        Sat, 13 Feb 2021 10:32:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1613241122;
+        bh=YYvWfoR+Cc4TMMU3BMYF+pPdEXWwhmPsMs848IAtLX8=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=HScxP2+XVxELs/PxNmMEEu9v9J8DPpN3Bxn/G0GTuKZWPMv1FFBDbev+lQFTQElwj
+         muPUpVrSFaBuoznxRFdt7ceohP42/NgqpsWSkqFEbm5cpZLTZsWXBT2ymVBN0CYBFo
+         3+L5DDPHGZGs3Xj6Ewnye7vcfr4a/S0sFWqzfTl8=
+Message-ID: <68f08a0fe3aa7e143f70199008f8cc745a434dff.camel@HansenPartnership.com>
+Subject: Re: TPM returned invalid status
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Lukasz Majczak <lma@semihalf.com>
+Cc:     Laurent Bigonville <bigon@debian.org>,
+        linux-integrity@vger.kernel.org
+Date:   Sat, 13 Feb 2021 10:32:01 -0800
+In-Reply-To: <YCZb/wdqEEumhtJa@kernel.org>
+References: <ee9c30b0-aff6-b1bd-2830-84b55a53b95e@debian.org>
+         <8581ad17cb536c807d8ce781e955de07643aa1f4.camel@HansenPartnership.com>
+         <YCZb/wdqEEumhtJa@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+On Fri, 2021-02-12 at 12:44 +0200, Jarkko Sakkinen wrote:
+> On Sun, Feb 07, 2021 at 07:33:54PM -0800, James Bottomley wrote:
+> > On Sat, 2021-02-06 at 00:31 +0100, Laurent Bigonville wrote:
+> > > Hello,
+> > > 
+> > > I already posted that beginning of January in reply to "tpm_tis:
+> > > Clean up locality release", but I didn't really got a reply
+> > > 
+> > > With debian unstable (Linux fornost 5.10.0-3-amd64 #1 SMP Debian 
+> > > 5.10.12-1 (2021-01-30) x86_64 GNU/Linux), I get the following
+> > > error:
+> > 
+> > Sorry, forgot to cc you.  We're iterating to this as the fix:
+> > 
+> > https://lore.kernel.org/linux-integrity/20201001180925.13808-5-James.Bottomley@HansenPartnership.com/
+> > 
+> > If you want to test it out.
+> > 
+> > Thanks,
+> > 
+> > James
+> 
+> Not true.
+> 
+> 1/5 and 2/5 have been already applied.
+> 
+> I'm still waiting one remaining fix from Lukasz. That's why I have
+> not sent any PR's to Linus.
 
-The code for setting up the /chosen node in the device tree
-and updating the memory reservation for the next kernel has been
-moved to of_kexec_alloc_and_setup_fdt() defined in "drivers/of/kexec.c".
+Perhaps you could point Laurent at the patch you think he could try
+then because I think the backtrace indicates a potentially new problem.
 
-Use the common of_kexec_alloc_and_setup_fdt() to setup the device tree
-and update the memory reservation for kexec for powerpc.
+James
 
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- arch/powerpc/include/asm/kexec.h  |   1 +
- arch/powerpc/kexec/elf_64.c       |  30 ++++---
- arch/powerpc/kexec/file_load.c    | 132 +-----------------------------
- arch/powerpc/kexec/file_load_64.c |   3 +
- 4 files changed, 26 insertions(+), 140 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
-index 4d9b250cf1e6..f59946c6f9e6 100644
---- a/arch/powerpc/include/asm/kexec.h
-+++ b/arch/powerpc/include/asm/kexec.h
-@@ -111,6 +111,7 @@ struct kimage_arch {
- 	unsigned long elf_load_addr;
- 	unsigned long elf_headers_sz;
- 	void *elf_headers;
-+	void *fdt;
- 
- #ifdef CONFIG_IMA_KEXEC
- 	phys_addr_t ima_buffer_addr;
-diff --git a/arch/powerpc/kexec/elf_64.c b/arch/powerpc/kexec/elf_64.c
-index d0e459bb2f05..87e34611f93d 100644
---- a/arch/powerpc/kexec/elf_64.c
-+++ b/arch/powerpc/kexec/elf_64.c
-@@ -19,6 +19,7 @@
- #include <linux/kexec.h>
- #include <linux/libfdt.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/of_fdt.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-@@ -29,7 +30,6 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
- 			unsigned long cmdline_len)
- {
- 	int ret;
--	unsigned int fdt_size;
- 	unsigned long kernel_load_addr;
- 	unsigned long initrd_load_addr = 0, fdt_load_addr;
- 	void *fdt;
-@@ -102,15 +102,10 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
- 		pr_debug("Loaded initrd at 0x%lx\n", initrd_load_addr);
- 	}
- 
--	fdt_size = fdt_totalsize(initial_boot_params) * 2;
--	fdt = kmalloc(fdt_size, GFP_KERNEL);
-+	fdt = of_kexec_alloc_and_setup_fdt(image, initrd_load_addr,
-+					   initrd_len, cmdline,
-+					   fdt_totalsize(initial_boot_params));
- 	if (!fdt) {
--		pr_err("Not enough memory for the device tree.\n");
--		ret = -ENOMEM;
--		goto out;
--	}
--	ret = fdt_open_into(initial_boot_params, fdt, fdt_size);
--	if (ret < 0) {
- 		pr_err("Error setting up the new device tree.\n");
- 		ret = -EINVAL;
- 		goto out;
-@@ -124,13 +119,17 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
- 	fdt_pack(fdt);
- 
- 	kbuf.buffer = fdt;
--	kbuf.bufsz = kbuf.memsz = fdt_size;
-+	kbuf.bufsz = kbuf.memsz = fdt_totalsize(fdt);
- 	kbuf.buf_align = PAGE_SIZE;
- 	kbuf.top_down = true;
- 	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
- 	ret = kexec_add_buffer(&kbuf);
- 	if (ret)
- 		goto out;
-+
-+	/* FDT will be freed in arch_kimage_file_post_load_cleanup */
-+	image->arch.fdt = fdt;
-+
- 	fdt_load_addr = kbuf.mem;
- 
- 	pr_debug("Loaded device tree at 0x%lx\n", fdt_load_addr);
-@@ -145,8 +144,15 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
- 	kfree(modified_cmdline);
- 	kexec_free_elf_info(&elf_info);
- 
--	/* Make kimage_file_post_load_cleanup free the fdt buffer for us. */
--	return ret ? ERR_PTR(ret) : fdt;
-+	/*
-+	 * Once FDT buffer has been successfully passed to kexec_add_buffer(),
-+	 * the FDT buffer address is saved in image->arch.fdt. In that case,
-+	 * the memory cannot be freed here in case of any other error.
-+	 */
-+	if (ret && !image->arch.fdt)
-+		kvfree(fdt);
-+
-+	return ret ? ERR_PTR(ret) : NULL;
- }
- 
- const struct kexec_file_ops kexec_elf64_ops = {
-diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
-index f7c31daf8a2e..af5a4724a70e 100644
---- a/arch/powerpc/kexec/file_load.c
-+++ b/arch/powerpc/kexec/file_load.c
-@@ -156,135 +156,11 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
- 		  unsigned long initrd_load_addr, unsigned long initrd_len,
- 		  const char *cmdline)
- {
--	int ret, chosen_node;
--	const void *prop;
--
--	/* Remove memory reservation for the current device tree. */
--	ret = delete_fdt_mem_rsv(fdt, __pa(initial_boot_params),
--				 fdt_totalsize(initial_boot_params));
--	if (ret == 0)
--		pr_debug("Removed old device tree reservation.\n");
--	else if (ret != -ENOENT)
--		return ret;
--
--	chosen_node = fdt_path_offset(fdt, "/chosen");
--	if (chosen_node == -FDT_ERR_NOTFOUND) {
--		chosen_node = fdt_add_subnode(fdt, fdt_path_offset(fdt, "/"),
--					      "chosen");
--		if (chosen_node < 0) {
--			pr_err("Error creating /chosen.\n");
--			return -EINVAL;
--		}
--	} else if (chosen_node < 0) {
--		pr_err("Malformed device tree: error reading /chosen.\n");
--		return -EINVAL;
--	}
--
--	/* Did we boot using an initrd? */
--	prop = fdt_getprop(fdt, chosen_node, "linux,initrd-start", NULL);
--	if (prop) {
--		uint64_t tmp_start, tmp_end, tmp_size;
--
--		tmp_start = fdt64_to_cpu(*((const fdt64_t *) prop));
--
--		prop = fdt_getprop(fdt, chosen_node, "linux,initrd-end", NULL);
--		if (!prop) {
--			pr_err("Malformed device tree.\n");
--			return -EINVAL;
--		}
--		tmp_end = fdt64_to_cpu(*((const fdt64_t *) prop));
--
--		/*
--		 * kexec reserves exact initrd size, while firmware may
--		 * reserve a multiple of PAGE_SIZE, so check for both.
--		 */
--		tmp_size = tmp_end - tmp_start;
--		ret = delete_fdt_mem_rsv(fdt, tmp_start, tmp_size);
--		if (ret == -ENOENT)
--			ret = delete_fdt_mem_rsv(fdt, tmp_start,
--						 round_up(tmp_size, PAGE_SIZE));
--		if (ret == 0)
--			pr_debug("Removed old initrd reservation.\n");
--		else if (ret != -ENOENT)
--			return ret;
--
--		/* If there's no new initrd, delete the old initrd's info. */
--		if (initrd_len == 0) {
--			ret = fdt_delprop(fdt, chosen_node,
--					  "linux,initrd-start");
--			if (ret) {
--				pr_err("Error deleting linux,initrd-start.\n");
--				return -EINVAL;
--			}
--
--			ret = fdt_delprop(fdt, chosen_node, "linux,initrd-end");
--			if (ret) {
--				pr_err("Error deleting linux,initrd-end.\n");
--				return -EINVAL;
--			}
--		}
--	}
--
--	if (initrd_len) {
--		ret = fdt_setprop_u64(fdt, chosen_node,
--				      "linux,initrd-start",
--				      initrd_load_addr);
--		if (ret < 0)
--			goto err;
--
--		/* initrd-end is the first address after the initrd image. */
--		ret = fdt_setprop_u64(fdt, chosen_node, "linux,initrd-end",
--				      initrd_load_addr + initrd_len);
--		if (ret < 0)
--			goto err;
--
--		ret = fdt_add_mem_rsv(fdt, initrd_load_addr, initrd_len);
--		if (ret) {
--			pr_err("Error reserving initrd memory: %s\n",
--			       fdt_strerror(ret));
--			return -EINVAL;
--		}
--	}
--
--	if (cmdline != NULL) {
--		ret = fdt_setprop_string(fdt, chosen_node, "bootargs", cmdline);
--		if (ret < 0)
--			goto err;
--	} else {
--		ret = fdt_delprop(fdt, chosen_node, "bootargs");
--		if (ret && ret != -FDT_ERR_NOTFOUND) {
--			pr_err("Error deleting bootargs.\n");
--			return -EINVAL;
--		}
--	}
--
--	if (image->type == KEXEC_TYPE_CRASH) {
--		/*
--		 * Avoid elfcorehdr from being stomped on in kdump kernel by
--		 * setting up memory reserve map.
--		 */
--		ret = fdt_add_mem_rsv(fdt, image->arch.elf_load_addr,
--				      image->arch.elf_headers_sz);
--		if (ret) {
--			pr_err("Error reserving elfcorehdr memory: %s\n",
--			       fdt_strerror(ret));
--			goto err;
--		}
--	}
--
--	ret = setup_ima_buffer(image, fdt, chosen_node);
--	if (ret) {
--		pr_err("Error setting up the new device tree.\n");
--		return ret;
--	}
-+	int ret;
- 
--	ret = fdt_setprop(fdt, chosen_node, "linux,booted-from-kexec", NULL, 0);
-+	ret = setup_ima_buffer(image, fdt, fdt_path_offset(fdt, "/chosen"));
- 	if (ret)
--		goto err;
--
--	return 0;
-+		pr_err("Error setting up the new device tree.\n");
- 
--err:
--	pr_err("Error setting up the new device tree.\n");
--	return -EINVAL;
-+	return ret;
- }
-diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
-index e539b7d401a2..0463ed8ff9ea 100644
---- a/arch/powerpc/kexec/file_load_64.c
-+++ b/arch/powerpc/kexec/file_load_64.c
-@@ -1111,5 +1111,8 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	image->arch.elf_headers = NULL;
- 	image->arch.elf_headers_sz = 0;
- 
-+	kvfree(image->arch.fdt);
-+	image->arch.fdt = NULL;
-+
- 	return kexec_image_post_load_cleanup_default(image);
- }
--- 
-2.30.0
 
