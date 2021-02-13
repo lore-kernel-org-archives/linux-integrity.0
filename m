@@ -2,231 +2,140 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3BEC433E0
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Feb 2021 23:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B337C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 007D164DCF
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Feb 2021 23:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD31664DCD
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231200AbhBLX4U (ORCPT
+        id S229712AbhBMQLi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Feb 2021 18:56:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229679AbhBLX4S (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Feb 2021 18:56:18 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id DFA3364E25;
-        Fri, 12 Feb 2021 23:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613174137;
-        bh=qB6dyxCgCs6hpdMfaqAM+5cZxOG0rVPh2DI+4rxPH7U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BZyoiIUmJE83cjcXVkT2x2L9I+aJLnwkubehxYHjFxjKKutrqtjYlojrVKQgUoIDE
-         jLdcQ/lLzERk+34spSAWv8NFJfj6RCNOf2pA+uGcGv8rPV50tfu4Ydn40skRHi3+Hw
-         WkLc4apR0X0QTBMBeEZCyz/mlBIPWREr2VeahlftsEmfQB3ff94d+hGm5zOe4TQfNq
-         /HOiBjCyf9qDLOijlpkf1k0jYRGKS8jlrQ8/w9Zk/rIRSCFFhm0Q74BOdFH0N5NRW9
-         Np416mQ48jXj4nqFTR6etvjsT2u9WBwBFHKP8hJcRb5RFSBBs9iZnppw1UOy9R/hvT
-         pSO4KaEM5dWbg==
-Date:   Sat, 13 Feb 2021 01:55:28 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Lukasz Majczak <lma@semihalf.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Tj <ml.linux@elloe.vision>, Dirk Gouders <dirk@gouders.net>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
+        Sat, 13 Feb 2021 11:11:38 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:35488 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229674AbhBMQLg (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 13 Feb 2021 11:11:36 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1A5B8209B8AD;
+        Sat, 13 Feb 2021 08:10:55 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1A5B8209B8AD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1613232655;
+        bh=WG/WkMH6P8ZbkszEzq8PwAt5JCMRGDbOn/dQ1D632Ms=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WdPWilBOv6k8LsqSZ+ZHBkT2VEJ41snmh/lpSKaNsdkjuioV7LH4aMPtqe3u/CsaK
+         REqUjubTahmcLsaLNCoS605M2ezIyi92oUvlpjWLdTg3ewyrtYrQASl097L7XJqmYi
+         4PrRVNYpgWzTnyotiLqdMdlXgZwq2GeuGf+PkWyQ=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, joe@perches.com, catalin.marinas@arm.com,
+        mpe@ellerman.id.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, mbrugger@suse.com, hsinyi@chromium.org,
+        tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Radoslaw Biernacki <rad@semihalf.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Alex Levin <levinale@google.com>, upstream@semihalf.com
-Subject: Re: [PATCH v5] tpm_tis: Add missing
- tpm_request/relinquish_locality() calls
-Message-ID: <YCcVcA876iJesEW5@kernel.org>
-References: <20210212110600.19216-1-lma@semihalf.com>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v18 01/11] powerpc: Rename kexec elfcorehdr_addr to elf_load_addr
+Date:   Sat, 13 Feb 2021 08:10:39 -0800
+Message-Id: <20210213161049.6190-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210213161049.6190-1-nramas@linux.microsoft.com>
+References: <20210213161049.6190-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210212110600.19216-1-lma@semihalf.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Feb 12, 2021 at 12:06:00PM +0100, Lukasz Majczak wrote:
-> There are missing calls to tpm_request_locality() before the calls to
-> the tpm_get_timeouts() and tpm_tis_probe_irq_single() - both functions
-> internally send commands to the tpm using tpm_tis_send_data()
-> which in turn, at the very beginning, calls the tpm_tis_status().
-> This one tries to read TPM_STS register, what fails and propagates
-> this error upward. The read fails due to lack of acquired locality,
-> as it is described in
-> TCG PC Client Platform TPM Profile (PTP) Specification,
-> paragraph 6.1 FIFO Interface Locality Usage per Register,
-> Table 39 Register Behavior Based on Locality Setting for FIFO
-> - a read attempt to TPM_STS_x Registers returns 0xFF in case of lack
-> of locality. The described situation manifests itself with
-> the following warning trace:
-> 
-> [    4.324298] TPM returned invalid status
-> [    4.324806] WARNING: CPU: 2 PID: 1 at drivers/char/tpm/tpm_tis_core.c:275 tpm_tis_status+0x86/0x8f
+From: Rob Herring <robh@kernel.org>
 
-The commit message is has great description  of the background, but
-it does not have description what the commit does. Please describe
-this in imperative form, e.g. "Export tpm_request_locality() and ..."
-and "Call tpm_request_locality() before ...". You get the idea.
+The architecture specific field, elfcorehdr_addr in struct kimage_arch,
+that holds the address of the buffer in memory for ELF core header for
+powerpc has a different name than the one used for x86_64.  This makes
+it hard to have a common code for setting up the device tree for
+kexec system call.
 
-It's also lacking expalanation of the implementation path, i.e.
-why you are not using tpm_chip_start() and tpm_chip_stop().
+Rename elfcorehdr_addr to elf_load_addr to align with x86_64 name so
+common code can use it.
 
-> 
-> Tested on Samsung Chromebook Pro (Caroline), TPM 1.2 (SLB 9670)
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+---
+ arch/powerpc/include/asm/kexec.h  | 2 +-
+ arch/powerpc/kexec/file_load.c    | 4 ++--
+ arch/powerpc/kexec/file_load_64.c | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-Empty line here.
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index 55d6ede30c19..4d9b250cf1e6 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -108,7 +108,7 @@ struct kimage_arch {
+ 	unsigned long backup_start;
+ 	void *backup_buf;
+ 
+-	unsigned long elfcorehdr_addr;
++	unsigned long elf_load_addr;
+ 	unsigned long elf_headers_sz;
+ 	void *elf_headers;
+ 
+diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
+index 9a232bc36c8f..f7c31daf8a2e 100644
+--- a/arch/powerpc/kexec/file_load.c
++++ b/arch/powerpc/kexec/file_load.c
+@@ -45,7 +45,7 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
+ 		return NULL;
+ 
+ 	elfcorehdr_strlen = sprintf(cmdline_ptr, "elfcorehdr=0x%lx ",
+-				    image->arch.elfcorehdr_addr);
++				    image->arch.elf_load_addr);
+ 
+ 	if (elfcorehdr_strlen + cmdline_len > COMMAND_LINE_SIZE) {
+ 		pr_err("Appending elfcorehdr=<addr> exceeds cmdline size\n");
+@@ -263,7 +263,7 @@ int setup_new_fdt(const struct kimage *image, void *fdt,
+ 		 * Avoid elfcorehdr from being stomped on in kdump kernel by
+ 		 * setting up memory reserve map.
+ 		 */
+-		ret = fdt_add_mem_rsv(fdt, image->arch.elfcorehdr_addr,
++		ret = fdt_add_mem_rsv(fdt, image->arch.elf_load_addr,
+ 				      image->arch.elf_headers_sz);
+ 		if (ret) {
+ 			pr_err("Error reserving elfcorehdr memory: %s\n",
+diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
+index c69bcf9b547a..e539b7d401a2 100644
+--- a/arch/powerpc/kexec/file_load_64.c
++++ b/arch/powerpc/kexec/file_load_64.c
+@@ -815,7 +815,7 @@ static int load_elfcorehdr_segment(struct kimage *image, struct kexec_buf *kbuf)
+ 		goto out;
+ 	}
+ 
+-	image->arch.elfcorehdr_addr = kbuf->mem;
++	image->arch.elf_load_addr = kbuf->mem;
+ 	image->arch.elf_headers_sz = headers_sz;
+ 	image->arch.elf_headers = headers;
+ out:
+@@ -851,7 +851,7 @@ int load_crashdump_segments_ppc64(struct kimage *image,
+ 		return ret;
+ 	}
+ 	pr_debug("Loaded elf core header at 0x%lx, bufsz=0x%lx memsz=0x%lx\n",
+-		 image->arch.elfcorehdr_addr, kbuf->bufsz, kbuf->memsz);
++		 image->arch.elf_load_addr, kbuf->bufsz, kbuf->memsz);
+ 
+ 	return 0;
+ }
+-- 
+2.30.0
 
-Also, add:
-
-Cc: stable@vger.kernel.org
-
-> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-
-Remove empty line.
-
-> Signed-off-by: Lukasz Majczak <lma@semihalf.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-
-> ---
-> 
-> Hi
-> 
-> I have tried to clean all the pointed issues, but decided to stay with 
-> tpm_request/relinquish_locality() calls instead of using tpm_chip_start/stop(),
-> the rationale behind this is that, in this case only locality is requested, there
-> is no need to enable/disable the clock, the similar case is present in
-> the probe_itpm() function.
-
-I would prefer to use the "same same" if it does not cause any extra harm
-instead of new exports. That will also make the fix more compact. So don't
-agree with this reasoning. Also the commit message lacks *any* reasoning.
-
-> One more clarification is that, the TPM present on my test machine is the SLB 9670
-> (not Cr50).
-> 
-> Best regards,
-> Lukasz
-> 
-> Changes:
-> v4->v5:
-> * Fixed style, typos, clarified commit message
-> 
->  drivers/char/tpm/tpm-chip.c      |  6 ++++--
->  drivers/char/tpm/tpm-interface.c | 13 ++++++++++---
->  drivers/char/tpm/tpm.h           |  2 ++
->  drivers/char/tpm/tpm_tis_core.c  | 14 +++++++++++---
->  4 files changed, 27 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index ddaeceb7e109..ce9c2650fbe5 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -32,7 +32,7 @@ struct class *tpm_class;
->  struct class *tpmrm_class;
->  dev_t tpm_devt;
->  
-> -static int tpm_request_locality(struct tpm_chip *chip)
-> +int tpm_request_locality(struct tpm_chip *chip)
->  {
->  	int rc;
->  
-> @@ -46,8 +46,9 @@ static int tpm_request_locality(struct tpm_chip *chip)
->  	chip->locality = rc;
->  	return 0;
->  }
-> +EXPORT_SYMBOL_GPL(tpm_request_locality);
->  
-> -static void tpm_relinquish_locality(struct tpm_chip *chip)
-> +void tpm_relinquish_locality(struct tpm_chip *chip)
->  {
->  	int rc;
->  
-> @@ -60,6 +61,7 @@ static void tpm_relinquish_locality(struct tpm_chip *chip)
->  
->  	chip->locality = -1;
->  }
-> +EXPORT_SYMBOL_GPL(tpm_relinquish_locality);
->  
->  static int tpm_cmd_ready(struct tpm_chip *chip)
->  {
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1621ce818705..2a9001d329f2 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -241,10 +241,17 @@ int tpm_get_timeouts(struct tpm_chip *chip)
->  	if (chip->flags & TPM_CHIP_FLAG_HAVE_TIMEOUTS)
->  		return 0;
->  
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->  		return tpm2_get_timeouts(chip);
-> -	else
-> -		return tpm1_get_timeouts(chip);
-> +	} else {
-> +		ssize_t ret = tpm_request_locality(chip);
-> +
-> +		if (ret)
-> +			return ret;
-> +		ret = tpm1_get_timeouts(chip);
-> +		tpm_relinquish_locality(chip);
-> +		return ret;
-> +	}
->  }
->  EXPORT_SYMBOL_GPL(tpm_get_timeouts);
->  
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 947d1db0a5cc..8c13008437dd 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -193,6 +193,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
->  
->  int tpm_chip_start(struct tpm_chip *chip);
->  void tpm_chip_stop(struct tpm_chip *chip);
-> +int tpm_request_locality(struct tpm_chip *chip);
-> +void tpm_relinquish_locality(struct tpm_chip *chip);
->  struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
->  __must_check int tpm_try_get_ops(struct tpm_chip *chip);
->  void tpm_put_ops(struct tpm_chip *chip);
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index 431919d5f48a..d4f381d6356e 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -708,11 +708,19 @@ static int tpm_tis_gen_interrupt(struct tpm_chip *chip)
->  	u32 cap2;
->  	cap_t cap;
->  
-> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->  		return tpm2_get_tpm_pt(chip, 0x100, &cap2, desc);
-> -	else
-> -		return tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, desc,
-> +	} else {
-> +		ssize_t ret = tpm_request_locality(chip);
-> +
-> +		if (ret)
-> +			return ret;
-> +		ret = tpm1_getcap(chip, TPM_CAP_PROP_TIS_TIMEOUT, &cap, desc,
->  				  0);
-> +		tpm_relinquish_locality(chip);
-> +		return ret;
-> +	}
-> +
->  }
->  
->  /* Register the IRQ and issue a command that will cause an interrupt. If an
-> -- 
-> 2.25.1
-> 
-> 
