@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C167C4332E
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C419C433E0
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4084E64E43
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3809764E38
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Feb 2021 16:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbhBMQLr (ORCPT
+        id S229862AbhBMQMh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 13 Feb 2021 11:11:47 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:35646 "EHLO
+        Sat, 13 Feb 2021 11:12:37 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:35980 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbhBMQLj (ORCPT
+        with ESMTP id S229829AbhBMQMS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 13 Feb 2021 11:11:39 -0500
+        Sat, 13 Feb 2021 11:12:18 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 30C9720B57A2;
-        Sat, 13 Feb 2021 08:10:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 30C9720B57A2
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0B50B20B57A9;
+        Sat, 13 Feb 2021 08:11:02 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0B50B20B57A9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613232657;
-        bh=PxZ9Fin2XXkLXjxE2va1lmog2eOlHd60RFX6Nu7IxZg=;
+        s=default; t=1613232662;
+        bh=Q5qP/oeHF3QsP6y24A/ceFIZlcYedcKYuPJE/HPeXkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RQRwzsjH1dnXC4IRzgFbp++Qt8de+UzSWlYXIHvL5LLakCdv3NERlBqnZBJ9FtWPl
-         pugmElVXPkYy197Ah1LrhX6YXrp2kkfGsjQW+o/TZsB/IuyFueFKgV2jOIy8CT9z5h
-         l0SbHx6M4Knb6Lf6/KYNIXtWdCIEdnCUUVfG+Azw=
+        b=aByCp+7x7S0YEyDj2ZH7lhS1HjbqHNIx4kABNUpWngvKeq0k1G3ZPnG6ydpQxGiku
+         Yj+Xn1xfrJIRPl+iAyi00VBDsHmOeGLuD9R5Ayb61GL03YCcUViShvX+TdAKjth/zN
+         Ji/0zc5C2Bo6CAdLuTsFPRU8pv3Qnuq30O/lxs8c=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -48,9 +48,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v18 04/11] arm64: Use common of_kexec_alloc_and_setup_fdt()
-Date:   Sat, 13 Feb 2021 08:10:42 -0800
-Message-Id: <20210213161049.6190-5-nramas@linux.microsoft.com>
+Subject: [PATCH v18 11/11] arm64: Enable passing IMA log to next kernel on kexec
+Date:   Sat, 13 Feb 2021 08:10:49 -0800
+Message-Id: <20210213161049.6190-12-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210213161049.6190-1-nramas@linux.microsoft.com>
 References: <20210213161049.6190-1-nramas@linux.microsoft.com>
@@ -60,248 +60,31 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+Update CONFIG_KEXEC_FILE to select CONFIG_HAVE_IMA_KEXEC, if CONFIG_IMA
+is enabled, to indicate that the IMA measurement log information is
+present in the device tree for ARM64.
 
-The code for setting up the /chosen node in the device tree
-and updating the memory reservation for the next kernel has been
-moved to of_kexec_alloc_and_setup_fdt() defined in "drivers/of/kexec.c".
-
-Use the common of_kexec_alloc_and_setup_fdt() to setup the device tree
-and update the memory reservation for kexec for arm64.
-
-Signed-off-by: Rob Herring <robh@kernel.org>
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- arch/arm64/kernel/machine_kexec_file.c | 180 ++-----------------------
- 1 file changed, 8 insertions(+), 172 deletions(-)
+ arch/arm64/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index d98bacec9426..c9f112455a4d 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -15,23 +15,12 @@
- #include <linux/kexec.h>
- #include <linux/libfdt.h>
- #include <linux/memblock.h>
-+#include <linux/of.h>
- #include <linux/of_fdt.h>
--#include <linux/random.h>
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/vmalloc.h>
--#include <asm/byteorder.h>
--
--/* relevant device tree properties */
--#define FDT_PROP_KEXEC_ELFHDR	"linux,elfcorehdr"
--#define FDT_PROP_MEM_RANGE	"linux,usable-memory-range"
--#define FDT_PROP_INITRD_START	"linux,initrd-start"
--#define FDT_PROP_INITRD_END	"linux,initrd-end"
--#define FDT_PROP_BOOTARGS	"bootargs"
--#define FDT_PROP_KASLR_SEED	"kaslr-seed"
--#define FDT_PROP_RNG_SEED	"rng-seed"
--#define RNG_SEED_SIZE		128
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	&kexec_image_ops,
-@@ -40,7 +29,7 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
- 
- int arch_kimage_file_post_load_cleanup(struct kimage *image)
- {
--	vfree(image->arch.dtb);
-+	kvfree(image->arch.dtb);
- 	image->arch.dtb = NULL;
- 
- 	vfree(image->arch.elf_headers);
-@@ -50,162 +39,6 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	return kexec_image_post_load_cleanup_default(image);
- }
- 
--static int setup_dtb(struct kimage *image,
--		     unsigned long initrd_load_addr, unsigned long initrd_len,
--		     char *cmdline, void *dtb)
--{
--	int off, ret;
--
--	ret = fdt_path_offset(dtb, "/chosen");
--	if (ret < 0)
--		goto out;
--
--	off = ret;
--
--	ret = fdt_delprop(dtb, off, FDT_PROP_KEXEC_ELFHDR);
--	if (ret && ret != -FDT_ERR_NOTFOUND)
--		goto out;
--	ret = fdt_delprop(dtb, off, FDT_PROP_MEM_RANGE);
--	if (ret && ret != -FDT_ERR_NOTFOUND)
--		goto out;
--
--	if (image->type == KEXEC_TYPE_CRASH) {
--		/* add linux,elfcorehdr */
--		ret = fdt_appendprop_addrrange(dtb, 0, off,
--				FDT_PROP_KEXEC_ELFHDR,
--				image->arch.elf_load_addr,
--				image->arch.elf_headers_sz);
--		if (ret)
--			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
--
--		/* add linux,usable-memory-range */
--		ret = fdt_appendprop_addrrange(dtb, 0, off,
--				FDT_PROP_MEM_RANGE,
--				crashk_res.start,
--				crashk_res.end - crashk_res.start + 1);
--		if (ret)
--			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
--	}
--
--	/* add bootargs */
--	if (cmdline) {
--		ret = fdt_setprop_string(dtb, off, FDT_PROP_BOOTARGS, cmdline);
--		if (ret)
--			goto out;
--	} else {
--		ret = fdt_delprop(dtb, off, FDT_PROP_BOOTARGS);
--		if (ret && (ret != -FDT_ERR_NOTFOUND))
--			goto out;
--	}
--
--	/* add initrd-* */
--	if (initrd_load_addr) {
--		ret = fdt_setprop_u64(dtb, off, FDT_PROP_INITRD_START,
--				      initrd_load_addr);
--		if (ret)
--			goto out;
--
--		ret = fdt_setprop_u64(dtb, off, FDT_PROP_INITRD_END,
--				      initrd_load_addr + initrd_len);
--		if (ret)
--			goto out;
--	} else {
--		ret = fdt_delprop(dtb, off, FDT_PROP_INITRD_START);
--		if (ret && (ret != -FDT_ERR_NOTFOUND))
--			goto out;
--
--		ret = fdt_delprop(dtb, off, FDT_PROP_INITRD_END);
--		if (ret && (ret != -FDT_ERR_NOTFOUND))
--			goto out;
--	}
--
--	/* add kaslr-seed */
--	ret = fdt_delprop(dtb, off, FDT_PROP_KASLR_SEED);
--	if (ret == -FDT_ERR_NOTFOUND)
--		ret = 0;
--	else if (ret)
--		goto out;
--
--	if (rng_is_initialized()) {
--		u64 seed = get_random_u64();
--		ret = fdt_setprop_u64(dtb, off, FDT_PROP_KASLR_SEED, seed);
--		if (ret)
--			goto out;
--	} else {
--		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
--				FDT_PROP_KASLR_SEED);
--	}
--
--	/* add rng-seed */
--	if (rng_is_initialized()) {
--		void *rng_seed;
--		ret = fdt_setprop_placeholder(dtb, off, FDT_PROP_RNG_SEED,
--				RNG_SEED_SIZE, &rng_seed);
--		if (ret)
--			goto out;
--		get_random_bytes(rng_seed, RNG_SEED_SIZE);
--	} else {
--		pr_notice("RNG is not initialised: omitting \"%s\" property\n",
--				FDT_PROP_RNG_SEED);
--	}
--
--out:
--	if (ret)
--		return (ret == -FDT_ERR_NOSPACE) ? -ENOMEM : -EINVAL;
--
--	return 0;
--}
--
--/*
-- * More space needed so that we can add initrd, bootargs, kaslr-seed,
-- * rng-seed, userable-memory-range and elfcorehdr.
-- */
--#define DTB_EXTRA_SPACE 0x1000
--
--static int create_dtb(struct kimage *image,
--		      unsigned long initrd_load_addr, unsigned long initrd_len,
--		      char *cmdline, void **dtb)
--{
--	void *buf;
--	size_t buf_size;
--	size_t cmdline_len;
--	int ret;
--
--	cmdline_len = cmdline ? strlen(cmdline) : 0;
--	buf_size = fdt_totalsize(initial_boot_params)
--			+ cmdline_len + DTB_EXTRA_SPACE;
--
--	for (;;) {
--		buf = vmalloc(buf_size);
--		if (!buf)
--			return -ENOMEM;
--
--		/* duplicate a device tree blob */
--		ret = fdt_open_into(initial_boot_params, buf, buf_size);
--		if (ret)
--			return -EINVAL;
--
--		ret = setup_dtb(image, initrd_load_addr, initrd_len,
--				cmdline, buf);
--		if (ret) {
--			vfree(buf);
--			if (ret == -ENOMEM) {
--				/* unlikely, but just in case */
--				buf_size += DTB_EXTRA_SPACE;
--				continue;
--			} else {
--				return ret;
--			}
--		}
--
--		/* trim it */
--		fdt_pack(buf);
--		*dtb = buf;
--
--		return 0;
--	}
--}
--
- static int prepare_elf_headers(void **addr, unsigned long *sz)
- {
- 	struct crash_mem *cmem;
-@@ -312,12 +145,15 @@ int load_other_segments(struct kimage *image,
- 	}
- 
- 	/* load dtb */
--	ret = create_dtb(image, initrd_load_addr, initrd_len, cmdline, &dtb);
--	if (ret) {
-+	dtb = of_kexec_alloc_and_setup_fdt(image, initrd_load_addr,
-+					   initrd_len, cmdline, 0);
-+	if (!dtb) {
- 		pr_err("Preparing for new dtb failed\n");
- 		goto out_err;
- 	}
- 
-+	/* trim it */
-+	fdt_pack(dtb);
- 	dtb_len = fdt_totalsize(dtb);
- 	kbuf.buffer = dtb;
- 	kbuf.bufsz = dtb_len;
-@@ -341,6 +177,6 @@ int load_other_segments(struct kimage *image,
- 
- out_err:
- 	image->nr_segments = orig_segments;
--	vfree(dtb);
-+	kvfree(dtb);
- 	return ret;
- }
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 05e17351e4f3..8a93573cebb6 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -1093,6 +1093,7 @@ config KEXEC
+ config KEXEC_FILE
+ 	bool "kexec file based system call"
+ 	select KEXEC_CORE
++	select HAVE_IMA_KEXEC if IMA
+ 	help
+ 	  This is new version of kexec system call. This system call is
+ 	  file based and takes file descriptors as system call argument
 -- 
 2.30.0
 
