@@ -2,97 +2,135 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4F0C433E0
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Feb 2021 20:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0B3C433DB
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Feb 2021 22:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADB964E4B
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Feb 2021 20:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A9764EB7
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Feb 2021 22:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230015AbhBRUeV (ORCPT
+        id S229900AbhBRWBR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 18 Feb 2021 15:34:21 -0500
-Received: from mout.gmx.net ([212.227.15.18]:41749 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231146AbhBRUdq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 18 Feb 2021 15:33:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1613680219;
-        bh=Rv2QiztmGCI/+aVrwY7N4QY4dBUgpjxiaRS6N+iq1MY=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=E2gpjhJH7SEnFPlTBjlgR8M1XnLhdkYJT7Nw4mA/s37pwz3lpkcCGvzbOxrxt5oGp
-         lEcKLiJxjx/+FP10zxJR64WL/U1jkvl2SacrZXRTTNU2eplB65bHFEExQsBsv12L58
-         pwTaqOZblJ6/aVWsOlfp3b9u56/j/u204+fx0s1A=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from Venus.fritz.box ([78.42.220.31]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N5mKP-1lwaw402nL-017Dn6; Thu, 18
- Feb 2021 21:30:19 +0100
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     stefanb@linux.vnet.ibm.com, James.Bottomley@hansenpartnership.com,
-        David.Laight@ACULAB.COM, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, LinoSanfilippo@gmx.de
-Subject: [PATCH v6] TPM fixes
-Date:   Thu, 18 Feb 2021 21:29:40 +0100
-Message-Id: <1613680181-31920-1-git-send-email-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.7.4
+        Thu, 18 Feb 2021 17:01:17 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46868 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229752AbhBRWBQ (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 18 Feb 2021 17:01:16 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 11ILjtFA033525;
+        Thu, 18 Feb 2021 17:00:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=/0bFhNo6+plZGlXa5zDgt9wzfo5s8AWNpxKzDS4Ea9k=;
+ b=DX7EdlPWwOeuBiUhZ1vTRup2MKtiy43mrUWu2Vg4dCsu9RXzaZThXSAa/SXop1q1d81s
+ W/AYg5a+CreSzl4iqjYQWg/th1VqEAEa8DAKiSSTs4YRH8AnRzbhIcOIXlVJL2MJdqb5
+ pQjYIB4VDnz7arNF1/Jw2AWwkmeBk2M+61brqf+FS3nyH1Vpt1DU5fT1lHYjh5Yi3CkX
+ 7YFYTMc/utl80/H2woR6Hh6oMw1AsUHvHZ2w7n5PJoe9k5OPC1OcyeyAd/P/2lT9XydW
+ mVZqFMdRm1jJg28tS435cqrRxFxNl6/H/XX1MtniXHwBDLgIag36uyJTwdF/bykhp2rZ 7g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36t0ekrb6b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Feb 2021 17:00:35 -0500
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 11ILkQAq039610;
+        Thu, 18 Feb 2021 17:00:34 -0500
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36t0ekrb3e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Feb 2021 17:00:34 -0500
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11ILriVv000870;
+        Thu, 18 Feb 2021 22:00:29 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma05fra.de.ibm.com with ESMTP id 36p6d8jmn5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 18 Feb 2021 22:00:28 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11IM0PNO45941154
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 18 Feb 2021 22:00:25 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8B8364C066;
+        Thu, 18 Feb 2021 22:00:24 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E3984C05E;
+        Thu, 18 Feb 2021 22:00:22 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.90.194])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 18 Feb 2021 22:00:22 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v2 0/5] ima: kernel build support for loading the kernel module signing key
+Date:   Thu, 18 Feb 2021 17:00:06 -0500
+Message-Id: <20210218220011.67625-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:XiwFUIsOpBG2o2szLGEPHBKzlWyo836qvtDDLOGT0jKoN4noArT
- HGpeksKMd3vkLSUsTq1v4EULrip0K3QvBCwerJZStwiYBufsoEoBbRs2c0bOPrAd2Iu7zSy
- ybDzbYdSr6emdcLe60FmaWvIJ+sCmaFGrLMdV+zuqy1M2e8excBgOrtvJq0RGluTAhwlT/Y
- PXEMjVxW0l/8Fb0+6r36g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:m81jPigrf5M=:sPZZdSw+p9ZNN01moB3TV+
- /nGOgMXJ+7XNd0ObKFVKP3i4Xr4F6Tx9x4Bku+A1+Dw9kUJOXuh6jAXmrvUWqi8+8TKl09k8a
- ZxKY2q0QTvxQ3kz7XtHK3FQ0wFypncbkjzsOoT/s64qe+bSU9XS5bTWyIsmT1nLCrMGvHiQzl
- +kyuG0KM0fnQR7b2na1U3l8aXKuD09m2J0xsvGr+6D/6VJJh6jRkD67Yvkm1JzhUusYSE562R
- U7jHfSriuAuPmYFos1zu0SqE3MBDPAsbEg1e0E5ip23PZrFa4k3v2/kOQRBJ5oPHi0MEwYml5
- rCNHeXp3fL2ZT2Q+TqokCG1dTwwuxJjCCXiifT5U5rTSzqkdCsTI+GVnzvTwpBQElt6ke8nZ8
- FiuZEAciGqwiUS+KnVuHo6I50DKu39x1hiPAhuHm8ZDB7jPGwRBV8m0ckwvm7HniQdyJplDRe
- U5eaYXhNy3xicceGflHxZNcAWotIQIVysStjKoUkwAm+GMZYuVRDD8/o2Ygveet9MpRHiayVC
- bGeC7LiMnxhslqHjS59zClODwQsbgsvYZfuARuX7gviwZ7QEuqyNuRepdW1PASQVIg6LcqL5l
- Oy0O+Il57KPDwkwlUXvr8rAURnlK9dOUMvQha3f9ElsTG9IhVZ7ll5ivyWiEC4LfAoI2Trbj0
- DBblcVZpItVJGWUGLnVeybiNqwT2UgdliD/mVo43wOI/sQxhEh3IJe3/uex7Pgknd+6yVzUml
- lCZU0w9KF7+V9ZpVROwzBj41r2M++ffXP22AzvuhdxH0KUQiLhx0gUPlcHscF2HVFzEm9flsp
- N0+y4A+WbhXq5CfgNNppl68Aji8ORCKwcknnRiJihoPjkPNFloLfkUi9VwUQD8T+e6EZCeYlD
- Ag7b9KwuxU587D9zxcJg==
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-02-18_09:2021-02-18,2021-02-18 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102180178
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-VGhpcyBwYXRjaCBmaXhlcyBhIHJlZmVyZW5jZSBjb3VudCBpc3N1ZSBpbiB0aGUgVFBNIGNvcmUg
-Y29kZS4KCkNoYW5nZXMgaW4gdjY6Ci0gcmVuYW1lIGZ1bmN0aW9uIHRwbTJfYWRkX2RldmljZSgp
-IHRvIHRwbV9kZXZzX2FkZCgpIGFzIHJlcXVlc3RlZCBieSBKYXJrbwotIGFkZCBmdW5jdGlvbiBk
-ZXNjcmlwdGlvbnMKLSBmaXggc291cmNlIGNvZGUgZm9ybWF0dGluZwoKQ2hhbmdlcyBpbiB2NToK
-LSBtb3ZlIGZ1bmN0aW9uIHRwbV9hZGRfdHBtMl9jaGFyX2RldmljZSgpIHRvIHRwbTItc3BhY2Uu
-YyBhbmQgcmVuYW1lCml0IHRvIHRwbTJfYWRkX2RldmljZSgpIGFzIHJlcXVlc3RlZCBieSBKYXJr
-bwotIHB1dCAiY2MiIHRhZyBiZWZvcmUgYWxsIG90aGVyIHRhZ3MgCi0gZW5zdXJlIHRoYXQgdGhl
-IGVycm9yIHBhdGggaW4gdHBtMl9hZGRfZGV2aWNlKCkgYWx3YXlzIGNhbGxzIAp0aGUgcmVsZWFz
-ZSgpIGZ1bmN0aW9uIG9mIGNoaXAtPmRldnMgYXMgcmVxdWVzdGVkIGJ5IEphc29uCi0gcmVmb3Jt
-YXQgYSBjb2RlIGxpbmUgYXMgc3VnZ2VzdGVkIGJ5IERhdmlkIExhaWdodAoKQ2hhbmdlcyBpbiB2
-NDoKLSBkcm9wIHBhdGNoIDIgKHRwbTogaW4gdHBtMl9kZWxfc3BhY2UgY2hlY2sgaWYgb3BzIHBv
-aW50ZXIgaXMgc3RpbGwKdmFsaWQpIHNpbmNlIEphbWVzIEJvdHRvbWxleSBvZmZlcmVkIGEgY2xl
-YW5lciBzb2x1dGlvbiBmb3IgdGhpcwotIHJlaW1wbGVtZW50IHBhdGNoIDEgdG8gc2V0dXAgdGhl
-IC9kZXYvdHBtcm0gZGV2aWNlIG9ubHkgaW4gY2FzZSBvZiBUUE0yCmFuZCBhdm9pZCB0aGUgaW5z
-dGFsbGF0aW9uIG9mIGFub3RoZXIgYWN0aW9uIGhhbmRsZXIuIFRoaXMgaXMgYmFzZWQgb24gYQpz
-dWdnZXN0aW9uIGFuZCBiYXNpYyBpbXBsZW1lbnRhdGlvbiBkb25lIGJ5IEphc29uIEd1bnRob3Jw
-ZS4KLSBhZGRlZCB0YWcgdG8gQ0Mgc3RhYmxlCgpDaGFuZ2VzIGluIHYzOgotIGRyb3AgdGhlIHBh
-dGNoIHRoYXQgaW50cm9kdWNlcyB0aGUgbmV3IGZ1bmN0aW9uIHRwbV9jaGlwX2ZyZWUoKQotIHJl
-d29yayB0aGUgY29tbWl0IG1lc3NhZ2VzIGZvciB0aGUgcGF0Y2hlcyAoc3R5bGUsIHR5cG9zLCBl
-dGMuKQotIGFkZCBmaXhlcyB0YWcgdG8gcGF0Y2ggMgotIGFkZCBKYW1lcyBCb3R0b21sZXkgdG8g
-Y2MgbGlzdAotIGFkZCBzdGFibGUgbWFpbGluZyBsaXN0IHRvIGNjIGxpc3QKCkNoYW5nZXMgaW4g
-djI6Ci0gZHJvcCB0aGUgcGF0Y2ggdGhhdCBlcnJvbmVvdXNseSBjbGVhbmVkIHVwIGFmdGVyIGZh
-aWxlZCBpbnN0YWxsYXRpb24gb2YKICBhbiBhY3Rpb24gaGFuZGxlciBpbiB0cG1tX2NoaXBfYWxs
-b2MoKSAocG9pbnRlZCBvdXQgYnkgSmFya2tvIFNha2tpbmVuKQotIG1ha2UgdGhlIGNvbW1pdCBt
-ZXNzYWdlIGZvciBwYXRjaCAxIG1vcmUgZGV0YWlsZWQKLSBhZGQgZml4ZXMgdGFncyBhbmQga2Vy
-bmVsIGxvZ3MKCgpMaW5vIFNhbmZpbGlwcG8gKDEpOgogIHRwbTogZml4IHJlZmVyZW5jZSBjb3Vu
-dGluZyBmb3Igc3RydWN0IHRwbV9jaGlwCgogZHJpdmVycy9jaGFyL3RwbS90cG0tY2hpcC5jICAg
-fCA0OCArKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2NoYXIv
-dHBtL3RwbS5oICAgICAgICB8ICAxICsKIGRyaXZlcnMvY2hhci90cG0vdHBtMi1zcGFjZS5jIHwg
-NTUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogMyBmaWxlcyBj
-aGFuZ2VkLCA2NiBpbnNlcnRpb25zKCspLCAzOCBkZWxldGlvbnMoLSkKCi0tIAoyLjcuNAoK
+Kernel modules are currently only signed when CONFIG_MODULE_SIG is enabled.
+The kernel module signing key is a self-signed CA only loaded onto the
+.builtin_trusted_key keyring.  On secure boot enabled systems with an arch
+specific IMA policy enabled, but without MODULE_SIG enabled, kernel modules
+are not signed, nor is the kernel module signing public key loaded onto the
+IMA keyring.
+
+In order to load the the kernel module signing key onto the IMA trusted
+keyring ('.ima'), the certificate needs to be signed by a CA key either on
+the builtin or secondary keyrings.  This series of patches enables IMA
+verification of signed kernel modules by:
+
+* Defining a kernel CA key. The CA key signs the kernel module signing key
+and is loaded onto the .builtin_trusted_key keyring, only when the kernel
+module signing key is loaded onto the .ima keyring.
+
+* Enable module signing at build time for IMA_APPRAISE_MODSIG as well
+
+v2:
+
+* Include feedback from Stefan - corrected the Fixes commit id in Patch 1
+and cleaned Patch 5/5.
+* Fix the issue reported by kernel test bot.
+* Include Jarkko's feedback on patch description.
+
+Nayna Jain (5):
+  keys: cleanup build time module signing keys
+  keys: generate self-signed module signing key using CSR
+  ima: update kernel module signing process during build
+  keys: define build time generated ephemeral kernel CA key
+  ima: enable loading of build time generated key on .ima keyring
+
+ Makefile                      |  9 ++--
+ certs/Kconfig                 |  2 +-
+ certs/Makefile                | 77 ++++++++++++++++++++++++++++++++---
+ certs/system_certificates.S   | 16 +++++++-
+ certs/system_keyring.c        | 55 +++++++++++++++++++------
+ include/keys/system_keyring.h |  9 +++-
+ init/Kconfig                  |  6 +--
+ security/integrity/digsig.c   |  4 ++
+ 8 files changed, 150 insertions(+), 28 deletions(-)
+
+-- 
+2.29.2
