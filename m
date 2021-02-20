@@ -2,105 +2,115 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 254DAC433DB
-	for <linux-integrity@archiver.kernel.org>; Sat, 20 Feb 2021 02:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B63CC433DB
+	for <linux-integrity@archiver.kernel.org>; Sat, 20 Feb 2021 02:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D442964EE0
-	for <linux-integrity@archiver.kernel.org>; Sat, 20 Feb 2021 02:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6E164EDF
+	for <linux-integrity@archiver.kernel.org>; Sat, 20 Feb 2021 02:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbhBTCVJ (ORCPT
+        id S229767AbhBTChn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 19 Feb 2021 21:21:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54116 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229700AbhBTCVI (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 19 Feb 2021 21:21:08 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47FBBC061574;
-        Fri, 19 Feb 2021 18:20:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=vkHct5nZ9eo2GX6kg3o550luk7j4MmaPBgMkq/hkd9k=; b=svpg8ZecDW5spllYjvOFHvISS6
-        lqXen/Xmy3JT1u52u0xFPmZxmZdfzmPqSmaGmNof4WwY6rwjS9TKXbYB5GVWGfLdKP9KuXLOaoxhi
-        ihhhrUiDCgwzeh4vLfItkNNk1ql5BlYrAHVB8+bv/qHSE00eHtIcDW1wP82Rtse6n7+N3A+kHHNMW
-        tOU9Tx1WXQzgRev/EUMEuLNimJxsmJReUD32fiPI+aM8TOJXQwA4WuxxSPVSSi3054Bn5diizYZBh
-        roB+iwkSHGYLL+jErZRVCItdXROC6kkw3m0L8F1EJlqzRnUTcpzZgP+OU7JeR0SslIm1lionRolKy
-        JPqNdLlg==;
-Received: from [2601:1c0:6280:3f0::d05b]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1lDHsZ-0001CX-1i; Sat, 20 Feb 2021 02:20:19 +0000
-Subject: Re: [PATCH 7/9] pm: hibernate: Optionally use TPM-backed keys to
- protect image integrity
-To:     Matthew Garrett <matthewgarrett@google.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org, zohar@linux.ibm.com, jejb@linux.ibm.com,
-        jarkko@kernel.org, corbet@lwn.net, rjw@rjwysocki.net,
-        Matthew Garrett <mjg59@google.com>
-References: <20210220013255.1083202-1-matthewgarrett@google.com>
- <20210220013255.1083202-8-matthewgarrett@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4c265e1d-0a02-207a-cc10-9a49b4fc5169@infradead.org>
-Date:   Fri, 19 Feb 2021 18:20:13 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Fri, 19 Feb 2021 21:37:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42692 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229725AbhBTChl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 19 Feb 2021 21:37:41 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CD88B64E54;
+        Sat, 20 Feb 2021 02:36:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613788620;
+        bh=11VjwrLVTaCchWbSZbfpOpPCXvnZn7rLf+bfTZNteK0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=shuls3n1ZfjhymTGI0HzOP4nDn77pgLswngIsQrM/9QfWkOzjJJdpnFmiIvaXzKST
+         eM64BxW7r8sb9di/kYILPup5NHw9PKOvoPmRQizFQRLXCUUOiMLLtpGlLiEjLGWJdT
+         aXgCn7A1yn+E1w2mIgU0KRKXraCuqKJJ3lowS7hQEmaU6VMZrjYW+LuRxGE3o3aCyc
+         IVmTgv5O+EKpgvt2EdGzxgMPpys5DOlk7sAicYOf4myKNmCR60Ugk6hA6Dw/Jjvly4
+         YkA6a3j2LxMEqFVaD7uZvr+nu+cG1CXNgVVDun/lGORtFzrcVdtdiHeRqufnMif2l/
+         LeWU0c2wNQYZA==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Laurent Bigonville <bigon@debian.org>, stable@vger.kernel.org,
+        Lukasz Majczak <lma@semihalf.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH 1/2] tpm, tpm_tis: Decorate tpm_get_timeouts() with request_locality()
+Date:   Sat, 20 Feb 2021 04:36:41 +0200
+Message-Id: <20210220023641.8568-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.30.1
 MIME-Version: 1.0
-In-Reply-To: <20210220013255.1083202-8-matthewgarrett@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi--
+This is shown with Samsung Chromebook Pro (Caroline) with TPM 1.2
+(SLB 9670):
 
-On 2/19/21 5:32 PM, Matthew Garrett wrote:
-> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> index a7320f07689d..0279cc10f319 100644
-> --- a/kernel/power/Kconfig
-> +++ b/kernel/power/Kconfig
-> @@ -92,6 +92,21 @@ config HIBERNATION_SNAPSHOT_DEV
->  
->  	  If in doubt, say Y.
->  
-> +config SECURE_HIBERNATION
-> +       bool "Implement secure hibernation support"
-> +       depends on HIBERNATION && TCG_TPM
-> +       select KEYS
-> +       select TRUSTED_KEYS
-> +       select CRYPTO
-> +       select CRYPTO_SHA256
-> +       select CRYPTO_AES
-> +       select TCG_TPM_RESTRICT_PCR
-> +       help
-> +         Use a TPM-backed key to securely determine whether a hibernation
-> +	 image was written out by the kernel and has not been tampered with.
-> +	 This requires a TCG-compliant TPM2 device, which is present on most
-> +	 modern hardware.
+[    4.324298] TPM returned invalid status
+[    4.324806] WARNING: CPU: 2 PID: 1 at drivers/char/tpm/tpm_tis_core.c:275 tpm_tis_status+0x86/0x8f
 
-Please follow coding-style for Kconfig files:
+Background
+==========
 
-from Documentation/process/coding-style.rst, section 10):
+TCG PC Client Platform TPM Profile (PTP) Specification, paragraph 6.1 FIFO
+Interface Locality Usage per Register, Table 39 Register Behavior Based on
+Locality Setting for FIFO - a read attempt to TPM_STS_x Registers returns
+0xFF in case of lack of locality.
 
-  For all of the Kconfig* configuration files throughout the source tree,
-  the indentation is somewhat different.  Lines under a ``config`` definition
-  are indented with one tab, while help text is indented an additional two
-  spaces.
+The fix
+=======
 
+Decorate tpm_get_timeouts() with request_locality() and release_locality().
 
-Also, one feature should not be responsible for enabling other "subsystems,"
-such as KEYS and CRYPTO. They should instead be listed as dependencies.
+Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Laurent Bigonville <bigon@debian.org>
+Cc: stable@vger.kernel.org
+Reported-by: Lukasz Majczak <lma@semihalf.com>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm_tis_core.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 431919d5f48a..30843954aa36 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -1019,11 +1019,21 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	init_waitqueue_head(&priv->read_queue);
+ 	init_waitqueue_head(&priv->int_queue);
+ 	if (irq != -1) {
+-		/* Before doing irq testing issue a command to the TPM in polling mode
++		/*
++		 * Before doing irq testing issue a command to the TPM in polling mode
+ 		 * to make sure it works. May as well use that command to set the
+ 		 * proper timeouts for the driver.
+ 		 */
+-		if (tpm_get_timeouts(chip)) {
++
++		rc = request_locality(chip, 0);
++		if (rc < 0)
++			goto out_err;
++
++		rc = tpm_get_timeouts(chip);
++
++		release_locality(chip, 0);
++
++		if (rc) {
+ 			dev_err(dev, "Could not get TPM timeouts and durations\n");
+ 			rc = -ENODEV;
+ 			goto out_err;
 -- 
-~Randy
+2.30.1
 
