@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF894C433E9
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 569B8C433E0
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8578E64EE9
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F9F264E2F
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbhBURvG (ORCPT
+        id S230219AbhBURvI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 21 Feb 2021 12:51:06 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45650 "EHLO
+        Sun, 21 Feb 2021 12:51:08 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:45662 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbhBURu7 (ORCPT
+        with ESMTP id S230198AbhBURu7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Sun, 21 Feb 2021 12:50:59 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B5B3F20B57AB;
-        Sun, 21 Feb 2021 09:49:44 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B5B3F20B57AB
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5B44D20B57A9;
+        Sun, 21 Feb 2021 09:49:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B44D20B57A9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613929785;
-        bh=Q5qP/oeHF3QsP6y24A/ceFIZlcYedcKYuPJE/HPeXkM=;
+        s=default; t=1613929783;
+        bh=5tVdVRRrroArIcB3wic0bOUaFnm0puk45+VCxameqFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cmJeUo3UdEcdFU+5E6pDB083u3VZG495WzjNyLF9uiCP8xsioLqgZBh9KJMwtcrTi
-         TFa0zGpyW1sEQBB84PqnyqRzONlT6G7IsrNHumpEf7OOXPpIWQB0b9DZgYXDSSnOTX
-         qsv4vBGOTYYkLikKfE54hpnv+IpnM+b0IWdFYXrM=
+        b=VO+GRuSKumk1qZZjgksCFLKGIHvqRBcej/ZJ0gy4ic2simAXDkL+7Xf0FbnQmHx+4
+         sXgqeBqQayqv+SAv9N1ppkqNdUhtS343Oxgo9+/iHJ52mgotuvGXi4t8lErFteIyos
+         lo6jrbDOjhiiLC//fzIxzpmfXjZt93UzC8ZtVKbU=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -48,9 +48,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v19 13/13] arm64: Enable passing IMA log to next kernel on kexec
-Date:   Sun, 21 Feb 2021 09:49:30 -0800
-Message-Id: <20210221174930.27324-14-nramas@linux.microsoft.com>
+Subject: [PATCH v19 11/13] kexec: Use fdt_appendprop_addrrange() to add ima buffer to FDT
+Date:   Sun, 21 Feb 2021 09:49:28 -0800
+Message-Id: <20210221174930.27324-12-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210221174930.27324-1-nramas@linux.microsoft.com>
 References: <20210221174930.27324-1-nramas@linux.microsoft.com>
@@ -60,31 +60,107 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Update CONFIG_KEXEC_FILE to select CONFIG_HAVE_IMA_KEXEC, if CONFIG_IMA
-is enabled, to indicate that the IMA measurement log information is
-present in the device tree for ARM64.
+fdt_appendprop_addrrange() function adds a property, with the given name,
+to the device tree at the given node offset, and also sets the address
+and size of the property.  This function should be used to add
+"linux,ima-kexec-buffer" property to the device tree and set the address
+and size of the IMA measurement buffer, instead of using custom function.
+
+Use fdt_appendprop_addrrange() to add  "linux,ima-kexec-buffer" property
+to the device tree.  This property holds the address and size of
+the IMA measurement buffer that needs to be passed from the current
+kernel to the next kernel across kexec system call.
+
+Remove custom code that is used in setup_ima_buffer() to add
+"linux,ima-kexec-buffer" property to the device tree.
 
 Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Suggested-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- arch/arm64/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/of/kexec.c | 57 ++++------------------------------------------
+ 1 file changed, 5 insertions(+), 52 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 05e17351e4f3..8a93573cebb6 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1093,6 +1093,7 @@ config KEXEC
- config KEXEC_FILE
- 	bool "kexec file based system call"
- 	select KEXEC_CORE
-+	select HAVE_IMA_KEXEC if IMA
- 	help
- 	  This is new version of kexec system call. This system call is
- 	  file based and takes file descriptors as system call argument
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index 6512e25671df..f335d941a716 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -216,36 +216,6 @@ static void remove_ima_buffer(void *fdt, int chosen_node)
+ }
+ 
+ #ifdef CONFIG_IMA_KEXEC
+-/**
+- * write_number - Convert number to big-endian format
+- *
+- * @p:		Buffer to write the number to
+- * @value:	Number to convert
+- * @cells:	Number of cells
+- *
+- * Return: 0 on success, or negative errno on error.
+- */
+-static int write_number(void *p, u64 value, int cells)
+-{
+-	if (cells == 1) {
+-		u32 tmp;
+-
+-		if (value > U32_MAX)
+-			return -EINVAL;
+-
+-		tmp = cpu_to_be32(value);
+-		memcpy(p, &tmp, sizeof(tmp));
+-	} else if (cells == 2) {
+-		u64 tmp;
+-
+-		tmp = cpu_to_be64(value);
+-		memcpy(p, &tmp, sizeof(tmp));
+-	} else
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+ /**
+  * setup_ima_buffer - add IMA buffer information to the fdt
+  * @image:		kexec image being loaded.
+@@ -257,32 +227,15 @@ static int write_number(void *p, u64 value, int cells)
+ static int setup_ima_buffer(const struct kimage *image, void *fdt,
+ 			    int chosen_node)
+ {
+-	int ret, addr_cells, size_cells, entry_size;
+-	u8 value[16];
++	int ret;
+ 
+ 	if (!image->ima_buffer_size)
+ 		return 0;
+ 
+-	ret = get_addr_size_cells(&addr_cells, &size_cells);
+-	if (ret)
+-		return ret;
+-
+-	entry_size = 4 * (addr_cells + size_cells);
+-
+-	if (entry_size > sizeof(value))
+-		return -EINVAL;
+-
+-	ret = write_number(value, image->ima_buffer_addr, addr_cells);
+-	if (ret)
+-		return ret;
+-
+-	ret = write_number(value + 4 * addr_cells, image->ima_buffer_size,
+-			   size_cells);
+-	if (ret)
+-		return ret;
+-
+-	ret = fdt_setprop(fdt, chosen_node, "linux,ima-kexec-buffer", value,
+-			  entry_size);
++	ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
++				       "linux,ima-kexec-buffer",
++				       image->ima_buffer_addr,
++				       image->ima_buffer_size);
+ 	if (ret < 0)
+ 		return -EINVAL;
+ 
 -- 
 2.30.0
 
