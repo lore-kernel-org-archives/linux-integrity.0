@@ -2,107 +2,98 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27591C433E0
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 13:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FF94C433E0
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5CB764F03
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 13:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 066D064DF2
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:50:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbhBUN0V (ORCPT
+        id S229970AbhBURuS (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 21 Feb 2021 08:26:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229914AbhBUN0C (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 21 Feb 2021 08:26:02 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AE70B60230;
-        Sun, 21 Feb 2021 13:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613913921;
-        bh=nQ8cbL5l2J/S9smkvuInScvbHXN8c/orZm+jlM6mP3Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=acDINoQ266bJ13ikO19j5jDyVbGCpz46Rz8f0dBJM7oFleorAGihjlShLhHVFD5sj
-         T4jGaumic3CeGl7/o2MfFlFDYcRJO9fJZrMO9aE/FrPsCkq61njHd5ZbTk3xluxDsa
-         3WnGfzyrYMYy34xZJwWKAceYpwOBK6nqNqel9cjGgcC2XRgeg9/f2nBzrVvU4ifqOl
-         ypXpDvhFezQEsnotd/Kkn1fgUgKevHG2kBcz+XHT1XYv+hR3pkbR6ve5DXYmN1hLzb
-         AKZjrTvKVEpLuKD+JT63UTdTsDN2S276gNvrkNDqyoORV4VVvrgVEqZQ4HDkmrKEQ3
-         t4CVbOZnAta1g==
-Date:   Sun, 21 Feb 2021 15:25:06 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
-        James.Bottomley@hansenpartnership.com, David.Laight@aculab.com,
+        Sun, 21 Feb 2021 12:50:18 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:45016 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229910AbhBURuR (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 21 Feb 2021 12:50:17 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7B9C1209FACB;
+        Sun, 21 Feb 2021 09:49:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7B9C1209FACB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1613929777;
+        bh=uowamsTjjBmMe5j3A2qccc9BUbwhw6V4WJQpcy/trZg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=p9QM+Q0squHzUnX0IO4IAQVIzngh7X4sSHuEbhcajLDTRqrHQ8HYyx72Ww4t1F3su
+         yLjl9R5RO1Z0NpBcV7SlqP7yvh2TkfTL4Gwr2raSuAKFpsmpXibdR5FaSiYlz9KTHN
+         AKxkOHNDdsspO1JUTPoQfMJnCxIA4mU4kxgkY3l4=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
+        takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
+        will@kernel.org, joe@perches.com, catalin.marinas@arm.com,
+        mpe@ellerman.id.au, sfr@canb.auug.org.au
+Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, mbrugger@suse.com, hsinyi@chromium.org,
+        tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v6] tpm: fix reference counting for struct tpm_chip
-Message-ID: <YDJfMll1rwA2idDC@kernel.org>
-References: <1613680181-31920-1-git-send-email-LinoSanfilippo@gmx.de>
- <1613680181-31920-2-git-send-email-LinoSanfilippo@gmx.de>
- <YC+BRfvtA3n7yeaR@kernel.org>
- <aa2ec878-f8ea-d28b-c7c2-ecdc3d19f71e@gmx.de>
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v19 01/13] kexec: Move ELF fields to struct kimage
+Date:   Sun, 21 Feb 2021 09:49:18 -0800
+Message-Id: <20210221174930.27324-2-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210221174930.27324-1-nramas@linux.microsoft.com>
+References: <20210221174930.27324-1-nramas@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa2ec878-f8ea-d28b-c7c2-ecdc3d19f71e@gmx.de>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 21, 2021 at 11:19:28AM +0100, Lino Sanfilippo wrote:
-> 
-> Hi,
-> 
-> On 19.02.21 at 10:13, Jarkko Sakkinen wrote:
-> 
-> >> +	rc = cdev_device_add(&chip->cdevs, &chip->devs);
-> >> +	if (rc) {
-> >> +		dev_err(&chip->devs,
-> >> +			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
-> >> +			dev_name(&chip->devs), MAJOR(chip->devs.devt),
-> >> +			MINOR(chip->devs.devt), rc);
-> >> +		goto out_put_devs;
-> >> +	}
-> >> +
-> >> +	return 0;
-> >> +
-> >> +out_put_devs:
-> >
-> > A nit:
-> >
-> > 1. You have already del_cdev:
-> > 2. Here you use a differing convention with out prefix.
-> >
-> > I'd suggest that you put err_ to both:
-> >
-> > 1. err_del_cdev
-> > 2. err_put_devs
-> >
-> > It's quite coherent what we have already:
-> >
-> > linux-tpmdd on  next took 8s
-> > ❯ git grep "^err_.*" drivers/char/tpm/ |  wc -l
-> > 17
-> >
-> 
-> 
-> The label del_cdev is indeed a bit inconsistent with the rest of the code.
-> But AFAICS out_put_devs is not:
-> 1. all labels in tpm2-space.c start with out_
-> 2. there are more hits for out_ across the whole TPM code (i.e. with the same command
-> you used above I get 31 hits for _out) than for err_.
-> 
-> I suggest to rename del_cdev to something like out_del_cdev or maybe out_cdev which
-> seems to be even closer to the existing naming scheme for labels.
+ELF related fields elf_headers, elf_headers_sz, and elf_load_addr are
+defined in architecture specific 'struct kimage_arch' for x86, powerpc,
+and arm64.  The name of these fields are different in these
+architectures that makes it hard to have a common code for setting up
+the device tree for kexec system call.
 
-OK, that makes sense, thanks!
+Move the ELF fields to 'struct kimage' defined in include/linux/kexec.h
+so common code can use it.
 
-> Regards,
-> Lino
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Rob Herring <robh@kernel.org>
+Fixes: 33488dc4d61f ("of: Add a common kexec FDT setup function")
+Reported-by: kernel test robot <lkp@intel.com>
+---
+ include/linux/kexec.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-/Jarkko
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 5f61389f5f36..0208fe8f8e42 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -305,6 +305,11 @@ struct kimage {
+ 	/* Virtual address of IMA measurement buffer for kexec syscall */
+ 	void *ima_buffer;
+ #endif
++
++	/* Core ELF header buffer */
++	void *elf_headers;
++	unsigned long elf_headers_sz;
++	unsigned long elf_load_addr;
+ };
+ 
+ /* kexec interface functions */
+-- 
+2.30.0
+
