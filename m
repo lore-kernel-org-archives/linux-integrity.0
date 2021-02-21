@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569B8C433E0
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D43C4332B
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9F264E2F
+	by mail.kernel.org (Postfix) with ESMTP id EF81964EE6
 	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230219AbhBURvI (ORCPT
+        id S230224AbhBURvJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 21 Feb 2021 12:51:08 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45662 "EHLO
+        Sun, 21 Feb 2021 12:51:09 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:45668 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230198AbhBURu7 (ORCPT
+        with ESMTP id S230199AbhBURvA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 21 Feb 2021 12:50:59 -0500
+        Sun, 21 Feb 2021 12:51:00 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5B44D20B57A9;
-        Sun, 21 Feb 2021 09:49:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B44D20B57A9
+        by linux.microsoft.com (Postfix) with ESMTPSA id 4AB8620B57A6;
+        Sun, 21 Feb 2021 09:49:41 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4AB8620B57A6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613929783;
-        bh=5tVdVRRrroArIcB3wic0bOUaFnm0puk45+VCxameqFY=;
+        s=default; t=1613929781;
+        bh=UcSmGozOexENegIGUGz3qQicWRTEGAasLQOBTUtlc0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VO+GRuSKumk1qZZjgksCFLKGIHvqRBcej/ZJ0gy4ic2simAXDkL+7Xf0FbnQmHx+4
-         sXgqeBqQayqv+SAv9N1ppkqNdUhtS343Oxgo9+/iHJ52mgotuvGXi4t8lErFteIyos
-         lo6jrbDOjhiiLC//fzIxzpmfXjZt93UzC8ZtVKbU=
+        b=WFt1eJq5Efwh83btLCIi59YgKIj0aHOdXfGC49i6llkIi24mC9rLUoO1gf0lmVxHD
+         Ux+7g7zJVM62aoidzdGCuDwRtQaTe9Szy5FWsmfQP+X+PTrY+etNB9PNzqAlQMkmRM
+         apoBOXTUevm9INOZAoMQWIxZEoyychOf/AkNHOLU=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -48,9 +48,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v19 11/13] kexec: Use fdt_appendprop_addrrange() to add ima buffer to FDT
-Date:   Sun, 21 Feb 2021 09:49:28 -0800
-Message-Id: <20210221174930.27324-12-nramas@linux.microsoft.com>
+Subject: [PATCH v19 08/13] powerpc: Move ima buffer fields to struct kimage
+Date:   Sun, 21 Feb 2021 09:49:25 -0800
+Message-Id: <20210221174930.27324-9-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210221174930.27324-1-nramas@linux.microsoft.com>
 References: <20210221174930.27324-1-nramas@linux.microsoft.com>
@@ -60,107 +60,164 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-fdt_appendprop_addrrange() function adds a property, with the given name,
-to the device tree at the given node offset, and also sets the address
-and size of the property.  This function should be used to add
-"linux,ima-kexec-buffer" property to the device tree and set the address
-and size of the IMA measurement buffer, instead of using custom function.
+The fields ima_buffer_addr and ima_buffer_size in "struct kimage_arch"
+for powerpc are used to carry forward the IMA measurement list across
+kexec system call.  These fields are not architecture specific, but are
+currently limited to powerpc.
 
-Use fdt_appendprop_addrrange() to add  "linux,ima-kexec-buffer" property
-to the device tree.  This property holds the address and size of
-the IMA measurement buffer that needs to be passed from the current
-kernel to the next kernel across kexec system call.
+arch_ima_add_kexec_buffer() defined in "arch/powerpc/kexec/ima.c"
+sets ima_buffer_addr and ima_buffer_size for the kexec system call.
+This function does not have architecture specific code, but is
+currently limited to powerpc.
 
-Remove custom code that is used in setup_ima_buffer() to add
-"linux,ima-kexec-buffer" property to the device tree.
+Move ima_buffer_addr and ima_buffer_size to "struct kimage".
+Set ima_buffer_addr and ima_buffer_size in ima_add_kexec_buffer()
+in security/integrity/ima/ima_kexec.c.
 
 Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Suggested-by: Will Deacon <will@kernel.org>
 Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- drivers/of/kexec.c | 57 ++++------------------------------------------
- 1 file changed, 5 insertions(+), 52 deletions(-)
+ arch/powerpc/include/asm/ima.h     |  3 ---
+ arch/powerpc/include/asm/kexec.h   |  5 -----
+ arch/powerpc/kexec/ima.c           | 29 ++++++-----------------------
+ include/linux/kexec.h              |  3 +++
+ security/integrity/ima/ima_kexec.c |  8 ++------
+ 5 files changed, 11 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-index 6512e25671df..f335d941a716 100644
---- a/drivers/of/kexec.c
-+++ b/drivers/of/kexec.c
-@@ -216,36 +216,6 @@ static void remove_ima_buffer(void *fdt, int chosen_node)
+diff --git a/arch/powerpc/include/asm/ima.h b/arch/powerpc/include/asm/ima.h
+index ead488cf3981..51f64fd06c19 100644
+--- a/arch/powerpc/include/asm/ima.h
++++ b/arch/powerpc/include/asm/ima.h
+@@ -14,9 +14,6 @@ static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
+ #endif
+ 
+ #ifdef CONFIG_IMA_KEXEC
+-int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+-			      size_t size);
+-
+ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node);
+ #else
+ static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index c483c2cf284e..4d2c9b5087e1 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -108,11 +108,6 @@ struct kimage_arch {
+ 	unsigned long backup_start;
+ 	void *backup_buf;
+ 	void *fdt;
+-
+-#ifdef CONFIG_IMA_KEXEC
+-	phys_addr_t ima_buffer_addr;
+-	size_t ima_buffer_size;
+-#endif
+ };
+ 
+ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
+diff --git a/arch/powerpc/kexec/ima.c b/arch/powerpc/kexec/ima.c
+index 720e50e490b6..ed38125e2f87 100644
+--- a/arch/powerpc/kexec/ima.c
++++ b/arch/powerpc/kexec/ima.c
+@@ -128,23 +128,6 @@ void remove_ima_buffer(void *fdt, int chosen_node)
  }
  
  #ifdef CONFIG_IMA_KEXEC
 -/**
-- * write_number - Convert number to big-endian format
+- * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
 - *
-- * @p:		Buffer to write the number to
-- * @value:	Number to convert
-- * @cells:	Number of cells
+- * Architectures should use this function to pass on the IMA buffer
+- * information to the next kernel.
 - *
-- * Return: 0 on success, or negative errno on error.
+- * Return: 0 on success, negative errno on error.
 - */
--static int write_number(void *p, u64 value, int cells)
+-int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
+-			      size_t size)
 -{
--	if (cells == 1) {
--		u32 tmp;
--
--		if (value > U32_MAX)
--			return -EINVAL;
--
--		tmp = cpu_to_be32(value);
--		memcpy(p, &tmp, sizeof(tmp));
--	} else if (cells == 2) {
--		u64 tmp;
--
--		tmp = cpu_to_be64(value);
--		memcpy(p, &tmp, sizeof(tmp));
--	} else
--		return -EINVAL;
+-	image->arch.ima_buffer_addr = load_addr;
+-	image->arch.ima_buffer_size = size;
 -
 -	return 0;
 -}
 -
- /**
-  * setup_ima_buffer - add IMA buffer information to the fdt
-  * @image:		kexec image being loaded.
-@@ -257,32 +227,15 @@ static int write_number(void *p, u64 value, int cells)
- static int setup_ima_buffer(const struct kimage *image, void *fdt,
- 			    int chosen_node)
+ static int write_number(void *p, u64 value, int cells)
  {
--	int ret, addr_cells, size_cells, entry_size;
--	u8 value[16];
-+	int ret;
+ 	if (cells == 1) {
+@@ -180,7 +163,7 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+ 	u8 value[16];
  
- 	if (!image->ima_buffer_size)
+ 	remove_ima_buffer(fdt, chosen_node);
+-	if (!image->arch.ima_buffer_size)
++	if (!image->ima_buffer_size)
  		return 0;
  
--	ret = get_addr_size_cells(&addr_cells, &size_cells);
--	if (ret)
--		return ret;
--
--	entry_size = 4 * (addr_cells + size_cells);
--
--	if (entry_size > sizeof(value))
--		return -EINVAL;
--
--	ret = write_number(value, image->ima_buffer_addr, addr_cells);
--	if (ret)
--		return ret;
--
--	ret = write_number(value + 4 * addr_cells, image->ima_buffer_size,
--			   size_cells);
--	if (ret)
--		return ret;
--
--	ret = fdt_setprop(fdt, chosen_node, "linux,ima-kexec-buffer", value,
--			  entry_size);
-+	ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
-+				       "linux,ima-kexec-buffer",
-+				       image->ima_buffer_addr,
-+				       image->ima_buffer_size);
+ 	ret = get_addr_size_cells(&addr_cells, &size_cells);
+@@ -192,11 +175,11 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
+ 	if (entry_size > sizeof(value))
+ 		return -EINVAL;
+ 
+-	ret = write_number(value, image->arch.ima_buffer_addr, addr_cells);
++	ret = write_number(value, image->ima_buffer_addr, addr_cells);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = write_number(value + 4 * addr_cells, image->arch.ima_buffer_size,
++	ret = write_number(value + 4 * addr_cells, image->ima_buffer_size,
+ 			   size_cells);
+ 	if (ret)
+ 		return ret;
+@@ -206,13 +189,13 @@ int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node)
  	if (ret < 0)
  		return -EINVAL;
  
+-	ret = fdt_add_mem_rsv(fdt, image->arch.ima_buffer_addr,
+-			      image->arch.ima_buffer_size);
++	ret = fdt_add_mem_rsv(fdt, image->ima_buffer_addr,
++			      image->ima_buffer_size);
+ 	if (ret)
+ 		return -EINVAL;
+ 
+ 	pr_debug("IMA buffer at 0x%llx, size = 0x%zx\n",
+-		 image->arch.ima_buffer_addr, image->arch.ima_buffer_size);
++		 image->ima_buffer_addr, image->ima_buffer_size);
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 0208fe8f8e42..c3e2a2af1aea 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -304,6 +304,9 @@ struct kimage {
+ #ifdef CONFIG_IMA_KEXEC
+ 	/* Virtual address of IMA measurement buffer for kexec syscall */
+ 	void *ima_buffer;
++
++	phys_addr_t ima_buffer_addr;
++	size_t ima_buffer_size;
+ #endif
+ 
+ 	/* Core ELF header buffer */
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index e29bea3dd4cc..8b1a3d50c49c 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -123,12 +123,8 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 		return;
+ 	}
+ 
+-	ret = arch_ima_add_kexec_buffer(image, kbuf.mem, kexec_segment_size);
+-	if (ret) {
+-		pr_err("Error passing over kexec measurement buffer.\n");
+-		return;
+-	}
+-
++	image->ima_buffer_addr = kbuf.mem;
++	image->ima_buffer_size = kexec_segment_size;
+ 	image->ima_buffer = kexec_buffer;
+ 
+ 	pr_debug("kexec measurement buffer for the loaded kernel at 0x%lx.\n",
 -- 
 2.30.0
 
