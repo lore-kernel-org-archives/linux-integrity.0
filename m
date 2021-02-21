@@ -2,37 +2,36 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33782C4332B
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A20EC433DB
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1096864DEC
-	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:50:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF79F64EE9
+	for <linux-integrity@archiver.kernel.org>; Sun, 21 Feb 2021 17:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230117AbhBURuU (ORCPT
+        id S230206AbhBURvE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 21 Feb 2021 12:50:20 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45082 "EHLO
+        Sun, 21 Feb 2021 12:51:04 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:45651 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229985AbhBURuT (ORCPT
+        with ESMTP id S230062AbhBURu6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 21 Feb 2021 12:50:19 -0500
+        Sun, 21 Feb 2021 12:50:58 -0500
 Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 316B2209FACE;
-        Sun, 21 Feb 2021 09:49:37 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 316B2209FACE
+        by linux.microsoft.com (Postfix) with ESMTPSA id 10A3520B57AA;
+        Sun, 21 Feb 2021 09:49:44 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 10A3520B57AA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613929777;
-        bh=MgAdoofhEsBi9ijWTsxP8/GBNa/+wmI9q0RKTL7qSb8=;
+        s=default; t=1613929784;
+        bh=O9olzA4F8wOx+jGLw6qdo8GKMGxvb6BX+udmR/nonSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OxRmZxdlfJ/ULDZwTxFlrrVVojo60qJw4/YRlOTsSL/PVPMbrCtAGGTniL6WFwHX3
-         Ag8qdgt19bC+IQkxpaimLQcaMDu+bA8hAcONiBXRF7FgTDCyiJaqm8sKBjhNAimVS/
-         U+GXo79K8iPkqg84fJ31YOs1ec2T1gI90Fi6A10A=
+        b=tE2Do87YmsnzqiU9jjBbsx1Ji8zTOuLkFwj6q0XO71jHqVEusqeSa80K27M9hxhhT
+         QI9HNULJZB9K08wc+NSAExED+UY4GNhNTILzIyrs6bsVXzzaHbC03+/BpNA2eG5Hqz
+         u/ziu6jWcPiqxF3EQ6lM+ZF1cuYcFORY80ea5e8g=
 From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 To:     zohar@linux.ibm.com, bauerman@linux.ibm.com, robh@kernel.org,
         takahiro.akashi@linaro.org, gregkh@linuxfoundation.org,
@@ -49,9 +48,9 @@ Cc:     james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v19 02/13] arm64: Use ELF fields defined in 'struct kimage'
-Date:   Sun, 21 Feb 2021 09:49:19 -0800
-Message-Id: <20210221174930.27324-3-nramas@linux.microsoft.com>
+Subject: [PATCH v19 12/13] powerpc: Delete unused function delete_fdt_mem_rsv()
+Date:   Sun, 21 Feb 2021 09:49:29 -0800
+Message-Id: <20210221174930.27324-13-nramas@linux.microsoft.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210221174930.27324-1-nramas@linux.microsoft.com>
 References: <20210221174930.27324-1-nramas@linux.microsoft.com>
@@ -61,81 +60,73 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-ELF related fields elf_headers, elf_headers_sz, and elf_headers_mem
-have been moved from 'struct kimage_arch' to 'struct kimage' as
-elf_headers, elf_headers_sz, and elf_load_addr respectively.
+delete_fdt_mem_rsv() defined in "arch/powerpc/kexec/file_load.c"
+has been renamed to fdt_find_and_del_mem_rsv(), and moved to
+"drivers/of/kexec.c".
 
-Use the ELF fields defined in 'struct kimage'.
+Remove delete_fdt_mem_rsv() in "arch/powerpc/kexec/file_load.c".
 
+Co-developed-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
+Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
 Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Suggested-by: Rob Herring <robh@kernel.org>
-Fixes: 33488dc4d61f ("of: Add a common kexec FDT setup function")
-Reported-by: kernel test robot <lkp@intel.com>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 ---
- arch/arm64/include/asm/kexec.h         |  4 ----
- arch/arm64/kernel/machine_kexec_file.c | 18 +++++++++---------
- 2 files changed, 9 insertions(+), 13 deletions(-)
+ arch/powerpc/include/asm/kexec.h |  1 -
+ arch/powerpc/kexec/file_load.c   | 32 --------------------------------
+ 2 files changed, 33 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index d24b527e8c00..12a561a54128 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -96,10 +96,6 @@ static inline void crash_post_resume(void) {}
- struct kimage_arch {
- 	void *dtb;
- 	unsigned long dtb_mem;
--	/* Core ELF header buffer */
--	void *elf_headers;
--	unsigned long elf_headers_mem;
--	unsigned long elf_headers_sz;
- };
+diff --git a/arch/powerpc/include/asm/kexec.h b/arch/powerpc/include/asm/kexec.h
+index 1af7b5962bb9..e881e9d083ce 100644
+--- a/arch/powerpc/include/asm/kexec.h
++++ b/arch/powerpc/include/asm/kexec.h
+@@ -115,7 +115,6 @@ char *setup_kdump_cmdline(struct kimage *image, char *cmdline,
+ int setup_purgatory(struct kimage *image, const void *slave_code,
+ 		    const void *fdt, unsigned long kernel_load_addr,
+ 		    unsigned long fdt_load_addr);
+-int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size);
  
- extern const struct kexec_file_ops kexec_image_ops;
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 03210f644790..5553de3d401a 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -43,9 +43,9 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	vfree(image->arch.dtb);
- 	image->arch.dtb = NULL;
+ #ifdef CONFIG_PPC64
+ struct kexec_buf;
+diff --git a/arch/powerpc/kexec/file_load.c b/arch/powerpc/kexec/file_load.c
+index dc28cb7813c8..4284f76cbef5 100644
+--- a/arch/powerpc/kexec/file_load.c
++++ b/arch/powerpc/kexec/file_load.c
+@@ -107,35 +107,3 @@ int setup_purgatory(struct kimage *image, const void *slave_code,
  
--	vfree(image->arch.elf_headers);
--	image->arch.elf_headers = NULL;
--	image->arch.elf_headers_sz = 0;
-+	vfree(image->elf_headers);
-+	image->elf_headers = NULL;
-+	image->elf_headers_sz = 0;
- 
- 	return kexec_image_post_load_cleanup_default(image);
+ 	return 0;
  }
-@@ -73,8 +73,8 @@ static int setup_dtb(struct kimage *image,
- 		/* add linux,elfcorehdr */
- 		ret = fdt_appendprop_addrrange(dtb, 0, off,
- 				FDT_PROP_KEXEC_ELFHDR,
--				image->arch.elf_headers_mem,
--				image->arch.elf_headers_sz);
-+				image->elf_load_addr,
-+				image->elf_headers_sz);
- 		if (ret)
- 			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
- 
-@@ -282,12 +282,12 @@ int load_other_segments(struct kimage *image,
- 			vfree(headers);
- 			goto out_err;
- 		}
--		image->arch.elf_headers = headers;
--		image->arch.elf_headers_mem = kbuf.mem;
--		image->arch.elf_headers_sz = headers_sz;
-+		image->elf_headers = headers;
-+		image->elf_load_addr = kbuf.mem;
-+		image->elf_headers_sz = headers_sz;
- 
- 		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
--			 image->arch.elf_headers_mem, kbuf.bufsz, kbuf.memsz);
-+			 image->elf_load_addr, kbuf.bufsz, kbuf.memsz);
- 	}
- 
- 	/* load initrd */
+-
+-/**
+- * delete_fdt_mem_rsv - delete memory reservation with given address and size
+- *
+- * Return: 0 on success, or negative errno on error.
+- */
+-int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size)
+-{
+-	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
+-
+-	for (i = 0; i < num_rsvs; i++) {
+-		uint64_t rsv_start, rsv_size;
+-
+-		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
+-		if (ret) {
+-			pr_err("Malformed device tree.\n");
+-			return -EINVAL;
+-		}
+-
+-		if (rsv_start == start && rsv_size == size) {
+-			ret = fdt_del_mem_rsv(fdt, i);
+-			if (ret) {
+-				pr_err("Error deleting device tree reservation.\n");
+-				return -EINVAL;
+-			}
+-
+-			return 0;
+-		}
+-	}
+-
+-	return -ENOENT;
+-}
 -- 
 2.30.0
 
