@@ -2,627 +2,350 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D361DC43332
-	for <linux-integrity@archiver.kernel.org>; Mon, 22 Feb 2021 18:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365F1C433E0
+	for <linux-integrity@archiver.kernel.org>; Mon, 22 Feb 2021 18:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 991C464E40
-	for <linux-integrity@archiver.kernel.org>; Mon, 22 Feb 2021 18:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0749864E20
+	for <linux-integrity@archiver.kernel.org>; Mon, 22 Feb 2021 18:56:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231907AbhBVR7x (ORCPT
+        id S232203AbhBVS4k (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 22 Feb 2021 12:59:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231628AbhBVR7s (ORCPT
+        Mon, 22 Feb 2021 13:56:40 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58286 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232210AbhBVSzA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 Feb 2021 12:59:48 -0500
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 256E9C061786;
-        Mon, 22 Feb 2021 09:59:08 -0800 (PST)
-Received: by mail-qt1-x831.google.com with SMTP id v3so9892497qtw.4;
-        Mon, 22 Feb 2021 09:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=upy4LZN81JmkKsnhpewdn/2zpm3+mszwvnaxwayCE3Y=;
-        b=bTNQgQbEmmce7DirxdGZNHLQLoI/vAOXy/pyv+sOPDBtd6s8VjYnza0NUECL8uW1dn
-         Foa6Oc29+qb1//MkMxEq8UL3EIGDuoCEonoqSnusH39Wzv0C44lFbwDPOXz+dJcxghVy
-         /78k3NYVHVrdT+Ds1fv0veo5RbmZpFkBz4kdPCkTUNNAhID2bJQQo04wkL8wMckUn9e7
-         3a3ReC4iwNGnhy+9w0kWveHlFjDZJSi3CqzPDfr+5s6Q/7adrVe3qgA98IWbtjYXVyBx
-         noprlmShp5M7RjxA+GmyF3Tlsfz4QHOiYOxYq9e06ye+N77lKxBTSFg4J2DNp6W16Nh7
-         Ou7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=upy4LZN81JmkKsnhpewdn/2zpm3+mszwvnaxwayCE3Y=;
-        b=Ntn9z9AKDY7PdmHHv3hLDhTCHh/QjMDLtHBeDJxIYlvAoz/DDc/ctOAk+VKJGYTOYY
-         VUZ6wPiuRDfzTdxFAIMXidZjyO3/jup2bus+7bN1M+/67UKe+OZ0d/tYSGLC5xzXve0p
-         itvOU6ZSgNDR98n8T/wkoMFpbGEJ1BkVoKEDTg0JquxxdAFgIIIcnpktzHgZz4CxMBFL
-         b6Yf77IUzZ6gmYP4SDwKK3l07a4sDYnyFE8KJN7fyWA1ocRmbPryI7MaRDWOkrud6eZR
-         Turl730yZgS4QP+pZVaJD0CtfaVvXAO6DRGTtezHmY/1xPkOKZRosCmPoSktXRkUYJcx
-         J6qw==
-X-Gm-Message-State: AOAM532BAQyPJaTdh3LyDXS/IcaIGkzRx9phd9fsswc3RzqReylT95op
-        y769YGKeOm8wFS7x3xRm55w=
-X-Google-Smtp-Source: ABdhPJyBOfNKXyder/sTPLzwDnkRekeudoCsp48+4h/llX43tKkCmGUpa0TVTE8sfKd60nyZF/URKA==
-X-Received: by 2002:ac8:6d38:: with SMTP id r24mr20034112qtu.285.1614016746558;
-        Mon, 22 Feb 2021 09:59:06 -0800 (PST)
-Received: from localhost.localdomain ([189.61.66.20])
-        by smtp.gmail.com with ESMTPSA id p6sm12686170qkg.36.2021.02.22.09.59.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Feb 2021 09:59:05 -0800 (PST)
-From:   Saulo Alessandre <saulo.alessandre@gmail.com>
-To:     stefanb@linux.ibm.com
-Cc:     davem@davemloft.net, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patrick@puiterwijk.org,
-        zohar@linux.ibm.com, Saulo Alessandre <saulo.alessandre@tse.jus.br>
-Subject: [PATCH v2 2/3] adds math to support nist_p384 fast and changes routines to pass forward ecc_curve
-Date:   Mon, 22 Feb 2021 14:58:49 -0300
-Message-Id: <20210222175850.1131780-2-saulo.alessandre@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210222175850.1131780-1-saulo.alessandre@gmail.com>
-References: <20210215162532.1077098-1-stefanb@linux.ibm.com>
- <20210222175850.1131780-1-saulo.alessandre@gmail.com>
+        Mon, 22 Feb 2021 13:55:00 -0500
+Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 254BE20B6C40;
+        Mon, 22 Feb 2021 10:54:18 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 254BE20B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1614020058;
+        bh=F2Q+wGBpdBRbQLa+Yjt0vgkaEnf0Irr3K423f6dNoP0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ps/yOWdYkgDYhpSRJjnZ8Fmb+hq+dLEa+J6KYhar4dBjNeN/igRNDKGDRynmgeOAu
+         vjwj5z18OmitPl//Ogi5+3x/qZw0MDRhz4Uej+hsdwBNP1cUcWVEkoWQDC4qfT1Nmd
+         8S8XoExUKRI6xQiD5XAvblSnc6ZxHgGlwMhJRDdM=
+Subject: Re: [PATCH v2 1/2] IMA: generalize key measurement tests
+To:     Petr Vorel <pvorel@suse.cz>
+Cc:     zohar@linux.ibm.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, nramas@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, dm-devel@redhat.com,
+        ltp@lists.linux.it
+References: <20200928035605.22701-1-tusharsu@linux.microsoft.com>
+ <20200928035605.22701-2-tusharsu@linux.microsoft.com>
+ <20201221230531.GD4453@pevik>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <28c14c80-660a-0f36-64ca-ae5230992032@linux.microsoft.com>
+Date:   Mon, 22 Feb 2021 10:54:17 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201221230531.GD4453@pevik>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Saulo Alessandre <saulo.alessandre@tse.jus.br>
+Hi Petr,
 
-*  crypto/ecc.c
-  - change ecc_get_curve to accept nist_p384
-  - add vli_mmod_fast_384
-  - change some routines to pass ecc_curve forward until vli_mmod_fast
+On 2020-12-21 3:05 p.m., Petr Vorel wrote:
+> Hi Tushar,
+> 
+> I'm very sorry about the delay. I'll finish this review in January,
+> here just some quick thoughts (minor style nits, I'll fix it before merge).
+> 
+> Generally LGTM, thanks for your work.
+> 
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> 
 
-* crypto/ecc.h
-  - add ECC_CURVE_NIST_P384_DIGITS
+Thanks for your review.
+My sincere apologies for missing this email and not responding in time.
 
-Signed-off-by: Saulo Alessandre <saulo.alessandre@tse.jus.br>
----
- crypto/ecc.c | 265 +++++++++++++++++++++++++++++++++++++--------------
- crypto/ecc.h |   3 +-
- 2 files changed, 195 insertions(+), 73 deletions(-)
+The device mapper measurement work is being revisited - to cover aspects
+like more DM targets (not just dm-crypt), better memory management,
+more relevant attributes from the DM targets, other corner cases etc.
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 25e79fd70566..db90f688dfb1 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -50,6 +50,8 @@ const struct ecc_curve *ecc_get_curve(unsigned int curve_id)
- 		return fips_enabled ? NULL : &nist_p192;
- 	case ECC_CURVE_NIST_P256:
- 		return &nist_p256;
-+	case ECC_CURVE_NIST_P384:
-+		return &nist_p384;
- 	default:
- 		return NULL;
- 	}
-@@ -776,18 +778,133 @@ static void vli_mmod_fast_256(u64 *result, const u64 *product,
- 	}
- }
- 
-+#define SL32OR32(x32, y32) (((u64)x32 << 32) | y32)
-+#define AND64H(x64)  (x64 & 0xffFFffFF00000000ull)
-+#define AND64L(x64)  (x64 & 0x00000000ffFFffFFull)
-+
-+/* Computes result = product % curve_prime
-+ * from "Mathematical routines for the NIST prime elliptic curves"
-+ */
-+static void vli_mmod_fast_384(u64 *result, const u64 *product,
-+				const u64 *curve_prime, u64 *tmp)
-+{
-+	int carry;
-+	const unsigned int ndigits = 6;
-+
-+	/* t */
-+	vli_set(result, product, ndigits);
-+
-+	/* s1 */
-+	tmp[0] = 0;		// 0 || 0
-+	tmp[1] = 0;		// 0 || 0
-+	tmp[2] = SL32OR32(product[11], (product[10]>>32));	//a22||a21
-+	tmp[3] = product[11]>>32;	// 0 ||a23
-+	tmp[4] = 0;		// 0 || 0
-+	tmp[5] = 0;		// 0 || 0
-+	carry = vli_lshift(tmp, tmp, 1, ndigits);
-+	carry += vli_add(result, result, tmp, ndigits);
-+
-+	/* s2 */
-+	tmp[0] = product[6];	//a13||a12
-+	tmp[1] = product[7];	//a15||a14
-+	tmp[2] = product[8];	//a17||a16
-+	tmp[3] = product[9];	//a19||a18
-+	tmp[4] = product[10];	//a21||a20
-+	tmp[5] = product[11];	//a23||a22
-+	carry += vli_add(result, result, tmp, ndigits);
-+
-+	/* s3 */
-+	tmp[0] = SL32OR32(product[11], (product[10]>>32));	//a22||a21
-+	tmp[1] = SL32OR32(product[6], (product[11]>>32));	//a12||a23
-+	tmp[2] = SL32OR32(product[7], (product[6])>>32);	//a14||a13
-+	tmp[3] = SL32OR32(product[8], (product[7]>>32));	//a16||a15
-+	tmp[4] = SL32OR32(product[9], (product[8]>>32));	//a18||a17
-+	tmp[5] = SL32OR32(product[10], (product[9]>>32));	//a20||a19
-+	carry += vli_add(result, result, tmp, ndigits);
-+
-+	/* s4 */
-+	tmp[0] = AND64H(product[11]);	//a23|| 0
-+	tmp[1] = (product[10]<<32); 	//a20|| 0
-+	tmp[2] = product[6];	//a13||a12
-+	tmp[3] = product[7];	//a15||a14
-+	tmp[4] = product[8];	//a17||a16
-+	tmp[5] = product[9];	//a19||a18
-+	carry += vli_add(result, result, tmp, ndigits);
-+
-+	/* s5 */
-+	tmp[0] = 0;		//  0|| 0
-+	tmp[1] = 0;		//  0|| 0
-+	tmp[2] = product[10];	//a21||a20
-+	tmp[3] = product[11];	//a23||a22
-+	tmp[4] = 0;		//  0|| 0
-+	tmp[5] = 0;		//  0|| 0
-+	carry += vli_add(result, result, tmp, ndigits);
-+
-+	/* s6 */
-+	tmp[0] = AND64L(product[10]);	// 0 ||a20
-+	tmp[1] = AND64H(product[10]);	//a21|| 0
-+	tmp[2] = product[11];	//a23||a22
-+	tmp[3] = 0;		// 0 || 0
-+	tmp[4] = 0;		// 0 || 0
-+	tmp[5] = 0;		// 0 || 0
-+	carry += vli_add(result, result, tmp, ndigits);
-+
-+	/* d1 */
-+	tmp[0] = SL32OR32(product[6], (product[11]>>32));	//a12||a23
-+	tmp[1] = SL32OR32(product[7], (product[6]>>32));	//a14||a13
-+	tmp[2] = SL32OR32(product[8], (product[7]>>32));	//a16||a15
-+	tmp[3] = SL32OR32(product[9], (product[8]>>32));	//a18||a17
-+	tmp[4] = SL32OR32(product[10], (product[9]>>32));	//a20||a19
-+	tmp[5] = SL32OR32(product[11], (product[10]>>32));	//a22||a21
-+	carry -= vli_sub(result, result, tmp, ndigits);
-+
-+	/* d2 */
-+	tmp[0] = (product[10]<<32);	//a20|| 0
-+	tmp[1] = SL32OR32(product[11], (product[10]>>32));	//a22||a21
-+	tmp[2] = (product[11]>>32);	// 0 ||a23
-+	tmp[3] = 0;		// 0 || 0
-+	tmp[4] = 0;		// 0 || 0
-+	tmp[5] = 0;		// 0 || 0
-+	carry -= vli_sub(result, result, tmp, ndigits);
-+
-+	/* d3 */
-+	tmp[0] = 0;		// 0 || 0
-+	tmp[1] = AND64H(product[11]);	//a23|| 0
-+	tmp[2] = product[11]>>32;	// 0 ||a23
-+	tmp[3] = 0;		// 0 || 0
-+	tmp[4] = 0;		// 0 || 0
-+	tmp[5] = 0;		// 0 || 0
-+	carry -= vli_sub(result, result, tmp, ndigits);
-+
-+	if (carry < 0) {
-+		do {
-+			carry += vli_add(result, result, curve_prime, ndigits);
-+		} while (carry < 0);
-+	} else {
-+		while (carry || vli_cmp(curve_prime, result, ndigits) != 1)
-+			carry -= vli_sub(result, result, curve_prime, ndigits);
-+	}
-+
-+}
-+
-+#undef SL32OR32
-+#undef AND64H
-+#undef AND64L
-+
- /* Computes result = product % curve_prime for different curve_primes.
-  *
-  * Note that curve_primes are distinguished just by heuristic check and
-  * not by complete conformance check.
-  */
- static bool vli_mmod_fast(u64 *result, u64 *product,
--			  const u64 *curve_prime, unsigned int ndigits)
-+			const struct ecc_curve *curve)
- {
- 	u64 tmp[2 * ECC_MAX_DIGITS];
-+	const u64 *curve_prime = curve->p;
-+	const unsigned int ndigits = curve->g.ndigits;
- 
--	/* Currently, both NIST primes have -1 in lowest qword. */
--	if (curve_prime[0] != -1ull) {
-+	/* Currently, all NIST have name nist_.* */
-+	if (curve->name && strncmp(curve->name, "nist_", 5) != 0) {
- 		/* Try to handle Pseudo-Marsenne primes. */
- 		if (curve_prime[ndigits - 1] == -1ull) {
- 			vli_mmod_special(result, product, curve_prime,
-@@ -810,6 +927,9 @@ static bool vli_mmod_fast(u64 *result, u64 *product,
- 	case 4:
- 		vli_mmod_fast_256(result, product, curve_prime, tmp);
- 		break;
-+	case 6:
-+		vli_mmod_fast_384(result, product, curve_prime, tmp);
-+		break;
- 	default:
- 		pr_err_ratelimited("ecc: unsupported digits size!\n");
- 		return false;
-@@ -833,22 +953,22 @@ EXPORT_SYMBOL(vli_mod_mult_slow);
- 
- /* Computes result = (left * right) % curve_prime. */
- static void vli_mod_mult_fast(u64 *result, const u64 *left, const u64 *right,
--			      const u64 *curve_prime, unsigned int ndigits)
-+				const struct ecc_curve *curve)
- {
- 	u64 product[2 * ECC_MAX_DIGITS];
- 
--	vli_mult(product, left, right, ndigits);
--	vli_mmod_fast(result, product, curve_prime, ndigits);
-+	vli_mult(product, left, right, curve->g.ndigits);
-+	vli_mmod_fast(result, product, curve);
- }
- 
- /* Computes result = left^2 % curve_prime. */
- static void vli_mod_square_fast(u64 *result, const u64 *left,
--				const u64 *curve_prime, unsigned int ndigits)
-+				const struct ecc_curve *curve)
- {
- 	u64 product[2 * ECC_MAX_DIGITS];
- 
--	vli_square(product, left, ndigits);
--	vli_mmod_fast(result, product, curve_prime, ndigits);
-+	vli_square(product, left, curve->g.ndigits);
-+	vli_mmod_fast(result, product, curve);
- }
- 
- #define EVEN(vli) (!(vli[0] & 1))
-@@ -946,25 +1066,27 @@ static bool ecc_point_is_zero(const struct ecc_point *point)
- 
- /* Double in place */
- static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
--				      u64 *curve_prime, unsigned int ndigits)
-+					const struct ecc_curve *curve)
- {
- 	/* t1 = x, t2 = y, t3 = z */
- 	u64 t4[ECC_MAX_DIGITS];
- 	u64 t5[ECC_MAX_DIGITS];
-+	const u64 *curve_prime = curve->p;
-+	const unsigned int ndigits = curve->g.ndigits;
- 
- 	if (vli_is_zero(z1, ndigits))
- 		return;
- 
- 	/* t4 = y1^2 */
--	vli_mod_square_fast(t4, y1, curve_prime, ndigits);
-+	vli_mod_square_fast(t4, y1, curve);
- 	/* t5 = x1*y1^2 = A */
--	vli_mod_mult_fast(t5, x1, t4, curve_prime, ndigits);
-+	vli_mod_mult_fast(t5, x1, t4, curve);
- 	/* t4 = y1^4 */
--	vli_mod_square_fast(t4, t4, curve_prime, ndigits);
-+	vli_mod_square_fast(t4, t4, curve);
- 	/* t2 = y1*z1 = z3 */
--	vli_mod_mult_fast(y1, y1, z1, curve_prime, ndigits);
-+	vli_mod_mult_fast(y1, y1, z1, curve);
- 	/* t3 = z1^2 */
--	vli_mod_square_fast(z1, z1, curve_prime, ndigits);
-+	vli_mod_square_fast(z1, z1, curve);
- 
- 	/* t1 = x1 + z1^2 */
- 	vli_mod_add(x1, x1, z1, curve_prime, ndigits);
-@@ -973,7 +1095,7 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
- 	/* t3 = x1 - z1^2 */
- 	vli_mod_sub(z1, x1, z1, curve_prime, ndigits);
- 	/* t1 = x1^2 - z1^4 */
--	vli_mod_mult_fast(x1, x1, z1, curve_prime, ndigits);
-+	vli_mod_mult_fast(x1, x1, z1, curve);
- 
- 	/* t3 = 2*(x1^2 - z1^4) */
- 	vli_mod_add(z1, x1, x1, curve_prime, ndigits);
-@@ -990,7 +1112,7 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
- 	/* t1 = 3/2*(x1^2 - z1^4) = B */
- 
- 	/* t3 = B^2 */
--	vli_mod_square_fast(z1, x1, curve_prime, ndigits);
-+	vli_mod_square_fast(z1, x1, curve);
- 	/* t3 = B^2 - A */
- 	vli_mod_sub(z1, z1, t5, curve_prime, ndigits);
- 	/* t3 = B^2 - 2A = x3 */
-@@ -998,7 +1120,7 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
- 	/* t5 = A - x3 */
- 	vli_mod_sub(t5, t5, z1, curve_prime, ndigits);
- 	/* t1 = B * (A - x3) */
--	vli_mod_mult_fast(x1, x1, t5, curve_prime, ndigits);
-+	vli_mod_mult_fast(x1, x1, t5, curve);
- 	/* t4 = B * (A - x3) - y1^4 = y3 */
- 	vli_mod_sub(t4, x1, t4, curve_prime, ndigits);
- 
-@@ -1008,23 +1130,22 @@ static void ecc_point_double_jacobian(u64 *x1, u64 *y1, u64 *z1,
- }
- 
- /* Modify (x1, y1) => (x1 * z^2, y1 * z^3) */
--static void apply_z(u64 *x1, u64 *y1, u64 *z, u64 *curve_prime,
--		    unsigned int ndigits)
-+static void apply_z(u64 *x1, u64 *y1, u64 *z, const struct ecc_curve *curve)
- {
- 	u64 t1[ECC_MAX_DIGITS];
- 
--	vli_mod_square_fast(t1, z, curve_prime, ndigits);    /* z^2 */
--	vli_mod_mult_fast(x1, x1, t1, curve_prime, ndigits); /* x1 * z^2 */
--	vli_mod_mult_fast(t1, t1, z, curve_prime, ndigits);  /* z^3 */
--	vli_mod_mult_fast(y1, y1, t1, curve_prime, ndigits); /* y1 * z^3 */
-+	vli_mod_square_fast(t1, z, curve);		/* z^2 */
-+	vli_mod_mult_fast(x1, x1, t1, curve);	/* x1 * z^2 */
-+	vli_mod_mult_fast(t1, t1, z, curve);	/* z^3 */
-+	vli_mod_mult_fast(y1, y1, t1, curve);	/* y1 * z^3 */
- }
- 
- /* P = (x1, y1) => 2P, (x2, y2) => P' */
- static void xycz_initial_double(u64 *x1, u64 *y1, u64 *x2, u64 *y2,
--				u64 *p_initial_z, u64 *curve_prime,
--				unsigned int ndigits)
-+				u64 *p_initial_z, const struct ecc_curve *curve)
- {
- 	u64 z[ECC_MAX_DIGITS];
-+	const unsigned int ndigits = curve->g.ndigits;
- 
- 	vli_set(x2, x1, ndigits);
- 	vli_set(y2, y1, ndigits);
-@@ -1035,35 +1156,37 @@ static void xycz_initial_double(u64 *x1, u64 *y1, u64 *x2, u64 *y2,
- 	if (p_initial_z)
- 		vli_set(z, p_initial_z, ndigits);
- 
--	apply_z(x1, y1, z, curve_prime, ndigits);
-+	apply_z(x1, y1, z, curve);
- 
--	ecc_point_double_jacobian(x1, y1, z, curve_prime, ndigits);
-+	ecc_point_double_jacobian(x1, y1, z, curve);
- 
--	apply_z(x2, y2, z, curve_prime, ndigits);
-+	apply_z(x2, y2, z, curve);
- }
- 
- /* Input P = (x1, y1, Z), Q = (x2, y2, Z)
-  * Output P' = (x1', y1', Z3), P + Q = (x3, y3, Z3)
-  * or P => P', Q => P + Q
-  */
--static void xycz_add(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
--		     unsigned int ndigits)
-+static void xycz_add(u64 *x1, u64 *y1, u64 *x2, u64 *y2,
-+			const struct ecc_curve *curve)
- {
- 	/* t1 = X1, t2 = Y1, t3 = X2, t4 = Y2 */
- 	u64 t5[ECC_MAX_DIGITS];
-+	const u64 *curve_prime = curve->p;
-+	const unsigned int ndigits = curve->g.ndigits;
- 
- 	/* t5 = x2 - x1 */
- 	vli_mod_sub(t5, x2, x1, curve_prime, ndigits);
- 	/* t5 = (x2 - x1)^2 = A */
--	vli_mod_square_fast(t5, t5, curve_prime, ndigits);
-+	vli_mod_square_fast(t5, t5, curve);
- 	/* t1 = x1*A = B */
--	vli_mod_mult_fast(x1, x1, t5, curve_prime, ndigits);
-+	vli_mod_mult_fast(x1, x1, t5, curve);
- 	/* t3 = x2*A = C */
--	vli_mod_mult_fast(x2, x2, t5, curve_prime, ndigits);
-+	vli_mod_mult_fast(x2, x2, t5, curve);
- 	/* t4 = y2 - y1 */
- 	vli_mod_sub(y2, y2, y1, curve_prime, ndigits);
- 	/* t5 = (y2 - y1)^2 = D */
--	vli_mod_square_fast(t5, y2, curve_prime, ndigits);
-+	vli_mod_square_fast(t5, y2, curve);
- 
- 	/* t5 = D - B */
- 	vli_mod_sub(t5, t5, x1, curve_prime, ndigits);
-@@ -1072,11 +1195,11 @@ static void xycz_add(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
- 	/* t3 = C - B */
- 	vli_mod_sub(x2, x2, x1, curve_prime, ndigits);
- 	/* t2 = y1*(C - B) */
--	vli_mod_mult_fast(y1, y1, x2, curve_prime, ndigits);
-+	vli_mod_mult_fast(y1, y1, x2, curve);
- 	/* t3 = B - x3 */
- 	vli_mod_sub(x2, x1, t5, curve_prime, ndigits);
- 	/* t4 = (y2 - y1)*(B - x3) */
--	vli_mod_mult_fast(y2, y2, x2, curve_prime, ndigits);
-+	vli_mod_mult_fast(y2, y2, x2, curve);
- 	/* t4 = y3 */
- 	vli_mod_sub(y2, y2, y1, curve_prime, ndigits);
- 
-@@ -1087,22 +1210,24 @@ static void xycz_add(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
-  * Output P + Q = (x3, y3, Z3), P - Q = (x3', y3', Z3)
-  * or P => P - Q, Q => P + Q
-  */
--static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
--		       unsigned int ndigits)
-+static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2,
-+			const struct ecc_curve *curve)
- {
- 	/* t1 = X1, t2 = Y1, t3 = X2, t4 = Y2 */
- 	u64 t5[ECC_MAX_DIGITS];
- 	u64 t6[ECC_MAX_DIGITS];
- 	u64 t7[ECC_MAX_DIGITS];
-+	const u64 *curve_prime = curve->p;
-+	const unsigned int ndigits = curve->g.ndigits;
- 
- 	/* t5 = x2 - x1 */
- 	vli_mod_sub(t5, x2, x1, curve_prime, ndigits);
- 	/* t5 = (x2 - x1)^2 = A */
--	vli_mod_square_fast(t5, t5, curve_prime, ndigits);
-+	vli_mod_square_fast(t5, t5, curve);
- 	/* t1 = x1*A = B */
--	vli_mod_mult_fast(x1, x1, t5, curve_prime, ndigits);
-+	vli_mod_mult_fast(x1, x1, t5, curve);
- 	/* t3 = x2*A = C */
--	vli_mod_mult_fast(x2, x2, t5, curve_prime, ndigits);
-+	vli_mod_mult_fast(x2, x2, t5, curve);
- 	/* t4 = y2 + y1 */
- 	vli_mod_add(t5, y2, y1, curve_prime, ndigits);
- 	/* t4 = y2 - y1 */
-@@ -1111,29 +1236,29 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
- 	/* t6 = C - B */
- 	vli_mod_sub(t6, x2, x1, curve_prime, ndigits);
- 	/* t2 = y1 * (C - B) */
--	vli_mod_mult_fast(y1, y1, t6, curve_prime, ndigits);
-+	vli_mod_mult_fast(y1, y1, t6, curve);
- 	/* t6 = B + C */
- 	vli_mod_add(t6, x1, x2, curve_prime, ndigits);
- 	/* t3 = (y2 - y1)^2 */
--	vli_mod_square_fast(x2, y2, curve_prime, ndigits);
-+	vli_mod_square_fast(x2, y2, curve);
- 	/* t3 = x3 */
- 	vli_mod_sub(x2, x2, t6, curve_prime, ndigits);
- 
- 	/* t7 = B - x3 */
- 	vli_mod_sub(t7, x1, x2, curve_prime, ndigits);
- 	/* t4 = (y2 - y1)*(B - x3) */
--	vli_mod_mult_fast(y2, y2, t7, curve_prime, ndigits);
-+	vli_mod_mult_fast(y2, y2, t7, curve);
- 	/* t4 = y3 */
- 	vli_mod_sub(y2, y2, y1, curve_prime, ndigits);
- 
- 	/* t7 = (y2 + y1)^2 = F */
--	vli_mod_square_fast(t7, t5, curve_prime, ndigits);
-+	vli_mod_square_fast(t7, t5, curve);
- 	/* t7 = x3' */
- 	vli_mod_sub(t7, t7, t6, curve_prime, ndigits);
- 	/* t6 = x3' - B */
- 	vli_mod_sub(t6, t7, x1, curve_prime, ndigits);
- 	/* t6 = (y2 + y1)*(x3' - B) */
--	vli_mod_mult_fast(t6, t6, t5, curve_prime, ndigits);
-+	vli_mod_mult_fast(t6, t6, t5, curve);
- 	/* t2 = y3' */
- 	vli_mod_sub(y1, t6, y1, curve_prime, ndigits);
- 
-@@ -1163,41 +1288,37 @@ static void ecc_point_mult(struct ecc_point *result,
- 	vli_set(rx[1], point->x, ndigits);
- 	vli_set(ry[1], point->y, ndigits);
- 
--	xycz_initial_double(rx[1], ry[1], rx[0], ry[0], initial_z, curve_prime,
--			    ndigits);
-+	xycz_initial_double(rx[1], ry[1], rx[0], ry[0], initial_z, curve);
- 
- 	for (i = num_bits - 2; i > 0; i--) {
- 		nb = !vli_test_bit(scalar, i);
--		xycz_add_c(rx[1 - nb], ry[1 - nb], rx[nb], ry[nb], curve_prime,
--			   ndigits);
--		xycz_add(rx[nb], ry[nb], rx[1 - nb], ry[1 - nb], curve_prime,
--			 ndigits);
-+		xycz_add_c(rx[1 - nb], ry[1 - nb], rx[nb], ry[nb], curve);
-+		xycz_add(rx[nb], ry[nb], rx[1 - nb], ry[1 - nb], curve);
- 	}
- 
- 	nb = !vli_test_bit(scalar, 0);
--	xycz_add_c(rx[1 - nb], ry[1 - nb], rx[nb], ry[nb], curve_prime,
--		   ndigits);
-+	xycz_add_c(rx[1 - nb], ry[1 - nb], rx[nb], ry[nb], curve);
- 
- 	/* Find final 1/Z value. */
- 	/* X1 - X0 */
- 	vli_mod_sub(z, rx[1], rx[0], curve_prime, ndigits);
- 	/* Yb * (X1 - X0) */
--	vli_mod_mult_fast(z, z, ry[1 - nb], curve_prime, ndigits);
-+	vli_mod_mult_fast(z, z, ry[1 - nb], curve);
- 	/* xP * Yb * (X1 - X0) */
--	vli_mod_mult_fast(z, z, point->x, curve_prime, ndigits);
-+	vli_mod_mult_fast(z, z, point->x, curve);
- 
- 	/* 1 / (xP * Yb * (X1 - X0)) */
- 	vli_mod_inv(z, z, curve_prime, point->ndigits);
- 
- 	/* yP / (xP * Yb * (X1 - X0)) */
--	vli_mod_mult_fast(z, z, point->y, curve_prime, ndigits);
-+	vli_mod_mult_fast(z, z, point->y, curve);
- 	/* Xb * yP / (xP * Yb * (X1 - X0)) */
--	vli_mod_mult_fast(z, z, rx[1 - nb], curve_prime, ndigits);
-+	vli_mod_mult_fast(z, z, rx[1 - nb], curve);
- 	/* End 1/Z calculation */
- 
--	xycz_add(rx[nb], ry[nb], rx[1 - nb], ry[1 - nb], curve_prime, ndigits);
-+	xycz_add(rx[nb], ry[nb], rx[1 - nb], ry[1 - nb], curve);
- 
--	apply_z(rx[0], ry[0], z, curve_prime, ndigits);
-+	apply_z(rx[0], ry[0], z, curve);
- 
- 	vli_set(result->x, rx[0], ndigits);
- 	vli_set(result->y, ry[0], ndigits);
-@@ -1218,9 +1339,9 @@ static void ecc_point_add(const struct ecc_point *result,
- 	vli_mod_sub(z, result->x, p->x, curve->p, ndigits);
- 	vli_set(px, p->x, ndigits);
- 	vli_set(py, p->y, ndigits);
--	xycz_add(px, py, result->x, result->y, curve->p, ndigits);
-+	xycz_add(px, py, result->x, result->y, curve);
- 	vli_mod_inv(z, z, curve->p, ndigits);
--	apply_z(result->x, result->y, z, curve->p, ndigits);
-+	apply_z(result->x, result->y, z, curve);
- }
- 
- /* Computes R = u1P + u2Q mod p using Shamir's trick.
-@@ -1261,7 +1382,7 @@ void ecc_point_mult_shamir(const struct ecc_point *result,
- 	z[0] = 1;
- 
- 	for (--i; i >= 0; i--) {
--		ecc_point_double_jacobian(rx, ry, z, curve->p, ndigits);
-+		ecc_point_double_jacobian(rx, ry, z, curve);
- 		idx = (!!vli_test_bit(u1, i)) | ((!!vli_test_bit(u2, i)) << 1);
- 		point = points[idx];
- 		if (point) {
-@@ -1271,14 +1392,14 @@ void ecc_point_mult_shamir(const struct ecc_point *result,
- 
- 			vli_set(tx, point->x, ndigits);
- 			vli_set(ty, point->y, ndigits);
--			apply_z(tx, ty, z, curve->p, ndigits);
-+			apply_z(tx, ty, z, curve);
- 			vli_mod_sub(tz, rx, tx, curve->p, ndigits);
--			xycz_add(tx, ty, rx, ry, curve->p, ndigits);
--			vli_mod_mult_fast(z, z, tz, curve->p, ndigits);
-+			xycz_add(tx, ty, rx, ry, curve);
-+			vli_mod_mult_fast(z, z, tz, curve);
- 		}
- 	}
- 	vli_mod_inv(z, z, curve->p, ndigits);
--	apply_z(rx, ry, z, curve->p, ndigits);
-+	apply_z(rx, ry, z, curve);
- }
- EXPORT_SYMBOL(ecc_point_mult_shamir);
- 
-@@ -1432,10 +1553,10 @@ int ecc_is_pubkey_valid_partial(const struct ecc_curve *curve,
- 		return -EINVAL;
- 
- 	/* Check 3: Verify that y^2 == (x^3 + a·x + b) mod p */
--	vli_mod_square_fast(yy, pk->y, curve->p, pk->ndigits); /* y^2 */
--	vli_mod_square_fast(xxx, pk->x, curve->p, pk->ndigits); /* x^2 */
--	vli_mod_mult_fast(xxx, xxx, pk->x, curve->p, pk->ndigits); /* x^3 */
--	vli_mod_mult_fast(w, curve->a, pk->x, curve->p, pk->ndigits); /* a·x */
-+	vli_mod_square_fast(yy, pk->y, curve); /* y^2 */
-+	vli_mod_square_fast(xxx, pk->x, curve); /* x^2 */
-+	vli_mod_mult_fast(xxx, xxx, pk->x, curve); /* x^3 */
-+	vli_mod_mult_fast(w, curve->a, pk->x, curve); /* a·x */
- 	vli_mod_add(w, w, curve->b, curve->p, pk->ndigits); /* a·x + b */
- 	vli_mod_add(w, w, xxx, curve->p, pk->ndigits); /* x^3 + a·x + b */
- 	if (vli_cmp(yy, w, pk->ndigits) != 0) /* Equation */
-diff --git a/crypto/ecc.h b/crypto/ecc.h
-index 2ea86dfb5cf7..c3ad222609de 100644
---- a/crypto/ecc.h
-+++ b/crypto/ecc.h
-@@ -29,7 +29,8 @@
- /* One digit is u64 qword. */
- #define ECC_CURVE_NIST_P192_DIGITS  3
- #define ECC_CURVE_NIST_P256_DIGITS  4
--#define ECC_MAX_DIGITS             (512 / 64)
-+#define ECC_CURVE_NIST_P384_DIGITS  6
-+#define ECC_MAX_DIGITS              (512 / 64)
- 
- #define ECC_DIGITS_TO_BYTES_SHIFT 3
- 
--- 
-2.25.1
+Therefore, even though this patch, "1/2: generalize key measurement
+tests", would be useful for other tests; I will have to revisit the
+second patch, "2/2: dm-crypt measurements", to address the DM side 
+changes I mentioned above.
 
+I will revisit this series, esp. testing the DM target measurements
+part, once the kernel work I mentioned above is close to completion.
+
+I will also address your feedback on patch #1 and #2 from v2 iteration
+at that time.
+
+Thanks again for your review and feedback.
+
+Thanks,
+Tushar
+
+>> New functionality is being added in IMA to measure data provided by
+>> kernel components. Tests have to be added in LTP to validate this new
+>> feature. The functionality in ima_keys.sh can be reused to test this new
+>> feature if it is made generic.
+> 
+>> Refactor check_keys_policy() and test1() implemented in ima_keys.sh to
+>> make it generic, and move the functionality to ima_setup.sh as new
+>> functions - check_policy_pattern() and check_ima_ascii_log_for_policy().
+> 
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> ---
+>>   .../security/integrity/ima/tests/ima_keys.sh  | 62 +++------------
+>>   .../security/integrity/ima/tests/ima_setup.sh | 79 +++++++++++++++++++
+>>   2 files changed, 92 insertions(+), 49 deletions(-)
+> 
+>> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+>> index c9eef4b68..c2120358a 100755
+>> --- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+>> +++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+>> @@ -6,7 +6,7 @@
+> 
+>>   # Verify that keys are measured correctly based on policy.
+> 
+>> -TST_NEEDS_CMDS="cmp cut grep sed xxd"
+>> +TST_NEEDS_CMDS="cmp cut grep xxd"
+> It still requires sed, it's just hidden in check_ima_ascii_log_for_policy
+> 
+> Maybe just put at the top of check_ima_ascii_log_for_policy():
+> tst_require_cmds cut grep sed xxd
+> 
+> And here still keep
+> TST_NEEDS_CMDS="cmp cut grep tail xxd"
+> 
+> This leads to duplicity in check, but it will not lead to hidden "command not
+> found".
+> 
+>>   TST_CNT=2
+>>   TST_NEEDS_DEVICE=1
+>>   TST_SETUP=setup
+>> @@ -28,64 +28,28 @@ cleanup()
+>>   	tst_is_num $KEYRING_ID && keyctl clear $KEYRING_ID
+>>   }
+> 
+>> -check_keys_policy()
+>> -{
+>> -	local pattern="$1"
+>> -
+>> -	if ! grep -E "$pattern" $TST_TMPDIR/policy.txt; then
+>> -		tst_res TCONF "IMA policy must specify $pattern, $FUNC_KEYCHECK, $TEMPLATE_BUF"
+>> -		return 1
+>> -	fi
+>> -	return 0
+>> -}
+>> -
+>>   # Based on https://lkml.org/lkml/2019/12/13/564.
+>>   # (450d0fd51564 - "IMA: Call workqueue functions to measure queued keys")
+> OK, it has been merged in v5.6-rc1. Any more relevant commits, changes since
+> then?
+> 
+>>   test1()
+>>   {
+>>   	local keycheck_lines i keyrings templates
+>>   	local pattern='keyrings=[^[:space:]]+'
+>> -	local test_file="file.txt" tmp_file="file2.txt"
+>> +	local policy="keyrings"
+>> +	local tmp_file="$TST_TMPDIR/keycheck_tmp_file.txt"
+>> +	local res
+> Will be unused, see below.
+> 
+>>   	tst_res TINFO "verify key measurement for keyrings and templates specified in IMA policy"
+> 
+>> -	check_keys_policy "$pattern" > $tmp_file || return
+>> -	keycheck_lines=$(cat $tmp_file)
+>> -	keyrings=$(for i in $keycheck_lines; do echo "$i" | grep "keyrings" | \
+>> -		sed "s/\./\\\./g" | cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
+>> -	if [ -z "$keyrings" ]; then
+>> -		tst_res TCONF "IMA policy has a keyring key-value specifier, but no specified keyrings"
+>> -		return
+>> -	fi
+>> -
+>> -	templates=$(for i in $keycheck_lines; do echo "$i" | grep "template" | \
+>> -		cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
+>> -
+>> -	tst_res TINFO "keyrings: '$keyrings'"
+>> -	tst_res TINFO "templates: '$templates'"
+>> -
+>> -	grep -E "($templates).*($keyrings)" $ASCII_MEASUREMENTS | while read line
+>> -	do
+>> -		local digest expected_digest algorithm
+>> -
+>> -		digest=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
+>> -		algorithm=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f1)
+>> -		keyring=$(echo "$line" | cut -d' ' -f5)
+>> +	check_policy_pattern "$pattern" $FUNC_KEYCHECK $TEMPLATE_BUF > $tmp_file || return
+> 
+>> -		echo "$line" | cut -d' ' -f6 | xxd -r -p > $test_file
+>> +	res="$(check_ima_ascii_log_for_policy $policy $tmp_file)"
+> 
+>> -		if ! expected_digest="$(compute_digest $algorithm $test_file)"; then
+>> -			tst_res TCONF "cannot compute digest for $algorithm"
+>> -			return
+>> -		fi
+>> -
+>> -		if [ "$digest" != "$expected_digest" ]; then
+>> -			tst_res TFAIL "incorrect digest was found for $keyring keyring"
+>> -			return
+>> -		fi
+>> -	done
+>> +	if [ "$res" = "0" ]; then
+>> +		tst_res TPASS "specified keyrings were measured correctly"
+>> +	else
+>> +		tst_res TFAIL "failed to measure specified keyrings"
+>> +	fi
+> 
+> Instead of:
+>         res="$(check_ima_ascii_log_for_policy $policy $tmp_file)"
+>         if [ "$res" = "0" ]; then
+> 
+> I'd prefer to have it as:
+>         check_ima_ascii_log_for_policy $policy $tmp_file
+>         if [ $? -eq 0 ]; then
+> 
+> 
+>> -	tst_res TPASS "specified keyrings were measured correctly"
+>>   }
+> 
+>>   # Create a new keyring, import a certificate into it, and verify
+>> @@ -97,11 +61,11 @@ test2()
+>>   	local cert_file="$TST_DATAROOT/x509_ima.der"
+>>   	local keyring_name="key_import_test"
+>>   	local pattern="keyrings=[^[:space:]]*$keyring_name"
+>> -	local temp_file="file.txt"
+>> +	local temp_file="$TST_TMPDIR/key_import_test_file.txt"
+> 
+>>   	tst_res TINFO "verify measurement of certificate imported into a keyring"
+> 
+>> -	check_keys_policy "$pattern" >/dev/null || return
+>> +	check_policy_pattern "$pattern" $FUNC_KEYCHECK $TEMPLATE_BUF >/dev/null || return
+> 
+>>   	KEYRING_ID=$(keyctl newring $keyring_name @s) || \
+>>   		tst_brk TBROK "unable to create a new keyring"
+>> diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+>> index 1f17aa707..2841d7df5 100644
+>> --- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+>> +++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+>> @@ -54,6 +54,85 @@ compute_digest()
+>>   	return 1
+>>   }
+> 
+>> +check_policy_pattern()
+>> +{
+>> +	local pattern="$1"
+>> +	local func="$2"
+>> +	local template="$3"
+>> +
+>> +	if ! grep -E "$pattern" $TST_TMPDIR/policy.txt; then
+>> +		tst_res TCONF "IMA policy must specify $pattern, $func, $template"
+>> +		return 1
+>> +	fi
+>> +	return 0
+>> +}
+> Probably ok for now (yes, it removes the duplicity with function used in two
+> tests, it's very policy specific).
+> 
+>> +
+>> +check_ima_ascii_log_for_policy()
+>> +{
+>> +	local test_file="$TST_TMPDIR/ascii_log_test_file.txt"
+>> +	local grep_file="$TST_TMPDIR/ascii_log_grep_file.txt"
+> nit: Since the real description is in variable, I'd just use:
+> 
+> local test_file="$TST_TMPDIR/test.txt"
+> local grep_file="$TST_TMPDIR/grep.txt"
+> 
+>> +	local func_lines sources templates i src
+>> +	local input_digest_res=1
+>> +	local policy_option="$1"
+>> +	local input_digest="$3"
+> 
+> tst_require_cmds cut grep sed xxd
+>> +
+>> +	func_lines=$(cat $2)
+>> +
+>> +	sources=$(for i in $func_lines; do echo "$i" | grep "$policy_option" | \
+>> +		sed "s/\./\\\./g" | cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
+>> +	if [ -z "$sources" ]; then
+>> +		tst_res TCONF "IMA policy $policy_option is a key-value specifier, but no values specified"
+>> +		echo "1"
+>> +		return
+>> +	fi
+>> +
+>> +	templates=$(for i in $func_lines; do echo "$i" | grep "template" | \
+>> +		cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
+>> +
+>> +	tst_res TINFO "policy sources: '$sources'"
+>> +	tst_res TINFO "templates: '$templates'"
+>> +
+>> +	grep -E "($templates).*($sources)" $ASCII_MEASUREMENTS > $grep_file
+>> +
+>> +	while read line
+>> +	do
+>> +		local digest expected_digest algorithm
+>> +
+>> +		digest=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f2)
+>> +		algorithm=$(echo "$line" | cut -d' ' -f4 | cut -d':' -f1)
+>> +		src_line=$(echo "$line" | cut -d' ' -f5)
+>> +
+>> +		echo "$line" | cut -d' ' -f6 | xxd -r -p > $test_file
+>> +
+>> +		if ! expected_digest="$(compute_digest $algorithm $test_file)"; then
+>> +			tst_res TCONF "cannot compute digest for $algorithm"
+>> +			echo "1"
+>> +			return
+>> +		fi
+>> +
+>> +		if [ "$digest" != "$expected_digest" ]; then
+>> +			tst_res TINFO "incorrect digest was found for $src_line $policy_option"
+>> +			echo "1"	
+>> +			return
+>> +		fi
+>> +
+>> +		if [ "$input_digest" ]; then
+>> +			if [ "$digest" = "$input_digest" ]; then
+>> +				input_digest_res=0
+>> +			fi
+>> +		fi
+> I'd prefer it as single if:
+>          if [ -n "$input_digest" -a "$digest" = "$input_digest" ]; then
+>              input_digest_res=0
+>          fi
+> 
+>> +
+>> +	done < $grep_file
+>> +
+>> +	if [ "$input_digest" ]; then
+>> +		echo "$input_digest_res"
+>> +		return
+> this return is redundant.
+>> +	else
+>> +		echo "0"
+>> +		return
+> Also this one.
+> 
+>> +	fi
+> 
+> And actually, instead of whole if/else block wouldn't be just this enough?
+> echo "$input_digest_res"
+> 
+> Isn't it the zero value set in the loop at:
+> 
+>          if [ -n "$input_digest" -a "$digest" = "$input_digest" ]; then
+>              input_digest_res=0
+>          fi
+> 
+> Kind regards,
+> Petr
+> 
