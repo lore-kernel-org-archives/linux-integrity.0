@@ -2,76 +2,132 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F91AC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A330EC433E6
 	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4362864E7A
+	by mail.kernel.org (Postfix) with ESMTP id 6072A64E3F
 	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:11:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234579AbhBXBK7 (ORCPT
+        id S234581AbhBXBLH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Feb 2021 20:10:59 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:53816 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbhBXA7C (ORCPT
+        Tue, 23 Feb 2021 20:11:07 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41818 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234469AbhBXBF2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Feb 2021 19:59:02 -0500
-Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 859B920B6C40;
-        Tue, 23 Feb 2021 16:25:53 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 859B920B6C40
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1614126353;
-        bh=FBzAz65Z+tjf5xUyNSGfsapmSUwxRby0EKUI4F/Icq4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gMYHFHRdlNxuwLh0OL9xKtuVUafjHfUJe9SqVYHn6ZLI/0d3LQeBEjThvWoA495Yv
-         G4N9z/w4AuA/mcewG9yOFzCzu6gZFUK9CrhxrMf4O9vLCfjUuxUWcmnof+htO1QLOo
-         lce5tuPJA83TRN/U1zD1HnbBoRhtyg6vbPTld1B4=
-Subject: Re: [PATCH v3] IMA: support for duplicate measurement records
-To:     Petr Vorel <pvorel@suse.cz>
-Cc:     zohar@linux.ibm.com, tyhicks@linux.microsoft.com,
-        sashal@kernel.org, jmorris@namei.org, nramas@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210219010045.5509-1-tusharsu@linux.microsoft.com>
- <YDWbWimf+tO5YvAc@pevik>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <12b62c3c-e2f7-b551-c79a-a0336ceec5d6@linux.microsoft.com>
-Date:   Tue, 23 Feb 2021 16:25:52 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 23 Feb 2021 20:05:28 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11O12qxn090069;
+        Tue, 23 Feb 2021 20:03:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=references : from : to :
+ cc : subject : in-reply-to : date : message-id : mime-version :
+ content-type; s=pp1; bh=LiUHUTJGKM9F5JZaSQZZBvR7ceGcxURUydnol1dcBUg=;
+ b=ShfbwJy4SURD1oyhdMKXmcfvSI0WvhH8nz7P7v83L1vSIgWgW/b9RsuuSNrfcShs6wII
+ FCSn6X5ifxXptX9x93rBL5cIY1DLjDNLERGNAa4234Yw4OPC1A1zr+uHdDEX4MXfDUIe
+ cTHb6Xrq2N77vSLaELWS/u5hVxFJjkmplvLKY9hf58UcSu2VmjIzJtUd87M3dXDjB6HN
+ nxHuEbscH4tK141F1exo63Db0dp8WmXFhw1KM49Ue/4r4pTnzThg6NzgbG+7eY0A5MjX
+ oBwIg1RYjMxug4/0+XoPm4A5ExNykoarn0b1RwYOwWhlJdffx4fHfxu6+Xt2h+azYRfp ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36vkg3n2un-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Feb 2021 20:03:48 -0500
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11O13lpk093319;
+        Tue, 23 Feb 2021 20:03:48 -0500
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36vkg3n2u5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Feb 2021 20:03:47 -0500
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11O12L2S009228;
+        Wed, 24 Feb 2021 01:03:46 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma04dal.us.ibm.com with ESMTP id 36tt2ahf0e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 24 Feb 2021 01:03:46 +0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11O13jH328639738
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Feb 2021 01:03:45 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 94D42BE058;
+        Wed, 24 Feb 2021 01:03:45 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2342BE059;
+        Wed, 24 Feb 2021 01:03:36 +0000 (GMT)
+Received: from manicouagan.localdomain (unknown [9.80.200.35])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Wed, 24 Feb 2021 01:03:36 +0000 (GMT)
+References: <20210221174930.27324-1-nramas@linux.microsoft.com>
+ <20210221174930.27324-2-nramas@linux.microsoft.com>
+User-agent: mu4e 1.4.10; emacs 27.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com, robh@kernel.org, takahiro.akashi@linaro.org,
+        gregkh@linuxfoundation.org, will@kernel.org, joe@perches.com,
+        catalin.marinas@arm.com, mpe@ellerman.id.au, sfr@canb.auug.org.au,
+        james.morse@arm.com, sashal@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, frowand.list@gmail.com,
+        vincenzo.frascino@arm.com, mark.rutland@arm.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        pasha.tatashin@soleen.com, allison@lohutok.net,
+        masahiroy@kernel.org, mbrugger@suse.com, hsinyi@chromium.org,
+        tao.li@vivo.com, christophe.leroy@c-s.fr,
+        prsriva@linux.microsoft.com, balajib@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v19 01/13] kexec: Move ELF fields to struct kimage
+In-reply-to: <20210221174930.27324-2-nramas@linux.microsoft.com>
+Date:   Tue, 23 Feb 2021 22:03:34 -0300
+Message-ID: <87im6iwa3d.fsf@manicouagan.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <YDWbWimf+tO5YvAc@pevik>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-02-23_12:2021-02-23,2021-02-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 adultscore=0 priorityscore=1501 malwarescore=0
+ mlxlogscore=988 mlxscore=0 impostorscore=0 bulkscore=0 spamscore=0
+ phishscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2102240005
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello Petr,
 
-On 2021-02-23 4:18 p.m., Petr Vorel wrote:
-> Hi Tushar,
-> 
->> Change Log v3:
->>   - Incorporated feedback from Mimi on v2.
->>   - Updated patch title and description to make it generic.
->>   - Changed config description word 'data' to 'records'.
->>   - Tested use cases for boot param "ima_policy=tcb".
-> 
-> LGTM.
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
-> 
+Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
 
-Thank you taking a look at the patch, and the 'Reviewed-by' tag.
-~Tushar
+> ELF related fields elf_headers, elf_headers_sz, and elf_load_addr are
+> defined in architecture specific 'struct kimage_arch' for x86, powerpc,
+> and arm64.  The name of these fields are different in these
+> architectures that makes it hard to have a common code for setting up
+> the device tree for kexec system call.
+>
+> Move the ELF fields to 'struct kimage' defined in include/linux/kexec.h
+> so common code can use it.
+>
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Fixes: 33488dc4d61f ("of: Add a common kexec FDT setup function")
 
-> Kind regards,
-> Petr
-> 
+This Fixes tag should be removed. It is referencing a patch from the
+future (later in the series), and the commit id is meaningless.
+
+> Reported-by: kernel test robot <lkp@intel.com>
+> ---
+>  include/linux/kexec.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+
+With that fixed:
+
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
