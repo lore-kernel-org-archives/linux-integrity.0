@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E572C433DB
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D05DC433E0
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B24364D5D
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 209B264E6F
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234613AbhBXBLg (ORCPT
+        id S233328AbhBXB11 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Feb 2021 20:11:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36122 "EHLO
+        Tue, 23 Feb 2021 20:27:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44952 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234424AbhBXBJP (ORCPT
+        by vger.kernel.org with ESMTP id S232102AbhBXBPh (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Feb 2021 20:09:15 -0500
+        Tue, 23 Feb 2021 20:15:37 -0500
 Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11O15hMh071159;
-        Tue, 23 Feb 2021 20:08:02 -0500
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11O14vpw066172;
+        Tue, 23 Feb 2021 20:14:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=references : from : to :
  cc : subject : in-reply-to : date : message-id : mime-version :
- content-type; s=pp1; bh=fvB3rzAf+nSMX8mMPWYXXuPAPGObMNYcBPw6HsZjV10=;
- b=rGSWdzTokt+BjuGdJizFgnzR1MUUoSsry6lb6/JGEO8CXx7ysUQgOCdndTPlwulgvslA
- XbCa2ZU8rczINW5MofXTdIZbt0TNxzfAXy2Xn3qHtpkHvgBX6zRxI7dp7O2Omwikhg2u
- EL3fSWqXqdJsHg6kP269tD9FoLHmkGzQoBCcuaEeYkQbf/baY5jcK4mqq7tEn8MtLqbC
- Uc+9g5sX2sr97GZPbDVMVFqykOFvmc+NkRtGSGkdTti5nRwY+WNZvabEHqRPgBFet+yl
- eB0tCN//QH0OGqMHJVO4Oe45AVI4ZV2/DVUPI/q21vcymSS9Z9oYcMLIP6K/+U8bi/Up 4Q== 
+ content-type; s=pp1; bh=xIQ9J5il7IdYFetThadoUWnAsHvBSPOp50LddBTelRU=;
+ b=duaKGhtWU7i+UCt8/iUESSbaPSmQIbQ+kILvNrRIw0QfpBBXhXUp7ZK7EaWxVBz0p1rv
+ n2Nh+nlVGkft4101lsMbtCHM758dxjepdleHMlIVzV77WZuuLMB2C3228QCeIe4AfeZq
+ QhJTSHV/bOM0Qe1kesMe/AF1xKthDM9EgmSRRj0fDom7h4jqUKkVSqwo3m3GjKeohqBw
+ VFzcb1FKAnRfxpBvo1tKfg0B6EwTJ62mtt9Q5mgh11jUPkWgn/V1LM+0+dZmWhTCXDsG
+ CV8/21dGPUkDXaBVf19vWb4X0QNbbGAS93sEV7u3sSEP6mN3trDrhfJiF0YOJIWAercP Kw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36wau9anbx-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36wau9ard3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Feb 2021 20:08:02 -0500
+        Tue, 23 Feb 2021 20:14:10 -0500
 Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11O14WF5062184;
-        Tue, 23 Feb 2021 20:08:01 -0500
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36wau9anb6-1
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11O14WGR062184;
+        Tue, 23 Feb 2021 20:14:09 -0500
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36wau9arch-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Feb 2021 20:08:01 -0500
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11O180nb032208;
-        Wed, 24 Feb 2021 01:08:00 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma05wdc.us.ibm.com with ESMTP id 36tt29tsmh-1
+        Tue, 23 Feb 2021 20:14:09 -0500
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11O1Cq0C013566;
+        Wed, 24 Feb 2021 01:14:07 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02wdc.us.ibm.com with ESMTP id 36tt292uj8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Feb 2021 01:08:00 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11O17xG727460078
+        Wed, 24 Feb 2021 01:14:07 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11O1E7vD29098300
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Feb 2021 01:07:59 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 354CC7805C;
-        Wed, 24 Feb 2021 01:07:59 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85C9478066;
-        Wed, 24 Feb 2021 01:07:50 +0000 (GMT)
+        Wed, 24 Feb 2021 01:14:07 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 01BB1AE05C;
+        Wed, 24 Feb 2021 01:14:07 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A32A2AE060;
+        Wed, 24 Feb 2021 01:13:59 +0000 (GMT)
 Received: from manicouagan.localdomain (unknown [9.80.200.35])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 24 Feb 2021 01:07:50 +0000 (GMT)
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed, 24 Feb 2021 01:13:59 +0000 (GMT)
 References: <20210221174930.27324-1-nramas@linux.microsoft.com>
- <20210221174930.27324-4-nramas@linux.microsoft.com>
+ <20210221174930.27324-5-nramas@linux.microsoft.com>
 User-agent: mu4e 1.4.10; emacs 27.1
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
@@ -82,11 +82,10 @@ Cc:     zohar@linux.ibm.com, robh@kernel.org, takahiro.akashi@linaro.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v19 03/13] powerpc: Use ELF fields defined in 'struct
- kimage'
-In-reply-to: <20210221174930.27324-4-nramas@linux.microsoft.com>
-Date:   Tue, 23 Feb 2021 22:07:48 -0300
-Message-ID: <87czwqw9wb.fsf@manicouagan.localdomain>
+Subject: Re: [PATCH v19 04/13] x86: Use ELF fields defined in 'struct kimage'
+In-reply-to: <20210221174930.27324-5-nramas@linux.microsoft.com>
+Date:   Tue, 23 Feb 2021 22:13:57 -0300
+Message-ID: <877dmyw9m2.fsf@manicouagan.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-TM-AS-GCONF: 00
@@ -95,7 +94,7 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
  priorityscore=1501 clxscore=1015 lowpriorityscore=0 impostorscore=0
  phishscore=0 mlxscore=0 spamscore=0 malwarescore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ adultscore=0 mlxlogscore=925 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.12.0-2009150000 definitions=main-2102240005
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -104,9 +103,8 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
 
-> ELF related fields elf_headers, elf_headers_sz, and elfcorehdr_addr
-> have been moved from 'struct kimage_arch' to 'struct kimage' as
-> elf_headers, elf_headers_sz, and elf_load_addr respectively.
+> ELF related fields elf_headers, elf_headers_sz, and elf_load_addr
+> have been moved from 'struct kimage_arch' to 'struct kimage'.
 >
 > Use the ELF fields defined in 'struct kimage'.
 >
@@ -114,15 +112,15 @@ Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
 > Suggested-by: Rob Herring <robh@kernel.org>
 > Fixes: 33488dc4d61f ("of: Add a common kexec FDT setup function")
 
-This Fixes tag should be removed. It is referencing a patch from the
-future (later in the series), and the commit id is meaningless.
+Ditto.
 
 > Reported-by: kernel test robot <lkp@intel.com>
 > ---
->  arch/powerpc/include/asm/kexec.h  |  4 ----
->  arch/powerpc/kexec/file_load.c    |  6 +++---
->  arch/powerpc/kexec/file_load_64.c | 14 +++++++-------
->  3 files changed, 10 insertions(+), 14 deletions(-)
+>  arch/x86/include/asm/kexec.h       |  5 -----
+>  arch/x86/kernel/crash.c            | 14 +++++++-------
+>  arch/x86/kernel/kexec-bzimage64.c  |  2 +-
+>  arch/x86/kernel/machine_kexec_64.c |  4 ++--
+>  4 files changed, 10 insertions(+), 15 deletions(-)
 
 With that fixed:
 
