@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56C62C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983F3C433E9
 	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE6AD64E6C
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5180264E22
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 Feb 2021 01:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232277AbhBXB10 (ORCPT
+        id S232727AbhBXB1a (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Feb 2021 20:27:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49098 "EHLO
+        Tue, 23 Feb 2021 20:27:30 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10598 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234488AbhBXBKP (ORCPT
+        by vger.kernel.org with ESMTP id S232384AbhBXBW7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Feb 2021 20:10:15 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11O14BoH099423;
-        Tue, 23 Feb 2021 20:08:51 -0500
+        Tue, 23 Feb 2021 20:22:59 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11O14uaf082271;
+        Tue, 23 Feb 2021 20:21:03 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=references : from : to :
  cc : subject : in-reply-to : date : message-id : mime-version :
- content-type; s=pp1; bh=WhTJiyZ25jK1DK8i367jxWJ083phI3DK+oUpaMZ1r98=;
- b=GJjSHmQe31TxHg0O5xqSzWutS7vHNxNl+q4eMyuMRasOORaIU0H6069RGQ7A9R8aaLGT
- 37BHl5fq0Vz14IZZueVZGE2Un8iBr3VNg0pNGH3V/7hqVEpOg741tc7REf2dsyFobdWh
- itTE/kQ1l1wGzDcLINrlzYGE6UKmZvibozhU/LjMIjuNCSL932Jd+kWJPPlHbUY432LH
- g4ACHwc7FDIuapiuC5knW2wTVwKa9zuNoWmwc45JJi0HQAtB2Vw9hArnrdfkHXwsK7KE
- bEtYXD+P0ap9cw+D5KRAvTlNlNXnuyYPwrdManVzQPG2m/4op0dpflygwXH/TIHbg3TD 0w== 
+ content-type; s=pp1; bh=kC/+0aVm8cp01TvLP/jGIzOiZ2VixN4Uazzg13a34iQ=;
+ b=MOrjc9khNWyJxSvy9gDpFJ6ruTGJphjx3Ecztx+yD+/LjajhJSNQdnIcs4D4tTctVw9o
+ qme9AIdWGcQKqGRkrm3tFTbR90+GvPPHtnjicCkDPyVY+3Knw4Sv4S2Yql2HMpk7+sEe
+ k52efMQN6o/JRsB7INf7+/QgPjMVup96fKNMYMCBE8MJKfnSRnmsFoAYUMgD73PU5UQ6
+ gLKU1R0s5YaM4oSHv7JYUzqdjQp9mp26bBxP275d6dlKBHLSpgRDp1Y0xHYkvhXdz777
+ JH7wxx8kC+V/U4mMrLksdH/73U0Gc6rAq3NN4xPLE+8OxnB8P+QYHaf4hz/mLCRXRPrw HQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36vkfuu9nc-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36vkf93cc3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Feb 2021 20:08:51 -0500
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11O14dVu100483;
-        Tue, 23 Feb 2021 20:08:50 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36vkfuu9mq-1
+        Tue, 23 Feb 2021 20:21:03 -0500
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11O1BhFu112037;
+        Tue, 23 Feb 2021 20:21:03 -0500
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 36vkf93cbp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Feb 2021 20:08:50 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11O18689003870;
-        Wed, 24 Feb 2021 01:08:48 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma04wdc.us.ibm.com with ESMTP id 36tt29jubu-1
+        Tue, 23 Feb 2021 20:21:03 -0500
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11O1GrfJ023830;
+        Wed, 24 Feb 2021 01:21:01 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma02dal.us.ibm.com with ESMTP id 36tt2a1nc3-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Feb 2021 01:08:48 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11O18lGm45023682
+        Wed, 24 Feb 2021 01:21:01 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11O1L15328180812
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Feb 2021 01:08:47 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76D5F78067;
-        Wed, 24 Feb 2021 01:08:47 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEDFF7805F;
-        Wed, 24 Feb 2021 01:08:38 +0000 (GMT)
+        Wed, 24 Feb 2021 01:21:01 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 034A5112063;
+        Wed, 24 Feb 2021 01:21:01 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3FE7112061;
+        Wed, 24 Feb 2021 01:20:53 +0000 (GMT)
 Received: from manicouagan.localdomain (unknown [9.80.200.35])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Wed, 24 Feb 2021 01:08:38 +0000 (GMT)
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed, 24 Feb 2021 01:20:53 +0000 (GMT)
 References: <20210221174930.27324-1-nramas@linux.microsoft.com>
- <20210221174930.27324-5-nramas@linux.microsoft.com>
+ <20210221174930.27324-6-nramas@linux.microsoft.com>
 User-agent: mu4e 1.4.10; emacs 27.1
 From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
 To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
@@ -82,19 +82,19 @@ Cc:     zohar@linux.ibm.com, robh@kernel.org, takahiro.akashi@linaro.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v19 04/13] x86: Use ELF fields defined in 'struct kimage'
-In-reply-to: <20210221174930.27324-5-nramas@linux.microsoft.com>
-Date:   Tue, 23 Feb 2021 22:08:36 -0300
-Message-ID: <87a6ruw9uz.fsf@manicouagan.localdomain>
+Subject: Re: [PATCH v19 05/13] of: Add a common kexec FDT setup function
+In-reply-to: <20210221174930.27324-6-nramas@linux.microsoft.com>
+Date:   Tue, 23 Feb 2021 22:20:51 -0300
+Message-ID: <874ki2w9ak.fsf@manicouagan.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
  definitions=2021-02-23_12:2021-02-23,2021-02-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=963
- phishscore=0 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 adultscore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ spamscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2102240005
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -103,24 +103,42 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 Lakshmi Ramasubramanian <nramas@linux.microsoft.com> writes:
 
-> ELF related fields elf_headers, elf_headers_sz, and elf_load_addr
-> have been moved from 'struct kimage_arch' to 'struct kimage'.
+> From: Rob Herring <robh@kernel.org>
 >
-> Use the ELF fields defined in 'struct kimage'.
+> Both arm64 and powerpc do essentially the same FDT /chosen setup for
+> kexec.  The differences are either omissions that arm64 should have
+> or additional properties that will be ignored.  The setup code can be
+> combined and shared by both powerpc and arm64.
 >
+> The differences relative to the arm64 version:
+>  - If /chosen doesn't exist, it will be created (should never happen).
+>  - Any old dtb and initrd reserved memory will be released.
+>  - The new initrd and elfcorehdr are marked reserved.
+>  - "linux,booted-from-kexec" is set.
+>
+> The differences relative to the powerpc version:
+>  - "kaslr-seed" and "rng-seed" may be set.
+>  - "linux,elfcorehdr" is set.
+>  - Any existing "linux,usable-memory-range" is removed.
+>
+> Combine the code for setting up the /chosen node in the FDT and updating
+> the memory reservation for kexec, for powerpc and arm64, in
+> of_kexec_alloc_and_setup_fdt() and move it to "drivers/of/kexec.c".
+>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Rob Herring <robh@kernel.org>
 > Fixes: 33488dc4d61f ("of: Add a common kexec FDT setup function")
 
-Same thing. :-)
+A patch cannot fix itself. The world would be a much better place if it
+could. :-)
 
 > Reported-by: kernel test robot <lkp@intel.com>
 > ---
->  arch/x86/include/asm/kexec.h       |  5 -----
->  arch/x86/kernel/crash.c            | 14 +++++++-------
->  arch/x86/kernel/kexec-bzimage64.c  |  2 +-
->  arch/x86/kernel/machine_kexec_64.c |  4 ++--
->  4 files changed, 10 insertions(+), 15 deletions(-)
+>  drivers/of/Makefile |   6 +
+>  drivers/of/kexec.c  | 265 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/of.h  |   5 +
+>  3 files changed, 276 insertions(+)
+>  create mode 100644 drivers/of/kexec.c
 
 With that fixed:
 
