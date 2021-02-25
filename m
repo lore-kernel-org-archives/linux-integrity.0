@@ -2,490 +2,392 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F20D9C433DB
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 21:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DA8C433E6
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 22:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1C5464F29
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 21:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A629864F4B
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 22:20:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231335AbhBYVvF (ORCPT
+        id S233397AbhBYWUq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Feb 2021 16:51:05 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:28444 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231326AbhBYVvE (ORCPT
+        Thu, 25 Feb 2021 17:20:46 -0500
+Received: from antares.kleine-koenig.org ([94.130.110.236]:40596 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231843AbhBYWT1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Feb 2021 16:51:04 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11PLX9Ie141464;
-        Thu, 25 Feb 2021 16:50:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=thGox3M7QE5o6ksULSEzekAWf1zqdbQ1tLKaibQ1o+8=;
- b=hsg+rpema/mBx7wjMj8/ssrVBGllf6vyEd2LFmhI00Mxphi9LGbFOHNs2qQNHAdVySxR
- WM4NELjwncC4lfxr/MVCLEAAsYw7PeZ2/bZM40Me+y9BoCAwi6vMlQo+DNHWxUO/GGCO
- IznI1m+FlG4i6pRoRvGLUjqgQZ2ch49ghQQ0iOPfiF5j+p14TFqbSuvqfZocBxl34Ztf
- CQaeDcumIcpxHtnAWXNOGAo3UVzzgOqzqi8iHadTq4CQskgdhXxdabtJxvUQJS39zXyh
- fGYGKGDFcSs7uH9TLXFWRqxm4Z/sWta51LXWQY7nEn64HcknsLq/Oif62BMmGaw2PP9t dg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36xfcxh5hn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Feb 2021 16:50:17 -0500
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11PLY6Rd001533;
-        Thu, 25 Feb 2021 16:50:16 -0500
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36xfcxh5h4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Feb 2021 16:50:16 -0500
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11PLm5Gd009838;
-        Thu, 25 Feb 2021 21:50:15 GMT
-Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
-        by ppma03wdc.us.ibm.com with ESMTP id 36tt29hwmp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Feb 2021 21:50:15 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11PLoEH836962594
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Feb 2021 21:50:14 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 311386A057;
-        Thu, 25 Feb 2021 21:50:14 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EE886A04D;
-        Thu, 25 Feb 2021 21:50:13 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 25 Feb 2021 21:50:13 +0000 (GMT)
-Subject: Re: [PATCH 1/3] tpm: Add support for reading a TPM NV Index
-To:     Patrick Uiterwijk <patrick@puiterwijk.org>, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, linux-integrity@vger.kernel.org
-Cc:     pbrobinson@gmail.com, kgold@linux.ibm.com
-References: <20210225203229.363302-1-patrick@puiterwijk.org>
- <20210225203229.363302-2-patrick@puiterwijk.org>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <cf2339c2-2fed-2cc0-d215-658606abf146@linux.ibm.com>
-Date:   Thu, 25 Feb 2021 16:50:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Thu, 25 Feb 2021 17:19:27 -0500
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 7EA30B147A1; Thu, 25 Feb 2021 23:18:36 +0100 (CET)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Haren Myneni <haren@us.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?q?Breno=20Leit=C3=A3o?= <leitao@debian.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
+        Steven Royer <seroyer@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Cristobal Forno <cforno12@linux.ibm.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Dany Madden <drt@linux.ibm.com>, Lijun Pan <ljp@linux.ibm.com>,
+        Sukadev Bhattiprolu <sukadev@linux.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Michael Cyr <mikecyr@linux.ibm.com>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        netdev@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: [PATCH v2] vio: make remove callback return void
+Date:   Thu, 25 Feb 2021 23:18:34 +0100
+Message-Id: <20210225221834.160083-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-In-Reply-To: <20210225203229.363302-2-patrick@puiterwijk.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-02-25_14:2021-02-24,2021-02-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxscore=0 spamscore=0 priorityscore=1501 impostorscore=0 clxscore=1015
- malwarescore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2102250163
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/25/21 3:32 PM, Patrick Uiterwijk wrote:
-> Add support to read contents from a TPM2 Non-Volatile Index location,
-> allowing the kernel to retrieve contents and attributes of NV indexes.
->
-> Signed-off-by: Patrick Uiterwijk <patrick@puiterwijk.org>
-> ---
->   drivers/char/tpm/tpm-interface.c |  30 ++++++
->   drivers/char/tpm/tpm.h           |   5 +
->   drivers/char/tpm/tpm2-cmd.c      | 163 +++++++++++++++++++++++++++++++
->   include/linux/tpm.h              |  65 ++++++++++++
->   4 files changed, 263 insertions(+)
->
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> index 1621ce818705..9d81c11181d4 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -342,6 +342,36 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->   }
->   EXPORT_SYMBOL_GPL(tpm_pcr_extend);
->   
-> +/**
-> + * tpm_nv_read - Read an NV Index from the TPM
-> + * @chip:	A &struct tpm_chip instance, %NULL for the default chip
-> + * @nv_idx:	The NV Index to be retrieved
-> + * @attr_out:	A place to store returned attributes if a TPM 2 was used
-> + * @out:	A pointer where to store the return buffer
-> + *
-> + * Return: number of bytes read or a negative error value
-> + */
-> +int tpm_nv_read(struct tpm_chip *chip, u32 nv_idx, u32 *attr_out, void **out)
-> +{
-> +	int rc;
-> +
-> +	chip = tpm_find_get_ops(chip);
-> +	if (!chip)
-> +		return -ENODEV;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> +		rc = tpm2_nv_read(chip, nv_idx, attr_out, out);
-> +		goto out;
-> +	}
-> +
-> +	rc = -ENODEV;
-> +
-> +out:
-> +	tpm_put_ops(chip);
-> +	return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(tpm_nv_read);
-> +
->   /**
->    * tpm_send - send a TPM command
->    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> index 947d1db0a5cc..d4dfc5148adb 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -56,9 +56,12 @@ enum tpm_addr {
->   #define TPM_ERR_DEACTIVATED     0x6
->   #define TPM_ERR_DISABLED        0x7
->   #define TPM_ERR_INVALID_POSTINIT 38
-> +#define TPM_ERR_INVALID_HANDLE_1 0x18b
->   
->   #define TPM_TAG_RQU_COMMAND 193
->   
-> +#define TPM2_HR_NV_INDEX 0x1000000
-> +
->   /* TPM2 specific constants. */
->   #define TPM2_SPACE_BUFFER_SIZE		16384 /* 16 kB */
->   
-> @@ -224,6 +227,8 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
->   ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,
->   			u32 *value, const char *desc);
->   
-> +int tpm2_nv_read(struct tpm_chip *chip, u32 nvindex, u32 *attr_out, void **dest);
-> +int tpm2_nv_readpublic(struct tpm_chip *chip, u32 nvindex, struct tpm2_nv_public *info);
->   ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip);
->   int tpm2_auto_startup(struct tpm_chip *chip);
->   void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type);
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index eff1f12d981a..ba1026123464 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -269,6 +269,169 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->   	return rc;
->   }
->   
-> +struct tpm2_buffer_out {
-> +	__be16	size;
-> +	u8	data[];
-> +} __packed;
-> +
-> +struct tpm2_nv_public_out {
-> +	__be32	nvIndex;
-> +	__be16	nameAlg;
-> +	__be32	attributes;
-> +	__be16	authPolicySize;
-> +	u8	data[];
-> +} __packed;
-> +
-> +int tpm2_nv_readpublic(struct tpm_chip *chip, u32 nvindex, struct tpm2_nv_public *info)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +	u16 recd;
-> +	u32 resp_header_length;
-> +	struct tpm2_buffer_out *out;
-> +	struct tpm2_nv_public_out *publicout;
-> +	u32 nvhandle;
-> +	u16 auth_policy_size;
-> +
-> +	if ((nvindex & ~TPM2_HR_NV_INDEX) > 0x00FFFFFF)
-> +		return -EINVAL;
-> +
-> +	/* HR_NV_INDEX = TPM_HT_NV_INDEX << HR_SHIFT */
-> +	nvhandle = TPM2_HR_NV_INDEX | nvindex;
-> +
-> +	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_NV_READPUBLIC);
-> +	if (rc)
-> +		return rc;
-> +	tpm_buf_append_u32(&buf, nvhandle);
-> +	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
-> +	if (rc) {
-> +		if (rc != TPM_ERR_DISABLED && rc != TPM_ERR_DEACTIVATED
+The driver core ignores the return value of struct bus_type::remove()
+because there is only little that can be done. To simplify the quest to
+make this function return void, let struct vio_driver::remove() return
+void, too. All users already unconditionally return 0, this commit makes
+it obvious that returning an error code is a bad idea.
 
-These are TPM 1.2 error codes. I don't think TPM 2 returns those, does 
-it? Ah, you took that from tpm_transmit_cmd... I think you can remove those.
+Note there are two nominally different implementations for a vio bus:
+one in arch/sparc/kernel/vio.c and the other in
+arch/powerpc/platforms/pseries/vio.c. This patch only adapts the powerpc
+one.
 
+Before this patch for a device that was bound to a driver without a
+remove callback vio_cmo_bus_remove(viodev) wasn't called. As the device
+core still considers the device unbound after vio_bus_remove() returns
+calling this unconditionally is the consistent behaviour which is
+implemented here.
 
-> +		    && rc != TPM2_RC_TESTING && rc != TPM_ERR_INVALID_HANDLE_1)
-> +			dev_err(&chip->dev, "A TPM error (%d) occurred attempting to read an NV Index public\n", rc);
-> +		if (rc == TPM_ERR_INVALID_HANDLE_1)
-> +			rc = -ENOENT;
-> +		else if (rc > 0)
-> +			rc = -EIO;
-> +		goto out;
-> +	}
-> +	resp_header_length = tpm_buf_response_header_length(&buf, 0);
-> +	out = (struct tpm2_buffer_out *)&buf.data[resp_header_length];
-> +	publicout = (struct tpm2_nv_public_out *)&out->data;
-> +	recd = be16_to_cpu(out->size);
-> +
-> +	info->nv_index = be32_to_cpu(publicout->nvIndex);
-> +	info->name_alg = be16_to_cpu(publicout->nameAlg);
-> +	info->attributes = be32_to_cpu(publicout->attributes);
-> +
-> +	/* Determine the size of the authPolicy, so we can skip over that to grab the data size */
-> +	auth_policy_size = be16_to_cpu(publicout->authPolicySize);
-> +
-> +	info->data_size = be16_to_cpu((publicout->data[auth_policy_size]) | (publicout->data[auth_policy_size+1] << 8));
+Reviewed-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+Acked-by: Lijun Pan <ljp@linux.ibm.com>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+Hello,
 
+I dropped the sparc specific files (i.e. all that Michael Ellerman
+didn't characterize as powerpc specific and verified that they are
+indeed sparc-only).
 
-I don't think this is correct. The way you read the 2 bytes they are 
-already in native format then due to the shifting. So be16_to_cpu should 
-return the wrong result on little endian machines.
+The commit log is adapted accordingly.
 
+Best regards
+Uwe
 
-> +
-> +out:
-> +	tpm_buf_destroy(&buf);
-> +	return rc;
-> +}
-> +
-> +int tpm2_nv_read(struct tpm_chip *chip, u32 nvindex, u32 *attr_out, void **dest)
-> +{
-> +	struct tpm_buf buf;
-> +	int rc;
-> +	struct tpm2_buffer_out *out;
-> +	u16 recd;
-> +	u16 copied;
-> +	u32 nvhandle;
-> +	u32 resp_header_length;
-> +	struct tpm2_null_auth_area auth_area;
-> +	u16 size;
-> +	struct tpm2_nv_public public;
-> +
-> +	copied = 0;
-> +
-> +	if ((nvindex & ~TPM2_HR_NV_INDEX) > 0x00FFFFFF)
-> +		return -EINVAL;
-> +
-> +	/* HR_NV_INDEX = TPM_HT_NV_INDEX << HR_SHIFT */
-> +	nvhandle = TPM2_HR_NV_INDEX | nvindex;
-> +
-> +	/* Determine the size of the NV Index contents */
-> +	rc = tpm2_nv_readpublic(chip, nvindex, &public);
-> +	if (rc < 0)
-> +		return rc;
-> +	if (attr_out != NULL)
-> +		*attr_out = public.attributes;
-> +	size = public.data_size;
-> +	*dest = kzalloc(size, GFP_KERNEL);
-> +	if (!*dest) {
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	/* Retrieve the actual NV Index contents */
-> +	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_NV_READ);
-> +	if (rc)
-> +		goto out_free;
-> +
-> +	while (copied < size) {
-> +		tpm_buf_reset(&buf, TPM2_ST_SESSIONS, TPM2_CC_NV_READ);
-> +
-> +		tpm_buf_append_u32(&buf, TPM2_RH_OWNER);
-> +		tpm_buf_append_u32(&buf, nvhandle);
-> +
-> +		auth_area.handle = cpu_to_be32(TPM2_RS_PW);
-> +		auth_area.nonce_size = 0;
-> +		auth_area.attributes = 0;
-> +		auth_area.auth_size = 0;
-> +
-> +		tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
-> +		tpm_buf_append(&buf, (const unsigned char *)&auth_area,
-> +			       sizeof(auth_area));
-> +
-> +		/* Size to request: at most 512 bytes at a time */
-> +		tpm_buf_append_u16(&buf, min_t(u16, 512, size-copied));
-> +		/* Offset: start at where we ended up */
-> +		tpm_buf_append_u16(&buf, copied);
-> +
-> +		rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to read NV index");
-> +		if (rc) {
-> +			if (rc > 0)
-> +				rc = -EIO;
-> +			goto out_free;
-> +		}
-> +		resp_header_length = tpm_buf_response_header_length(&buf, 0);
-> +		out = (struct tpm2_buffer_out *)&buf.data[resp_header_length];
-> +		recd = be16_to_cpu(out->size);
-> +
-> +		if (recd == 0) {
-> +			rc = -EIO;
-> +			goto out_free;
-> +		}
-> +		if (recd > size-copied) {
-> +			rc = -EIO;
-> +			goto out_free;
-> +		}
+ arch/powerpc/include/asm/vio.h           | 2 +-
+ arch/powerpc/platforms/pseries/vio.c     | 7 +++----
+ drivers/char/hw_random/pseries-rng.c     | 3 +--
+ drivers/char/tpm/tpm_ibmvtpm.c           | 4 +---
+ drivers/crypto/nx/nx-842-pseries.c       | 4 +---
+ drivers/crypto/nx/nx.c                   | 4 +---
+ drivers/misc/ibmvmc.c                    | 4 +---
+ drivers/net/ethernet/ibm/ibmveth.c       | 4 +---
+ drivers/net/ethernet/ibm/ibmvnic.c       | 4 +---
+ drivers/scsi/ibmvscsi/ibmvfc.c           | 3 +--
+ drivers/scsi/ibmvscsi/ibmvscsi.c         | 4 +---
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 4 +---
+ drivers/tty/hvc/hvcs.c                   | 3 +--
+ 13 files changed, 15 insertions(+), 35 deletions(-)
 
-You could add this to the above.
+diff --git a/arch/powerpc/include/asm/vio.h b/arch/powerpc/include/asm/vio.h
+index 0cf52746531b..721c0d6715ac 100644
+--- a/arch/powerpc/include/asm/vio.h
++++ b/arch/powerpc/include/asm/vio.h
+@@ -113,7 +113,7 @@ struct vio_driver {
+ 	const char *name;
+ 	const struct vio_device_id *id_table;
+ 	int (*probe)(struct vio_dev *dev, const struct vio_device_id *id);
+-	int (*remove)(struct vio_dev *dev);
++	void (*remove)(struct vio_dev *dev);
+ 	/* A driver must have a get_desired_dma() function to
+ 	 * be loaded in a CMO environment if it uses DMA.
+ 	 */
+diff --git a/arch/powerpc/platforms/pseries/vio.c b/arch/powerpc/platforms/pseries/vio.c
+index b2797cfe4e2b..9cb4fc839fd5 100644
+--- a/arch/powerpc/platforms/pseries/vio.c
++++ b/arch/powerpc/platforms/pseries/vio.c
+@@ -1261,7 +1261,6 @@ static int vio_bus_remove(struct device *dev)
+ 	struct vio_dev *viodev = to_vio_dev(dev);
+ 	struct vio_driver *viodrv = to_vio_driver(dev->driver);
+ 	struct device *devptr;
+-	int ret = 1;
+ 
+ 	/*
+ 	 * Hold a reference to the device after the remove function is called
+@@ -1270,13 +1269,13 @@ static int vio_bus_remove(struct device *dev)
+ 	devptr = get_device(dev);
+ 
+ 	if (viodrv->remove)
+-		ret = viodrv->remove(viodev);
++		viodrv->remove(viodev);
+ 
+-	if (!ret && firmware_has_feature(FW_FEATURE_CMO))
++	if (firmware_has_feature(FW_FEATURE_CMO))
+ 		vio_cmo_bus_remove(viodev);
+ 
+ 	put_device(devptr);
+-	return ret;
++	return 0;
+ }
+ 
+ /**
+diff --git a/drivers/char/hw_random/pseries-rng.c b/drivers/char/hw_random/pseries-rng.c
+index 8038a8a9fb58..f4949b689bd5 100644
+--- a/drivers/char/hw_random/pseries-rng.c
++++ b/drivers/char/hw_random/pseries-rng.c
+@@ -54,10 +54,9 @@ static int pseries_rng_probe(struct vio_dev *dev,
+ 	return hwrng_register(&pseries_rng);
+ }
+ 
+-static int pseries_rng_remove(struct vio_dev *dev)
++static void pseries_rng_remove(struct vio_dev *dev)
+ {
+ 	hwrng_unregister(&pseries_rng);
+-	return 0;
+ }
+ 
+ static const struct vio_device_id pseries_rng_driver_ids[] = {
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 994385bf37c0..903604769de9 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -343,7 +343,7 @@ static int ibmvtpm_crq_send_init_complete(struct ibmvtpm_dev *ibmvtpm)
+  *
+  * Return: Always 0.
+  */
+-static int tpm_ibmvtpm_remove(struct vio_dev *vdev)
++static void tpm_ibmvtpm_remove(struct vio_dev *vdev)
+ {
+ 	struct tpm_chip *chip = dev_get_drvdata(&vdev->dev);
+ 	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
+@@ -372,8 +372,6 @@ static int tpm_ibmvtpm_remove(struct vio_dev *vdev)
+ 	kfree(ibmvtpm);
+ 	/* For tpm_ibmvtpm_get_desired_dma */
+ 	dev_set_drvdata(&vdev->dev, NULL);
+-
+-	return 0;
+ }
+ 
+ /**
+diff --git a/drivers/crypto/nx/nx-842-pseries.c b/drivers/crypto/nx/nx-842-pseries.c
+index 2de5e3672e42..cc8dd3072b8b 100644
+--- a/drivers/crypto/nx/nx-842-pseries.c
++++ b/drivers/crypto/nx/nx-842-pseries.c
+@@ -1042,7 +1042,7 @@ static int nx842_probe(struct vio_dev *viodev,
+ 	return ret;
+ }
+ 
+-static int nx842_remove(struct vio_dev *viodev)
++static void nx842_remove(struct vio_dev *viodev)
+ {
+ 	struct nx842_devdata *old_devdata;
+ 	unsigned long flags;
+@@ -1063,8 +1063,6 @@ static int nx842_remove(struct vio_dev *viodev)
+ 	if (old_devdata)
+ 		kfree(old_devdata->counters);
+ 	kfree(old_devdata);
+-
+-	return 0;
+ }
+ 
+ static const struct vio_device_id nx842_vio_driver_ids[] = {
+diff --git a/drivers/crypto/nx/nx.c b/drivers/crypto/nx/nx.c
+index 0d2dc5be7f19..1d0e8a1ba160 100644
+--- a/drivers/crypto/nx/nx.c
++++ b/drivers/crypto/nx/nx.c
+@@ -783,7 +783,7 @@ static int nx_probe(struct vio_dev *viodev, const struct vio_device_id *id)
+ 	return nx_register_algs();
+ }
+ 
+-static int nx_remove(struct vio_dev *viodev)
++static void nx_remove(struct vio_dev *viodev)
+ {
+ 	dev_dbg(&viodev->dev, "entering nx_remove for UA 0x%x\n",
+ 		viodev->unit_address);
+@@ -811,8 +811,6 @@ static int nx_remove(struct vio_dev *viodev)
+ 		nx_unregister_skcipher(&nx_ecb_aes_alg, NX_FC_AES,
+ 				       NX_MODE_AES_ECB);
+ 	}
+-
+-	return 0;
+ }
+ 
+ 
+diff --git a/drivers/misc/ibmvmc.c b/drivers/misc/ibmvmc.c
+index 2d778d0f011e..c0fe3295c330 100644
+--- a/drivers/misc/ibmvmc.c
++++ b/drivers/misc/ibmvmc.c
+@@ -2288,15 +2288,13 @@ static int ibmvmc_probe(struct vio_dev *vdev, const struct vio_device_id *id)
+ 	return -EPERM;
+ }
+ 
+-static int ibmvmc_remove(struct vio_dev *vdev)
++static void ibmvmc_remove(struct vio_dev *vdev)
+ {
+ 	struct crq_server_adapter *adapter = dev_get_drvdata(&vdev->dev);
+ 
+ 	dev_info(adapter->dev, "Entering remove for UA 0x%x\n",
+ 		 vdev->unit_address);
+ 	ibmvmc_release_crq_queue(adapter);
+-
+-	return 0;
+ }
+ 
+ static struct vio_device_id ibmvmc_device_table[] = {
+diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
+index c3ec9ceed833..7fea9ae60f13 100644
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1758,7 +1758,7 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
+ 	return 0;
+ }
+ 
+-static int ibmveth_remove(struct vio_dev *dev)
++static void ibmveth_remove(struct vio_dev *dev)
+ {
+ 	struct net_device *netdev = dev_get_drvdata(&dev->dev);
+ 	struct ibmveth_adapter *adapter = netdev_priv(netdev);
+@@ -1771,8 +1771,6 @@ static int ibmveth_remove(struct vio_dev *dev)
+ 
+ 	free_netdev(netdev);
+ 	dev_set_drvdata(&dev->dev, NULL);
+-
+-	return 0;
+ }
+ 
+ static struct attribute veth_active_attr;
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 118a4bd3f877..eb39318766f6 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -5396,7 +5396,7 @@ static int ibmvnic_probe(struct vio_dev *dev, const struct vio_device_id *id)
+ 	return rc;
+ }
+ 
+-static int ibmvnic_remove(struct vio_dev *dev)
++static void ibmvnic_remove(struct vio_dev *dev)
+ {
+ 	struct net_device *netdev = dev_get_drvdata(&dev->dev);
+ 	struct ibmvnic_adapter *adapter = netdev_priv(netdev);
+@@ -5437,8 +5437,6 @@ static int ibmvnic_remove(struct vio_dev *dev)
+ 	device_remove_file(&dev->dev, &dev_attr_failover);
+ 	free_netdev(netdev);
+ 	dev_set_drvdata(&dev->dev, NULL);
+-
+-	return 0;
+ }
+ 
+ static ssize_t failover_store(struct device *dev, struct device_attribute *attr,
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
+index 755313b766b9..e663085a8944 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -6038,7 +6038,7 @@ static int ibmvfc_probe(struct vio_dev *vdev, const struct vio_device_id *id)
+  * Return value:
+  * 	0
+  **/
+-static int ibmvfc_remove(struct vio_dev *vdev)
++static void ibmvfc_remove(struct vio_dev *vdev)
+ {
+ 	struct ibmvfc_host *vhost = dev_get_drvdata(&vdev->dev);
+ 	LIST_HEAD(purge);
+@@ -6070,7 +6070,6 @@ static int ibmvfc_remove(struct vio_dev *vdev)
+ 	spin_unlock(&ibmvfc_driver_lock);
+ 	scsi_host_put(vhost->host);
+ 	LEAVE;
+-	return 0;
+ }
+ 
+ /**
+diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
+index 29fcc44be2d5..77fafb1bc173 100644
+--- a/drivers/scsi/ibmvscsi/ibmvscsi.c
++++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+@@ -2335,7 +2335,7 @@ static int ibmvscsi_probe(struct vio_dev *vdev, const struct vio_device_id *id)
+ 	return -1;
+ }
+ 
+-static int ibmvscsi_remove(struct vio_dev *vdev)
++static void ibmvscsi_remove(struct vio_dev *vdev)
+ {
+ 	struct ibmvscsi_host_data *hostdata = dev_get_drvdata(&vdev->dev);
+ 
+@@ -2356,8 +2356,6 @@ static int ibmvscsi_remove(struct vio_dev *vdev)
+ 	spin_unlock(&ibmvscsi_driver_lock);
+ 
+ 	scsi_host_put(hostdata->host);
+-
+-	return 0;
+ }
+ 
+ /**
+diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+index cc3908c2d2f9..9abd9e253af6 100644
+--- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
++++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+@@ -3595,7 +3595,7 @@ static int ibmvscsis_probe(struct vio_dev *vdev,
+ 	return rc;
+ }
+ 
+-static int ibmvscsis_remove(struct vio_dev *vdev)
++static void ibmvscsis_remove(struct vio_dev *vdev)
+ {
+ 	struct scsi_info *vscsi = dev_get_drvdata(&vdev->dev);
+ 
+@@ -3622,8 +3622,6 @@ static int ibmvscsis_remove(struct vio_dev *vdev)
+ 	list_del(&vscsi->list);
+ 	spin_unlock_bh(&ibmvscsis_dev_lock);
+ 	kfree(vscsi);
+-
+-	return 0;
+ }
+ 
+ static ssize_t system_id_show(struct device *dev,
+diff --git a/drivers/tty/hvc/hvcs.c b/drivers/tty/hvc/hvcs.c
+index c90848919644..01fc97e3c5c8 100644
+--- a/drivers/tty/hvc/hvcs.c
++++ b/drivers/tty/hvc/hvcs.c
+@@ -819,7 +819,7 @@ static int hvcs_probe(
+ 	return 0;
+ }
+ 
+-static int hvcs_remove(struct vio_dev *dev)
++static void hvcs_remove(struct vio_dev *dev)
+ {
+ 	struct hvcs_struct *hvcsd = dev_get_drvdata(&dev->dev);
+ 	unsigned long flags;
+@@ -849,7 +849,6 @@ static int hvcs_remove(struct vio_dev *dev)
+ 
+ 	printk(KERN_INFO "HVCS: vty-server@%X removed from the"
+ 			" vio bus.\n", dev->unit_address);
+-	return 0;
+ };
+ 
+ static struct vio_driver hvcs_vio_driver = {
 
-if (recd == 0 || recd > size - copied) ...
-
-This address the case where the TPM is actually returning more bytes 
-than requested.
-
-> +
-> +		memcpy(*dest + copied, out->data, recd);
-> +		copied += recd;
-> +	};
-> +
-> +out_free:
-> +	if ((rc < 0) || (copied != size)) {
-> +		kvfree(*dest);
-
-
-kfree ?
-
-
-> +		*dest = NULL;
-> +	}
-> +
-> +out:
-> +	tpm_buf_destroy(&buf);
-> +
-> +	if (rc < 0)
-> +		return rc;
-> +	else if (copied != size)
-> +		return -EIO;
-> +	else
-> +		return size;
-> +}
-> +
->   struct tpm2_get_random_out {
->   	__be16 size;
->   	u8 buffer[TPM_MAX_RNG_DATA];
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 8f4ff39f51e7..b812236b9955 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -53,6 +53,40 @@ struct tpm_bank_info {
->   	u16 crypto_id;
->   };
->   
-> +enum tpm_nv_public_attrs {
-> +	TPM2_ATTR_NV_PPWRITE = 0x00000001,
-> +	TPM2_ATTR_NV_OWNERWRITE = 0x00000002,
-> +	TPM2_ATTR_NV_AUTHWRITE = 0x00000004,
-> +	TPM2_ATTR_NV_POLICYWRITE = 0x00000008,
-> +	/* Bits 4-7 TPM_NT */
-> +	/* Bits 8-9 reserved */
-> +	TPM2_ATTR_NV_POLICY_DELETE = 0x00000400,
-> +	TPM2_ATTR_NV_WRITELOCKED = 0x00000800,
-> +	TPM2_ATTR_NV_WRITEALL = 0x00001000,
-> +	TPM2_ATTR_NV_WRITE_DEFINE = 0x00002000,
-> +	TPM2_ATTR_NV_WRITE_STCLEAR = 0x00004000,
-> +	TPM2_ATTR_NV_GLOBALLOCK = 0x00008000,
-> +	TPM2_ATTR_NV_PPREAD = 0x00010000,
-> +	TPM2_ATTR_NV_OWNERREAD = 0x00020000,
-> +	TPM2_ATTR_NV_AUTHREAD = 0x00040000,
-> +	TPM2_ATTR_NV_POLICYREAD = 0x00080000,
-> +	/* Bits 20-24 reserved */
-> +	TPM2_ATTR_NV_NO_DA = 0x02000000,
-> +	TPM2_ATTR_NV_ORDERLY = 0x04000000,
-> +	TPM2_ATTR_NV_CLEAR_STCLEAR = 0x08000000,
-> +	TPM2_ATTR_NV_READLOCKED = 0x10000000,
-> +	TPM2_ATTR_NV_WRITTEN = 0x20000000,
-> +	TPM2_ATTR_NV_PLATFORMCREATE = 0x40000000,
-> +	TPM2_ATTR_NV_READ_STCLEAR = 0x80000000,
-> +};
-> +
-> +struct tpm2_nv_public {
-> +	u32 nv_index;
-> +	u16 name_alg;
-> +	u32 attributes;
-> +	u16 data_size;
-> +};
-> +
->   enum TPM_OPS_FLAGS {
->   	TPM_OPS_AUTO_STARTUP = BIT(0),
->   };
-> @@ -189,6 +223,10 @@ enum tpm2_structures {
->   	TPM2_ST_SESSIONS	= 0x8002,
->   };
->   
-> +enum tpm2_root_handles {
-> +	TPM2_RH_OWNER		= 0x40000001,
-> +};
-> +
->   /* Indicates from what layer of the software stack the error comes from */
->   #define TSS2_RC_LAYER_SHIFT	 16
->   #define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
-> @@ -223,6 +261,7 @@ enum tpm2_command_codes {
->   	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
->   	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
->   	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
-> +	TPM2_CC_NV_READPUBLIC		= 0x0169,
->   	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
->   	TPM2_CC_GET_CAPABILITY	        = 0x017A,
->   	TPM2_CC_GET_RANDOM	        = 0x017B,
-> @@ -389,6 +428,21 @@ static inline void tpm_buf_append_u32(struct tpm_buf *buf, const u32 value)
->   	tpm_buf_append(buf, (u8 *) &value2, 4);
->   }
->   
-> +static inline u32 tpm_buf_response_header_length(struct tpm_buf *buf, bool has_shielded_locations)
-> +{
-> +	u32 header_length = TPM_HEADER_SIZE;
-> +
-> +	/* Possibly a handle for a Shielded Location */
-> +	if (has_shielded_locations)
-> +		header_length += 4;
-> +
-> +	/* Possibly the 32-bit parameter area size */
-> +	if (tpm_buf_tag(buf) == TPM2_ST_SESSIONS)
-> +		header_length += 4;
-> +
-> +	return header_length;
-> +}
-> +
->   static inline u32 tpm2_rc_value(u32 rc)
->   {
->   	return (rc & BIT(7)) ? rc & 0xff : rc;
-> @@ -401,6 +455,7 @@ extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
->   			struct tpm_digest *digest);
->   extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->   			  struct tpm_digest *digests);
-> +extern int tpm_nv_read(struct tpm_chip *chip, u32 nv_idx, u32 *attrs_out, void **out);
->   extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
->   extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
->   extern struct tpm_chip *tpm_default_chip(void);
-> @@ -423,6 +478,16 @@ static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->   	return -ENODEV;
->   }
->   
-> +static inline int tpm2_nv_readpublic(struct tpm_chip *chip, u32 nvindex, struct tpm2_nv_public *info)
-> +{
-> +	return -ENODEV;
-> +}
-> +
-> +static inline int tpm_nv_read(struct tpm_chip *chip, u32 nv_idx, u8 *out, size_t max)
-> +{
-
-
-tpm2_nv_read
-
-
-> +	return -ENODEV;
-> +}
-> +
->   static inline int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
->   {
->   	return -ENODEV;
-
+base-commit: 2c87f7a38f930ef6f6a7bdd04aeb82ce3971b54b
+-- 
+2.30.0
 
