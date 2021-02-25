@@ -2,61 +2,64 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7D3C433E6
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 20:36:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9930C433DB
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 20:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CBB5601FB
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 20:36:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 814FC6148E
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Feb 2021 20:37:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233743AbhBYUgK (ORCPT
+        id S233916AbhBYUhA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 25 Feb 2021 15:36:10 -0500
-Received: from mail-eopbgr80074.outbound.protection.outlook.com ([40.107.8.74]:59131
+        Thu, 25 Feb 2021 15:37:00 -0500
+Received: from mail-eopbgr80077.outbound.protection.outlook.com ([40.107.8.77]:18150
         "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S231974AbhBYUeO (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 25 Feb 2021 15:34:14 -0500
+        id S233960AbhBYUex (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 25 Feb 2021 15:34:53 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BasIxZObeQR27t8PHVEfMLSRyMtO6pYn3y/wSGBABmkiL/Cr3F+HIgFp849SVE30vrPdmPZvbO4l699s7yiPgBU4Gkp8pTnQ6qm5bm3S2TU6q/O0NamnLpfnAKrrSRnHBXCwQc7fKokV360c+Us1seitYJikJ6qA/6DlI/CWC8sFY61LIxtvTklrCxPwSKvBEH4Xg8YKYKxEOE0iLHSVsgwQEgqetbMajnvX0zTzjCYY2Z98zu1Ais7KVzzKs3EFQ++/Pocvhy6J6p7oVJCsij157DA53TQuYrIg55IUTKeOiUl/wuKVB9BKgCPT0VMhF27eL/8f59eHAEX8N7hIVQ==
+ b=G/cush2G0tKU2VFEGBktL4taNn+wn5AUtpI3jflKgyZ7s2PpteS3FWot0aT21Hrq1Sjijv0L+5s5nVWBpp3jhSWsrOl7jQsGzmxHdICka8YL+2yL6da1GzEsS88EdoYsjt28JogZ2twlafwsvCo4Wwb+jmDcSC7it66eBNUe5SL9SuAwEiOf8zoEwFKr+PQzXumChjy3ny72ENxrXVDHUvPniQZuu3kq4mj3cloWPu5bTzbVHFyz9MVVtFdJ/09TE8TQKkw1rSSSbFtaDZjDJM7nmgdvIega56xfhCA7ySTpo7stoQMdqFr8FNGRxmN9+E3bo5+1V8oXTpv4oS/9lA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WcX1ZltdWPjXHOPHaOaQrK3jiB5gJuTyKMjF+yHO9No=;
- b=UK4TRQXiI2Thu0yVZ8dvoi6wbqxXYNZViDH37kBqlCsmF8ys0nVjaNw2aVr2HihJsG7aiprmx9dL9dLFTSt89SS0d2SFegi7MkKTaYpogqrwkkYM/kb6I7SfV5lWUlMbXl5ZpKGgXI0J3EtyOemrzzSO6jWG3nlm0bFwgowNjru4DV0nM+mQVOMOfJtv4aEHJDyfJTbCVCsqij63+IwF+cLPEDPIl6DD8hotpjsESwdeROjNJzKJuTYzx9M052oKoPOWalhfTPE0auuYIPXe7rCo/kZ5DYqACh+P/P4Dy0XQoV9cGjyb0vwvMpR2MyQS8W1EoKpA20vgCU2ewoFzOQ==
+ bh=b5Qpikqg+zpMc3h8h1XLsm2X6/xzWAGKDBk1Uj5LBNk=;
+ b=JYC9Fsx8FhgrthGeQ0Dz7qX6VZb0pXyyw0sp2n349GRcxBX2zOpNc4twQ+C+QX+5Gz6ij2qjGDgymC0b4EYg/ZMieVUnRVdVZUBu2KKcL/WKCC1amH7JifsTYryTVseBwya+vyMZOAqJ+BYlCwhlGVahdTjWpdOH3TWlAo/3oZqlX6t8tNcr6SHnRAg4beXZpEdVeOtjofpWLLETOfL3dtMkSVFssJKbWQPfqasbs7MmrFk85/5MfOSMpgqLoK/uWpgJvLrNxkIR9qFyTjquLYjwUzPIhVcnSvnuKs4jafyIoIWEF++M7KuwlyfcoJJ4V8FkaaCtQ3zvmDQ2J2nEQg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=puiterwijk.org; dmarc=pass action=none
  header.from=puiterwijk.org; dkim=pass header.d=puiterwijk.org; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=puiterwijk.org;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WcX1ZltdWPjXHOPHaOaQrK3jiB5gJuTyKMjF+yHO9No=;
- b=fzHztsBMo/Qx84i6QYkvmS3O4XIW8vFxscJbG8VHRtiwj7F2vZyrfYHZ2rDaDJvCuOUEVXmrr5JA2L4+H+iCc5hE6gE14UqbIBdN0lswQAPCriIJstU/ZatS2XZhqTOxLcCMRfS17YpeSbrKLt+BVnWHvHryLYQlvWmsKckvcSWGF6q8gZ2KXgTdk8mVtFpCHVTZqSbTpnailoD9qJyDkBnnfrKb4MYAUX8u2kRMDQ4+RtJXzQfn2VbI2YXvtfT7/N7zU40/CgnkHSGFRtnPpijOdIHZM/q0poQigMfzCgSgHFUiKQLG7Wsd6fbpidYDTexBUPx9AbmeUxzkYslN5g==
+ bh=b5Qpikqg+zpMc3h8h1XLsm2X6/xzWAGKDBk1Uj5LBNk=;
+ b=SMW/wEhm4SrR2cIpbvtRCZM5qFK02aN0MqAJ2qKV/66lDuBDmecxlDjJ6Z2l6KJkJEwFDm4NJxFoTlEYjWuCG676zEO7l1JpRrR2n52hOwxDjZ87UjeXtOsZOlRZmZnb7eFbtXj/XWifWUERt3OjtIevQqCJ2GeG+0m+HfBNCVVq31oGVB3ZL8yt+BhvQunrm62oAsCPDdo9D32DjdHT87pTSEvhGZPiVdEpRcNX7FK5TjL6zx7UUlkvADh4KDqbGbHlH4zzgq5Tcu7sFbnPyhywGR+7tJfrJs36dQoR/H0fiqBUZ4NdEy4u+eZhEwQX8KcGAa16//Ou+nZXuTWtrw==
 Authentication-Results: gmx.de; dkim=none (message not signed)
  header.d=none;gmx.de; dmarc=none action=none header.from=puiterwijk.org;
 Received: from AM0P191MB0721.EURP191.PROD.OUTLOOK.COM (2603:10a6:20b:15f::13)
  by AM4P191MB0083.EURP191.PROD.OUTLOOK.COM (2603:10a6:200:65::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.29; Thu, 25 Feb
- 2021 20:32:47 +0000
+ 2021 20:32:48 +0000
 Received: from AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
  ([fe80::b002:8668:5cfa:a46b]) by AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
  ([fe80::b002:8668:5cfa:a46b%8]) with mapi id 15.20.3890.019; Thu, 25 Feb 2021
- 20:32:46 +0000
+ 20:32:48 +0000
 From:   Patrick Uiterwijk <patrick@puiterwijk.org>
 To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
         zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         linux-integrity@vger.kernel.org
 Cc:     pbrobinson@gmail.com, stefanb@linux.ibm.com, kgold@linux.ibm.com,
         Patrick Uiterwijk <patrick@puiterwijk.org>
-Subject: [PATCH 0/3] Load keys from TPM2 NV Index on IMA keyring
-Date:   Thu, 25 Feb 2021 21:32:26 +0100
-Message-Id: <20210225203229.363302-1-patrick@puiterwijk.org>
+Subject: [PATCH 3/3] integrity: Load keys from TPM NV onto IMA keyring
+Date:   Thu, 25 Feb 2021 21:32:29 +0100
+Message-Id: <20210225203229.363302-4-patrick@puiterwijk.org>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210225203229.363302-1-patrick@puiterwijk.org>
+References: <20210225203229.363302-1-patrick@puiterwijk.org>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-Originating-IP: [2a10:3781:662:0:ec87:3741:6e9a:b11e]
@@ -65,109 +68,174 @@ X-ClientProxiedBy: AM0PR03CA0018.eurprd03.prod.outlook.com
  (2603:10a6:20b:15f::13)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from rowhammer.mgmt.home.puiterwijk.org (2a10:3781:662:0:ec87:3741:6e9a:b11e) by AM0PR03CA0018.eurprd03.prod.outlook.com (2603:10a6:208:14::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20 via Frontend Transport; Thu, 25 Feb 2021 20:32:46 +0000
+Received: from rowhammer.mgmt.home.puiterwijk.org (2a10:3781:662:0:ec87:3741:6e9a:b11e) by AM0PR03CA0018.eurprd03.prod.outlook.com (2603:10a6:208:14::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.20 via Frontend Transport; Thu, 25 Feb 2021 20:32:47 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: c3d26061-3e08-496d-11c0-08d8d9cc82fe
+X-MS-Office365-Filtering-Correlation-Id: bbca39a8-af2b-46c2-8870-08d8d9cc8395
 X-MS-TrafficTypeDiagnostic: AM4P191MB0083:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM4P191MB008339860F9BC7694B7E3B59C89E9@AM4P191MB0083.EURP191.PROD.OUTLOOK.COM>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-Microsoft-Antispam-PRVS: <AM4P191MB008354EE69203CA4D343C170C89E9@AM4P191MB0083.EURP191.PROD.OUTLOOK.COM>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Z2LgruPBncOU/DY3bytsoD7fMHapXI0f4G/GS8/Pqod07bLBOcZxxTEsmUr5lHhtzTBhKjRDeM0/JPH9nwEVLn0m2YRDQ2hZgMdlX2cSef/h09nLHJHvWCXzWpT7TtZqTGVnlkRnvBiMwwjMkuXKChIvAyYgtNua0IHTQYvoWPvkBfGypYVhAh7IzSi1jn58NjoxUiGklRqyj14KPck7dttbIFRznF1xMLPhyIiSV/Lw6O2pKpIGkvLyoOenl9y7aA8T3YfqtpZyrZ+1ejZBdSXOVsdeCbL5yMHwH4lvdAnkgFi93H+thyF3lUFn0pJMiGqHC8jphlfsdYSJ+ZUi7palKUiESlEpS/WCoIm2nXGOMIYg+Ba9wtTuS8T6RAau61rhfO/2TqA2PXgTHphw2LYHrckbGk4ZmYWJkPVGSlWdO7Cd9Pf7CmYS5lvY/SKDn/NzvgD9tyXw9HaCvOt7MOT4RdgPhHV6q5kbBsFi4CrjOq5nN/555n+6BjFPg+tNmTo66UvZGAVpVQYYSGBFUA==
+X-Microsoft-Antispam-Message-Info: AnONTjdz3uwWPjeZMA/dx9wlhmW8qp+qPwMD58GFK3XIPCNaKW/p4gg2h/okorhl7G93k3ZuNSki2l6EDNiU6iRuJ9llLKEg8lpIRB96wNMTFoQpzV5HoT0bzKIA4nsnIOOrkcR3wQ7QnzIuL1sWk5FBsbOWHh/1QzU1jOeaS24cuP338MVLvsYEdajjU0DsobizjIdRQWHlziFLhy6YBZk6Tcu0oZi6tqYtK77/HqEt+o33e42zd8HTpRwmWwG7ncVCF0R+t/01lEI+i701TE24kLUVZ9Mtr7dmXuiimmS+vQ4ghRuEuTNK76AcSwVT/IaDcAV125ihkS+QPa3TSRkLR/fLNSsO2c4ymAoxNIGHR4smjK+KFvuBFBkMQkvcDIy7ugnsaLzeOKi5jTpioEhdW4TlEYw80tJQRWdwNbkIVIPlahMJpK3mVn+/oMrCqJYGS7dH1LJ4RZ90pq4tjK93UuIa5Bo2Ue6sM2tBQsDVCuxwdyzrACr8mnbEDDsRkMeNbUFQzONphn32i4ik2Q==
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0P191MB0721.EURP191.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(376002)(39830400003)(136003)(346002)(366004)(396003)(2616005)(316002)(186003)(107886003)(6486002)(5660300002)(4326008)(66476007)(1076003)(478600001)(66946007)(6666004)(2906002)(36756003)(7696005)(52116002)(66556008)(83380400001)(8676002)(8936002)(16526019)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?lOcD4F9f1BfX+wUmXbMPZCVoZ7xutMsJYQHjGS59mmX8V/KN9zJ6iWqEWN1j?=
- =?us-ascii?Q?X7dNROwbfFngfHL6SXS9t9XS5vSqugN557zCqUwE462s66TpbuLyhIdugnMD?=
- =?us-ascii?Q?SeCf/MEo02kZmKbPiQfcjlrq8gZlELje33FhreXGn4x4ectU7c2bhY31xeFH?=
- =?us-ascii?Q?dthMa+rRkXQ+GBSVzOdWuTXIx0T79O80ASTnTCtFJxgs5/MNegh1ut8NsXfo?=
- =?us-ascii?Q?kpQ6LpJcN2W/6DgH8jI9BPrndMU9sxB7Zc5CqbZBTnvWwulQJRmwnrmzNtcI?=
- =?us-ascii?Q?hJSUiqK6iXMqPtFtK+NrBeMQNnUu83MDDVWEgWfKExBqqQpO34Kvbqjnlq1c?=
- =?us-ascii?Q?UVeJ7aM0Y20EhPEVdZ2z1RhjJdocoqniXm18tme3+GEHiJEzrxO3RWutc1Oe?=
- =?us-ascii?Q?aWKyioo+WHAUw/DjOM0zfTs0E+zVqRDkcXjS7lmDk9VoTAvnFoctLczFHpMl?=
- =?us-ascii?Q?WOvbOo2g3z1QnLrbfJ/l6Kg3ltxJsr8oiswunxzwSNIKAT/YPtsgWGdJVc2R?=
- =?us-ascii?Q?Zd7IZRzVtR+kCQKfNUq/7d4joONj/xQEwGyvXnT7gtPqdiMzWKQt9Wf6ysGT?=
- =?us-ascii?Q?OZpYX+HEUrjX1EcI0L2JcbYt6DMCWE79Z5VOGoxQsShx3iJvT0g7OjvVYkQg?=
- =?us-ascii?Q?p/kaPMyk+GkOD7jtXRPetDnAcs1Y3ncnuYTk3Zgms4FsTU+dv+6KtB7kiTV6?=
- =?us-ascii?Q?nX1OQq1deEBRZOUK9J73v6CToS5HDnxveO0JbUiBC7iIxD17++2joH5bVP51?=
- =?us-ascii?Q?PrC8P+iC9j3AMYU1m365OpqEOSiFglYmjP3fhQuzC1ehlPn7pCBtRllMn20D?=
- =?us-ascii?Q?pttgsca1WLT447CI1kt0kQJZm82Z5kfh+fZ9qB4kBEBQwphzEr53C53p5xCx?=
- =?us-ascii?Q?udjT2aT7rqbLsKe0T4QqEt7otDzbK+gvw4QUAddPzQz1cUI9r0u3xTjpiJnd?=
- =?us-ascii?Q?s5Nns7snBNeja29ECg0KlJsqRAoh2a6DgYABxUv2gf1Wzp1BJAX+4Ye7ee1M?=
- =?us-ascii?Q?TFx4fKoKKXGHPpLxRPrqHw2Wp+nKFJm5Z6YfdFZK3hN5N5CrB3WVpWGyaTnK?=
- =?us-ascii?Q?5KufqrU57ErfVVmLcw5U8/VYvHYBeaqsAuNldyY5RTgFqxGTjKxr+tusK7Qp?=
- =?us-ascii?Q?PlJVaKzL/VBUVfe4cj1IiyoeUPB9SsTzD7on1/w/A7e8jstH2LyNTzcX37IN?=
- =?us-ascii?Q?SdNvKVCAAgOCRi47FCw1r1l6Gk35tFF/hbfP3UmccP0Em5bd/9fqxXs4I4R7?=
- =?us-ascii?Q?K5ITgzuGL/jdNBdnJRy1lwo5oPva4z7nSFCpapKQhKRuuJKf4MM+GlH6pJ4F?=
- =?us-ascii?Q?eQRbsdGsNeiODAUxji3LMmWer6/LjsiUxBmnImumv8F1dY+maU1Kjl2DfGRu?=
- =?us-ascii?Q?u45EK2B1vxKCicjpoP86lE6EHOLe?=
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?c/q5FMsg1V43GOH+SqYofUWKinkPXpoK46LKfwMDqbIYcZhmKr1J7l4stUGA?=
+ =?us-ascii?Q?TSSuFFHlXgRPOzTFubgSNYxe6nFfE0//v9TYylQA0k+y9K4LjwdHcdC5hUxq?=
+ =?us-ascii?Q?8wDJDStEfwKGSjSrzbiKknfrUNv7UXWphV3FiGNHhO+9Q5IUB8w04c4peo53?=
+ =?us-ascii?Q?FzdidiFpcNRpeadsKBZ2A2/wfxIRF9ct7fhcE8Y9n1bg4rAB1AZ6kVv/y6im?=
+ =?us-ascii?Q?lL4xmm8Ke0dVhJmtzVGSpOuu5EbeeMf/exTN8uNt5jJ6B1QU3ygSffemEy4L?=
+ =?us-ascii?Q?9gUz38g7orSqoYeq3CtBiLTrPeTiDtIQ+4+ALPr3DaU1jskSs0ilvHwTyjGe?=
+ =?us-ascii?Q?EDCNXRzNEN6tO09L2sltl1SNzNGTTc74O+YWolcuQTdGa2QTleRGwe8Kga8I?=
+ =?us-ascii?Q?NSAx79/LgtHK9lRTC7lcFfF069tVlMK/2FuR3CWPZofE2y5ERzd34llITNBX?=
+ =?us-ascii?Q?E2t91RqWe5wUB91U2RN9Ih8Ny96EmFxSW9OmS4VSEW/0u0e6wS8PEyKZrUyN?=
+ =?us-ascii?Q?BQo5Weukncc7KdnYUBFIOXy6GRtxWEWdqbagRfzn+cbf6d9ndMHGfgd1wzID?=
+ =?us-ascii?Q?I7qTYE7E/AK32B8I+GhfRBqRvu0gyY5g9r8NeyzIzgxcLiyrdJP0+D5u3ko1?=
+ =?us-ascii?Q?gLnpElQ/oJ9n017m4ilRLxtj9YNj3c5xhPWTG6RL96sWfCWIQ4WImlMmEnIX?=
+ =?us-ascii?Q?S13A9bM/LhvKL3p4iWtyM9pZIIQm1KmIyf4OUvG6TghRfsz0gY9kWokUmA0j?=
+ =?us-ascii?Q?0UwwE0m/XJmwqRDrrtYHOGygHlDQV4BDqVF4m/rwx8AO10rqH57YK6iqNzrJ?=
+ =?us-ascii?Q?F2FIo/J4/CJ8/GbwUwPNSNIvn+iSvmUi9DCyxKl/MGIiokpw7BpYEyMLj44G?=
+ =?us-ascii?Q?rqe71sDW99toOGJIl3h3axTC5IjinIJYKHG3XtKBzbofXQCZF4WzkIOfzEeJ?=
+ =?us-ascii?Q?lBNOT8VyGyjOxwW6iy+4jzyy7FU5jdXnkMaUh81KKyQR0G8y0FXuygSCU2VC?=
+ =?us-ascii?Q?3iv1ZBP7Ws6/P1of77EPBJrP+8V43QnB7tcuZ2cM/unaR77U0fyI/Ju1Awt0?=
+ =?us-ascii?Q?vMzdWsTK9Mi4hTrdANRSStZ20fZQawJ4FRngJ7iMX318OeJ2fJ1ZpxVx7aMF?=
+ =?us-ascii?Q?9ulbmV03lHeW0XXbLIO3s+rIytUowKUh7uVg1RTv+HpmYnwMfdl4ZZBXZO1y?=
+ =?us-ascii?Q?Q8zpP9YHKaXHyPWv297PvJzrG1tHxM2PrmS/zH9BM8RaqX8boJNHVCyFF60J?=
+ =?us-ascii?Q?E6xa9aNdSMoHqrjSOCb0maNumBc+QCkK2kX+f7PZR9L3Me51cn11dhKPT9cr?=
+ =?us-ascii?Q?iZ9bGNfjks9/Akpd5lTniRWogdNC3vdyJodkhgo4ZBxRmLZTSdPK1eTn9M4U?=
+ =?us-ascii?Q?Ds1b2ufiiUf8q1s6yslkGRLMi2dA?=
 X-OriginatorOrg: puiterwijk.org
-X-MS-Exchange-CrossTenant-Network-Message-Id: c3d26061-3e08-496d-11c0-08d8d9cc82fe
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbca39a8-af2b-46c2-8870-08d8d9cc8395
 X-MS-Exchange-CrossTenant-AuthSource: AM0P191MB0721.EURP191.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2021 20:32:46.9230
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2021 20:32:47.8111
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 963619a5-d7a7-4543-a254-29462dc51fb3
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yfdEkUA6Fppt/nAhU22mlnKHj1u2Ea7EEGRTXfUSDNOq5Nflr5yXRfyRxGdSDUuH2gpw/tz13j1qUIQ+p/IU8w==
+X-MS-Exchange-CrossTenant-UserPrincipalName: mFF1WwW5YLnhpZ34tiFe8pXqs88LyU+OFkOH2PYurH9hx90kyIweTaI6P4oh+ExVV63JIEF4N2LSC1axMD9ejA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4P191MB0083
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The system's signature chain of trust is rooted in hardware and pivots to
-the keys baked into the kernel. IMA maintains this signature chain of trust
-by requiring any key being added to the IMA trusted keyring to be signed by
-a key on the builtin (or secondary) keyrings. This prevents a local key,
-needed for signing policies or other files, from being loaded on the IMA
-keyring, without requiring a custom built kernel (or injecting a key and
-resigning the kernel image).
+Allows users to enroll their own public key stored in a specific TPM2
+NV Index, requiring the absence of the Platform Create and Platform
+Write attributes on the NV Index, to be loaded on the IMA keyring.
 
-Allow users to load their own public key stored in a specific TPM2 NV
-Index, requiring the absence of the Platform Create and Platform Write
-attributes on the NV Index, to be loaded on the IMA keyring.
+Provides a method for users to load keys without the need to recompile
+the kernel or change the kernel binary, which would require a resign of
+the kernel image.
 
-To test this with the TPM2-software tools with a DER-encoded imacert.der:
-  tpm2_nvdefine -C o -s 945 0x184b520
-  tpm2_nvwrite -C o -i imacert.der 0x184b520
+Signed-off-by: Patrick Uiterwijk <patrick@puiterwijk.org>
+---
+ security/integrity/ima/Kconfig    | 22 +++++++++++++
+ security/integrity/ima/ima_init.c | 53 +++++++++++++++++++++++++++++++
+ 2 files changed, 75 insertions(+)
 
-Or with the IBM TSS tools:
-  tssnvdefinespace -ha 0x184b520 -hi o -sz 945 +at ow +at or
-  tssnvwrite -hia o -ha 0x184b520 -if imacert.der
-
-Then after a reboot, the ima keyring should contain the certificate.
-
-Note that if this feature is enabled, users should make sure an NV Index
-is created with accurate attributes to prevent any other users from
-writing or deleting the NV Index. Without this precaution, any user who
-has access to the TPM would be able to write a key to the NV Index and have
-that key loaded on the IMA trusted keyring.
-
-A distro who wants to enable this feature, for example, should ensure that
-the installer defines the NV Index in all cases, and only fills it if a key
-was provided by the user.
-
-It is strongly adviced that any NV Index created for this purpose has at
-least the policy_delete and policywrite attributes set, together with a
-non-empty policy. Those flags make sure that the policy (which would be up
-to them to define) is required to be satisfied to delete or write the index.
-
-Patrick Uiterwijk (3):
-  tpm: Add support for reading a TPM NV Index
-  integrity: Allow specifying flags in integrity_load_cert
-  integrity: Load keys from TPM NV onto IMA keyring
-
- drivers/char/tpm/tpm-interface.c              |  30 ++++
- drivers/char/tpm/tpm.h                        |   5 +
- drivers/char/tpm/tpm2-cmd.c                   | 163 ++++++++++++++++++
- include/linux/tpm.h                           |  65 +++++++
- security/integrity/digsig.c                   |  11 +-
- security/integrity/ima/Kconfig                |  22 +++
- security/integrity/ima/ima_init.c             |  53 ++++++
- security/integrity/integrity.h                |   6 +-
- .../platform_certs/platform_keyring.c         |   2 +-
- 9 files changed, 349 insertions(+), 8 deletions(-)
-
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 12e9250c1bec..28424b930c81 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -291,6 +291,28 @@ config IMA_BLACKLIST_KEYRING
+ 	   the search is successful the requested operation is rejected and
+ 	   an error is returned to the caller.
+ 
++config IMA_LOAD_CERT_NVINDEX
++	bool "Load certificate from TPM nvindex into '.ima' trusted keyring"
++	depends on IMA_TRUSTED_KEYRING && TCG_TPM
++	default n
++	help
++	   File signature verification is based on the public keys
++	   loaded on the .ima trusted keyring. These public keys are
++	   X509 certificates signed by a trusted key on the
++	   .system keyring.  This option enables X509 certificate
++	   loading by the kernel onto the '.ima' trusted keyring
++	   from a TPM nvindex, bypassing the builtin keyring check.
++
++config IMA_LOAD_CERT_NVINDEX_INDEX
++	hex "The TPM NV Index to load into the '.ima' trusted keyring"
++	depends on IMA_LOAD_CERT_NVINDEX
++	default 0x184b520
++	help
++	   Defines the index of the NV Index that gets loaded into the
++	   '.ima' keyring.
++	   The default is the "0x18" prefix for a non-TCG specified NV Index,
++	   suffixed with ASCII for "KR" (keyring) and then 0
++
+ config IMA_LOAD_X509
+ 	bool "Load X509 certificate onto the '.ima' trusted keyring"
+ 	depends on IMA_TRUSTED_KEYRING
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 6e8742916d1d..ea0949e8df12 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -112,6 +112,55 @@ void __init ima_load_x509(void)
+ }
+ #endif
+ 
++#ifndef CONFIG_IMA_LOAD_CERT_NVINDEX
++int __init ima_load_key_nvindex(void)
++{
++	return 0;
++}
++#else
++int __init ima_load_key_nvindex(void)
++{
++	void *cert_buffer;
++	int rc;
++	key_perm_t perm;
++	u32 nvindex_attributes = 0;
++
++	rc = tpm_nv_read(tpm_default_chip(),
++				CONFIG_IMA_LOAD_CERT_NVINDEX_INDEX,
++				&nvindex_attributes, &cert_buffer);
++	if (rc < 0) {
++		if (rc == -ENODEV)  /* No TPM2 */
++			rc = 0;
++		if (rc == -ENOENT)  /* No certificate in NV Index */
++			rc = 0;
++		goto out;
++	}
++
++	pr_info("Loading IMA key from TPM NV Index 0x%x", CONFIG_IMA_LOAD_CERT_NVINDEX_INDEX);
++
++	if (nvindex_attributes & TPM2_ATTR_NV_PLATFORMCREATE) {
++		pr_err("NV Index has the Platform Create attribute");
++		rc = -EACCES;
++		goto out_free;
++	}
++	if (nvindex_attributes & TPM2_ATTR_NV_PPWRITE) {
++		pr_err("NV Index has the Platform Write attribute");
++		rc = -EACCES;
++		goto out_free;
++	}
++
++	perm = (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW | KEY_USR_READ;
++	rc = integrity_load_cert(INTEGRITY_KEYRING_IMA, "TPM NV Index",
++				 cert_buffer, rc, perm,
++				 KEY_ALLOC_BYPASS_RESTRICTION);
++
++out_free:
++	kvfree(cert_buffer);
++out:
++	return rc;
++}
++#endif
++
+ int __init ima_init(void)
+ {
+ 	int rc;
+@@ -124,6 +173,10 @@ int __init ima_init(void)
+ 	if (rc)
+ 		return rc;
+ 
++	rc = ima_load_key_nvindex();
++	if (rc)
++		pr_info("Failed to load IMA key from TPM NV Index (%d)", rc);
++
+ 	rc = ima_init_crypto();
+ 	if (rc)
+ 		return rc;
 -- 
 2.29.2
 
