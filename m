@@ -2,61 +2,61 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BD6C433E6
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Mar 2021 13:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E78C4332D
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Mar 2021 13:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BED9664E41
-	for <linux-integrity@archiver.kernel.org>; Mon,  1 Mar 2021 13:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 635E664E2E
+	for <linux-integrity@archiver.kernel.org>; Mon,  1 Mar 2021 13:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235463AbhCANMj (ORCPT
+        id S234519AbhCANNi (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 1 Mar 2021 08:12:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50992 "EHLO
+        Mon, 1 Mar 2021 08:13:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235458AbhCANMd (ORCPT
+        with ESMTP id S235503AbhCANNQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 1 Mar 2021 08:12:33 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3B29C061756
-        for <linux-integrity@vger.kernel.org>; Mon,  1 Mar 2021 05:11:52 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id p5so9847477plo.4
-        for <linux-integrity@vger.kernel.org>; Mon, 01 Mar 2021 05:11:52 -0800 (PST)
+        Mon, 1 Mar 2021 08:13:16 -0500
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B87BAC0617AA
+        for <linux-integrity@vger.kernel.org>; Mon,  1 Mar 2021 05:12:14 -0800 (PST)
+Received: by mail-pj1-x1036.google.com with SMTP id l18so11790402pji.3
+        for <linux-integrity@vger.kernel.org>; Mon, 01 Mar 2021 05:12:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=b3ExXcrTKtaMKYTLWvaQqay72x46/EzChsHCCF6qzCU=;
-        b=b7sA/vRm3WrAy3bA3s72thm96GXP3C0iIoAmX4jN9pYjQl0r5bYZemIFYL1D7mdLPO
-         k05WugUa2MpwiovRwKnXYw4IXWJmkcQtuwHQ/n9CHO9ejxb6r6s7bbP7QUQESrItpO6Y
-         oyASWNdvVq3nIil5HSbzF+yQNjV7M2E6+Zv6V9Do8DL85lR7GZjBGXJHSj4kMR7XP30W
-         6ZqC3zCcKih4QsFHFmeZhdxJPKCHXgVP2uYCmSsqmlCaof0V+65bGCJI0/jFIuztXHeX
-         1z5ZoImHLP572W4obDz3LssDrMtgDektzGkLh7qZzjB5sfi0F8K8IF2pz3T7yqOWX9YJ
-         YkQw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=y2bkNsSP8l8d5yevA68i6xvWSrQppTgTZi9xtt1Cmeo=;
+        b=cOVVZfVuRQfhOfypu+mYStgZ+yrGXGIgIr4XVqhb99BmnfK7fCA9sf7OGVUA9oDfkj
+         UZ4ho6V0gFuE7U+gH7a6y0g1TzG6wzFbooFloKqWAyLTrTU53FedLomxicL3DguuF854
+         POvFnByQKQac8EwADnDTPA5Cetlq/fbwC2f6Jy96y/V+yl45i+Behbk9FQfytsDv6HUa
+         CUKRMxKpYbPED6zXh405yzwMpB9KP311j5veqVWKHw2fI5CnDy+Y3brxIsVQrs6zlgmW
+         zGPpbf8gQaSUwt5994XizLu0m7oucYspyKRMA7CPYG65WkriTNE1JkfZnU/Wp+sikQ+R
+         NrXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=b3ExXcrTKtaMKYTLWvaQqay72x46/EzChsHCCF6qzCU=;
-        b=tqekeZ6QFhoLnkvxS7SYUpa1wCfZ/Pu1F8idoaUhTptaMyo488CeKS9xNWOuYnMjrp
-         YBqCEHh3MN71S/y1H4PFtQYfXMHMnW/gLjjp/DtgYBuiGmMgOS7bsxirkOpWDQpkzQ8O
-         NgmRkuAJdpn1GgVYPKefkwgmABoBE5xQZ2Y+Ct4dLz8TAxfiNNjudWAv2l6Y9A1eHjdm
-         nYzoyYwSpQPjyISwdfvKx7k7bie/wProMHlAOF+1ARbtZM+SfgArOpdoIspy3f5UMzFk
-         SMnRcT+AUKJYFLYtu7j7HJtsC478AJ/rbqYsaafEMVDNlI/p0ZdT7EoFMHDd76utXdtq
-         7+Dg==
-X-Gm-Message-State: AOAM533XyEiB4vE2ou3Giu5i50rTH+8/jmaNJA56TD3w0iCAHmOWPZz2
-        06JDPSXsdszBWjRTkarO6jadzw==
-X-Google-Smtp-Source: ABdhPJzEwXoFW5aHXjckvLnyESk7reRavQszrdC8mYNQ9CxHGgFAhrl6FUGikFWhCrRy8h0bxbZLBg==
-X-Received: by 2002:a17:90a:1a59:: with SMTP id 25mr16193091pjl.54.1614604312435;
-        Mon, 01 Mar 2021 05:11:52 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=y2bkNsSP8l8d5yevA68i6xvWSrQppTgTZi9xtt1Cmeo=;
+        b=g34eY7s1ZW8dvqFdzJ8QydanoXTLdTjYqomgFhPAXZPnAjfG6OJt46QdmvjWVjHG1m
+         yglI3AZU1qalOkIliyL6aqfeHr10ka8eAImCF615s5LWjjDFEr+pd2RMJOKBUijvq1D7
+         8x1+F0OatHdBEo4ZJSGjRuEDpw92kOFAJsk0ewyNaqoInczuYL9fd/VDsqMmEL6fGyou
+         o4s8RVR+gi6qwo4cxlJwCBNtuyW34VLzI4SQ5ec0QaogdeuUBc7/6DTAGe9eGZ51Xrkc
+         yMW5gJfEJSRPGVm52EZQ/rxBQnmqbHkABfBvNc4cSSPXKhBgyUUS0Owpx2inNQbNYBmm
+         tP0g==
+X-Gm-Message-State: AOAM533SxNKS2alRzYXjqZAUIswyCvayiB/xaVqiD2mhESAih5iM2F8x
+        JpFmSZ9eiLL+ZZl3U+NOxz0/YQ==
+X-Google-Smtp-Source: ABdhPJwjWWWiLZCEQtjJ3SsIBRyK1v6PxRZeCLxjcdgO7YsR6JS12sqvLMprqhoJbsjNuTiAPIFQpA==
+X-Received: by 2002:a17:90a:ce0c:: with SMTP id f12mr6326195pju.11.1614604334274;
+        Mon, 01 Mar 2021 05:12:14 -0800 (PST)
 Received: from localhost.localdomain ([110.226.35.200])
-        by smtp.gmail.com with ESMTPSA id b3sm13964523pjg.41.2021.03.01.05.11.43
+        by smtp.gmail.com with ESMTPSA id b3sm13964523pjg.41.2021.03.01.05.12.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Mar 2021 05:11:51 -0800 (PST)
+        Mon, 01 Mar 2021 05:12:10 -0800 (PST)
 From:   Sumit Garg <sumit.garg@linaro.org>
 To:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
         jejb@linux.ibm.com
@@ -70,10 +70,12 @@ Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         op-tee@lists.trustedfirmware.org,
         Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v9 0/4] Introduce TEE based Trusted Keys support
-Date:   Mon,  1 Mar 2021 18:41:23 +0530
-Message-Id: <20210301131127.793707-1-sumit.garg@linaro.org>
+Subject: [PATCH v9 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
+Date:   Mon,  1 Mar 2021 18:41:25 +0530
+Message-Id: <20210301131127.793707-3-sumit.garg@linaro.org>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210301131127.793707-1-sumit.garg@linaro.org>
+References: <20210301131127.793707-1-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -81,88 +83,397 @@ List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 Add support for TEE based trusted keys where TEE provides the functionality
-to seal and unseal trusted keys using hardware unique key. Also, this is
-an alternative in case platform doesn't possess a TPM device.
+to seal and unseal trusted keys using hardware unique key.
 
-This patch-set has been tested with OP-TEE based early TA which is already
-merged in upstream [1].
+Refer to Documentation/staging/tee.rst for detailed information about TEE.
 
-[1] https://github.com/OP-TEE/optee_os/commit/f86ab8e7e0de869dfa25ca05a37ee070d7e5b86b
-
-Changes in v9:
-1. Rebased to latest tpmdd/master.
-2. Defined pr_fmt() and removed redundant tags.
-3. Patch #2: incorporated misc. comments.
-4. Patch #3: incorporated doc changes from Elaine and misc. comments
-   from Randy.
-5. Patch #4: reverted to separate maintainer entry as per request from
-   Jarkko.
-6. Added Jarkko's Tested-by: tag on patch #2.
-
-Changes in v8:
-1. Added static calls support instead of indirect calls.
-2. Documented trusted keys source module parameter.
-3. Refined patch #1 commit message discription.
-4. Addressed misc. comments on patch #2.
-5. Added myself as Trusted Keys co-maintainer instead.
-6. Rebased to latest tpmdd master.
-
-Changes in v7:
-1. Added a trusted.source module parameter in order to enforce user's
-   choice in case a particular platform posses both TPM and TEE.
-2. Refine commit description for patch #1.
-
-Changes in v6:
-1. Revert back to dynamic detection of trust source.
-2. Drop author mention from trusted_core.c and trusted_tpm1.c files.
-3. Rebased to latest tpmdd/master.
-
-Changes in v5:
-1. Drop dynamic detection of trust source and use compile time flags
-   instead.
-2. Rename trusted_common.c -> trusted_core.c.
-3. Rename callback: cleanup() -> exit().
-4. Drop "tk" acronym.
-5. Other misc. comments.
-6. Added review tags for patch #3 and #4.
-
-Changes in v4:
-1. Pushed independent TEE features separately:
-  - Part of recent TEE PR: https://lkml.org/lkml/2020/5/4/1062
-2. Updated trusted-encrypted doc with TEE as a new trust source.
-3. Rebased onto latest tpmdd/master.
-
-Changes in v3:
-1. Update patch #2 to support registration of multiple kernel pages.
-2. Incoporate dependency patch #4 in this patch-set:
-   https://patchwork.kernel.org/patch/11091435/
-
-Changes in v2:
-1. Add reviewed-by tags for patch #1 and #2.
-2. Incorporate comments from Jens for patch #3.
-3. Switch to use generic trusted keys framework.
-
-Sumit Garg (4):
-  KEYS: trusted: Add generic trusted keys framework
-  KEYS: trusted: Introduce TEE based Trusted Keys
-  doc: trusted-encrypted: updates with TEE as a new trust source
-  MAINTAINERS: Add entry for TEE based Trusted Keys
-
- .../admin-guide/kernel-parameters.txt         |  12 +
- .../security/keys/trusted-encrypted.rst       | 171 ++++++--
- MAINTAINERS                                   |   8 +
- include/keys/trusted-type.h                   |  53 +++
- include/keys/trusted_tee.h                    |  16 +
- include/keys/trusted_tpm.h                    |  29 +-
- security/keys/trusted-keys/Makefile           |   2 +
- security/keys/trusted-keys/trusted_core.c     | 358 +++++++++++++++++
- security/keys/trusted-keys/trusted_tee.c      | 317 +++++++++++++++
- security/keys/trusted-keys/trusted_tpm1.c     | 366 ++++--------------
- 10 files changed, 981 insertions(+), 351 deletions(-)
+Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ include/keys/trusted_tee.h                |  16 ++
+ security/keys/trusted-keys/Makefile       |   1 +
+ security/keys/trusted-keys/trusted_core.c |   4 +
+ security/keys/trusted-keys/trusted_tee.c  | 317 ++++++++++++++++++++++
+ 4 files changed, 338 insertions(+)
  create mode 100644 include/keys/trusted_tee.h
- create mode 100644 security/keys/trusted-keys/trusted_core.c
  create mode 100644 security/keys/trusted-keys/trusted_tee.c
 
+diff --git a/include/keys/trusted_tee.h b/include/keys/trusted_tee.h
+new file mode 100644
+index 000000000000..151be25a979e
+--- /dev/null
++++ b/include/keys/trusted_tee.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2019-2021 Linaro Ltd.
++ *
++ * Author:
++ * Sumit Garg <sumit.garg@linaro.org>
++ */
++
++#ifndef __TEE_TRUSTED_KEY_H
++#define __TEE_TRUSTED_KEY_H
++
++#include <keys/trusted-type.h>
++
++extern struct trusted_key_ops trusted_key_tee_ops;
++
++#endif
+diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+index 49e3bcfe704f..347021d5d1f9 100644
+--- a/security/keys/trusted-keys/Makefile
++++ b/security/keys/trusted-keys/Makefile
+@@ -7,3 +7,4 @@ obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+ trusted-y += trusted_core.o
+ trusted-y += trusted_tpm1.o
+ trusted-y += trusted_tpm2.o
++trusted-$(CONFIG_TEE) += trusted_tee.o
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 0db86b44605d..ec3a066a4b42 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -8,6 +8,7 @@
+ 
+ #include <keys/user-type.h>
+ #include <keys/trusted-type.h>
++#include <keys/trusted_tee.h>
+ #include <keys/trusted_tpm.h>
+ #include <linux/capability.h>
+ #include <linux/err.h>
+@@ -29,6 +30,9 @@ static const struct trusted_key_source trusted_key_sources[] = {
+ #if defined(CONFIG_TCG_TPM)
+ 	{ "tpm", &trusted_key_tpm_ops },
+ #endif
++#if defined(CONFIG_TEE)
++	{ "tee", &trusted_key_tee_ops },
++#endif
+ };
+ 
+ DEFINE_STATIC_CALL_NULL(trusted_key_init, *trusted_key_sources[0].ops->init);
+diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+new file mode 100644
+index 000000000000..62983d98a252
+--- /dev/null
++++ b/security/keys/trusted-keys/trusted_tee.c
+@@ -0,0 +1,317 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019-2021 Linaro Ltd.
++ *
++ * Author:
++ * Sumit Garg <sumit.garg@linaro.org>
++ */
++
++#include <linux/err.h>
++#include <linux/key-type.h>
++#include <linux/slab.h>
++#include <linux/string.h>
++#include <linux/tee_drv.h>
++#include <linux/uuid.h>
++
++#include <keys/trusted_tee.h>
++
++#define DRIVER_NAME "trusted-key-tee"
++
++/*
++ * Get random data for symmetric key
++ *
++ * [out]     memref[0]        Random data
++ */
++#define TA_CMD_GET_RANDOM	0x0
++
++/*
++ * Seal trusted key using hardware unique key
++ *
++ * [in]      memref[0]        Plain key
++ * [out]     memref[1]        Sealed key datablob
++ */
++#define TA_CMD_SEAL		0x1
++
++/*
++ * Unseal trusted key using hardware unique key
++ *
++ * [in]      memref[0]        Sealed key datablob
++ * [out]     memref[1]        Plain key
++ */
++#define TA_CMD_UNSEAL		0x2
++
++/**
++ * struct trusted_key_tee_private - TEE Trusted key private data
++ * @dev:		TEE based Trusted key device.
++ * @ctx:		TEE context handler.
++ * @session_id:		Trusted key TA session identifier.
++ * @shm_pool:		Memory pool shared with TEE device.
++ */
++struct trusted_key_tee_private {
++	struct device *dev;
++	struct tee_context *ctx;
++	u32 session_id;
++	struct tee_shm *shm_pool;
++};
++
++static struct trusted_key_tee_private pvt_data;
++
++/*
++ * Have the TEE seal(encrypt) the symmetric key
++ */
++static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
++{
++	int ret;
++	struct tee_ioctl_invoke_arg inv_arg;
++	struct tee_param param[4];
++	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
++
++	memset(&inv_arg, 0, sizeof(inv_arg));
++	memset(&param, 0, sizeof(param));
++
++	reg_shm_in = tee_shm_register(pvt_data.ctx, (unsigned long)p->key,
++				      p->key_len, TEE_SHM_DMA_BUF |
++				      TEE_SHM_KERNEL_MAPPED);
++	if (IS_ERR(reg_shm_in)) {
++		dev_err(pvt_data.dev, "key shm register failed\n");
++		return PTR_ERR(reg_shm_in);
++	}
++
++	reg_shm_out = tee_shm_register(pvt_data.ctx, (unsigned long)p->blob,
++				       sizeof(p->blob), TEE_SHM_DMA_BUF |
++				       TEE_SHM_KERNEL_MAPPED);
++	if (IS_ERR(reg_shm_out)) {
++		dev_err(pvt_data.dev, "blob shm register failed\n");
++		ret = PTR_ERR(reg_shm_out);
++		goto out;
++	}
++
++	inv_arg.func = TA_CMD_SEAL;
++	inv_arg.session = pvt_data.session_id;
++	inv_arg.num_params = 4;
++
++	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
++	param[0].u.memref.shm = reg_shm_in;
++	param[0].u.memref.size = p->key_len;
++	param[0].u.memref.shm_offs = 0;
++	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
++	param[1].u.memref.shm = reg_shm_out;
++	param[1].u.memref.size = sizeof(p->blob);
++	param[1].u.memref.shm_offs = 0;
++
++	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
++	if ((ret < 0) || (inv_arg.ret != 0)) {
++		dev_err(pvt_data.dev, "TA_CMD_SEAL invoke err: %x\n",
++			inv_arg.ret);
++		ret = -EFAULT;
++	} else {
++		p->blob_len = param[1].u.memref.size;
++	}
++
++out:
++	if (reg_shm_out)
++		tee_shm_free(reg_shm_out);
++	if (reg_shm_in)
++		tee_shm_free(reg_shm_in);
++
++	return ret;
++}
++
++/*
++ * Have the TEE unseal(decrypt) the symmetric key
++ */
++static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
++{
++	int ret;
++	struct tee_ioctl_invoke_arg inv_arg;
++	struct tee_param param[4];
++	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
++
++	memset(&inv_arg, 0, sizeof(inv_arg));
++	memset(&param, 0, sizeof(param));
++
++	reg_shm_in = tee_shm_register(pvt_data.ctx, (unsigned long)p->blob,
++				      p->blob_len, TEE_SHM_DMA_BUF |
++				      TEE_SHM_KERNEL_MAPPED);
++	if (IS_ERR(reg_shm_in)) {
++		dev_err(pvt_data.dev, "blob shm register failed\n");
++		return PTR_ERR(reg_shm_in);
++	}
++
++	reg_shm_out = tee_shm_register(pvt_data.ctx, (unsigned long)p->key,
++				       sizeof(p->key), TEE_SHM_DMA_BUF |
++				       TEE_SHM_KERNEL_MAPPED);
++	if (IS_ERR(reg_shm_out)) {
++		dev_err(pvt_data.dev, "key shm register failed\n");
++		ret = PTR_ERR(reg_shm_out);
++		goto out;
++	}
++
++	inv_arg.func = TA_CMD_UNSEAL;
++	inv_arg.session = pvt_data.session_id;
++	inv_arg.num_params = 4;
++
++	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
++	param[0].u.memref.shm = reg_shm_in;
++	param[0].u.memref.size = p->blob_len;
++	param[0].u.memref.shm_offs = 0;
++	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
++	param[1].u.memref.shm = reg_shm_out;
++	param[1].u.memref.size = sizeof(p->key);
++	param[1].u.memref.shm_offs = 0;
++
++	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
++	if ((ret < 0) || (inv_arg.ret != 0)) {
++		dev_err(pvt_data.dev, "TA_CMD_UNSEAL invoke err: %x\n",
++			inv_arg.ret);
++		ret = -EFAULT;
++	} else {
++		p->key_len = param[1].u.memref.size;
++	}
++
++out:
++	if (reg_shm_out)
++		tee_shm_free(reg_shm_out);
++	if (reg_shm_in)
++		tee_shm_free(reg_shm_in);
++
++	return ret;
++}
++
++/*
++ * Have the TEE generate random symmetric key
++ */
++static int trusted_tee_get_random(unsigned char *key, size_t key_len)
++{
++	int ret;
++	struct tee_ioctl_invoke_arg inv_arg;
++	struct tee_param param[4];
++	struct tee_shm *reg_shm = NULL;
++
++	memset(&inv_arg, 0, sizeof(inv_arg));
++	memset(&param, 0, sizeof(param));
++
++	reg_shm = tee_shm_register(pvt_data.ctx, (unsigned long)key, key_len,
++				   TEE_SHM_DMA_BUF | TEE_SHM_KERNEL_MAPPED);
++	if (IS_ERR(reg_shm)) {
++		dev_err(pvt_data.dev, "key shm register failed\n");
++		return PTR_ERR(reg_shm);
++	}
++
++	inv_arg.func = TA_CMD_GET_RANDOM;
++	inv_arg.session = pvt_data.session_id;
++	inv_arg.num_params = 4;
++
++	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
++	param[0].u.memref.shm = reg_shm;
++	param[0].u.memref.size = key_len;
++	param[0].u.memref.shm_offs = 0;
++
++	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
++	if ((ret < 0) || (inv_arg.ret != 0)) {
++		dev_err(pvt_data.dev, "TA_CMD_GET_RANDOM invoke err: %x\n",
++			inv_arg.ret);
++		ret = -EFAULT;
++	} else {
++		ret = param[0].u.memref.size;
++	}
++
++	tee_shm_free(reg_shm);
++
++	return ret;
++}
++
++static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
++{
++	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
++		return 1;
++	else
++		return 0;
++}
++
++static int trusted_key_probe(struct device *dev)
++{
++	struct tee_client_device *rng_device = to_tee_client_device(dev);
++	int ret;
++	struct tee_ioctl_open_session_arg sess_arg;
++
++	memset(&sess_arg, 0, sizeof(sess_arg));
++
++	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
++					       NULL);
++	if (IS_ERR(pvt_data.ctx))
++		return -ENODEV;
++
++	memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
++	sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
++	sess_arg.num_params = 0;
++
++	ret = tee_client_open_session(pvt_data.ctx, &sess_arg, NULL);
++	if ((ret < 0) || (sess_arg.ret != 0)) {
++		dev_err(dev, "tee_client_open_session failed, err: %x\n",
++			sess_arg.ret);
++		ret = -EINVAL;
++		goto out_ctx;
++	}
++	pvt_data.session_id = sess_arg.session;
++
++	ret = register_key_type(&key_type_trusted);
++	if (ret < 0)
++		goto out_sess;
++
++	pvt_data.dev = dev;
++
++	return 0;
++
++out_sess:
++	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
++out_ctx:
++	tee_client_close_context(pvt_data.ctx);
++
++	return ret;
++}
++
++static int trusted_key_remove(struct device *dev)
++{
++	unregister_key_type(&key_type_trusted);
++	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
++	tee_client_close_context(pvt_data.ctx);
++
++	return 0;
++}
++
++static const struct tee_client_device_id trusted_key_id_table[] = {
++	{UUID_INIT(0xf04a0fe7, 0x1f5d, 0x4b9b,
++		   0xab, 0xf7, 0x61, 0x9b, 0x85, 0xb4, 0xce, 0x8c)},
++	{}
++};
++MODULE_DEVICE_TABLE(tee, trusted_key_id_table);
++
++static struct tee_client_driver trusted_key_driver = {
++	.id_table	= trusted_key_id_table,
++	.driver		= {
++		.name		= DRIVER_NAME,
++		.bus		= &tee_bus_type,
++		.probe		= trusted_key_probe,
++		.remove		= trusted_key_remove,
++	},
++};
++
++static int trusted_tee_init(void)
++{
++	return driver_register(&trusted_key_driver.driver);
++}
++
++static void trusted_tee_exit(void)
++{
++	driver_unregister(&trusted_key_driver.driver);
++}
++
++struct trusted_key_ops trusted_key_tee_ops = {
++	.migratable = 0, /* non-migratable */
++	.init = trusted_tee_init,
++	.seal = trusted_tee_seal,
++	.unseal = trusted_tee_unseal,
++	.get_random = trusted_tee_get_random,
++	.exit = trusted_tee_exit,
++};
 -- 
 2.25.1
 
