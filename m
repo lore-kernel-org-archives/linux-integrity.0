@@ -2,154 +2,168 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B76C433DB
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Mar 2021 01:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF3FC4332D
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Mar 2021 01:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F05B64E90
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Mar 2021 01:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC5664E60
+	for <linux-integrity@archiver.kernel.org>; Wed,  3 Mar 2021 01:42:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233751AbhCCB3n (ORCPT
+        id S232869AbhCCBac (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Mar 2021 20:29:43 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39664 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1351091AbhCBNbd (ORCPT
+        Tue, 2 Mar 2021 20:30:32 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:56192 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1578708AbhCBP0p (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Mar 2021 08:31:33 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 122DLAnh019792;
-        Tue, 2 Mar 2021 08:30:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=o5Z9y33maAEhv+LN3/ehy6YtXs7A81xGJs4Xc3UM8Us=;
- b=VllA/SWXS8Sfpw7ry0WweQ6x2ljzTXD9dvJJsPlz0KSxXOSfY+Uho2M+xcWUKj0KbYcv
- Je18Btazt5UU0K7v4heRYP/YDmKTbEdyOOFa6TgZFSxCxG/uGMYs6AgQ5wBiTnOrnTSF
- A8vxDGAYnfPPusHCvTh5YBj0VGg0fXp/4ZumJ9ZfA/3R26tilmfxt0sJFGiOgE3Ck5NG
- D5G/UQGJjr0ozrBlHNiJ6h2k14U7Hf1Rjg9EcO9Eqquorm9m3v9KJrXJqEp3d6ljEzHP
- ofuw5Rpi5Royrs/OuxMsuB1fig89tQwCKN5N8tE9jmEb4PYDHIQSVPw6oF7kY1YdUqiz 7Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 371p5yg6v5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Mar 2021 08:30:07 -0500
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 122DMnWF023013;
-        Tue, 2 Mar 2021 08:30:06 -0500
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 371p5yg6sy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Mar 2021 08:30:06 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 122DMuc2031303;
-        Tue, 2 Mar 2021 13:30:04 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 370c59sx1t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 02 Mar 2021 13:30:03 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 122DU1wl50856288
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 2 Mar 2021 13:30:01 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AFC94AE058;
-        Tue,  2 Mar 2021 13:30:01 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12BDBAE051;
-        Tue,  2 Mar 2021 13:30:00 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.103.165])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  2 Mar 2021 13:29:59 +0000 (GMT)
-Message-ID: <1a679c59345b02f10e425c8c5c55efd901dc714d.camel@linux.ibm.com>
-Subject: Re: [PATCH 06/20] ima: Manual replacement of the deprecated
- strlcpy() with return values
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Romain Perier <romain.perier@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        kernel-hardening@lists.openwall.com,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 02 Mar 2021 08:29:58 -0500
-In-Reply-To: <20210222151231.22572-7-romain.perier@gmail.com>
-References: <20210222151231.22572-1-romain.perier@gmail.com>
-         <20210222151231.22572-7-romain.perier@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
+        Tue, 2 Mar 2021 10:26:45 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9687820B83EA;
+        Tue,  2 Mar 2021 07:26:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9687820B83EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1614698761;
+        bh=lwnEHkkImr8dT+pu5zA94ImzVDh1eaKp+2wplr8dTxw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=pLLCBLu/Gt65UbzyLnL9BV31JdFvnxcEvpWZedW6aek9Fr7BAvJMq8pE7+I3D21HR
+         IhAQWA5ZLk63w0dE3FSSr4HbxcROs4K0Ok7obQWUOQTWh9PrLQWbwmnRiQ5oDBMNjX
+         vvxYK8ZzE4nI3spfi8YNiR8jeYbt6avdkMKdo2vQ=
+Subject: Re: [PATCH v19 00/13] Carry forward IMA measurement log on kexec on
+ ARM64
+To:     Rob Herring <robh@kernel.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will@kernel.org>, Joe Perches <joe@perches.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        James Morse <james.morse@arm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        vincenzo.frascino@arm.com, Mark Rutland <mark.rutland@arm.com>,
+        dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Allison Randal <allison@lohutok.net>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>, tao.li@vivo.com,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Prakhar Srivastava <prsriva@linux.microsoft.com>,
+        balajib@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20210221174930.27324-1-nramas@linux.microsoft.com>
+ <CAL_JsqKiOVo2rDhstAA-jUkMJiajHM=uwfj3JQd64h_eEfSjTw@mail.gmail.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <7828ec90-a768-f96f-192f-d00dec2344af@linux.microsoft.com>
+Date:   Tue, 2 Mar 2021 07:25:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAL_JsqKiOVo2rDhstAA-jUkMJiajHM=uwfj3JQd64h_eEfSjTw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-02_06:2021-03-01,2021-03-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- clxscore=1011 lowpriorityscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 bulkscore=0 mlxscore=0 phishscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103020107
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2021-02-22 at 16:12 +0100, Romain Perier wrote:
-> The strlcpy() reads the entire source buffer first, it is dangerous if
-> the source buffer lenght is unbounded or possibility non NULL-terminated.
+On 3/2/21 7:06 AM, Rob Herring wrote:
+> On Sun, Feb 21, 2021 at 11:49 AM Lakshmi Ramasubramanian
+> <nramas@linux.microsoft.com> wrote:
+>>
+>> On kexec file load Integrity Measurement Architecture (IMA) subsystem
+>> may verify the IMA signature of the kernel and initramfs, and measure
+>> it.  The command line parameters passed to the kernel in the kexec call
+>> may also be measured by IMA.  A remote attestation service can verify
+>> a TPM quote based on the TPM event log, the IMA measurement list, and
+>> the TPM PCR data.  This can be achieved only if the IMA measurement log
+>> is carried over from the current kernel to the next kernel across
+>> the kexec call.
+>>
+>> powerpc already supports carrying forward the IMA measurement log on
+>> kexec.  This patch set adds support for carrying forward the IMA
+>> measurement log on kexec on ARM64.
+>>
+>> This patch set moves the platform independent code defined for powerpc
+>> such that it can be reused for other platforms as well.  A chosen node
+>> "linux,ima-kexec-buffer" is added to the DTB for ARM64 to hold
+>> the address and the size of the memory reserved to carry
+>> the IMA measurement log.
+>>
+>> This patch set has been tested for ARM64 platform using QEMU.
+>> I would like help from the community for testing this change on powerpc.
+>> Thanks.
+>>
+>> This patch set is based on
+>> commit f31e3386a4e9 ("ima: Free IMA measurement buffer after kexec syscall")
+>> in https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+>> "ima-kexec-fixes" branch.
 
-As other's have pointed out, "lenght" -> length.
+[...]
 
-> It can lead to linear read overflows, crashes, etc...
+>>
+>> Lakshmi Ramasubramanian (10):
+>>    kexec: Move ELF fields to struct kimage
+>>    arm64: Use ELF fields defined in 'struct kimage'
+>>    powerpc: Use ELF fields defined in 'struct kimage'
+>>    x86: Use ELF fields defined in 'struct kimage'
+>>    powerpc: Move ima buffer fields to struct kimage
+>>    powerpc: Enable passing IMA log to next kernel on kexec
+>>    powerpc: Move arch independent ima kexec functions to
+>>      drivers/of/kexec.c
+>>    kexec: Use fdt_appendprop_addrrange() to add ima buffer to FDT
+>>    powerpc: Delete unused function delete_fdt_mem_rsv()
+>>    arm64: Enable passing IMA log to next kernel on kexec
+>>
+>> Rob Herring (3):
+>>    of: Add a common kexec FDT setup function
+>>    arm64: Use common of_kexec_alloc_and_setup_fdt()
+>>    powerpc: Use common of_kexec_alloc_and_setup_fdt()
+>>
+>>   arch/arm64/Kconfig                     |   1 +
+>>   arch/arm64/include/asm/kexec.h         |   4 -
+>>   arch/arm64/kernel/machine_kexec_file.c | 194 +----------
+>>   arch/powerpc/Kconfig                   |   2 +-
+>>   arch/powerpc/include/asm/ima.h         |  30 --
+>>   arch/powerpc/include/asm/kexec.h       |  14 +-
+>>   arch/powerpc/kexec/Makefile            |   7 -
+>>   arch/powerpc/kexec/elf_64.c            |  30 +-
+>>   arch/powerpc/kexec/file_load.c         | 183 +---------
+>>   arch/powerpc/kexec/file_load_64.c      |  21 +-
+>>   arch/powerpc/kexec/ima.c               | 219 ------------
+>>   arch/x86/include/asm/kexec.h           |   5 -
+>>   arch/x86/kernel/crash.c                |  14 +-
+>>   arch/x86/kernel/kexec-bzimage64.c      |   2 +-
+>>   arch/x86/kernel/machine_kexec_64.c     |   4 +-
+>>   drivers/of/Makefile                    |   6 +
+>>   drivers/of/kexec.c                     | 458 +++++++++++++++++++++++++
+>>   include/linux/kexec.h                  |   8 +
+>>   include/linux/of.h                     |   7 +
+>>   security/integrity/ima/ima.h           |   4 -
+>>   security/integrity/ima/ima_kexec.c     |   9 +-
+>>   21 files changed, 539 insertions(+), 683 deletions(-)
+>>   delete mode 100644 arch/powerpc/include/asm/ima.h
+>>   delete mode 100644 arch/powerpc/kexec/ima.c
+>>   create mode 100644 drivers/of/kexec.c
 > 
-> As recommended in the deprecated interfaces [1], it should be replaced
-> by strscpy.
-> 
-> This commit replaces all calls to strlcpy that handle the return values
-> by the corresponding strscpy calls with new handling of the return
-> values (as it is quite different between the two functions).
-> 
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#strlcpy
-> 
-> Signed-off-by: Romain Perier <romain.perier@gmail.com>
-> ---
->  security/integrity/ima/ima_policy.c |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 9b45d064a87d..1a905b8b064f 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -790,8 +790,14 @@ static int __init ima_init_arch_policy(void)
->  	for (rules = arch_rules, i = 0; *rules != NULL; rules++) {
->  		char rule[255];
->  		int result;
-> +		ssize_t len;
->  
-> -		result = strlcpy(rule, *rules, sizeof(rule));
-> +		len = strscpy(rule, *rules, sizeof(rule));
-> +		if (len == -E2BIG) {
-> +			pr_warn("Internal copy of architecture policy rule '%s' "
-> +				"failed. Skipping.\n", *rules);
-
-"arch_rules" is an array of hard coded strings.   The generic reason
-for replacing strlcpy with strscpy doesn't seem applicable; however,
-the additonal warning is appropriate.
-
-(User-visible strings are not bound to the 80 column length.  Breaking
-up the line like this is fine, but unnecessary.)
-
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
-
-thanks,
-
-Mimi
-
-> +			continue;
-> +		}
->  
->  		INIT_LIST_HEAD(&arch_policy_entry[i].list);
->  		result = ima_parse_rule(rule, &arch_policy_entry[i]);
+> I fixed up the Fixes tags and applied for 5.13.
 > 
 
+Thanks a lot Rob.
+
+  -lakshmi
 
 
