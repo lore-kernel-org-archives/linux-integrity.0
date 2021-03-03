@@ -2,78 +2,137 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E842C433E0
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Mar 2021 23:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D78C43331
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6F464F57
-	for <linux-integrity@archiver.kernel.org>; Wed,  3 Mar 2021 23:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D566464F41
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242253AbhCCXGy (ORCPT
+        id S231169AbhCCX7k (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 3 Mar 2021 18:06:54 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:13112 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352239AbhCCDaF (ORCPT
+        Wed, 3 Mar 2021 18:59:40 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:41086 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1388039AbhCCUdj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 2 Mar 2021 22:30:05 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4DqzvL66Bdz16F4S;
-        Wed,  3 Mar 2021 11:27:10 +0800 (CST)
-Received: from ubuntu1804.huawei.com (10.67.174.174) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.498.0; Wed, 3 Mar 2021 11:28:45 +0800
-From:   Li Huafei <lihuafei1@huawei.com>
-To:     <zohar@linux.ibm.com>, <roberto.sassu@huawei.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <dmitry.kasatkin@gmail.com>, <jmorris@namei.org>,
-        <serge@hallyn.com>, <yangjihong1@huawei.com>,
-        <zhangjinhao2@huawei.com>, <lihuafei1@huawei.com>
-Subject: [PATCH] ima: Fix the error code for restoring the PCR value
-Date:   Wed, 3 Mar 2021 11:28:24 +0800
-Message-ID: <20210303032824.124112-1-lihuafei1@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 3 Mar 2021 15:33:39 -0500
+Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D33BA20B83EA;
+        Wed,  3 Mar 2021 12:32:58 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D33BA20B83EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1614803578;
+        bh=h4q9fAxS+MFSgu5p/zIGjIyIrAME+eYN6saW0Oul8qo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=P4SvIF4PZ6d0XUb5kY8v4QP4MTya8vbrC1YWy1o2EuL7iD+f11GbxBUf56XvVll/I
+         nCmJRVFm/UnWE2Lne9LbxHWDiR3rS398HHH8WGGFesMA2fNVnUFeq46/8rIBaX9jH8
+         20+0M43yX7PL4P5UQUakY/dHIMARpRVVY56eNTPk=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     pvorel@suse.cz, zohar@linux.ibm.com
+Cc:     tusharsu@linux.microsoft.com, ltp@lists.linux.it,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH] IMA: Allow only ima-buf template for key measurement
+Date:   Wed,  3 Mar 2021 12:32:54 -0800
+Message-Id: <20210303203254.12856-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.174]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-In ima_restore_measurement_list(), hdr[HDR_PCR].data is pointing to a
-buffer of type u8, which contains the dumped 32-bit pcr value.
-Currently, only the least significant byte is used to restore the pcr
-value. We should convert hdr[HDR_PCR].data to a pointer of type u32
-before fetching the value to restore the correct pcr value.
+ima-buf is the default IMA template used for all buffer measurements.
+Therefore, IMA policy rule for measuring keys need not specify
+an IMA template.  But if a template is specified for key measurement
+rule then it must be only ima-buf.
 
-Fixes: 47fdee60b47f ("ima: use ima_parse_buf() to parse measurements headers")
-Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+Update keys tests to not require a template to be specified for
+key measurement rule, but if a template is specified verify it is
+only ima-buf.
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima_template.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../security/integrity/ima/tests/ima_keys.sh     | 10 +++++++---
+ .../security/integrity/ima/tests/ima_setup.sh    | 16 ++++++++++++++++
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
-diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index e22e510ae92d..4e081e650047 100644
---- a/security/integrity/ima/ima_template.c
-+++ b/security/integrity/ima/ima_template.c
-@@ -494,8 +494,8 @@ int ima_restore_measurement_list(loff_t size, void *buf)
- 			}
- 		}
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+index c9eef4b68..8b214b413 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+@@ -15,8 +15,7 @@ TST_CLEANUP=cleanup
+ . ima_setup.sh
  
--		entry->pcr = !ima_canonical_fmt ? *(hdr[HDR_PCR].data) :
--			     le32_to_cpu(*(hdr[HDR_PCR].data));
-+		entry->pcr = !ima_canonical_fmt ? *(u32 *)(hdr[HDR_PCR].data) :
-+			     le32_to_cpu(*(u32 *)(hdr[HDR_PCR].data));
- 		ret = ima_restore_measurement_entry(entry);
- 		if (ret < 0)
- 			break;
+ FUNC_KEYCHECK='func=KEY_CHECK'
+-TEMPLATE_BUF='template=ima-buf'
+-REQUIRED_POLICY="^measure.*($FUNC_KEYCHECK.*$TEMPLATE_BUF|$TEMPLATE_BUF.*$FUNC_KEYCHECK)"
++REQUIRED_POLICY="^measure.*$FUNC_KEYCHECK"
+ 
+ setup()
+ {
+@@ -33,9 +32,10 @@ check_keys_policy()
+ 	local pattern="$1"
+ 
+ 	if ! grep -E "$pattern" $TST_TMPDIR/policy.txt; then
+-		tst_res TCONF "IMA policy must specify $pattern, $FUNC_KEYCHECK, $TEMPLATE_BUF"
++		tst_res TCONF "IMA policy must specify $pattern, $FUNC_KEYCHECK"
+ 		return 1
+ 	fi
++
+ 	return 0
+ }
+ 
+@@ -49,6 +49,8 @@ test1()
+ 
+ 	tst_res TINFO "verify key measurement for keyrings and templates specified in IMA policy"
+ 
++	check_policy_template "template=ima-buf" $FUNC_KEYCHECK || return
++
+ 	check_keys_policy "$pattern" > $tmp_file || return
+ 	keycheck_lines=$(cat $tmp_file)
+ 	keyrings=$(for i in $keycheck_lines; do echo "$i" | grep "keyrings" | \
+@@ -101,6 +103,8 @@ test2()
+ 
+ 	tst_res TINFO "verify measurement of certificate imported into a keyring"
+ 
++	check_policy_template "template=ima-buf" $FUNC_KEYCHECK || return
++
+ 	check_keys_policy "$pattern" >/dev/null || return
+ 
+ 	KEYRING_ID=$(keyctl newring $keyring_name @s) || \
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+index 59a7ffeac..01ebec2b6 100644
+--- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+@@ -107,6 +107,22 @@ check_ima_policy_cmdline()
+ 	return 1
+ }
+ 
++check_policy_template()
++{
++	local template="$1"
++	local func="$2"
++	grep -E "template=" $TST_TMPDIR/policy.txt | while read line
++	do
++		ima_template=$(echo $line | grep $template)
++		if [ -z "$ima_template" ]; then
++			tst_res TCONF "Only $template can be specified for $func"
++			return 1
++		fi
++	done
++
++	return 0
++}
++
+ require_ima_policy_cmdline()
+ {
+ 	local policy="$1"
 -- 
-2.17.1
+2.30.0
 
