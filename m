@@ -2,147 +2,115 @@ Return-Path: <SRS0=RCql=ID=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D395BC433E6
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 21:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074E5C433DB
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 22:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6D92650A0
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 21:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0E41650AA
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 22:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230161AbhCEVAz (ORCPT
+        id S229611AbhCEWKd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Mar 2021 16:00:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64146 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229651AbhCEVAV (ORCPT
+        Fri, 5 Mar 2021 17:10:33 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:43618 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229589AbhCEWKZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Mar 2021 16:00:21 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 125KXLkM182717;
-        Fri, 5 Mar 2021 16:00:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=fiZsSRFRiO57Q/ctX3IRQ7U1I0yk/Kl43WdugbbhNts=;
- b=s4JUuqhZ52rROvXmYWHv35ke54KHCQagPEaosLZyBeNRZJ+lKYSnSFbkIerKvIqny1XA
- NT+cApoYyFQmYdneIjTmgiNchk4l4tl9jJdTRzY8oJxa/c034fLTKxq8Cod93nBg4U+p
- QeGpWG2WsalzQRn6KgZyyZwHG69aStvj09gj6WPeOq0eK/EUYLc8uQ9g3KwLYeaziJiu
- GsJZ8tiHADLHj2WoRSk/FMpCO/wqgyoTzucMkjmoksifSWSziPTHqM8ah1sdfeO2vpoF
- s3owc/gNEzZF5+XwqEtu/aGPxckANunHqvJrAD7Wa1uky+RNLZW4wGEzBysTUHBFh/yG hA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 373usj0h0c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Mar 2021 16:00:12 -0500
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 125KYCOa184670;
-        Fri, 5 Mar 2021 16:00:11 -0500
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 373usj0gyg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Mar 2021 16:00:11 -0500
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 125KqhX2014298;
-        Fri, 5 Mar 2021 21:00:10 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma02dal.us.ibm.com with ESMTP id 3710srkqs1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 05 Mar 2021 21:00:10 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 125L08Y828443120
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 5 Mar 2021 21:00:08 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72345BE061;
-        Fri,  5 Mar 2021 21:00:08 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA2D5BE05D;
-        Fri,  5 Mar 2021 21:00:07 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri,  5 Mar 2021 21:00:07 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        davem@davemloft.net, herbert@gondor.apana.org.au,
-        dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org
-Cc:     linux-kernel@vger.kernel.org, patrick@puiterwijk.org,
-        linux-integrity@vger.kernel.org,
-        Saulo Alessandre <saulo.alessandre@tse.jus.br>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v11 09/10] x509: Add OID for NIST P384 and extend parser for it
-Date:   Fri,  5 Mar 2021 15:59:55 -0500
-Message-Id: <20210305205956.3594375-10-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210305205956.3594375-1-stefanb@linux.vnet.ibm.com>
-References: <20210305205956.3594375-1-stefanb@linux.vnet.ibm.com>
+        Fri, 5 Mar 2021 17:10:25 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1F51A20B83EA;
+        Fri,  5 Mar 2021 14:10:25 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1F51A20B83EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1614982225;
+        bh=tS0kZd38cOZYLhiGPqvSavC58Q8S3BMf+o9IS38H8nQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kboBfiBs6sRWbRp8dsjwiDjBIlhxry7KlLF4JwBi6NCs9Tltbf+ECDX/wS8Sf4nWL
+         irGUQ2Zcbf0P5D77u03Bv2aAeP63i9oWG+pCAx3l9ZJOLiFW15Xmy6rZPNNlnBj+8V
+         DFp+28GLAsIxPB8qqjCU75jhHKLnomrCWJHnJNSw=
+Subject: Re: [PATCH] IMA: Allow only ima-buf template for key measurement
+To:     Petr Vorel <pvorel@suse.cz>
+Cc:     zohar@linux.ibm.com, tusharsu@linux.microsoft.com,
+        ltp@lists.linux.it, linux-integrity@vger.kernel.org
+References: <20210303203254.12856-1-nramas@linux.microsoft.com>
+ <YEJZIQqa1arYKwK+@pevik>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <33ba6274-e7ef-27de-b481-5a702136c0df@linux.microsoft.com>
+Date:   Fri, 5 Mar 2021 14:10:20 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-05_14:2021-03-03,2021-03-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxscore=0 clxscore=1015 spamscore=0 impostorscore=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 priorityscore=1501 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103050103
+In-Reply-To: <YEJZIQqa1arYKwK+@pevik>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Saulo Alessandre <saulo.alessandre@tse.jus.br>
+On 3/5/21 8:15 AM, Petr Vorel wrote:
 
-Prepare the x509 parser to accept NIST P384 certificates and add the
-OID for ansip384r1, which is the identifier for NIST P384.
+Hi Petr,
 
-Summary of changes:
+A small change is needed:
 
-* crypto/asymmetric_keys/x509_cert_parser.c
-  - prepare x509 parser to load NIST P384
+In the while loop, for each line of the KEY_CHECK policy, we need to 
+check if a "template" is specified, and if it is then verify if it is 
+"ima-buf".
 
-* include/linux/oid_registry.h
-  - add OID_ansip384r1
+> You need to do:
+> while read line; do
+> 	if ! echo $line | grep -q $template; then
+> 		tst_res TCONF "only $template can be specified for $func"
+> 		return 1
+> 	fi
+> done < $TST_TMPDIR/policy.txt
+> return 0
 
-Signed-off-by: Saulo Alessandre <saulo.alessandre@tse.jus.br>
-Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+Please see the change below:
 
----
+while read line; do
+	if echo $line | grep -q 'template=' && ! echo $line | grep -q $template 
+; then
+		tst_res TCONF "only $template can be specified for $func"
+		return 1
+	fi
+done < $TST_TMPDIR/policy.txt
+return 0
 
-v10->v11:
- - renamed OID_id_secp384r1 to OID_id_ansip384r1 (spec name)
----
- crypto/asymmetric_keys/x509_cert_parser.c | 3 +++
- include/linux/oid_registry.h              | 1 +
- 2 files changed, 4 insertions(+)
+With check_policy_template() moved from ima_setup.sh to ima_keys.sh, the 
+test works fine
 
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index f5d547c6dfb5..6d003096b5bc 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -510,6 +510,9 @@ int x509_extract_key_data(void *context, size_t hdrlen,
- 		case OID_id_prime256v1:
- 			ctx->cert->pub->pkey_algo = "ecdsa-nist-p256";
- 			break;
-+		case OID_id_ansip384r1:
-+			ctx->cert->pub->pkey_algo = "ecdsa-nist-p384";
-+			break;
- 		default:
- 			return -ENOPKG;
- 		}
-diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
-index 3583908cf1ca..cc64d9419746 100644
---- a/include/linux/oid_registry.h
-+++ b/include/linux/oid_registry.h
-@@ -64,6 +64,7 @@ enum OID {
- 
- 	OID_certAuthInfoAccess,		/* 1.3.6.1.5.5.7.1.1 */
- 	OID_sha1,			/* 1.3.14.3.2.26 */
-+	OID_id_ansip384r1,		/* 1.3.132.0.34 */
- 	OID_sha256,			/* 2.16.840.1.101.3.4.2.1 */
- 	OID_sha384,			/* 2.16.840.1.101.3.4.2.2 */
- 	OID_sha512,			/* 2.16.840.1.101.3.4.2.3 */
--- 
-2.29.2
+When the policy contains the following
+    measure func=KEY_CHECK keyrings=key_import_test template=ima-buf
+    measure func=KEY_CHECK keyrings=.builtin_trusted_keys
+
+the test passes:
+
+ima_keys 1 TINFO: verify key measurement for keyrings and templates 
+specified in IMA policy
+ima_keys 1 TINFO: keyrings: 'key_import_test|\.builtin_trusted_keys'
+ima_keys 1 TINFO: templates: 'ima-buf'
+ima_keys 1 TPASS: specified keyrings were measured correctly
+
+
+But if the policy is changed to below:
+    measure func=KEY_CHECK keyrings=key_import_test template=ima-buf
+    measure func=KEY_CHECK keyrings=.builtin_trusted_keys template=ima-sig
+
+the test fails as expected.
+
+ima_keys 1 TINFO: verify key measurement for keyrings and templates 
+specified in IMA policy
+ima_keys 1 TCONF: only template=ima-buf can be specified for func=KEY_CHECK
+
+I'll post the updated patch shortly.
+
+thanks,
+  -lakshmi
+
 
