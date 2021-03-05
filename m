@@ -2,106 +2,69 @@ Return-Path: <SRS0=RCql=ID=vger.kernel.org=linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9A7C433DB
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 17:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E0FC433E0
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 17:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAC316506A
-	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 17:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC89650A4
+	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 17:59:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229597AbhCER57 (ORCPT
+        id S229517AbhCER7E (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Mar 2021 12:57:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50976 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbhCER5p (ORCPT
+        Fri, 5 Mar 2021 12:59:04 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:49704 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229611AbhCER6i (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 5 Mar 2021 12:57:45 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26E9C061574;
-        Fri,  5 Mar 2021 09:57:45 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C8D791280557;
-        Fri,  5 Mar 2021 09:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1614967064;
-        bh=I12qLg9Cwserkp5Y2dm2OSRdMTJvsQsUwHpn6DZphVo=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=HOVc499lijkDdTOqaUgES5NwYDqdRrMroJVLkIwh9RbwMbWm7DAkgJA47Zd2pPboR
-         1/MiiB5ca3cUAN48bPkaR1QtDnEVeHVxk6Qy2ZwiSCFQSj1+zHqtIqXvmVJJOOo1pY
-         6N0yglQoKMJdbxcZ8RSwQEnilHoli6AJJHCB8t9A=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id FpH8EscH_1PE; Fri,  5 Mar 2021 09:57:44 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B0F2A1280555;
-        Fri,  5 Mar 2021 09:57:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1614967064;
-        bh=I12qLg9Cwserkp5Y2dm2OSRdMTJvsQsUwHpn6DZphVo=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=HOVc499lijkDdTOqaUgES5NwYDqdRrMroJVLkIwh9RbwMbWm7DAkgJA47Zd2pPboR
-         1/MiiB5ca3cUAN48bPkaR1QtDnEVeHVxk6Qy2ZwiSCFQSj1+zHqtIqXvmVJJOOo1pY
-         6N0yglQoKMJdbxcZ8RSwQEnilHoli6AJJHCB8t9A=
-Message-ID: <af0f2d60c6584b613172b08e4fcea4119e231e93.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3] selinux: measure state and policy capabilities
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        tusharsu@linux.microsoft.com, tyhicks@linux.microsoft.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, sashal@kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 05 Mar 2021 09:57:42 -0800
-In-Reply-To: <CAHC9VhSMz8FtK5HMPA1+FMeU0cs4vfCCaimxb-J+VDj_Dyk-nA@mail.gmail.com>
-References: <20210212163709.3139-1-nramas@linux.microsoft.com>
-         <CAHC9VhSMz8FtK5HMPA1+FMeU0cs4vfCCaimxb-J+VDj_Dyk-nA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Fri, 5 Mar 2021 12:58:38 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id C411A72C8B8;
+        Fri,  5 Mar 2021 20:58:35 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id A16FB4A4737;
+        Fri,  5 Mar 2021 20:58:35 +0300 (MSK)
+Date:   Fri, 5 Mar 2021 20:58:35 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        davem@davemloft.net, herbert@gondor.apana.org.au,
+        dhowells@redhat.com, zohar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, patrick@puiterwijk.org,
+        linux-integrity@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v10 1/9] crypto: Add support for ECDSA signature
+ verification
+Message-ID: <20210305175835.armhwbivd4g6w273@altlinux.org>
+References: <20210305005203.3547587-1-stefanb@linux.vnet.ibm.com>
+ <20210305005203.3547587-2-stefanb@linux.vnet.ibm.com>
+ <YEJk44FXEl0+mEPr@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <YEJk44FXEl0+mEPr@kernel.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2021-03-05 at 12:52 -0500, Paul Moore wrote:
-[...]
-> This draft seems fine to me, but there is a small logistical blocker
-> at the moment which means I can't merge this until -rc2 is released,
-> which likely means this coming Monday.  The problem is that this
-> patch relies on code that went upstream via in the last merge window
-> via the IMA tree, not the SELinux tree; normally that wouldn't be a
-> problem as I typically rebase the selinux/next to Linus' -rc1 tag
-> once the merge window is closed, but in this particular case the -rc1
-> tag is dangerously broken for some system configurations (the tag has
-> since been renamed) so I'm not rebasing onto -rc1 this time around.
+Jarkko,
+
+On Fri, Mar 05, 2021 at 07:05:39PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Mar 04, 2021 at 07:51:55PM -0500, Stefan Berger wrote:
+> > +module_exit(ecdsa_exit);
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_AUTHOR("Stefan Berger <stefanb@linux.ibm.com>");
 > 
-> Assuming that -rc2 fixes the swapfile/fs-corruption problem, early
-> next week I'll rebase selinux/next to -rc2 and merge this patch.
-> However, if the swapfile bug continues past -rc2 we can consider
-> merging this via the IMA tree, but I'd assume not do that if possible
-> due to merge conflict and testing reasons.
+> Remove MODULE_AUTHOR(). It's redundant because of Git.
 
-If it helps, we rebased the SCSI tree on top of the merge for the
-swapfile fix which is this one, without waiting for -rc2:
+When it's decided that MODULE_AUTHOR is redundant because of git?
+I don't see MODULE_AUTHOR define expanding to nothing in module.h.
+Also, this info is shown for end user in modinfo. And kernel is still
+distributed as a tarball on kernel.org.
 
-commit f69d02e37a85645aa90d18cacfff36dba370f797
-Merge: 7a7fd0de4a98 caf6912f3f4a
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue Mar 2 18:18:17 2021 -0800
-
-    Merge tag 'misc-5.12-2021-03-02' of git://git.kernel.dk/linux-block
- 
-James
-
+Thanks,
 
