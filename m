@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8062C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E259CC43381
 	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 15:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3A1465015
+	by mail.kernel.org (Postfix) with ESMTP id C09B86508D
 	for <linux-integrity@archiver.kernel.org>; Fri,  5 Mar 2021 15:22:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbhCEPVk (ORCPT
+        id S230202AbhCEPVj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 5 Mar 2021 10:21:40 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2628 "EHLO
+        Fri, 5 Mar 2021 10:21:39 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2631 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229558AbhCEPVN (ORCPT
+        with ESMTP id S229562AbhCEPVN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 5 Mar 2021 10:21:13 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWWc34G4z67vDP;
-        Fri,  5 Mar 2021 23:15:24 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWTH3WgTz67wDF;
+        Fri,  5 Mar 2021 23:13:23 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2106.2; Fri, 5 Mar 2021 16:21:11 +0100
+ 15.1.2106.2; Fri, 5 Mar 2021 16:21:09 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 09/11] ima: Allow imasig requirement to be satisfied by EVM portable signatures
-Date:   Fri, 5 Mar 2021 16:19:21 +0100
-Message-ID: <20210305151923.29039-10-roberto.sassu@huawei.com>
+Subject: [PATCH v4 06/11] evm: Ignore INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are safe
+Date:   Fri, 5 Mar 2021 16:19:18 +0100
+Message-ID: <20210305151923.29039-7-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210305151923.29039-1-roberto.sassu@huawei.com>
 References: <20210305151923.29039-1-roberto.sassu@huawei.com>
@@ -51,105 +51,74 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-System administrators can require that all accessed files have a signature
-by specifying appraise_type=imasig in a policy rule.
+When a file is being created, LSMs can set the initial label with the
+inode_init_security hook. If no HMAC key is loaded, the new file will have
+LSM xattrs but not the HMAC. It is also possible that the file remains
+without protected xattrs after creation if no active LSM provided it.
 
-Currently, IMA signatures satisfy this requirement. Appended signatures may
-also satisfy this requirement, but are not applicable as IMA signatures.
-IMA/appended signatures ensure data source authentication for file content
-and prevent any change. EVM signatures instead ensure data source
-authentication for file metadata. Given that the digest or signature of the
-file content must be included in the metadata, EVM signatures provide the
-same file data guarantees of IMA signatures, as well as providing file
-metadata guarantees.
+Unfortunately, EVM will deny any further metadata operation on new files,
+as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error, or
+INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
+usability of EVM when only a public key is loaded, as commands such as cp
+or tar with the option to preserve xattrs won't work.
 
-This patch lets systems protected with EVM signatures pass appraisal
-verification if the appraise_type=imasig requirement is specified in the
-policy. This facilitates deployment in the scenarios where only EVM
-signatures are available.
-
-The patch makes the following changes:
-
-file xattr types:
-security.ima: IMA_XATTR_DIGEST/IMA_XATTR_DIGEST_NG
-security.evm: EVM_XATTR_PORTABLE_DIGSIG
-
-execve(), mmap(), open() behavior (with appraise_type=imasig):
-before: denied (file without IMA signature, imasig requirement not met)
-after: allowed (file with EVM portable signature, imasig requirement met)
-
-open(O_WRONLY) behavior (without appraise_type=imasig):
-before: allowed (file without IMA signature, not immutable)
-after: denied (file with EVM portable signature, immutable)
-
-In addition, similarly to IMA signatures, this patch temporarily allows
-new files without or with incomplete metadata to be opened so that content
-can be written.
+This patch ignores these errors when they won't be an issue, if no HMAC key
+is loaded and cannot be loaded in the future (which can be enforced by
+setting the EVM_SETUP_COMPLETE initialization flag).
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/ima/ima_appraise.c | 24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ security/integrity/evm/evm_main.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 24d59893aab0..538ccbf972c8 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -242,12 +242,16 @@ static int xattr_verify(enum ima_hooks func, struct integrity_iint_cache *iint,
- 		hash_start = 1;
- 		fallthrough;
- 	case IMA_XATTR_DIGEST:
--		if (iint->flags & IMA_DIGSIG_REQUIRED) {
--			*cause = "IMA-signature-required";
--			*status = INTEGRITY_FAIL;
--			break;
-+		if (*status != INTEGRITY_PASS_IMMUTABLE) {
-+			if (iint->flags & IMA_DIGSIG_REQUIRED) {
-+				*cause = "IMA-signature-required";
-+				*status = INTEGRITY_FAIL;
-+				break;
-+			}
-+			clear_bit(IMA_DIGSIG, &iint->atomic_flags);
-+		} else {
-+			set_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		}
--		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		if (xattr_len - sizeof(xattr_value->type) - hash_start >=
- 				iint->ima_hash->length)
- 			/*
-@@ -417,6 +421,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		cause = "missing-HMAC";
- 		goto out;
- 	case INTEGRITY_FAIL_IMMUTABLE:
-+		set_bit(IMA_DIGSIG, &iint->atomic_flags);
- 		fallthrough;
- 	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
- 		cause = "invalid-HMAC";
-@@ -461,9 +466,12 @@ int ima_appraise_measurement(enum ima_hooks func,
- 				status = INTEGRITY_PASS;
- 		}
- 
--		/* Permit new files with file signatures, but without data. */
-+		/*
-+		 * Permit new files with file/EVM portable signatures, but
-+		 * without data.
-+		 */
- 		if (inode->i_size == 0 && iint->flags & IMA_NEW_FILE &&
--		    xattr_value && xattr_value->type == EVM_IMA_XATTR_DIGSIG) {
-+		    test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
- 			status = INTEGRITY_PASS;
- 		}
- 
-@@ -595,6 +603,8 @@ void ima_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
- 				   xattr_value_len);
- 	if (result == 1)
- 		digsig = (xvalue->type == EVM_IMA_XATTR_DIGSIG);
-+	if (!strcmp(xattr_name, XATTR_NAME_EVM) && xattr_value_len > 0)
-+		digsig = (xvalue->type == EVM_XATTR_PORTABLE_DIGSIG);
- 	if (result == 1 || evm_status_revalidate(xattr_name))
- 		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 998818283fda..6556e8c22da9 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -90,6 +90,24 @@ static bool evm_key_loaded(void)
+ 	return (bool)(evm_initialized & EVM_KEY_MASK);
  }
+ 
++/*
++ * Ignoring INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS is safe if no HMAC key
++ * is loaded and the EVM_SETUP_COMPLETE initialization flag is set.
++ */
++static bool evm_ignore_error_safe(enum integrity_status evm_status)
++{
++	if (evm_initialized & EVM_INIT_HMAC)
++		return false;
++
++	if (!(evm_initialized & EVM_SETUP_COMPLETE))
++		return false;
++
++	if (evm_status != INTEGRITY_NOLABEL && evm_status != INTEGRITY_NOXATTRS)
++		return false;
++
++	return true;
++}
++
+ static int evm_find_protected_xattrs(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -354,6 +372,8 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 				    -EPERM, 0);
+ 	}
+ out:
++	if (evm_ignore_error_safe(evm_status))
++		return 0;
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -515,7 +535,8 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 		return 0;
+ 	evm_status = evm_verify_current_integrity(dentry);
+ 	if ((evm_status == INTEGRITY_PASS) ||
+-	    (evm_status == INTEGRITY_NOXATTRS))
++	    (evm_status == INTEGRITY_NOXATTRS) ||
++	    (evm_ignore_error_safe(evm_status)))
+ 		return 0;
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
 -- 
 2.26.2
 
