@@ -2,204 +2,227 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0EBC4361A
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Mar 2021 17:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F1BC433DB
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Mar 2021 00:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC35664FB5
-	for <linux-integrity@archiver.kernel.org>; Fri, 12 Mar 2021 17:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EFF764F8E
+	for <linux-integrity@archiver.kernel.org>; Sat, 13 Mar 2021 00:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232362AbhCLRNx (ORCPT
+        id S229968AbhCMAF6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 12 Mar 2021 12:13:53 -0500
-Received: from smtp-bc0b.mail.infomaniak.ch ([45.157.188.11]:47239 "EHLO
-        smtp-bc0b.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232689AbhCLRNV (ORCPT
+        Fri, 12 Mar 2021 19:05:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51214 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235916AbhCMAFm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 12 Mar 2021 12:13:21 -0500
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DxspH0687zMqqBB;
-        Fri, 12 Mar 2021 18:13:11 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DxspG4qrkzlh8TC;
-        Fri, 12 Mar 2021 18:13:10 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Fri, 12 Mar 2021 19:05:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615593941;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mVXvmcYP1sSR9GWfD7PGzVWbpYUCA5Ac+5UF3mw/8Ks=;
+        b=en25UQwrJkeJku5zlYHghg+cRQDUgKlT1EQkPYv59oW0lRnGkTBYPO1lZ3gRyLAzfLRi+Y
+        TEVLWuy5mZh/vAgjSD8xBHPycXYa1eN/2EFxKpUmEXOazpYI8Gu0V/T+uOJfw3LVcsEEiB
+        dbsTJ7+c2MT61fH/gnBqBNHNeUtxGfQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-488-GopGBo6-M_m5rNeEHuJOdg-1; Fri, 12 Mar 2021 19:05:39 -0500
+X-MC-Unique: GopGBo6-M_m5rNeEHuJOdg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1783939382;
+        Sat, 13 Mar 2021 00:05:34 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-2.rdu2.redhat.com [10.10.114.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B94811F065;
+        Sat, 13 Mar 2021 00:05:29 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 49B3622054F; Fri, 12 Mar 2021 19:05:29 -0500 (EST)
+Date:   Fri, 12 Mar 2021 19:05:29 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v7 1/5] tools/certs: Add print-cert-tbs-hash.sh
-Date:   Fri, 12 Mar 2021 18:12:28 +0100
-Message-Id: <20210312171232.2681989-2-mic@digikod.net>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210312171232.2681989-1-mic@digikod.net>
-References: <20210312171232.2681989-1-mic@digikod.net>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 02/40] fs: add id translation helpers
+Message-ID: <20210313000529.GA181317@redhat.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-3-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121131959.646623-3-christian.brauner@ubuntu.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On Thu, Jan 21, 2021 at 02:19:21PM +0100, Christian Brauner wrote:
+> Add simple helpers to make it easy to map kuids into and from idmapped
+> mounts. We provide simple wrappers that filesystems can use to e.g.
+> initialize inodes similar to i_{uid,gid}_read() and i_{uid,gid}_write().
+> Accessing an inode through an idmapped mount maps the i_uid and i_gid of
+> the inode to the mount's user namespace. If the fsids are used to
+> initialize inodes they are unmapped according to the mount's user
+> namespace. Passing the initial user namespace to these helpers makes
+> them a nop and so any non-idmapped paths will not be impacted.
+> 
+> Link: https://lore.kernel.org/r/20210112220124.837960-9-christian.brauner@ubuntu.com
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+> /* v2 */
+> - Christoph Hellwig <hch@lst.de>:
+>   - Get rid of the ifdefs and the config option that hid idmapped mounts.
+> 
+> /* v3 */
+> unchanged
+> 
+> /* v4 */
+> - Serge Hallyn <serge@hallyn.com>:
+>   - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+>     terminology consistent.
+> 
+> /* v5 */
+> unchanged
+> base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+> 
+> /* v6 */
+> unchanged
+> base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+> ---
+>  include/linux/fs.h | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd0b80e6361d..3165998e2294 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -40,6 +40,7 @@
+>  #include <linux/build_bug.h>
+>  #include <linux/stddef.h>
+>  #include <linux/mount.h>
+> +#include <linux/cred.h>
+>  
+>  #include <asm/byteorder.h>
+>  #include <uapi/linux/fs.h>
+> @@ -1573,6 +1574,52 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
+>  	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
+>  }
+>  
+> +static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
+> +				   kuid_t kuid)
+> +{
+> +	return make_kuid(mnt_userns, __kuid_val(kuid));
+> +}
+> +
 
-Add a new helper print-cert-tbs-hash.sh to generate a TBSCertificate
-hash from a given certificate.  This is useful to generate a blacklist
-key description used to forbid loading a specific certificate in a
-keyring, or to invalidate a certificate provided by a PKCS#7 file.
+Hi Christian,
 
-This kind of hash formatting is required to populate the file pointed
-out by CONFIG_SYSTEM_BLACKLIST_HASH_LIST, but only the kernel code was
-available to understand how to effectively create such hash.
+I am having little trouble w.r.t function names and trying to figure
+out whether they are mapping id down or up.
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Link: https://lore.kernel.org/r/20210312171232.2681989-2-mic@digikod.net
----
+For example, kuid_into_mnt() ultimately calls map_id_down(). That is,
+id visible inside user namespace is mapped to host
+(if observer is in init_user_ns, IIUC).
 
-Changes since v5:
-* Add Reviewed-by Jarkko.
+But fsuid_into_mnt() ultimately calls map_id_up(). That's take a kuid
+and map it into the user_namespace.
 
-Changes since v3:
-* Explain in the commit message that this kind of formating is not new
-  but it wasn't documented.
+So both the helpers end with into_mnt() but one maps id down and
+other maps id up. I found this confusing and was wondering how
+should I visualize it. So thought of asking you.
 
-Changes since v1:
-* Fix typo.
-* Use "if" block instead of "||" .
----
- MAINTAINERS                        |  1 +
- tools/certs/print-cert-tbs-hash.sh | 91 ++++++++++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
- create mode 100755 tools/certs/print-cert-tbs-hash.sh
+Is this intentional or can naming be improved so that *_into_mnt()
+means one thing (Either map_id_up() or map_id_down()). And vice-a-versa
+for *_from_mnt().
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 00836f6452f0..773a362e807f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4120,6 +4120,7 @@ F:	Documentation/admin-guide/module-signing.rst
- F:	certs/
- F:	scripts/extract-cert.c
- F:	scripts/sign-file.c
-+F:	tools/certs/
- 
- CFAG12864B LCD DRIVER
- M:	Miguel Ojeda Sandonis <miguel.ojeda.sandonis@gmail.com>
-diff --git a/tools/certs/print-cert-tbs-hash.sh b/tools/certs/print-cert-tbs-hash.sh
-new file mode 100755
-index 000000000000..c93df5387ec9
---- /dev/null
-+++ b/tools/certs/print-cert-tbs-hash.sh
-@@ -0,0 +1,91 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright © 2020, Microsoft Corporation. All rights reserved.
-+#
-+# Author: Mickaël Salaün <mic@linux.microsoft.com>
-+#
-+# Compute and print the To Be Signed (TBS) hash of a certificate.  This is used
-+# as description of keys in the blacklist keyring to identify certificates.
-+# This output should be redirected, without newline, in a file (hash0.txt) and
-+# signed to create a PKCS#7 file (hash0.p7s).  Both of these files can then be
-+# loaded in the kernel with.
-+#
-+# Exemple on a workstation:
-+# ./print-cert-tbs-hash.sh certificate-to-invalidate.pem > hash0.txt
-+# openssl smime -sign -in hash0.txt -inkey builtin-private-key.pem \
-+#               -signer builtin-certificate.pem -certfile certificate-chain.pem \
-+#               -noattr -binary -outform DER -out hash0.p7s
-+#
-+# Exemple on a managed system:
-+# keyctl padd blacklist "$(< hash0.txt)" %:.blacklist < hash0.p7s
-+
-+set -u -e -o pipefail
-+
-+CERT="${1:-}"
-+BASENAME="$(basename -- "${BASH_SOURCE[0]}")"
-+
-+if [ $# -ne 1 ] || [ ! -f "${CERT}" ]; then
-+	echo "usage: ${BASENAME} <certificate>" >&2
-+	exit 1
-+fi
-+
-+# Checks that it is indeed a certificate (PEM or DER encoded) and exclude the
-+# optional PEM text header.
-+if ! PEM="$(openssl x509 -inform DER -in "${CERT}" 2>/dev/null || openssl x509 -in "${CERT}")"; then
-+	echo "ERROR: Failed to parse certificate" >&2
-+	exit 1
-+fi
-+
-+# TBSCertificate starts at the second entry.
-+# Cf. https://tools.ietf.org/html/rfc3280#section-4.1
-+#
-+# Exemple of first lines printed by openssl asn1parse:
-+#    0:d=0  hl=4 l= 763 cons: SEQUENCE
-+#    4:d=1  hl=4 l= 483 cons: SEQUENCE
-+#    8:d=2  hl=2 l=   3 cons: cont [ 0 ]
-+#   10:d=3  hl=2 l=   1 prim: INTEGER           :02
-+#   13:d=2  hl=2 l=  20 prim: INTEGER           :3CEB2CB8818D968AC00EEFE195F0DF9665328B7B
-+#   35:d=2  hl=2 l=  13 cons: SEQUENCE
-+#   37:d=3  hl=2 l=   9 prim: OBJECT            :sha256WithRSAEncryption
-+RANGE_AND_DIGEST_RE='
-+2s/^\s*\([0-9]\+\):d=\s*[0-9]\+\s\+hl=\s*[0-9]\+\s\+l=\s*\([0-9]\+\)\s\+cons:\s*SEQUENCE\s*$/\1 \2/p;
-+7s/^\s*[0-9]\+:d=\s*[0-9]\+\s\+hl=\s*[0-9]\+\s\+l=\s*[0-9]\+\s\+prim:\s*OBJECT\s*:\(.*\)$/\1/p;
-+'
-+
-+RANGE_AND_DIGEST=($(echo "${PEM}" | \
-+	openssl asn1parse -in - | \
-+	sed -n -e "${RANGE_AND_DIGEST_RE}"))
-+
-+if [ "${#RANGE_AND_DIGEST[@]}" != 3 ]; then
-+	echo "ERROR: Failed to parse TBSCertificate." >&2
-+	exit 1
-+fi
-+
-+OFFSET="${RANGE_AND_DIGEST[0]}"
-+END="$(( OFFSET + RANGE_AND_DIGEST[1] ))"
-+DIGEST="${RANGE_AND_DIGEST[2]}"
-+
-+# The signature hash algorithm is used by Linux to blacklist certificates.
-+# Cf. crypto/asymmetric_keys/x509_cert_parser.c:x509_note_pkey_algo()
-+DIGEST_MATCH=""
-+while read -r DIGEST_ITEM; do
-+	if [ -z "${DIGEST_ITEM}" ]; then
-+		break
-+	fi
-+	if echo "${DIGEST}" | grep -qiF "${DIGEST_ITEM}"; then
-+		DIGEST_MATCH="${DIGEST_ITEM}"
-+		break
-+	fi
-+done < <(openssl list -digest-commands | tr ' ' '\n' | sort -ur)
-+
-+if [ -z "${DIGEST_MATCH}" ]; then
-+	echo "ERROR: Unknown digest algorithm: ${DIGEST}" >&2
-+	exit 1
-+fi
-+
-+echo "${PEM}" | \
-+	openssl x509 -in - -outform DER | \
-+	dd "bs=1" "skip=${OFFSET}" "count=${END}" "status=none" | \
-+	openssl dgst "-${DIGEST_MATCH}" - | \
-+	awk '{printf "tbs:" $2}'
--- 
-2.30.2
+Thanks
+Vivek
+
+> +static inline kgid_t kgid_into_mnt(struct user_namespace *mnt_userns,
+> +				   kgid_t kgid)
+> +{
+> +	return make_kgid(mnt_userns, __kgid_val(kgid));
+> +}
+> +
+> +static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
+> +				    const struct inode *inode)
+> +{
+> +	return kuid_into_mnt(mnt_userns, inode->i_uid);
+> +}
+> +
+> +static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
+> +				    const struct inode *inode)
+> +{
+> +	return kgid_into_mnt(mnt_userns, inode->i_gid);
+> +}
+> +
+> +static inline kuid_t kuid_from_mnt(struct user_namespace *mnt_userns,
+> +				   kuid_t kuid)
+> +{
+> +	return KUIDT_INIT(from_kuid(mnt_userns, kuid));
+> +}
+> +
+> +static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
+> +				   kgid_t kgid)
+> +{
+> +	return KGIDT_INIT(from_kgid(mnt_userns, kgid));
+> +}
+> +
+> +static inline kuid_t fsuid_into_mnt(struct user_namespace *mnt_userns)
+> +{
+> +	return kuid_from_mnt(mnt_userns, current_fsuid());
+> +}
+> +
+> +static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
+> +{
+> +	return kgid_from_mnt(mnt_userns, current_fsgid());
+> +}
+> +
+>  extern struct timespec64 current_time(struct inode *inode);
+>  
+>  /*
+> -- 
+> 2.30.0
+> 
 
