@@ -2,79 +2,87 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD6D9C433E0
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Mar 2021 02:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656AAC433E6
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Mar 2021 07:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5C964E2E
-	for <linux-integrity@archiver.kernel.org>; Thu, 18 Mar 2021 02:54:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3908D64F10
+	for <linux-integrity@archiver.kernel.org>; Thu, 18 Mar 2021 07:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhCRCyC (ORCPT
+        id S229646AbhCRHHE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 17 Mar 2021 22:54:02 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14080 "EHLO
-        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230499AbhCRCxy (ORCPT
+        Thu, 18 Mar 2021 03:07:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229558AbhCRHHC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 17 Mar 2021 22:53:54 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4F1BPp2RGBz17MQW;
-        Thu, 18 Mar 2021 10:51:58 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.498.0; Thu, 18 Mar 2021 10:53:46 +0800
-From:   Tian Tao <tiantao6@hisilicon.com>
-To:     <peterhuewe@gmx.de>, <jarkko@kernel.org>
-CC:     <linux-integrity@vger.kernel.org>
-Subject: [PATCH v2] char: tpm: move to use request_irq by IRQF_NO_AUTOEN flag
-Date:   Thu, 18 Mar 2021 10:54:25 +0800
-Message-ID: <1616036065-53621-1-git-send-email-tiantao6@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 18 Mar 2021 03:07:02 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04ABC06175F
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Mar 2021 00:07:02 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lMmkF-0004vU-6M; Thu, 18 Mar 2021 08:06:59 +0100
+Subject: Re: [PATCH] KEYS: trusted: tee: fix build error due to missing
+ include
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>, kernel@pengutronix.de,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210317142904.27855-1-a.fatoum@pengutronix.de>
+ <YFJ7UOagBgm5Fn0/@kernel.org>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <94f5e918-21d4-ddbb-1db5-35c7f8be347a@pengutronix.de>
+Date:   Thu, 18 Mar 2021 08:06:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+In-Reply-To: <YFJ7UOagBgm5Fn0/@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-disable_irq() after request_irq() still has a time gap in which
-interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-disable IRQ auto-enable because of requesting.
+Hi Jarkko,
 
-Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-Link: https://lore.kernel.org/patchwork/patch/1388765/
+On 17.03.21 22:57, Jarkko Sakkinen wrote:
+> On Wed, Mar 17, 2021 at 03:29:05PM +0100, Ahmad Fatoum wrote:
+>> MODULE_DEVICE_TABLE is defined in <linux/module.h>, which is not
+>> included. Add the include to fix the build error its lack caused.
+>>
+>> Cc: Sumit Garg <sumit.garg@linaro.org>
+>> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> 
+> Hi, I appreciate your work, thanks for taking action, but unfortunately
+> I already incorporated this fix to the original patch.
 
-v2: add the Link.
----
- drivers/char/tpm/tpm_tis_i2c_cr50.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Nothing unfortunate about this! :)
 
-diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-index ec9a65e..25299e5 100644
---- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-+++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-@@ -705,14 +705,14 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client,
- 
- 	if (client->irq > 0) {
- 		rc = devm_request_irq(dev, client->irq, tpm_cr50_i2c_int_handler,
--				      IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+				      IRQF_TRIGGER_FALLING | IRQF_ONESHOT |
-+				      IRQF_NO_AUTOEN,
- 				      dev->driver->name, chip);
- 		if (rc < 0) {
- 			dev_err(dev, "Failed to probe IRQ %d\n", client->irq);
- 			return rc;
- 		}
- 
--		disable_irq(client->irq);
- 		priv->irq = client->irq;
- 	} else {
- 		dev_warn(dev, "No IRQ, will use %ums delay for TPM ready\n",
+Cheers,
+Ahmad
+
+> 
+> /Jarkko
+> 
+
 -- 
-2.7.4
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
