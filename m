@@ -7,141 +7,118 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F09DC43470
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Apr 2021 17:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A54C43600
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Apr 2021 17:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2549E60FDC
+	by mail.kernel.org (Postfix) with ESMTP id B002560FDC
 	for <linux-integrity@archiver.kernel.org>; Thu,  1 Apr 2021 17:47:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236768AbhDARrV (ORCPT
+        id S236776AbhDARrW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Apr 2021 13:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57168 "EHLO
+        Thu, 1 Apr 2021 13:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234944AbhDARlc (ORCPT
+        with ESMTP id S234458AbhDARmp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:41:32 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE3FCC08EC74
-        for <linux-integrity@vger.kernel.org>; Thu,  1 Apr 2021 06:53:07 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id d13so2963760lfg.7
-        for <linux-integrity@vger.kernel.org>; Thu, 01 Apr 2021 06:53:07 -0700 (PDT)
+        Thu, 1 Apr 2021 13:42:45 -0400
+Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5C22C05BD15
+        for <linux-integrity@vger.kernel.org>; Thu,  1 Apr 2021 05:55:16 -0700 (PDT)
+Received: by mail-lj1-x22b.google.com with SMTP id u10so2133599lju.7
+        for <linux-integrity@vger.kernel.org>; Thu, 01 Apr 2021 05:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=c893QbRRmjQkEtB2posydTcKTgGrQP7cS/Yzjgewk74=;
-        b=cU1/w+Ev6H6Wdyc50mYASof9MSjhUc9dkCpvuENGmyhJsVhMz+Ufq+lmVSgNIeVBeK
-         PbFUfLm4E1xcJ9HZ5XaHZORsL4dXolTon/o7fchVX7AzcKhccS4cnyNCP9eYDwkh/tjY
-         ObFY120/dvcpAvkUtDNcIeaJwwzWacVE1zgEio1J/pBBIaVkeDFrBTHmbkLbGmh8e/vy
-         7Jw5fVPkwDcKBziVeobEki4jh0HUVxqz4PODne1uZb1s1d+Z+c1J8ELr++rl+vf5b6KS
-         zS1VLh347XyLyD4Q/E6wnYQBFCViiNhC29iHIGiFl4tcSv9WSK5SmIy9d9L57/H4xDfk
-         b0rA==
+         :cc;
+        bh=VIk1VyBFqF5fVZFBu0yexXHYaS9Jn30Rld7o2bVbBwk=;
+        b=Apd+UzHEAEi98S6OdfucHkNROZU7jCgX5/KNygYU3cVOLmi2PHXIN8LRL/INjJMZT2
+         +T7sbpkA1dHoI5hc7fww5ba5aE2TjM8dwGwwufSllGQiwylrGI0cS488JL/xNibDw5Cu
+         2+eknYxHVIfteXbHDfVGnwtETKC61+6Ys9Q59Y5+NreZIXf3O8ek1f6nwiPeAZ31FLYx
+         JP07cdx8Lht2U45g70INCV2MprWQgxaOUq4Y3uGF3LwH7J/nRfQOjuLD03XeTBhbnZ3w
+         3kGM/AEkbnuu9X/oEc2B9w4enaBqVfgrhZYb3ySlCRAGSvA6qD8rW+w9ga1FZsJLnIXC
+         z8Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=c893QbRRmjQkEtB2posydTcKTgGrQP7cS/Yzjgewk74=;
-        b=p8+Kjd8P/hxLzr8K3Im5o1UEsYW3bCPaD4acb+pyJNwcAfN58NLIVtIitHiQTOQVOa
-         zLzV51f+M1L/0my2/UxEyAT7GNjW5h9u1VjAXrDcmUn1zddsD9KOrE/dZZH58r76k88l
-         X8LCi84Sej1UN9kV2lyfMVEuHecWB/Avq0Rhmj4V+bzpr5VplgaO+9J7XVOnQwpBxru9
-         Lg8kjJGkGb630TKBAZ4BhVcgJpkxmwXWzTvua2RqT8WwKvKA7CJ7w75zTHaBgqaHUsPz
-         6idc7UbDmK/HzpM/tMoKObe1Da8kWEWGtv2OBUa7MakorFvytqVIOFwXvz6Nt344sEwr
-         YqZg==
-X-Gm-Message-State: AOAM530p15A+k3jTomuZFoLX0yAVdwvI2ER40Kupkeixz8ORzqRJnuFV
-        bZqmAUL2NEcZvSW3eWEW1S4eQpxjEKexeWPD4dEIXA==
-X-Google-Smtp-Source: ABdhPJzf2Vf+J0kHLdivX0dvXkq4BlUU//tUmf8HMN2XU1LxE89EyoNOm2SAuZ5vFZYQrOuPdm9P3QNcmVEHVOzMvJw=
-X-Received: by 2002:a05:6512:1084:: with SMTP id j4mr5525797lfg.194.1617285186182;
- Thu, 01 Apr 2021 06:53:06 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=VIk1VyBFqF5fVZFBu0yexXHYaS9Jn30Rld7o2bVbBwk=;
+        b=cprygHjROCdR3Rc21SaHr2He/B/pMjKzlPsASg2uRelNy+KTLXVr2T5kXVGw4ef0Bq
+         gmgFH7n5vOtLCuyu455KFlmi91G71ahVON3KoT0UrZcemmRwaEF52D63jGFcRISOqTkJ
+         iMrSUAyYGT2vgF01kknmmvx86RZRcHs+KtVUODuMSB23OXjHKa8TDesRoAMAG9y2THaI
+         lC15dmnYfyoPYj4ygADRMe9zzDKH1Nqd5ym48jfcTKQUkkRg1hRULpxTfQBxochEJfLT
+         ee6wRgJRMgyXQfc1EfR3cFWvjGARL85UtAI+EwFlNwu+7zG7Y5ScSHojNwuJLVR5iiaP
+         XgkQ==
+X-Gm-Message-State: AOAM533qCAYjdc6JmAjCGb2s3ib8vipczIJ7Cfvrgopl5vNndnKCtn7q
+        rmgVvhzCOGd1NaRipWLPOcfCHutwFhyehNfq4uJfxg==
+X-Google-Smtp-Source: ABdhPJzxwz2LDe0yIeonE1iDSI5e5lDG4mIYMjWxL+WfT+GgrPcNFOKL6OGonaimUeBpqxqGZ9SE9Ng/p3VJVcrOnEs=
+X-Received: by 2002:a2e:8e33:: with SMTP id r19mr5136316ljk.40.1617281715310;
+ Thu, 01 Apr 2021 05:55:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
  <CAFLxGvzWLje+_HFeb+hKNch4U1f5uypVUOuP=QrEPn_JNM+scg@mail.gmail.com>
  <ca2a7c17-3ed0-e52f-2e2f-c0f8bbe10323@pengutronix.de> <CAFLxGvwNomKOo3mQLMxYGDA8T8zN=Szpo2q5jrp4D1CaMHydWA@mail.gmail.com>
- <CAFA6WYO29o73nSg4ikU9cyaOr0kpaXFJpcGLGmFLgjKQWchcEg@mail.gmail.com>
- <1666035815.140054.1617283065549.JavaMail.zimbra@nod.at> <ea261e53-8f5d-ac52-f3b9-7f2db4532244@pengutronix.de>
-In-Reply-To: <ea261e53-8f5d-ac52-f3b9-7f2db4532244@pengutronix.de>
+In-Reply-To: <CAFLxGvwNomKOo3mQLMxYGDA8T8zN=Szpo2q5jrp4D1CaMHydWA@mail.gmail.com>
 From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 1 Apr 2021 19:22:54 +0530
-Message-ID: <CAFA6WYODfsMTiCEyFA2aRGm+UQE0OTe-ui7mMSK-cqUR_YJFTA@mail.gmail.com>
+Date:   Thu, 1 Apr 2021 18:25:03 +0530
+Message-ID: <CAFA6WYO29o73nSg4ikU9cyaOr0kpaXFJpcGLGmFLgjKQWchcEg@mail.gmail.com>
 Subject: Re: [PATCH v1 0/3] KEYS: trusted: Introduce support for NXP
  CAAM-based trusted keys
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Richard Weinberger <richard@nod.at>,
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        horia geanta <horia.geanta@nxp.com>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        aymen sghaier <aymen.sghaier@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        davem <davem@davemloft.net>,
-        James Bottomley <jejb@linux.ibm.com>,
-        kernel <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
         David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Steffen Trumtrar <s.trumtrar@pengutronix.de>,
         Udit Agarwal <udit.agarwal@nxp.com>,
         Jan Luebbe <j.luebbe@pengutronix.de>,
-        david <david@sigma-star.at>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list, ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        David Gstir <david@sigma-star.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        linux-integrity@vger.kernel.org,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         LSM <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 1 Apr 2021 at 19:00, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->
-> Hello Richard, Sumit,
->
-> On 01.04.21 15:17, Richard Weinberger wrote:
-> > Sumit,
-> >
-> > ----- Urspr=C3=BCngliche Mail -----
-> >> Von: "Sumit Garg" <sumit.garg@linaro.org>
-> >> IIUC, this would require support for multiple trusted keys backends at
-> >> runtime but currently the trusted keys subsystem only supports a
-> >> single backend which is selected via kernel module parameter during
-> >> boot.
-> >>
-> >> So the trusted keys framework needs to evolve to support multiple
-> >> trust sources at runtime but I would like to understand the use-cases
-> >> first. IMO, selecting the best trust source available on a platform
-> >> for trusted keys should be a one time operation, so why do we need to
-> >> have other backends available at runtime as well?
-> >
-> > I thought about devices with a TPM-Chip and CAAM.
+Hi Richard,
 
-In this case why would one prefer to use CAAM when you have standards
-compliant TPM-Chip which additionally offers sealing to specific PCR
-(integrity measurement) values.
-
-> > IMHO allowing only one backend at the same time is a little over simpli=
-fied.
+On Wed, 31 Mar 2021 at 03:34, Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
 >
-> It is, but I'd rather leave this until it's actually needed.
-> What can be done now is adopting a format for the exported keys that woul=
-d
-> make this extension seamless in future.
+> Ahmad,
+>
+> On Wed, Mar 17, 2021 at 3:08 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+> >     keyctl add trusted $KEYNAME "load $(cat ~/kmk.blob)" @s
+>
+> Is there a reason why we can't pass the desired backend name in the
+> trusted key parameters?
+> e.g.
+> keyctl add trusted $KEYNAME "backendtype caam load $(cat ~/kmk.blob)" @s
 >
 
-+1
+IIUC, this would require support for multiple trusted keys backends at
+runtime but currently the trusted keys subsystem only supports a
+single backend which is selected via kernel module parameter during
+boot.
+
+So the trusted keys framework needs to evolve to support multiple
+trust sources at runtime but I would like to understand the use-cases
+first. IMO, selecting the best trust source available on a platform
+for trusted keys should be a one time operation, so why do we need to
+have other backends available at runtime as well?
 
 -Sumit
 
-> Cheers,
-> Ahmad
->
 > --
-> Pengutronix e.K.                           |                             =
-|
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
-|
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+> Thanks,
+> //richard
