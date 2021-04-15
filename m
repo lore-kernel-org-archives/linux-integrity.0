@@ -2,70 +2,74 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9310BC433B4
-	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 11:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86EBC433ED
+	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 11:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6111F61249
-	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 11:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62536137D
+	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 11:27:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232422AbhDOLVD (ORCPT
+        id S230056AbhDOL17 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 15 Apr 2021 07:21:03 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56853 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231549AbhDOLVD (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Apr 2021 07:21:03 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 13FBKFtS085702;
-        Thu, 15 Apr 2021 20:20:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
- Thu, 15 Apr 2021 20:20:15 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 13FBKET4085693
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 15 Apr 2021 20:20:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 1/5] xattr: Complete constify ->name member of "struct
- xattr"
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Jeff Mahoney <jeffm@suse.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, stable@vger.kernel.org,
-        zohar@linux.ibm.com, jmorris@namei.org, paul@paul-moore.com,
-        casey@schaufler-ca.com
-References: <20210415100435.18619-1-roberto.sassu@huawei.com>
- <20210415100435.18619-2-roberto.sassu@huawei.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <164b0933-0917-457e-4dad-245ea13cbe52@i-love.sakura.ne.jp>
-Date:   Thu, 15 Apr 2021 20:20:15 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        Thu, 15 Apr 2021 07:27:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51624 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231549AbhDOL17 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 15 Apr 2021 07:27:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 663EEAE20;
+        Thu, 15 Apr 2021 11:27:35 +0000 (UTC)
+From:   Petr Vorel <pvorel@suse.cz>
+To:     linux-integrity@vger.kernel.org
+Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH v3 2/2] tests/install-swtpm.sh: Add tar option --no-same-owner
+Date:   Thu, 15 Apr 2021 13:27:28 +0200
+Message-Id: <20210415112728.9307-2-pvorel@suse.cz>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210415112728.9307-1-pvorel@suse.cz>
+References: <20210415112728.9307-1-pvorel@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20210415100435.18619-2-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2021/04/15 19:04, Roberto Sassu wrote:
-> This patch completes commit 9548906b2bb7 ('xattr: Constify ->name member of
-> "struct xattr"'). It fixes the documentation of the inode_init_security
-> hook, by removing the xattr name from the objects that are expected to be
-> allocated by LSMs (only the value is allocated). Also, it removes the
-> kfree() of name and setting it to NULL in the reiserfs code.
+to workaround running out of subuids/subgids when using podman:
+tar: ./LICENSE: Cannot change ownership to uid 339315, gid 578953: Invalid argument
 
-Good catch, but well, grep does not find any reiserfs_security_free() callers.
-Is reiserfs_security_free() a dead code?
+(run script under sudo would also work, but this does not require it)
+
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+Changes v2->v3:
+* new commit
+
+Feel free to squash it to the previous commit.
+
+Kind regards,
+Petr
+
+ tests/install-swtpm.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/install-swtpm.sh b/tests/install-swtpm.sh
+index 2d8293a..2666748 100755
+--- a/tests/install-swtpm.sh
++++ b/tests/install-swtpm.sh
+@@ -6,7 +6,7 @@ version=1637
+ wget --no-check-certificate https://sourceforge.net/projects/ibmswtpm2/files/ibmtpm${version}.tar.gz/download
+ mkdir ibmtpm$version
+ cd ibmtpm$version
+-tar -xvzf ../download
++tar --no-same-owner -xvzf ../download
+ cd src
+ make -j$(nproc)
+ sudo cp tpm_server /usr/local/bin/
+-- 
+2.31.1
+
