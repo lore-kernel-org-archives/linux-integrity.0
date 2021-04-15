@@ -2,127 +2,84 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D88F6C433B4
-	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 11:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D2DC433ED
+	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 12:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A806D61027
-	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 11:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6179961153
+	for <linux-integrity@archiver.kernel.org>; Thu, 15 Apr 2021 12:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231590AbhDOL17 (ORCPT
+        id S232981AbhDOM0S (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 15 Apr 2021 07:27:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51618 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230056AbhDOL17 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 15 Apr 2021 07:27:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 48BB5ABED;
-        Thu, 15 Apr 2021 11:27:35 +0000 (UTC)
-From:   Petr Vorel <pvorel@suse.cz>
-To:     linux-integrity@vger.kernel.org
-Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>
-Subject: [PATCH v3 1/2] travis: Fix openSUSE Tumbleweed
-Date:   Thu, 15 Apr 2021 13:27:27 +0200
-Message-Id: <20210415112728.9307-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.31.1
+        Thu, 15 Apr 2021 08:26:18 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2867 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232975AbhDOM0Q (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 15 Apr 2021 08:26:16 -0400
+Received: from fraeml715-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FLdbb1Rksz68BPR;
+        Thu, 15 Apr 2021 20:15:55 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml715-chm.china.huawei.com (10.206.15.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Thu, 15 Apr 2021 14:25:50 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.013;
+ Thu, 15 Apr 2021 14:25:50 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Jeff Mahoney <jeffm@suse.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>
+Subject: RE: [PATCH 1/5] xattr: Complete constify ->name member of "struct
+ xattr"
+Thread-Topic: [PATCH 1/5] xattr: Complete constify ->name member of "struct
+ xattr"
+Thread-Index: AQHXMd7FDBbRfOc0Vkms8LxU+cs6Xqq1TVmAgAAzkSA=
+Date:   Thu, 15 Apr 2021 12:25:49 +0000
+Message-ID: <eedc6f82d59b4084b529788efd43e10b@huawei.com>
+References: <20210415100435.18619-1-roberto.sassu@huawei.com>
+ <20210415100435.18619-2-roberto.sassu@huawei.com>
+ <164b0933-0917-457e-4dad-245ea13cbe52@i-love.sakura.ne.jp>
+In-Reply-To: <164b0933-0917-457e-4dad-245ea13cbe52@i-love.sakura.ne.jp>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.215.118]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-openSUSE Tumbleweed build fails due broken permission detection due
-faccessat2() incompatibility in libseccomp/runc used in old docker with
-old kernel on Ubuntu Focal on hosts in Travis CI together with guests
-with the newest glibc 2.33.
-
-Fixing Tumbleweed required switch to podman and downloading newest runc
-release (v1.0.0-rc93) which contains the fix [1], because proposed glibc
-fix [2] aren't going to merged to upstream [3] nor to Tumbleweed
-downstream glibc [4].
-
-Sooner or later it will be required for more distros (Fedora, Debian
-Ubuntu), but don't waste build time until required.
-
-[1] https://github.com/opencontainers/runc/pull/2750
-[2] https://sourceware.org/pipermail/libc-alpha/2020-November/119955.html
-[3] https://sourceware.org/pipermail/libc-alpha/2020-November/119978.html
-[4] https://bugzilla.opensuse.org/1182451
-
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
-Changes v2->v3:
-* remove sudo (replaced by --no-same-owner)
-
-Whole patchset tested on Travis CI:
-https://travis-ci.org/github/pevik/ima-evm-utils/builds/767144462
-
-Kind regards,
-Petr
-
- .travis.yml | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
-
-diff --git a/.travis.yml b/.travis.yml
-index e73b24e..ac6b2a5 100644
---- a/.travis.yml
-+++ b/.travis.yml
-@@ -1,4 +1,7 @@
-+# Copyright (c) 2017-2021 Petr Vorel <pvorel@suse.cz>
-+
- dist: bionic
-+sudo: required
- language: C
- services:
-     - docker
-@@ -30,7 +33,7 @@ matrix:
- 
-         # glibc (gcc/clang)
-         - os: linux
--          env: DISTRO=opensuse/tumbleweed TSS=ibmtss
-+          env: DISTRO=opensuse/tumbleweed TSS=ibmtss CONTAINER=podman CONTAINER_ARGS="--runtime=/usr/bin/runc --network=host"
-           compiler: clang
- 
-         - os: linux
-@@ -66,13 +69,29 @@ matrix:
-           compiler: gcc
- 
- before_install:
--    - df -hT
-+    # Tumbleweed requires podman and newest runc due docker incompatible with glibc 2.33 (faccessat2)
-+    - CONTAINER="${CONTAINER:-docker}"
-+    - >
-+        if [ "$CONTAINER" = "podman" ]; then
-+            # podman
-+            . /etc/os-release
-+            sudo sh -c "echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /' > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list"
-+            wget -nv https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/xUbuntu_${VERSION_ID}/Release.key -O- | sudo apt-key add -
-+            sudo apt update
-+            sudo apt -y install podman slirp4netns
-+
-+            # runc
-+            sudo curl -L https://github.com/opencontainers/runc/releases/download/v1.0.0-rc93/runc.amd64 -o /usr/bin/runc
-+            sudo chmod +x /usr/bin/runc
-+        fi
-+    - $CONTAINER info
-+
-     - DIR="/usr/src/ima-evm-utils"
-     - printf "FROM $DISTRO\nRUN mkdir -p $DIR\nWORKDIR $DIR\nCOPY . $DIR\n" > Dockerfile
-     - cat Dockerfile
--    - docker build -t ima-evm-utils .
-+    - $CONTAINER build $CONTAINER_ARGS -t ima-evm-utils .
- 
- script:
-     - INSTALL="${DISTRO%%:*}"
-     - INSTALL="${INSTALL%%/*}"
--    - docker run -t ima-evm-utils /bin/sh -c "cd travis && if [ \"$VARIANT\" ]; then ARCH=\"$ARCH\" ./$INSTALL.$VARIANT.sh; fi && ARCH=\"$ARCH\" CC=\"$CC\" TSS=\"$TSS\" ./$INSTALL.sh && if [ ! \"$VARIANT\" ]; then which tpm_server || which swtpm || ../tests/install-swtpm.sh; fi && CC=\"$CC\" VARIANT=\"$VARIANT\" ../build.sh"
-+    - $CONTAINER run $CONTAINER_ARGS -t ima-evm-utils /bin/sh -c "cd travis && if [ \"$VARIANT\" ]; then ARCH=\"$ARCH\" ./$INSTALL.$VARIANT.sh; fi && ARCH=\"$ARCH\" CC=\"$CC\" TSS=\"$TSS\" ./$INSTALL.sh && if [ ! \"$VARIANT\" ]; then which tpm_server || which swtpm || ../tests/install-swtpm.sh; fi && CC=\"$CC\" VARIANT=\"$VARIANT\" ../build.sh"
--- 
-2.31.1
-
+PiBGcm9tOiBUZXRzdW8gSGFuZGEgW21haWx0bzpwZW5ndWluLWtlcm5lbEBpLWxvdmUuc2FrdXJh
+Lm5lLmpwXQ0KPiBTZW50OiBUaHVyc2RheSwgQXByaWwgMTUsIDIwMjEgMToyMCBQTQ0KPiBPbiAy
+MDIxLzA0LzE1IDE5OjA0LCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggY29t
+cGxldGVzIGNvbW1pdCA5NTQ4OTA2YjJiYjcgKCd4YXR0cjogQ29uc3RpZnkgLT5uYW1lDQo+IG1l
+bWJlciBvZg0KPiA+ICJzdHJ1Y3QgeGF0dHIiJykuIEl0IGZpeGVzIHRoZSBkb2N1bWVudGF0aW9u
+IG9mIHRoZSBpbm9kZV9pbml0X3NlY3VyaXR5DQo+ID4gaG9vaywgYnkgcmVtb3ZpbmcgdGhlIHhh
+dHRyIG5hbWUgZnJvbSB0aGUgb2JqZWN0cyB0aGF0IGFyZSBleHBlY3RlZCB0bw0KPiBiZQ0KPiA+
+IGFsbG9jYXRlZCBieSBMU01zIChvbmx5IHRoZSB2YWx1ZSBpcyBhbGxvY2F0ZWQpLiBBbHNvLCBp
+dCByZW1vdmVzIHRoZQ0KPiA+IGtmcmVlKCkgb2YgbmFtZSBhbmQgc2V0dGluZyBpdCB0byBOVUxM
+IGluIHRoZSByZWlzZXJmcyBjb2RlLg0KPiANCj4gR29vZCBjYXRjaCwgYnV0IHdlbGwsIGdyZXAg
+ZG9lcyBub3QgZmluZCBhbnkgcmVpc2VyZnNfc2VjdXJpdHlfZnJlZSgpIGNhbGxlcnMuDQo+IElz
+IHJlaXNlcmZzX3NlY3VyaXR5X2ZyZWUoKSBhIGRlYWQgY29kZT8NCg0KVWhtLCBJIGFsc28gZG9u
+J3Qgc2VlIGl0Lg0KDQpUaGFua3MNCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1
+ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExp
+IEppYW4sIFNoaSBZYW5saQ0K
