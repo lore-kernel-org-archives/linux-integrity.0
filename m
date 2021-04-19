@@ -7,129 +7,124 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E7FC433ED
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED663C43461
 	for <linux-integrity@archiver.kernel.org>; Mon, 19 Apr 2021 15:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 127F161029
+	by mail.kernel.org (Postfix) with ESMTP id D012C6101C
 	for <linux-integrity@archiver.kernel.org>; Mon, 19 Apr 2021 15:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240660AbhDSPCa (ORCPT
+        id S239586AbhDSPCa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Mon, 19 Apr 2021 11:02:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56640 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239586AbhDSPC3 (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20630 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239230AbhDSPCa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 19 Apr 2021 11:02:29 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13JEY350063432
+        Mon, 19 Apr 2021 11:02:30 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13JEXaLH031502
         for <linux-integrity@vger.kernel.org>; Mon, 19 Apr 2021 11:02:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=VUOGGhhTvxxg5pW0BbgZgrUZRYXuFgYJYDI+OeysVIA=;
- b=s50mzSQU/v+LiwdCKaOqk6Dq13v2dTWwrKSmxYJO5PYcpg5Q7digA01GWUL9BqrsJkRk
- U8+OkzRaKhE59kyLDQaXJMMrLIFzbUpzo9v/gOFNpG9RGaAPQCs6XRZMimtMGU4mOX6P
- ErlpLxQ48VBwe5gr3EfvAL+AgyZsFEY07cRkT1waTMcnlG/DURHGOlsx2ebxoLIpfe4g
- ypotq/KJB5L/12lGHP0GznCsj9Quu2orDuk3U09DjSJfxhJpzU92mj7hBfypt5bOqFUE
- OPTIir2617uQyhNDRQyi049wkG8JPYCorpoFxZLasgF57akL92VrIYbaefaiEfbuZJJu wg== 
+ bh=56W0iEdGubB1+U29sYehFG0HtKMZrA9aSiTRV+T4vVg=;
+ b=bYTgXYf52FkLSQT3fdvik1n86bbAJkMewyvW67M/M5nn+S4gSNuYFt9s+J/wFZveOADY
+ TQ2eBamMSPU8KJK2fCemD4ImQxYHeEi5Ro5MimchU3vJzxp6X4Dn79qyF0/x/f9ttl8E
+ /Hf8PQfBCeIZmXv3mxuoy+gVoezykybpg2BOJoxPnK3g5OYtvJw80t7EIHLEO4gwpFw3
+ ZG8ozVkSHTTavzkeMmwpKAmsyIBcWY7oS4yZfu5RqJfpXozMFQlM3NX4FsXU7Oycu1u/
+ UErGUlNJjg7nAnEdgk12+g5iL8r/E9IMLZInkbWEllH9e73PxuEUCh4YFSk/61sgSMiI nw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 380d6uv8fb-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 380cwxv9yu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Mon, 19 Apr 2021 11:01:59 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13JEZK7P068416
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13JEXeLC032097
         for <linux-integrity@vger.kernel.org>; Mon, 19 Apr 2021 11:01:59 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 380d6uv8et-1
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 380cwxv9xr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Mon, 19 Apr 2021 11:01:59 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13JErcIW021478;
-        Mon, 19 Apr 2021 15:01:57 GMT
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13JEqgJd014062;
+        Mon, 19 Apr 2021 15:01:58 GMT
 Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma01dal.us.ibm.com with ESMTP id 37yqa9qe4v-1
+        by ppma05wdc.us.ibm.com with ESMTP id 37yqa8tr55-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Apr 2021 15:01:57 +0000
+        Mon, 19 Apr 2021 15:01:58 +0000
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13JF1uxH17170798
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13JF1vWL21758428
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Apr 2021 15:01:56 GMT
+        Mon, 19 Apr 2021 15:01:57 GMT
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 14E96136063;
+        by IMSVA (Postfix) with ESMTP id 2B214136051;
+        Mon, 19 Apr 2021 15:01:57 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB457136055;
         Mon, 19 Apr 2021 15:01:56 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AE57D13604F;
-        Mon, 19 Apr 2021 15:01:55 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.47.158.155])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Apr 2021 15:01:55 +0000 (GMT)
+        Mon, 19 Apr 2021 15:01:56 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH 1/6] libimaevm: Properly check for error returned by EVP_DigestUpdate
-Date:   Mon, 19 Apr 2021 11:01:46 -0400
-Message-Id: <20210419150151.236409-2-stefanb@linux.ibm.com>
+Subject: [PATCH 3/6] libimaevm: Rename variable returned from readlink to len
+Date:   Mon, 19 Apr 2021 11:01:48 -0400
+Message-Id: <20210419150151.236409-4-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210419150151.236409-1-stefanb@linux.ibm.com>
 References: <20210419150151.236409-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 54AwuZEWPbZtyxJGUvrFDxab3qevbUTJ
-X-Proofpoint-ORIG-GUID: 5VWCVD7XwZOZhHEz5435zFNmsck4Wfjs
+X-Proofpoint-ORIG-GUID: e_TsLhLG3rHxPmLX-fRjd1oZJUwXq5f6
+X-Proofpoint-GUID: e_yB8I6lqTBOenZnZOAbYLRyn-oDys2D
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-04-19_10:2021-04-19,2021-04-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- mlxlogscore=999 spamscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 phishscore=0 mlxscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104190100
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ malwarescore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
+ mlxscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2104060000 definitions=main-2104190100
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The error checking in add_dir_hash was wrong. EVP_DigestUpdate returns 1
-on success and 0 on error, so we cannot just accumulate it using or'ing.
-
-From the man page:
-       EVP_DigestInit_ex(), EVP_DigestUpdate(), EVP_DigestFinal_ex()
-           Returns 1 for success and 0 for failure.
+The variable returned from readlink is a length indicator of the
+number of bytes placed into a buffer, not only an error. Leave
+a note in the code that a zero-length link is also treated as an
+error, besdies the usual -1.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- src/libimaevm.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ src/libimaevm.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/src/libimaevm.c b/src/libimaevm.c
-index fa6c278..d8fc0d4 100644
+index 0137884..9a6739b 100644
 --- a/src/libimaevm.c
 +++ b/src/libimaevm.c
-@@ -179,7 +179,6 @@ out:
+@@ -213,15 +213,16 @@ static int add_dir_hash(const char *file, EVP_MD_CTX *ctx)
  
- static int add_dir_hash(const char *file, EVP_MD_CTX *ctx)
+ static int add_link_hash(const char *path, EVP_MD_CTX *ctx)
  {
 -	int err;
- 	struct dirent *de;
- 	DIR *dir;
- 	unsigned long long ino, off;
-@@ -198,11 +197,10 @@ static int add_dir_hash(const char *file, EVP_MD_CTX *ctx)
- 		type = de->d_type;
- 		log_debug("entry: %s, ino: %llu, type: %u, off: %llu, reclen: %hu\n",
- 			  de->d_name, ino, type, off, de->d_reclen);
--		err = EVP_DigestUpdate(ctx, de->d_name, strlen(de->d_name));
--		/*err |= EVP_DigestUpdate(ctx, &off, sizeof(off));*/
--		err |= EVP_DigestUpdate(ctx, &ino, sizeof(ino));
--		err |= EVP_DigestUpdate(ctx, &type, sizeof(type));
--		if (!err) {
-+		if (EVP_DigestUpdate(ctx, de->d_name, strlen(de->d_name)) != 1 ||
-+		    /* EVP_DigestUpdate(ctx, &off, sizeof(off)) != 1 || */
-+		    EVP_DigestUpdate(ctx, &ino, sizeof(ino)) != 1||
-+		    EVP_DigestUpdate(ctx, &type, sizeof(type)) != 1) {
- 			log_err("EVP_DigestUpdate() failed\n");
- 			output_openssl_errors();
- 			result = 1;
++	int len;
+ 	char buf[1024];
+ 
+-	err = readlink(path, buf, sizeof(buf));
+-	if (err <= 0)
++	len = readlink(path, buf, sizeof(buf));
++	/* 0-length links are also an error */
++	if (len <= 0)
+ 		return -1;
+ 
+-	log_info("link: %s -> %.*s\n", path, err, buf);
+-	return !EVP_DigestUpdate(ctx, buf, err);
++	log_info("link: %s -> %.*s\n", path, len, buf);
++	return !EVP_DigestUpdate(ctx, buf, len);
+ }
+ 
+ static int add_dev_hash(struct stat *st, EVP_MD_CTX *ctx)
 -- 
 2.30.2
 
