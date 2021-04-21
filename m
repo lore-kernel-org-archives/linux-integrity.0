@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 146C7C433ED
-	for <linux-integrity@archiver.kernel.org>; Wed, 21 Apr 2021 16:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D0D1C433ED
+	for <linux-integrity@archiver.kernel.org>; Wed, 21 Apr 2021 16:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF3566144A
-	for <linux-integrity@archiver.kernel.org>; Wed, 21 Apr 2021 16:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D09261430
+	for <linux-integrity@archiver.kernel.org>; Wed, 21 Apr 2021 16:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244255AbhDUQUl (ORCPT
+        id S244273AbhDUQUm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 21 Apr 2021 12:20:41 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2896 "EHLO
+        Wed, 21 Apr 2021 12:20:42 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2898 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244246AbhDUQUi (ORCPT
+        with ESMTP id S244254AbhDUQUi (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Wed, 21 Apr 2021 12:20:38 -0400
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FQQYl0XrYz6slNm;
-        Thu, 22 Apr 2021 00:12:27 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FQQc91b4hz6wjrk;
+        Thu, 22 Apr 2021 00:14:33 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 21 Apr 2021 18:19:57 +0200
+ 15.1.2176.2; Wed, 21 Apr 2021 18:20:00 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <jmorris@namei.org>, <paul@paul-moore.com>,
         <casey@schaufler-ca.com>
@@ -36,10 +36,12 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>,
         <reiserfs-devel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v2 0/6] evm: Prepare for moving to the LSM infrastructure
-Date:   Wed, 21 Apr 2021 18:19:19 +0200
-Message-ID: <20210421161925.968825-1-roberto.sassu@huawei.com>
+Subject: [PATCH v2 3/6] security: Pass xattrs allocated by LSMs to the inode_init_security hook
+Date:   Wed, 21 Apr 2021 18:19:22 +0200
+Message-ID: <20210421161925.968825-4-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210421161925.968825-1-roberto.sassu@huawei.com>
+References: <20210421161925.968825-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -51,127 +53,215 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch set depends on:
+In preparation for moving EVM to the LSM infrastructure, this patch
+replaces the name, value, len triple with the xattr array pointer provided
+by security_inode_init_security(). LSMs are expected to call the new
+function lsm_find_xattr_slot() to find the first unused slot of the array
+where the xattr should be written.
 
-https://lore.kernel.org/linux-integrity/20210409114313.4073-1-roberto.sassu@huawei.com/
-https://lore.kernel.org/linux-integrity/20210407105252.30721-1-roberto.sassu@huawei.com/
+This patch modifies also SELinux and Smack to search for an unused slot, to
+have a consistent behavior across LSMs (the unmodified version would
+overwrite the xattr set by the first LSM in the chain). It is also
+desirable to have the modification in those LSMs, as they are likely used
+as a reference for the development of new LSMs.
 
-One of the challenges that must be tackled to move IMA and EVM to the LSM
-infrastructure is to ensure that EVM is capable to correctly handle
-multiple stacked LSMs providing an xattr at file creation. At the moment,
-there are few issues that would prevent a correct integration. This patch
-set aims at solving them.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ include/linux/lsm_hook_defs.h |  4 ++--
+ include/linux/lsm_hooks.h     | 18 +++++++++++++++---
+ security/security.c           | 13 +++++++------
+ security/selinux/hooks.c      | 13 ++++++-------
+ security/smack/smack_lsm.c    | 20 +++++++++-----------
+ 5 files changed, 39 insertions(+), 29 deletions(-)
 
-From the LSM infrastructure side, the LSM stacking feature added the
-possibility of registering multiple implementations of the security hooks,
-that are called sequentially whenever someone calls the corresponding
-security hook. However, security_inode_init_security() and
-security_old_inode_init_security() are currently limited to support one
-xattr provided by LSM and one by EVM.
-
-In addition, using the call_int_hook() macro causes some issues. According
-to the documentation in include/linux/lsm_hooks.h, it is a legitimate case
-that an LSM returns -EOPNOTSUPP when it does not want to provide an xattr.
-However, the loop defined in the macro would stop calling subsequent LSMs
-if that happens. In the case of security_old_inode_init_security(), using
-the macro would also cause a memory leak due to replacing the *value
-pointer, if multiple LSMs provide an xattr.
-
-From EVM side, the first operation to be done is to change the definition
-of evm_inode_init_security() to be compatible with the security hook
-definition. Unfortunately, the current definition does not provide enough
-information for EVM, as it must have visibility of all xattrs provided by
-LSMs to correctly calculate the HMAC. This patch set changes the security
-hook definition by replacing the name, value and len triple with the xattr
-array allocated by security_inode_init_security().
-
-Secondly, EVM must know how many elements are in the xattr array. It seems
-that it is not necessary to add another parameter, as all filesystems that
-define an initxattr function expect that the last element of the array is
-one with the name field set to NULL. EVM reuses the same assumption.
-
-This patch set has been tested by introducing several instances of a
-TestLSM (some providing an xattr, some not, one with a wrong implementation
-to see how the LSM infrastructure handles it). The patch is not included
-in this set but it is available here:
-
-https://github.com/robertosassu/linux/commit/dbe867fdf0b61b9bd73332f159e7ce5ca2a9b980
-
-The test, added to ima-evm-utils, is available here:
-
-https://github.com/robertosassu/ima-evm-utils/blob/evm-multiple-lsms-v2-devel-v2/tests/evm_multiple_lsms.test
-
-The test takes a UML kernel built by Travis and launches it several times,
-each time with a different combination of LSMs. After boot, it first checks
-that there is an xattr for each LSM providing it, and then calculates the
-HMAC in user space and compares it with the HMAC calculated by EVM in
-kernel space.
-
-A test report can be obtained here:
-
-https://travis-ci.com/github/robertosassu/ima-evm-utils/jobs/500142666
-
-SELinux Test Suite result (diff 5.11.14-200.fc33.x86_64 5.12.0-rc8+):
--Files=70, Tests=1099, 82 wallclock secs ( 0.35 usr  0.09 sys +  7.39 cusr 10.14 csys = 17.97 CPU)
-+Files=70, Tests=1108, 104 wallclock secs ( 0.35 usr  0.09 sys +  7.35 cusr 11.35 csys = 19.14 CPU)
- Result: FAIL
--Failed 2/70 test programs. 5/1099 subtests failed.
-+Failed 2/70 test programs. 5/1108 subtests failed.
-
-Smack Test Suite result:
-smack_set_ambient 1 TPASS: Test "smack_set_ambient" success.
-smack_set_current 1 TPASS: Test "smack_set_current" success.
-smack_set_doi 1 TPASS: Test "smack_set_doi" success.
-smack_set_netlabel 1 TPASS: Test "smack_set_netlabel" success.
-smack_set_socket_labels    1  TPASS  :  Test smack_set_socket_labels success.
-smack_set_cipso 1 TPASS: Test "smack_set_cipso" success.
-smack_set_direct 1 TPASS: Test "smack_set_direct" success.
-smack_set_load 1 TPASS: Test "smack_set_load" success.
-smack_set_onlycap 1 TFAIL: The smack label reported for "/smack/onlycap"
-
-Lastly, running the test on reiserfs to check
-security_old_inode_init_security(), some issues have been discovered: a
-free of xattr->name which is not correct after commit 9548906b2bb7 ('xattr:
-Constify ->name member of "struct xattr"'), missing calls to
-reiserfs_security_free() and a misalignment with
-security_inode_init_security() (the old version expects the full xattr name
-with the security. prefix, the new version just the suffix). The last issue
-has not been fixed yet.
-
-Changelog
-
-v1:
-- add calls to reiserfs_security_free() and initialize sec->value to NULL
-  (suggested by Tetsuo and Mimi)
-- change definition of inode_init_security hook, replace the name, value
-  and len triple with the xattr array (suggested by Casey)
-- introduce lsm_find_xattr_slot() helper for LSMs to find an unused slot in
-  the passed xattr array
-
-Roberto Sassu (6):
-  xattr: Complete constify ->name member of "struct xattr"
-  reiserfs: Add missing calls to reiserfs_security_free()
-  security: Pass xattrs allocated by LSMs to the inode_init_security
-    hook
-  security: Support multiple LSMs implementing the inode_init_security
-    hook
-  evm: Align evm_inode_init_security() definition with LSM
-    infrastructure
-  evm: Support multiple LSMs providing an xattr
-
- fs/reiserfs/namei.c                 |   4 ++
- fs/reiserfs/xattr_security.c        |   3 +-
- include/linux/evm.h                 |  17 +++--
- include/linux/lsm_hook_defs.h       |   4 +-
- include/linux/lsm_hooks.h           |  22 ++++--
- security/integrity/evm/evm.h        |   2 +
- security/integrity/evm/evm_crypto.c |   9 ++-
- security/integrity/evm/evm_main.c   |  28 +++++---
- security/security.c                 | 105 +++++++++++++++++++++++-----
- security/selinux/hooks.c            |  13 ++--
- security/smack/smack_lsm.c          |  20 +++---
- 11 files changed, 167 insertions(+), 60 deletions(-)
-
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 477a597db013..afb9dd122f60 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -111,8 +111,8 @@ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+ LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+ LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+-	 struct inode *dir, const struct qstr *qstr, const char **name,
+-	 void **value, size_t *len)
++	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
++	 void *fs_data)
+ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+ 	 const struct qstr *name, const struct inode *context_inode)
+ LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index c5498f5174ce..e8c9bac29b9d 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -27,6 +27,7 @@
+ 
+ #include <linux/security.h>
+ #include <linux/init.h>
++#include <linux/xattr.h>
+ #include <linux/rculist.h>
+ 
+ /**
+@@ -227,9 +228,11 @@
+  *	@inode contains the inode structure of the newly created inode.
+  *	@dir contains the inode structure of the parent directory.
+  *	@qstr contains the last path component of the new object
+- *	@name will be set to the allocated name suffix (e.g. selinux).
+- *	@value will be set to the allocated attribute value.
+- *	@len will be set to the length of the value.
++ *	@xattrs contains the full array of xattrs allocated by LSMs where
++ *	->name will be set to the allocated name suffix (e.g. selinux).
++ *	->value will be set to the allocated attribute value.
++ *	->len will be set to the length of the value.
++ *	@fs_data contains filesystem-specific data.
+  *	Returns 0 if @name and @value have been successfully set,
+  *	-EOPNOTSUPP if no security attribute is needed, or
+  *	-ENOMEM on memory allocation failure.
+@@ -1661,4 +1664,13 @@ static inline void security_delete_hooks(struct security_hook_list *hooks,
+ 
+ extern int lsm_inode_alloc(struct inode *inode);
+ 
++static inline struct xattr *lsm_find_xattr_slot(struct xattr *xattrs)
++{
++	struct xattr *slot;
++
++	for (slot = xattrs; slot && slot->name != NULL; slot++)
++		;
++
++	return slot;
++}
+ #endif /* ! __LINUX_LSM_HOOKS_H */
+diff --git a/security/security.c b/security/security.c
+index 7f14e59c4f8e..2c1fe1496069 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1037,18 +1037,16 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 
+ 	if (!initxattrs)
+ 		return call_int_hook(inode_init_security, -EOPNOTSUPP, inode,
+-				     dir, qstr, NULL, NULL, NULL);
++				     dir, qstr, NULL, fs_data);
+ 	memset(new_xattrs, 0, sizeof(new_xattrs));
+ 	lsm_xattr = new_xattrs;
+ 	ret = call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir, qstr,
+-						&lsm_xattr->name,
+-						&lsm_xattr->value,
+-						&lsm_xattr->value_len);
++			    lsm_xattr, fs_data);
+ 	if (ret)
+ 		goto out;
+ 
+ 	evm_xattr = lsm_xattr + 1;
+-	ret = evm_inode_init_security(inode, lsm_xattr, evm_xattr);
++	ret = evm_inode_init_security(inode, new_xattrs, evm_xattr);
+ 	if (ret)
+ 		goto out;
+ 	ret = initxattrs(inode, new_xattrs, fs_data);
+@@ -1071,10 +1069,13 @@ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len)
+ {
++	struct xattr xattr = { .name = NULL, .value = NULL, .value_len = 0 };
++	struct xattr *lsm_xattr = (name && value && len) ? &xattr : NULL;
++
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return -EOPNOTSUPP;
+ 	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
+-			     qstr, name, value, len);
++			     qstr, lsm_xattr, NULL);
+ }
+ EXPORT_SYMBOL(security_old_inode_init_security);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index ddd097790d47..806827eb132a 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2916,11 +2916,11 @@ static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
+ 
+ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 				       const struct qstr *qstr,
+-				       const char **name,
+-				       void **value, size_t *len)
++				       struct xattr *xattrs, void *fs_data)
+ {
+ 	const struct task_security_struct *tsec = selinux_cred(current_cred());
+ 	struct superblock_security_struct *sbsec;
++	struct xattr *xattr = lsm_find_xattr_slot(xattrs);
+ 	u32 newsid, clen;
+ 	int rc;
+ 	char *context;
+@@ -2947,16 +2947,15 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ 	    !(sbsec->flags & SBLABEL_MNT))
+ 		return -EOPNOTSUPP;
+ 
+-	if (name)
+-		*name = XATTR_SELINUX_SUFFIX;
++	if (xattr) {
++		xattr->name = XATTR_SELINUX_SUFFIX;
+ 
+-	if (value && len) {
+ 		rc = security_sid_to_context_force(&selinux_state, newsid,
+ 						   &context, &clen);
+ 		if (rc)
+ 			return rc;
+-		*value = context;
+-		*len = clen;
++		xattr->value = context;
++		xattr->value_len = clen;
+ 	}
+ 
+ 	return 0;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 12a45e61c1a5..af7eee0fee52 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -962,26 +962,24 @@ static int smack_inode_alloc_security(struct inode *inode)
+  * @inode: the newly created inode
+  * @dir: containing directory object
+  * @qstr: unused
+- * @name: where to put the attribute name
+- * @value: where to put the attribute value
+- * @len: where to put the length of the attribute
++ * @xattrs: where to put the attribute
+  *
+  * Returns 0 if it all works out, -ENOMEM if there's no memory
+  */
+ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, const char **name,
+-				     void **value, size_t *len)
++				     const struct qstr *qstr,
++				     struct xattr *xattrs, void *fs_data)
+ {
+ 	struct inode_smack *issp = smack_inode(inode);
+ 	struct smack_known *skp = smk_of_current();
+ 	struct smack_known *isp = smk_of_inode(inode);
+ 	struct smack_known *dsp = smk_of_inode(dir);
++	struct xattr *xattr = lsm_find_xattr_slot(xattrs);
+ 	int may;
+ 
+-	if (name)
+-		*name = XATTR_SMACK_SUFFIX;
++	if (xattr) {
++		xattr->name = XATTR_SMACK_SUFFIX;
+ 
+-	if (value && len) {
+ 		rcu_read_lock();
+ 		may = smk_access_entry(skp->smk_known, dsp->smk_known,
+ 				       &skp->smk_rules);
+@@ -999,11 +997,11 @@ static int smack_inode_init_security(struct inode *inode, struct inode *dir,
+ 			issp->smk_flags |= SMK_INODE_CHANGED;
+ 		}
+ 
+-		*value = kstrdup(isp->smk_known, GFP_NOFS);
+-		if (*value == NULL)
++		xattr->value = kstrdup(isp->smk_known, GFP_NOFS);
++		if (xattr->value == NULL)
+ 			return -ENOMEM;
+ 
+-		*len = strlen(isp->smk_known);
++		xattr->value_len = strlen(isp->smk_known);
+ 	}
+ 
+ 	return 0;
 -- 
 2.25.1
 
