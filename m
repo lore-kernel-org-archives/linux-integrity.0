@@ -2,124 +2,235 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E912C433B4
-	for <linux-integrity@archiver.kernel.org>; Fri, 23 Apr 2021 15:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908B1C433ED
+	for <linux-integrity@archiver.kernel.org>; Fri, 23 Apr 2021 23:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56CB661468
-	for <linux-integrity@archiver.kernel.org>; Fri, 23 Apr 2021 15:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BE9161465
+	for <linux-integrity@archiver.kernel.org>; Fri, 23 Apr 2021 23:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243028AbhDWPNi (ORCPT
+        id S244182AbhDWXFO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 23 Apr 2021 11:13:38 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25242 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242829AbhDWPNg (ORCPT
+        Fri, 23 Apr 2021 19:05:14 -0400
+Received: from bedivere.hansenpartnership.com ([96.44.175.130]:39416 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S243236AbhDWXFF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Apr 2021 11:13:36 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13NF6YlN112666;
-        Fri, 23 Apr 2021 11:12:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=13VxI2u/uzl1rsCou/jlybKaB3Fcj4Hk8iNuw0hp8ss=;
- b=IqbLz44PCWm0AyMztqPxEluVvpxBmhrFtUelOPlmfZF7y1SZ1EeBpf4pSZw9OwNFdxSl
- GxlufLNOq6Yxj0FIltZpaN4B7PmlGYzm1SHu5LB/uwz6Bw6acbEJ+5Uzdglov3cBdgQ/
- X6/zxL3kHk1OgOMYrQogpWv72G9OdGUlhXHit8LWDDs9/QKVwVHJoytKCQpXS6igXY5q
- 3f+gsM7e1QTaolOH4UNY3LK7tzgqTftB40E+OzFuHCXL8XYxxC9RVEHnBMH9bNm+/Nud
- g82+hAShCF7+hfCJ/B23s4V9KacAOrJKz0SpyTzP55tDfWbeUHL3MnNyrSeO+mAIVqhz cg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 383ykja3aa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Apr 2021 11:12:58 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13NF8oYU121591;
-        Fri, 23 Apr 2021 11:12:58 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 383ykja37w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Apr 2021 11:12:58 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13NFCf0u028347;
-        Fri, 23 Apr 2021 15:12:54 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma03wdc.us.ibm.com with ESMTP id 37yqa9srhy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Apr 2021 15:12:54 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13NFCqMn60686736
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Apr 2021 15:12:52 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CAE2D6A047;
-        Fri, 23 Apr 2021 15:12:52 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C6236A04F;
-        Fri, 23 Apr 2021 15:12:52 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.47.158.152])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Apr 2021 15:12:52 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        zohar@linux.ibm.com, jarkko@kernel.org
-Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v4 1/2] certs: Trigger creation of RSA module signing key if it's not an RSA key
-Date:   Fri, 23 Apr 2021 11:12:46 -0400
-Message-Id: <20210423151247.1517808-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210423151247.1517808-1-stefanb@linux.ibm.com>
-References: <20210423151247.1517808-1-stefanb@linux.ibm.com>
+        Fri, 23 Apr 2021 19:05:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id CCCC912805E0;
+        Fri, 23 Apr 2021 16:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1619219067;
+        bh=EvcwOC67P8i6xhWNY2Fy8D2fKnBdoTZv+6sSfbs3CrQ=;
+        h=Message-ID:Subject:From:To:Date:From;
+        b=d00lOxF65Lf0SpGPeD5wW/xQZ+FPHDvpGsRyBYDY33wHl5DwPc8WKv6OHywnwao0e
+         ZU5wiWvXFaEoJYs9mO9OAWMoKzZsgF9YViRODnBRM/cXbK3sB+cW5aP608vHAs+Bup
+         D+zDlQE67u3+uKesK5gjnx3TAV7ouckwAk6OAHSs=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id O5SHQ4Iy6raj; Fri, 23 Apr 2021 16:04:27 -0700 (PDT)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 51C3212805D3;
+        Fri, 23 Apr 2021 16:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1619219067;
+        bh=EvcwOC67P8i6xhWNY2Fy8D2fKnBdoTZv+6sSfbs3CrQ=;
+        h=Message-ID:Subject:From:To:Date:From;
+        b=d00lOxF65Lf0SpGPeD5wW/xQZ+FPHDvpGsRyBYDY33wHl5DwPc8WKv6OHywnwao0e
+         ZU5wiWvXFaEoJYs9mO9OAWMoKzZsgF9YViRODnBRM/cXbK3sB+cW5aP608vHAs+Bup
+         D+zDlQE67u3+uKesK5gjnx3TAV7ouckwAk6OAHSs=
+Message-ID: <52f4810fbcdb3a118b7126e2497ae384016c9004.camel@HansenPartnership.com>
+Subject: [GIT PULL] TPM DEVICE DRIVER updates for v5.13 (updated)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        dhowells@redhat.com, Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Date:   Fri, 23 Apr 2021 16:04:26 -0700
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rvnVN2uC0d2n0SShuIwPB-gf0FKOCoi6
-X-Proofpoint-ORIG-GUID: Iav6le4oz4f1jlcOag-FCNy8Q48IjMC-
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-23_07:2021-04-23,2021-04-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 phishscore=0 suspectscore=0 mlxscore=0 adultscore=0
- mlxlogscore=999 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104060000 definitions=main-2104230098
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Address a kbuild issue where a developer created an ECDSA key for signing
-kernel modules and then builds an older version of the kernel, when bi-
-secting the kernel for example, that does not support ECDSA keys.
+Fix a regression in the TPM trusted keys caused by the generic rework
+to add ARM TEE based trusted keys.  Without this fix, the TPM trusted
+key subsystem fails to add or load any keys.
 
-Trigger the creation of an RSA module signing key if it is not an RSA key.
+This is an incremental update to Jarkko's previous pull request (which
+contains the regression):
 
-Fixes: cfc411e7fff3 ("Move certificate handling to its own directory")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+https://lore.kernel.org/linux-integrity/YHb06P4IOGV7eoiJ@kernel.org/
+
+So if you could pull both in succession to minimize the bisection
+problem, I'd be grateful (it's only a functional regression not a
+compile one so the bisection problem would only impact someone
+bisecting trusted keys).
+
+There's also a minor conflict caused by the previous urgent fix I sent,
+but the resolution is obvious.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/tpmdd.git queue
+
+The short changelog is:
+
+James Bottomley (1):
+      KEYS: trusted: fix TPM trusted keys for generic framework
+
+And the diffstat:
+
+ security/keys/trusted-keys/trusted_core.c | 24 ++++++++++++------------
+ security/keys/trusted-keys/trusted_tpm1.c |  5 ++++-
+ 2 files changed, 16 insertions(+), 13 deletions(-)
+
+With full diff below.
+
+James
+
 ---
- certs/Makefile | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/certs/Makefile b/certs/Makefile
-index e3185c57fbd8..f64bc89ccbf1 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -59,6 +59,11 @@ silent_redirect_openssl = 2>/dev/null
- # external private key, because 'make randconfig' might enable such a
- # boolean option and we unfortunately can't make it depend on !RANDCONFIG.
- ifeq ($(CONFIG_MODULE_SIG_KEY),"certs/signing_key.pem")
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index 90774793f0b1..d5c891d8d353 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -62,7 +62,7 @@ static const match_table_t key_tokens = {
+  *
+  * On success returns 0, otherwise -EINVAL.
+  */
+-static int datablob_parse(char *datablob, struct trusted_key_payload *p)
++static int datablob_parse(char **datablob, struct trusted_key_payload *p)
+ {
+ 	substring_t args[MAX_OPT_ARGS];
+ 	long keylen;
+@@ -71,14 +71,14 @@ static int datablob_parse(char *datablob, struct trusted_key_payload *p)
+ 	char *c;
+ 
+ 	/* main command */
+-	c = strsep(&datablob, " \t");
++	c = strsep(datablob, " \t");
+ 	if (!c)
+ 		return -EINVAL;
+ 	key_cmd = match_token(c, key_tokens, args);
+ 	switch (key_cmd) {
+ 	case Opt_new:
+ 		/* first argument is key size */
+-		c = strsep(&datablob, " \t");
++		c = strsep(datablob, " \t");
+ 		if (!c)
+ 			return -EINVAL;
+ 		ret = kstrtol(c, 10, &keylen);
+@@ -89,7 +89,7 @@ static int datablob_parse(char *datablob, struct trusted_key_payload *p)
+ 		break;
+ 	case Opt_load:
+ 		/* first argument is sealed blob */
+-		c = strsep(&datablob, " \t");
++		c = strsep(datablob, " \t");
+ 		if (!c)
+ 			return -EINVAL;
+ 		p->blob_len = strlen(c) / 2;
+@@ -140,7 +140,7 @@ static int trusted_instantiate(struct key *key,
+ {
+ 	struct trusted_key_payload *payload = NULL;
+ 	size_t datalen = prep->datalen;
+-	char *datablob;
++	char *datablob, *orig_datablob;
+ 	int ret = 0;
+ 	int key_cmd;
+ 	size_t key_len;
+@@ -148,7 +148,7 @@ static int trusted_instantiate(struct key *key,
+ 	if (datalen <= 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+-	datablob = kmalloc(datalen + 1, GFP_KERNEL);
++	orig_datablob = datablob = kmalloc(datalen + 1, GFP_KERNEL);
+ 	if (!datablob)
+ 		return -ENOMEM;
+ 	memcpy(datablob, prep->data, datalen);
+@@ -160,7 +160,7 @@ static int trusted_instantiate(struct key *key,
+ 		goto out;
+ 	}
+ 
+-	key_cmd = datablob_parse(datablob, payload);
++	key_cmd = datablob_parse(&datablob, payload);
+ 	if (key_cmd < 0) {
+ 		ret = key_cmd;
+ 		goto out;
+@@ -196,7 +196,7 @@ static int trusted_instantiate(struct key *key,
+ 		ret = -EINVAL;
+ 	}
+ out:
+-	kfree_sensitive(datablob);
++	kfree_sensitive(orig_datablob);
+ 	if (!ret)
+ 		rcu_assign_keypointer(key, payload);
+ 	else
+@@ -220,7 +220,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	struct trusted_key_payload *p;
+ 	struct trusted_key_payload *new_p;
+ 	size_t datalen = prep->datalen;
+-	char *datablob;
++	char *datablob, *orig_datablob;
+ 	int ret = 0;
+ 
+ 	if (key_is_negative(key))
+@@ -231,7 +231,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	if (datalen <= 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+ 
+-	datablob = kmalloc(datalen + 1, GFP_KERNEL);
++	orig_datablob = datablob = kmalloc(datalen + 1, GFP_KERNEL);
+ 	if (!datablob)
+ 		return -ENOMEM;
+ 
+@@ -243,7 +243,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 
+ 	memcpy(datablob, prep->data, datalen);
+ 	datablob[datalen] = '\0';
+-	ret = datablob_parse(datablob, new_p);
++	ret = datablob_parse(&datablob, new_p);
+ 	if (ret != Opt_update) {
+ 		ret = -EINVAL;
+ 		kfree_sensitive(new_p);
+@@ -267,7 +267,7 @@ static int trusted_update(struct key *key, struct key_preparsed_payload *prep)
+ 	rcu_assign_keypointer(key, new_p);
+ 	call_rcu(&p->rcu, trusted_rcu_free);
+ out:
+-	kfree_sensitive(datablob);
++	kfree_sensitive(orig_datablob);
+ 	return ret;
+ }
+ 
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index 798dc7820084..469394550801 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -747,6 +747,9 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
+ 
+ 	opt->hash = tpm2 ? HASH_ALGO_SHA256 : HASH_ALGO_SHA1;
+ 
++	if (!c)
++		return 0;
 +
-+X509TEXT=$(shell openssl x509 -in $(CONFIG_MODULE_SIG_KEY) -text)
-+
-+$(if $(findstring rsaEncryption,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+
- $(obj)/signing_key.pem: $(obj)/x509.genkey
- 	@$(kecho) "###"
- 	@$(kecho) "### Now generating an X.509 key pair to be used for signing modules."
--- 
-2.29.2
+ 	while ((p = strsep(&c, " \t"))) {
+ 		if (*p == '\0' || *p == ' ' || *p == '\t')
+ 			continue;
+@@ -944,7 +947,7 @@ static int trusted_tpm_unseal(struct trusted_key_payload *p, char *datablob)
+ 		goto out;
+ 	dump_options(options);
+ 
+-	if (!options->keyhandle) {
++	if (!options->keyhandle && !tpm2) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
