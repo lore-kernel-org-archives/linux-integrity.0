@@ -2,110 +2,97 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282C2C43461
-	for <linux-integrity@archiver.kernel.org>; Sat,  1 May 2021 09:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08A9C433ED
+	for <linux-integrity@archiver.kernel.org>; Sat,  1 May 2021 14:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F181061423
-	for <linux-integrity@archiver.kernel.org>; Sat,  1 May 2021 09:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85B1F61613
+	for <linux-integrity@archiver.kernel.org>; Sat,  1 May 2021 14:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231846AbhEAJC1 (ORCPT
+        id S232178AbhEAOC3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 1 May 2021 05:02:27 -0400
-Received: from mout.gmx.net ([212.227.15.18]:55959 "EHLO mout.gmx.net"
+        Sat, 1 May 2021 10:02:29 -0400
+Received: from mout.gmx.net ([212.227.17.20]:56987 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230117AbhEAJC0 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 1 May 2021 05:02:26 -0400
+        id S232135AbhEAOC2 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 1 May 2021 10:02:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1619859683;
-        bh=PBKnn869NbbFhapUKErGOasK17EN1C5xgem9fGghJpM=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=kPpBybbb3OesfHBkL+LWVhc38wAGpcuJfs/tWDm5As1P2aDw5xYYVrr5HZnVlxPju
-         va/3hERzzxx+p989cqQk97F55qr6kcFSbab4ZNiiLxAdPJT07ujV27oAu+Iq8TZ2hW
-         CVvUVZDg/psBh9DZI0h9ovSqdqQu6ymqh6a4scA4=
+        s=badeba3b8450; t=1619877685;
+        bh=AzZ1AEuOXzDeEZImjz7dTO6fuYvDAouQw4LSy2qtRfc=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=cJEtwcMT/jtmDGDmnOkPUOtDVMz5XKQVsLanP9GkzkU9SZxla1Bje4xAU2i1Fyoq/
+         bq6YQmiHdDOyTgK5+dLiYPYtUEsVP6rITBpHEcknK0mUX4OLS8GREa4U7nZhA0c2Ss
+         MCz7VdZQefZZhle4OVDs88b8W+fVaF2JyHmQby3g=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.178.51] ([78.42.220.31]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MJmKh-1lrwyI1YiX-00KBoQ; Sat, 01
- May 2021 11:01:23 +0200
-Subject: Re: [PATCH v2 1/4] tpm: Use a threaded interrupt handler
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
-        James.Bottomley@hansenpartnership.com, keescook@chromium.org,
-        jsnitsel@redhat.com, ml.linux@elloe.vision,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1619394440-30646-1-git-send-email-LinoSanfilippo@gmx.de>
- <1619394440-30646-2-git-send-email-LinoSanfilippo@gmx.de>
- <YIikDCTBcMMxjots@kernel.org> <495e816a-afba-4ea0-560c-bc748df26337@gmx.de>
- <YIpZH5TtEDA071EE@kernel.org>
+Received: from Venus.fritz.box ([78.42.220.31]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MwQTF-1lJvmq2RYj-00sQci; Sat, 01
+ May 2021 16:01:25 +0200
 From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Message-ID: <024acf60-47cd-5558-93d8-dcea9f063b83@gmx.de>
-Date:   Sat, 1 May 2021 11:01:21 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
+Cc:     stefanb@linux.vnet.ibm.com, James.Bottomley@hansenpartnership.com,
+        keescook@chromium.org, jsnitsel@redhat.com, ml.linux@elloe.vision,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LinoSanfilippo@gmx.de, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v3 1/4] tpm: Use a threaded interrupt handler
+Date:   Sat,  1 May 2021 15:57:24 +0200
+Message-Id: <20210501135727.17747-2-LinoSanfilippo@gmx.de>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210501135727.17747-1-LinoSanfilippo@gmx.de>
+References: <20210501135727.17747-1-LinoSanfilippo@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <YIpZH5TtEDA071EE@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4Wh1ARpQ2IOq9+Qbk3nBaPUf61Y0lkijlQ5IVidZ+2VG7wdJCbu
- dxvSGiBqNzeaFs2CrwDveNsF5g9fyCe7dOqS5XJsWwQQId3qs6fJbyqw0z6u2C4j2hMe45n
- g6Nha5/R7t852ryZNVlrA2iP5XRV6EIEkc+SPApOPJb+tf0cH8VKjDcclVzwjeGoGDMNXEa
- 6sZdnBLJoA2QPLQK2f5yw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vGNUkOTiDT0=:sI+qlAr/5K1B76rdXjG/Gn
- nlA5ZSAlDemHKxwDJhODz8e9CDD6pITOmgQyZG7HdZQ1mNKOzK6UAPcz021GFYSjSqawtYU5l
- f1VojoLyEzrVyQ+uolw9ipeac6M10AzQIiIC7x616kg7++yNgF6uoBtbojWPbhUUDLw7SGvBo
- KzZFL00YIUtJVWQZsuTcMrddphiJgWHacLXJp+4bxB6q4aHVRNyFaK3tV5tD91ctMtuWSAaXB
- /AoUVJGnwzS967gxofOYB/vlXTtuvdhDca72THYfZR+M8Wk0jnPTKJZtueknoAMTpo2EhGzCb
- Xg7/E2Fs+XvBkyIpiknUhDM0KiJjrD0tr4ymVOerhQ8sZADSSFfKgPWTyCMD3xy1Mv6lMZKDV
- ahPEktdAGWG2rbN9kQsaRvOJkB6ry/Xd1NYU9YBAHUka/M4Tna0ckVTxJRhawXWxF17htZkt8
- fdLM8fu3YtuC6gTXMjmg7s3594podpefADTXeqXNXCFFFnCR/aOdrvNM8d5733PF1Qjhx0bOS
- zx8yTcjfDXx5SlAvUi6NMGwAxkQg8IGhyYLuwRdMJU0VYypIAcmxEXTHZqQBjopBeUHcurwtQ
- LesDvDcvJOcicmKsjI00DArADA3lZ026Z8GYfD9WFIzygqrscU/KEKnLds4tewkiyYsVc8fBM
- I2xz507dSKMAOidLMIye2lpZV6vrKkdsODQztQvY7fyU0ct6r+q3y+RVHTWVvinz9Ft4+FwEl
- N3jvA86PQ21Xk7K/4zo/d/XUCyK4CaIwqVUgOYNfvVJ2kH8LXY4HeLX3NxRPY8kOi9NRDMvPo
- CCiJCFGhNOqo2ksQy27ebT+NveqbMqUoy15ePEu8wb00KR9WndKAkvrWDjVTZUvHc+ks0V3El
- lgr6/WcANk/LB9Fa83ZQvPttITkQTgO4Nl8MPeyfbYIgUm7oIR6IxOA6a3hbTPx2AkyohHSxe
- HZj6Vq40GEyzb0NR6D23ztOinIrYVjdDzZH9EBFT9AdC6dXCJERlodnI1c3Bs6XivuHDIT6aO
- Ma25U1r48TadsGvpasmO7cvdLpGwA0AYBX3/+Hir06vQcZDQbcGRovahZ8vobN2uCBq/mFuTV
- XPY7K/1RpBxYAAUHlF4yakHU/rPJ3XyCb0vLQ+VCWuKCitR6P3ruJEzfKy+cd06MkQl2usE5E
- VVryZkO4i0EZ+GWniEs/F90fqWSsJNLPvDl8DHiSJ86uLFiS9WdwtOocSTlBNuH4oMjN6x1QG
- 8ojDyv6QOtDpt+85U
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:NrTXl/opWW/qgKoUTHBe+9UNDrooth7BL558pzu02XlAoFZ2mXR
+ uBepUu9IrF0futHiWZ0QtkjV68QuieCkwEvgeHsuk+/4KXVZI5SHlyGHG9eh2TvXGwRxaTP
+ tEqlXh4APLVE2GLSxocC5hN80O4Q8+JLX+jA+gBi0JkrcxGu8eIP73wEiPPXxEDYeiKGQJA
+ 42G5Uf/V4JM4tgjCMfkbQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6LPgizRyedI=:Cx2O9SlAsQqEtSKq11bB/w
+ 9ca9OY5wg+eP48gfddI1w8wJCKHxv8WlKx4ulGaDdY6EXbCtipijSJ3Is+wLMiMhLUBucnU94
+ dITVMESvGCOHjiGxWovFRx6m3dd2TmGMdpo0WX6ogYQOKUZTPb691+dttuTPJtuaFB4sKNbRp
+ 4YWJ/pnmlaWVec915D0eW0Qmp9LhL4M2/icYoQIY1svc6nW/uLSSaEYoxZeSEEyWMggLV0zdT
+ iEZBJzWF58oOsoqzw98UIiGukGxDqz2zWfIXjl8cteMfSMU8iVMDbEq9+juuR/wTgxgDI2aNF
+ JZP+MMJ1XFQTHneMKDNQMOAMWo7tznfE5CCT2mnMcji0Q6o/obNsgiWj2VYevtHIime5J7Qtf
+ gA+aMM5u9Q2Q+tTZCnRRbYtF5v9XKR9V72SRxpmW4EKs6cG2f2I4Lz/1fURRuVUbewAB82ts+
+ WLgsNcnKD6uOLUwizTyxP6+bnZoZFv+Oruv18KrP3o8UuJ1MfCUFhMgB9SEbJV5k9Aom7tiRv
+ R1YDt9IlIvu4bSDY52DUtUHUl9j+36KkiGLnZIkXk3bwrqzpsBwGNKOT3Z6ZdXaR0WeG4Bk6w
+ VzzzVwcNbyvJWEz7yzVQAjNYDycOEyRPJLii9zItQU61dGujOL3irqbLqIqAuS0QyhDAFIQ41
+ ujMDGbtJQppYOdEeZC/q5hxvWon55VYk8zgoTn8BeThfxBboWJ0Dten5Q4MPFz7jw0hNyQoMe
+ Dic7A82abklmPAu9MVhTPyvtZduqhfZOKokeWvg8MLy0qzAYB1Yj2vGlANKxqs2/rP1DyujTc
+ 8nSRUyOk6R78lCXwAgcJTyEw3F1BFFTCWVr/TGBZzy0fct5zXCuce2b7jcMu4tooLkG9i9NwN
+ 4R+MHeqNBYDcUgEP43CKoN0qj50VS5FC0kHEgQQreQg0rTqi6IgbkxVoXpKWq/se14bv81dOv
+ n7ILwMMVHMf7g9aIY7+RN23d6k6inGeLxL+NEucTeUvR5us+VoElDtH8eWRtMmN9Qm6zcTkf2
+ qqs99vxYN+Iz7GuoIwPUEtpt2GEjxJh+2J01xEP3uaSguEDLbP9lx9Ek8ng3y1FbSR3Zz97+B
+ SoE/+Mz39+jnI7/OhXRQCWWjZJmFoay9HtXWcWW0aCR6TlYkAqbjKnDjcFRH5NAR+ULHDEpYO
+ 70tytwQcCH/jNUNYEbb116YfLpQNOhBMfiVW03W7X5Qmy0LQREUKJzXcEs4RK5d2PnL1S4mpC
+ IGN9pCdXypWwke3sU
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-
-Hi,
-
-
-On 29.04.21 at 08:58, Jarkko Sakkinen wrote:
->
-> This is a sentence that you should delete:
->
-> "However over SPI those accesses require a sleepable context, since a
-> mutex is used in the concerning functions.  "
->
-> It neither explains anything who and why sort of stuff.
->
-> Why don't you put intead something like
->
-> "Inside tpm_int_handler(), tpm_tis_read32() and tpm_tis_write32() are
-> invoked. The SPI subsystem requires mutex for I/O, which means that the
-> calls ought not to be used inside interrupt context."
->
-> (I did not check typos). Generally speaking, commit message is as, if no=
-t
-> more important than the code change.
->
-> /Jarkko
->
-
-ok, I will rephrase this in the next patch version.
-
-Regards,
-Lino
+VGhlIGludGVycnVwdCBoYW5kbGVyIHVzZXMgdHBtX3Rpc19yZWFkMzIoKSBhbmQgdHBtX3Rpc193
+cml0ZTMyKCkgdG8gYWNjZXNzCnRoZSBpbnRlcnJ1cHQgc3RhdHVzIHJlZ2lzdGVyLiBJbiBjYXNl
+IG9mIFNQSSB0aG9zZSBhY2Nlc3NlcyBhcmUgZG9uZSB3aXRoCnRoZSBzcGlfYnVzX2xvY2sgbXV0
+ZXggaGVsZC4gVGhpcyBtZWFucyB0aGF0IHRoZSBzdGF0dXMgcmVnaXN0ZXIgY2Fubm90CmJlIHJl
+YWQgb3Igd3JpdHRlbiBpbiBpbnRlcnJ1cHQgY29udGV4dC4KCkZvciB0aGlzIHJlYXNvbiByZXF1
+ZXN0IGEgdGhyZWFkZWQgaW50ZXJydXB0IGhhbmRsZXIgc28gdGhhdCB0aGUgcmVxdWlyZWQKYWNj
+ZXNzZXMgY2FuIGJlIGRvbmUgaW4gcHJvY2VzcyBjb250ZXh0LgoKUmV2aWV3ZWQtYnk6IFN0ZWZh
+biBCZXJnZXIgPHN0ZWZhbmJAbGludXguaWJtLmNvbT4KU2lnbmVkLW9mZi1ieTogTGlubyBTYW5m
+aWxpcHBvIDxMaW5vU2FuZmlsaXBwb0BnbXguZGU+Ci0tLQogZHJpdmVycy9jaGFyL3RwbS90cG1f
+dGlzX2NvcmUuYyB8IDYgKysrKy0tCiAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAy
+IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3Jl
+LmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jCmluZGV4IGEyZTAzOTVjYmU2MS4u
+YTEyOTkyYWUyYTNlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5j
+CisrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmMKQEAgLTczNyw4ICs3MzcsMTAg
+QEAgc3RhdGljIGludCB0cG1fdGlzX3Byb2JlX2lycV9zaW5nbGUoc3RydWN0IHRwbV9jaGlwICpj
+aGlwLCB1MzIgaW50bWFzaywKIAlpbnQgcmM7CiAJdTMyIGludF9zdGF0dXM7CiAKLQlpZiAoZGV2
+bV9yZXF1ZXN0X2lycShjaGlwLT5kZXYucGFyZW50LCBpcnEsIHRpc19pbnRfaGFuZGxlciwgZmxh
+Z3MsCi0JCQkgICAgIGRldl9uYW1lKCZjaGlwLT5kZXYpLCBjaGlwKSAhPSAwKSB7CisKKwlpZiAo
+ZGV2bV9yZXF1ZXN0X3RocmVhZGVkX2lycShjaGlwLT5kZXYucGFyZW50LCBpcnEsIE5VTEwsCisJ
+CQkJICAgICAgdGlzX2ludF9oYW5kbGVyLCBJUlFGX09ORVNIT1QgfCBmbGFncywKKwkJCQkgICAg
+ICBkZXZfbmFtZSgmY2hpcC0+ZGV2KSwgY2hpcCkgIT0gMCkgewogCQlkZXZfaW5mbygmY2hpcC0+
+ZGV2LCAiVW5hYmxlIHRvIHJlcXVlc3QgaXJxOiAlZCBmb3IgcHJvYmVcbiIsCiAJCQkgaXJxKTsK
+IAkJcmV0dXJuIC0xOwotLSAKMi4zMS4xCgo=
