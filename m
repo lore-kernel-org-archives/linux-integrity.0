@@ -2,92 +2,101 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B02DC433ED
-	for <linux-integrity@archiver.kernel.org>; Sat,  1 May 2021 22:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C7AC433B4
+	for <linux-integrity@archiver.kernel.org>; Sun,  2 May 2021 03:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0C2F6143D
-	for <linux-integrity@archiver.kernel.org>; Sat,  1 May 2021 22:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74894613BC
+	for <linux-integrity@archiver.kernel.org>; Sun,  2 May 2021 03:15:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231826AbhEAWux (ORCPT
+        id S231593AbhEBDQT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 1 May 2021 18:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231817AbhEAWux (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 1 May 2021 18:50:53 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B607C06174A
-        for <linux-integrity@vger.kernel.org>; Sat,  1 May 2021 15:50:01 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id x2so2536456lff.10
-        for <linux-integrity@vger.kernel.org>; Sat, 01 May 2021 15:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FyUcLRZ0Rt19UEL/ZLBgHf+f8fvCiwACi2cQWFH2R+4=;
-        b=WIQvM5n8kzuO83VPn1XaK4ss2X3KkxUzpwTAcspVwQI3/ZUorcYOqLyFfKnr/9fmxS
-         XCr8wo3tGgeIhK1S/ZssUeq3S/LesQ0YbtwC5nlCPPLh3nidZfPMIk8CZUmkHcaGAQ5y
-         HZ7KOHdUd0BEvG1AKdeUOnn9e92SM75vQdfgQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FyUcLRZ0Rt19UEL/ZLBgHf+f8fvCiwACi2cQWFH2R+4=;
-        b=uLsyB5bz8ZlVs46GC962Y3eaRq9N922wNYMRKiszFmJsikps33Bp9PVtcb6cs+VT7h
-         wnoTrdZ/9msn1SBCxGN6jjm6YhuCRjk9t2de456kAS5EqUdNt4W/msHQKS2yqupA/wTt
-         OKXIsOBOM0GZmHnniBl/GkWVegX6IPa7d3243SLBMi4Z56J/2QJvpJKm7xebziGgjDY2
-         s4cbRwTI/XcKg2CZ5Hy/vaug8rJ8y+v6gHVgnhdJtQeCelI7A+sz9ArZK0ReAQpex8F+
-         eEcBRfErC5vVr9APcvntdlSRK1PneziqiX/xSSq4VsQzd4VFRZ6Pl4TMmk0GqBt0APmC
-         zKNQ==
-X-Gm-Message-State: AOAM531QHh6dcr3o1ldB9HwzIEihpkYrh/wEb1Kf93si5cNyoIKJ5xUD
-        nDzv9szIZkqmdacYGEaW76suvx0jDa7E2qe6
-X-Google-Smtp-Source: ABdhPJzxeVFv6kqT6Po0LyAAKkIhj1bvBz6JlZKPDDDujnH9PhCyfYznSXmlEc7r2YDsVze1aNGYUw==
-X-Received: by 2002:ac2:5feb:: with SMTP id s11mr7818938lfg.99.1619909399744;
-        Sat, 01 May 2021 15:49:59 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id h7sm677655lfu.199.2021.05.01.15.49.59
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 May 2021 15:49:59 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id o16so2468120ljp.3
-        for <linux-integrity@vger.kernel.org>; Sat, 01 May 2021 15:49:59 -0700 (PDT)
-X-Received: by 2002:a05:651c:44f:: with SMTP id g15mr8049801ljg.48.1619909398916;
- Sat, 01 May 2021 15:49:58 -0700 (PDT)
+        Sat, 1 May 2021 23:16:19 -0400
+Received: from mout.gmx.net ([212.227.15.15]:45289 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230409AbhEBDQT (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Sat, 1 May 2021 23:16:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1619925314;
+        bh=lp1DUMxwIxuXBmtBlzRd7HCviresfWbtWy97/TcI23w=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=gOfEZfKEZSB4zHTgimN/uZmgBvtsaAEVdQg0Y53aYKJ1JOVO0mS8Yma6loiszcAa9
+         J1aEJsk5Xxa84YcFzar/x/qhdm7upgKWv20NgBu9SGPEuGNOTu9FtJIVABUFOymsrJ
+         cIPgdvVEqD7bK+xHdANBB3I5PcZRY7HTFD+TgRrs=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.178.51] ([78.42.220.31]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N2mFi-1lRB6M2s0a-0132le; Sun, 02
+ May 2021 05:15:14 +0200
+Subject: Re: [PATCH v3 4/4] tpm: Only enable supported irqs
+To:     Stefan Berger <stefanb@linux.ibm.com>, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca
+Cc:     stefanb@linux.vnet.ibm.com, James.Bottomley@hansenpartnership.com,
+        keescook@chromium.org, jsnitsel@redhat.com, ml.linux@elloe.vision,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210501135727.17747-1-LinoSanfilippo@gmx.de>
+ <20210501135727.17747-5-LinoSanfilippo@gmx.de>
+ <d9da4946-c380-d56d-6d42-1ec6f9bd3d8b@linux.ibm.com>
+From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Message-ID: <2a11e90e-d012-141a-5977-74935d175f5b@gmx.de>
+Date:   Sun, 2 May 2021 05:15:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <33e5687f1e4c7becdc41136704fa239f81b82fec.camel@linux.ibm.com>
-In-Reply-To: <33e5687f1e4c7becdc41136704fa239f81b82fec.camel@linux.ibm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 1 May 2021 15:49:43 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjBSomE81D=dXN5Z1r_qTLDeKfOzXH4T+mPK6AeSWhW0w@mail.gmail.com>
-Message-ID: <CAHk-=wjBSomE81D=dXN5Z1r_qTLDeKfOzXH4T+mPK6AeSWhW0w@mail.gmail.com>
-Subject: Re: [GIT PULL] integrity subsystem updates for v5.13
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d9da4946-c380-d56d-6d42-1ec6f9bd3d8b@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AqUbjHZm+mttLvCAVvgb4wkybsFfI9HRmoPRMS3IqCBBbeRIs6D
+ j2Z4sbQSI5b+qE2aTlrsvIQdAOEo4duIyUwjySzzZpaYzgvYD4QFSfugH1LJN3Ly7rx3hDN
+ s9jc9CxId1q2+dtLtfxpmZWSjzjyD2l4xH8QJtA0ndBWVBM6C7uS2X01F9jvnlcym7iGvjZ
+ RsCrzjya7JKCUMiOiIMOw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:csYJNsVV8NY=:vKsVhGYOQl5ejgN8q5hMrY
+ qKykD5EY1hMcKz9rDBGqRmdwMjeJ/SmnBBebwvd9vBsYaTi4Jw+sDaazWnc96NqOurbzJImjM
+ cQ96y2FVdOnsM8tztoBMWmzlo8t/vwoJm08LlL4ailKGe4WFM6oTDqMxCRv4wZKUR4+n3ik8C
+ gsErfq7wtn+DJjooKk66TcuXtlm5ZB5OmQJ+SoqnakVJ5CZN3gkF0P1roQKj+cXF5zhHNEFas
+ dd3fQwSYhGUz0pRe3vrB6iF3zVMzEdcGLeF6DUchwGXAMnJJ42neW4vzsFlLVoPSFrzwb8FIZ
+ /pVOH7U8iQCjK3r5A4Igohcvm8KmYPBeQuQLNMA9FH9ijn6x1MeF88EKZ85xczMmR9Mw3i4/+
+ FS35evoB0iSmO1tM9kT+0KGKSeVordSUw9PPpGz4LZKxkT10mPbPlDahmJ/XP1Q4yi5M6PF16
+ ObiX9oKXPq9Nusc8vCwXAzieY9w0zbtX4wiZTV2MGMa7CqZR/2qrj+DFdYZXS4yAe2qdS4YXj
+ oXMjI40FAGb7S/2WZhibhQzxt42jeqRBKWzT5RByKiSIEI3gqFsrCbCTD9JmlvNXi88v3ctKU
+ gsjZElLKb2sU5GOJ/HqduubvkMTu9XDaoN5hWU3dTc2oLyhHTI5nM2o8gNPKtrEEuuwdMfy8E
+ Ya2Bzdfz8P0oUzYKPx/YZnFM0R5Zwth6vuclYuyDJO9CKJOq/gtFJqATU8iR0P/QAU8rFhHI2
+ wy+NqKoJOMMW9kYZX8j564fT1ddnyRz/2j3ZJ9cZK1FAalIvs+yZGZG0fntA5A9JZO6C8YovO
+ 37RtzHIdSAa5qMIgb3WvjgdbRQ1oxo65BU2JVL6VtdIo3a40AhCIdOgGE/HbA0XZASVf2EBkk
+ TZziXnRLJjAwEgTSls2Rv8bCtq0OUfi3Ao+7+oIWDtbqmnrbouh3eHfTSUaPVXxIkhKS2QYeg
+ nY+M4BPlrRR6ZbnCi3XUqw4gH4+5s2bX46wf1MnjycFEmIasfo6z27nLP4zRniBQmxYhXKHnY
+ cq/lFpzapOEsX1KMInzjzHCjB90qtnuUPAIMj/30OxY9CkycmqDbaKCnYB8TRo/W8sJj8AmZZ
+ XK337qY4MNH6HN1tp+UPfLKBH7szV3BEGGuoAefo8aQcW69hefOAbZ9/1QW2woPc4/8rlUoQ8
+ PGYZbc5obH/eCEdSzl0d3O/1cQxws61VJlDj0BGJxILKtTSs1tuJilDABr9Cbs28YQWmt+57Z
+ XhzUOW2XXsDHcKf9U
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Apr 28, 2021 at 6:47 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On 01.05.21 at 21:09, Stefan Berger wrote:
 >
-> In addition to loading the kernel module signing key onto the builtin
-> keyring, load it onto the IMA keyring as well.
+> On 5/1/21 9:57 AM, Lino Sanfilippo wrote:
+>> Do not set interrupts which are not supported by the hardware. Instead =
+use
+>> the information from the capability query and activate only the reporte=
+d
+>> interrupts.
+>>
+>> Signed-off-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+>
+>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>
+>
 
-This clashed pretty badly with the other cert changes.
+Ah sorry, I forgot to add your Reviewed-By for this patch. Will do so in t=
+he
+next version.
 
-I think the end result looks nice and clean (the cert updates mesh
-well with the _intention_ of your code, just not with the
-implementation), but you should really double-check that I didn't mess
-anything up in the merge and whatever test-case you have for IMA still
-works.
-
-I only verified that the kernel module signing key still works for
-modules - no IMA test-case.
-
-              Linus
+Thx,
+Lino
