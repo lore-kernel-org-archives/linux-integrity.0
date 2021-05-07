@@ -4,77 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DDFFC433B4
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 May 2021 14:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40327C433ED
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 May 2021 19:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED3386145A
-	for <linux-integrity@archiver.kernel.org>; Fri,  7 May 2021 14:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06A0161456
+	for <linux-integrity@archiver.kernel.org>; Fri,  7 May 2021 19:14:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236407AbhEGOyI (ORCPT
+        id S229470AbhEGTP0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 7 May 2021 10:54:08 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:58752 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234601AbhEGOyI (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 7 May 2021 10:54:08 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=zhangliguang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0UY3o8YN_1620399176;
-Received: from localhost(mailfrom:zhangliguang@linux.alibaba.com fp:SMTPD_---0UY3o8YN_1620399176)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 07 May 2021 22:53:06 +0800
-From:   Liguang Zhang <zhangliguang@linux.alibaba.com>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Liguang Zhang <zhangliguang@linux.alibaba.com>
-Subject: [PATCH] tpm_tis_spi: set default probe function if device id not match
-Date:   Fri,  7 May 2021 22:52:55 +0800
-Message-Id: <20210507145255.44033-1-zhangliguang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+        Fri, 7 May 2021 15:15:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54942 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229482AbhEGTPW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 7 May 2021 15:15:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 9F566B008;
+        Fri,  7 May 2021 19:14:21 +0000 (UTC)
+From:   Petr Vorel <pvorel@suse.cz>
+To:     ltp@lists.linux.it
+Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v4 1/3] ima_keys.sh: Check policy only once
+Date:   Fri,  7 May 2021 21:14:12 +0200
+Message-Id: <20210507191414.14795-2-pvorel@suse.cz>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210507191414.14795-1-pvorel@suse.cz>
+References: <20210507191414.14795-1-pvorel@suse.cz>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-In DSDT table, TPM _CID was SMO0768, and no _HID definition. After a
-kernel upgrade from 4.19 to 5.10, TPM probe function was changed which
-causes device probe fails. In order to make newer kernel to be
-compatible with the older acpi definition, it would be best set default
-probe function.
+Not needed to check the same policy twice.
+Rename to contain 'require' as we use tst_brk.
 
-Signed-off-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
- drivers/char/tpm/tpm_tis_spi_main.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+new in v4
 
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index 3856f6ebcb34..da632a582621 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -240,10 +240,14 @@ static int tpm_tis_spi_driver_probe(struct spi_device *spi)
- 	tpm_tis_spi_probe_func probe_func;
- 
- 	probe_func = of_device_get_match_data(&spi->dev);
--	if (!probe_func && spi_dev_id)
--		probe_func = (tpm_tis_spi_probe_func)spi_dev_id->driver_data;
--	if (!probe_func)
--		return -ENODEV;
-+	if (!probe_func) {
-+		if (spi_dev_id) {
-+			probe_func = (tpm_tis_spi_probe_func)spi_dev_id->driver_data;
-+			if (!probe_func)
-+				return -ENODEV;
-+		} else
-+			probe_func = tpm_tis_spi_probe;
-+	}
- 
- 	return probe_func(spi);
+ .../security/integrity/ima/tests/ima_keys.sh       | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
+
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+index 9951ab999..3476b8007 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2020 Microsoft Corporation
+-# Copyright (c) 2020 Petr Vorel <pvorel@suse.cz>
++# Copyright (c) 2020-2021 Petr Vorel <pvorel@suse.cz>
+ # Author: Lachlan Sneff <t-josne@linux.microsoft.com>
+ #
+ # Verify that keys are measured correctly based on policy.
+@@ -20,6 +20,7 @@ REQUIRED_POLICY="^measure.*$FUNC_KEYCHECK"
+ setup()
+ {
+ 	require_ima_policy_content "$REQUIRED_POLICY" '-E' > $TST_TMPDIR/policy.txt
++	require_valid_policy_template
  }
+ 
+ cleanup()
+@@ -27,15 +28,14 @@ cleanup()
+ 	tst_is_num $KEYRING_ID && keyctl clear $KEYRING_ID
+ }
+ 
+-check_policy_template()
++
++require_valid_policy_template()
+ {
+ 	while read line; do
+ 	if echo $line | grep -q 'template=' && ! echo $line | grep -q 'template=ima-buf'; then
+-		tst_res TCONF "only template=ima-buf can be specified for KEY_CHECK"
+-		return 1
++		tst_brk TCONF "only template=ima-buf can be specified for KEY_CHECK"
+ 	fi
+ 	done < $TST_TMPDIR/policy.txt
+-	return 0
+ }
+ 
+ check_keys_policy()
+@@ -59,8 +59,6 @@ test1()
+ 
+ 	tst_res TINFO "verify key measurement for keyrings and templates specified in IMA policy"
+ 
+-	check_policy_template || return
+-
+ 	check_keys_policy "$pattern" > $tmp_file || return
+ 	keycheck_lines=$(cat $tmp_file)
+ 	keyrings=$(for i in $keycheck_lines; do echo "$i" | grep "keyrings" | \
+@@ -115,8 +113,6 @@ test2()
+ 
+ 	tst_res TINFO "verify measurement of certificate imported into a keyring"
+ 
+-	check_policy_template || return
+-
+ 	check_keys_policy "$pattern" >/dev/null || return
+ 
+ 	KEYRING_ID=$(keyctl newring $keyring_name @s) || \
 -- 
-2.19.1.6.gb485710b
+2.31.1
 
