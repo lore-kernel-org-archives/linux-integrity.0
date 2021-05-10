@@ -1,106 +1,79 @@
 Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Level: **
+X-Spam-Status: No, score=2.6 required=3.0 tests=BAYES_50,DATE_IN_PAST_03_06,
+	DKIMWL_BL,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0A6C433ED
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 May 2021 17:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0456C433B4
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 May 2021 18:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D262611F0
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 May 2021 17:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2C3C6121E
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 May 2021 18:26:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233210AbhEJRw3 (ORCPT
+        id S231577AbhEJS1m (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 May 2021 13:52:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231786AbhEJRw1 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 May 2021 13:52:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B6D78601FA;
-        Mon, 10 May 2021 17:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620669082;
-        bh=+hf11QRJVdEDxS2uQZBcnMSOoYiIW5DRA7C7sdWiZms=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tEnSGp0WxjqIbYc+r7mgkHg3XHDUs1yVcyjlfiAk7SyuHLljHFHirPn/J9Ybt9DTu
-         +9yuBuOYnj3VSFQ0Upxaio+j9av9hf2wPcJCbGkRDr3A5rTIh3zbuWndmLTqYHyUjF
-         0cbXgzXjL0khBsR3mf65T3ZShw7ouAn5rWxNYpEB6LUACy8tW1fyoiDH3jD/+I/qVb
-         jdYVhaEEtgAHnWV2oSNYIGbSxYqvP8RQky1CL9kqhlBwSHj+aMZanX08QwGkD2KvtH
-         s7j0WaqaPpVFLva6g0Snl4gOZoG+KfpgL48Li00HxA9XGuTeqslEynaRci6mVPikJn
-         iQGl210y0ILrA==
-Date:   Mon, 10 May 2021 20:51:19 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     amirmizi6@gmail.com
-Cc:     Eyal.Cohen@nuvoton.com, jarkko.sakkinen@linux.intel.com,
-        peterhuewe@gmx.de, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, Dan.Morav@nuvoton.com,
-        oren.tanami@nuvoton.com, shmulik.hager@nuvoton.com,
-        amir.mizinski@nuvoton.com
-Subject: Re: [PATCH v1] tpm2: add longer timeout for verify signature command
-Message-ID: <YJlyl+Eie/+G3l4S@kernel.org>
-References: <20210510142719.48153-1-amirmizi6@gmail.com>
- <20210510142719.48153-2-amirmizi6@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210510142719.48153-2-amirmizi6@gmail.com>
+        Mon, 10 May 2021 14:27:42 -0400
+Received: from flippiebeckerswealth.xyz ([62.173.147.206]:39496 "EHLO
+        host.flippiebeckerswealth.xyz" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231726AbhEJS1l (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 10 May 2021 14:27:41 -0400
+Received: from flippiebeckerswealth.xyz (ec2-3-142-218-249.us-east-2.compute.amazonaws.com [3.142.218.249])
+        by host.flippiebeckerswealth.xyz (Postfix) with ESMTPA id E09232311C3
+        for <linux-integrity@vger.kernel.org>; Mon, 10 May 2021 17:06:49 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippiebeckerswealth.xyz E09232311C3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippiebeckerswealth.xyz; s=default; t=1620655611;
+        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=Qcb3ZN0vnF6f4P0OM9UI/Ci/0lQpg2Hq9EaZFPgZ7aQ11653OwvaNzYWtVo9wXd7h
+         z9Hy1kOEvXkf/DfrgfiRQjLGpvjbK5Z17Cx49dETp59DdpCx3XZc7UUFuFT82sZqyx
+         Y2+lLagLTeIHNkw8qtxYFoEbPIiJ624b4zhkERt4=
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippiebeckerswealth.xyz E09232311C3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippiebeckerswealth.xyz; s=default; t=1620655611;
+        bh=Lxx5rGQCX/MQzrwE9epz1Mb5yPYRqDyEupWj6GReobo=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=Qcb3ZN0vnF6f4P0OM9UI/Ci/0lQpg2Hq9EaZFPgZ7aQ11653OwvaNzYWtVo9wXd7h
+         z9Hy1kOEvXkf/DfrgfiRQjLGpvjbK5Z17Cx49dETp59DdpCx3XZc7UUFuFT82sZqyx
+         Y2+lLagLTeIHNkw8qtxYFoEbPIiJ624b4zhkERt4=
+Reply-To: cpavlides@flippiebeckerwealthservices.com
+From:   Chris Pavlides <cpavlides@flippiebeckerswealth.xyz>
+To:     linux-integrity@vger.kernel.org
+Subject: Personal
+Date:   10 May 2021 14:06:49 +0000
+Message-ID: <20210510140649.7C6DB8203F7F5E70@flippiebeckerswealth.xyz>
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, May 10, 2021 at 05:27:19PM +0300, amirmizi6@gmail.com wrote:
-> From: Amir Mizinski <amirmizi6@gmail.com>
-> 
-> TPM2_CC_VERIFY_SIGNATURE(0x177) Current timeout does not apply to usage with
-> RSA 3070-bit keys.
+Hello there,
 
-I don't understand what this sentence means.
+I hope this message finds you in good spirits especially during=20
+this challenging time of coronavirus pandemic. I hope you and=20
+your family are well and keeping safe. Anyway, I am Chris=20
+Pavlides, a broker working with Flippiebecker Wealth. I got your=20
+contact (along with few other contacts) through an online=20
+business directory and I thought I should contact you to see if=20
+you are interested in this opportunity. I am contacting you=20
+because one of my high profile clients is interested in investing=20
+abroad and has asked me to look for individuals and companies=20
+with interesting business ideas and projects that he can invest=20
+in. He wants to invest a substantial amount of asset abroad.
 
-Better excuse for making the whole change would be to:
+Please kindly respond back to this email if you are interested in=20
+this opportunity. Once I receive your response, I will give you=20
+more details and we can plan a strategy that will be beneficial=20
+to all parties.
 
-1. If possible put a snippet of the klog transcript what happens to you.
-2. You probably want rationalize this change for the reason that, since the
-   TPM PC Client specification does not specify any specific number, and
-   you have a corner case to show, it's best to pick the longest timeout,
-   i.e. TPM_LONG_LONG.
+Best regards
 
-> Additional time may be required for usage with RSA 3070-bit keys. Therefore, the
-> timeout of TPM2_CC_VERIFY_SIGNATURE is set to 3 minutes (TPM_LONG_LONG).
-> 
-> Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
-
-Please, re-phrase : "Set duration for TPM2_CC_VERIFY_SIGNATUE to
-TPM_LONG_LONG (3 minutes)".  Imperative way to express things is always
-better, and "timeout" is a concept of its own, separate from "duration" in
-TPM jargon.
-
-> ---
->  drivers/char/tpm/tpm2-cmd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index eff1f12..235a454 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -87,7 +87,7 @@ static u8 tpm2_ordinal_duration_index(u32 ordinal)
->  		return TPM_MEDIUM;
->  
->  	case TPM2_CC_VERIFY_SIGNATURE:        /* 177 */
-> -		return TPM_LONG;
-> +		return TPM_LONG_LONG;
->  
->  	case TPM2_CC_PCR_EXTEND:              /* 182 */
->  		return TPM_MEDIUM;
-> -- 
-> 2.7.4
-> 
-> 
-
-The commit message needs rework because now it makes no sense. With the
-correct rationalization this probably would make sense.
-
-/Jarkko
+C Pavlides
+Flippiebecker Wealth
