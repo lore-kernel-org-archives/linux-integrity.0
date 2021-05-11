@@ -2,119 +2,226 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFCAC433B4
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 May 2021 23:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B0FC433B4
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 May 2021 08:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0775B61359
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 May 2021 23:19:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53A2C613AF
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 May 2021 08:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbhEJXUI (ORCPT
+        id S230427AbhEKIiw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 May 2021 19:20:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbhEJXUI (ORCPT
+        Tue, 11 May 2021 04:38:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33182 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229995AbhEKIiw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 May 2021 19:20:08 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E03C061574;
-        Mon, 10 May 2021 16:19:02 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1AC04128053C;
-        Mon, 10 May 2021 16:19:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1620688742;
-        bh=f905pQyWkLsAp05euszWRJr8cxZx1j0A/Ts4bKkRP00=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=XQZ17b4EHOcvNHKQV/G8NkHCK5QxyRs75nHIZ+NU2BwsXSjaecY1bVumMHyAck4Wn
-         60U7vbdMuochf82VrqCSIZzrzb0HDq1OX4D9waKUC7aDU346wWkTEZyCcN94BvGdPG
-         T2MCS1JMSBSLHu7/ngRue3NnMf4vLfNdlxA5OMAY=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id EwNIEwqsrRQ2; Mon, 10 May 2021 16:19:02 -0700 (PDT)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 9AA13128053B;
-        Mon, 10 May 2021 16:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1620688741;
-        bh=f905pQyWkLsAp05euszWRJr8cxZx1j0A/Ts4bKkRP00=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=QOWswFUiFRIpMgsESW8uArfM77pN5AYcAO2vNZYwPyon+5xq+UNgc3VSaym99y43n
-         G44OYK1QAH17v4gZWWBel6GKTmDHsW/kpEtQ5eJsLjQd4bhsCFo4HLnFcIkpFHFsiT
-         GUvttcLwC7WAA882wwkHuxKDCYo3LsEQNdrM9oMM=
-Message-ID: <c896e4fd24aa649081cb0ce712580a8400ab36d6.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2 1/1] trusted-keys: match tpm_get_ops on all return
- paths
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Ben Boeckel <me@benboeckel.net>, keyrings@vger.kernel.org
-Cc:     Ben Boeckel <mathstuf@gmail.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Date:   Mon, 10 May 2021 16:19:00 -0700
-In-Reply-To: <YJmf4Q0l+MTFEaEo@erythro.dev.benboeckel.internal>
-References: <20210429192156.770145-1-list.lkml.keyrings@me.benboeckel.net>
-         <20210429192156.770145-2-list.lkml.keyrings@me.benboeckel.net>
-         <YJmf4Q0l+MTFEaEo@erythro.dev.benboeckel.internal>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Tue, 11 May 2021 04:38:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620722265;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8c09aiHUCyiT7mt/5iPMlq0VEJGHMx0WdaN3n9zR6DU=;
+        b=gE6mx3Zb+zMidw1tD75P5t2scuja6r3cFBSrfxzDhDSU75WDyKbt5N/KdBtk4EsXHvhOt0
+        FSK217jdpIK9XlRifoOD1iPOEKJPt0zdN0rq1yjjMJBQf7tYKOONBfF9kDFmdzP55kABH6
+        7QqqoIeqlCoz0tnH65xNppRbHeVsuHM=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-550-vIU_bCA-M1GpfAJ7CNmv6w-1; Tue, 11 May 2021 04:37:43 -0400
+X-MC-Unique: vIU_bCA-M1GpfAJ7CNmv6w-1
+Received: by mail-ej1-f69.google.com with SMTP id nd10-20020a170907628ab02903a324b229bfso5690846ejc.7
+        for <linux-integrity@vger.kernel.org>; Tue, 11 May 2021 01:37:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8c09aiHUCyiT7mt/5iPMlq0VEJGHMx0WdaN3n9zR6DU=;
+        b=RM3rAjREfwF+ow7v+QI0zrDq8sdBxbSmxXPZKYyKY4HYfIg/xn6biTKvoWQGSKoM8M
+         AM5+eUHGikiiboQGAZ/Z02hDvNYl+8/D7bganPODr5qwBd3wg8awoUgobUwT2g+uiSqu
+         zOT1IsZS1rMMGG/jKT+c5g52LTtVEhErX0/HmZpIquEEKMMs0ZYzNvVcSl4fgqy0Weje
+         OhuTtzsDPRnej5KdrdFeimXHo8g/ZnbVuvaYXxaYsA1SBiDgXwiIrpOuDHv1QHtih3qy
+         ju5H2UiJI/EgRXPVd4dJdXlK36PGiVMAQe1HhOR6w8E6Wk6xj/JAxnQdhQgSOCbQvhoX
+         jzqQ==
+X-Gm-Message-State: AOAM5335tu5ZrZfbjA980JKQtJ3p6YFjw6rhThznlGuk7imwaaGGuUC3
+        +j6C/xclgu0SFXwOse57iGYbEC2SYNowPbmthDsXu5pQZSHpKY4nW3dxwmx0jY/6CUOJBmZylxj
+        GtVqoOR9SXdxzS2nXYdwLxE8ueBsw5fIOHgSMgkc+G+35BRk4lIf88QeD6mb4zXK7H9b9hAXx+3
+        p+Q/QJ
+X-Received: by 2002:a05:6402:c94:: with SMTP id cm20mr1844837edb.323.1620722261833;
+        Tue, 11 May 2021 01:37:41 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwWGR3KC5TbNjV9F+zoMr+jPqpOiod+fvjnVeWQbM63kk7O5sSYZMo896jGNiZKrrMtL/dIHw==
+X-Received: by 2002:a05:6402:c94:: with SMTP id cm20mr1844809edb.323.1620722261614;
+        Tue, 11 May 2021 01:37:41 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
+        by smtp.gmail.com with ESMTPSA id um2sm11210668ejb.4.2021.05.11.01.37.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 May 2021 01:37:41 -0700 (PDT)
+Subject: Re: Recent tpm_tis IRQ handling changes are causing kernel backtraces
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+References: <34442b17-c8e6-9d33-831f-fcbf3a38552b@redhat.com>
+ <e4afc566-0114-c5a3-ebda-a775132e999d@redhat.com>
+ <YFEEas6kH3FUoKJe@kernel.org>
+ <8b592417-dc1d-a7f8-0e17-09b6bb1df33a@redhat.com>
+ <YJlsdgxPIm5I6Jk8@kernel.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <4f525bca-3836-7f5c-7913-e54d620473aa@redhat.com>
+Date:   Tue, 11 May 2021 10:37:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
+In-Reply-To: <YJlsdgxPIm5I6Jk8@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2021-05-10 at 17:04 -0400, Ben Boeckel wrote:
-> On Thu, Apr 29, 2021 at 15:21:56 -0400, Ben Boeckel wrote:
-> > From: Ben Boeckel <mathstuf@gmail.com>
-> > 
-> > The `tpm_get_ops` call at the beginning of the function is not
-> > paired
-> > with a `tpm_put_ops` on this return path.
-> > 
-> > Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key
-> > format for the blobs")
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Ben Boeckel <mathstuf@gmail.com>
-> > ---
-> >  security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c
-> > b/security/keys/trusted-keys/trusted_tpm2.c
-> > index 617fabd4d913..0165da386289 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm2.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> > @@ -336,9 +336,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> >  			rc = -EPERM;
-> >  	}
-> >  	if (blob_len < 0)
-> > -		return blob_len;
-> > -
-> > -	payload->blob_len = blob_len;
-> > +		rc = blob_len;
-> > +	else
-> > +		payload->blob_len = blob_len;
-> >  
-> >  	tpm_put_ops(chip);
-> >  	return rc;
+Hi,
+
+On 5/10/21 7:25 PM, Jarkko Sakkinen wrote:
+> On Sat, May 08, 2021 at 11:07:43AM +0200, Hans de Goede wrote:
+>> Hi Jarko,
+>>
+>> On 3/16/21 8:18 PM, Jarkko Sakkinen wrote:
+>>> On Tue, Mar 16, 2021 at 04:34:01PM +0100, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 2/11/21 2:09 PM, Hans de Goede wrote:
+>>>>> Hi Jerry,
+>>>>>
+>>>>> It looks like there still is an issue with the recent changes to the tpm_tis IRQ
+>>>>> handling. At least I think those are the cause I did not dive any deeper,
+>>>>> I just noticed that we (Fedora) have been receiving an aweful lot of
+>>>>> kernel tpm_tis_send_data backtraces with most starting with tpm_tis_probe_irq_...
+>>>>>
+>>>>> See for example:
+>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1912167
+>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1927610
+>>>>>
+>>>>> Those are just the 3 which landed in my inbox today, for much more see:
+>>>>> https://bugzilla.redhat.com/buglist.cgi?quicksearch=tpm_tis_send_data
+>>>>> (this shows 18 bugs atm).
+>>>>>
+>>>>> These were reported through the Fedora ABRT tools which automatically
+>>>>> collects backtraces, the bugs have links to the ABRT reports, e.g. :
+>>>>> https://retrace.fedoraproject.org/faf/reports/28155/
+>>>>> https://retrace.fedoraproject.org/faf/reports/37107/
+>>>>>
+>>>>> The 28155 report says that so far there have been 308,412 (ouch) automatic
+>>>>> uploads of that particular variant of these backtraces
+>>>>>
+>>>>> Note the second (37107) retrace report is about this happening
+>>>>> on resume, rather then on probe/tpm_tis_probe_irq_... time.
+>>>>>
+>>>>> Did your work on this work land in 5.10 ? Or could it be that the
+>>>>> issue is an incomplete backport to the 5.10.y stable series ?
+>>>>
+>>>> Ping ?
+>>>>
+>>>> It is raining bug-reports about this:
+>>>>
+>>>> https://bugzilla.redhat.com/buglist.cgi?quicksearch=tpm_tis_send_data
+>>>>
+>>>> Currently lists 25 bugs and that is excluding bugs which have already
+>>>> been marked as a duplicate.
+>>>>
+>>>> Can someone involved in the patch-series which is causing this regression
+>>>> please take a look at these kernel backtraces ?
+>>>>
+>>>> Regards,
+>>>>
+>>>> Hans
+>>>
+>>> I incorporated two fixes to this issue to my last PR, which were taken
+>>> to the mainline. What is the situation with the mainline?
+>>
+>> Thank you for your reply and sorry for being slow to respond.
+>>
+>> Is this expected to be fixed in 5.11, or when you say mainline you
+>> main Linus' master branch / so the fixes are in 5.12 only ?
+>>
+>> The reason I'm asking is because we just received another bugreport
+>> about this against 5.11.17. The bug is marked private (our tool to
+>> automatically file bugs for kernel backtraces does this) so let me
+>> just copy and paste the trace here:
+>>
+>> WARNING: CPU: 0 PID: 3060 at drivers/char/tpm/tpm_tis_core.c:205
+>> tpm_tis_status+0x66/0x70
+>>
+>> CPU: 0 PID: 3060 Comm: systemd-sleep Not tainted 5.11.17-200.fc33.x86_64 #1
+>> Hardware name: Hewlett-Packard HP ProBook 6460b/161D, BIOS 68SCE Ver. F.63
+>> 05/27/2016
+>> RIP: 0010:tpm_tis_status+0x66/0x70
+>> Code: 23 75 05 48 83 c4 10 c3 31 c0 80 3d 38 02 56 01 00 75 f0 48 c7 c7 94 67
+>> 43 96 88 44 24 07 c6 05 24 02 56 01 01 e8 4a 53 3c 00 <0f> 0b 0f b6 44 24 07 eb
+>> d0 90 66 66 66 66 90 41 57 41 56 41 55 41
+>> RSP: 0018:ffffaac581427b10 EFLAGS: 00010282
+>> RAX: 000000000000001b RBX: ffff9dc800b93000 RCX: ffff9dc83b418ac8
+>> RDX: 00000000ffffffd8 RSI: 0000000000000027 RDI: ffff9dc83b418ac0
+>> RBP: ffff9dc800b93000 R08: ffffffff96a64ec0 R09: ffffaac581427ab0
+>> R10: 0000000000000001 R11: 000000002d2d2d2d R12: ffff9dc80667c268
+>> R13: ffff9dc801fd1000 R14: 0000000000000000 R15: ffffaac581427bca
+>> FS:  00007f8f0f32c000(0000) GS:ffff9dc83b400000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 0000557044ec6c86 CR3: 0000000062e92001 CR4: 00000000000606f0
+>> Call Trace:
+>>  tpm_tis_send_data+0x2b/0x230
+>>  tpm_tis_send_main+0x1e/0xe0
+>>  tpm_transmit+0xd8/0x3d0
+>>  tpm_transmit_cmd+0x25/0x90
+>>  tpm1_do_selftest+0x88/0x130
+>>  ? _cond_resched+0x16/0x40
+>>  tpm_tis_resume+0x4d/0x120
+>>  ? pnpacpi_resume+0x1b/0xa0
+>>  ? pnp_bus_suspend+0x10/0x10
+>>  pnp_bus_resume+0x63/0x90
+>>  dpm_run_callback+0x4c/0x120
+>>  device_resume+0xa7/0x200
+>>  dpm_resume+0xce/0x2c0
+>>  dpm_resume_end+0xd/0x20
+>>  suspend_devices_and_enter+0x195/0x750
+>>  pm_suspend.cold+0x329/0x374
+>>  state_store+0x71/0xd0
+>>  kernfs_fop_write_iter+0x124/0x1b0
+>>  new_sync_write+0x108/0x180
+>>  vfs_write+0x1bc/0x270
+>>  ksys_write+0x4f/0xc0
+>>  do_syscall_64+0x33/0x40
+>>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> RIP: 0033:0x7f8f102ec4e7
+>> Code: 0d 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64
+>> 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51
+>> c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+>> RSP: 002b:00007ffe87216bf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+>> RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f8f102ec4e7
+>> RDX: 0000000000000004 RSI: 00007ffe87216ce0 RDI: 0000000000000004
+>> RBP: 00007ffe87216ce0 R08: 000055c485d835e0 R09: 00007f8f103830c0
+>> R10: 00007f8f10382fc0 R11: 0000000000000246 R12: 0000000000000004
+>> R13: 000055c485d7f650 R14: 0000000000000004 R15: 00007f8f103bf720
+>>
+>> Regards,
+>>
+>> Hans
 > 
-> Ping? Is this going to make 5.13? This fixes an issue that is in
-> 5.13-rc1.
+> I sent a couple fixes (cc'd to you).
 
-It's not urgent, since it's in an error in the ASN.1 encoder, the only
-real way to produce it is if the system runs out of memory, which is
-highly unlikely since the allocations are all GFP_KERNEL.  We've also
-got another 8 or so weeks before 5.13 so there's time for this to go
-through the normal review process.
+I've seen the fixes, thank you.
 
-James
+I'll probably add these as downstream patches to the Fedora 5.12 kernels for now
+and see if that helps.
 
+Regards,
+
+Hans
 
