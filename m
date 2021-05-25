@@ -2,80 +2,169 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B2DC2B9F8
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 May 2021 11:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E96C2B9F8
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 May 2021 16:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5982C610A0
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 May 2021 11:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAD0F6141C
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 May 2021 16:29:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231132AbhEYLP1 (ORCPT
+        id S233480AbhEYQbG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 May 2021 07:15:27 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:60797 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S230252AbhEYLPX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 May 2021 07:15:23 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 14PBDd2Q004241;
-        Tue, 25 May 2021 14:13:39 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 679A563A19; Tue, 25 May 2021 14:13:45 +0300 (IDT)
-From:   amirmizi6@gmail.com
-To:     Eyal.Cohen@nuvoton.com, jarkko@kernel.org, peterhuewe@gmx.de,
-        jgg@ziepe.ca
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v4] add longer timeout for verify signature command
-Date:   Tue, 25 May 2021 14:13:24 +0300
-Message-Id: <20210525111325.158790-1-amirmizi6@gmail.com>
-X-Mailer: git-send-email 2.22.0
+        Tue, 25 May 2021 12:31:06 -0400
+Received: from namei.org ([65.99.196.166]:49298 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233485AbhEYQbG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 25 May 2021 12:31:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 9AC61DCF;
+        Tue, 25 May 2021 16:24:35 +0000 (UTC)
+Date:   Wed, 26 May 2021 02:24:35 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     linux-security-module@vger.kernel.org
+cc:     linux-kernel@vger.kernel.org, lwn@lwn.net,
+        fedora-selinux-list@redhat.com, linux-crypto@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Audit-ML <linux-audit@redhat.com>, gentoo-hardened@gentoo.org,
+        keyrings@linux-nfs.org, tpmdd-devel@lists.sourceforge.net,
+        Linux Security Summit Program Committee 
+        <lss-pc@lists.linuxfoundation.org>
+Subject: Re: [ANNOUNCE][CFP] Linux Security Summit 2021
+In-Reply-To: <c244f77-56a1-c089-521d-2e670488c10@namei.org>
+Message-ID: <5b3a0bf-226d-6ee-d0b-d6673eff32b2@namei.org>
+References: <c244f77-56a1-c089-521d-2e670488c10@namei.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Amir Mizinski <amirmizi6@gmail.com>
+Note that the venue of LSS 2021 has now changed to Seattle, USA.
 
-while testing TPM2_CC_VERIFY_SIGNATURE with usage of RSA 3072-bit keys i
-encountered a timeout error. it seems current values do not support this case
-as described in ptp 1.05 6.5.1.3:
-https://trustedcomputinggroup.org/wp-content/uploads/PC_Client_Specific-Platform_TPM_Profile_for-PTP_2p0-v1p05p_r14_pub.pdf
+See https://events.linuxfoundation.org/linux-security-summit-north-america/
 
-The patch was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
+The new event dates are 29 September to 01 October.
 
-Changes since version 1:
--"tpm2: add longer timout for verify signature command"
-                - Fixed and extended commit description.
-Addressed comments from:
- - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1424664/
-
-Changes since version 2:
--"tpm2: add longer timout for verify signature command"
-                - Fixed commit description.
-Addressed comments from:
- - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1431866/
-Changes since version 3:
--"tpm2: add longer timout for verify signature command"
-                - Fixed Link tag in commit description.
-Addressed comments from:
- - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1434828/
+The CFP closes on June 27th.
 
 
-Amir Mizinski (1):
-  tpm2: add longer timeout for verify signature command
 
- drivers/char/tpm/tpm2-cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+
+
+On Tue, 9 Feb 2021, James Morris wrote:
+
+> ==============================================================================
+>                    ANNOUNCEMENT AND CALL FOR PARTICIPATION
+> 
+>                          LINUX SECURITY SUMMIT 2021
+>                              
+>                               27-29 September
+>                               Dublin, Ireland
+> ==============================================================================
+> 
+> DESCRIPTION
+>  
+> Linux Security Summit (LSS) is a technical forum for collaboration between
+> Linux developers, researchers, and end-users.  Its primary aim is to foster
+> community efforts in analyzing and solving Linux security challenges.
+> 
+>  The program committee currently seeks proposals for:
+>  
+>    * Refereed Presentations:
+>      45 minutes in length.
+>  
+>    * Panel Discussion Topics:
+>      45 minutes in length.
+>  
+>    * Short Topics:
+>      30 minutes in total, including at least 10 minutes discussion.
+>  
+>    * Tutorials
+>      90 minutes in length.
+>  
+> Tutorial sessions should be focused on advanced Linux security defense
+> topics within areas such as the kernel, compiler, and security-related
+> libraries.  Priority will be given to tutorials created for this conference,
+> and those where the presenter a leading subject matter expert on the topic.
+>  
+> Topic areas include, but are not limited to:
+>  
+>    * Kernel self-protection
+>    * Access control
+>    * Cryptography and key management
+>    * Integrity policy and enforcement
+>    * Hardware Security
+>    * IoT and embedded security
+>    * Virtualization and containers
+>    * System-specific system hardening
+>    * Case studies
+>    * Security tools
+>    * Security UX
+>    * Emerging technologies, threats & techniques
+> 
+>   Proposals should be submitted via:
+>     https://events.linuxfoundation.org/linux-security-summit-europe/program/cfp/
+> 
+> 
+> ** Note that for 2021, the North American and European events are combined into
+> a single event planned for Dublin, Ireland. **
+>  
+> 
+> DATES
+>  
+>   * CFP close:            June 27
+>   * CFP notifications:    July 20
+>   * Schedule announced:   July 22
+>   * Event:                September 27-29
+> 
+> WHO SHOULD ATTEND
+>  
+> We're seeking a diverse range of attendees and welcome participation by
+> people involved in Linux security development, operations, and research.
+>  
+> LSS is a unique global event that provides the opportunity to present and
+> discuss your work or research with key Linux security community members and
+> maintainers.  It's also useful for those who wish to keep up with the latest
+> in Linux security development and to provide input to the development
+> process.
+> 
+> WEB SITE
+> 
+>     https://events.linuxfoundation.org/linux-security-summit-europe/
+> 
+> TWITTER
+> 
+>   For event updates and announcements, follow:
+> 
+>     https://twitter.com/LinuxSecSummit
+>   
+>     #linuxsecuritysummit
+> 
+> PROGRAM COMMITTEE
+> 
+>   The program committee for LSS 2021 is:
+> 
+>     * James Morris, Microsoft
+>     * Serge Hallyn, Cisco
+>     * Paul Moore, Cisco
+>     * Stephen Smalley, NSA
+>     * Elena Reshetova, Intel
+>     * John Johansen, Canonical
+>     * Kees Cook, Google
+>     * Casey Schaufler, Intel
+>     * Mimi Zohar, IBM
+>     * David A. Wheeler, Institute for Defense Analyses
+> 
+>   The program committee may be contacted as a group via email:
+>     lss-pc () lists.linuxfoundation.org
+> 
+> 
 
 -- 
-2.7.4
+James Morris
+<jmorris@namei.org>
 
