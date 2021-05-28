@@ -2,78 +2,146 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCD0C4708C
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 May 2021 06:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B31C4708D
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 May 2021 07:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23B626135C
-	for <linux-integrity@archiver.kernel.org>; Fri, 28 May 2021 06:27:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFB27613C9
+	for <linux-integrity@archiver.kernel.org>; Fri, 28 May 2021 07:38:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbhE1G3U (ORCPT
+        id S235154AbhE1HkK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 28 May 2021 02:29:20 -0400
-Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:38192 "EHLO
-        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229753AbhE1G3T (ORCPT
+        Fri, 28 May 2021 03:40:10 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3098 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233653AbhE1HkG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 28 May 2021 02:29:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0UaLIcr6_1622183262;
-Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UaLIcr6_1622183262)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 28 May 2021 14:27:42 +0800
-Subject: Re: [PATCH v2 1/7] crypto: fix a memory leak in sm2
-To:     Hongbo Li <herbert.tencent@gmail.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
-        ebiggers@kernel.org, dhowells@redhat.com, jarkko@kernel.org,
-        herberthbli@tencent.com
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <1622123615-15517-1-git-send-email-herbert.tencent@gmail.com>
- <1622123615-15517-2-git-send-email-herbert.tencent@gmail.com>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <47cf4353-b4bb-3907-6017-60bf87805d0c@linux.alibaba.com>
-Date:   Fri, 28 May 2021 14:27:41 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.10.2
+        Fri, 28 May 2021 03:40:06 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Frx7d2ctjz6P33T;
+        Fri, 28 May 2021 15:26:21 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 28 May 2021 09:38:29 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@srcf.ucam.org>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 1/7] ima: Add ima_show_template_uint() template library function
+Date:   Fri, 28 May 2021 09:38:06 +0200
+Message-ID: <20210528073812.407936-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210528073812.407936-1-roberto.sassu@huawei.com>
+References: <20210528073812.407936-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1622123615-15517-2-git-send-email-herbert.tencent@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.62.217]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Herbert, Hongbo,
+This patch introduces the new function ima_show_template_uint(). This can
+be used for showing integers of different sizes in ASCII format. The
+function ima_show_template_data_ascii() automatically determines how to
+print a stored integer by checking the integer size.
 
-On 5/27/21 9:53 PM, Hongbo Li wrote:
-> From: Hongbo Li <herberthbli@tencent.com>
-> 
-> SM2 module alloc ec->Q in sm2_set_pub_key(), when doing alg test in
-> test_akcipher_one(), it will set public key for every test vector,
-> and don't free ec->Q. This will cause a memory leak.
-> 
-> This patch alloc ec->Q in sm2_ec_ctx_init().
-> 
-> Fixes: ea7ecb66440b ("crypto: sm2 - introduce OSCCA SM2 asymmetric cipher algorithm")
-> Signed-off-by: Hongbo Li <herberthbli@tencent.com>
-> Reviewed-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> ---
->   crypto/sm2.c | 24 ++++++++++--------------
->   1 file changed, 10 insertions(+), 14 deletions(-)
-> 
+If integers have been written in canonical format,
+ima_show_template_data_ascii() calls the appropriate leXX_to_cpu() function
+to correctly display the value.
 
-Patch 1/7 is an independent bugfix patch. If possible, consider applying 
-it first.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_template_lib.c | 38 ++++++++++++++++++++++-
+ security/integrity/ima/ima_template_lib.h |  2 ++
+ 2 files changed, 39 insertions(+), 1 deletion(-)
 
-The commit message header should start with: crypto: sm2 -
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 4314d9a3514c..f23296c33da1 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -24,7 +24,8 @@ enum data_formats {
+ 	DATA_FMT_DIGEST = 0,
+ 	DATA_FMT_DIGEST_WITH_ALGO,
+ 	DATA_FMT_STRING,
+-	DATA_FMT_HEX
++	DATA_FMT_HEX,
++	DATA_FMT_UINT
+ };
+ 
+ static int ima_write_template_field_data(const void *data, const u32 datalen,
+@@ -88,6 +89,35 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 	case DATA_FMT_STRING:
+ 		seq_printf(m, "%s", buf_ptr);
+ 		break;
++	case DATA_FMT_UINT:
++		switch (field_data->len) {
++		case sizeof(u8):
++			seq_printf(m, "%u", *(u8 *)buf_ptr);
++			break;
++		case sizeof(u16):
++			if (ima_canonical_fmt)
++				seq_printf(m, "%u",
++					   le16_to_cpu(*(u16 *)buf_ptr));
++			else
++				seq_printf(m, "%u", *(u16 *)buf_ptr);
++			break;
++		case sizeof(u32):
++			if (ima_canonical_fmt)
++				seq_printf(m, "%u",
++					   le32_to_cpu(*(u32 *)buf_ptr));
++			else
++				seq_printf(m, "%u", *(u32 *)buf_ptr);
++			break;
++		case sizeof(u64):
++			if (ima_canonical_fmt)
++				seq_printf(m, "%llu",
++					   le64_to_cpu(*(u64 *)buf_ptr));
++			else
++				seq_printf(m, "%llu", *(u64 *)buf_ptr);
++			break;
++		default:
++			break;
++		}
+ 	default:
+ 		break;
+ 	}
+@@ -163,6 +193,12 @@ void ima_show_template_buf(struct seq_file *m, enum ima_show_type show,
+ 	ima_show_template_field_data(m, show, DATA_FMT_HEX, field_data);
+ }
+ 
++void ima_show_template_uint(struct seq_file *m, enum ima_show_type show,
++			    struct ima_field_data *field_data)
++{
++	ima_show_template_field_data(m, show, DATA_FMT_UINT, field_data);
++}
++
+ /**
+  * ima_parse_buf() - Parses lengths and data from an input buffer
+  * @bufstartp:       Buffer start address.
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index f4b2a2056d1d..54b67c80b315 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -27,6 +27,8 @@ void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
+ 			   struct ima_field_data *field_data);
+ void ima_show_template_buf(struct seq_file *m, enum ima_show_type show,
+ 			   struct ima_field_data *field_data);
++void ima_show_template_uint(struct seq_file *m, enum ima_show_type show,
++			    struct ima_field_data *field_data);
+ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
+ 		  int maxfields, struct ima_field_data *fields, int *curfields,
+ 		  unsigned long *len_mask, int enforce_mask, char *bufname);
+-- 
+2.25.1
 
-Also added:
-
-Cc: stable@vger.kernel.org # v5.10+
-
-Best regards,
-Tianjia
