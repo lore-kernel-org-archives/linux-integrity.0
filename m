@@ -2,107 +2,86 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A717FC47097
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 06:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ABAC47082
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 07:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 838F6613DC
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 06:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67803613D7
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 07:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbhFCGtZ (ORCPT
+        id S229697AbhFCHvw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Jun 2021 02:49:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229635AbhFCGtZ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Jun 2021 02:49:25 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 977A9613B4;
-        Thu,  3 Jun 2021 06:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622702861;
-        bh=whQ5awbfuf7TtbPdUWFwRctWP18k3gRZdJxFleFXT4o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BcWqz17SJhPIKm5LyoKTIC46oMedZf+LuOoFcwvZMgK6dNeENmuU385rSWx2VQdEf
-         jBD7i9H7C1Tvy0CKuWnCmoxNNYxa69AYDYbQ+aE1fNZO6+FZ2iQYrY0S7qpRlDd97R
-         gpuQfP8s9bENHKxQxKMJb6+q44LvXoG//md61u3rSjMW5d1mxXr+DvA1uP3A18Ybqp
-         pFDR8dcqIpXrvax7NxMI9lh4u0CJYp9UshBirA5NOmkRI0r7Ly2wz0cXWWwe0MczTm
-         t+315o11WUsIl2jWywiKhT73gaEgYGjbWDCjx4wkgU5b4uCl3xTzsz1FBkyd695ORO
-         RaRGp4Vy98Rdw==
-Date:   Thu, 3 Jun 2021 09:47:38 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] Add support for ECDSA-signed kernel modules
-Message-ID: <20210603064738.pwfq3n7erzmncdmw@kernel.org>
-References: <20210602143537.545132-1-stefanb@linux.ibm.com>
+        Thu, 3 Jun 2021 03:51:52 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3527 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229567AbhFCHvw (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 Jun 2021 03:51:52 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FwdK26ktTzZcQF;
+        Thu,  3 Jun 2021 15:47:18 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 3 Jun 2021 15:50:04 +0800
+Received: from thunder-town.china.huawei.com (10.174.177.72) by
+ dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 3 Jun 2021 15:50:03 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH v2 1/1] tpm_tis: Use DEFINE_RES_MEM() to simplify code
+Date:   Thu, 3 Jun 2021 15:49:55 +0800
+Message-ID: <20210603074955.11653-2-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.26.0.windows.1
+In-Reply-To: <20210603074955.11653-1-thunder.leizhen@huawei.com>
+References: <20210603074955.11653-1-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210602143537.545132-1-stefanb@linux.ibm.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.174.177.72]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 10:35:35AM -0400, Stefan Berger wrote:
-> This series adds support for ECDSA-signed kernel modules. It also
-> attempts to address a kbuild issue where a developer created an ECDSA
-> key for signing kernel modules and then builds an older version of the
-> kernel, when bisecting the kernel for example, that does not support
-> ECDSA keys.
-> 
-> The first patch addresses the kbuild issue of needing to delete that
-> ECDSA key if it is in certs/signing_key.pem and trigger the creation
-> of an RSA key. However, for this to work this patch would have to be
-> backported to previous versions of the kernel but would also only work
-> for the developer if he/she used a stable version of the kernel to which
-> this patch was applied. So whether this patch actually achieves the
-> wanted effect is not always guaranteed.
-> 
-> The 2nd patch adds the support for the ECSDA-signed kernel modules.
-> 
-> This patch depends on the ECDSA support series currently queued here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/log/?h=ecc
-> 
->   Stefan
-> 
-> v5:
->   - do not touch the key files if openssl is not installed; likely
->     addresses an issue pointed out by kernel test robot
-> 
-> v4:
->   - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
->   
-> v3:
->   - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
->   - added recommendation to use string hash to Kconfig help text
-> 
-> v2:
->   - Adjustment to ECDSA key detector string in 2/2
->   - Rephrased cover letter and patch descriptions with Mimi
-> 
-> 
-> Stefan Berger (2):
->   certs: Trigger creation of RSA module signing key if it's not an RSA
->     key
->   certs: Add support for using elliptic curve keys for signing modules
-> 
->  certs/Kconfig                         | 26 ++++++++++++++++++++++++++
->  certs/Makefile                        | 21 +++++++++++++++++++++
->  crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
->  3 files changed, 55 insertions(+)
-> 
-> -- 
-> 2.29.2
-> 
-> 
+Use DEFINE_RES_MEM() to save a couple of lines of code, which is simpler
+and more readable. The start address does not need to appear twice.
 
-Please instead send a fix.
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/char/tpm/tpm_tis.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-/Jarkko
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 4ed6e660273a414..d3f2e5364c275f4 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -363,11 +363,7 @@ static int tpm_tis_force_device(void)
+ {
+ 	struct platform_device *pdev;
+ 	static const struct resource x86_resources[] = {
+-		{
+-			.start = 0xFED40000,
+-			.end = 0xFED40000 + TIS_MEM_LEN - 1,
+-			.flags = IORESOURCE_MEM,
+-		},
++		DEFINE_RES_MEM(0xFED40000, TIS_MEM_LEN)
+ 	};
+ 
+ 	if (!force)
+-- 
+2.26.0.106.g9fadedd
+
+
