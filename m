@@ -2,110 +2,128 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F502C47096
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 05:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF1AC47096
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 06:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 649AD613B4
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 05:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3F6A613E4
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Jun 2021 06:27:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbhFCFbn (ORCPT
+        id S229794AbhFCG2x (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Jun 2021 01:31:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229656AbhFCFbk (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Jun 2021 01:31:40 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 129CD613DA;
-        Thu,  3 Jun 2021 05:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622698196;
-        bh=lZ29KVCtkxlkoM/36VI4ZBcA1/oG7TivL0xDiXOwx3M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JVYxP6u1T+A116yYndTWL4qubDouejxMW5ulUQ2J3LG81t163oxWpaFVX7MSrcyyL
-         HdGdt2BoTcZVJTSvtcS8xD/uuSEd/wcAHCDDkiWIrUHNiBzGGKzDhCH5aCai50eNkn
-         xqBdQEHCnMTbcNz9teWDs7dg4ogZP2Mq2WCpNjYg2qfdZ5KU9gb07EFTIq0NOMywpt
-         g7niwa44+gG0qGCRIXxVsO/8xObssVI8hT1rFY50DtNOIEpOJgokru6s5RCWcfTBM/
-         t85MSmppQmJlqPjRLNsq29VM6MQ5Kb0LqERzdYkPiZDky4iwRFPDyZGCWpnptGfeSf
-         Dt+xXUaC/DidQ==
-Date:   Thu, 3 Jun 2021 08:29:54 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Thu, 3 Jun 2021 02:28:53 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3396 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229667AbhFCG2w (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 Jun 2021 02:28:52 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4FwbS91VT8z67mC;
+        Thu,  3 Jun 2021 14:23:21 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 3 Jun 2021 14:27:06 +0800
+Received: from [127.0.0.1] (10.174.177.72) by dggpemm500006.china.huawei.com
+ (7.185.36.236) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 3 Jun 2021
+ 14:27:06 +0800
+Subject: Re: [PATCH 1/1] tpm_tis: Use DEFINE_RES_MEM() to simplify code
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+CC:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] tpm_tis: Use DEFINE_RES_MEM() to simplify code
-Message-ID: <20210603052954.ms7s4cmkejpxo2lc@kernel.org>
 References: <20210601064507.9989-1-thunder.leizhen@huawei.com>
  <20210601175728.gyi3yepdtvu4hald@kernel.org>
  <277d929b-0602-ffbb-5866-64731a19ff14@huawei.com>
+ <20210603052954.ms7s4cmkejpxo2lc@kernel.org>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <427a9ec1-a841-e42a-0970-81f2a890db1f@huawei.com>
+Date:   Thu, 3 Jun 2021 14:27:05 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <277d929b-0602-ffbb-5866-64731a19ff14@huawei.com>
+In-Reply-To: <20210603052954.ms7s4cmkejpxo2lc@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.72]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jun 02, 2021 at 09:11:47AM +0800, Leizhen (ThunderTown) wrote:
-> 
-> 
-> On 2021/6/2 1:57, Jarkko Sakkinen wrote:
-> > On Tue, Jun 01, 2021 at 02:45:07PM +0800, Zhen Lei wrote:
-> >> No functional change.
-> >>
-> >> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> > 
-> > No change, no need to apply?
-> 
-> But it can make the code look simpler, easier to read and maintain(The start
-> address does not need to appear twice). I think that's why these DEFINE_RES_*
-> macros are defined.
-> 
-> By the way, would it be better to change the letters in 0xFED40000 to lowercase?
 
-I mean "No functional change" does not really tell anything about anything.
 
-Please just describe what the commit does.
+On 2021/6/3 13:29, Jarkko Sakkinen wrote:
+> On Wed, Jun 02, 2021 at 09:11:47AM +0800, Leizhen (ThunderTown) wrote:
+>>
+>>
+>> On 2021/6/2 1:57, Jarkko Sakkinen wrote:
+>>> On Tue, Jun 01, 2021 at 02:45:07PM +0800, Zhen Lei wrote:
+>>>> No functional change.
+>>>>
+>>>> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+>>>
+>>> No change, no need to apply?
+>>
+>> But it can make the code look simpler, easier to read and maintain(The start
+>> address does not need to appear twice). I think that's why these DEFINE_RES_*
+>> macros are defined.
+>>
+>> By the way, would it be better to change the letters in 0xFED40000 to lowercase?
+> 
+> I mean "No functional change" does not really tell anything about anything.
+> 
+> Please just describe what the commit does.
 
-/Jarkko
+I'm sorry to have misunderstood your intention. OK, I rewrite the commit message.
 
 > 
-> > 
-> > /Jarkko
-> > 
-> >> ---
-> >>  drivers/char/tpm/tpm_tis.c | 6 +-----
-> >>  1 file changed, 1 insertion(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> >> index 4ed6e660273a414..d3f2e5364c275f4 100644
-> >> --- a/drivers/char/tpm/tpm_tis.c
-> >> +++ b/drivers/char/tpm/tpm_tis.c
-> >> @@ -363,11 +363,7 @@ static int tpm_tis_force_device(void)
-> >>  {
-> >>  	struct platform_device *pdev;
-> >>  	static const struct resource x86_resources[] = {
-> >> -		{
-> >> -			.start = 0xFED40000,
-> >> -			.end = 0xFED40000 + TIS_MEM_LEN - 1,
-> >> -			.flags = IORESOURCE_MEM,
-> >> -		},
-> >> +		DEFINE_RES_MEM(0xFED40000, TIS_MEM_LEN)
-> >>  	};
-> >>  
-> >>  	if (!force)
-> >> -- 
-> >> 2.26.0.106.g9fadedd
-> >>
-> >>
-> >>
-> > 
-> > .
-> > 
+> /Jarkko
 > 
+>>
+>>>
+>>> /Jarkko
+>>>
+>>>> ---
+>>>>  drivers/char/tpm/tpm_tis.c | 6 +-----
+>>>>  1 file changed, 1 insertion(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+>>>> index 4ed6e660273a414..d3f2e5364c275f4 100644
+>>>> --- a/drivers/char/tpm/tpm_tis.c
+>>>> +++ b/drivers/char/tpm/tpm_tis.c
+>>>> @@ -363,11 +363,7 @@ static int tpm_tis_force_device(void)
+>>>>  {
+>>>>  	struct platform_device *pdev;
+>>>>  	static const struct resource x86_resources[] = {
+>>>> -		{
+>>>> -			.start = 0xFED40000,
+>>>> -			.end = 0xFED40000 + TIS_MEM_LEN - 1,
+>>>> -			.flags = IORESOURCE_MEM,
+>>>> -		},
+>>>> +		DEFINE_RES_MEM(0xFED40000, TIS_MEM_LEN)
+>>>>  	};
+>>>>  
+>>>>  	if (!force)
+>>>> -- 
+>>>> 2.26.0.106.g9fadedd
+>>>>
+>>>>
+>>>>
+>>>
+>>> .
+>>>
+>>
+>>
 > 
+> .
+> 
+
