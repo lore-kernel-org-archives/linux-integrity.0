@@ -2,36 +2,36 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD1FC48BD1
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEED5C48BE0
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19F27613E7
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BACE0613E7
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230407AbhFJVLg (ORCPT
+        id S231145AbhFJVLr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Jun 2021 17:11:36 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:60390 "EHLO
+        Thu, 10 Jun 2021 17:11:47 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60446 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230281AbhFJVLg (ORCPT
+        with ESMTP id S230059AbhFJVLn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Jun 2021 17:11:36 -0400
+        Thu, 10 Jun 2021 17:11:43 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B2DF320B7188;
-        Thu, 10 Jun 2021 14:09:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2DF320B7188
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7035520B7188;
+        Thu, 10 Jun 2021 14:09:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7035520B7188
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1623359379;
-        bh=QMN/+TpHdMpcC0h+c75GxaUojxMi3iQPGhRZ8PsKTHQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mz5cpn3eN5otr/jZWMJdiCZvIPzxr3dvCjB424ogGNwv4kxXQNZDsw6udU/COjZnT
-         bBunt9ZR2JVRY9As0eUglxIAVfr7RkGLvG0oLicRsugm8Fc/xabXVnGfSF6sH9A8U0
-         kvXrdlfuVyPmcbxTyJMF8WIco41JLX3Ya8ryzEkg=
+        s=default; t=1623359386;
+        bh=whfJfsHqMmmVau0YBJ0E1Ux41l/udPG1ewedmaTL4yg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FVGjl+t53lgQXqPR6g0jjW7lwVMXdsNOtAxIgaPMJxOgUx1WFMCQKy9gIhwfySh6j
+         lU09YKVgUMn1tsy3Ym3hVEAqTbt8lsdFv99NCPvQHfnUFLpSclNnDvqNZQAckWxBh7
+         6yuIt6W76iC00q/Z9JtyITaWOcIPtCfTUCW6fABI=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Jens Wiklander <jens.wiklander@linaro.org>,
         Allen Pais <apais@linux.microsoft.com>,
@@ -46,109 +46,93 @@ Cc:     Thirupathaiah Annapureddy <thiruan@microsoft.com>,
         op-tee@lists.trustedfirmware.org, linux-integrity@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com, linux-mips@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/8] tee: Improve support for kexec and kdump
-Date:   Thu, 10 Jun 2021 16:09:05 -0500
-Message-Id: <20210610210913.536081-1-tyhicks@linux.microsoft.com>
+Subject: [PATCH v4 2/8] optee: Refuse to load the driver under the kdump kernel
+Date:   Thu, 10 Jun 2021 16:09:07 -0500
+Message-Id: <20210610210913.536081-3-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210610210913.536081-1-tyhicks@linux.microsoft.com>
+References: <20210610210913.536081-1-tyhicks@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-v4:
-- Incorporated 'tee: add tee_shm_alloc_kernel_buf()' from Jens to remove
-  the need to expose TEE_SHM_REGISTER to callers of tee_shm_alloc()
-- Updated 'tee: Support kernel shm registration without dma-buf backing'
-  to drop the TEE_SHM_DMA_BUF flag when tee_shm_alloc_kernel_buf() calls
-  tee_shm_alloc()
-- Updated the final two patches, against ftpm and tee_bnxt_fw, to use
-  tee_shm_alloc_kernel_buf() instead of tee_shm_alloc()
-- Minor cleanups to the commit messages of the updates patches
-v3: https://lore.kernel.org/lkml/20210609002326.210024-1-tyhicks@linux.microsoft.com/
-v2: https://lore.kernel.org/lkml/20210225090610.242623-1-allen.lkml@gmail.com/
-v1: https://lore.kernel.org/lkml/20210217092714.121297-1-allen.lkml@gmail.com/
+Fix a hung task issue, seen when booting the kdump kernel, that is
+caused by all of the secure world threads being in a permanent suspended
+state:
 
-This series fixes several bugs uncovered while exercising the OP-TEE
-(Open Portable Trusted Execution Environment), ftpm (firmware TPM), and
-tee_bnxt_fw (Broadcom BNXT firmware manager) drivers with kexec and
-kdump (emergency kexec) based workflows.
+ INFO: task swapper/0:1 blocked for more than 120 seconds.
+       Not tainted 5.4.83 #1
+ "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+ swapper/0       D    0     1      0 0x00000028
+ Call trace:
+  __switch_to+0xc8/0x118
+  __schedule+0x2e0/0x700
+  schedule+0x38/0xb8
+  schedule_timeout+0x258/0x388
+  wait_for_completion+0x16c/0x4b8
+  optee_cq_wait_for_completion+0x28/0xa8
+  optee_disable_shm_cache+0xb8/0xf8
+  optee_probe+0x560/0x61c
+  platform_drv_probe+0x58/0xa8
+  really_probe+0xe0/0x338
+  driver_probe_device+0x5c/0xf0
+  device_driver_attach+0x74/0x80
+  __driver_attach+0x64/0xe0
+  bus_for_each_dev+0x84/0xd8
+  driver_attach+0x30/0x40
+  bus_add_driver+0x188/0x1e8
+  driver_register+0x64/0x110
+  __platform_driver_register+0x54/0x60
+  optee_driver_init+0x20/0x28
+  do_one_initcall+0x54/0x24c
+  kernel_init_freeable+0x1e8/0x2c0
+  kernel_init+0x18/0x118
+  ret_from_fork+0x10/0x18
 
-The majority of the problems are caused by missing .shutdown hooks in
-the drivers. The .shutdown hooks are used by the normal kexec code path
-to let the drivers clean up prior to executing the target kernel. The
-.remove hooks, which are already implemented in these drivers, are not
-called as part of the kexec code path. This resulted in shared memory
-regions, that were cached and/or registered with OP-TEE, not being
-cleared/unregistered prior to kexec. The new kernel would then run into
-problems when handling the previously cached virtual addresses or trying
-to register newly allocated shared memory objects that overlapped with
-the previously registered virtual addresses. The TEE didn't receive
-notification that the old virtual addresses were no longer meaningful
-and that a new kernel, with a new address space, would soon be running.
+The invoke_fn hook returned OPTEE_SMC_RETURN_ETHREAD_LIMIT, indicating
+that the secure world threads were all in a suspended state at the time
+of the kernel crash. This intermittently prevented the kdump kernel from
+booting, resulting in a failure to collect the kernel dump.
 
-However, implementing .shutdown hooks was not enough for supporting
-kexec. There was an additional problem caused by the TEE driver's
-reliance on the dma-buf subsystem for multi-page shared memory objects
-that were registered with the TEE. Shared memory objects backed by a
-dma-buf use a different mechanism for reference counting. When the final
-reference is released, work is scheduled to be executed to unregister
-the shared memory with the TEE but that work is only completed prior to
-the current task returning the userspace. In the case of a kexec
-operation, the current task that's calling the driver .shutdown hooks
-never returns to userspace prior to the kexec operation so the shared
-memory was never unregistered. This eventually caused problems from
-overlapping shared memory regions that were registered with the TEE
-after several kexec operations. The large 4M contiguous region
-allocated by the tee_bnxt_fw driver reliably ran into this issue on the
-fourth kexec on a system with 8G of RAM.
+Make kernel dump collection more reliable on systems utilizing OP-TEE by
+refusing to load the driver under the kdump kernel.
 
-The use of dma-buf makes sense for shared memory that's in use by
-userspace but dma-buf's aren't needed for shared memory that will only
-used by the driver. This series separates dma-buf backed shared memory
-allocated by the kernel from multi-page shared memory that the kernel
-simply needs registered with the TEE for private use.
+Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+---
+ drivers/tee/optee/core.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-One other noteworthy change in this series is to completely refuse to
-load the OP-TEE driver in the kdump kernel. This is needed because the
-secure world may have had all of its threads in suspended state when the
-regular kernel crashed. The kdump kernel would then hang during boot
-because the OP-TEE driver's .probe function would attempt to use a
-secure world thread when they're all in suspended state. Another problem
-is that shared memory allocations could fail under the kdump kernel
-because the previously registered were not unregistered (the .shutdown
-hook is not called when kexec'ing into the kdump kernel).
-
-The first patch in the series fixes potential memory leaks that are not
-directly related to kexec or kdump but were noticed during the
-development of this series.
-
-Tyler
-
-Allen Pais (2):
-  optee: fix tee out of memory failure seen during kexec reboot
-  firmware: tee_bnxt: Release TEE shm, session, and context during kexec
-
-Jens Wiklander (1):
-  tee: add tee_shm_alloc_kernel_buf()
-
-Tyler Hicks (5):
-  optee: Fix memory leak when failing to register shm pages
-  optee: Refuse to load the driver under the kdump kernel
-  optee: Clear stale cache entries during initialization
-  tee: Support kernel shm registration without dma-buf backing
-  tpm_ftpm_tee: Free and unregister TEE shared memory during kexec
-
- drivers/char/tpm/tpm_ftpm_tee.c         |  8 ++---
- drivers/firmware/broadcom/tee_bnxt_fw.c | 14 +++++++--
- drivers/tee/optee/call.c                | 11 ++++++-
- drivers/tee/optee/core.c                | 42 ++++++++++++++++++++++++-
- drivers/tee/optee/optee_private.h       |  2 +-
- drivers/tee/optee/shm_pool.c            | 17 +++++++---
- drivers/tee/tee_shm.c                   | 29 ++++++++++++++++-
- include/linux/tee_drv.h                 |  1 +
- 8 files changed, 108 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index ddb8f9ecf307..5288cd767d82 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -6,6 +6,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/arm-smccc.h>
++#include <linux/crash_dump.h>
+ #include <linux/errno.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -612,6 +613,16 @@ static int optee_probe(struct platform_device *pdev)
+ 	u32 sec_caps;
+ 	int rc;
+ 
++	/*
++	 * The kernel may have crashed at the same time that all available
++	 * secure world threads were suspended and we cannot reschedule the
++	 * suspended threads without access to the crashed kernel's wait_queue.
++	 * Therefore, we cannot reliably initialize the OP-TEE driver in the
++	 * kdump kernel.
++	 */
++	if (is_kdump_kernel())
++		return -ENODEV;
++
+ 	invoke_fn = get_invoke_func(&pdev->dev);
+ 	if (IS_ERR(invoke_fn))
+ 		return PTR_ERR(invoke_fn);
 -- 
 2.25.1
 
