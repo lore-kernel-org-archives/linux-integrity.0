@@ -2,36 +2,37 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-31.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE32C48BD1
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D28C49360
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56E5C61421
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 320B961410
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Jun 2021 21:09:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230523AbhFJVLq (ORCPT
+        id S231157AbhFJVLr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Jun 2021 17:11:46 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:60418 "EHLO
+        Thu, 10 Jun 2021 17:11:47 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:60478 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230468AbhFJVLl (ORCPT
+        with ESMTP id S230492AbhFJVLo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Jun 2021 17:11:41 -0400
+        Thu, 10 Jun 2021 17:11:44 -0400
 Received: from sequoia.work.tihix.com (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A6E9120B7178;
-        Thu, 10 Jun 2021 14:09:43 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A6E9120B7178
+        by linux.microsoft.com (Postfix) with ESMTPSA id 130EC20B83C2;
+        Thu, 10 Jun 2021 14:09:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 130EC20B83C2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1623359384;
-        bh=uVgZoRO1aKnahUqyjDPzyphebgzUacysdZ2smy7vuKE=;
+        s=default; t=1623359388;
+        bh=vHXNCzPH6vP65w3gRv4QZZVovB1oVYvISDjQp48lif0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fjX04TsCT6Z9+aOGs0t4/zJ6XPuhW1muqh2cI/PW8VrAvXURzeTSoIjMpnqhrzZOb
-         E/K1XPRxBdhyQ+MDJE8KarvEvA8PQXdzCF8br/WB8fC7tWqbxBgowaSehYqchn4aA2
-         UPoZgcynC2lD2eVK3tfgc34Xt50jzEitiV1mfx0k=
+        b=WScSuzy266P0Px2xDr1yh+1BTBosX/Zq1zy0vz23Z9w9dutLlYSfo46yNUf2ulKPd
+         JdLAVC5TaynHNwTz+LKp/RIjeDHVduFBo4HC6uuL7zTUlZgv25xYzVkE2QyFlq9XEu
+         kb2uD9O+P0EkJfpdjBLB5kf8E+3Qv+/Tf9TCqygs=
 From:   Tyler Hicks <tyhicks@linux.microsoft.com>
 To:     Jens Wiklander <jens.wiklander@linaro.org>,
         Allen Pais <apais@linux.microsoft.com>,
@@ -46,9 +47,9 @@ Cc:     Thirupathaiah Annapureddy <thiruan@microsoft.com>,
         op-tee@lists.trustedfirmware.org, linux-integrity@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com, linux-mips@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/8] optee: Fix memory leak when failing to register shm pages
-Date:   Thu, 10 Jun 2021 16:09:06 -0500
-Message-Id: <20210610210913.536081-2-tyhicks@linux.microsoft.com>
+Subject: [PATCH v4 3/8] optee: fix tee out of memory failure seen during kexec reboot
+Date:   Thu, 10 Jun 2021 16:09:08 -0500
+Message-Id: <20210610210913.536081-4-tyhicks@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210610210913.536081-1-tyhicks@linux.microsoft.com>
 References: <20210610210913.536081-1-tyhicks@linux.microsoft.com>
@@ -58,48 +59,73 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Free the previously allocated pages when we encounter an error condition
-while attempting to register the pages with the secure world.
+From: Allen Pais <apais@linux.microsoft.com>
 
-Fixes: a249dd200d03 ("tee: optee: Fix dynamic shm pool allocations")
-Fixes: 5a769f6ff439 ("optee: Fix multi page dynamic shm pool alloc")
-Signed-off-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+The following out of memory errors are seen on kexec reboot
+from the optee core.
+
+[    0.368428] tee_bnxt_fw optee-clnt0: tee_shm_alloc failed
+[    0.368461] tee_bnxt_fw: probe of optee-clnt0 failed with error -22
+
+tee_shm_release() is not invoked on dma shm buffer.
+
+Implement .shutdown() method to handle the release of the buffers
+correctly.
+
+More info:
+https://github.com/OP-TEE/optee_os/issues/3637
+
+Signed-off-by: Allen Pais <apais@linux.microsoft.com>
+Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
 ---
- drivers/tee/optee/shm_pool.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/tee/optee/core.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/tee/optee/shm_pool.c b/drivers/tee/optee/shm_pool.c
-index d767eebf30bd..da06ce9b9313 100644
---- a/drivers/tee/optee/shm_pool.c
-+++ b/drivers/tee/optee/shm_pool.c
-@@ -32,8 +32,10 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
- 		struct page **pages;
- 
- 		pages = kcalloc(nr_pages, sizeof(pages), GFP_KERNEL);
--		if (!pages)
--			return -ENOMEM;
-+		if (!pages) {
-+			rc = -ENOMEM;
-+			goto err;
-+		}
- 
- 		for (i = 0; i < nr_pages; i++) {
- 			pages[i] = page;
-@@ -44,8 +46,14 @@ static int pool_op_alloc(struct tee_shm_pool_mgr *poolm,
- 		rc = optee_shm_register(shm->ctx, shm, pages, nr_pages,
- 					(unsigned long)shm->kaddr);
- 		kfree(pages);
-+		if (rc)
-+			goto err;
- 	}
- 
-+	return 0;
-+
-+err:
-+	__free_pages(page, order);
- 	return rc;
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index 5288cd767d82..0987074d7ed0 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -573,6 +573,13 @@ static optee_invoke_fn *get_invoke_func(struct device *dev)
+ 	return ERR_PTR(-EINVAL);
  }
  
++/* optee_remove - Device Removal Routine
++ * @pdev: platform device information struct
++ *
++ * optee_remove is called by platform subsystem to alert the driver
++ * that it should release the device
++ */
++
+ static int optee_remove(struct platform_device *pdev)
+ {
+ 	struct optee *optee = platform_get_drvdata(pdev);
+@@ -603,6 +610,18 @@ static int optee_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++/* optee_shutdown - Device Removal Routine
++ * @pdev: platform device information struct
++ *
++ * platform_shutdown is called by the platform subsystem to alert
++ * the driver that a shutdown, reboot, or kexec is happening and
++ * device must be disabled.
++ */
++static void optee_shutdown(struct platform_device *pdev)
++{
++	optee_disable_shm_cache(platform_get_drvdata(pdev));
++}
++
+ static int optee_probe(struct platform_device *pdev)
+ {
+ 	optee_invoke_fn *invoke_fn;
+@@ -739,6 +758,7 @@ MODULE_DEVICE_TABLE(of, optee_dt_match);
+ static struct platform_driver optee_driver = {
+ 	.probe  = optee_probe,
+ 	.remove = optee_remove,
++	.shutdown = optee_shutdown,
+ 	.driver = {
+ 		.name = "optee",
+ 		.of_match_table = optee_dt_match,
 -- 
 2.25.1
 
