@@ -2,91 +2,74 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26CF7C48BE6
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jun 2021 18:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D73C2B9F4
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jun 2021 05:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 048DF613C2
-	for <linux-integrity@archiver.kernel.org>; Wed, 16 Jun 2021 18:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C7F4613E7
+	for <linux-integrity@archiver.kernel.org>; Thu, 17 Jun 2021 05:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232157AbhFPSzM (ORCPT
+        id S229565AbhFQFkR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 16 Jun 2021 14:55:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232159AbhFPSzL (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 16 Jun 2021 14:55:11 -0400
-Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE47C06175F
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Jun 2021 11:53:04 -0700 (PDT)
-Received: by mail-qv1-xf35.google.com with SMTP id u13so259049qvt.7
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Jun 2021 11:53:04 -0700 (PDT)
+        Thu, 17 Jun 2021 01:40:17 -0400
+Received: from smtp2.axis.com ([195.60.68.18]:39023 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229580AbhFQFkR (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 17 Jun 2021 01:40:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Bi8dbucrJcy0W1D0dg2PU0hOFJEuVy1iH+Z01lR7RNU=;
-        b=Po/xUUsHLApF2WJxJQfD/YuH91EnTAYSVD1+At+SSHlxCPOKFaw9xtnwZTdsdk+DFK
-         BayPMchZJUB930+dPPSSh6lWVh5oNdEfz0ZlYGrkMYI+kXaq2wTWBOJrrBOC9k4PWSr1
-         8hIkaUTo/FBInVYQX6XbTssCK+3z++KEDgkUq5wSDCT9uzsyBZTJsCc3z2wfo0Rp4Gy2
-         4cbslr3Il3c2If01RtYElCx2dZ910hiCKH1YNGwB9F2N7sVsv3uHa+qdu+OMxzoNAf87
-         opIFJMYgELd/xKzFT3icow5eXFKEouovuysAXmGye9Pr/YeSiYq+hnD5pV2l7lnxmNoA
-         Yhog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Bi8dbucrJcy0W1D0dg2PU0hOFJEuVy1iH+Z01lR7RNU=;
-        b=DI/lDo9mb0O2pBHbc+jQjVxyGyibtjO35nRA7fCEQMWN1QqkwuapurUxcrELaG2LVe
-         DCPfDdeHABQGlUYWFaMe0wd4v2eMY/X9+4NB/tUBoW/8gYdrCWVMnpWDAjtBkOIrfnrH
-         Oom+c4rcsTt94c29niV4P3Rwnsqix6A4zVs6u0376OzPyahHRvExCivRqLO+kBwRTLGb
-         Le8w8zb9L/a+bSq7gNCB3LI+Qt7lGOwffAEERh4SRlV0QqQEmlj78YiqUlvGc4ggeYw/
-         y+RyeYzM9ZbLDVWyD7n1hYgRvRnbpj+LtQ0kNqd7Bl0zmF2hspjn75uFTGYRrN34+n27
-         dPYw==
-X-Gm-Message-State: AOAM532tM3zvBYXZ1fxNinD2hXkrkq4l/Uc2xwrxTaxbWGGMiLaLzlkP
-        h+yHjWMNfWOB1asJX+fZZxShaQ==
-X-Google-Smtp-Source: ABdhPJzkiKO6DN9zp2TAQ51SVCuXD9hc0JgggsuuhG7gouo0zcIq4LwmfpdPN8lJmIm+C4xh7+Ci1g==
-X-Received: by 2002:a0c:8563:: with SMTP id n90mr1504110qva.41.1623869583161;
-        Wed, 16 Jun 2021 11:53:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-113-94.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.113.94])
-        by smtp.gmail.com with ESMTPSA id i11sm61968qkl.95.2021.06.16.11.53.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Jun 2021 11:53:02 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1ltaes-007kLT-09; Wed, 16 Jun 2021 15:53:02 -0300
-Date:   Wed, 16 Jun 2021 15:53:01 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
+  d=axis.com; q=dns/txt; s=axis-central1; t=1623908290;
+  x=1655444290;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xk5lY+DviIEB+UeE2RSKHxcpgc9FMKqbw8HU2SouMqc=;
+  b=QRiK5c56ooSAML0WkPR1ASFyoIY30BwI0yr+wHN9fSycdMQYhx9k9CdO
+   wAOuIE/Qd74yNTnqsX5tdnbAVCATMVutTSL/QjTqjuW56rUvlxW8r7lb7
+   qBLJQvOPOiJ4cSHFP2AtrJhqPEqse+NazT61juHurRrASe7Oe1XFiiecH
+   DLThqArLkyT3RKTl2su1PTT0HdciFc6E1G1U1/n5N6haQ5Le9xQx0BXJA
+   YZFl8ZgaCvJZL76saslEtX99REeBYtArAF1X6FT1bNiF8IqK5DYBy3COQ
+   u+u0DRfkvy5VAbokF1k+hrp1RiCiljieGtYH6Sm38iiaEJ/Uxzui9AORX
+   w==;
+Date:   Thu, 17 Jun 2021 07:38:09 +0200
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Peter Huewe <peterhuewe@gmx.de>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>, kernel@axis.com,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        kernel <kernel@axis.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <LinoSanfilippo@gmx.de>
 Subject: Re: [PATCH 1/2] tpm: Fix tpmrm reference counting
-Message-ID: <20210616185301.GV1096940@ziepe.ca>
+Message-ID: <20210617053809.GA4049@axis.com>
 References: <20210615091410.17007-1-vincent.whitchurch@axis.com>
+ <20210616185301.GV1096940@ziepe.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20210615091410.17007-1-vincent.whitchurch@axis.com>
+In-Reply-To: <20210616185301.GV1096940@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jun 15, 2021 at 11:14:08AM +0200, Vincent Whitchurch wrote:
-> The code added by commit 8979b02aaf1d6de8 ("tpm: Fix reference count to
-> main device") tries to take an extra reference to the main device only
-> for TPM2 by looking at the flags, but the flags are actually not set
-> at the time when tpm_chip_alloc() is called, so no extra reference is
-> ever taken, leading to a use-after-free if the TPM modules are removed
-> when the tpmrm device is in use.
+On Wed, Jun 16, 2021 at 08:53:01PM +0200, Jason Gunthorpe wrote:
+> On Tue, Jun 15, 2021 at 11:14:08AM +0200, Vincent Whitchurch wrote:
+> > The code added by commit 8979b02aaf1d6de8 ("tpm: Fix reference count to
+> > main device") tries to take an extra reference to the main device only
+> > for TPM2 by looking at the flags, but the flags are actually not set
+> > at the time when tpm_chip_alloc() is called, so no extra reference is
+> > ever taken, leading to a use-after-free if the TPM modules are removed
+> > when the tpmrm device is in use.
+> 
+> Please read this
+> 
+> https://lore.kernel.org/linux-integrity/20210205172528.GP4718@ziepe.ca/
 
-Please read this
+Thank you for the pointer.  I see that Lino already posted your proposal
+as a real patch as you requested so I will drop this.
 
-https://lore.kernel.org/linux-integrity/20210205172528.GP4718@ziepe.ca/
-
-Jason
+ https://lore.kernel.org/linux-integrity/1613949567-1181-2-git-send-email-LinoSanfilippo@gmx.de/
