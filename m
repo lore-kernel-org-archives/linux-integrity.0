@@ -2,139 +2,191 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D81BC48BDF
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jun 2021 16:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96472C49EA2
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jun 2021 16:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3B6611CC
-	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jun 2021 16:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80309613F0
+	for <linux-integrity@archiver.kernel.org>; Fri, 18 Jun 2021 16:07:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234331AbhFRQGz (ORCPT
+        id S231151AbhFRQJ3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 18 Jun 2021 12:06:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:22346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235724AbhFRQGq (ORCPT
+        Fri, 18 Jun 2021 12:09:29 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:46090 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230006AbhFRQJ3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 18 Jun 2021 12:06:46 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IG45dr088167;
-        Fri, 18 Jun 2021 12:04:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=f0ceIPiYDxY/booagKQSwOn88XfgJKGtoIutFEB+Cjs=;
- b=Xh0g8a/JdFKWjh1pa6DJZMSzNkpGOwnVLdQ1kOXceSR4Rh3Vwhzay+YlDMPmA2z3H83A
- zmu6+dFK+xHyewV9jcr+/g9H/iOpO7Ojz1+3k6gm7YLJyk6FXalRsz04RlWU+mKEl3h+
- Y641lxUpBOK8czXEBko1/Ml1nqDZ+CpYdbeObvm1HOprUZdrYrZtYzHhB9y2NMXQ8uDG
- UB6FXJPItSz8MW6iiDV3ViFULSmJmbiNAZzVOc3M2gNoD8D97MgQtVRt/EtvyS8Kp7zg
- E32poU4B33G/dTUBwurwi5hNSenz1PoHCmAvepIRgqHMG5VGyqDrPQ/OsX24Cn1aCNVj MQ== 
+        Fri, 18 Jun 2021 12:09:29 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IG0sKV005131;
+        Fri, 18 Jun 2021 16:06:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2020-01-29;
+ bh=LQZ+GE9yVVhfvtNDyFMeIAWHQrqXBNb//RTV73osKc0=;
+ b=AI1H4sqwuNomFNCHS74ByG38FHdu9LaoUO43F0e7Sl+Ps49r4Zod77cEZhhVg/FmwAGd
+ E1B04Mi+Hyu3i3xoLWR9/UBo2VaufhM0VWoxeUiVY9UD5d8M47LxPb8oEFX6SSKD4Fn1
+ z6BktApiCh6GlqGFCPyvp7Vapxis9Q2YBY2KczlXlc8KhVw00CNd9MWkkkhWzn3fT+Ng
+ r7ECmBkCI3xCTVwhrL1sHu1G34jU/ldPT6+ASTa0lctNmc0FdyMKvIYgVyywH+BybD0P
+ lELbFZ9PUpQSKRkPyL8zH/OdBrEeN/T5Zu8wwX0Q5mA8ACzdBFTR9k2mOkIzpaYeXZqk 4w== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 397mptmbhc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jun 2021 16:06:56 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 15IG1cPH155098;
+        Fri, 18 Jun 2021 16:06:55 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 398xd6gng4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 12:04:30 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15IG4THq094487;
-        Fri, 18 Jun 2021 12:04:29 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 398xd6gnem-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 12:04:29 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15IG4QeY015728;
-        Fri, 18 Jun 2021 16:04:26 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06fra.de.ibm.com with ESMTP id 394m6h9vp1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 16:04:26 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15IG4OkL20644140
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 16:04:24 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D393A4064;
-        Fri, 18 Jun 2021 16:04:24 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E6E6A4060;
-        Fri, 18 Jun 2021 16:04:22 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.93.34])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Jun 2021 16:04:22 +0000 (GMT)
-Message-ID: <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
-Subject: Re: [PATCH] fs: Return raw xattr for security.* if there is size
- disagreement with LSMs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Date:   Fri, 18 Jun 2021 12:04:21 -0400
-In-Reply-To: <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com>
-References: <ee75bde9a17f418984186caa70abd33b@huawei.com>
-         <20210616132227.999256-1-roberto.sassu@huawei.com>
-         <6e1c9807-d7e8-7c26-e0ee-975afa4b9515@linux.ibm.com>
-         <9cb676de40714d0288f85292c1f1a430@huawei.com>
-         <d822efcc0bb05178057ab2f52293575124cde1fc.camel@linux.ibm.com>
-         <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: AdhDHHaCU3yaVieHCH-VrseouUkXcA_2
-X-Proofpoint-ORIG-GUID: CkEmq2yFkV_GcP0onKt5fShi-ls-1vh3
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-18_07:2021-06-18,2021-06-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- mlxlogscore=999 spamscore=0 mlxscore=0 phishscore=0 impostorscore=0
- bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106180094
+        by userp3020.oracle.com with ESMTP id 396wayyuxw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jun 2021 16:06:55 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 15IG6sV1167639;
+        Fri, 18 Jun 2021 16:06:54 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 396wayyuxh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 18 Jun 2021 16:06:54 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 15IG6pih018495;
+        Fri, 18 Jun 2021 16:06:51 GMT
+Received: from lateralus.us.oracle.com (/10.149.232.101)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Jun 2021 16:06:51 +0000
+From:   Ross Philipson <ross.philipson@oracle.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        luto@amacapital.net, trenchboot-devel@googlegroups.com
+Subject: [PATCH v2 08/12] kexec: Secure Launch kexec SEXIT support
+Date:   Fri, 18 Jun 2021 12:12:53 -0400
+Message-Id: <1624032777-7013-9-git-send-email-ross.philipson@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1624032777-7013-1-git-send-email-ross.philipson@oracle.com>
+References: <1624032777-7013-1-git-send-email-ross.philipson@oracle.com>
+X-Proofpoint-GUID: 0Viov2hHSfNgLDHDilXu2cMCH8No2Jc-
+X-Proofpoint-ORIG-GUID: 0Viov2hHSfNgLDHDilXu2cMCH8No2Jc-
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2021-06-17 at 23:18 -0400, Paul Moore wrote:
-> On Thu, Jun 17, 2021 at 11:28 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Thu, 2021-06-17 at 07:09 +0000, Roberto Sassu wrote:
-> 
-> ...
-> 
-> > > An alternative would be to do the EVM verification twice if the
-> > > first time didn't succeed (with vfs_getxattr_alloc() and with the
-> > > new function that behaves like vfs_getxattr()).
-> >
-> > Unfortunately, I don't see an alternative.
-> 
-> ... and while unfortunate, the impact should be non-existant if you
-> are using the right tools to label files or ensuring that you are
-> formatting labels properly if doing it by hand.
-> 
-> Handling a corner case is good, but I wouldn't add a lot of code
-> complexity trying to optimize it.
+Prior to running the next kernel via kexec, the Secure Launch code
+closes down private SMX resources and does an SEXIT. This allows the
+next kernel to start normally without any issues starting the APs etc.
 
-From userspace it's really difficult to understand the EVM signature
-verification failure is due to the missing NULL.
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ arch/x86/kernel/slaunch.c | 71 +++++++++++++++++++++++++++++++++++++++++++++++
+ kernel/kexec_core.c       |  4 +++
+ 2 files changed, 75 insertions(+)
 
-Roberto, I just pushed the "evm: output EVM digest calculation info"
-patch to the next-integrity-testing branch, which includes some
-debugging.   Instead of this patch, which returns the raw xattr data,
-how about adding additional debugging info in evm_calc_hmac_or_hash()
-indicating the size discrepancy between the raw xattr and the LSM
-returned xattr?
-
-thanks,
-
-Mimi
+diff --git a/arch/x86/kernel/slaunch.c b/arch/x86/kernel/slaunch.c
+index a24d384..8db557a 100644
+--- a/arch/x86/kernel/slaunch.c
++++ b/arch/x86/kernel/slaunch.c
+@@ -470,3 +470,74 @@ void __init slaunch_setup(void)
+ 	    vendor[3] == INTEL_CPUID_MFGID_EDX)
+ 		slaunch_setup_intel();
+ }
++
++static inline void smx_getsec_sexit(void)
++{
++	asm volatile (".byte 0x0f,0x37\n"
++		      : : "a" (SMX_X86_GETSEC_SEXIT));
++}
++
++void slaunch_finalize(int do_sexit)
++{
++	void __iomem *config;
++	u64 one = TXT_REGVALUE_ONE, val;
++
++	if ((slaunch_get_flags() & (SL_FLAG_ACTIVE|SL_FLAG_ARCH_TXT)) !=
++	    (SL_FLAG_ACTIVE|SL_FLAG_ARCH_TXT))
++		return;
++
++	config = ioremap(TXT_PRIV_CONFIG_REGS_BASE, TXT_NR_CONFIG_PAGES *
++			 PAGE_SIZE);
++	if (!config) {
++		pr_emerg("Error SEXIT failed to ioremap TXT private reqs\n");
++		return;
++	}
++
++	/* Clear secrets bit for SEXIT */
++	memcpy_toio(config + TXT_CR_CMD_NO_SECRETS, &one, sizeof(one));
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(val));
++
++	/* Unlock memory configurations */
++	memcpy_toio(config + TXT_CR_CMD_UNLOCK_MEM_CONFIG, &one, sizeof(one));
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(val));
++
++	/* Close the TXT private register space */
++	memcpy_toio(config + TXT_CR_CMD_CLOSE_PRIVATE, &one, sizeof(one));
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(val));
++
++	/*
++	 * Calls to iounmap are not being done because of the state of the
++	 * system this late in the kexec process. Local IRQs are disabled and
++	 * iounmap causes a TLB flush which in turn causes a warning. Leaving
++	 * thse mappings is not an issue since the next kernel is going to
++	 * completely re-setup memory management.
++	 */
++
++	/* Map public registers and do a final read fence */
++	config = ioremap(TXT_PUB_CONFIG_REGS_BASE, TXT_NR_CONFIG_PAGES *
++			 PAGE_SIZE);
++	if (!config) {
++		pr_emerg("Error SEXIT failed to ioremap TXT public reqs\n");
++		return;
++	}
++
++	memcpy_fromio(&val, config + TXT_CR_E2STS, sizeof(val));
++
++	pr_emerg("TXT clear secrets bit and unlock memory complete.");
++
++	if (!do_sexit)
++		return;
++
++	if (smp_processor_id() != 0) {
++		pr_emerg("Error TXT SEXIT must be called on CPU 0\n");
++		return;
++	}
++
++	/* Disable SMX mode */
++	cr4_set_bits(X86_CR4_SMXE);
++
++	/* Do the SEXIT SMX operation */
++	smx_getsec_sexit();
++
++	pr_emerg("TXT SEXIT complete.");
++}
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index f099bae..1dcf20c 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -38,6 +38,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/objtool.h>
+ #include <linux/kmsg_dump.h>
++#include <linux/slaunch.h>
+ 
+ #include <asm/page.h>
+ #include <asm/sections.h>
+@@ -1178,6 +1179,9 @@ int kernel_kexec(void)
+ 		cpu_hotplug_enable();
+ 		pr_notice("Starting new kernel\n");
+ 		machine_shutdown();
++
++		/* Finalize TXT registers and do SEXIT */
++		slaunch_finalize(1);
+ 	}
+ 
+ 	kmsg_dump(KMSG_DUMP_SHUTDOWN);
+-- 
+1.8.3.1
 
