@@ -2,181 +2,192 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC013C2B9F4
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jun 2021 02:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316B0C48BDF
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jun 2021 23:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95317611AC
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jun 2021 02:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D15F61156
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Jun 2021 23:18:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbhFTCiK (ORCPT
+        id S229899AbhFTXUy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 19 Jun 2021 22:38:10 -0400
-Received: from mout.gmx.net ([212.227.15.15]:40459 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230236AbhFTCiJ (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 19 Jun 2021 22:38:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1624156553;
-        bh=kvfPbNBSnMkWHBdMxo/TBW9AayZJVdLROfZh2QX8248=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=Ewl5xTJuZrYg4Pd4sKVB8OoyttMWpuODsNr/L3P1teUbvdOp+SBKs6ziXEWAYPr05
-         jiDlJZeXdHt8gCVQIfARryZK9DaOJgekCkglgnuL3MhKp7XDCIZhkJcSZS7nJeLqKz
-         Az9P0CBYy8YYEuSxKOQS51HungpiJ5j2IjjL1HrM=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from Venus.fritz.box ([149.172.234.120]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N3KTo-1lC97b28qw-010LwK; Sun, 20
- Jun 2021 04:35:53 +0200
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org
-Cc:     jgg@ziepe.ca, linus.walleij@linaro.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lino Sanfilippo <LinoSanfilippo@gmx.de>, stable@vger.kernel.org
-Subject: [PATCH v2] tpm, tpm_tis_spi: Allow to sleep in the interrupt handler
-Date:   Sun, 20 Jun 2021 04:34:44 +0200
-Message-Id: <20210620023444.14684-1-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.31.1
+        Sun, 20 Jun 2021 19:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53650 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229875AbhFTXUx (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 20 Jun 2021 19:20:53 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBFF7C061574
+        for <linux-integrity@vger.kernel.org>; Sun, 20 Jun 2021 16:18:39 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id h16so8862737pjv.2
+        for <linux-integrity@vger.kernel.org>; Sun, 20 Jun 2021 16:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rubrik.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qzWFN6djd8850raIpH/pfqfQct+h95LasOhjwz0ae94=;
+        b=PTIbkZSafwRqUqd1xn2/G38ZokJXP36/Ltq4MpCW7AbZ3wHg+dbgQ8ebbJ1dPcsOhw
+         KtlPWtDuFX1eFnLXuRdSvW3wxzriBXphDpRcXCET85BdWfkPVt1xqyc4P5YMbk/+qyuj
+         WrE00eo4eLjJwFmPFi51hyVWuFVm0GQmDNimM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qzWFN6djd8850raIpH/pfqfQct+h95LasOhjwz0ae94=;
+        b=De/L1qpIHkwpBZVRzQ39ixonl9csHR4X6SevV0Rzn90oPgxhBqoVtl2f3ZA/Mq9lLT
+         Z3jZz7Og4YWwfSVOiZ5E4mADZDxc5VCl9oY4eEyLqiN7o74t7AfJhTfZv5yrFk87YoQy
+         LAId1WPSoS5eG8ora4navUP4V6GhXaG0DpVXeMATj/pjfwrM3jIIE81Y5P71Rq1ewqSv
+         eXIpoq69m5P+B4xmzGjGgQvD3HdqS/V1c7CqScpeCYJHOSoU2E3qu3G5pdrJX5wgpEIm
+         npfv8ii3JxmFuUHQSlL/cdZPmbpQkYDUcm9LP6mBYrbg5slc3nSnL4usoQeWRhU2z3ZL
+         MkPw==
+X-Gm-Message-State: AOAM532TSaKm70K/SSJ9KtQP64SKJrP4Kcnq/y8YzdBKM4QKoc7i5lal
+        POT+ZVGTFrzQNz7BXyndtudNjQ==
+X-Google-Smtp-Source: ABdhPJyB2dZiixMnB7m3C6jBYxbD83BShY0GA2AlyVmNlLsRHKrI9LZGyXKEBqouiSC1Oqw4Baoing==
+X-Received: by 2002:a17:902:d101:b029:121:9fa2:969e with SMTP id w1-20020a170902d101b02901219fa2969emr12886867plw.23.1624231119085;
+        Sun, 20 Jun 2021 16:18:39 -0700 (PDT)
+Received: from hao-wu-dev.colo.rubrik.com ([104.171.196.14])
+        by smtp.gmail.com with ESMTPSA id z23sm137888pjn.2.2021.06.20.16.18.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Jun 2021 16:18:38 -0700 (PDT)
+From:   Hao Wu <hao.wu@rubrik.com>
+To:     hao.wu@rubrik.com, shrihari.kalkar@rubrik.com,
+        seungyeop.han@rubrik.com, anish.jhaveri@rubrik.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        linux-integrity@vger.kernel.org, pmenzel@molgen.mpg.de,
+        kgold@linux.ibm.com, zohar@linux.vnet.ibm.com,
+        why2jjj.linux@gmail.com, hamza@hpe.com, gregkh@linuxfoundation.org,
+        arnd@arndb.de, nayna@linux.vnet.ibm.com,
+        James.Bottomley@hansenpartnership.com
+Subject: [PATCH] Fix Atmel TPM crash caused by too frequent queries
+Date:   Sun, 20 Jun 2021 16:18:09 -0700
+Message-Id: <20210620231809.21101-1-hao.wu@rubrik.com>
+X-Mailer: git-send-email 2.29.0.vfs.0.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:NDQzXvb6/eZ2jUNdvGsI7megvl14n3dJOXmkMuZSBJAWeZRIbyh
- GfXZxUtNxSDMbYkufD7sJ+q9+/myCvZ2EEyP0DSgDcbfSGe0nxAHsQc8wBfoWfV0Yx6JPsP
- 3tm8viTlRg1b26GqSfGG/Hry6JYzlrK0lV2pzxXvmQHlw8dhQ6vnj+ts5tqdKftglu2aBy8
- r8hz+7+ydJqPTv9JxE4ag==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zJPor6yO/LI=:iI8FChg8JKRIh5qisFKNvX
- et7KEfvQ0Shs3LVQWRRS4F9vi/pbZCIs2lO+MnlSvJyGnTVKe465yMX1pFK3EUsWKMZAFIXdE
- bZMCuql+LABBb1KfUiX0zbaDxja3+O9YQ+huBu/c+tM8mENi3COs6N8D+BabOp2dN1hDlxZgO
- yZEviNjBC1fRUywKgujqTOwpMFV9IvJIbKHIvxbuZCmVZHdBT9ND5gA36eWq6LUurSF4LYwQj
- PBxR08jKI8CEkiv6f6zZrABcFh6nc5BlCtTLTEYR5xSH3BBtAzqM+c8+FTk1A8lKGr4RlE2pX
- BH0HdmgvjaT2uRJNpsP7i22UTBHcsuJcJuWQAms8xcO3rgk0cBYgxtu5X9vsWUYd/ToRJ/jvW
- SeeORNMZDt6DmAn5cjHvDdkQGevXm8lL9Htg5TVuBbj+u0cqLQkalUIPUV05M2ozLy1Sxa4A0
- OTw4obpmnTzLD3b0wN3fE0Zxe7lr3YiwNCNO2kddbuGNfadzJH9v/re6BO7PQbmumDGLLZOaO
- HnDTSNxZEhCDnWySZFe1EBtybn6DYX9Jcz/Ul7a121YF4BTbO43sMCPi3Z79UJeEPtE39ZYv4
- +0ES0WEWrj/B+1c4h06ug0hWtmBGdfNWH1eFTQZfqDmXoAsSeJ3Qwf7Y2v0EOMH/yC36yYGu1
- 5TJ7vd8HGSF/NoF14PhvnFZYkXTug92c7sGy4m6PaPd4l+t+sg4S2ux9Q6b5G3ovlYphlc5K+
- GoqRHahai0riI2KfWJaIR1xP5cTiTUJXbZUWHddaQm7NO2yW8DjEfZ7oq9kitmbKKJEihpl6I
- Vhs810wnuRqa4ZkukDuwEjMq6i73qQPHlOH0BkQlUWYO8Ay/okDiEEoA3JFR4y5SHeKgLsFfd
- h2Te6/wIF1VxbkHmSeChb6rzZ0H4iP09RL7Ex2fQJ/feqyE3Fg77KMlmJlW7xYlxLRjwma+wm
- CoKlSH3VTbzPbyh7VV2Vyc9FOwwmZwE4etS1O4EjGV/zbGSY+tmb6tKLScHLk/RSwk7oCoqTW
- 6dRBvvfaHz86UNeJqwf0fLlCYZ9rLwfWRK00w9SJwdz6X3C4TEtAtGV0UKF7+7cWq8MOLW7Qn
- ctwS/QNZT+n0aq4s36Oy0txkuwt7qoaqHY+A63ZKMDQwtzMv9Wz/5AuAA==
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-SW50ZXJydXB0IGhhbmRsaW5nIGF0IGxlYXN0IGluY2x1ZGVzIHJlYWRpbmcgYW5kIHdyaXRpbmcg
-dGhlIGludGVycnVwdApzdGF0dXMgcmVnaXN0ZXIgd2l0aGluIHRoZSBpbnRlcnJ1cHQgcm91dGlu
-ZS4gRm9yIGFjY2Vzc2VzIG92ZXIgU1BJIGEgbXV0ZXgKaXMgdXNlZCBpbiB0aGUgY29uY2Vybmlu
-ZyBmdW5jdGlvbnMuIFNpbmNlIHRoaXMgcmVxdWlyZXMgYSBzbGVlcGFibGUKY29udGV4dCByZXF1
-ZXN0IGEgdGhyZWFkZWQgaW50ZXJydXB0IGhhbmRsZXIgZm9yIHRoaXMgY2FzZS4KCkNjOiBzdGFi
-bGVAdmdlci5rZXJuZWwub3JnCkZpeGVzOiAxYTMzOWI2NThkOWQgKCJ0cG1fdGlzX3NwaTogUGFz
-cyB0aGUgU1BJIElSUSBkb3duIHRvIHRoZSBkcml2ZXIiKQpTaWduZWQtb2ZmLWJ5OiBMaW5vIFNh
-bmZpbGlwcG8gPExpbm9TYW5maWxpcHBvQGdteC5kZT4KLS0tClRoaXMgcGF0Y2ggaGFzIGJlZW4g
-dGVzdGVkIG9uIGEgU0xCOTY3MHZxMi4wLgpUaGUgZmlyc3QgdmVyc2lvbiBvZiB0aGlzIHBhdGNo
-IHdhcyBwYXJ0IG9mIHBhdGNoIHNlcmllcyAoc2VlCmh0dHBzOi8vbWFyYy5pbmZvLz9sPWxpbnV4
-LWludGVncml0eSZtPTE2MjAxNjg4ODAyMDA0NCZ3PTIpCgp2MjoKLSByZXF1ZXN0IHRocmVhZGVk
-IGlycSBoYW5kbGVyIG9ubHkgaW4gY2FzZSBvZiBTUEkgYXMgcmVxdWVzdGVkIGJ5IEphcmtrbwog
-IFNha2tpbmVuCi0gYWRkICJGaXhlcyIgdGFnCi0gYWRkIHN0YWJsZQotIGNvcnJlY3Qgc2hvcnQg
-c3VtbWFyeQoKIGRyaXZlcnMvY2hhci90cG0vdHBtX3Rpcy5jICAgICAgICAgICB8ICAyICstCiBk
-cml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jICAgICAgfCAzMiArKysrKysrKysrKysrKysr
-KysrKy0tLS0tLS0tCiBkcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5oICAgICAgfCAgMiAr
-LQogZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX3NwaV9tYWluLmMgIHwgIDMgKystCiBkcml2ZXJz
-L2NoYXIvdHBtL3RwbV90aXNfc3lucXVhY2VyLmMgfCAgMiArLQogNSBmaWxlcyBjaGFuZ2VkLCAy
-OCBpbnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2No
-YXIvdHBtL3RwbV90aXMuYyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpcy5jCmluZGV4IDRlZDZl
-NjYwMjczYS4uZDI3MDA5Yjk4OWZlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV90
-aXMuYworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXMuYwpAQCAtMjM2LDcgKzIzNiw3IEBA
-IHN0YXRpYyBpbnQgdHBtX3Rpc19pbml0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV9p
-bmZvICp0cG1faW5mbykKIAkJcGh5LT5wcml2LmZsYWdzIHw9IFRQTV9USVNfSVRQTV9XT1JLQVJP
-VU5EOwogCiAJcmV0dXJuIHRwbV90aXNfY29yZV9pbml0KGRldiwgJnBoeS0+cHJpdiwgaXJxLCAm
-dHBtX3RjZywKLQkJCQkgQUNQSV9IQU5ETEUoZGV2KSk7CisJCQkJIEFDUElfSEFORExFKGRldiks
-IGZhbHNlKTsKIH0KIAogc3RhdGljIFNJTVBMRV9ERVZfUE1fT1BTKHRwbV90aXNfcG0sIHRwbV9w
-bV9zdXNwZW5kLCB0cG1fdGlzX3Jlc3VtZSk7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2NoYXIvdHBt
-L3RwbV90aXNfY29yZS5jIGIvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYwppbmRleCA1
-NWI5ZDM5NjVhZTEuLjIxYWJjMjE2OGQwNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9jaGFyL3RwbS90
-cG1fdGlzX2NvcmUuYworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jCkBAIC03
-MjgsMTkgKzcyOCwzMSBAQCBzdGF0aWMgaW50IHRwbV90aXNfZ2VuX2ludGVycnVwdChzdHJ1Y3Qg
-dHBtX2NoaXAgKmNoaXApCiAgKiBldmVyeXRoaW5nIGFuZCBsZWF2ZSBpbiBwb2xsaW5nIG1vZGUu
-IFJldHVybnMgMCBvbiBzdWNjZXNzLgogICovCiBzdGF0aWMgaW50IHRwbV90aXNfcHJvYmVfaXJx
-X3NpbmdsZShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsIHUzMiBpbnRtYXNrLAotCQkJCSAgICBpbnQg
-ZmxhZ3MsIGludCBpcnEpCisJCQkJICAgIGludCBmbGFncywgaW50IGlycSwgYm9vbCB0aHJlYWRl
-ZF9pcnEpCiB7CiAJc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiA9IGRldl9nZXRfZHJ2ZGF0YSgm
-Y2hpcC0+ZGV2KTsKIAl1OCBvcmlnaW5hbF9pbnRfdmVjOwogCWludCByYzsKIAl1MzIgaW50X3N0
-YXR1czsKIAotCWlmIChkZXZtX3JlcXVlc3RfaXJxKGNoaXAtPmRldi5wYXJlbnQsIGlycSwgdGlz
-X2ludF9oYW5kbGVyLCBmbGFncywKLQkJCSAgICAgZGV2X25hbWUoJmNoaXAtPmRldiksIGNoaXAp
-ICE9IDApIHsKKworCWlmICh0aHJlYWRlZF9pcnEpIHsKKwkJcmMgPSBkZXZtX3JlcXVlc3RfdGhy
-ZWFkZWRfaXJxKGNoaXAtPmRldi5wYXJlbnQsIGlycSwgTlVMTCwKKwkJCQkJICAgICAgIHRpc19p
-bnRfaGFuZGxlciwKKwkJCQkJICAgICAgIElSUUZfT05FU0hPVCB8IGZsYWdzLAorCQkJCQkgICAg
-ICAgZGV2X25hbWUoJmNoaXAtPmRldiksCisJCQkJCSAgICAgICBjaGlwKTsKKwl9IGVsc2Ugewor
-CQlyYyA9IGRldm1fcmVxdWVzdF9pcnEoY2hpcC0+ZGV2LnBhcmVudCwgaXJxLCB0aXNfaW50X2hh
-bmRsZXIsCisJCQkJICAgICAgZmxhZ3MsIGRldl9uYW1lKCZjaGlwLT5kZXYpLCBjaGlwKTsKKwl9
-CisKKwlpZiAocmMpIHsKIAkJZGV2X2luZm8oJmNoaXAtPmRldiwgIlVuYWJsZSB0byByZXF1ZXN0
-IGlycTogJWQgZm9yIHByb2JlXG4iLAogCQkJIGlycSk7CiAJCXJldHVybiAtMTsKIAl9CisKIAlw
-cml2LT5pcnEgPSBpcnE7CiAKIAlyYyA9IHRwbV90aXNfcmVhZDgocHJpdiwgVFBNX0lOVF9WRUNU
-T1IocHJpdi0+bG9jYWxpdHkpLApAQCAtNzk1LDcgKzgwNyw4IEBAIHN0YXRpYyBpbnQgdHBtX3Rp
-c19wcm9iZV9pcnFfc2luZ2xlKHN0cnVjdCB0cG1fY2hpcCAqY2hpcCwgdTMyIGludG1hc2ssCiAg
-KiBkbyBub3QgaGF2ZSBBQ1BJL2V0Yy4gV2UgdHlwaWNhbGx5IGV4cGVjdCB0aGUgaW50ZXJydXB0
-IHRvIGJlIGRlY2xhcmVkIGlmCiAgKiBwcmVzZW50LgogICovCi1zdGF0aWMgdm9pZCB0cG1fdGlz
-X3Byb2JlX2lycShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsIHUzMiBpbnRtYXNrKQorc3RhdGljIHZv
-aWQgdHBtX3Rpc19wcm9iZV9pcnEoc3RydWN0IHRwbV9jaGlwICpjaGlwLCB1MzIgaW50bWFzaywK
-KwkJCSAgICAgIGJvb2wgdGhyZWFkZWRfaXJxKQogewogCXN0cnVjdCB0cG1fdGlzX2RhdGEgKnBy
-aXYgPSBkZXZfZ2V0X2RydmRhdGEoJmNoaXAtPmRldik7CiAJdTggb3JpZ2luYWxfaW50X3ZlYzsK
-QEAgLTgxMCwxMCArODIzLDExIEBAIHN0YXRpYyB2b2lkIHRwbV90aXNfcHJvYmVfaXJxKHN0cnVj
-dCB0cG1fY2hpcCAqY2hpcCwgdTMyIGludG1hc2spCiAJCWlmIChJU19FTkFCTEVEKENPTkZJR19Y
-ODYpKQogCQkJZm9yIChpID0gMzsgaSA8PSAxNTsgaSsrKQogCQkJCWlmICghdHBtX3Rpc19wcm9i
-ZV9pcnFfc2luZ2xlKGNoaXAsIGludG1hc2ssIDAsCi0JCQkJCQkJICAgICAgaSkpCisJCQkJCQkJ
-ICAgICAgaSwgdGhyZWFkZWRfaXJxKSkKIAkJCQkJcmV0dXJuOwogCX0gZWxzZSBpZiAoIXRwbV90
-aXNfcHJvYmVfaXJxX3NpbmdsZShjaGlwLCBpbnRtYXNrLCAwLAotCQkJCQkgICAgIG9yaWdpbmFs
-X2ludF92ZWMpKQorCQkJCQkgICAgIG9yaWdpbmFsX2ludF92ZWMsCisJCQkJCSAgICAgdGhyZWFk
-ZWRfaXJxKSkKIAkJcmV0dXJuOwogfQogCkBAIC05MDksNyArOTIzLDcgQEAgc3RhdGljIGNvbnN0
-IHN0cnVjdCB0cG1fY2xhc3Nfb3BzIHRwbV90aXMgPSB7CiAKIGludCB0cG1fdGlzX2NvcmVfaW5p
-dChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCB0cG1fdGlzX2RhdGEgKnByaXYsIGludCBpcnEs
-CiAJCSAgICAgIGNvbnN0IHN0cnVjdCB0cG1fdGlzX3BoeV9vcHMgKnBoeV9vcHMsCi0JCSAgICAg
-IGFjcGlfaGFuZGxlIGFjcGlfZGV2X2hhbmRsZSkKKwkJICAgICAgYWNwaV9oYW5kbGUgYWNwaV9k
-ZXZfaGFuZGxlLCBib29sIHRocmVhZGVkX2lycSkKIHsKIAl1MzIgdmVuZG9yOwogCXUzMiBpbnRm
-Y2FwczsKQEAgLTEwNDksNyArMTA2Myw3IEBAIGludCB0cG1fdGlzX2NvcmVfaW5pdChzdHJ1Y3Qg
-ZGV2aWNlICpkZXYsIHN0cnVjdCB0cG1fdGlzX2RhdGEgKnByaXYsIGludCBpcnEsCiAKIAkJaWYg
-KGlycSkgewogCQkJdHBtX3Rpc19wcm9iZV9pcnFfc2luZ2xlKGNoaXAsIGludG1hc2ssIElSUUZf
-U0hBUkVELAotCQkJCQkJIGlycSk7CisJCQkJCQkgaXJxLCB0aHJlYWRlZF9pcnEpOwogCQkJaWYg
-KCEoY2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX0lSUSkpIHsKIAkJCQlkZXZfZXJyKCZjaGlw
-LT5kZXYsIEZXX0JVRwogCQkJCQkiVFBNIGludGVycnVwdCBub3Qgd29ya2luZywgcG9sbGluZyBp
-bnN0ZWFkXG4iKTsKQEAgLTEwNTcsNyArMTA3MSw3IEBAIGludCB0cG1fdGlzX2NvcmVfaW5pdChz
-dHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCB0cG1fdGlzX2RhdGEgKnByaXYsIGludCBpcnEsCiAJ
-CQkJZGlzYWJsZV9pbnRlcnJ1cHRzKGNoaXApOwogCQkJfQogCQl9IGVsc2UgewotCQkJdHBtX3Rp
-c19wcm9iZV9pcnEoY2hpcCwgaW50bWFzayk7CisJCQl0cG1fdGlzX3Byb2JlX2lycShjaGlwLCBp
-bnRtYXNrLCB0aHJlYWRlZF9pcnEpOwogCQl9CiAJfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2No
-YXIvdHBtL3RwbV90aXNfY29yZS5oIGIvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuaApp
-bmRleCA5YjJkMzJhNTlmNjcuLjMyZDM2ZTUzODIwOCAxMDA2NDQKLS0tIGEvZHJpdmVycy9jaGFy
-L3RwbS90cG1fdGlzX2NvcmUuaAorKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5o
-CkBAIC0xNjEsNyArMTYxLDcgQEAgc3RhdGljIGlubGluZSBib29sIGlzX2Jzdyh2b2lkKQogdm9p
-ZCB0cG1fdGlzX3JlbW92ZShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXApOwogaW50IHRwbV90aXNfY29y
-ZV9pbml0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiwgaW50
-IGlycSwKIAkJICAgICAgY29uc3Qgc3RydWN0IHRwbV90aXNfcGh5X29wcyAqcGh5X29wcywKLQkJ
-ICAgICAgYWNwaV9oYW5kbGUgYWNwaV9kZXZfaGFuZGxlKTsKKwkJICAgICAgYWNwaV9oYW5kbGUg
-YWNwaV9kZXZfaGFuZGxlLCBib29sIHVzZV90aHJlYWRlZF9pcnEpOwogCiAjaWZkZWYgQ09ORklH
-X1BNX1NMRUVQCiBpbnQgdHBtX3Rpc19yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KTsKZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19zcGlfbWFpbi5jIGIvZHJpdmVycy9jaGFy
-L3RwbS90cG1fdGlzX3NwaV9tYWluLmMKaW5kZXggMzg1NmY2ZWJjYjM0Li4yZWI1N2MxY2Y5YmEg
-MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19zcGlfbWFpbi5jCisrKyBiL2Ry
-aXZlcnMvY2hhci90cG0vdHBtX3Rpc19zcGlfbWFpbi5jCkBAIC0xOTksNyArMTk5LDggQEAgaW50
-IHRwbV90aXNfc3BpX2luaXQoc3RydWN0IHNwaV9kZXZpY2UgKnNwaSwgc3RydWN0IHRwbV90aXNf
-c3BpX3BoeSAqcGh5LAogCiAJcGh5LT5zcGlfZGV2aWNlID0gc3BpOwogCi0JcmV0dXJuIHRwbV90
-aXNfY29yZV9pbml0KCZzcGktPmRldiwgJnBoeS0+cHJpdiwgaXJxLCBwaHlfb3BzLCBOVUxMKTsK
-KwlyZXR1cm4gdHBtX3Rpc19jb3JlX2luaXQoJnNwaS0+ZGV2LCAmcGh5LT5wcml2LCBpcnEsIHBo
-eV9vcHMsIE5VTEwsCisJCQkJIHRydWUpOwogfQogCiBzdGF0aWMgY29uc3Qgc3RydWN0IHRwbV90
-aXNfcGh5X29wcyB0cG1fc3BpX3BoeV9vcHMgPSB7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2NoYXIv
-dHBtL3RwbV90aXNfc3lucXVhY2VyLmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfc3lucXVh
-Y2VyLmMKaW5kZXggZTQ3YmRkMjcyNzA0Li42ZWU1OWExZmRmMDggMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvY2hhci90cG0vdHBtX3Rpc19zeW5xdWFjZXIuYworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3Rw
-bV90aXNfc3lucXVhY2VyLmMKQEAgLTEyNyw3ICsxMjcsNyBAQCBzdGF0aWMgaW50IHRwbV90aXNf
-c3lucXVhY2VyX2luaXQoc3RydWN0IGRldmljZSAqZGV2LAogCQlyZXR1cm4gUFRSX0VSUihwaHkt
-PmlvYmFzZSk7CiAKIAlyZXR1cm4gdHBtX3Rpc19jb3JlX2luaXQoZGV2LCAmcGh5LT5wcml2LCB0
-cG1faW5mby0+aXJxLCAmdHBtX3RjZ19idywKLQkJCQkgQUNQSV9IQU5ETEUoZGV2KSk7CisJCQkJ
-IEFDUElfSEFORExFKGRldiksIGZhbHNlKTsKIH0KIAogc3RhdGljIFNJTVBMRV9ERVZfUE1fT1BT
-KHRwbV90aXNfc3lucXVhY2VyX3BtLCB0cG1fcG1fc3VzcGVuZCwgdHBtX3Rpc19yZXN1bWUpOwoK
-YmFzZS1jb21taXQ6IDkxM2VjM2MyMmVmNDI1ZDYzZGQwYmM4MWZiMDA4Y2U3ZjliY2IwN2IKLS0g
-CjIuMzEuMQoK
+This is a fix for the ATMEL TPM crash bug reported in
+https://patchwork.kernel.org/project/linux-integrity/patch/20200926223150.109645-1-hao.wu@rubrik.com/
+
+According to the discussions in the original thread,
+we don't want to revert the timeout of wait_for_tpm_stat
+for non-ATMEL chips, which brings back the performance cost.
+For investigation and analysis of why wait_for_tpm_stat
+caused the issue, and how the regression was introduced,
+please read the original thread above.
+
+Thus the proposed fix here is to only revert the timeout
+for ATMEL chips by checking the vendor ID.
+
+Test Plan:
+- Run fixed kernel with ATMEL TPM chips and see crash
+  has been fixed.
+- Run fixed kernel with non-ATMEL TPM chips, and confirm
+  the timeout has not been changed.
+---
+ drivers/char/tpm/tpm.h          |  9 ++++++++-
+ drivers/char/tpm/tpm_tis_core.c | 19 +++++++++++++++++--
+ include/linux/tpm.h             |  2 ++
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 283f78211c3a..bc6aa7f9e119 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -42,7 +42,9 @@ enum tpm_timeout {
+ 	TPM_TIMEOUT_RANGE_US = 300,	/* usecs */
+ 	TPM_TIMEOUT_POLL = 1,	/* msecs */
+ 	TPM_TIMEOUT_USECS_MIN = 100,      /* usecs */
+-	TPM_TIMEOUT_USECS_MAX = 500      /* usecs */
++	TPM_TIMEOUT_USECS_MAX = 500,	/* usecs */
++	TPM_TIMEOUT_WAIT_STAT = 500,	/* usecs */
++	TPM_ATML_TIMEOUT_WAIT_STAT = 15000	/* usecs */
+ };
+ 
+ /* TPM addresses */
+@@ -189,6 +191,11 @@ static inline void tpm_msleep(unsigned int delay_msec)
+ 		     delay_msec * 1000);
+ };
+ 
++static inline void tpm_usleep(unsigned int delay_usec)
++{
++	usleep_range(delay_usec - TPM_TIMEOUT_RANGE_US, delay_usec);
++};
++
+ int tpm_chip_start(struct tpm_chip *chip);
+ void tpm_chip_stop(struct tpm_chip *chip);
+ struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 55b9d3965ae1..9ddd4edfe1c2 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -80,8 +80,12 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
+ 		}
+ 	} else {
+ 		do {
+-			usleep_range(TPM_TIMEOUT_USECS_MIN,
+-				     TPM_TIMEOUT_USECS_MAX);
++			if (chip->timeout_wait_stat && 
++				chip->timeout_wait_stat >= TPM_TIMEOUT_WAIT_STAT) {
++				tpm_usleep((unsigned int)(chip->timeout_wait_stat));
++			} else {
++				tpm_usleep((unsigned int)(TPM_TIMEOUT_WAIT_STAT));
++			}
+ 			status = chip->ops->status(chip);
+ 			if ((status & mask) == mask)
+ 				return 0;
+@@ -934,6 +938,8 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
+ 	chip->timeout_c = msecs_to_jiffies(TIS_TIMEOUT_C_MAX);
+ 	chip->timeout_d = msecs_to_jiffies(TIS_TIMEOUT_D_MAX);
++	/* init timeout for wait_for_tpm_stat */
++	chip->timeout_wait_stat = TPM_TIMEOUT_WAIT_STAT;
+ 	priv->phy_ops = phy_ops;
+ 	dev_set_drvdata(&chip->dev, priv);
+ 
+@@ -983,6 +989,15 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 
+ 	priv->manufacturer_id = vendor;
+ 
++	switch (priv->manufacturer_id) {
++	case TPM_VID_ATML:
++        /* ATMEL chip needs longer timeout to avoid crash */
++		chip->timeout_wait_stat = TPM_ATML_TIMEOUT_WAIT_STAT;
++		break;
++	default:
++		chip->timeout_wait_stat = TPM_TIMEOUT_WAIT_STAT;
++	}
++
+ 	rc = tpm_tis_read8(priv, TPM_RID(0), &rid);
+ 	if (rc < 0)
+ 		goto out_err;
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index aa11fe323c56..35f2a0260d76 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -150,6 +150,7 @@ struct tpm_chip {
+ 	bool timeout_adjusted;
+ 	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
+ 	bool duration_adjusted;
++	unsigned long timeout_wait_stat; /* usecs */
+ 
+ 	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
+ 
+@@ -269,6 +270,7 @@ enum tpm2_cc_attrs {
+ #define TPM_VID_INTEL    0x8086
+ #define TPM_VID_WINBOND  0x1050
+ #define TPM_VID_STM      0x104A
++#define TPM_VID_ATML     0x1114
+ 
+ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_TPM2		= BIT(1),
+-- 
+2.29.0.vfs.0.0
+
