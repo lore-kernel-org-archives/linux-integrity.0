@@ -2,32 +2,32 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 209AAC49ECA
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A1B2C2B9F4
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jun 2021 16:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8FB61965
-	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F92D6194F
+	for <linux-integrity@archiver.kernel.org>; Fri, 25 Jun 2021 16:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbhFYQ7F (ORCPT
+        id S230025AbhFYRAV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 25 Jun 2021 12:59:05 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3311 "EHLO
+        Fri, 25 Jun 2021 13:00:21 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3313 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229738AbhFYQ7A (ORCPT
+        with ESMTP id S229653AbhFYRAU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 25 Jun 2021 12:59:00 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GBNJ25g9kz6G83c;
-        Sat, 26 Jun 2021 00:49:06 +0800 (CST)
+        Fri, 25 Jun 2021 13:00:20 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GBNGW44gnz6G8kB;
+        Sat, 26 Jun 2021 00:47:47 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 25 Jun 2021 18:56:37 +0200
+ 15.1.2176.2; Fri, 25 Jun 2021 18:57:56 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>,
@@ -35,9 +35,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 04/12] digest_lists: Objects
-Date:   Fri, 25 Jun 2021 18:56:06 +0200
-Message-ID: <20210625165614.2284243-5-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 06/12] digest_lists: Parser
+Date:   Fri, 25 Jun 2021 18:56:08 +0200
+Message-ID: <20210625165614.2284243-7-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210625165614.2284243-1-roberto.sassu@huawei.com>
 References: <20210625165614.2284243-1-roberto.sassu@huawei.com>
@@ -52,207 +52,108 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This patch defines the objects to manage digest lists:
+This patch introduces the necessary functions to parse a digest list and
+to execute the requested operation.
 
-- digest_list_item: represents a digest list;
-- digest_list_item_ref: represents a reference to a digest list, i.e. the
-  location at which a digest within a digest list can be accessed;
-- digest_item: represents a unique digest.
+The main function is digest_list_parse(), which coordinates the various
+steps required to add or delete a digest list, and has the logic to roll
+back when one of the steps fails.
 
-It also defines some helpers for the objects. More information can be found
-in Documentation/security/digest_lists.rst.
+A more detailed description about the steps can be found in
+Documentation/security/digest_lists.rst
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/security/digest_lists.rst       | 156 ++++++++++++++++++
+ Documentation/security/digest_lists.rst       |  33 +++
  MAINTAINERS                                   |   1 +
- .../integrity/digest_lists/digest_lists.h     | 117 +++++++++++++
- 3 files changed, 274 insertions(+)
- create mode 100644 security/integrity/digest_lists/digest_lists.h
+ security/integrity/digest_lists/Makefile      |   2 +-
+ .../integrity/digest_lists/digest_lists.h     |   3 +
+ security/integrity/digest_lists/parser.c      | 270 ++++++++++++++++++
+ 5 files changed, 308 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/digest_lists/parser.c
 
 diff --git a/Documentation/security/digest_lists.rst b/Documentation/security/digest_lists.rst
-index 995260294783..1031667324c9 100644
+index 8f1d15a37dbd..04ea4b3790e0 100644
 --- a/Documentation/security/digest_lists.rst
 +++ b/Documentation/security/digest_lists.rst
-@@ -345,3 +345,159 @@ with digest lists:
- 
- - ``DIGEST_LIST_ADD``: the digest list is being added;
- - ``DIGEST_LIST_DEL``: the digest list is being deleted.
+@@ -611,3 +611,36 @@ hash table for the ``COMPACT_DIGEST_LIST`` type. Deletion can be done only
+ if the digest list is found. ``digest_list_del()`` then deletes the
+ ``digest_list_item``, the special ``digest_list_item_ref`` and the
+ ``digest_item``.
 +
 +
-+Objects
-+-------
++Parser
++------
 +
-+This section defines the objects to manage digest lists:
++This section introduces the necessary functions to parse a digest list and
++to execute the requested operation.
 +
-+- ``digest_list_item``: represents a digest list;
-+- ``digest_list_item_ref``: represents a reference to a digest list,
-+  i.e. the location at which a digest within a digest list can be accessed;
-+- ``digest_item``: represents a unique digest.
++The main function is ``digest_list_parse()``, which coordinates the
++various steps required to add or delete a digest list, and has the logic
++to roll back when one of the steps fails.
 +
-+They are represented in the following class diagram:
++#. Calls ``digest_list_validate()`` to validate the passed buffer
++   containing the digest list to ensure that the format is correct.
 +
-+::
++#. Calls ``get_digest_list()`` to create a new ``digest_list_item`` for the
++   add operation, or to retrieve the existing one for the delete operation.
++   ``get_digest_list()`` refuses to add digest lists that were previously
++   added and to delete digest lists that weren't previously added. Also,
++   ``get_digest_list()`` refuses to delete digest lists that are not
++   processed in the same way as when they were added (it would guarantee
++   that also deletion is notified to remote verifiers).
 +
-+ digest_offset,-----------+
-+ hdr_offset               |
-+                          |
-+ +------------------+     |     +----------------------+
-+ | digest_list_item |--- N:1 ---| digest_list_item_ref |
-+ +------------------+           +----------------------+
-+                                           |
-+                                          1:N
-+                                           |
-+                                    +-------------+
-+                                    | digest_item |
-+                                    +-------------+
++#. Calls ``_digest_list_parse()`` which takes the created/retrieved
++   ``digest_list_item`` and adds or delete the digests included in the
++   digest list.
 +
-+A ``digest_list_item`` is associated to one or multiple
-+``digest_list_item_ref``, one for each digest it contains. However,
-+a ``digest_list_item_ref`` is associated to only one ``digest_list_item``,
-+as it represents a single location within a specific digest list.
++#. If an error occurred, performs a rollback to the previous state, by
++   calling ``_digest_list_parse()`` with the opposite operation and the
++   buffer size at the time the error occurred.
 +
-+Given that a ``digest_list_item_ref`` represents a single location, it is
-+associated to only one ``digest_item``. However, a ``digest_item`` can have
-+multiple references (as it might appears multiple times within the same
-+digest list or in different digest lists, if it is duplicated).
-+
-+
-+A ``digest_list_item`` is defined as:
-+
-+::
-+
-+	struct digest_list_item {
-+		loff_t size;
-+		u8 *buf;
-+		u8 actions;
-+		u8 digest[64];
-+		enum hash_algo algo;
-+		const char *label;
-+	};
-+
-+- ``size``: size of the digest list buffer;
-+- ``buf``: digest list buffer;
-+- ``actions``: actions performed on the digest list;
-+- ``digest``: digest of the digest list;
-+- ``algo``: digest algorithm;
-+- ``label``: label used to identify the digest list (e.g. file name).
-+
-+A ``digest_list_item_ref`` is defined as:
-+
-+::
-+
-+	struct digest_list_item_ref {
-+		struct digest_list_item *digest_list;
-+		loff_t digest_offset;
-+		loff_t hdr_offset;
-+	};
-+
-+- ``digest_list``: pointer to a ``digest_list_item`` structure;
-+- ``digest_offset``: offset of the digest related to the digest list
-+  buffer;
-+- ``hdr_offset``: offset of the header of the digest block containing the
-+  digest.
-+
-+A ``digest_item`` is defined as:
-+
-+::
-+
-+	struct digest_item {
-+		struct hlist_node hnext;
-+		struct digest_list_item_ref *refs;
-+	};
-+
-+- ``hnext``: pointers of the hash table;
-+- ``refs``: array of ``digest_list_item_ref`` structures including a
-+  terminator (protected by RCU).
-+
-+All digest list references are stored for a given digest, so that a query
-+result can include the OR of the modifiers and actions of each referenced
-+digest list.
-+
-+The relationship between the described objects can be graphically
-+represented as:
-+
-+::
-+
-+ Hash table            +-------------+         +-------------+
-+ PARSER      +-----+   | digest_item |         | digest_item |
-+ FILE        | key |-->|             |-->...-->|             |
-+ METADATA    +-----+   |ref0|...|refN|         |ref0|...|refN|
-+                       +-------------+         +-------------+
-+            ref0:         |                               | refN:
-+            digest_offset | +-----------------------------+ digest_offset
-+            hdr_offset    | |                               hdr_offset
-+                          V V
-+                     +--------------------+
-+                     |  digest_list_item  |
-+                     |                    |
-+                     | size, buf, actions |
-+                     +--------------------+
-+                          ^
-+                          |
-+ Hash table            +-------------+         +-------------+
-+ DIGEST_LIST +-----+   |ref0         |         |ref0         |
-+             | key |-->|             |-->...-->|             |
-+             +-----+   | digest_item |         | digest_item |
-+                       +-------------+         +-------------+
-+
-+The reference for the digest of the digest list differs from the references
-+for the other digest types. ``digest_offset`` and ``hdr_offset`` are set to
-+zero, so that the digest of the digest list is retrieved from the
-+``digest_list_item`` structure directly (see ``get_digest()`` below).
-+
-+Finally, this section defines useful helpers to access a digest or the
-+header the digest belongs to. For example:
-+
-+::
-+
-+ static inline struct compact_list_hdr *get_hdr(
-+                                      struct digest_list_item *digest_list,
-+                                      loff_t hdr_offset)
-+ {
-+         return (struct compact_list_hdr *)(digest_list->buf + hdr_offset);
-+ }
-+
-+the header can be obtained by summing the address of the digest list buffer
-+in the ``digest_list_item`` structure with ``hdr_offset``.
-+
-+Similarly:
-+
-+::
-+
-+ static inline u8 *get_digest(struct digest_list_item *digest_list,
-+                              loff_t digest_offset, loff_t hdr_offset)
-+ {
-+         /* Digest list digest is stored in a different place. */
-+         if (!digest_offset)
-+                 return digest_list->digest;
-+         return digest_list->buf + digest_offset;
-+ }
-+
-+the digest can be obtained by summing the address of the digest list buffer
-+with ``digest_offset`` (except for the digest lists, where the digest is
-+stored in the ``digest`` field of the ``digest_list_item`` structure).
++#. ``digest_list_parse()`` deletes the ``digest_list_item`` on unsuccessful
++   add or successful delete.
 diff --git a/MAINTAINERS b/MAINTAINERS
-index ccf555862673..9a7e9f16eee8 100644
+index a9eb52e65b12..31d280acf5fb 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8387,6 +8387,7 @@ L:	linux-integrity@vger.kernel.org
- S:	Supported
- T:	git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- F:	Documentation/security/digest_lists.rst
-+F:	security/integrity/digest_lists/digest_list.h
+@@ -8390,6 +8390,7 @@ F:	Documentation/security/digest_lists.rst
+ F:	include/linux/digest_list.h
+ F:	security/integrity/digest_lists/digest_list.h
+ F:	security/integrity/digest_lists/methods.c
++F:	security/integrity/digest_lists/parser.c
  F:	uapi/linux/digest_lists.h
  
  HUAWEI ETHERNET DRIVER
+diff --git a/security/integrity/digest_lists/Makefile b/security/integrity/digest_lists/Makefile
+index 0ba66ab2e260..86cca5bb7824 100644
+--- a/security/integrity/digest_lists/Makefile
++++ b/security/integrity/digest_lists/Makefile
+@@ -5,4 +5,4 @@
+ 
+ obj-$(CONFIG_DIGEST_LISTS) += digest_lists.o
+ 
+-digest_lists-y := methods.o
++digest_lists-y := methods.o parser.o
 diff --git a/security/integrity/digest_lists/digest_lists.h b/security/integrity/digest_lists/digest_lists.h
-new file mode 100644
-index 000000000000..81b6cb10f4f1
---- /dev/null
+index aadce9ca8f5f..442ab116a6a5 100644
+--- a/security/integrity/digest_lists/digest_lists.h
 +++ b/security/integrity/digest_lists/digest_lists.h
-@@ -0,0 +1,117 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+@@ -148,4 +148,7 @@ struct digest_item *digest_list_add(u8 *digest, enum hash_algo algo,
+ 				    const char *label);
+ struct digest_item *digest_list_del(u8 *digest, enum hash_algo algo, u8 actions,
+ 				    struct digest_list_item *digest_list);
++
++int digest_list_parse(loff_t size, void *buf, enum ops op, u8 actions,
++		      u8 *digest, enum hash_algo algo, const char *label);
+ #endif /*__DIGEST_LISTS_INTERNAL_H*/
+diff --git a/security/integrity/digest_lists/parser.c b/security/integrity/digest_lists/parser.c
+new file mode 100644
+index 000000000000..7ed6765a9dc4
+--- /dev/null
++++ b/security/integrity/digest_lists/parser.c
+@@ -0,0 +1,270 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2005,2006,2007,2008 IBM Corporation
 + * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
@@ -264,111 +165,264 @@ index 000000000000..81b6cb10f4f1
 + * published by the Free Software Foundation, version 2 of the
 + * License.
 + *
-+ * File: digest_lists.h
-+ *      Unexported definitions for digest lists.
++ * File: parser.c
++ *      Functions to parse digest lists.
 + */
 +
-+#ifndef __DIGEST_LISTS_INTERNAL_H
-+#define __DIGEST_LISTS_INTERNAL_H
++#include <linux/vmalloc.h>
++#include <linux/module.h>
 +
-+#include <linux/types.h>
-+#include <linux/crypto.h>
-+#include <linux/fs.h>
-+#include <linux/security.h>
-+#include <linux/hash.h>
-+#include <linux/tpm.h>
-+#include <linux/audit.h>
-+#include <crypto/hash_info.h>
-+#include <linux/hash_info.h>
-+#include <uapi/linux/digest_lists.h>
++#include "digest_lists.h"
++#include "../integrity.h"
 +
-+#define MAX_DIGEST_SIZE	64
-+#define HASH_BITS 10
-+#define MEASURE_HTABLE_SIZE (1 << HASH_BITS)
++/**
++ * digest_list_validate - validate format of digest list
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ *
++ * This function validates the format of the passed digest list.
++ *
++ * Returns 0 if the digest list was successfully validated, -EINVAL otherwise.
++ */
++static int digest_list_validate(loff_t size, void *buf)
++{
++	void *bufp = buf, *bufendp = buf + size;
++	struct compact_list_hdr *hdr;
++	size_t digest_len;
 +
-+struct digest_list_item {
-+	loff_t size;
-+	u8 *buf;
-+	u8 actions;
-+	u8 digest[64];
-+	enum hash_algo algo;
-+	const char *label;
-+};
++	while (bufp < bufendp) {
++		if (bufp + sizeof(*hdr) > bufendp) {
++			pr_err("invalid data\n");
++			return -EINVAL;
++		}
 +
-+struct digest_list_item_ref {
++		hdr = bufp;
++
++		if (hdr->version != 1) {
++			pr_err("unsupported version\n");
++			return -EINVAL;
++		}
++
++		hdr->type = le16_to_cpu(hdr->type);
++		hdr->modifiers = le16_to_cpu(hdr->modifiers);
++		hdr->algo = le16_to_cpu(hdr->algo);
++		hdr->count = le32_to_cpu(hdr->count);
++		hdr->datalen = le32_to_cpu(hdr->datalen);
++
++		if (hdr->algo >= HASH_ALGO__LAST) {
++			pr_err("invalid hash algorithm\n");
++			return -EINVAL;
++		}
++
++		digest_len = hash_digest_size[hdr->algo];
++
++		if (hdr->type >= COMPACT__LAST ||
++		    hdr->type == COMPACT_DIGEST_LIST) {
++			pr_err("invalid type %d\n", hdr->type);
++			return -EINVAL;
++		}
++
++		bufp += sizeof(*hdr);
++
++		if (hdr->datalen != hdr->count * digest_len ||
++		    bufp + hdr->datalen > bufendp) {
++			pr_err("invalid data\n");
++			return -EINVAL;
++		}
++
++		bufp += hdr->count * digest_len;
++	}
++
++	return 0;
++}
++
++/**
++ * _digest_list_parse - parse digest list and add/delete digests
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ * @op: operation to be performed
++ * @digest_list: digest list digests being added/deleted belong to
++ *
++ * This function parses the digest list and adds or delete the digests in the
++ * found digest blocks.
++ *
++ * Returns the buffer size if all digests were successfully added or deleted,
++ * the size of the already parsed buffer on error.
++ */
++static int _digest_list_parse(loff_t size, void *buf, enum ops op,
++			      struct digest_list_item *digest_list)
++{
++	void *bufp = buf, *bufendp = buf + size;
++	struct compact_list_hdr *hdr;
++	struct digest_item *d;
++	size_t digest_len;
++	int i;
++
++	while (bufp < bufendp) {
++		if (bufp + sizeof(*hdr) > bufendp)
++			break;
++
++		hdr = bufp;
++		bufp += sizeof(*hdr);
++
++		digest_len = hash_digest_size[hdr->algo];
++
++		for (i = 0; i < hdr->count && bufp + digest_len <= bufendp;
++		     i++, bufp += digest_len) {
++			switch (op) {
++			case DIGEST_LIST_ADD:
++				d = digest_add(bufp, hdr->algo, hdr->type,
++					       digest_list, bufp - buf,
++					       (void *)hdr - buf);
++				break;
++			case DIGEST_LIST_DEL:
++				d = digest_del(bufp, hdr->algo, hdr->type,
++					       digest_list, bufp - buf,
++					       (void *)hdr - buf);
++				break;
++			default:
++				break;
++			}
++
++			if (IS_ERR(d)) {
++				pr_err("failed to %s a digest from %s\n",
++				       (op == DIGEST_LIST_ADD) ?
++				       "add" : "delete", digest_list->label);
++				goto out;
++			}
++		}
++	}
++out:
++	return bufp - buf;
++}
++
++/**
++ * get_digest_list - get the digest list extracted digests will be associated to
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ * @op: digest list operation
++ * @actions: actions performed on the digest list being processed
++ * @digest: digest of the digest list
++ * @algo: digest algorithm
++ * @label: label to identify the digest list (e.g. file name)
++ *
++ * This function retrieves the digest list item for the passed digest and
++ * algorithm. If it is not found at addition time, this function creates a new
++ * one.
++ *
++ * This function also ensures that the actions done at the time of deletion
++ * match the actions done at the time of addition (it would guarantee that also
++ * deletion is notified to remote verifiers).
++ *
++ * Returns the retrieved/created digest list item on success, an error pointer
++ * otherwise.
++ */
++static struct digest_list_item *get_digest_list(loff_t size, void *buf,
++						enum ops op, u8 actions,
++						u8 *digest, enum hash_algo algo,
++						const char *label)
++{
++	struct digest_item *d;
 +	struct digest_list_item *digest_list;
-+	loff_t digest_offset;
-+	loff_t hdr_offset;
-+};
++	int digest_len = hash_digest_size[algo];
 +
-+struct digest_item {
-+	/* hash table pointers */
-+	struct hlist_node hnext;
-+	/* digest list references (protected by RCU) */
-+	struct digest_list_item_ref *refs;
-+};
++	switch (op) {
++	case DIGEST_LIST_ADD:
++		/* Add digest list to be associated to each digest. */
++		d = digest_list_add(digest, algo, size, buf, actions, label);
++		if (IS_ERR(d))
++			return (void *)d;
 +
-+struct h_table {
-+	atomic_long_t len;
-+	struct hlist_head queue[MEASURE_HTABLE_SIZE];
-+};
++		digest_list = d->refs[0].digest_list;
++		break;
++	case DIGEST_LIST_DEL:
++		/* Lookup digest list to delete the references. */
++		d = digest_lookup(digest, algo, COMPACT_DIGEST_LIST, NULL,
++				  NULL);
++		if (!d) {
++			print_hex_dump(KERN_ERR,
++				       "digest list digest not found: ",
++				       DUMP_PREFIX_NONE, digest_len, 1, digest,
++				       digest_len, true);
++			return ERR_PTR(-ENOENT);
++		}
 +
-+static inline unsigned int hash_key(u8 *digest)
-+{
-+	return (digest[0] | digest[1] << 8) % MEASURE_HTABLE_SIZE;
++		digest_list = d->refs[0].digest_list;
++
++		/* Reject deletion if actions on delete differ from add. */
++		if (digest_list->actions != actions) {
++			pr_err("actions mismatch, add: %d, del: %d\n",
++			       digest_list->actions, actions);
++			return ERR_PTR(-EPERM);
++		}
++
++		break;
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	return digest_list;
 +}
 +
-+static inline struct compact_list_hdr *get_hdr(
-+					struct digest_list_item *digest_list,
-+					loff_t hdr_offset)
++/**
++ * digest_list_parse - parse a digest list
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ * @op: digest list operation
++ * @actions: actions performed on the digest list being processed
++ * @digest: digest of the digest list
++ * @algo: digest algorithm
++ * @label: label to identify the digest list (e.g. file name)
++ *
++ * This function parses the passed digest list and executed the requested
++ * operation. If the operation cannot be successfully executed, this function
++ * performs a rollback to the previous state.
++ *
++ * Returns the buffer size on success, a negative value otherwise.
++ */
++int digest_list_parse(loff_t size, void *buf, enum ops op, u8 actions,
++		      u8 *digest, enum hash_algo algo, const char *label)
 +{
-+	return (struct compact_list_hdr *)(digest_list->buf + hdr_offset);
++	struct digest_item *d;
++	struct digest_list_item *digest_list;
++	enum ops rollback_op = (op == DIGEST_LIST_ADD) ?
++			       DIGEST_LIST_DEL : DIGEST_LIST_ADD;
++	int ret, rollback_size;
++
++	ret = digest_list_validate(size, buf);
++	if (ret < 0)
++		return ret;
++
++	digest_list = get_digest_list(size, buf, op, actions, digest, algo,
++				      label);
++	if (IS_ERR(digest_list))
++		return PTR_ERR(digest_list);
++
++	ret = _digest_list_parse(size, buf, op, digest_list);
++	if (ret < 0)
++		goto out;
++
++	if (ret != size) {
++		rollback_size = ret;
++
++		ret = _digest_list_parse(rollback_size, buf, rollback_op,
++					 digest_list);
++		if (ret != rollback_size)
++			pr_err("rollback failed\n");
++
++		ret = -EINVAL;
++	}
++out:
++	/* Delete digest list on unsuccessful add or successful delete. */
++	if ((op == DIGEST_LIST_ADD && ret < 0) ||
++	    (op == DIGEST_LIST_DEL && ret == size)) {
++		d = digest_list_del(digest, algo, actions, digest_list);
++		if (IS_ERR(d))
++			return PTR_ERR(d);
++	}
++
++	return ret;
 +}
-+
-+static inline enum hash_algo get_algo(struct digest_list_item *digest_list,
-+				      loff_t digest_offset, loff_t hdr_offset)
-+{
-+	/* Digest list digest algorithm is stored in a different place. */
-+	if (!digest_offset)
-+		return digest_list->algo;
-+
-+	return get_hdr(digest_list, hdr_offset)->algo;
-+}
-+
-+static inline u8 *get_digest(struct digest_list_item *digest_list,
-+			     loff_t digest_offset, loff_t hdr_offset)
-+{
-+	/* Digest list digest is stored in a different place. */
-+	if (!digest_offset)
-+		return digest_list->digest;
-+
-+	return digest_list->buf + digest_offset;
-+}
-+
-+static inline struct compact_list_hdr *get_hdr_ref(
-+					struct digest_list_item_ref *ref)
-+{
-+	return get_hdr(ref->digest_list, ref->hdr_offset);
-+}
-+
-+static inline enum hash_algo get_algo_ref(struct digest_list_item_ref *ref)
-+{
-+	/* Digest list digest algorithm is stored in a different place. */
-+	if (!ref->digest_offset)
-+		return ref->digest_list->algo;
-+
-+	return get_hdr_ref(ref)->algo;
-+}
-+
-+static inline u8 *get_digest_ref(struct digest_list_item_ref *ref)
-+{
-+	/* Digest list digest is stored in a different place. */
-+	if (!ref->digest_offset)
-+		return ref->digest_list->digest;
-+
-+	return ref->digest_list->buf + ref->digest_offset;
-+}
-+#endif /*__DIGEST_LISTS_INTERNAL_H*/
 -- 
 2.25.1
 
