@@ -2,154 +2,193 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AD0C11F6B
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jun 2021 21:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27473C11F67
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jun 2021 22:05:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E30461CF1
-	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jun 2021 21:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CC7261DA2
+	for <linux-integrity@archiver.kernel.org>; Tue, 29 Jun 2021 22:05:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235641AbhF2VhH (ORCPT
+        id S235335AbhF2WHr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 29 Jun 2021 17:37:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2568 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235631AbhF2VhD (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 29 Jun 2021 17:37:03 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15TLXZxW157827;
-        Tue, 29 Jun 2021 17:34:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=fle6/XLlT/XEz9K53LS/zKddDIKGzsiUGG2+Bqg9wjc=;
- b=cExVkQPZdQLLrhlQ3dCJnZpGCntx+E49Gy9g/ZWLsRw+38yVs8kkDw4coeO0bAQna7nt
- 0SwVsSlibpBC2uvDmJgJjcWsicVPumJwn1V3p/W1OqFpNrPV1tGOH6tjjl+4lFldqDyz
- 8tWBKxKmll0JG9m/k39j4Zf06qhF6+Dvn55NkI2LLWe24Vto3gceXET5eoYIcC0CAnoO
- 9cTz2XBZKaOrk7NVV7P9JehTAjVyW40dMnZCe6Zd0L9ncXRBD/ax8/t/fUMn3FMeotAJ
- QLDk77FT5XgHK3kwjMRlJ18FKinTomqYOiv3lEn2DFo0AB8/JVoeOqEPyjrdluOUPCjy MQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39g8uvm45y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Jun 2021 17:34:31 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15TLYUOU164126;
-        Tue, 29 Jun 2021 17:34:30 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39g8uvm45s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Jun 2021 17:34:30 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15TLVN9e003535;
-        Tue, 29 Jun 2021 21:34:29 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma01dal.us.ibm.com with ESMTP id 39duvdau3s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 29 Jun 2021 21:34:29 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15TLYQIL39059780
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 29 Jun 2021 21:34:26 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6A7DAC060;
-        Tue, 29 Jun 2021 21:34:26 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC28CAC05B;
-        Tue, 29 Jun 2021 21:34:26 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.47.158.152])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 29 Jun 2021 21:34:26 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, zohar@linux.ibm.com, jarkko@kernel.org
-Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v8 0/2] Add support for ECDSA-signed kernel modules
-Date:   Tue, 29 Jun 2021 17:34:19 -0400
-Message-Id: <20210629213421.60320-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 29 Jun 2021 18:07:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234953AbhF2WHq (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 29 Jun 2021 18:07:46 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1C26D61DA0;
+        Tue, 29 Jun 2021 22:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625004318;
+        bh=wL4QubpVslVkyqpPYOVGapr51ugDCN40mrI1cMYOd3s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mHZD86XEw5OblpWiif0Ap7A/Rozq76oL+oSo8bdhOjX1xlrdGZhDkIDrLnp9y0qtF
+         VhOhnhxocUVjv1E4NAmyY4tY7v/iD+GO99jFNcEmhKQ7gfmTm+go9p56vBJHmVTmQF
+         4Ah+0bebDFVY4HIgmLVrEbT5ZiyFsSNB4saAbTamM+91fc/NM//5qVQKVTCTSczcSa
+         NeRJZUkNrj2AMKY4TrGvBM4uulEd6CLGFL8eBLWdjnzR8fDHxMe+kjs3S9rlJoI3aS
+         m2cm+RR7t4ZJZPR+gWH51pagUajDvtesIYOertvk8Mf623uHNR4NKYDURXnUqaeEes
+         kKkXcnQnfr6FQ==
+Date:   Wed, 30 Jun 2021 01:05:16 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: Recent tpm_tis IRQ handling changes are causing kernel
+ backtraces]
+Message-ID: <20210629220516.xm3jvjy7v2uw3fvz@kernel.org>
+References: <20210527140025.vl3ply6wnn7rsygg@kernel.org>
+ <27d71b81-1e89-1b5d-ddaf-a8928bac90fd@redhat.com>
+ <20210531043616.u3v25qzkkrik5apq@kernel.org>
+ <89d5b891-97d8-caed-4eb1-6d4d485a2fd1@redhat.com>
+ <5680899e-9040-7641-e6ac-23edd2d988cf@redhat.com>
+ <49bfb4a7-eb3c-77f9-ff8e-b37617a26195@redhat.com>
+ <20210623134054.45gjj2wbgz7jpjmy@kernel.org>
+ <90ed51b4-66d4-fb10-ca8e-d99532028fab@redhat.com>
+ <20210629180445.oind62rsktevm45q@kernel.org>
+ <b4398c5b-38dc-d511-ea29-0847bfca60b4@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: SOYPRvhy9pjFpVECL0pddFdN_7y7qKjL
-X-Proofpoint-GUID: U-RAcScL2xWwRstF-v6rK06gMMd0tlkt
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-29_14:2021-06-29,2021-06-29 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- malwarescore=0 mlxlogscore=999 phishscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106290132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4398c5b-38dc-d511-ea29-0847bfca60b4@redhat.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, Jun 29, 2021 at 09:14:39PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 6/29/21 8:04 PM, Jarkko Sakkinen wrote:
+> > On Wed, Jun 23, 2021 at 03:54:59PM +0200, Hans de Goede wrote:
+> >> Hi,
+> >>
+> >> On 6/23/21 3:40 PM, Jarkko Sakkinen wrote:
+> >>> On Mon, Jun 21, 2021 at 02:04:52PM +0200, Hans de Goede wrote:
+> >>>> Hi,
+> >>>>
+> >>>> On 6/14/21 3:33 PM, Hans de Goede wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> On 6/1/21 6:04 PM, Hans de Goede wrote:
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> On 5/31/21 6:36 AM, Jarkko Sakkinen wrote:
+> >>>>>>>> Interestingly enough the first backtrace is also happening on a:
+> >>>>>>>> "Dell Inc. XPS 13 9310/0MRT12, BIOS 2.2.0 04/06/2021"
+> >>>>>>>>
+> >>>>>>>> So it seems that at least with 5.12.6 (which has the last 2 fixes)
+> >>>>>>>> all reports are about the XPS 13 9310. I wonder if there is an
+> >>>>>>>> issue with the TPM interrupt line on the XPS 13 9310; I've asked the
+> >>>>>>>> reporters to try adding tpm_tis.interrupts=0 to their kernel commandline.
+> >>>>>>>
+> >>>>>>> This is helpful for sure that these all are happening on matching hardware.
+> >>>>>>
+> >>>>>> So our kernel-backtrace tracking info (ABRT) just recorded a third backtrace
+> >>>>>> with a kernel >= 5.12.6, again on the XPS 13 9310, so now we have 3 variants:
+> >>>>>>
+> >>>>>> 1. Backtrace starting with a call to ima_add_boot_aggregate
+> >>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1963712
+> >>>>>>
+> >>>>>> 2. Backtrace starting with a call to tpm_dev_async_work:
+> >>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1964974
+> >>>>>> (note this one is not easily reproducible)
+> >>>>>>
+> >>>>>> 3. Backtrace starting with a call to rng_dev_read:
+> >>>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1920510
+> >>>>>>
+> >>>>>> 3. is the new one. All bugs linked above are public, all 3 backtraces
+> >>>>>> so far have only been reported on the XPS 13 9310 (with kernel >= 5.12.6)
+> >>>>>> and I've asked all the reporters to check if tpm_tis.interrupts=0 helps.
+> >>>>>
+> >>>>> Quick status update, I've got a response from a XPS 13 9310 user in:
+> >>>>>
+> >>>>> https://bugzilla.redhat.com/show_bug.cgi?id=1920510
+> >>>>>
+> >>>>> Indicating that a. he can reproduce this with the latest >= 5.12.6 kernels;
+> >>>>> and b. it goes away when specifying tpm_tis.interrupts=0 as I expected
+> >>>>> (I expected this because all the bug-reports started when the interrupt
+> >>>>> code got fixed/re-enabled a while ago).
+> >>>>
+> >>>> One more status update.
+> >>>>
+> >>>> - A new 4th variant of the backtrace has been spotted, where the problem hits
+> >>>> when called from probe() -> tpm2_auto_startup -> tpm2_do_selftest, see:
+> >>>> https://bugzilla.redhat.com/show_bug.cgi?id=1958381
+> >>>>
+> >>>> - So far all reports with kernel >= 5.12.6 have been on a Dell XPS 13 9310
+> >>>> models. But the new variant is happening on a Dell XPS 15 9500 and the
+> >>>> backtrace starting at ima_add_boot_aggregate is also being reported on
+> >>>> a Dell XPS 15 9500 (as well as on the XPS 13 9310).
+> >>>>
+> >>>> Regards,
+> >>>>
+> >>>> Hans
+> >>>
+> >>> OK, I'll have to query if I could borrow that laptop from someone. It's
+> >>> fairly common laptop, i.e. might be possible.
+> >>
+> >> In the mean time I've also got a report that this variant of the backtrace:
+> >>
+> >> 1. Backtrace starting with a call to ima_add_boot_aggregate
+> >> https://bugzilla.redhat.com/show_bug.cgi?id=1963712
+> >>
+> >> Is also still happening with recent 5.12.y kernels on
+> >> Dell Precision 7750 laptops. Both the Precision 7750 and the XPS 9500 use
+> >> 10th gen comet lake processors (i7-10750H), where as the XPS 9310 is using
+> >> an icelake processor. So the common denominator seems to be that they are
+> >> all 2020 Dell laptop models using the latest Intel CPUs.
+> >>
+> >> FYI the complete list of models on which some of the 4 backtrace variants
+> >> are still seen on recent 5.12.y kernels is now:
+> >>
+> >> Dell XPS 13 9310
+> >> Dell XPS 15 9500
+> >> Dell Precision 7750
+> >>
+> >> Regards,
+> >>
+> >> Hans
+> > 
+> > Does "tpm_tis.interrupts=0" uniformly workaround the issue?
+> 
+> I unfortunately have not gotten much replies to my request to test with
+> tpm_tis.interrupts=0, but for those people who have bothered to test
+> (2 reporters IIRC) using tpm_tis.interrupts=0 does avoid the issue.
 
-This series adds support for ECDSA-signed kernel modules. It also
-attempts to address a kbuild issue where a developer created an ECDSA
-key for signing kernel modules and then builds an older version of the
-kernel, when bisecting the kernel for example, that does not support
-ECDSA keys.
+So we see this in dmesg as first anything from TPM:
 
-The first patch addresses the kbuild issue of needing to delete that
-ECDSA key if it is in certs/signing_key.pem and trigger the creation
-of an RSA key. However, for this to work this patch would have to be
-backported to previous versions of the kernel but would also only work
-for the developer if he/she used a stable version of the kernel to which
-this patch was applied. So whether this patch actually achieves the
-wanted effect is not always guaranteed.
+[    0.904572] tpm_tis STM0125:00: 2.0 TPM (device-id 0x0, rev-id 78)
 
-The 2nd patch adds the support for the ECSDA-signed kernel modules.
+This means that one command is successfully processed by the TPM, i.e.
+tpm2_probe() in tpm_tis_core_init().
 
-  Stefan
+My first *guess*  was that IRQ is given by ACPI, would need ACPI dump to
+confirm (e.g. sudo acpidump > acpi.dump). It cannot be so because otherwise
+this code path would be executed:
 
-v8:
-  - Removed R-b tags and reordered Cc tags
+        if (!(chip->flags & TPM_CHIP_FLAG_IRQ)) {
+                dev_err(&chip->dev, FW_BUG
+                        "TPM interrupt not working, polling instead\n");
 
-v7:
-  - Changed Kconfig reference to kernel version from 5.11 to 5.13
-  - Redirecting stderr of openssl to NULL device to address kernel robot
-    detected issue
-  - Replaced $(CONFIG_MODULE_SIG_KEY) with "certs/signing_key.pem" following
-    Linus's suggestion
+                disable_interrupts(chip);
+        }
 
-v6:
-  - Patch 2/4 is fixing V4's 1/2 and 4/4 is fixing V4's 2/2. Both fixup
-    patches to be squashed.
+TPM_CHIP_FLAG_IRQ is never set, so you should see this message in dmesg if
+a legit value is given to IRQ by ACPI.  We are probably planning re-enable
+IRQ code after these type of issues are fully resolved, but right now you
+should not end up having it enabled (see tpm_tis_send() function).
 
-v5:
-  - do not touch the key files if openssl is not installed; likely
-    addresses an issue pointed out by kernel test robot
+To put this together "if (irq != -1) {" path in tpm_tis_core_init() is
+never executed. And early in the same function the interrupt hardware is
+*explicitly* disabled.
 
-v4:
-  - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
-  
-v3:
-  - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
-  - added recommendation to use string hash to Kconfig help text
+For me this looks like a hardware bug right now: interrupts stay enabled
+for some reason.
 
-v2:
-  - Adjustment to ECDSA key detector string in 2/2
-  - Rephrased cover letter and patch descriptions with Mimi
+ACPI dump would be useful to verify some of the assumptions in this.
 
-
-Stefan Berger (2):
-  certs: Trigger creation of RSA module signing key if it's not an RSA
-    key
-  certs: Add support for using elliptic curve keys for signing modules
-
- certs/Kconfig                         | 26 ++++++++++++++++++++++++++
- certs/Makefile                        | 21 +++++++++++++++++++++
- crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
- 3 files changed, 55 insertions(+)
-
--- 
-2.31.1
-
+/Jarkko
