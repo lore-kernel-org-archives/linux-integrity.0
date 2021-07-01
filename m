@@ -7,194 +7,114 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624EDC11F68
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Jul 2021 01:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46366C11F64
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Jul 2021 12:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4431F61424
-	for <linux-integrity@archiver.kernel.org>; Thu,  1 Jul 2021 01:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 255C861406
+	for <linux-integrity@archiver.kernel.org>; Thu,  1 Jul 2021 12:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238272AbhGABQ1 (ORCPT
+        id S236537AbhGAM6p (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Jun 2021 21:16:27 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:48438 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238307AbhGABQX (ORCPT
+        Thu, 1 Jul 2021 08:58:45 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3339 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236536AbhGAM6o (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Jun 2021 21:16:23 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 3971D72C8C6;
-        Thu,  1 Jul 2021 04:13:52 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [193.43.10.250])
-        by imap.altlinux.org (Postfix) with ESMTPSA id EE0084A46ED;
-        Thu,  1 Jul 2021 04:13:51 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH v7 3/3] ima-evm-utils: Read keyid from the cert appended to the key file
-Date:   Thu,  1 Jul 2021 04:13:23 +0300
-Message-Id: <20210701011323.2377251-4-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20210701011323.2377251-1-vt@altlinux.org>
-References: <20210701011323.2377251-1-vt@altlinux.org>
+        Thu, 1 Jul 2021 08:58:44 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GFycS0x6vz6L7Rq;
+        Thu,  1 Jul 2021 20:45:44 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 1 Jul 2021 14:56:11 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <paul@paul-moore.com>
+CC:     <stephen.smalley.work@gmail.com>, <prsriva02@gmail.com>,
+        <tusharsu@linux.microsoft.com>, <nramas@linux.microsoft.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v2 1/3] ima: Introduce ima_get_current_hash_algo()
+Date:   Thu, 1 Jul 2021 14:55:50 +0200
+Message-ID: <20210701125552.2958008-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210701125552.2958008-1-roberto.sassu@huawei.com>
+References: <20210701125552.2958008-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml749-chm.china.huawei.com (10.201.108.199) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Allow to have certificate appended to the private key of `--key'
-specified (PEM) file (for v2 signing) to facilitate reading of keyid
-from the associated cert. This will allow users to have private and
-public key as a single file and avoid the need of manually specifying
-keyid. There is no check that public key form the cert matches
-associated private key.
+This patch introduces the new function ima_get_current_hash_algo(), that
+callers in the other kernel subsystems might use to obtain the hash
+algorithm selected by IMA.
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Its primary use will be to determine which algorithm has been used to
+calculate the digest written by ima_measure_critical_data() to the location
+passed as a new parameter (in a subsequent patch).
+
+Since the hash algorithm does not change after the IMA setup phase, there
+is no risk of races (obtaining a digest calculated with a different
+algorithm than the one returned).
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- README                 |  3 +++
- src/libimaevm.c        | 32 +++++++++++++++++++++++++++++---
- tests/gen-keys.sh      | 25 +++++++++++++++++++++----
- tests/sign_verify.test |  1 +
- 4 files changed, 54 insertions(+), 7 deletions(-)
+ include/linux/ima.h               | 7 +++++++
+ security/integrity/ima/ima_main.c | 5 +++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/README b/README
-index a130519..23e7d17 100644
---- a/README
-+++ b/README
-@@ -128,6 +128,9 @@ for signing and importing the key.
- Second key format uses X509 DER encoded public key certificates and uses asymmetric key support
- in the kernel (since kernel 3.9). CONFIG_INTEGRITY_ASYMMETRIC_KEYS must be enabled (default).
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 61d5723ec303..81e830d01ced 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -11,9 +11,11 @@
+ #include <linux/fs.h>
+ #include <linux/security.h>
+ #include <linux/kexec.h>
++#include <crypto/hash_info.h>
+ struct linux_binprm;
  
-+For v2 signatures x509 certificate (containing the public key) could be appended to the
-+private key (they both are in PEM format) to automatically extract keyid from its Subject
-+Key Identifier (SKID).
+ #ifdef CONFIG_IMA
++extern enum hash_algo ima_get_current_hash_algo(void);
+ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask);
+ extern void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
+@@ -64,6 +66,11 @@ static inline const char * const *arch_get_ima_policy(void)
+ #endif
  
- Integrity keyrings
- ----------------
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index c8a320e..15f702b 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -852,6 +852,28 @@ uint32_t imaevm_read_keyid(const char *certfile)
- 	return ntohl(keyid_be);
- }
- 
-+/**
-+ * read_keyid_from_key() - Read 32-bit keyid from the key file
-+ * @keyid_be:   Pointer to 32-bit value in network order (BE, unaligned).
-+ * @keyfile:    PEM file with private key with optionally appended x509 cert.
-+ * Return:      0 on success and keyid_be is written;
-+ *              -1 on error, logged error message, and keyid_be isn't written.
-+ */
-+static int read_keyid_from_key(uint32_t *keyid_be, const char *keyfile)
+ #else
++static inline enum hash_algo ima_get_current_hash_algo(void)
 +{
-+	X509 *x;
-+
-+	/* false: to try to read optional PEM cert. */
-+	if (!(x = read_cert(keyfile, false)))
-+		return -1;
-+	if (extract_keyid(keyid_be, x, keyfile)) {
-+		X509_free(x);
-+		return -1;
-+	}
-+	X509_free(x);
-+	return 0;
++	return HASH_ALGO__LAST;
 +}
 +
- static EVP_PKEY *read_priv_pkey(const char *keyfile, const char *keypass)
+ static inline int ima_bprm_check(struct linux_binprm *bprm)
  {
- 	FILE *fp;
-@@ -1036,10 +1058,14 @@ static int sign_hash_v2(const char *algo, const unsigned char *hash,
- 		return -1;
- 	}
- 
--	if (imaevm_params.keyid)
-+	if (imaevm_params.keyid) {
- 		hdr->keyid = htonl(imaevm_params.keyid);
--	else
--		calc_keyid_v2(&hdr->keyid, name, pkey);
-+	} else {
-+		int keyid_read_failed = read_keyid_from_key(&hdr->keyid, keyfile);
-+
-+		if (keyid_read_failed)
-+			calc_keyid_v2(&hdr->keyid, name, pkey);
-+	}
- 
- 	st = "EVP_PKEY_CTX_new";
- 	if (!(ctx = EVP_PKEY_CTX_new(pkey, NULL)))
-diff --git a/tests/gen-keys.sh b/tests/gen-keys.sh
-index 46130cf..d604c96 100755
---- a/tests/gen-keys.sh
-+++ b/tests/gen-keys.sh
-@@ -20,7 +20,7 @@ PATH=../src:$PATH
- type openssl
- 
- log() {
--  echo - "$*"
-+  echo >&2 - "$*"
-   eval "$@"
+ 	return 0;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 287b90509006..8ef1fa357e0c 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -76,6 +76,11 @@ static int __init hash_setup(char *str)
  }
+ __setup("ima_hash=", hash_setup);
  
-@@ -43,26 +43,43 @@ cat > test-ca.conf <<- EOF
- 	basicConstraints=CA:TRUE
- 	subjectKeyIdentifier=hash
- 	authorityKeyIdentifier=keyid:always,issuer
++enum hash_algo ima_get_current_hash_algo(void)
++{
++	return ima_hash_algo;
++}
 +
-+	[ skid ]
-+	basicConstraints=CA:TRUE
-+	subjectKeyIdentifier=12345678
-+	authorityKeyIdentifier=keyid:always,issuer
- EOF
- fi
- 
- # RSA
- # Second key will be used for wrong key tests.
--for m in 1024 2048; do
-+for m in 1024 1024_skid 2048; do
-   if [ "$1" = clean ] || [ "$1" = force ]; then
-     rm -f test-rsa$m.cer test-rsa$m.key test-rsa$m.pub
-   fi
-   if [ "$1" = clean ]; then
-     continue
-   fi
-+  if [ -z "${m%%*_*}" ]; then
-+    # Add named extension.
-+    bits=${m%_*}
-+    ext="-extensions ${m#*_}"
-+  else
-+    bits=$m
-+    ext=
-+  fi
-   if [ ! -e test-rsa$m.key ]; then
--    log openssl req -verbose -new -nodes -utf8 -sha1 -days 10000 -batch -x509 \
-+    log openssl req -verbose -new -nodes -utf8 -sha1 -days 10000 -batch -x509 $ext \
-       -config test-ca.conf \
--      -newkey rsa:$m \
-+      -newkey rsa:$bits \
-       -out test-rsa$m.cer -outform DER \
-       -keyout test-rsa$m.key
-     # for v1 signatures
-     log openssl pkey -in test-rsa$m.key -out test-rsa$m.pub -pubout
-+    if [ $m = 1024_skid ]; then
-+      # Create combined key+cert.
-+      log openssl x509 -inform DER -in test-rsa$m.cer >> test-rsa$m.key
-+    fi
-   fi
- done
- 
-diff --git a/tests/sign_verify.test b/tests/sign_verify.test
-index 1fdd786..df4304a 100755
---- a/tests/sign_verify.test
-+++ b/tests/sign_verify.test
-@@ -367,6 +367,7 @@ sign_verify  rsa1024  sha1    0x030202:K:0080
- sign_verify  rsa1024  sha224  0x030207:K:0080
- expect_pass check_sign TYPE=ima KEY=rsa1024 ALG=sha256 PREFIX=0x030204aabbccdd0080 OPTS=--keyid=aabbccdd
- expect_pass check_sign TYPE=ima KEY=rsa1024 ALG=sha256 PREFIX=0x030204:K:0080 OPTS=--keyid-from-cert=test-rsa1024.cer
-+expect_pass check_sign TYPE=ima KEY=rsa1024_skid ALG=sha256 PREFIX=0x030204123456780080
- sign_verify  rsa1024  sha256  0x030204:K:0080
-   try_different_keys
-   try_different_sigs
+ /* Prevent mmap'ing a file execute that is already mmap'ed write */
+ static int mmap_violation_check(enum ima_hooks func, struct file *file,
+ 				char **pathbuf, const char **pathname,
 -- 
-2.11.0
+2.25.1
 
