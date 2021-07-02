@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15DBC11F67
-	for <linux-integrity@archiver.kernel.org>; Fri,  2 Jul 2021 03:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB3CC11F67
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Jul 2021 03:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8756A61400
-	for <linux-integrity@archiver.kernel.org>; Fri,  2 Jul 2021 03:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EBF461407
+	for <linux-integrity@archiver.kernel.org>; Fri,  2 Jul 2021 03:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234788AbhGBDSK (ORCPT
+        id S234769AbhGBDUp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 1 Jul 2021 23:18:10 -0400
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:37254 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234771AbhGBDSK (ORCPT
+        Thu, 1 Jul 2021 23:20:45 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:52219 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234731AbhGBDUp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 1 Jul 2021 23:18:10 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UeQpj44_1625195735;
-Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UeQpj44_1625195735)
+        Thu, 1 Jul 2021 23:20:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0UeQwul7_1625195891;
+Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UeQwul7_1625195891)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 02 Jul 2021 11:15:36 +0800
-Subject: Re: [PATCH v3] ima-evm-utils: Support SM2 algorithm for sign and
- verify
+          Fri, 02 Jul 2021 11:18:12 +0800
+Subject: Re: [PATCH ima-evm-utils v3] ima-evm-utils: Support SM2 algorithm for
+ sign and verify
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         Vitaly Chikunov <vt@altlinux.org>,
         linux-integrity@vger.kernel.org,
         Jia Zhang <zhang.jia@linux.alibaba.com>
-References: <20210526084215.55118-1-tianjia.zhang@linux.alibaba.com>
+References: <20210526084455.56705-1-tianjia.zhang@linux.alibaba.com>
 From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <6e0eda94-b4a8-882f-53e8-b0695cb2d705@linux.alibaba.com>
-Date:   Fri, 2 Jul 2021 11:15:35 +0800
+Message-ID: <d7526f84-f7c9-cbc6-c4a5-3e8b8d78fb60@linux.alibaba.com>
+Date:   Fri, 2 Jul 2021 11:18:11 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
  Gecko/20100101 Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <20210526084215.55118-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20210526084455.56705-1-tianjia.zhang@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -53,7 +53,7 @@ Any comment?
 Cheers,
 Tianjia
 
-On 5/26/21 4:42 PM, Tianjia Zhang wrote:
+On 5/26/21 4:44 PM, Tianjia Zhang wrote:
 > The combination of SM2 and SM3 algorithms has been implemented in the
 > kernel. At present, the ima-evm-utils signature tool does not support
 > this combination of algorithms. Because in the current version of
