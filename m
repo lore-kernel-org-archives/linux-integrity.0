@@ -2,106 +2,130 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE56C07E99
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E3CC07E9E
 	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jul 2021 16:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9811F61876
+	by mail.kernel.org (Postfix) with ESMTP id ABF6161874
 	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jul 2021 16:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbhGHQGy (ORCPT
+        id S230032AbhGHQGz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 8 Jul 2021 12:06:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19184 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229592AbhGHQGy (ORCPT
+        Thu, 8 Jul 2021 12:06:55 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229992AbhGHQGy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Thu, 8 Jul 2021 12:06:54 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 168G3Kc4180421
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 168G3lBT075185
         for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 12:04:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=q+u1QYndk8VNUqqTvbln2SXKKJ0Y/Y9aklSZMqgqQXs=;
- b=oivyEQ3UapsDR5iJS4HvmjeHfjYFmiLJlLSX+o5FUVJDAZoxrOoZ4GHU6y4QEWLVrMXy
- pquBaqQNdMrPqS5DBgsxDgYLA1G2R7cMA18SeIXURA4kJAptHNS9DjCYgBO8iZh6B4GO
- F3LH0u2V+W1CQgmwmKYXhQehkeR3YsbUZH31gHyuj3nfJfj+uazp5OxOw4UyPKG4/v+F
- 0y9ZyiuQZSceO5U2uXP02FLXXS8u78Ppj0CC0rHksHDMTzakV0Nlb57KflJTqPnwwG89
- sLVVFNWqVVowtJjOin7xNEoGO/TEwsQP36z+L2XtLS/6/WdRFQMNddCDMvAT9QlrCoa+ Gg== 
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39nhkhx42g-1
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=3gJxilfmgb3aZYy10i+tUGinihr/lvJD/KIwxH+mKYE=;
+ b=pA0YJ7BrcPFpGWPRJQkliAX47xsbN0jjHqAhul/qPZmywZno7TghMreLSe7DZz1hqZho
+ deC/31W7Jj7mxZFXaCvk/Zg0M7B3mzFrdyFtSJUKgCwuBwv97+a3861ZynyPVZGrlN26
+ wSmz0NyeaSToqhKSifgj+My3MMtADK3fOhiSRk5TihDPKY7tAR15r8jnOr7d538FA37O
+ MeNHCe5DuxU/9jHf/NQr25w/wx7yqanPXaKioHFpPnS1lhGp0tF5tGZWfsMucN8Odn0c
+ dfraclMlw/PO647LBLSgaM4BWYEjO1MQFo6YQ/qk6fCToPwzczui2bkjacCR9K2Q2a4Y IA== 
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39nhcb8eeq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 12:04:11 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 168Fx5j0027118
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 16:04:10 GMT
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 12:04:12 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 168FvNrW019075
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 16:04:11 GMT
 Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma05wdc.us.ibm.com with ESMTP id 39jfhd7c8e-1
+        by ppma03dal.us.ibm.com with ESMTP id 39jhq1cepj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 16:04:10 +0000
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 16:04:11 +0000
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 168G4AEu38207918
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 168G4AJc31261112
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 8 Jul 2021 16:04:10 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 02DE1124060;
+        by IMSVA (Postfix) with ESMTP id 5D7F4124060;
         Thu,  8 Jul 2021 16:04:10 +0000 (GMT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF9FC124052;
-        Thu,  8 Jul 2021 16:04:09 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 505B1124055;
+        Thu,  8 Jul 2021 16:04:10 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.47.158.155])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Jul 2021 16:04:09 +0000 (GMT)
+        Thu,  8 Jul 2021 16:04:10 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v2 0/4] libimaevm: Remove digest calculations not supported by IMA
-Date:   Thu,  8 Jul 2021 12:04:04 -0400
-Message-Id: <20210708160408.2779849-1-stefanb@linux.ibm.com>
+Subject: [PATCH ima-evm-utils v2 4/4] libimaevm: Remove calculation of a digest over a symbolic link
+Date:   Thu,  8 Jul 2021 12:04:08 -0400
+Message-Id: <20210708160408.2779849-5-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210708160408.2779849-1-stefanb@linux.ibm.com>
+References: <20210708160408.2779849-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: iTNG1U1nq4Xnnts3limKWYSXul2-VTOa
-X-Proofpoint-ORIG-GUID: iTNG1U1nq4Xnnts3limKWYSXul2-VTOa
+X-Proofpoint-ORIG-GUID: pNxkojln4zdK813f06FS4kPyUZSU1rNj
+X-Proofpoint-GUID: pNxkojln4zdK813f06FS4kPyUZSU1rNj
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
  definitions=2021-07-08_10:2021-07-08,2021-07-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 mlxlogscore=686 impostorscore=0 spamscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 phishscore=0 mlxscore=0
- clxscore=1015 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104190000 definitions=main-2107080086
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107080083
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove digest calculations over directories, symbolic links, and device files
-since those and related signature verifications are not supported by IMA in
-the kernel.
+Signature verification on symbolic links is not supported by IMA in the
+kernel, so remove the calculation of digests over symbolic links.
 
-Regards,
-   Stefan
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ src/libimaevm.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-v2:
-  - added patch 1/4 that removes filering on IMA unsupported file types
-  - added Mimi's R-b tags to other patches
-
-
-Stefan Berger (4):
-  evmctl: Remove filtering support for file types unsupported by IMA
-  libimaevm: Remove calculation of a digest over a device file
-  libimaevm: Remove calculation of a digest over a directory
-  libimaevm: Remove calculation of a digest over a symbolic link
-
- README          |  2 +-
- src/evmctl.c    | 13 +---------
- src/libimaevm.c | 68 -------------------------------------------------
- 3 files changed, 2 insertions(+), 81 deletions(-)
-
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 07a25c9..6591d20 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -177,20 +177,6 @@ out:
+ 	return err;
+ }
+ 
+-static int add_link_hash(const char *path, EVP_MD_CTX *ctx)
+-{
+-	int len;
+-	char buf[1024];
+-
+-	len = readlink(path, buf, sizeof(buf));
+-	/* 0-length links are also an error */
+-	if (len <= 0)
+-		return -1;
+-
+-	log_info("link: %s -> %.*s\n", path, len, buf);
+-	return !EVP_DigestUpdate(ctx, buf, len);
+-}
+-
+ int ima_calc_hash(const char *file, uint8_t *hash)
+ {
+ 	const EVP_MD *md;
+@@ -231,9 +217,6 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ 	case S_IFREG:
+ 		err = add_file_hash(file, pctx);
+ 		break;
+-	case S_IFLNK:
+-		err = add_link_hash(file, pctx);
+-		break;
+ 	default:
+ 		log_err("Unsupported file type (0x%x)", st.st_mode & S_IFMT);
+ 		err = -1;
 -- 
 2.31.1
 
