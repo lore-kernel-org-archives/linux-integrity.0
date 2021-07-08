@@ -7,150 +7,145 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2B3AC07E9C
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jul 2021 16:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D811DC07E99
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jul 2021 16:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE64361878
-	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jul 2021 16:04:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E9B61874
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jul 2021 16:04:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229592AbhGHQG4 (ORCPT
+        id S230145AbhGHQG7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 8 Jul 2021 12:06:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:28667 "EHLO
+        Thu, 8 Jul 2021 12:06:59 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14398 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229992AbhGHQGz (ORCPT
+        by vger.kernel.org with ESMTP id S229992AbhGHQG6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Jul 2021 12:06:55 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 168G35kG010199
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 12:04:12 -0400
+        Thu, 8 Jul 2021 12:06:58 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 168G3kmg075106
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 12:04:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=OheOjOvjFCHWUFxL8esB+H/tHA6Itrq2T6gbh1QiIU8=;
- b=OcTjg9h9UuTABDPZbNQyIExHD6bctlJX81QhbpoWZCriB+XiH3ylIfV87aHF6s2GI1r9
- gNMGexvCVTQZxuzmk/hNfXYtos8FdvpH8QKodCbHdehrU685bzdTqokjoM9QUzxREt2U
- xjMpBbjrhYbg7Ol8B59jKzQjHMEjtcd0BztM4FabHmnnKBfZEqcrlR2h5KXGd2RJWLOM
- Zm3AoHiqEa+NKu6nRoDW6B5TvbFcmBWeNoAvclJ/SiAuAWOvcnyMcmNT4WSCU8jhRAWs
- lqvC1wPe1taamnzy15B9GgbqXslB/LRnmsWIPIMtoScDCzhC16EkS5Oqmdi/Qypc7gwP UA== 
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39p2yf3ecv-1
+ bh=AF+afRAj6xC18HRymqmCo8vWiya647NOdPLgPKzOQi8=;
+ b=Xg3sc+OGJ1L7uDX/F7r2F+mPs1Izk1uNxaMWgtq3HHsa/SsSKEhHPgp41J9O1Wv/j70x
+ B2tq4vZOT2Eo9pbMFeY4EpSHxv2EM28daAwx27XI1jkPflqr8GqEq7XyZK1DTd8aMVWR
+ AOHZcy8RP+sUV9dd3ATySZ9YnF5Jwkn3xnjitmpvx2XGU9ubaRe3FQAmxlCCy0OvgFd7
+ jYyqjNA9Hu1KBCw3XmqnZXjtMnLDjqYG62q0J3n2Cqk19gQQeMb9dqb8L0TyVzrFKVDT
+ MRXH1rVQy4IWJqYl+h3p8urWqXcTslre8Rn3znzHAekrXgIaa53kVghesXibQCuch37y 7g== 
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39nhcb8eef-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 12:04:12 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 168FvhlS016608
-        for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 16:04:11 GMT
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 12:04:16 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 168Fx5Gl027109
+        for <linux-integrity@vger.kernel.org>; Thu, 8 Jul 2021 16:04:10 GMT
 Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03wdc.us.ibm.com with ESMTP id 39jfhd79rj-1
+        by ppma05wdc.us.ibm.com with ESMTP id 39jfhd7c8k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 16:04:11 +0000
+        for <linux-integrity@vger.kernel.org>; Thu, 08 Jul 2021 16:04:10 +0000
 Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 168G4AlJ32244012
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 168G4AJn37486870
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 8 Jul 2021 16:04:10 GMT
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 15BE0124064;
+        by IMSVA (Postfix) with ESMTP id 44E03124074;
         Thu,  8 Jul 2021 16:04:10 +0000 (GMT)
 Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 082EC124062;
+        by IMSVA (Postfix) with ESMTP id 40E33124072;
         Thu,  8 Jul 2021 16:04:10 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.47.158.155])
         by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Jul 2021 16:04:09 +0000 (GMT)
+        Thu,  8 Jul 2021 16:04:10 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v2 1/4] evmctl: Remove filtering support for file types unsupported by IMA
-Date:   Thu,  8 Jul 2021 12:04:05 -0400
-Message-Id: <20210708160408.2779849-2-stefanb@linux.ibm.com>
+Subject: [PATCH ima-evm-utils v2 3/4] libimaevm: Remove calculation of a digest over a directory
+Date:   Thu,  8 Jul 2021 12:04:07 -0400
+Message-Id: <20210708160408.2779849-4-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210708160408.2779849-1-stefanb@linux.ibm.com>
 References: <20210708160408.2779849-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 8upYi8Qw0CeXuPqSzqzQb_mQBtYEDUkR
-X-Proofpoint-GUID: 8upYi8Qw0CeXuPqSzqzQb_mQBtYEDUkR
+X-Proofpoint-ORIG-GUID: KJzlNzE1pIXlvtKv2twV-SOPGEqLt2QC
+X-Proofpoint-GUID: KJzlNzE1pIXlvtKv2twV-SOPGEqLt2QC
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-08_09:2021-07-08,2021-07-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 priorityscore=1501
- clxscore=1015 malwarescore=0 mlxlogscore=999 impostorscore=0 adultscore=0
- mlxscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ definitions=2021-07-08_10:2021-07-08,2021-07-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 phishscore=0 mlxlogscore=999 mlxscore=0 spamscore=0
+ clxscore=1015 impostorscore=0 priorityscore=1501 adultscore=0
+ suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2104190000 definitions=main-2107080083
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove support for filtering on file types unsupported by IMA from evmctl.
-This now prevents func(de->d_name) to be invoked on symlinks, block device
-files, etc. since signature verification on those file types is not
-supported by IMA in the kernel.
+Signature verification on directories is not supported by IMA in the
+kernel, so remove the calculation of digests over directories.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- README       |  2 +-
- src/evmctl.c | 13 +------------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ src/libimaevm.c | 37 -------------------------------------
+ 1 file changed, 37 deletions(-)
 
-diff --git a/README b/README
-index 321045d..2ccac46 100644
---- a/README
-+++ b/README
-@@ -51,7 +51,7 @@ OPTIONS
-   -o, --portable     generate portable EVM signatures
-   -p, --pass         password for encrypted signing key
-   -r, --recursive    recurse into directories (sign)
--  -t, --type         file types to fix 'fdsxm' (f: file, d: directory, s: block/char/symlink)
-+  -t, --type         file types to fix 'fxm' (f: file)
-                      x - skip fixing if both ima and evm xattrs exist (use with caution)
-                      m - stay on the same filesystem (like 'find -xdev')
-   -n                 print result to stdout instead of setting xattr
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 7a6f202..04f14af 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -142,10 +142,6 @@ typedef int (*find_cb_t)(const char *path);
- static int find(const char *path, int dts, find_cb_t func);
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 4d51901..07a25c9 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -177,40 +177,6 @@ out:
+ 	return err;
+ }
  
- #define REG_MASK	(1 << DT_REG)
--#define DIR_MASK	(1 << DT_DIR)
--#define LNK_MASK	(1 << DT_LNK)
--#define CHR_MASK	(1 << DT_CHR)
--#define BLK_MASK	(1 << DT_BLK)
- 
- struct command cmds[];
- static void print_usage(struct command *cmd);
-@@ -668,10 +664,6 @@ static int get_file_type(const char *path, const char *search_type)
- 		switch (search_type[i]) {
- 		case 'f':
- 			dts |= REG_MASK; break;
--		case 'd':
--			dts |= DIR_MASK; break;
--		case 's':
--			dts |= BLK_MASK | CHR_MASK | LNK_MASK; break;
- 		case 'x':
- 			check_xattr = true; break;
- 		case 'm':
-@@ -1371,9 +1363,6 @@ static int find(const char *path, int dts, find_cb_t func)
- 		return -1;
- 	}
- 
--	if (dts & DIR_MASK)
--		func(path);
+-static int add_dir_hash(const char *file, EVP_MD_CTX *ctx)
+-{
+-	struct dirent *de;
+-	DIR *dir;
+-	unsigned long long ino;
+-	unsigned int type;
+-	int result = 0;
 -
- 	closedir(dir);
- 
- 	return 0;
-@@ -2517,7 +2506,7 @@ static void usage(void)
- 		"  -o, --portable     generate portable EVM signatures\n"
- 		"  -p, --pass         password for encrypted signing key\n"
- 		"  -r, --recursive    recurse into directories (sign)\n"
--		"  -t, --type         file types to fix 'fdsxm' (f: file, d: directory, s: block/char/symlink)\n"
-+		"  -t, --type         file types to fix 'fxm' (f: file)\n"
- 		"                     x - skip fixing if both ima and evm xattrs exist (use with caution)\n"
- 		"                     m - stay on the same filesystem (like 'find -xdev')\n"
- 		"  -n                 print result to stdout instead of setting xattr\n"
+-	dir = opendir(file);
+-	if (!dir) {
+-		log_err("Failed to open: %s\n", file);
+-		return -1;
+-	}
+-
+-	while ((de = readdir(dir))) {
+-		ino = de->d_ino;
+-		type = de->d_type;
+-		log_debug("entry: %s, ino: %llu, type: %u, reclen: %hu\n",
+-			  de->d_name, ino, type, de->d_reclen);
+-		if (EVP_DigestUpdate(ctx, de->d_name, strlen(de->d_name)) != 1 ||
+-		    EVP_DigestUpdate(ctx, &ino, sizeof(ino)) != 1||
+-		    EVP_DigestUpdate(ctx, &type, sizeof(type)) != 1) {
+-			log_err("EVP_DigestUpdate() failed\n");
+-			output_openssl_errors();
+-			result = 1;
+-			break;
+-		}
+-	}
+-
+-	closedir(dir);
+-
+-	return result;
+-}
+-
+ static int add_link_hash(const char *path, EVP_MD_CTX *ctx)
+ {
+ 	int len;
+@@ -265,9 +231,6 @@ int ima_calc_hash(const char *file, uint8_t *hash)
+ 	case S_IFREG:
+ 		err = add_file_hash(file, pctx);
+ 		break;
+-	case S_IFDIR:
+-		err = add_dir_hash(file, pctx);
+-		break;
+ 	case S_IFLNK:
+ 		err = add_link_hash(file, pctx);
+ 		break;
 -- 
 2.31.1
 
