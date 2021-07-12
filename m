@@ -2,234 +2,116 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9024EC11F66
-	for <linux-integrity@archiver.kernel.org>; Mon, 12 Jul 2021 17:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC3AC07E99
+	for <linux-integrity@archiver.kernel.org>; Mon, 12 Jul 2021 20:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6627D61241
-	for <linux-integrity@archiver.kernel.org>; Mon, 12 Jul 2021 17:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB3F461248
+	for <linux-integrity@archiver.kernel.org>; Mon, 12 Jul 2021 20:04:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234224AbhGLRQS (ORCPT
+        id S233686AbhGLUH2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 12 Jul 2021 13:16:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230255AbhGLRQS (ORCPT
+        Mon, 12 Jul 2021 16:07:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21458 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233299AbhGLUH1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 12 Jul 2021 13:16:18 -0400
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 656F4C0613E9
-        for <linux-integrity@vger.kernel.org>; Mon, 12 Jul 2021 10:13:29 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GNqpy4r1ZzMppR6;
-        Mon, 12 Jul 2021 19:03:38 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4GNqpy2cvhzlh8TR;
-        Mon, 12 Jul 2021 19:03:38 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v8 2/5] certs: Check that builtin blacklist hashes are valid
-Date:   Mon, 12 Jul 2021 19:03:10 +0200
-Message-Id: <20210712170313.884724-3-mic@digikod.net>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210712170313.884724-1-mic@digikod.net>
-References: <20210712170313.884724-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 12 Jul 2021 16:07:27 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16CK3xDI017522;
+        Mon, 12 Jul 2021 16:04:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : date : in-reply-to : references : content-type : mime-version
+ : content-transfer-encoding; s=pp1;
+ bh=OqvVUjngvShKdsSy4qHCHrp6wWSaZa76CtkQynx/fx8=;
+ b=JRU17Y1E5RnZYC9VY4HFjZJbLMBBVxmDEMjb7r7ACqJ1lLrSvL60HTjBvNfgF7raPzGb
+ YG8JMTQljGiQtSZAv8teupWwzaq55dn0U9sgTAN0aETUhHLTDK1I7BZY8XmLKvTQ0dmK
+ bfIBQsH2UEgJabWe9r/QqNSxg1GNa1zBXawtTQep1KiRdTEh38DxRCg8cb7o94OzRcAC
+ 6BzShQIz8WHvp9EBokFQCjaKVcQzv3VLk/w5qbk+2XHPcQ5/RTw5j85m7XTKS0lV7CL0
+ UiwB5dhi/LBaUzCSEIsD00ZOy23cavnIABdCzfmYBAgfIFBr5vVhAbc4Gy3RAw+Rt14s vw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39qrkw4jts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jul 2021 16:04:37 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16CK4Bnv018514;
+        Mon, 12 Jul 2021 16:04:36 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39qrkw4js8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jul 2021 16:04:36 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16CK3OcV000954;
+        Mon, 12 Jul 2021 20:04:34 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 39q2th8xkf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jul 2021 20:04:33 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16CK2RRT28508566
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Jul 2021 20:02:28 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8E7E1AE051;
+        Mon, 12 Jul 2021 20:04:31 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F00BAE04D;
+        Mon, 12 Jul 2021 20:04:30 +0000 (GMT)
+Received: from sig-9-65-203-86.ibm.com (unknown [9.65.203.86])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Jul 2021 20:04:30 +0000 (GMT)
+Message-ID: <b2dab0c5a7f67f337257ddf63dc58134c36ca4f9.camel@linux.ibm.com>
+Subject: Re: [PATCH ima-evm-utils v8 0/3] ima-evm-utils: Add --keyid option
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Vitaly Chikunov <vt@altlinux.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org
+Date:   Mon, 12 Jul 2021 16:04:29 -0400
+In-Reply-To: <20210712054448.2471236-1-vt@altlinux.org>
+References: <20210712054448.2471236-1-vt@altlinux.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: s5bhyYcitCF7d6A2t6VQhBG-4RB8NiP5
+X-Proofpoint-ORIG-GUID: QeTV-X7O08pPn5bEnCujAb_G34w8pbWb
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-12_11:2021-07-12,2021-07-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ impostorscore=0 phishscore=0 priorityscore=1501 spamscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2107120139
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On Mon, 2021-07-12 at 08:44 +0300, Vitaly Chikunov wrote:
+> Allow user to set signature's keyid using `--keyid' option. Keyid should
+> correspond to SKID in certificate. When keyid is calculated using SHA-1
+> in libimaevm it may mismatch keyid extracted by the kernel from SKID of
+> certificate (the way public key is presented to the kernel), thus making
+> signatures not verifiable. This may happen when certificate is using non
+> SHA-1 SKID (see rfc7093) or just 'unique number' (see rfc5280 4.2.1.2).
+> As a last resort user may specify arbitrary keyid using the new option.
+> Certificate filename could be used instead of the hex number with
+> `--keyid-from-cert' option. And, third option is to read keyid from the
+> cert appended to the key file.
+> 
+> These commits create backward incompatible ABI change for libimaevm,
+> thus soname should be incremented on release.
 
-Add and use a check-blacklist-hashes.awk script to make sure that the
-builtin blacklist hashes set with CONFIG_SYSTEM_BLACKLIST_HASH_LIST will
-effectively be taken into account as blacklisted hashes.  This is useful
-to debug invalid hash formats, and it make sure that previous hashes
-which could have been loaded in the kernel, but silently ignored, are
-now noticed and deal with by the user at kernel build time.
+I can't seem to apply either of your patch sets using "git am", only
+manually using "patch -p0 <  <mbox>".    This hasn't been a problem in
+the past.  Did you do something differently?
 
-This also prevent stricter blacklist key description checking (provided
-by following commits) to failed for builtin hashes.
+thanks,
 
-Update CONFIG_SYSTEM_BLACKLIST_HASH_LIST help to explain the content of
-a hash string and how to generate certificate ones.
-
-Cc: David Howells <dhowells@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20210712170313.884724-3-mic@digikod.net
----
-
-Changes since v7:
-* Rebase and fix trivial .gitignore conflict.
-
-Changes since v5:
-* Rebase on keys-next and fix conflict as previously done by David
-  Howells.
-* Enable to use a file path relative to the kernel source directory.
-  This align with the handling of CONFIG_SYSTEM_TRUSTED_KEYS,
-  CONFIG_MODULE_SIG_KEY and CONFIG_SYSTEM_REVOCATION_KEYS.
-
-Changes since v3:
-* Improve commit description.
-* Update CONFIG_SYSTEM_BLACKLIST_HASH_LIST help.
-* Remove Acked-by Jarkko Sakkinen because of the above changes.
-
-Changes since v2:
-* Add Jarkko's Acked-by.
-
-Changes since v1:
-* Prefix script path with $(scrtree)/ (suggested by David Howells).
-* Fix hexadecimal number check.
----
- MAINTAINERS                        |  1 +
- certs/.gitignore                   |  1 +
- certs/Kconfig                      |  7 ++++--
- certs/Makefile                     | 17 +++++++++++++-
- scripts/check-blacklist-hashes.awk | 37 ++++++++++++++++++++++++++++++
- 5 files changed, 60 insertions(+), 3 deletions(-)
- create mode 100755 scripts/check-blacklist-hashes.awk
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0b3be78d27ef..04b8fb5dcdac 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4299,6 +4299,7 @@ L:	keyrings@vger.kernel.org
- S:	Maintained
- F:	Documentation/admin-guide/module-signing.rst
- F:	certs/
-+F:	scripts/check-blacklist-hashes.awk
- F:	scripts/extract-cert.c
- F:	scripts/sign-file.c
- F:	tools/certs/
-diff --git a/certs/.gitignore b/certs/.gitignore
-index 8c3763f80be3..01de9442e4e2 100644
---- a/certs/.gitignore
-+++ b/certs/.gitignore
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+/blacklist_hashes_checked
- /x509_certificate_list
- /x509_revocation_list
-diff --git a/certs/Kconfig b/certs/Kconfig
-index f4e61116f94e..0fbe184ceca5 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -80,8 +80,11 @@ config SYSTEM_BLACKLIST_HASH_LIST
- 	help
- 	  If set, this option should be the filename of a list of hashes in the
- 	  form "<hash>", "<hash>", ... .  This will be included into a C
--	  wrapper to incorporate the list into the kernel.  Each <hash> should
--	  be a string of hex digits.
-+	  wrapper to incorporate the list into the kernel.  Each <hash> must be a
-+	  string starting with a prefix ("tbs" or "bin"), then a colon (":"), and
-+	  finally an even number of hexadecimal lowercase characters (up to 128).
-+	  Certificate hashes can be generated with
-+	  tools/certs/print-cert-tbs-hash.sh .
- 
- config SYSTEM_REVOCATION_LIST
- 	bool "Provide system-wide ring of revocation certificates"
-diff --git a/certs/Makefile b/certs/Makefile
-index 359239a0ee9e..e43c1a8032de 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -7,7 +7,22 @@ obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o c
- obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o common.o
- obj-$(CONFIG_SYSTEM_REVOCATION_LIST) += revocation_certificates.o
- ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
-+
-+quiet_cmd_check_blacklist_hashes = CHECK   $(patsubst "%",%,$(2))
-+      cmd_check_blacklist_hashes = $(AWK) -f $(srctree)/scripts/check-blacklist-hashes.awk $(2); touch $@
-+
-+$(eval $(call config_filename,SYSTEM_BLACKLIST_HASH_LIST))
-+
-+$(obj)/blacklist_hashes.o: $(obj)/blacklist_hashes_checked
-+
-+CFLAGS_blacklist_hashes.o += -I$(srctree)
-+
-+targets += blacklist_hashes_checked
-+$(obj)/blacklist_hashes_checked: $(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(SYSTEM_BLACKLIST_HASH_LIST_FILENAME) scripts/check-blacklist-hashes.awk FORCE
-+	$(call if_changed,check_blacklist_hashes,$(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(CONFIG_SYSTEM_BLACKLIST_HASH_LIST))
-+
- obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_hashes.o
-+
- else
- obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_nohashes.o
- endif
-@@ -30,7 +45,7 @@ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREF
- 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
- endif # CONFIG_SYSTEM_TRUSTED_KEYRING
- 
--clean-files := x509_certificate_list .x509.list x509_revocation_list
-+clean-files := x509_certificate_list .x509.list x509_revocation_list blacklist_hashes_checked
- 
- ifeq ($(CONFIG_MODULE_SIG),y)
- 	SIGN_KEY = y
-diff --git a/scripts/check-blacklist-hashes.awk b/scripts/check-blacklist-hashes.awk
-new file mode 100755
-index 000000000000..107c1d3204d4
---- /dev/null
-+++ b/scripts/check-blacklist-hashes.awk
-@@ -0,0 +1,37 @@
-+#!/usr/bin/awk -f
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright © 2020, Microsoft Corporation. All rights reserved.
-+#
-+# Author: Mickaël Salaün <mic@linux.microsoft.com>
-+#
-+# Check that a CONFIG_SYSTEM_BLACKLIST_HASH_LIST file contains a valid array of
-+# hash strings.  Such string must start with a prefix ("tbs" or "bin"), then a
-+# colon (":"), and finally an even number of hexadecimal lowercase characters
-+# (up to 128).
-+
-+BEGIN {
-+	RS = ","
-+}
-+{
-+	if (!match($0, "^[ \t\n\r]*\"([^\"]*)\"[ \t\n\r]*$", part1)) {
-+		print "Not a string (item " NR "):", $0;
-+		exit 1;
-+	}
-+	if (!match(part1[1], "^(tbs|bin):(.*)$", part2)) {
-+		print "Unknown prefix (item " NR "):", part1[1];
-+		exit 1;
-+	}
-+	if (!match(part2[2], "^([0-9a-f]+)$", part3)) {
-+		print "Not a lowercase hexadecimal string (item " NR "):", part2[2];
-+		exit 1;
-+	}
-+	if (length(part3[1]) > 128) {
-+		print "Hash string too long (item " NR "):", part3[1];
-+		exit 1;
-+	}
-+	if (length(part3[1]) % 2 == 1) {
-+		print "Not an even number of hexadecimal characters (item " NR "):", part3[1];
-+		exit 1;
-+	}
-+}
--- 
-2.32.0
+Mimi
 
