@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B88D7C07E9C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B714EC11F68
 	for <linux-integrity@archiver.kernel.org>; Tue, 13 Jul 2021 00:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF1D611CB
+	by mail.kernel.org (Postfix) with ESMTP id 3FE586127C
 	for <linux-integrity@archiver.kernel.org>; Tue, 13 Jul 2021 00:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233767AbhGMAwD (ORCPT
+        id S233545AbhGMAwC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 12 Jul 2021 20:52:03 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:53372 "EHLO
+        Mon, 12 Jul 2021 20:52:02 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:53362 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233765AbhGMAwC (ORCPT
+        with ESMTP id S233505AbhGMAwC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Mon, 12 Jul 2021 20:52:02 -0400
 Received: from Lenovo-Legion-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 946E020B8016;
+        by linux.microsoft.com (Postfix) with ESMTPSA id 44CBB20B8010;
         Mon, 12 Jul 2021 17:49:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 946E020B8016
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 44CBB20B8010
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1626137353;
-        bh=aw5g78XGdnlDL9hjUC/z7H7Y6XLewH4fs+vPZt4W4Nc=;
+        bh=/l31ufbAiB7frLCvxnEGR33q8h5cqsq1tZNnteHdz14=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WAHudBVFBr07KrZuFbJxknJLczk6VtGJg3/zzPZyfi6NckAnR17R4EsPzyZ6Km6wc
-         ziSCWo6Yy+s4l2BgggVXqcv1yxTecEjumyUc/wbtRgLldvIB1lOuYg487rvpwtuHC1
-         XJRYJK3dsmuCk+3OHpNyix60NBHHuuR9dI2N141Q=
+        b=BcK5NapSCXywo3SS7SytSt+/cWmCSkRCZNswCKF9H16DyEFBQpgPS7In1j6dbEcY7
+         H0qRGUK1mf5DkKpqmRQft7Hi1ODaBPsqGG0W2hIw61M9TVsLE/U2wV9DY5FuJwZJyq
+         uxsHFYUaJ2Oj5HoQcWJNJlTjWzEPx6T/bxMzxfvE=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     dm-devel@redhat.com, agk@redhat.com, snitzer@redhat.com
 Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
         nramas@linux.microsoft.com, tusharsu@linux.microsoft.com
-Subject: [PATCH 5/7] dm: measure data on device rename
-Date:   Mon, 12 Jul 2021 17:49:02 -0700
-Message-Id: <20210713004904.8808-6-tusharsu@linux.microsoft.com>
+Subject: [PATCH 4/7] dm: measure data on table clear
+Date:   Mon, 12 Jul 2021 17:49:01 -0700
+Message-Id: <20210713004904.8808-5-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210713004904.8808-1-tusharsu@linux.microsoft.com>
 References: <20210713004904.8808-1-tusharsu@linux.microsoft.com>
@@ -48,76 +48,120 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-A given block device is identified by it's name and UUID.  However, both
-these parameters can be renamed.  For an external attestation service to
-correctly attest a given device, it needs to keep track of these rename
-events.
+For a given block device, an inactive table slot contains the parameters
+to configure the device with.  The inactive table can be cleared
+multiple times, accidentally or maliciously, which may impact the
+functionality of the device, and compromise the system.  Therefore it is
+important to measure and log the event when a table is cleared.
 
-Update the device data with the new values for IMA measurements.  Measure
-both old and new device name/UUID parameters in the same IMA measurement
-event, so that the old and the new values can be connected later.
+Measure device parameters, and table hashes when the inactive table slot
+is cleared.
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 ---
- drivers/md/dm-ima.c   | 49 +++++++++++++++++++++++++++++++++++++++++++
- drivers/md/dm-ima.h   |  1 +
- drivers/md/dm-ioctl.c |  3 +++
- 3 files changed, 53 insertions(+)
+ drivers/md/dm-ima.c   | 93 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/md/dm-ima.h   |  2 +
+ drivers/md/dm-ioctl.c |  3 ++
+ 3 files changed, 98 insertions(+)
 
 diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-index b1e1cf6bb4e7..36f99848825a 100644
+index 47eca432a21a..b1e1cf6bb4e7 100644
 --- a/drivers/md/dm-ima.c
 +++ b/drivers/md/dm-ima.c
-@@ -664,12 +664,61 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
- 	kfree(device_table_data);
+@@ -572,11 +572,104 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+ 	kfree(dev_uuid);
  }
  
 +/*
-+ * Measure IMA data on device rename.
++ * Measure ima data on table clear.
 + */
-+void dm_ima_measure_on_device_rename(struct mapped_device *md)
++void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
 +{
-+	char *old_device_data = NULL, *new_device_data = NULL, *combined_device_data = NULL;
-+	char *new_dev_name = NULL, *new_dev_uuid = NULL, *capacity_str = NULL;
++	unsigned int l = 0, capacity_len = 0;
++	char *device_table_data = NULL, *dev_name = NULL, *dev_uuid = NULL, *capacity_str = NULL;
++	char inactive_str[] = "inactive_table_hash=";
++	unsigned int inactive_len = strlen(inactive_str);
 +	bool noio = true;
 +	int r;
 +
-+	if (dm_ima_alloc_and_copy_device_data(md, &new_device_data,
-+					      md->ima.active_table.num_targets, noio))
++	device_table_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN, GFP_KERNEL, noio);
++	if (!device_table_data)
 +		return;
-+
-+	if (dm_ima_alloc_and_copy_name_uuid(md, &new_dev_name, &new_dev_uuid, noio))
-+		goto error;
-+
-+	combined_device_data = dm_ima_alloc(DM_IMA_DEVICE_BUF_LEN * 2, GFP_KERNEL, noio);
-+	if (!combined_device_data)
-+		goto error;
 +
 +	r = dm_ima_alloc_and_copy_capacity_str(md, &capacity_str, noio);
 +	if (r)
-+		goto error;
++		goto error1;
 +
-+	old_device_data = md->ima.active_table.device_metadata;
++	if (md->ima.inactive_table.device_metadata_len &&
++	    md->ima.inactive_table.hash_len) {
++		memcpy(device_table_data + l, md->ima.inactive_table.device_metadata,
++		       md->ima.inactive_table.device_metadata_len);
++		l += md->ima.inactive_table.device_metadata_len;
 +
-+	md->ima.active_table.device_metadata = new_device_data;
-+	md->ima.active_table.device_metadata_len = strlen(new_device_data);
++		memcpy(device_table_data + l, inactive_str, inactive_len);
++		l += inactive_len;
 +
-+	scnprintf(combined_device_data, DM_IMA_DEVICE_BUF_LEN * 2, "%snew_name=%s,new_uuid=%s;%s",
-+		  old_device_data, new_dev_name, new_dev_uuid, capacity_str);
++		memcpy(device_table_data + l, md->ima.inactive_table.hash,
++			   md->ima.inactive_table.hash_len);
 +
-+	dm_ima_measure_data("device_rename", combined_device_data, strlen(combined_device_data),
-+			    noio);
++		l += md->ima.inactive_table.hash_len;
 +
-+	goto exit;
++		memcpy(device_table_data + l, ";", 1);
++		l++;
++	}
 +
-+error:
-+	kfree(new_device_data);
-+exit:
++	if (!l) {
++		if (dm_ima_alloc_and_copy_name_uuid(md, &dev_name, &dev_uuid, noio))
++			goto error2;
++
++		scnprintf(device_table_data, DM_IMA_DEVICE_BUF_LEN,
++			  "name=%s,uuid=%s;table_clear=no_data;", dev_name, dev_uuid);
++		l += strlen(device_table_data);
++	}
++
++	capacity_len = strlen(capacity_str);
++	memcpy(device_table_data + l, capacity_str, capacity_len);
++	l += capacity_len;
++
++	dm_ima_measure_data("table_clear", device_table_data, l, noio);
++
++	if (new_map) {
++		if (md->ima.inactive_table.hash &&
++		    md->ima.inactive_table.hash != md->ima.active_table.hash)
++			kfree(md->ima.inactive_table.hash);
++
++		md->ima.inactive_table.hash = NULL;
++		md->ima.inactive_table.hash_len = 0;
++
++		if (md->ima.inactive_table.device_metadata &&
++		    md->ima.inactive_table.device_metadata != md->ima.active_table.device_metadata)
++			kfree(md->ima.inactive_table.device_metadata);
++
++		md->ima.inactive_table.device_metadata = NULL;
++		md->ima.inactive_table.device_metadata_len = 0;
++		md->ima.inactive_table.num_targets = 0;
++
++		if (md->ima.active_table.hash) {
++			md->ima.inactive_table.hash = md->ima.active_table.hash;
++			md->ima.inactive_table.hash_len = md->ima.active_table.hash_len;
++		}
++
++		if (md->ima.active_table.device_metadata) {
++			md->ima.inactive_table.device_metadata =
++				md->ima.active_table.device_metadata;
++			md->ima.inactive_table.device_metadata_len =
++				md->ima.active_table.device_metadata_len;
++			md->ima.inactive_table.num_targets =
++				md->ima.active_table.num_targets;
++		}
++	}
++
++	kfree(dev_name);
++	kfree(dev_uuid);
++error2:
 +	kfree(capacity_str);
-+	kfree(combined_device_data);
-+	kfree(old_device_data);
-+	kfree(new_dev_name);
-+	kfree(new_dev_uuid);
++error1:
++	kfree(device_table_data);
 +}
 +
  #else
@@ -125,36 +169,49 @@ index b1e1cf6bb4e7..36f99848825a 100644
  void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags) {}
  void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap) {}
  void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all) {}
- void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map) {}
-+void dm_ima_measure_on_device_rename(struct mapped_device *md) {}
++void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map) {}
  #endif
  MODULE_AUTHOR("Tushar Sugandhi <tusharsu@linux.microsoft.com>");
  MODULE_DESCRIPTION("Enables IMA measurements for DM targets");
 diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
-index a17ae953dc67..b1cf014d538d 100644
+index cb7b883ed35b..a17ae953dc67 100644
 --- a/drivers/md/dm-ima.h
 +++ b/drivers/md/dm-ima.h
-@@ -51,5 +51,6 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
+@@ -50,4 +50,6 @@ void dm_ima_reset_data(struct mapped_device *md);
+ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags);
  void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap);
  void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all);
- void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map);
-+void dm_ima_measure_on_device_rename(struct mapped_device *md);
- 
++void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map);
++
  #endif /*DM_IMA_H*/
 diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-index b07c19037c7c..e45f6c6ef84a 100644
+index 2d4475f6de7d..b07c19037c7c 100644
 --- a/drivers/md/dm-ioctl.c
 +++ b/drivers/md/dm-ioctl.c
-@@ -485,6 +485,9 @@ static struct mapped_device *dm_hash_rename(struct dm_ioctl *param,
- 		param->flags |= DM_UEVENT_GENERATED_FLAG;
+@@ -1508,6 +1508,7 @@ static int table_clear(struct file *filp, struct dm_ioctl *param, size_t param_s
+ 	struct hash_cell *hc;
+ 	struct mapped_device *md;
+ 	struct dm_table *old_map = NULL;
++	bool has_new_map = false;
  
- 	md = hc->md;
-+
-+	dm_ima_measure_on_device_rename(md);
-+
- 	up_write(&_hash_lock);
- 	kfree(old_name);
+ 	down_write(&_hash_lock);
  
+@@ -1521,6 +1522,7 @@ static int table_clear(struct file *filp, struct dm_ioctl *param, size_t param_s
+ 	if (hc->new_map) {
+ 		old_map = hc->new_map;
+ 		hc->new_map = NULL;
++		has_new_map = true;
+ 	}
+ 
+ 	param->flags &= ~DM_INACTIVE_PRESENT_FLAG;
+@@ -1532,6 +1534,7 @@ static int table_clear(struct file *filp, struct dm_ioctl *param, size_t param_s
+ 		dm_sync_table(md);
+ 		dm_table_destroy(old_map);
+ 	}
++	dm_ima_measure_on_table_clear(md, has_new_map);
+ 	dm_put(md);
+ 
+ 	return 0;
 -- 
 2.25.1
 
