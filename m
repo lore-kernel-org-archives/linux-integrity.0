@@ -7,99 +7,98 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E021FC636CA
-	for <linux-integrity@archiver.kernel.org>; Fri, 16 Jul 2021 14:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D09E5C07E95
+	for <linux-integrity@archiver.kernel.org>; Fri, 16 Jul 2021 14:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C910E613F5
-	for <linux-integrity@archiver.kernel.org>; Fri, 16 Jul 2021 14:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8D34613E8
+	for <linux-integrity@archiver.kernel.org>; Fri, 16 Jul 2021 14:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240071AbhGPOIm (ORCPT
+        id S233208AbhGPOI6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 16 Jul 2021 10:08:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29812 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232808AbhGPOIl (ORCPT
+        Fri, 16 Jul 2021 10:08:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61294 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232808AbhGPOI6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 16 Jul 2021 10:08:41 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16GE4Bpo077732
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 10:05:46 -0400
+        Fri, 16 Jul 2021 10:08:58 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16GE63bg083115
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 10:06:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=qYPgEZPqwTCCMUFMpiyJc1dz88+EcRE48GzLcnLvHh4=;
- b=sTQ7UzODBkJzvqU2BGPPwcSxML7eVL74+S1/ZThOnM7fPPo606M2LximUBl9iSHSFSZV
- eO5RL7vT3rwikJ5QKlPuR1iM3gytpf0jmqb+aHpz9DMTk1/7cq8Poc/ApKZMZftvwrdj
- ErJkgPeB5E6aCTuU6vZXTrOthzKCNT8JPx9fJPvgUVorBt8+RrSwMQWtYPkEsIOD/3K6
- WOqAncoNGAisAIRQCg8JRccbkwPrfRClnW90ulcu/rbqDP9ZLdvG5z5P2Nj5NmkNgyF0
- SGSn74KWOj+MB9W92LCqMzB6NKW/Y/m7zrD/KnPQrWmycC8i4hbm9YHt7u0FvO69BS5h Vw== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39tw2rxhgx-1
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=R1MlYflbXimauDrpWivqL9bNY2A+y+SCJxjUOsos+Ns=;
+ b=OnBmts9lk29+17euoY9EawcLNFetANdPcTed0A5dz4FshQ1LKPiYxgGwBOVz0iNLQyCC
+ bF0R5seNc/U644pRKgg7yjmds36xRn0VtH6vyZD4CZkJ5a2ooqTDbEZDW5X892tbJY6/
+ TVPRhfr5k0EHcsVEwDYZQ7Wv9qGHClmWd2QHGBrXDJeM1IXT4+eLMhhlA40k0zQyhiFq
+ qUojEHzZaTVz8wU1xpEce7iPPc63MNWJs8O8U/EVDZwz9un0XsHKEO3dy7tLI26E+1Pd
+ H54JjuEjrNjKwPM6hGLNKSqpDWBO4N2hPM7hEZ0WiKCZ0wfn5FlHfpsFoumpnpLsDeKM tQ== 
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39twha6c8n-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 10:05:46 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16GE4Nkx017074
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 14:05:44 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma04ams.nl.ibm.com with ESMTP id 39q368asap-1
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 10:05:53 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16GE3pmc006777
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 14:05:40 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma02fra.de.ibm.com with ESMTP id 39s3p78w82-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 14:05:44 +0000
+        for <linux-integrity@vger.kernel.org>; Fri, 16 Jul 2021 14:05:40 +0000
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16GE5fbK13041972
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16GE3Ott35127658
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Jul 2021 14:05:41 GMT
+        Fri, 16 Jul 2021 14:03:24 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D00E5204F;
-        Fri, 16 Jul 2021 14:05:41 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D5EAE52057;
+        Fri, 16 Jul 2021 14:05:36 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.55.33])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 42CF652054;
-        Fri, 16 Jul 2021 14:05:40 +0000 (GMT)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 3848652050;
+        Fri, 16 Jul 2021 14:05:36 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH ima-evm-utils 3/3] Remove unnecessary NULL pointer test
-Date:   Fri, 16 Jul 2021 10:05:31 -0400
-Message-Id: <20210716140531.945013-3-zohar@linux.ibm.com>
+Subject: [PATCH ima-evm-utils 1/3] Fix out-of-bounds read
+Date:   Fri, 16 Jul 2021 10:05:29 -0400
+Message-Id: <20210716140531.945013-1-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210716140531.945013-1-zohar@linux.ibm.com>
-References: <20210716140531.945013-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2iwl7EZCcimy-kqh6nWpU-ymmlVJvWcS
-X-Proofpoint-ORIG-GUID: 2iwl7EZCcimy-kqh6nWpU-ymmlVJvWcS
+X-Proofpoint-ORIG-GUID: jLkjiYMz26YtYcnr0ZxCvxnz-mYsqxl8
+X-Proofpoint-GUID: jLkjiYMz26YtYcnr0ZxCvxnz-mYsqxl8
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
  definitions=2021-07-16_04:2021-07-16,2021-07-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- mlxscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104190000 definitions=main-2107160086
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0 adultscore=0
+ phishscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2107160086
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove the "Logically dead code (DEADCODE)" as reported by Coverity.
+Coverity reported "overrunning an array".  Properly clear only the
+remaining unused buffer memory.
 
-Fixes: 9c79b7de7231 ("ima-evm-utils: support verifying the measurement list using multiple keys")
+Fixes: 874c0fd45cab ("EVM hmac calculation")
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/libimaevm.c | 2 --
- 1 file changed, 2 deletions(-)
+ src/evmctl.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 261712717368..925c3cccf964 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -392,8 +392,6 @@ void init_public_keys(const char *keyfiles)
- 	keyfiles_free = tmp_keyfiles;
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 04f14af9ab29..e1464ade4837 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -1108,7 +1108,8 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
  
- 	while ((keyfile = strsep(&tmp_keyfiles, ", \t")) != NULL) {
--		if (!keyfile)
--			break;
- 		if ((*keyfile == '\0') || (*keyfile == ' ') ||
- 		    (*keyfile == '\t'))
- 			continue;
+ 	/* EVM key is 128 bytes */
+ 	memcpy(evmkey, key, keylen);
+-	memset(evmkey + keylen, 0, sizeof(evmkey) - keylen);
++	if (keylen < sizeof(evmkey))
++		memset(evmkey + keylen, 0, sizeof(evmkey) - keylen);
+ 
+ 	if (lstat(file, &st)) {
+ 		log_err("Failed to stat: %s\n", file);
 -- 
 2.27.0
 
