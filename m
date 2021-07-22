@@ -2,137 +2,101 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 387EAC63797
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 13:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F83C6377D
+	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 17:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2213E61249
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 13:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878156101B
+	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 17:34:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232064AbhGVNJn (ORCPT
+        id S230149AbhGVQyN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 22 Jul 2021 09:09:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39162 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231925AbhGVNJn (ORCPT
+        Thu, 22 Jul 2021 12:54:13 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3453 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230054AbhGVQyK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:09:43 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16MDX0E3128636;
-        Thu, 22 Jul 2021 09:50:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=kos3FVmTd7oXvlZ3XCZRWpWrBVMFG6Ui1FBGEyaRtbM=;
- b=DAyvb9xvFE2UQS0Zg29ILghYMai1hPTyTS1IjqmMirx29XIBVi16ARu24ieY7aMdoZ/U
- LT8kv5W08Yl0FhygOB9/wJSDgUtTBB2rPmMrrv3OTsCQrtVAx8tzbxVocRekDFegYoUR
- rOilz2tiKreRQJbwnQFnbQXfyVSYnys6kvnyMlqeIwh6QGaXmeYUQGxJ3h2BbyhOnJfN
- 6Xlubt9owPftU0vPOHKrnutK9JaxxwSHSoaXn5D8hrZi53EjvPwuwUh0BpO+QlODWDyP
- rfoxXyzLKTpo9tWb0PSPjesK7ApBo5KdrVDRkmtvrMb0oPtAo9QnxqYV+WyrwIoUn0D7 0A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39y8xahu24-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jul 2021 09:50:15 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16MDXeMb136193;
-        Thu, 22 Jul 2021 09:50:15 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39y8xahtyw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jul 2021 09:50:15 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16MDlGuG008371;
-        Thu, 22 Jul 2021 13:50:12 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 39vng724gw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Jul 2021 13:50:12 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16MDlfMx23921074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Jul 2021 13:47:41 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0D3D11C054;
-        Thu, 22 Jul 2021 13:50:09 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3B6B11C04A;
-        Thu, 22 Jul 2021 13:50:07 +0000 (GMT)
-Received: from sig-9-65-201-143.ibm.com (unknown [9.65.201.143])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Jul 2021 13:50:07 +0000 (GMT)
-Message-ID: <decadc5869f3de0bc78f783703e5ca9286f42522.camel@linux.ibm.com>
-Subject: Re: [syzbot] possible deadlock in mnt_want_write (2)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>,
-        Hillf Danton <hdanton@sina.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Date:   Thu, 22 Jul 2021 09:50:06 -0400
-In-Reply-To: <CAJfpegsYNcv+mEVpLBxVGSQhXr0Q_UnOUC1VkYuYB=xzRt+f-A@mail.gmail.com>
-References: <00000000000067d24205c4d0e599@google.com>
-         <CAJfpegsYNcv+mEVpLBxVGSQhXr0Q_UnOUC1VkYuYB=xzRt+f-A@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: jNI6zunxBaehC_v-7eAEcm_fNZPdIjc1
-X-Proofpoint-ORIG-GUID: v1AYLtooOcVymVRZmDtX_OfRce_DyXX7
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 22 Jul 2021 12:54:10 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GVzqw0Wdtz6DGqg;
+        Fri, 23 Jul 2021 01:25:48 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 22 Jul 2021 19:34:43 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>
+CC:     <pvorel@suse.cz>, <vt@altlinux.org>,
+        <linux-integrity@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH ima-evm-utils 2/7] Download mount-idmapped
+Date:   Thu, 22 Jul 2021 19:34:09 +0200
+Message-ID: <20210722173414.1738041-3-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210722173414.1738041-1-roberto.sassu@huawei.com>
+References: <20210722173414.1738041-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-22_07:2021-07-22,2021-07-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 clxscore=1011 mlxlogscore=930 mlxscore=0 spamscore=0
- malwarescore=0 bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107220091
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[CC'ing Hillf Danton <hdanton@sina.com>]
+mount-idmapped is a tool to create idmapped mounts, a feature recently
+integrated in kernel 5.12 and that allows processes to see a different UID
+and GID on that mount.
 
-Hi Miklos,
+This patch downloads (errors are ignored) an artifact from
+$MOUNT_IDMAPPED_URL/mount-idmapped, where MOUNT_IDMAPPED_URL is an
+environment variable to be set in the configuration of the testing platform
+(for Github Actions, the variable should be added in an environment named
+'test').
 
-On Mon, 2021-07-19 at 17:11 +0200, Miklos Szeredi wrote:
-> [CC: linux-intergrity]
-> 
-> On Tue, 15 Jun 2021 at 18:59, syzbot
-> <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    06af8679 coredump: Limit what can interrupt coredumps
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=162f99afd00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=547a5e42ca601229
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
-> > compiler:       Debian clang version 11.0.1-2
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ .github/workflows/ci.yml | 4 ++++
+ .travis.yml              | 5 +++++
+ 2 files changed, 9 insertions(+)
 
-There was a similar syzbot report and followup discussion [1].  
-According to Amir Goldstein,  it's a false positive lockdep warning.  
-At this point we understand how to fix the problem, but are waiting for
-a reproducer.
-
-thanks,
-
-Mimi
-
-[1] Message-Id: <20210616090142.734-1-hdanton@sina.com>
-
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
-
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 51f7dbe0aaa6..4cfffbbd85f7 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -140,6 +140,10 @@ jobs:
+         if [ -f linux ]; then
+                 chmod +x linux
+         fi
++        curl -L ${{ secrets.MOUNT_IDMAPPED_URL }}/mount-idmapped -s -f --output mount-idmapped || echo
++        if [ -f mount-idmapped ]; then
++                chmod +x mount-idmapped
++        fi
+ 
+     - name: Compiler version
+       run: $CC --version
+diff --git a/.travis.yml b/.travis.yml
+index 23c220e857b6..f3e3d93e1907 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -104,6 +104,11 @@ before_install:
+         if [ -f "linux" ]; then
+                 chmod +x linux
+         fi
++    - curl -L $MOUNT_IDMAPPED_URL/mount-idmapped -s -f --output mount-idmapped || echo
++    - >
++        if [ -f "mount-idmapped" ]; then
++                chmod +x mount-idmapped
++        fi
+     - $CONTAINER build $CONTAINER_ARGS -t ima-evm-utils .
+ 
+ script:
+-- 
+2.25.1
 
