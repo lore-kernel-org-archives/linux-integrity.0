@@ -2,198 +2,141 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119F0C63797
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 09:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065F8C6377D
+	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 12:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E65F661221
-	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 09:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD3BD6128A
+	for <linux-integrity@archiver.kernel.org>; Thu, 22 Jul 2021 12:28:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231463AbhGVIik (ORCPT
+        id S231789AbhGVLsC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 22 Jul 2021 04:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58928 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbhGVIiL (ORCPT
+        Thu, 22 Jul 2021 07:48:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9428 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231772AbhGVLsC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 22 Jul 2021 04:38:11 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5B13C0613D5
-        for <linux-integrity@vger.kernel.org>; Thu, 22 Jul 2021 02:18:42 -0700 (PDT)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1m6UqE-0001NM-VX; Thu, 22 Jul 2021 11:18:06 +0200
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1m6UqC-0001Cr-FA; Thu, 22 Jul 2021 11:18:04 +0200
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Song Liu <song@kernel.org>, Richard Weinberger <richard@nod.at>
-Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: [RFC PATCH v1 2/4] dm: crypt: use new key_extract_material helper
-Date:   Thu, 22 Jul 2021 11:18:00 +0200
-Message-Id: <7ac4a9ae0a3c2dfdf41611f3fe78fe63a6e57b94.1626945419.git-series.a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.b2fdd70b830d12853b12a12e32ceb0c8162c1346.1626945419.git-series.a.fatoum@pengutronix.de>
-References: <cover.b2fdd70b830d12853b12a12e32ceb0c8162c1346.1626945419.git-series.a.fatoum@pengutronix.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
+        Thu, 22 Jul 2021 07:48:02 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16MC5UHD167297;
+        Thu, 22 Jul 2021 08:28:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : date : in-reply-to : references : content-type : mime-version
+ : content-transfer-encoding; s=pp1;
+ bh=ZnQxz/2pCHWa04niLAMnLAINUmWogN3eROPizQ9ia2s=;
+ b=gNzXUDecHgZ0iGaMiDIYZZATPyicshKq9cP6El8vKKQZJiM4r09NE0fR7KM5Y0YVMezc
+ GVKSZ1UaCL1WUL4nOziFLvnpK8EUQ79TjB09Swtw3HmzNgPUwchRSou8Oq/YcYDd0Big
+ DLGAcJGYKqzvf8rl/8WAJTv1bOsVlu6c2eEn13fzyyWuf/c83/cwwuEJ4q2BIDA2s5J/
+ /c1Q9ssKAGX+Nw9waZ16oLyB3U1fdUD/wXw9iw5h2Qea7klEwuXSFYGAE/0pQZ9IizIU
+ VnRKP5UFzMXvLDtncll3JhurThViHXges5jY8UIE+Zj2C3SH/2e/WwDWoGIMUj8en7rK Ew== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39y7wrhfut-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jul 2021 08:28:29 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16MC6JuX171569;
+        Thu, 22 Jul 2021 08:28:29 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39y7wrhfts-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jul 2021 08:28:29 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16MCCQnu004739;
+        Thu, 22 Jul 2021 12:28:27 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma01fra.de.ibm.com with ESMTP id 39upu89fxt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Jul 2021 12:28:26 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16MCSOes30998864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Jul 2021 12:28:24 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0FFFA4057;
+        Thu, 22 Jul 2021 12:28:23 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 44ABFA4059;
+        Thu, 22 Jul 2021 12:28:22 +0000 (GMT)
+Received: from sig-9-65-201-143.ibm.com (unknown [9.65.201.143])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Jul 2021 12:28:22 +0000 (GMT)
+Message-ID: <22d8ae657783ae11ad5bb0cca8346d45d1011733.camel@linux.ibm.com>
+Subject: Re: [PATCH ima-evm-utils] ima-evm-utils: Fix incorrect algorithm
+ name in hash_info.gen
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Petr Vorel <pvorel@suse.cz>, Vitaly Chikunov <vt@altlinux.org>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        Jia Zhang <zhang.jia@linux.alibaba.com>,
+        "YiLin . Li" <YiLin.Li@linux.alibaba.com>
+Date:   Thu, 22 Jul 2021 08:28:21 -0400
+In-Reply-To: <20210722052704.11031-1-tianjia.zhang@linux.alibaba.com>
+References: <20210722052704.11031-1-tianjia.zhang@linux.alibaba.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JHh5RnmPW9p31jbE5u6b95aroYFqfc1A
+X-Proofpoint-ORIG-GUID: JFFEa365ynn1guD4zGEL_WXm5TCTNJt-
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-22_04:2021-07-22,2021-07-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 impostorscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107220081
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There is a common function now to extract key material out of a few
-different key types, which includes all types currently supported by
-dm-crypt. Make use of it.
+Hi Tianjia,
 
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-To: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Morris <jmorris@namei.org>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-To: Alasdair Kergon <agk@redhat.com>
-To: Mike Snitzer <snitzer@redhat.com>
-To: dm-devel@redhat.com
-To: Song Liu <song@kernel.org>
-To: Richard Weinberger <richard@nod.at>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-raid@vger.kernel.org
-Cc: keyrings@vger.kernel.org
-Cc: linux-mtd@lists.infradead.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
----
- drivers/md/dm-crypt.c | 65 ++++++--------------------------------------
- 1 file changed, 9 insertions(+), 56 deletions(-)
+On Thu, 2021-07-22 at 13:27 +0800, Tianjia Zhang wrote:
+> There is no such an algorithm name as sm3-256. This is an ambiguity
+> caused by the definition of the macro HASH_ALGO_SM3_256. The sed
+> command is only a special case of sm3, so sm3 is used to replace
+> the sm3-256 algorithm name.
+> 
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
+>  src/.gitignore    | 1 +
+>  src/hash_info.gen | 2 +-
+>  2 files changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/src/.gitignore b/src/.gitignore
+> index 38e8e3c..69d2988 100644
+> --- a/src/.gitignore
+> +++ b/src/.gitignore
+> @@ -1 +1,2 @@
+>  hash_info.h
+> +tmp_hash_info.h
+> diff --git a/src/hash_info.gen b/src/hash_info.gen
+> index 5f7a97f..f72db37 100755
+> --- a/src/hash_info.gen
+> +++ b/src/hash_info.gen
+> @@ -86,7 +86,7 @@ sed -n 's/HASH_ALGO_\(.*\),/\1 \L\1\E/p' $HASH_INFO | \
+>    while read a b; do
+>      # Normalize text hash name: if it contains underscore between
+>      # digits replace it with a dash, other underscores are removed.
+> -    b=$(echo "$b" | sed "s/\([0-9]\)_\([0-9]\)/\1-\2/g;s/_//g")
+> +    b=$(echo "$b" | sed "s/sm3_256/sm3/g;s/_//g")
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 50f4cbd600d5..576d6b7ce231 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2421,61 +2421,14 @@ static bool contains_whitespace(const char *str)
- 	return false;
- }
- 
--static int set_key_user(struct crypt_config *cc, struct key *key)
--{
--	const struct user_key_payload *ukp;
--
--	ukp = user_key_payload_locked(key);
--	if (!ukp)
--		return -EKEYREVOKED;
--
--	if (cc->key_size != ukp->datalen)
--		return -EINVAL;
--
--	memcpy(cc->key, ukp->data, cc->key_size);
--
--	return 0;
--}
--
--static int set_key_encrypted(struct crypt_config *cc, struct key *key)
--{
--	const struct encrypted_key_payload *ekp;
--
--	ekp = key->payload.data[0];
--	if (!ekp)
--		return -EKEYREVOKED;
--
--	if (cc->key_size != ekp->decrypted_datalen)
--		return -EINVAL;
--
--	memcpy(cc->key, ekp->decrypted_data, cc->key_size);
--
--	return 0;
--}
--
--static int set_key_trusted(struct crypt_config *cc, struct key *key)
--{
--	const struct trusted_key_payload *tkp;
--
--	tkp = key->payload.data[0];
--	if (!tkp)
--		return -EKEYREVOKED;
--
--	if (cc->key_size != tkp->key_len)
--		return -EINVAL;
--
--	memcpy(cc->key, tkp->key, cc->key_size);
--
--	return 0;
--}
--
- static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string)
- {
- 	char *new_key_string, *key_desc;
- 	int ret;
-+	unsigned int len;
- 	struct key_type *type;
- 	struct key *key;
--	int (*set_key)(struct crypt_config *cc, struct key *key);
-+	const void *key_material;
- 
- 	/*
- 	 * Reject key_string with whitespace. dm core currently lacks code for
-@@ -2493,18 +2446,14 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
- 
- 	if (!strncmp(key_string, "logon:", key_desc - key_string + 1)) {
- 		type = &key_type_logon;
--		set_key = set_key_user;
- 	} else if (!strncmp(key_string, "user:", key_desc - key_string + 1)) {
- 		type = &key_type_user;
--		set_key = set_key_user;
- 	} else if (IS_ENABLED(CONFIG_ENCRYPTED_KEYS) &&
- 		   !strncmp(key_string, "encrypted:", key_desc - key_string + 1)) {
- 		type = &key_type_encrypted;
--		set_key = set_key_encrypted;
- 	} else if (IS_ENABLED(CONFIG_TRUSTED_KEYS) &&
- 	           !strncmp(key_string, "trusted:", key_desc - key_string + 1)) {
- 		type = &key_type_trusted;
--		set_key = set_key_trusted;
- 	} else {
- 		return -EINVAL;
- 	}
-@@ -2521,14 +2470,18 @@ static int crypt_set_keyring_key(struct crypt_config *cc, const char *key_string
- 
- 	down_read(&key->sem);
- 
--	ret = set_key(cc, key);
--	if (ret < 0) {
-+	key_material = key_extract_material(key, &len);
-+	if (!IS_ERR(key_material) && len != cc->key_size)
-+		key_material = ERR_PTR(-EINVAL);
-+	if (IS_ERR(key_material)) {
- 		up_read(&key->sem);
- 		key_put(key);
- 		kfree_sensitive(new_key_string);
--		return ret;
-+		return PTR_ERR(key_material);
- 	}
- 
-+	memcpy(cc->key, key_material, len);
-+
- 	up_read(&key->sem);
- 	key_put(key);
- 
--- 
-git-series 0.9.1
+Please update the comment associated with this change.
+
+thanks,
+
+Mimi
+
+>      printf '\t%-26s = "%s",\n' "[HASH_ALGO_$a]" "$b"
+>    done
+>  echo "};
+
+
+
+
