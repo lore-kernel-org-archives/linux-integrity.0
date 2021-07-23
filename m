@@ -2,232 +2,127 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B50DC43214
-	for <linux-integrity@archiver.kernel.org>; Fri, 23 Jul 2021 08:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC23BC4338F
+	for <linux-integrity@archiver.kernel.org>; Fri, 23 Jul 2021 11:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7842D60F25
-	for <linux-integrity@archiver.kernel.org>; Fri, 23 Jul 2021 08:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF7AA60EBD
+	for <linux-integrity@archiver.kernel.org>; Fri, 23 Jul 2021 11:36:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234517AbhGWINC (ORCPT
+        id S232681AbhGWKz6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 23 Jul 2021 04:13:02 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3461 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234105AbhGWIM7 (ORCPT
+        Fri, 23 Jul 2021 06:55:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231703AbhGWKz5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Jul 2021 04:12:59 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GWN5C5QKLz6D8Vw;
-        Fri, 23 Jul 2021 16:38:39 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 23 Jul 2021 10:53:30 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <paul@paul-moore.com>
-CC:     <stephen.smalley.work@gmail.com>, <prsriva02@gmail.com>,
-        <tusharsu@linux.microsoft.com>, <nramas@linux.microsoft.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 2/3] ima: Return int in the functions to measure a buffer
-Date:   Fri, 23 Jul 2021 10:53:03 +0200
-Message-ID: <20210723085304.1760138-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210723085304.1760138-1-roberto.sassu@huawei.com>
-References: <20210723085304.1760138-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+        Fri, 23 Jul 2021 06:55:57 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16NBXjuC033153;
+        Fri, 23 Jul 2021 07:36:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : date : in-reply-to : references : content-type : mime-version
+ : content-transfer-encoding; s=pp1;
+ bh=EJjeS9McCvhUbjQPyK4pJH9oe5ZeqUnvGsm+FWcPcFY=;
+ b=ng2YdhAWBHuKvzb5lOg0Z5lgSUtHu6Z2whVR3U5CrUVekALKflwvEETvWjAwlSId/Vkd
+ 3gzLvGuzR0c/t1qZpxS2xZcNXONLJkH9vBJOmX08ljJ61itnqTAvCgOgQpqaGVSPklKd
+ ExRwY0VdS9z3SToeMEPzjKRJ49WdTm5NqtxOqYu+djzCpvc3KZXYdfC6YaLhLSPbeZze
+ 3rRz3JquCw4+xNbG5JSfw9b3qnHRdeg9A019ebjQlzulyT52EhdO7BAJH0e0cB9pVSbY
+ fjwCUmTmt+X2/T2b5Eh7wl9cq1qNr83iFTM7m4HEvyJvfMlbI0EwizHKdUqcK+83a07s jg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39yuubt2hy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jul 2021 07:36:31 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16NBXl28033378;
+        Fri, 23 Jul 2021 07:36:30 -0400
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39yuubt2gn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jul 2021 07:36:30 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16NBWfmx032273;
+        Fri, 23 Jul 2021 11:36:28 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma01fra.de.ibm.com with ESMTP id 39upu89tym-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Jul 2021 11:36:28 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16NBaPFn29360572
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Jul 2021 11:36:25 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CC15A42047;
+        Fri, 23 Jul 2021 11:36:25 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B386142042;
+        Fri, 23 Jul 2021 11:36:24 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.74.193])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 23 Jul 2021 11:36:24 +0000 (GMT)
+Message-ID: <7841c6025e3f51db3cd74a330d37ae333d041dc5.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 2/3] IMA: add policy support for restricting the
+ accepted hash algorithms
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        BARVAUX Didier <Didier.BARVAUX@viveris.fr>
+Date:   Fri, 23 Jul 2021 07:36:23 -0400
+In-Reply-To: <20210720092404.120172-3-simon.thoby@viveris.fr>
+References: <20210720092404.120172-1-simon.thoby@viveris.fr>
+         <20210720092404.120172-3-simon.thoby@viveris.fr>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gLufMrZVcbYApRcWz3dGVVRYKMFwPBmK
+X-Proofpoint-GUID: HZpAg9kcWn5GUtLAcQqd9qApHZvDdYH7
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-23_05:2021-07-23,2021-07-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 priorityscore=1501 suspectscore=0 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107230068
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-ima_measure_critical_data() and process_buffer_measurement() currently
-don't return a result as, unlike appraisal-related functions, the result is
-not used by callers to deny an operation. Measurement-related functions
-instead rely on the audit subsystem to notify the system administrator when
-an error occurs.
+Hi Simon,
 
-However, ima_measure_critical_data() and process_buffer_measurement() are a
-special case, as these are the only functions that can return a buffer
-measurement (for files, there is ima_file_hash()). In a subsequent patch,
-they will be modified to return the calculated digest.
+On Tue, 2021-07-20 at 09:25 +0000, THOBY Simon wrote:
+> This patch defines a new IMA policy rule option "appraise_hash=",
+> that restricts the hash algorithms accepted for the extended attribute
+> security.ima when appraising.
+> This patch is *not* self-contained, as it plugs in the support for
+> parsing the parameter and showing it to the user, but it doesn't enforce
+> the hashes yet, this will come in a subsequent patch.
 
-In preparation to return the result of the digest calculation, this patch
-modifies the return type from void to int, and returns 0 if the buffer has
-been successfully measured, a negative value otherwise.
+Right, in order for the patch set to be bisect safe, the order of
+patches 2 & 3 should be reversed.  First implement the support, then
+add the policy rule support.  Otherwise the policy rules could be
+processed, but not enforced.
 
-Given that the result of the measurement is still not necessary, this patch
-does not modify the behavior of existing callers by processing the returned
-value. For those, the return value is ignored.
+thanks,
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Acked-by: Paul Moore <paul@paul-moore.com> (for the SELinux bits)
----
- include/linux/ima.h               | 15 +++++++-----
- security/integrity/ima/ima.h      | 10 ++++----
- security/integrity/ima/ima_main.c | 40 ++++++++++++++++++-------------
- 3 files changed, 37 insertions(+), 28 deletions(-)
+Mimi
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 81e830d01ced..60492263aa64 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -35,10 +35,10 @@ extern void ima_post_path_mknod(struct user_namespace *mnt_userns,
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
--extern void ima_measure_critical_data(const char *event_label,
--				      const char *event_name,
--				      const void *buf, size_t buf_len,
--				      bool hash);
-+extern int ima_measure_critical_data(const char *event_label,
-+				     const char *event_name,
-+				     const void *buf, size_t buf_len,
-+				     bool hash);
- 
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
- extern void ima_appraise_parse_cmdline(void);
-@@ -144,10 +144,13 @@ static inline int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size
- 
- static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
- 
--static inline void ima_measure_critical_data(const char *event_label,
-+static inline int ima_measure_critical_data(const char *event_label,
- 					     const char *event_name,
- 					     const void *buf, size_t buf_len,
--					     bool hash) {}
-+					     bool hash)
-+{
-+	return -ENOENT;
-+}
- 
- #endif /* CONFIG_IMA */
- 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index f0e448ed1f9f..03db221324c3 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -264,11 +264,11 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
- 			   struct evm_ima_xattr_data *xattr_value,
- 			   int xattr_len, const struct modsig *modsig, int pcr,
- 			   struct ima_template_desc *template_desc);
--void process_buffer_measurement(struct user_namespace *mnt_userns,
--				struct inode *inode, const void *buf, int size,
--				const char *eventname, enum ima_hooks func,
--				int pcr, const char *func_data,
--				bool buf_hash);
-+int process_buffer_measurement(struct user_namespace *mnt_userns,
-+			       struct inode *inode, const void *buf, int size,
-+			       const char *eventname, enum ima_hooks func,
-+			       int pcr, const char *func_data,
-+			       bool buf_hash);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8ef1fa357e0c..b512c06d8ee1 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -827,7 +827,7 @@ int ima_post_load_data(char *buf, loff_t size,
- 	return 0;
- }
- 
--/*
-+/**
-  * process_buffer_measurement - Measure the buffer or the buffer data hash
-  * @mnt_userns:	user namespace of the mount the inode was found from
-  * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
-@@ -840,12 +840,15 @@ int ima_post_load_data(char *buf, loff_t size,
-  * @buf_hash: measure buffer data hash
-  *
-  * Based on policy, either the buffer data or buffer data hash is measured
-+ *
-+ * Return: 0 if the buffer has been successfully measured, a negative value
-+ * otherwise.
-  */
--void process_buffer_measurement(struct user_namespace *mnt_userns,
--				struct inode *inode, const void *buf, int size,
--				const char *eventname, enum ima_hooks func,
--				int pcr, const char *func_data,
--				bool buf_hash)
-+int process_buffer_measurement(struct user_namespace *mnt_userns,
-+			       struct inode *inode, const void *buf, int size,
-+			       const char *eventname, enum ima_hooks func,
-+			       int pcr, const char *func_data,
-+			       bool buf_hash)
- {
- 	int ret = 0;
- 	const char *audit_cause = "ENOMEM";
-@@ -867,7 +870,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 	u32 secid;
- 
- 	if (!ima_policy_flag)
--		return;
-+		return -ENOENT;
- 
- 	template = ima_template_desc_buf();
- 	if (!template) {
-@@ -889,7 +892,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 					secid, 0, func, &pcr, &template,
- 					func_data);
- 		if (!(action & IMA_MEASURE))
--			return;
-+			return -ENOENT;
- 	}
- 
- 	if (!pcr)
-@@ -937,7 +940,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 					func_measure_str(func),
- 					audit_cause, ret, 0, ret);
- 
--	return;
-+	return ret;
- }
- 
- /**
-@@ -977,18 +980,21 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
-  * and extend the pcr.  Examples of critical data could be various data
-  * structures, policies, and states stored in kernel memory that can
-  * impact the integrity of the system.
-+ *
-+ * Return: 0 if the buffer has been successfully measured, a negative value
-+ * otherwise.
-  */
--void ima_measure_critical_data(const char *event_label,
--			       const char *event_name,
--			       const void *buf, size_t buf_len,
--			       bool hash)
-+int ima_measure_critical_data(const char *event_label,
-+			      const char *event_name,
-+			      const void *buf, size_t buf_len,
-+			      bool hash)
- {
- 	if (!event_name || !event_label || !buf || !buf_len)
--		return;
-+		return -ENOPARAM;
- 
--	process_buffer_measurement(&init_user_ns, NULL, buf, buf_len, event_name,
--				   CRITICAL_DATA, 0, event_label,
--				   hash);
-+	return process_buffer_measurement(&init_user_ns, NULL, buf, buf_len,
-+					  event_name, CRITICAL_DATA, 0,
-+					  event_label, hash);
- }
- 
- static int __init init_ima(void)
--- 
-2.25.1
+> 
+> Here is an example of a valid rule that enforces the use of sha256 or
+> sha512 when appraising iptables binaries:
+>   appraise func=BPRM_CHECK obj_type=iptables_exec_t appraise_type=imasig appraise_hash=sha256,sha512
+> 
+> This do not apply only to IMA in hash mode, it also works with digital
+> signatures, in which case it requires the hash (which was then signed
+> by a trusted private key) to have been generated with one of the
+> whitelisted algorithms.
+> 
+> Signed-off-by: Simon Thoby <simon.thoby@viveris.fr>
+
 
