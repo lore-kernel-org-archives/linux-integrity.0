@@ -2,280 +2,253 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3100FC4338F
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462F4C432BE
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C16561BA4
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:24:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DDE161B93
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229537AbhG0QYZ (ORCPT
+        id S229974AbhG0Qdn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Jul 2021 12:24:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41676 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229569AbhG0QYZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Jul 2021 12:24:25 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16RGEcYv002816;
-        Tue, 27 Jul 2021 12:24:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=FiF7bl34zwGeiIjUjVFkuWKyvTGUJznO3t1PTaV6vwc=;
- b=I7ydFbSnPc5UeVVCy+A+3jW81qkPgZtCWR4LrF3wIhV6M6rRmkuq/cfKY9u9yAsG7Fuj
- o1dK5kUSgnAjFRj9Nh5Lgtc+jAxTdZ2R/KBhNbKjUAsF07UYtBtADefxXT3o4vmEqdtn
- Ptz7e3s804ebyYRzrpUqteAR4HiryKdXAwJjymtH5tWdOoTi2BqmX+HzmzGkR1Rh0WHr
- 0GKoi5jkpG3Bsk9EjTKhcLeofF928SDBzUwhte9Mv4v1NAs77UGDFvL9qEE+8nmTQsIR
- RgZA1IO3HhBNPh5VJSjKvI479SX9eN3q8rTB+KLEpVyOeVZm3O8YHOfvXQ9kK+QYf6ui 8g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a2ng60au5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jul 2021 12:24:24 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16RGEqIr003405;
-        Tue, 27 Jul 2021 12:24:24 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a2ng60at7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jul 2021 12:24:23 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16RGIM4V013619;
-        Tue, 27 Jul 2021 16:24:21 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma01fra.de.ibm.com with ESMTP id 3a235krbp0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jul 2021 16:24:20 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16RGOI0h28246278
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Jul 2021 16:24:18 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F39611C054;
-        Tue, 27 Jul 2021 16:24:18 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 719D211C04A;
-        Tue, 27 Jul 2021 16:24:17 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.85.52])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Jul 2021 16:24:17 +0000 (GMT)
-Message-ID: <bd785a9d0c029cec34514d306e110bdef945c13e.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 3/4] IMA: add a policy option to restrict xattr hash
- algorithms on appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        Tue, 27 Jul 2021 12:33:43 -0400
+Received: from mail-eopbgr150132.outbound.protection.outlook.com ([40.107.15.132]:37894
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S229580AbhG0Qdm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Jul 2021 12:33:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=V7XlMT0YzoNfC5ls6i37PAPP3ywRj5aD08Iycao6xeaGG/dpWoX76M+uk1CDahUsB0xkSZm7N/MhSKUXVWRnh8+KLlbQdW4ztz5OOjSrOWLLyMXpZpwwog+aFIRXMxyTiAEpSfp5eQiWvQ7YX/74UkE4tDU8H7BZCJDCf6xQFVF6vnpOu9DJADMSHMt1IuehAeNx7vSW1/zck56GzxpNnxRFsVlUe47YPDfQqqAz0XM3wCX3xtTX2LXXA4xjJJzswgE1EPS8HSP92zhv+J2qinE265Yrtx9kr4EUVx7+pXn6lrhYLTTWKw52nFWweS/YE6ZbijgfuY/cJIT9XDp7TQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zn0BiVISq43+MS04ScnaVdU/MGL1sJm9RvjfgMWU0ZE=;
+ b=fmZUy6ouda44VJRJwWfC/B5KxtCUJtl8vm+VLvKypU1WwxpNZlumnhlOVwKdLpdAJAE/u5EEEOG4Lc8LS7hTbmJjYskch0V6wF8hoQxObR7vv6MG1YbA9UjhxWCRCjFVnHKIF8JEN1jfqzRxaDxeGXovZIienNAt7BTvvdj6VaTYEloyFQZi9angB90PJOmXnnpsSoFy2tJIf2uQ5BXsPzVJGlnk6v/XF322eLCD+G34JQ1FJxfC5kmqUyadMco37Yd1ylkTJbctyZ293XNgCKTan1/ktP70uHn1Gb/GWWmalGGIPtfwQhEJCPrvYXpR7d37As3MTCsaJ6XJ27WKaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
+ dkim=pass header.d=viveris.fr; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=viverislicensing.onmicrosoft.com;
+ s=selector2-viverislicensing-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zn0BiVISq43+MS04ScnaVdU/MGL1sJm9RvjfgMWU0ZE=;
+ b=p38r6kO5X5VXh78tWrG5ZCsgzdkI6IIPuL1il7X71Ich+RnOJ6OWTeU0P8QvsKstS86JcvjfER98OCgVuM9asra8cbsKOHtsrprfYu7tstxpBc+vyCzAUnlQo8kD1ZkJvvq43BSEqrC1Hb32DlTFZERb5OrTD5jIblUF2z+GBc8=
+Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
+ (2603:10a6:200:96::21) by AM0PR09MB4243.eurprd09.prod.outlook.com
+ (2603:10a6:208:182::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.28; Tue, 27 Jul
+ 2021 16:33:39 +0000
+Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
+ ([fe80::84a0:780d:1c5c:4432]) by AM4PR0902MB1748.eurprd09.prod.outlook.com
+ ([fe80::84a0:780d:1c5c:4432%9]) with mapi id 15.20.4352.031; Tue, 27 Jul 2021
+ 16:33:33 +0000
+From:   THOBY Simon <Simon.THOBY@viveris.fr>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
         "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         BARVAUX Didier <Didier.BARVAUX@viveris.fr>
-Date:   Tue, 27 Jul 2021 12:24:16 -0400
-In-Reply-To: <20210727102307.552052-4-simon.thoby@viveris.fr>
-References: <20210727102307.552052-1-simon.thoby@viveris.fr>
-         <20210727102307.552052-4-simon.thoby@viveris.fr>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1P2mVrY71wTGf7mJ-_NFPzsr_m0oxWW6
-X-Proofpoint-GUID: 4YfSAE5tsYIeZLaPpV2U1LNFphssCtWC
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-27_10:2021-07-27,2021-07-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- suspectscore=0 phishscore=0 spamscore=0 adultscore=0 clxscore=1015
- mlxlogscore=999 impostorscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2107270097
+CC:     THOBY Simon <Simon.THOBY@viveris.fr>
+Subject: [PATCH v4 0/5] IMA: restrict the accepted digest algorithms for
+Thread-Topic: [PATCH v4 0/5] IMA: restrict the accepted digest algorithms for
+Thread-Index: AQHXgwUjIzkwnmRK4kKnEl46pUVNCw==
+Date:   Tue, 27 Jul 2021 16:33:33 +0000
+Message-ID: <20210727163330.790010-1-simon.thoby@viveris.fr>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux.ibm.com; dkim=none (message not signed)
+ header.d=none;linux.ibm.com; dmarc=none action=none header.from=viveris.fr;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b77c7316-22f5-4d7e-6a1c-08d9511c4675
+x-ms-traffictypediagnostic: AM0PR09MB4243:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR09MB4243740CE904B8AAD85889E794E99@AM0PR09MB4243.eurprd09.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZlIkpMVlHIFR6s0VKI8OWzROh2fEKbA1YM4SLeNRbzztM17tqIeiw+f8hYRJk/xgW+8nrqSg+oJtahKxQYCT2CQWtrnq51+Ho8lVA2JREP2Hx4FU77qvqc4t314CDKdLMNrUFlTf8jMkP5exbvNbZ7r1tw5EJqejh2dTCRtmR/6yFhLe9ywLy/4X/ZWyMW76LfPvyxoTTSU+oa2N2GgK3mz9VeC7ogTcvRUnTL86+QyAEzk+4QEXITb9J6A3coC/VZTFwxkBDcNT0ZyxIW5WLw0AlxfqlhwaZ15bpYx3sdQrfJc8ZukmQTaDIGn7D/qvKvcLn2faxnlYjMnC9rlUor3UmlVmTYqpIRaY0W6GaUq0OKsxltPwsEcaU2U+9LqMqZMkWfbp3ZO58Yvogg4qPiW0gUmGU8njydgxgeXZW1dQwaXoImjHfTX8ALx6viKAFim12K28UMVdDq09OTA0YQIOOAV8r5a7YKOjEUrLNOgxDwtg99mgvxkIO7lbE5bjopWGzSpIrWpYj3HhMx49EhO/CKR+bS336iLRgRlcsiXF24OI2cpo7UXpZEw31xkTxCQwEFwEP5gxlk9AESBUqUnYlFXjE5G8ZvdIZIiwl2WSOVLMEmpvM9yt78pZOJxro5PM7Swu+waAivrPaf6gyf0aiBJ1nSywa3tE4Ehyw5uUvGWy6k7vvdTd1/tXV260fqllHfkxc9OBuh7GRpg3HrroXbVBg5Yk/cmx6QyKgU6mJEfm+n6gGULmVVmNScP8OUJThmoEcCb1wvE9pMoNt1U9n2AiEwzRDB2XXl6WPpo=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39840400004)(396003)(346002)(136003)(966005)(66446008)(122000001)(66946007)(76116006)(36756003)(91956017)(2906002)(38100700002)(26005)(2616005)(186003)(6486002)(86362001)(6506007)(110136005)(4326008)(478600001)(64756008)(66556008)(66476007)(6512007)(71200400001)(1076003)(316002)(5660300002)(6636002)(83380400001)(8936002)(8676002)(107886003)(38070700004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?bojl1cYLRDK1okfSP9Fls7KuE33YUNGekb3w7JLDYKeS1CcbaTxSlnjYoa?=
+ =?iso-8859-1?Q?LyuKNXO+Gg61wRHw5CLeQEB2xZLhjMQYbjailI/LuqRzP6QPdX5qYmu1cr?=
+ =?iso-8859-1?Q?yYTW9ReHyaqJpN9+AuwLvgpaX1wvxBepsInOAg3FMvXQn35hKxXQG83LJ8?=
+ =?iso-8859-1?Q?PUDZ42rJDPShwdxTT4oqFtCn1lDzRFefSZK1WnypRXA9NxSpsnnDMSdOUn?=
+ =?iso-8859-1?Q?R9V3ESyDuhvfmZj9SOjzSA6uhHdd9jTPCOQxcloz3bPjMvQ1751FyqYf5/?=
+ =?iso-8859-1?Q?6HGfuzFsEy7yrI7rOuvLny6pkhJVXX9mi5dgd/Cctu+MyER7zMYT7nUZP/?=
+ =?iso-8859-1?Q?VLgZk+nnp8yXCqOtU9qtz1xv8Y2LRnif5TAKc8NjfYYrnX3B8S6N/zrQBn?=
+ =?iso-8859-1?Q?0v6YhdwWaajz22YPzx6362VV9XO10X8uarChZMVc66pCPaAZWjzxm3GgVW?=
+ =?iso-8859-1?Q?rmU4+MPbmmfgnmlqdb1QaD63wD4186dFir4TUKwYNvOPUtX6U7BpAS3Cr7?=
+ =?iso-8859-1?Q?ZgzwKaQOzD5hQM47BKIlactc/OHhjOAWbU0JuX6gt3sojZRtpdix46xvOS?=
+ =?iso-8859-1?Q?c5y+9VHBUbmWyneExES7v+7uf12PlJ/Ygut9e0p7p9KJyXT7+LKplYB0ea?=
+ =?iso-8859-1?Q?nL/aoi8HKjy1izrg8o+MFdsqpHUPZX8e5QXWDZVkmrrcveUmskyHZi6JB2?=
+ =?iso-8859-1?Q?y46sykg7NGalFMvkXPg6uoLx345m7zRk+aQenY9DSEex4v7Xq1JlSpSwIt?=
+ =?iso-8859-1?Q?a/Fmxh3Y3cGNQzGaVlsefjXiGkYCErpuhtngEEInKK6OsItF6vTi4erg3c?=
+ =?iso-8859-1?Q?4tfUs3L3dyIpcWD/b9Uq1qc3jcPvfvl4xv/PXwcDRQY+C3xBdtKiz5Eu3g?=
+ =?iso-8859-1?Q?KNEZ1rhDlQzsOUcxkn2D2Iz4E6w/K83uJTz48eF28XLBQRkZ6z+cVgt+7j?=
+ =?iso-8859-1?Q?tNP7bpbbMOTFzhHWeQVTRxh34G9/JwadWFknDzAVtg5HqSKVffYqSbrB+z?=
+ =?iso-8859-1?Q?vw+V0JD1YGlRuBJpaxtk6vALpsFho3nCxp/dy0wAGNphdcvGl5K2D6aWcI?=
+ =?iso-8859-1?Q?MnQPJcVphkTIwGnt4inPgzPKIlr224EAfnNML/ws+N9qLNsvXG4jSkGp8W?=
+ =?iso-8859-1?Q?owf6qjGYhpa9sqqlKvJ3MyxbKtHN9m0jNdqjfr+zvQX7xODzieY0GlxOGH?=
+ =?iso-8859-1?Q?allXoy9fUzKqwYXdpzv7MRZbyKuW23Mh46ytIM//h7jwntEL611GN3B+TE?=
+ =?iso-8859-1?Q?tOou2uest0FubPYxhOk7f8ZGNSAGw+lmtVWuCAEhZ+xdgejA75uScSh8QZ?=
+ =?iso-8859-1?Q?EBgwi/nHCnIWA7A8CV6xz+UJG2r5unFV1X5okrKikChZMwMqUmVMAPymIg?=
+ =?iso-8859-1?Q?AF1yEEJsub?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: viveris.fr
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b77c7316-22f5-4d7e-6a1c-08d9511c4675
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2021 16:33:33.1980
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Cn1edfm0jWSYBrmPSDW+QSZt3HdR2WPINt5POgKkNJ34h4b33kWgV+iBbv8MrZ0f240GZYXnPzJv8Pv4LkPnhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR09MB4243
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Simon,
+IMA protects files by storing a hash (or a signature thereof) of their
+content in the security.ima xattr. While the security.ima xattr itself
+is protected by EVM with either a HMAC or a digital signature, no
+mechanism is currently in place to ensure that the security.ima xattr
+was generated with a strong digest algorithm, as was outlined in
+https://lore.kernel.org/linux-integrity/10dde047d76b447f32ca91356599be679b8=
+a76e5.camel@linux.ibm.com/t/#m0f8127c6982ef94aa42f5cc13ea83b9f9000917e
 
-On Tue, 2021-07-27 at 10:23 +0000, THOBY Simon wrote:
-> This patch defines a new IMA policy rule option "appraise_hash=",
-> that restricts the hash algorithms accepted for the extended attribute
-> security.ima when appraising.
+One important point is safeguarding users from mislabelling their
+files when using userland utilities to update their files, as this
+is the kind of behavior one can observe with evmctl (`evmctl ima_hash`
+defaults to sha1). Another group that may be interested is those
+that have deployed IMA years ago, possibly using algorithms that
+was then deemed sufficiently collision-resistant, but that proved
+to be weak with the passage of time (note that this could also
+happen in the future with algorithms considered safe today).
+This patch provides a migration path of sorts for these users.
 
-"Define ..."
+This patch series gives users the ability to restrict the algorithms
+accepted by their system, both when writing/updating xattrs, and
+when appraising files, while retaining a permissive behavior by default
+to preserve backward compatibility.
 
-> When a policy rule uses the 'appraise_hash' option, appraisal of a
-> file referenced by that rule will now fail if the digest algorithm
-> employed to hash the file was not one of those explicitly listed
-> in the option. In its absence, any hash algorithm compiled in the
-> kernel will be accepted.
-> 
-> For example, on a system where SELinux is properly deployed, the rule
->   appraise func=BPRM_CHECK obj_type=iptables_exec_t appraise_hash=sha256,sha384
-> will block the execution of iptables if the xattr security.ima of its
-> executables were not hashed with either sha256 or sha384.
-> 
-> Signed-off-by: Simon Thoby <simon.thoby@viveris.fr>
-> ---
->  Documentation/ABI/testing/ima_policy |  6 ++-
->  security/integrity/ima/ima_policy.c  | 72 ++++++++++++++++++++++++++--
->  2 files changed, 74 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-> index 070779e8d836..365e4c91719e 100644
-> --- a/Documentation/ABI/testing/ima_policy
-> +++ b/Documentation/ABI/testing/ima_policy
-> @@ -27,7 +27,7 @@ Description:
->  			lsm:	[[subj_user=] [subj_role=] [subj_type=]
->  				 [obj_user=] [obj_role=] [obj_type=]]
->  			option:	[[appraise_type=]] [template=] [permit_directio]
-> -				[appraise_flag=] [keyrings=]
-> +				[appraise_flag=] [keyrings=] [appraise_hash=]
+To provide these features, alter the behavior of setxattr to
+only accept hashes built in the kernel, instead of any hash listed
+in the kernel (complete list crypto/hash_info.c). In addition, the
+user can define in his IMA policy the list of digest algorithms
+allowed for writing to the security.ima xattr. In that case,
+only algorithms present in that list are accepted for writing.
 
-Nit:
-Probably nicer to keep the "appraise_" options together.  How about
-placing it after "appraise_flag", instead of at the end.
+In addition, users may opt-in to whitelisting the hash
+algorithms accepted when appraising thanks to the new
+"appraise_hash" IMA policy option.
+By default IMA will keep accepting any hash algorithm, but specifying
+that option will make appraisal of files hashed with another algorithm
+fail.
 
->  		  base:
->  			func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
->  			        [FIRMWARE_CHECK]
-> @@ -55,6 +55,10 @@ Description:
->  			label:= [selinux]|[kernel_info]|[data_label]
->  			data_label:= a unique string used for grouping and limiting critical data.
->  			For example, "selinux" to measure critical data for SELinux.
-> +			appraise_hash:= comma-separated list of hash algorithms
-> +			For example, "sha256,sha512" to only accept to appraise
-> +			files where the security.ima xattr was hashed with one
-> +			of these two algorithms.
->  
->  		  default policy:
->  			# PROC_SUPER_MAGIC
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 344b5b0dc1a1..a7f110cbbff0 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -92,6 +92,7 @@ struct ima_rule_entry {
->  	struct ima_template_desc *template;
->  };
->  
-> +
 
-Is this extra blank line intentional?
+Even when using this option to restrict accepted hashes, a migration
+to a new algorithm is still possible. Suppose your policy states you
+must migrate from 'old_algo' (e.g. sha1) to 'new_algo' (e.g. one of
+sha256/384/512). You can upgrade without relaxing the hash requirements:
+alter your policy rules from 'appraise_hash=3Dold_algo' to
+'appraise_hash=3Dold_algo,new_algo', update the "ima_hash" parameter to
+'new_algo', reboot, relabel all your files with 'new_algo', alter your
+policy_rule from 'appraise_hash=3Dold_algo,new_algo' to
+'appraise_hash=3Dnew_algo', reboot again and you're done.
+Agreed, it's quite a lot of churn - I don't know if this can be reduced -
+but this is technically doable.
 
->  /*
->   * sanity check in case the kernels gains more hash algorithms that can
->   * fit in an unsigned int
-> @@ -962,7 +963,7 @@ enum {
->  	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
->  	Opt_appraise_type, Opt_appraise_flag,
->  	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
-> -	Opt_label, Opt_err
-> +	Opt_label, Opt_appraise_hash, Opt_err
 
-Nit: move Opt_appraise_hash after Opt_appraise_type.
->  };
->  
->  static const match_table_t policy_tokens = {
-> @@ -1000,6 +1001,7 @@ static const match_table_t policy_tokens = {
->  	{Opt_template, "template=%s"},
->  	{Opt_keyrings, "keyrings=%s"},
->  	{Opt_label, "label=%s"},
-> +	{Opt_appraise_hash, "appraise_hash=%s"},
+This series is based on the following repo/branch:
+ repo: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+ branch: master
+ commit ff1176468d368232b684f75e82563369208bc371 ("Linux 5.14-rc3")
 
-ditto
+Changelog since v3:
+- fixed an issue where the first write to the policy would ignore the
+  SETXATTR_CHECK attribute
+- fixed potential concurrency issues (I would greatly like external
+  opinions on this, because I clearly don't know much about RCU. Beside
+  maybe it's better to completely ignore the duplicates SETXATTR_CHECK
+  issue and not update the IMA policy in any case)
+- remove the CONFIG_CRYPTO_MD5 requirement for IMA (suggested by Mimi Zohar=
+)
+- updated commit messages to follow more closely the kernel style guide
+  (suggested by Mimi Zohar)
+- moved the hash verification code on appraisal a bit later, to prevent
+  issues when using the code with IMA in a disable/auditing mode
+  (suggested by Mimi Zohar)
+- limit the 'appraise_hash' parameter to the 'appraise' action
+  (suggested by Mimi Zohar)
 
->  	{Opt_err, NULL}
->  };
->  
-> @@ -1125,7 +1127,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
->  				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
->  				     IMA_INMASK | IMA_EUID | IMA_PCR |
->  				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
-> -				     IMA_PERMIT_DIRECTIO))
-> +				     IMA_PERMIT_DIRECTIO | IMA_VALIDATE_HASH))
->  			return false;
->  
->  		break;
-> @@ -1137,7 +1139,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
->  				     IMA_INMASK | IMA_EUID | IMA_PCR |
->  				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
->  				     IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED |
-> -				     IMA_CHECK_BLACKLIST))
-> +				     IMA_CHECK_BLACKLIST | IMA_VALIDATE_HASH))
->  			return false;
->  
->  		break;
-> @@ -1187,6 +1189,27 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
->  	return true;
->  }
->  
-> +static unsigned int ima_parse_appraise_hash(char *arg)
-> +{
-> +	unsigned int res = 0;
-> +	char *token;
-> +
-> +	while ((token = strsep(&arg, ",")) != NULL) {
-> +		int idx = match_string(hash_algo_name, HASH_ALGO__LAST, token);
+Changelog since v2:
+- remove the SecureBoot-specific behavior (suggested by Mimi Zohar)
+- users can now tweak through policy both the algorithms for
+  appraising files (a feature already present in v2) and for writing
+  with the new SETXATTR_CHECK value for the 'func' ima policy flag
+- updating 'forbidden-hash-algorithm' to 'denied-hash-algorithm' and
+  'unsupported-hash-algorithm' to disambiguate cases when the user
+  asked for an algorithm not present in the kernel and when the system
+  vendor explicitly opted in to a restricted list of accepted
+  algorithms (suggested by Mimi Zohar)
+- change the order of the patches to be bisect-safe while retaining
+  the guarantee that a policy cannot be accepted but not enforced
+  (suggested by Mimi Zohar)
 
-Move the variable definition to the beginning of the function.
-> +
-> +		if (idx < 0) {
-> +			pr_err("unknown hash algorithm \"%s\", ignoring",
-> +			       token);
-> +			continue;
-> +		}
-> +
-> +		/* Add the hash algorithm to the 'allowed' bitfield */
-> +		res |= (1U << idx);
-> +	}
-> +
-> +	return res;
-> +}
-> +
->  static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  {
->  	struct audit_buffer *ab;
-> @@ -1204,6 +1227,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  	entry->uid_op = &uid_eq;
->  	entry->fowner_op = &uid_eq;
->  	entry->action = UNKNOWN;
-> +	entry->allowed_hashes = 0;
->  	while ((p = strsep(&rule, " \t")) != NULL) {
->  		substring_t args[MAX_OPT_ARGS];
->  		int token;
-> @@ -1556,6 +1580,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  						 &(template_desc->fields),
->  						 &(template_desc->num_fields));
->  			entry->template = template_desc;
-> +			break;
-> +		case Opt_appraise_hash:
+Changelog since v1:
+- Remove the two boot parameters (suggested by Mimi Zohar)
+- filter out hash algorithms not compiled in the kernel
+  on xattr writes (suggested by Mimi Zohar)
+- add a special case when secure boot is enabled: only the
+  ima_hash algorithm is accepted on userland writes
+- add a policy option to opt-in to restricting digest algorithms
+  at a per-rule granularity (suggested by Mimi Zohar)
 
-ditto
+Simon Thoby (4):
+  IMA: block writes of the security.ima xattr with unsupported
+    algorithms
+  IMA: add support to restrict the hash algorithms used for file
+    appraisal
+  IMA: add a policy option to restrict xattr hash algorithms on
+    appraisal
+  IMA: introduce a new policy option func=3DSETXATTR_CHECK
 
-"appraise_hash=" should be limited to appraise rules.  Please update
-ima_validate_rule().
+Simon Thoby (4):
+  IMA: block writes of the security.ima xattr with unsupported
+    algorithms
+  IMA: add support to restrict the hash algorithms used for file
+    appraisal
+  IMA: add a policy option to restrict xattr hash algorithms on
+    appraisal
+  IMA: introduce a new policy option func=3DSETXATTR_CHECK
 
-thanks,
+Simon Thoby (5):
+  IMA: remove the dependency on CRYPTO_MD5
+  IMA: block writes of the security.ima xattr with unsupported
+    algorithms
+  IMA: add support to restrict the hash algorithms used for file
+    appraisal
+  IMA: add a policy option to restrict xattr hash algorithms on
+    appraisal
+  IMA: introduce a new policy option func=3DSETXATTR_CHECK
 
-Mimi
+ Documentation/ABI/testing/ima_policy  |  15 ++-
+ security/integrity/ima/Kconfig        |   1 -
+ security/integrity/ima/ima.h          |  10 +-
+ security/integrity/ima/ima_api.c      |   6 +-
+ security/integrity/ima/ima_appraise.c |  79 +++++++++++-
+ security/integrity/ima/ima_main.c     |  19 ++-
+ security/integrity/ima/ima_policy.c   | 168 +++++++++++++++++++++++++-
+ 7 files changed, 278 insertions(+), 20 deletions(-)
 
-> +			ima_log_string(ab, "appraise_hash", args[0].from);
-> +
-> +			if (entry->allowed_hashes) {
-> +				result = -EINVAL;
-> +				break;
-> +			}
-> +
-> +			entry->allowed_hashes = ima_parse_appraise_hash(args[0].from);
-> +			if (!entry->allowed_hashes) {
-> +				result = -EINVAL;
-> +				break;
-> +			}
-> +
-> +			entry->flags |= IMA_VALIDATE_HASH;
-> +
->  			break;
->  		case Opt_err:
->  			ima_log_string(ab, "UNKNOWN", p);
-> 
-<trim>
-
+--=20
+2.31.1
