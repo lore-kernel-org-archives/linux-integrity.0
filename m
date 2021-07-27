@@ -2,335 +2,190 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F3C4320E
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB34C432BE
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB76161B24
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61FA560F58
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:38:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229529AbhG0Qdp (ORCPT
+        id S229658AbhG0QiW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Jul 2021 12:33:45 -0400
-Received: from mail-eopbgr150132.outbound.protection.outlook.com ([40.107.15.132]:37894
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229831AbhG0Qdn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Jul 2021 12:33:43 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WX9CndbTR5babzmWGAdC/0IpIm+Ei3fEwmk3gtI9jCADqHTigBR9tyrPjSccDpvWLVRYgEFNNPHcQas2/ZRunW4t96H1VQayQ1ZwK7MnDxOjEWKn0mcoc/vnDbswsC8xkNNO13ayfUq7kplDmVEcoUXFh5q3jYY7VPmun++6/reGd6G/NY4mh9mLNQqkY6eMApeDZIgwcIpqAX8/ZmCZdnlHBJu6ZXMY82h0SGOavVworDlGjQGGkbUHU4kO15kixZ6ThtpPYQ9isFofr83YDZxgKXHbip5A6FDL6uRMO6G9CgJ5hTR2Dg5A8dOQOzrmDmji3z8wIPBf31Np+BV6kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w77eN8x1rgvT0k9FQrcK8P/CB01uSJWX59lgD2kU6tU=;
- b=gA+AshB0gMIojS3JVtjZMfHlWLVpLKBaHK0mitml5GccqYXmcKPKoGckmpa+6pfm9Mw7xCclqdXaBCt0Sq+/Dkw0Sug94eBBHvvaFnQi/rU6bHL4FyHyZbpsj7+crHFUoMfQ3gtz8j2hogq9EwUBqmYZPwUjRv4WsE4dZ3vzoOFtPTdKLTRUienPSi2ZJO/WBa6Cat5QO4fHqF003wGjOYB8TSENNlSY2rfQyGydcIwIwu6Q7uOBxcZZsAIo9LR6FVO8W2BeqDJoPosOk5X3sOodOVwgmMJ1NR5uKwtOKITewRvU2t7/3UIWrrN/WQO/l+agS6IbYA6XgSz+I8Ou7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
- dkim=pass header.d=viveris.fr; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=viverislicensing.onmicrosoft.com;
- s=selector2-viverislicensing-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w77eN8x1rgvT0k9FQrcK8P/CB01uSJWX59lgD2kU6tU=;
- b=EDg+g8t9obOv1xPAIH+gr8Fp94DmjTUuXQmOBSPz0FdAFsfdVAxYtI3Qe6Te1d5UlPSaaXbYgYn+XIrofKptw5NTkEeFcPGheOfNwmRMx/ZBAl3r2YR3EDMNf+QQ3rgkAL38Z3RQvu7jp5AAMFvph4AjONaOBKwaIqZbAQDowQc=
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- (2603:10a6:200:96::21) by AM0PR09MB4243.eurprd09.prod.outlook.com
- (2603:10a6:208:182::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.28; Tue, 27 Jul
- 2021 16:33:40 +0000
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432]) by AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432%9]) with mapi id 15.20.4352.031; Tue, 27 Jul 2021
- 16:33:40 +0000
-From:   THOBY Simon <Simon.THOBY@viveris.fr>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        BARVAUX Didier <Didier.BARVAUX@viveris.fr>
-CC:     THOBY Simon <Simon.THOBY@viveris.fr>
-Subject: [PATCH v4 4/5] IMA: add a policy option to restrict xattr hash
- algorithms on appraisal
-Thread-Topic: [PATCH v4 4/5] IMA: add a policy option to restrict xattr hash
- algorithms on appraisal
-Thread-Index: AQHXgwUlxwiCOsAhwkeORDl+jS8LHA==
-Date:   Tue, 27 Jul 2021 16:33:35 +0000
-Message-ID: <20210727163330.790010-5-simon.thoby@viveris.fr>
-References: <20210727163330.790010-1-simon.thoby@viveris.fr>
-In-Reply-To: <20210727163330.790010-1-simon.thoby@viveris.fr>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=none action=none header.from=viveris.fr;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e5e8b9cc-de12-4afd-169f-08d9511c4a82
-x-ms-traffictypediagnostic: AM0PR09MB4243:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR09MB4243AD3E17AEE3BD9347B19D94E99@AM0PR09MB4243.eurprd09.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1824;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: OupXHkOjr5N1mlXhqKyK4fwugzI33HfX4x7EhKFtyi0f5MiCSCqYAYdbp1lgZhpAoRywMBkV19Il0I5+jT/zeE0UlfQ4WgPgZm6FGIH5/lq3l8w2/vjRLolRmmtN+S2zATIYdUGLWQOQMOzo2jRfnm4kFgbv2VTLLwkyZrKK6cL6t5/gjEDkG+2PgSSxjv76WpggRdAE8IovfbSLWtCn9mlYw3I/oKwO1hPE1WAJU4/1fqrwDEzsglxTmj5hab07kkviGWE/D0cTR/U7/V8dEVIsZZrKAMaLStB4n5KUnwKPg45vZA68n8M1NjN0ppNzDO6TM2J11pnUAh+b85BhIywbzslrrun+Voyv4Jkz8fJ6dwhhjYM8LtFJQ6IhKezIBjm/Gkpq+MOTYiQBsbhZg1w23iOEye8M4Gs0t9n0DQQn6j2TDq+6RtWdP4bQ/2zc8rgc8zoahWqIJQqKJHIb8eS0z2KaoN7+XsnTYVJ24zySfp4ywuczZu+/axYFud2H9Tst9l+5k95qCCg+lj78TJo3g8Hq9f5W2a+fXtM/I5kJXshMeM0RAnp0befHdAJnROtz3Fq79Gz/Xpy1V6AT77vOdBuQEj6/V7LFSNR2awx1mR9kip+SKpkD/xnwx8OH7l1hS6ShrmjlfjcfcbntrINsI95LB401Ro52P76EfAigQSnKutHnbic0cY8Vp79QyAgPEgyik80tyr4Lv6ThCA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39840400004)(396003)(346002)(136003)(66446008)(122000001)(66946007)(6666004)(76116006)(36756003)(91956017)(2906002)(38100700002)(26005)(2616005)(186003)(6486002)(86362001)(6506007)(110136005)(4326008)(478600001)(64756008)(66556008)(66476007)(6512007)(71200400001)(1076003)(316002)(5660300002)(6636002)(83380400001)(8936002)(8676002)(107886003)(38070700004);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?je8xoID7F+nJMSl08VPn63iZOhKWnmfbMN3rDyMH5sk/rNwA90HusGkqQc?=
- =?iso-8859-1?Q?tVu4qZeV7quH7PbdGjX4+xp5T5qdSbWGQq65oVwWfguD8yR/yUi2T8KvkH?=
- =?iso-8859-1?Q?xLnRj3VxdhlBVWfrVveQma6xX28Wn31b2YKcPQVM4zvmKWNsPSl+izuYD1?=
- =?iso-8859-1?Q?nVVH5uxHDEQWnfoFb5gdbmOVL8wChjWUj6Wb2Jxo/HTZIUbw5Bxc1qbcX9?=
- =?iso-8859-1?Q?Y/1dtZzMqxhSk4OjUvofs+byjSHY0yF3lhYmAy+Ss3P0DfxRQKzncnfdom?=
- =?iso-8859-1?Q?kM8aCTS9/rfptYgxA0Qhkq51cpYWBLsV08z7uON0zB7ULGopKbICSYrn9v?=
- =?iso-8859-1?Q?LAehQsLI66qbE8yjcIT9NAWUCWG+TT8o/HNlPgeipjhHMWwdqN5REU+wzD?=
- =?iso-8859-1?Q?6v2CkIGDciw9AWvY6RiTYDaLgknpy+e5MsmuXOZ9bHXn2LnWxHTDLqrndv?=
- =?iso-8859-1?Q?4xkmjvnP9UwUdZGhOOn61+paltSV/JLhQyhxI3GRc6etbNy4QiLrcB4LkI?=
- =?iso-8859-1?Q?aVl61kEhww7nCq9tS82aAa4Xb8CevntI5c99KryR4irwDkECEDilnOGPDF?=
- =?iso-8859-1?Q?Mv5vIWV5xWbiB23z9PphiGuG6Ot0431CN07etEh0u8j+qZllQu6AO5lxO8?=
- =?iso-8859-1?Q?IiOHW1F/s/oXmNHXCxvjR+RoQxvFxM3wuGXAMUNkwZxn9WDs1VPnUJCBeT?=
- =?iso-8859-1?Q?ppV7oAMsm3q59luTxJrqadCvOETslhoIi9hSVNi4uQoL7R/drlRbPmBZbK?=
- =?iso-8859-1?Q?NlW2R4PJXag0uE+g1BjuL6zaBh+2XfOug0QK/9fQBX+/qQtRWUkNnFwz4N?=
- =?iso-8859-1?Q?ng/56rM+0dz/enQRxxAKUtgg00XYvDBcdaIE3grmh5wMzJyWIJBCrlBJeU?=
- =?iso-8859-1?Q?a7jTYpJf0rq0ApkneTScPs5zzcZSKSbORA6dcr5zW5tC2rYWAplQtK83Vz?=
- =?iso-8859-1?Q?yq3C4pmDE6ScEdoC2tZfkdH/Bd75CrIH2JCy+bLeC0hGyGlvZYJbaHQWgR?=
- =?iso-8859-1?Q?xWlU+6gbSGCbKA7ttXWQnbYKTRikXUih6fD/tGWSoNISukkrz2S0cIvhwI?=
- =?iso-8859-1?Q?RYVDuv/iP7YgqkQ/vVpqXQLsMZThNvSxqEOdaiMpIgaJTORI2ObnJ/CGjH?=
- =?iso-8859-1?Q?AvhYZn2e8iHFgLSl3TLU04CdOOiNHTZAzSgRMM9Eym+Kqzvcw0Ikl2SZeE?=
- =?iso-8859-1?Q?Gkp2BPlu6W1tI0fFYsvZcvRewPycKOAYNSFJTwpTdgnoJvj0QSR07lzog9?=
- =?iso-8859-1?Q?lDFLNgmrOZyNvEpqyLlO0yr9VLrhIbXJOfP4C3QYWPF1dLYg/Hxnz3NAWL?=
- =?iso-8859-1?Q?C7NFbVwIa+kL63NpBt/7ncAw/FuKSyUnUuPT/7Y6KIHn4Dou0x3Q3lm3I8?=
- =?iso-8859-1?Q?r8Dwqi/7CkeqqaV/JG/lnNBWRhP2EQ0A=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 27 Jul 2021 12:38:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229489AbhG0QiW (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Jul 2021 12:38:22 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D4B5160551;
+        Tue, 27 Jul 2021 16:38:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627403902;
+        bh=kTfNWkw/+75t2SVupGO2gGNYqskpuTnQ2ecCChCQJXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tXFG82sYCd1JVI4/3dsitudiqHAqS03OKzRf4OBFy3GO7R+TpL8Pg2TClRDW2dLRj
+         sfAakK5vupxZk380szPZlh7nGOCYm1Cq74BBAip6ZBSK7ji6tmFUSSsRut7DGwptC6
+         avLECug1VDiL3HqG/ZIElog7ZDje2cRMK6iHX8P6ugfsOUHJkpxkoYqxuWGGozqLcq
+         QVBHUbx2p3bAATaxh43Dk+TSAD+Vf/f3cZ5oA5jlnIHZNcwU+29XkNMwNfOL2BDj9h
+         IVc99ZTBumNnD5HL79B1HvIjTwIPGASwX74zfB4eaujMc0eoa6G2En3Ys8J87nz2ro
+         0LVbkXUwp7EDA==
+Date:   Tue, 27 Jul 2021 09:38:20 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1] fscrypt: support encrypted and trusted keys
+Message-ID: <YQA2fHPwH6EsH9BR@sol.localdomain>
+References: <20210727144349.11215-1-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-X-OriginatorOrg: viveris.fr
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5e8b9cc-de12-4afd-169f-08d9511c4a82
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2021 16:33:35.4800
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AD2BrUng8QbBemXZpEhok0O1FpgX2EUpQA7AsEW485W2baQ8IbBcFp2slP1ckSoGqjCdT+RfO+PWj6pzAwv8BA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR09MB4243
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210727144349.11215-1-a.fatoum@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The kernel have the ability to restrict the set of hash algorithms
-it accepts for the security.ima xattr when it appraises files.
+On Tue, Jul 27, 2021 at 04:43:49PM +0200, Ahmad Fatoum wrote:
+> For both v1 and v2 key setup mechanisms, userspace supplies the raw key
+> material to the kernel after which it is never again disclosed to
+> userspace.
+> 
+> Use of encrypted and trusted keys offers stronger guarantees:
+> The key material is generated within the kernel and is never disclosed to
+> userspace in clear text and, in the case of trusted keys, can be
+> directly rooted to a trust source like a TPM chip.
 
-Define a new IMA policy rule option "appraise_hash=3D",
-using the mentionned mechanism to expose a user-toggable policy
-knob to opt-in to that restriction and select the desired set of
-algorithms that must be accepted.
+Please include a proper justification for this feature and update the relevant
+sections of Documentation/filesystems/fscrypt.rst to explain why someone would
+want to use this feature and what it accomplishes.
 
-When a policy rule uses the 'appraise_hash' option, appraisal of a
-file referenced by that rule will now fail if the digest algorithm
-employed to hash the file was not one of those explicitly listed
-in the option. In its absence, any hash algorithm compiled in the
-kernel will be accepted.
+As-is, this feature doesn't seem to have a very strong justification.  Please
+also see previous threads where this feature was discussed/requested:
+https://lkml.kernel.org/linux-fscrypt/20180110124418.24385-1-git@andred.net/T/#u,
+https://lkml.kernel.org/linux-fscrypt/20180118131359.8365-1-git@andred.net/T/#u,
+https://lkml.kernel.org/linux-fscrypt/20200116193228.GA266386@vader/T/#u
 
-For example, on a system where SELinux is properly deployed, the rule
-  appraise func=3DBPRM_CHECK obj_type=3Diptables_exec_t appraise_hash=3Dsha=
-256,sha384
-will block the execution of iptables if the xattr security.ima of its
-executables were not hashed with either sha256 or sha384.
+Note that there are several design flaws with the encrypted and trusted key
+types:
 
-Signed-off-by: Simon Thoby <simon.thoby@viveris.fr>
----
- Documentation/ABI/testing/ima_policy |  6 ++-
- security/integrity/ima/ima_policy.c  | 75 ++++++++++++++++++++++++++--
- 2 files changed, 76 insertions(+), 5 deletions(-)
+- By default, trusted keys are generated using the TPM's RNG rather than the
+  kernel's RNG, which places all trust in an unauditable black box.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testi=
-ng/ima_policy
-index 070779e8d836..aeb622698047 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -27,7 +27,7 @@ Description:
- 			lsm:	[[subj_user=3D] [subj_role=3D] [subj_type=3D]
- 				 [obj_user=3D] [obj_role=3D] [obj_type=3D]]
- 			option:	[[appraise_type=3D]] [template=3D] [permit_directio]
--				[appraise_flag=3D] [keyrings=3D]
-+				[appraise_flag=3D] [appraise_hash=3D] [keyrings=3D]
- 		  base:
- 			func:=3D [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK=
-]
- 			        [FIRMWARE_CHECK]
-@@ -55,6 +55,10 @@ Description:
- 			label:=3D [selinux]|[kernel_info]|[data_label]
- 			data_label:=3D a unique string used for grouping and limiting critical =
-data.
- 			For example, "selinux" to measure critical data for SELinux.
-+			appraise_hash:=3D comma-separated list of hash algorithms
-+			For example, "sha256,sha512" to only accept to appraise
-+			files where the security.ima xattr was hashed with one
-+			of these two algorithms.
-=20
- 		  default policy:
- 			# PROC_SUPER_MAGIC
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/i=
-ma_policy.c
-index 344b5b0dc1a1..aadd95753229 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -960,7 +960,7 @@ enum {
- 	Opt_fsuuid, Opt_uid_eq, Opt_euid_eq, Opt_fowner_eq,
- 	Opt_uid_gt, Opt_euid_gt, Opt_fowner_gt,
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
--	Opt_appraise_type, Opt_appraise_flag,
-+	Opt_appraise_type, Opt_appraise_flag, Opt_appraise_hash,
- 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
- 	Opt_label, Opt_err
- };
-@@ -995,6 +995,7 @@ static const match_table_t policy_tokens =3D {
- 	{Opt_fowner_lt, "fowner<%s"},
- 	{Opt_appraise_type, "appraise_type=3D%s"},
- 	{Opt_appraise_flag, "appraise_flag=3D%s"},
-+	{Opt_appraise_hash, "appraise_hash=3D%s"},
- 	{Opt_permit_directio, "permit_directio"},
- 	{Opt_pcr, "pcr=3D%s"},
- 	{Opt_template, "template=3D%s"},
-@@ -1095,7 +1096,8 @@ static bool ima_validate_rule(struct ima_rule_entry *=
-entry)
- 		return false;
-=20
- 	if (entry->action !=3D APPRAISE &&
--	    entry->flags & (IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED | IMA_CHECK_=
-BLACKLIST))
-+	    entry->flags & (IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED |
-+			    IMA_CHECK_BLACKLIST | IMA_VALIDATE_HASH))
- 		return false;
-=20
- 	/*
-@@ -1125,7 +1127,7 @@ static bool ima_validate_rule(struct ima_rule_entry *=
-entry)
- 				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
- 				     IMA_INMASK | IMA_EUID | IMA_PCR |
- 				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
--				     IMA_PERMIT_DIRECTIO))
-+				     IMA_PERMIT_DIRECTIO | IMA_VALIDATE_HASH))
- 			return false;
-=20
- 		break;
-@@ -1137,7 +1139,7 @@ static bool ima_validate_rule(struct ima_rule_entry *=
-entry)
- 				     IMA_INMASK | IMA_EUID | IMA_PCR |
- 				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
- 				     IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED |
--				     IMA_CHECK_BLACKLIST))
-+				     IMA_CHECK_BLACKLIST | IMA_VALIDATE_HASH))
- 			return false;
-=20
- 		break;
-@@ -1187,6 +1189,28 @@ static bool ima_validate_rule(struct ima_rule_entry =
-*entry)
- 	return true;
- }
-=20
-+static unsigned int ima_parse_appraise_hash(char *arg)
-+{
-+	unsigned int res =3D 0;
-+	int idx;
-+	char *token;
-+
-+	while ((token =3D strsep(&arg, ",")) !=3D NULL) {
-+		idx =3D match_string(hash_algo_name, HASH_ALGO__LAST, token);
-+
-+		if (idx < 0) {
-+			pr_err("unknown hash algorithm \"%s\", ignoring",
-+			       token);
-+			continue;
-+		}
-+
-+		/* Add the hash algorithm to the 'allowed' bitfield */
-+		res |=3D (1U << idx);
-+	}
-+
-+	return res;
-+}
-+
- static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- {
- 	struct audit_buffer *ab;
-@@ -1204,6 +1228,7 @@ static int ima_parse_rule(char *rule, struct ima_rule=
-_entry *entry)
- 	entry->uid_op =3D &uid_eq;
- 	entry->fowner_op =3D &uid_eq;
- 	entry->action =3D UNKNOWN;
-+	entry->allowed_hashes =3D 0;
- 	while ((p =3D strsep(&rule, " \t")) !=3D NULL) {
- 		substring_t args[MAX_OPT_ARGS];
- 		int token;
-@@ -1522,6 +1547,25 @@ static int ima_parse_rule(char *rule, struct ima_rul=
-e_entry *entry)
- 			else
- 				result =3D -EINVAL;
- 			break;
-+		case Opt_appraise_hash:
-+			ima_log_string(ab, "appraise_hash", args[0].from);
-+
-+			if (entry->allowed_hashes) {
-+				result =3D -EINVAL;
-+				break;
-+			}
-+
-+			entry->allowed_hashes =3D ima_parse_appraise_hash(args[0].from);
-+
-+			/* invalid or empty list of algorithms */
-+			if (!entry->allowed_hashes) {
-+				result =3D -EINVAL;
-+				break;
-+			}
-+
-+			entry->flags |=3D IMA_VALIDATE_HASH;
-+
-+			break;
- 		case Opt_permit_directio:
- 			entry->flags |=3D IMA_PERMIT_DIRECTIO;
- 			break;
-@@ -1714,6 +1758,23 @@ static void ima_show_rule_opt_list(struct seq_file *=
-m,
- 		seq_printf(m, "%s%s", i ? "|" : "", opt_list->items[i]);
- }
-=20
-+static void ima_policy_show_appraise_hash(struct seq_file *m,
-+					  unsigned int allowed_hashes)
-+{
-+	int idx, list_size =3D 0;
-+
-+	for (idx =3D 0; idx < HASH_ALGO__LAST; idx++) {
-+		if (!(allowed_hashes & (1U << idx)))
-+			continue;
-+
-+		/* only add commas if the list contains multiple entries */
-+		if (list_size++)
-+			seq_puts(m, ",");
-+
-+		seq_puts(m, hash_algo_name[idx]);
-+	}
-+}
-+
- int ima_policy_show(struct seq_file *m, void *v)
- {
- 	struct ima_rule_entry *entry =3D v;
-@@ -1825,6 +1886,12 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
-=20
-+	if (entry->flags & IMA_VALIDATE_HASH) {
-+		seq_puts(m, "appraise_hash=3D");
-+		ima_policy_show_appraise_hash(m, entry->allowed_hashes);
-+		seq_puts(m, " ");
-+	}
-+
- 	for (i =3D 0; i < MAX_LSM_RULES; i++) {
- 		if (entry->lsm[i].rule) {
- 			switch (i) {
---=20
-2.31.1
+- trusted and encrypted keys aren't restricted to specific uses in the kernel
+  (like the fscrypt-provisioning key type is) but rather are general-purpose.
+  Hence, it may be possible to leak their contents to userspace by requesting
+  their use for certain algorithms/features, e.g. to encrypt a dm-crypt target
+  using a weak cipher that is vulnerable to key recovery attacks.
+
+- "encrypted" keys that use a master key of type "user" are supported, despite
+  these being easily obtainable in the clear by userspace providing their own
+  master key.  This violates one of the main design goals of "encrypted" keys.
+
+Also, using the "trusted" key type isn't necessary to achieve TPM-bound
+encryption, as TPM binding can be handled in userspace instead.
+
+So I really would like to see a proper justification for this feature, and have
+it be properly documented.
+
+One comment on the UAPI below.
+
+> 
+> Add support for trusted and encrypted keys by repurposing
+> fscrypt_add_key_arg::raw to hold the key description when the new
+> FSCRYPT_KEY_ARG_TYPE_DESC flag is supplied. The location of the flag
+> was previously reserved and enforced by ioctl code to be zero, so this
+> change won't break backwards compatibility.
+> 
+> Corresponding userspace patches are available for fscryptctl:
+> https://github.com/google/fscryptctl/pull/23
+> 
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+> key_extract_material used by this patch is added in
+> <cover.b2fdd70b830d12853b12a12e32ceb0c8162c1346.1626945419.git-series.a.fatoum@pengutronix.de>
+> which still awaits feedback.
+> 
+> Sending this RFC out anyway to get some feedback from the fscrypt
+> developers whether this is the correct way to go about it.
+> 
+> To: "Theodore Y. Ts'o" <tytso@mit.edu>
+> To: Jaegeuk Kim <jaegeuk@kernel.org>
+> To: Eric Biggers <ebiggers@kernel.org>
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: James Bottomley <jejb@linux.ibm.com>
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: Sumit Garg <sumit.garg@linaro.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: linux-fscrypt@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  Documentation/filesystems/fscrypt.rst | 24 ++++++++---
+>  fs/crypto/keyring.c                   | 59 ++++++++++++++++++++++++---
+>  include/uapi/linux/fscrypt.h          | 16 +++++++-
+>  3 files changed, 87 insertions(+), 12 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+> index 44b67ebd6e40..83738af2afa3 100644
+> --- a/Documentation/filesystems/fscrypt.rst
+> +++ b/Documentation/filesystems/fscrypt.rst
+> @@ -681,11 +681,15 @@ It can be executed on any file or directory on the target filesystem,
+>  but using the filesystem's root directory is recommended.  It takes in
+>  a pointer to struct fscrypt_add_key_arg, defined as follows::
+>  
+> +    #define FSCRYPT_KEY_ADD_RAW_ASIS		0
+> +    #define FSCRYPT_KEY_ADD_RAW_DESC		1
+> +
+>      struct fscrypt_add_key_arg {
+>              struct fscrypt_key_specifier key_spec;
+>              __u32 raw_size;
+>              __u32 key_id;
+> -            __u32 __reserved[8];
+> +            __u32 raw_flags;     /* one of FSCRYPT_KEY_ADD_RAW_* */
+> +            __u32 __reserved[7];
+>              __u8 raw[];
+>      };
+>  
+> @@ -732,8 +736,11 @@ as follows:
+>    Alternatively, if ``key_id`` is nonzero, this field must be 0, since
+>    in that case the size is implied by the specified Linux keyring key.
+>  
+> -- ``key_id`` is 0 if the raw key is given directly in the ``raw``
+> -  field.  Otherwise ``key_id`` is the ID of a Linux keyring key of
+> +- If ``key_id`` is 0, the raw key is given directly in the ``raw``
+> +  field if ``raw_flags == FSCRYPT_KEY_ADD_RAW_ASIS``. With
+> +  ``raw_flags == FSCRYPT_KEY_ADD_RAW_DESC``, ``raw`` is instead
+> +  interpreted as the description of an encrypted or trusted key.
+> +  Otherwise ``key_id`` is the ID of a Linux keyring key of
+>    type "fscrypt-provisioning" whose payload is
+>    struct fscrypt_provisioning_key_payload whose ``raw`` field contains
+>    the raw key and whose ``type`` field matches ``key_spec.type``.
+> @@ -748,8 +755,15 @@ as follows:
+>    without having to store the raw keys in userspace memory.
+
+Why not just allow the key_id field to specify a "trusted" or "encrypted" key?
+Why is it necessary for FS_IOC_ADD_ENCRYPTION_KEY to support two different ways
+of looking up keyring keys -- by ID and by description?  Looking up by ID works
+fine for "fscrypt-provisioning" keys; why are "trusted" and "encrypted" keys
+different in this regard?
+
+- Eric
