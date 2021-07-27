@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BECC4338F
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84EAC4320A
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62C1461B96
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D34B61B93
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jul 2021 16:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbhG0Qdn (ORCPT
+        id S229981AbhG0Qdo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Jul 2021 12:33:43 -0400
+        Tue, 27 Jul 2021 12:33:44 -0400
 Received: from mail-eopbgr130129.outbound.protection.outlook.com ([40.107.13.129]:40010
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229441AbhG0Qdm (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Jul 2021 12:33:42 -0400
+        id S229630AbhG0Qdn (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 27 Jul 2021 12:33:43 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bwsLOXHw1jTPhAA9xd9O+p+tASL7eISSuRSo21vVajZFqyaWId0LYN6rmhGZkAPHeeGEF0g3vESbbmK2kYVfLHZYq/8GXmSt+ir/+xQgumxshMX1nOq1ewXa5GaYRXV0nxYUbx6sLsnJY1o6Pd5ti5Va5ZPxJfCRWYwzsPtPl14ZhjJ5wi8pPdgSrcYe0+hjMl8076me8PvIMKvQbHARazRU/Oolz4RYPJ5O8J5ofbd6uWXoyIPtZmkOgABsbCYacWNYSONtd2Hfs9vVmflgzmME6NNf8dQpHnz53d9Y8aGb/eKrIZhVw3Xp45Udygjm8x1egZRiDcfTDjJ05htWag==
+ b=bVRZDrbh/RUEMjbgD3SENRhd6DFiS+ty9m9/Yd0a1N3VAjr7BzzNDb4272NKoNkk5bA7GI2nDyzIfcYWNKpoeMQ5CXIyMjSIDcqGLWLV49nUP9kKY4v+jAci7Vas8ne7tlpTGfZYU4hqKHCXi0BZcdaSGmfgaKxClqs3EjOiyDSCKb4uruHD1kWN2HrBoXmnsiZ8gyfv2dtBAXscQ2GAWoTsoZpdrXO5UXhlNmlk0QLG3bqVgTw9gsNLXgqkktsiUi1qusfkK0VO2ZPQdOwlZjy0LzgeeiR4qNjtFkvtFf2f43Ri7yen8C9hYEPH8qABBjJmYDx7mbdaHLNUpSUMMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I/WoRWCG3xvwfsrvc4xL2tDdIzeNLfKmv+iH3QWKiQc=;
- b=oMj1+VZpm3++PZzWcZlpfc3Lff0NT0GP2wt4yaPT/ftLqnDVlvwsFE3Dk42M86pPalahNhgu3Tws2EnEGAqDmP+r5LzkV2tNX7Ztsq50gXoEbt+MefLMYuM05flFlZ30ouYYOh2D3aqkGNvaljIlhTOaJt6sLwSxHypt8s7Hr5QXAIUAgnrU2mPdFf7x035lG1qJPVYcSMTMOy8ZMsoSKA90c41hsPUwoOT3KUWkQnGx70YeFFErzsaxL+W3gFlZMxYjaQ6bkP8NV8o3cLvmg3u+3KW82sPT+KW5DMfNJ/IE+hSA0JEO5SarMloCI01VXepi6n4pC5PV3IpiEAOGBw==
+ bh=CVT7j4SAxiAXCzYWfHDM8WroRG6rNQkQ4wisGSK7nJs=;
+ b=oKaFkZR2FEejoqStUACoinkd7Y8coL3jMpFt9GQypVX2/u7PkfrSXz27dVggtesNfz15lb2uJbGrNiRIt71qSNHNjMe6I4zqggOo3ClD4JAt2V6S8aNlPqoc6xIy7x6mPwMgac2L4adXqK6HhMT4Pjo582a1NnWlTDiRDInywhOPltevE9PaVQuI5FxkafShfxqshn7usWrXQJ6WcGa61Ujf6bsDAnQWq9Fgj0NpebqA4xG0I1iGZMbTyt9VUsJ+FZ+lOS1/VMQP6Mc9jJVOQTEaExPFZOmRIoAHT4E/ju68qhATHsUgg0tpbGmlWTXArkdZGxwjMbLCbxml22VJOQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
  dkim=pass header.d=viveris.fr; arc=none
@@ -35,8 +35,8 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=viverislicensing.onmicrosoft.com;
  s=selector2-viverislicensing-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I/WoRWCG3xvwfsrvc4xL2tDdIzeNLfKmv+iH3QWKiQc=;
- b=vYUsQ3E6rk6h9goa+2bcz8q4k6OM8fDvmGHzEfiXafEvGa4+twlB23m/3bKbzIexZxqBMOgb8T5/mbwtgs4JexoZk/EJp0MZkKRTtXUhmsGfam3kp5pD7hMoeNkgdBzhxk8JN71a23yujDGPeo9c0/HYzKoanXoG7O1PPgqXGEI=
+ bh=CVT7j4SAxiAXCzYWfHDM8WroRG6rNQkQ4wisGSK7nJs=;
+ b=zU8zkFSdQV1Tw82sdBF6XeqnbFPgtqS4krUAMtMhzCv8o2S3aYqFiP3d8ImMQHadn2vz5ouGTJJguU0iQdL1MlmAN5+F2YmYNrPkDcYzffUuHOi1Xzp0xrZu5vKSIrBrczqxOMK/ZTn6emP1LZTlPuGPNNvP2tXte1FBzZPN8zk=
 Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
  (2603:10a6:200:96::21) by AM0PR09MB4243.eurprd09.prod.outlook.com
  (2603:10a6:208:182::23) with Microsoft SMTP Server (version=TLS1_2,
@@ -52,11 +52,13 @@ To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         BARVAUX Didier <Didier.BARVAUX@viveris.fr>
 CC:     THOBY Simon <Simon.THOBY@viveris.fr>
-Subject: [PATCH v4 1/5] IMA: remove the dependency on CRYPTO_MD5
-Thread-Topic: [PATCH v4 1/5] IMA: remove the dependency on CRYPTO_MD5
-Thread-Index: AQHXgwUkKmokX09Kxkiedz7G8dviPA==
-Date:   Tue, 27 Jul 2021 16:33:33 +0000
-Message-ID: <20210727163330.790010-2-simon.thoby@viveris.fr>
+Subject: [PATCH v4 2/5] IMA: block writes of the security.ima xattr with
+ unsupported algorithms
+Thread-Topic: [PATCH v4 2/5] IMA: block writes of the security.ima xattr with
+ unsupported algorithms
+Thread-Index: AQHXgwUkWGVV9iy3rkKcNLQiDD+1vA==
+Date:   Tue, 27 Jul 2021 16:33:34 +0000
+Message-ID: <20210727163330.790010-3-simon.thoby@viveris.fr>
 References: <20210727163330.790010-1-simon.thoby@viveris.fr>
 In-Reply-To: <20210727163330.790010-1-simon.thoby@viveris.fr>
 Accept-Language: fr-FR, en-US
@@ -66,97 +68,154 @@ X-MS-TNEF-Correlator:
 authentication-results: linux.ibm.com; dkim=none (message not signed)
  header.d=none;linux.ibm.com; dmarc=none action=none header.from=viveris.fr;
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ebdfefc6-dc42-491b-4592-08d9511c4a26
+x-ms-office365-filtering-correlation-id: 1b3e7ede-b519-4cc3-7877-08d9511c4a44
 x-ms-traffictypediagnostic: AM0PR09MB4243:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR09MB42436258247F487D0D4261AE94E99@AM0PR09MB4243.eurprd09.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
+x-microsoft-antispam-prvs: <AM0PR09MB424311D7460B650F4CC4F7A094E99@AM0PR09MB4243.eurprd09.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ksp2wx/TMkXLbtvGlzHye8JX32IMJwn1vg61dOrhUtDsusgjfpq7R7szNekLYZ82gbIisdHGpweZE4gSfk6x8Mvos/tb718m9jPnJ1MGr2GOz0Bo+fW23he6ANuZtDAlnJpRPKmF9s4Bq/sTU12REDKe+wGm7d4jp2b7FjlNPO8yO9Trc1d3360xECDfcnA/2ryDfz2qXzBOtjKdTX7jCCAFtlR3EI8wjkU5CsUWi8RRUoAfCtbTDd2j961j2C2vvpUymVoO9tT0l080/e69HIyccJ/HulZwiv1NA4NhcopVVY9AO3FviDMrQPvm0Tyu2bEuaxcjqdRwXZwVeCTuB7R6nrWneKzJIqR/wJpe4kd1XfcFScqebG5pGwfHcfjWslPUfVm5wIOizRfWV5LWcbWhyf5U03kZaW58h/yPTrZWsvoQTDYNtcfhd2+73od0Co/x/swF0dJMRNBCvHqRHCxfdRs8NwARUUeoDry3Kuyx0QhOXvNOCp4LggWh5QT5cR9psXSobUsIdh9h9DeT9ueojTo05WGk1hqL4VopVQk4TnCxOPSqK9ROaT86e8OS+l1Ur5U6l5zchsdjLmHzQMVKLtzmTrXrKzr8CqqxvrQ0D/Ih8cl5aZuITHZ9wTN24LAl1cyccmNBKGUaR8oZLU/rkW1h1XfqizIkZ/5SjmrBLsD7VF/zi+xofBXGjVmgahquPtRhkq9GvU/UI36G1g==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39840400004)(396003)(346002)(136003)(66446008)(122000001)(66946007)(6666004)(76116006)(36756003)(91956017)(2906002)(38100700002)(26005)(2616005)(186003)(6486002)(86362001)(6506007)(110136005)(4326008)(478600001)(64756008)(66556008)(66476007)(6512007)(71200400001)(1076003)(316002)(5660300002)(6636002)(83380400001)(8936002)(8676002)(107886003)(38070700004);DIR:OUT;SFP:1102;
+x-microsoft-antispam-message-info: mssqaTb52AwaGlQ0nJ5HXzHLo/4CdTlGHSXK2M8vFmlIepBu/ZeXV3dkT3+74Qs84RcoujZd+V5kCMOxF3xghIez02OJeH1RxVzeyLq6jTuyfeI6RfsfyBmovFD3w7d9yHfl4cLzbjac7HfvzzCyvfqREeQMEwWW/dcedbWl+51wnMi6h7lVX0zK71q9wcDJd8+v5f0+W9nrEhCV3+pK+vHO04bNBiOtVeSY5c4LigIA/JRb9TEFFndY1aD4M77CIszdILkG1rig9RKAvYcq6p2xF5tDLLcLXZ0XzId0c/bLxQMdUPd4tP2T/l4LG+1SnV+3L3saTOYUlZu8dUL1FWfljyJyAX8qzIRXz7W4C/onn4Q5ObKfq791LdNaeqhL0Kk3ijzXXAcVpBsSqI1uiwJ/Zu3ni0gRFXkL95ghOJJMVeeideNMiuJqvH2HBASYuUqAiq2HH0cj4hITTx4nIKofE1Gg7FUBOv+T3XyGg2aXu/F4i9i/EcWzsmWdNyGp1qgHQ7T9CWUun6FgXYyUQFpSA8QIns2P5ZCRVAARpoKdYO8W8bQ6V6hHBKmAbHnNpjqHQuUGX41IKoc20hEqxAkv4LV986foQvHQ0H005+y22xqK6WAmQFcUOyNaeuWETMYHnaiaZ24t9CiWE3GvlnmLeoXEI2M7zutVndKqFi6FU+TKAgCWd+NlOtUKlx/6gFEeH6sGI2F8i6io+Cbveg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39840400004)(396003)(346002)(136003)(15650500001)(66446008)(122000001)(66946007)(6666004)(76116006)(36756003)(91956017)(2906002)(38100700002)(26005)(2616005)(186003)(6486002)(86362001)(6506007)(110136005)(4326008)(478600001)(64756008)(66556008)(66476007)(6512007)(71200400001)(1076003)(316002)(5660300002)(6636002)(83380400001)(8936002)(8676002)(107886003)(38070700004);DIR:OUT;SFP:1102;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?/oSNQxrG83LiH/bYsG5OD70yYmNvZrEURejPUuOKgsWuYbw2406XOejwaz?=
- =?iso-8859-1?Q?Da5jGNgTXnKppgvzxkoOF3k9yOuTpuXIyvBBUA9VYj/NevXwlQy9fROcD+?=
- =?iso-8859-1?Q?JTyqeR+YIvWusRo8KaMM4jNSzerc90l6pOajDYf9rXNZr8D4WSXeq2ZJZr?=
- =?iso-8859-1?Q?5H88RRc7AIfVoOKQkejmWUnDDtzLv16WR6Lv27fkRSRSllYtoNgEm0YPQs?=
- =?iso-8859-1?Q?fEXMpw57+3I6cNrO3yU8uFFv1VJhJBwt/8G4BlGsF9inUj6OsHsbdigo0G?=
- =?iso-8859-1?Q?nJ3N59wMmpRRfwy9+krLZI3zz9CcVnKDo+tRte+pUNIiXU8wAtsp88t+LU?=
- =?iso-8859-1?Q?uWojvLZzP2J06QHmglo6VCaIgN9kT0cUEiqoFf9xYSz+fhmpjlk55AdpQn?=
- =?iso-8859-1?Q?xIONGLtUUmSsogE4ziuxYfCnr4LD66obC6Be8HarvkL9CaB1TAtRLt8Ef6?=
- =?iso-8859-1?Q?4yDyRIsvjgDH8zxDjAkL7phjT1cvQD4DMQRApvWO9Tm03bcCCg7Cx7iw+x?=
- =?iso-8859-1?Q?U3ubYVonJF41A86QysS11S+mx8g4GbDfSwPrx7sU8O2QMk6lAHa6nCdDHa?=
- =?iso-8859-1?Q?baRZ6GSQBBAJb+c4obmY7Hr2EmzBkTNPXZnBjFg3eV/tVC8Nyk35LssvP6?=
- =?iso-8859-1?Q?IsTqGZWtg17BCaOHwEdDK94PeQHZnnJHkF2k77IE7L3zUg4eQXVZdjEsEn?=
- =?iso-8859-1?Q?zlPZKe8djXLz6nR4hEKQ+dBRSuWbOr9IREoyuHFUUT2cgJwutoNH2yjWNU?=
- =?iso-8859-1?Q?67jU/7wFnEVGaic2a7Z7wdkLVN73f8j2mub1Nl5TWTEmGZvDjyzQXNSDX2?=
- =?iso-8859-1?Q?bO7wCcDvHDAR5v6HoIjefF7KsZAv2Ie1d+5zkRAM697umh9T0w1UEl9UO8?=
- =?iso-8859-1?Q?es9D6Wsh3jq9JQOx/jJjW1cxQw+OY1Jx3SDU4Vi7hy/oq78AAv3KkQUTP2?=
- =?iso-8859-1?Q?dBPusiPf9uaWxFnRDbqO0nMuMKHNMpXLVgnRMIkyWWAjF0mJLwMJyrMMX8?=
- =?iso-8859-1?Q?8m4XuoRBLOBZnlo3ElrrzHVM9JYfFfKYsU9HZqcaeoQb9fuTlM/xP55Lbf?=
- =?iso-8859-1?Q?jSs0UXRrnSPtjYbrSRL0LqE7WjLxgtzc1u8YQKpjB53w4Xs5uf30ifgWRx?=
- =?iso-8859-1?Q?3/9iFB8Cifuk7e/sDfXVGwYmM9abz1r/sKtaTE74yfqHyBT594MO83n3XO?=
- =?iso-8859-1?Q?b0LH6joth4x9SUBEv9iWuQhXTbiB+NW+Ycmz6ABXJMMh8TOFXBYAfCaSnG?=
- =?iso-8859-1?Q?AfWmyAPBg1s1glvrmNYhxkEmpFjSF3pH/IohNi2wBBZLbmfk/t1t0rmQZp?=
- =?iso-8859-1?Q?T/1JmSvMad3b/6oTSPq2nQM0Zorp2O24YpfG3P7HzvWO0KEfINKJ0Yk4py?=
- =?iso-8859-1?Q?sp91axsYR+?=
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?fwY3AfNfp6JZAspVvHO5GtFi9XOiBJVIPNVgKLCvNTytTbmBGJk7ohZxpB?=
+ =?iso-8859-1?Q?/osyloAqyNy5+p4Mst1MGtk9525fvVzpWoykw3teQ+KhWMMdnhSiy5b/YN?=
+ =?iso-8859-1?Q?/0iOCPAqVX/mPk5dEHPNNr6uGD5sxv8UHioQf1ZZRFDmVO5Z3ZAvKL4fyY?=
+ =?iso-8859-1?Q?UZ3+XSlSa+Ft5ekfxDjWpke1K1Qtbn1Mharm7utF/SZJc6q3dQgTIXSEQX?=
+ =?iso-8859-1?Q?RGbNfJl8kitBf18QfhKjhyvVWDL44391SEYDMgl/mCs/lbcHRZQg1eWBAu?=
+ =?iso-8859-1?Q?QYncSAigobyPBd/5wLwXaGML/E1PRo/Blw409hYy6FFUBk3CSfj5VYSdvq?=
+ =?iso-8859-1?Q?FP43sUmg9Xh5VqGiLNJfSHEOqpHRLwWTx5dvmfdy2qViwBUgitO1siJkKk?=
+ =?iso-8859-1?Q?mrn5npXvqklZnptdw3q12Z8b5bWzLV7z2ygBh9kiPPTCJQ5gxj25VWxe/y?=
+ =?iso-8859-1?Q?pZXufItFGmAHp+UUbpCn2Jgp/6LNMOolZ7vk/FoxBX7Y8ZZfDH550n9Y7Z?=
+ =?iso-8859-1?Q?0jRmrTDQMyC1BvVS5KL5du+21r7qGj04nxNYUM5/AFNYJ/gr/uKDmA7KOi?=
+ =?iso-8859-1?Q?4Zgm+2K4j5EExVF5PCx5aQQ04Q2XAt5dQGtMeEfBtn5i1cRSnZ9YWVMblr?=
+ =?iso-8859-1?Q?FwiXxIR5Y2BgChVy1syBq33TdOthre7PkDzgIcEUycyyvJ1nbqBXA3a1xw?=
+ =?iso-8859-1?Q?EGnFOrpE1azu7ePMMsbsA2rfFFrB5MY5SCbRrNtnVK1pjJR6bI4qOTgSUh?=
+ =?iso-8859-1?Q?JwcTKRPHoFPZKLYMvvsYkhjCyRiXo7BD2wW9IwusrNXlcjwUNOPHDqoi+2?=
+ =?iso-8859-1?Q?20no4ezSOO6om36do6LszxUYU3t96dosdVTpJmVs8tSsgAHdej5nE6EXhy?=
+ =?iso-8859-1?Q?M1qgKRdq8mYPyPknzrBiXpxrWeluhdDMPoobUogBJirx6CvGmFOIF5F86v?=
+ =?iso-8859-1?Q?+x2OcGCmsRPI/qULyflWAquWnz8SFjJNPX1efghrjsH0QkzKn4vgsRyxId?=
+ =?iso-8859-1?Q?boVoNa6Id3ZKq0Ao/5Lksr0ijq+Zop0FpK5UJwU8gZfWpak/URj0A1kbPL?=
+ =?iso-8859-1?Q?8FAxfwk+bg402DzK1/I5mnp8Mffh4eqasbgofYHTybOHtThipK1Vvb91Fo?=
+ =?iso-8859-1?Q?SiLWG29CPADMzKrp08h7Dmpzo+0/b9hYqG3UqrXabaElNQsd3913zJLY5K?=
+ =?iso-8859-1?Q?Sb6J7Kqrm1C91zd3MJthW1RyJsmiXhByF8OjNeH6k3B1wN/Ta5ISOEB4kw?=
+ =?iso-8859-1?Q?AS0E4Fk9mF6504ETuRtruWb0DLhbDlob13GICneCLpGAfDaT5MCfYz6Jlv?=
+ =?iso-8859-1?Q?67/j0ykRkd2tNNM+Yn/vRyAGQec1bxFu9HcYWz4j7gZozHyG3cLtuqE5Nz?=
+ =?iso-8859-1?Q?Fe37P5yJG6?=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: viveris.fr
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebdfefc6-dc42-491b-4592-08d9511c4a26
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2021 16:33:33.8297
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b3e7ede-b519-4cc3-7877-08d9511c4a44
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2021 16:33:34.3854
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RY4RTEdU3u6qFNWW669vJZAdLBsXyfcQkJpZ7iXcpyFIpiKV+XmcbtOGq7W24IlHQSuLeD2dGoTvIn7AC/auJA==
+X-MS-Exchange-CrossTenant-userprincipalname: VctxQrDB4bfY62RYJhN186mE90cSUeVzzYaayPmnxdjRd+VhJjCe5UW9zGcedyXW2WBcCoIlIt6j2UImYy6RNA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR09MB4243
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove the CRYPTO_MD5 dependency for IMA, as it is not necessary
-and it hinders the efficiency of a patchset that limit the digests
-allowed for the security.ima xattr.
+By default, any write to the extended attributes security.ima will be
+accepted, even if the xattr value uses a hash algorithm not compiled in
+the kernel (which doesn't make sense, because the kernel wouldn't be able
+to appraise that file, as it lacks support for validating the hash).
+
+Prevent such writes: only writes using hash algorithms
+available in the current kernel are now allowed. Any attempt to
+perform these writes will be denied with an audit message.
+
+Note however that CONFIG_IMA depends on CONFIG_CRYPTO_SHA1, which
+somewhat hampers the security benefits of this measure (but MD4 and
+MD5 can be disabled, which is already a significant improvement).
 
 Signed-off-by: Simon Thoby <simon.thoby@viveris.fr>
 ---
- security/integrity/ima/Kconfig    | 1 -
- security/integrity/ima/ima_main.c | 2 ++
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ security/integrity/ima/ima_appraise.c | 51 ++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfi=
-g
-index d0ceada99243..f3a9cc201c8c 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -6,7 +6,6 @@ config IMA
- 	select SECURITYFS
- 	select CRYPTO
- 	select CRYPTO_HMAC
--	select CRYPTO_MD5
- 	select CRYPTO_SHA1
- 	select CRYPTO_HASH_INFO
- 	select TCG_TPM if HAS_IOMEM && !UML
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima=
-_main.c
-index 287b90509006..d171764230b7 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -53,8 +53,10 @@ static int __init hash_setup(char *str)
- 	if (strcmp(template_desc->name, IMA_TEMPLATE_IMA_NAME) =3D=3D 0) {
- 		if (strncmp(str, "sha1", 4) =3D=3D 0) {
- 			ima_hash_algo =3D HASH_ALGO_SHA1;
-+#ifdef CONFIG_CRYPTO_MD5
- 		} else if (strncmp(str, "md5", 3) =3D=3D 0) {
- 			ima_hash_algo =3D HASH_ALGO_MD5;
-+#endif
- 		} else {
- 			pr_err("invalid hash algorithm \"%s\" for template \"%s\"",
- 				str, IMA_TEMPLATE_IMA_NAME);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima=
+/ima_appraise.c
+index ef9dcfce45d4..989da2fbf496 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -575,12 +575,55 @@ static void ima_reset_appraise_flags(struct inode *in=
+ode, int digsig)
+ 		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+ }
+=20
++/**
++ * ima_setxattr_validate_hash_alg() - Block setxattr with invalid digests
++ * @dentry: file being altered
++ * @xattr_value: value supplied by userland for the xattr
++ * @xattr_value_len: length of xattr_value
++ *
++ * Context: called when the user tries to write the security.ima xattr.
++ * The xattr value is mapped to some hash algorithm, and this algorithm
++ * must be built in the kernel for the setxattr to be allowed.
++ *
++ * Emit an audit message when the algorithm is invalid.
++ *
++ * Return: 0 on success, else an error.
++ */
++int ima_setxattr_validate_hash_alg(struct dentry *dentry,
++				   const void *xattr_value,
++				   size_t xattr_value_len)
++{
++	int res =3D -EACCES;
++	char *path =3D NULL, *pathbuf =3D NULL;
++	enum hash_algo dentry_hash;
++
++	dentry_hash =3D ima_get_hash_algo((struct evm_ima_xattr_data *)xattr_valu=
+e,
++				     xattr_value_len);
++
++	if (likely(dentry_hash =3D=3D ima_hash_algo
++	    || crypto_has_alg(hash_algo_name[dentry_hash], 0, 0)))
++		return 0;
++
++	pathbuf =3D kmalloc(PATH_MAX, GFP_KERNEL);
++	/* no memory available ? no file path for you */
++	if (pathbuf)
++		path =3D dentry_path(dentry, pathbuf, PATH_MAX);
++
++	/* disallow xattr writes with algorithms not built in the kernel */
++	integrity_audit_msg(AUDIT_INTEGRITY_DATA, d_inode(dentry),
++		path, "collect_data", "unavailable-hash-algorithm", res, 0);
++
++	kfree(pathbuf);
++
++	return res;
++}
++
+ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		       const void *xattr_value, size_t xattr_value_len)
+ {
+ 	const struct evm_ima_xattr_data *xvalue =3D xattr_value;
+ 	int digsig =3D 0;
+-	int result;
++	int result, rc;
+=20
+ 	result =3D ima_protect_xattr(dentry, xattr_name, xattr_value,
+ 				   xattr_value_len);
+@@ -592,6 +635,12 @@ int ima_inode_setxattr(struct dentry *dentry, const ch=
+ar *xattr_name,
+ 		digsig =3D (xvalue->type =3D=3D EVM_XATTR_PORTABLE_DIGSIG);
+ 	}
+ 	if (result =3D=3D 1 || evm_revalidate_status(xattr_name)) {
++		/* the user-supplied xattr must use an allowed hash algo */
++		rc =3D ima_setxattr_validate_hash_alg(dentry, xattr_value,
++							xattr_value_len);
++		if (!rc)
++			return rc;
++
+ 		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
+ 		if (result =3D=3D 1)
+ 			result =3D 0;
 --=20
 2.31.1
