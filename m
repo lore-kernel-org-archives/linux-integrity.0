@@ -2,155 +2,200 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C52DC432BE
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Jul 2021 22:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8E28C4320E
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Jul 2021 05:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8137260F02
-	for <linux-integrity@archiver.kernel.org>; Wed, 28 Jul 2021 22:57:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3726105A
+	for <linux-integrity@archiver.kernel.org>; Thu, 29 Jul 2021 05:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232326AbhG1W5X (ORCPT
+        id S234261AbhG2F5N (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 28 Jul 2021 18:57:23 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61572 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232163AbhG1W5X (ORCPT
+        Thu, 29 Jul 2021 01:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233949AbhG2F5M (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 28 Jul 2021 18:57:23 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16SMdwZh054192;
-        Wed, 28 Jul 2021 18:57:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=4UR4y9o2kwbASX4z8Iqr7yq9Uxctz++9XV5hLrLEH7M=;
- b=IwdgyFHz6JHSmBG4itn6lLJXABK/Ssf2VGCv1DW9F06BGdPcUgc4EnDRQqM4FKSWn1AR
- N8d/G2pbWNfkEmtub5/7igzZP8YNfbfEsM0SUKc9Cb3UTnjLlXYLXJFOr6cXAsDfnQsp
- ndNK7xtWfdLw6yCK/pp0tUPo+DHPWNJXryYk4i+U39Eqp2PrGP4a+lBDhr2MsKYYRbji
- V8sdh37uLBTKVXCVSJlEm8io2SvUnSxWHEgVpuMYXf7bIcZ7rsOmKjCsK7jVMghdyXDs
- Gs5fq5uh/HdIPV6C6qSQ5fiJ65KXjMZyIIDF+pzTEAlUouFjBZXYv+iz/tIxNIsiIFIE CA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a38tf6x6a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jul 2021 18:57:21 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16SMuAUS107332;
-        Wed, 28 Jul 2021 18:57:20 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a38tf6x5q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jul 2021 18:57:20 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16SMvILr014944;
-        Wed, 28 Jul 2021 22:57:18 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06fra.de.ibm.com with ESMTP id 3a235kgvqa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Jul 2021 22:57:18 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16SMvFvf30146872
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Jul 2021 22:57:15 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A7111A404D;
-        Wed, 28 Jul 2021 22:57:15 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8234CA4053;
-        Wed, 28 Jul 2021 22:57:14 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.118.100])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Jul 2021 22:57:14 +0000 (GMT)
-Message-ID: <acf4fc349a59b4390e0ff57728f8f4920f89386a.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 5/5] IMA: introduce a new policy option
- func=SETXATTR_CHECK
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     THOBY Simon <Simon.THOBY@viveris.fr>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        BARVAUX Didier <Didier.BARVAUX@viveris.fr>
-Date:   Wed, 28 Jul 2021 18:57:13 -0400
-In-Reply-To: <20210728132112.258606-6-simon.thoby@viveris.fr>
-References: <20210728132112.258606-1-simon.thoby@viveris.fr>
-         <20210728132112.258606-6-simon.thoby@viveris.fr>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _lJbOpluf6CBVur8D0Pqje1hJ6bLteO8
-X-Proofpoint-ORIG-GUID: Wr2RMeg6vB_-kSxUqvDyWhw4FlLDf_GF
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-28_12:2021-07-27,2021-07-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 spamscore=0
- clxscore=1015 mlxlogscore=999 mlxscore=0 phishscore=0 adultscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2107280115
+        Thu, 29 Jul 2021 01:57:12 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AEA0C0613C1
+        for <linux-integrity@vger.kernel.org>; Wed, 28 Jul 2021 22:57:09 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id g13so8661124lfj.12
+        for <linux-integrity@vger.kernel.org>; Wed, 28 Jul 2021 22:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XcbhZ5Sjzz8dxY7pTRg9gGEgfRrO83ag5vG41bFy7qA=;
+        b=YQEazPr+8F1apEi6PsoFkWJBawAyqulBeVpaRkq8+OZmhbwY1w8AVgsg+ekg2keP8U
+         AQcbJfUtG6kHUx4bXydpdMV+rM1Fqd1RbfQGFJHSmUF+3eTPZgSJjGCjWMfi3z8FdKHx
+         9eQlqYzm1NR3PI3NeTNFqlYI+ILW5SPY64rTFV2wN12Xu4blbSJRHDWC+QXnXYIVacUP
+         /wg78Zv0mNs3pKalYMNWqLZJSW4c4MvY0wzm5PHUFEMKJeMZFAqGDbbqEpGrlveUhjP1
+         zV+2fMf0vt26mgSFhuuBJgNMNWgrDM67K5+KGvh+xqp0ABvRQsEksxGogLILccUxaclh
+         uAig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XcbhZ5Sjzz8dxY7pTRg9gGEgfRrO83ag5vG41bFy7qA=;
+        b=gKm63FRd2HxvX3oFYfvJ+wZ7V7SV6m73FN/eGAs3aeceSjq0BpCdxcdpayJF0HO2uF
+         qBO/VFwUcdEsMG/vkREjk/VKyDcQto4AEfok35yW/HpEmA/1CkS2mU+8zTTNhprC6847
+         SjK2pLdsvT1t93DN2BOfA3irxz3WeyuS7VCzWxs5xYfO345YnqK9e/5EpzTBBcueehLC
+         zewhvADFdw7nB0kIBTt3NpNq49QkjOYEHxlMYcYaBe2ijbnO1IT4uQnyl3AiUbBe1BdW
+         jn8w48lfbKXcB4Yhequ14aA9pwq99rRF0nf+qEvV/RIzp95BNgchakaShIm6Dxsmyp2B
+         3Xvg==
+X-Gm-Message-State: AOAM530gqP2kVBf/+fzs8WfNg1c4TqpwoexPFGQ6a3ZwSG91j/+1G9b5
+        3YkxeeqbP39cMo/UIfGwfo26Bb+7CUAfK8uL+F+D4A==
+X-Google-Smtp-Source: ABdhPJzXQMiTbRwHulQZgSyAMiQCjKimBxkJLN8fa+Src+cJukNSOCcSHAMcEv0gZ4fTWkxqcwZgE78x/0et/HUAcqo=
+X-Received: by 2002:a19:c757:: with SMTP id x84mr2581412lff.302.1627538227888;
+ Wed, 28 Jul 2021 22:57:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210727144349.11215-1-a.fatoum@pengutronix.de>
+ <YQA2fHPwH6EsH9BR@sol.localdomain> <367ea5bb-76cf-6020-cb99-91b5ca82d679@pengutronix.de>
+ <YQGAOTdQRHFv9rlr@gmail.com>
+In-Reply-To: <YQGAOTdQRHFv9rlr@gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Thu, 29 Jul 2021 11:26:56 +0530
+Message-ID: <CAFA6WYO-h+ngCAT_PS=bZTQkBBtOpBRUmZNP4zhvRuLDJYQXkA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] fscrypt: support encrypted and trusted keys
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fscrypt@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        git@andred.net, Omar Sandoval <osandov@osandov.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Simon,
+Hi Eric,
 
-On Wed, 2021-07-28 at 13:21 +0000, THOBY Simon wrote:
- 
-> @@ -914,6 +918,42 @@ int ima_check_policy(void)
->  	return 0;
->  }
->  
-> +/** update_allowed_hash_algorithms - update the hash algorithms allowed
+On Wed, 28 Jul 2021 at 21:35, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Wed, Jul 28, 2021 at 10:50:42AM +0200, Ahmad Fatoum wrote:
+> > Hello Eric,
+> >
+> > On 27.07.21 18:38, Eric Biggers wrote:
+> > > On Tue, Jul 27, 2021 at 04:43:49PM +0200, Ahmad Fatoum wrote:
+> > >> For both v1 and v2 key setup mechanisms, userspace supplies the raw key
+> > >> material to the kernel after which it is never again disclosed to
+> > >> userspace.
+> > >>
+> > >> Use of encrypted and trusted keys offers stronger guarantees:
+> > >> The key material is generated within the kernel and is never disclosed to
+> > >> userspace in clear text and, in the case of trusted keys, can be
+> > >> directly rooted to a trust source like a TPM chip.
+> > >
+> > > Please include a proper justification for this feature
+> >
+> > I've patches pending for extending trusted keys to wrap the key sealing
+> > functionality of the CAAM IP on NXP SoCs[1]. I want the kernel to
+> > generate key material in the factory, have the CAAM encrypt it using its
+> > undisclosed unique key and pass it to userspace as encrypted blob that is
+> > persisted to an unencrypted volume. The intention is to thwart offline
+> > decryption of an encrypted file system in an embedded system, where a
+> > passphrase can't be supplied by an end user.
+> >
+> > Employing TPM and TEE trusted keys with this is already possible with
+> > dm-crypt, but I'd like this to be possible out-of-the-box with
+> > ubifs + fscrypt as well.
+>
+> Why not do the key management in userspace, like tpm-tools
+> (https://github.com/tpm2-software/tpm2-tools)?  There are a lot of uses for this
+> type of hardware besides in-kernel crypto.  See
+> https://wiki.archlinux.org/title/Trusted_Platform_Module for all the things you
+> can do with the TPM on Linux, including LUKS encryption; this is all with
+> userspace key management.  Wouldn't the CAAM hardware be useful for similar
+> purposes and thus need a similar design as well, e.g. with functionality exposed
+> through some /dev node for userspace to use?  Or are you saying it will only
+> ever be useful for in-kernel crypto?
 
-The first line of kernel-doc is just "/**" by itself, followed by the
-function name and a brief description.  The brief description should
-not wrap to the next line.  Refer to Documentation/doc-guide/kernel-
-doc.rst.
+AFAIK from my prior experience while working with CAAM engine during
+my time at NXP, it is generally a crypto engine with additional
+security properties like one discussed here to protect keys (blob
+encap and decap) etc. But it doesn't offer user authentication similar
+to what a TPM (ownership) can offer. Although, one should be able to
+expose CAAM via /dev node but I am not sure if that would be really
+useful without user authentication. I think similar should be the case
+for other crypto engines with additional security properties.
 
-> + * for setxattr writes
-> + *
-> + * Update the atomic variable holding the set of allowed hash algorithms
-> + * that can be used to update the security.ima xattr of a file.
-> + *
-> + * Context: called when updating the IMA policy.
-> + *
-> + * SETXATTR_CHECK rules do not implement a full policy check because of
-> + * the performance impact performing rules checking on setxattr() would
-> + * have. The consequence is that only one SETXATTR_CHECK can be active at
-> + * a time.
-> + */
-> +static void update_allowed_hash_algorithms(void)
-> +{
-> +	struct ima_rule_entry *entry;
-> +
-> +	/*
-> +	 * We scan in reverse order because only the last entry with the
-> +	 * 'func=SETXATTR_CHECK' apply: this allows runtime upgrades of the
-> +	 * digest algorithm policy, unlike the other IMA rules that are
-> +	 * usually append-only. Old rules will still be present in the
-> +	 * ruleset, but inactive.
-> +	 */
+With restriction of CAAM's security properties to kernel crypto we
+could at least ensure a kernel boundary that should offer enough
+resistance from malicious user space attacks.
 
-Oh, my!  I really hope this won't be used as precedent.  Before
-agreeing to this, the existing policy rules must require loading of
-only signed IMA policies.
+>
+> > > Note that there are several design flaws with the encrypted and trusted key
+> > > types:
+> > >
+> > > - By default, trusted keys are generated using the TPM's RNG rather than the
+> > >   kernel's RNG, which places all trust in an unauditable black box.
+> >
 
-thanks,
+With regards to trusted keys generated using the TEE's RNG, the
+underlying implementation being OP-TEE [1] which is an open source TEE
+implementation built on top of Arm TrustZone providing the hardware
+based isolation among the TEE and Linux. So regarding auditability, it
+should be comparatively easier to audit the TEE components designed
+with a goal of minimal footprint when compared with Linux kernel.
 
-Mimi
-  
-> +	rcu_read_lock();
-> +	list_for_each_entry_reverse(entry, ima_rules, list) {
-> +		if (entry->func != SETXATTR_CHECK)
-> +			continue;
-> +
-> +		atomic_xchg(&ima_setxattr_allowed_hash_algorithms,
-> +			    entry->allowed_hashes);
-> +		break;
-> +	}
-> +	rcu_read_unlock();
-> +}
-> +
+[1] https://github.com/OP-TEE/optee_os
 
+> > Patch to fix that awaits feedback on linux-integrity[2].
+>
+> It does *not* fix it, as your patch only provides an option to use the kernel's
+> RNG whereas the default is still the TPM's RNG.
+>
+
+Yes in case of TPM, default is still TPM's RNG but with Ahmad's patch
+#2, the trust source backend like CAAM should be able to use kernel's
+RNG by default.
+
+-Sumit
+
+> Most people don't change defaults.
+>
+> Essentially your same argument was used for Dual_EC_DRBG; people argued it was
+> okay to standardize because people had the option to choose their own constants
+> if they felt the default constants were backdoored.  That didn't really matter,
+> though, since in practice everyone just used the default constants.
+>
+> >
+> > > - trusted and encrypted keys aren't restricted to specific uses in the kernel
+> > >   (like the fscrypt-provisioning key type is) but rather are general-purpose.
+> > >   Hence, it may be possible to leak their contents to userspace by requesting
+> > >   their use for certain algorithms/features, e.g. to encrypt a dm-crypt target
+> > >   using a weak cipher that is vulnerable to key recovery attacks.
+> >
+> > The footgun is already there by allowing users to specify their own
+> >
+> > raw key. Users can already use $keyid for dm-crypt and then do
+> >
+> >   $ keyctl pipe $keyid | fscryptctl add_key /mnt
+> >
+> > The responsibility to not reuse key material already lies with the users,
+> > regardless if they handle the raw key material directly or indirectly via
+> > a trusted key description/ID.
+>
+> Elsewhere you are claiming that "trusted" keys can never be disclosed to
+> userspace.  So you can't rely on userspace cooperating, right?
+>
+> - Eric
