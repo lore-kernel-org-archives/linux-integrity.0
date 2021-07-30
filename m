@@ -2,171 +2,106 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40F2C4338F
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Jul 2021 07:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A83C4338F
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Jul 2021 11:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 942EB60F0F
-	for <linux-integrity@archiver.kernel.org>; Fri, 30 Jul 2021 07:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 851AC60232
+	for <linux-integrity@archiver.kernel.org>; Fri, 30 Jul 2021 11:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237403AbhG3HQI convert rfc822-to-8bit (ORCPT
+        id S238633AbhG3Lp6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 30 Jul 2021 03:16:08 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3535 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230273AbhG3HQI (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 30 Jul 2021 03:16:08 -0400
-Received: from fraeml713-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Gbdfp5sqqz6LBk7;
-        Fri, 30 Jul 2021 15:04:02 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml713-chm.china.huawei.com (10.206.15.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 30 Jul 2021 09:16:00 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Fri, 30 Jul 2021 09:16:00 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
- digest_list_del
-Thread-Topic: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
- digest_list_del
-Thread-Index: AQHXgjzPxJ6WuoGgH0KyG3D/y7w0xqtaWSsAgADBDpA=
-Date:   Fri, 30 Jul 2021 07:16:00 +0000
-Message-ID: <ef7c85dcb096479e95c8c60ccda4d700@huawei.com>
-References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
-         <20210726163700.2092768-7-roberto.sassu@huawei.com>
- <c9dffd9d29df095660beaa631ff252c4b33629a0.camel@linux.ibm.com>
-In-Reply-To: <c9dffd9d29df095660beaa631ff252c4b33629a0.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 30 Jul 2021 07:45:58 -0400
+Received: from mout.gmx.net ([212.227.17.21]:38947 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230157AbhG3Lp5 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 30 Jul 2021 07:45:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1627645548;
+        bh=5nwtFUK6rZsQSaPedvMtggo0kXPpIuOZXQXwWmwUXyw=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=QV220zb7rpnBcz4J0qAKKimC58tuXv5SUSM1V8eY52hw/duRbaqxszjCI1958pJ26
+         O9+H+cF/22/Pj3Z0YLmtgWe9eSYl1Ppn1phH9vW4QatTygOrQLQdhvo8cJos/Em1m2
+         4B4P8er62f0ZqOOUidr13ckYbn+FBhHEYMuxvw3A=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [87.130.101.138] ([87.130.101.138]) by web-mail.gmx.net
+ (3c-app-gmx-bs53.server.lan [172.19.170.137]) (via HTTP); Fri, 30 Jul 2021
+ 13:45:48 +0200
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Message-ID: <trinity-23757337-a194-45c1-864b-6f96a754fed1-1627645548572@3c-app-gmx-bs53>
+From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linus.walleij@linaro.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Aw: Re: [PATCH v2] tpm, tpm_tis_spi: Allow to sleep in the
+ interrupt handler
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 30 Jul 2021 13:45:48 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <20210623133420.gw2lziue5nkvjtps@kernel.org>
+References: <20210620023444.14684-1-LinoSanfilippo@gmx.de>
+ <20210623133420.gw2lziue5nkvjtps@kernel.org>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:iD0cgET1uosZgRcmeBTa/6zynHtSmS9RAa0zPzePWzPxyajS59Lk2bD+DghdCYoGMy3wl
+ DVtcWR7eCEnJfdRwqKPuGaFNH6Y3TpQqnsas/6vYDwDPfhn7M41UIlWtz89kdV+bjN4Ki89TvXhu
+ +fUryqpBqjDFTa0tBFgrBf6oEOiZaMx2SD3ao8FO3BQRyNESKtUiSZvY7gtvP60roXZLLMJyyY+s
+ yxfYG1aZIMutHe979SBulg30sI8rVFFQ6gUiTT2l3vBJENW/DB295om1QJnPTtjil5Y5Cni93mBI
+ Bw=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Sx8Hbnu69Tk=:P2zLXADOnYyEPlPGwyUGkl
+ JDPf3njtHtSOnAvZRuaDs4w0PlIoy/fIbUyRQ7nv9sejlZ0e+S2K3DzLwjyvQuK5GtRfL5FL1
+ EfZ3nbSpVQE6m0cwDoeDJnCbeaJiYjjacb3ru9yeVCxPIIPX+5iY3qNrCXbBgkA6u/BA4Td9q
+ 9H8QJjyuZFiw6joWvmw34iF+7Khtas7W4FsCuU1g03Y89Pzp7+LPonualQwIy4WVgvIRGTX3S
+ +SU+U5DdLzl2zzBkB6bhO9ZGtX9ghU8eH0cNAYw1SjhU0cKu1JQGP2WODjQVns08Y1n30hzPV
+ vSC44X9smcn/6j6A0bhC5KcBtMMf9jZewxqDDEqPVfQq6JlVyl/zoU7N8BYssQSjMhsVfPizH
+ D8ew9d0iNVCT9w+dLBoQV83w9Ckj51kxUcR2wrIuNc2KJT/4qRKMSve3/F2vQx8krAxTbjj/N
+ rudugvjvRAhJiKQ7k7pEkCsGO8qODhDXKMFI0/Z3xur0cO9uAt1iUbho7BfcXwsCymQjKrC1L
+ X4yz5FEsW7+I0dDwQ8EeqafdOmhqpbSRva8kmIiiBLaIJKgElr7L1K8Bo7mSoPxlfoaO2HBkg
+ IFdM6aMJuqCL0mPVR7BFm7kOc9nC30cg2AcsR0eLUjf90dDm6RlRdpRsCa1uNpZnosuuQ+gD9
+ CMf6UTvH3A1rnVbhnI2Gswf0G2JPHaO+Tj+hvTb+Fs/1dR8qCEMZwL0mPQAiTpGGFBHz8VzSK
+ R6anq5zpgN0mFUTK+LzjvToPLVJ/6jBs4irH8ejum0omELXzMlWkJrC/x9dW4aZJLgajW9DHP
+ 17NNPKbrfjOJg5pyfDjOhAncMHGbQ==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Thursday, July 29, 2021 11:21 PM
-> Hi Roberto,
-> 
-> On Mon, 2021-07-26 at 18:36 +0200, Roberto Sassu wrote:
-> > /*
-> > + * digest_list_read: read and parse the digest list from the path
-> > + */
-> > +static ssize_t digest_list_read(char *path, enum ops op)
-> > +{
-> > +       void *data = NULL;
-> > +       char *datap;
-> > +       size_t size;
-> > +       u8 actions = 0;
-> > +       struct file *file;
-> > +       char event_name[NAME_MAX + 9 + 1];
-> > +       u8 digest[IMA_MAX_DIGEST_SIZE] = { 0 };
-> > +       enum hash_algo algo;
-> > +       int rc, pathlen = strlen(path);
-> > +
-> > +       /* Remove \n. */
-> > +       datap = path;
-> > +       strsep(&datap, "\n");
-> > +
-> > +       file = filp_open(path, O_RDONLY, 0);
-> > +       if (IS_ERR(file)) {
-> > +               pr_err("unable to open file: %s (%ld)", path, PTR_ERR(file));
-> > +               return PTR_ERR(file);
-> > +       }
-> > +
-> > +       rc = kernel_read_file(file, 0, &data, INT_MAX, NULL,
-> > +                             READING_DIGEST_LIST);
-> > +       if (rc < 0) {
-> > +               pr_err("unable to read file: %s (%d)", path, rc);
-> > +               goto out;
-> > +       }
-> > +
-> > +       size = rc;
-> > +
-> > +       snprintf(event_name, sizeof(event_name), "%s_file_%s",
-> > +                op == DIGEST_LIST_ADD ? "add" : "del",
-> > +                file_dentry(file)->d_name.name);
-> > +
-> > +       rc = ima_measure_critical_data("diglim", event_name, data, size, false,
-> > +                                      digest, sizeof(digest));
-> > +       if (rc < 0 && rc != -EEXIST)
-> > +               goto out_vfree;
-> 
-> The digest lists could easily be measured while reading the digest list
-> file above in kernel_read_file().  What makes it "critical-data"?  In
-> the SELinux case, the in memory SELinux policy is being measured and
-> re-measured to make sure it hasn't been modified.  Is the digest list
-> file data being measured more than once?
+Hi Jarko,
 
-Hi Mimi
+> Gesendet: Mittwoch, 23. Juni 2021 um 15:34 Uhr
+> Von: "Jarkko Sakkinen" <jarkko@kernel.org>
+> An: "Lino Sanfilippo" <LinoSanfilippo@gmx.de>
+> Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linus.walleij@linaro.org, linux-int=
+egrity@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.o=
+rg
+> Betreff: Re: [PATCH v2] tpm, tpm_tis_spi: Allow to sleep in the interrup=
+t handler
+>
+> On Sun, Jun 20, 2021 at 04:34:44AM +0200, Lino Sanfilippo wrote:
+> > Interrupt handling at least includes reading and writing the interrupt
+> > status register within the interrupt routine. For accesses over SPI a =
+mutex
+> > is used in the concerning functions. Since this requires a sleepable
+> > context request a threaded interrupt handler for this case.
+> >
+> > Cc: stable@vger.kernel.org
+> > Fixes: 1a339b658d9d ("tpm_tis_spi: Pass the SPI IRQ down to the driver=
+")
+> > Signed-off-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+>
+> I'll test this after rc1 PR (I have one NUC which uses tpm_tis_spi).
+>
+> /Jarkko
+>
 
-yes, the digest lists can be measured with kernel_read_file().
-I didn't send the change yet, but I added a DIGEST_LIST_CHECK
-hook mapped to READING_DIGEST_LIST, so that digest lists
-can be easily measured or appraised.
+any news from this patch? Did you already have the opportunity to test it?
 
-The point was that the digest of the digest list must be always
-calculated, as it is added to the hash table. Instead of duplicating
-the code, I preferred to use ima_measure_critical_data().
-
-The advantage is also that, if the use case is to just measure
-digest lists, ima_measure_critical_data() could do both at the
-same time.
-
-Digest lists can be seen as "critical data" in the sense that
-they can affect the security decision on whether to grant
-access to a file or not, assuming that an appropriate rule is
-added in the IMA policy.
-
-> I understand that with your changes to ima_measure_critical_data(),
-> which are now in next-integrity-testing branch, allow IMA to calculate
-> the file data hash.
-
-Yes, correct. But actually there is another useful use case.
-If digest lists are not in the format supported by the kernel,
-the user space parser has to convert them before uploading
-them to the kernel.
-
-ima_measure_critical_data() would in this case measure
-the converted digest list (it is written directly, without
-sending the file path). It is easier to attest the result,
-instead of determining whether the user space parser
-produced the expected result (by checking the files it
-read).
-
-Thanks
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-> thanks,
-> 
-> Mimi
-> 
-> > +
-> > +       algo = ima_get_current_hash_algo();
-> > +
-> 
-
+Regards,
+Lino
