@@ -2,284 +2,236 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978F4C4338F
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Aug 2021 05:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D549C4338F
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Aug 2021 09:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC2E60F10
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Aug 2021 05:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 559A160F41
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Aug 2021 09:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235062AbhHDFb0 (ORCPT
+        id S237051AbhHDJUc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 Aug 2021 01:31:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60642 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232010AbhHDFbZ (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Aug 2021 01:31:25 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17454JtB105733;
-        Wed, 4 Aug 2021 01:31:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=NblZU99XF51OF6LVM6E3ZmyfEhrdUxiEedGEnfofF/E=;
- b=joWxsMl6UP9DdNm0KBnuJZ/ekpPhY/3LzOjDbLmc4LsWRCY8z5IUYURO/5/gZq5VFPWt
- vQXSZj3sOzY69I/Min3goGBtNy5LagswcvI14nS5j1BkAKKMeoOhQuibLVyEMV7jsY2m
- IZda102KHM6rfM3gkRAOvf4Of9N6sGeqF2MpohzUDJbJLZa8QjO9YZe/+E8OGmk3YLTz
- QDLIv891c896sioBi1jlnHZeZY+xzYXGofSiJTlyFzFDtISEojB+EF+In5tAJinKVZuU
- r/2HgAbdXFSoKrXlqztvRKHhmQuKIaDW2j7RIfPUidd77hoZae1Zihkngn4e6kSxEgU4 3A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a76r5vtf4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Aug 2021 01:31:12 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17454WYB106529;
-        Wed, 4 Aug 2021 01:31:12 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a76r5vted-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Aug 2021 01:31:12 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1745IUAP015553;
-        Wed, 4 Aug 2021 05:31:10 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma01fra.de.ibm.com with ESMTP id 3a4x58qmvf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 04 Aug 2021 05:31:09 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1745V61N56230364
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 4 Aug 2021 05:31:06 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D8A2A405C;
-        Wed,  4 Aug 2021 05:31:06 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A7F76A4054;
-        Wed,  4 Aug 2021 05:31:01 +0000 (GMT)
-Received: from Nageswaras-MacBook-Pro-2.local (unknown [9.211.35.152])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed,  4 Aug 2021 05:31:01 +0000 (GMT)
-Subject: Re: [PATCH v2] tpm: ibmvtpm: Avoid error message when process gets
- signal while waiting
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>, jarkko@kernel.org
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>
-References: <20210803202622.1537040-1-stefanb@linux.vnet.ibm.com>
-From:   Nageswara Sastry <rnsastry@linux.ibm.com>
-Message-ID: <59736f0a-6090-2e95-805c-1f38b2c09d0c@linux.ibm.com>
-Date:   Wed, 4 Aug 2021 11:00:57 +0530
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.12.0
-In-Reply-To: <20210803202622.1537040-1-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _vh0e6afxLKgUFxjHQZPh-Mhef-YGB6H
-X-Proofpoint-ORIG-GUID: 585esrirbLpr7a1ucgYsf_uJ0By8zyIq
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 4 Aug 2021 05:20:32 -0400
+Received: from mail-am6eur05on2111.outbound.protection.outlook.com ([40.107.22.111]:20289
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237005AbhHDJU3 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 4 Aug 2021 05:20:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ka/w+rrOmLOwFbEl8qQQSFOLYa0NLBjMtz2vMwlN3eiCgK+A4js8HemT+4Jen7fY/9bGbydChgZ69uKG8jhAX+49c60pRVNjQeVr9+GJcUgfY9NEOzuQXCp3XaXa6JhRtxBJAZW4GVSowo6HqyrJNeR+j4hDnT8FvbwZXHHICI+46kCvBSJkYkz9kBqPuOJWozM3ZFQoygExl8jZ51UoGCs6h0AZp8uVzOcfaNnj1KNQM/3B97ixS0ntROApQGV5CJ5AmxCxfSzDBn60nhsIkvghKN1vK4woz+lAjJfBC2I1V+fV65s8MSLsGq6qBm6KkCmqpecMInAPw4nDQqGDPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9n5Npiv4ACbKZv+BpBMYmzZfl0fM1Qfwe3CPqqbd+ik=;
+ b=kNFGiXaqomVL1t6RfoYJAvGtxOvOj6s2XUhueBZfcvMni8e5v5o+EJAzWt6NkokPrNGhx1H6ksnu2JOWRtvzr9w899Co1mAC4R+B7miTJgV/K+XefQRdXlBxrNqugPaHWzmZexGpy+coJFy7GtNETuK0s/HgiB/i2rd94a1E4HwAx12KJRF7M4PDu+LwWyOdVaWKRmhuruK6SIUuAqPlU1dWT+W1tLfrnaf32TZr+Bp1XL+8HsbGprdUjGrodg62u3tuvM3AvPrI7jEUUg/wwE+iSYSM7nPizupwxphVo5U69jtoG6lBoUleNMNTFbSI+M0c5liaDmc2usLxEuZ2Bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
+ dkim=pass header.d=viveris.fr; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=viverislicensing.onmicrosoft.com;
+ s=selector2-viverislicensing-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9n5Npiv4ACbKZv+BpBMYmzZfl0fM1Qfwe3CPqqbd+ik=;
+ b=H7IwtwdUp92sIBjlElON0WLEWR/DKyCFWIQyKgmVdxJHm2XnII1SJa2A1dEDh1sGfErPbKUEKTnfWeXJl+dj2uTQLK/xifwG3OvwJt1OhaHKmHDA+yPIGru7ZuUmkcfSvoPfLVy2iJgfqRlFYmCEs9tekHnGSPDLV2rvXSfJHjI=
+Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
+ (2603:10a6:200:96::21) by AM0PR09MB4244.eurprd09.prod.outlook.com
+ (2603:10a6:208:181::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18; Wed, 4 Aug
+ 2021 09:20:16 +0000
+Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
+ ([fe80::84a0:780d:1c5c:4432]) by AM4PR0902MB1748.eurprd09.prod.outlook.com
+ ([fe80::84a0:780d:1c5c:4432%9]) with mapi id 15.20.4373.026; Wed, 4 Aug 2021
+ 09:20:15 +0000
+From:   THOBY Simon <Simon.THOBY@viveris.fr>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        BARVAUX Didier <Didier.BARVAUX@viveris.fr>
+CC:     THOBY Simon <Simon.THOBY@viveris.fr>
+Subject: [PATCH v6 2/5] IMA: block writes of the security.ima xattr with
+ unsupported algorithms
+Thread-Topic: [PATCH v6 2/5] IMA: block writes of the security.ima xattr with
+ unsupported algorithms
+Thread-Index: AQHXiRHvsKoLCmhItESAenpSj4tG+w==
+Date:   Wed, 4 Aug 2021 09:20:15 +0000
+Message-ID: <20210804092010.350372-3-simon.thoby@viveris.fr>
+References: <20210804092010.350372-1-simon.thoby@viveris.fr>
+In-Reply-To: <20210804092010.350372-1-simon.thoby@viveris.fr>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux.ibm.com; dkim=none (message not signed)
+ header.d=none;linux.ibm.com; dmarc=none action=none header.from=viveris.fr;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 16ddd842-ee84-479c-bca9-08d95729122d
+x-ms-traffictypediagnostic: AM0PR09MB4244:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR09MB4244A363469ECED664E5B1E594F19@AM0PR09MB4244.eurprd09.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: sL+h8Awbqj5pMsHeDV+uS2hOmXw/SZKhOBRxUiQgvMPwHvv83FdakAiX2iPZ9OQfAypTOHH3+ewdVcNxbCDvckSt7QmsRqXtZil+uvhvLEfVzWqGjKpFsOh7Y16UqobVzVOvyYDE/vP2XR3Fybsda64SCvS86UwSdecrhXKrQ9z1FEsOc8laPUPsfVw247QnCmZB8/rha281lcVm2WkLyMtnZ1wLiT2PVsUg1rIWo5am4xxiHeSJJE7Cntm9jgfbK+b77CQBV5hrYed5zCwl8C3I2yNxsr/Ii3SPa7KoMJsZRcto5BIAE41WXmNQMz03wA4TMJPr2BHxBjNuqhNECsJynmxXWoXo+3TPeBb6hb/fJNGeYEuEgnIVix+PGNKzPXrvXtFpyG3cn+IGS73SuatlIhlWHLCUCyqKukyYPyoYptJxK7YDRiSAykEDQ84BxJEPw5fd+FCwtckIhAo76TBvKItnRI1ZnT9SIHGLgntxv9PozKo+P0he7kfPUz3quNPz+nDzhuFIw+ngGfgwEINYIZzOtAdj/yyyT8LI4CDIGaE/G5MjiFH6tFADkRzYjmaoqw2Tnmx8GifMV56EmxR0UqW/YNJDSBgAiFwLLDAbKCJptW4SSk0t9c37ZPplTPxoRTBaMEnaf5qAHtlBcOQHJGCgLfgxXxAn12mig10vGhYDAJ7YSe+79XwevuIGCKyXT4bUdajwuHWv8XF0YRJd3Ta/LHN70NmBoRZC5I8=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(136003)(39840400004)(366004)(86362001)(64756008)(6636002)(38100700002)(6486002)(71200400001)(478600001)(66446008)(110136005)(66556008)(107886003)(66946007)(15650500001)(66476007)(4326008)(38070700005)(316002)(36756003)(2906002)(122000001)(5660300002)(2616005)(186003)(8676002)(8936002)(91956017)(6512007)(76116006)(83380400001)(6506007)(1076003)(26005)(230434002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?GDIpo1qM1vWht5y+cXf2ZSO5mdVEotKJkGwzieVQIRAq+vfQ2D2v4D6nBl?=
+ =?iso-8859-1?Q?AaF5CzwSceth6yZBsmbogEKS23VueLcrpvp3gYa1HOeHunh+gnMz9FZ5tr?=
+ =?iso-8859-1?Q?mGL6b0Zys54R5XhWuN7IGam2tBLY6k7WoPYw3XEALhBxTQ3HWPbBsQQfOm?=
+ =?iso-8859-1?Q?9rK/6vwr1W/LXzBlbxwQnmJCmXzIMc4GjFxmQ3fU+CnkLaRHs1jl0Oxbs7?=
+ =?iso-8859-1?Q?+YkuV3Htiipf6VVwVE4iW6BdjIOl1vpriG4wyHqP71MGTg6CpvSnuf6d4X?=
+ =?iso-8859-1?Q?3jqot4etaPYvEcqJknUYXkHvT1nEZ80FWB4u1bsh69IB4i3GONNvtSfDBA?=
+ =?iso-8859-1?Q?VQCFTWKbWMc9ysYavBrXmdYBEWu7nm8KofssshhLhtKfgD/MJWEBHlaicO?=
+ =?iso-8859-1?Q?az/eONFkyvBar5Mf5+SaEMnbgb0SJ9+rneu1cNXdhLt+o3A+9gt/vGAEFD?=
+ =?iso-8859-1?Q?eNe2teS+W7KndGbJAh3lI/mAH4IIh36k/whuv4Rr4g+QIS3jJQX2HJ9vJ7?=
+ =?iso-8859-1?Q?EZa4JjHj4yhMuEjUhglqEIbJVWVEolRifngaMGvIBVgI0tS7kN6oWYuJpJ?=
+ =?iso-8859-1?Q?3NmMzXGxQGdsbINEL9kdt1n228Q5c7rVesyJOi6midABc1HfJUY4DOFpMU?=
+ =?iso-8859-1?Q?h40qkf2MpeJkzbjBH0+2Of56suFjV461+8tlmhIbJ0TD6CmJ+mxbWgkQJL?=
+ =?iso-8859-1?Q?olbE8ASTl8/lz2IW9EB816azDu5ZFRAKcpyURGfPnJoYfGqV77jf7pd7sn?=
+ =?iso-8859-1?Q?cf3iuNZG/50XUmDitXhiMqXJfCO5ZPuD2H3rXuRtctiKl/Jc+xcDmHGLHw?=
+ =?iso-8859-1?Q?9+pmAO0lnL3zJ62eQILr2F9f6pZ3H0PXHiQz6+K5w/2wrQlpQg5I1S1cKL?=
+ =?iso-8859-1?Q?H5KN60Cs2Omn6DDb0MuCReVYahMdVF41QQgyJeJrMIaahTfDvnUxdaOj3b?=
+ =?iso-8859-1?Q?m4w4quQbmiO7xLs7PPjF6uohJtOvTcGRMlYYTc0bKZFggbCPJTBS9fwdHg?=
+ =?iso-8859-1?Q?LMn595ELcDKlwoshVssW+O3qCij99DDw6z3TjtdpPB5yr68hZ7jcs4xQ4B?=
+ =?iso-8859-1?Q?hneP6ypROYqYY55CNpUTZlIaiIoJoDfQ43SEYo1dV3pavPbPMdzhFeeqiS?=
+ =?iso-8859-1?Q?2DzkaA/UfKo6Iu2XtEJDDuSrvBomTorXLcMTNamnekaZwrMjIdY4/lmApz?=
+ =?iso-8859-1?Q?oO5151EMOxBH+6LtpgGcGbxWZMdGrU0n2XYD59wVvZjyHZKMqq9pVNdO7i?=
+ =?iso-8859-1?Q?nUE7XX6NKMmGYSFzoP306MXrZHjRW68Q2Gzns3Wx7/vyAhvqhxQELXmM5q?=
+ =?iso-8859-1?Q?An0PPUQ54yzHf/xFG54L/2APDCuAW/6o7c7GxqBh0JptCv1T5O/oZ1LU/R?=
+ =?iso-8859-1?Q?olrLS5bA91?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-04_01:2021-08-03,2021-08-04 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
- clxscore=1011 priorityscore=1501 adultscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108040027
+X-OriginatorOrg: viveris.fr
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16ddd842-ee84-479c-bca9-08d95729122d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2021 09:20:15.9548
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2WXvxwW9eboFbX1pdDxGGfPWEL38kWvr20YbXzLdehKaj9M3EWI1AxktK7Dd7R1zbTwR7qBAzrSGqRQGM+4/OA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR09MB4244
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+By default, writes to the extended attributes security.ima will be
+allowed even if the hash algorithm used for the xattr is not compiled
+in the kernel (which does not make sense because the kernel would not
+be able to appraise that file as it lacks support for validating the
+hash).
 
+Prevent writes to the security.ima xattr if the hash algorithm used is
+not available in the current kernel. Lo an audit message if such an
+operation is attempted.
 
-On 04/08/21 1:56 am, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> When rngd is run as root then lots of these types of message will appear
-> in the kernel log if the TPM has been configured to provide random bytes:
-> 
-> [ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
-> 
-> The issue is caused by the following call that is interrupted while
-> waiting for the TPM's response.
-> 
-> sig = wait_event_interruptible(ibmvtpm->wq,
->                                 !ibmvtpm->tpm_processing_cmd);
-> 
-> Rather than waiting for the response in the low level driver, have it use
-> the polling loop in tpm_try_transmit() that uses a command's duration to
-> poll until a result has been returned by the TPM, thus ending when the
-> timeout has occurred but not responding to signals and ctrl-c anymore. To
-> stay in this polling loop extend tpm_ibmvtpm_status() to return
-> TPM_STATUS_BUSY for as long as the vTPM is busy. Since the loop requires
-> the TPM's timeouts, get them now using tpm_get_timeouts() after setting
-> the TPM2 version flag on the chip.
-> 
-> Rename the tpm_processing_cmd to tpm_status in ibmvtpm_dev and set the
-> TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
-> 
-> To recreat the resolved issue start rngd like this:
-> 
-> sudo rngd -r /dev/hwrng -t
-> sudo rngd -r /dev/tpm0 -t
-> 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
-> Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
-> Cc: Nayna Jain <nayna@linux.ibm.com>
-> Cc: George Wilson <gcwilson@linux.ibm.com>
-> Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> 
+Signed-off-by: Simon Thoby <simon.thoby@viveris.fr>
+---
+ security/integrity/ima/ima.h          |  2 +-
+ security/integrity/ima/ima_appraise.c | 49 ++++++++++++++++++++++++++-
+ 2 files changed, 49 insertions(+), 2 deletions(-)
 
-Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-
-Tested the patch applying on kernel version 5.14.0-rc3
-
-1. Ran with recreate commands i.e.
-rngd -r /dev/hwrng -t
-rngd -r /dev/tpm0 -t
-
-2. Ran the above rngd commands along with "stress-ng - dispatching hogs: 
-32 af-alg, 32 bsearch, 32 context, 32 cpu, 32 crypt, 32 hsearch, 32 
-longjmp, 32 lsearch, 32 matrix, 32 qsort, 32 str, 32 stream, 32 tsearch, 
-32 vecmath, 32 wcs" for 2 hours
-
-Thanks!!
-> ---
-> 
-> v2:
->   - reworded commit text
-> ---
->   drivers/char/tpm/tpm_ibmvtpm.c | 31 ++++++++++++++++++-------------
->   drivers/char/tpm/tpm_ibmvtpm.h |  3 ++-
->   2 files changed, 20 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 903604769de9..5d795866b483 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -106,17 +106,12 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
->   {
->   	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
->   	u16 len;
-> -	int sig;
->   
->   	if (!ibmvtpm->rtce_buf) {
->   		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
->   		return 0;
->   	}
->   
-> -	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-> -	if (sig)
-> -		return -EINTR;
-> -
->   	len = ibmvtpm->res_len;
->   
->   	if (count < len) {
-> @@ -220,11 +215,12 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   		return -EIO;
->   	}
->   
-> -	if (ibmvtpm->tpm_processing_cmd) {
-> +	if ((ibmvtpm->tpm_status & TPM_STATUS_BUSY)) {
->   		dev_info(ibmvtpm->dev,
->   		         "Need to wait for TPM to finish\n");
->   		/* wait for previous command to finish */
-> -		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-> +		sig = wait_event_interruptible(ibmvtpm->wq,
-> +				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
->   		if (sig)
->   			return -EINTR;
->   	}
-> @@ -237,7 +233,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   	 * set the processing flag before the Hcall, since we may get the
->   	 * result (interrupt) before even being able to check rc.
->   	 */
-> -	ibmvtpm->tpm_processing_cmd = true;
-> +	ibmvtpm->tpm_status |= TPM_STATUS_BUSY;
->   
->   again:
->   	rc = ibmvtpm_send_crq(ibmvtpm->vdev,
-> @@ -255,7 +251,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   			goto again;
->   		}
->   		dev_err(ibmvtpm->dev, "tpm_ibmvtpm_send failed rc=%d\n", rc);
-> -		ibmvtpm->tpm_processing_cmd = false;
-> +		ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
->   	}
->   
->   	spin_unlock(&ibmvtpm->rtce_lock);
-> @@ -269,7 +265,9 @@ static void tpm_ibmvtpm_cancel(struct tpm_chip *chip)
->   
->   static u8 tpm_ibmvtpm_status(struct tpm_chip *chip)
->   {
-> -	return 0;
-> +	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
-> +
-> +	return ibmvtpm->tpm_status;
->   }
->   
->   /**
-> @@ -457,7 +455,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
->   	.send = tpm_ibmvtpm_send,
->   	.cancel = tpm_ibmvtpm_cancel,
->   	.status = tpm_ibmvtpm_status,
-> -	.req_complete_mask = 0,
-> +	.req_complete_mask = TPM_STATUS_BUSY,
->   	.req_complete_val = 0,
->   	.req_canceled = tpm_ibmvtpm_req_canceled,
->   };
-> @@ -550,7 +548,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
->   		case VTPM_TPM_COMMAND_RES:
->   			/* len of the data in rtce buffer */
->   			ibmvtpm->res_len = be16_to_cpu(crq->len);
-> -			ibmvtpm->tpm_processing_cmd = false;
-> +			ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
->   			wake_up_interruptible(&ibmvtpm->wq);
->   			return;
->   		default:
-> @@ -688,8 +686,15 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
->   		goto init_irq_cleanup;
->   	}
->   
-> -	if (!strcmp(id->compat, "IBM,vtpm20")) {
-> +
-> +	if (!strcmp(id->compat, "IBM,vtpm20"))
->   		chip->flags |= TPM_CHIP_FLAG_TPM2;
-> +
-> +	rc = tpm_get_timeouts(chip);
-> +	if (rc)
-> +		goto init_irq_cleanup;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->   		rc = tpm2_get_cc_attrs_tbl(chip);
->   		if (rc)
->   			goto init_irq_cleanup;
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
-> index b92aa7d3e93e..252f1cccdfc5 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.h
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.h
-> @@ -41,7 +41,8 @@ struct ibmvtpm_dev {
->   	wait_queue_head_t wq;
->   	u16 res_len;
->   	u32 vtpm_version;
-> -	bool tpm_processing_cmd;
-> +	u8 tpm_status;
-> +#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
->   };
->   
->   #define CRQ_RES_BUF_SIZE	PAGE_SIZE
-> 
-
--- 
-Thanks and Regards
-R.Nageswara Sastry
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 2f4c20b16ad7..829478dabeeb 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -319,7 +319,7 @@ int ima_must_appraise(struct user_namespace *mnt_userns=
+, struct inode *inode,
+ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file=
+);
+ enum integrity_status ima_get_cache_status(struct integrity_iint_cache *ii=
+nt,
+ 					   enum ima_hooks func);
+-enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
++enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_va=
+lue,
+ 				 int xattr_len);
+ int ima_read_xattr(struct dentry *dentry,
+ 		   struct evm_ima_xattr_data **xattr_value);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima=
+/ima_appraise.c
+index 63bec42c353f..ed1a98f6ee19 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -171,7 +171,7 @@ static void ima_cache_flags(struct integrity_iint_cache=
+ *iint,
+ 	}
+ }
+=20
+-enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
++enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_va=
+lue,
+ 				 int xattr_len)
+ {
+ 	struct signature_v2_hdr *sig;
+@@ -575,6 +575,51 @@ static void ima_reset_appraise_flags(struct inode *ino=
+de, int digsig)
+ 		clear_bit(IMA_DIGSIG, &iint->atomic_flags);
+ }
+=20
++/**
++ * validate_hash_algo() - Block setxattr with invalid digests
++ * @dentry: object being setxattr()'ed
++ * @xattr_value: value supplied by userland for the xattr
++ * @xattr_value_len: length of xattr_value
++ *
++ * Context: called when the user tries to write the security.ima xattr.
++ * The xattr value is mapped to some hash algorithm, and this algorithm
++ * must be built in the kernel for the setxattr to be allowed.
++ *
++ * Emit an audit message when the algorithm is invalid.
++ *
++ * Return: 0 on success, else an error.
++ */
++static int validate_hash_algo(struct dentry *dentry,
++				   const struct evm_ima_xattr_data *xattr_value,
++				   size_t xattr_value_len)
++{
++	int result =3D 0;
++	char *path =3D NULL, *pathbuf =3D NULL;
++	enum hash_algo xattr_hash_algo;
++
++	xattr_hash_algo =3D ima_get_hash_algo(xattr_value, xattr_value_len);
++
++	if (likely(xattr_hash_algo =3D=3D ima_hash_algo ||
++		   crypto_has_alg(hash_algo_name[xattr_hash_algo], 0, 0)))
++		return result;
++
++	result =3D -EACCES;
++
++	pathbuf =3D kmalloc(PATH_MAX, GFP_KERNEL);
++	if (!pathbuf)
++		return result;
++
++	path =3D dentry_path(dentry, pathbuf, PATH_MAX);
++
++	integrity_audit_msg(AUDIT_INTEGRITY_DATA, d_inode(dentry), path,
++			    "collect_data", "unavailable-hash-algorithm",
++			    result, 0);
++
++	kfree(pathbuf);
++
++	return result;
++}
++
+ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+ 		       const void *xattr_value, size_t xattr_value_len)
+ {
+@@ -595,6 +640,8 @@ int ima_inode_setxattr(struct dentry *dentry, const cha=
+r *xattr_name,
+ 		ima_reset_appraise_flags(d_backing_inode(dentry), digsig);
+ 		if (result =3D=3D 1)
+ 			result =3D 0;
++
++		result =3D validate_hash_algo(dentry, xvalue, xattr_value_len);
+ 	}
+ 	return result;
+ }
+--=20
+2.31.1
