@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7519AC43214
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A783C432BE
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5847C6109F
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4742960295
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241831AbhHJNqZ (ORCPT
+        id S240201AbhHJNqY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 10 Aug 2021 09:46:25 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60126 "EHLO
+        Tue, 10 Aug 2021 09:46:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63326 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240192AbhHJNqX (ORCPT
+        by vger.kernel.org with ESMTP id S241832AbhHJNqX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 10 Aug 2021 09:46:23 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17ADYXnb023533
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:46:01 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17ADXtXl167410
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:46:02 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=K08/ckWpEcHHVwgjIjT9MU57Sag0QIPYH2OWnCjJWUU=;
- b=pC1fGSmKCTf9F9x2BiBeKkY96OM8VEZovzF5GKmjQWgShdg0dzYNOj+pS0KWy+a0yqLc
- AGJLER1znPbAqNOdCS1kq15PmV5KccIjgW5QG1SRia2wRxJCgpHAdNfnq2SYoJECH4wy
- Ije8+Gmtv8EW33mbzhLyMJvRNM3YO8CsD2rJGkezEJt6LGf3VIBWNoAez1hTSm6ZDgeA
- yb762w7/DJnAgiUXX4mZoJa5IWdK3b5jfhX361rGiv5zeMzLxp3MWFv+xQl7TiYJyz1F
- SeoN7dGivvtUputETrARa7NC404V2HbT0POmi9AoVa1SqRRl6HEIKJHWj4wUxwStNgtS ug== 
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3abtf20bxf-1
+ bh=6gqU34acZ3FrQB+YUMS51Wz6t50aFMPuB/Mf+jEtwmc=;
+ b=Uf1lfp7p+xDW+xmjO+ZGjOmD0efY+UxPHB0odt6tpWNWCEc3eOl1zkGgQITOwEufm7HL
+ 0MUIS7fCg3ZX1J9tRAGgVlkLcLPNWAwAiUJmeyWjl8/BZApGRKRbIhjNMU8D8JJ8vISG
+ hN5Mbiwh8nmWehg8wQrKwJz1Z5u8fvpsM1u6vLbJUrm7IhEWSgLjgZSbLg8ragJQzNKI
+ EwKIUjpqKGpdShzK5BnH4TivV7DYMjtvUkqoSrRW3hme9LkR3w/mH1xYZ3yGMDuzR6i/
+ 4CZrcxZsPrh5uo+SJ9dYvElyUb2k8ZwHUmd0KmWeYc8nzjNktcOxZrwCUsVFoZFWllV0 Pw== 
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3abq69entc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:46:01 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17ADhMxs030226
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17ADgriu028350
         for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 13:46:00 GMT
 Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma02wdc.us.ibm.com with ESMTP id 3aapja1tfs-1
+        by ppma03dal.us.ibm.com with ESMTP id 3a9htcucuv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 13:46:00 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17ADjxsF41943496
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17ADjxEZ39649764
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 10 Aug 2021 13:45:59 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DD3FB2073;
+        by IMSVA (Postfix) with ESMTP id 28AE9B208B;
         Tue, 10 Aug 2021 13:45:59 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EAA6B2081;
+        by IMSVA (Postfix) with ESMTP id 19B5BB207F;
         Tue, 10 Aug 2021 13:45:59 +0000 (GMT)
 Received: from sbct-2.. (unknown [9.47.158.152])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
@@ -60,57 +60,85 @@ Received: from sbct-2.. (unknown [9.47.158.152])
 From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 5/8] evmctl: Setup the pkcs11 engine if key has pkcs11: prefix
-Date:   Tue, 10 Aug 2021 09:45:54 -0400
-Message-Id: <20210810134557.2444863-6-stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v2 3/8] evmctl: Move code setting up engine to own funtion
+Date:   Tue, 10 Aug 2021 09:45:52 -0400
+Message-Id: <20210810134557.2444863-4-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210810134557.2444863-1-stefanb@linux.vnet.ibm.com>
 References: <20210810134557.2444863-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: lKpc6i7zbnjME401pxUF_oRKMhmRW9Xu
-X-Proofpoint-ORIG-GUID: lKpc6i7zbnjME401pxUF_oRKMhmRW9Xu
+X-Proofpoint-GUID: ww4xcw1M51Ejycuet_vvQykTNTzkhzC3
+X-Proofpoint-ORIG-GUID: ww4xcw1M51Ejycuet_vvQykTNTzkhzC3
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
  definitions=2021-08-10_05:2021-08-10,2021-08-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=774
- impostorscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 priorityscore=1501 mlxscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108100087
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108100087
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Stefan Berger <stefanb@linux.ibm.com>
 
-If the key has the pkcs11: URI prefix then setup the pkcs11 engine
-if the user hasn't chosen a specific engine already.
-
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- src/evmctl.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ src/evmctl.c | 32 +++++++++++++++++++-------------
+ 1 file changed, 19 insertions(+), 13 deletions(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 625a511..5178643 100644
+index ed0ece3..4b6f3fb 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -2827,6 +2827,14 @@ int main(int argc, char *argv[])
- 	if (!imaevm_params.keypass)
- 		imaevm_params.keypass = getenv("EVMCTL_KEY_PASSWORD");
+@@ -2631,6 +2631,23 @@ static char *get_password(void)
+ 	return pwd;
+ }
  
-+	if (imaevm_params.keyfile != NULL &&
-+	    imaevm_params.eng == NULL &&
-+	    !strncmp(imaevm_params.keyfile, "pkcs11:", 7)) {
-+		imaevm_params.eng = setup_engine("pkcs11");
-+		if (!imaevm_params.eng)
-+			goto error;
++static ENGINE *setup_engine(const char *engine_id)
++{
++	ENGINE *eng = ENGINE_by_id(engine_id);
++	if (!eng) {
++		log_err("engine %s isn't available\n", optarg);
++		ERR_print_errors_fp(stderr);
++	} else if (!ENGINE_init(eng)) {
++		log_err("engine %s init failed\n", optarg);
++		ERR_print_errors_fp(stderr);
++		ENGINE_free(eng);
++		eng = NULL;
 +	}
++	if (eng)
++		ENGINE_set_default(eng, ENGINE_METHOD_ALL);
++	return eng;
++}
 +
- 	if (argv[optind] == NULL)
- 		usage();
- 	else
+ int main(int argc, char *argv[])
+ {
+ 	int err = 0, c, lind;
+@@ -2755,19 +2772,8 @@ int main(int argc, char *argv[])
+ 			verify_list_sig = 1;
+ 			break;
+ 		case 139: /* --engine e */
+-			eng = ENGINE_by_id(optarg);
+-			if (!eng) {
+-				log_err("engine %s isn't available\n", optarg);
+-				ERR_print_errors_fp(stderr);
+-			} else if (!ENGINE_init(eng)) {
+-				log_err("engine %s init failed\n", optarg);
+-				ERR_print_errors_fp(stderr);
+-				ENGINE_free(eng);
+-				eng = NULL;
+-			}
+-			if (eng)
+-				ENGINE_set_default(eng, ENGINE_METHOD_ALL);
+-			else
++			eng = setup_engine(optarg);
++			if (!eng)
+ 				goto error;
+ 			break;
+ 		case 140: /* --xattr-user */
 -- 
 2.31.1
 
