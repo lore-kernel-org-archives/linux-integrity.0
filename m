@@ -2,87 +2,121 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B35C4338F
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 11:29:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40FAC4338F
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5A360C51
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 11:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C975360295
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240118AbhHJL3h convert rfc822-to-8bit (ORCPT
+        id S241833AbhHJNqY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 10 Aug 2021 07:29:37 -0400
-Received: from mail-0201.mail-europe.com ([51.77.79.158]:42546 "EHLO
-        mail-0201.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238252AbhHJL3g (ORCPT
+        Tue, 10 Aug 2021 09:46:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8874 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241830AbhHJNqX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 10 Aug 2021 07:29:36 -0400
-Date:   Tue, 10 Aug 2021 11:28:25 +0000
-Authentication-Results: mail-4316.protonmail.ch; dkim=none
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-From:   David Gstir <david@sigma-star.at>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        =?utf-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Richard Weinberger <richard@nod.at>,
-        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kernel@pengutronix.de,
-        linux-integrity@vger.kernel.org,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Reply-To: David Gstir <david@sigma-star.at>
-Subject: Re: [PATCH 0/4] KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
-Message-ID: <74737543-4A73-49F8-92F7-F7FFE64A00DB@sigma-star.at>
-In-Reply-To: <8321cac9-350b-1325-4b7e-390f4f292070@pengutronix.de>
-References: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de> <b9e44f8e-84a0-90be-6cfc-d3a0bde12178@pengutronix.de> <20210809093519.er32rmspuvkrww45@kernel.org> <8321cac9-350b-1325-4b7e-390f4f292070@pengutronix.de>
+        Tue, 10 Aug 2021 09:46:23 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17ADZN6J034187
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:46:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=LQpCswoKrv2lHbvMbb3m8hnx5lKXxbg0Z5lNQadq41E=;
+ b=c5NHk+XG262w4pcSW541iFdzYx8xqTyVGOuIZRmrb1XfXJB2on4yZpoywe9befFuuCcL
+ sU4cACvw62QO7O4aNshGsMcni3tg/nV6P2nDe6iDOEvse+WSpskML1d6OG30TpXo3ZLJ
+ 6W/frWizHOwC8v/jN8XNLIYeof4+WPosblqZkfdJravnDutMHYOFRr2ExfTjQo1s9GHX
+ 0en7tRw//n+Vo4IzRRvFYnhrg1jc2SefilK05ZOumhygbvv3mnQASGg0sig0gBNkxwty
+ nstd4+gohHM3CoFHIhaGrb0lEtODKZzp4FSOTbX2CeIi0er/ZLiFFh9wm43NH35hMdKV OA== 
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ab9xa86rx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:46:01 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17ADfvCq018809
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 13:46:00 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma04dal.us.ibm.com with ESMTP id 3a9htcuf81-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 13:46:00 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17ADjxcY30343622
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Aug 2021 13:45:59 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1E2FB2082;
+        Tue, 10 Aug 2021 13:45:58 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDF46B2075;
+        Tue, 10 Aug 2021 13:45:58 +0000 (GMT)
+Received: from sbct-2.. (unknown [9.47.158.152])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Aug 2021 13:45:58 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v2 0/8] ima-evm-utils: Add support for signing with pkcs11 URIs
+Date:   Tue, 10 Aug 2021 09:45:49 -0400
+Message-Id: <20210810134557.2444863-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: OkdN-9-8PRcNLyu96MkXlZ-Fh8NUh_RW
+X-Proofpoint-GUID: OkdN-9-8PRcNLyu96MkXlZ-Fh8NUh_RW
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-10_05:2021-08-10,2021-08-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 mlxscore=0 clxscore=1015 priorityscore=1501 bulkscore=0
+ mlxlogscore=999 spamscore=0 adultscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108100087
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Ahmad,
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-> On 09.08.2021, at 12:16, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+This series of patches adds support for signing with pkcs11 URIs and the
+keyid explicitly provided via a command line option.
+A test program is provided setting up softhsm for test cases to use. Tests
+are passing on gitub actions with some distros not enabled (Debian, Ubuntu)
+where I could not reproduce the github actions failure on the same type of
+container locally (debian:stable).
 
-[...]
+   Stefan
+   
+v2:
+  - Use global imaevm_params.eng field for the ENGINE
+  - Fix bug on engine initialization in existing code
 
-> If it interests you, I described[2] my CAAM+ubifs+fscrypt use case in the
-> discussion thread on my fscrypt-trusted-keys v1. Jan, a colleague of mine, held a
-> talk[3] on the different solutions for authenticated and encrypted storage, which
-> you may want to check out.
->
-> I'd really appreciate feedback here on the the CAAM parts of this series, so this can
-> eventually go mainline.
+Stefan Berger (8):
+  evmctl: Implement support for EVMCTL_KEY_PASSWORD environment variable
+  evmctl: Handle engine initialization properly
+  evmctl: Move code setting up engine to own funtion
+  evmctl: Extend libimaevm_params with ENGINE field and use it
+  evmctl: Setup the pkcs11 engine if key has pkcs11: prefix
+  libimaevm: Add support for pkcs11 private keys for signing a v2 hash
+  tests: Extend sign_verify test with pkcs11-specific test
+  tests: Get the packages for pkcs11 testing on the CI/CD system
 
-Since you mention the fscrypt trusted-keys use case:
+ README                 |   5 +
+ ci/alt.sh              |   3 +
+ ci/fedora.sh           |   8 ++
+ ci/tumbleweed.sh       |   3 +
+ src/evmctl.c           |  54 +++++---
+ src/imaevm.h           |   2 +
+ src/libimaevm.c        |  47 +++++--
+ tests/functions.sh     |  26 ++++
+ tests/sign_verify.test |  50 +++++--
+ tests/softhsm_setup    | 290 +++++++++++++++++++++++++++++++++++++++++
+ 10 files changed, 448 insertions(+), 40 deletions(-)
+ create mode 100755 tests/softhsm_setup
 
-I noticed that the key length for trusted-keys is limited to
-256 - 1024bit keys. fscrypt does however also support keys
-with e.g. 128bit keys (AES-128-CBC-ESSIV, AES-128-CTS-CBC).
-AFAIK, CAAM and TEE key blobs would also support key lengths outside the 256 - 1024bit range.
-
-Wouldn’t it make sense to align the supported key lengths?
-I.e. extend the range of supported key lengths for trusted keys.
-Or is there a specific reason why key lengths below 256bit are
-not supported by trusted-keys?
-
-Cheers,
-David
-
+-- 
+2.31.1
 
