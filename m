@@ -2,153 +2,126 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3F3C4338F
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:47:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB97C4338F
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 16:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F00061058
-	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 13:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C3A610FC
+	for <linux-integrity@archiver.kernel.org>; Tue, 10 Aug 2021 16:19:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238309AbhHJNrX (ORCPT
+        id S229609AbhHJQT5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 10 Aug 2021 09:47:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26796 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238288AbhHJNrX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 10 Aug 2021 09:47:23 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17ADZI3g076846
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:47:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=9n30euOzcCAjMwq0mwEJRhi+xXhekyNHYt00fUhShWE=;
- b=DpyaVWsc5LCsj5eCrSf/7uhEw2wWB1PY7C0aB+2Q6fAaA0HZggFLIzI/Uom6LJpH6HmO
- 8gKXw5neEdXu/uIQqBoHtJCrmysEtGXnUz7+KjS/Pu0dgSOJr6zT7bA/147/9agSq6Tz
- QK3v2CW98mR7H9tpkQbczYsGytaqNXGwTQqVll/0Y+a+5vwtrm33UEwLdwIX5vIWc1zH
- 1Oyh2GntfyiOQWyESlNh9WV1pJVitOB6eGCEHbXxT68DdN4umqErsxy4k9hGpsi6dKC4
- untEyYtAzJWBxWBruy8/rIqDkzAh2lXVoAxwXZ7BldNsdoCQyIxnOtxvBBpAUcb8ltaD SQ== 
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3abkndkfkn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 09:47:01 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17ADh8ZY010286
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 13:47:00 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma05wdc.us.ibm.com with ESMTP id 3a9htbv413-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Aug 2021 13:47:00 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17ADjxf530540144
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Aug 2021 13:45:59 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4232DB2071;
-        Tue, 10 Aug 2021 13:45:59 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34436B2082;
-        Tue, 10 Aug 2021 13:45:59 +0000 (GMT)
-Received: from sbct-2.. (unknown [9.47.158.152])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 10 Aug 2021 13:45:59 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 4/8] evmctl: Extend libimaevm_params with ENGINE field and use it
-Date:   Tue, 10 Aug 2021 09:45:53 -0400
-Message-Id: <20210810134557.2444863-5-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210810134557.2444863-1-stefanb@linux.vnet.ibm.com>
-References: <20210810134557.2444863-1-stefanb@linux.vnet.ibm.com>
+        Tue, 10 Aug 2021 12:19:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229783AbhHJQT4 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 10 Aug 2021 12:19:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0D515600CC;
+        Tue, 10 Aug 2021 16:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628612374;
+        bh=rUrQspPgCz1GB/kLMPpAV5Oz5uFIYwUtwRxo8l8CgxQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FoKJI/tWK/6kSLtIxyJfheigFp9Dbk39gOIdQawyWlg/IV94uf8MeVLmFCk/QQFGZ
+         nrURh8v2Y/B2Ah/51rD46AOuFfzffVzne77EWYedGNlu+fHlDNjC/TI0ahcurePvdQ
+         MRbnVzVIw3VloWG+nu87QnB1v4o+O5LBh8KhXkybvvbw7+Z0+xXZajZMOnP5Zy6vMx
+         yYLnP9WMwnDJVHB+x0oKDdtdOqdf8pStAfdCAqjQzZjXJxNo/bsOltJkph/KE8sFoa
+         J/M+fytEJTw0ReNNrAkT0GAGy4pF2vseBrTdWNnLtxsewLz4VYcDA+jV7RlAr0AEMR
+         jXgBkj8miZhkA==
+Date:   Tue, 10 Aug 2021 19:19:32 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ross Philipson <ross.philipson@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        luto@amacapital.net, kanth.ghatraju@oracle.com,
+        trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v3 02/14] x86/boot: Add missing handling of
+ setup_indirect structures
+Message-ID: <20210810161932.wdwfu3wosjytdj4h@kernel.org>
+References: <1628527136-2478-1-git-send-email-ross.philipson@oracle.com>
+ <1628527136-2478-3-git-send-email-ross.philipson@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ENux57DuXneTb3QyKtTaf45ikvm5mkgR
-X-Proofpoint-GUID: ENux57DuXneTb3QyKtTaf45ikvm5mkgR
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-10_05:2021-08-10,2021-08-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 phishscore=0 spamscore=0 bulkscore=0
- mlxlogscore=743 impostorscore=0 adultscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108100087
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1628527136-2478-3-git-send-email-ross.philipson@oracle.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Mon, Aug 09, 2021 at 12:38:44PM -0400, Ross Philipson wrote:
+> One of the two functions in ioremap.c that handles setup_data was
+> missing the correct handling of setup_indirect structures.
 
-Extend the global libimaevm_params structure with an ENGINE field 'eng'
-and use it in place of the local ENGINE variable in main().
+What is "correct handling", and how was it broken?
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- src/evmctl.c | 11 +++++------
- src/imaevm.h |  2 ++
- 2 files changed, 7 insertions(+), 6 deletions(-)
+What is 'setup_indirect'?
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 4b6f3fb..625a511 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -2651,7 +2651,6 @@ static ENGINE *setup_engine(const char *engine_id)
- int main(int argc, char *argv[])
- {
- 	int err = 0, c, lind;
--	ENGINE *eng = NULL;
- 	unsigned long keyid;
- 	char *eptr;
- 
-@@ -2772,8 +2771,8 @@ int main(int argc, char *argv[])
- 			verify_list_sig = 1;
- 			break;
- 		case 139: /* --engine e */
--			eng = setup_engine(optarg);
--			if (!eng)
-+			imaevm_params.eng = setup_engine(optarg);
-+			if (!imaevm_params.eng)
- 				goto error;
- 			break;
- 		case 140: /* --xattr-user */
-@@ -2849,9 +2848,9 @@ int main(int argc, char *argv[])
- 	}
- 
- error:
--	if (eng) {
--		ENGINE_finish(eng);
--		ENGINE_free(eng);
-+	if (imaevm_params.eng) {
-+		ENGINE_finish(imaevm_params.eng);
-+		ENGINE_free(imaevm_params.eng);
- #if OPENSSL_API_COMPAT < 0x10100000L
- 		ENGINE_cleanup();
- #endif
-diff --git a/src/imaevm.h b/src/imaevm.h
-index 491f136..8792aa2 100644
---- a/src/imaevm.h
-+++ b/src/imaevm.h
-@@ -48,6 +48,7 @@
- #include <errno.h>
- #include <sys/types.h>
- #include <openssl/rsa.h>
-+#include <openssl/engine.h>
- 
- #ifdef USE_FPRINTF
- #define do_log(level, fmt, args...)	\
-@@ -197,6 +198,7 @@ struct libimaevm_params {
- 	const char *keyfile;
- 	const char *keypass;
- 	uint32_t keyid;		/* keyid overriding value, unless 0. (Host order.) */
-+	ENGINE *eng;
- };
- 
- struct RSA_ASN1_template {
--- 
-2.31.1
+> Functionality missing from original commit:
 
+Remove this sentence.
+
+> commit b3c72fc9a78e (x86/boot: Introduce setup_indirect)
+
+Should be.
+
+Fixes: b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
+
+ 
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> ---
+>  arch/x86/mm/ioremap.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index ab74e4f..f2b34c5 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -669,17 +669,34 @@ static bool __init early_memremap_is_setup_data(resource_size_t phys_addr,
+>  
+>  	paddr = boot_params.hdr.setup_data;
+>  	while (paddr) {
+> -		unsigned int len;
+> +		unsigned int len, size;
+>  
+>  		if (phys_addr == paddr)
+>  			return true;
+>  
+>  		data = early_memremap_decrypted(paddr, sizeof(*data));
+> +		size = sizeof(*data);
+>  
+>  		paddr_next = data->next;
+>  		len = data->len;
+>  
+> -		early_memunmap(data, sizeof(*data));
+> +		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
+> +			early_memunmap(data, sizeof(*data));
+> +			return true;
+> +		}
+> +
+> +		if (data->type == SETUP_INDIRECT) {
+> +			size += len;
+> +			early_memunmap(data, sizeof(*data));
+> +			data = early_memremap_decrypted(paddr, size);
+> +
+> +			if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
+> +				paddr = ((struct setup_indirect *)data->data)->addr;
+> +				len = ((struct setup_indirect *)data->data)->len;
+> +			}
+> +		}
+> +
+> +		early_memunmap(data, size);
+>  
+>  		if ((phys_addr > paddr) && (phys_addr < (paddr + len)))
+>  			return true;
+> -- 
+> 1.8.3.1
+> 
+> 
+
+/Jarkko
