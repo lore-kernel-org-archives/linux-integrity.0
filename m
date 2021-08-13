@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54944C4320A
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD81C43214
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3194760EE4
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 456D060F51
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234841AbhHMVih (ORCPT
+        id S234909AbhHMVii (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Aug 2021 17:38:37 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44274 "EHLO
+        Fri, 13 Aug 2021 17:38:38 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:44314 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234824AbhHMVih (ORCPT
+        with ESMTP id S234869AbhHMVii (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 Aug 2021 17:38:37 -0400
+        Fri, 13 Aug 2021 17:38:38 -0400
 Received: from Lenovo-Legion-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DBDE320C1715;
-        Fri, 13 Aug 2021 14:38:09 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DBDE320C1715
+        by linux.microsoft.com (Postfix) with ESMTPSA id 12AAD20C28AD;
+        Fri, 13 Aug 2021 14:38:11 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 12AAD20C28AD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1628890690;
-        bh=4csy5b5kiyoZxFENmB5VxSl1SoTC8baiBFdwBVsH09s=;
+        s=default; t=1628890691;
+        bh=bGT4Ic4+8heI39wiqJHz4huQx3xxxyNiPNklH/2l28E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aqaHLW8ZfSOM4G0OTmNyN53qJ5vl/AAAV3yaE2pTG+vJr45/zbr5fjVnox4t7WiHU
-         cTWrIkDAdpH5FBWWso1KOneZPSJhHe7xcBZ8NH9kn7TW5lHnne9hWKVT3gKmcSSYFL
-         Tc7H+Qq0JYq5pvybWLAFjNTLFAQ62jIE69ZDRdZE=
+        b=XanzTZEkXW5Iic5Qhqw0GaAyRZt41IwixOLDV3oH8mYVH1InrFDVw7KWa6frr65mc
+         Gb5Aei9+/x4WrTSayqYGM0yzgt1lgYs1IPycXXyCnfKlY0K9cdPyTmo0B3H5aI4qE3
+         0KJM3hg8bi17ctVOSlU46rqBFUc8onnk4R1bkNrA=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     dm-devel@redhat.com, agk@redhat.com, snitzer@redhat.com
 Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
         sfr@canb.auug.org.au, public@thson.de, nramas@linux.microsoft.com,
         tusharsu@linux.microsoft.com
-Subject: [PATCH 1/6] dm ima: prefix dm table hashes in ima log with hash algorithm
-Date:   Fri, 13 Aug 2021 14:37:56 -0700
-Message-Id: <20210813213801.297051-2-tusharsu@linux.microsoft.com>
+Subject: [PATCH 4/6] dm ima: add a warning in dm_init if duplicate ima events are not measured
+Date:   Fri, 13 Aug 2021 14:37:59 -0700
+Message-Id: <20210813213801.297051-5-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210813213801.297051-1-tusharsu@linux.microsoft.com>
 References: <20210813213801.297051-1-tusharsu@linux.microsoft.com>
@@ -49,77 +49,38 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The active/inactive table hashes measured in the ima log do not contain
-the information about hash algorithm.  This information is useful for the
-attestation servers to recreate the hashes and compare them with the ones
-present in the ima log to verify the table contents.
+The end-users of DM devices/targets may remove and re-create the same
+device multiple times.  IMA does not measure such duplicate events if the
+configuration CONFIG_IMA_DISABLE_HTABLE is set to 'n'.
+To avoid confusion, the end-users need some indication on the client
+if that configuration option is disabled.
 
-Prefix the table hashes in various DM events in ima log with the hash
-algorithm used to compute those hashes.
+Add a one-time warning to dmesg during dm_init if
+CONFIG_IMA_DISABLE_HTABLE is set to 'n', to notify the end-users that
+duplicate events will not be measured in the ima log.
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- drivers/md/dm-ima.c | 15 ++++++++++++---
- drivers/md/dm-ima.h |  1 +
- 2 files changed, 13 insertions(+), 3 deletions(-)
+ drivers/md/dm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-index 91ea4a7202ab..4bab35c8f0c7 100644
---- a/drivers/md/dm-ima.c
-+++ b/drivers/md/dm-ima.c
-@@ -186,6 +186,12 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 	struct crypto_shash *tfm = NULL;
- 	u8 *digest = NULL;
- 	bool noio = false;
-+	const size_t hash_alg_prefix_len = strlen(DM_IMA_TABLE_HASH_ALG) + 1;
-+				/*
-+				 * +1 for the additional char (':'), when prefixing
-+				 * the hash value with the hash algorithm name.
-+				 * e.g. sha256:<hash_value>.
-+				 */
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 2e82757b4ab7..948cb0dc5fc4 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -265,6 +265,12 @@ static int __init dm_init(void)
  
- 	ima_buf = dm_ima_alloc(DM_IMA_MEASUREMENT_BUF_LEN, GFP_KERNEL, noio);
- 	if (!ima_buf)
-@@ -204,7 +210,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 	if (dm_ima_alloc_and_copy_device_data(table->md, &device_data_buf, num_targets, noio))
- 		goto error;
+ 	int r, i;
  
--	tfm = crypto_alloc_shash("sha256", 0, 0);
-+	tfm = crypto_alloc_shash(DM_IMA_TABLE_HASH_ALG, 0, 0);
- 	if (IS_ERR(tfm))
- 		goto error;
- 
-@@ -315,12 +321,15 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 	if (r < 0)
- 		goto error;
- 
--	digest_buf = dm_ima_alloc((digest_size*2)+1, GFP_KERNEL, noio);
-+	digest_buf = dm_ima_alloc((digest_size*2) + hash_alg_prefix_len + 1, GFP_KERNEL, noio);
++#if (IS_ENABLED(CONFIG_BLK_DEV_DM) && IS_ENABLED(CONFIG_IMA) \
++	&& !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE))
++	DMWARN("CONFIG_IMA_DISABLE_HTABLE is disabled."
++	       " Duplicate IMA measurements will not be recorded in the IMA log.");
++#endif
 +
- 	if (!digest_buf)
- 		goto error;
- 
-+	snprintf(digest_buf, hash_alg_prefix_len + 1, "%s:", DM_IMA_TABLE_HASH_ALG);
-+
- 	for (i = 0; i < digest_size; i++)
--		snprintf((digest_buf+(i*2)), 3, "%02x", digest[i]);
-+		snprintf((digest_buf + hash_alg_prefix_len + (i*2)), 3, "%02x", digest[i]);
- 
- 	if (table->md->ima.active_table.hash != table->md->ima.inactive_table.hash)
- 		kfree(table->md->ima.inactive_table.hash);
-diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
-index 6e6f18bf05b4..0731a51565d6 100644
---- a/drivers/md/dm-ima.h
-+++ b/drivers/md/dm-ima.h
-@@ -16,6 +16,7 @@
- #define DM_IMA_TARGET_METADATA_BUF_LEN	128
- #define DM_IMA_TARGET_DATA_BUF_LEN	2048
- #define DM_IMA_DEVICE_CAPACITY_BUF_LEN	128
-+#define DM_IMA_TABLE_HASH_ALG		"sha256"
- 
- #ifdef CONFIG_IMA
- 
+ 	for (i = 0; i < count; i++) {
+ 		r = _inits[i]();
+ 		if (r)
 -- 
 2.32.0
 
