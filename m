@@ -8,39 +8,39 @@ X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0656EC4320E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD47CC43216
 	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA19F60F51
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912AD6109E
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 Aug 2021 21:38:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234547AbhHMVii (ORCPT
+        id S234869AbhHMVij (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 Aug 2021 17:38:38 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:44298 "EHLO
+        Fri, 13 Aug 2021 17:38:39 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:44324 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S234824AbhHMVii (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 13 Aug 2021 17:38:38 -0400
 Received: from Lenovo-Legion-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id AA2B220C171A;
-        Fri, 13 Aug 2021 14:38:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AA2B220C171A
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6C91520C2935;
+        Fri, 13 Aug 2021 14:38:11 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6C91520C2935
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1628890690;
-        bh=mUT0Jx6cKjcUIcrKeW65+2LTgqveBTVLDqMe9OBdGiQ=;
+        s=default; t=1628890691;
+        bh=zZX7LGLs9wItFDOG3lSr2nLkYfwgSeHJJDYb45LouEw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a6wLKubiikv2zlfQI6EqoYZM8eWGKDywOKGeScFeti0yTztXkFEtMS0F4/9K2D8/B
-         5TgZcvGYuWAe4ELrRTI3NDKN6fyHaBqgEOuzYw7M4XzSC4OVIA5D4Tp/IeH8OXFAH/
-         YaN/g/NUztQvzMBX662CnGlMbDkxw+iTyV9Nb0e4=
+        b=YIgId31OlLn4AOzIdsI2jC7n7Rf0EqJ8kfc+R4TVAsTswGVqAL6dFsdd9n4SkkjBA
+         fZQeokftBJCHrXS4q+CCLamf6+Bu8s6Dr2tqoL9zrKEBMs2s/R2je490K5UBacOv71
+         JkGbK6Vizf90JN69bmBXBq0nqxhTkuLslNTDeEBU=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     dm-devel@redhat.com, agk@redhat.com, snitzer@redhat.com
 Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
         sfr@canb.auug.org.au, public@thson.de, nramas@linux.microsoft.com,
         tusharsu@linux.microsoft.com
-Subject: [PATCH 3/6] dm ima: prefix ima event name related to device mapper with dm_
-Date:   Fri, 13 Aug 2021 14:37:58 -0700
-Message-Id: <20210813213801.297051-4-tusharsu@linux.microsoft.com>
+Subject: [PATCH 5/6] dm ima: update dm target attributes for ima measurements
+Date:   Fri, 13 Aug 2021 14:38:00 -0700
+Message-Id: <20210813213801.297051-6-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210813213801.297051-1-tusharsu@linux.microsoft.com>
 References: <20210813213801.297051-1-tusharsu@linux.microsoft.com>
@@ -50,104 +50,113 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The event names for the DM events recorded in the ima log do not contain
-any information to indicate the events are part of the DM devices/targets.
+Certain DM targets ('integrity', 'multipath', 'verity') need to update the
+way their attributes are recorded in the ima log, so that the attestation
+servers can interpret the data correctly and decide if the devices
+meet the attestation requirements.  For instance, the "mode=%c" attribute
+in the 'integrity' target is measured twice, the 'verity' target is
+missing the attribute "root_hash_sig_key_desc=%s", and the 'multipath'
+target needs to index the attributes properly.
 
-Prefix the event names for DM events with "dm_" to indicate that they
-are part of device-mapper.
+Update 'integrity' target to remove the duplicate measurement of
+the attribute "mode=%c".  Add "root_hash_sig_key_desc=%s" attribute
+for the 'verity' target.  Index various attributes in 'multipath'
+target.  Also, add "nr_priority_groups=%u" attribute to 'multipath'
+target to record the number of priority groups.
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 Suggested-by: Thore Sommer <public@thson.de>
 ---
- drivers/md/dm-ima.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/md/dm-integrity.c     |  1 -
+ drivers/md/dm-mpath.c         | 26 ++++++++++++++++++--------
+ drivers/md/dm-verity-target.c |  2 ++
+ 3 files changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-index 458a3a1d78bc..81a574129a80 100644
---- a/drivers/md/dm-ima.c
-+++ b/drivers/md/dm-ima.c
-@@ -193,6 +193,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 				 * the hash value with the hash algorithm name.
- 				 * e.g. sha256:<hash_value>.
- 				 */
-+	char table_load_event_name[] = "dm_table_load";
- 
- 	ima_buf = dm_ima_alloc(DM_IMA_MEASUREMENT_BUF_LEN, GFP_KERNEL, noio);
- 	if (!ima_buf)
-@@ -272,7 +273,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 		 * targets by prefixing the device metadata again.
- 		 */
- 		if (unlikely(cur_total_buf_len >= DM_IMA_MEASUREMENT_BUF_LEN)) {
--			dm_ima_measure_data("table_load", ima_buf, l, noio);
-+			dm_ima_measure_data(table_load_event_name, ima_buf, l, noio);
- 			r = crypto_shash_update(shash, (const u8 *)ima_buf, l);
- 			if (r < 0)
- 				goto error;
-@@ -281,8 +282,8 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 			l = 0;
- 
- 			/*
--			 * Each new "table_load" entry in IMA log should have device data
--			 * prefix, so that multiple records from the same table_load for
-+			 * Each new "dm_table_load" entry in IMA log should have device data
-+			 * prefix, so that multiple records from the same "dm_table_load" for
- 			 * a given device can be linked together.
- 			 */
- 			memcpy(ima_buf + l, DM_IMA_VERSION_STR, table->md->ima.dm_version_str_len);
-@@ -293,7 +294,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 
- 			/*
- 			 * If this iteration of the for loop turns out to be the last target
--			 * in the table, dm_ima_measure_data("table_load", ...) doesn't need
-+			 * in the table, dm_ima_measure_data("dm_table_load", ...) doesn't need
- 			 * to be called again, just the hash needs to be finalized.
- 			 * "last_target_measured" tracks this state.
- 			 */
-@@ -312,7 +313,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
+diff --git a/drivers/md/dm-integrity.c b/drivers/md/dm-integrity.c
+index 40f8116c8e44..6e0b2f2f5911 100644
+--- a/drivers/md/dm-integrity.c
++++ b/drivers/md/dm-integrity.c
+@@ -3328,7 +3328,6 @@ static void dm_integrity_status(struct dm_target *ti, status_type_t type,
+ 		DMEMIT(",journal_sectors=%u", ic->initial_sectors - SB_SECTORS);
+ 		DMEMIT(",interleave_sectors=%u", 1U << ic->sb->log2_interleave_sectors);
+ 		DMEMIT(",buffer_sectors=%u", 1U << ic->log2_buffer_sectors);
+-		DMEMIT(",mode=%c", ic->mode);
+ 		DMEMIT(";");
+ 		break;
  	}
+diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
+index c3c514a9edbb..694aaca4eea2 100644
+--- a/drivers/md/dm-mpath.c
++++ b/drivers/md/dm-mpath.c
+@@ -1790,7 +1790,7 @@ static void multipath_resume(struct dm_target *ti)
+ static void multipath_status(struct dm_target *ti, status_type_t type,
+ 			     unsigned status_flags, char *result, unsigned maxlen)
+ {
+-	int sz = 0;
++	int sz = 0, pg_counter, pgpath_counter;
+ 	unsigned long flags;
+ 	struct multipath *m = ti->private;
+ 	struct priority_group *pg;
+@@ -1906,7 +1906,12 @@ static void multipath_status(struct dm_target *ti, status_type_t type,
+ 		break;
  
- 	if (!last_target_measured) {
--		dm_ima_measure_data("table_load", ima_buf, l, noio);
-+		dm_ima_measure_data(table_load_event_name, ima_buf, l, noio);
+ 	case STATUSTYPE_IMA:
++		sz = 0; /*reset the result pointer*/
++
+ 		DMEMIT_TARGET_NAME_VERSION(ti->type);
++		DMEMIT(",nr_priority_groups=%u", m->nr_priority_groups);
++
++		pg_counter = 0;
+ 		list_for_each_entry(pg, &m->priority_groups, list) {
+ 			if (pg->bypassed)
+ 				state = 'D';	/* Disabled */
+@@ -1914,21 +1919,26 @@ static void multipath_status(struct dm_target *ti, status_type_t type,
+ 				state = 'A';	/* Currently Active */
+ 			else
+ 				state = 'E';	/* Enabled */
+-			DMEMIT(",pg_state=%c", state);
+-			DMEMIT(",nr_pgpaths=%u", pg->nr_pgpaths);
+-			DMEMIT(",path_selector_name=%s", pg->ps.type->name);
++			DMEMIT(",pg_state_%d=%c", pg_counter, state);
++			DMEMIT(",nr_pgpaths_%d=%u", pg_counter, pg->nr_pgpaths);
++			DMEMIT(",path_selector_name_%d=%s", pg_counter, pg->ps.type->name);
  
- 		r = crypto_shash_update(shash, (const u8 *)ima_buf, l);
- 		if (r < 0)
-@@ -461,7 +462,7 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
- 	memcpy(device_table_data + l, capacity_str, capacity_len);
- 	l += capacity_len;
++			pgpath_counter = 0;
+ 			list_for_each_entry(p, &pg->pgpaths, list) {
+-				DMEMIT(",path_name=%s,is_active=%c,fail_count=%u",
+-				       p->path.dev->name, p->is_active ? 'A' : 'F',
+-				       p->fail_count);
++				DMEMIT(",path_name_%d_%d=%s,is_active_%d_%d=%c,fail_count_%d_%d=%u",
++				       pg_counter, pgpath_counter, p->path.dev->name,
++				       pg_counter, pgpath_counter, p->is_active ? 'A' : 'F',
++				       pg_counter, pgpath_counter, p->fail_count);
+ 				if (pg->ps.type->status) {
+-					DMEMIT(",path_selector_status=");
++					DMEMIT(",path_selector_status_%d_%d=",
++					       pg_counter, pgpath_counter);
+ 					sz += pg->ps.type->status(&pg->ps, &p->path,
+ 								  type, result + sz,
+ 								  maxlen - sz);
+ 				}
++				pgpath_counter++;
+ 			}
++			pg_counter++;
+ 		}
+ 		DMEMIT(";");
+ 		break;
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index bfefa100c265..22a5ac82446a 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -794,6 +794,8 @@ static void verity_status(struct dm_target *ti, status_type_t type,
  
--	dm_ima_measure_data("device_resume", device_table_data, l, noio);
-+	dm_ima_measure_data("dm_device_resume", device_table_data, l, noio);
+ 		DMEMIT(",ignore_zero_blocks=%c", v->zero_digest ? 'y' : 'n');
+ 		DMEMIT(",check_at_most_once=%c", v->validated_blocks ? 'y' : 'n');
++		if (v->signature_key_desc)
++			DMEMIT(",root_hash_sig_key_desc=%s", v->signature_key_desc);
  
- 	kfree(dev_name);
- 	kfree(dev_uuid);
-@@ -578,7 +579,7 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
- 	memcpy(device_table_data + l, capacity_str, capacity_len);
- 	l += capacity_len;
- 
--	dm_ima_measure_data("device_remove", device_table_data, l, noio);
-+	dm_ima_measure_data("dm_device_remove", device_table_data, l, noio);
- 
- error:
- 	kfree(device_table_data);
-@@ -659,7 +660,7 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
- 	memcpy(device_table_data + l, capacity_str, capacity_len);
- 	l += capacity_len;
- 
--	dm_ima_measure_data("table_clear", device_table_data, l, noio);
-+	dm_ima_measure_data("dm_table_clear", device_table_data, l, noio);
- 
- 	if (new_map) {
- 		if (md->ima.inactive_table.hash &&
-@@ -734,7 +735,7 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md)
- 		  "%s%snew_name=%s,new_uuid=%s;%s", DM_IMA_VERSION_STR, old_device_data,
- 		  new_dev_name, new_dev_uuid, capacity_str);
- 
--	dm_ima_measure_data("device_rename", combined_device_data, strlen(combined_device_data),
-+	dm_ima_measure_data("dm_device_rename", combined_device_data, strlen(combined_device_data),
- 			    noio);
- 
- 	goto exit;
+ 		if (v->mode != DM_VERITY_MODE_EIO) {
+ 			DMEMIT(",verity_mode=");
 -- 
 2.32.0
 
