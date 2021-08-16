@@ -2,364 +2,254 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E28BC4338F
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 08:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1481AC4338F
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 14:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 180A561AFC
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 08:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAEE060F5C
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 14:16:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234704AbhHPILl (ORCPT
+        id S231175AbhHPORF (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 16 Aug 2021 04:11:41 -0400
-Received: from mail-vi1eur05on2111.outbound.protection.outlook.com ([40.107.21.111]:26208
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S234757AbhHPILl (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Aug 2021 04:11:41 -0400
+        Mon, 16 Aug 2021 10:17:05 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:49380 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230094AbhHPORE (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 16 Aug 2021 10:17:04 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17GE7uTh021784;
+        Mon, 16 Aug 2021 14:16:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=Mmcl6jmTckqLsvTb91RGeqcPElpW65Jydr9nQF+a674=;
+ b=IxnKmmJbc3+MSh7LPaUubyw7ZjAaBo3W6LyO+Sy9STYRT9D48fxnUFHpsTKX0QLkxAiP
+ QDQNNqm0bWAYepHk5FcgJcPCiVPp12BR17Fs+fZp1mwDtknbmnWaxoRSFLPYdoKLFVQ5
+ Ucghm8nErbBruWGdz9Y/61Q9PzBlKCYtGdKj3JIVLbgZpHu108EJVytf2qy9RD6si+MV
+ TVbSk+6OKye2tpEUM91uzqDcP00w4TbtX67lOfTSSrXnL0recD+M9zzeAJFZdcIs0T65
+ Yx8tLmgeLoxurZBcRwSTs1ZSlO742pn1axqX2TiQmx/B+/9MRG3sgS46gUDhxtIdN1+m Iw== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2020-01-29;
+ bh=Mmcl6jmTckqLsvTb91RGeqcPElpW65Jydr9nQF+a674=;
+ b=UusfJ8xmrtUw9IfTPvZrG2me44WvNU1cDxKvH6VX/3cV+vq5Xw1Jtz8eKJKZqhmSo50u
+ q3Wkd9pMu0JdZn/5evku4c/l6y3tLzLlFjuh2B8V9fK6rd7vFY/5H/QKaXtQmkh73hdC
+ cuwQGB6mRS99X0hDBNt/LTGFkvTfvVVqwS2BOj+zgEFTL6eNgPogVlWKpMqBmWu5Hozy
+ yT04eF9aUP/AOgX2isNyKtcMtY/SR6+hrB+PscnPNn/kujM1WiFHj0347vTZz9mlvbwV
+ QD7xw8VvfyGDZdclBobwOsXKsBN8XRoETSisr7OExDBqNN5/qIIBQWNHln9gUIsU+kLS aw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3afgmb96da-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Aug 2021 14:16:08 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17GEEkiZ135308;
+        Mon, 16 Aug 2021 14:16:08 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2107.outbound.protection.outlook.com [104.47.70.107])
+        by aserp3020.oracle.com with ESMTP id 3ae5n5ry20-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Aug 2021 14:16:07 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JFV6T4gsZbzSGnLocZGJCmHwghH3HiQrdk3rBBw0dYnF6cmuQGcYyUYG18+0EYRprRONP0FstyPNeMI/qhoXlNJijUvUpaVG5HCQbkcCfzYETM2Pn8POJD1Hmp+wn/o144nYqxLIDosXulwHEwOx1QPeRT4lvUKz6GqnsYy0u2dFd5tewg3nhVJEw+YlwULoVU7RB1RCNY30FTeBvgT2m20Z9icN+K/Mp7AZS6vykQhVdWgzQj2FSJJMCCqT9zTUi4zbKnucC+CQ+Fsht1Kd4yV1rCfYkPBnyUUNKhf6RhqNukXqSb8P4QVBvtlIS1AIkcyDYTr1wmK9/ARldj7u0Q==
+ b=iiJn2Enl6AXkV0IUglgAv4c8m37lLL5HhN4MakqPwOiBj6eVfQbzpsCCXWYzEHmyTDdU9yw6z1aZHDVVOH4UayFEkJsaGPC/ePUxcYi/idHqcYhrCTNMK94EdJv1sA4VBiXVehyL4xNYJlkXDv++kdxIhbkkVXt43BOO+k2OnGMDiqNdaM4Por2+oZv8BfSExAYjVI01mDjWHnwyH6cNOWzUHoO1Z3k2Ojkmqx5r/6PQQXh6wAF/P68XVEPlfIsHub1tM6nHJPmLPFRuBwioAo/X4Uv5KKRfAf2BSw9oD0oSbVnWg7Ki47FFreAd2N5GJ96SVtjMZwe2geK6NDZuNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IkLjR1QeU9boeuiN0dgBemRzIK/x6Nu30ebdO2ssKkI=;
- b=CBUtqu2QNoBk9Eef9u5BlmInuErl2fMYfsmZCZU5kQ1wip3JgijQzYoKlHxk3hsArDYgZfznDWbwM9p3+ryq1nCt7QwbN73C4/1kb1L3rCnElONYqfEFsCFU0P3Z38VM7lhWnFyGdqGfQTElM3Ff1B+2hGgsEJCRAIM0jNn7xl7FLo4jJ6tGknifatgTGBq9vrkDsbt1QYkciaqe3rKP9OJDKGntc+Ryu1nY1dHiqz5kNb1+hIUKNMRv/jkTRTB4X52f+HK2XGM/a0otdaBY//Xt8qOqdqjVHuNO2DLJmyIK+Dd2HRhTcEZybXtz5o3fhZObiyX9NByaCVyom45j7w==
+ bh=Mmcl6jmTckqLsvTb91RGeqcPElpW65Jydr9nQF+a674=;
+ b=a0IQdtIky71V41iuv+QxUAVTfr9wah8YgSqTxoO4iv2yUGQ+O9HZFlem3nA6nV7p/0u0sP6nGNEsLVvl/WRYEnRUyTVtbq9iB9ouRSlngQAbc3ZkCupeypc9d2/BbSS3oyunBXaIENY9ddAbUUkBTopeFjwJR0aZ4IJ75vjDWEUiDgCQ6ovANdtZsIE1ULYrTDqowWjZko7e8VhWDGDuqzQ6/MrYlws9GgiLmewmvZSVKixPgsdOJL4gCjXj6XuV5quRROZb653dhW2wOd8VtZcLAFiv+Pr4yKV6NxbJsRZkot2TITzka5v/CK5Ro1I9sW8jkGvdZKIZSM03gaOwjw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
- dkim=pass header.d=viveris.fr; arc=none
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=viverislicensing.onmicrosoft.com;
- s=selector2-viverislicensing-onmicrosoft-com;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IkLjR1QeU9boeuiN0dgBemRzIK/x6Nu30ebdO2ssKkI=;
- b=kacRg1Skjqb/Il2+hvCe2BEIzdEt2QVN1DNv79Q3El/v/Kiv83uF/gLZlW6E7Vk94cAbZkopptn+HoiQgDjSn78NCMmeHEhYbZUwqOLzSqhFir3bwNVAfqBOFIxXOKJeBvQlr0qIaTRkeZnoV5pugLjz5WFrU8nU90XwJ08YuLY=
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- (2603:10a6:200:96::21) by AM9PR09MB4516.eurprd09.prod.outlook.com
- (2603:10a6:20b:2d7::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.15; Mon, 16 Aug
- 2021 08:11:00 +0000
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432]) by AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432%9]) with mapi id 15.20.4415.023; Mon, 16 Aug 2021
- 08:11:00 +0000
-From:   THOBY Simon <Simon.THOBY@viveris.fr>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        BARVAUX Didier <Didier.BARVAUX@viveris.fr>
-CC:     THOBY Simon <Simon.THOBY@viveris.fr>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Subject: [PATCH v8 3/6] IMA: add support to restrict the hash algorithms used
- for file appraisal
-Thread-Topic: [PATCH v8 3/6] IMA: add support to restrict the hash algorithms
- used for file appraisal
-Thread-Index: AQHXknY/oTIS3yHQq0eSpnviPdpvhw==
-Date:   Mon, 16 Aug 2021 08:11:00 +0000
-Message-ID: <20210816081056.24530-4-Simon.THOBY@viveris.fr>
-References: <20210816081056.24530-1-Simon.THOBY@viveris.fr>
-In-Reply-To: <20210816081056.24530-1-Simon.THOBY@viveris.fr>
-Accept-Language: fr-FR, en-US
+ bh=Mmcl6jmTckqLsvTb91RGeqcPElpW65Jydr9nQF+a674=;
+ b=k1DK/vtTZgMuTMC010en/bgHSkG66j22x+bCMOxTGUpVbLL8/Ih5eNNGNRVUwDrjDUZciF806mlSFGXvORGStLUr2dGC/AamJDdQzTJA+znlGrSGKGdnY5eR+O6JronzsWHD4oY048CtWAyasUHqycZciTE1MHgMoEZwxWlR1ug=
+Authentication-Results: googlegroups.com; dkim=none (message not signed)
+ header.d=none;googlegroups.com; dmarc=none action=none
+ header.from=oracle.com;
+Received: from BY5PR10MB3793.namprd10.prod.outlook.com (2603:10b6:a03:1f6::14)
+ by BY5PR10MB4338.namprd10.prod.outlook.com (2603:10b6:a03:207::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14; Mon, 16 Aug
+ 2021 14:16:05 +0000
+Received: from BY5PR10MB3793.namprd10.prod.outlook.com
+ ([fe80::e035:720f:86fd:bae3]) by BY5PR10MB3793.namprd10.prod.outlook.com
+ ([fe80::e035:720f:86fd:bae3%4]) with mapi id 15.20.4415.023; Mon, 16 Aug 2021
+ 14:16:05 +0000
+Subject: Re: [PATCH v3 02/14] x86/boot: Add missing handling of setup_indirect
+ structures
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        luto@amacapital.net, kanth.ghatraju@oracle.com,
+        trenchboot-devel@googlegroups.com
+References: <1628527136-2478-1-git-send-email-ross.philipson@oracle.com>
+ <1628527136-2478-3-git-send-email-ross.philipson@oracle.com>
+ <20210810161932.wdwfu3wosjytdj4h@kernel.org>
+From:   Ross Philipson <ross.philipson@oracle.com>
+Message-ID: <87c42ae4-dfd7-c7e1-071c-7f32cf719954@oracle.com>
+Date:   Mon, 16 Aug 2021 10:16:01 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+In-Reply-To: <20210810161932.wdwfu3wosjytdj4h@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=none action=none header.from=viveris.fr;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ca1e9ea1-fede-403b-23da-08d9608d6251
-x-ms-traffictypediagnostic: AM9PR09MB4516:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM9PR09MB4516A76B6A01D6FA65296A3F94FD9@AM9PR09MB4516.eurprd09.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: zRbFJ+t2Yn9kgqq+NVBxBu8wMO6KYF7WxJ17ISdGjNra0XRDOWW0o9RSQa0s8s6JN+SKsgsLnv4j7rTrdCesREhKKj+KQJqaJpajEpeHCqEhWM5TfxwrPVWFUTHot/S/xgbpB+XVtq+9S2k7B6nCA+q3L8JVVYebLkswbXUQgHZpRnuGxFzjbA0U48bO+fWIw1/zhrXmFyiCum4UvxPIY5t69gphOVk0WlqvtqnNNYfc3fyFasckTnTegv3uCmWc4LJX6ZpEjsKTkwFWgqF5lCA9HhbVH2y5w4hx0NoimYrwkILTa3halB7QBTyHByuw9eWDlDHUvM1oSShZ2TxFpqOMst9NRcRkdi5vv9z/ExPgUgXHed/n3VNqgi8J1QHOitvi5Y6/8klXZ0QQAcOMBpJvaJBIKvsbTTtWedDa61nD4TTCOGt7rpyvgY1sWG7WD4p5GSsK2zpPqGRn584/FE4a1xpCOsv34eg/dCRtr2ieyzMAprec6RvE1SrufQz5wUDj3qI8OQ3ctXzzDwOyTi0DY8wF+hLLAMHRF9s5eJ6DUrPOzdEpgjpW8hM3tYlqFb5xPViy8q4eqxwR+2h4KdPYByAEuUiAp8WXU0gcyY/kKwpraK3eGPgDhsco6aU+9KKrx66VjvytGE4EQ0+5sLdqB8bewtVsQ/vYvgP/TXmHRZzE9pH2DL9BAjvYYLH81Po1NdQ3QJYIX5atDYHPlQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(6512007)(71200400001)(6636002)(2616005)(122000001)(83380400001)(6486002)(36756003)(38100700002)(66446008)(8936002)(4326008)(110136005)(26005)(66946007)(1076003)(2906002)(5660300002)(508600001)(6506007)(8676002)(54906003)(186003)(38070700005)(86362001)(66556008)(316002)(76116006)(91956017)(66476007)(64756008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?rLADGQwpp4XaioRnbJhuZS2fWcLZUiGBBS5MivNJMuVpkP8q+7iTwn6iDe?=
- =?iso-8859-1?Q?FWddrgDZYQMBSZITodg3b3lx+fO+fFnCptgFhW+3J3+K+O0pfbw4kLD+SD?=
- =?iso-8859-1?Q?XXnKSgrK/jLKe06+UDVjIX9S/UL+kmJHqAeN8A9lyViJd6YD5RpqP/jvG3?=
- =?iso-8859-1?Q?Im07COW4Ja8N1gip9HO6TJvZBX3t+Ue/g2H7Px2oL6rNSSOFezaDjEM5jC?=
- =?iso-8859-1?Q?/rMVKjiGyI1ohlV4IW01a6MqLXvZ4ikAAstJsyJAp/qWsNUm04QJ13mMLI?=
- =?iso-8859-1?Q?JXsIL1+QmERRqw4d58ixVTuTvLSxMDz51I/Ygb/GPYVk18qwXRwd8MI//N?=
- =?iso-8859-1?Q?BBEnmQsxmMpS1S61U5rJ5t4iZw9P2HK3Jwtm9OXGh/mrRKm8P33eeSqmAo?=
- =?iso-8859-1?Q?XSDUiJbOkogB9CPbGockZ3HfoWP8OVT9PT3Dn8FuTtukvVTeqhF9ULRieS?=
- =?iso-8859-1?Q?WVa9rTQH8n/87hPtZQD6BWkp35W0Cvbmz0hnLXoXQEXbMudrwNOoQYVZ6y?=
- =?iso-8859-1?Q?Yc16XhO5rVg+yJ6Dp1RbxVNil+TeyzBo0AlCiHSHq1ZypuNOodkGHY+Qun?=
- =?iso-8859-1?Q?9cRe5lK2/uIuaJm9EAUymNlqWr4xio3dRxZ1rXt/vsHxsN2++BeCexYeoz?=
- =?iso-8859-1?Q?dJgI+/0YpvEU/XiJVwoUP9BedkXW0I3o4IEFPl61UuF4ztPcEbqGoA9qgS?=
- =?iso-8859-1?Q?2ureOlTT2Fh9qy69u68OouhaBMDQ2r7DC2crOhIvgP0FQUJeGqRHgmYOOx?=
- =?iso-8859-1?Q?4SeouqDJvxybP9agRskcI5Je69C3wNcCFmMy4uxL2TCZDlFVxJo8f5zc3v?=
- =?iso-8859-1?Q?hc83R1EXDwMGCjSFGrTqGQa2lVF71ykkGijQedd4yZePyRVEikfiOFgYW9?=
- =?iso-8859-1?Q?lZsFqcrrqsfKgGCdNyd3UGpeQ4OztcST4zuGR5Io3wtdWVd6+Nz1pe0TNS?=
- =?iso-8859-1?Q?/FrSbL1nDsFvvXoC6sEiLwrjDlwF6gLwKnU2XeNpfhGBhvONgQtD/w/tUa?=
- =?iso-8859-1?Q?812qIN33zQ7d8uwCfJpuOuLM30mbWwwxlkSMgUd4J6L6s2xYWTGihA7lin?=
- =?iso-8859-1?Q?dkQ3x9izE3WtKAztWK2OElPrQC+FDDjqzxvyFmyE6xQfXZypgaPpWDsjCk?=
- =?iso-8859-1?Q?BSP3aKUNjOU89SwhkGCzzuJasgRpu8FdIH6Qp4rdxEtGdArQcXLxEuzlTP?=
- =?iso-8859-1?Q?rW/qXPqd9djuGNJxy5tGdP+hIhpqudkm1LKOVU0Oa/xm/pufmdCWvCf0tr?=
- =?iso-8859-1?Q?yFm7sDrD/06hXqkWskD1u6IsbAYmMVVr9/rH2IzLHYitA2DQJg71AmbqcQ?=
- =?iso-8859-1?Q?muMY6A5tuR3OX0HPUBREC5RfX/z7OADHtXJOKxljzp5Gqk+Xn89j5xfDLb?=
- =?iso-8859-1?Q?YTQ6cMbaGl?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BL0PR02CA0054.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::31) To BY5PR10MB3793.namprd10.prod.outlook.com
+ (2603:10b6:a03:1f6::14)
 MIME-Version: 1.0
-X-OriginatorOrg: viveris.fr
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [IPv6:2601:191:8500:cff0::40e4] (2601:191:8500:cff0::40e4) by BL0PR02CA0054.namprd02.prod.outlook.com (2603:10b6:207:3d::31) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14 via Frontend Transport; Mon, 16 Aug 2021 14:16:03 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 279718e5-5c74-43ec-70e3-08d960c0629b
+X-MS-TrafficTypeDiagnostic: BY5PR10MB4338:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <BY5PR10MB4338C132172A3636E3595F7DE6FD9@BY5PR10MB4338.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1417;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: krVH2KuXecgUzRIF8FAmL+7UY/k/PoiQA+0lFhn+Yt6EniWKADTAHXSy7lRAilZXs5PEbkuWT/H9oJmkp8mT8qcL6PsVCldIU9KRZz0Lyu2pBPl0CYUZb2HfT3RSNL2NJh+P0SjqPSn2PJtxHdMSVECozEoqjNY+BQkh8fBu1jkBrnen9K4jXZdP+kZmFlRUL5ejvdSvggkT4UfU35m7ckl5Ur849BKaJQhIs72EX1QSyawyaehobB3EM0et7GKp9wl8JdzYqBihCaX9T4W663LKg2KdtL+ghfR/CdmTc7UAGuGtgTXmczE45oPGtCgtAv0DKHiH5B9TpyX97EiVZrypPOagtYkSY1dzbt1J6P/vDkqwbiZg+8unGRnsto7927SXiuOF568Y3wbj0+mSFyE/CS+hniimoIkFSR6XV1xLSp4LYQNyOrEq42hgtkWTvF+v6CvSHMA5xB4O1u7qH19iaxEkcdUJOAXyVlODKSmCVxAdvIBkKVgtYDHhrfl5SV/yj+7wQrArDZLi3Ywe1Usf7mErQFxX9YJtI9A5LF5WahKHdb24uYzZgyhYl3odPBGAbW1aCVehuFXxpKXyiuFcihv6QNoj4Bqi96sjYqwiNEXVg2fXNayBtnlKggWZEmFtJ3bkiFJFaipZttaCD4W5NY8cIAZSW6VOHNjmP6XEjIzhOHsIXcexloFuf9ZvVaSmYv/QlS7d1S+4a6SH6yvEjDLHYimV3sXSn6d/VE0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB3793.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(66556008)(2906002)(6916009)(8676002)(66476007)(186003)(4326008)(66946007)(8936002)(38100700002)(86362001)(6486002)(508600001)(36756003)(83380400001)(5660300002)(31696002)(53546011)(316002)(44832011)(2616005)(31686004)(7416002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?a2pCMmJhbEg0UnBaYW0rU2Z0ODRGSlVhT1R2K2wyTDdnT0Z0SWtQR3pBdVVC?=
+ =?utf-8?B?TXZ0RHhTZUQwLzRIM09RUlNOc2VlSXRHbklZZUlZd2FWZE5qSjVGRUM4UElK?=
+ =?utf-8?B?bWFza2NQNmRTNkwxdTA5VzNPeVFvSGZQOU16QmN5WUprVjBoU1I3NEVqRlZM?=
+ =?utf-8?B?UHg4Q0VZcE9uSjdrMmcvKzdYM1BXVlo3UEZvRnpCN1hYTmFOQ21PcERlTTA2?=
+ =?utf-8?B?SDFTcXFOM3U1L1NiL083TGMzWC83aVZVUDBRbVBqM2NDazQ2dDJ6TytvVXRO?=
+ =?utf-8?B?c3ppMFlZRjFCVzRuaFFuN2NIalNHRGdzMk56MGVUbW85QVFCR0FqeGVBamV5?=
+ =?utf-8?B?RkpJLzlKSlZZWTJWZ1lvQzhrelhvYmVBRTQrUFNMTjNuSDNwYTNxZmN5eitn?=
+ =?utf-8?B?dGJHMnVOZ0xsdkp6bDdsdXZVNE9lN2w4Z2FkQnAvdzVzcW1wdDZoL0hFREhr?=
+ =?utf-8?B?WkU3QjVhUmdYUmNyU21BQ1FQc2ptUnJhbDZNU0treTBMMExxbGcwY3FDUm56?=
+ =?utf-8?B?MFNhMlNJUm5YbXUrS2luS3ZIRFhzbll4ZHpKM0x5TmxTM0I4OUVlWG9nRHJ0?=
+ =?utf-8?B?VUJUY0JkbmdIVUFiNmZXajBQUTh3cURLaVZMR2VqbFNQWGVqRmFMNSs3L2Jh?=
+ =?utf-8?B?YkN2VlN2MHJvUUFOcDFMR0xtNVgrVUVBN1R3ZlVPVGJzaUZweThhaVE4SEJT?=
+ =?utf-8?B?SjdNZG5KdGg3R3NUYU5XQ21zMUNmSllvR2Fvd083a0ZSTHhVUUZRTm40cWg1?=
+ =?utf-8?B?a1JpTlgyelNVOGFNblM0bFlKRkFsS1V4d3pKbEdqQVBwdXNrV1ZsaEgwTDcv?=
+ =?utf-8?B?U0xlR1FUTHAzRUZUSklta2VJWTVkalg0RCt2dzZwNHdMUHJGQ3FDbWlkbmpa?=
+ =?utf-8?B?NVRwNDlGSkhCL1JGME5ocWR3SkoyMzhhRHVYSGRJNHZ2dWNDZTh0eUNWOGpH?=
+ =?utf-8?B?OHNmZWpKeFlYYVBYdzZlb20vT0JCMllVNnFYbXdFbnFRbHZIK3FOdUM5Y0s0?=
+ =?utf-8?B?NEF6NHJlekpURmMvNW5YNTNVQXcwdnBJZ1pacFdqS3kvai9JQ3dsNFlJNDMw?=
+ =?utf-8?B?aEZZOVlOb1ZGUWdFZ3hwU3Q3cHE5UDRsYS9ablpUOWZLVlo2L0VwQkJGbDQ0?=
+ =?utf-8?B?aFkzemZJNzQ1aHgrVi8yay9ycVNEMzRhLzNpd0hYWDVXUkhRZytEQXBUcktF?=
+ =?utf-8?B?MzZYV1pXY3ZyOGR5U1pGSWorRWJKbDB0N2d4bU5JMnIxeHBkc1lBekhUbHNM?=
+ =?utf-8?B?NmlUdVhqbHpmWmh1SEMwQkc2Smxhc3F6UFJ6VXRoaEExWkxBNTE4Wmd1am05?=
+ =?utf-8?B?c2RDNWRjM0FrVHoyVnRUVVpKNzBqUW9IUVJFU3VqRVdoUk9Pb0NwS2djeW9M?=
+ =?utf-8?B?SlF3L0lQcjFoblJ3Zkx2bzJWR1Nra3N5UG5TN0V4Rk80NlV3QWZEZFlCelNM?=
+ =?utf-8?B?OXVIZkJjNHRTTVNLSExFM0QvSG44OFFrRzhKK1MraG8yWDZ3WCszN0dxOVVR?=
+ =?utf-8?B?V3R5OW5pMWZ4L2tvUXdsUVN2Z0Q4Wm80eEtHUVlsRDQ4NWdpcENmcy9OWm1y?=
+ =?utf-8?B?OHBNL0pueG1odnBzQ0hRNVNkdWtld2Y0eVMxRFJ4V3hYVUl4YnU2LzhuMEVQ?=
+ =?utf-8?B?WVRnWGRoT2RGQ2RPSDVtNlZJMFRPMkNZUkRZd0M2YXZBc2Z3ZmZLcHFzWVRl?=
+ =?utf-8?B?dzloV2pGSzQ4Y21UU0lGT1prVVFGOExadDdQakFreVpiQlZNNzFFeVJYa21C?=
+ =?utf-8?B?MDBvWXVmN3pSYnFWT01RdVphY3dWT3Uya0R1K2g4bUVVdE0zSHVnM2xDeDJh?=
+ =?utf-8?B?MU1naEkrRk83THBrOU4xZz09?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 279718e5-5c74-43ec-70e3-08d960c0629b
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB3793.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca1e9ea1-fede-403b-23da-08d9608d6251
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2021 08:11:00.4096
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2021 14:16:05.7765
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Q2CIFHJyTm6tM8ODxuQgbzAb/C7uE3AzLTBaYwOne0cYub5BjMbd77eTkKOXmBcojQhxTcLCZwSknk1iQME8pA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR09MB4516
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Gy31QnRHWO/VXd1e/d9yD0wgw9UMEMjcJcWkSS2Hh9sbsLFGU6RwtTsLhTymArxoj++EOnX9/0/JrpGHbyFop8TaeEIl5W2ROPzoVONuChc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR10MB4338
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10077 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108160091
+X-Proofpoint-ORIG-GUID: ebKm7AKE13dfh5D6yeChAUiauK23idQ9
+X-Proofpoint-GUID: ebKm7AKE13dfh5D6yeChAUiauK23idQ9
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The kernel accepts any hash algorithm as a value for the security.ima
-xattr. Users may wish to restrict the accepted algorithms to only
-support strong cryptographic ones.
+On 8/10/21 12:19 PM, Jarkko Sakkinen wrote:
+> On Mon, Aug 09, 2021 at 12:38:44PM -0400, Ross Philipson wrote:
+>> One of the two functions in ioremap.c that handles setup_data was
+>> missing the correct handling of setup_indirect structures.
+> 
+> What is "correct handling", and how was it broken?
+> 
+> What is 'setup_indirect'?
+> 
+>> Functionality missing from original commit:
+> 
+> Remove this sentence.
+> 
+>> commit b3c72fc9a78e (x86/boot: Introduce setup_indirect)
+> 
+> Should be.
+> 
+> Fixes: b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
 
-Provide the plumbing to restrict the permitted set of hash algorithms
-used for verifying file hashes and signatures stored in
-security.ima xattr.
+I will fix these things and make the commit message clearer.
 
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: THOBY Simon <Simon.THOBY@viveris.fr>
----
- security/integrity/ima/ima.h          |  6 +++---
- security/integrity/ima/ima_api.c      |  6 ++++--
- security/integrity/ima/ima_appraise.c |  5 +++--
- security/integrity/ima/ima_main.c     | 18 +++++++++++++++---
- security/integrity/ima/ima_policy.c   | 18 ++++++++++++++++--
- 5 files changed, 41 insertions(+), 12 deletions(-)
+Thanks,
+Ross
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 829478dabeeb..bcaf818fb647 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -47,7 +47,7 @@ enum tpm_pcrs { TPM_PCR0 =3D 0, TPM_PCR8 =3D 8, TPM_PCR10=
- =3D 10 };
- extern int ima_policy_flag;
-=20
- /* set during initialization */
--extern int ima_hash_algo;
-+extern int ima_hash_algo __ro_after_init;
- extern int ima_sha1_idx __ro_after_init;
- extern int ima_hash_algo_idx __ro_after_init;
- extern int ima_extra_slots __ro_after_init;
-@@ -254,7 +254,7 @@ int ima_get_action(struct user_namespace *mnt_userns, s=
-truct inode *inode,
- 		   const struct cred *cred, u32 secid, int mask,
- 		   enum ima_hooks func, int *pcr,
- 		   struct ima_template_desc **template_desc,
--		   const char *func_data);
-+		   const char *func_data, unsigned int *allowed_algos);
- int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
- int ima_collect_measurement(struct integrity_iint_cache *iint,
- 			    struct file *file, void *buf, loff_t size,
-@@ -285,7 +285,7 @@ int ima_match_policy(struct user_namespace *mnt_userns,=
- struct inode *inode,
- 		     const struct cred *cred, u32 secid, enum ima_hooks func,
- 		     int mask, int flags, int *pcr,
- 		     struct ima_template_desc **template_desc,
--		     const char *func_data);
-+		     const char *func_data, unsigned int *allowed_algos);
- void ima_init_policy(void);
- void ima_update_policy(void);
- void ima_update_policy_flag(void);
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_=
-api.c
-index d8e321cc6936..2c6c3a5228b5 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -172,6 +172,7 @@ void ima_add_violation(struct file *file, const unsigne=
-d char *filename,
-  * @pcr: pointer filled in if matched measure policy sets pcr=3D
-  * @template_desc: pointer filled in if matched measure policy sets templa=
-te=3D
-  * @func_data: func specific data, may be NULL
-+ * @allowed_algos: allowlist of hash algorithms for the IMA xattr
-  *
-  * The policy is defined in terms of keypairs:
-  *		subj=3D, obj=3D, type=3D, func=3D, mask=3D, fsmagic=3D
-@@ -188,14 +189,15 @@ int ima_get_action(struct user_namespace *mnt_userns,=
- struct inode *inode,
- 		   const struct cred *cred, u32 secid, int mask,
- 		   enum ima_hooks func, int *pcr,
- 		   struct ima_template_desc **template_desc,
--		   const char *func_data)
-+		   const char *func_data, unsigned int *allowed_algos)
- {
- 	int flags =3D IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
-=20
- 	flags &=3D ima_policy_flag;
-=20
- 	return ima_match_policy(mnt_userns, inode, cred, secid, func, mask,
--				flags, pcr, template_desc, func_data);
-+				flags, pcr, template_desc, func_data,
-+				allowed_algos);
- }
-=20
- /*
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima=
-/ima_appraise.c
-index baeb10efbf51..e2edef8a9185 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -77,8 +77,9 @@ int ima_must_appraise(struct user_namespace *mnt_userns, =
-struct inode *inode,
- 		return 0;
-=20
- 	security_task_getsecid_subj(current, &secid);
--	return ima_match_policy(mnt_userns, inode, current_cred(), secid, func,
--				mask, IMA_APPRAISE | IMA_HASH, NULL, NULL, NULL);
-+	return ima_match_policy(mnt_userns, inode, current_cred(), secid,
-+				func, mask, IMA_APPRAISE | IMA_HASH, NULL,
-+				NULL, NULL, NULL);
- }
-=20
- static int ima_fix_xattr(struct dentry *dentry,
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima=
-_main.c
-index 1cba6beb5a60..af6367ba34ee 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -215,6 +215,7 @@ static int process_measurement(struct file *file, const=
- struct cred *cred,
- 	int xattr_len =3D 0;
- 	bool violation_check;
- 	enum hash_algo hash_algo;
-+	unsigned int allowed_algos =3D 0;
-=20
- 	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
- 		return 0;
-@@ -224,7 +225,8 @@ static int process_measurement(struct file *file, const=
- struct cred *cred,
- 	 * Included is the appraise submask.
- 	 */
- 	action =3D ima_get_action(file_mnt_user_ns(file), inode, cred, secid,
--				mask, func, &pcr, &template_desc, NULL);
-+				mask, func, &pcr, &template_desc, NULL,
-+				&allowed_algos);
- 	violation_check =3D ((func =3D=3D FILE_CHECK || func =3D=3D MMAP_CHECK) &=
-&
- 			   (ima_policy_flag & IMA_MEASURE));
- 	if (!action && !violation_check)
-@@ -361,6 +363,16 @@ static int process_measurement(struct file *file, cons=
-t struct cred *cred,
-=20
- 	if ((file->f_flags & O_DIRECT) && (iint->flags & IMA_PERMIT_DIRECTIO))
- 		rc =3D 0;
-+
-+	/* Ensure the digest was generated using an allowed algorithm */
-+	if (rc =3D=3D 0 && must_appraise && allowed_algos !=3D 0 &&
-+	    (allowed_algos & (1U << hash_algo)) =3D=3D 0) {
-+		rc =3D -EACCES;
-+
-+		integrity_audit_msg(AUDIT_INTEGRITY_DATA, file_inode(file),
-+				    pathname, "collect_data",
-+				    "denied-hash-algorithm", rc, 0);
-+	}
- out_locked:
- 	if ((mask & MAY_WRITE) && test_bit(IMA_DIGSIG, &iint->atomic_flags) &&
- 	     !(iint->flags & IMA_NEW_FILE))
-@@ -438,7 +450,7 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsig=
-ned long prot)
- 	inode =3D file_inode(vma->vm_file);
- 	action =3D ima_get_action(file_mnt_user_ns(vma->vm_file), inode,
- 				current_cred(), secid, MAY_EXEC, MMAP_CHECK,
--				&pcr, &template, NULL);
-+				&pcr, &template, NULL, NULL);
-=20
- 	/* Is the mmap'ed file in policy? */
- 	if (!(action & (IMA_MEASURE | IMA_APPRAISE_SUBMASK)))
-@@ -896,7 +908,7 @@ int process_buffer_measurement(struct user_namespace *m=
-nt_userns,
- 		security_task_getsecid_subj(current, &secid);
- 		action =3D ima_get_action(mnt_userns, inode, current_cred(),
- 					secid, 0, func, &pcr, &template,
--					func_data);
-+					func_data, NULL);
- 		if (!(action & IMA_MEASURE) && !digest)
- 			return -ENOENT;
- 	}
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/i=
-ma_policy.c
-index fd5d46e511f1..1536e6f5eb22 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -35,6 +35,7 @@
- #define IMA_FSNAME	0x0200
- #define IMA_KEYRINGS	0x0400
- #define IMA_LABEL	0x0800
-+#define IMA_VALIDATE_ALGOS	0x1000
-=20
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -79,6 +80,7 @@ struct ima_rule_entry {
- 	bool (*uid_op)(kuid_t, kuid_t);    /* Handlers for operators       */
- 	bool (*fowner_op)(kuid_t, kuid_t); /* uid_eq(), uid_gt(), uid_lt() */
- 	int pcr;
-+	unsigned int allowed_algos; /* bitfield of allowed hash algorithms */
- 	struct {
- 		void *rule;	/* LSM file metadata specific */
- 		char *args_p;	/* audit value */
-@@ -90,6 +92,14 @@ struct ima_rule_entry {
- 	struct ima_template_desc *template;
- };
-=20
-+/*
-+ * sanity check in case the kernels gains more hash algorithms that can
-+ * fit in an unsigned int
-+ */
-+static_assert(
-+	8 * sizeof(unsigned int) >=3D HASH_ALGO__LAST,
-+	"The bitfield allowed_algos in ima_rule_entry is too small to contain all=
- the supported hash algorithms, consider using a bigger type");
-+
- /*
-  * Without LSM specific knowledge, the default policy can only be
-  * written in terms of .action, .func, .mask, .fsmagic, .uid, and .fowner
-@@ -646,6 +656,7 @@ static int get_subaction(struct ima_rule_entry *rule, e=
-num ima_hooks func)
-  * @pcr: set the pcr to extend
-  * @template_desc: the template that should be used for this rule
-  * @func_data: func specific data, may be NULL
-+ * @allowed_algos: allowlist of hash algorithms for the IMA xattr
-  *
-  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
-  * conditions.
-@@ -658,7 +669,7 @@ int ima_match_policy(struct user_namespace *mnt_userns,=
- struct inode *inode,
- 		     const struct cred *cred, u32 secid, enum ima_hooks func,
- 		     int mask, int flags, int *pcr,
- 		     struct ima_template_desc **template_desc,
--		     const char *func_data)
-+		     const char *func_data, unsigned int *allowed_algos)
- {
- 	struct ima_rule_entry *entry;
- 	int action =3D 0, actmask =3D flags | (flags << 1);
-@@ -684,8 +695,11 @@ int ima_match_policy(struct user_namespace *mnt_userns=
-, struct inode *inode,
- 			action &=3D ~IMA_HASH;
- 			if (ima_fail_unverifiable_sigs)
- 				action |=3D IMA_FAIL_UNVERIFIABLE_SIGS;
--		}
-=20
-+			if (allowed_algos &&
-+			    entry->flags & IMA_VALIDATE_ALGOS)
-+				*allowed_algos =3D entry->allowed_algos;
-+		}
-=20
- 		if (entry->action & IMA_DO_MASK)
- 			actmask &=3D ~(entry->action | entry->action << 1);
---=20
-2.31.1
+> 
+>   
+>> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+>> ---
+>>   arch/x86/mm/ioremap.c | 21 +++++++++++++++++++--
+>>   1 file changed, 19 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+>> index ab74e4f..f2b34c5 100644
+>> --- a/arch/x86/mm/ioremap.c
+>> +++ b/arch/x86/mm/ioremap.c
+>> @@ -669,17 +669,34 @@ static bool __init early_memremap_is_setup_data(resource_size_t phys_addr,
+>>   
+>>   	paddr = boot_params.hdr.setup_data;
+>>   	while (paddr) {
+>> -		unsigned int len;
+>> +		unsigned int len, size;
+>>   
+>>   		if (phys_addr == paddr)
+>>   			return true;
+>>   
+>>   		data = early_memremap_decrypted(paddr, sizeof(*data));
+>> +		size = sizeof(*data);
+>>   
+>>   		paddr_next = data->next;
+>>   		len = data->len;
+>>   
+>> -		early_memunmap(data, sizeof(*data));
+>> +		if ((phys_addr > paddr) && (phys_addr < (paddr + len))) {
+>> +			early_memunmap(data, sizeof(*data));
+>> +			return true;
+>> +		}
+>> +
+>> +		if (data->type == SETUP_INDIRECT) {
+>> +			size += len;
+>> +			early_memunmap(data, sizeof(*data));
+>> +			data = early_memremap_decrypted(paddr, size);
+>> +
+>> +			if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
+>> +				paddr = ((struct setup_indirect *)data->data)->addr;
+>> +				len = ((struct setup_indirect *)data->data)->len;
+>> +			}
+>> +		}
+>> +
+>> +		early_memunmap(data, size);
+>>   
+>>   		if ((phys_addr > paddr) && (phys_addr < (paddr + len)))
+>>   			return true;
+>> -- 
+>> 1.8.3.1
+>>
+>>
+> 
+> /Jarkko
+> 
+
