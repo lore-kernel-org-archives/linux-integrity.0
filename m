@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376A7C4338F
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 20:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D5FC4338F
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 20:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E83160F35
-	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 20:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 901EA60F46
+	for <linux-integrity@archiver.kernel.org>; Mon, 16 Aug 2021 20:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231605AbhHPUUp (ORCPT
+        id S231726AbhHPU7T (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 16 Aug 2021 16:20:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:60898 "EHLO
+        Mon, 16 Aug 2021 16:59:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52975 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231203AbhHPUUo (ORCPT
+        by vger.kernel.org with ESMTP id S231698AbhHPU7T (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 16 Aug 2021 16:20:44 -0400
+        Mon, 16 Aug 2021 16:59:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1629145212;
+        s=mimecast20190719; t=1629147527;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=7uZX44pKRv8e3bPpdaLNw6OUWI/3CPhaMaXg3VlWRLA=;
-        b=eQ4jDk/vQywWHC6UIwO2nncbxtRR3Xx3ZTEl85itRCKJ07XUaOHgSsVXBEpuz4Bfnkqe6w
-        QJmv/jTvWLqL+fjA6pZRy5feelXk0XG+lv7o6xZjsSscCPiKRE5Ahxdke/nQ1QGHlz0oz4
-        nCBp5d7qGnhN9DxJt2xgFX13s+bRi/A=
+        bh=aKa4JIFgo1QMF+TVxmFpAttHSTW5o7TPLh5pO66X7QI=;
+        b=TZ28Bbsoy237vt73SgAhSorSfRMLmvbc5RMYGdddmm4ItH/FmbK3bztgfW/WiPPJxTnNqy
+        pn2rra5v967fp8vKUoeBF+iILfLltTnV0WpooVHse4rOK/0lbn3OAWhSihyM+IOAWShmJQ
+        Lhnb/Bphle1EsyZw5qAXyAfWmAPTglE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-567-7A1dt8F2OziuGYE48A8inA-1; Mon, 16 Aug 2021 16:20:10 -0400
-X-MC-Unique: 7A1dt8F2OziuGYE48A8inA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-171-aJg9jsAYMeC_9ABGziTxfg-1; Mon, 16 Aug 2021 16:58:45 -0400
+X-MC-Unique: aJg9jsAYMeC_9ABGziTxfg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AC5F91082921;
-        Mon, 16 Aug 2021 20:20:09 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A42BA192CC41;
+        Mon, 16 Aug 2021 20:58:44 +0000 (UTC)
 Received: from localhost (unknown [10.22.8.201])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D74961095;
-        Mon, 16 Aug 2021 20:20:01 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 54E16620DE;
+        Mon, 16 Aug 2021 20:58:39 +0000 (UTC)
 From:   Bruno Meneguele <bmeneg@redhat.com>
 To:     zohar@linux.ibm.com
 Cc:     linux-integrity@vger.kernel.org, kgold@linux.ibm.com,
         Bruno Meneguele <bmeneg@redhat.com>
-Subject: [PATCH] libimaevm: make SHA-256 the default hash algorithm
-Date:   Mon, 16 Aug 2021 17:19:59 -0300
-Message-Id: <20210816201959.73218-1-bmeneg@redhat.com>
+Subject: [PATCH v2 ima-evm-utils] libimaevm: make SHA-256 the default hash algorithm
+Date:   Mon, 16 Aug 2021 17:58:35 -0300
+Message-Id: <20210816205835.76183-1-bmeneg@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
@@ -65,6 +65,9 @@ algorithm instead.
 
 Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
 ---
+Changelog:
+  v1: add ima-evm-utils to the [PATCH] part of the subject
+
  README          | 2 +-
  src/evmctl.c    | 2 +-
  src/libimaevm.c | 2 +-
