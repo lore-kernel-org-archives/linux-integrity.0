@@ -2,84 +2,83 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C08F1C25AE9
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEA5C2BB4C
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A601A60F91
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13FB460F91
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245255AbhH0NWO (ORCPT
+        id S245261AbhH0NWP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:22:14 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:25074 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245186AbhH0NWC (ORCPT
+        Fri, 27 Aug 2021 09:22:15 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:37616 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245210AbhH0NWF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:22:02 -0400
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 17RCCJtu015338;
-        Fri, 27 Aug 2021 13:20:42 GMT
+        Fri, 27 Aug 2021 09:22:05 -0400
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 17RANNPq015027;
+        Fri, 27 Aug 2021 13:21:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2021-07-09;
- bh=pJScYFSSXd48rFQcO4SNhCOzggVxNzAwYUqdt8STBUE=;
- b=rqd9i2IozoipD/s1NOuw87+MbjJ7pYJ4JYsEiLIdRwGfTj1O/G9VSYKDY6bbAihHrsvB
- VHGQ2kPP57+Gtqp7vb1/ORkDOfsM3Vx6hd91YPYQQnuhnI+HjQghyTTLcgKAgtSu+jQh
- QNJpN8x8qpQG5W10CgrlR/lQWg55WnastYwDm0Yxnf/spPD5qEshHZ4QqylARI/gYFJO
- anv3S5Wtc6l4+DedUaprAMBXdMAl5WVIeRpTYFThsCdq6Jam9w7oS0L45B5AO4YfpihZ
- Np47Yl4FWB1Cux9ETh/yoPTKLxRrKBkl6MbrzvLaLt1hNqTp2ZmmuDtFzR/Feg8vMVCV yg== 
+ bh=pCuiy1PYr8laUbnFWIkuUZhLNZc3nLFo89v5zj/FsI8=;
+ b=BKuIOWfAvkziNmmjch2ns9pAeha4qVrq2kUrzdDPOSHtW3rKabPHtAiPKP9hTWYmi/KX
+ PQv2+7N4GDP5O5T1bA+DwLaTzJJLLsq2ck7YclyNwSJs39ZJLRIctbeDiCa0niJb1cAH
+ DnUo2J8tgoWCNqT6GwVOtfL/nRI8r27jrpHPZu8noms4pl84iWWhQR/50FmbwR/uNWSX
+ aP/tGjfQRIPbkQKhnVCfMN1WXUxwallXfdkMW3jRUp8dAKLQyEnwq9Lx8how8LamH4Do
+ Ue7C5LiZPZQ4kS/3H8yfzw7VmPOosoecy1U5U7XKVVSvKfS61D96u1bL+y/PIJnr4s3P yg== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2020-01-29;
- bh=pJScYFSSXd48rFQcO4SNhCOzggVxNzAwYUqdt8STBUE=;
- b=ZKZ4Vpgl/oTxzenm4H3M+WDkh5XZXcrbbsjCkQTkrScNqZeN0OgVrs01/2JosbL0n7Oj
- ldr6UaE4vr3bpckAxYAfMgeDjJ3//zPWwESFuCjUYYnUrmluP4hpakq1PIxGaCnIgV3W
- aZKpfBnzS006UbQ7A74VI/pqDHIvSNQZQAUxMltbzqcUQIQC0sMJ1DVeuP5XYKvAkhVq
- e7HMzG0mew1tYLjCHq1fWZhHoOA81NtH1xqvpjF+gmuQhR+pYbveCE590WqFhFEaV5wo
- 7CHI3PctlPEmsrBbDnO3UUF4/+FRDFmtTTKfdLnOA+FO7laVvlmbYdMnXWeqo697NBmV OQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3apvjr0ktb-1
+ bh=pCuiy1PYr8laUbnFWIkuUZhLNZc3nLFo89v5zj/FsI8=;
+ b=WI2lTnFb/MX6uktSpOJRR0W2Qd4Nrn2hh4nNHrAVqBBGVt72gubpOk+FrLeWMNztMlR7
+ WhrBJTTcp54iZ2GvAVV3ubwz7RhX+b2QiP3PLS4dOrKAYn24T7KRHykIUbEUdNrvTqd0
+ P72b28pwrpH9NHJM3YKaVBZPbhneN1/DgnmmHl0lasvpQpz42oB/N2T2opt6Xcl3wzSf
+ Qmwe7MykKZ6sAtzv0hr1ey7AmrF+2kQMQtCZOC8afa+dDws93dt+guNhiivprpBouGkl
+ 5P9K5pYnBhdERY2oc7YdLHLis3yU0OQsyHm6bMmx8OZkJ+QUk+vROhh+t00Q0scS9u4B lA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ap4xv3gya-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Aug 2021 13:20:41 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17RDBYUS007537;
-        Fri, 27 Aug 2021 13:20:40 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-        by aserp3030.oracle.com with ESMTP id 3ajqhmjm17-2
+        Fri, 27 Aug 2021 13:21:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17RDBeGU013130;
+        Fri, 27 Aug 2021 13:21:02 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2040.outbound.protection.outlook.com [104.47.51.40])
+        by userp3020.oracle.com with ESMTP id 3akb924gn5-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Aug 2021 13:20:39 +0000
+        Fri, 27 Aug 2021 13:21:02 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T8eVhOO6q8/REYxGWG1pXfZ1s8VIqkEzoiVRNC3CEsEhKR0ohN5HzrRqtjZCT8q+t83jekVNyH9qNCl3QPRmAZAhsW3mvEkKAX5ybGIx2aXHzyEIesrgEqC+wz03IZpEnHjhSXhU3bPXWOY2abmDt8cG7wwh1K9yZ3Vwi43cXZ8GiAosDVUV0h8FM2unst3+8IcIhWcQl0bjxlcqwGwr+I5PctkdFixAHtqBmWKnW8pRfwu7EEsiQ7devK+z+q2FoG1Nyu6jwUvDU51OtVM3eixz7tW+ZEFmxck5AWBowxmJB+WzVj/NERSZWkXrWzF3P8Uew3TscFv3hkij1ApXKw==
+ b=AGEVyTL4IH63bFCZOMObMsxLLrFfqJPaBCXC94msnRLfOHJ6LRcjBRuSfr8eu4GcclPe4ESJVyPWnSxKQuYUBX1OSHSFfY3MxACN/E3ZEiHd3qKRYJOh7zkeyWmAgspfURqfnhsvoBPUenDPVGS7c5yk85TdDHKhW0q1q/le0D9Kd3SxEjedFXr6iFTWa0EYCQGtF8EKad3DE/EvqNdpdiPNj5oHpwQaOm3e6H2zhDDBGypRDIGPFB4s7XuQP+fls8UBZvg05GwN7dNcbpKI0C/Lee5cjbkvNY0ROFOEUv10W6mKCySonvrT2pvjdCIzEhySV+zIVgMjZs0bH2pq0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pJScYFSSXd48rFQcO4SNhCOzggVxNzAwYUqdt8STBUE=;
- b=fgd3AkGsNwYmbU/OeYQveC3/sbgsuVWQv4oQakgZcjoSles+zClHdLNOzclJ/tRZTUE1swuLCHMA6LzYuyQ0wGSEw93CtFtVS04M3b+T4PHqp1t44gWTfdBweov09pbyOPhkHi3057zU1Mz/2JLOgQARjVue9puES80mEou0h3buGe+XABD7Yas03r/4xsS1XZeeJjOI/flvQlWjp4wb8Wq6GiHXTQaSmO88p4811oxdNI/QvflncVSRD3st7SOT+PccL+NuLfYr8uimQXW2OwOsmZVQG9qvJQWyPBjp9omWgosXmNRYKr0jOEc6qxvw7nduIenYfwdfFVZ8sVG9LA==
+ bh=pCuiy1PYr8laUbnFWIkuUZhLNZc3nLFo89v5zj/FsI8=;
+ b=TQJbsSGzTLt08GmvKO3uQIXDhAdZtlyX/7Ifm40liDgYRD88W3rFcv7EvRck+Vg6POtyNIEmFYhP5d37Zhl+JHE3r/jjFA1GRWp5dxMLscmRSsDvlFWN0mL1z6zjA3NZrgtWjgNAImug1kOqXnkQiSq0ooxvwMbxG4slHaanb1BoDwzAO7EV/qzmhc9HAi4f0xK4tnY6xsNNx5ZhWedhEgfHLM7+5ij1AUbw7oCL0tDF0bUc9JVF6+v8Q3AbWoQy5hhh9Fke+gBUbXCm3qmgHXo+fpvlFfU7sHIK4I4KkFa4Leui4Dblz5RQCmCSi5O88TtEBC8hH0DfDFHq4pQ7+g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pJScYFSSXd48rFQcO4SNhCOzggVxNzAwYUqdt8STBUE=;
- b=hebzis/EEKayBzcRy9qXArU1D44AO6YPnmziWyTg6Ub5IOI/T+yYx1jFGpc63LfVsP37/rhCttINta6evJLnX09qTC+EKEMUNezOIZriKeNks51VrdBLnngsY9q9NlAoxmrRAgFlK9CyQ1rDts/i3jBZM862MRlTcffASTvHpcg=
+ bh=pCuiy1PYr8laUbnFWIkuUZhLNZc3nLFo89v5zj/FsI8=;
+ b=pbX5awhGXAJiH5MlcTiBK1F+TuSzydubQtQbFqsWiGzintxO900yJbGqOIG2PTgn5wQlVJNNfB8Qlvj7a462xijuYRBMBhKq6StUzt35m7UQWH68YFdfDw2GZxhm6Xh3CARJ525phD8H7Z5K6mN61Tm7sE7bpVNUJLG/Cub+Tkw=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
 Received: from BY5PR10MB3793.namprd10.prod.outlook.com (2603:10b6:a03:1f6::14)
- by BYAPR10MB3621.namprd10.prod.outlook.com (2603:10b6:a03:121::23) with
+ by BYAPR10MB3237.namprd10.prod.outlook.com (2603:10b6:a03:153::30) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.23; Fri, 27 Aug
- 2021 13:20:38 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.23; Fri, 27 Aug
+ 2021 13:21:00 +0000
 Received: from BY5PR10MB3793.namprd10.prod.outlook.com
  ([fe80::e035:720f:86fd:bae3]) by BY5PR10MB3793.namprd10.prod.outlook.com
  ([fe80::e035:720f:86fd:bae3%4]) with mapi id 15.20.4457.020; Fri, 27 Aug 2021
- 13:20:38 +0000
+ 13:21:00 +0000
 From:   Ross Philipson <ross.philipson@oracle.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
@@ -88,9 +87,9 @@ Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         luto@amacapital.net, kanth.ghatraju@oracle.com,
         trenchboot-devel@googlegroups.com
-Subject: [PATCH v4 01/14] x86/boot: Fix memremap of setup_indirect structures
-Date:   Fri, 27 Aug 2021 09:28:24 -0400
-Message-Id: <1630070917-9896-2-git-send-email-ross.philipson@oracle.com>
+Subject: [PATCH v4 14/14] tpm: Allow locality 2 to be set when initializing the TPM for Secure Launch
+Date:   Fri, 27 Aug 2021 09:28:37 -0400
+Message-Id: <1630070917-9896-15-git-send-email-ross.philipson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
 References: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
@@ -100,366 +99,106 @@ X-ClientProxiedBy: SN6PR05CA0011.namprd05.prod.outlook.com
  (2603:10b6:a03:1f6::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from lateralus.us.oracle.com (209.17.40.45) by SN6PR05CA0011.namprd05.prod.outlook.com (2603:10b6:805:de::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.8 via Frontend Transport; Fri, 27 Aug 2021 13:20:36 +0000
+Received: from lateralus.us.oracle.com (209.17.40.45) by SN6PR05CA0011.namprd05.prod.outlook.com (2603:10b6:805:de::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.8 via Frontend Transport; Fri, 27 Aug 2021 13:20:59 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 41eef716-7bd2-4273-85a5-08d9695d75cb
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3621:
+X-MS-Office365-Filtering-Correlation-Id: 9affd255-28df-48e2-3739-08d9695d8335
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3237:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BYAPR10MB3621CBA074BECDF24F427722E6C89@BYAPR10MB3621.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Microsoft-Antispam-PRVS: <BYAPR10MB3237CAC9A163FDE364D755D1E6C89@BYAPR10MB3237.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5797;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ZCO0W+3Jq8kpIPYRnuVfGke8X5NWG22UZKAGffokxcu7ScfnH8F9MvP0SDu1Yp7msJ9iAckTKDZvtbq4SzYX7XrhVeUlh/Z8KhS7BCPc9+M292yKlXU+ETOdOS0rEa0qKFDWdi2OCkV0xpXbdNLZVvS8RZSl6839SVaMcb4Bh2TeTD0GmmaiMHiLYR4VHMI3XPakZwbAgo4DwDBZ7N6cuobTVzB2eCnaV5krRCmvwnicC3SkgiwHVxDYsl1GnWtBg5wwNQJexytuimnwE/Tp1i7xRIiZa9laxLtsoF95kC5TEzys+ZUb0O6PVbdkqWQZQnlxxX3jE/piMo+6dAVH7Ifdqe5oGaPUWsUT8563pgabq5aVKlhYMWAPFDUaEeUvKw7oU3yoMyRVc0V8iaK3PWftPyuq9EYLyUrc4I1cNPdcEKK91BDTJVQzbXl2kNtW1CyTD3C+Xst7mBhMjFmJaxx/hIel3Mo8fH2MYGZ8//DoipGqMZA9uaOQPPdguq2v3q8XwZovpnaUY9KlavQSy1/A0o3u4UTy/9UT0iNqQy3FLRODtXx+/v59t3gjIkmyNAr8CGeghIW1WOPmYGxE32RXwjJMN95ohaB4M1yCzkqQHDQhQDLO416s7/1i1PzxF5b3fKZy/UqoisuaLvjcdRr8+0DFSQnBIL1j7tmUAM4ltNKJ6aNC5XF292GJxgp/B/AZiW3ODK6aNmFfCmIQdQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB3793.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(346002)(376002)(39860400002)(396003)(136003)(26005)(44832011)(316002)(86362001)(186003)(36756003)(83380400001)(7416002)(5660300002)(478600001)(6486002)(38100700002)(52116002)(7696005)(4326008)(38350700002)(8936002)(8676002)(6666004)(66556008)(2906002)(2616005)(956004)(66946007)(66476007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: wWk1dIaP4EgnWLecjLk8Enf+4EDD9rHAMjdDgcHQoNuQ498EnvJrf3RuCGUeIwF9QO13VcKxcb7ZPPCa4/Moy3WMuzUAD8CqD2nw1lHQU+aEr3cwUn+jsqDXvS3Co8rRP5R74IiNm45Cp/9CftVHEns9wPGVTRGFxJxLzSchrljqfkhkbHjt2YbydZuQ/MD537Tk7Tpii4yLsQYtgjajmDdMDgbG+z565WU3X/8DEacKrrxurwEl5ERunY4U3NFuKqcPR8qFy79kaciXzTiIQakiA87hLDdFiBWvnbh2D46d/kyxeStTFwim8kx2FNk/ZPspnOUamuJD3R8aabWy+sdMvJo375+olDz24Py80pz8EB6OaTcp4wM88IXPRUliwfrWYqcMpMfEP8yQ5jleRO29v/iWRbBRR1+bPX/5Em92C7GLpejqv1r1/MFZeteMeurmEOIoHoJpYQdzA1SV6FA0ihfZmiH3TIVspKI9gHNDeM/TeGngoO08iPqd3TXMDz5Pa9VF/kXlRFyD7oadTAzgHEJNuJJEoeJS8K1xfXtLs6T4otMaZpTjaXi9/k06RMN8WxJoP41Rvldf40RtuofwFe5Q8HIsuAqW49xLwIzAQ3P9FAwBMH27ftW9cKP0hbg9UxmiBWF/MNXZmaX0d8F10zLY0U6lIdl6gGU/tA6nt958vz5j0DsQW38aJCyXkqi316zlbELKAFPo2C+ouQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB3793.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39860400002)(366004)(346002)(376002)(396003)(956004)(44832011)(2616005)(2906002)(52116002)(26005)(7696005)(478600001)(38350700002)(38100700002)(6486002)(36756003)(186003)(83380400001)(6666004)(86362001)(8936002)(8676002)(316002)(66946007)(66556008)(4326008)(66476007)(7416002)(5660300002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dEwIULASFFIe1q3HlHEVxrDpBs8VLOLAGyg60acNUArulT+gLsRa1m+onWp4?=
- =?us-ascii?Q?xBcG6iFUArJocNLQturQALcmtyOGqwfWwWDwi1gT9P1TQpMfiu2UdHQDO/Al?=
- =?us-ascii?Q?rTvbk5jXtFFHRkQtIVoALfQwTTdmmOAvNlsCElrCkmaBjM2kO5m9x+bhE62U?=
- =?us-ascii?Q?8gXUyKZUiPA+7sgVJMk5C6RWH53V1d2oQVxXMT6h54LzIlqyGnbSBghlTw10?=
- =?us-ascii?Q?oNFnCzy/1PbQWnZVoSMwEMVMbW3SmNy6bCioZmayXHXgcDZ87I5K3tLD4TPh?=
- =?us-ascii?Q?QrnX0BQu2pvyLc8sHKVkzpoYRGFp4pNqorv745XaZyTlv1FwBXaWltWs1Axl?=
- =?us-ascii?Q?/dRAofKWyhDYsTJHdR6aKUPKlaedbVxTrMFpEwXDLT//6/EE9fmPgQQZ+4s6?=
- =?us-ascii?Q?cYiyOYDItaCs5Xe3BJy2xiML8nFEm/HQ7uJNryHQqivfrFN1uk7nmPmy4w4Z?=
- =?us-ascii?Q?CWZsFX+JstDOmdkAlROaa4SnJ2CovHJNWDDBXhLq0LgwGHwSRfPtPwRFSgdD?=
- =?us-ascii?Q?D5sfBoaxDcVVbbnZJWRu+wt4fGqGvRBxMhrlXqPFo9/dTrVLZ0+imyXD+JcA?=
- =?us-ascii?Q?+G8uInWxyeMYQkUmerHH/HvwEU9fdCRUDXsbtoVfl5RIww9txs1xNOqKPnWl?=
- =?us-ascii?Q?KOeMaSKjmiqlXvNSx8EJDcpkph/kYGtoPN+xdpaahOn6KUzUbG6H2yBAEk4A?=
- =?us-ascii?Q?Tn1RkJ+Bs/rVhFEVbwZcoiSi9bvbZCT308IAoaemZfHeTgu9GBbKTGJaL8hA?=
- =?us-ascii?Q?0eExLLAf5gpxJqcDfWY84zlYTYJqJme1anr5rMgFbz/GKaw4ZhWWfdZCKmA3?=
- =?us-ascii?Q?S9uf+vy4SfQLh1OfzeLp87bIjRB94/Rl5Rx2rf1ubgn7Hkm3+z5M9WpzAVZx?=
- =?us-ascii?Q?Kt3m29T/1vRjBSOdjfceX9SMEV4EesTQNFW/Y5BikbemjWs92lfyxctn2cRR?=
- =?us-ascii?Q?ZYWfhB21rYp0AP13Xr4id5j2Epevzoa8bANDgr/A/IiLAXsfP/CxKtW5F9pO?=
- =?us-ascii?Q?dp9YX3N04LsnPRI3GQRhf8bK5l0NdZknLGP5FtmrczamDKllxHJq7VbTSAWg?=
- =?us-ascii?Q?qYZlDE6q7bfABmcMY80TZVFi6vHmpVo/UzoJZhFyg3mGj98AUTWTMsH+lNRK?=
- =?us-ascii?Q?4FZGB0ZhbMq+QfzzEtZPscgc9cOVy/Z3zT4tt4sTmYBv0Lz6gcRhp/BcDhgc?=
- =?us-ascii?Q?cC26ZGnYadZJqszAdyfRXxdoNGAztGgU3T2f9JUAPbBC1IxYRpg7CH+I8Vsc?=
- =?us-ascii?Q?B3Omxnjckc88ZwYn0dcp+9VbZ9DpxF27mqY6t2CZJn/XMAoGx0mkP0x+strJ?=
- =?us-ascii?Q?SndEm3zuiRbxG3FMwbsb3/sk?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bgEePlB8TwA0D7kqY1kYfhFcvNJHkn7qClYY922vM9bIdEHXrjp0sn/63JxA?=
+ =?us-ascii?Q?wA0brf1FlujLTg/8U+QhhABBJlkDdOvI59XrbCsx20f2oVb9h8vC0xahNKEe?=
+ =?us-ascii?Q?RC0auzH5yCvOKxbUWtRlaKMgBarEXJrE837DXnhv8CatUQXtIx6mmEb+vFIv?=
+ =?us-ascii?Q?ZSaiIYfbbCGYum61ID212i8pcjXKXm3qk+ZNwoqSqPT2sSuEGHJkyk8HdcIN?=
+ =?us-ascii?Q?Wf8RhRFaLlHvU0zWavc5R5fk1nxFQZmOGWGYiSc9gPgOR61hVypSIJkRkaOT?=
+ =?us-ascii?Q?Ql5weAmTFPAyhlThQ/s8TYnuDd97Jweau6rP5CwZ/p1Cb8uVpyDNKYoNNoX8?=
+ =?us-ascii?Q?XmTUarFaIUkwBW+VtGco+zU28vHx7bfQzfPO8pH4Jlx8NgRf/SOtXJjmHKvf?=
+ =?us-ascii?Q?LfvONTFxxRIDa/Fs2Ws7BicEHH2/8YkX/hCoJ2dND48HeuCSgL8oLG8u+v3F?=
+ =?us-ascii?Q?flacm/wHQs8acSYpC3GWFOvpW2qUQj360Jq5Dreq2f8ZJyFzS4tambxhcmmy?=
+ =?us-ascii?Q?8ugpB2KS8faNcKXDiXDM7VjdcgAr4nUFW7v2dl4fzJYTxQRp3nvzM1HM4X7G?=
+ =?us-ascii?Q?LQazEewa/eFCab8LtSoyr5fqu2aQBniMwAbHhWxJ1EOKKQpd6GcldAalkop4?=
+ =?us-ascii?Q?8nUkwksNDOLZ66S5gs7+inpidSnZQpAuYPRkgPCDd/WkBsPSJ/pbUfbKtgWj?=
+ =?us-ascii?Q?G/aBNF3su91tOzSciKD85PImZJouia7ZN8IKWUtHcCS73QcHQdM2md52f/cM?=
+ =?us-ascii?Q?rB4daUmDDB4h9VU8c8TlEtKwpNjnH7SsLYr6QRURDRjG/ux6qEzDBalV2veB?=
+ =?us-ascii?Q?EmNkn7/35ic4aYbkgNYs2Hmsh7BP3QGGuVckfSheHPYVkhSAjrgjYktfHn6n?=
+ =?us-ascii?Q?OtGR+I6cLnLK9uZ+hXszB8JVkPbSxnOS8GjMJzKdcsSNRiE1A2cyvxN8N5sr?=
+ =?us-ascii?Q?1Hne/ZsSlt12f8e0ZTcycJJlvrkUr7ZpQOfLcTFkulAKvieQF5KEf1MqlQMO?=
+ =?us-ascii?Q?r4exifJzWh+nZY9jlT6VPl9TzktEdPdoHNMYCm/G8YtVpFOqLdqKhFo0PNA2?=
+ =?us-ascii?Q?QZI2w32T8KozpLxKJqm1149qRz1lcRH7zLiEgA6W8BVdMbc4yyA0CFgfbqaH?=
+ =?us-ascii?Q?feb05GK8GgCJ6B52HiAZ+U0W5CNnXz08D6XcN+nhhEgB2JvkwUSHUENMsax8?=
+ =?us-ascii?Q?oLY2yS4SWEHzy7vo7rTac7duaXy0AKjqoTuHGs2Ewj9YnSMBGNUSxXmZjcr5?=
+ =?us-ascii?Q?Lsxlp6f4e+Z1qhVbH83jD05AAE1S9B2rOXoI5r5eL1lnls5fzDWyCLBfsH99?=
+ =?us-ascii?Q?KLeYXjw/2/eOKSVmcyXH26UY?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41eef716-7bd2-4273-85a5-08d9695d75cb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9affd255-28df-48e2-3739-08d9695d8335
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB3793.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2021 13:20:38.0272
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2021 13:21:00.5582
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jWf8jLVBHI3UeYGG05beZk5Z5OtMM/hHhk13AUdA5eRLfmDJ4ZizjEze9XiveHOcOhZQNFW0vYzhIKkQ3QwNZ/EeNjFYvdLORN0tH/MiC2Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3621
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8SuCnAQvlxFGTSndnYsNXq4rTZisW9uhAwAZkvP06/Ki3N+0QruppOQIjpUYxCNVCw9HlO/3GQ4klWluK0nbNePyqsxpo5EXrnK4J0zdQqU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3237
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10088 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0 spamscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0 mlxscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
  definitions=main-2108270086
-X-Proofpoint-GUID: SiC7RZdrY63723bWudWmqcDwK6QoFQCn
-X-Proofpoint-ORIG-GUID: SiC7RZdrY63723bWudWmqcDwK6QoFQCn
+X-Proofpoint-ORIG-GUID: L20cHFe815oKpsfYh4aeMPg2ybvfuhYu
+X-Proofpoint-GUID: L20cHFe815oKpsfYh4aeMPg2ybvfuhYu
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-As documented, the setup_indirect structure is nested inside
-the setup_data structures in the setup_data list. The code currently
-accesses the fields inside the setup_indirect structure but only
-the sizeof(struct setup_data) is being memremapped. No crash
-occured but this is just due to how the area is remapped under the
-covers.
-
-The fix is to properly memremap both the setup_data and setup_indirect
-structures in these cases before accessing them.
-
-Fixes: b3c72fc9a78e ("x86/boot: Introduce setup_indirect")
+The Secure Launch MLE environment uses PCRs that are only accessible from
+the DRTM locality 2. By default the TPM drivers always initialize the
+locality to 0. When a Secure Launch is in progress, initialize the
+locality to 2.
 
 Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 ---
- arch/x86/kernel/e820.c     | 31 ++++++++++++++++---------
- arch/x86/kernel/kdebugfs.c | 32 +++++++++++++++++++-------
- arch/x86/kernel/ksysfs.c   | 56 ++++++++++++++++++++++++++++++++++++----------
- arch/x86/kernel/setup.c    | 23 +++++++++++++------
- arch/x86/mm/ioremap.c      | 13 +++++++----
- 5 files changed, 113 insertions(+), 42 deletions(-)
+ drivers/char/tpm/tpm-chip.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index bc0657f..e023950 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -996,7 +996,8 @@ static int __init parse_memmap_opt(char *str)
- void __init e820__reserve_setup_data(void)
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index ddaeceb..ce0a3b7 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -23,6 +23,7 @@
+ #include <linux/major.h>
+ #include <linux/tpm_eventlog.h>
+ #include <linux/hw_random.h>
++#include <linux/slaunch.h>
+ #include "tpm.h"
+ 
+ DEFINE_IDR(dev_nums_idr);
+@@ -34,12 +35,18 @@
+ 
+ static int tpm_request_locality(struct tpm_chip *chip)
  {
- 	struct setup_data *data;
--	u64 pa_data;
-+	u64 pa_data, pa_next;
-+	u32 len;
++	int locality;
+ 	int rc;
  
- 	pa_data = boot_params.hdr.setup_data;
- 	if (!pa_data)
-@@ -1004,6 +1005,9 @@ void __init e820__reserve_setup_data(void)
+ 	if (!chip->ops->request_locality)
+ 		return 0;
  
- 	while (pa_data) {
- 		data = early_memremap(pa_data, sizeof(*data));
-+		len = sizeof(*data);
-+		pa_next = data->next;
+-	rc = chip->ops->request_locality(chip, 0);
++	if (slaunch_get_flags() & SL_FLAG_ACTIVE)
++		locality = 2;
++	else
++		locality = 0;
 +
- 		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
++	rc = chip->ops->request_locality(chip, locality);
+ 	if (rc < 0)
+ 		return rc;
  
- 		/*
-@@ -1015,18 +1019,23 @@ void __init e820__reserve_setup_data(void)
- 						 sizeof(*data) + data->len,
- 						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
- 
--		if (data->type == SETUP_INDIRECT &&
--		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
--			e820__range_update(((struct setup_indirect *)data->data)->addr,
--					   ((struct setup_indirect *)data->data)->len,
--					   E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
--			e820__range_update_kexec(((struct setup_indirect *)data->data)->addr,
--						 ((struct setup_indirect *)data->data)->len,
--						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-+		if (data->type == SETUP_INDIRECT) {
-+			len += data->len;
-+			early_memunmap(data, sizeof(*data));
-+			data = early_memremap(pa_data, len);
-+
-+			if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+				e820__range_update(((struct setup_indirect *)data->data)->addr,
-+						   ((struct setup_indirect *)data->data)->len,
-+						   E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-+				e820__range_update_kexec(((struct setup_indirect *)data->data)->addr,
-+							 ((struct setup_indirect *)data->data)->len,
-+							 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-+			}
- 		}
- 
--		pa_data = data->next;
--		early_memunmap(data, sizeof(*data));
-+		pa_data = pa_next;
-+		early_memunmap(data, len);
- 	}
- 
- 	e820__update_table(e820_table);
-diff --git a/arch/x86/kernel/kdebugfs.c b/arch/x86/kernel/kdebugfs.c
-index 64b6da9..e5c72d8 100644
---- a/arch/x86/kernel/kdebugfs.c
-+++ b/arch/x86/kernel/kdebugfs.c
-@@ -92,7 +92,8 @@ static int __init create_setup_data_nodes(struct dentry *parent)
- 	struct setup_data *data;
- 	int error;
- 	struct dentry *d;
--	u64 pa_data;
-+	u64 pa_data, pa_next;
-+	u32 len;
- 	int no = 0;
- 
- 	d = debugfs_create_dir("setup_data", parent);
-@@ -112,12 +113,27 @@ static int __init create_setup_data_nodes(struct dentry *parent)
- 			error = -ENOMEM;
- 			goto err_dir;
- 		}
--
--		if (data->type == SETUP_INDIRECT &&
--		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
--			node->paddr = ((struct setup_indirect *)data->data)->addr;
--			node->type  = ((struct setup_indirect *)data->data)->type;
--			node->len   = ((struct setup_indirect *)data->data)->len;
-+		pa_next = data->next;
-+
-+		if (data->type == SETUP_INDIRECT) {
-+			len = sizeof(*data) + data->len;
-+			memunmap(data);
-+			data = memremap(pa_data, len, MEMREMAP_WB);
-+			if (!data) {
-+				kfree(node);
-+				error = -ENOMEM;
-+				goto err_dir;
-+			}
-+
-+			if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+				node->paddr = ((struct setup_indirect *)data->data)->addr;
-+				node->type  = ((struct setup_indirect *)data->data)->type;
-+				node->len   = ((struct setup_indirect *)data->data)->len;
-+			} else {
-+				node->paddr = pa_data;
-+				node->type  = data->type;
-+				node->len   = data->len;
-+			}
- 		} else {
- 			node->paddr = pa_data;
- 			node->type  = data->type;
-@@ -125,7 +141,7 @@ static int __init create_setup_data_nodes(struct dentry *parent)
- 		}
- 
- 		create_setup_data_node(d, no, node);
--		pa_data = data->next;
-+		pa_data = pa_next;
- 
- 		memunmap(data);
- 		no++;
-diff --git a/arch/x86/kernel/ksysfs.c b/arch/x86/kernel/ksysfs.c
-index d0a1912..4cef401 100644
---- a/arch/x86/kernel/ksysfs.c
-+++ b/arch/x86/kernel/ksysfs.c
-@@ -93,24 +93,35 @@ static int __init get_setup_data_size(int nr, size_t *size)
- {
- 	int i = 0;
- 	struct setup_data *data;
--	u64 pa_data = boot_params.hdr.setup_data;
-+	u64 pa_data = boot_params.hdr.setup_data, pa_next;
-+	u32 len;
- 
- 	while (pa_data) {
- 		data = memremap(pa_data, sizeof(*data), MEMREMAP_WB);
- 		if (!data)
- 			return -ENOMEM;
-+		pa_next = data->next;
-+
- 		if (nr == i) {
--			if (data->type == SETUP_INDIRECT &&
--			    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT)
--				*size = ((struct setup_indirect *)data->data)->len;
--			else
-+			if (data->type == SETUP_INDIRECT) {
-+				len = sizeof(*data) + data->len;
-+				memunmap(data);
-+				data = memremap(pa_data, len, MEMREMAP_WB);
-+				if (!data)
-+					return -ENOMEM;
-+
-+			    	if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT)
-+					*size = ((struct setup_indirect *)data->data)->len;
-+				else
-+					*size = data->len;
-+			} else
- 				*size = data->len;
- 
- 			memunmap(data);
- 			return 0;
- 		}
- 
--		pa_data = data->next;
-+		pa_data = pa_next;
- 		memunmap(data);
- 		i++;
- 	}
-@@ -122,6 +133,7 @@ static ssize_t type_show(struct kobject *kobj,
- {
- 	int nr, ret;
- 	u64 paddr;
-+	u32 len;
- 	struct setup_data *data;
- 
- 	ret = kobj_to_setup_data_nr(kobj, &nr);
-@@ -135,9 +147,14 @@ static ssize_t type_show(struct kobject *kobj,
- 	if (!data)
- 		return -ENOMEM;
- 
--	if (data->type == SETUP_INDIRECT)
-+	if (data->type == SETUP_INDIRECT) {
-+		len = sizeof(*data) + data->len;
-+		memunmap(data);
-+		data = memremap(paddr, len, MEMREMAP_WB);
-+		if (!data)
-+			return -ENOMEM;
- 		ret = sprintf(buf, "0x%x\n", ((struct setup_indirect *)data->data)->type);
--	else
-+	} else
- 		ret = sprintf(buf, "0x%x\n", data->type);
- 	memunmap(data);
- 	return ret;
-@@ -165,10 +182,25 @@ static ssize_t setup_data_data_read(struct file *fp,
- 	if (!data)
- 		return -ENOMEM;
- 
--	if (data->type == SETUP_INDIRECT &&
--	    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
--		paddr = ((struct setup_indirect *)data->data)->addr;
--		len = ((struct setup_indirect *)data->data)->len;
-+	if (data->type == SETUP_INDIRECT) {
-+		len = sizeof(*data) + data->len;
-+		memunmap(data);
-+		data = memremap(paddr, len, MEMREMAP_WB);
-+		if (!data)
-+			return -ENOMEM;
-+
-+		if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+			paddr = ((struct setup_indirect *)data->data)->addr;
-+			len = ((struct setup_indirect *)data->data)->len;
-+		} else {
-+			/*
-+			 * Even though this is technically undefined, return
-+			 * the data as though it is a normal setup_data struct.
-+			 * This will at least allow it to be inspected.
-+			 */
-+			paddr += sizeof(*data);
-+			len = data->len;
-+		}
- 	} else {
- 		paddr += sizeof(*data);
- 		len = data->len;
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index bff3a78..055a834 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -368,20 +368,29 @@ static void __init parse_setup_data(void)
- static void __init memblock_x86_reserve_range_setup_data(void)
- {
- 	struct setup_data *data;
--	u64 pa_data;
-+	u64 pa_data, pa_next;
-+	u32 len;
- 
- 	pa_data = boot_params.hdr.setup_data;
- 	while (pa_data) {
- 		data = early_memremap(pa_data, sizeof(*data));
-+		len = sizeof(*data);
-+		pa_next = data->next;
-+
- 		memblock_reserve(pa_data, sizeof(*data) + data->len);
- 
--		if (data->type == SETUP_INDIRECT &&
--		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT)
--			memblock_reserve(((struct setup_indirect *)data->data)->addr,
--					 ((struct setup_indirect *)data->data)->len);
-+		if (data->type == SETUP_INDIRECT) {
-+			len += data->len;
-+			early_memunmap(data, sizeof(*data));
-+			data = early_memremap(pa_data, len);
- 
--		pa_data = data->next;
--		early_memunmap(data, sizeof(*data));
-+			if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT)
-+				memblock_reserve(((struct setup_indirect *)data->data)->addr,
-+						 ((struct setup_indirect *)data->data)->len);
-+		}
-+
-+		pa_data = pa_next;
-+		early_memunmap(data, len);
- 	}
- }
- 
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 60ade7d..ab74e4f 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -635,10 +635,15 @@ static bool memremap_is_setup_data(resource_size_t phys_addr,
- 			return true;
- 		}
- 
--		if (data->type == SETUP_INDIRECT &&
--		    ((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
--			paddr = ((struct setup_indirect *)data->data)->addr;
--			len = ((struct setup_indirect *)data->data)->len;
-+		if (data->type == SETUP_INDIRECT) {
-+			memunmap(data);
-+			data = memremap(paddr, sizeof(*data) + len,
-+					MEMREMAP_WB | MEMREMAP_DEC);
-+
-+			if (((struct setup_indirect *)data->data)->type != SETUP_INDIRECT) {
-+				paddr = ((struct setup_indirect *)data->data)->addr;
-+				len = ((struct setup_indirect *)data->data)->len;
-+			}
- 		}
- 
- 		memunmap(data);
 -- 
 1.8.3.1
 
