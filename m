@@ -2,300 +2,159 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF136C432BE
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 00:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD16C432BE
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 06:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5BE60FD8
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 00:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8B660FC4
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 06:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243853AbhH0AgG (ORCPT
+        id S232463AbhH0GnH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Aug 2021 20:36:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57238 "EHLO
+        Fri, 27 Aug 2021 02:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230522AbhH0AgG (ORCPT
+        with ESMTP id S230522AbhH0GnG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Aug 2021 20:36:06 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55740C061757
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Aug 2021 17:35:18 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id w7so3388162pgk.13
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Aug 2021 17:35:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rubrik.com; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3w0EUiMG0873zV3xUH8w7oQPaErse5z8yRGr4jE4Wuo=;
-        b=MT1+Rjxnu5QsWAIFZDqgFw0fVzHaXX1sn2fuMgv2kJhe+SB9GNEQ0aFVEdIVpMIWsz
-         yVQCV8W0q9Efsj0rxGdU4EHYrsii0mdNS4AIpZEoobdOIGbKyNw0cLAFwqLFjhITlUTX
-         ZZAUNpvtfjMKhKD0BJQTCWJ/fYb85hBtmdBkM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=3w0EUiMG0873zV3xUH8w7oQPaErse5z8yRGr4jE4Wuo=;
-        b=P4Y2kaxjXreb+z3r8J9YdBb1Y0YAxvPhMNKsLXf7ejs7jdEi+1eg4OY7mDC7FFrjzW
-         3sxILPNAKlaCjedpwsLRUDHf5R7pciCL7uKgtVU1aE64ylOi2dRoKfyC4qrYv4FpcklA
-         mzPi0BYWlaTE8blQPvUSwNjssyzYvIzL7FxuQnTrHlrm2wlc1inTYUCZS4YB/6uBiGpt
-         hrcWzM0P6Fmt8W3/nrnFF1Fg2Izi/vwH0XD9X4yXirNo8UCSIId+5VQaHmfYbcq4rk9m
-         AYhAPNWxt+at7oKHXwdhWnEBbIEqo4B/XHQQ9Hdje85ZgEI8tu8q0zKkBMj6NhWPY9/X
-         jq5g==
-X-Gm-Message-State: AOAM532slHufD2tukF8Z+7veOJ7ghdxl500MkZdZjR+Ohg44Q4ODe6tn
-        UG6ExLzFIB9S7FE7088ToMMCUg==
-X-Google-Smtp-Source: ABdhPJy8yTPQ3tT+WNJn0FbFFq8yU1A4P93SkVuOd3d7fAghaH9W6+eCLz3U73XeTFNnza8Og1u92A==
-X-Received: by 2002:a65:468c:: with SMTP id h12mr5705720pgr.423.1630024517606;
-        Thu, 26 Aug 2021 17:35:17 -0700 (PDT)
-Received: from [10.0.0.5] (c-73-231-56-47.hsd1.ca.comcast.net. [73.231.56.47])
-        by smtp.gmail.com with ESMTPSA id t42sm3965063pfg.30.2021.08.26.17.35.16
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Aug 2021 17:35:17 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
-Subject: Re: [PATCH v4] tpm: fix Atmel TPM crash caused by too frequent
- queries
-From:   Hao Wu <hao.wu@rubrik.com>
-In-Reply-To: <bc1ba8557c3146f1b94647de6f2851d002a9b597.camel@kernel.org>
-Date:   Thu, 26 Aug 2021 17:35:15 -0700
-Cc:     Shrihari Kalkar <shrihari.kalkar@rubrik.com>,
-        Han Seungyeop <seungyeop.han@rubrik.com>,
-        Anish Jhaveri <anish.jhaveri@rubrik.com>, peterhuewe@gmx.de,
-        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Ken Goldman <kgold@linux.ibm.com>, zohar@linux.vnet.ibm.com,
-        why2jjj.linux@gmail.com, Hamza Attak <hamza@hpe.com>,
-        gregkh@linuxfoundation.org, arnd@arndb.de,
-        Nayna <nayna@linux.vnet.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <45EFFAB9-00A3-47D1-B9E6-2380EB581A9F@rubrik.com>
-References: <20210711075122.30056-1-hao.wu@rubrik.com>
- <20210814222519.42476-1-hao.wu@rubrik.com>
- <B58587F6-AF3F-4224-B6F6-E3886EE80413@rubrik.com>
- <bc1ba8557c3146f1b94647de6f2851d002a9b597.camel@kernel.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-X-Mailer: Apple Mail (2.3654.60.0.2.21)
+        Fri, 27 Aug 2021 02:43:06 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 047E3C061757;
+        Thu, 26 Aug 2021 23:42:16 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id EC8AAAE0DCB;
+        Fri, 27 Aug 2021 14:41:18 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bonB99NEQbAx; Fri, 27 Aug 2021 14:40:58 +0800 (CST)
+Received: from [172.30.18.174] (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id CFABBAE0DB0;
+        Fri, 27 Aug 2021 14:40:57 +0800 (CST)
+Subject: Re: [PATCH] ima: fix deadlock within RCU list of ima_rules
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+ <20210824085747.23604-1-liqiong@nfschina.com>
+ <e720e88e-ebfa-56df-6048-f2da0b8fa2a0@viveris.fr>
+ <3ba4da9d-fa7b-c486-0c48-67cee4d5de6d@nfschina.com>
+ <2c4f61ff68544b2627fc4a38ad1e4109184ec68a.camel@linux.ibm.com>
+ <d502623a-7a49-04f8-1672-6521ceef260b@nfschina.com>
+ <5a032a1b-f763-a0e4-8ea2-803872bd7174@nfschina.com>
+ <eb9921ff-2d4b-136f-b7a7-924e61a0651b@viveris.fr>
+ <1e464ae0-28e1-6511-ab89-52b5cd1a0841@nfschina.com>
+ <3ef6906b-ccf1-0ab8-180b-b71568e22443@viveris.fr>
+From:   liqiong <liqiong@nfschina.com>
+Message-ID: <bd52af5b-6c69-73a1-e0b2-8d23f3d8db3a@nfschina.com>
+Date:   Fri, 27 Aug 2021 14:41:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <3ef6906b-ccf1-0ab8-180b-b71568e22443@viveris.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Aug 26, 2021, at 9:24 AM, Jarkko Sakkinen <jarkko@kernel.org> =
-wrote:
->=20
-> On Wed, 2021-08-25 at 22:38 -0700, Hao Wu wrote:
->>> On Aug 14, 2021, at 3:25 PM, Hao Wu <hao.wu@rubrik.com> wrote:
->>>=20
->>> The Atmel TPM 1.2 chips crash with error
->>> `tpm_try_transmit: send(): error -62` since kernel 4.14.
->>> It is observed from the kernel log after running `tpm_sealdata -z`.
->>> The error thrown from the command is as follows
->>> ```
->>> $ tpm_sealdata -z
->>> Tspi_Key_LoadKey failed: 0x00001087 - layer=3Dtddl,
->>> code=3D0087 (135), I/O error
->>> ```
->>>=20
->>> The issue was reproduced with the following Atmel TPM chip:
->>> ```
->>> $ tpm_version
->>> T0  TPM 1.2 Version Info:
->>> Chip Version:        1.2.66.1
->>> Spec Level:          2
->>> Errata Revision:     3
->>> TPM Vendor ID:       ATML
->>> TPM Version:         01010000
->>> Manufacturer Info:   41544d4c
->>> ```
->>>=20
->>> The root cause of the issue is due to the TPM calls to msleep()
->>> were replaced with usleep_range() [1], which reduces
->>> the actual timeout. Via experiments, it is observed that
->>> the original msleep(5) actually sleeps for 15ms.
->>> Because of a known timeout issue in Atmel TPM 1.2 chip,
->>> the shorter timeout than 15ms can cause the error described above.
->>>=20
->>> A few further changes in kernel 4.16 [2] and 4.18 [3, 4] further
->>> reduced the timeout to less than 1ms. With experiments,
->>> the problematic timeout in the latest kernel is the one
->>> for `wait_for_tpm_stat`.
->>>=20
->>> To fix it, the patch reverts the timeout of `wait_for_tpm_stat`
->>> to 15ms for all Atmel TPM 1.2 chips, but leave it untouched
->>> for Ateml TPM 2.0 chip, and chips from other vendors.
->>> As explained above, the chosen 15ms timeout is
->>> the actual timeout before this issue introduced,
->>> thus the old value is used here.
->>> Particularly, TPM_ATML_TIMEOUT_WAIT_STAT_MIN is set to 14700us,
->>> TPM_ATML_TIMEOUT_WAIT_STAT_MIN is set to 15000us according to
->>> the existing TPM_TIMEOUT_RANGE_US (300us).
->>> The fixed has been tested in the system with the affected Atmel chip
->>> with no issues observed after boot up.
->>>=20
->>> References:
->>> [1] 9f3fc7bcddcb tpm: replace msleep() with usleep_range() in TPM
->>> 1.2/2.0 generic drivers
->>> [2] cf151a9a44d5 tpm: reduce tpm polling delay in tpm_tis_core
->>> [3] 59f5a6b07f64 tpm: reduce poll sleep time in tpm_transmit()
->>> [4] 424eaf910c32 tpm: reduce polling time to usecs for even finer
->>> granularity
->>>=20
->>> Fixes: 9f3fc7bcddcb ("tpm: replace msleep() with usleep_range() in =
-TPM 1.2/2.0 generic drivers")
->>> Link: =
-https://patchwork.kernel.org/project/linux-integrity/patch/20200926223150.=
-109645-1-hao.wu@rubrik.com/
->>> Signed-off-by: Hao Wu <hao.wu@rubrik.com>
->>> ---
->>> v4:
->>> - Move timeout constants to drivers/char/tpm/tpm_tis_core.h
->>> - Cleanup unnecessary inline comment
->>>=20
->>> v3:
->>> - removes unnecessary condition check in `wait_for_tpm_stat`
->>>=20
->>> v2:
->>> - follow the existing way to define two timeouts (min and max)
->>> for ATMEL chip, thus keep the exact timeout logic for=20
->>> non-ATEML chips.
->>> - limit the timeout increase to only ATMEL TPM 1.2 chips,
->>> because it is not an issue for TPM 2.0 chips yet.
->>>=20
->>> Test Plan:
->>> - Run fixed kernel with ATMEL TPM chips and see crash
->>> has been fixed.
->>> - Run fixed kernel with non-ATMEL TPM chips, and confirm
->>> the timeout has not been changed.
->>>=20
->>> drivers/char/tpm/tpm_tis_core.c | 13 +++++++++++--
->>> drivers/char/tpm/tpm_tis_core.h |  2 ++
->>> include/linux/tpm.h             |  3 +++
->>> 3 files changed, 16 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/drivers/char/tpm/tpm_tis_core.c =
-b/drivers/char/tpm/tpm_tis_core.c
->>> index 55b9d3965ae1..24605f100e96 100644
->>> --- a/drivers/char/tpm/tpm_tis_core.c
->>> +++ b/drivers/char/tpm/tpm_tis_core.c
->>> @@ -80,8 +80,8 @@ static int wait_for_tpm_stat(struct tpm_chip =
-*chip, u8 mask,
->>> 		}
->>> 	} else {
->>> 		do {
->>> -			usleep_range(TPM_TIMEOUT_USECS_MIN,
->>> -				     TPM_TIMEOUT_USECS_MAX);
->>> +			usleep_range(chip->timeout_wait_stat_min,
->>> +				     chip->timeout_wait_stat_max);
->>> 			status =3D chip->ops->status(chip);
->>> 			if ((status & mask) =3D=3D mask)
->>> 				return 0;
->>> @@ -934,6 +934,8 @@ int tpm_tis_core_init(struct device *dev, struct =
-tpm_tis_data *priv, int irq,
->>> 	chip->timeout_b =3D msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
->>> 	chip->timeout_c =3D msecs_to_jiffies(TIS_TIMEOUT_C_MAX);
->>> 	chip->timeout_d =3D msecs_to_jiffies(TIS_TIMEOUT_D_MAX);
->>> +	chip->timeout_wait_stat_min =3D TPM_TIMEOUT_USECS_MIN;
->>> +	chip->timeout_wait_stat_max =3D TPM_TIMEOUT_USECS_MAX;
->>> 	priv->phy_ops =3D phy_ops;
->>> 	dev_set_drvdata(&chip->dev, priv);
->>>=20
->>> @@ -983,6 +985,13 @@ int tpm_tis_core_init(struct device *dev, =
-struct tpm_tis_data *priv, int irq,
->>>=20
->>> 	priv->manufacturer_id =3D vendor;
->>>=20
->>> +	if (priv->manufacturer_id =3D=3D TPM_VID_ATML &&
->>> +		!(chip->flags & TPM_CHIP_FLAG_TPM2)) {
->>> +		/* If TPM chip is 1.2 ATMEL chip, timeout need to be =
-relaxed*/
->>> +		chip->timeout_wait_stat_min =3D =
-TPM_ATML_TIMEOUT_WAIT_STAT_MIN;
->>> +		chip->timeout_wait_stat_max =3D =
-TPM_ATML_TIMEOUT_WAIT_STAT_MAX;
->>> +	}
->>> +
->>> 	rc =3D tpm_tis_read8(priv, TPM_RID(0), &rid);
->>> 	if (rc < 0)
->>> 		goto out_err;
->>> diff --git a/drivers/char/tpm/tpm_tis_core.h =
-b/drivers/char/tpm/tpm_tis_core.h
->>> index 9b2d32a59f67..2e431beb44f7 100644
->>> --- a/drivers/char/tpm/tpm_tis_core.h
->>> +++ b/drivers/char/tpm/tpm_tis_core.h
->>> @@ -54,6 +54,8 @@ enum tis_defaults {
->>> 	TIS_MEM_LEN =3D 0x5000,
->>> 	TIS_SHORT_TIMEOUT =3D 750,	/* ms */
->>> 	TIS_LONG_TIMEOUT =3D 2000,	/* 2 sec */
->>> +	TPM_ATML_TIMEOUT_WAIT_STAT_MIN =3D 14700,	/* usecs */
->>> +	TPM_ATML_TIMEOUT_WAIT_STAT_MAX =3D 15000,	/* usecs */
->>> };
->=20
-> I'd prefer TIS_TIMEOUT_{MIN, MAX}_ATML. I.e. no "WAIT_STAT" and =
-without "TPM_"
-> to be consistent with other constants here.
-Ok will do
->=20
->>>=20
->>> /* Some timeout values are needed before it is known whether the =
-chip is
->>> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->>> index aa11fe323c56..171b9102c976 100644
->>> --- a/include/linux/tpm.h
->>> +++ b/include/linux/tpm.h
->>> @@ -150,6 +150,8 @@ struct tpm_chip {
->>> 	bool timeout_adjusted;
->>> 	unsigned long duration[TPM_NUM_DURATIONS]; /* jiffies */
->>> 	bool duration_adjusted;
->>> +	unsigned int timeout_wait_stat_min; /* usecs */
->>> +	unsigned int timeout_wait_stat_max; /* usecs */
->=20
-> Please rename as timeout_{min, max}.
-Ok will do
->=20
-> And I think tpm_chip is wrong place to put them as they are TIS
-> specific, i.e. they should be in tpm_tis_data.
-Sorry, I am not familiar with tpm_tis_data, could tell the the place =
-that you want me to put the var?=20
-I think I may have hard time to move forward according toward this =
-comment due to bandwidth constraints.
-Some helps would be appreciated.=20
+Hi Simon,
 
-Is tpm_tis_data something specific to a chip instance ? Given the values =
-are tied to chip,
-we need chip specific instance to make this work.
+Thanks for you help, i may got it, here is the new commit message:
 
->=20
->>>=20
->>> 	struct dentry *bios_dir[TPM_NUM_EVENT_LOG_FILES];
->>>=20
->>> @@ -269,6 +271,7 @@ enum tpm2_cc_attrs {
->>> #define TPM_VID_INTEL    0x8086
->>> #define TPM_VID_WINBOND  0x1050
->>> #define TPM_VID_STM      0x104A
->>> +#define TPM_VID_ATML     0x1114
->>>=20
->>> enum tpm_chip_flags {
->>> 	TPM_CHIP_FLAG_TPM2		=3D BIT(1),
->>> --=20
->>> 2.29.0.vfs.0.0
->>>=20
->>=20
->> Just kindly remind this code review in case it has been missed =
-somehow
->=20
-> I'm sorry, my bad. I managed to somehow miss this. Might be because
-> I've been recently reorganizing my email accounts. And thanks for
-> pinging so that I spotted it.
-No worries, thanks for quick response!
 
->=20
+The current IMA ruleset is identified by the variable "ima_rules"
+that default to "&ima_default_rules". When loading a custom policy
+for the first time, the variable is updated to "&ima_policy_rules"
+instead. That update isn't RCU-safe, and deadlocks are possible.
+Because some functions like ima_match_policy() may loop indefinitely
+over traversing the "ima_default_rules" as list_for_each_entry_rcu().
+
+When iterating over the default ruleset back to head, value of
+"&entry->list" is "&ima_default_rules", and "ima_rules" may have been
+updated to "&ima_policy_rules", the loop condition (&entry->list != ima_rules)
+stay alway true, traversing doesn't terminate, cause soft lockup and
+RCU stalls.
+
+Introduce a temporary value for "ima_rules" when iterating over
+the ruleset to avoid the deadlocks.
+
+
+Signed-off-by: liqiong <liqiong@nfschina.com>
+---
+ security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index fd5d46e511f1..e92b197bfd3c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+
+
+Thanks
+
+liqiong
+
+在 2021年08月26日 17:01, THOBY Simon 写道:
+> Hi liqiong,
+>
+> On 8/26/21 10:15 AM, liqiong wrote:
+>> Hi Simon,
+>>
+>> Thanks for your help, your advice is clear, can i just use it,
+>> how about this:
+>>
+>>
+>> The current IMA ruleset is identified by the variable "ima_rules",
+>> and the pointer starts pointing at the list "ima_default_rules".
+> After reading it again, maybe
+> "The current IMA ruleset is identified by the variable "ima_rules",
+> that defaults to "&ima_default_rules".'?
+>
+>> When loading a custom policy for the first time, the variable is
+>> updated to point to the list "ima_policy_rules" instead. That update
+>> isn't RCU-safe, and deadlocks are possible.
+> I think what Mimi was trying to say is that you could add the high-level
+> overview above, but keep the details. Sorry if I wasn't clearer in my
+> earlier messages.
+>
+> Consider re-adding your previous paragraph
+> """
+> As a consequence, when traversing the ruleset, some functions like ima_match_policy()
+> may loop indefinitely over "ima_default_rules" as list_for_each_entry_rcu() doesn't
+> terminate (after the update, "ima_rules" no longer points to the list head, so the
+> loop condition stays always true), causing RCU stalls.
+> """
+> (note: I tweaked it above, feel free to fix it)
+>> Introduce a temporary value for "ima_rules" when iterating over
+>> the ruleset to avoid the deadlocks.
+> ... while keeping this a separate paragraph.
+>
+>>
+>> Signed-off-by: liqiong <liqiong@nfschina.com>
+>> ---
+>>  security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+>>  1 file changed, 12 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index fd5d46e511f1..e92b197bfd3c 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>>
+>>
+>>
 >> Thanks
->> Hao
->=20
-> /Jarkko
+>>
+>> liqiong
 
-Hao=
