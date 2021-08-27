@@ -3,80 +3,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A2BC25AE9
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFBCC19F35
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8E760FC4
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75BF60FD9
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Aug 2021 13:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245205AbhH0NWJ (ORCPT
+        id S245192AbhH0NWI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 27 Aug 2021 09:22:09 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:24768 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245185AbhH0NWC (ORCPT
+        Fri, 27 Aug 2021 09:22:08 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:28174 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S245153AbhH0NWB (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Aug 2021 09:22:02 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 17RAGhBv024236;
-        Fri, 27 Aug 2021 13:20:40 GMT
+        Fri, 27 Aug 2021 09:22:01 -0400
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 17RA8dsT025578;
+        Fri, 27 Aug 2021 13:20:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-type : mime-version;
- s=corp-2021-07-09; bh=UI/MoM4TUAzW1zO07N5apqi3mvniO5GmH11xURogTmg=;
- b=JrENZZmQvey1XgGFioVnf+u9GQ74Y7qI0dBtC5iK+ToZdxK3j/MbBPQJCFCMAnBJ2ybG
- /5HFJNfBvbodxdtRGzL1nN3h+DxxtZmNA2nsJkRkjifpPsNUcqpoQipR3CBFJiXEZy9e
- imlaUq5FkIfhxsEcmxSBhTRfow/KD61Di20n6aQkqAp3jcYSWml+uuJm7qqRzYrrNOs9
- x3Uw0mI+P4Ry2LuSNe5tX/xurMnoPcYg+iTxme2Laj2E+/a1oWnbT+tAFPbaEeaNyZAA
- 2l5wTPo5jsxFssZastumthuKiJYSoF41KXVxm0MqtTBC1TRpXwoNHK80K/iN7aPTApqY Og== 
+ subject : date : message-id : in-reply-to : references : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=ryFmKdn22aDzTv7hHbtLareszmknkHuvUfAEeNFJAMw=;
+ b=xhFGcUFwrN6ewYsW+QVqZkNY5IF/4glpZhjosMVPbcsMI8MqmBPDxb270ptCxpL/SOid
+ ntKLisXwmvqVB63nmDsIV+scIovW0Cm4YNIAobJuR4pJ4bCxNI+d3/wIdPZzNpAmhRwx
+ PK5bdpurOFIdo2Yv8pnL4QxtoPHDj3S9O7+2Q5izKliJQht/6qy0lO2iEqmfKDP7JN1/
+ VJ5Nalir5pMPxbXopbuOc8O62oOnN/D4WgaMYCItIr0wHo2e2G9VHzjxETuX44S00wLx
+ MWwR3/Fm/1xNYS4Zha8gFmYFapYrQF36a7VXPvbDf8kMeoyqrIKD2iUJ5GnhWvdj8rfk fA== 
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : content-type : mime-version;
- s=corp-2020-01-29; bh=UI/MoM4TUAzW1zO07N5apqi3mvniO5GmH11xURogTmg=;
- b=s6t4k5NE+OqbvW+zuK5BhmNENQ/uWJJ1TX3j3aJOlDjbDM+HdO+GatrKsrNTO+tmesiW
- XeRcL18uzH10cS5dE/NZeuaX38HdySDRq9Mh12/dYn35qndNQiw0yyfD28yJZxOdZ86r
- C8mAKBFP6g/HU1cRHeaoyIKXOZaCd6fwXdU5mQ0+E/ODS4+NNx1sls+TUSUpJKnRuBxi
- UoqgxaHGtUpF5RqxD+PyDal2oOEsZGadfi33N0USsgX7ICUIMm3gAzeRwQNi7ymCVOv+
- bN/FMydpjVbkPlZd6CTMahOVuTlJnxCFsqYuS/Ejnd2lcQLkudSJJAhj3K8ZplUVBGgC bA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ap0xpbywe-1
+ subject : date : message-id : in-reply-to : references : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=ryFmKdn22aDzTv7hHbtLareszmknkHuvUfAEeNFJAMw=;
+ b=PmXxhYdf8zaVv19lqdt8YZ4rtP4jiF3HCmQ8PWiHCtsYwqF1nOwIGDkbX997HwUGmPA1
+ YMlXZBN3DzNyBo/TIRXSCh9IhYZ9I6emDJ9BWVDKfIa7Mi0qzZcX5wJ8+MJ7+pnRa5o0
+ 4q8x+ZJAhqXaZXrriVU2mRIQ/UyedACI94lYpCM4kzGMXBT4cOYsqPt62GxEvAQcwsKI
+ sJCCp4gct590jlUE9Jw/oK7OFDcI8C4jyDCAISyyoiLvbup7J3xO6y+4xg2k1+oAccV3
+ I87krG8nU9QSSdJ1FiqnWecAis2FUUhjKQMVIzJ8vOHBLwFuHpwyQFjcvJAPeTtAGJJj dA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ap3eauqkt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Aug 2021 13:20:39 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17RDBYUQ007537;
-        Fri, 27 Aug 2021 13:20:39 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-        by aserp3030.oracle.com with ESMTP id 3ajqhmjm17-1
+        Fri, 27 Aug 2021 13:20:51 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17RD9oud076983;
+        Fri, 27 Aug 2021 13:20:50 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2041.outbound.protection.outlook.com [104.47.51.41])
+        by userp3030.oracle.com with ESMTP id 3ajpm4pqa4-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 27 Aug 2021 13:20:38 +0000
+        Fri, 27 Aug 2021 13:20:50 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KZPaSSCQD8wOv6B4iORGsGLwpql61RY5CXHPCkqsKeKKjIsK6Us39V2dkFK1b1EaMOHnec3KFFImfyMlNp/iXyqXxuJ9JS3t568zHmV251/dcQQBHeqMCZKeFGquJoSuxGhBOn4sLlBB3EirIntl6Ia+DjCtzdj8N9gt7RsokBcnHAUwf3Ivf4Rr/B3nFIGiDtulipMAS7ptTvIo7/nqX5VG67dX+wkDPxYnJxvd6tqliPZsjoXXxuGaAOnlkToVN65OTsNWIzF0i1STkKUNxxPZ9oeju3uWK5lEkYJwsyznkFFzBsqYXQC1MLPN/VVzFFWN970nv1QsZe85Wdk3Xg==
+ b=aYyHW2sSW+E5Ziwy3YazlnLm97s8vIFRi0KoTenxUEBJb26ZtzscVi/ozbUbuH6kJMN9hg/jTkdX2ejY8PmChnK6SjfqAHhEZAbBNxHTews5317OYJI13008iQqnP9FIB3ZudtjYfXsE/WIwk7xq7Nq1o3UHWLDy9DUGZi2mUkaIQWYFJPMnLrxIBHa2UwK6AL9TNyKIeWHduTpqBPp5ZqX5Bh4Kmzf9B69x42kwbaz5mFBTDUT0B1Zveqhg0FyE9ZLKd/Nnwp7fjn47nvSIMje0Ik4gcIh8MS5lmE4xCrRDAGVqCvUYPyO3L0cLxKM5u/AwC8xwWRd+od8y/VpArw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UI/MoM4TUAzW1zO07N5apqi3mvniO5GmH11xURogTmg=;
- b=RE4GbL3gqqlBTf6KPA1ANpLrm27S6WzTiX/M4KVHso72vmk+9nwiaKTCYBFpyrD8p9/ei5h0lZqWyVPvQmL/SMBBC7y9WVZdtRP478F4F7q0ddQNM6SdEoGQR+zujRtg0Rz3HZ8X4nLnnc5cp/vYVUFyeXDyR3Gv4VTTHuf2WS4jhbDHwAY8gYAmgmBSbZEFnNs3IMux2Lyv0HxkQK4XTD59gL2dN+/ydvPKOS8SfKZJCSpPY1R/JKZ7vs/R8s/Fuva98vseI9AE55KAgh/CQfPNLZjWZiCEwgeH6LRwgEXXoFBxZ8t6UFOyzIacjZPEm0TMqKMtZIel88x8uLxcQA==
+ bh=ryFmKdn22aDzTv7hHbtLareszmknkHuvUfAEeNFJAMw=;
+ b=cYliL/fJqjRaRxJap9LryXh5hs0BRiwUsdjFShFWrbyLhM6mHUtLiukNATIoU1X62fdsPMlFvdmULkjoRsukA95vDuFNFq54dYLOX5yF+0c/oRq90kGt7PcF+4/B582q2wUHc2t6mqjCdVPKJCjDtuJovnPODlEvbbEh3RhAffAQP9CD8MTSNufUXoZzS60Jh0eP5XjohOdzUCuhd7Kjhj+8UHbjNJ5rXwdExvsxuf6rZPE+q0xOsfvFLHqysBxPamERa8T5Q3KfOEkt5mLNW0eZvMzo16SPPWe3K20PbhakEo4ach+Yqybx9CqoxJHMgoNvUEAB7PEXkd0yvNUxmQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UI/MoM4TUAzW1zO07N5apqi3mvniO5GmH11xURogTmg=;
- b=ZglFZ2+u5VgnBw3h2V/xoJoYubYFBygbkXOV6wjkCSYV75zAHbXUyxMus0AOv+FGQUCsnYNip/3sH+sQH7q1xzG15DiwceSf9pYwFfa/A0KYsO6ZcsziG7EL6FWg6onFL4M/ue6hAi5v/dSvWDEqhDauqPiFqgjCWkoqICiHXAs=
+ bh=ryFmKdn22aDzTv7hHbtLareszmknkHuvUfAEeNFJAMw=;
+ b=Ezf/KzfqMzdeT1qfRW1jYm9WGpzRh5fzlEzL4aBg1ahcsmBAkOKOOf2wW5Nn6hYqw7G7Yvlb1b4o77eU+M83hfXaGTdHsqhXgkojE46+NXDJIPogsA7KbsUavNm4FBhKKA0GkEVTKSWISow59OCnkVKt1oMplJzbXnVv/PHkb1k=
 Authentication-Results: vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
 Received: from BY5PR10MB3793.namprd10.prod.outlook.com (2603:10b6:a03:1f6::14)
- by BYAPR10MB3621.namprd10.prod.outlook.com (2603:10b6:a03:121::23) with
+ by BYAPR10MB3237.namprd10.prod.outlook.com (2603:10b6:a03:153::30) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.23; Fri, 27 Aug
- 2021 13:20:36 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.23; Fri, 27 Aug
+ 2021 13:20:48 +0000
 Received: from BY5PR10MB3793.namprd10.prod.outlook.com
  ([fe80::e035:720f:86fd:bae3]) by BY5PR10MB3793.namprd10.prod.outlook.com
  ([fe80::e035:720f:86fd:bae3%4]) with mapi id 15.20.4457.020; Fri, 27 Aug 2021
- 13:20:36 +0000
+ 13:20:48 +0000
 From:   Ross Philipson <ross.philipson@oracle.com>
 To:     linux-kernel@vger.kernel.org, x86@kernel.org,
         iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
@@ -85,294 +87,322 @@ Cc:     ross.philipson@oracle.com, dpsmith@apertussolutions.com,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         luto@amacapital.net, kanth.ghatraju@oracle.com,
         trenchboot-devel@googlegroups.com
-Subject: [PATCH v4 00/14] x86: Trenchboot secure dynamic launch Linux kernel support
-Date:   Fri, 27 Aug 2021 09:28:23 -0400
-Message-Id: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
+Subject: [PATCH v4 07/14] x86: Add early SHA support for Secure Launch early measurements
+Date:   Fri, 27 Aug 2021 09:28:30 -0400
+Message-Id: <1630070917-9896-8-git-send-email-ross.philipson@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
+References: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
 Content-Type: text/plain
 X-ClientProxiedBy: SN6PR05CA0011.namprd05.prod.outlook.com
  (2603:10b6:805:de::24) To BY5PR10MB3793.namprd10.prod.outlook.com
  (2603:10b6:a03:1f6::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from lateralus.us.oracle.com (209.17.40.45) by SN6PR05CA0011.namprd05.prod.outlook.com (2603:10b6:805:de::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.8 via Frontend Transport; Fri, 27 Aug 2021 13:20:34 +0000
+Received: from lateralus.us.oracle.com (209.17.40.45) by SN6PR05CA0011.namprd05.prod.outlook.com (2603:10b6:805:de::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.8 via Frontend Transport; Fri, 27 Aug 2021 13:20:47 +0000
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cf3d5778-07ee-457e-5f36-08d9695d74ce
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3621:
+X-MS-Office365-Filtering-Correlation-Id: e33f5f5c-bda8-41a8-b75c-08d9695d7c24
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3237:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <BYAPR10MB362167FAE2DAE90D812A65F9E6C89@BYAPR10MB3621.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3968;
+X-Microsoft-Antispam-PRVS: <BYAPR10MB323743A22630132F0D84B168E6C89@BYAPR10MB3237.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2449;
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: lNs0UKm03vJcqvd2TvYRW9dvpE51d3NRYwxU/YBMHQCLbCmyQo2737wIaLIGi21T108UM41WWKXCX5xb1uh9H2mE5BbwCFBljIYcO1PPXjkbaByv2bSXB33lA4IseM4WsWtDUVWmvysdIkTuUdzV/nmZFG7Lc/eDl5M8aMnCJxXKJO4rwp+yJMJGlPq9+vo5stkNt38H0LlckKe+L9Py8wJUzjQyZ2MsOEFrGHKeYxEdWuz+8qQcfS94bmCdRc/o0IQPjKOMr/JYVPCCTLwyxPSeuJM7otGgNxyi41qK4g35Ka03zjCBDuGKk6uDxgNWVIhBHAQR3GM1X8QiexNYzWKtFejLEX1x1g4HL5HPG2ZdwYVlEPb7Z6gydjLTk2Jhxw8PdlLPyur2EoOoIyLCZbxwEo3hxKedMUPZX2idljWUEfWQrGBkcaHiyPpPIJKv8KeZhR5Qc0OEicXXNA1jygNgHR+Z4QNo2wOXw3qC9PZxNm9V0XjElqgSywHrTb8S4ezq7nvYimb/WXkJqu4DErn7mxgbaorfz4pZ2duxJ/nFNbytQLJyMKznbFXvCx50gKHfF7ztCwt6uLjMqJrrDvtq9Pf0chqBzcYxvZ0SANYb6HbxyjOJCDvkN789/JYF7sv9bwikuIoHBrt4mKknA7NYuv7ZwtZ0MAhlutRQ59DmGac7X21Mhtw/OFDRa68ftza6pkgZarUGc9OPM5taftt6T4QJ6Kv3FZ0btcFOE+oAu6swFzEvcCq699ZcPOlNyS343/tIpK3DjLhPCHreo+ly+FtsgcsS7GFiL7vP8/uAE0+dkI3rJV7769i/Rbg2
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB3793.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(346002)(376002)(39860400002)(396003)(136003)(26005)(44832011)(316002)(86362001)(186003)(36756003)(83380400001)(7416002)(5660300002)(478600001)(6486002)(38100700002)(52116002)(7696005)(30864003)(4326008)(38350700002)(8936002)(8676002)(6666004)(66556008)(2906002)(2616005)(956004)(966005)(66946007)(66476007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: O2MTsUjJtFIjmgJ/884LO9SCXZvBoDSOT/+1b5O/kUwQQJ5IudOVtzVdQqvhYj8KFDsJnUC1JgsaHNAXticBoZz5AL58cUp+xM4ZrxQ5xAgJ2NrIZ/TFrBl62cBtSwSfDZYQmy8CwdSy8JJZox0Uyw0fIrcelXmrkrP2CjB4U9D2X+5VUAyWM3KF4IdniHsK/vxKpVovGeieVhlYC4AC1FyHnX/JDuEP1txLeDft7x41BiMC73vNabQ1gMih+2Cvv/09WEHtW0F5jHs2UUVAM1Q4E5PVL/HZOna+iyuI2OWQmLn6UnZCD7x780DYBjf2uTdd+4qZQm8O/PTKHW7Ae1brerU1yds9KLGiaP51eLYsbMdOxXc10c3KZVOBdBhDaItOKHatpTNKcJ9948j81U8+ZydeGM2Cfpvqb4PsbprHlHV5O2/RvcwQBmbgnIqRDa3tvtZdqAd8IKZMPHESkU367l9T5SHWvK5WJxmxHRultN79Ht1FplPb/7W0belUdTR1KQLNXyzlE8+BRTOnhNwnY6DR+y+Px1l8almGQoQagBtp9oC9O7eotGtv5A5WflywVKziEXq4AlkaVmbcwiY0k7TCq3BrNQMV8CsjpCrutwK5B3vFUQNlZM4+dB781MumWSnJfhPq5dOO8uXQSLjRf2F+xeVAl+/7TrB3n8dxVlwu6NGOZp3c5zoLeuxSa3sjmlZzFoN+9liI6w850A==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB3793.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39860400002)(366004)(346002)(376002)(396003)(956004)(44832011)(2616005)(2906002)(52116002)(26005)(7696005)(478600001)(38350700002)(38100700002)(6486002)(36756003)(186003)(83380400001)(6666004)(86362001)(8936002)(8676002)(316002)(66946007)(66556008)(4326008)(66476007)(7416002)(5660300002);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kiimaAcP6N5n/F85NR2N6zUZqxC534g2Vxse4yhxfQoPDD8qjDM5pj2tNME/?=
- =?us-ascii?Q?8QMa4y3Rg7D+uSXuv9bJzbf2LLoac/yCt53JDPdfgtoG9dHAYi+DHY4s6l2P?=
- =?us-ascii?Q?Js6En5P5D2rps6WBfgqR7B+BTeQE1WwhA4+NoMOc3qFzImB30DIrWbUTme5v?=
- =?us-ascii?Q?8zyo/V+XMqdGtsl8hZggWFZqPZBdWW9Otqe3wPzAWqlfP315g08HnND6B6bY?=
- =?us-ascii?Q?HvBMYTtcG+XrPvlYx4TAEvR8QQtc6umcBvrpKBVyCfoG4pkvZ1gVBTM72d8U?=
- =?us-ascii?Q?M4ux715iwKrtuGVQeTE5IyWkQ2w2RFNj11aGNVBTa5G464rf0aJz+1AIhheq?=
- =?us-ascii?Q?J/PlpIqCR69MSmay8lQSqQCnfJoxSV2lhbVWBd6pYm44v1/1YhGvZvTVj9mK?=
- =?us-ascii?Q?vUCozUptWDgnxZrMdG2Gnm+EOac2vSrKsH7kUihrOZmEdbRSEUzWl7LnVZUN?=
- =?us-ascii?Q?8y1HoOWGQGe5/FqkelH+52S0KETNF7IkQV0wgaS3T1YYe1Ghv+Lc8digwSVv?=
- =?us-ascii?Q?eoP1xBR2cfCBbcOgtucpeUzncQ+Iog7FZKCZE4d5Cd/3TRyQV2KvWpV4Gxhi?=
- =?us-ascii?Q?kkBGEhD06yBQSQGxL5oNDDBySr29em2e79ILkXaJ7kTiP1bv7trSUij0MddQ?=
- =?us-ascii?Q?wwKsM6HLzJpKqjHVvH1IrMF5QVDFSDjroeTHolc/gws5VNBWlyWkRJ0idRUj?=
- =?us-ascii?Q?yaujy5x22S8heSlvaQ8QlNaOQN4yJtiLAQ71HkwU4lda2Wr7qoXJ2TkZ48J0?=
- =?us-ascii?Q?xRwLvdQOvTrZ1iik9Ca0qH1p3yxCtKAa7YJMGMgGvkJtAMaO6Bt2SgczQpMr?=
- =?us-ascii?Q?tYprAi6vg8ujmu5BI9gMyyrpvsrCitdeIO98HrnRLyRVePs0XXM5csEf80WH?=
- =?us-ascii?Q?DfLenXaI7t6EsU+xxOfta4pEF3xQkO3hw9+1Eq8zNdsqIBsieLXDHnjP4dSI?=
- =?us-ascii?Q?1WEIdW+msXUiUt8Q+DmoHOkjfM9ogxGmuKaLPaAtlF2jellqCj7I1Ipgfymg?=
- =?us-ascii?Q?E4HjtLZGzCkAcimb7FG+7ClEiSc9sDcvXK2margKMUxf/MfwOW5FnsYj4wnB?=
- =?us-ascii?Q?FFPFF2pDxHp1bhsL1+DWl1Y8sbOeXeV6QXjm89CjtMy1tQa0Yalx/aE48B3E?=
- =?us-ascii?Q?6CveEwDxcJNnU9C4QkbQjUPNQEOwbf7sY1TnOovIoDwiXns586QKD1OxXX/W?=
- =?us-ascii?Q?zbjoJHYGX0rZ5rXci20ahsnlE45T2e1m7pBQJ46oretIckQ/9y8VfNJo5ZHY?=
- =?us-ascii?Q?jMEM1wkDdKiP33O0NHSCGnsX7Ln3K2NDKY029XQ1pBB5GNpmhNt89ks9O01z?=
- =?us-ascii?Q?LIiR8ABn1aMQt7RQJeDjL3Ph?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rh1DckNapPGX41PPTfvPTQbt2zD4a/ohioOziajk4T6rutPWKK6s+/BOicCp?=
+ =?us-ascii?Q?dWoSTkcGnXlIgjk+DL20P6iRJt4m+KUCXdFIr+wucSgXxqRrnNVVs+moWtT9?=
+ =?us-ascii?Q?G0rHLSAWxY4PnWf9uQUZPAt4E3gD7hTbGIUCi0+LCfChT1DpZeUPBG1WqgQH?=
+ =?us-ascii?Q?qzK5cSVaUi40PYaXNaG0wsMlgeE23g95duYvcVv/dVf8Op25a9qIHBjv4UGz?=
+ =?us-ascii?Q?v5E9BklbMvV3Xu2gg6WgmOeVwFYrfGyIXv3C+pqosaV0ZoermCaaJFWTPbVV?=
+ =?us-ascii?Q?hUKY964g5uSGiCLyNlGZHWTx/mSG8I5bHWau4yjNRV8mqIZAau5pRN+yYnzd?=
+ =?us-ascii?Q?T02pNsntTM4iNhWjO4rQyxT7vqM0HcoFWZe9u7YhLnOqgFo2S/qBqgs44rCA?=
+ =?us-ascii?Q?GPClZ9cJAnhZ6IZZLB0VKX5uTyt04GAr36A7pP6UXaNNeyOzYcxUKRGz66CV?=
+ =?us-ascii?Q?Mz5/NzMwWxcbhbmHiJhknc8Qgq9Emlsc60aUHq7SN6fswFwik7CFUaUfAWd1?=
+ =?us-ascii?Q?lKHlhXmizTVRpWreH1w5jH5T61mhD3rWqwRU2tly/vVD536mjJC8GJD0wMag?=
+ =?us-ascii?Q?vVXV+QUIqYd/C4vawsdtMbWOG+0k8Ig9Fn9CHnVXrXJwKx7zWGg4tbG55fI0?=
+ =?us-ascii?Q?gu7ws4djtK8/mlG7nmx0l8eD1ulrXpVQVIOKA5/M0HrjufOStGo6OoCc3Laf?=
+ =?us-ascii?Q?NI8IKHLtT3GiqHNSJpQOfqT84ZO6wHKJjIbXnowAOnKmVgbrao3iyrzUs9a9?=
+ =?us-ascii?Q?N6oHrBZTqaaESmJGLGBsCLab995j9ZPe+/DUs0y/lt7cmD7fFgpJj2M5Cc/G?=
+ =?us-ascii?Q?tmiOn93BsDedq5BkBufNRSrZXMUyicToL6Nf7yMrnzjxE/0PdrcT8nwuFE+y?=
+ =?us-ascii?Q?vQPnBGFC3AIoDQ6sPDwONpSAhbYVWJ2v1JF4dT5heU5sF5QrDgl/RRsJNU95?=
+ =?us-ascii?Q?jWUf16U8gNl7zmC3ob1uvDJrr+Bc5ZTOHbnzceiTuVYo3ZnJepe/Qes8oqnu?=
+ =?us-ascii?Q?w63vLhuFNLU8mVQAna3aVkg9YAuPW7AmwmX6UceZWDoO72hHIMqkpeBGIafB?=
+ =?us-ascii?Q?nyeU7VVeCb+NTD11vwmxBt99SqQZ4T3kxB5QuWjXCmp4qwBQKkYVmFWXcYw/?=
+ =?us-ascii?Q?gHyf2LoGKZpjq8jU0MAQoq9xA7n9nt2tGGmKrd/Mlr0VgQ+v5Z69O1ClPGPM?=
+ =?us-ascii?Q?d0kdOUbQhIPifouQVtiqZzZKGa2XMabaURCs9l9rOG89vOEzR9LpiXFCvq8v?=
+ =?us-ascii?Q?okZhI6dQj5359EouSGR/FB0RW4EFfJKQPJObPCp0ZkcYkcinyqIJnlBj7qBF?=
+ =?us-ascii?Q?MEe/AP+dxHZQxHndM6rn3Bl4?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf3d5778-07ee-457e-5f36-08d9695d74ce
+X-MS-Exchange-CrossTenant-Network-Message-Id: e33f5f5c-bda8-41a8-b75c-08d9695d7c24
 X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB3793.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2021 13:20:36.3581
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2021 13:20:48.6591
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i0XHjoGr5vtYR4XtWPY87BCEo0kyxJHaT9TTVzOqwUxzyEjG2NeCnJy4OoAxxE/WpU4Y3ddFw8DZTT/VppQ4UU0pD1GzqpjE9hRw7y8DMws=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3621
+X-MS-Exchange-CrossTenant-UserPrincipalName: /8sx5g9P6PNdyI77w9Pl9xvuC9v5z9gxCa7gVHMk3MDltm5MjHFn1PFc0C3qKW8tMm3QntTG3gd4J03t4pwyF5Gfmls7kEN+Aq53JZfKt0o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB3237
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10088 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 suspectscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
  definitions=main-2108270086
-X-Proofpoint-GUID: nAkNJboxkyjD9S6WWAavMZ0FO-nJiFzm
-X-Proofpoint-ORIG-GUID: nAkNJboxkyjD9S6WWAavMZ0FO-nJiFzm
+X-Proofpoint-ORIG-GUID: 2miuq_qZC1s68I_qsjvuqUng2blpsPLM
+X-Proofpoint-GUID: 2miuq_qZC1s68I_qsjvuqUng2blpsPLM
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The larger focus of the Trechboot project (https://github.com/TrenchBoot) is to
-enhance the boot security and integrity in a unified manner. The first area of
-focus has been on the Trusted Computing Group's Dynamic Launch for establishing
-a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root of
-Trust for Measurement). The project has been and continues to work on providing
-a unified means to Dynamic Launch that is a cross-platform (Intel and AMD) and
-cross-architecture (x86 and Arm), with our recent involvment in the upcoming
-Arm DRTM specification. The order of introducing DRTM to the Linux kernel
-follows the maturity of DRTM in the architectures. Intel's Trusted eXecution
-Technology (TXT) is present today and only requires a preamble loader, e.g. a
-boot loader, and an OS kernel that is TXT-aware. AMD DRTM implementation has
-been present since the introduction of AMD-V but requires an additional
-component that is AMD specific and referred to in the specification as the
-Secure Loader, which the TrenchBoot project has an active prototype in
-development. Finally Arm's implementation is in specification development stage
-and the project is looking to support it when it becomes available.
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
 
-The approach that the TrenchBoot project is taking requires the Linux kernel
-to be directly invoked by the Dynamic Launch. The Dynamic Launch will
-be initiated by a boot loader with associated support added to it, for
-example the first targeted boot loader will be GRUB2. An integral part of
-establishing the DRTM involves measuring everything that is intended to
-be run (kernel image, initrd, etc) and everything that will configure
-that kernel to run (command line, boot params, etc) into specific PCRs,
-the DRTM PCRs (17-22), in the TPM. Another key aspect is the Dynamic
-Launch is rooted in hardware, that is to say the hardware (CPU) is what
-takes the first measurement for the chain of integrity measurements. On
-Intel this is done using the GETSEC instruction provided by Intel's TXT
-and the SKINIT instruction provided by AMD's AMD-V. Information on these
-technologies can be readily found online. This patchset introduces Intel
-TXT support.
+The SHA algorithms are necessary to measure configuration information into
+the TPM as early as possible before using the values. This implementation
+uses the established approach of #including the SHA libraries directly in
+the code since the compressed kernel is not uncompressed at this point.
 
-To enable the kernel to be launched by GETSEC, a stub must be built
-into the setup section of the compressed kernel to handle the specific
-state that the dynamic launch process leaves the BSP in. Also this stub
-must measure everything that is going to be used as early as possible.
-This stub code and subsequent code must also deal with the specific
-state that the dynamic launch leaves the APs in.
+The SHA code here has its origins in the code from the main kernel, commit
+c4d5b9ffa31f (crypto: sha1 - implement base layer for SHA-1). That code could
+not be pulled directly into the setup portion of the compressed kernel because
+of other dependencies it pulls in. The result is this is a modified copy of
+that code that still leverages the core SHA algorithms.
 
-A quick note on terminology. The larger open source project itself is
-called Trenchboot, which is hosted on Github (links below). The kernel
-feature enabling the use of the x86 technology is referred to as "Secure
-Launch" within the kernel code. As such the prefixes sl_/SL_ or
-slaunch/SLAUNCH will be seen in the code. The stub code discussed above
-is referred to as the SL stub.
-
-The new feature starts with patch #4. There are several preceeding patches
-before that. Patches 1 and 2 are fixes to an earlier patch set that
-itroduced the x86 setup_data type setup_indirect. Patch 3 was authored
-by Arvind Sankar. There is no further status on this patch at this point but
-Secure Launch depends on it so it is included with the set.
-
-The basic flow is:
-
- - Entry from the dynamic launch jumps to the SL stub
- - SL stub fixes up the world on the BSP
- - For TXT, SL stub wakes the APs, fixes up their worlds
- - For TXT, APs are left halted waiting for an NMI to wake them
- - SL stub jumps to startup_32
- - SL main locates the TPM event log and writes the measurements of
-   configuration and module information into it.
- - Kernel boot proceeds normally from this point.
- - During early setup, slaunch_setup() runs to finish some validation
-   and setup tasks.
- - The SMP bringup code is modified to wake the waiting APs. APs vector
-   to rmpiggy and start up normally from that point.
- - SL platform module is registered as a late initcall module. It reads
-   the TPM event log and extends the measurements taken into the TPM PCRs.
- - SL platform module initializes the securityfs interface to allow
-   asccess to the TPM event log and TXT public registers.
- - Kernel boot finishes booting normally
- - SEXIT support to leave SMX mode is present on the kexec path and
-   the various reboot paths (poweroff, reset, halt).
-
-Links:
-
-The Trenchboot project including documentation:
-
-https://github.com/trenchboot
-
-Intel TXT is documented in its own specification and in the SDM Instruction Set volume:
-
-https://www.intel.com/content/dam/www/public/us/en/documents/guides/intel-txt-software-development-guide.pdf
-https://software.intel.com/en-us/articles/intel-sdm
-
-AMD SKINIT is documented in the System Programming manual:
-
-https://www.amd.com/system/files/TechDocs/24593.pdf
-
-GRUB2 pre-launch support patchset (WIP):
-
-https://lists.gnu.org/archive/html/grub-devel/2020-05/msg00011.html
-
-Thanks
-Ross Philipson and Daniel P. Smith
-
-Changes in v2:
-
- - Modified 32b entry code to prevent causing relocations in the compressed
-   kernel.
- - Dropped patches for compressed kernel TPM PCR extender.
- - Modified event log code to insert log delimiter events and not rely
-   on TPM access.
- - Stop extending PCRs in the early Secure Launch stub code.
- - Removed Kconfig options for hash algorithms and use the algorithms the
-   ACM used.
- - Match Secure Launch measurement algorithm use to those reported in the
-   TPM 2.0 event log.
- - Read the TPM events out of the TPM and extend them into the PCRs using
-   the mainline TPM driver. This is done in the late initcall module.
- - Allow use of alternate PCR 19 and 20 for post ACM measurements.
- - Add Kconfig constraints needed by Secure Launch (disable KASLR
-   and add x2apic dependency).
- - Fix testing of SL_FLAGS when determining if Secure Launch is active
-   and the architecture is TXT.
- - Use SYM_DATA_START_LOCAL macros in early entry point code.
- - Security audit changes:
-   - Validate buffers passed to MLE do not overlap the MLE and are
-     properly laid out.
-   - Validate buffers and memory regions used by the MLE are
-     protected by IOMMU PMRs.
- - Force IOMMU to not use passthrough mode during a Secure Launch.
- - Prevent KASLR use during a Secure Launch.
-
-Changes in v3:
-
- - Introduce x86 documentation patch to provide background, overview
-   and configuration/ABI information for the Secure Launch kernel
-   feature.
- - Remove the IOMMU patch with special cases for disabling IOMMU
-   passthrough. Configuring the IOMMU is now a documentation matter
-   in the previously mentioned new patch.
- - Remove special case KASLR disabling code. Configuring KASLR is now
-   a documentation matter in the previously mentioned new patch.
- - Fix incorrect panic on TXT public register read.
- - Properly handle and measure setup_indirect bootparams in the early
-   launch code.
- - Use correct compressed kernel image base address when testing buffers
-   in the early launch stub code. This bug was introduced by the changes
-   to avoid relocation in the compressed kernel.
- - Use CPUID feature bits instead of CPUID vendor strings to determine
-   if SMX mode is supported and the system is Intel.
- - Remove early NMI re-enable on the BSP. This can be safely done later
-   on the BSP after an IDT is setup.
-
-Changes in v4:
- - Expand the cover letter to provide more context to the order that DRTM
-   support will be added.
- - Removed debug tracing in TPM request locality funciton and fixed
-   local variable declarations.
- - Fixed missing break in default case in slmodule.c.
- - Reworded commit messages in patches 1 and 2 per suggestions.
-
-Arvind Sankar (1):
-  x86/boot: Place kernel_info at a fixed offset
-
-Daniel P. Smith (2):
-  x86: Add early SHA support for Secure Launch early measurements
-  x86: Secure Launch late initcall platform module
-
-Ross Philipson (11):
-  x86/boot: Fix memremap of setup_indirect structures
-  x86/boot: Add setup_indirect support in early_memremap_is_setup_data
-  Documentation/x86: Secure Launch kernel documentation
-  x86: Secure Launch Kconfig
-  x86: Secure Launch main header file
-  x86: Secure Launch kernel early boot stub
-  x86: Secure Launch kernel late boot stub
-  x86: Secure Launch SMP bringup support
-  kexec: Secure Launch kexec SEXIT support
-  reboot: Secure Launch SEXIT support on reboot paths
-  tpm: Allow locality 2 to be set when initializing the TPM for Secure
-    Launch
-
- Documentation/x86/boot.rst              |  13 +
- Documentation/x86/index.rst             |   1 +
- Documentation/x86/secure-launch.rst     | 716 ++++++++++++++++++++++++++++++++
- arch/x86/Kconfig                        |  32 ++
- arch/x86/boot/compressed/Makefile       |   3 +
- arch/x86/boot/compressed/early_sha1.c   | 103 +++++
- arch/x86/boot/compressed/early_sha1.h   |  17 +
- arch/x86/boot/compressed/early_sha256.c |   7 +
- arch/x86/boot/compressed/head_64.S      |  37 ++
- arch/x86/boot/compressed/kernel_info.S  |  53 ++-
- arch/x86/boot/compressed/kernel_info.h  |  12 +
- arch/x86/boot/compressed/sl_main.c      | 549 ++++++++++++++++++++++++
- arch/x86/boot/compressed/sl_stub.S      | 685 ++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/vmlinux.lds.S  |   6 +
- arch/x86/include/asm/realmode.h         |   3 +
- arch/x86/kernel/Makefile                |   2 +
- arch/x86/kernel/asm-offsets.c           |  19 +
- arch/x86/kernel/e820.c                  |  31 +-
- arch/x86/kernel/kdebugfs.c              |  32 +-
- arch/x86/kernel/ksysfs.c                |  56 ++-
- arch/x86/kernel/reboot.c                |  10 +
- arch/x86/kernel/setup.c                 |  26 +-
- arch/x86/kernel/slaunch.c               | 531 +++++++++++++++++++++++
- arch/x86/kernel/slmodule.c              | 494 ++++++++++++++++++++++
- arch/x86/kernel/smpboot.c               |  86 ++++
- arch/x86/mm/ioremap.c                   |  34 +-
- arch/x86/realmode/rm/header.S           |   3 +
- arch/x86/realmode/rm/trampoline_64.S    |  37 ++
- drivers/char/tpm/tpm-chip.c             |   9 +-
- drivers/iommu/intel/dmar.c              |   4 +
- include/linux/slaunch.h                 | 532 ++++++++++++++++++++++++
- kernel/kexec_core.c                     |   4 +
- lib/crypto/sha256.c                     |   8 +
- lib/sha1.c                              |   4 +
- 34 files changed, 4110 insertions(+), 49 deletions(-)
- create mode 100644 Documentation/x86/secure-launch.rst
+Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ arch/x86/boot/compressed/Makefile       |   2 +
+ arch/x86/boot/compressed/early_sha1.c   | 103 ++++++++++++++++++++++++++++++++
+ arch/x86/boot/compressed/early_sha1.h   |  17 ++++++
+ arch/x86/boot/compressed/early_sha256.c |   7 +++
+ lib/crypto/sha256.c                     |   8 +++
+ lib/sha1.c                              |   4 ++
+ 6 files changed, 141 insertions(+)
  create mode 100644 arch/x86/boot/compressed/early_sha1.c
  create mode 100644 arch/x86/boot/compressed/early_sha1.h
  create mode 100644 arch/x86/boot/compressed/early_sha256.c
- create mode 100644 arch/x86/boot/compressed/kernel_info.h
- create mode 100644 arch/x86/boot/compressed/sl_main.c
- create mode 100644 arch/x86/boot/compressed/sl_stub.S
- create mode 100644 arch/x86/kernel/slaunch.c
- create mode 100644 arch/x86/kernel/slmodule.c
- create mode 100644 include/linux/slaunch.h
 
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index 431bf7f..059d49a 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -102,6 +102,8 @@ vmlinux-objs-$(CONFIG_ACPI) += $(obj)/acpi.o
+ vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_thunk_$(BITS).o
+ efi-obj-$(CONFIG_EFI_STUB) = $(objtree)/drivers/firmware/efi/libstub/lib.a
+ 
++vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/early_sha1.o $(obj)/early_sha256.o
++
+ $(obj)/vmlinux: $(vmlinux-objs-y) $(efi-obj-y) FORCE
+ 	$(call if_changed,ld)
+ 
+diff --git a/arch/x86/boot/compressed/early_sha1.c b/arch/x86/boot/compressed/early_sha1.c
+new file mode 100644
+index 0000000..74f4654
+--- /dev/null
++++ b/arch/x86/boot/compressed/early_sha1.c
+@@ -0,0 +1,103 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2021 Apertus Solutions, LLC.
++ */
++
++#include <linux/init.h>
++#include <linux/linkage.h>
++#include <linux/string.h>
++#include <asm/boot.h>
++#include <asm/unaligned.h>
++
++#include "early_sha1.h"
++
++#define SHA1_DISABLE_EXPORT
++#include "../../../../lib/sha1.c"
++
++/* The SHA1 implementation in lib/sha1.c was written to get the workspace
++ * buffer as a parameter. This wrapper function provides a container
++ * around a temporary workspace that is cleared after the transform completes.
++ */
++static void __sha_transform(u32 *digest, const char *data)
++{
++	u32 ws[SHA1_WORKSPACE_WORDS];
++
++	sha1_transform(digest, data, ws);
++
++	memset(ws, 0, sizeof(ws));
++	/*
++	 * As this is cryptographic code, prevent the memset 0 from being
++	 * optimized out potentially leaving secrets in memory.
++	 */
++	wmb();
++
++}
++
++void early_sha1_init(struct sha1_state *sctx)
++{
++	sha1_init(sctx->state);
++	sctx->count = 0;
++}
++
++void early_sha1_update(struct sha1_state *sctx,
++		       const u8 *data,
++		       unsigned int len)
++{
++	unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
++
++	sctx->count += len;
++
++	if (likely((partial + len) >= SHA1_BLOCK_SIZE)) {
++		int blocks;
++
++		if (partial) {
++			int p = SHA1_BLOCK_SIZE - partial;
++
++			memcpy(sctx->buffer + partial, data, p);
++			data += p;
++			len -= p;
++
++			__sha_transform(sctx->state, sctx->buffer);
++		}
++
++		blocks = len / SHA1_BLOCK_SIZE;
++		len %= SHA1_BLOCK_SIZE;
++
++		if (blocks) {
++			while (blocks--) {
++				__sha_transform(sctx->state, data);
++				data += SHA1_BLOCK_SIZE;
++			}
++		}
++		partial = 0;
++	}
++
++	if (len)
++		memcpy(sctx->buffer + partial, data, len);
++}
++
++void early_sha1_final(struct sha1_state *sctx, u8 *out)
++{
++	const int bit_offset = SHA1_BLOCK_SIZE - sizeof(__be64);
++	__be64 *bits = (__be64 *)(sctx->buffer + bit_offset);
++	__be32 *digest = (__be32 *)out;
++	unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
++	int i;
++
++	sctx->buffer[partial++] = 0x80;
++	if (partial > bit_offset) {
++		memset(sctx->buffer + partial, 0x0, SHA1_BLOCK_SIZE - partial);
++		partial = 0;
++
++		__sha_transform(sctx->state, sctx->buffer);
++	}
++
++	memset(sctx->buffer + partial, 0x0, bit_offset - partial);
++	*bits = cpu_to_be64(sctx->count << 3);
++	__sha_transform(sctx->state, sctx->buffer);
++
++	for (i = 0; i < SHA1_DIGEST_SIZE / sizeof(__be32); i++)
++		put_unaligned_be32(sctx->state[i], digest++);
++
++	*sctx = (struct sha1_state){};
++}
+diff --git a/arch/x86/boot/compressed/early_sha1.h b/arch/x86/boot/compressed/early_sha1.h
+new file mode 100644
+index 0000000..6584ea5
+--- /dev/null
++++ b/arch/x86/boot/compressed/early_sha1.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2021 Apertus Solutions, LLC
++ */
++
++#ifndef BOOT_COMPRESSED_EARLY_SHA1_H
++#define BOOT_COMPRESSED_EARLY_SHA1_H
++
++#include <crypto/sha1.h>
++
++void early_sha1_init(struct sha1_state *sctx);
++void early_sha1_update(struct sha1_state *sctx,
++		       const u8 *data,
++		       unsigned int len);
++void early_sha1_final(struct sha1_state *sctx, u8 *out);
++
++#endif /* BOOT_COMPRESSED_EARLY_SHA1_H */
+diff --git a/arch/x86/boot/compressed/early_sha256.c b/arch/x86/boot/compressed/early_sha256.c
+new file mode 100644
+index 0000000..db8d784
+--- /dev/null
++++ b/arch/x86/boot/compressed/early_sha256.c
+@@ -0,0 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2021 Apertus Solutions, LLC
++ */
++
++#define SHA256_DISABLE_EXPORT
++#include "../../../../lib/crypto/sha256.c"
+diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
+index 72a4b0b..e532220 100644
+--- a/lib/crypto/sha256.c
++++ b/lib/crypto/sha256.c
+@@ -149,13 +149,17 @@ void sha256_update(struct sha256_state *sctx, const u8 *data, unsigned int len)
+ 	}
+ 	memcpy(sctx->buf + partial, src, len - done);
+ }
++#ifndef SHA256_DISABLE_EXPORT
+ EXPORT_SYMBOL(sha256_update);
++#endif
+ 
+ void sha224_update(struct sha256_state *sctx, const u8 *data, unsigned int len)
+ {
+ 	sha256_update(sctx, data, len);
+ }
++#ifndef SHA256_DISABLE_EXPORT
+ EXPORT_SYMBOL(sha224_update);
++#endif
+ 
+ static void __sha256_final(struct sha256_state *sctx, u8 *out, int digest_words)
+ {
+@@ -188,13 +192,17 @@ void sha256_final(struct sha256_state *sctx, u8 *out)
+ {
+ 	__sha256_final(sctx, out, 8);
+ }
++#ifndef SHA256_DISABLE_EXPORT
+ EXPORT_SYMBOL(sha256_final);
++#endif
+ 
+ void sha224_final(struct sha256_state *sctx, u8 *out)
+ {
+ 	__sha256_final(sctx, out, 7);
+ }
++#ifndef SHA256_DISABLE_EXPORT
+ EXPORT_SYMBOL(sha224_final);
++#endif
+ 
+ void sha256(const u8 *data, unsigned int len, u8 *out)
+ {
+diff --git a/lib/sha1.c b/lib/sha1.c
+index 9bd1935..0598efd 100644
+--- a/lib/sha1.c
++++ b/lib/sha1.c
+@@ -187,7 +187,9 @@ void sha1_transform(__u32 *digest, const char *data, __u32 *array)
+ 	digest[3] += D;
+ 	digest[4] += E;
+ }
++#ifndef SHA1_DISABLE_EXPORT
+ EXPORT_SYMBOL(sha1_transform);
++#endif
+ 
+ /**
+  * sha1_init - initialize the vectors for a SHA1 digest
+@@ -201,4 +203,6 @@ void sha1_init(__u32 *buf)
+ 	buf[3] = 0x10325476;
+ 	buf[4] = 0xc3d2e1f0;
+ }
++#ifndef SHA1_DISABLE_EXPORT
+ EXPORT_SYMBOL(sha1_init);
++#endif
 -- 
 1.8.3.1
 
