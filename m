@@ -2,90 +2,139 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE15C433F5
-	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 13:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C183C433EF
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 16:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E455E610FF
-	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 13:43:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647C461153
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 16:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232667AbhIHNoY (ORCPT
+        id S231642AbhIHQEf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 8 Sep 2021 09:44:24 -0400
-Received: from mxout70.expurgate.net ([194.37.255.70]:47707 "EHLO
-        mxout70.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235462AbhIHNoX (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 8 Sep 2021 09:44:23 -0400
-X-Greylist: delayed 520 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Sep 2021 09:44:23 EDT
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1mNxii-0006AB-Gy; Wed, 08 Sep 2021 15:34:32 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1mNxih-000Bkh-Ed; Wed, 08 Sep 2021 15:34:31 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id E9F42240041;
-        Wed,  8 Sep 2021 15:34:30 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id 77837240040;
-        Wed,  8 Sep 2021 15:34:30 +0200 (CEST)
-Received: from localhost.localdomain (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id ABC032029C;
-        Wed,  8 Sep 2021 15:34:29 +0200 (CEST)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        Eckert.Florian@googlemail.com
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm/tpm_i2c_infineon: Fix init endian vendor check
-Date:   Wed,  8 Sep 2021 15:34:16 +0200
-Message-ID: <20210908133416.12408-1-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+        Wed, 8 Sep 2021 12:04:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235422AbhIHQEP (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 8 Sep 2021 12:04:15 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0497E61132;
+        Wed,  8 Sep 2021 16:03:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631116987;
+        bh=qVfO5gkTsL/byGqtBpBk8YEiz9wStKdGvcJD8qC5O50=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=gEw1S4XZ/nT5F8J1wGYRnYpWGq4GQISA0sHzWDLmT2SL6qtqBBPXIFmtjsRswC0Zi
+         gcmaeB7kB2hckjqcPkPnc5CmaMxbZqjYmK4AqWay2hHBL3DAubYM8KP8YiXq+9I09x
+         CW5RXY1+mz/yzkm11OSMayjrGMnrwoQ80NwAir8eJrb50H1RJu1iZlg8DwNzXaPd7H
+         b+M/T7nuZjc2FCBD2bdZ3hWz4qUSlioGsQGnRXXwDp+5EhI/DWYB1ju/6tBhDea19S
+         YlRMYeCOvC010ZtXf7xcw/ewsCvdtiqFhD4TsG21ZMWAVvsr/nUCVZMMICdMAL0eRl
+         MbcXe8YLpZXyg==
+Message-ID: <7f9fb65a4ee20c337646a1fc887cd24365c2c59e.camel@kernel.org>
+Subject: Re: [PATCH v5 00/12] Enroll kernel keys thru MOK
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Date:   Wed, 08 Sep 2021 19:03:05 +0300
+In-Reply-To: <20210907160110.2699645-1-eric.snowberg@oracle.com>
+References: <20210907160110.2699645-1-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-purgate-ID: 151534::1631108072-00000D29-D0C1529F/0/0
-X-purgate: clean
-X-purgate-type: clean
+User-Agent: Evolution 3.36.5-0ubuntu1 
+MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On my embedded system I use this tpm infineon chip via I2C.
-My system is a MIPS architecture and therefore works in big endian mode.
+On Tue, 2021-09-07 at 12:00 -0400, Eric Snowberg wrote:
+> Many UEFI Linux distributions boot using shim.  The UEFI shim provides
+> what is called Machine Owner Keys (MOK).  Shim uses both the UEFI Secure
+> Boot DB and MOK keys to validate the next step in the boot chain.  The
+> MOK facility can be used to import user generated keys.  These keys can
+> be used to sign an end-user development kernel build.  When Linux boots,
+> pre-boot keys (both UEFI Secure Boot DB and MOK keys) get loaded in the
+> Linux .platform keyring. =20
+>=20
+> Currently, pre-boot keys are not trusted within the Linux trust boundary
+> [1]. These platform keys can only be used for kexec. If an end-user
 
-The problem is that the chip type is not recognised, because the vendor I=
-D
-is incorrectly stored in memory.
+What exactly is "trust boundary"? And what do you mean when you say that
+Linux "trusts" something? AFAIK, software does not have feelings. Please,
+just speak about exact things.
 
-By converting the vendor ID with ie32_to_cpus() to the correct format,
-the TPM chip is recognised by the driver and works as expected.
+That's the whole point of the cover letter. It's better to not have cover
+letter at all, than a confusing cover letter that reads like a white paper.
+Code changes at least tell the exact story, and not speak about feelings.
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/char/tpm/tpm_i2c_infineon.c | 2 ++
- 1 file changed, 2 insertions(+)
+> wants to use their own key within the Linux trust boundary, they must
+> either compile it into the kernel themselves or use the insert-sys-cert
+> script. Both options present a problem. Many end-users do not want to
+> compile their own kernels. With the insert-sys-cert option, there are
+> missing upstream changes [2].  Also, with the insert-sys-cert option,
+> the end-user must re-sign their kernel again with their own key, and
+> then insert that key into the MOK db. Another problem with
+> insert-sys-cert is that only a single key can be inserted into a
+> compressed kernel.
 
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i=
-2c_infineon.c
-index a19d32cb4e94..111a8c34329a 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -638,6 +638,8 @@ static int tpm_tis_i2c_init(struct device *dev)
- 		goto out_release;
- 	}
-=20
-+	le32_to_cpus(&vendor);
-+
- 	if (vendor =3D=3D TPM_TIS_I2C_DID_VID_9645) {
- 		tpm_dev.chip_type =3D SLB9645;
- 	} else if (vendor =3D=3D TPM_TIS_I2C_DID_VID_9635) {
---=20
-2.20.1
+I use a pre-compiled kernel in my desktop: https://liquorix.net/. When
+a new version comes up it requires a sbsign one-liner to sign it for
+secure boot. I'm wondering what is the problem I'm facing because I do
+not see it.
+
+If there are something missing changes that you use as a rationale for
+this large patch set, you should at least broadly explain what we are
+missing. How I conclude this paragraph is that, since there is only an
+xref, they are not really "that important" changes, which are missing.
+
+> Having the ability to insert a key into the Linux trust boundary opens
+> up various possibilities.  The end-user can use a pre-built kernel and
+> sign their own kernel modules.  It also opens up the ability for an
+
+Which both can be done by end-user as of today, or I'm misreading this.
+
+> end-user to more easily use digital signature based IMA-appraisal.  To
+> get a key into the ima keyring, it must be signed by a key within the
+> Linux trust boundary.
+
+What is IMA appraisal? I just don't know it because I don't use IMA.
+Again, this trust boundary is really something I do not. Looking at
+code changes, you could just speak about exact assets in the kernel.
+
+> Downstream Linux distros try to have a single signed kernel for each
+> architecture.  Each end-user may use this kernel in entirely different
+> ways.  Some downstream kernels have chosen to always trust platform keys
+> within the Linux trust boundary for kernel module signing.  These
+> kernels have no way of using digital signature base IMA appraisal.
+>=20
+> This series introduces a new Linux kernel keyring containing the Machine
+> Owner Keys (MOK) called .machine. It also adds a new MOK variable to shim=
+.
+> This variable allows the end-user to decide if they want to trust keys
+> enrolled in the MOK within the Linux trust boundary.  By default,
+> nothing changes; MOK keys are not trusted within the Linux kernel.  They
+> are only trusted after the end-user makes the decision themselves.  The
+> end-user would set this through mokutil using a new --trust-mok option
+> [3]. This would work similar to how the kernel uses MOK variables to
+> enable/disable signature validation as well as use/ignore the db.
+
+OK, changes are described here (again speaking about trusting tho). The
+motivation part is missing. The text before this is more like confusion
+part. When you describe motivation to do something you should really be in
+grass roots, e.g. "when you have this feature in the kernel, look, I can
+do now this". It's not that hard. E.g. with an usage example it is quite
+quick accomplish this.
+
+/Jarkko
 
