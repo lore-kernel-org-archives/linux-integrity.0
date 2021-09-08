@@ -2,271 +2,149 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EF84C4321E
-	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 19:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E45C433EF
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 21:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17C0961131
-	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 19:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A21756105A
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Sep 2021 21:21:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350455AbhIHTZA (ORCPT
+        id S234969AbhIHVWI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 8 Sep 2021 15:25:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26824 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1350419AbhIHTY4 (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 8 Sep 2021 15:24:56 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 188J3Rfa148867
-        for <linux-integrity@vger.kernel.org>; Wed, 8 Sep 2021 15:23:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : content-transfer-encoding
- : mime-version; s=pp1; bh=1KJ1U3M+dP8i8vSjcgIpYBpFLpe7t4UEdU5aZ/BQJhM=;
- b=YzXiYlqgyLxT1jqI+kFSOgDfsKjvfDE1hbtUt0TaLbwA1nSNYuxDMPFinav3nAd22MCV
- 8PUZ/S133n1Ivf3Ctqb2CzTkwg0lgLEtLeKiVSJFnSJOE4tJXry9k4A2GuBgwZJvOevk
- K7rXfCj9V5GnyUPuDBWBP/keKE79XiDx7NYhg6jFQBS4XVOn+z6FEqoeEbVD4YDl82YX
- +C6oilq18o8dHqVUbYCmuJgqpw1ZuqBAqTNdbixy7oCGZ2Imro6KNUuf5zYaJ4W6aHSu
- 0AqTJfjX5kbr+wTf3WcFA19merphtNHOCfT5eYSLtiknClTInInH5feG+TV5WiYVsbCD rA== 
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ay2xwrddm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 08 Sep 2021 15:23:47 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 188JHKl8017686
-        for <linux-integrity@vger.kernel.org>; Wed, 8 Sep 2021 19:23:46 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma05wdc.us.ibm.com with ESMTP id 3axcnnuhff-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 08 Sep 2021 19:23:46 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 188JNkls46858506
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 Sep 2021 19:23:46 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E54BE11206E;
-        Wed,  8 Sep 2021 19:23:45 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC558112062;
-        Wed,  8 Sep 2021 19:23:45 +0000 (GMT)
-Received: from sbct-2.pok.ibm.com (unknown [9.47.158.152])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Sep 2021 19:23:45 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 8/9] tests: Extend sign_verify test with pkcs11-specific test
-Date:   Wed,  8 Sep 2021 15:23:42 -0400
-Message-Id: <20210908192343.4147739-9-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210908192343.4147739-1-stefanb@linux.vnet.ibm.com>
-References: <20210908192343.4147739-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HDOIU4FXR8UmmPhxEUz1r2Sc9VILjv60
-X-Proofpoint-ORIG-GUID: HDOIU4FXR8UmmPhxEUz1r2Sc9VILjv60
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 8 Sep 2021 17:22:08 -0400
+Received: from mail-dm6nam11on2060.outbound.protection.outlook.com ([40.107.223.60]:18889
+        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S231956AbhIHVWH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 8 Sep 2021 17:22:07 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y9cZESDA319/r+xSpP1cCRaXsmwajEdeUDTzRb3rPqIy591QpknRmc8Dzvp/ss1UEesWL3HTI6DvBbllyMfy/cP3y6H/wPYBbuhVNKmA0S4x6a6HdpoMKfALBAhyakgJHJRJERDC/Ku3JZwGHF5yy4NRchJPhlllXG/2PeCN0NxMJLaCxpwEwSRuBX/bLJhiHIFQWMyqwdrpe5CYY9oZP6Thmk8JKaIV8GX/mIDrFldBbMAyU9UKGRrRkaoNzHk4AtiVo4rHqfNsQpgBzGNbGG6Zzo5iL9uQzqhAs3tWsrcZYWMqIR952f11pDUgW4EqjbePSwgwIQrHkOtJfBRDgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vivWf5E2o8HBWX8Tn1bEHbHwghk4Ml0rlCZ/HvE3U8M=;
+ b=EiSCtg14JVw49cOcsw1FnsotI2ITcGwDx7pY2isD2sMBvNVcblUa3NlR71K29Ub62Y2j/z6kVgDhqzpGYLd9qtTBhBPGTfCKNSHE4asOXalqjFms3OmHvlwm4hYZZaFeOFa6mKeuTSkzKqX/jCyEGINBSsuCZ8lhmps+H2OYD7KFimXEitnU0TTstQX7MtjKorooudI+o39vwTP7N00bhjL4Mn2tfKLZUqjW9+AZC2KUVz+vDW67TKU7RkmCwgeCqGphjydV6Sdk90/1FxrFKIR1GAC56Z0J/qPfHQo/yhW+e9D8WjVBSIV5M/5TLzKlOy/YzBq3kAVlQcKQEn7m3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vpitech.com; dmarc=pass action=none header.from=vpitech.com;
+ dkim=pass header.d=vpitech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vpitech.onmicrosoft.com; s=selector2-vpitech-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vivWf5E2o8HBWX8Tn1bEHbHwghk4Ml0rlCZ/HvE3U8M=;
+ b=qSRX98XHQxinUIWX4Vk8CZo/fxG1khb102M77uHH3OgeORGYLnPkUNChCGR1mnaxQG40H5d82XaPsBIhQZ4qkJ7PxpT2gvPxlii6tz0QL8nv+gDwcDy9EGKVtk1TnxSGehABuIl2MyG9aZ7zXhXPwqkQhh8NuZnr+P1P+vZsCVc=
+Authentication-Results: linux.ibm.com; dkim=none (message not signed)
+ header.d=none;linux.ibm.com; dmarc=none action=none header.from=vpitech.com;
+Received: from MW2PR07MB3980.namprd07.prod.outlook.com (2603:10b6:907:a::32)
+ by MW2PR07MB3913.namprd07.prod.outlook.com (2603:10b6:907:9::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.17; Wed, 8 Sep
+ 2021 21:20:57 +0000
+Received: from MW2PR07MB3980.namprd07.prod.outlook.com
+ ([fe80::cc48:9777:4f07:6014]) by MW2PR07MB3980.namprd07.prod.outlook.com
+ ([fe80::cc48:9777:4f07:6014%4]) with mapi id 15.20.4478.026; Wed, 8 Sep 2021
+ 21:20:56 +0000
+Date:   Wed, 8 Sep 2021 15:20:54 -0600
+From:   Alex Henrie <alexh@vpitech.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, alexhenrie24@gmail.com
+Subject: Re: [PATCH] ima: add gid support
+Message-Id: <20210908152054.b6483142c7fce15f2bf01548@vpitech.com>
+In-Reply-To: <ab00a38ebd268a67eae306a368cd94964a06f0ba.camel@linux.ibm.com>
+References: <20210702222027.13973-1-alexh@vpitech.com>
+        <20210831201241.a256fa28b510a8e2546be79a@vpitech.com>
+        <ab00a38ebd268a67eae306a368cd94964a06f0ba.camel@linux.ibm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-unknown-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MWHPR08CA0060.namprd08.prod.outlook.com
+ (2603:10b6:300:c0::34) To MW2PR07MB3980.namprd07.prod.outlook.com
+ (2603:10b6:907:a::32)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-09-08_06:2021-09-07,2021-09-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 phishscore=0 adultscore=0 bulkscore=0 suspectscore=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109080120
+Received: from demeter (66.60.105.30) by MWHPR08CA0060.namprd08.prod.outlook.com (2603:10b6:300:c0::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4500.14 via Frontend Transport; Wed, 8 Sep 2021 21:20:56 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: be74db14-7b2b-45f1-1298-08d9730e8bec
+X-MS-TrafficTypeDiagnostic: MW2PR07MB3913:
+X-Microsoft-Antispam-PRVS: <MW2PR07MB3913DF31D611542C01145AD8B8D49@MW2PR07MB3913.namprd07.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: kmjV56eCym9hZ2KOVl3dIPWuG78IXBQdoIwvJUXYwoL1kBqiepihZsRuJTk+C8JXkmpbZuZmJer8IuHv8seOkEIooNhn8kq1ndjLXXJpGWrSod+aYHk8g2I5NnxsI34pvqNPyWjYwdZ6qgcFExBnCwQxw9fOQf192kBo90FwR+LqMJC7r1ISEhcv9MMazWqKiV8pq9IfkX5iD+ZR3Bpv1EZMuNH/I2llwbsb/6fWCNxycdv1B1tignYnB4B2e4ft1Xc4ckvo50nAE0k/LGkTPS5hS7wOSl3odMFhlLaD2GvIt7MJ4UpEkq45By1ab7LRkPuTOIAImrvjg5zUFZyt1U36oZP+9nWThphotxObx077NRMv8JfoCLfw2C5fsADQ63fC13lv2Qku0U+dqJVoh/e2sLjSENQ+Gn0D3AfVcoCGllFouAVlqVHGsPwyVr1bNFK14xfK7LeQD6MWKRw1c60O859tY5nVTfOXiZcS3QgV6uaFQqXhRtqW0z2puHEDR2iiYgwNqyoRn6JqewIIM90PmWcRiRqoMCUSJ+FDPMlblIktp/gQxWdvAci4Xz4wnxj9SFMS7p2FXjDW15ok9n5FIo9eQ9s0esjre/v2TitsZeJzifV25ABTLx3Qg2OtWJiiZs1qhYjMlbQuw0aDZZfrBY6sksrAepL86N64eK4hPxLLFO4MJOk2SodaJAuU6f9vPpQoeH8NEQS7OazVKw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR07MB3980.namprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(376002)(346002)(366004)(396003)(39840400004)(66476007)(8676002)(66946007)(66556008)(2616005)(6496006)(316002)(52116002)(36756003)(8936002)(6486002)(6916009)(2906002)(1076003)(38100700002)(38350700002)(26005)(478600001)(186003)(86362001)(956004)(5660300002)(4326008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?jyo/PjMG7v1HuByejXQoJHko/oBf01roHkAcJfuV4A1V0rElgbSbP/ry/2d7?=
+ =?us-ascii?Q?7kenYMC+31s+EN7xYWktrGeuVJ6MB3si5IydhMHXGbm3MPchfy4q+ckJJFjM?=
+ =?us-ascii?Q?4yIxDBV6QLIer+nn45zRuJq41hVQcxyQxwz/9iX4mZB6ay/YPN2s6s55xa/t?=
+ =?us-ascii?Q?lQPyyS+m3WT5S2e2m+sXffYO5mjfHbw8mLAtxUN4LVMj9Ya1hhV4HsqUf0VG?=
+ =?us-ascii?Q?AeffY8rueALHolXOOLa2CaebQTAkm9YO9i3xoJFBASdt0DyVjhKklnNoofn/?=
+ =?us-ascii?Q?XiZAtQEEPot3882TUQkaeNlgRQ/WjiitWVdCd9VxAuQGPF36Cp7RPpyhhpZJ?=
+ =?us-ascii?Q?ZMVnnWbNcbDHLW4VWbAEdKcWo2juWp7VQXR+Eaw8mYfiLHm6+GZtVaLQMi0l?=
+ =?us-ascii?Q?QS6LjKegJzx4nkpDrWgV3XWZOXwq4R/sacHtGMeH4wIvFf8UXiaZt+KprP/Q?=
+ =?us-ascii?Q?rsvd6FIeFEHvSmsz9+TUlBoejNdcHq14C0lUqcM68fDeuII6PsDTwJVVgESH?=
+ =?us-ascii?Q?iYYqmcCEG355VNAUh91rhS9gNnu/nIEiz9RS9DJ3utkZ7h5xHozaPccXTeBm?=
+ =?us-ascii?Q?pzn1+StwxBK1hCDye2Rt29n2ckXwpW0aLrQxTA03A1FIIMtaDO2DQ2hil1jm?=
+ =?us-ascii?Q?EDuTWtfevcDr+0tGF5bszWE45cmjgfFaPKFl9x21uBCGeZuPAFtWO8S5oRba?=
+ =?us-ascii?Q?XQM368R1V5dZiAGIh9eWlTFEThxCUjTquIMhHZI+InfmdjKO+26db+BMn4QY?=
+ =?us-ascii?Q?uZVIcYSFiEIr17gRrDeDD6Hw+/Pgr3e3Q3591NogLEZiAsicuCKj2TrtAMDm?=
+ =?us-ascii?Q?krCc/ELa5KxzCAKt8ToZnKCZ5t5G3th1ekYVaVy7gFU7fu8ac8V3/AHUVDEN?=
+ =?us-ascii?Q?nEobhOg516ooolOH6vWI6c8FLxoVc6IinXiT0uZuntJinnHVhAxF5B500gC2?=
+ =?us-ascii?Q?GhDuOP98NepVO3vmvqaevMy1EeRietTVS/oJoNVjeMdZwoFmrjIFmsNFU2Gk?=
+ =?us-ascii?Q?XKi6F4vWITqnecH1eqJI+l52Ip0NK0Y2IcZhA41Q5Ot7IyEe+shPKjJgTW+p?=
+ =?us-ascii?Q?SikJSTRll1BrUf3jgh8PqzjFGCKmj0wj2AS8j9M4sYlPpSZcXwgyaeH9f/mm?=
+ =?us-ascii?Q?ftJzc0y5B1GUHXFLe6l1gDdRQtXcNgdTHydEoy+5q96N2i8lqHUI/7U5C+BN?=
+ =?us-ascii?Q?WdSKqI9xNYRit8kbQ5+/7SuSStH4zZY2Rit/ez1WeXh0w4pqHGgNiCLoecgE?=
+ =?us-ascii?Q?71VYTRMOkXgCOwMlrKx7gZ7LevOSbS7ZJOxjYQe6fjmIWz88si0L5T7ihpqS?=
+ =?us-ascii?Q?sUF5CPbUb1p2M+IDfyzu9Qg4?=
+X-OriginatorOrg: vpitech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be74db14-7b2b-45f1-1298-08d9730e8bec
+X-MS-Exchange-CrossTenant-AuthSource: MW2PR07MB3980.namprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2021 21:20:56.5875
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 130d6264-38b7-4474-a9bf-511ff1224fac
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /xqqFIYao3gq4RepEW+zH96LJ1mwlMPpRTrOmRuYDIPeWR6DO+/rVog2yPEIj6LbpxWpmEk20LUUja/H2V0epg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR07MB3913
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Wed, 01 Sep 2021 10:54:21 -0400
+Mimi Zohar <zohar@linux.ibm.com> wrote:
 
-Extend the sign_verify test with a pkcs11-specific test.
+> Hi Alex,
+> 
+> On Tue, 2021-08-31 at 20:12 -0600, Alex Henrie wrote:
+> > Hello, could I get some feedback on this patch? Are there any
+> > objections to including it upstream?
+> 
+> Conceptually I don't have a problem with the patch, but I'd also like a
+> test to go with it.  
+> 
+> Roberto posted "ima-evm-utils: Add UML support and tests for EVM
+> portable signatures", which introduces using UML (User Mode Linux) for
+> testing new kernel features, which, unfortunately, still needs to be
+> reviewed and upstreamed.  (Hint, hint help with reviewing.]
+> 
+> Another option is to define an LTP test.   In either case, a custom IMA
+> policy would be defined in terms of a loopback mounted filesystem to
+> avoid affecting the entire system.
+> 
+> I'd appreciate your re-basing and re-posting this patch.
+> 
+> thanks,
+> 
+> Mimi
+> 
 
-Since the openssl command line tool now needs to use a key provided by
-an engine, extend some command lines with the additional parameters
-'--keyform engine'. These parameters are passed using the global variable
-OPENSSL_KEYFORM, which is only set when pkcs11 URIs are used.
+Thanks for the feedback! The UML tests are intriguing and I will be
+interested to see how they work out. However, I think the tests for
+this particular patch fit better with the existing LTP tests. I will
+send a rebased kernel patch and an LTP patch.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- tests/functions.sh     | 45 ++++++++++++++++++++++++++++++++++++
- tests/sign_verify.test | 52 ++++++++++++++++++++++++++++++------------
- 2 files changed, 83 insertions(+), 14 deletions(-)
-
-diff --git a/tests/functions.sh b/tests/functions.sh
-index 91cd5d9..dce278b 100755
---- a/tests/functions.sh
-+++ b/tests/functions.sh
-@@ -272,3 +272,48 @@ _report_exit() {
-   fi
- }
- 
-+# Cleanups when exiting
-+_at_exit() {
-+  _report_exit
-+  if [ -n "${WORKDIR}" ]; then
-+    rm -f "${WORKDIR}"
-+  fi
-+}
-+
-+# Setup SoftHSM for local testing by calling the softhsm_setup script.
-+# Use the provided workdir as the directory where SoftHSM will store its state
-+# into.
-+# Upon successfully setting up SoftHSM, this function sets the global variables
-+# OPENSSL_ENGINE and OPENSSL_KEYFORM so that the openssl command line tool can
-+# use SoftHSM. Also the PKCS11_KEYURI global variable is set to the test key's
-+# pkcs11 URI.
-+_softhsm_setup() {
-+  local workdir="$1"
-+
-+  local msg
-+
-+  export SOFTHSM_SETUP_CONFIGDIR="${workdir}/softhsm"
-+  export SOFTHSM2_CONF="${workdir}/softhsm/softhsm2.conf"
-+
-+  mkdir -p "${SOFTHSM_SETUP_CONFIGDIR}"
-+
-+  msg=$(./softhsm_setup setup 2>&1)
-+  if [ $? -eq 0 ]; then
-+    echo "softhsm_setup setup succeeded: $msg"
-+    PKCS11_KEYURI=$(echo $msg | sed -n 's|^keyuri: \(.*\)|\1|p')
-+
-+    export EVMCTL_ENGINE="--engine pkcs11"
-+    export OPENSSL_ENGINE="-engine pkcs11"
-+    export OPENSSL_KEYFORM="-keyform engine"
-+  else
-+    echo "softhsm_setup setup failed: ${msg}"
-+  fi
-+}
-+
-+# Tear down the SoftHSM setup and clean up the environment
-+_softhsm_teardown() {
-+  ./softhsm_setup teardown &>/dev/null
-+  rm -rf "${SOFTHSM_SETUP_CONFIGDIR}"
-+  unset SOFTHSM_SETUP_CONFIGDIR SOFTHSM2_CONF PKCS11_KEYURI \
-+    EVMCTL_ENGINE OPENSSL_ENGINE OPENSSL_KEYFORM
-+}
-\ No newline at end of file
-diff --git a/tests/sign_verify.test b/tests/sign_verify.test
-index 3b42eec..4741b92 100755
---- a/tests/sign_verify.test
-+++ b/tests/sign_verify.test
-@@ -28,7 +28,8 @@ fi
- 
- ./gen-keys.sh >/dev/null 2>&1
- 
--trap _report_exit EXIT
-+trap _at_exit EXIT
-+WORKDIR=$(mktemp -d)
- set -f # disable globbing
- 
- # Determine keyid from a cert
-@@ -132,11 +133,16 @@ check_sign() {
-   # OPTS (additional options for evmctl),
-   # FILE (working file to sign).
-   local "$@"
--  local KEY=${KEY%.*}.key
-+  local key verifykey
-   local FILE=${FILE:-$ALG.txt}
- 
--  # Normalize key filename
--  KEY=test-${KEY#test-}
-+  # Normalize key filename if it's not a pkcs11 URI
-+  if [ ${KEY:0:7} != pkcs11: ]; then
-+    key=${KEY%.*}.key
-+    key=test-${key#test-}
-+  else
-+    key=${KEY}
-+  fi
- 
-   # Append suffix to files for negative tests, because we may
-   # leave only good files for verify tests.
-@@ -152,33 +158,33 @@ check_sign() {
- 
-   if _test_expected_to_pass; then
-     # Can openssl work with this digest?
--    cmd="openssl dgst $OPENSSL_ENGINE -$ALG $FILE"
-+    cmd="openssl dgst $OPENSSL_ENGINE $OPENSSL_KEYFORM -$ALG $FILE"
-     echo - "$cmd"
-     if ! $cmd >/dev/null; then
--      echo "${CYAN}$ALG ($KEY) test is skipped (openssl is unable to digest)$NORM"
-+      echo "${CYAN}$ALG ($key) test is skipped (openssl is unable to digest)$NORM"
-       return "$SKIP"
-     fi
- 
--    if [ ! -e "$KEY" ]; then
--      echo "${CYAN}$ALG ($KEY) test is skipped (key file not found)$NORM"
-+    if [ "${key:0:7}" != pkcs11: ] && [ ! -e "$key" ]; then
-+      echo "${CYAN}$ALG ($key) test is skipped (key file not found)$NORM"
-       return "$SKIP"
-     fi
- 
-     # Can openssl sign with this digest and key?
--    cmd="openssl dgst $OPENSSL_ENGINE -$ALG -sign $KEY -hex $FILE"
-+    cmd="openssl dgst $OPENSSL_ENGINE $OPENSSL_KEYFORM -$ALG -sign $key -hex $FILE"
-     echo - "$cmd"
-     if ! $cmd >/dev/null; then
--      echo "${CYAN}$ALG ($KEY) test is skipped (openssl is unable to sign)$NORM"
-+      echo "${CYAN}$ALG ($key) test is skipped (openssl is unable to sign)$NORM"
-       return "$SKIP"
-     fi
-   fi
- 
-   # Insert keyid from cert into PREFIX in-place of marker `:K:'
-   if [[ $PREFIX =~ :K: ]]; then
--    keyid=$(_keyid_from_cert "$KEY")
-+    keyid=$(_keyid_from_cert "$key")
-     if [ $? -ne 0 ]; then
-       color_red
--      echo "Unable to determine keyid for $KEY"
-+      echo "Unable to determine keyid for $key"
-       color_restore
-       return "$HARDFAIL"
-     fi
-@@ -187,7 +193,7 @@ check_sign() {
-   fi
- 
-   # Perform signing by evmctl
--  _evmctl_sign "$TYPE" "$KEY" "$ALG" "$FILE" "$OPTS" || return
-+  _evmctl_sign "$TYPE" "$key" "$ALG" "$FILE" "$OPTS" || return
- 
-   # First simple pattern match the signature.
-   ADD_TEXT_FOR=$ALG \
-@@ -207,7 +213,13 @@ check_sign() {
-   _extract_xattr "$FILE" "$(_xattr "$TYPE")" "$FILE.sig2" "$PREFIX"
- 
-   # Verify extracted signature with openssl
--  cmd="openssl dgst $OPENSSL_ENGINE -$ALG -verify ${KEY%.*}.pub \
-+  if [ "${key:0:7}" != pkcs11: ]; then
-+      verifykey=${key%.*}.pub
-+  else
-+      verifykey=${key}
-+  fi
-+
-+  cmd="openssl dgst $OPENSSL_ENGINE $OPENSSL_KEYFORM -$ALG -verify ${verifykey} \
- 	-signature $FILE.sig2 $FILE"
-   echo - "$cmd"
-   if ! $cmd; then
-@@ -413,3 +425,15 @@ expect_fail \
- expect_fail \
-   check_sign TYPE=ima KEY=gost2012_256-B ALG=md_gost12_512 PREFIX=0x0302 OPTS=
- 
-+# Test signing with key described by pkcs11 URI
-+_softhsm_setup "${WORKDIR}"
-+if [ -n "${PKCS11_KEYURI}" ]; then
-+  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY=${PKCS11_KEYURI} ALG=sha256 PREFIX=0x030204aabbccdd0100 OPTS=--keyid=aabbccdd
-+  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY=${PKCS11_KEYURI} ALG=sha1   PREFIX=0x030202aabbccdd0100 OPTS=--keyid=aabbccdd
-+else
-+  # to have a constant number of tests, skip these two tests
-+  __skip() { echo "pkcs11 test is skipped: could not setup softhsm"; return $SKIP; }
-+  expect_pass __skip
-+  expect_pass __skip
-+fi
-+_softhsm_teardown "${WORKDIR}"
--- 
-2.31.1
-
+-Alex
