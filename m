@@ -2,80 +2,301 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC85C4332F
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 13:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F77FC433F5
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 14:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B58C6136A
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 13:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73EE9604D1
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 14:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244820AbhIMNul (ORCPT
+        id S1345930AbhIMOvf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 13 Sep 2021 09:50:41 -0400
-Received: from mxout70.expurgate.net ([194.37.255.70]:55347 "EHLO
-        mxout70.expurgate.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243603AbhIMNsL (ORCPT
+        Mon, 13 Sep 2021 10:51:35 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:42954 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1346066AbhIMOsE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 13 Sep 2021 09:48:11 -0400
-Received: from [127.0.0.1] (helo=localhost)
-        by relay.expurgate.net with smtp (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1mPmIN-0004dK-P6; Mon, 13 Sep 2021 15:46:51 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-        by relay.expurgate.net with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <fe@dev.tdt.de>)
-        id 1mPmIN-00014X-29; Mon, 13 Sep 2021 15:46:51 +0200
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-        by securemail.tdt.de (Postfix) with ESMTP id 64BF3240042;
-        Mon, 13 Sep 2021 15:46:50 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-        by securemail.tdt.de (Postfix) with ESMTP id E51A0240041;
-        Mon, 13 Sep 2021 15:46:49 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-        by mail.dev.tdt.de (Postfix) with ESMTP id 584BF20110;
-        Mon, 13 Sep 2021 15:46:48 +0200 (CEST)
+        Mon, 13 Sep 2021 10:48:04 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 18DEhn0T003094;
+        Mon, 13 Sep 2021 17:43:49 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
+        id 76D0B63A1C; Mon, 13 Sep 2021 17:43:59 +0300 (IDT)
+From:   amirmizi6@gmail.com
+To:     Eyal.Cohen@nuvoton.com, jarkko@kernel.org, oshrialkoby85@gmail.com,
+        alexander.steffen@infineon.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org, benoit.houyere@st.com,
+        eajames@linux.ibm.com, joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
+        Amir Mizinski <amirmizi6@gmail.com>
+Subject: [PATCH v14 0/7] Add tpm i2c ptp driver
+Date:   Mon, 13 Sep 2021 17:43:44 +0300
+Message-Id: <20210913144351.101167-1-amirmizi6@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 13 Sep 2021 15:46:48 +0200
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     peterhuewe@gmx.de, jarkko@kernel.org,
-        Eckert.Florian@googlemail.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] tpm/tpm_i2c_infineon: Fix init endian vendor check
-In-Reply-To: <20210913130210.GD3544071@ziepe.ca>
-References: <20210913120521.18572-1-fe@dev.tdt.de>
- <20210913130210.GD3544071@ziepe.ca>
-Message-ID: <690f5a5f846c4ef966713b4970d07737@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.16
-X-purgate-ID: 151534::1631540811-00000C04-D5556CE0/0/0
-X-purgate: clean
-X-purgate-type: clean
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello Jason,
+From: Amir Mizinski <amirmizi6@gmail.com>
 
->> The device works than as expected.
->> 
->> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
->> ---
->> v2:
->> * use variable type instead of le32_to_cpus function call
->>  drivers/char/tpm/tpm_i2c_infineon.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> And if you do this it need to be made sparse clean/etc
+This patch set adds support for TPM devices that implement the I2C.
+Interface defined by TCG PTP specification:
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_PC_Client_Platform_TPM_Profile_PTP_2.0_r1.03_v22.pdf
 
-Sorry for the stupid question, but what exactly do you mean?
+The driver was tested on Raspberry-Pie 3, using Nuvoton NPCT75X TPM.
 
--- Florian
+Interrupts are not implemented yet, preparing it for the next patch.
+This patch is based on initial work by oshri Alkoby, Alexander Steffen and Christophe Ricard
+
+Changes since version 1:
+-"char:tpm:Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
+        - Fixed and extended commit description.
+        - Fixed an issue regarding handling max retries.
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options":
+        -Converted "tpm_tis_i2c.txt" to "tpm-tis-i2c.yaml".
+        - Renamed "tpm_tis-i2c" to "tpm-tis-i2c".
+        - Removed interrupts properties.
+-"char: tpm: add tpm_tis_i2c driver"
+        - Replaced "tpm_tis-i2c" with "tpm-tis-i2c" in "tpm_tis_i2c.c".
+Addressed comments from:
+ - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11236257/
+ - Rob Herring: https://patchwork.kernel.org/patch/11236253/
+
+Changes since version 2:
+- Added 2 new commits with improvements suggested by Benoit Houyere.
+        -"Fix expected bit handling and send all bytes in one shot without last byte in exception"
+        -"Handle an exception for TPM Firmware Update mode."
+- Updated patch to latest v5.5
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
+        - Added "interrupts" and "crc-checksum" to properties.
+        - Updated binding description and commit info.
+-"char: tpm: add tpm_tis_i2c driver" (suggested by Benoit Houyere)
+        - Added repeat I2C frame after NACK.
+        - Checksum I2C feature activation in DTS file configuration.
+Addressed comments from:
+ - Rob Herring: https://lore.kernel.org/patchwork/patch/1161287/
+
+Changes since version 3:
+- Updated patch to latest v5.6
+- Updated commits headlines and development credit format by Jarkko Sakkinen suggestion
+-"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
+        - Updated commit description.
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
+        - Fixed 'make dt_binding_check' errors on YAML file.
+        - Removed interrupts from required and examples since there is no use for them in current patch.
+Addressed comments from:
+ - Jarkko Sakkinen: https://lore.kernel.org/patchwork/patch/1192101/
+ - Rob Herring: https://lore.kernel.org/patchwork/patch/1192099/
+
+Changes since version 4:
+-"tpm: tpm_tis: Make implementation of read16 read32 write32 optional"
+        -Added a "Reviewed-by" tag:
+-"tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops in order to check data integrity"
+        -Fixed credit typos.
+-"tpm: tpm_tis: rewrite "tpm_tis_req_canceled()""
+        -Added fixes tag and removed changes for STM.
+-"tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
+        -Fixed typos, edited description to be clearer, and added a "Suggested-by" tag.
+-"tpm: Handle an exception for TPM Firmware Update mode."
+        -Added a "Suggested-by" tag.
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C options"
+        -Fixed 'make dt_binding_check' errors.
+-"tpm: tpm_tis: add tpm_tis_i2c driver"
+        -Added tested-by tag by Eddie James.
+        -Fixed indent in Kconfig file.
+        -Fixed 'MODULE_DESCRIPTION'.
+Addressed comments from:
+ - Jarkko Sakkinen: https://patchwork.kernel.org/patch/11467645/
+                https://patchwork.kernel.org/patch/11467655/
+                https://patchwork.kernel.org/patch/11467643/
+                https://patchwork.kernel.org/patch/11467659/
+                https://patchwork.kernel.org/patch/11467651/
+ - Rob Herring: https://patchwork.kernel.org/patch/11467653/
+ - Randy Dunlap: https://patchwork.kernel.org/patch/11467651/
+ - Eddie James: https://lore.kernel.org/patchwork/patch/1192104/
+
+Changes since version 5:
+-"tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops"
+        -Updated short description and fixed long description to be more clear.
+Addressed comments from:
+ - Jarkko Sakkinen: https://lkml.org/lkml/2020/4/6/748
+
+Changes since version 6:
+-"tpm: tpm_tis: Make implementation of read16, read32 and write32 optional"
+        -Fixed short description.
+        -fixed long description proofreading issues.
+-"tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops"
+        -Fixed long description by Jarkko comments and proofreading issues.
+        -Replaced "check_data" with verify_data_integrity".
+        -New line before return statement.
+-"tpm: tpm_tis: rewrite "tpm_tis_req_canceled()"
+        -Fixed line over 80 characters.
+        -fixed long description proofreading issues.
+-" tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot"
+        -fixed long description proofreading issues.
+-"dt-bindings: tpm: Add YAML schema for TPM TIS I2C option"
+        -Replaced "tpm-tis-i2c@2e" with "tpm_tis@2e".
+        -Fixed CRC_Checksum description.
+-"tpm: tpm_tis: add tpm_tis_i2c driver"
+        -Replaced "depends on CRC_CCIT" with "select CRC_CCIT".
+        -Added tested-by tag by Joel Stanley.
+        -Fixed checkpatch.pl warnings.
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1221336/
+        https://lore.kernel.org/patchwork/patch/1221337/
+        https://lore.kernel.org/patchwork/patch/1221339/
+ - Joel Stanley:
+        https://lore.kernel.org/patchwork/patch/1220543/
+ - Rob Herring:
+        https://lore.kernel.org/patchwork/patch/1221334/
+
+Changes since version 7:
+- Added a new commit with improvements suggested by Benoit Houyere.
+        -"tpm: tpm_tis: verify TPM_STS register is valid after locality request"
+-"tpm: tpm_tis: Rewrite "tpm_tis_req_canceled()""
+        -Fixed Hash for Fixes tag.
+-"tpm: Add YAML schema for TPM TIS I2C options"
+        -Added a compatible string specific to the nuvoton npct75x chip.
+-"tpm: tpm_tis: add tpm_tis_i2c driver"
+        -added a compatible string according to yaml file.
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1231524/
+ - Rob Herring:
+        https://lore.kernel.org/patchwork/patch/1231526/
+
+Changes since version 8:
+- "tpm: tpm_tis: Make implementation of read16, read32 and write32 optional"
+        -Fixed a compile error conflicting CR50
+- "tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
+        -Moved commit backwards from 4/8 to 2/8 for a better flow with new data integrity check design
+- "tpm: tpm_tis: Add retry in case of protocol failure or data integrity (on I2C only) failure."
+        -Renamed from "tpm: tpm_tis: Add check_data handle to tpm_tis_phy_ops"
+        -Redesign and added a retry for additional error cases.
+- "tpm: Add YAML schema for TPM TIS I2C options"
+        -Fixed Dual-license new binding
+        -Removed "oneOf"
+        -Fixed tpm_tis@2e to tpm@2e
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1240728/
+        https://lore.kernel.org/patchwork/patch/1240736/
+ - Rob Herring:
+        https://lore.kernel.org/patchwork/patch/1240733/
+
+Changes since version 9:
+- "tpm: Make read{16, 32}() and write32() in tpm_tis_phy_ops optional"
+        -Fixed short description
+- "tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
+        -Canceled wait_for_tpm_stat() function renaming.
+        -Fixed long description
+- "tpm: Add YAML schema for TPM TIS I2C options"
+        -Added a reviewed-by tag.
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1247163/
+        https://lore.kernel.org/patchwork/patch/1247164/
+ - Rob Herring:
+        https://lore.kernel.org/patchwork/patch/1247161/
+
+Changes since version 10:
+- "tpm: Make read{16, 32}() and write32() in tpm_tis_phy_ops optional"
+        -Added a Reviewed-by and Tested-by tags
+- "tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
+        -Renamed "mask_result" parameter with "stat"
+- "tpm: tpm_tis: Add retry in case of protocol failure or data integrity (on I2C only) failure."
+        -Edited long description.
+        -Modified tpm_tis_recv() to __tpm_tis_recv() and Introduced a new tpm_tis_recv() function
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1252428/
+        https://lore.kernel.org/patchwork/patch/1252422/
+        https://lore.kernel.org/patchwork/patch/1252424/
+
+Changes since version 11:
+- "tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception"
+        -Added a "Reviewed-by" tag
+        -Renamed 'wait_for_tpm_stat()' function with 'tpm_tis_wait_for_stat()'
+- "tpm: tpm_tis: Add retry in case of protocol failure."
+        -Removed data integrity check and created a new commit for it.
+        -Edited short and long description.
+- "tpm: tpm_tis: Add verify_data_integrity handle to tpm_tis_phy_ops"
+        -This is a new commit.
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1258107/
+        https://lore.kernel.org/patchwork/patch/1258110/
+
+Changes since version 12:
+	
+- Moved "tpm: Add YAML schema for TPM TIS I2C options" to end of patch.
+- Removed two commits to be resubmited on later patch:
+        - "tpm: tpm_tis: Add retry in case of protocol failure."
+        - "tpm: tpm_tis: Add verify_data_integrity handle to tpm_tis_phy_ops"
+- "tpm: tpm_tis: add tpm_tis_i2c driver"
+        - Removed verify data integrity (Checksum) functuality from i2c driver.
+		- Edited Long Description.
+		- Updated header comment for tpm_tis_i2c.c
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lore.kernel.org/patchwork/patch/1263805/
+        https://lore.kernel.org/patchwork/patch/1263813/
+		
+Changes since version 13:
+	
+- Edited description of commits 1-6 by Jarkko comments.
+- "tpm: Add YAML schema for TPM TIS I2C options"
+        - Fixed YAML compilation error of missing "additionalProperties" field
+Addressed comments from:
+ - Jarkko Sakkinen:
+        https://lkml.org/lkml/2021/8/26/546
+        https://lkml.org/lkml/2021/8/26/548
+	https://lkml.org/lkml/2021/8/26/550
+	https://lkml.org/lkml/2021/8/26/551
+	https://lkml.org/lkml/2021/8/26/552
+	https://lkml.org/lkml/2021/8/26/553
+	https://lkml.org/lkml/2021/8/26/555
+ - Rob Herring:
+	https://lkml.org/lkml/2021/8/26/427
+
+Amir Mizinski (7):
+  tpm: Make read{16, 32}() and write32() in tpm_tis_phy_ops optional
+  tpm: tpm_tis: Fix expected bit handling and send all bytes in one shot
+    without last byte in exception
+  tpm: tpm_tis: Rewrite "tpm_tis_req_canceled()"
+  tpm: Handle an exception for TPM Firmware Update mode.
+  tpm: tpm_tis: verify TPM_STS register is valid after locality request
+  tpm: tpm_tis: add tpm_tis_i2c driver
+  \tpm: Add YAML schema for TPM TIS I2C options
+
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         |  52 +++++
+ drivers/char/tpm/Kconfig                           |  12 ++
+ drivers/char/tpm/Makefile                          |   1 +
+ drivers/char/tpm/tpm2-cmd.c                        |   4 +
+ drivers/char/tpm/tpm_tis_core.c                    |  84 ++++----
+ drivers/char/tpm/tpm_tis_core.h                    |  38 +++-
+ drivers/char/tpm/tpm_tis_i2c.c                     | 227 +++++++++++++++++++++
+ drivers/char/tpm/tpm_tis_spi.h                     |   4 -
+ drivers/char/tpm/tpm_tis_spi_cr50.c                |   3 -
+ drivers/char/tpm/tpm_tis_spi_main.c                |  41 ----
+ include/linux/tpm.h                                |   1 +
+ 11 files changed, 367 insertions(+), 100 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+ create mode 100644 drivers/char/tpm/tpm_tis_i2c.c
+
+-- 
+2.7.4
+
