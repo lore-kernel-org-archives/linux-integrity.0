@@ -2,107 +2,110 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B33EC433EF
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 15:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E701C433FE
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 16:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 115D761056
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 15:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64D1A60FE6
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 16:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345307AbhIMPN4 (ORCPT
+        id S233210AbhIMQzX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 13 Sep 2021 11:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54250 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244574AbhIMPNu (ORCPT
+        Mon, 13 Sep 2021 12:55:23 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21612 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S239512AbhIMQzW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 13 Sep 2021 11:13:50 -0400
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB175C0C7018
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 07:03:05 -0700 (PDT)
-Received: by mail-qt1-x833.google.com with SMTP id c19so8144042qte.7
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 07:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YEvIyYeLDXUpTcJZWMj983nbdS1DgqFIWLgNvEi4/Kc=;
-        b=UBFJb/UNvdtTIVCvaiSXEdqImCOifx2UsDbPJuKsWTYonXF9HcLGUZQpwlWpd+7Ah2
-         LbjHtrrJg6a3J/R57I6PCgelupBiAhdh/JpCa31goTnJMpfL2+kE5rf73AP7w2x/KFwH
-         lgy5G1OARWI5FY3AhcpvUpoSg58EALyljbwxgI+weoQOylI3a6qU5fnvQzSscdZ7ziPS
-         9tE3acRsny/FIP0kFA0yJ3G5wg2p1OIeF+jufoAYCIsI3iGfGP1kN/lmBrlPC8qdy9DU
-         CaFmTTWKf/xb3P9MijywkcnPoO/gLMAVIG5zTXYDBhiDQpCIgsHACL54WyeeTrlNyxrQ
-         E5iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YEvIyYeLDXUpTcJZWMj983nbdS1DgqFIWLgNvEi4/Kc=;
-        b=FWrJM4fwHBnaNrFJmSjAjIBV5sWQanX4VsWKbfVtWNEDfCEDGMZM1xx5WK6dcrgGoJ
-         iW+ikeE9zC4iQsOwILf0izU7+ryoV/NrE9fLaq34uDy6fV3b570wwEXEBGjS0K72Ga1b
-         wrJe2NcFQy0MuIEEG4huSBudzRShlp/hZIZ+czKnVz+U41YOrvJEf4uyOJV0dgyeTkfJ
-         kghtaaS2z+t+0gWXm/h5JlGExeJnBmlLTa6H5AJG5TN+1twy59CGQN/63SWm0+myVuRR
-         z4jnuGFv3cZzOp8G2opBbAiV1gAUnN0r9LI1sNdvSMig2bSqOPHyd7SMqM4EVn+uVwq6
-         0huQ==
-X-Gm-Message-State: AOAM531JL/6Tge4HBZmcaYwrrucb7yCEG2SCm83Kxf8C/EQlPb6eS3Bu
-        /LOExIOBPEl70CiB6BF6CUQ7Qg==
-X-Google-Smtp-Source: ABdhPJwFd7EsMjZS09jyOS0QyiyESxT3hnj2v4ushFACgvIZP/sy5MgREfrUl8X2Mx5iMEb9dSRjVg==
-X-Received: by 2002:ac8:5f86:: with SMTP id j6mr9320639qta.11.1631541784302;
-        Mon, 13 Sep 2021 07:03:04 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-113-129.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.113.129])
-        by smtp.gmail.com with ESMTPSA id b15sm5219812qka.107.2021.09.13.07.03.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Sep 2021 07:03:03 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1mPmY2-00GTN6-Sz; Mon, 13 Sep 2021 11:03:02 -0300
-Date:   Mon, 13 Sep 2021 11:03:02 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Florian Eckert <fe@dev.tdt.de>
-Cc:     peterhuewe@gmx.de, jarkko@kernel.org,
-        Eckert.Florian@googlemail.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] tpm/tpm_i2c_infineon: Fix init endian vendor check
-Message-ID: <20210913140302.GE3544071@ziepe.ca>
-References: <20210913120521.18572-1-fe@dev.tdt.de>
- <20210913130210.GD3544071@ziepe.ca>
- <690f5a5f846c4ef966713b4970d07737@dev.tdt.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <690f5a5f846c4ef966713b4970d07737@dev.tdt.de>
+        Mon, 13 Sep 2021 12:55:22 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18DGZbZq006007
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 12:54:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=steAjPX6UtZ/r0j3e+Ear+ZiJcrep8KroXRMaNzT2jA=;
+ b=HwaKo79cl6qr1ENL9C4JRwuHkWiZnjnx9g9Qkir32Lvz2i7E7Zxgdt2DkXCeVOO3WP/X
+ kW4GXdMEI33F7neKohBdMdpmzsBgMV3iV14FLnXXQQ/uvHwjAGD4dW7polWleJfgn0MB
+ mb/bvKP0tl5FVD9oRKO2d26YUQGJ48c/YsZaSwU2cFWEKR06oc2T0+m8J6N9rX9bSJOH
+ f67H3Hc1+YOV8/s29iqGklpWtxGblAdvMtlWYj7vRQ/dTGx7LMIoIW/sT4Q8oMUvFJOx
+ A6zW+tUuhcOrhmoz+PyZg0cPWYSfX/gjPgD9/12SofDZK04GArdhcRaG945NsVMHtpoW yQ== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b2aa5rae7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 12:54:05 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18DGrJZC014851
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 16:54:03 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04ams.nl.ibm.com with ESMTP id 3b0m39jyvt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 16:54:03 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18DGs0A448103790
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 13 Sep 2021 16:54:00 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 582F042047;
+        Mon, 13 Sep 2021 16:54:00 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8450A4204D;
+        Mon, 13 Sep 2021 16:53:59 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.27.52])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 13 Sep 2021 16:53:59 +0000 (GMT)
+Message-ID: <894c3656b59bfc7b9581ba1606e4129e7af7cc96.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 0/9] ima-evm-utils: Add support for signing with
+ pkcs11 URIs
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     Stefan Berger <stefanb@linux.ibm.com>
+Date:   Mon, 13 Sep 2021 12:53:58 -0400
+In-Reply-To: <20210908192343.4147739-1-stefanb@linux.vnet.ibm.com>
+References: <20210908192343.4147739-1-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5MaylyU5Vc47sytuCIHBgCexeuz8i1Lr
+X-Proofpoint-ORIG-GUID: 5MaylyU5Vc47sytuCIHBgCexeuz8i1Lr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.182.1,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ priorityscore=1501 spamscore=0 clxscore=1015 mlxscore=0 impostorscore=0
+ bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109030001
+ definitions=main-2109130102
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Sep 13, 2021 at 03:46:48PM +0200, Florian Eckert wrote:
-> Hello Jason,
+On Wed, 2021-09-08 at 15:23 -0400, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+
+Having a "From: " line normally occurs when the original author is
+being credited with the patch, but the patch is being updated/modified
+by someone else.
+
 > 
-> > > The device works than as expected.
-> > > 
-> > > Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> > > v2:
-> > > * use variable type instead of le32_to_cpus function call
-> > >  drivers/char/tpm/tpm_i2c_infineon.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > And if you do this it need to be made sparse clean/etc
+> This series of patches adds support for signing with pkcs11 URIs so that
+> pkcs11-enabled devices can also be used for file signing.
 > 
-> Sorry for the stupid question, but what exactly do you mean?
+> A test program is provided setting up SoftHSM for test cases to use. I added
+> two test cases for testing with SoftHSM.
 
-There is a tool called sparse that checks the endia notations and
-verfies correctness
+The correlation between the first paragraph and the second is
+missing.   The second paragraph also needs to be written in the 3rd
+person.  Perhaps say something like, "Extend the existing
+sign_verify.test with tests for the new pkcs11 URI support.  Use the
+SoftHSM, when available, as the pkcs11 device."
 
-It will complain if you do
+thanks,
 
-__le32 x
+Mimi
 
-x = le32tocpu(x)
-
-you neeed another variable to store the cpu version
-
-Jason 
