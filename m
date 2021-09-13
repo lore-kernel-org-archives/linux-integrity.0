@@ -2,129 +2,126 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD549C433F5
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 22:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CE8C433FE
+	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 22:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9EF1D606A5
+	by mail.kernel.org (Postfix) with ESMTP id F3783606A5
 	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 22:18:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235035AbhIMWTk (ORCPT
+        id S234858AbhIMWTk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Mon, 13 Sep 2021 18:19:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:63360 "EHLO
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56470 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234858AbhIMWTj (ORCPT
+        by vger.kernel.org with ESMTP id S235133AbhIMWTk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 13 Sep 2021 18:19:39 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18DKvE1E010490
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 18:18:23 -0400
+        Mon, 13 Sep 2021 18:19:40 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18DLMvB1000423
+        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 18:18:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=+22RQXL1IrHLHzhsHQRIgRC1yc3CfDZdsNRcsWSz4v0=;
- b=CERkwcKGAylkG/P/11YhmoV/mJGALiU6+XN9k3KZXD8AeKEwG9wI8VldGx9k6uZUeFUn
- VQO3SoHVEnKmZlyEiOV7PEgNVpHOtxE5z8NHxCQpB3v6QuCMEmz4M++m3VTb6FEOjJzk
- JgbeZh9i/bbDJtbPK8oDdN8bs9zs10jJeq2tUH0syosF04YyQKt4X6w/5jxi4uXC/GPb
- oaeAmuW427axbD7586aflz2KjUKosqqta29fsivX+kjb6smJZ05GLIfHMY14YC4cV3EH
- e/IizhnSiUkC3pte3DK3IvB+10u4zjXyIIJZYLsBLDaedJBCPQen0mCC5PmeCND36Msv vA== 
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3b232su98w-1
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=N+QaTzX4Nnf6KGCI81/2NJF8rX9m8g9w8NR+FWs/0R8=;
+ b=VJYUOxTqdyHQJ8mYYvjREhFvm7TVci3JNcg58F1cwmlbw8apB7IWae3ZGjYsUlcXpT34
+ A4u2pyD3Bl6u69tVQD3Kv4dvLBnwBSLVc4ijwvmf2evtoJd2Kh7TvWssf6rlSXKS0u0t
+ Y5HkufEu5d87wFBNvDoeIXfLqH3XC8g8ACCI+ZT1zGyLpiTsPsBOhdI3suDWavQrfBBJ
+ ire31mxn46oHg4H7CdMuyiCuILoZwU4r6EAD2OznhhoWZ5hg+1+S6noN58e5Dj+b6IUv
+ AVfNYT7t1I4qUlC3VwPjJgii7m/XFvmUMOIR0aJroIG+nbYJJAO0IinabfcU3Mvzonaa 7Q== 
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3b23hwakxq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 18:18:23 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18DMHgC6019690
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18DMHKSN019348
         for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 22:18:22 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma01dal.us.ibm.com with ESMTP id 3b0m3c56xr-1
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma03wdc.us.ibm.com with ESMTP id 3b0m3aawq6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 22:18:22 +0000
 Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18DMIKiP19661234
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18DMIL3T53150020
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Sep 2021 22:18:20 GMT
+        Mon, 13 Sep 2021 22:18:21 GMT
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3DB2BE068;
-        Mon, 13 Sep 2021 22:18:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 7BB16BE05D;
+        Mon, 13 Sep 2021 22:18:21 +0000 (GMT)
 Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6F7B3BE05D;
-        Mon, 13 Sep 2021 22:18:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 35FA9BE054;
+        Mon, 13 Sep 2021 22:18:21 +0000 (GMT)
 Received: from sbct-2.pok.ibm.com (unknown [9.47.158.152])
         by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 13 Sep 2021 22:18:20 +0000 (GMT)
+        Mon, 13 Sep 2021 22:18:21 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v4 0/9] ima-evm-utils: Add support for signing with pkcs11 URIs
-Date:   Mon, 13 Sep 2021 18:18:04 -0400
-Message-Id: <20210913221813.2554880-1-stefanb@linux.ibm.com>
+Subject: [PATCH v4 2/9] evmctl: Handle failure to initialize the openssl engine
+Date:   Mon, 13 Sep 2021 18:18:06 -0400
+Message-Id: <20210913221813.2554880-3-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210913221813.2554880-1-stefanb@linux.ibm.com>
+References: <20210913221813.2554880-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: v3Adfy0sNONh26mSfGyGTYyRQAmq2vAF
-X-Proofpoint-ORIG-GUID: v3Adfy0sNONh26mSfGyGTYyRQAmq2vAF
+X-Proofpoint-ORIG-GUID: r7L-FpqGLrPkJQlvbMiju8J7xCaefE19
+X-Proofpoint-GUID: r7L-FpqGLrPkJQlvbMiju8J7xCaefE19
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.391,FMLib:17.0.607.475
- definitions=2021-09-11_02,2021-09-09_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 priorityscore=1501 mlxscore=0 phishscore=0
- lowpriorityscore=0 spamscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999
- clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109130045
+ engine=ICAP:2.0.182.1,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=498 impostorscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2109030001 definitions=main-2109130048
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This series of patches adds support for signing with pkcs11 URIs so that
-pkcs11-enabled devices can also be used for file signing.
+Handle failure to initialize the openssl engine. For example,
 
-Extend the existing sign_verify.test with tests for the new pkcs11 URI support. 
-Use SoftHSM, when available, as a pkcs11 device for testing.
+$ ./src/evmctl --engine foo
+engine foo isn't available
+140322992015168:error:25066067:DSO support routines:dlfcn_load:could not load the shared library:crypto/dso/dso_dlfcn.c:118:filename(/usr/lib64/engines-1.1/foo.so): /usr/lib64/engines-1.1/foo.so: cannot open shared object file: No such file or directory
+140322992015168:error:25070067:DSO support routines:DSO_load:could not load the shared library:crypto/dso/dso_lib.c:162:
+140322992015168:error:260B6084:engine routines:dynamic_load:dso not found:crypto/engine/eng_dyn.c:414:
+140322992015168:error:2606A074:engine routines:ENGINE_by_id:no such engine:crypto/engine/eng_list.c:334:id=foo
+Segmentation fault (core dumped)
 
-  Stefan
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ src/evmctl.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-v4:
-  - Addressed Mimi's comments on v3
-
-v3:
-  - Used commit messages Mimi suggested
-  - 7/9: Split off imported script into own patch
-  - 8/9: Added missing EVMCTL_ENGINE variable that allowed to enable Debian
-         and Ubuntu testing in 9/9; improvements on setup and teardown
-         functions
-  - 9/9: Installation of required packages on Debian and Ubuntu
-
-Stefan Berger (9):
-  evmctl: Implement support for EVMCTL_KEY_PASSWORD environment variable
-  evmctl: Handle failure to initialize the openssl engine
-  evmctl: Implement function for setting up an OpenSSL engine
-  evmctl: Define and use an ENGINE field in libimaevm_params
-  evmctl: use the pkcs11 engine for pkcs11: prefixed URIs
-  libimaevm: Add support for pkcs11 private keys for signing a v2 hash
-  tests: Import softhsm_setup script to enable pkcs11 test case
-  tests: Extend sign_verify test with pkcs11-specific test
-  tests: Get the packages for pkcs11 testing on the CI/CD system
-
- README                 |   5 +
- ci/alt.sh              |   3 +
- ci/debian.sh           |   3 +-
- ci/fedora.sh           |   8 ++
- ci/tumbleweed.sh       |   3 +
- src/evmctl.c           |  54 +++++---
- src/imaevm.h           |   2 +
- src/libimaevm.c        |  47 +++++--
- tests/functions.sh     |  45 ++++++-
- tests/ima_hash.test    |   2 +-
- tests/sign_verify.test |  52 ++++++--
- tests/softhsm_setup    | 293 +++++++++++++++++++++++++++++++++++++++++
- 12 files changed, 473 insertions(+), 44 deletions(-)
- create mode 100755 tests/softhsm_setup
-
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 58f8e66..ed0ece3 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -2765,7 +2765,10 @@ int main(int argc, char *argv[])
+ 				ENGINE_free(eng);
+ 				eng = NULL;
+ 			}
+-			ENGINE_set_default(eng, ENGINE_METHOD_ALL);
++			if (eng)
++				ENGINE_set_default(eng, ENGINE_METHOD_ALL);
++			else
++				goto error;
+ 			break;
+ 		case 140: /* --xattr-user */
+ 			xattr_ima = "user.ima";
+@@ -2839,6 +2842,7 @@ int main(int argc, char *argv[])
+ 			err = 125;
+ 	}
+ 
++error:
+ 	if (eng) {
+ 		ENGINE_finish(eng);
+ 		ENGINE_free(eng);
 -- 
 2.31.1
 
