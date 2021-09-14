@@ -2,291 +2,98 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450C6C43217
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 22:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2E9C433EF
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Sep 2021 00:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C354610F9
-	for <linux-integrity@archiver.kernel.org>; Mon, 13 Sep 2021 22:18:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F13060F4C
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Sep 2021 00:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237930AbhIMWTp (ORCPT
+        id S237692AbhINAc6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 13 Sep 2021 18:19:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25584 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238079AbhIMWTn (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 13 Sep 2021 18:19:43 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.0.43) with SMTP id 18DLLQ12007398
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 18:18:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : content-transfer-encoding
- : mime-version; s=pp1; bh=6UpEWSACWo3ZcR2iUCGT5FMxDSlvLpgtdl28kqBJ21o=;
- b=hUFvlksXDzqwuAZ1Qayaff+1AtGVnWdw9UQ7JNYZi0M+4i409pJKuFQpca/WxHqTyNX5
- 5k2klhSv2UZNZ9oKlrYZioH+nFOVX1sSd879XGm9ndrPfI6a+m/Bx2sIE4IVxivQCB8w
- lA5XBazJSGIEM3C8L+ODo/UOIX0T1gLRQHJlNsKbRXQ/Nt+NTg1VCaNM1Hm6BociyX6h
- dUohrdSstCPzu2Dfgc7DrB8omPwKC/SNW9dle6EBABg7+pnjn7EQJPId+KQqb7ECAxEd
- HGeELLax+wO/I0bQuLkWzkGsJOonwQ8eUQaCflyHxHtkCImdepDGPJJMtqzeafVU3OH3 vg== 
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3b23ha2m60-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 18:18:27 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 18DMHgR1019687
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 22:18:26 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma01dal.us.ibm.com with ESMTP id 3b0m3c56ym-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Mon, 13 Sep 2021 22:18:26 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 18DMIOnS19858106
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Sep 2021 22:18:24 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 26B63BE05D;
-        Mon, 13 Sep 2021 22:18:24 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D59C3BE065;
-        Mon, 13 Sep 2021 22:18:23 +0000 (GMT)
-Received: from sbct-2.pok.ibm.com (unknown [9.47.158.152])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 13 Sep 2021 22:18:23 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v4 8/9] tests: Extend sign_verify test with pkcs11-specific test
-Date:   Mon, 13 Sep 2021 18:18:12 -0400
-Message-Id: <20210913221813.2554880-9-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210913221813.2554880-1-stefanb@linux.ibm.com>
-References: <20210913221813.2554880-1-stefanb@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Y5dXqdwgX2cWZfjfaib3sE6sZRMPvrlp
-X-Proofpoint-ORIG-GUID: Y5dXqdwgX2cWZfjfaib3sE6sZRMPvrlp
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 13 Sep 2021 20:32:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235668AbhINAc6 (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 13 Sep 2021 20:32:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 206FE60232;
+        Tue, 14 Sep 2021 00:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1631579501;
+        bh=ROKfi1j6O6/b6NJU/GxZO7zzPnDnAEe2zixZ9LMELis=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=i1861PIiMSnWhP5nnLDhXk+XB7414kaY17sDc6oHtnuLyuIQNQub8gKXQBR7TwGBP
+         tvT/zVmawApBLxV6pCclJ2qiLKtPL4gQCrIVRRHDXBR7QvI3C2fb76v0mXFqP+EKq1
+         MVLWzihVlKx8j/Es3yJjjWvqFPPtsFCRvmUyxpuOn/N95hNz/Ib3m/5BOfjbJClvFQ
+         ENdGYJpzIyt36ZzDJbUMH7Rs4d2aF5QVav5ag4XVbHwM047+DKbyXPh+XW6m7dRbTj
+         S+bTvL5SB7Z0G9HAxOAEM67R29rMXtYjlzIvgPLtFd5ORlLMMoJ6tW/ePE1aySAMmQ
+         158WFcs52eFxA==
+Message-ID: <c22d2878f9816000c33f5349e7256cadae22b400.camel@kernel.org>
+Subject: Re: Aw: Re: [PATCH] tpm: fix potential NULL pointer access in
+ tpm_del_char_device()
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, p.rosenberger@kunbus.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Tue, 14 Sep 2021 03:31:39 +0300
+In-Reply-To: <trinity-27f56ffd-504a-4c34-9cda-0953ccc459a3-1631566430623@3c-app-gmx-bs69>
+References: <20210910180451.19314-1-LinoSanfilippo@gmx.de>
+         <204a438b6db54060d03689389d6663b0d4ca815d.camel@kernel.org>
+         <trinity-27f56ffd-504a-4c34-9cda-0953ccc459a3-1631566430623@3c-app-gmx-bs69>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
- definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0 phishscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109130047
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Extend the sign_verify test with a pkcs11-specific test.
+On Mon, 2021-09-13 at 22:53 +0200, Lino Sanfilippo wrote:
+> Hi,
+>=20
+> > Gesendet: Montag, 13. September 2021 um 22:25 Uhr
+> > Von: "Jarkko Sakkinen" <jarkko@kernel.org>
+> > An: "Lino Sanfilippo" <LinoSanfilippo@gmx.de>, peterhuewe@gmx.de, jgg@z=
+iepe.ca
+> > Cc: p.rosenberger@kunbus.com, linux-integrity@vger.kernel.org, linux-ke=
+rnel@vger.kernel.org, stable@vger.kernel.org
+> > Betreff: Re: [PATCH] tpm: fix potential NULL pointer access in tpm_del_=
+char_device()
+> >=20
+> > On Fri, 2021-09-10 at 20:04 +0200, Lino Sanfilippo wrote:
+> > > In tpm_del_char_device() make sure that chip->ops is still valid.
+> > > This check is needed since in case of a system shutdown
+> > > tpm_class_shutdown() has already been called and set chip->ops to NUL=
+L.
+> > > This leads to a NULL pointer access as soon as tpm_del_char_device()
+> > > tries to access chip->ops in case of TPM 2.
+> > >=20
+> > > Fixes: dcbeab1946454 ("tpm: fix crash in tpm_tis deinitialization")
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Lino Sanfilippo <LinoSanfilippo@gmx.de>
+> > > ---
+> >=20
+> > Have you been able to reproduce this in some environment?
+> >=20
+> > /Jarkko
+> >=20
+> >=20
+>=20
+> Yes, this bug is reproducable on my system that is running a 5.10 raspber=
+ry kernel.
+> I use a SLB 9670 which is connected via SPI.
 
-Since the openssl command line tool now needs to use a key provided by
-an engine, extend some command lines with the additional parameters
-'--keyform engine'. These parameters are passed using the global variable
-OPENSSL_KEYFORM, which is only set when pkcs11 URIs are used.
+Can you confirm that the lates mainline kernel has also this
+issue here? That is lacking in this fix.=20
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- tests/functions.sh     | 45 ++++++++++++++++++++++++++++++++++--
- tests/ima_hash.test    |  2 +-
- tests/sign_verify.test | 52 ++++++++++++++++++++++++++++++------------
- 3 files changed, 82 insertions(+), 17 deletions(-)
+It's obvious that the issue does not scale to every system,
+so it would nice to know the difference that triggers the
+issue, before applying this, and it also needs to be
+documented to the commit message.
 
-diff --git a/tests/functions.sh b/tests/functions.sh
-index 91cd5d9..8f6f02d 100755
---- a/tests/functions.sh
-+++ b/tests/functions.sh
-@@ -248,8 +248,12 @@ _enable_gost_engine() {
- }
- 
- # Show test stats and exit into automake test system
--# with proper exit code (same as ours).
--_report_exit() {
-+# with proper exit code (same as ours). Do cleanups.
-+_report_exit_and_cleanup() {
-+  if [ -n "${WORKDIR}" ]; then
-+    rm -rf "${WORKDIR}"
-+  fi
-+
-   if [ $testsfail -gt 0 ]; then
-     echo "================================="
-     echo " Run with FAILEARLY=1 $0 $*"
-@@ -272,3 +276,40 @@ _report_exit() {
-   fi
- }
- 
-+# Setup SoftHSM for local testing by calling the softhsm_setup script.
-+# Use the provided workdir as the directory where SoftHSM will store its state
-+# into.
-+# Upon successfully setting up SoftHSM, this function sets the global variables
-+# OPENSSL_ENGINE and OPENSSL_KEYFORM so that the openssl command line tool can
-+# use SoftHSM. Also the PKCS11_KEYURI global variable is set to the test key's
-+# pkcs11 URI.
-+_softhsm_setup() {
-+  local workdir="$1"
-+
-+  local msg
-+
-+  export SOFTHSM_SETUP_CONFIGDIR="${workdir}/softhsm"
-+  export SOFTHSM2_CONF="${workdir}/softhsm/softhsm2.conf"
-+
-+  mkdir -p "${SOFTHSM_SETUP_CONFIGDIR}"
-+
-+  msg=$(./softhsm_setup setup 2>&1)
-+  if [ $? -eq 0 ]; then
-+    echo "softhsm_setup setup succeeded: $msg"
-+    PKCS11_KEYURI=$(echo $msg | sed -n 's|^keyuri: \(.*\)|\1|p')
-+
-+    export EVMCTL_ENGINE="--engine pkcs11"
-+    export OPENSSL_ENGINE="-engine pkcs11"
-+    export OPENSSL_KEYFORM="-keyform engine"
-+  else
-+    echo "softhsm_setup setup failed: ${msg}"
-+  fi
-+}
-+
-+# Tear down the SoftHSM setup and clean up the environment
-+_softhsm_teardown() {
-+  ./softhsm_setup teardown &>/dev/null
-+  rm -rf "${SOFTHSM_SETUP_CONFIGDIR}"
-+  unset SOFTHSM_SETUP_CONFIGDIR SOFTHSM2_CONF PKCS11_KEYURI \
-+    EVMCTL_ENGINE OPENSSL_ENGINE OPENSSL_KEYFORM
-+}
-\ No newline at end of file
-diff --git a/tests/ima_hash.test b/tests/ima_hash.test
-index 6e0e463..e88fd59 100755
---- a/tests/ima_hash.test
-+++ b/tests/ima_hash.test
-@@ -20,7 +20,7 @@ PATH=../src:$PATH
- source ./functions.sh
- _require evmctl openssl getfattr
- 
--trap _report_exit EXIT
-+trap _report_exit_and_cleanup EXIT
- set -f # disable globbing
- 
- check() {
-diff --git a/tests/sign_verify.test b/tests/sign_verify.test
-index 3b42eec..c56290a 100755
---- a/tests/sign_verify.test
-+++ b/tests/sign_verify.test
-@@ -28,7 +28,8 @@ fi
- 
- ./gen-keys.sh >/dev/null 2>&1
- 
--trap _report_exit EXIT
-+trap _report_exit_and_cleanup EXIT
-+WORKDIR=$(mktemp -d)
- set -f # disable globbing
- 
- # Determine keyid from a cert
-@@ -132,11 +133,16 @@ check_sign() {
-   # OPTS (additional options for evmctl),
-   # FILE (working file to sign).
-   local "$@"
--  local KEY=${KEY%.*}.key
-+  local key verifykey
-   local FILE=${FILE:-$ALG.txt}
- 
--  # Normalize key filename
--  KEY=test-${KEY#test-}
-+  # Normalize key filename if it's not a pkcs11 URI
-+  if [ ${KEY:0:7} != pkcs11: ]; then
-+    key=${KEY%.*}.key
-+    key=test-${key#test-}
-+  else
-+    key=${KEY}
-+  fi
- 
-   # Append suffix to files for negative tests, because we may
-   # leave only good files for verify tests.
-@@ -152,33 +158,33 @@ check_sign() {
- 
-   if _test_expected_to_pass; then
-     # Can openssl work with this digest?
--    cmd="openssl dgst $OPENSSL_ENGINE -$ALG $FILE"
-+    cmd="openssl dgst $OPENSSL_ENGINE $OPENSSL_KEYFORM -$ALG $FILE"
-     echo - "$cmd"
-     if ! $cmd >/dev/null; then
--      echo "${CYAN}$ALG ($KEY) test is skipped (openssl is unable to digest)$NORM"
-+      echo "${CYAN}$ALG ($key) test is skipped (openssl is unable to digest)$NORM"
-       return "$SKIP"
-     fi
- 
--    if [ ! -e "$KEY" ]; then
--      echo "${CYAN}$ALG ($KEY) test is skipped (key file not found)$NORM"
-+    if [ "${key:0:7}" != pkcs11: ] && [ ! -e "$key" ]; then
-+      echo "${CYAN}$ALG ($key) test is skipped (key file not found)$NORM"
-       return "$SKIP"
-     fi
- 
-     # Can openssl sign with this digest and key?
--    cmd="openssl dgst $OPENSSL_ENGINE -$ALG -sign $KEY -hex $FILE"
-+    cmd="openssl dgst $OPENSSL_ENGINE $OPENSSL_KEYFORM -$ALG -sign $key -hex $FILE"
-     echo - "$cmd"
-     if ! $cmd >/dev/null; then
--      echo "${CYAN}$ALG ($KEY) test is skipped (openssl is unable to sign)$NORM"
-+      echo "${CYAN}$ALG ($key) test is skipped (openssl is unable to sign)$NORM"
-       return "$SKIP"
-     fi
-   fi
- 
-   # Insert keyid from cert into PREFIX in-place of marker `:K:'
-   if [[ $PREFIX =~ :K: ]]; then
--    keyid=$(_keyid_from_cert "$KEY")
-+    keyid=$(_keyid_from_cert "$key")
-     if [ $? -ne 0 ]; then
-       color_red
--      echo "Unable to determine keyid for $KEY"
-+      echo "Unable to determine keyid for $key"
-       color_restore
-       return "$HARDFAIL"
-     fi
-@@ -187,7 +193,7 @@ check_sign() {
-   fi
- 
-   # Perform signing by evmctl
--  _evmctl_sign "$TYPE" "$KEY" "$ALG" "$FILE" "$OPTS" || return
-+  _evmctl_sign "$TYPE" "$key" "$ALG" "$FILE" "$OPTS" || return
- 
-   # First simple pattern match the signature.
-   ADD_TEXT_FOR=$ALG \
-@@ -207,7 +213,13 @@ check_sign() {
-   _extract_xattr "$FILE" "$(_xattr "$TYPE")" "$FILE.sig2" "$PREFIX"
- 
-   # Verify extracted signature with openssl
--  cmd="openssl dgst $OPENSSL_ENGINE -$ALG -verify ${KEY%.*}.pub \
-+  if [ "${key:0:7}" != pkcs11: ]; then
-+      verifykey=${key%.*}.pub
-+  else
-+      verifykey=${key}
-+  fi
-+
-+  cmd="openssl dgst $OPENSSL_ENGINE $OPENSSL_KEYFORM -$ALG -verify ${verifykey} \
- 	-signature $FILE.sig2 $FILE"
-   echo - "$cmd"
-   if ! $cmd; then
-@@ -413,3 +425,15 @@ expect_fail \
- expect_fail \
-   check_sign TYPE=ima KEY=gost2012_256-B ALG=md_gost12_512 PREFIX=0x0302 OPTS=
- 
-+# Test signing with key described by pkcs11 URI
-+_softhsm_setup "${WORKDIR}"
-+if [ -n "${PKCS11_KEYURI}" ]; then
-+  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY=${PKCS11_KEYURI} ALG=sha256 PREFIX=0x030204aabbccdd0100 OPTS=--keyid=aabbccdd
-+  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY=${PKCS11_KEYURI} ALG=sha1   PREFIX=0x030202aabbccdd0100 OPTS=--keyid=aabbccdd
-+else
-+  # to have a constant number of tests, skip these two tests
-+  __skip() { echo "pkcs11 test is skipped: could not setup softhsm"; return $SKIP; }
-+  expect_pass __skip
-+  expect_pass __skip
-+fi
-+_softhsm_teardown "${WORKDIR}"
--- 
-2.31.1
 
+/Jarkko
