@@ -2,32 +2,32 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B024C4167B
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Sep 2021 16:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073B2C433FE
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27BBC610D1
-	for <linux-integrity@archiver.kernel.org>; Wed, 15 Sep 2021 16:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8BA961242
+	for <linux-integrity@archiver.kernel.org>; Wed, 15 Sep 2021 16:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbhIOQeM (ORCPT
+        id S229788AbhIOQfa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 15 Sep 2021 12:34:12 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3825 "EHLO
+        Wed, 15 Sep 2021 12:35:30 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3828 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229854AbhIOQeJ (ORCPT
+        with ESMTP id S229491AbhIOQf3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 15 Sep 2021 12:34:09 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8m0r2mrNz67h7V;
-        Thu, 16 Sep 2021 00:30:36 +0800 (CST)
+        Wed, 15 Sep 2021 12:35:29 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4H8m2P0HXFz67hPW;
+        Thu, 16 Sep 2021 00:31:57 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.8; Wed, 15 Sep 2021 18:32:47 +0200
+ 15.1.2308.8; Wed, 15 Sep 2021 18:34:08 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
         <mchehab+huawei@kernel.org>
@@ -36,9 +36,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 2/9] diglim: Loader
-Date:   Wed, 15 Sep 2021 18:31:38 +0200
-Message-ID: <20210915163145.1046505-3-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 5/9] diglim: Compact digest list generator
+Date:   Wed, 15 Sep 2021 18:31:41 +0200
+Message-ID: <20210915163145.1046505-6-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210915163145.1046505-1-roberto.sassu@huawei.com>
 References: <20210915163145.1046505-1-roberto.sassu@huawei.com>
@@ -53,224 +53,574 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Digest lists should be loaded as soon as possible, before files are
-accessed, so that services like IMA can perform their queries.
+Introduce a generator for the compact digest lists, which can be directly
+uploaded to the kernel.
 
-Implement two methods for loading digest lists at kernel initialization
-time. Take a directory from CONFIG_DIGLIM_DIGEST_LISTS_DIR and execute
-digest_list_read() for each file in that directory. Afterwards, execute a
-digest list uploader at CONFIG_DIGLIM_UPLOADER_PATH with the following
-syntax:
+This tool can be used to generate a digest list from a file or the files in
+the specified directory.
 
-<CONFIG_DIGLIM_UPLOADER_PATH> add <CONFIG_DIGLIM_DIGEST_LISTS_DIR>
+Files with execute permissions, without write permissions, those in
+/lib/modules (not files starting with modules.) and in /lib/firmware are
+marked as immutable (IMA with appraisal in enforcing mode will deny
+writes).
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- .../security/diglim/implementation.rst        | 16 ++++
- MAINTAINERS                                   |  1 +
- security/integrity/diglim/Kconfig             | 14 +++
- security/integrity/diglim/Makefile            |  2 +-
- security/integrity/diglim/loader.c            | 92 +++++++++++++++++++
- security/integrity/iint.c                     |  1 +
- security/integrity/integrity.h                |  8 ++
- 7 files changed, 133 insertions(+), 1 deletion(-)
- create mode 100644 security/integrity/diglim/loader.c
+ MAINTAINERS                |   4 +
+ tools/diglim/Makefile      |  18 ++
+ tools/diglim/common.c      |  79 +++++++++
+ tools/diglim/common.h      |  59 +++++++
+ tools/diglim/compact_gen.c | 349 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 509 insertions(+)
+ create mode 100644 tools/diglim/Makefile
+ create mode 100644 tools/diglim/common.c
+ create mode 100644 tools/diglim/common.h
+ create mode 100644 tools/diglim/compact_gen.c
 
-diff --git a/Documentation/security/diglim/implementation.rst b/Documentation/security/diglim/implementation.rst
-index f7b48c093f39..0290b42b014b 100644
---- a/Documentation/security/diglim/implementation.rst
-+++ b/Documentation/security/diglim/implementation.rst
-@@ -226,3 +226,19 @@ This section introduces the interfaces in
- ``<securityfs>/integrity/diglim`` necessary to interact with DIGLIM.
- 
- .. kernel-doc:: security/integrity/diglim/fs.c
-+
-+
-+Loader
-+------
-+
-+Digest lists should be loaded as soon as possible, before files are
-+accessed, so that services like IMA can perform their queries.
-+
-+The kernel loader implements two methods for loading digest lists at kernel
-+initialization time. The first method takes a directory from
-+CONFIG_DIGLIM_DIGEST_LISTS_DIR and executes digest_list_read() for each
-+file in that directory. The second method, invoked sequentially after the
-+first, executes a digest list uploader at CONFIG_DIGLIM_UPLOADER_PATH with
-+the following syntax:
-+
-+<CONFIG_DIGLIM_UPLOADER_PATH> add <CONFIG_DIGLIM_DIGEST_LISTS_DIR>
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 033c70014568..0ffceb271803 100644
+index 94220e40b7e2..b752790c06ea 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -5518,6 +5518,7 @@ F:	include/uapi/linux/diglim.h
- F:	security/integrity/diglim/diglim.h
- F:	security/integrity/diglim/fs.c
- F:	security/integrity/diglim/ima.c
-+F:	security/integrity/diglim/loader.c
+@@ -5522,6 +5522,10 @@ F:	security/integrity/diglim/ima.c
+ F:	security/integrity/diglim/loader.c
  F:	security/integrity/diglim/methods.c
  F:	security/integrity/diglim/parser.c
++F:	tools/diglim/Makefile
++F:	tools/diglim/common.c
++F:	tools/diglim/common.h
++F:	tools/diglim/compact_gen.c
  F:	tools/testing/selftests/diglim/
-diff --git a/security/integrity/diglim/Kconfig b/security/integrity/diglim/Kconfig
-index 436a76a14337..6c76a0fefe42 100644
---- a/security/integrity/diglim/Kconfig
-+++ b/security/integrity/diglim/Kconfig
-@@ -9,3 +9,17 @@ config DIGLIM
- 	help
- 	  DIGLIM provides reference values for file content and metadata,
- 	  that can be used for measurement and appraisal with IMA.
-+
-+config DIGLIM_DIGEST_LISTS_DIR
-+	string "Path of the directory containing digest lists"
-+	depends on DIGLIM
-+	default "/etc/digest_lists"
-+	help
-+	  This option defines the path of the directory containing digest lists.
-+
-+config DIGLIM_UPLOADER_PATH
-+	string "Path of the user space digest list uploader"
-+	depends on DIGLIM
-+	default "/usr/libexec/diglim/upload_digest_lists"
-+	help
-+	  This option defines the path of the user space digest list uploader.
-diff --git a/security/integrity/diglim/Makefile b/security/integrity/diglim/Makefile
-index 5cb1a8bfa0fc..ae79a3317ec8 100644
---- a/security/integrity/diglim/Makefile
-+++ b/security/integrity/diglim/Makefile
-@@ -5,4 +5,4 @@
  
- obj-$(CONFIG_DIGLIM) += diglim.o
- 
--diglim-y := methods.o parser.o ima.o fs.o
-+diglim-y := methods.o parser.o ima.o fs.o loader.o
-diff --git a/security/integrity/diglim/loader.c b/security/integrity/diglim/loader.c
+ DIOLAN U2C-12 I2C DRIVER
+diff --git a/tools/diglim/Makefile b/tools/diglim/Makefile
 new file mode 100644
-index 000000000000..e95d3716c153
+index 000000000000..45efa554449d
 --- /dev/null
-+++ b/security/integrity/diglim/loader.c
-@@ -0,0 +1,92 @@
++++ b/tools/diglim/Makefile
+@@ -0,0 +1,18 @@
++# SPDX-License-Identifier: GPL-2.0
++
++CC := $(CROSS_COMPILE)gcc
++CFLAGS += -O2 -Wall -g -I./ -I../../usr/include/ -ggdb
++
++PROGS := compact_gen
++PROGS_EXTENDED := common.o
++
++all: $(PROGS)
++
++clean:
++	rm -fr $(PROGS) $(PROGS_EXTENDED)
++
++common.o: common.c
++	$(CC) -c $(CFLAGS) $< -o $@
++
++compact_gen: compact_gen.c $(PROGS_EXTENDED)
++	$(CC) $(CFLAGS) $< $(PROGS_EXTENDED) -o $@ $(LDFLAGS) -lcrypto
+diff --git a/tools/diglim/common.c b/tools/diglim/common.c
+new file mode 100644
+index 000000000000..dd5ff4b186b3
+--- /dev/null
++++ b/tools/diglim/common.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2005,2006,2007,2008 IBM Corporation
++ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * Common functions and data.
++ */
++
++#include <sys/random.h>
++#include <errno.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <ctype.h>
++#include <malloc.h>
++#include <unistd.h>
++#include <string.h>
++#include <limits.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <linux/types.h>
++#include <linux/hash_info.h>
++
++#include "common.h"
++
++char *compact_types_str[COMPACT__LAST] = {
++	[COMPACT_PARSER] = "parser",
++	[COMPACT_FILE] = "file",
++	[COMPACT_METADATA] = "metadata",
++	[COMPACT_DIGEST_LIST] = "digest_list",
++};
++
++const char *const hash_algo_name[HASH_ALGO__LAST] = {
++	[HASH_ALGO_MD4]		= "md4",
++	[HASH_ALGO_MD5]		= "md5",
++	[HASH_ALGO_SHA1]	= "sha1",
++	[HASH_ALGO_RIPE_MD_160]	= "rmd160",
++	[HASH_ALGO_SHA256]	= "sha256",
++	[HASH_ALGO_SHA384]	= "sha384",
++	[HASH_ALGO_SHA512]	= "sha512",
++	[HASH_ALGO_SHA224]	= "sha224",
++	[HASH_ALGO_RIPE_MD_128]	= "rmd128",
++	[HASH_ALGO_RIPE_MD_256]	= "rmd256",
++	[HASH_ALGO_RIPE_MD_320]	= "rmd320",
++	[HASH_ALGO_WP_256]	= "wp256",
++	[HASH_ALGO_WP_384]	= "wp384",
++	[HASH_ALGO_WP_512]	= "wp512",
++	[HASH_ALGO_TGR_128]	= "tgr128",
++	[HASH_ALGO_TGR_160]	= "tgr160",
++	[HASH_ALGO_TGR_192]	= "tgr192",
++	[HASH_ALGO_SM3_256]	= "sm3",
++	[HASH_ALGO_STREEBOG_256] = "streebog256",
++	[HASH_ALGO_STREEBOG_512] = "streebog512",
++};
++
++const int hash_digest_size[HASH_ALGO__LAST] = {
++	[HASH_ALGO_MD4]		= MD5_DIGEST_SIZE,
++	[HASH_ALGO_MD5]		= MD5_DIGEST_SIZE,
++	[HASH_ALGO_SHA1]	= SHA1_DIGEST_SIZE,
++	[HASH_ALGO_RIPE_MD_160]	= RMD160_DIGEST_SIZE,
++	[HASH_ALGO_SHA256]	= SHA256_DIGEST_SIZE,
++	[HASH_ALGO_SHA384]	= SHA384_DIGEST_SIZE,
++	[HASH_ALGO_SHA512]	= SHA512_DIGEST_SIZE,
++	[HASH_ALGO_SHA224]	= SHA224_DIGEST_SIZE,
++	[HASH_ALGO_RIPE_MD_128]	= RMD128_DIGEST_SIZE,
++	[HASH_ALGO_RIPE_MD_256]	= RMD256_DIGEST_SIZE,
++	[HASH_ALGO_RIPE_MD_320]	= RMD320_DIGEST_SIZE,
++	[HASH_ALGO_WP_256]	= WP256_DIGEST_SIZE,
++	[HASH_ALGO_WP_384]	= WP384_DIGEST_SIZE,
++	[HASH_ALGO_WP_512]	= WP512_DIGEST_SIZE,
++	[HASH_ALGO_TGR_128]	= TGR128_DIGEST_SIZE,
++	[HASH_ALGO_TGR_160]	= TGR160_DIGEST_SIZE,
++	[HASH_ALGO_TGR_192]	= TGR192_DIGEST_SIZE,
++	[HASH_ALGO_SM3_256]	= SM3256_DIGEST_SIZE,
++	[HASH_ALGO_STREEBOG_256] = STREEBOG256_DIGEST_SIZE,
++	[HASH_ALGO_STREEBOG_512] = STREEBOG512_DIGEST_SIZE,
++};
+diff --git a/tools/diglim/common.h b/tools/diglim/common.h
+new file mode 100644
+index 000000000000..d33e5082c17c
+--- /dev/null
++++ b/tools/diglim/common.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2005,2006,2007,2008 IBM Corporation
++ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * Header of common.c
++ */
++
++#include <sys/random.h>
++#include <errno.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <ctype.h>
++#include <malloc.h>
++#include <unistd.h>
++#include <string.h>
++#include <limits.h>
++#include <stdbool.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <linux/types.h>
++#include <linux/hash_info.h>
++
++#include "../../usr/include/linux/diglim.h"
++
++#define MD5_DIGEST_SIZE 16
++#define SHA1_DIGEST_SIZE 20
++#define RMD160_DIGEST_SIZE 20
++#define SHA256_DIGEST_SIZE 32
++#define SHA384_DIGEST_SIZE 48
++#define SHA512_DIGEST_SIZE 64
++#define SHA224_DIGEST_SIZE 28
++#define RMD128_DIGEST_SIZE 16
++#define RMD256_DIGEST_SIZE 32
++#define RMD320_DIGEST_SIZE 40
++#define WP256_DIGEST_SIZE 32
++#define WP384_DIGEST_SIZE 48
++#define WP512_DIGEST_SIZE 64
++#define TGR128_DIGEST_SIZE 16
++#define TGR160_DIGEST_SIZE 20
++#define TGR192_DIGEST_SIZE 24
++#define SM3256_DIGEST_SIZE 32
++#define STREEBOG256_DIGEST_SIZE 32
++#define STREEBOG512_DIGEST_SIZE 64
++
++#define COMPACT_LIST_SIZE_MAX (64 * 1024 * 1024 - 1)
++
++/* kernel types */
++typedef u_int8_t u8;
++typedef u_int16_t u16;
++typedef u_int32_t u32;
++typedef u_int64_t u64;
++
++extern char *compact_types_str[COMPACT__LAST];
++extern const char *const hash_algo_name[HASH_ALGO__LAST];
++extern const int hash_digest_size[HASH_ALGO__LAST];
+diff --git a/tools/diglim/compact_gen.c b/tools/diglim/compact_gen.c
+new file mode 100644
+index 000000000000..0bfe8584de46
+--- /dev/null
++++ b/tools/diglim/compact_gen.c
+@@ -0,0 +1,349 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
 + *
 + * Author: Roberto Sassu <roberto.sassu@huawei.com>
 + *
-+ * Functions to load digest lists.
++ * Generate compact digest lists.
 + */
 +
-+#include <linux/vmalloc.h>
-+#include <linux/module.h>
-+#include <linux/namei.h>
-+#include <linux/ima.h>
++#include <stdio.h>
++#include <fcntl.h>
++#include <errno.h>
 +
-+#include "diglim.h"
++#include <limits.h>
++#include <openssl/sha.h>
++#include <openssl/evp.h>
++#include <sys/mman.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <fts.h>
++#include <string.h>
++#include <getopt.h>
++#include <linux/hash_info.h>
++#include <bits/endianness.h>
 +
-+struct readdir_callback {
-+	struct dir_context ctx;
-+	struct path *path;
-+};
++#if __BYTE_ORDER == __BIG_ENDIAN
++#include <linux/byteorder/big_endian.h>
++#else
++#include <linux/byteorder/little_endian.h>
++#endif
 +
-+static bool digest_list_supported_by_kernel(const char *filename)
++#include "common.h"
++
++static int gen_filename_prefix(char *filename, int filename_len, int pos,
++			       const char *format, enum compact_types type)
 +{
-+	char *type_start, *format_start, *format_end;
-+
-+	type_start = strchr(filename, '-');
-+	if (!type_start++)
-+		return false;
-+
-+	format_start = strchr(type_start, '-');
-+	if (!format_start++)
-+		return false;
-+
-+	format_end = strchr(format_start, '-');
-+	if (!format_end)
-+		return false;
-+
-+	if (format_end - format_start != strlen("compact") ||
-+	    strncmp(format_start, "compact", format_end - format_start))
-+		return false;
-+
-+	return true;
++	return snprintf(filename, filename_len, "%d-%s_list-%s-",
++			(pos >= 0) ? pos : 0, compact_types_str[type], format);
 +}
 +
-+static int __init digest_list_load(struct dir_context *__ctx, const char *name,
-+				   int namelen, loff_t offset, u64 ino,
-+				   unsigned int d_type)
++static int calc_digest(u8 *digest, void *data, u64 len, enum hash_algo algo)
 +{
-+	struct readdir_callback *ctx = container_of(__ctx, typeof(*ctx), ctx);
++	EVP_MD_CTX *mdctx;
++	const EVP_MD *md;
++	int ret = -EINVAL;
++
++	OpenSSL_add_all_algorithms();
++
++	md = EVP_get_digestbyname(hash_algo_name[algo]);
++	if (!md)
++		goto out;
++
++	mdctx = EVP_MD_CTX_create();
++	if (!mdctx)
++		goto out;
++
++	if (EVP_DigestInit_ex(mdctx, md, NULL) != 1)
++		goto out_mdctx;
++
++	if (EVP_DigestUpdate(mdctx, data, len) != 1)
++		goto out_mdctx;
++
++	if (EVP_DigestFinal_ex(mdctx, digest, NULL) != 1)
++		goto out_mdctx;
++
++	ret = 0;
++out_mdctx:
++	EVP_MD_CTX_destroy(mdctx);
++out:
++	EVP_cleanup();
++	return ret;
++}
++
++static int calc_file_digest(u8 *digest, char *path, enum hash_algo algo)
++{
++	void *data = MAP_FAILED;
++	struct stat st;
++	int fd, ret = 0;
++
++	if (stat(path, &st) == -1)
++		return -EACCES;
++
++	fd = open(path, O_RDONLY);
++	if (fd < 0)
++		return -EACCES;
++
++	if (st.st_size) {
++		data = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
++		if (data == MAP_FAILED) {
++			ret = -ENOMEM;
++			goto out;
++		}
++	}
++
++	ret = calc_digest(digest, data, st.st_size, algo);
++out:
++	if (data != MAP_FAILED)
++		munmap(data, st.st_size);
++
++	close(fd);
++	return ret;
++}
++
++static u8 *new_digest_list(enum hash_algo algo, enum compact_types type,
++			   u16 modifiers)
++{
++	u8 *digest_list;
++	struct compact_list_hdr *hdr;
++
++	digest_list = mmap(NULL, COMPACT_LIST_SIZE_MAX, PROT_READ | PROT_WRITE,
++			   MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
++	if (digest_list == MAP_FAILED) {
++		printf("Cannot allocate buffer\n");
++		return NULL;
++	}
++
++	hdr = (struct compact_list_hdr *)digest_list;
++	memset(hdr, 0, sizeof(*hdr));
++
++	hdr->version = 1;
++	hdr->type = __cpu_to_le16(type);
++	hdr->modifiers = __cpu_to_le16(modifiers);
++	hdr->algo = __cpu_to_le16(algo);
++	return digest_list;
++}
++
++static int write_digest_list(int fd, u8 *digest_list)
++{
++	struct compact_list_hdr *hdr;
++	u32 datalen;
++	ssize_t ret;
++
++	hdr = (struct compact_list_hdr *)digest_list;
++	if (!hdr->count)
++		return 0;
++
++	datalen = hdr->datalen;
++	hdr->count = __cpu_to_le32(hdr->count);
++	hdr->datalen = __cpu_to_le32(hdr->datalen);
++
++	ret = write(fd, digest_list, sizeof(*hdr) + datalen);
++	if (ret != sizeof(*hdr) + datalen)
++		return -EIO;
++
++	return ret;
++}
++
++static int gen_compact_digest_list(char *input, enum hash_algo algo,
++				   u8 *digest_list, u8 *digest_list_immutable)
++{
++	FTS *fts = NULL;
++	FTSENT *ftsent;
++	int fts_flags = (FTS_PHYSICAL | FTS_COMFOLLOW | FTS_NOCHDIR | FTS_XDEV);
++	char *paths[2] = { input, NULL };
++	u8 *digest_list_ptr = digest_list;
++	struct compact_list_hdr *cur_hdr;
 +	int ret;
 +
-+	if (!strcmp(name, ".") || !strcmp(name, ".."))
-+		return 0;
++	if (!digest_list)
++		digest_list_ptr = digest_list_immutable;
 +
-+	if (!digest_list_supported_by_kernel(name))
-+		return 0;
++	fts = fts_open(paths, fts_flags, NULL);
++	if (!fts) {
++		printf("Unable to open %s\n", input);
++		return -EACCES;
++	}
 +
-+	ret = digest_list_read(ctx->path, (char *)name, DIGEST_LIST_ADD);
-+	if (ret < 0)
-+		return ret;
++	while ((ftsent = fts_read(fts)) != NULL) {
++		switch (ftsent->fts_info) {
++		case FTS_F:
++			if (((ftsent->fts_statp->st_mode & 0111) ||
++			    !(ftsent->fts_statp->st_mode & 0222)) &&
++			    ftsent->fts_statp->st_size)
++				digest_list_ptr = digest_list_immutable;
++
++			if ((strstr(ftsent->fts_path, "/lib/modules") &&
++			    strncmp(ftsent->fts_name, "modules.", 8)) ||
++			    strstr(ftsent->fts_path, "/lib/firmware"))
++				digest_list_ptr = digest_list_immutable;
++
++			cur_hdr = (struct compact_list_hdr *)digest_list_ptr;
++
++			ret = calc_file_digest(digest_list_ptr +
++					sizeof(*cur_hdr) + cur_hdr->datalen,
++					ftsent->fts_path, algo);
++			if (ret < 0) {
++				printf("Cannot calculate digest of %s\n",
++				       ftsent->fts_path);
++				continue;
++			}
++
++			cur_hdr->count++;
++			cur_hdr->datalen += hash_digest_size[algo];
++			break;
++		default:
++			break;
++		}
++	}
 +
 +	return 0;
 +}
 +
-+static void digest_list_exec_parser(void)
++static void usage(char *progname)
 +{
-+	char *argv[4] = {NULL}, *envp[1] = {NULL};
-+
-+	argv[0] = (char *)CONFIG_DIGLIM_UPLOADER_PATH;
-+	argv[1] = "add";
-+	argv[2] = CONFIG_DIGLIM_DIGEST_LISTS_DIR;
-+
-+	call_usermodehelper(argv[0], argv, envp, UMH_WAIT_PROC);
++	printf("Usage: %s <options>\n", progname);
++	printf("Options:\n");
++	printf("\t-d <output directory>: directory digest lists are written to\n"
++	       "\t-i <path>: file/directory the digest list is generated from\n"
++	       "\t-t <type>: type of compact list to generate\n"
++	       "\t-a <algo>: digest algorithm\n"
++	       "\t-f: force the digest list to be immutable\n"
++	       "\t-h: display help\n");
 +}
 +
-+void __init digest_lists_load(void)
++int main(int argc, char *argv[])
 +{
-+	struct file *file;
-+	struct readdir_callback buf = {
-+		.ctx.actor = digest_list_load,
-+	};
++	char path[PATH_MAX];
++	char filename[NAME_MAX + 1];
++	char *output_dir = NULL, *input = NULL;
++	enum compact_types type = COMPACT_FILE;
++	enum hash_algo algo = HASH_ALGO_SHA256;
++	u8 *digest_list = NULL, *digest_list_immutable = NULL;
++	char *input_ptr;
++	struct stat st;
++	int c;
++	int ret, fd = -1, force_immutable = 0;
 +
-+	file = filp_open(CONFIG_DIGLIM_DIGEST_LISTS_DIR, O_RDONLY, 0);
-+	if (IS_ERR(file))
-+		return;
++	while ((c = getopt(argc, argv, "d:i:t:a:fh")) != -1) {
++		switch (c) {
++		case 'd':
++			output_dir = optarg;
++			break;
++		case 'i':
++			input = optarg;
++			break;
++		case 't':
++			for (type = 0; type < COMPACT__LAST; type++)
++				if (!strcmp(compact_types_str[type], optarg))
++					break;
++			if (type == COMPACT__LAST) {
++				printf("Invalid type %s\n", optarg);
++				exit(1);
++			}
++			break;
++		case 'a':
++			for (algo = 0; algo < HASH_ALGO__LAST; algo++)
++				if (!strcmp(hash_algo_name[algo], optarg))
++					break;
++			if (algo == HASH_ALGO__LAST) {
++				printf("Invalid algo %s\n", optarg);
++				exit(1);
++			}
++			break;
++		case 'f':
++			force_immutable = 1;
++			break;
++		case 'h':
++			usage(argv[0]);
++			exit(0);
++		default:
++			printf("Invalid option %c\n", c);
++			exit(1);
++		}
++	}
 +
-+	buf.path = &file->f_path;
-+	iterate_dir(file, &buf.ctx);
-+	fput(file);
++	if (!output_dir) {
++		printf("Output directory not specified\n");
++		exit(1);
++	}
 +
-+	digest_list_exec_parser();
++	if (!input) {
++		printf("Input file/directory not specified\n");
++		exit(1);
++	}
++
++	if (stat(input, &st) == -1) {
++		printf("Input file/directory not found or not accessible\n");
++		exit(1);
++	}
++
++	if (stat(output_dir, &st) == -1)
++		mkdir(output_dir, 0755);
++
++	gen_filename_prefix(filename, sizeof(filename), 0, "compact", type);
++
++	input_ptr = strrchr(input, '/');
++	if (input_ptr)
++		input_ptr++;
++	else
++		input_ptr = input;
++
++	snprintf(path, sizeof(path), "%s/%s%s", output_dir, filename,
++		 input_ptr);
++
++	if (!force_immutable) {
++		digest_list = new_digest_list(algo, type, 0);
++		if (!digest_list) {
++			ret = -ENOMEM;
++			goto out;
++		}
++	}
++
++	digest_list_immutable = new_digest_list(algo, type,
++						(1 << COMPACT_MOD_IMMUTABLE));
++	if (!digest_list_immutable) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
++	if (fd < 0) {
++		printf("Unable to create %s\n", path);
++		ret = -errno;
++		goto out;
++	}
++
++	ret = gen_compact_digest_list(input, algo, digest_list,
++				      digest_list_immutable);
++	if (ret < 0) {
++		printf("Unable to generate the digest list from %s\n", input);
++		goto out;
++	}
++
++	if (!force_immutable) {
++		ret = write_digest_list(fd, digest_list);
++		if (ret < 0) {
++			printf("Unable to write the digest list to %s\n", path);
++			goto out;
++		}
++	}
++
++	ret = write_digest_list(fd, digest_list_immutable);
++	if (ret < 0)
++		printf("Unable to write the digest list to %s\n", path);
++out:
++	if (digest_list)
++		munmap(digest_list, COMPACT_LIST_SIZE_MAX);
++	if (digest_list_immutable)
++		munmap(digest_list_immutable, COMPACT_LIST_SIZE_MAX);
++
++	if (fd >= 0)
++		close(fd);
++
++	if (ret < 0)
++		unlink(path);
++
++	return ret;
 +}
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 8638976f7990..3799311cc0c3 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -211,6 +211,7 @@ void __init integrity_load_keys(void)
- 
- 	if (!IS_ENABLED(CONFIG_IMA_LOAD_X509))
- 		evm_load_x509();
-+	digest_lists_load();
- }
- 
- static int __init integrity_fs_init(void)
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index de5dde382f11..2ab85f286d17 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -288,4 +288,12 @@ static inline void __init add_to_platform_keyring(const char *source,
- {
- }
- #endif
-+
-+#ifdef CONFIG_DIGLIM
-+void __init digest_lists_load(void);
-+#else
-+static inline void __init digest_lists_load(void)
-+{
-+}
-+#endif
- #endif /*__INTEGRITY_H*/
 -- 
 2.25.1
 
