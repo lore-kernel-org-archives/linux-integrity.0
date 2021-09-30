@@ -2,136 +2,230 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A99CEC433F5
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Sep 2021 08:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B27FC4332F
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8017461407
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Sep 2021 08:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8B061A04
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Sep 2021 11:55:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244905AbhI2JAM (ORCPT
+        id S1350592AbhI3L5a (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Sep 2021 05:00:12 -0400
-Received: from mout.gmx.net ([212.227.15.19]:57751 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244764AbhI2JAL (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Sep 2021 05:00:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1632905905;
-        bh=0LEmnNPhcWdihF2RjF95YJlRjy/VpEvhtUCClVkra3E=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=NoQ22YzDXYVc3sXRvJUxxZbTH7Tlh7bOQtkkk6SIFFsMXEXH0IU7OllhYyN/9nbAo
-         9z2naBmrgWWlrfEZjYAhIOsQZXKD+oejMQLhCaMM9qRQPw3a0tuHeHq4uKo+8obxkK
-         gkMOtNf+RSWaM3fhYbSoBpYFMS1a69TPSz/4kRNc=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [87.130.101.138] ([87.130.101.138]) by web-mail.gmx.net
- (3c-app-gmx-bs21.server.lan [172.19.170.73]) (via HTTP); Wed, 29 Sep 2021
- 10:58:25 +0200
+        Thu, 30 Sep 2021 07:57:30 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3895 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350549AbhI3L53 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 30 Sep 2021 07:57:29 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4HKs7R6v0Bz67Yp1;
+        Thu, 30 Sep 2021 19:52:51 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.8; Thu, 30 Sep 2021 13:55:45 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
+        <mchehab+huawei@kernel.org>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 1/7] integrity: Change type of IMA rule-related flags to u64
+Date:   Thu, 30 Sep 2021 13:55:27 +0200
+Message-ID: <20210930115533.878169-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210930115533.878169-1-roberto.sassu@huawei.com>
+References: <20210930115533.878169-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Message-ID: <trinity-04f4aedd-514d-47bc-8622-cf6b1a264d52-1632905905528@3c-app-gmx-bs21>
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de,
-        p.rosenberger@kunbus.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: Re: [PATCH] tpm: fix potential NULL pointer access in
- tpm_del_char_device()
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 29 Sep 2021 10:58:25 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <20210924142032.GY3544071@ziepe.ca>
-References: <20210910180451.19314-1-LinoSanfilippo@gmx.de>
- <204a438b6db54060d03689389d6663b0d4ca815d.camel@kernel.org>
- <trinity-27f56ffd-504a-4c34-9cda-0953ccc459a3-1631566430623@3c-app-gmx-bs69>
- <c22d2878f9816000c33f5349e7256cadae22b400.camel@kernel.org>
- <50bd6224-0f01-ca50-af0e-f79b933e7998@gmx.de>
- <20210924133321.GX3544071@ziepe.ca>
- <b49f4b52-44c4-8cb8-a102-689e9f788177@gmx.de>
- <20210924142032.GY3544071@ziepe.ca>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:jxiYz/CfHteSo64qsJl+OFqt2ZEi7cgLLlu3QlsURDEaRf1qcf2836+rv8hUCuZubEcXY
- IOXBufYQQSASmDArS0/i4E2Npm5wTfyBbLtF8c7fHYKE2HnyuDG3BSBfjEsQtVyn5m9DwhEz+GKR
- VL37F+2X/7FRBU37VzZKlp2kUXmu9L7cnXSeT3uCScmv+QzWJbEVyUKYjbGnU3YfMYN29otDNmEl
- pZw+FfU1OI4uZYyOe8C/qGmaoPU4y7HeUOitF7lV0o6nkSaQ7bunYlUz4gSH1j9rkm9yoNY3r0cw
- Uw=
-X-UI-Out-Filterresults: notjunk:1;V03:K0:yQoCdAJcWJM=:pi5fuWIg9BPlVs+WOjM1Gi
- tRqUOlzFucYaLb8HvycKb40Lwear0svHybX7xRzYidSwelXeuxOatMaruV5mO1RfdPTyvuW8F
- c+GeHzXaSvTvdZnznqurSABvSnY1DJVBKDKzefeK47IED2VTNyGO8Mkgs/4FVNPQkNqPKbA4H
- CEQ5X/ADltCCDP3O8h6pg4VLzvEL9BylgfhKfR1wttX2fk2PoBfFNHMj7bSdxEGGbcFF1dyGo
- NbxtqDBPr0t8xgPBKV2s8KKRZhr69cAILvgMAW0Zz7uaG0r5JVa2c3Fl1X2a1yTaiyZK9Zq27
- cJAIbSyOFw6y/ZEUbmUu8uJLBAHGmWCOLFqv798Z0Mbp3B46i86aD3Tbv3/nSf8a0E9fbvCc8
- fGmBw506xZhbP01CF9OrUMaA0DI8xBZjaHhZQ+6N0sQiUu+MwICfeaUB3aTYL/PWceT09Gq2A
- Y/n491oRRQ9Zcxpf3U4EmOgFGlaM8S9ep5nE0sBwioNqSKA1aZ55PlzmLNSKdducUszns0CTd
- PfmN4FLgIVDgpjfHlKEjRmleZC4/fOKIs+XswuXhw8kJbErFZotC9Wbr3HvK4GgDpBX/jJcOG
- OrKMzD9xDZ4FAuD9SzJLVxSxL7JgueTRANN61t4CA9ghivBKufxt0qC89Unf+1wwg+xMvgK6k
- cNzHMv6qaD0hrKEb5dkZ47XNUy3dWit0jZmrS4vdZEgn1ayKJJb4yradQVg4e6lSO6OZrULwo
- tDjRnbrqOvdRP9jj0xOT+7qxi+A1Y7N3FA4iiaPGLHpq/Q9+h8Ij1yEvtXgdphyfPN6p24+YW
- n40VELY
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+Change the type of the flags member of integrity_iint_cache and
+ima_rule_entry, and the type of return value of ima_match_policy() and
+ima_get_action() to u64 to make room for more flags.
 
-> Gesendet: Freitag, 24. September 2021 um 16:20 Uhr
-> Von: "Jason Gunthorpe" <jgg@ziepe.ca>
-> An: "Lino Sanfilippo" <LinoSanfilippo@gmx.de>
-> Cc: "Jarkko Sakkinen" <jarkko@kernel.org>, peterhuewe@gmx.de, p.rosenber=
-ger@kunbus.com, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.=
-org, stable@vger.kernel.org
-> Betreff: Re: [PATCH] tpm: fix potential NULL pointer access in tpm_del_c=
-har_device()
->
-> On Fri, Sep 24, 2021 at 04:17:52PM +0200, Lino Sanfilippo wrote:
-> > On 24.09.21 at 15:33, Jason Gunthorpe wrote:
-> > > On Fri, Sep 24, 2021 at 03:29:46PM +0200, Lino Sanfilippo wrote:
-> > >
-> > >> So this bug is triggered when the bcm2835 drivers shutdown() functi=
-on is called since this
-> > >> driver does something quite unusual: it unregisters the spi control=
-ler in its shutdown()
-> > >> handler.
-> > >
-> > > This seems wrong
-> > >
-> > > Jason
-> > >
-> >
-> >
-> > Unregistering the SPI controller during shutdown is only a side-effect=
- of calling
-> > bcm2835_spi_remove() in the shutdown handler:
-> >
-> > static void bcm2835_spi_shutdown(struct platform_device *pdev)
-> > {
-> > 	int ret;
-> >
-> > 	ret =3D bcm2835_spi_remove(pdev);
-> > 	if (ret)
-> > 		dev_err(&pdev->dev, "failed to shutdown\n");
-> > }
->
-> That's wrong, the shutdown handler is only supposed to make the HW
-> stop doing DMA and interrupts so we can have a clean transition to
-> kexec/etc
->
-> It should not be manipulating other state.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima.h        |  4 +-
+ security/integrity/ima/ima_api.c    |  2 +-
+ security/integrity/ima/ima_main.c   |  3 +-
+ security/integrity/ima/ima_policy.c |  6 +--
+ security/integrity/integrity.h      | 60 ++++++++++++++---------------
+ 5 files changed, 38 insertions(+), 37 deletions(-)
 
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index d01ca3566aec..cde2e1c2a6be 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -255,7 +255,7 @@ static inline void ima_process_queued_keys(void) {}
+ #endif /* CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS */
+ 
+ /* LIM API function definitions */
+-int ima_get_action(struct user_namespace *mnt_userns, struct inode *inode,
++u64 ima_get_action(struct user_namespace *mnt_userns, struct inode *inode,
+ 		   const struct cred *cred, u32 secid, int mask,
+ 		   enum ima_hooks func, int *pcr,
+ 		   struct ima_template_desc **template_desc,
+@@ -286,7 +286,7 @@ void ima_free_template_entry(struct ima_template_entry *entry);
+ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
+ 
+ /* IMA policy related functions */
+-int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
++u64 ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
+ 		     const struct cred *cred, u32 secid, enum ima_hooks func,
+ 		     int mask, int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 2c6c3a5228b5..bd9316d89243 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -185,7 +185,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * Returns IMA_MEASURE, IMA_APPRAISE mask.
+  *
+  */
+-int ima_get_action(struct user_namespace *mnt_userns, struct inode *inode,
++u64 ima_get_action(struct user_namespace *mnt_userns, struct inode *inode,
+ 		   const struct cred *cred, u32 secid, int mask,
+ 		   enum ima_hooks func, int *pcr,
+ 		   struct ima_template_desc **template_desc,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index d33765c7aaa7..fe1f4ef1bb9d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -208,7 +208,8 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	char *pathbuf = NULL;
+ 	char filename[NAME_MAX];
+ 	const char *pathname = NULL;
+-	int rc = 0, action, must_appraise = 0;
++	u64 action;
++	int rc = 0, must_appraise = 0;
+ 	int pcr = CONFIG_IMA_MEASURE_PCR_IDX;
+ 	struct evm_ima_xattr_data *xattr_value = NULL;
+ 	struct modsig *modsig = NULL;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 8d6f5d85dfa4..084b5d9257da 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -74,7 +74,7 @@ struct ima_rule_opt_list {
+ struct ima_rule_entry {
+ 	struct list_head list;
+ 	int action;
+-	unsigned int flags;
++	u64 flags;
+ 	enum ima_hooks func;
+ 	int mask;
+ 	unsigned long fsmagic;
+@@ -702,14 +702,14 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * list when walking it.  Reads are many orders of magnitude more numerous
+  * than writes so ima_match_policy() is classical RCU candidate.
+  */
+-int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
++u64 ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
+ 		     const struct cred *cred, u32 secid, enum ima_hooks func,
+ 		     int mask, int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+ 		     const char *func_data, unsigned int *allowed_algos)
+ {
+ 	struct ima_rule_entry *entry;
+-	int action = 0, actmask = flags | (flags << 1);
++	u64 action = 0, actmask = flags | (flags << 1);
+ 	struct list_head *ima_rules_tmp;
+ 
+ 	if (template_desc && !*template_desc)
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 2ab85f286d17..cb4a8cd2a213 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -23,27 +23,27 @@
+ #include <crypto/hash_info.h>
+ 
+ /* iint action cache flags */
+-#define IMA_MEASURE		0x00000001
+-#define IMA_MEASURED		0x00000002
+-#define IMA_APPRAISE		0x00000004
+-#define IMA_APPRAISED		0x00000008
+-/*#define IMA_COLLECT		0x00000010  do not use this flag */
+-#define IMA_COLLECTED		0x00000020
+-#define IMA_AUDIT		0x00000040
+-#define IMA_AUDITED		0x00000080
+-#define IMA_HASH		0x00000100
+-#define IMA_HASHED		0x00000200
++#define IMA_MEASURE		0x0000000000000001
++#define IMA_MEASURED		0x0000000000000002
++#define IMA_APPRAISE		0x0000000000000004
++#define IMA_APPRAISED		0x0000000000000008
++/*#define IMA_COLLECT		0x0000000000000010  do not use this flag */
++#define IMA_COLLECTED		0x0000000000000020
++#define IMA_AUDIT		0x0000000000000040
++#define IMA_AUDITED		0x0000000000000080
++#define IMA_HASH		0x0000000000000100
++#define IMA_HASHED		0x0000000000000200
+ 
+ /* iint cache flags */
+-#define IMA_ACTION_FLAGS	0xff000000
+-#define IMA_DIGSIG_REQUIRED	0x01000000
+-#define IMA_PERMIT_DIRECTIO	0x02000000
+-#define IMA_NEW_FILE		0x04000000
+-#define EVM_IMMUTABLE_DIGSIG	0x08000000
+-#define IMA_FAIL_UNVERIFIABLE_SIGS	0x10000000
+-#define IMA_MODSIG_ALLOWED	0x20000000
+-#define IMA_CHECK_BLACKLIST	0x40000000
+-#define IMA_META_IMMUTABLE_REQUIRED	0x80000000
++#define IMA_ACTION_FLAGS	0xffffffffff000000
++#define IMA_DIGSIG_REQUIRED	0x0000000001000000
++#define IMA_PERMIT_DIRECTIO	0x0000000002000000
++#define IMA_NEW_FILE		0x0000000004000000
++#define EVM_IMMUTABLE_DIGSIG	0x0000000008000000
++#define IMA_FAIL_UNVERIFIABLE_SIGS	0x0000000010000000
++#define IMA_MODSIG_ALLOWED	0x0000000020000000
++#define IMA_CHECK_BLACKLIST	0x0000000040000000
++#define IMA_META_IMMUTABLE_REQUIRED	0x0000000080000000
+ 
+ #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
+ 				 IMA_HASH | IMA_APPRAISE_SUBMASK)
+@@ -52,16 +52,16 @@
+ 				 IMA_APPRAISED_SUBMASK)
+ 
+ /* iint subaction appraise cache flags */
+-#define IMA_FILE_APPRAISE	0x00001000
+-#define IMA_FILE_APPRAISED	0x00002000
+-#define IMA_MMAP_APPRAISE	0x00004000
+-#define IMA_MMAP_APPRAISED	0x00008000
+-#define IMA_BPRM_APPRAISE	0x00010000
+-#define IMA_BPRM_APPRAISED	0x00020000
+-#define IMA_READ_APPRAISE	0x00040000
+-#define IMA_READ_APPRAISED	0x00080000
+-#define IMA_CREDS_APPRAISE	0x00100000
+-#define IMA_CREDS_APPRAISED	0x00200000
++#define IMA_FILE_APPRAISE	0x0000000000001000
++#define IMA_FILE_APPRAISED	0x0000000000002000
++#define IMA_MMAP_APPRAISE	0x0000000000004000
++#define IMA_MMAP_APPRAISED	0x0000000000008000
++#define IMA_BPRM_APPRAISE	0x0000000000010000
++#define IMA_BPRM_APPRAISED	0x0000000000020000
++#define IMA_READ_APPRAISE	0x0000000000040000
++#define IMA_READ_APPRAISED	0x0000000000080000
++#define IMA_CREDS_APPRAISE	0x0000000000100000
++#define IMA_CREDS_APPRAISED	0x0000000000200000
+ #define IMA_APPRAISE_SUBMASK	(IMA_FILE_APPRAISE | IMA_MMAP_APPRAISE | \
+ 				 IMA_BPRM_APPRAISE | IMA_READ_APPRAISE | \
+ 				 IMA_CREDS_APPRAISE)
+@@ -133,7 +133,7 @@ struct integrity_iint_cache {
+ 	struct mutex mutex;	/* protects: version, flags, digest */
+ 	struct inode *inode;	/* back pointer to inode in question */
+ 	u64 version;		/* track inode changes */
+-	unsigned long flags;
++	u64 flags;
+ 	unsigned long measured_pcrs;
+ 	unsigned long atomic_flags;
+ 	enum integrity_status ima_file_status:4;
+-- 
+2.32.0
 
-I created another patch that fixes the issue in the BCM2835 driver instead
-(see https://marc.info/?l=3Dlinux-spi&m=3D163285906725366&w=3D2).
-
-However I still think that the fix I proposed for TPM is valueable, becaus=
-e
-it saves us from any SPI controller driver that does not know/care about t=
-he
-issue that is caused in TPM by unregistering the controller in the shutdow=
-n
-handler. Note that the freescale DSPI driver is another candidate that beh=
-aves
-errorneous in this way.
-
-Regards,
-Lino
