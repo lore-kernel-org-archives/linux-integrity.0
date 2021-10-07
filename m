@@ -2,139 +2,87 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52437C433EF
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Oct 2021 09:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD26C433EF
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Oct 2021 18:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34024611C1
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Oct 2021 09:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3A960F6F
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Oct 2021 18:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240707AbhJGJgi (ORCPT
+        id S243545AbhJGSaz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 Oct 2021 05:36:38 -0400
-Received: from smtp-out1.suse.de ([195.135.220.28]:49216 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240712AbhJGJgg (ORCPT
+        Thu, 7 Oct 2021 14:30:55 -0400
+Received: from smtp-8fae.mail.infomaniak.ch ([83.166.143.174]:48595 "EHLO
+        smtp-8fae.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233816AbhJGSaz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Oct 2021 05:36:36 -0400
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 5C14122636;
-        Thu,  7 Oct 2021 09:34:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1633599282;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oCNTuDA86Yx9mhczyzKj3htwjs7J498UQ14YZsykrCc=;
-        b=v8MxO+Z9+wZUj7kyZJZZsj43QSOA9qP8qdBGZl5KhBakBb7WMCMhTbzUmV47v8QXhJ2oWM
-        pBqiJhqVd6bMgwVAEiAiWHGuEF2m9gFUztFOePARjtQNtjj61/c6ivM75N0s9OUt48w1+8
-        PRgbeSewhDMCZ5Onub5cHBZiqF5ZMaw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1633599282;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oCNTuDA86Yx9mhczyzKj3htwjs7J498UQ14YZsykrCc=;
-        b=a9zOJ7KaE5DQmuYtspuTo/lmPqddlua1mL5oSf3SZJW0w69HoBw70k2NYJyOP15DSxgVm5
-        W6HJCzjjzGnSWxAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1071E13513;
-        Thu,  7 Oct 2021 09:34:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id eu7CATK/XmGfNwAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Thu, 07 Oct 2021 09:34:42 +0000
-Date:   Thu, 7 Oct 2021 11:34:40 +0200
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Alex Henrie <alexh@vpitech.com>, linux-integrity@vger.kernel.org,
-        alexhenrie24@gmail.com, Curtis Veit <veit@vpieng.com>
-Subject: Re: [PATCH v2] ima: add gid support
-Message-ID: <YV6/MBZzZ5GS+MCv@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20211005003237.501882-1-alexh@vpitech.com>
- <81863154aebf9d3e023bd37acca8ff265a187fd0.camel@linux.ibm.com>
+        Thu, 7 Oct 2021 14:30:55 -0400
+X-Greylist: delayed 323 seconds by postgrey-1.27 at vger.kernel.org; Thu, 07 Oct 2021 14:30:54 EDT
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HQKbH6sXZzMq0pQ;
+        Thu,  7 Oct 2021 20:28:59 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4HQKbF323jzlhNwp;
+        Thu,  7 Oct 2021 20:28:57 +0200 (CEST)
+Subject: Re: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
+To:     Kees Cook <keescook@chromium.org>
+Cc:     bauen1 <j2468h@googlemail.com>, akpm@linux-foundation.org,
+        arnd@arndb.de, casey@schaufler-ca.com,
+        christian.brauner@ubuntu.com, christian@python.org, corbet@lwn.net,
+        cyphar@cyphar.com, deven.desai@linux.microsoft.com,
+        dvyukov@google.com, ebiggers@kernel.org, ericchiang@google.com,
+        fweimer@redhat.com, geert@linux-m68k.org, jack@suse.cz,
+        jannh@google.com, jmorris@namei.org,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, luto@kernel.org,
+        madvenka@linux.microsoft.com, mjg59@google.com,
+        mszeredi@redhat.com, mtk.manpages@gmail.com,
+        nramas@linux.microsoft.com, philippe.trebuchet@ssi.gouv.fr,
+        scottsh@microsoft.com, sean.j.christopherson@intel.com,
+        sgrubb@redhat.com, shuah@kernel.org, steve.dower@python.org,
+        thibaut.sautereau@clip-os.org, vincent.strubel@ssi.gouv.fr,
+        viro@zeniv.linux.org.uk, willy@infradead.org, zohar@linux.ibm.com
+References: <20201203173118.379271-1-mic@digikod.net>
+ <d3b0da18-d0f6-3f72-d3ab-6cf19acae6eb@gmail.com>
+ <2a4cf50c-7e79-75d1-7907-8218e669f7fa@digikod.net>
+ <202110061500.B8F821C@keescook>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <4c4bbd74-0599-fed5-0340-eff197bafeb1@digikod.net>
+Date:   Thu, 7 Oct 2021 20:29:31 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81863154aebf9d3e023bd37acca8ff265a187fd0.camel@linux.ibm.com>
+In-Reply-To: <202110061500.B8F821C@keescook>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Alex, Mimi,
 
-> Hi Alex,
+On 07/10/2021 00:03, Kees Cook wrote:
+> On Fri, Apr 09, 2021 at 07:15:42PM +0200, Mickaël Salaün wrote:
+>> There was no new reviews, probably because the FS maintainers were busy,
+>> and I was focused on Landlock (which is now in -next), but I plan to
+>> send a new patch series for trusted_for(2) soon.
+> 
+> Hi!
+> 
+> Did this ever happen? It looks like it's in good shape, and I think it's
+> a nice building block for userspace to have. Are you able to rebase and
+> re-send this?
 
-> On Mon, 2021-10-04 at 18:32 -0600, Alex Henrie wrote:
-> > From: Curtis Veit <veit@vpieng.com>
+I just sent it:
+https://lore.kernel.org/all/20211007182321.872075-1-mic@digikod.net/
 
-> > IMA currently supports the concept of rules based on uid where the rule
-> > is based on the uid of the file owner or the uid of the user accessing
-> > the file. It is useful to have similar rules based on gid. This patch
-> > provides that ability.
+Some Signed-off-by would be appreciated. :)
 
-> > Signed-off-by: Curtis Veit <veit@vpieng.com>
-> > Co-developed-by: Alex Henrie <alexh@vpitech.com>
-> > Signed-off-by: Alex Henrie <alexh@vpitech.com>
-> > ---
-> > v2: Trivial changes that Mimi requested
-
-> Sorry, scripts/check-patch.pl reported some warnings.  Two more trivial changes.
-
-> > ---
-> >  Documentation/ABI/testing/ima_policy |   8 +-
-> >  security/integrity/ima/ima_policy.c  | 201 +++++++++++++++++++++++----
-> >  2 files changed, 180 insertions(+), 29 deletions(-)
-
-> > diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-> > index 5c2798534950..e1a04bd3b9e5 100644
-> > --- a/Documentation/ABI/testing/ima_policy
-
-> > @@ -78,9 +81,13 @@ struct ima_rule_entry {
-> >  	unsigned long fsmagic;
-> >  	uuid_t fsuuid;
-> >  	kuid_t uid;
-> > +	kgid_t gid;
-> >  	kuid_t fowner;
-> > +	kgid_t fgroup;
-> >  	bool (*uid_op)(kuid_t, kuid_t);    /* Handlers for operators       */
-> > +	bool (*gid_op)(kgid_t, kgid_t);
-> >  	bool (*fowner_op)(kuid_t, kuid_t); /* uid_eq(), uid_gt(), uid_lt() */
-> > +	bool (*fgroup_op)(kgid_t, kgid_t); /* gid_eq(), gid_gt(), gid_lt() */
-
-> scripts/checkpatch.pl complains about missing variables.
-+1
-
-> >  	int pcr;
-> >  	unsigned int allowed_algos; /* bitfield of allowed hash algorithms */
-> >  	struct {
-
-> > @@ -582,10 +590,23 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
-> >  		} else if (!rule->uid_op(cred->euid, rule->uid))
-> >  			return false;
-> >  	}
-> > -
-> > +	if ((rule->flags & IMA_GID) && !rule->gid_op(rule->gid, cred->gid))
-
-> All of uid_op/gid_op calls in ima_match_rules() pass the "cred->xxxx,
-> rule->xxx" except here, where it is rule->gid, cred->rule.   Reversing
-> the parameters here will help with addressing the checkpatch.pl
-> warning.
-+1
-
-Apart from those checkpatch issues patch LGTM.
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
-
-Kind regards,
-Petr
-
-> thanks,
-
-> Mimi
-
+> 
+> I've tended to aim these things at akpm if Al gets busy. (And since
+> you've had past review from Al, that should be hopefully sufficient.)
+> 
+> Thanks for chasing this!
+> 
+> -Kees
+> 
