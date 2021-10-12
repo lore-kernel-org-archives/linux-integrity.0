@@ -2,72 +2,135 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B72C433EF
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Oct 2021 15:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA6CC433F5
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Oct 2021 15:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC7AB6103D
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Oct 2021 15:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED2B761076
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Oct 2021 15:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237374AbhJLPcD (ORCPT
+        id S237580AbhJLPmJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 12 Oct 2021 11:32:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237355AbhJLPcD (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 12 Oct 2021 11:32:03 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C843160F3A;
-        Tue, 12 Oct 2021 15:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634052601;
-        bh=JpF6An/Riv/dMcUkrhm8JSEkFKJMUWfWjMUX6PwjxwE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pgxa5ioPEQcnUN4WhfnouRG3+p0X4c1Fi/dcxyxpGiHcKIBi06OUe7KEFSmwQnEj4
-         9CKnSJy3J9R8HsExGL6hXZYoLmQ+sxuj4KL+EPjfyAuG3d13IiqBOrlo2oRzAIULso
-         7eZcbjqZAQHghUA65lYc4vOS4QvnxbPN9TqnzCdpZ2F78zYQZ3vA1KBEw6oEPOiXlj
-         BirBxvEBgeoRDGprFFcSgTdznJV5JOklg4yzuG54yHVd4/JPB5YLqe4vUo/oXTu9MU
-         2SX9eh/7lEHihPPkibIqfDcSq1xls9O6cJkqA/IH7wtdWXeMiD5WDE+PFMWDpceM8l
-         8yCsauCyBBbfA==
-Message-ID: <31619f2f192a4f1584e458f468422cf6e8f7542f.camel@kernel.org>
-Subject: Re: [PATCH] tpm: ibmvtpm: Make use of dma_alloc_coherent()
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Cai Huoqing <caihuoqing@baidu.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linuxppc-dev@lists.ozlabs.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 12 Oct 2021 18:29:58 +0300
-In-Reply-To: <20211010160147.590-1-caihuoqing@baidu.com>
-References: <20211010160147.590-1-caihuoqing@baidu.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.40.0-1 
+        Tue, 12 Oct 2021 11:42:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237522AbhJLPmC (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 12 Oct 2021 11:42:02 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A271C061570
+        for <linux-integrity@vger.kernel.org>; Tue, 12 Oct 2021 08:40:00 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1maJsi-0000GR-MA; Tue, 12 Oct 2021 17:39:56 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1maJsi-0004jt-3w; Tue, 12 Oct 2021 17:39:56 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1maJsf-0004ZK-1f; Tue, 12 Oct 2021 17:39:53 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>
+Cc:     Mark Brown <broonie@kernel.org>, kernel@pengutronix.de,
+        linux-integrity@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: [PATCH v2 20/20] tpm: st33zp24: Make st33zp24_remove() return void
+Date:   Tue, 12 Oct 2021 17:39:45 +0200
+Message-Id: <20211012153945.2651412-21-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211012153945.2651412-1-u.kleine-koenig@pengutronix.de>
+References: <20211012153945.2651412-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Patch-Hashes: v=1; h=sha256; i=2RfjlQngpYVdDmF7/sh7VSPt9aAaxh1F9oCTWbtcFaI=; m=YmvLiK47JXRlSzLFzxqwlRAcg9TrPiYd49fSIG4963c=; p=J4sUOjxlatUSZp6KZXQHP7X5Nt2PutSw8I364wwqzYo=; g=fcea7ec8c956ac6a1c9afce0aa9705bb0fa52453
+X-Patch-Sig: m=pgp; i=u.kleine-koenig@pengutronix.de; s=0x0D2511F322BFAB1C1580266BE2DCDD9132669BD6; b=iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmFlrDsACgkQwfwUeK3K7Al++wf/T7U BatUKSlTBuJgmVw3wJPKYATQxH2k+OkCGL8UcAuKk++dm+EX1WT6PF/3yyhszwvZmFK8NkysabDTK OKDMQ+V3fg/dlAaVYv3L8uqC/BHO9qL0lffpGhogS1uF1UMbnO0IP2k/HqRxknijkWWsN5JfjAC5M 7CiYl8yhdAaYuzXqxQSL27iV2QicbzQjZ9gSpENmnJ0gdvlge+G3FAq6Fh0DXdF+SyhtGYM2ZV+Px XWAQLPxTRP+4PrpBAuJIdmsVzUzvw/9ANbXmqxoh4Js27SZt1pYgZrcXBezQWTSNIUFb9CreIdOUG ZHiIasfdEq0A+UmpOcxU1FfA8J2DwFQ==
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2021-10-11 at 00:01 +0800, Cai Huoqing wrote:
-> Replacing kmalloc/kfree/get_zeroed_page/free_page/dma_map_single/
-  ~~~~~~~~~
-  Replace
+Up to now st33zp24_remove() returns zero unconditionally. Make it return
+void instead which makes it easier to see in the callers that there is
+no error to handle.
 
-> dma_unmap_single() with dma_alloc_coherent/dma_free_coherent()
-> helps to reduce code size, and simplify the code, and coherent
-> DMA will not clear the cache every time.
->=20
-> Signed-off-by: Cai Huoqing <caihuoqing@baidu.com>
+Also the return value of i2c and spi remove callbacks is ignored anyway.
 
-If this does not do functionally anything useful, there's no
-reason to apply this.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/char/tpm/st33zp24/i2c.c      | 5 +----
+ drivers/char/tpm/st33zp24/spi.c      | 5 +----
+ drivers/char/tpm/st33zp24/st33zp24.c | 3 +--
+ drivers/char/tpm/st33zp24/st33zp24.h | 2 +-
+ 4 files changed, 4 insertions(+), 11 deletions(-)
 
-It is also missing information why the substitution is possible.
-
-Field tested code is better than clean code, i.e. we don not
-risk at having possible new regressions just for a bit nicer
-layout...
-
-/Jarkko
-
+diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
+index 7c617edff4ca..3170d59d660c 100644
+--- a/drivers/char/tpm/st33zp24/i2c.c
++++ b/drivers/char/tpm/st33zp24/i2c.c
+@@ -267,11 +267,8 @@ static int st33zp24_i2c_probe(struct i2c_client *client,
+ static int st33zp24_i2c_remove(struct i2c_client *client)
+ {
+ 	struct tpm_chip *chip = i2c_get_clientdata(client);
+-	int ret;
+ 
+-	ret = st33zp24_remove(chip);
+-	if (ret)
+-		return ret;
++	st33zp24_remove(chip);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
+index a75dafd39445..ccd9e42b8eab 100644
+--- a/drivers/char/tpm/st33zp24/spi.c
++++ b/drivers/char/tpm/st33zp24/spi.c
+@@ -384,11 +384,8 @@ static int st33zp24_spi_probe(struct spi_device *dev)
+ static int st33zp24_spi_remove(struct spi_device *dev)
+ {
+ 	struct tpm_chip *chip = spi_get_drvdata(dev);
+-	int ret;
+ 
+-	ret = st33zp24_remove(chip);
+-	if (ret)
+-		return ret;
++	st33zp24_remove(chip);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index 4ec10ab5e576..2b63654c38d6 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -588,10 +588,9 @@ EXPORT_SYMBOL(st33zp24_probe);
+  * @param: tpm_data, the tpm phy.
+  * @return: 0 in case of success.
+  */
+-int st33zp24_remove(struct tpm_chip *chip)
++void st33zp24_remove(struct tpm_chip *chip)
+ {
+ 	tpm_chip_unregister(chip);
+-	return 0;
+ }
+ EXPORT_SYMBOL(st33zp24_remove);
+ 
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.h b/drivers/char/tpm/st33zp24/st33zp24.h
+index 6747be1e2502..b387a476c555 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.h
++++ b/drivers/char/tpm/st33zp24/st33zp24.h
+@@ -34,5 +34,5 @@ int st33zp24_pm_resume(struct device *dev);
+ 
+ int st33zp24_probe(void *phy_id, const struct st33zp24_phy_ops *ops,
+ 		   struct device *dev, int irq, int io_lpcpd);
+-int st33zp24_remove(struct tpm_chip *chip);
++void st33zp24_remove(struct tpm_chip *chip);
+ #endif /* __LOCAL_ST33ZP24_H__ */
+-- 
+2.30.2
 
