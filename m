@@ -2,143 +2,94 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7F8C433EF
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Oct 2021 13:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FD7C433F5
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Oct 2021 15:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4C72610E7
-	for <linux-integrity@archiver.kernel.org>; Thu, 14 Oct 2021 13:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 156A060E0C
+	for <linux-integrity@archiver.kernel.org>; Fri, 15 Oct 2021 15:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbhJNNGN (ORCPT
+        id S240916AbhJOPWH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 14 Oct 2021 09:06:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63370 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231300AbhJNNGN (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 14 Oct 2021 09:06:13 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19EB24Nn007542;
-        Thu, 14 Oct 2021 09:04:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=RQwZSVnWRQfmUby1fOBEr0l1Q2Bj7qzzRHKtNjsAO6I=;
- b=bQaLuzpaMK+4ujE3LQv7M3fBh5QJd4TQmeDID4duiDNleklsk7Cuk236hqjTFoJapE07
- UJ1N6/KrzozD887FRmW2Tu8GMOEsf/mqSaCwyFyRg0m6Z627U+Cwf/i6wPG4zpRIgWyG
- c4Q+QaGY8UoS6wDkDZX8GzTkZ3TVrdk2Xv9bTrmRESO4px/fSc1JEaPOTPSvOoySJfxO
- lQNjtmRfNlFZsQddzBfH2ADb47JOXemCg6iQvmdQy5FXo2vGFjGMhqkQef36EDSUVChs
- bBzSRFZhhzfYdGDn0Od+exZpa2h45Cb4ubVODfWhEqZA1lZr8p2u/yr486YGs1yb0kd5 eQ== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3bnt94587f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Oct 2021 09:03:44 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19ECprG6005422;
-        Thu, 14 Oct 2021 13:01:35 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma05fra.de.ibm.com with ESMTP id 3bk2qaacfp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Oct 2021 13:01:35 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19ED1WcY47120886
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Oct 2021 13:01:32 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6102A4053;
-        Thu, 14 Oct 2021 13:01:32 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 88633A4051;
-        Thu, 14 Oct 2021 13:01:31 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.55.249])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Oct 2021 13:01:31 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v1 2/3] fs: extend the trusted_for syscall to call IMA
-Date:   Thu, 14 Oct 2021 09:01:24 -0400
-Message-Id: <20211014130125.6991-2-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211014130125.6991-1-zohar@linux.ibm.com>
-References: <20211014130125.6991-1-zohar@linux.ibm.com>
+        Fri, 15 Oct 2021 11:22:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232267AbhJOPWG (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Fri, 15 Oct 2021 11:22:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9E2F361181;
+        Fri, 15 Oct 2021 15:19:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1634311200;
+        bh=fWcVkFP52FOs/xPDPEmntNU+EM79bIknhYN49kApNB4=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=YYOZC4O91hPiL10R/oH31GOv5+FZW9yAD+ts/qdMMK/TcNeY9mPXAB0gH71liXiic
+         99nPBL5dLmNzjPFxqZAsnhnwpeZjtx4vVunzgJlnuA2bb/3XVQN8Go3D7y23I/ST4K
+         3ORRS0xJy+bBt9TNFJThGvytaAPCrzbSMCr6hSUYoPkGysgTvAGb9KO1w4y7ONwbxk
+         mf47iBiT9GeewpngVjCJxzHp7u8/L9lHRNPqL1oZWDG6E6nZwa5mrugJUSUBX+wvpp
+         nSXtdyiDm4POrtW70M3cx/IL8vZh/JMTuJHxOvdjlgllK7/A++/v9ZnBOZRJmUubU3
+         FqUD22sGJLv5A==
+Message-ID: <31d49f7785dd82fd2f0c1078c9a94153e3c389ac.camel@kernel.org>
+Subject: Re: [PATCH 2/2] tpm: use SM3 instead of SM3_256
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Date:   Fri, 15 Oct 2021 18:19:57 +0300
+In-Reply-To: <5db32f21-1df7-c92e-42a1-a2a85b29dfbf@linux.alibaba.com>
+References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
+         <20211009130828.101396-3-tianjia.zhang@linux.alibaba.com>
+         <c6c2337ed83c237f70716cb4c62794d1d3da31f2.camel@kernel.org>
+         <5db32f21-1df7-c92e-42a1-a2a85b29dfbf@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.40.0-1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uFH-1qJrG5ogzbhdwb1f_520nqU1pz2B
-X-Proofpoint-ORIG-GUID: uFH-1qJrG5ogzbhdwb1f_520nqU1pz2B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-14_03,2021-10-14_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
- malwarescore=0 adultscore=0 phishscore=0 impostorscore=0 mlxlogscore=854
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109230001 definitions=main-2110140084
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Extend the trusted_for syscall to call the newly defined
-ima_trusted_for hook.
+On Thu, 2021-10-14 at 17:46 +0800, Tianjia Zhang wrote:
+> Hi Jarkko,
+>=20
+> On 10/12/21 11:21 PM, Jarkko Sakkinen wrote:
+> > On Sat, 2021-10-09 at 21:08 +0800, Tianjia Zhang wrote:
+> > > According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+> > > SM3 always produces a 256-bit hash value and there are no plans for
+> > > other length development, so there is no ambiguity in the name of sm3=
+.
+> > >=20
+> > > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> >=20
+> > This is not enough to make any changes because the commit message
+> > does not describe what goes wrong if we keep it as it was.
+> >=20
+> > /Jarkko
+> >=20
+>=20
+> This did not cause an error, just to use a more standard algorithm name.=
+=20
+> If it is possible to use the SM3 name instead of SM3_256 if it can be=20
+> specified from the source, it is of course better. I have contacted the=
+=20
+> trustedcomputinggroup and have not yet received a reply.
+>=20
+> Best regards,
+> Tianjia
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- fs/open.c           | 3 +++
- include/linux/ima.h | 9 +++++++++
- 2 files changed, 12 insertions(+)
+Why don't you then create a patch set that fully removes SM3_256, if it
+is incorrect?
 
-diff --git a/fs/open.c b/fs/open.c
-index c79c138a638c..4d54e2a727e1 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -585,6 +585,9 @@ SYSCALL_DEFINE3(trusted_for, const int, fd, const enum trusted_for_usage, usage,
- 	err = inode_permission(file_mnt_user_ns(f.file), inode,
- 			mask | MAY_ACCESS);
- 
-+	if (!err)
-+		err = ima_trusted_for(f.file, usage);
-+
- out_fd:
- 	fdput(f);
- 	return err;
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index b6ab66a546ae..603df9932817 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -12,12 +12,15 @@
- #include <linux/security.h>
- #include <linux/kexec.h>
- #include <crypto/hash_info.h>
-+#include <uapi/linux/trusted-for.h>
- struct linux_binprm;
- 
- #ifdef CONFIG_IMA
- extern enum hash_algo ima_get_current_hash_algo(void);
- extern int ima_bprm_check(struct linux_binprm *bprm);
- extern int ima_file_check(struct file *file, int mask);
-+extern int ima_trusted_for(struct file *file,
-+			   const enum trusted_for_usage usage);
- extern void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
- 				    struct inode *inode);
- extern void ima_file_free(struct file *file);
-@@ -81,6 +84,12 @@ static inline int ima_file_check(struct file *file, int mask)
- 	return 0;
- }
- 
-+static inline int ima_trusted_for(struct file *file,
-+				  const enum trusted_for_usage usage)
-+{
-+	return 0;
-+}
-+
- static inline void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
- 					   struct inode *inode)
- {
--- 
-2.27.0
+This looks a bit half-baked patch set.
 
+/Jarkko
