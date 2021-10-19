@@ -2,32 +2,27 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCA8C433EF
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Oct 2021 09:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36E3C4332F
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Oct 2021 10:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34E8D6139E
-	for <linux-integrity@archiver.kernel.org>; Tue, 19 Oct 2021 09:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F4E961374
+	for <linux-integrity@archiver.kernel.org>; Tue, 19 Oct 2021 10:04:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234976AbhJSJmJ (ORCPT
+        id S235098AbhJSKGm (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 19 Oct 2021 05:42:09 -0400
-Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:60981 "EHLO
-        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234808AbhJSJmI (ORCPT
+        Tue, 19 Oct 2021 06:06:42 -0400
+Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:55241 "EHLO
+        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234794AbhJSKGl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 19 Oct 2021 05:42:08 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0UsueS9M_1634636390;
-Received: from 30.240.101.11(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UsueS9M_1634636390)
+        Tue, 19 Oct 2021 06:06:41 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0UsupxQ._1634637864;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0UsupxQ._1634637864)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 19 Oct 2021 17:39:51 +0800
-Message-ID: <aac78812-18dc-5e78-ab48-61e15eeb9315@linux.alibaba.com>
-Date:   Tue, 19 Oct 2021 17:39:49 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.2.0
-Subject: Re: [PATCH 1/2] crypto: use SM3 instead of SM3_256
-Content-Language: en-US
-To:     Jarkko Sakkinen <jarkko@kernel.org>, jejb@linux.ibm.com,
+          Tue, 19 Oct 2021 18:04:25 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -41,80 +36,122 @@ To:     Jarkko Sakkinen <jarkko@kernel.org>, jejb@linux.ibm.com,
         linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20211009130828.101396-1-tianjia.zhang@linux.alibaba.com>
- <20211009130828.101396-2-tianjia.zhang@linux.alibaba.com>
- <7035153d58e220473fe3cd17c9f574f2d91c740b.camel@linux.ibm.com>
- <dbac037710d711959d5ce0969f80ea0dd18a176e.camel@kernel.org>
- <af8c2098c4cfe23b941a191f7b4ec0e3a5251760.camel@linux.ibm.com>
- <41aba1e1c5849b58f83108eb9f9f115d0cd5826f.camel@kernel.org>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <41aba1e1c5849b58f83108eb9f9f115d0cd5826f.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v2 1/2] crypto: use SM3 instead of SM3_256
+Date:   Tue, 19 Oct 2021 18:04:22 +0800
+Message-Id: <20211019100423.43615-2-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+In-Reply-To: <20211019100423.43615-1-tianjia.zhang@linux.alibaba.com>
+References: <20211019100423.43615-1-tianjia.zhang@linux.alibaba.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Jarkko,
+According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+SM3 always produces a 256-bit hash value and there are no plans for
+other length development, so there is no ambiguity in the name of sm3.
 
-On 10/18/21 9:41 PM, Jarkko Sakkinen wrote:
-> On Mon, 2021-10-18 at 09:32 -0400, James Bottomley wrote:
->> On Mon, 2021-10-18 at 16:27 +0300, Jarkko Sakkinen wrote:
->>> On Mon, 2021-10-18 at 09:05 -0400, James Bottomley wrote:
->>>> On Sat, 2021-10-09 at 21:08 +0800, Tianjia Zhang wrote:
->>>> [...]
->>>>> diff --git a/include/uapi/linux/hash_info.h
->>>>> b/include/uapi/linux/hash_info.h
->>>>> index 74a8609fcb4d..1355525dd4aa 100644
->>>>> --- a/include/uapi/linux/hash_info.h
->>>>> +++ b/include/uapi/linux/hash_info.h
->>>>> @@ -32,7 +32,7 @@ enum hash_algo {
->>>>>          HASH_ALGO_TGR_128,
->>>>>          HASH_ALGO_TGR_160,
->>>>>          HASH_ALGO_TGR_192,
->>>>> -       HASH_ALGO_SM3_256,
->>>>> +       HASH_ALGO_SM3,
->>>>>          HASH_ALGO_STREEBOG_256,
->>>>>          HASH_ALGO_STREEBOG_512,
->>>>>          HASH_ALGO__LAST
->>>>
->>>> This is another one you can't do: all headers in UAPI are exports
->>>> to userspace and the definitions constitute an ABI.  If you simply
->>>> do a rename, every userspace program that uses the current
->>>> definition will immediately break on compile.  You could add
->>>> HASH_ALGO_SM3, but you can't remove HASH_ALGO_SM3_256
->>>>
->>>> James
->>>
->>> So: shouldn't then also the old symbol continue to work also
->>> semantically?
->>
->> Yes, that's the point: you can add a new definition ... in this case an
->> alias for the old one, but you can't remove a definition that's been
->> previously exported.
-> 
-> Thanks, this of course obvious :-) I forgot temporarily that crypto
-> has uapi interface. Tianjia, this patch set break production systems,
-> so no chance we would ever merge it in this form.
-> 
-> Why not just do this:
-> 
-> ...
-> HASH_ALGO_SM3_256,
-> HASH_ALOG_SM3 = HASH_ALOG_SM_256,
-> ...
-> 
-> There is not good reason to mod the implementation because both symbols
-> are kept.
-> 
-> /Jarkko
-> 
+Suggested-by: James Bottomley <jejb@linux.ibm.com>
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+---
+ Documentation/security/keys/trusted-encrypted.rst | 2 +-
+ crypto/hash_info.c                                | 4 ++--
+ drivers/char/tpm/tpm2-cmd.c                       | 2 +-
+ include/crypto/hash_info.h                        | 2 +-
+ include/uapi/linux/hash_info.h                    | 3 ++-
+ security/keys/trusted-keys/trusted_tpm2.c         | 2 +-
+ 6 files changed, 8 insertions(+), 7 deletions(-)
 
-Very good suggestion, I will do this in the next version patch. Maybe 
-this is more appropriate:
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 80d5a5af62a1..3292461517f6 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -162,7 +162,7 @@ Usage::
+                      default 1 (resealing allowed)
+        hash=         hash algorithm name as a string. For TPM 1.x the only
+                      allowed value is sha1. For TPM 2.x the allowed values
+-                     are sha1, sha256, sha384, sha512 and sm3-256.
++                     are sha1, sha256, sha384, sha512 and sm3.
+        policydigest= digest for the authorization policy. must be calculated
+                      with the same hash algorithm as specified by the 'hash='
+                      option.
+diff --git a/crypto/hash_info.c b/crypto/hash_info.c
+index a49ff96bde77..fe0119407219 100644
+--- a/crypto/hash_info.c
++++ b/crypto/hash_info.c
+@@ -26,7 +26,7 @@ const char *const hash_algo_name[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_TGR_128]	= "tgr128",
+ 	[HASH_ALGO_TGR_160]	= "tgr160",
+ 	[HASH_ALGO_TGR_192]	= "tgr192",
+-	[HASH_ALGO_SM3_256]	= "sm3",
++	[HASH_ALGO_SM3]		= "sm3",
+ 	[HASH_ALGO_STREEBOG_256] = "streebog256",
+ 	[HASH_ALGO_STREEBOG_512] = "streebog512",
+ };
+@@ -50,7 +50,7 @@ const int hash_digest_size[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_TGR_128]	= TGR128_DIGEST_SIZE,
+ 	[HASH_ALGO_TGR_160]	= TGR160_DIGEST_SIZE,
+ 	[HASH_ALGO_TGR_192]	= TGR192_DIGEST_SIZE,
+-	[HASH_ALGO_SM3_256]	= SM3256_DIGEST_SIZE,
++	[HASH_ALGO_SM3]		= SM3_DIGEST_SIZE,
+ 	[HASH_ALGO_STREEBOG_256] = STREEBOG256_DIGEST_SIZE,
+ 	[HASH_ALGO_STREEBOG_512] = STREEBOG512_DIGEST_SIZE,
+ };
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a25815a6f625..20f55de9d87b 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -19,7 +19,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+ 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
++	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
+ };
+ 
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+diff --git a/include/crypto/hash_info.h b/include/crypto/hash_info.h
+index dd4f06785049..c1e6b2884732 100644
+--- a/include/crypto/hash_info.h
++++ b/include/crypto/hash_info.h
+@@ -32,7 +32,7 @@
+ #define TGR192_DIGEST_SIZE 24
+ 
+ /* not defined in include/crypto/ */
+-#define SM3256_DIGEST_SIZE 32
++#define SM3_DIGEST_SIZE 32
+ 
+ extern const char *const hash_algo_name[HASH_ALGO__LAST];
+ extern const int hash_digest_size[HASH_ALGO__LAST];
+diff --git a/include/uapi/linux/hash_info.h b/include/uapi/linux/hash_info.h
+index 74a8609fcb4d..3829279b2d37 100644
+--- a/include/uapi/linux/hash_info.h
++++ b/include/uapi/linux/hash_info.h
+@@ -32,7 +32,8 @@ enum hash_algo {
+ 	HASH_ALGO_TGR_128,
+ 	HASH_ALGO_TGR_160,
+ 	HASH_ALGO_TGR_192,
+-	HASH_ALGO_SM3_256,
++	HASH_ALGO_SM3,
++	HASH_ALGO_SM3_256 = HASH_ALGO_SM3,
+ 	HASH_ALGO_STREEBOG_256,
+ 	HASH_ALGO_STREEBOG_512,
+ 	HASH_ALGO__LAST
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..52a696035176 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -23,7 +23,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+ 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
++	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
+ };
+ 
+ static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
+-- 
+2.19.1.3.ge56e4f7
 
-   HASH_ALGO_SM3,
-   HASH_ALGO_SM3_256 = HASH_ALGO_SM3,
-
-Best regards,
-Tianjia
