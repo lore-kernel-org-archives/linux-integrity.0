@@ -2,90 +2,92 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3100C433FE
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Oct 2021 00:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D84C433F5
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Oct 2021 16:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1B7C6108D
-	for <linux-integrity@archiver.kernel.org>; Sat, 23 Oct 2021 00:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65B26604AC
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Oct 2021 16:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbhJWAui (ORCPT
+        id S230426AbhJXQyC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 22 Oct 2021 20:50:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229507AbhJWAui (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 22 Oct 2021 20:50:38 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id ADB5F6101C;
-        Sat, 23 Oct 2021 00:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634950100;
-        bh=kbtNHfGbGhSMTAw0+cA9930pf9e1d4ODVtDxLJB8ts0=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=Eo8NRWz4J4aoPfPJ2sLX/Xrbd8+vVzacRcBGYaC9WBuZFnUcrew6/6//GZeuq8O2C
-         htN23e6J3Q39RBFAS1DqXxIkQZHS0Y3YFPwj35yEkRbXfwq18VaLc4+akTbmegKa61
-         QFkDW3igonoSEBFsbbIKyixv6VOIKcSmE0CUPd5UUqDAIbg46od8rLrcDXwIfEYzxP
-         M31o7JQvj69xmboEk2A1IIfALhcDrpiV4q7usN9F8+IfUKLw4hwQkubO4xQNHuxpz+
-         ekIbOSY7ZPdDliovD/MLBeP08CcI1j1Jb8gQrRZIUZ2+EzRhs7V2Dz1MblFasLw//m
-         xF89ZSZqBo7+Q==
-Message-ID: <f5c87a233027c8026ae8574f3e25c9162da3bfff.camel@kernel.org>
-Subject: Re: [PATCH v2 1/2] crypto: use SM3 instead of SM3_256
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Sat, 23 Oct 2021 03:48:17 +0300
-In-Reply-To: <20211019100423.43615-2-tianjia.zhang@linux.alibaba.com>
-References: <20211019100423.43615-1-tianjia.zhang@linux.alibaba.com>
-         <20211019100423.43615-2-tianjia.zhang@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.40.4-1 
+        Sun, 24 Oct 2021 12:54:02 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:46185 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S230284AbhJXQyB (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Sun, 24 Oct 2021 12:54:01 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 19OGn5JJ004312;
+        Sun, 24 Oct 2021 19:49:05 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
+        id AC0A363A1F; Sun, 24 Oct 2021 19:49:16 +0300 (IDT)
+From:   amirmizi6@gmail.com
+To:     Eyal.Cohen@nuvoton.com, jarkko@kernel.org, oshrialkoby85@gmail.com,
+        alexander.steffen@infineon.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de, gregkh@linuxfoundation.org, benoit.houyere@st.com,
+        eajames@linux.ibm.com, joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
+        tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
+        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
+        Amir Mizinski <amirmizi6@gmail.com>
+Subject: [PATCH v17 3/6] tpm: Handle an exception for TPM Firmware Update mode.
+Date:   Sun, 24 Oct 2021 19:48:52 +0300
+Message-Id: <20211024164855.250362-4-amirmizi6@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20211024164855.250362-1-amirmizi6@gmail.com>
+References: <20211024164855.250362-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-T24gVHVlLCAyMDIxLTEwLTE5IGF0IDE4OjA0ICswODAwLCBUaWFuamlhIFpoYW5nIHdyb3RlOgo+
-IEFjY29yZGluZyB0byBodHRwczovL3Rvb2xzLmlldGYub3JnL2lkL2RyYWZ0LW9zY2NhLWNmcmct
-c20zLTAxLmh0bWwsCj4gU00zIGFsd2F5cyBwcm9kdWNlcyBhIDI1Ni1iaXQgaGFzaCB2YWx1ZSBh
-bmQgdGhlcmUgYXJlIG5vIHBsYW5zIGZvcgo+IG90aGVyIGxlbmd0aCBkZXZlbG9wbWVudCwgc28g
-dGhlcmUgaXMgbm8gYW1iaWd1aXR5IGluIHRoZSBuYW1lIG9mIHNtMy4KPiAKPiBTdWdnZXN0ZWQt
-Ynk6IEphbWVzIEJvdHRvbWxleSA8amVqYkBsaW51eC5pYm0uY29tPgo+IFNpZ25lZC1vZmYtYnk6
-IFRpYW5qaWEgWmhhbmcgPHRpYW5qaWEuemhhbmdAbGludXguYWxpYmFiYS5jb20+Cj4gLS0tCj4g
-wqBEb2N1bWVudGF0aW9uL3NlY3VyaXR5L2tleXMvdHJ1c3RlZC1lbmNyeXB0ZWQucnN0IHwgMiAr
-LQo+IMKgY3J5cHRvL2hhc2hfaW5mby5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA0ICsrLS0KPiDCoGRyaXZlcnMvY2hhci90
-cG0vdHBtMi1jbWQuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHwgMiArLQo+IMKgaW5jbHVkZS9jcnlwdG8vaGFzaF9pbmZvLmjCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMiArLQo+IMKgaW5jbHVkZS91YXBpL2xpbnV4
-L2hhc2hfaW5mby5owqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAzICsr
-LQo+IMKgc2VjdXJpdHkva2V5cy90cnVzdGVkLWtleXMvdHJ1c3RlZF90cG0yLmPCoMKgwqDCoMKg
-wqDCoMKgIHwgMiArLQo+IMKgNiBmaWxlcyBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDcgZGVs
-ZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vc2VjdXJpdHkva2V5cy90
-cnVzdGVkLWVuY3J5cHRlZC5yc3QgYi9Eb2N1bWVudGF0aW9uL3NlY3VyaXR5L2tleXMvdHJ1c3Rl
-ZC1lbmNyeXB0ZWQucnN0Cj4gaW5kZXggODBkNWE1YWY2MmExLi4zMjkyNDYxNTE3ZjYgMTAwNjQ0
-Cj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9zZWN1cml0eS9rZXlzL3RydXN0ZWQtZW5jcnlwdGVkLnJz
-dAo+ICsrKyBiL0RvY3VtZW50YXRpb24vc2VjdXJpdHkva2V5cy90cnVzdGVkLWVuY3J5cHRlZC5y
-c3QKPiBAQCAtMTYyLDcgKzE2Miw3IEBAIFVzYWdlOjoKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgZGVmYXVsdCAxIChyZXNlYWxpbmcgYWxsb3dlZCkKPiDCoMKg
-wqDCoMKgwqDCoCBoYXNoPcKgwqDCoMKgwqDCoMKgwqAgaGFzaCBhbGdvcml0aG0gbmFtZSBhcyBh
-IHN0cmluZy4gRm9yIFRQTSAxLnggdGhlIG9ubHkKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgYWxsb3dlZCB2YWx1ZSBpcyBzaGExLiBGb3IgVFBNIDIueCB0aGUg
-YWxsb3dlZCB2YWx1ZXMKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCBhcmUgc2hhMSwgc2hhMjU2LCBzaGEzODQsIHNoYTUxMiBhbmQgc20zLTI1Ni4KPiArwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBhcmUgc2hhMSwgc2hhMjU2LCBzaGEz
-ODQsIHNoYTUxMiBhbmQgc20zLgoKWW91IGNhbm5vdCByZW1vdmUgc20zLTI1NiBmcm9tIHVhcGku
-CgovSmFya2tvCgo=
+From: Amir Mizinski <amirmizi6@gmail.com>
+
+Add a condition to enable communication with the TPM while the TPM is in
+firmware update mode.
+In such a case if power was cut during the TPM firmware update, the driver
+should ignore the "selftest" command return code (TPM2_RC_UPGRADE or
+TPM2_RC_COMMAND_CODE) and skip the rest of the TPM initialization
+sequence.
+
+Suggested-by: Benoit Houyere <benoit.houyere@st.com>
+Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+---
+ drivers/char/tpm/tpm2-cmd.c | 4 ++++
+ include/linux/tpm.h         | 1 +
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a25815a..c2b541d 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -729,6 +729,10 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 
+ 	rc = tpm2_do_selftest(chip);
++
++	if (rc == TPM2_RC_UPGRADE || rc == TPM2_RC_COMMAND_CODE)
++		return 0;
++
+ 	if (rc && rc != TPM2_RC_INITIALIZE)
+ 		goto out;
+ 
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index aa11fe3..c5bf934 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -207,6 +207,7 @@ enum tpm2_return_codes {
+ 	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
+ 	TPM2_RC_FAILURE		= 0x0101,
+ 	TPM2_RC_DISABLED	= 0x0120,
++	TPM2_RC_UPGRADE         = 0x012D,
+ 	TPM2_RC_COMMAND_CODE    = 0x0143,
+ 	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
+ 	TPM2_RC_REFERENCE_H0	= 0x0910,
+-- 
+2.7.4
 
