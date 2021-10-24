@@ -2,92 +2,88 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAC6C433FE
-	for <linux-integrity@archiver.kernel.org>; Sun, 24 Oct 2021 16:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF26C433F5
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Oct 2021 17:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7FF761051
-	for <linux-integrity@archiver.kernel.org>; Sun, 24 Oct 2021 16:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB27C60F57
+	for <linux-integrity@archiver.kernel.org>; Sun, 24 Oct 2021 17:43:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbhJXQyz (ORCPT
+        id S231481AbhJXRqL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 24 Oct 2021 12:54:55 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:46229 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231534AbhJXQyz (ORCPT
+        Sun, 24 Oct 2021 13:46:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44826 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229788AbhJXRqL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 24 Oct 2021 12:54:55 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 19OGn56F004315;
-        Sun, 24 Oct 2021 19:49:05 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id CB5E963A20; Sun, 24 Oct 2021 19:49:16 +0300 (IDT)
-From:   amirmizi6@gmail.com
-To:     Eyal.Cohen@nuvoton.com, jarkko@kernel.org, oshrialkoby85@gmail.com,
-        alexander.steffen@infineon.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de, gregkh@linuxfoundation.org, benoit.houyere@st.com,
-        eajames@linux.ibm.com, joel@jms.id.au
+        Sun, 24 Oct 2021 13:46:11 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68C16C061745;
+        Sun, 24 Oct 2021 10:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=nFn6fi/iskR5+ltkie8eDQymFVJfaUyjj9/k24bqil0=; b=pDdtD1cxcIbdnIUPmFsmt4VhD5
+        BFLCCa96wHcTyeenK04CvmYCouHdUq34C+4tPCQvM9pjlqPQyJ6lA+8Duwr4VxIJ85N283gYQfbGn
+        UZhFnmaN5Omckopj0DAF7mL+/TBURDYZJlCUvvzN54e4hUDcKusGlVjrKv9VZsvrDg7QD4NvyuItN
+        bAFTpXBu9eFRnKwh9+Q6rlKauyqRg06Eicbkbqzmo6whYolp1yEjOUdxokyZezBkscHUqWSZPec5f
+        Ut8TMRDL2Fjf6YpDpiSdAtado8oUohK8JwjETLqeZS8W933khRpVNXBL1e1AMittAYAFVTFZZbe0V
+        kVoMcLMA==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1mehX6-00EPLj-Pa; Sun, 24 Oct 2021 17:43:44 +0000
+Subject: Re: [PATCH v17 5/6] tpm: tpm_tis: Add tpm_tis_i2c driver
+To:     amirmizi6@gmail.com, Eyal.Cohen@nuvoton.com, jarkko@kernel.org,
+        oshrialkoby85@gmail.com, alexander.steffen@infineon.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, peterhuewe@gmx.de,
+        jgg@ziepe.ca, arnd@arndb.de, gregkh@linuxfoundation.org,
+        benoit.houyere@st.com, eajames@linux.ibm.com, joel@jms.id.au
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-integrity@vger.kernel.org, oshri.alkoby@nuvoton.com,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v17 4/6] tpm: tpm_tis: Verify TPM_STS register is valid after locality request
-Date:   Sun, 24 Oct 2021 19:48:53 +0300
-Message-Id: <20211024164855.250362-5-amirmizi6@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20211024164855.250362-1-amirmizi6@gmail.com>
+        shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com
 References: <20211024164855.250362-1-amirmizi6@gmail.com>
+ <20211024164855.250362-6-amirmizi6@gmail.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c0c82d83-7b92-3cb6-5f08-acfc33d275be@infradead.org>
+Date:   Sun, 24 Oct 2021 10:43:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20211024164855.250362-6-amirmizi6@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Amir Mizinski <amirmizi6@gmail.com>
+On 10/24/21 9:48 AM, amirmizi6@gmail.com wrote:
+> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
+> index 4308f9c..ba90137 100644
+> --- a/drivers/char/tpm/Kconfig
+> +++ b/drivers/char/tpm/Kconfig
+> @@ -86,6 +86,18 @@ config TCG_TIS_SYNQUACER
+>   	  To compile this driver as a module, choose  M here;
+>   	  the module will be called tpm_tis_synquacer.
+>   
+> +config TCG_TIS_I2C
+> +	tristate "TPM I2C Interface Specification"
+> +	depends on I2C
+> +	select CRC_CCITT
+> +	select TCG_TIS_CORE
+> +	help
+> +	  If you have a TPM security chip, compliant with the TCG TPM PTP
+> +	  (I2C interface) specification and connected to an I2C bus master,
+> +	  say Yes and it will be accessible from within Linux.
+> +	  To compile this driver as a module, choose  M here;
 
-This issue could occur when the TPM does not update TPM_STS register after
-a locality request (TPM_STS Initial value = 0xFF) and a TPM_STS register
-read occurs in the tpm_tis_status(chip) function call.
+	                                      choose M here;
+[drop one space]
 
-When a call to tpm_tis_send_data() function is made after a
-request_locality() call, the condition
-("if ((status & TPM_STS_COMMAND_READY) == 0)") is checked. At this moment
-if the status value is 0xFF, then it is considered, wrongly, in “ready”
-state (by checking only one bit). However, at this moment the TPM is, in
-fact, in "Idle" state and remains in "Idle" state because
-"tpm_tis_ready(chip);" was not executed.
-Waiting for the condition TPM_STS.tpmGo == 0, will ensure that the TPM
-status register has the correct value.
+> +	  the module will be called tpm_tis_i2c.
 
-Suggested-by: Benoit Houyere <benoit.houyere@st.com>
-Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
----
- drivers/char/tpm/tpm_tis_core.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index e1c4a5a..237b952 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -177,8 +177,14 @@ static int request_locality(struct tpm_chip *chip, int l)
- 	} else {
- 		/* wait for burstcount */
- 		do {
--			if (check_locality(chip, l))
-+			if (check_locality(chip, l)) {
-+				if (wait_for_tpm_stat(chip, TPM_STS_GO, 0,
-+							  chip->timeout_c,
-+							  &priv->int_queue,
-+							  false) < 0)
-+					return -ETIME;
- 				return l;
-+			}
- 			tpm_msleep(TPM_TIMEOUT);
- 		} while (time_before(jiffies, stop));
- 	}
 -- 
-2.7.4
-
+~Randy
