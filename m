@@ -2,116 +2,142 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F5E4C433EF
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Oct 2021 02:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C55C433EF
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Oct 2021 07:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCEC60238
-	for <linux-integrity@archiver.kernel.org>; Tue, 26 Oct 2021 02:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DBBC610C7
+	for <linux-integrity@archiver.kernel.org>; Tue, 26 Oct 2021 07:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbhJZCwU (ORCPT
+        id S233535AbhJZH6y (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 25 Oct 2021 22:52:20 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21756 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232091AbhJZCwU (ORCPT
+        Tue, 26 Oct 2021 03:58:54 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:59953 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233200AbhJZH6y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 25 Oct 2021 22:52:20 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 19Q1ZH6Y005083;
-        Tue, 26 Oct 2021 02:49:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=Un4Qha0nCbOPQ2Db0qxLyKpKocnsdP8oSJpPnqLrT4Q=;
- b=DSxZ+i6ZZ/KUBKXIgfBB6KorBoQFRz2JvfsX+rUV/IVlpnK/Pyvsq1+gTXTgU7OhLSaS
- 1eeI9Nzk+YdysmLDwzK5Xb3YT7yxTyJ6ELA4zX+BBywaqDFsnf+s1C5qCbRirH+fAlzN
- ucFRTLTMNalXnoD4UMdSS0HbA/v+8aFFAQ1sIuYVRtBsOvsJc9AxgoUt7JM0t2oV8GSv
- ACpfI7GlaWX6q9O7O98MbuulcPQtsS5Zt6zR1prj/8sZRbFZKo4mwzl5cYCyNv5tWJ3L
- 7NwRBXBB3KsiYVvbfI1VdxJXJwIC9QtEXclBbQssBA68BVCrjfXkbI49avnmkMgwfcwC Mw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bx4k3dygk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Oct 2021 02:49:55 +0000
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 19Q2nsmK018706;
-        Tue, 26 Oct 2021 02:49:54 GMT
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3bx4k3dyfj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Oct 2021 02:49:54 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 19Q2bL1i032170;
-        Tue, 26 Oct 2021 02:49:51 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 3bx4f791ww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 26 Oct 2021 02:49:51 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 19Q2hjrN58655100
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 26 Oct 2021 02:43:45 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 473C9AE04D;
-        Tue, 26 Oct 2021 02:49:49 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7093FAE045;
-        Tue, 26 Oct 2021 02:49:48 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.77.130.61])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 26 Oct 2021 02:49:48 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Petr Vorel <petr.vorel@gmail.com>,
-        Vitaly Chikunov <vt@altlinux.org>
-Subject: [PATCH ima-evm-utils 2/2] upgrade to glibc-2.34 uses clone3 causing CI to fail
-Date:   Mon, 25 Oct 2021 22:49:29 -0400
-Message-Id: <20211026024929.535519-2-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211026024929.535519-1-zohar@linux.ibm.com>
-References: <20211026024929.535519-1-zohar@linux.ibm.com>
+        Tue, 26 Oct 2021 03:58:54 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R891e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0Utl7WGR_1635234987;
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0Utl7WGR_1635234987)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 26 Oct 2021 15:56:27 +0800
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH v3 1/2] crypto: use SM3 instead of SM3_256
+Date:   Tue, 26 Oct 2021 15:56:25 +0800
+Message-Id: <20211026075626.61975-2-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.3.ge56e4f7
+In-Reply-To: <20211026075626.61975-1-tianjia.zhang@linux.alibaba.com>
+References: <20211026075626.61975-1-tianjia.zhang@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vTWUn7PAKkH997gM9GeC-0-q7cQeLZOZ
-X-Proofpoint-ORIG-GUID: HzF0J0xIAPDDjNPBieyKl1fAEfiraUMS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.182.1,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
- definitions=2021-10-25_08,2021-10-25_02,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 adultscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 spamscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2110260012
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Both opensuse/tumbleweed and Alt Linux have upgraded to glibc-2.34,
-causing the CI testing to fail.  Disable seccomp (which is not needed
-anyway, since GA uses throwable virtual environments anyway).
+According to https://tools.ietf.org/id/draft-oscca-cfrg-sm3-01.html,
+SM3 always produces a 256-bit hash value and there are no plans for
+other length development, so there is no ambiguity in the name of sm3.
 
-options: --security-opt seccomp=unconfined
-
-Suggested-by: Vitaly Chikunov <vt@altlinux.org>
-Acked-by: Petr Vorel <petr.vorel@gmail.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Suggested-by: James Bottomley <jejb@linux.ibm.com>
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 ---
- .github/workflows/ci.yml | 1 +
- 1 file changed, 1 insertion(+)
+ crypto/hash_info.c                        | 4 ++--
+ drivers/char/tpm/tpm2-cmd.c               | 2 +-
+ include/crypto/hash_info.h                | 2 +-
+ include/uapi/linux/hash_info.h            | 3 ++-
+ security/keys/trusted-keys/trusted_tpm2.c | 2 +-
+ 5 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index 0931f2487d50..ad611ad914b4 100644
---- a/.github/workflows/ci.yml
-+++ b/.github/workflows/ci.yml
-@@ -103,6 +103,7 @@ jobs:
-     container:
-       image: ${{ matrix.container }}
-       env: ${{ matrix.env }}
-+      options: --security-opt seccomp=unconfined
+diff --git a/crypto/hash_info.c b/crypto/hash_info.c
+index a49ff96bde77..fe0119407219 100644
+--- a/crypto/hash_info.c
++++ b/crypto/hash_info.c
+@@ -26,7 +26,7 @@ const char *const hash_algo_name[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_TGR_128]	= "tgr128",
+ 	[HASH_ALGO_TGR_160]	= "tgr160",
+ 	[HASH_ALGO_TGR_192]	= "tgr192",
+-	[HASH_ALGO_SM3_256]	= "sm3",
++	[HASH_ALGO_SM3]		= "sm3",
+ 	[HASH_ALGO_STREEBOG_256] = "streebog256",
+ 	[HASH_ALGO_STREEBOG_512] = "streebog512",
+ };
+@@ -50,7 +50,7 @@ const int hash_digest_size[HASH_ALGO__LAST] = {
+ 	[HASH_ALGO_TGR_128]	= TGR128_DIGEST_SIZE,
+ 	[HASH_ALGO_TGR_160]	= TGR160_DIGEST_SIZE,
+ 	[HASH_ALGO_TGR_192]	= TGR192_DIGEST_SIZE,
+-	[HASH_ALGO_SM3_256]	= SM3256_DIGEST_SIZE,
++	[HASH_ALGO_SM3]		= SM3_DIGEST_SIZE,
+ 	[HASH_ALGO_STREEBOG_256] = STREEBOG256_DIGEST_SIZE,
+ 	[HASH_ALGO_STREEBOG_512] = STREEBOG512_DIGEST_SIZE,
+ };
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a25815a6f625..20f55de9d87b 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -19,7 +19,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+ 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
++	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
+ };
  
-     steps:
-     - name: Show OS
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+diff --git a/include/crypto/hash_info.h b/include/crypto/hash_info.h
+index dd4f06785049..c1e6b2884732 100644
+--- a/include/crypto/hash_info.h
++++ b/include/crypto/hash_info.h
+@@ -32,7 +32,7 @@
+ #define TGR192_DIGEST_SIZE 24
+ 
+ /* not defined in include/crypto/ */
+-#define SM3256_DIGEST_SIZE 32
++#define SM3_DIGEST_SIZE 32
+ 
+ extern const char *const hash_algo_name[HASH_ALGO__LAST];
+ extern const int hash_digest_size[HASH_ALGO__LAST];
+diff --git a/include/uapi/linux/hash_info.h b/include/uapi/linux/hash_info.h
+index 74a8609fcb4d..3829279b2d37 100644
+--- a/include/uapi/linux/hash_info.h
++++ b/include/uapi/linux/hash_info.h
+@@ -32,7 +32,8 @@ enum hash_algo {
+ 	HASH_ALGO_TGR_128,
+ 	HASH_ALGO_TGR_160,
+ 	HASH_ALGO_TGR_192,
+-	HASH_ALGO_SM3_256,
++	HASH_ALGO_SM3,
++	HASH_ALGO_SM3_256 = HASH_ALGO_SM3,
+ 	HASH_ALGO_STREEBOG_256,
+ 	HASH_ALGO_STREEBOG_512,
+ 	HASH_ALGO__LAST
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..52a696035176 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -23,7 +23,7 @@ static struct tpm2_hash tpm2_hash_map[] = {
+ 	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
+ 	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
+ 	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
++	{HASH_ALGO_SM3, TPM_ALG_SM3_256},
+ };
+ 
+ static u32 tpm2key_oid[] = { 2, 23, 133, 10, 1, 5 };
 -- 
-2.27.0
+2.19.1.3.ge56e4f7
 
