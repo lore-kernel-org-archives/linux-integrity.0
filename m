@@ -2,25 +2,25 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24711C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBC1C433FE
 	for <linux-integrity@archiver.kernel.org>; Tue,  2 Nov 2021 15:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F1F461105
+	by mail.kernel.org (Postfix) with ESMTP id 6746E60F36
 	for <linux-integrity@archiver.kernel.org>; Tue,  2 Nov 2021 15:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234177AbhKBP2m (ORCPT
+        id S234474AbhKBP2n (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 2 Nov 2021 11:28:42 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:47481 "EHLO
+        Tue, 2 Nov 2021 11:28:43 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:47482 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S234550AbhKBP2k (ORCPT
+        with ESMTP id S234599AbhKBP2k (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 2 Nov 2021 11:28:40 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 1A2FMWXH005889;
-        Tue, 2 Nov 2021 17:22:32 +0200
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 1A2FMgOT005904;
+        Tue, 2 Nov 2021 17:22:42 +0200
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id 25ADD63A1D; Tue,  2 Nov 2021 17:22:44 +0200 (IST)
+        id E47BB63A1D; Tue,  2 Nov 2021 17:22:53 +0200 (IST)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko@kernel.org, oshrialkoby85@gmail.com,
         alexander.steffen@infineon.com, robh+dt@kernel.org,
@@ -32,10 +32,11 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>
-Subject: [PATCH v18 1/6] tpm_tis: Fix expected bit handling and send all bytes in one shot without last byte in exception
-Date:   Tue,  2 Nov 2021 17:20:51 +0200
-Message-Id: <20211102152056.241769-2-amirmizi6@gmail.com>
+        Amir Mizinski <amirmizi6@gmail.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v18 6/6] tpm: Add YAML schema for TPM TIS I2C options
+Date:   Tue,  2 Nov 2021 17:20:56 +0200
+Message-Id: <20211102152056.241769-7-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20211102152056.241769-1-amirmizi6@gmail.com>
 References: <20211102152056.241769-1-amirmizi6@gmail.com>
@@ -47,165 +48,80 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Currently, the driver polls the TPM_STS.stsValid field until TRUE; then it
-reads TPM_STS register again to verify only that TPM_STS.expect field is
-FALSE (i.e., it ignores TPM_STS.stsValid).
-Since TPM_STS.stsValid represents the TPM_STS.expect validity, a check of
-only one of these fields is wrong. Fix this condition so that both fields
-are checked in the same TPM_STS register read.
+Add a YAML schema to support tpm tis i2c related dt-bindings for the I2c
+PTP based physical layer.
 
-Modify the signature of wait_for_tpm_stat() to tpm_tis_wait_for_stat(),
-adding an additional "expected" parameter to its call.
-tpm_tis_wait_for_stat() is now polling the TPM_STS with a mask and waits
-for the value in "expected". This modification adds the ability to check if
-certain TPM_STS bits have been cleared.
-For example, use the new parameter to check in status that TPM_STS_VALID
-is set and also that TPM_STS_EXPECT is zeroed. This prevents a racy
-check.
+This patch adds the documentation for corresponding device tree bindings of
+I2C based Physical TPM.
+Refer to the 'I2C Interface Definition' section in
+'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
+for specification.
 
-Suggested-by: Benoit Houyere <benoit.houyere@st.com>
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/char/tpm/tpm_tis_core.c | 61 ++++++++++++++++++-----------------------
- 1 file changed, 27 insertions(+), 34 deletions(-)
+ .../bindings/security/tpm/tpm-tis-i2c.yaml         | 52 ++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 69579ef..f833f35 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -44,9 +44,9 @@ static bool wait_for_tpm_stat_cond(struct tpm_chip *chip, u8 mask,
- 	return false;
- }
- 
--static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
--		unsigned long timeout, wait_queue_head_t *queue,
--		bool check_cancel)
-+static int tpm_tis_wait_for_stat(struct tpm_chip *chip, u8 mask, u8 expected,
-+				 unsigned long timeout,
-+				 wait_queue_head_t *queue, bool check_cancel)
- {
- 	unsigned long stop;
- 	long rc;
-@@ -55,7 +55,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 
- 	/* check current status */
- 	status = chip->ops->status(chip);
--	if ((status & mask) == mask)
-+	if ((status & mask) == expected)
- 		return 0;
- 
- 	stop = jiffies + timeout;
-@@ -83,7 +83,7 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 			usleep_range(TPM_TIMEOUT_USECS_MIN,
- 				     TPM_TIMEOUT_USECS_MAX);
- 			status = chip->ops->status(chip);
--			if ((status & mask) == mask)
-+			if ((status & mask) == expected)
- 				return 0;
- 		} while (time_before(jiffies, stop));
- 	}
-@@ -259,10 +259,11 @@ static int recv_data(struct tpm_chip *chip, u8 *buf, size_t count)
- 	int size = 0, burstcnt, rc;
- 
- 	while (size < count) {
--		rc = wait_for_tpm_stat(chip,
--				 TPM_STS_DATA_AVAIL | TPM_STS_VALID,
--				 chip->timeout_c,
--				 &priv->read_queue, true);
-+		rc = tpm_tis_wait_for_stat(chip,
-+					   TPM_STS_DATA_AVAIL | TPM_STS_VALID,
-+					   TPM_STS_DATA_AVAIL | TPM_STS_VALID,
-+					   chip->timeout_c, &priv->read_queue,
-+					   true);
- 		if (rc < 0)
- 			return rc;
- 		burstcnt = get_burstcount(chip);
-@@ -315,8 +316,9 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		goto out;
- 	}
- 
--	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--				&priv->int_queue, false) < 0) {
-+	if (tpm_tis_wait_for_stat(chip, TPM_STS_VALID, TPM_STS_VALID,
-+				  chip->timeout_c, &priv->int_queue,
-+				  false) < 0) {
- 		size = -ETIME;
- 		goto out;
- 	}
-@@ -342,14 +344,14 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc, status, burstcnt;
- 	size_t count = 0;
--	bool itpm = priv->flags & TPM_TIS_ITPM_WORKAROUND;
- 
- 	status = tpm_tis_status(chip);
- 	if ((status & TPM_STS_COMMAND_READY) == 0) {
- 		tpm_tis_ready(chip);
--		if (wait_for_tpm_stat
--		    (chip, TPM_STS_COMMAND_READY, chip->timeout_b,
--		     &priv->int_queue, false) < 0) {
-+		if (tpm_tis_wait_for_stat(chip, TPM_STS_COMMAND_READY,
-+					  TPM_STS_COMMAND_READY,
-+					  chip->timeout_b, &priv->int_queue,
-+					  false) < 0) {
- 			rc = -ETIME;
- 			goto out_err;
- 		}
-@@ -369,34 +371,24 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 			goto out_err;
- 
- 		count += burstcnt;
--
--		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--					&priv->int_queue, false) < 0) {
-+		if (tpm_tis_wait_for_stat(chip, TPM_STS_VALID | TPM_STS_DATA_EXPECT,
-+					  TPM_STS_VALID | TPM_STS_DATA_EXPECT, chip->timeout_a,
-+					  &priv->int_queue, false) < 0) {
- 			rc = -ETIME;
- 			goto out_err;
- 		}
--		status = tpm_tis_status(chip);
--		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
--			rc = -EIO;
--			goto out_err;
--		}
- 	}
- 
- 	/* write last byte */
- 	rc = tpm_tis_write8(priv, TPM_DATA_FIFO(priv->locality), buf[count]);
- 	if (rc < 0)
- 		goto out_err;
--
--	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--				&priv->int_queue, false) < 0) {
-+	if (tpm_tis_wait_for_stat(chip, TPM_STS_VALID | TPM_STS_DATA_EXPECT,
-+				  TPM_STS_VALID, chip->timeout_a,
-+				  &priv->int_queue, false) < 0) {
- 		rc = -ETIME;
- 		goto out_err;
- 	}
--	status = tpm_tis_status(chip);
--	if (!itpm && (status & TPM_STS_DATA_EXPECT) != 0) {
--		rc = -EIO;
--		goto out_err;
--	}
- 
- 	return 0;
- 
-@@ -451,9 +443,10 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- 		ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
- 
- 		dur = tpm_calc_ordinal_duration(chip, ordinal);
--		if (wait_for_tpm_stat
--		    (chip, TPM_STS_DATA_AVAIL | TPM_STS_VALID, dur,
--		     &priv->read_queue, false) < 0) {
-+		if (tpm_tis_wait_for_stat(chip,
-+					  TPM_STS_DATA_AVAIL | TPM_STS_VALID,
-+					  TPM_STS_DATA_AVAIL | TPM_STS_VALID,
-+					  dur, &priv->read_queue, false) < 0) {
- 			rc = -ETIME;
- 			goto out_err;
- 		}
+diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+new file mode 100644
+index 0000000..217ba8e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+@@ -0,0 +1,52 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: I2C PTP based TPM Device Tree Bindings
++
++maintainers:
++  - Amir Mizinski <amirmizi6@gmail.com>
++
++description:
++  Device Tree Bindings for I2C based Trusted Platform Module(TPM).
++
++properties:
++  compatible:
++    items:
++      - enum:
++          # Nuvoton's Trusted Platform Module (TPM) (NPCT75x)
++          - nuvoton,npct75x
++      - const: tcg,tpm-tis-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupt:
++    maxItems: 1
++
++  crc-checksum:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Set this flag to enable CRC checksum.
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      tpm@2e {
++        compatible = "nuvoton,npct75x", "tcg,tpm-tis-i2c";
++        reg = <0x2e>;
++        crc-checksum;
++      };
++    };
++...
 -- 
 2.7.4
 
