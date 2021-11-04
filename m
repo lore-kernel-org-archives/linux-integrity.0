@@ -2,25 +2,25 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17357C433F5
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Nov 2021 14:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F82C433F5
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Nov 2021 14:05:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF5B3611C1
-	for <linux-integrity@archiver.kernel.org>; Thu,  4 Nov 2021 14:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C314160EE9
+	for <linux-integrity@archiver.kernel.org>; Thu,  4 Nov 2021 14:05:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbhKDOH7 (ORCPT
+        id S231379AbhKDOIA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 4 Nov 2021 10:07:59 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:47757 "EHLO
+        Thu, 4 Nov 2021 10:08:00 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:47755 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S231335AbhKDOH6 (ORCPT
+        with ESMTP id S231325AbhKDOH7 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 4 Nov 2021 10:07:58 -0400
+        Thu, 4 Nov 2021 10:07:59 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 1A4E28Lu029325;
-        Thu, 4 Nov 2021 16:02:08 +0200
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id 1A4E26M5029313;
+        Thu, 4 Nov 2021 16:02:06 +0200
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10140)
-        id A916363A22; Thu,  4 Nov 2021 16:02:19 +0200 (IST)
+        id 0DD2963A20; Thu,  4 Nov 2021 16:02:18 +0200 (IST)
 From:   amirmizi6@gmail.com
 To:     Eyal.Cohen@nuvoton.com, jarkko@kernel.org, oshrialkoby85@gmail.com,
         alexander.steffen@infineon.com, robh+dt@kernel.org,
@@ -32,15 +32,15 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         tmaimon77@gmail.com, gcwilson@us.ibm.com, kgoldman@us.ibm.com,
         Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
         shmulik.hager@nuvoton.com, amir.mizinski@nuvoton.com,
-        Amir Mizinski <amirmizi6@gmail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v19 5/5] tpm: Add YAML schema for TPM TIS I2C options
-Date:   Thu,  4 Nov 2021 16:02:11 +0200
-Message-Id: <20211104140211.6258-6-amirmizi6@gmail.com>
+        Amir Mizinski <amirmizi6@gmail.com>
+Subject: [PATCH v19 3/5] tpm: tpm_tis: Verify TPM_STS register is valid after locality request
+Date:   Thu,  4 Nov 2021 16:02:09 +0200
+Message-Id: <20211104140211.6258-4-amirmizi6@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20211104140211.6258-1-amirmizi6@gmail.com>
 References: <20211104140211.6258-1-amirmizi6@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -48,80 +48,45 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Amir Mizinski <amirmizi6@gmail.com>
 
-Add a YAML schema to support tpm tis i2c related dt-bindings for the I2c
-PTP based physical layer.
+An invalid TPM_STS value could be used when the following two events occur:
+TPM does not update TPM_STS register after a locality request (TPM_STS
+Initial value = 0xFF), and a TPM_STS register read occurs in the
+tpm_tis_status(chip) function call.
 
-This patch adds the documentation for corresponding device tree bindings of
-I2C based Physical TPM.
-Refer to the 'I2C Interface Definition' section in
-'TCG PC Client PlatformTPMProfile(PTP) Specification' publication
-for specification.
+In probe_itpm(), a call to tpm_tis_send_data() function is made after a
+request_locality() call, and the condition
+("if ((status & TPM_STS_COMMAND_READY) == 0)") is checked. At this moment
+if the status value is 0xFF, then it is considered, wrongly, in “ready”
+state (by checking only one bit). However, at this moment the TPM is, in
+fact, in "Idle" state and remains in "Idle" state because
+"tpm_tis_ready(chip);" was not executed.
+Waiting for the condition TPM_STS.tpmGo == 0, will ensure that the TPM
+status register has the correct value.
 
+Suggested-by: Benoit Houyere <benoit.houyere@st.com>
 Signed-off-by: Amir Mizinski <amirmizi6@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/security/tpm/tpm-tis-i2c.yaml         | 52 ++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
+ drivers/char/tpm/tpm_tis_core.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
-new file mode 100644
-index 0000000..217ba8e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/security/tpm/tpm-tis-i2c.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/security/tpm/tpm-tis-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: I2C PTP based TPM Device Tree Bindings
-+
-+maintainers:
-+  - Amir Mizinski <amirmizi6@gmail.com>
-+
-+description:
-+  Device Tree Bindings for I2C based Trusted Platform Module(TPM).
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          # Nuvoton's Trusted Platform Module (TPM) (NPCT75x)
-+          - nuvoton,npct75x
-+      - const: tcg,tpm-tis-i2c
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupt:
-+    maxItems: 1
-+
-+  crc-checksum:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Set this flag to enable CRC checksum.
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      tpm@2e {
-+        compatible = "nuvoton,npct75x", "tcg,tpm-tis-i2c";
-+        reg = <0x2e>;
-+        crc-checksum;
-+      };
-+    };
-+...
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 6ff8b44..770685a 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -177,8 +177,12 @@ static int request_locality(struct tpm_chip *chip, int l)
+ 	} else {
+ 		/* wait for burstcount */
+ 		do {
+-			if (check_locality(chip, l))
++			if (check_locality(chip, l)) {
++				if (tpm_tis_wait_for_stat(chip, TPM_STS_GO, 0, chip->timeout_c,
++							  &priv->int_queue, false) < 0)
++					return -ETIME;
+ 				return l;
++			}
+ 			tpm_msleep(TPM_TIMEOUT);
+ 		} while (time_before(jiffies, stop));
+ 	}
 -- 
 2.7.4
 
