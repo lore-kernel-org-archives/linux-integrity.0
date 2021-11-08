@@ -2,117 +2,171 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEE5CC433F5
-	for <linux-integrity@archiver.kernel.org>; Sun,  7 Nov 2021 22:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA7DC433EF
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Nov 2021 17:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFA4560E94
-	for <linux-integrity@archiver.kernel.org>; Sun,  7 Nov 2021 22:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A24DC617E5
+	for <linux-integrity@archiver.kernel.org>; Mon,  8 Nov 2021 17:01:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235655AbhKGWF3 (ORCPT
+        id S240375AbhKHRD6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 7 Nov 2021 17:05:29 -0500
-Received: from smtp-out1.suse.de ([195.135.220.28]:37924 "EHLO
-        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235654AbhKGWF2 (ORCPT
+        Mon, 8 Nov 2021 12:03:58 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48768 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235453AbhKHRD6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 7 Nov 2021 17:05:28 -0500
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 9E363212C2;
-        Sun,  7 Nov 2021 22:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1636322564;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AuwAcJ4HaM7MbmUxUL/7LP4ABH9efUxTbsQvUNRJ0zg=;
-        b=VZBBh2SY0CW1WNPjAVzilyUHUPwlc2zgUyVcxC9cxGA76vyOP1SEWBYSkb6Ra2X5dNq1Nr
-        /1JnH5KACfy7ULQoRZwYcD5Vum2bhxeb2QxJhandi0XCCi6xtyR9AgTgXFQ343NOHZjxfc
-        ldSuz59w6s7stzACNWX8SFjhmhCeZP8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1636322564;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AuwAcJ4HaM7MbmUxUL/7LP4ABH9efUxTbsQvUNRJ0zg=;
-        b=OI/z3YQKDSYd9PYkKNzJY7eQeku2WBAC4toeoN9VqTbmm9UAiyKPZ1hFEPiDuulRsBBxXi
-        hEbv/BER/L+wd+Ag==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 228C513517;
-        Sun,  7 Nov 2021 22:02:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id jGjdAwRNiGFzKgAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Sun, 07 Nov 2021 22:02:44 +0000
-Date:   Sun, 7 Nov 2021 23:02:42 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+        Mon, 8 Nov 2021 12:03:58 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1A8GWLA7017554;
+        Mon, 8 Nov 2021 17:01:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=qTgha4aiz9iITjfGZMEm4VpbubZUM3+NuX3efHPL2o0=;
+ b=JVxVWMrWNK7+wSWWcn15sfRlQk07rHCf1mB/5bantLMY/0hpLjetJOc7wVQNyUDuh6xM
+ KqAeZDznH/mesdAyokZ5KmFUCvluY/xU80+v6r7vXSLFCPO2nekWZJ4PLfRiYoUeRe58
+ 4BCRLXQvNOwrXSm9n7wMuMTItQ3oMxxKhpHDiKsRUNhj88th9Bjc7lj8Xi4HjxxnE5bj
+ QZlUwBoeqxiGG1yw05Wy2KqPEbajhy7y/piv+MIsK0bi/zkwW6gz9O7Ns7cOd/wW0VvU
+ 2gcGtiTMW/AXg52cBUBJohD2aOEdQg7Dm+sz3Ms7kkOZqD1RGV8ToojCxN8K02sW1SIr Tg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3c69dn3cue-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 08 Nov 2021 17:01:10 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1A8GXpG8025230;
+        Mon, 8 Nov 2021 17:01:10 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3c69dn3cth-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 08 Nov 2021 17:01:10 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1A8Gm9t6016447;
+        Mon, 8 Nov 2021 17:01:08 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04fra.de.ibm.com with ESMTP id 3c5hb9q2bt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 08 Nov 2021 17:01:08 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1A8H159423265568
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 8 Nov 2021 17:01:06 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D97674C040;
+        Mon,  8 Nov 2021 17:01:05 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8AA464C050;
+        Mon,  8 Nov 2021 17:01:04 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.5.243])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  8 Nov 2021 17:01:04 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        "Bruno E. O. Meneguele" <bmeneg@redhat.com>
-Subject: Re: ima-evm-utils: version 1.4 released
-Message-ID: <YYhNAojmg/OTgSRt@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <9af9143c2c90f1ebae6cc34a7100673332cce1a1.camel@linux.ibm.com>
- <YYToG+8u/edIcc3u@pevik>
- <e7213f8c-a6f5-f73e-d88f-a264e6d231bb@linux.microsoft.com>
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [RFC PATCH] ima: differentiate overlay, pivot_root, and other pathnames
+Date:   Mon,  8 Nov 2021 12:01:00 -0500
+Message-Id: <20211108170100.148066-1-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e7213f8c-a6f5-f73e-d88f-a264e6d231bb@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ezzw92u2Y38_C0kO_2kbEnL3pYcIFrfD
+X-Proofpoint-ORIG-GUID: RptRndZ79OCqbGHtOyVZS2wU9ky8XPLf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-08_05,2021-11-08_02,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 clxscore=1011 adultscore=0 bulkscore=0 spamscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111080103
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Lakshmi, all,
+Relative file pathnames are included in the IMA measurement list making
+it difficult to differentiate files.  Permit replacing the relative
+pathname with the (raw) full pathname in the measurement list.
 
-> On 11/5/2021 1:15 AM, Petr Vorel wrote:
-> > Hi Mimi,
+Define a new module param named "ima.rawpath".
 
-> > > Please refer to the NEWS file for the short summary and the git history
-> > > for details of the ima-evm-utils v1.4 release.
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+comment: this change does not address the simple "unshare -m" case
+without pivot_root.
 
-> Thanks for the info Mimi.
+ .../admin-guide/kernel-parameters.txt          |  7 +++++++
+ security/integrity/ima/ima_api.c               | 18 +++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-> I checked both "master" and "next-testing" branches in the following, and I
-> still see 1.3.2 version only.
-
-> 	https://github.com/pevik/ima-evm-utils
-FYI this is my unofficial fork which I used for Travis testing, now used for
-GitHub actions testing. I stated it's unofficial since it's creation in About
-section.
-
-Kind regards,
-Petr
-
-> Is there a different github url for the latest ima-evm-utils source?
-
-> I am seeing the following errors when trying to validate IMA measurement
-> using the util. I'd like to try the latest (v1.4).
-
-> sudo ./evmctl ima_measurement
-> /sys/kernel/security/ima/binary_runtime_measurements  -vv
-
-> Error messages for the above command
-> ------------------------------------
-> Using tsspcrread to read PCRs.
-
-> tpm2_pcr_supported:67 Found 'tsspcrread' in $PATHread_tpm_banks:1923
-> Failed to read sha1 PCRs: (TSS_Socket_Open: Error on connect to
-> localhost:2321)
-
-> read_tpm_banks:1923 Failed to read sha256 PCRs: (TSS_Socket_Open: Error
-> on connect to localhost:2321)
-
-> Failed to read any TPM PCRs
-
-> thanks,
->  -lakshmi
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 91ba391f9b32..d49a5edcd3c3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1890,6 +1890,13 @@
+ 			different crypto accelerators. This option can be used
+ 			to achieve best performance for particular HW.
+ 
++	ima.rawpath=	[IMA]
++			Format: <bool>
++			Default: 0
++			This parameter controls whether the IMA measurement
++			list contains the relative or raw full file pathnames
++			in the IMA measurement list.
++
+ 	init=		[KNL]
+ 			Format: <full_path>
+ 			Run specified binary instead of /sbin/init as init
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index a64fb0130b01..42c6ff7056e6 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -9,14 +9,19 @@
+  *	appraise_measurement, store_measurement and store_template.
+  */
+ #include <linux/slab.h>
++#include <linux/moduleparam.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
++#include <linux/fs_struct.h>
+ #include <linux/xattr.h>
+ #include <linux/evm.h>
+ #include <linux/iversion.h>
+ 
+ #include "ima.h"
+ 
++static bool rawpath_enabled;
++module_param_named(rawpath, rawpath_enabled, bool, 0);
++
+ /*
+  * ima_free_template_entry - free an existing template entry
+  */
+@@ -390,11 +395,22 @@ void ima_audit_measurement(struct integrity_iint_cache *iint,
+  */
+ const char *ima_d_path(const struct path *path, char **pathbuf, char *namebuf)
+ {
++	struct dentry *dentry = NULL;
+ 	char *pathname = NULL;
+ 
+ 	*pathbuf = __getname();
+ 	if (*pathbuf) {
+-		pathname = d_absolute_path(path, *pathbuf, PATH_MAX);
++		if (!rawpath_enabled) {
++			pathname = d_absolute_path(path, *pathbuf, PATH_MAX);
++		} else {
++			/* Use union/overlay full pathname */
++			if (unlikely(path->dentry->d_flags & DCACHE_OP_REAL))
++				dentry = d_real(path->dentry, NULL);
++			else
++				dentry = path->dentry;
++			pathname = dentry_path_raw(dentry, *pathbuf, PATH_MAX);
++		}
++
+ 		if (IS_ERR(pathname)) {
+ 			__putname(*pathbuf);
+ 			*pathbuf = NULL;
+-- 
+2.27.0
 
