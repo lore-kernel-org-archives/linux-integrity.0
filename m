@@ -2,161 +2,221 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A969EC433F5
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Nov 2021 21:54:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AFBEC433EF
+	for <linux-integrity@archiver.kernel.org>; Sun, 14 Nov 2021 12:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 774D260231
-	for <linux-integrity@archiver.kernel.org>; Sat, 13 Nov 2021 21:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E1EA60FE8
+	for <linux-integrity@archiver.kernel.org>; Sun, 14 Nov 2021 12:09:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233469AbhKMV4t (ORCPT
+        id S235918AbhKNMMM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 13 Nov 2021 16:56:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59890 "EHLO
+        Sun, 14 Nov 2021 07:12:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233102AbhKMV4s (ORCPT
+        with ESMTP id S235685AbhKNMMG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 13 Nov 2021 16:56:48 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0A29C061766
-        for <linux-integrity@vger.kernel.org>; Sat, 13 Nov 2021 13:53:55 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mm0y6-0002BA-Bq; Sat, 13 Nov 2021 22:53:50 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mm0y5-000Cik-DU; Sat, 13 Nov 2021 22:53:48 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mm0y3-0007im-Ec; Sat, 13 Nov 2021 22:53:47 +0100
-Date:   Sat, 13 Nov 2021 22:53:40 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH] char: tpm: cr50_i2c: Drop if with an always false
- condition
-Message-ID: <20211113215340.cn5kyia7g6fcquh2@pengutronix.de>
-References: <20211112225308.1149304-1-u.kleine-koenig@pengutronix.de>
- <0c7eb1e97e73e2cd3182a98d8cf76c6a2e2e6578.camel@kernel.org>
+        Sun, 14 Nov 2021 07:12:06 -0500
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A53C061746
+        for <linux-integrity@vger.kernel.org>; Sun, 14 Nov 2021 04:09:10 -0800 (PST)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HsWMM73kGzMpvZb;
+        Sun, 14 Nov 2021 13:09:03 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HsWMH5cBRzlh8Tl;
+        Sun, 14 Nov 2021 13:08:59 +0100 (CET)
+Subject: Re: [PATCH v16 1/3] fs: Add trusted_for(2) syscall implementation and
+ related sysctl
+To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20211110190626.257017-1-mic@digikod.net>
+ <20211110190626.257017-2-mic@digikod.net>
+ <8a22a3c2-468c-e96c-6516-22a0f029aa34@gmail.com>
+ <5312f022-96ea-5555-8d17-4e60a33cf8f8@digikod.net>
+ <34779736-e875-c3e0-75d5-0f0a55d729aa@gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <ebaba192-1f0b-eb5e-0914-a0c885afdac6@digikod.net>
+Date:   Sun, 14 Nov 2021 13:09:06 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7bq6l2ndujozayro"
-Content-Disposition: inline
-In-Reply-To: <0c7eb1e97e73e2cd3182a98d8cf76c6a2e2e6578.camel@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
+In-Reply-To: <34779736-e875-c3e0-75d5-0f0a55d729aa@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 
---7bq6l2ndujozayro
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 13/11/2021 20:56, Alejandro Colomar (man-pages) wrote:
+> Hi Mickaël,
+> 
+> On 11/13/21 14:02, Mickaël Salaün wrote:
+>>> TL;DR:
+>>>
+>>> ISO C specifies that for the following code:
+>>>
+>>>      enum foo {BAR};
+>>>
+>>>      enum foo foobar;
+>>>
+>>> typeof(foo)    shall be int
+>>> typeof(foobar) is implementation-defined
+>>
+>> I tested with some version of GCC (from 4.9 to 11) and clang (10 and 11)
+>> with different optimizations and the related sizes are at least the same
+>> as for the int type.
+> 
+> GCC has -fshort-enums to make enum types be as short as possible.  I
+> expected -Os to turn this on, since it saves space, but it doesn't.
+> 
+> Still, not relying on enum == int is better, IMO.
+> 
+>>
+>>>
+>>> Since foobar = BAR; assigns an int, the best thing to do to avoid
+>>> implementation-defined behavior, is to declare foobar as int too.
+>>
+>> OK, so it should be enough to change the syscall argument type from enum
+>> trusted_for_usage to int, but we can keep the UAPI with the enum (i.e.
+>> we don't need to change the value to #define TRUSTED_FOR_EXECUTION 1)
+>> right?
+> 
+> Correct.  The enumerations are guaranteed to be int (except in case of
+> UB, see below), so they'll be (almost) the same as a #define after the
+> preprocessor.
 
-Hello,
+Thanks for the detailed explanation! I'll send a new patch taking into
+account your suggestion.
 
-On Sat, Nov 13, 2021 at 12:53:32PM +0200, Jarkko Sakkinen wrote:
-> On Fri, 2021-11-12 at 23:53 +0100, Uwe Kleine-K=F6nig wrote:
-> > tpm_cr50_i2c_remove() is only called after tpm_cr50_i2c_probe() returned
-> > successfully. As i2c_get_clientdata() returns driver data for the
-> > client's device and this was set in tpmm_chip_alloc() it won't return
-> > NULL.
->=20
-> This does not make the check obsolete, e.g. it would catch a programming
-> error elsewhere.
->=20
-> > Simplify accordingly to prepare changing the prototype of the i2c remove
-> > callback to return void. Notice that already today returning an error
-> > code from the remove callback doesn't prevent removal.
->=20
-> I don't understand what you are trying to say.
-
-The eventual goal is the following change:
-
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index 16119ac1aa97..c7069ebf5a66 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -273,7 +273,7 @@ struct i2c_driver {
-=20
- 	/* Standard driver model interfaces */
- 	int (*probe)(struct i2c_client *client, const struct i2c_device_id *id);
--	int (*remove)(struct i2c_client *client);
-+	void (*remove)(struct i2c_client *client);
-=20
- 	/* New driver model interface to aid the seamless removal of the
- 	 * current probe()'s, more commonly unused than used second parameter.
-
-To prepare that I want to change all remove callbacks to unconditionally
-return 0.
-
-The motivation for the above change is that returning an error from an
-i2c (or spi or platform) remove callback doesn't prevent the device from
-being removed. So the ability to return an int leads to wrong
-expectations by driver authors.
-
-The only effect a non-zero return code has, is an error message from the
-i2c core. So if you object to my suggested change, the minimal change I
-want to convince you of is to replace
-
-	return -ENODEV;
-
-by
-
-	return 0;
-
-=2E
-
-Best regards
-Uwe
-
-> > diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm=
-_tis_i2c_cr50.c
-> > index c89278103703..622cdf622ddc 100644
-> > --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> > +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> > @@ -751,12 +751,6 @@ static int tpm_cr50_i2c_probe(struct i2c_client *c=
-lient)
-> > =A0static int tpm_cr50_i2c_remove(struct i2c_client *client)
-> > =A0{
-> > =A0=A0=A0=A0=A0=A0=A0=A0struct tpm_chip *chip =3D i2c_get_clientdata(cl=
-ient);
-> > -=A0=A0=A0=A0=A0=A0=A0struct device *dev =3D &client->dev;
-> > -
-> > -=A0=A0=A0=A0=A0=A0=A0if (!chip) {
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0dev_err(dev, "Could not g=
-et client data at remove\n");
-> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return -ENODEV;
-> > -=A0=A0=A0=A0=A0=A0=A0}
-> > =A0
-> > =A0=A0=A0=A0=A0=A0=A0=A0tpm_chip_unregister(chip);
-> > =A0=A0=A0=A0=A0=A0=A0=A0tpm_cr50_release_locality(chip, true);
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---7bq6l2ndujozayro
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmGQM+EACgkQwfwUeK3K
-7Al2+gf/XeqeH1yzC564+pMKTPLyihLT6/NSsR1fwGAQlhMLHK0HkuK1LcxyGfnF
-Up0v0fNJToE8YJzETvN+hL6YfBQC1cd7+BAvGxDb05wDn45pf2pVXNwo4gedyap6
-iDjYpeQm30h3IH4wTMinceb0/ezUx622HnvQwEggOjdGCEESEqLL7WTYySVZyAVe
-EgkyV5FTLh/z+Tqa8tcxeeVZFiesocJ9ASSsh02qOHoLxM66Z6wmq6D5BSqdLraN
-Ux1k9v2C8z3poGOHvFZxGHvSGzVAhusZqN6JBlLOw3uNXutriQ8mG+auvapGH7Op
-3yDBTXQlRochalDu5GOVAKlJ6jtn6g==
-=mOBs
------END PGP SIGNATURE-----
-
---7bq6l2ndujozayro--
+> 
+> 
+> If you do
+> 
+> enum foo {
+>     FOO = 1L << INT_WIDTH
+> };
+> 
+> since that doesn't fit in either int or unsigned int,
+> it is Undefined Behavior,
+> and here GCC decides to use long for FOO.
+> 
+> +++++++++ UB example ++++++++++++++
+> 
+> $ cat foo.c
+>     #include <limits.h>
+>     #include <stdio.h>
+> 
+> 
+>     enum foo {
+>         FOO = 1L << UINT_WIDTH
+>     };
+> 
+>     int main(void)
+>     {
+>         printf("\tsizeof(enum foo) = %zu\n", sizeof(enum foo));
+>         printf("\tsizeof(FOO)      = %zu\n", sizeof(FOO));
+>     }
+> 
+> $ cc foo.c -Wall -Wextra -Werror -Wpedantic -pedantic-errors -std=c2x
+> foo.c:6:23: error: ISO C restricts enumerator values to range of 'int'
+> [-Wpedantic]
+>     6 |                 FOO = 1L << UINT_WIDTH
+>       |                       ^~
+> $ cc foo.c -Wall -Wextra -Werror -std=c2x
+> $ ./a.out
+>     sizeof(enum foo) = 8
+>     sizeof(FOO)      = 8
+> 
+> +++++++++++++ -fshort-enums example +++++++++++++++
+> 
+> $ cat foo.c
+>     #include <stdio.h>
+> 
+> 
+>     enum foo {
+>         FOO = 1
+>     };
+> 
+>     int main(void)
+>     {
+>         printf("\tsizeof(enum foo) = %zu\n", sizeof(enum foo));
+>         printf("\tsizeof(FOO)      = %zu\n", sizeof(FOO));
+>     }
+> 
+> $ cc foo.c -Wall -Wextra -Werror -Wpedantic -pedantic-errors -fshort-enums
+> $ ./a.out
+>     sizeof(enum foo) = 1
+>     sizeof(FOO)      = 4
+> 
+> ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> 
+> Cheers,
+> Alex
+> 
+> 
+>>
+>>>
+>>>
+>>>> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+>>>> index 528a478dbda8..c535e0e43cc8 100644
+>>>> --- a/include/linux/syscalls.h
+>>>> +++ b/include/linux/syscalls.h
+>>>> @@ -462,6 +463,7 @@ asmlinkage long sys_fallocate(int fd, int mode,
+>>>> loff_t offset, loff_t len);
+>>>>    asmlinkage long sys_faccessat(int dfd, const char __user *filename,
+>>>> int mode);
+>>>>    asmlinkage long sys_faccessat2(int dfd, const char __user *filename,
+>>>> int mode,
+>>>>                       int flags);
+>>>> +asmlinkage long sys_trusted_for(int fd, enum trusted_for_usage usage,
+>>>> u32 flags);
+>>>
+>>> Same here.
+>>>
+>>>>    asmlinkage long sys_chdir(const char __user *filename);
+>>>>    asmlinkage long sys_fchdir(unsigned int fd);
+>>>>    asmlinkage long sys_chroot(const char __user *filename);
+>>>
+>>> Thanks,
+>>> Alex
+>>>
+>>>
+> 
