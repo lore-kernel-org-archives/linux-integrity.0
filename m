@@ -2,123 +2,58 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D32EAC4332F
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Nov 2021 00:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F2ACC4332F
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Nov 2021 08:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB7AA6325B
-	for <linux-integrity@archiver.kernel.org>; Tue, 16 Nov 2021 00:31:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1951463219
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Nov 2021 08:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346932AbhKPAeL (ORCPT
+        id S232617AbhKPI7e (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 15 Nov 2021 19:34:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1344826AbhKOTZe (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 15 Nov 2021 14:25:34 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D4FF636D2;
-        Mon, 15 Nov 2021 19:05:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1637003102;
-        bh=OxbA2Dy+guUtV/oxu3huaKUI54o5bkpBbR72qWRaAfQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FxEl08qu4dUEMgEsJFpcX25p/KAprHCVG4O2xUjklk6MvshRaaVwAbSWxfPyA3ba3
-         G5+kXBoJGUkezo7WNhBgi7qQVqg29NVjmQ/iemHcndYQvpHT/o2OusJ6ufzGCTt+X3
-         COwh9q9xxmf2+gdOCzIjNRJdYEmTDEEmGYON1C6E7fpxnhNw1Y4p/lUjcPsdYh267J
-         C3X3PW3x+ePAkJZQrUJ7enxU3FrOy4YKGrdwtzow9e996b4sFxvokIygVh8H3+jh5G
-         +nw98sTQbGfTlWDj+RTeADtMTm/qxJwgZO1jIRN9zBcTRtzn63a8XeyX6Ju7SZR0oI
-         WB07kdDfXRzhA==
-Date:   Mon, 15 Nov 2021 11:05:00 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     "tytso@mit.edu" <tytso@mit.edu>, "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "hughd@google.com" <hughd@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH 5/5] shmem: Add fsverity support
-Message-ID: <YZKvXK+vX/we4GCD@gmail.com>
-References: <20211112124411.1948809-1-roberto.sassu@huawei.com>
- <20211112124411.1948809-6-roberto.sassu@huawei.com>
- <YY68iXKPWN8+rd+0@gmail.com>
- <6adb6da30b734213942f976745c456f6@huawei.com>
+        Tue, 16 Nov 2021 03:59:34 -0500
+Received: from mail.bizjoindeal.pl ([80.211.97.164]:53688 "EHLO
+        mail.bizjoindeal.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232712AbhKPI7Z (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Tue, 16 Nov 2021 03:59:25 -0500
+Received: by mail.bizjoindeal.pl (Postfix, from userid 1001)
+        id CB09CA291D; Tue, 16 Nov 2021 08:46:32 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=bizjoindeal.pl;
+        s=mail; t=1637052411;
+        bh=JZuQ1fK7zFtz2oeUB7Xfid9vb7kUywdmDd2OluR8ywA=;
+        h=Date:From:To:Subject:From;
+        b=SalBqB1TtRfHJnp8efS9cGivobz8+jeZ9PwnoGAiyKNLOtRLu8K9Vu1s7hDd8/ab2
+         EIjfMzgziQpO3urnzB2PvvcUoQqNaBs5MXdWT+A9ADlDeCTdnGOyPau6SEhzn/rFVs
+         e6sHMLcAIPntX5JLtHJ4kBKZbG6KfSc39hajqQIhXjrYfJLmG5gJ4IU4WeADH5clrn
+         4tuCsGd764nZiPjlR+n+zZr94IvYr3B4Q2fyTpwfc1FuwIRa15od/SbACgr2gqc/W9
+         uuv0Kx0qOYBYySABbCx1tUlZ1Oo3MA7HKXiZcUeRGDuf8vaiHrnMThFEzajp4fSgCm
+         OIpK8Y70OHH1g==
+Received: by mail.bizjoindeal.pl for <linux-integrity@vger.kernel.org>; Tue, 16 Nov 2021 08:46:10 GMT
+Message-ID: <20211116074500-0.1.60.f0j0.0.mp6b79g20x@bizjoindeal.pl>
+Date:   Tue, 16 Nov 2021 08:46:10 GMT
+From:   "Dorian Kwiatkowski" <dorian.kwiatkowski@bizjoindeal.pl>
+To:     <linux-integrity@vger.kernel.org>
+Subject: Fotowoltaika dla firm
+X-Mailer: mail.bizjoindeal.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6adb6da30b734213942f976745c456f6@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Nov 15, 2021 at 08:49:41AM +0000, Roberto Sassu wrote:
-> > From: Eric Biggers [mailto:ebiggers@kernel.org]
-> > Sent: Friday, November 12, 2021 8:12 PM
-> > On Fri, Nov 12, 2021 at 01:44:11PM +0100, Roberto Sassu wrote:
-> > > Make the necessary modifications to support fsverity in tmpfs.
-> > >
-> > > First, implement the fsverity operations (in a similar way of f2fs). These
-> > > operations make use of shmem_read_mapping_page() instead of
-> > > read_mapping_page() to handle the case where the page has been swapped
-> > out.
-> > > The fsverity descriptor is placed at the end of the file and its location
-> > > is stored in an xattr.
-> > >
-> > > Second, implement the ioctl operations to enable, measure and read fsverity
-> > > metadata.
-> > >
-> > > Lastly, add calls to fsverity functions, to ensure that fsverity-relevant
-> > > operations are checked and handled by fsverity (file open, attr set, inode
-> > > evict).
-> > >
-> > > Fsverity support can be enabled through the kernel configuration and
-> > > remains enabled by default for every tmpfs filesystem instantiated (there
-> > > should be no overhead, unless fsverity is enabled for a file).
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > I don't see how this makes sense at all.  The point of fs-verity is to avoid
-> > having to hash the whole file when verifying it.  However, obviously the whole
-> > file still has to be hashed to build the Merkle tree in the first place.  That
-> > makes sense for a persistent filesystem where a file can be written once and
-> > verified many times.  I don't see how it makes sense for tmpfs, where files have
-> > to be re-created on every boot.  You might as well just hash the whole file.
-> 
-> The point of adding fsverity support for tmpfs was to being able to do
-> integrity enforcement with just one mechanism, given that I was
-> planning to do integrity verification with reference values loaded
-> to the kernel with DIGLIM [1].
-> 
-> With an LSM such as IPE [2], integrity verification would consist in
-> querying the fsverity digest with DIGLIM and allowing the operation
-> if the digest was found. With fsverity support in tmpfs, this can be
-> done from the very beginning of the boot process.
-> 
-> Using regular file digests would be also possible but this requires
-> loading with DIGLIM both fsverity and non-fsverity reference values.
-> It would also require two separate mechanisms for calculating
-> the file digest depending on the filesystem. It could be done, but
-> I thought it was easier to add support for fsverity in tmpfs.
-> 
-> > Also, you didn't implement actually verifying the data (by calling
-> > fsverity_verify_page()), so this patch doesn't really do anything anyway.
-> 
-> Yes, at the end I didn't add it. Probably the only place where
-> calling fsverity_verify_page() would make sense is when a page
-> is swapped in (assuming that the swap device is untrusted).
-> 
-> I tried to add a call in shmem_swapin_page() but fsverity complained
-> due to the fact that the page was already up to date, and also
-> rejected the page. I will check it better.
-> 
+Dzie=C5=84 dobry,
 
-It sounds like you really only care about calculating fs-verity file digests.
-That's just an algorithm for hashing a file, so it could just be implemented in
-generic code that operates on any file on any filesystem, like how IMA
-implemennts full file hashing for any file.  There isn't a need for any special
-filesystem support to do this.
+kontaktuj=C4=99 si=C4=99 z Pa=C5=84stwem, poniewa=C5=BC dostrzegam mo=C5=BC=
+liwo=C5=9B=C4=87 redukcji op=C5=82at za pr=C4=85d.
 
-- Eric
+Odpowiednio dobrana instalacja fotowoltaiczna to rozwi=C4=85zanie, kt=C3=B3=
+re pozwala wygenerowa=C4=87 spore oszcz=C4=99dno=C5=9Bci w skali roku.
+
+Chcia=C5=82bym porozmawia=C4=87 z Pa=C5=84stwem o tego typu rozwi=C4=85za=
+niu, a tak=C5=BCe przedstawi=C4=87 wst=C4=99pne kalkulacje.
+
+Czy s=C4=85 Pa=C5=84stwo zainteresowani?
+
+Pozdrawiam,
+Dorian Kwiatkowski
