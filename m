@@ -2,345 +2,242 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B5BC433F5
-	for <linux-integrity@archiver.kernel.org>; Mon, 15 Nov 2021 20:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832CDC4332F
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Nov 2021 00:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11CD1610A8
-	for <linux-integrity@archiver.kernel.org>; Mon, 15 Nov 2021 20:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7184B614C8
+	for <linux-integrity@archiver.kernel.org>; Tue, 16 Nov 2021 00:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345443AbhKOUuC (ORCPT
+        id S1347334AbhKPAWE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 15 Nov 2021 15:50:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37260 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345455AbhKOT2b (ORCPT
+        Mon, 15 Nov 2021 19:22:04 -0500
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:56148 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1353441AbhKPATx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 15 Nov 2021 14:28:31 -0500
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED59DC0A8849
-        for <linux-integrity@vger.kernel.org>; Mon, 15 Nov 2021 10:53:25 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4HtJHF3m9yzMpnSf;
-        Mon, 15 Nov 2021 19:53:13 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4HtJHF0bgczlh8Tx;
-        Mon, 15 Nov 2021 19:53:13 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yin Fengwei <fengwei.yin@intel.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v17 2/3] arch: Wire up trusted_for(2)
-Date:   Mon, 15 Nov 2021 19:53:03 +0100
-Message-Id: <20211115185304.198460-3-mic@digikod.net>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20211115185304.198460-1-mic@digikod.net>
-References: <20211115185304.198460-1-mic@digikod.net>
+        Mon, 15 Nov 2021 19:19:53 -0500
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AFNNR8h007673;
+        Tue, 16 Nov 2021 00:16:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=ZGxaux3O2h/UxHDxxRko9/8hYIcYj2uByWULJeccau8=;
+ b=VKtnBwsetRNWK2k0+wb8ACHMaLFxTrqw5zOf0VY0gfMtCNJE2+7cjkU6vgnxGOgjgRzq
+ EWbgFpsixVEI97vHLB883dbWnywhnfJD3eEUfWFirukiy0juAiVBWD/n3rkM/6z++if0
+ ZN57ZbWficKxvtVq/uYMH/YqU0udKyr9O1Y/OsBSE1+uKijLhdI4NK8F64Y+0Hs3emwM
+ KfQnLe6X6mOJLunYt3lMlyiuTbDm1gnMx+oMuZS2TyIxDrX5kyfmrk6oUKqxvku5yjWn
+ TewM47hQ0yJax51I7gjJO37NZq4sToW4np/gBDt9iOH2tGX0X09UfNsJF0hCPp+l+VON /g== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3cbhv5618t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Nov 2021 00:16:28 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 1AG0B0Za046215;
+        Tue, 16 Nov 2021 00:16:27 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2174.outbound.protection.outlook.com [104.47.73.174])
+        by userp3020.oracle.com with ESMTP id 3caq4ru99e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Nov 2021 00:16:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hP1r6FAfTPMULYfWCUFNL2TVV08vy4kQ49K6OsttmEszAS/axqpmutE5AypKBiU6p5YWBRs+f60moXxmMU8FO5djehlZ5jBQrU5nMPAof+kw6AxP29CWA4lNEaW62jHPkKxRnKcmNwqwDNPmmgYNuXyIwA8utNiL/2q7rAbi5RBxJgmODniSYww6gSBolXAQ+ck6t/FGdnyqx80kz2M1acXejGPSXnw4Nb2FO0CkNZocVEW31rdHhrDVBYt9AEhLH7FP1AAAgoOSufoz3kyipsabRzCRr8wltO0iuceubWpa0K7h3V4Bt3aF4FoJV/Yu0K1pdCAifh8yVA9LIu8fcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZGxaux3O2h/UxHDxxRko9/8hYIcYj2uByWULJeccau8=;
+ b=Yut9clokJcZElBtsuE/sDDzICyZ0ywU5c3GZlA7CQuPPAi1Av1A7mPT+6iK4PMm1wLfiA3gJQP4imjL5HPs73EgA5X20qIe7fbcrQTuJH3MuStLywvvZuGwH+Dq5IG9Ctf+RRuU0D6HksTScjVejcaTPgUBtOD/dxbjXTkf60AslwCrWPSM8Dj0reEYRbt80CDDWxrH30NYnIG5tGXEBc79+UqAeUjS8MrZ4vuZR2uKw6/258Bn091tN3l4d5pBjCdDUonWSrgCKYSDjXF6ighEY2exjCT40mh/PfRhSs3+aWZlbUxFS0QgFVfu2mE2VZxmv7BTYafCuhF4sERm8jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZGxaux3O2h/UxHDxxRko9/8hYIcYj2uByWULJeccau8=;
+ b=ajmb4aGNWNWsElo98e6hkGBsx0o9RBgESYCzMWrlKSQ7UmcR1RlxGBVxtm20/gr7P4LqBMed2Ab0Cv+kcq0HzfULPVoMTWn3QhTGNrXzHpuPM8SAC6wgWanh2jY+D0aZoeBM5/eK9qw/5VZCPwWuP/GXpuI06KbTW30jcTusams=
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by CH0PR10MB5276.namprd10.prod.outlook.com (2603:10b6:610:c4::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.20; Tue, 16 Nov
+ 2021 00:16:25 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::65b8:d8e7:e373:4896]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::65b8:d8e7:e373:4896%9]) with mapi id 15.20.4690.027; Tue, 16 Nov 2021
+ 00:16:25 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com
+Cc:     eric.snowberg@oracle.com, keescook@chromium.org,
+        torvalds@linux-foundation.org, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        nramas@linux.microsoft.com, lszubowi@redhat.com, jason@zx2c4.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Subject: [PATCH v7 05/17] KEYS: CA link restriction
+Date:   Mon, 15 Nov 2021 19:15:33 -0500
+Message-Id: <20211116001545.2639333-6-eric.snowberg@oracle.com>
+X-Mailer: git-send-email 2.18.4
+In-Reply-To: <20211116001545.2639333-1-eric.snowberg@oracle.com>
+References: <20211116001545.2639333-1-eric.snowberg@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SN1PR12CA0048.namprd12.prod.outlook.com
+ (2603:10b6:802:20::19) To CH2PR10MB4150.namprd10.prod.outlook.com
+ (2603:10b6:610:ac::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: from ca-dev113.us.oracle.com (148.87.23.5) by SN1PR12CA0048.namprd12.prod.outlook.com (2603:10b6:802:20::19) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4690.26 via Frontend Transport; Tue, 16 Nov 2021 00:16:21 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ee514baf-4fb3-42e8-5d4a-08d9a896533e
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5276:
+X-Microsoft-Antispam-PRVS: <CH0PR10MB52763E0A07DF7C4D80B5A7D387999@CH0PR10MB5276.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: bMMXPqd9W/fhDGukWsjRsO2lmkW5wDyaRBlkPDhEbzbURpeq9BBdE9LuPPQ1gPp6Tr4ACMsSeFAr0ZatkJL/Cvsu04lcCA8Gs5w4cvRpXAeVCWf1720Lthc/h59R6zNWO9mOoHLw6Wg8lncOKJ9A+1qu71OX59q7zUwfH7LFTpXoO1gbKRaG/AeKqt9VTblOwjYqXQ0dxhZ4v25QKVbdQ/eqANeQfdUKRw4IVfsgvBStEANd9k3JWzNTJMKK8/CrvuleaBLC6gDS1F2mwsm13VhWFqy6rSE/fTsayvZXq1koA1pZlP/5zOqxvx5x/1l0ldjW0PKABMBkkz0YmiRP/DThl6e5wO0yiqPkfkvCmS2zF4fAYa/dLeAfNCqnBW91CUeKzvIET4wIp6w/VlAm2HI0LQ0V/k/2vpetufK7A7g/UCoMnoGOjM95K7QIJT7EnKShfn/O5RcolAtayOh31l/TwDo2DTlMfbCvhdlnd8cb+8l9/+Grf+hW2Rw57ytGkXzRK06LAnbr93TCPprz+5ZET9A4JEbwUzlT97BIeiE91N1zorpfI+zN63Hvx4TIfzq3gKB8sO8jUFncmrGsB7Rh1S1ZvnJLDAqzBSQB8EY0U5bqgXhRbGXg+fF340LB1QBTgYrPpNPeqM8XFZKftSxTcGSeg1nGg8bXqPMKCtM9z3YTjB4001rwJzpCZRMj1ob4B6JPtkDReVw4k13fGQxoU7uEVw531q1Iyzc7URQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(6486002)(316002)(66946007)(508600001)(7696005)(66556008)(66476007)(52116002)(186003)(2906002)(26005)(1076003)(44832011)(36756003)(38350700002)(38100700002)(6666004)(4326008)(921005)(8936002)(83380400001)(5660300002)(8676002)(7416002)(86362001)(956004)(107886003)(2616005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?OsfTyvmBcxWXgNuZ+aYYrE7aI+geRfXJ5GopTEjmxpz6eu+vUrcSSYwZ+NCU?=
+ =?us-ascii?Q?YHkFKPt0gPo4Nl1NYF6n4B6IxYGzaqivpHo+unEaR6R3zHb5tYg2vtdryVWt?=
+ =?us-ascii?Q?AxwtWi4HIrnmo5UrcDBLoxlvzZ/5SN9AMzMORT8nfnWTgnAu56LyH4Vo0/wp?=
+ =?us-ascii?Q?l3ZXw1BeoJaJNR82Hs5iVYd8Z7xPDgoFltLzFNvOIASNxSjrOHBBFtMx4y8B?=
+ =?us-ascii?Q?He9lri0eFuEcjDwFCGASQPB3vfDsmb+9qE4EVIb9ATvZqY4NhUeUqHzky6nQ?=
+ =?us-ascii?Q?FYOX5rDZKQSlRMxR9rFb4Mx87qAdtwZKkwldV2SP/6ZSKizUzkOskgZ6VuTc?=
+ =?us-ascii?Q?L22OscXobjnpce9YjoLcR6XnqkRQhy4YRANGu1LCAqacAgR8E8CDqTn0wybE?=
+ =?us-ascii?Q?NuEGFfoO9EfL53czErspGPjuyUDg+Qd91f5AZauycPOCUSkV97Fbr2H7uygL?=
+ =?us-ascii?Q?oYdniwKt+Wc5AaT8JPOtGtEALgUn/vn1OLUDyRdgP/LRU4B4TMeO/QYICvi+?=
+ =?us-ascii?Q?TcipoHgVAiCg92W8nZo8YEt8LZIvQVrZNNFkGwCagdmGrZM1tE7ZG9Rv4A0I?=
+ =?us-ascii?Q?8jpAlNrhsd/5btIiLO+nrpOmY8QAXqc60u7rpyrTDj3JnKTfAie3w/1HSvcm?=
+ =?us-ascii?Q?JS6LciJleetbvaEl5vG7ZKNmPOGK4TCC/VhYwUz0MzaB3yRKGpANAxw4m580?=
+ =?us-ascii?Q?ERgWyrSk6JeVFuvLOT887dIIkC/HPGtNFDwwxbgFpNPGwjQKsZJ7dA/iA3IR?=
+ =?us-ascii?Q?gHL8w1bf/OJdx5NCuFjFXRNKWYq4+RTzYPwGrWXAOF5v66TTg1V/yxiOviOv?=
+ =?us-ascii?Q?jU5toTj1k92x1t8MJseek1LoCyucsMMEBauekNvSMNzXl1nxAKqGeBPxT3Ho?=
+ =?us-ascii?Q?YvDMzAuIKw8SvdZd6s1Bc87WDJdZnjqlN94So4dxSRyTbAhbaIp7SJO6j8Q0?=
+ =?us-ascii?Q?cJ6W7tz+LMlg1BGoGudr5QPY9HFdQRDi8DAtW5pYPuWCoYdl2juieJ4qebSi?=
+ =?us-ascii?Q?MkFBRajSwupVW6+/Mggic2BOMjI+142efdiNEqhgXzYlBoEnb1WBieHkZE0+?=
+ =?us-ascii?Q?CyipvdMis6yIest4HZDD13fVn9sGNZtJD39rm/uQE6ESTA4fA8gRxTAWZPsy?=
+ =?us-ascii?Q?vGQe+W8syPyQyDcjHTEhRi0onpkmcFV35gzTien6BGjHuWbulRoKm0PTOQlo?=
+ =?us-ascii?Q?9dwfx8jqCyl/dnNEfL22b+5vyCk4mpmc4ZmRMQBFpoGJYibzKXvies8I4Ggx?=
+ =?us-ascii?Q?shPmVbPUn4PC6aJ3j38fRa3cEMqHh1zWdq2l+7pX78OpaqsUp4qR5S6PpMEW?=
+ =?us-ascii?Q?dEyBQdL+XQbscjqDc07wVvaJuIb5wIxkkcyiagEj447HMyZxTcX5xaqVWMjQ?=
+ =?us-ascii?Q?x5oJpcr3UKj9HhqQH8eywbXJP9reiCwsffdkI8BLyxXIR+z5elEPKqZMxveH?=
+ =?us-ascii?Q?xXB32XUOaKVyPRGqaHFak4QRIB3NgskKAbh+i2AF9rALrRt167uGqcJ9RY4E?=
+ =?us-ascii?Q?G+wFCvK+Dh0klO7mymmZ87dr5dQKj3AD2uuIZ05HtzjvvK0gl7KsXknyXW+o?=
+ =?us-ascii?Q?WfUqTGD7GYHmWVzoaNC2bA+ljFIMDis47P1o4a1B8Y7RtSmye4ByTglPG4ex?=
+ =?us-ascii?Q?tSA64fOu0Xjtnsx/QMKz/hVeoJcPwDTZlj1LtdPvTdZS+pwtC8LGoCFcmXmG?=
+ =?us-ascii?Q?s2dl6g=3D=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee514baf-4fb3-42e8-5d4a-08d9a896533e
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2021 00:16:24.8327
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GKw5eTNujBLQpPq0/pc4X4XK1gUsdoSRXnbJbQHM0iV3pSnlUzObt8ltSnnzjL3LDptIYkgkVhkmiqG2HR6xmABWXLdybsmRj9EeIPfBrBw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5276
+X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10169 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 mlxscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2111150124
+X-Proofpoint-ORIG-GUID: EcQ6973E1rIge62BLoJYw7ZPQD83W54i
+X-Proofpoint-GUID: EcQ6973E1rIge62BLoJYw7ZPQD83W54i
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+Add a new link restriction.  Restrict the addition of keys in a keyring
+based on the key to be added being a CA.
 
-Wire up trusted_for(2) for all architectures.
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20211115185304.198460-3-mic@digikod.net
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 ---
-
-Changes since v15:
-* Update syscall IDs to align with the new futex_waitv.
-
-Changes since v13:
-* Add Reviewed-by Kees Cook.
-
-Changes since v12:
-* Update syscall IDs to align with the new ones.
-
-Changes since v11:
-* Add Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-* Rebase and leave space for watch_mount(2) and epoll_pwait2(2) from
-  -next.
-
-Changes since v9:
-* Rename introspect_access(2) to trusted_for(2).
-* Increase syscall number to leave space for memfd_secret(2) in -next.
-
-Changes since v7:
-* New patch for the new syscall.
-* Increase syscall numbers by 2 to leave space for new ones (in
-  linux-next): watch_mount(2) and process_madvise(2).
+v1: Initial version
+v2: Removed secondary keyring references
+v3: Removed restrict_link_by_system_trusted_or_ca
+    Simplify restrict_link_by_ca - only see if the key is a CA
+    Did not add __init in front of restrict_link_by_ca in case
+      restriction could be resued in the future
+v6: Unmodified from v3
+v7: Check for CA restruction in public key
 ---
- arch/alpha/kernel/syscalls/syscall.tbl      | 2 ++
- arch/arm/tools/syscall.tbl                  | 1 +
- arch/arm64/include/asm/unistd.h             | 2 +-
- arch/arm64/include/asm/unistd32.h           | 2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       | 2 ++
- arch/m68k/kernel/syscalls/syscall.tbl       | 2 ++
- arch/microblaze/kernel/syscalls/syscall.tbl | 2 ++
- arch/mips/kernel/syscalls/syscall_n32.tbl   | 2 ++
- arch/mips/kernel/syscalls/syscall_n64.tbl   | 2 ++
- arch/mips/kernel/syscalls/syscall_o32.tbl   | 2 ++
- arch/parisc/kernel/syscalls/syscall.tbl     | 2 ++
- arch/powerpc/kernel/syscalls/syscall.tbl    | 2 ++
- arch/s390/kernel/syscalls/syscall.tbl       | 2 ++
- arch/sh/kernel/syscalls/syscall.tbl         | 2 ++
- arch/sparc/kernel/syscalls/syscall.tbl      | 2 ++
- arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
- arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     | 2 ++
- include/uapi/asm-generic/unistd.h           | 4 +++-
- 19 files changed, 35 insertions(+), 2 deletions(-)
+ crypto/asymmetric_keys/restrict.c | 43 +++++++++++++++++++++++++++++++
+ include/crypto/public_key.h       |  5 ++++
+ 2 files changed, 48 insertions(+)
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index e4a041cd5715..7943ed6455a2 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -488,3 +488,5 @@
- 556	common	landlock_restrict_self		sys_landlock_restrict_self
- # 557 reserved for memfd_secret
- 558	common	process_mrelease		sys_process_mrelease
-+# 559 reserved for futex_waitv
-+560	common	trusted_for			sys_trusted_for
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 543100151f2b..ccfd831bcb96 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -463,3 +463,4 @@
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
- 449	common	futex_waitv			sys_futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 6bdb5f5db438..4e65da3445c7 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+diff --git a/crypto/asymmetric_keys/restrict.c b/crypto/asymmetric_keys/restrict.c
+index 84cefe3b3585..a891c598a2aa 100644
+--- a/crypto/asymmetric_keys/restrict.c
++++ b/crypto/asymmetric_keys/restrict.c
+@@ -108,6 +108,49 @@ int restrict_link_by_signature(struct key *dest_keyring,
+ 	return ret;
+ }
  
--#define __NR_compat_syscalls		450
-+#define __NR_compat_syscalls		451
- #endif
++/**
++ * restrict_link_by_ca - Restrict additions to a ring of CA keys
++ * @dest_keyring: Keyring being linked to.
++ * @type: The type of key being added.
++ * @payload: The payload of the new key.
++ * @trust_keyring: Unused.
++ *
++ * Check if the new certificate is a CA. If it is a CA, then mark the new
++ * certificate as being ok to link.
++ *
++ * Returns 0 if the new certificate was accepted, -ENOKEY if the
++ * certificate is not a CA. -ENOPKG if the signature uses unsupported
++ * crypto, or some other error if there is a matching certificate but
++ * the signature check cannot be performed.
++ */
++int restrict_link_by_ca(struct key *dest_keyring,
++			const struct key_type *type,
++			const union key_payload *payload,
++			struct key *trust_keyring)
++{
++	const struct public_key_signature *sig;
++	const struct public_key *pkey;
++
++	if (type != &key_type_asymmetric)
++		return -EOPNOTSUPP;
++
++	sig = payload->data[asym_auth];
++	if (!sig)
++		return -ENOPKG;
++
++	if (!sig->auth_ids[0] && !sig->auth_ids[1])
++		return -ENOKEY;
++
++	pkey = payload->data[asym_crypto];
++	if (!pkey)
++		return -ENOPKG;
++
++	if (!pkey->key_is_ca)
++		return -ENOKEY;
++
++	return public_key_verify_signature(pkey, sig);
++}
++
+ static bool match_either_id(const struct asymmetric_key_ids *pair,
+ 			    const struct asymmetric_key_id *single)
+ {
+diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
+index 61c66be80995..1e4fff6b7820 100644
+--- a/include/crypto/public_key.h
++++ b/include/crypto/public_key.h
+@@ -72,6 +72,11 @@ extern int restrict_link_by_key_or_keyring_chain(struct key *trust_keyring,
+ 						 const union key_payload *payload,
+ 						 struct key *trusted);
  
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 41ea1195e44b..0e69743609ff 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -905,6 +905,8 @@ __SYSCALL(__NR_landlock_restrict_self, sys_landlock_restrict_self)
- __SYSCALL(__NR_process_mrelease, sys_process_mrelease)
- #define __NR_futex_waitv 449
- __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
-+#define __NR_trusted_for 450
-+__SYSCALL(__NR_trusted_for, sys_trusted_for)
++extern int restrict_link_by_ca(struct key *dest_keyring,
++			       const struct key_type *type,
++			       const union key_payload *payload,
++			       struct key *trust_keyring);
++
+ extern int query_asymmetric_key(const struct kernel_pkey_params *,
+ 				struct kernel_pkey_query *);
  
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index 6fea1844fb95..362c1e837bd6 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -369,3 +369,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 7976dff8f879..90306947817d 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -448,3 +448,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index 6b0e11362bd2..8b19bbdaaf70 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -454,3 +454,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index 70e32de2bcaa..1a84e8d1c776 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -387,3 +387,5 @@
- 446	n32	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	n32	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	n32	trusted_for			sys_trusted_for
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 1ca7bc337932..ced3db574de3 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -363,3 +363,5 @@
- 446	n64	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	n64	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	n64	trusted_for			sys_trusted_for
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index a61c35edaa74..94b77adc6165 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -436,3 +436,5 @@
- 446	o32	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	o32	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	o32	trusted_for			sys_trusted_for
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index bf751e0732b7..11de0c191a0e 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -446,3 +446,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index 7bef917cc84e..b7337d3843a7 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -528,3 +528,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index df5261e5cfe1..98bab648cda6 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -451,3 +451,5 @@
- 446  common	landlock_restrict_self	sys_landlock_restrict_self	sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448  common	process_mrelease	sys_process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450  common	trusted_for		sys_trusted_for			sys_trusted_for
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index 208f131659c5..88c6cb3de23b 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -451,3 +451,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index c37764dc764d..b0db960c5897 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -494,3 +494,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 7e25543693de..2f230c04f8a7 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -454,3 +454,4 @@
- 447	i386	memfd_secret		sys_memfd_secret
- 448	i386	process_mrelease	sys_process_mrelease
- 449	i386	futex_waitv		sys_futex_waitv
-+450	i386	trusted_for		sys_trusted_for
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index fe8f8dd157b4..678ab13ee1c1 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -371,6 +371,7 @@
- 447	common	memfd_secret		sys_memfd_secret
- 448	common	process_mrelease	sys_process_mrelease
- 449	common	futex_waitv		sys_futex_waitv
-+450	common	trusted_for		sys_trusted_for
- 
- #
- # Due to a historical design error, certain syscalls are numbered differently
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 104b327f8ac9..9dab1dfffc95 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -419,3 +419,5 @@
- 446	common	landlock_restrict_self		sys_landlock_restrict_self
- # 447 reserved for memfd_secret
- 448	common	process_mrelease		sys_process_mrelease
-+# 449 reserved for futex_waitv
-+450	common	trusted_for			sys_trusted_for
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 4557a8b6086f..ded7a49616f2 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -882,9 +882,11 @@ __SYSCALL(__NR_process_mrelease, sys_process_mrelease)
- 
- #define __NR_futex_waitv 449
- __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
-+#define __NR_trusted_for 450
-+__SYSCALL(__NR_trusted_for, sys_trusted_for)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 450
-+#define __NR_syscalls 451
- 
- /*
-  * 32 bit systems traditionally used different
 -- 
-2.33.1
+2.18.4
 
