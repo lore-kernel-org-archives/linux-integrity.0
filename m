@@ -2,55 +2,56 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760E8C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BA4C43219
 	for <linux-integrity@archiver.kernel.org>; Thu, 25 Nov 2021 00:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344463AbhKYAnp (ORCPT
+        id S1344726AbhKYAnq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 24 Nov 2021 19:43:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21134 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1344871AbhKYAln (ORCPT
+        Wed, 24 Nov 2021 19:43:46 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23578 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1344872AbhKYAlo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 24 Nov 2021 19:41:43 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AOMplKR002502;
+        Wed, 24 Nov 2021 19:41:44 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1AOMkTKv010842;
         Thu, 25 Nov 2021 00:38:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=vhS/t8ty6L7ShWjAyb76gQbtxCrJrEAZqpR+Ca3s+pQ=;
- b=nm/pkVMaOtilxrFKWtYe0dZEFH3iiLgAFrVXFTWxh0e/5lFMMRiMyrclwhbhqirQ0uOj
- VObVLRVNVCDRCCG9bUX6DVCnkr5AbYJTQWAdFySQSKj3wN1eRkc6yeQGanvJcfvkf/hi
- WB7un61hU/RZOb18SgID37sOrbrbnYp3TkwlnEoCe9qj0oEmCDWrcnevFlr4kFk6xP0E
- vn3sE8QMokSxw00M59a7j+mJ8GvPPzRi8s7Bdq6Oj0OLH6NPDS6gKgzQp2flTqryJ76t
- /H2byV3K6QgikBQYP4h1+/kWDWcjLbKD9K0T85By3IxtyrUd/ABf95PuLc2toBor1Bs2 NA== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=eHgws6Wf+qHlJO679jheVoKil2upivq+jcL7XncWqkQ=;
+ b=kJzhlvQlrLENeWZY2ETiqeqlviQaNuFYTBungREiTdL38cRCDoT/l+cJp9oYMng69Akh
+ MfQ4xuE0OH6KpAVJ8oxx17RBOqaqWGa02+0fP6NbkIUQCx8mGjewbWDP2rjyzVdEAS1v
+ w+ACfvUeSHC1BJb5RgV7K6nCapK5H+DXUoO6YV1EKAPvp5Vj3B9m3MIzs3199ReR5crA
+ Ett0V/EO486Szcmuvt5C48ElJKQGVcmz6zxgEht3VjuGaXaEGFqGSkmxrZ6qym5VaT99
+ TDg6UrdjPmhQcHRefHsRcviksyiTqD1nnpVVgix0IHIepLS0my1l3ojr9oQlMF1m2v5r 7A== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3chxjbsfw4-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3chxfyhgus-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 25 Nov 2021 00:38:31 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AP0CCZd014607;
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1AP0cKJH004049;
         Thu, 25 Nov 2021 00:38:31 GMT
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3chxjbsfvk-1
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3chxfyhguk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 25 Nov 2021 00:38:31 +0000
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AP0NCha010157;
-        Thu, 25 Nov 2021 00:38:29 GMT
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1AP0NA4I007152;
+        Thu, 25 Nov 2021 00:38:30 GMT
 Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma05wdc.us.ibm.com with ESMTP id 3cernbm36r-1
+        by ppma04dal.us.ibm.com with ESMTP id 3cernchega-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 25 Nov 2021 00:38:29 +0000
+        Thu, 25 Nov 2021 00:38:30 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AP0cT1D49873214
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1AP0cT9b63308084
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 25 Nov 2021 00:38:29 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 460B7B2067;
+        by IMSVA (Postfix) with ESMTP id 7013EB205F;
         Thu, 25 Nov 2021 00:38:29 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2DE97B2066;
+        by IMSVA (Postfix) with ESMTP id 618FBB206B;
         Thu, 25 Nov 2021 00:38:29 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
@@ -60,22 +61,24 @@ To:     jarkko@kernel.org, linux-integrity@vger.kernel.org
 Cc:     peterhuewe@gmx.de, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 0/3] selftests: tpm2: Probe for available PCR bank
-Date:   Wed, 24 Nov 2021 19:38:24 -0500
-Message-Id: <20211125003827.1360432-1-stefanb@linux.vnet.ibm.com>
+Subject: [PATCH v3 2/3] selftests: tpm2: Reset the dictionary attack lock
+Date:   Wed, 24 Nov 2021 19:38:26 -0500
+Message-Id: <20211125003827.1360432-3-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20211125003827.1360432-1-stefanb@linux.vnet.ibm.com>
+References: <20211125003827.1360432-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: H0oTmrwQ0y4xHIjnmFZ1De4h2bC6vY8i
-X-Proofpoint-ORIG-GUID: HuMv6Vlq9fKfkBAfv7LGeRNf48AhIjI3
+X-Proofpoint-GUID: l_lJ2Chsup2ssHdwBAoYUCt6U-ewlKmz
+X-Proofpoint-ORIG-GUID: f5mdSKbHvDDH3GjE8Xw3nk7sTisQeyOn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
  definitions=2021-11-24_06,2021-11-24_01,2020-04-07_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 mlxscore=0 adultscore=0 impostorscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 clxscore=1011 lowpriorityscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 adultscore=0 priorityscore=1501 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2110150000 definitions=main-2111250000
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -83,31 +86,38 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Stefan Berger <stefanb@linux.ibm.com>
 
-This series of patches fixes two issues with TPM2 selftest.
-- Probes for available PCR banks
-- Resets DA lock on TPM2 to avoid subsequent test failures
+Reset the dictionary attack lock to avoid the following types of test
+failures after running the test 2 times:
 
-It also extends the test cases with support for SHA-384 and SHA-512
-PCR banks.
+======================================================================
+ERROR: test_unseal_with_wrong_policy (tpm2_tests.SmokeTest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/linux-ima-namespaces/tools/testing/selftests/tpm2/tpm2_tests.py", line 105, in test_unseal_with_wrong_policy
+    blob = self.client.seal(self.root_key, data, auth, policy_dig)
+  File "/root/linux-ima-namespaces/tools/testing/selftests/tpm2/tpm2.py", line 620, in seal
+    rsp = self.send_cmd(cmd)
+  File "/root/linux-ima-namespaces/tools/testing/selftests/tpm2/tpm2.py", line 397, in send_cmd
+    raise ProtocolError(cc, rc)
+tpm2.ProtocolError: TPM_RC_LOCKOUT: cc=0x00000153, rc=0x00000921
 
-  Stefan
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ tools/testing/selftests/tpm2/tpm2_tests.py | 1 +
+ 1 file changed, 1 insertion(+)
 
-v3:
- - Mention SHA-256 PCR bank as alternative in patch 1 description
-
-v2:
- - Clarified patch 1 description 
- - Added patch 3 with support for SHA-384 and SHA-512
-
-Stefan Berger (3):
-  selftests: tpm2: Probe for available PCR bank
-  selftests: tpm2: Reset the dictionary attack lock
-  selftests: tpm2: Add support for SHA-384 and SHA-512
-
- tools/testing/selftests/tpm2/tpm2.py       | 12 ++++++-
- tools/testing/selftests/tpm2/tpm2_tests.py | 37 +++++++++++++++++-----
- 2 files changed, 40 insertions(+), 9 deletions(-)
-
+diff --git a/tools/testing/selftests/tpm2/tpm2_tests.py b/tools/testing/selftests/tpm2/tpm2_tests.py
+index 6b88ff0e47b9..ae88d8866e5d 100644
+--- a/tools/testing/selftests/tpm2/tpm2_tests.py
++++ b/tools/testing/selftests/tpm2/tpm2_tests.py
+@@ -104,6 +104,7 @@ class SmokeTest(unittest.TestCase):
+             policy_dig = self.client.get_policy_digest(handle)
+         finally:
+             self.client.flush_context(handle)
++            self.client.reset_da_lock()
+ 
+         blob = self.client.seal(self.root_key, data, auth, policy_dig)
+ 
 -- 
 2.31.1
 
