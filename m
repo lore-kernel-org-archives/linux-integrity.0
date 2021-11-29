@@ -2,167 +2,106 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60CCC433F5
-	for <linux-integrity@archiver.kernel.org>; Mon, 29 Nov 2021 16:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA9DC433FE
+	for <linux-integrity@archiver.kernel.org>; Mon, 29 Nov 2021 17:03:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242580AbhK2Q3O (ORCPT
+        id S1347315AbhK2RGn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 29 Nov 2021 11:29:14 -0500
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:36152 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244824AbhK2Q1N (ORCPT
+        Mon, 29 Nov 2021 12:06:43 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61368 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1346245AbhK2REn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 29 Nov 2021 11:27:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1638203028;
-        bh=xPNipZt/4wQBEActY1Dd9mBHUhc6/PCR2MJmoxfAE0Y=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=cafs1KVuEdavSLF40QBBPMYAo5T3Yj/V0JVpUdoVlEM8FZYJNK0DGaVblvhkeFL1H
-         kQoCy63uZeymBtRdZ7kCOTaBuDMvv2jr1VcEGx1GOS6ba4kpe3FneyV+3eCtejB3+9
-         2M3AtPf/bR+/r6fdh2uyeTX2/Hrg0k4PXUmBJoeM=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id DF8B41280975;
-        Mon, 29 Nov 2021 11:23:48 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id SE6fwn6yX7hq; Mon, 29 Nov 2021 11:23:48 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1638203028;
-        bh=xPNipZt/4wQBEActY1Dd9mBHUhc6/PCR2MJmoxfAE0Y=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=cafs1KVuEdavSLF40QBBPMYAo5T3Yj/V0JVpUdoVlEM8FZYJNK0DGaVblvhkeFL1H
-         kQoCy63uZeymBtRdZ7kCOTaBuDMvv2jr1VcEGx1GOS6ba4kpe3FneyV+3eCtejB3+9
-         2M3AtPf/bR+/r6fdh2uyeTX2/Hrg0k4PXUmBJoeM=
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4300:c551::c447])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 71A3C128096D;
-        Mon, 29 Nov 2021 11:23:47 -0500 (EST)
-Message-ID: <0d882e9cb371485c506d73a9b702a2cc398125af.camel@HansenPartnership.com>
-Subject: Re: [RFC 3/3] ima: make the integrity inode cache per namespace
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, containers@lists.linux.dev,
+        Mon, 29 Nov 2021 12:04:43 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1ATFkcHL004585;
+        Mon, 29 Nov 2021 17:01:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=tyJn1dJDKOISYr6ZBfAQkOJsshvSUxtJqeXTCrXzPaQ=;
+ b=djYJS2prL6tqi/AWoA9X3CWmj4j+SNJYduPxpWdiUVaxHxL07Ku2a+Qe9m5kUk8FtW1K
+ 7PWw0YU0xMdSFhzGYQ76ptNt7ZGnE4UxbBjKfShINeV/QNAjhD6N3tBVENP2ROTg3LZZ
+ Zv8RfG/G2RBNNwdddFArA34RmPP6wpC1ayWxRYatLQitE/YR4r5Y6QiEUIvrOmjnoWVN
+ MflHwENtYcxqjbaGX2QFcZ7SBDbyMPbumsSqU0XhPb3xmAYjDDtLvc9X8l4P/CmfsI19
+ Y2rNw6HB2Aug/A6LfweqMFRIa3wU0hStQ0ZYQMn2RdTMo9EFuegWcFcpjP2xiyxdgR/r Sg== 
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3cn1t71yrv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Nov 2021 17:01:23 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1ATGuj1x006995;
+        Mon, 29 Nov 2021 17:01:21 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06fra.de.ibm.com with ESMTP id 3ckbxje6uj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 29 Nov 2021 17:01:21 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1ATH1Ivp19661196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Nov 2021 17:01:18 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA7F44C063;
+        Mon, 29 Nov 2021 17:01:18 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A542A4C044;
+        Mon, 29 Nov 2021 17:01:17 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.65.68.145])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 29 Nov 2021 17:01:17 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        krzysztof.struczynski@huawei.com,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Michael Peters <mpeters@redhat.com>,
-        Luke Hinds <lhinds@redhat.com>,
-        Lily Sturmann <lsturman@redhat.com>,
-        Patrick Uiterwijk <puiterwi@redhat.com>,
-        Christian Brauner <christian@brauner.io>
-Date:   Mon, 29 Nov 2021 11:23:46 -0500
-In-Reply-To: <3e609b60-221a-8b9b-5f55-ab7081a83786@linux.ibm.com>
-References: <20211127164549.2571457-1-James.Bottomley@HansenPartnership.com>
-         <20211127164549.2571457-4-James.Bottomley@HansenPartnership.com>
-         <20211129045834.GB20606@mail.hallyn.com>
-         <755446b10c8415fd469b814535c4a12964af3264.camel@HansenPartnership.com>
-         <70b81e62-46af-9d39-3dcb-4cfbae645175@linux.ibm.com>
-         <a74b18c1aee2b14426cc12e2fd336716c447f070.camel@HansenPartnership.com>
-         <20211129142235.hez3ovtuj3rpscgm@wittgenstein>
-         <afee2f0483271a6cdb1bc7b48b819a3ca2c4ceda.camel@HansenPartnership.com>
-         <3e609b60-221a-8b9b-5f55-ab7081a83786@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/4] ima: support fs-verity signatures stored as
+Date:   Mon, 29 Nov 2021 12:00:53 -0500
+Message-Id: <20211129170057.243127-1-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lut-SrzVKLJ-JpDWmXzwhdr9vCKQgf5G
+X-Proofpoint-ORIG-GUID: lut-SrzVKLJ-JpDWmXzwhdr9vCKQgf5G
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.0.607.475
+ definitions=2021-11-29_10,2021-11-28_01,2020-04-07_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 spamscore=0
+ priorityscore=1501 phishscore=0 clxscore=1011 mlxscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2111290081
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2021-11-29 at 10:27 -0500, Stefan Berger wrote:
-> On 11/29/21 09:46, James Bottomley wrote:
-[...]
-> > And, of course, the fun ones we're coming to.
-> > 
-> >     1. Given that the current keyring namespacing doesn't give
-> > access to the system keyrings, how do we get per-namespace access
-> > for .ima/_ima system keyrings given that the namespace admin is
-> > going to want to set their own key for appraisal?
-> >     2. What mechanism should we use for .ima/_ima key setting?  The
-> > current mechanism is must be signed by a key in the system keyrings
-> > sounds appropriate, but is problematic given most system owners
-> > don't actually have any private keys for keys in the system
-> > keyrings. Hopefully the MoK keyring patches will help us have an
-> > easier approach to this.
-> 
-> The approach we took in the previous implementation was to support
-> BYOK (bring your own key) for every container. The (trusted)
-> container runtime has to do what dracut would typically do, namely
-> create the keyrings and load the keys onto it.
+Support for fs-verity file digests in IMA was discussed from the beginning,
+prior to fs-verity being upstreamed[1,2].  This patch set adds signature
+verification support based on the fs-verity file digest.  Both the
+file digest and the signature must be included in the IMA measurement list
+in order to disambiguate the type of file digest.
 
-Right, that's why I think the staged approach is the right way to do
-this.  Let's first of all try to get an IMA namespace that can be used
-to measure things and then worry about trying to add appraisal to the
-namespace later, since it's a separable use case.  I think they how of
-appraisal is one of the more complex issues, but it shouldn't hold up
-actually starting to get an IMA namespace upstream and encouraging use
-cases.
+[1] https://events19.linuxfoundation.org/wp-content/uploads/2017/11/fs-verify_Mike-Halcrow_Eric-Biggers.pdf
+[2] Documentation/filesystems/fsverity.rst
 
-> The container runtime would
-> 
-> 1a) expect keys to be found inside a container's filesystem at the
-> usual location (/etc/keys/ima) but then also allow for a CA key that
-> is used to verify the signature of those keys; that CA key is
-> typically baked  into the Linux kernel when .ima is to be used, but
-> for containers and BYOK it's an additional file in the container's
-> filesystem
-> 
-> 1b) passing in keys via command line should be possible as well but 
-> that's an implementation detail
+Mimi Zohar (4):
+  fs-verity: define a function to return the integrity protected file
+    digest
+  ima: define a new signature type named IMA_VERITY_DIGSIG
+  ima: limit including fs-verity's file digest in measurement list
+  ima: support fs-verity file digest based signatures
 
-I do think the namespace should use a mechanism that's as close as
-possible to the one on the physical system, so it shouldn't depend on
-the orchestration system doing anything (there might not even be one).
+ fs/verity/fsverity_private.h              |  6 ---
+ fs/verity/measure.c                       | 49 +++++++++++++++++++++++
+ include/linux/fsverity.h                  | 17 ++++++++
+ security/integrity/ima/ima.h              |  3 +-
+ security/integrity/ima/ima_api.c          | 23 ++++++++++-
+ security/integrity/ima/ima_appraise.c     |  9 ++++-
+ security/integrity/ima/ima_main.c         |  7 +++-
+ security/integrity/ima/ima_template_lib.c |  3 +-
+ security/integrity/integrity.h            |  1 +
+ 9 files changed, 107 insertions(+), 11 deletions(-)
 
-The current way you install a new ima key is by adding it as root to
-_ima or by adding one signed by a key on the system keyring to .ima; I
-think this mechanism should be usable inside the namespace as well ...
-that's not to say there can't be other mechanisms, but mirroring the
-existing mechanism should be part of this.
-
-> 2) container runtime sets up either a restricted keyring [ 
-> https://elixir.bootlin.com/linux/latest/source/Documentation/crypto/asymmetric-keys.rst#L359 
-> ] if that CA key is found in the filesystem or a 'normal' keyring.
-> The container runtime then loads the keys onto that keyring; call
-> that keyring '.ima' or '_ima' for as long as the kernel knows what
-> keyring to search for.
-
-and this keyring should be owned by the admin of the IMA namespace.
-
->  We created that keyring under a session keyring. With
-> the user namespace isolation and keyrings support in the user
-> namespace the  isolation of the IMA related keyrings between
-> different user namespaces should be possible.
-
-Yes, I think so.  Really system keyrings are keyrings root can't create
-but which are owned by root, so it can see them.  This mechanism should
-carry over to the admin of the IMA namespace, so I see no reason why we
-can't set up mirrors of .ima/_ima in the keyring (user) namespace.
-
-Part of the reason why I think using the user namespace for the IMA
-namespace is because this will have to be done on first create of a new
-IMA namespace, so it's much easier if the keyring and IMA namespaces
-are the same namespace.
-
-> The same would be done for the IMA policy where the container
-> runtime also needs to do some work that usually dracut would do:
-> 
-> - expect the IMA policy for the container at the usual location 
-> (/etc/ima/ima-policy) and load it into the container's 'securityfs' 
-> policy file
-
-Right, since non system containers don't boot, we discount the kernel
-command line option.  Once we have the securityfs namespaced for the
-IMA files, doing the policy write should be trivial.  The next question
-would be how to process it so that we don't cause a security breach
-(like turn of measurement on a filesystem where the original policy
-required it).
-
-James
-
+-- 
+2.27.0
 
