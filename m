@@ -2,224 +2,145 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199B9C433FE
-	for <linux-integrity@archiver.kernel.org>; Thu,  2 Dec 2021 16:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC72C433F5
+	for <linux-integrity@archiver.kernel.org>; Thu,  2 Dec 2021 16:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359754AbhLBQai (ORCPT
+        id S237007AbhLBQdk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 2 Dec 2021 11:30:38 -0500
-Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21188 "EHLO
-        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359803AbhLBQaO (ORCPT
+        Thu, 2 Dec 2021 11:33:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56427 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230060AbhLBQdj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 2 Dec 2021 11:30:14 -0500
-X-Greylist: delayed 932 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Dec 2021 11:30:14 EST
-ARC-Seal: i=1; a=rsa-sha256; t=1638461440; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=Ef7/5KndNWTutWFlInIcn49PUdwFroAcNIVI7T1nYeb8Pe7cwRm0UMhiRJbIfJDrEGbWsXrVmwS2K2YAqqS+tiwmrH4Ahgk7IIlFcySQzasFv0FTsvKeqmMmeSHADU4ra7sWRyTFZCqS1TwA5i3nQpc8P8ukmzEMhP4Avd5TWcE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1638461440; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=lMSNaC8iHTZb79U0vyTj0xLlOB+ewHNQ8YYULYg6ndY=; 
-        b=G8avNwaERXHBVta7/GOP+xxNti1Kca9EgBOmQgh4K5E5wop+LfQMRmehlWTLqvbKyX1YFk/ZQGyTg6UXGWd9HKeRC8c6K+4bXY8BhZZEs7Ja6y3Ydb9j/oSVt9HsAeqTfUxnuaVDrw4Skh2brupK+8ULeCUyQyrYd1MLMfO19M8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=apertussolutions.com;
-        spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-        dmarc=pass header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1638461440;
-        s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-        h=From:To:Cc:References:Subject:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=lMSNaC8iHTZb79U0vyTj0xLlOB+ewHNQ8YYULYg6ndY=;
-        b=ZDhAHqpdCvwT8O5SVL4rT5hzDc0tFNRwrWO/x7qrfascQu4XC7ag6pjHeLC90XwO
-        92OGdjmhJjqgX0ZuM6YF6fgmCXA7OnVzW4+LiTwMmt1qAKy5dcJmM1UU13chMCZklAo
-        C2bP/fO3KHN0F2SYobN5q9X8eE5HGLByzkL9xDM0=
-Received: from [10.10.1.138] (static-72-81-132-2.bltmmd.fios.verizon.net [72.81.132.2]) by mx.zohomail.com
-        with SMTPS id 1638461437855136.63909149380606; Thu, 2 Dec 2021 08:10:37 -0800 (PST)
-From:   "Daniel P. Smith" <dpsmith@apertussolutions.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Ross Philipson <ross.philipson@oracle.com>,
-        trenchboot-devel@googlegroups.com
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        iommu@lists.linux-foundation.org, linux-integrity@vger.kernel.org,
-        linux-doc@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, luto@amacapital.net,
-        kanth.ghatraju@oracle.com
-References: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
- <CAHC9VhTJG24iG=U0geO-ZhC6OogxOu4icBrNY22+qRNpWd5PBQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] x86: Trenchboot secure dynamic launch Linux
- kernel support
-Message-ID: <456caf8c-b79a-e8b0-581f-3504240466ff@apertussolutions.com>
-Date:   Thu, 2 Dec 2021 11:09:55 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+        Thu, 2 Dec 2021 11:33:39 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B2EddoT030799;
+        Thu, 2 Dec 2021 16:29:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : mime-version : content-transfer-encoding; s=pp1;
+ bh=+5dictTnW7menonE8Uu7D4Mh9Iqfr1cClZiq7J6QGUc=;
+ b=Z361jl1gz7loVU7mCa7eK/nZTd5udEMKmjmaCHAk2cRXYnyefZ+7dJYsp9anzGMBdVCc
+ eP2dZYZ4kYyly7Ez60VomgQdutJVRmaOJTrADvsw4DY9sSuTlB25lAJAaygdRpeINEht
+ EDmhAV0meWxh1Tw650kPlogN07JkmkW+xM93NbVovhtl0S4BvvU4lyyGR5q4/8mhKesk
+ aMsWSu6JCmTRh57aE4OcqM+F65xIPUNBYZ5aEudd4hkY/iHzF8vn+0XFcoHXgQuw9swX
+ QxJHxCIE1ojtfpU6bF9UaHPR3Cjy/cjBUdDdnQA8EZuoThhn2ECeTMLUM2fmhGGQnAnd JQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3cpys2k9mq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Dec 2021 16:29:55 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B2FiKOZ016427;
+        Thu, 2 Dec 2021 16:29:55 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3cpys2k9m7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Dec 2021 16:29:55 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B2GT7f3028713;
+        Thu, 2 Dec 2021 16:29:54 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma02wdc.us.ibm.com with ESMTP id 3ckcacsx7j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 02 Dec 2021 16:29:54 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B2GTqLx28050078
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 2 Dec 2021 16:29:52 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DA2178098;
+        Thu,  2 Dec 2021 16:29:52 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFC5478063;
+        Thu,  2 Dec 2021 16:29:47 +0000 (GMT)
+Received: from jarvis.int.hansenpartnership.com (unknown [9.211.96.125])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  2 Dec 2021 16:29:47 +0000 (GMT)
+Message-ID: <eeaadc76ca2da67d79c155497a73c6905b70e726.camel@linux.ibm.com>
+Subject: Re: [RFC 08/20] ima: Move measurement list related variables into
+ ima_namespace
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Date:   Thu, 02 Dec 2021 11:29:46 -0500
+In-Reply-To: <c3b99439-1dd6-e204-ad41-5d8bacb54d48@linux.ibm.com>
+References: <20211130160654.1418231-1-stefanb@linux.ibm.com>
+         <20211130160654.1418231-9-stefanb@linux.ibm.com>
+         <141ce433f026b47edb1d9a8f89e4581db253c579.camel@linux.ibm.com>
+         <c3b99439-1dd6-e204-ad41-5d8bacb54d48@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTJG24iG=U0geO-ZhC6OogxOu4icBrNY22+qRNpWd5PBQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: TYJca4kMZ2T-YEQV5jG84fVHlYog7MsA
+X-Proofpoint-GUID: kAPnGdCaN722DRo6Nft-lRHP8cW2aYl9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2021-12-02_10,2021-12-02_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112020106
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Paul!
-
-On 11/30/21 8:06 PM, Paul Moore wrote:
-> On Fri, Aug 27, 2021 at 9:20 AM Ross Philipson
-> <ross.philipson@oracle.com> wrote:
->>
->> The larger focus of the Trechboot project (https://github.com/TrenchBoot) is to
->> enhance the boot security and integrity in a unified manner. The first area of
->> focus has been on the Trusted Computing Group's Dynamic Launch for establishing
->> a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root of
->> Trust for Measurement).
+On Thu, 2021-12-02 at 08:41 -0500, Stefan Berger wrote:
+> On 12/2/21 07:46, James Bottomley wrote:
+> > On Tue, 2021-11-30 at 11:06 -0500, Stefan Berger wrote:
+> > > Move measurement list related variables into the ima_namespace.
+> > > This
+> > > way a
+> > > front-end like SecurityFS can show the measurement list inside an
+> > > IMA
+> > > namespace.
+> > > 
+> > > Implement ima_free_measurements() to free a list of measurements
+> > > and call it when an IMA namespace is deleted.
+> > This one worries me quite a lot.  What seems to be happening in
+> > this
+> > code:
+> > 
+> > > @@ -107,7 +100,7 @@ static int ima_add_digest_entry(struct
+> > > ima_namespace *ns,
+> > >          qe->entry = entry;
+> > >   
+> > >          INIT_LIST_HEAD(&qe->later);
+> > > -       list_add_tail_rcu(&qe->later, &ima_measurements);
+> > > +       list_add_tail_rcu(&qe->later, &ns->ima_measurements);
+> > >   
+> > >          atomic_long_inc(&ns->ima_htable.len);
+> > >          if (update_htable) {
+> > > 
+> > is that we now only add the measurements to the namespace list, but
+> > that list is freed when the namespace dies.  However, the
+> > measurement
+> > is still extended through the PCRs meaning we have incomplete
+> > information for a replay after the namespace dies?
 > 
-> My apologies for such a late reply, but I'm just getting around to
-> looking at this and I have a few questions on the basic design/flow
-> (below) ...
-
-No worries, thank you so much for taking the time to review.
-
->> The basic flow is:
->>
->>  - Entry from the dynamic launch jumps to the SL stub
+> *Not at all.* The measurement list of the namespace is independent
+> of 
+> the host.
 > 
-> So I'm clear, at this point the combined stub+kernel+initramfs+cmdline
-> image has already been loaded into memory and the SL stub is
-> executing, yes?
+> The cover letter states:
 
-That is correct.
+I get that the host can set up a policy to log everything in the
+namespace, but that wasn't my question.  My question is can the guest
+set up a policy to log something that doesn't go into the host log
+(because the host hasn't asked for it to be logged) but extends a PCR
+anyway, thus destroying the ability of the host to do log replay.
 
-> As TrenchBoot seems to be focused on boot measurement and not
-> enforcing policy, I'm guessing this is considered out-of-scope (not to
-> mention that the combined stub+kernel image makes this less
-> interesting), but has any thought been given to leveraging the TXT
-> launch control policy, or is it simply an empty run-everything policy?
-
-The TrenchBoot model is a bit different and takes a more flexible
-approach to allow users to build tailored solutions. For instance Secure
-Launch is able to be used in a configuration that is similar to tboot.
-Consider the functions of tboot, it has a portion that is the
-post-launch kernel that handles the handover from the ACM and a portion
-that provides the Verified Launch policy engine, which is only capable
-of enforcing policy on what is contained in the Multiboot chain. The
-TrenchBoot approach is to introduce the Secure Launch capability into a
-kernel, in this case Linux, to handle the handover from the ACM, and
-then transition to a running user space that can contain a distribution
-specific policy enforcement. As an example, the TrenchBoot project
-contributed to the uroot project a Secure Launch policy engine which
-enables the creation of an initramfs image which can then be embedded
-into a minimal configuration Secure Launch Linux kernel. This results in
-a single binary that functions like tboot but with a far richer and more
-extensible policy engine.
-
-With regard to TXT's Launch Control Policy, it is a function of SINIT
-ACM and so it is still very much possible to be used with Secure Launch.
-In fact such a configuration has been tested and used. Now it is out of
-scope in the sense that the tboot project already maintains and provides
-the lcptools suite for managing LCPs. If there is a requirement to use
-an LCP, then the lcptools can be used to create a policy to only allow
-the specific instance(s) of a Secure Launch kernel.
-
->>  - SL stub fixes up the world on the BSP
->>  - For TXT, SL stub wakes the APs, fixes up their worlds
->>  - For TXT, APs are left halted waiting for an NMI to wake them
->>  - SL stub jumps to startup_32
->>  - SL main locates the TPM event log and writes the measurements of
->>    configuration and module information into it.
-> 
-> Since the stub+kernel image are combined it looks like the kernel
-> measurement comes from the ACM via the MLE measurement into PCR 18,
-> while the stub generated measurements are extended into PCR 19 or 20
-> depending on the configuration, yes?
-
-If TXT is launched in Legacy PCR usage mode, then the bzImage, as loaded
-into memory by the bootloader (GRUB), will be hashed into PCR 18. If it
-is launched in the default Details and Authorities (DA) PCR usage mode,
-then the bzImage will be hashed into PCR 17. This is because the kernel
-has been promoted to being the MLE.
-
-> I realize that moving the TXT code into the kernel makes this
-> difficult (not possible?), but one of the things that was nice about
-> the tboot based approach (dynamic, early launch) was that it could be
-> extended to do different types of measurements, e.g. a signing
-> authority measurement similar to UEFI Secure Boot and PCR 7.  If that
-> is possible, I think it is something worth including in the design,
-> even if it isn't initially implemented.  The only thing that
-> immediately comes to mind would be a section/region based approach
-> similar to systemd-boot/gummiboot where the (signed) kernel is kept in
-> a well known region and verified/measured by the stub prior to jumping
-> into its start point.
-
-Revisiting the tboot-like configuration: the Secure Launch kernel, its
-configuration (cmdline), and uroot initramfs (which may be embedded or
-separate) are all part of the MLE started by the ACM. For tboot there is
-the tboot binary and the VL policy, though uncertain if it was
-configurable where the policy hash would be extended. Like the tboot VL
-policy engine, the u-root policy engine is configurable where the
-measurements are stored.
-
-As highlighted, more components are measured as part of Secure Launch
-than for tboot. The approach taken was to model after DA and put
-binaries into 17 and configuration into 18. Later there were
-requirements to isolate certain measurements. For the time this is
-provided through kconfig to move config to 19 and initrd to 20. In the
-future if/when additional measurements are incorporated, such as signing
-keys that are embedded into the kernel, then it may be necessary to
-provide a means to configure PCR usage at runtime.
-
->>  - Kernel boot proceeds normally from this point.
->>  - During early setup, slaunch_setup() runs to finish some validation
->>    and setup tasks.
->>  - The SMP bringup code is modified to wake the waiting APs. APs vector
->>    to rmpiggy and start up normally from that point.
->>  - SL platform module is registered as a late initcall module. It reads
->>    the TPM event log and extends the measurements taken into the TPM PCRs.
-> 
-> I'm sure there is some issue with passing data across boundaries, but
-> is there any reason why the TPM event log needs to be updated
-> out-of-sync with the TPM PCRs?  Is is possible to pass the
-> measurements to the SL platform module which would both extend the
-> PCRs and update the TPM event log at the same time?
-
-Without rehashing the issues around TPM usage from the stub, the core
-issue is that measurements need to be collected before usage which is at
-a time when access to the TPM is not possible at this time. Thus the
-measurements need to be collected and persisted in a location where they
-can be retrieved when the main kernel is in control. It was felt using
-the DRTM TPM log was a natural place as it persists all the info
-necessary to record the measurements by the SL platform module. Though
-it does result in there being two non-event entries to exist in the log
-but those are standardized such that any TCG compliant log parser should
-ignore them.
-
-With the explanation of why it was done aside, if there is another
-location that is preferred which can provide the necessary guarantees,
-then there is no reason why they could not be switched to that location.
-
->>  - SL platform module initializes the securityfs interface to allow
->>    asccess to the TPM event log and TXT public registers.
->>  - Kernel boot finishes booting normally
->>  - SEXIT support to leave SMX mode is present on the kexec path and
->>    the various reboot paths (poweroff, reset, halt).
-> 
-> It doesn't look like it's currently implemented, but it looks like
-> eventually you plan to support doing a new DRTM measurement on kexec,
-> is that correct?  I'm sure that is something a *lot* of people
-> (including myself) would like to see happen.
-
-Correct, relaunch is not currently implemented but has always been
-planned as relaunch enables DRTM late-launch use cases. For a few
-reasons this is being elevated in priority and as a result there is a
-short-term solution to quickly enable relaunch with longer term direct
-integration into kexec.
-
-Finally if your schedule allows it and it is not too much to ask, it
-would be greatly appreciated if some code review could be provided.
-Otherwise thank you for taking the time that you have to review the
-approach.
-
-V/r,
-Daniel P. Smith
-Apertus Solutions, LLC
+James
 
 
