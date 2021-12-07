@@ -2,59 +2,60 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4A9C4332F
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Dec 2021 20:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FE7C433F5
+	for <linux-integrity@archiver.kernel.org>; Tue,  7 Dec 2021 20:22:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241223AbhLGUZk (ORCPT
+        id S231817AbhLGUZr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 7 Dec 2021 15:25:40 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231817AbhLGUZj (ORCPT
+        Tue, 7 Dec 2021 15:25:47 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29928 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S241252AbhLGUZq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Dec 2021 15:25:39 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B7Jbh8g023014;
-        Tue, 7 Dec 2021 20:21:54 GMT
+        Tue, 7 Dec 2021 15:25:46 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B7JfHmj012849;
+        Tue, 7 Dec 2021 20:22:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=ctKy4vwEZUfMSGNwMWDxzkilOj7nvuFVJ0w/Ro8+3aw=;
- b=g3RlMXrYzuFVzQ+PLHRYWvWDJxHSwQUNFsQKUju03zZELkThpCvdxQDJeqX38tYESP2O
- 5FZD8HrFiPQWaodu4uBN0E0IRHf9Ene6vMFpqI8KfMZZLXLCh1BWQ3lB7/RAO1v2KbKF
- 6HaPGbxJ9Io721yn0dqLn/2/p/hAFfwDE5QJPlD3n7y9wSVzeuRL4iu6kCUwq5OyNuW5
- Ayn3A91+PmuJ+Lu63/UIEN/oU4xT5Pgz/Md5EuYDmGN8C73s1pN0KNePcWCYSETKXQKS
- vEcCH80IgG8V/CsqTSmTElxFl+TSEGkCrhClX5700Egku7rPJJg+igHDenKDejlNaK9Q Pg== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=n29Af/SeAT4kB/5tQUZrbIaCIYhKWtgPgf/bzQFWBmM=;
+ b=EHGZoC5AaR9x6xdVKUoO9XWPKIM0d4gUxVieap1KXn1+3daK64Tegn7fnqsXcocSQexU
+ wgviUfdoI2J/hAM8W6SHtl/Td/87uvoHCjwJ1uZC0SwdFDrDqaGudLxwcMsyomX66bHn
+ toDWO2R06tyq6u0xoIF1BsBO3klVGzNzTCxvvU7lsZWYa3K9j7J/UXJU6no/VwpVVXVS
+ J8L959y/rLDV8J0BsXxRAFbMGsaQYrS9Ezd5AixL8Z+o937TOEHRH15yCCazzqJB8AP3
+ 9+U2lcgUkxbyg881IKyTZIlC5Kt0T5m8TLzqGpwpRPcJrwIN1IWeb/QxW25o/imfK5da YQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ctajxnse4-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ctanb5evg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:21:53 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B7KEoY8023044;
-        Tue, 7 Dec 2021 20:21:53 GMT
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ctajxnsdr-1
+        Tue, 07 Dec 2021 20:21:59 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B7K1fHK014353;
+        Tue, 7 Dec 2021 20:21:59 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ctanb5ev6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:21:53 +0000
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B7K7rG5023097;
-        Tue, 7 Dec 2021 20:21:51 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma02wdc.us.ibm.com with ESMTP id 3cqyyam14c-1
+        Tue, 07 Dec 2021 20:21:59 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B7K7xSc020244;
+        Tue, 7 Dec 2021 20:21:58 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04dal.us.ibm.com with ESMTP id 3cqyyataqd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:21:51 +0000
+        Tue, 07 Dec 2021 20:21:58 +0000
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B7KLoqS28181126
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B7KLusM62128414
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Dec 2021 20:21:50 GMT
+        Tue, 7 Dec 2021 20:21:56 GMT
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8B61B136053;
-        Tue,  7 Dec 2021 20:21:50 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 980F113605D;
+        Tue,  7 Dec 2021 20:21:56 +0000 (GMT)
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB7E7136059;
-        Tue,  7 Dec 2021 20:21:47 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id E0468136066;
+        Tue,  7 Dec 2021 20:21:53 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Dec 2021 20:21:47 +0000 (GMT)
+        Tue,  7 Dec 2021 20:21:53 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com,
@@ -65,169 +66,298 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com,
         puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
         linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v4 00/16] ima: Namespace IMA with audit support in IMA-ns
-Date:   Tue,  7 Dec 2021 15:21:11 -0500
-Message-Id: <20211207202127.1508689-1-stefanb@linux.ibm.com>
+Subject: [PATCH v4 02/16] ima: Define ns_status for storing namespaced iint data
+Date:   Tue,  7 Dec 2021 15:21:13 -0500
+Message-Id: <20211207202127.1508689-3-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BWxgFUm6h8BteI3KqlGvYV-eW0a56H9-
-X-Proofpoint-GUID: 9Yi73JQE1rGnqH1AyDerzsCR3fjke5KJ
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+In-Reply-To: <20211207202127.1508689-1-stefanb@linux.ibm.com>
+References: <20211207202127.1508689-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: _I5-C0oBcSN-AQLP-2jq9krZCFIpHDap
+X-Proofpoint-ORIG-GUID: R3ovpNADQlOBUWI1R-9UE3ZK509sU6qi
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2021-12-07_08,2021-12-06_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- priorityscore=1501 suspectscore=0 impostorscore=0 clxscore=1015
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 mlxscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112070122
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
+ impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2112070125
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The goal of this series of patches is to start with the namespacing of
-IMA and support auditing within an IMA namespace (IMA-ns) as the first
-step.
+From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
 
-In this series the IMA namespace is piggy backing on the user namespace
-and therefore an IMA namespace gets created when a user namespace is
-created. The advantage of this is that the user namespace can provide
-the keys infrastructure that IMA appraisal support will need later on.
+This patch adds an rbtree to the IMA namespace structure that stores a
+namespaced version of iint->flags in ns_status struct. Similar to the
+integrity_iint_cache, both the iint ns_struct are looked up using the
+inode pointer value. The lookup, allocate, and insertion code is also
+similar, except ns_struct is not free'd when the inode is free'd.
+Instead, the lookup verifies the i_ino and i_generation fields are also a
+match.
 
-We chose the goal of supporting auditing within an IMA namespace since it
-requires the least changes to IMA. Following this series, auditing within
-an IMA namespace can be activated by a user running the following lines
-that rely on a statically linked busybox to be installed on the host for
-execution within the minimal container environment:
+Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-mkdir -p rootfs/{bin,mnt,proc}
-cp /sbin/busybox rootfs/bin
-PATH=/bin unshare --user --map-root-user --mount-proc --pid --fork \
-  --root rootfs busybox sh -c \
- "busybox mount -t securityfs /mnt /mnt; \
-  busybox echo 'audit func=BPRM_CHECK mask=MAY_EXEC' > /mnt/ima/policy; \
-  busybox cat /mnt/ima/policy"
-
-Following the audit log on the host the last line cat'ing the IMA policy
-inside the namespace would have been audited. Unfortunately the auditing
-line is not distinguishable from one stemming from actions on the host.
-The hope here is that Richard Brigg's container id support for auditing
-would help resolve the problem.
-
-The following lines added to a suitable IMA policy on the host would
-cause the execution of the commands inside the container (by uid 1000)
-to be measured and audited as well on the host, thus leading to two
-auditing messages for the 'busybox cat' above and log entries in IMA's
-system log.
-
-echo -e "measure func=BPRM_CHECK mask=MAY_EXEC uid=1000\n" \
-        "audit func=BPRM_CHECK mask=MAY_EXEC uid=1000\n" \
-    > /sys/kernel/security/ima/policy
-
-The goal of supporting measurement and auditing by the host, of actions
-occurring within IMA namespaces, is that users, particularly root,
-should not be able to evade the host's IMA policy just by spawning
-new IMA namespaces, running programs there, and discarding the namespaces
-again. This is achieved through 'hierarchical processing' of file
-accesses that are evaluated against the policy of the namespace where
-the action occurred and against all namespaces' and their policies leading
-back to the root IMA namespace (init_ima_ns).
-
-The patch series adds support for a virtualized SecurityFS with a few
-new API calls that are used by IMA namespacing. Only the data relevant
-to the IMA namespace are shown. The files and directories of other
-security subsystems (TPM, evm, Tomoyo, safesetid) are not showing
-up when secruityfs is mounted inside a user namespace.
-
-Much of the code leading up to the virtualization of SecurityFS deals
-with moving IMA's variables from various files into the IMA namespace
-structure called 'ima_namespace'. When it comes to determining the
-current IMA namespace I took the approach to get the current IMA
-namespace (get_current_ns()) on the top level and pass the pointer all
-the way down to those functions that now need access to the ima_namespace
-to get to their variables. This later on comes in handy once hierarchical
-processing is implemented in this series where we walk the list of
-namespaces backwards and again need to pass the pointer into functions.
-
-This patch also introduces usage of CAP_MAC_ADMIN to allow access to the
-IMA policy via reduced capabilities. We would again later on use this
-capability to allow users to set file extended attributes for IMA appraisal
-support.
-
-My tree with these patches is here:
-
-git clone https://github.com/stefanberger/linux-ima-namespaces v5.15+imans.v4.posted 
-
-Regards,
-   Stefan
-
-v4:
- - For consistency moved 'ns = get_current_ns()' to top of functions
- - Merge in James's latest SecurityFS patch
-
-v3:
- - Further modifications to virtualized SecurityFS following James's posted patch
- - Dropping of early teardown for user_namespaces since not needed anymore
-
+Changelog:
 v2:
- - Folllwed Christian's suggestion to virtualize securitytfs; no more securityfs_ns
- - Followed James's advice for late 'population' of securityfs for IMA namespaces
- - Squashed 2 patches dealing with capabilities
- - Added missing 'depends on USER_NS' to Kconfig
- - Added missing 'static' to several functions
-
-Mehmet Kayaalp (2):
-  ima: Define ns_status for storing namespaced iint data
-  ima: Namespace audit status flags
-
-Stefan Berger (14):
-  ima: Add IMA namespace support
-  ima: Move delayed work queue and variables into ima_namespace
-  ima: Move IMA's keys queue related variables into ima_namespace
-  ima: Move policy related variables into ima_namespace
-  ima: Move ima_htable into ima_namespace
-  ima: Move measurement list related variables into ima_namespace
-  ima: Only accept AUDIT rules for IMA non-init_ima_ns namespaces for
-    now
-  ima: Implement hierarchical processing of file accesses
-  securityfs: Only use simple_pin_fs/simple_release_fs for init_user_ns
-  securityfs: Extend securityfs with namespacing support
-  ima: Move some IMA policy and filesystem related variables into
-    ima_namespace
-  ima: Use mac_admin_ns_capable() to check corresponding capability
-  ima: Move dentries into ima_namespace
-  ima: Setup securityfs for IMA namespace
-
- include/linux/capability.h                   |   6 +
- include/linux/ima.h                          | 140 +++++++++++++++++
- include/linux/user_namespace.h               |   4 +
- init/Kconfig                                 |  13 ++
- kernel/user.c                                |   9 +-
- kernel/user_namespace.c                      |  16 ++
- security/inode.c                             |  54 +++++--
- security/integrity/ima/Makefile              |   4 +-
- security/integrity/ima/ima.h                 | 145 ++++++++++++------
- security/integrity/ima/ima_api.c             |  33 ++--
- security/integrity/ima/ima_appraise.c        |  26 ++--
- security/integrity/ima/ima_asymmetric_keys.c |   8 +-
- security/integrity/ima/ima_fs.c              | 152 +++++++++++--------
- security/integrity/ima/ima_init.c            |  20 +--
- security/integrity/ima/ima_init_ima_ns.c     |  73 +++++++++
- security/integrity/ima/ima_main.c            | 144 ++++++++++++------
- security/integrity/ima/ima_ns.c              | 111 ++++++++++++++
- security/integrity/ima/ima_ns_status.c       | 132 ++++++++++++++++
- security/integrity/ima/ima_policy.c          | 146 ++++++++++--------
- security/integrity/ima/ima_queue.c           |  75 +++++----
- security/integrity/ima/ima_queue_keys.c      |  73 ++++-----
- security/integrity/ima/ima_template.c        |   4 +-
- 22 files changed, 1044 insertions(+), 344 deletions(-)
- create mode 100644 security/integrity/ima/ima_init_ima_ns.c
- create mode 100644 security/integrity/ima/ima_ns.c
+ * fixed tree traversal in __ima_ns_status_find()
+---
+ include/linux/ima.h                      |   3 +
+ security/integrity/ima/Makefile          |   1 +
+ security/integrity/ima/ima.h             |  24 +++++
+ security/integrity/ima/ima_init_ima_ns.c |   9 ++
+ security/integrity/ima/ima_ns.c          |   1 +
+ security/integrity/ima/ima_ns_status.c   | 132 +++++++++++++++++++++++
+ 6 files changed, 170 insertions(+)
  create mode 100644 security/integrity/ima/ima_ns_status.c
 
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 86d126b9ff2f..cc0e8c509fa2 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -214,6 +214,9 @@ static inline int ima_inode_removexattr(struct dentry *dentry,
+ struct ima_namespace {
+ 	struct kref kref;
+ 	struct user_namespace *user_ns;
++	struct rb_root ns_status_tree;
++	rwlock_t ns_status_lock;
++	struct kmem_cache *ns_status_cache;
+ };
+ 
+ extern struct ima_namespace init_ima_ns;
+diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+index b86a35fbed60..78c84214e109 100644
+--- a/security/integrity/ima/Makefile
++++ b/security/integrity/ima/Makefile
+@@ -10,6 +10,7 @@ ima-y := ima_fs.o ima_queue.o ima_init.o ima_main.o ima_crypto.o ima_api.o \
+ 	 ima_policy.o ima_template.o ima_template_lib.o ima_init_ima_ns.o
+ ima-$(CONFIG_IMA_APPRAISE) += ima_appraise.o
+ ima-$(CONFIG_IMA_APPRAISE_MODSIG) += ima_modsig.o
++ima-$(CONFIG_IMA_NS) += ima_ns.o ima_ns_status.o
+ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+ ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+ ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 2f8adf383054..28896d256e36 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -133,6 +133,14 @@ static inline void ima_load_kexec_buffer(void) {}
+  */
+ extern bool ima_canonical_fmt;
+ 
++struct ns_status {
++	struct rb_node rb_node;
++	struct inode *inode;
++	ino_t i_ino;
++	u32 i_generation;
++	unsigned long flags;
++};
++
+ /* Internal IMA function definitions */
+ int ima_init(void);
+ int ima_fs_init(void);
+@@ -422,6 +430,22 @@ int ima_ns_init(void);
+ struct ima_namespace;
+ int ima_init_namespace(struct ima_namespace *ns);
+ 
++#ifdef CONFIG_IMA_NS
++struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
++				    struct inode *inode);
++
++void free_ns_status_cache(struct ima_namespace *ns);
++
++#else
++
++static inline struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
++						  struct inode *inode)
++{
++	return NULL;
++}
++
++#endif /* CONFIG_IMA_NS */
++
+ /* LSM based policy rules require audit */
+ #ifdef CONFIG_IMA_LSM_RULES
+ 
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+index 12723d77fe17..1a44963e8ba9 100644
+--- a/security/integrity/ima/ima_init_ima_ns.c
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -14,9 +14,18 @@
+ #include <linux/user_namespace.h>
+ #include <linux/ima.h>
+ #include <linux/proc_ns.h>
++#include <linux/slab.h>
++
++#include "ima.h"
+ 
+ int ima_init_namespace(struct ima_namespace *ns)
+ {
++	ns->ns_status_tree = RB_ROOT;
++	rwlock_init(&ns->ns_status_lock);
++	ns->ns_status_cache = KMEM_CACHE(ns_status, SLAB_PANIC);
++	if (!ns->ns_status_cache)
++		return -ENOMEM;
++
+ 	return 0;
+ }
+ 
+diff --git a/security/integrity/ima/ima_ns.c b/security/integrity/ima/ima_ns.c
+index 9a782c08c34e..566e59524958 100644
+--- a/security/integrity/ima/ima_ns.c
++++ b/security/integrity/ima/ima_ns.c
+@@ -61,6 +61,7 @@ struct ima_namespace *copy_ima_ns(struct ima_namespace *old_ns,
+ static void destroy_ima_ns(struct ima_namespace *ns)
+ {
+ 	pr_debug("DESTROY ima_ns: 0x%p\n", ns);
++	free_ns_status_cache(ns);
+ 	kmem_cache_free(imans_cachep, ns);
+ }
+ 
+diff --git a/security/integrity/ima/ima_ns_status.c b/security/integrity/ima/ima_ns_status.c
+new file mode 100644
+index 000000000000..807dfaecdb5e
+--- /dev/null
++++ b/security/integrity/ima/ima_ns_status.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2016-2021 IBM Corporation
++ * Author:
++ *  Yuqiong Sun <suny@us.ibm.com>
++ *  Stefan Berger <stefanb@linux.vnet.ibm.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, version 2 of the License.
++ */
++
++#include <linux/user_namespace.h>
++#include <linux/proc_ns.h>
++#include <linux/ima.h>
++
++#include "ima.h"
++
++void free_ns_status_cache(struct ima_namespace *ns)
++{
++	struct ns_status *status, *next;
++
++	write_lock(&ns->ns_status_lock);
++	rbtree_postorder_for_each_entry_safe(status, next,
++					     &ns->ns_status_tree, rb_node)
++		kmem_cache_free(ns->ns_status_cache, status);
++	ns->ns_status_tree = RB_ROOT;
++	write_unlock(&ns->ns_status_lock);
++	kmem_cache_destroy(ns->ns_status_cache);
++}
++
++/*
++ * __ima_ns_status_find - return the ns_status associated with an inode
++ */
++static struct ns_status *__ima_ns_status_find(struct ima_namespace *ns,
++					      struct inode *inode)
++{
++	struct ns_status *status;
++	struct rb_node *n = ns->ns_status_tree.rb_node;
++
++	while (n) {
++		status = rb_entry(n, struct ns_status, rb_node);
++
++		if (inode < status->inode)
++			n = n->rb_left;
++		else if (inode > status->inode)
++			n = n->rb_right;
++		else
++			break;
++	}
++	if (!n)
++		return NULL;
++
++	return status;
++}
++
++/*
++ * ima_ns_status_find - return the ns_status associated with an inode
++ */
++static struct ns_status *ima_ns_status_find(struct ima_namespace *ns,
++					    struct inode *inode)
++{
++	struct ns_status *status;
++
++	read_lock(&ns->ns_status_lock);
++	status = __ima_ns_status_find(ns, inode);
++	read_unlock(&ns->ns_status_lock);
++
++	return status;
++}
++
++static void insert_ns_status(struct ima_namespace *ns, struct inode *inode,
++			     struct ns_status *status)
++{
++	struct rb_node **p;
++	struct rb_node *node, *parent = NULL;
++	struct ns_status *test_status;
++
++	p = &ns->ns_status_tree.rb_node;
++	while (*p) {
++		parent = *p;
++		test_status = rb_entry(parent, struct ns_status, rb_node);
++		if (inode < test_status->inode)
++			p = &(*p)->rb_left;
++		else
++			p = &(*p)->rb_right;
++	}
++	node = &status->rb_node;
++	rb_link_node(node, parent, p);
++	rb_insert_color(node, &ns->ns_status_tree);
++}
++
++struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
++				    struct inode *inode)
++{
++	struct ns_status *status;
++	int skip_insert = 0;
++
++	status = ima_ns_status_find(ns, inode);
++	if (status) {
++		/*
++		 * Unlike integrity_iint_cache we are not free'ing the
++		 * ns_status data when the inode is free'd. So, in addition to
++		 * checking the inode pointer, we need to make sure the
++		 * (i_generation, i_ino) pair matches as well.
++		 */
++		if (inode->i_ino == status->i_ino &&
++		    inode->i_generation == status->i_generation)
++			return status;
++
++		/* Same inode number is reused, overwrite the ns_status */
++		skip_insert = 1;
++	} else {
++		status = kmem_cache_alloc(ns->ns_status_cache, GFP_NOFS);
++		if (!status)
++			return ERR_PTR(-ENOMEM);
++	}
++
++	write_lock(&ns->ns_status_lock);
++
++	if (!skip_insert)
++		insert_ns_status(ns, inode, status);
++
++	status->inode = inode;
++	status->i_ino = inode->i_ino;
++	status->i_generation = inode->i_generation;
++	status->flags = 0UL;
++
++	write_unlock(&ns->ns_status_lock);
++
++	return status;
++}
 -- 
 2.31.1
 
