@@ -2,293 +2,340 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197CBC43219
-	for <linux-integrity@archiver.kernel.org>; Tue,  7 Dec 2021 20:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 943F8C433F5
+	for <linux-integrity@archiver.kernel.org>; Wed,  8 Dec 2021 09:30:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241514AbhLGU0f (ORCPT
+        id S229598AbhLHJeH (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 7 Dec 2021 15:26:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31504 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S241304AbhLGU0S (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 7 Dec 2021 15:26:18 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1B7Jbfb7027243;
-        Tue, 7 Dec 2021 20:22:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=JUuy3t+8HN+Piv8GDxJ6jewhg6X4npu2ObmOtAqQBVs=;
- b=ejSKBfkesazQ2q+FlsQ/lAozebF3lJPIM5CTElCaapVqPzAUmnEsdXMSgio9NKRHBCr3
- +5KBpYAVlJ0C3VwnCQgGc8QyRYw3xWh/4Wp6gWGppRKC9YjL1tb2wWs9XPdk2x9SFfRd
- m+onmxFzW2PHKZudDFzhrwJWoA/WjAHrrFErWzNoJmlsSdy7kb263RIhhRyJ36b/Vdte
- wJX8ecgvAmDuJaHnkis+imPPrW6YtUuDRWYX9lFix2UHWJsyRl+kevLawpUC7oGCCcrS
- y2IXNRN2kJR2WJxby1z4+SMQ6GIXO4eQlHTpCYJ1kIvTWSXfMxN0ECaKkG5JGfgSGG5j WQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ct811j0aa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:22:38 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1B7K9RPv027980;
-        Tue, 7 Dec 2021 20:22:38 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ct811j09y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:22:38 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1B7K7pZd018282;
-        Tue, 7 Dec 2021 20:22:37 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03dal.us.ibm.com with ESMTP id 3cqyyb2dvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Dec 2021 20:22:37 +0000
-Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1B7KMZWD35979676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Dec 2021 20:22:35 GMT
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2CC6136055;
-        Tue,  7 Dec 2021 20:22:35 +0000 (GMT)
-Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34326136063;
-        Tue,  7 Dec 2021 20:22:33 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Dec 2021 20:22:33 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: [PATCH v4 16/16] ima: Setup securityfs for IMA namespace
-Date:   Tue,  7 Dec 2021 15:21:27 -0500
-Message-Id: <20211207202127.1508689-17-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20211207202127.1508689-1-stefanb@linux.ibm.com>
-References: <20211207202127.1508689-1-stefanb@linux.ibm.com>
+        Wed, 8 Dec 2021 04:34:07 -0500
+Received: from smtp1.axis.com ([195.60.68.17]:47988 "EHLO smtp1.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229481AbhLHJeH (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 8 Dec 2021 04:34:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=axis.com; q=dns/txt; s=axis-central1; t=1638955837;
+  x=1670491837;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version;
+  bh=zgy+ZILfGGAc0wsfdYNI5SVihhR+8j30bPFIXz8+NQM=;
+  b=RO2EHTWRKYYvG9mwVGda2/jKRXuUA4wCeHCIy38Fzh+VklUilnRP0ewn
+   FvI1HnOOHAKUiFeYRaEJZVYyt6Wpnu47EPTJZzm7Mfn32Tz4GZ9icVzFj
+   NAfdKqSM6K1lnzrwM2jRpntjHGLFJtWv2sYmTO9s7luelifT+BvZnRuY/
+   MBWHMxTjuz4YSSo4EzwbPrPgMPjeyHmiqlQR9JfxiiwasZAUH3saklDUt
+   bjo8C+d86sm1Nk6aTtblPRsbQhDWcQh3ATUcaSEZ17l+pngMs/oAUn+9+
+   f39DOQ80H7oc2b8uDaoWwb7HZj2XW9vklBn37P7EFsRPvIJPzNUErFSCi
+   w==;
+From:   Axel Jonsson <axel.jonsson@axis.com>
+To:     <jarkko@kernel.org>
+CC:     <sergio.ruiz@axis.com>, <borysmn@axis.com>, <jgg@ziepe.ca>,
+        <kernel@axis.com>, <linux-integrity@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <peterhuewe@gmx.de>
+Subject: [PATCH v6] tpm: Add Upgrade/Reduced mode support for TPM2 modules
+Date:   Wed, 8 Dec 2021 10:30:06 +0100
+Message-ID: <20211208093006.8499-1-axel.jonsson@axis.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <59f8d5a835ff0f02c9efe0ecff0abbe1b4f08111.camel@kernel.org>
+References: <59f8d5a835ff0f02c9efe0ecff0abbe1b4f08111.camel@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: u5JWlByzX5ou1sDi1oDbOtGqTmc2uSwR
-X-Proofpoint-GUID: 8zMaXG6qlEx67FT8-zaOzXLNt8u15auB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2021-12-07_07,2021-12-06_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 suspectscore=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2110150000 definitions=main-2112070122
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Setup securityfs with symlinks, directories, and files for IMA
-namespacing support. The same directory structure that IMA uses on the
-host is also created for the namespacing case.
+Hello Jarkko!
 
-The securityfs file and directory ownerships cannot be set when the
-IMA namespace is initialized. Therefore, delay the setup of the file
-system to a later point when securityfs is in securityfs_fill_super.
+I am Axel, a colleague to Borys, and will take over the integration of this
+patch since Borys is too busy with other work.
 
-This filesystem can now be mounted as follows:
+I am sorry for the long delay since the last update.
 
-mount -t securityfs /sys/kernel/security/ /sys/kernel/security/
+>> If something went wrong during the TPM firmware upgrade, like power
+>> failure or the firmware image file get corrupted, the TPM might end
+>> up in Upgrade or Failure mode upon the next start. The state is
+>> persistent between the TPM power cycle/restart.
+>>=20
+>> According to TPM specification:
+>>  * If the TPM is in Upgrade mode, it will answer with TPM2_RC_UPGRADE
+>>    to all commands except Field Upgrade related ones.
+> 
+> How many such command are there and what they are? This patch is missing
+> the part that filters in only these commands.
 
-The following directories, symlinks, and files are then available.
+The documentation states:
 
-$ ls -l sys/kernel/security/
-total 0
-lr--r--r--. 1 root root 0 Dec  2 00:18 ima -> integrity/ima
-drwxr-xr-x. 3 root root 0 Dec  2 00:18 integrity
+"If the proper authorization is given, the TPM will retain the signed
+digest and enter the Field Upgrade mode (FUM). While in FUM, the TPM will
+accept TPM2_FieldUpgradeData() commands. It may accept other commands if
+it is able to complete them using the previously installed firmware.
+Otherwise, it will return TPM_RC_UPGRADE."
+www.trustedcomputinggroup.org/wp-content/uploads/
+TPM-Rev-2.0-Part-3-Commands-01.38.pdf, page 307
 
-$ ls -l sys/kernel/security/ima/
-total 0
--r--r-----. 1 root root 0 Dec  2 00:18 ascii_runtime_measurements
--r--r-----. 1 root root 0 Dec  2 00:18 binary_runtime_measurements
--rw-------. 1 root root 0 Dec  2 00:18 policy
--r--r-----. 1 root root 0 Dec  2 00:18 runtime_measurements_count
--r--r-----. 1 root root 0 Dec  2 00:18 violations
+and I do not not think that TPM2_FieldUpgradeData is a command which will/
+should be given in a tpm kernel driver. So I think it is enough to handle 
+all other commands as it is right now. Please tell me if you disagree.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
----
- include/linux/ima.h             | 17 ++++++++++++++++-
- security/inode.c                | 12 +++++++++++-
- security/integrity/ima/ima_fs.c | 33 ++++++++++++++++++++++++++-------
- 3 files changed, 53 insertions(+), 9 deletions(-)
+I will update the commit message to clarify which commands there are.
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index bfb978a7f8d5..a8017272d78d 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -66,6 +66,10 @@ static inline const char * const *arch_get_ima_policy(void)
- }
- #endif
- 
-+extern int ima_fs_ns_init(struct user_namespace *user_ns,
-+			  struct dentry *root);
-+extern void ima_fs_ns_free_dentries(struct user_namespace *user_ns);
-+
- #else
- static inline enum hash_algo ima_get_current_hash_algo(void)
- {
-@@ -154,6 +158,15 @@ static inline int ima_measure_critical_data(const char *event_label,
- 	return -ENOENT;
- }
- 
-+static inline int ima_fs_ns_init(struct user_namespace *ns, struct dentry *root)
-+{
-+	return 0;
-+}
-+
-+static inline void ima_fs_ns_free_dentries(struct user_namespace *user_ns)
-+{
-+}
-+
- #endif /* CONFIG_IMA */
- 
- #ifndef CONFIG_IMA_KEXEC
-@@ -221,7 +234,8 @@ struct ima_h_table {
- };
- 
- enum {
--	IMAFS_DENTRY_DIR = 0,
-+	IMAFS_DENTRY_INTEGRITY_DIR = 0,
-+	IMAFS_DENTRY_DIR,
- 	IMAFS_DENTRY_SYMLINK,
- 	IMAFS_DENTRY_BINARY_RUNTIME_MEASUREMENTS,
- 	IMAFS_DENTRY_ASCII_RUNTIME_MEASUREMENTS,
-@@ -333,6 +347,7 @@ static inline struct ima_namespace *get_current_ns(void)
- {
- 	return &init_ima_ns;
- }
-+
- #endif /* CONFIG_IMA_NS */
- 
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-diff --git a/security/inode.c b/security/inode.c
-index 121ac1874dde..10ee20917f42 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -16,6 +16,7 @@
- #include <linux/fs_context.h>
- #include <linux/mount.h>
- #include <linux/pagemap.h>
-+#include <linux/ima.h>
- #include <linux/init.h>
- #include <linux/namei.h>
- #include <linux/security.h>
-@@ -41,6 +42,7 @@ static const struct super_operations securityfs_super_operations = {
- static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	static const struct tree_descr files[] = {{""}};
-+	struct user_namespace *ns = fc->user_ns;
- 	int error;
- 
- 	error = simple_fill_super(sb, SECURITYFS_MAGIC, files);
-@@ -49,7 +51,10 @@ static int securityfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_op = &securityfs_super_operations;
- 
--	return 0;
-+	if (ns != &init_user_ns)
-+		error = ima_fs_ns_init(ns, sb->s_root);
-+
-+	return error;
- }
- 
- static int securityfs_get_tree(struct fs_context *fc)
-@@ -69,6 +74,11 @@ static int securityfs_init_fs_context(struct fs_context *fc)
- 
- static void securityfs_kill_super(struct super_block *sb)
- {
-+	struct user_namespace *ns = sb->s_fs_info;
-+
-+	if (ns != &init_user_ns)
-+		ima_fs_ns_free_dentries(ns);
-+
- 	kill_litter_super(sb);
- }
- 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index e2cee1457aaa..ea366c8e68c6 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -447,8 +447,9 @@ static const struct file_operations ima_measure_policy_ops = {
- 	.llseek = generic_file_llseek,
- };
- 
--static void ima_fs_ns_free_dentries(struct ima_namespace *ns)
-+void ima_fs_ns_free_dentries(struct user_namespace *user_ns)
- {
-+	struct ima_namespace *ns = user_ns->ima_ns;
- 	int i;
- 
- 	for (i = IMAFS_DENTRY_LAST - 1; i >= 0; i--)
-@@ -457,18 +458,36 @@ static void ima_fs_ns_free_dentries(struct ima_namespace *ns)
- 	memset(ns->dentry, 0, sizeof(ns->dentry));
- }
- 
--static int __init ima_fs_ns_init(struct user_namespace *user_ns)
-+int ima_fs_ns_init(struct user_namespace *user_ns,
-+		   struct dentry *root)
- {
- 	struct ima_namespace *ns = user_ns->ima_ns;
- 	struct dentry *ima_dir;
- 
--	ns->dentry[IMAFS_DENTRY_DIR] = securityfs_create_dir("ima", integrity_dir);
-+	/* already initialized? */
-+	if (ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR])
-+		return 0;
-+
-+	/* FIXME: update when evm and integrity are namespaced */
-+	if (user_ns != &init_user_ns) {
-+		ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] =
-+			securityfs_create_dir("integrity", root);
-+		if (IS_ERR(ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR])) {
-+			ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] = NULL;
-+			return -1;
-+		}
-+	} else
-+		ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR] = integrity_dir;
-+
-+	ns->dentry[IMAFS_DENTRY_DIR] =
-+	    securityfs_create_dir("ima",
-+				  ns->dentry[IMAFS_DENTRY_INTEGRITY_DIR]);
- 	if (IS_ERR(ns->dentry[IMAFS_DENTRY_DIR]))
--		return -1;
-+		goto out;
- 	ima_dir = ns->dentry[IMAFS_DENTRY_DIR];
- 
- 	ns->dentry[IMAFS_DENTRY_SYMLINK] =
--	    securityfs_create_symlink("ima", NULL, "integrity/ima", NULL);
-+	    securityfs_create_symlink("ima", root, "integrity/ima", NULL);
- 	if (IS_ERR(ns->dentry[IMAFS_DENTRY_SYMLINK]))
- 		goto out;
- 
-@@ -508,11 +527,11 @@ static int __init ima_fs_ns_init(struct user_namespace *user_ns)
- 
- 	return 0;
- out:
--	ima_fs_ns_free_dentries(ns);
-+	ima_fs_ns_free_dentries(user_ns);
- 	return -1;
- }
- 
- int __init ima_fs_init(void)
- {
--	return ima_fs_ns_init(&init_user_ns);
-+	return ima_fs_ns_init(&init_user_ns, NULL);
- }
--- 
-2.31.1
+>>  * If the TPM is in Failure mode, it will allow performing TPM
+>>    initialization but will not provide any crypto operations.
+>>    Will happily respond to Field Upgrade calls.
+>>=20
+>> Change the behavior of the tpm2_auto_startup(), so it detects the active
+>> running mode of the TPM by adding the following checks.  If
+>> tpm2_do_selftest() call returns TPM2_RC_UPGRADE, the TPM is in Upgrade
+>> mode.
+>> If the TPM is in Failure mode, it will successfully respond to both
+>> tpm2_do_selftest() and tpm2_startup() calls. Although, will fail to
+>> answer to tpm2_get_cc_attrs_tbl(). Use this fact to conclude that TPM is
+>> in Failure mode.
+>>=20
+>> If detected that the TPM is in the Upgrade or Failure mode, the function
+>> sets TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE flag.
+> 
+> I think we should shorten this to TPM_CHIP_FLAG_FIRMWARE_MODE. It's clear
+> enough and just easier for eyes, really.
+
+Done.
+
+>> The limited mode flag is used later during driver
+> 
+> You probably have forgot to update commit message over here? Please try to
+> align it with the code changes.
+
+Done.
+
+>> initialization/deinitialization to disable functionality which makes no
+>> sense or will fail in the current TPM state. Following functionality is
+>> affected:
+>>  * do not register TPM as a hwrng
+> 
+> Nit: "do" -> "Do"
+> 
+>>  * do not register sysfs entries which provide information impossible to
+>>    obtain in limited mode
+>>  * do not register resource managed character device
+> 
+> Ditto.'
+
+Done.
+
+>>=20
+>> Signed-off-by: Borys Movchan <borysmn@axis.com>
+>> ---
+>>=20
+>> Notes:
+>>     v2:
+>>      * Commit message updated.
+>>    =20
+>>     v3:
+>>      * Commit message reworked.
+>>    =20
+>>     v4:
+>>      * Description of how tpm2_auto_startup() detects the mode added to
+>>        commit message.
+>>    =20
+>>     v5:
+>>      * Introduce global flag: TPM_CHIP_FLAG_LIMITED_MODE.
+>>      * Add checks for the flag in places that will not work properly when=
+> TPM
+>>        functionality is limited.
+>>      * Avoid registering sysfs and character device entries that have no =
+> useful
+>>        function in limited mode.
+>>      * Do not register TPM as a hwrng.
+>>      * Do not try to obtain any crypto-related properties from TPM as it =
+> will fail
+>>        in limited mode.
+>>    =20
+>>     v6:
+>>      * Rename the TPM_CHIP_FLAG_LIMITED_MODE to TPM_CHIP_FLAG_FIRMWARE_UP=
+> GRADE_MODE
+>>        to reduce confusion. Update info messages.
+>>=20
+>>  drivers/char/tpm/tpm-chip.c  | 23 ++++++++++++++++-------
+>>  drivers/char/tpm/tpm-sysfs.c |  3 +++
+>>  drivers/char/tpm/tpm2-cmd.c  | 14 +++++++++++++-
+>>  include/linux/tpm.h          |  2 ++
+>>  4 files changed, 34 insertions(+), 8 deletions(-)
+>>=20
+>> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> index ddaeceb7e109..3378bfe06006 100644
+>> --- a/drivers/char/tpm/tpm-chip.c
+>> +++ b/drivers/char/tpm/tpm-chip.c
+>> @@ -444,7 +444,8 @@ static int tpm_add_char_device(struct tpm_chip *chip)
+>>  		return rc;
+>>  	}
+>> =20
+>> -	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>> +	if (chip->flags & TPM_CHIP_FLAG_TPM2 &&
+>> +	    !(chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE)) {
+> 
+> Please do this instead in tpm.h, give that the check is everywhere:
+> 
+> /*
+>  * Check if TPM device is in the firmware upgrade mode.
+>  */
+> static inline bool tpm_is_firmware_upgrade(void)
+> {
+> 	return chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE;
+> }
+> 
+> 
+> Makes the code less stressing to read (and find the decision points
+> later on with tools).
+> 
+
+Done.
+
+>>  		rc =3D cdev_device_add(&chip->cdevs, &chip->devs);
+>>  		if (rc) {
+>>  			dev_err(&chip->devs,
+>> @@ -488,7 +489,8 @@ static void tpm_del_legacy_sysfs(struct tpm_chip *chi=
+>p)
+>>  {
+>>  	struct attribute **i;
+>> =20
+>> -	if (chip->flags & (TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_VIRTUAL))
+>> +	if (chip->flags & (TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_VIRTUAL) ||
+>> +	    chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE)
+>>  		return;
+>> =20
+>>  	sysfs_remove_link(&chip->dev.parent->kobj, "ppi");
+>> @@ -506,7 +508,8 @@ static int tpm_add_legacy_sysfs(struct tpm_chip *chip=
+>)
+>>  	struct attribute **i;
+>>  	int rc;
+>> =20
+>> -	if (chip->flags & (TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_VIRTUAL))
+>> +	if (chip->flags & (TPM_CHIP_FLAG_TPM2 | TPM_CHIP_FLAG_VIRTUAL) ||
+>> +		chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE)
+>>  		return 0;
+>> =20
+>>  	rc =3D compat_only_sysfs_link_entry_to_kobj(
+>> @@ -536,7 +539,8 @@ static int tpm_hwrng_read(struct hwrng *rng, void *da=
+>ta, size_t max, bool wait)
+>> =20
+>>  static int tpm_add_hwrng(struct tpm_chip *chip)
+>>  {
+>> -	if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+>> +	if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM) ||
+>> +	    chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE)
+>>  		return 0;
+>> =20
+>>  	snprintf(chip->hwrng_name, sizeof(chip->hwrng_name),
+>> @@ -550,6 +554,9 @@ static int tpm_get_pcr_allocation(struct tpm_chip *ch=
+>ip)
+>>  {
+>>  	int rc;
+>> =20
+>> +	if (chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE)
+>> +		return 0;
+>> +
+>>  	rc =3D (chip->flags & TPM_CHIP_FLAG_TPM2) ?
+>>  	     tpm2_get_pcr_allocation(chip) :
+>>  	     tpm1_get_pcr_allocation(chip);
+>> @@ -612,7 +619,7 @@ int tpm_chip_register(struct tpm_chip *chip)
+>>  	return 0;
+>> =20
+>>  out_hwrng:
+>> -	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+>> +	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM) && !(chip->flags & TPM_CHIP_FLAG_F=
+>IRMWARE_UPGRADE_MODE))
+>>  		hwrng_unregister(&chip->hwrng);
+>>  out_ppi:
+>>  	tpm_bios_log_teardown(chip);
+>> @@ -637,10 +644,12 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
+>>  void tpm_chip_unregister(struct tpm_chip *chip)
+>>  {
+>>  	tpm_del_legacy_sysfs(chip);
+>> -	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+>> +	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM) &&
+>> +	    !(chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE))
+>>  		hwrng_unregister(&chip->hwrng);
+>>  	tpm_bios_log_teardown(chip);
+>> -	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+>> +	if (chip->flags & TPM_CHIP_FLAG_TPM2 &&
+>> +	    !(chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE))
+>>  		cdev_device_del(&chip->cdevs, &chip->devs);
+>>  	tpm_del_char_device(chip);
+>>  }
+>> diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+>> index 63f03cfb8e6a..2842f3c667a5 100644
+>> --- a/drivers/char/tpm/tpm-sysfs.c
+>> +++ b/drivers/char/tpm/tpm-sysfs.c
+>> @@ -480,6 +480,9 @@ void tpm_sysfs_add_device(struct tpm_chip *chip)
+>> =20
+>>  	WARN_ON(chip->groups_cnt !=3D 0);
+>> =20
+>> +	if (chip->flags & TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE)
+>> +		return;
+>> +
+>>  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+>>  		chip->groups[chip->groups_cnt++] =3D &tpm2_dev_group;
+>>  	else
+>> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+>> index a25815a6f625..76245c861e59 100644
+>> --- a/drivers/char/tpm/tpm2-cmd.c
+>> +++ b/drivers/char/tpm/tpm2-cmd.c
+>> @@ -729,7 +729,12 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+>>  		goto out;
+>> =20
+>>  	rc =3D tpm2_do_selftest(chip);
+>> -	if (rc && rc !=3D TPM2_RC_INITIALIZE)
+>> +	if (rc =3D=3D TPM2_RC_UPGRADE) {
+>> +		dev_info(&chip->dev, "TPM requires firmware upgrade\n");
+>> +		chip->flags |=3D TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE;
+>> +		rc =3D 0;
+>> +		goto out;
+>> +	} else if (rc && rc !=3D TPM2_RC_INITIALIZE)
+>>  		goto out;
+>> =20
+>>  	if (rc =3D=3D TPM2_RC_INITIALIZE) {
+>> @@ -743,6 +748,13 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+>>  	}
+>> =20
+>>  	rc =3D tpm2_get_cc_attrs_tbl(chip);
+>> +	if (rc) {
+>> +		dev_info(&chip->dev,
+>> +			 "TPM requires firmware recovery/upgrade\n");
+> 
+> Why these two dev_info() messages differ?
+> 
+> You should put a single info message that is unconditionally printed
+> when in FW upgrade mode, and not sprikle bloat to fallback paths.
+> 
+
+I removed these dev_info() messages and added one in out which will be printed
+if (rc == TPM2_RC_UPGRADE).
+
+>> +		chip->flags |=3D TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE;
+>> +		rc =3D 0;
+>> +		goto out;
+>> +	}
+>> =20
+>>  out:
+>>  	if (rc > 0)
+>> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+>> index aa11fe323c56..498f487d786f 100644
+>> --- a/include/linux/tpm.h
+>> +++ b/include/linux/tpm.h
+>> @@ -207,6 +207,7 @@ enum tpm2_return_codes {
+>>  	TPM2_RC_INITIALIZE	=3D 0x0100, /* RC_VER1 */
+>>  	TPM2_RC_FAILURE		=3D 0x0101,
+>>  	TPM2_RC_DISABLED	=3D 0x0120,
+>> +	TPM2_RC_UPGRADE		=3D 0x012D,
+>>  	TPM2_RC_COMMAND_CODE    =3D 0x0143,
+>>  	TPM2_RC_TESTING		=3D 0x090A, /* RC_WARN */
+>>  	TPM2_RC_REFERENCE_H0	=3D 0x0910,
+>> @@ -277,6 +278,7 @@ enum tpm_chip_flags {
+>>  	TPM_CHIP_FLAG_HAVE_TIMEOUTS	=3D BIT(4),
+>>  	TPM_CHIP_FLAG_ALWAYS_POWERED	=3D BIT(5),
+>>  	TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED	=3D BIT(6),
+>> +	TPM_CHIP_FLAG_FIRMWARE_UPGRADE_MODE	=3D BIT(7),
+>>  };
+>> =20
+>>  #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
+
+Best regards, Axel
 
