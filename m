@@ -2,53 +2,53 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6108EC433F5
-	for <linux-integrity@archiver.kernel.org>; Thu, 16 Dec 2021 11:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC47C433F5
+	for <linux-integrity@archiver.kernel.org>; Thu, 16 Dec 2021 12:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236336AbhLPLAH (ORCPT
+        id S234322AbhLPMDE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 16 Dec 2021 06:00:07 -0500
-Received: from mga12.intel.com ([192.55.52.136]:17910 "EHLO mga12.intel.com"
+        Thu, 16 Dec 2021 07:03:04 -0500
+Received: from mga14.intel.com ([192.55.52.115]:2892 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236331AbhLPLAC (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 16 Dec 2021 06:00:02 -0500
+        id S234296AbhLPMDB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 16 Dec 2021 07:03:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639652402; x=1671188402;
+  t=1639656181; x=1671192181;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=kyO5ihOz/ALaQl8Q/ytMsN/xFujiQgte8E153O1Mi4s=;
-  b=dziyThKtawTho04N67T8aQC8apfVdrxNwF0TneMGy3UZWfkN2MIrDkLD
-   WVciBcG0MU4ahT8Rc2YSaTaIotHSRWEfMuxZ1IA0zLu3x4B5tBp6l+NGu
-   fStWsVr2iYUKHdbhDhnYRRD03UEpsoRWezVJx7cIJ5p0Dq7J2N6BkZqjP
-   kpwhSp5ZlHh0MR5O9MrexZDhAjoLGIqCx9mEqFSZnXRewNQOyqfNg2PjX
-   WSD5WKBSbkYrv30kVqfBS6WmvvRj3lDLajrZaoudcVQd0/Odp+dAPfozU
-   PlmvF7C44U+iU2BxPrTmAlhNgFjCgWaX9/yzYlW/KTyKchSOta7Xc21Ku
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10199"; a="219475482"
+  bh=B0yYE6pyJ5FHWWiTURE+O7JxIfssJQEmx4NecM1/bC8=;
+  b=U2hyeqIxaHziihndLVr2vDSYBOhuWOX3lM4i77LrIR2Qq/bs8G5XA4HU
+   tlRrNRhRvXO5Kdro+FFUVRSVN529Ma3EIcOEFaUo3ljJkrSrJKCXwv9yP
+   QK9WDsWpVT/lAzsRuYVnDJbtAe4Q0H9troRu8zmkmgul5H0DFeyMToMOK
+   ftj4wf7JKvZOxWTjJA3F8qyEPb/kVNcST2pyBY+S3EeDjiLmspHfW8at+
+   Hv4+9W1wti0pqsrjAhRu+tjjmWAwQNb4f2FgTIICz33hFwcVJ1FGl4UvU
+   YDVTl4mzXHUVWbFHWSev3RQdrtabJVZZXlTMTxPToXQthUo11wFVLIBpi
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10199"; a="239693155"
 X-IronPort-AV: E=Sophos;i="5.88,211,1635231600"; 
-   d="scan'208";a="219475482"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2021 03:00:01 -0800
+   d="scan'208";a="239693155"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2021 04:03:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,211,1635231600"; 
-   d="scan'208";a="682897497"
+   d="scan'208";a="568369340"
 Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 16 Dec 2021 02:59:57 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Dec 2021 04:02:58 -0800
 Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mxoUO-00032M-Pz; Thu, 16 Dec 2021 10:59:56 +0000
-Date:   Thu, 16 Dec 2021 18:59:50 +0800
+        id 1mxpTN-00035m-Rr; Thu, 16 Dec 2021 12:02:57 +0000
+Date:   Thu, 16 Dec 2021 20:02:05 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
         linux-integrity@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com
 Subject: Re: [PATCH v7 14/14] ima: Setup securityfs for IMA namespace
-Message-ID: <202112161827.mbpxbf1k-lkp@intel.com>
+Message-ID: <202112161948.NK58RGVT-lkp@intel.com>
 References: <20211216054323.1707384-15-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -72,27 +72,34 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/0day-ci/linux/commits/Stefan-Berger/ima-Namespace-IMA-with-audit-support-in-IMA-ns/20211216-134611
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20211216/202112161827.mbpxbf1k-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 11.2.0
+config: mips-buildonly-randconfig-r006-20211216 (https://download.01.org/0day-ci/archive/20211216/202112161948.NK58RGVT-lkp@intel.com/config)
+compiler: clang version 14.0.0 (https://github.com/llvm/llvm-project dd245bab9fbb364faa1581e4f92ba3119a872fba)
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
+        # install mips cross compiling tool for clang build
+        # apt-get install binutils-mips-linux-gnu
         # https://github.com/0day-ci/linux/commit/bc2f1f683efbf2ad7b955fd4afc78861609eff4b
         git remote add linux-review https://github.com/0day-ci/linux
         git fetch --no-tags linux-review Stefan-Berger/ima-Namespace-IMA-with-audit-support-in-IMA-ns/20211216-134611
         git checkout bc2f1f683efbf2ad7b955fd4afc78861609eff4b
         # save the config file to linux build tree
         mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=sh SHELL=/bin/bash security/integrity/ima/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=mips SHELL=/bin/bash security/integrity/ima/
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> security/integrity/ima/ima_fs.c:451:5: warning: no previous prototype for 'ima_fs_ns_init' [-Wmissing-prototypes]
-     451 | int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
-         |     ^~~~~~~~~~~~~~
+>> security/integrity/ima/ima_fs.c:451:5: warning: no previous prototype for function 'ima_fs_ns_init' [-Wmissing-prototypes]
+   int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+       ^
+   security/integrity/ima/ima_fs.c:451:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int ima_fs_ns_init(struct user_namespace *user_ns, struct dentry *root)
+   ^
+   static 
+   1 warning generated.
 
 
 vim +/ima_fs_ns_init +451 security/integrity/ima/ima_fs.c
