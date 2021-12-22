@@ -2,112 +2,123 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5654C433EF
-	for <linux-integrity@archiver.kernel.org>; Wed, 22 Dec 2021 21:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1058C433F5
+	for <linux-integrity@archiver.kernel.org>; Wed, 22 Dec 2021 22:14:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234838AbhLVVgU (ORCPT
+        id S230254AbhLVWOD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 22 Dec 2021 16:36:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35684 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234222AbhLVVgU (ORCPT
+        Wed, 22 Dec 2021 17:14:03 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55250 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229813AbhLVWOD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 22 Dec 2021 16:36:20 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BMLDIls005274;
-        Wed, 22 Dec 2021 21:36:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=XTjTf9pbhvJ4dEZtdy1dWmdIbs4FdTkVSeAQRaR7f0w=;
- b=izxpPwredIkOFuGykGLDxSAoagx9HcrCVE/Xzm5z0xm6rz/Gh1JyBAWRWF7QQNNmfROi
- LmOBR8Ac6eN9zUhmcEo4FfjdrjOz8Q9yPBIaKaW9xH5gXimL1NH5T+DCsrXZm5+PzM3M
- VJ3Sm6NfSnDSCYaXJrXEtQabSMP5nMhfiPTca8wNBIVS+bVxC+jQ9XO+SYjBRRKnuj3A
- +8lMTfZP+JVaefUzC4YJuH7OeYLmFu7TT7oflKqFnuDs1F/BEySdNH+6YlwJf+caAG03
- z7xDFD+0MZJuUHjTm1/J9ugBlqUYJAC2CEqHk68+nt00nmwljLtFDHuXhWoeE/wlnj85 Fw== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3d4bra0akc-1
+        Wed, 22 Dec 2021 17:14:03 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 1BMM1pg5007235;
+        Wed, 22 Dec 2021 22:14:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=MhZv0mPQHiuDZvRQG5dC1mpk7h5pq5TOT7yS86sVm8I=;
+ b=sG5x2DU5q173o+KnMMzHGq9xPqOk5gkGMkLq/J4DBwSPFVsYThxjvgnzhwneL3yZOoIH
+ xb7dJuEsCSRsUEQZRJkiyYP9/L7HP0vYW6iLiSfxxnlBYTommwzmaMSDIndJ45Uao0hA
+ EdZS/3bxnz52NwnhmqQpWyGufps7EYdcAFW71SZGEzSFCOcEq9qIP2l99d7Nz37j1te7
+ VfLLdIC2gkz++exkypGsQ15jN1q+YeVQo6+l0x25u0eM6JAXDXDEFGPidAbyro/Tp7Vi
+ oNxjLDrO48nQMIAojujA0rgLWxbgQnhTaOyRPbfwRxDajrysSVSvWIeCkMruXruaujvQ Fw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3d4cf1r5y6-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Dec 2021 21:36:13 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BMLNaQb004564;
-        Wed, 22 Dec 2021 21:31:10 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04ams.nl.ibm.com with ESMTP id 3d179a203d-1
+        Wed, 22 Dec 2021 22:14:02 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 1BMM5k7X021847;
+        Wed, 22 Dec 2021 22:14:01 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3d4cf1r5y1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 22 Dec 2021 21:31:10 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BMLV7af39715206
+        Wed, 22 Dec 2021 22:14:01 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1BMMCBtt021215;
+        Wed, 22 Dec 2021 22:14:00 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3d179at6ns-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 22 Dec 2021 22:13:59 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1BMMDvtY47186334
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 22 Dec 2021 21:31:07 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CD3811C04C;
-        Wed, 22 Dec 2021 21:31:07 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D3A711C050;
-        Wed, 22 Dec 2021 21:31:06 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.65.95.213])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 22 Dec 2021 21:31:06 +0000 (GMT)
+        Wed, 22 Dec 2021 22:13:57 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B5970AE04D;
+        Wed, 22 Dec 2021 22:13:57 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 36AD4AE045;
+        Wed, 22 Dec 2021 22:13:57 +0000 (GMT)
+Received: from sig-9-65-95-213.ibm.com (unknown [9.65.95.213])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 22 Dec 2021 22:13:57 +0000 (GMT)
+Message-ID: <31d71e1957e84d2440f41d43d2570b112e91a27b.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: silence measurement list hexdump during kexec
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Petr Vorel <pvorel@suse.cz>,
-        Nageswara Sastry <rnsastry@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, Takashi Iwai <tiwai@suse.de>,
-        Joey Lee <jlee@suse.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] selftest/kexec: fix "ignored null byte in input" warning
-Date:   Wed, 22 Dec 2021 16:30:51 -0500
-Message-Id: <20211222213052.6771-2-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211222213052.6771-1-zohar@linux.ibm.com>
-References: <20211222213052.6771-1-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Bruno Meneguele <bmeneg@redhat.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 22 Dec 2021 17:13:56 -0500
+In-Reply-To: <20211222191623.376174-1-bmeneg@redhat.com>
+References: <20211222191623.376174-1-bmeneg@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: CtoJYWcNIoqE8bc4oF542JxRax7UZ7p1
-X-Proofpoint-GUID: CtoJYWcNIoqE8bc4oF542JxRax7UZ7p1
+X-Proofpoint-ORIG-GUID: s6cExu7CsdmG-24r9QPPh7xAdY5zAI6t
+X-Proofpoint-GUID: vxIgZQKt7768fdyMZ-oS7V1gT-tm4dx_
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2021-12-22_09,2021-12-22_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- adultscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=999 bulkscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2112220112
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2112220114
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Instead of assigning the string to a variable, which might contain a
-null character, redirect the output and grep for the string directly.
+Hi Bruno,
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
-Comment: this patch was previously posted as part of Nageswara's larger
- patch set.
+On Wed, 2021-12-22 at 16:16 -0300, Bruno Meneguele wrote:
+> The measurement list is dumped during a soft reset (kexec) through the call
+> to "print_hex_dump(KERN_DEBUG, ...)", which ignores the DEBUG build flag.
+> Instead, use "print_hex_dump_debug(...)", honoring the build flag.
+> 
+> Signed-off-by: Bruno Meneguele <bmeneg@redhat.com>
 
- tools/testing/selftests/kexec/test_kexec_file_load.sh | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+The patch description needs to at least explain why using
+print_hex_dump() isn't sufficent.   Look at how print_hex_dump() is
+defined.  Based on whether CONFIG_DYNAMIC_DEBUG is enabled, different
+functions are used.
 
-diff --git a/tools/testing/selftests/kexec/test_kexec_file_load.sh b/tools/testing/selftests/kexec/test_kexec_file_load.sh
-index 2ff600388c30..99f6fc23ee31 100755
---- a/tools/testing/selftests/kexec/test_kexec_file_load.sh
-+++ b/tools/testing/selftests/kexec/test_kexec_file_load.sh
-@@ -97,10 +97,11 @@ check_for_imasig()
- check_for_modsig()
- {
- 	local module_sig_string="~Module signature appended~"
--	local sig="$(tail --bytes $((${#module_sig_string} + 1)) $KERNEL_IMAGE)"
- 	local ret=0
- 
--	if [ "$sig" == "$module_sig_string" ]; then
-+	tail --bytes $((${#module_sig_string} + 1)) $KERNEL_IMAGE | \
-+		grep -q "$module_sig_string"
-+	if [ $? -eq 0 ]; then
- 		ret=1
- 		log_info "kexec kernel image modsig signed"
- 	else
--- 
-2.27.0
+Mimi
+
+> ---
+>  security/integrity/ima/ima_kexec.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index f799cc278a9a..13753136f03f 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -61,9 +61,9 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>  	}
+>  	memcpy(file.buf, &khdr, sizeof(khdr));
+>  
+> -	print_hex_dump(KERN_DEBUG, "ima dump: ", DUMP_PREFIX_NONE,
+> -			16, 1, file.buf,
+> -			file.count < 100 ? file.count : 100, true);
+> +	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+> +			     file.buf, file.count < 100 ? file.count : 100,
+> +			     true);
+>  
+>  	*buffer_size = file.count;
+>  	*buffer = file.buf;
+
 
