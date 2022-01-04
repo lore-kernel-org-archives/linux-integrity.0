@@ -2,136 +2,162 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301CBC433EF
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Jan 2022 20:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D16C433F5
+	for <linux-integrity@archiver.kernel.org>; Tue,  4 Jan 2022 15:45:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229527AbiACUoq (ORCPT
+        id S235016AbiADPpU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 3 Jan 2022 15:44:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7284 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229478AbiACUop (ORCPT
+        Tue, 4 Jan 2022 10:45:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235057AbiADPpR (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 3 Jan 2022 15:44:45 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 203GhW5b001880;
-        Mon, 3 Jan 2022 20:44:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=d7Rppfjf2xK3qs9W3EXgtV0sz6zBM9e4EQyVooPXVHw=;
- b=cqwM3Wj8Fr9RdulST/wJx0ZLar9kIwwk6rfLNBKQF1XKOOO+QkK2HcI/LnKI3/6Rki25
- kQgQfYjRDwTo8m79xQU7ydlcs9ptJcqYnbNLva9MFj7zZVPzAgfe70k8o8plwnraMJNQ
- QvAw4pS/dWXN6rwyXj7lB75YtMEaJn7GjpCdYjUcnGgK5TqcJ76s+kBNYGTrONyA+Y+t
- eS95uP1Dx40tTD+kz+SESXi8m+hg0NfbAfL39ER3SLSlVTmtPvF9fYnyP6rvcat/PZ6U
- NwfQwK9hvMvrAAstbT07FO3sEqZGTwJIIen77yn29FYiOKR8tbrHWcaPxi7N0VgwFVCe Pw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dc4wvk3jh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jan 2022 20:44:43 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 203KhOCS004977;
-        Mon, 3 Jan 2022 20:44:42 GMT
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dc4wvk3j5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jan 2022 20:44:42 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 203KgL2p001628;
-        Mon, 3 Jan 2022 20:44:40 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03fra.de.ibm.com with ESMTP id 3daek9465m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 03 Jan 2022 20:44:40 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 203KibAv17629542
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 3 Jan 2022 20:44:37 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C5D82A4040;
-        Mon,  3 Jan 2022 20:44:37 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2516CA404D;
-        Mon,  3 Jan 2022 20:44:37 +0000 (GMT)
-Received: from sig-9-65-85-84.ibm.com (unknown [9.65.85.84])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  3 Jan 2022 20:44:36 +0000 (GMT)
-Message-ID: <44da7e73335cd70ec847e02c305b5f42014ab37b.camel@linux.ibm.com>
-Subject: Re: [oss-security] IMA gadgets
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     linux-integrity@vger.kernel.org,
+        Tue, 4 Jan 2022 10:45:17 -0500
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B29C061761
+        for <linux-integrity@vger.kernel.org>; Tue,  4 Jan 2022 07:45:15 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4JSxlF1GWrzN3f1x;
+        Tue,  4 Jan 2022 16:45:13 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4JSxlD5cMHzljsW5;
+        Tue,  4 Jan 2022 16:45:12 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
         Florian Weimer <fweimer@redhat.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Date:   Mon, 03 Jan 2022 15:44:36 -0500
-In-Reply-To: <20220102224413.575bcx4s5rclw4vz@altlinux.org>
-References: <87wnkp8kmj.fsf@oldenburg.str.redhat.com>
-         <20211228153909.3ueeb25vrxvcmhk3@altlinux.org>
-         <d767f176dcdbc50a71f716e3ad9704763b5be537.camel@linux.ibm.com>
-         <20220102224413.575bcx4s5rclw4vz@altlinux.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: kHqvlfRaLoihQv4gG7AiJCJLVyZiTfC2
-X-Proofpoint-ORIG-GUID: 6BY-ZShsAqAUIwDChUuxeZrL6V1PCmTC
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Yin Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v18 1/4] printk: Move back proc_dointvec_minmax_sysadmin() to sysctl.c
+Date:   Tue,  4 Jan 2022 16:50:21 +0100
+Message-Id: <20220104155024.48023-2-mic@digikod.net>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220104155024.48023-1-mic@digikod.net>
+References: <20220104155024.48023-1-mic@digikod.net>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-03_08,2022-01-01_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- suspectscore=0 adultscore=0 bulkscore=0 mlxlogscore=999 spamscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2110150000 definitions=main-2201030140
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2022-01-03 at 01:44 +0300, Vitaly Chikunov wrote:
-> Hi,
-> 
-> On Tue, Dec 28, 2021 at 11:13:11AM -0500, Mimi Zohar wrote:
-> > On Tue, 2021-12-28 at 18:39 +0300, Vitaly Chikunov wrote:
-> > > 
-> > > JFYI, there was a small discussion in oss-security [1] about IMA. Yes,
-> > > it does not touch EVM in case of SUID. But the fact that filenames are
-> > > never tracked in IMA/EVM does look like a major problem indeed.
-> > > 
-> > > Thanks,
-> > 
-> > Thanks, Vitaly, for forwarding the oss-security link to the discussion.
-> > 
-> > When I responded in a different thread[1], I mentioned protecting file
-> > metadata is not IMA's responsibility, but EVM's.  I left out mentioning
-> > file signatures provide provenance, which a hash does not.
-> > 
-> > As for the filename not being protected, that is a known issue as well,
-> > which was discussed at 2018 Linux Storage, Filesystem, and Memory-
-> > Management Summit [2].
-> > Dmitry Kasatkin years ago proposed protecting
-> > the directory structure, but that support was limited to the first
-> > directory level, not all the way up to the tree root.
-> 
-> That's interesting. But protecting directory with xattr seems to have
-> bad consequences, besides it's harder to calculate, it will be
-> impossible to install additional binaries to the dir (like upgrading
-> single package on the system). (If I understood correctly the idea.)
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-The proposed support was for directory hashes, not signatures, based on
-the getdents syscall.  Only in ima-evm-utils v1.4 was the experimental
-code for calculating the directory hash removed.
+The proc_dointvec_minmax_sysadmin() helper is useful for the
+fs.trusted_for_policy sysctl brought by the next commit.
 
-> 
-> What if we combine filename hash and directory inode number to the EVM
-> signature?
+This partially revert commit 642fd23fb826 ("printk: move printk sysctl
+to printk/sysctl.c") from Luis Chamberlain's 20211129-sysctl-cleanups
+branch [1], to share the proc_dointvec_minmax_sysadmin() helper.  FYI,
+this previous commit also got the buffer pointer an __user attribute.
 
-Another approach could be based on Allison Henderson's 2018 LSF/MM talk
-titled "XFS parent pointers" https://lwn.net/Articles/753480/, as
-pointed out by Boaz Harrosh.
+Also remove the forgotten ten_thousand static variable (moved to
+kernel/printk/sysctl.c).
 
-thanks,
+Link: https://lkml.kernel.org/r/20211124231435.1445213-6-mcgrof@kernel.org [1]
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Xiaoming Ni <nixiaoming@huawei.com>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Link: https://lore.kernel.org/r/20220104155024.48023-2-mic@digikod.net
+---
+ include/linux/sysctl.h | 2 ++
+ kernel/printk/sysctl.c | 9 ---------
+ kernel/sysctl.c        | 9 +++++++++
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
-Mimi
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index 180adf7da785..cf1ba98aab50 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -69,6 +69,8 @@ int proc_dobool(struct ctl_table *table, int write, void *buffer,
+ int proc_dointvec(struct ctl_table *, int, void *, size_t *, loff_t *);
+ int proc_douintvec(struct ctl_table *, int, void *, size_t *, loff_t *);
+ int proc_dointvec_minmax(struct ctl_table *, int, void *, size_t *, loff_t *);
++int proc_dointvec_minmax_sysadmin(struct ctl_table *, int, void *, size_t *,
++		loff_t *);
+ int proc_douintvec_minmax(struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos);
+ int proc_dou8vec_minmax(struct ctl_table *table, int write, void *buffer,
+diff --git a/kernel/printk/sysctl.c b/kernel/printk/sysctl.c
+index 653ae04aab7f..c7129428ee9b 100644
+--- a/kernel/printk/sysctl.c
++++ b/kernel/printk/sysctl.c
+@@ -11,15 +11,6 @@
+ 
+ static const int ten_thousand = 10000;
+ 
+-static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+-				void __user *buffer, size_t *lenp, loff_t *ppos)
+-{
+-	if (write && !capable(CAP_SYS_ADMIN))
+-		return -EPERM;
+-
+-	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+-}
+-
+ static struct ctl_table printk_sysctls[] = {
+ 	{
+ 		.procname	= "printk",
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 5ae443b2882e..2e2027e323fd 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -888,6 +888,15 @@ static int proc_taint(struct ctl_table *table, int write,
+ 	return err;
+ }
+ 
++int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
++				void __user *buffer, size_t *lenp, loff_t *ppos)
++{
++	if (write && !capable(CAP_SYS_ADMIN))
++		return -EPERM;
++
++	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++}
++
+ /**
+  * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+  * @min: pointer to minimum allowable value
+-- 
+2.34.1
 
