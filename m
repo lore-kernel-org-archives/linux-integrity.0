@@ -2,160 +2,144 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C268FC433F5
-	for <linux-integrity@archiver.kernel.org>; Mon, 10 Jan 2022 12:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9952FC4321E
+	for <linux-integrity@archiver.kernel.org>; Mon, 10 Jan 2022 13:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245319AbiAJMO6 (ORCPT
+        id S234069AbiAJNuJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 10 Jan 2022 07:14:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22168 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S245358AbiAJMNv (ORCPT
+        Mon, 10 Jan 2022 08:50:09 -0500
+Received: from smtp-out1.suse.de ([195.135.220.28]:36562 "EHLO
+        smtp-out1.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230451AbiAJNuI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 10 Jan 2022 07:13:51 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20AC8hCG028776;
-        Mon, 10 Jan 2022 12:13:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Xak/CKLMnioeGOSndHD6lQ+kfo22g2B8NuO2kHa7z0E=;
- b=TmqMf5H6DVJ8wH7eTGzr6aWgdMp+Aa6moKzaVc28L9S385jSv7u7b3ngf90du0mNw+vM
- iTlhJvZ08BXo8d7Oz/PgsOgUihkujeRXVLvpb54RBIKHnYDhJZZfC5i5ja3j9mWeUDOx
- p0dv9+yLp9J5CR9ccZjz/W9/HVdoxlYR/SEvg4H338ho+p9gv5FAt4W1dU+nKzOjjEMV
- QKHN+p2KZGEBsLnN7hd1B4pY71DtNC16YaOzUIkU/Tami+kAlOMxe4Tw2X2bQWEnRz97
- fijKKPFpFhiJMcF72mSOsREdxPM/S3ZIf9xvqpFK1EifnRrm0mP8uqG8oMLa3fiwsm+b Sw== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3df37wv2yr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jan 2022 12:13:42 +0000
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20ACDR7p032182;
-        Mon, 10 Jan 2022 12:13:41 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma05fra.de.ibm.com with ESMTP id 3df288ukb2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 10 Jan 2022 12:13:39 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20ACDO5v43843854
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 10 Jan 2022 12:13:24 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F09CBA405E;
-        Mon, 10 Jan 2022 12:13:23 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41957A4055;
-        Mon, 10 Jan 2022 12:13:23 +0000 (GMT)
-Received: from sig-9-65-93-173.ibm.com (unknown [9.65.93.173])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 10 Jan 2022 12:13:23 +0000 (GMT)
-Message-ID: <6361f769a41d319810f33c559f52938cf93607bb.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 2/6] fs-verity: define a function to return the
- integrity protected file digest
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     linux-integrity@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 10 Jan 2022 07:13:22 -0500
-In-Reply-To: <20220110004738.kzhzyastvq5rn2g5@altlinux.org>
-References: <20220109185517.312280-1-zohar@linux.ibm.com>
-         <20220109185517.312280-3-zohar@linux.ibm.com>
-         <20220110004738.kzhzyastvq5rn2g5@altlinux.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 8t7hD3g3bgukSVN8lyjGERRfOlEohop0
-X-Proofpoint-ORIG-GUID: 8t7hD3g3bgukSVN8lyjGERRfOlEohop0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-01-10_05,2022-01-10_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0 phishscore=0
- mlxscore=0 impostorscore=0 bulkscore=0 malwarescore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
- definitions=main-2201100085
+        Mon, 10 Jan 2022 08:50:08 -0500
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 84BB52113D;
+        Mon, 10 Jan 2022 13:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1641822606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IrWBD7TI68EgG0wGR5MEbMvcsfaxaq2AlRDdyvro99A=;
+        b=ER1Ig+kbKfqELKLQrCGR4puUWqX6nCfeVapfUC/iwt8mKZSH5Eb5QxJkzoCz349hh+vda3
+        ND0UIkio8l1y074bT+8Cx3bcYBYAk/3A9t5OBSZcuoTb9iY1d9oxCMN+ZWXhQ7ucYrmOrT
+        Susl5as4RKjIOsQf356SIK5FmFphnc4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1641822606;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=IrWBD7TI68EgG0wGR5MEbMvcsfaxaq2AlRDdyvro99A=;
+        b=kfcNRT7fN0cSjMRFNOlh5Fuwd3Ka9aRohhgvnb0dWnDJZ7eLXBC64pNyypsWLev+JfRBMo
+        jw9CVIqrPigKGuDQ==
+Received: from kitsune.suse.cz (kitsune.suse.cz [10.100.12.127])
+        by relay2.suse.de (Postfix) with ESMTP id 40348A3B81;
+        Mon, 10 Jan 2022 13:50:06 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Cc:     Michal Suchanek <msuchanek@suse.de>, kexec@lists.infradead.org,
+        Philipp Rudo <prudo@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Frank van der Linden <fllinden@amazon.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v4 1/6] s390/kexec_file: Don't opencode appended signature check.
+Date:   Mon, 10 Jan 2022 14:49:53 +0100
+Message-Id: <940cd6a0e88793060cdf5ddb7880c03564b38bdd.1641822505.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <cover.1641822505.git.msuchanek@suse.de>
+References: <cover.1641822505.git.msuchanek@suse.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Vitaly,
+Module verification already implements appeded signature check.
 
-On Mon, 2022-01-10 at 03:47 +0300, Vitaly Chikunov wrote:
-> Mimi,
-> 
-> On Sun, Jan 09, 2022 at 01:55:13PM -0500, Mimi Zohar wrote:
-> > Define a function named fsverity_get_digest() to return the verity file
-> > digest and the associated hash algorithm (enum hash_algo).
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> >  fs/verity/Kconfig            |  1 +
-> >  fs/verity/fsverity_private.h |  7 -------
-> >  fs/verity/measure.c          | 40 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/fsverity.h     | 18 ++++++++++++++++
-> >  4 files changed, 59 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/verity/measure.c b/fs/verity/measure.c
-> > index f0d7b30c62db..52906b2e5811 100644
-> > --- a/fs/verity/measure.c
-> > +++ b/fs/verity/measure.c
-> > @@ -57,3 +57,43 @@ int fsverity_ioctl_measure(struct file *filp, void __user *_uarg)
-> >  	return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(fsverity_ioctl_measure);
-> > +
-> > +/**
-> > + * fsverity_get_digest() - get a verity file's digest
-> > + * @inode: inode to get digest of
-> > + * @digest: (out) pointer to the digest
-> > + * @alg: (out) pointer to the hash algorithm enumeration
-> > + *
-> > + * Return the file hash algorithm and digest of an fsverity protected file.
-> > + *
-> > + * Return: 0 on success, -errno on failure
-> > + */
-> > +int fsverity_get_digest(struct inode *inode,
-> > +			    u8 digest[FS_VERITY_MAX_DIGEST_SIZE],
-> > +			    enum hash_algo *alg)
-> > +{
-> > +	const struct fsverity_info *vi;
-> > +	const struct fsverity_hash_alg *hash_alg;
-> > +	int i;
-> > +
-> > +	vi = fsverity_get_info(inode);
-> > +	if (!vi)
-> > +		return -ENODATA; /* not a verity file */
-> > +
-> > +	hash_alg = vi->tree_params.hash_alg;
-> > +	memset(digest, 0, FS_VERITY_MAX_DIGEST_SIZE);
-> > +	*alg = HASH_ALGO__LAST;
-> 
-> Perhaps this line is redundant (*alg is overwritten later) and would
-> needlessly mangle output value in case of -EINVAL while it's being
-> untouched on -ENODATA.
-> 
+Reuse it for kexec_file.
 
-Thanks!
+The kexec_file implementation uses EKEYREJECTED error in some cases when
+there is no key and the common implementation uses ENOPKG or EBADMSG
+instead.
 
-Mimi
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+Acked-by: Heiko Carstens <hca@linux.ibm.com>
+---
+v3: Philipp Rudo <prudo@redhat.com>: Update the commit with note about
+change of return value
+---
+ arch/s390/kernel/machine_kexec_file.c | 22 +++++-----------------
+ 1 file changed, 5 insertions(+), 17 deletions(-)
 
-> 
-> > +
-> > +	/* convert hash algorithm to hash_algo_name */
-> > +	i = match_string(hash_algo_name, HASH_ALGO__LAST, hash_alg->name);
-> > +	if (i < 0)
-> > +		return -EINVAL;
-> > +	*alg = i;
-> > +
-> > +	memcpy(digest, vi->file_digest, hash_alg->digest_size);
-> > +
-> > +	pr_debug("file digest %s:%*phN\n", hash_algo_name[*alg],
-> > +		  hash_digest_size[*alg], digest);
-> > +
-> > +	return 0;
-> > +}
-
+diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
+index 8f43575a4dd3..c944d71316c7 100644
+--- a/arch/s390/kernel/machine_kexec_file.c
++++ b/arch/s390/kernel/machine_kexec_file.c
+@@ -31,6 +31,7 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
+ 	const unsigned long marker_len = sizeof(MODULE_SIG_STRING) - 1;
+ 	struct module_signature *ms;
+ 	unsigned long sig_len;
++	int ret;
+ 
+ 	/* Skip signature verification when not secure IPLed. */
+ 	if (!ipl_secure_flag)
+@@ -45,25 +46,12 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
+ 	kernel_len -= marker_len;
+ 
+ 	ms = (void *)kernel + kernel_len - sizeof(*ms);
+-	kernel_len -= sizeof(*ms);
++	ret = mod_check_sig(ms, kernel_len, "kexec");
++	if (ret)
++		return ret;
+ 
+ 	sig_len = be32_to_cpu(ms->sig_len);
+-	if (sig_len >= kernel_len)
+-		return -EKEYREJECTED;
+-	kernel_len -= sig_len;
+-
+-	if (ms->id_type != PKEY_ID_PKCS7)
+-		return -EKEYREJECTED;
+-
+-	if (ms->algo != 0 ||
+-	    ms->hash != 0 ||
+-	    ms->signer_len != 0 ||
+-	    ms->key_id_len != 0 ||
+-	    ms->__pad[0] != 0 ||
+-	    ms->__pad[1] != 0 ||
+-	    ms->__pad[2] != 0) {
+-		return -EBADMSG;
+-	}
++	kernel_len -= sizeof(*ms) + sig_len;
+ 
+ 	return verify_pkcs7_signature(kernel, kernel_len,
+ 				      kernel + kernel_len, sig_len,
+-- 
+2.31.1
 
