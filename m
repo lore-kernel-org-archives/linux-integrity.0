@@ -2,316 +2,181 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B4FEC4332F
-	for <linux-integrity@archiver.kernel.org>; Tue, 11 Jan 2022 11:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09D8C433F5
+	for <linux-integrity@archiver.kernel.org>; Tue, 11 Jan 2022 12:17:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349595AbiAKLiC (ORCPT
+        id S239739AbiAKMRG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 11 Jan 2022 06:38:02 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:33626 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349546AbiAKLh7 (ORCPT
+        Tue, 11 Jan 2022 07:17:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S239606AbiAKMRF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 11 Jan 2022 06:37:59 -0500
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 9ACCA1F3BE;
-        Tue, 11 Jan 2022 11:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1641901077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E5S+PDIMt0cv778Ug4dTHgOhwSV6I7mLY7fYsPSMbc8=;
-        b=cNTa4UdEI8NMT2ulyV45F/C/V13CVcxnHg2/esmZQ9mIhQ4wW8tFjineNtW9R8OYNjpyzQ
-        /zlZ9M4CizPX6Da//4DbLf1GFhpmIzRgQqK8WzvxT/I3jGEGk7/mfQepNvv2M1J7zCxtl2
-        fc3gS9gTAYfCRnrha03OmoNgg3j/HZY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1641901077;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E5S+PDIMt0cv778Ug4dTHgOhwSV6I7mLY7fYsPSMbc8=;
-        b=Gx/naHnidUOgdbPPRqig0Wgs+UDBOAiZnhMMzrD37EGj9I3JOKbn2QGeVXTk7DLgO/rsjU
-        BxTzShMlokMLUABA==
-Received: from kitsune.suse.cz (kitsune.suse.cz [10.100.12.127])
-        by relay2.suse.de (Postfix) with ESMTP id 5459AA3B8F;
-        Tue, 11 Jan 2022 11:37:57 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>, kexec@lists.infradead.org,
-        Philipp Rudo <prudo@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank van der Linden <fllinden@amazon.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Baoquan He <bhe@redhat.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v5 3/6] kexec_file: Don't opencode appended signature verification.
-Date:   Tue, 11 Jan 2022 12:37:45 +0100
-Message-Id: <7834eb187ef67cd88fc67f10e831130e3717d776.1641900831.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <cover.1641900831.git.msuchanek@suse.de>
-References: <cover.1641900831.git.msuchanek@suse.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 11 Jan 2022 07:17:05 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20BC2Z4s007863;
+        Tue, 11 Jan 2022 12:16:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=CXiUk4EYqETtUrjwj55OEO3KLhrpjQ5YmfBgvR7Me1M=;
+ b=U1XJQU2HoLk32y0ldKIAc6V1TlqOSeeBfrBi81ZSDGhGNp8Zl6Rgxfk8GsEO58rZss8o
+ WPYv8TAOCW2yB+SvmFsX3L/ET3dDb1U8d/M4vcSlt4ZH6paF8ksHet05DH+gKhQMjrdc
+ 3Yua930xKQbDnqdZ6JLg93eRy/DXaUueRznDmLCcyC7giZKSOghO1PB4MZEfEem910lP
+ muZVI5xuy1/ay5NCgK7aFhMJtxzouHj8AvhPz7nqGVnaPd6b/+rMSXMYrJ6iFp2h6M6V
+ D6stOtstFFGPQMbJ4u9KzyW2J/V4PRXVTjhadRL3XGU5QO0S3CH158QmFPdL+gZRC1XT yQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dfm05d3eu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jan 2022 12:16:36 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20BCB73O003499;
+        Tue, 11 Jan 2022 12:16:35 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dfm05d3dx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jan 2022 12:16:35 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20BCCYEv006787;
+        Tue, 11 Jan 2022 12:16:33 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma06fra.de.ibm.com with ESMTP id 3df1vjdk7p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Jan 2022 12:16:33 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20BCGUSU33227202
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Jan 2022 12:16:30 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DEEBDA4053;
+        Tue, 11 Jan 2022 12:16:29 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93A77A4070;
+        Tue, 11 Jan 2022 12:16:26 +0000 (GMT)
+Received: from sig-9-65-94-95.ibm.com (unknown [9.65.94.95])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 11 Jan 2022 12:16:26 +0000 (GMT)
+Message-ID: <d11458798496f2aed2fb31a7bb077f5938174083.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 01/19] securityfs: Extend securityfs with namespacing
+ support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, serge@hallyn.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Date:   Tue, 11 Jan 2022 07:16:26 -0500
+In-Reply-To: <20220105101815.ldsm4s5yx7pmuiil@wittgenstein>
+References: <20220104170416.1923685-1-stefanb@linux.vnet.ibm.com>
+         <20220104170416.1923685-2-stefanb@linux.vnet.ibm.com>
+         <YdUXU3XIzhxFUfVB@zeniv-ca.linux.org.uk>
+         <20220105101815.ldsm4s5yx7pmuiil@wittgenstein>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: cRSugpHShk13XAUsN-zZ1X8DHuqM-bnm
+X-Proofpoint-ORIG-GUID: AuH4e7pJuunftabGYhcnCth7hWbd_yRA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.790,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-11_04,2022-01-11_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 clxscore=1011 bulkscore=0 priorityscore=1501 spamscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2110150000 definitions=main-2201110072
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Module verification already implements appeded signature verification.
+On Wed, 2022-01-05 at 11:18 +0100, Christian Brauner wrote:
+> On Wed, Jan 05, 2022 at 03:58:11AM +0000, Al Viro wrote:
+> > On Tue, Jan 04, 2022 at 12:03:58PM -0500, Stefan Berger wrote:
+> > > From: Stefan Berger <stefanb@linux.ibm.com> 
 
-Reuse it for kexec_file.
+> > > Drop the additional dentry reference to enable simple cleanup of dentries
+> > > upon umount. Now the dentries do not need to be explicitly freed anymore
+> > > but we can just rely on d_genocide() and the dcache shrinker to do all
+> > > the required work.
+> 
+> The "additional dentry reference" mentioned only relates to an afaict
+> unnecessary dget() in securityfs_create_dentry() which I pointed out
+> as part of earlier reviews. But the phrasing implies that there's a
+> behavioral change for the initial securityfs instance based on the
+> removal of this additional dget() when there really isn't.
+> 
+> After securityfs_create_dentry() has created a new dentry via
+> lookup_one_len() and eventually called d_instantiate() it currently
+> takes an additional reference on the newly created dentry via dget().
+> This additional reference is then paired with an additional dput() in
+> securityfs_remove(). I have not yet seen a reason why this is
+> necessary maybe you can help there.
+> 
+> For example, contrast this with debugfs which has the same underlying
+> logic as securityfs, i.e. any created dentry pins the whole filesystem
+> via simple_pin_fs() until the dentry is released and simple_unpin_fs()
+> is called. It uses a similar pairing as securityfs: where securityfs
+> has the securityfs_create_dentry() and securityfs_remove() pairing,
+> debugfs has the __debugfs_create_file() and debugfs_remove() pairing.
+> But debugfs doesn't take an additional reference on the just created
+> dentry in __debugfs_create_file() which would need to be put in
+> debugfs_remove().
+> 
+> So if we contrast the creation routines of securityfs and debugfs directly
+> condensed to just the dentry references:
+> 
+> securityfs       |   debugfs
+> ---------------- | ------------------
+>                  |
+> lookup_one_len() |   lookup_one_len()
+> d_instantiate()  |   d_instantiate() 
+> dget()           |
+> 
+> And I have not understood why securityfs would need that additional
+> dget(). Not just intrinsically but also when contrasted with debugfs. So
+> that additional dget() is removed as part of this patch.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
-v3: - Philipp Rudo <prudo@redhat.com>: Update the dependency on
-      MODULE_SIG_FORMAT to MODULE_SIG
-    - Include linux/verification.h - previously added in earlier patch
-v4: - kernel test robot <lkp@intel.com>: Use unsigned long rather than size_t for data length
-    - Update the code in kernel/module_signing.c to use pointer rather
-      than memcpy as the kexec and IMA code does
----
- arch/powerpc/Kconfig                  |  2 +-
- arch/powerpc/kexec/elf_64.c           | 19 +++------------
- arch/s390/Kconfig                     |  2 +-
- arch/s390/kernel/machine_kexec_file.c | 18 ++------------
- include/linux/verification.h          |  3 +++
- kernel/module-internal.h              |  2 --
- kernel/module.c                       |  4 +++-
- kernel/module_signing.c               | 34 ++++++++++++++++-----------
- 8 files changed, 33 insertions(+), 51 deletions(-)
+Assuming it isn't needed, could removing it be a separate patch and
+upstreamed independently of either the securityfs or IMA namespacing
+changes?
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 1cde9b6c5987..4092187474ff 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -562,7 +562,7 @@ config ARCH_HAS_KEXEC_PURGATORY
- 
- config KEXEC_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
--	depends on KEXEC_FILE && MODULE_SIG_FORMAT
-+	depends on KEXEC_FILE && MODULE_SIG
- 	help
- 	  This option makes kernel signature verification mandatory for
- 	  the kexec_file_load() syscall.
-diff --git a/arch/powerpc/kexec/elf_64.c b/arch/powerpc/kexec/elf_64.c
-index 98d1cb5135b4..64cd314cce0d 100644
---- a/arch/powerpc/kexec/elf_64.c
-+++ b/arch/powerpc/kexec/elf_64.c
-@@ -23,6 +23,7 @@
- #include <linux/of_fdt.h>
- #include <linux/slab.h>
- #include <linux/types.h>
-+#include <linux/verification.h>
- #include <linux/module_signature.h>
- 
- static void *elf64_load(struct kimage *image, char *kernel_buf,
-@@ -156,9 +157,6 @@ static void *elf64_load(struct kimage *image, char *kernel_buf,
- int elf64_verify_sig(const char *kernel, unsigned long kernel_len)
- {
- 	const unsigned long marker_len = sizeof(MODULE_SIG_STRING) - 1;
--	struct module_signature *ms;
--	unsigned long sig_len;
--	int ret;
- 
- 	if (marker_len > kernel_len)
- 		return -EKEYREJECTED;
-@@ -168,19 +166,8 @@ int elf64_verify_sig(const char *kernel, unsigned long kernel_len)
- 		return -EKEYREJECTED;
- 	kernel_len -= marker_len;
- 
--	ms = (void *)kernel + kernel_len - sizeof(*ms);
--	ret = mod_check_sig(ms, kernel_len, "kexec");
--	if (ret)
--		return ret;
--
--	sig_len = be32_to_cpu(ms->sig_len);
--	kernel_len -= sizeof(*ms) + sig_len;
--
--	return verify_pkcs7_signature(kernel, kernel_len,
--				      kernel + kernel_len, sig_len,
--				      VERIFY_USE_PLATFORM_KEYRING,
--				      VERIFYING_MODULE_SIGNATURE,
--				      NULL, NULL);
-+	return verify_appended_signature(kernel, &kernel_len, VERIFY_USE_PLATFORM_KEYRING,
-+					 "kexec_file");
- }
- #endif /* CONFIG_KEXEC_SIG */
- 
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 2a5bb4f29cfe..cece7152ea35 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -544,7 +544,7 @@ config ARCH_HAS_KEXEC_PURGATORY
- 
- config KEXEC_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
--	depends on KEXEC_FILE && MODULE_SIG_FORMAT
-+	depends on KEXEC_FILE && MODULE_SIG
- 	help
- 	  This option makes kernel signature verification mandatory for
- 	  the kexec_file_load() syscall.
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-index c944d71316c7..345f2eab6e04 100644
---- a/arch/s390/kernel/machine_kexec_file.c
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -29,9 +29,6 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
- int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- {
- 	const unsigned long marker_len = sizeof(MODULE_SIG_STRING) - 1;
--	struct module_signature *ms;
--	unsigned long sig_len;
--	int ret;
- 
- 	/* Skip signature verification when not secure IPLed. */
- 	if (!ipl_secure_flag)
-@@ -45,19 +42,8 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- 		return -EKEYREJECTED;
- 	kernel_len -= marker_len;
- 
--	ms = (void *)kernel + kernel_len - sizeof(*ms);
--	ret = mod_check_sig(ms, kernel_len, "kexec");
--	if (ret)
--		return ret;
--
--	sig_len = be32_to_cpu(ms->sig_len);
--	kernel_len -= sizeof(*ms) + sig_len;
--
--	return verify_pkcs7_signature(kernel, kernel_len,
--				      kernel + kernel_len, sig_len,
--				      VERIFY_USE_PLATFORM_KEYRING,
--				      VERIFYING_MODULE_SIGNATURE,
--				      NULL, NULL);
-+	return verify_appended_signature(kernel, &kernel_len, VERIFY_USE_PLATFORM_KEYRING,
-+					"kexec_file");
- }
- #endif /* CONFIG_KEXEC_SIG */
- 
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index a655923335ae..32db9287a7b0 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -60,5 +60,8 @@ extern int verify_pefile_signature(const void *pebuf, unsigned pelen,
- 				   enum key_being_used_for usage);
- #endif
- 
-+int verify_appended_signature(const void *data, unsigned long *len,
-+			      struct key *trusted_keys, const char *what);
-+
- #endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
- #endif /* _LINUX_VERIFY_PEFILE_H */
-diff --git a/kernel/module-internal.h b/kernel/module-internal.h
-index 33783abc377b..80461e14bf29 100644
---- a/kernel/module-internal.h
-+++ b/kernel/module-internal.h
-@@ -27,5 +27,3 @@ struct load_info {
- 		unsigned int sym, str, mod, vers, info, pcpu;
- 	} index;
- };
--
--extern int mod_verify_sig(const void *mod, struct load_info *info);
-diff --git a/kernel/module.c b/kernel/module.c
-index 84a9141a5e15..8481933dfa92 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -57,6 +57,7 @@
- #include <linux/bsearch.h>
- #include <linux/dynamic_debug.h>
- #include <linux/audit.h>
-+#include <linux/verification.h>
- #include <uapi/linux/module.h>
- #include "module-internal.h"
- 
-@@ -2894,7 +2895,8 @@ static int module_sig_check(struct load_info *info, int flags)
- 	    memcmp(mod + info->len - markerlen, MODULE_SIG_STRING, markerlen) == 0) {
- 		/* We truncate the module to discard the signature */
- 		info->len -= markerlen;
--		err = mod_verify_sig(mod, info);
-+		err = verify_appended_signature(mod, &info->len,
-+						VERIFY_USE_SECONDARY_KEYRING, "module");
- 		if (!err) {
- 			info->sig_ok = true;
- 			return 0;
-diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-index 8723ae70ea1f..30149969f21f 100644
---- a/kernel/module_signing.c
-+++ b/kernel/module_signing.c
-@@ -14,32 +14,38 @@
- #include <crypto/public_key.h>
- #include "module-internal.h"
- 
--/*
-- * Verify the signature on a module.
-+/**
-+ * verify_appended_signature - Verify the signature on a module with the
-+ * signature marker stripped.
-+ * @data: The data to be verified
-+ * @len: Size of @data.
-+ * @trusted_keys: Keyring to use for verification
-+ * @what: Informational string for log messages
-  */
--int mod_verify_sig(const void *mod, struct load_info *info)
-+int verify_appended_signature(const void *data, unsigned long *len,
-+			      struct key *trusted_keys, const char *what)
- {
--	struct module_signature ms;
--	size_t sig_len, modlen = info->len;
-+	struct module_signature *ms;
-+	unsigned long sig_len, modlen = *len;
- 	int ret;
- 
--	pr_devel("==>%s(,%zu)\n", __func__, modlen);
-+	pr_devel("==>%s(,%lu)\n", __func__, modlen);
- 
--	if (modlen <= sizeof(ms))
-+	if (modlen <= sizeof(*ms))
- 		return -EBADMSG;
- 
--	memcpy(&ms, mod + (modlen - sizeof(ms)), sizeof(ms));
-+	ms = data + modlen - sizeof(*ms);
- 
--	ret = mod_check_sig(&ms, modlen, "module");
-+	ret = mod_check_sig(ms, modlen, what);
- 	if (ret)
- 		return ret;
- 
--	sig_len = be32_to_cpu(ms.sig_len);
--	modlen -= sig_len + sizeof(ms);
--	info->len = modlen;
-+	sig_len = be32_to_cpu(ms->sig_len);
-+	modlen -= sig_len + sizeof(*ms);
-+	*len = modlen;
- 
--	return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
--				      VERIFY_USE_SECONDARY_KEYRING,
-+	return verify_pkcs7_signature(data, modlen, data + modlen, sig_len,
-+				      trusted_keys,
- 				      VERIFYING_MODULE_SIGNATURE,
- 				      NULL, NULL);
- }
--- 
-2.31.1
+thanks,
+
+Mimi
+
+> 
+> But the explanation in the commit message isn't ideal as it implies
+> the removal of the additional dget() would have any impact on the
+> pinning logic for securityfs when it does not.
+> 
+> But the pinning logic doesn't make sense outside of the initial
+> namespace which can never go away and there are security modules that
+> have files or settings for the whole system that never go away and will
+> always keep the filesystem around.
+> 
+> But for unprivileged/userns containers that mount their own securityfs
+> instance we want the securityfs instance cleaned up when it is
+> unmounted. There is no need to duplicate the pinning logic or make the
+> global securityfs instance display different information based on the
+> userns. Both options would be really messy and hacky.
+> 
+> Instead we can simply give each userns it's own securityfs instance
+> similar to how each ipc ns has its own mqueue instance and all entries
+> in there are cleaned up on umount or when the whole container is
+> shutdown. After the container is shutdown all of the security module
+> settings for the container go away with it anyway. So for that we don't
+> want any filesystem pinning done in securityfs_create_dentry(). And we
+> also really don't want the additional dget() that is currently taken in
+> securityfs_create_dentry() as it would pointlessly require us to dput()
+> during superblock shutdown afaict. None of this however should cause any
+> behavioral changes for the initial securityfs instance.
 
