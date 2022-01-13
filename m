@@ -2,163 +2,132 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB1AC433F5
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jan 2022 09:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A422C433EF
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Jan 2022 18:04:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234001AbiAMJMG (ORCPT
+        id S237437AbiAMSEM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Jan 2022 04:12:06 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4409 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233890AbiAMJLf (ORCPT
+        Thu, 13 Jan 2022 13:04:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S237440AbiAMSEL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Jan 2022 04:11:35 -0500
-Received: from fraeml713-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4JZJZk6BsVz67lZV;
-        Thu, 13 Jan 2022 17:11:26 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml713-chm.china.huawei.com (10.206.15.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.20; Thu, 13 Jan 2022 10:11:31 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2308.020;
- Thu, 13 Jan 2022 10:11:31 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-CC:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Subject: RE: [PATCH 00/14] KEYS: Add support for PGP keys and signatures
-Thread-Topic: [PATCH 00/14] KEYS: Add support for PGP keys and signatures
-Thread-Index: AQHYBxWUAJoIvMeqLk2UYoD6PZRMZ6xeNfyAgADgBLCAAK1lAIAA3Hrw
-Date:   Thu, 13 Jan 2022 09:11:31 +0000
-Message-ID: <f30d8240a38b48bb92f86a6e4c951918@huawei.com>
-References: <20220111180318.591029-1-roberto.sassu@huawei.com>
- <ab29dd6f-1301-e012-8898-9c739ca511a3@maciej.szmigiero.name>
- <b37f9c0e9bf941f0b778c6949538835d@huawei.com>
- <ab3d2bda-a704-f5d3-adee-e52b7d0a4641@maciej.szmigiero.name>
-In-Reply-To: <ab3d2bda-a704-f5d3-adee-e52b7d0a4641@maciej.szmigiero.name>
-Accept-Language: en-US
+        Thu, 13 Jan 2022 13:04:11 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20DHqsod027852;
+        Thu, 13 Jan 2022 18:04:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : from : to : cc : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=h7PGYmYGOaS7whOzz2krlo4qhHm2j2+iN2wg1u9LGzo=;
+ b=IugUQjNZbqI3tZpwi2Y5jTuSZwFgqmdjxbunCKZCJYFV56Gmj8Js7Ztgs2mCqhZ9DoV7
+ ZmZfPRMgjpb3S6SJNopcGbp2WdHvyt73Vp705LYD60xXZ9ShaeAKXWPpCR9uzywhd/qo
+ +ojjK6Ce0skaNzRPmJnVDG/jFFjE6UF/kXOLEMa74PJgaieNk44xZPM6oBgDztH4jVhf
+ CYLZRwjyU6KkaI6LjC8THxoaHUsVp33k+Oc9ME4dIh7b9y4vSTJrkrOWdp/kNFAyIhf7
+ kPHVXXSr64tLFiP08Vf7zo8uxA2heOpVbz4Y7jRa/wrCI1X0QZ+DTiKPMBzpKlLDS7mO gg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3djrv98716-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 18:04:07 +0000
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20DHu1qC009802;
+        Thu, 13 Jan 2022 18:04:07 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3djrv9870x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 18:04:07 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20DI3qek007408;
+        Thu, 13 Jan 2022 18:04:05 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma02wdc.us.ibm.com with ESMTP id 3df28bya1m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Jan 2022 18:04:05 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20DI447v27066710
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 13 Jan 2022 18:04:04 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F7F32806A;
+        Thu, 13 Jan 2022 18:04:04 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3544A28064;
+        Thu, 13 Jan 2022 18:04:04 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Jan 2022 18:04:04 +0000 (GMT)
+Message-ID: <1e3b1e6f-6600-d77f-843b-f3d60e062192@linux.ibm.com>
+Date:   Thu, 13 Jan 2022 13:04:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+Subject: Re: [PATCH v4 1/2] selftests: tpm2: Determine available PCR bank
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.204.63.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        skhan@linuxfoundation.org
+References: <20211128041052.1395504-1-stefanb@linux.vnet.ibm.com>
+ <20211128041052.1395504-2-stefanb@linux.vnet.ibm.com>
+ <YaVkw5dnCewnFybR@iki.fi>
+ <eaad369c-f02e-8d83-94b1-fdac7ae84388@linux.ibm.com>
+In-Reply-To: <eaad369c-f02e-8d83-94b1-fdac7ae84388@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: VhrntTOZ2fUnC6cHeX1xOWCtbKldnM9b
+X-Proofpoint-ORIG-GUID: eYe9VVJM1UlquiHJWHJU8lBVaQ_VmqMM
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-01-13_08,2022-01-13_01,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 spamscore=0 phishscore=0 mlxlogscore=822
+ clxscore=1015 malwarescore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2110150000
+ definitions=main-2201130112
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PiBGcm9tOiBNYWNpZWogUy4gU3ptaWdpZXJvIFttYWlsdG86bWFpbEBtYWNpZWouc3ptaWdpZXJv
-Lm5hbWVdDQo+IFNlbnQ6IFdlZG5lc2RheSwgSmFudWFyeSAxMiwgMjAyMiA5OjE2IFBNDQo+IE9u
-IDEyLjAxLjIwMjIgMTA6MTYsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4+IEZyb206IE1hY2ll
-aiBTLiBTem1pZ2llcm8gW21haWx0bzptYWlsQG1hY2llai5zem1pZ2llcm8ubmFtZV0NCj4gPj4g
-U2VudDogVHVlc2RheSwgSmFudWFyeSAxMSwgMjAyMiA5OjMzIFBNDQo+ID4+IE9uIDExLjAxLjIw
-MjIgMTk6MDMsIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4+PiBTdXBwb3J0IGZvciBQR1Aga2V5
-cyBhbmQgc2lnbmF0dXJlcyB3YXMgcHJvcG9zZWQgYnkgRGF2aWQgbG9uZyB0aW1lIGFnbywNCj4g
-Pj4+IGJlZm9yZSB0aGUgZGVjaXNpb24gb2YgdXNpbmcgUEtDUyM3IGZvciBrZXJuZWwgbW9kdWxl
-cyBzaWduYXR1cmVzDQo+ID4+PiB2ZXJpZmljYXRpb24gd2FzIG1hZGUuIEFmdGVyIHRoYXQsIHRo
-ZXJlIGhhcyBiZWVuIG5vdCBlbm91Z2ggaW50ZXJlc3QgdG8NCj4gPj4+IHN1cHBvcnQgUEdQIHRv
-by4NCj4gPj4+DQo+ID4+PiBMYXRlbHksIHdoZW4gZGlzY3Vzc2luZyBhIHByb3Bvc2FsIG9mIGlu
-dHJvZHVjaW5nIGZzdmVyaXR5IHNpZ25hdHVyZXMgaW4NCj4gPj4+IEZlZG9yYSBbMV0sIGRldmVs
-b3BlcnMgZXhwcmVzc2VkIHRoZWlyIHByZWZlcmVuY2Ugb24gbm90IGhhdmluZyBhIHNlcGFyYXRl
-DQo+ID4+PiBrZXkgZm9yIHNpZ25pbmcsIHdoaWNoIHdvdWxkIGNvbXBsaWNhdGUgdGhlIG1hbmFn
-ZW1lbnQgb2YgdGhlDQo+IGRpc3RyaWJ1dGlvbi4NCj4gPj4+IFRoZXkgd291bGQgYmUgbW9yZSBp
-biBmYXZvciBvZiB1c2luZyB0aGUgc2FtZSBQR1Aga2V5LCBjdXJyZW50bHkgdXNlZCBmb3INCj4g
-Pj4+IHNpZ25pbmcgUlBNIGhlYWRlcnMsIGFsc28gZm9yIGZpbGUtYmFzZWQgc2lnbmF0dXJlcyAo
-bm90IG9ubHkgZnN2ZXJpdHksIGJ1dA0KPiA+Pj4gYWxzbyBJTUEgb25lcykuDQo+ID4+DQo+ID4+
-IEFyZW4ndCBQR1Aga2V5cyBzaW1wbHkgUlNBIC8gRUNDIC8gRWREU0Ega2V5cyB3aXRoIGFkZGl0
-aW9uYWwgbWV0YWRhdGE/DQo+ID4+IENhbid0IHRoZXkgYmUgdW53cmFwcGVkIGZyb20gdGhlaXIg
-KGNvbXBsZXgpIFBHUCBmb3JtYXQgaW4gdXNlcnNwYWNlIGFuZA0KPiA+PiBsb2FkZWQgcmF3IGlu
-dG8gdGhlIGtlcm5lbCwgaW4gYSBzaW1pbGFyIHdheSBhcyB0aGV5IGFyZSBzb21ldGltZXMgdXNl
-ZA0KPiA+PiBmb3IgU1NIIGF1dGhlbnRpY2F0aW9uPw0KPiA+DQo+ID4gUHJvYmFibHksIHRoaXMg
-d291bGQgYmUgcG9zc2libGUgYnkgaW50cm9kdWNpbmcgYSBuZXcgYXN5bW1ldHJpYw0KPiA+IGtl
-eSBzdWJ0eXBlIHBhcnNpbmcgUEdQIGtleXMgYW5kIHNpZ25hdHVyZXMgaW4gYSBtb3JlIHNpbXBs
-ZSBmb3JtYXQsDQo+ID4gYWZ0ZXIgY29udmVyc2lvbiBieSB1c2VyIHNwYWNlLiBCdXQgc3RpbGws
-IGEgcGFyc2VyIHdvdWxkIGJlIHJlcXVpcmVkLg0KPiA+IFRvIGJlIGhvbmVzdCwgSSB3b3VsZCBw
-cmVmZXIgdG8gaW1wbGVtZW50IChhY3R1YWxseSBEYXZpZCBkaWQpIGENCj4gPiBwYXJzZXIgZm9s
-bG93aW5nIGFuIFJGQywgdGhhbiBkZXZlbG9waW5nIGEgbmV3IG9uZS4NCj4gDQo+IEEgcGFyc2Vy
-IGluIHVzZXJzcGFjZSBpcyBwcmVmZXJyZWQgdG8gb25lIGluIGtlcm5lbCBzaW5jZSBpZiB0aGVy
-ZSBpcw0KPiBhIGJ1ZyBzb21ld2hlcmUgaXRzIGNvbnNlcXVlbmNlcyBhcmUgbXVjaCBsZXNzIHNl
-dmVyZS4NCj4gQW5kIGV4cGVyaWVuY2Ugc2hvd3MgdGhhdCBwYXJzZXJzIGFyZSBlc3BlY2lhbGx5
-IHByb25lIHRvIGJ1Z3MuDQo+IEEgdXNlcnNwYWNlIGltcGxlbWVudGF0aW9uIGNhbiBhbHNvIGJl
-IHRpZ2h0bHkgc2FuZGJveGVkIGZvciBleHRyYQ0KPiBzZWN1cml0eS4NCj4gDQo+IFRoZXJlIGFy
-ZSBtYW55IGV4aXN0aW5nIE9wZW5QR1AgcGFyc2luZyBsaWJyYXJpZXMgdG8gY2hvb3NlIGZyb20u
-DQoNCkkgdW5kZXJzdGFuZCB5b3VyIHBvaW50LiBIb3dldmVyLCBpdCBkb2VzIG5vdCBzZWVtIHRv
-IG1lIGxlc3MNCnJpc2t5IHRvIGRlZmluZSBhIG5ldyBmb3JtYXQgdG8gdXBsb2FkIHRoZSBSU0Eg
-a2V5IGFuZCB0aGUgc2lnbmF0dXJlDQp0byBhdm9pZCB0aGUgY29tcGxleGl0eSBvZiBQR1AuIEFs
-c28sIGl0IGRvZXMgbm90IHNlZW0gbW9yZQ0KY29tcGxleCB0aGFuIFBLQ1MjNywgd2hpY2ggaXMg
-YWxyZWFkeSBpbiB0aGUga2VybmVsLg0KDQpJbiBhZGRpdGlvbiwgdGhlcmUgYXJlIGFzcGVjdHMg
-b2YgUEdQIHRoYXQgYW55d2F5IGhhdmUgdG8gYmUgdGFrZW4NCmludG8gYWNjb3VudC4gT25lIGV4
-YW1wbGUgaXMgdGhlIGRpZ2VzdCBjYWxjdWxhdGlvbiwgd2hpY2ggZGVwZW5kcw0KYWxzbyBvbiB0
-aGUgUEdQIHBhY2tldC4gV2hlbmV2ZXIgdGhlIGtlcm5lbCB2ZXJpZmllcyB0aGUgc2lnbmF0dXJl
-LA0KdGhlIGFkZGl0aW9uYWwgZGF0YSBuZWVkIHRvIGJlIGFwcGVuZGVkIHRvIHRoZSBvcmlnaW5h
-bCBkYXRhLiBUaGlzDQpyaXNrcyB0byBjcmVhdGUgbW9yZSBjb25mdXNpb24sIGFzIHRoZSBjb25z
-dW1lciBvZiB0aGUgZGF0YSBiZWluZw0KdmVyaWZpZWQgbWlnaHQgbm90IGJlIHByZXBhcmVkIHRv
-IGhhbmRsZSB0aGUgYWRkaXRpb25hbCBkYXRhDQpyZXF1aXJlZCBmb3Igc2lnbmF0dXJlIHZlcmlm
-aWNhdGlvbi4NCg0KVGhlIGtlcm5lbCBoYXMgYWxyZWFkeSBhIHdlbGwtZGVmaW5lZCB3YXkgdG8g
-cHJvY2VzcyBkYXRhIHdpdGgNCmEgc2lnbmF0dXJlLiBJdCBleHBlY3RzIGEgZGF0YSBzdHJ1Y3R1
-cmUgY2FsbGVkIG1vZHVsZV9zaWduYXR1cmUNCmF0IHRoZSBlbmQgb2YgdGhlIGRhdGEgdG8gdmVy
-aWZ5LCB3aGljaCBpbmNsdWRlIGluZm9ybWF0aW9uIHJlcXVpcmVkDQpmb3IgdGhlIHZlcmlmaWNh
-dGlvbiBzdWNoIGFzIHRoZSBkaWdlc3QgYWxnb3JpdGhtLCBrZXkgSUQsIGV0Yy4gSXQNCmFsc28g
-aGFzIGEgc2VsZWN0b3IgY2FsbGVkIFBLRVlfSURfUEdQLCBzbyB0aGF0IHRoZSBjb2RlIHdvdWxk
-DQpoYW5kbGUgYSBQR1Agc2lnbmF0dXJlLiBUaGlzIGRhdGEgc3RydWN0dXJlIGRvZXMgbm90IGlu
-Y2x1ZGUgc3BhY2UNCmZvciB0aGUgYWRkaXRpb25hbCBkYXRhIHJlcXVpcmVkIGZvciB0aGUgc2ln
-bmF0dXJlIHZlcmlmaWNhdGlvbi4NCg0KVGhpcyBwYXRjaCBzZXQgaW5zdGVhZCBvZmZlcnMgdGhl
-IG5ldyBmdW5jdGlvbiB2ZXJpZnlfcGdwX3NpZ25hdHVyZSgpLA0Kd2hpY2ggdGFrZXMgdGhlIHNh
-bWUgYXJndW1lbnRzIGFzIHZlcmlmeV9wa2NzN19zaWduYXR1cmUoKSwgYW5kDQpjYW4gYmUgdXNl
-ZCBhcyBpbiB0aGUgZXhhbXBsZSBJIG1lbnRpb25lZCBhYm92ZSBpbiBhIHN3aXRjaCgpIHdoZXJl
-DQp0aGUgc2VsZWN0b3IgaXMgdGhlIHNpZ25hdHVyZSB0eXBlLg0KDQpUaGlzIHBhdGNoIHNldCBh
-bHNvIG9mZmVycyB0aGUgaW5kaXZpZHVhbCBmdW5jdGlvbnMgY2FsbGVkIGluc2lkZQ0KdmVyaWZ5
-X3BncF9zaWduYXR1cmUoKSwgdG8gc3VwcG9ydCB0aGUgY2FzZSB3aGVyZSB0aGUgc2lnbmF0dXJl
-DQp2ZXJpZmljYXRpb24gcHJvY2VzcyBpcyBzcGxpdCBpbiBtdWx0aXBsZSBwYXJ0cw0KKGUuZy4g
-c2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfbW9kc2lnLmMpLiBBbHNvIGluIHRoaXMgY2FzZSwN
-CnRoZSBhcmd1bWVudHMgcGFzc2VkIHRvIHRoZSBQR1AtcmVsYXRlZCBmdW5jdGlvbnMgYXJlIHNp
-bWlsYXINCnRvIHRoZSBQS0NTIzcgb25lcy4NCg0KQW5vdGhlciBjb25jZXJuIHRoYXQgSSBoYXZl
-IGlzIHRoYXQsIHRoZSBhcHByb2FjaCBvZiB1c2luZyBhbg0KT3BlblBHUCBsaWJyYXJ5IHN0aWxs
-IHJlcXVpcmVzIHRoZSBMaW51eCBkaXN0cmlidXRpb24gdmVuZG9ycyB0bw0KZG8gYSB0cmFuc2Zv
-cm1hdGlvbiBmcm9tIHRoZSBzb3VyY2UgZGF0YSB0aGV5IGhhdmUgdG8gYW5vdGhlcg0KZm9ybWF0
-LiBUaGV5IGhhdmUgYW55d2F5IHRvIGNlcnRpZnkgdGhpcyB0cmFuc2Zvcm1hdGlvbiwgZXZlbg0K
-aWYgaXQgaXMgZG9uZSBpbiB1c2VyIHNwYWNlLiBNYXliZSBpdCBpcyBlYXNpZXIgdG8ga2VlcCB0
-aGUgb3JpZ2luYWwNCmRhdGEgYW5kIHZlcmlmeSB0aGUgbWluaW11bSBuZWNlc3NhcnkgdG8gaGFu
-ZGxlIFBHUCBrZXlzIGFuZA0Kc2lnbmF0dXJlIGluIHRoZSBrZXJuZWwsIHJhdGhlciB0aGFuIHZl
-cmlmeWluZyBhIGxpYnJhcnkgcnVubmluZw0KaW4gdXNlciBzcGFjZSB3aXRoIG1hbnkgb3RoZXIg
-ZnVuY3Rpb25zLg0KDQo+ID4+IFRoaXMgd2lsbCBzYXZlIHVzIGZyb20gaGF2aW5nIHRvIGFkZCBj
-b21wbGV4IHBhcnNlcnMgKGEgd2VsbC1rbm93biBzb3VyY2UNCj4gPj4gb2YgYnVncykgaW50byB0
-aGUga2VybmVsIC0gSSBndWVzcyB0aGVyZSBhcmVuJ3QgYW55IHBsYW5zIHRvIGFkZCBhbg0KPiA+
-PiBpbi1rZXJuZWwgUEdQIFdlYiBvZiBUcnVzdCBpbXBsZW1lbnRhdGlvbi4NCj4gPg0KPiA+IEkg
-ZXh0ZW5zaXZlbHkgdGVzdGVkIHRoZSBpbXBsZW1lbnRhdGlvbiB3aXRoIGFuIGFkLWhvYyBmYXVs
-dCBpbmplY3RvciwNCj4gPiB0byBzZWUgaWYgdGhlIGNvZGUgY2FuIGNvcnJlY3RseSBoYW5kbGUg
-ZXJyb3JzLiBJIGFsc28gZGV2ZWxvcGVkIGENCj4gPiBmdXp6ZXIgdG8gY29ycnVwdCB0aGUgZGF0
-YSBiZWZvcmUgaXQgaXMgcmVhZCBieSB0aGUga2VybmVsLiBGaW5hbGx5LA0KPiA+IEkgY2hlY2tl
-ZCB0aGF0IHRoZXJlIGFyZSBub3QgbWVtb3J5IGxlYWtzLiBCdXQgSSBhZ3JlZSwgdGhlcmUgY291
-bGQNCj4gPiBzdGlsbCBiZSBidWdzLg0KPiA+DQo+ID4gSWYgeW91IG1lYW4gdGhhdCBhIGtleSBj
-YW4gYmUgYWRkZWQgdG8gdGhlIGtlcm5lbCBpZiBpcyB2b3VjaGVkIGZvcg0KPiA+IGJ5IGFub3Ro
-ZXIga2V5IGluIHRoZSBidWlsdC1pbiBrZXlyaW5nLCBJIGFjdHVhbGx5IGltcGxlbWVudGVkIHRo
-aXMNCj4gPiAod2FzIG1pc3NpbmcgaW4gdGhlIG9yaWdpbmFsIGltcGxlbWVudGF0aW9uKS4gU29t
-ZSBrZXlyaW5ncywgZS5nLiAuaW1hLA0KPiA+IGhhdmUgdGhpcyByZXN0cmljdGlvbi4NCj4gPg0K
-PiA+IFRoZSB3YXkgdGhpcyB3b3JrcyBpcyB0aGF0LCB3aGVuZXZlciB5b3UgYWRkIGEgUEdQIGtl
-eSB0byB0aGUNCj4gPiBrZXJuZWwsIHRoZSBwYXJzZXIgdGFrZXMgbm90IG9ubHkgdGhlIHB1Ymxp
-YyBrZXkgYW5kIHRoZSB1c2VyIElELA0KPiA+IGJ1dCBhbHNvIGl0cyBzaWduYXR1cmUgYnkgdGhl
-IHNhbWUgb3IgYW5vdGhlciBQR1Aga2V5Lg0KPiA+DQo+ID4gVGhlIHNpZ25hdHVyZSBpcyB2ZXJp
-ZmllZCB3aGVuIHRoZSBrZXkgaXMgYWRkZWQgdG8gdGhlIGtleXJpbmcNCj4gPiB3aXRoIHRoYXQg
-cmVzdHJpY3Rpb24sIGFuZCBvbmx5IGlmIHRoZSB2ZXJpZmljYXRpb24gaXMgc3VjY2Vzc2Z1bA0K
-PiA+IHRoZSBrZXkgY2FuIGJlIGFkZGVkLg0KPiANCj4gSSB1bmRlcnN0YW5kIGJ1dCBpdCB3b3Vs
-ZCBiZSBncmVhdCB0byBtYWtlIHVzZSBhcyBtdWNoIGFzIHBvc3NpYmxlIG9mDQo+IHRoZSBleGlz
-dGluZyBpbi1rZXJuZWwgc2lnbmF0dXJlIHZlcmlmaWNhdGlvbiBtZWNoYW5pc21zLg0KDQpZZXMu
-IEkgdGhpbmsgdGhpcyBpcyB0aGUgcHVycG9zZSBvZiB0aGUgYXN5bW1ldHJpYyBzdWJ0eXBlcy4g
-VGhleQ0KaW50cm9kdWNlIGEgcGFyc2VyIGZvciB0aGUgc3BlY2lmaWMgZm9ybWF0LCBidXQgb25j
-ZSB0aGUgcmVsZXZhbnQNCmluZm9ybWF0aW9uIGFyZSBleHRyYWN0ZWQsIHRoZSBpbi1rZXJuZWwg
-bWVjaGFuaXNtcyBhcmUgdXNlZC4NCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1
-ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIFpo
-b25nIFJvbmdodWENCg0KPiA+IFJvYmVydG8NCj4gDQo+IFRoYW5rcywNCj4gTWFjaWVqDQoNCg==
+Jarkko,
+
+   can you take this patch 1/2?
+
+  https://lore.kernel.org/lkml/20211128041052.1395504-1-stefanb@linux.vnet.ibm.com/T/#m21209a978c237368499ce5f082f3c0fc03bcbbeb
+
+   Stefan
+
+
+On 12/23/21 20:12, Stefan Berger wrote:
+> Shuah,
+>
+>   are you going to take this fix here - only 1/2 ?
+>
+> https://lore.kernel.org/lkml/20211128041052.1395504-1-stefanb@linux.vnet.ibm.com/T/#m21209a978c237368499ce5f082f3c0fc03bcbbeb 
+>
+>
+>   Stefan
+>
+> On 11/29/21 18:39, Jarkko Sakkinen wrote:
+>> On Sat, Nov 27, 2021 at 11:10:51PM -0500, Stefan Berger wrote:
+>>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>>
+>>> Determine an available PCR bank to be used by a test case by 
+>>> querying the
+>>> capability TPM2_GET_CAP. The TPM2 returns TPML_PCR_SELECTIONS that
+>>> contains an array of TPMS_PCR_SELECTIONs indicating available PCR banks
+>>> and the bitmasks that show which PCRs are enabled in each bank. Collect
+>>> the data in a dictionary. From the dictionary determine the PCR bank 
+>>> that
+>>> has the PCRs enabled that the test needs. This avoids test failures 
+>>> with
+>>> TPM2's that either to not have a SHA-1 bank or whose SHA-1 bank is
+>>> disabled.
+>>>
+>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>
+>> /Jarkko
