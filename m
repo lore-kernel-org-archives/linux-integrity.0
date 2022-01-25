@@ -2,183 +2,108 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA88C636C8
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jan 2022 23:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 598CBC5AC75
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jan 2022 23:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234353AbiAYWrs (ORCPT
+        id S234703AbiAYXQO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Jan 2022 17:47:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:20510 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234227AbiAYWr3 (ORCPT
+        Tue, 25 Jan 2022 18:16:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52094 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230111AbiAYXQO (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 Jan 2022 17:47:29 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PMkL7B000430;
-        Tue, 25 Jan 2022 22:47:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=Ky/ABeLzJYYv8wAwevKOfcW2yogVuYyI5RvYcWCzMsQ=;
- b=QAIG3PFZNs81qW7UJtVqwo0w8VcVKz+8+vuQFbYUBEW2cSMv2ulTQWZuAa94H0HdKei9
- NA5NKmnTNz8KghOzleB2HOT25ByTeXJ2yhZ9j6MRgikTx+XgvikvLsfAC80t3ZiIs8jc
- PupQQYjpWzPLFOxmY6Oe5Y+obcG6bCoOoBoSDEF1ijBJvLONF0XF3gbMnorrYtZmdWnw
- 7fpmyhV9bG8jNAkrHzAKSHIpgJhNeDEN9dKLJcHNV9DYL6Q6uPLhKzYCObsmJv93fd97
- FeSt50R2BquohrIKFjxg72/p/8gyrdQnAwVx98x7PQBdZ95NsU/n/QrCp4E/ZUSIH4bC 6Q== 
+        Tue, 25 Jan 2022 18:16:14 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PMh9iD012492;
+        Tue, 25 Jan 2022 23:16:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=yiyWToWFqnlyskNfoTnW0lrVrnPqVY5shMwyPUWLsQY=;
+ b=PRxt7xQPBTXRYN2BVHR2enKRBjRxgnlzVVx7CMy97bu5x51NI5pZE14YRynlWvm3ROco
+ pihFoNdTKywQjtdZzbIdqRa9dThcyG4e3ywAvKkxe4hhQ+ilwRtXDeNv3ZM9FFvFz7Va
+ d69EgQF5sHA7TkusFJs2VaZwY+WVP5ivY93VAVtqDwKwdVcr6/N5CWZ0Re0CgK/8Mk80
+ 4L3o80WiNkUiqnXt0zw4NEiq0JCMPEVbM7iMvDBPtB7XaE2/V1Mq4ZQsVdY+qm3jrbvC
+ 3uG37mk5mxcFb7hsbXE7AlV39gnFy1xILK7CYCQ5eM5ohBqbuHrsyVVqvfCwfpVKnYY2 wQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dtt9wr0bm-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtt83ghjh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 22:47:04 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMl4BK001736;
-        Tue, 25 Jan 2022 22:47:04 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dtt9wr0b5-1
+        Tue, 25 Jan 2022 23:16:11 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMiJsP015033;
+        Tue, 25 Jan 2022 23:16:10 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtt83ghj4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 22:47:03 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PMhDWf008667;
-        Tue, 25 Jan 2022 22:47:03 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma04dal.us.ibm.com with ESMTP id 3dr9japd6n-1
+        Tue, 25 Jan 2022 23:16:10 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PNDwJF029300;
+        Tue, 25 Jan 2022 23:16:09 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 3dr9j9a2xr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 22:47:02 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PMkxbh30605640
+        Tue, 25 Jan 2022 23:16:08 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PNG63Q46465328
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jan 2022 22:46:59 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 843ADAC059;
-        Tue, 25 Jan 2022 22:46:59 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7BF7AAC064;
-        Tue, 25 Jan 2022 22:46:59 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 25 Jan 2022 22:46:59 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v9 22/23] ima: Show owning user namespace's uid and gid when displaying policy
-Date:   Tue, 25 Jan 2022 17:46:44 -0500
-Message-Id: <20220125224645.79319-23-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
-References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 25 Jan 2022 23:16:06 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F3D8A405F;
+        Tue, 25 Jan 2022 23:16:06 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0223A405B;
+        Tue, 25 Jan 2022 23:16:05 +0000 (GMT)
+Received: from sig-9-65-78-94.ibm.com (unknown [9.65.78.94])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Jan 2022 23:16:05 +0000 (GMT)
+Message-ID: <6de3a9e2d9b4d068d8b5914473574c7d17030429.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 1/1] ci/travis: Replace groovy -> impish
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
+Cc:     Petr Vorel <petr.vorel@gmail.com>
+Date:   Tue, 25 Jan 2022 18:16:05 -0500
+In-Reply-To: <bcb59cb4d8af33fe666acc8648ded424dbbc7370.camel@linux.ibm.com>
+References: <20220121164748.6536-1-pvorel@suse.cz>
+         <bcb59cb4d8af33fe666acc8648ded424dbbc7370.camel@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: av4MuksJ14vpA_sAQbEY6XWCga9no2bX
-X-Proofpoint-ORIG-GUID: DHDnJssSd0ua22jbabLTm0khJFQwexpB
+X-Proofpoint-ORIG-GUID: xF8ptfoBYTHzDFbQOSJwN98mgr1YVywk
+X-Proofpoint-GUID: 7cClxPGnLgFVDnQaEoVwwXpVmi38B2P9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2022-01-25_06,2022-01-25_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0 mlxscore=0
- spamscore=0 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
- suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2201110000 definitions=main-2201250135
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ phishscore=0 lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 clxscore=1015 bulkscore=0 impostorscore=0
+ mlxlogscore=768 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2201110000 definitions=main-2201250139
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, 2022-01-25 at 18:07 -0500, Mimi Zohar wrote:
+> Hi Petr,
+> 
+> On Fri, 2022-01-21 at 17:47 +0100, Petr Vorel wrote:
+> > From: Petr Vorel <petr.vorel@gmail.com>
+> > 
+> > follow previous commit also for Travis.
+> > 
+> > Fixes: 024c02d ("ci: Replace groovy -> impish")
+> > 
+> > Reported-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+> > ---
+> > Update only for Travis, as previous patch has been merged.
+> 
+> I had picked up your v2 1/1 version, which updated both.
 
-Show the uid and gid values relative to the user namespace that is
-currently active. The effect of this changes is that when one displays
-the policy from the user namespace that originally set the policy,
-the same uid and gid values are shown in the policy as those that were
-used when the policy was set.
+Oh, looks like only my local and the internal repo have the v2 version.
+The external github repo still has the original v1 version, that was
+used for testing.  Sorry for the confusion.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-
----
-v9:
-  - use seq_user_ns and from_k{g,u}id_munged()
----
- security/integrity/ima/ima_policy.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 47f2d1b5d156..151f418036ee 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -2002,6 +2002,7 @@ static void ima_policy_show_appraise_algos(struct seq_file *m,
- 
- int ima_policy_show(struct seq_file *m, void *v)
- {
-+	struct user_namespace *user_ns = seq_user_ns(m);
- 	struct ima_rule_entry *entry = v;
- 	int i;
- 	char tbuf[64] = {0,};
-@@ -2087,7 +2088,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	if (entry->flags & IMA_UID) {
--		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->uid));
-+		snprintf(tbuf, sizeof(tbuf),
-+			 "%d", from_kuid_munged(user_ns, entry->uid));
- 		if (entry->uid_op == &uid_gt)
- 			seq_printf(m, pt(Opt_uid_gt), tbuf);
- 		else if (entry->uid_op == &uid_lt)
-@@ -2098,7 +2100,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	if (entry->flags & IMA_EUID) {
--		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->uid));
-+		snprintf(tbuf, sizeof(tbuf),
-+			 "%d", from_kuid_munged(user_ns, entry->uid));
- 		if (entry->uid_op == &uid_gt)
- 			seq_printf(m, pt(Opt_euid_gt), tbuf);
- 		else if (entry->uid_op == &uid_lt)
-@@ -2109,7 +2112,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	if (entry->flags & IMA_GID) {
--		snprintf(tbuf, sizeof(tbuf), "%d", __kgid_val(entry->gid));
-+		snprintf(tbuf, sizeof(tbuf),
-+			 "%d", from_kgid_munged(user_ns, entry->gid));
- 		if (entry->gid_op == &gid_gt)
- 			seq_printf(m, pt(Opt_gid_gt), tbuf);
- 		else if (entry->gid_op == &gid_lt)
-@@ -2120,7 +2124,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	if (entry->flags & IMA_EGID) {
--		snprintf(tbuf, sizeof(tbuf), "%d", __kgid_val(entry->gid));
-+		snprintf(tbuf, sizeof(tbuf),
-+			 "%d", from_kgid_munged(user_ns, entry->gid));
- 		if (entry->gid_op == &gid_gt)
- 			seq_printf(m, pt(Opt_egid_gt), tbuf);
- 		else if (entry->gid_op == &gid_lt)
-@@ -2131,7 +2136,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	if (entry->flags & IMA_FOWNER) {
--		snprintf(tbuf, sizeof(tbuf), "%d", __kuid_val(entry->fowner));
-+		snprintf(tbuf, sizeof(tbuf),
-+			 "%d", from_kuid_munged(user_ns, entry->fowner));
- 		if (entry->fowner_op == &uid_gt)
- 			seq_printf(m, pt(Opt_fowner_gt), tbuf);
- 		else if (entry->fowner_op == &uid_lt)
-@@ -2142,7 +2148,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	if (entry->flags & IMA_FGROUP) {
--		snprintf(tbuf, sizeof(tbuf), "%d", __kgid_val(entry->fgroup));
-+		snprintf(tbuf, sizeof(tbuf),
-+			 "%d", from_kgid_munged(user_ns, entry->fgroup));
- 		if (entry->fgroup_op == &gid_gt)
- 			seq_printf(m, pt(Opt_fgroup_gt), tbuf);
- 		else if (entry->fgroup_op == &gid_lt)
--- 
-2.31.1
+Mimi
 
