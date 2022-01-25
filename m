@@ -2,101 +2,198 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBB0C5AC75
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jan 2022 23:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69EFC6369B
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Jan 2022 23:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234659AbiAYXII (ORCPT
+        id S234257AbiAYWrl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Jan 2022 18:08:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57782 "EHLO
+        Tue, 25 Jan 2022 17:47:41 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42676 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230468AbiAYXII (ORCPT
+        by vger.kernel.org with ESMTP id S234224AbiAYWr3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 Jan 2022 18:08:08 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PLGgFO031800;
-        Tue, 25 Jan 2022 23:08:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=pOhrnt5wieDar9QQaD1GP7nqP7TDKPRP+LaBd8lbFEY=;
- b=s+Vvtv+tqzHCyTUT5HbLNYX5Wv9kHHn9IK9kjoyQUntl0k6feP31j7OHBlP0ISfTgFln
- JtwdOzKh8TZYJxZNr4kHMkBNWLypJXavNNyAJT/lxP4bfKUCNadbdQ3glWBSYYff1vF4
- Z9q5DA7R1/nSXrwnCKKtdYwvwh92BPQvs8M20nBKomHDDjQBCNNiuE4max9Zzra3xUzS
- BMQeO5ehe8WYeKt3aTMWLhtYWGH7DBwQBRKBlhI9kRAgH1qlGj9QgqIgVZa7U6+r2wIK
- 9gGpkWjo5BhJ6/LxVwXECgWz9UhPyrGi0qwHRn0tarZMXKEe/rSXOm1ggnC0DEJ0VsLs Sg== 
+        Tue, 25 Jan 2022 17:47:29 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 20PM68Hl002480;
+        Tue, 25 Jan 2022 22:47:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=KijHy903UMH2XLgL8VnGJFey6CestvpIRiHVW5YG8YA=;
+ b=jCffWbfJ5xltTsQRui3vkfViDb8fILuCHyMvTdi/Y1alF/Yd003q2wg93nism29wrr21
+ bbMjG0EebtNfcRqBJag9qqY8xbjbqA6bU0NNYb/O8v1U63UfGDiJ8AUqsJ8cTNb/f/wP
+ 1OaHmpQrRiLV9XivDy51wtm6CwNayCq2r6FosmXwsFhmW/eUQfTvcOYpf+838qcyoXI3
+ KPT09GVwAAoVCux/SNh5kjnGpuD8JQ7DAJv0PsPJRHj/JBLjb92O5omPNuj9FIVMtTEe
+ dWWu3sC6PtKAnB59+2/swPOzaPZ7SWFusCgmkXJBIqKF8L0iZXqd7QxkB2ZXssHONzFY hA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtryvsts4-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtryw1cba-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 23:08:05 +0000
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMtbQh029940;
-        Tue, 25 Jan 2022 23:08:05 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtryvstrr-1
+        Tue, 25 Jan 2022 22:47:00 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 20PMZYxa001673;
+        Tue, 25 Jan 2022 22:46:59 GMT
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3dtryw1cb4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 23:08:05 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PN3Kqd007279;
-        Tue, 25 Jan 2022 23:08:03 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06fra.de.ibm.com with ESMTP id 3dr96jgpf1-1
+        Tue, 25 Jan 2022 22:46:59 +0000
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 20PMhnr1010313;
+        Tue, 25 Jan 2022 22:46:58 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma05wdc.us.ibm.com with ESMTP id 3dtbch8rfr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 25 Jan 2022 23:08:03 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PMwR1d47907076
+        Tue, 25 Jan 2022 22:46:58 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 20PMkvc123986554
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Jan 2022 22:58:27 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C7C152050;
-        Tue, 25 Jan 2022 23:08:01 +0000 (GMT)
-Received: from sig-9-65-78-94.ibm.com (unknown [9.65.78.94])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 784635204E;
-        Tue, 25 Jan 2022 23:08:00 +0000 (GMT)
-Message-ID: <bcb59cb4d8af33fe666acc8648ded424dbbc7370.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 1/1] ci/travis: Replace groovy -> impish
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
-Cc:     Petr Vorel <petr.vorel@gmail.com>
-Date:   Tue, 25 Jan 2022 18:07:59 -0500
-In-Reply-To: <20220121164748.6536-1-pvorel@suse.cz>
-References: <20220121164748.6536-1-pvorel@suse.cz>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 25 Jan 2022 22:46:57 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4575CAC062;
+        Tue, 25 Jan 2022 22:46:57 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2FB28AC067;
+        Tue, 25 Jan 2022 22:46:57 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Jan 2022 22:46:57 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
+        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
+        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v9 06/23] ima: Move arch_policy_entry into ima_namespace
+Date:   Tue, 25 Jan 2022 17:46:28 -0500
+Message-Id: <20220125224645.79319-7-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+References: <20220125224645.79319-1-stefanb@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: qGBQw0Z-adIPN5qqDg8HldtDjvWyITrG
-X-Proofpoint-ORIG-GUID: AM0Rbgmqi0NoGpbV91GJZ_QzgXbMPIUy
+X-Proofpoint-GUID: 1fEdqweKj6hy-Kniz9FVWXEPsbDzGOlW
+X-Proofpoint-ORIG-GUID: gLa-yLtgaLCeu3VtdAzZA9TQEkJYGqGc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
  definitions=2022-01-25_06,2022-01-25_02,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 impostorscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=672 suspectscore=0 mlxscore=0 phishscore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ clxscore=1011 mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 adultscore=0 malwarescore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
- definitions=main-2201250139
+ definitions=main-2201250135
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Petr,
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-On Fri, 2022-01-21 at 17:47 +0100, Petr Vorel wrote:
-> From: Petr Vorel <petr.vorel@gmail.com>
-> 
-> follow previous commit also for Travis.
-> 
-> Fixes: 024c02d ("ci: Replace groovy -> impish")
-> 
-> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
-> ---
-> Update only for Travis, as previous patch has been merged.
+Move the arch_policy_entry pointer into ima_namespace.
 
-I had picked up your v2 1/1 version, which updated both.
+When freeing the memory set the pointer to NULL.
 
-thanks,
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ security/integrity/ima/ima.h             |  3 +++
+ security/integrity/ima/ima_init_ima_ns.c |  1 +
+ security/integrity/ima/ima_policy.c      | 23 +++++++++++------------
+ 3 files changed, 15 insertions(+), 12 deletions(-)
 
-Mimi
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 5b44fa6f27c4..a4669b55c2e0 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -125,6 +125,9 @@ struct ima_namespace {
+ 
+ 	struct list_head __rcu *ima_rules;	/* current policy */
+ 	int ima_policy_flag;
++
++	/* An array of architecture specific rules */
++	struct ima_rule_entry *arch_policy_entry;
+ } __randomize_layout;
+ extern struct ima_namespace init_ima_ns;
+ 
+diff --git a/security/integrity/ima/ima_init_ima_ns.c b/security/integrity/ima/ima_init_ima_ns.c
+index c919a456b525..ae33621c3955 100644
+--- a/security/integrity/ima/ima_init_ima_ns.c
++++ b/security/integrity/ima/ima_init_ima_ns.c
+@@ -15,6 +15,7 @@ static int ima_init_namespace(struct ima_namespace *ns)
+ 	INIT_LIST_HEAD(&ns->ima_temp_rules);
+ 	ns->ima_rules = (struct list_head __rcu *)(&ns->ima_default_rules);
+ 	ns->ima_policy_flag = 0;
++	ns->arch_policy_entry = NULL;
+ 
+ 	return 0;
+ }
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b0e1c16b7f37..05b2bc06ab0c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -229,9 +229,6 @@ static struct ima_rule_entry critical_data_rules[] __ro_after_init = {
+ 	{.action = MEASURE, .func = CRITICAL_DATA, .flags = IMA_FUNC},
+ };
+ 
+-/* An array of architecture specific rules */
+-static struct ima_rule_entry *arch_policy_entry __ro_after_init;
+-
+ static int ima_policy __initdata;
+ 
+ static int __init default_measure_policy_setup(char *str)
+@@ -860,9 +857,10 @@ static int __init ima_init_arch_policy(struct ima_namespace *ns)
+ 	for (rules = arch_rules; *rules != NULL; rules++)
+ 		arch_entries++;
+ 
+-	arch_policy_entry = kcalloc(arch_entries + 1,
+-				    sizeof(*arch_policy_entry), GFP_KERNEL);
+-	if (!arch_policy_entry)
++	ns->arch_policy_entry = kcalloc(arch_entries + 1,
++					sizeof(*ns->arch_policy_entry),
++					GFP_KERNEL);
++	if (!ns->arch_policy_entry)
+ 		return 0;
+ 
+ 	/* Convert each policy string rules to struct ima_rule_entry format */
+@@ -872,13 +870,13 @@ static int __init ima_init_arch_policy(struct ima_namespace *ns)
+ 
+ 		result = strscpy(rule, *rules, sizeof(rule));
+ 
+-		INIT_LIST_HEAD(&arch_policy_entry[i].list);
+-		result = ima_parse_rule(ns, rule, &arch_policy_entry[i]);
++		INIT_LIST_HEAD(&ns->arch_policy_entry[i].list);
++		result = ima_parse_rule(ns, rule, &ns->arch_policy_entry[i]);
+ 		if (result) {
+ 			pr_warn("Skipping unknown architecture policy rule: %s\n",
+ 				rule);
+-			memset(&arch_policy_entry[i], 0,
+-			       sizeof(*arch_policy_entry));
++			memset(&ns->arch_policy_entry[i], 0,
++			       sizeof(ns->arch_policy_entry[i]));
+ 			continue;
+ 		}
+ 		i++;
+@@ -926,7 +924,7 @@ void __init ima_init_policy(struct ima_namespace *ns)
+ 	if (!arch_entries)
+ 		pr_info("No architecture policies found\n");
+ 	else
+-		add_rules(ns, arch_policy_entry, arch_entries,
++		add_rules(ns, ns->arch_policy_entry, arch_entries,
+ 			  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY);
+ 
+ 	/*
+@@ -1006,7 +1004,8 @@ void ima_update_policy(struct ima_namespace *ns)
+ 		 * on boot.  After loading a custom policy, free the
+ 		 * architecture specific rules stored as an array.
+ 		 */
+-		kfree(arch_policy_entry);
++		kfree(ns->arch_policy_entry);
++		ns->arch_policy_entry = NULL;
+ 	}
+ 	ima_update_policy_flags(ns);
+ 
+-- 
+2.31.1
 
