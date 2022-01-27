@@ -2,33 +2,33 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE6FC433EF
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Jan 2022 18:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E0FC43217
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Jan 2022 18:46:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238208AbiA0Sqe (ORCPT
+        id S240865AbiA0Sqg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 27 Jan 2022 13:46:34 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:4534 "EHLO
+        Thu, 27 Jan 2022 13:46:36 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:4532 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236489AbiA0Sqc (ORCPT
+        with ESMTP id S235638AbiA0Sqc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Thu, 27 Jan 2022 13:46:32 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jl8bk6DQ8z67N6L;
-        Fri, 28 Jan 2022 02:42:58 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Jl8gJ02h1z68568;
+        Fri, 28 Jan 2022 02:46:04 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 27 Jan 2022 19:46:30 +0100
+ 15.1.2308.21; Thu, 27 Jan 2022 19:46:28 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <linux-integrity@vger.kernel.org>
 CC:     <zohar@linux.ibm.com>, <ebiggers@kernel.org>,
         <stefanb@linux.ibm.com>, <linux-fscrypt@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH v3a 08/11] fsverity: Completely disable signature verification if not requested
-Date:   Thu, 27 Jan 2022 19:46:12 +0100
-Message-ID: <20220127184614.2837938-4-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH v3a 06/11] fsverity: Introduce fsverity_get_formatted_digest()
+Date:   Thu, 27 Jan 2022 19:46:10 +0100
+Message-ID: <20220127184614.2837938-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220127184614.2837938-1-roberto.sassu@huawei.com>
 References: <20220127184614.2837938-1-roberto.sassu@huawei.com>
@@ -43,42 +43,113 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Currently, fsverity verifies the signature, if supplied, regardless of
-whether signature verification is requested or not.
-
-Completely disable signature verification, if not requested, so that other
-users of fsverity can do their own verification without relying on the
-fsverity-specific verification to work.
+Introduce fsverity_get_formatted_digest() so that a caller (e.g. IMA) can
+get all the information necessary to validate the fsverity signature.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- fs/verity/signature.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/verity/measure.c      | 46 ++++++++++++++++++++++++++++++++++++++++
+ include/linux/fsverity.h | 12 +++++++++++
+ 2 files changed, 58 insertions(+)
 
-diff --git a/fs/verity/signature.c b/fs/verity/signature.c
-index 143a530a8008..b45a2cea6c59 100644
---- a/fs/verity/signature.c
-+++ b/fs/verity/signature.c
-@@ -45,13 +45,13 @@ int fsverity_verify_signature(const struct fsverity_info *vi,
- 	struct fsverity_formatted_digest *d;
- 	int err;
+diff --git a/fs/verity/measure.c b/fs/verity/measure.c
+index 2152f115071a..7afe4274ecb0 100644
+--- a/fs/verity/measure.c
++++ b/fs/verity/measure.c
+@@ -8,6 +8,7 @@
+ #include "fsverity_private.h"
  
--	if (sig_size == 0) {
--		if (fsverity_require_signatures) {
--			fsverity_err(inode,
--				     "require_signatures=1, rejecting unsigned file!");
--			return -EPERM;
--		}
-+	if (!fsverity_require_signatures)
- 		return 0;
+ #include <linux/uaccess.h>
++#include <linux/slab.h>
+ 
+ /**
+  * fsverity_ioctl_measure() - get a verity file's digest
+@@ -96,3 +97,48 @@ int fsverity_get_digest(struct inode *inode,
+ 
+ 	return 0;
+ }
 +
-+	if (sig_size == 0) {
-+		fsverity_err(inode,
-+			     "require_signatures=1, rejecting unsigned file!");
-+		return -EPERM;
- 	}
++/**
++ * fsverity_get_formatted_digest() - get a verity file's formatted digest
++ * @inode: inode to get the formatted digest from
++ * @formatted_digest: (out) pointer to the formatted digest
++ * @alg: (out) pointer to the hash algorithm enumeration
++ *
++ * Return the fsverity_formatted_digest structure for a given inode.
++ *
++ * Return: written bytes on success, -errno on failure
++ */
++ssize_t fsverity_get_formatted_digest(struct inode *inode,
++			u8 formatted_digest[FS_VERITY_MAX_FMT_DIGEST_SIZE],
++			enum hash_algo *alg)
++{
++	struct fsverity_formatted_digest *d =
++			(struct fsverity_formatted_digest *)formatted_digest;
++	const struct fsverity_info *vi;
++	const struct fsverity_hash_alg *hash_alg;
++	int i;
++
++	vi = fsverity_get_info(inode);
++	if (!vi)
++		return -ENODATA; /* not a verity file */
++
++	hash_alg = vi->tree_params.hash_alg;
++
++	/* convert hash algorithm to hash_algo_name */
++	i = match_string(hash_algo_name, HASH_ALGO__LAST, hash_alg->name);
++	if (i < 0)
++		return -EINVAL;
++	*alg = i;
++
++	memset(formatted_digest, 0, FS_VERITY_MAX_FMT_DIGEST_SIZE);
++
++	memcpy(d->magic, "FSVerity", 8);
++	d->digest_algorithm = cpu_to_le16(hash_alg - fsverity_hash_algs);
++	d->digest_size = cpu_to_le16(hash_alg->digest_size);
++	memcpy(d->digest, vi->file_digest, hash_alg->digest_size);
++
++	pr_debug("file formatted digest FSVerity:%s:%d:%*phN\n", hash_alg->name,
++		 hash_alg->digest_size, hash_alg->digest_size, vi->file_digest);
++
++	return sizeof(*d) + hash_alg->digest_size;
++}
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index 9a1b70cc7318..17ae313ed8f4 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -21,6 +21,8 @@
+  * Currently assumed to be <= size of fsverity_descriptor::root_hash.
+  */
+ #define FS_VERITY_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
++#define FS_VERITY_MAX_FMT_DIGEST_SIZE	(FS_VERITY_MAX_DIGEST_SIZE + \
++				sizeof(struct fsverity_formatted_digest))
  
- 	d = kzalloc(sizeof(*d) + hash_alg->digest_size, GFP_KERNEL);
+ /* Verity operations for filesystems */
+ struct fsverity_operations {
+@@ -142,6 +144,9 @@ int fsverity_ioctl_measure(struct file *filp, void __user *arg);
+ int fsverity_get_digest(struct inode *inode,
+ 			u8 digest[FS_VERITY_MAX_DIGEST_SIZE],
+ 			enum hash_algo *alg);
++ssize_t fsverity_get_formatted_digest(struct inode *inode,
++			u8 formatted_digest[FS_VERITY_MAX_FMT_DIGEST_SIZE],
++			enum hash_algo *alg);
+ 
+ /* open.c */
+ 
+@@ -188,6 +193,13 @@ static inline int fsverity_get_digest(struct inode *inode,
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline ssize_t fsverity_get_formatted_digest(struct inode *inode,
++			u8 formatted_digest[FS_VERITY_MAX_FMT_DIGEST_SIZE],
++			enum hash_algo *alg)
++{
++	return -EOPNOTSUPP;
++}
++
+ /* open.c */
+ 
+ static inline int fsverity_file_open(struct inode *inode, struct file *filp)
 -- 
 2.32.0
 
