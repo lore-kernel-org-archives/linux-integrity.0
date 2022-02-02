@@ -2,117 +2,88 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5F4C433FE
-	for <linux-integrity@archiver.kernel.org>; Wed,  2 Feb 2022 12:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88897C433EF
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Feb 2022 13:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243904AbiBBMzu (ORCPT
+        id S233004AbiBBNUB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 2 Feb 2022 07:55:50 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35310 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231500AbiBBMzu (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 Feb 2022 07:55:50 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 212AekuH015286;
-        Wed, 2 Feb 2022 12:55:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=zeswlkAxStLCD9AUMlaDRFijspzLCsEycfEF1UtQJuU=;
- b=Bi91+InWGHvs8TcgtwsHaIRwxJiB2MNV0i6IOKvZcKjuCWzo9DjSHc8nCo5Mnm7UwZ1x
- jc5pBgDeInyHLYujULcZDEhrsA66JvTdOnP1G0/w1n16wlTcXMeyDAizsjVBsi+n5MbS
- 5MhFm5wNAMh/jauPYjFQDbLGDG/b5G2Pnap0zi95Ws6YUe80ssZtU0dadpp9iwjUuzhZ
- uPao6uNSy6QRcIg7Oob04pDnayvdG1n8BrjwYMAimBc2Zm3CZ1r0iUPHwf36LCG6d0j3
- cGGEoNdVdCFXIvL7O6Tox/WjbF6aoVfXok9rUivTITFYMvBxOtWY3AsHZU848b7Nydrs 0g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dym3gf8pf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Feb 2022 12:55:46 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 212Cdrrc021978;
-        Wed, 2 Feb 2022 12:55:45 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3dym3gf8p8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Feb 2022 12:55:45 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 212CmdP6020595;
-        Wed, 2 Feb 2022 12:55:44 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma02dal.us.ibm.com with ESMTP id 3dvw7bdhc5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 02 Feb 2022 12:55:44 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 212CthED42861006
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Feb 2022 12:55:43 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 997EBAE05F;
-        Wed,  2 Feb 2022 12:55:43 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C097AE064;
-        Wed,  2 Feb 2022 12:55:43 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Feb 2022 12:55:43 +0000 (GMT)
-Message-ID: <5bb23626-afe1-9e05-566b-8830882904f6@linux.ibm.com>
-Date:   Wed, 2 Feb 2022 07:55:43 -0500
+        Wed, 2 Feb 2022 08:20:01 -0500
+Received: from mga07.intel.com ([134.134.136.100]:28250 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232564AbiBBNUB (ORCPT <rfc822;linux-integrity@vger.kernel.org>);
+        Wed, 2 Feb 2022 08:20:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643808001; x=1675344001;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1y/I8+Cwv/D7OTbXUo7gXNUyyzvhMDlcTuYRYcNTGzM=;
+  b=lh4fjLNsLzHArlw0sR3YdWycic7p2xwejSviy8GWBaLxH3L6XCLnkI54
+   XGAs6S5okXaCtk8jWvMA0rDqKldimVIMQTm011kLcylUNqMrf2dDanKDK
+   9FV3JtvOLtBbZKkXp0IuQ3cnI/154YMIkbnSI7kpZfyj3ugdYiWOXe/xS
+   LtR40qRtT4BQxNNvGIWSDtqydH6oOd6DvZLgWGTF4yp2ROJPQWiGmq97S
+   cY0Xpk763eQQyJTZWQdoYNx+nL8gAScXV2ixdyg8cDZ8ncIAwPU0iqwKJ
+   VyFeznIMrM+jN34cHD5neCKxJbRzasM7L75Zq+IcnCIDE01zok7p4cdkv
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10245"; a="311220647"
+X-IronPort-AV: E=Sophos;i="5.88,336,1635231600"; 
+   d="scan'208";a="311220647"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2022 05:20:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,336,1635231600"; 
+   d="scan'208";a="599556250"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 02 Feb 2022 05:19:58 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nFFYD-000Ucm-ET; Wed, 02 Feb 2022 13:19:57 +0000
+Date:   Wed, 2 Feb 2022 21:19:53 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, zohar@linux.ibm.com, serge@hallyn.com,
+        christian.brauner@ubuntu.com, containers@lists.linux.dev,
+        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
+        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
+        mpeters@redhat.com
+Subject: Re: [PATCH v10 15/27] ima: Implement hierarchical processing of file
+ accesses
+Message-ID: <202202022159.CBH5XW23-lkp@intel.com>
+References: <20220201203735.164593-16-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [RFC PATCH] KEYS: Double max_size to make keyctl pkey_verify work
-Content-Language: en-US
-To:     Vitaly Chikunov <vt@altlinux.org>, keyrings@vger.kernel.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>
-References: <20220202065906.2598366-1-vt@altlinux.org>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220202065906.2598366-1-vt@altlinux.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: UJG6tWGYH90PXu3y_n590Xc3XPIe-SW5
-X-Proofpoint-GUID: p5qSS0QwBzqR_LRhObcAjxcm6MWyq742
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-02_06,2022-02-01_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 bulkscore=0 phishscore=0 impostorscore=0 mlxscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=999
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202020068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220201203735.164593-16-stefanb@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Hi Stefan,
 
-On 2/2/22 01:59, Vitaly Chikunov wrote:
-> Rarely used `keyctl pkey_verify' can verify raw signatures, but was
-> failing, because ECDSA/EC-RDSA signature sizes are twice key sizes which
-> does not pass in/out sizes check in keyctl_pkey_params_get_2.
-> This in turn because these values cannot be distinguished by a single
-> `max_size' callback return value.
-> Also, `keyctl pkey_query` displays incorrect `max_sig_size' about these
-> algorithms.
->
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Thank you for the patch! Perhaps something to improve:
 
-How do you use pkey_query?
+[auto build test WARNING on v5.16]
+[cannot apply to zohar-integrity/next-integrity linux/master linus/master jmorris-security/next-testing v5.17-rc2 v5.17-rc1 next-20220202]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-$ keyctl padd asymmetric testkey %keyring:test < cert.der
-385037223
-$ keyctl pkey_query 385037223 ''
-Password passing is not yet supported
-$ keyctl pkey_query 385037223
-Format:
-   keyctl --version
-   keyctl add <type> <desc> <data> <keyring>
-[...]
+url:    https://github.com/0day-ci/linux/commits/Stefan-Berger/ima-Namespace-IMA-with-audit-support-in-IMA-ns/20220202-044058
+base:    df0cc57e057f18e44dac8e6c18aba47ab53202f9
+config: x86_64-randconfig-c003-20220131 (https://download.01.org/0day-ci/archive/20220202/202202022159.CBH5XW23-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
 
-$ keyctl unlink 385037223
-1 links removed
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
 
+cocci warnings: (new ones prefixed by >>)
+>> security/integrity/ima/ima_main.c:424:2-3: Unneeded semicolon
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
