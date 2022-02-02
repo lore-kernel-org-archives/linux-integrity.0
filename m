@@ -2,123 +2,165 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87867C43219
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Feb 2022 20:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B7FC433F5
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Feb 2022 02:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242641AbiBAUjH (ORCPT
+        id S232457AbiBBCwe (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Feb 2022 15:39:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30018 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240598AbiBAUiS (ORCPT
+        Tue, 1 Feb 2022 21:52:34 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:56388 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231829AbiBBCwd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Feb 2022 15:38:18 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 211Js69b031070;
-        Tue, 1 Feb 2022 20:37:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=Z61o7XFNtLtEoY0IRwR7hf+c1pRZ1yg1bG/PraBIWHc=;
- b=W3hf6tz3UQY8BjnY/rm0RslrZvTs5LTGewmv2Uj1Y5MBtWBL9EMXUNem817w5Coirq/S
- Uzbs2qHRg1HvGk261zHG+D27k4j+HeGmbj9fwk5Rh/rLhAJCv/jwtQ8pLdh/lYtw8G9J
- zI5cd8Zkit+Syu25iBSPjv1+QkwRKJ3CoMfS4lgk7AiUe8usZ0N5xL/Q/tBn4xsEJ0mj
- hL5Jlge/+SvHJRvKKFPbc81VrD2O98G8wLcR7MTkpuz2jSi5L8K1vtgQaGZQLB1jHsWR
- 3+jkhFwmpweK3MhfY4pCBbh0DH6aD3whAcDmvKV3yN2HdcbSkc3WRBzUJC5FEGuP1bQU KQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dybe58pvy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Feb 2022 20:37:52 +0000
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 211KLph7024770;
-        Tue, 1 Feb 2022 20:37:51 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3dybe58pvt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Feb 2022 20:37:51 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 211KWMRd028009;
-        Tue, 1 Feb 2022 20:37:50 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma03dal.us.ibm.com with ESMTP id 3dy0swgmm0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Feb 2022 20:37:50 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 211KbnAS14746100
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Feb 2022 20:37:49 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 56886B205F;
-        Tue,  1 Feb 2022 20:37:49 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A789B206B;
-        Tue,  1 Feb 2022 20:37:49 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Feb 2022 20:37:49 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, serge@hallyn.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v10 02/27] ima: Do not print policy rule with inactive LSM labels
-Date:   Tue,  1 Feb 2022 15:37:10 -0500
-Message-Id: <20220201203735.164593-3-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220201203735.164593-1-stefanb@linux.ibm.com>
-References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+        Tue, 1 Feb 2022 21:52:33 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 1D6F072C8FA;
+        Wed,  2 Feb 2022 05:52:31 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id E361B4A46F0;
+        Wed,  2 Feb 2022 05:52:30 +0300 (MSK)
+Date:   Wed, 2 Feb 2022 05:52:30 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     keyrings@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] KEYS: asymmetric: enforce that sig algo matches key
+ algo
+Message-ID: <20220202025230.hrfochvm3uyuh2wm@altlinux.org>
+References: <20220201003414.55380-1-ebiggers@kernel.org>
+ <20220201003414.55380-2-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: WrZdQUFmuUGFFjnwdNXFBN21dRdeGRZo
-X-Proofpoint-ORIG-GUID: WIxt4MwYIU1MqaZQa24XpHhQskfp8ZFp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
- definitions=2022-02-01_09,2022-02-01_01,2021-12-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2201110000 definitions=main-2202010114
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20220201003414.55380-2-ebiggers@kernel.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Before printing a policy rule scan for inactive LSM labels in the policy
-rule. Inactive LSM labels are identified by args_p != NULL and
-rule == NULL.
+Eric,
 
-Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- security/integrity/ima/ima_policy.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Mon, Jan 31, 2022 at 04:34:13PM -0800, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Most callers of public_key_verify_signature(), including most indirect
+> callers via verify_signature() as well as pkcs7_verify_sig_chain(),
+> don't check that public_key_signature::pkey_algo matches
+> public_key::pkey_algo.  These should always match.
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 320ca80aacab..2a1f6418b10a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -1967,6 +1967,14 @@ int ima_policy_show(struct seq_file *m, void *v)
- 
- 	rcu_read_lock();
- 
-+	/* Do not print rules with inactive LSM labels */
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		if (entry->lsm[i].args_p && !entry->lsm[i].rule) {
-+			rcu_read_unlock();
-+			return 0;
-+		}
-+	}
-+
- 	if (entry->action & MEASURE)
- 		seq_puts(m, pt(Opt_measure));
- 	if (entry->action & DONT_MEASURE)
--- 
-2.31.1
+Why should they match?
 
+public_key_signature is the data prepared to verify the cert's
+signature. The cert's signature algorithm could be different from the
+public key algorithm defined in the cert itself. They should match only
+for self-signed certs. For example, you should be able to sign RSA
+public key with ECDSA signature and vice versa. Or 256-bit EC-RDSA with
+512-bit EC-RDSA. This check will prevent this.
+
+
+> However, a malicious
+> signature could intentionally declare an unintended algorithm.  It is
+> essential that such signatures be rejected outright, or that the
+> algorithm of the *key* be used -- not the algorithm of the signature as
+> that would allow attackers to choose the algorithm used.
+> 
+> Currently, public_key_verify_signature() correctly uses the key's
+> algorithm when deciding which akcipher to allocate.  That's good.
+> However, it uses the signature's algorithm when deciding whether to do
+> the first step of SM2, which is incorrect.  Also, v4.19 and older
+> kernels used the signature's algorithm for the entire process.
+> 
+> Prevent such errors by making public_key_verify_signature() enforce that
+> the signature's algorithm matches the key's algorithm.
+> 
+> Also remove two checks of this done by callers, which are now redundant.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  crypto/asymmetric_keys/pkcs7_verify.c    |  6 ------
+>  crypto/asymmetric_keys/public_key.c      | 15 +++++++++++++++
+>  crypto/asymmetric_keys/x509_public_key.c |  6 ------
+>  3 files changed, 15 insertions(+), 12 deletions(-)
+> 
+> diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
+> index 0b4d07aa88111..f94a1d1ad3a6c 100644
+> --- a/crypto/asymmetric_keys/pkcs7_verify.c
+> +++ b/crypto/asymmetric_keys/pkcs7_verify.c
+> @@ -174,12 +174,6 @@ static int pkcs7_find_key(struct pkcs7_message *pkcs7,
+>  		pr_devel("Sig %u: Found cert serial match X.509[%u]\n",
+>  			 sinfo->index, certix);
+>  
+> -		if (strcmp(x509->pub->pkey_algo, sinfo->sig->pkey_algo) != 0) {
+> -			pr_warn("Sig %u: X.509 algo and PKCS#7 sig algo don't match\n",
+> -				sinfo->index);
+> -			continue;
+> -		}
+> -
+>  		sinfo->signer = x509;
+>  		return 0;
+>  	}
+> diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+> index 4fefb219bfdc8..aba7113d86c76 100644
+> --- a/crypto/asymmetric_keys/public_key.c
+> +++ b/crypto/asymmetric_keys/public_key.c
+> @@ -325,6 +325,21 @@ int public_key_verify_signature(const struct public_key *pkey,
+>  	BUG_ON(!sig);
+>  	BUG_ON(!sig->s);
+>  
+> +	/*
+> +	 * The signature's claimed public key algorithm *must* match the key's
+> +	 * actual public key algorithm.
+> +	 *
+> +	 * Small exception: ECDSA signatures don't specify the curve, but ECDSA
+> +	 * keys do.  So the strings can mismatch slightly in that case:
+> +	 * "ecdsa-nist-*" for the key, but "ecdsa" for the signature.
+> +	 */
+> +	if (!sig->pkey_algo)
+> +		return -EINVAL;
+
+This seem incorrect too, as sig->pkey_algo could be NULL for direct
+signature verification calls. For example, for keyctl pkey_verify.
+
+(Side note: keyctl pkey_verify will not work for non-RSA signatures,
+though, due to other bug - because signature size is twice key size for
+them, but akcipher_alg::max_size cannot distinguish this, and
+max_data_size, key_size, and max_sig_size are set from it).
+
+> +	if (strcmp(pkey->pkey_algo, sig->pkey_algo) != 0 &&
+> +	    (strncmp(pkey->pkey_algo, "ecdsa-", 6) != 0 ||
+> +	     strcmp(sig->pkey_algo, "ecdsa") != 0))
+
+This seems to be taken from x509_check_for_self_signed, that's why this
+should not work for non-self-signed certs.
+
+Thanks,
+
+> +		return -EKEYREJECTED;
+> +
+>  	ret = software_key_determine_akcipher(sig->encoding,
+>  					      sig->hash_algo,
+>  					      pkey, alg_name);
+> diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric_keys/x509_public_key.c
+> index fe14cae115b51..71cc1738fbfd2 100644
+> --- a/crypto/asymmetric_keys/x509_public_key.c
+> +++ b/crypto/asymmetric_keys/x509_public_key.c
+> @@ -128,12 +128,6 @@ int x509_check_for_self_signed(struct x509_certificate *cert)
+>  			goto out;
+>  	}
+>  
+> -	ret = -EKEYREJECTED;
+> -	if (strcmp(cert->pub->pkey_algo, cert->sig->pkey_algo) != 0 &&
+> -	    (strncmp(cert->pub->pkey_algo, "ecdsa-", 6) != 0 ||
+> -	     strcmp(cert->sig->pkey_algo, "ecdsa") != 0))
+> -		goto out;
+> -
+>  	ret = public_key_verify_signature(cert->pub, cert->sig);
+>  	if (ret < 0) {
+>  		if (ret == -ENOPKG) {
+> -- 
+> 2.35.1
