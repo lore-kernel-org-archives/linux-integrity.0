@@ -2,83 +2,137 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA726C433FE
-	for <linux-integrity@archiver.kernel.org>; Tue,  8 Feb 2022 05:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46260C433F5
+	for <linux-integrity@archiver.kernel.org>; Tue,  8 Feb 2022 08:53:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241878AbiBHFuq (ORCPT
+        id S231946AbiBHIxZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 8 Feb 2022 00:50:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49634 "EHLO
+        Tue, 8 Feb 2022 03:53:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240566AbiBHFuo (ORCPT
+        with ESMTP id S231657AbiBHIxY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 Feb 2022 00:50:44 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481F0C0401DC;
-        Mon,  7 Feb 2022 21:50:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D5CDF6155A;
-        Tue,  8 Feb 2022 05:50:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25C42C004E1;
-        Tue,  8 Feb 2022 05:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644299442;
-        bh=TicygsgleVlUaz7G3ja6PR1QdTGvF1cHrJxoSj4FJlA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uICo0s+TSSpGtGQyJHoeSya09jVrA++MU7y4R+gJsY763e29KMYaB1xE5y6po2+SS
-         I2FnLwwzk/45wqq6R8OVEnY9Sn7z0xDTkLK6bTSe/gokWnjs3deiqsK519476J8h6A
-         5SnJNirURFvKOuGA/9z4zmGImKNPdCkrFSHievoiLIEF33glznf0Vc3yVVfSM+055W
-         tuVVz7XJfiWKND6nhUbpX4rMaQQePka7ejPc1ratwnGH3cdDlog90khhLv8J4Z/oDW
-         S3LjdoB3Jd0acaSC2vJWeW7E4Z1FvzWkbTWJTa592BluNRvq/+o+Puv9L6+fpFXmQi
-         4GUpYeB3ry9Mg==
-Date:   Mon, 7 Feb 2022 21:50:40 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/8] ima: support fs-verity digests and signatures
-Message-ID: <YgIEsLsoe/sHsjBr@sol.localdomain>
-References: <20220208014140.483447-1-zohar@linux.ibm.com>
+        Tue, 8 Feb 2022 03:53:24 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70ED3C03FEC0;
+        Tue,  8 Feb 2022 00:53:23 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JtGwh4xFCzbkKJ;
+        Tue,  8 Feb 2022 16:52:20 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Tue, 8 Feb 2022 16:53:20 +0800
+Message-ID: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
+Date:   Tue, 8 Feb 2022 16:53:20 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220208014140.483447-1-zohar@linux.ibm.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>
+CC:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        wangweiyang <wangweiyang2@huawei.com>,
+        "xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+Subject: Problem with commit ccf11dbaa07b ("evm: Fix memleak in init_desc")
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Feb 07, 2022 at 08:41:32PM -0500, Mimi Zohar wrote:
-> Support for including fs-verity file digests and signatures in the IMA
-> measurement list as well as verifying the fs-verity file digest based
-> signatures, both based on IMA policy rules, was discussed prior to
-> fs-verity being upstreamed[1,2].
-> 
-> Support for including fs-verity file digests in the 'd-ng' template field
-> is based on a new policy rule option named 'digest_type=verity'.  A new
-> template field named 'd-type' as well as a new template named 'ima-ngv2'
-> are defined to differentiate between the regular IMA file hashes from the
-> fs-verity file digests (tree-hash based file hashes) stored in the 'd-ng'
-> template field.
-> 
-> Support for verifying fs-verity based file signatures stored in the
-> 'security.ima' xattr is similarly based on the policy rule option
-> 'digest_type=verity'.
-> 
-> To differentiate IMA from fs-verity file signatures a new xattr_type
-> named IMA_VERITY_DIGSIG is defined.  Signature version 3, which is a hash
-> of the ima_file_id struct, disambiguates the signatures stored as
-> 'security.ima' xattr.  fs-verity only supports the new signature format
-> (version 3).  To prevent abuse of the different signature formats, policy
-> rules must be limited to a specific signature version.
-> 
-> [1] https://events19.linuxfoundation.org/wp-content/uploads/2017/11/fs-verify_Mike-Halcrow_Eric-Biggers.pdf
-> [2] Documentation/filesystems/fsverity.rst
+Hi Mimi,
 
-What does this patchset apply to?  I'm no longer able to apply it.  I tried
-both v5.17-rc3, and the next-integrity branch of
-https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git.
+I found an issue with commit ccf11dbaa07b ("evm: Fix memleak in init_desc").
 
-- Eric
+This commit tries to free variable "tmp_tfm" if something went wrong 
+after the "alloc" label in function init_desc, which would potentially 
+cause a user-after-free issue
+
+The codes are as follows:
+
+   1 static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+   2 {
+   3 	long rc;
+   4 	const char *algo;
+   5 	struct crypto_shash **tfm, *tmp_tfm = NULL;
+   6 	struct shash_desc *desc;
+   7
+   8 	if (type == EVM_XATTR_HMAC) {
+   9 		if (!(evm_initialized & EVM_INIT_HMAC)) {
+  10 			pr_err_once("HMAC key is not set\n");
+  11 			return ERR_PTR(-ENOKEY);
+  12 		}
+  13 		tfm = &hmac_tfm;
+  14 		algo = evm_hmac;
+  15 	} else {
+  16 		if (hash_algo >= HASH_ALGO__LAST)
+  17 			return ERR_PTR(-EINVAL);
+  18
+  19 		tfm = &evm_tfm[hash_algo];
+  20 		algo = hash_algo_name[hash_algo];
+  21 	}
+  22
+  23 	if (*tfm)
+  24 		goto alloc;
+  25 	mutex_lock(&mutex);
+  26 	if (*tfm)
+  27 		goto unlock;
+  28
+  29 	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
+  30 	if (IS_ERR(tmp_tfm)) {
+  31 		pr_err("Can not allocate %s (reason: %ld)\n", algo,
+  32 		       PTR_ERR(tmp_tfm));
+  33 		mutex_unlock(&mutex);
+  34 		return ERR_CAST(tmp_tfm);
+  35 	}
+  36 	if (type == EVM_XATTR_HMAC) {
+  37 		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
+  38 		if (rc) {
+  39 			crypto_free_shash(tmp_tfm);
+  40 			⋅mutex_unlock(&mutex);
+  41 			return ERR_PTR(rc);
+  42 		}
+  43 	}
+  44 	*tfm = tmp_tfm;
+  45 unlock:
+  46 	mutex_unlock(&mutex);
+  47 alloc:
+  48 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+  49 			GFP_KERNEL);
+  50 	if (!desc) {
+  51 		crypto_free_shash(tmp_tfm);
+  52 		return ERR_PTR(-ENOMEM);
+  53 	}
+  54
+  55 	desc->tfm = *tfm;
+  56
+  57 	rc = crypto_shash_init(desc);
+  58 	if (rc) {
+  59 		crypto_free_shash(tmp_tfm);
+  60 		kfree(desc);
+  61 		return ERR_PTR(rc);
+  62 	}
+  63 	return desc;
+  64 }
+
+As we can see, variable *tfm points to one of the two global variable 
+hmac_tfm or evm_tfm[hash_algo]. tmp_tfm is used as an intermediate 
+variable for initializing these global variables. Freeing tmp_tfm after 
+line 44 would invalidate these global variables and potentially cause a 
+user-after-free issue.
+
+I think this commit should be reverted.
+
+Reference: commit 843385694721 ("evm: Fix a small race in init_desc()")
+
+-- 
+Best
+GUO Zihua
