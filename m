@@ -2,135 +2,155 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB1FC4332F
-	for <linux-integrity@archiver.kernel.org>; Tue,  8 Feb 2022 01:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A871C35273
+	for <linux-integrity@archiver.kernel.org>; Tue,  8 Feb 2022 01:48:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232985AbiBHBFN (ORCPT
+        id S242427AbiBHBsD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 7 Feb 2022 20:05:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
+        Mon, 7 Feb 2022 20:48:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240354AbiBGXM6 (ORCPT
+        with ESMTP id S1344906AbiBHBm1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 Feb 2022 18:12:58 -0500
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD312C061355;
-        Mon,  7 Feb 2022 15:12:56 -0800 (PST)
-Received: by mail-yb1-xb30.google.com with SMTP id m6so44643795ybc.9;
-        Mon, 07 Feb 2022 15:12:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wQq+mHaX2NTw8edQ1piWfzulWZiGotWvejNP1a/WHXA=;
-        b=isfraitWhRGlMJU5yWGEFJjAgZ2h8hn2M0bv6WDAuftAolDZK9XA10xhcXKRl6rb94
-         Lu2YTxxxUFK9r4kVpKXZcDqHbNFXAq3M/NQtxWAxWU6Qfs3DCND/pp7uwO7sJosdY4ny
-         /9vBtqBd05H+DhwRfXZGfcCiFZKw95XpV45hry9I+TFnZSlDf6+IgPsn8XlxTLfWDuYP
-         xQ6LomxeYhe7kxPG7n0kLTv4KpJezzWcSd6u3OOBzs77fI1XZcFw61F5Ta2gwFw6PQS4
-         1xG1sL4x+soscQSUxGAPhLyCvhMH//JPqNEnuYqW3eCPFBtjrTbD/yJ/9Qn0kZU5YYtp
-         0JnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wQq+mHaX2NTw8edQ1piWfzulWZiGotWvejNP1a/WHXA=;
-        b=0Yt7C4eCX+dvddQORyOJi1Neojd8RbYgSbtVGciWbrO6eD3QbQ0t/XHwYSYX893GbW
-         JsYuwVrd5jlsG0HJPmBmJnqhQz6ukzbRxoHZ+MFBqo4C5TLmfm4JN02VbHJ7ad/KuLGD
-         TILz1rPjUQHXxUMKwHNdwjdEfroEdeNr0l3E1wKRSI96a+Rh+LiTpvqxE8fJ4A0tcFWK
-         K9iddeRkz4cvCFoHkBtMNcTgYZLvW29/l53276EUnELV91XxDiK5rtdc54N7udwWXQts
-         IE0CrPXQfsclvtaK8xgPor61zBTcQAiiCaYqVvgvB10h/Bh5vdd9FcZgaXEgTcvJO23I
-         9rAQ==
-X-Gm-Message-State: AOAM531Boi6YKFpXk83oLe5cIbDDWoGOW77f5lX41T/aKuevK4rF7zGl
-        kDz7Qdoww8Whbf88ry2pzIlQenEfbjkqKjXcNEBbnGS3i9kEE+vJ
-X-Google-Smtp-Source: ABdhPJzVIXzrcgHdMz3A3fRll57H1Ml4LaWjCW0LwWcIaltsCm6YZYIZwy7v3kDRz8E1y6o8uyz5xHiPiu0JAPcWoqE=
-X-Received: by 2002:a05:6902:4c2:: with SMTP id v2mr2126067ybs.429.1644275575771;
- Mon, 07 Feb 2022 15:12:55 -0800 (PST)
+        Mon, 7 Feb 2022 20:42:27 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FB2AC043181;
+        Mon,  7 Feb 2022 17:42:25 -0800 (PST)
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 217LMWV6013010;
+        Tue, 8 Feb 2022 01:42:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=krtvOcvXF32XPtlhSDQUP5MaKSEcLiroOIXzFu4OWs8=;
+ b=YioOwb/jEzudIQpP2lrI2CfU4RzsM2ki5ykifE+j7mq3bR9EBS3qsU7166TJrl7fjqD1
+ bIBJ0Y1els8DMbGhgTh+IECf8UsAN/lvr4EMT1kBLeRX/uEdCdTP60Zqzn2AQh6XBlEF
+ T0X4v9Zd58NriFwCovSrEmZd5Wm8PXwucNQvKwuG0YdHT/+aBl+TrshEmSwiW2atCjS/
+ CRfuxkF3UWpt90YtdEPvQYTAwybosgSbhpvXN898fQCsLFkTtZWUTkysOu0bhKmTqx0F
+ UYNl/PgxcNmfauEbH046bx5VtMAvNGOE9OLJTc4qDYx7pnYxYhGg1XNKND4euvzIxRkr PQ== 
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3e22u3ap7b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Feb 2022 01:42:23 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2181gH8I023563;
+        Tue, 8 Feb 2022 01:42:21 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06ams.nl.ibm.com with ESMTP id 3e1ggjsksn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Feb 2022 01:42:21 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2181gIw642926424
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Feb 2022 01:42:18 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1CA3AA4057;
+        Tue,  8 Feb 2022 01:42:18 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B179A4055;
+        Tue,  8 Feb 2022 01:42:17 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.65.90.153])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Feb 2022 01:42:17 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 4/8] ima: define a new template field 'd-type' and a new template 'ima-ngv2'
+Date:   Mon,  7 Feb 2022 20:41:36 -0500
+Message-Id: <20220208014140.483447-5-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220208014140.483447-1-zohar@linux.ibm.com>
+References: <20220208014140.483447-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
-References: <20220204200342.48665-1-ztong0001@gmail.com> <a45010a4-2b86-aa22-d7bd-3c4839356cf1@pengutronix.de>
-In-Reply-To: <a45010a4-2b86-aa22-d7bd-3c4839356cf1@pengutronix.de>
-From:   Tong Zhang <ztong0001@gmail.com>
-Date:   Mon, 7 Feb 2022 15:12:45 -0800
-Message-ID: <CAA5qM4BtyFZJfwSjCfoAzMf5jZQNbi6jziPjOm+Z1_c98VEVYg@mail.gmail.com>
-Subject: Re: [PATCH] KEYS: trusted: fix crash when TPM/TEE are built as module
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>,
-        Andreas Rammhold <andreas@rammhold.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: xZOSJXNdO9DX-DZOxIls-4B0yNkko4y6
+X-Proofpoint-ORIG-GUID: xZOSJXNdO9DX-DZOxIls-4B0yNkko4y6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.62.513
+ definitions=2022-02-07_07,2022-02-07_02,2021-12-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ malwarescore=0 adultscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2201110000
+ definitions=main-2202080006
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sun, Feb 6, 2022 at 2:36 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->
-> Hello Tong,
->
-> On 04.02.22 21:03, Tong Zhang wrote:
-> > when TCG_TPM and TEE are built as module, trusted_key_sources will be an
-> > empty array, loading it won't do what it is supposed to do and unloading
-> > it will cause kernel crash.
->
-> Jarkko reported picking up an equivalent fix two months ago:
-> https://lkml.kernel.org/keyrings/YadRAWbl2aiapf8l@iki.fi/
->
-> But it seems to have never made it to Linus.
->
-> Cheers,
-> Ahmad
->
-> >
-> > To reproduce:
-> > $ modprobe trusted
-> > $ modprobe -r trusted
-> >
-> > [  173.749423] Unable to handle kernel NULL pointer dereference at virtual address 00000000
-> > [  173.755268] Backtrace:
-> > [  173.755378]  cleanup_trusted [trusted] from sys_delete_module+0x15c/0x22c
-> > [  173.755589]  sys_delete_module from ret_fast_syscall+0x0/0x1c
-> >
-> > To fix this issue, we also need to check CONFIG_TCG_TPM_MODULE and
-> > CONFIG_TEE_MODULE.
-> >
-> > Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-> > Signed-off-by: Tong Zhang <ztong0001@gmail.com>
-> > ---
-> >  security/keys/trusted-keys/trusted_core.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-> > index d5c891d8d353..b3a3b2f2d4a4 100644
-> > --- a/security/keys/trusted-keys/trusted_core.c
-> > +++ b/security/keys/trusted-keys/trusted_core.c
-> > @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
-> >  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
-> >
-> >  static const struct trusted_key_source trusted_key_sources[] = {
-> > -#if defined(CONFIG_TCG_TPM)
-> > +#if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
-> >       { "tpm", &trusted_key_tpm_ops },
-> >  #endif
-> > -#if defined(CONFIG_TEE)
-> > +#if defined(CONFIG_TEE) || defined(CONFIG_TEE_MODULE)
-> >       { "tee", &trusted_key_tee_ops },
-> >  #endif
-> >  };
->
->
-> --
-> Pengutronix e.K.                           |                             |
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+In preparation to differentiate between regular IMA file hashes and
+fs-verity's file digests, define a new template field named 'd-type'.
+Define a new template named 'ima-ngv2', which includes the new 'd-type'
+field.
 
-Hi Ahmad,
-Thanks for letting me know.
-That fix looks good to me.
-- Tong
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ security/integrity/ima/ima_template.c     |  3 +++
+ security/integrity/ima/ima_template_lib.c | 13 +++++++++++++
+ security/integrity/ima/ima_template_lib.h |  2 ++
+ 3 files changed, 18 insertions(+)
+
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index db1ad6d7a57f..b321342e5bee 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -19,6 +19,7 @@ enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
+ static struct ima_template_desc builtin_templates[] = {
+ 	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+ 	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
++	{.name = "ima-ngv2", .fmt = "d-ng|n-ng|d-type"},
+ 	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+ 	{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"},
+ 	{.name = "ima-modsig", .fmt = "d-ng|n-ng|sig|d-modsig|modsig"},
+@@ -40,6 +41,8 @@ static const struct ima_template_field supported_fields[] = {
+ 	 .field_show = ima_show_template_digest_ng},
+ 	{.field_id = "n-ng", .field_init = ima_eventname_ng_init,
+ 	 .field_show = ima_show_template_string},
++	{.field_id = "d-type", .field_init = ima_eventdigest_type_init,
++	 .field_show = ima_show_template_string},
+ 	{.field_id = "sig", .field_init = ima_eventsig_init,
+ 	 .field_show = ima_show_template_sig},
+ 	{.field_id = "buf", .field_init = ima_eventbuf_init,
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 5a5d462ab36d..48c2fcbefacf 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -386,6 +386,19 @@ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+ 					   hash_algo, field_data);
+ }
+ 
++/*
++ * This function writes the digest type of an event.
++ */
++int ima_eventdigest_type_init(struct ima_event_data *event_data,
++			      struct ima_field_data *field_data)
++{
++	static const char * const digest_type[] = {"ima"};
++
++	return ima_write_template_field_data(digest_type[0],
++					     strlen(digest_type[0]),
++					     DATA_FMT_STRING, field_data);
++}
++
+ /*
+  * This function writes the digest of the file which is expected to match the
+  * digest contained in the file's appended signature.
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index c71f1de95753..539a5e354925 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -38,6 +38,8 @@ int ima_eventname_init(struct ima_event_data *event_data,
+ 		       struct ima_field_data *field_data);
+ int ima_eventdigest_ng_init(struct ima_event_data *event_data,
+ 			    struct ima_field_data *field_data);
++int ima_eventdigest_type_init(struct ima_event_data *event_data,
++			      struct ima_field_data *field_data);
+ int ima_eventdigest_modsig_init(struct ima_event_data *event_data,
+ 				struct ima_field_data *field_data);
+ int ima_eventname_ng_init(struct ima_event_data *event_data,
+-- 
+2.27.0
+
