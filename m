@@ -2,153 +2,117 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E3CC433FE
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Feb 2022 02:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F493C433FE
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Feb 2022 05:16:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344301AbiBIClC (ORCPT
+        id S231955AbiBIFQd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 8 Feb 2022 21:41:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57596 "EHLO
+        Wed, 9 Feb 2022 00:16:33 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:43416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239658AbiBIBmP (ORCPT
+        with ESMTP id S230197AbiBIEqF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 Feb 2022 20:42:15 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1ACFC06157B;
-        Tue,  8 Feb 2022 17:42:11 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4JtjJ51574z9sWd;
-        Wed,  9 Feb 2022 09:40:37 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 9 Feb 2022 09:42:08 +0800
-Message-ID: <248bf5e4-f171-0f18-90ec-f4be886cb35e@huawei.com>
-Date:   Wed, 9 Feb 2022 09:42:08 +0800
+        Tue, 8 Feb 2022 23:46:05 -0500
+Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DBB3C061578;
+        Tue,  8 Feb 2022 20:46:09 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4JtnQ60Fbjz4xNq;
+        Wed,  9 Feb 2022 15:46:06 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+        s=201909; t=1644381966;
+        bh=4LBu3b4sqV42JJCmT2RvLfUf47/jOabbpGeO17DWNxg=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=VpsRKjTOAuTL4YVFAXqLwlQNTVN2PnFaRNMaDdmekioS+Axih9wqxwuuZXvgF38GV
+         BtlQrTRz2IAQ9QmpujmvPxeEPJBOCKQODVTttnlXUqTA3LNbZRxgAs7FMDYFW7UAzp
+         hNZMjJnJRRBuEQsm/scDVGFl3F1CnxD/UQBFK7HXqfl2FNQM9xzVfhzm6vaSQz1Oui
+         eoQoylhJFl+fMdpPBEWkx0gW9z1nkkfG9Ee4wjyAlpTXz2FASBp3lrsVq34UIp87iV
+         WiyxUBkfMXtIWN/O5RXzGc5uFFcCQQWtagfWwXYs+Xzz/Ci/ixvZSY69tgrW3wLzm6
+         VxO4WOGIITJUw==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Michal Suchanek <msuchanek@suse.de>,
+        David Howells <dhowells@redhat.com>,
+        Aaron Tomlin <atomlin@redhat.com>
+Cc:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        Philipp Rudo <prudo@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Nayna <nayna@linux.vnet.ibm.com>, Rob Herring <robh@kernel.org>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Jessica Yu <jeyu@kernel.org>, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Frank van der Linden <fllinden@amazon.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Daniel Axtens <dja@axtens.net>, buendgen@de.ibm.com,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Baoquan He <bhe@redhat.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] KEXEC_SIG with appended signature
+In-Reply-To: <YfBd/EDGUx9UIHcb@bombadil.infradead.org>
+References: <cover.1641900831.git.msuchanek@suse.de>
+ <YfBd/EDGUx9UIHcb@bombadil.infradead.org>
+Date:   Wed, 09 Feb 2022 15:46:05 +1100
+Message-ID: <87pmnwlkaa.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: Problem with commit ccf11dbaa07b ("evm: Fix memleak in
- init_desc")
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        wangweiyang <wangweiyang2@huawei.com>,
-        "xiujianfeng@huawei.com" <xiujianfeng@huawei.com>
-References: <e852660c-17fa-cd75-e361-45dd77b8884d@huawei.com>
- <ec4348e54b39811b727a29f3c23972eab616dcd3.camel@linux.ibm.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <ec4348e54b39811b727a29f3c23972eab616dcd3.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2022/2/8 23:20, Mimi Zohar wrote:
-> On Tue, 2022-02-08 at 16:53 +0800, Guozihua (Scott) wrote:
->> Hi Mimi,
->>
->> I found an issue with commit ccf11dbaa07b ("evm: Fix memleak in init_desc").
->>
->> This commit tries to free variable "tmp_tfm" if something went wrong
->> after the "alloc" label in function init_desc, which would potentially
->> cause a user-after-free issue
->>
->> The codes are as follows:
->>
->>     1 static struct shash_desc *init_desc(char type, uint8_t hash_algo)
->>     2 {
->>     3 	long rc;
->>     4 	const char *algo;
->>     5 	struct crypto_shash **tfm, *tmp_tfm = NULL;
->>     6 	struct shash_desc *desc;
->>     7
->>     8 	if (type == EVM_XATTR_HMAC) {
->>     9 		if (!(evm_initialized & EVM_INIT_HMAC)) {
->>    10 			pr_err_once("HMAC key is not set\n");
->>    11 			return ERR_PTR(-ENOKEY);
->>    12 		}
->>    13 		tfm = &hmac_tfm;
->>    14 		algo = evm_hmac;
->>    15 	} else {
->>    16 		if (hash_algo >= HASH_ALGO__LAST)
->>    17 			return ERR_PTR(-EINVAL);
->>    18
->>    19 		tfm = &evm_tfm[hash_algo];
->>    20 		algo = hash_algo_name[hash_algo];
->>    21 	}
->>    22
->>    23 	if (*tfm)
->>    24 		goto alloc;
->>    25 	mutex_lock(&mutex);
->>    26 	if (*tfm)
->>    27 		goto unlock;
->>    28
->>    29 	tmp_tfm = crypto_alloc_shash(algo, 0, CRYPTO_NOLOAD);
->>    30 	if (IS_ERR(tmp_tfm)) {
->>    31 		pr_err("Can not allocate %s (reason: %ld)\n", algo,
->>    32 		       PTR_ERR(tmp_tfm));
->>    33 		mutex_unlock(&mutex);
->>    34 		return ERR_CAST(tmp_tfm);
->>    35 	}
->>    36 	if (type == EVM_XATTR_HMAC) {
->>    37 		rc = crypto_shash_setkey(tmp_tfm, evmkey, evmkey_len);
->>    38 		if (rc) {
->>    39 			crypto_free_shash(tmp_tfm);
->>    40 			⋅mutex_unlock(&mutex);
->>    41 			return ERR_PTR(rc);
->>    42 		}
->>    43 	}
->>    44 	*tfm = tmp_tfm;
->>    45 unlock:
->>    46 	mutex_unlock(&mutex);
->>    47 alloc:
->>    48 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
->>    49 			GFP_KERNEL);
->>    50 	if (!desc) {
->>    51 		crypto_free_shash(tmp_tfm);
->>    52 		return ERR_PTR(-ENOMEM);
->>    53 	}
->>    54
->>    55 	desc->tfm = *tfm;
->>    56
->>    57 	rc = crypto_shash_init(desc);
->>    58 	if (rc) {
->>    59 		crypto_free_shash(tmp_tfm);
->>    60 		kfree(desc);
->>    61 		return ERR_PTR(rc);
->>    62 	}
->>    63 	return desc;
->>    64 }
->>
->> As we can see, variable *tfm points to one of the two global variable
->> hmac_tfm or evm_tfm[hash_algo]. tmp_tfm is used as an intermediate
->> variable for initializing these global variables. Freeing tmp_tfm after
->> line 44 would invalidate these global variables and potentially cause a
->> user-after-free issue.
->>
->> I think this commit should be reverted.
->>
->> Reference: commit 843385694721 ("evm: Fix a small race in init_desc()")
-> 
-> Why this one, as opposed to commit ccf11dbaa07b ("evm: Fix memleak in
-> init_desc")?
-> 
+Luis Chamberlain <mcgrof@kernel.org> writes:
+> On Tue, Jan 11, 2022 at 12:37:42PM +0100, Michal Suchanek wrote:
+>> Hello,
+>> 
+>> This is a refresh of the KEXEC_SIG series.
+>> 
+>> This adds KEXEC_SIG support on powerpc and deduplicates the code dealing
+>> with appended signatures in the kernel.
+>> 
+>> powerpc supports IMA_KEXEC but that's an exception rather than the norm.
+>> On the other hand, KEXEC_SIG is portable across platforms.
+>> 
+>> For distributions to have uniform security features across platforms one
+>> option should be used on all platforms.
+>> 
+>> Thanks
+>> 
+>> Michal
+>> 
+>> Previous revision: https://lore.kernel.org/linuxppc-dev/cover.1637862358.git.msuchanek@suse.de/
+>> Patched kernel tree: https://github.com/hramrach/kernel/tree/kexec_sig
+>> 
+>> Michal Suchanek (6):
+>>   s390/kexec_file: Don't opencode appended signature check.
+>>   powerpc/kexec_file: Add KEXEC_SIG support.
+>>   kexec_file: Don't opencode appended signature verification.
+>>   module: strip the signature marker in the verification function.
+>>   module: Use key_being_used_for for log messages in
+>>     verify_appended_signature
+>>   module: Move duplicate mod_check_sig users code to mod_parse_sig
+>
+> What tree should this go through? I'd prefer if over through modules
+> tree as it can give a chance for Aaron Tomlin to work with this for his
+> code refactoring of kernel/module*.c to kernel/module/
 
-Hi Mimi,
+Yeah that's fine by me, the arch changes are pretty minimal and unlikely
+to conflict much.
 
-I mean commit ccf11dbaa07b ("evm: Fix memleak in init_desc") should be 
-reverted. commit 843385694721 ("evm: Fix a small race in init_desc()") 
-is just for reference.
-
--- 
-Best
-GUO Zihua
+cheers
