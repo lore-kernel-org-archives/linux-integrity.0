@@ -2,226 +2,185 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D028BC433F5
-	for <linux-integrity@archiver.kernel.org>; Tue, 15 Feb 2022 16:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F1AC433FE
+	for <linux-integrity@archiver.kernel.org>; Tue, 15 Feb 2022 16:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238727AbiBOQJD (ORCPT
+        id S239762AbiBOQLo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 15 Feb 2022 11:09:03 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40088 "EHLO
+        Tue, 15 Feb 2022 11:11:44 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241333AbiBOQJD (ORCPT
+        with ESMTP id S241573AbiBOQLU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 15 Feb 2022 11:09:03 -0500
-X-Greylist: delayed 907 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 15 Feb 2022 08:08:52 PST
-Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC7A6C940
-        for <linux-integrity@vger.kernel.org>; Tue, 15 Feb 2022 08:08:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1644940382; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=HXxz3GmPdHi9VJcULR+nRpA9zsW0rlX60sRmo8yOPf0h3QXRoVdNmSQqTJrAxriv+lFzmgr/eA8DOZRpDvCBQazkqXbUWl4fQBWXnf+P+rCpGP4q65P91EkgWpS8vP64nQ4LaKbfmnNC6qL40T403E/3D/Fyg2kpfNLQ5iW7NAU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1644940382; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=Q9rIJ8BwGgpzkzfuy7gF1S8dCxR9g5dAGFpAHarHfDU=; 
-        b=ee4ME+Qz5Pm78HW/5MLfo7HkApMsiQJnpOK4VJijt23BrczkJ2iLnKmwPoVVp8H2/kvLYv7zRJ/F4709/9IZCRj04Cstkp9aeYMVhatDD6ToQOP34xRxqqPGpSBY9c8HP9fPVGuvwbI4m4GcQ8zKesQpqIWWNWMxe3y6WPLSuCs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=apertussolutions.com;
-        spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
-        dmarc=pass header.from=<dpsmith@apertussolutions.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1644940382;
-        s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
-        h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=Q9rIJ8BwGgpzkzfuy7gF1S8dCxR9g5dAGFpAHarHfDU=;
-        b=hMiI53rETvA7McBVv/5+kyNFnRmFkD4k4nvg+oEHwMhlxhhG313puEjpfZSxuFzC
-        2AbXaQjR8tT1+3TLBEVXkgKb1/+trmA/Va7EA0AVmdKpCYcvTTfARfshzub967EiXf9
-        ty/aZPLMBmUau7nePCtU4nfZasbJXR3pwovm4x54=
-Received: from [10.10.1.138] (static-72-81-132-2.bltmmd.fios.verizon.net [72.81.132.2]) by mx.zohomail.com
-        with SMTPS id 1644940378250940.8412069904673; Tue, 15 Feb 2022 07:52:58 -0800 (PST)
-Message-ID: <d7b6434d-ceb5-fc87-4117-5b0341611535@apertussolutions.com>
-Date:   Tue, 15 Feb 2022 10:50:56 -0500
+        Tue, 15 Feb 2022 11:11:20 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4624A27B2
+        for <linux-integrity@vger.kernel.org>; Tue, 15 Feb 2022 08:11:07 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id t6so1804372ioj.12
+        for <linux-integrity@vger.kernel.org>; Tue, 15 Feb 2022 08:11:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Uya3VrJ5mbeW5e3EiyZomdfwW6pYC+/8k7L0vXEy/64=;
+        b=GqhrTd29C1Fa/GF7XdeyaZQ3hqUrBB2h17CHBFffHv2hxDx4zjmbEz0vOyg0Iq6R4M
+         2H7TFNA3sVqU8hkGQKByqZzQE7IH19x0/irG56NJvKU+wpiHH9Dv0RwN43FfYB3shghc
+         QMqwnn6TGVnovhyQd07APJlJB7dev7UiXwUtc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Uya3VrJ5mbeW5e3EiyZomdfwW6pYC+/8k7L0vXEy/64=;
+        b=0/IOzleK9nus93iUs+J5fujFVjhPwbASfbkBa0b2oeNSMp+KuzTlK5rAg8tUHtwaXD
+         M0QgA9BBBqaKdT94/71W0xLWokbI1/PZgD58z02ZRWcIzGHa/gsA9Yoz4/aOiiNZKyNL
+         7Hu7IwO8kyKNyQuDH0UIb0N8agC3aPsyqNeGZvUwPrmU3qKvDmkozmMXGgmLuf0gZltw
+         khtM+R3coIU+Hx7XA0V3oL8bRrLiZg/6gp7VQZmISkIOJBjcRzty4OqqOZowflUSjEhD
+         iCyGCddaBPnRXzegoUJOGEgJJTlPKEuCJA1XU3Wb7oUaI+CSkQrUgNmnSTMi4VRAfZEm
+         sDcw==
+X-Gm-Message-State: AOAM532BfnTcVKZhBaXKC78Yq0XmK1Pqjs92vL6/9nbjLsM35NSVLtKr
+        cT8XrogJhJGDg/wpm9WNkMeDyA==
+X-Google-Smtp-Source: ABdhPJwNMQ+hD4yYnX67fbKxMkuWIh4ikYUTO3MVI4i6Lb6x2R7QnWChrXVehVMDRoy3LOMo6wasHA==
+X-Received: by 2002:a05:6638:6bb:: with SMTP id d27mr3009674jad.231.1644941467203;
+        Tue, 15 Feb 2022 08:11:07 -0800 (PST)
+Received: from [192.168.1.128] ([71.205.29.0])
+        by smtp.gmail.com with ESMTPSA id l2sm5384520ilv.66.2022.02.15.08.11.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Feb 2022 08:11:06 -0800 (PST)
+Subject: Re: [PATCH v2 6/6] selftests/bpf: Add test for
+ bpf_lsm_kernel_read_file()
+To:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kpsingh@kernel.org, revest@chromium.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20220215124042.186506-1-roberto.sassu@huawei.com>
+ <20220215124042.186506-7-roberto.sassu@huawei.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <a06aaff2-2760-faff-db00-082543953bfe@linuxfoundation.org>
+Date:   Tue, 15 Feb 2022 09:11:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-From:   "Daniel P. Smith" <dpsmith@apertussolutions.com>
-Subject: Re: [PATCH v4 00/14] x86: Trenchboot secure dynamic launch Linux
- kernel support
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Ross Philipson <ross.philipson@oracle.com>,
-        trenchboot-devel@googlegroups.com, linux-kernel@vger.kernel.org,
-        x86@kernel.org, iommu@lists.linux-foundation.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        luto@amacapital.net, kanth.ghatraju@oracle.com
-References: <1630070917-9896-1-git-send-email-ross.philipson@oracle.com>
- <CAHC9VhTJG24iG=U0geO-ZhC6OogxOu4icBrNY22+qRNpWd5PBQ@mail.gmail.com>
- <456caf8c-b79a-e8b0-581f-3504240466ff@apertussolutions.com>
- <CAHC9VhSZx7j2sEs1H3ON-eDoeWdtXPC7XNQcv5D1WbnP=4Lchg@mail.gmail.com>
- <CAHC9VhThAbwuy+wXZfeMorc0QZ19FOfh0rk7uqaOj7uHvruM0Q@mail.gmail.com>
+In-Reply-To: <20220215124042.186506-7-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-In-Reply-To: <CAHC9VhThAbwuy+wXZfeMorc0QZ19FOfh0rk7uqaOj7uHvruM0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Paul,
-
-Apologies for missing your follow-up questions. Hopefully, the below
-answers will help.
-
-On 1/21/22 16:39, Paul Moore wrote:
-> On Mon, Dec 6, 2021 at 3:56 PM Paul Moore <paul@paul-moore.com> wrote:
->> On Thu, Dec 2, 2021 at 11:11 AM Daniel P. Smith
->> <dpsmith@apertussolutions.com> wrote:
->>> Hi Paul!
->>
->> /me waves
->>
->>> On 11/30/21 8:06 PM, Paul Moore wrote:
->>>> On Fri, Aug 27, 2021 at 9:20 AM Ross Philipson
->>>> <ross.philipson@oracle.com> wrote:
->>>>>
->>>>> The larger focus of the Trechboot project (https://github.com/TrenchBoot) is to
->>>>> enhance the boot security and integrity in a unified manner. The first area of
->>>>> focus has been on the Trusted Computing Group's Dynamic Launch for establishing
->>>>> a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root of
->>>>> Trust for Measurement).
->>>>
->>>> My apologies for such a late reply, but I'm just getting around to
->>>> looking at this and I have a few questions on the basic design/flow
->>>> (below) ...
->>>
->>> No worries, thank you so much for taking the time to review.
->>>
->>>>> The basic flow is:
->>>>>
->>>>>  - Entry from the dynamic launch jumps to the SL stub
->>>>
->>>> So I'm clear, at this point the combined stub+kernel+initramfs+cmdline
->>>> image has already been loaded into memory and the SL stub is
->>>> executing, yes?
->>>
->>> That is correct.
->>>
->>>> As TrenchBoot seems to be focused on boot measurement and not
->>>> enforcing policy, I'm guessing this is considered out-of-scope (not to
->>>> mention that the combined stub+kernel image makes this less
->>>> interesting), but has any thought been given to leveraging the TXT
->>>> launch control policy, or is it simply an empty run-everything policy?
->>>
->>> The TrenchBoot model is a bit different and takes a more flexible
->>> approach to allow users to build tailored solutions. For instance Secure
->>> Launch is able to be used in a configuration that is similar to tboot.
->>> Consider the functions of tboot, it has a portion that is the
->>> post-launch kernel that handles the handover from the ACM and a portion
->>> that provides the Verified Launch policy engine, which is only capable
->>> of enforcing policy on what is contained in the Multiboot chain. The
->>> TrenchBoot approach is to introduce the Secure Launch capability into a
->>> kernel, in this case Linux, to handle the handover from the ACM, and
->>> then transition to a running user space that can contain a distribution
->>> specific policy enforcement. As an example, the TrenchBoot project
->>> contributed to the uroot project a Secure Launch policy engine which
->>> enables the creation of an initramfs image which can then be embedded
->>> into a minimal configuration Secure Launch Linux kernel ...
->>
->> Thank you for the answers, that was helpful.
->>
->> I think I initially misunderstood TrenchBoot, thinking that a Secure
->> Launch'd kernel/userspace would be the "normal" OS that would
->> transition to multi-user mode and be available for users and
->> applications.  However, on reading your response it appears that the
->> Secure Launch'd kernel/initramfs exists only to verify a secondary
->> kernel/initramfs/userspace and then kexec() into that once verified.
-
-Yes it can be used in this manner but this is not the only way it was
-intended to be used. The goal is to enable an integrator, e.g, a distro,
-to incorporate Linux Secure Launch appropriately for their security
-needs, though ideally it would be preferred that a standardized approach
-is adopted by Linux init tooling to provide common experience across
-distros. Up until the introduction of Secure Launch, the only widely
-deployed model for DRTM has been to use tboot. Tboot is an MLE/DLME that
-functions as an exokernel and an intermediate loader for the Runtime
-OS/MLE. This motivated the first exemplar solution to be a Linux Secure
-Launch + uroot solution that would provide a similar intermediate loader
-experience, but with an expanded ability of the uroot to measure
-additional properties about a system. As a result a distro could use the
-exemplar to replace tboot, tboot VL policy tools, and VL policy file
-with a Secure Launch kernel, a u-root initrd (built-in or standalone),
-and a JSON policy file.
-
-By no means was Secure Launch meant to be limited to only being used as
-an intermediate loader for a Runtime OS. There is nothing that prohibits
-a Runtime Linux system to be directly started using Secure Launch.
-Though it should be noted that such a solution would need to be
-cognizant of the security gap across power-save modes, whereby the OS
-looses the positive control that it had over the system. It should also
-be mentioned that one of the motivations behind DRTM late-launch via
-kexec is to provide a path for dealing with this gap by enabling a
-late-launch to re-establish a known good state of the system. These all
-can be considered the advanced use cases for Secure Launch.
-
->>> Finally if your schedule allows it and it is not too much to ask, it
->>> would be greatly appreciated if some code review could be provided.
->>> Otherwise thank you for taking the time that you have to review the
->>> approach.
->>
->> I have to admit that I'm not sure I'm the most appropriate person to
->> review all of the Intel TXT related assembly, but I could give it a
->> shot as time allows.  I would think Intel would be willing to help out
->> here if one were to ask nicely :)
->>
->> Beyond that, and with my new understanding of how TrenchBoot is
->> supposed to work, I guess my only other concern is how one might
->> verify the integrity of the Secure Launch environment on the local
->> system during boot.  My apologies if I missed some details about that
->> in your docs, responses, etc. but is this something that TrenchBoot is
->> planning on addressing (or has already addressed)?
+On 2/15/22 5:40 AM, Roberto Sassu wrote:
+> Test the ability of bpf_lsm_kernel_read_file() to call the sleepable
+> functions bpf_ima_inode_hash() or bpf_ima_file_hash() to obtain a
+> measurement of a loaded IMA policy.
 > 
-> I wanted to follow-up on this thread just in case this last question
-> was lost ...
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   tools/testing/selftests/bpf/ima_setup.sh      |  2 ++
+>   .../selftests/bpf/prog_tests/test_ima.c       |  3 +-
+>   tools/testing/selftests/bpf/progs/ima.c       | 28 ++++++++++++++++---
+>   3 files changed, 28 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/ima_setup.sh b/tools/testing/selftests/bpf/ima_setup.sh
+> index 8e62581113a3..82530f19f85a 100755
+> --- a/tools/testing/selftests/bpf/ima_setup.sh
+> +++ b/tools/testing/selftests/bpf/ima_setup.sh
+> @@ -51,6 +51,7 @@ setup()
+>   
+>   	ensure_mount_securityfs
+>   	echo "measure func=BPRM_CHECK fsuuid=${mount_uuid}" > ${IMA_POLICY_FILE}
+> +	echo "measure func=BPRM_CHECK fsuuid=${mount_uuid}" > ${mount_dir}/policy_test
+>   }
+>   
+>   cleanup() {
+> @@ -74,6 +75,7 @@ run()
+>   	local mount_dir="${tmp_dir}/mnt"
+>   	local copied_bin_path="${mount_dir}/$(basename ${TEST_BINARY})"
+>   
+> +	echo ${mount_dir}/policy_test > ${IMA_POLICY_FILE}
+>   	exec "${copied_bin_path}"
+>   }
+>   
+> diff --git a/tools/testing/selftests/bpf/prog_tests/test_ima.c b/tools/testing/selftests/bpf/prog_tests/test_ima.c
+> index 62bf0e830453..c4a62d7b70df 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/test_ima.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/test_ima.c
+> @@ -97,8 +97,9 @@ void test_test_ima(void)
+>   	/*
+>   	 * 1 sample with use_ima_file_hash = false
+>   	 * 2 samples with use_ima_file_hash = true (./ima_setup.sh, /bin/true)
+> +	 * 1 sample with use_ima_file_hash = true (IMA policy)
+>   	 */
+> -	ASSERT_EQ(err, 3, "num_samples_or_err");
+> +	ASSERT_EQ(err, 4, "num_samples_or_err");
+>   	ASSERT_NEQ(ima_hash_from_bpf, 0, "ima_hash");
+>   
+>   close_clean:
+> diff --git a/tools/testing/selftests/bpf/progs/ima.c b/tools/testing/selftests/bpf/progs/ima.c
+> index 9bb63f96cfc0..9b4c03f30a1c 100644
+> --- a/tools/testing/selftests/bpf/progs/ima.c
+> +++ b/tools/testing/selftests/bpf/progs/ima.c
+> @@ -20,8 +20,7 @@ char _license[] SEC("license") = "GPL";
+>   
+>   bool use_ima_file_hash;
+>   
+> -SEC("lsm.s/bprm_committed_creds")
+> -void BPF_PROG(ima, struct linux_binprm *bprm)
+> +static void ima_test_common(struct file *file)
+>   {
+>   	u64 ima_hash = 0;
+>   	u64 *sample;
+> @@ -31,10 +30,10 @@ void BPF_PROG(ima, struct linux_binprm *bprm)
+>   	pid = bpf_get_current_pid_tgid() >> 32;
+>   	if (pid == monitored_pid) {
+>   		if (!use_ima_file_hash)
+> -			ret = bpf_ima_inode_hash(bprm->file->f_inode, &ima_hash,
+> +			ret = bpf_ima_inode_hash(file->f_inode, &ima_hash,
+>   						 sizeof(ima_hash));
+>   		else
+> -			ret = bpf_ima_file_hash(bprm->file, &ima_hash,
+> +			ret = bpf_ima_file_hash(file, &ima_hash,
+>   						sizeof(ima_hash));
+>   		if (ret < 0 || ima_hash == 0)
 
-To continue from the answer above and lead into answering your question
-I would first point to a presentation I gave at LPC 2020, Advanced
-Applications of DRTM with TrenchBoot[1]. There I walked through how
-Secure Launch could be used for different early-launch and late-launch
-DRTM solutions. Under the late-launch solutions there is the "Secure
-Upgrade" solutions. What I laid out there is that DRTM could be used to
-launch an "Upgrade Environment" which could be locally or remotely
-verified and provide a known-good and clean environment to upgrade a
-system. What an implementation of that actually looks like can be seen
-in the presentation by Brain Payne and myself at FOSDEM 2021, Secure
-Upgrades with DRTM[2]. In this presentation the concept of a Management
-MLE is introduced to provide a secure means to upgrade the Runtime MLE
-along with its related policy and sealing measurements.
+Is this considered an error? Does it make sense for this test to be
+void type and not return the error to its callers? One of the callers
+below seems to care for return values.
 
-Now the above, like most local verification, relies on the unseal
-operation as the means of local attestation. Using unseal is strong but
-the reality is that remote attestation is stronger. The problem is that
-remote attestation is often built as an enterprise solutions requiring a
-central server/service under the control of an authority that decides
-what is good or bad. Often the average user either does not have access
-to such a service or does not desire to out-source control over their
-system. To address this I am collaborating with 3mdeb on their Fobnail
-product[3][4][5] to deliver an "attestation server in your pocket"
-capability that is accessible and usable by the average user.
+>   			return;
+> @@ -49,3 +48,24 @@ void BPF_PROG(ima, struct linux_binprm *bprm)
+>   
+>   	return;
+>   }
+> +
+> +SEC("lsm.s/bprm_committed_creds")
+> +void BPF_PROG(ima, struct linux_binprm *bprm)
+> +{
+> +	ima_test_common(bprm->file);
+> +}
+> +
+> +SEC("lsm.s/kernel_read_file")
+> +int BPF_PROG(kernel_read_file, struct file *file, enum kernel_read_file_id id,
+> +	     bool contents)
+> +{
+> +	if (!contents)
+> +		return 0;
+> +
+> +	if (id != READING_POLICY)
+> +		return 0;
+> +
+> +	ima_test_common(file);
 
-The answer so far is around solutions that were built from/around the
-TrenchBoot project but Linux Secure Launch does not require new, special
-user solutions. These solutions have been developed because DRTM enables
-them to exist, not that they are the only ways Linux Secure Launch can
-be utilized. For instance it is possible to setup a Clevis[6] based LUKS
-full disk encryption setup using clevis' TPM2 PIN, where the TPM2 PIN
-configuration uses the DRTM PCRs (17-22) as part of sealing PCRs for the
-encryption key.
+This one here.
 
-[1] https://lpc.events/event/7/contributions/739/
-[2] https://archive.fosdem.org/2021/schedule/event/firmware_suwd/
-[3] https://blog.3mdeb.com/2021/2021-10-28-fobnail-promotion/
-[4] https://blog.3mdeb.com/2021/2021-12-15-fobnail_2nd_phase/
-[5] https://fobnail.3mdeb.com/
-[6] https://github.com/latchset/clevis
+> +
+> +	return 0;
+> +}
+> 
 
-V/r,
-Daniel P. Smith
+thanks,
+-- Shuah
