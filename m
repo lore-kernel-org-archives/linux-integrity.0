@@ -2,85 +2,244 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7575C433FE
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Feb 2022 17:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB48C433F5
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Feb 2022 17:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243486AbiBWRqI (ORCPT
+        id S237733AbiBWR7Z (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Feb 2022 12:46:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35728 "EHLO
+        Wed, 23 Feb 2022 12:59:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243478AbiBWRqH (ORCPT
+        with ESMTP id S233244AbiBWR7Y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Feb 2022 12:46:07 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AFC241331;
-        Wed, 23 Feb 2022 09:45:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1645638340; x=1677174340;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aeb0qt4wCCz7I/mFg9ArXVeLtAeRSHAS90P4rnXgYoM=;
-  b=IUOYbsZyWf1EQ8t/DZKZsUQGBm4pOgCkBYU7SWXnYKBXY0BBV4O1hbTf
-   E5+NufXT+Ohz7qsqAV0Y7Qn0oFvSNWmCVo4g6xRC3TOxWcnq5E/in6pQY
-   E+QK/VNbpiIUCUIiviEckaajJR4/YGD2NAYwHmXYmGHAm6e9WCQVBSVYX
-   LybPuRDAVjakFr+5EO3lYwtsZfO7apQGva61WPSKbFzUvZR/1Zhu3jfY2
-   gPtRC+ISd64H3uY1KtM+wdqkERoxHqqHkWhr79CFqiIpwr8jL1XMh1Xng
-   u4pScKU7A9LbhBdmqoStVM4b3NXhe+zfc6o0wRUL7yqHKAmysKdzs+zej
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10267"; a="251774224"
-X-IronPort-AV: E=Sophos;i="5.88,391,1635231600"; 
-   d="scan'208";a="251774224"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 09:45:17 -0800
-X-IronPort-AV: E=Sophos;i="5.88,391,1635231600"; 
-   d="scan'208";a="491292157"
-Received: from chakanog-mobl.amr.corp.intel.com (HELO [10.212.198.215]) ([10.212.198.215])
-  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2022 09:45:17 -0800
-Message-ID: <04080c88-3e69-b4e6-0af2-0690accaa02f@intel.com>
-Date:   Wed, 23 Feb 2022 09:45:12 -0800
+        Wed, 23 Feb 2022 12:59:24 -0500
+X-Greylist: delayed 452 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Feb 2022 09:58:55 PST
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6323CA6A;
+        Wed, 23 Feb 2022 09:58:55 -0800 (PST)
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 65D2BA1C; Wed, 23 Feb 2022 11:58:54 -0600 (CST)
+Date:   Wed, 23 Feb 2022 11:58:54 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        serge@hallyn.com, christian.brauner@ubuntu.com,
+        containers@lists.linux.dev, dmitry.kasatkin@gmail.com,
+        ebiederm@xmission.com, krzysztof.struczynski@huawei.com,
+        roberto.sassu@huawei.com, mpeters@redhat.com, lhinds@redhat.com,
+        lsturman@redhat.com, puiterwi@redhat.com, jejb@linux.ibm.com,
+        jamjoom@us.ibm.com, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, rgb@redhat.com,
+        linux-security-module@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH v10 27/27] ima: Enable IMA namespaces
+Message-ID: <20220223175854.GB10272@mail.hallyn.com>
+References: <20220201203735.164593-1-stefanb@linux.ibm.com>
+ <20220201203735.164593-28-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v5 00/12] x86: Trenchboot secure dynamic launch Linux
- kernel support
-Content-Language: en-US
-To:     Ross Philipson <ross.philipson@oracle.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org
-Cc:     iommu@lists.linux-foundation.org, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        luto@amacapital.net, nivedita@alum.mit.edu,
-        kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
-References: <1645070085-14255-1-git-send-email-ross.philipson@oracle.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-In-Reply-To: <1645070085-14255-1-git-send-email-ross.philipson@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220201203735.164593-28-stefanb@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2/16/22 19:54, Ross Philipson wrote:
-> The larger focus of the TrenchBoot project (https://github.com/TrenchBoot) is to
-> enhance the boot security and integrity in a unified manner. The first area of
-> focus has been on the Trusted Computing Group's Dynamic Launch for establishing
-> a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root of
-> Trust for Measurement). The project has been and continues to work on providing
-> a unified means to Dynamic Launch that is a cross-platform (Intel and AMD) and
-> cross-architecture (x86 and Arm), with our recent involvment in the upcoming
-> Arm DRTM specification. The order of introducing DRTM to the Linux kernel
-> follows the maturity of DRTM in the architectures. Intel's Trusted eXecution
-> Technology (TXT) is present today and only requires a preamble loader, e.g. a
-> boot loader, and an OS kernel that is TXT-aware. AMD DRTM implementation has
-> been present since the introduction of AMD-V but requires an additional
-> component that is AMD specific and referred to in the specification as the
-> Secure Loader, which the TrenchBoot project has an active prototype in
-> development. Finally Arm's implementation is in specification development stage
-> and the project is looking to support it when it becomes available.
+On Tue, Feb 01, 2022 at 03:37:35PM -0500, Stefan Berger wrote:
+> Introduce the IMA_NS in Kconfig for IMA namespace enablement.
+> 
+> Enable the lazy initialization of an IMA namespace when a user mounts
+> SecurityFS and writes '1' into IMA's 'active' securityfs file. A
+> user_namespace will now get a pointer to an ima_namespace and therefore
+> implement get_current_ns() for the namespacing case that returns this
+> pointer. Use get_current_ns() in those places that require access to the
+> current IMA namespace. In some places, primarily those related to
+> IMA-appraisal and changes to file attributes, keep the pointer to
+> init_ima_ns, since there flags related to file measurements may be
+> affected, which are not supported in IMA namespaces, yet.
+> 
+> Before using the ima_namespace pointer test it with ns_is_active()
+> to check whether it is NULL and whether the ima_namespace is active.
+> If it's not active, it cannot be used, yet. Therefore, return early
+> from those functions that may now get either get a NULL pointer from
+> this call or where ns->active is still 0. The init_ima_ns is always
+> set to be active, thus passing the check.
+> 
+> Implement ima_ns_from_file() for SecurityFS-related files where we can
+> now get the IMA namespace via the user namespace pointer associated
+> with the superblock of the SecurityFS filesystem instance.
+> 
+> Return -EACCES to IMA's securityfs files, except for the 'active' file,
+> until the IMA namespace has been set to active.
+> 
+> Switch access to userns->ima_ns to use acquire/release semantics to ensure
+> that a newly created ima_namespace structure is fully visible upon access.
+> 
+> Only emit the kernel log message 'policy update completed' for the
+> init_ima_ns.
+> 
+> When parsing an IMA policy rule use the user namespace of the opener
+> to translate uid and gid values to kernel values rather than the user
+> namespace of the writer.
+> 
+> Gate access to ima_appraise variable to init_ima_ns in ima_load_data()
+> and ima_write_policy().
+> 
+> Gate access to temp_ima_appraise variable to init_ima_ns in
+> ima_delete_rules().
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> ---
+> v10:
+>  - dropped ima_ns_to_user_ns(); using current_user_ns() instead
+>  - Pass user_namespace of file opener into ima_parse_rule and propagate
+>    this parameter back all the way to the initial caller in the chain
+>  - Gate access to ima_appraise to init_ima_ns in ima_write_policy()
+> 
+> v9:
+>  - ima_post_key_create_or_update: Only handle key if in init_ima_ns
+>  - Removed ns == NULL checks where user_namespace is now passed
+>  - Defer setting of user_ns->ima_ns until end of ima_fs_ns_init();
+>    required new ima_free_imans() and new user_ns_set_ima_ns()
+>  - Only emit log message 'policy update completed' for init_ima_ns
+>  - Introduce get_current_ns() only in this patch
+>  - Check for ns == &init_ima_ns in ima_load_data()
+> ---
+>  include/linux/ima.h                          |  1 +
+>  init/Kconfig                                 | 13 +++
+>  kernel/user_namespace.c                      |  2 +
+>  security/integrity/ima/ima.h                 | 55 +++++++++++--
+>  security/integrity/ima/ima_appraise.c        |  3 +
+>  security/integrity/ima/ima_asymmetric_keys.c |  6 +-
+>  security/integrity/ima/ima_fs.c              | 87 ++++++++++++++++----
+>  security/integrity/ima/ima_init.c            |  2 +-
+>  security/integrity/ima/ima_init_ima_ns.c     |  2 +
+>  security/integrity/ima/ima_main.c            | 34 +++++---
+>  security/integrity/ima/ima_ns.c              | 15 +++-
+>  security/integrity/ima/ima_policy.c          | 43 ++++++----
+>  12 files changed, 202 insertions(+), 61 deletions(-)
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index c584527c0f47..a8cb2c269f61 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/security.h>
+>  #include <linux/kexec.h>
+> +#include <linux/user_namespace.h>
+>  #include <crypto/hash_info.h>
+>  struct linux_binprm;
+>  
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 4b7bac10c72d..e27155e0ddba 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1247,6 +1247,19 @@ config NET_NS
+>  	  Allow user space to create what appear to be multiple instances
+>  	  of the network stack.
+>  
+> +config IMA_NS
+> +	bool "IMA namespace"
+> +	depends on USER_NS
+> +	depends on IMA
+> +	default n
+> +	help
+> +	  Allow the creation of an IMA namespace for each user namespace.
+> +	  Namespaced IMA enables having IMA features work separately
+> +	  in each IMA namespace.
+> +	  Currently, only the audit status flags are stored in the namespace,
+> +	  which allows the same file to be audited each time it is accessed
+> +	  in a new namespace.
+> +
+>  endif # NAMESPACES
+>  
+>  config CHECKPOINT_RESTORE
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 6b2e3ca7ee99..653f8fa83b69 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/fs_struct.h>
+>  #include <linux/bsearch.h>
+>  #include <linux/sort.h>
+> +#include <linux/ima.h>
+>  
+>  static struct kmem_cache *user_ns_cachep __read_mostly;
+>  static DEFINE_MUTEX(userns_state_mutex);
+> @@ -196,6 +197,7 @@ static void free_user_ns(struct work_struct *work)
+>  			kfree(ns->projid_map.forward);
+>  			kfree(ns->projid_map.reverse);
+>  		}
+> +		free_ima_ns(ns);
+>  		retire_userns_sysctls(ns);
+>  		key_free_user_ns(ns);
+>  		ns_free_inum(&ns->ns);
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 05e2de7697da..73df1d8a2ece 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -337,10 +337,10 @@ int ima_match_policy(struct ima_namespace *ns,
+>  		     int mask, int flags, int *pcr,
+>  		     struct ima_template_desc **template_desc,
+>  		     const char *func_data, unsigned int *allowed_algos);
+> -void ima_init_policy(struct ima_namespace *ns);
+> +void ima_init_policy(struct user_namespace *user_ns);
+>  void ima_update_policy(struct ima_namespace *ns);
+>  void ima_update_policy_flags(struct ima_namespace *ns);
+> -ssize_t ima_parse_add_rule(struct ima_namespace *ns, char *rule);
+> +ssize_t ima_parse_add_rule(struct user_namespace *user_ns, char *rule);
+>  void ima_delete_rules(struct ima_namespace *ns);
+>  int ima_check_policy(struct ima_namespace *ns);
+>  void ima_free_policy_rules(struct ima_namespace *ns);
+> @@ -538,32 +538,70 @@ struct user_namespace *ima_user_ns_from_file(const struct file *filp)
+>  	return file_inode(filp)->i_sb->s_user_ns;
+>  }
+>  
+> +#ifdef CONFIG_IMA_NS
+> +
+>  static inline struct ima_namespace
+>  *ima_ns_from_user_ns(struct user_namespace *user_ns)
+>  {
+> -	if (user_ns == &init_user_ns)
+> -		return &init_ima_ns;
+> -	return NULL;
+> +	/* Pairs with smp_store_releases() in user_ns_set_ima_ns(). */
+> +	return smp_load_acquire(&user_ns->ima_ns);
+>  }
+>  
+> -#ifdef CONFIG_IMA_NS
+> +static inline void user_ns_set_ima_ns(struct user_namespace *user_ns,
+> +				      struct ima_namespace *ns)
+> +{
+> +	/* Pairs with smp_load_acquire() in ima_ns_from_user_ns() */
+> +	smp_store_release(&user_ns->ima_ns, ns);
+> +}
+> +
+> +static inline struct ima_namespace *get_current_ns(void)
+> +{
+> +	return ima_ns_from_user_ns(current_user_ns());
+> +}
+>  
+>  struct ima_namespace *create_ima_ns(void);
+>  
+> +void ima_free_ima_ns(struct ima_namespace *ns);
+> +
+>  struct ns_status *ima_get_ns_status(struct ima_namespace *ns,
+>  				    struct inode *inode,
+>  				    struct integrity_iint_cache *iint);
+>  
+>  void ima_free_ns_status_tree(struct ima_namespace *ns);
+>  
+> +static inline struct ima_namespace *ima_ns_from_file(const struct file *filp)
+> +{
 
-What problem is this patch series solving?  Is the same problem solved
-in a different way in the kernel today?  What is wrong with that
-solution?  What effects will end users see if they apply this series?
+Why is it ok here to dereference userns->ima_ns without
+going through ima_ns_from_user_ns() to do the smp_load_acquire()?
+
+> +	return ima_user_ns_from_file(filp)->ima_ns;
+> +}
+> +
+>  #else
+
+-serge
