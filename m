@@ -2,106 +2,109 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B38C433EF
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Feb 2022 17:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 362BFC433FE
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Feb 2022 18:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232184AbiBXRnI (ORCPT
+        id S231537AbiBXSrI (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 24 Feb 2022 12:43:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52990 "EHLO
+        Thu, 24 Feb 2022 13:47:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232171AbiBXRnI (ORCPT
+        with ESMTP id S229850AbiBXSrI (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 Feb 2022 12:43:08 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5D42177E6;
-        Thu, 24 Feb 2022 09:42:37 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 24 Feb 2022 13:47:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0714F4C7BC;
+        Thu, 24 Feb 2022 10:46:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 305E11F37C;
-        Thu, 24 Feb 2022 17:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645724556;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oHRcXNAyVVLBmzjtITjvYsLkaLmEBNuckTKDj2JF/sQ=;
-        b=qjReW5R4Uw6x5aNoKjevXfGCZdphemqRh+9z7KgeK3+PdYeNitd3JjyDgtrF3cOvwLPNcB
-        l2aZuvycJ72O/Pz5lP05+t5WE7B0FcDV6FDiGRlVv7YF6pFhEy3P9EPo4H5EXxqMYtNvv7
-        p9XPBICZw3U8HzfYz2NYBH77pGILyI8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645724556;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oHRcXNAyVVLBmzjtITjvYsLkaLmEBNuckTKDj2JF/sQ=;
-        b=bP3zwb+almDjPEBWW1T5UZXt9hS5kwf0Isr6ycFHkERR7tAq0C/x9r4nhTzdINjCy5ksIS
-        gO2TXUQiUS1GncAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BCD7713B15;
-        Thu, 24 Feb 2022 17:42:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EjarK4vDF2J4GwAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Thu, 24 Feb 2022 17:42:35 +0000
-Date:   Thu, 24 Feb 2022 18:42:29 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     zohar@linux.ibm.com, dvyukov@google.com, ebiggers@kernel.org,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com
-Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
-Message-ID: <YhfDhYQYZTU0clAf@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20210322154207.6802-2-zohar@linux.ibm.com>
- <20220224142025.2587-1-pvorel@suse.cz>
- <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 986FD61330;
+        Thu, 24 Feb 2022 18:46:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43D12C340E9;
+        Thu, 24 Feb 2022 18:46:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645728397;
+        bh=ZRIL25zhAUg48lH14eqqeW0pLyxILXBHMP0S8m9bCk8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rJYqDXHH+3VfG6C0oUBM1moumLHVCfZOSUBStzhJSnkPn5razVF2pUe5QvFDOseLz
+         qPSHCjf8sHNwNwnSU7BUTyHscBURnYuSWzC5BZHdorLbmSLcWmAIVX8yDC2FZ5JuMX
+         wp5mFUZJ9AE3kSCbW9gcePCtAyMtC+OyARdeBQKRRhSc3fdVJEbv/cnPO9cu+gQaHB
+         4Tv9is8SNQy2h1lHZQMSkAbpwZxJTqZ46L+eMk/fBBlbxsyQSbSkt4t+apI8EtJ8q3
+         gvP4D5Ez446e8hNMu4Gfkh5bSk6fkNLkV32HxemvmMSjBq1IzCdzpNeUqk2TiMBnvL
+         HH1i2uRobvvqw==
+Date:   Thu, 24 Feb 2022 10:46:25 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/8] ima: define a new template field 'd-type' and a
+ new template 'ima-ngv2'
+Message-ID: <YhfSgeldgCcnzszw@sol.localdomain>
+References: <20220211214310.119257-1-zohar@linux.ibm.com>
+ <20220211214310.119257-5-zohar@linux.ibm.com>
+ <YhbSE/k4mElcehDN@sol.localdomain>
+ <b89ec5792da3c284f8e5e058c5568482beccf00d.camel@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <418628ea-f524-05a1-8bfc-a688fa2d625d@schaufler-ca.com>
+In-Reply-To: <b89ec5792da3c284f8e5e058c5568482beccf00d.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Casey,
+On Thu, Feb 24, 2022 at 11:16:51AM -0500, Mimi Zohar wrote:
+> On Wed, 2022-02-23 at 16:32 -0800, Eric Biggers wrote:
+> > On Fri, Feb 11, 2022 at 04:43:06PM -0500, Mimi Zohar wrote:
+> > > In preparation to differentiate between regular IMA file hashes and
+> > > fs-verity's file digests, define a new template field named 'd-type'.
+> > > Define a new template named 'ima-ngv2', which includes the new 'd-type'
+> > > field.
+> > > 
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > ---
+> > >  security/integrity/ima/ima_template.c     |  3 +++
+> > >  security/integrity/ima/ima_template_lib.c | 13 +++++++++++++
+> > >  security/integrity/ima/ima_template_lib.h |  2 ++
+> > >  3 files changed, 18 insertions(+)
+> > > 
+> > > diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+> > > index db1ad6d7a57f..b321342e5bee 100644
+> > > --- a/security/integrity/ima/ima_template.c
+> > > +++ b/security/integrity/ima/ima_template.c
+> > > @@ -19,6 +19,7 @@ enum header_fields { HDR_PCR, HDR_DIGEST, HDR_TEMPLATE_NAME,
+> > >  static struct ima_template_desc builtin_templates[] = {
+> > >  	{.name = IMA_TEMPLATE_IMA_NAME, .fmt = IMA_TEMPLATE_IMA_FMT},
+> > >  	{.name = "ima-ng", .fmt = "d-ng|n-ng"},
+> > > +	{.name = "ima-ngv2", .fmt = "d-ng|n-ng|d-type"},
+> > >  	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
+> > >  	{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"},
+> > >  	{.name = "ima-modsig", .fmt = "d-ng|n-ng|sig|d-modsig|modsig"},
+> > > @@ -40,6 +41,8 @@ static const struct ima_template_field supported_fields[] = {
+> > >  	 .field_show = ima_show_template_digest_ng},
+> > >  	{.field_id = "n-ng", .field_init = ima_eventname_ng_init,
+> > >  	 .field_show = ima_show_template_string},
+> > > +	{.field_id = "d-type", .field_init = ima_eventdigest_type_init,
+> > > +	 .field_show = ima_show_template_string},
+> > >  	{.field_id = "sig", .field_init = ima_eventsig_init,
+> > >  	 .field_show = ima_show_template_sig},
+> > >  	{.field_id = "buf", .field_init = ima_eventbuf_init,
+> > 
+> > I notice that the "d-ng" field already contains both the hash algorithm and the
+> > hash itself, in the form <algorithm>:<hash>.  Wouldn't it make more sense to
+> > define a "d-ngv2" field that contains <type>:<algorithm>:<hash>?  After all,
+> > both the type and algorithm are required to interpret the hash.
+> > 
+> > Or in other words, what about the hash type is different from the hash algorithm
+> > that would result in them needing different handling here?
+> 
+> Thanks, Eric.  I really like your suggestion.  Currently, type is
+> defined as either "ima" or "verity".   Are you ok with prefixing each
+> record with these strings?
+> 
 
-> On 2/24/2022 6:20 AM, Petr Vorel wrote:
-> > Hi Mimi, Tetsuo, Kees, all,
+As I mentioned before I think "full_hash" would be more descriptive than "ima".
+(All of this is part of IMA.)  It's up to you though.
 
-> > FYI this commit merged as 92063f3ca73a ("integrity: double check iint_cache was initialized")
-> > is the reason for openSUSE distro installer going back from lsm= to deprecated
-> > security= when filling default grub parameters because security=apparmor or
-> > security=selinux does not break boot when used with ima_policy=tcb, unlike
-> > using lsm.
-
-> OK, color me confused. Integrity isn't an LSM. It doesn't
-> call security_add_hooks().
-Really: "Initially I also questioned making "integrity" an LSM.  Perhaps it's
-time to reconsider." [1]
-
-> > @Kees, @Mimi sure, people who use ima_policy=tcb will just remove lsm parameter
-> > or add "integrity" to it but I wonder whether there could be "integrity"
-> > automatic inclusion when using ima_policy=tcb. Although the point of lsm= (and
-> > CONFIG_LSM) is to have *ordered* list of enabled LSMs and it wouldn't be clear
-> > on which place.
-
-> Why would adding integrity to the lsm= make sense? It's not an LSM.
-
-> Sorry, but something is wrong here.
-np. I explained that: try to boot with "ima_policy=tcb lsm=" or "ima_policy=tcb
-lsm=whatever" (whatever != integrity).
-
-Also have look at commit 92063f3ca73a ("integrity: double check iint_cache was
-initialized") which explain why it's needed.
-
-Kind regards,
-Petr
-
-[1] https://lore.kernel.org/linux-integrity/3ed2004413e0ac07c7bd6f10294d6b6fac6fdbf3.camel@linux.ibm.com/
+- Eric
