@@ -2,101 +2,181 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE358C433FE
-	for <linux-integrity@archiver.kernel.org>; Wed,  2 Mar 2022 09:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2A9C433EF
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Mar 2022 11:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240599AbiCBJpq (ORCPT
+        id S241461AbiCBLQA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 2 Mar 2022 04:45:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45836 "EHLO
+        Wed, 2 Mar 2022 06:16:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236428AbiCBJpl (ORCPT
+        with ESMTP id S241344AbiCBLPw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 Mar 2022 04:45:41 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 846A63E0DB;
-        Wed,  2 Mar 2022 01:44:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1646214280;
-        bh=u9LSPz59K1AzPPN6pInj51OX5iy0BC9R1p2p2gRRKlw=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=RgiNI2s9vyP54Ko9/bcmrrJQiUWzk9+jfb9hYoQFLW4NukPqoz/JnX8ryxn6dyRsA
-         cAFmyCUfn/952XqDYp7oowb6tS7b5YXWFwM5H9IW85DgUnnzD0ZkOA3HEGIW3CDTf0
-         J1dIqkBqnS/X2S1BJpShANLGb0C4ooEanfUyRyX0=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from Venus.fritz.box ([149.172.237.68]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MNKhs-1nZqD41NCU-00Oo4K; Wed, 02
- Mar 2022 10:44:40 +0100
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     stefanb@linux.vnet.ibm.com, James.Bottomley@hansenpartnership.com,
-        David.Laight@ACULAB.COM, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, p.rosenberger@kunbus.com,
-        LinoSanfilippo@gmx.de
-Subject: [PATCH v9 0/1] This patch fixes a reference count issue in the TPM core code
-Date:   Wed,  2 Mar 2022 10:43:52 +0100
-Message-Id: <20220302094353.3465-1-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.35.1
+        Wed, 2 Mar 2022 06:15:52 -0500
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F4060DAF;
+        Wed,  2 Mar 2022 03:14:35 -0800 (PST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4K7s1K3cK2z67NJM;
+        Wed,  2 Mar 2022 19:13:25 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 2 Mar 2022 12:14:32 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <shuah@kernel.org>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <andrii@kernel.org>, <yhs@fb.com>,
+        <kpsingh@kernel.org>, <revest@chromium.org>,
+        <gregkh@linuxfoundation.org>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 2/9] ima: Always return a file measurement in ima_file_hash()
+Date:   Wed, 2 Mar 2022 12:13:57 +0100
+Message-ID: <20220302111404.193900-3-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220302111404.193900-1-roberto.sassu@huawei.com>
+References: <20220302111404.193900-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:XbTfDc6oHSCC25zdRUunVw99wBhP91zXTkKy535tLuopP8UW2zH
- UcwxtuHNs9MHp6wXsanhY3J6y2Qi4FwhC2vMWIWlDLUGuLC2a8OAPnGkrs/66MAMVac5Oyf
- 14CIbMrQ3eJI4V+k3z05oP1KT+aX9/BiL9g/rogezOCbEXL2LcrdUQIruMBxoHkFnlB7XWr
- SCm5lfZtS9mnNVr9v1lIQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:KwwNtkS5whI=:tA2uaPOWm7pkCpadfCQx8o
- 2R+zz7vHdl7YyLLJ6Kju4vO5MVpY0RdLf8s/eTo1Yl17dbgxLe+B4AxatJzMx4meEMBdM0+9x
- /Pw+dKYMqIoc827ykUUfS3V3ixd4+rNr7AW+8K/DoXq7W8wykCYe2tHvCm5nqHDUN5ICRAtWj
- 8hO7a/SALSJjaJzivSFCi/h99lHIRkNZJGEYGqmksfR9uF2OqiXf52fLQyKk2S/jByXRSZQKl
- iXwg9fxuNN9MT+KkmumrS4x7VOzH7y3awgedFf0RTOj+0zUuDyG52Xh+YhGeOdF/7TEE/KXbm
- mEd6bZ3i2/saERfK/DVpQR73Q9vVXzTscCyWo+YSToJ+Qdx8nRTYrPMrKKJ1r/K6rWT/H3jx4
- t7iaxU1fAy+MYdqMhhlAQcmc2roJ/5FYicwNLVg4uO6s8tnpyk0abMxsfsXHixP1lZWhSKLPh
- lpETKQxF2eJGc9dHGC1sqbhmOxsJDvk32feyLmd3gnho4Fu5sD/KEFzCGQM642oHHiTZU93lh
- K+rxX9QTbSRuVOsvCe9s8/LsT5crF/hf4xA+8w318xUBdc9JkujzbMvC7QfTGu61y0Zq7JCq1
- fKWVvqRxpnhURmqjYNuTzOIKM/7abO027/9jfCGsmjVI6Y0NEVmRhBnn9mwWEjIDW3NU2jS7W
- eJQnEpL2Sgtl1ZVxijBdZYN5GeJUJqmIrXuz/BIeTQ6aNxa0uLRUbcFu9qMVqKkNKgLCaNdGg
- Svl8SvgPkmBJp0XBCEaCqvZP5J+wSq6xx9DiIRddJWlQX7mF+cIwOQMOYpQrs682pAl4WRJwd
- 0ogTZoJ1oOEIJ6ogYbw6ySsUIgLAgzr8MVry6sfvHlcVPhZ1AJ6zMa+nmrFS2xqST5KlmZrRX
- S6HiJz288+wVoQeztMh47pLBHsqTBwbDSkd3RIbypxKb+3ZzG6WBuXPCCDyhpA1rktRMqE3Sp
- 3sJgSa06vUdPsv5wSlADotR5jjHECsxK5bqgpTSakDnMjpkDs2y+FCl/TSMzutbLr1LXzdmhh
- 8eXKuvhW6MjvbXKTmTWwbMUNerawRm7YN1H88QZxhxzB94NOsSBTsDYbrFncjYLd8jkqKu7Ao
- xToYPo0BPXVs+M=
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Q2hhbmdlcyBpbiB2OToKLSBhZGQgYSBmdW5jdGlvbiB0cG1fZGV2c19yZW1vdmUoKSBhcyBjb3Vu
-dGVycGFydCB0byB0cG1fZGV2c19hZGQoKQogIGFzIHN1Z2dlc3RlZCBieSBKYXNvbgoKQ2hhbmdl
-cyBpbiB2ODoKLSBhZGp1c3QgbmFtZXMgb2YganVtcCBsYWJlbHMgZm9yIAogIGFzIHJlcXVlc3Rl
-ZCBieSBKYXJra28KCkNoYW5nZXMgaW4gdjc6Ci0gYWRqdXN0IG5hbWluZyBvZiBqdW1wIGxhYmVs
-cyB0byBmaXQgYmV0dGVyIHRoZSB1c2VkIGxhYmVsIG5hbWluZyBzY2hlbWUKCkNoYW5nZXMgaW4g
-djY6Ci0gcmVuYW1lIGZ1bmN0aW9uIHRwbTJfYWRkX2RldmljZSgpIHRvIHRwbV9kZXZzX2FkZCgp
-IGFzIHJlcXVlc3RlZCBieSBKYXJrbwotIGFkZCBmdW5jdGlvbiBkZXNjcmlwdGlvbnMKLSBmaXgg
-c291cmNlIGNvZGUgZm9ybWF0dGluZwoKQ2hhbmdlcyBpbiB2NToKLSBtb3ZlIGZ1bmN0aW9uIHRw
-bV9hZGRfdHBtMl9jaGFyX2RldmljZSgpIHRvIHRwbTItc3BhY2UuYyBhbmQgcmVuYW1lCml0IHRv
-IHRwbTJfYWRkX2RldmljZSgpIGFzIHJlcXVlc3RlZCBieSBKYXJrbwotIHB1dCAiY2MiIHRhZyBi
-ZWZvcmUgYWxsIG90aGVyIHRhZ3MgCi0gZW5zdXJlIHRoYXQgdGhlIGVycm9yIHBhdGggaW4gdHBt
-Ml9hZGRfZGV2aWNlKCkgYWx3YXlzIGNhbGxzIAp0aGUgcmVsZWFzZSgpIGZ1bmN0aW9uIG9mIGNo
-aXAtPmRldnMgYXMgcmVxdWVzdGVkIGJ5IEphc29uCi0gcmVmb3JtYXQgYSBjb2RlIGxpbmUgYXMg
-c3VnZ2VzdGVkIGJ5IERhdmlkIExhaWdodAoKQ2hhbmdlcyBpbiB2NDoKLSBkcm9wIHBhdGNoIDIg
-KHRwbTogaW4gdHBtMl9kZWxfc3BhY2UgY2hlY2sgaWYgb3BzIHBvaW50ZXIgaXMgc3RpbGwKdmFs
-aWQpIHNpbmNlIEphbWVzIEJvdHRvbWxleSBvZmZlcmVkIGEgY2xlYW5lciBzb2x1dGlvbiBmb3Ig
-dGhpcwotIHJlaW1wbGVtZW50IHBhdGNoIDEgdG8gc2V0dXAgdGhlIC9kZXYvdHBtcm0gZGV2aWNl
-IG9ubHkgaW4gY2FzZSBvZiBUUE0yCmFuZCBhdm9pZCB0aGUgaW5zdGFsbGF0aW9uIG9mIGFub3Ro
-ZXIgYWN0aW9uIGhhbmRsZXIuIFRoaXMgaXMgYmFzZWQgb24gYQpzdWdnZXN0aW9uIGFuZCBiYXNp
-YyBpbXBsZW1lbnRhdGlvbiBkb25lIGJ5IEphc29uIEd1bnRob3JwZS4KLSBhZGRlZCB0YWcgdG8g
-Q0Mgc3RhYmxlCgpDaGFuZ2VzIGluIHYzOgotIGRyb3AgdGhlIHBhdGNoIHRoYXQgaW50cm9kdWNl
-cyB0aGUgbmV3IGZ1bmN0aW9uIHRwbV9jaGlwX2ZyZWUoKQotIHJld29yayB0aGUgY29tbWl0IG1l
-c3NhZ2VzIGZvciB0aGUgcGF0Y2hlcyAoc3R5bGUsIHR5cG9zLCBldGMuKQotIGFkZCBmaXhlcyB0
-YWcgdG8gcGF0Y2ggMgotIGFkZCBKYW1lcyBCb3R0b21sZXkgdG8gY2MgbGlzdAotIGFkZCBzdGFi
-bGUgbWFpbGluZyBsaXN0IHRvIGNjIGxpc3QKCkNoYW5nZXMgaW4gdjI6Ci0gZHJvcCB0aGUgcGF0
-Y2ggdGhhdCBlcnJvbmVvdXNseSBjbGVhbmVkIHVwIGFmdGVyIGZhaWxlZCBpbnN0YWxsYXRpb24g
-b2YKICBhbiBhY3Rpb24gaGFuZGxlciBpbiB0cG1tX2NoaXBfYWxsb2MoKSAocG9pbnRlZCBvdXQg
-YnkgSmFya2tvIFNha2tpbmVuKQotIG1ha2UgdGhlIGNvbW1pdCBtZXNzYWdlIGZvciBwYXRjaCAx
-IG1vcmUgZGV0YWlsZWQKLSBhZGQgZml4ZXMgdGFncyBhbmQga2VybmVsIGxvZ3MKCgpMaW5vIFNh
-bmZpbGlwcG8gKDEpOgogIHRwbTogZml4IHJlZmVyZW5jZSBjb3VudGluZyBmb3Igc3RydWN0IHRw
-bV9jaGlwCgogZHJpdmVycy9jaGFyL3RwbS90cG0tY2hpcC5jICAgfCA0NiArKysrKy0tLS0tLS0t
-LS0tLS0tLS0tLS0tCiBkcml2ZXJzL2NoYXIvdHBtL3RwbS5oICAgICAgICB8ICAyICsrCiBkcml2
-ZXJzL2NoYXIvdHBtL3RwbTItc3BhY2UuYyB8IDY1ICsrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDc1IGluc2VydGlvbnMoKyksIDM4IGRlbGV0aW9u
-cygtKQoKCmJhc2UtY29tbWl0OiBjOGRiOTBkM2U3MjMwODZhNTRiZTgzZTBhMmIxMDgxNDZjNTdl
-MGRlCi0tIAoyLjM1LjEKCg==
+__ima_inode_hash() checks if a digest has been already calculated by
+looking for the integrity_iint_cache structure associated to the passed
+inode.
+
+Users of ima_file_hash() (e.g. eBPF) might be interested in obtaining the
+information without having to setup an IMA policy so that the digest is
+always available at the time they call this function.
+
+In addition, they likely expect the digest to be fresh, e.g. recalculated
+by IMA after a file write. Although getting the digest from the
+bprm_committed_creds hook (as in the eBPF test) ensures that the digest is
+fresh, as the IMA hook is executed before that hook, this is not always the
+case (e.g. for the mmap_file hook).
+
+Call ima_collect_measurement() in __ima_inode_hash(), if the file
+descriptor is available (passed by ima_file_hash()) and the digest is not
+available/not fresh, and store the file measurement in a temporary
+integrity_iint_cache structure.
+
+This change does not cause memory usage increase, due to using the
+temporary integrity_iint_cache structure, and due to freeing the
+ima_digest_data structure inside integrity_iint_cache before exiting from
+__ima_inode_hash().
+
+For compatibility reasons, the behavior of ima_inode_hash() remains
+unchanged.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_main.c | 46 ++++++++++++++++++++++---------
+ 1 file changed, 33 insertions(+), 13 deletions(-)
+
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 946ba8a12eab..ed1a82f1def3 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -520,20 +520,38 @@ int ima_file_check(struct file *file, int mask)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
+-static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
++static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
++			    size_t buf_size)
+ {
+-	struct integrity_iint_cache *iint;
+-	int hash_algo;
++	struct integrity_iint_cache *iint = NULL, tmp_iint;
++	int rc, hash_algo;
+ 
+-	if (!ima_policy_flag)
+-		return -EOPNOTSUPP;
++	if (ima_policy_flag) {
++		iint = integrity_iint_find(inode);
++		if (iint)
++			mutex_lock(&iint->mutex);
++	}
++
++	if ((!iint || !(iint->flags & IMA_COLLECTED)) && file) {
++		if (iint)
++			mutex_unlock(&iint->mutex);
++
++		memset(&tmp_iint, 0, sizeof(tmp_iint));
++		tmp_iint.inode = inode;
++		mutex_init(&tmp_iint.mutex);
++
++		rc = ima_collect_measurement(&tmp_iint, file, NULL, 0,
++					     ima_hash_algo, NULL);
++		if (rc < 0)
++			return -EOPNOTSUPP;
++
++		iint = &tmp_iint;
++		mutex_lock(&iint->mutex);
++	}
+ 
+-	iint = integrity_iint_find(inode);
+ 	if (!iint)
+ 		return -EOPNOTSUPP;
+ 
+-	mutex_lock(&iint->mutex);
+-
+ 	/*
+ 	 * ima_file_hash can be called when ima_collect_measurement has still
+ 	 * not been called, we might not always have a hash.
+@@ -552,12 +570,14 @@ static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
+ 	hash_algo = iint->ima_hash->algo;
+ 	mutex_unlock(&iint->mutex);
+ 
++	if (iint == &tmp_iint)
++		kfree(iint->ima_hash);
++
+ 	return hash_algo;
+ }
+ 
+ /**
+- * ima_file_hash - return the stored measurement if a file has been hashed and
+- * is in the iint cache.
++ * ima_file_hash - return a measurement of the file
+  * @file: pointer to the file
+  * @buf: buffer in which to store the hash
+  * @buf_size: length of the buffer
+@@ -570,7 +590,7 @@ static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
+  * The file hash returned is based on the entire file, including the appended
+  * signature.
+  *
+- * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
++ * If the measurement cannot be performed, return -EOPNOTSUPP.
+  * If the parameters are incorrect, return -EINVAL.
+  */
+ int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+@@ -578,7 +598,7 @@ int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+ 	if (!file)
+ 		return -EINVAL;
+ 
+-	return __ima_inode_hash(file_inode(file), buf, buf_size);
++	return __ima_inode_hash(file_inode(file), file, buf, buf_size);
+ }
+ EXPORT_SYMBOL_GPL(ima_file_hash);
+ 
+@@ -605,7 +625,7 @@ int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
+ 	if (!inode)
+ 		return -EINVAL;
+ 
+-	return __ima_inode_hash(inode, buf, buf_size);
++	return __ima_inode_hash(inode, NULL, buf, buf_size);
+ }
+ EXPORT_SYMBOL_GPL(ima_inode_hash);
+ 
+-- 
+2.32.0
+
