@@ -2,101 +2,171 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E28C433F5
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Mar 2022 03:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E2ACC433FE
+	for <linux-integrity@archiver.kernel.org>; Fri, 11 Mar 2022 04:42:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237598AbiCKDVQ (ORCPT
+        id S234539AbiCKEnB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Mar 2022 22:21:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
+        Thu, 10 Mar 2022 23:43:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230400AbiCKDVP (ORCPT
+        with ESMTP id S1346433AbiCKEnA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Mar 2022 22:21:15 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE0061A7D92;
-        Thu, 10 Mar 2022 19:20:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 89D17610A2;
-        Fri, 11 Mar 2022 03:20:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DBE5AC340EF;
-        Fri, 11 Mar 2022 03:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646968812;
-        bh=VsGSHD7E4OpMLRoeX2QE+gkBvx0t0j1p1Ol0/Z7+yS0=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=luK9NBPoQgXMbyWFT8nnbcOtbyvjfOpUXfoOyFuWrpBiEM/r/ufilfCNcmQ3oVX/N
-         x6EmdIwPtaD6MCifUK+Hc8W3j4ClYF0ea+osOGypIv+l54kemQJm3teGPCbJrg/K+D
-         PMfBAcbK1yHAMxvAjhMlIAtNyo5vkumxWmasEyVMW/j1VhX1tIcNLPBnZg1kJ9YboQ
-         vOVi5oPXv6Wd0LhliEjJ+UFFRokUEInZd6Fh9pxft3HJKZU+TLVmYVV8hauMZn3vMA
-         fC+cLp4bWjNI6uMmh0gGsKjYyzPxK5wEkV8O8OOQ0rWS5p7UO6vRDIsdb3yCy6RiOs
-         VhEo/gLcl723g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BE6D9EAC095;
-        Fri, 11 Mar 2022 03:20:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 10 Mar 2022 23:43:00 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E26B1A907A;
+        Thu, 10 Mar 2022 20:41:58 -0800 (PST)
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22B4SD8w006855;
+        Fri, 11 Mar 2022 04:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=1La54FmIqIbZzewnmTDVKyzNOZ4KlniNQIRdC9L4pTw=;
+ b=ln9zUlB5Wx3D72w9Io3Vz0b95Ndvlcy2bkSkNk4KCAWNaKf70X6DIESiLXiUIwwcDZGQ
+ voY6D9bZECOTWwDqPRnFplW7WKABKaJB5MXbUzrEObjfUW34lNBeLC2Cvod+L6qJ9gSk
+ rIXxS4PWXF8s+nh2meHcxH5qPrMZg6jQrdYcyXRgYUUlTFQr3XMMd8VpK2ScZNr81CN7
+ 1UDSgonAkJpgU23JT+uGwX/NybTkPyKyJEbO/mlJ3JwGqVeIi0p6g2cjRat+0SGjzF+x
+ kh0oxjwS/3H8e5nel77XZk2Vlmw3jRcvmiajSlkPxbgPow+fuc4Vh5+LFSg7gVYuCjQS 1Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqrrdq2fs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 04:41:53 +0000
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22B4aSbj004503;
+        Fri, 11 Mar 2022 04:41:53 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3eqrrdq2fc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 04:41:52 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22B4blDr022254;
+        Fri, 11 Mar 2022 04:41:51 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06ams.nl.ibm.com with ESMTP id 3eqqf08pss-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 04:41:51 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22B4fl5Y36897178
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Mar 2022 04:41:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AF1CCAE04D;
+        Fri, 11 Mar 2022 04:41:47 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 312B5AE045;
+        Fri, 11 Mar 2022 04:41:45 +0000 (GMT)
+Received: from [9.43.5.3] (unknown [9.43.5.3])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 11 Mar 2022 04:41:44 +0000 (GMT)
+Message-ID: <4afae87c-2986-6b0e-07be-954dd4937afd@linux.ibm.com>
+Date:   Fri, 11 Mar 2022 10:11:43 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 0/9] bpf-lsm: Extend interoperability with IMA
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <164696881277.12219.12423811667872228529.git-patchwork-notify@kernel.org>
-Date:   Fri, 11 Mar 2022 03:20:12 +0000
-References: <20220302111404.193900-1-roberto.sassu@huawei.com>
-In-Reply-To: <20220302111404.193900-1-roberto.sassu@huawei.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, shuah@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, yhs@fb.com,
-        kpsingh@kernel.org, revest@chromium.org,
-        gregkh@linuxfoundation.org, linux-integrity@vger.kernel.org,
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.2
+Subject: Re: [PATCH v11 0/4] integrity: support including firmware ".platform"
+ keys at build time
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, dimitri.ledkov@canonical.com,
+        seth@forshee.me, Masahiro Yamada <masahiroy@kernel.org>
+References: <20220310214450.676505-1-nayna@linux.ibm.com>
+From:   Nageswara Sastry <rnsastry@linux.ibm.com>
+In-Reply-To: <20220310214450.676505-1-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xINTBg14ZqSpZh-yay9uoKnMPzWX3n5y
+X-Proofpoint-GUID: xseay6-Ax7BOXKVK0qR6OTHXLoou4EEd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-10_09,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 impostorscore=0
+ phishscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203110020
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hello:
 
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
 
-On Wed, 2 Mar 2022 12:13:55 +0100 you wrote:
-> Extend the interoperability with IMA, to give wider flexibility for the
-> implementation of integrity-focused LSMs based on eBPF.
+On 11/03/22 3:14 am, Nayna Jain wrote:
+> Some firmware support secure boot by embedding static keys to verify the
+> Linux kernel during boot. However, these firmware do not expose an
+> interface for the kernel to load firmware keys onto the ".platform"
+> keyring, preventing the kernel from verifying the kexec kernel image
+> signature.
 > 
-> Patch 1 fixes some style issues.
+> This patchset exports load_certificate_list() and defines a new function
+> load_builtin_platform_cert() to load compiled in certificates onto the
+> ".platform" keyring.
 > 
-> Patches 2-6 give the ability to eBPF-based LSMs to take advantage of the
-> measurement capability of IMA without needing to setup a policy in IMA
-> (those LSMs might implement the policy capability themselves).
+> Changelog:
+> v11:
+> * Added a new patch to conditionally build extract-cert if
+> PLATFORM_KEYRING is enabled.
 > 
-> [...]
 
-Here is the summary with links:
-  - [v3,1/9] ima: Fix documentation-related warnings in ima_main.c
-    https://git.kernel.org/bpf/bpf-next/c/bae60eefb95c
-  - [v3,2/9] ima: Always return a file measurement in ima_file_hash()
-    https://git.kernel.org/bpf/bpf-next/c/280fe8367b0d
-  - [v3,3/9] bpf-lsm: Introduce new helper bpf_ima_file_hash()
-    https://git.kernel.org/bpf/bpf-next/c/174b16946e39
-  - [v3,4/9] selftests/bpf: Move sample generation code to ima_test_common()
-    https://git.kernel.org/bpf/bpf-next/c/2746de3c53d6
-  - [v3,5/9] selftests/bpf: Add test for bpf_ima_file_hash()
-    https://git.kernel.org/bpf/bpf-next/c/27a77d0d460c
-  - [v3,6/9] selftests/bpf: Check if the digest is refreshed after a file write
-    https://git.kernel.org/bpf/bpf-next/c/91e8fa254dbd
-  - [v3,7/9] bpf-lsm: Make bpf_lsm_kernel_read_file() as sleepable
-    https://git.kernel.org/bpf/bpf-next/c/df6b3039fa11
-  - [v3,8/9] selftests/bpf: Add test for bpf_lsm_kernel_read_file()
-    https://git.kernel.org/bpf/bpf-next/c/e6dcf7bbf37c
-  - [v3,9/9] selftests/bpf: Check that bpf_kernel_read_file() denies reading IMA policy
-    https://git.kernel.org/bpf/bpf-next/c/7bae42b68d7f
+Tested the following four patches with and with out setting 
+CONFIG_INTEGRITY_PLATFORM_KEYS
 
-You are awesome, thank you!
+Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+
+
+1. With set CONFIG_INTEGRITY_PLATFORM_KEYS
+
+# grep pem .config
+CONFIG_INTEGRITY_PLATFORM_KEYS="certs/kernel.pem"
+CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"
+
+# grep 
+"CONFIG_INTEGRITY_PLATFORM_KEYS\|INTEGRITY_PLATFORM_KEYRING\|SYSTEM_REVOCATION_LIST" 
+.config
+CONFIG_INTEGRITY_PLATFORM_KEYRING=y
+CONFIG_INTEGRITY_PLATFORM_KEYS="certs/kernel.pem"
+# CONFIG_SYSTEM_REVOCATION_LIST is not set
+
+# cat /proc/keys | grep platform
+0e60c88d I------     1 perm 1f0b0000     0     0 keyring   .platform: 1
+
+# keyctl show %keyring:.platform
+Keyring
+  241223821 ---lswrv      0     0  keyring: .platform
+  308815460 ---lswrv      0     0   \_ asymmetric: IBM Corporation: 
+Guest Secure Boot Imprint Kernel Signing Key: 
+a0cf9069c30875320cb10a77325d4fa7012f8d12
+
+
+2. With out set CONFIG_INTEGRITY_PLATFORM_KEYS
+
+# grep pem .config
+CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"
+
+# grep 
+"CONFIG_INTEGRITY_PLATFORM_KEYS\|INTEGRITY_PLATFORM_KEYRING\|SYSTEM_REVOCATION_LIST" 
+.config
+CONFIG_INTEGRITY_PLATFORM_KEYRING=y
+CONFIG_INTEGRITY_PLATFORM_KEYS=""
+# CONFIG_SYSTEM_REVOCATION_LIST is not set
+
+# cat /proc/keys | grep platform
+12a5f301 I------     1 perm 1f0b0000     0     0 keyring   .platform: empty
+
+# keyctl show %keyring:.platform
+Keyring
+  312865537 ---lswrv      0     0  keyring: .platform
+
+
+> 
+> 
+> base-commit: fb5abce6b2bb5cb3d628aaa63fa821da8c4600f9
+
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Thanks and Regards
+R.Nageswara Sastry
