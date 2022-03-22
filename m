@@ -2,111 +2,114 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52368C433FE
-	for <linux-integrity@archiver.kernel.org>; Tue, 22 Mar 2022 11:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300E6C433F5
+	for <linux-integrity@archiver.kernel.org>; Tue, 22 Mar 2022 18:26:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232215AbiCVLEV (ORCPT
+        id S240512AbiCVS1a (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 22 Mar 2022 07:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57980 "EHLO
+        Tue, 22 Mar 2022 14:27:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231920AbiCVLEU (ORCPT
+        with ESMTP id S240538AbiCVS1G (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 22 Mar 2022 07:04:20 -0400
-Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09A2D7EA25
-        for <linux-integrity@vger.kernel.org>; Tue, 22 Mar 2022 04:02:53 -0700 (PDT)
-Received: from [192.168.0.3] (ip5f5ae922.dynamic.kabel-deutschland.de [95.90.233.34])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5E8D061EA1929;
-        Tue, 22 Mar 2022 12:02:49 +0100 (CET)
-Message-ID: <f1c910eb-4ac9-13b7-e7fc-5c42e72f8bbf@molgen.mpg.de>
-Date:   Tue, 22 Mar 2022 12:02:48 +0100
+        Tue, 22 Mar 2022 14:27:06 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1140D91349
+        for <linux-integrity@vger.kernel.org>; Tue, 22 Mar 2022 11:25:26 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22MHlufe020577;
+        Tue, 22 Mar 2022 18:25:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=WHSY4fz+3A9hxbGx63CiJzrwZOhCEVEt9+qNTBBTwZQ=;
+ b=AbN7c13CBF4T/WKA79WVnJhw088jT8QHGD5fqYeRjrtdQh3SSsPHXJ9mcv7XTGGJ5cyS
+ zTMmlKXhrnS6J+I2ZfYdZOyKiqDh5HGldR8fuqoV0RHY4LkwvsCXNLoJOX6lVF2R85ia
+ ctsx6Fvvusc3YFuXPoUyqCPp9K9Fizd3sIWWzR/sKiLJfcwTCxlYuakydxJCml00TeYb
+ oBitMq7W/Ny7cYvyyXCaYcEEEiv7W8fwPkwoMeoBAGfxQK8DXtjD5vgmbnv0JncRGmcZ
+ /LwKLfVg9HZ5l77YsvBy8m7zrKGX45oX/aNi/70kkfqQvLzhzu4HlFEVHlUwBwhMZUV/ +Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eyautwh9b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Mar 2022 18:25:22 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22MHu1sB025715;
+        Tue, 22 Mar 2022 18:25:22 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eyautwh8w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Mar 2022 18:25:22 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22MICJx5027159;
+        Tue, 22 Mar 2022 18:25:20 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma05fra.de.ibm.com with ESMTP id 3ew6t9du38-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 22 Mar 2022 18:25:20 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22MIPIPE51380564
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 22 Mar 2022 18:25:18 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5451F42047;
+        Tue, 22 Mar 2022 18:25:18 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9037C42045;
+        Tue, 22 Mar 2022 18:25:17 +0000 (GMT)
+Received: from sig-9-65-81-246.ibm.com (unknown [9.65.81.246])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 22 Mar 2022 18:25:17 +0000 (GMT)
+Message-ID: <401a1ee927a68a7c0811f21f4e75b6f01956e59c.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] ci: Remove CentOS 8
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Petr Vorel <pvorel@suse.cz>, linux-integrity@vger.kernel.org
+Cc:     "Bruno E. O. Meneguele" <bmeneg@redhat.com>
+Date:   Tue, 22 Mar 2022 14:25:17 -0400
+In-Reply-To: <20220215074958.6942-1-pvorel@suse.cz>
+References: <20220215074958.6942-1-pvorel@suse.cz>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nSKys16_OqZ383dmfP2AiGr9vOL2Jms0
+X-Proofpoint-ORIG-GUID: 0iCC6olhRutr-N-2EZZRhOsLJz5MO3wS
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v1] tpm: Fix regression in tpm_tis_synquacer.c
-Content-Language: en-US
-To:     Johannes Holland <johannes.holland@infineon.com>
-References: <20220322105933.1242-1-johannes.holland@infineon.com>
-Cc:     peterhuewe@gmx.de, jarkko@kernel.org,
-        linux-integrity@vger.kernel.org
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20220322105933.1242-1-johannes.holland@infineon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-22_07,2022-03-22_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 priorityscore=1501 mlxscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203220095
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Dear Johannes,
+Hi Petr,
 
-
-Thank you for the patch.
-
-
-Am 22.03.22 um 11:59 schrieb Johannes Holland:
-> Remove unused variables and type mismatch (integer from pointer without
-> a cast).
-
-Maybe also paste the compiler error message?
-
-As it’s a regression, please also add a Fixes line.
-
-
-Kind regards,
-
-Paul
-
-
-> Signed-off-by: Johannes Holland <johannes.holland@infineon.com>
-> ---
->   drivers/char/tpm/tpm_tis_synquacer.c | 18 ++++--------------
->   1 file changed, 4 insertions(+), 14 deletions(-)
+On Tue, 2022-02-15 at 08:49 +0100, Petr Vorel wrote:
+> It EOL in 12/2021 and CI is failing due removed repo:
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_synquacer.c b/drivers/char/tpm/tpm_tis_synquacer.c
-> index 2751be8e6065..679196c61401 100644
-> --- a/drivers/char/tpm/tpm_tis_synquacer.c
-> +++ b/drivers/char/tpm/tpm_tis_synquacer.c
-> @@ -39,11 +39,6 @@ static int tpm_tis_synquacer_read_bytes(struct tpm_tis_data *data, u32 addr,
->   					enum tpm_tis_io_mode io_mode)
->   {
->   	struct tpm_tis_synquacer_phy *phy = to_tpm_tis_tcg_phy(data);
-> -	__le16 result_le16;
-> -	__le32 result_le32;
-> -	u16 result16;
-> -	u32 result32;
-> -
->   	switch (io_mode) {
->   	case TPM_TIS_PHYS_8:
->   		while (len--)
-> @@ -69,11 +64,6 @@ static int tpm_tis_synquacer_write_bytes(struct tpm_tis_data *data, u32 addr,
->   					 enum tpm_tis_io_mode io_mode)
->   {
->   	struct tpm_tis_synquacer_phy *phy = to_tpm_tis_tcg_phy(data);
-> -	__le16 result_le16;
-> -	__le32 result_le32;
-> -	u16 result16;
-> -	u32 result32;
-> -
->   	switch (io_mode) {
->   	case TPM_TIS_PHYS_8:
->   		while (len--)
-> @@ -86,10 +76,10 @@ static int tpm_tis_synquacer_write_bytes(struct tpm_tis_data *data, u32 addr,
->   		 * Due to the limitation of SPI controller on SynQuacer,
->   		 * 16/32 bits access must be done in byte-wise and descending order.
->   		 */
-> -		iowrite8(&value[3], phy->iobase + addr + 3);
-> -		iowrite8(&value[2], phy->iobase + addr + 2);
-> -		iowrite8(&value[1], phy->iobase + addr + 1);
-> -		iowrite8(&value[0], phy->iobase + addr);
-> +		iowrite8(value[3], phy->iobase + addr + 3);
-> +		iowrite8(value[2], phy->iobase + addr + 2);
-> +		iowrite8(value[1], phy->iobase + addr + 1);
-> +		iowrite8(value[0], phy->iobase + addr);
->   		break;
->   	}
->   
+> CentOS Linux 8 - AppStream                      232  B/s |  38  B     00:00
+> Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
+> 
+> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> ---
+> Hi,
+> 
+> the error:
+> https://github.com/pevik/ima-evm-utils/runs/5196409185?check_suite_focus=true
+> 
+> Mimi, could you please test Travis CI?
+> I tested only GitHub Actions:
+> https://github.com/pevik/ima-evm-utils/actions/runs/1845623174
+
+Removing "centos:latest" works, but is there another option?  Perhaps
+defining a different repo - "REPO=quay.io/centos/"?
+
+thanks,
+
+Mimi
+
