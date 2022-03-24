@@ -2,71 +2,77 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994C9C433F5
-	for <linux-integrity@archiver.kernel.org>; Thu, 24 Mar 2022 13:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8160C433EF
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Mar 2022 14:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346372AbiCXNeX (ORCPT
+        id S1350748AbiCXON5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 24 Mar 2022 09:34:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46630 "EHLO
+        Thu, 24 Mar 2022 10:13:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347487AbiCXNeX (ORCPT
+        with ESMTP id S1344493AbiCXON4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 24 Mar 2022 09:34:23 -0400
+        Thu, 24 Mar 2022 10:13:56 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F5C673EE
-        for <linux-integrity@vger.kernel.org>; Thu, 24 Mar 2022 06:32:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3212AC04F
+        for <linux-integrity@vger.kernel.org>; Thu, 24 Mar 2022 07:12:24 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2FCE31F38D;
-        Thu, 24 Mar 2022 13:32:50 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8E8771F38D;
+        Thu, 24 Mar 2022 14:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1648128770; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        t=1648131143;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=/F5R5GpuFPnXnfvZfrijv7DtSyPwTeFWupVjdT03QvQ=;
-        b=UULNB12ViBgRUcA5ER+lehws3GKjqzuj3lblD8DkqrvHgXdVN4m9sCLoBG7v+9zlnx2GUD
-        sahamD7MrTUTsZkXetjYN4TUMZ8LhZ2ldFeCGjIuxV2WMAfSbbFfXxgPsOSRFh8uuxwIPM
-        3+UOcBGUqXscPjqg85+REVl706SuzCY=
+        bh=xHgRdiKMEoGbWtI3cdinS+VtQweisGNmeGB63BLjflI=;
+        b=viLFsUNQX3EaBaYAKUPWKDTJtwaCuFKcSlfHNeA/BhKjeNSiIl8q/VijyI15e9D37vavjR
+        IGbqAGH5gnMxmKIetwBdFT5NPX4/1dmsBtvT17s9rv0+zwa4Sb+ltESq1jeIf7X9a+R25V
+        SfipC9Y0xpT/c2NeGGmPzvtUylgVWkk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1648128770;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        s=susede2_ed25519; t=1648131143;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=/F5R5GpuFPnXnfvZfrijv7DtSyPwTeFWupVjdT03QvQ=;
-        b=lFzSCJHY/CMCHr32/6WuOMESnHmua5Uika30pTJZFCMsmJdBKd0T56tw5tSSLXFgTkBGhU
-        L6d3yyIuxzqnpuDQ==
+        bh=xHgRdiKMEoGbWtI3cdinS+VtQweisGNmeGB63BLjflI=;
+        b=xxE7A0smVNThItO07LAHkITy/IRBiimYNkbhATuTypjnA+6VsWIX1ZdIuOTNHzppvA/uhN
+        D25KZE35jsL/KrCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0A00612FF7;
-        Thu, 24 Mar 2022 13:32:50 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 614D412FF7;
+        Thu, 24 Mar 2022 14:12:23 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id QTYGAgJzPGKEbgAAMHmgww
-        (envelope-from <chrubis@suse.cz>); Thu, 24 Mar 2022 13:32:50 +0000
-Date:   Thu, 24 Mar 2022 14:35:09 +0100
-From:   Cyril Hrubis <chrubis@suse.cz>
-To:     Yael Tzur <yaelt@google.com>
-Cc:     ltp@lists.linux.it, linux-integrity@vger.kernel.org
-Subject: Re: [LTP] [PATCH v4] syscalls/keyctl09: test encrypted keys with
- provided decrypted data.
-Message-ID: <YjxzjWHS19sUCl7T@yuki>
-References: <20220223200731.1859670-1-yaelt@google.com>
+        id eei0FUd8PGIcfwAAMHmgww
+        (envelope-from <pvorel@suse.cz>); Thu, 24 Mar 2022 14:12:23 +0000
+Date:   Thu, 24 Mar 2022 15:12:21 +0100
+From:   Petr Vorel <pvorel@suse.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org
+Subject: Re: [PATCH ima-evm-utils] travis: include CentOS stream 8
+Message-ID: <Yjx8RWbYwYV0ihKK@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20220323233057.42287-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220223200731.1859670-1-yaelt@google.com>
+In-Reply-To: <20220323233057.42287-1-zohar@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi!
-Applied, thanks.
+Hi Mimi,
 
--- 
-Cyril Hrubis
-chrubis@suse.cz
+> Replace CentOS 8 with CentOS stream 8.
+> Use podman for both CentOS 7 & 8.
+
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+
+What a shame that GitHub Actions cannot specify container.
+
+Kind regards,
+Petr
