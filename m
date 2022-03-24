@@ -2,105 +2,129 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBC4C433F5
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Mar 2022 23:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D718CC433F5
+	for <linux-integrity@archiver.kernel.org>; Thu, 24 Mar 2022 01:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344900AbiCWXcn (ORCPT
+        id S244723AbiCXBV6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Mar 2022 19:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34478 "EHLO
+        Wed, 23 Mar 2022 21:21:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241475AbiCWXcm (ORCPT
+        with ESMTP id S230416AbiCXBV5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Mar 2022 19:32:42 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4A9290CD8
-        for <linux-integrity@vger.kernel.org>; Wed, 23 Mar 2022 16:31:11 -0700 (PDT)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22NK1Xpa001438;
-        Wed, 23 Mar 2022 23:31:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=6OWHzXsVz7AKaMufFCWuuHm6SPCb97H9O49yCLw5nCA=;
- b=ObF267DGZxTfy+wdD/R9qprx2p2CyT8htV82eL+U8NaSiIAK4wcTjYGoRPcigyRtY+Km
- +9RmnzgUt4bGuhghTQjjcVNQyV15DeBFY9aIG6pd7PnZtHkr52JaHydSWIMtnPX903yx
- nKl3RXSsVIqSrtIGlNe5/8Ke2oaCi7peHHyrL2fz/2jCCwN9qEDJ4G32NVtizs9uXiz7
- coCCizctXr3X5hSKc+69Qf7b1anGiNzu/ozd5b/Y57vlS2mXN0nhnvXrAU0bMnYfvZiw
- 2sKRAVw+u5zdG1289cWVoTSpk8s+xebzuPLxXSF8xE4KNQfxvo5ismGP3jA0IAUe+ULt Fw== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3f053qb512-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Mar 2022 23:31:08 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22NNGvYW012903;
-        Wed, 23 Mar 2022 23:31:06 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma06ams.nl.ibm.com with ESMTP id 3ew6ej1jvb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Mar 2022 23:31:06 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22NNV3xd33685810
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Mar 2022 23:31:03 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46B4CA4054;
-        Wed, 23 Mar 2022 23:31:03 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 90DCEA4060;
-        Wed, 23 Mar 2022 23:31:02 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.65.73.171])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Mar 2022 23:31:02 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>
-Subject: [PATCH ima-evm-utils] travis: include CentOS stream 8
-Date:   Wed, 23 Mar 2022 19:30:57 -0400
-Message-Id: <20220323233057.42287-1-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
+        Wed, 23 Mar 2022 21:21:57 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4622C92873;
+        Wed, 23 Mar 2022 18:20:25 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KP6mS2V7lzCr3L;
+        Thu, 24 Mar 2022 09:18:16 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Thu, 24 Mar 2022 09:20:23 +0800
+Message-ID: <7831693e-f923-043e-6097-17052eb83f7e@huawei.com>
+Date:   Thu, 24 Mar 2022 09:20:12 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: atgcrl8Ecln4b_bXRBUuFlM1bhr8gB7L
-X-Proofpoint-GUID: atgcrl8Ecln4b_bXRBUuFlM1bhr8gB7L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-23_08,2022-03-23_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- bulkscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- malwarescore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203230120
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.0
+Subject: Re: [PATCH] ima: remove template "ima" as the compiled default
+Content-Language: en-US
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+To:     <linux-integrity@vger.kernel.org>
+CC:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <roberto.sassu@huawei.com>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <xiujianfeng@huawei.com>,
+        <wangweiyang2@huawei.com>
+References: <20220321074737.138002-1-guozihua@huawei.com>
+In-Reply-To: <20220321074737.138002-1-guozihua@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Replace CentOS 8 with CentOS stream 8.
-Use podman for both CentOS 7 & 8.
+On 2022/3/21 15:47, GUO Zihua wrote:
+> Template "ima" is a legacy template which limits the hash algorithm to
+> either sha1 or md5. None of them should be considered "strong" these
+> days. Besides, allowing template "ima" as the compiled default would
+> also cause the following issue: the cmdline option "ima_hash=" must be
+> behind "ima_template=", otherwise "ima_hash=" might be rejected.
+> 
+> The root cause of this issue is that during the processing of ima_hash,
+> we would try to check whether the hash algorithm is compatible with the
+> template. If the template is not set at the moment we do the check, we
+> check the algorithm against the compiled default template. If the
+> complied default template is "ima", then we reject any hash algorithm
+> other than sha1 and md5.
+> 
+> For example, if the compiled default template is "ima", and the default
+> algorithm is sha1 (which is the current default). In the cmdline, we put
+> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
+> that ima starts with ima-ng as the template and sha256 as the hash
+> algorithm. However, during the processing of "ima_hash=",
+> "ima_template=" has not been processed yet, and hash_setup would check
+> the configured hash algorithm against the compiled default: ima, and
+> reject sha256. So at the end, the hash algorithm that is actually used
+> will be sha1.
+> 
+> With template "ima" removed from the compiled default, we ensure that the
+> default tempalte would at least be "ima-ng" which allows for basically
+> any hash algorithm.
+> 
+> This change would not break the algorithm compatibility checking for
+> IMA.
+> 
+> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
+> Signed-off-by: GUO Zihua <guozihua@huawei.com>
+> ---
+>   security/integrity/ima/Kconfig | 14 +++++---------
+>   1 file changed, 5 insertions(+), 9 deletions(-)
+> 
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index f3a9cc201c8c..9513df2ac19e 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -65,14 +65,11 @@ choice
+>   	help
+>   	  Select the default IMA measurement template.
+>   
+> -	  The original 'ima' measurement list template contains a
+> -	  hash, defined as 20 bytes, and a null terminated pathname,
+> -	  limited to 255 characters.  The 'ima-ng' measurement list
+> -	  template permits both larger hash digests and longer
+> -	  pathnames.
+> -
+> -	config IMA_TEMPLATE
+> -		bool "ima"
+> +	  The 'ima-ng' measurement list template permits various hash
+> +	  digests and long pathnames. The compiled default template
+> +	  can be overwritten using the kernel command line
+> +	  'ima_template=' option.
+> +
+>   	config IMA_NG_TEMPLATE
+>   		bool "ima-ng (default)"
+>   	config IMA_SIG_TEMPLATE
+> @@ -82,7 +79,6 @@ endchoice
+>   config IMA_DEFAULT_TEMPLATE
+>   	string
+>   	depends on IMA
+> -	default "ima" if IMA_TEMPLATE
+>   	default "ima-ng" if IMA_NG_TEMPLATE
+>   	default "ima-sig" if IMA_SIG_TEMPLATE
+>   
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- .travis.yml | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/.travis.yml b/.travis.yml
-index bdf78a1b12cd..0b70971a3c76 100644
---- a/.travis.yml
-+++ b/.travis.yml
-@@ -52,11 +52,11 @@ matrix:
-           compiler: clang
- 
-         - os: linux
--          env: DISTRO=centos:7 TSS=tpm2-tss
-+          env: DISTRO=centos:7 TSS=tpm2-tss CONTAINER=podman CONTAINER_ARGS="--runtime=/usr/bin/crun --network=host"
-           compiler: gcc
- 
-         - os: linux
--          env: DISTRO=centos:latest TSS=tpm2-tss
-+          env: REPO="quay.io/centos/" DISTRO="${REPO}centos:stream8" TSS=tpm2-tss CONTAINER=podman CONTAINER_ARGS="--runtime=/usr/bin/crun --network=host"
-           compiler: clang
- 
-         - os: linux
+Any thought on this patch?
+
+Thanks!
+
 -- 
-2.27.0
-
+Best
+GUO Zihua
