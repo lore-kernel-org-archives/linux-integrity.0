@@ -2,124 +2,165 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81CCC433EF
-	for <linux-integrity@archiver.kernel.org>; Sat, 26 Mar 2022 09:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED72C433EF
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Mar 2022 03:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232209AbiCZJBo convert rfc822-to-8bit (ORCPT
+        id S237861AbiC1DrT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 26 Mar 2022 05:01:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35490 "EHLO
+        Sun, 27 Mar 2022 23:47:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231671AbiCZJBn (ORCPT
+        with ESMTP id S232101AbiC1DrS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 26 Mar 2022 05:01:43 -0400
-Received: from sender4-of-o58.zoho.com (sender4-of-o58.zoho.com [136.143.188.58])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ACEA1A3B8;
-        Sat, 26 Mar 2022 02:00:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1648285180; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=U0KH9TtA849ZQpQgkzTQJHBLd+gA6KyKITRo6oId6yDEWJX/6mqwQi8g2N8k5yVs8+BpnR2MN7Pabu+CXap2KPcXYjX1T9sgLA0HCNT/lIDoB+UDhpvLg1ZZeihANwvHbGNhEFCjEneT+9UuFBk4RIdAQu2Cx4C6NF5VSpD/E0s=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1648285180; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=LOOCE7XdBN7XwT4sC/6xpw4M6jD70wZ1Ts5Ft73PBqA=; 
-        b=UQ3clG9XqqA9QAZiUAvMSN/i+xkw7yJ4DJAF1W0ItzksMWzFJzBxvNZqSK/bcTbhoIZ7bM1aTPNvjvDMRSKX4JQt73H7r9qi04beZMe4pEKZQunb18IGWsHrXufxFzJML6zPHYyZPHAumunbLG139mqcWgAWfApxjgXozVbsLU0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de>
-Received: from z3r0.lan (185.31.62.161 [185.31.62.161]) by mx.zohomail.com
-        with SMTPS id 1648285177777877.9724402004048; Sat, 26 Mar 2022 01:59:37 -0700 (PDT)
-Message-ID: <7028ffce7164986435e8bb9566f09bb79730c554.camel@mniewoehner.de>
-Subject: Re: [PATCH v3 0/4] Fixes for TPM interrupt handling
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
-        stefanb@linux.ibm.com, James.Bottomley@hansenpartnership.com,
-        keescook@chromium.org, jsnitsel@redhat.com, ml.linux@elloe.vision,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        twawrzynczak@chromium.org
-In-Reply-To: <efdb99b3-6d33-38b1-64a0-671821101631@gmx.de>
-References: <20210501135727.17747-1-LinoSanfilippo@gmx.de>
-         <20210501135727.17747-3-LinoSanfilippo@gmx.de>
-         <YJAby8mmiJ74qWAh@kernel.org> <6722bf6f-1a3f-ee9c-55e2-cf63c64266a9@gmx.de>
-         <YJNKs8bUMGOzFre+@kernel.org>
-         <2a1a1cf61732eff1608aeae74054a0c135c1671f.camel@mniewoehner.de>
-         <Yj0lhqTP1RoedxSc@iki.fi>
-         <0d6c22b40a2f17d4b260f287d4c479a96a88b0b1.camel@mniewoehner.de>
-         <efdb99b3-6d33-38b1-64a0-671821101631@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Sat, 26 Mar 2022 09:59:33 +0100
+        Sun, 27 Mar 2022 23:47:18 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D8BCFD26;
+        Sun, 27 Mar 2022 20:45:38 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KRdlz1654zBrny;
+        Mon, 28 Mar 2022 11:41:35 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Mon, 28 Mar 2022 11:45:35 +0800
+Message-ID: <0e803aad-5ae6-349b-b17e-89a832306925@huawei.com>
+Date:   Mon, 28 Mar 2022 11:45:24 +0800
 MIME-Version: 1.0
-User-Agent: Evolution 3.42.2 
-Content-Transfer-Encoding: 8BIT
-X-ZohoMailClient: External
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v7 1/5] fs-verity: define a function to return the
+ integrity protected file digest
+Content-Language: en-US
+To:     Mimi Zohar <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
+CC:     Eric Biggers <ebiggers@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        <linux-fscrypt@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@google.com>
+References: <20220325223824.310119-1-zohar@linux.ibm.com>
+ <20220325223824.310119-2-zohar@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <20220325223824.310119-2-zohar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Lino,
+On 2022/3/26 6:38, Mimi Zohar wrote:
+> Define a function named fsverity_get_digest() to return the verity file
+> digest and the associated hash algorithm (enum hash_algo).
+> 
+> This assumes that before calling fsverity_get_digest() the file must have
+> been opened, which is even true for the IMA measure/appraise on file
+> open policy rule use case (func=FILE_CHECK).  do_open() calls vfs_open()
+> immediately prior to ima_file_check().
+> 
+> Acked-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>   fs/verity/Kconfig            |  1 +
+>   fs/verity/fsverity_private.h |  7 ------
+>   fs/verity/measure.c          | 43 ++++++++++++++++++++++++++++++++++++
+>   include/linux/fsverity.h     | 18 +++++++++++++++
+>   4 files changed, 62 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/verity/Kconfig b/fs/verity/Kconfig
+> index 24d1b54de807..54598cd80145 100644
+> --- a/fs/verity/Kconfig
+> +++ b/fs/verity/Kconfig
+> @@ -3,6 +3,7 @@
+>   config FS_VERITY
+>   	bool "FS Verity (read-only file-based authenticity protection)"
+>   	select CRYPTO
+> +	select CRYPTO_HASH_INFO
+>   	# SHA-256 is implied as it's intended to be the default hash algorithm.
+>   	# To avoid bloat, other wanted algorithms must be selected explicitly.
+>   	# Note that CRYPTO_SHA256 denotes the generic C implementation, but
+> diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+> index a7920434bae5..c6fb62e0ef1a 100644
+> --- a/fs/verity/fsverity_private.h
+> +++ b/fs/verity/fsverity_private.h
+> @@ -14,7 +14,6 @@
+>   
+>   #define pr_fmt(fmt) "fs-verity: " fmt
+>   
+> -#include <crypto/sha2.h>
+>   #include <linux/fsverity.h>
+>   #include <linux/mempool.h>
+>   
+> @@ -26,12 +25,6 @@ struct ahash_request;
+>    */
+>   #define FS_VERITY_MAX_LEVELS		8
+>   
+> -/*
+> - * Largest digest size among all hash algorithms supported by fs-verity.
+> - * Currently assumed to be <= size of fsverity_descriptor::root_hash.
+> - */
+> -#define FS_VERITY_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
+> -
+>   /* A hash algorithm supported by fs-verity */
+>   struct fsverity_hash_alg {
+>   	struct crypto_ahash *tfm; /* hash tfm, allocated on demand */
+> diff --git a/fs/verity/measure.c b/fs/verity/measure.c
+> index f0d7b30c62db..e99c00350c28 100644
+> --- a/fs/verity/measure.c
+> +++ b/fs/verity/measure.c
+> @@ -57,3 +57,46 @@ int fsverity_ioctl_measure(struct file *filp, void __user *_uarg)
+>   	return 0;
+>   }
+>   EXPORT_SYMBOL_GPL(fsverity_ioctl_measure);
+> +
+> +/**
+> + * fsverity_get_digest() - get a verity file's digest
+> + * @inode: inode to get digest of
+> + * @digest: (out) pointer to the digest
+> + * @alg: (out) pointer to the hash algorithm enumeration
+> + *
+> + * Return the file hash algorithm and digest of an fsverity protected file.
+> + * Assumption: before calling fsverity_get_digest(), the file must have been
+> + * opened.
+> + *
+> + * Return: 0 on success, -errno on failure
+> + */
+> +int fsverity_get_digest(struct inode *inode,
+> +			u8 digest[FS_VERITY_MAX_DIGEST_SIZE],
+> +			enum hash_algo *alg)
+> +{
+> +	const struct fsverity_info *vi;
+> +	const struct fsverity_hash_alg *hash_alg;
+> +	int i;
+> +
+> +	vi = fsverity_get_info(inode);
+> +	if (!vi)
+> +		return -ENODATA; /* not a verity file */
+> +
+> +	hash_alg = vi->tree_params.hash_alg;
+> +	memset(digest, 0, FS_VERITY_MAX_DIGEST_SIZE);
 
-On Sat, 2022-03-26 at 04:24 +0100, Lino Sanfilippo wrote:
-> 
-> Hi Michael,
-> 
-> On 25.03.22 at 13:32, Michael Niewöhner wrote:
-> > > > 
-> > > > Lino, I'd be happy to test the patches, when you have time and interest
-> > > > to
-> > > > work
-> > > > on this again!
-> > > > 
-> > > > Thanks, Michael
-> > > 
-> > > It's quite easy to test them out. Both fixes are in the mainline GIT tree.
-> > > E.g. give a shot rc1, and please report if any issues persists to:
-> > > 
-> > >   linux-integrity@vger.kernel.org 
-> > > 
-> > > BR, Jarkko
-> > 
-> > I don't see Linos patches on mainline. Also, the series included four
-> > patches:
-> > [PATCH v3 0/4] Fixes for TPM interrupt handling
-> > [PATCH v3 1/4] tpm: Use a threaded interrupt handler
-> > [PATCH v3 2/4] tpm: Simplify locality handling
-> > [PATCH v3 3/4] tpm: Fix test for interrupts
-> > [PATCH v3 4/4] tpm: Only enable supported irqs
-> > 
-> > Three of them are relevant for the interrupt problem, which is still present
-> > in
-> > mainline, as these patches were refused:
-> > [PATCH v3 1/4] tpm: Use a threaded interrupt handler
-> > [PATCH v3 2/4] tpm: Simplify locality handling
-> > [PATCH v3 3/4] tpm: Fix test for interrupts
-> > 
-> > Michael
-> > 
-> 
-> You are right, the interrupts are still not working in the mainline kernel.
-> I would gladly make another attempt to fix this but rather step by step
-> than in a series that tries to fix (different) things at once.
+Hi Mimi,
 
-IMHO a series is perfectly fine, as it's easier to show *why* single changes are
-required (like already done in v3 0/4). One just has to actually *read* what's
-written there. Ahem. It's up to you, though.
+I would suggest moving this memset downward right before the memcpy.
 
-> 
-> A first step could be to have a sleepable context for the interrupt handling,
-> since in case of SPI the accesses to the irq status register may sleep.
-> 
-> I sent a patch for this purpose once, but it seems to have gone lost:
-> 
-> https://lore.kernel.org/all/20210620023444.14684-1-LinoSanfilippo@gmx.de/
-> 
-
-Jarkko, looks like you've already tested that patch on your NUC?
-
-> 
-> Best regards,
-> Lino
-> 
-
-
-Michael
+> +
+> +	/* convert the verity hash algorithm name to a hash_algo_name enum */
+> +	i = match_string(hash_algo_name, HASH_ALGO__LAST, hash_alg->name);
+> +	if (i < 0)
+> +		return -EINVAL;
+> +	*alg = i;
+> +
+> +	if (WARN_ON_ONCE(hash_alg->digest_size != hash_digest_size[*alg]))
+> +		return -EINVAL;
+> +	memcpy(digest, vi->file_digest, hash_alg->digest_size);
+> +
+> +	pr_debug("file digest %s:%*phN\n", hash_algo_name[*alg],
+> +		 hash_digest_size[*alg], digest);
+> +
+> +	return 0;
+> +}
+-- 
+Best
+GUO Zihua
