@@ -2,153 +2,222 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3278C433EF
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Mar 2022 13:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B61C433FE
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Mar 2022 17:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243493AbiC1NxB (ORCPT
+        id S244644AbiC1RxM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Mar 2022 09:53:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
+        Mon, 28 Mar 2022 13:53:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243495AbiC1NxA (ORCPT
+        with ESMTP id S244775AbiC1Rw4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 Mar 2022 09:53:00 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DD855EBEB;
-        Mon, 28 Mar 2022 06:51:18 -0700 (PDT)
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22SDIID9013485;
-        Mon, 28 Mar 2022 13:51:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=pr6D/jbd4lK0qyeCKzWTrtA5NkWr9yYSeGF6wt9w0lg=;
- b=nwI9w/Ew6yo8vLrscTHGMKI9xfdxGTFFWQoBmQocesNdw2JEw9ssABQg+O1xVqDaNbYy
- p2v3G4jd5f/aLQBV49tN+0UPTehXrebc3GFBeTaVWejzS03GPFPjXubqicuJ3h4Q70KL
- yYlv+vAYikdmImV9enkOuW9qG29h0spLp7PNsC5077j8TeuF0qkR54izO/6BBttTUZvp
- FReUDLmuNvl0pPpdU21eDp8UJCI/GnzzBvE9uCeNF+xh2fyRwgpFMFUSCWpZaO8pT4Z/
- LQlkyy1O5TTcDVtvHEghUPXJQlA/09Kfrdv7eu4ozHb9Tv240QSK5f4hgtwp9/N4rLox ZQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3f3dsngn76-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 28 Mar 2022 13:51:08 +0000
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22SDg5wt019333;
-        Mon, 28 Mar 2022 13:51:08 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3f3dsngn6r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 28 Mar 2022 13:51:07 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22SDhaa7013419;
-        Mon, 28 Mar 2022 13:51:06 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma04ams.nl.ibm.com with ESMTP id 3f1tf8v3hc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 28 Mar 2022 13:51:06 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22SDp3Bl34210212
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Mar 2022 13:51:03 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6D7634203F;
-        Mon, 28 Mar 2022 13:51:03 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 731E042045;
-        Mon, 28 Mar 2022 13:51:02 +0000 (GMT)
-Received: from sig-9-65-77-40.ibm.com (unknown [9.65.77.40])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Mar 2022 13:51:02 +0000 (GMT)
-Message-ID: <152f1bfa9a07354183ca808a036d5e3fef664ea8.camel@linux.ibm.com>
-Subject: Re: [PATCH v7 1/5] fs-verity: define a function to return the
- integrity protected file digest
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Guozihua (Scott)" <guozihua@huawei.com>,
-        linux-integrity@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Date:   Mon, 28 Mar 2022 09:51:01 -0400
-In-Reply-To: <0e803aad-5ae6-349b-b17e-89a832306925@huawei.com>
-References: <20220325223824.310119-1-zohar@linux.ibm.com>
-         <20220325223824.310119-2-zohar@linux.ibm.com>
-         <0e803aad-5ae6-349b-b17e-89a832306925@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: WC8DueF78B8C15jgMAIQ6z0M7HltKIvp
-X-Proofpoint-ORIG-GUID: TsjQreu5Rozw_elGqqFo-o0zcO1GdIi9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-28_05,2022-03-28_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 malwarescore=0 adultscore=0 clxscore=1015 suspectscore=0
- impostorscore=0 mlxscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203280078
+        Mon, 28 Mar 2022 13:52:56 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD65D3C735;
+        Mon, 28 Mar 2022 10:51:15 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0YR4g3Pz67w73;
+        Tue, 29 Mar 2022 01:48:43 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 28 Mar 2022 19:51:12 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
+        <shuah@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <zohar@linux.ibm.com>
+CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+        <linux-kselftest@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 04/18] bpf-preload: Export and call bpf_obj_do_pin_kernel()
+Date:   Mon, 28 Mar 2022 19:50:19 +0200
+Message-ID: <20220328175033.2437312-5-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Scott,
+Export bpf_obj_do_pin_kernel(), so that the preload method of an eBPF
+program (built-in or in a kernel module) can call this function to pin
+links, maps and progs.
 
-On Mon, 2022-03-28 at 11:45 +0800, Guozihua (Scott) wrote:
-> > +
-> > +/**
-> > + * fsverity_get_digest() - get a verity file's digest
-> > + * @inode: inode to get digest of
-> > + * @digest: (out) pointer to the digest
-> > + * @alg: (out) pointer to the hash algorithm enumeration
-> > + *
-> > + * Return the file hash algorithm and digest of an fsverity protected file.
-> > + * Assumption: before calling fsverity_get_digest(), the file must have been
-> > + * opened.
-> > + *
-> > + * Return: 0 on success, -errno on failure
-> > + */
-> > +int fsverity_get_digest(struct inode *inode,
-> > +                     u8 digest[FS_VERITY_MAX_DIGEST_SIZE],
-> > +                     enum hash_algo *alg)
-> > +{
-> > +     const struct fsverity_info *vi;
-> > +     const struct fsverity_hash_alg *hash_alg;
-> > +     int i;
-> > +
-> > +     vi = fsverity_get_info(inode);
-> > +     if (!vi)
-> > +             return -ENODATA; /* not a verity file */
-> > +
-> > +     hash_alg = vi->tree_params.hash_alg;
-> > +     memset(digest, 0, FS_VERITY_MAX_DIGEST_SIZE);
-> 
-> Hi Mimi,
-> 
-> I would suggest moving this memset downward right before the memcpy.
+This removes the need of defining the bpf_preload_info structure, to hold
+the links to be pinned by populate_bpffs().
 
-By doing it here, any existing garbage stored in the digest is cleared
-before returning a failure.
+Since after this patch the preload method has everything needed to pin
+objects, that makes it possible to pin arbitrary objects of eBPF programs,
+by generating the corresponding preload method in the light skeleton.
 
-thanks,
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ include/linux/bpf_preload.h           | 20 +++++++++++++-----
+ kernel/bpf/inode.c                    | 30 +++++----------------------
+ kernel/bpf/preload/bpf_preload_kern.c | 25 +++++++++++++++++-----
+ 3 files changed, 40 insertions(+), 35 deletions(-)
 
-Mimi
-> 
-> > +
-> > +     /* convert the verity hash algorithm name to a hash_algo_name enum */
-> > +     i = match_string(hash_algo_name, HASH_ALGO__LAST, hash_alg->name);
-> > +     if (i < 0)
-> > +             return -EINVAL;
-> > +     *alg = i;
-> > +
-> > +     if (WARN_ON_ONCE(hash_alg->digest_size != hash_digest_size[*alg]))
-> > +             return -EINVAL;
-> > +     memcpy(digest, vi->file_digest, hash_alg->digest_size);
-> > +
-> > +     pr_debug("file digest %s:%*phN\n", hash_algo_name[*alg],
-> > +              hash_digest_size[*alg], digest);
-> > +
-> > +     return 0;
-
+diff --git a/include/linux/bpf_preload.h b/include/linux/bpf_preload.h
+index 09d55d9f1131..e604933b3daa 100644
+--- a/include/linux/bpf_preload.h
++++ b/include/linux/bpf_preload.h
+@@ -2,19 +2,29 @@
+ #ifndef _BPF_PRELOAD_H
+ #define _BPF_PRELOAD_H
+ 
+-struct bpf_preload_info {
+-	char link_name[16];
+-	struct bpf_link *link;
++enum bpf_type {
++	BPF_TYPE_UNSPEC	= 0,
++	BPF_TYPE_PROG,
++	BPF_TYPE_MAP,
++	BPF_TYPE_LINK,
+ };
+ 
+ struct bpf_preload_ops {
+-	int (*preload)(struct bpf_preload_info *);
++	int (*preload)(struct dentry *parent);
+ 	struct module *owner;
+ };
+ 
+ #ifdef CONFIG_BPF_SYSCALL
+ extern struct bpf_preload_ops *bpf_preload_ops;
++
++int bpf_obj_do_pin_kernel(struct dentry *parent, const char *name, void *raw,
++			  enum bpf_type type);
++#else
++static inline int bpf_obj_do_pin_kernel(struct dentry *parent, const char *name,
++					void *raw, enum bpf_type type)
++{
++	return -EOPNOTSUPP;
++}
+ #endif /*CONFIG_BPF_SYSCALL*/
+ 
+-#define BPF_PRELOAD_LINKS 2
+ #endif
+diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
+index a9d725db4cf4..bb8762abbf3d 100644
+--- a/kernel/bpf/inode.c
++++ b/kernel/bpf/inode.c
+@@ -22,13 +22,6 @@
+ #include <linux/bpf_trace.h>
+ #include <linux/bpf_preload.h>
+ 
+-enum bpf_type {
+-	BPF_TYPE_UNSPEC	= 0,
+-	BPF_TYPE_PROG,
+-	BPF_TYPE_MAP,
+-	BPF_TYPE_LINK,
+-};
+-
+ static void *bpf_any_get(void *raw, enum bpf_type type)
+ {
+ 	switch (type) {
+@@ -415,9 +408,8 @@ static const struct inode_operations bpf_dir_iops = {
+ };
+ 
+ /* pin object into bpffs */
+-static int bpf_obj_do_pin_kernel(struct dentry *parent,
+-				 const char *name, void *raw,
+-				 enum bpf_type type)
++int bpf_obj_do_pin_kernel(struct dentry *parent, const char *name, void *raw,
++			  enum bpf_type type)
+ {
+ 	umode_t mode = S_IFREG | S_IRUSR;
+ 	struct dentry *dentry;
+@@ -449,6 +441,7 @@ static int bpf_obj_do_pin_kernel(struct dentry *parent,
+ 	inode_unlock(parent->d_inode);
+ 	return ret;
+ }
++EXPORT_SYMBOL(bpf_obj_do_pin_kernel);
+ 
+ static int bpf_obj_do_pin(const char __user *pathname, void *raw,
+ 			  enum bpf_type type)
+@@ -724,8 +717,7 @@ static DEFINE_MUTEX(bpf_preload_lock);
+ 
+ static int populate_bpffs(struct dentry *parent)
+ {
+-	struct bpf_preload_info objs[BPF_PRELOAD_LINKS] = {};
+-	int err = 0, i;
++	int err = 0;
+ 
+ 	/* grab the mutex to make sure the kernel interactions with bpf_preload
+ 	 * are serialized
+@@ -736,19 +728,7 @@ static int populate_bpffs(struct dentry *parent)
+ 	if (!bpf_preload_mod_get())
+ 		goto out;
+ 
+-	err = bpf_preload_ops->preload(objs);
+-	if (err)
+-		goto out_put;
+-	for (i = 0; i < BPF_PRELOAD_LINKS; i++) {
+-		bpf_link_inc(objs[i].link);
+-		err = bpf_obj_do_pin_kernel(parent, objs[i].link_name,
+-					    objs[i].link, BPF_TYPE_LINK);
+-		if (err) {
+-			bpf_link_put(objs[i].link);
+-			goto out_put;
+-		}
+-	}
+-out_put:
++	err = bpf_preload_ops->preload(parent);
+ 	bpf_preload_mod_put();
+ out:
+ 	mutex_unlock(&bpf_preload_lock);
+diff --git a/kernel/bpf/preload/bpf_preload_kern.c b/kernel/bpf/preload/bpf_preload_kern.c
+index f43391d1c49c..d70047108bb3 100644
+--- a/kernel/bpf/preload/bpf_preload_kern.c
++++ b/kernel/bpf/preload/bpf_preload_kern.c
+@@ -17,13 +17,28 @@ static void free_links_and_skel(void)
+ 	iterators_bpf__destroy(skel);
+ }
+ 
+-static int preload(struct bpf_preload_info *obj)
++static int preload(struct dentry *parent)
+ {
+-	strlcpy(obj[0].link_name, "maps.debug", sizeof(obj[0].link_name));
+-	obj[0].link = maps_link;
+-	strlcpy(obj[1].link_name, "progs.debug", sizeof(obj[1].link_name));
+-	obj[1].link = progs_link;
++	int err;
++
++	bpf_link_inc(maps_link);
++	bpf_link_inc(progs_link);
++
++	err = bpf_obj_do_pin_kernel(parent, "maps.debug", maps_link,
++				    BPF_TYPE_LINK);
++	if (err)
++		goto undo;
++
++	err = bpf_obj_do_pin_kernel(parent, "progs.debug", progs_link,
++				    BPF_TYPE_LINK);
++	if (err)
++		goto undo;
++
+ 	return 0;
++undo:
++	bpf_link_put(maps_link);
++	bpf_link_put(progs_link);
++	return err;
+ }
+ 
+ static struct bpf_preload_ops ops = {
+-- 
+2.32.0
 
