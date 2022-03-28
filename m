@@ -2,27 +2,27 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26564C4167D
-	for <linux-integrity@archiver.kernel.org>; Mon, 28 Mar 2022 17:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3864C4332F
+	for <linux-integrity@archiver.kernel.org>; Mon, 28 Mar 2022 17:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244734AbiC1RxM (ORCPT
+        id S244750AbiC1Rxw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 28 Mar 2022 13:53:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33340 "EHLO
+        Mon, 28 Mar 2022 13:53:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244770AbiC1Rwz (ORCPT
+        with ESMTP id S244761AbiC1Rwx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 28 Mar 2022 13:52:55 -0400
+        Mon, 28 Mar 2022 13:52:53 -0400
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3B03CA5F;
-        Mon, 28 Mar 2022 10:51:14 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0YQ3KRMz67Q7R;
-        Tue, 29 Mar 2022 01:48:42 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B5159A5D;
+        Mon, 28 Mar 2022 10:51:12 -0700 (PDT)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0Z80VPMz67PnL;
+        Tue, 29 Mar 2022 01:49:20 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 28 Mar 2022 19:51:11 +0200
+ 15.1.2375.24; Mon, 28 Mar 2022 19:51:09 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
         <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
@@ -37,9 +37,9 @@ CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 03/18] bpf-preload: Generalize object pinning from the kernel
-Date:   Mon, 28 Mar 2022 19:50:18 +0200
-Message-ID: <20220328175033.2437312-4-roberto.sassu@huawei.com>
+Subject: [PATCH 01/18] bpf: Export bpf_link_inc()
+Date:   Mon, 28 Mar 2022 19:50:16 +0200
+Message-ID: <20220328175033.2437312-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
 References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
@@ -54,70 +54,32 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Rename bpf_iter_link_pin_kernel() to bpf_obj_do_pin_kernel(), to match the
-user space counterpart bpf_obj_do_pin() and similarly to the latter, accept
-a generic object pointer and its type, so that the preload method can pin
-not only links but also maps and progs.
+In the upcoming patches, populate_bpffs() will not have visibility anymore
+on the links and maps to be pinned (to avoid the limitation of the 'objs'
+fixed-size array), but the eBPF-program-specific preload method will
+directly do the pinning and increase/decrease the reference count.
+
+Since the preload method can be implemented in a kernel module, also
+bpf_link_inc(), before called by populate_bpffs(), should be exported.
+Thus, export bpf_link_inc().
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- kernel/bpf/inode.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+ kernel/bpf/syscall.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index 1f2d468abf58..a9d725db4cf4 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -414,9 +414,10 @@ static const struct inode_operations bpf_dir_iops = {
- 	.unlink		= simple_unlink,
- };
- 
--/* pin iterator link into bpffs */
--static int bpf_iter_link_pin_kernel(struct dentry *parent,
--				    const char *name, struct bpf_link *link)
-+/* pin object into bpffs */
-+static int bpf_obj_do_pin_kernel(struct dentry *parent,
-+				 const char *name, void *raw,
-+				 enum bpf_type type)
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index cdaa1152436a..8ffe342545c3 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2459,6 +2459,7 @@ void bpf_link_inc(struct bpf_link *link)
  {
- 	umode_t mode = S_IFREG | S_IRUSR;
- 	struct dentry *dentry;
-@@ -428,8 +429,22 @@ static int bpf_iter_link_pin_kernel(struct dentry *parent,
- 		inode_unlock(parent->d_inode);
- 		return PTR_ERR(dentry);
- 	}
--	ret = bpf_mkobj_ops(dentry, mode, link, &bpf_link_iops,
--			    &bpf_iter_fops);
-+
-+	switch (type) {
-+	case BPF_TYPE_PROG:
-+		ret = bpf_mkprog(dentry, mode, raw);
-+		break;
-+	case BPF_TYPE_MAP:
-+		ret = bpf_mkmap(dentry, mode, raw);
-+		break;
-+	case BPF_TYPE_LINK:
-+		ret = bpf_mklink(dentry, mode, raw);
-+		break;
-+	default:
-+		ret = -EOPNOTSUPP;
-+		break;
-+	}
-+
- 	dput(dentry);
- 	inode_unlock(parent->d_inode);
- 	return ret;
-@@ -726,8 +741,8 @@ static int populate_bpffs(struct dentry *parent)
- 		goto out_put;
- 	for (i = 0; i < BPF_PRELOAD_LINKS; i++) {
- 		bpf_link_inc(objs[i].link);
--		err = bpf_iter_link_pin_kernel(parent,
--					       objs[i].link_name, objs[i].link);
-+		err = bpf_obj_do_pin_kernel(parent, objs[i].link_name,
-+					    objs[i].link, BPF_TYPE_LINK);
- 		if (err) {
- 			bpf_link_put(objs[i].link);
- 			goto out_put;
+ 	atomic64_inc(&link->refcnt);
+ }
++EXPORT_SYMBOL_GPL(bpf_link_inc);
+ 
+ /* bpf_link_free is guaranteed to be called from process context */
+ static void bpf_link_free(struct bpf_link *link)
 -- 
 2.32.0
 
