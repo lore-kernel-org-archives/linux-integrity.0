@@ -2,116 +2,200 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C36DC433F5
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Mar 2022 15:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE55EC43219
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Mar 2022 16:06:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235559AbiC3PUS (ORCPT
+        id S1348630AbiC3QI3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Mar 2022 11:20:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
+        Wed, 30 Mar 2022 12:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240658AbiC3PUS (ORCPT
+        with ESMTP id S1348710AbiC3QI0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Mar 2022 11:20:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFE4515AAE2;
-        Wed, 30 Mar 2022 08:18:32 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7CD9EB81B2F;
-        Wed, 30 Mar 2022 15:18:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A6FAC340EE;
-        Wed, 30 Mar 2022 15:18:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648653510;
-        bh=NZtLh5n6uJudC6+M/fqWrHQmUDG8lg9LYqRK+f4nvX8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ruhvSz9i814m2acImZ8wezw8pt9oMQE/BYobaaOwb3vLi5z/HHeh0CSkeEWv6lyWd
-         UCQfXZqZPLYKcO7Eojt4wRAl95VVc6azBSSLCJR72NGHcX31LL1YjpnOPrn7VeQpoR
-         obdm0UJ7Er6CAc26SzKAWCb2K+FLNalfJPQkjU0JBC/whtTQa+pNzLfHHYc0IAHO3P
-         AQehrXVERFc+FBwjA92LGaZaZDU74jMpzsllrBOpZ8lCwTC8v1dj8rzQcyVr7XWS5T
-         MLvw3enPVAM94v0FcVgklslr83imDChpCVniRyWcEDl0/KvSPKeow6GaNicu86zm3X
-         BW3xZbivVEYfg==
-Date:   Wed, 30 Mar 2022 18:19:37 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Cc:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
-        stefanb@linux.ibm.com, James.Bottomley@hansenpartnership.com,
-        keescook@chromium.org, jsnitsel@redhat.com, ml.linux@elloe.vision,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        twawrzynczak@chromium.org
-Subject: Re: [PATCH v3 0/4] Fixes for TPM interrupt handling
-Message-ID: <YkR1Cf/5ZvHK2I2j@iki.fi>
-References: <20210501135727.17747-1-LinoSanfilippo@gmx.de>
- <20210501135727.17747-3-LinoSanfilippo@gmx.de>
- <YJAby8mmiJ74qWAh@kernel.org>
- <6722bf6f-1a3f-ee9c-55e2-cf63c64266a9@gmx.de>
- <YJNKs8bUMGOzFre+@kernel.org>
- <2a1a1cf61732eff1608aeae74054a0c135c1671f.camel@mniewoehner.de>
- <Yj0lhqTP1RoedxSc@iki.fi>
- <0d6c22b40a2f17d4b260f287d4c479a96a88b0b1.camel@mniewoehner.de>
- <efdb99b3-6d33-38b1-64a0-671821101631@gmx.de>
+        Wed, 30 Mar 2022 12:08:26 -0400
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCAA123D5A2
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Mar 2022 09:06:40 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KTBBc40cpzMprt9;
+        Wed, 30 Mar 2022 18:06:32 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KTBBZ5nHZzlhPJV;
+        Wed, 30 Mar 2022 18:06:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1648656392;
+        bh=8z/gwYk4igoSvFw5d9ygcqzUz71oGnSSI3aVBjvHzrg=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=S2lhB0PW4iY3T7nJCWRrrxY/EEwhD0huzWX5e8KJOHm5GGVGGjY8iCRzduT1unZj8
+         JG4xoo/fZxx5CFQIGQ1hNdrIQ5/d5AarQVv/fbgm8Ro3omT1l6w9nJK/6OGKmHeHa+
+         Jgh2LeETNI80KsVqtBvJCrnTLRD7VC2cxrAc8gbs=
+Message-ID: <f6cf4112-b7b9-7ad7-dbb0-27304176146f@digikod.net>
+Date:   Wed, 30 Mar 2022 18:06:15 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: 
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20220321161557.495388-1-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <20220321161557.495388-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <efdb99b3-6d33-38b1-64a0-671821101631@gmx.de>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Mar 26, 2022 at 04:24:55AM +0100, Lino Sanfilippo wrote:
-> 
-> Hi Michael,
-> 
-> On 25.03.22 at 13:32, Michael Niew�hner wrote:
-> >>>
-> >>> Lino, I'd be happy to test the patches, when you have time and interest to
-> >>> work
-> >>> on this again!
-> >>>
-> >>> Thanks, Michael
-> >>
-> >> It's quite easy to test them out. Both fixes are in the mainline GIT tree.
-> >> E.g. give a shot rc1, and please report if any issues persists to:
-> >>
-> >> � linux-integrity@vger.kernel.org�
-> >>
-> >> BR, Jarkko
-> >
-> > I don't see Linos patches on mainline. Also, the series included four patches:
-> > [PATCH v3 0/4] Fixes for TPM interrupt handling
-> > [PATCH v3 1/4] tpm: Use a threaded interrupt handler
-> > [PATCH v3 2/4] tpm: Simplify locality handling
-> > [PATCH v3 3/4] tpm: Fix test for interrupts
-> > [PATCH v3 4/4] tpm: Only enable supported irqs
-> >
-> > Three of them are relevant for the interrupt problem, which is still present in
-> > mainline, as these patches were refused:
-> > [PATCH v3 1/4] tpm: Use a threaded interrupt handler
-> > [PATCH v3 2/4] tpm: Simplify locality handling
-> > [PATCH v3 3/4] tpm: Fix test for interrupts
-> >
-> > Michael
-> >
-> 
-> You are right, the interrupts are still not working in the mainline kernel.
-> I would gladly make another attempt to fix this but rather step by step
-> than in a series that tries to fix (different) things at once.
-> 
-> A first step could be to have a sleepable context for the interrupt handling,
-> since in case of SPI the accesses to the irq status register may sleep.
-> 
-> I sent a patch for this purpose once, but it seems to have gone lost:
-> 
-> https://lore.kernel.org/all/20210620023444.14684-1-LinoSanfilippo@gmx.de/
-> 
-> 
-> Best regards,
-> Lino
+Hi,
 
-This is clearly my bad I'll test this ASAP.
+What is the status of this pull request? Do you need something more?
 
-BR, Jarkko
+Regards,
+  Mickaël
+
+
+On 21/03/2022 17:15, Mickaël Salaün wrote:
+> Hi Linus,
+> 
+> This patch series adds a new syscall named trusted_for.  It enables user
+> space to ask the kernel: is this file descriptor's content trusted to be
+> used for this purpose?  The set of usage currently only contains
+> execution, but other may follow (e.g. configuration, sensitive data).
+> If the kernel identifies the file descriptor as trustworthy for this
+> usage, user space should then take this information into account.  The
+> "execution" usage means that the content of the file descriptor is
+> trusted according to the system policy to be executed by user space,
+> which means that it interprets the content or (try to) maps it as
+> executable memory.
+> 
+> A simple system-wide security policy can be set by the system
+> administrator through a sysctl configuration consistent with the mount
+> points or the file access rights.  The documentation explains the
+> prerequisites.
+> 
+> It is important to note that this can only enable to extend access
+> control managed by the kernel.  Hence it enables current access control
+> mechanism to be extended and become a superset of what they can
+> currently control.  Indeed, the security policy could also be delegated
+> to an LSM, either a MAC system or an integrity system.  For instance,
+> this is required to close a major IMA measurement/appraisal interpreter
+> integrity gap by bringing the ability to check the use of scripts.
+> Other uses are expected as well.
+> 
+> For further details, please see the latest cover letter:
+> https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+> 
+> Commit dae71698b6c5 ("printk: Move back proc_dointvec_minmax_sysadmin()
+> to sysctl.c") was recently added due to the sysctl refactoring.
+> 
+> Commit e674341a90b9 ("selftests/interpreter: fix separate directory
+> build") will fix some test build cases as explained here:
+> https://lore.kernel.org/r/20220119101531.2850400-1-usama.anjum@collabora.com
+> Merging this commit without the new KHDR_INCLUDES is not an issue.
+> The upcoming kselftest pull request is ready:
+> https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=next
+> 
+> This patch series has been open for review for more than three years and
+> got a lot of feedbacks (and bikeshedding) which were all considered.
+> Since I heard no objection, please consider to pull this code for
+> v5.18-rc1 .  These five patches have been successfully tested in the
+> latest linux-next releases for several weeks.
+> 
+> Regards,
+>   Mickaël
+> 
+> --
+> The following changes since commit dcb85f85fa6f142aae1fe86f399d4503d49f2b60:
+> 
+>    gcc-plugins/stackleak: Use noinstr in favor of notrace (2022-02-03 17:02:21 -0800)
+> 
+> are available in the Git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/trusted-for-v18
+> 
+> for you to fetch changes up to e674341a90b95c3458d684ae25e6891afc3e03ad:
+> 
+>    selftests/interpreter: fix separate directory build (2022-03-04 10:56:25 +0100)
+> 
+> ----------------------------------------------------------------
+> Add the trusted_for system call (v18)
+> 
+> The final goal of this patch series is to enable the kernel to be a
+> global policy manager by entrusting processes with access control at
+> their level.  To reach this goal, two complementary parts are required:
+> * user space needs to be able to know if it can trust some file
+>    descriptor content for a specific usage;
+> * and the kernel needs to make available some part of the policy
+>    configured by the system administrator.
+> 
+> In a nutshell, this is a required building block to control script
+> execution.
+> 
+> For further details see the latest cover letter:
+> https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+> 
+> ----------------------------------------------------------------
+> Mickaël Salaün (4):
+>        printk: Move back proc_dointvec_minmax_sysadmin() to sysctl.c
+>        fs: Add trusted_for(2) syscall implementation and related sysctl
+>        arch: Wire up trusted_for(2)
+>        selftest/interpreter: Add tests for trusted_for(2) policies
+> 
+> Muhammad Usama Anjum (1):
+>        selftests/interpreter: fix separate directory build
+> 
+>   Documentation/admin-guide/sysctl/fs.rst            |  50 +++
+>   arch/alpha/kernel/syscalls/syscall.tbl             |   1 +
+>   arch/arm/tools/syscall.tbl                         |   1 +
+>   arch/arm64/include/asm/unistd.h                    |   2 +-
+>   arch/arm64/include/asm/unistd32.h                  |   2 +
+>   arch/ia64/kernel/syscalls/syscall.tbl              |   1 +
+>   arch/m68k/kernel/syscalls/syscall.tbl              |   1 +
+>   arch/microblaze/kernel/syscalls/syscall.tbl        |   1 +
+>   arch/mips/kernel/syscalls/syscall_n32.tbl          |   1 +
+>   arch/mips/kernel/syscalls/syscall_n64.tbl          |   1 +
+>   arch/mips/kernel/syscalls/syscall_o32.tbl          |   1 +
+>   arch/parisc/kernel/syscalls/syscall.tbl            |   1 +
+>   arch/powerpc/kernel/syscalls/syscall.tbl           |   1 +
+>   arch/s390/kernel/syscalls/syscall.tbl              |   1 +
+>   arch/sh/kernel/syscalls/syscall.tbl                |   1 +
+>   arch/sparc/kernel/syscalls/syscall.tbl             |   1 +
+>   arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
+>   arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+>   arch/xtensa/kernel/syscalls/syscall.tbl            |   1 +
+>   fs/open.c                                          | 133 ++++++++
+>   fs/proc/proc_sysctl.c                              |   2 +-
+>   include/linux/syscalls.h                           |   1 +
+>   include/linux/sysctl.h                             |   3 +
+>   include/uapi/asm-generic/unistd.h                  |   5 +-
+>   include/uapi/linux/trusted-for.h                   |  18 +
+>   kernel/printk/sysctl.c                             |   9 -
+>   kernel/sysctl.c                                    |   9 +
+>   tools/testing/selftests/Makefile                   |   1 +
+>   tools/testing/selftests/interpreter/.gitignore     |   2 +
+>   tools/testing/selftests/interpreter/Makefile       |  21 ++
+>   tools/testing/selftests/interpreter/config         |   1 +
+>   .../selftests/interpreter/trust_policy_test.c      | 362 +++++++++++++++++++++
+>   32 files changed, 625 insertions(+), 12 deletions(-)
+>   create mode 100644 include/uapi/linux/trusted-for.h
+>   create mode 100644 tools/testing/selftests/interpreter/.gitignore
+>   create mode 100644 tools/testing/selftests/interpreter/Makefile
+>   create mode 100644 tools/testing/selftests/interpreter/config
+>   create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
