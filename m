@@ -2,56 +2,57 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D596C433EF
-	for <linux-integrity@archiver.kernel.org>; Fri,  1 Apr 2022 07:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EF3C433F5
+	for <linux-integrity@archiver.kernel.org>; Fri,  1 Apr 2022 09:29:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239816AbiDAHG5 (ORCPT
+        id S1344582AbiDAJbO (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 1 Apr 2022 03:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33386 "EHLO
+        Fri, 1 Apr 2022 05:31:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343694AbiDAHGz (ORCPT
+        with ESMTP id S1344578AbiDAJbN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 1 Apr 2022 03:06:55 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8551FCA0C1
-        for <linux-integrity@vger.kernel.org>; Fri,  1 Apr 2022 00:05:06 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KVB2T0gxCzgYKH;
-        Fri,  1 Apr 2022 15:02:57 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 1 Apr 2022 15:04:37 +0800
-Message-ID: <8609c0dc-1180-f410-e9cf-8f3ceee4c4cc@huawei.com>
-Date:   Fri, 1 Apr 2022 15:04:26 +0800
+        Fri, 1 Apr 2022 05:31:13 -0400
+Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 684321D41B9
+        for <linux-integrity@vger.kernel.org>; Fri,  1 Apr 2022 02:29:24 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=2;SR=0;TI=SMTPD_---0V8spY2g_1648805361;
+Received: from 30.240.100.21(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0V8spY2g_1648805361)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 01 Apr 2022 17:29:21 +0800
+Message-ID: <18217eda-f28c-508d-412b-6c10f7d2b94f@linux.alibaba.com>
+Date:   Fri, 1 Apr 2022 17:29:20 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.7.0
+Subject: Re: Progress about SM2-with-SM3 signature support for PKCS #7.
 Content-Language: en-US
-To:     <tianjia.zhang@linux.alibaba.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-Subject: Progress about SM2-with-SM3 signature support for PKCS #7.
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     "Guozihua (Scott)" <guozihua@huawei.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+References: <8609c0dc-1180-f410-e9cf-8f3ceee4c4cc@huawei.com>
+From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <8609c0dc-1180-f410-e9cf-8f3ceee4c4cc@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Tianjia,
+Hi Guozihua,
 
-Thank you for the all the work surrounding SM crypto algorithm and 
-certificates.
+On 4/1/22 3:04 PM, Guozihua (Scott) wrote:
+> Hi Tianjia,
+> 
+> Thank you for the all the work surrounding SM crypto algorithm and 
+> certificates.
+> 
+> I noticed that the patch implementing the support for SM2-with-SM3 
+> signature parsing in PKCS #7 has not been merged yet. Would you mind me 
+> asking about the progress of that patch?
+> 
 
-I noticed that the patch implementing the support for SM2-with-SM3 
-signature parsing in PKCS #7 has not been merged yet. Would you mind me 
-asking about the progress of that patch?
+Thanks, I'd love you to do so, the latest series patch is v4 version,
+this series also supports EC-RDSA algorithm.
 
--- 
-Thanks!
-GUO Zihua
+Best regards,
+Tianjia
