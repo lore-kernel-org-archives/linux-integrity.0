@@ -2,105 +2,169 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6D68C433EF
-	for <linux-integrity@archiver.kernel.org>; Sun,  3 Apr 2022 10:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396C6C433EF
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Apr 2022 00:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235000AbiDCKXu (ORCPT
+        id S1376797AbiDDAYo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 3 Apr 2022 06:23:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34592 "EHLO
+        Sun, 3 Apr 2022 20:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234981AbiDCKXt (ORCPT
+        with ESMTP id S235549AbiDDAYo (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 3 Apr 2022 06:23:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C3843193D;
-        Sun,  3 Apr 2022 03:21:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A834D61006;
-        Sun,  3 Apr 2022 10:21:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DECC340ED;
-        Sun,  3 Apr 2022 10:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648981315;
-        bh=va2wdSIDhigU9l6racetCvNOSAZt+vprXlIct+i0T0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rutRab4n813Pxfl1QOm3oCQU5Xw0G5pZcmivt9D8npqu4IeZ4XLNRwF6dQRZdruRS
-         dQsrnuWExDhYQBC0BY4fFx2WUvuUjn+/gNQyEufnl5Thr194LQyTDkIpvzdPXzVfe2
-         Gv7YrSRhK2bJdYj8xSlipwAdkRUOFgih9P1B3sErpDmLLPVUZDBQ89UgGaDF3RV1RQ
-         P772i3/NCOcdOFRMNPBpTmgXdzJeQfB0ykaj1GaNDLLhOlo5sNA9xIIMQJakuFFdAR
-         fw6wsZpyDuioEbDdlPYXoUIcScjf+fI0xwqZYGjenu5uz91SR5iFuK/NlWI580+F20
-         FUdDBek5lAsJw==
-Date:   Sun, 3 Apr 2022 13:23:05 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-integrity@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] char: tpm: Prepare cleanup of powerpc's asm/prom.h
-Message-ID: <Ykl1ibvVxJUBrhfK@kernel.org>
-References: <7a522d9029737d7a1fb513529659321ed62d50d9.1648895070.git.christophe.leroy@csgroup.eu>
- <cfd3a718e147b39620dfa7c779a7ae1af2f6b575.1648895074.git.christophe.leroy@csgroup.eu>
+        Sun, 3 Apr 2022 20:24:44 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74471326CD;
+        Sun,  3 Apr 2022 17:22:49 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id b16so9495689ioz.3;
+        Sun, 03 Apr 2022 17:22:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aRWK0On/yQrY9JPjv44yF0LPcIjibwFg2byMQWbxmME=;
+        b=m7QLUo7hQJc1gPKTRFWKJMyYxQRJoEUmN6fETczH5jCn8d4R/oKkYo4UWK5g0IY8VI
+         p3ASRZ02UvqPNVj+uwGFqGiODMN6dX6xYvtxF/oHx0i35GLATYzqXnBFSkFxu9M+VwmT
+         xb3/PdwR/s2kmyLi8ZTlpA/KcTv06dxnrjjglAUHXQxajJSS8bnqhbz2FmR6/t8zypGb
+         rWAs86RwysW+2t2E+czeksUfo2S/bXGIkEc033ZcgZqbViqFeZFRNYHaiLflYRTwulO1
+         ZWtK+SF68AjzHfD8eqQz6vsUP5GICjDbkWh+xyUyzHSFtaNFAsqcM27Y0U6kks0IQu+2
+         Mq4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aRWK0On/yQrY9JPjv44yF0LPcIjibwFg2byMQWbxmME=;
+        b=DGsTerQtAAe5fUrlSs9IuAJKE6jVg3+ghoHO6OMHadRcCmznqDZHhizh7EFso/XVW6
+         QYBjZMIH17aXUlrGB9CzKzu4LeZJZY7aLSHaYUnqFEZBar+WjV5N/jH5fiHuaCzs0BR7
+         F4kWoJLShOdDSuozwB+47l6KrbPaFla7ODqRh5fzGneDUli2UU+2l8UCVjyDD7Vowxv4
+         JldHYDFTr6IuVO431P+CTnkzmBkY6fdwstZd3OUyGmZmf1insP4z1Tlr91CJsiSq9Yl4
+         3v4oCmHHFkIctSMwAt5HHFdx3CQDbxcqY6tbukN9KaxlRshn+9ovgSnDKA640i16F5Z3
+         GbcA==
+X-Gm-Message-State: AOAM532sidG7ISiK++nBHF/Wflqy0ZkuMZdHb6u1e6uA/Gskz1Wrc6L1
+        Z/V1R+vDftvP7wiFRNsJ7Z9O1Quw77GwWBPKGbs=
+X-Google-Smtp-Source: ABdhPJw3GVx6VRlTw8pIT6ieOqU7bki+fDz8/uu6pPoGbccqm8oEHB/k+fnnlta0vSZ4NcUV23zKg08MWe65dXoOuPU=
+X-Received: by 2002:a05:6638:2105:b0:323:68db:2e4e with SMTP id
+ n5-20020a056638210500b0032368db2e4emr11000299jaj.234.1649031768898; Sun, 03
+ Apr 2022 17:22:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cfd3a718e147b39620dfa7c779a7ae1af2f6b575.1648895074.git.christophe.leroy@csgroup.eu>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220328175033.2437312-6-roberto.sassu@huawei.com> <CAEf4BzY9d0pUP2TFkOY41dbjyYrsr5S+sNCpynPtg_9XZHFb-Q@mail.gmail.com>
+ <4621def6171f4ca5948a59a7e714d25f@huawei.com>
+In-Reply-To: <4621def6171f4ca5948a59a7e714d25f@huawei.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Sun, 3 Apr 2022 17:22:38 -0700
+Message-ID: <CAEf4BzZB=aLA23xysFBm50AKZ72p0PBDeL5j1d0mmNCGW2VKwA@mail.gmail.com>
+Subject: Re: [PATCH 05/18] bpf-preload: Generate static variables
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        KP Singh <kpsingh@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, Apr 02, 2022 at 12:29:19PM +0200, Christophe Leroy wrote:
-> powerpc's asm/prom.h brings some headers that it doesn't
-> need itself.
-> 
-> In order to clean it up, first add missing headers in
-> users of asm/prom.h
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+On Wed, Mar 30, 2022 at 12:44 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+>
+> > From: Andrii Nakryiko [mailto:andrii.nakryiko@gmail.com]
+> > Sent: Wednesday, March 30, 2022 1:52 AM
+> > On Mon, Mar 28, 2022 at 10:52 AM Roberto Sassu
+> > <roberto.sassu@huawei.com> wrote:
+> > >
+> > > The first part of the preload code generation consists in generating the
+> > > static variables to be used by the code itself: the links and maps to be
+> > > pinned, and the skeleton. Generation of the preload variables and
+> > methods
+> > > is enabled with the option -P added to 'bpftool gen skeleton'.
+> > >
+> > > The existing variables maps_link and progs_links in bpf_preload_kern.c
+> > have
+> > > been renamed respectively to dump_bpf_map_link and
+> > dump_bpf_prog_link, to
+> > > match the name of the variables in the main structure of the light
+> > > skeleton.
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > ---
+> > >  kernel/bpf/preload/bpf_preload_kern.c         |  35 +-
+> > >  kernel/bpf/preload/iterators/Makefile         |   2 +-
+> > >  .../bpf/preload/iterators/iterators.lskel.h   | 378 +++++++++---------
+> > >  .../bpf/bpftool/Documentation/bpftool-gen.rst |   5 +
+> > >  tools/bpf/bpftool/bash-completion/bpftool     |   2 +-
+> > >  tools/bpf/bpftool/gen.c                       |  27 ++
+> > >  tools/bpf/bpftool/main.c                      |   7 +-
+> > >  tools/bpf/bpftool/main.h                      |   1 +
+> > >  8 files changed, 254 insertions(+), 203 deletions(-)
+> > >
+> >
+> > [...]
+> >
+> > > +__attribute__((unused)) static void
+> > > +iterators_bpf__assert(struct iterators_bpf *s)
+> > > +{
+> > > +#ifdef __cplusplus
+> > > +#define _Static_assert static_assert
+> > > +#endif
+> > > +#ifdef __cplusplus
+> > > +#undef _Static_assert
+> > > +#endif
+> > > +}
+> > > +
+> > > +static struct bpf_link *dump_bpf_map_link;
+> > > +static struct bpf_link *dump_bpf_prog_link;
+> > > +static struct iterators_bpf *skel;
+> >
+> > I don't understand what is this and what for? You are making an
+> > assumption that light skeleton can be instantiated just once, why? And
+> > adding extra bpftool option to light skeleton codegen just to save a
+> > bit of typing at the place where light skeleton is actually
+> > instantiated and used doesn't seems like a right approach.
+>
+> True, iterator_bpf is simple. Writing the preloading code
+> for it is simple. But, what if you wanted to preload an LSM
+> with 10 hooks or more?
 
-I don't understand this. It changes nothing as far as kernel is concerned.
+I suppose you'd write a straightforward code to do pinning ten times
+for ten different programs to ten different paths. But with this you
+don't have to establish a random set of conventions that might not
+apply in all the situations to anyone that would try to use this
+feature.
 
-> ---
->  drivers/char/tpm/tpm_atmel.h   | 2 --
->  drivers/char/tpm/tpm_ibmvtpm.c | 1 -
->  2 files changed, 3 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_atmel.h b/drivers/char/tpm/tpm_atmel.h
-> index ba37e77e8af3..959f7cce8301 100644
-> --- a/drivers/char/tpm/tpm_atmel.h
-> +++ b/drivers/char/tpm/tpm_atmel.h
-> @@ -26,8 +26,6 @@ struct tpm_atmel_priv {
->  
->  #ifdef CONFIG_PPC64
->  
-> -#include <asm/prom.h>
-> -
->  #define atmel_getb(priv, offset) readb(priv->iobase + offset)
->  #define atmel_putb(val, priv, offset) writeb(val, priv->iobase + offset)
->  #define atmel_request_region request_mem_region
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 3af4c07a9342..1180cce7067a 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -20,7 +20,6 @@
->  #include <linux/spinlock.h>
->  #include <linux/interrupt.h>
->  #include <linux/wait.h>
-> -#include <asm/prom.h>
->  
->  #include "tpm.h"
->  #include "tpm_ibmvtpm.h"
-> -- 
-> 2.35.1
-> 
+Worst case, light skeleton can be extended to provide a way to iterate
+all programs programmatically.
 
-BR, Jarkko
+>
+> Ok, regarding where the preloading code should be, I will
+> try to move the generated code to the kernel module instead
+> of the light skeleton.
+>
+> Thanks
+>
+> Roberto
+>
+> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+> Managing Director: Li Peng, Zhong Ronghua
+>
+> > Further, even if this is the way to go, please split out bpftool
+> > changes from kernel changes. There is nothing requiring them to be
+> > coupled together.
+> >
+> > [...]
