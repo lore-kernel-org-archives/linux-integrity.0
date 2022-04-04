@@ -2,230 +2,148 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1BDC433EF
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Apr 2022 08:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9C9C4707A
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Apr 2022 21:16:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244465AbiDDIVR (ORCPT
+        id S1379154AbiDDVSu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Apr 2022 04:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47766 "EHLO
+        Mon, 4 Apr 2022 17:18:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243044AbiDDIVM (ORCPT
+        with ESMTP id S1380577AbiDDUbw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Apr 2022 04:21:12 -0400
-Received: from smtp14.infineon.com (smtp14.infineon.com [IPv6:2a00:18f0:1e00:4::6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64BB63B3F5;
-        Mon,  4 Apr 2022 01:19:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1649060356; x=1680596356;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=V5/V/b34epGg8B1yd9EkHhKeSrC0QZBHyPFuqOyeHGo=;
-  b=mKY/+WlisFdQkbPz+bL076gMSZdoInu1txwSmdXeDTGHz2XRP2W2crbd
-   yvWpSlT/cks5gAyZf1N/jzS9CHLCKORPHFbw+E56y97LSCNYKqNfO6bh8
-   buboKuuTccx9Rb01mPK/eJDQ1eT5wVdJ1RSa3SoZWINJxUrHzFVmImXmv
-   o=;
-X-SBRS: None
-X-IronPort-AV: E=McAfee;i="6200,9189,10306"; a="115548210"
-X-IronPort-AV: E=Sophos;i="5.90,233,1643670000"; 
-   d="scan'208";a="115548210"
-Received: from unknown (HELO mucxv001.muc.infineon.com) ([172.23.11.16])
-  by smtp14.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Apr 2022 10:19:14 +0200
-Received: from MUCSE819.infineon.com (MUCSE819.infineon.com [172.23.29.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mucxv001.muc.infineon.com (Postfix) with ESMTPS;
-        Mon,  4 Apr 2022 10:19:13 +0200 (CEST)
-Received: from ISCN5CG1067W80.infineon.com (172.23.8.247) by
- MUCSE819.infineon.com (172.23.29.45) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.22; Mon, 4 Apr 2022 10:19:12 +0200
-From:   Johannes Holland <johannes.holland@infineon.com>
-To:     <peterhuewe@gmx.de>, <jarkko@kernel.org>, <jgg@ziepe.ca>,
-        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-CC:     <amirmizi6@gmail.com>, <robh@kernel.org>,
-        Johannes Holland <johannes.holland@infineon.com>
-Subject: [PATCH 3/4] tpm: Implement command and response retry in tpm_tis_core
-Date:   Mon, 4 Apr 2022 10:18:34 +0200
-Message-ID: <20220404081835.495-3-johannes.holland@infineon.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20220404081835.495-1-johannes.holland@infineon.com>
-References: <20220404081835.495-1-johannes.holland@infineon.com>
+        Mon, 4 Apr 2022 16:31:52 -0400
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [IPv6:2001:1600:4:17::8faa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BA51377FD;
+        Mon,  4 Apr 2022 13:29:55 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXMp90prXzMptVt;
+        Mon,  4 Apr 2022 22:29:53 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXMp602llzlhRVP;
+        Mon,  4 Apr 2022 22:29:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1649104193;
+        bh=0mFVDtUYoFc9pSC5qUi5cW5G1Ntu51smq5L10oK+2/A=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=TaTRgRi8PJBAchvq1Ix+2vhlaVk/a4nJDrvNu0UPE+g7kY8z4w69RVDtrYUQI4sW7
+         NyeXa0fQWVDYnVQ3YGjrnXS4Dxsj1EG0+q4+bKAuR0xQzy0D8Rj6shj3puUOuxqZU6
+         n9x7Sib0gN6Nsv1/R7bd7gTDuaRn/pnmNcgBseS8=
+Message-ID: <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+Date:   Mon, 4 Apr 2022 22:30:13 +0200
 MIME-Version: 1.0
+User-Agent: 
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+References: <20220321161557.495388-1-mic@digikod.net>
+ <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.23.8.247]
-X-ClientProxiedBy: MUCSE812.infineon.com (172.23.29.38) To
- MUCSE819.infineon.com (172.23.29.45)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Some errors during command transmission and response reception are
-recoverable. Implement the specified retry mechanisms.
 
-Recoverable errors during response reception:
- * invalid response size during header read
- * left over data:
-   a communication error can lead to a FIFO read of 0xFFs and an
-   unexpected STS.dataAvail = 1, subsequently
- * CRC mismatch
+On 04/04/2022 20:47, Linus Torvalds wrote:
+> On Mon, Apr 4, 2022 at 11:40 AM Kees Cook <keescook@chromium.org> wrote:
+>>
+>> It looks like this didn't get pulled for -rc1 even though it was sent
+>> during the merge window and has been in -next for a while. It would be
+>> really nice to get this landed since userspace can't make any forward
+>> progress without the kernel support.
+> 
+> Honestly, I need a *lot* better reasoning for random new non-standard
+> system calls than this had.
+> 
+> And this kind of "completely random interface with no semantics except
+> for random 'future flags'" I will not pull even *with* good reasoning.
 
-Recoverable errors during transmit:
- * CRC mismatch
+I think the semantic is well defined:
+"This new syscall enables user space to ask the kernel: is this file
+descriptor's content trusted to be used for this purpose?"
+See the trusted_for_policy sysctl documentation: 
+https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/
 
-Signed-off-by: Johannes Holland <johannes.holland@infineon.com>
----
- drivers/char/tpm/tpm_tis_core.c | 98 +++++++++++++++++++--------------
- drivers/char/tpm/tpm_tis_core.h |  1 +
- 2 files changed, 57 insertions(+), 42 deletions(-)
+There is currently only one defined and implemented purpose: execution 
+(or script interpretation). There is room for other flags because it is 
+a good practice to do so, and other purposes were proposed.
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index f1c893a5a38f..a2b6fba7f719 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -287,6 +287,7 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int size = 0;
-+	int i = 0;
- 	int status;
- 	u32 expected;
- 	int rc;
-@@ -296,45 +297,52 @@ static int tpm_tis_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		goto out;
- 	}
- 
--	size = recv_data(chip, buf, TPM_HEADER_SIZE);
--	/* read first 10 bytes, including tag, paramsize, and result */
--	if (size < TPM_HEADER_SIZE) {
--		dev_err(&chip->dev, "Unable to read header\n");
--		goto out;
--	}
-+	do {
-+		if (size < 0)
-+			tpm_tis_write8(priv, TPM_STS(priv->locality),
-+				       TPM_STS_RESPONSE_RETRY);
-+
-+		size = recv_data(chip, buf, TPM_HEADER_SIZE);
-+		/* read first 10 bytes, including tag, paramsize, and result */
-+		if (size < TPM_HEADER_SIZE) {
-+			dev_err(&chip->dev, "Unable to read header\n");
-+			goto out;
-+		}
- 
--	expected = be32_to_cpu(*(__be32 *) (buf + 2));
--	if (expected > count || expected < TPM_HEADER_SIZE) {
--		size = -EIO;
--		goto out;
--	}
-+		expected = be32_to_cpu(*(__be32 *)(buf + 2));
-+		if (expected > count || expected < TPM_HEADER_SIZE) {
-+			dev_info(&chip->dev, "Bad response size: %d. Retry...\n", expected);
-+			size = -EIO;
-+			continue;
-+		}
- 
--	size += recv_data(chip, &buf[TPM_HEADER_SIZE],
--			  expected - TPM_HEADER_SIZE);
--	if (size < expected) {
--		dev_err(&chip->dev, "Unable to read remainder of result\n");
--		size = -ETIME;
--		goto out;
--	}
-+		size += recv_data(chip, &buf[TPM_HEADER_SIZE],
-+				expected - TPM_HEADER_SIZE);
-+		if (size < expected) {
-+			dev_err(&chip->dev, "Unable to read remainder of result\n");
-+			size = -ETIME;
-+			goto out;
-+		}
- 
--	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
--				&priv->int_queue, false) < 0) {
--		size = -ETIME;
--		goto out;
--	}
--	status = tpm_tis_status(chip);
--	if (status & TPM_STS_DATA_AVAIL) {	/* retry? */
--		dev_err(&chip->dev, "Error left over data\n");
--		size = -EIO;
--		goto out;
--	}
-+		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
-+				      &priv->int_queue, false) < 0) {
-+			size = -ETIME;
-+			goto out;
-+		}
-+		status = tpm_tis_status(chip);
-+		if (status & TPM_STS_DATA_AVAIL) {
-+			dev_info(&chip->dev, "Error left over data. Retry...\n");
-+			size = -EIO;
-+			continue;
-+		}
- 
--	rc = tpm_tis_verify_crc(priv, (size_t)size, buf);
--	if (rc < 0) {
--		dev_err(&chip->dev, "Error crc mismatch for response.\n");
--		size = rc;
--		goto out;
--	}
-+		rc = tpm_tis_verify_crc(priv, (size_t)size, buf);
-+		if (rc < 0) {
-+			dev_info(&chip->dev, "Error crc mismatch for response. Retry...\n");
-+			size = rc;
-+			continue;
-+		}
-+	} while (unlikely(size < 0) && i++ < TPM_RETRY);
- 
- out:
- 	tpm_tis_ready(chip);
-@@ -444,18 +452,24 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
- 	int rc;
-+	int i = 0;
- 	u32 ordinal;
- 	unsigned long dur;
- 
--	rc = tpm_tis_send_data(chip, buf, len);
--	if (rc < 0)
--		return rc;
-+	do {
-+		rc = tpm_tis_send_data(chip, buf, len);
-+		if (rc < 0)
-+			return rc;
- 
--	rc = tpm_tis_verify_crc(priv, len, buf);
--	if (rc < 0) {
--		dev_err(&chip->dev, "Error crc mismatch for command.\n");
-+		rc = tpm_tis_verify_crc(priv, len, buf);
-+		if (rc < 0) {
-+			dev_info(&chip->dev, "Error crc mismatch for command. Retry...\n");
-+			tpm_tis_ready(chip);
-+		}
-+	} while (unlikely(rc < 0) && i++ < TPM_RETRY);
-+
-+	if (rc < 0)
- 		return rc;
--	}
- 
- 	/* go and do it */
- 	rc = tpm_tis_write8(priv, TPM_STS(priv->locality), TPM_STS_GO);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index 21b4a67c9aac..b4b36d5c5514 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -34,6 +34,7 @@ enum tis_status {
- 	TPM_STS_GO = 0x20,
- 	TPM_STS_DATA_AVAIL = 0x10,
- 	TPM_STS_DATA_EXPECT = 0x08,
-+	TPM_STS_RESPONSE_RETRY = 0x02,
- 	TPM_STS_READ_ZERO = 0x23, /* bits that must be zero on read */
- };
- 
--- 
-2.31.1.windows.1
 
+> 
+> I already told Mickaël in private that I wouldn't pull this.
+> 
+> Honestly, we have a *horrible* history with non-standard system calls,
+> and that's been true even for well-designed stuff that actually
+> matters, that people asked for.
+> 
+> Something  like this, which adds one very special system call and
+> where the whole thing is designed for "let's add something random
+> later because we don't even know what we want" is right out.
+> 
+> What the system call seems to actually *want* is basically a new flag
+> to access() (and faccessat()). One that is very close to what X_OK
+> already is.
+
+I agree.
+
+
+> 
+> But that wasn't how it was sold.
+> 
+> So no. No way will this ever get merged, and whoever came up with that
+> disgusting "trusted_for()" (for WHAT? WHO TRUSTS? WHY?) should look
+> themselves in the mirror.
+
+Well, naming is difficult, but I'm open to suggestion. :)
+
+As explained in the description, the WHAT is the file descriptor 
+content, the WHO TRUSTS is the system security policy (e.g. the mount 
+point options) and the WHY is defined by the usage flag 
+(TRUSTED_FOR_EXECUTION).
+This translates to: is this file descriptor's content trusted to be used 
+for this specified purpose/usage?
+
+
+> 
+> If you add a new X_OK variant to access(), maybe that could fly.
+
+As answered in private, that was the approach I took for one of the 
+early versions but a dedicated syscall was requested by Al Viro: 
+https://lore.kernel.org/r/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net
+The main reason behind this request was that it doesn't have the exact 
+same semantic as faccessat(2). The changes for this syscall are 
+documented here: 
+https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/
+The whole history is linked in the cover letter: 
+https://lore.kernel.org/all/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net/
+
+This initial proposal was using a new faccessat2(2) flag: 
+AT_INTERPRETED, see 
+https://lore.kernel.org/all/20200908075956.1069018-2-mic@digikod.net/
+What do you think about that? I'm happy to get back to this version if 
+everyone is OK with it.
