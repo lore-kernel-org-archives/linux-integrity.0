@@ -2,256 +2,120 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D81C433F5
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Apr 2022 15:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD8DC433F5
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:32:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238816AbiDEPDS (ORCPT
+        id S1356185AbiDFCeh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 11:03:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50010 "EHLO
+        Tue, 5 Apr 2022 22:34:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1387056AbiDEO33 (ORCPT
+        with ESMTP id S1572981AbiDERjw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 10:29:29 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 599521207D8;
-        Tue,  5 Apr 2022 06:11:32 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KXnyW2G6Cz685VR;
-        Tue,  5 Apr 2022 21:08:35 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 5 Apr 2022 15:11:28 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
-        <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
-        <tixxdz@gmail.com>, <shuah@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <zohar@linux.ibm.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [POC][USER SPACE][PATCH] Introduce LSM to protect pinned objects
-Date:   Tue, 5 Apr 2022 15:11:16 +0200
-Message-ID: <20220405131116.3810418-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
-References: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
+        Tue, 5 Apr 2022 13:39:52 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1C0B8209
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 10:37:53 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id y6so11505945plg.2
+        for <linux-integrity@vger.kernel.org>; Tue, 05 Apr 2022 10:37:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Nwu8jpVkI6C7VwnrywKtcRGeDT2fuyh+kt2g5bo1y9w=;
+        b=Lw5EATL+sOQBSkpUq+6d2yFb3UX+wLpMPBMs1qT7H2FEnxAxS+Out/GTJK1O6Dl9Rh
+         zzVeKLhcn9Iqw5nnSbmT59AtX+vxfT3tVF++IZuE8YPig+uL0Qd73A/szLBe14lkFRhT
+         sKkEy0M5HsZGZhfriWrrucPJywYn7pNKnInUE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Nwu8jpVkI6C7VwnrywKtcRGeDT2fuyh+kt2g5bo1y9w=;
+        b=zNc1vCPfNb+ioeijICfFSHq7mLU506ApQ4VxDZDP7XnLM55Efv8i+rJ8z2OzpMn653
+         RH+75WgZ7IAkzA/NwjG8eqa8etex6ATFQ1dsfMhJ2pp7PkgmGsXhQwrielqtiZYHGBvd
+         hBnz2vPy3RGgZ6CqPAFg+NOcOR2KtDISVGZZ0ZXeHhHkIP7FEfYNyTVUzPB7JHRBUkuu
+         +6vi1mTTTYnEzr16KMkW089jI2+RmkJg6xqe083iraMHPgQ+aShC6FUvEPOL6YLYuogu
+         EgPuQCn+Ok2sLTqM5iB//+BmO7ImrN7bGnVXUPlCr3JVLgg1ewwbkq0mPin2xE60ahmO
+         ffog==
+X-Gm-Message-State: AOAM533xEYQ+QAVHCkZHRgmyILZQL+S9SZXX6ugnCR8OJL5za4SnYGCZ
+        lf4Rzos+5dPtEr66VIcAfOHxHo3Dv1DbtPWy
+X-Google-Smtp-Source: ABdhPJx/Ml/KJFa13Olx66XGO/m5W3BLJXnALBjf/zubTA+VU5XEeYwj7jehcCiBfOkP4z4ChXJsAA==
+X-Received: by 2002:a17:902:7ec1:b0:156:17a4:a2f8 with SMTP id p1-20020a1709027ec100b0015617a4a2f8mr4774620plb.155.1649180273187;
+        Tue, 05 Apr 2022 10:37:53 -0700 (PDT)
+Received: from localhost ([2620:15c:202:201:1331:63a2:a876:db1d])
+        by smtp.gmail.com with UTF8SMTPSA id v3-20020a056a00148300b004fb04acde5dsm16033146pfu.166.2022.04.05.10.37.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Apr 2022 10:37:52 -0700 (PDT)
+From:   "Jes B. Klinke" <jbk@chromium.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        "Jes B. Klinke" <jbk@chromium.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: cr50: Add new device/vendor ID 0x504a6666
+Date:   Tue,  5 Apr 2022 10:37:41 -0700
+Message-Id: <20220405173741.4023216-1-jbk@chromium.org>
+X-Mailer: git-send-email 2.35.1.1094.g7c7d902a7c-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Introduce a new LSM to protect pinned objects in a bpf filesystem
-instance. This is useful for example to ensure that an LSM will always
-enforce its policy, even despite root tries to unload the corresponding
-eBPF program.
+Accept one additional numerical value of DID:VID for next generation
+Google TPM, to be used in future Chromebooks.
 
-Achieve the protection by denying inode unlink and unmount of the
-protected bpf filesystem instance. Since protected inodes hold a
-reference of the link of loaded programs (e.g. LSM hooks), denying
-operations on them will prevent the ref count of the links from reaching
-zero, ensuring that the programs remain always active.
+This patch touches more lines than may seem necessary, as a result of
+the need to move the error case to sit after the two recognized cases.
 
-Enable the protection only for the instance created by the user space
-counterpart of the LSM, and don't interfere with other instances, so
-that their behavior remains unchanged.
-
-Suggested-by: Djalal Harouni <tixxdz@gmail.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Jes B. Klinke <jbk@chromium.org>
 ---
- .gitignore       |  4 +++
- Makefile         | 18 ++++++++++++++
- bpffs_lsm_kern.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++++
- bpffs_lsm_user.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 145 insertions(+)
- create mode 100644 .gitignore
- create mode 100644 Makefile
- create mode 100644 bpffs_lsm_kern.c
- create mode 100644 bpffs_lsm_user.c
 
-diff --git a/.gitignore b/.gitignore
-new file mode 100644
-index 000000000000..7fa02964f1dc
---- /dev/null
-+++ b/.gitignore
-@@ -0,0 +1,4 @@
-+*.o
-+vmlinux.h
-+bpffs_lsm_kern.skel.h
-+bpffs_lsm_user
-diff --git a/Makefile b/Makefile
-new file mode 100644
-index 000000000000..c3d805759db3
---- /dev/null
-+++ b/Makefile
-@@ -0,0 +1,18 @@
-+# SPDX-License-Identifier: GPL-2.0
-+all: bpffs_lsm_user
-+
-+clean:
-+	rm -rf bpffs_lsm.skel.h vmlinux.h bpffs_lsm_kern.o bpffs_lsm_user
-+
-+vmlinux.h:
-+	/usr/sbin/bpftool btf dump file /sys/kernel/btf/vmlinux format c > \
-+			  vmlinux.h
-+
-+bpffs_lsm_kern.skel.h: bpffs_lsm_kern.o
-+	bpftool gen skeleton $< > $@
-+
-+bpffs_lsm_kern.o: bpffs_lsm_kern.c vmlinux.h
-+	clang -Wall -Werror -g -O2 -target bpf -c $< -o $@
-+
-+bpffs_lsm_user: bpffs_lsm_user.c bpffs_lsm_kern.skel.h bpffs_lsm_kern.o
-+	cc -Wall -Werror -g -o $@ $< -lbpf
-diff --git a/bpffs_lsm_kern.c b/bpffs_lsm_kern.c
-new file mode 100644
-index 000000000000..b3ccb2a75c95
---- /dev/null
-+++ b/bpffs_lsm_kern.c
-@@ -0,0 +1,63 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Authors:
-+ * Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Implement an LSM to protect a bpf filesystem instance.
-+ */
-+
-+#include "vmlinux.h"
-+#include <errno.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+uint32_t monitored_pid = 0;
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, sizeof(uint8_t));
-+} inode_storage_map SEC(".maps");
-+
-+SEC("lsm/sb_set_mnt_opts")
-+int BPF_PROG(sb_set_mnt_opts, struct super_block *sb, void *mnt_opts,
-+	     unsigned long kern_flags, unsigned long *set_kern_flags)
-+{
-+	u32 pid;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	if (!bpf_inode_storage_get(&inode_storage_map, sb->s_root->d_inode, 0,
-+				   BPF_LOCAL_STORAGE_GET_F_CREATE))
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
-+SEC("lsm/inode_unlink")
-+int BPF_PROG(inode_unlink, struct inode *dir, struct dentry *dentry)
-+{
-+	if (bpf_inode_storage_get(&inode_storage_map,
-+				  dir->i_sb->s_root->d_inode, 0, 0))
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
-+SEC("lsm/sb_umount")
-+int BPF_PROG(sb_umount, struct vfsmount *mnt, int flags)
-+{
-+	if (bpf_inode_storage_get(&inode_storage_map,
-+				  mnt->mnt_sb->s_root->d_inode, 0, 0))
-+		return -EPERM;
-+
-+	return 0;
-+}
-diff --git a/bpffs_lsm_user.c b/bpffs_lsm_user.c
-new file mode 100644
-index 000000000000..e20180cc5db9
---- /dev/null
-+++ b/bpffs_lsm_user.c
-@@ -0,0 +1,60 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Implement the user space side of the LSM for bpffs.
-+ */
-+
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <stdio.h>
-+#include <errno.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <limits.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+
-+#include "bpffs_lsm_kern.skel.h"
-+
-+#define MOUNT_FLAGS (MS_NOSUID | MS_NODEV | MS_NOEXEC | MS_RELATIME)
-+
-+int main(int argc, char *argv[])
-+{
-+	char mntpoint[] = "/tmp/bpf_private_mountXXXXXX";
-+	char path[PATH_MAX];
-+	struct bpffs_lsm_kern *skel;
-+	int ret, i;
-+
-+	skel = bpffs_lsm_kern__open_and_load();
-+	if (!skel)
-+		return -EINVAL;
-+
-+	ret = bpffs_lsm_kern__attach(skel);
-+	if (ret < 0)
-+		goto out_destroy;
-+
-+	mkdtemp(mntpoint);
-+
-+	skel->bss->monitored_pid = getpid();
-+	ret = mount(mntpoint, mntpoint, "bpf", MOUNT_FLAGS, NULL);
-+	skel->bss->monitored_pid = 0;
-+
-+	if (ret < 0)
-+		goto out_destroy;
-+
-+	for (i = 0; i < skel->skeleton->prog_cnt; i++) {
-+		snprintf(path, sizeof(path), "%s/%s", mntpoint,
-+			 skel->skeleton->progs[i].name);
-+		ret = bpf_link__pin(*skel->skeleton->progs[i].link, path);
-+		if (ret < 0)
-+			goto out_destroy;
+ drivers/char/tpm/tpm_tis_i2c_cr50.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+index f6c0affbb4567..bf54ebd6724b0 100644
+--- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
++++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+@@ -31,6 +31,7 @@
+ #define TPM_CR50_TIMEOUT_SHORT_MS	2		/* Short timeout during transactions */
+ #define TPM_CR50_TIMEOUT_NOIRQ_MS	20		/* Timeout for TPM ready without IRQ */
+ #define TPM_CR50_I2C_DID_VID		0x00281ae0L	/* Device and vendor ID reg value */
++#define TPM_TI50_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
+ #define TPM_CR50_I2C_MAX_RETRIES	3		/* Max retries due to I2C errors */
+ #define TPM_CR50_I2C_RETRY_DELAY_LO	55		/* Min usecs between retries on I2C */
+ #define TPM_CR50_I2C_RETRY_DELAY_HI	65		/* Max usecs between retries on I2C */
+@@ -742,16 +743,20 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
+ 	}
+ 
+ 	vendor = le32_to_cpup((__le32 *)buf);
+-	if (vendor != TPM_CR50_I2C_DID_VID) {
+-		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
+-		tpm_cr50_release_locality(chip, true);
+-		return -ENODEV;
++	if (vendor == TPM_CR50_I2C_DID_VID) {
++		dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
++			 client->addr, client->irq, vendor >> 16);
++		return tpm_chip_register(chip);
 +	}
-+
-+	ret = 0;
-+out_destroy:
-+	bpffs_lsm_kern__destroy(skel);
-+	return ret;
-+}
++	if (vendor == TPM_TI50_I2C_DID_VID) {
++		dev_info(dev, "ti50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
++			 client->addr, client->irq, vendor >> 16);
++		return tpm_chip_register(chip);
+ 	}
+ 
+-	dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+-		 client->addr, client->irq, vendor >> 16);
+-
+-	return tpm_chip_register(chip);
++	dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
++	tpm_cr50_release_locality(chip, true);
++	return -ENODEV;
+ }
+ 
+ /**
 -- 
-2.32.0
+2.35.1.1094.g7c7d902a7c-goog
 
