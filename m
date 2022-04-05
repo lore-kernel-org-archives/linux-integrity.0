@@ -2,85 +2,203 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C2AC46467
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9236DC35273
 	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1447755AbiDFCfv (ORCPT
+        id S1446725AbiDFCfo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58738 "EHLO
+        Tue, 5 Apr 2022 22:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1387042AbiDEVuz (ORCPT
+        with ESMTP id S1457757AbiDEQkG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 17:50:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49238D681;
-        Tue,  5 Apr 2022 13:35:41 -0700 (PDT)
+        Tue, 5 Apr 2022 12:40:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482FED9EA3
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 09:38:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DDA43619AF;
-        Tue,  5 Apr 2022 20:35:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30537C385A1;
-        Tue,  5 Apr 2022 20:35:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CA259B81E8E
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 16:38:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B53C385A0
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 16:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649190926;
-        bh=5AMYXQake7hH4Sl7hM9HYLwlrWswqrY810AOuA4uvuY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i0h8TOPZyYXw7YxYxsVl6M7m9galZt/HSu2NrnpCZivNyZ7yuqNR6VPzSsh9B5xZ7
-         wEI8GFAsRtI1+5cpvV4y5V6bD7ZTHWPrNms51oMeBLqlbhz/Pt4jHjEr4YMtpS04bv
-         inUsXA39X6lGwlO1xGyJPxEYe1/qPedJg+ZQA8CccgWdLyfHb14wrrbhHpPIc+xAb6
-         2Kx5UkD3i6eV7U8TpRrO27fFNcv6EyK0xn1bXYnJaKFcb7onhVzGsI0JoyGopO2ej3
-         a1PNnKsF+R00mz8wCgz30M0lR6/Fgfb+1bACZztdZ/k/7a5j2fhFUCttN/z9s5wiPu
-         gNWEMYwCMmdpw==
-Date:   Tue, 5 Apr 2022 20:35:24 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 5/5] fsverity: update the documentation
-Message-ID: <YkyoDE3HPkxcV1jM@gmail.com>
-References: <20220325223824.310119-1-zohar@linux.ibm.com>
- <20220325223824.310119-6-zohar@linux.ibm.com>
+        s=k20201202; t=1649176685;
+        bh=Godeb1QF1XaLrnNDs3lSu+RGeizZyertdC0hYAIHClw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fE6K3ZMOrzLhOrGELR5HAtFVyi2NejfAzQAYn94hbuyiYrk1Wj/uHjQ/sUwrFLq7b
+         A90RQAeTHiH/jnF2FsoDzzb6YF6K7Da9PcyEtfDSMTTtqoV+6881nB3QRuxgbRB1C0
+         L1BVh6We0d4/AWznFWw+bE9HrosTDxOoqixJRgriBIQeRWuil9/sq6gfrBnMMr+5wI
+         zMbtCSoVvsck22ldzHRKFa04rO6n/CZ4G3xf1f7z+cHOmA7EOAPN7aPLK7G36cU3Ql
+         jPOSWjIGfcde6VfzUdUUGxaUZdzwVjVyzkIbs+C0Mf1xPcXcBfPZUslz33qheWg8dg
+         7wC9nhqlRbeAg==
+Received: by mail-ed1-f53.google.com with SMTP id w18so9328961edi.13
+        for <linux-integrity@vger.kernel.org>; Tue, 05 Apr 2022 09:38:05 -0700 (PDT)
+X-Gm-Message-State: AOAM530YbdIquTx2ozs/XYvbRUiTP/mlbUEZqLm2sGVTXYO0794MffpU
+        HS3P8sHH7T2qbzlanx5ozdSVS/NEbvGXSit9rpZ5Zw==
+X-Google-Smtp-Source: ABdhPJzKjYrImTJI9WyByUp50Mj9PCG8J06DWt1ucdJTqdDxCPRpsxJHnkt2Vhm9WUOmFxdnESIK5CAyDWTZbEBHta8=
+X-Received: by 2002:a17:907:6089:b0:6db:a3d7:3fa9 with SMTP id
+ ht9-20020a170907608900b006dba3d73fa9mr4556278ejc.593.1649176672844; Tue, 05
+ Apr 2022 09:37:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220325223824.310119-6-zohar@linux.ibm.com>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+ <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
+ <c2e57f10b62940eba3cfcae996e20e3c@huawei.com> <385e4cf4-4cd1-8f41-5352-ea87a1f419ad@schaufler-ca.com>
+ <0497bb46586c4f37b9bd01950ba9e6a5@huawei.com> <fb804242-da2c-4213-9dc3-f09ea42f0355@schaufler-ca.com>
+In-Reply-To: <fb804242-da2c-4213-9dc3-f09ea42f0355@schaufler-ca.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Tue, 5 Apr 2022 18:37:42 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4KwWykYjb0DJ1SHe9syiefqgfjDB8om7RNx10vZ3UiKg@mail.gmail.com>
+Message-ID: <CACYkzJ4KwWykYjb0DJ1SHe9syiefqgfjDB8om7RNx10vZ3UiKg@mail.gmail.com>
+Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Mar 25, 2022 at 06:38:24PM -0400, Mimi Zohar wrote:
-> Update the fsverity documentation related to IMA signature support.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  Documentation/filesystems/fsverity.rst | 20 ++++++++++++--------
->  1 file changed, 12 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-> index 1d831e3cbcb3..c1d355f17a54 100644
-> --- a/Documentation/filesystems/fsverity.rst
-> +++ b/Documentation/filesystems/fsverity.rst
-> @@ -74,8 +74,12 @@ authenticating the files is up to userspace.  However, to meet some
->  users' needs, fs-verity optionally supports a simple signature
->  verification mechanism where users can configure the kernel to require
->  that all fs-verity files be signed by a key loaded into a keyring; see
-> -`Built-in signature verification`_.  Support for fs-verity file hashes
-> -in IMA (Integrity Measurement Architecture) policies is also planned.
-> +`Built-in signature verification`_.
-> +
-> +The Integrity Measurement Architecture (IMA) supports including
-> +fs-verity file digests and signatures in the IMA measurement list
-> +and verifying fs-verity based file signatures stored as security.ima
-> +xattrs, based on policy.
+On Tue, Apr 5, 2022 at 6:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 4/5/2022 8:29 AM, Roberto Sassu wrote:
+> >> From: Casey Schaufler [mailto:casey@schaufler-ca.com]
+> >> Sent: Tuesday, April 5, 2022 4:50 PM
+> >> On 4/4/2022 10:20 AM, Roberto Sassu wrote:
+> >>>> From: Djalal Harouni [mailto:tixxdz@gmail.com]
+> >>>> Sent: Monday, April 4, 2022 9:45 AM
+> >>>> On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
+> >>>>> On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
+> >>>>> <alexei.starovoitov@gmail.com> wrote:
+> >>>> ...
+> >>>>>>> Pinning
+> >>>>>>> them to unreachable inodes intuitively looked the
+> >>>>>>> way to go for achieving the stated goal.
+> >>>>>> We can consider inodes in bpffs that are not unlinkable by root
+> >>>>>> in the future, but certainly not for this use case.
+> >>>>> Can this not be already done by adding a BPF_LSM program to the
+> >>>>> inode_unlink LSM hook?
+> >>>>>
+> >>>> Also, beside of the inode_unlink... and out of curiosity: making
+> >> sysfs/bpffs/
+> >>>> readonly after pinning, then using bpf LSM hooks
+> >>>> sb_mount|remount|unmount...
+> >>>> family combining bpf() LSM hook... isn't this enough to:
+> >>>> 1. Restrict who can pin to bpffs without using a full MAC
+> >>>> 2. Restrict who can delete or unmount bpf filesystem
+> >>>>
+> >>>> ?
+> >>> I'm thinking to implement something like this.
+> >>>
+> >>> First, I add a new program flag called
+> >>> BPF_F_STOP_ONCONFIRM, which causes the ref count
+> >>> of the link to increase twice at creation time. In this way,
+> >>> user space cannot make the link disappear, unless a
+> >>> confirmation is explicitly sent via the bpf() system call.
+> >>>
+> >>> Another advantage is that other LSMs can decide
+> >>> whether or not they allow a program with this flag
+> >>> (in the bpf security hook).
+> >>>
+> >>> This would work regardless of the method used to
+> >>> load the eBPF program (user space or kernel space).
+> >>>
+> >>> Second, I extend the bpf() system call with a new
+> >>> subcommand, BPF_LINK_CONFIRM_STOP, which
+> >>> decreasres the ref count for the link of the programs
+> >>> with the BPF_F_STOP_ONCONFIRM flag. I will also
+> >>> introduce a new security hook (something like
+> >>> security_link_confirm_stop), so that an LSM has the
+> >>> opportunity to deny the stop (the bpf security hook
+> >>> would not be sufficient to determine exactly for
+> >>> which link the confirmation is given, an LSM should
+> >>> be able to deny the stop for its own programs).
+> >> Would you please stop referring to a set of eBPF programs
+> >> loaded into the BPF LSM as an LSM? Call it a BPF security
+> >> module (BSM) if you must use an abbreviation. An LSM is a
+> >> provider of security_ hooks. In your case that is BPF. When
+> >> you call the set of eBPF programs an LSM it is like calling
+> >> an SELinux policy an LSM.
+> > An eBPF program could be a provider of security_ hooks
+> > too.
+>
+> No, it can't. If I look in /sys/kernel/security/lsm what
+> you see is "bpf". The LSM is BPF. What BPF does in its
+> hooks is up to it and its responsibility.
+>
+> >   The bpf LSM is an aggregator, similarly to your
+> > infrastructure to manage built-in LSMs. Maybe, calling
+> > it second-level LSM or secondary LSM would better
+> > represent this new class.
+>
+> It isn't an LSM, and adding a qualifier doesn't make it
+> one and only adds to the confusion.
+>
+> > The only differences are the registration method, (SEC
+> > directive instead of DEFINE_LSM), and what the hook
+> > implementation can access.
+>
+> Those two things pretty well define what an LSM is.
+>
+> > The implementation of a security_ hook via eBPF can
+> > follow the same structure of built-in LSMs, i.e. it can be
+> > uniquely responsible for enforcing and be policy-agnostic,
+> > and can retrieve the decisions based on a policy from a
+> > component implemented somewhere else.
+>
+> The BPF LSM provides mechanism. The eBPF programs provide policy.
 
-This looks okay, but this would be easier to understand as a list of alternative
-ways to do signature verification with fs-verity:
+Yeah, let's stick what we call an LSM in the kernel, Here,
+"bpf" is the LSM like selinux,apparmor and this is what you set in
+CONFIG_LSM or pass on cmdline as lsm= and can be seen
+in /sys/kernel/security/lsm
 
-	* Userspace-only
-	* Built-in signature verification + userspace policy
-	* IMA
+Calling your BPF programs an LSM will just confuse people.
 
-- Eric
+>
+> >
+> > Hopefully, I understood the basic principles correctly.
+> > I let the eBPF maintainers comment on this.
+> >
+> > Thanks
+> >
+> > Roberto
+> >
+> > HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+> > Managing Director: Li Peng, Zhong Ronghua
+> >
+> >>> What do you think?
+> >>>
+> >>> Thanks
+> >>>
+> >>> Roberto
+> >>>
+> >>> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+> >>> Managing Director: Li Peng, Zhong Ronghua
