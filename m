@@ -2,92 +2,161 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FF5C433F5
-	for <linux-integrity@archiver.kernel.org>; Mon,  4 Apr 2022 23:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E43C433FE
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Apr 2022 02:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229470AbiDDXvy (ORCPT
+        id S229795AbiDECiM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Apr 2022 19:51:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60120 "EHLO
+        Mon, 4 Apr 2022 22:38:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiDDXvx (ORCPT
+        with ESMTP id S229852AbiDECiE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Apr 2022 19:51:53 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBA70B67
-        for <linux-integrity@vger.kernel.org>; Mon,  4 Apr 2022 16:49:51 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id i6-20020a1c3b06000000b0038e710da2dcso535906wma.1
-        for <linux-integrity@vger.kernel.org>; Mon, 04 Apr 2022 16:49:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l9xW3HAcFSKuV+/FcSEP9k1d5+BZ/v4v+0buVAagfng=;
-        b=Rtdpm9/eExIrkWu7lqvtkp2SFUdc1voWm++CoidXs0vCCl0DY2whSZxPuRt8j+gotn
-         +MrPOkFIqus6rHCei1KQMzI1v3glGY2IrhLl4sZuHtCXfTqNTYi1CmXVfLs14gYU7Dtv
-         XJJWs78w5wb0t8EsE89dxxUJNOF5TMhq0guchBQ1GMv5FMZRNfVzhUMPlK6qRz9QjRbU
-         z7Mmj1n/Vk4XgkeoTJUtjGrzX+Dof23gOL+XiaQSv/asA4zYRHUX6XqkqKxXOGDM4HI1
-         2p43PYHU8zuby29ZXuOjKABaRi1tTnGXw3urM1d/B8NwhpVSxEYBjUEyQsfbmNfwhjcD
-         5DeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l9xW3HAcFSKuV+/FcSEP9k1d5+BZ/v4v+0buVAagfng=;
-        b=gStN7rjEXt5MVNwrPGAi/QBcuOuL8p0iwLDauE5ilU2BX9Z/P8DB9pSHJEmfiu2mxO
-         bW2D3IqVXO5FkL2nFmaEoLeFadye3J8Ivqi9ZOI40YVJwTMQCbkn6Fo/RRzlVbdgxsFy
-         P/YtcEG0BIV5QkBMXQFq4LuHYzgXHP530T0wnmW91wiN3DdqtAHFTql6dSbryRJowuIh
-         6NkDq7HZ8HNcbkV9CRft/Oxsr5ZXwubwj9FT0Rjzho7ur797DJGlsYZTEH9OkCtRq58M
-         cUO7kKk9ELwzVOlXOO6Tzua+Uu/LKdd2nAE9mVhQfMDycbLPqvbliWtHn/NEFhwWVM71
-         9ixA==
-X-Gm-Message-State: AOAM531UO+CBVDtX2QrOjImL3xNV3eKkf0yC3Qm6AfKo7K68rhBtA+/B
-        K0hEYibTdV1p2vnd7ZAppc2rUOggDKixel/uFPU2DA==
-X-Google-Smtp-Source: ABdhPJyg+abWix7Ts4qCEO7RXp6fKaPsVgBsnBTOQy+NgVb44hvZvX8QAtOVUrILV/l+lMXh8eMMBCOoDOqNay9FyAk=
-X-Received: by 2002:a05:600c:1797:b0:38e:70fa:4e4f with SMTP id
- x23-20020a05600c179700b0038e70fa4e4fmr479543wmo.30.1649115908962; Mon, 04 Apr
- 2022 16:45:08 -0700 (PDT)
+        Mon, 4 Apr 2022 22:38:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D5452F4971
+        for <linux-integrity@vger.kernel.org>; Mon,  4 Apr 2022 18:37:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ED74E61753
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 00:00:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57689C341C0
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 00:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649116837;
+        bh=zFyw1VrfGv7NEuMWOTezqzL8GubbV0WO1PDpwo/w7kk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IzT8pKglPQrYQePYYNDTTvWosEy8MxZkq3wR0piD8u7iSz63ghJ7anCpsXVy8rPww
+         h8sb6BeBAosTUPJfJSBf5tC/Uc9Zc7IhUFp3EN+3Y4bey3Juna89uPMBgdz3W6AXN8
+         KvMFgfyNzawLqWgHmU50yAJKNxBLRXw3d+NWJeiFYcgugGX/GADSzk/5G8g9++kPxr
+         OpF27iOsOSCNOr0NIjmDYXJCtgmcKH1aCT/Qss+bZqX0jw6YqWJZnXdaS1BIF6FzjI
+         YW3kHL8sWBe0nwkHW+VswjM/Okte+nrlOhP3czPdm/y4SX3zE8ViE7mZZZHIzCb+Y/
+         aCTsH/tzvnYAg==
+Received: by mail-ed1-f41.google.com with SMTP id r10so7272038eda.1
+        for <linux-integrity@vger.kernel.org>; Mon, 04 Apr 2022 17:00:37 -0700 (PDT)
+X-Gm-Message-State: AOAM532JmgoDVzFO1x1yHHIzN0IxFOa38g1v8aQH8KS+9esnTpj2yASX
+        P+T7Orl5QxG8tr7bFeqPuWZTYAJc6e41AHCEuuTE0Q==
+X-Google-Smtp-Source: ABdhPJx00CBmV+NQNnGWVZ6pCbTPeYWoi7t9WNITl4M8WQe+QSjOqLEi5/uSRAkUXHVhCjpjoCKilOkyYU4kDA3K4zE=
+X-Received: by 2002:aa7:c157:0:b0:418:f8e3:4c87 with SMTP id
+ r23-20020aa7c157000000b00418f8e34c87mr671966edp.271.1649116835186; Mon, 04
+ Apr 2022 17:00:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <CANMTAZSQgokaG7ZaqipcR56yzOK7iDq50P0_GKd-H7nxUX3TzQ@mail.gmail.com>
- <Ykt9hoX+mPG1oirv@sol.localdomain>
-In-Reply-To: <Ykt9hoX+mPG1oirv@sol.localdomain>
-From:   Jes Klinke <jbk@google.com>
-Date:   Mon, 4 Apr 2022 16:44:57 -0700
-Message-ID: <CANMTAZR-7UEeNXx0Syd+eS7L1K9xc6X9L01UoT50xpDPu4+xVQ@mail.gmail.com>
-Subject: Re: PATCH: Google security chip, additional DID:VID
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+ <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
+ <c2e57f10b62940eba3cfcae996e20e3c@huawei.com> <CAADnVQJSso+GSXC-QmNmj0GBPZzxRCRfqAcQbqD-6y0CtMSopQ@mail.gmail.com>
+In-Reply-To: <CAADnVQJSso+GSXC-QmNmj0GBPZzxRCRfqAcQbqD-6y0CtMSopQ@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Tue, 5 Apr 2022 02:00:24 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
+Message-ID: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
+Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-I have sent a separate email to the list with the patch, in which I
-have cut out the long explanation, added Signed-off-by, and added the
-delimiter for the diff.  Let me know if there are anything else I have
-overlooked.
+On Tue, Apr 5, 2022 at 12:49 AM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Apr 4, 2022 at 10:21 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> >
+> > > From: Djalal Harouni [mailto:tixxdz@gmail.com]
+> > > Sent: Monday, April 4, 2022 9:45 AM
+> > > On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
+> > > >
+> > > > On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
+> > > > <alexei.starovoitov@gmail.com> wrote:
+> > > ...
+> > > > >
+> > > > > > Pinning
+> > > > > > them to unreachable inodes intuitively looked the
+> > > > > > way to go for achieving the stated goal.
+> > > > >
+> > > > > We can consider inodes in bpffs that are not unlinkable by root
+> > > > > in the future, but certainly not for this use case.
+> > > >
+> > > > Can this not be already done by adding a BPF_LSM program to the
+> > > > inode_unlink LSM hook?
+> > > >
+> > >
+> > > Also, beside of the inode_unlink... and out of curiosity: making sysfs/bpffs/
+> > > readonly after pinning, then using bpf LSM hooks
+> > > sb_mount|remount|unmount...
+> > > family combining bpf() LSM hook... isn't this enough to:
+> > > 1. Restrict who can pin to bpffs without using a full MAC
+> > > 2. Restrict who can delete or unmount bpf filesystem
+> > >
 
-Regards
-Jes
+I like this approach better, you will have to restrict the BPF, if you
+want to implement MAC policy using BPF.
 
-On Mon, Apr 4, 2022 at 4:21 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Mon, Apr 04, 2022 at 04:00:31PM -0700, Jes Klinke wrote:
-> > Hello Peter,
+Can you please try implementing something using these hooks?
+
+> > > ?
 > >
-> > I am a firmware engineer working on the TPM chip in Chromebooks (known
-> > as cr50).  As we plan to deploy a new codebase on our TPM chips, we
-> > will have them present a new DID:VID value, but otherwise follow the
-> > same protocol as the existing implementations.
+> > I'm thinking to implement something like this.
 > >
-> > The below patch has the effect of accepting one additional numerical
-> > value, and logging one of two messages, depending on the value.
-> > Unfortunately, I had to reverse the indentation, so the diff appears
-> > to touch more lines than it needed to do.
+> > First, I add a new program flag called
+> > BPF_F_STOP_ONCONFIRM, which causes the ref count
+> > of the link to increase twice at creation time. In this way,
+> > user space cannot make the link disappear, unless a
+> > confirmation is explicitly sent via the bpf() system call.
+
+I don't like this approach, this just sounds like an intentional
+dangling reference, prone to refcounting errors and it does not
+really solve the purpose you want to achieve.
+
+And you will still need a policy around the BPF syscall,
+so why not just use the LSM hooks as suggested above?
+
 > >
-> > I am unsure which procedure to follow, as this is my first kernel
-> > patch.  Let me know if posting the patch inline like this is not the
-> > way to go.
+> > Another advantage is that other LSMs can decide
+> > whether or not they allow a program with this flag
+> > (in the bpf security hook).
+> >
+> > This would work regardless of the method used to
+> > load the eBPF program (user space or kernel space).
+> >
+> > Second, I extend the bpf() system call with a new
+> > subcommand, BPF_LINK_CONFIRM_STOP, which
+> > decreases the ref count for the link of the programs
+> > with the BPF_F_STOP_ONCONFIRM flag. I will also
+> > introduce a new security hook (something like
+> > security_link_confirm_stop), so that an LSM has the
+> > opportunity to deny the stop (the bpf security hook
+> > would not be sufficient to determine exactly for
+> > which link the confirmation is given, an LSM should
+> > be able to deny the stop for its own programs).
+> >
+> > What do you think?
 >
-> Can you take a look at Documentation/process/submitting-patches.rst?
->
-> - Eric
+> Hack upon a hack? Makes no sense.
