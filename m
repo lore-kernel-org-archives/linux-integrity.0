@@ -2,194 +2,296 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC16BC4332F
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D16C43219
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442159AbiDFCfI (ORCPT
+        id S1444214AbiDFCf1 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41588 "EHLO
+        Tue, 5 Apr 2022 22:35:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344753AbiDEVIr (ORCPT
+        with ESMTP id S1835879AbiDFAdx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 17:08:47 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058785D5FF;
-        Tue,  5 Apr 2022 13:31:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B4D32B81FCB;
-        Tue,  5 Apr 2022 20:31:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70C26C385A0;
-        Tue,  5 Apr 2022 20:31:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649190704;
-        bh=hVvEkc+QO11ZHsYNIQDJIVc5jdlWet/kgSfgUtvbG/A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jDpzZ/qW2fXYwFXtD8rfvPxLC+cmucdfq4k8q3Q/I1fZo1wrFvjpHT0dJgdgTXY2V
-         /l74OHoZD0DmfyAw2zWm4AbqNBMr7NkZlonch0Y2jF6dNJiESmV2TaXEs3bOpvdqPb
-         Btza7b5cdyfJujw+5H54+Mib4qI9nSSms2DVulBQPj3kw2JlckVyGGzHHDKKfM48nr
-         3NZH4wSnHyxKGKXNjkIUyxa0sUF1NR0uYis2f+AymQVbn5lsguCWXKImCPzC338loS
-         uM43snSY7JCMLQx53XPF5OLgULkGlybnsho4awM+fAuN7GffFU1mT1O+cSENJzTQEK
-         C8ao2ZdEm0eBQ==
-Date:   Tue, 5 Apr 2022 20:31:43 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/5] ima: support fs-verity file digest based version
- 3 signatures
-Message-ID: <YkynLz5ZuI3pnBk9@gmail.com>
-References: <20220325223824.310119-1-zohar@linux.ibm.com>
- <20220325223824.310119-5-zohar@linux.ibm.com>
+        Tue, 5 Apr 2022 20:33:53 -0400
+Received: from sonic312-30.consmr.mail.ne1.yahoo.com (sonic312-30.consmr.mail.ne1.yahoo.com [66.163.191.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53847103DBF
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 15:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1649198856; bh=kuHtMKHl/c2qIGNhAGVZoANBI56QWLO5me7QncFB0/4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lw/b5SvbMVXuoNhOkN60MTNvRK0sDPou7k8Sm8/fDot5jNIhKwRd3eHlRDH4X++09rQEJw1wr+aKES2kF0F5dOMKeDQUZQ6F4HZOWGED0RDC4zr9xcZY9Qk6H8JLGIQho7PvJeTl8oKy7KnIOIiPnQQ7B7oSZHdV7nV34QwwpPvCV1hoQGTxbT/4rS1hlwLxnfvKtak1zmDmffa+AUzFsTThb4ap/GSRNi9jovUUtR5yK7ddvNvJrvphSyDebb/pwGdWdzuXAqm2VSIbgKe10iBQx3wYqNt0U7V+Z2fvGSGZwR7tJu3GBEoFohyivhXzK9FuIP48+lJCqFVNv9I8hQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1649198856; bh=VbxZHvRlQ3ApM+hvxQitthNUVXoy1RKh/KVchJBGZGS=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=oGp9qOO4oZpK+WQMwTyI6AQctVQpLckSVRDCMM9EY4+URlBQmX+gpK78IfGzEbJ1WQOoAgSAqaV7gbPSvkBrQmDEU+odSwN0Z7UaU315n38j5LFqVI6pfJGjwXZEkE0sJ20imT5mnbnidmwOGI5FZKeajBcL6gMT9w9tZ6VAPJSnOE5tnZANcnkdMh7dqLfFizhLODK+mnLGixLVyp1AgVBsFojT0K3uAfCKlTIeoM31WO7VJJKdaVbU1W5+cjem8eiUyG/ev9ipDWUvQK/goHUd0yZOMuHWRMtTMakOWirSW07wdwQdxNy89lTohXsPGu8sAAXcWlEgAmiEApvXZw==
+X-YMail-OSG: KM__rusVM1mvT51zYphGFvuxV3vMoEUz.64XbPOnJeUfM3Q02p8tjzbCHPbxK90
+ xEbDliiZmXka7VwlPeFd9D1DD5e1OCiK71seGddNJdacxGYZBFqNL38S22jUAAh2NKwCZgZ3a1qm
+ b68mSbOJTcl892WIwb.mTv9vYc9nK6H9jOBvffECkgbEOIuJ2OTT0OCGlYe38K9gXdoiudYOOpHl
+ 2fh_s6WdkypLC5Nfeyk4z1adY.Se94Xlv.8WW64_g.Q6gsD7htFWlmyKKuIjT7IOL6GjWm9Szqd1
+ R3UV59okWBjij2lkAmEvm1OGVvxhNPUS.liSAj2FU0qfbfjIyuTRodjmQ44ijXaF_l.ncSA6E7D2
+ 52uqJTjoWIGYu33gu7Y9smglgLO03sxROpSKDJjLYSmqq5TZV191mqxNk6qpvwyo1.It_zg1CqAM
+ _I4TYKmrHvNzptK8N1w3ksNztLX_e0N5gHbhAJlQPW5Bw6ykmInAWc_WUaCDq_nMTrMNQ0.BQLAW
+ WCRbo_nap91myK7S6jaZMMJbCJQlKQ0d19nAP0GXwM.U0k4qdC3wPw9KG8_ejbIeSpZDDcf8IzrJ
+ 4bQvcIjmYkKtr30WANdICKGFIG6qoNp9Fg95.2kjpGHvmwHPuO6qR9YqjocDnUP97EQvkTGUoZTC
+ fmWLce.3nw8OaynFbR2KRNYiUriJl8uXIATVYpJyjRTwAIa8rjrwbAhxUP5NVN_nxvbt9B0qD1vL
+ iF5dcCV7zA.vqsgkTlPIKvL7geTOs3C_5Q.EkNfAn5PlCJi3y1zODah_iTZ4ecECSgQVOQRR_lvQ
+ 5sUCI4wSaPH5EOmTNV6q7bTyu3MxHVIaMUAIVoLi_8k4EtldfkqaEeKispwKxjk.YDkONtPJE0Cc
+ pE8iFJVkuJaeEnENzECZy3vMXBzWkyWrlOzxhd.x5VcN.LvY_kezvJ9przKkPd24eoo3B9kOZUKP
+ NS_jcRoQPrm.gnozfYxNufkt9qbgJaWqXnPjXRpcK_nHwdGqJ9SrZII7p1ZaQmL_NGh5eShl5Ak0
+ oCDgnLQHlke0.mPoBs.DXXK7r8bayP2uWHxez.cMKyi2mCozH06SzzozGsmV2DV4wRVeNnQ5NnD7
+ duFgvP9y0siotq8UHHEY2GCd5kkjmdaAUd1iyLgVlxPeMAd89ho9zCouqCHg9YuIHw3L_NEVlpyt
+ 6bEP0KxoUYtsVKOeWmn1lqMZxOkdMux8JF.jzEan8uwwC2iFVX62Zh.3mtBLMy4wCtI2ydJ7NwVg
+ kIvCoToLc5RDNWmOhaNfzcZ9SpG03jdgluv5cLh1oyTvjJti37BVGbQVSuFKambK6zz6fPT3JpqQ
+ Td7uMTzGQLDd3aM3r4lpQwkkq6ZgvfZuI74TGG1Qz72OiRGT6ElyxmqgTz9DPI0QPCS8zFtBd5wN
+ g7GXxswBII_DtM6v2a2SqBZlQJnDZCEbYwvF6Rsb7KLhj9nTdtNLv40B05j5uX6eOcjh6.gjicjh
+ 4n2hzMomOHjxFoL26zmw2HZQXDRB9WrXRegbN6o9ZS7S56GISCNn0e.GVx1_ANGl1Y9ITLgc3mkj
+ aeGxLxguvgu5LBpKKyxuQl92.GCrYlYGg9HBZk_gNpX.esY3Yg6VvCP7BctyRlX5CWY0a9REhZJK
+ YiZHe20QUET91dvI8o.O7mlwNgp2u8k7LNi3gGdWWoDQLdXbXVKDqqN8p.OkQ_PT6MQFWhvWD6Hq
+ lQi_UcfdeW3nTE0YTi7wBXLRaPZq2rA6YO6mbYysziXrkHmx9aCMWS1.7xLOO2J43QzBZ7VjWuOp
+ mr2bspwwUWdOji.Vpcv8AgMMWnL2l9RHnGmuIXsm.HAAsC.rmVV9vmPHZtotu0A2DOfy6b8a.kDo
+ 88dY442gAarDTf8zkzmeXacI80hqCh0bPv.qB_AqAuDz8UFgHzXk6kRu6lMfytQN56jEeBNu5Xav
+ WAcMHhj._SoyiuB1CBQ_SLZ1CY5EpL3Iyd3J9TY3sxDmLjffnDicxHqypaiKCVj_kLP6XvZDVPDC
+ iyDxzHS.Msc7c3OGGTk6..15qsMeGybeAzJrJPCL1fE309eHGaV_S4Jk04LwlcKG_q0pxqPS7NCO
+ lvKrLp6NdUSkWJWPqisJBlzCNx0nElmqBXE2hAc2_hYCT_zwuwkjKJLWpKiy5Q8p8ZXptLMQaK_n
+ h7bPvT_uLr4.6T.jmGFpAcr.PEWhdDEqORzK1ytMR5S1ocjyiSITC5gOz0z6sv3U1VufvspTMC_V
+ OyGNoO0g8_WnT_BFdlHO7W5vCSMmUK1kEBFdnH8P0oNSTwlTNikou0acFupkLZ0z2
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Apr 2022 22:47:36 +0000
+Received: by hermes--canary-production-bf1-665cdb9985-4zttc (VZM Hermes SMTP Server) with ESMTPA ID eaa50fa1da4b68d1bc9a73fb183248ea;
+          Tue, 05 Apr 2022 22:47:33 +0000 (UTC)
+Message-ID: <5ce85845-824c-32fb-3807-6f9ab95ad6fe@schaufler-ca.com>
+Date:   Tue, 5 Apr 2022 15:47:30 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220325223824.310119-5-zohar@linux.ibm.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [POC][USER SPACE][PATCH] Introduce LSM to protect pinned objects
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huawei.com>, corbet@lwn.net,
+        viro@zeniv.linux.org.uk, ast@kernel.org, daniel@iogearbox.net,
+        andrii@kernel.org, kpsingh@kernel.org, tixxdz@gmail.com,
+        shuah@kernel.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@foss.st.com, zohar@linux.ibm.com
+Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
+ <20220405131116.3810418-1-roberto.sassu@huawei.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20220405131116.3810418-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20001 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> The IMA policy defines "which" files are to be measured, verified, and/or
-> audited.  For those files being verified, the policy rules indicate "how"
-> the file should be verified.  For example to require a file be signed,
-> the appraise policy rule must include the 'appraise_type' option.
-> 
-> 	appraise_type:= [imasig] | [imasig|modsig] | [sigv3]
->            where 'imasig' is the original or v2 signature (default),
->            where 'modsig' is an appended signature,
->            where 'sigv3' is the signature v3 format.
-> 
-> The policy rule must also indicate the type of signature, if not the IMA
-> default, by specifying the digest type:
-> 
-> 	digest_type:= [verity]
+On 4/5/2022 6:11 AM, Roberto Sassu wrote:
+> Introduce a new LSM to protect pinned objects in a bpf filesystem
 
-I don't understand the above paragraph.  Should it say "type of digest" instead
-of "type of signature"?  And what does specifying the digest type do, exactly?
+This is *not an LSM*. Do not call it an LSM. It is a set of
+eBPF programs. We have all the opportunities for confusion
+that we need. I suggested that you call this a BPF security
+module (BSM) earlier today. You have any number of things
+you can call this that won't be objectionable.
 
-> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-> index 2e0c501ce9c8..acd17183ad8c 100644
-> --- a/Documentation/ABI/testing/ima_policy
-> +++ b/Documentation/ABI/testing/ima_policy
-> @@ -47,7 +47,11 @@ Description:
->  			fgroup:= decimal value
->  		  lsm:  are LSM specific
->  		  option:
-> -			appraise_type:= [imasig] [imasig|modsig]
-> +			appraise_type:= [imasig] | [imasig|modsig] | [sigv3]
-> +			    where 'imasig' is the original or v2 signature,
-> +			    where 'modsig' is an appended signature,
-> +			    where 'sigv3' is the IMA v3 signature.
+> instance. This is useful for example to ensure that an LSM will always
+> enforce its policy, even despite root tries to unload the corresponding
+> eBPF program.
+
+How is this going to ensure that SELinux enforces its policy?
+AppArmor has no eBPF program that corresponds to its policy,
+neither does any other existing LSM, save BPF. Your claim is
+nonsensical in the face of LSM behavior.
+
+> Achieve the protection by denying inode unlink and unmount of the
+> protected bpf filesystem instance. Since protected inodes hold a
+> reference of the link of loaded programs (e.g. LSM hooks), denying
+> operations on them will prevent the ref count of the links from reaching
+> zero, ensuring that the programs remain always active.
+>
+> Enable the protection only for the instance created by the user space
+> counterpart of the LSM, and don't interfere with other instances, so
+> that their behavior remains unchanged.
+>
+> Suggested-by: Djalal Harouni <tixxdz@gmail.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   .gitignore       |  4 +++
+>   Makefile         | 18 ++++++++++++++
+>   bpffs_lsm_kern.c | 63 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   bpffs_lsm_user.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 145 insertions(+)
+>   create mode 100644 .gitignore
+>   create mode 100644 Makefile
+>   create mode 100644 bpffs_lsm_kern.c
+>   create mode 100644 bpffs_lsm_user.c
+>
+> diff --git a/.gitignore b/.gitignore
+> new file mode 100644
+> index 000000000000..7fa02964f1dc
+> --- /dev/null
+> +++ b/.gitignore
+> @@ -0,0 +1,4 @@
+> +*.o
+> +vmlinux.h
+> +bpffs_lsm_kern.skel.h
+> +bpffs_lsm_user
+> diff --git a/Makefile b/Makefile
+> new file mode 100644
+> index 000000000000..c3d805759db3
+> --- /dev/null
+> +++ b/Makefile
+> @@ -0,0 +1,18 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +all: bpffs_lsm_user
 > +
-
-The documentation should explain the differences between the different signature
-types, especially when a user would need to choose one or another.
-
+> +clean:
+> +	rm -rf bpffs_lsm.skel.h vmlinux.h bpffs_lsm_kern.o bpffs_lsm_user
 > +
-> +		Example of 'measure' and 'appraise' rules requiring fs-verity
-> +		signatures (version 3) stored in security.ima xattr.
+> +vmlinux.h:
+> +	/usr/sbin/bpftool btf dump file /sys/kernel/btf/vmlinux format c > \
+> +			  vmlinux.h
 > +
-> +		The 'measure' rule specifies the 'ima-sigv2' template option,
-> +		which includes the indication of type of digest and the file
-> +		signature in the measurement list.
+> +bpffs_lsm_kern.skel.h: bpffs_lsm_kern.o
+> +	bpftool gen skeleton $< > $@
 > +
-> +			measure func=BPRM_CHECK digest_type=verity \
-> +				template=ima-sigv2
-
-This says it requires version 3 signatures, however it then uses "ima-sigv2".
-
-> @@ -183,13 +185,18 @@ enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_value,
->  		return ima_hash_algo;
->  
->  	switch (xattr_value->type) {
-> +	case IMA_VERITY_DIGSIG:
-> +		sig = (typeof(sig))xattr_value;
-> +		if (sig->version != 3 || xattr_len <= sizeof(*sig) ||
-> +		    sig->hash_algo >= HASH_ALGO__LAST)
-> +			return ima_hash_algo;
-> +		return sig->hash_algo;
-
-It looks like this is falling back to SHA-1 if the xattr is invalid:
-
-	int __ro_after_init ima_hash_algo = HASH_ALGO_SHA1;
-
-How about falling back to a more secure hash algorithm, or returning an error?
-
+> +bpffs_lsm_kern.o: bpffs_lsm_kern.c vmlinux.h
+> +	clang -Wall -Werror -g -O2 -target bpf -c $< -o $@
+> +
+> +bpffs_lsm_user: bpffs_lsm_user.c bpffs_lsm_kern.skel.h bpffs_lsm_kern.o
+> +	cc -Wall -Werror -g -o $@ $< -lbpf
+> diff --git a/bpffs_lsm_kern.c b/bpffs_lsm_kern.c
+> new file mode 100644
+> index 000000000000..b3ccb2a75c95
+> --- /dev/null
+> +++ b/bpffs_lsm_kern.c
+> @@ -0,0 +1,63 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * calc_file_id_hash - calculate the hash of the ima_file_id struct data
-> + * @type: xattr type [enum evm_ima_xattr_type]
-> + * @algo: hash algorithm [enum hash_algo]
-> + * @digest: pointer to the digest to be hashed
-> + * @hash: (out) pointer to the hash
+> + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
 > + *
-> + * IMA signature version 3 disambiguates the data that is signed by
-> + * indirectly signing the hash of the ima_file_id structure data.
+> + * Authors:
+> + * Roberto Sassu <roberto.sassu@huawei.com>
 > + *
-> + * Signing the ima_file_id struct is currently only supported for
-> + * IMA_VERITY_DIGSIG type xattrs.
-> + *
-> + * Return 0 on success, error code otherwise.
+> + * Implement an LSM to protect a bpf filesystem instance.
 > + */
-> +static int calc_file_id_hash(enum evm_ima_xattr_type type,
-> +			     enum hash_algo algo, const u8 *digest,
-> +			     struct ima_digest_data *hash)
+> +
+> +#include "vmlinux.h"
+> +#include <errno.h>
+> +#include <bpf/bpf_helpers.h>
+> +#include <bpf/bpf_tracing.h>
+> +#include <bpf/bpf_core_read.h>
+> +
+> +char _license[] SEC("license") = "GPL";
+> +
+> +uint32_t monitored_pid = 0;
+> +
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
+> +	__uint(map_flags, BPF_F_NO_PREALLOC);
+> +	__type(key, int);
+> +	__type(value, sizeof(uint8_t));
+> +} inode_storage_map SEC(".maps");
+> +
+> +SEC("lsm/sb_set_mnt_opts")
+> +int BPF_PROG(sb_set_mnt_opts, struct super_block *sb, void *mnt_opts,
+> +	     unsigned long kern_flags, unsigned long *set_kern_flags)
 > +{
-> +	struct ima_file_id file_id = {
-> +		.hash_type = IMA_VERITY_DIGSIG, .hash_algorithm = algo};
-> +	uint unused = HASH_MAX_DIGESTSIZE - hash_digest_size[algo];
-
-'uint' is unusual in kernel code; please use 'unsigned int' instead.
-
-> @@ -1735,14 +1745,24 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  			break;
->  		case Opt_appraise_type:
->  			ima_log_string(ab, "appraise_type", args[0].from);
-> -			if ((strcmp(args[0].from, "imasig")) == 0)
-> +			if ((strcmp(args[0].from, "imasig")) == 0) {
->  				entry->flags |= IMA_DIGSIG_REQUIRED;
-> -			else if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
-> -				 strcmp(args[0].from, "imasig|modsig") == 0)
-> +			} else if (strcmp(args[0].from, "sigv3") == 0) {
-> +				/*
-> +				 * Only fsverity supports sigv3 for now.
-> +				 * No need to define a new flag.
-> +				 */
-> +				if (entry->flags & IMA_VERITY_REQUIRED)
-> +					entry->flags |= IMA_DIGSIG_REQUIRED;
-> +				else
-> +					result = -EINVAL;
-> +			} else if (IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG) &&
-> +				 strcmp(args[0].from, "imasig|modsig") == 0) {
->  				entry->flags |= IMA_DIGSIG_REQUIRED |
->  						IMA_MODSIG_ALLOWED;
-> -			else
-> +			} else {
->  				result = -EINVAL;
-> +			}
-
-This appears to be assuming that the appraise_type option is given after
-digest_type rather than befoore, as digest_type is what sets the
-IMA_VERITY_REQUIRED flag.  Is this intentional?  Does the order of options
-matter in IMA rules, and if so where are the ordering requirements documented?
-
-Also, it looks like this is allowing appraise_type=imasig or
-appraise_type=imasig|modsig in combination with digest_type=verity.  Is that
-intentional?  What is the use case for these combinations?
-
->  /*
-> - * signature format v2 - for using with asymmetric keys
-> + * signature header format v2 - for using with asymmetric keys
+> +	u32 pid;
+> +
+> +	pid = bpf_get_current_pid_tgid() >> 32;
+> +	if (pid != monitored_pid)
+> +		return 0;
+> +
+> +	if (!bpf_inode_storage_get(&inode_storage_map, sb->s_root->d_inode, 0,
+> +				   BPF_LOCAL_STORAGE_GET_F_CREATE))
+> +		return -EPERM;
+> +
+> +	return 0;
+> +}
+> +
+> +SEC("lsm/inode_unlink")
+> +int BPF_PROG(inode_unlink, struct inode *dir, struct dentry *dentry)
+> +{
+> +	if (bpf_inode_storage_get(&inode_storage_map,
+> +				  dir->i_sb->s_root->d_inode, 0, 0))
+> +		return -EPERM;
+> +
+> +	return 0;
+> +}
+> +
+> +SEC("lsm/sb_umount")
+> +int BPF_PROG(sb_umount, struct vfsmount *mnt, int flags)
+> +{
+> +	if (bpf_inode_storage_get(&inode_storage_map,
+> +				  mnt->mnt_sb->s_root->d_inode, 0, 0))
+> +		return -EPERM;
+> +
+> +	return 0;
+> +}
+> diff --git a/bpffs_lsm_user.c b/bpffs_lsm_user.c
+> new file mode 100644
+> index 000000000000..e20180cc5db9
+> --- /dev/null
+> +++ b/bpffs_lsm_user.c
+> @@ -0,0 +1,60 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
 > + *
-> + * signature format:
-> + * version 2: regular file data hash based signature
-> + * version 3: struct ima_file_id data based signature
->   */
->  struct signature_v2_hdr {
-
-Is this struct also used with version 3, despite having v2 in its name?
-The comment is not clear.
-
-- Eric
+> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> + *
+> + * Implement the user space side of the LSM for bpffs.
+> + */
+> +
+> +#include <fcntl.h>
+> +#include <unistd.h>
+> +#include <stdio.h>
+> +#include <errno.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <limits.h>
+> +#include <sys/mount.h>
+> +#include <sys/stat.h>
+> +
+> +#include "bpffs_lsm_kern.skel.h"
+> +
+> +#define MOUNT_FLAGS (MS_NOSUID | MS_NODEV | MS_NOEXEC | MS_RELATIME)
+> +
+> +int main(int argc, char *argv[])
+> +{
+> +	char mntpoint[] = "/tmp/bpf_private_mountXXXXXX";
+> +	char path[PATH_MAX];
+> +	struct bpffs_lsm_kern *skel;
+> +	int ret, i;
+> +
+> +	skel = bpffs_lsm_kern__open_and_load();
+> +	if (!skel)
+> +		return -EINVAL;
+> +
+> +	ret = bpffs_lsm_kern__attach(skel);
+> +	if (ret < 0)
+> +		goto out_destroy;
+> +
+> +	mkdtemp(mntpoint);
+> +
+> +	skel->bss->monitored_pid = getpid();
+> +	ret = mount(mntpoint, mntpoint, "bpf", MOUNT_FLAGS, NULL);
+> +	skel->bss->monitored_pid = 0;
+> +
+> +	if (ret < 0)
+> +		goto out_destroy;
+> +
+> +	for (i = 0; i < skel->skeleton->prog_cnt; i++) {
+> +		snprintf(path, sizeof(path), "%s/%s", mntpoint,
+> +			 skel->skeleton->progs[i].name);
+> +		ret = bpf_link__pin(*skel->skeleton->progs[i].link, path);
+> +		if (ret < 0)
+> +			goto out_destroy;
+> +	}
+> +
+> +	ret = 0;
+> +out_destroy:
+> +	bpffs_lsm_kern__destroy(skel);
+> +	return ret;
+> +}
