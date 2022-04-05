@@ -2,170 +2,148 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7378C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7C5DC433FE
 	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1391317AbiDFCfB (ORCPT
+        id S1392240AbiDFCfE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33632 "EHLO
+        Tue, 5 Apr 2022 22:35:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573648AbiDETaW (ORCPT
+        with ESMTP id S1457131AbiDEQCq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 15:30:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6999BE9FD;
-        Tue,  5 Apr 2022 12:28:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 798EBB81FA5;
-        Tue,  5 Apr 2022 19:28:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FFE8C385A0;
-        Tue,  5 Apr 2022 19:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649186901;
-        bh=pVw+p9ycf47WcueumebtNHtrMlhZvyHvueOH6HyIgxg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H7DrYXUcnOILq8iiKmQblcUhP12doiBbqszAS+75nlkzSSWvfMtpz0NrUXQomLzqR
-         +wg1S6W0W4OJuwdK4xplboyrOrMqYJ1hjDXvV3JTxf4yj9KUf4MwuhApyFXwrL4xn6
-         i4R8tvEldQQd2TvYxEoD+pz//7BsB48i7XGg/dKrEdcPabZkiFhUwA5zpL5zC/0wiO
-         bKMul1zj1k7nTsCfMCNROi53v/8s0Vke0DQKca0hEBmzuYeY5HX7vF5sTupHXifJlm
-         vl57JKzt34mqZiEE69FjJkXJ2iSEmX65i56DMdMV8DIGdyjbyb16VGLECbl5YPeTL1
-         3+sLYUZjrxTuQ==
-Date:   Tue, 5 Apr 2022 19:28:19 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] ima: permit fsverity's file digests in the IMA
- measurement list
-Message-ID: <YkyYUzEK9Tw4TgL2@gmail.com>
-References: <20220325223824.310119-1-zohar@linux.ibm.com>
- <20220325223824.310119-4-zohar@linux.ibm.com>
+        Tue, 5 Apr 2022 12:02:46 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C60C1965CE;
+        Tue,  5 Apr 2022 08:29:40 -0700 (PDT)
+Received: from fraeml713-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KXs1t6CNPz681Vp;
+        Tue,  5 Apr 2022 23:26:42 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml713-chm.china.huawei.com (10.206.15.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Tue, 5 Apr 2022 17:29:37 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
+ Tue, 5 Apr 2022 17:29:37 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        KP Singh <kpsingh@kernel.org>
+CC:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
+ programs
+Thread-Topic: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
+ programs
+Thread-Index: AQHYQsxoL5kXhl8+JE6PJPNWV+NOTqzYppqAgABrSsCAAo7zgIAAEt0AgAOU8YCAALoz0IABTtSAgAAmCSA=
+Date:   Tue, 5 Apr 2022 15:29:37 +0000
+Message-ID: <0497bb46586c4f37b9bd01950ba9e6a5@huawei.com>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+        <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+        <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
+        <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+        <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+        <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
+        <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
+ <385e4cf4-4cd1-8f41-5352-ea87a1f419ad@schaufler-ca.com>
+In-Reply-To: <385e4cf4-4cd1-8f41-5352-ea87a1f419ad@schaufler-ca.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.81.221.206]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220325223824.310119-4-zohar@linux.ibm.com>
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Mar 25, 2022 at 06:38:22PM -0400, Mimi Zohar wrote:
-> Permit fsverity's file digest (a hash of struct fsverity_digest) to be
-> included in the IMA measurement list, based on the new measurement
-> policy rule 'digest_type=verity' option.
-
-"fsverity's file digest" *is* 'struct fsverity_digest', not a hash of it.
-Did you mean to write 'struct fsverity_descriptor'?
-
-> diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-> index 1a91d92950a7..2d4789dc7750 100644
-> --- a/Documentation/security/IMA-templates.rst
-> +++ b/Documentation/security/IMA-templates.rst
-> @@ -68,6 +68,9 @@ descriptors by adding their identifier to the format string
->   - 'd-ng': the digest of the event, calculated with an arbitrary hash
->     algorithm (field format: [<hash algo>:]digest, where the digest
->     prefix is shown only if the hash algorithm is not SHA1 or MD5);
-> + - 'd-ngv2': same as d-ng, but prefixed with the digest type.
-> +    field format: [<digest type>:<hash algo>:]digest,
-> +        where the digest type is either "ima" or "verity".
-
-As in patch 2, it is not clear what the square brackets mean here.  Maybe they
-mean that "<digest type>:<hash algo>:" is optional, but it is not explained when
-they will be present and when they will not be present.
-
->   - 'd-modsig': the digest of the event without the appended modsig;
->   - 'n-ng': the name of the event, without size limitations;
->   - 'sig': the file signature, or the EVM portable signature if the file
-> @@ -106,3 +109,8 @@ currently the following methods are supported:
->     the ``ima_template=`` parameter;
->   - register a new template descriptor with custom format through the kernel
->     command line parameter ``ima_template_fmt=``.
-> +
-> +
-> +References
-> +==========
-> +[1] Documentation/filesystems/fsverity.rst
-
-Is this meant to be a footnote?  There are no references to it above.
-
-> @@ -242,14 +267,29 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
->  	 */
->  	i_version = inode_query_iversion(inode);
->  	hash.hdr.algo = algo;
-> +	hash.hdr.length = hash_digest_size[algo];
->  
->  	/* Initialize hash digest to 0's in case of failure */
->  	memset(&hash.digest, 0, sizeof(hash.digest));
->  
-> -	if (buf)
-> +	if (buf) {
->  		result = ima_calc_buffer_hash(buf, size, &hash.hdr);
-> -	else
-> +	} else if (iint->flags & IMA_VERITY_REQUIRED) {
-> +		result = ima_get_verity_digest(iint, &hash);
-> +		switch (result) {
-> +		case 0:
-> +			break;
-> +		case -ENODATA:
-> +			audit_cause = "no-verity-digest";
-> +			result = -EINVAL;
-> +			break;
-> +		default:
-> +			audit_cause = "invalid-verity-digest";
-> +			break;
-> +		}
-> +	} else {
->  		result = ima_calc_file_hash(file, &hash.hdr);
-> +	}
->  
->  	if (result && result != -EBADF && result != -EINVAL)
->  		goto out;
-
-The above code only calls ima_get_verity_digest() if 'buf' is non-NULL,
-otherwise it calls ima_calc_buffer_hash().  Under what circumstances is 'buf'
-non-NULL?  Does this imply that 'digest_type=verity' does not always use verity
-digests, and if not, when are they used and when are they not used?
-
-> +/*
-> + * Make sure the policy rule and template format are in sync.
-> + */
-> +static void check_template_field(const struct ima_template_desc *template,
-> +				 const char *field, const char *msg)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < template->num_fields; i++)
-> +		if (!strcmp(template->fields[i]->field_id, field))
-> +			return;
-> +
-> +	pr_notice_once("%s", msg);
-> +}
-
-A better description for this function would be something like "Warn if the
-template does not contain the given field."
-
-> index daf49894fd7d..d42a01903f08 100644
-> --- a/security/integrity/integrity.h
-> +++ b/security/integrity/integrity.h
-> @@ -32,7 +32,7 @@
->  #define IMA_HASHED		0x00000200
->  
->  /* iint policy rule cache flags */
-> -#define IMA_NONACTION_FLAGS	0xff000000
-> +#define IMA_NONACTION_FLAGS	0xff800000
->  #define IMA_DIGSIG_REQUIRED	0x01000000
->  #define IMA_PERMIT_DIRECTIO	0x02000000
->  #define IMA_NEW_FILE		0x04000000
-> @@ -40,6 +40,7 @@
->  #define IMA_FAIL_UNVERIFIABLE_SIGS	0x10000000
->  #define IMA_MODSIG_ALLOWED	0x20000000
->  #define IMA_CHECK_BLACKLIST	0x40000000
-> +#define IMA_VERITY_REQUIRED	0x80000000
-
-It is intentional that the new bit added to IMA_NONACTION_FLAGS is not the same
-as IMA_VERITY_REQUIRED?
-
-- Eric
+PiBGcm9tOiBDYXNleSBTY2hhdWZsZXIgW21haWx0bzpjYXNleUBzY2hhdWZsZXItY2EuY29tXQ0K
+PiBTZW50OiBUdWVzZGF5LCBBcHJpbCA1LCAyMDIyIDQ6NTAgUE0NCj4gT24gNC80LzIwMjIgMTA6
+MjAgQU0sIFJvYmVydG8gU2Fzc3Ugd3JvdGU6DQo+ID4+IEZyb206IERqYWxhbCBIYXJvdW5pIFtt
+YWlsdG86dGl4eGR6QGdtYWlsLmNvbV0NCj4gPj4gU2VudDogTW9uZGF5LCBBcHJpbCA0LCAyMDIy
+IDk6NDUgQU0NCj4gPj4gT24gU3VuLCBBcHIgMywgMjAyMiBhdCA1OjQyIFBNIEtQIFNpbmdoIDxr
+cHNpbmdoQGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+Pj4gT24gU2F0LCBBcHIgMiwgMjAyMiBhdCAx
+OjU1IEFNIEFsZXhlaSBTdGFyb3ZvaXRvdg0KPiA+Pj4gPGFsZXhlaS5zdGFyb3ZvaXRvdkBnbWFp
+bC5jb20+IHdyb3RlOg0KPiA+PiAuLi4NCj4gPj4+Pj4gUGlubmluZw0KPiA+Pj4+PiB0aGVtIHRv
+IHVucmVhY2hhYmxlIGlub2RlcyBpbnR1aXRpdmVseSBsb29rZWQgdGhlDQo+ID4+Pj4+IHdheSB0
+byBnbyBmb3IgYWNoaWV2aW5nIHRoZSBzdGF0ZWQgZ29hbC4NCj4gPj4+PiBXZSBjYW4gY29uc2lk
+ZXIgaW5vZGVzIGluIGJwZmZzIHRoYXQgYXJlIG5vdCB1bmxpbmthYmxlIGJ5IHJvb3QNCj4gPj4+
+PiBpbiB0aGUgZnV0dXJlLCBidXQgY2VydGFpbmx5IG5vdCBmb3IgdGhpcyB1c2UgY2FzZS4NCj4g
+Pj4+IENhbiB0aGlzIG5vdCBiZSBhbHJlYWR5IGRvbmUgYnkgYWRkaW5nIGEgQlBGX0xTTSBwcm9n
+cmFtIHRvIHRoZQ0KPiA+Pj4gaW5vZGVfdW5saW5rIExTTSBob29rPw0KPiA+Pj4NCj4gPj4gQWxz
+bywgYmVzaWRlIG9mIHRoZSBpbm9kZV91bmxpbmsuLi4gYW5kIG91dCBvZiBjdXJpb3NpdHk6IG1h
+a2luZw0KPiBzeXNmcy9icGZmcy8NCj4gPj4gcmVhZG9ubHkgYWZ0ZXIgcGlubmluZywgdGhlbiB1
+c2luZyBicGYgTFNNIGhvb2tzDQo+ID4+IHNiX21vdW50fHJlbW91bnR8dW5tb3VudC4uLg0KPiA+
+PiBmYW1pbHkgY29tYmluaW5nIGJwZigpIExTTSBob29rLi4uIGlzbid0IHRoaXMgZW5vdWdoIHRv
+Og0KPiA+PiAxLiBSZXN0cmljdCB3aG8gY2FuIHBpbiB0byBicGZmcyB3aXRob3V0IHVzaW5nIGEg
+ZnVsbCBNQUMNCj4gPj4gMi4gUmVzdHJpY3Qgd2hvIGNhbiBkZWxldGUgb3IgdW5tb3VudCBicGYg
+ZmlsZXN5c3RlbQ0KPiA+Pg0KPiA+PiA/DQo+ID4gSSdtIHRoaW5raW5nIHRvIGltcGxlbWVudCBz
+b21ldGhpbmcgbGlrZSB0aGlzLg0KPiA+DQo+ID4gRmlyc3QsIEkgYWRkIGEgbmV3IHByb2dyYW0g
+ZmxhZyBjYWxsZWQNCj4gPiBCUEZfRl9TVE9QX09OQ09ORklSTSwgd2hpY2ggY2F1c2VzIHRoZSBy
+ZWYgY291bnQNCj4gPiBvZiB0aGUgbGluayB0byBpbmNyZWFzZSB0d2ljZSBhdCBjcmVhdGlvbiB0
+aW1lLiBJbiB0aGlzIHdheSwNCj4gPiB1c2VyIHNwYWNlIGNhbm5vdCBtYWtlIHRoZSBsaW5rIGRp
+c2FwcGVhciwgdW5sZXNzIGENCj4gPiBjb25maXJtYXRpb24gaXMgZXhwbGljaXRseSBzZW50IHZp
+YSB0aGUgYnBmKCkgc3lzdGVtIGNhbGwuDQo+ID4NCj4gPiBBbm90aGVyIGFkdmFudGFnZSBpcyB0
+aGF0IG90aGVyIExTTXMgY2FuIGRlY2lkZQ0KPiA+IHdoZXRoZXIgb3Igbm90IHRoZXkgYWxsb3cg
+YSBwcm9ncmFtIHdpdGggdGhpcyBmbGFnDQo+ID4gKGluIHRoZSBicGYgc2VjdXJpdHkgaG9vayku
+DQo+ID4NCj4gPiBUaGlzIHdvdWxkIHdvcmsgcmVnYXJkbGVzcyBvZiB0aGUgbWV0aG9kIHVzZWQg
+dG8NCj4gPiBsb2FkIHRoZSBlQlBGIHByb2dyYW0gKHVzZXIgc3BhY2Ugb3Iga2VybmVsIHNwYWNl
+KS4NCj4gPg0KPiA+IFNlY29uZCwgSSBleHRlbmQgdGhlIGJwZigpIHN5c3RlbSBjYWxsIHdpdGgg
+YSBuZXcNCj4gPiBzdWJjb21tYW5kLCBCUEZfTElOS19DT05GSVJNX1NUT1AsIHdoaWNoDQo+ID4g
+ZGVjcmVhc3JlcyB0aGUgcmVmIGNvdW50IGZvciB0aGUgbGluayBvZiB0aGUgcHJvZ3JhbXMNCj4g
+PiB3aXRoIHRoZSBCUEZfRl9TVE9QX09OQ09ORklSTSBmbGFnLiBJIHdpbGwgYWxzbw0KPiA+IGlu
+dHJvZHVjZSBhIG5ldyBzZWN1cml0eSBob29rIChzb21ldGhpbmcgbGlrZQ0KPiA+IHNlY3VyaXR5
+X2xpbmtfY29uZmlybV9zdG9wKSwgc28gdGhhdCBhbiBMU00gaGFzIHRoZQ0KPiA+IG9wcG9ydHVu
+aXR5IHRvIGRlbnkgdGhlIHN0b3AgKHRoZSBicGYgc2VjdXJpdHkgaG9vaw0KPiA+IHdvdWxkIG5v
+dCBiZSBzdWZmaWNpZW50IHRvIGRldGVybWluZSBleGFjdGx5IGZvcg0KPiA+IHdoaWNoIGxpbmsg
+dGhlIGNvbmZpcm1hdGlvbiBpcyBnaXZlbiwgYW4gTFNNIHNob3VsZA0KPiA+IGJlIGFibGUgdG8g
+ZGVueSB0aGUgc3RvcCBmb3IgaXRzIG93biBwcm9ncmFtcykuDQo+IA0KPiBXb3VsZCB5b3UgcGxl
+YXNlIHN0b3AgcmVmZXJyaW5nIHRvIGEgc2V0IG9mIGVCUEYgcHJvZ3JhbXMNCj4gbG9hZGVkIGlu
+dG8gdGhlIEJQRiBMU00gYXMgYW4gTFNNPyBDYWxsIGl0IGEgQlBGIHNlY3VyaXR5DQo+IG1vZHVs
+ZSAoQlNNKSBpZiB5b3UgbXVzdCB1c2UgYW4gYWJicmV2aWF0aW9uLiBBbiBMU00gaXMgYQ0KPiBw
+cm92aWRlciBvZiBzZWN1cml0eV8gaG9va3MuIEluIHlvdXIgY2FzZSB0aGF0IGlzIEJQRi4gV2hl
+bg0KPiB5b3UgY2FsbCB0aGUgc2V0IG9mIGVCUEYgcHJvZ3JhbXMgYW4gTFNNIGl0IGlzIGxpa2Ug
+Y2FsbGluZw0KPiBhbiBTRUxpbnV4IHBvbGljeSBhbiBMU00uDQoNCkFuIGVCUEYgcHJvZ3JhbSBj
+b3VsZCBiZSBhIHByb3ZpZGVyIG9mIHNlY3VyaXR5XyBob29rcw0KdG9vLiBUaGUgYnBmIExTTSBp
+cyBhbiBhZ2dyZWdhdG9yLCBzaW1pbGFybHkgdG8geW91cg0KaW5mcmFzdHJ1Y3R1cmUgdG8gbWFu
+YWdlIGJ1aWx0LWluIExTTXMuIE1heWJlLCBjYWxsaW5nDQppdCBzZWNvbmQtbGV2ZWwgTFNNIG9y
+IHNlY29uZGFyeSBMU00gd291bGQgYmV0dGVyDQpyZXByZXNlbnQgdGhpcyBuZXcgY2xhc3MuDQoN
+ClRoZSBvbmx5IGRpZmZlcmVuY2VzIGFyZSB0aGUgcmVnaXN0cmF0aW9uIG1ldGhvZCwgKFNFQw0K
+ZGlyZWN0aXZlIGluc3RlYWQgb2YgREVGSU5FX0xTTSksIGFuZCB3aGF0IHRoZSBob29rDQppbXBs
+ZW1lbnRhdGlvbiBjYW4gYWNjZXNzLg0KDQpUaGUgaW1wbGVtZW50YXRpb24gb2YgYSBzZWN1cml0
+eV8gaG9vayB2aWEgZUJQRiBjYW4NCmZvbGxvdyB0aGUgc2FtZSBzdHJ1Y3R1cmUgb2YgYnVpbHQt
+aW4gTFNNcywgaS5lLiBpdCBjYW4gYmUNCnVuaXF1ZWx5IHJlc3BvbnNpYmxlIGZvciBlbmZvcmNp
+bmcgYW5kIGJlIHBvbGljeS1hZ25vc3RpYywNCmFuZCBjYW4gcmV0cmlldmUgdGhlIGRlY2lzaW9u
+cyBiYXNlZCBvbiBhIHBvbGljeSBmcm9tIGENCmNvbXBvbmVudCBpbXBsZW1lbnRlZCBzb21ld2hl
+cmUgZWxzZS4NCg0KSG9wZWZ1bGx5LCBJIHVuZGVyc3Rvb2QgdGhlIGJhc2ljIHByaW5jaXBsZXMg
+Y29ycmVjdGx5Lg0KSSBsZXQgdGhlIGVCUEYgbWFpbnRhaW5lcnMgY29tbWVudCBvbiB0aGlzLg0K
+DQpUaGFua3MNCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdt
+YkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIFpob25nIFJvbmdodWEN
+Cg0KPiA+IFdoYXQgZG8geW91IHRoaW5rPw0KPiA+DQo+ID4gVGhhbmtzDQo+ID4NCj4gPiBSb2Jl
+cnRvDQo+ID4NCj4gPiBIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1
+NjA2Mw0KPiA+IE1hbmFnaW5nIERpcmVjdG9yOiBMaSBQZW5nLCBaaG9uZyBSb25naHVhDQoNCg==
