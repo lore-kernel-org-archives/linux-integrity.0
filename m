@@ -2,65 +2,114 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C62C433F5
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Apr 2022 02:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD7EC433FE
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Apr 2022 06:14:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229735AbiDECkM (ORCPT
+        id S229924AbiDEGQq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 4 Apr 2022 22:40:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39790 "EHLO
+        Tue, 5 Apr 2022 02:16:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbiDECkA (ORCPT
+        with ESMTP id S229701AbiDEGQn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 4 Apr 2022 22:40:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5FD2921E1
-        for <linux-integrity@vger.kernel.org>; Mon,  4 Apr 2022 18:42:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 5 Apr 2022 02:16:43 -0400
+Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ACD5B2
+        for <linux-integrity@vger.kernel.org>; Mon,  4 Apr 2022 23:14:44 -0700 (PDT)
+Received: from [192.168.0.2] (ip5f5ae8ff.dynamic.kabel-deutschland.de [95.90.232.255])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3BA4C60DDD
-        for <linux-integrity@vger.kernel.org>; Mon,  4 Apr 2022 23:58:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E33C2BBE4;
-        Mon,  4 Apr 2022 23:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649116724;
-        bh=wL0AvquUaltiJYos7r/r/kHsQFf77whBwQb4Z/k9moc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AZeXPyRd9IKFvGmmkuiR2PKFb9V+dDxjvV+cnpm8suKkjNSuxsZ9kbOlpWYtNSHqz
-         614cUg4CkrMI+GP/Vd9dnAhH+GmTBRMbHr1n82wbY6QAUOZUVI9OCXiu7n0/fK6CDt
-         tLjz7wTVlu+Lc/gM0lDP4fpKJIEYXUCkfMgTjAsSzC3VIX+jf405dOF4asSoK6Aok0
-         EWOVypN2A6FfwrU+se4IYwID5poRHhDy5r0AuG3wZa4W5vLUaaKqOPWFqGpwkYD34P
-         4v99tHy7x/cJMy4I8WyOFAf8OL6vN1upp9oNzlE0PNbxg9yaxcqK5wRYGyXIt1rsMg
-         yFysji5OMPrXA==
-Date:   Mon, 4 Apr 2022 16:58:43 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jes Klinke <jbk@google.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
-Subject: Re: PATCH: Google security chip, additional DID:VID
-Message-ID: <YkuGMzkivenBgSmO@sol.localdomain>
-References: <CANMTAZSQgokaG7ZaqipcR56yzOK7iDq50P0_GKd-H7nxUX3TzQ@mail.gmail.com>
- <Ykt9hoX+mPG1oirv@sol.localdomain>
- <CANMTAZR-7UEeNXx0Syd+eS7L1K9xc6X9L01UoT50xpDPu4+xVQ@mail.gmail.com>
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3CA4A61E64846;
+        Tue,  5 Apr 2022 08:14:43 +0200 (CEST)
+Message-ID: <29700faa-6e23-78ee-8353-9a665374c487@molgen.mpg.de>
+Date:   Tue, 5 Apr 2022 08:14:42 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANMTAZR-7UEeNXx0Syd+eS7L1K9xc6X9L01UoT50xpDPu4+xVQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] drivers/char/tpm: Google TPM, additional DID:VID
+Content-Language: en-US
+To:     Jes Klinke <jbk@google.com>
+References: <CANMTAZTAnGDxJri4_rogsW2Ev9tpFTSTBZaEvSNpgmjEUAgwBA@mail.gmail.com>
+Cc:     linux-integrity@vger.kernel.org
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <CANMTAZTAnGDxJri4_rogsW2Ev9tpFTSTBZaEvSNpgmjEUAgwBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Apr 04, 2022 at 04:44:57PM -0700, Jes Klinke wrote:
-> I have sent a separate email to the list with the patch, in which I
-> have cut out the long explanation, added Signed-off-by, and added the
-> delimiter for the diff.  Let me know if there are anything else I have
-> overlooked.
+Dear Jes,
+
+
+Am 05.04.22 um 01:42 schrieb Jes Klinke:
+> Accept one additional numerical value of DID:VID for Google TPM.
+
+Mention the ID at least once in the commit message? In what device is it 
+used?
+
+For the summary, the prefix seems often just `tpm` or `char: tpm`.
+
+tpm: cr50: Add new device/vendor ID 0x504a6666
+
+> Signed-off-by: Jes B. Klinke <jbk@google.com>
 > 
-> Regards
-> Jes
 
-Please use 'git format-patch', as submitting-patches.rst recommends.  Also run
-scripts/checkpatch.pl on your patch.  That will ensure that your patch is in the
-correct format.  As-is, your patch doesn't apply.
+Superfluous blank line.
 
-- Eric
+> ---
+> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> index f6c0affbb4567..e5fb1ecc8fa2e 100644
+> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> @@ -31,6 +31,7 @@
+>   #define TPM_CR50_TIMEOUT_SHORT_MS 2 /* Short timeout during transactions */
+>   #define TPM_CR50_TIMEOUT_NOIRQ_MS 20 /* Timeout for TPM ready without IRQ */
+>   #define TPM_CR50_I2C_DID_VID 0x00281ae0L /* Device and vendor ID reg value */
+> +#define TPM_TI50_I2C_DID_VID 0x504a6666L
+>   #define TPM_CR50_I2C_MAX_RETRIES 3 /* Max retries due to I2C errors */
+>   #define TPM_CR50_I2C_RETRY_DELAY_LO 55 /* Min usecs between retries on I2C */
+>   #define TPM_CR50_I2C_RETRY_DELAY_HI 65 /* Max usecs between retries on I2C */
+> @@ -742,16 +743,20 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
+>    }
+> 
+>    vendor = le32_to_cpup((__le32 *)buf);
+> - if (vendor != TPM_CR50_I2C_DID_VID) {
+> - dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
+
+This line should be indented, shouldn’t it? Please send a properly 
+formatted patch. Did you run it through `scripts/checkpatch.pl`?
+
+> - tpm_cr50_release_locality(chip, true);
+> - return -ENODEV;
+> + if (vendor == TPM_CR50_I2C_DID_VID) {
+> + dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+> + client->addr, client->irq, vendor >> 16);
+> + return tpm_chip_register(chip);
+> + }
+> + if (vendor == TPM_TI50_I2C_DID_VID) {
+> + dev_info(dev, "ti50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+> + client->addr, client->irq, vendor >> 16);
+> + return tpm_chip_register(chip);
+>    }
+> 
+> - dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
+> - client->addr, client->irq, vendor >> 16);
+> -
+> - return tpm_chip_register(chip);
+> + dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
+> + tpm_cr50_release_locality(chip, true);
+> + return -ENODEV;
+>   }
+> 
+>   /**
+
+Please also mention in the commit message, what is changed here.
+
+
+Kind regards,
+
+Paul
