@@ -2,203 +2,172 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9236DC35273
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3EFC35276
 	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446725AbiDFCfo (ORCPT
+        id S1447866AbiDFCfy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43564 "EHLO
+        Tue, 5 Apr 2022 22:35:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457757AbiDEQkG (ORCPT
+        with ESMTP id S1457338AbiDEQDG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 12:40:06 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 482FED9EA3
-        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 09:38:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CA259B81E8E
-        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 16:38:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78B53C385A0
-        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 16:38:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649176685;
-        bh=Godeb1QF1XaLrnNDs3lSu+RGeizZyertdC0hYAIHClw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fE6K3ZMOrzLhOrGELR5HAtFVyi2NejfAzQAYn94hbuyiYrk1Wj/uHjQ/sUwrFLq7b
-         A90RQAeTHiH/jnF2FsoDzzb6YF6K7Da9PcyEtfDSMTTtqoV+6881nB3QRuxgbRB1C0
-         L1BVh6We0d4/AWznFWw+bE9HrosTDxOoqixJRgriBIQeRWuil9/sq6gfrBnMMr+5wI
-         zMbtCSoVvsck22ldzHRKFa04rO6n/CZ4G3xf1f7z+cHOmA7EOAPN7aPLK7G36cU3Ql
-         jPOSWjIGfcde6VfzUdUUGxaUZdzwVjVyzkIbs+C0Mf1xPcXcBfPZUslz33qheWg8dg
-         7wC9nhqlRbeAg==
-Received: by mail-ed1-f53.google.com with SMTP id w18so9328961edi.13
-        for <linux-integrity@vger.kernel.org>; Tue, 05 Apr 2022 09:38:05 -0700 (PDT)
-X-Gm-Message-State: AOAM530YbdIquTx2ozs/XYvbRUiTP/mlbUEZqLm2sGVTXYO0794MffpU
-        HS3P8sHH7T2qbzlanx5ozdSVS/NEbvGXSit9rpZ5Zw==
-X-Google-Smtp-Source: ABdhPJzKjYrImTJI9WyByUp50Mj9PCG8J06DWt1ucdJTqdDxCPRpsxJHnkt2Vhm9WUOmFxdnESIK5CAyDWTZbEBHta8=
-X-Received: by 2002:a17:907:6089:b0:6db:a3d7:3fa9 with SMTP id
- ht9-20020a170907608900b006dba3d73fa9mr4556278ejc.593.1649176672844; Tue, 05
- Apr 2022 09:37:52 -0700 (PDT)
+        Tue, 5 Apr 2022 12:03:06 -0400
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB90443C4
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 08:38:23 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXsHG6sFqzMpxx0;
+        Tue,  5 Apr 2022 17:38:18 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXsHB10mbzlhNts;
+        Tue,  5 Apr 2022 17:38:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1649173098;
+        bh=CsXI63Mo7UO6r/uWwmX4gFbUZp/CXy5CRXKt0P6gt6c=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=gmHoadq5c/jpwjvzRlDxdSe/QMSdIkQfuWdwnlle2JMgrxICKuYw2Otz5agkacD7Z
+         B3oSAGjmLbhr+bMhGpyxWhZRNmQP4WVnKkPPMB7gr9oFepQ8SCfZOo8micekUP/VgR
+         nsB09g6YQOZdXoGywDPjQHeZ/pGkYe4CO0FU08J8=
+Message-ID: <1eeae491-7f4f-2cbc-7dbb-04e926c78b89@digikod.net>
+Date:   Tue, 5 Apr 2022 17:38:39 +0200
 MIME-Version: 1.0
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
- <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
- <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
- <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
- <c2e57f10b62940eba3cfcae996e20e3c@huawei.com> <385e4cf4-4cd1-8f41-5352-ea87a1f419ad@schaufler-ca.com>
- <0497bb46586c4f37b9bd01950ba9e6a5@huawei.com> <fb804242-da2c-4213-9dc3-f09ea42f0355@schaufler-ca.com>
-In-Reply-To: <fb804242-da2c-4213-9dc3-f09ea42f0355@schaufler-ca.com>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Tue, 5 Apr 2022 18:37:42 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4KwWykYjb0DJ1SHe9syiefqgfjDB8om7RNx10vZ3UiKg@mail.gmail.com>
-Message-ID: <CACYkzJ4KwWykYjb0DJ1SHe9syiefqgfjDB8om7RNx10vZ3UiKg@mail.gmail.com>
-Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: 
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+References: <20220321161557.495388-1-mic@digikod.net>
+ <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+ <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 6:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 4/5/2022 8:29 AM, Roberto Sassu wrote:
-> >> From: Casey Schaufler [mailto:casey@schaufler-ca.com]
-> >> Sent: Tuesday, April 5, 2022 4:50 PM
-> >> On 4/4/2022 10:20 AM, Roberto Sassu wrote:
-> >>>> From: Djalal Harouni [mailto:tixxdz@gmail.com]
-> >>>> Sent: Monday, April 4, 2022 9:45 AM
-> >>>> On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
-> >>>>> On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
-> >>>>> <alexei.starovoitov@gmail.com> wrote:
-> >>>> ...
-> >>>>>>> Pinning
-> >>>>>>> them to unreachable inodes intuitively looked the
-> >>>>>>> way to go for achieving the stated goal.
-> >>>>>> We can consider inodes in bpffs that are not unlinkable by root
-> >>>>>> in the future, but certainly not for this use case.
-> >>>>> Can this not be already done by adding a BPF_LSM program to the
-> >>>>> inode_unlink LSM hook?
-> >>>>>
-> >>>> Also, beside of the inode_unlink... and out of curiosity: making
-> >> sysfs/bpffs/
-> >>>> readonly after pinning, then using bpf LSM hooks
-> >>>> sb_mount|remount|unmount...
-> >>>> family combining bpf() LSM hook... isn't this enough to:
-> >>>> 1. Restrict who can pin to bpffs without using a full MAC
-> >>>> 2. Restrict who can delete or unmount bpf filesystem
-> >>>>
-> >>>> ?
-> >>> I'm thinking to implement something like this.
-> >>>
-> >>> First, I add a new program flag called
-> >>> BPF_F_STOP_ONCONFIRM, which causes the ref count
-> >>> of the link to increase twice at creation time. In this way,
-> >>> user space cannot make the link disappear, unless a
-> >>> confirmation is explicitly sent via the bpf() system call.
-> >>>
-> >>> Another advantage is that other LSMs can decide
-> >>> whether or not they allow a program with this flag
-> >>> (in the bpf security hook).
-> >>>
-> >>> This would work regardless of the method used to
-> >>> load the eBPF program (user space or kernel space).
-> >>>
-> >>> Second, I extend the bpf() system call with a new
-> >>> subcommand, BPF_LINK_CONFIRM_STOP, which
-> >>> decreasres the ref count for the link of the programs
-> >>> with the BPF_F_STOP_ONCONFIRM flag. I will also
-> >>> introduce a new security hook (something like
-> >>> security_link_confirm_stop), so that an LSM has the
-> >>> opportunity to deny the stop (the bpf security hook
-> >>> would not be sufficient to determine exactly for
-> >>> which link the confirmation is given, an LSM should
-> >>> be able to deny the stop for its own programs).
-> >> Would you please stop referring to a set of eBPF programs
-> >> loaded into the BPF LSM as an LSM? Call it a BPF security
-> >> module (BSM) if you must use an abbreviation. An LSM is a
-> >> provider of security_ hooks. In your case that is BPF. When
-> >> you call the set of eBPF programs an LSM it is like calling
-> >> an SELinux policy an LSM.
-> > An eBPF program could be a provider of security_ hooks
-> > too.
->
-> No, it can't. If I look in /sys/kernel/security/lsm what
-> you see is "bpf". The LSM is BPF. What BPF does in its
-> hooks is up to it and its responsibility.
->
-> >   The bpf LSM is an aggregator, similarly to your
-> > infrastructure to manage built-in LSMs. Maybe, calling
-> > it second-level LSM or secondary LSM would better
-> > represent this new class.
->
-> It isn't an LSM, and adding a qualifier doesn't make it
-> one and only adds to the confusion.
->
-> > The only differences are the registration method, (SEC
-> > directive instead of DEFINE_LSM), and what the hook
-> > implementation can access.
->
-> Those two things pretty well define what an LSM is.
->
-> > The implementation of a security_ hook via eBPF can
-> > follow the same structure of built-in LSMs, i.e. it can be
-> > uniquely responsible for enforcing and be policy-agnostic,
-> > and can retrieve the decisions based on a policy from a
-> > component implemented somewhere else.
->
-> The BPF LSM provides mechanism. The eBPF programs provide policy.
 
-Yeah, let's stick what we call an LSM in the kernel, Here,
-"bpf" is the LSM like selinux,apparmor and this is what you set in
-CONFIG_LSM or pass on cmdline as lsm= and can be seen
-in /sys/kernel/security/lsm
+On 04/04/2022 23:28, Linus Torvalds wrote:
+> On Mon, Apr 4, 2022 at 1:29 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> This initial proposal was using a new faccessat2(2) flag:
+>> AT_INTERPRETED, see
+>> https://lore.kernel.org/all/20200908075956.1069018-2-mic@digikod.net/
+>> What do you think about that? I'm happy to get back to this version if
+>> everyone is OK with it.
+> 
+> I'm certainly happi_er_ with that, but I find that particular patch
+> odd for other reasons.
+> 
+> In no particular order:
+> 
+>   - what's with the insane non-C syntax? Double parentheses have no
+> actual meaning in C:
+> 
+>       if ((flags & AT_INTERPRETED)) {
+>           if ((mode & MAY_EXEC)) {
+> 
+>     so I don't understand why you'd use that strance thing.
 
-Calling your BPF programs an LSM will just confuse people.
+I guess it comes from a previous version that ANDed two booleans.
 
->
-> >
-> > Hopefully, I understood the basic principles correctly.
-> > I let the eBPF maintainers comment on this.
-> >
-> > Thanks
-> >
-> > Roberto
-> >
-> > HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> > Managing Director: Li Peng, Zhong Ronghua
-> >
-> >>> What do you think?
-> >>>
-> >>> Thanks
-> >>>
-> >>> Roberto
-> >>>
-> >>> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> >>> Managing Director: Li Peng, Zhong Ronghua
+
+> 
+>   - why is this an AT_INTERPRETED flag? I don't understand the name, I
+> don't understand the semantics.
+
+I wasn't sure it was a good idea to add another mode bit, so I ended up 
+using a flag to not break compatibility of other mode checks but extend 
+the semantic to interpreted scripts. But I agree that a new mode makes 
+sense.
+
+
+> 
+>     Why would that flag have the same value as AT_SYMLINK_FOLLOW?
+
+It was a bug.
+
+
+> 
+>     Why isn't this just a new _mode_ bit, which is what I feel is
+> sensible? We only use three bits (with no bits set meaning
+> "existence"), so we have *tons* of bits left in that namespace, and it
+> would make much more sense to me to have
+> 
+>          #define EXECVE_OK 8
+> 
+>      which is the same as the "group exec" bit, so it actually makes
+> some kind of sense too.
+
+Looks fine to me. The "EXECVE_" prefix is a bit weird but it will not be 
+defined in the kernel like X_OK and others anyway, and as you said, it 
+matches S_IXGRP.
+
+
+> 
+>   - related to that "I don't understand the semantics", the
+> "documentation" for that thing doesn't make sense either:
+> 
+>      +         The
+>      +    main usage is for script
+>      +    interpreters to enforce a policy
+>      +    consistent with the kernel's one
+>      +    (through sysctl configuration or LSM
+>      +    policy).  */
+
+I'll synchronize the documentation with a next series.
+
+
+> 
+> Now, what I *think* you mean is
+See a following email in reply to Kees.
+[...]
+
+> 
+> And yes, we still need to talk details:
+> 
+>   - no backwards compatibility issues, because we've happily always
+> checked 'mode' for being valid, so old kernels will always return
+> -EINVAL.
+> 
+>   - POSIX namespace issues for EXECVE_OK means that the name probably
+> needs some thinking (maybe we just need to call it __ACCESS_OK_EXECVE
+> internally or something - the kernel actually doesn't even export the
+> existing [FRWX]_OK values, because we "know" they map tho the usual
+> "owner RWX" bits, with F being "no bit set")
+
+Right, I cannot find a better name for now.
+
+See a following email in reply to Kees.
+[...]
+
+> 
+> So to recap: I'm very much ok with some access() extension, but I
+> think even that very much needs clarification, and the existing patch
+> is just odd in many many ways.
+
+This v8 was kind of an early version, I'll update everything. Thanks!
