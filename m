@@ -2,34 +2,41 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B5FBC4167D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E42C41535
 	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445288AbiDFCfc (ORCPT
+        id S1445819AbiDFCfh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48800 "EHLO
+        Tue, 5 Apr 2022 22:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1585626AbiDFAAG (ORCPT
+        with ESMTP id S1457505AbiDEQDT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 20:00:06 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FB4B5DE40;
-        Tue,  5 Apr 2022 15:22:11 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 235MLeah002791
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 5 Apr 2022 18:21:40 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id DFA5915C3EB6; Tue,  5 Apr 2022 18:21:39 -0400 (EDT)
-Date:   Tue, 5 Apr 2022 18:21:39 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Tue, 5 Apr 2022 12:03:19 -0400
+Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD47F2315C;
+        Tue,  5 Apr 2022 08:55:35 -0700 (PDT)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXsgB4M82zMq0sP;
+        Tue,  5 Apr 2022 17:55:34 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXsg91X3NzlhSMT;
+        Tue,  5 Apr 2022 17:55:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1649174134;
+        bh=n8eScuGwrUyyZSJgvZ6lVdoUOYD/v6TfS3yMx/Udtks=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=JnDSENf16eneR0rB24qn+a2KSFPCjzI4EXohLg+3kAT8m4AC3+MfQVCKykfm6TKH2
+         MCz+01LQ4oBu62PsNO8nwK1T+DFOsDvhCKaFTkZKM9hj4PFy4VmKOnL/ryJ8yuTY6R
+         irEn/3AiFzY58nJOspTOKxoSr9FMCyracTvvgYF8=
+Message-ID: <673bfc0f-7263-9404-3d88-6cc0ae1a1ae1@digikod.net>
+Date:   Tue, 5 Apr 2022 17:55:58 +0200
+MIME-Version: 1.0
+User-Agent: 
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Christian Heimes <christian@python.org>,
         Geert Uytterhoeven <geert@linux-m68k.org>,
@@ -38,7 +45,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Muhammad Usama Anjum <usama.anjum@collabora.com>,
         Paul Moore <paul@paul-moore.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>,
         Shuah Khan <skhan@linuxfoundation.org>,
         Steve Dower <steve.dower@python.org>,
@@ -48,69 +55,75 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-integrity <linux-integrity@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-Message-ID: <YkzA8/3sl86W5oCX@mit.edu>
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>
 References: <20220321161557.495388-1-mic@digikod.net>
  <202204041130.F649632@keescook>
  <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
  <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
  <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
  <202204041451.CC4F6BF@keescook>
- <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+In-Reply-To: <202204041451.CC4F6BF@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Apr 04, 2022 at 04:26:44PM -0700, Linus Torvalds wrote:
-> > >     (a) "what about suid bits that user space cannot react to"
-> >
-> > What do you mean here? Do you mean setid bits on the file itself?
+
+On 05/04/2022 00:25, Kees Cook wrote:
+> On Mon, Apr 04, 2022 at 02:28:19PM -0700, Linus Torvalds wrote:
+>> Now, what I *think* you mean is
+>>
+>>   (1) user-space executable loaders want to be able to test the *same*
+>> policy as the kernel does for execve()
 > 
-> Right.
+> Right. The script interpreter wants to ask "if this file were actually
+> an ELF going through execve(), would the kernel allow it?"
+
+The current behavior was a bit more flexible thanks to the sysctl. It 
+was either the mount exec option check, the file perm check or both. The 
+rationale is to let sysadmins adapt their system to existing 
+applications/interpreters without breaking. Only basing the check on 
+mount exec and file perm could be an issue in the short term, but I 
+guess it would deter inconsistencies in existing systems… I'm not sure 
+it is a wise move because if no interpreter want to use this check it 
+would then be useless. See commit message in 
+https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/ and 
+the trusted_for_policy sysctl documentation:
+
+"Even without enforced security policy, user space interpreters can use
+this syscall to try as much as possible to enforce the system policy at
+their level, knowing that it will not break anything on running systems
+which do not care about this feature.  However, on systems which want
+this feature enforced, there will be knowledgeable people (i.e. system
+administrator who configured fs.trusted_for_policy deliberately) to
+manage it. [...]"
+
+
 > 
-> Maybe we don't care.
+>>   (2) access(path, EXECVE_OK) will do the same permission checks as
+>> "execve()" would do for that path
 > 
-> Maybe we do.
+> Maybe. I defer to Mickaël here, but my instinct is to avoid creating an
+> API that can be accidentally misused. I'd like this to be fd-only based,
+> since that removes path name races. (e.g. trusted_for() required an fd.)
+
+The fd-based approach is definitely better from a security point of view 
+but there is indeed a use case for pathnames. I guess we could highlight 
+this point in the documentation.
+
 > 
-> Is the user-space loader going to honor them? Is it going to ignore
-> them? I don't know. And it actually interacts with things like
-> 'nosuid', which the kernel does know about, and user space has a hard
-> time figuring out.
-
-So there *used* to be suidperl which was a setuid version of perl with
-some extra security checks.  (See [1] for more details.)  The suidperl
-binary would be used by #!/usr/bin/perl so it could honor setuid bits
-on perl scripts, but it was deprecated in Perl 5.8 and removed in Perl
-5.12 in 2010[2].
-
-[1] https://mattmccutchen.net/suidperl.html
-[2] https://metacpan.org/release/SHAY/perl-5.20.2/view/pod/perl5120delta.pod#Deprecations
-
-So it's possible that the user-space loader might try to honor them,
-and if there was such an example "in the field", it might be nice if
-there was a way for the kernel to advise userspace about the nosuid.
-But I'm not aware of any other shell script interpreter that tried do
-what perl did with suidperl.
-
-> So if the point is "give me an interface so that I can do the same
-> thing a kernel execve() loader would do", then those sgid/suid bits
-> actually may be exactly the kind of thing that user space wants the
-> kernel to react to - should it ignore them, or should it do something
-> special when it sees that they are set?
+>>   (3) if you already have the fd open, use "faccess(fd, NULL,
+>> F_OK_TO_EXECUTE, AT_EMPTY_PATH)"
 > 
-> I'm not saying that they *should* be something we care about. All I'm
-> saying is that I want that *discussion* to happen.
+> Yes, specifically faccessat2(). (And continuing the race thought above,
+> yes, there could still be races if the content of the file could be
+> changed, but that case is less problematic under real-world conditions.)
 
-I'm not convinced we should.  I suppose *if* the shell script was
-suid, *and* the file system was mounted nosuid, then the check could
-return false, and that would be mostly harmless even if the script
-interpreter didn't support setuid.  But it's extra complexity, and in
-theory it could break a setuid script, where the setuid bit was
-previously a no-op, and it now might cause a problem for that user.
+I'm not worried about changes in the file once it is opened. This could 
+be an issue but not in the kernel (e.g. flaky update system).
 
-	     	    	       	     	   - Ted
+[...]
