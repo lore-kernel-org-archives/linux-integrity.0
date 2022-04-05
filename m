@@ -2,125 +2,113 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0F9C4707A
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C29FC4707E
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1448684AbiDFCgD (ORCPT
+        id S1448870AbiDFCgE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:36:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
+        Tue, 5 Apr 2022 22:36:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1452408AbiDEPyx (ORCPT
+        with ESMTP id S1573509AbiDETNz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 11:54:53 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C83891177;
-        Tue,  5 Apr 2022 07:55:03 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 235EsMot006873
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 5 Apr 2022 10:54:23 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 9237D15C3EB6; Tue,  5 Apr 2022 10:54:22 -0400 (EDT)
-Date:   Tue, 5 Apr 2022 10:54:22 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-Message-ID: <YkxYHqLqTEKFrCeg@mit.edu>
-References: <20220321161557.495388-1-mic@digikod.net>
- <202204041130.F649632@keescook>
- <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
- <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+        Tue, 5 Apr 2022 15:13:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3E9E885A;
+        Tue,  5 Apr 2022 12:11:53 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8530EB81FA2;
+        Tue,  5 Apr 2022 19:11:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D2AC385A3;
+        Tue,  5 Apr 2022 19:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649185911;
+        bh=iqDVStRGWXOC77cY1v8kziYHdtofJiyJcwhxPZyHrbc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aLEMuI3pesvK6tTddYPd7tLH6xqK53mL9EL/1QzdSFFDsK5N4EdY1LIVnfurkf8d7
+         BkJukhkF+kv3CQ9PLpfN0qAU8pzWM70ZdrXidS0aNhBClngiuWHJ6I85GU1hdi0WWt
+         hBywYF1O/c5L3zhHAviInVrbXd4/whLDJq1cHeys+Qjci7C4+joCjfJVDMLCoZVb6U
+         m3S0dz+1WlxZPW2eV/Tquo7WTkLeF9z0icfXGEGHZZplTblFgpq0JH2mU1DGI8ODlv
+         DgUgy8TTUHhhkuiXA4mhefyvy1PTrAVpVUtCBg8USciqeKb99t7MjokKbT6OPx0+V+
+         VYUwwgit8OhpQ==
+Date:   Tue, 5 Apr 2022 19:11:48 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/5] ima: define a new template field named 'd-ngv2'
+ and templates
+Message-ID: <YkyUdM5hmKf4noS7@gmail.com>
+References: <20220325223824.310119-1-zohar@linux.ibm.com>
+ <20220325223824.310119-3-zohar@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+In-Reply-To: <20220325223824.310119-3-zohar@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, Apr 04, 2022 at 10:30:13PM +0200, Mickaël Salaün wrote:
-> > If you add a new X_OK variant to access(), maybe that could fly.
-> 
-> As answered in private, that was the approach I took for one of the early
-> versions but a dedicated syscall was requested by Al Viro:
-> https://lore.kernel.org/r/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net
-> The main reason behind this request was that it doesn't have the exact same
-> semantic as faccessat(2). The changes for this syscall are documented here:
-> https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/
-> The whole history is linked in the cover letter:
-> https://lore.kernel.org/all/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net/
+On Fri, Mar 25, 2022 at 06:38:21PM -0400, Mimi Zohar wrote:
+>  static int ima_eventdigest_init_common(const u8 *digest, u32 digestsize,
+> -				       u8 hash_algo,
+> +				       u8 digest_type, u8 hash_algo,
+>  				       struct ima_field_data *field_data)
+>  {
+>  	/*
+>  	 * digest formats:
+>  	 *  - DATA_FMT_DIGEST: digest
+>  	 *  - DATA_FMT_DIGEST_WITH_ALGO: [<hash algo>] + ':' + '\0' + digest,
+> +	 *  - DATA_FMT_DIGEST_WITH_TYPE_AND_ALGO:
+> +	 *	[<digest type> + ':' + <hash algo>] + ':' + '\0' + digest,
+> +	 *    where <hash type> is either "ima" or "verity",
+>  	 *    where <hash algo> is provided if the hash algorithm is not
+>  	 *    SHA1 or MD5
 
-As a suggestion, something that can be helpful for something which has
-been as heavily bike-sheded as this concept might be to write a
-"legislative history", or perhaps, a "bike shed history".
+This says both "hash type" and "digest type".  It should be one or the other.
 
-And not just with links to mailing list discussions, but a short
-summary of why, for example, we moved from the open flag O_MAYEXEC to
-the faccessat(2) approach.  I looked, but I couldn't find the
-reasoning while diving into the mail archives.  And there was some
-kind of request for some new functionality for IMA and other LSM's
-that I couldn't follow that is why the new AT_INTERETED flag, but at
-this point my time quantuum for mailing list archeology most
-definitely expired.  :-)
+The square brackets are meant to indicate that the part within it is optional,
+right?  Are they in the right place?  I don't see how this matches the code.
+There is also no explanation for why or when <digest type> is optional with
+DATA_FMT_DIGEST_WITH_TYPE_AND_ALGO.
 
-It might be that when all of this is laid out, we can either revisit
-prior design decisions as "that bike-shed request to support this
-corner case was unreasonable", or "oh, OK, this is why we need as
-fully general a solution as this".
+> +	if (digest_type < DIGEST_TYPE__LAST && hash_algo < HASH_ALGO__LAST) {
+> +		fmt = DATA_FMT_DIGEST_WITH_TYPE_AND_ALGO;
+> +		offset += snprintf(buffer, DIGEST_TYPE_NAME_LEN_MAX +
+> +				   CRYPTO_MAX_ALG_NAME + 1, "%*s:%s",
+> +				   (int)strlen(digest_type_name[digest_type]),
+> +				   digest_type_name[digest_type],
+>  				   hash_algo_name[hash_algo]);
+>  		buffer[offset] = ':';
+>  		offset += 2;
 
-Also, some of examples of potential future use cases such as "magic
-links" that were linked in the cover letter, it's not clear to me
-actually make sense in the context of a "trusted for" system call
-(although might make more sense in the context of an open flag).  So
-revisiting some of those other cases to see whether they actually
-*could* be implemented as new "TRUSTED_FOR" flags might be
-instructive.
+There's no need to use %*s if the length argument is just going to be strlen().
+It should just use %s.
 
-Personally, I'm a bit skeptical about the prospct of additional use
-cases, since trusted_for(2) is essentially a mother_should_I(2)
-request where userspace is asking the kernel whether they should go
-ahead and do some particular policy thing.  And it's not clear to me
-how many of these policy questions exist where (a) the kernel is in
-the past position to answer that question, and (b) there isn't some
-additional information that the kernel doesn't have that might be
-needed to answer that question.
+Also, this is not correct use of snprintf(), given that the string is
+unconditionally appended to at the offset which snprintf() returns.  So it is
+not providing buffer overflow protection.  It might as well just be:
 
-For example, "Mother should I use that private key file" might require
-information about whether the SRE is currently on pager duty or not,
-at least for some policies, and the kernel isn't going to have that
-information.
+                offset += 1 + sprintf(buffer, "%s:%s:",
+                                      digest_type_name[digest_type],
+                                      hash_algo_name[hash_algo]);
 
-Other examples of TRUSTED_FOR flags that really make sense and would
-be useful might help alleviate my skepticsm.  And the "bike shed
-history" would help with my question about why some folks didn't like
-the original O_MAYEXEC flag?
+and likewise for the other case:
 
-Cheers,
+                offset += 1 + sprintf(buffer, "%s:", hash_algo_name[hash_algo]);
 
-					- Ted
+> +/*
+> + * This function writes the digest of an event (without size limit),
+> + * prefixed with both the hash type and algorithm.
+> + */
+> +int ima_eventdigest_ngv2_init(struct ima_event_data *event_data,
+> +			      struct ima_field_data *field_data)
+> +{
+> +	u8 *cur_digest = NULL, hash_algo = HASH_ALGO_SHA1;
+
+Why is this defaulting to SHA-1?
+
+- Eric
