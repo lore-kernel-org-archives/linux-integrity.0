@@ -2,128 +2,85 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E42C41535
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C2AC46467
 	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445819AbiDFCfh (ORCPT
+        id S1447755AbiDFCfv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37148 "EHLO
+        Tue, 5 Apr 2022 22:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457505AbiDEQDT (ORCPT
+        with ESMTP id S1387042AbiDEVuz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 12:03:19 -0400
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [IPv6:2001:1600:4:17::42ae])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD47F2315C;
-        Tue,  5 Apr 2022 08:55:35 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXsgB4M82zMq0sP;
-        Tue,  5 Apr 2022 17:55:34 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXsg91X3NzlhSMT;
-        Tue,  5 Apr 2022 17:55:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1649174134;
-        bh=n8eScuGwrUyyZSJgvZ6lVdoUOYD/v6TfS3yMx/Udtks=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=JnDSENf16eneR0rB24qn+a2KSFPCjzI4EXohLg+3kAT8m4AC3+MfQVCKykfm6TKH2
-         MCz+01LQ4oBu62PsNO8nwK1T+DFOsDvhCKaFTkZKM9hj4PFy4VmKOnL/ryJ8yuTY6R
-         irEn/3AiFzY58nJOspTOKxoSr9FMCyracTvvgYF8=
-Message-ID: <673bfc0f-7263-9404-3d88-6cc0ae1a1ae1@digikod.net>
-Date:   Tue, 5 Apr 2022 17:55:58 +0200
+        Tue, 5 Apr 2022 17:50:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49238D681;
+        Tue,  5 Apr 2022 13:35:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DDA43619AF;
+        Tue,  5 Apr 2022 20:35:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30537C385A1;
+        Tue,  5 Apr 2022 20:35:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649190926;
+        bh=5AMYXQake7hH4Sl7hM9HYLwlrWswqrY810AOuA4uvuY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i0h8TOPZyYXw7YxYxsVl6M7m9galZt/HSu2NrnpCZivNyZ7yuqNR6VPzSsh9B5xZ7
+         wEI8GFAsRtI1+5cpvV4y5V6bD7ZTHWPrNms51oMeBLqlbhz/Pt4jHjEr4YMtpS04bv
+         inUsXA39X6lGwlO1xGyJPxEYe1/qPedJg+ZQA8CccgWdLyfHb14wrrbhHpPIc+xAb6
+         2Kx5UkD3i6eV7U8TpRrO27fFNcv6EyK0xn1bXYnJaKFcb7onhVzGsI0JoyGopO2ej3
+         a1PNnKsF+R00mz8wCgz30M0lR6/Fgfb+1bACZztdZ/k/7a5j2fhFUCttN/z9s5wiPu
+         gNWEMYwCMmdpw==
+Date:   Tue, 5 Apr 2022 20:35:24 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 5/5] fsverity: update the documentation
+Message-ID: <YkyoDE3HPkxcV1jM@gmail.com>
+References: <20220325223824.310119-1-zohar@linux.ibm.com>
+ <20220325223824.310119-6-zohar@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>
-References: <20220321161557.495388-1-mic@digikod.net>
- <202204041130.F649632@keescook>
- <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
- <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
- <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
- <202204041451.CC4F6BF@keescook>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-In-Reply-To: <202204041451.CC4F6BF@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220325223824.310119-6-zohar@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-On 05/04/2022 00:25, Kees Cook wrote:
-> On Mon, Apr 04, 2022 at 02:28:19PM -0700, Linus Torvalds wrote:
->> Now, what I *think* you mean is
->>
->>   (1) user-space executable loaders want to be able to test the *same*
->> policy as the kernel does for execve()
+On Fri, Mar 25, 2022 at 06:38:24PM -0400, Mimi Zohar wrote:
+> Update the fsverity documentation related to IMA signature support.
 > 
-> Right. The script interpreter wants to ask "if this file were actually
-> an ELF going through execve(), would the kernel allow it?"
-
-The current behavior was a bit more flexible thanks to the sysctl. It 
-was either the mount exec option check, the file perm check or both. The 
-rationale is to let sysadmins adapt their system to existing 
-applications/interpreters without breaking. Only basing the check on 
-mount exec and file perm could be an issue in the short term, but I 
-guess it would deter inconsistencies in existing systems… I'm not sure 
-it is a wise move because if no interpreter want to use this check it 
-would then be useless. See commit message in 
-https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/ and 
-the trusted_for_policy sysctl documentation:
-
-"Even without enforced security policy, user space interpreters can use
-this syscall to try as much as possible to enforce the system policy at
-their level, knowing that it will not break anything on running systems
-which do not care about this feature.  However, on systems which want
-this feature enforced, there will be knowledgeable people (i.e. system
-administrator who configured fs.trusted_for_policy deliberately) to
-manage it. [...]"
-
-
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  Documentation/filesystems/fsverity.rst | 20 ++++++++++++--------
+>  1 file changed, 12 insertions(+), 8 deletions(-)
 > 
->>   (2) access(path, EXECVE_OK) will do the same permission checks as
->> "execve()" would do for that path
-> 
-> Maybe. I defer to Mickaël here, but my instinct is to avoid creating an
-> API that can be accidentally misused. I'd like this to be fd-only based,
-> since that removes path name races. (e.g. trusted_for() required an fd.)
+> diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
+> index 1d831e3cbcb3..c1d355f17a54 100644
+> --- a/Documentation/filesystems/fsverity.rst
+> +++ b/Documentation/filesystems/fsverity.rst
+> @@ -74,8 +74,12 @@ authenticating the files is up to userspace.  However, to meet some
+>  users' needs, fs-verity optionally supports a simple signature
+>  verification mechanism where users can configure the kernel to require
+>  that all fs-verity files be signed by a key loaded into a keyring; see
+> -`Built-in signature verification`_.  Support for fs-verity file hashes
+> -in IMA (Integrity Measurement Architecture) policies is also planned.
+> +`Built-in signature verification`_.
+> +
+> +The Integrity Measurement Architecture (IMA) supports including
+> +fs-verity file digests and signatures in the IMA measurement list
+> +and verifying fs-verity based file signatures stored as security.ima
+> +xattrs, based on policy.
 
-The fd-based approach is definitely better from a security point of view 
-but there is indeed a use case for pathnames. I guess we could highlight 
-this point in the documentation.
+This looks okay, but this would be easier to understand as a list of alternative
+ways to do signature verification with fs-verity:
 
-> 
->>   (3) if you already have the fd open, use "faccess(fd, NULL,
->> F_OK_TO_EXECUTE, AT_EMPTY_PATH)"
-> 
-> Yes, specifically faccessat2(). (And continuing the race thought above,
-> yes, there could still be races if the content of the file could be
-> changed, but that case is less problematic under real-world conditions.)
+	* Userspace-only
+	* Built-in signature verification + userspace policy
+	* IMA
 
-I'm not worried about changes in the file once it is opened. This could 
-be an issue but not in the kernel (e.g. flaky update system).
-
-[...]
+- Eric
