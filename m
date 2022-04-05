@@ -2,40 +2,33 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3EFC35276
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0F9C4707A
 	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1447866AbiDFCfy (ORCPT
+        id S1448684AbiDFCgD (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:35:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37006 "EHLO
+        Tue, 5 Apr 2022 22:36:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457338AbiDEQDG (ORCPT
+        with ESMTP id S1452408AbiDEPyx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 12:03:06 -0400
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FB90443C4
-        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 08:38:23 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KXsHG6sFqzMpxx0;
-        Tue,  5 Apr 2022 17:38:18 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KXsHB10mbzlhNts;
-        Tue,  5 Apr 2022 17:38:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1649173098;
-        bh=CsXI63Mo7UO6r/uWwmX4gFbUZp/CXy5CRXKt0P6gt6c=;
-        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
-        b=gmHoadq5c/jpwjvzRlDxdSe/QMSdIkQfuWdwnlle2JMgrxICKuYw2Otz5agkacD7Z
-         B3oSAGjmLbhr+bMhGpyxWhZRNmQP4WVnKkPPMB7gr9oFepQ8SCfZOo8micekUP/VgR
-         nsB09g6YQOZdXoGywDPjQHeZ/pGkYe4CO0FU08J8=
-Message-ID: <1eeae491-7f4f-2cbc-7dbb-04e926c78b89@digikod.net>
-Date:   Tue, 5 Apr 2022 17:38:39 +0200
-MIME-Version: 1.0
-User-Agent: 
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
+        Tue, 5 Apr 2022 11:54:53 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C83891177;
+        Tue,  5 Apr 2022 07:55:03 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 235EsMot006873
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 5 Apr 2022 10:54:23 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 9237D15C3EB6; Tue,  5 Apr 2022 10:54:22 -0400 (EDT)
+Date:   Tue, 5 Apr 2022 10:54:22 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Christian Heimes <christian@python.org>,
@@ -45,7 +38,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Mimi Zohar <zohar@linux.ibm.com>,
         Muhammad Usama Anjum <usama.anjum@collabora.com>,
         Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>,
         Shuah Khan <skhan@linuxfoundation.org>,
         Steve Dower <steve.dower@python.org>,
@@ -56,118 +49,78 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         LSM List <linux-security-module@vger.kernel.org>,
         Christian Brauner <brauner@kernel.org>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <YkxYHqLqTEKFrCeg@mit.edu>
 References: <20220321161557.495388-1-mic@digikod.net>
  <202204041130.F649632@keescook>
  <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
  <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
- <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-In-Reply-To: <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-On 04/04/2022 23:28, Linus Torvalds wrote:
-> On Mon, Apr 4, 2022 at 1:29 PM MickaÃ«l SalaÃ¼n <mic@digikod.net> wrote:
->>
->> This initial proposal was using a new faccessat2(2) flag:
->> AT_INTERPRETED, see
->> https://lore.kernel.org/all/20200908075956.1069018-2-mic@digikod.net/
->> What do you think about that? I'm happy to get back to this version if
->> everyone is OK with it.
+On Mon, Apr 04, 2022 at 10:30:13PM +0200, Mickaël Salaün wrote:
+> > If you add a new X_OK variant to access(), maybe that could fly.
 > 
-> I'm certainly happi_er_ with that, but I find that particular patch
-> odd for other reasons.
-> 
-> In no particular order:
-> 
->   - what's with the insane non-C syntax? Double parentheses have no
-> actual meaning in C:
-> 
->       if ((flags & AT_INTERPRETED)) {
->           if ((mode & MAY_EXEC)) {
-> 
->     so I don't understand why you'd use that strance thing.
+> As answered in private, that was the approach I took for one of the early
+> versions but a dedicated syscall was requested by Al Viro:
+> https://lore.kernel.org/r/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net
+> The main reason behind this request was that it doesn't have the exact same
+> semantic as faccessat(2). The changes for this syscall are documented here:
+> https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/
+> The whole history is linked in the cover letter:
+> https://lore.kernel.org/all/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net/
 
-I guess it comes from a previous version that ANDed two booleans.
+As a suggestion, something that can be helpful for something which has
+been as heavily bike-sheded as this concept might be to write a
+"legislative history", or perhaps, a "bike shed history".
 
+And not just with links to mailing list discussions, but a short
+summary of why, for example, we moved from the open flag O_MAYEXEC to
+the faccessat(2) approach.  I looked, but I couldn't find the
+reasoning while diving into the mail archives.  And there was some
+kind of request for some new functionality for IMA and other LSM's
+that I couldn't follow that is why the new AT_INTERETED flag, but at
+this point my time quantuum for mailing list archeology most
+definitely expired.  :-)
 
-> 
->   - why is this an AT_INTERPRETED flag? I don't understand the name, I
-> don't understand the semantics.
+It might be that when all of this is laid out, we can either revisit
+prior design decisions as "that bike-shed request to support this
+corner case was unreasonable", or "oh, OK, this is why we need as
+fully general a solution as this".
 
-I wasn't sure it was a good idea to add another mode bit, so I ended up 
-using a flag to not break compatibility of other mode checks but extend 
-the semantic to interpreted scripts. But I agree that a new mode makes 
-sense.
+Also, some of examples of potential future use cases such as "magic
+links" that were linked in the cover letter, it's not clear to me
+actually make sense in the context of a "trusted for" system call
+(although might make more sense in the context of an open flag).  So
+revisiting some of those other cases to see whether they actually
+*could* be implemented as new "TRUSTED_FOR" flags might be
+instructive.
 
+Personally, I'm a bit skeptical about the prospct of additional use
+cases, since trusted_for(2) is essentially a mother_should_I(2)
+request where userspace is asking the kernel whether they should go
+ahead and do some particular policy thing.  And it's not clear to me
+how many of these policy questions exist where (a) the kernel is in
+the past position to answer that question, and (b) there isn't some
+additional information that the kernel doesn't have that might be
+needed to answer that question.
 
-> 
->     Why would that flag have the same value as AT_SYMLINK_FOLLOW?
+For example, "Mother should I use that private key file" might require
+information about whether the SRE is currently on pager duty or not,
+at least for some policies, and the kernel isn't going to have that
+information.
 
-It was a bug.
+Other examples of TRUSTED_FOR flags that really make sense and would
+be useful might help alleviate my skepticsm.  And the "bike shed
+history" would help with my question about why some folks didn't like
+the original O_MAYEXEC flag?
 
+Cheers,
 
-> 
->     Why isn't this just a new _mode_ bit, which is what I feel is
-> sensible? We only use three bits (with no bits set meaning
-> "existence"), so we have *tons* of bits left in that namespace, and it
-> would make much more sense to me to have
-> 
->          #define EXECVE_OK 8
-> 
->      which is the same as the "group exec" bit, so it actually makes
-> some kind of sense too.
-
-Looks fine to me. The "EXECVE_" prefix is a bit weird but it will not be 
-defined in the kernel like X_OK and others anyway, and as you said, it 
-matches S_IXGRP.
-
-
-> 
->   - related to that "I don't understand the semantics", the
-> "documentation" for that thing doesn't make sense either:
-> 
->      +         The
->      +    main usage is for script
->      +    interpreters to enforce a policy
->      +    consistent with the kernel's one
->      +    (through sysctl configuration or LSM
->      +    policy).  */
-
-I'll synchronize the documentation with a next series.
-
-
-> 
-> Now, what I *think* you mean is
-See a following email in reply to Kees.
-[...]
-
-> 
-> And yes, we still need to talk details:
-> 
->   - no backwards compatibility issues, because we've happily always
-> checked 'mode' for being valid, so old kernels will always return
-> -EINVAL.
-> 
->   - POSIX namespace issues for EXECVE_OK means that the name probably
-> needs some thinking (maybe we just need to call it __ACCESS_OK_EXECVE
-> internally or something - the kernel actually doesn't even export the
-> existing [FRWX]_OK values, because we "know" they map tho the usual
-> "owner RWX" bits, with F being "no bit set")
-
-Right, I cannot find a better name for now.
-
-See a following email in reply to Kees.
-[...]
-
-> 
-> So to recap: I'm very much ok with some access() extension, but I
-> think even that very much needs clarification, and the existing patch
-> is just odd in many many ways.
-
-This v8 was kind of an early version, I'll update everything. Thanks!
+					- Ted
