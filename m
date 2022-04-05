@@ -2,120 +2,133 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD8DC433F5
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C8CC433FE
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 02:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356185AbiDFCeh (ORCPT
+        id S1390299AbiDFCe4 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Apr 2022 22:34:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39992 "EHLO
+        Tue, 5 Apr 2022 22:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1572981AbiDERjw (ORCPT
+        with ESMTP id S1457656AbiDEQ0u (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Apr 2022 13:39:52 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA1C0B8209
-        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 10:37:53 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id y6so11505945plg.2
-        for <linux-integrity@vger.kernel.org>; Tue, 05 Apr 2022 10:37:53 -0700 (PDT)
+        Tue, 5 Apr 2022 12:26:50 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CFB97C166
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Apr 2022 09:24:50 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id g24so17791493lja.7
+        for <linux-integrity@vger.kernel.org>; Tue, 05 Apr 2022 09:24:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Nwu8jpVkI6C7VwnrywKtcRGeDT2fuyh+kt2g5bo1y9w=;
-        b=Lw5EATL+sOQBSkpUq+6d2yFb3UX+wLpMPBMs1qT7H2FEnxAxS+Out/GTJK1O6Dl9Rh
-         zzVeKLhcn9Iqw5nnSbmT59AtX+vxfT3tVF++IZuE8YPig+uL0Qd73A/szLBe14lkFRhT
-         sKkEy0M5HsZGZhfriWrrucPJywYn7pNKnInUE=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=FELPvFz/6oaJHsU4oc1kXTcQ26iC0/VrCF/XPlp17+4=;
+        b=XJkkA3b9tMj2Oywq65L1XLPGe9r4EWP4QonCvPcAvNQC7lH+KZKOjbWEjEmxm1w9l6
+         GTCCy3sUV5mOUios3pbc+w2xyA02qNafDjyGesSqpIRyz7QCRPbAT4MAOjeJ/i8sDPPr
+         JM8yRVTKDHALD8dV/vRION3fkiPh4VLXV0D9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Nwu8jpVkI6C7VwnrywKtcRGeDT2fuyh+kt2g5bo1y9w=;
-        b=zNc1vCPfNb+ioeijICfFSHq7mLU506ApQ4VxDZDP7XnLM55Efv8i+rJ8z2OzpMn653
-         RH+75WgZ7IAkzA/NwjG8eqa8etex6ATFQ1dsfMhJ2pp7PkgmGsXhQwrielqtiZYHGBvd
-         hBnz2vPy3RGgZ6CqPAFg+NOcOR2KtDISVGZZ0ZXeHhHkIP7FEfYNyTVUzPB7JHRBUkuu
-         +6vi1mTTTYnEzr16KMkW089jI2+RmkJg6xqe083iraMHPgQ+aShC6FUvEPOL6YLYuogu
-         EgPuQCn+Ok2sLTqM5iB//+BmO7ImrN7bGnVXUPlCr3JVLgg1ewwbkq0mPin2xE60ahmO
-         ffog==
-X-Gm-Message-State: AOAM533xEYQ+QAVHCkZHRgmyILZQL+S9SZXX6ugnCR8OJL5za4SnYGCZ
-        lf4Rzos+5dPtEr66VIcAfOHxHo3Dv1DbtPWy
-X-Google-Smtp-Source: ABdhPJx/Ml/KJFa13Olx66XGO/m5W3BLJXnALBjf/zubTA+VU5XEeYwj7jehcCiBfOkP4z4ChXJsAA==
-X-Received: by 2002:a17:902:7ec1:b0:156:17a4:a2f8 with SMTP id p1-20020a1709027ec100b0015617a4a2f8mr4774620plb.155.1649180273187;
-        Tue, 05 Apr 2022 10:37:53 -0700 (PDT)
-Received: from localhost ([2620:15c:202:201:1331:63a2:a876:db1d])
-        by smtp.gmail.com with UTF8SMTPSA id v3-20020a056a00148300b004fb04acde5dsm16033146pfu.166.2022.04.05.10.37.52
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=FELPvFz/6oaJHsU4oc1kXTcQ26iC0/VrCF/XPlp17+4=;
+        b=Db3rRZOg43l0UTZr5ACgjOxXdo5wAbOUHML38eD4H0tmIhPy0HhWILKZ+Yjz0VjhsR
+         hAKxHvr3hcQ31vg2ykbGie4JiUzLDQwxoRLrYYeEvm5AaxhXOZKbOorVzr6yVDnoGxRn
+         WYuoy1R2EfPM6bzIEdUdXXoxWngjHAkTPd99yYELLrcVrwKLhQXWTaiM96MQx7oQd/9x
+         B2vw/RqafRllX8ftLAKeGzSshPR6VKaOI3+Lu+37Mc2G793KZl+a6dDBXkOOZ4sCYU/c
+         E62EoK1P6BgEHGo7f1VMC3pUhvvL6KnBCI/aL6yoqagzaor+SIxi4JzTF065Wtq3ClDS
+         t+SQ==
+X-Gm-Message-State: AOAM532HHjf5zomuLA36tvf60/Z4OwPvObJqijswuxSRUS3qOIe/YvEK
+        ba6v0dm+4u0hUBFOI1gh66uu4wPw9uOlTVbakc4=
+X-Google-Smtp-Source: ABdhPJzez1y/bYl3KFjARWvX0BOhU0edzK6rmYiuTBMZyAvZf3Q6eMXDqIgCGz0KGODQzMXjs5khuw==
+X-Received: by 2002:a05:651c:17a3:b0:245:f39e:f2d2 with SMTP id bn35-20020a05651c17a300b00245f39ef2d2mr2831561ljb.490.1649175888127;
+        Tue, 05 Apr 2022 09:24:48 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id bi2-20020a0565120e8200b004484aaaf818sm1548711lfb.13.2022.04.05.09.24.47
+        for <linux-integrity@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 05 Apr 2022 10:37:52 -0700 (PDT)
-From:   "Jes B. Klinke" <jbk@chromium.org>
-To:     linux-integrity@vger.kernel.org
-Cc:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        "Jes B. Klinke" <jbk@chromium.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: cr50: Add new device/vendor ID 0x504a6666
-Date:   Tue,  5 Apr 2022 10:37:41 -0700
-Message-Id: <20220405173741.4023216-1-jbk@chromium.org>
-X-Mailer: git-send-email 2.35.1.1094.g7c7d902a7c-goog
+        Tue, 05 Apr 2022 09:24:47 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id g24so17791433lja.7
+        for <linux-integrity@vger.kernel.org>; Tue, 05 Apr 2022 09:24:47 -0700 (PDT)
+X-Received: by 2002:a2e:9794:0:b0:249:8488:7dbd with SMTP id
+ y20-20020a2e9794000000b0024984887dbdmr2641943lji.176.1649175481210; Tue, 05
+ Apr 2022 09:18:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20220321161557.495388-1-mic@digikod.net> <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net> <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+ <202204041451.CC4F6BF@keescook> <CAHk-=whb=XuU=LGKnJWaa7LOYQz9VwHs8SLfgLbT5sf2VAbX1A@mail.gmail.com>
+ <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+In-Reply-To: <7e8d9f8a-f119-6d1a-7861-0493dc513aa7@digikod.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 5 Apr 2022 09:17:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjPGNLyzeBMWdQu+kUdQLHQugznwY7CvWjmvNW47D5sog@mail.gmail.com>
+Message-ID: <CAHk-=wjPGNLyzeBMWdQu+kUdQLHQugznwY7CvWjmvNW47D5sog@mail.gmail.com>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Accept one additional numerical value of DID:VID for next generation
-Google TPM, to be used in future Chromebooks.
+On Tue, Apr 5, 2022 at 9:08 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
+>
+> I think we don't. I think the only corner case that could be different
+> is for files that are executable, SUID and non-readable. In this case it
+> wouldn't matter because userspace could not read the file, which is
+> required for interpretation/execution. Anyway, S[GU]ID bits in scripts
+> are just ignored by execve and we want to follow the same semantic.
 
-This patch touches more lines than may seem necessary, as a result of
-the need to move the error case to sit after the two recognized cases.
+So I just want to bring up the possibility that somebody wants to just
+implement execve() in user space for some reason - not just "script
+interpreter".
 
-Signed-off-by: Jes B. Klinke <jbk@chromium.org>
----
+It's *doable*.
 
- drivers/char/tpm/tpm_tis_i2c_cr50.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+Don't ask me if it's sane or useful, but people have done insane
+things before. Things like "emulate other operating systems in user
+space" etc
 
-diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-index f6c0affbb4567..bf54ebd6724b0 100644
---- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-+++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-@@ -31,6 +31,7 @@
- #define TPM_CR50_TIMEOUT_SHORT_MS	2		/* Short timeout during transactions */
- #define TPM_CR50_TIMEOUT_NOIRQ_MS	20		/* Timeout for TPM ready without IRQ */
- #define TPM_CR50_I2C_DID_VID		0x00281ae0L	/* Device and vendor ID reg value */
-+#define TPM_TI50_I2C_DID_VID		0x504a6666L	/* Device and vendor ID reg value */
- #define TPM_CR50_I2C_MAX_RETRIES	3		/* Max retries due to I2C errors */
- #define TPM_CR50_I2C_RETRY_DELAY_LO	55		/* Min usecs between retries on I2C */
- #define TPM_CR50_I2C_RETRY_DELAY_HI	65		/* Max usecs between retries on I2C */
-@@ -742,16 +743,20 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
- 	}
- 
- 	vendor = le32_to_cpup((__le32 *)buf);
--	if (vendor != TPM_CR50_I2C_DID_VID) {
--		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
--		tpm_cr50_release_locality(chip, true);
--		return -ENODEV;
-+	if (vendor == TPM_CR50_I2C_DID_VID) {
-+		dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-+			 client->addr, client->irq, vendor >> 16);
-+		return tpm_chip_register(chip);
-+	}
-+	if (vendor == TPM_TI50_I2C_DID_VID) {
-+		dev_info(dev, "ti50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-+			 client->addr, client->irq, vendor >> 16);
-+		return tpm_chip_register(chip);
- 	}
- 
--	dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
--		 client->addr, client->irq, vendor >> 16);
--
--	return tpm_chip_register(chip);
-+	dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
-+	tpm_cr50_release_locality(chip, true);
-+	return -ENODEV;
- }
- 
- /**
--- 
-2.35.1.1094.g7c7d902a7c-goog
+Such a user can trivially see the suid/sgid bit on the file (just do
+fstat() on it), but wouldn't necessarily see if that file is then in a
+mount that is mounted nosuid.
 
+Now, I think the right thing to do is to just say "we don't support
+it", but I do think it should perhaps be mentioned somewhere
+explicitly.
+
+Particularly since I can well imagine that a security policy might
+have some "no, I don't allow suid exec" and return an actual error for
+it, and then the access() call would fail for that case.
+
+(Ok, so the security policies would look at the actual bprm data on a
+real exec, not the inode executable, so that's kind of made up and
+theoretical, but I just want this issue to be mentioned somewhere so
+that people are aware that the "it's the same basic file checking that
+execve does, but a _real_ execve might then have _other_ issues going
+on, including suid bits etc")
+
+               Linus
