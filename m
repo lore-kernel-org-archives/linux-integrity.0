@@ -2,143 +2,148 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AE8C4332F
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 16:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A41C433FE
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 21:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237680AbiDFQa6 (ORCPT
+        id S233055AbiDFVNq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 6 Apr 2022 12:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53382 "EHLO
+        Wed, 6 Apr 2022 17:13:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237640AbiDFQah (ORCPT
+        with ESMTP id S235518AbiDFVMd (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Apr 2022 12:30:37 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39C6A41FD2C;
-        Tue,  5 Apr 2022 18:48:21 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KY6pd6wRQz1HBSF;
-        Wed,  6 Apr 2022 09:47:53 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 6 Apr 2022 09:48:19 +0800
-Message-ID: <84ba6fb8-45e1-461b-1aa3-c97f065cbe60@huawei.com>
-Date:   Wed, 6 Apr 2022 09:48:19 +0800
+        Wed, 6 Apr 2022 17:12:33 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1496D7908;
+        Wed,  6 Apr 2022 12:55:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649274940; x=1680810940;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J20fzEWTWmR3uYtjMGA+kYNrfafUzFxfY0/tWjpo4Js=;
+  b=FCLralDZ2y5c+n5eyzl2OiHHACRbmYf7kxeimP94PKNKTJCMsJZFnYmT
+   QkvZLQQ/gVtfSI3vrAJR51R4Ey3HTXe7Zv2I0m1NhtKSjPelBG4aLEApJ
+   isXm1u1JmRLFbCr1goiTrjdmnSBl+RsXfx3ko6UWBm45u5urLJzTrJOjP
+   8uYw4VWQfGcOzgcMYvJhFBnnFN+k8COeytB+D4op3ZUdQRgtDUR1Ts2t8
+   wbY1dZKBBHECn0z0ITBo87VIzyZU8RmSQbeOYH10ZkPxz5WNAXJy0aH6l
+   xFys/9q120W2eBc4VibibGl6ECGv/g0WTxrzkwxto3wAoI27PqY8YxWKs
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10309"; a="241072221"
+X-IronPort-AV: E=Sophos;i="5.90,240,1643702400"; 
+   d="scan'208";a="241072221"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Apr 2022 12:55:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,240,1643702400"; 
+   d="scan'208";a="697504089"
+Received: from lkp-server02.sh.intel.com (HELO a44fdfb70b94) ([10.239.97.151])
+  by fmsmga001.fm.intel.com with ESMTP; 06 Apr 2022 12:55:34 -0700
+Received: from kbuild by a44fdfb70b94 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1ncBkc-0004hT-7R;
+        Wed, 06 Apr 2022 19:55:34 +0000
+Date:   Thu, 7 Apr 2022 03:55:00 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
+        dwmw2@infradead.org, jarkko@kernel.org, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, roberto.sassu@huawei.com,
+        nramas@linux.microsoft.com, eric.snowberg@oracle.com,
+        pvorel@suse.cz, tiwai@suse.de, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 5/7] KEYS: Introduce sig restriction that validates root
+ of trust
+Message-ID: <202204070321.X7bLj3Ce-lkp@intel.com>
+References: <20220406015337.4000739-6-eric.snowberg@oracle.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] ima: remove template "ima" as the compiled default
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>
-CC:     <dmitry.kasatkin@gmail.com>, <roberto.sassu@huawei.com>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xiujianfeng@huawei.com>,
-        <wangweiyang2@huawei.com>
-References: <20220321074737.138002-1-guozihua@huawei.com>
- <5c3565f5a46f5728873c9aedd634699ba171fe98.camel@linux.ibm.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <5c3565f5a46f5728873c9aedd634699ba171fe98.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220406015337.4000739-6-eric.snowberg@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2022/4/5 4:22, Mimi Zohar wrote:
-> Hi Guo,
-> 
-> The Subject line above sounds like the default template is currently
-> "ima", which it isn't.   Perhaps "ima: remove the IMA_TEMPLATE Kconfig
-> option" is more accurate.
-> 
-> On Mon, 2022-03-21 at 15:47 +0800, GUO Zihua wrote:
->> Template "ima" is a legacy template which limits the hash algorithm to
->> either sha1 or md5. None of them should be considered "strong" these
->> days. Besides, allowing template "ima" as the compiled default would
->> also cause the following issue: the cmdline option "ima_hash=" must be
->> behind "ima_template=", otherwise "ima_hash=" might be rejected.
->>
-> 
-> True "ima" is a legacy template, but the purpose of removing the
-> IMA_TEMPLATE from the Kconfig is to address the remaining boot command
-> line ordering issue not previously addressed.  This is reasonable
-> because the "ima" template is limited to SHA1 and MD5.  If someone
-> still needs to use the "ima" template, "ima_template=ima" could still
-> be specified on the boot command line.
-> 
->> The root cause of this issue is that during the processing of ima_hash,
->> we would try to check whether the hash algorithm is compatible with the
->> template. If the template is not set at the moment we do the check, we
->> check the algorithm against the compiled default template. If the
->> complied default template is "ima", then we reject any hash algorithm
->> other than sha1 and md5.
->>
->> For example, if the compiled default template is "ima", and the default
->> algorithm is sha1 (which is the current default). In the cmdline, we put
->> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
->> that ima starts with ima-ng as the template and sha256 as the hash
->> algorithm. However, during the processing of "ima_hash=",
->> "ima_template=" has not been processed yet, and hash_setup would check
->> the configured hash algorithm against the compiled default: ima, and
->> reject sha256. So at the end, the hash algorithm that is actually used
->> will be sha1.
->>
->> With template "ima" removed from the compiled default, we ensure that the
->> default tempalte would at least be "ima-ng" which allows for basically
->> any hash algorithm.
->>
->> This change would not break the algorithm compatibility checking for
->> IMA.
->>
->> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
->> Signed-off-by: GUO Zihua <guozihua@huawei.com>
->> ---
->>   security/integrity/ima/Kconfig | 14 +++++---------
->>   1 file changed, 5 insertions(+), 9 deletions(-)
->>
->> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
->> index f3a9cc201c8c..9513df2ac19e 100644
->> --- a/security/integrity/ima/Kconfig
->> +++ b/security/integrity/ima/Kconfig
->> @@ -65,14 +65,11 @@ choice
->>   	help
->>   	  Select the default IMA measurement template.
->>   
->> -	  The original 'ima' measurement list template contains a
->> -	  hash, defined as 20 bytes, and a null terminated pathname,
->> -	  limited to 255 characters.  The 'ima-ng' measurement list
->> -	  template permits both larger hash digests and longer
->> -	  pathnames.
->> -
->> -	config IMA_TEMPLATE
->> -		bool "ima"
->> +	  The 'ima-ng' measurement list template permits various hash
->> +	  digests and long pathnames. The compiled default template
->> +	  can be overwritten using the kernel command line
->> +	  'ima_template=' option.
->> +
->>   	config IMA_NG_TEMPLATE
->>   		bool "ima-ng (default)"
->>   	config IMA_SIG_TEMPLATE
->> @@ -82,7 +79,6 @@ endchoice
->>   config IMA_DEFAULT_TEMPLATE
->>   	string
->>   	depends on IMA
->> -	default "ima" if IMA_TEMPLATE
->>   	default "ima-ng" if IMA_NG_TEMPLATE
->>   	default "ima-sig" if IMA_SIG_TEMPLATE
->>   
-> 
-> The IMA_TEMPLATE definition is removed, but leaves a few references to
-> it.
+Hi Eric,
 
-Thank you very much for the detailed review Mimi! I'll fix these right now.
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on 3123109284176b1532874591f7c81f3837bbdc17]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Snowberg/Add-CA-enforcement-keyring-restrictions/20220407-003209
+base:   3123109284176b1532874591f7c81f3837bbdc17
+config: riscv-randconfig-r042-20220406 (https://download.01.org/0day-ci/archive/20220407/202204070321.X7bLj3Ce-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 11.2.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/68d98a175d29032d888f3f5700c43cf771ef17d8
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Eric-Snowberg/Add-CA-enforcement-keyring-restrictions/20220407-003209
+        git checkout 68d98a175d29032d888f3f5700c43cf771ef17d8
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=riscv SHELL=/bin/bash crypto/asymmetric_keys/
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> crypto/asymmetric_keys/restrict.c:111:5: warning: no previous prototype for 'restrict_link_by_rot_and_signature' [-Wmissing-prototypes]
+     111 | int restrict_link_by_rot_and_signature(struct key *dest_keyring,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/restrict_link_by_rot_and_signature +111 crypto/asymmetric_keys/restrict.c
+
+   110	
+ > 111	int restrict_link_by_rot_and_signature(struct key *dest_keyring,
+   112					       const struct key_type *type,
+   113					       const union key_payload *payload,
+   114					       struct key *trust_keyring)
+   115	{
+   116		const struct public_key_signature *sig;
+   117		struct key *key;
+   118		int ret;
+   119	
+   120		if (!trust_keyring)
+   121			return -ENOKEY;
+   122	
+   123		if (type != &key_type_asymmetric)
+   124			return -EOPNOTSUPP;
+   125	
+   126		sig = payload->data[asym_auth];
+   127		if (!sig)
+   128			return -ENOPKG;
+   129		if (!sig->auth_ids[0] && !sig->auth_ids[1] && !sig->auth_ids[2])
+   130			return -ENOKEY;
+   131	
+   132		if (ca_keyid && !asymmetric_key_id_partial(sig->auth_ids[1], ca_keyid))
+   133			return -EPERM;
+   134	
+   135		/* See if we have a key that signed this one. */
+   136		key = find_asymmetric_key(trust_keyring,
+   137					  sig->auth_ids[0], sig->auth_ids[1],
+   138					  sig->auth_ids[2], false);
+   139		if (IS_ERR(key))
+   140			return -ENOKEY;
+   141	
+   142		if (!test_bit(KEY_FLAG_BUILTIN_ROT, &key->flags))
+   143			ret = -ENOKEY;
+   144		else if (use_builtin_keys && !test_bit(KEY_FLAG_BUILTIN, &key->flags))
+   145			ret = -ENOKEY;
+   146		else
+   147			ret = verify_signature(key, sig);
+   148		key_put(key);
+   149		return ret;
+   150	}
+   151	
 
 -- 
-Best
-GUO Zihua
+0-DAY CI Kernel Test Service
+https://01.org/lkp
