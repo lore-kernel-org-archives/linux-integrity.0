@@ -2,202 +2,239 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D1FC433EF
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 15:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C288C433EF
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Apr 2022 16:27:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235653AbiDFPK4 (ORCPT
+        id S237645AbiDFQ3u (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 6 Apr 2022 11:10:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51872 "EHLO
+        Wed, 6 Apr 2022 12:29:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235362AbiDFPKq (ORCPT
+        with ESMTP id S237721AbiDFQ3a (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 6 Apr 2022 11:10:46 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B2DFFFB5;
-        Wed,  6 Apr 2022 05:10:48 -0700 (PDT)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 236BgTjv003534;
-        Wed, 6 Apr 2022 12:09:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=BmKJuJMODVttv+/lBaYf3hGEbzzMxoGNKuLFEm/ZpD4=;
- b=cQs2TctgJZPet3Mwn7W4WiuDwIeZipc+5OoPbN0Lgj4yIq5IBE5X83K+XKhqMk3rixx1
- pQF0vw7KGo9vAR0vTvqMmagDcjerpMR+XVGGjWX36rc/zE7A3VPLc43zyM0jPGMaCgru
- FKJZG5c4uWdXBEuoVKT2rTnLKzW/k0j+AndLlJzqSU8N48WesLv7VSk9rXoWa40gbgST
- HJqEZVVwqBKGycbW8x0K6Kc/pLQgCaR2X4vByGv6vaUgOMxa8GJbhVV6JI1c2lz5+fw7
- 422zsRb26fERlbTur4yWmiJ7REHPbjUYXDPzAVedMJR+W10kT1cRJwzZgqQEtkIqOja3 /Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3f94js7nh8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Apr 2022 12:08:59 +0000
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 236BqC5Q010819;
-        Wed, 6 Apr 2022 12:08:59 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3f94js7ng2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Apr 2022 12:08:59 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 236C3Hsg002663;
-        Wed, 6 Apr 2022 12:08:56 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma01fra.de.ibm.com with ESMTP id 3f6e48xcvf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 06 Apr 2022 12:08:56 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 236C8sEn35324370
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Apr 2022 12:08:54 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D0A352050;
-        Wed,  6 Apr 2022 12:08:54 +0000 (GMT)
-Received: from sig-9-65-95-173.ibm.com (unknown [9.65.95.173])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 7ED485204F;
-        Wed,  6 Apr 2022 12:08:53 +0000 (GMT)
-Message-ID: <35c38676a8b464a0fb7e4842de5108e08cb53380.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: remove the IMA_TEMPLATE Kconfig option
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     GUO Zihua <guozihua@huawei.com>, linux-integrity@vger.kernel.org
-Cc:     dmitry.kasatkin@gmail.com, roberto.sassu@huawei.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 06 Apr 2022 08:08:52 -0400
-In-Reply-To: <20220406061624.173584-1-guozihua@huawei.com>
-References: <20220406061624.173584-1-guozihua@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: zpShxX2sIuoOT1E96ea0mOmgaXLBxued
-X-Proofpoint-GUID: 8WkfBX0dsUk2htx-JqrPoZZgst7KIBa1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-06_04,2022-04-06_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204060057
+        Wed, 6 Apr 2022 12:29:30 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144D5435BDE;
+        Tue,  5 Apr 2022 18:54:33 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 235KWY9E012570;
+        Wed, 6 Apr 2022 01:54:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references :
+ content-transfer-encoding : content-type : mime-version;
+ s=corp-2021-07-09; bh=mqQ2mac3lIqsdluCix4jvAfSWforxK0/etC71ODPy+4=;
+ b=FinYnLWuePg4Y7aelsaPNXxGMZfdLGsAL5Q8m1PXHDCemYNPV+ICSFJ2tR1p8YgP/Lay
+ DfUVF5ohcvZSWd5uQoccdtJE/CB90gGKUpcv7gx7XDK2+C6GEvHphjEr9tNjKVCNw3ZQ
+ JjI3zIg3cdZOeT3BWJPxs6+L66azgpxAz1v/h0vQFcpFUcs6u4ejJT2/jYusQ0PG5BAF
+ y73nLJgCYgHAtHPVlb0wUB4rb0q3oDZ766Y58oiOZqbnv9iwSkD8iEiM9Ixlyo28LK51
+ 54VYcul6qFN1oUY4myBRRD53m+0cz0Svc0nb2wjdddjUe8/MqLkBTwicpHsqqKjgpbia Pw== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3f6cwcfdm7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Apr 2022 01:54:02 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 2361orv0036988;
+        Wed, 6 Apr 2022 01:54:01 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2109.outbound.protection.outlook.com [104.47.58.109])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3f6cx43ey3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Apr 2022 01:54:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MXybUJUbnIJfzrl3guiDNpkmm9SzPVswcjuDdba7aeqWQPJxUkJV/K5shmidyNYMk/DgKHL600z0Uas8HUjmaeo2cS8TjY6FPvy74CP52Ij/Z8iA9IzsPzxNMvYniafWzpSmPa5ocWqUc6lMB5kpJpSpUz99gLPacjDVGsVEikXZ40d/1AjrSPxw8ETt74WElEIK104Fm2GAp9Kfkfj1e0Ye3H8GmRqEl3we6Gvi1EnCTvrO2eN6AN+QPH3LcZxVzqxPi6sxfMjlGXtIceoXBzgLMPmrfJ5SQMZllhKQ6wjrjHV2zJMG9SHXQEheSYqqUnOLvOq1raK97ZHic8mwaw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mqQ2mac3lIqsdluCix4jvAfSWforxK0/etC71ODPy+4=;
+ b=huQq3HnNir5VT4JsSIhovqqiwmB/Urbs3ptxc8qBgqMa03WC72c9sn755C/BsBqUGdfzNuHh/i45IemiKIdd6aWUjx4/m4Q5nDqxcCJR+Ds0+yfSLpJTsLovIQY7sbSI5REMGaWAN2lWoeekmsDyhvH+aYZoN+F16Iqgl4z0BWPn3mEz8E72vefZB0hDYIP4b5s55VwIMmBncHWQ/f+nn5P7EttcpEHSNJ3zrOghEYL8/vKZewTzVLuSkVzsgFN917aTfjLoXSpiWu3Pn9DVFxLo9hdeiz94zxhqc4b10Kq9kANLx+ngA887/LUfVrMxOsZpoWAA0OOsSa8/mxJo8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mqQ2mac3lIqsdluCix4jvAfSWforxK0/etC71ODPy+4=;
+ b=epHi1l+IfGZ5rLzt+EoDOAKEtAodYr8G9EXPIIVhHkNvrLSWPvQWA0L3jlT23JGZZO5zT+ftu6yQZYogFKPyvwyaVF88TmpqNBp2atB0mBsX+oXJ/jLPQejms/CPzT2BN/ZP60S4xI8niZrTW+ll/MRrqZxcQc4JlkjWxhmw460=
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by MN2PR10MB4349.namprd10.prod.outlook.com (2603:10b6:208:1d4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Wed, 6 Apr
+ 2022 01:53:59 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::7ded:5b3:a28f:2e55]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::7ded:5b3:a28f:2e55%5]) with mapi id 15.20.5123.031; Wed, 6 Apr 2022
+ 01:53:59 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     dhowells@redhat.com, dwmw2@infradead.org, jarkko@kernel.org,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
+        roberto.sassu@huawei.com, nramas@linux.microsoft.com,
+        eric.snowberg@oracle.com, pvorel@suse.cz, tiwai@suse.de,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH 4/7] KEYS: Introduce a builtin root of trust key flag
+Date:   Tue,  5 Apr 2022 21:53:34 -0400
+Message-Id: <20220406015337.4000739-5-eric.snowberg@oracle.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220406015337.4000739-1-eric.snowberg@oracle.com>
+References: <20220406015337.4000739-1-eric.snowberg@oracle.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SA0PR11CA0091.namprd11.prod.outlook.com
+ (2603:10b6:806:d1::6) To CH2PR10MB4150.namprd10.prod.outlook.com
+ (2603:10b6:610:ac::13)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c303eb0e-cd0e-4a0e-e987-08da1770516b
+X-MS-TrafficTypeDiagnostic: MN2PR10MB4349:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR10MB43497DB368B152185503D90E87E79@MN2PR10MB4349.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: t/NQPDmTHrfB+MLfuJq0TMmLUSBpwR2L6T+T48QaOgUwJc6qTjkuhmYMpv9jKDUAAU2NGGDTThWA7sX6fmXunuY0Ys6BxFcZnYRKGMRVCpcSVRRpcBH9CBDJ7+/6UPFz1596B+WPS1NEVuUEF/yZMm3fz/2M5e76Majyv7K9TDAlGX9pGpIFFjkSj/sl7porvG7Kt3c/aS6P3GnfJXRldn6K3CWaarRIdWhJJRmCODXiwb+nv29cF4elSMdSKXuiBTKWPL2nTv6M1ej92RT77K9gNpxtxXdsTbr3doXJnHenICCyfy//Om+G4O2BpMR01ImeF3dkQJQq3gv5jxZB+Q0PnuIu+efbtbdaqJp4ISYCXsFPhwYcaLLykWUPKYZuA85N+9jEEpB5nBeiGfHTJ48IEMPZNyGfqrc7yobx4ULIXVHsZypf4Nd8Y1M7yW4vynP8Muy32JCexurGTPS16vhkg8hsjNlAxSvQ5rMtC9GfODmnlZ1wd1KXKF+ewxvV3rB0POrrsZ4UPlrkZXhRcnBmwVzYUTm2UoUC/Jupq1EiGnI6qCoVqOD9iSlVs4LaxAdLwOIkUFZcvqYaJuwW51UrCU7QUjx4rIBZwNSOC/jaGm7TiFnSH3YO1aEOPgfLmL8Swlus5NZQ20CDk8UeGEVZ6VF99RunnBl48NvKjPZq4g7Pu+nuU9fDyzirS0YikvLF2f+MDtp3GuA2dJpUlQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(66476007)(8676002)(6486002)(6506007)(6512007)(6666004)(5660300002)(508600001)(316002)(4326008)(66556008)(1076003)(83380400001)(36756003)(186003)(26005)(44832011)(38350700002)(38100700002)(66946007)(2616005)(86362001)(8936002)(2906002)(7416002)(52116002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?M1BJJ7YmTL0rj2fPfUuR8QuxLLwTKpY29W7tCiXOKMI71JnWAkT/zEGzPYxB?=
+ =?us-ascii?Q?2Qlr0g0jy75MfipKOnyS21EqoyD3wMSJFmL8jaelQUIGOj0oRLWPd0ukQaF2?=
+ =?us-ascii?Q?a+tWWz/s872P5CiOakY8FXS696sf071tb/tVWYls/BovRgKdoCNOt/8gta2o?=
+ =?us-ascii?Q?8yZv0JuyHw4NlnAWp4AAVSGmPPWbdIdTVu4hX78HOPhxQ5etT4S+1ShvbZHx?=
+ =?us-ascii?Q?8VcSqotPqyRM6sk8jyoxx+aiQrRrNK1rpibNl+uHqCKpPyzUReti/+fFiJ3I?=
+ =?us-ascii?Q?KzZsJDDpG69Nv1E7NnjkkSkjuwX/+ldgRZFnZ8+ru/fzjJWSKwcYlr7gykfU?=
+ =?us-ascii?Q?0TTtzBjuPIISN6tDAtDmn1BQHJ8jrxX2GHxNcyeYKSeOIVCTW8NYRFbvshav?=
+ =?us-ascii?Q?UNZq5PfNYA+9K6wYs7tOfFBbsQX73xAxutPYiVapy2xwv2TSD/QeXywt+Avn?=
+ =?us-ascii?Q?IgsUZFaV8gdydqZxLbLGT1HjXOe0fvR10qMBgkN3N37f0+Bij0D1NgJxCUqv?=
+ =?us-ascii?Q?4UmfnYzPTQ4sJa/lhHFXj5W71zhS+iwrIDezC/HU6c2Wuq3HTm9OV5P3A/Mu?=
+ =?us-ascii?Q?KcnKbJ/ezPKBAFe6LnaCe8I65A9qYfJr/mh7El6tJRVjeQdooN/UpoG/HZ4G?=
+ =?us-ascii?Q?j6WAVrRkFDDxmAVwKiFTHAtAnSCvm3kFBEHBLMouyBCf3OND/MnQAIqN9XOF?=
+ =?us-ascii?Q?gBcqxDg/BUEH6BQXGHVXAr3ZCZOYRiUoAiSUj5sAutA/20sbxhRN7fTTLe0k?=
+ =?us-ascii?Q?8zckpQPfuNryVZPR+2VPEn/AHWza07OA/HKL6mZicw1OyLTorpUUqEtGz5pj?=
+ =?us-ascii?Q?Ht2TjKpvdFVjV8xbyqxCvppLGWUQO3KhrHB3fFnAlDkdyHsR0tLOBkRXdunz?=
+ =?us-ascii?Q?VKbwzFI5QrMguPbpGblGc4Pr5HKITjqUmh1axDtFxCRRY6Zpe+Kti2UFDfXw?=
+ =?us-ascii?Q?2Um/LVnpVZsRX00689tLp8ng4ES6DP+WYn3asppm6MI6po0mhTl09pqiQdyJ?=
+ =?us-ascii?Q?jRtW2RfIChKJSQHevsg4J4UnibE5pSNAOAC72lUBp1mf4wNCnaxqb8sHe3ap?=
+ =?us-ascii?Q?ALwMgJcatvN+j4ObLvFRRPgxZ/VfeAbxnaeTZ7DCaPaFULLSZc+qeuV3Os/G?=
+ =?us-ascii?Q?kmO2SCEsGQSlwMRpH5BPVQD0Wz09paOnySFSvNgpSu4dkplV3GeSNx2PuK9J?=
+ =?us-ascii?Q?6exFfKVoPwj8lvGa4/5BeMbsM0yoeE/MwJL4NGNUm5PMEQYXyjaRENQ1RP5W?=
+ =?us-ascii?Q?S28Tk9CEOWOhJTEF/qqXNts/6os514TGfRYhAdWY+ulqwLNrbBj/Kkkgk1fg?=
+ =?us-ascii?Q?e3lDexoSVdcavG91Ns4y/P0arD3f/laDDhsrYLoaFkXOjs/kNSAKDb+PZpOR?=
+ =?us-ascii?Q?u33LGvMR3oVI3jFXMG3HMW4+Vfh8Yl0YB8Xs4eJXq+/4Cxya2+zCP/uANVoT?=
+ =?us-ascii?Q?sGTxbdRAgBJV6kbltRQNfSxfLFtrNuZTyJlXL/32nNhaRopfsU835SBR5m/B?=
+ =?us-ascii?Q?QlJM54VUWPMBRYa5QwoYFuM74rhMKuqV4Rs8XZupscrcEYdwZItCKALgLQpq?=
+ =?us-ascii?Q?pUnlSt6H50DxA2apRCYhprDkxNEss3ghjifqc8fyFo+CrMm4R0dl/G2vVfg6?=
+ =?us-ascii?Q?aAoEJ5eCucS6wbXIjHNLABUF6Cml40kVXUzp5VjMAIhd509t4XwQkvUW7brc?=
+ =?us-ascii?Q?gIxZYDZZ1Vfy0Fx2pSwvQ398ngWKB74ANseSFebaZQhvd1JKJLxciZPRDSvc?=
+ =?us-ascii?Q?4dDUtbrERfmRAhGfzhYhmNNXO8Q0UvM=3D?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c303eb0e-cd0e-4a0e-e987-08da1770516b
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Apr 2022 01:53:59.7868
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JLJL38Fy2cdEwV222QAPx+XlYRhQKsM99u/Tj5AW7b5V9M6eg6bIJcCJJe4G2/F0oxX6n8kQPddosAaPBG9ogA9NdMewD0CprPfcfw2lxT4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4349
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.425,18.0.850
+ definitions=2022-04-05_08:2022-04-04,2022-04-05 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ phishscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2204060004
+X-Proofpoint-ORIG-GUID: ZZjSI025ueIaGdHmhHnx6Fdztx_d4xra
+X-Proofpoint-GUID: ZZjSI025ueIaGdHmhHnx6Fdztx_d4xra
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2022-04-06 at 14:16 +0800, GUO Zihua wrote:
-> It is discovered thatO allowing template "ima" as the compiled default
-> would cause the following issue: the boot command line option
-> "ima_hash=" must be behind "ima_template=", otherwise "ima_hash=" might
-> be rejected.
+Some subsystems are interested in knowing if keys within a keyring could
+be used as a foundation of a root of trust.  Introduce a new builtin root
+of trust key flag.
 
-The format of a proper patch description describes the current status,
-provides a succinct problem description, followed by the solution.
+The first type of key to use this is X.509.  When a X.509 certificate
+is self signed, has the kernCertSign Key Usage set and contains the
+CA bit set this new flag is set.
 
-The original 'ima' measurement list template contains a hash, defined
-as 20 bytes, and a null terminated pathname, limited to 255
-characters.  Other measurement list templates permit both larger hashes
-and longer pathnames.  When the "ima" template is configured as the
-default, a new measurement list template (ima_template=) must be
-specified before specifying a larger hash algorithm (ima_hash=) on the
-boot command line.
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+---
+ crypto/asymmetric_keys/x509_public_key.c | 2 ++
+ include/linux/key-type.h                 | 2 ++
+ include/linux/key.h                      | 2 ++
+ security/keys/key.c                      | 8 ++++++++
+ 4 files changed, 14 insertions(+)
 
-To avoid this boot command line ordering issue, remove the legacy "ima"
-template configuration option, allowing it to still be specified on the
-boot command line.
-
-> 
-> The root cause of this issue is that during the processing of ima_hash,
-> we would try to check whether the hash algorithm is compatible with the
-> template. If the template is not set at the moment we do the check, we
-> check the algorithm against the compiled default template. If the
-> complied default template is "ima", then we reject any hash algorithm
-> other than sha1 and md5.
-> 
-> For example, if the compiled default template is "ima", and the default
-> algorithm is sha1 (which is the current default). In the cmdline, we put
-> in "ima_hash=sha256 ima_template=ima-ng". The expected behavior would be
-> that ima starts with ima-ng as the template and sha256 as the hash
-> algorithm. However, during the processing of "ima_hash=",
-> "ima_template=" has not been processed yet, and hash_setup would check
-> the configured hash algorithm against the compiled default: ima, and
-> reject sha256. So at the end, the hash algorithm that is actually used
-> will be sha1.
-> 
-> With template "ima" removed from the compiled default, we ensure that
-> the default tempalte would at least be "ima-ng" which allows for
-> basically any hash algorithm. Users who needs to use "ima" template
-> could still do it by specifying "ima_template=ima" in boot command line.
-> 
-> This change would not break the algorithm compatibility checking for
-> IMA.
-> 
-> Fixes: 4286587dccd43 ("ima: add Kconfig default measurement list template")
-> Signed-off-by: GUO Zihua <guozihua@huawei.com>
-> ---
->  security/integrity/ima/Kconfig | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
-> 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index f3a9cc201c8c..f392cac7a7d1 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -65,14 +65,11 @@ choice
->  	help
->  	  Select the default IMA measurement template.
->  
-> -	  The original 'ima' measurement list template contains a
-> -	  hash, defined as 20 bytes, and a null terminated pathname,
-> -	  limited to 255 characters.  The 'ima-ng' measurement list
-> -	  template permits both larger hash digests and longer
-> -	  pathnames.
-> -
-> -	config IMA_TEMPLATE
-> -		bool "ima"
-> +	  The 'ima-ng' measurement list template permits various hash
-> +	  digests and long pathnames. The compiled default template
-> +	  can be overwritten using the kernel command line
-> +	  'ima_template=' option.
-> +
-
-Other than perhaps changing "contains" to "contained", there's no
-reason for changing the text.  Adding an additional line is fine - The
-configured default template can be replaced by specifying
-"ima_template="  on the boot command line.
-
->  	config IMA_NG_TEMPLATE
->  		bool "ima-ng (default)"
->  	config IMA_SIG_TEMPLATE
-> @@ -82,7 +79,6 @@ endchoice
->  config IMA_DEFAULT_TEMPLATE
->  	string
->  	depends on IMA
-> -	default "ima" if IMA_TEMPLATE
->  	default "ima-ng" if IMA_NG_TEMPLATE
->  	default "ima-sig" if IMA_SIG_TEMPLATE
->  
-> @@ -102,19 +98,19 @@ choice
->  
->  	config IMA_DEFAULT_HASH_SHA256
->  		bool "SHA256"
-> -		depends on CRYPTO_SHA256=y && !IMA_TEMPLATE
-> +		depends on CRYPTO_SHA256=y
->  
->  	config IMA_DEFAULT_HASH_SHA512
->  		bool "SHA512"
-> -		depends on CRYPTO_SHA512=y && !IMA_TEMPLATE
-> +		depends on CRYPTO_SHA512=y
->  
->  	config IMA_DEFAULT_HASH_WP512
->  		bool "WP512"
-> -		depends on CRYPTO_WP512=y && !IMA_TEMPLATE
-> +		depends on CRYPTO_WP512=y
->  
->  	config IMA_DEFAULT_HASH_SM3
->  		bool "SM3"
-> -		depends on CRYPTO_SM3=y && !IMA_TEMPLATE
-> +		depends on CRYPTO_SM3=y
->  endchoice
->  
->  config IMA_DEFAULT_HASH
-
+diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric_keys/x509_public_key.c
+index 91a4ad50dea2..7290e765f46b 100644
+--- a/crypto/asymmetric_keys/x509_public_key.c
++++ b/crypto/asymmetric_keys/x509_public_key.c
+@@ -215,6 +215,8 @@ static int x509_key_preparse(struct key_preparsed_payload *prep)
+ 	prep->payload.data[asym_auth] = cert->sig;
+ 	prep->description = desc;
+ 	prep->quotalen = 100;
++	if (cert->is_kcs_set && cert->self_signed && cert->is_root_ca)
++		prep->payload_flags |= KEY_ALLOC_ROT;
+ 
+ 	/* We've finished with the certificate */
+ 	cert->pub = NULL;
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index 7d985a1dfe4a..ed0aaad3849b 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -36,6 +36,8 @@ struct key_preparsed_payload {
+ 	size_t		datalen;	/* Raw datalen */
+ 	size_t		quotalen;	/* Quota length for proposed payload */
+ 	time64_t	expiry;		/* Expiry time of key */
++	unsigned int	payload_flags;  /* Proposed payload flags */
++#define KEY_ALLOC_ROT	0x0001		/* Proposed Root of Trust (ROT) key */
+ } __randomize_layout;
+ 
+ typedef int (*request_key_actor_t)(struct key *auth_key, void *aux);
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 7febc4881363..97f6a1f86a27 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -230,6 +230,7 @@ struct key {
+ #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
+ #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
+ #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
++#define KEY_FLAG_BUILTIN_ROT	10	/* set if key is a builtin Root of Trust key */
+ 
+ 	/* the key type and key description string
+ 	 * - the desc is used to match a key against search criteria
+@@ -290,6 +291,7 @@ extern struct key *key_alloc(struct key_type *type,
+ #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
+ #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
+ #define KEY_ALLOC_SET_KEEP		0x0020	/* Set the KEEP flag on the key/keyring */
++#define KEY_ALLOC_BUILT_IN_ROT		0x0040  /* Add builtin root of trust key */
+ 
+ extern void key_revoke(struct key *key);
+ extern void key_invalidate(struct key *key);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index c45afdd1dfbb..732bb837fc51 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -305,6 +305,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 		key->flags |= 1 << KEY_FLAG_UID_KEYRING;
+ 	if (flags & KEY_ALLOC_SET_KEEP)
+ 		key->flags |= 1 << KEY_FLAG_KEEP;
++	if (flags & KEY_ALLOC_BUILT_IN_ROT)
++		key->flags |= 1 << KEY_FLAG_BUILTIN_ROT;
+ 
+ #ifdef KEY_DEBUGGING
+ 	key->magic = KEY_DEBUG_MAGIC;
+@@ -929,6 +931,12 @@ key_ref_t key_create_or_update(key_ref_t keyring_ref,
+ 			perm |= KEY_POS_WRITE;
+ 	}
+ 
++	/* Only allow KEY_ALLOC_BUILT_IN_ROT flag to be set by preparser contents */
++	if (prep.payload_flags & KEY_ALLOC_ROT)
++		flags |= KEY_ALLOC_BUILT_IN_ROT;
++	else
++		flags &= ~KEY_ALLOC_BUILT_IN_ROT;
++
+ 	/* allocate a new key */
+ 	key = key_alloc(index_key.type, index_key.description,
+ 			cred->fsuid, cred->fsgid, cred, perm, flags, NULL);
+-- 
+2.27.0
 
