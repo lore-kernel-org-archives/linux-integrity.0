@@ -2,190 +2,314 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1965C4167D
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Apr 2022 15:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1EBC433EF
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Apr 2022 12:57:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347930AbiDKPeS (ORCPT
+        id S1347446AbiDLM7b (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Apr 2022 11:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43538 "EHLO
+        Tue, 12 Apr 2022 08:59:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348269AbiDKPdo (ORCPT
+        with ESMTP id S1355633AbiDLM60 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Apr 2022 11:33:44 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE8F35DE1;
-        Mon, 11 Apr 2022 08:31:29 -0700 (PDT)
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23BDm2x4016697;
-        Mon, 11 Apr 2022 15:30:58 GMT
+        Tue, 12 Apr 2022 08:58:26 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B36A75C86F;
+        Tue, 12 Apr 2022 05:33:05 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23CBBxYi029884;
+        Tue, 12 Apr 2022 12:32:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=l9AB7GVsGiap+WlF670Iih31yy9cSLCunm8PRyeTp6U=;
- b=XrfFDWagaHFjztFzzu9hrdCXa0WLKGJsLQTB1fzwS2psGipuokfNbAQEJ487Y+C3RHtb
- mn+ujeaVQZ8tFiw226o1Q22vTesrh3QiItMmFfEFY+GsDT/url56kLbhusWUddW/5g1k
- 21f6+Pzq9i9KFJYf4N4H3H+A7qZhq+pZWJt8/e5au1xowI6/c4xO01hfat5VfLrkKmJV
- vgC7zO7E1eZQjkh9DewNxEPqZlJBWkb4nSDvnKO+sut5tEBtzFVY53u2XbF8AbhU/McU
- QOVNZrR1V3fqQH8IOFGrCZY9flNkbrVitneY7ehgrFqXxbmGB5jUpflKxFH5v2vwYn8G gQ== 
+ bh=vyaBAvLraJ2tua5EQaq+mkfRTcOYDbXcnxO/FeOjC/k=;
+ b=H5SUElumn5gMoOxYd2hW7du6gP4afvBGMDsyxb7nHOweHmItj1WDZJpbB4bH9n8rO8O0
+ psNHTuvdd9hUgdPYp0dRQ7ORroZd3Jku+ELf+xKgG3Y9VLuFzMnJKTwCRbNHHnFs6Jz0
+ EsFIZZEltkcrieTRMUBBJ+OW/2dsyS10g0SbEvIsAejgewm1l3hTTs+71uyN458dNK3N
+ 9XnVp4LLT1Ug2yGdS5kuEB30SyiEBDFThP2v0y8VbeB6CgxdGDj8aOLbq2GSJoOdg2rc
+ ccO52nlg/dt4FJp31E9EL6kdkXSvdfxh52gYOxNO2T+e1Hiqa2NBs2nr6ZRgbNteGXFi Fg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3fcnhhaced-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3fd8b5htcc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 15:30:58 +0000
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 23BEKrsx014370;
-        Mon, 11 Apr 2022 15:30:55 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3fcnhhacdd-1
+        Tue, 12 Apr 2022 12:32:46 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 23CCUC0O008163;
+        Tue, 12 Apr 2022 12:32:45 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3fd8b5htbj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 15:30:55 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23BFMCs0024027;
-        Mon, 11 Apr 2022 15:30:53 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma04ams.nl.ibm.com with ESMTP id 3fb1s8ucdf-1
+        Tue, 12 Apr 2022 12:32:45 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23CCDnoX030588;
+        Tue, 12 Apr 2022 12:32:43 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06ams.nl.ibm.com with ESMTP id 3fb1dj4w0m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 15:30:53 +0000
+        Tue, 12 Apr 2022 12:32:42 +0000
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23BFUpN745154646
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23CCWeLQ40501638
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Apr 2022 15:30:51 GMT
+        Tue, 12 Apr 2022 12:32:40 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2069F52050;
-        Mon, 11 Apr 2022 15:30:51 +0000 (GMT)
-Received: from sig-9-65-89-227.ibm.com (unknown [9.65.89.227])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id B72E95204F;
-        Mon, 11 Apr 2022 15:30:48 +0000 (GMT)
-Message-ID: <6798c67d748ecdc92455a8be8c63fb55e243368a.camel@linux.ibm.com>
-Subject: Re: [PATCH 4/7] KEYS: Introduce a builtin root of trust key flag
+        by IMSVA (Postfix) with ESMTP id 920D75204E;
+        Tue, 12 Apr 2022 12:32:40 +0000 (GMT)
+Received: from sig-9-65-64-123.ibm.com (unknown [9.65.64.123])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 57E9852050;
+        Tue, 12 Apr 2022 12:32:37 +0000 (GMT)
+Message-ID: <f55551188f2a17a7a5da54ea4a38bfbae938a62f.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 RESEND] efi: Do not import certificates from UEFI
+ Secure Boot for T2 Macs
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
+To:     Aditya Garg <gargaditya08@live.com>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
         "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
         "jmorris@namei.org" <jmorris@namei.org>,
         "serge@hallyn.com" <serge@hallyn.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "pvorel@suse.cz" <pvorel@suse.cz>, "tiwai@suse.de" <tiwai@suse.de>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "kafai@fb.com" <kafai@fb.com>,
+        "songliubraving@fb.com" <songliubraving@fb.com>,
+        "yhs@fb.com" <yhs@fb.com>,
+        "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Date:   Mon, 11 Apr 2022 11:30:48 -0400
-In-Reply-To: <BFA04505-F4BC-4CF8-B813-EE81DBD90E09@oracle.com>
-References: <20220406015337.4000739-1-eric.snowberg@oracle.com>
-         <20220406015337.4000739-5-eric.snowberg@oracle.com>
-         <4fbef0889d6f286c7fcd317db099b4857e1b2fa3.camel@linux.ibm.com>
-         <EF1544D5-54E8-4D47-82F8-F9337CA7AEA0@oracle.com>
-         <b8965652274b49ba7c6f67cad6d42965cf984b42.camel@linux.ibm.com>
-         <16DDA7F1-95BA-4279-BE4E-9F713A905B36@oracle.com>
-         <986199739ff8bd730b9aabe8882e245946d3d9e9.camel@linux.ibm.com>
-         <BFA04505-F4BC-4CF8-B813-EE81DBD90E09@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        Orlando Chamberlain <redecorating@protonmail.com>,
+        "admin@kodeit.net" <admin@kodeit.net>
+Date:   Tue, 12 Apr 2022 08:32:36 -0400
+In-Reply-To: <652C3E9E-CB97-4C70-A961-74AF8AEF9E39@live.com>
+References: <652C3E9E-CB97-4C70-A961-74AF8AEF9E39@live.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Onkk5hMhE7Dop4lPIT_dAQZd5PBFSuf7
-X-Proofpoint-ORIG-GUID: f9XCZDuQK4ykRc0vIg5oq3JqbAZx1R-l
+X-Proofpoint-ORIG-GUID: P0qJhkOPK2C5QZTvOJ6EMKg6-W1Da97M
+X-Proofpoint-GUID: CPrrncJGw3lrPoyPHwhMngG2z1YirLDY
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-11_06,2022-04-11_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
- phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204110085
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-12_04,2022-04-12_02,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ bulkscore=0 spamscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2204120059
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, 2022-04-08 at 21:59 +0000, Eric Snowberg wrote:
-> > On Apr 8, 2022, at 12:49 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Fri, 2022-04-08 at 17:34 +0000, Eric Snowberg wrote:
-> >> 
-> >>> On Apr 8, 2022, at 10:55 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>> 
-> >>> On Fri, 2022-04-08 at 15:27 +0000, Eric Snowberg wrote:
-> >>>> 
-> >>>>> On Apr 8, 2022, at 8:40 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >>>>> 
-> >>>>> On Tue, 2022-04-05 at 21:53 -0400, Eric Snowberg wrote:
-> >>>>>> 
-> >>>>>> The first type of key to use this is X.509.  When a X.509 certificate
-> >>>>>> is self signed, has the kernCertSign Key Usage set and contains the
-> >>>>>> CA bit set this new flag is set.
-> >>>>>> 
-> >>>>>> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> >>>>>> 
-> >>>>>> diff --git a/include/linux/key.h b/include/linux/key.h
-> >>>>>> index 7febc4881363..97f6a1f86a27 100644
-> >>>>>> --- a/include/linux/key.h
-> >>>>>> +++ b/include/linux/key.h
-> >>>>>> @@ -230,6 +230,7 @@ struct key {
-> >>>>>> #define KEY_FLAG_ROOT_CAN_INVAL  7       /* set if key can be invalidated by root without permission */
-> >>>>>> #define KEY_FLAG_KEEP            8       /* set if key should not be removed */
-> >>>>>> #define KEY_FLAG_UID_KEYRING     9       /* set if key is a user or user session keyring */
-> >>>>>> +#define KEY_FLAG_BUILTIN_ROT    10      /* set if key is a builtin Root of Trust key */
-> >>>>>> 
-> >>>>>>  /* the key type and key description string
-> >>>>>>   * - the desc is used to match a key against search criteria
-> >>>>>> @@ -290,6 +291,7 @@ extern struct key *key_alloc(struct key_type *type,
-> >>>>>> #define KEY_ALLOC_BYPASS_RESTRICTION     0x0008  /* Override the check on restricted keyrings */
-> >>>>>> #define KEY_ALLOC_UID_KEYRING            0x0010  /* allocating a user or user session keyring */
-> >>>>>> #define KEY_ALLOC_SET_KEEP               0x0020  /* Set the KEEP flag on the key/keyring */
-> >>>>>> +#define KEY_ALLOC_BUILT_IN_ROT          0x0040  /* Add builtin root of trust key */
-> >>>>> 
-> >>>>> Since the concept of root of trust is not generic, but limited to
-> >>>>> specific keyrings, the root CA certificate signing keys on the
-> >>>>> "machine" keyring need to be identified.  Similar to the
-> >>>>> KEY_ALLOC_BUILT_IN/KEY_FLAG_BUILTIN, new flags
-> >>>>> KEY_ALLOC_MACHINE/KEY_FLAG_MACHINE should be defined instead.
-> >>>> 
-> >>>> I’m open to renaming these, however this name change seems confusing to me.  
-> >>>> This flag gets set when the X.509 certificate contains the three CA requirements 
-> >>>> identified above.  The remaining keys in the machine keyring can be used for 
-> >>>> anything else.
-> >>> 
-> >>> Renaming the flag to KEY_ALLOC_MACHINE/KEY_FLAG_MACHINE differentiates
-> >>> between the "builtin" keys from the "machine" keys.  The trust models
-> >>> are very different.
-> >> 
-> >> Isn’t the trust model the same for machine and secondary keys?  Both are supplied by 
-> >> the end-user. That is why I’m confused by naming something _MACHINE when it applies 
-> >> to more than one keyring.
-> > 
-> > True both are supplied by the end-user, but the trust models are
-> > different.
+On Sun, 2022-04-10 at 10:49 +0000, Aditya Garg wrote:
+> From: Aditya Garg <gargaditya08@live.com>
 > 
-> I think I need more information here, I’m not seeing how they are different trust 
-> models.
+> On T2 Macs, the secure boot is handled by the T2 Chip. If enabled, only
+> macOS and Windows are allowed to boot on these machines. Thus we need to
+> disable secure boot for Linux.
 
-In order to discuss trust models, we need to understand the different
-use-cases that are being discussed here without ever having been
-explicitly stated.  Here are a few:
-- Allow users to sign their own kernel modules.
-- Allow users to selectively authorize 3rd party certificates to verify
-kernel modules.
-- From an IMA perspective, allow users to sign files within their own
-software packages.
+The end result might be "disable secure boot for Linux", but that isn't
+what the code is actually doing.  As a result of not being able to read
+or load certificates, secure boot cannot be enabled.  Please be more
+precise.
 
-Each of the above use-cases needs to be independently configurable,
-thoroughly explained, and enforced.
+> If we boot into Linux after disabling
+> secure boot, if CONFIG_LOAD_UEFI_KEYS is enabled, EFI Runtime services
+> fail to start, with the following logs in dmesg
+> 
+> Call Trace:
+>  <TASK>
+>  page_fault_oops+0x4f/0x2c0
+>  ? search_bpf_extables+0x6b/0x80
+>  ? search_module_extables+0x50/0x80
+>  ? search_exception_tables+0x5b/0x60
+>  kernelmode_fixup_or_oops+0x9e/0x110
+>  __bad_area_nosemaphore+0x155/0x190
+>  bad_area_nosemaphore+0x16/0x20
+>  do_kern_addr_fault+0x8c/0xa0
+>  exc_page_fault+0xd8/0x180
+>  asm_exc_page_fault+0x1e/0x30
+> (Removed some logs from here)
+>  ? __efi_call+0x28/0x30
+>  ? switch_mm+0x20/0x30
+>  ? efi_call_rts+0x19a/0x8e0
+>  ? process_one_work+0x222/0x3f0
+>  ? worker_thread+0x4a/0x3d0
+>  ? kthread+0x17a/0x1a0
+>  ? process_one_work+0x3f0/0x3f0
+>  ? set_kthread_struct+0x40/0x40
+>  ? ret_from_fork+0x22/0x30
+>  </TASK>
+> ---[ end trace 1f82023595a5927f ]---
+> efi: Froze efi_rts_wq and disabled EFI Runtime Services
+> integrity: Couldn't get size: 0x8000000000000015
+> integrity: MODSIGN: Couldn't get UEFI db list
+> efi: EFI Runtime Services are disabled!
+> integrity: Couldn't get size: 0x8000000000000015
+> integrity: Couldn't get UEFI dbx list
+> integrity: Couldn't get size: 0x8000000000000015
+> integrity: Couldn't get mokx list
+> integrity: Couldn't get size: 0x80000000
+> 
+> This patch prevents querying of these UEFI variables, since these Macs
+> seem to use a non-standard EFI hardware
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Aditya Garg <gargaditya08@live.com>
+> ---
+> v2 :- Reduce code size of the table.
+> V3 :- Close the brackets which were left open by mistake.
+>  .../platform_certs/keyring_handler.h          |  8 ++++
+>  security/integrity/platform_certs/load_uefi.c | 48 +++++++++++++++++++
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/security/integrity/platform_certs/keyring_handler.h b/security/integrity/platform_certs/keyring_handler.h
+> index 2462bfa08..cd06bd607 100644
+> --- a/security/integrity/platform_certs/keyring_handler.h
+> +++ b/security/integrity/platform_certs/keyring_handler.h
+> @@ -30,3 +30,11 @@ efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type);
+>  efi_element_handler_t get_handler_for_dbx(const efi_guid_t *sig_type);
+>  
+>  #endif
+> +
+> +#ifndef UEFI_QUIRK_SKIP_CERT
+> +#define UEFI_QUIRK_SKIP_CERT(vendor, product) \
+> +		 .matches = { \
+> +			DMI_MATCH(DMI_BOARD_VENDOR, vendor), \
+> +			DMI_MATCH(DMI_PRODUCT_NAME, product), \
+> +		},
+> +#endif
+> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> index 08b6d12f9..f246c8732 100644
+> --- a/security/integrity/platform_certs/load_uefi.c
+> +++ b/security/integrity/platform_certs/load_uefi.c
+> @@ -3,6 +3,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/sched.h>
+>  #include <linux/cred.h>
+> +#include <linux/dmi.h>
+>  #include <linux/err.h>
+>  #include <linux/efi.h>
+>  #include <linux/slab.h>
+> @@ -12,6 +13,32 @@
+>  #include "../integrity.h"
+>  #include "keyring_handler.h"
+>  
+> +/* Apple Macs with T2 Security chip don't support these UEFI variables.
+
+Please refer to Documentation/process/coding-style.rst for the format
+of multi-line comments.
+
+> + * The T2 chip manages the Secure Boot and does not allow Linux to boot
+> + * if it is turned on. If turned off, an attempt to get certificates
+> + * causes a crash, so we simply return 0 for them in each function.
+> + */
+> +
+
+No need for a blank line here.
+
+> +static const struct dmi_system_id uefi_skip_cert[] = {
+> +
+No need for a blank here either.
+
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,2") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,3") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro15,4") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,2") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,3") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookPro16,4") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir8,2") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacBookAir9,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacMini8,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "MacPro7,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,1") },
+> +	{ UEFI_QUIRK_SKIP_CERT("Apple Inc.", "iMac20,2") },
+> +	{ }
+> +};
+> +
+>  /*
+>   * Look to see if a UEFI variable called MokIgnoreDB exists and return true if
+>   * it does.
+> @@ -21,12 +48,18 @@
+>   * is set, we should ignore the db variable also and the true return indicates
+>   * this.
+>   */
+> +
+Or here
+
+>  static __init bool uefi_check_ignore_db(void)
+>  {
+>  	efi_status_t status;
+>  	unsigned int db = 0;
+>  	unsigned long size = sizeof(db);
+>  	efi_guid_t guid = EFI_SHIM_LOCK_GUID;
+> +	const struct dmi_system_id *dmi_id;
+> +
+> +	dmi_id = dmi_first_match(uefi_skip_cert);
+> +	if (dmi_id)
+> +		return 0;
+
+The function returns a bool.  Return either "true" or "false".
+
+>  
+>  	status = efi.get_variable(L"MokIgnoreDB", &guid, NULL, &size, &db);
+>  	return status == EFI_SUCCESS;
+> @@ -41,6 +74,11 @@ static __init void *get_cert_list(efi_char16_t *name, efi_guid_t *guid,
+>  	unsigned long lsize = 4;
+>  	unsigned long tmpdb[4];
+>  	void *db;
+> +	const struct dmi_system_id *dmi_id;
+> +
+> +	dmi_id = dmi_first_match(uefi_skip_cert);
+> +	if (dmi_id)
+> +		return 0;
+
+The return value here should be NULL.
+
+>  
+>  	*status = efi.get_variable(name, guid, NULL, &lsize, &tmpdb);
+>  	if (*status == EFI_NOT_FOUND)
+> @@ -85,6 +123,11 @@ static int __init load_moklist_certs(void)
+>  	unsigned long moksize;
+>  	efi_status_t status;
+>  	int rc;
+> +	const struct dmi_system_id *dmi_id;
+> +
+> +	dmi_id = dmi_first_match(uefi_skip_cert);
+> +	if (dmi_id)
+> +		return 0;
+>  
+>  	/* First try to load certs from the EFI MOKvar config table.
+>  	 * It's not an error if the MOKvar config table doesn't exist
+> @@ -138,6 +181,11 @@ static int __init load_uefi_certs(void)
+>  	unsigned long dbsize = 0, dbxsize = 0, mokxsize = 0;
+>  	efi_status_t status;
+>  	int rc = 0;
+> +	const struct dmi_system_id *dmi_id;
+> +
+> +	dmi_id = dmi_first_match(uefi_skip_cert);
+> +	if (dmi_id)
+> +		return 0;
+
+uefi_check_ignore_db(), get_cert_list(), uefi_check_ignore_db(), and
+/load_moklist_certs() are all defined all static and are gated here by
+this dmi_first_match().  There's probably no need for any of the other
+calls to dmi_first_match().
+
+Like in all the other cases, there should be some sort of message.  At
+minimum, there should be a pr_info().
+
+>  
+>  	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE))
+>  		return false;
 
 thanks,
 
 Mimi
-
-
-> 
-> >  In one case the certificates are coming indirectly from
-> > firmware,
 
