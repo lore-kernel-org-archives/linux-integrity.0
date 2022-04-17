@@ -2,644 +2,361 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CF7C4332F
-	for <linux-integrity@archiver.kernel.org>; Fri, 15 Apr 2022 21:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3233AC433F5
+	for <linux-integrity@archiver.kernel.org>; Sun, 17 Apr 2022 15:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355823AbiDOVaH (ORCPT
+        id S234279AbiDQPG0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 15 Apr 2022 17:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45876 "EHLO
+        Sun, 17 Apr 2022 11:06:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354745AbiDOV3u (ORCPT
+        with ESMTP id S229496AbiDQPGZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 15 Apr 2022 17:29:50 -0400
-Received: from sonic317-39.consmr.mail.ne1.yahoo.com (sonic317-39.consmr.mail.ne1.yahoo.com [66.163.184.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73E7FE0984
-        for <linux-integrity@vger.kernel.org>; Fri, 15 Apr 2022 14:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650057986; bh=w40bsvxz1maTfxCP5OPrFydafSqo7FsPfYgUwwtQr5s=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=oaWhSOQqIp+rGNYrrZYea0GYlJWahNtcVJXx52K7Q1T5ih0jUcgRAomNEe6IgKO+JzKhb479tkPrm+kJEahXZnxkB1gpppVZGFem3AQwMt4pFj6nhFi/JxDMKWDrXdVcQFBfjSr06jYACcf7B/9u2p7GfCxGisyYIuqRTJQP5zidaxdeALsJ9Llj7WSXtywcOUmZOEe0Lr5cytQeWh5xChNGVKA9fm3ss7AgC05rF6grEMwCVS4lhsiEeRI/nei4oqY0qR07tGfilW88Rq1AsuBXrhuRmBVINX3KNTe7uzt0DOOK3IByMNVDZ4tfQuapxVq3GI0y8UK+TDJVUrNqTA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1650057986; bh=wtsVw27xPLxCqSUmhyj2kv6qS02lu4MpXdzUpNISyxE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=b9EgObqnQ4SxI6ZMwLUpCiyZ4v2VYkyjGZb0vSer9vhKiQbR0O1BHH7iosdIEPjUOimgdIF8cE2r361/7AbFGFmA+bhGs5HoAHGXxxAHvgVsQ6dTCx5hPA/zzecqk1ZXZwP5G0gXttvuEnzbVDfWASL13DN6wYrk8oy0lkZMJdsfst+agvee3q1emdVHgg4rHaEJQo6JuRTTslBAe5GCkQzI1pQmGiIhmua7x2IfzI9hRQSXjV1KZwnKAVnEGH+omcsgxOUk6KNzFg4afJ5EmH44a5mglvMuyKMK1u5ooqpoPao1F0UNr9cppLeiHqCBWdlQNlSdJXS9shFsTiId/g==
-X-YMail-OSG: 9xZ8PEoVM1mW32.vc1fypnK.bH.ALuse3KHHMY_77QrA0519_TtZjc42HsYa89m
- Gy1D8oYYEjwGVRmX_7AK..rnKetjAQq3JPaQYROyEQY4R5ns6tq.rHn.czKbtHY_Yqw5Hm96JpxD
- Y6SqVXhqiLfdI_4NnWzFVFN1KmXzBfCyq83IJZh1MNWCpUFNy8P674l5VkCLW5CGWXH6Wg5M4bkn
- 5_xaF4nXr7aflAuK1BXQG3Iea0oWEEj8j.4jELzgUXTgpvJKUtE_X4p9mnTRt6NluHBmlwCCYNhQ
- AvFSnwHutgrf8i85SfqTAE1S58JR3FsbyBB6pBgXwCmkBAW58hdOLIXK9IpjfJM1jx07CC5rBHSJ
- y3HqpZzwDjj1AKije.I0WfE89pYkOvRnmQJOK1Gdam.nzh4cTkoK8dsYW8aFRZTQh2h04DGRZTbZ
- 6b.eTH.55q_jsXMQ_Rh.IdxLa1KppPdo_Btb_oqgoxb3pphcWmdYhjEkuPGvbC_OD43.EJDEUPyq
- 9J6ilPF9VKgOk5S8att5m4sasrH7qHdM05_GDVq5OQAPZsj6_npGvYemqzdBQkASiUVFxOEyUfwb
- yt1R57t5Gu2wz9C.UeACW3UL2OJFmKn4rArEy1IWtpr0cR2qIXmfXgd2ZEuwZD0aNI6Sx.4b5IFE
- vc0f8ax55H.EJ40RxDaY49yhhAKo42SLYe0MPReniJaIvkEoXLEuX1YnVSsF3vQiI6onJpenuskP
- PYKEsYUjI93WvUFrAlF1ypcRO8Ko9a_LfJtRcXczAl7nScMogGpIytloV.5coObgyi3D8G7gXOyC
- A1o9hkzaZCzUrEVOf6RYrzs1QqBFK5.iLBuYQVezc8KF5JjFxA7xOPoFUez4I9zn8h38xQOVhCOn
- YLX0pe7dAQSBLR.CTKmPP9A2maqCcJX3F05sIBTayM_.wVek13hisuzvCDDCR7x8tTmDVVqcDR9Y
- pQ.keSVQiyL2Eb3X5m6JnUmFKIEYLZHVUULnnZ2CcvHuP5I.mzwjB4QSFYturfP9mqbtVbmqthgn
- RG09BwH0OWqftvEh6LE8DVzgNOqEy71RD6VbZN73nfjGkwfLxvjS8aaUkLGii6BbdJkGwl8zDTkM
- bBf2XFrLDYDu6p1a5u3gGGTkVj_PGLAxwOuGsJReKTwO8Jhr32dmwL5pdLMFWMG_FcGt1xYyebcI
- 5hwme_TecnhZPF.nRYEUPvKK3ncVcSAYJDl6yLxEQtsn5TBMADH3pMclUqao7WIHS7eOLYRABsmw
- qFn.PKLS.snJ7HUEX52cP7YYWpR27738ycMd4KMAYhZhmkwzR3B9uBEbnRKQ40g5ySoqIYMTPf5F
- 8akn2qMK05q.y1keQwVdZyEo9ZUYg3GbmF8hqPLk3fqWUSguC3xTXnY_GU.RHaR0pypJuTOAwmUH
- Xr2BG8dWcp___ggl_IUSxhbLYV0tvwG8JANi2pzl6Zm1Nq96xq4p6BvphFTCi0GpmcmC66F8maOR
- GwFIrKxzItNje3Ho0xvjWXM8JH4vGPh2b.Nzw5Q8uwo2fYFwQiFzQH2QlYn9sLPnj2PdnrVTpfgi
- Y5AIfKZ7aBB7le_YvvinWkRhz5EsMwdP8bh8r2E8IQhmNv8JTLkC1Sj6XLrzqientNtm6LTQlSk6
- OkAH3Ug1adE1tOdL..LXViHXzhLeV_qY0UGFOtJY6NwpCdrALzlbmPvhLd9S9Pruv.1Nn_NWV5MU
- NFVc8_rY77UKOO8aEJwNRE6Gsvo36G_50pVvdp7K7ACW1kcCkgwxDo4xutIegzao2MEmzMC8sxVR
- hBLphO1YG.B15FwBBrlZ2zFPS4hRfZ6Owdr0PhjMj31BhgNZQ0D40w3.qlPpN6JgcEtjYQj0d36Q
- dv2fkubweaxDaNP4YvdVUOJXOFExPpnFUM8c7fV76fVA2lm58ZpEDlWC5ma0vIpDRXzlK9Hrq.GF
- itlNMm78cxQthfMEMV2.2ERD8Tu9DtgKeLxXfyLJM_npMrWQflBqk8TeyWpdAjjbovsqN_OD0yHA
- 0U1W8YB5HDzxgUmI3D_uk0R9FJj0FCqtV7FRl45mYV19EMR7ru3wSV.9gOBD7Rz4gBI4u8oE14AM
- ekLgstzIYk1dNKQ2MUHZCeuV6NRvrBT4V.73_hPmDuAD5OyJyRxJzGFdRcNBWdvE3dQ94xA8GAZI
- pgOJPoLo9vHJ3neRvpotByRQIBKWcrYj3c0jT7Wfr96GGMlqR5zrREKpDNLdftzT3mY_Fx2vDs1l
- LK0x2f2TIYuejTdz3JbmYuZYmYT_PpPIeavBc7XaADzusMyWtEJ3s1aEyK6lC923IITCwf0K1CGL
- 8UJt8jso03ROxIY_wkPrTcmkcJJfgMFk-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Fri, 15 Apr 2022 21:26:26 +0000
-Received: by hermes--canary-production-ne1-c7c4f6977-8bhqd (VZM Hermes SMTP Server) with ESMTPA ID 6a671e6207f140a4363de0fabf2a4e74;
-          Fri, 15 Apr 2022 21:26:25 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-integrity@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH v34 15/29] LSM: Ensure the correct LSM context releaser
-Date:   Fri, 15 Apr 2022 14:17:47 -0700
-Message-Id: <20220415211801.12667-16-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220415211801.12667-1-casey@schaufler-ca.com>
-References: <20220415211801.12667-1-casey@schaufler-ca.com>
+        Sun, 17 Apr 2022 11:06:25 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26A491E3D8;
+        Sun, 17 Apr 2022 08:03:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8DA156121A;
+        Sun, 17 Apr 2022 15:03:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67772C385A7;
+        Sun, 17 Apr 2022 15:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650207827;
+        bh=1T0Q/h1efvWuDVM98/+sFjgm9Q0PUEnDsigeiBfNC7M=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=sEXj5NOK3oCzgNBX1B40GuAO9l0BekNf2KpWbd7zymi+IQBEtw+6npL9E4YUY8FfM
+         azDHW9hK/k8JqDQH4q0AHK/8lNmflJNxYWYFhb6zQ0F/COshqHbn1Q/TwrJFb+Zgbu
+         1f1+TFM7HvaK7YynQ3/AV2h+dsQ/+pCmfN2Z7LfkRoieiVK9papMGJbOhlYLQ/odGj
+         3CT1X3cVAm2ufL6ECpr2vDjvCjfhGVdNLTVdU3MFmsLPI6TLSDGp9NW3KaTCvwbRfO
+         DfizxZlFTQp1ltk0LGEUtA2zdUr83Rlq8LZjmwGvD8SiPvHnxS5iFaSnyZ0da2Y33u
+         LR89mPoqCisMg==
+Message-ID: <8a5166497604c721583eeafaef49c734ecac623c.camel@kernel.org>
+Subject: Re: [PATCH v7 3/6] crypto: caam - add in-kernel interface for blob
+ generator
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Horia =?UTF-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     kernel@pengutronix.de, David Gstir <david@sigma-star.at>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Date:   Sun, 17 Apr 2022 18:02:37 +0300
+In-Reply-To: <20220415205647.46056-4-a.fatoum@pengutronix.de>
+References: <20220415205647.46056-1-a.fatoum@pengutronix.de>
+         <20220415205647.46056-4-a.fatoum@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.0 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add a new lsmcontext data structure to hold all the information
-about a "security context", including the string, its size and
-which LSM allocated the string. The allocation information is
-necessary because LSMs have different policies regarding the
-lifecycle of these strings. SELinux allocates and destroys
-them on each use, whereas Smack provides a pointer to an entry
-in a list that never goes away.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Acked-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-integrity@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-audit@redhat.com
-Cc: netfilter-devel@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: linux-nfs@vger.kernel.org
----
- drivers/android/binder.c                | 10 ++++---
- fs/ceph/xattr.c                         |  6 ++++-
- fs/nfs/nfs4proc.c                       |  8 ++++--
- fs/nfsd/nfs4xdr.c                       |  7 +++--
- include/linux/security.h                | 35 +++++++++++++++++++++++--
- include/net/scm.h                       |  5 +++-
- kernel/audit.c                          | 14 +++++++---
- kernel/auditsc.c                        | 12 ++++++---
- net/ipv4/ip_sockglue.c                  |  4 ++-
- net/netfilter/nf_conntrack_netlink.c    |  4 ++-
- net/netfilter/nf_conntrack_standalone.c |  4 ++-
- net/netfilter/nfnetlink_queue.c         | 13 ++++++---
- net/netlabel/netlabel_unlabeled.c       | 19 +++++++++++---
- net/netlabel/netlabel_user.c            |  4 ++-
- security/security.c                     | 11 ++++----
- 15 files changed, 121 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 26838061defb..2125b4b795da 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -2725,6 +2725,7 @@ static void binder_transaction(struct binder_proc *proc,
- 	int t_debug_id = atomic_inc_return(&binder_last_id);
- 	char *secctx = NULL;
- 	u32 secctx_sz = 0;
-+	struct lsmcontext scaff; /* scaffolding */
- 	struct list_head sgc_head;
- 	struct list_head pf_head;
- 	const void __user *user_buffer = (const void __user *)
-@@ -3033,7 +3034,8 @@ static void binder_transaction(struct binder_proc *proc,
- 			t->security_ctx = 0;
- 			WARN_ON(1);
- 		}
--		security_release_secctx(secctx, secctx_sz);
-+		lsmcontext_init(&scaff, secctx, secctx_sz, 0);
-+		security_release_secctx(&scaff);
- 		secctx = NULL;
- 	}
- 	t->buffer->debug_id = t->debug_id;
-@@ -3433,8 +3435,10 @@ static void binder_transaction(struct binder_proc *proc,
- 	binder_alloc_free_buf(&target_proc->alloc, t->buffer);
- err_binder_alloc_buf_failed:
- err_bad_extra_size:
--	if (secctx)
--		security_release_secctx(secctx, secctx_sz);
-+	if (secctx) {
-+		lsmcontext_init(&scaff, secctx, secctx_sz, 0);
-+		security_release_secctx(&scaff);
-+	}
- err_get_secctx_failed:
- 	kfree(tcomplete);
- 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index afec84088471..8ac30a5c05ef 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -1383,12 +1383,16 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
- 
- void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
- {
-+#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
-+	struct lsmcontext scaff; /* scaffolding */
-+#endif
- #ifdef CONFIG_CEPH_FS_POSIX_ACL
- 	posix_acl_release(as_ctx->acl);
- 	posix_acl_release(as_ctx->default_acl);
- #endif
- #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
--	security_release_secctx(as_ctx->sec_ctx, as_ctx->sec_ctxlen);
-+	lsmcontext_init(&scaff, as_ctx->sec_ctx, as_ctx->sec_ctxlen, 0);
-+	security_release_secctx(&scaff);
- #endif
- 	if (as_ctx->pagelist)
- 		ceph_pagelist_release(as_ctx->pagelist);
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index e3f5b380cefe..9d84e592e7d3 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -133,8 +133,12 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
- static inline void
- nfs4_label_release_security(struct nfs4_label *label)
- {
--	if (label)
--		security_release_secctx(label->label, label->len);
-+	struct lsmcontext scaff; /* scaffolding */
-+
-+	if (label) {
-+		lsmcontext_init(&scaff, label->label, label->len, 0);
-+		security_release_secctx(&scaff);
-+	}
- }
- static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_label *label)
- {
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index da92e7d2ab6a..77388b5ece56 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -2830,6 +2830,7 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
- 	int err;
- 	struct nfs4_acl *acl = NULL;
- #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
-+	struct lsmcontext scaff; /* scaffolding */
- 	void *context = NULL;
- 	int contextlen;
- #endif
-@@ -3341,8 +3342,10 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct svc_fh *fhp,
- 
- out:
- #ifdef CONFIG_NFSD_V4_SECURITY_LABEL
--	if (context)
--		security_release_secctx(context, contextlen);
-+	if (context) {
-+		lsmcontext_init(&scaff, context, contextlen, 0); /*scaffolding*/
-+		security_release_secctx(&scaff);
-+	}
- #endif /* CONFIG_NFSD_V4_SECURITY_LABEL */
- 	kfree(acl);
- 	if (tempfh) {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 4a4abda5d06d..ce63621c45af 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -135,6 +135,37 @@ enum lockdown_reason {
- 
- extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
- 
-+/*
-+ * A "security context" is the text representation of
-+ * the information used by LSMs.
-+ * This structure contains the string, its length, and which LSM
-+ * it is useful for.
-+ */
-+struct lsmcontext {
-+	char	*context;	/* Provided by the module */
-+	u32	len;
-+	int	slot;		/* Identifies the module */
-+};
-+
-+/**
-+ * lsmcontext_init - initialize an lsmcontext structure.
-+ * @cp: Pointer to the context to initialize
-+ * @context: Initial context, or NULL
-+ * @size: Size of context, or 0
-+ * @slot: Which LSM provided the context
-+ *
-+ * Fill in the lsmcontext from the provided information.
-+ * This is a scaffolding function that will be removed when
-+ * lsmcontext integration is complete.
-+ */
-+static inline void lsmcontext_init(struct lsmcontext *cp, char *context,
-+				   u32 size, int slot)
-+{
-+	cp->slot = slot;
-+	cp->context = context;
-+	cp->len = size;
-+}
-+
- /*
-  * Data exported by the security modules
-  *
-@@ -569,7 +600,7 @@ int security_ismaclabel(const char *name);
- int security_secid_to_secctx(struct lsmblob *blob, char **secdata, u32 *seclen);
- int security_secctx_to_secid(const char *secdata, u32 seclen,
- 			     struct lsmblob *blob);
--void security_release_secctx(char *secdata, u32 seclen);
-+void security_release_secctx(struct lsmcontext *cp);
- void security_inode_invalidate_secctx(struct inode *inode);
- int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
-@@ -1432,7 +1463,7 @@ static inline int security_secctx_to_secid(const char *secdata,
- 	return -EOPNOTSUPP;
- }
- 
--static inline void security_release_secctx(char *secdata, u32 seclen)
-+static inline void security_release_secctx(struct lsmcontext *cp)
- {
- }
- 
-diff --git a/include/net/scm.h b/include/net/scm.h
-index 23a35ff1b3f2..f273c4d777ec 100644
---- a/include/net/scm.h
-+++ b/include/net/scm.h
-@@ -92,6 +92,7 @@ static __inline__ int scm_send(struct socket *sock, struct msghdr *msg,
- #ifdef CONFIG_SECURITY_NETWORK
- static inline void scm_passec(struct socket *sock, struct msghdr *msg, struct scm_cookie *scm)
- {
-+	struct lsmcontext context;
- 	struct lsmblob lb;
- 	char *secdata;
- 	u32 seclen;
-@@ -106,7 +107,9 @@ static inline void scm_passec(struct socket *sock, struct msghdr *msg, struct sc
- 
- 		if (!err) {
- 			put_cmsg(msg, SOL_SOCKET, SCM_SECURITY, seclen, secdata);
--			security_release_secctx(secdata, seclen);
-+			/*scaffolding*/
-+			lsmcontext_init(&context, secdata, seclen, 0);
-+			security_release_secctx(&context);
- 		}
- 	}
- }
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 2b670ac129be..0eff57959b4e 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1214,6 +1214,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 	struct audit_sig_info   *sig_data;
- 	char			*ctx = NULL;
- 	u32			len;
-+	struct lsmcontext	scaff; /* scaffolding */
- 
- 	err = audit_netlink_ok(skb, msg_type);
- 	if (err)
-@@ -1471,15 +1472,18 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
- 		}
- 		sig_data = kmalloc(struct_size(sig_data, ctx, len), GFP_KERNEL);
- 		if (!sig_data) {
--			if (lsmblob_is_set(&audit_sig_lsm))
--				security_release_secctx(ctx, len);
-+			if (lsmblob_is_set(&audit_sig_lsm)) {
-+				lsmcontext_init(&scaff, ctx, len, 0);
-+				security_release_secctx(&scaff);
-+			}
- 			return -ENOMEM;
- 		}
- 		sig_data->uid = from_kuid(&init_user_ns, audit_sig_uid);
- 		sig_data->pid = audit_sig_pid;
- 		if (lsmblob_is_set(&audit_sig_lsm)) {
- 			memcpy(sig_data->ctx, ctx, len);
--			security_release_secctx(ctx, len);
-+			lsmcontext_init(&scaff, ctx, len, 0);
-+			security_release_secctx(&scaff);
- 		}
- 		audit_send_reply(skb, seq, AUDIT_SIGNAL_INFO, 0, 0,
- 				 sig_data, struct_size(sig_data, ctx, len));
-@@ -2171,6 +2175,7 @@ int audit_log_task_context(struct audit_buffer *ab)
- 	unsigned len;
- 	int error;
- 	struct lsmblob blob;
-+	struct lsmcontext scaff; /* scaffolding */
- 
- 	security_current_getsecid_subj(&blob);
- 	if (!lsmblob_is_set(&blob))
-@@ -2185,7 +2190,8 @@ int audit_log_task_context(struct audit_buffer *ab)
- 	}
- 
- 	audit_log_format(ab, " subj=%s", ctx);
--	security_release_secctx(ctx, len);
-+	lsmcontext_init(&scaff, ctx, len, 0);
-+	security_release_secctx(&scaff);
- 	return 0;
- 
- error_path:
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 2b27ef99f0f6..2202952c830d 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1121,6 +1121,7 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 				 struct lsmblob *blob, char *comm)
- {
- 	struct audit_buffer *ab;
-+	struct lsmcontext lsmcxt;
- 	char *ctx = NULL;
- 	u32 len;
- 	int rc = 0;
-@@ -1138,7 +1139,8 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 			rc = 1;
- 		} else {
- 			audit_log_format(ab, " obj=%s", ctx);
--			security_release_secctx(ctx, len);
-+			lsmcontext_init(&lsmcxt, ctx, len, 0); /*scaffolding*/
-+			security_release_secctx(&lsmcxt);
- 		}
- 	}
- 	audit_log_format(ab, " ocomm=");
-@@ -1398,6 +1400,7 @@ static void audit_log_time(struct audit_context *context, struct audit_buffer **
- 
- static void show_special(struct audit_context *context, int *call_panic)
- {
-+	struct lsmcontext lsmcxt;
- 	struct audit_buffer *ab;
- 	int i;
- 
-@@ -1432,7 +1435,8 @@ static void show_special(struct audit_context *context, int *call_panic)
- 				*call_panic = 1;
- 			} else {
- 				audit_log_format(ab, " obj=%s", ctx);
--				security_release_secctx(ctx, len);
-+				lsmcontext_init(&lsmcxt, ctx, len, 0);
-+				security_release_secctx(&lsmcxt);
- 			}
- 		}
- 		if (context->ipc.has_perm) {
-@@ -1594,6 +1598,7 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
- 		char *ctx = NULL;
- 		u32 len;
- 		struct lsmblob blob;
-+		struct lsmcontext lsmcxt;
- 
- 		lsmblob_init(&blob, n->osid);
- 		if (security_secid_to_secctx(&blob, &ctx, &len)) {
-@@ -1602,7 +1607,8 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
- 				*call_panic = 2;
- 		} else {
- 			audit_log_format(ab, " obj=%s", ctx);
--			security_release_secctx(ctx, len);
-+			lsmcontext_init(&lsmcxt, ctx, len, 0); /* scaffolding */
-+			security_release_secctx(&lsmcxt);
- 		}
- 	}
- 
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index 933a8f94f93a..70ca4510ea35 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -130,6 +130,7 @@ static void ip_cmsg_recv_checksum(struct msghdr *msg, struct sk_buff *skb,
- 
- static void ip_cmsg_recv_security(struct msghdr *msg, struct sk_buff *skb)
- {
-+	struct lsmcontext context;
- 	struct lsmblob lb;
- 	char *secdata;
- 	u32 seclen, secid;
-@@ -145,7 +146,8 @@ static void ip_cmsg_recv_security(struct msghdr *msg, struct sk_buff *skb)
- 		return;
- 
- 	put_cmsg(msg, SOL_IP, SCM_SECURITY, seclen, secdata);
--	security_release_secctx(secdata, seclen);
-+	lsmcontext_init(&context, secdata, seclen, 0); /* scaffolding */
-+	security_release_secctx(&context);
- }
- 
- static void ip_cmsg_recv_dstaddr(struct msghdr *msg, struct sk_buff *skb)
-diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-index a28e275981d4..f053d7544355 100644
---- a/net/netfilter/nf_conntrack_netlink.c
-+++ b/net/netfilter/nf_conntrack_netlink.c
-@@ -348,6 +348,7 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
- 	int len, ret;
- 	char *secctx;
- 	struct lsmblob blob;
-+	struct lsmcontext context;
- 
- 	/* lsmblob_init() puts ct->secmark into all of the secids in blob.
- 	 * security_secid_to_secctx() will know which security module
-@@ -368,7 +369,8 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
- 
- 	ret = 0;
- nla_put_failure:
--	security_release_secctx(secctx, len);
-+	lsmcontext_init(&context, secctx, len, 0); /* scaffolding */
-+	security_release_secctx(&context);
- 	return ret;
- }
- #else
-diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index bba3a66f5636..3b6ba86783f6 100644
---- a/net/netfilter/nf_conntrack_standalone.c
-+++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -179,6 +179,7 @@ static void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
- 	u32 len;
- 	char *secctx;
- 	struct lsmblob blob;
-+	struct lsmcontext context;
- 
- 	lsmblob_init(&blob, ct->secmark);
- 	ret = security_secid_to_secctx(&blob, &secctx, &len);
-@@ -187,7 +188,8 @@ static void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
- 
- 	seq_printf(s, "secctx=%s ", secctx);
- 
--	security_release_secctx(secctx, len);
-+	lsmcontext_init(&context, secctx, len, 0); /* scaffolding */
-+	security_release_secctx(&context);
- }
- #else
- static inline void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index 6269fe122345..f69d5e997da2 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -397,6 +397,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	enum ip_conntrack_info ctinfo = 0;
- 	const struct nfnl_ct_hook *nfnl_ct;
- 	bool csum_verify;
-+	struct lsmcontext scaff; /* scaffolding */
- 	char *secdata = NULL;
- 	u32 seclen = 0;
- 	ktime_t tstamp;
-@@ -634,8 +635,10 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	}
- 
- 	nlh->nlmsg_len = skb->len;
--	if (seclen)
--		security_release_secctx(secdata, seclen);
-+	if (seclen) {
-+		lsmcontext_init(&scaff, secdata, seclen, 0);
-+		security_release_secctx(&scaff);
-+	}
- 	return skb;
- 
- nla_put_failure:
-@@ -643,8 +646,10 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	kfree_skb(skb);
- 	net_err_ratelimited("nf_queue: error creating packet message\n");
- nlmsg_failure:
--	if (seclen)
--		security_release_secctx(secdata, seclen);
-+	if (seclen) {
-+		lsmcontext_init(&scaff, secdata, seclen, 0);
-+		security_release_secctx(&scaff);
-+	}
- 	return NULL;
- }
- 
-diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-index c86df6ead742..a8e9ee202245 100644
---- a/net/netlabel/netlabel_unlabeled.c
-+++ b/net/netlabel/netlabel_unlabeled.c
-@@ -374,6 +374,7 @@ int netlbl_unlhsh_add(struct net *net,
- 	struct net_device *dev;
- 	struct netlbl_unlhsh_iface *iface;
- 	struct audit_buffer *audit_buf = NULL;
-+	struct lsmcontext context;
- 	char *secctx = NULL;
- 	u32 secctx_len;
- 	struct lsmblob blob;
-@@ -447,7 +448,9 @@ int netlbl_unlhsh_add(struct net *net,
- 					     &secctx,
- 					     &secctx_len) == 0) {
- 			audit_log_format(audit_buf, " sec_obj=%s", secctx);
--			security_release_secctx(secctx, secctx_len);
-+			/* scaffolding */
-+			lsmcontext_init(&context, secctx, secctx_len, 0);
-+			security_release_secctx(&context);
- 		}
- 		audit_log_format(audit_buf, " res=%u", ret_val == 0 ? 1 : 0);
- 		audit_log_end(audit_buf);
-@@ -478,6 +481,7 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
- 	struct netlbl_unlhsh_addr4 *entry;
- 	struct audit_buffer *audit_buf;
- 	struct net_device *dev;
-+	struct lsmcontext context;
- 	char *secctx;
- 	u32 secctx_len;
- 	struct lsmblob blob;
-@@ -508,7 +512,9 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
- 		    security_secid_to_secctx(&blob,
- 					     &secctx, &secctx_len) == 0) {
- 			audit_log_format(audit_buf, " sec_obj=%s", secctx);
--			security_release_secctx(secctx, secctx_len);
-+			/* scaffolding */
-+			lsmcontext_init(&context, secctx, secctx_len, 0);
-+			security_release_secctx(&context);
- 		}
- 		audit_log_format(audit_buf, " res=%u", entry != NULL ? 1 : 0);
- 		audit_log_end(audit_buf);
-@@ -545,6 +551,7 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
- 	struct netlbl_unlhsh_addr6 *entry;
- 	struct audit_buffer *audit_buf;
- 	struct net_device *dev;
-+	struct lsmcontext context;
- 	char *secctx;
- 	u32 secctx_len;
- 	struct lsmblob blob;
-@@ -574,7 +581,8 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
- 		    security_secid_to_secctx(&blob,
- 					     &secctx, &secctx_len) == 0) {
- 			audit_log_format(audit_buf, " sec_obj=%s", secctx);
--			security_release_secctx(secctx, secctx_len);
-+			lsmcontext_init(&context, secctx, secctx_len, 0);
-+			security_release_secctx(&context);
- 		}
- 		audit_log_format(audit_buf, " res=%u", entry != NULL ? 1 : 0);
- 		audit_log_end(audit_buf);
-@@ -1093,6 +1101,7 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
- 	int ret_val = -ENOMEM;
- 	struct netlbl_unlhsh_walk_arg *cb_arg = arg;
- 	struct net_device *dev;
-+	struct lsmcontext context;
- 	void *data;
- 	u32 secid;
- 	char *secctx;
-@@ -1163,7 +1172,9 @@ static int netlbl_unlabel_staticlist_gen(u32 cmd,
- 			  NLBL_UNLABEL_A_SECCTX,
- 			  secctx_len,
- 			  secctx);
--	security_release_secctx(secctx, secctx_len);
-+	/* scaffolding */
-+	lsmcontext_init(&context, secctx, secctx_len, 0);
-+	security_release_secctx(&context);
- 	if (ret_val != 0)
- 		goto list_cb_failure;
- 
-diff --git a/net/netlabel/netlabel_user.c b/net/netlabel/netlabel_user.c
-index 893301ae0131..ef139d8ae7cd 100644
---- a/net/netlabel/netlabel_user.c
-+++ b/net/netlabel/netlabel_user.c
-@@ -84,6 +84,7 @@ struct audit_buffer *netlbl_audit_start_common(int type,
- 					       struct netlbl_audit *audit_info)
- {
- 	struct audit_buffer *audit_buf;
-+	struct lsmcontext context;
- 	char *secctx;
- 	u32 secctx_len;
- 	struct lsmblob blob;
-@@ -103,7 +104,8 @@ struct audit_buffer *netlbl_audit_start_common(int type,
- 	if (audit_info->secid != 0 &&
- 	    security_secid_to_secctx(&blob, &secctx, &secctx_len) == 0) {
- 		audit_log_format(audit_buf, " subj=%s", secctx);
--		security_release_secctx(secctx, secctx_len);
-+		lsmcontext_init(&context, secctx, secctx_len, 0);/*scaffolding*/
-+		security_release_secctx(&context);
- 	}
- 
- 	return audit_buf;
-diff --git a/security/security.c b/security/security.c
-index 52d3d0601636..0cdd12c4c157 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2379,16 +2379,17 @@ int security_secctx_to_secid(const char *secdata, u32 seclen,
- }
- EXPORT_SYMBOL(security_secctx_to_secid);
- 
--void security_release_secctx(char *secdata, u32 seclen)
-+void security_release_secctx(struct lsmcontext *cp)
- {
- 	struct security_hook_list *hp;
--	int ilsm = lsm_task_ilsm(current);
- 
- 	hlist_for_each_entry(hp, &security_hook_heads.release_secctx, list)
--		if (ilsm == LSMBLOB_INVALID || ilsm == hp->lsmid->slot) {
--			hp->hook.release_secctx(secdata, seclen);
--			return;
-+		if (cp->slot == hp->lsmid->slot) {
-+			hp->hook.release_secctx(cp->context, cp->len);
-+			break;
- 		}
-+
-+	memset(cp, 0, sizeof(*cp));
- }
- EXPORT_SYMBOL(security_release_secctx);
- 
--- 
-2.35.1
+T24gRnJpLCAyMDIyLTA0LTE1IGF0IDIyOjU2ICswMjAwLCBBaG1hZCBGYXRvdW0gd3JvdGU6Cj4g
+VGhlIE5YUCBDcnlwdG9ncmFwaGljIEFjY2VsZXJhdGlvbiBhbmQgQXNzdXJhbmNlIE1vZHVsZSAo
+Q0FBTSkKPiBjYW4gYmUgdXNlZCB0byBwcm90ZWN0IHVzZXItZGVmaW5lZCBkYXRhIGFjcm9zcyBz
+eXN0ZW0gcmVib290Ogo+IAo+IMKgIC0gV2hlbiB0aGUgc3lzdGVtIGlzIGZ1c2VkIGFuZCBib290
+cyBpbnRvIHNlY3VyZSBzdGF0ZSwgdGhlIG1hc3Rlcgo+IMKgwqDCoCBrZXkgaXMgYSB1bmlxdWUg
+bmV2ZXItZGlzY2xvc2VkIGRldmljZS1zcGVjaWZpYyBrZXkKPiDCoCAtIHJhbmRvbSBrZXkgaXMg
+ZW5jcnlwdGVkIGJ5IGtleSBkZXJpdmVkIGZyb20gbWFzdGVyIGtleQo+IMKgIC0gZGF0YSBpcyBl
+bmNyeXB0ZWQgdXNpbmcgdGhlIHJhbmRvbSBrZXkKPiDCoCAtIGVuY3J5cHRlZCBkYXRhIGFuZCBp
+dHMgZW5jcnlwdGVkIHJhbmRvbSBrZXkgYXJlIHN0b3JlZCBhbG9uZ3NpZGUKPiDCoCAtIFRoaXMg
+YmxvYiBjYW4gbm93IGJlIHNhZmVseSBzdG9yZWQgaW4gbm9uLXZvbGF0aWxlIG1lbW9yeQo+IAo+
+IE9uIG5leHQgcG93ZXItb246Cj4gwqAgLSBibG9iIGlzIGxvYWRlZCBpbnRvIENBQU0KPiDCoCAt
+IENBQU0gd3JpdGVzIGRlY3J5cHRlZCBkYXRhIGVpdGhlciBpbnRvIG1lbW9yeSBvciBrZXkgcmVn
+aXN0ZXIKPiAKPiBBZGQgZnVuY3Rpb25zIHRvIHJlYWxpemUgZW5jcnlwdGluZyBhbmQgZGVjcnlw
+dGluZyBpbnRvIG1lbW9yeSBhbG9uZ3NpZGUKPiB0aGUgQ0FBTSBkcml2ZXIuCj4gCj4gVGhleSB3
+aWxsIGJlIHVzZWQgaW4gYSBsYXRlciBjb21taXQgYXMgYSBzb3VyY2UgZm9yIHRoZSB0cnVzdGVk
+IGtleQo+IHNlYWwvdW5zZWFsIG1lY2hhbmlzbS4KPiAKPiBSZXZpZXdlZC1ieTogRGF2aWQgR3N0
+aXIgPGRhdmlkQHNpZ21hLXN0YXIuYXQ+Cj4gUmV2aWV3ZWQtYnk6IFBhbmthaiBHdXB0YSA8cGFu
+a2FqLmd1cHRhQG54cC5jb20+Cj4gVGVzdGVkLWJ5OiBUaW0gSGFydmV5IDx0aGFydmV5QGdhdGV3
+b3Jrcy5jb20+Cj4gVGVzdGVkLWJ5OiBNYXR0aGlhcyBTY2hpZmZlciA8bWF0dGhpYXMuc2NoaWZm
+ZXJAZXcudHEtZ3JvdXAuY29tPgo+IFNpZ25lZC1vZmYtYnk6IFN0ZWZmZW4gVHJ1bXRyYXIgPHMu
+dHJ1bXRyYXJAcGVuZ3V0cm9uaXguZGU+Cj4gU2lnbmVkLW9mZi1ieTogQWhtYWQgRmF0b3VtIDxh
+LmZhdG91bUBwZW5ndXRyb25peC5kZT4KPiAtLS0KPiB2NiAtPiB2NzoKPiDCoCAtIEFkZGVkIG1v
+cmUgdmVyYm9zZSBjb21tZW50IG9uIGhvdyBDQUFNX0JMT0JfREVTQ19CWVRFU19NQVggYWRkcyB1
+cC4KPiDCoCAtIHJlbW92ZSBlcnJvciBtZXNzYWdlIG9uIGt6YWxsb2MgZmFpbHVyZSAoY2hlY2tw
+YXRjaCkKPiDCoCAtIFJlcGxhY2VkIGJ1ZmZlciBhcmd1bWVudHMgd2l0aCBzdHJ1Y3R1cmUgY29u
+dGFpbmluZyB0aGVtIChQYW5rYWopCj4gdjUgLT4gdjY6Cj4gwqAgLSBEcm9wcGVkIGNhYW1fYmxv
+Yl9hbGxvY19kZXNjKCkgaW4gZmF2b3Igb2Yga3phbGxvYygpIHdpdGggZml4ZWQgc2l6ZS4KPiDC
+oMKgwqAgVGhpcyBzaW1wbGlmaWVzIGNvZGUgYW5kIHdhc3RlcyBhdCBtb3N0IDEyIGJ5dGVzIHdo
+aWNoIGFyZSBmcmVlZAo+IMKgwqDCoCBhdCB0aGUgZW5kIG9mIHRoZSBmdW5jdGlvbiBhbnl3YXku
+Cj4gwqAgLSBGYWN0b3JlZCBvdXQgY29tbW9uIGNvZGUgYmV0d2VlbiBjYWFtX2VuY2FwX2Jsb2Ig
+YW5kIGNhYW1fZGVjYXBfYmxvYgo+IMKgwqDCoCBhcyBib3RoIGZ1bmN0aW9ucyB3ZXJlIGxhcmdl
+bHkgaWRlbnRpY2FsCj4gwqAgLSB1c2UgYXBwZW5kX3NlcV8oaW58b3V0KV9wdHJfaW50bGVuIGZv
+ciBib3RoIGVuY2FwL2RlY2FwIGFzIGEgcmVzdWx0Cj4gwqAgLSB1c2UgcmV2ZXJzZSBjaHJpc3Rt
+YXMgdHJlZSBvcmRlciBmb3IgY2FhbV9wcm9jZXNzX2Jsb2IgdmFyaWFibGUKPiDCoMKgwqAgZGVm
+aW5pdGlvbnMuCj4gdjQgLT4gdjU6Cj4gwqAgLSBDb2xsZWN0ZWQgUmV2aWV3ZWQtYnkncyBhbmQg
+VGVzdGVkLWJ5J3MKPiDCoCAtIE5vdGUgaW4gQ0FBTSBwYXRjaCB3aGF0IENBQU0gaXMgKEphcmtr
+bykKPiB2MyAtPiB2NDoKPiDCoCAtIENvbGxlY3RlZCBBY2tlZC1ieSdzLCBSZXZpZXdlZC1ieSdz
+IGFuZCBUZXN0ZWQtYnkKPiDCoCAtIEZpeGVkIHR5cG8gc3BvdHRlZCBieSBEYXZpZAo+IHYyIC0+
+IHYzOgo+IMKgLSBObyBjaGFuZ2UKPiB2MSAtPiB2MjoKPiDCoC0gRW5mb3JjZSBtYXhpbXVtIGtl
+eW1vZCBzaXplIChIb3JpYSkKPiDCoC0gVXNlIGFwcGVuZF9zZXFfKGlufG91dClfcHRyX2ludGxl
+biBpbnN0ZWFkIG9mIGFwcGVuZF9zZXFfKGlufG91dClfcHRyCj4gwqDCoCAoSG9yaWEpCj4gwqAt
+IE1ha2UgYmxvYmlmaWVyIGhhbmRsZSBwcml2YXRlIHRvIENBQU0gZ2x1ZSBjb2RlIGZpbGUgKEhv
+cmlhKQo+IAo+IFRvOiAiSG9yaWEgR2VhbnTEgyIgPGhvcmlhLmdlYW50YUBueHAuY29tPgo+IFRv
+OiBQYW5rYWogR3VwdGEgPHBhbmthai5ndXB0YUBueHAuY29tPgo+IFRvOiBIZXJiZXJ0IFh1IDxo
+ZXJiZXJ0QGdvbmRvci5hcGFuYS5vcmcuYXU+Cj4gVG86ICJEYXZpZCBTLiBNaWxsZXIiIDxkYXZl
+bUBkYXZlbWxvZnQubmV0Pgo+IENjOiBKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNv
+bT4KPiBDYzogSmFya2tvIFNha2tpbmVuIDxqYXJra29Aa2VybmVsLm9yZz4KPiBDYzogTWltaSBa
+b2hhciA8em9oYXJAbGludXguaWJtLmNvbT4KPiBDYzogRGF2aWQgSG93ZWxscyA8ZGhvd2VsbHNA
+cmVkaGF0LmNvbT4KPiBDYzogSmFtZXMgTW9ycmlzIDxqbW9ycmlzQG5hbWVpLm9yZz4KPiBDYzog
+RXJpYyBCaWdnZXJzIDxlYmlnZ2Vyc0BrZXJuZWwub3JnPgo+IENjOiAiU2VyZ2UgRS4gSGFsbHlu
+IiA8c2VyZ2VAaGFsbHluLmNvbT4KPiBDYzogSmFuIEx1ZWJiZSA8ai5sdWViYmVAcGVuZ3V0cm9u
+aXguZGU+Cj4gQ2M6IERhdmlkIEdzdGlyIDxkYXZpZEBzaWdtYS1zdGFyLmF0Pgo+IENjOiBSaWNo
+YXJkIFdlaW5iZXJnZXIgPHJpY2hhcmRAbm9kLmF0Pgo+IENjOiBGcmFuY2sgTEVOT1JNQU5EIDxm
+cmFuY2subGVub3JtYW5kQG54cC5jb20+Cj4gQ2M6IE1hdHRoaWFzIFNjaGlmZmVyIDxtYXR0aGlh
+cy5zY2hpZmZlckBldy50cS1ncm91cC5jb20+Cj4gQ2M6IFN1bWl0IEdhcmcgPHN1bWl0LmdhcmdA
+bGluYXJvLm9yZz4KPiBDYzogbGludXgtaW50ZWdyaXR5QHZnZXIua2VybmVsLm9yZwo+IENjOiBr
+ZXlyaW5nc0B2Z2VyLmtlcm5lbC5vcmcKPiBDYzogbGludXgtY3J5cHRvQHZnZXIua2VybmVsLm9y
+Zwo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnCj4gQ2M6IGxpbnV4LXNlY3VyaXR5
+LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmcKPiAtLS0KPiDCoGRyaXZlcnMvY3J5cHRvL2NhYW0vS2Nv
+bmZpZ8KgwqDCoCB8wqDCoCAzICsKPiDCoGRyaXZlcnMvY3J5cHRvL2NhYW0vTWFrZWZpbGXCoMKg
+IHzCoMKgIDEgKwo+IMKgZHJpdmVycy9jcnlwdG8vY2FhbS9ibG9iX2dlbi5jIHwgMTY0ICsrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+IMKgaW5jbHVkZS9zb2MvZnNsL2NhYW0tYmxv
+Yi5owqDCoMKgIHwgMTAyICsrKysrKysrKysrKysrKysrKysrCj4gwqA0IGZpbGVzIGNoYW5nZWQs
+IDI3MCBpbnNlcnRpb25zKCspCj4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jcnlwdG8v
+Y2FhbS9ibG9iX2dlbi5jCj4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9zb2MvZnNsL2Nh
+YW0tYmxvYi5oCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY3J5cHRvL2NhYW0vS2NvbmZpZyBi
+L2RyaXZlcnMvY3J5cHRvL2NhYW0vS2NvbmZpZwo+IGluZGV4IDg0ZWE3Y2JhNWVlNS4uZWE5Zjhi
+MWFlOTgxIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvY3J5cHRvL2NhYW0vS2NvbmZpZwo+ICsrKyBi
+L2RyaXZlcnMvY3J5cHRvL2NhYW0vS2NvbmZpZwo+IEBAIC0xNTEsNiArMTUxLDkgQEAgY29uZmln
+IENSWVBUT19ERVZfRlNMX0NBQU1fUk5HX0FQSQo+IMKgwqDCoMKgwqDCoMKgwqDCoCBTZWxlY3Rp
+bmcgdGhpcyB3aWxsIHJlZ2lzdGVyIHRoZSBTRUM0IGhhcmR3YXJlIHJuZyB0bwo+IMKgwqDCoMKg
+wqDCoMKgwqDCoCB0aGUgaHdfcmFuZG9tIEFQSSBmb3Igc3VwcGx5aW5nIHRoZSBrZXJuZWwgZW50
+cm9weSBwb29sLgo+IMKgCj4gK2NvbmZpZyBDUllQVE9fREVWX0ZTTF9DQUFNX0JMT0JfR0VOCj4g
+K8KgwqDCoMKgwqDCoMKgYm9vbAo+ICsKPiDCoGVuZGlmICMgQ1JZUFRPX0RFVl9GU0xfQ0FBTV9K
+Ugo+IMKgCj4gwqBlbmRpZiAjIENSWVBUT19ERVZfRlNMX0NBQU0KPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9jcnlwdG8vY2FhbS9NYWtlZmlsZSBiL2RyaXZlcnMvY3J5cHRvL2NhYW0vTWFrZWZpbGUK
+PiBpbmRleCAzNTcwMjg2ZWI5Y2UuLjI1ZjdhZTVhNDY0MiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
+L2NyeXB0by9jYWFtL01ha2VmaWxlCj4gKysrIGIvZHJpdmVycy9jcnlwdG8vY2FhbS9NYWtlZmls
+ZQo+IEBAIC0yMSw2ICsyMSw3IEBAIGNhYW1fanItJChDT05GSUdfQ1JZUFRPX0RFVl9GU0xfQ0FB
+TV9DUllQVE9fQVBJX1FJKSArPSBjYWFtYWxnX3FpLm8KPiDCoGNhYW1fanItJChDT05GSUdfQ1JZ
+UFRPX0RFVl9GU0xfQ0FBTV9BSEFTSF9BUEkpICs9IGNhYW1oYXNoLm8KPiDCoGNhYW1fanItJChD
+T05GSUdfQ1JZUFRPX0RFVl9GU0xfQ0FBTV9STkdfQVBJKSArPSBjYWFtcm5nLm8KPiDCoGNhYW1f
+anItJChDT05GSUdfQ1JZUFRPX0RFVl9GU0xfQ0FBTV9QS0NfQVBJKSArPSBjYWFtcGtjLm8gcGtj
+X2Rlc2Mubwo+ICtjYWFtX2pyLSQoQ09ORklHX0NSWVBUT19ERVZfRlNMX0NBQU1fQkxPQl9HRU4p
+ICs9IGJsb2JfZ2VuLm8KPiDCoAo+IMKgY2FhbS0kKENPTkZJR19DUllQVE9fREVWX0ZTTF9DQUFN
+X0NSWVBUT19BUElfUUkpICs9IHFpLm8KPiDCoGlmbmVxICgkKENPTkZJR19DUllQVE9fREVWX0ZT
+TF9DQUFNX0NSWVBUT19BUElfUUkpLCkKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcnlwdG8vY2Fh
+bS9ibG9iX2dlbi5jIGIvZHJpdmVycy9jcnlwdG8vY2FhbS9ibG9iX2dlbi5jCj4gbmV3IGZpbGUg
+bW9kZSAxMDA2NDQKPiBpbmRleCAwMDAwMDAwMDAwMDAuLmYxNjY5MzdmY2ZlYgo+IC0tLSAvZGV2
+L251bGwKPiArKysgYi9kcml2ZXJzL2NyeXB0by9jYWFtL2Jsb2JfZ2VuLmMKPiBAQCAtMCwwICsx
+LDE2NCBAQAo+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5Cj4gKy8q
+Cj4gKyAqIENvcHlyaWdodCAoQykgMjAxNSBQZW5ndXRyb25peCwgU3RlZmZlbiBUcnVtdHJhciA8
+a2VybmVsQHBlbmd1dHJvbml4LmRlPgo+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMjEgUGVuZ3V0cm9u
+aXgsIEFobWFkIEZhdG91bSA8a2VybmVsQHBlbmd1dHJvbml4LmRlPgo+ICsgKi8KPiArCj4gKyNp
+bmNsdWRlIDxsaW51eC9kZXZpY2UuaD4KPiArI2luY2x1ZGUgPHNvYy9mc2wvY2FhbS1ibG9iLmg+
+Cj4gKwo+ICsjaW5jbHVkZSAiY29tcGF0LmgiCj4gKyNpbmNsdWRlICJkZXNjX2NvbnN0ci5oIgo+
+ICsjaW5jbHVkZSAiZGVzYy5oIgo+ICsjaW5jbHVkZSAiZXJyb3IuaCIKPiArI2luY2x1ZGUgImlu
+dGVybi5oIgo+ICsjaW5jbHVkZSAianIuaCIKPiArI2luY2x1ZGUgInJlZ3MuaCIKPiArCj4gKyNk
+ZWZpbmUgQ0FBTV9CTE9CX0RFU0NfQllURVNfTUFYwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ICvC
+oMKgwqDCoMKgwqDCoC8qIENvbW1hbmQgdG8gaW5pdGlhbGl6ZSAmIHN0YXRpbmcgbGVuZ3RoIG9m
+IGRlc2NyaXB0b3IgKi/CoMKgwqDCoMKgwqBcCj4gK8KgwqDCoMKgwqDCoMKgKENBQU1fQ01EX1Na
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgXAo+ICvCoMKgwqDC
+oMKgwqDCoC8qIENvbW1hbmQgdG8gYXBwZW5kIHRoZSBrZXktbW9kaWZpZXIgKyBrZXktbW9kaWZp
+ZXIgZGF0YSAqL8KgwqDCoMKgXAo+ICvCoMKgwqDCoMKgwqDCoCBDQUFNX0NNRF9TWiArIENBQU1f
+QkxPQl9LRVlNT0RfTEVOR1RIICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqBcCj4gK8KgwqDCoMKgwqDCoMKgLyogQ29tbWFuZCB0byBpbmNsdWRlIGlucHV0
+IGtleSArIHBvaW50ZXIgdG8gdGhlIGlucHV0IGtleSAqL8KgwqDCoFwKPiArwqDCoMKgwqDCoMKg
+wqAgQ0FBTV9DTURfU1ogKyBDQUFNX1BUUl9TWl9NQVggK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBcCj4gK8KgwqDCoMKgwqDC
+oMKgLyogQ29tbWFuZCB0byBpbmNsdWRlIG91dHB1dCBrZXkgKyBwb2ludGVyIHRvIHRoZSBvdXRw
+dXQga2V5ICovwqBcCj4gK8KgwqDCoMKgwqDCoMKgIENBQU1fQ01EX1NaICsgQ0FBTV9QVFJfU1pf
+TUFYICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgXAo+ICvCoMKgwqDCoMKgwqDCoC8qIENvbW1hbmQgZGVzY3JpYmluZyB0aGUg
+T3BlcmF0aW9uIHRvIHBlcmZvcm0gKi/CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBcCj4g
+K8KgwqDCoMKgwqDCoMKgIENBQU1fQ01EX1NaKQo+ICsKPiArc3RydWN0IGNhYW1fYmxvYl9wcml2
+IHsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZGV2aWNlIGpyZGV2Owo+ICt9Owo+ICsKPiArc3Ry
+dWN0IGNhYW1fYmxvYl9qb2JfcmVzdWx0IHsKPiArwqDCoMKgwqDCoMKgwqBpbnQgZXJyOwo+ICvC
+oMKgwqDCoMKgwqDCoHN0cnVjdCBjb21wbGV0aW9uIGNvbXBsZXRpb247Cj4gK307Cj4gKwo+ICtz
+dGF0aWMgdm9pZCBjYWFtX2Jsb2Jfam9iX2RvbmUoc3RydWN0IGRldmljZSAqZGV2LCB1MzIgKmRl
+c2MsIHUzMiBlcnIsIHZvaWQgKmNvbnRleHQpCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3Qg
+Y2FhbV9ibG9iX2pvYl9yZXN1bHQgKnJlcyA9IGNvbnRleHQ7Cj4gK8KgwqDCoMKgwqDCoMKgaW50
+IGVjb2RlID0gMDsKPiArCj4gK8KgwqDCoMKgwqDCoMKgZGV2X2RiZyhkZXYsICIlcyAlZDogZXJy
+IDB4JXhcbiIsIF9fZnVuY19fLCBfX0xJTkVfXywgZXJyKTsKPiArCj4gK8KgwqDCoMKgwqDCoMKg
+aWYgKGVycikKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZWNvZGUgPSBjYWFtX2py
+X3N0cnN0YXR1cyhkZXYsIGVycik7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHJlcy0+ZXJyID0gZWNv
+ZGU7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoC8qCj4gK8KgwqDCoMKgwqDCoMKgICogVXBvbiBjb21w
+bGV0aW9uLCBkZXNjIHBvaW50cyB0byBhIGJ1ZmZlciBjb250YWluaW5nIGEgQ0FBTSBqb2IKPiAr
+wqDCoMKgwqDCoMKgwqAgKiBkZXNjcmlwdG9yIHdoaWNoIGVuY2Fwc3VsYXRlcyBkYXRhIGludG8g
+YW4gZXh0ZXJuYWxseS1zdG9yYWJsZQo+ICvCoMKgwqDCoMKgwqDCoCAqIGJsb2IuCj4gK8KgwqDC
+oMKgwqDCoMKgICovCj4gK8KgwqDCoMKgwqDCoMKgY29tcGxldGUoJnJlcy0+Y29tcGxldGlvbik7
+Cj4gK30KPiArCj4gK2ludCBjYWFtX3Byb2Nlc3NfYmxvYihzdHJ1Y3QgY2FhbV9ibG9iX3ByaXYg
+KnByaXYsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgc3RydWN0
+IGNhYW1fYmxvYl9pbmZvICppbmZvLCBib29sIGVuY2FwKQoKRG9jdW1lbnRhdGlvbiBtaXNzaW5n
+IChpdCdzIGV4cG9ydGVkKS4KCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgY2FhbV9ibG9i
+X2pvYl9yZXN1bHQgdGVzdHJlczsKPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgZGV2aWNlICpqcmRl
+diA9ICZwcml2LT5qcmRldjsKPiArwqDCoMKgwqDCoMKgwqBkbWFfYWRkcl90IGRtYV9pbiwgZG1h
+X291dDsKPiArwqDCoMKgwqDCoMKgwqBpbnQgb3AgPSBPUF9QQ0xJRF9CTE9COwo+ICvCoMKgwqDC
+oMKgwqDCoHNpemVfdCBvdXRwdXRfbGVuOwo+ICvCoMKgwqDCoMKgwqDCoHUzMiAqZGVzYzsKPiAr
+wqDCoMKgwqDCoMKgwqBpbnQgcmV0Owo+ICsKPiArwqDCoMKgwqDCoMKgwqBpZiAoaW5mby0+a2V5
+X21vZF9sZW4gPiBDQUFNX0JMT0JfS0VZTU9EX0xFTkdUSCkKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgcmV0dXJuIC1FSU5WQUw7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGlmIChlbmNh
+cCkgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBvcCB8PSBPUF9UWVBFX0VOQ0FQ
+X1BST1RPQ09MOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBvdXRwdXRfbGVuID0g
+aW5mby0+aW5wdXRfbGVuICsgQ0FBTV9CTE9CX09WRVJIRUFEOwo+ICvCoMKgwqDCoMKgwqDCoH0g
+ZWxzZSB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG9wIHw9IE9QX1RZUEVfREVD
+QVBfUFJPVE9DT0w7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoG91dHB1dF9sZW4g
+PSBpbmZvLT5pbnB1dF9sZW4gLSBDQUFNX0JMT0JfT1ZFUkhFQUQ7Cj4gK8KgwqDCoMKgwqDCoMKg
+fQo+ICsKPiArwqDCoMKgwqDCoMKgwqBkZXNjID0ga3phbGxvYyhDQUFNX0JMT0JfREVTQ19CWVRF
+U19NQVgsIEdGUF9LRVJORUwgfCBHRlBfRE1BKTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoIWRlc2Mp
+Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRU5PTUVNOwo+ICsKPiAr
+wqDCoMKgwqDCoMKgwqBkbWFfaW4gPSBkbWFfbWFwX3NpbmdsZShqcmRldiwgaW5mby0+aW5wdXQs
+IGluZm8tPmlucHV0X2xlbiwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBETUFfVE9fREVWSUNFKTsKPiArwqDCoMKgwqDCoMKg
+wqBpZiAoZG1hX21hcHBpbmdfZXJyb3IoanJkZXYsIGRtYV9pbikpIHsKPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgZGV2X2VycihqcmRldiwgInVuYWJsZSB0byBtYXAgaW5wdXQgRE1B
+IGJ1ZmZlclxuIik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldCA9IC1FTk9N
+RU07Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGdvdG8gb3V0X2ZyZWU7Cj4gK8Kg
+wqDCoMKgwqDCoMKgfQo+ICsKPiArwqDCoMKgwqDCoMKgwqBkbWFfb3V0ID0gZG1hX21hcF9zaW5n
+bGUoanJkZXYsIGluZm8tPm91dHB1dCwgb3V0cHV0X2xlbiwKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgRE1BX0ZST01fREVW
+SUNFKTsKPiArwqDCoMKgwqDCoMKgwqBpZiAoZG1hX21hcHBpbmdfZXJyb3IoanJkZXYsIGRtYV9v
+dXQpKSB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGRldl9lcnIoanJkZXYsICJ1
+bmFibGUgdG8gbWFwIG91dHB1dCBETUEgYnVmZmVyXG4iKTsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgcmV0ID0gLUVOT01FTTsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgZ290byBvdXRfdW5tYXBfaW47Cj4gK8KgwqDCoMKgwqDCoMKgfQo+ICsKPiArwqDCoMKgwqDC
+oMKgwqAvKgo+ICvCoMKgwqDCoMKgwqDCoCAqIEEgZGF0YSBibG9iIGlzIGVuY3J5cHRlZCB1c2lu
+ZyBhIGJsb2Iga2V5IChCSyk7IGEgcmFuZG9tIG51bWJlci4KPiArwqDCoMKgwqDCoMKgwqAgKiBU
+aGUgQksgaXMgdXNlZCBhcyBhbiBBRVMtQ0NNIGtleS4gVGhlIGluaXRpYWwgYmxvY2sgKEIwKSBh
+bmQgdGhlCj4gK8KgwqDCoMKgwqDCoMKgICogaW5pdGlhbCBjb3VudGVyIChDdHIwKSBhcmUgZ2Vu
+ZXJhdGVkIGF1dG9tYXRpY2FsbHkgYW5kIHN0b3JlZCBpbgo+ICvCoMKgwqDCoMKgwqDCoCAqIENs
+YXNzIDEgQ29udGV4dCBEV29yZHMgMCsxKzIrMy4gVGhlIHJhbmRvbSBCSyBpcyBzdG9yZWQgaW4g
+dGhlCj4gK8KgwqDCoMKgwqDCoMKgICogQ2xhc3MgMSBLZXkgUmVnaXN0ZXIuIE9wZXJhdGlvbiBN
+b2RlIGlzIHNldCB0byBBRVMtQ0NNLgo+ICvCoMKgwqDCoMKgwqDCoCAqLwo+ICsKPiArwqDCoMKg
+wqDCoMKgwqBpbml0X2pvYl9kZXNjKGRlc2MsIDApOwo+ICvCoMKgwqDCoMKgwqDCoGFwcGVuZF9r
+ZXlfYXNfaW1tKGRlc2MsIGluZm8tPmtleV9tb2QsIGluZm8tPmtleV9tb2RfbGVuLAo+ICvCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaW5mby0+a2V5X21v
+ZF9sZW4sIENMQVNTXzIgfCBLRVlfREVTVF9DTEFTU19SRUcpOwo+ICvCoMKgwqDCoMKgwqDCoGFw
+cGVuZF9zZXFfaW5fcHRyX2ludGxlbihkZXNjLCBkbWFfaW4sIGluZm8tPmlucHV0X2xlbiwgMCk7
+Cj4gK8KgwqDCoMKgwqDCoMKgYXBwZW5kX3NlcV9vdXRfcHRyX2ludGxlbihkZXNjLCBkbWFfb3V0
+LCBvdXRwdXRfbGVuLCAwKTsKPiArwqDCoMKgwqDCoMKgwqBhcHBlbmRfb3BlcmF0aW9uKGRlc2Ms
+IG9wKTsKPiArCj4gK8KgwqDCoMKgwqDCoMKgcHJpbnRfaGV4X2R1bXBfZGVidWcoImRhdGFAIl9f
+c3RyaW5naWZ5KF9fTElORV9fKSI6ICIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBEVU1QX1BSRUZJWF9BRERSRVNTLCAxNiwgMSwgaW5m
+by0+aW5wdXQsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCBpbmZvLT5pbnB1dF9sZW4sIGZhbHNlKTsKPiArwqDCoMKgwqDCoMKgwqBwcmlu
+dF9oZXhfZHVtcF9kZWJ1Zygiam9iZGVzY0AiX19zdHJpbmdpZnkoX19MSU5FX18pIjogIiwKPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIERV
+TVBfUFJFRklYX0FERFJFU1MsIDE2LCAxLCBkZXNjLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZGVzY19ieXRlcyhkZXNjKSwgZmFsc2Up
+Owo+ICsKPiArwqDCoMKgwqDCoMKgwqB0ZXN0cmVzLmVyciA9IDA7Cj4gK8KgwqDCoMKgwqDCoMKg
+aW5pdF9jb21wbGV0aW9uKCZ0ZXN0cmVzLmNvbXBsZXRpb24pOwo+ICsKPiArwqDCoMKgwqDCoMKg
+wqByZXQgPSBjYWFtX2pyX2VucXVldWUoanJkZXYsIGRlc2MsIGNhYW1fYmxvYl9qb2JfZG9uZSwg
+JnRlc3RyZXMpOwo+ICvCoMKgwqDCoMKgwqDCoGlmIChyZXQgPT0gLUVJTlBST0dSRVNTKSB7Cj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHdhaXRfZm9yX2NvbXBsZXRpb24oJnRlc3Ry
+ZXMuY29tcGxldGlvbik7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldCA9IHRl
+c3RyZXMuZXJyOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwcmludF9oZXhfZHVt
+cF9kZWJ1Zygib3V0cHV0QCJfX3N0cmluZ2lmeShfX0xJTkVfXykiOiAiLAo+ICvCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIERVTVBfUFJFRklYX0FERFJFU1MsIDE2LCAxLCBpbmZvLT5vdXRwdXQsCj4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgb3V0cHV0X2xlbiwgZmFsc2UpOwo+ICvCoMKgwqDCoMKgwqDCoH0KPiArCj4gK8KgwqDC
+oMKgwqDCoMKgaWYgKHJldCA9PSAwKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBp
+bmZvLT5vdXRwdXRfbGVuID0gb3V0cHV0X2xlbjsKPiArCj4gK8KgwqDCoMKgwqDCoMKgZG1hX3Vu
+bWFwX3NpbmdsZShqcmRldiwgZG1hX291dCwgb3V0cHV0X2xlbiwgRE1BX0ZST01fREVWSUNFKTsK
+PiArb3V0X3VubWFwX2luOgo+ICvCoMKgwqDCoMKgwqDCoGRtYV91bm1hcF9zaW5nbGUoanJkZXYs
+IGRtYV9pbiwgaW5mby0+aW5wdXRfbGVuLCBETUFfVE9fREVWSUNFKTsKPiArb3V0X2ZyZWU6Cj4g
+K8KgwqDCoMKgwqDCoMKga2ZyZWUoZGVzYyk7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBy
+ZXQ7Cj4gK30KPiArRVhQT1JUX1NZTUJPTChjYWFtX3Byb2Nlc3NfYmxvYik7Cj4gKwo+ICtzdHJ1
+Y3QgY2FhbV9ibG9iX3ByaXYgKmNhYW1fYmxvYl9nZW5faW5pdCh2b2lkKQo+ICt7Cj4gK8KgwqDC
+oMKgwqDCoMKgc3RydWN0IGRldmljZSAqanJkZXY7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoGpyZGV2
+ID0gY2FhbV9qcl9hbGxvYygpOwo+ICvCoMKgwqDCoMKgwqDCoGlmIChJU19FUlIoanJkZXYpKQo+
+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm4gRVJSX0NBU1QoanJkZXYpOwo+
+ICsKPiArwqDCoMKgwqDCoMKgwqByZXR1cm4gY29udGFpbmVyX29mKGpyZGV2LCBzdHJ1Y3QgY2Fh
+bV9ibG9iX3ByaXYsIGpyZGV2KTsKPiArfQo+ICtFWFBPUlRfU1lNQk9MKGNhYW1fYmxvYl9nZW5f
+aW5pdCk7Cj4gKwo+ICt2b2lkIGNhYW1fYmxvYl9nZW5fZXhpdChzdHJ1Y3QgY2FhbV9ibG9iX3By
+aXYgKnByaXYpCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBjYWFtX2pyX2ZyZWUoJnByaXYtPmpyZGV2
+KTsKPiArfQo+ICtFWFBPUlRfU1lNQk9MKGNhYW1fYmxvYl9nZW5fZXhpdCk7Cj4gZGlmZiAtLWdp
+dCBhL2luY2x1ZGUvc29jL2ZzbC9jYWFtLWJsb2IuaCBiL2luY2x1ZGUvc29jL2ZzbC9jYWFtLWJs
+b2IuaAo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4gaW5kZXggMDAwMDAwMDAwMDAwLi4wYmUwYWIy
+ZGE1YzcKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvaW5jbHVkZS9zb2MvZnNsL2NhYW0tYmxvYi5o
+Cj4gQEAgLTAsMCArMSwxMDIgQEAKPiArLyogU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0y
+LjAtb25seSAqLwo+ICsvKgo+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMjAgUGVuZ3V0cm9uaXgsIEFo
+bWFkIEZhdG91bSA8a2VybmVsQHBlbmd1dHJvbml4LmRlPgo+ICsgKi8KPiArCj4gKyNpZm5kZWYg
+X19DQUFNX0JMT0JfR0VOCj4gKyNkZWZpbmUgX19DQUFNX0JMT0JfR0VOCj4gKwo+ICsjaW5jbHVk
+ZSA8bGludXgvdHlwZXMuaD4KPiArI2luY2x1ZGUgPGxpbnV4L2Vycm5vLmg+Cj4gKwo+ICsjZGVm
+aW5lIENBQU1fQkxPQl9LRVlNT0RfTEVOR1RIwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAxNgo+ICsjZGVmaW5lIENBQU1fQkxPQl9PVkVSSEVBRMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgKDMyICsgMTYpCj4gKyNkZWZpbmUgQ0FBTV9CTE9CX01BWF9MRU7CoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgNDA5Ngo+ICsKPiArc3RydWN0IGNhYW1fYmxvYl9wcml2Owo+ICsKPiArLyoq
+IHN0cnVjdCBjYWFtX2Jsb2JfaW5mbyAtIGluZm9ybWF0aW9uIGZvciBDQUFNIGJsb2JiaW5nCj4g
+KyAqCgpZb3UgY2FuIHJlbW92ZSB0aGlzIGV4dHJhIGxpbmUsIGFwcGxpZXMgdG8gc29tZSBmdW5j
+dGlvbnMgaW4gdGhlIHBhdGNoCnRvby4KCj4gKyAqIEBpbnB1dDrCoMKgwqDCoMKgwqAgcG9pbnRl
+ciB0byBpbnB1dCBidWZmZXIgKG11c3QgYmUgRE1BYWJsZSkKPiArICogQGlucHV0X2xlbjrCoMKg
+IGxlbmd0aCBvZiBAaW5wdXQgYnVmZmVyIGluIGJ5dGVzLgo+ICsgKiBAb3V0cHV0OsKgwqDCoMKg
+wqAgcG9pbnRlciB0byBvdXRwdXQgYnVmZmVyIChtdXN0IGJlIERNQWFibGUpCj4gKyAqIEBvdXRw
+dXRfbGVuOsKgIGxlbmd0aCBvZiBAb3V0cHV0IGJ1ZmZlciBpbiBieXRlcy4KPiArICogQGtleV9t
+b2Q6wqDCoMKgwqAga2V5IG1vZGlmaWVyCj4gKyAqIEBrZXlfbW9kX2xlbjogbGVuZ3RoIG9mIEBr
+ZXlfbW9kIGluIGJ5dGVzLgo+ICsgKsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIE1heSBub3Qg
+ZXhjZWVkIENBQU1fQkxPQl9LRVlNT0RfTEVOR1RICj4gKyAqLwo+ICtzdHJ1Y3QgY2FhbV9ibG9i
+X2luZm8gewo+ICvCoMKgwqDCoMKgwqDCoHZvaWQgKmlucHV0Owo+ICvCoMKgwqDCoMKgwqDCoHNp
+emVfdCBpbnB1dF9sZW47Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHZvaWQgKm91dHB1dDsKPiArwqDC
+oMKgwqDCoMKgwqBzaXplX3Qgb3V0cHV0X2xlbjsKPiArCj4gK8KgwqDCoMKgwqDCoMKgY29uc3Qg
+dm9pZCAqa2V5X21vZDsKPiArwqDCoMKgwqDCoMKgwqBzaXplX3Qga2V5X21vZF9sZW47Cj4gK307
+Cj4gKwo+ICsvKiogY2FhbV9ibG9iX2dlbl9pbml0IC0gaW5pdGlhbGl6ZSBibG9iIGdlbmVyYXRp
+b24KPiArICoKPiArICogcmV0dXJucyBlaXRoZXIgcG9pbnRlciB0byBuZXcgY2FhbV9ibG9iX3By
+aXYgaW5zdGFuY2UKPiArICogb3IgZXJyb3IgcG9pbnRlcgo+ICsgKi8KPiArc3RydWN0IGNhYW1f
+YmxvYl9wcml2ICpjYWFtX2Jsb2JfZ2VuX2luaXQodm9pZCk7Cj4gKwo+ICsvKiogY2FhbV9ibG9i
+X2dlbl9leGl0IC0gZnJlZSBibG9iIGdlbmVyYXRpb24gcmVzb3VyY2VzCj4gKyAqCj4gKyAqIEBw
+cml2OiBpbnN0YW5jZSByZXR1cm5lZCBieSBjYWFtX2Jsb2JfZ2VuX2luaXQKPiArICovCj4gK3Zv
+aWQgY2FhbV9ibG9iX2dlbl9leGl0KHN0cnVjdCBjYWFtX2Jsb2JfcHJpdiAqcHJpdik7Cj4gKwo+
+ICsvKiogY2FhbV9wcm9jZXNzX2Jsb2IgLSBlbmNhcHN1bGF0ZSBvciBkZWNhcHN1bGF0ZSBibG9i
+Cj4gKyAqCj4gKyAqIEBwcml2OsKgwqAgaW5zdGFuY2UgcmV0dXJuZWQgYnkgY2FhbV9ibG9iX2dl
+bl9pbml0Cj4gKyAqIEBpbmZvOsKgwqAgcG9pbnRlciB0byBibG9iYmluZyBpbmZvIGRlc2NyaWJp
+bmcga2V5LCBibG9iIGFuZAo+ICsgKsKgwqDCoMKgwqDCoMKgwqDCoCBrZXkgbW9kaWZpZXIgYnVm
+ZmVycy4KPiArICogQGVuY2FwOsKgIHRydWUgZm9yIGVuY2Fwc3VsYXRpb24sIGZhbHNlIGZvciBk
+ZWNhcHN1bGF0aW9uCj4gKyAqCj4gKyAqIHJldHVybnMgMCBhbmQgc2V0cyBpbmZvLT5vdXRwdXRf
+bGVuIG9uIHN1Y2Nlc3MgYW5kIHJldHVybnMKPiArICogYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG90
+aGVyd2lzZS4KPiArICovCj4gK2ludCBjYWFtX3Byb2Nlc3NfYmxvYihzdHJ1Y3QgY2FhbV9ibG9i
+X3ByaXYgKnByaXYsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+c3RydWN0IGNhYW1fYmxvYl9pbmZvICppbmZvLCBib29sIGJsb2IpOwo+ICsKPiArLyoqIGNhYW1f
+ZW5jYXBfYmxvYiAtIGVuY2Fwc3VsYXRlIGJsb2IKPiArICoKPiArICogQHByaXY6wqDCoCBpbnN0
+YW5jZSByZXR1cm5lZCBieSBjYWFtX2Jsb2JfZ2VuX2luaXQKPiArICogQGluZm86wqDCoCBwb2lu
+dGVyIHRvIGJsb2JiaW5nIGluZm8gZGVzY3JpYmluZyBpbnB1dCBrZXksCj4gKyAqwqDCoMKgwqDC
+oMKgwqDCoMKgIG91dHB1dCBibG9iIGFuZCBrZXkgbW9kaWZpZXIgYnVmZmVycy4KPiArICoKPiAr
+ICogcmV0dXJucyAwIGFuZCBzZXRzIGluZm8tPm91dHB1dF9sZW4gb24gc3VjY2VzcyBhbmQgcmV0
+dXJucwo+ICsgKiBhIG5lZ2F0aXZlIGVycm9yIGNvZGUgb3RoZXJ3aXNlLgo+ICsgKi8KPiArc3Rh
+dGljIGlubGluZSBpbnQgY2FhbV9lbmNhcF9ibG9iKHN0cnVjdCBjYWFtX2Jsb2JfcHJpdiAqcHJp
+diwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCBzdHJ1Y3QgY2FhbV9ibG9iX2luZm8gKmluZm8pCj4gK3sKPiArwqDCoMKg
+wqDCoMKgwqBpZiAoaW5mby0+b3V0cHV0X2xlbiA8IGluZm8tPmlucHV0X2xlbiArIENBQU1fQkxP
+Ql9PVkVSSEVBRCkKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIC1FSU5W
+QUw7Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoHJldHVybiBjYWFtX3Byb2Nlc3NfYmxvYihwcml2LCBp
+bmZvLCB0cnVlKTsKPiArfQo+ICsKPiArLyoqIGNhYW1fZGVjYXBfYmxvYiAtIGRlY2Fwc3VsYXRl
+IGJsb2IKPiArICoKPiArICogQHByaXY6wqDCoCBpbnN0YW5jZSByZXR1cm5lZCBieSBjYWFtX2Js
+b2JfZ2VuX2luaXQKPiArICogQGluZm86wqDCoCBwb2ludGVyIHRvIGJsb2JiaW5nIGluZm8gZGVz
+Y3JpYmluZyBvdXRwdXQga2V5LAo+ICsgKsKgwqDCoMKgwqDCoMKgwqDCoCBpbnB1dCBibG9iIGFu
+ZCBrZXkgbW9kaWZpZXIgYnVmZmVycy4KPiArICoKPiArICogcmV0dXJucyAwIGFuZCBzZXRzIGlu
+Zm8tPm91dHB1dF9sZW4gb24gc3VjY2VzcyBhbmQgcmV0dXJucwo+ICsgKiBhIG5lZ2F0aXZlIGVy
+cm9yIGNvZGUgb3RoZXJ3aXNlLgo+ICsgKi8KPiArc3RhdGljIGlubGluZSBpbnQgY2FhbV9kZWNh
+cF9ibG9iKHN0cnVjdCBjYWFtX2Jsb2JfcHJpdiAqcHJpdiwKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgY2Fh
+bV9ibG9iX2luZm8gKmluZm8pCj4gK3sKPiArwqDCoMKgwqDCoMKgwqBpZiAoaW5mby0+aW5wdXRf
+bGVuIDwgQ0FBTV9CTE9CX09WRVJIRUFEIHx8Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgIGluZm8t
+Pm91dHB1dF9sZW4gPCBpbmZvLT5pbnB1dF9sZW4gLSBDQUFNX0JMT0JfT1ZFUkhFQUQpCj4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJldHVybiAtRUlOVkFMOwo+ICsKPiArwqDCoMKg
+wqDCoMKgwqByZXR1cm4gY2FhbV9wcm9jZXNzX2Jsb2IocHJpdiwgaW5mbywgZmFsc2UpOwo+ICt9
+Cj4gKwo+ICsjZW5kaWYKCkJSLCBKYXJra28KCg==
 
