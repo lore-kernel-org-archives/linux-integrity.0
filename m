@@ -2,149 +2,116 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D63FC4332F
-	for <linux-integrity@archiver.kernel.org>; Thu, 21 Apr 2022 16:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3900AC433FE
+	for <linux-integrity@archiver.kernel.org>; Thu, 21 Apr 2022 17:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229621AbiDUQ1T (ORCPT
+        id S1390775AbiDURby (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 21 Apr 2022 12:27:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60464 "EHLO
+        Thu, 21 Apr 2022 13:31:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390500AbiDUQKY (ORCPT
+        with ESMTP id S1390769AbiDURby (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 21 Apr 2022 12:10:24 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E9E647541
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Apr 2022 09:07:34 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id p189so3485473wmp.3
-        for <linux-integrity@vger.kernel.org>; Thu, 21 Apr 2022 09:07:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=W/2Za70C1RHKqi8XDzjUDlZrNvCkjmOJSSy94nVWdeo=;
-        b=V6zMP4bR03OtSHzQnhQ8C07/7liPhzxks7VIQDG9UyNJlBm3gL9cl4qycYdZpw/6/8
-         gnRZzPoPbAm6EteTZIlMDohqau4tlXHabCZVBb8CNbV34fkBdNicaT8J7KVwITEkZ202
-         MF+Jc+m5W5Nd6ChFOK7ImjudxfaZq5yp7KfW4iFKia9NQ2gtarCUKeCP1t3Ij7iJphyq
-         bxp3IJ8k2nd9DtzjAWA/30ru4FTtDp8Cfli7RMLYwxFFZynSMhKH+hYRChs7nfdIceq7
-         gc3SzrGQ7nDluILkLngZeZYVy8TBLepLx6mbM/bq0f9FBLKpE9t00Ah4un9atburVfsZ
-         nBOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=W/2Za70C1RHKqi8XDzjUDlZrNvCkjmOJSSy94nVWdeo=;
-        b=h1lTtdgEwT9fPcLdOa67UUQEhRvnP5/Udh8viA9KbrrFoA4UfuKBnaHJ+c9izFRfgC
-         tk2sZU7T1ZENCm6BDspy3rP2sp/73zYuKgMdFL+uz+5vA+qqq+dwqfbr1aNodF+kuyGk
-         5Ifk/mwFJ2K3iT+Cf2UUh4xf6Ma+/Sv/4Cko2wmaBx0usCaD18pQyirHOe4oU0QyFoTc
-         xXyQzpENnLhDCaruYnWvFGkygn0/WaOYktPI98uFVS6UYKUEsAnrBbzJ2xI+/cMrKt/Z
-         ZcpF7wrLybZfUIUvcU4EiL82dMZCnziD5RGkExHjOPdnosf6MgbV2b0NKiVYtJ72E2CB
-         5Y3Q==
-X-Gm-Message-State: AOAM530p3B1YifgmSNPb8L60p2ntSAZ9w9THJ2y7dXosX0TbWC6QA0IL
-        Ajh1uWZCinmbLhRn4vE6qxPlVy1eUqxY5WByBuFakg==
-X-Google-Smtp-Source: ABdhPJxqUYobkFKPsjnyNIvJy+aGvbRCq3IvWHSrRSfKqva8aaJVNAP6j8VnjdlZbx3EmrWdD1hpjE86W6KLq8k0p9U=
-X-Received: by 2002:a05:600c:1990:b0:392:7119:b55d with SMTP id
- t16-20020a05600c199000b003927119b55dmr75078wmq.49.1650557252813; Thu, 21 Apr
- 2022 09:07:32 -0700 (PDT)
+        Thu, 21 Apr 2022 13:31:54 -0400
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E8F34757C
+        for <linux-integrity@vger.kernel.org>; Thu, 21 Apr 2022 10:29:03 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Kkkzd1GFJzMq0wj;
+        Thu, 21 Apr 2022 19:29:01 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KkkzZ4twRzljsTN;
+        Thu, 21 Apr 2022 19:28:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1650562141;
+        bh=AWCSMTsYxeqMfpT4j3/IgWzaiuTFvDGAFKxBu/PEs7A=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=z/OZ9pMPUnN5igC3T/CamIvR4CIXw3gz6R7fedUtl/VSHSza2ngjhZy0EATPOaHDm
+         agAxEYfJstLZ6XqTARPrKMFOzlTvA9/IQvygJjWfIK3xUJfZKaSnsL7Vk5jCIofP9l
+         RzFPfwpm0yireL020AbdYTSvdNbgMY7Uw0+hj3fw=
+Message-ID: <329a078d-29e3-e41e-3118-cd8f3e00b003@digikod.net>
+Date:   Thu, 21 Apr 2022 19:29:10 +0200
 MIME-Version: 1.0
-References: <20220419163749.1.Ica39bd8d1494f750a70a668e5929f6e5e63241f2@changeid>
- <c8f5ada2-c5cc-fe1b-bdeb-8b7d134250ee@molgen.mpg.de>
-In-Reply-To: <c8f5ada2-c5cc-fe1b-bdeb-8b7d134250ee@molgen.mpg.de>
-From:   Jes Klinke <jbk@google.com>
-Date:   Thu, 21 Apr 2022 09:07:21 -0700
-Message-ID: <CANMTAZRp5GPwrJNO4RY1KpvABgiuOMYEtwm+jdYfX5JRH8FpSA@mail.gmail.com>
-Subject: Re: [PATCH v2] tpm: cr50: Add new device/vendor ID 0x504a6666
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     "Jes B. Klinke" <jbk@chromium.org>,
-        linux-integrity@vger.kernel.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: 
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20210312171232.2681989-4-mic@digikod.net>
+ <20210312171232.2681989-1-mic@digikod.net>
+ <648218.1650450548@warthog.procyon.org.uk> <YmF0eAh7dYmtLDVx@kernel.org>
+ <01ec2ce7-986d-451a-4a36-f627263ef826@digikod.net>
+ <YmF+4ZZCZxH9OrS+@kernel.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v7 3/5] certs: Make blacklist_vet_description() more
+ strict
+In-Reply-To: <YmF+4ZZCZxH9OrS+@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Dear Paul,
 
-On Wed, Apr 20, 2022 at 3:52 AM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
->
-> Dear Jes,
->
->
-> Am 20.04.22 um 01:37 schrieb Jes B. Klinke:
-> > Accept one additional numerical value of DID:VID for next generation
-> > Google TPM with new firmware, to be used in future Chromebooks.
-> >
-> > The TPM with the new firmware has the code name TI50, and is going to
-> > use the same interfaces.
-> >
-> > Signed-off-by: Jes B. Klinke <jbk@chromium.org>
-> > Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> > ---
-> >
-> >   drivers/char/tpm/tpm_tis_i2c_cr50.c | 7 ++++---
-> >   1 file changed, 4 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm=
-_tis_i2c_cr50.c
-> > index f6c0affbb4567..4ddb8ff3a8569 100644
-> > --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> > +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> > @@ -31,6 +31,7 @@
-> >   #define TPM_CR50_TIMEOUT_SHORT_MS   2               /* Short timeout =
-during transactions */
-> >   #define TPM_CR50_TIMEOUT_NOIRQ_MS   20              /* Timeout for TP=
-M ready without IRQ */
-> >   #define TPM_CR50_I2C_DID_VID                0x00281ae0L     /* Device=
- and vendor ID reg value */
-> > +#define TPM_TI50_I2C_DID_VID         0x504a6666L     /* Device and ven=
-dor ID reg value */
-> >   #define TPM_CR50_I2C_MAX_RETRIES    3               /* Max retries du=
-e to I2C errors */
-> >   #define TPM_CR50_I2C_RETRY_DELAY_LO 55              /* Min usecs betw=
-een retries on I2C */
-> >   #define TPM_CR50_I2C_RETRY_DELAY_HI 65              /* Max usecs betw=
-een retries on I2C */
-> > @@ -742,15 +743,15 @@ static int tpm_cr50_i2c_probe(struct i2c_client *=
-client)
-> >       }
-> >
-> >       vendor =3D le32_to_cpup((__le32 *)buf);
-> > -     if (vendor !=3D TPM_CR50_I2C_DID_VID) {
-> > +     if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2C_=
-DID_VID) {
-> >               dev_err(dev, "Vendor ID did not match! ID was %08x\n", ve=
-ndor);
-> >               tpm_cr50_release_locality(chip, true);
-> >               return -ENODEV;
-> >       }
-> >
-> > -     dev_info(dev, "cr50 TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-> > +     dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-> > +              vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
-> >                client->addr, client->irq, vendor >> 16);
-> > -
->
-> Remove this blank line wasn=E2=80=99t needed, I gues.
+On 21/04/2022 17:57, Jarkko Sakkinen wrote:
+> On Thu, Apr 21, 2022 at 05:27:42PM +0200, Mickaël Salaün wrote:
+>>
+>> On 21/04/2022 17:12, Jarkko Sakkinen wrote:
+>>> On Wed, Apr 20, 2022 at 11:29:08AM +0100, David Howells wrote:
+>>>> Mickaël Salaün <mic@digikod.net> wrote:
+>>>>
+>>>>> +	/* The following algorithm only works if prefix lengths match. */
+>>>>> +	BUILD_BUG_ON(sizeof(tbs_prefix) != sizeof(bin_prefix));
+>>>>> +	prefix_len = sizeof(tbs_prefix) - 1;
+>>>>> +	for (i = 0; *desc; desc++, i++) {
+>>>>> +		if (*desc == ':') {
+>>>>> +			if (tbs_step == prefix_len)
+>>>>> +				goto found_colon;
+>>>>> +			if (bin_step == prefix_len)
+>>>>> +				goto found_colon;
+>>>>> +			return -EINVAL;
+>>>>> +		}
+>>>>> +		if (i >= prefix_len)
+>>>>> +			return -EINVAL;
+>>>>> +		if (*desc == tbs_prefix[i])
+>>>>> +			tbs_step++;
+>>>>> +		if (*desc == bin_prefix[i])
+>>>>> +			bin_step++;
+>>>>> +	}
+>>>>
+>>>> I wonder if:
+>>>>
+>>>> 	static const char tbs_prefix[] = "tbs:";
+>>>> 	static const char bin_prefix[] = "bin:";
+>>>>
+>>>> 	if (strncmp(desc, tbs_prefix, sizeof(tbs_prefix) - 1) == 0 ||
+>>>> 	    strncmp(desc, bin_prefix, sizeof(bin_prefix) - 1) == 0)
+>>>> 		goto found_colon;
+>>>>
+>>>> might be better.
+>>>>
+>>>> David
+>>>
+>>> I think it'd be.
+>>>
+>>> BR, Jarkko
+>>
+>> I'm confused. Didn't you plan to send this patch series before v5.18-rc2?
+>> It's been a while since I started working on this.
+> 
+> That was my original plan but due to some other things, I've sent
+> a PR for rc4. I CC'd you to the PR.
 
-You are right, I should probably have left the blank line untouched.
-It does not hurt the readability of the code much to remove it,
-though.
-
-> >       return tpm_chip_register(chip);
-> >   }
-> >
->
-> Thank for addressing the other comments, and congratulations on getting
-> your first commit into the Linux kernel.
-
-When I think about it, I did propose a kernel patch in 2002, to
-introduce /proc/sys/kernel/core_pattern, so this is my second patch.
-All the mailing lists, and formal review process this time seemed
-daunting at first, though, so thank you for guiding me through the
-process.
-
-Regards
-Jes
+OK, I missed it. My micro-optimization isn't worth it, strncmp is much 
+simple indeed.
