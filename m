@@ -2,77 +2,224 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8CDEC433EF
-	for <linux-integrity@archiver.kernel.org>; Tue,  3 May 2022 19:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AEFC4321E
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 May 2022 01:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230079AbiECT0x (ORCPT
+        id S245409AbiEDBvM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 May 2022 15:26:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53634 "EHLO
+        Tue, 3 May 2022 21:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241859AbiECT0v (ORCPT
+        with ESMTP id S245335AbiEDBvK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 May 2022 15:26:51 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E29B2AE37
-        for <linux-integrity@vger.kernel.org>; Tue,  3 May 2022 12:23:18 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id b18so13041075lfv.9
-        for <linux-integrity@vger.kernel.org>; Tue, 03 May 2022 12:23:18 -0700 (PDT)
+        Tue, 3 May 2022 21:51:10 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BA8D326F5
+        for <linux-integrity@vger.kernel.org>; Tue,  3 May 2022 18:47:35 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id x12so11548pgj.7
+        for <linux-integrity@vger.kernel.org>; Tue, 03 May 2022 18:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=oDPDRTaJ/Y9FxcEb/X2khYoMXOgW7bHgyQsV8PtMr7Y=;
-        b=UrLmD6tCqKeG6+qUvD3hHxC/7foZmjkC2BmjZf25xGF648iF4IDJqjbzyfeYzl/xjA
-         WMGDsHeQrmpyATwD6MWLsZ6vZOEMAyoWPiI1q1iWaqh6tRbP1gIwTSilFXtvHB/oXf9e
-         isJVuZxZDeGoSTBLW/Gx+UOrV351WD/G8XvsZXqw0ZKLGSaJ4mVrK17lKparMyguqwff
-         I4w3UZBLIN3tGRKQ0ffeP3XA1CCK0P3q+jYbfV3B3HHB9FRic9NdgQgk3NDo+4aGgmOb
-         fIQYi1ip2njr6wNSeDgaSlFjNkABFBs88JslD3/uEjR0n8GzefAFPnPqJ3ZWiwBo+Sx5
-         Khjg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+ZZ5vfFx25K1I7i1kYl8UxhLqvkhElnoRitD8+hKJmA=;
+        b=DpRwgsc8k+bO9cXVHmU7ksT2E8T7R4om62xOunRq9j6F4/Hlmd+72tPALfSIkWpTBv
+         6ZsB/FoXumwXqUlvu94h7ehF0Poi6zQZRyL/SVAXWNru3D7CYZKN+GO4S+p3OYu8TvOf
+         p5r4/HuAd0PoSIWCdxVFPC7ODUIYPeBjfKvmU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=oDPDRTaJ/Y9FxcEb/X2khYoMXOgW7bHgyQsV8PtMr7Y=;
-        b=asynRccN4GlVj/WwEdC1YOjHU6NS4IfVS3cKbahL8i9MSDotOG92JndPO4MPmva3eL
-         vLkL3sOPhwbJvnEg3tYdwobNamsOGQQoovk62A68d1fhcKNmPR37QocWmlB207pto/qF
-         /RraP8K0uHEyWck3q4BryMDbxzlCr+xD2+W58UD2LoK8W3tMP5feXGHu/qTrIGZCZnW3
-         OqGn6W1a9W8ZVLeyDk4RP/s6oOZWvIA+Dr9BpkW4eYmqboC388DBo7UqRqvOuv/jkRsp
-         hi/jYwEj+2aQq0uf07ddjOZpDmuGAyRwOY8Q6cgAKX9rfseI5ovumJLXSX/F8Ia9c2tH
-         sJcg==
-X-Gm-Message-State: AOAM530eTvA3orp6huFNQZtAxzIGUNSxx1umEW+lLr/y1k+hTopBz/32
-        DUKE7G2d+fLmmMZR0I+NZeocccN64nKMS+BpujnVbLFDvOk=
-X-Google-Smtp-Source: ABdhPJwe0OKZU6xokfVUK0JvKXXGwI8b8dPqA1aRxNlk7ZYn8zNJJPxwvacC/lN9OC2zyQ7DIAxIrfvPsbJjRwkFkvE=
-X-Received: by 2002:a19:f706:0:b0:473:9e36:79de with SMTP id
- z6-20020a19f706000000b004739e3679demr6476812lfe.35.1651605795823; Tue, 03 May
- 2022 12:23:15 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+ZZ5vfFx25K1I7i1kYl8UxhLqvkhElnoRitD8+hKJmA=;
+        b=c0zqLyUEnEVrv/agXlbqVwr200S9f6E5tnDrYJ0RyRRtDAMlbBp+hn9iMl6BWMlBDQ
+         6c9ecPMmWJrPguP6Tv15Y7A+sIUkZpdItXBA1/PUEv8g7eKMF65eDOOEnxtQrneDP9a2
+         riMj+xHif6OGOYIVSWnij6l4n0bGfvCxNTtLi7eM/KU9yNFbNvn0hoJsiiP9KYgcHbo9
+         PCIv3RDVH+xSMsdl1z7Zd2d4BvhA7yTbt0MyYLIt91VXVxLLxuCYVpfNM93dWkF8mTNU
+         /fIz1OB0okHZSM47CiASBwRm6GimSoqNnVa2Zp1xDxUJjZ7ShFkn+THA62aIjuKmgTQ5
+         mpgw==
+X-Gm-Message-State: AOAM530qjHFKDNHXq0fpikRegdePJCyABPaBmNKf3S/jj07DF2PnhPRK
+        moQ0pBVuQAE7tNPBj2rw5fZR+g==
+X-Google-Smtp-Source: ABdhPJx1pk1Kj8VquWNvjueoOJF84IDUN+sdPy6JRVklo0yvv2jKaWOAa1dEeUA85vrZ210XI6GffA==
+X-Received: by 2002:aa7:962e:0:b0:50d:5ed8:aa23 with SMTP id r14-20020aa7962e000000b0050d5ed8aa23mr18603820pfg.43.1651628853848;
+        Tue, 03 May 2022 18:47:33 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k8-20020a170902ce0800b0015e8d4eb283sm7000015plg.205.2022.05.03.18.47.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 May 2022 18:47:33 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     "Gustavo A . R . Silva" <gustavoars@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rich Felker <dalias@aerifal.cx>,
+        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Gross <agross@kernel.org>,
+        Andy Lavr <andy.lavr@gmail.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Bradley Grove <linuxdrivers@attotech.com>,
+        brcm80211-dev-list.pdl@broadcom.com,
+        Christian Brauner <brauner@kernel.org>,
+        =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        Christian Lamparter <chunkeey@googlemail.com>,
+        Chris Zankel <chris@zankel.net>,
+        Cong Wang <cong.wang@bytedance.com>,
+        Daniel Axtens <dja@axtens.net>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Gow <davidgow@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
+        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eli Cohen <elic@nvidia.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Francis Laniel <laniel_francis@privacyrequired.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gregory Greenman <gregory.greenman@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Hulk Robot <hulkci@huawei.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        John Keeping <john@metanate.com>,
+        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
+        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
+        kunit-dev@googlegroups.com,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Leon Romanovsky <leon@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux1394-devel@lists.sourceforge.net,
+        linux-afs@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Louis Peens <louis.peens@corigine.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Mark Brown <broonie@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        SHA-cyfmac-dev-list@infineon.com,
+        Simon Horman <simon.horman@corigine.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
+        Udipto Goswami <quic_ugoswami@quicinc.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
+        xen-devel@lists.xenproject.org,
+        Xiu Jianfeng <xiujianfeng@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>
+Subject: [PATCH 01/32] netlink: Avoid memcpy() across flexible array boundary
+Date:   Tue,  3 May 2022 18:44:10 -0700
+Message-Id: <20220504014440.3697851-2-keescook@chromium.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20220504014440.3697851-1-keescook@chromium.org>
+References: <20220504014440.3697851-1-keescook@chromium.org>
 MIME-Version: 1.0
-From:   William Roberts <bill.c.roberts@gmail.com>
-Date:   Tue, 3 May 2022 14:23:02 -0500
-Message-ID: <CAFftDdqL5OB+1X=W4C5KjkJgArAaUM-EJPorOXOWKsfOP6jBLA@mail.gmail.com>
-Subject: Permissions on binary_runtime_measurements and tpm0/binary_bios_measurements
-To:     linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2198; h=from:subject; bh=m3+rrHA3rlt0sA4WgKzRJNTXeSTN4vWW0f0prUvbWYY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqAKYSI60YG7oB43Zm2qf2XEYFq9+0dv6JxgKQA Vag6ObOJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHagAAKCRCJcvTf3G3AJt+PD/ 4wYVpcKl2liC+Uc4jUmmdOovQey8J6/k2HmeHGxkjjuXUGIWCxvRqFTmpp0zt8q6NeCY1dzyQE7A9N PW2CVLlv5GLZfLyBlcsOWL4hofk/Ed905HvAky/Dx8yVe0LszOaIIrWGUii70nX0RIZBcDlNYaOY4k wGJaGLJ9XI5Abp/vMi8qzgEIVt5Qty6Z+cfnpAvETE9FFC0ibHAuxSsOCPhKMgvWgkyDjMAVgJQC6t TKGjSE1Rwow+68x8cxXa3ZsNgWXO0wHDaWWB4/QUxyVrq/AqCxOvgu3SljXBgVpaeUF41w+gB7rTXz Jpn7XXtJZLIDQT9yoNDAsj8yjQSIPdaKabA732knKP+dXXvoimMLj17LWxunuIrNQJ5Awl5Dz2jNa4 96eQ4Eabc5miPNc5+9VOK1Wc20FUE/uqW/VkQkBWzcnLXslpLRuJ2jNTFzk50BKZOJ20vutotuSmWf 5gqjyHzRfK+iajoBCEV6nUiWN7ewO8XDDayLZtzu5foCWXgFFwp2ZWksNnvY6M1djooGD0fU2cMDkZ HK9WR0ZfO5zv8cE5RCjDXb25deVhtGS6HRKU3vBlDmFx3drFqOEK/4zwTej6ttVyJqAspxBqEq7xpi JDgQOkTfh60YdtsNYhykruXCL3NnFuRLtxOeMGWD4IL6YtPwYfH3V6aFCljQ==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Currently the tpm2-tools and other userspace processes cannot access
-the system measurement logs for users even if they are in the group
-tss:
+In preparation for run-time memcpy() bounds checking, split the nlmsg
+copying for error messages (which crosses a previous unspecified flexible
+array boundary) in half. Avoids the future run-time warning:
 
-crw-rw---- 1 tss root 10, 224 Mai  3 17:22 /dev/tpm0
--r--r----- 1 root root 0 Mai  3 17:22
-/sys/kernel/security/ima/binary_runtime_measurements
--r--r----- 1 root root 0 Mai  3 17:22
-/sys/kernel/security/tpm0/binary_bios_measurements
+memcpy: detected field-spanning write (size 32) of single field "&errmsg->msg" (size 16)
 
-So with tss2_quote a quote can be computed but not the pcrLog for the
-sytem PCRs.
+Creates an explicit flexible array at the end of nlmsghdr for the payload,
+named "nlmsg_payload". There is no impact on UAPI; the sizeof(struct
+nlmsghdr) does not change, but now the compiler can better reason about
+where things are being copied.
 
-The problem could be solved if the log files would be owned by tss.
-But that could create privacy issues because the pcrLog would e.g.
-contain executables in user home directories.
-Do you have any suggestions how the problem could be addressed or is
-there a privacy concern here?
+Fixed-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Link: https://lore.kernel.org/lkml/d7251d92-150b-5346-6237-52afc154bb00@rasmusvillemoes.dk
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Rich Felker <dalias@aerifal.cx>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/uapi/linux/netlink.h | 1 +
+ net/netlink/af_netlink.c     | 5 ++++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-Thanks,
-Bill
+diff --git a/include/uapi/linux/netlink.h b/include/uapi/linux/netlink.h
+index 855dffb4c1c3..47f9342d51bc 100644
+--- a/include/uapi/linux/netlink.h
++++ b/include/uapi/linux/netlink.h
+@@ -47,6 +47,7 @@ struct nlmsghdr {
+ 	__u16		nlmsg_flags;	/* Additional flags */
+ 	__u32		nlmsg_seq;	/* Sequence number */
+ 	__u32		nlmsg_pid;	/* Sending process port ID */
++	__u8		nlmsg_payload[];/* Contents of message */
+ };
+ 
+ /* Flags values */
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 1b5a9c2e1c29..09346aee1022 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -2445,7 +2445,10 @@ void netlink_ack(struct sk_buff *in_skb, struct nlmsghdr *nlh, int err,
+ 			  NLMSG_ERROR, payload, flags);
+ 	errmsg = nlmsg_data(rep);
+ 	errmsg->error = err;
+-	memcpy(&errmsg->msg, nlh, payload > sizeof(*errmsg) ? nlh->nlmsg_len : sizeof(*nlh));
++	errmsg->msg = *nlh;
++	if (payload > sizeof(*errmsg))
++		memcpy(errmsg->msg.nlmsg_payload, nlh->nlmsg_payload,
++		       nlh->nlmsg_len - sizeof(*nlh));
+ 
+ 	if (nlk_has_extack && extack) {
+ 		if (extack->_msg) {
+-- 
+2.32.0
+
