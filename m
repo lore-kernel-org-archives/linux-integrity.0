@@ -2,50 +2,50 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D72EC433EF
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 May 2022 01:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4DFC4167B
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 May 2022 01:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343665AbiEDB75 (ORCPT
+        id S1343861AbiEDB77 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 May 2022 21:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40068 "EHLO
+        Tue, 3 May 2022 21:59:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343873AbiEDB64 (ORCPT
+        with ESMTP id S1343561AbiEDB6n (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 May 2022 21:58:56 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B78541F84
-        for <linux-integrity@vger.kernel.org>; Tue,  3 May 2022 18:53:13 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id p6so16911255pjm.1
-        for <linux-integrity@vger.kernel.org>; Tue, 03 May 2022 18:53:13 -0700 (PDT)
+        Tue, 3 May 2022 21:58:43 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A25249907
+        for <linux-integrity@vger.kernel.org>; Tue,  3 May 2022 18:52:44 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id p6so16911190pjm.1
+        for <linux-integrity@vger.kernel.org>; Tue, 03 May 2022 18:52:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=vEhg+UN+nvvIRlNnvIoleDYLxzWI/4j+AXJ2OBahvyQ=;
-        b=E5bLX9p+4KMQ7dCXesW/uSO4Z3TzhqBoNV2cnwQ6UenYFaZTatAXLltuILaNWlnTeH
-         ZPF9bsRL6MA89tW5PvZIMCIKWfhOmFJwJGsxRwJiF9IEfmjgBCchcmHUHUKuUjfJgzaf
-         xdp24lDnEh6QoNKPI3Ft2lTJ+h48bMoBlTL80=
+        bh=KYZx+y1oKNSP1oqgJrB6Tz6rT9EWA8WKaERG51foz1A=;
+        b=bz1Sh9MVCXyP0oQlo8D6xVMzQ27pV4R6B//UGDTL8nzMS3F7Sze+JRYFVh2IBIaTFl
+         BrDTiNFs4Nw3sFWGEkG5ftS8E8tnvlsvZL9PIbvMFVJ2Ru0EtHqoxpqbupakHeJmxqdO
+         iZ/yeqiNZ245qldJTLvXJrPu0t4+xuvhNmFB4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vEhg+UN+nvvIRlNnvIoleDYLxzWI/4j+AXJ2OBahvyQ=;
-        b=3tBhc5NSlyKwppHZqfFPDbeklbknnFsQDcWb9v2DGp8RiKUSKsaLlbfZksOSX4HfNX
-         owRWQCD6ak9UFzhnFv0QnBmLw5oZhm7J81ctTwQCbRK+zI+Ge4Knjju3McXGnU27Wbjk
-         TwFFcgZc0FulafRlnQE09cimJmMb1v8eEOMa6wogpCpV8Oyq0i84i3TawGRkjT+xnBgT
-         0Wj02njH4K4QSgjrlB5RZolIA9UH6fx0XP3Z5LeF20Pzo65ijNi5AVzmanZAMXBEsFZE
-         LGWXivbHDTOdz0EQYTziZMlFUI+h6lqrZGeG7mMqBYClUXfLN8thtPoGMjkCU1Mi2qv/
-         z9NQ==
-X-Gm-Message-State: AOAM530XcAzHvmd0LtxSQWg+hr5cwhpyOLdwzqNwbbCgn37cL837EAlv
-        goy5GKjtCXfamuyLe96OMIMd4g==
-X-Google-Smtp-Source: ABdhPJzI4IiRrxPSXkixkcvlB8cGm8brcWRiM4L1KUnKofXLRSVRJRXFkv6QdN0IforxNoZJSUOL5w==
-X-Received: by 2002:a17:903:2d1:b0:156:7ceb:b56f with SMTP id s17-20020a17090302d100b001567cebb56fmr19656689plk.11.1651629165975;
-        Tue, 03 May 2022 18:52:45 -0700 (PDT)
+        bh=KYZx+y1oKNSP1oqgJrB6Tz6rT9EWA8WKaERG51foz1A=;
+        b=vjzX9uWgU9VMaBaTnLMDiFxCviLx3GSwhbh9kYQVp7Hd6A0CCoNNbuOjUIzWMd9YgC
+         fava2HhWsOs0y7pSgJ0y4kl5xfTDVkjRXZvbaAYK8+OPyFAOOzDyxQdK1wopX05KGB9W
+         rV4DByn2bNIYypnSBvTxXQWOr97967JiCPy/2UPIQK7263Qu/Fkq8qYkUqDorTFF/jsO
+         RaswxkEWU92s3Blm8oeOSPOpoLILAQhtH11cysKZOcmdah4sCVxnc0plzc0bjSO/1lNI
+         sOvleOIU/+aicqKAAFd/ahQSQGArKEM8WDvNWWCPEDdkJjtwNGSFl3mKdzcugvhFDALe
+         ajGQ==
+X-Gm-Message-State: AOAM530OmrIEe+4ULn8Ua/o/+p55rDVZ4OyMmSFof6dFvsRWKR4M3RPC
+        UeWcd1aXCvHwL0mvqsAIgrXjyA==
+X-Google-Smtp-Source: ABdhPJwtjdTcb6qV1Xl5Vzy/9VvPreEN/EABD7sYxuaK1s+XxEIiaFWGiGBVAvDZ6TrtSaJT9nKYmw==
+X-Received: by 2002:a17:902:ce8d:b0:15e:a95d:b4b0 with SMTP id f13-20020a170902ce8d00b0015ea95db4b0mr11612235plg.153.1651629163571;
+        Tue, 03 May 2022 18:52:43 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o1-20020a170902778100b0015e8d4eb2cbsm7014958pll.277.2022.05.03.18.52.45
+        by smtp.gmail.com with ESMTPSA id j5-20020a654d45000000b003c14af50621sm13543498pgt.57.2022.05.03.18.52.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 18:52:45 -0700 (PDT)
+        Tue, 03 May 2022 18:52:43 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     "Gustavo A . R . Silva" <gustavoars@kernel.org>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -53,10 +53,8 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
-        Baowen Zheng <baowen.zheng@corigine.com>,
-        Eli Cohen <elic@nvidia.com>,
-        Louis Peens <louis.peens@corigine.com>,
-        Simon Horman <simon.horman@corigine.com>,
+        Hulk Robot <hulkci@huawei.com>,
+        Yang Yingliang <yangyingliang@huawei.com>,
         netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Gabbasov <andrew_gabbasov@mentor.com>,
@@ -64,6 +62,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Andy Gross <agross@kernel.org>,
         Andy Lavr <andy.lavr@gmail.com>,
         Arend van Spriel <aspriel@gmail.com>,
+        Baowen Zheng <baowen.zheng@corigine.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Bradley Grove <linuxdrivers@attotech.com>,
@@ -81,6 +80,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
         devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eli Cohen <elic@nvidia.com>,
         Eric Paris <eparis@parisplace.org>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Felipe Balbi <balbi@kernel.org>,
@@ -93,7 +93,6 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Haiyang Zhang <haiyangz@microsoft.com>,
         Hante Meuleman <hante.meuleman@broadcom.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        Hulk Robot <hulkci@huawei.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         James Morris <jmorris@namei.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
@@ -122,6 +121,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
         linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
         Loic Poulain <loic.poulain@linaro.org>,
+        Louis Peens <louis.peens@corigine.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
         Marc Dionne <marc.dionne@auristor.com>,
@@ -140,6 +140,7 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Russell King <linux@armlinux.org.uk>, selinux@vger.kernel.org,
         "Serge E. Hallyn" <serge@hallyn.com>,
         SHA-cyfmac-dev-list@infineon.com,
+        Simon Horman <simon.horman@corigine.com>,
         Stefano Stabellini <sstabellini@kernel.org>,
         Stefan Richter <stefanr@s5r6.in-berlin.de>,
         Steffen Klassert <steffen.klassert@secunet.com>,
@@ -151,16 +152,15 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
         xen-devel@lists.xenproject.org,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        Yang Yingliang <yangyingliang@huawei.com>
-Subject: [PATCH 17/32] net/flow_offload: Use mem_to_flex_dup() with struct flow_action_cookie
-Date:   Tue,  3 May 2022 18:44:26 -0700
-Message-Id: <20220504014440.3697851-18-keescook@chromium.org>
+        Xiu Jianfeng <xiujianfeng@huawei.com>
+Subject: [PATCH 15/32] 802/garp: Use mem_to_flex_dup() with struct garp_attr
+Date:   Tue,  3 May 2022 18:44:24 -0700
+Message-Id: <20220504014440.3697851-16-keescook@chromium.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220504014440.3697851-1-keescook@chromium.org>
 References: <20220504014440.3697851-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1993; h=from:subject; bh=PrKJ7fngslFAVnoAR+kxxSWcyzyvUbqj4Z3UXnDbHJY=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqEQoFbddPpYBIL178hMkYpivETQV90l3JHFEnm 7J1thjCJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHahAAKCRCJcvTf3G3AJtw3EA C0LNh89YqDNrcJCXsCKfSbcHlFxrq44D7OA0sCgHExo+fXdaECb+Xj3tfEkQFm9bgvn/VnNhpCwqMV U8VQzGL6UaTCr267IE8XzSzkQJ6Uu2Nn+oM8/g6gDst8U7DsXu/1M4XVa8NK32yL6cBvV8PVBTcChy j8jyHBC43g8+Lg9oLs4UB/SO8Tb2ObCEpGf+h+/rD6v1mUrkoYKhvITvEAQ6BXgJ7NMeKfMd5TbnLL n7fyJaP0DKQoiMbMCMPhOnbaBLKTz9JjJ2/U07j/wfD/U5vjQBmTOZvo7vv3sex/J3PimMP/LVVrgg rZ19XaTiGULGLnmPuJjPt4zppdXAE7bED4queSk/tjdOsuMkougu3osd+yKLNrkqDRGxwMqxHn6Adg VL64IdPA3BY3aE8mOXGUxTLKtJs1pv7lv1msRzE5gUB7RTMHQ1//cIMC8EgdL5FVxZNtm4Nrhurpsb fvUFe8jDSjzE++5RHGWvAqbIheq7tgJhhaDmUF+rUmIMNowlHUeWcz7qDRxFSgMiX+xi/ZX4sJtg/V tnoPJ9uGluYyVnNod6v2TAn0dMpQirNr3BrADN1GRZ9iYaSt2xYRiifwpxLWUpi4DIfHGqb2y4ockX o/g9MpGsEistTYeWgK8HQdvJO+YhqSNADTeBhz9hngLOsUZU3CcUlT8pVg2A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2053; h=from:subject; bh=g6mLY++H2BfqQCK003F0EjItFkVyhehgYOIo/aZQtaQ=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqEjjw/bjk+w/BAp5zZGN/lLOysTcemUiPR49xS rdNJyZqJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHahAAKCRCJcvTf3G3AJkdZD/ 9ULlU2HE7dyOGGZcxoTDzzzQ0RkAnTOaJ+RVqmjII2Tv1VoPm6QRB0LGPVIKf/ajMgajI22eW2yGjV dV/acgUammYsccOQLPxTPzsPUVFZFU0hxMis5Oq9JqjehQPY4nErl1wT/Zymsur2YjD5pHbuIEHC00 ++wwwIwEXX7l/PdVNJ+PMRIdE9atC0npYUgWrpfpDQWjeDdc8adknigoQ33ZyiQZNgrZVYTO9/59Qg 8KXYHO+zkVTrXNgaZRW0wDjH3ltz+pKJr0geOSSbUhz6LlZjAauJ/rC2ZsYG+CUN5gZKKeQGMACl+O utmoGfrkJAMo4fchbVPoySQfEI4RycU3tPyq3AjrjHPoEOk1up5kNYJrBZjwNIsdxzt2klrR6QtXyt bfI8wU27DsqhelPlsyi6UMtKYVW917c/eUpFGiSJstE8AvpEEc7fwbwOkpO95+zogvhdjqrPwm0ODF hO4WSuDl0qqoSCqmphywXtHTbvP3/SyHQqpHk+XFWlqObHfRedTUudfAq0fRt/wpoTokjndugHxbB3 vPHZIR/QvpGV0TdPvLZ2ykBHieWoDTJLdsmeVjUv1/KqeUr4N1QQRZM24ry1hMmkrjPTDYRPSVjN1n 2Idl5GOStpor5uc8wuqfeiXlQfP7X+6iC5KJi+Kgwt8eOaWFgTn89ibYrF3g==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -176,52 +176,59 @@ Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Eric Dumazet <edumazet@google.com>
 Cc: Jakub Kicinski <kuba@kernel.org>
 Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Baowen Zheng <baowen.zheng@corigine.com>
-Cc: Eli Cohen <elic@nvidia.com>
-Cc: Louis Peens <louis.peens@corigine.com>
-Cc: Simon Horman <simon.horman@corigine.com>
+Cc: Hulk Robot <hulkci@huawei.com>
+Cc: Yang Yingliang <yangyingliang@huawei.com>
 Cc: netdev@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/net/flow_offload.h | 4 ++--
- net/core/flow_offload.c    | 7 ++-----
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ include/net/garp.h | 4 ++--
+ net/802/garp.c     | 9 +++------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/include/net/flow_offload.h b/include/net/flow_offload.h
-index 021778a7e1af..ca5db457a0bc 100644
---- a/include/net/flow_offload.h
-+++ b/include/net/flow_offload.h
-@@ -190,8 +190,8 @@ enum flow_action_hw_stats {
- typedef void (*action_destr)(void *priv);
- 
- struct flow_action_cookie {
--	u32 cookie_len;
--	u8 cookie[];
-+	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(u32, cookie_len);
-+	DECLARE_FLEX_ARRAY_ELEMENTS(u8, cookie);
+diff --git a/include/net/garp.h b/include/net/garp.h
+index 4d9a0c6a2e5f..ec087ae534e7 100644
+--- a/include/net/garp.h
++++ b/include/net/garp.h
+@@ -80,8 +80,8 @@ struct garp_attr {
+ 	struct rb_node			node;
+ 	enum garp_applicant_state	state;
+ 	u8				type;
+-	u8				dlen;
+-	unsigned char			data[];
++	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(u8, dlen);
++	DECLARE_FLEX_ARRAY_ELEMENTS(unsigned char, data);
  };
  
- struct flow_action_cookie *flow_action_cookie_create(void *data,
-diff --git a/net/core/flow_offload.c b/net/core/flow_offload.c
-index 73f68d4625f3..e23c8d05b828 100644
---- a/net/core/flow_offload.c
-+++ b/net/core/flow_offload.c
-@@ -199,13 +199,10 @@ struct flow_action_cookie *flow_action_cookie_create(void *data,
- 						     unsigned int len,
- 						     gfp_t gfp)
+ enum garp_applications {
+diff --git a/net/802/garp.c b/net/802/garp.c
+index f6012f8e59f0..72743ed00a54 100644
+--- a/net/802/garp.c
++++ b/net/802/garp.c
+@@ -168,7 +168,7 @@ static struct garp_attr *garp_attr_create(struct garp_applicant *app,
+ 					  const void *data, u8 len, u8 type)
  {
--	struct flow_action_cookie *cookie;
-+	struct flow_action_cookie *cookie = NULL;
+ 	struct rb_node *parent = NULL, **p = &app->gid.rb_node;
+-	struct garp_attr *attr;
++	struct garp_attr *attr = NULL;
+ 	int d;
  
--	cookie = kmalloc(sizeof(*cookie) + len, gfp);
--	if (!cookie)
-+	if (mem_to_flex_dup(&cookie, data, len, gfp))
- 		return NULL;
--	cookie->cookie_len = len;
--	memcpy(cookie->cookie, data, len);
- 	return cookie;
- }
- EXPORT_SYMBOL(flow_action_cookie_create);
+ 	while (*p) {
+@@ -184,13 +184,10 @@ static struct garp_attr *garp_attr_create(struct garp_applicant *app,
+ 			return attr;
+ 		}
+ 	}
+-	attr = kmalloc(sizeof(*attr) + len, GFP_ATOMIC);
+-	if (!attr)
+-		return attr;
++	if (mem_to_flex_dup(&attr, data, len, GFP_ATOMIC))
++		return NULL;
+ 	attr->state = GARP_APPLICANT_VO;
+ 	attr->type  = type;
+-	attr->dlen  = len;
+-	memcpy(attr->data, data, len);
+ 
+ 	rb_link_node(&attr->node, parent, p);
+ 	rb_insert_color(&attr->node, &app->gid);
 -- 
 2.32.0
 
