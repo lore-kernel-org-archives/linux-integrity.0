@@ -2,57 +2,59 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D76AC4321E
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 May 2022 01:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22D0C43219
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 May 2022 01:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343510AbiEDBx0 (ORCPT
+        id S245558AbiEDBy0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 May 2022 21:53:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56982 "EHLO
+        Tue, 3 May 2022 21:54:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343500AbiEDBwa (ORCPT
+        with ESMTP id S245550AbiEDBw0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 May 2022 21:52:30 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBF3E443CA
-        for <linux-integrity@vger.kernel.org>; Tue,  3 May 2022 18:48:12 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id d17so192536plg.0
-        for <linux-integrity@vger.kernel.org>; Tue, 03 May 2022 18:48:12 -0700 (PDT)
+        Tue, 3 May 2022 21:52:26 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C731E35AA1
+        for <linux-integrity@vger.kernel.org>; Tue,  3 May 2022 18:47:38 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id j14so168924plx.3
+        for <linux-integrity@vger.kernel.org>; Tue, 03 May 2022 18:47:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jHmaho/x33MqcwhAHjzMaEbYW3Sn2ucNcqc26yK2kNU=;
-        b=P8OaWDj1i9vMS2YXwPGohhK4T/Iw+CyPZ/W6hEEhH6k1LaC96jgeOuZ+dQGCL7k52R
-         9vedbYNUSwVa5cTgkoS7mq60UIXNgrNEh8xt0xCvSUKOkKMHizwfjhRvtgim24nhUgRa
-         9onXSvEkUpL1rmnA+09r2XcsNzTJwLrKjOBuk=
+        bh=xU+lft0xYFj1fS1yuTZSbozxjgBGk0a+m2yFd6VoFH8=;
+        b=a+tRkUtoblEDLjvFId++UphGjoZEaQCYI3Vk83Wii7jOQPjtu5Lszr9szx/ri1HX51
+         wV1jt/Of6XxA4HH6Vf9VLVYuUYeTQ2uz41Vd4xndvpOP8cB9qurXZHACinwkcuuAVoNS
+         S4kXDV6k7pYw97SFuBD/SAZ91ynDl2QAdaG/0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jHmaho/x33MqcwhAHjzMaEbYW3Sn2ucNcqc26yK2kNU=;
-        b=WqBLjf7EK9dVxpVql+R9s5THjnW4q7SX+OD6Mkn9RKovwS7mIPecy3eqDaSSOV8EIH
-         2NIp2K+MVGawYh/FpVkVk1s0pGbCtg5FVLpkkI2cfumxG4YKTi5IZCpWbXjY5xd1G4dR
-         MQTeK59dBVNLOwWsGQ+hIxwD0pwk4Di9ZbF62WtduOeYcAO6Xgewx3MJwyfA2+05f8Pe
-         W3kWV48mTxZjt25su+1rMF7b98mRYS/G7a/aX6HjkWuRd07ApG9iI4kd+VQA5NxntErq
-         BLTFuAw7NDpvEWROqAGs4VkJu/vpeT4RWBxKADzWjseLgWp7DspC8xwux++Qg0RJzROs
-         Y4uQ==
-X-Gm-Message-State: AOAM532ZX8KZPjWyW+dXX6ay73ydqgKVkAbKgZ1tI5jvTySRCAdtAiJo
-        13gqmqYnxhcIFusH5/2WcuIPhQ==
-X-Google-Smtp-Source: ABdhPJw/YslU2yUBia+w/4PurFJMBiRJ5IDYAc+d7ObCpClWIglgELelEBFuL7QqIQfyj8Do+oUJyg==
-X-Received: by 2002:a17:903:248:b0:155:e660:b774 with SMTP id j8-20020a170903024800b00155e660b774mr19737712plh.174.1651628859441;
-        Tue, 03 May 2022 18:47:39 -0700 (PDT)
+        bh=xU+lft0xYFj1fS1yuTZSbozxjgBGk0a+m2yFd6VoFH8=;
+        b=f659snxtIRabidCUKkLn5W8TDC9oaf7EKuJy1rHqu9YwynhDoZHBPGnE4Of1DIpOuD
+         7nBkCBASJ2hZ5nbvLfXl2Ht9jQNAX/SGrZIh4AapXsMjljI5wTh4c8QKSxz1sd8tCNor
+         JeyzjyIVprQl2NKOW6CAXT+vDyL/QSEJczEgpLqbDmpbnlseoXr/I21X0/eeqNSrVQ84
+         5SV0OuRjQ56GCqSJfUE2bIWUG1LSK89GxQEW3mpRqfXuZSXoVz1Mg0puNCvxaestpJhx
+         kdlHmKweLwWrkjOrfhVZz5Oh7MWymxr1gr5d+VHkp1MUJJSUhFrtMME2DIjupZ2MBjGm
+         fY9g==
+X-Gm-Message-State: AOAM530YwkF/w2PSstPwbCkFsRaCQbEyL5bEiNHc7i0OZzkPl3yCRXwr
+        hc6IRJrHcBVO2RbZ1iDcYCjUBw==
+X-Google-Smtp-Source: ABdhPJym7M+DImW/Jqb3OQWBvYlyqklXqWcPP05A/qCeDGaoGZArCRBHN6sBE2ZReqB74PMUZr0+qw==
+X-Received: by 2002:a17:90a:730c:b0:1da:4630:518e with SMTP id m12-20020a17090a730c00b001da4630518emr7902816pjk.239.1651628857841;
+        Tue, 03 May 2022 18:47:37 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x5-20020aa79a45000000b004fa743ba3f9sm7108890pfj.2.2022.05.03.18.47.38
+        by smtp.gmail.com with ESMTPSA id c21-20020aa781d5000000b0050dc7628163sm6917221pfn.61.2022.05.03.18.47.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 18:47:39 -0700 (PDT)
+        Tue, 03 May 2022 18:47:37 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     "Gustavo A . R . Silva" <gustavoars@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
+Cc:     Kees Cook <keescook@chromium.org>, Andy Lavr <andy.lavr@gmail.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Paolo Abeni <pabeni@redhat.com>,
+        Gregory Greenman <gregory.greenman@intel.com>,
         Eric Dumazet <edumazet@google.com>,
         linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
         Alexei Starovoitov <ast@kernel.org>,
@@ -60,7 +62,6 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Andrew Gabbasov <andrew_gabbasov@mentor.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Gross <agross@kernel.org>,
-        Andy Lavr <andy.lavr@gmail.com>,
         Arend van Spriel <aspriel@gmail.com>,
         Baowen Zheng <baowen.zheng@corigine.com>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -88,7 +89,6 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Frank Rowand <frowand.list@gmail.com>,
         Franky Lin <franky.lin@broadcom.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gregory Greenman <gregory.greenman@intel.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Haiyang Zhang <haiyangz@microsoft.com>,
         Hante Meuleman <hante.meuleman@broadcom.com>,
@@ -101,8 +101,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
         Johan Hedberg <johan.hedberg@gmail.com>,
         Johannes Berg <johannes.berg@intel.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
         John Keeping <john@metanate.com>,
-        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
         Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
         kunit-dev@googlegroups.com,
         Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
@@ -121,7 +122,6 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-usb@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         llvm@lists.linux.dev, Loic Poulain <loic.poulain@linaro.org>,
         Louis Peens <louis.peens@corigine.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
         Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
         Marc Dionne <marc.dionne@auristor.com>,
         Marcel Holtmann <marcel@holtmann.org>,
@@ -153,14 +153,14 @@ Cc:     Kees Cook <keescook@chromium.org>,
         xen-devel@lists.xenproject.org,
         Xiu Jianfeng <xiujianfeng@huawei.com>,
         Yang Yingliang <yangyingliang@huawei.com>
-Subject: [PATCH 12/32] cfg80211: Use mem_to_flex_dup() with struct cfg80211_bss_ies
-Date:   Tue,  3 May 2022 18:44:21 -0700
-Message-Id: <20220504014440.3697851-13-keescook@chromium.org>
+Subject: [PATCH 07/32] iwlwifi: calib: Use mem_to_flex_dup() with struct iwl_calib_result
+Date:   Tue,  3 May 2022 18:44:16 -0700
+Message-Id: <20220504014440.3697851-8-keescook@chromium.org>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220504014440.3697851-1-keescook@chromium.org>
 References: <20220504014440.3697851-1-keescook@chromium.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4271; h=from:subject; bh=zLIoLyad9bBq8i+CHRJcAMhW5JgPaoyM4x0VIL3Wjf8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqDR3XqoFSprf0Mf1o1HYj7dBBBP7wDZ118xdTx ToM0RNGJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHagwAKCRCJcvTf3G3AJpDCD/ wMlRRCUB8XTmCXlLdvPCGb5ACTTMa3Km0myBmfsx6i7FkHxAEfNtllJsJZ1xGdv/WP8g4XEUJ0zuGC 7wsRbPVl7sHYNyFiAu9iXMMSYvJVG0G1YrRXdH2A3UhX8o4+JfEVNj7XazhRyhM9cIwvTR0hQBUIKJ OO0TtkviYxesRpL1xBvgYIcCWjxEvNdpsGjAfF7Wn6Ml1dOstypUTb2ulq7hIf7BX8w63KuqOXZx6V eQKW4gi3cQO3gPoEWsv9zeDktQzxWbaMN212KDtDCB76/UH1i+QQg8eLLlaSQ/55nnf45kUX75sHkI zDmnUC7uL8hJaFE7/98/TeYKsLAgbyP1/MwzniEWgtSaLkPJj+BDTLhK4+jBB7zxpXsyQsyJXmfWnN 69jBTE8Z6ldaOWiCaA2dwzQcHNWXsHvzTspOWk/Tiv7AIUHd8Nqe4ecJtsbDBBxQU21ogSn3TNlfat 3ZCTfW1XDttiZNSK2Rit27Gb0LCzE4nKpVwxT5qmFoGk/jjq2ZfP1uWkMyv4TOb/bfGw5ZiXtTJwtA 22mI6CUOQ9lCD1lIB2WdB8z0yibGypy9fbuDpeqzg6v+weYYD4cY0Q38ZtkdzpABByyOAlmZm7iXIU /hIQA44hD8/vgfuYEgBfavnXALP3koZt6viHAklNZAsuY6wiAG9ZgR2ZT8XQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2309; h=from:subject; bh=WpodBqq01jqwxM1KRcJO62uugaWovPAJ5k8Asd34efc=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBicdqCGKNTo/e4rYqRS6JHFIWEcMsPl6ZUWQBFBFL/ Wqla2nSJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYnHaggAKCRCJcvTf3G3AJvqCD/ 9KMmQRVL3p5s+EO2ziT+OnA/bWRcfyVrpdD2apYiZrAvV6jv+ChcK5o9LNvgU6liqmGQvBK56XO3bQ qrNnEnu62KEpY0aEShwY6YNXdwdTLw3FEMK42jV6f34XbajiPo0MoQoS/x/QSbL1eIG6JO5d4TRjIe 0/Q48qkArPdlLvI5pKeSr1lsEVPndfc9NGHCI6nA2+bBonwbXOWfAC7HZPfrpPcmTgLfoKTkBLXai4 ePDPJtwC3/jzsxtTC7J9DHOmQvRPHeYKpPXefkrkgeOaZf2ToPQ3uG49rEHXnkAeJVNemhQ1DJPNcQ HudzUsakTefZTR7ato8r+9r+0+ie8aFfQEAagdWcpPFVR9EyXHXbSWIWZPdHaXSsvv+zcH2BVwp+lX PHt2bIY0X/x3Uouh1It3/uSZlg30A1qnqeXxqNsMc6p4qaHY4pJywV1EkrsZwZd1PdBaiWc6LsdWnm g/rpEfcleSaFr5QGOmd7i7ErfwdtNTNDj5n6eo7f/rD6qfq1dEAIa3IkdH7xRECGPpT/2qd+a747A7 vm2gjfh13/ghhPAbVTSZORt9oZN46upeJxwm83wHp0XHC4gVbEH+bjDqXYQAWbhNyUaOA8Ua7uIonu l7HgMXAQ7eoMMallt3TbHeAxvHxkwxcyt1LUHi517rK5CcCYO26DROhVZXYw==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -172,118 +172,63 @@ replace the open-coded a deserialization of bytes out of memory into a
 trailing flexible array by using a flex_array.h helper to perform the
 allocation, bounds checking, and copying.
 
-Cc: Johannes Berg <johannes@sipsolutions.net>
+Avoids future false-positive warning when strict run-time memcpy()
+bounds checking is enabled:
+
+memcpy: detected field-spanning write (size 8) of single field "&res->hdr" (size 4)
+
+Adds an additional size check since the minimum isn't 0.
+
+Reported-by: Andy Lavr <andy.lavr@gmail.com>
+Cc: Luca Coelho <luciano.coelho@intel.com>
+Cc: Kalle Valo <kvalo@kernel.org>
 Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Jakub Kicinski <kuba@kernel.org>
 Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Gregory Greenman <gregory.greenman@intel.com>
 Cc: Eric Dumazet <edumazet@google.com>
 Cc: linux-wireless@vger.kernel.org
 Cc: netdev@vger.kernel.org
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/net/cfg80211.h |  4 ++--
- net/wireless/scan.c    | 21 ++++++---------------
- 2 files changed, 8 insertions(+), 17 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/dvm/calib.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
-index 68713388b617..fa236015f6ef 100644
---- a/include/net/cfg80211.h
-+++ b/include/net/cfg80211.h
-@@ -2600,9 +2600,9 @@ struct cfg80211_inform_bss {
- struct cfg80211_bss_ies {
- 	u64 tsf;
- 	struct rcu_head rcu_head;
--	int len;
-+	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(int, len);
- 	bool from_beacon;
--	u8 data[];
-+	DECLARE_FLEX_ARRAY_ELEMENTS(u8, data);
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/calib.c b/drivers/net/wireless/intel/iwlwifi/dvm/calib.c
+index ae1f0cf560e2..7480c19d7af0 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/calib.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/calib.c
+@@ -18,8 +18,11 @@
+ /* Opaque calibration results */
+ struct iwl_calib_result {
+ 	struct list_head list;
+-	size_t cmd_len;
+-	struct iwl_calib_cmd cmd;
++	DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(size_t, cmd_len);
++	union {
++		struct iwl_calib_cmd cmd;
++		DECLARE_FLEX_ARRAY_ELEMENTS(u8, data);
++	};
+ 	/* data follows */
  };
  
- /**
-diff --git a/net/wireless/scan.c b/net/wireless/scan.c
-index 4a6d86432910..9f53d05c6aaa 100644
---- a/net/wireless/scan.c
-+++ b/net/wireless/scan.c
-@@ -1932,7 +1932,7 @@ cfg80211_inform_single_bss_data(struct wiphy *wiphy,
- 				gfp_t gfp)
+@@ -59,14 +62,10 @@ int iwl_send_calib_results(struct iwl_priv *priv)
+ int iwl_calib_set(struct iwl_priv *priv,
+ 		  const struct iwl_calib_cmd *cmd, int len)
  {
- 	struct cfg80211_registered_device *rdev = wiphy_to_rdev(wiphy);
--	struct cfg80211_bss_ies *ies;
-+	struct cfg80211_bss_ies *ies = NULL;
- 	struct ieee80211_channel *channel;
- 	struct cfg80211_internal_bss tmp = {}, *res;
- 	int bss_type;
-@@ -1978,13 +1978,10 @@ cfg80211_inform_single_bss_data(struct wiphy *wiphy,
- 	 * override the IEs pointer should we have received an earlier
- 	 * indication of Probe Response data.
- 	 */
--	ies = kzalloc(sizeof(*ies) + ielen, gfp);
--	if (!ies)
-+	if (mem_to_flex_dup(&ies, ie, ielen, gfp))
- 		return NULL;
--	ies->len = ielen;
- 	ies->tsf = tsf;
- 	ies->from_beacon = false;
--	memcpy(ies->data, ie, ielen);
+-	struct iwl_calib_result *res, *tmp;
++	struct iwl_calib_result *res = NULL, *tmp;
  
- 	switch (ftype) {
- 	case CFG80211_BSS_FTYPE_BEACON:
-@@ -2277,7 +2274,7 @@ cfg80211_update_notlisted_nontrans(struct wiphy *wiphy,
- 	size_t ielen = len - offsetof(struct ieee80211_mgmt,
- 				      u.probe_resp.variable);
- 	size_t new_ie_len;
--	struct cfg80211_bss_ies *new_ies;
-+	struct cfg80211_bss_ies *new_ies = NULL;
- 	const struct cfg80211_bss_ies *old;
- 	u8 cpy_len;
+-	res = kmalloc(sizeof(*res) + len - sizeof(struct iwl_calib_hdr),
+-		      GFP_ATOMIC);
+-	if (!res)
++	if (len < sizeof(*cmd) || mem_to_flex_dup(&res, cmd, len, GFP_ATOMIC))
+ 		return -ENOMEM;
+-	memcpy(&res->hdr, cmd, len);
+-	res->cmd_len = len;
  
-@@ -2314,8 +2311,7 @@ cfg80211_update_notlisted_nontrans(struct wiphy *wiphy,
- 	if (!new_ie)
- 		return;
- 
--	new_ies = kzalloc(sizeof(*new_ies) + new_ie_len, GFP_ATOMIC);
--	if (!new_ies)
-+	if (mem_to_flex_dup(&new_ies, new_ie, new_ie_len, GFP_ATOMIC))
- 		goto out_free;
- 
- 	pos = new_ie;
-@@ -2333,10 +2329,8 @@ cfg80211_update_notlisted_nontrans(struct wiphy *wiphy,
- 	memcpy(pos, mbssid + cpy_len, ((ie + ielen) - (mbssid + cpy_len)));
- 
- 	/* update ie */
--	new_ies->len = new_ie_len;
- 	new_ies->tsf = le64_to_cpu(mgmt->u.probe_resp.timestamp);
- 	new_ies->from_beacon = ieee80211_is_beacon(mgmt->frame_control);
--	memcpy(new_ies->data, new_ie, new_ie_len);
- 	if (ieee80211_is_probe_resp(mgmt->frame_control)) {
- 		old = rcu_access_pointer(nontrans_bss->proberesp_ies);
- 		rcu_assign_pointer(nontrans_bss->proberesp_ies, new_ies);
-@@ -2363,7 +2357,7 @@ cfg80211_inform_single_bss_frame_data(struct wiphy *wiphy,
- 				      gfp_t gfp)
- {
- 	struct cfg80211_internal_bss tmp = {}, *res;
--	struct cfg80211_bss_ies *ies;
-+	struct cfg80211_bss_ies *ies = NULL;
- 	struct ieee80211_channel *channel;
- 	bool signal_valid;
- 	struct ieee80211_ext *ext = NULL;
-@@ -2442,14 +2436,11 @@ cfg80211_inform_single_bss_frame_data(struct wiphy *wiphy,
- 		capability = le16_to_cpu(mgmt->u.probe_resp.capab_info);
- 	}
- 
--	ies = kzalloc(sizeof(*ies) + ielen, gfp);
--	if (!ies)
-+	if (mem_to_flex_dup(&ies, variable, ielen, gfp))
- 		return NULL;
--	ies->len = ielen;
- 	ies->tsf = le64_to_cpu(mgmt->u.probe_resp.timestamp);
- 	ies->from_beacon = ieee80211_is_beacon(mgmt->frame_control) ||
- 			   ieee80211_is_s1g_beacon(mgmt->frame_control);
--	memcpy(ies->data, variable, ielen);
- 
- 	if (ieee80211_is_probe_resp(mgmt->frame_control))
- 		rcu_assign_pointer(tmp.pub.proberesp_ies, ies);
+ 	list_for_each_entry(tmp, &priv->calib_results, list) {
+ 		if (tmp->cmd.hdr.op_code == res->cmd.hdr.op_code) {
 -- 
 2.32.0
 
