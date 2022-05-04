@@ -2,186 +2,241 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC92C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A20AC43217
 	for <linux-integrity@archiver.kernel.org>; Wed,  4 May 2022 23:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351808AbiEEABa (ORCPT
+        id S1359450AbiEEABb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 May 2022 20:01:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
+        Wed, 4 May 2022 20:01:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381179AbiEDXiD (ORCPT
+        with ESMTP id S1385492AbiEDXZ0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 May 2022 19:38:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E38E1EEC0;
-        Wed,  4 May 2022 16:34:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9AAD361CFE;
-        Wed,  4 May 2022 23:34:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B1B9C385A4;
-        Wed,  4 May 2022 23:34:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651707264;
-        bh=rg7gAW6bX54fvgfTyj+iLNX8iI1sLhWyZHkaZSInPKI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rr/VhCUks/jvvIukLEQ8hvouelHSSI+9oZesVy9WjHsFReyAH53SdMAhNcNxTncRh
-         AeNcfpQbGYHxmfRd7jiZWMjG0UbB4TKauYhVIbCXLf6VkMiM+KTnvLtKq+XumdW3b5
-         5XsvfgT+eqRG0aM2cOon7t/TFhjG0ZcaDmVjSrCT8tVFYMC+NZbIz/9jgmtLbpb2XF
-         jXkHA/11zXgPOkzwOz9hKL1cmOdu/0VL29aSmhBA26JK83Tblanq8QYFCE42J8CQ6Y
-         8C4e2ka/Vcj7axXhNyNWWZ2uF0Rop6olk1luKtEofCYGXG5sML5MH30Czl0f2TcCS9
-         K08sslbYEpn+w==
-Date:   Wed, 4 May 2022 18:43:24 -0500
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Xiu Jianfeng <xiujianfeng@huawei.com>,
-        Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-        netdev@vger.kernel.org, selinux@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        alsa-devel@alsa-project.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Gross <agross@kernel.org>,
-        Andy Lavr <andy.lavr@gmail.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Baowen Zheng <baowen.zheng@corigine.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Bradley Grove <linuxdrivers@attotech.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Christian Brauner <brauner@kernel.org>,
-        Christian Lamparter <chunkeey@googlemail.com>,
-        Chris Zankel <chris@zankel.net>,
-        Cong Wang <cong.wang@bytedance.com>,
-        Daniel Axtens <dja@axtens.net>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Gow <davidgow@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        devicetree@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eli Cohen <elic@nvidia.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Francis Laniel <laniel_francis@privacyrequired.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Hulk Robot <hulkci@huawei.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        John Keeping <john@metanate.com>,
-        Juergen Gross <jgross@suse.com>, Kalle Valo <kvalo@kernel.org>,
-        Keith Packard <keithp@keithp.com>, keyrings@vger.kernel.org,
-        kunit-dev@googlegroups.com,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leon Romanovsky <leon@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux1394-devel@lists.sourceforge.net,
-        linux-afs@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, llvm@lists.linux.dev,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Louis Peens <louis.peens@corigine.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Mark Brown <broonie@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Rich Felker <dalias@aerifal.cx>,
-        Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        SHA-cyfmac-dev-list@infineon.com,
-        Simon Horman <simon.horman@corigine.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Stefan Richter <stefanr@s5r6.in-berlin.de>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Tadeusz Struk <tadeusz.struk@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>, Tom Rix <trix@redhat.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        wcn36xx@lists.infradead.org, Wei Liu <wei.liu@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Yang Yingliang <yangyingliang@huawei.com>
-Subject: Re: [PATCH 28/32] selinux: Use mem_to_flex_dup() with xfrm and sidtab
-Message-ID: <20220504234324.GA12556@embeddedor>
-References: <20220504014440.3697851-1-keescook@chromium.org>
- <20220504014440.3697851-29-keescook@chromium.org>
- <CAHC9VhT5Y=ENiSyb=S-NVbGX63sLOv4nVuR_GS-yww6tiz0wYA@mail.gmail.com>
+        Wed, 4 May 2022 19:25:26 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37E744EA0B
+        for <linux-integrity@vger.kernel.org>; Wed,  4 May 2022 16:21:49 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id x18so2823786plg.6
+        for <linux-integrity@vger.kernel.org>; Wed, 04 May 2022 16:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=T0Ha5PjFrQlu4myFqDfG5tFx9BSiu6/SZECZT4sF2bI=;
+        b=lygx6dOsIFOk6hF+4C4Y8LRBekgsVCS6E/2MWFWQDMqc5bqCTYepfliMJM1myFV70X
+         jLFK02Fm2WKNyG22x0nZg+TsW5CsKzRyxkbYqV5+/PZ+gd4MpqDNr7coCd5Kt+2BDZNd
+         ONxJuOjN2+D6qeZ3Xquf1Dcw1BHsLe77ypccU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=T0Ha5PjFrQlu4myFqDfG5tFx9BSiu6/SZECZT4sF2bI=;
+        b=N34Z04rYKmbVIQyWUVEYKEVEitV8WYINrUmOE17Qn0ezLjDX8Kwomu5wmQKRmZWUEl
+         AspxRNNniUzpGzTLF9QiH7ypHbRqA8XouZg0ThudYQAITRAANrJQcvlbGCU9DeF+pL+P
+         aq9ENDXFB9ZynR/6tpGzIHDyCHuHqTSpsKDHiqe21oE//SxMmBbqENsNIe7Ywg+m2Yli
+         oiPEm8Ytpzsna54TUx6AIq1nK6fCCMprPY1JShnwkNLFs6LLOYj3JmxpWDHju4v7/iM/
+         /hJXBmd7vRX7twOwd8YWVv7qlgnjv4ceZ5JwuB+Ny5OdpD3ijXIo+vIKV9Uafi4TGj35
+         g4pw==
+X-Gm-Message-State: AOAM532lsJ0d5gZw+hgrgfCNRgOvyTkGvDOc/2SntqqS0oJ8e6/NYcOn
+        ve/JKJM4HDJVkTaYF5+BKUFZRQ==
+X-Google-Smtp-Source: ABdhPJwTek7lbCixRIDyD0usxwvu26W1HK2YAo0odHiNuXLR54TGcMPEtMfBRJ0xUOtP1S0Xrla3iw==
+X-Received: by 2002:a17:903:22c9:b0:15e:a8a0:2a79 with SMTP id y9-20020a17090322c900b0015ea8a02a79mr16125068plg.31.1651706508866;
+        Wed, 04 May 2022 16:21:48 -0700 (PDT)
+Received: from evgreen-glaptop.lan ([98.47.98.87])
+        by smtp.gmail.com with ESMTPSA id q12-20020a170902f78c00b0015e8d4eb2d6sm1901pln.288.2022.05.04.16.21.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 May 2022 16:21:48 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Matthew Garrett <mgarrett@aurora.tech>, dlunev@google.com,
+        zohar@linux.ibm.com, jejb@linux.ibm.com,
+        linux-integrity@vger.kernel.org, corbet@lwn.net, rjw@rjwysocki.net,
+        gwendal@chromium.org, jarkko@kernel.org, linux-pm@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH 09/10] PM: hibernate: Verify the digest encryption key
+Date:   Wed,  4 May 2022 16:21:01 -0700
+Message-Id: <20220504161439.9.I504d456c7a94ef1aaa7a2c63775ce9690c3ad7ab@changeid>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20220504232102.469959-1-evgreen@chromium.org>
+References: <20220504232102.469959-1-evgreen@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT5Y=ENiSyb=S-NVbGX63sLOv4nVuR_GS-yww6tiz0wYA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Paul,
+We want to ensure that the key used to encrypt the digest was created by
+the kernel during hibernation. To do this we request that the TPM
+include information about the value of PCR 23 at the time of key
+creation in the sealed blob. On resume, we can make sure that the PCR
+information in the creation data blob (already certified by the TPM to
+be accurate) corresponds to the expected value. Since only
+the kernel can touch PCR 23, if an attacker generates a key themselves
+the value of PCR 23 will have been different, allowing us to reject the
+key and boot normally instead of resuming.
 
-On Wed, May 04, 2022 at 06:57:28PM -0400, Paul Moore wrote:
-> On Tue, May 3, 2022 at 9:57 PM Kees Cook <keescook@chromium.org> wrote:
+Sourced-from: Matthew Garrett <mjg59@google.com>
+Signed-off-by: Evan Green <evgreen@chromium.org>
 
-[..]
+---
+Matthew's original version of this patch is here:
+https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
 
-> > +++ b/include/uapi/linux/xfrm.h
-> > @@ -31,9 +31,9 @@ struct xfrm_id {
-> >  struct xfrm_sec_ctx {
-> >         __u8    ctx_doi;
-> >         __u8    ctx_alg;
-> > -       __u16   ctx_len;
-> > +       __DECLARE_FLEX_ARRAY_ELEMENTS_COUNT(__u16, ctx_len);
-> >         __u32   ctx_sid;
-> > -       char    ctx_str[0];
-> > +       __DECLARE_FLEX_ARRAY_ELEMENTS(char, ctx_str);
-> >  };
-> 
-> While I like the idea of this in principle, I'd like to hear about the
-> testing you've done on these patches.  A previous flex array
-> conversion in the audit uapi headers ended up causing a problem with
+I moved the TPM2_CC_CERTIFYCREATION code into a separate change in the
+trusted key code because the blob_handle was being flushed and was no
+longer valid for use in CC_CERTIFYCREATION after the key was loaded. As
+an added benefit of moving the certification into the trusted keys code,
+we can drop the other patch from the original series that squirrelled
+the blob_handle away.
 
-I'm curious about which commit caused those problems...?
+ kernel/power/snapenc.c | 96 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 94 insertions(+), 2 deletions(-)
 
-Thanks
---
-Gustavo
+diff --git a/kernel/power/snapenc.c b/kernel/power/snapenc.c
+index 067f49c05a4d54..38bc820f780d8b 100644
+--- a/kernel/power/snapenc.c
++++ b/kernel/power/snapenc.c
+@@ -23,6 +23,45 @@ static struct tpm_digest known_digest = { .alg_id = TPM_ALG_SHA256,
+ 		   0xf1, 0x22, 0x38, 0x6c, 0x33, 0xb1, 0x14, 0xb7, 0xec, 0x05,
+ 		   0x5f, 0x49}};
+ 
++/* sha256(sha256(empty_pcr | known_digest)) */
++static const char expected_digest[] = {0x2f, 0x96, 0xf2, 0x1b, 0x70, 0xa9, 0xe8,
++	0x42, 0x25, 0x8e, 0x66, 0x07, 0xbe, 0xbc, 0xe3, 0x1f, 0x2c, 0x84, 0x4a,
++	0x3f, 0x85, 0x17, 0x31, 0x47, 0x9a, 0xa5, 0x53, 0xbb, 0x23, 0x0c, 0x32,
++	0xf3};
++
++static int sha256_data(char *buf, int size, char *output)
++{
++	struct crypto_shash *tfm;
++	struct shash_desc *desc;
++	int ret;
++
++	tfm = crypto_alloc_shash("sha256", 0, 0);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
++
++	desc = kmalloc(sizeof(struct shash_desc) +
++			       crypto_shash_descsize(tfm), GFP_KERNEL);
++	if (!desc) {
++		crypto_free_shash(tfm);
++		return -ENOMEM;
++	}
++
++	desc->tfm = tfm;
++	ret = crypto_shash_init(desc);
++	if (ret != 0) {
++		crypto_free_shash(tfm);
++		kfree(desc);
++		return ret;
++	}
++
++	crypto_shash_update(desc, buf, size);
++	crypto_shash_final(desc, output);
++	crypto_free_shash(desc->tfm);
++	kfree(desc);
++
++	return 0;
++}
++
+ /* Derive a key from the kernel and user keys for data encryption. */
+ static int snapshot_use_user_key(struct snapshot_data *data)
+ {
+@@ -515,7 +554,7 @@ static int snapshot_create_kernel_key(struct snapshot_data *data)
+ 	struct key *key;
+ 	int ret, i;
+ 	/* Create a key sealed by the SRK. */
+-	char *keyinfo = "new\t32\tkeyhandle=0x81000000";
++	char *keyinfo = "new\t32\tkeyhandle=0x81000000\tcreationpcrs=0x00800000";
+ 
+ 	chip = tpm_default_chip();
+ 	if (!chip)
+@@ -628,6 +667,7 @@ static int snapshot_load_kernel_key(struct snapshot_data *data,
+ 	struct uswsusp_key_blob *blob)
+ {
+ 
++	char certhash[SHA256_DIGEST_SIZE];
+ 	const struct cred *cred = current_cred();
+ 	char *keytemplate = "load\t%s\tkeyhandle=0x81000000";
+ 	struct tpm_digest *digests = NULL;
+@@ -635,6 +675,7 @@ static int snapshot_load_kernel_key(struct snapshot_data *data,
+ 	char *keyinfo = NULL;
+ 	struct tpm_chip *chip;
+ 	struct key *key;
++	struct trusted_key_payload *payload;
+ 	int i, ret;
+ 
+ 	chip = tpm_default_chip();
+@@ -650,8 +691,10 @@ static int snapshot_load_kernel_key(struct snapshot_data *data,
+ 
+ 	digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
+ 			  GFP_KERNEL);
+-	if (!digests)
++	if (!digests) {
++		ret = -ENOMEM;
+ 		goto reset;
++	}
+ 
+ 	for (i = 0; i <= chip->nr_allocated_banks; i++) {
+ 		digests[i].alg_id = chip->allocated_banks[i].alg_id;
+@@ -690,6 +733,55 @@ static int snapshot_load_kernel_key(struct snapshot_data *data,
+ 	if (ret < 0)
+ 		goto out;
+ 
++	/* Verify the creation hash matches the creation data. */
++	payload = key->payload.data[0];
++	ret = sha256_data(payload->creation, payload->creation_len, certhash);
++	if (ret < 0)
++		goto out;
++
++	if (memcmp(payload->creation_hash, certhash, SHA256_DIGEST_SIZE) != 0) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* We now know that the creation data is authentic - parse it */
++
++	/* TPML_PCR_SELECTION.count */
++	if (be32_to_cpu(*(int *)payload->creation) != 1) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (be16_to_cpu(*(u16 *)&payload->creation[4]) != TPM_ALG_SHA256) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (*(char *)&payload->creation[6] != 3) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* PCR 23 selected */
++	if (be32_to_cpu(*(int *)&payload->creation[6]) != 0x03000080) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (be16_to_cpu(*(u16 *)&payload->creation[10]) !=
++	    SHA256_DIGEST_SIZE) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* Verify PCR 23 contained the expected value when the key was created. */
++	if (memcmp(&payload->creation[12], expected_digest,
++		   SHA256_DIGEST_SIZE) != 0) {
++
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	data->key = key;
+ 	key = NULL;
+ 
+-- 
+2.31.0
 
-> GCC12 and SWIG; while it was a SWIG problem and not a kernel header
-> problem that was thin consolation for those with broken builds.
