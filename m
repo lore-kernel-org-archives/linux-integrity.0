@@ -2,128 +2,140 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7DEC433EF
-	for <linux-integrity@archiver.kernel.org>; Sat,  7 May 2022 21:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 087B9C433EF
+	for <linux-integrity@archiver.kernel.org>; Mon,  9 May 2022 08:42:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1387536AbiEGVeO convert rfc822-to-8bit (ORCPT
+        id S230310AbiEIIpv (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 7 May 2022 17:34:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43898 "EHLO
+        Mon, 9 May 2022 04:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235745AbiEGVeM (ORCPT
+        with ESMTP id S235627AbiEIIOx (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 7 May 2022 17:34:12 -0400
-Received: from mail.actia.se (212-181-117-226.customer.telia.com [212.181.117.226])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CBB4BC32;
-        Sat,  7 May 2022 14:30:19 -0700 (PDT)
-Received: from S036ANL.actianordic.se (10.12.31.117) by S035ANL.actianordic.se
- (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Sat, 7 May
- 2022 23:30:16 +0200
-Received: from S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69]) by
- S036ANL.actianordic.se ([fe80::e13e:1feb:4ea6:ec69%10]) with mapi id
- 15.01.2375.024; Sat, 7 May 2022 23:30:16 +0200
-From:   John Ernberg <john.ernberg@actia.se>
-To:     "a.fatoum@pengutronix.de" <a.fatoum@pengutronix.de>
-CC:     "andreas@rammhold.de" <andreas@rammhold.de>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "david@sigma-star.at" <david@sigma-star.at>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        "franck.lenormand@nxp.com" <franck.lenormand@nxp.com>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "horia.geanta@nxp.com" <horia.geanta@nxp.com>,
-        "j.luebbe@pengutronix.de" <j.luebbe@pengutronix.de>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        John Ernberg <john.ernberg@actia.se>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "matthias.schiffer@ew.tq-group.com" 
-        <matthias.schiffer@ew.tq-group.com>,
-        "pankaj.gupta@nxp.com" <pankaj.gupta@nxp.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "s.trumtrar@pengutronix.de" <s.trumtrar@pengutronix.de>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "sumit.garg@linaro.org" <sumit.garg@linaro.org>,
-        "tharvey@gateworks.com" <tharvey@gateworks.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-Subject: Re: [PATCH v8 0/6] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-Thread-Topic: [PATCH v8 0/6] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-Thread-Index: AQHYYJCRaP1BJI53pkGuwIjy0ObIW60QaeKAgANmr4A=
-Date:   Sat, 7 May 2022 21:30:16 +0000
-Message-ID: <20220507213003.3373206-1-john.ernberg@actia.se>
-References: <09e2552c-7392-e1da-926b-53c7db0b118d@pengutronix.de>
-In-Reply-To: <09e2552c-7392-e1da-926b-53c7db0b118d@pengutronix.de>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.35.1
-x-originating-ip: [10.12.12.58]
-x-esetresult: clean, is OK
-x-esetid: 37303A293105C852617465
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 9 May 2022 04:14:53 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E4D1D043B;
+        Mon,  9 May 2022 01:10:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1652083626;
+        bh=viBGPAXuNsA7zjTMIINHaGbiAR7IRO1hyoh+kfXxmY0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=fQNZFMRgksIrIe1fiR8JNLrpFt4Y/x5UnAfyjEue7NREmwhU9WxIsr3JGc53N6Dzl
+         Qc/X7kRseIZiHGWlcFObZ5EJ5xI4xV9WcWvcUyTkY1EqgKeiuXfN5O1DMpTzdz5tUO
+         hhYdrplLxh/Iv8YVgz63okbLgBiStTAAbdolUG6k=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from Venus.fritz.box ([46.223.3.89]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N8GQy-1nsDak1Bqq-014A2v; Mon, 09
+ May 2022 10:07:06 +0200
+From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
+To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
+Cc:     stefanb@linux.vnet.ibm.com, linux@mniewoehner.de,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        LinoSanfilippo@gmx.de, lukas@wunner.de, p.rosenberger@kunbus.com,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Subject: [PATCH v4 2/6] tpm, tpm_tis: Claim and release locality only once
+Date:   Mon,  9 May 2022 10:05:55 +0200
+Message-Id: <20220509080559.4381-3-LinoSanfilippo@gmx.de>
+X-Mailer: git-send-email 2.36.0
+In-Reply-To: <20220509080559.4381-1-LinoSanfilippo@gmx.de>
+References: <20220509080559.4381-1-LinoSanfilippo@gmx.de>
 MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+X-Provags-ID: V03:K1:EzX1A8+1f3IydNHHtPhvWaoNMgzrH3pWX0+iA3ZGSjVn4WzbSiA
+ 7tXpS9EjNgRGfvsQOnVJp3W41Q/mmT7PpH5i1JayytG5WGPPH6nDUEf+9qAyXOORqPR4A3w
+ 1R8EYJhSK/YR22qt3Q/86X9TaDoj1Sp9wtBEb1xl+FjNZfnVPdjmT2Gi9ll3nDJOI/uyB8I
+ oEVcD/GX5KVsb5ySn1Q1A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:L4tfxDCfs0g=:+77T31xfuLq9b3eZAfE9aa
+ vZQ5tLluGX4TBfZOLBcRPAeO5xV2kBk4yMLSJrj6r/wNBPGBLfqPGsIEJrheexryyGu3+Nymu
+ FoD6LqKhyjEi/dvj2R31bff8TKp8z34DdXLPuf2klDOoQQMpIa3z5LZaQ71vzsGG0AdMPmrH9
+ DY/8mo6PKtG6ZDVsH2vQSuPnJOnN57k1ZwIrQCsKSMcWKtuk0kvltnwNHSiHe8fTIDaAZ0V4v
+ +szy9kPZ/xY7c0EhKN+IN3+LBOIMQOOO+8BQryjxX2tkp82bzk7PyfLd/3WqrqfTnlLlu2MwU
+ v2YTAymuPcFKcasYA7LEA7hSpVIsLYxnL6nXD8jOqO3AQCtiIage+9y9I8UPc8spoyiGv6BX4
+ /2SNozOaE5Pu2F+icLGZEdyUMrr8Xx4FALZxl/ilYyMPDiZpb89Uvgu41Li2sjFxzGVI9gXwY
+ BzPs0Y7c5X/S1ekGi0IQqVwX/RZdTCIzwc6yfkkkBLycsKK6RDbNWcKqxi0nnxFJYbTsZF7Gl
+ aAlUHlXdPln/A/3hJe6x+4Ez5Unnjbc5/vi1BWPVDs97ztkadLTCl8/apVZHCBs21uy/BI5vy
+ EYvOsuPohsn0ijeCxX1kMnev0DRQgfNqftH8aQX/NwKMr2iPQCrdM27UQq1RgkqTTwxl6ctVD
+ yQ00qq0m+CYd12FTR9HRJzIXGFFpIGQcf6jkXZtKRBEg3KZtpajzRFTLupwYl8E4F8qVTd86M
+ GDs0wh8LoZx/BpKg64YNdneUwok+EEBzeqiii4QaagJnhN6N/1c4d5zOxRsAbtM1IgmyPpNJU
+ Jej+Ok2OM/fesb3EnZJNCtgaoqClerdTD+4eJjUV6k5A4AnGAcKJKy4rpdoweZN0tULCBtPJt
+ f2fJuenmUIY750h0cyQFu495CtwrLtBjBTymiBjPHxm4xDO73cTLTZkJ+ormVYxZtYFZFQtiW
+ fowMvZhU0MqpJpci1WqcyQFP5eikxZhN4CpUuVbtN784l7ae+oq2W02xhY9NwaQf+StUTZaJ5
+ zKYxt3cC0QnTantCHBbUREFv3TyYN8LJCxdVM86H5nXhVnBT7RbboG81EY5SRl1x2inritw3B
+ 2Znek6pLqvoJWg=
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Ahmad,
-
-> > 
-> > dmesg snips:
-> > [    1.296772] trusted_key: Job Ring Device allocation for transform failed
-> > ...
-> > [    1.799768] caam 31400000.crypto: device ID = 0x0a16040000000100 (Era 9)
-> > [    1.807142] caam 31400000.crypto: job rings = 2, qi = 0
-> > [    1.822667] caam algorithms registered in /proc/crypto
-> > [    1.830541] caam 31400000.crypto: caam pkc algorithms registered in /proc/crypto
-> > [    1.841807] caam 31400000.crypto: registering rng-caam
-> > 
-> > I didn't quite have the time to get a better trace than that.
-> 
-> I don't see a crypto@31400000 node upstream. Where can I see your device tree?
-
-Apologies for forgetting to mention that, I took it from the NXP tree
-while removing the SM and SECO bits [1].
-I also had to rebase some of their patches onto 5.17 for the CAAM to
-probe, as the SCU makes some register pages unavailable.
-
-> Initcall ordering does the right thing, but if CAAM device probe is deferred beyond
-> late_initcall, then it won't help.
-> 
-> This is a general limitation with trusted keys at the moment. Anything that's
-> not there by the time of the late_initcall won't be tried again. You can work
-> around it by having trusted keys as a module. We might be able to do something
-> with fw_devlinks in the future and a look into your device tree would help here,
-> but I think that should be separate from this patch series.
-
-Thank for you the explanation, it makes sense, and I agree that such work
-would be a different patch set.
-
-> 
-> Please let me know if the module build improves the situation for you.
-> 
-
-After I changed trusted keys to a module I got it working. Which is good
-enough for me as QXP CAAM support is not upstream yet.
-
-Feel free to add my tested by if you need to make another spin.
-Tested-by: John Ernberg <john.ernberg@actia.se> # iMX8QXP
-
-I didn't test v9 as I would have to patch around the new patch due to
-the SCU.
-
-Best regards // John Ernberg
-
-[1]: https://source.codeaurora.org/external/imx/linux-imx/tree/arch/arm64/boot/dts/freescale/imx8-ss-security.dtsi?h=lf-5.10.y
+RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkl0IGlzIG5v
+dCBuZWNlc3NhcnkgdG8gY2xhaW0gYW5kIHJlbGVhc2UgdGhlIGRlZmF1bHQgbG9jYWxpdHkgZm9y
+IGVhY2ggVFBNCmNvbW1hbmQuIEluc3RlYWQgY2xhaW0gdGhlIGxvY2FsaXR5IG9uY2UgYXQgZHJp
+dmVyIHN0YXJ0dXAgYW5kIHJlbGVhc2UgaXQKYXQgZHJpdmVyIHNodXRkb3duLgoKU2lnbmVkLW9m
+Zi1ieTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KLS0tCiBkcml2
+ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jIHwgNTAgKysrKysrKysrLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKSwgMzcgZGVsZXRpb25z
+KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYyBiL2RyaXZl
+cnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmMKaW5kZXggNTIzNjllZjM5YjAzLi40NmY1MDRmYjUw
+ODQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmMKKysrIGIvZHJp
+dmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYwpAQCAtNjM4LDkgKzYzOCw2IEBAIHN0YXRpYyBp
+bnQgcHJvYmVfaXRwbShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXApCiAJaWYgKHZlbmRvciAhPSBUUE1f
+VklEX0lOVEVMKQogCQlyZXR1cm4gMDsKIAotCWlmIChyZXF1ZXN0X2xvY2FsaXR5KGNoaXAsIDAp
+ICE9IDApCi0JCXJldHVybiAtRUJVU1k7Ci0KIAlyYyA9IHRwbV90aXNfc2VuZF9kYXRhKGNoaXAs
+IGNtZF9nZXR0aWNrcywgbGVuKTsKIAlpZiAocmMgPT0gMCkKIAkJZ290byBvdXQ7CkBAIC02NTks
+NyArNjU2LDYgQEAgc3RhdGljIGludCBwcm9iZV9pdHBtKHN0cnVjdCB0cG1fY2hpcCAqY2hpcCkK
+IAogb3V0OgogCXRwbV90aXNfcmVhZHkoY2hpcCk7Ci0JcmVsZWFzZV9sb2NhbGl0eShjaGlwLCBw
+cml2LT5sb2NhbGl0eSk7CiAKIAlyZXR1cm4gcmM7CiB9CkBAIC03MjEsMTcgKzcxNywxMSBAQCBz
+dGF0aWMgaW50IHRwbV90aXNfZ2VuX2ludGVycnVwdChzdHJ1Y3QgdHBtX2NoaXAgKmNoaXApCiAJ
+Y2FwX3QgY2FwOwogCWludCByZXQ7CiAKLQlyZXQgPSByZXF1ZXN0X2xvY2FsaXR5KGNoaXAsIDAp
+OwotCWlmIChyZXQgPCAwKQotCQlyZXR1cm4gcmV0OwotCiAJaWYgKGNoaXAtPmZsYWdzICYgVFBN
+X0NISVBfRkxBR19UUE0yKQogCQlyZXQgPSB0cG0yX2dldF90cG1fcHQoY2hpcCwgMHgxMDAsICZj
+YXAyLCBkZXNjKTsKIAllbHNlCiAJCXJldCA9IHRwbTFfZ2V0Y2FwKGNoaXAsIFRQTV9DQVBfUFJP
+UF9USVNfVElNRU9VVCwgJmNhcCwgZGVzYywgMCk7CiAKLQlyZWxlYXNlX2xvY2FsaXR5KGNoaXAs
+IDApOwotCiAJcmV0dXJuIHJldDsKIH0KIApAQCAtODU1LDYgKzg0NSw4IEBAIHZvaWQgdHBtX3Rp
+c19yZW1vdmUoc3RydWN0IHRwbV9jaGlwICpjaGlwKQogCiAJdHBtX3Rpc193cml0ZTMyKHByaXYs
+IHJlZywgflRQTV9HTE9CQUxfSU5UX0VOQUJMRSAmIGludGVycnVwdCk7CiAKKwlyZWxlYXNlX2xv
+Y2FsaXR5KGNoaXAsIDApOworCiAJdHBtX3Rpc19jbGtydW5fZW5hYmxlKGNoaXAsIGZhbHNlKTsK
+IAogCWlmIChwcml2LT5pbGJfYmFzZV9hZGRyKQpAQCAtOTI1LDggKzkxNyw2IEBAIHN0YXRpYyBj
+b25zdCBzdHJ1Y3QgdHBtX2NsYXNzX29wcyB0cG1fdGlzID0gewogCS5yZXFfY29tcGxldGVfbWFz
+ayA9IFRQTV9TVFNfREFUQV9BVkFJTCB8IFRQTV9TVFNfVkFMSUQsCiAJLnJlcV9jb21wbGV0ZV92
+YWwgPSBUUE1fU1RTX0RBVEFfQVZBSUwgfCBUUE1fU1RTX1ZBTElELAogCS5yZXFfY2FuY2VsZWQg
+PSB0cG1fdGlzX3JlcV9jYW5jZWxlZCwKLQkucmVxdWVzdF9sb2NhbGl0eSA9IHJlcXVlc3RfbG9j
+YWxpdHksCi0JLnJlbGlucXVpc2hfbG9jYWxpdHkgPSByZWxlYXNlX2xvY2FsaXR5LAogCS5jbGtf
+ZW5hYmxlID0gdHBtX3Rpc19jbGtydW5fZW5hYmxlLAogfTsKIApAQCAtOTYzLDkgKzk1MywxNSBA
+QCBpbnQgdHBtX3Rpc19jb3JlX2luaXQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgdHBtX3Rp
+c19kYXRhICpwcml2LCBpbnQgaXJxLAogCiAJZGV2X3NldF9kcnZkYXRhKCZjaGlwLT5kZXYsIHBy
+aXYpOwogCisJcmMgPSByZXF1ZXN0X2xvY2FsaXR5KGNoaXAsIDApOworCWlmIChyYykKKwkJcmV0
+dXJuIHJjOworCiAJcmMgPSB0cG1fdGlzX3JlYWQzMihwcml2LCBUUE1fRElEX1ZJRCgwKSwgJnZl
+bmRvcik7Ci0JaWYgKHJjIDwgMCkKKwlpZiAocmMgPCAwKSB7CisJCXJlbGVhc2VfbG9jYWxpdHko
+Y2hpcCwgMCk7CiAJCXJldHVybiByYzsKKwl9CiAKIAlwcml2LT5tYW51ZmFjdHVyZXJfaWQgPSB2
+ZW5kb3I7CiAKQEAgLTk3OCw4ICs5NzQsMTAgQEAgaW50IHRwbV90aXNfY29yZV9pbml0KHN0cnVj
+dCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiwgaW50IGlycSwKIAlpZiAo
+aXNfYnN3KCkpIHsKIAkJcHJpdi0+aWxiX2Jhc2VfYWRkciA9IGlvcmVtYXAoSU5URUxfTEVHQUNZ
+X0JMS19CQVNFX0FERFIsCiAJCQkJCUlMQl9SRU1BUF9TSVpFKTsKLQkJaWYgKCFwcml2LT5pbGJf
+YmFzZV9hZGRyKQorCQlpZiAoIXByaXYtPmlsYl9iYXNlX2FkZHIpIHsKKwkJCXJlbGVhc2VfbG9j
+YWxpdHkoY2hpcCwgMCk7CiAJCQlyZXR1cm4gLUVOT01FTTsKKwkJfQogCiAJCWNsa3J1bl92YWwg
+PSBpb3JlYWQzMihwcml2LT5pbGJfYmFzZV9hZGRyICsgTFBDX0NOVFJMX09GRlNFVCk7CiAJCS8q
+IENoZWNrIGlmIENMS1JVTiMgaXMgYWxyZWFkeSBub3QgZW5hYmxlZCBpbiB0aGUgTFBDIGJ1cyAq
+LwpAQCAtMTAwNiwxNCArMTAwNCw3IEBAIGludCB0cG1fdGlzX2NvcmVfaW5pdChzdHJ1Y3QgZGV2
+aWNlICpkZXYsIHN0cnVjdCB0cG1fdGlzX2RhdGEgKnByaXYsIGludCBpcnEsCiAJCSAgIFRQTV9J
+TlRGX0RBVEFfQVZBSUxfSU5UIHwgVFBNX0lOVEZfU1RTX1ZBTElEX0lOVDsKIAlpbnRtYXNrICY9
+IH5UUE1fR0xPQkFMX0lOVF9FTkFCTEU7CiAKLQlyYyA9IHJlcXVlc3RfbG9jYWxpdHkoY2hpcCwg
+MCk7Ci0JaWYgKHJjIDwgMCkgewotCQlyYyA9IC1FTk9ERVY7Ci0JCWdvdG8gb3V0X2VycjsKLQl9
+Ci0KIAl0cG1fdGlzX3dyaXRlMzIocHJpdiwgVFBNX0lOVF9FTkFCTEUocHJpdi0+bG9jYWxpdHkp
+LCBpbnRtYXNrKTsKLQlyZWxlYXNlX2xvY2FsaXR5KGNoaXAsIDApOwogCiAJcmMgPSB0cG1fY2hp
+cF9zdGFydChjaGlwKTsKIAlpZiAocmMpCkBAIC0xMDcyLDE1ICsxMDYzLDcgQEAgaW50IHRwbV90
+aXNfY29yZV9pbml0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJp
+diwgaW50IGlycSwKIAkJICogdG8gbWFrZSBzdXJlIGl0IHdvcmtzLiBNYXkgYXMgd2VsbCB1c2Ug
+dGhhdCBjb21tYW5kIHRvIHNldCB0aGUKIAkJICogcHJvcGVyIHRpbWVvdXRzIGZvciB0aGUgZHJp
+dmVyLgogCQkgKi8KLQotCQlyYyA9IHJlcXVlc3RfbG9jYWxpdHkoY2hpcCwgMCk7Ci0JCWlmIChy
+YyA8IDApCi0JCQlnb3RvIG91dF9lcnI7Ci0KIAkJcmMgPSB0cG1fZ2V0X3RpbWVvdXRzKGNoaXAp
+OwotCi0JCXJlbGVhc2VfbG9jYWxpdHkoY2hpcCwgMCk7Ci0KIAkJaWYgKHJjKSB7CiAJCQlkZXZf
+ZXJyKGRldiwgIkNvdWxkIG5vdCBnZXQgVFBNIHRpbWVvdXRzIGFuZCBkdXJhdGlvbnNcbiIpOwog
+CQkJcmMgPSAtRU5PREVWOwpAQCAtMTE2OSwxNiArMTE1Miw5IEBAIGludCB0cG1fdGlzX3Jlc3Vt
+ZShzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJICogVFBNIDEuMiByZXF1aXJlcyBzZWxmLXRlc3Qgb24g
+cmVzdW1lLiBUaGlzIGZ1bmN0aW9uIGFjdHVhbGx5IHJldHVybnMKIAkgKiBhbiBlcnJvciBjb2Rl
+IGJ1dCBmb3IgdW5rbm93biByZWFzb24gaXQgaXNuJ3QgaGFuZGxlZC4KIAkgKi8KLQlpZiAoIShj
+aGlwLT5mbGFncyAmIFRQTV9DSElQX0ZMQUdfVFBNMikpIHsKLQkJcmV0ID0gcmVxdWVzdF9sb2Nh
+bGl0eShjaGlwLCAwKTsKLQkJaWYgKHJldCA8IDApCi0JCQlyZXR1cm4gcmV0OwotCisJaWYgKCEo
+Y2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX1RQTTIpKQogCQl0cG0xX2RvX3NlbGZ0ZXN0KGNo
+aXApOwogCi0JCXJlbGVhc2VfbG9jYWxpdHkoY2hpcCwgMCk7Ci0JfQotCiAJcmV0dXJuIDA7CiB9
+CiBFWFBPUlRfU1lNQk9MX0dQTCh0cG1fdGlzX3Jlc3VtZSk7Ci0tIAoyLjM2LjAKCg==
