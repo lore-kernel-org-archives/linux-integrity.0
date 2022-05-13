@@ -2,115 +2,105 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9DACC433EF
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 May 2022 12:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B40EC4332F
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 May 2022 13:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbiEMMMl (ORCPT
+        id S233491AbiEMNuJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 May 2022 08:12:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
+        Fri, 13 May 2022 09:50:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232458AbiEMMMk (ORCPT
+        with ESMTP id S1382016AbiEMNmb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 May 2022 08:12:40 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A66263394
-        for <linux-integrity@vger.kernel.org>; Fri, 13 May 2022 05:12:39 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24DC0XJ5015924;
-        Fri, 13 May 2022 12:12:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=IXAlnsjagdkanynEy5KbfcBbS0A9QsV8TZKTQX72su8=;
- b=AR9M8QyI0RFl9YlnnIOnKAyIXTZFxSxsQkVczdy3qTqOfryJ1bar2E/NF1HXgN2djFN1
- MkI4EJC0YMsjkW6wFDqi9i23b3LriP50u9SZOmlhbFzUZOLS14L9VBvP7SC8vRyGDrGi
- LjW/9y4+63/HhaGuq6A39FU57C0jQzN5W3/Dg2r/XJKM2CZXuz8d1aKqDDz19uz+EAp0
- mSpTcGns/Q7/tXVcVvjZ807qwIwQMHziIBUb9rFEaZ6ovgIpbyYmJGx9wDrltRvDLB1S
- d/oo6euvEAcqCefVO/r2kLCBPxvvdZQ4b2iHB7VMrIv4SfN+5aaGvaczj2oJWrZrLNvT 4w== 
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3g1py7g88w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 May 2022 12:12:31 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24DC1VAK026065;
-        Fri, 13 May 2022 12:12:28 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03fra.de.ibm.com with ESMTP id 3g0kn7a487-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 May 2022 12:12:28 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24DCCP1l50332136
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 13 May 2022 12:12:25 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34CFAAE04D;
-        Fri, 13 May 2022 12:12:25 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AB415AE045;
-        Fri, 13 May 2022 12:12:24 +0000 (GMT)
-Received: from sig-9-65-91-25.ibm.com (unknown [9.65.91.25])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 May 2022 12:12:24 +0000 (GMT)
-Message-ID: <17a2963c7f4151de9360912da494c924fbf2709d.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 ima-evm-utils 2/3] Sign an fs-verity file digest
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@kernel.org>
-Date:   Fri, 13 May 2022 08:12:24 -0400
-In-Reply-To: <b4ed4a2c-2da2-b9f0-cb1c-50ee7ec43eba@linux.ibm.com>
-References: <20220512183056.307597-1-zohar@linux.ibm.com>
-         <20220512183056.307597-2-zohar@linux.ibm.com>
-         <b4ed4a2c-2da2-b9f0-cb1c-50ee7ec43eba@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: OP-K93XL2zPBB-cSM3B9Ox--xQtDq3Rd
-X-Proofpoint-GUID: OP-K93XL2zPBB-cSM3B9Ox--xQtDq3Rd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-13_04,2022-05-13_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
- phishscore=0 suspectscore=0 malwarescore=0 bulkscore=0 adultscore=0
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2205130054
+        Fri, 13 May 2022 09:42:31 -0400
+Received: from smtp11.infineon.com (smtp11.infineon.com [IPv6:2a00:18f0:1e00:4::5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D6A2BC0E;
+        Fri, 13 May 2022 06:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1652449350; x=1683985350;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=uguWhCfJrqay1S13NWgbZNRG98dj6oaX1/xu1tlmmzM=;
+  b=g1CzpIgG2Noc6I4YtTP0yXuou+aHgwq/aKxBZ8laP6osOm7B3yV41cf0
+   Yz2QVsrQxPRrHVNQUtmiZvYcuLL28AdsGezLrYs238sfB9EWj9zZUNpJ2
+   LCsXXksrwiXYFCoGW6PiZ3X/Aux1LeeNiNaa5LXZmZWtr5xrc1I9tavRH
+   w=;
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="6400,9594,10345"; a="294595933"
+X-IronPort-AV: E=Sophos;i="5.91,223,1647298800"; 
+   d="scan'208";a="294595933"
+Received: from unknown (HELO mucxv003.muc.infineon.com) ([172.23.11.20])
+  by smtp11.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2022 15:42:28 +0200
+Received: from MUCSE814.infineon.com (MUCSE814.infineon.com [172.23.29.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mucxv003.muc.infineon.com (Postfix) with ESMTPS;
+        Fri, 13 May 2022 15:42:27 +0200 (CEST)
+Received: from MUCSE818.infineon.com (172.23.29.44) by MUCSE814.infineon.com
+ (172.23.29.40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.22; Fri, 13 May
+ 2022 15:42:27 +0200
+Received: from smaha-lin-dev01.agb.infineon.com (172.23.8.247) by
+ MUCSE818.infineon.com (172.23.29.44) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.22; Fri, 13 May 2022 15:42:27 +0200
+From:   Stefan Mahnke-Hartmann <stefan.mahnke-hartmann@infineon.com>
+To:     <jarkko@kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <peterhuewe@gmx.de>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
+        <nayna@linux.vnet.ibm.com>, <stefan.mahnke-hartmann@infineon.com>,
+        <alexander.steffen@infineon.com>
+Subject: [PATCH v2 2/2] tpm: Add field upgrade mode support for Infineon TPM2 modules
+Date:   Fri, 13 May 2022 15:41:53 +0200
+Message-ID: <20220513134152.270442-2-stefan.mahnke-hartmann@infineon.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220513134152.270442-1-stefan.mahnke-hartmann@infineon.com>
+References: <20220513134152.270442-1-stefan.mahnke-hartmann@infineon.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE813.infineon.com (172.23.29.39) To
+ MUCSE818.infineon.com (172.23.29.44)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2022-05-12 at 17:48 -0400, Stefan Berger wrote:
-> > -             /* find the end of the hash */
-> > -             token = strpbrk(line, ", \t");
-> > -             hashlen = token ? token - line : strlen(line);
-> > +             /*
-> > +              * Before either directly or indirectly signing the hash,
-> > +              * convert the hex-ascii hash representation to binary.
-> > +              */
-> > +             if (veritysig) {
-> > +
-> > +                     /* split the algorithm from the hash */
-> > +                     hashp = strpbrk(line, ":");
-> > +                     if (!hashp) {   /* pointer to the delimiter */
-> > +                             log_err("Missing fsverity hash algorithm\n");
-> > +                             continue;
-> > +                     }
-> > +
-> > +                     algolen = hashp - line;
-> > +                     if (algolen > sizeof(algo))
-> > +                             algolen = sizeof(algo);
-> 
-> I think a hash name exceeding the max buffer size and needing to be 
-> truncating it should be an error since the name to index conversion will 
-> fail  later on.
+TPM2_GetCapability with a capability that has the property type value
+of TPM_PT_TOTAL_COMMANDS returns a zero length list, when an Infineon
+TPM2 is in field upgrade mode.
+Since an Infineon TPM2.0 in field upgrade mode returns RC_SUCCESS on
+TPM2_Startup, the field upgrade mode has to be detected by
+TPM2_GetCapability.
 
-Sure.  In fact, the hash algorithm name size should be limited to the
-maximum size of those algorithms that fs-verity actually supports.
+Signed-off-by: Stefan Mahnke-Hartmann <stefan.mahnke-hartmann@infineon.com>
+---
+Changelog:
+ * v2:
+   * Move check of -ENODATA to if condition below.
+   * Change 'field upgrade mode' to lower case.
 
-thanks,
+ drivers/char/tpm/tpm2-cmd.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Mimi
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 04a3e23a4afc..c1eb5d223839 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -754,7 +754,11 @@ int tpm2_auto_startup(struct tpm_chip *chip)
+ 	rc = tpm2_get_cc_attrs_tbl(chip);
+ 
+ out:
+-	if (rc == TPM2_RC_UPGRADE) {
++	/*
++	 * Infineon TPM in field upgrade mode will return no data for the number
++	 * of supported commands.
++	 */
++	if (rc == TPM2_RC_UPGRADE || rc == -ENODATA) {
+ 		dev_info(&chip->dev, "TPM in field upgrade mode, requires firmware upgrade\n");
+ 		chip->flags |= TPM_CHIP_FLAG_FIRMWARE_UPGRADE;
+ 		rc = 0;
+-- 
+2.25.1
 
