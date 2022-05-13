@@ -2,186 +2,194 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE3B9C43219
-	for <linux-integrity@archiver.kernel.org>; Fri, 13 May 2022 14:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA16C433FE
+	for <linux-integrity@archiver.kernel.org>; Fri, 13 May 2022 14:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381268AbiEMOoH (ORCPT
+        id S242379AbiEMO5z (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 13 May 2022 10:44:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54770 "EHLO
+        Fri, 13 May 2022 10:57:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382829AbiEMOnR (ORCPT
+        with ESMTP id S234215AbiEMO5y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 13 May 2022 10:43:17 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9F1767D32
-        for <linux-integrity@vger.kernel.org>; Fri, 13 May 2022 07:41:05 -0700 (PDT)
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24DEXsDc008074;
-        Fri, 13 May 2022 14:41:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=v3B7SEERfy1SjcfouVZzmv96paSlwkNHxZbNweVuXC4=;
- b=VfJfX6TGSRLSKCQoV8K1JCdefNWqe8znHmWyzZSBqBTfM8SKmH8MX3GOrWW1B12akeQM
- NN/K+a3gmXRvGHfMZiG9m8tS8ozRgrmrNlcpGo3uE4WhLOzqe7jZL0qEuTxdeTSBSHB/
- 6fLoFpVzkboX+Hr2SMgr+XvPPkAuMwV5X5TLvfOovwJqCgQ608ye9JOCdWUeepYN1eGA
- ivwXGKTIcbafL/nrFkYpbBGGIGUW4ESpDaTKvvU3CQm1oU7t5naywBc+CuJXOCMZFcQ/
- UdEd636ipLZ1ItJQZBrn7lotsNBFDK6AU3amrmaZbKDl94r21Apix3o4wGyLqN6pSBHc KQ== 
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3g1s6y84sm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 May 2022 14:41:02 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 24DEcQH8032330;
-        Fri, 13 May 2022 14:41:02 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02dal.us.ibm.com with ESMTP id 3fwgdb5gq2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 13 May 2022 14:41:01 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 24DEf0Co26935596
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 13 May 2022 14:41:01 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E506DAE063;
-        Fri, 13 May 2022 14:41:00 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C0F83AE062;
-        Fri, 13 May 2022 14:41:00 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 13 May 2022 14:41:00 +0000 (GMT)
-Message-ID: <e51529e8-9af2-edf7-9e13-b2b1ab383bc9@linux.ibm.com>
-Date:   Fri, 13 May 2022 10:41:00 -0400
+        Fri, 13 May 2022 10:57:54 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C26B17054
+        for <linux-integrity@vger.kernel.org>; Fri, 13 May 2022 07:57:54 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1npWjS-0002Ml-Bx; Fri, 13 May 2022 16:57:30 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1npWjR-0026H6-Ln; Fri, 13 May 2022 16:57:28 +0200
+Received: from afa by dude04.red.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <afa@pengutronix.de>)
+        id 1npWjP-008jCu-3j; Fri, 13 May 2022 16:57:27 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Pankaj Gupta <pankaj.gupta@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     kernel@pengutronix.de, Michael Walle <michael@walle.cc>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        John Ernberg <john.ernberg@actia.se>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v10 3/7] crypto: caam - determine whether CAAM supports blob encap/decap
+Date:   Fri, 13 May 2022 16:57:01 +0200
+Message-Id: <20220513145705.2080323-4-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
+References: <20220513145705.2080323-1-a.fatoum@pengutronix.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH v2 ima-evm-utils 3/3] Verify an fs-verity file digest
- based signature
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@kernel.org>
-References: <20220512183056.307597-1-zohar@linux.ibm.com>
- <20220512183056.307597-3-zohar@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220512183056.307597-3-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: W_HWzuVckSN_u07cDbQlbFQgbWv56Wi_
-X-Proofpoint-GUID: W_HWzuVckSN_u07cDbQlbFQgbWv56Wi_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-13_04,2022-05-13_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 spamscore=0 mlxscore=0
- lowpriorityscore=0 adultscore=0 clxscore=1015 impostorscore=0
- mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2202240000 definitions=main-2205130064
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Depending on SoC variant, a CAAM may be available, but with some futures
+fused out. The LS1028A (non-E) SoC is one such SoC and while it
+indicates BLOB support, BLOB operations will ultimately fail, because
+there is no AES support. Add a new blob_present member to reflect
+whether both BLOB support and the AES support it depends on is
+available.
 
+These will be used in a follow-up commit to allow blob driver
+initialization to error out on SoCs without the necessary hardware
+support instead of failing at runtime with a cryptic
 
-On 5/12/22 14:30, Mimi Zohar wrote:
-> ima-evm-utils does not attempt to calculate or even read the fs-verity
-> file hash, but can verify the fs-verity signature based on the fsverity
-> file hash, both contained in the measurement list record.
-> 
-> For the time being only fs-verity supports signature format v3 (sigv3).
-> To differentiate between the existing IMA and fs-verity file signatures,
-> modify the verify_hash() 'sig' argument to be a pointer to the entire
-> xattr, including the xattr type.
-> 
-> Example:
-> evmctl ima_measurement --key <DER encoded public key> \
->   --verify-sig /sys/kernel/security/ima/binary_runtime_measurements
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->   src/evmctl.c    | 11 +++++++++--
->   src/libimaevm.c | 50 +++++++++++++++++++++++++++++++++++++------------
->   2 files changed, 47 insertions(+), 14 deletions(-)
-> 
-> diff --git a/src/evmctl.c b/src/evmctl.c
-> index 9152b0a5c7c2..593eed80f96a 100644
-> --- a/src/evmctl.c
-> +++ b/src/evmctl.c
-> @@ -909,7 +909,7 @@ static int verify_evm(const char *file)
->   		return mdlen;
->   	assert(mdlen <= sizeof(hash));
->   
-> -	return verify_hash(file, hash, mdlen, sig + 1, len - 1);
-> +	return verify_hash(file, hash, mdlen, sig, len);
->   }
->   
->   static int cmd_verify_evm(struct command *cmd)
-> @@ -1572,7 +1572,8 @@ void ima_ng_show(struct template_entry *entry)
->   	fieldp += field_len;
->   	total_len -= field_len;
->   
-> -	if (!strcmp(entry->name, "ima-sig")) {
-> +	if (!strcmp(entry->name, "ima-sig") ||
-> +	    !strcmp(entry->name, "ima-sigv2")) {
->   		/* get signature */
->   		field_len = *(uint32_t *)fieldp;
->   		fieldp += sizeof(field_len);
-> @@ -1618,11 +1619,17 @@ void ima_ng_show(struct template_entry *entry)
->   			log_info(" ");
->   			log_dump(sig, sig_len);
->   		}
-> +
-> +		/*
-> +		 * Either verify the signature against the hash contained in
-> +		 * the measurement list or calculate the hash.
-> +		 */
->   		if (verify_list_sig)
->   			err = ima_verify_signature(path, sig, sig_len,
->   						   digest, digest_len);
->   		else
->   			err = ima_verify_signature(path, sig, sig_len, NULL, 0);
-> +
->   		if (!err && imaevm_params.verbose > LOG_INFO)
->   			log_info("%s: verification is OK\n", path);
->   	} else {
-> diff --git a/src/libimaevm.c b/src/libimaevm.c
-> index 7c2ed5fb0556..8a37551132d6 100644
-> --- a/src/libimaevm.c
-> +++ b/src/libimaevm.c
-> @@ -534,11 +534,21 @@ int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo,
->   		return -EINVAL;
->   	}
->   
-> -	if ((hash_algo = imaevm_get_hash_algo(algo)) < 0) {
-> -		log_err("Hash algorithm %s not supported\n", algo);
-> -		return -EINVAL;
-> +	/*
-> +	 * Calculating the hash is based on the fsverity hash algorithm,
-> +	 * while verifying the signature is based on the hash algorithm
-> +	 * contained in the signature header.
-> +	 */
-> +	if (algo) {
-> +		if ((hash_algo = imaevm_get_hash_algo(algo)) < 0) {
-> +			log_err("Hash algorithm %s not supported\n", algo);
-> +			return -EINVAL;
-> +		}
-> +		file_id.hash_algorithm = hash_algo;
-> +	} else {
-> +		algo = imaevm_params.hash_algo;
-> +		file_id.hash_algorithm = imaevm_get_hash_algo(algo);
+  caam_jr 8020000.jr: 20000b0f: CCB: desc idx 11: : Invalid CHA selected.
 
-You should probably compare this also against '< 0' as it was before. If 
-you do it outside the if-else the two cases can share this:
+Co-developed-by: Michael Walle <michael@walle.cc>
+Signed-off-by: Michael Walle <michael@walle.cc>
+Tested-by: Michael Walle <michael@walle.cc> # on ls1028a (non-E and E)
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+v9 -> v10:
+  - added Michael's Tested-by
+  - Check for AES support on CAAM era < 10, as LS1046A/LSA1012A have
+    such CAAMs, which can be partially disabled.
+v8 -> v9:
+  - New patch
 
-	if (!algo)
-		algo = imaevm_params.hash_algo;
+To: "Horia Geantă" <horia.geanta@nxp.com>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: James Bottomley <jejb@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: Michael Walle <michael@walle.cc>
+Cc: John Ernberg <john.ernberg@actia.se>
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+---
+ drivers/crypto/caam/ctrl.c   | 17 +++++++++++++++--
+ drivers/crypto/caam/intern.h |  1 +
+ drivers/crypto/caam/regs.h   |  4 +++-
+ 3 files changed, 19 insertions(+), 3 deletions(-)
 
-	if ((hash_algo = imaevm_get_hash_algo(algo)) < 0) {
-		log_err("Hash algorithm %s not supported\n", algo);
-		return -EINVAL;
-	}
-	file_id.hash_algorithm = hash_algo;
-
+diff --git a/drivers/crypto/caam/ctrl.c b/drivers/crypto/caam/ctrl.c
+index ca0361b2dbb0..38c4d88a9d03 100644
+--- a/drivers/crypto/caam/ctrl.c
++++ b/drivers/crypto/caam/ctrl.c
+@@ -820,12 +820,25 @@ static int caam_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (ctrlpriv->era < 10)
++	comp_params = rd_reg32(&ctrl->perfmon.comp_parms_ls);
++	ctrlpriv->blob_present = !!(comp_params & CTPR_LS_BLOB);
++
++	/*
++	 * Some SoCs like the LS1028A (non-E) indicate CTPR_LS_BLOB support,
++	 * but fail when actually using it due to missing AES support, so
++	 * check both here.
++	 */
++	if (ctrlpriv->era < 10) {
+ 		rng_vid = (rd_reg32(&ctrl->perfmon.cha_id_ls) &
+ 			   CHA_ID_LS_RNG_MASK) >> CHA_ID_LS_RNG_SHIFT;
+-	else
++		ctrlpriv->blob_present = ctrlpriv->blob_present &&
++			(rd_reg32(&ctrl->perfmon.cha_num_ls) & CHA_ID_LS_AES_MASK);
++	} else {
+ 		rng_vid = (rd_reg32(&ctrl->vreg.rng) & CHA_VER_VID_MASK) >>
+ 			   CHA_VER_VID_SHIFT;
++		ctrlpriv->blob_present = ctrlpriv->blob_present &&
++			(rd_reg32(&ctrl->vreg.aesa) & CHA_VER_MISC_AES_NUM_MASK);
++	}
+ 
+ 	/*
+ 	 * If SEC has RNG version >= 4 and RNG state handle has not been
+diff --git a/drivers/crypto/caam/intern.h b/drivers/crypto/caam/intern.h
+index 7d45b21bd55a..e92210e2ab76 100644
+--- a/drivers/crypto/caam/intern.h
++++ b/drivers/crypto/caam/intern.h
+@@ -92,6 +92,7 @@ struct caam_drv_private {
+ 	 */
+ 	u8 total_jobrs;		/* Total Job Rings in device */
+ 	u8 qi_present;		/* Nonzero if QI present in device */
++	u8 blob_present;	/* Nonzero if BLOB support present in device */
+ 	u8 mc_en;		/* Nonzero if MC f/w is active */
+ 	int secvio_irq;		/* Security violation interrupt number */
+ 	int virt_en;		/* Virtualization enabled in CAAM */
+diff --git a/drivers/crypto/caam/regs.h b/drivers/crypto/caam/regs.h
+index 3738625c0250..66d6dad841bb 100644
+--- a/drivers/crypto/caam/regs.h
++++ b/drivers/crypto/caam/regs.h
+@@ -320,7 +320,8 @@ struct version_regs {
+ #define CHA_VER_VID_MASK	(0xffull << CHA_VER_VID_SHIFT)
+ 
+ /* CHA Miscellaneous Information - AESA_MISC specific */
+-#define CHA_VER_MISC_AES_GCM	BIT(1 + CHA_VER_MISC_SHIFT)
++#define CHA_VER_MISC_AES_NUM_MASK	GENMASK(7, 0)
++#define CHA_VER_MISC_AES_GCM		BIT(1 + CHA_VER_MISC_SHIFT)
+ 
+ /* CHA Miscellaneous Information - PKHA_MISC specific */
+ #define CHA_VER_MISC_PKHA_NO_CRYPT	BIT(7 + CHA_VER_MISC_SHIFT)
+@@ -414,6 +415,7 @@ struct caam_perfmon {
+ #define CTPR_MS_PG_SZ_MASK	0x10
+ #define CTPR_MS_PG_SZ_SHIFT	4
+ 	u32 comp_parms_ms;	/* CTPR - Compile Parameters Register	*/
++#define CTPR_LS_BLOB           BIT(1)
+ 	u32 comp_parms_ls;	/* CTPR - Compile Parameters Register	*/
+ 	u64 rsvd1[2];
+ 
+-- 
+2.30.2
 
