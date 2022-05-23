@@ -2,51 +2,51 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7774C433EF
-	for <linux-integrity@archiver.kernel.org>; Mon, 23 May 2022 16:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7A9C433F5
+	for <linux-integrity@archiver.kernel.org>; Mon, 23 May 2022 16:18:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238619AbiEWQK2 (ORCPT
+        id S238686AbiEWQSc (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 23 May 2022 12:10:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45358 "EHLO
+        Mon, 23 May 2022 12:18:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238554AbiEWQK1 (ORCPT
+        with ESMTP id S238721AbiEWQSV (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 23 May 2022 12:10:27 -0400
-Received: from smtp2.infineon.com (smtp2.infineon.com [IPv6:2a00:18f0:1e00:4::4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C7AF6473C;
-        Mon, 23 May 2022 09:10:24 -0700 (PDT)
+        Mon, 23 May 2022 12:18:21 -0400
+Received: from smtp11.infineon.com (smtp11.infineon.com [IPv6:2a00:18f0:1e00:4::5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B32CC674F5;
+        Mon, 23 May 2022 09:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
-  t=1653322225; x=1684858225;
+  t=1653322697; x=1684858697;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=Ys+ww2y4QlKOYHGmCP1IrTb7mc9uzAUXfcxwMWEz4q4=;
-  b=Id9j+l8tN/7MCJXParHy8Ze0srdyBtTdQaqJmIER9X0URu0wxzU3y7el
-   RJf3clcr8XlYndr05CUEWSp0ZNFBHPq7nnrAyw8Hz0FPyjUiXJHIYj9fa
-   QkYtSm9FUG2zq8Geyd3qbuwzHI2fQKosO9vaNncbjFr+USyy/vd6Ux1YY
-   Y=;
+  bh=z8t769RTJ1v6wThwJD40WUm25oo8h2mVf0BG5uNRaCc=;
+  b=QsUaaVCYZ67dYpIAxoxr1Erzw784RBvGVRLnW0moaMNe/aWmzlgL7v1c
+   4nincVzD0wFO/OK6k4/Bh9KpDOmScsyNdHTQSK5flPgVFbYeDSQcQuP+Q
+   LGrx4/ZUiPPbdZ6duVIec/tFPtPLXEy+1tphYY4CYTG2xz/yLD51n+iJc
+   Q=;
 X-SBRS: None
-X-IronPort-AV: E=McAfee;i="6400,9594,10356"; a="180193235"
+X-IronPort-AV: E=McAfee;i="6400,9594,10356"; a="297362362"
 X-IronPort-AV: E=Sophos;i="5.91,246,1647298800"; 
-   d="scan'208";a="180193235"
-Received: from unknown (HELO mucxv002.muc.infineon.com) ([172.23.11.17])
-  by smtp2.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2022 18:10:22 +0200
-Received: from MUCSE814.infineon.com (MUCSE814.infineon.com [172.23.29.40])
+   d="scan'208";a="297362362"
+Received: from unknown (HELO mucxv003.muc.infineon.com) ([172.23.11.20])
+  by smtp11.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 May 2022 18:18:15 +0200
+Received: from MUCSE819.infineon.com (MUCSE819.infineon.com [172.23.29.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mucxv002.muc.infineon.com (Postfix) with ESMTPS;
-        Mon, 23 May 2022 18:10:22 +0200 (CEST)
-Received: from MUCSE817.infineon.com (172.23.29.43) by MUCSE814.infineon.com
- (172.23.29.40) with Microsoft SMTP Server (version=TLS1_2,
+        by mucxv003.muc.infineon.com (Postfix) with ESMTPS;
+        Mon, 23 May 2022 18:18:14 +0200 (CEST)
+Received: from MUCSE817.infineon.com (172.23.29.43) by MUCSE819.infineon.com
+ (172.23.29.45) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 23 May
- 2022 18:10:22 +0200
-Received: from [10.165.68.85] (172.23.8.247) by MUCSE817.infineon.com
+ 2022 18:18:14 +0200
+Received: from [10.165.68.85] (10.165.68.85) by MUCSE817.infineon.com
  (172.23.29.43) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 23 May
- 2022 18:10:21 +0200
-Message-ID: <9e509abb-b33a-1c33-c62e-7f9e799546b1@infineon.com>
-Date:   Mon, 23 May 2022 18:10:03 +0200
+ 2022 18:18:14 +0200
+Message-ID: <cbebf61b-71ab-b37d-c516-57a9155e1a94@infineon.com>
+Date:   Mon, 23 May 2022 18:18:02 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.1
@@ -69,8 +69,8 @@ From:   Alexander Steffen <Alexander.Steffen@infineon.com>
 In-Reply-To: <9d9e04e9-463a-bd43-b116-a9488f6e154e@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.23.8.247]
-X-ClientProxiedBy: MUCSE823.infineon.com (172.23.29.54) To
+X-Originating-IP: [10.165.68.85]
+X-ClientProxiedBy: MUCSE807.infineon.com (172.23.29.33) To
  MUCSE817.infineon.com (172.23.29.43)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -120,7 +120,7 @@ On 23.05.22 11:44, Krzysztof Kozlowski wrote:
 >>> So would you be okay with just adding the compatibles from tpm_tis_i2c.c
 >>> to trivial-devices.yaml, so that checkpatch does not complain anymore,
 >>> and leave the cleanup of the mess above for later?
-> 
+>>
 > To trivial-devices you should add only bindings of really trivial
 > devices, which do not have any other properties, even when the bindings
 > are finished. This means you describe fully the hardware and still have
