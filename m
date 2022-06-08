@@ -2,31 +2,31 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB03BCCA49C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5E5CCA486
 	for <linux-integrity@archiver.kernel.org>; Wed,  8 Jun 2022 19:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234832AbiFHTCN (ORCPT
+        id S234817AbiFHTCM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 8 Jun 2022 15:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        Wed, 8 Jun 2022 15:02:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234435AbiFHTBt (ORCPT
+        with ESMTP id S234542AbiFHTBv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 8 Jun 2022 15:01:49 -0400
+        Wed, 8 Jun 2022 15:01:51 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C186C3BBCD;
-        Wed,  8 Jun 2022 12:01:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E145527CC8;
+        Wed,  8 Jun 2022 12:01:47 -0700 (PDT)
 Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 15F0E20BE67A;
+        by linux.microsoft.com (Postfix) with ESMTPSA id 8498220BE680;
         Wed,  8 Jun 2022 12:01:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 15F0E20BE67A
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8498220BE680
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1654714905;
-        bh=oeE34hsi22VsTSnTBMX6qjlgjST1eR6y3tPGNEqqWQI=;
+        bh=s8Qi5v7a9dEsjwgM9arAyv56ehrckJ/twHvRNNAJ8wQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HNsXqHwbMwOALbJFvt/MLvJHIWrtaMJyB0gqqAZbQM8HiYhan3RMmL/iaUTzdW2Cv
-         FVL9P6f/64BBCLyNW/gJpb1ipngMkIjmJWxBrMPQei3/NbiLNnVQgAWv42nD+TiDdx
-         25L5e4lKRVltBXOuOMb4povlXNLuyl0QxSvZW4Lg=
+        b=EoU9sbRHvb6P6n2Eoaqx+0eU4yOBWjRJtOPBpK9MQDw7mC55gY5bmHRe1AsMK7U+q
+         B+8lEt6b2fb+FqD75Y15dd6BRNuWDt00V5YcoNAfyY+/hHwum0vgZMuIcrYrk9x5mx
+         gMa5MsxhkIFLLgVk+OVtW1GAjNIf0Hv31KswI7lE=
 From:   Deven Bowers <deven.desai@linux.microsoft.com>
 To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
         serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
@@ -37,9 +37,9 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
         dm-devel@redhat.com, linux-audit@redhat.com,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v8 12/17] ipe: add support for dm-verity as a trust provider
-Date:   Wed,  8 Jun 2022 12:01:24 -0700
-Message-Id: <1654714889-26728-13-git-send-email-deven.desai@linux.microsoft.com>
+Subject: [RFC PATCH v8 16/17] ipe: kunit tests
+Date:   Wed,  8 Jun 2022 12:01:28 -0700
+Message-Id: <1654714889-26728-17-git-send-email-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
 References: <1654714889-26728-1-git-send-email-deven.desai@linux.microsoft.com>
@@ -47,538 +47,1126 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Allows author of IPE policy to indicate trust for a singular dm-verity
-volume, identified by roothash, through "dmverity_roothash" and all
-signed dm-verity volumes, through "dmverity_signature".
+Add various happy/unhappy unit tests for both IPE's parser
+and evaluation loop, testing the core of IPE. The missing
+test gap remains the interface with userspace.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+
 ---
-v2:
-  + No Changes
-
-v3:
-  + No changes
-
-v4:
-  + No changes
-
-v5:
-  + No changes
-
-v6:
-  + Fix an improper cleanup that can result in
-    a leak
+v1-v6:
+  + Not present
 
 v7:
-  + Squash patch 08/12, 10/12 to [11/16]
+  Introduced
 
 v8:
-  + Undo squash of 08/12, 10/12 - separating drivers/md/ from security/ & block/
-  + Use common-audit function for dmverity_signature.
-  + Change implementation for storing the dm-verity digest to use the
-    newly introduced dm_verity_digest structure introduced in patch
-    14/20.
+  + Remove the kunit tests with respect to the fsverity digest, as these
+    require significant changes to work with the new method of acquiring
+    the digest at runtime.
 ---
- security/ipe/eval.c                       |   5 +
- security/ipe/eval.h                       |  11 ++
- security/ipe/hooks.c                      |  51 +++++++++
- security/ipe/hooks.h                      |   6 +
- security/ipe/ipe.c                        |   9 ++
- security/ipe/ipe.h                        |   3 +
- security/ipe/modules.c                    | 133 ++++++++++++++++++++++
- security/ipe/modules/Kconfig              |  23 ++++
- security/ipe/modules/Makefile             |   2 +
- security/ipe/modules/dmverity_roothash.c  |  31 +++++
- security/ipe/modules/dmverity_signature.c |  26 +++++
- security/ipe/modules/ipe_module.h         |   5 +
- 12 files changed, 305 insertions(+)
- create mode 100644 security/ipe/modules/dmverity_roothash.c
- create mode 100644 security/ipe/modules/dmverity_signature.c
+ security/ipe/Kconfig               |  17 +
+ security/ipe/Makefile              |   3 +
+ security/ipe/ctx_test.c            | 718 +++++++++++++++++++++++++++++
+ security/ipe/eval.c                |   4 +
+ security/ipe/policy_parser_tests.c | 313 +++++++++++++
+ 5 files changed, 1055 insertions(+)
+ create mode 100644 security/ipe/ctx_test.c
+ create mode 100644 security/ipe/policy_parser_tests.c
 
-diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-index ccf9b843040b..9b29d83cd466 100644
---- a/security/ipe/eval.c
-+++ b/security/ipe/eval.c
-@@ -23,6 +23,7 @@ static struct super_block *pinned_sb;
- static DEFINE_SPINLOCK(pin_lock);
+diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
+index 619bf179af43..8746022f147b 100644
+--- a/security/ipe/Kconfig
++++ b/security/ipe/Kconfig
+@@ -81,4 +81,21 @@ config IPE_AUDIT_HASH_ALG
  
- #define FILE_SUPERBLOCK(f) ((f)->f_path.mnt->mnt_sb)
-+#define FILE_BLOCK_DEV(f) (FILE_SUPERBLOCK(f)->s_bdev)
+ source "security/ipe/modules/Kconfig"
  
- /**
-  * pin_sb: pin the underlying superblock of @f, marking it as trusted
-@@ -93,6 +94,10 @@ static struct ipe_eval_ctx *build_ctx(const struct file *file,
- 	ctx->op = op;
- 	ctx->ci_ctx = ipe_current_ctx();
- 	ctx->from_init_sb = from_pinned(file);
-+	if (file) {
-+		if (FILE_BLOCK_DEV(file))
-+			ctx->ipe_bdev = ipe_bdev(FILE_BLOCK_DEV(file));
-+	}
- 
- 	return ctx;
- }
-diff --git a/security/ipe/eval.h b/security/ipe/eval.h
-index f195671eaa8f..57b7b2b424f8 100644
---- a/security/ipe/eval.h
-+++ b/security/ipe/eval.h
-@@ -8,17 +8,28 @@
- 
- #include <linux/file.h>
- #include <linux/types.h>
-+#include <crypto/hash_info.h>
- 
- #include "ctx.h"
- #include "hooks.h"
- #include "policy.h"
- 
-+struct ipe_bdev {
-+	bool dm_verity_signed;
++config SECURITY_IPE_KUNIT_TEST
++	bool "Build KUnit tests for IPE" if !KUNIT_ALL_TESTS
++	depends on KUNIT=y
++	default KUNIT_ALL_TESTS
++	help
++	  This builds the IPE KUnit tests.
 +
-+	const u8       *digest;
-+	size_t		digest_len;
-+	const char     *digest_algo;
++	  KUnit tests run during boot and output the results to the debug log
++	  in TAP format (https://testanything.org/). Only useful for kernel devs
++	  running KUnit test harness and are not for inclusion into a
++	  production build.
++
++	  For more information on KUnit and unit tests in general please refer
++	  to the KUnit documentation in Documentation/dev-tools/kunit/.
++
++	  If unsure, say N.
++
+ endif
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index 1a1f7484caee..c91672a05d5f 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -31,4 +31,7 @@ obj-$(CONFIG_SECURITY_IPE) += \
+ 
+ obj-$(CONFIG_IPE_AUDIT) += audit.o
+ 
++obj-$(CONFIG_SECURITY_IPE_KUNIT_TEST) += \
++	policy_parser_tests.o \
++
+ clean-files := boot-policy.c \
+diff --git a/security/ipe/ctx_test.c b/security/ipe/ctx_test.c
+new file mode 100644
+index 000000000000..1bbf5d5320e0
+--- /dev/null
++++ b/security/ipe/ctx_test.c
+@@ -0,0 +1,718 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++#include <kunit/test.h>
++#include <linux/workqueue.h>
++#include <linux/types.h>
++#include <linux/list.h>
++#include "ctx.h"
++#include "policy.h"
++#include "hooks.h"
++
++struct eval_case {
++	const char *const desc;
++	const char *const policy;
++	int		  errno;
++
++	const struct file *fake_file;
++	const struct ipe_bdev *bdev_sec;
++	const struct ipe_inode *inode_sec;
++	bool initsb;
 +};
 +
- struct ipe_eval_ctx {
- 	enum ipe_operation op;
- 
- 	const struct file *file;
- 	struct ipe_context *ci_ctx;
- 
-+	const struct ipe_bdev *ipe_bdev;
++static const u8 fake_digest[] = { 0xDE, 0xAD, 0xBE, 0xEF };
 +
- 	bool from_init_sb;
- };
- 
-diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-index 4dc7b0c0fd31..1072ee5bb8f6 100644
---- a/security/ipe/hooks.c
-+++ b/security/ipe/hooks.c
-@@ -13,8 +13,11 @@
- #include <linux/types.h>
- #include <linux/refcount.h>
- #include <linux/rcupdate.h>
-+#include <linux/blk_types.h>
- #include <linux/binfmts.h>
- #include <linux/mman.h>
-+#include <linux/dm-verity.h>
-+#include <crypto/hash_info.h>
- 
- /**
-  * ipe_task_alloc: Assign a new context for an associated task structure.
-@@ -216,3 +219,51 @@ void ipe_sb_free_security(struct super_block *mnt_sb)
- {
- 	ipe_invalidate_pinned_sb(mnt_sb);
- }
-+
-+/**
-+ * ipe_bdev_free_security: free nested structures within IPE's LSM blob
-+ *			   in block_devices
-+ * @bdev: Supplies a pointer to a block_device that contains the structure
-+ *	  to free.
-+ */
-+void ipe_bdev_free_security(struct block_device *bdev)
-+{
-+	struct ipe_bdev *blob = ipe_bdev(bdev);
-+
-+	kfree(blob->digest);
-+	kfree(blob->digest_algo);
-+}
-+
-+/**
-+ * ipe_bdev_setsecurity: associate some data from the block device layer
-+ *			 with IPE's LSM blob.
-+ * @bdev: Supplies a pointer to a block_device that contains the LSM blob.
-+ * @key: Supplies the string key that uniquely identifies the value.
-+ * @value: Supplies the value to store.
-+ * @len: The length of @value.
-+ */
-+int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
-+			 const void *value, size_t len)
-+{
-+	struct ipe_bdev *blob = ipe_bdev(bdev);
-+
-+	if (!strcmp(key, DM_VERITY_ROOTHASH_SEC_NAME)) {
-+		const struct dm_verity_digest *digest = value;
-+
-+		blob->digest = kmemdup(digest->digest, digest->digest_len, GFP_KERNEL);
-+		if (!blob->digest)
-+			return -ENOMEM;
-+
-+		blob->digest_algo = kstrdup_const(digest->algo, GFP_KERNEL);
-+		if (!blob->digest_algo)
-+			return -ENOMEM;
-+
-+		blob->digest_len = digest->digest_len;
-+		return 0;
-+	} else if (!strcmp(key, DM_VERITY_SIGNATURE_SEC_NAME)) {
-+		blob->dm_verity_signed = true;
-+		return 0;
-+	}
-+
-+	return -EOPNOTSUPP;
-+}
-diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-index 43d5b2fe67fd..0d1589e47f8f 100644
---- a/security/ipe/hooks.h
-+++ b/security/ipe/hooks.h
-@@ -10,6 +10,7 @@
- #include <linux/sched.h>
- #include <linux/binfmts.h>
- #include <linux/security.h>
-+#include <linux/device-mapper.h>
- 
- int ipe_task_alloc(struct task_struct *task,
- 		   unsigned long clone_flags);
-@@ -31,4 +32,9 @@ int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents);
- 
- void ipe_sb_free_security(struct super_block *mnt_sb);
- 
-+void ipe_bdev_free_security(struct block_device *bdev);
-+
-+int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
-+			 const void *value, size_t len);
-+
- #endif /* IPE_HOOKS_H */
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index d52ad248dfd3..398014ac6004 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -9,6 +9,7 @@
- #include "ipe_parser.h"
- #include "modules/ipe_module.h"
- #include "modules.h"
-+#include "eval.h"
- 
- #include <linux/fs.h>
- #include <linux/sched.h>
-@@ -22,8 +23,14 @@ bool ipe_enabled;
- 
- static struct lsm_blob_sizes ipe_blobs __lsm_ro_after_init = {
- 	.lbs_task = sizeof(struct ipe_context __rcu *),
-+	.lbs_bdev = sizeof(struct ipe_bdev),
- };
- 
-+struct ipe_bdev *ipe_bdev(struct block_device *b)
-+{
-+	return b->security + ipe_blobs.lbs_bdev;
-+}
-+
- static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(task_alloc, ipe_task_alloc),
- 	LSM_HOOK_INIT(task_free, ipe_task_free),
-@@ -33,6 +40,8 @@ static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
- 	LSM_HOOK_INIT(kernel_load_data, ipe_kernel_load_data),
- 	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
-+	LSM_HOOK_INIT(bdev_free_security, ipe_bdev_free_security),
-+	LSM_HOOK_INIT(bdev_setsecurity, ipe_bdev_setsecurity),
- };
- 
- /**
-diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-index de0629bd7061..df2b56d8b5e9 100644
---- a/security/ipe/ipe.h
-+++ b/security/ipe/ipe.h
-@@ -14,6 +14,7 @@
- 
- #include <linux/types.h>
- #include <linux/sched.h>
-+#include <linux/blk_types.h>
- #include <linux/lsm_hooks.h>
- 
- extern bool ipe_enabled;
-@@ -21,4 +22,6 @@ extern bool ipe_enabled;
- extern struct ipe_parser __start_ipe_parsers[], __end_ipe_parsers[];
- extern struct ipe_module __start_ipe_modules[], __end_ipe_modules[];
- 
-+struct ipe_bdev *ipe_bdev(struct block_device *b);
-+
- #endif /* IPE_H */
-diff --git a/security/ipe/modules.c b/security/ipe/modules.c
-index 30346f7ad35c..673752a58505 100644
---- a/security/ipe/modules.c
-+++ b/security/ipe/modules.c
-@@ -9,6 +9,7 @@
- #include <linux/slab.h>
- #include <linux/types.h>
- #include <linux/rbtree.h>
-+#include <crypto/hash_info.h>
- 
- static struct rb_root module_root = RB_ROOT;
- 
-@@ -108,6 +109,12 @@ int ipe_register_module(struct ipe_module *m)
- 	return 0;
- }
- 
-+struct digest_info {
-+	const char     *alg;
-+	const u8       *digest;
-+	size_t		digest_len;
++static const struct ipe_bdev fake_bdev_no_data = {};
++static const struct ipe_bdev fake_bdev_no_sig = {
++	.digest = fake_digest,
++	.digest_len = ARRAY_SIZE(fake_digest),
++	.digest_algo = "test",
 +};
 +
- /**
-  * ipe_bool_parse: parse a boolean in IPE's policy and associate
-  *		   it as @value in IPE's policy.
-@@ -137,3 +144,129 @@ void ipe_bool_audit(struct audit_buffer *ab, const void *val)
- {
- 	audit_log_format(ab, "%s", ((bool)val) ? "TRUE" : "FALSE");
- }
++static const struct ipe_bdev fake_bdev_signed = {
++	.dm_verity_signed = true,
++	.digest = fake_digest,
++	.digest_len = ARRAY_SIZE(fake_digest),
++	.digest_algo = "test",
++};
 +
-+/**
-+ * ipe_digest_parse: parse a digest in IPE's policy and associate
-+ *		     it as @value in IPE's policy.
-+ * @valstr: Supplies the string parsed from the policy
-+ * @value: Supplies a pointer to be populated with the result.
-+ *
-+ * Digests in IPE are defined in a standard way:
-+ *	<alg_name>:<hex>
-+ *
-+ * Use this function to create a property to parse the digest
-+ * consistently.
-+ *
-+ * Return:
-+ * 0 - OK
-+ * !0 - Error
-+ */
-+int ipe_digest_parse(const char *valstr, void **value)
++static const struct ipe_inode fake_ino_no_data = {};
++static const struct ipe_inode fake_ino_signed = {
++	.fs_verity_signed = true,
++};
++
++static struct inode fake_inode = {
++	.i_flags = S_VERITY
++};
++
++static const struct file fake_verity = {
++	.f_inode = &fake_inode,
++};
++
++static const struct eval_case cases[] = {
++	{
++		"boot_verified_trust_no_source",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE boot_verified=TRUE action=ALLOW\n"
++		"op=KERNEL_READ boot_verified=TRUE action=ALLOW\n",
++		-EACCES, NULL, NULL, NULL, false
++	},
++	{
++		"boot_verified_distrust",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE boot_verified=FALSE action=ALLOW\n"
++		"op=KERNEL_READ boot_verified=FALSE action=ALLOW\n",
++		0, NULL, NULL, NULL, false
++	},
++	{
++		"boot_verified_trust",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE boot_verified=TRUE action=ALLOW\n"
++		"op=KERNEL_READ boot_verified=TRUE action=ALLOW\n",
++		0, NULL, NULL, NULL, true
++	},
++	{
++		"boot_verified_trust",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE boot_verified=FALSE action=ALLOW\n"
++		"op=KERNEL_READ boot_verified=FALSE action=ALLOW\n",
++		-EACCES, NULL, NULL, NULL, true
++	},
++	{
++		"dmverity_signature_trust_no_bdev",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_signature=FALSE action=ALLOW\n"
++		"op=KERNEL_READ dmverity_signature=FALSE action=ALLOW\n",
++		0, NULL, NULL, NULL, true
++	},
++	{
++		"dmverity_signature_distrust_no_bdev",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_signature=TRUE action=ALLOW\n"
++		"op=KERNEL_READ dmverity_signature=TRUE action=ALLOW\n",
++		-EACCES, NULL, NULL, NULL, false
++	},
++	{
++		"dmverity_signature_distrust_sigdata",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_signature=FALSE action=ALLOW\n"
++		"op=KERNEL_READ dmverity_signature=FALSE action=ALLOW\n",
++		-EACCES, NULL, &fake_bdev_signed, &fake_ino_no_data, false
++	},
++	{
++		"dmverity_signature_trust_sigdata",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_signature=TRUE action=ALLOW\n"
++		"op=KERNEL_READ dmverity_signature=TRUE action=ALLOW\n",
++		0, NULL, &fake_bdev_signed, &fake_ino_no_data, true
++	},
++	{
++		"dmverity_roothash_trust_no_bdev",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_roothash=test:DEADBEEF action=ALLOW\n"
++		"op=KERNEL_READ dmverity_roothash=test:DEADBEEF action=ALLOW\n",
++		-EACCES, NULL, NULL, NULL, true
++	},
++	{
++		"dmverity_roothash_distrust_no_bdev",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_roothash=test:deadbeef action=DENY\n"
++		"op=KERNEL_READ dmverity_roothash=test:deadbeef action=DENY\n",
++		0, NULL, NULL, NULL, false
++	},
++	{
++		"dmverity_roothash_trust_hash",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_roothash=test:DEADBEEF action=ALLOW\n"
++		"op=KERNEL_READ dmverity_roothash=test:DEADBEEF action=ALLOW\n",
++		0, NULL, &fake_bdev_no_sig, &fake_ino_no_data, false
++	},
++	{
++		"dmverity_roothash_distrust_hash",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_roothash=test:DEADBEEF action=DENY\n"
++		"op=KERNEL_READ dmverity_roothash=test:DEADBEEF action=DENY\n",
++		-EACCES, NULL, &fake_bdev_no_sig, &fake_ino_no_data, false
++	},
++	{
++		"dmverity_signature_revoke_hash",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE dmverity_roothash=test:DEADBEEF action=DENY\n"
++		"op=EXECUTE dmverity_signature=TRUE action=ALLOW\n"
++		"op=KERNEL_READ dmverity_roothash=test:DEADBEEF action=DENY\n"
++		"op=KERNEL_READ dmverity_signature=TRUE action=ALLOW\n",
++		-EACCES, NULL, &fake_bdev_signed, &fake_ino_no_data, false
++	},
++	{
++		"fsverity_signature_trust_sigdata",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE fsverity_signature=TRUE action=ALLOW\n"
++		"op=KERNEL_READ fsverity_signature=TRUE action=ALLOW\n",
++		0, &fake_verity, &fake_bdev_no_data, &fake_ino_signed, false
++	},
++	{
++		"fsverity_signature_distrust_sigdata",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE fsverity_signature=TRUE action=DENY\n"
++		"op=KERNEL_READ fsverity_signature=TRUE action=DENY\n",
++		-EACCES, &fake_verity, &fake_bdev_no_data, &fake_ino_signed, false
++	},
++	{
++		"fsverity_signature_trust_no_sigdata",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"op=EXECUTE fsverity_signature=FALSE action=ALLOW\n"
++		"op=KERNEL_READ fsverity_signature=FALSE action=ALLOW\n",
++		0, &fake_verity, &fake_bdev_signed, &fake_ino_no_data, true
++	},
++	{
++		"fsverity_signature_distrust_no_sigdata",
++		"policy_name='Test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE fsverity_signature=FALSE action=DENY\n"
++		"op=KERNEL_READ fsverity_signature=FALSE action=DENY\n",
++		-EACCES, &fake_verity, &fake_bdev_signed, &fake_ino_no_data, true
++	}
++};
++
++static void case_to_desc(const struct eval_case *c, char *desc)
 +{
-+	char *sep;
-+	int rc = 0;
-+	u8 *digest = NULL;
-+	struct digest_info *info;
-+
-+	info = kzalloc(sizeof(*info), GFP_KERNEL);
-+	if (!info) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
-+
-+	sep = strchr(valstr, ':');
-+	if (!sep) {
-+		rc = -EBADMSG;
-+		goto err;
-+	}
-+
-+	info->alg = kstrndup(valstr, sep - valstr, GFP_KERNEL);
-+	if (!info->alg) {
-+		rc = -ENOMEM;
-+		goto err;
-+	}
-+
-+	info->digest_len = strlen(sep) / 2;
-+	digest = kzalloc(info->digest_len, GFP_KERNEL);
-+	if (!digest) {
-+		rc = -ENOMEM;
-+		goto err_free_info;
-+	}
-+
-+	rc = hex2bin(digest, ++sep, info->digest_len);
-+	if (rc < 0) {
-+		rc = -EINVAL;
-+		goto err_free_info;
-+	}
-+
-+	info->digest = digest;
-+	*value = info;
-+	return 0;
-+
-+err_free_info:
-+	kfree(info->alg);
-+err:
-+	kfree(digest);
-+	kfree(info);
-+	return rc;
++	strncpy(desc, c->desc, KUNIT_PARAM_DESC_SIZE);
 +}
 +
-+/**
-+ * ipe_digest_audit: audit a digest that was sourced from IPE's
-+ *		     policy.
-+ * @ab: Supplies the audit_buffer to append the formatted result.
-+ * @val: Supplies a pointer to source the audit record from.
-+ *
-+ * Digests in IPE are defined in a standard way:
-+ *	<alg_name>:<hex>
-+ *
-+ * Use this function to create a property to audit the digest
-+ * consistently.
-+ *
-+ * Return:
-+ * 0 - OK
-+ * !0 - Error
-+ */
-+void ipe_digest_audit(struct audit_buffer *ab, const void *val)
-+{
-+	const struct digest_info *info = (struct digest_info *)val;
-+
-+	audit_log_format(ab, "%s:", info->alg);
-+	audit_log_n_hex(ab, info->digest, info->digest_len);
-+}
++KUNIT_ARRAY_PARAM(ipe_eval, cases, case_to_desc);
 +
 +/**
-+ * ipe_digest_eval: evaluate an IPE digest against another digest.
-+ * @expect: Supplies the policy-provided digest value.
-+ * @digest: Supplies the digest to compare against the policy digest value.
-+ * @digest_len: The length of @digest
-+ * @alg: Supplies the name of the algorithm used to calculated @digest.
-+ *
-+ * Return:
-+ * true - digests match
-+ * false - digests do not match
++ * fake_free_ctx: Fake function to deallocate a context structure.
 + */
-+bool ipe_digest_eval(const void *expect, const u8 *digest, size_t digest_len,
-+		     const char *alg)
++static void fake_free_ctx(struct ipe_context *ctx)
 +{
-+	const struct digest_info *info = (struct digest_info *)expect;
++	struct ipe_policy *p = NULL;
 +
-+	return (digest_len == info->digest_len) && !strcmp(alg, info->alg) &&
-+	       (!memcmp(info->digest, digest, info->digest_len));
-+}
-+
-+/**
-+ * ipe_digest_free: evaluate an IPE digest against another digest.
-+ * @value: Supplies a pointer the policy-provided digest value to free.
-+ */
-+void ipe_digest_free(void **value)
-+{
-+	struct digest_info *info = (struct digest_info *)(*value);
-+
-+	if (IS_ERR_OR_NULL(info))
++	if (!IS_ERR_OR_NULL(ctx) || !refcount_dec_and_test(&ctx->refcount))
 +		return;
 +
-+	kfree(info->alg);
-+	kfree(info->digest);
-+	kfree(info);
++	list_for_each_entry(p, &ctx->policies, next)
++		ipe_put_policy(p);
++
++	kfree(ctx);
 +}
-diff --git a/security/ipe/modules/Kconfig b/security/ipe/modules/Kconfig
-index fad96ba534e2..a6ea06cf0737 100644
---- a/security/ipe/modules/Kconfig
-+++ b/security/ipe/modules/Kconfig
-@@ -16,5 +16,28 @@ config IPE_PROP_BOOT_VERIFIED
- 
- 	  If unsure, answer N.
- 
-+config IPE_PROP_DM_VERITY_SIGNATURE
-+	bool "Enable support for signed dm-verity volumes"
-+	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
-+	default Y
-+	help
-+	  This option enables the property 'dmverity_signature' in
-+	  IPE policy. This property evaluates to TRUE when a file
-+	  is evaluated against a dm-verity volume that was mounted
-+	  with a signed root-hash.
 +
-+	  If unsure, answer Y.
++/**
++ * create_fake_ctx: Build a fake ipe_context for use
++ *		    in a test.
++ * Return:
++ * !IS_ERR - OK
++ */
++static struct ipe_context *create_fake_ctx(void)
++{
++	struct ipe_context *ctx = NULL;
 +
-+config IPE_PROP_DM_VERITY_ROOTHASH
-+	bool "Enable support for dm-verity volumes"
-+	depends on DM_VERITY
-+	default Y
-+	help
-+	  This option enables the property 'dmverity_roothash' in
-+	  IPE policy. This property evaluates to TRUE when a file
-+	  is evaluated against a dm-verity volume whose root hash
-+	  matches the supplied value.
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return ERR_PTR(-ENOMEM);
 +
-+	  If unsure, answer Y.
++	INIT_LIST_HEAD(&ctx->policies);
++	refcount_set(&ctx->refcount, 1);
++	spin_lock_init(&ctx->lock);
++	WRITE_ONCE(ctx->enforce, true);
++
++	return ctx;
++}
++
++/**
++ * ipe_ctx_eval_test: Parse a policy, and run a mock through the
++ *		      evaluation loop to check the functional result.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_eval_test(struct kunit *test)
++{
++	int rc = 0;
++	enum ipe_operation i = ipe_operation_exec;
++	struct ipe_policy *pol = NULL;
++	struct ipe_context *ctx = NULL;
++	struct ipe_eval_ctx eval = { 0 };
++	const struct eval_case *t = test->param_value;
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	pol = ipe_new_policy(t->policy, strlen(t->policy), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pol);
++
++	ipe_add_policy(ctx, pol);
++	KUNIT_ASSERT_EQ(test, 0, ipe_set_active_pol(pol));
++	KUNIT_EXPECT_EQ(test, refcount_read(&pol->refcount), 2);
++	KUNIT_EXPECT_PTR_EQ(test, pol->policyfs, NULL);
++	KUNIT_EXPECT_PTR_EQ(test, pol->pkcs7, NULL);
++
++	eval.ipe_bdev = t->bdev_sec;
++	eval.ipe_inode = t->inode_sec;
++	eval.from_init_sb = t->initsb;
++	eval.ci_ctx = ctx;
++	eval.file = t->fake_file;
++
++	for (i = ipe_operation_exec; i < ipe_operation_max; ++i) {
++		eval.op = i;
++		rc = evaluate(&eval);
++		KUNIT_EXPECT_EQ(test, rc, t->errno);
++	}
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(pol);
++}
++
++/**
++ * ipe_ctx_eval_permissive_test: Parse a policy, and run a mock through the
++ *				 evaluation loop to with permissive on,
++ *				 checking the functional result.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_eval_permissive_test(struct kunit *test)
++{
++	int rc = 0;
++	enum ipe_operation i = ipe_operation_exec;
++	struct ipe_policy *pol = NULL;
++	struct ipe_context *ctx = NULL;
++	struct ipe_eval_ctx eval = { 0 };
++	const struct eval_case *t = test->param_value;
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++	WRITE_ONCE(ctx->enforce, false);
++
++	pol = ipe_new_policy(t->policy, strlen(t->policy), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pol);
++
++	ipe_add_policy(ctx, pol);
++	KUNIT_ASSERT_EQ(test, 0, ipe_set_active_pol(pol));
++	KUNIT_EXPECT_EQ(test, refcount_read(&pol->refcount), 2);
++	KUNIT_EXPECT_PTR_EQ(test, pol->policyfs, NULL);
++	KUNIT_EXPECT_PTR_EQ(test, pol->pkcs7, NULL);
++
++	eval.ipe_bdev = t->bdev_sec;
++	eval.ipe_inode = t->inode_sec;
++	eval.from_init_sb = t->initsb;
++	eval.ci_ctx = ctx;
++	eval.file = t->fake_file;
++
++	for (i = ipe_operation_exec; i < ipe_operation_max; ++i) {
++		eval.op = i;
++		rc = evaluate(&eval);
++		KUNIT_EXPECT_EQ(test, rc, 0);
++	}
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(pol);
++}
++
++/**
++ * ipe_ctx_default_eval_test: Ensure an operation-level default
++ *			      is taken over a global-level default.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_default_eval_test(struct kunit *test)
++{
++	int rc = 0;
++	struct ipe_policy *pol = NULL;
++	struct ipe_context *ctx = NULL;
++	struct ipe_eval_ctx eval = { 0 };
++	const char *const policy =
++		"policy_name=Test policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n"
++		"DEFAULT op=EXECUTE action=ALLOW";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	pol = ipe_new_policy(policy, strlen(policy), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pol);
++	KUNIT_EXPECT_EQ(test, pol->parsed->global_default, ipe_action_deny);
++	KUNIT_EXPECT_EQ(test, pol->parsed->rules[ipe_operation_exec].default_action,
++			ipe_action_allow);
++
++	ipe_add_policy(ctx, pol);
++	KUNIT_ASSERT_EQ(test, 0, ipe_set_active_pol(pol));
++	KUNIT_EXPECT_EQ(test, refcount_read(&pol->refcount), 2);
++	KUNIT_EXPECT_PTR_EQ(test, pol->policyfs, NULL);
++	KUNIT_EXPECT_PTR_EQ(test, pol->pkcs7, NULL);
++
++	eval.ipe_bdev = NULL;
++	eval.ipe_inode = NULL;
++	eval.from_init_sb = NULL;
++	eval.ci_ctx = ctx;
++	eval.file = NULL;
++	eval.op = ipe_operation_exec;
++
++	rc = evaluate(&eval);
++	KUNIT_EXPECT_EQ(test, rc, 0);
++
++	eval.op = ipe_operation_kexec_image;
++	rc = evaluate(&eval);
++	KUNIT_EXPECT_EQ(test, rc, -EACCES);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(pol);
++}
++
++/**
++ * ipe_ctx_replace_policy - Associate a policy with a context, then replace it.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_replace_policy(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_policy *pp = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.0\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t policy_version=0.0.1\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++	p2 = ipe_new_policy(policy2, strlen(policy2), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p2);
++
++	ipe_add_policy(ctx, p1);
++	KUNIT_EXPECT_TRUE(test, list_is_singular(&ctx->policies));
++
++	pp = list_first_entry(&ctx->policies, struct ipe_policy, next);
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++
++	ipe_replace_policy(p1, p2);
++	KUNIT_EXPECT_TRUE(test, list_is_singular(&ctx->policies));
++	pp = list_first_entry(&ctx->policies, struct ipe_policy, next);
++	KUNIT_EXPECT_PTR_EQ(test, pp, p2);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++/**
++ * ipe_ctx_replace_policy - Associate a policy with a context, mark the policy active,
++ *			    then replace it.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_replace_active_policy(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_policy *pp = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.0\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t policy_version=0.0.1\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++	p2 = ipe_new_policy(policy2, strlen(policy2), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p2);
++
++	ipe_add_policy(ctx, p1);
++	KUNIT_ASSERT_EQ(test, 0, ipe_set_active_pol(p1));
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++	ipe_put_policy(pp);
++
++	ipe_replace_policy(p1, p2);
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p2);
++	ipe_put_policy(pp);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++/**
++ * ipe_ctx_update_policy - Associate a policy with a context, then update it.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness. This function differs from replace above,
++ * as it performs additional error checking.
++ */
++static void ipe_ctx_update_policy(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_policy *pp = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.0\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t policy_version=0.0.1\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++
++	ipe_add_policy(ctx, p1);
++	ipe_set_active_pol(p1);
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++	ipe_put_policy(pp);
++
++	p2 = ipe_update_policy(p1, policy2, strlen(policy2), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p2);
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p2);
++	ipe_put_policy(pp);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++/**
++ * ipe_ctx_update_wrong_policy - Associate a policy with a context, then
++ *				 attempt update it with the wrong policy.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_update_wrong_policy(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_policy *pp = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.0\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t2 policy_version=0.0.0\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++
++	ipe_add_policy(ctx, p1);
++	ipe_set_active_pol(p1);
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++	ipe_put_policy(pp);
++
++	p2 = ipe_update_policy(p1, policy2, strlen(policy2), NULL, 0);
++	KUNIT_EXPECT_EQ(test, PTR_ERR(p2), -EINVAL);
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++	ipe_put_policy(pp);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++/**
++ * ipe_ctx_update_wrong_policy - Associate a policy with a context, mark it active,
++ *				 then attempt update it with a stale policy.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_update_rollback_policy(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_policy *pp = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.1\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t policy_version=0.0.0\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++
++	ipe_add_policy(ctx, p1);
++	KUNIT_ASSERT_EQ(test, 0, ipe_set_active_pol(p1));
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++	ipe_put_policy(pp);
++
++	p2 = ipe_update_policy(p1, policy2, strlen(policy2), NULL, 0);
++	KUNIT_EXPECT_EQ(test, PTR_ERR(p2), -EINVAL);
++
++	rcu_read_lock();
++	pp = ipe_get_policy_rcu(ctx->active_policy);
++	rcu_read_unlock();
++	KUNIT_EXPECT_PTR_EQ(test, pp, p1);
++	ipe_put_policy(pp);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++/**
++ * ipe_ctx_rollback - Associate two policies with a context, then
++ *		      attempt rollback the active policy.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_rollback(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.1\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t2 policy_version=0.0.0\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++	ipe_add_policy(ctx, p1);
++	KUNIT_ASSERT_EQ(test, 0, ipe_set_active_pol(p1));
++
++	p2 = ipe_new_policy(policy2, strlen(policy2), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p2);
++	ipe_add_policy(ctx, p2);
++	KUNIT_ASSERT_EQ(test, -EINVAL, ipe_set_active_pol(p2));
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++/**
++ * ipe_ctx_update_rollback_inactive - Associate a policy with a context, then
++ *				      attempt update it with a stale policy.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_ctx_update_rollback_inactive(struct kunit *test)
++{
++	struct ipe_policy *p1 = NULL;
++	struct ipe_policy *p2 = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy1 = "policy_name=t policy_version=0.0.1\n"
++				    "DEFAULT action=ALLOW";
++	const char *const policy2 = "policy_name=t policy_version=0.0.0\n"
++				    "DEFAULT action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p1 = ipe_new_policy(policy1, strlen(policy1), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p1);
++
++	ipe_add_policy(ctx, p1);
++
++	p2 = ipe_update_policy(p1, policy2, strlen(policy2), NULL, 0);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, p2);
++
++	fake_free_ctx(ctx);
++	ipe_put_policy(p1);
++	ipe_put_policy(p2);
++}
++
++static void ipe_ctx_oob_enum(struct kunit *test)
++{
++	struct ipe_policy *p = NULL;
++	struct ipe_context *ctx = NULL;
++	const char *const policy = "policy_name=t policy_version=0.0.0\n"
++				   "DEFAULT action=ALLOW\n"
++				   "DEFAULT op=KERNEL_READ action=DENY\n";
++
++	ctx = create_fake_ctx();
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++	p = ipe_new_policy(policy, strlen(policy), NULL, 0);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, p);
++
++	ipe_add_policy(ctx, p);
++	ipe_set_active_pol(p);
++
++	KUNIT_EXPECT_EQ(test, 0, ipe_kernel_read_file(NULL, READING_MAX_ID + 1, false));
++	KUNIT_EXPECT_EQ(test, 0, ipe_kernel_load_data(LOADING_MAX_ID + 1, false));
++}
++
++static struct kunit_case ipe_ctx_test_cases[] = {
++	KUNIT_CASE_PARAM(ipe_ctx_eval_test, ipe_eval_gen_params),
++	KUNIT_CASE_PARAM(ipe_ctx_eval_permissive_test, ipe_eval_gen_params),
++	KUNIT_CASE(ipe_ctx_default_eval_test),
++	KUNIT_CASE(ipe_ctx_replace_active_policy),
++	KUNIT_CASE(ipe_ctx_replace_policy),
++	KUNIT_CASE(ipe_ctx_update_policy),
++	KUNIT_CASE(ipe_ctx_update_wrong_policy),
++	KUNIT_CASE(ipe_ctx_update_rollback_policy),
++	KUNIT_CASE(ipe_ctx_update_rollback_inactive),
++	KUNIT_CASE(ipe_ctx_rollback),
++	KUNIT_CASE(ipe_ctx_oob_enum),
++};
++
++static struct kunit_suite ipe_ctx_test_suite = {
++	.name = "ipe-context",
++	.test_cases = ipe_ctx_test_cases,
++};
++
++kunit_test_suite(ipe_ctx_test_suite);
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+index e8205a6fce44..ce67b5e1afd7 100644
+--- a/security/ipe/eval.c
++++ b/security/ipe/eval.c
+@@ -234,3 +234,7 @@ void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb)
  
- endmenu
-diff --git a/security/ipe/modules/Makefile b/security/ipe/modules/Makefile
-index e0045ec65434..84fadce85193 100644
---- a/security/ipe/modules/Makefile
-+++ b/security/ipe/modules/Makefile
-@@ -6,3 +6,5 @@
- #
- 
- obj-$(CONFIG_IPE_PROP_BOOT_VERIFIED) += boot_verified.o
-+obj-$(CONFIG_IPE_PROP_DM_VERITY_SIGNATURE) += dmverity_signature.o
-+obj-$(CONFIG_IPE_PROP_DM_VERITY_ROOTHASH) += dmverity_roothash.o
-diff --git a/security/ipe/modules/dmverity_roothash.c b/security/ipe/modules/dmverity_roothash.c
+ 	spin_unlock(&pin_lock);
+ }
++
++#ifdef CONFIG_SECURITY_IPE_KUNIT_TEST
++#include "ctx_test.c"
++#endif /* CONFIG_SECURITY_IPE_KUNIT_TEST */
+diff --git a/security/ipe/policy_parser_tests.c b/security/ipe/policy_parser_tests.c
 new file mode 100644
-index 000000000000..abf3ec0a1448
+index 000000000000..38d5fb7d785a
 --- /dev/null
-+++ b/security/ipe/modules/dmverity_roothash.c
-@@ -0,0 +1,31 @@
++++ b/security/ipe/policy_parser_tests.c
+@@ -0,0 +1,313 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) Microsoft Corporation. All rights reserved.
 + */
 +
-+#include "ipe_module.h"
-+
-+#include <linux/fs.h>
++#include <linux/slab.h>
 +#include <linux/types.h>
-+#include <linux/string.h>
-+#include <crypto/hash_info.h>
++#include <linux/list.h>
++#include <kunit/test.h>
++#include "policy.h"
 +
-+static bool dvrh_eval(const struct ipe_eval_ctx *ctx, const void *val)
++struct policy_case {
++	const char *const policy;
++	int	   errno;
++	const char *const desc;
++};
++
++static const struct policy_case policy_cases[] = {
++	{
++		"policy_name=\"allowall\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW",
++		0,
++		"basic",
++	},
++	{
++		"policy_name='trailing comment' policy_version=152.0.0 #This is comment\n"
++		"DEFAULT action=ALLOW",
++		0,
++		"trailing comment",
++	},
++	{
++		"policy_name=allowallnewline policy_version=0.2.0\n"
++		"DEFAULT action=ALLOW\n"
++		"\n",
++		0,
++		"trailing newline",
++	},
++	{
++		"policy_name=\"carriage return\tline feed\" policy_version=0.0.1\n"
++		"DEFAULT action=ALLOW\n"
++		"\r\n",
++		0,
++		"clrf newline",
++	},
++	{
++		"policy_name='whitespace' policy_version=0.0.0\n"
++		"DEFAULT\taction=ALLOW\n"
++		"     \t     DEFAULT \t    op=EXECUTE      action=DENY\n"
++		"op=EXECUTE boot_verified=TRUE action=ALLOW\n"
++		"# this is a\tcomment\t\t\t\t\n"
++		"DEFAULT \t op=KERNEL_READ\t\t\t  action=DENY\r\n"
++		"op=KERNEL_READ boot_verified=TRUE action=ALLOW\n",
++		0,
++		"various whitespaces and nested default",
++	},
++	{
++		"policy_name='boot verified' policy_version=-1236.0.0\n"
++		"DEFAULT\taction=ALLOW\n",
++		-EINVAL,
++		"negative version",
++	},
++	{
++		"policy_name=\"# this is not a comment\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW",
++		0,
++		"quoted comment character",
++	},
++	{
++		"policy_name=$@!*&^%%\\:;{}() policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW",
++		0,
++		"special characters",
++	},
++	{
++		"policy_name=test policy_version=999999.0.0\n"
++		"DEFAULT action=ALLOW",
++		-ERANGE,
++		"overflow version",
++	},
++	{
++		"policy_name=test policy_version=255.0\n"
++		"DEFAULT action=ALLOW",
++		-EBADMSG,
++		"incomplete version",
++	},
++	{
++		"policy_name=test policy_version=111.0.0.0\n"
++		"DEFAULT action=ALLOW",
++		-EBADMSG,
++		"extra version",
++	},
++	{
++		"",
++		-EBADMSG,
++		"0-length policy",
++	},
++	{
++		"policy_name=\"test\"\0policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW",
++		-EBADMSG,
++		"random null in header",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"\0DEFAULT action=ALLOW",
++		-EBADMSG,
++		"incomplete policy from NULL",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"DEFAULT action=DENY\n\0"
++		"op=EXECUTE dmverity_signature=TRUE action=ALLOW\n",
++		0,
++		"NULL truncates policy",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_signature=abc action=ALLOW",
++		-EBADMSG,
++		"invalid property type",
++	},
++	{
++		"DEFAULT action=ALLOW",
++		-EBADMSG,
++		"missing policy header",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n",
++		-EBADMSG,
++		"missing default definition",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=KERNEL_READ dmverity_signature=TRUE action=ALLOW",
++		0,
++		"aliased operation",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"dmverity_signature=TRUE op=EXECUTE action=ALLOW",
++		-EINVAL,
++		"invalid rule ordering"
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"action=ALLOW op=EXECUTE dmverity_signature=TRUE",
++		-EINVAL,
++		"invalid rule ordering (2)",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_signature=TRUE action=ALLOW",
++		-EBADMSG,
++		"invalid version",
++	},
++	{
++		"policy_name=\"test\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=UNKNOWN dmverity_signature=TRUE action=ALLOW",
++		-ENOENT,
++		"unknown operation",
++	},
++	{
++		"policy_name=\"asdv\"policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n",
++		-EBADMSG,
++		"missing space after quote",
++	},
++	{
++		"policy_name=\"test\xFF\xEF\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_signature=TRUE action=ALLOW",
++		0,
++		"expanded ascii",
++	},
++	{
++		"policy_name=\"test\xFF\xEF\" policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_roothash=\"GOOD DOG\" action=ALLOW",
++		-EBADMSG,
++		"invalid property value (2)",
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"policy_name='test' policy_version=0.1.0\n"
++		"DEFAULT action=ALLOW",
++		-EBADMSG,
++		"double header"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"DEFAULT action=ALLOW\n",
++		-EBADMSG,
++		"double default"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"DEFAULT op=EXECUTE action=DENY\n"
++		"DEFAULT op=EXECUTE action=ALLOW\n",
++		-EBADMSG,
++		"double operation default"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"DEFAULT op=EXECUTE action=DEN\n",
++		-EINVAL,
++		"invalid allow value"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"DEFAULT op=EXECUTE action\n",
++		-EINVAL,
++		"invalid allow value (2)"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"UNKNOWN value=true\n",
++		-EINVAL,
++		"unrecognized statement"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE dmverity_roothash=1c0d7ee1f8343b7fbe418378e8eb22c061d7dec7 action=DENY\n",
++		-EBADMSG,
++		"old-style digest"
++	},
++	{
++		"policy_name='test' policy_version=0.0.0\n"
++		"DEFAULT action=ALLOW\n"
++		"op=EXECUTE fsverity_digest=1c0d7ee1f8343b7fbe418378e8eb22c061d7dec7 action=DENY\n",
++		-EBADMSG,
++		"old-style digest"
++	}
++};
++
++static void pol_to_desc(const struct policy_case *c, char *desc)
 +{
-+	const struct ipe_bdev *bdev;
-+
-+	if (!ctx->ipe_bdev)
-+		return false;
-+
-+	bdev = ctx->ipe_bdev;
-+	return ipe_digest_eval(val, bdev->digest, bdev->digest_len, bdev->digest_algo);
++	strncpy(desc, c->desc, KUNIT_PARAM_DESC_SIZE);
 +}
 +
-+IPE_MODULE(dvrh) = {
-+	.name = "dmverity_roothash",
-+	.version = 1,
-+	.parse = ipe_digest_parse,
-+	.free = ipe_digest_free,
-+	.eval = dvrh_eval,
-+	.audit = ipe_digest_audit,
-+};
-diff --git a/security/ipe/modules/dmverity_signature.c b/security/ipe/modules/dmverity_signature.c
-new file mode 100644
-index 000000000000..4f74cd82254b
---- /dev/null
-+++ b/security/ipe/modules/dmverity_signature.c
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
++KUNIT_ARRAY_PARAM(ipe_policies, policy_cases, pol_to_desc);
++
++/**
++ * ipe_parser_unsigned_test: Throw policies at the parser and check the result.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness. This test does not check the correctness
++ * of the policy, but ensures that errors are handled correctly. Functional
++ * validation of correctly-parsed policies are done in the evaluation unit tests.
 + */
-+
-+#include "ipe_module.h"
-+
-+#include <linux/fs.h>
-+#include <linux/types.h>
-+
-+static bool dvv_eval(const struct ipe_eval_ctx *ctx, const void *val)
++static void ipe_parser_unsigned_test(struct kunit *test)
 +{
-+	bool expect = (bool)val;
-+	bool eval = ctx->ipe_bdev && (!!ctx->ipe_bdev->dm_verity_signed);
++	const struct policy_case *p = test->param_value;
++	struct ipe_policy *pol = ipe_new_policy(p->policy, strlen(p->policy), NULL, 0);
 +
-+	return expect == eval;
++	if (p->errno) {
++		KUNIT_EXPECT_EQ(test, PTR_ERR(pol), p->errno);
++		return;
++	}
++
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pol);
++	KUNIT_EXPECT_EQ(test, 1, refcount_read(&pol->refcount));
++	KUNIT_EXPECT_PTR_EQ(test, NULL, pol->ctx);
++	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, pol->parsed);
++	KUNIT_EXPECT_PTR_EQ(test, NULL, pol->policyfs);
++	KUNIT_EXPECT_STREQ(test, pol->text, p->policy);
++	KUNIT_EXPECT_PTR_EQ(test, NULL, pol->pkcs7);
++	KUNIT_EXPECT_EQ(test, 0, pol->pkcs7len);
++	KUNIT_EXPECT_TRUE(test, list_empty(&pol->next));
++
++	ipe_put_policy(pol);
 +}
 +
-+IPE_MODULE(dvv) = {
-+	.name = "dmverity_signature",
-+	.version = 1,
-+	.parse = ipe_bool_parse,
-+	.free = NULL,
-+	.eval = dvv_eval,
-+	.audit = ipe_bool_audit,
++/**
++ * ipe_parser_widestring_test: Ensure a wide string policy causes a failure.
++ * @test: Supplies a pointer to a kunit structure.
++ *
++ * This is called by the kunit harness.
++ */
++static void ipe_parser_widestring_test(struct kunit *test)
++{
++	struct ipe_policy *pol = NULL;
++	const unsigned short policy[] = L"policy_name=Test policy_version=0.0.0\n"
++					L"DEFAULT action=ALLOW";
++
++	pol = ipe_new_policy((const char *)policy, (ARRAY_SIZE(policy) - 1) * 2, NULL, 0);
++	KUNIT_EXPECT_TRUE(test, IS_ERR_OR_NULL(pol));
++
++	ipe_put_policy(pol);
++}
++
++static struct kunit_case ipe_parser_test_cases[] = {
++	KUNIT_CASE_PARAM(ipe_parser_unsigned_test, ipe_policies_gen_params),
++	KUNIT_CASE(ipe_parser_widestring_test),
 +};
-diff --git a/security/ipe/modules/ipe_module.h b/security/ipe/modules/ipe_module.h
-index 5255a57c4784..58e5cdd94448 100644
---- a/security/ipe/modules/ipe_module.h
-+++ b/security/ipe/modules/ipe_module.h
-@@ -11,6 +11,11 @@
- 
- int ipe_bool_parse(const char *valstr, void **value);
- void ipe_bool_audit(struct audit_buffer *ab, const void *val);
-+int ipe_digest_parse(const char *valstr, void **value);
-+void ipe_digest_audit(struct audit_buffer *ab, const void *val);
-+bool ipe_digest_eval(const void *expect, const u8 *digest, size_t digest_len,
-+		     const char *algo);
-+void ipe_digest_free(void **value);
- 
- /**
-  * ipe_module: definition of an extensible module for IPE properties.
++
++static struct kunit_suite ipe_parser_test_suite = {
++	.name = "ipe-parser",
++	.test_cases = ipe_parser_test_cases,
++};
++
++kunit_test_suite(ipe_parser_test_suite);
 -- 
 2.25.1
 
