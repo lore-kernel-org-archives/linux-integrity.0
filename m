@@ -2,112 +2,225 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A51CC43334
-	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jun 2022 13:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0466EC433EF
+	for <linux-integrity@archiver.kernel.org>; Fri, 17 Jun 2022 19:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381052AbiFQN4e (ORCPT
+        id S231483AbiFQTVq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 17 Jun 2022 09:56:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36066 "EHLO
+        Fri, 17 Jun 2022 15:21:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382523AbiFQN4d (ORCPT
+        with ESMTP id S231453AbiFQTVp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 17 Jun 2022 09:56:33 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4693C4B8
-        for <linux-integrity@vger.kernel.org>; Fri, 17 Jun 2022 06:56:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 199F7218B1;
-        Fri, 17 Jun 2022 13:56:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1655474191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Wx9PR0zxToLAnkqcqQWh0unZcw78nGJEcwqaAdch5E8=;
-        b=qcVAUjFrsOkRCo8RtMbYYzqtlEI6XbGPkdvYCbifJbWV+3cOOG8avBj1NCI2EuLAHjPVAL
-        L4v6LrXpUKHxQSlKipQ8U0U+6sL8vOjPkHFneCPMUM1K1VeJv4hW+oOt1ngTeuqyqEtceV
-        B7qjH2m+BNnOVtT1tJb7wxYDegqMD0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1655474191;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Wx9PR0zxToLAnkqcqQWh0unZcw78nGJEcwqaAdch5E8=;
-        b=4pp8iSHNAopoJ6LyY0DSUlWdlTg9GmVpLK/zs/PDmLlIdm2mRxmLvalec9i7UX859nFgIn
-        CTIP2rzs9CyGPtCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D956813458;
-        Fri, 17 Jun 2022 13:56:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id h9uvMg6IrGKfIAAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Fri, 17 Jun 2022 13:56:30 +0000
-From:   Petr Vorel <pvorel@suse.cz>
+        Fri, 17 Jun 2022 15:21:45 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 537BB5047A
+        for <linux-integrity@vger.kernel.org>; Fri, 17 Jun 2022 12:21:44 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25HI0xnq026078;
+        Fri, 17 Jun 2022 19:21:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=aOQ38OALe/P5XMA5jYipN2v3ADPlV+b9WuzNNqmNSpw=;
+ b=kD4FruO/A8y8ADWlr5KIxHRVy/9jW6ehFDZM8fG2rEUWDJG9wMaLUJzX2ngb7oGx3DbY
+ 9H4w6mlozv0JVlYH8Hpea3gEQK5aTFkm9/ye0oyy90OtzeCwZAr5aFP3Lt84oiBXtggb
+ 00vMJfNT1+VyNt+jen33vcGP3US+Orxctmg91f1NiXe3GyJU7rgughJMDfIUPRVeA8P6
+ t5O25FKSCwJ/jIq1N2dTpOSFkLG5bSXwyHxTUHqNU8NMaAXJyZpl7IK9/i2AW6DdFLvX
+ 3C5axE7bimVdginCzxDkLhxB5AxojOTukPx9I1gyz6kxja+4rRwOZxFQ5vALJSg+/EL8 3Q== 
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3grwdv374m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jun 2022 19:21:35 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25HJLCYL001362;
+        Fri, 17 Jun 2022 19:21:33 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 3gmjp9h855-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 17 Jun 2022 19:21:33 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25HJLUIf22282622
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 17 Jun 2022 19:21:30 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 615B2A404D;
+        Fri, 17 Jun 2022 19:21:30 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A5C9BA4040;
+        Fri, 17 Jun 2022 19:21:29 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.65.64.10])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 17 Jun 2022 19:21:29 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
-Cc:     Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH 1/1] ci/ubuntu: impish -> jammy
-Date:   Fri, 17 Jun 2022 15:56:25 +0200
-Message-Id: <20220617135625.2370-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.36.1
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v4 ima-evm-utils 1/3] Reset 'errno' after failure to open or access a file
+Date:   Fri, 17 Jun 2022 15:21:05 -0400
+Message-Id: <20220617192107.270865-2-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20220617192107.270865-1-zohar@linux.ibm.com>
+References: <20220617192107.270865-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 1_tdOz71t-rG9Ny3jSw6f4i7QGf0Yy3g
+X-Proofpoint-ORIG-GUID: 1_tdOz71t-rG9Ny3jSw6f4i7QGf0Yy3g
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-17_11,2022-06-17_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 clxscore=1015 phishscore=0
+ lowpriorityscore=0 mlxscore=0 bulkscore=0 priorityscore=1501
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2204290000 definitions=main-2206170081
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Ubuntu 21.10 impish EOL in 2027-04 (next month).
-Replace it with the latest stable release (EOL 2027-04).
+Not being able to open a file is not necessarily a problem. If
+and when it occurs, an informational or error message with the
+actual filename is emitted as needed.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Reset 'errno' to prevent the "errno: No such file or directory (2)"
+generic message.
+
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
-Hi Mimi,
+ src/evmctl.c    | 16 ++++++++++++++--
+ src/libimaevm.c |  4 ++++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-Tested: https://github.com/pevik/ima-evm-utils/actions/runs/2515784254
-
-It's also a question whether use 20.04 LTS focal instead of 18.04 LTS
-bionic. I guess we'd like to cover everything: bleeding edge, used
-distros and very old and still used distros. bionic EOL next year
-(2023-04).
-
-I'll try to have look on Alpine failure sometimes on July.
-
-Kind regards,
-Petr
-
- .github/workflows/ci.yml | 2 +-
- .travis.yml              | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index 5e4498e..dc06fce 100644
---- a/.github/workflows/ci.yml
-+++ b/.github/workflows/ci.yml
-@@ -59,7 +59,7 @@ jobs:
-               CC: gcc
-               TSS: tpm2-tss
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 8bdd34817408..101cd407e05d 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -181,6 +181,7 @@ static int bin2file(const char *file, const char *ext, const unsigned char *data
+ 	fp = fopen(name, "w");
+ 	if (!fp) {
+ 		log_err("Failed to open: %s\n", name);
++		errno = 0;
+ 		return -1;
+ 	}
+ 	err = fwrite(data, len, 1, fp);
+@@ -206,6 +207,7 @@ static unsigned char *file2bin(const char *file, const char *ext, int *size)
+ 	fp = fopen(name, "r");
+ 	if (!fp) {
+ 		log_err("Failed to open: %s\n", name);
++		errno = 0;
+ 		return NULL;
+ 	}
+ 	if (fstat(fileno(fp), &stats) == -1) {
+@@ -312,8 +314,10 @@ static int get_uuid(struct stat *st, char *uuid)
+ 	sprintf(path, "blkid -s UUID -o value /dev/block/%u:%u", major, minor);
  
--          - container: "ubuntu:impish"
-+          - container: "ubuntu:jammy"
-             env:
-               CC: gcc
-               TSS: ibmtss
-diff --git a/.travis.yml b/.travis.yml
-index d6b3c5e..5741116 100644
---- a/.travis.yml
-+++ b/.travis.yml
-@@ -40,7 +40,7 @@ matrix:
-           compiler: gcc
+ 	fp = popen(path, "r");
+-	if (!fp)
++	if (!fp) {
++		errno = 0;
+ 		goto err;
++	}
  
-         - os: linux
--          env: DISTRO=ubuntu:impish TSS=ibmtss COMPILE_SSL=openssl-3.0.0-beta1
-+          env: DISTRO=ubuntu:jammy TSS=ibmtss COMPILE_SSL=openssl-3.0.0-beta1
-           compiler: gcc
+ 	len = fread(_uuid, 1, sizeof(_uuid), fp);
+ 	pclose(fp);
+@@ -370,6 +374,7 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
  
-         - os: linux
+ 			if (fd < 0) {
+ 				log_err("Failed to open: %s\n", file);
++				errno = 0;
+ 				return -1;
+ 			}
+ 			if (ioctl(fd, FS_IOC_GETVERSION, &generation)) {
+@@ -1122,6 +1127,7 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+ 
+ 		if (fd < 0) {
+ 			log_err("Failed to open %s\n", file);
++			errno = 0;
+ 			goto out;
+ 		}
+ 		if (ioctl(fd, FS_IOC_GETVERSION, &generation)) {
+@@ -1312,6 +1318,7 @@ static int ima_fix(const char *path)
+ 	fd = open(path, O_RDONLY);
+ 	if (fd < 0) {
+ 		log_errno("Failed to open file: %s", path);
++		errno = 0;
+ 		return -1;
+ 	}
+ 
+@@ -1828,8 +1835,10 @@ static int read_sysfs_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+ 	int i, result;
+ 
+ 	fp = fopen(pcrs, "r");
+-	if (!fp)
++	if (!fp) {
+ 		fp = fopen(misc_pcrs, "r");
++		errno = 0;
++	}
+ 	if (!fp)
+ 		return -1;
+ 
+@@ -1892,6 +1901,7 @@ static int read_file_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+ 		fp = fopen(path, "r");
+ 		if (!fp) {
+ 			log_err("Could not open '%s'\n", path);
++			errno = 0;
+ 			return -1;
+ 		}
+ 
+@@ -1984,6 +1994,7 @@ static int ima_measurement(const char *file)
+ 	fp = fopen(file, "rb");
+ 	if (!fp) {
+ 		log_err("Failed to open measurement file: %s\n", file);
++		errno = 0;
+ 		return -1;
+ 	}
+ 
+@@ -2229,6 +2240,7 @@ static int read_binary_bios_measurements(char *file, struct tpm_bank_info *bank)
+ 	fp = fopen(file, "r");
+ 	if (!fp) {
+ 		log_errno("Failed to open TPM 1.2 event log.\n");
++		errno = 0;
+ 		return 1;
+ 	}
+ 
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 388b726f1e3a..a4f2ec40684d 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -144,6 +144,7 @@ static int add_file_hash(const char *file, EVP_MD_CTX *ctx)
+ 	fp = fopen(file, "r");
+ 	if (!fp) {
+ 		log_err("Failed to open: %s\n", file);
++		errno = 0;
+ 		return -1;
+ 	}
+ 
+@@ -258,6 +259,7 @@ EVP_PKEY *read_pub_pkey(const char *keyfile, int x509)
+ 	if (!fp) {
+ 		if (imaevm_params.verbose > LOG_INFO)
+ 			log_info("Failed to open keyfile: %s\n", keyfile);
++		errno = 0;
+ 		return NULL;
+ 	}
+ 
+@@ -735,6 +737,7 @@ static int read_keyid_from_cert(uint32_t *keyid_be, const char *certfile, int tr
+ 
+ 	if (!(fp = fopen(certfile, "r"))) {
+ 		log_err("Cannot open %s: %s\n", certfile, strerror(errno));
++		errno = 0;
+ 		return -1;
+ 	}
+ 	if (!PEM_read_X509(fp, &x, NULL, NULL)) {
+@@ -826,6 +829,7 @@ static EVP_PKEY *read_priv_pkey(const char *keyfile, const char *keypass)
+ 		fp = fopen(keyfile, "r");
+ 		if (!fp) {
+ 			log_err("Failed to open keyfile: %s\n", keyfile);
++			errno = 0;
+ 			return NULL;
+ 		}
+ 		pkey = PEM_read_PrivateKey(fp, NULL, NULL, (void *)keypass);
 -- 
-2.36.1
+2.27.0
 
