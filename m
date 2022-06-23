@@ -2,84 +2,89 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F48EC433EF
-	for <linux-integrity@archiver.kernel.org>; Wed, 22 Jun 2022 09:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E6DCCA47C
+	for <linux-integrity@archiver.kernel.org>; Thu, 23 Jun 2022 04:47:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233391AbiFVJxR (ORCPT
+        id S233039AbiFWErl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 22 Jun 2022 05:53:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47072 "EHLO
+        Thu, 23 Jun 2022 00:47:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232568AbiFVJxR (ORCPT
+        with ESMTP id S1346553AbiFWE1O (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 22 Jun 2022 05:53:17 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82691BF76;
-        Wed, 22 Jun 2022 02:53:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1655891583;
-        bh=9cEw9FMLBn4W5pgHYOQdSlww+YpqE/CuIHU5Q+i/17A=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=HQRd0reRnmkalF5Nlv1fL+D9ySw6cRDCl67K5L2ZnfaVAAYB6M5E+TSpiLZDr3ubN
-         6AkOhh40U+uSUTWihMGup+g8tazDQ4VD30PxnbFegPm951KiUVq3ep5FX7zjGIcbeF
-         LVT3nhapmClj0fugm2jSMSq/2nCQylaY2EO1ZwYE=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.0.33] ([46.223.2.22]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MF3DW-1nswXX0cq8-00FQVG; Wed, 22
- Jun 2022 11:53:03 +0200
-Subject: Re: [PATCH v6 9/9] tpm, tpm_tis: Enable interrupt test
-To:     =?UTF-8?Q?Michael_Niew=c3=b6hner?= <linux@mniewoehner.de>,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     stefanb@linux.vnet.ibm.com, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, l.sanfilippo@kunbus.com,
-        lukas@wunner.de, p.rosenberger@kunbus.com
-References: <20220621132447.16281-1-LinoSanfilippo@gmx.de>
- <20220621132447.16281-10-LinoSanfilippo@gmx.de>
- <822cad1aa73867ea36c5428cb929a00aa0e82bc9.camel@mniewoehner.de>
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-Message-ID: <573d1c1a-cff2-4b45-6ec0-bd32f5312a16@gmx.de>
-Date:   Wed, 22 Jun 2022 11:53:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 23 Jun 2022 00:27:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7FE6A2DAB6
+        for <linux-integrity@vger.kernel.org>; Wed, 22 Jun 2022 21:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1655958431;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=IBxvMB+Edf2kNT2Bpm+WLvfut0GM6YsurjzoxFCucJo=;
+        b=UQqko6fpr0DmJsKYE/STSJVGDV7GOCXK+q2vqnWsqS+L7AQ/7fokJKgWQDqK8S3sj9MpbG
+        6ROJolwP83WkS0w7is9M2xakqh2L5Y1m8thflhX8R9yUya+buKTzBOi0l0t5Ge4c9gH+Vq
+        0v7FHMwT3x/Wa/qEjfk3UlNQItRuF5Y=
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
+ [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-625-ri7QvMfUMXSL4xTivwpcuw-1; Thu, 23 Jun 2022 00:27:08 -0400
+X-MC-Unique: ri7QvMfUMXSL4xTivwpcuw-1
+Received: by mail-vk1-f197.google.com with SMTP id m63-20020a1fee42000000b0036c8981d9bdso979535vkh.16
+        for <linux-integrity@vger.kernel.org>; Wed, 22 Jun 2022 21:27:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=IBxvMB+Edf2kNT2Bpm+WLvfut0GM6YsurjzoxFCucJo=;
+        b=gLGCUw4RdSomVkWZ5TGpDEum0gq0cj5R1xi8UZz7Z9O/+k9S3uNWS2v2ZQkqgwhJyN
+         WjT34p97QflOo/zpd3qkplLbPIH+ahS8agH+tOKVnEC/ABhekSHplSRX6X+lTIfI3JEX
+         ZSBRvYvAX92UVWpM+Be6fmm30Du6fN3XoZ/MkZ3WfhiV+9yis/tX0gpSJsfGarIh829z
+         a37RQBCm3S/u/FQnYufbiqEBWoqowHKoCKMvpiq1Xa3QAC3q53fnWTdttIhmUuWXJ+DK
+         QCqthLASsYvUyXf5FOHzWEuIKmus+M9tGgQGpzTflij3HQG2GcGc7wnXRqFPnWZq2/Lt
+         6ylg==
+X-Gm-Message-State: AJIora+jfoFa9vpxhWqBevkYdfq4ruO3fjM2VbH9W6BTg8p2kxmXVcwz
+        kxUH8sYnxNnorHMfNoVrnWYFMswybuGK7P663dz4Lp2ECM25VmbUg0Tfhg/BF4jgBMRKaE1rZtB
+        om8Gu7zSyjqs0z+8SdZhiEeeVzLzih8ER573dw/Va+kvQ
+X-Received: by 2002:a05:6102:390f:b0:34b:fd08:765b with SMTP id e15-20020a056102390f00b0034bfd08765bmr16297305vsu.20.1655958428191;
+        Wed, 22 Jun 2022 21:27:08 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1sqAVgj7S1VnchuTdBup1a9JK6o0vYCVoY8GvaUXQmHuO1iT+OVscT0bHinyPB4lh4Jp/HzGkdPzdUSBdvBLl0=
+X-Received: by 2002:a05:6102:390f:b0:34b:fd08:765b with SMTP id
+ e15-20020a056102390f00b0034bfd08765bmr16297299vsu.20.1655958427918; Wed, 22
+ Jun 2022 21:27:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <822cad1aa73867ea36c5428cb929a00aa0e82bc9.camel@mniewoehner.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ppv3eukWPslFcTbhTkTqi3dgA/tijvgsEE14CGSoqVrtwKkYmZp
- Mxa1uUjWTytXRXGHd0n0yRRpf3MhXbH60V5Hz3dtq0FXoDW1d/YIZnHl15TXdsvTkm+5KQc
- ewiw7CbQ/I2QrQL3psU2KdMtwAVgZ0pwskvArXUm2F4s7wxwKE9/Dv/cPI7zoI/oUvmilPf
- N6ezkVp+PCjHO1s1748qA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:sPL2QIr2apI=:Oh4KaDzPLhM5B6nwdxLbmT
- ln+qQYbCqkC2Rr1o2aghdvV8VDO+4m+Xtk0lCfXj41tagDI8Hhn/bzlf2Z3JzmNpmIwrbyiz8
- m6RF5UaqrPNo4AYKMq/stxpYAjNONhIfbZcjAeUeLe29wat2H7geJrawZU+CgncNuQhF79PPW
- 6ocNvjYjnKUz24cVUd99YCMLlaLU9f/iyhjBrb7jUfX/oXUJP2H23wNKf53QQYrP6jS5bvyJR
- M+g+K8MEDWBo/DY/bSpjftmnCKDR9obTPKFblGg0gpv37lGNrGZbFcFJyD4Pcc/Vry5VB6twL
- Wufu0KnggGgGaXpX1E8dGsnd9O/vjbkBlAYYiBcEmbmWtl7J3+g/sPjYUUsvCMfY5rlgVFo2q
- KXH6g2lMkSqTEtPTANY/lymoz/akoNE/kEiDjvRpZ5J319ZbieBRA4P9eV/EQ3kHhW+kAjysS
- vGrLAQOU8IdzLUTV2KpEeg9B/hzAxEPWOIYVmhCFX4yW8uqfJpTJTSzDlt7U051MGKblgNsKM
- FTJzuGD07GaSrevsGIUSDsxZq32iMD4ZzvqgyUo4ZjSWD/9Kf/1kZ1/THPUTFavsII0tRBU+V
- reO/dVppBmgP+xuoeAcsAMC1LH3rEAQRUMQZl1osrvhFs6YvH9BKPx2giFGAFHhklRQ0jljH2
- W6ZnFxjXOaUiXYE8beG8zWrycvG3+n9MThwArWB/5Me1zjeG+rF70klaSHp1LCYGhSsGT0/9Q
- KJhKeMgEvIO1O53kORoi+qgF0R0vkZduGo3I5kTSL5tkSLefqDdvwwVq++8od0v64Dni8adWO
- KkzNfZT4V/SR/tz9Lmjgaxz63yHqQ8XzosqpmuZsEJ4wFbiA5sT9BCKPQHMtkdOOKe8LVKHsp
- V74sZdGLD8rq4gecebhzOiRnzOrZaH2/Nj6Kn6ISJN/aXc5OoqcmTZ92tvbn2j+eC21d7/KGQ
- FuYlR6yYZG49XRl1UZ9bYRFWMzufx0ffLbPbjlZMaHZzjhbhI54eUvDkJpvPP0BX8d8qbMBn/
- esH4X+K9ytLmB3OUtyVGdJhoEnOWbV3qDL8gARzghuRPcztm+GG+80PgrZfoefzFzQNbbeTGG
- XTQTZJ4+03+QCQdxmVRGq+J7UNS8PSkOiwmoENmwZdgG34PdwofEWjMXw==
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+Date:   Wed, 22 Jun 2022 21:26:42 -0700
+Message-ID: <CALzcddsfNchgJhKdxbUDDb3zBhbHZfYLCtRt9o6o=pv-zk_w_g@mail.gmail.com>
+Subject: efi_tpm_eventlog_init question
+To:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 22.06.22 at 00:39, Michael Niew=C3=B6hner wrote:
-> On Tue, 2022-06-21 at 15:24 +0200, Lino Sanfilippo wrote:
+Is this calling memblock_reserve() correctly for the final events log?
 
->
-> Tested-by: Michael Niew=C3=B6hner <linux@mniewoehner.de>
->
+For the tpm events log it does:
 
-Thanks Michael!
+memblock_reserve(efi.tpm_log, tbl_size);
+
+For the final events log it does:
+
+          memblock_reserve((unsigned long)final_tbl,
+                           tbl_size + sizeof(*final_tbl));
+
+
+which ends up with something like:
+
+[    0.000000] memblock_reserve:
+[0x000000005d7b5018-0x000000005d7b958a]
+efi_tpm_eventlog_init+0x82/0x370
+[    0.000000] memblock_reserve:
+[0xffffffffff2c0000-0xffffffffff2c00e4]
+efi_tpm_eventlog_init+0x324/0x370
+
 
 Regards,
-Lino
+Jerry
 
