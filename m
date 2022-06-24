@@ -2,89 +2,97 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E6DCCA47C
-	for <linux-integrity@archiver.kernel.org>; Thu, 23 Jun 2022 04:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1630C433EF
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Jun 2022 04:50:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233039AbiFWErl (ORCPT
+        id S231774AbiFXEtz (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 23 Jun 2022 00:47:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60628 "EHLO
+        Fri, 24 Jun 2022 00:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49296 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346553AbiFWE1O (ORCPT
+        with ESMTP id S231861AbiFXEs2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 23 Jun 2022 00:27:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7FE6A2DAB6
-        for <linux-integrity@vger.kernel.org>; Wed, 22 Jun 2022 21:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655958431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type;
-        bh=IBxvMB+Edf2kNT2Bpm+WLvfut0GM6YsurjzoxFCucJo=;
-        b=UQqko6fpr0DmJsKYE/STSJVGDV7GOCXK+q2vqnWsqS+L7AQ/7fokJKgWQDqK8S3sj9MpbG
-        6ROJolwP83WkS0w7is9M2xakqh2L5Y1m8thflhX8R9yUya+buKTzBOi0l0t5Ge4c9gH+Vq
-        0v7FHMwT3x/Wa/qEjfk3UlNQItRuF5Y=
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
- [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-625-ri7QvMfUMXSL4xTivwpcuw-1; Thu, 23 Jun 2022 00:27:08 -0400
-X-MC-Unique: ri7QvMfUMXSL4xTivwpcuw-1
-Received: by mail-vk1-f197.google.com with SMTP id m63-20020a1fee42000000b0036c8981d9bdso979535vkh.16
-        for <linux-integrity@vger.kernel.org>; Wed, 22 Jun 2022 21:27:08 -0700 (PDT)
+        Fri, 24 Jun 2022 00:48:28 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CFDB68096
+        for <linux-integrity@vger.kernel.org>; Thu, 23 Jun 2022 21:48:26 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id h9-20020a17090a648900b001ecb8596e43so1685951pjj.5
+        for <linux-integrity@vger.kernel.org>; Thu, 23 Jun 2022 21:48:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding:cc:from:to;
+        bh=vBU/QhGWkV1K4rpRU6iuVI+/0UvyZtTiMv0XrxYPMnY=;
+        b=KBTXLVQ9Myy+5fRcw18yS0lVJWlJWOdd7MztywK2mmLs41m1QyL9u71UUmRkZsVufO
+         WBGDCzLQmzxvYVvsyvL43mR/VUG7XnIdk39+oF8XwhmacjrZkaSZcXbdPN9I5HafTNer
+         xr82vLEO3N2V2NbYCHw86NmaenfnQTgypXQywZ3rOFxQ8Ry2BA3Q6/1czAnoeM+amgXI
+         PXNiI40EmhGP/RqKwo10U5bHYT3e2eMwbnXUA42H/MeYjCJBsRUSv0ePUpNifVLgVv1h
+         EOnTPql0DKaJ4Wn1LDQyp0D911OQtivur+xe4+XmZBEwj8WkviY0CU/CFaC8mcdEguoD
+         tZuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=IBxvMB+Edf2kNT2Bpm+WLvfut0GM6YsurjzoxFCucJo=;
-        b=gLGCUw4RdSomVkWZ5TGpDEum0gq0cj5R1xi8UZz7Z9O/+k9S3uNWS2v2ZQkqgwhJyN
-         WjT34p97QflOo/zpd3qkplLbPIH+ahS8agH+tOKVnEC/ABhekSHplSRX6X+lTIfI3JEX
-         ZSBRvYvAX92UVWpM+Be6fmm30Du6fN3XoZ/MkZ3WfhiV+9yis/tX0gpSJsfGarIh829z
-         a37RQBCm3S/u/FQnYufbiqEBWoqowHKoCKMvpiq1Xa3QAC3q53fnWTdttIhmUuWXJ+DK
-         QCqthLASsYvUyXf5FOHzWEuIKmus+M9tGgQGpzTflij3HQG2GcGc7wnXRqFPnWZq2/Lt
-         6ylg==
-X-Gm-Message-State: AJIora+jfoFa9vpxhWqBevkYdfq4ruO3fjM2VbH9W6BTg8p2kxmXVcwz
-        kxUH8sYnxNnorHMfNoVrnWYFMswybuGK7P663dz4Lp2ECM25VmbUg0Tfhg/BF4jgBMRKaE1rZtB
-        om8Gu7zSyjqs0z+8SdZhiEeeVzLzih8ER573dw/Va+kvQ
-X-Received: by 2002:a05:6102:390f:b0:34b:fd08:765b with SMTP id e15-20020a056102390f00b0034bfd08765bmr16297305vsu.20.1655958428191;
-        Wed, 22 Jun 2022 21:27:08 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1sqAVgj7S1VnchuTdBup1a9JK6o0vYCVoY8GvaUXQmHuO1iT+OVscT0bHinyPB4lh4Jp/HzGkdPzdUSBdvBLl0=
-X-Received: by 2002:a05:6102:390f:b0:34b:fd08:765b with SMTP id
- e15-20020a056102390f00b0034bfd08765bmr16297299vsu.20.1655958427918; Wed, 22
- Jun 2022 21:27:07 -0700 (PDT)
+        h=x-gm-message-state:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding:cc:from:to;
+        bh=vBU/QhGWkV1K4rpRU6iuVI+/0UvyZtTiMv0XrxYPMnY=;
+        b=kTEHpW4vLegNd0S8rYvv8GemGIuU5QJdEE3uZqavaNMhtXBs5fRt69UxUmtrtrRvo/
+         jImushUb9GcG2yavHT/b3lFE3sTRLCVqrNaEcCT+v5ypBkFxIP4tLHeXuLMUD3s2+Fpi
+         F3V6jzfFxuIaopqmTIU8MqJ7tmvPOC0Ilqsyg42H69fJqxdzQkrXkO3vCdnomZRan/Ba
+         WvIFSZemreHfhaorEgNXlrGBkCKmA9OxW2HaJcb5v7YbYUrRijNcsiBDWPCT681krUFT
+         UV9NbmRmAvQlCguUAxUzWYopvnr1NldxBIHMDAglXTvvRRxWrUlLnD+D1tZFpuMN96n4
+         go/w==
+X-Gm-Message-State: AJIora92unKEsWTUkKjFc+6eQ2bAkkL89lAe/bd53iraQjQWiGA4vynl
+        e1uxMbT0g4Ca/Eq7+EJ7nbuIAKuyD5nzrA==
+X-Google-Smtp-Source: AGRyM1voXMrdQb1DI39mijMlt8wYaDCo2EZoNrpq8QsrSaFoZs/0+hNfar1BHQvqZ1cGC/I8u7r8Ug==
+X-Received: by 2002:a17:902:7202:b0:167:6548:3f3e with SMTP id ba2-20020a170902720200b0016765483f3emr41641064plb.98.1656046105816;
+        Thu, 23 Jun 2022 21:48:25 -0700 (PDT)
+Received: from localhost ([12.3.194.138])
+        by smtp.gmail.com with ESMTPSA id x13-20020a056a000bcd00b005206d4fd636sm559062pfu.2.2022.06.23.21.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jun 2022 21:48:24 -0700 (PDT)
+Subject: [PATCH v2 1/5] drivers: of: kexec ima: Support 32-bit platforms
+Date:   Thu, 23 Jun 2022 21:48:07 -0700
+Message-Id: <20220624044811.9682-2-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220624044811.9682-1-palmer@rivosinc.com>
+References: <20220624044811.9682-1-palmer@rivosinc.com>
 MIME-Version: 1.0
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-Date:   Wed, 22 Jun 2022 21:26:42 -0700
-Message-ID: <CALzcddsfNchgJhKdxbUDDb3zBhbHZfYLCtRt9o6o=pv-zk_w_g@mail.gmail.com>
-Subject: efi_tpm_eventlog_init question
-To:     linux-integrity <linux-integrity@vger.kernel.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Cc:         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+            linux-security-module@vger.kernel.org,
+            Palmer Dabbelt <palmer@rivosinc.com>,
+            Rob Herring <robh@kernel.org>
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Is this calling memblock_reserve() correctly for the final events log?
+RISC-V recently added kexec_file() support, which uses enables kexec
+IMA.  We're the first 32-bit platform to support this, so we found a
+build bug.
 
-For the tpm events log it does:
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+ drivers/of/kexec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-memblock_reserve(efi.tpm_log, tbl_size);
-
-For the final events log it does:
-
-          memblock_reserve((unsigned long)final_tbl,
-                           tbl_size + sizeof(*final_tbl));
-
-
-which ends up with something like:
-
-[    0.000000] memblock_reserve:
-[0x000000005d7b5018-0x000000005d7b958a]
-efi_tpm_eventlog_init+0x82/0x370
-[    0.000000] memblock_reserve:
-[0xffffffffff2c0000-0xffffffffff2c00e4]
-efi_tpm_eventlog_init+0x324/0x370
-
-
-Regards,
-Jerry
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index b9bd1cff1793..ed3451ec2b24 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -236,8 +236,8 @@ static int setup_ima_buffer(const struct kimage *image, void *fdt,
+ 	if (ret)
+ 		return -EINVAL;
+ 
+-	pr_debug("IMA buffer at 0x%llx, size = 0x%zx\n",
+-		 image->ima_buffer_addr, image->ima_buffer_size);
++	pr_debug("IMA buffer at 0x%pa, size = 0x%zx\n",
++		 &image->ima_buffer_addr, image->ima_buffer_size);
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
 
