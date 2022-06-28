@@ -2,159 +2,449 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED97CC433EF
-	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jun 2022 16:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F214CCA47F
+	for <linux-integrity@archiver.kernel.org>; Tue, 28 Jun 2022 16:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232587AbiF1Qze (ORCPT
+        id S231140AbiF1Q7C (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 28 Jun 2022 12:55:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40008 "EHLO
+        Tue, 28 Jun 2022 12:59:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232782AbiF1Qys (ORCPT
+        with ESMTP id S237273AbiF1Q6m (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 28 Jun 2022 12:54:48 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146E623164;
-        Tue, 28 Jun 2022 09:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656435208; x=1687971208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Lk9i+UFDFPdV2X5SBVGrwZ4ywWGVr3wZW7Ti7xnz5Js=;
-  b=LBnYK7pIdoOPEQsjFbnRHlbrJSuU2zdtucqQ8Ri4f724EuJ49Mb7iBvF
-   Ck7lMab4V0bq9/04SCIIbekqAAHU9qvF81g2wGRNE5SkU2lLk7rGZP04h
-   /cRrn2MWL84oKyQAjczLGpFMVK2jGXIxQeEriCCpyTV7wpc2ZNm/UMDkG
-   lH7+YV6YnMR+MttmRRWcKb41kne999ETvP6F5pI3qHZo6UL2ogn8zmkKd
-   rbg3htcwrsg7eQYj40gtuz8O84HpXSVEr5OLzLXs9bDdiTuIX4NC75kCN
-   mD2m9zsfSbkr+qIfMsKUYkxJbC/rWc2L+liyIgyPHwpgOpVmQLItQy30W
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="279338975"
-X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
-   d="scan'208";a="279338975"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2022 09:53:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,229,1650956400"; 
-   d="scan'208";a="646993101"
-Received: from lkp-server01.sh.intel.com (HELO 68b931ab7ac1) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Jun 2022 09:53:25 -0700
-Received: from kbuild by 68b931ab7ac1 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o6ESq-000ARG-UR;
-        Tue, 28 Jun 2022 16:53:24 +0000
-Date:   Wed, 29 Jun 2022 00:53:11 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, kexec@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-integrity@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, nayna@linux.ibm.com, nasastry@in.ibm.com,
+        Tue, 28 Jun 2022 12:58:42 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D392E313;
+        Tue, 28 Jun 2022 09:58:40 -0700 (PDT)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25SG0PTv004591;
+        Tue, 28 Jun 2022 16:58:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=+7F3xWBRf8B0IWhYhsOB6ixDVzchtNAgJuEjyMCzmq8=;
+ b=tEq2IQXjROI934bb87ruI5mYcB1x7UsvM38XOi8LRqLFyHc+DcM/A6db6YQ/GmOmnXRc
+ zg80zn0y9cb3u59T5LaL74s1GH5mea12ziqKfgbN4NHBFnuyMbD8O7k5R9NA/qq8VHb6
+ s1AjhiHL7lNA3LK1WWPXj+9FIbQMtzPROhCkn9aNCxmNP1RYFfgFbboQHYGIA+TZ33Kb
+ 0vMzBnJ1QIx7ba7hE3P+Nle2kZc0PPug+Dk63k3Pv1B0HjIzJzsy5GWecMGTrwsvuojB
+ u1cQGq2SmJ5Eiz1Zrg9Ftk2VVuCGQFclPh0Kt0VMttBUmODROEXF2pdVNuuKm4bNBSeS vw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h04snst7v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jun 2022 16:58:30 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 25SGfcfQ030955;
+        Tue, 28 Jun 2022 16:58:30 GMT
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h04snst7g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jun 2022 16:58:29 +0000
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25SGpwjT014763;
+        Tue, 28 Jun 2022 16:58:28 GMT
+Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
+        by ppma03wdc.us.ibm.com with ESMTP id 3gwt09es8f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 28 Jun 2022 16:58:28 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25SGwRa034865534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jun 2022 16:58:27 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 873107805C;
+        Tue, 28 Jun 2022 16:58:27 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D456978067;
+        Tue, 28 Jun 2022 16:58:26 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 28 Jun 2022 16:58:26 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     kexec@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     nayna@linux.ibm.com, nasastry@in.ibm.com, mpe@ellerman.id.au,
         Stefan Berger <stefanb@linux.ibm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
         Eric Biederman <ebiederm@xmission.com>
-Subject: Re: [PATCH v2 3/3] tpm/kexec: Duplicate TPM measurement log in
- of-tree for kexec
-Message-ID: <202206290021.AodC96Vc-lkp@intel.com>
-References: <20220616154130.2052541-4-stefanb@linux.ibm.com>
+Subject: [PATCH v3 3/3] tpm/kexec: Duplicate TPM measurement log in of-tree for kexec
+Date:   Tue, 28 Jun 2022 12:58:20 -0400
+Message-Id: <20220628165820.883222-4-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.35.3
+In-Reply-To: <20220628165820.883222-1-stefanb@linux.ibm.com>
+References: <20220628165820.883222-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220616154130.2052541-4-stefanb@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: oE9WDvVRQQZppXbITIv4it_SrsXaxzYe
+X-Proofpoint-ORIG-GUID: 1G906ff4H4FOWtU-mRDlHI0WJDEF4jQB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-28_09,2022-06-28_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206280065
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Stefan,
+The memory area of the TPM measurement log is currently not properly
+duplicated for carrying it across kexec when an Open Firmware
+Devicetree is used. Therefore, the contents of the log get corrupted.
+Fix this for the kexec_file_load() syscall by allocating a buffer and
+copying the contents of the existing log into it. The new buffer is
+preserved across the kexec and a pointer to it is available when the new
+kernel is started. To achieve this, store the allocated buffer's address
+in the flattened device tree (fdt) under the name linux,tpm-kexec-buffer
+and search for this entry early in the kernel startup before the TPM
+subsystem starts up. Adjust the pointer in the of-tree stored under
+linux,sml-base to point to this buffer holding the preserved log. The TPM
+driver can then read the base address from this entry when making the log
+available.
 
-Thank you for the patch! Yet something to improve:
+Use postcore_initcall() to call the function to restore the buffer even if
+the TPM subsystem or driver are not used. This allows the buffer to be
+carried across the next kexec without involvement of the TPM subsystem
+and ensures a valid buffer pointed to by the of-tree.
 
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on linus/master v5.19-rc4 next-20220628]
-[cannot apply to robh/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+---
+ drivers/of/kexec.c    | 198 +++++++++++++++++++++++++++++++++++++++++-
+ include/linux/kexec.h |   6 ++
+ include/linux/of.h    |   8 +-
+ kernel/kexec_file.c   |   6 ++
+ 4 files changed, 216 insertions(+), 2 deletions(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stefan-Berger/tpm-Preserve-TPM-measurement-log-across-kexec/20220616-234240
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git 0a35780c755ccec097d15c6b4ff8b246a89f1689
-config: parisc-randconfig-r012-20220627 (https://download.01.org/0day-ci/archive/20220629/202206290021.AodC96Vc-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 11.3.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/c28e0f7321d0b7245454e811a3dd0f2134d9dd74
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Stefan-Berger/tpm-Preserve-TPM-measurement-log-across-kexec/20220616-234240
-        git checkout c28e0f7321d0b7245454e811a3dd0f2134d9dd74
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=parisc SHELL=/bin/bash drivers/of/
-
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   drivers/of/kexec.c: In function 'tpm_add_kexec_buffer':
->> drivers/of/kexec.c:371:18: error: implicit declaration of function 'vmalloc'; did you mean 'kvmalloc'? [-Werror=implicit-function-declaration]
-     371 |         buffer = vmalloc(size);
-         |                  ^~~~~~~
-         |                  kvmalloc
-   drivers/of/kexec.c:371:16: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     371 |         buffer = vmalloc(size);
-         |                ^
-   drivers/of/kexec.c: In function 'tpm_post_kexec':
-   drivers/of/kexec.c:446:42: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-     446 |                 *(u64 *)newprop->value = (u64)phyaddr;
-         |                                          ^
-   cc1: some warnings being treated as errors
-
-
-vim +371 drivers/of/kexec.c
-
-   349	
-   350	void tpm_add_kexec_buffer(struct kimage *image)
-   351	{
-   352		struct kexec_buf kbuf = { .image = image, .buf_align = 1,
-   353					  .buf_min = 0, .buf_max = ULONG_MAX,
-   354					  .top_down = true };
-   355		struct device_node *np;
-   356		void *buffer;
-   357		u32 size;
-   358		u64 base;
-   359		int ret;
-   360	
-   361		if (!IS_ENABLED(CONFIG_PPC64))
-   362			return;
-   363	
-   364		np = of_find_node_by_name(NULL, "vtpm");
-   365		if (!np)
-   366			return;
-   367	
-   368		if (of_tpm_get_sml_parameters(np, &base, &size) < 0)
-   369			return;
-   370	
- > 371		buffer = vmalloc(size);
-   372		if (!buffer)
-   373			return;
-   374		memcpy(buffer, __va(base), size);
-   375	
-   376		kbuf.buffer = buffer;
-   377		kbuf.bufsz = size;
-   378		kbuf.memsz = size;
-   379		ret = kexec_add_buffer(&kbuf);
-   380		if (ret) {
-   381			pr_err("Error passing over kexec TPM measurement log buffer: %d\n",
-   382			       ret);
-   383			return;
-   384		}
-   385	
-   386		image->tpm_buffer = buffer;
-   387		image->tpm_buffer_addr = kbuf.mem;
-   388		image->tpm_buffer_size = size;
-   389	}
-   390	
-
+diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
+index 601ea9727b0e..efc428b951db 100644
+--- a/drivers/of/kexec.c
++++ b/drivers/of/kexec.c
+@@ -18,6 +18,7 @@
+ #include <linux/random.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
++#include <linux/tpm.h>
+ 
+ #define RNG_SEED_SIZE		128
+ 
+@@ -220,7 +221,6 @@ static void remove_ima_buffer(void *fdt, int chosen_node)
+ 	remove_buffer(fdt, chosen_node, "linux,ima-kexec-buffer");
+ }
+ 
+-#ifdef CONFIG_IMA_KEXEC
+ static int setup_buffer(void *fdt, int chosen_node, const char *name,
+ 			uint64_t addr, uint64_t size)
+ {
+@@ -242,6 +242,7 @@ static int setup_buffer(void *fdt, int chosen_node, const char *name,
+ 
+ }
+ 
++#ifdef CONFIG_IMA_KEXEC
+ /**
+  * setup_ima_buffer - add IMA buffer information to the fdt
+  * @image:		kexec image being loaded.
+@@ -274,6 +275,198 @@ static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
+ }
+ #endif /* CONFIG_IMA_KEXEC */
+ 
++/**
++ * tpm_get_kexec_buffer - get TPM log buffer from the previous kernel
++ * @phyaddr:	On successful return, set to physical address of buffer
++ * @size:	On successful return, set to the buffer size.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++static int tpm_get_kexec_buffer(void **phyaddr, size_t *size)
++{
++	int ret;
++	unsigned long tmp_addr;
++	size_t tmp_size;
++
++	ret = get_kexec_buffer("linux,tpm-kexec-buffer", &tmp_addr, &tmp_size);
++	if (ret)
++		return ret;
++
++	*phyaddr = (void *)tmp_addr;
++	*size = tmp_size;
++
++	return 0;
++}
++
++/**
++ * tpm_of_remove_kexec_buffer - remove the linux,tpm-kexec-buffer node
++ */
++static int tpm_of_remove_kexec_buffer(void)
++{
++	struct property *prop;
++
++	prop = of_find_property(of_chosen, "linux,tpm-kexec-buffer", NULL);
++	if (!prop)
++		return -ENOENT;
++
++	return of_remove_property(of_chosen, prop);
++}
++
++/**
++ * remove_tpm_buffer - remove the TPM log buffer property and reservation from @fdt
++ *
++ * @fdt: Flattened Device Tree to update
++ * @chosen_node: Offset to the chosen node in the device tree
++ *
++ * The TPM log measurement buffer is of no use to a subsequent kernel, so we always
++ * remove it from the device tree.
++ */
++static void remove_tpm_buffer(void *fdt, int chosen_node)
++{
++	if (!IS_ENABLED(CONFIG_PPC64))
++		return;
++
++	remove_buffer(fdt, chosen_node, "linux,tpm-kexec-buffer");
++}
++
++/**
++ * setup_tpm_buffer - add TPM measurement log buffer information to the fdt
++ * @image:		kexec image being loaded.
++ * @fdt:		Flattened device tree for the next kernel.
++ * @chosen_node:	Offset to the chosen node.
++ *
++ * Return: 0 on success, or negative errno on error.
++ */
++static int setup_tpm_buffer(const struct kimage *image, void *fdt,
++			    int chosen_node)
++{
++	if (!IS_ENABLED(CONFIG_PPC64))
++		return 0;
++
++	return setup_buffer(fdt, chosen_node, "linux,tpm-kexec-buffer",
++			    image->tpm_buffer_addr, image->tpm_buffer_size);
++}
++
++void tpm_add_kexec_buffer(struct kimage *image)
++{
++	struct kexec_buf kbuf = { .image = image, .buf_align = 1,
++				  .buf_min = 0, .buf_max = ULONG_MAX,
++				  .top_down = true };
++	struct device_node *np;
++	void *buffer;
++	u32 size;
++	u64 base;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_PPC64))
++		return;
++
++	np = of_find_node_by_name(NULL, "vtpm");
++	if (!np)
++		return;
++
++	if (of_tpm_get_sml_parameters(np, &base, &size) < 0)
++		return;
++
++	buffer = vmalloc(size);
++	if (!buffer)
++		return;
++	memcpy(buffer, __va(base), size);
++
++	kbuf.buffer = buffer;
++	kbuf.bufsz = size;
++	kbuf.memsz = size;
++	ret = kexec_add_buffer(&kbuf);
++	if (ret) {
++		pr_err("Error passing over kexec TPM measurement log buffer: %d\n",
++		       ret);
++		return;
++	}
++
++	image->tpm_buffer = buffer;
++	image->tpm_buffer_addr = kbuf.mem;
++	image->tpm_buffer_size = size;
++}
++
++/**
++ * tpm_post_kexec - Make stored TPM log buffer available in of-tree
++ */
++static int __init tpm_post_kexec(void)
++{
++	struct property *newprop;
++	struct device_node *np;
++	void *phyaddr;
++	size_t size;
++	u32 oflogsize;
++	u64 unused;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_PPC64))
++		return 0;
++
++	ret = tpm_get_kexec_buffer(&phyaddr, &size);
++	if (ret)
++		return 0;
++
++	/*
++	 * If any one of the following steps fails then the next kexec will
++	 * cause issues due to linux,sml-base pointing to a stale buffer.
++	 */
++	np = of_find_node_by_name(NULL, "vtpm");
++	if (!np)
++		goto err_free_memblock;
++
++	/* logsize must not have changed */
++	if (of_tpm_get_sml_parameters(np, &unused, &oflogsize) < 0)
++		goto err_free_memblock;
++	if (oflogsize != size)
++		goto err_free_memblock;
++
++	/* replace linux,sml-base with new physical address of buffer */
++	ret = -ENOMEM;
++	newprop = kzalloc(sizeof(*newprop), GFP_KERNEL);
++	if (!newprop)
++		goto err_free_memblock;
++
++	newprop->name = kstrdup("linux,sml-base", GFP_KERNEL);
++	if (!newprop->name)
++		goto err_free_newprop;
++
++	newprop->length = sizeof(phyaddr);
++
++	newprop->value = kmalloc(sizeof(u64), GFP_KERNEL);
++	if (!newprop->value)
++		goto err_free_newprop_struct;
++
++	if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0 &&
++	    of_property_match_string(np, "compatible", "IBM,vtpm20") < 0) {
++		ret = -ENODEV;
++		goto err_free_newprop_struct;
++	} else {
++		*(u64 *)newprop->value = (u64)phyaddr;
++	}
++
++	ret = of_update_property(np, newprop);
++	if (ret) {
++		pr_err("Could not update linux,sml-base with new address");
++		goto err_free_newprop_struct;
++	}
++
++	goto exit;
++
++err_free_newprop_struct:
++	kfree(newprop->name);
++err_free_newprop:
++	kfree(newprop);
++err_free_memblock:
++	memblock_phys_free((phys_addr_t)phyaddr, size);
++exit:
++	tpm_of_remove_kexec_buffer();
++
++	return ret;
++}
++postcore_initcall(tpm_post_kexec);
++
+ /*
+  * of_kexec_alloc_and_setup_fdt - Alloc and setup a new Flattened Device Tree
+  *
+@@ -463,6 +656,9 @@ void *of_kexec_alloc_and_setup_fdt(const struct kimage *image,
+ 	remove_ima_buffer(fdt, chosen_node);
+ 	ret = setup_ima_buffer(image, fdt, fdt_path_offset(fdt, "/chosen"));
+ 
++	remove_tpm_buffer(fdt, chosen_node);
++	ret = setup_tpm_buffer(image, fdt, fdt_path_offset(fdt, "/chosen"));
++
+ out:
+ 	if (ret) {
+ 		kvfree(fdt);
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 58d1b58a971e..a0fd7ac0398c 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -319,6 +319,12 @@ struct kimage {
+ 	void *elf_headers;
+ 	unsigned long elf_headers_sz;
+ 	unsigned long elf_load_addr;
++
++	/* Virtual address of TPM log buffer for kexec syscall */
++	void *tpm_buffer;
++
++	phys_addr_t tpm_buffer_addr;
++	size_t tpm_buffer_size;
+ };
+ 
+ /* kexec interface functions */
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 04971e85fbc9..a86e07b58f26 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -100,6 +100,8 @@ struct of_reconfig_data {
+ 	struct property		*old_prop;
+ };
+ 
++struct kimage;
++
+ /* initialize a node */
+ extern struct kobj_type of_node_ktype;
+ extern const struct fwnode_operations of_fwnode_ops;
+@@ -436,13 +438,13 @@ int of_map_id(struct device_node *np, u32 id,
+ 
+ phys_addr_t of_dma_get_max_cpu_address(struct device_node *np);
+ 
+-struct kimage;
+ void *of_kexec_alloc_and_setup_fdt(const struct kimage *image,
+ 				   unsigned long initrd_load_addr,
+ 				   unsigned long initrd_len,
+ 				   const char *cmdline, size_t extra_fdt_size);
+ int ima_get_kexec_buffer(void **addr, size_t *size);
+ int ima_free_kexec_buffer(void);
++void tpm_add_kexec_buffer(struct kimage *image);
+ #else /* CONFIG_OF */
+ 
+ static inline void of_core_init(void)
+@@ -844,6 +846,10 @@ static inline phys_addr_t of_dma_get_max_cpu_address(struct device_node *np)
+ 	return PHYS_ADDR_MAX;
+ }
+ 
++static inline void tpm_add_kexec_buffer(struct kimage *image)
++{
++}
++
+ #define of_match_ptr(_ptr)	NULL
+ #define of_match_node(_matches, _node)	NULL
+ #endif /* CONFIG_OF */
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 8347fc158d2b..3f58d044939b 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -27,6 +27,7 @@
+ #include <linux/kernel_read_file.h>
+ #include <linux/syscalls.h>
+ #include <linux/vmalloc.h>
++#include <linux/of.h>
+ #include "kexec_internal.h"
+ 
+ static int kexec_calculate_store_digests(struct kimage *image);
+@@ -171,6 +172,9 @@ void kimage_file_post_load_cleanup(struct kimage *image)
+ 	image->ima_buffer = NULL;
+ #endif /* CONFIG_IMA_KEXEC */
+ 
++	vfree(image->tpm_buffer);
++	image->tpm_buffer = NULL;
++
+ 	/* See if architecture has anything to cleanup post load */
+ 	arch_kimage_file_post_load_cleanup(image);
+ 
+@@ -277,6 +281,8 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 
+ 	/* IMA needs to pass the measurement list to the next kernel. */
+ 	ima_add_kexec_buffer(image);
++	/* Pass the TPM measurement log to next kernel */
++	tpm_add_kexec_buffer(image);
+ 
+ 	/* Call arch image load handlers */
+ 	ldata = arch_kexec_kernel_image_load(image);
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.35.1
+
