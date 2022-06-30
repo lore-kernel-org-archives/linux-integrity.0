@@ -2,104 +2,115 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A30CCA47E
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Jun 2022 23:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A5CC433EF
+	for <linux-integrity@archiver.kernel.org>; Thu, 30 Jun 2022 02:04:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231523AbiF2X1r (ORCPT
+        id S231216AbiF3CED (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Jun 2022 19:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33368 "EHLO
+        Wed, 29 Jun 2022 22:04:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231368AbiF2X1k (ORCPT
+        with ESMTP id S229489AbiF3CEC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Jun 2022 19:27:40 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7597624F13;
-        Wed, 29 Jun 2022 16:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1656545245;
-        bh=FO1qKvjwo5OYPnKK1TQ+U7MMExJ4/KOfblZ/tjJSnxI=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=jtTO7FOnilg87GhuFWwBPTq/qv/GMfnu/MrKug3vt4+GVjenkEbVGxAGCAn3aKMs0
-         /BGnUY7D/HUMk1hbZluL60hnO/UqNijfROrt95whTlCFgA7lpL6Uo9iH1++A7k1X6k
-         7iBfo5oLl62nnCCjDTn4sXVk9YuiYy2MoxRAmDeg=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from localhost.localdomain ([46.223.3.23]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N49lD-1ngOgG23zV-0108ik; Thu, 30
- Jun 2022 01:27:25 +0200
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     stefanb@linux.vnet.ibm.com, linux@mniewoehner.de,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        l.sanfilippo@kunbus.com, LinoSanfilippo@gmx.de, lukas@wunner.de,
-        p.rosenberger@kunbus.com
-Subject: [PATCH v7 06/10] tpm, tpm_tis: Move interrupt mask checks into own function
-Date:   Thu, 30 Jun 2022 01:26:49 +0200
-Message-Id: <20220629232653.1306735-7-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220629232653.1306735-1-LinoSanfilippo@gmx.de>
-References: <20220629232653.1306735-1-LinoSanfilippo@gmx.de>
+        Wed, 29 Jun 2022 22:04:02 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D3D32061;
+        Wed, 29 Jun 2022 19:04:02 -0700 (PDT)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25U22036000315;
+        Thu, 30 Jun 2022 02:04:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=exBZ8Y35ByIv3jK7eL0z+GX/KE70ys8GCo5ukmKfkRk=;
+ b=sA08ls4WgS+2Bg8QeVlmQXTg4hF1g2ZS67gR6Zm2dupGPT5NloB/SNgFP0eq3gkWr/UQ
+ PlkvjsnuCam+7150PHmq9Umv7RXIyj2wJ9AKeHL/F3myadWoYwPgPOGLU6UD8DsGLAYl
+ Z+GZRL3LZQAI+lFCX2oQrcQuduAznYhFVTCIQwf7Ma671flN9IISGv66ItzP1Cl/If7V
+ SABPfZVAFUbU0+luu78z8Wzo0wkrUj7iYd2N6nxht+UcVz6+ERTeTtJ/1OPGa3366sOl
+ JcvFKXB5xnDnmdk+NotR5/dxDRnEmo94vBjJCdiBFWGzCSCCxYFT9H5IOQyQVAzYinZm 1A== 
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h12pnr11k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Jun 2022 02:04:01 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25U1pGKZ015883;
+        Thu, 30 Jun 2022 02:04:00 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma04wdc.us.ibm.com with ESMTP id 3gwt0a6xys-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Jun 2022 02:04:00 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25U23xdg11338138
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 30 Jun 2022 02:03:59 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9A9EE6A051;
+        Thu, 30 Jun 2022 02:03:59 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 433C46A047;
+        Thu, 30 Jun 2022 02:03:59 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 30 Jun 2022 02:03:59 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] ima: Defer query for iversion until it is needed
+Date:   Wed, 29 Jun 2022 22:03:46 -0400
+Message-Id: <20220630020346.1151942-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:NK8V6gYmS9shuxcrgqlJD2IVankIghQH/8sonM50vYYQWUMuy8/
- M6RiAs5r3z2QL7Dq1LGMWSkqdc+/QXaqtXT5PfT1r1goRtROuQfOQ6zzGdPN0ZKhcNqYT7i
- R50Y+jzin0V7tRBJqXSxKagbDHcjJJpsMmcTh8suHkSqofml97iD24sxJJyI0Ua9CgWGWxg
- XV+CpN7+fUi3NapKcUqKA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4zETysfYVlw=:Z4puwgExUg62rspa9x73sk
- HBeJyveXQ29pji3+OnyuK/bmRWdX3lqtN0rHD7eKyqhRs1Fkw9gBUL61ZtfA+T4DEGl39ABx2
- IE4aoOlr8K3Xay++20AX+Iek28fkQ+pHHuZ1WspveKXUJsfWlRKKXqf/OsXl9ufkC4WqKnVsX
- qmv0USFh2sAFZywJh9mkBX4lLkpwuaDumfYc6jlf3EHcWjvJZXceLS7CG65G/dSvViXrDSogB
- 860dD/gEli6NrtuhRvsnFTM61LtdQ3jFO7LvXBs58Bxrc/nZ3yG/ObWJNdtWCt15+82u75Jdz
- 5PGWmkt5fiYa7j7KBgmXJTj74Vgf68brLcy8VxW/drNR2UZJRc/gRmREA+EAcTqzL6ReysysK
- h6wymat8V6PEhRaTB52leBE0j3HG3xHmim8677hWuTvIfars4rwBLqIHBMDMrjnKHSDvyMIt8
- G6XpY6CTkj8q45YXhwXisizdRA2GzoOtelyOqdlq/jey3TwHpe69ixP2dRnlhO4CsD6SfkqLW
- BQSrIvjGUy4ewzMX4TebejFfbkd+jd6agnH84a4KB/BfvGDt/Mju5Xogn34mqa9BO88JpTMC+
- dCeehcj/OAcGlBrPt5Ca0Rg0zNTlUsmW/LlfWPhol1w7Vu+baapj1MrV2Gs0Hp5qmSzz88hwK
- i4IsoZtyatfSBl/uV1cADxzJ1Rt0TMe14aBO/QHTgr+u+3z02VlCM6W82Pw/xGIjwhwLu+S+c
- 6+JS2otPjK7QGDInWdifGgw/vJYRTmTOAxgCA5oJo4xGkMycXsI70ZnkE3HPLHIOxPqMbKnFK
- tg2qIBKRi19zxJJ3gEc3G0O920yHmFv63uMsA/JKpBDYZcbjKX1VQ4ted4LxmM+DHDB0B3CeF
- aVcFvOHZ4f69Yjm1qnwEoPDaUK4NPnyoEpHR7DB9/4OpSH8jVWg0WJXeqqLIhZHdQjn3/F3Iu
- KsXD9cy49e86/3lo5TDdvBjZ06K4E/xBmsIdtuKEZZTm7cIpFBjVUn3OggTrS8VbN5nKFtR5E
- 6jLU2bk9mtnN6O7fLHBP3FyeLx1HFiLRTxdzkFdZw29QqyMAV9zIEAloxRSDKqYFr2Ht8g3Qn
- odH8HDvoUF4wLFQzeC4wXN9OJ668jvWNyrVGqElID7tsQoUCLA+7E+KIg==
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I_EbhZqzUTVesNv60kAeU5X3dg-bwVgy
+X-Proofpoint-ORIG-GUID: I_EbhZqzUTVesNv60kAeU5X3dg-bwVgy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-06-29_24,2022-06-28_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 bulkscore=0 mlxscore=0 adultscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2204290000 definitions=main-2206300006
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkNsZWFuIHVw
-IHdhaXRfZm9yX3RwbV9zdGF0KCkgYnkgbW92aW5nIG11bHRpcGxlIHNpbWlsYXIgaW50ZXJydXB0
-IG1hc2sKY2hlY2tzIGludG8gYW4gb3duIGZ1bmN0aW9uLgoKU2lnbmVkLW9mZi1ieTogTGlubyBT
-YW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KU3VnZ2VzdGVkLWJ5OiBKYXJra28g
-U2Fra2luZW4gPGphcmtrb0BrZXJuZWwub3JnPgotLS0KIGRyaXZlcnMvY2hhci90cG0vdHBtX3Rp
-c19jb3JlLmMgfCAyOSArKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5n
-ZWQsIDE4IGluc2VydGlvbnMoKyksIDExIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29y
-ZS5jCmluZGV4IGMxMzU5OWU5NGFiNi4uYmQ0ZWViMGIyMTkyIDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2NoYXIvdHBtL3RwbV90aXNfY29yZS5jCisrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19j
-b3JlLmMKQEAgLTQ0LDYgKzQ0LDIwIEBAIHN0YXRpYyBib29sIHdhaXRfZm9yX3RwbV9zdGF0X2Nv
-bmQoc3RydWN0IHRwbV9jaGlwICpjaGlwLCB1OCBtYXNrLAogCXJldHVybiBmYWxzZTsKIH0KIAor
-c3RhdGljIHU4IHRwbV90aXNfZmlsdGVyX3N0c19tYXNrKHU4IGludF9tYXNrLCB1OCBzdHNfbWFz
-aykKK3sKKwlpZiAoIShpbnRfbWFzayAmIFRQTV9JTlRGX1NUU19WQUxJRF9JTlQpKQorCQlzdHNf
-bWFzayAmPSB+VFBNX1NUU19WQUxJRDsKKworCWlmICghKGludF9tYXNrICYgVFBNX0lOVEZfREFU
-QV9BVkFJTF9JTlQpKQorCQlzdHNfbWFzayAmPSB+VFBNX1NUU19EQVRBX0FWQUlMOworCisJaWYg
-KCEoaW50X21hc2sgJiBUUE1fSU5URl9DTURfUkVBRFlfSU5UKSkKKwkJc3RzX21hc2sgJj0gflRQ
-TV9TVFNfQ09NTUFORF9SRUFEWTsKKworCXJldHVybiBzdHNfbWFzazsKK30KKwogc3RhdGljIGlu
-dCB3YWl0X2Zvcl90cG1fc3RhdChzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsIHU4IG1hc2ssCiAJCXVu
-c2lnbmVkIGxvbmcgdGltZW91dCwgd2FpdF9xdWV1ZV9oZWFkX3QgKnF1ZXVlLAogCQlib29sIGNo
-ZWNrX2NhbmNlbCkKQEAgLTUzLDcgKzY3LDcgQEAgc3RhdGljIGludCB3YWl0X2Zvcl90cG1fc3Rh
-dChzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAsIHU4IG1hc2ssCiAJbG9uZyByYzsKIAl1OCBzdGF0dXM7
-CiAJYm9vbCBjYW5jZWxlZCA9IGZhbHNlOwotCXU4IHN0c19tYXNrID0gMDsKKwl1OCBzdHNfbWFz
-azsKIAlpbnQgcmV0ID0gMDsKIAogCS8qIGNoZWNrIGN1cnJlbnQgc3RhdHVzICovCkBAIC02MSwx
-NyArNzUsMTAgQEAgc3RhdGljIGludCB3YWl0X2Zvcl90cG1fc3RhdChzdHJ1Y3QgdHBtX2NoaXAg
-KmNoaXAsIHU4IG1hc2ssCiAJaWYgKChzdGF0dXMgJiBtYXNrKSA9PSBtYXNrKQogCQlyZXR1cm4g
-MDsKIAorCXN0c19tYXNrID0gbWFzayAmIChUUE1fU1RTX1ZBTElEIHwgVFBNX1NUU19EQVRBX0FW
-QUlMIHwKKwkJCSAgIFRQTV9TVFNfQ09NTUFORF9SRUFEWSk7CiAJLyogY2hlY2sgd2hpY2ggc3Rh
-dHVzIGNoYW5nZXMgY2FuIGJlIGhhbmRsZWQgYnkgaXJxcyAqLwotCWlmIChwcml2LT5pbnRfbWFz
-ayAmIFRQTV9JTlRGX1NUU19WQUxJRF9JTlQpCi0JCXN0c19tYXNrIHw9IFRQTV9TVFNfVkFMSUQ7
-Ci0KLQlpZiAocHJpdi0+aW50X21hc2sgJiBUUE1fSU5URl9EQVRBX0FWQUlMX0lOVCkKLQkJc3Rz
-X21hc2sgfD0gVFBNX1NUU19EQVRBX0FWQUlMOwotCi0JaWYgKHByaXYtPmludF9tYXNrICYgVFBN
-X0lOVEZfQ01EX1JFQURZX0lOVCkKLQkJc3RzX21hc2sgfD0gVFBNX1NUU19DT01NQU5EX1JFQURZ
-OwotCi0Jc3RzX21hc2sgJj0gbWFzazsKKwlzdHNfbWFzayA9IHRwbV90aXNfZmlsdGVyX3N0c19t
-YXNrKHByaXYtPmludF9tYXNrLCBzdHNfbWFzayk7CiAKIAlzdG9wID0gamlmZmllcyArIHRpbWVv
-dXQ7CiAJLyogcHJvY2VzcyBzdGF0dXMgY2hhbmdlcyB3aXRoIGlycSBzdXBwb3J0ICovCi0tIAoy
-LjI1LjEKCg==
+Defer the query for the iversion until it is needed.
+
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ security/integrity/ima/ima_api.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index c1e76282b5ee..4410d45eb281 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -248,7 +248,6 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 	int result = 0;
+ 	int length;
+ 	void *tmpbuf;
+-	u64 i_version;
+ 
+ 	/*
+ 	 * Always collect the modsig, because IMA might have already collected
+@@ -267,7 +266,6 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 	 * to an initial measurement/appraisal/audit, but was modified to
+ 	 * assume the file changed.
+ 	 */
+-	i_version = inode_query_iversion(inode);
+ 	hash.hdr.algo = algo;
+ 	hash.hdr.length = hash_digest_size[algo];
+ 
+@@ -304,7 +302,7 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 
+ 	iint->ima_hash = tmpbuf;
+ 	memcpy(iint->ima_hash, &hash, length);
+-	iint->version = i_version;
++	iint->version = inode_query_iversion(inode);
+ 
+ 	/* Possibly temporary failure due to type of read (eg. O_DIRECT) */
+ 	if (!result)
+-- 
+2.36.1
+
