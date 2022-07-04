@@ -2,359 +2,192 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D637CCA486
-	for <linux-integrity@archiver.kernel.org>; Wed, 29 Jun 2022 07:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11CCC433EF
+	for <linux-integrity@archiver.kernel.org>; Mon,  4 Jul 2022 17:45:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232234AbiF2Hlx (ORCPT
+        id S230034AbiGDRpb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 29 Jun 2022 03:41:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
+        Mon, 4 Jul 2022 13:45:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229820AbiF2Hlv (ORCPT
+        with ESMTP id S229894AbiGDRpa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 29 Jun 2022 03:41:51 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F1236B42;
-        Wed, 29 Jun 2022 00:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1656488510; x=1688024510;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hRLWAheTUgpMqJ+CTyhb8q72eqCf5jXCD+qdlPmQdX8=;
-  b=V7EsYYr9EIij1ip70+OQMY/gzrh5wyGiKcYp8AWCHb25bOJrQa8ldVVA
-   WjfiGM9RSi7+O2v6aTzjnGFtciC06e+wwz660J8d1fRqDhDUuFa+GCisT
-   rKUaoFvcqeLu972MEnNCCaodyFq5KFw65hrEObpxXK1USTMOqGTNjghk1
-   M6eAb7r6RhwTd49jKSf+itMDaZ5Gu/jHoVMqNBN++BYhLvCzxTurIoN9M
-   /3H0k+pz3CbrRrMwvdgEhSQ7BUW5H6fpDqV6CtG6BHjQGM7QYyLOK833q
-   sD1PkwJUKQH1n3D/+a5t4ubmQSAULxHZs8gKZv4cjGcBr80q05Z6ghIMA
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10392"; a="307444900"
-X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
-   d="scan'208";a="307444900"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2022 00:41:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.92,230,1650956400"; 
-   d="scan'208";a="733074160"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by fmsmga001.fm.intel.com with SMTP; 29 Jun 2022 00:40:24 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 29 Jun 2022 10:40:23 +0300
-Date:   Wed, 29 Jun 2022 10:40:23 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Wolfram Sang <wsa@kernel.org>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Russell King <linux@armlinux.org.uk>,
-        Scott Wood <oss@buserror.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Robin van der Gracht <robin@protonic.nl>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Corey Minyard <minyard@acm.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Phong LE <ple@baylibre.com>,
-        Adrien Grassein <adrien.grassein@gmail.com>,
-        Peter Senna Tschudin <peter.senna@gmail.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Florian Fainelli <f.fainelli@gmail.com>, Broad@vger.kernel.org
-Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
-Message-ID: <YrwB5xPKZmHlXzrC@kuha.fi.intel.com>
-References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
- <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+        Mon, 4 Jul 2022 13:45:30 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E446FD5;
+        Mon,  4 Jul 2022 10:45:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1656956716;
+        bh=TQ4lBTrLpuo+eOz6EySprVM5Znbg7fuRxnxioDxOg14=;
+        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
+        b=KdSpeikfbSf3EQvihQEIF7SS8Ku4HT8j4pwvPpvzdscJiSTAGpcBNw7Keo9Mzuthe
+         6rGLo1KQU+SeKl4fjXkZ7r0Pjb89kEesrFMcRj3K4woHDhKoR78JojJmsU0y697my/
+         UYr0I3hN7/fqKcmPWje1pgA6VUU5pO72cHt46wIM=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.0.69] ([46.223.3.210]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1McpNy-1nYoCU1GHi-00Zuiw; Mon, 04
+ Jul 2022 19:45:16 +0200
+Message-ID: <f0e33bc4-335c-322a-9295-18d6bc0b8286@gmx.de>
+Date:   Mon, 4 Jul 2022 19:45:12 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v7 07/10] tmp, tmp_tis: Implement usage counter for
+ locality
+Content-Language: en-US
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, stefanb@linux.vnet.ibm.com,
+        linux@mniewoehner.de, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, l.sanfilippo@kunbus.com,
+        lukas@wunner.de, p.rosenberger@kunbus.com
+References: <20220629232653.1306735-1-LinoSanfilippo@gmx.de>
+ <20220629232653.1306735-8-LinoSanfilippo@gmx.de>
+ <Yr4x6KRSvzlXNdH2@kernel.org>
+From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
+In-Reply-To: <Yr4x6KRSvzlXNdH2@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7NEXJUNaT6KySY/atP+dQn+HYXS4nNzYgcoi8I8faZCB2VCxL+n
+ yJulzOSntGDyPF4x/sqJy1J/rMK6r8TXz2h9Sge/BlwpsIPea8Vv1tvANcQA0MZTOjKR7I4
+ QqP4x4B191n3TVgy3bBeG+m5PAOWg6e+ZRS5l8f40DXk6WxOuVGO5Toszy3emCPnoSLaADa
+ fGLWpUlMq1Vn70JOOej7w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:zQEcDyYnCbo=:CohU44Go8P38dFklNt1xAx
+ i2sEaBRJ+kMTHJl0QXkQIMBsp2JqsM8O4ow9cVJ8iMxy3al9JX7AwlOa1SQtTLoQfgAr2Om8I
+ hes53IsJXO8BpiZXBQaynG0OVCyUaD83Uk8dyQiePxgV9j55qvruUKGjMZN7rA6LsmgDduer+
+ 0J3ZzZIIbbNGKL8wBy/To+N5RJ5EuFYsNH0sQwudOoSX1/LuTaX9ZrSD40ZSN9LVo/0TRiqzD
+ lwzdBA+BlWOXtiwyN6kYT7h/N5uGkbwjFquPfTEyMjN04koittlS/M5jlIN4rMoT14EzjAGCj
+ FsQgNhrvK5DS7FEyXGK+q1AboHt8suvK07fFi1bwtA8h0lqTUBri+VdqCwnkAT03Rzb6z6F0n
+ VGh+hKz0gSjFH6jmbg3xFiqNf/5+87N8grbInyE8cdnpvsHYwx8NAJ8VncaQPIR+UdaHSSVSA
+ r/7Djlyd7OuuXlLx7ArLYG5+S0/z1glrMygUkJO3tG/WSdc1faX8pgXaMXaXW82JTRPMlOVv4
+ 3Hrjte4f4xCShJCzhBaTsufFx5EaiiSeMl11vOVZFzzjSUVWpycG1BCAAWLW2XzmvHz70E9sx
+ /oR6Nbj6ZD9m3CaeZj91c/PerBSpiR6ixw5BKfzFet4xoJPknajniKMKh6DxkexdW851Bp38E
+ UnYBQTHk1grHLS+/zSt5kicdYuE8yRj335enTcOIGxW8GR0Ck2oRAIW6l8HY0aTYIVgVvtYOc
+ bxR9ABt0kbxr7F/+dD5FxHhhF4ry4hVNDKcGZbW8fK2rrgBpe4igMdHyp9yypZDpWBdlsceE5
+ 8T5CQPDJH44mjIh25KtHH33vKt2ST+Mc5XmK9RfX7b8+Sh0iF/zeNBVuspTAPqMygs9nmxPxM
+ FUEly1NjnLfDt8D/B0WfoFCCoJrOqd2MWuriarjwCezfqs/+62lmBeXtMKJ1j8hvfOSiQ4YD1
+ iFKo0dIG+rPFfHi3hVPBS6EFgz8ZgVa0EC9CczEl+WdWF/2Ku54U3qMT+C2dM+QmeE0wwktpN
+ KsH9FDR24qO+rRzPL+vANigeZRgJTgImA1HMoFUlhKAAeK7xIAznKJhjED5XKjywLfVpkOEWt
+ 4c/vswxXu20Hgyx1Epi6bqBJom+Kx0IZtMfpF3BO9M8/4o89lsYDkDTYQ==
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Jun 28, 2022 at 04:03:12PM +0200, Uwe Kleine-König wrote:
-> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-> index cd47c3597e19..2a58185fb14c 100644
-> --- a/drivers/usb/typec/hd3ss3220.c
-> +++ b/drivers/usb/typec/hd3ss3220.c
-> @@ -245,14 +245,12 @@ static int hd3ss3220_probe(struct i2c_client *client,
->  	return ret;
->  }
->  
-> -static int hd3ss3220_remove(struct i2c_client *client)
-> +static void hd3ss3220_remove(struct i2c_client *client)
->  {
->  	struct hd3ss3220 *hd3ss3220 = i2c_get_clientdata(client);
->  
->  	typec_unregister_port(hd3ss3220->port);
->  	usb_role_switch_put(hd3ss3220->role_sw);
-> -
-> -	return 0;
->  }
->  
->  static const struct of_device_id dev_ids[] = {
-> diff --git a/drivers/usb/typec/mux/fsa4480.c b/drivers/usb/typec/mux/fsa4480.c
-> index 6184f5367190..d6495e533e58 100644
-> --- a/drivers/usb/typec/mux/fsa4480.c
-> +++ b/drivers/usb/typec/mux/fsa4480.c
-> @@ -181,14 +181,12 @@ static int fsa4480_probe(struct i2c_client *client)
->  	return 0;
->  }
->  
-> -static int fsa4480_remove(struct i2c_client *client)
-> +static void fsa4480_remove(struct i2c_client *client)
->  {
->  	struct fsa4480 *fsa = i2c_get_clientdata(client);
->  
->  	typec_mux_unregister(fsa->mux);
->  	typec_switch_unregister(fsa->sw);
-> -
-> -	return 0;
->  }
->  
->  static const struct i2c_device_id fsa4480_table[] = {
-> diff --git a/drivers/usb/typec/mux/pi3usb30532.c b/drivers/usb/typec/mux/pi3usb30532.c
-> index 6ce9f282594e..1cd388b55c30 100644
-> --- a/drivers/usb/typec/mux/pi3usb30532.c
-> +++ b/drivers/usb/typec/mux/pi3usb30532.c
-> @@ -160,13 +160,12 @@ static int pi3usb30532_probe(struct i2c_client *client)
->  	return 0;
->  }
->  
-> -static int pi3usb30532_remove(struct i2c_client *client)
-> +static void pi3usb30532_remove(struct i2c_client *client)
->  {
->  	struct pi3usb30532 *pi = i2c_get_clientdata(client);
->  
->  	typec_mux_unregister(pi->mux);
->  	typec_switch_unregister(pi->sw);
-> -	return 0;
->  }
->  
->  static const struct i2c_device_id pi3usb30532_table[] = {
-> diff --git a/drivers/usb/typec/rt1719.c b/drivers/usb/typec/rt1719.c
-> index f1b698edd7eb..ea8b700b0ceb 100644
-> --- a/drivers/usb/typec/rt1719.c
-> +++ b/drivers/usb/typec/rt1719.c
-> @@ -930,14 +930,12 @@ static int rt1719_probe(struct i2c_client *i2c)
->  	return ret;
->  }
->  
-> -static int rt1719_remove(struct i2c_client *i2c)
-> +static void rt1719_remove(struct i2c_client *i2c)
->  {
->  	struct rt1719_data *data = i2c_get_clientdata(i2c);
->  
->  	typec_unregister_port(data->port);
->  	usb_role_switch_put(data->role_sw);
-> -
-> -	return 0;
->  }
->  
->  static const struct of_device_id __maybe_unused rt1719_device_table[] = {
-> diff --git a/drivers/usb/typec/stusb160x.c b/drivers/usb/typec/stusb160x.c
-> index e7745d1c2a5c..8638f1d39896 100644
-> --- a/drivers/usb/typec/stusb160x.c
-> +++ b/drivers/usb/typec/stusb160x.c
-> @@ -801,7 +801,7 @@ static int stusb160x_probe(struct i2c_client *client)
->  	return ret;
->  }
->  
-> -static int stusb160x_remove(struct i2c_client *client)
-> +static void stusb160x_remove(struct i2c_client *client)
->  {
->  	struct stusb160x *chip = i2c_get_clientdata(client);
->  
-> @@ -823,8 +823,6 @@ static int stusb160x_remove(struct i2c_client *client)
->  
->  	if (chip->main_supply)
->  		regulator_disable(chip->main_supply);
-> -
-> -	return 0;
->  }
->  
->  static int __maybe_unused stusb160x_suspend(struct device *dev)
-> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-> index 96c55eaf3f80..5e9348f28d50 100644
-> --- a/drivers/usb/typec/tcpm/fusb302.c
-> +++ b/drivers/usb/typec/tcpm/fusb302.c
-> @@ -1771,7 +1771,7 @@ static int fusb302_probe(struct i2c_client *client,
->  	return ret;
->  }
->  
-> -static int fusb302_remove(struct i2c_client *client)
-> +static void fusb302_remove(struct i2c_client *client)
->  {
->  	struct fusb302_chip *chip = i2c_get_clientdata(client);
->  
-> @@ -1783,8 +1783,6 @@ static int fusb302_remove(struct i2c_client *client)
->  	fwnode_handle_put(chip->tcpc_dev.fwnode);
->  	destroy_workqueue(chip->wq);
->  	fusb302_debugfs_exit(chip);
-> -
-> -	return 0;
->  }
->  
->  static int fusb302_pm_suspend(struct device *dev)
-> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-> index f33e08eb7670..c48fca60bb06 100644
-> --- a/drivers/usb/typec/tcpm/tcpci.c
-> +++ b/drivers/usb/typec/tcpm/tcpci.c
-> @@ -869,7 +869,7 @@ static int tcpci_probe(struct i2c_client *client,
->  	return 0;
->  }
->  
-> -static int tcpci_remove(struct i2c_client *client)
-> +static void tcpci_remove(struct i2c_client *client)
->  {
->  	struct tcpci_chip *chip = i2c_get_clientdata(client);
->  	int err;
-> @@ -880,8 +880,6 @@ static int tcpci_remove(struct i2c_client *client)
->  		dev_warn(&client->dev, "Failed to disable irqs (%pe)\n", ERR_PTR(err));
->  
->  	tcpci_unregister_port(chip->tcpci);
-> -
-> -	return 0;
->  }
->  
->  static const struct i2c_device_id tcpci_id[] = {
-> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.c b/drivers/usb/typec/tcpm/tcpci_maxim.c
-> index df2505570f07..a11be5754128 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_maxim.c
-> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.c
-> @@ -493,14 +493,12 @@ static int max_tcpci_probe(struct i2c_client *client, const struct i2c_device_id
->  	return ret;
->  }
->  
-> -static int max_tcpci_remove(struct i2c_client *client)
-> +static void max_tcpci_remove(struct i2c_client *client)
->  {
->  	struct max_tcpci_chip *chip = i2c_get_clientdata(client);
->  
->  	if (!IS_ERR_OR_NULL(chip->tcpci))
->  		tcpci_unregister_port(chip->tcpci);
-> -
-> -	return 0;
->  }
->  
->  static const struct i2c_device_id max_tcpci_id[] = {
-> diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-> index b56a0880a044..9ad4924b4ba7 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-> +++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-> @@ -263,12 +263,11 @@ static int rt1711h_probe(struct i2c_client *client,
->  	return 0;
->  }
->  
-> -static int rt1711h_remove(struct i2c_client *client)
-> +static void rt1711h_remove(struct i2c_client *client)
->  {
->  	struct rt1711h_chip *chip = i2c_get_clientdata(client);
->  
->  	tcpci_unregister_port(chip->tcpci);
-> -	return 0;
->  }
->  
->  static const struct i2c_device_id rt1711h_id[] = {
-> diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-> index dfbba5ae9487..b637e8b378b3 100644
-> --- a/drivers/usb/typec/tipd/core.c
-> +++ b/drivers/usb/typec/tipd/core.c
-> @@ -857,15 +857,13 @@ static int tps6598x_probe(struct i2c_client *client)
->  	return ret;
->  }
->  
-> -static int tps6598x_remove(struct i2c_client *client)
-> +static void tps6598x_remove(struct i2c_client *client)
->  {
->  	struct tps6598x *tps = i2c_get_clientdata(client);
->  
->  	tps6598x_disconnect(tps, 0);
->  	typec_unregister_port(tps->port);
->  	usb_role_switch_put(tps->role_sw);
-> -
-> -	return 0;
->  }
->  
->  static const struct of_device_id tps6598x_of_match[] = {
-> diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> index 6db7c8ddd51c..920b7e743f56 100644
-> --- a/drivers/usb/typec/ucsi/ucsi_ccg.c
-> +++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
-> @@ -1398,7 +1398,7 @@ static int ucsi_ccg_probe(struct i2c_client *client,
->  	return status;
->  }
->  
-> -static int ucsi_ccg_remove(struct i2c_client *client)
-> +static void ucsi_ccg_remove(struct i2c_client *client)
->  {
->  	struct ucsi_ccg *uc = i2c_get_clientdata(client);
->  
-> @@ -1408,8 +1408,6 @@ static int ucsi_ccg_remove(struct i2c_client *client)
->  	ucsi_unregister(uc->ucsi);
->  	ucsi_destroy(uc->ucsi);
->  	free_irq(uc->irq, uc);
-> -
-> -	return 0;
->  }
->  
->  static const struct i2c_device_id ucsi_ccg_device_id[] = {
-> diff --git a/drivers/usb/typec/wusb3801.c b/drivers/usb/typec/wusb3801.c
-> index e63509f8b01e..3cc7a15ecbd3 100644
-> --- a/drivers/usb/typec/wusb3801.c
-> +++ b/drivers/usb/typec/wusb3801.c
-> @@ -399,7 +399,7 @@ static int wusb3801_probe(struct i2c_client *client)
->  	return ret;
->  }
->  
-> -static int wusb3801_remove(struct i2c_client *client)
-> +static void wusb3801_remove(struct i2c_client *client)
->  {
->  	struct wusb3801 *wusb3801 = i2c_get_clientdata(client);
->  
-> @@ -411,8 +411,6 @@ static int wusb3801_remove(struct i2c_client *client)
->  
->  	if (wusb3801->vbus_on)
->  		regulator_disable(wusb3801->vbus_supply);
-> -
-> -	return 0;
->  }
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
--- 
-heikki
+On 01.07.22 01:29, Jarkko Sakkinen wrote:
+
+>
+> I'm kind of thinking that should tpm_tis_data have a lock for its
+> contents?
+
+Most of the tpm_tis_data structure elements are set once during init and
+then never changed but only read. So no need for locking for these. The
+exceptions I see are
+
+- flags
+- locality_count
+- locality
+
+
+whereby "flags" is accessed by atomic bit manipulating functions and thus
+does not need extra locking. "locality_count" is protected by the locality=
+_count_mutex.
+"locality" is only set in check_locality() which is called from tpm_tis_re=
+quest_locality_locked()
+which holds the locality_count_mutex. So check_locality() is also protecte=
+d by the locality_count_mutex
+(which for this reason should probably rather be called locality_mutex sin=
+ce it protects both the "locality_count"
+and the "locality" variable).
+
+There is one other place check_locality() is called from, namely the inter=
+rupt handler. This is also the only
+place in which "locality" could be assigned another value than 0 (aka the =
+default). In this case there
+is no lock, so this could indeed by racy.
+
+The solution I see for this is:
+1. remove the entire loop that checks for the current locality, i.e. this =
+code:
+
+	if (interrupt & TPM_INTF_LOCALITY_CHANGE_INT)
+		for (i =3D 0; i < 5; i++)
+			if (check_locality(chip, i))
+				break;
+
+So we avoid "locality" from being changed to something that is not the def=
+ault.
+
+
+2. grab the locality_count_mutex and protect "locality":
+
+if (interrupt & TPM_INTF_LOCALITY_CHANGE_INT)
+	mutex_lock(&priv->locality_count_mutex);
+		for (i =3D 0; i < 5; i++)
+			if (check_locality(chip, i))
+				break;
+	mutex_unlock(&priv->locality_count_mutex);
+
+
+I dont see the reason why we should store which locality is the active one=
+, since the only thing
+that ever would change it from 0 (i.e. the default which we use) to someth=
+ing else is some external instance.
+
+So I would vote for option 1.
+
+
+
+>
+> I kind of doubt that we would ever need more than one lock for it,
+> and it would give some more ensurance to not be race, especially
+> when re-enabling interrupts this feels important to be "extra safe".
+>
+> I looked at this commit, and did not see anything that would prevent
+> using a spin lock instead of mutex. With a spin lock priv can be
+> accessed also in the interrupt context.
+>
+> So instead prepend this patch with a patch that adds:
+>
+>         struct spin_lock lock;
+>
+> And something like:
+>
+>         static inline struct tpm_tis_data *tpm_tis_priv_get(struct tpm_c=
+hip *chip)
+>         {
+>                 struct tpm_tis_data *priv =3D dev_get_drvdata(&chip->dev=
+);
+>
+>                 spin_lock(&priv->lock);
+>                 return priv;
+>         }
+>
+>         static inline void tpm_tis_priv_put(struct tpm_tis_data *priv)
+>         {
+>                 spin_unlock(&priv->lock);
+>         }
+>
+> And change the sites where priv is used to acquire the instance with thi=
+s.
+>
+
+In this patch we need the mutex to protect the locality counter. We have t=
+o hold the mutex
+while we do a register access that requires a locality (to make sure that =
+the locality is not
+released by another thread shortly before we do the access).
+
+We cannot do the register access while holding a spinlock, since for SPI t=
+he (SPI) bus
+lock mutex is used which needs a sleepable context. That is not given whil=
+e holding a spinlock,
+so I think we have no choice here unfortunately.
+
+Regards,
+Lino
+
+
+
+
+
