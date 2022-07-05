@@ -2,73 +2,144 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 559E3C433EF
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Jul 2022 07:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE03FCCA482
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Jul 2022 10:09:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230442AbiGEHtn (ORCPT
+        id S231318AbiGEKJA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Jul 2022 03:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44284 "EHLO
+        Tue, 5 Jul 2022 06:09:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230467AbiGEHtm (ORCPT
+        with ESMTP id S229885AbiGEKI6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Jul 2022 03:49:42 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A33D331A
-        for <linux-integrity@vger.kernel.org>; Tue,  5 Jul 2022 00:49:36 -0700 (PDT)
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4LcZVH2k4HzTgQs;
-        Tue,  5 Jul 2022 15:45:59 +0800 (CST)
-Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 5 Jul 2022 15:49:34 +0800
-Received: from huawei.com (10.175.101.6) by kwepemm600010.china.huawei.com
- (7.193.23.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Tue, 5 Jul
- 2022 15:49:33 +0800
-From:   <luhuaxin1@huawei.com>
-To:     <linux-integrity@vger.kernel.org>
-CC:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>
-Subject: [PATCH v2] ima: Fix a potential integer overflow in ima_appraise_measurement
-Date:   Tue, 5 Jul 2022 13:14:17 +0800
-Message-ID: <20220705051417.2114-1-luhuaxin1@huawei.com>
-X-Mailer: git-send-email 2.33.0
+        Tue, 5 Jul 2022 06:08:58 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9546613F56;
+        Tue,  5 Jul 2022 03:08:56 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4BB4A1F91F;
+        Tue,  5 Jul 2022 10:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1657015735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qvMJ4J1/LuqJ2bm7BlZIoOLJOYmWh+4Rpvkk33SZGOA=;
+        b=eByb4sSPqg6rRuVWR7Uyol2qkXUh2FlAJZJl6kQB2+c8EEhcdaxtq/jkX0dVzdvL/5s6D3
+        /efNTsY/bdasP3pVQxu6qP4nvHO+zcS4O9fblGgs1NR89rSYgTvYETM292rGHy3CrhOSj+
+        qGcOFU+GGl+mKHAF54mbZA9ZrTUJOaY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1657015735;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qvMJ4J1/LuqJ2bm7BlZIoOLJOYmWh+4Rpvkk33SZGOA=;
+        b=jKWTp5GMggeoLloojImrUvPvKkYL+8GQzQSR8Qi8VzqCYEK46zUKh7GMjl/cO3qvfPDiP7
+        DHXFfHIde+vxx5CQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2E2AF1339A;
+        Tue,  5 Jul 2022 10:08:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id VBGsCbYNxGK1BQAAMHmgww
+        (envelope-from <jdelvare@suse.de>); Tue, 05 Jul 2022 10:08:54 +0000
+Date:   Tue, 5 Jul 2022 12:08:52 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Wolfram Sang <wsa@kernel.org>, Guenter Roeck <groeck@chromium.org>,
+        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, chrome-platform@lists.linux.dev,
+        linux-rpi-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org, linux-media@vger.kernel.org,
+        patches@opensource.cirrus.com, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        acpi4asus-user@lists.sourceforge.net, linux-pm@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 6/6] i2c: Make remove callback return void
+Message-ID: <20220705120852.049dc235@endymion.delvare>
+In-Reply-To: <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+References: <20220628140313.74984-1-u.kleine-koenig@pengutronix.de>
+        <20220628140313.74984-7-u.kleine-koenig@pengutronix.de>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.101.6]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600010.china.huawei.com (7.193.23.86)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Huaxin Lu <luhuaxin1@huawei.com>
+On Tue, 28 Jun 2022 16:03:12 +0200, Uwe Kleine-K=C3=B6nig wrote:
+> From: Uwe Kleine-K=C3=B6nig <uwe@kleine-koenig.org>
+>=20
+> The value returned by an i2c driver's remove function is mostly ignored.
+> (Only an error message is printed if the value is non-zero that the
+> error is ignored.)
+>=20
+> So change the prototype of the remove function to return no value. This
+> way driver authors are not tempted to assume that passing an error to
+> the upper layer is a good idea. All drivers are adapted accordingly.
+> There is no intended change of behaviour, all callbacks were prepared to
+> return 0 before.
+>=20
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
 
-When the ima-modsig is enabled, the rc passed to evm_verifyxattr() may be
-negative, which may cause the integer overflow problem.
+That's a huge change for a relatively small benefit, but if this is
+approved by the I2C core maintainer then fine with me. For:
 
-Signed-off-by: Huaxin Lu <luhuaxin1@huawei.com>
----
- security/integrity/ima/ima_appraise.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/hwmon/adc128d818.c                                | 4 +---
+>  drivers/hwmon/adt7470.c                                   | 3 +--
+>  drivers/hwmon/asb100.c                                    | 6 ++----
+>  drivers/hwmon/asc7621.c                                   | 4 +---
+>  drivers/hwmon/dme1737.c                                   | 4 +---
+>  drivers/hwmon/f75375s.c                                   | 5 ++---
+>  drivers/hwmon/fschmd.c                                    | 6 ++----
+>  drivers/hwmon/ftsteutates.c                               | 3 +--
+>  drivers/hwmon/ina209.c                                    | 4 +---
+>  drivers/hwmon/ina3221.c                                   | 4 +---
+>  drivers/hwmon/jc42.c                                      | 3 +--
+>  drivers/hwmon/mcp3021.c                                   | 4 +---
+>  drivers/hwmon/occ/p8_i2c.c                                | 4 +---
+>  drivers/hwmon/pcf8591.c                                   | 3 +--
+>  drivers/hwmon/smm665.c                                    | 3 +--
+>  drivers/hwmon/tps23861.c                                  | 4 +---
+>  drivers/hwmon/w83781d.c                                   | 4 +---
+>  drivers/hwmon/w83791d.c                                   | 6 ++----
+>  drivers/hwmon/w83792d.c                                   | 6 ++----
+>  drivers/hwmon/w83793.c                                    | 6 ++----
+>  drivers/hwmon/w83795.c                                    | 4 +---
+>  drivers/hwmon/w83l785ts.c                                 | 6 ++----
+>  drivers/i2c/i2c-core-base.c                               | 6 +-----
+>  drivers/i2c/i2c-slave-eeprom.c                            | 4 +---
+>  drivers/i2c/i2c-slave-testunit.c                          | 3 +--
+>  drivers/i2c/i2c-smbus.c                                   | 3 +--
+>  drivers/i2c/muxes/i2c-mux-ltc4306.c                       | 4 +---
+>  drivers/i2c/muxes/i2c-mux-pca9541.c                       | 3 +--
+>  drivers/i2c/muxes/i2c-mux-pca954x.c                       | 3 +--
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 3fb378017f9d..956fb0f4c006 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -412,7 +412,8 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		goto out;
- 	}
- 
--	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value, rc, iint);
-+	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value,
-+				 rc < 0 ? 0 : rc, iint);
- 	switch (status) {
- 	case INTEGRITY_PASS:
- 	case INTEGRITY_PASS_IMMUTABLE:
--- 
-2.33.0
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
 
+--=20
+Jean Delvare
+SUSE L3 Support
