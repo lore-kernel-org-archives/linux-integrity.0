@@ -2,51 +2,59 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA40C433EF
-	for <linux-integrity@archiver.kernel.org>; Wed,  6 Jul 2022 15:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3F5CCA482
+	for <linux-integrity@archiver.kernel.org>; Wed,  6 Jul 2022 15:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233464AbiGFPX6 (ORCPT
+        id S233253AbiGFPX6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Wed, 6 Jul 2022 11:23:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37238 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233633AbiGFPXy (ORCPT
+        with ESMTP id S233541AbiGFPXy (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Wed, 6 Jul 2022 11:23:54 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7863F17E0C;
-        Wed,  6 Jul 2022 08:23:51 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 266EsYAa027998;
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA2E18E02;
+        Wed,  6 Jul 2022 08:23:53 -0700 (PDT)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 266E0Ep4028260;
         Wed, 6 Jul 2022 15:23:41 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : content-transfer-encoding
- : mime-version; s=pp1; bh=zGa1Mqa+GjerSsvVMd3yxyGNYC0cR8xJxlsQGjPujsI=;
- b=aLG9kCnj1TmICKWPiEGPlk5SqMHJDJhHg05MFqTmPHRqO2+Xs1+lO7yq9zfRCC2Y3DFt
- HvQyIi5OXxlkEu0NgTYHUaHQBWAzrq/nXw9rv0XWB+T2pcgMwtwkN2ss8tnfnoqFbvtQ
- kD8Riru9jLAv9BdtxMY47byhuYfRyoP8MBqWeag9PEPvtvziFVpAV4pRYsMKQvYz4Vg2
- P8lnWNxkLJBGfNx4Y9jwHTKkLO8NhygULjQgefdPkEgoNp0xdMiTlFwjlUgZJSyrviHi
- pa63no4etx4y4l/sP236BDVYeayaH3mV66PZqzEI4+JY1n+aNXXAcXcjyHSa5Pqu9hQT RA== 
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5844h460-1
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=NBIWYiw/5g00/YDjObXVt+G0rnq9mc/abggeTCGYK6Q=;
+ b=sQVw7bPX+BMJCCuAWjNy3uERCxy3e8YHfCNXFFMaL2ylsmoDIZ9n7MA25Eyzwms0MZbM
+ DGsIUYnjnXwuENYgaocTJZQZ9gJfiVmo2B1+VGx3nD5JbwcUmtyLB2Z9+kMKlZkNKixL
+ PzKjIUclwVQPsJd7mogcHwiGPGjy+fmErKrwRChPcbuZ7GUK2qkT8gSDeliwIKOx4pD7
+ 3zy5JtKWFPT5V7Au7mMfzv13ZgyhwRDKVq31dm2oabLAeeleCSOY2gn9V+sE+5A1Ia7X
+ /J8pnhDsjAinQ4lcGfDibZfiyWmkM7327/5PK1BtqU4FETvWxpW4Dpa3c/Ow39/MHiu+ +Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5a7ynby0-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 06 Jul 2022 15:23:40 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 266FKGiX002661;
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 266EeZf5011380;
+        Wed, 6 Jul 2022 15:23:40 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5a7ynbxm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 Jul 2022 15:23:40 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 266FLNev002881;
         Wed, 6 Jul 2022 15:23:39 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma03dal.us.ibm.com with ESMTP id 3h4v5v677s-1
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01wdc.us.ibm.com with ESMTP id 3h4ud1n803-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 06 Jul 2022 15:23:39 +0000
 Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 266FNcrw25362940
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 266FNdnS64487904
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Jul 2022 15:23:38 GMT
+        Wed, 6 Jul 2022 15:23:39 GMT
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A9B2A112061;
+        by IMSVA (Postfix) with ESMTP id E7D1F112061;
         Wed,  6 Jul 2022 15:23:38 +0000 (GMT)
 Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8293A112063;
+        by IMSVA (Postfix) with ESMTP id CBF06112064;
         Wed,  6 Jul 2022 15:23:38 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
@@ -56,396 +64,247 @@ To:     kexec@lists.infradead.org, devicetree@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
 Cc:     nayna@linux.ibm.com, nasastry@in.ibm.com, mpe@ellerman.id.au,
-        Jonathan McDowell <noodles@fb.com>,
-        Borislav Petkov <bp@suse.de>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH v5 3/6] x86/kexec: Carry forward IMA measurement log on kexec
-Date:   Wed,  6 Jul 2022 11:23:26 -0400
-Message-Id: <20220706152329.665636-4-stefanb@linux.ibm.com>
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [PATCH v5 5/6] of: kexec: Refactor IMA buffer related functions to make them reusable
+Date:   Wed,  6 Jul 2022 11:23:28 -0400
+Message-Id: <20220706152329.665636-6-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220706152329.665636-1-stefanb@linux.ibm.com>
 References: <20220706152329.665636-1-stefanb@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: KChwSsFnfWiVYJMPagVXj8I8K2KH8rWJ
-X-Proofpoint-ORIG-GUID: KChwSsFnfWiVYJMPagVXj8I8K2KH8rWJ
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nmdvic0LiCuBgXpTBFZGhPcW_73vaCWr
+X-Proofpoint-ORIG-GUID: R2sXZDmaLvfzl3TeB1qBUmU-hfDK1SoF
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
  definitions=2022-07-06_09,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
- impostorscore=0 adultscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
- bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2206140000 definitions=main-2207060060
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ mlxlogscore=999 mlxscore=0 suspectscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
+ definitions=main-2207060060
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Jonathan McDowell <noodles@fb.com>
+Refactor IMA buffer related functions to make them reusable for carrying
+TPM logs across kexec.
 
-On kexec file load, the Integrity Measurement Architecture (IMA)
-subsystem may verify the IMA signature of the kernel and initramfs, and
-measure it. The command line parameters passed to the kernel in the
-kexec call may also be measured by IMA.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
 
-A remote attestation service can verify a TPM quote based on the TPM
-event log, the IMA measurement list and the TPM PCR data. This can
-be achieved only if the IMA measurement log is carried over from the
-current kernel to the next kernel across the kexec call.
-
-PowerPC and ARM64 both achieve this using device tree with a
-"linux,ima-kexec-buffer" node. x86 platforms generally don't make use of
-device tree, so use the setup_data mechanism to pass the IMA buffer to
-the new kernel.
-
-Signed-off-by: Jonathan McDowell <noodles@fb.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com> # IMA function definitions
-Link: https://lore.kernel.org/r/YmKyvlF3my1yWTvK@noodles-fedora-PC23Y6EG
 ---
- arch/x86/Kconfig                      |  1 +
- arch/x86/include/uapi/asm/bootparam.h |  9 ++++
- arch/x86/kernel/e820.c                |  6 +--
- arch/x86/kernel/kexec-bzimage64.c     | 42 +++++++++++++++++-
- arch/x86/kernel/setup.c               | 63 +++++++++++++++++++++++++++
- drivers/of/kexec.c                    | 13 +++---
- include/linux/ima.h                   |  5 +++
- include/linux/of.h                    |  2 -
- security/integrity/ima/ima_kexec.c    |  2 +-
- 9 files changed, 127 insertions(+), 16 deletions(-)
+v5:
+ - Rebased on Jonathan McDowell's commit "b69a2afd5afc x86/kexec: Carry
+   forward IMA measurement log on kexec"
+v4:
+ - Move debug output into setup_buffer()
+---
+ drivers/of/kexec.c | 125 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 73 insertions(+), 52 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index be0b95e51df6..670e0edc074f 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2033,6 +2033,7 @@ config KEXEC_FILE
- 	bool "kexec file based system call"
- 	select KEXEC_CORE
- 	select BUILD_BIN2C
-+	select HAVE_IMA_KEXEC if IMA
- 	depends on X86_64
- 	depends on CRYPTO=y
- 	depends on CRYPTO_SHA256=y
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index bea5cdcdf532..ca0796ac4403 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -11,6 +11,7 @@
- #define SETUP_APPLE_PROPERTIES		5
- #define SETUP_JAILHOUSE			6
- #define SETUP_CC_BLOB			7
-+#define SETUP_IMA			8
- 
- #define SETUP_INDIRECT			(1<<31)
- 
-@@ -172,6 +173,14 @@ struct jailhouse_setup_data {
- 	} __attribute__((packed)) v2;
- } __attribute__((packed));
- 
-+/*
-+ * IMA buffer setup data information from the previous kernel during kexec
-+ */
-+struct ima_setup_data {
-+	__u64 addr;
-+	__u64 size;
-+} __attribute__((packed));
-+
- /* The so-called "zeropage" */
- struct boot_params {
- 	struct screen_info screen_info;			/* 0x000 */
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index f267205f2d5a..9dac24680ff8 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -1017,10 +1017,10 @@ void __init e820__reserve_setup_data(void)
- 		e820__range_update(pa_data, sizeof(*data)+data->len, E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
- 
- 		/*
--		 * SETUP_EFI is supplied by kexec and does not need to be
--		 * reserved.
-+		 * SETUP_EFI and SETUP_IMA are supplied by kexec and do not need
-+		 * to be reserved.
- 		 */
--		if (data->type != SETUP_EFI)
-+		if (data->type != SETUP_EFI && data->type != SETUP_IMA)
- 			e820__range_update_kexec(pa_data,
- 						 sizeof(*data) + data->len,
- 						 E820_TYPE_RAM, E820_TYPE_RESERVED_KERN);
-diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-index 170d0fd68b1f..c63974e94272 100644
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -186,11 +186,38 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
- }
- #endif /* CONFIG_EFI */
- 
-+static void
-+setup_ima_state(const struct kimage *image, struct boot_params *params,
-+		unsigned long params_load_addr,
-+		unsigned int ima_setup_data_offset)
-+{
-+#ifdef CONFIG_IMA_KEXEC
-+	struct setup_data *sd = (void *)params + ima_setup_data_offset;
-+	unsigned long setup_data_phys;
-+	struct ima_setup_data *ima;
-+
-+	if (!image->ima_buffer_size)
-+		return;
-+
-+	sd->type = SETUP_IMA;
-+	sd->len = sizeof(*ima);
-+
-+	ima = (void *)sd + sizeof(struct setup_data);
-+	ima->addr = image->ima_buffer_addr;
-+	ima->size = image->ima_buffer_size;
-+
-+	/* Add setup data */
-+	setup_data_phys = params_load_addr + ima_setup_data_offset;
-+	sd->next = params->hdr.setup_data;
-+	params->hdr.setup_data = setup_data_phys;
-+#endif /* CONFIG_IMA_KEXEC */
-+}
-+
- static int
- setup_boot_parameters(struct kimage *image, struct boot_params *params,
- 		      unsigned long params_load_addr,
- 		      unsigned int efi_map_offset, unsigned int efi_map_sz,
--		      unsigned int efi_setup_data_offset)
-+		      unsigned int setup_data_offset)
- {
- 	unsigned int nr_e820_entries;
- 	unsigned long long mem_k, start, end;
-@@ -245,8 +272,15 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
- #ifdef CONFIG_EFI
- 	/* Setup EFI state */
- 	setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
--			efi_setup_data_offset);
-+			setup_data_offset);
-+	setup_data_offset += sizeof(struct setup_data) +
-+			sizeof(struct efi_setup_data);
- #endif
-+
-+	/* Setup IMA log buffer state */
-+	setup_ima_state(image, params, params_load_addr,
-+			setup_data_offset);
-+
- 	/* Setup EDD info */
- 	memcpy(params->eddbuf, boot_params.eddbuf,
- 				EDDMAXNR * sizeof(struct edd_info));
-@@ -403,6 +437,10 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
- 				sizeof(struct setup_data) +
- 				sizeof(struct efi_setup_data);
- 
-+	if (IS_ENABLED(CONFIG_IMA_KEXEC))
-+		kbuf.bufsz += sizeof(struct setup_data) +
-+			      sizeof(struct ima_setup_data);
-+
- 	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
- 	if (!params)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index bd6c6fd373ae..53f863f28b4c 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -11,6 +11,7 @@
- #include <linux/dma-map-ops.h>
- #include <linux/dmi.h>
- #include <linux/efi.h>
-+#include <linux/ima.h>
- #include <linux/init_ohci1394_dma.h>
- #include <linux/initrd.h>
- #include <linux/iscsi_ibft.h>
-@@ -140,6 +141,11 @@ __visible unsigned long mmu_cr4_features __ro_after_init;
- __visible unsigned long mmu_cr4_features __ro_after_init = X86_CR4_PAE;
- #endif
- 
-+#ifdef CONFIG_IMA
-+static phys_addr_t ima_kexec_buffer_phys;
-+static size_t ima_kexec_buffer_size;
-+#endif
-+
- /* Boot loader ID and version as integers, for the benefit of proc_dointvec */
- int bootloader_type, bootloader_version;
- 
-@@ -330,6 +336,60 @@ static void __init reserve_initrd(void)
- }
- #endif /* CONFIG_BLK_DEV_INITRD */
- 
-+static void __init add_early_ima_buffer(u64 phys_addr)
-+{
-+#ifdef CONFIG_IMA
-+	struct ima_setup_data *data;
-+
-+	data = early_memremap(phys_addr + sizeof(struct setup_data), sizeof(*data));
-+	if (!data) {
-+		pr_warn("setup: failed to memremap ima_setup_data entry\n");
-+		return;
-+	}
-+
-+	if (data->size) {
-+		memblock_reserve(data->addr, data->size);
-+		ima_kexec_buffer_phys = data->addr;
-+		ima_kexec_buffer_size = data->size;
-+	}
-+
-+	early_memunmap(data, sizeof(*data));
-+#else
-+	pr_warn("Passed IMA kexec data, but CONFIG_IMA not set. Ignoring.\n");
-+#endif
-+}
-+
-+#if defined(CONFIG_HAVE_IMA_KEXEC) && !defined(CONFIG_OF_FLATTREE)
-+int __init ima_free_kexec_buffer(void)
-+{
-+	int rc;
-+
-+	if (!ima_kexec_buffer_size)
-+		return -ENOENT;
-+
-+	rc = memblock_phys_free(ima_kexec_buffer_phys,
-+				ima_kexec_buffer_size);
-+	if (rc)
-+		return rc;
-+
-+	ima_kexec_buffer_phys = 0;
-+	ima_kexec_buffer_size = 0;
-+
-+	return 0;
-+}
-+
-+int __init ima_get_kexec_buffer(void **addr, size_t *size)
-+{
-+	if (!ima_kexec_buffer_size)
-+		return -ENOENT;
-+
-+	*addr = __va(ima_kexec_buffer_phys);
-+	*size = ima_kexec_buffer_size;
-+
-+	return 0;
-+}
-+#endif
-+
- static void __init parse_setup_data(void)
- {
- 	struct setup_data *data;
-@@ -355,6 +415,9 @@ static void __init parse_setup_data(void)
- 		case SETUP_EFI:
- 			parse_efi_setup(pa_data, data_len);
- 			break;
-+		case SETUP_IMA:
-+			add_early_ima_buffer(pa_data);
-+			break;
- 		default:
- 			break;
- 		}
 diff --git a/drivers/of/kexec.c b/drivers/of/kexec.c
-index c4f9b6655a2e..548dd5b1b5c1 100644
+index 548dd5b1b5c1..404a86bb3978 100644
 --- a/drivers/of/kexec.c
 +++ b/drivers/of/kexec.c
-@@ -9,6 +9,7 @@
-  *  Copyright (C) 2016  IBM Corporation
-  */
- 
-+#include <linux/ima.h>
- #include <linux/kernel.h>
- #include <linux/kexec.h>
- #include <linux/memblock.h>
-@@ -115,6 +116,7 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
- 	return 0;
+@@ -117,45 +117,56 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
  }
  
-+#ifdef CONFIG_HAVE_IMA_KEXEC
- /**
-  * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-  * @addr:	On successful return, set to point to the buffer contents.
-@@ -122,7 +124,7 @@ static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
-  *
-  * Return: 0 on success, negative errno on error.
-  */
--int ima_get_kexec_buffer(void **addr, size_t *size)
-+int __init ima_get_kexec_buffer(void **addr, size_t *size)
+ #ifdef CONFIG_HAVE_IMA_KEXEC
+-/**
+- * ima_get_kexec_buffer - get IMA buffer from the previous kernel
+- * @addr:	On successful return, set to point to the buffer contents.
+- * @size:	On successful return, set to the buffer size.
+- *
+- * Return: 0 on success, negative errno on error.
+- */
+-int __init ima_get_kexec_buffer(void **addr, size_t *size)
++static int get_kexec_buffer(const char *name, unsigned long *addr, size_t *size)
  {
  	int ret, len;
- 	unsigned long tmp_addr;
-@@ -130,9 +132,6 @@ int ima_get_kexec_buffer(void **addr, size_t *size)
- 	size_t tmp_size;
+-	unsigned long tmp_addr;
+ 	unsigned long start_pfn, end_pfn;
+-	size_t tmp_size;
+ 	const void *prop;
+ 
+-	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
++	prop = of_get_property(of_chosen, name, &len);
+ 	if (!prop)
+ 		return -ENOENT;
+ 
+-	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
++	ret = do_get_kexec_buffer(prop, len, addr, size);
+ 	if (ret)
+ 		return ret;
+ 
+-	/* Do some sanity on the returned size for the ima-kexec buffer */
+-	if (!tmp_size)
++	/* Do some sanity on the returned size for the kexec buffer */
++	if (!*size)
+ 		return -ENOENT;
+ 
+ 	/*
+ 	 * Calculate the PFNs for the buffer and ensure
+ 	 * they are with in addressable memory.
+ 	 */
+-	start_pfn = PHYS_PFN(tmp_addr);
+-	end_pfn = PHYS_PFN(tmp_addr + tmp_size - 1);
++	start_pfn = PHYS_PFN(*addr);
++	end_pfn = PHYS_PFN(*addr + *size - 1);
+ 	if (!page_is_ram(start_pfn) || !page_is_ram(end_pfn)) {
+-		pr_warn("IMA buffer at 0x%lx, size = 0x%zx beyond memory\n",
+-			tmp_addr, tmp_size);
++		pr_warn("%s buffer at 0x%lx, size = 0x%zx beyond memory\n",
++			name, *addr, *size);
+ 		return -EINVAL;
+ 	}
+ 
++	return 0;
++}
++
++/**
++ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
++ * @addr:	On successful return, set to point to the buffer contents.
++ * @size:	On successful return, set to the buffer size.
++ *
++ * Return: 0 on success, negative errno on error.
++ */
++int __init ima_get_kexec_buffer(void **addr, size_t *size)
++{
++	int ret;
++	unsigned long tmp_addr;
++	size_t tmp_size;
++
++	ret = get_kexec_buffer("linux,ima-kexec-buffer", &tmp_addr, &tmp_size);
++	if (ret)
++		return ret;
++
+ 	*addr = __va(tmp_addr);
+ 	*size = tmp_size;
+ 
+@@ -188,72 +199,82 @@ int __init ima_free_kexec_buffer(void)
+ }
+ #endif
+ 
+-/**
+- * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
+- *
+- * @fdt: Flattened Device Tree to update
+- * @chosen_node: Offset to the chosen node in the device tree
+- *
+- * The IMA measurement buffer is of no use to a subsequent kernel, so we always
+- * remove it from the device tree.
+- */
+-static void remove_ima_buffer(void *fdt, int chosen_node)
++static int remove_buffer(void *fdt, int chosen_node, const char *name)
+ {
+ 	int ret, len;
+ 	unsigned long addr;
+ 	size_t size;
  	const void *prop;
  
 -	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
--		return -ENOTSUPP;
+-		return;
 -
- 	prop = of_get_property(of_chosen, "linux,ima-kexec-buffer", &len);
+-	prop = fdt_getprop(fdt, chosen_node, "linux,ima-kexec-buffer", &len);
++	prop = fdt_getprop(fdt, chosen_node, name, &len);
  	if (!prop)
- 		return -ENOENT;
-@@ -166,16 +165,13 @@ int ima_get_kexec_buffer(void **addr, size_t *size)
+-		return;
++		return -ENOENT;
+ 
+ 	ret = do_get_kexec_buffer(prop, len, &addr, &size);
+-	fdt_delprop(fdt, chosen_node, "linux,ima-kexec-buffer");
++	fdt_delprop(fdt, chosen_node, name);
+ 	if (ret)
+-		return;
++		return ret;
+ 
+ 	ret = fdt_find_and_del_mem_rsv(fdt, addr, size);
+ 	if (!ret)
+-		pr_debug("Removed old IMA buffer reservation.\n");
++		pr_debug("Remove old %s buffer reserveration", name);
++	return ret;
+ }
+ 
+-#ifdef CONFIG_IMA_KEXEC
  /**
-  * ima_free_kexec_buffer - free memory used by the IMA buffer
+- * setup_ima_buffer - add IMA buffer information to the fdt
+- * @image:		kexec image being loaded.
+- * @fdt:		Flattened device tree for the next kernel.
+- * @chosen_node:	Offset to the chosen node.
++ * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
+  *
+- * Return: 0 on success, or negative errno on error.
++ * @fdt: Flattened Device Tree to update
++ * @chosen_node: Offset to the chosen node in the device tree
++ *
++ * The IMA measurement buffer is of no use to a subsequent kernel, so we always
++ * remove it from the device tree.
   */
--int ima_free_kexec_buffer(void)
-+int __init ima_free_kexec_buffer(void)
+-static int setup_ima_buffer(const struct kimage *image, void *fdt,
+-			    int chosen_node)
++static void remove_ima_buffer(void *fdt, int chosen_node)
++{
++	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
++		return;
++
++	remove_buffer(fdt, chosen_node, "linux,ima-kexec-buffer");
++}
++
++#ifdef CONFIG_IMA_KEXEC
++static int setup_buffer(void *fdt, int chosen_node, const char *name,
++			phys_addr_t addr, size_t size)
  {
  	int ret;
- 	unsigned long addr;
- 	size_t size;
- 	struct property *prop;
  
--	if (!IS_ENABLED(CONFIG_HAVE_IMA_KEXEC))
--		return -ENOTSUPP;
--
- 	prop = of_find_property(of_chosen, "linux,ima-kexec-buffer", NULL);
- 	if (!prop)
- 		return -ENOENT;
-@@ -190,6 +186,7 @@ int ima_free_kexec_buffer(void)
+-	if (!image->ima_buffer_size)
++	if (!size)
+ 		return 0;
  
- 	return memblock_phys_free(addr, size);
- }
-+#endif
+ 	ret = fdt_appendprop_addrrange(fdt, 0, chosen_node,
+-				       "linux,ima-kexec-buffer",
+-				       image->ima_buffer_addr,
+-				       image->ima_buffer_size);
++				       name, addr, size);
+ 	if (ret < 0)
+ 		return -EINVAL;
  
- /**
-  * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 426b1744215e..81708ca0ebc7 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -140,6 +140,11 @@ static inline int ima_measure_critical_data(const char *event_label,
+-	ret = fdt_add_mem_rsv(fdt, image->ima_buffer_addr,
+-			      image->ima_buffer_size);
++	ret = fdt_add_mem_rsv(fdt, addr, size);
+ 	if (ret)
+ 		return -EINVAL;
  
- #endif /* CONFIG_IMA */
+-	pr_debug("IMA buffer at 0x%pa, size = 0x%zx\n",
+-		 &image->ima_buffer_addr, image->ima_buffer_size);
++	pr_debug("%s at 0x%pa, size = 0x%zx\n", name, &addr, size);
  
-+#ifdef CONFIG_HAVE_IMA_KEXEC
-+int __init ima_free_kexec_buffer(void);
-+int __init ima_get_kexec_buffer(void **addr, size_t *size);
-+#endif
+ 	return 0;
 +
- #ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
- extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
-diff --git a/include/linux/of.h b/include/linux/of.h
-index f0a5d6b10c5a..20a4e7cb7afe 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -441,8 +441,6 @@ void *of_kexec_alloc_and_setup_fdt(const struct kimage *image,
- 				   unsigned long initrd_load_addr,
- 				   unsigned long initrd_len,
- 				   const char *cmdline, size_t extra_fdt_size);
--int ima_get_kexec_buffer(void **addr, size_t *size);
--int ima_free_kexec_buffer(void);
- #else /* CONFIG_OF */
- 
- static inline void of_core_init(void)
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 13753136f03f..419dc405c831 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -137,7 +137,7 @@ void ima_add_kexec_buffer(struct kimage *image)
- /*
-  * Restore the measurement list from the previous kernel.
-  */
--void ima_load_kexec_buffer(void)
-+void __init ima_load_kexec_buffer(void)
- {
- 	void *kexec_buffer = NULL;
- 	size_t kexec_buffer_size = 0;
++}
++
++/**
++ * setup_ima_buffer - add IMA buffer information to the fdt
++ * @image:		kexec image being loaded.
++ * @fdt:		Flattened device tree for the next kernel.
++ * @chosen_node:	Offset to the chosen node.
++ *
++ * Return: 0 on success, or negative errno on error.
++ */
++static int setup_ima_buffer(const struct kimage *image, void *fdt,
++			    int chosen_node)
++{
++	return setup_buffer(fdt, chosen_node, "linux,ima-kexec-buffer",
++			    image->ima_buffer_addr, image->ima_buffer_size);
+ }
+ #else /* CONFIG_IMA_KEXEC */
+ static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
 -- 
 2.35.1
 
