@@ -2,239 +2,111 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16BAC43334
-	for <linux-integrity@archiver.kernel.org>; Thu,  7 Jul 2022 14:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E7BC433EF
+	for <linux-integrity@archiver.kernel.org>; Thu,  7 Jul 2022 14:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235447AbiGGOOj (ORCPT
+        id S235182AbiGGOPo (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 7 Jul 2022 10:14:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42196 "EHLO
+        Thu, 7 Jul 2022 10:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235567AbiGGOOg (ORCPT
+        with ESMTP id S234797AbiGGOPn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 7 Jul 2022 10:14:36 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98ACD2F3B3;
-        Thu,  7 Jul 2022 07:14:31 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 267Datg6029570;
-        Thu, 7 Jul 2022 14:14:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=e4XJIRn0ATPLPAT/5norm4jYg66ITgsbYuh4hfzdCFg=;
- b=MBZiWG3K+Uug8CdsSlDjoeCPQIml9IMK1FUelQaUqOz8U84NHvfVVhRCF4OtQxdxvjF1
- NTw/b2qYu+XDpwTI1zxMKQct3Uq66Jdy2oHh0MTkvsC28VWtmGBcp6Wod9ewkc+2M8hd
- 5YAR2dVvq85+31zFCOuwCq4XSAUCljRzur4hQrdiJYH8+XACqHkl6ZYc7VCmLKqeWygd
- HPOyHoOMeafPfO458kJm99rzHwTLM699aF4N/kDMcQKdy6jpcLX3eiU8CdJx9guDGaxw
- gOkozFiyDKgWdk7GZXK12+7uUMV2lQcunY/fNAYy1I6dAjVjm9kuN7vyxbYScLTgNAhq Fg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5yxvae94-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:14:09 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 267DasPQ029495;
-        Thu, 7 Jul 2022 14:14:08 GMT
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3h5yxvae8b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:14:08 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 267E6lbE005011;
-        Thu, 7 Jul 2022 14:14:07 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma03wdc.us.ibm.com with ESMTP id 3h4ucnusnh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 07 Jul 2022 14:14:07 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 267EE6eQ44433830
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 7 Jul 2022 14:14:06 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2952BBE058;
-        Thu,  7 Jul 2022 14:14:06 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 22FC5BE053;
-        Thu,  7 Jul 2022 14:14:04 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  7 Jul 2022 14:14:04 +0000 (GMT)
-Message-ID: <ccdf515d-56d3-7a9d-a632-91cb527133b1@linux.ibm.com>
-Date:   Thu, 7 Jul 2022 10:14:03 -0400
+        Thu, 7 Jul 2022 10:15:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0D08C2F38E
+        for <linux-integrity@vger.kernel.org>; Thu,  7 Jul 2022 07:15:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657203342;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Snse6WNAbXQDgwuAFPKIs/eg6AGY2otiMBS6p+tZq8Q=;
+        b=AI4GdB253ugo4pYDVhIzZOK6gHWsxVNxinesDRl6y+cDtf12fw597Hf4ANg2Uftdp3Jl/r
+        D45Gdgeq8VltK1r6SLtax1OGHqyksOufUULsvn4a7iA4DnNiPIEIY2vGaAHTc5+2lWwx24
+        eLnfynmZHQat3qldFEHqLriAZrPMWhg=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-22-IJEMS1NLNMmuJUyLELifhA-1; Thu, 07 Jul 2022 10:15:41 -0400
+X-MC-Unique: IJEMS1NLNMmuJUyLELifhA-1
+Received: by mail-pf1-f200.google.com with SMTP id ay16-20020a056a00301000b00528c0c726f8so2958472pfb.16
+        for <linux-integrity@vger.kernel.org>; Thu, 07 Jul 2022 07:15:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Snse6WNAbXQDgwuAFPKIs/eg6AGY2otiMBS6p+tZq8Q=;
+        b=TAqOerw39G5m40tmvKPJ1n9A7YvqCcBO3jqCa9AimvJqdE9In5ZzL7LvZxrDlS9r45
+         BqUrpyHwr5DMIUoqm/DfMEqsH4r45THJTAqIlSrgzOEKKnj/GYMorfjL6wVerJ/440v+
+         v7q/sGJcOzEdxP1WTWxfJFvfOImzqMQVyD/E+KBV7JyO7m6PC3EKMP5dkolKhjj5ktIu
+         g7RiodyLd3E18j6yzyw0C+fwnyQ9wmryKLE+v7XoQpI5QI8bzu2fbrNqoYBzoTsdDbND
+         5RCT/QcEE/vl6G0o8nID7ovSIIFG+bDVv8F06Lf1g6qxEWISO0fXHqqSg4cvvRjl3GLg
+         ghBw==
+X-Gm-Message-State: AJIora+x29aPKr6Hno8Jfe1LWrznhI3dQeMwNpBuidHi/R9jZyImXhM2
+        FanBCLh4On5T/zfLlvOayZvHZVIOMqyMPoMGmxV1WMoCrs0LzOPDYJZFAZ2mWf2vPJJ0umLSr1Y
+        Q2DUZOXQNnWecwWpZMOE8tO/ttn+p
+X-Received: by 2002:a05:6a00:1d9e:b0:528:a33a:22b9 with SMTP id z30-20020a056a001d9e00b00528a33a22b9mr10537534pfw.7.1657203339902;
+        Thu, 07 Jul 2022 07:15:39 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1tuWzdyOy7C3Ub7vTA/s057bMHl2QvOk3c7J797qqSRQnzwd0elRhBJpWmYXea++UlYeQjR1w==
+X-Received: by 2002:a05:6a00:1d9e:b0:528:a33a:22b9 with SMTP id z30-20020a056a001d9e00b00528a33a22b9mr10537501pfw.7.1657203339558;
+        Thu, 07 Jul 2022 07:15:39 -0700 (PDT)
+Received: from localhost ([240e:3a1:31b:3d30:c711:d753:abde:647d])
+        by smtp.gmail.com with ESMTPSA id o197-20020a62cdce000000b005292729cc5csm203757pfg.160.2022.07.07.07.15.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Jul 2022 07:15:38 -0700 (PDT)
+Date:   Thu, 7 Jul 2022 22:10:29 +0800
+From:   Coiby Xu <coxu@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        kexec@lists.infradead.org, linux-integrity@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Michal Suchanek <msuchanek@suse.de>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Chun-Yi Lee <jlee@suse.com>
+Subject: Re: [PATCH v9 0/4] unify the keyrings of arm64 and s390 with x86 to
+ verify kexec'ed kernel signature
+Message-ID: <20220707141029.tj6zerqd6dcu2wrr@Rk>
+References: <20220704015201.59744-1-coxu@redhat.com>
+ <711440de6340ef6ad73e4db5edd36fc391b8a11d.camel@linux.ibm.com>
+ <20220706114806.GB2403@willie-the-truck>
+ <45013a3990af13449c2d0deadab419e5d437eae7.camel@linux.ibm.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v12 13/26] userns: Add pointer to ima_namespace to
- user_namespace
-Content-Language: en-US
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
-        christian.brauner@ubuntu.com, containers@lists.linux.dev,
-        dmitry.kasatkin@gmail.com, ebiederm@xmission.com,
-        krzysztof.struczynski@huawei.com, roberto.sassu@huawei.com,
-        mpeters@redhat.com, lhinds@redhat.com, lsturman@redhat.com,
-        puiterwi@redhat.com, jejb@linux.ibm.com, jamjoom@us.ibm.com,
-        linux-kernel@vger.kernel.org, paul@paul-moore.com, rgb@redhat.com,
-        linux-security-module@vger.kernel.org, jmorris@namei.org,
-        jpenumak@redhat.com
-References: <20220420140633.753772-1-stefanb@linux.ibm.com>
- <20220420140633.753772-14-stefanb@linux.ibm.com>
- <20220522182426.GA24765@mail.hallyn.com>
- <20220523095932.adr2r26o2obch4r5@wittgenstein>
- <e1df20d5-a6c9-d30c-3671-46f7a8742bc0@linux.ibm.com>
- <20220523124159.zsbp2gonh2dum4jm@wittgenstein>
- <20220523142500.GA1599@mail.hallyn.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20220523142500.GA1599@mail.hallyn.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: GuaFaVYoF0E7qKL4RJ4hDMJrhK7Ssrl0
-X-Proofpoint-ORIG-GUID: qjv-mZOXOhe11UqgPqdgeeEviuRHgowf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-07_11,2022-06-28_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 suspectscore=0 phishscore=0 impostorscore=0 bulkscore=0
- clxscore=1015 mlxscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207070055
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <45013a3990af13449c2d0deadab419e5d437eae7.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Hi Mimi,
 
+On Wed, Jul 06, 2022 at 10:33:50AM -0400, Mimi Zohar wrote:
+>On Wed, 2022-07-06 at 12:48 +0100, Will Deacon wrote:
+[..]
+>> It looks like this series is ready to go, but it's not clear who should
+>> pick it up. Eric -- would you be the best person? Otherwise, I'm happy to
+>> take it via the arm64 tree (on its own branch) if that would be helpful.
+>
+>Unless Eric is interested, I was asked to pick this patch set up.
 
-On 5/23/22 10:25, Serge E. Hallyn wrote:
-> On Mon, May 23, 2022 at 02:41:59PM +0200, Christian Brauner wrote:
->> On Mon, May 23, 2022 at 07:31:29AM -0400, Stefan Berger wrote:
->>>
->>>
->>> On 5/23/22 05:59, Christian Brauner wrote:
->>>> On Sun, May 22, 2022 at 01:24:26PM -0500, Serge Hallyn wrote:
->>>>> On Wed, Apr 20, 2022 at 10:06:20AM -0400, Stefan Berger wrote:
->>>>>> Add a pointer to ima_namespace to the user_namespace and initialize
->>>>>> the init_user_ns with a pointer to init_ima_ns. We need a pointer from
->>>>>> the user namespace to its associated IMA namespace since IMA namespaces
->>>>>> are piggybacking on user namespaces.
->>>>>>
->>>>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->>>>>> Acked-by: Christian Brauner <brauner@kernel.org>
->>>>>> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->>>>>>
->>>>>> ---
->>>>>> v11:
->>>>>>    - Added lost A-b from Christian back
->>>>>>    - Added sentence to patch description explaining why we need the pointer
->>>>>>
->>>>>> v9:
->>>>>>    - Deferred implementation of ima_ns_from_user_ns() to later patch
->>>>>> ---
->>>>>>    include/linux/ima.h            | 2 ++
->>>>>>    include/linux/user_namespace.h | 4 ++++
->>>>>>    kernel/user.c                  | 4 ++++
->>>>>>    3 files changed, 10 insertions(+)
->>>>>>
->>>>>> diff --git a/include/linux/ima.h b/include/linux/ima.h
->>>>>> index 426b1744215e..fcb60a44e05f 100644
->>>>>> --- a/include/linux/ima.h
->>>>>> +++ b/include/linux/ima.h
->>>>>> @@ -14,6 +14,8 @@
->>>>>>    #include <crypto/hash_info.h>
->>>>>>    struct linux_binprm;
->>>>>> +extern struct ima_namespace init_ima_ns;
->>>>>> +
->>>>>>    #ifdef CONFIG_IMA
->>>>>>    extern enum hash_algo ima_get_current_hash_algo(void);
->>>>>>    extern int ima_bprm_check(struct linux_binprm *bprm);
->>>>>> diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
->>>>>> index 33a4240e6a6f..019e8cf7b633 100644
->>>>>> --- a/include/linux/user_namespace.h
->>>>>> +++ b/include/linux/user_namespace.h
->>>>>> @@ -36,6 +36,7 @@ struct uid_gid_map { /* 64 bytes -- 1 cache line */
->>>>>>    #define USERNS_INIT_FLAGS USERNS_SETGROUPS_ALLOWED
->>>>>>    struct ucounts;
->>>>>> +struct ima_namespace;
->>>>>>    enum ucount_type {
->>>>>>    	UCOUNT_USER_NAMESPACES,
->>>>>> @@ -99,6 +100,9 @@ struct user_namespace {
->>>>>>    #endif
->>>>>>    	struct ucounts		*ucounts;
->>>>>>    	long ucount_max[UCOUNT_COUNTS];
->>>>>> +#ifdef CONFIG_IMA_NS
->>>>>
->>>>> It's probably worth putting a comment here saying that user_ns does not
->>>>> pin ima_ns.
->>>>>
->>>>> That the only time the ima_ns will be freed is when user_ns is freed,
->>>>> and only time it will be changed is when user_ns is freed, or during
->>>>> ima_fs_ns_init() (under smp_load_acquire) during a new mount.
->>>>>
->>>>>> +	struct ima_namespace	*ima_ns;
->>>>>
->>>>> So, if I create a new user_ns with a new ima_ns, and in there I
->>>>> create a new user_ns again, it looks like ima_ns will be NULL in
->>>>> the new user_ns?  Should it not be set to the parent->ima_ns?
->>>>> (which would cause trouble for the way it's currently being
->>>>> freed...)
->>>>
->>>> Would also work and wouldn't be difficult to do imho.
->>>
->>> We previously decide to create an ima_namespace when securityfs is mounted.
->>> This now also applies to nested containers where an IMA namespace is first
->>> configured with the hash and template to use in a particular container and
->>> then activated. If no configuration is done it will inherit the hash and
->>> template from the first ancestor that has been configure when it is
->>> activated. So the same steps and behavior applies to *all* containers, no
->>> difference at any depth of nesting. Besides that, we don't want nested
->>> containers to share policy and logs but keep them isolated from each other,
->>> or do we not?
->>>
->>> Further, how should it work if we were to apply this even to the first
->>> container? Should it just inherit the &init_ima_namespace and we'd have no
->>> isolation at all? Why would we start treating containers at deeper nesting
->>> levels differently?
->>
->> Valid points. I understood Serge as suggesting an implementation detail
->> change not a design change but might misunderstand him here.
->>
->> # Currently
->>
->> 1. create new userns -> imans set to NULL
->> 2. mount securityfs and configure imans -> set imans to &new_ima_ns
->>
->> When 2. hasn't been done then we find the relevant imans by walking
->> the userns hierarchy upwards finding the first parent userns that has a
->> non-NULL imans.
-> 
-> Ah, right, thanks Christian.
-> 
-> But so the code - I think where the ima_ns is defined in the user_ns
-> struct, needs to make this clear.  Just something like
-> 
-> 	// Pointer to ima_ns which this user_ns created.  Can be null.
-> 	// Access checks will walk the userns->parent chain and check
-> 	// against all active ima_ns's.  Note that when the user_ns is
-> 	// freed, the ima_ns is guaranteed to be free-able.
-> 	struct ima_namespace	*ima_ns;
+Thanks! FYI, Andrew has queued up Naveen's patch set "[PATCH 0/2] kexec:
+Drop __weak attributes from functions" though:
+https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/log/?h=mm-nonmm-unstable
 
-I added this comment now. Thanks.
+With Naveen's patch set, "[PATCH v9 1/4] kexec: clean up
+arch_kexec_kernel_verify_sig"" can be dropped. If you need me to send a
+new version, please let me know.
 
-> 
->> # Serge's suggestion
->>
->> 1. create new userns -> imans is set to parent imans
->> 2. mount securityfs and configure imans -> replace parent with &new_ima_ns
->>
->> So when 2. hasn't been done we don't need to walk the userns hierarchy
->> upwards. We always find the relevant imans directly. Some massaging
->> would be needed in process_measurement() probably but it wouldn't need
->> to change semantics per se.
->>
->> But I think I misunderstood something in any case. So looking at an
->> example like ima_post_path_mknod(). You seem to not call into
->> ima_must_appraise() if the caller's userns doesn't have an imans
->> enabled. I somehow had thought that the same logic applied as in
->> process_measurement. But if it isn't then it might make sense to keep
->> the current implementation.
+>
+>thanks,
+>
+>Mimi
+>
+
+-- 
+Best regards,
+Coiby
+
