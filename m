@@ -2,118 +2,216 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A72EC43334
-	for <linux-integrity@archiver.kernel.org>; Wed, 13 Jul 2022 14:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0386C433EF
+	for <linux-integrity@archiver.kernel.org>; Thu, 14 Jul 2022 13:40:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233873AbiGMOYL (ORCPT
+        id S239804AbiGNNkn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 13 Jul 2022 10:24:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57646 "EHLO
+        Thu, 14 Jul 2022 09:40:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231576AbiGMOYI (ORCPT
+        with ESMTP id S239808AbiGNNkm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 13 Jul 2022 10:24:08 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E048023160;
-        Wed, 13 Jul 2022 07:24:07 -0700 (PDT)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 26DEEgor004515;
-        Wed, 13 Jul 2022 14:23:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Kqd8S3YsVTupeYDsw/0CEjgSPyDSJBms6hyW9oBAQeM=;
- b=QswoJDCWPAwTxoZHbdQEOYKJFNMNTb2KFlnGbq7oimxzEtYekgdpSiRH/HNBsveUdi/f
- 1c4OgdZzQ7WLvfp5Gh+2GZ/LXRW8hApTxw75mJZhcsPDNNgnlyJ+Z89sKRqwNHEooqX+
- czJ8NIQEa4koGb3HjCFShmMwZeEIocw9bWmvbkNOizW6cHrfWrta+3DFONOUT42z6MFV
- u9nj5WHC2ENWupHa+kNzIwpjhdmcuVdSiuKRm7clv7Lfh9eh9b1idBzuyd7gxRNzD9hg
- pQELC3clUGyVOLTRv8+FgiKBwKBoqzTxWvwdIrSC7/cs8xZ0bppXs2d8s5idEtkUeH9E Ng== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h9ymvratk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 14:23:45 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 26DEFSXF013891;
-        Wed, 13 Jul 2022 14:23:44 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3h9ymvrasc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 14:23:44 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 26DEKPjp000304;
-        Wed, 13 Jul 2022 14:23:42 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma01fra.de.ibm.com with ESMTP id 3h71a8w2sf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 13 Jul 2022 14:23:41 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 26DENdG921365098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jul 2022 14:23:39 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4C5D52051;
-        Wed, 13 Jul 2022 14:23:39 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.111.228])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 883BE5204F;
-        Wed, 13 Jul 2022 14:23:36 +0000 (GMT)
-Message-ID: <8bea9e61be96e0358a43e320f9b89b742e8ca992.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: force signature verification when
- CONFIG_KEXEC_SIG is configured
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc:     kexec@lists.infradead.org, Baoquan He <bhe@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jiri Bohac <jbohac@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Date:   Wed, 13 Jul 2022 10:23:35 -0400
-In-Reply-To: <20220713072111.230333-1-coxu@redhat.com>
-References: <20220712093302.49490-1-coxu@redhat.com>
-         <20220713072111.230333-1-coxu@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Fr7HlAMLzOgY2q57u1UJRu5T-WiUxJYG
-X-Proofpoint-ORIG-GUID: FClJBHTbZacQzfCFbUO4Cd14E0SRbUrp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.883,Hydra:6.0.517,FMLib:17.11.122.1
- definitions=2022-07-13_03,2022-07-13_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 bulkscore=0 malwarescore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2206140000
- definitions=main-2207130055
+        Thu, 14 Jul 2022 09:40:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3A5ED60516
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Jul 2022 06:40:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657806040;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PG1WsGRWRvVRe8I3xrLjHusVh6PAsG2ZTZ2d691+jyw=;
+        b=BQoh5CWFiRkyRi9H8I5vgO0L6bdAD5/bLA7od3QL8SwVYpRUhUpOBvtBig4nKo+4E8hpmn
+        9kl6hTHk0vwD5XW45484nimiRhHiplPcDTQO7TlQHoxhA5MZJMtR0rAlbCVDBCCy6JFASH
+        b97+Mtw87CSxFp19zsF1iul4dHvooSo=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-186-FaXdbTiDMFmngZ_ZC6G4mA-1; Thu, 14 Jul 2022 09:40:38 -0400
+X-MC-Unique: FaXdbTiDMFmngZ_ZC6G4mA-1
+Received: by mail-pj1-f70.google.com with SMTP id k7-20020a17090a62c700b001ef9c16ba10so3725352pjs.1
+        for <linux-integrity@vger.kernel.org>; Thu, 14 Jul 2022 06:40:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PG1WsGRWRvVRe8I3xrLjHusVh6PAsG2ZTZ2d691+jyw=;
+        b=MyuI2LnNfcVoIVuB6jiWnurp5f/ib2TxVttg8ptjVhNnwLTFp/qn7JHEzIupsYyqfy
+         /M1FwWJtXhvktkVl57C4gy6DN27ygDKgMcvYq9VAD2aDtLS2dQJmM8DwlGGZtCSqmjXs
+         fr7tex2vhJv9N2mwIuk+bB+9k9B3tUhsHsItzW6yZv0G82By9sO3sbtgFZOTl03CXP57
+         qlsOHCvRCJyEe20Px7eG+sU2e/1rLFvR3DiideeE9pcMjSoYBRIieuygtUeMIBYlGxRg
+         Kh3IFoYe4roDnYMh9tyZ7NGz/WIS4ov9OSM/NeL6QkCIea3JbstW8b7mpagnvPbsCGt8
+         vHQw==
+X-Gm-Message-State: AJIora89pIh35epOM7hhwvuYfFkItjUrAfbQ78Sh03lkx+Uej3CccBAd
+        n9O3dITd9UijK4pL/bdbdTLl07uDUYvAmsxCSAqBq+X0o2qwAj2RW8smrTIKbiNk1+D2LKhhw+7
+        hyCkOOBY0XRLQvo/9iOTl/yTFk1mw
+X-Received: by 2002:a63:68c7:0:b0:405:1da9:ab69 with SMTP id d190-20020a6368c7000000b004051da9ab69mr7922149pgc.233.1657806036911;
+        Thu, 14 Jul 2022 06:40:36 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1uVKyvFxKJJVTEcre0pPRg6laUS8s7uC3NACW6lW/xJmM7S6uGd27qyh4tX8GUQRRZJI8PDrg==
+X-Received: by 2002:a63:68c7:0:b0:405:1da9:ab69 with SMTP id d190-20020a6368c7000000b004051da9ab69mr7922129pgc.233.1657806036590;
+        Thu, 14 Jul 2022 06:40:36 -0700 (PDT)
+Received: from localhost ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id b3-20020a170902650300b0016a0bf0ce32sm1489511plk.70.2022.07.14.06.40.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Jul 2022 06:40:36 -0700 (PDT)
+From:   Coiby Xu <coxu@redhat.com>
+To:     kexec@lists.infradead.org, linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Michal Suchanek <msuchanek@suse.de>,
+        Baoquan He <bhe@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Will Deacon <will@kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Chun-Yi Lee <jlee@suse.com>
+Subject: [PATCH v10 0/4] unify the keyrings of arm64 and s390 with x86 to verify kexec'ed kernel signature
+Date:   Thu, 14 Jul 2022 21:40:23 +0800
+Message-Id: <20220714134027.394370-1-coxu@redhat.com>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2022-07-13 at 15:21 +0800, Coiby Xu wrote:
-> Currently, an unsigned kernel could be kexec'ed when IMA arch specific
-> policy is configured unless lockdown is enabled. Enforce kernel
-> signature verification check in the kexec_file_load syscall when IMA
-> arch specific policy is configured.
-> 
-> Fixes: 99d5cadfde2b ("kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE")
-> Reported-by: Mimi Zohar <zohar@linux.ibm.com>
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
-> v2
->  - don't include linux/kexec.h since it's already been included in
->    linux/ima.h
->  - fix build errors when KEXEC_FILE/KEXEC_CORE is disable as caught by
->    kernel test robot <lkp@intel.com>
+Currently when loading a kernel image via the kexec_file_load() system
+call, x86 can make use of three keyrings i.e. the .builtin_trusted_keys,
+.secondary_trusted_keys and .platform keyrings to verify a signature.
+However, arm64 and s390 can only use the .builtin_trusted_keys and
+.platform keyring respectively. For example, one resulting problem is
+kexec'ing a kernel image  would be rejected with the error "Lockdown:
+kexec: kexec of unsigned images is restricted; see man
+kernel_lockdown.7".
 
-Thanks, Coiby.  This version of the patch is now queued in next-
-integrity/next-
-integrity-testing.
+This patch set enables arm64 and s390 to make use of the same keyrings
+as x86 to verify the signature kexec'ed kernel image.
 
-Mimi
+The recently introduced .machine keyring impacts the roots of trust by
+linking the .machine keyring to the .secondary keyring. The roots of
+trust for different keyrings are described as follows,
+
+.builtin_trusted_keys:
+
+Keys may be built into the kernel during build or inserted into memory
+reserved for keys post build. The root of trust is based on verification
+of the kernel image signature. For example, on a physical system in a
+secure boot environment, this trust is rooted in hardware.
+
+.machine:
+
+If the end-users choose to trust the keys provided by first-stage UEFI
+bootloader shim i.e. Machine Owner Keys (MOK keys), the keys will be
+added to this keyring which is linked to the .secondary_trusted_keys
+keyring as the same as the .builtin_trusted_keys keyring. Shim has
+built-in keys from a Linux distribution or the end-users-enrolled keys.
+So the root of trust of this keyring is either a Linux distribution
+vendor or the end-users.
+
+.secondary_trusted_keys:
+
+Certificates signed by keys on the .builtin_trusted_keys, .machine, or
+existing keys on the .secondary_trusted_keys keryings may be loaded
+onto the .secondary_trusted_keys keyring. This establishes a signature
+chain of trust based on keys loaded on either the .builtin_trusted_keys
+or .machine keyrings, if configured and enabled.
+
+.platform:
+
+The .platform keyring consist of UEFI db and MOK keys which are used by
+shim to verify the first boot kernel's image signature. If end-users
+choose to trust MOK keys and the kernel has the .machine keyring
+enabled, the .platform keyring only consists of UEFI db keys since the
+MOK keys are added to the .machine keyring instead. Because the
+end-users could also enroll their own MOK keys, the root of trust could
+be hardware and the end-users.
+
+The 3rd arm64 patch depends on Naven's patch "[PATCH 1/2] kexec_file:
+Drop weak attribute from functions" [2] and the first two patches.
+With Naven's patch first applied to the next-integrity branch, I can
+confirm these patches are directly appliable to the next-integrity
+branch without any conflict. The 4th s390 patch can be applied
+independently.
+
+In v9, I've tested the patch set on 5.19.0-rc2 and it works as expected.
+
+For arm64, the tests were done as follows,
+  1. build 5.19.0-rc2
+  2. generate keys and add them to .secondary_trusted_keys, MOK, UEFI
+     db;
+  3. sign different kernel images with different keys including keys
+     from .builtin_trusted_key, .secondary_trusted_keys keyring, a UEFI db
+     key and MOK key
+  4. Without lockdown, all kernel images can be kexec'ed; with lockdown
+     enabled, only the kernel image signed by the key from the
+     .builtin_trusted_key keyring can be kexec'ed
+
+For 390, I commented out the code that skips signature verification when
+secure boot is not enabled since the testing machine doesn't supports
+secure boot and can confirm before applying the patch, kernel images
+signed by keys from .builtin_trusted_key, .secondary_trusted_keys
+couldn't be kexec'ed when lockdown is enabled; after applying the patch,
+those kernel images could be kexec'ed.
+
+v10:
+ - resolve conflict with Naveen's patch which drops weak attribute of
+   arch_kexec_kernel_verify_sig
+
+v9:
+ - improve cover letter, subject line and commit messages, expecially
+   regarding the root of trust of different keyrings and the .machine
+   keyring [Mimi]
+ - fix two code format issues [Mimi]
+ - add test results [Mimi]
+
+v8:
+ - drop "Cc: stable@vger.kernel.org" for the first two prerequisite
+   patches [Baoquan]
+
+v7:
+ - drop the Fixes tag for the 2nd patch and add patch prerequisites
+   [Baoquan]
+ - improve cover letter
+
+v6:
+ - integrate the first three patches of "[PATCH 0/4] Unifrom keyring
+   support across architectures and functions" from Michal [1]
+ - improve commit message [Baoquan, Michal]
+ - directly assign kexec_kernel_verify_pe_sig to
+   kexec_file_ops->verify_sig [Michal]
+
+v5:
+ - improve commit message [Baoquan]
+
+v4:
+ - fix commit reference format issue and other checkpatch.pl warnings [Baoquan]
+
+v3:
+ - s/arch_kexec_kernel_verify_pe_sig/kexec_kernel_verify_pe_sig [Eric]
+ - clean up arch_kexec_kernel_verify_sig [Eric]
+
+v2:
+ - only x86_64 and arm64 need to enable PE file signature check [Dave]
+
+[1] https://lore.kernel.org/lkml/cover.1644953683.git.msuchanek@suse.de/
+[2] https://lore.kernel.org/lkml/cover.1656659357.git.naveen.n.rao@linux.vnet.ibm.com/T/#mbd23f46b3714c3c9eecc7484c832a5af49bfa340
+
+Coiby Xu (3):
+  kexec: clean up arch_kexec_kernel_verify_sig
+  kexec, KEYS: make the code in bzImage64_verify_sig generic
+  arm64: kexec_file: use more system keyrings to verify kernel image
+    signature
+
+Michal Suchanek (1):
+  kexec, KEYS, s390: Make use of built-in and secondary keyring for
+    signature verification
+
+ arch/arm64/kernel/kexec_image.c       | 11 +-----
+ arch/s390/kernel/machine_kexec_file.c | 18 +++++++---
+ arch/x86/kernel/kexec-bzimage64.c     | 20 +----------
+ include/linux/kexec.h                 |  6 ++--
+ kernel/kexec_file.c                   | 50 ++++++++++++++++-----------
+ 5 files changed, 49 insertions(+), 56 deletions(-)
+
+-- 
+2.35.3
 
