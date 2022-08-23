@@ -2,97 +2,110 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC4CC32772
-	for <linux-integrity@archiver.kernel.org>; Tue, 23 Aug 2022 15:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5BBC32772
+	for <linux-integrity@archiver.kernel.org>; Tue, 23 Aug 2022 16:53:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243800AbiHWPnP (ORCPT
+        id S245708AbiHWQxR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 23 Aug 2022 11:43:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39622 "EHLO
+        Tue, 23 Aug 2022 12:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243807AbiHWPmt (ORCPT
+        with ESMTP id S245723AbiHWQww (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 23 Aug 2022 11:42:49 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA1C7EE1C;
-        Tue, 23 Aug 2022 04:39:26 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 324BC336BA;
-        Tue, 23 Aug 2022 11:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661254700; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=O5U0gw3AtIl2Nq1G66dQgq5N3st5lWOBhdWxLO2VlGE=;
-        b=ammxSTYUkCQ6Lu+GqUnnZHT8EpBMtIsT8PA1UnmlPL8dUH9A4bdRtTR4IEpcF0e0rMCEJc
-        Vhy/BEKQFv6oKQaF/R+zchvlg6RoLjwuFvj9yZd3h/HK2bz+4p+qfP7fnJBZVo6kilPSMF
-        m0Ja3K2+SsAW+hPlqSuEjXjUFI6BOoM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661254700;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=O5U0gw3AtIl2Nq1G66dQgq5N3st5lWOBhdWxLO2VlGE=;
-        b=K9Ngnq2pAX6810jWu8OsMysSuPXoUMzaNMB0Ba/tGCgdVPJMrbOTnkJBE2jpToacYEf8pd
-        cHBWZKBczM/X5mDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 26C5F13AB7;
-        Tue, 23 Aug 2022 11:38:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id cKPANCi8BGP8LwAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 23 Aug 2022 11:38:16 +0000
-Content-Type: text/plain; charset="utf-8"
+        Tue, 23 Aug 2022 12:52:52 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1AF712ECC9
+        for <linux-integrity@vger.kernel.org>; Tue, 23 Aug 2022 06:21:25 -0700 (PDT)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27NCtWhT009588;
+        Tue, 23 Aug 2022 13:21:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : date : in-reply-to : references : content-type : mime-version
+ : content-transfer-encoding; s=pp1;
+ bh=4T30uoD1G7ycZ2yvc4g7HHYdpjsymVARdZVptRAQQwQ=;
+ b=a24XOIDYcRvzHxCpu/m2c0VlvjYYxqdCS1SQIUc4rTupnJMSkyB8rrz60frkMjxxP//V
+ reY+r5LHawrOeEVFatLWdVcEPorJeAbXTQfZhXUnG/lNyyNcnE2+7sk8n5UU9jkVt27i
+ dTm+imYnTd4FyQUR+uy4LogtPH18+Y6ElrgzzY+TV8Rkx6frqabnPU+FSjBOXaBxsi+4
+ COWdAhJv6riWu253oLbwGuG8u7BLQQrh3sgwmuAM2WdvrZvUbf04ItL15psLtIgHL/3J
+ hBPNnmWufZjiIjRIjbkI88p9Y2oD2Rz5RfSCpEtB+R9HHaZ14RAuyDkzbfvvbiGYsFWP Fw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3j4yaqgtss-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Aug 2022 13:21:17 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 27NCwTbL021509;
+        Tue, 23 Aug 2022 13:21:16 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3j4yaqgtrp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Aug 2022 13:21:16 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 27NDL5Zf006300;
+        Tue, 23 Aug 2022 13:21:14 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06ams.nl.ibm.com with ESMTP id 3j2pvj3umx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 23 Aug 2022 13:21:14 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 27NDLCe229950268
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 23 Aug 2022 13:21:12 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E9424AE04D;
+        Tue, 23 Aug 2022 13:21:11 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B0ED0AE051;
+        Tue, 23 Aug 2022 13:21:10 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.141.37])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 23 Aug 2022 13:21:10 +0000 (GMT)
+Message-ID: <dc34912b2bad1c46f249fb6e2aa2c79e26890699.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Handle -ESTALE returned by ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Guozihua (Scott)" <guozihua@huawei.com>,
+        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com
+Date:   Tue, 23 Aug 2022 09:21:09 -0400
+In-Reply-To: <d5861fbc-1079-a47f-e746-1072dd1d37d7@huawei.com>
+References: <20220818020551.18922-1-guozihua@huawei.com>
+         <b383f302284dfa31408e2796a9cae60eefd45004.camel@linux.ibm.com>
+         <998ca87c-8eef-8d50-e1ee-da53ef8f0046@huawei.com>
+         <c61de998f8ed1e1192297f9a2ce568a86cee3296.camel@linux.ibm.com>
+         <d5861fbc-1079-a47f-e746-1072dd1d37d7@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Mimi Zohar" <zohar@linux.ibm.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        "Trond Myklebust" <trondmy@hammerspace.com>
-Subject: Re: [PATCH] iversion: update comments with info about atime updates
-In-reply-to: <6cbcb33d33613f50dd5e485ecbf6ce7e305f3d6f.camel@kernel.org>
-References: <20220822133309.86005-1-jlayton@kernel.org>,
- <ceb8f09a4cb2de67f40604d03ee0c475feb3130a.camel@linux.ibm.com>,
- <f17b9d627703bee2a7b531a051461671648a9dbd.camel@kernel.org>,
- <18827b350fbf6719733fda814255ec20d6dcf00f.camel@linux.ibm.com>,
- <4cc84440d954c022d0235bf407a60da66a6ccc39.camel@kernel.org>,
- <20220822233231.GJ3600936@dread.disaster.area>,
- <6cbcb33d33613f50dd5e485ecbf6ce7e305f3d6f.camel@kernel.org>
-Date:   Tue, 23 Aug 2022 21:38:07 +1000
-Message-id: <166125468756.23264.2859374883806269821@noble.neil.brown.name>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nlYd7UlbwT7wXyFlBo42TTFrMdSPDPW-
+X-Proofpoint-ORIG-GUID: 5KW1xnqg8fj6aq5IuKBZJAHX9niXr3Sp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-23_05,2022-08-22_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ suspectscore=0 malwarescore=0 mlxscore=0 clxscore=1015 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2207270000
+ definitions=main-2208230052
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 23 Aug 2022, Jeff Layton wrote:
-> So, we can refer to that and simply say:
+On Tue, 2022-08-23 at 16:12 +0800, Guozihua (Scott) wrote:
+> > The question is whether we're waiting for the SELinux policy to change
+> > from ESTALE or whether it is the number of SELinux based IMA policy
+> > rules or some combination of the two.  Retrying three times seems to be
+> > random.  If SELinux waited for ESTALE to change, then it would only be
+> > dependent on the time it took to update the SELinux based IMA policy
+> > rules.
 > 
-> "If the function updates the mtime or ctime on the inode, then the
-> i_version should be incremented. If only the atime is being updated,
-> then the i_version should not be incremented. The exception to this rule
-> is explicit atime updates via utimes() or similar mechanism, which
-> should result in the i_version being incremented."
+> We are waiting for ima_lsm_update_rules() to finish re-initializing all 
+> the LSM based rules.
 
-Is that exception needed?  utimes() updates ctime.
+Fine.  Hopefully retrying a maximum of 3 times is sufficient.
 
-https://man7.org/linux/man-pages/man2/utimes.2.html
+-- 
+thanks,
 
-doesn't say that, but
+Mimi
 
-https://pubs.opengroup.org/onlinepubs/007904875/functions/utimes.html
-
-does, as does the code.
-
-NeilBrown
