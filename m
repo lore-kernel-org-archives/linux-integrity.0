@@ -2,189 +2,143 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 800E3C04AA5
-	for <linux-integrity@archiver.kernel.org>; Thu, 25 Aug 2022 00:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B302CC3F6B0
+	for <linux-integrity@archiver.kernel.org>; Thu, 25 Aug 2022 13:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230268AbiHYARU (ORCPT
+        id S242169AbiHYNCt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 24 Aug 2022 20:17:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51894 "EHLO
+        Thu, 25 Aug 2022 09:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiHYART (ORCPT
+        with ESMTP id S242127AbiHYNCl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 24 Aug 2022 20:17:19 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1DC6D559;
-        Wed, 24 Aug 2022 17:17:17 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9F0D55C167;
-        Thu, 25 Aug 2022 00:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1661386636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=se5jWXIzFtpgRYm/ZgsUL2TuX6cQdVJ2jx4NrHnS5Qo=;
-        b=QJuIpxPKfyh2tlQhlVwToDBZZTeevLVIMa4GUkq0MvKSOAYs3AkmuxXPszKu9s/p1RPRDb
-        TfAJ1+TL3nFnoDE+teRnQtl4ti3H+UECG7S+PyOx6OKmCZDEr1NzLaciqxaw/g6ypyez5g
-        xxgVSbdo4p1PZzICsnsrARPfGAkP+HM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1661386636;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=se5jWXIzFtpgRYm/ZgsUL2TuX6cQdVJ2jx4NrHnS5Qo=;
-        b=J+HbTfCHYrnr78czRZrbfy8ON9Uv8NH80LcoLBmC/GUseZqk1slWtu2vfxWC9lti3CYJgW
-        c/vID/+Kx2QfKPBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 71D9D13A47;
-        Thu, 25 Aug 2022 00:17:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id I9TiCom/BmM/TgAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 25 Aug 2022 00:17:13 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Mimi Zohar" <zohar@linux.ibm.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        "Trond Myklebust" <trondmy@hammerspace.com>
-Subject: Re: [PATCH] iversion: update comments with info about atime updates
-In-reply-to: <5f248d934ec5d2345986fd75d7d12bcd9e2f32b9.camel@kernel.org>
-References: <20220822133309.86005-1-jlayton@kernel.org>,
- <ceb8f09a4cb2de67f40604d03ee0c475feb3130a.camel@linux.ibm.com>,
- <f17b9d627703bee2a7b531a051461671648a9dbd.camel@kernel.org>,
- <18827b350fbf6719733fda814255ec20d6dcf00f.camel@linux.ibm.com>,
- <4cc84440d954c022d0235bf407a60da66a6ccc39.camel@kernel.org>,
- <20220822233231.GJ3600936@dread.disaster.area>,
- <6cbcb33d33613f50dd5e485ecbf6ce7e305f3d6f.camel@kernel.org>,
- <166125468756.23264.2859374883806269821@noble.neil.brown.name>,
- <df469d936b2e1c1a8c9c947896fa8a160f33b0e8.camel@kernel.org>,
- <166129348704.23264.10381335282721356873@noble.neil.brown.name>,
- <5f248d934ec5d2345986fd75d7d12bcd9e2f32b9.camel@kernel.org>
-Date:   Thu, 25 Aug 2022 10:17:09 +1000
-Message-id: <166138662999.27490.2273361647379875097@noble.neil.brown.name>
+        Thu, 25 Aug 2022 09:02:41 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14F3D80F42
+        for <linux-integrity@vger.kernel.org>; Thu, 25 Aug 2022 06:02:36 -0700 (PDT)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 27PCqXrj016753;
+        Thu, 25 Aug 2022 13:02:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : date : in-reply-to : references : content-type : mime-version
+ : content-transfer-encoding; s=pp1;
+ bh=XxTLddRjTmoJzFQafDUPnLX+cmJgCce6xWR1x6iCszU=;
+ b=CSDtsKdHl0rCA5DdyAxi8woRzKWi/l66wf6WhgIMpzC6xCoPuBAwLt5bd2FR3p65+o/S
+ aHihymT417AklxCAFR/wUrlDdH7Lc/6/cpswBf25/8eAYhLCrZe4uf+lN/duE69z4xG6
+ kXYcbJUStBooaJBW/6jaUOxIbVBo8k5RhIoTIvR6gZuB7kylM0rZuNBSPstIQFNNWIPc
+ 5jqceiuobsrDLWXkY0QATWBd1LW7/qxp7tr3T6Qf8ADHdEsNc5q02ZrL4zqdAX2/+I35
+ m7dE3C7IfYcIkYotyI8sJl4EDSpjPynjecW03BPY11ThNqDrdFY0evvBxQkF45mpjAIz qw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3j69f8g99b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Aug 2022 13:02:28 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 27PCtKam028541;
+        Thu, 25 Aug 2022 13:02:28 GMT
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3j69f8g98a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Aug 2022 13:02:28 +0000
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 27PCooQl003384;
+        Thu, 25 Aug 2022 13:02:26 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01wdc.us.ibm.com with ESMTP id 3j2q897p5u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Aug 2022 13:02:26 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 27PD2Qdb56689102
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Aug 2022 13:02:26 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 73308112062;
+        Thu, 25 Aug 2022 13:02:26 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DAAEB112061;
+        Thu, 25 Aug 2022 13:02:25 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.119.31])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 25 Aug 2022 13:02:25 +0000 (GMT)
+Message-ID: <886d4588b9b6ab4e7dd903addf9809898defd6d9.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Handle -ESTALE returned by ima_filter_rule_match()
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Guozihua (Scott)" <guozihua@huawei.com>,
+        linux-integrity@vger.kernel.org, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com
+Date:   Thu, 25 Aug 2022 09:02:25 -0400
+In-Reply-To: <61bc81bc-1b4a-3c08-6232-afc0d04decee@huawei.com>
+References: <20220818020551.18922-1-guozihua@huawei.com>
+         <b383f302284dfa31408e2796a9cae60eefd45004.camel@linux.ibm.com>
+         <998ca87c-8eef-8d50-e1ee-da53ef8f0046@huawei.com>
+         <c61de998f8ed1e1192297f9a2ce568a86cee3296.camel@linux.ibm.com>
+         <d5861fbc-1079-a47f-e746-1072dd1d37d7@huawei.com>
+         <dc34912b2bad1c46f249fb6e2aa2c79e26890699.camel@linux.ibm.com>
+         <6cd55a0f-366f-45b7-d0e5-4116de454c10@huawei.com>
+         <117476d4f35be96ddba26675b849af44a5dbd6d1.camel@linux.ibm.com>
+         <61bc81bc-1b4a-3c08-6232-afc0d04decee@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: sY5k_U2KtGulXZRlCffk0hkzYZcIovik
+X-Proofpoint-GUID: Bw2eWp0FUQVPvdm0km91MNrjD4Pk5336
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.517,FMLib:17.11.122.1
+ definitions=2022-08-25_05,2022-08-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=945 spamscore=0
+ mlxscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ phishscore=0 suspectscore=0 impostorscore=0 malwarescore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2207270000 definitions=main-2208250050
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 24 Aug 2022, Jeff Layton wrote:
-> On Wed, 2022-08-24 at 08:24 +1000, NeilBrown wrote:
-> > On Tue, 23 Aug 2022, Jeff Layton wrote:
-> > > On Tue, 2022-08-23 at 21:38 +1000, NeilBrown wrote:
-> > > > On Tue, 23 Aug 2022, Jeff Layton wrote:
-> > > > > So, we can refer to that and simply say:
-> > > > >=20
-> > > > > "If the function updates the mtime or ctime on the inode, then the
-> > > > > i_version should be incremented. If only the atime is being updated,
-> > > > > then the i_version should not be incremented. The exception to this=
- rule
-> > > > > is explicit atime updates via utimes() or similar mechanism, which
-> > > > > should result in the i_version being incremented."
-> > > >=20
-> > > > Is that exception needed? utimes() updates ctime.
-> > > >=20
-> > > > https://man7.org/linux/man-pages/man2/utimes.2.html
-> > > >=20
-> > > > doesn't say that, but
-> > > >=20
-> > > > https://pubs.opengroup.org/onlinepubs/007904875/functions/utimes.html
-> > > >=20
-> > > > does, as does the code.
-> > > >=20
-> > >=20
-> > > Oh, good point! I think we can leave that out. Even better!
-> >=20
-> > Further, implicit mtime updates (file_update_time()) also update ctime.
-> > So all you need is
-> >  If the function updates the ctime, then i_version should be
-> >  incremented.
-> >=20
-> > and I have to ask - why not just use the ctime? Why have another number
-> > that is parallel?
-> >=20
-> > Timestamps are updated at HZ (ktime_get_course) which is at most every
-> > millisecond.
-> > xfs stores nanosecond resolution, so about 20 bits are currently wasted.
-> > We could put a counter like i_version in there that only increments
-> > after it is viewed, then we can get all the precision we need but with
-> > exactly ctime semantics.
-> >=20
-> > The 64 change-id could comprise
-> >  35 bits of seconds (nearly a millenium)
-> >  16 bits of sub-seconds (just in case a higher precision time was wanted
-> >  one day)
-> >  13 bits of counter. - 8192 changes per tick
->=20
-> We'd need a "seen" flag too, so maybe only 4096 changes per tick...
+On Wed, 2022-08-24 at 09:56 +0800, Guozihua (Scott) wrote:
+> On 2022/8/24 9:26, Mimi Zohar wrote:
+> > On Tue, 2022-08-23 at 21:28 +0800, Guozihua (Scott) wrote:
+> >> On 2022/8/23 21:21, Mimi Zohar wrote:
+> >>> On Tue, 2022-08-23 at 16:12 +0800, Guozihua (Scott) wrote:
+> >>>>> The question is whether we're waiting for the SELinux policy to change
+> >>>>> from ESTALE or whether it is the number of SELinux based IMA policy
+> >>>>> rules or some combination of the two.  Retrying three times seems to be
+> >>>>> random.  If SELinux waited for ESTALE to change, then it would only be
+> >>>>> dependent on the time it took to update the SELinux based IMA policy
+> >>>>> rules.
+> >>>>
+> >>>> We are waiting for ima_lsm_update_rules() to finish re-initializing all
+> >>>> the LSM based rules.
+> >>>
+> >>> Fine.  Hopefully retrying a maximum of 3 times is sufficient.
+> >>>
+> >> Well, at least this should greatly reduce the chance of this issue from
+> >> happening.
+> > 
+> > Agreed
+> > 
+> >> This would be the best we I can think of without locking and
+> >> busy waiting. Maybe we can also add delays before we retry. Maybe you
+> >> got any other thought in mind?
+> > 
+> > Another option would be to re-introduce the equivalent of the "lazy"
+> > LSM update on -ESTALE, but without updating the policy rule, as the
+> > notifier callback will eventually get to it.
+> > 
+> 
+> For this to happen we would need a way to tell when we are able to 
+> continue with the retry though.
 
-The "seen" flag does not need to be visible to NFSv4.
-Nor does it need to be appear on storage.
+Previously with the lazy update, on failure security_filter_rule_init()
+was called before the retry.  To avoid locking or detecting when to
+continue, another option would be to call to
+security_filter_rule_init() with a local copy of the rule.  The retry
+would be based on a local copy of the rule.
 
-Though it may still be easier to include it with the counter bits.
+Eventually the registered callback will complete, so we don't need to
+be concerned about updating the actual rules.
+-- 
+thanks,
 
->=20
-> >=20
-> > The value exposed in i_ctime would hide the counter and just show the
-> > timestamp portion of what the filesystem stores. This would ensure we
-> > never get changes on different files that happen in one order leaving
-> > timestamps with the reversed order (the timestamps could be the same,
-> > but that is expected).
-> >=20
-> > This scheme could be made to handle a sustained update rate of 1
-> > increment every 8 nanoseconds (if the counter were allowed to overflow
-> > into unused bits of the sub-second field). This is one ever 24 CPU
-> > cycles. Incrementing a counter and making it visible to all CPUs can
-> > probably be done in 24 cycles. Accessing it and setting the "seen" flag
-> > as well might just fit with faster memory. Getting any other useful
-> > work done while maintaining that rate on a single file seems unlikely.
->=20
-> This is an interesting idea.
->=20
-> So, for NFSv4 you'd just mask off the counter bits (and "seen" flag) to
-> get the ctime, and for the change attribute we'd just mask off the
-> "seen" flag and put it all in there.
+Mimi
 
-Obviously it isn't just NFSv4 that needs the ctime, it is also the
-vfs...
-
-I imagine that the counter would be separate in the in-memory inode.  It
-would be split out when read from storage, and merge in when written to
-storage.
-
->=20
->  * Implementing that for all filesystems would be a huge project though.
->    If we were implementing the i_version counter from scratch, I'd
->    probably do something along these lines. Given that we already have
->    an existing i_version counter, would there be any real benefit to
->    pursuing this avenue instead?
-
-i_version is currently only supported by btrfs, ext4, and xfs.  Plus
-cephfs which has its own internal ideas.
-So "all filesystems" isn't needed.  Let's just start with xfs.
-
-All we need is for xfs store in ->i_version a value that meets the
-semantics that we specify for ->i_version.
-So we need to change xfs to use somewhere else to store its internal
-counter that is used for forensics, and then arrange that ->i_version
-stores the ctime combined with a counter that resets whenever the ctime
-changes.
-I think most of this would be done in xfs_vn_update_time(), but probably
-some changes would be needed in iversion.h to provide useful support.
-
-If ext4's current use of i_version provides the semantics that we need,
-there would be no need to change it.  Ditto for btrfs.
-
-NeilBrown
