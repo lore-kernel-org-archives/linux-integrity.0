@@ -2,122 +2,123 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B057C6FA8B
-	for <linux-integrity@archiver.kernel.org>; Fri,  9 Sep 2022 01:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F15A3ECAAD3
+	for <linux-integrity@archiver.kernel.org>; Fri,  9 Sep 2022 15:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229686AbiIIBTF (ORCPT
+        id S232114AbiIIPVW (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 8 Sep 2022 21:19:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36290 "EHLO
+        Fri, 9 Sep 2022 11:21:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229819AbiIIBTE (ORCPT
+        with ESMTP id S229892AbiIIPVU (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 8 Sep 2022 21:19:04 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 551D5109D15;
-        Thu,  8 Sep 2022 18:19:02 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4MNyl370HfzHnVm;
-        Fri,  9 Sep 2022 09:17:03 +0800 (CST)
-Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
- (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Fri, 9 Sep
- 2022 09:19:00 +0800
-From:   GUO Zihua <guozihua@huawei.com>
-To:     <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-Subject: [PATCH v4 2/2] ima: Handle -ESTALE returned by ima_filter_rule_match()
-Date:   Fri, 9 Sep 2022 09:15:16 +0800
-Message-ID: <20220909011516.55957-3-guozihua@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220909011516.55957-1-guozihua@huawei.com>
-References: <20220909011516.55957-1-guozihua@huawei.com>
+        Fri, 9 Sep 2022 11:21:20 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFF77A00EF;
+        Fri,  9 Sep 2022 08:21:16 -0700 (PDT)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 289El24C003935;
+        Fri, 9 Sep 2022 15:21:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=ETxy00/oSLMaFwhEgTi64CSAohYWFjoKt+q44NRh+5E=;
+ b=e2lK6FKnRBGUqzGIpdMTD3kgoJF94JDX7W3gB05VUy88pA9GOKEXGyy9CozkcTC+6NcT
+ kqpvFq/c/UYv5n7/NenDrFRo1AwyJz5/mGp4J8oxL4mzIU6VfzlGyL79O6p6FFMdMsR0
+ kxgmLNY+6pLYnQ8EXpibpE1eFCc8WDX5Qvd5psVHw+kP6lMlsxIyIKJABFOuS6LyxxK7
+ uDVv4dpF51rI3dtZE9u9qBLU+Wg0B7aJtss7WQNKm0btkojHcdEGhpWJPZaZbDsAUZGU
+ VH9VO+jfiE3C0yqlwwdmc1B0EmWjKiSJuZKDXCzG8ASCTaSlr5NRIUThJoYNIK2HWhGJ 4A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jg7j6s3nj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Sep 2022 15:21:12 +0000
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 289ElHbX005279;
+        Fri, 9 Sep 2022 15:21:11 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jg7j6s3n7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Sep 2022 15:21:11 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 289FKfiU030354;
+        Fri, 9 Sep 2022 15:21:10 GMT
+Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
+        by ppma03dal.us.ibm.com with ESMTP id 3jbxjash13-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 09 Sep 2022 15:21:10 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 289FL9Tb35521022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 9 Sep 2022 15:21:09 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 41FFB7805F;
+        Fri,  9 Sep 2022 15:32:50 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFD5E78064;
+        Fri,  9 Sep 2022 15:32:49 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Sep 2022 15:32:49 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     jarkko@kernel.org, linux-integrity@vger.kernel.org
+Cc:     peterhuewe@gmx.de, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, skhan@linuxfoundation.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Shuah Khan <shuah@kernel.org>
+Subject: [PATCH] selftests: tpm2: Implement class desstructor to close file descriptor
+Date:   Fri,  9 Sep 2022 11:20:56 -0400
+Message-Id: <20220909152056.1335261-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.31]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uBgP43LIeEsIw0QlRJAR-jQOm899RkpN
+X-Proofpoint-ORIG-GUID: K_4MA1wVvviQMNkflsxsgCsUvZOJ5Saa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-09-09_08,2022-09-09_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1011 adultscore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=483 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2207270000 definitions=main-2209090053
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-IMA relies on the blocking LSM policy notifier callback to update the
-LSM based IMA policy rules.
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-When SELinux update its policies, IMA would be notified and starts
-updating all its lsm rules one-by-one. During this time, -ESTALE would
-be returned by ima_filter_rule_match() if it is called with a LSM rule
-that has not yet been updated. In ima_match_rules(), -ESTALE is not
-handled, and the LSM rule is considered a match, causing extra files
-to be measured by IMA.
+Implement a class destructor to close the open TPM file descriptor
+and avoid the following error message:
 
-Fix it by re-initializing a temporary rule if -ESTALE is returned by
-ima_filter_rule_match(). The origin rule in the rule list would be
-updated by the LSM policy notifier callback.
+ test_flush_context (tpm2_tests.SpaceTest) ... \
+   /usr/lib64/python3.6/unittest/case.py:605: ResourceWarning: \
+   unclosed file <_io.FileIO name='/dev/tpmrm0' mode='rb+' closefd=True>
 
-Fixes: b16942455193 ("ima: use the lsm policy update notifier")
-Signed-off-by: GUO Zihua <guozihua@huawei.com>
+Fixes: 6ea3dfe1e0732 ("selftests: add TPM 2.0 tests")
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
 ---
- security/integrity/ima/ima_policy.c | 28 +++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
+ tools/testing/selftests/tpm2/tpm2.py | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 8040215c0252..cb672df9b888 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -545,6 +545,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 			    const char *func_data)
- {
- 	int i;
-+	bool result = false;
-+	bool rule_reinitialized = false;
+diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+index 057a4f49c79d..c7363c6764fc 100644
+--- a/tools/testing/selftests/tpm2/tpm2.py
++++ b/tools/testing/selftests/tpm2/tpm2.py
+@@ -371,6 +371,10 @@ class Client:
+             fcntl.fcntl(self.tpm, fcntl.F_SETFL, flags)
+             self.tpm_poll = select.poll()
  
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
-@@ -612,6 +614,8 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 			else
- 				return false;
- 		}
++    def __del__(self):
++        if self.tpm:
++            self.tpm.close()
 +
-+retry:
- 		switch (i) {
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
-@@ -631,10 +635,28 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 		default:
- 			break;
- 		}
--		if (!rc)
--			return false;
-+
-+		if (rc == -ESTALE) {
-+			rule = ima_lsm_copy_rule(rule);
-+			if (rule) {
-+				rule_reinitialized = true;
-+				goto retry;
-+			}
-+		}
-+		if (!rc) {
-+			result = false;
-+			goto out;
-+		}
- 	}
--	return true;
-+	result = true;
-+
-+out:
-+	if (rule_reinitialized) {
-+		for (i = 0; i < MAX_LSM_RULES; i++)
-+			ima_filter_rule_free(rule->lsm[i].rule);
-+		kfree(rule);
-+	}
-+	return result;
- }
+     def close(self):
+         self.tpm.close()
  
- /*
 -- 
-2.17.1
+2.35.1
 
