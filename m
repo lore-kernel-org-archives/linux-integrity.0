@@ -2,160 +2,120 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7A1C6FA89
-	for <linux-integrity@archiver.kernel.org>; Wed, 14 Sep 2022 02:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B2BC6FA8D
+	for <linux-integrity@archiver.kernel.org>; Wed, 14 Sep 2022 02:30:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbiINCa1 (ORCPT
+        id S229484AbiINCa2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 13 Sep 2022 22:30:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34442 "EHLO
+        Tue, 13 Sep 2022 22:30:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiINCaY (ORCPT
+        with ESMTP id S229846AbiINCaZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 13 Sep 2022 22:30:24 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5007245057
+        Tue, 13 Sep 2022 22:30:25 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07EBA51A02
         for <linux-integrity@vger.kernel.org>; Tue, 13 Sep 2022 19:30:23 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E2Dl0P026766;
-        Wed, 14 Sep 2022 02:30:19 GMT
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28E1Ipf6032068;
+        Wed, 14 Sep 2022 02:30:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=drT64InxfTIATQKuCRL+GopbslNgDcvCaBLvhsbs44Y=;
- b=HADy8p5QciE7mN6I3mSOMg9QlfUaJpghAXP6Ooc39GwKZOvTidot4izYzXQ3dX26xQAf
- kcoJ1u6lM+41ng+jxH0tPFJWN84CRZPjWaU3hJXw3pO4YqGRCyqREzvdlsUWymjz9xsX
- 6auS9R3vHqF0VhiAJ/NsPnmefdovOFQjwzcFlUd3vdQlFNjK6docRkvlP3OKN7OYRRee
- 9W3CTJmsQnvsA484Bpm3qXdDurcNmuVBYl48FZzDgHYD8r5Ezt14b5GNh16favLDiaPB
- tWgs5gT22R2S2KDhnSSHomH6DT3UlHV5Xb5NQ79T+xWcaZoBKoYQk141S2U1MEWtQVGg 6A== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jk605g9ps-1
+ bh=k1ezI43RjQMiDMDS10MXydcAdQFfueOvwdZ34Zexh/M=;
+ b=IXPqsLBOfuX8TTePYFsXuY92Q6CVyMqCyMPTjL5+LF8eym9wE3bSsbxlsL+OeRlwkXy2
+ 5mtxIDIyID7VC2oGr1L+tytkY/9uggq9B3RCKDzqkBfTk6SnUBsBjTjsaaWQXssBAlsU
+ Kmpeqr+loj5iu3B3b/vUKH7W4IAJlpJ+JYYRlpuVZZq4BuQGRpAQjENjnB/bT2wCQ/S0
+ tw/ZbS9UZLwQGBERj52z/zabIeDr/Ykf3ZFAHD08vN5liv88oPh0y9kuiE41keUwc+OC
+ oT+YUGUIk8oii84yrcpdcyif0bIvD1eAAgnpith6QGpMPswGl6PhnXgkZ6YyRKb7Pl7/ Aw== 
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jk56e1q01-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Sep 2022 02:30:20 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28E2M73X028229;
+        Wed, 14 Sep 2022 02:30:18 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 3jjyfr8bfj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Wed, 14 Sep 2022 02:30:18 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28E2KbpC026697;
-        Wed, 14 Sep 2022 02:30:16 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 3jjytx0av1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Sep 2022 02:30:16 +0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28E2Ubbl18612718
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28E2UFaD39453072
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Sep 2022 02:30:37 GMT
+        Wed, 14 Sep 2022 02:30:15 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4956EA4055;
-        Wed, 14 Sep 2022 02:30:13 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 3514DA4040;
+        Wed, 14 Sep 2022 02:30:15 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 918D8A404D;
-        Wed, 14 Sep 2022 02:30:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 69495A404D;
+        Wed, 14 Sep 2022 02:30:14 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.29.234])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Sep 2022 02:30:12 +0000 (GMT)
+        Wed, 14 Sep 2022 02:30:14 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
         Vitaly Chikunov <vt@altlinux.org>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v3 13/15] Compile a newer version of OpenSSL
-Date:   Tue, 13 Sep 2022 22:29:54 -0400
-Message-Id: <20220914022956.1359218-14-zohar@linux.ibm.com>
+Subject: [PATCH ima-evm-utils v3 15/15] Fix d2i_x509_fp failure
+Date:   Tue, 13 Sep 2022 22:29:56 -0400
+Message-Id: <20220914022956.1359218-16-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220914022956.1359218-1-zohar@linux.ibm.com>
 References: <20220914022956.1359218-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jPRyjCOBPSxNBHOpX_I_OnfhtQSg1kRE
-X-Proofpoint-GUID: jPRyjCOBPSxNBHOpX_I_OnfhtQSg1kRE
+X-Proofpoint-ORIG-GUID: WvaMjI3eWmIZ8l7WE_OoOBRnmEY6U5I9
+X-Proofpoint-GUID: WvaMjI3eWmIZ8l7WE_OoOBRnmEY6U5I9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
  definitions=2022-09-13_12,2022-09-13_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 mlxscore=0 suspectscore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 mlxlogscore=999 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=950 impostorscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2208220000 definitions=main-2209140008
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-With the distros shipping OpenSSL 3 with engine support, the original
-purpose for compiling OpenSSL 3 to test sm2/sm3 is no longer necessary
-and could be removed.  Or, it could be re-purposed for building OpenSSL
-without engine support, which is needed for testing.
-
-For both travis and github actions, update openssl-3.0.0-beta1 with
-openssl-3.0.5.
+Before calling d2i_x509_fp(), make sure the keyfile is a regular file.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- .github/workflows/ci.yml | 6 +++---
- .travis.yml              | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ src/libimaevm.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index dc06fce64ba5..5595855512e4 100644
---- a/.github/workflows/ci.yml
-+++ b/.github/workflows/ci.yml
-@@ -17,7 +17,7 @@ jobs:
-               ARCH: i386
-               TSS: tpm2-tss
-               VARIANT: i386
--              COMPILE_SSL: openssl-3.0.0-beta1
-+              COMPILE_SSL: openssl-3.0.5
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 5d05f1bc1720..7adfa2101373 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -251,6 +251,7 @@ EVP_PKEY *read_pub_pkey(const char *keyfile, int x509)
+ {
+ 	FILE *fp;
+ 	EVP_PKEY *pkey = NULL;
++	struct stat st;
  
-           # cross compilation builds
-           - container: "debian:stable"
-@@ -52,7 +52,7 @@ jobs:
-             env:
-               CC: clang
-               TSS: ibmtss
--              COMPILE_SSL: openssl-3.0.0-beta1
-+              COMPILE_SSL: openssl-3.0.5
+ 	if (!keyfile)
+ 		return NULL;
+@@ -264,6 +265,16 @@ EVP_PKEY *read_pub_pkey(const char *keyfile, int x509)
+ 	}
  
-           - container: "opensuse/leap"
-             env:
-@@ -63,7 +63,7 @@ jobs:
-             env:
-               CC: gcc
-               TSS: ibmtss
--              COMPILE_SSL: openssl-3.0.0-beta1
-+              COMPILE_SSL: openssl-3.0.5
+ 	if (x509) {
++		if (fstat(fileno(fp), &st) == -1)
++			goto out;
++
++		if ((st.st_mode & S_IFMT) != S_IFREG) {
++			if (imaevm_params.verbose > LOG_INFO)
++				log_err("Keyfile is not regular file: %s\n",
++					 keyfile);
++			goto out;
++		}
++
+ 		X509 *crt = d2i_X509_fp(fp, NULL);
  
-           - container: "ubuntu:xenial"
-             env:
-diff --git a/.travis.yml b/.travis.yml
-index edd2a21b83d3..09db401928f6 100644
---- a/.travis.yml
-+++ b/.travis.yml
-@@ -9,7 +9,7 @@ matrix:
-     include:
-         # 32 bit build
-         - os: linux
--          env: DISTRO=debian:stable VARIANT=i386 ARCH=i386 TSS=tpm2-tss COMPILE_SSL=openssl-3.0.0-beta1
-+          env: DISTRO=debian:stable VARIANT=i386 ARCH=i386 TSS=tpm2-tss COMPILE_SSL=openssl-3.0.5
-           compiler: gcc
- 
-         # cross compilation builds
-@@ -32,7 +32,7 @@ matrix:
- 
-         # glibc (gcc/clang)
-         - os: linux
--          env: DISTRO=opensuse/tumbleweed TSS=ibmtss CONTAINER=podman CONTAINER_ARGS="--runtime=/usr/bin/crun --network=host" COMPILE_SSL=openssl-3.0.0-beta1
-+          env: DISTRO=opensuse/tumbleweed TSS=ibmtss CONTAINER=podman CONTAINER_ARGS="--runtime=/usr/bin/crun --network=host" COMPILE_SSL=openssl-3.0.5
-           compiler: clang
- 
-         - os: linux
-@@ -40,7 +40,7 @@ matrix:
-           compiler: gcc
- 
-         - os: linux
--          env: DISTRO=ubuntu:jammy TSS=ibmtss COMPILE_SSL=openssl-3.0.0-beta1
-+          env: DISTRO=ubuntu:jammy TSS=ibmtss COMPILE_SSL=openssl-3.0.5
-           compiler: gcc
- 
-         - os: linux
+ 		if (!crt) {
 -- 
 2.31.1
 
