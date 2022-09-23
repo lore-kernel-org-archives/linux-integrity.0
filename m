@@ -2,149 +2,452 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BDFC6FA83
-	for <linux-integrity@archiver.kernel.org>; Fri, 23 Sep 2022 20:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 611F6C07E9D
+	for <linux-integrity@archiver.kernel.org>; Fri, 23 Sep 2022 22:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233272AbiIWUf3 (ORCPT
+        id S232149AbiIWWY2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 23 Sep 2022 16:35:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49226 "EHLO
+        Fri, 23 Sep 2022 18:24:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232995AbiIWUeB (ORCPT
+        with ESMTP id S230018AbiIWWY0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Sep 2022 16:34:01 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00B3F14D30F;
-        Fri, 23 Sep 2022 13:28:46 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 28NKPDua007507;
-        Fri, 23 Sep 2022 20:28:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=C1ePJ8Mf307F7nByJ7BtKcM8WaOumNsqo6SgWuWLwEw=;
- b=Xzb0PKVSMLpfwtNDd4ZmIgKg6KYRwRWpQYVfhC8USQLDiyZrvilCdgpwLCdlGM32a1As
- iXu9bmQ2286Z0uXLI6QV8+zPdDTeym/eKx2tDiqiV1Gk6TQsDhIKhIpElC6p4vqJz21C
- sEjpG19MY8HoLIA2GWagHijQH5teyNaJnmQgZyY1YRhQwKZk9Iq46TmL/WHwXUtibcOz
- hCO9Lzzhw3WCL4gUih28SQ8SrUub13FKNWQRiR9kaiGZAJY/CSHxQwOhKEezslEFTVoR
- bs0ewsqo9RNILomoX6jp+l/vgUvAsAGM3T2d9VEbNP+YoJhSlPjM7Ju0aH1cu3QyHll2 ow== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jsktj02w9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 20:28:33 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 28NKPWwo009551;
-        Fri, 23 Sep 2022 20:28:32 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3jsktj02vt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 20:28:32 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 28NKL9TY024646;
-        Fri, 23 Sep 2022 20:28:31 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma02dal.us.ibm.com with ESMTP id 3jn5vamg9w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Sep 2022 20:28:31 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 28NKSUlT7340554
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Sep 2022 20:28:30 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B69358054;
-        Fri, 23 Sep 2022 20:28:30 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E0B958058;
-        Fri, 23 Sep 2022 20:28:29 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.173.46])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Sep 2022 20:28:29 +0000 (GMT)
-Message-ID: <0f9387c9ceec0819de7bdb8b3635af8fa8236973.camel@linux.ibm.com>
-Subject: Re: [PATCH -next 1/4] ima: Use DECLARE_FLEX_ARRAY() helper in
- ima_modsig
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Gaosheng Cui <cuigaosheng1@huawei.com>, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 23 Sep 2022 16:28:28 -0400
-In-Reply-To: <20220905075837.1083216-2-cuigaosheng1@huawei.com>
-References: <20220905075837.1083216-1-cuigaosheng1@huawei.com>
-         <20220905075837.1083216-2-cuigaosheng1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -EumnrV6P_ZEykrDwuIzUAun3irb-r9e
-X-Proofpoint-ORIG-GUID: 1VEcZepvLU4jde-VqGfHDtl1Nq8N4AiX
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Fri, 23 Sep 2022 18:24:26 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5085014A786
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:24:24 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id 13so3435769ejn.3
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=hdQMsqBIYDf8xQ7R7tGLHzz9I5HM0m8MMLdxASUc44Y=;
+        b=I5q3AKT58dZwj2NQAFLoX+IV6j+7obRBlimBQYtNG/nERjA41yfzPY1fzDCIU25/dt
+         ItnLN77MxUv0GaE0vcDo7E8yddVIuL8h187wZ8wBqz1HT4CMvh0bPePaKG7ol9I2hDm0
+         XLl0NrO7Mf6yflot4ozYzss1dJ8Ya27q6AmB0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=hdQMsqBIYDf8xQ7R7tGLHzz9I5HM0m8MMLdxASUc44Y=;
+        b=vPDjJrbxkFMUj7r/2C4QpPY4APvS61NYGgG7o2UMhZSl9uppfLFJIWT1J/MP7LSExG
+         Hfdn9v/Cjy1IVoqpSZ3ae94ETJv/f6eoKDrGiMfpeg2r2qKfa8yDL5+pSUyyfikCHRhk
+         laoqmTBNc86aGIWYbSHehQ2Hg+x+D9iD4SNnSTA73C2E3JYAWMPmao84UvCWRNrceYCE
+         oXdgf8UiXXEAago1Vs9KzlR5rZRGuF2H3tQ7tCKghcTzb++OV5ClmUf9RDsQA03P2E++
+         rSvmkKO2J0uENkkoH6weYK0Ivfcvzh5IJ21w6dJlqbhUVqbuIgKw4o+nChzgPVHeA+8W
+         oOtA==
+X-Gm-Message-State: ACrzQf3xSxBjdT67TIvWVMZrGrI7Hkfz9B04g5aTmPqpojvbJZ5VORxX
+        0obFz6axElAihrEe9WaMgFxDW4yXWQ8CFh+B
+X-Google-Smtp-Source: AMsMyM4ComPqYSSLta7CPh+i/oQt5q9WEg7SggohnuGfgxbUnhiNW1jvKTAz5wReRw0DHYcDWZW8YQ==
+X-Received: by 2002:a17:907:168d:b0:782:68d1:f091 with SMTP id hc13-20020a170907168d00b0078268d1f091mr7685541ejc.714.1663971862548;
+        Fri, 23 Sep 2022 15:24:22 -0700 (PDT)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id g7-20020aa7c847000000b0044e01e2533asm1982978edt.43.2022.09.23.15.24.20
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Sep 2022 15:24:20 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id iv17so1062896wmb.4
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:24:20 -0700 (PDT)
+X-Received: by 2002:a05:600c:34c2:b0:3b4:76f2:9c3b with SMTP id
+ d2-20020a05600c34c200b003b476f29c3bmr13898395wmq.179.1663971860021; Fri, 23
+ Sep 2022 15:24:20 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-09-23_08,2022-09-22_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- lowpriorityscore=0 clxscore=1011 bulkscore=0 adultscore=0 malwarescore=0
- suspectscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2209130000 definitions=main-2209230130
+References: <20220823222526.1524851-1-evgreen@chromium.org>
+ <20220823152108.v2.7.Ibd067e73916b9fae268a5824c2dd037416426af8@changeid> <202209201610.C06F8CA@keescook>
+In-Reply-To: <202209201610.C06F8CA@keescook>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 23 Sep 2022 15:23:43 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4twDMw8zpp1o0hv+SFFQtGNxkAivBg0VC2Pax1ez7qzg@mail.gmail.com>
+Message-ID: <CAE=gft4twDMw8zpp1o0hv+SFFQtGNxkAivBg0VC2Pax1ez7qzg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/10] PM: hibernate: Use TPM-backed keys to encrypt image
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        apronin@chromium.org, Daniil Lunev <dlunev@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Gaosheng,
+On Tue, Sep 20, 2022 at 4:16 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Tue, Aug 23, 2022 at 03:25:23PM -0700, Evan Green wrote:
+> > When using encrypted hibernate images, have the TPM create a key for us
+> > and seal it. By handing back a sealed blob instead of the raw key, we
+> > prevent usermode from being able to decrypt and tamper with the
+> > hibernate image on a different machine.
+> >
+> > We'll also go through the motions of having PCR23 set to a known value at
+> > the time of key creation and unsealing. Currently there's nothing that
+> > enforces the contents of PCR23 as a condition to unseal the key blob,
+> > that will come in a later change.
+> >
+> > Sourced-from: Matthew Garrett <mjg59@google.com>
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> >
+> > ---
+> > Matthew's incarnation of this patch is at:
+> > https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
+> >
+> > Changes in v2:
+> >  - Rework load/create_kernel_key() to eliminate a label (Andrey)
+> >  - Call put_device() needed from calling tpm_default_chip().
+> >
+> >  kernel/power/Kconfig   |   2 +
+> >  kernel/power/snapenc.c | 207 +++++++++++++++++++++++++++++++++++++++--
+> >  kernel/power/user.h    |   1 +
+> >  3 files changed, 201 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+> > index cd574af0b43379..ff15361c5d8fad 100644
+> > --- a/kernel/power/Kconfig
+> > +++ b/kernel/power/Kconfig
+> > @@ -96,6 +96,8 @@ config ENCRYPTED_HIBERNATION
+> >       bool "Encryption support for userspace snapshots"
+> >       depends on HIBERNATION_SNAPSHOT_DEV
+> >       depends on CRYPTO_AEAD2=y
+> > +     depends on KEYS
+> > +     depends on TRUSTED_KEYS
+>
+> nit: TRUSTED_KEYS already depends on KEYS, so the KEYS depend can be
+> dropped.
+>
+> >       default n
+> >       help
+> >         Enable support for kernel-based encryption of hibernation snapshots
+> > diff --git a/kernel/power/snapenc.c b/kernel/power/snapenc.c
+> > index cb90692d6ab83a..90079f6d4f184b 100644
+> > --- a/kernel/power/snapenc.c
+> > +++ b/kernel/power/snapenc.c
+> > @@ -4,13 +4,23 @@
+> >  #include <linux/crypto.h>
+> >  #include <crypto/aead.h>
+> >  #include <crypto/gcm.h>
+> > +#include <keys/trusted-type.h>
+> > +#include <linux/key-type.h>
+> >  #include <linux/random.h>
+> >  #include <linux/mm.h>
+> > +#include <linux/tpm.h>
+> >  #include <linux/uaccess.h>
+> >
+> >  #include "power.h"
+> >  #include "user.h"
+> >
+> > +/* sha256("To sleep, perchance to dream") */
+> > +static struct tpm_digest known_digest = { .alg_id = TPM_ALG_SHA256,
+> > +     .digest = {0x92, 0x78, 0x3d, 0x79, 0x2d, 0x00, 0x31, 0xb0, 0x55, 0xf9,
+> > +                0x1e, 0x0d, 0xce, 0x83, 0xde, 0x1d, 0xc4, 0xc5, 0x8e, 0x8c,
+> > +                0xf1, 0x22, 0x38, 0x6c, 0x33, 0xb1, 0x14, 0xb7, 0xec, 0x05,
+> > +                0x5f, 0x49}};
+> > +
+> >  /* Encrypt more data from the snapshot into the staging area. */
+> >  static int snapshot_encrypt_refill(struct snapshot_data *data)
+> >  {
+> > @@ -313,6 +323,12 @@ void snapshot_teardown_encryption(struct snapshot_data *data)
+> >  {
+> >       int i;
+> >
+> > +     if (data->key) {
+> > +             key_revoke(data->key);
+> > +             key_put(data->key);
+> > +             data->key = NULL;
+> > +     }
+> > +
+> >       if (data->aead_req) {
+> >               aead_request_free(data->aead_req);
+> >               data->aead_req = NULL;
+> > @@ -381,11 +397,83 @@ static int snapshot_setup_encryption_common(struct snapshot_data *data)
+> >       return rc;
+> >  }
+> >
+> > +static int snapshot_create_kernel_key(struct snapshot_data *data)
+> > +{
+> > +     const struct cred *cred = current_cred();
+> > +     struct tpm_digest *digests = NULL;
+> > +     struct tpm_chip *chip;
+> > +     struct key *key = NULL;
+> > +     int ret, i;
+> > +     /* Create a key sealed by the SRK. */
+> > +     char *keyinfo = "new\t32\tkeyhandle=0x81000000";
+> > +
+> > +     chip = tpm_default_chip();
+> > +     if (!chip)
+> > +             return -ENODEV;
+> > +
+> > +     if (!(tpm_is_tpm2(chip))) {
+> > +             ret = -ENODEV;
+> > +             goto out_dev;
+> > +     }
+> > +
+> > +     ret = tpm_pcr_reset(chip, 23);
+> > +     if (ret)
+> > +             goto out;
+> > +
+> > +     digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
+> > +                       GFP_KERNEL);
+> > +     if (!digests) {
+> > +             ret = -ENOMEM;
+> > +             goto out;
+> > +     }
+> > +
+> > +     for (i = 0; i <= chip->nr_allocated_banks; i++) {
+> > +             digests[i].alg_id = chip->allocated_banks[i].alg_id;
+> > +             if (digests[i].alg_id == known_digest.alg_id)
+> > +                     memcpy(&digests[i], &known_digest, sizeof(known_digest));
+> > +     }
+> > +
+> > +     ret = tpm_pcr_extend(chip, 23, digests);
+> > +     if (ret != 0)
+> > +             goto out;
+> > +
+> > +     key = key_alloc(&key_type_trusted, "swsusp", GLOBAL_ROOT_UID,
+> > +                     GLOBAL_ROOT_GID, cred, 0, KEY_ALLOC_NOT_IN_QUOTA,
+> > +                     NULL);
+> > +
+> > +     if (IS_ERR(key)) {
+> > +             ret = PTR_ERR(key);
+> > +             key = NULL;
+> > +             goto out;
+> > +     }
+> > +
+> > +     ret = key_instantiate_and_link(key, keyinfo, strlen(keyinfo) + 1, NULL,
+> > +                                    NULL);
+> > +     if (ret != 0)
+> > +             goto out;
+> > +
+> > +     data->key = key;
+> > +     key = NULL;
+> > +
+> > +out:
+> > +     if (key) {
+> > +             key_revoke(key);
+> > +             key_put(key);
+> > +     }
+> > +
+> > +     kfree(digests);
+> > +     tpm_pcr_reset(chip, 23);
+> > +
+> > +out_dev:
+> > +     put_device(&chip->dev);
+> > +     return ret;
+> > +}
+> > +
+> >  int snapshot_get_encryption_key(struct snapshot_data *data,
+> >       struct uswsusp_key_blob __user *key)
+> >  {
+> > -     u8 aead_key[SNAPSHOT_ENCRYPTION_KEY_SIZE];
+> >       u8 nonce[USWSUSP_KEY_NONCE_SIZE];
+> > +     struct trusted_key_payload *payload;
+> >       int rc;
+> >       /* Don't pull a random key from a world that can be reset. */
+> >       if (data->ready)
+> > @@ -399,21 +487,28 @@ int snapshot_get_encryption_key(struct snapshot_data *data,
+> >       get_random_bytes(nonce, sizeof(nonce));
+> >       memcpy(&data->nonce_low, &nonce[0], sizeof(data->nonce_low));
+> >       memcpy(&data->nonce_high, &nonce[8], sizeof(data->nonce_high));
+> > -     /* Build a random key */
+> > -     get_random_bytes(aead_key, sizeof(aead_key));
+> > -     rc = crypto_aead_setkey(data->aead_tfm, aead_key, sizeof(aead_key));
+> > +
+> > +     /* Create a kernel key, and set it. */
+> > +     rc = snapshot_create_kernel_key(data);
+> > +     if (rc)
+> > +             goto fail;
+> > +
+> > +     payload = data->key->payload.data[0];
+> > +     /* Install the key */
+> > +     rc = crypto_aead_setkey(data->aead_tfm, payload->key, SNAPSHOT_ENCRYPTION_KEY_SIZE);
+> >       if (rc)
+> >               goto fail;
+> >
+> > -     /* Hand the key back to user mode (to be changed!) */
+> > -     rc = put_user(sizeof(struct uswsusp_key_blob), &key->blob_len);
+> > +     /* Hand the key back to user mode in sealed form. */
+> > +     rc = put_user(payload->blob_len, &key->blob_len);
+> >       if (rc)
+> >               goto fail;
+> >
+> > -     rc = copy_to_user(&key->blob, &aead_key, sizeof(aead_key));
+> > +     rc = copy_to_user(&key->blob, &payload->blob, payload->blob_len);
+> >       if (rc)
+> >               goto fail;
+> >
+> > +     /* The nonce just gets handed back in the clear. */
+> >       rc = copy_to_user(&key->nonce, &nonce, sizeof(nonce));
+> >       if (rc)
+> >               goto fail;
+> > @@ -425,10 +520,99 @@ int snapshot_get_encryption_key(struct snapshot_data *data,
+> >       return rc;
+> >  }
+> >
+> > +static int snapshot_load_kernel_key(struct snapshot_data *data,
+> > +     struct uswsusp_key_blob *blob)
+> > +{
+> > +
+> > +     const struct cred *cred = current_cred();
+> > +     char *keytemplate = "load\t%s\tkeyhandle=0x81000000";
+> > +     struct tpm_digest *digests = NULL;
+> > +     char *blobstring = NULL;
+> > +     char *keyinfo = NULL;
+> > +     struct tpm_chip *chip;
+> > +     struct key *key = NULL;
+> > +     int i, ret;
+> > +
+> > +     chip = tpm_default_chip();
+> > +     if (!chip)
+> > +             return -ENODEV;
+> > +
+> > +     if (!(tpm_is_tpm2(chip))) {
+> > +             ret = -ENODEV;
+> > +             goto out_dev;
+> > +     }
+> > +
+> > +     ret = tpm_pcr_reset(chip, 23);
+> > +     if (ret)
+> > +             goto out;
+> > +
+> > +     digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
+> > +                       GFP_KERNEL);
+> > +     if (!digests)
+> > +             goto out;
+> > +
+> > +     for (i = 0; i <= chip->nr_allocated_banks; i++) {
+> > +             digests[i].alg_id = chip->allocated_banks[i].alg_id;
+> > +             if (digests[i].alg_id == known_digest.alg_id)
+> > +                     memcpy(&digests[i], &known_digest, sizeof(known_digest));
+> > +     }
+>
+> So I can confirm my unerstanding here: this is just putting a starting
+> value in the PCR? (As mentioned in the commit log?)
 
-Thank you for the patches.
+Correct, the PCR is reset above and set (well, extended from 0) to the
+magic value here ahead of the unseal operation. Once we add the policy
+in patch 10, the TPM will refuse to unseal the key unless PCR23 is set
+to this magic value.
 
-On Mon, 2022-09-05 at 15:58 +0800, Gaosheng Cui wrote:
-> Zero-length arrays are deprecated and we are moving towards adopting
-> C99 flexible-array members instead. So, replace zero-length array
-> declaration with the new DECLARE_FLEX_ARRAY() helper macro in struct
-> modsig.
-> 
-> This helper allows for a flexible-array member in a union.
-> 
-> Link: KSPP#21
-> Link: KSPP#193
-> Link: KSPP#197
+>
+> > +
+> > +     ret = tpm_pcr_extend(chip, 23, digests);
+> > +     if (ret != 0)
+> > +             goto out;
+> > +
+> > +     blobstring = kmalloc(blob->blob_len * 2, GFP_KERNEL);
+> > +     if (!blobstring) {
+> > +             ret = -ENOMEM;
+> > +             goto out;
+> > +     }
+> > +
+> > +     bin2hex(blobstring, blob->blob, blob->blob_len);
+> > +     keyinfo = kasprintf(GFP_KERNEL, keytemplate, blobstring);
+> > +     if (!keyinfo) {
+> > +             ret = -ENOMEM;
+> > +             goto out;
+> > +     }
+> > +
+> > +     key = key_alloc(&key_type_trusted, "swsusp", GLOBAL_ROOT_UID,
+> > +                     GLOBAL_ROOT_GID, cred, 0, KEY_ALLOC_NOT_IN_QUOTA,
+> > +                     NULL);
+> > +
+> > +     if (IS_ERR(key)) {
+> > +             ret = PTR_ERR(key);
+> > +             key = NULL;
+> > +             goto out;
+> > +     }
+> > +
+> > +     ret = key_instantiate_and_link(key, keyinfo, strlen(keyinfo) + 1, NULL,
+> > +                                    NULL);
+>
+> You want to keep the trailing NUL byte here so it's easier to read back
+> later? Reading it back will need to verify the trailing NUL regardless.
+> (Does this get read back?)
 
-The above shortened link is a bit confusing.  The #193 complete link is
-mentioned in the cover letter.  In all cases being modified the "[]" 
-notation is used.  Is this a boiler plate patch description or are all
-three of these links really applicable to each of the patches?  
-
-- Eliminate fake flexible arrays from the kernel ("variable length"
-one-element and zero-length arrays) #21
-- Replace fake flexible-array declarations with the
-DECLARE_FLEX_ARRAY() helper macro #193
-- Address -Wzero-length-array warnings reported by Clang #197
-
-> Link: https://gcc.gnu.org/onlinedocs/gcc/Zero-Length.html
-
-Shouldn't this link be in the cover letter?  And the applicable
-link(s), as shown in the cover letter, here in the patches?
-
--- 
-thanks,
-
-Mimi
-
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
-> ---
->  security/integrity/ima/ima_modsig.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-> index fb25723c65bc..d132383dbb64 100644
-> --- a/security/integrity/ima/ima_modsig.c
-> +++ b/security/integrity/ima/ima_modsig.c
-> @@ -29,7 +29,7 @@ struct modsig {
->  	 * storing the signature.
->  	 */
->  	int raw_pkcs7_len;
-> -	u8 raw_pkcs7[];
-> +	DECLARE_FLEX_ARRAY(u8, raw_pkcs7);
->  };
->  
->  /*
+Are you referring to the trailing nul on keyinfo? The keyinfo string
+is only used within this function, as key_instantiate_and_link()
+receives it as a parameter string. I can see that
+trusted_instantiate() also null-terminates the buffer defensively for
+itself, but it still seemed prudent to hand in a terminated string. I
+can remove the + 1 if you think it's better.
 
 
+>
+> > +     if (ret != 0)
+> > +             goto out;
+> > +
+> > +     data->key = key;
+> > +     key = NULL;
+> > +
+> > +out:
+> > +     if (key) {
+> > +             key_revoke(key);
+> > +             key_put(key);
+> > +     }
+> > +
+> > +     kfree(keyinfo);
+> > +     kfree(blobstring);
+> > +     kfree(digests);
+> > +     tpm_pcr_reset(chip, 23);
+> > +
+> > +out_dev:
+> > +     put_device(&chip->dev);
+> > +     return ret;
+> > +}
+> > +
+> >  int snapshot_set_encryption_key(struct snapshot_data *data,
+> >       struct uswsusp_key_blob __user *key)
+> >  {
+> >       struct uswsusp_key_blob blob;
+> > +     struct trusted_key_payload *payload;
+> >       int rc;
+> >
+> >       /* It's too late if data's been pushed in. */
+> > @@ -444,13 +628,18 @@ int snapshot_set_encryption_key(struct snapshot_data *data,
+> >       if (rc)
+> >               goto crypto_setup_fail;
+> >
+> > -     if (blob.blob_len != sizeof(struct uswsusp_key_blob)) {
+> > +     if (blob.blob_len > sizeof(key->blob)) {
+> >               rc = -EINVAL;
+> >               goto crypto_setup_fail;
+> >       }
+> >
+> > +     rc = snapshot_load_kernel_key(data, &blob);
+> > +     if (rc)
+> > +             goto crypto_setup_fail;
+> > +
+> > +     payload = data->key->payload.data[0];
+> >       rc = crypto_aead_setkey(data->aead_tfm,
+> > -                             blob.blob,
+> > +                             payload->key,
+> >                               SNAPSHOT_ENCRYPTION_KEY_SIZE);
+> >
+> >       if (rc)
+> > diff --git a/kernel/power/user.h b/kernel/power/user.h
+> > index 6823e2eba7ec53..591b30bb213349 100644
+> > --- a/kernel/power/user.h
+> > +++ b/kernel/power/user.h
+> > @@ -31,6 +31,7 @@ struct snapshot_data {
+> >       uint64_t crypt_total;
+> >       uint64_t nonce_low;
+> >       uint64_t nonce_high;
+> > +     struct key *key;
+> >  #endif
+> >
+> >  };
+> > --
+> > 2.31.0
+> >
+>
+> --
+> Kees Cook
