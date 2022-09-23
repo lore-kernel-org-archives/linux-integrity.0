@@ -2,65 +2,65 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611F6C07E9D
-	for <linux-integrity@archiver.kernel.org>; Fri, 23 Sep 2022 22:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1177DC04A95
+	for <linux-integrity@archiver.kernel.org>; Fri, 23 Sep 2022 22:30:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232149AbiIWWY2 (ORCPT
+        id S229724AbiIWWaX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 23 Sep 2022 18:24:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58824 "EHLO
+        Fri, 23 Sep 2022 18:30:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230018AbiIWWY0 (ORCPT
+        with ESMTP id S229511AbiIWWaW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 23 Sep 2022 18:24:26 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5085014A786
-        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:24:24 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id 13so3435769ejn.3
-        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:24:24 -0700 (PDT)
+        Fri, 23 Sep 2022 18:30:22 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F99886704
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:30:20 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id z2so2020031edi.1
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=hdQMsqBIYDf8xQ7R7tGLHzz9I5HM0m8MMLdxASUc44Y=;
-        b=I5q3AKT58dZwj2NQAFLoX+IV6j+7obRBlimBQYtNG/nERjA41yfzPY1fzDCIU25/dt
-         ItnLN77MxUv0GaE0vcDo7E8yddVIuL8h187wZ8wBqz1HT4CMvh0bPePaKG7ol9I2hDm0
-         XLl0NrO7Mf6yflot4ozYzss1dJ8Ya27q6AmB0=
+        bh=4oqyTkBBDw3LTmTITK5vyNnI1QkI4Y5DdLpXejtCHoY=;
+        b=bhDnbELAevvPVnhReDF/VQ1fkqPSkrWfUHJ7AefH7oNQZeJGyiIjM/rldTaMG7QWtw
+         kf43gw25L4/r1LH8DT3ukacprjz6fYGnpWTn1oB9Rw3NAuD3cbr8h4h4C9NVvsYoobL0
+         yPFfbQfjket+9sK2EgAcIj2bcXDD+sWXu+LsM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=hdQMsqBIYDf8xQ7R7tGLHzz9I5HM0m8MMLdxASUc44Y=;
-        b=vPDjJrbxkFMUj7r/2C4QpPY4APvS61NYGgG7o2UMhZSl9uppfLFJIWT1J/MP7LSExG
-         Hfdn9v/Cjy1IVoqpSZ3ae94ETJv/f6eoKDrGiMfpeg2r2qKfa8yDL5+pSUyyfikCHRhk
-         laoqmTBNc86aGIWYbSHehQ2Hg+x+D9iD4SNnSTA73C2E3JYAWMPmao84UvCWRNrceYCE
-         oXdgf8UiXXEAago1Vs9KzlR5rZRGuF2H3tQ7tCKghcTzb++OV5ClmUf9RDsQA03P2E++
-         rSvmkKO2J0uENkkoH6weYK0Ivfcvzh5IJ21w6dJlqbhUVqbuIgKw4o+nChzgPVHeA+8W
-         oOtA==
-X-Gm-Message-State: ACrzQf3xSxBjdT67TIvWVMZrGrI7Hkfz9B04g5aTmPqpojvbJZ5VORxX
-        0obFz6axElAihrEe9WaMgFxDW4yXWQ8CFh+B
-X-Google-Smtp-Source: AMsMyM4ComPqYSSLta7CPh+i/oQt5q9WEg7SggohnuGfgxbUnhiNW1jvKTAz5wReRw0DHYcDWZW8YQ==
-X-Received: by 2002:a17:907:168d:b0:782:68d1:f091 with SMTP id hc13-20020a170907168d00b0078268d1f091mr7685541ejc.714.1663971862548;
-        Fri, 23 Sep 2022 15:24:22 -0700 (PDT)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id g7-20020aa7c847000000b0044e01e2533asm1982978edt.43.2022.09.23.15.24.20
+        bh=4oqyTkBBDw3LTmTITK5vyNnI1QkI4Y5DdLpXejtCHoY=;
+        b=AwvHOKwHRHBRPhdE2878mViWHXBVOg1Kvs25k3GW4OZczgZHurxyPbwgTOIH2dacrP
+         3lfATatcqSP9DVDtitNHL/jaMuSvmmuDavaPhjLU3U5Ix/0ZqCuYnJRWBs16Ty3y3lKD
+         QoHthGKBLfzRCJGxYC7B0Xi7USkhwwl66EVcxLmcwjCwCF508ZAFuSTd+FjrceO8H+k3
+         vpOaTWkVgl0n/3UAvWYPtEh/G06ekWa9D+6pZYH73+Pl7gE5yh2PV32ux9ju0IToEJSd
+         8sS0oqfbLG1hVoidCLrtbqYJ0zx6vk/T9FQUEbTzZTwXRMzLo2e8bkw/jxdR1rszE//H
+         +yTw==
+X-Gm-Message-State: ACrzQf2fc55qR5iEBBeDtiTDFidHm2U0WpmrBBZrW0mYRNTr39nNvE6e
+        +uUArmqqD3VrjehYd+wRut+rdTwl9M64ce1WwSQ=
+X-Google-Smtp-Source: AMsMyM4Mfq2cruXeTjn3w/hEbE19+1kQfOt0rSkyRVelvxQUahKSof+acnzVlVe2/ROnAk5uIzkFUQ==
+X-Received: by 2002:aa7:cad5:0:b0:454:88dc:2c22 with SMTP id l21-20020aa7cad5000000b0045488dc2c22mr10766203edt.352.1663972218715;
+        Fri, 23 Sep 2022 15:30:18 -0700 (PDT)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id hk14-20020a170906c9ce00b0073d87068042sm4491476ejb.110.2022.09.23.15.30.18
         for <linux-integrity@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Sep 2022 15:24:20 -0700 (PDT)
-Received: by mail-wm1-f46.google.com with SMTP id iv17so1062896wmb.4
-        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:24:20 -0700 (PDT)
-X-Received: by 2002:a05:600c:34c2:b0:3b4:76f2:9c3b with SMTP id
- d2-20020a05600c34c200b003b476f29c3bmr13898395wmq.179.1663971860021; Fri, 23
- Sep 2022 15:24:20 -0700 (PDT)
+        Fri, 23 Sep 2022 15:30:18 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id e18so1068959wmq.3
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Sep 2022 15:30:18 -0700 (PDT)
+X-Received: by 2002:a7b:c389:0:b0:3b4:a67a:2ef7 with SMTP id
+ s9-20020a7bc389000000b003b4a67a2ef7mr14181065wmj.180.1663971779214; Fri, 23
+ Sep 2022 15:22:59 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220823222526.1524851-1-evgreen@chromium.org>
- <20220823152108.v2.7.Ibd067e73916b9fae268a5824c2dd037416426af8@changeid> <202209201610.C06F8CA@keescook>
-In-Reply-To: <202209201610.C06F8CA@keescook>
+ <20220823152108.v2.3.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid> <202209201552.DF8C511D23@keescook>
+In-Reply-To: <202209201552.DF8C511D23@keescook>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Fri, 23 Sep 2022 15:23:43 -0700
-X-Gmail-Original-Message-ID: <CAE=gft4twDMw8zpp1o0hv+SFFQtGNxkAivBg0VC2Pax1ez7qzg@mail.gmail.com>
-Message-ID: <CAE=gft4twDMw8zpp1o0hv+SFFQtGNxkAivBg0VC2Pax1ez7qzg@mail.gmail.com>
-Subject: Re: [PATCH v2 07/10] PM: hibernate: Use TPM-backed keys to encrypt image
+Date:   Fri, 23 Sep 2022 15:22:21 -0700
+X-Gmail-Original-Message-ID: <CAE=gft6AEKiYUf9yZ1Z6F0w+=S2KJvZ6HVK+eVsQ3fF1u+HaVQ@mail.gmail.com>
+Message-ID: <CAE=gft6AEKiYUf9yZ1Z6F0w+=S2KJvZ6HVK+eVsQ3fF1u+HaVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] security: keys: trusted: Include TPM2 creation data
 To:     Kees Cook <keescook@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Gwendal Grignou <gwendal@chromium.org>,
@@ -74,380 +74,460 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linux PM <linux-pm@vger.kernel.org>,
         Jonathan Corbet <corbet@lwn.net>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 4:16 PM Kees Cook <keescook@chromium.org> wrote:
+On Tue, Sep 20, 2022 at 4:04 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Tue, Aug 23, 2022 at 03:25:23PM -0700, Evan Green wrote:
-> > When using encrypted hibernate images, have the TPM create a key for us
-> > and seal it. By handing back a sealed blob instead of the raw key, we
-> > prevent usermode from being able to decrypt and tamper with the
-> > hibernate image on a different machine.
+> On Tue, Aug 23, 2022 at 03:25:19PM -0700, Evan Green wrote:
+> > In addition to the private key and public key, the TPM2_Create
+> > command may also return creation data, a creation hash, and a creation
+> > ticket. These fields allow the TPM to attest to the contents of a
+> > specified set of PCRs at the time the trusted key was created. Encrypted
+> > hibernation will use this to ensure that PCRs settable only by the
+> > kernel were set properly at the time of creation, indicating this is an
+> > authentic hibernate key.
 > >
-> > We'll also go through the motions of having PCR23 set to a known value at
-> > the time of key creation and unsealing. Currently there's nothing that
-> > enforces the contents of PCR23 as a condition to unseal the key blob,
-> > that will come in a later change.
-> >
-> > Sourced-from: Matthew Garrett <mjg59@google.com>
-> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > Encode these additional parameters into the ASN.1 created to represent
+> > the key blob. The new fields are made optional so that they don't bloat
+> > key blobs which don't need them, and to ensure interoperability with
+> > old blobs.
 > >
 > > ---
-> > Matthew's incarnation of this patch is at:
-> > https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
 > >
-> > Changes in v2:
-> >  - Rework load/create_kernel_key() to eliminate a label (Andrey)
-> >  - Call put_device() needed from calling tpm_default_chip().
+> > (no changes since v1)
 > >
-> >  kernel/power/Kconfig   |   2 +
-> >  kernel/power/snapenc.c | 207 +++++++++++++++++++++++++++++++++++++++--
-> >  kernel/power/user.h    |   1 +
-> >  3 files changed, 201 insertions(+), 9 deletions(-)
+> > This is a replacement for Matthew's original patch here:
+> > https://patchwork.kernel.org/patch/12096489/
 > >
-> > diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> > index cd574af0b43379..ff15361c5d8fad 100644
-> > --- a/kernel/power/Kconfig
-> > +++ b/kernel/power/Kconfig
-> > @@ -96,6 +96,8 @@ config ENCRYPTED_HIBERNATION
-> >       bool "Encryption support for userspace snapshots"
-> >       depends on HIBERNATION_SNAPSHOT_DEV
-> >       depends on CRYPTO_AEAD2=y
-> > +     depends on KEYS
-> > +     depends on TRUSTED_KEYS
+> > That patch was written before the exported key format was switched to
+> > ASN.1. This patch accomplishes the same thing (saving, loading, and
+> > getting pointers to the creation data) while utilizing the new ASN.1
+> > format.
 >
-> nit: TRUSTED_KEYS already depends on KEYS, so the KEYS depend can be
-> dropped.
->
-> >       default n
-> >       help
-> >         Enable support for kernel-based encryption of hibernation snapshots
-> > diff --git a/kernel/power/snapenc.c b/kernel/power/snapenc.c
-> > index cb90692d6ab83a..90079f6d4f184b 100644
-> > --- a/kernel/power/snapenc.c
-> > +++ b/kernel/power/snapenc.c
-> > @@ -4,13 +4,23 @@
-> >  #include <linux/crypto.h>
-> >  #include <crypto/aead.h>
-> >  #include <crypto/gcm.h>
-> > +#include <keys/trusted-type.h>
-> > +#include <linux/key-type.h>
-> >  #include <linux/random.h>
-> >  #include <linux/mm.h>
-> > +#include <linux/tpm.h>
-> >  #include <linux/uaccess.h>
-> >
-> >  #include "power.h"
-> >  #include "user.h"
-> >
-> > +/* sha256("To sleep, perchance to dream") */
-> > +static struct tpm_digest known_digest = { .alg_id = TPM_ALG_SHA256,
-> > +     .digest = {0x92, 0x78, 0x3d, 0x79, 0x2d, 0x00, 0x31, 0xb0, 0x55, 0xf9,
-> > +                0x1e, 0x0d, 0xce, 0x83, 0xde, 0x1d, 0xc4, 0xc5, 0x8e, 0x8c,
-> > +                0xf1, 0x22, 0x38, 0x6c, 0x33, 0xb1, 0x14, 0xb7, 0xec, 0x05,
-> > +                0x5f, 0x49}};
-> > +
-> >  /* Encrypt more data from the snapshot into the staging area. */
-> >  static int snapshot_encrypt_refill(struct snapshot_data *data)
-> >  {
-> > @@ -313,6 +323,12 @@ void snapshot_teardown_encryption(struct snapshot_data *data)
-> >  {
-> >       int i;
-> >
-> > +     if (data->key) {
-> > +             key_revoke(data->key);
-> > +             key_put(data->key);
-> > +             data->key = NULL;
-> > +     }
-> > +
-> >       if (data->aead_req) {
-> >               aead_request_free(data->aead_req);
-> >               data->aead_req = NULL;
-> > @@ -381,11 +397,83 @@ static int snapshot_setup_encryption_common(struct snapshot_data *data)
-> >       return rc;
-> >  }
-> >
-> > +static int snapshot_create_kernel_key(struct snapshot_data *data)
-> > +{
-> > +     const struct cred *cred = current_cred();
-> > +     struct tpm_digest *digests = NULL;
-> > +     struct tpm_chip *chip;
-> > +     struct key *key = NULL;
-> > +     int ret, i;
-> > +     /* Create a key sealed by the SRK. */
-> > +     char *keyinfo = "new\t32\tkeyhandle=0x81000000";
-> > +
-> > +     chip = tpm_default_chip();
-> > +     if (!chip)
-> > +             return -ENODEV;
-> > +
-> > +     if (!(tpm_is_tpm2(chip))) {
-> > +             ret = -ENODEV;
-> > +             goto out_dev;
-> > +     }
-> > +
-> > +     ret = tpm_pcr_reset(chip, 23);
-> > +     if (ret)
-> > +             goto out;
-> > +
-> > +     digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
-> > +                       GFP_KERNEL);
-> > +     if (!digests) {
-> > +             ret = -ENOMEM;
-> > +             goto out;
-> > +     }
-> > +
-> > +     for (i = 0; i <= chip->nr_allocated_banks; i++) {
-> > +             digests[i].alg_id = chip->allocated_banks[i].alg_id;
-> > +             if (digests[i].alg_id == known_digest.alg_id)
-> > +                     memcpy(&digests[i], &known_digest, sizeof(known_digest));
-> > +     }
-> > +
-> > +     ret = tpm_pcr_extend(chip, 23, digests);
-> > +     if (ret != 0)
-> > +             goto out;
-> > +
-> > +     key = key_alloc(&key_type_trusted, "swsusp", GLOBAL_ROOT_UID,
-> > +                     GLOBAL_ROOT_GID, cred, 0, KEY_ALLOC_NOT_IN_QUOTA,
-> > +                     NULL);
-> > +
-> > +     if (IS_ERR(key)) {
-> > +             ret = PTR_ERR(key);
-> > +             key = NULL;
-> > +             goto out;
-> > +     }
-> > +
-> > +     ret = key_instantiate_and_link(key, keyinfo, strlen(keyinfo) + 1, NULL,
-> > +                                    NULL);
-> > +     if (ret != 0)
-> > +             goto out;
-> > +
-> > +     data->key = key;
-> > +     key = NULL;
-> > +
-> > +out:
-> > +     if (key) {
-> > +             key_revoke(key);
-> > +             key_put(key);
-> > +     }
-> > +
-> > +     kfree(digests);
-> > +     tpm_pcr_reset(chip, 23);
-> > +
-> > +out_dev:
-> > +     put_device(&chip->dev);
-> > +     return ret;
-> > +}
-> > +
-> >  int snapshot_get_encryption_key(struct snapshot_data *data,
-> >       struct uswsusp_key_blob __user *key)
-> >  {
-> > -     u8 aead_key[SNAPSHOT_ENCRYPTION_KEY_SIZE];
-> >       u8 nonce[USWSUSP_KEY_NONCE_SIZE];
-> > +     struct trusted_key_payload *payload;
-> >       int rc;
-> >       /* Don't pull a random key from a world that can be reset. */
-> >       if (data->ready)
-> > @@ -399,21 +487,28 @@ int snapshot_get_encryption_key(struct snapshot_data *data,
-> >       get_random_bytes(nonce, sizeof(nonce));
-> >       memcpy(&data->nonce_low, &nonce[0], sizeof(data->nonce_low));
-> >       memcpy(&data->nonce_high, &nonce[8], sizeof(data->nonce_high));
-> > -     /* Build a random key */
-> > -     get_random_bytes(aead_key, sizeof(aead_key));
-> > -     rc = crypto_aead_setkey(data->aead_tfm, aead_key, sizeof(aead_key));
-> > +
-> > +     /* Create a kernel key, and set it. */
-> > +     rc = snapshot_create_kernel_key(data);
-> > +     if (rc)
-> > +             goto fail;
-> > +
-> > +     payload = data->key->payload.data[0];
-> > +     /* Install the key */
-> > +     rc = crypto_aead_setkey(data->aead_tfm, payload->key, SNAPSHOT_ENCRYPTION_KEY_SIZE);
-> >       if (rc)
-> >               goto fail;
-> >
-> > -     /* Hand the key back to user mode (to be changed!) */
-> > -     rc = put_user(sizeof(struct uswsusp_key_blob), &key->blob_len);
-> > +     /* Hand the key back to user mode in sealed form. */
-> > +     rc = put_user(payload->blob_len, &key->blob_len);
-> >       if (rc)
-> >               goto fail;
-> >
-> > -     rc = copy_to_user(&key->blob, &aead_key, sizeof(aead_key));
-> > +     rc = copy_to_user(&key->blob, &payload->blob, payload->blob_len);
-> >       if (rc)
-> >               goto fail;
-> >
-> > +     /* The nonce just gets handed back in the clear. */
-> >       rc = copy_to_user(&key->nonce, &nonce, sizeof(nonce));
-> >       if (rc)
-> >               goto fail;
-> > @@ -425,10 +520,99 @@ int snapshot_get_encryption_key(struct snapshot_data *data,
-> >       return rc;
-> >  }
-> >
-> > +static int snapshot_load_kernel_key(struct snapshot_data *data,
-> > +     struct uswsusp_key_blob *blob)
-> > +{
-> > +
-> > +     const struct cred *cred = current_cred();
-> > +     char *keytemplate = "load\t%s\tkeyhandle=0x81000000";
-> > +     struct tpm_digest *digests = NULL;
-> > +     char *blobstring = NULL;
-> > +     char *keyinfo = NULL;
-> > +     struct tpm_chip *chip;
-> > +     struct key *key = NULL;
-> > +     int i, ret;
-> > +
-> > +     chip = tpm_default_chip();
-> > +     if (!chip)
-> > +             return -ENODEV;
-> > +
-> > +     if (!(tpm_is_tpm2(chip))) {
-> > +             ret = -ENODEV;
-> > +             goto out_dev;
-> > +     }
-> > +
-> > +     ret = tpm_pcr_reset(chip, 23);
-> > +     if (ret)
-> > +             goto out;
-> > +
-> > +     digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
-> > +                       GFP_KERNEL);
-> > +     if (!digests)
-> > +             goto out;
-> > +
-> > +     for (i = 0; i <= chip->nr_allocated_banks; i++) {
-> > +             digests[i].alg_id = chip->allocated_banks[i].alg_id;
-> > +             if (digests[i].alg_id == known_digest.alg_id)
-> > +                     memcpy(&digests[i], &known_digest, sizeof(known_digest));
-> > +     }
->
-> So I can confirm my unerstanding here: this is just putting a starting
-> value in the PCR? (As mentioned in the commit log?)
+> This part (between your S-o-b and the "---") should got below the "---"
+> after your S-o-b, otherwise tooling will include it in the commit log
+> (or lose your S-o-b).
 
-Correct, the PCR is reset above and set (well, extended from 0) to the
-magic value here ahead of the unseal operation. Once we add the policy
-in patch 10, the TPM will refuse to unseal the key unless PCR23 is set
-to this magic value.
+Will fix.
 
 >
-> > +
-> > +     ret = tpm_pcr_extend(chip, 23, digests);
-> > +     if (ret != 0)
-> > +             goto out;
-> > +
-> > +     blobstring = kmalloc(blob->blob_len * 2, GFP_KERNEL);
-> > +     if (!blobstring) {
-> > +             ret = -ENOMEM;
-> > +             goto out;
-> > +     }
-> > +
-> > +     bin2hex(blobstring, blob->blob, blob->blob_len);
-> > +     keyinfo = kasprintf(GFP_KERNEL, keytemplate, blobstring);
-> > +     if (!keyinfo) {
-> > +             ret = -ENOMEM;
-> > +             goto out;
-> > +     }
-> > +
-> > +     key = key_alloc(&key_type_trusted, "swsusp", GLOBAL_ROOT_UID,
-> > +                     GLOBAL_ROOT_GID, cred, 0, KEY_ALLOC_NOT_IN_QUOTA,
-> > +                     NULL);
-> > +
-> > +     if (IS_ERR(key)) {
-> > +             ret = PTR_ERR(key);
-> > +             key = NULL;
-> > +             goto out;
-> > +     }
-> > +
-> > +     ret = key_instantiate_and_link(key, keyinfo, strlen(keyinfo) + 1, NULL,
-> > +                                    NULL);
->
-> You want to keep the trailing NUL byte here so it's easier to read back
-> later? Reading it back will need to verify the trailing NUL regardless.
-> (Does this get read back?)
-
-Are you referring to the trailing nul on keyinfo? The keyinfo string
-is only used within this function, as key_instantiate_and_link()
-receives it as a parameter string. I can see that
-trusted_instantiate() also null-terminates the buffer defensively for
-itself, but it still seemed prudent to hand in a terminated string. I
-can remove the + 1 if you think it's better.
-
-
->
-> > +     if (ret != 0)
-> > +             goto out;
-> > +
-> > +     data->key = key;
-> > +     key = NULL;
-> > +
-> > +out:
-> > +     if (key) {
-> > +             key_revoke(key);
-> > +             key_put(key);
-> > +     }
-> > +
-> > +     kfree(keyinfo);
-> > +     kfree(blobstring);
-> > +     kfree(digests);
-> > +     tpm_pcr_reset(chip, 23);
-> > +
-> > +out_dev:
-> > +     put_device(&chip->dev);
-> > +     return ret;
-> > +}
-> > +
-> >  int snapshot_set_encryption_key(struct snapshot_data *data,
-> >       struct uswsusp_key_blob __user *key)
-> >  {
-> >       struct uswsusp_key_blob blob;
-> > +     struct trusted_key_payload *payload;
-> >       int rc;
 > >
-> >       /* It's too late if data's been pushed in. */
-> > @@ -444,13 +628,18 @@ int snapshot_set_encryption_key(struct snapshot_data *data,
-> >       if (rc)
-> >               goto crypto_setup_fail;
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> > ---
+> >  include/keys/trusted-type.h               |   8 +
+> >  security/keys/trusted-keys/tpm2key.asn1   |   5 +-
+> >  security/keys/trusted-keys/trusted_tpm2.c | 202 +++++++++++++++++++---
+> >  3 files changed, 190 insertions(+), 25 deletions(-)
 > >
-> > -     if (blob.blob_len != sizeof(struct uswsusp_key_blob)) {
-> > +     if (blob.blob_len > sizeof(key->blob)) {
-> >               rc = -EINVAL;
-> >               goto crypto_setup_fail;
+> > diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+> > index 4eb64548a74f1a..209086fed240a5 100644
+> > --- a/include/keys/trusted-type.h
+> > +++ b/include/keys/trusted-type.h
+> > @@ -22,15 +22,23 @@
+> >  #define MAX_BLOB_SIZE                        512
+> >  #define MAX_PCRINFO_SIZE             64
+> >  #define MAX_DIGEST_SIZE                      64
+> > +#define MAX_CREATION_DATA            412
+> > +#define MAX_TK                               76
+> >
+> >  struct trusted_key_payload {
+> >       struct rcu_head rcu;
+> >       unsigned int key_len;
+> >       unsigned int blob_len;
+> > +     unsigned int creation_len;
+> > +     unsigned int creation_hash_len;
+> > +     unsigned int tk_len;
+> >       unsigned char migratable;
+> >       unsigned char old_format;
+> >       unsigned char key[MAX_KEY_SIZE + 1];
+> >       unsigned char blob[MAX_BLOB_SIZE];
+> > +     unsigned char *creation;
+> > +     unsigned char *creation_hash;
+> > +     unsigned char *tk;
+> >  };
+> >
+> >  struct trusted_key_options {
+> > diff --git a/security/keys/trusted-keys/tpm2key.asn1 b/security/keys/trusted-keys/tpm2key.asn1
+> > index f57f869ad60068..1bfbf290e523a3 100644
+> > --- a/security/keys/trusted-keys/tpm2key.asn1
+> > +++ b/security/keys/trusted-keys/tpm2key.asn1
+> > @@ -7,5 +7,8 @@ TPMKey ::= SEQUENCE {
+> >       emptyAuth       [0] EXPLICIT BOOLEAN OPTIONAL,
+> >       parent          INTEGER ({tpm2_key_parent}),
+> >       pubkey          OCTET STRING ({tpm2_key_pub}),
+> > -     privkey         OCTET STRING ({tpm2_key_priv})
+> > +     privkey         OCTET STRING ({tpm2_key_priv}),
+> > +     creationData    [1] EXPLICIT OCTET STRING OPTIONAL ({tpm2_key_creation_data}),
+> > +     creationHash    [2] EXPLICIT OCTET STRING OPTIONAL ({tpm2_key_creation_hash}),
+> > +     creationTk      [3] EXPLICIT OCTET STRING OPTIONAL ({tpm2_key_creation_tk})
+> >       }
+>
+> Maybe include a link (or named reference) to these fields from the TPM
+> spec?
+
+Sure. The TPM spec names their structure types (TPM2B_CREATION_DATA,
+TPM2B_DIGEST, etc), so I'll add comments with the names of the types
+as well as the command they came out of.
+
+>
+> > [...]
+> > @@ -46,6 +49,26 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+> >
+> >       pub_len = get_unaligned_be16(src) + 2;
+> >       pub = src;
+> > +     src += pub_len;
+> > +
+> > +     creation_data_len = get_unaligned_be16(src);
+> > +     if (creation_data_len) {
+> > +             creation_data_len += 2;
+> > +             creation_data = src;
+> > +             src += creation_data_len;
+> > +
+> > +             creation_hash_len = get_unaligned_be16(src) + 2;
+> > +             creation_hash = src;
+> > +             src += creation_hash_len;
+> > +
+> > +             /*
+> > +              * The creation ticket (TPMT_TK_CREATION) consists of a 2 byte
+> > +              * tag, 4 byte handle, and then a TPM2B_DIGEST, which is a 2
+> > +              * byte length followed by data.
+> > +              */
+> > +             creation_tk_len = get_unaligned_be16(src + 6) + 8;
+> > +             creation_tk = src;
+> > +     }
+> >
+> >       if (!scratch)
+> >               return -ENOMEM;
+>
+> I don't see anything in this code (even before your patch) actually
+> checking length against the "len" argument to tpm2_key_encode(). I think
+> that needs to be fixed so proper bounds checking can be done here.
+> Otherwise how do we know if we're running off the end of "src"?
+>
+> Yes, I realize if we have a malicious TPM everything goes out the
+> window, but TPMs don't always behave -- this code should likely be more
+> defensive. Or, I've misunderstood where "src" is coming from.
+> Regardless, my question stands: what is checking "len"?
+
+Sure, will add checks of len to my hunk and the bit above.
+
+>
+> > @@ -63,26 +86,81 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
 > >       }
 > >
-> > +     rc = snapshot_load_kernel_key(data, &blob);
-> > +     if (rc)
-> > +             goto crypto_setup_fail;
+> >       /*
+> > -      * Assume both octet strings will encode to a 2 byte definite length
+> > +      * Assume each octet string will encode to a 2 byte definite length.
+> > +      * Each optional octet string consumes one extra byte.
+> >        *
+> > -      * Note: For a well behaved TPM, this warning should never
+> > -      * trigger, so if it does there's something nefarious going on
+> > +      * Note: For a well behaved TPM, this warning should never trigger, so
+> > +      * if it does there's something nefarious going on
+> >        */
+> > -     if (WARN(work - scratch + pub_len + priv_len + 14 > SCRATCH_SIZE,
+> > -              "BUG: scratch buffer is too small"))
+> > -             return -EINVAL;
+> > +     if (WARN(work - scratch + pub_len + priv_len + creation_data_len +
+> > +              creation_hash_len + creation_tk_len + (7 * 5) + 3 >
+> > +              SCRATCH_SIZE,
+> > +              "BUG: scratch buffer is too small")) {
+> > +             rc = -EINVAL;
+> > +             goto err;
+> > +     }
+> >
+> >       work = asn1_encode_integer(work, end_work, options->keyhandle);
+> >       work = asn1_encode_octet_string(work, end_work, pub, pub_len);
+> >       work = asn1_encode_octet_string(work, end_work, priv, priv_len);
+> > +     if (creation_data_len) {
+> > +             u8 *scratch2 = kmalloc(SCRATCH_SIZE, GFP_KERNEL);
+> > +             u8 *work2;
+> > +             u8 *end_work2 = scratch2 + SCRATCH_SIZE;
 > > +
-> > +     payload = data->key->payload.data[0];
-> >       rc = crypto_aead_setkey(data->aead_tfm,
-> > -                             blob.blob,
-> > +                             payload->key,
-> >                               SNAPSHOT_ENCRYPTION_KEY_SIZE);
+> > +             if (!scratch2) {
+> > +                     rc = -ENOMEM;
+> > +                     goto err;
+> > +             }
+> > +
+> > +             work2 = asn1_encode_octet_string(scratch2,
+> > +                                              end_work2,
+> > +                                              creation_data,
+> > +                                              creation_data_len);
+> > +
+> > +             work = asn1_encode_tag(work,
+> > +                                    end_work,
+> > +                                    1,
+> > +                                    scratch2,
+> > +                                    work2 - scratch2);
+> > +
+> > +             work2 = asn1_encode_octet_string(scratch2,
+> > +                                              end_work2,
+> > +                                              creation_hash,
+> > +                                              creation_hash_len);
+> > +
+> > +             work = asn1_encode_tag(work,
+> > +                                    end_work,
+> > +                                    2,
+> > +                                    scratch2,
+> > +                                    work2 - scratch2);
+> > +
+> > +             work2 = asn1_encode_octet_string(scratch2,
+> > +                                              end_work2,
+> > +                                              creation_tk,
+> > +                                              creation_tk_len);
+> > +
+> > +             work = asn1_encode_tag(work,
+> > +                                    end_work,
+> > +                                    3,
+> > +                                    scratch2,
+> > +                                    work2 - scratch2);
+> > +
+> > +             kfree(scratch2);
+> > +     }
 > >
-> >       if (rc)
-> > diff --git a/kernel/power/user.h b/kernel/power/user.h
-> > index 6823e2eba7ec53..591b30bb213349 100644
-> > --- a/kernel/power/user.h
-> > +++ b/kernel/power/user.h
-> > @@ -31,6 +31,7 @@ struct snapshot_data {
-> >       uint64_t crypt_total;
-> >       uint64_t nonce_low;
-> >       uint64_t nonce_high;
-> > +     struct key *key;
-> >  #endif
+> >       work1 = payload->blob;
+> >       work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+> >                                    scratch, work - scratch);
+> > -     if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
+> > -             return PTR_ERR(work1);
+> > +     if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed")) {
+> > +             rc = PTR_ERR(work1);
+> > +             goto err;
+>
+> I find the addition of the word "BUG" in a WARN() to be confusing. :) I
+> realize this is just copying the existing style, though.
+
+It wasn't my favorite either, but I felt an urge to be consistent. So
+far I've lft this as-is, holler if I should change it.
+
+>
+> > +     }
 > >
+> >       return work1 - payload->blob;
+> > +err:
+> > +     kfree(scratch);
+> > +     return rc;
+> >  }
+> >
+> >  struct tpm2_key_context {
+> > @@ -91,15 +169,21 @@ struct tpm2_key_context {
+> >       u32 pub_len;
+> >       const u8 *priv;
+> >       u32 priv_len;
+> > +     const u8 *creation_data;
+> > +     u32 creation_data_len;
+> > +     const u8 *creation_hash;
+> > +     u32 creation_hash_len;
+> > +     const u8 *creation_tk;
+> > +     u32 creation_tk_len;
 > >  };
+> >
+> >  static int tpm2_key_decode(struct trusted_key_payload *payload,
+> > -                        struct trusted_key_options *options,
+> > -                        u8 **buf)
+> > +                        struct trusted_key_options *options)
+> >  {
+> > +     u64 data_len;
+> >       int ret;
+> >       struct tpm2_key_context ctx;
+> > -     u8 *blob;
+> > +     u8 *blob, *buf;
+> >
+> >       memset(&ctx, 0, sizeof(ctx));
+> >
+> > @@ -108,21 +192,57 @@ static int tpm2_key_decode(struct trusted_key_payload *payload,
+> >       if (ret < 0)
+> >               return ret;
+> >
+> > -     if (ctx.priv_len + ctx.pub_len > MAX_BLOB_SIZE)
+> > +     data_len = ctx.priv_len + ctx.pub_len + ctx.creation_data_len +
+> > +                ctx.creation_hash_len + ctx.creation_tk_len;
+> > +
+> > +     if (data_len > MAX_BLOB_SIZE)
+> >               return -EINVAL;
+> >
+> > -     blob = kmalloc(ctx.priv_len + ctx.pub_len + 4, GFP_KERNEL);
+> > -     if (!blob)
+> > +     buf = kmalloc(data_len + 4, GFP_KERNEL);
+> > +     if (!buf)
+> >               return -ENOMEM;
+> >
+> > -     *buf = blob;
+> > +     blob = buf;
+> >       options->keyhandle = ctx.parent;
+> >
+> >       memcpy(blob, ctx.priv, ctx.priv_len);
+> >       blob += ctx.priv_len;
+> >
+> >       memcpy(blob, ctx.pub, ctx.pub_len);
+> > +     blob += ctx.pub_len;
+> > +     if (ctx.creation_data_len) {
+> > +             memcpy(blob, ctx.creation_data, ctx.creation_data_len);
+> > +             blob += ctx.creation_data_len;
+> > +     }
+> > +
+> > +     if (ctx.creation_hash_len) {
+> > +             memcpy(blob, ctx.creation_hash, ctx.creation_hash_len);
+> > +             blob += ctx.creation_hash_len;
+> > +     }
+> >
+> > +     if (ctx.creation_tk_len) {
+> > +             memcpy(blob, ctx.creation_tk, ctx.creation_tk_len);
+> > +             blob += ctx.creation_tk_len;
+> > +     }
+> > +
+> > +     /*
+> > +      * Copy the buffer back into the payload blob since the creation
+> > +      * info will be used after loading.
+> > +      */
+> > +     payload->blob_len = blob - buf;
+> > +     memcpy(payload->blob, buf, payload->blob_len);
+> > +     if (ctx.creation_data_len) {
+> > +             payload->creation = payload->blob + ctx.priv_len + ctx.pub_len;
+> > +             payload->creation_len = ctx.creation_data_len;
+> > +             payload->creation_hash = payload->creation + ctx.creation_data_len;
+> > +             payload->creation_hash_len = ctx.creation_hash_len;
+> > +             payload->tk = payload->creation_hash +
+> > +                           payload->creation_hash_len;
+> > +
+> > +             payload->tk_len = ctx.creation_tk_len;
+> > +     }
+> > +
+> > +     kfree(buf);
+> >       return 0;
+> >  }
+> >
+> > @@ -185,6 +305,42 @@ int tpm2_key_priv(void *context, size_t hdrlen,
+> >       return 0;
+> >  }
+> >
+> > +int tpm2_key_creation_data(void *context, size_t hdrlen,
+> > +                        unsigned char tag,
+> > +                        const void *value, size_t vlen)
+> > +{
+> > +     struct tpm2_key_context *ctx = context;
+> > +
+> > +     ctx->creation_data = value;
+> > +     ctx->creation_data_len = vlen;
+> > +
+> > +     return 0;
+> > +}
+>
+> What is hdrlen here? Or rather, what kinds of bounds checking is needed
+> here?
+
+The prototype of asn1_action_t looks like this:
+
+typedef int (*asn1_action_t)(void *context,
+     size_t hdrlen, /* In case of ANY type */
+     unsigned char tag, /* In case of ANY type */
+     const void *value, size_t vlen);
+
+I'm not an ASN.1 expert, but from studying asn1_ber_decoder(), it
+looks like the core unit of an ASN.1 thing is a TLV, and hdrlen
+represents the number of bytes in the datastream that make up the {TL}
+portion. Based on the ANY comment above this seems to maybe be useful
+for certain generic/undefined object types, but I think it's not
+relevant to the types we're using. The vlen arg is the L value of the
+TLV, which is what we save away in tpm2_key_context. In
+asn1_ber_decoder(), I do see checks that what they pass for vlen stays
+within the bounds of the source data buffer (since I knew you'd ask
+:)).
+
+
+>
+> > +
+> > +int tpm2_key_creation_hash(void *context, size_t hdrlen,
+> > +                        unsigned char tag,
+> > +                        const void *value, size_t vlen)
+> > +{
+> > +     struct tpm2_key_context *ctx = context;
+> > +
+> > +     ctx->creation_hash = value;
+> > +     ctx->creation_hash_len = vlen;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int tpm2_key_creation_tk(void *context, size_t hdrlen,
+> > +                      unsigned char tag,
+> > +                      const void *value, size_t vlen)
+> > +{
+> > +     struct tpm2_key_context *ctx = context;
+> > +
+> > +     ctx->creation_tk = value;
+> > +     ctx->creation_tk_len = vlen;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  /**
+> >   * tpm_buf_append_auth() - append TPMS_AUTH_COMMAND to the buffer.
+> >   *
+> > @@ -229,6 +385,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >                     struct trusted_key_options *options)
+> >  {
+> >       int blob_len = 0;
+> > +     unsigned int offset;
+> >       struct tpm_buf buf;
+> >       u32 hash;
+> >       u32 flags;
+> > @@ -317,13 +474,14 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+> >               rc = -E2BIG;
+> >               goto out;
+> >       }
+> > -     if (tpm_buf_length(&buf) < TPM_HEADER_SIZE + 4 + blob_len) {
+> > +     offset = TPM_HEADER_SIZE + 4;
+> > +     if (tpm_buf_length(&buf) < offset + blob_len) {
+> >               rc = -EFAULT;
+> >               goto out;
+> >       }
+> >
+> >       blob_len = tpm2_key_encode(payload, options,
+> > -                                &buf.data[TPM_HEADER_SIZE + 4],
+> > +                                &buf.data[offset],
+> >                                  blob_len);
+> >
+> >  out:
+> > @@ -370,13 +528,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> >       int rc;
+> >       u32 attrs;
+> >
+> > -     rc = tpm2_key_decode(payload, options, &blob);
+> > -     if (rc) {
+> > -             /* old form */
+> > -             blob = payload->blob;
+> > +     rc = tpm2_key_decode(payload, options);
+> > +     if (rc)
+> >               payload->old_format = 1;
+> > -     }
+> >
+> > +     blob = payload->blob;
+> >       /* new format carries keyhandle but old format doesn't */
+> >       if (!options->keyhandle)
+> >               return -EINVAL;
+> > @@ -433,8 +589,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+> >                       (__be32 *) &buf.data[TPM_HEADER_SIZE]);
+> >
+> >  out:
+> > -     if (blob != payload->blob)
+> > -             kfree(blob);
+> >       tpm_buf_destroy(&buf);
+> >
+> >       if (rc > 0)
 > > --
 > > 2.31.0
 > >
 >
-> --
-> Kees Cook
+> Otherwise looks good!
+
+Thank you for reviewing it!
+-Evan
