@@ -2,115 +2,135 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F53C6FA8E
-	for <linux-integrity@archiver.kernel.org>; Mon, 26 Sep 2022 05:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5B3C6FA82
+	for <linux-integrity@archiver.kernel.org>; Mon, 26 Sep 2022 09:06:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232918AbiIZFkL (ORCPT
+        id S234751AbiIZJGl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 26 Sep 2022 01:40:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50886 "EHLO
+        Mon, 26 Sep 2022 05:06:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233195AbiIZFkK (ORCPT
+        with ESMTP id S234744AbiIZJGN (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Sep 2022 01:40:10 -0400
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9727D183BA;
-        Sun, 25 Sep 2022 22:40:04 -0700 (PDT)
-Received: by mail-pg1-x530.google.com with SMTP id u69so5618518pgd.2;
-        Sun, 25 Sep 2022 22:40:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
-        bh=zbMWBpJAr3OkSRe66ITLMsu2IwUoetprW3YnPTViuio=;
-        b=dOx4PbxAEA45IugHMxj+VOgf0c4AcoOEBjy447rlNd/9AfP2QjGYXtea3yg9skyxIK
-         fFjDAPYOleyizDiY0xCUpedgRZgYP2f5Tmssaj+rZXY07EEj5I4eh8pMWmFdBeGSJkBe
-         LfilB76y6vrdRBTtBlKgGq2SidQxImUas7yA7A+sm2rjUPR1iXgLfPCMf7LMK8FMTBu2
-         1tkfrFu9+yCBHKMIhrf1oD9eazvBMpGmvcJE2lK3itp6b9mdCzfAuxQTSOjul6uEwRIE
-         EGw9WgP3rLgHkTsD2nPR6S5+XmuRTF/Xq6J7NtSwuc1Qsc/UXedMAkm9yV8HiwZEBj+N
-         q0ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date;
-        bh=zbMWBpJAr3OkSRe66ITLMsu2IwUoetprW3YnPTViuio=;
-        b=JHFm0Xlw7vIt/GxMxas/dYAWHUrjSLeQPvd6RNlbAeUBjCrh3GCgldcRrROwZJkchB
-         /QWKnYEK9a73jzIsu0LXEd85qyO1QU9vcjRdXOP39io3OQoIePgmYrRhvkug0EjwLq8a
-         WL3Nk1bvOG2bDTHV6NABQVw1GqL3pUUUCBBCv2FbKq6huYbSAiRuuy5JxuFkBf3kdc9J
-         xkc7Z6Ns+kae0WfasW4pwy4SYLR8ghMQpmr1acYS/UYST4WLprc6YQrf/lk8ePzpRyLu
-         YWmkFrK3nSHX+QFGNRxNjHExg/dTypGDhtTzZChI2s7XgeM/KPvUFmzt4NtrqSmora71
-         WXOg==
-X-Gm-Message-State: ACrzQf08vXBd6yNXqe1L7en3p5cd+cgBMQ3rHINsULKLoG2YZjnZVUA6
-        6flO4ZCPncO3SudAvHh37lI=
-X-Google-Smtp-Source: AMsMyM78y3GHje17aC0crHddY/JbQqOBEWo9hveb8SUBzolzOMysUeG0fZK7vLtmf1eNsVtTJuA1iw==
-X-Received: by 2002:a63:90c9:0:b0:434:b578:3bb4 with SMTP id a192-20020a6390c9000000b00434b5783bb4mr17686371pge.389.1664170803940;
-        Sun, 25 Sep 2022 22:40:03 -0700 (PDT)
-Received: from dtor-ws.mtv.corp.google.com ([2620:15c:9d:2:7e1b:858c:19dc:934])
-        by smtp.gmail.com with ESMTPSA id h18-20020a170902f71200b00176b0dec886sm10120350plo.58.2022.09.25.22.40.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Sep 2022 22:40:03 -0700 (PDT)
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] tpm: st33zp24: remove pointless checks on probe
-Date:   Sun, 25 Sep 2022 22:39:58 -0700
-Message-Id: <20220926053958.1541912-3-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.37.3.998.g577e59143f-goog
-In-Reply-To: <20220926053958.1541912-1-dmitry.torokhov@gmail.com>
-References: <20220926053958.1541912-1-dmitry.torokhov@gmail.com>
+        Mon, 26 Sep 2022 05:06:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3458839B9F;
+        Mon, 26 Sep 2022 02:05:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 286BDB8076E;
+        Mon, 26 Sep 2022 09:05:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A980C433D7;
+        Mon, 26 Sep 2022 09:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664183118;
+        bh=0g86jOVv3VeJ8lk0JCkQymoiaTts5ZO0mxnD94+cDig=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iNwm0JGLH6PEK2b/4/REbfim6kqxRnjv5mLiSrtb19n54sh6VVtQtx9vNJYH1kaNL
+         a7H5kPypEC4KnbzDPkWGWvqsdYxdlweAHF/nmNZZa40nA2EPtdpUawy/4mkLpJwiij
+         3AFkAwbWOOQvABeJMtAvbww4B/Y/UM8xbxUnpcKyKb94p/A4Ic9FRs28nWQrxtLNeJ
+         qi1SaHlXgMTmCIK6b1ElKx9InThJLjT8bCRA4dAsnoFAVXQA/GMcthIVSQ0vw2Z8Mn
+         VXK6e7sxxaFSEYEqmvtWp6Q2q70YbpGu8VOQE+sgCNiVxjlxw50vWvm3ZtfN+QiXrl
+         oJmCu6jFzczlQ==
+Date:   Mon, 26 Sep 2022 11:05:13 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-integrity@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org
+Subject: Re: [PATCH 10/29] selinux: implement set acl hook
+Message-ID: <20220926090513.hn3ylkakb5wf2rrx@wittgenstein>
+References: <20220922151728.1557914-1-brauner@kernel.org>
+ <20220922151728.1557914-11-brauner@kernel.org>
+ <CAHC9VhS7gEbngqYPMya52EMS5iZYQ_7pPgQiEfRqwPCgzhDbwA@mail.gmail.com>
+ <20220923064707.GD16489@lst.de>
+ <20220923075752.nmloqf2aj5yhoe34@wittgenstein>
+ <CAHC9VhS3NWfMk3uHxZSZMtDay4FqOYzTf9mKCy1=Rb22r-2P4A@mail.gmail.com>
+ <20220923143540.howryhuygxi2hsj3@wittgenstein>
+ <CAHC9VhRZf+OAzc96=c2s3NqkizNh2tZbLF8OFPHbFFuFXEZ8sA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRZf+OAzc96=c2s3NqkizNh2tZbLF8OFPHbFFuFXEZ8sA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Driver core will never call driver's probe method without appropriate
-device structure, so testing them for NULL is pointless.
+On Fri, Sep 23, 2022 at 01:35:08PM -0400, Paul Moore wrote:
+> On Fri, Sep 23, 2022 at 10:35 AM Christian Brauner <brauner@kernel.org> wrote:
+> > On Fri, Sep 23, 2022 at 10:26:35AM -0400, Paul Moore wrote:
+> > > On Fri, Sep 23, 2022 at 3:57 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > > On Fri, Sep 23, 2022 at 08:47:07AM +0200, Christoph Hellwig wrote:
+> > > > > On Thu, Sep 22, 2022 at 01:16:57PM -0400, Paul Moore wrote:
+> > > > > > properly review the changes, but one thing immediately jumped out at
+> > > > > > me when looking at this: why is the LSM hook
+> > > > > > "security_inode_set_acl()" when we are passing a dentry instead of an
+> > > > > > inode?  We don't have a lot of them, but there are
+> > > > > > `security_dentry_*()` LSM hooks in the existing kernel code.
+> > > > >
+> > > > > I'm no LSM expert, but isn't the inode vs dentry for if it is
+> > > > > related to an inode operation or dentry operation, not about that
+> > > > > the first argument is?
+> > > >
+> > > > Indeed. For example ...
+> > >
+> > > If the goal is for this LSM hook to operate on an inode and not a
+> > > dentry, let's pass it an inode instead.  This should help prevent
+> >
+> > I would be ok with that but EVM requires a dentry being passed and as
+> > evm is called from security_inode_set_acl() exactly like it is from
+> > security_inode_setxattr() and similar the hook has to take a dentry.
+> 
+> If a dentry is truly needed by EVM (a quick look indicates that it may
+> just be for the VFS getxattr API, but I haven't traced the full code
+> path), then I'm having a hard time reconciling that this isn't a
+> dentry operation.  Yes, I get that the ACLs belong to the inode and
+> not the dentry, but then why do we need the dentry?  It seems like the
+> interfaces are broken slightly, or at least a little odd ... <shrug>
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/char/tpm/st33zp24/i2c.c | 6 ------
- drivers/char/tpm/st33zp24/spi.c | 7 -------
- 2 files changed, 13 deletions(-)
+There's multiple reasons for the generic xattr api to take a dentry. For
+example, there are quite a few filesystems that require dentry access
+during (specific or all) xattr operations. So ideally, we'd just want to
+pass the dentry I'd say. But we can't do that because of security
+modules. 
 
-diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
-index 614c7d8ed84f..8156bb2af78c 100644
---- a/drivers/char/tpm/st33zp24/i2c.c
-+++ b/drivers/char/tpm/st33zp24/i2c.c
-@@ -106,12 +106,6 @@ static int st33zp24_i2c_probe(struct i2c_client *client,
- {
- 	struct st33zp24_i2c_phy *phy;
- 
--	if (!client) {
--		pr_info("%s: i2c client is NULL. Device not accessible.\n",
--			__func__);
--		return -ENODEV;
--	}
--
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
- 		dev_info(&client->dev, "client not i2c capable\n");
- 		return -ENODEV;
-diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
-index ff4adbe104cf..2154059f0235 100644
---- a/drivers/char/tpm/st33zp24/spi.c
-+++ b/drivers/char/tpm/st33zp24/spi.c
-@@ -223,13 +223,6 @@ static int st33zp24_spi_probe(struct spi_device *dev)
- {
- 	struct st33zp24_spi_phy *phy;
- 
--	/* Check SPI platform functionnalities */
--	if (!dev) {
--		pr_info("%s: dev is NULL. Device is not accessible.\n",
--			__func__);
--		return -ENODEV;
--	}
--
- 	phy = devm_kzalloc(&dev->dev, sizeof(struct st33zp24_spi_phy),
- 			   GFP_KERNEL);
- 	if (!phy)
--- 
-2.37.3.998.g577e59143f-goog
+Some security modules call security_d_instantiate() which in turn calls
+__vfs_{g,s}et_xattr() in the hook implementation. That's at least true
+of SELinux and Smack iirc. They want dentry and inode but
+security_d_instantiate() is called in e.g., d_instantiate and d_add()
+before the inode is attached to the dentry:
 
+selinux_d_instantiate()
+-> inode_doinit_with_dentry()
+   -> inode_doinit_use_xattr()
+      -> __vfs_getxattr()
+
+smack_d_instantiate()
+-> __vfs_getxattr()
+-> __vfs_setxattr()
+
+So that mandates both dentry and inode in vfs xattr helpers.
+
+I don't think we can and want to solve this in this patchset. For now we
+can stick with the naming as set by precedent and then in the future the
+security modules can decide whether they want to do a rename patchset
+for most of the xattr hooks at some point.
+
+> 
+> > And I want to minimize - ideally get rid of at some point - separate
+> > calls to security_*() and evm_*() or ima_() in the vfs. So the evm hook
+> > should please stay in there.
+> 
+> For the record, I want to get rid of the IMA and EVM specific hooks in
+> the kernel.  They were a necessity back when there could only be one
+> LSM active at a given time, but with that no longer the case I see
+> little reason why IMA/EVM/etc. remain separate; it makes the code
+> worse and complicates a lot of things both at the LSM layer as well as
+> the rest of the kernel.  I've mentioned this to a few people,
+> including Mimi, and it came up during at talk at LPC this year.
+
+Sounds good.
