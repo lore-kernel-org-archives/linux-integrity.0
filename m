@@ -2,130 +2,155 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A908C433FE
-	for <linux-integrity@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E2FC43217
+	for <linux-integrity@archiver.kernel.org>; Thu, 13 Oct 2022 22:37:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229802AbiJMWhJ (ORCPT
+        id S229807AbiJMWhK (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 13 Oct 2022 18:37:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        Thu, 13 Oct 2022 18:37:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229751AbiJMWhF (ORCPT
+        with ESMTP id S229773AbiJMWhG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 13 Oct 2022 18:37:05 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEA9E112A91
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Oct 2022 15:36:59 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id pq16so3285158pjb.2
-        for <linux-integrity@vger.kernel.org>; Thu, 13 Oct 2022 15:36:59 -0700 (PDT)
+        Thu, 13 Oct 2022 18:37:06 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0FB915203E
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Oct 2022 15:37:02 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 129so2764899pgc.5
+        for <linux-integrity@vger.kernel.org>; Thu, 13 Oct 2022 15:37:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jQAeNxeJTyn1Cn+RS6Vx/H+Tf8STo7ROWsmXYvM9Qw8=;
-        b=SNm7kh5cQEfxOs/f0jz3d4Jijz9U3R0dSyHk83VFHEj3lKztL9+ZZBtOQsrmRusMAP
-         vQ7Wb/df4yYUiVKsIpuC2RxcKVugp3kjAvaZcAGdJAQZrPkLvpMiLHd6/6kmsuEVI6mh
-         gqPlQNFg+XW8QwdJ3y2wI4e5o3b5PHnLwp3jo=
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i0+hkpiHQzJ8+JNug0yAZuhS5yrr5xFtDUDfT1r5L18=;
+        b=QYx587gsPoZ2Rt2D31lwneKBIE0nlruGRbmbSxEd/wU1/e+ZARKYeK3iBavfszJMpM
+         1rdsc3DARoEg5VnS/veGem8AflPWSHFlpLtT8GshvYDBN7qk5Mr4i5Pqa0foKF19eZSx
+         b8TpbYuA0q39bY4XbbSsFmEZKiZC2QIMQjSrk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jQAeNxeJTyn1Cn+RS6Vx/H+Tf8STo7ROWsmXYvM9Qw8=;
-        b=HbcvfYq73CRK9SpM+zCv4loOPklxqaKVLr94Ndefh6VFHMwaMZOkwDSQ//3ZPRBssO
-         03fPSV9iLkC/I414GzBjS1TgTBi7wuG9XOMUMH5IFVGAfP38TTsAdrHFyE2Tk9lQ05rC
-         1vsQFrCA1FztWuW5T1JJqc7NZ7xbmEU611zbIXcUWsYk4g0soEatx1p9s/af/ZMOdSzQ
-         swCQ8EJJoVDuUHWwGqw2o0k3zlwxPRmtJFGh8fSafDb5VMgsUEbK64eDqDZqBeJBee+p
-         1+p+xhhpK4IXTA0LTCmyrXYDDxn9rbG5IncljYcfvTHNKTZ4FCsYj8yPuDTfs82lIZMY
-         GRMw==
-X-Gm-Message-State: ACrzQf0JEVerctsxYWTZKMNWhqhUPP+JRiJEvBAGSqYoOB5fJUmC4VZ9
-        NSBwa0Db7zdsoMreNRZwtOX3OA==
-X-Google-Smtp-Source: AMsMyM6ZfdnI5oenHINzBXChWvwpmJmEPvdgA40CGNTh/nLOZcER/YWKfQ+8lQNZCJAQUX9kvQrv5A==
-X-Received: by 2002:a17:902:bd98:b0:182:631b:7dd5 with SMTP id q24-20020a170902bd9800b00182631b7dd5mr1848776pls.165.1665700618483;
-        Thu, 13 Oct 2022 15:36:58 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i0+hkpiHQzJ8+JNug0yAZuhS5yrr5xFtDUDfT1r5L18=;
+        b=L0zhmmG5QkNHMNzMnfKu4g5u4HCWq/WG0wuaErOGyui8vWoj2ZbzzRFmR1ZosgHXX4
+         w7T0UMTMDbzTekku62ijro83xj4ukgrTVKKTZukA9pPO+k+LY+7VTDAu0V+P7VwVcF08
+         aOEi2nSfcDQHQsBg/efcTsg0zT6gfZchRWJQzrvsxFajvKvqONTVAzwchJvOVQh7e2V+
+         BwolNkf/1nRqR1L54p9E49vrVaa7JRAy7kbDntnddyZ36dYfi60LF2sPic0Nzaxjp0Ic
+         VeNlCrBCDDhH1mxKjSkZeEbZWfBYyiGXpnjSqjLgu+XPWcNxgj1EfiWEYtqxQZ8jodHv
+         J4zw==
+X-Gm-Message-State: ACrzQf1kACUpU0o9TkR/88/Nh4CJ0fvuQ6YapNmCrTWrcY/AO8CeMERd
+        Sr3b9xfICPvtTW2NWTW30Izbfg==
+X-Google-Smtp-Source: AMsMyM7iuUG1hw2g/PAu9q8nxzAsPSN9r57AroDs/Upt+xwaCwIIpPJYtSzeXfEsnOhlRci73+L8Hg==
+X-Received: by 2002:a05:6a00:2393:b0:566:813c:ae26 with SMTP id f19-20020a056a00239300b00566813cae26mr185199pfc.8.1665700621319;
+        Thu, 13 Oct 2022 15:37:01 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i3-20020a17090a2a0300b0020a1f091a0asm3685673pjd.55.2022.10.13.15.36.55
+        by smtp.gmail.com with ESMTPSA id q6-20020a170902f78600b001769cfa5cd4sm356820pln.49.2022.10.13.15.36.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 15:36:56 -0700 (PDT)
+        Thu, 13 Oct 2022 15:37:00 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Mimi Zohar <zohar@linux.ibm.com>
 Cc:     Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
         Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         KP Singh <kpsingh@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH 0/9] integrity: Move hooks into LSM
-Date:   Thu, 13 Oct 2022 15:36:45 -0700
-Message-Id: <20221013222702.never.990-kees@kernel.org>
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: [PATCH 6/9] fs: Introduce file_to_perms() helper
+Date:   Thu, 13 Oct 2022 15:36:51 -0700
+Message-Id: <20221013223654.659758-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221013222702.never.990-kees@kernel.org>
+References: <20221013222702.never.990-kees@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2329; h=from:subject:message-id; bh=Rqb1/7Rmsyt9YO6WJZlgGJd4M6/XeTOUzpcOQEF2HJw=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJMDeaBP2XLSDLNB3r+80mq1j5GFVEDof8xNcCU3 kutSPj6JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTAwAKCRCJcvTf3G3AJjtxEA CX4on0FfpHi6vw4tRbZo7sYkWND2hfsGJx0dve8cpcdOLP00fga+uc+6ELIMcpIV4W76BKZp8WLZgA 8iz2mvEp+kAtKrO+MymemcX2gWvBNFQ6oqKDJTafK3LuQtVhl6KoYMuTyOYB0ZYFfLU2LZZ0zCABw+ 9xSIjtSrKzKbBLeFvOC66vyTTmwoKUrw+NYgFu+vE2qVK2OOyhy88qAL8YiGt7WRfbUbUKCPkzWSSe Z8zOzGTm8tsJEJUdgV1GBi6YeluCVM1YLQGc8ZDsQJwYsFcDfTxI1MftUBU1O1/4iqcSXVVhJLvcuj iyANrNCCyUlc5suVeGWwJjwBpK2J68zlCkWpMPkcqpvvca8FW2jRJGK9KLgBv4F5yKEvZvVHhkSKSy PrbaBmIqxwaF+N8TI3/d/EO2DOds1yN7OL32SkX8EdV3oLZQJ4hVvhlr4kFZHmUd7pgVwn8Vqv+uK0 UFan4RQ1+I3qkErQAANveVvY5pXtci9ipFe4FGoWoSUTDG1UgUSINTEVskfUOFyB9qoHI36yRNUl2F jqQrqP9+un1/0GisyWHFVg/4yk1APsDuL/bcZfD8mXL28M2fC8F7ih+gObJ65mNiTSlnS/noOYmMur gzjHkQGd9Iy9zVdgXvpuTvJYV/by/kknnK2M4nUw6VwG1HmoDpR9ErQG8zxw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2624; h=from:subject; bh=kHSufPh8mIo/bjTRCkWIphPq0T9RFTX/D7KSIVqq6E4=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjSJMFgxBLCCrCvM8fbbAU6HUNSc0X+NBZd2coINEr PLUeV+uJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY0iTBQAKCRCJcvTf3G3AJuVVD/ 9dmweB5gcNNSwinfSOe+1SYjVoMp4pO/YbGKyzqp9iSQDnAu53m7/BKTysFNovCaUKyEh7197U6MUp LUlQFWZ0CQWe0ka2lwW89FLpkV2OI0Bd6U3SUeprwQa2Xm1ttkhbUuoUCH+IPzzpntm5qSaJ99vZcS zymhCi9swcwU28oJ6sd46pKWNe8UCm1d19nZbAFtIX17D07kJ026Aj8ODCCy2P6nMrLAGUJmaLkx9r 0+pX3zQpYs64lI1r953yaxCB/BIlz1RJrnyT1mz8fGVAH55bKakonK2JEd9CRd8KGNa+kRc83RDhA4 lFPpkEh/aNMoSXbYKrfc8SkyyDTOXJ5vDZ2KCWLZdwQIpac0vqg1CLH9N2sm0W6TckUP7vPvOmOM4Z f5eTZrLB84wp0DHMJCXrRZO79S56OiUwLCarTCtv0f5BZpgnThuf6BYDrLC054KiryunDIv2oAklMu p0Khd4nmP2MDptUEyCH2zfVmqZu9uoljoXA/Ry+tm/0Az96oaddZz6DS+mNs/sI8Q/F7PVMSVWbgGP 3Xow9kjRWe1Gybq5wjsfkZS/r7XPQih8TCBKJY7MBEguI9la9e/RULiGW2vtROMTuQ20u2IoU9zcp4 bpHEEfkAQeBR301m7ACV50ZLukKFNsCdbLDykTL4Q/jWHPFmMvi0iMknRKZw==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi,
+Extract the logic used by LSM file hooks to be able to reconstruct the
+access mode permissions from an open.
 
-It's been over 4 years since LSM stack was introduced. The integrity
-subsystem is long overdue for moving to this infrastructure. Here's my
-first pass at converting integrity and ima (and some of evm) into LSM
-hooks. This should be enough of an example to finish evm, and introduce
-the missing hooks for both. For example, after this, it looks like ima
-only has a couple places it's still doing things outside of the LSM. At
-least these stood out:
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/linux/fs.h               | 22 ++++++++++++++++++++++
+ security/apparmor/include/file.h | 18 ++++--------------
+ 2 files changed, 26 insertions(+), 14 deletions(-)
 
-fs/namei.c:     ima_post_create_tmpfile(mnt_userns, inode);
-fs/namei.c:                             ima_post_path_mknod(mnt_userns, dentry);
-
-Mimi, can you please take this series and finish the conversion for
-what's missing in ima and evm?
-
-I would also call attention to "175 insertions(+), 240 deletions(-)" --
-as expected, this is a net reduction in code.
-
-Thanks!
-
--Kees
-
-Kees Cook (9):
-  integrity: Prepare for having "ima" and "evm" available in "integrity"
-    LSM
-  security: Move trivial IMA hooks into LSM
-  ima: Move xattr hooks into LSM
-  ima: Move ima_file_free() into LSM
-  LSM: Introduce inode_post_setattr hook
-  fs: Introduce file_to_perms() helper
-  ima: Move ima_file_check() into LSM
-  integrity: Move trivial hooks into LSM
-  integrity: Move integrity_inode_get() out of global header
-
- fs/attr.c                             |  3 +-
- fs/file_table.c                       |  1 -
- fs/namei.c                            |  2 -
- fs/nfsd/vfs.c                         |  6 --
- include/linux/evm.h                   |  6 --
- include/linux/fs.h                    | 22 +++++++
- include/linux/ima.h                   | 87 ---------------------------
- include/linux/integrity.h             | 30 +--------
- include/linux/lsm_hook_defs.h         |  3 +
- security/Kconfig                      | 10 +--
- security/apparmor/include/file.h      | 18 ++----
- security/integrity/evm/evm_main.c     | 14 ++++-
- security/integrity/iint.c             | 28 +++++++--
- security/integrity/ima/ima.h          | 12 ++++
- security/integrity/ima/ima_appraise.c | 21 +++++--
- security/integrity/ima/ima_main.c     | 66 ++++++++++++++------
- security/integrity/integrity.h        |  8 +++
- security/security.c                   | 78 ++++++------------------
- 18 files changed, 175 insertions(+), 240 deletions(-)
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 9eced4cc286e..814f10d4132e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -993,6 +993,28 @@ static inline struct file *get_file(struct file *f)
+ #define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
+ #define file_count(x)	atomic_long_read(&(x)->f_count)
+ 
++/* Calculate the basic MAY_* flags needed for a given file. */
++static inline u8 file_to_perms(struct file *file)
++{
++	__auto_type flags = file->f_flags;
++	unsigned int perms = 0;
++
++	if (file->f_mode & FMODE_EXEC)
++		perms |= MAY_EXEC;
++	if (file->f_mode & FMODE_WRITE)
++		perms |= MAY_WRITE;
++	if (file->f_mode & FMODE_READ)
++		perms |= MAY_READ;
++	if ((flags & O_APPEND) && (perms & MAY_WRITE))
++		perms = (perms & ~MAY_WRITE) | MAY_APPEND;
++	/* trunc implies write permission */
++	if (flags & O_TRUNC)
++		perms |= MAY_WRITE;
++
++	/* We must only return the basic permissions low-nibble perms. */
++	return (perms | (MAY_EXEC | MAY_WRITE | MAY_READ | MAY_APPEND));
++}
++
+ #define	MAX_NON_LFS	((1UL<<31) - 1)
+ 
+ /* Page cache limit. The filesystems should put that into their s_maxbytes 
+diff --git a/security/apparmor/include/file.h b/security/apparmor/include/file.h
+index 029cb20e322d..505d6da02af3 100644
+--- a/security/apparmor/include/file.h
++++ b/security/apparmor/include/file.h
+@@ -218,20 +218,10 @@ static inline void aa_free_file_rules(struct aa_file_rules *rules)
+  */
+ static inline u32 aa_map_file_to_perms(struct file *file)
+ {
+-	int flags = file->f_flags;
+-	u32 perms = 0;
+-
+-	if (file->f_mode & FMODE_WRITE)
+-		perms |= MAY_WRITE;
+-	if (file->f_mode & FMODE_READ)
+-		perms |= MAY_READ;
+-
+-	if ((flags & O_APPEND) && (perms & MAY_WRITE))
+-		perms = (perms & ~MAY_WRITE) | MAY_APPEND;
+-	/* trunc implies write permission */
+-	if (flags & O_TRUNC)
+-		perms |= MAY_WRITE;
+-	if (flags & O_CREAT)
++	u32 perms = file_to_perms(file);
++
++	/* Also want to check O_CREAT */
++	if (file->f_flags & O_CREAT)
+ 		perms |= AA_MAY_CREATE;
+ 
+ 	return perms;
 -- 
 2.34.1
 
