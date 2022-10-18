@@ -2,184 +2,110 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C7F5C4332F
-	for <linux-integrity@archiver.kernel.org>; Tue, 18 Oct 2022 15:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62977C433FE
+	for <linux-integrity@archiver.kernel.org>; Tue, 18 Oct 2022 18:25:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230286AbiJRPxV (ORCPT
+        id S229751AbiJRSZf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 18 Oct 2022 11:53:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38514 "EHLO
+        Tue, 18 Oct 2022 14:25:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiJRPxT (ORCPT
+        with ESMTP id S230184AbiJRSZV (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 18 Oct 2022 11:53:19 -0400
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0D8C97EA;
-        Tue, 18 Oct 2022 08:53:04 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4MsHls6RwJz9xrpj;
-        Tue, 18 Oct 2022 23:27:05 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwD3fgUbx05jE5UGAA--.19528S2;
-        Tue, 18 Oct 2022 16:32:53 +0100 (CET)
-Message-ID: <1b41c633bbd31b82b02fdbae718f2f11ac862181.camel@huaweicloud.com>
-Subject: Re: [PATCH 4/9] ima: Move ima_file_free() into LSM
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Christian Brauner <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>
+        Tue, 18 Oct 2022 14:25:21 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7112F659D6
+        for <linux-integrity@vger.kernel.org>; Tue, 18 Oct 2022 11:25:06 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id n7so14657843plp.1
+        for <linux-integrity@vger.kernel.org>; Tue, 18 Oct 2022 11:25:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XnD0cUVp+TOTlgr52vU4IJ+UQNYJwnMUoL+t7q45VyE=;
+        b=knjecM+JwXsRjmXTN38QTXdo60yLmZbtz3TiWB6dKs1qQ30ZMLuU5uJKsLks+W19SL
+         MhCYYnb+l60NN2dFy1uHPJPAONKJjdBvZIKuQ839w8pnHn6FV3rCq6AXDJoeopNRIXa7
+         NAdJf2F6f8oMnGxEvBxeISjz0+pS8DGQ57Cvc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XnD0cUVp+TOTlgr52vU4IJ+UQNYJwnMUoL+t7q45VyE=;
+        b=K2kmuqp81jN6v7v7MZjHFvGGAEpaiIeqAm5+dnXmfeGPfiLbJpolxByKQd/Fn3jtKV
+         0cLcI24xRW9R4W+g8zeoP7X1fB8NJ+E8osrGTz47lNz27tbkDkfZ/BubtyZK6M2pv0ib
+         edaw4uR+WzeEz4o8XK+kKJvpDJ58uMQ2Wj6oXbtuD4I7b/zR1pEVUWl06Iyz6FqpGStF
+         B97OibxRsrz8RzjQxNp9wiaSlE9HsT+u624ib2R71c04zYBILpzTdGcRoq7fQcXWQqZ3
+         FlTIoz6IMkYzOm2X68ejK4DqAOhB6Uy6WB/xREILIQdiVmK9N5UL3n15OVcKSFFDT5el
+         NRVQ==
+X-Gm-Message-State: ACrzQf3CpBH2NMPbiJyhsAkBxtN1Lbg1rUGaE7NInPY22uZ3L5i8m6jt
+        mv9Bsbdcyh9NaGrgj9og4xvRiw==
+X-Google-Smtp-Source: AMsMyM56wYSQF4d6PdxkC9KXMD1lXxNzi/2pnc/ihUXr+HLyRnxmdbs1/lcrj69ovUsn97pESxrYwQ==
+X-Received: by 2002:a17:902:ea85:b0:17f:88c1:7015 with SMTP id x5-20020a170902ea8500b0017f88c17015mr4189852plb.49.1666117504543;
+        Tue, 18 Oct 2022 11:25:04 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m4-20020a170902f64400b00176b84eb29asm8884968plg.301.2022.10.18.11.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 11:25:03 -0700 (PDT)
+Date:   Tue, 18 Oct 2022 11:25:02 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Brauner <brauner@kernel.org>
 Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        John Johansen <john.johansen@canonical.com>,
         Paul Moore <paul@paul-moore.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Petr Vorel <pvorel@suse.cz>,
-        Jonathan McDowell <noodles@fb.com>,
-        Borislav Petkov <bp@suse.de>, Takashi Iwai <tiwai@suse.de>,
-        linux-integrity@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         KP Singh <kpsingh@kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Date:   Tue, 18 Oct 2022 17:32:40 +0200
-In-Reply-To: <20221018150213.7n4sv7rtsh6lshd5@wittgenstein>
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 6/9] fs: Introduce file_to_perms() helper
+Message-ID: <202210181124.73B5B7ECCE@keescook>
 References: <20221013222702.never.990-kees@kernel.org>
-         <20221013223654.659758-4-keescook@chromium.org>
-         <20221018150213.7n4sv7rtsh6lshd5@wittgenstein>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+ <20221013223654.659758-6-keescook@chromium.org>
+ <20221018141037.zzpfjzutqbutbpiy@wittgenstein>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwD3fgUbx05jE5UGAA--.19528S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr1ktw18Kr1rJr43Gr4UJwb_yoWrAr43pF
-        s3t3W5Crn3Jryjgr97Canrua4Fg39agryxuFyrW348tFnxtFyvvFy3Cr1Y9F4UJry0krWx
-        tF4UKry5Z3WjyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
-        0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-        F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
-        kC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IY
-        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIx
-        AIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
-        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1rMa5UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj4BjMQACsu
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221018141037.zzpfjzutqbutbpiy@wittgenstein>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2022-10-18 at 17:02 +0200, Christian Brauner wrote:
-> On Thu, Oct 13, 2022 at 03:36:49PM -0700, Kees Cook wrote:
-> > The file_free_security hook already exists for managing
-> > notification of
-> > released files. Use the LSM hook instead of open-coded stacking.
+On Tue, Oct 18, 2022 at 04:10:37PM +0200, Christian Brauner wrote:
+> On Thu, Oct 13, 2022 at 03:36:51PM -0700, Kees Cook wrote:
+> > Extract the logic used by LSM file hooks to be able to reconstruct the
+> > access mode permissions from an open.
 > > 
-> > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> > Cc: John Johansen <john.johansen@canonical.com>
 > > Cc: Paul Moore <paul@paul-moore.com>
 > > Cc: James Morris <jmorris@namei.org>
 > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: Petr Vorel <pvorel@suse.cz>
-> > Cc: Jonathan McDowell <noodles@fb.com>
-> > Cc: Borislav Petkov <bp@suse.de>
-> > Cc: Takashi Iwai <tiwai@suse.de>
-> > Cc: linux-integrity@vger.kernel.org
 > > Cc: linux-security-module@vger.kernel.org
 > > Signed-off-by: Kees Cook <keescook@chromium.org>
 > > ---
-> >  fs/file_table.c                   | 1 -
-> >  include/linux/ima.h               | 6 ------
-> >  security/integrity/ima/ima_main.c | 3 ++-
-> >  3 files changed, 2 insertions(+), 8 deletions(-)
+> >  include/linux/fs.h               | 22 ++++++++++++++++++++++
+> >  security/apparmor/include/file.h | 18 ++++--------------
+> >  2 files changed, 26 insertions(+), 14 deletions(-)
 > > 
-> > diff --git a/fs/file_table.c b/fs/file_table.c
-> > index 99c6796c9f28..fa707d221a43 100644
-> > --- a/fs/file_table.c
-> > +++ b/fs/file_table.c
-> > @@ -311,7 +311,6 @@ static void __fput(struct file *file)
-> >  	eventpoll_release(file);
-> >  	locks_remove_file(file);
+> > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > index 9eced4cc286e..814f10d4132e 100644
+> > --- a/include/linux/fs.h
+> > +++ b/include/linux/fs.h
+> > @@ -993,6 +993,28 @@ static inline struct file *get_file(struct file *f)
+> >  #define get_file_rcu(x) atomic_long_inc_not_zero(&(x)->f_count)
+> >  #define file_count(x)	atomic_long_read(&(x)->f_count)
 > >  
-> > -	ima_file_free(file);
-> >  	if (unlikely(file->f_flags & FASYNC)) {
-> >  		if (file->f_op->fasync)
-> >  			file->f_op->fasync(-1, file, 0);
-> > diff --git a/include/linux/ima.h b/include/linux/ima.h
-> > index 6dc5143f89f2..9f18df366064 100644
-> > --- a/include/linux/ima.h
-> > +++ b/include/linux/ima.h
-> > @@ -19,7 +19,6 @@ extern enum hash_algo
-> > ima_get_current_hash_algo(void);
-> >  extern int ima_file_check(struct file *file, int mask);
-> >  extern void ima_post_create_tmpfile(struct user_namespace
-> > *mnt_userns,
-> >  				    struct inode *inode);
-> > -extern void ima_file_free(struct file *file);
-> >  extern void ima_post_path_mknod(struct user_namespace *mnt_userns,
-> >  				struct dentry *dentry);
-> >  extern int ima_file_hash(struct file *file, char *buf, size_t
-> > buf_size);
-> > @@ -56,11 +55,6 @@ static inline void
-> > ima_post_create_tmpfile(struct user_namespace *mnt_userns,
-> >  {
-> >  }
-> >  
-> > -static inline void ima_file_free(struct file *file)
-> > -{
-> > -	return;
-> > -}
-> > -
-> >  static inline void ima_post_path_mknod(struct user_namespace
-> > *mnt_userns,
-> >  				       struct dentry *dentry)
-> >  {
-> > diff --git a/security/integrity/ima/ima_main.c
-> > b/security/integrity/ima/ima_main.c
-> > index b3b79d030a67..94379ba40b58 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -183,7 +183,7 @@ static void ima_check_last_writer(struct
-> > integrity_iint_cache *iint,
-> >   *
-> >   * Flag files that changed, based on i_version
-> >   */
-> > -void ima_file_free(struct file *file)
-> > +static void ima_file_free(struct file *file)
-> >  {
-> >  	struct inode *inode = file_inode(file);
-> >  	struct integrity_iint_cache *iint;
-> > @@ -1085,6 +1085,7 @@ static struct security_hook_list ima_hooks[]
-> > __lsm_ro_after_init = {
-> >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-> >  	LSM_HOOK_INIT(mmap_file, ima_file_mmap),
-> >  	LSM_HOOK_INIT(file_mprotect, ima_file_mprotect),
-> > +	LSM_HOOK_INIT(file_free_security, ima_file_free),
+> > +/* Calculate the basic MAY_* flags needed for a given file. */
+> > +static inline u8 file_to_perms(struct file *file)
 > 
-> This doesn't work afaict. If the file is opened for writing ima may
-> update xattrs. But by the time security_file_free() is called
-> put_file_access() has already been called which will have given up
-> write
-> access to the file's mount.
-> 
-> So you would have to - just one of the possibilities - have to move
-> security_file_free() out of file_free() and into the old
-> ima_file_free()
-> location. But that might cause semantic changes for other LSMs.
+> As long as there aren't multiple users of this and especially none in
+> the vfs proper please don't move this into fs.h. It's overloaded enough
+> as it is and we have vague plans on splitting it further in the future.
 
-Hi
+Sure -- this can live in a security .h file somewhere.
 
-I also did this work before. In my implementation, I created a new
-security hook called security_file_pre_free().
-
-https://github.com/robertosassu/linux/commit/692c9d36fff865435b23b3cb765d31f3584f6263
-
-If useful, the whole patch set is available at:
-
-https://github.com/robertosassu/linux/commits/ima-evm-lsm-v1-devel-v3
-
-Roberto
-
+-- 
+Kees Cook
