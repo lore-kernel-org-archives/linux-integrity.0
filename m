@@ -2,143 +2,146 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9294FC4332F
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Nov 2022 20:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8035C4332F
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Nov 2022 21:07:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbiKAUV7 (ORCPT
+        id S230132AbiKAVHq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Nov 2022 16:21:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58328 "EHLO
+        Tue, 1 Nov 2022 17:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229939AbiKAUV7 (ORCPT
+        with ESMTP id S230017AbiKAVHp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Nov 2022 16:21:59 -0400
+        Tue, 1 Nov 2022 17:07:45 -0400
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 452241C102
-        for <linux-integrity@vger.kernel.org>; Tue,  1 Nov 2022 13:21:58 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A1K3q4K008328;
-        Tue, 1 Nov 2022 20:21:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=bniy1ulIUzo3NXXzZuvQMD4AY5vSfcSUm9l7WXv7ZwA=;
- b=g9XXc6b1e9YzyOuPAFaBvlboAw88Er9GFH2VQMMyu+YBDt27l/NoET3Vv/YArIhtPGUG
- Q6W3VMBRaip9oUT+3xIAc00P5dpkMbxFscZ0lkb84YVyGxWN0/nAryqPF7r0nu7kKAC3
- ACt4QQY5NDE4czyFnRlEMKJ5DFuEuaJyuiG3OgNegjQ0gViJs3gGHjgSZvCJonk6WHQG
- U7yrzE1Zzg0wtUSGVJCW5QX4x5oHUU4iM9qwmAjFloWeA2dSuXa/ESBS06oDQVODHkd8
- SWygjUgUf1w0va7Ar0kuEBfSeLA+KdlFJQWeHl7/ZbMv5mlGqw3O4R1Vy4mUZvMcD6I+ yw== 
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjw3ks0rq-1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C711DA78;
+        Tue,  1 Nov 2022 14:07:44 -0700 (PDT)
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A1K0bgv011530;
+        Tue, 1 Nov 2022 21:07:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=tFHhevBTuVeibnGjbNPPIb8CHtAFDNMRfUu71KO8UeY=;
+ b=Qm+NsJ51+Im8XWzN3Akue+SjanAA0ED81sCyGTTNa17E8tKerbqyzj/blekFvm/xyr14
+ HUG/shLEno4Ov8xDIhXqeSkxN1FrgWnX3cetsHnKxVBS3FcqRpJiXdbz69MuI0zMwoh9
+ um5Fo+OEE1ocAMj98KpR0afWkuRNSvfX3cKVw/p70Sr0M6GvKASevTXsOPkVBrE9Gu2m
+ 7OVvcJlum+sUVIEhsKFD/zkEZ5IFXsn0l7KI469k0aBx8sleygPhFBY0AWip0+v5jAZ0
+ RnyZBriXM/A72qr/zWaWTqa0a0GtIYE4Nv1znDi+zdnQ4NGyEkSWNuBuYP4Vds+FIvuB Cw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjvbhem89-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Nov 2022 20:21:51 +0000
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A1K6wA1028466;
-        Tue, 1 Nov 2022 20:18:15 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma02fra.de.ibm.com with ESMTP id 3kgut9bwhk-1
+        Tue, 01 Nov 2022 21:07:20 +0000
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A1Iag3I019035;
+        Tue, 1 Nov 2022 21:07:19 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjvbhem7r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Nov 2022 20:18:15 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A1KICBP49545606
+        Tue, 01 Nov 2022 21:07:19 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A1L6p7J028551;
+        Tue, 1 Nov 2022 21:07:18 GMT
+Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
+        by ppma04dal.us.ibm.com with ESMTP id 3kguta3yk0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Nov 2022 21:07:18 +0000
+Received: from smtpav01.dal12v.mail.ibm.com ([9.208.128.133])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A1L7K9L10289820
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Nov 2022 20:18:12 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AAC2DA405B;
-        Tue,  1 Nov 2022 20:18:12 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB888A4054;
-        Tue,  1 Nov 2022 20:18:11 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.14.52])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Nov 2022 20:18:11 +0000 (GMT)
+        Tue, 1 Nov 2022 21:07:21 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF28558058;
+        Tue,  1 Nov 2022 21:07:16 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17A0E58059;
+        Tue,  1 Nov 2022 21:07:16 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.106.109])
+        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Tue,  1 Nov 2022 21:07:15 +0000 (GMT)
+Message-ID: <6d1f5204ad68fa34d55019790ce376167a0110a9.camel@linux.ibm.com>
+Subject: Re: [PATCH] efi: Add iMac Pro 2017 to uefi skip cert quirk
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v4 05/17] Update configure.ac to address a couple of obsolete warnings
-Date:   Tue,  1 Nov 2022 16:17:51 -0400
-Message-Id: <20221101201803.372652-6-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20221101201803.372652-1-zohar@linux.ibm.com>
-References: <20221101201803.372652-1-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Aditya Garg <gargaditya08@live.com>
+Cc:     "chyishian.jiang@gmail.com" <chyishian.jiang@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jarkko@kernel.org" <jarkko@kernel.org>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Orlando Chamberlain <redecorating@protonmail.com>
+Date:   Tue, 01 Nov 2022 17:07:15 -0400
+In-Reply-To: <9D46D92F-1381-4F10-989C-1A12CD2FFDD8@live.com>
+References: <8CB9E43B-AB65-4735-BB8D-A8A7A10F9E30@live.com>
+         <cee0b0176edc942ecc0ce6f4d585c239f9b7c425.camel@linux.ibm.com>
+         <9D46D92F-1381-4F10-989C-1A12CD2FFDD8@live.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rDNIoa0PX9iohJK8fb5PJnhHdAJivmqt
-X-Proofpoint-ORIG-GUID: rDNIoa0PX9iohJK8fb5PJnhHdAJivmqt
+X-Proofpoint-GUID: otuF8GVL0erMKE98_o_DPisopIAymoU4
+X-Proofpoint-ORIG-GUID: YSB9X97RL2Qh1CzDBwDtkO-er7_dB7zc
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-01_10,2022-11-01_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 suspectscore=0 malwarescore=0 phishscore=0 mlxscore=0
- bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211010143
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 mlxlogscore=718 suspectscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2210170000
+ definitions=main-2211010147
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Remove AC_PROG_LIBTOOL and AC_HEAD_STDC. Replace AC_HELP_STRING with
-AS_HELP_STRING.
+Hi Aditya,
 
-Reviewed-by: Petr Vorel <pvorel@suse.cz>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- acinclude.m4              | 2 +-
- configure.ac              | 4 ----
- m4/manpage-docbook-xsl.m4 | 2 +-
- 3 files changed, 2 insertions(+), 6 deletions(-)
+On Tue, 2022-11-01 at 14:06 +0000, Aditya Garg wrote:
+> Hi Mimi
+> 
+> > I found this list of computers with the Apple T2 Security Chip - 
+> > https://support.apple.com/en-us/HT208862, but not a list that
+> > correlates them to the system ID.  With this update, is this the entire
+> > list?
+> 
+> As per the link you sent me, the following are the system IDs of the T2 Macs mentioned in the list
+> 
+> 1. iMac (Retina 5K, 27-inch, 2020) - iMac20,1, iMac20,2
+> 2. iMac Pro - iMacPro1,1
+> 3. Mac Pro (2019) - MacPro7,1
+> 4. Mac Pro (Rack, 2019) - MacPro7,1
+> 5. Mac mini (2018) - Macmini8,1
+> 6. MacBook Air (Retina, 13-inch, 2020) - MacBookAir9,1
+> 7. MacBook Air (Retina, 13-inch, 2019) - MacBookAir8,2
+> 8. MacBook Air (Retina, 13-inch, 2018) - MacBookAir8,1
+> 9. MacBook Pro (13-inch, 2020, Two Thunderbolt 3 ports) - MacBookPro16,3
+> 10. MacBook Pro (13-inch, 2020, Four Thunderbolt 3 ports) - MacBookPro16,2
+> 11. MacBook Pro (16-inch, 2019) - MacBookPro16,1, MacBookPro16,4
+> 12. MacBook Pro (13-inch, 2019, Two Thunderbolt 3 ports) - MacBookPro15,4
+> 13. MacBook Pro (15-inch, 2019) - MacBookPro15,1, MacBookPro15,3
+> 14. MacBook Pro (13-inch, 2019, Four Thunderbolt 3 ports) - MacBookPro15,2
+> 15. MacBook Pro (15-inch, 2018) - MacBookPro15,1
+> 16. MacBook Pro (13-inch, 2018, Four Thunderbolt 3 ports) - MacBookPro15,2
+> 
+> The system IDs of the Macs can be seen from official Apple’s documentation form the links below :-
+> 
+> https://support.apple.com/en-in/HT201634 - For iMac
+> https://support.apple.com/en-in/HT202888 - For Mac Pro
+> https://support.apple.com/en-in/HT201894 - For Mac mini
+> https://support.apple.com/en-in/HT201862 - For MacBook Air
+> https://support.apple.com/en-in/HT201300 - For MacBook Pro
+> 
+> After cross-checking only iMacPro1,1 seems to be missing.
 
-diff --git a/acinclude.m4 b/acinclude.m4
-index dd430d4f0565..bb962f81a9c0 100644
---- a/acinclude.m4
-+++ b/acinclude.m4
-@@ -2,7 +2,7 @@
- AC_DEFUN([PKG_ARG_ENABLE],
- 	[
- 	AC_MSG_CHECKING(whether to enable $1)
--	AC_ARG_ENABLE([$1], AC_HELP_STRING([--enable-$1], [enable $1 (default is $2)]), 
-+	AC_ARG_ENABLE([$1], AS_HELP_STRING([--enable-$1], [enable $1 (default is $2)]),
- 	[pkg_cv_enable_$1=$enableval],	
- 	[AC_CACHE_VAL([pkg_cv_enable_$1], [pkg_cv_enable_$1=$2])])
- 	if test $pkg_cv_enable_$1 = yes; then
-diff --git a/configure.ac b/configure.ac
-index 1a0f093df562..9d3b23ff8def 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -15,16 +15,12 @@ AM_PROG_CC_C_O
- #AC_PROG_CXX
- #AC_PROG_CPP
- AC_PROG_INSTALL
--AC_PROG_LIBTOOL
- #AC_PROG_LN_S
- LT_INIT
- 
- # FIXME: Replace `main' with a function in `-lpthread':
- #AC_CHECK_LIB([pthread], [main])
- 
--# Checks for header files.
--AC_HEADER_STDC
--
- PKG_CHECK_MODULES(LIBCRYPTO, [libcrypto >= 0.9.8 ])
- AC_SUBST(KERNEL_HEADERS)
- AC_CHECK_HEADER(unistd.h)
-diff --git a/m4/manpage-docbook-xsl.m4 b/m4/manpage-docbook-xsl.m4
-index 25c8ce54b068..f2ee912ed1be 100644
---- a/m4/manpage-docbook-xsl.m4
-+++ b/m4/manpage-docbook-xsl.m4
-@@ -7,7 +7,7 @@ AC_DEFUN([EVMCTL_MANPAGE_DOCBOOK_XSL], [
- 
- 	AC_PATH_PROGS(XMLCATALOG, xmlcatalog)
- 	AC_ARG_WITH([xml-catalog],
--		AC_HELP_STRING([--with-xml-catalog=CATALOG],
-+		AS_HELP_STRING([--with-xml-catalog=CATALOG],
- 				[path to xml catalog to use]),,
- 				[with_xml_catalog=/etc/xml/catalog])
- 	XML_CATALOG_FILE="$with_xml_catalog"
--- 
-2.31.1
+Thank you for double checking.  The patch is now queued in next-
+integrity.
+
+Mimi
 
