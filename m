@@ -2,147 +2,229 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389BDC4321E
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Nov 2022 20:18:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 160FCC4332F
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Nov 2022 20:18:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230186AbiKAUS1 (ORCPT
+        id S229945AbiKAUS2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Nov 2022 16:18:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56342 "EHLO
+        Tue, 1 Nov 2022 16:18:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbiKAUSY (ORCPT
+        with ESMTP id S229939AbiKAUSX (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Nov 2022 16:18:24 -0400
+        Tue, 1 Nov 2022 16:18:23 -0400
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4154E63A2
-        for <linux-integrity@vger.kernel.org>; Tue,  1 Nov 2022 13:18:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CAFD110A
+        for <linux-integrity@vger.kernel.org>; Tue,  1 Nov 2022 13:18:22 -0700 (PDT)
 Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A1J5jUu004217;
-        Tue, 1 Nov 2022 20:18:16 GMT
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A1JtukG012334;
+        Tue, 1 Nov 2022 20:18:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=/pzgdG8QVbwIElZT9syZFCeYlDXsjwv5NKCpyDJxLTs=;
- b=aukc+P1Sz4cIrENzomOUHvQKC81Zidwf9HggNjZbzuZUUvKbqYPP0bd5kpoC3hS0m1w5
- udPGv4yEodEAVXKmA+Szw+cDLXUm+2S/OMXnG0NUglNby3mVjcBt91HF67Xejydf+Oj6
- WdwfSneyJLZdx04Oikq7umg0D1099xs8Z4F+rJhC2j/cxJOULWZXx498VpaVzCPiSPKm
- VDoGV3lHk9ei2e+JL89M5hg/FCA8ll3+PXB4p0HGVDqYqzECdmG4z0g9hEzRW+1BaCPM
- ZvHYXE87IEAxlAv8qmg/4AxAVw/a5AoLNug5SUyR8wkzvgrLaCobG8LCrHHGo1eHRpco pQ== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjtg5qak4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Nov 2022 20:18:15 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A1K6cwg014532;
-        Tue, 1 Nov 2022 20:18:13 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04ams.nl.ibm.com with ESMTP id 3kgut9572e-1
+ bh=qxq90qBrR9pOtJArpqU39kMaPYesIl3zkGw8+LLsPUI=;
+ b=hUHvbcdlASXmndbbi0OdQlUjYSuJmtDTdMj0Ue0M6rlOunRRfzHnYr8b2ab/DMwV+9vM
+ 9loFHImlytRDYVheugGIzku+n+auPkh94K3GRDZ/vVQkJNuJLK6vXqHD+jpcIfYaQ0aR
+ 6V+TFUMccF3kTiwwKTkl29QkQ4apg6AMEhvHkwJgql+vFj7cy9KmUrQMuj7n9dApC2bW
+ HojOvBg76LcZBexMl0WtWSKyhtCagabPwsQJd+uxYky9ve7QKJSM7x9Foic6vC4wo7xM
+ zla+Ld5/5WCmgZUAZBTOt3nc4lm4MxaZDFPrugp7wRWfDveuMUYEDYf96Sy2pJ87Lh+F Bg== 
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kjtg5qaj2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Tue, 01 Nov 2022 20:18:13 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A1K5Z8U004787;
+        Tue, 1 Nov 2022 20:18:11 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 3kgut8w8bm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 01 Nov 2022 20:18:11 +0000
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A1KCgwZ47841536
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A1KI8TD47055300
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Nov 2022 20:12:42 GMT
+        Tue, 1 Nov 2022 20:18:09 GMT
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C909EA405F;
-        Tue,  1 Nov 2022 20:18:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id D6B0FA405C;
+        Tue,  1 Nov 2022 20:18:08 +0000 (GMT)
 Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 05114A4054;
-        Tue,  1 Nov 2022 20:18:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 2583EA4054;
+        Tue,  1 Nov 2022 20:18:08 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.14.52])
         by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Nov 2022 20:18:09 +0000 (GMT)
+        Tue,  1 Nov 2022 20:18:08 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
         Vitaly Chikunov <vt@altlinux.org>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v4 03/17] Log and reset 'errno' on lsetxattr failure
-Date:   Tue,  1 Nov 2022 16:17:49 -0400
-Message-Id: <20221101201803.372652-4-zohar@linux.ibm.com>
+Subject: [PATCH ima-evm-utils v4 01/17] Revert "Reset 'errno' after failure to open or access a file"
+Date:   Tue,  1 Nov 2022 16:17:47 -0400
+Message-Id: <20221101201803.372652-2-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20221101201803.372652-1-zohar@linux.ibm.com>
 References: <20221101201803.372652-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6J39EkjsZtaRcZqKyzzafhl3pfj_PuPI
-X-Proofpoint-GUID: 6J39EkjsZtaRcZqKyzzafhl3pfj_PuPI
+X-Proofpoint-ORIG-GUID: V54xEE_GX0B1S-l2GvjEHzvNydLRFXep
+X-Proofpoint-GUID: V54xEE_GX0B1S-l2GvjEHzvNydLRFXep
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-01_09,2022-11-01_02,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
  lowpriorityscore=0 phishscore=0 impostorscore=0 mlxscore=0 suspectscore=0
- adultscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=785 spamscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999 spamscore=0
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2210170000 definitions=main-2211010143
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Writing either security.ima hashes or security.evm hmacs from userspace
-will fail regardless of the IMA or EVM fix mode.  In fix mode, 'touch'
-will force security.ima and security.evm to be updated.
-
-Make the setxattr error messages more explicit and clear errno.
+This reverts commit acb19d1894a4a95471b8d2346cd6c3ecf3385110.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ src/evmctl.c    | 18 ++----------------
+ src/libimaevm.c |  4 ----
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 54123bf20f03..b1dcd9b1c1ef 100644
+index 76e2561798fa..0412bc0ac2b0 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -572,7 +572,7 @@ static int sign_evm(const char *file, const char *key)
- 	if (xattr) {
- 		err = lsetxattr(file, xattr_evm, sig, len, 0);
- 		if (err < 0) {
--			log_err("setxattr failed: %s\n", file);
-+			log_errno_reset(LOG_ERR, "Set EVM xattr failed: %s", file);
- 			return err;
- 		}
+@@ -182,7 +182,6 @@ static int bin2file(const char *file, const char *ext, const unsigned char *data
+ 	fp = fopen(name, "w");
+ 	if (!fp) {
+ 		log_err("Failed to open: %s\n", name);
+-		errno = 0;
+ 		return -1;
  	}
-@@ -615,7 +615,8 @@ static int hash_ima(const char *file)
- 	if (xattr) {
- 		err = lsetxattr(file, xattr_ima, hash, len, 0);
- 		if (err < 0) {
--			log_err("setxattr failed: %s\n", file);
-+			log_errno_reset(LOG_ERR, "Set IMA hash xattr failed: %s",
-+					file);
- 			return err;
- 		}
+ 	err = fwrite(data, len, 1, fp);
+@@ -208,7 +207,6 @@ static unsigned char *file2bin(const char *file, const char *ext, int *size)
+ 	fp = fopen(name, "r");
+ 	if (!fp) {
+ 		log_err("Failed to open: %s\n", name);
+-		errno = 0;
+ 		return NULL;
  	}
-@@ -652,7 +653,8 @@ static int sign_ima(const char *file, const char *key)
- 	if (xattr) {
- 		err = lsetxattr(file, xattr_ima, sig, len, 0);
- 		if (err < 0) {
--			log_err("setxattr failed: %s\n", file);
-+			log_errno_reset(LOG_ERR, "Set IMA sig xattr failed: %s",
-+					file);
- 			return err;
- 		}
- 	}
-@@ -1125,7 +1127,7 @@ static int setxattr_ima(const char *file, char *sig_file)
+ 	if (fstat(fileno(fp), &stats) == -1) {
+@@ -315,10 +313,8 @@ static int get_uuid(struct stat *st, char *uuid)
+ 	sprintf(path, "blkid -s UUID -o value /dev/block/%u:%u", major, minor);
  
- 	err = lsetxattr(file, xattr_ima, sig, len, 0);
- 	if (err < 0)
--		log_err("setxattr failed: %s\n", file);
-+		log_errno_reset(LOG_ERR, "Set IMA sig xattr failed: %s", file);
- 	free(sig);
- 	return err;
- }
-@@ -1323,7 +1325,8 @@ static int hmac_evm(const char *file, const char *key)
- 		sig[0] = EVM_XATTR_HMAC;
- 		err = lsetxattr(file, xattr_evm, sig, len + 1, 0);
- 		if (err < 0) {
--			log_err("setxattr failed: %s\n", file);
-+			log_errno_reset(LOG_ERR, "Set EVM hmac xattr failed: %s",
-+					file);
- 			return err;
+ 	fp = popen(path, "r");
+-	if (!fp) {
+-		errno = 0;
++	if (!fp)
+ 		goto err;
+-	}
+ 
+ 	len = fread(_uuid, 1, sizeof(_uuid), fp);
+ 	pclose(fp);
+@@ -375,7 +371,6 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
+ 
+ 			if (fd < 0) {
+ 				log_err("Failed to open: %s\n", file);
+-				errno = 0;
+ 				return -1;
+ 			}
+ 			if (ioctl(fd, FS_IOC_GETVERSION, &generation)) {
+@@ -1201,7 +1196,6 @@ static int calc_evm_hmac(const char *file, const char *keyfile, unsigned char *h
+ 
+ 		if (fd < 0) {
+ 			log_err("Failed to open %s\n", file);
+-			errno = 0;
+ 			goto out;
  		}
+ 		if (ioctl(fd, FS_IOC_GETVERSION, &generation)) {
+@@ -1392,7 +1386,6 @@ static int ima_fix(const char *path)
+ 	fd = open(path, O_RDONLY);
+ 	if (fd < 0) {
+ 		log_errno("Failed to open file: %s", path);
+-		errno = 0;
+ 		return -1;
  	}
+ 
+@@ -1916,10 +1909,8 @@ static int read_sysfs_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+ 	int i, result;
+ 
+ 	fp = fopen(pcrs, "r");
+-	if (!fp) {
++	if (!fp)
+ 		fp = fopen(misc_pcrs, "r");
+-		errno = 0;
+-	}
+ 	if (!fp)
+ 		return -1;
+ 
+@@ -1982,7 +1973,6 @@ static int read_file_pcrs(int num_banks, struct tpm_bank_info *tpm_banks)
+ 		fp = fopen(path, "r");
+ 		if (!fp) {
+ 			log_err("Could not open '%s'\n", path);
+-			errno = 0;
+ 			return -1;
+ 		}
+ 
+@@ -2075,7 +2065,6 @@ static int ima_measurement(const char *file)
+ 	fp = fopen(file, "rb");
+ 	if (!fp) {
+ 		log_err("Failed to open measurement file: %s\n", file);
+-		errno = 0;
+ 		return -1;
+ 	}
+ 
+@@ -2321,7 +2310,6 @@ static int read_binary_bios_measurements(char *file, struct tpm_bank_info *bank)
+ 	fp = fopen(file, "r");
+ 	if (!fp) {
+ 		log_errno("Failed to open TPM 1.2 event log.\n");
+-		errno = 0;
+ 		return 1;
+ 	}
+ 
+@@ -2758,8 +2746,6 @@ int main(int argc, char *argv[])
+ 	unsigned long keyid;
+ 	char *eptr;
+ 
+-	errno = 0;	/* initialize errno */
+-
+ #if !(OPENSSL_VERSION_NUMBER < 0x10100000)
+ 	OPENSSL_init_crypto(
+ #ifndef DISABLE_OPENSSL_CONF
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index e4b62b4989b2..611631c57f14 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -144,7 +144,6 @@ static int add_file_hash(const char *file, EVP_MD_CTX *ctx)
+ 	fp = fopen(file, "r");
+ 	if (!fp) {
+ 		log_err("Failed to open: %s\n", file);
+-		errno = 0;
+ 		return -1;
+ 	}
+ 
+@@ -259,7 +258,6 @@ EVP_PKEY *read_pub_pkey(const char *keyfile, int x509)
+ 	if (!fp) {
+ 		if (imaevm_params.verbose > LOG_INFO)
+ 			log_info("Failed to open keyfile: %s\n", keyfile);
+-		errno = 0;
+ 		return NULL;
+ 	}
+ 
+@@ -878,7 +876,6 @@ static int read_keyid_from_cert(uint32_t *keyid_be, const char *certfile, int tr
+ 
+ 	if (!(fp = fopen(certfile, "r"))) {
+ 		log_err("Cannot open %s: %s\n", certfile, strerror(errno));
+-		errno = 0;
+ 		return -1;
+ 	}
+ 	if (!PEM_read_X509(fp, &x, NULL, NULL)) {
+@@ -970,7 +967,6 @@ static EVP_PKEY *read_priv_pkey(const char *keyfile, const char *keypass)
+ 		fp = fopen(keyfile, "r");
+ 		if (!fp) {
+ 			log_err("Failed to open keyfile: %s\n", keyfile);
+-			errno = 0;
+ 			return NULL;
+ 		}
+ 		pkey = PEM_read_PrivateKey(fp, NULL, NULL, (void *)keypass);
 -- 
 2.31.1
 
