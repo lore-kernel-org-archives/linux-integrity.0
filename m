@@ -2,190 +2,110 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B8BC43217
-	for <linux-integrity@archiver.kernel.org>; Wed,  2 Nov 2022 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A81C4332F
+	for <linux-integrity@archiver.kernel.org>; Wed,  2 Nov 2022 18:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231642AbiKBSpw (ORCPT
+        id S231655AbiKBSpw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Wed, 2 Nov 2022 14:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40846 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231669AbiKBSpq (ORCPT
+        with ESMTP id S231670AbiKBSpq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Wed, 2 Nov 2022 14:45:46 -0400
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 991B22F67B
-        for <linux-integrity@vger.kernel.org>; Wed,  2 Nov 2022 11:45:44 -0700 (PDT)
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2IMklo028217
-        for <linux-integrity@vger.kernel.org>; Wed, 2 Nov 2022 18:45:44 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 369492D77D
+        for <linux-integrity@vger.kernel.org>; Wed,  2 Nov 2022 11:45:45 -0700 (PDT)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A2Haeqw011473
+        for <linux-integrity@vger.kernel.org>; Wed, 2 Nov 2022 18:45:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=PWs2AHLJL8xhcllbFVIM7JmUfUrg8HTvC7B5wjYrP2Y=;
- b=qrLMaj/BttxKfEvLmi/Rj51gX2UPtR9w8IzwYWxq8/flUMUpdyC+W5JvanNa995+5KvJ
- niO1d/6cEfN8fChPY57PW32Noh15t4gpM+9Fvfi+CdHaLD7BOIFaQ+qeXaolbxPunN9v
- vJnxZ0NkZp7zHooePsdjWnH3Mpr95xJV3fYqJYicbZYJgdSQ4bvbAUxSfDBAB8K5fc01
- M9FDtFXYZMkqB4segXSAp1f4kaUGZaCFk8xpSOGyCOAch7KF5ya7XxYFG3zkXDQKbAbv
- 0/IowvscHEdgO4NLtG5Z/Xm3SgtBer5Ur3gvXNYlaZvsJBZeJQlMl7aK5G0V/pOGOKDg uA== 
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kkws2rmrt-1
+ content-type : content-transfer-encoding; s=pp1;
+ bh=9jmewiu0dtifcz0k0DUgXZBwtuUKObO9/M9DmPORY/g=;
+ b=KxIlzI5NdboT7DEFf/iD/dFbGbxGU3C+HxD/HJ+syKvKl+l9a9Xr0pCERElrLlyevw73
+ IjNvuwwkBAWezlWqnzosbfUaW8d9P1cEKYkaswxbWjlVGXQ1KMzUMt7y/hxZ1JkBED16
+ GpN2ZySzPDNut8GKUdzXLCS1aDGsq5ppPN9mExfxPPQDjIKLp10sXRXiYJotYkVNBBLq
+ gMcnBCJUxt+mgFLF5GPVRDxK8MLtDL1WFvj7Kc3DuPOXQD6jB2vSXh/L57AzjhEpmFcm
+ z+cfqL1QJL70RuM3T+KdwvXVxbI2NFO0Dn3EdSAyi5YQ7jGo9ADyS2GMOkIEykIIKnc8 Gg== 
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kkqxwyws0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-integrity@vger.kernel.org>; Wed, 02 Nov 2022 18:45:44 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A2IanRL031916
+        for <linux-integrity@vger.kernel.org>; Wed, 2 Nov 2022 18:45:44 GMT
+Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
+        by ppma04dal.us.ibm.com with ESMTP id 3kgutabfbm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-integrity@vger.kernel.org>; Wed, 02 Nov 2022 18:45:43 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A2Ia9eF017774
-        for <linux-integrity@vger.kernel.org>; Wed, 2 Nov 2022 18:45:42 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma04wdc.us.ibm.com with ESMTP id 3kguta4fp8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Wed, 02 Nov 2022 18:45:42 +0000
 Received: from smtpav06.dal12v.mail.ibm.com ([9.208.128.130])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A2IjdVt25166166
+        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A2Ijgv252756830
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 2 Nov 2022 18:45:39 GMT
+        Wed, 2 Nov 2022 18:45:42 GMT
 Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 176425805E;
+        by IMSVA (Postfix) with ESMTP id 4797C58043;
+        Wed,  2 Nov 2022 18:45:42 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF31A5805F;
         Wed,  2 Nov 2022 18:45:41 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C85F758055;
-        Wed,  2 Nov 2022 18:45:40 +0000 (GMT)
 Received: from sbct-2.pok.ibm.com (unknown [9.47.158.152])
         by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  2 Nov 2022 18:45:40 +0000 (GMT)
+        Wed,  2 Nov 2022 18:45:41 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v1 1/4] Fix memory leaks of tpm_bank_info allocations
-Date:   Wed,  2 Nov 2022 14:45:31 -0400
-Message-Id: <20221102184534.1075049-2-stefanb@linux.ibm.com>
+Subject: [PATCH ima-evm-utils v1 4/4] Change condition to free(pub)
+Date:   Wed,  2 Nov 2022 14:45:34 -0400
+Message-Id: <20221102184534.1075049-5-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221102184534.1075049-1-stefanb@linux.ibm.com>
 References: <20221102184534.1075049-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4GMhUPRwLM2MFjMW_jTAh-CuTrBUeS4q
-X-Proofpoint-GUID: 4GMhUPRwLM2MFjMW_jTAh-CuTrBUeS4q
+X-Proofpoint-ORIG-GUID: vi4cmhYfetFfmdcSmn49A6S5ts4MNnnV
+X-Proofpoint-GUID: vi4cmhYfetFfmdcSmn49A6S5ts4MNnnV
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-02_14,2022-11-02_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 adultscore=0 bulkscore=0 spamscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211020120
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
+ definitions=main-2211020120
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+Change the condition under which pub is freed to make it clearer for the
+reader and analyzer.
+
+This change gets rid of the following gcc -fanalyzer warning:
+
+evmctl.c:1140:12: warning: leak of ‘pub’ [CWE-401] [-Wanalyzer-malloc-leak]
+ 1140 |         if (imaevm_params.x509)
+      |            ^
+
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- src/evmctl.c | 37 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 5 deletions(-)
+ src/evmctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index 349215e..c2fe152 100644
+index 4f55fb6..59a56c8 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -1711,8 +1711,10 @@ static struct tpm_bank_info *init_tpm_banks(int *num_banks)
- 	int i, j;
- 
- 	banks = calloc(num_algos, sizeof(struct tpm_bank_info));
--	if (!banks)
--		return banks;
-+	if (!banks) {
-+		log_err("Out of memory\n");
-+		return NULL;
-+	}
- 
- 	/* re-calculate the PCRs digests for only known algorithms */
- 	*num_banks = num_algos;
-@@ -2083,8 +2085,8 @@ static int read_tpm_banks(int num_banks, struct tpm_bank_info *bank)
- static int ima_measurement(const char *file)
- {
- 	struct tpm_bank_info *pseudo_padded_banks;
--	struct tpm_bank_info *pseudo_banks;
--	struct tpm_bank_info *tpm_banks;
-+	struct tpm_bank_info *pseudo_banks = NULL;
-+	struct tpm_bank_info *tpm_banks = NULL;
- 	int is_ima_template, cur_template_fmt;
- 	int num_banks = 0;
- 	int tpmbanks = 1;
-@@ -2102,13 +2104,21 @@ static int ima_measurement(const char *file)
- 	memset(zero, 0, MAX_DIGEST_SIZE);
- 
- 	pseudo_padded_banks = init_tpm_banks(&num_banks);
-+	if (!pseudo_padded_banks)
-+		return -1;
-+
- 	pseudo_banks = init_tpm_banks(&num_banks);
-+	if (!pseudo_banks)
-+		goto out_free;
-+
- 	tpm_banks = init_tpm_banks(&num_banks);
-+	if (!tpm_banks)
-+		goto out_free;
- 
- 	fp = fopen(file, "rb");
- 	if (!fp) {
- 		log_err("Failed to open measurement file: %s\n", file);
--		return -1;
-+		goto out;
+@@ -1137,7 +1137,7 @@ static int cmd_import(struct command *cmd)
+ 		log_info("keyid: %d\n", id);
+ 		printf("%d\n", id);
  	}
- 
- 	if (imaevm_params.keyfile)	/* Support multiple public keys */
-@@ -2311,6 +2321,11 @@ static int ima_measurement(const char *file)
- 
- out:
- 	fclose(fp);
-+out_free:
-+	free(tpm_banks);
-+	free(pseudo_banks);
-+	free(pseudo_padded_banks);
-+
+-	if (imaevm_params.x509)
++	if (pub != _pub)
+ 		free(pub);
  	return err;
  }
- 
-@@ -2556,6 +2571,8 @@ static int cmd_ima_bootaggr(struct command *cmd)
- 	 */
- 	if (file) {
- 		tpm_banks = init_tpm_banks(&num_banks);
-+		if (!tpm_banks)
-+			return -1;
- 
- 		/* TPM 1.2 only supports SHA1.*/
- 		for (i = 1; i < num_banks; i++)
-@@ -2565,12 +2582,19 @@ static int cmd_ima_bootaggr(struct command *cmd)
- 		if (err) {
- 			log_err("Failed reading the TPM 1.2 event log (%s)\n",
- 				file);
-+			free(tpm_banks);
-+
- 			return -1;
- 		}
- 	} else {
- 		tpm_banks = init_tpm_banks(&num_banks);
-+		if (!tpm_banks)
-+			return -1;
-+
- 		if (read_tpm_banks(num_banks, tpm_banks) != 0) {
- 			log_info("Failed to read any TPM PCRs\n");
-+			free(tpm_banks);
-+
- 			return -1;
- 		}
- 	}
-@@ -2604,7 +2628,10 @@ static int cmd_ima_bootaggr(struct command *cmd)
- 	}
- 	bootaggr[bootaggr_len] = '\0';
- 	printf("%s", bootaggr);
-+
- 	free(bootaggr);
-+	free(tpm_banks);
-+
- 	return 0;
- }
- 
 -- 
 2.38.1
 
