@@ -2,125 +2,106 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F68C4332F
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Nov 2022 14:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8741FC43217
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Nov 2022 14:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbiKCOc5 (ORCPT
+        id S231576AbiKCO4C (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Nov 2022 10:32:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53872 "EHLO
+        Thu, 3 Nov 2022 10:56:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbiKCOc4 (ORCPT
+        with ESMTP id S231915AbiKCOzr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Nov 2022 10:32:56 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C904178B7
-        for <linux-integrity@vger.kernel.org>; Thu,  3 Nov 2022 07:32:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1EA8021C7A;
-        Thu,  3 Nov 2022 14:32:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1667485971;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fEKvxK4h0LbkgHCW7eTG4Re1NecvnHtIX+afxLL3tWM=;
-        b=cG+bJk/sROMpfOaypVyvprPBQZ6SAWkR5USJSXjNxvFRhh7XLdQC+4B+84a9joItu4uShV
-        XDMd7bvZ1PqPmAcSHvnzANjW7/fMzFdR77tTy6axMEi+k6yH7/D5lA8XEUtRBbcn9klnKT
-        yObNqMgrNSYTJSYbUUtBJUEikwzPX2g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1667485971;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fEKvxK4h0LbkgHCW7eTG4Re1NecvnHtIX+afxLL3tWM=;
-        b=vP+voFWSZI3wv7/rvNie5RpZQIBIUdrUMqNcSxZNkWZgNpWsX+3KzRD4SQC+ltAJrmwO4e
-        HWsU5bLCY5MrbqCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DE23413AAF;
-        Thu,  3 Nov 2022 14:32:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 3cZvNBLRY2OWAQAAMHmgww
-        (envelope-from <pvorel@suse.cz>); Thu, 03 Nov 2022 14:32:50 +0000
-Date:   Thu, 3 Nov 2022 15:32:48 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, Vitaly Chikunov <vt@altlinux.org>
-Subject: Re: [PATCH ima-evm-utils v4 01/17] Revert "Reset 'errno' after
- failure to open or access a file"
-Message-ID: <Y2PREKTdNQhwhPEK@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20221101201803.372652-1-zohar@linux.ibm.com>
- <20221101201803.372652-2-zohar@linux.ibm.com>
- <0a70ffe5-a35a-f8fa-dfa8-be3bf2e5e29f@linux.ibm.com>
- <145f4c70ec894c4980d9455485cdac4673e01d04.camel@linux.ibm.com>
- <52e19952-a1c3-722e-2267-a625e16c37a2@linux.ibm.com>
- <4db89eab7d21124aa7945ccf4fd150c3ee4d259c.camel@linux.ibm.com>
+        Thu, 3 Nov 2022 10:55:47 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 149A11A201
+        for <linux-integrity@vger.kernel.org>; Thu,  3 Nov 2022 07:55:27 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id p8so3222288lfu.11
+        for <linux-integrity@vger.kernel.org>; Thu, 03 Nov 2022 07:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf.com; s=google;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SEOfG8FISec8dD0CD8AC77q2u56LHquBLj1RJNx5Usc=;
+        b=p6+vbSXy9L4H3XzkDCfcuzje1tN6xEUcMCkzn0XRDrsn73geORp/F3ccOZ9PvPyPiQ
+         Sv1BwBP8RxGDGA4+iFppn9mUb6C3EV4Kl5S7LQ5vxYRiIeQFUsQjFyK0sQbYrzbV3oKk
+         RS07WEhJAISN+0b12N+1KRc04N4DinEzOjF4VkqeGStRIWxpCs2LhF3jqLF7BfnzOc46
+         pD9yurIKvrm9AMJPx3NEl862Sjb9LdeBsA2wVaFMZEMZmabk8aC08UOQyW9g/bRZ+oQr
+         CnRHD27fn/p+6Bm4S/uEhFIPXNAbCvHMrSoxitX9dK5JBvAKliAcAs7XjxJRJNtt9Qnc
+         C54g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SEOfG8FISec8dD0CD8AC77q2u56LHquBLj1RJNx5Usc=;
+        b=fjf0w5tTd/KePFMZ+LGEj1kVv7Ar32BhslM+04pB7sKA6VvabfPVqEcPUSvYXegKql
+         H8WHNFe5iV5IsbSpCs1phWJid3S/W/pfvlESXuYH5WaTChGmEdUQafEhCJ1iG2p3G58K
+         4AElJAMQRI1zGih++Mhn5pNiY6N+hII5caCakp3pDcrwpvMNM1HZ61PSNrAZMozxGWCp
+         ybf3anhfcCJessqaLSPLeM4NaWIgAL1+KQL3krXGtJDXY3YVXZ2YI35FmKTPKAM3oczs
+         8F7C4bbfuV1t+msC+j8rmk5OE0ZMnbjsI28xeuoqPB0foJ3FfRlO09lgD6CtIdo/h2NL
+         N6Eg==
+X-Gm-Message-State: ACrzQf3ERTcjnLiUEgRdV93tMxZQ+TE/hEUx8Lr/uBg1gQf5TByFQW7e
+        vuFBL9Tdv4J4tSFLKlwF+aWLBww0fGyr0KgI
+X-Google-Smtp-Source: AMsMyM7MScLKgj/jkNTw/zOcvOUCyvdRl2SVgGTsac92sKcCBCyoEyJ6Gho5fdOXAFm04o46R0l0Sw==
+X-Received: by 2002:ac2:5204:0:b0:4b0:678:20d7 with SMTP id a4-20020ac25204000000b004b0067820d7mr12166417lfl.675.1667487325167;
+        Thu, 03 Nov 2022 07:55:25 -0700 (PDT)
+Received: from dabros-l.wifi.semihalf.net ([83.142.187.86])
+        by smtp.gmail.com with ESMTPSA id x4-20020a056512078400b0049c29389b98sm154878lfr.151.2022.11.03.07.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 07:55:24 -0700 (PDT)
+From:   Jan Dabros <jsd@semihalf.com>
+To:     linux-integrity@vger.kernel.org, jarkko@kernel.org,
+        peterhuewe@gmx.de, jgg@ziepe.ca, gregkh@linuxfoundation.org,
+        arnd@arndb.de
+Cc:     rrangel@chromium.org, timvp@google.com, apronin@google.com,
+        mw@semihalf.com, upstream@semihalf.com, jsd@semihalf.com
+Subject: [PATCH v2 1/3] char: tpm: Protect tpm_pm_suspend with locks
+Date:   Thu,  3 Nov 2022 15:54:48 +0100
+Message-Id: <20221103145450.1409273-2-jsd@semihalf.com>
+X-Mailer: git-send-email 2.38.1.273.g43a17bfeac-goog
+In-Reply-To: <20221103145450.1409273-1-jsd@semihalf.com>
+References: <20221103145450.1409273-1-jsd@semihalf.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4db89eab7d21124aa7945ccf4fd150c3ee4d259c.camel@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Tue, 2022-11-01 at 20:25 -0400, Stefan Berger wrote:
+Currently tpm transactions are executed unconditionally in
+tpm_pm_suspend() function, what may lead to races with other tpm
+accessors in the system.
 
-> > On 11/1/22 19:04, Mimi Zohar wrote:
-> > > Hi Stefan,
+Add proper locking mechanisms by calling tpm_try_get_ops() which is a
+wrapper on tpm_chip_start().
 
-> > > On Tue, 2022-11-01 at 17:46 -0400, Stefan Berger wrote:
+Signed-off-by: Jan Dabros <jsd@semihalf.com>
+---
+ drivers/char/tpm/tpm-interface.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> > >> On 11/1/22 16:17, Mimi Zohar wrote:
-> > >>> This reverts commit acb19d1894a4a95471b8d2346cd6c3ecf3385110.
-
-> > >> $ git show acb19d1
-> > >> fatal: ambiguous argument 'acb19d1': unknown revision or path not in the working tree.
-
-> > >> Are you reverting this from a public tree? or could you just drop this patch from your series?
-
-> > >> Also after removing this patch from the mbox file I cannot apply these patches to my sourceforge checkout -- presumably next-testing branch:
-
-> > >> $ git am ./v4_20221101_zohar_address_deprecated_warnings.mbx
-> > >> Applying: log and reset 'errno' after failure to open non-critical files
-> > >> Applying: Log and reset 'errno' on lsetxattr failure
-> > >> Applying: travis: update dist=focal
-> > >> Applying: Update configure.ac to address a couple of obsolete warnings
-> > >> Applying: Deprecate IMA signature version 1
-> > >> error: patch failed: src/libimaevm.c:684
-> > >> error: src/libimaevm.c: patch does not apply
-> > >> Patch failed at 0005 Deprecate IMA signature version 1
-> > >> hint: Use 'git am --show-current-patch=diff' to see the failed patch
-> > >> When you have resolved this problem, run "git am --continue".
-> > >> If you prefer to skip this patch, run "git am --skip" instead.
-> > >> To restore the original branch and stop patching, run "git am --abort".
-
-> > > Sorry, I should have used "--base=auto" when generating the patch set.
-> > > Yes, the patch set is based on the github next-testing branch.
-
-
-> > Is the github repo now the main repo and sourceforge repo is dead?
-
-> The "next" branch in both repo's are the same.  Before posting patches,
-> I verify that github Actions works.   As a result, the next-testing
-> branch on github is rebased frequently.  Once a patch set is ready, the
-> "next" branch in both repo's is updated.
-
-> To answer your question the github repo is primary.
-Maybe deleting everything in sourceforge and ad put single file with link to
-github.com would save you work (having master, next and next-testing branches
-with this file).
-
-Kind regards,
-Petr
-
-> Mimi
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1621ce8187052..d69905233aff2 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -401,13 +401,14 @@ int tpm_pm_suspend(struct device *dev)
+ 	    !pm_suspend_via_firmware())
+ 		goto suspended;
+ 
+-	if (!tpm_chip_start(chip)) {
++	rc = tpm_try_get_ops(chip);
++	if (!rc) {
+ 		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 			tpm2_shutdown(chip, TPM2_SU_STATE);
+ 		else
+ 			rc = tpm1_pm_suspend(chip, tpm_suspend_pcr);
+ 
+-		tpm_chip_stop(chip);
++		tpm_put_ops(chip);
+ 	}
+ 
+ suspended:
+-- 
+2.38.1.273.g43a17bfeac-goog
 
