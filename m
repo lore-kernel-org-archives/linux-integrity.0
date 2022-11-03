@@ -2,109 +2,143 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F8FC4332F
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Nov 2022 18:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7122C43219
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Nov 2022 18:39:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230295AbiKCSjd (ORCPT
+        id S230244AbiKCSjb (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:39:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbiKCSjb (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
         Thu, 3 Nov 2022 14:39:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36948 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230295AbiKCSj2 (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Thu, 3 Nov 2022 14:39:28 -0400
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63E12BC1D
-        for <linux-integrity@vger.kernel.org>; Thu,  3 Nov 2022 11:39:31 -0700 (PDT)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A3ITSCu039326
-        for <linux-integrity@vger.kernel.org>; Thu, 3 Nov 2022 18:39:31 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6292638
+        for <linux-integrity@vger.kernel.org>; Thu,  3 Nov 2022 11:39:28 -0700 (PDT)
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A3HObpq029608;
+        Thu, 3 Nov 2022 18:39:23 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=vHgHfYGhrhSEt983xhDwAtQ7MvtOABjyvXFIU73aVjw=;
- b=tphcmQ/paifIdWvk3e4gxx2XbIzxWfb156ub+cTNyjffYfsySOVtgIim9yQBQvHs6MQ9
- /XPg5XzJwaPIg2Au01xIRqFjtkEb2ZjMxB56XLJ0o1MO8AZCT6j9n3hHkwDGjrBfS1Zo
- Px7kcAz/c2gNotN2jEEYwEH60dRS2ch0TKPULSo54TebvCAlk29MCNlLN5grX9d9HSa4
- 4MZdu0oV6j4nipGEPwILDq2NioiLWVaO8XO7STUhjMYD3T8Ypz/ZYYX/pTuNTBIhJHJH
- ybeqRvgKcrS3mRuCnVhuI2nHcxXanTjVvm7+McLTOpoXMdPAsFucAPZ7AGxUWErEgL4E pA== 
+ bh=bniy1ulIUzo3NXXzZuvQMD4AY5vSfcSUm9l7WXv7ZwA=;
+ b=ZOOIREhB7PXzd73kPWTAVc8BE2Zel0r5tXvwIi3GRAu40Ca3yiefvjih/gaymof6KRZy
+ Nr9imbgbGti+5lSi+LiSZfL97KTZlHTniTj4/SE0cHilIHtkcHf7LoID9FLEVTlk4GB1
+ U8nTSIwQy9sEVRSfCOaHPctVONV8aCdEmoDiCNwjwnM+H0W5onGzNYjVw62wZIRA6V5e
+ k2gXI1g0gIYtNA75FSv6BW+CTAZXeV4bdC/L9i+k3qmi+4tKKYQR6uVACqdUgfvhJke2
+ aGHZsVC0e+xJY7LbOSo4UcBFv+oKooGCEwoHtPssU/aLq8ru6s9R/AiZd8Tqrf2n1hhn 8A== 
 Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kme16ctpg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 03 Nov 2022 18:39:30 +0000
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kme7ykxn3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Nov 2022 18:39:23 +0000
 Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A3IZfAE024831
-        for <linux-integrity@vger.kernel.org>; Thu, 3 Nov 2022 18:39:28 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma04fra.de.ibm.com with ESMTP id 3kgut8xw30-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Thu, 03 Nov 2022 18:39:28 +0000
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A3Ia7m4025079;
+        Thu, 3 Nov 2022 18:39:20 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma04fra.de.ibm.com with ESMTP id 3kgut8xw2t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 03 Nov 2022 18:39:20 +0000
 Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A3Ie2n347841746
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-integrity@vger.kernel.org>; Thu, 3 Nov 2022 18:40:02 GMT
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A3IdHXr5374504
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 3 Nov 2022 18:39:17 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E77B142041;
-        Thu,  3 Nov 2022 18:39:25 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 46D0742042;
+        Thu,  3 Nov 2022 18:39:17 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D0F114203F;
-        Thu,  3 Nov 2022 18:39:24 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 86C4942041;
+        Thu,  3 Nov 2022 18:39:16 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.160.20.100])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  3 Nov 2022 18:39:24 +0000 (GMT)
+        Thu,  3 Nov 2022 18:39:16 +0000 (GMT)
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.ibm.com>, Petr Vorel <pvorel@suse.cz>,
         Vitaly Chikunov <vt@altlinux.org>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v5 13/17] Missing template data size lower bounds checking
-Date:   Thu,  3 Nov 2022 14:39:00 -0400
-Message-Id: <20221103183904.103562-14-zohar@linux.ibm.com>
+Subject: [PATCH ima-evm-utils v5 05/17] Update configure.ac to address a couple of obsolete warnings
+Date:   Thu,  3 Nov 2022 14:38:52 -0400
+Message-Id: <20221103183904.103562-6-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20221103183904.103562-1-zohar@linux.ibm.com>
 References: <20221103183904.103562-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: hSZm1A8WEVRLzMCPJlMJo5Q8wQFhx3-C
-X-Proofpoint-ORIG-GUID: hSZm1A8WEVRLzMCPJlMJo5Q8wQFhx3-C
+X-Proofpoint-GUID: L5eVPKMzEd7zSqy8HRHm1zcyheufxMwD
+X-Proofpoint-ORIG-GUID: L5eVPKMzEd7zSqy8HRHm1zcyheufxMwD
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-03_04,2022-11-03_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 phishscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211030125
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 malwarescore=0 mlxscore=0 suspectscore=0 adultscore=0
+ spamscore=0 impostorscore=0 phishscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211030125
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Each record in the IMA measurement list must contain some template data.
-Ensure the template data is not zero length.
+Remove AC_PROG_LIBTOOL and AC_HEAD_STDC. Replace AC_HELP_STRING with
+AS_HELP_STRING.
 
 Reviewed-by: Petr Vorel <pvorel@suse.cz>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ acinclude.m4              | 2 +-
+ configure.ac              | 4 ----
+ m4/manpage-docbook-xsl.m4 | 2 +-
+ 3 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 17472bf621f6..65e27e1681e7 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -2188,6 +2188,10 @@ static int ima_measurement(const char *file)
- 				log_err("Unable to read template length\n");
- 				goto out;
- 			}
-+			if (entry.template_len == 0) {
-+				log_err("Invalid template data len\n");
-+				goto out;
-+			}
- 		} else {
- 			entry.template_len = SHA_DIGEST_LENGTH +
- 					     TCG_EVENT_NAME_LEN_MAX + 1;
+diff --git a/acinclude.m4 b/acinclude.m4
+index dd430d4f0565..bb962f81a9c0 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -2,7 +2,7 @@
+ AC_DEFUN([PKG_ARG_ENABLE],
+ 	[
+ 	AC_MSG_CHECKING(whether to enable $1)
+-	AC_ARG_ENABLE([$1], AC_HELP_STRING([--enable-$1], [enable $1 (default is $2)]), 
++	AC_ARG_ENABLE([$1], AS_HELP_STRING([--enable-$1], [enable $1 (default is $2)]),
+ 	[pkg_cv_enable_$1=$enableval],	
+ 	[AC_CACHE_VAL([pkg_cv_enable_$1], [pkg_cv_enable_$1=$2])])
+ 	if test $pkg_cv_enable_$1 = yes; then
+diff --git a/configure.ac b/configure.ac
+index 1a0f093df562..9d3b23ff8def 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -15,16 +15,12 @@ AM_PROG_CC_C_O
+ #AC_PROG_CXX
+ #AC_PROG_CPP
+ AC_PROG_INSTALL
+-AC_PROG_LIBTOOL
+ #AC_PROG_LN_S
+ LT_INIT
+ 
+ # FIXME: Replace `main' with a function in `-lpthread':
+ #AC_CHECK_LIB([pthread], [main])
+ 
+-# Checks for header files.
+-AC_HEADER_STDC
+-
+ PKG_CHECK_MODULES(LIBCRYPTO, [libcrypto >= 0.9.8 ])
+ AC_SUBST(KERNEL_HEADERS)
+ AC_CHECK_HEADER(unistd.h)
+diff --git a/m4/manpage-docbook-xsl.m4 b/m4/manpage-docbook-xsl.m4
+index 25c8ce54b068..f2ee912ed1be 100644
+--- a/m4/manpage-docbook-xsl.m4
++++ b/m4/manpage-docbook-xsl.m4
+@@ -7,7 +7,7 @@ AC_DEFUN([EVMCTL_MANPAGE_DOCBOOK_XSL], [
+ 
+ 	AC_PATH_PROGS(XMLCATALOG, xmlcatalog)
+ 	AC_ARG_WITH([xml-catalog],
+-		AC_HELP_STRING([--with-xml-catalog=CATALOG],
++		AS_HELP_STRING([--with-xml-catalog=CATALOG],
+ 				[path to xml catalog to use]),,
+ 				[with_xml_catalog=/etc/xml/catalog])
+ 	XML_CATALOG_FILE="$with_xml_catalog"
 -- 
 2.31.1
 
