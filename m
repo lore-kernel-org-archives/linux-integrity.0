@@ -2,52 +2,52 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7F8C43219
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Nov 2022 18:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3E3C4321E
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Nov 2022 18:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231543AbiKCSEz (ORCPT
+        id S230099AbiKCSE5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Nov 2022 14:04:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37102 "EHLO
+        Thu, 3 Nov 2022 14:04:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiKCSEI (ORCPT
+        with ESMTP id S230522AbiKCSEM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Nov 2022 14:04:08 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A8CF23BDA
-        for <linux-integrity@vger.kernel.org>; Thu,  3 Nov 2022 11:01:49 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id v17so2681408plo.1
-        for <linux-integrity@vger.kernel.org>; Thu, 03 Nov 2022 11:01:49 -0700 (PDT)
+        Thu, 3 Nov 2022 14:04:12 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EBBF23BFA
+        for <linux-integrity@vger.kernel.org>; Thu,  3 Nov 2022 11:01:53 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id io19so2654109plb.8
+        for <linux-integrity@vger.kernel.org>; Thu, 03 Nov 2022 11:01:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gmRSuvtVdtePdWlhI+qYfa3jkKLy3lL4+DZtMxIoK0I=;
-        b=oCaws+kyFllbssoMBrcVaWuoHdvEerAiSWJdhgX2/4syWfjhj1QKDY3vH01nEt1vCn
-         6+epL9ht0qOEZlWyuffULkcOVrYNaQtUOQrp36inBYo1C6HudOiAwjNrVKMTzQk3Tt92
-         d2ijSkQ/5cW7KlfiSiDR6E4oiBjCKBzhXuCcE=
+        bh=gN9qKMAhYJlqKuIbqJEoz2jqEFif72BoLEhc9K1zc0g=;
+        b=Z/A7qsCsCNMQebxMQUC7jeFHDbsCaxq6l6xjtJLdKNsLMO2wJ1eVH+54fYkt67yJIZ
+         5EeKE7mZJBZeCt+yZ24MTMX5WMFvtd4imlOBNzHP4jhjjMA8t6qbm6NjK49G+9baNTYq
+         Hb/NFEIIMs+34NLi/jQmUCZzQIilo0WZ7iMvQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gmRSuvtVdtePdWlhI+qYfa3jkKLy3lL4+DZtMxIoK0I=;
-        b=WKEZ18c+YrdlNAt4QYn66XNIpBTzfurt7Za93N+JdCxSNVDDiLyX+enMBHMmaanRPs
-         P/Yp2n+QdN6cFTNQEVnr9xO5hIIKH5OnnzUFuJMoRS0efIsamXbWlzYBndFNF+PC4QGK
-         eT/X1TfzTMbYbVIf8DvkfGbQHwQbwRn2tPivpoimnsIxIpUK+COb3czP0uw8Ek2GMwYq
-         It8CqXpcR5cgqwGHlqPQ4olv/BezQ4XG1/Ia0MGS+XcaCjgtdoGOSJSwQBHkUpIinUCN
-         Xjca+drKfMIv601oz4IRFmMERk/pkUOpQtajnvvslw3WKzjr43HnuruXMGeKkKkz0Zoe
-         kgMQ==
-X-Gm-Message-State: ACrzQf2HaM8qQU6PapBYbjxvbNk1L/ln4zn+yOt0buZUopcC64S0gjpk
-        0CVlA5WOdKZE1tWF6TsRtbyRQw==
-X-Google-Smtp-Source: AMsMyM5Pk1O0MR+psJrfWUlI0d5V4npjm5wYkPwm+68nIz1aVymvhFA0VHcpQUBKzObFd3rMSFoLEw==
-X-Received: by 2002:a17:90b:278b:b0:213:c2f2:6ca1 with SMTP id pw11-20020a17090b278b00b00213c2f26ca1mr27478944pjb.103.1667498509274;
-        Thu, 03 Nov 2022 11:01:49 -0700 (PDT)
+        bh=gN9qKMAhYJlqKuIbqJEoz2jqEFif72BoLEhc9K1zc0g=;
+        b=QlTOpuHglUVcbKkpZHJPnjZbmdepq1UxvQvbPdeFR6+eTjBwmpIkZp1OpSEkRp1/cW
+         EWMqfHKBGEcndDui6j3rttbFNeS54sCMZOVoByIxz/k2766OL+9W25Rhmm+wCaV6L2SE
+         69NcT+TVBBiNmnK3WuvIzxL16uUeaiiUJ6y5kVYXdMxG0OA5R0wMQvZA3kh75Dpo8P6N
+         J8zE+r4Nmvg6KuKfVGr1s1okDgMk19XuG6hnjXQULPja0cwzNR0n2LVzC8hZvDWdEGyF
+         NOQ/Jo2mm4DbekrYCBrh7JDksczWlnMmU0bn/KmXqsNH70LbeiseaRuIgYPrWZU0CVu6
+         XxBQ==
+X-Gm-Message-State: ACrzQf3QEgaEAOT8wKsmytAkIZY+EOkkUgMqiP099tP+WRFW6jsMCz6S
+        YxVgORXlsa7piekUM48iEKeqvA==
+X-Google-Smtp-Source: AMsMyM5a8tzGl/cuGVJLwZgHv1F/Lsn8ZnybwoSrB6/BbEzupQ6p0duRG7+uxZmiFVkZrKcswz9S4Q==
+X-Received: by 2002:a17:90b:118a:b0:213:bbbc:8f09 with SMTP id gk10-20020a17090b118a00b00213bbbc8f09mr28269131pjb.64.1667498513109;
+        Thu, 03 Nov 2022 11:01:53 -0700 (PDT)
 Received: from evgreen-glaptop.lan ([98.45.28.95])
-        by smtp.gmail.com with ESMTPSA id t12-20020a1709027fcc00b00177fb862a87sm1000277plb.20.2022.11.03.11.01.47
+        by smtp.gmail.com with ESMTPSA id t12-20020a1709027fcc00b00177fb862a87sm1000277plb.20.2022.11.03.11.01.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 11:01:48 -0700 (PDT)
+        Thu, 03 Nov 2022 11:01:52 -0700 (PDT)
 From:   Evan Green <evgreen@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     corbet@lwn.net, linux-pm@vger.kernel.org, rjw@rjwysocki.net,
@@ -59,16 +59,11 @@ Cc:     corbet@lwn.net, linux-pm@vger.kernel.org, rjw@rjwysocki.net,
         Eric Biggers <ebiggers@kernel.org>,
         Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
         Evan Green <evgreen@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, axelj <axelj@axis.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v4 06/11] security: keys: trusted: Verify creation data
-Date:   Thu,  3 Nov 2022 11:01:14 -0700
-Message-Id: <20221103105558.v4.6.I6cdb522cb5ea28fcd1e35b4cd92cbd067f99269a@changeid>
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH v4 08/11] PM: hibernate: Use TPM-backed keys to encrypt image
+Date:   Thu,  3 Nov 2022 11:01:16 -0700
+Message-Id: <20221103105558.v4.8.Ibd067e73916b9fae268a5824c2dd037416426af8@changeid>
 X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
 In-Reply-To: <20221103180120.752659-1-evgreen@chromium.org>
 References: <20221103180120.752659-1-evgreen@chromium.org>
@@ -78,139 +73,353 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-If a loaded key contains creation data, ask the TPM to verify that
-creation data. This allows users like encrypted hibernate to know that
-the loaded and parsed creation data has not been tampered with.
+When using encrypted hibernate images, have the TPM create a key for us
+and seal it. By handing back a sealed blob instead of the raw key, we
+prevent usermode from being able to decrypt and tamper with the
+hibernate image on a different machine.
 
-Suggested-by: Matthew Garrett <mjg59@google.com>
+We'll also go through the motions of having PCR23 set to a known value at
+the time of key creation and unsealing. Currently there's nothing that
+enforces the contents of PCR23 as a condition to unseal the key blob,
+that will come in a later change.
+
+Sourced-from: Matthew Garrett <mjg59@google.com>
 Signed-off-by: Evan Green <evgreen@chromium.org>
 
 ---
-Source material for this change is at:
+Matthew's incarnation of this patch is at:
 https://patchwork.kernel.org/project/linux-pm/patch/20210220013255.1083202-9-matthewgarrett@google.com/
 
-(no changes since v3)
+Changes in v4:
+ - s/tpm_pcr_reset/tpm2_pcr_reset/ due to change in other patch
+ - Variable ordering and whitespace fixes (Jarkko)
+ - Add NULL check explanation in teardown (Jarkko)
+ - Change strlen+1 to sizeof for static buffer (Jarkko)
+ - Fix nr_allocated_banks loop overflow (found via KASAN)
 
 Changes in v3:
- - Changed funky tag to suggested-by (Kees). Matthew, holler if you want
-   something different.
+ - ENCRYPTED_HIBERNATION needs TRUSTED_KEYS builtin for
+   key_type_trusted.
+ - Remove KEYS dependency since it's covered by TRUSTED_KEYS (Kees)
 
 Changes in v2:
- - Adjust hash len by 2 due to new ASN.1 storage, and add underflow
-   check.
+ - Rework load/create_kernel_key() to eliminate a label (Andrey)
+ - Call put_device() needed from calling tpm_default_chip().
 
- include/linux/tpm.h                       |  1 +
- security/keys/trusted-keys/trusted_tpm2.c | 77 ++++++++++++++++++++++-
- 2 files changed, 77 insertions(+), 1 deletion(-)
+ kernel/power/Kconfig   |   1 +
+ kernel/power/snapenc.c | 211 +++++++++++++++++++++++++++++++++++++++--
+ kernel/power/user.h    |   1 +
+ 3 files changed, 204 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 70134e6551745f..9c2ee3e30ffa5d 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -224,6 +224,7 @@ enum tpm2_command_codes {
- 	TPM2_CC_SELF_TEST	        = 0x0143,
- 	TPM2_CC_STARTUP		        = 0x0144,
- 	TPM2_CC_SHUTDOWN	        = 0x0145,
-+	TPM2_CC_CERTIFYCREATION	        = 0x014A,
- 	TPM2_CC_NV_READ                 = 0x014E,
- 	TPM2_CC_CREATE		        = 0x0153,
- 	TPM2_CC_LOAD		        = 0x0157,
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index a7ad83bc0e5396..c76a1b5a2e8471 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -703,6 +703,74 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+index cd574af0b43379..2f8acbd87b34dc 100644
+--- a/kernel/power/Kconfig
++++ b/kernel/power/Kconfig
+@@ -96,6 +96,7 @@ config ENCRYPTED_HIBERNATION
+ 	bool "Encryption support for userspace snapshots"
+ 	depends on HIBERNATION_SNAPSHOT_DEV
+ 	depends on CRYPTO_AEAD2=y
++	depends on TRUSTED_KEYS=y
+ 	default n
+ 	help
+ 	  Enable support for kernel-based encryption of hibernation snapshots
+diff --git a/kernel/power/snapenc.c b/kernel/power/snapenc.c
+index f215df16dad4d3..7ff4fc66f7500c 100644
+--- a/kernel/power/snapenc.c
++++ b/kernel/power/snapenc.c
+@@ -4,13 +4,23 @@
+ #include <linux/crypto.h>
+ #include <crypto/aead.h>
+ #include <crypto/gcm.h>
++#include <keys/trusted-type.h>
++#include <linux/key-type.h>
+ #include <linux/random.h>
+ #include <linux/mm.h>
++#include <linux/tpm.h>
+ #include <linux/uaccess.h>
+ 
+ #include "power.h"
+ #include "user.h"
+ 
++/* sha256("To sleep, perchance to dream") */
++static struct tpm_digest known_digest = { .alg_id = TPM_ALG_SHA256,
++	.digest = {0x92, 0x78, 0x3d, 0x79, 0x2d, 0x00, 0x31, 0xb0, 0x55, 0xf9,
++		   0x1e, 0x0d, 0xce, 0x83, 0xde, 0x1d, 0xc4, 0xc5, 0x8e, 0x8c,
++		   0xf1, 0x22, 0x38, 0x6c, 0x33, 0xb1, 0x14, 0xb7, 0xec, 0x05,
++		   0x5f, 0x49}};
++
+ /* Encrypt more data from the snapshot into the staging area. */
+ static int snapshot_encrypt_refill(struct snapshot_data *data)
+ {
+@@ -314,6 +324,16 @@ void snapshot_teardown_encryption(struct snapshot_data *data)
+ {
+ 	int i;
+ 
++	/*
++	 * Do NULL checks so this function can safely be called from error paths
++	 * and other places where this context may not be fully set up.
++	 */
++	if (data->key) {
++		key_revoke(data->key);
++		key_put(data->key);
++		data->key = NULL;
++	}
++
+ 	if (data->aead_req) {
+ 		aead_request_free(data->aead_req);
+ 		data->aead_req = NULL;
+@@ -382,10 +402,82 @@ static int snapshot_setup_encryption_common(struct snapshot_data *data)
  	return rc;
  }
  
-+/**
-+ * tpm2_certify_creation() - execute a TPM2_CertifyCreation command
-+ *
-+ * @chip: TPM chip to use
-+ * @payload: the key data in clear and encrypted form
-+ * @blob_handle: the loaded TPM handle of the key
-+ *
-+ * Return: 0 on success
-+ *         -EINVAL on tpm error status
-+ *         < 0 error from tpm_send or tpm_buf_init
-+ */
-+static int tpm2_certify_creation(struct tpm_chip *chip,
-+				 struct trusted_key_payload *payload,
-+				 u32 blob_handle)
++static int snapshot_create_kernel_key(struct snapshot_data *data)
 +{
-+	struct tpm_header *head;
-+	struct tpm_buf buf;
-+	int rc;
++	/* Create a key sealed by the SRK. */
++	char *keyinfo = "new\t32\tkeyhandle=0x81000000";
++	const struct cred *cred = current_cred();
++	struct tpm_digest *digests = NULL;
++	struct key *key = NULL;
++	struct tpm_chip *chip;
++	int ret, i;
 +
-+	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_CERTIFYCREATION);
-+	if (rc)
-+		return rc;
++	chip = tpm_default_chip();
++	if (!chip)
++		return -ENODEV;
 +
-+	/* Use TPM_RH_NULL for signHandle */
-+	tpm_buf_append_u32(&buf, 0x40000007);
++	if (!(tpm_is_tpm2(chip))) {
++		ret = -ENODEV;
++		goto out_dev;
++	}
 +
-+	/* Object handle */
-+	tpm_buf_append_u32(&buf, blob_handle);
++	ret = tpm2_pcr_reset(chip, 23);
++	if (ret)
++		goto out;
 +
-+	/* Auth */
-+	tpm_buf_append_u32(&buf, 9);
-+	tpm_buf_append_u32(&buf, TPM2_RS_PW);
-+	tpm_buf_append_u16(&buf, 0);
-+	tpm_buf_append_u8(&buf, 0);
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Qualifying data */
-+	tpm_buf_append_u16(&buf, 0);
-+
-+	/* Creation data hash */
-+	if (payload->creation_hash_len < 2) {
-+		rc = -EINVAL;
++	digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
++			  GFP_KERNEL);
++	if (!digests) {
++		ret = -ENOMEM;
 +		goto out;
 +	}
 +
-+	tpm_buf_append_u16(&buf, payload->creation_hash_len - 2);
-+	tpm_buf_append(&buf, payload->creation_hash + 2,
-+		       payload->creation_hash_len - 2);
++	for (i = 0; i < chip->nr_allocated_banks; i++) {
++		digests[i].alg_id = chip->allocated_banks[i].alg_id;
++		if (digests[i].alg_id == known_digest.alg_id)
++			memcpy(&digests[i], &known_digest, sizeof(known_digest));
++	}
 +
-+	/* signature scheme */
-+	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
-+
-+	/* creation ticket */
-+	tpm_buf_append(&buf, payload->tk, payload->tk_len);
-+
-+	rc = tpm_transmit_cmd(chip, &buf, 6, "certifying creation data");
-+	if (rc)
++	ret = tpm_pcr_extend(chip, 23, digests);
++	if (ret != 0)
 +		goto out;
 +
-+	head = (struct tpm_header *)buf.data;
++	key = key_alloc(&key_type_trusted, "swsusp", GLOBAL_ROOT_UID,
++			GLOBAL_ROOT_GID, cred, 0, KEY_ALLOC_NOT_IN_QUOTA,
++			NULL);
 +
-+	if (be32_to_cpu(head->return_code) != TPM2_RC_SUCCESS)
-+		rc = -EINVAL;
++	if (IS_ERR(key)) {
++		ret = PTR_ERR(key);
++		key = NULL;
++		goto out;
++	}
++
++	ret = key_instantiate_and_link(key, keyinfo, sizeof(keyinfo), NULL,
++				       NULL);
++	if (ret != 0)
++		goto out;
++
++	data->key = key;
++	key = NULL;
++
 +out:
-+	tpm_buf_destroy(&buf);
-+	return rc;
++	if (key) {
++		key_revoke(key);
++		key_put(key);
++	}
++
++	kfree(digests);
++	tpm2_pcr_reset(chip, 23);
++
++out_dev:
++	put_device(&chip->dev);
++	return ret;
 +}
 +
- /**
-  * tpm2_unseal_trusted() - unseal the payload of a trusted key
-  *
-@@ -728,8 +796,15 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
- 		goto out;
+ int snapshot_get_encryption_key(struct snapshot_data *data,
+ 				struct uswsusp_key_blob __user *key)
+ {
+-	u8 aead_key[SNAPSHOT_ENCRYPTION_KEY_SIZE];
++	struct trusted_key_payload *payload;
+ 	u8 nonce[USWSUSP_KEY_NONCE_SIZE];
+ 	int rc;
  
- 	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
--	tpm2_flush_context(chip, blob_handle);
+@@ -401,21 +493,28 @@ int snapshot_get_encryption_key(struct snapshot_data *data,
+ 	get_random_bytes(nonce, sizeof(nonce));
+ 	memcpy(&data->nonce_low, &nonce[0], sizeof(data->nonce_low));
+ 	memcpy(&data->nonce_high, &nonce[8], sizeof(data->nonce_high));
+-	/* Build a random key */
+-	get_random_bytes(aead_key, sizeof(aead_key));
+-	rc = crypto_aead_setkey(data->aead_tfm, aead_key, sizeof(aead_key));
++
++	/* Create a kernel key, and set it. */
++	rc = snapshot_create_kernel_key(data);
 +	if (rc)
-+		goto flush;
++		goto fail;
 +
-+	if (payload->creation_len)
-+		rc = tpm2_certify_creation(chip, payload, blob_handle);
++	payload = data->key->payload.data[0];
++	/* Install the key */
++	rc = crypto_aead_setkey(data->aead_tfm, payload->key, SNAPSHOT_ENCRYPTION_KEY_SIZE);
+ 	if (rc)
+ 		goto fail;
  
+-	/* Hand the key back to user mode (to be changed!) */
+-	rc = put_user(sizeof(struct uswsusp_key_blob), &key->blob_len);
++	/* Hand the key back to user mode in sealed form. */
++	rc = put_user(payload->blob_len, &key->blob_len);
+ 	if (rc)
+ 		goto fail;
+ 
+-	rc = copy_to_user(&key->blob, &aead_key, sizeof(aead_key));
++	rc = copy_to_user(&key->blob, &payload->blob, payload->blob_len);
+ 	if (rc)
+ 		goto fail;
+ 
++	/* The nonce just gets handed back in the clear. */
+ 	rc = copy_to_user(&key->nonce, &nonce, sizeof(nonce));
+ 	if (rc)
+ 		goto fail;
+@@ -427,10 +526,99 @@ int snapshot_get_encryption_key(struct snapshot_data *data,
+ 	return rc;
+ }
+ 
++static int snapshot_load_kernel_key(struct snapshot_data *data,
++				    struct uswsusp_key_blob *blob)
++{
 +
-+flush:
-+	tpm2_flush_context(chip, blob_handle);
- out:
- 	tpm_put_ops(chip);
++	char *keytemplate = "load\t%s\tkeyhandle=0x81000000";
++	const struct cred *cred = current_cred();
++	struct tpm_digest *digests = NULL;
++	char *blobstring = NULL;
++	struct key *key = NULL;
++	struct tpm_chip *chip;
++	char *keyinfo = NULL;
++	int i, ret;
++
++	chip = tpm_default_chip();
++	if (!chip)
++		return -ENODEV;
++
++	if (!(tpm_is_tpm2(chip))) {
++		ret = -ENODEV;
++		goto out_dev;
++	}
++
++	ret = tpm2_pcr_reset(chip, 23);
++	if (ret)
++		goto out;
++
++	digests = kcalloc(chip->nr_allocated_banks, sizeof(struct tpm_digest),
++			  GFP_KERNEL);
++	if (!digests)
++		goto out;
++
++	for (i = 0; i < chip->nr_allocated_banks; i++) {
++		digests[i].alg_id = chip->allocated_banks[i].alg_id;
++		if (digests[i].alg_id == known_digest.alg_id)
++			memcpy(&digests[i], &known_digest, sizeof(known_digest));
++	}
++
++	ret = tpm_pcr_extend(chip, 23, digests);
++	if (ret != 0)
++		goto out;
++
++	blobstring = kmalloc(blob->blob_len * 2, GFP_KERNEL);
++	if (!blobstring) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	bin2hex(blobstring, blob->blob, blob->blob_len);
++	keyinfo = kasprintf(GFP_KERNEL, keytemplate, blobstring);
++	if (!keyinfo) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	key = key_alloc(&key_type_trusted, "swsusp", GLOBAL_ROOT_UID,
++			GLOBAL_ROOT_GID, cred, 0, KEY_ALLOC_NOT_IN_QUOTA,
++			NULL);
++
++	if (IS_ERR(key)) {
++		ret = PTR_ERR(key);
++		key = NULL;
++		goto out;
++	}
++
++	ret = key_instantiate_and_link(key, keyinfo, strlen(keyinfo) + 1, NULL,
++				       NULL);
++	if (ret != 0)
++		goto out;
++
++	data->key = key;
++	key = NULL;
++
++out:
++	if (key) {
++		key_revoke(key);
++		key_put(key);
++	}
++
++	kfree(keyinfo);
++	kfree(blobstring);
++	kfree(digests);
++	tpm2_pcr_reset(chip, 23);
++
++out_dev:
++	put_device(&chip->dev);
++	return ret;
++}
++
+ int snapshot_set_encryption_key(struct snapshot_data *data,
+ 				struct uswsusp_key_blob __user *key)
+ {
+ 	struct uswsusp_key_blob blob;
++	struct trusted_key_payload *payload;
+ 	int rc;
  
+ 	/* It's too late if data's been pushed in. */
+@@ -446,13 +634,18 @@ int snapshot_set_encryption_key(struct snapshot_data *data,
+ 	if (rc)
+ 		goto crypto_setup_fail;
+ 
+-	if (blob.blob_len != sizeof(struct uswsusp_key_blob)) {
++	if (blob.blob_len > sizeof(key->blob)) {
+ 		rc = -EINVAL;
+ 		goto crypto_setup_fail;
+ 	}
+ 
++	rc = snapshot_load_kernel_key(data, &blob);
++	if (rc)
++		goto crypto_setup_fail;
++
++	payload = data->key->payload.data[0];
+ 	rc = crypto_aead_setkey(data->aead_tfm,
+-				blob.blob,
++				payload->key,
+ 				SNAPSHOT_ENCRYPTION_KEY_SIZE);
+ 
+ 	if (rc)
+diff --git a/kernel/power/user.h b/kernel/power/user.h
+index ac429782abff85..6c86fb64ebe13e 100644
+--- a/kernel/power/user.h
++++ b/kernel/power/user.h
+@@ -31,6 +31,7 @@ struct snapshot_data {
+ 	uint64_t crypt_total;
+ 	uint64_t nonce_low;
+ 	uint64_t nonce_high;
++	struct key *key;
+ #endif
+ 
+ };
 -- 
 2.38.1.431.g37b22c650d-goog
 
