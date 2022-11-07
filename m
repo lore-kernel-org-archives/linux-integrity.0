@@ -2,106 +2,371 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB081C433FE
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Nov 2022 08:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8DCC4332F
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Nov 2022 09:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230239AbiKGIpx (ORCPT
+        id S230340AbiKGJUN (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 7 Nov 2022 03:45:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48498 "EHLO
+        Mon, 7 Nov 2022 04:20:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbiKGIpx (ORCPT
+        with ESMTP id S231299AbiKGJUM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 Nov 2022 03:45:53 -0500
-Received: from mail-io1-xd34.google.com (mail-io1-xd34.google.com [IPv6:2607:f8b0:4864:20::d34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F78AC62
-        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 00:45:52 -0800 (PST)
-Received: by mail-io1-xd34.google.com with SMTP id n191so8245266iod.13
-        for <linux-integrity@vger.kernel.org>; Mon, 07 Nov 2022 00:45:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf.com; s=google;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gO7KYbvGE1WDs0bJ/NlL4CWjmtLe+DbWd87Q0QV4CbM=;
-        b=nw8qWU6jx+E56gYX6To9qBar529wr/bv0UyDm4wQ3dAtCX95AMLnU4WuXPj7YE47gV
-         OsWkaAA7D7qcx1+tCM4xRor3YfuGtFh1PPDx2mZt4QeKBo/9VIyjVxM+jV3kscWrdN0F
-         yx7MmIt9PjYMa2/x+etbsEjhoRfh6za/B+mhqB1wh2/ABpxWoFol3/proSZIL9/2heU0
-         HdM+tkSTypefCWZRk5oW10CcUzMC2Dl7mgBlsUPIo909xISiMmMcb4wZoAf/FIGQudIQ
-         qe76sqCNkqjt/rlrBE0gTJGOA4TfnjY3Y/UwzUeLL0AAeuJB4CsfOs+96py8iJNoxE0a
-         jZDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gO7KYbvGE1WDs0bJ/NlL4CWjmtLe+DbWd87Q0QV4CbM=;
-        b=5VFNnhBkZgJw1NltlfFS9q9I32z6aMjQPiH7iYA5yyBXOaLaMVlseiuaglwc/twMcp
-         FnXYlRsEzceB35zN3m+odZaCKk8q5GTr+Zp6My73FsuvmUwCQzEKSY6hMejdRf9LOLbI
-         q1DZ5jxCdvwHrRMgLeh4wTNr7Zg6HQM+miPLH3EqHDLyr+YoOGajX9LM1fF/SN4+AH7Z
-         STQXf7GANih0/eTlbiISfIfAxBSEWjO9RUtsjLASHliWv3N7SKbhcNqe5q0LevJkTFe7
-         ncQepOl/h2neVzsmZhLhRYD1v+VzkdmeI8Hg1qMO4dy/E626ApFw6+0TprQmwA6mpNaB
-         /FNw==
-X-Gm-Message-State: ACrzQf0xjuUybWtRZxdUSiSsL2q7fHKhOZUFhO9/nbPrCRyfKJWeKM4I
-        7D4XAx0qrjAnPWxabeF/p04Rji6iHVRvdSYa36Fj/dK2bY5avA==
-X-Google-Smtp-Source: AMsMyM7Fn+4JPafX/16M/lJK3FFHzo5dS8bAQmz8825aHDJGmhQsm0q41+tL1zVZtwNPrJA91sRD1rAxchw9GqBsR/o=
-X-Received: by 2002:a05:6602:164f:b0:6d4:8783:8019 with SMTP id
- y15-20020a056602164f00b006d487838019mr16400404iow.77.1667810751791; Mon, 07
- Nov 2022 00:45:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20221103145450.1409273-1-jsd@semihalf.com> <20221103145450.1409273-2-jsd@semihalf.com>
- <Y2f/pExGdDBGhNZA@kernel.org>
-In-Reply-To: <Y2f/pExGdDBGhNZA@kernel.org>
-From:   =?UTF-8?B?SmFuIETEhWJyb8Wb?= <jsd@semihalf.com>
-Date:   Mon, 7 Nov 2022 09:45:41 +0100
-Message-ID: <CAOtMz3MRyTVHEmoiR95jUCtEM-JXNMVLzE08HiENPhdpWL2LVA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] char: tpm: Protect tpm_pm_suspend with locks
-To:     Jarkko Sakkinen <jarkko@kernel.org>
+        Mon, 7 Nov 2022 04:20:12 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5709F6567
+        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 01:20:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DCE39B80E83
+        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 09:20:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E5AC433C1;
+        Mon,  7 Nov 2022 09:20:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667812808;
+        bh=m/aWY3KBj5LxYWOiHFiTBawLqkANPvLdY8LW6pttRIM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gH0/JlpLCluK+78ZFe7vphmKmBVIXo/5KLwQ0FAU/LaACeFNJntzB+2mprVZp6q1A
+         QFUF/j/88dvti7MAEW/vf/vGOozW0uNQl1xqMQJ6B0c+TQxNUlfoCbko7lkOw7++Z1
+         EepX+vN2Njl0f+8E6qHWG/FKQglm3571xPJxOukR+0UF4kqqOqpe4FR7/S2zdsivQH
+         5lNLdx94bHx4gwzOrxFxpuPDu1YKi6aQTzw/vxhuCnEu2VhY7al1qWkT12HDOk2M29
+         q0WhpwMScziOu4UG/ePwE3bUInrkinzqk0z3Ha/Xz2sbAfItC2TQCQIojRwWlVisss
+         jW+rrg/rqu09w==
+Date:   Mon, 7 Nov 2022 11:20:03 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jan Dabros <jsd@semihalf.com>
 Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
         gregkh@linuxfoundation.org, arnd@arndb.de, rrangel@chromium.org,
         timvp@google.com, apronin@google.com, mw@semihalf.com,
         upstream@semihalf.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/3] char: tpm: cr50: Use generic request/relinquish
+ locality ops
+Message-ID: <Y2jNw5JymJ+upOaQ@kernel.org>
+References: <20221103145450.1409273-1-jsd@semihalf.com>
+ <20221103145450.1409273-3-jsd@semihalf.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221103145450.1409273-3-jsd@semihalf.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-niedz., 6 lis 2022 o 20:49 Jarkko Sakkinen <jarkko@kernel.org> napisa=C5=82=
-(a):
->
-> On Thu, Nov 03, 2022 at 03:54:48PM +0100, Jan Dabros wrote:
-> > Currently tpm transactions are executed unconditionally in
-> > tpm_pm_suspend() function, what may lead to races with other tpm
-> > accessors in the system.
-> >
-> > Add proper locking mechanisms by calling tpm_try_get_ops() which is a
-> > wrapper on tpm_chip_start().
-> >
-> > Signed-off-by: Jan Dabros <jsd@semihalf.com>
->
-> AFAIK processes are freezed before suspend callbacks are called, and
-> the callbacks are called sequentially. I have no idea what is meant
-> by "TPM accessor" here.
+On Thu, Nov 03, 2022 at 03:54:49PM +0100, Jan Dabros wrote:
+> Instead of using static functions tpm_cr50_request_locality and
+> tpm_cr50_release_locality register callbacks from tpm class chip->ops
+> created for this purpose.
+> 
+> Signed-off-by: Jan Dabros <jsd@semihalf.com>
 
-User space processes are freezed before suspend, but kernel threads
-are not freezable by default. In my particular case it was a hwrng
-thread started from drivers/char/hw_random/core.c - I was referring to
-it as "TPM accessor". For sure I should be more precise in a commit
-msg.
+I get that architecturally using the standard callbacks is a good idea.
+Still, you should explicitly document the gain because the existing code
+is working and field tested.
 
-> Please describe the concurrency scenario in the commit message where the
-> race could happen, if it is hard to reproduce, and add an appropriate fix=
-es
-> tag.
+> ---
+>  drivers/char/tpm/tpm_tis_i2c_cr50.c | 106 ++++++++++++++++++----------
+>  1 file changed, 70 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> index 77cea5b31c6e4..517d8410d7da0 100644
+> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> @@ -17,6 +17,7 @@
+>   */
+>  
+>  #include <linux/acpi.h>
+> +#include <linux/bug.h>
+>  #include <linux/completion.h>
+>  #include <linux/i2c.h>
+>  #include <linux/interrupt.h>
+> @@ -35,6 +36,7 @@
+>  #define TPM_CR50_I2C_MAX_RETRIES	3		/* Max retries due to I2C errors */
+>  #define TPM_CR50_I2C_RETRY_DELAY_LO	55		/* Min usecs between retries on I2C */
+>  #define TPM_CR50_I2C_RETRY_DELAY_HI	65		/* Max usecs between retries on I2C */
+> +#define TPM_CR50_I2C_DEFAULT_LOC	0
+>  
+>  #define TPM_I2C_ACCESS(l)	(0x0000 | ((l) << 4))
+>  #define TPM_I2C_STS(l)		(0x0001 | ((l) << 4))
+> @@ -286,20 +288,21 @@ static int tpm_cr50_i2c_write(struct tpm_chip *chip, u8 addr, u8 *buffer,
+>  }
+>  
+>  /**
+> - * tpm_cr50_check_locality() - Verify TPM locality 0 is active.
+> + * tpm_cr50_check_locality() - Verify if required TPM locality is active.
+>   * @chip: A TPM chip.
+> + * @loc: Locality to be verified
+>   *
+>   * Return:
+>   * - 0:		Success.
+>   * - -errno:	A POSIX error code.
+>   */
+> -static int tpm_cr50_check_locality(struct tpm_chip *chip)
+> +static int tpm_cr50_check_locality(struct tpm_chip *chip, int loc)
+>  {
+>  	u8 mask = TPM_ACCESS_VALID | TPM_ACCESS_ACTIVE_LOCALITY;
+>  	u8 buf;
+>  	int rc;
+>  
+> -	rc = tpm_cr50_i2c_read(chip, TPM_I2C_ACCESS(0), &buf, sizeof(buf));
+> +	rc = tpm_cr50_i2c_read(chip, TPM_I2C_ACCESS(loc), &buf, sizeof(buf));
+>  	if (rc < 0)
+>  		return rc;
+>  
+> @@ -312,48 +315,57 @@ static int tpm_cr50_check_locality(struct tpm_chip *chip)
+>  /**
+>   * tpm_cr50_release_locality() - Release TPM locality.
+>   * @chip:	A TPM chip.
+> - * @force:	Flag to force release if set.
+> + * @loc:	Locality to be released
+> + *
+> + * Return:
+> + * - 0:		Success.
+> + * - -errno:	A POSIX error code.
+>   */
+> -static void tpm_cr50_release_locality(struct tpm_chip *chip, bool force)
+> +static int tpm_cr50_release_locality(struct tpm_chip *chip, int loc)
+>  {
+>  	u8 mask = TPM_ACCESS_VALID | TPM_ACCESS_REQUEST_PENDING;
+> -	u8 addr = TPM_I2C_ACCESS(0);
+> +	u8 addr = TPM_I2C_ACCESS(loc);
+>  	u8 buf;
+> +	int rc;
+>  
+> -	if (tpm_cr50_i2c_read(chip, addr, &buf, sizeof(buf)) < 0)
+> -		return;
+> +	rc = tpm_cr50_i2c_read(chip, addr, &buf, sizeof(buf));
+> +	if (rc < 0)
+> +		return rc;
+>  
+> -	if (force || (buf & mask) == mask) {
+> +	if ((buf & mask) == mask) {
+>  		buf = TPM_ACCESS_ACTIVE_LOCALITY;
+> -		tpm_cr50_i2c_write(chip, addr, &buf, sizeof(buf));
+> +		rc = tpm_cr50_i2c_write(chip, addr, &buf, sizeof(buf));
+>  	}
+> +
+> +	return rc;
+>  }
+>  
+>  /**
+> - * tpm_cr50_request_locality() - Request TPM locality 0.
+> + * tpm_cr50_request_locality() - Request TPM locality.
+>   * @chip: A TPM chip.
+> + * @loc: Locality to be requested.
+>   *
+>   * Return:
+> - * - 0:		Success.
+> + * - loc:	Success.
+>   * - -errno:	A POSIX error code.
+>   */
+> -static int tpm_cr50_request_locality(struct tpm_chip *chip)
+> +static int tpm_cr50_request_locality(struct tpm_chip *chip, int loc)
+>  {
+>  	u8 buf = TPM_ACCESS_REQUEST_USE;
+>  	unsigned long stop;
+>  	int rc;
+>  
+> -	if (!tpm_cr50_check_locality(chip))
+> -		return 0;
+> +	if (!tpm_cr50_check_locality(chip, loc))
+> +		return loc;
+>  
+> -	rc = tpm_cr50_i2c_write(chip, TPM_I2C_ACCESS(0), &buf, sizeof(buf));
+> +	rc = tpm_cr50_i2c_write(chip, TPM_I2C_ACCESS(loc), &buf, sizeof(buf));
+>  	if (rc < 0)
+>  		return rc;
+>  
+>  	stop = jiffies + chip->timeout_a;
+>  	do {
+> -		if (!tpm_cr50_check_locality(chip))
+> -			return 0;
+> +		if (!tpm_cr50_check_locality(chip, loc))
+> +			return loc;
+>  
+>  		msleep(TPM_CR50_TIMEOUT_SHORT_MS);
+>  	} while (time_before(jiffies, stop));
+> @@ -374,7 +386,12 @@ static u8 tpm_cr50_i2c_tis_status(struct tpm_chip *chip)
+>  {
+>  	u8 buf[4];
+>  
+> -	if (tpm_cr50_i2c_read(chip, TPM_I2C_STS(0), buf, sizeof(buf)) < 0)
+> +	if (chip->locality < 0){
+> +		WARN_ONCE(1, "Incorrect tpm locality value\n");
 
-I will describe my scenario in more detail in the next version.
-Regarding the "fixes" tag - I'm not too familiar with it, but looking
-at the kernel submission guide, "fixes" should be used either when
-there was a particular commit in the past which introduced the bug or
-if a patch fixes an already logged bug entry (so that one can paste
-URL). In my case both are not applicable, so please advise what
-exactly I should put after this tag?
+Never ever add WARN() for a success case. It can ultimately crash the whole
+system, if panic_on_warn is enabled.
 
-Best Regards,
-Jan
+Since this is a success case, judging from the return value, at most you
+should use pr_info() here.
+
+> +		return 0;
+> +	}
+> +
+> +	if (tpm_cr50_i2c_read(chip, TPM_I2C_STS(chip->locality), buf, sizeof(buf)) < 0)
+>  		return 0;
+>  
+>  	return buf[0];
+> @@ -390,7 +407,12 @@ static void tpm_cr50_i2c_tis_set_ready(struct tpm_chip *chip)
+>  {
+>  	u8 buf[4] = { TPM_STS_COMMAND_READY };
+>  
+> -	tpm_cr50_i2c_write(chip, TPM_I2C_STS(0), buf, sizeof(buf));
+> +	if (chip->locality < 0) {
+> +		WARN_ONCE(1, "Incorrect tpm locality value\n");
+> +		return;
+> +	}
+> +
+> +	tpm_cr50_i2c_write(chip, TPM_I2C_STS(chip->locality), buf, sizeof(buf));
+>  	msleep(TPM_CR50_TIMEOUT_SHORT_MS);
+>  }
+>  
+> @@ -420,7 +442,7 @@ static int tpm_cr50_i2c_get_burst_and_status(struct tpm_chip *chip, u8 mask,
+>  	stop = jiffies + chip->timeout_b;
+>  
+>  	do {
+> -		if (tpm_cr50_i2c_read(chip, TPM_I2C_STS(0), buf, sizeof(buf)) < 0) {
+> +		if (tpm_cr50_i2c_read(chip, TPM_I2C_STS(chip->locality), buf, sizeof(buf)) < 0) {
+>  			msleep(TPM_CR50_TIMEOUT_SHORT_MS);
+>  			continue;
+>  		}
+> @@ -454,10 +476,15 @@ static int tpm_cr50_i2c_tis_recv(struct tpm_chip *chip, u8 *buf, size_t buf_len)
+>  
+>  	u8 mask = TPM_STS_VALID | TPM_STS_DATA_AVAIL;
+>  	size_t burstcnt, cur, len, expected;
+> -	u8 addr = TPM_I2C_DATA_FIFO(0);
+> +	u8 addr = TPM_I2C_DATA_FIFO(chip->locality);
+>  	u32 status;
+>  	int rc;
+>  
+> +	if (chip->locality < 0) {
+> +		WARN_ONCE(1, "Incorrect tpm locality value\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	if (buf_len < TPM_HEADER_SIZE)
+>  		return -EINVAL;
+>  
+> @@ -516,7 +543,6 @@ static int tpm_cr50_i2c_tis_recv(struct tpm_chip *chip, u8 *buf, size_t buf_len)
+>  		goto out_err;
+>  	}
+>  
+> -	tpm_cr50_release_locality(chip, false);
+>  	return cur;
+>  
+>  out_err:
+> @@ -524,7 +550,6 @@ static int tpm_cr50_i2c_tis_recv(struct tpm_chip *chip, u8 *buf, size_t buf_len)
+>  	if (tpm_cr50_i2c_tis_status(chip) & TPM_STS_COMMAND_READY)
+>  		tpm_cr50_i2c_tis_set_ready(chip);
+>  
+> -	tpm_cr50_release_locality(chip, false);
+>  	return rc;
+>  }
+>  
+> @@ -546,9 +571,10 @@ static int tpm_cr50_i2c_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
+>  	u32 status;
+>  	int rc;
+>  
+> -	rc = tpm_cr50_request_locality(chip);
+> -	if (rc < 0)
+> -		return rc;
+> +	if (chip->locality < 0) {
+> +		WARN_ONCE(1, "Incorrect tpm locality value\n");
+> +		return -EINVAL;
+> +	}
+>  
+>  	/* Wait until TPM is ready for a command */
+>  	stop = jiffies + chip->timeout_b;
+> @@ -578,7 +604,8 @@ static int tpm_cr50_i2c_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
+>  		 * that is inserted by tpm_cr50_i2c_write()
+>  		 */
+>  		limit = min_t(size_t, burstcnt - 1, len);
+> -		rc = tpm_cr50_i2c_write(chip, TPM_I2C_DATA_FIFO(0), &buf[sent], limit);
+> +		rc = tpm_cr50_i2c_write(chip, TPM_I2C_DATA_FIFO(chip->locality),
+> +					&buf[sent], limit);
+>  		if (rc < 0) {
+>  			dev_err(&chip->dev, "Write failed\n");
+>  			goto out_err;
+> @@ -599,7 +626,7 @@ static int tpm_cr50_i2c_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
+>  	}
+>  
+>  	/* Start the TPM command */
+> -	rc = tpm_cr50_i2c_write(chip, TPM_I2C_STS(0), tpm_go,
+> +	rc = tpm_cr50_i2c_write(chip, TPM_I2C_STS(chip->locality), tpm_go,
+>  				sizeof(tpm_go));
+>  	if (rc < 0) {
+>  		dev_err(&chip->dev, "Start command failed\n");
+> @@ -612,7 +639,6 @@ static int tpm_cr50_i2c_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
+>  	if (tpm_cr50_i2c_tis_status(chip) & TPM_STS_COMMAND_READY)
+>  		tpm_cr50_i2c_tis_set_ready(chip);
+>  
+> -	tpm_cr50_release_locality(chip, false);
+>  	return rc;
+>  }
+>  
+> @@ -651,6 +677,8 @@ static const struct tpm_class_ops cr50_i2c = {
+>  	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+>  	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
+>  	.req_canceled = &tpm_cr50_i2c_req_canceled,
+> +	.request_locality = &tpm_cr50_request_locality,
+> +	.relinquish_locality = &tpm_cr50_release_locality,
+>  };
+>  
+>  #ifdef CONFIG_ACPI
+> @@ -686,6 +714,7 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
+>  	u32 vendor;
+>  	u8 buf[4];
+>  	int rc;
+> +	int loc;
+>  
+>  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+>  		return -ENODEV;
+> @@ -728,24 +757,30 @@ static int tpm_cr50_i2c_probe(struct i2c_client *client)
+>  			 TPM_CR50_TIMEOUT_NOIRQ_MS);
+>  	}
+>  
+> -	rc = tpm_cr50_request_locality(chip);
+> -	if (rc < 0) {
+> +	loc = tpm_cr50_request_locality(chip, TPM_CR50_I2C_DEFAULT_LOC);
+> +	if (loc < 0) {
+>  		dev_err(dev, "Could not request locality\n");
+>  		return rc;
+>  	}
+>  
+>  	/* Read four bytes from DID_VID register */
+> -	rc = tpm_cr50_i2c_read(chip, TPM_I2C_DID_VID(0), buf, sizeof(buf));
+> +	rc = tpm_cr50_i2c_read(chip, TPM_I2C_DID_VID(loc), buf, sizeof(buf));
+>  	if (rc < 0) {
+>  		dev_err(dev, "Could not read vendor id\n");
+> -		tpm_cr50_release_locality(chip, true);
+> +		if (tpm_cr50_release_locality(chip, loc))
+> +			dev_err(dev, "Could not release locality\n");
+> +		return rc;
+> +	}
+> +
+> +	rc = tpm_cr50_release_locality(chip, loc);
+> +	if (rc) {
+> +		dev_err(dev, "Could not release locality\n");
+>  		return rc;
+>  	}
+>  
+>  	vendor = le32_to_cpup((__le32 *)buf);
+>  	if (vendor != TPM_CR50_I2C_DID_VID && vendor != TPM_TI50_I2C_DID_VID) {
+>  		dev_err(dev, "Vendor ID did not match! ID was %08x\n", vendor);
+> -		tpm_cr50_release_locality(chip, true);
+>  		return -ENODEV;
+>  	}
+>  
+> @@ -774,7 +809,6 @@ static void tpm_cr50_i2c_remove(struct i2c_client *client)
+>  	}
+>  
+>  	tpm_chip_unregister(chip);
+> -	tpm_cr50_release_locality(chip, true);
+>  }
+>  
+>  static SIMPLE_DEV_PM_OPS(cr50_i2c_pm, tpm_pm_suspend, tpm_pm_resume);
+> -- 
+> 2.38.1.273.g43a17bfeac-goog
+> 
+
+BR, Jarkko
