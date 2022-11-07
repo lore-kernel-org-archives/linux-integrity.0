@@ -2,59 +2,174 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D10FFC433FE
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Nov 2022 09:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D7FC433FE
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Nov 2022 09:22:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230471AbiKGJWg (ORCPT
+        id S231436AbiKGJWy (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 7 Nov 2022 04:22:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48764 "EHLO
+        Mon, 7 Nov 2022 04:22:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231713AbiKGJWa (ORCPT
+        with ESMTP id S231764AbiKGJWq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 Nov 2022 04:22:30 -0500
-X-Greylist: delayed 985 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Nov 2022 01:22:22 PST
-Received: from mail.lokoho.com (mail.lokoho.com [217.61.105.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE47A17581
-        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 01:22:22 -0800 (PST)
-Received: by mail.lokoho.com (Postfix, from userid 1001)
-        id 35D658285E; Mon,  7 Nov 2022 09:05:54 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lokoho.com; s=mail;
-        t=1667811955; bh=Z0N5VlX9/JlryGOL5I747Le9USomZJCRNNGRT3LbbKc=;
-        h=Date:From:To:Subject:From;
-        b=ahHuy/SjuvQTvTvWV7Tr1NVu0E3tdEpcR3bq18ApeG/Y+MOUX4PGlrXM9HRaTYwLZ
-         C17mmAZ/TlFWUX0AOW0qDQM08cCjLF34xWBMxlZi8rWJCC+Dau+5caZqjBKWz3wvkA
-         e3qkyQjbU+chnKuMz5Ntd7PjGpEexl23X0Qdk8qd11Z3maqTG5Bwqp9FI5bBhw0PYb
-         WCP+3jrw1hjFqW1C/U+IH5I7f3wGZ151LgyPodS9Zeb3PxtwN3Kq/P4mE+rN0bVlDX
-         RsVGVTQWk6Gl840wQoQe8m/iv7olm/ymuiQSERAAehUVIRHA3isols+fhLnCsZEJAW
-         Avz+vH/liDu7A==
-Received: by mail.lokoho.com for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 09:05:51 GMT
-Message-ID: <20221107074500-0.1.23.5laz.0.a4kb252wka@lokoho.com>
-Date:   Mon,  7 Nov 2022 09:05:51 GMT
-From:   "Adam Charachuta" <adam.charachuta@lokoho.com>
-To:     <linux-integrity@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.lokoho.com
+        Mon, 7 Nov 2022 04:22:46 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5705F167F2
+        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 01:22:45 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C4D4EB80E9A
+        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 09:22:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F98BC433B5;
+        Mon,  7 Nov 2022 09:22:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667812962;
+        bh=d9mVdSb4Mpd/JBrlSe0Ugl4RgC6BXZYt+a93CN9QQUU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uJ1uIb1uUcn4SKphZ2q4uGM1/rXZXunLD9D5QZavBAQMbj9lXXPUJrG30tFRZ6p2Q
+         BRsBQBPQVaDsGNRcWwHIeDXvMmH76cz+syIWS2y0CsF/jfyPStYknFkA+bFLD+sYtI
+         ovfKj7TybkArunlPTfhAfUIaYhVvUhLvwZsBsbKx/+sCHt3RmWEXxhs5CZez7AIgLy
+         vkAQDkuIxOgtNpSFqANZyg7MvuEU93ezawV+aiC/8h0YZGA7KihBlp/jg9fqhTzSeJ
+         lo4nxUkY9xeCNUqJnKRKtRQEYdvOKXtKmj7E0U2Fp3UlnFRdEsUG+kPQ2VfT7Vwas/
+         sLH48eRsKpCwg==
+Date:   Mon, 7 Nov 2022 11:22:37 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jan Dabros <jsd@semihalf.com>
+Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        gregkh@linuxfoundation.org, arnd@arndb.de, rrangel@chromium.org,
+        timvp@google.com, apronin@google.com, mw@semihalf.com,
+        upstream@semihalf.com
+Subject: Re: [PATCH v2 3/3] char: tpm: cr50: Move i2c locking to
+ request/relinquish locality ops
+Message-ID: <Y2jOXcsXCGyYtCR9@kernel.org>
+References: <20221103145450.1409273-1-jsd@semihalf.com>
+ <20221103145450.1409273-4-jsd@semihalf.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221103145450.1409273-4-jsd@semihalf.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Thu, Nov 03, 2022 at 03:54:50PM +0100, Jan Dabros wrote:
+> Move i2c locking primitives to request_locality and relinquish_locality
+> callbacks, what effectively blocks TPM bus for the whole duration of
+> logical TPM operation.
+> 
+> With this in place, cr50-equipped TPM may be shared with external CPUs -
+> assuming that underneath i2c controller driver is aware of this setup
+> (see i2c-designware-amdpsp as an example).
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+Nit: s/CPUs/peripherals/ ? I'm not sure why you want to emphasize external
+chips having CPU.
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+> 
+> Signed-off-by: Jan Dabros <jsd@semihalf.com>
+> ---
+>  drivers/char/tpm/tpm_tis_i2c_cr50.c | 22 +++++++++++++---------
+>  1 file changed, 13 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> index 517d8410d7da0..f8a67fc2382cc 100644
+> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
+> @@ -202,8 +202,6 @@ static int tpm_cr50_i2c_read(struct tpm_chip *chip, u8 addr, u8 *buffer, size_t
+>  	};
+>  	int rc;
+>  
+> -	i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+> -
+>  	/* Prepare for completion interrupt */
+>  	tpm_cr50_i2c_enable_tpm_irq(chip);
+>  
+> @@ -222,7 +220,6 @@ static int tpm_cr50_i2c_read(struct tpm_chip *chip, u8 addr, u8 *buffer, size_t
+>  
+>  out:
+>  	tpm_cr50_i2c_disable_tpm_irq(chip);
+> -	i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+>  
+>  	if (rc < 0)
+>  		return rc;
+> @@ -264,8 +261,6 @@ static int tpm_cr50_i2c_write(struct tpm_chip *chip, u8 addr, u8 *buffer,
+>  	priv->buf[0] = addr;
+>  	memcpy(priv->buf + 1, buffer, len);
+>  
+> -	i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+> -
+>  	/* Prepare for completion interrupt */
+>  	tpm_cr50_i2c_enable_tpm_irq(chip);
+>  
+> @@ -279,7 +274,6 @@ static int tpm_cr50_i2c_write(struct tpm_chip *chip, u8 addr, u8 *buffer,
+>  
+>  out:
+>  	tpm_cr50_i2c_disable_tpm_irq(chip);
+> -	i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+>  
+>  	if (rc < 0)
+>  		return rc;
+> @@ -323,6 +317,7 @@ static int tpm_cr50_check_locality(struct tpm_chip *chip, int loc)
+>   */
+>  static int tpm_cr50_release_locality(struct tpm_chip *chip, int loc)
+>  {
+> +	struct i2c_client *client = to_i2c_client(chip->dev.parent);
+>  	u8 mask = TPM_ACCESS_VALID | TPM_ACCESS_REQUEST_PENDING;
+>  	u8 addr = TPM_I2C_ACCESS(loc);
+>  	u8 buf;
+> @@ -330,13 +325,15 @@ static int tpm_cr50_release_locality(struct tpm_chip *chip, int loc)
+>  
+>  	rc = tpm_cr50_i2c_read(chip, addr, &buf, sizeof(buf));
+>  	if (rc < 0)
+> -		return rc;
+> +		goto unlock_out;
+>  
+>  	if ((buf & mask) == mask) {
+>  		buf = TPM_ACCESS_ACTIVE_LOCALITY;
+>  		rc = tpm_cr50_i2c_write(chip, addr, &buf, sizeof(buf));
+>  	}
+>  
+> +unlock_out:
+> +	i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+>  	return rc;
+>  }
+>  
+> @@ -351,16 +348,19 @@ static int tpm_cr50_release_locality(struct tpm_chip *chip, int loc)
+>   */
+>  static int tpm_cr50_request_locality(struct tpm_chip *chip, int loc)
+>  {
+> +	struct i2c_client *client = to_i2c_client(chip->dev.parent);
+>  	u8 buf = TPM_ACCESS_REQUEST_USE;
+>  	unsigned long stop;
+>  	int rc;
+>  
+> +	i2c_lock_bus(client->adapter, I2C_LOCK_SEGMENT);
+> +
+>  	if (!tpm_cr50_check_locality(chip, loc))
+>  		return loc;
+>  
+>  	rc = tpm_cr50_i2c_write(chip, TPM_I2C_ACCESS(loc), &buf, sizeof(buf));
+>  	if (rc < 0)
+> -		return rc;
+> +		goto unlock_out;
+>  
+>  	stop = jiffies + chip->timeout_a;
+>  	do {
+> @@ -370,7 +370,11 @@ static int tpm_cr50_request_locality(struct tpm_chip *chip, int loc)
+>  		msleep(TPM_CR50_TIMEOUT_SHORT_MS);
+>  	} while (time_before(jiffies, stop));
+>  
+> -	return -ETIMEDOUT;
+> +	rc = -ETIMEDOUT;
+> +
+> +unlock_out:
+> +	i2c_unlock_bus(client->adapter, I2C_LOCK_SEGMENT);
+> +	return rc;
+>  }
+>  
+>  /**
+> -- 
+> 2.38.1.273.g43a17bfeac-goog
+> 
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
-
-
-Pozdrawiam
-Adam Charachuta
+BR, Jarkko
