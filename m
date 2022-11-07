@@ -2,84 +2,127 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D24C433FE
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Nov 2022 09:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 942E6C433FE
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Nov 2022 11:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231806AbiKGJr4 (ORCPT
+        id S231857AbiKGLh7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 7 Nov 2022 04:47:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41952 "EHLO
+        Mon, 7 Nov 2022 06:37:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231620AbiKGJr4 (ORCPT
+        with ESMTP id S231837AbiKGLh6 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 Nov 2022 04:47:56 -0500
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57F2A17A82
-        for <linux-integrity@vger.kernel.org>; Mon,  7 Nov 2022 01:47:55 -0800 (PST)
-Received: by mail-io1-xd29.google.com with SMTP id d123so8352194iof.7
-        for <linux-integrity@vger.kernel.org>; Mon, 07 Nov 2022 01:47:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=semihalf.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MTuS5IqksW809wrmS6ToW9l0x4pdln/2ATfcNmIWQUI=;
-        b=iCHjwr8Ijq5NSR6ct8gFJo26pCm3laOnIkhfWSgehG4yhXT3koIyVMJrgBcjig8/La
-         u3LHeVABdNP2qR9J7tIwzd54HkwIeAMNmKzMAALam9iFa21cLKBf0oO4Os+siHn0EUSv
-         wkZgoT31ey2d8DrTW0SslriLY6ieu1Ev52jFoQtlJUMrnrsU/JYtng0BEGf06F9n41ap
-         KtrLmkfL7Cxzs0nDSVaUPbDCjQekT1j5OmHYsKbN5+a6+dQipUiaKJ/tWDmXMrFPjXlE
-         JdxwJ+PhN8A0lc63DUR3mhaM01/wxT6vlhUqnvE4ASntPZ3Me2J9eyqYG1H8TwFNAxxT
-         4uYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MTuS5IqksW809wrmS6ToW9l0x4pdln/2ATfcNmIWQUI=;
-        b=OU27DuFhr1X8tUMks1193vvhaQDiDnbt47AvjQOARf9uV/U0p521ZMhv5YJAU18w9L
-         ywzRNMQM1U0ntnm3qkpBK4+SdecLWD9Qz8CO0DsAGOzbesDzLR4CXypLkXCnROSg1RAw
-         PzAK9v3PXiWGSwtlbD29ZCfzDQQZzDD1LrY5YL3Tq0d+RxgU2oheeyY/caWU3imABJMa
-         yyo/z9EuUEQswC/mn6FkJJ48fPUyZzAuXbuxnUUsXR90Ar0YP2Onnd8C1810Bb4gSudn
-         aaZkKlfM/Ou6nwyBE9RWOzzAsOcCsJu9HePhNWcsW5Y+PvBxvkDZHx+G1oEZkqpf29DF
-         Hn1w==
-X-Gm-Message-State: ACrzQf19qbTuoEaXvRgTlKTy0UZlGmVSm8h43Rhhl5/Bx8z+QhL/4+0w
-        QFmRDCvl3OFuySo649iSBINvKz2b/u4X/ti0MHKtoA==
-X-Google-Smtp-Source: AMsMyM7UkAzimBV9S6ZSJvkfNDfgCwwq6nx0w5jVbKivJ6gt1k8kqBIBoGzKpfLy6dbl9IQOULwWbfUi12f2BSnpdjY=
-X-Received: by 2002:a05:6638:4118:b0:375:97af:c5a3 with SMTP id
- ay24-20020a056638411800b0037597afc5a3mr10855697jab.2.1667814474793; Mon, 07
- Nov 2022 01:47:54 -0800 (PST)
+        Mon, 7 Nov 2022 06:37:58 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AFB6D40;
+        Mon,  7 Nov 2022 03:37:58 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E3A9DB81047;
+        Mon,  7 Nov 2022 11:37:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F6C3C433C1;
+        Mon,  7 Nov 2022 11:37:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667821075;
+        bh=wmRJ9Bh1sQC5dP/YZFcpYvwOfERvr5wUBEB4e5Epx4E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O+DVhJKV0sdvQ9OEqMeJ39GM3xddAsWmwVCTv+OcVovps629wehNde+cOI0Yw3Ucn
+         d+eEG+YFVPK1eD5C75kDEy9j0asfxBFJH1WIGxRGw4aVSe0fTeqwwDN2bhnEbpfXdL
+         1SwXXP2JA+DGFkUF6iHoswBEKo9mLtEuMPVYn0soK4qAMdYN/tL3mF3FNqGYGRebtO
+         AQ5xh6+QWg7/SBlOEcRa8yQzjHAUmsg+uOjPjl5YtOxkYN/vB77G7CetEAfro4gEfA
+         xDBU7kkHQ6xokjAwDstiCoq1xizZhyceELdGhJ5cNBXO1cJJhmnZ6doQ0acUvaAlsD
+         DwRSHUSdT6W2g==
+Date:   Mon, 7 Nov 2022 13:37:49 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net, gwendal@chromium.org,
+        apronin@chromium.org, Pavel Machek <pavel@ucw.cz>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, dlunev@google.com,
+        Eric Biggers <ebiggers@kernel.org>,
+        Ben Boeckel <me@benboeckel.net>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>
+Subject: Re: [PATCH v4 02/11] tpm: Export and rename
+ tpm2_find_and_validate_cc()
+Message-ID: <Y2juDUwRLnYRYCPs@kernel.org>
+References: <20221103180120.752659-1-evgreen@chromium.org>
+ <20221103105558.v4.2.I7bbedcf5efd3f1c72c32d6002faed086c5ed31c7@changeid>
 MIME-Version: 1.0
-References: <20221103145450.1409273-1-jsd@semihalf.com> <20221103145450.1409273-4-jsd@semihalf.com>
- <Y2jOXcsXCGyYtCR9@kernel.org>
-In-Reply-To: <Y2jOXcsXCGyYtCR9@kernel.org>
-From:   =?UTF-8?B?SmFuIETEhWJyb8Wb?= <jsd@semihalf.com>
-Date:   Mon, 7 Nov 2022 10:47:44 +0100
-Message-ID: <CAOtMz3PpurnM8je0o8zSHFEyUCeiyVeZfU1-=vsO6uB2+e0O8w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] char: tpm: cr50: Move i2c locking to
- request/relinquish locality ops
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        gregkh@linuxfoundation.org, arnd@arndb.de, rrangel@chromium.org,
-        timvp@google.com, apronin@google.com, mw@semihalf.com,
-        upstream@semihalf.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221103105558.v4.2.I7bbedcf5efd3f1c72c32d6002faed086c5ed31c7@changeid>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-> On Thu, Nov 03, 2022 at 03:54:50PM +0100, Jan Dabros wrote:
-> > Move i2c locking primitives to request_locality and relinquish_locality
-> > callbacks, what effectively blocks TPM bus for the whole duration of
-> > logical TPM operation.
-> >
-> > With this in place, cr50-equipped TPM may be shared with external CPUs -
-> > assuming that underneath i2c controller driver is aware of this setup
-> > (see i2c-designware-amdpsp as an example).
->
-> Nit: s/CPUs/peripherals/ ? I'm not sure why you want to emphasize external
-> chips having CPU.
+On Thu, Nov 03, 2022 at 11:01:10AM -0700, Evan Green wrote:
+> Export tpm_find_and_validate_cc() since it will be needed by an upcoming
+> change allowing access to certain PCRs to be restricted to the kernel.
+> In order to export it consistently, and because it's a tpm2-only
+> function, rename it to tpm2_find_and_validate_cc().
+> 
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> 
+> ---
+> 
+> (no changes since v3)
+> 
+> Changes in v3:
+>  - Split find_and_validate_cc() export to its own patch (Jarkko)
+>  - Rename tpm_find_and_validate_cc() to tpm2_find_and_validate_cc().
+> 
+>  drivers/char/tpm/tpm.h        | 3 +++
+>  drivers/char/tpm/tpm2-space.c | 8 ++++----
+>  2 files changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 24ee4e1cc452a0..f1e0f490176f01 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -231,6 +231,9 @@ int tpm2_find_cc(struct tpm_chip *chip, u32 cc);
+>  int tpm2_init_space(struct tpm_space *space, unsigned int buf_size);
+>  void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space);
+>  void tpm2_flush_space(struct tpm_chip *chip);
+> +int tpm2_find_and_validate_cc(struct tpm_chip *chip,
+> +			      struct tpm_space *space,
+> +			      const void *cmd, size_t len);
+>  int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
+>  		       size_t cmdsiz);
+>  int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space, void *buf,
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index ffb35f0154c16c..ca34cc006e7f8d 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -262,9 +262,9 @@ static int tpm2_map_command(struct tpm_chip *chip, u32 cc, u8 *cmd)
+>  	return 0;
+>  }
+>  
+> -static int tpm_find_and_validate_cc(struct tpm_chip *chip,
+> -				    struct tpm_space *space,
+> -				    const void *cmd, size_t len)
+> +int tpm2_find_and_validate_cc(struct tpm_chip *chip,
+> +			      struct tpm_space *space,
+> +			      const void *cmd, size_t len)
+>  {
+>  	const struct tpm_header *header = (const void *)cmd;
+>  	int i;
+> @@ -306,7 +306,7 @@ int tpm2_prepare_space(struct tpm_chip *chip, struct tpm_space *space, u8 *cmd,
+>  	if (!space)
+>  		return 0;
+>  
+> -	cc = tpm_find_and_validate_cc(chip, space, cmd, cmdsiz);
+> +	cc = tpm2_find_and_validate_cc(chip, space, cmd, cmdsiz);
+>  	if (cc < 0)
+>  		return cc;
+>  
+> -- 
+> 2.38.1.431.g37b22c650d-goog
+> 
 
-My point was that we can have a multi-controller setup and each
-controller may work with the TPM chip, so let me s/CPUs/controllers/.
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Best Regards,
-Jan
+BR, Jarkko
