@@ -2,475 +2,218 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDEAC433FE
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Nov 2022 00:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C9CC43219
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Nov 2022 01:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbiKJAim (ORCPT
+        id S232178AbiKJBHf (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 9 Nov 2022 19:38:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40226 "EHLO
+        Wed, 9 Nov 2022 20:07:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231254AbiKJAil (ORCPT
+        with ESMTP id S232204AbiKJBHc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 Nov 2022 19:38:41 -0500
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1A422ACB
-        for <linux-integrity@vger.kernel.org>; Wed,  9 Nov 2022 16:38:39 -0800 (PST)
-Received: by mail-ej1-x631.google.com with SMTP id q9so1342453ejd.0
-        for <linux-integrity@vger.kernel.org>; Wed, 09 Nov 2022 16:38:39 -0800 (PST)
+        Wed, 9 Nov 2022 20:07:32 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CD322503;
+        Wed,  9 Nov 2022 17:07:25 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2AA12wqp021777;
+        Thu, 10 Nov 2022 01:06:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
+ bh=Txps/w/WIYyrQXJGyJqpzqO8ItMCnVptG8chSzAB3Jk=;
+ b=o4N+HLf+RMlAdvMvTNHwJC3RoC6MyHgKK38t73ZBBWlnm9+AZd4kPUNM66kClHXsGd3Z
+ VQ4+nruImH9MSzrnwsOeUziKK/50BDAEFGJp6V9gYeTEH6HGSF2h20IpNb6YoS2qhUgS
+ XuzyxXobyBKYbhOW80uuR8CFGnu0Lj8U2rMDW7jRyl4jAhqBJUXuNBoisAU+WyfLrzlo
+ N88Cwls2PHjjuR2AP83HFjdyIyZs1zx1PceTI/89nF0TuCjmftX+03rgv7f9Ah4NSIiy
+ ZBPEJxSx7TNDrmh9c94xfWvS6zpxmH97VkFrLBVPokhoQg5i0mkTOdPnUHj7HzqUjjCX nQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3krq9k004p-13
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Nov 2022 01:06:48 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2A9MfJAQ036333;
+        Thu, 10 Nov 2022 00:54:45 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2103.outbound.protection.outlook.com [104.47.70.103])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3kpcyr34sf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Nov 2022 00:54:45 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B6hOuldmyozIv38Ba98iikdaf91tV1WY0b0m2FNyH2RLyHLaNI24KDC8NXk0PVZAByzw5HINd/cJ6i2u5q2zqZpUFX3rJjNTKbkN/U6+PvFvs7HoW5BCLT1+oCffAlH1InoMz61rY0haAhEd3kncx+gqoabfRfeuIR6jgKk26SKsRBYSvXAQEElkts8LeowUKfVRs872QC1ApikPI3vmZjL8oSlkpixF6/HHFiSYwx+1vkbMLVnbV2OawptWZKWg3QYcCr1dbH6vKz1qiJEINg6kD+81YLWtjlmOrhnKNlOAxDpOK4vJU8xkjzs7Y4tYzQiR7jAfFYmrkCLtFebQEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Txps/w/WIYyrQXJGyJqpzqO8ItMCnVptG8chSzAB3Jk=;
+ b=Ut7yud2O+RP/sRsNiQUKvZReppJnbwuWETHN5MlzoqDffZQ30fGVppNkI89N0ia2Lw+pORjugQDlX8OSwmcgfUJepNMpDjJ12gsNWU9cdVE46YlHZ1zm2nSGHUs9fLcNiINgEeChsKUHlnt4JC9cpAelDo/6NWv0oQ+B3EPWVk8B8R5gGPYFyUaZGGtFrk7bQqEjE1AX+mU2F6Zryq5Q2rsxHYOeJMLIhZTknK42/w0eruqkjZae42OXXuPoSCylBzLIFNAm3DGq5DSgn0ytZPjfCQQw8vaWf01G89mseEvzhuI5LGHhBm2H4gANiegcW9Sxcu3+NZGbB8Eq9jiHDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mq94PZ5iU/UOuZYHdNSCubEmtr2coNcbC+ParOhyfLI=;
-        b=FfJTEBmKC2UUHawO4EgJ+NmuzmTGGK328zdAu0SBNhzCQM/s3eUESZCH65cXAYsLeS
-         E0Hw4v/twst9QqyePUKlPQVqqeMeM/8IrgMtyhlQ6V6F7+Nx8HdalJQOh6TIhiGuMphG
-         tGnaxHTKZmFZl2ewy4zDoaYM6aA1JrkbRnw1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mq94PZ5iU/UOuZYHdNSCubEmtr2coNcbC+ParOhyfLI=;
-        b=NwFn1XJmRt52Vx52SJOeqNThgxEA94WA/DSFomnslvioE//9HlfAp8opVwWgX6WQA6
-         nKU1h1W+SCCL5xnfCZw1n8YtF7yKdQvOIZpwZ6fF8yKujT76/FVCprHZwpzMMqH8vVbo
-         nF9njwiVmNFQvNhgQQBhtbfrpg6Gnw9/3JJ7H9d0Ow9df5cloZvaO0tev60XaVL0GQ7V
-         3BsPwYCrqs1a0ZczbSlRvn5R4jUf8q3Y/BA3DR+P7lZYUKOfeWVCF8pgy9I1TuYu1U5g
-         IPOYB9O+feNOcg8u2mnC65LS0z31cxCojmiRGF4HF0fHeltWf7YlpT3xFk5wECivUEG2
-         XfiQ==
-X-Gm-Message-State: ANoB5pnFMtUUBeAt2WxdRp680K4GRn8tLcnr6RKnAfQujtFGGM4F18p1
-        cYgrroY5813MOVvnxt3rzcejBdb8WumNgw==
-X-Google-Smtp-Source: AA0mqf7ITsjS8o0WJV+0CMFxKOgHJgSfKzW01ZiY05kQVx9fpGOdPQdl1osPrH68alMPO+8myDmrYg==
-X-Received: by 2002:a17:907:d601:b0:7ae:6ade:59ba with SMTP id wd1-20020a170907d60100b007ae6ade59bamr15017024ejc.332.1668040717852;
-        Wed, 09 Nov 2022 16:38:37 -0800 (PST)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com. [209.85.128.47])
-        by smtp.gmail.com with ESMTPSA id ky8-20020a170907778800b00782539a02absm6411154ejc.194.2022.11.09.16.38.37
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 16:38:37 -0800 (PST)
-Received: by mail-wm1-f47.google.com with SMTP id j5-20020a05600c410500b003cfa9c0ea76so168862wmi.3
-        for <linux-integrity@vger.kernel.org>; Wed, 09 Nov 2022 16:38:37 -0800 (PST)
-X-Received: by 2002:a05:600c:1906:b0:3cf:a7fc:550e with SMTP id
- j6-20020a05600c190600b003cfa7fc550emr14052955wmq.4.1668040247294; Wed, 09 Nov
- 2022 16:30:47 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Txps/w/WIYyrQXJGyJqpzqO8ItMCnVptG8chSzAB3Jk=;
+ b=J6bNuTEUUJ13Yv4HJiDkuxWA0SOGJtlNXH5j6NnBor9yF5rJzxgtNKcLQDCxvhqhdFa78ooiCcyHwkN8o5jEPVynIsIy9ip66D12gt6NwQpXJHewEiSzkvW0Cn065vrCa5SraRvTSOXO3dMpTxJF0Oi9ca1htGdA2USX7TnTtP0=
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by BLAPR10MB5073.namprd10.prod.outlook.com (2603:10b6:208:307::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.13; Thu, 10 Nov
+ 2022 00:54:44 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::f006:f411:9056:63a4]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::f006:f411:9056:63a4%5]) with mapi id 15.20.5813.012; Thu, 10 Nov 2022
+ 00:54:43 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     Morten Linderud <morten@linderud.pw>
+CC:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "lszubowi@redhat.com" <lszubowi@redhat.com>,
+        "jason@zx2c4.com" <jason@zx2c4.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@hansenpartnership.com>,
+        "pjones@redhat.com" <pjones@redhat.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>
+Subject: Re: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT
+ found
+Thread-Topic: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT
+ found
+Thread-Index: AQHX4O22o7n05FQT4kqWdM0Hvcs3jK45bU+AgAAO3YA=
+Date:   Thu, 10 Nov 2022 00:54:43 +0000
+Message-ID: <4A479B96-4B41-4323-9920-5A909423F998@oracle.com>
+References: <20211124044124.998170-1-eric.snowberg@oracle.com>
+ <20211124044124.998170-17-eric.snowberg@oracle.com>
+ <20221110000129.kl6pjy5mafpuptbk@framework>
+In-Reply-To: <20221110000129.kl6pjy5mafpuptbk@framework>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3696.120.41.1.1)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH2PR10MB4150:EE_|BLAPR10MB5073:EE_
+x-ms-office365-filtering-correlation-id: 01a384d9-6bc7-49e9-0887-08dac2b62812
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: eMT4T46DvpB1pCLMul6z0+7Vw/yvRAeNrpSHY8nj28vY+NWpZLMSObMzSEciJ9hEHm+zw5TwIMlG/SozCfSoO6H17+MrrEnBDdRv4M37KjYJ4mJniJfzJwjh8jFJKoNMmt7v4ddeZMqpKxS6+RESIcKMLjRnS2IJJXhkLh3OCsC26vwa2mtn9LYudf28k/Sd0k37EaezNYjwrmwX7IpUVCih56axzyfXlMR0gf6ECfv8IwbfTFi86g5lvEjEDXASAhzf/6mH00dCAtHWLg8is/mHCNzZPCAIQntEfLKlIen+AYwCKkGB1y7o+te+tT4armT2FI225S+gmBD/GIPaQJBHQZ5VTAyYX7QKswURI63Ru/fA3lh4RdSAjdZlxuNgJeGpiatR2wr6rXMuDNMYj/gB0xoqWbF9nk/Z8eZgwD5rVABWA7+Exjvg8nogfDVK9fqjYLvuM8C5ZZflaYKAhXaARNF5Dbvgg8im7xPyT9jTLeawO+HuIMc1PlvZ17aE5xUL9fUyh3/vC8WkFrD+/Ht+5DAU63Lxrc7qW9UJOnD+3vz9VbGMSbiWidMo1sfSubvq3InVxy/VWZ6866Dw6i5gvf974HM2Y/yDrnrvAlSWqQ+HFLeXtcKKXSb4Fx6zHM61sizWDTW2EMI/uR9AkLwI30dJkXcyrGUJJ7nylaJXXbg8baWsX4MYW8ga8Qilf4QOsnm7fKdg9Hx8S4GohLMcepqvEaopRjNDYmz02r+AwT6PpVD4yqi0TYptON5P3YnQIDT0WRWSMzcPgH4xoriN3taMIfLQ59IZkXbuoFmDd1ainEZbj9tRwqyZtHmqFGu3vghwww8N8x7LkwNnVA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(39860400002)(346002)(376002)(136003)(396003)(366004)(451199015)(6506007)(316002)(6916009)(54906003)(8936002)(83380400001)(2616005)(33656002)(44832011)(5660300002)(2906002)(7416002)(186003)(76116006)(64756008)(66946007)(66446008)(66476007)(66556008)(91956017)(53546011)(41300700001)(6512007)(8676002)(4326008)(86362001)(36756003)(71200400001)(38070700005)(38100700002)(6486002)(966005)(107886003)(122000001)(478600001)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?L1lWb1B1ajBnUFNZeGFGRW5zZ0RhVXo2eVp3UG96dXY0Znh0QktIRUt2WlNC?=
+ =?utf-8?B?SUo5MVgzYkd1dnJEL3krMTBrR3M3WFlLY05tUms2NzIrRTBrbHVWT3lZYzhm?=
+ =?utf-8?B?dTRMTGtHYWNhSThNQUpQZVJETklXbzB4M25SUzlSN3dGcEhqb0JuM2I2ZjlG?=
+ =?utf-8?B?Mi9Va0JnSzlNRW40cGtHUmJtelVhWFhlMVpUZXdsdmFrWU5zczRsSEQwK3lq?=
+ =?utf-8?B?UzVEbm5xQmU5ZFdRbzRJTzhSeWNDb05iOGxmdVFybVhnbUxtSkpOdnAxTTBF?=
+ =?utf-8?B?YzdCYm9YYjJpdkxDMzU0SU1jekozUlNzREJMbGY1UlFqMHNjVjV3aTZ0clBx?=
+ =?utf-8?B?a0labkZJZFJDazQ5cndZTzlLNUx5YmFlaGI0WWtZNEF1a0VRNzdpMkdmQnlz?=
+ =?utf-8?B?b2tZNE9SWldKVnYwbjBhNWNjdHZSOUdENjUxSW1RbWVJRWVxRzNrdnJuRTVr?=
+ =?utf-8?B?OVBPQVJOcXA3RDluWXphN0Z6T0lqZGNpVzZicGhMV1JZeHlzaGNESXZxcnZm?=
+ =?utf-8?B?MEZhb2ViNWhyM3FEcUlUTU15dFZ3bTZHTFFDQi9vbXhOVW95dVpzQ085dWhU?=
+ =?utf-8?B?RDRPNmwyM3hXelBJdHVXd0lqaUEwZ29pRENYc0VnMHQwN01EU3RqYVZaampY?=
+ =?utf-8?B?ZFVtcWcyQzFPbnYyV2JaTmV3b0VDSk4yUXhFckFQR0M1ZERCOXJDRFU1RU1U?=
+ =?utf-8?B?Q0pDS2pOS1FMRGI4dG5ZK1ErdWpqaHRaeEhpWVhsK2drSk5pRGlEendVbXJk?=
+ =?utf-8?B?V2s1Yjh4anVBK0RsRzBRaE53YzVncGZ3cHUrN0I1b0FKVkVQNy9sWCtUYlJ1?=
+ =?utf-8?B?UXcwRnZ2MkZQMlZRUjFETVZSUzJITzhSbFhBWFhKT2NMbE1adHU0bHZnMUEv?=
+ =?utf-8?B?QmJ1Yy9kcG5hVjdjakNkcU5kTlFoSHM2WkxwdFVqSlZKbnFDLzFoUEhUT0cx?=
+ =?utf-8?B?anhxaFdrb1pFL3Vua2JZWTAxbWJZaWpWYk1hNHFaemJSd21acERCSFl6bDNV?=
+ =?utf-8?B?L2hRc0hxTlI3SFZFbTNrdXlYL0IxZUJDejNvNXhUQkhzdWd6YVpXOU5uc3lZ?=
+ =?utf-8?B?QU5naHFyV2pDUWt1VW5TMllPdzlwenAyY09CVlZmakpxZy9YZUIwUUxJL3d3?=
+ =?utf-8?B?bzJmN0lEc1BiU2t1UVh3MlFidSt1UlNZR0pjYk4vYUswTlp0bFVhZDJrMlc3?=
+ =?utf-8?B?MTNEUTNIN2N1NG5pQytUc3AxdWZkR0dURGduWTFNWkQ4cUFPUjgxWWY4Y1Rx?=
+ =?utf-8?B?WmMwWEdqS1kya2QyLzVEVXlKSzRhRHVNbk8zUitoOVFySjFrdjFNaktlejZ2?=
+ =?utf-8?B?R0FXaFlJTERpRFQ3Ky85UHJ1NjRtakY1ak42RE54WE5qTHVVYW1vWEdhci9y?=
+ =?utf-8?B?c0lBditHWG9saEJlZGhvaHROeFRydHZsci84MUR4RE1MbVl1cHlmdmNrWHFv?=
+ =?utf-8?B?SnF5ZlRTU2ovWmpuQmdVY0tmNGZhaTM5RG8zbkJzVzduUnRpbXkzOFo2UlhM?=
+ =?utf-8?B?YmR5M1JzT29mbVBMVGhYaHlBYXZwdkd2VnAzSkh4MnFIa0R5Y2NqNzQ5RjY3?=
+ =?utf-8?B?YnlaTGMrdmZnZVo5U3BYaVBxRldmazRQbTdkak84ZlIwTUlSRnV0ejdUYjI5?=
+ =?utf-8?B?VlpvS1JLc1dIc2hQc0tiTy9rczF4Y3dpMTg1WHYzcENFTTVMMkg2bWljY2I0?=
+ =?utf-8?B?ZGRTaDUweklHV21qZjlEM3RCQVVJZVRVTEs3ODZyRUF5N3dUdDY0alk0ZmRB?=
+ =?utf-8?B?bk9lMWJpY3VWbWdaSmpOempvRlV0Ylhlck4vNVc4cGY1RGxPVTdQVThIY2Jn?=
+ =?utf-8?B?UjB5UkptVzR5azFDalhvQ2FuV1FCMDVQZlVKT3htcDFvaTk4cDJ1YVVuWTQv?=
+ =?utf-8?B?NnAvNDd6SXJpSGhDMnF4WEFaaU91TVZYZS9EcERrdDhwSVc5dEtRSVlKaDB5?=
+ =?utf-8?B?Wm1yK3lMY3JHaitJMUZxMmdWZGkyM0RlT21rbFhHRnduVndlaGFvbUQrQkk0?=
+ =?utf-8?B?ZUxERUI2eFU2Q1JTYU5lVzl3WnlZTVpneExOL3BRcWZMeENNSXkvWmI1Q1Fw?=
+ =?utf-8?B?UFZ0S2FkeC9ZZnFDZHNKc0xRdG1QLy9GUGZpazlmNnZ2TTgraXk4S092cnBO?=
+ =?utf-8?B?amFLV0p3aktqRjZmbm1tZXVETjAzVGlTOGtMaThpRnd1WHFQMTVWVkFEL0Y5?=
+ =?utf-8?Q?VsUxnM/FJCcWrQa9FqSxdQEy69D14epgzYDbil7UQTYQ?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DD8CF4EF58B4184F9156299ECCB5E0BF@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20221103180120.752659-1-evgreen@chromium.org> <20221103105558.v4.9.I87952411cf83f2199ff7a4cc8c828d357b8c8ce3@changeid>
- <202211041147.DEDC1F64F@keescook>
-In-Reply-To: <202211041147.DEDC1F64F@keescook>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 9 Nov 2022 16:30:10 -0800
-X-Gmail-Original-Message-ID: <CAE=gft41=5uWwPfDZ=nyjcOzk21YCAeg6cheUNy-m0j79CgNfQ@mail.gmail.com>
-Message-ID: <CAE=gft41=5uWwPfDZ=nyjcOzk21YCAeg6cheUNy-m0j79CgNfQ@mail.gmail.com>
-Subject: Re: [PATCH v4 09/11] PM: hibernate: Mix user key in encrypted hibernate
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-pm@vger.kernel.org, rjw@rjwysocki.net, gwendal@chromium.org,
-        apronin@chromium.org, Pavel Machek <pavel@ucw.cz>,
-        Matthew Garrett <mgarrett@aurora.tech>,
-        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
-        zohar@linux.ibm.com, dlunev@google.com,
-        Eric Biggers <ebiggers@kernel.org>,
-        Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
-        Len Brown <len.brown@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01a384d9-6bc7-49e9-0887-08dac2b62812
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2022 00:54:43.7828
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T4InuXlYO2lzQHQ6nxR8c19mDMrgxgS3Z9U702GsyuKDGuV/B5fZOS2hILpiPgQ4ceyGQC/6tCUrPzqPdzIvcA3pBgSFNfexUL3BDzevibI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5073
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-09_06,2022-11-09_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 malwarescore=0
+ adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
+ definitions=main-2211100004
+X-Proofpoint-ORIG-GUID: 6spophyHnZ3IJCsLyb_t4jAH4ONmpKPc
+X-Proofpoint-GUID: 6spophyHnZ3IJCsLyb_t4jAH4ONmpKPc
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 11:54 AM Kees Cook <keescook@chromium.org> wrote:
->
-> On Thu, Nov 03, 2022 at 11:01:17AM -0700, Evan Green wrote:
-> > Usermode may have their own data protection requirements when it comes
-> > to encrypting the hibernate image. For example, users may want a policy
-> > where the hibernate image is protected by a key derived both from
-> > platform-level security as well as authentication data (such as a
-> > password or PIN). This way, even if the platform is compromised (ie a
-> > stolen laptop), sensitive data cannot be exfiltrated via the hibernate
-> > image without additional data (like the user's password).
-> >
-> > The kernel is already doing the encryption, but will be protecting its
-> > key with the TPM alone. Allow usermode to mix in key content of their own
-> > for the data portion of the hibernate image, so that the image
-> > encryption key is determined both by a TPM-backed secret and
-> > user-defined data.
-> >
-> > To mix the user key in, we hash the kernel key followed by the user key,
-> > and use the resulting hash as the new key. This allows usermode to mix
-> > in its key material without giving it too much control over what key is
-> > actually driving the encryption (which might be used to attack the
-> > secret kernel key).
-> >
-> > Limiting this to the data portion allows the kernel to receive the page
-> > map and prepare its giant allocation even if this user key is not yet
-> > available (ie the user has not yet finished typing in their password).
-> > Once the user key becomes available, the data portion can be pushed
-> > through to the kernel as well. This enables "preloading" scenarios,
-> > where the hibernate image is loaded off of disk while the additional
-> > key material (eg password) is being collected.
-> >
-> > One annoyance of the "preloading" scheme is that hibernate image memory
-> > is effectively double-allocated: first by the usermode process pulling
-> > encrypted contents off of disk and holding it, and second by the kernel
-> > in its giant allocation in prepare_image(). An interesting future
-> > optimization would be to allow the kernel to accept and store encrypted
-> > page data before the user key is available. This would remove the
-> > double allocation problem, as usermode could push the encrypted pages
-> > loaded from disk immediately without storing them. The kernel could defer
-> > decryption of the data until the user key is available, while still
-> > knowing the correct page locations to store the encrypted data in.
-> >
-> > Signed-off-by: Evan Green <evgreen@chromium.org>
-> > ---
-> >
-> > (no changes since v2)
-> >
-> > Changes in v2:
-> >  - Add missing static on snapshot_encrypted_byte_count()
-> >  - Fold in only the used kernel key bytes to the user key.
-> >  - Make the user key length 32 (Eric)
-> >  - Use CRYPTO_LIB_SHA256 for less boilerplate (Eric)
-> >
-> >  include/uapi/linux/suspend_ioctls.h |  15 ++-
-> >  kernel/power/Kconfig                |   1 +
-> >  kernel/power/power.h                |   1 +
-> >  kernel/power/snapenc.c              | 158 ++++++++++++++++++++++++++--
-> >  kernel/power/snapshot.c             |   5 +
-> >  kernel/power/user.c                 |   4 +
-> >  kernel/power/user.h                 |  12 +++
-> >  7 files changed, 185 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/include/uapi/linux/suspend_ioctls.h b/include/uapi/linux/suspend_ioctls.h
-> > index b73026ef824bb9..f93a22eac52dc2 100644
-> > --- a/include/uapi/linux/suspend_ioctls.h
-> > +++ b/include/uapi/linux/suspend_ioctls.h
-> > @@ -25,6 +25,18 @@ struct uswsusp_key_blob {
-> >       __u8 nonce[USWSUSP_KEY_NONCE_SIZE];
-> >  } __attribute__((packed));
-> >
-> > +/*
-> > + * Allow user mode to fold in key material for the data portion of the hibernate
-> > + * image.
-> > + */
-> > +struct uswsusp_user_key {
-> > +     /* Kernel returns the metadata size. */
-> > +     __kernel_loff_t meta_size;
-> > +     __u32 key_len;
-> > +     __u8 key[32];
->
-> Why is this 32? (Is there a non-literal we can put here?)
-
-Sure, I can make a new define for this: USWSUSP_USER_KEY_SIZE. Really
-it just needs to be enough key material that usermode feels like
-they've swizzled things up enough. I wanted to avoid using a
-particular implementation constant like AES_KEYSIZE_256 because I
-wanted that to be a kernel implementation detail, and also wanted to
-avoid adding additional header dependencies to suspend_ioctls.h.
-
->
-> > +     __u32 pad;
->
-> And why the pad?
-
-I added the padding because I was finding myself struggling with what
-I think are compiler differences when the structure size isn't a
-multiple of its required alignment (which is 8 due to the
-__kernel_loff_t). My usermode bindings in Rust were generating the
-wrong ioctl numbers because it computed a different structure size.
-Adding the padding removes the opportunity for misinterpretation.
-
->
-> > +};
-> > +
-> >  #define SNAPSHOT_IOC_MAGIC   '3'
-> >  #define SNAPSHOT_FREEZE                      _IO(SNAPSHOT_IOC_MAGIC, 1)
-> >  #define SNAPSHOT_UNFREEZE            _IO(SNAPSHOT_IOC_MAGIC, 2)
-> > @@ -42,6 +54,7 @@ struct uswsusp_key_blob {
-> >  #define SNAPSHOT_AVAIL_SWAP_SIZE     _IOR(SNAPSHOT_IOC_MAGIC, 19, __kernel_loff_t)
-> >  #define SNAPSHOT_ALLOC_SWAP_PAGE     _IOR(SNAPSHOT_IOC_MAGIC, 20, __kernel_loff_t)
-> >  #define SNAPSHOT_ENABLE_ENCRYPTION   _IOWR(SNAPSHOT_IOC_MAGIC, 21, struct uswsusp_key_blob)
-> > -#define SNAPSHOT_IOC_MAXNR   21
-> > +#define SNAPSHOT_SET_USER_KEY                _IOWR(SNAPSHOT_IOC_MAGIC, 22, struct uswsusp_user_key)
-> > +#define SNAPSHOT_IOC_MAXNR   22
-> >
-> >  #endif /* _LINUX_SUSPEND_IOCTLS_H */
-> > diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> > index 2f8acbd87b34dc..35bf48b925ebf6 100644
-> > --- a/kernel/power/Kconfig
-> > +++ b/kernel/power/Kconfig
-> > @@ -97,6 +97,7 @@ config ENCRYPTED_HIBERNATION
-> >       depends on HIBERNATION_SNAPSHOT_DEV
-> >       depends on CRYPTO_AEAD2=y
-> >       depends on TRUSTED_KEYS=y
-> > +     select CRYPTO_LIB_SHA256
-> >       default n
-> >       help
-> >         Enable support for kernel-based encryption of hibernation snapshots
-> > diff --git a/kernel/power/power.h b/kernel/power/power.h
-> > index b4f43394320961..5955e5cf692302 100644
-> > --- a/kernel/power/power.h
-> > +++ b/kernel/power/power.h
-> > @@ -151,6 +151,7 @@ struct snapshot_handle {
-> >
-> >  extern unsigned int snapshot_additional_pages(struct zone *zone);
-> >  extern unsigned long snapshot_get_image_size(void);
-> > +extern unsigned long snapshot_get_meta_page_count(void);
-> >  extern int snapshot_read_next(struct snapshot_handle *handle);
-> >  extern int snapshot_write_next(struct snapshot_handle *handle);
-> >  extern void snapshot_write_finalize(struct snapshot_handle *handle);
-> > diff --git a/kernel/power/snapenc.c b/kernel/power/snapenc.c
-> > index 7ff4fc66f7500c..50167a37c5bf23 100644
-> > --- a/kernel/power/snapenc.c
-> > +++ b/kernel/power/snapenc.c
-> > @@ -6,6 +6,7 @@
-> >  #include <crypto/gcm.h>
-> >  #include <keys/trusted-type.h>
-> >  #include <linux/key-type.h>
-> > +#include <crypto/sha.h>
-> >  #include <linux/random.h>
-> >  #include <linux/mm.h>
-> >  #include <linux/tpm.h>
-> > @@ -21,6 +22,38 @@ static struct tpm_digest known_digest = { .alg_id = TPM_ALG_SHA256,
-> >                  0xf1, 0x22, 0x38, 0x6c, 0x33, 0xb1, 0x14, 0xb7, 0xec, 0x05,
-> >                  0x5f, 0x49}};
-> >
-> > +/* Derive a key from the kernel and user keys for data encryption. */
-> > +static int snapshot_use_user_key(struct snapshot_data *data)
-> > +{
-> > +     u8 digest[SHA256_DIGEST_SIZE];
-> > +     struct trusted_key_payload *payload = data->key->payload.data[0];
-> > +     struct sha256_state sha256_state;
-> > +
-> > +     /*
-> > +      * Hash the kernel key and the user key together. This folds in the user
-> > +      * key, but not in a way that gives the user mode predictable control
-> > +      * over the key bits.
-> > +      */
-> > +     sha256_init(&sha256_state);
-> > +     sha256_update(&sha256_state, payload->key, SNAPSHOT_ENCRYPTION_KEY_SIZE);
-> > +     sha256_update(&sha256_state, data->user_key, sizeof(data->user_key));
-> > +     sha256_final(&sha256_state, digest);
-> > +     return crypto_aead_setkey(data->aead_tfm,
-> > +                               digest,
-> > +                               SNAPSHOT_ENCRYPTION_KEY_SIZE);
-> > +}
-> > +
-> > +/* Check to see if it's time to switch to the user key, and do it if so. */
-> > +static int snapshot_check_user_key_switch(struct snapshot_data *data)
-> > +{
-> > +     if (data->user_key_valid && data->meta_size &&
-> > +         data->crypt_total == data->meta_size) {
-> > +             return snapshot_use_user_key(data);
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  /* Encrypt more data from the snapshot into the staging area. */
-> >  static int snapshot_encrypt_refill(struct snapshot_data *data)
-> >  {
-> > @@ -32,6 +65,15 @@ static int snapshot_encrypt_refill(struct snapshot_data *data)
-> >       int pg_idx;
-> >       int res;
-> >
-> > +     if (data->crypt_total == 0) {
-> > +             data->meta_size = snapshot_get_meta_page_count() << PAGE_SHIFT;
-> > +
-> > +     } else {
-> > +             res = snapshot_check_user_key_switch(data);
-> > +             if (res)
-> > +                     return res;
-> > +     }
-> > +
-> >       /*
-> >        * The first buffer is the associated data, set to the offset to prevent
-> >        * attacks that rearrange chunks.
-> > @@ -42,6 +84,11 @@ static int snapshot_encrypt_refill(struct snapshot_data *data)
-> >       for (pg_idx = 0; pg_idx < CHUNK_SIZE; pg_idx++) {
-> >               void *buf = data->crypt_pages[pg_idx];
-> >
-> > +             /* Stop at the meta page boundary to potentially switch keys. */
-> > +             if (total &&
-> > +                 ((data->crypt_total + total) == data->meta_size))
-> > +                     break;
-> > +
-> >               res = snapshot_read_next(&data->handle);
-> >               if (res < 0)
-> >                       return res;
-> > @@ -114,10 +161,10 @@ static int snapshot_decrypt_drain(struct snapshot_data *data)
-> >               sg_set_buf(&data->sg[1 + pg_idx], data->crypt_pages[pg_idx], PAGE_SIZE);
-> >
-> >       /*
-> > -      * It's possible this is the final decrypt, and there are fewer than
-> > -      * CHUNK_SIZE pages. If this is the case we would have just written the
-> > -      * auth tag into the first few bytes of a new page. Copy to the tag if
-> > -      * so.
-> > +      * It's possible this is the final decrypt, or the final decrypt of the
-> > +      * meta region, and there are fewer than CHUNK_SIZE pages. If this is
-> > +      * the case we would have just written the auth tag into the first few
-> > +      * bytes of a new page. Copy to the tag if so.
-> >        */
-> >       if ((page_count < CHUNK_SIZE) &&
-> >           (data->crypt_offset - total) == sizeof(data->auth_tag)) {
-> > @@ -172,7 +219,14 @@ static int snapshot_decrypt_drain(struct snapshot_data *data)
-> >               total += PAGE_SIZE;
-> >       }
-> >
-> > +     if (data->crypt_total == 0)
-> > +             data->meta_size = snapshot_get_meta_page_count() << PAGE_SHIFT;
-> > +
-> >       data->crypt_total += total;
-> > +     res = snapshot_check_user_key_switch(data);
-> > +     if (res)
-> > +             return res;
-> > +
-> >       return 0;
-> >  }
-> >
-> > @@ -221,8 +275,26 @@ static ssize_t snapshot_write_next_encrypted(struct snapshot_data *data,
-> >       if (data->crypt_offset < (PAGE_SIZE * CHUNK_SIZE)) {
-> >               size_t pg_idx = data->crypt_offset >> PAGE_SHIFT;
-> >               size_t pg_off = data->crypt_offset & (PAGE_SIZE - 1);
-> > +             size_t size_avail = PAGE_SIZE;
-> >               *buf = data->crypt_pages[pg_idx] + pg_off;
-> > -             return PAGE_SIZE - pg_off;
-> > +
-> > +             /*
-> > +              * If this is the boundary where the meta pages end, then just
-> > +              * return enough for the auth tag.
-> > +              */
-> > +             if (data->meta_size && (data->crypt_total < data->meta_size)) {
-> > +                     uint64_t total_done =
-> > +                             data->crypt_total + data->crypt_offset;
-> > +
-> > +                     if ((total_done >= data->meta_size) &&
-> > +                         (total_done <
-> > +                          (data->meta_size + SNAPSHOT_AUTH_TAG_SIZE))) {
-> > +
-> > +                             size_avail = SNAPSHOT_AUTH_TAG_SIZE;
-> > +                     }
-> > +             }
-> > +
-> > +             return size_avail - pg_off;
-> >       }
-> >
-> >       /* Use offsets just beyond the size to return the tag. */
-> > @@ -304,9 +376,15 @@ ssize_t snapshot_write_encrypted(struct snapshot_data *data,
-> >                       break;
-> >               }
-> >
-> > -             /* Drain the encrypted buffer if it's full. */
-> > +             /*
-> > +              * Drain the encrypted buffer if it's full, or if we hit the end
-> > +              * of the meta pages and need a key change.
-> > +              */
-> >               if ((data->crypt_offset >=
-> > -                 ((PAGE_SIZE * CHUNK_SIZE) + SNAPSHOT_AUTH_TAG_SIZE))) {
-> > +                 ((PAGE_SIZE * CHUNK_SIZE) + SNAPSHOT_AUTH_TAG_SIZE)) ||
-> > +                 (data->meta_size && (data->crypt_total < data->meta_size) &&
-> > +                  ((data->crypt_total + data->crypt_offset) ==
-> > +                   (data->meta_size + SNAPSHOT_AUTH_TAG_SIZE)))) {
-> >
-> >                       int rc;
-> >
-> > @@ -350,6 +428,8 @@ void snapshot_teardown_encryption(struct snapshot_data *data)
-> >                       data->crypt_pages[i] = NULL;
-> >               }
-> >       }
-> > +
-> > +     memset(data->user_key, 0, sizeof(data->user_key));
-> >  }
-> >
-> >  static int snapshot_setup_encryption_common(struct snapshot_data *data)
-> > @@ -359,6 +439,7 @@ static int snapshot_setup_encryption_common(struct snapshot_data *data)
-> >       data->crypt_total = 0;
-> >       data->crypt_offset = 0;
-> >       data->crypt_size = 0;
-> > +     data->user_key_valid = false;
-> >       memset(data->crypt_pages, 0, sizeof(data->crypt_pages));
-> >       /* This only works once per hibernate. */
-> >       if (data->aead_tfm)
-> > @@ -661,15 +742,72 @@ int snapshot_set_encryption_key(struct snapshot_data *data,
-> >       return rc;
-> >  }
-> >
-> > -loff_t snapshot_get_encrypted_image_size(loff_t raw_size)
-> > +static loff_t snapshot_encrypted_byte_count(loff_t plain_size)
-> >  {
-> > -     loff_t pages = raw_size >> PAGE_SHIFT;
-> > +     loff_t pages = plain_size >> PAGE_SHIFT;
-> >       loff_t chunks = (pages + (CHUNK_SIZE - 1)) / CHUNK_SIZE;
-> >       /*
-> >        * The encrypted size is the normal size, plus a stitched in
-> >        * authentication tag for every chunk of pages.
-> >        */
-> > -     return raw_size + (chunks * SNAPSHOT_AUTH_TAG_SIZE);
-> > +     return plain_size + (chunks * SNAPSHOT_AUTH_TAG_SIZE);
-> > +}
-> > +
-> > +static loff_t snapshot_get_meta_data_size(void)
-> > +{
-> > +     loff_t pages = snapshot_get_meta_page_count();
-> > +
-> > +     return snapshot_encrypted_byte_count(pages << PAGE_SHIFT);
-> > +}
-> > +
-> > +int snapshot_set_user_key(struct snapshot_data *data,
-> > +     struct uswsusp_user_key __user *key)
-> > +{
-> > +     struct uswsusp_user_key user_key;
-> > +     unsigned int key_len;
-> > +     int rc;
-> > +     loff_t size;
-> > +
-> > +     /*
-> > +      * Return the metadata size, the number of bytes that can be fed in before
-> > +      * the user data key is needed at resume time.
-> > +      */
-> > +     size = snapshot_get_meta_data_size();
-> > +     rc = put_user(size, &key->meta_size);
-> > +     if (rc)
-> > +             return rc;
-> > +
-> > +     rc = copy_from_user(&user_key, key, sizeof(struct uswsusp_user_key));
-> > +     if (rc)
-> > +             return rc;
-> > +
-> > +     key_len = min_t(__u32, user_key.key_len, sizeof(data->user_key));
-> > +     if (key_len < 8)
-> > +             return -EINVAL;
-> > +
-> > +     /* Don't allow it if it's too late. */
-> > +     if (data->crypt_total > data->meta_size)
-> > +             return -EBUSY;
-> > +
-> > +     memset(data->user_key, 0, sizeof(data->user_key));
-> > +     memcpy(data->user_key, user_key.key, key_len);
->
-> Is struct snapshot_data::user_key is supposed to be %NUL terminated? Or
-> is it just 0-padded up to 32 bytes? If the latter, it might be worth
-> marking struct snapshot_data::user_data with the __non_string attribute.
-
-It's just zero padded up to 32 bytes, and is stored here until it's
-ready to be folded in by snapshot_use_user_key(). I'll add the
-attribute as well.
-
->
-> I don't like the dissociation of struct uswsusp_user_key::user_key and
-> struct snapshot_data::user_key, since a mistake here can lead to copying
-> kernel memory into struct snapshot_data::user_key. It would be nice to
-> see something like:
->
->         BUILD_BUG_ON(sizeof(data->user_key) < sizeof(user_key.key));
-
-Ok, now that I've got a define for the size in suspend_ioctls.h, I'll
-use that in snapshot_data.user_key as well. I'll also add the
-BUILD_BUG_ON here, and for a couple of other compile-time size
-requirements in snapshot_use_user_key().
-
-
-
-
->
-> --
-> Kees Cook
+DQoNCj4gT24gTm92IDksIDIwMjIsIGF0IDU6MDEgUE0sIE1vcnRlbiBMaW5kZXJ1ZCA8bW9ydGVu
+QGxpbmRlcnVkLnB3PiB3cm90ZToNCj4gDQo+IE9uIFR1ZSwgTm92IDIzLCAyMDIxIGF0IDExOjQx
+OjIzUE0gLTA1MDAsIEVyaWMgU25vd2Jlcmcgd3JvdGU6DQo+PiBBIG5ldyBNYWNoaW5lIE93bmVy
+IEtleSAoTU9LKSB2YXJpYWJsZSBjYWxsZWQgTW9rTGlzdFRydXN0ZWRSVCBoYXMgYmVlbg0KPj4g
+aW50cm9kdWNlZCBpbiBzaGltLiBXaGVuIHRoaXMgVUVGSSB2YXJpYWJsZSBpcyBzZXQsIGl0IGlu
+ZGljYXRlcyB0aGUNCj4+IGVuZC11c2VyIGhhcyBtYWRlIHRoZSBkZWNpc2lvbiB0aGVtc2VsdmVz
+IHRoYXQgdGhleSB3aXNoIHRvIHRydXN0IE1PSyBrZXlzDQo+PiB3aXRoaW4gdGhlIExpbnV4IHRy
+dXN0IGJvdW5kYXJ5LiAgSXQgaXMgbm90IGFuIGVycm9yIGlmIHRoaXMgdmFyaWFibGUNCj4+IGRv
+ZXMgbm90IGV4aXN0LiBJZiBpdCBkb2VzIG5vdCBleGlzdCwgdGhlIE1PSyBrZXlzIHNob3VsZCBu
+b3QgYmUgdHJ1c3RlZA0KPj4gd2l0aGluIHRoZSBrZXJuZWwuDQo+IA0KPiBIaSBFcmljLA0KPiAN
+Cj4gSSd2ZSBiZWVuIG1pbGxpbmcgYXJvdW5kIG9uIHRoaXMgcGF0Y2gtc2V0IGZvciBhIHdoaWxl
+IGFuZCBJIGhhdmUgYSBmZXcgaXNzdWVzDQo+IHdpdGggdGhlIGRlc2NyaXB0aW9uIG9mIHRoZSBj
+b21taXQgYW5kIHdoYXQgdGhlIGNvZGUgYWN0dWFsbHkgZG9lcy4NCj4gDQo+IGVmaV9tb2t2YXJf
+ZW50cnlfZmluZCBkb2Vzbid0IHNpbXBseSByZWFkIGFuIFVFRkkgdmFyaWFibGUgYXMgdGhlIGNv
+bW1pdCBtZXNzYWdlDQo+IHN1Z2dlc3RzLCBpdCB3aWxsIGxvb2sgZm9yIHRoZSBNT0sgdmFyaWFi
+bGUgbG9hZGVkIGludG8gdGhlIEVGSSBjb25maWd1cmF0aW9uDQo+IHRhYmxlLiBUaGlzIGltcGxp
+ZXMgd2UgbmVlZCB0aGlzIHRhYmxlIHNldHVwIGluIGVhcmx5IGJvb3QgdG8gdGFrZSB1c2FnZSBv
+ZiB0aGlzDQo+IHBhdGNoIHNldC4NCj4gDQo+IFRoZSBvbmx5IGJvb3Rsb2FkZXIgdGhhdCBkb2Vz
+IHNldHVwIHRoaXMgdGFibGUsIGlzIHRoZSBgc2hpbWAgYXMgZGVzY3JpYmVkLiBCdXQNCj4gbm8g
+b3RoZXIgYm9vdGxvYWRlciBpbXBsZW1lbnRzIHN1cHBvcnQgZm9yIHRoZSBNT0sgRUZJIGNvbmZp
+Z3VyYXRpb24gdGFibGUuDQo+IA0KPiBUaGlzIGVmZmVjdGl2ZWx5IG1lYW5zIHRoYXQgdGhlcmUg
+aXMgc3RpbGwgbm8gd2F5IGZvciBNYWNoaW5lIE93bmVycyB0byBsb2FkDQo+IGtleXMgaW50byB0
+aGUga2V5cmluZywgZm9yIHRoaW5ncyBsaWtlIG1vZHVsZSBzaWduaW5nLCB3aXRob3V0IHRoZSBz
+aGltIHByZXNlbnQNCj4gaW4gdGhlIGJvb3RjaGFpbi4gSSBmaW5kIHRoaXMgYSBiaXQgd2VpcmQu
+DQo+IA0KPiBJcyB0aGlzIGFuIGludGVudGlvbmFsIGRlc2lnbiBkZWNpc2lvbiwgb3IgY291bGQg
+b3RoZXIgd2F5cyBiZSBzdXBwb3J0ZWQgYXMNCj4gd2VsbD8NCg0KSW4gdjYgSSBoYWQgaXQgYXMg
+YSBSVCB2YXJpYWJsZSwgZHVyaW5nIHRoZSByZXZpZXcgYSByZXF1ZXN0IHdhcyBtYWRlIFsxXSB0
+byBqdXN0IA0KdXNlIHRoZSBFRkkgY29uZmlndXJhdGlvbiB0YWJsZS4gIElmIHRoZXJlIGFyZSBv
+dGhlciBib290IGxvYWRlcnMgdGhhdCB3YW50IHRvIHVzZSB0aGlzLA0KSSBkb27igJl0IHNlZSB3
+aHkgdGhlIGNvZGUgaW4gdjYgY291bGRu4oCZdCBiZSBhZGRlZCBiYWNrLiAgSWYgdGhlIGNvbmZp
+Z3VyYXRpb24gdGFibGUgaXNu4oCZdA0KYXZhaWxhYmxlLCBpdCBjb3VsZCB0cnkgcmVhZGluZyB0
+aGUgUlQgdmFyIG5leHQuDQoNCjEuIGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVj
+dC9saW51eC1pbnRlZ3JpdHkvcGF0Y2gvMjAyMTA5MTQyMTE0MTYuMzQwOTYtMTMtZXJpYy5zbm93
+YmVyZ0BvcmFjbGUuY29tLyMyNDQ1MzQwOQ0KDQo=
