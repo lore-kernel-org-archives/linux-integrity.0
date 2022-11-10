@@ -2,102 +2,102 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B780C433FE
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Nov 2022 00:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A741C433FE
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Nov 2022 00:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231648AbiKJA0m (ORCPT
+        id S231989AbiKJAaR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 9 Nov 2022 19:26:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
+        Wed, 9 Nov 2022 19:30:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbiKJA0l (ORCPT
+        with ESMTP id S231535AbiKJAaP (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 Nov 2022 19:26:41 -0500
-X-Greylist: delayed 900 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 09 Nov 2022 16:26:40 PST
-Received: from linderud.pw (linderud.dev [163.172.10.146])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AFC328E31;
-        Wed,  9 Nov 2022 16:26:40 -0800 (PST)
-Received: from linderud.pw (localhost [127.0.0.1])
-        by linderud.pw (Postfix) with ESMTP id 0E360C0273;
-        Thu, 10 Nov 2022 01:01:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linderud.pw;
-        s=linderud; t=1668038494;
-        bh=jH0zJFbDnCevPE8tf0c1v6aSJKKT3slV14YINE41imY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=U0dBESQLYHV9bR+lJN7IIwR0s+9MLgjZCaC29vtuBJicKAlUqCJA/8h/XDWPRT+aF
-         5KGr3uiWk0XJtRScrl5QEjn+4vrjGQX6Hms9RmxW4AkcL2KhEOKVdDq0uW6cgGQONK
-         2b4cV4OyG6EX7fiuO9KVbz5Z4vzANcy+Y620PKtCpjpG1K7OO9h5XZTbxi9L0PMK+Q
-         aUS3852wWwcdISxeTKf1y2Ml8l0fUnlcnQV/LArMUSwZMAhyQYLFxrMvag93Kiyk+o
-         rgXzF2R5k8lckO/HVRNen26BJvRNU0SC5YMhd0auAvTQ6dQqce+Sz+TrJdEGUNP5gP
-         uhuBd0M6nP3FPkxnbFRv78o5outAF7pLYBRXxWTRO6i0k9TRWsmacCM6mG6aY36vI1
-         2KniNKKH4W78ldDkHY+gCKUyawFiWTBFaR3XVqCWJVZcQZinjjR9H33JyfBQk0qXIO
-         0N/PymYd9tifdimGEspYZGfkGsfEaGAm3dMD+ZAbK+0eEgGQJvePRoTE/CC2NAH222
-         0UiUBrTyfQVCWSV8PQedyGwLX/QEh9x98BnJnlUCqIPu7J57W2tWzWVuAirp1EdPec
-         EK5Ht57VCNavVXl5d41jZLG7OXYo5osfeImVkvEoryGIuy8lObCOhlYTJNX4Kmi0r2
-         FdQA/J5zBQKLrm8VZGwq9hMs=
-Received: from localhost (host-37-191-241-102.lynet.no [37.191.241.102])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: morten)
-        by linderud.pw (Postfix) with ESMTPSA id BFB40C007F;
-        Thu, 10 Nov 2022 01:01:34 +0100 (CET)
-Date:   Thu, 10 Nov 2022 01:01:29 +0100
-From:   Morten Linderud <morten@linderud.pw>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
-        keescook@chromium.org, torvalds@linux-foundation.org,
-        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
-        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
-        jason@zx2c4.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
-        konrad.wilk@oracle.com
-Subject: Re: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT
- found
-Message-ID: <20221110000129.kl6pjy5mafpuptbk@framework>
-References: <20211124044124.998170-1-eric.snowberg@oracle.com>
- <20211124044124.998170-17-eric.snowberg@oracle.com>
+        Wed, 9 Nov 2022 19:30:15 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DB913D18
+        for <linux-integrity@vger.kernel.org>; Wed,  9 Nov 2022 16:30:14 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id v17so689232edc.8
+        for <linux-integrity@vger.kernel.org>; Wed, 09 Nov 2022 16:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v4yTYtNFCr2DMFGxVYe8BkHHgi9YJBUY78E57QbJ4b4=;
+        b=QPh+dXTNNNqvMpbHZ+zyyruTS5AtCQvm6jcqLL2W9v+PwLC7vDe3logqFmZD94dYSP
+         j6gODfcUUWJDTpUyk8hmXXMbo328Gv/iEL/11fF5vrLy0rJupS7Hu5DJ6Kbwjs4Fqbwx
+         alPJToOLgsVzSGLZWe/LaiY8wv+0RY0qSb1+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v4yTYtNFCr2DMFGxVYe8BkHHgi9YJBUY78E57QbJ4b4=;
+        b=vv7+yAlV2U1uugS8DvJ1/kemOHlBEpWsum+6im7jugxAeX8bbJBS2cl/hHsCbvOnCk
+         33cg4Me0m0jMNpX+QWBFl6Vuxdvs1B9iGg/8SmQpJnjuk1LwZKvfUeoT3bSPWs9G5ngz
+         XCLUS4RTh4NO8mZM6fSsj2XMxAchYEa3cOd3Xp82Lcle2mNfsWanJSl1U1Qu5tRx5npY
+         d6t478m0tMc1kGMZc8FnxKpqQSe+tNtk5Z7sRdih3rq8qYukAGUj7CuDP2ViTSBQttFH
+         MCLsiTm0mLKz+BxcU5qISOodJW2EiH1bKYe7aTFX5blYQ2EqnCGluByYRW4DWct3wxQP
+         K7MQ==
+X-Gm-Message-State: ACrzQf3pxFrU4apOjVaM8UVNhgb5K5vw7EGqnCJrs7YcEfucN0vyRYlZ
+        zifGnYqYaIlx2/bqkLbqyd49ye85av56rw==
+X-Google-Smtp-Source: AMsMyM5TySGQyjwWDUL4iIhDKhtXnZR7zRfqQSdhLk0lco5v5QOx9jxZCb8v+VZckSyHWUKpcA8wOQ==
+X-Received: by 2002:a50:ec13:0:b0:461:e3f2:38bc with SMTP id g19-20020a50ec13000000b00461e3f238bcmr1336235edr.149.1668040213341;
+        Wed, 09 Nov 2022 16:30:13 -0800 (PST)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
+        by smtp.gmail.com with ESMTPSA id lx8-20020a170906af0800b00782fbb7f5f7sm6454966ejb.113.2022.11.09.16.30.12
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Nov 2022 16:30:12 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id l14so158629wrw.2
+        for <linux-integrity@vger.kernel.org>; Wed, 09 Nov 2022 16:30:12 -0800 (PST)
+X-Received: by 2002:a5d:6dc3:0:b0:22a:bcc3:21c6 with SMTP id
+ d3-20020a5d6dc3000000b0022abcc321c6mr41571850wrz.450.1668040212003; Wed, 09
+ Nov 2022 16:30:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211124044124.998170-17-eric.snowberg@oracle.com>
+References: <20221103180120.752659-1-evgreen@chromium.org> <20221103105558.v4.7.Ifff11e11797a1bde0297577ecb2f7ebb3f9e2b04@changeid>
+ <202211041135.EAC889BA08@keescook>
+In-Reply-To: <202211041135.EAC889BA08@keescook>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Wed, 9 Nov 2022 16:29:35 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5Tw-iX8M1zWc419X-mwYTYvxZJiKxR9Q1He9dY7A3C5w@mail.gmail.com>
+Message-ID: <CAE=gft5Tw-iX8M1zWc419X-mwYTYvxZJiKxR9Q1He9dY7A3C5w@mail.gmail.com>
+Subject: Re: [PATCH v4 07/11] PM: hibernate: Add kernel-based encryption
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-pm@vger.kernel.org, rjw@rjwysocki.net, gwendal@chromium.org,
+        apronin@chromium.org, Pavel Machek <pavel@ucw.cz>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        linux-integrity@vger.kernel.org, jejb@linux.ibm.com,
+        zohar@linux.ibm.com, dlunev@google.com,
+        Eric Biggers <ebiggers@kernel.org>,
+        Ben Boeckel <me@benboeckel.net>, jarkko@kernel.org,
+        Len Brown <len.brown@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, Nov 23, 2021 at 11:41:23PM -0500, Eric Snowberg wrote:
-> A new Machine Owner Key (MOK) variable called MokListTrustedRT has been
-> introduced in shim. When this UEFI variable is set, it indicates the
-> end-user has made the decision themselves that they wish to trust MOK keys
-> within the Linux trust boundary.  It is not an error if this variable
-> does not exist. If it does not exist, the MOK keys should not be trusted
-> within the kernel.
+On Fri, Nov 4, 2022 at 11:38 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Thu, Nov 03, 2022 at 11:01:15AM -0700, Evan Green wrote:
+> > [...]
+> > +config ENCRYPTED_HIBERNATION
+> > +     bool "Encryption support for userspace snapshots"
+> > +     depends on HIBERNATION_SNAPSHOT_DEV
+> > +     depends on CRYPTO_AEAD2=y
+> > +     default n
+>
+> "default n" is the, err, default, so this line can be left out.
+>
+> If someone more familiar with the crypto pieces can review the rest,
+> that would be good. :)
 
-Hi Eric,
+Eric and I emailed briefly about it a couple weeks ago, he said he
+would try to take a look when he could. I'm optimistic.
 
-I've been milling around on this patch-set for a while and I have a few issues
-with the description of the commit and what the code actually does.
+-Evan
 
-efi_mokvar_entry_find doesn't simply read an UEFI variable as the commit message
-suggests, it will look for the MOK variable loaded into the EFI configuration
-table. This implies we need this table setup in early boot to take usage of this
-patch set.
-
-The only bootloader that does setup this table, is the `shim` as described. But
-no other bootloader implements support for the MOK EFI configuration table.
-
-This effectively means that there is still no way for Machine Owners to load
-keys into the keyring, for things like module signing, without the shim present
-in the bootchain. I find this a bit weird.
-
-Is this an intentional design decision, or could other ways be supported as
-well?
-
--- 
-Morten Linderud
-PGP: 9C02FF419FECBE16
+>
+> --
+> Kees Cook
