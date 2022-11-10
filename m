@@ -2,98 +2,109 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19100C43217
-	for <linux-integrity@archiver.kernel.org>; Thu, 10 Nov 2022 15:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7FEC433FE
+	for <linux-integrity@archiver.kernel.org>; Thu, 10 Nov 2022 15:28:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbiKJP0q (ORCPT
+        id S230387AbiKJP23 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 10 Nov 2022 10:26:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42214 "EHLO
+        Thu, 10 Nov 2022 10:28:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231529AbiKJP03 (ORCPT
+        with ESMTP id S231204AbiKJP1e (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 10 Nov 2022 10:26:29 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD77C40926;
-        Thu, 10 Nov 2022 07:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1668093944; bh=vmr8i0HILdqGMwVhgOxfm//3j+C4M5iWtBnT+hrsrRw=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=l6NcozitBJOn/pRw0n3a9CgOrLtnM8YlA1d8jZtTFwPPvvU7Uw8RlNv36aQxrVrDc
-         jO/lk2UZgewHknat5X1SMky/rs0cxy+zKwWj13rYjWEuPvPJkVsmWrdsfbWLL0MC1a
-         5G66ZhceVqdZ9Dguo/GaDgaVAPht+21cXuKqNujgyqvQlFGum240rpWCzxG7WsF86s
-         tYvWiMzxeVNa0OAFOinONbYCPVRaRfZBVEp5UbMqp9CjevF7xQL4hrXuxWLHDX72jY
-         rqVqLabBjcaw4U7NjQ5j9jWGG/IFxGFBlN3cU6uD5e8jQzHdZDFV7AcQoAlgfvi0HG
-         +ffSnocqK481w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from Venus.speedport.ip ([84.162.7.17]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M89Gt-1oxnzo3GrL-005L2E; Thu, 10
- Nov 2022 16:25:43 +0100
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     stefanb@linux.vnet.ibm.com, linux@mniewoehner.de,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jandryuk@gmail.com, pmenzel@molgen.mpg.de, l.sanfilippo@kunbus.com,
-        LinoSanfilippo@gmx.de, lukas@wunner.de, p.rosenberger@kunbus.com
-Subject: [PATCH v9 03/12] tpm, tpm_tis: Disable interrupts if tpm_tis_probe_irq() failed
-Date:   Thu, 10 Nov 2022 16:25:24 +0100
-Message-Id: <20221110152533.24243-4-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20221110152533.24243-1-LinoSanfilippo@gmx.de>
-References: <20221110152533.24243-1-LinoSanfilippo@gmx.de>
+        Thu, 10 Nov 2022 10:27:34 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D980B3F054;
+        Thu, 10 Nov 2022 07:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1668094051;
+        bh=JR33g8gWlSZGidJuKivTgbq5ECjLpcLYApf6iPOEG4w=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=ud4jobt2vwD795E+KzwUN6dmloAtvJnv237I9aQOWFlYSMugYNh7X/5QAlOgP10Hw
+         shu82adBq6GPRCVeMKyQKWc7fHBmWgCS+dl6RZAEZMjSrGlICLe3hXbsAj5U3E4A49
+         jeahL4oHCgMKm6FdvPgIzjko01lbA5wDSJ/TplKs=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id AD6DB1285F6D;
+        Thu, 10 Nov 2022 10:27:31 -0500 (EST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id P-df-yN8V5IA; Thu, 10 Nov 2022 10:27:31 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1668094050;
+        bh=JR33g8gWlSZGidJuKivTgbq5ECjLpcLYApf6iPOEG4w=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=kq+CmaEP+hl8WK8iJn9Oiow8bNpyykjPeEzKJebMmy/YDGGGCRfa/FFR9L9H+DrKr
+         OgD9kxYnHQuyo4RNMN7ZekqaOIo3H7NOno1DhnPjA/zuHmTjbtBq520z4p4x7u4qnx
+         DZ5fiNQES6FbjQUxUXmOxwmdo60xLLqodNtdeK+k=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 0026C1286591;
+        Thu, 10 Nov 2022 10:27:27 -0500 (EST)
+Message-ID: <47ae05f8d3a67ee5e1607ab8e718cc4b3e95cebb.camel@HansenPartnership.com>
+Subject: Re: [PATCH v8 16/17] integrity: Trust MOK keys if MokListTrustedRT
+ found
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Morten Linderud <morten@linderud.pw>,
+        Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "weiyongjun1@huawei.com" <weiyongjun1@huawei.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Eric Biggers <ebiggers@google.com>,
+        "ardb@kernel.org" <ardb@kernel.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "lszubowi@redhat.com" <lszubowi@redhat.com>,
+        "jason@zx2c4.com" <jason@zx2c4.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "pjones@redhat.com" <pjones@redhat.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>
+Date:   Thu, 10 Nov 2022 10:27:24 -0500
+In-Reply-To: <20221110150607.h4iaymkgc4f7kuue@framework>
+References: <20211124044124.998170-1-eric.snowberg@oracle.com>
+         <20211124044124.998170-17-eric.snowberg@oracle.com>
+         <20221110000129.kl6pjy5mafpuptbk@framework>
+         <4A479B96-4B41-4323-9920-5A909423F998@oracle.com>
+         <20221110150607.h4iaymkgc4f7kuue@framework>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:pM1M1Hc/4r3ew4oifeUS7mZ1Y9Ljsr4ABery3qVtBcuLO7/zlv7
- gFYRo5fz8/wLYU0MK3psPh/O/bkkSbz+iZRBEF3VmbmChhSmtfnUxVIsKNUW+wV2up6Z7Ll
- ug2oXwHvSHth714q79SbJk+LpHWKSUemEddh5LyvLmQkhxdBD3u4vJe/XqZTa0Kkac/v4Q/
- zwjk3Zz7241RR6XK7MReg==
-UI-OutboundReport: notjunk:1;M01:P0:AYfreQn/zm4=;T/7Y5nb/wGFzkRCd0y1uGLSzRRq
- NVQpG4fGGPcd6GI9Pz1n7S5NS7ZZ4Vj5MnA/0Dk7m4P+k2f0N0hyJl/DxSJgxaCCPsxP3kCMh
- LUlP3rZNA1CYjxNt5ULhwfTZ9E+rILTQRUhRVQk18TsBX8CG0HhfDzWXNs8ycea0aAU+bWCZ/
- Vs/nic5NJiuzXBEAesZi9Q384TwU3wWCYlx4e88LHnNGp8175wJgj2WhgCVll41gF1m6sxdW4
- QMSeBcTWQ2h/wlp11U6w4+/eK1Bf2Z/9IpqkFocUHExEjwnyGLByh/SPjAh/3oXYgHgEnPpzH
- pWZFIjKf2Lk7HuKzagion6EqlrtsShtcIwF/gY746f0gKjZrLpKUNsbCKAiteLuBETQE3Rz2f
- wrgnGxOuP1yOhcs5E59s//MZ/i0nsaRfjq2VNJfJar4rZlSYT7JRsOe5tUHLmDtsJXV7uW6YO
- Uy7Y5ofyplkXqm+bfxMTNyKhPyvHAhq3BUj96X0Q4L+VdV762lb5eDwJ6jrI4AiyC6ZlajFGr
- yfuNe1UnvQxV/Xo/KGpLBtV7uo4yUmMY/MY9G/2Zui9eWqx56Lkb55ZPJHdCQ30DdMZBNrmo3
- LaBnluUAS4gG+nvdpNpEkT+u4jVvVpVSddhV8eV7E0ED/rQwoIIQD+lLesawyiTzfwvenvU2F
- yvnQvFreEID+6t4jn7W9c7UBQPPnloF5ndCZHwvk1a1rOVY2lpHVLiWScHJ+1nK/JFIrEM0Th
- 01OoI6T5iA0UB7E4JtTKbYddecVa/qKs9tOFXwXEqZa1xNak+AMJeeWx3vc58lHHHg9Sjxi6M
- WXOIoIP9ELwSDpMuRAWuShmDxO/YHJY1iMOtrwt1R3inMBG9C27rpsx5lNVDPrYsMxzwfT/Mx
- MVNz9DWOER33VqnkzOFKwYwjbJqsLL0tI+BpMPtS2VTFP2Evbv8OBK9tjaSIgprs+mDs9S/8r
- 3c64GQ==
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkJvdGggZnVu
-Y3Rpb25zIHRwbV90aXNfcHJvYmVfaXJxX3NpbmdsZSgpIGFuZCB0cG1fdGlzX3Byb2JlX2lycSgp
-IG1heSBzZXR1cAp0aGUgaW50ZXJydXB0cyBhbmQgdGhlbiByZXR1cm4gd2l0aCBhbiBlcnJvci4g
-VGhpcyBjYXNlIGlzIGluZGljYXRlZCBieSBhCm1pc3NpbmcgVFBNX0NISVBfRkxBR19JUlEgZmxh
-ZyBpbiBjaGlwLT5mbGFncy4KQ3VycmVudGx5IHRoZSBpbnRlcnJ1cHQgc2V0dXAgaXMgb25seSB1
-bmRvbmUgaWYgdHBtX3Rpc19wcm9iZV9pcnFfc2luZ2xlKCkKZmFpbHMuIFVuZG8gdGhlIHNldHVw
-IGFsc28gaWYgdHBtX3Rpc19wcm9iZV9pcnEoKSBmYWlscy4KClNpZ25lZC1vZmYtYnk6IExpbm8g
-U2FuZmlsaXBwbyA8bC5zYW5maWxpcHBvQGt1bmJ1cy5jb20+ClJldmlld2VkLWJ5OiBKYXJra28g
-U2Fra2luZW4gPGphcmtrb0BrZXJuZWwub3JnPgpUZXN0ZWQtYnk6IE1pY2hhZWwgTmlld8O2aG5l
-ciA8bGludXhAbW5pZXdvZWhuZXIuZGU+Ci0tLQogZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2Nv
-cmUuYyB8IDIyICsrKysrKysrKysrLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNl
-cnRpb25zKCspLCAxMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2NoYXIvdHBt
-L3RwbV90aXNfY29yZS5jIGIvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYwppbmRleCBk
-MmM5YzlkNzY4OTMuLjYwM2I4MmNhNTZkYSAxMDA2NDQKLS0tIGEvZHJpdmVycy9jaGFyL3RwbS90
-cG1fdGlzX2NvcmUuYworKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5jCkBAIC0x
-MDkxLDIxICsxMDkxLDIxIEBAIGludCB0cG1fdGlzX2NvcmVfaW5pdChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsIHN0cnVjdCB0cG1fdGlzX2RhdGEgKnByaXYsIGludCBpcnEsCiAJCQlnb3RvIG91dF9lcnI7
-CiAJCX0KIAotCQlpZiAoaXJxKSB7CisJCWlmIChpcnEpCiAJCQl0cG1fdGlzX3Byb2JlX2lycV9z
-aW5nbGUoY2hpcCwgaW50bWFzaywgSVJRRl9TSEFSRUQsCiAJCQkJCQkgaXJxKTsKLQkJCWlmICgh
-KGNoaXAtPmZsYWdzICYgVFBNX0NISVBfRkxBR19JUlEpKSB7Ci0JCQkJZGV2X2VycigmY2hpcC0+
-ZGV2LCBGV19CVUcKKwkJZWxzZQorCQkJdHBtX3Rpc19wcm9iZV9pcnEoY2hpcCwgaW50bWFzayk7
-CisKKwkJaWYgKCEoY2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX0lSUSkpIHsKKwkJCWRldl9l
-cnIoJmNoaXAtPmRldiwgRldfQlVHCiAJCQkJCSJUUE0gaW50ZXJydXB0IG5vdCB3b3JraW5nLCBw
-b2xsaW5nIGluc3RlYWRcbiIpOwogCi0JCQkJcmMgPSByZXF1ZXN0X2xvY2FsaXR5KGNoaXAsIDAp
-OwotCQkJCWlmIChyYyA8IDApCi0JCQkJCWdvdG8gb3V0X2VycjsKLQkJCQlkaXNhYmxlX2ludGVy
-cnVwdHMoY2hpcCk7Ci0JCQkJcmVsZWFzZV9sb2NhbGl0eShjaGlwLCAwKTsKLQkJCX0KLQkJfSBl
-bHNlIHsKLQkJCXRwbV90aXNfcHJvYmVfaXJxKGNoaXAsIGludG1hc2spOworCQkJcmMgPSByZXF1
-ZXN0X2xvY2FsaXR5KGNoaXAsIDApOworCQkJaWYgKHJjIDwgMCkKKwkJCQlnb3RvIG91dF9lcnI7
-CisJCQlkaXNhYmxlX2ludGVycnVwdHMoY2hpcCk7CisJCQlyZWxlYXNlX2xvY2FsaXR5KGNoaXAs
-IDApOwogCQl9CiAJfQogCi0tIAoyLjM2LjEKCg==
+On Thu, 2022-11-10 at 16:06 +0100, Morten Linderud wrote:
+> I'm not really sure what Peter means with "much more reliable"
+> though.
+
+It's that in-head knowledge you referred to.  You can't see the true
+MoK variables because they're BootServices, meaning they're not visible
+in the RunTime, which is why the shadow RT variables exist (this is a
+security property: BS only variables can only be altered by trusted,
+signed entities).  However lots of things can create RT variables so
+you have to run through a sequence of checks on the RT shadows to try
+to defeat clever attackers (like verifying the variable attributes),
+because the chain of custody from BS to RT is not guaranteed.  If you
+use a configuration table instead, that is BS only, the kernel (which
+is also a trusted entity) has to pick it out before ExitBootServices,
+so if the kernel has the table, you have a reliable chain of custody
+for the entries.
+
+James
+
