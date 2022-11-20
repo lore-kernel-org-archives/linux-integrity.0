@@ -2,190 +2,172 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81702C4332F
-	for <linux-integrity@archiver.kernel.org>; Sun, 20 Nov 2022 13:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9791CC4167E
+	for <linux-integrity@archiver.kernel.org>; Sun, 20 Nov 2022 19:43:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbiKTNcw (ORCPT
+        id S229677AbiKTTnu (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 20 Nov 2022 08:32:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46920 "EHLO
+        Sun, 20 Nov 2022 14:43:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbiKTNcj (ORCPT
+        with ESMTP id S229449AbiKTTns (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 20 Nov 2022 08:32:39 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD67E82;
-        Sun, 20 Nov 2022 05:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1668951126; bh=S+hhbmGWDO0VTuSnSrMDyNR5O/r2XEHMgIEZ7ffd/3o=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=N8Pr9BhFF3SCxSv1LBebt52RsBq77SoQGxRDE0yI9UTR0SGoSZe3Mv1WFfV8qzIih
-         iAvCJQiyEeLK49eqi7neJWSEIY+xXgGNmKsAlE2mZQ9NJGhYlOEBeIKOEUZhbP0jSI
-         RB3fh/iKG4C4YsVQoqffXEqqQBaQdGKM9147eNYzYHFiweffHrUZuTwBJBQUtFg8WF
-         aTNTJKEISHBS3NEZfezhdZOWrBbt4lTz36QaLu3/ZFU2rQYKOZeIYDhmJFlHdxrKQE
-         8+N9xJzYHv2gLpnTwmbrgLo/KFFBbT2wNiC9jTZps373eoHVz46ck+gdn7BoUcboYG
-         PmIsPiQZb6FWw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from Venus.speedport.ip ([84.162.7.17]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhD2O-1pR9Yi2qFm-00eOCL; Sun, 20
- Nov 2022 14:32:06 +0100
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     stefanb@linux.vnet.ibm.com, linux@mniewoehner.de,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jandryuk@gmail.com, pmenzel@molgen.mpg.de, l.sanfilippo@kunbus.com,
-        LinoSanfilippo@gmx.de, lukas@wunner.de, p.rosenberger@kunbus.com
-Subject: [PATCH v10 06/14] tpm, tpm_tis: Only handle supported interrupts
-Date:   Sun, 20 Nov 2022 14:31:26 +0100
-Message-Id: <20221120133134.28926-7-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20221120133134.28926-1-LinoSanfilippo@gmx.de>
-References: <20221120133134.28926-1-LinoSanfilippo@gmx.de>
+        Sun, 20 Nov 2022 14:43:48 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 703BD1EC46;
+        Sun, 20 Nov 2022 11:43:47 -0800 (PST)
+Received: from mercury (unknown [185.209.196.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: sre)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 981D16602381;
+        Sun, 20 Nov 2022 19:43:45 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1668973425;
+        bh=T3nU7r4TDRBfUE21qBPtx6/vbbqNd5aTZrUhEKVEpe8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eTDOl2wCVRsu/tyZH+YPJZtqzX+lTk+zyDWIOt7B5OERtVQXV05JqgkECzvZaxhvq
+         GWHynwzbAdTGjQc4EiizPb4JzuNJErOOA6MGMcIE1OOBJsR2nJxdyKqik4rZXW8I8S
+         YL9hLYJH9B0qYNlv0ofE25pkedfO3Zr0ukRr6nTWoiYIF0ElBn0uG1ehB/KKpnJkB6
+         LmHZCe95IKsjPugXIHsbUyR3TPbe/Uz/FTgEe5YV5fHfIiRZ+dwYB8lU4/MgAmu4vM
+         BZjO4bgM9A0wAKu6Ub+wy7zE/lgrgtzyeA/1iFwakjmg/vd8UL0auYvToqpQCZqsxv
+         +Bmg67/Ow+Rwg==
+Received: by mercury (Postfix, from userid 1000)
+        id 1C1D2106F223; Sun, 20 Nov 2022 20:43:43 +0100 (CET)
+Date:   Sun, 20 Nov 2022 20:43:43 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+Cc:     Angel Iglesias <ang.iglesiasg@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Grant Likely <grant.likely@linaro.org>,
+        Wolfram Sang <wsa@kernel.org>, linux-i2c@vger.kernel.org,
+        kernel@pengutronix.de, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Broadcom internal kernel review list 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-media@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-actions@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, alsa-devel@alsa-project.org,
+        linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
+        linux-pm@vger.kernel.org, Purism Kernel Team <kernel@puri.sm>,
+        linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-staging@lists.linux.dev,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net
+Subject: Re: [PATCH 000/606] i2c: Complete conversion to i2c_probe_new
+Message-ID: <20221120194343.nnpzhgjapep7iwqk@mercury.elektranox.org>
+References: <20221118224540.619276-1-uwe@kleine-koenig.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:pj9FekuflmRkmp8yKItK+S15WfK+mvG73cJI33XbaCDKiXdEYhH
- RMuk+wI0Bzde5PWEpNMdaJFim3D4B0DSVlWxvSdBjLAEIfFQgYzTqn2bOhnHWRNCIta3ttB
- E84mMOrbYZRVnU63L6wUOiBGhqcKmc9jnxHuvhZjerzkmai88MzxxHM1oT0Aapi1k8hKRbq
- BKxr0kxEdOkXMfunZ+JOA==
-UI-OutboundReport: notjunk:1;M01:P0:6AjY/MVFtng=;jLWczQZvTXNacP1t7vpKs+IaCFW
- yObG/QcyeDJVIMIkwolW6f77oIMVYXe5kag/9tri6fzZPF521H95EfpN6UdPgrtLNQGYJSHn+
- XsEP4tdFIPxqX/oBuE7cuUBaQbQtDsFMMUAJfI0Ze/Y5QYnfOPrmPUTkwY72zj1RBg3DUNTei
- Nu1IwA/bak6DviOczNz4Dq7x5KiesoJawOCWfRQTM6EnQFT2F5286ILrbLf8X8PX/tNJTK4rn
- ainZNGgFFqsuxIHvg0jMr4VbMpKw84ANLLWtCnPPJoUKfpoo4BKU7j9C2NvmhPC3neOQPqFNy
- P2d1hfdErCy7yV3PlpdjHWh/5Dc/lwv0SnvrvWJyYcUuAbtdqS9BxxNtcmlfqqcghmcjwc944
- sUQ3uc6a+FeWypDfyYewLQaVmJtpgQdrZUYbVQDs7ddTiZECydGc93tMSu+z2g3//kxaGtgI3
- oTmXAO18QOfh7yPv3T2HsWoxu1pu7Ly8dITe2GqHoGZXhThCSty68H+AXoP8m98O4mVPF7Fg+
- lzyWwLdQK+XrQ2AboUrPWdviG+wHputox4SVd2FEm5Uuj82DZUtQvyI4JBLYfyvBDOa/a8WZr
- +5fvqhkNFUq7GXCgEUPW/YKcJuBvRB176Bugkgp3X0pD70bzTfgsJcvNKtjJlq9vzXzfuQTEc
- FjJ4ZjnHDEwnetV38tmkaPqP/LsCVVJc+AzwzQp9U8Ig4asIXavPsVdWoXxMPzPbcOWhzFL36
- 0w26YtkMtnC2m8G5Y2dnRPZR7g4ndwigmzndzmB35xY2vvuZoMt+IEuKfAAXR/JKo4Mmklke+
- PTVeQlkGjXIfpMOy9qc3Fl6BU+BEv7fq+AHNDEYAH+e13tIiMl/nFa6u/chUjiXCjL5pXVF6o
- 0Yh3R4IuvObdAdgbqE2jU9SaxNQLu3DV3XTXd9m8Rjn2oI/9De+k536XvNmW68ntEyKGNOnF3
- IB5ySa6fjJgYME90gQt52ev7UEk=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wvm2z6appxwdd5fa"
+Content-Disposition: inline
+In-Reply-To: <20221118224540.619276-1-uwe@kleine-koenig.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkFjY29yZGlu
-ZyB0byB0aGUgVFBNIEludGVyZmFjZSBTcGVjaWZpY2F0aW9uIChUSVMpIHN1cHBvcnQgZm9yICJz
-dHNWYWxpZCIKYW5kICJjb21tYW5kUmVhZHkiIGludGVycnVwdHMgaXMgb25seSBvcHRpb25hbC4K
-VGhpcyBoYXMgdG8gYmUgdGFrZW4gaW50byBhY2NvdW50IHdoZW4gaGFuZGxpbmcgdGhlIGludGVy
-cnVwdHMgaW4gZnVuY3Rpb25zCmxpa2Ugd2FpdF9mb3JfdHBtX3N0YXQoKS4gVG8gZGV0ZXJtaW5l
-IHRoZSBzdXBwb3J0ZWQgaW50ZXJydXB0cyB1c2UgdGhlCmNhcGFiaWxpdHkgcXVlcnkuCgpBbHNv
-IGFkanVzdCB3YWl0X2Zvcl90cG1fc3RhdCgpIHRvIG9ubHkgd2FpdCBmb3IgaW50ZXJydXB0IHJl
-cG9ydGVkIHN0YXR1cwpjaGFuZ2VzLiBBZnRlciB0aGF0IHByb2Nlc3MgYWxsIHRoZSByZW1haW5p
-bmcgc3RhdHVzIGNoYW5nZXMgYnkgcG9sbGluZwp0aGUgc3RhdHVzIHJlZ2lzdGVyLgoKU2lnbmVk
-LW9mZi1ieTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KVGVzdGVk
-LWJ5OiBNaWNoYWVsIE5pZXfDtmhuZXIgPGxpbnV4QG1uaWV3b2VobmVyLmRlPgpSZXZpZXdlZC1i
-eTogSmFya2tvIFNha2tpbmVuIDxqYXJra29Aa2VybmVsLm9yZz4KLS0tCiBkcml2ZXJzL2NoYXIv
-dHBtL3RwbV90aXNfY29yZS5jIHwgMTIwICsrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
-CiBkcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5oIHwgICAxICsKIDIgZmlsZXMgY2hhbmdl
-ZCwgNzMgaW5zZXJ0aW9ucygrKSwgNDggZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuYyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3Jl
-LmMKaW5kZXggNThhNTNlYzUzNGFhLi5mYmFkOTJiMTg3ODggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-Y2hhci90cG0vdHBtX3Rpc19jb3JlLmMKKysrIGIvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2Nv
-cmUuYwpAQCAtNTMsNDEgKzUzLDYzIEBAIHN0YXRpYyBpbnQgd2FpdF9mb3JfdHBtX3N0YXQoc3Ry
-dWN0IHRwbV9jaGlwICpjaGlwLCB1OCBtYXNrLAogCWxvbmcgcmM7CiAJdTggc3RhdHVzOwogCWJv
-b2wgY2FuY2VsZWQgPSBmYWxzZTsKKwl1OCBzdHNfbWFzayA9IDA7CisJaW50IHJldCA9IDA7CiAK
-IAkvKiBjaGVjayBjdXJyZW50IHN0YXR1cyAqLwogCXN0YXR1cyA9IGNoaXAtPm9wcy0+c3RhdHVz
-KGNoaXApOwogCWlmICgoc3RhdHVzICYgbWFzaykgPT0gbWFzaykKIAkJcmV0dXJuIDA7CiAKLQlz
-dG9wID0gamlmZmllcyArIHRpbWVvdXQ7CisJLyogY2hlY2sgd2hhdCBzdGF0dXMgY2hhbmdlcyBj
-YW4gYmUgaGFuZGxlZCBieSBpcnFzICovCisJaWYgKHByaXYtPmludF9tYXNrICYgVFBNX0lOVEZf
-U1RTX1ZBTElEX0lOVCkKKwkJc3RzX21hc2sgfD0gVFBNX1NUU19WQUxJRDsKIAotCWlmIChjaGlw
-LT5mbGFncyAmIFRQTV9DSElQX0ZMQUdfSVJRKSB7CisJaWYgKHByaXYtPmludF9tYXNrICYgVFBN
-X0lOVEZfREFUQV9BVkFJTF9JTlQpCisJCXN0c19tYXNrIHw9IFRQTV9TVFNfREFUQV9BVkFJTDsK
-KworCWlmIChwcml2LT5pbnRfbWFzayAmIFRQTV9JTlRGX0NNRF9SRUFEWV9JTlQpCisJCXN0c19t
-YXNrIHw9IFRQTV9TVFNfQ09NTUFORF9SRUFEWTsKKworCXN0c19tYXNrICY9IG1hc2s7CisKKwlz
-dG9wID0gamlmZmllcyArIHRpbWVvdXQ7CisJLyogcHJvY2VzcyBzdGF0dXMgY2hhbmdlcyB3aXRo
-IGlycSBzdXBwb3J0ICovCisJaWYgKHN0c19tYXNrKSB7CisJCXJldCA9IC1FVElNRTsKIGFnYWlu
-OgogCQl0aW1lb3V0ID0gc3RvcCAtIGppZmZpZXM7CiAJCWlmICgobG9uZyl0aW1lb3V0IDw9IDAp
-CiAJCQlyZXR1cm4gLUVUSU1FOwogCQlyYyA9IHdhaXRfZXZlbnRfaW50ZXJydXB0aWJsZV90aW1l
-b3V0KCpxdWV1ZSwKLQkJCXdhaXRfZm9yX3RwbV9zdGF0X2NvbmQoY2hpcCwgbWFzaywgY2hlY2tf
-Y2FuY2VsLAorCQkJd2FpdF9mb3JfdHBtX3N0YXRfY29uZChjaGlwLCBzdHNfbWFzaywgY2hlY2tf
-Y2FuY2VsLAogCQkJCQkgICAgICAgJmNhbmNlbGVkKSwKIAkJCXRpbWVvdXQpOwogCQlpZiAocmMg
-PiAwKSB7CiAJCQlpZiAoY2FuY2VsZWQpCiAJCQkJcmV0dXJuIC1FQ0FOQ0VMRUQ7Ci0JCQlyZXR1
-cm4gMDsKKwkJCXJldCA9IDA7CiAJCX0KIAkJaWYgKHJjID09IC1FUkVTVEFSVFNZUyAmJiBmcmVl
-emluZyhjdXJyZW50KSkgewogCQkJY2xlYXJfdGhyZWFkX2ZsYWcoVElGX1NJR1BFTkRJTkcpOwog
-CQkJZ290byBhZ2FpbjsKIAkJfQotCX0gZWxzZSB7Ci0JCWRvIHsKLQkJCXVzbGVlcF9yYW5nZShw
-cml2LT50aW1lb3V0X21pbiwKLQkJCQkgICAgIHByaXYtPnRpbWVvdXRfbWF4KTsKLQkJCXN0YXR1
-cyA9IGNoaXAtPm9wcy0+c3RhdHVzKGNoaXApOwotCQkJaWYgKChzdGF0dXMgJiBtYXNrKSA9PSBt
-YXNrKQotCQkJCXJldHVybiAwOwotCQl9IHdoaWxlICh0aW1lX2JlZm9yZShqaWZmaWVzLCBzdG9w
-KSk7CiAJfQorCisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsKKworCW1hc2sgJj0gfnN0c19tYXNr
-OworCWlmICghbWFzaykgLyogYWxsIGRvbmUgKi8KKwkJcmV0dXJuIDA7CisJLyogcHJvY2VzcyBz
-dGF0dXMgY2hhbmdlcyB3aXRob3V0IGlycSBzdXBwb3J0ICovCisJZG8geworCQlzdGF0dXMgPSBj
-aGlwLT5vcHMtPnN0YXR1cyhjaGlwKTsKKwkJaWYgKChzdGF0dXMgJiBtYXNrKSA9PSBtYXNrKQor
-CQkJcmV0dXJuIDA7CisJCXVzbGVlcF9yYW5nZShwcml2LT50aW1lb3V0X21pbiwKKwkJCSAgICAg
-cHJpdi0+dGltZW91dF9tYXgpOworCX0gd2hpbGUgKHRpbWVfYmVmb3JlKGppZmZpZXMsIHN0b3Ap
-KTsKIAlyZXR1cm4gLUVUSU1FOwogfQogCkBAIC0xMDAwLDggKzEwMjIsNDAgQEAgaW50IHRwbV90
-aXNfY29yZV9pbml0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJp
-diwgaW50IGlycSwKIAlpZiAocmMgPCAwKQogCQlnb3RvIG91dF9lcnI7CiAKLQlpbnRtYXNrIHw9
-IFRQTV9JTlRGX0NNRF9SRUFEWV9JTlQgfCBUUE1fSU5URl9MT0NBTElUWV9DSEFOR0VfSU5UIHwK
-LQkJICAgVFBNX0lOVEZfREFUQV9BVkFJTF9JTlQgfCBUUE1fSU5URl9TVFNfVkFMSURfSU5UOwor
-CS8qIEZpZ3VyZSBvdXQgdGhlIGNhcGFiaWxpdGllcyAqLworCXJjID0gdHBtX3Rpc19yZWFkMzIo
-cHJpdiwgVFBNX0lOVEZfQ0FQUyhwcml2LT5sb2NhbGl0eSksICZpbnRmY2Fwcyk7CisJaWYgKHJj
-IDwgMCkKKwkJZ290byBvdXRfZXJyOworCisJZGV2X2RiZyhkZXYsICJUUE0gaW50ZXJmYWNlIGNh
-cGFiaWxpdGllcyAoMHgleCk6XG4iLAorCQlpbnRmY2Fwcyk7CisJaWYgKGludGZjYXBzICYgVFBN
-X0lOVEZfQlVSU1RfQ09VTlRfU1RBVElDKQorCQlkZXZfZGJnKGRldiwgIlx0QnVyc3QgQ291bnQg
-U3RhdGljXG4iKTsKKwlpZiAoaW50ZmNhcHMgJiBUUE1fSU5URl9DTURfUkVBRFlfSU5UKSB7CisJ
-CWludG1hc2sgfD0gVFBNX0lOVEZfQ01EX1JFQURZX0lOVDsKKwkJZGV2X2RiZyhkZXYsICJcdENv
-bW1hbmQgUmVhZHkgSW50IFN1cHBvcnRcbiIpOworCX0KKwlpZiAoaW50ZmNhcHMgJiBUUE1fSU5U
-Rl9JTlRfRURHRV9GQUxMSU5HKQorCQlkZXZfZGJnKGRldiwgIlx0SW50ZXJydXB0IEVkZ2UgRmFs
-bGluZ1xuIik7CisJaWYgKGludGZjYXBzICYgVFBNX0lOVEZfSU5UX0VER0VfUklTSU5HKQorCQlk
-ZXZfZGJnKGRldiwgIlx0SW50ZXJydXB0IEVkZ2UgUmlzaW5nXG4iKTsKKwlpZiAoaW50ZmNhcHMg
-JiBUUE1fSU5URl9JTlRfTEVWRUxfTE9XKQorCQlkZXZfZGJnKGRldiwgIlx0SW50ZXJydXB0IExl
-dmVsIExvd1xuIik7CisJaWYgKGludGZjYXBzICYgVFBNX0lOVEZfSU5UX0xFVkVMX0hJR0gpCisJ
-CWRldl9kYmcoZGV2LCAiXHRJbnRlcnJ1cHQgTGV2ZWwgSGlnaFxuIik7CisJaWYgKGludGZjYXBz
-ICYgVFBNX0lOVEZfTE9DQUxJVFlfQ0hBTkdFX0lOVCkgeworCQlpbnRtYXNrIHw9IFRQTV9JTlRG
-X0xPQ0FMSVRZX0NIQU5HRV9JTlQ7CisJCWRldl9kYmcoZGV2LCAiXHRMb2NhbGl0eSBDaGFuZ2Ug
-SW50IFN1cHBvcnRcbiIpOworCX0KKwlpZiAoaW50ZmNhcHMgJiBUUE1fSU5URl9TVFNfVkFMSURf
-SU5UKSB7CisJCWludG1hc2sgfD0gVFBNX0lOVEZfU1RTX1ZBTElEX0lOVDsKKwkJZGV2X2RiZyhk
-ZXYsICJcdFN0cyBWYWxpZCBJbnQgU3VwcG9ydFxuIik7CisJfQorCWlmIChpbnRmY2FwcyAmIFRQ
-TV9JTlRGX0RBVEFfQVZBSUxfSU5UKSB7CisJCWludG1hc2sgfD0gVFBNX0lOVEZfREFUQV9BVkFJ
-TF9JTlQ7CisJCWRldl9kYmcoZGV2LCAiXHREYXRhIEF2YWlsIEludCBTdXBwb3J0XG4iKTsKKwl9
-CisKIAlpbnRtYXNrICY9IH5UUE1fR0xPQkFMX0lOVF9FTkFCTEU7CiAKIAlyYyA9IHJlcXVlc3Rf
-bG9jYWxpdHkoY2hpcCwgMCk7CkBAIC0xMDM1LDMyICsxMDg5LDYgQEAgaW50IHRwbV90aXNfY29y
-ZV9pbml0KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiwgaW50
-IGlycSwKIAkJZ290byBvdXRfZXJyOwogCX0KIAotCS8qIEZpZ3VyZSBvdXQgdGhlIGNhcGFiaWxp
-dGllcyAqLwotCXJjID0gdHBtX3Rpc19yZWFkMzIocHJpdiwgVFBNX0lOVEZfQ0FQUyhwcml2LT5s
-b2NhbGl0eSksICZpbnRmY2Fwcyk7Ci0JaWYgKHJjIDwgMCkKLQkJZ290byBvdXRfZXJyOwotCi0J
-ZGV2X2RiZyhkZXYsICJUUE0gaW50ZXJmYWNlIGNhcGFiaWxpdGllcyAoMHgleCk6XG4iLAotCQlp
-bnRmY2Fwcyk7Ci0JaWYgKGludGZjYXBzICYgVFBNX0lOVEZfQlVSU1RfQ09VTlRfU1RBVElDKQot
-CQlkZXZfZGJnKGRldiwgIlx0QnVyc3QgQ291bnQgU3RhdGljXG4iKTsKLQlpZiAoaW50ZmNhcHMg
-JiBUUE1fSU5URl9DTURfUkVBRFlfSU5UKQotCQlkZXZfZGJnKGRldiwgIlx0Q29tbWFuZCBSZWFk
-eSBJbnQgU3VwcG9ydFxuIik7Ci0JaWYgKGludGZjYXBzICYgVFBNX0lOVEZfSU5UX0VER0VfRkFM
-TElORykKLQkJZGV2X2RiZyhkZXYsICJcdEludGVycnVwdCBFZGdlIEZhbGxpbmdcbiIpOwotCWlm
-IChpbnRmY2FwcyAmIFRQTV9JTlRGX0lOVF9FREdFX1JJU0lORykKLQkJZGV2X2RiZyhkZXYsICJc
-dEludGVycnVwdCBFZGdlIFJpc2luZ1xuIik7Ci0JaWYgKGludGZjYXBzICYgVFBNX0lOVEZfSU5U
-X0xFVkVMX0xPVykKLQkJZGV2X2RiZyhkZXYsICJcdEludGVycnVwdCBMZXZlbCBMb3dcbiIpOwot
-CWlmIChpbnRmY2FwcyAmIFRQTV9JTlRGX0lOVF9MRVZFTF9ISUdIKQotCQlkZXZfZGJnKGRldiwg
-Ilx0SW50ZXJydXB0IExldmVsIEhpZ2hcbiIpOwotCWlmIChpbnRmY2FwcyAmIFRQTV9JTlRGX0xP
-Q0FMSVRZX0NIQU5HRV9JTlQpCi0JCWRldl9kYmcoZGV2LCAiXHRMb2NhbGl0eSBDaGFuZ2UgSW50
-IFN1cHBvcnRcbiIpOwotCWlmIChpbnRmY2FwcyAmIFRQTV9JTlRGX1NUU19WQUxJRF9JTlQpCi0J
-CWRldl9kYmcoZGV2LCAiXHRTdHMgVmFsaWQgSW50IFN1cHBvcnRcbiIpOwotCWlmIChpbnRmY2Fw
-cyAmIFRQTV9JTlRGX0RBVEFfQVZBSUxfSU5UKQotCQlkZXZfZGJnKGRldiwgIlx0RGF0YSBBdmFp
-bCBJbnQgU3VwcG9ydFxuIik7Ci0KIAkvKiBJTlRFUlJVUFQgU2V0dXAgKi8KIAlpbml0X3dhaXRx
-dWV1ZV9oZWFkKCZwcml2LT5yZWFkX3F1ZXVlKTsKIAlpbml0X3dhaXRxdWV1ZV9oZWFkKCZwcml2
-LT5pbnRfcXVldWUpOwpAQCAtMTA5MSw3ICsxMTE5LDkgQEAgaW50IHRwbV90aXNfY29yZV9pbml0
-KHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiwgaW50IGlycSwK
-IAkJZWxzZQogCQkJdHBtX3Rpc19wcm9iZV9pcnEoY2hpcCwgaW50bWFzayk7CiAKLQkJaWYgKCEo
-Y2hpcC0+ZmxhZ3MgJiBUUE1fQ0hJUF9GTEFHX0lSUSkpIHsKKwkJaWYgKGNoaXAtPmZsYWdzICYg
-VFBNX0NISVBfRkxBR19JUlEpIHsKKwkJCXByaXYtPmludF9tYXNrID0gaW50bWFzazsKKwkJfSBl
-bHNlIHsKIAkJCWRldl9lcnIoJmNoaXAtPmRldiwgRldfQlVHCiAJCQkJCSJUUE0gaW50ZXJydXB0
-IG5vdCB3b3JraW5nLCBwb2xsaW5nIGluc3RlYWRcbiIpOwogCkBAIC0xMTM4LDEzICsxMTY4LDcg
-QEAgc3RhdGljIHZvaWQgdHBtX3Rpc19yZWVuYWJsZV9pbnRlcnJ1cHRzKHN0cnVjdCB0cG1fY2hp
-cCAqY2hpcCkKIAlpZiAocmMgPCAwKQogCQlnb3RvIG91dDsKIAotCXJjID0gdHBtX3Rpc19yZWFk
-MzIocHJpdiwgVFBNX0lOVF9FTkFCTEUocHJpdi0+bG9jYWxpdHkpLCAmaW50bWFzayk7Ci0JaWYg
-KHJjIDwgMCkKLQkJZ290byBvdXQ7Ci0KLQlpbnRtYXNrIHw9IFRQTV9JTlRGX0NNRF9SRUFEWV9J
-TlQKLQkgICAgfCBUUE1fSU5URl9MT0NBTElUWV9DSEFOR0VfSU5UIHwgVFBNX0lOVEZfREFUQV9B
-VkFJTF9JTlQKLQkgICAgfCBUUE1fSU5URl9TVFNfVkFMSURfSU5UIHwgVFBNX0dMT0JBTF9JTlRf
-RU5BQkxFOworCWludG1hc2sgPSBwcml2LT5pbnRfbWFzayB8IFRQTV9HTE9CQUxfSU5UX0VOQUJM
-RTsKIAogCXRwbV90aXNfd3JpdGUzMihwcml2LCBUUE1fSU5UX0VOQUJMRShwcml2LT5sb2NhbGl0
-eSksIGludG1hc2spOwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29y
-ZS5oIGIvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuaAppbmRleCA2OTVhMjUxNmRjZTAu
-LjJkZWVmMTFjODhkYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUu
-aAorKysgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5oCkBAIC05Myw2ICs5Myw3IEBA
-IHN0cnVjdCB0cG1fdGlzX2RhdGEgewogCXUxNiBtYW51ZmFjdHVyZXJfaWQ7CiAJaW50IGxvY2Fs
-aXR5OwogCWludCBpcnE7CisJdW5zaWduZWQgaW50IGludF9tYXNrOwogCXVuc2lnbmVkIGxvbmcg
-ZmxhZ3M7CiAJdm9pZCBfX2lvbWVtICppbGJfYmFzZV9hZGRyOwogCXUxNiBjbGtydW5fZW5hYmxl
-ZDsKLS0gCjIuMzYuMQoK
+
+--wvm2z6appxwdd5fa
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Nov 18, 2022 at 11:35:34PM +0100, Uwe Kleine-K=F6nig wrote:
+> Hello,
+>=20
+> since commit b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new()
+> call-back type") from 2016 there is a "temporary" alternative probe
+> callback for i2c drivers.
+>=20
+> This series completes all drivers to this new callback (unless I missed
+> something). It's based on current next/master.
+> A part of the patches depend on commit 662233731d66 ("i2c: core:
+> Introduce i2c_client_get_device_id helper function"), there is a branch t=
+hat
+> you can pull into your tree to get it:
+>=20
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/client=
+_device_id_helper-immutable
+>=20
+> I don't think it's feasable to apply this series in one go, so I ask the
+> maintainers of the changed files to apply via their tree. I guess it
+> will take a few kernel release iterations until all patch are in, but I
+> think a single tree creates too much conflicts.
+>=20
+> The last patch changes i2c_driver::probe, all non-converted drivers will
+> fail to compile then. So I hope the build bots will tell me about any
+> driver I missed to convert. This patch is obviously not for application
+> now.
+>=20
+> I dropped most individuals from the recipents of this mail to not
+> challenge the mail servers and mailing list filters too much. Sorry if
+> you had extra efforts to find this mail.
+>=20
+> Best regards
+> Uwe
+
+=2E..
+
+>   power: supply: adp5061: Convert to i2c's .probe_new()
+>   power: supply: bq2415x: Convert to i2c's .probe_new()
+>   power: supply: bq24190: Convert to i2c's .probe_new()
+>   power: supply: bq24257: Convert to i2c's .probe_new()
+>   power: supply: bq24735: Convert to i2c's .probe_new()
+>   power: supply: bq2515x: Convert to i2c's .probe_new()
+>   power: supply: bq256xx: Convert to i2c's .probe_new()
+>   power: supply: bq25890: Convert to i2c's .probe_new()
+>   power: supply: bq25980: Convert to i2c's .probe_new()
+>   power: supply: bq27xxx: Convert to i2c's .probe_new()
+>   power: supply: ds2782: Convert to i2c's .probe_new()
+>   power: supply: lp8727: Convert to i2c's .probe_new()
+>   power: supply: ltc2941: Convert to i2c's .probe_new()
+>   power: supply: ltc4162-l: Convert to i2c's .probe_new()
+>   power: supply: max14656: Convert to i2c's .probe_new()
+>   power: supply: max17040: Convert to i2c's .probe_new()
+>   power: supply: max17042_battery: Convert to i2c's .probe_new()
+>   power: supply: rt5033_battery: Convert to i2c's .probe_new()
+>   power: supply: rt9455: Convert to i2c's .probe_new()
+>   power: supply: sbs: Convert to i2c's .probe_new()
+>   power: supply: sbs-manager: Convert to i2c's .probe_new()
+>   power: supply: smb347: Convert to i2c's .probe_new()
+>   power: supply: ucs1002: Convert to i2c's .probe_new()
+>   power: supply: z2_battery: Convert to i2c's .probe_new()
+>   [...]
+
+Thanks, I queued patches 513-536 to the power-supply subsystem.
+
+-- Sebastian
+
+--wvm2z6appxwdd5fa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmN6g2YACgkQ2O7X88g7
++pocPA/+MG7rp45xJuAH0zlIFTM8ovBviXnLvra0hpvK+vMB8SVdh4K8vRCAoeoT
+lxML9oRVfhraHzo/3X6+7V87cw+QzEx3GZbYsIasGqic46MoFYkbA2i3Q8s8hS5y
+qpAcKn/efXJaBtdIxWQnOc0xU0YCiteiIik8Idb9MjHFupUspLxtIjCzTAmvKQ0k
+hJ5u5cqv3d/MP6VpsOCUYPDet9nS9ByPeg8Kr9Ux1a0WEldPYUO+dU0ObqRdhliZ
+agftaEtCvFYkfO9k8ubBL/x00gTn002xOB7gp+5s0V0D3wKfT5EPVYOoUZbeYMIu
+QOZaLHkNkBtV85kGm18h7IFdQZQY9ahcaGTYZplyz/YzHlK/AlfjA2umKS1+rs5m
+A+DDqnAkuWw9fLg0MJ4dLSPwOSPX3VfgmVS3By3Do2gotQkCqXsRdhrG1cIoE1aL
+AZYpSwLTn2rAYF59poL3rgSqx/MhgrLwmKQOH3fjwZ3R7PIAWFhYP1We2UtKdCEM
+Gjpr7QfAUiOuXDKi5OrBbWr4m2eX26A4uifwR62OyldwH8pUWAq3umgkw3rotQAA
+hdwOOPM+cHTyLbtP8kaP1XSR6u0ybuTbw8OQE/XPDNVceoMqR4XxUSYbs0Q0UzY6
+fwljGfbakuGbaNlb7s2LBsy0ESZuiz64Za/0gfJhI5rP1eNRR1U=
+=Dh+o
+-----END PGP SIGNATURE-----
+
+--wvm2z6appxwdd5fa--
