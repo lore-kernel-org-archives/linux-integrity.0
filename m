@@ -2,26 +2,26 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C17C4321E
-	for <linux-integrity@archiver.kernel.org>; Wed, 23 Nov 2022 10:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70687C43219
+	for <linux-integrity@archiver.kernel.org>; Wed, 23 Nov 2022 10:02:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236143AbiKWKBu (ORCPT
+        id S236085AbiKWKCT (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 23 Nov 2022 05:01:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55914 "EHLO
+        Wed, 23 Nov 2022 05:02:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236725AbiKWKAm (ORCPT
+        with ESMTP id S236980AbiKWKBF (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 23 Nov 2022 05:00:42 -0500
+        Wed, 23 Nov 2022 05:01:05 -0500
 Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DADE1082;
-        Wed, 23 Nov 2022 01:53:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641AD11A73F;
+        Wed, 23 Nov 2022 01:53:18 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NHGTm1Fw7z9v7Vm;
-        Wed, 23 Nov 2022 17:46:04 +0800 (CST)
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4NHGV71T9lz9xFQc;
+        Wed, 23 Nov 2022 17:46:23 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwAH829J7X1jzDqKAA--.13162S3;
-        Wed, 23 Nov 2022 10:52:31 +0100 (CET)
+        by APP1 (Coremail) with SMTP id LxC2BwAH829J7X1jzDqKAA--.13162S5;
+        Wed, 23 Nov 2022 10:52:50 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     mark@fasheh.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
         zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
@@ -34,21 +34,21 @@ Cc:     ocfs2-devel@oss.oracle.com, reiserfs-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org, keescook@chromium.org,
         nicolas.bouchinet@clip-os.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 1/6] reiserfs: Switch to security_inode_init_security()
-Date:   Wed, 23 Nov 2022 10:51:57 +0100
-Message-Id: <20221123095202.599252-2-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v5 3/6] security: Remove security_old_inode_init_security()
+Date:   Wed, 23 Nov 2022 10:51:59 +0100
+Message-Id: <20221123095202.599252-4-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221123095202.599252-1-roberto.sassu@huaweicloud.com>
 References: <20221123095202.599252-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwAH829J7X1jzDqKAA--.13162S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF15GF43Aw1UuFyUZr48tFb_yoW8Kr1kpF
-        47K3W7Grs8JF1xWr1Sya13W3WfKrWfKa17JwsxK34DAanrJw18trW0yw13u34rJrWkJr1I
-        qw4Iyw43Gwn8XwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: LxC2BwAH829J7X1jzDqKAA--.13162S5
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWftw1rZw4rtr4rJrW5KFg_yoW5JFyrpF
+        47t3WUGr1rJFyjgF10yF47u3WfKFWrGrZrJrs3C3sxJFn3Ar18tF1Fyr17CFyrJrW8Ww1I
+        qw4a9r43Gr4DtrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
         9KBjDU0xBIdaVrnRJUUUPqb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-        A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUWw
+        A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
         w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
         W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
         6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
@@ -58,9 +58,9 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7ZF15GF43Aw1UuFyUZr48tFb_yoW8Kr1kpF
         F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wr
         ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7Cj
         xVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-        0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
-        07jqYL9UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj4XF3wAAsu
+        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x
+        07jxCztUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4HGZgABsS
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -68,68 +68,71 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-In preparation for removing security_old_inode_init_security(), switch to
-security_inode_init_security().
+As the remaining two users reiserfs and ocfs2 switched to
+security_inode_init_security(), security_old_inode_init_security() can be
+now removed.
 
-Define the initxattrs callback reiserfs_initxattrs(), to populate the
-name/value/len triple in the reiserfs_security_handle() with the first
-xattr provided by LSMs. Multiple xattrs are currently not supported, as the
-reiserfs_security_handle structure is exported to user space.
-
-In reiserfs_initxattrs(), make a copy of the first xattr value, as
-security_inode_init_security() frees it.
-
-After the call to security_inode_init_security(), remove the check for
-returning -EOPNOTSUPP, as security_inode_init_security() changes it to
-zero.
+Out-of-tree kernel modules should switch to security_inode_init_security()
+too.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- fs/reiserfs/xattr_security.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ include/linux/security.h | 12 ------------
+ security/security.c      | 11 -----------
+ 2 files changed, 23 deletions(-)
 
-diff --git a/fs/reiserfs/xattr_security.c b/fs/reiserfs/xattr_security.c
-index 857a65b05726..0ba96757681d 100644
---- a/fs/reiserfs/xattr_security.c
-+++ b/fs/reiserfs/xattr_security.c
-@@ -39,6 +39,22 @@ static bool security_list(struct dentry *dentry)
- 	return !IS_PRIVATE(d_inode(dentry));
+diff --git a/include/linux/security.h b/include/linux/security.h
+index ca1b7109c0db..c682fc96ed61 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -336,9 +336,6 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ int security_inode_init_security_anon(struct inode *inode,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode);
+-int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, const char **name,
+-				     void **value, size_t *len);
+ int security_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode);
+ int security_inode_link(struct dentry *old_dentry, struct inode *dir,
+ 			 struct dentry *new_dentry);
+@@ -771,15 +768,6 @@ static inline int security_inode_init_security_anon(struct inode *inode,
+ 	return 0;
  }
  
-+static int
-+reiserfs_initxattrs(struct inode *inode, const struct xattr *xattr_array,
-+		    void *fs_info)
-+{
-+	struct reiserfs_security_handle *sec = fs_info;
-+
-+	sec->value = kmemdup(xattr_array->value, xattr_array->value_len,
-+			     GFP_KERNEL);
-+	if (!sec->value)
-+		return -ENOMEM;
-+
-+	sec->name = xattr_array->name;
-+	sec->length = xattr_array->value_len;
-+	return 0;
-+}
-+
- /* Initializes the security context for a new inode and returns the number
-  * of blocks needed for the transaction. If successful, reiserfs_security
-  * must be released using reiserfs_security_free when the caller is done. */
-@@ -56,12 +72,9 @@ int reiserfs_security_init(struct inode *dir, struct inode *inode,
- 	if (IS_PRIVATE(dir))
- 		return 0;
- 
--	error = security_old_inode_init_security(inode, dir, qstr, &sec->name,
--						 &sec->value, &sec->length);
-+	error = security_inode_init_security(inode, dir, qstr,
-+					     &reiserfs_initxattrs, sec);
- 	if (error) {
--		if (error == -EOPNOTSUPP)
--			error = 0;
+-static inline int security_old_inode_init_security(struct inode *inode,
+-						   struct inode *dir,
+-						   const struct qstr *qstr,
+-						   const char **name,
+-						   void **value, size_t *len)
+-{
+-	return -EOPNOTSUPP;
+-}
 -
- 		sec->name = NULL;
- 		sec->value = NULL;
- 		sec->length = 0;
+ static inline int security_inode_create(struct inode *dir,
+ 					 struct dentry *dentry,
+ 					 umode_t mode)
+diff --git a/security/security.c b/security/security.c
+index 79d82cb6e469..e2857446fd32 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1132,17 +1132,6 @@ int security_inode_init_security_anon(struct inode *inode,
+ 			     context_inode);
+ }
+ 
+-int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+-				     const struct qstr *qstr, const char **name,
+-				     void **value, size_t *len)
+-{
+-	if (unlikely(IS_PRIVATE(inode)))
+-		return -EOPNOTSUPP;
+-	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
+-			     qstr, name, value, len);
+-}
+-EXPORT_SYMBOL(security_old_inode_init_security);
+-
+ #ifdef CONFIG_SECURITY_PATH
+ int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
+ 			unsigned int dev)
 -- 
 2.25.1
 
