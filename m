@@ -2,149 +2,130 @@ Return-Path: <linux-integrity-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C562BC4321E
-	for <linux-integrity@archiver.kernel.org>; Mon,  5 Dec 2022 15:08:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01064C4332F
+	for <linux-integrity@archiver.kernel.org>; Mon,  5 Dec 2022 18:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232422AbiLEPId (ORCPT
+        id S230230AbiLESn5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 5 Dec 2022 10:08:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39976 "EHLO
+        Mon, 5 Dec 2022 13:43:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232414AbiLEPIK (ORCPT
+        with ESMTP id S230327AbiLESnq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 5 Dec 2022 10:08:10 -0500
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89691DF12
-        for <linux-integrity@vger.kernel.org>; Mon,  5 Dec 2022 07:07:58 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NQmvw15yvz9v7Gd
-        for <linux-integrity@vger.kernel.org>; Mon,  5 Dec 2022 23:01:16 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnG_g5CY5j0APAAA--.56046S2;
-        Mon, 05 Dec 2022 16:07:43 +0100 (CET)
-Message-ID: <a9df6b39a29c9c0671b75c121d520673cdd830c2.camel@huaweicloud.com>
-Subject: Re: [PATCH ima-evm-utils] Experimental fsverity.test related GA CI
- improvements
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Vitaly Chikunov <vt@altlinux.org>, Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org
-Date:   Mon, 05 Dec 2022 16:07:09 +0100
-In-Reply-To: <20221205144447.4mtmteolbvcabzzp@altlinux.org>
-References: <20221201002654.2238906-1-vt@altlinux.org>
-         <7db27896916a944d8e4a212cad23865166ceb9f4.camel@linux.ibm.com>
-         <20221205144447.4mtmteolbvcabzzp@altlinux.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Mon, 5 Dec 2022 13:43:46 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B21F9BC98
+        for <linux-integrity@vger.kernel.org>; Mon,  5 Dec 2022 10:43:43 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id n20so814112ejh.0
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Dec 2022 10:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wAi9wb/ccr1V0J6asFIl7Azn5bhshYuD4nE6CW5xW+g=;
+        b=OPVtqaGQfZNdZ4DF7z8NeObdT3sHluUFseqPw49KCbN+wqTHkRGDlCNAdrUqnU5qq6
+         M/dZcdpbg6LMDtINPMHagxvEiD/e+KnOjJz+nt7H4s3lp1pprnp3qe4GMLa/QhYvpUQp
+         yZVn5ofbBDCap0LFHONiDAaGYHExRbkxKOdis=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wAi9wb/ccr1V0J6asFIl7Azn5bhshYuD4nE6CW5xW+g=;
+        b=F9Ba2z/OhTGDQJI5ZOSUh3xs85Mqei4Cwp9RR1ZT5Z3uNm7ofsm2p8i6CYQDxN8cDO
+         nCp1U8GFxFBbHw5Ew5josXEQ+DyHEfR14kRWGIivgafOuP4BRYSglV6goGwIWW2KL489
+         9+lQoSqG70UfMCG4ePZOhzYyo695S3wk0pc26zr3TFpzvjIpFr13igNwXjEEyFlJK5Jq
+         f+suEX+tPhIz0XMOrw+JIf8Qp0pv6B8ZuZu5r/JT/lJ6aVrflKkgwIQdiPe1SKHxYNer
+         n8X88XnTqt65FwKescpZrnCQ7r0idXwKy8CE4rMetMfNzve7iio2hQm2r6+CHvekHrws
+         wkpw==
+X-Gm-Message-State: ANoB5pnlteEs3iRd3U9IfcnFppKorcLcL87k/dQi3m0qiOIYd5F5Ue8N
+        BzxmGFqxSFeXL+A9RqI1uZLWETFz4/goJHNT
+X-Google-Smtp-Source: AA0mqf5MQKofA29CYv254vaQYS2zGs5OnXeIoHzRcWlJKKwBfF9KCnH3xNkioHxIGYyHayDtUHheEw==
+X-Received: by 2002:a17:906:3096:b0:7ae:eae9:25a5 with SMTP id 22-20020a170906309600b007aeeae925a5mr70525735ejv.394.1670265821788;
+        Mon, 05 Dec 2022 10:43:41 -0800 (PST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
+        by smtp.gmail.com with ESMTPSA id fe17-20020a1709072a5100b0073d7b876621sm6466336ejc.205.2022.12.05.10.43.41
+        for <linux-integrity@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 Dec 2022 10:43:41 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id n9-20020a05600c3b8900b003d0944dba41so6133254wms.4
+        for <linux-integrity@vger.kernel.org>; Mon, 05 Dec 2022 10:43:41 -0800 (PST)
+X-Received: by 2002:a05:600c:4e4c:b0:3cf:87c6:890b with SMTP id
+ e12-20020a05600c4e4c00b003cf87c6890bmr62524251wmq.194.1670265821267; Mon, 05
+ Dec 2022 10:43:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwDnG_g5CY5j0APAAA--.56046S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw1kGr13WFWDGF1UAryDtrb_yoWrWry8pa
-        y5KFyjkr4kXF1UAw1SgF1fuayYy3s3JFW5GF1kJw48Ja98X3WDtr1IgF4avasFvrn3Wr4F
-        vay0vFy2gw1DZFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUglb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-        Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-        AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAI
-        cVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMI
-        IF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVF
-        xhVjvjDU0xZFpf9x07UE-erUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgARBF1jj4JPDQAAsm
-X-CFilter-Loop: Reflected
+References: <20221111231636.3748636-1-evgreen@chromium.org>
+ <20221111151451.v5.4.Ieb1215f598bc9df56b0e29e5977eae4fcca25e15@changeid>
+ <Y3FfhrgvBNey6T7V@sol.localdomain> <ff23b4e24222037959c2a784496c7ee91024e6c5.camel@linux.ibm.com>
+ <CAE=gft63-jdKqKmepB+LXPm6WUWSnz+CMWcWWnyN1y-EnS4kVg@mail.gmail.com>
+ <c31d1a3af53515f2a9d3f53eb27ce698e796f9b9.camel@linux.ibm.com>
+ <CAE=gft6L6bMtzbqUfH_NAsFz2r0Nw7kkbCPXcr2nYj5n31FYQg@mail.gmail.com>
+ <95ffac38780bf0ec6084cb354bfcb3b7bee686b9.camel@linux.ibm.com> <6f66f174af92a9b23bddd72945e94e888b0c9420.camel@linux.ibm.com>
+In-Reply-To: <6f66f174af92a9b23bddd72945e94e888b0c9420.camel@linux.ibm.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Mon, 5 Dec 2022 10:43:05 -0800
+X-Gmail-Original-Message-ID: <CAE=gft4wvxOZ4CS2hJzYANRNbCtYUznmsEE-3n4=EDx-+L_f9Q@mail.gmail.com>
+Message-ID: <CAE=gft4wvxOZ4CS2hJzYANRNbCtYUznmsEE-3n4=EDx-+L_f9Q@mail.gmail.com>
+Subject: Re: [PATCH v5 04/11] security: keys: trusted: Include TPM2 creation data
+To:     jejb@linux.ibm.com
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, linux-integrity@vger.kernel.org,
+        gwendal@chromium.org, dianders@chromium.org, apronin@chromium.org,
+        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
+        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
+        dlunev@google.com, zohar@linux.ibm.com,
+        Matthew Garrett <mgarrett@aurora.tech>, jarkko@kernel.org,
+        linux-pm@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Mon, 2022-12-05 at 17:44 +0300, Vitaly Chikunov wrote:
-> Mimi,
-> 
-> On Mon, Dec 05, 2022 at 08:39:32AM -0500, Mimi Zohar wrote:
-> > On Thu, 2022-12-01 at 03:26 +0300, Vitaly Chikunov wrote:
-> > > From: Mimi Zohar <zohar@linux.ibm.com>
-> > > 
-> > > This does not make fsverity.test working on GA CI, though.
-> > > 
-> > > - `--device /dev/loop-control' is required for losetup(8) to work.
-> > > - `--privileged' is required foo mount(8) to work, and this makes
-> > >   `--security-opt seccomp=unconfined' redundant.
-> > > - GA container does not have `/sys/kernel/security' mounted which is
-> > >   needed for `/sys/kernel/security/integrity/ima/policy'.
-> > > - Enable `set -x` in CI as the logs is everything we have to analyze on
-> > >   failures.
-> > > 
-> > 
-> > Agreed, even with these changes the fsverity test will not be executed,
-> > but skipped.
-> > 
-> > However, the reason for them being skipped is totally different than
-> > prior to this patch.   Once the distros have enabled both fsverity
-> > support and are running a recent enough kernel with IMA support for
-> > fsverity, the fsverity test should succeed.
-> > 
-> > So the problem isn't the GitHub actions architecture or the fsverity
-> > test itself, but the lack of IMA kernel support for it.  In addition to
-> > the ima-evm-utils distro tests, there needs to be a way for testing new
-> > kernel integrity features.  Roberto's proposed ima-evm-utils UML patch
-> > set downloads and uses a UML kernel for this purpose.
-> > 
-> > Unless someone can recommend a better alternative, a single UML
-> > "distro" test could be defined and would be executed if a UML kernel is
-> > supplied.   Additional UML tests could be specified.
-> 
-> Just as an idea. I did some CI testing for LKRG on GA,
->   https://github.com/lkrg-org/lkrg/blob/main/.github/workflows/docker-boot.yml
->   https://github.com/lkrg-org/lkrg/blob/main/.github/workflows/docker-boot.sh
-> 
-> It's possible to boot in QEMU system created in Docker (alas without
-> KVM as GA does not support it). But this will install distribution's kernel.
-> So it would need to find distribution with the appropriate kernel.
+On Fri, Dec 2, 2022 at 1:03 PM James Bottomley <jejb@linux.ibm.com> wrote:
+>
+> On Mon, 2022-11-14 at 13:00 -0500, James Bottomley wrote:
+> > On Mon, 2022-11-14 at 09:43 -0800, Evan Green wrote:
+> > > On Mon, Nov 14, 2022 at 8:56 AM James Bottomley
+> > > <jejb@linux.ibm.com>
+> > > wrote:
+> > [...]
+> > > > Of course, since openssl_tpm2_engine is the complete reference
+> > > > implementation that means I'll have to add the creation PCRs
+> > > > implementation to it ... unless you'd like to do it?
+> > >
+> > > I am willing to help as I'm the one making the mess. How does it
+> > > sequence along with your draft submission (before, after,
+> > > simultaneous)?
+> >
+> > At the moment, just send patches.  The openssl_tpm2_engine is
+> > developed on a groups.io mailing list:
+> >
+> > https://groups.io/g/openssl-tpm2-engine/
+> >
+> > You need an IETF specific tool (xml2rfc) to build the rfc from the
+> > xml, but it's available in most distros as python3-xml2rfc.  If you
+> > don't want to learn the IETF XML I can help you code up the patch to
+> > add that to the draft spec.
+>
+> Just as a heads up, the patch series implementing signed policy (and
+> thus taking option [3]) is on the mailing list for review:
+>
+> https://groups.io/g/openssl-tpm2-engine/message/296
+>
+> With apologies for the awful lack of threading in the groups.io
+> interface.
+>
+> So you don't have to build the RFC yourself, I published the proposed
+> update on my website:
+>
+> https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.html
+> https://www.hansenpartnership.com/draft-bottomley-tpm2-keys.txt
+>
+> If you want to use option [4] for the creation data, it's available.
 
-Uhm, yes. It is an option, but I guess it requires to build the image
-you want to boot the virtual machine with.
-
-Until now, the UML kernel was more than sufficient to test a new
-functionality or bug fixes.
-
-> Also, GA have cache functionality, so there could be dependent job
-> to build the kernel with required options and then save it into a cache
-> (to save time, bandwidth, and CPU resources).
-
-Yes, automatizing this step would be better. Currently, I have two
-separate repos for the kernel and ima-evm-utils. I build the kernel
-first, to create a release (kernel binary + signing key) and then ima-
-evm-utils, which fetches the kernel to test. I do these two steps
-separately, but I guess you can launch a kernel build from ima-evm-
-utils.
-
-> And another possibility is, instead of using Docker it's possible to use
-> cloud images that many distributions have, and then same as with docker
-> (install or build kernel, save into cache and use in next CI runs).
-> Never tried this method myself. AFAIK this will require to use cloud-init
-> to set up system on first boot.
-
-One cool thing about the UML kernel approach is that the script detects
-if it exists, and if not runs the test in the current environment. The
-modifications to support both I guess are not too invasive.
-
-Another thing that I like about this approach is that I can launch the
-UML kernel several times in the same script, and each time I execute
-different tests (useful for example if you need a specific EVM mode, as
-you cannot go back).
-
-That could be done with the virtual machine approach too, passing the
-necessary environment variables. It could however require some effort
-(I'm using UML kernels in Github Actions for a while).
-
-These are the two tests for the latest patch set I developed:
-
-https://github.com/robertosassu/linux/actions/runs/3591117649
-https://github.com/robertosassu/ima-evm-utils/actions/runs/3590837109
-
-Roberto
-
+Perfect, thanks James!
+-Evan
