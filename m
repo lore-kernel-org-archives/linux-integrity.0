@@ -2,40 +2,36 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA65CC4332F
-	for <linux-integrity@archiver.kernel.org>; Sat, 24 Dec 2022 07:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97299C4332F
+	for <linux-integrity@archiver.kernel.org>; Sat, 24 Dec 2022 07:06:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiLXHAf (ORCPT
+        id S229541AbiLXHGB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 24 Dec 2022 02:00:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43212 "EHLO
+        Sat, 24 Dec 2022 02:06:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229457AbiLXHAe (ORCPT
+        with ESMTP id S229534AbiLXHGA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 24 Dec 2022 02:00:34 -0500
+        Sat, 24 Dec 2022 02:06:00 -0500
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047B36402
-        for <linux-integrity@vger.kernel.org>; Fri, 23 Dec 2022 23:00:32 -0800 (PST)
-Received: from lhrpeml500003.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NfFJX2kjDz689TS;
-        Sat, 24 Dec 2022 14:58:52 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A42D3FAF6
+        for <linux-integrity@vger.kernel.org>; Fri, 23 Dec 2022 23:05:58 -0800 (PST)
+Received: from lhrpeml500003.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4NfFNs6NPdz67W0D;
+        Sat, 24 Dec 2022 15:02:37 +0800 (CST)
 Received: from mscphispre00062.huawei.com (10.123.70.102) by
  lhrpeml500003.china.huawei.com (7.191.162.67) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.34; Sat, 24 Dec 2022 07:00:29 +0000
+ 15.1.2375.34; Sat, 24 Dec 2022 07:05:56 +0000
 From:   Denis Semakin <denis.semakin@huawei.com>
 To:     <linux-integrity@vger.kernel.org>
-CC:     <artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>,
-        <yusongping@huawei.com>, <hukeping@huawei.com>,
-        <roberto.sassu@huawei.com>, <krzysztof.struczynski@huawei.com>,
-        <stefanb@linux.ibm.com>, <denis.semakin@huawei-partners.com>,
-        <ilya.hanov@huawei-partners.com>
+CC:     <stefanb@linux.ibm.com>, <denis.semakin@huawei-partners.com>
 Subject: [PATCH v1 1/1] ima: fix possible memory leak in cache allocating for namespace
-Date:   Sat, 24 Dec 2022 14:59:46 +0800
-Message-ID: <20221224065946.349471-1-denis.semakin@huawei.com>
+Date:   Sat, 24 Dec 2022 15:05:45 +0800
+Message-ID: <20221224070545.349944-1-denis.semakin@huawei.com>
 X-Mailer: git-send-email 2.38.GIT
-In-Reply-To: <20220915193221.1728029-1-stefanb@linux.ibm.com>
-References: <20220915193221.1728029-1-stefanb@linux.ibm.com>
+In-Reply-To: <20220915193221.1728029-18-stefanb@linux.ibm.com>
+References: <20220915193221.1728029-18-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
