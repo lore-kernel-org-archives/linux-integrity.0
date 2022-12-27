@@ -2,122 +2,115 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606E6C4332F
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Dec 2022 11:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9A6C4167B
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Dec 2022 11:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbiL0LXb (ORCPT
+        id S231204AbiL0L44 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Dec 2022 06:23:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33542 "EHLO
+        Tue, 27 Dec 2022 06:56:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbiL0LW6 (ORCPT
+        with ESMTP id S229679AbiL0L4c (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Dec 2022 06:22:58 -0500
+        Tue, 27 Dec 2022 06:56:32 -0500
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3DA5FA3
-        for <linux-integrity@vger.kernel.org>; Tue, 27 Dec 2022 03:22:57 -0800 (PST)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BR8CGDu030502;
-        Tue, 27 Dec 2022 11:22:49 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26762191;
+        Tue, 27 Dec 2022 03:56:28 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BRAug9p015465;
+        Tue, 27 Dec 2022 11:56:19 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=7dx77t0wWkXKp5zcLCyiXiZHh+eAvUvFbmtAF6PaS08=;
- b=EFf/jdcwYJy28p2V0S+NHWUJkdZBWu1vl8qVI5MeGv6r9KDdgrbSvnv9CNj8+HNpGHus
- umEg0CUNZGpJnNxQSP5f4c6RIAQtWHeatVJlWuoRMP2pOIf2EDzu1FEB7XpRHPJyUH4l
- c19EfkFPSj5YzvJ3wvyS1skEnPwtbG/Ri+LDI9e2FB0S/serGzOm4APloo4Lv7w6uXYG
- P6/qcmqGAJLYevJH+XqX1vOM13pDV9tm/RCIUp0m+iYBPy1qcqIpUDQ0t1vE8OBhmr+C
- yFPOJ7fyUwBOeUuf2h20cnO/ZKsFXIPpVK3dh6vZWMJ3k46VaG1/U8GYjl1QPxV+K9Fw Bw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mqs1cy5n6-1
+ bh=D8Dmx1UxuS+JHTxv5lC60zrzyi7pxK0+1j1ZUQBGI+s=;
+ b=cZIyMnbgRM8ill5SmM3x9C23RqRUDIWzIjD6q8bV1hMzjZAY0V9PqJtqhjxe67C1hS83
+ ivw1VylxITSIC0UwRmlSf74w+n4sSzNm7gwR7iUoTcksb35S9hvnah5xgS9NwHt6RWHz
+ 7IIvZ/J19rLpm/oqpGJUiuey6HP/xS2iMqfrHLRrHrjljmtnl2+yMz8VdZ3/09cPNMms
+ tDkfr/hE9K4j1UYvvP/z8jrjB00QTu6xlfiTaEQ2x6sDgj1hVpVwamgazpidzFNDlE9d
+ CChx/DB4f8coDrsdQj/2CroC4dUdWXxN68w3V2edxhOaS3yzMFbsm/b+m6D0C1OVu/Qh Yw== 
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mqyd9gwpa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Dec 2022 11:22:48 +0000
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2BRBGlNq032617;
-        Tue, 27 Dec 2022 11:22:48 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3mqs1cy5mu-1
+        Tue, 27 Dec 2022 11:56:19 +0000
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 2BRBIBda013133;
+        Tue, 27 Dec 2022 11:56:18 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([9.208.130.99])
+        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3mns27rumj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Dec 2022 11:22:48 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 2BRBCTBW018334;
-        Tue, 27 Dec 2022 11:22:47 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([9.208.129.113])
-        by ppma01wdc.us.ibm.com (PPS) with ESMTPS id 3mns27grww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Dec 2022 11:22:47 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-        by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2BRBMkCA53739792
+        Tue, 27 Dec 2022 11:56:17 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+        by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2BRBuHOC31326674
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Dec 2022 11:22:46 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11CE25805B;
-        Tue, 27 Dec 2022 11:22:46 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D17758055;
-        Tue, 27 Dec 2022 11:22:45 +0000 (GMT)
+        Tue, 27 Dec 2022 11:56:17 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EAA6B58054;
+        Tue, 27 Dec 2022 11:56:16 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E03D858058;
+        Tue, 27 Dec 2022 11:56:15 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.23.56])
-        by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Dec 2022 11:22:45 +0000 (GMT)
-Message-ID: <537bd46f8392c031e2792ef50b5e73bf9aa2f875.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Handle error code from security_audit_rule_match
+        by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Dec 2022 11:56:15 +0000 (GMT)
+Message-ID: <d65e2d46bf41e3d58c0fa18bd274faf20dadb523.camel@linux.ibm.com>
+Subject: Re: [PATCH 2/2] ima: Handle -ESTALE returned by
+ ima_filter_rule_match()
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     GUO Zihua <guozihua@huawei.com>, dmitry.kasatkin@gmail.com
-Cc:     linux-integrity@vger.kernel.org
-Date:   Tue, 27 Dec 2022 06:22:44 -0500
-In-Reply-To: <20221227014633.4449-1-guozihua@huawei.com>
-References: <20221227014633.4449-1-guozihua@huawei.com>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        GUO Zihua <guozihua@huawei.com>
+Cc:     stable@vger.kernel.org, paul@paul-moore.com,
+        linux-integrity@vger.kernel.org, luhuaxin1@huawei.com
+Date:   Tue, 27 Dec 2022 06:56:15 -0500
+In-Reply-To: <Y6qgqO/LJ/wHUk5x@kroah.com>
+References: <20221227014729.4799-1-guozihua@huawei.com>
+         <20221227014729.4799-3-guozihua@huawei.com> <Y6qgqO/LJ/wHUk5x@kroah.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Rsl9RzPNU2rW_jv9YWQ2Sd6Jn-E30qHP
-X-Proofpoint-ORIG-GUID: R-oP6Cry1F3r26kO7kB-FjCE4BozowNF
+X-Proofpoint-GUID: pS52XCwEjMORToRoUGn0RngLWm0ogdc-
+X-Proofpoint-ORIG-GUID: pS52XCwEjMORToRoUGn0RngLWm0ogdc-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-12-27_07,2022-12-27_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- bulkscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 mlxlogscore=999
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ definitions=2022-12-27_08,2022-12-27_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 mlxscore=0 clxscore=1011 spamscore=0
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2212270091
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2022-12-27 at 09:46 +0800, GUO Zihua wrote:
-> commit c7423dbdbc9e ("ima: Handle -ESTALE returned by
-> ima_filter_rule_match()") introduced the handling of -ESTALE returned by
-> security_audit_rule_match(). However, security_audit_rule_match() might
-> return other error codes if some error occurred. We should handle those
-> error codes as well.
+On Tue, 2022-12-27 at 08:37 +0100, Greg KH wrote:
+> On Tue, Dec 27, 2022 at 09:47:29AM +0800, GUO Zihua wrote:
+> > [ Upstream commit c7423dbdbc9ecef7fff5239d144cad4b9887f4de ]
 > 
-> Fixes: c7423dbdbc9e ("ima: Handle -ESTALE returned by ima_filter_rule_match()")
-> Signed-off-by: GUO Zihua <guozihua@huawei.com>
-> ---
->  security/integrity/ima/ima_policy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> For obvious reasons we can not only take this patch (from 6.2-rc1) into
+> 4.19.y as that would cause people who upgrade from 4.19.y to a newer
+> stable kernel to have a regression.
 > 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 6a68ec270822..5561e1b2c376 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -663,7 +663,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
->  			break;
->  		}
->  
-> -		if (rc == -ESTALE && !rule_reinitialized) {
-> +		if (rc < 0 && !rule_reinitialized) {
+> Please submit backports for all stable kernels if you wish to see this
+> in older ones to prevent problems like this from happening.
 
-Which other error codes are resolved by retrying?
+Sasha has already queued the original commit and the dependencies for
+the 6.1, 6.0, and 5.15 stable kernels.  Those kernels all had the
+call_lsm_notifier() to call_blocking_lsm_notifier() change.  Prior to
+5.3, the change to the blocking notifier would need to be backported as
+well.  This version of the backport still needs to be reviewed.
 
->  			lsm_rule = ima_lsm_copy_rule(rule);
->  			if (lsm_rule) {
->  				rule_reinitialized = true;
-
--- 
-Thanks,
+thanks,
 
 Mimi
+
+> 
+> But also, why are you still on 4.19.y?  What is wrong with 5.4.y at this
+> point in time?  If we dropped support for 4.19.y in January, what would
+> that cause to happen for your systems?
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
