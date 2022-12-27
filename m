@@ -2,269 +2,96 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC498C4708D
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Dec 2022 01:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5791C4167B
+	for <linux-integrity@archiver.kernel.org>; Tue, 27 Dec 2022 04:14:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232529AbiL0Buz (ORCPT
+        id S229646AbiL0EOn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 26 Dec 2022 20:50:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49184 "EHLO
+        Mon, 26 Dec 2022 23:14:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232504AbiL0But (ORCPT
+        with ESMTP id S229540AbiL0EOm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 26 Dec 2022 20:50:49 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFFEA326;
-        Mon, 26 Dec 2022 17:50:47 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4NgyJC0KBvz16LqT;
-        Tue, 27 Dec 2022 09:49:31 +0800 (CST)
-Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
- (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Tue, 27 Dec
- 2022 09:50:45 +0800
-From:   GUO Zihua <guozihua@huawei.com>
-To:     <stable@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <zohar@linux.ibm.com>
-CC:     <paul@paul-moore.com>, <linux-integrity@vger.kernel.org>,
-        <luhuaxin1@huawei.com>
-Subject: [PATCH 1/2] ima: use the lsm policy update notifier
-Date:   Tue, 27 Dec 2022 09:47:28 +0800
-Message-ID: <20221227014729.4799-2-guozihua@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20221227014729.4799-1-guozihua@huawei.com>
-References: <20221227014729.4799-1-guozihua@huawei.com>
+        Mon, 26 Dec 2022 23:14:42 -0500
+Received: from mail-vk1-xa31.google.com (mail-vk1-xa31.google.com [IPv6:2607:f8b0:4864:20::a31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18A4A305
+        for <linux-integrity@vger.kernel.org>; Mon, 26 Dec 2022 20:14:40 -0800 (PST)
+Received: by mail-vk1-xa31.google.com with SMTP id h4so779899vkn.3
+        for <linux-integrity@vger.kernel.org>; Mon, 26 Dec 2022 20:14:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HjdlqICv33EOX64nmJtOK4eeCybLMgO053G4bs/5DXk=;
+        b=UQemiBq/jNd0yUioMpgUp+A3qwjeM7CxkNfj6MjcCid1BgBsBAgxXdpHAtm748v8ib
+         vATyKVJafFHxh1puDfmUg0fRwoUMdOYw4vl3lcLwWnCxx6Y/FbfgZvSgArv/4PQbcrGM
+         2VXQR6LODSwQqRPz8V7ARd/QtnzaqgRGgZ/ucDYHdWRTin/VkQ5nhfqR+hGmg+LRXzem
+         03wWfSx6HDFcdrIcMwTjXYG/KzMzL6zGYEvToV6O8haCtXu8jf+C2PNkpa/EQJwKA3C/
+         huq7r/fqsj47HuA57/EXvJo55hAd3EPk4jdkjjjyPpVU2+fWz0GIzwpsYPThylyNcDj6
+         xCEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HjdlqICv33EOX64nmJtOK4eeCybLMgO053G4bs/5DXk=;
+        b=xrbphNPUsfEP2/3OvqI3mKhmtJGVVvUOBH36ZY4zvfn0IBD1irfbfR6OukQjThG17r
+         +qmnXXRZxTRa3/AqtzcykeKQ3ln6DR2GqSh0tfjBkmzYhrQArDaurJYEo7CSphtBQebb
+         dscJ/9hukC9Oq65Rex6xH2ZNy0a277eY+6/088BN3F17VGCwCFlhyyyg1hGp0eEvUY3L
+         JX/upkoLs8lRlkmBPCce0CrnxiiEbJb81nLhP1p9+73UYz4sCTlsqhmbrAn3bkYWOUs/
+         Jkg2DzZI50Z+Xalr2CIn1WNn3tQus46QL0FbEd+et1LMRJNN2jdp8Xz5HKtSWuKndl2f
+         VmYQ==
+X-Gm-Message-State: AFqh2kq0n3UT9ogJLO5AEw/FM+yVr/cStUH04MskuoFaDPPwDVglF1re
+        mbLNoTVbWofFz+TRZH1EcyUqXOp3HmhGyRMQug8NNG9IlQE+UFhC
+X-Google-Smtp-Source: AMrXdXup0jfh6WM8yiM9FjWnkDizh8v2Dv+xIPZh/43ZS4YL8xF6Y2sGXtQhQdQtHp+Atzd7zdAi6i6FHi81anpCOAs=
+X-Received: by 2002:a05:6122:334:b0:3d0:8328:c28e with SMTP id
+ d20-20020a056122033400b003d08328c28emr1939449vko.33.1672114478970; Mon, 26
+ Dec 2022 20:14:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.31]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+From:   Sughosh Ganu <sughosh.ganu@linaro.org>
+Date:   Tue, 27 Dec 2022 09:44:28 +0530
+Message-ID: <CADg8p94+rY5B937YweMo=5aGS4Dhz2z4QW-BiAdkVdiWCm-u9w@mail.gmail.com>
+Subject: Seal/Unseal trusted keys against PCR policy
+To:     linux-integrity@vger.kernel.org
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Janne Karhunen <janne.karhunen@gmail.com>
+hi,
+I am looking to use PCR policy to seal and unseal trusted keys. I
+tried using the interface described in the documentation [1], but I
+get an unseal error at the time of a key load operation. I came across
+a thread [2] which is pretty much the error that I get. As per my
+understanding of what James had explained on that thread, the API was
+broken for TPM2.0 based devices. Has that since been fixed. If so, has
+there been a change in the user interface for sealing and unsealing
+the trusted keys.
 
-[ Upstream commit b169424551930a9325f700f502802f4d515194e5 ]
+Here are the steps that I follow.
 
-This patch is backported to resolve the issue of IMA ignoreing LSM part of
-an LSM based rule. As the LSM notifier chain was an atomic notifier
-chain, we'll not be able to call synchronize_rcu() within our notifier
-handling function.
+# tpm2_createpolicy --policy-pcr --pcr-list sha256:10 --policy
+pcr10_bin.policy > pcr.policy
 
-Original patch message is as follows:
+# cat pcr.policy
+16ef916486174ed6f68b09629d2920dd7493d0918fff1247420934c3836100d3
 
-  Don't do lazy policy updates while running the rule matching,
-  run the updates as they happen.
+#keyctl add trusted kmk-pcr "new 32 keyhandle=0x81000001 hash=sha256
+policydigest=`cat pcr.policy`" @u
+588568314
 
-  Depends on commit f242064c5df3 ("LSM: switch to blocking policy
-  update notifiers")
+# keyctl pipe 588568314 > kmk-pcr.blob
 
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Cc: stable@vger.kernel.org #4.19.y
-Signed-off-by: GUO Zihua <guozihua@huawei.com>
----
- security/integrity/ima/ima.h        |   2 +
- security/integrity/ima/ima_main.c   |   8 ++
- security/integrity/ima/ima_policy.c | 115 +++++++++++++++++++++++-----
- 3 files changed, 105 insertions(+), 20 deletions(-)
+On a reboot (or even w/o a reboot, after deleting the key)
+#keyctl add trusted kmk-pcr "load `cat kmk-pcr.blob`
+keyhandle=0x81000001 hash=sha256 policydigest=`cat pcr.policy`" @u
+add_key: Operation not permitted
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index e2916b115b93..dc564ed9a790 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -154,6 +154,8 @@ int ima_measurements_show(struct seq_file *m, void *v);
- unsigned long ima_get_binary_runtime_size(void);
- int ima_init_template(void);
- void ima_init_template_list(void);
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data);
- 
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 2d31921fbda4..f461b3e2de00 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -41,6 +41,10 @@ int ima_appraise;
- int ima_hash_algo = HASH_ALGO_SHA1;
- static int hash_setup_done;
- 
-+static struct notifier_block ima_lsm_policy_notifier = {
-+	.notifier_call = ima_lsm_policy_change,
-+};
-+
- static int __init hash_setup(char *str)
- {
- 	struct ima_template_desc *template_desc = ima_template_desc_current();
-@@ -553,6 +557,10 @@ static int __init init_ima(void)
- 		error = ima_init();
- 	}
- 
-+	error = register_lsm_notifier(&ima_lsm_policy_notifier);
-+	if (error)
-+		pr_warn("Couldn't register LSM notifier, error %d\n", error);
-+
- 	if (!error)
- 		ima_update_policy_flag();
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index b2dadff3626b..1e0251e9510a 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -256,31 +256,112 @@ static void ima_free_rule(struct ima_rule_entry *entry)
- 	kfree(entry);
- }
- 
-+static void ima_lsm_free_rule(struct ima_rule_entry *entry)
-+{
-+	int i;
-+
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		kfree(entry->lsm[i].rule);
-+		kfree(entry->lsm[i].args_p);
-+	}
-+	kfree(entry);
-+}
-+
-+static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
-+{
-+	struct ima_rule_entry *nentry;
-+	int i, result;
-+
-+	nentry = kmalloc(sizeof(*nentry), GFP_KERNEL);
-+	if (!nentry)
-+		return NULL;
-+
-+	/*
-+	 * Immutable elements are copied over as pointers and data; only
-+	 * lsm rules can change
-+	 */
-+	memcpy(nentry, entry, sizeof(*nentry));
-+	memset(nentry->lsm, 0, FIELD_SIZEOF(struct ima_rule_entry, lsm));
-+
-+	for (i = 0; i < MAX_LSM_RULES; i++) {
-+		if (!entry->lsm[i].rule)
-+			continue;
-+
-+		nentry->lsm[i].type = entry->lsm[i].type;
-+		nentry->lsm[i].args_p = kstrdup(entry->lsm[i].args_p,
-+						GFP_KERNEL);
-+		if (!nentry->lsm[i].args_p)
-+			goto out_err;
-+
-+		result = security_filter_rule_init(nentry->lsm[i].type,
-+						   Audit_equal,
-+						   nentry->lsm[i].args_p,
-+						   &nentry->lsm[i].rule);
-+		if (result == -EINVAL)
-+			pr_warn("ima: rule for LSM \'%d\' is undefined\n",
-+				entry->lsm[i].type);
-+	}
-+	return nentry;
-+
-+out_err:
-+	ima_lsm_free_rule(nentry);
-+	return NULL;
-+}
-+
-+static int ima_lsm_update_rule(struct ima_rule_entry *entry)
-+{
-+	struct ima_rule_entry *nentry;
-+
-+	nentry = ima_lsm_copy_rule(entry);
-+	if (!nentry)
-+		return -ENOMEM;
-+
-+	list_replace_rcu(&entry->list, &nentry->list);
-+	ima_lsm_free_rule(entry);
-+
-+	return 0;
-+}
-+
- /*
-  * The LSM policy can be reloaded, leaving the IMA LSM based rules referring
-  * to the old, stale LSM policy.  Update the IMA LSM based rules to reflect
-- * the reloaded LSM policy.  We assume the rules still exist; and BUG_ON() if
-- * they don't.
-+ * the reloaded LSM policy.
-  */
- static void ima_lsm_update_rules(void)
- {
--	struct ima_rule_entry *entry;
--	int result;
--	int i;
-+	struct ima_rule_entry *entry, *e;
-+	int i, result, needs_update;
- 
--	list_for_each_entry(entry, &ima_policy_rules, list) {
-+	list_for_each_entry_safe(entry, e, &ima_policy_rules, list) {
-+		needs_update = 0;
- 		for (i = 0; i < MAX_LSM_RULES; i++) {
--			if (!entry->lsm[i].rule)
--				continue;
--			result = security_filter_rule_init(entry->lsm[i].type,
--							   Audit_equal,
--							   entry->lsm[i].args_p,
--							   &entry->lsm[i].rule);
--			BUG_ON(!entry->lsm[i].rule);
-+			if (entry->lsm[i].rule) {
-+				needs_update = 1;
-+				break;
-+			}
-+		}
-+		if (!needs_update)
-+			continue;
-+
-+		result = ima_lsm_update_rule(entry);
-+		if (result) {
-+			pr_err("ima: lsm rule update error %d\n",
-+				result);
-+			return;
- 		}
- 	}
- }
- 
-+int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-+			  void *lsm_data)
-+{
-+	if (event != LSM_POLICY_CHANGE)
-+		return NOTIFY_DONE;
-+
-+	ima_lsm_update_rules();
-+	return NOTIFY_OK;
-+}
-+
- /**
-  * ima_match_rules - determine whether an inode matches the measure rule.
-  * @rule: a pointer to a rule
-@@ -334,11 +415,10 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
- 		int rc = 0;
- 		u32 osid;
--		int retried = 0;
- 
- 		if (!rule->lsm[i].rule)
- 			continue;
--retry:
-+
- 		switch (i) {
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
-@@ -361,11 +441,6 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
- 		default:
- 			break;
- 		}
--		if ((rc < 0) && (!retried)) {
--			retried = 1;
--			ima_lsm_update_rules();
--			goto retry;
--		}
- 		if (!rc)
- 			return false;
- 	}
--- 
-2.17.1
+My setup is a Qemu arm64 virt platform running Debian11, linux kernel
+built with current master branch, and swtpm 2.0 implementation as the
+TPM backend.
 
+-sughosh
+
+[1] - Documentation/security/keys/trusted-encrypted.rst
+[2] - https://lore.kernel.org/linux-integrity/20191206212031.GE9971@linux.intel.com/T/
