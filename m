@@ -2,97 +2,206 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68403C4332F
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Jan 2023 03:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00232C4332F
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Jan 2023 06:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233940AbjADDmE (ORCPT
+        id S230416AbjADGRl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 3 Jan 2023 22:42:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
+        Wed, 4 Jan 2023 01:17:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230060AbjADDmD (ORCPT
+        with ESMTP id S229469AbjADGRl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 3 Jan 2023 22:42:03 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81FB27678
-        for <linux-integrity@vger.kernel.org>; Tue,  3 Jan 2023 19:42:02 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id b3so48698581lfv.2
-        for <linux-integrity@vger.kernel.org>; Tue, 03 Jan 2023 19:42:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s0Z9P5zAl8OMVW0iNoSbJoRO8gW6HoM/PUn42UgSrQU=;
-        b=ecPK2dNgDdt6UAwTIszHkWH2ig/5+MsB5C0VshWk1nLizcH0kEqDd21t9UVEZwLDvM
-         6F8FyO42Fy/p1hEIC2z6+NTMvbzul8n+U70Yd4dUZwNfMYfBKVmBHJNXt+TgATcMrKXA
-         R7luMzd95y7NtRXs21VQPpdPG+NjlhUTEHW+xN8Agc7NuYPWmSpfBMzOJz33q9f8v+Hi
-         h1bmvXRV759ga0b+ZnyhCcC9/3PfMPdO71Kkiq+YNkVpFPDJOUp/ScNvflJfJsDdU45p
-         alXt6QJV3bTxt4jwdXiGz9PngBZzrh7/YC5GNhnJDY0cCzbHQggCABUHTA/uOo2wGke3
-         4RrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s0Z9P5zAl8OMVW0iNoSbJoRO8gW6HoM/PUn42UgSrQU=;
-        b=ZAiJhUeY6s2NnSyG3rsa6VFHcBlzgCIuB6qqAVkSZY4q6Mb+VuyCNeyRi9VGrfFYas
-         /IFj7eboDwgweCP2WipsEVvqbuGHtmkCUTCf9YW5cFwAW7hMrRmzSgsscY7UvdDiFGA0
-         +RxcVDTfDYhJoVY6QcMuUnXYkCQEg3U38RbrGu3QJ5KNBfoao5whnPKH4vD/94tWNDr7
-         NpMjHU40I5yrCwBWmebuxAADsn7ytXY5q8Oj6lU+GXTFewIk6RwyaseMKkS6TdjvbzFi
-         ItOf5WA0dbuEn3EtrAa474PrMyJ5fFFb08cbrrytkZG4hxHmVY9XGmliBJMA4ajs6qIK
-         fz1Q==
-X-Gm-Message-State: AFqh2ko/6Qc2bgZXmFyVx3AVH8Exv8K0B3oGSizBeIbKOpsDlC6Id/b1
-        sQ327LH+nYmv0ZHndcPXmQB+6g==
-X-Google-Smtp-Source: AMrXdXuzUvRj8L8bHlwyCor4UJUQ9mtURazlh2thLXW7r0/nCbOxEInB079cGisW4pF1tvDeEFn2EA==
-X-Received: by 2002:a05:6512:10c3:b0:4b6:e64c:aec6 with SMTP id k3-20020a05651210c300b004b6e64caec6mr15613053lfg.63.1672803720794;
-        Tue, 03 Jan 2023 19:42:00 -0800 (PST)
-Received: from google.com (38.165.88.34.bc.googleusercontent.com. [34.88.165.38])
-        by smtp.gmail.com with ESMTPSA id v24-20020a05651203b800b004b4e6dab30esm5009037lfp.222.2023.01.03.19.42.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jan 2023 19:42:00 -0800 (PST)
-Date:   Wed, 4 Jan 2023 03:41:56 +0000
-From:   Matt Bobrowski <mattbobrowski@google.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com
-Cc:     linux-integrity@vger.kernel.org, revest@google.com,
-        kpsingh@google.com, roberto.sassu@huawei.com
-Subject: [PATCH] ima: return IMA digest value only when IMA_COLLECTED flag is
- set
-Message-ID: <Y7T1hEhIL5TEmLEN@google.com>
+        Wed, 4 Jan 2023 01:17:41 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E9F8EE3E;
+        Tue,  3 Jan 2023 22:17:39 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NmzrC4LLRznTxt;
+        Wed,  4 Jan 2023 14:16:11 +0800 (CST)
+Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
+ (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Wed, 4 Jan
+ 2023 14:17:37 +0800
+From:   GUO Zihua <guozihua@huawei.com>
+To:     <stable@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <zohar@linux.ibm.com>
+CC:     <paul@paul-moore.com>, <linux-integrity@vger.kernel.org>,
+        <luhuaxin1@huawei.com>
+Subject: [PATCH v3 1/3] LSM: switch to blocking policy update notifiers
+Date:   Wed, 4 Jan 2023 14:14:56 +0800
+Message-ID: <20230104061458.8878-2-guozihua@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230104061458.8878-1-guozihua@huawei.com>
+References: <20230104061458.8878-1-guozihua@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.67.175.31]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The IMA_COLLECTED flag indicates whether the IMA subsystem has
-successfully collected a measurement for a given file object. Ensure
-that we return the respective digest value stored within the iint
-entry only when this flag has been set.
+From: Janne Karhunen <janne.karhunen@gmail.com>
 
-Failing to check for the presence of this flag exposes consumers of
-this IMA API to receive potentially undesired IMA digest values when
-an erroneous condition has been experienced in some of the lower level
-IMA API code.
+[ Upstream commit 42df744c4166af6959eda2df1ee5cde744d4a1c3 ]
 
-Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
+Atomic policy updaters are not very useful as they cannot
+usually perform the policy updates on their own. Since it
+seems that there is no strict need for the atomicity,
+switch to the blocking variant. While doing so, rename
+the functions accordingly.
+
+Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Acked-by: James Morris <jamorris@linux.microsoft.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: GUO Zihua <guozihua@huawei.com>
 ---
- security/integrity/ima/ima_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/device.c |  4 ++--
+ include/linux/security.h         | 12 ++++++------
+ security/security.c              | 23 +++++++++++++----------
+ security/selinux/hooks.c         |  2 +-
+ security/selinux/selinuxfs.c     |  2 +-
+ 5 files changed, 23 insertions(+), 20 deletions(-)
 
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index b1ae0f2751f1..1d40cdfa23d5 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -563,7 +563,7 @@ static int __ima_inode_hash(struct inode *inode, struct file *file, char *buf,
- 	 * ima_file_hash can be called when ima_collect_measurement has still
- 	 * not been called, we might not always have a hash.
- 	 */
--	if (!iint->ima_hash) {
-+	if (!iint->ima_hash || !(iint->flags & IMA_COLLECTED)) {
- 		mutex_unlock(&iint->mutex);
- 		return -EOPNOTSUPP;
+diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
+index ffd0f43e2129..ebcebb95f61b 100644
+--- a/drivers/infiniband/core/device.c
++++ b/drivers/infiniband/core/device.c
+@@ -1207,7 +1207,7 @@ static int __init ib_core_init(void)
+ 		goto err_mad;
  	}
+ 
+-	ret = register_lsm_notifier(&ibdev_lsm_nb);
++	ret = register_blocking_lsm_notifier(&ibdev_lsm_nb);
+ 	if (ret) {
+ 		pr_warn("Couldn't register LSM notifier. ret %d\n", ret);
+ 		goto err_sa;
+@@ -1243,7 +1243,7 @@ static void __exit ib_core_cleanup(void)
+ 	roce_gid_mgmt_cleanup();
+ 	nldev_exit();
+ 	rdma_nl_unregister(RDMA_NL_LS);
+-	unregister_lsm_notifier(&ibdev_lsm_nb);
++	unregister_blocking_lsm_notifier(&ibdev_lsm_nb);
+ 	ib_sa_cleanup();
+ 	ib_mad_cleanup();
+ 	addr_cleanup();
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 273877cf47bf..81e795c9c09a 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -191,9 +191,9 @@ struct security_mnt_opts {
+ 	int num_mnt_opts;
+ };
+ 
+-int call_lsm_notifier(enum lsm_event event, void *data);
+-int register_lsm_notifier(struct notifier_block *nb);
+-int unregister_lsm_notifier(struct notifier_block *nb);
++int call_blocking_lsm_notifier(enum lsm_event event, void *data);
++int register_blocking_lsm_notifier(struct notifier_block *nb);
++int unregister_blocking_lsm_notifier(struct notifier_block *nb);
+ 
+ static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
+ {
+@@ -409,17 +409,17 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+ struct security_mnt_opts {
+ };
+ 
+-static inline int call_lsm_notifier(enum lsm_event event, void *data)
++static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+ {
+ 	return 0;
+ }
+ 
+-static inline int register_lsm_notifier(struct notifier_block *nb)
++static inline int register_blocking_lsm_notifier(struct notifier_block *nb)
+ {
+ 	return 0;
+ }
+ 
+-static inline  int unregister_lsm_notifier(struct notifier_block *nb)
++static inline  int unregister_blocking_lsm_notifier(struct notifier_block *nb)
+ {
+ 	return 0;
+ }
+diff --git a/security/security.c b/security/security.c
+index fc1410550b79..4d20a15f18b4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -38,7 +38,7 @@
+ #define SECURITY_NAME_MAX	10
+ 
+ struct security_hook_heads security_hook_heads __lsm_ro_after_init;
+-static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
++static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
+ 
+ char *lsm_names;
+ /* Boot-time LSM user choice */
+@@ -180,23 +180,26 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
+ 		panic("%s - Cannot get early memory.\n", __func__);
+ }
+ 
+-int call_lsm_notifier(enum lsm_event event, void *data)
++int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+ {
+-	return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
++	return blocking_notifier_call_chain(&blocking_lsm_notifier_chain,
++					    event, data);
+ }
+-EXPORT_SYMBOL(call_lsm_notifier);
++EXPORT_SYMBOL(call_blocking_lsm_notifier);
+ 
+-int register_lsm_notifier(struct notifier_block *nb)
++int register_blocking_lsm_notifier(struct notifier_block *nb)
+ {
+-	return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
++	return blocking_notifier_chain_register(&blocking_lsm_notifier_chain,
++						nb);
+ }
+-EXPORT_SYMBOL(register_lsm_notifier);
++EXPORT_SYMBOL(register_blocking_lsm_notifier);
+ 
+-int unregister_lsm_notifier(struct notifier_block *nb)
++int unregister_blocking_lsm_notifier(struct notifier_block *nb)
+ {
+-	return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
++	return blocking_notifier_chain_unregister(&blocking_lsm_notifier_chain,
++						  nb);
+ }
+-EXPORT_SYMBOL(unregister_lsm_notifier);
++EXPORT_SYMBOL(unregister_blocking_lsm_notifier);
+ 
+ /*
+  * Hook list operation macros.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 41e24df986eb..77f2147709b1 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -199,7 +199,7 @@ static int selinux_lsm_notifier_avc_callback(u32 event)
+ {
+ 	if (event == AVC_CALLBACK_RESET) {
+ 		sel_ib_pkey_flush();
+-		call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
++		call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
+ 	}
+ 
+ 	return 0;
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 60b3f16bb5c7..4f72d0998580 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -180,7 +180,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
+ 		selnl_notify_setenforce(new_value);
+ 		selinux_status_update_setenforce(state, new_value);
+ 		if (!new_value)
+-			call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
++			call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
+ 	}
+ 	length = count;
+ out:
 -- 
-2.39.0.314.g84b9a713c41-goog
+2.17.1
 
-/M
