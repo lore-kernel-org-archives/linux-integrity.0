@@ -2,206 +2,125 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D20C54EF0
-	for <linux-integrity@archiver.kernel.org>; Fri,  6 Jan 2023 01:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5C6C3DA7A
+	for <linux-integrity@archiver.kernel.org>; Fri,  6 Jan 2023 03:04:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229957AbjAFB3O (ORCPT
+        id S231610AbjAFDEY (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 5 Jan 2023 20:29:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52646 "EHLO
+        Thu, 5 Jan 2023 22:04:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230121AbjAFB2j (ORCPT
+        with ESMTP id S232036AbjAFDDl (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Jan 2023 20:28:39 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1FC65AF5;
-        Thu,  5 Jan 2023 17:23:51 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Np5DW2znQzJrF9;
-        Fri,  6 Jan 2023 09:22:35 +0800 (CST)
-Received: from huawei.com (10.67.175.31) by dggpemm500024.china.huawei.com
- (7.185.36.203) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Fri, 6 Jan
- 2023 09:23:43 +0800
-From:   GUO Zihua <guozihua@huawei.com>
-To:     <stable@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <zohar@linux.ibm.com>
-CC:     <paul@paul-moore.com>, <linux-integrity@vger.kernel.org>,
-        <luhuaxin1@huawei.com>
-Subject: [PATCH v7 1/3] LSM: switch to blocking policy update notifiers
-Date:   Fri, 6 Jan 2023 09:21:04 +0800
-Message-ID: <20230106012106.21559-2-guozihua@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230106012106.21559-1-guozihua@huawei.com>
-References: <20230106012106.21559-1-guozihua@huawei.com>
+        Thu, 5 Jan 2023 22:03:41 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75D4A6B5C6;
+        Thu,  5 Jan 2023 19:02:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 464D961CC8;
+        Fri,  6 Jan 2023 03:02:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 170B1C433EF;
+        Fri,  6 Jan 2023 03:02:09 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="R4BcOF1Q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1672974126;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=efZSHt3YcBRsaUeR6mOr7PEUQW1tGnk6xcgIkVA9P44=;
+        b=R4BcOF1QA8mj1a+6y7oEGCzd6sbEa8PsR9N/ECutO2ta5Mh8weq4/jjAA1D2vLFyffHB5v
+        p+HV7w5Ydj4ZLXFu4fr2sJjgIJNf6O8uxYml0nO1ESo5Y0cHbuBC5b0W9zqtwIhr+6u7ke
+        XUE7xCY89+EX3PJv8QbQ//54E+N58qI=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 7620b3ca (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Fri, 6 Jan 2023 03:02:06 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Thorsten Leemhuis <regressions@leemhuis.info>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Jan Dabros <jsd@semihalf.com>,
+        regressions@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Johannes Altmanninger <aclopte@gmail.com>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH v2] tpm: Allow system suspend to continue when TPM suspend fails
+Date:   Fri,  6 Jan 2023 04:01:56 +0100
+Message-Id: <20230106030156.3258307-1-Jason@zx2c4.com>
+In-Reply-To: <Y7dPV5BK6jk1KvX+@zx2c4.com>
+References: <Y7dPV5BK6jk1KvX+@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.175.31]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Janne Karhunen <janne.karhunen@gmail.com>
+TPM 1 is sometimes broken across system suspends, due to races or
+locking issues or something else that haven't been diagnosed or fixed
+yet, most likely having to do with concurrent reads from the TPM's
+hardware random number generator driver. These issues prevent the system
+from actually suspending, with errors like:
 
-[ Upstream commit 42df744c4166af6959eda2df1ee5cde744d4a1c3 ]
+  tpm tpm0: A TPM error (28) occurred continue selftest
+  ...
+  tpm tpm0: A TPM error (28) occurred attempting get random
+  ...
+  tpm tpm0: Error (28) sending savestate before suspend
+  tpm_tis 00:08: PM: __pnp_bus_suspend(): tpm_pm_suspend+0x0/0x80 returns 28
+  tpm_tis 00:08: PM: dpm_run_callback(): pnp_bus_suspend+0x0/0x10 returns 28
+  tpm_tis 00:08: PM: failed to suspend: error 28
+  PM: Some devices failed to suspend, or early wake event detected
 
-Atomic policy updaters are not very useful as they cannot
-usually perform the policy updates on their own. Since it
-seems that there is no strict need for the atomicity,
-switch to the blocking variant. While doing so, rename
-the functions accordingly.
+This issue was partially fixed by 23393c646142 ("char: tpm: Protect
+tpm_pm_suspend with locks"), in a last minute 6.1 commit that Linus took
+directly because the TPM maintainers weren't available. However, it
+seems like this just addresses the most common cases of the bug, rather
+than addressing it entirely. So there are more things to fix still,
+apparently.
 
-Signed-off-by: Janne Karhunen <janne.karhunen@gmail.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Acked-by: James Morris <jamorris@linux.microsoft.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: GUO Zihua <guozihua@huawei.com>
+In lieu of actually fixing the underlying bug, just allow system suspend
+to continue, so that laptops still go to sleep fine. Later, this can be
+reverted when the real bug is fixed.
+
+Link: https://lore.kernel.org/lkml/7cbe96cf-e0b5-ba63-d1b4-f63d2e826efa@suse.cz/
+Cc: stable@vger.kernel.org # 6.1+
+Reported-by: Vlastimil Babka <vbabka@suse.cz>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
 ---
- drivers/infiniband/core/device.c |  4 ++--
- include/linux/security.h         | 12 ++++++------
- security/security.c              | 23 +++++++++++++----------
- security/selinux/hooks.c         |  2 +-
- security/selinux/selinuxfs.c     |  2 +-
- 5 files changed, 23 insertions(+), 20 deletions(-)
+This is basically untested and I haven't worked out if there are any
+awful implications of letting the system sleep when TPM suspend fails.
+Maybe some PCRs get cleared and that will make everything explode on
+resume? Maybe it doesn't matter? Somebody well versed in TPMology should
+probably [n]ack this approach.
 
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index ffd0f43e2129..ebcebb95f61b 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -1207,7 +1207,7 @@ static int __init ib_core_init(void)
- 		goto err_mad;
+ drivers/char/tpm/tpm-interface.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index d69905233aff..6df9067ef7f9 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -412,7 +412,10 @@ int tpm_pm_suspend(struct device *dev)
  	}
  
--	ret = register_lsm_notifier(&ibdev_lsm_nb);
-+	ret = register_blocking_lsm_notifier(&ibdev_lsm_nb);
- 	if (ret) {
- 		pr_warn("Couldn't register LSM notifier. ret %d\n", ret);
- 		goto err_sa;
-@@ -1243,7 +1243,7 @@ static void __exit ib_core_cleanup(void)
- 	roce_gid_mgmt_cleanup();
- 	nldev_exit();
- 	rdma_nl_unregister(RDMA_NL_LS);
--	unregister_lsm_notifier(&ibdev_lsm_nb);
-+	unregister_blocking_lsm_notifier(&ibdev_lsm_nb);
- 	ib_sa_cleanup();
- 	ib_mad_cleanup();
- 	addr_cleanup();
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 273877cf47bf..81e795c9c09a 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -191,9 +191,9 @@ struct security_mnt_opts {
- 	int num_mnt_opts;
- };
- 
--int call_lsm_notifier(enum lsm_event event, void *data);
--int register_lsm_notifier(struct notifier_block *nb);
--int unregister_lsm_notifier(struct notifier_block *nb);
-+int call_blocking_lsm_notifier(enum lsm_event event, void *data);
-+int register_blocking_lsm_notifier(struct notifier_block *nb);
-+int unregister_blocking_lsm_notifier(struct notifier_block *nb);
- 
- static inline void security_init_mnt_opts(struct security_mnt_opts *opts)
- {
-@@ -409,17 +409,17 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- struct security_mnt_opts {
- };
- 
--static inline int call_lsm_notifier(enum lsm_event event, void *data)
-+static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
- {
- 	return 0;
+ suspended:
+-	return rc;
++	if (rc)
++		pr_err("Unable to suspend tpm-%d (error %d), but continuing system suspend\n",
++		       chip->dev_num, rc);
++	return 0;
  }
+ EXPORT_SYMBOL_GPL(tpm_pm_suspend);
  
--static inline int register_lsm_notifier(struct notifier_block *nb)
-+static inline int register_blocking_lsm_notifier(struct notifier_block *nb)
- {
- 	return 0;
- }
- 
--static inline  int unregister_lsm_notifier(struct notifier_block *nb)
-+static inline  int unregister_blocking_lsm_notifier(struct notifier_block *nb)
- {
- 	return 0;
- }
-diff --git a/security/security.c b/security/security.c
-index fc1410550b79..4d20a15f18b4 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -38,7 +38,7 @@
- #define SECURITY_NAME_MAX	10
- 
- struct security_hook_heads security_hook_heads __lsm_ro_after_init;
--static ATOMIC_NOTIFIER_HEAD(lsm_notifier_chain);
-+static BLOCKING_NOTIFIER_HEAD(blocking_lsm_notifier_chain);
- 
- char *lsm_names;
- /* Boot-time LSM user choice */
-@@ -180,23 +180,26 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 		panic("%s - Cannot get early memory.\n", __func__);
- }
- 
--int call_lsm_notifier(enum lsm_event event, void *data)
-+int call_blocking_lsm_notifier(enum lsm_event event, void *data)
- {
--	return atomic_notifier_call_chain(&lsm_notifier_chain, event, data);
-+	return blocking_notifier_call_chain(&blocking_lsm_notifier_chain,
-+					    event, data);
- }
--EXPORT_SYMBOL(call_lsm_notifier);
-+EXPORT_SYMBOL(call_blocking_lsm_notifier);
- 
--int register_lsm_notifier(struct notifier_block *nb)
-+int register_blocking_lsm_notifier(struct notifier_block *nb)
- {
--	return atomic_notifier_chain_register(&lsm_notifier_chain, nb);
-+	return blocking_notifier_chain_register(&blocking_lsm_notifier_chain,
-+						nb);
- }
--EXPORT_SYMBOL(register_lsm_notifier);
-+EXPORT_SYMBOL(register_blocking_lsm_notifier);
- 
--int unregister_lsm_notifier(struct notifier_block *nb)
-+int unregister_blocking_lsm_notifier(struct notifier_block *nb)
- {
--	return atomic_notifier_chain_unregister(&lsm_notifier_chain, nb);
-+	return blocking_notifier_chain_unregister(&blocking_lsm_notifier_chain,
-+						  nb);
- }
--EXPORT_SYMBOL(unregister_lsm_notifier);
-+EXPORT_SYMBOL(unregister_blocking_lsm_notifier);
- 
- /*
-  * Hook list operation macros.
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 41e24df986eb..77f2147709b1 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -199,7 +199,7 @@ static int selinux_lsm_notifier_avc_callback(u32 event)
- {
- 	if (event == AVC_CALLBACK_RESET) {
- 		sel_ib_pkey_flush();
--		call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
-+		call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
- 	}
- 
- 	return 0;
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 60b3f16bb5c7..4f72d0998580 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -180,7 +180,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
- 		selnl_notify_setenforce(new_value);
- 		selinux_status_update_setenforce(state, new_value);
- 		if (!new_value)
--			call_lsm_notifier(LSM_POLICY_CHANGE, NULL);
-+			call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
- 	}
- 	length = count;
- out:
 -- 
-2.17.1
+2.39.0
 
