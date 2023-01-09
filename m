@@ -2,53 +2,56 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C165EC678D7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAFCC678D6
 	for <linux-integrity@archiver.kernel.org>; Mon,  9 Jan 2023 16:57:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234055AbjAIQ5R (ORCPT
+        id S234288AbjAIQ5T (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 9 Jan 2023 11:57:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51176 "EHLO
+        Mon, 9 Jan 2023 11:57:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236851AbjAIQ4v (ORCPT
+        with ESMTP id S237040AbjAIQ5E (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 9 Jan 2023 11:56:51 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CCB48FC0
-        for <linux-integrity@vger.kernel.org>; Mon,  9 Jan 2023 08:56:48 -0800 (PST)
+        Mon, 9 Jan 2023 11:57:04 -0500
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED672C3
+        for <linux-integrity@vger.kernel.org>; Mon,  9 Jan 2023 08:57:03 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4NrKf833Pvz9xFGj
-        for <linux-integrity@vger.kernel.org>; Tue, 10 Jan 2023 00:49:04 +0800 (CST)
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4NrKfV3Rhgz9v7YP
+        for <linux-integrity@vger.kernel.org>; Tue, 10 Jan 2023 00:49:22 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwCXHWQ9R7xjPQWBAA--.14103S2;
-        Mon, 09 Jan 2023 17:56:34 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwCXHWQ9R7xjPQWBAA--.14103S6;
+        Mon, 09 Jan 2023 17:56:49 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com
 Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH ima-evm-utils 0/8] Support testing with UML kernel
-Date:   Mon,  9 Jan 2023 17:55:44 +0100
-Message-Id: <20230109165552.3409716-1-roberto.sassu@huaweicloud.com>
+Subject: [PATCH ima-evm-utils 4/8] Add support for UML in functions.sh
+Date:   Mon,  9 Jan 2023 17:55:48 +0100
+Message-Id: <20230109165552.3409716-5-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230109165552.3409716-1-roberto.sassu@huaweicloud.com>
+References: <20230109165552.3409716-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwCXHWQ9R7xjPQWBAA--.14103S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryrJw18uF15Gr1fCFy3Jwb_yoW8ZF1Upa
-        yDKwnY9rykJF9Fvw13Wa1Ik345Kw48Cr15C3ZrXw13uFyDJF1jyr129FW3JF9xZrWvqr15
-        Z3WvgF18KanxAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x
-        0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-        F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4I
-        kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IY
-        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
-        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF
-        0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIx
-        AIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
-        87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU06VbPUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAMBF1jj4dfgAAAsg
+X-CM-TRANSID: GxC2BwCXHWQ9R7xjPQWBAA--.14103S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw45WrWfuFW5KFykJr13Jwb_yoWrGr4kpw
+        1UWFyYqas7XF9FvaySg3yxWF1fJrWrCr10qr9xX398Awn8Kr4vqr4IvF1aqry5GrWYg3y0
+        q3yIqr4rG3W7CwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUBab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
+        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+        0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+        7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcV
+        C0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY
+        6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+        CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07jD6p9UUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBF1jj4NhnAAAsF
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -56,51 +59,164 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Add support for running existing and new tests in an environment created
-with an UML kernel. Adapting existing tests requires minimal changes, such
-as adding calls to a newly defined API.
+Add the new functions _run_user_mode(), _exit_user_mode(),
+_init_user_mode() and _cleanup_user_mode() to run the tests inside a system
+booted with the UML kernel.
 
-The main benefit of using the UML kernel is to run tests in an environment
-similar to a virtual machine, without however requiring the host to support
-virtualization. The UML kernel runs as a regular process and has visibility
-to the host filesystem.
+A typical structure of a script with tests is:
 
-Adapt the Github workflow to build the UML kernel from a chosen repository
-and branch, and use it for the tests. In this way, the ima-evm-utils test
-suite is self-contained and does not depend on external repositories. In
-the future, ima-evm-utils might have separate tests for the user space part
-and for the kernel part.
+trap cleanup SIGINT SIGTERM SIGSEGV EXIT
 
-Finally, introduce a new set of tests for EVM portable signatures, adapt
-the existing fsverity.test to run with the UML kernel, and optimize
-fsverity.test to not require installation of built binaries.
+_cleanup() {
+	<test cleanup>
+}
 
-Roberto Sassu (8):
-  Fix error messages and mdlen init in calc_evm_hmac()
-  Add config for UML kernel
-  Compile the UML kernel and download it in Github Actions
-  Add support for UML in functions.sh
-  Introduce TST_LIST variable to select a test to execute
-  Add tests for EVM portable signatures
-  Adapt fsverity.test to work with UML kernel
-  Use in-place built fsverity binary instead of installing it
+cleanup() {
+	_cleanup_user_mode _cleanup
+	_report_exit_and_cleanup
+}
 
- .github/workflows/ci.yml        |   92 ++-
- build.sh                        |    5 +
- ci/fedora.sh                    |   10 +-
- config-uml                      |  235 +++++++
- src/evmctl.c                    |    8 +-
- tests/Makefile.am               |    2 +-
- tests/fsverity.test             |   18 +-
- tests/functions.sh              |   91 ++-
- tests/install-fsverity.sh       |    2 +-
- tests/install-mount-idmapped.sh |    7 +
- tests/portable_signatures.test  | 1173 +++++++++++++++++++++++++++++++
- 11 files changed, 1631 insertions(+), 12 deletions(-)
- create mode 100644 config-uml
- create mode 100755 tests/install-mount-idmapped.sh
- create mode 100755 tests/portable_signatures.test
+<tests implementations>
 
+_run_user_mode ../linux $PWD/$(basename $0) "env_var1=$env_var1 ..."
+
+_exit_user_mode ../linux
+
+_init_user_mode
+
+<tests init>
+
+<tests call>
+
+If the UML_MODE environment variable is not set to 1, ignore the UML kernel
+execution and initialization requests, and perform the cleanup in the
+current environment. Ignore the same also if the script is already run in
+the UML environment, to avoid loops. Instead, for cleanup, do it only in
+the UML environment and skip it in the host environment.
+
+Signal to the host environment failures of tests run in the UML environment
+with an unclean shutdown of the UML kernel.
+
+Add haveged and systemd as dependencies for the tests in ci/fedora.sh,
+respectively for initializing the random number generator and for shutting
+down the system in the environment created by the UML kernel.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ ci/fedora.sh       |  4 ++-
+ tests/functions.sh | 79 +++++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 81 insertions(+), 2 deletions(-)
+
+diff --git a/ci/fedora.sh b/ci/fedora.sh
+index e60de7981c60..198034a34e3c 100755
+--- a/ci/fedora.sh
++++ b/ci/fedora.sh
+@@ -45,7 +45,9 @@ yum -y install \
+ 	vim-common \
+ 	wget \
+ 	which \
+-	zstd
++	zstd \
++	haveged \
++	systemd
+ 
+ yum -y install docbook5-style-xsl || true
+ yum -y install swtpm || true
+diff --git a/tests/functions.sh b/tests/functions.sh
+index 8f6f02dfcd95..98829d94fae1 100755
+--- a/tests/functions.sh
++++ b/tests/functions.sh
+@@ -267,6 +267,16 @@ _report_exit_and_cleanup() {
+   [ $testsfail -gt 0 ] && echo -n "$RED" || echo -n "$NORM"
+   echo " FAIL: $testsfail"
+   echo "$NORM"
++  # Signal failure to UML caller with an unclean shutdown.
++  if [ -n "$UML_MODE" ] && [ "$UML_MODE" -eq 1 ] && [ $$ -eq 1 ]; then
++    if [ -z "$(which poweroff)" ]; then
++      echo "Warning: cannot properly shutdown system"
++    fi
++
++    if [ $testsfail -eq 0 ]; then
++      poweroff -f
++    fi
++  fi
+   if [ $testsfail -gt 0 ]; then
+     exit "$FAIL"
+   elif [ $testspass -gt 0 ]; then
+@@ -312,4 +322,71 @@ _softhsm_teardown() {
+   rm -rf "${SOFTHSM_SETUP_CONFIGDIR}"
+   unset SOFTHSM_SETUP_CONFIGDIR SOFTHSM2_CONF PKCS11_KEYURI \
+     EVMCTL_ENGINE OPENSSL_ENGINE OPENSSL_KEYFORM
+-}
+\ No newline at end of file
++}
++
++# Syntax: _run_user_mode <UML binary> <init> <additional kernel parameters>
++_run_user_mode() {
++  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
++    return
++  fi
++
++  if [ $$ -eq 1 ]; then
++    return
++  fi
++
++  expect_pass $1 rootfstype=hostfs rw init=$2 quiet mem=256M $3
++}
++
++# Syntax: _exit_user_mode <UML binary>
++_exit_user_mode() {
++  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
++    return
++  fi
++
++  if [ $$ -eq 1 ]; then
++    return
++  fi
++
++  if [ -f "$1" ]; then
++    exit $OK
++  fi
++}
++
++# Syntax: _init_user_mode
++_init_user_mode() {
++  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
++    return
++  fi
++
++  if [ $$ -ne 1 ]; then
++    return
++  fi
++
++  mount -t proc proc /proc
++  mount -t sysfs sysfs /sys
++  mount -t securityfs securityfs /sys/kernel/security
++
++  if [ -n "$(which haveged 2> /dev/null)" ]; then
++    $(which haveged) -w 1024 &> /dev/null
++  fi
++
++  pushd $PWD > /dev/null
++}
++
++# Syntax: _cleanup_user_mode <cleanup function>
++_cleanup_user_mode() {
++  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
++    $1
++    return
++  fi
++
++  if [ $$ -ne 1 ]; then
++    return
++  fi
++
++  $1
++
++  umount /sys/kernel/security
++  umount /sys
++  umount /proc
++}
 -- 
 2.25.1
 
