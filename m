@@ -2,235 +2,295 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9DEC54EBD
-	for <linux-integrity@archiver.kernel.org>; Thu, 12 Jan 2023 15:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38461C54EBC
+	for <linux-integrity@archiver.kernel.org>; Thu, 12 Jan 2023 15:32:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbjALPNw (ORCPT
+        id S232767AbjALPce (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 12 Jan 2023 10:13:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58628 "EHLO
+        Thu, 12 Jan 2023 10:32:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230462AbjALPMx (ORCPT
+        with ESMTP id S232658AbjALPai (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 12 Jan 2023 10:12:53 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F09145AC44
-        for <linux-integrity@vger.kernel.org>; Thu, 12 Jan 2023 07:02:27 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Nt6ym41vhz9v7Yx
-        for <linux-integrity@vger.kernel.org>; Thu, 12 Jan 2023 22:54:40 +0800 (CST)
-Received: from roberto-ThinkStation-P620 (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwCnemHvIMBjyJSNAA--.53757S2;
-        Thu, 12 Jan 2023 16:02:14 +0100 (CET)
-Message-ID: <ebfca979a1e303ce64f17d252844e172008c40a4.camel@huaweicloud.com>
-Subject: Re: [PATCH ima-evm-utils v2 4/9] Add support for UML in functions.sh
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>, zohar@linux.ibm.com,
+        Thu, 12 Jan 2023 10:30:38 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1F0DE0D7
+        for <linux-integrity@vger.kernel.org>; Thu, 12 Jan 2023 07:23:23 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30CEoiF2025042;
+        Thu, 12 Jan 2023 15:23:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=PGaQo37jLpAMSAG/dTaVWP2bnVsnQgCseFDVEyMA4QU=;
+ b=XpbLQwF2zHThrwPTkrzlr1yKPdbq281Y3E2qf1gZZkoVPCSvHNDQVwq1qo8idYAxLlvY
+ tdTCpWantLUW0477wyalJjbaR/8AsuOIyDcIWKtNhq8gXyhVYlVgXFtLF0LEwtM7IFvT
+ CTOmkiHQisFT8nVFv+FZWYbe2iu9k0hP4zhKFj5gW8NXYbW1us9H0kkTK7UgM7ZJugL3
+ NbMa9n50tqWnRr6qYeyaPWMKZnl1gcawX1ka2T1yZyus4neDtIm0wZBJKsJBB0jfbSLZ
+ IRwJtn5m6/V9aPoaCi/Aza2JUYi2TYnn0ApWitKmAGSwr0G6Xve+ihi9TJY2pXMR+37R MA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n2mb0h2bp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Jan 2023 15:22:59 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30CFJwFJ036116;
+        Thu, 12 Jan 2023 15:22:59 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n2mb0h2ba-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Jan 2023 15:22:59 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30CEmBgu012721;
+        Thu, 12 Jan 2023 15:22:58 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([9.208.130.98])
+        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3n1ka14hs3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Jan 2023 15:22:58 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+        by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30CFMvJt12583462
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jan 2023 15:22:57 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25FB358058;
+        Thu, 12 Jan 2023 15:22:57 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B1D65805D;
+        Thu, 12 Jan 2023 15:22:22 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Jan 2023 15:22:22 +0000 (GMT)
+Message-ID: <bc08eaf9-1282-f6b3-3c7a-1242aacfe9e1@linux.ibm.com>
+Date:   Thu, 12 Jan 2023 10:22:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH ima-evm-utils v2 6/9] Add tests for EVM portable
+ signatures
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
         dmitry.kasatkin@gmail.com
 Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org, pvorel@suse.cz,
         Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 12 Jan 2023 16:01:39 +0100
-In-Reply-To: <8d15733c-67bc-ce58-0724-fa5a9cdc905e@linux.ibm.com>
 References: <20230112122426.3759938-1-roberto.sassu@huaweicloud.com>
-         <20230112122426.3759938-5-roberto.sassu@huaweicloud.com>
-         <8d15733c-67bc-ce58-0724-fa5a9cdc905e@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
-MIME-Version: 1.0
+ <20230112122426.3759938-7-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230112122426.3759938-7-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: U3SNmG_gtYMSeaik4KazCttVE2_MybEl
+X-Proofpoint-ORIG-GUID: AuYs60pytS6jJEPzV1Dn-EPs3k_TxvyB
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: GxC2BwCnemHvIMBjyJSNAA--.53757S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4rKw13Aw4DXryUur4DJwb_yoWrZF1Dp3
-        9rWFy5KFn7Ja47Z34ag3y5X3Wftr48Ar18Zr9xX3s8Zwn0krn7tr4IvF4ag348Wr1Yva10
-        vay0qw4fGw1DK37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-        6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-        Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-        6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-        CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF
-        0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3w
-        CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-        WIevJa73UjIFyTuYvjxUrR6zUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBF1jj4OIwAAEs3
-X-CFilter-Loop: Reflected
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2023-01-12_08,2023-01-12_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0 clxscore=1015
+ mlxscore=0 malwarescore=0 mlxlogscore=999 spamscore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301120109
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2023-01-12 at 10:00 -0500, Stefan Berger wrote:
-> On 1/12/23 07:24, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Add the new functions _run_user_mode(), _exit_user_mode(),
-> > _init_user_mode() and _cleanup_user_mode() to run the tests inside a system
-> > booted with the UML kernel.
-> > 
-> > A typical structure of a script with tests is:
-> > 
-> > trap cleanup SIGINT SIGTERM SIGSEGV EXIT
-> > 
-> > _cleanup() {
-> > 	<test cleanup>
-> > }
-> > 
-> > cleanup() {
-> > 	_cleanup_user_mode _cleanup
-> > 	_report_exit_and_cleanup
-> > }
-> > 
-> > <tests implementations>
-> > 
-> > _run_user_mode ../linux $PWD/$(basename $0) "env_var1=$env_var1 ..."
-> > 
-> > _exit_user_mode ../linux
-> > 
-> > _init_user_mode
-> > 
-> > <tests init>
-> > 
-> > <tests call>
-> > 
-> > If the UML_MODE environment variable is not set to 1, ignore the UML kernel
-> > execution and initialization requests, and perform the cleanup in the
-> > current environment. Ignore the same also if the script is already run in
-> > the UML environment, to avoid loops. Instead, for cleanup, do it only in
-> > the UML environment and skip it in the host environment.
-> > 
-> > Signal to the host environment failures of tests run in the UML environment
-> > with an unclean shutdown of the UML kernel.
-> > 
-> > Add haveged and systemd as dependencies for the tests in ci/fedora.sh,
-> > respectively for initializing the random number generator and for shutting
-> > down the system in the environment created by the UML kernel.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >   ci/fedora.sh       |  4 ++-
-> >   tests/functions.sh | 79 +++++++++++++++++++++++++++++++++++++++++++++-
-> >   2 files changed, 81 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/ci/fedora.sh b/ci/fedora.sh
-> > index e60de7981c60..198034a34e3c 100755
-> > --- a/ci/fedora.sh
-> > +++ b/ci/fedora.sh
-> > @@ -45,7 +45,9 @@ yum -y install \
-> >   	vim-common \
-> >   	wget \
-> >   	which \
-> > -	zstd
-> > +	zstd \
-> > +	haveged \
-> > +	systemd
-> >   
-> >   yum -y install docbook5-style-xsl || true
-> >   yum -y install swtpm || true
-> > diff --git a/tests/functions.sh b/tests/functions.sh
-> > index 8f6f02dfcd95..98829d94fae1 100755
-> > --- a/tests/functions.sh
-> > +++ b/tests/functions.sh
-> > @@ -267,6 +267,16 @@ _report_exit_and_cleanup() {
-> >     [ $testsfail -gt 0 ] && echo -n "$RED" || echo -n "$NORM"
-> >     echo " FAIL: $testsfail"
-> >     echo "$NORM"
-> > +  # Signal failure to UML caller with an unclean shutdown.
-> > +  if [ -n "$UML_MODE" ] && [ "$UML_MODE" -eq 1 ] && [ $$ -eq 1 ]; then
-> > +    if [ -z "$(which poweroff)" ]; then
-> > +      echo "Warning: cannot properly shutdown system"
-> > +    fi
-> > +
-> > +    if [ $testsfail -eq 0 ]; then
-> > +      poweroff -f
-> > +    fi
-> > +  fi
-> >     if [ $testsfail -gt 0 ]; then
-> >       exit "$FAIL"
-> >     elif [ $testspass -gt 0 ]; then
-> > @@ -312,4 +322,71 @@ _softhsm_teardown() {
-> >     rm -rf "${SOFTHSM_SETUP_CONFIGDIR}"
-> >     unset SOFTHSM_SETUP_CONFIGDIR SOFTHSM2_CONF PKCS11_KEYURI \
-> >       EVMCTL_ENGINE OPENSSL_ENGINE OPENSSL_KEYFORM
-> > -}
-> > \ No newline at end of file
-> > +}
-> > +
-> > +# Syntax: _run_user_mode <UML binary> <init> <additional kernel parameters>
-> > +_run_user_mode() {
-> > +  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  if [ $$ -eq 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  expect_pass $1 rootfstype=hostfs rw init=$2 quiet mem=256M $3
-> > +}
-> > +
-> > +# Syntax: _exit_user_mode <UML binary>
-> > +_exit_user_mode() {
-> > +  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  if [ $$ -eq 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  if [ -f "$1" ]; then
-> > +    exit $OK
-> > +  fi
-> > +}
-> > +
-> > +# Syntax: _init_user_mode
-> > +_init_user_mode() {
-> > +  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  if [ $$ -ne 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  mount -t proc proc /proc
-> > +  mount -t sysfs sysfs /sys
-> > +  mount -t securityfs securityfs /sys/kernel/security
-> > +
-> > +  if [ -n "$(which haveged 2> /dev/null)" ]; then
-> > +    $(which haveged) -w 1024 &> /dev/null
-> > +  fi
+
+
+On 1/12/23 07:24, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> What's different when it's missing?
-
-The boot time is longer, if I remember correctly.
-
-Thanks
-
-Roberto
-
-> > +
-> > +  pushd $PWD > /dev/null
-> > +}
-> > +
-> > +# Syntax: _cleanup_user_mode <cleanup function>
-> > +_cleanup_user_mode() {
-> > +  if [ -z "$UML_MODE" ] || [ "$UML_MODE" -ne 1 ]; then
-> > +    $1
-> > +    return
-> > +  fi
-> > +
-> > +  if [ $$ -ne 1 ]; then
-> > +    return
-> > +  fi
-> > +
-> > +  $1
-> > +
-> > +  umount /sys/kernel/security
-> > +  umount /sys
-> > +  umount /proc
-> > +}
+> Verify that operations on files with EVM portable signatures succeed and
+> that the new kernel patch set does not break the existing kernel integrity
+> expectations. Build and install mount-idmapped for ci/fedora.sh, to
+> additionally test idmapped mounts.
 > 
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> To run the tests, pass the path of the kernel private key with the
+> TST_KEY_PATH environment variable. If not provided, the script searches the
+> key in /lib/modules/$(uname -r)/source/certs/signing_key.pem and in the
+> current directory. Root privileges are required to mount the image,
+> configure IMA/EVM and set xattrs.
+> 
+> Set UML_MODE to 1, to relaunch the script in a new environment after
+> booting an UML kernel. The UML kernel must be named 'linux' and placed in
+> the ima-evm-utils directory.
+> 
+> Alternatively, set the TST_EVM_CHANGE_MODE variable to 1, to change the
+> current EVM mode, if a test needs a different one. Otherwise, execute only
+> the tests compatible with the current EVM mode.
+> 
+> Also set the EVM_ALLOW_METADATA_WRITES flag in the EVM mode, before
+> launching the script, to run the check_evm_revalidate() test. Execute:
+> 
+> echo 4 > /sys/kernel/security/evm
+> 
+> The last two environment variables above affect which tests will run the
+> next time the script is executed. Without setting UML_MODE to 1, changes to
+> the current EVM mode will be irreversibly done in the host. Next time,
+> unless the host is rebooted, only tests compatible with the last EVM mode
+> set will run. The others will be skipped.
+> 
+> With the UML kernel, this problem does not arise as, every time the UML
+> kernel is executed, it will create a clean environment with no flags set in
+> the EVM mode.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   build.sh                        |    5 +
+>   ci/fedora.sh                    |    7 +-
+>   tests/Makefile.am               |    2 +-
+>   tests/install-mount-idmapped.sh |    7 +
+>   tests/portable_signatures.test  | 1173 +++++++++++++++++++++++++++++++
+>   5 files changed, 1192 insertions(+), 2 deletions(-)
+>   create mode 100755 tests/install-mount-idmapped.sh
+>   create mode 100755 tests/portable_signatures.test
+> 
+> diff --git a/build.sh b/build.sh
+> index 4e2f1bb7353b..0920599b2780 100755
+> --- a/build.sh
+> +++ b/build.sh
+> @@ -114,6 +114,11 @@ if [ $ret -eq 0 ]; then
+>   		grep "skipped" tests/fsverity.log  && \
+>   		   grep "skipped" tests/fsverity.log | wc -l
+>   	fi
+> +	if [ -f tests/portable_signatures.log ]; then
+> +		[ -n "$CI" ] && cat tests/portable_signatures.log || tail tests/portable_signatures.log
+> +		grep "skipped" tests/portable_signatures.log  && \
+> +		   grep "skipped" tests/portable_signatures.log | wc -l
+> +	fi
+>   	exit 0
+>   fi
+>   
+> diff --git a/ci/fedora.sh b/ci/fedora.sh
+> index 198034a34e3c..3f75d2e1ddbd 100755
+> --- a/ci/fedora.sh
+> +++ b/ci/fedora.sh
+> @@ -47,7 +47,11 @@ yum -y install \
+>   	which \
+>   	zstd \
+>   	haveged \
+> -	systemd
+> +	systemd \
+> +	keyutils \
+> +	e2fsprogs \
+> +	acl \
+> +	libcap
+>   
+>   yum -y install docbook5-style-xsl || true
+>   yum -y install swtpm || true
+> @@ -59,3 +63,4 @@ fi
+>   yum -y install softhsm || true
+>   
+>   ./tests/install-fsverity.sh
+> +./tests/install-mount-idmapped.sh
+> diff --git a/tests/Makefile.am b/tests/Makefile.am
+> index 305082483f36..421fac577b55 100644
+> --- a/tests/Makefile.am
+> +++ b/tests/Makefile.am
+> @@ -2,7 +2,7 @@ check_SCRIPTS =
+>   TESTS = $(check_SCRIPTS)
+>   
+>   check_SCRIPTS += ima_hash.test sign_verify.test boot_aggregate.test \
+> -		 fsverity.test
+> +		 fsverity.test portable_signatures.test
+>   
+>   clean-local:
+>   	-rm -f *.txt *.out *.sig *.sig2
+> diff --git a/tests/install-mount-idmapped.sh b/tests/install-mount-idmapped.sh
+> new file mode 100755
+> index 000000000000..e9768e2fbf7a
+> --- /dev/null
+> +++ b/tests/install-mount-idmapped.sh
+> @@ -0,0 +1,7 @@
+> +#!/bin/sh
+> +
+> +git clone https://github.com/brauner/mount-idmapped.git
+> +cd mount-idmapped
+> +gcc -o mount-idmapped mount-idmapped.c
+> +cd ..
+> +rm -rf mount-idmapped
 
+Where did you just install the executable to? It looks to me like it was removed.
+
+> diff --git a/tests/portable_signatures.test b/tests/portable_signatures.test
+> new file mode 100755
+> index 000000000000..a6d79c929281
+> --- /dev/null
+> +++ b/tests/portable_signatures.test
+> @@ -0,0 +1,1173 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (C) 2022-2023 Roberto Sassu <roberto.sassu@huawei.com>
+> +#
+> +# Check if operations on files with EVM portable signatures succeed.
+> +
+> +trap cleanup SIGINT SIGTERM SIGSEGV EXIT
+> +
+> +# Base VERBOSE on the environment variable, if set.
+> +VERBOSE="${VERBOSE:-0}"
+> +TST_EVM_CHANGE_MODE="${TST_EVM_CHANGE_MODE:-0}"
+> +UML_MODE="${UML_MODE:-0}"
+> +
+> +# From security/integrity/evm/evm.h in kernel source directory.
+> +let "EVM_INIT_HMAC=0x0001"
+> +let "EVM_INIT_X509=0x0002"
+> +let "EVM_ALLOW_METADATA_WRITES=0x0004"
+> +let "EVM_SETUP_COMPLETE=0x80000000"
+> +
+> +cd "$(dirname "$0")"
+> +export PATH=$PWD/../src:$PWD/../mount-idmapped:$PATH
+> +export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+> +. ./functions.sh
+> +_require evmctl
+> +
+> +_cleanup() {> +	if [ "$loop_mounted" = "1" ]; then
+
+These global variables make it quite a bit tricky even though it's 'just a test case'. They
+could clash with variables elsewhere. Maybe prefix them with 'g_' if you don't want to
+pass them as parameters into the function, which I would think is yet more preferable.
+
+
+> +		popd > /dev/null
+> +
+> +		if [ -n "$mountpoint_idmapped" ]; then
+> +			umount $mountpoint_idmapped
+> +		fi
+> +
+> +		umount $mountpoint
+> +	fi
+> +
+> +	if [ -n "$dev" ]; then
+> +		losetup -d $dev
+> +	fi
+> +
+> +	if [ -n "$image" ]; then
+> +		rm -f $image
+> +	fi
+> +
+> +	if [ -n "$key_path_der" ]; then
+> +		rm -f $key_path_der
+> +	fi
+> +
+> +	if [ -n "$mountpoint" ]; then
+> +		rm -Rf $mountpoint
+> +	fi
+> +
+> +	if [ -n "$mountpoint_idmapped" ]; then
+> +		rm -Rf $mountpoint_idmapped
+> +	fi
+> +}
+> +
+> +cleanup() {
+> +	_cleanup_user_mode _cleanup
+> +	_report_exit_and_cleanup
+> +}
+> +
+> +get_xattr() {
+> +	format="hex"
+
+Don't want to use 'local format=....' to avoid clashes with possibly global variables of same name?
+
+I would also urge to consider using shellcheck on shell script files. It helps a bit.
+
+For now I leave it at these comment.
+
+    Stefan
