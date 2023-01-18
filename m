@@ -2,59 +2,60 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F76C32793
-	for <linux-integrity@archiver.kernel.org>; Wed, 18 Jan 2023 06:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B450C38159
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Jan 2023 06:27:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229758AbjARG1Q (ORCPT
+        id S229770AbjARG10 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 18 Jan 2023 01:27:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54052 "EHLO
+        Wed, 18 Jan 2023 01:27:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbjARGWB (ORCPT
+        with ESMTP id S229706AbjARGWb (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 18 Jan 2023 01:22:01 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85DB84DCE6;
-        Tue, 17 Jan 2023 22:11:25 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30I4mMGU027640;
-        Wed, 18 Jan 2023 06:11:15 GMT
+        Wed, 18 Jan 2023 01:22:31 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660204E509;
+        Tue, 17 Jan 2023 22:11:29 -0800 (PST)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30I3C7wv005658;
+        Wed, 18 Jan 2023 06:11:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=dfnVYVY5V1BVtF6bk6/ezlFkujH1gUPSTLDFMGtXI8Y=;
- b=i7SQG7bJXaNo0M3XdE60ghJVFUugcac0eOxJT18qJJhxCutthdIH0ch2OEtFHc7G8f/s
- N5v8TQYZNLxI7CCz0OEZRuCp4+wlHb0Mi+6oY8qjwVB9Fcd/2m8kVc9vpW1rnPr7IqWf
- eLxRBnQexgdAhrdE6ykGeaoAv24ni5ZV4bQxMtci6vbUp7RvD01faDfeFWyc18Q7c6wY
- CMywrxQ5vb962Cq2PjwhQkTmOhpR0gCVELFItH5p/mXV04EYHlaitQzjwOOQpHZScdbR
- fcfSAaoNDdxi7S9VcecKL4FmeUeFihktnRDOJ9r6ErJd+9wUz1k6PhL064ojCJzSkjfu Aw== 
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n6a2m1djp-1
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=zTIV6PRVUVjhP5LqIHw2BlDGgUnAlkowALzDmGJNn38=;
+ b=PYaxnProKxeXPcGsCkoagkyTaeE/+CdGEp3IAmHTpmg++n5jJdL0N2XwmDAQExaZtlTc
+ Gz6uWfc2DTW7HPeVDLxtfxZkH5ZS1RzTS6mELQZI5l2kMAtem+Rh/BAdf0wR8+0gjpgv
+ y5v/jcl60AePmeJc1bwopZSgGzUJ6gDytyaTnRjI2/CNxoBA2axOMcTig60fkocAq7XA
+ 2SIvmWeZnpOhQ8aLZAlzLHFc/TLWrH5KffyODOKDjo3MUryV4ba1eJNNp2ucZ3Z0zQ7k
+ FwUzGHPWvI8+zPAAiSrGcIcf6ODRfwcKUyEtl/FIBFkW6qbz59NmfvSxaFfwDDxpZPPX /w== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n68n7u2g7-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Jan 2023 06:11:15 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30HMJ28l023694;
-        Wed, 18 Jan 2023 06:11:13 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3n3m16mttb-1
+        Wed, 18 Jan 2023 06:11:19 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30HLRDYn004659;
+        Wed, 18 Jan 2023 06:11:17 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3n3m16mtnj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Jan 2023 06:11:13 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-        by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30I6BBW147186334
+        Wed, 18 Jan 2023 06:11:17 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30I6BEUR44630348
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jan 2023 06:11:11 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04DFC2004F;
-        Wed, 18 Jan 2023 06:11:11 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CC9D20043;
-        Wed, 18 Jan 2023 06:11:10 +0000 (GMT)
+        Wed, 18 Jan 2023 06:11:14 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB9722004D;
+        Wed, 18 Jan 2023 06:11:14 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4119520049;
+        Wed, 18 Jan 2023 06:11:14 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 18 Jan 2023 06:11:10 +0000 (GMT)
+        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jan 2023 06:11:14 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 0CF6F60306;
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id A9D2E609BD;
         Wed, 18 Jan 2023 17:11:08 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
@@ -63,199 +64,117 @@ Cc:     gregkh@linuxfoundation.org, gcwilson@linux.ibm.com,
         ruscur@russell.cc, zohar@linux.ibm.com, mpe@ellerman.id.au,
         gjoyce@linux.ibm.com, sudhakar@linux.ibm.com, bgray@linux.ibm.com,
         erichte@linux.ibm.com
-Subject: [PATCH v3 00/24] pSeries dynamic secure boot secvar interface + platform keyring loading
-Date:   Wed, 18 Jan 2023 17:10:25 +1100
-Message-Id: <20230118061049.1006141-1-ajd@linux.ibm.com>
+Subject: [PATCH v3 23/24] integrity/powerpc: Improve error handling & reporting when loading certs
+Date:   Wed, 18 Jan 2023 17:10:48 +1100
+Message-Id: <20230118061049.1006141-24-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: J1wknze5S8m04rW8ai4wFRweqbPqLH3O
-X-Proofpoint-ORIG-GUID: J1wknze5S8m04rW8ai4wFRweqbPqLH3O
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+In-Reply-To: <20230118061049.1006141-1-ajd@linux.ibm.com>
+References: <20230118061049.1006141-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: GzLCZsfabuhnXz8eBLEXXzmTCrjoyt1e
+X-Proofpoint-GUID: GzLCZsfabuhnXz8eBLEXXzmTCrjoyt1e
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-18_01,2023-01-17_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- bulkscore=0 phishscore=0 clxscore=1011 spamscore=0 malwarescore=0
- mlxlogscore=999 lowpriorityscore=0 suspectscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ suspectscore=0 impostorscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 mlxlogscore=999 bulkscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2301180051
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-This series exposes an interface to userspace for reading and writing
-secure variables contained within the PowerVM LPAR Platform KeyStore
-(PLPKS) for the purpose of configuring dynamic secure boot, and adds
-the glue required to load keys from the PLPKS into the platform keyring.
+From: Russell Currey <ruscur@russell.cc>
 
-This series builds on past work by Nayna Jain[0] in exposing PLPKS
-variables to userspace.  Rather than being a generic interface for
-interacting with the keystore, however, we use the existing powerpc
-secvar infrastructure to only expose objects in the keystore used
-for dynamic secure boot.  This has the benefit of leveraging an
-existing interface and making the implementation relatively minimal.
+A few improvements to load_powerpc.c:
 
-This series integrates a previous series to fix some bugs in PLPKS
-and implement support for signed updates[1], and a cleanup patch from
-Michael Ellerman[2].
+ - include integrity.h for the pr_fmt()
+ - move all error reporting out of get_cert_list()
+ - use ERR_PTR() to better preserve error detail
+ - don't use pr_err() for missing keys
 
-There are a few relevant details to note about the implementation:
+Signed-off-by: Russell Currey <ruscur@russell.cc>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 
- * New additions to the secvar API: format(), max_size(), config_attrs,
-   var_names
+---
 
- * New optional sysfs directory "config/" for arbitrary ASCII variables
+v3: New patch
+---
+ .../integrity/platform_certs/load_powerpc.c   | 26 ++++++++++++++-----
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
- * Some OPAL-specific code has been relocated from secvar-sysfs.c to
-   powernv platform code.  Would appreciate any powernv testing!
-
- * Variable names are fixed and only those used for secure boot are
-   exposed.  This is not a generic PLPKS interface, but also doesn't
-   preclude one being added in future.
-
-With this series, both powernv and pseries platforms support dynamic
-secure boot through the same interface.
-
-[0]: https://lore.kernel.org/linuxppc-dev/20221106210744.603240-1-nayna@linux.ibm.com/
-[1]: https://lore.kernel.org/linuxppc-dev/20221220071626.1426786-1-ajd@linux.ibm.com/
-[2]: https://lore.kernel.org/linuxppc-dev/20230112023819.1692452-1-mpe@ellerman.id.au/
-
-v1: https://lore.kernel.org/linuxppc-dev/20221228072943.429266-1-ruscur@russell.cc/
-v2: https://lore.kernel.org/linuxppc-dev/20221230042014.154483-1-ruscur@russell.cc/
-
-=================
-
-Changes in v3:
-
-    Integrate Andrew's PLPKS bugfixes and enhancements series and Michael
-    Ellerman's u64 cleanup patch into this series (and update the other
-    patches to use u64)
-
-    New patches to load keys from the PLPKS into the kernel's platform
-    keyring (ruscur)
-
-    New patches to pass PLPKS password to new kernels when kexecing
-    (ruscur)
-
-    Improve handling of format strings (ruscur)
-
-    Clean up secvar error messages (ajd)
-
-    Merge config attributes into secvar_operations (mpe)
-
-    Add a new static variable names API rather than (ab)using get_next()
-    (ajd/mpe)
-
-    Warning message when PAGE_SIZE is smaller than the max object size
-    (ajd)
-
-    Move plpks.h to the include directory, and move a bunch of constants
-    in there with a consistent naming scheme
-
-    Refresh PLPKS config values whenever plpks_get_usedspace() is called
-    (ajd)
-
-    Extra validation on PLPKS config values (ruscur)
-
-    Return maxobjlabelsize to userspace as is without subtracting overhead (ruscur)
-
-    Fix error code handling in plpks_confirm_object_flushed() (ruscur)
-
-    Pass plpks_var struct to plpks_signed_update_var() by reference (mpe)
-
-    Make the data buffer in plpks_read_var() caller-allocated to reduce
-    number of allocations/copies (mpe)
-
-    Rework the Kconfig options so that PSERIES_PLPKS is a hidden option,
-    turned on by enabling PPC_SECURE_BOOT, and the PLPKS secvar code is
-    activated by PPC_SECVAR_SYSFS to match powernv (ajd)
-
-    Use machine_arch_initcall() rather than device_initcall() so we don't
-    break powernv (mpe)
-
-    Improve ABI documentation (mpe)
-
-    Return -EIO on most read errors (mpe)
-
-    Add "grubdbx" variable (Sudhakar)
-
-    Use utf8s_to_utf16s() rather than our own "UCS-2" conversion code (mpe)
-
-    Fix SB_VERSION data length (ruscur)
-
-    Stop prepending policy data on read (ruscur)
-
-    Don't print errors to the kernel log when reading non-existent
-    variables (Sudhakar)
-
-    Miscellaneous code style, checkpatch cleanups
-
-Changes in v2:
-
-    Remove unnecessary config vars from sysfs and document the others,
-    thanks to review from Greg.  If we end up needing to expose more, we
-    can add them later and update the docs.
-
-    Use sysfs_emit() instead of sprintf() for all sysfs strings
-
-    Change the size of the sysfs binary attributes to include the 8-byte
-    flags header, preventing truncation of large writes.
-
-Andrew Donnellan (8):
-  powerpc/secvar: Clean up init error messages
-  powerpc/secvar: Allow backend to populate static list of variable
-    names
-  powerpc/secvar: Warn when PAGE_SIZE is smaller than max object size
-  powerpc/secvar: Don't print error on ENOENT when reading variables
-  powerpc/pseries: Fix handling of PLPKS object flushing timeout
-  powerpc/pseries: Fix alignment of PLPKS structures and buffers
-  powerpc/pseries: Make caller pass buffer to plpks_read_var()
-  powerpc/pseries: Turn PSERIES_PLPKS into a hidden option
-
-Michael Ellerman (1):
-  powerpc/secvar: Use u64 in secvar_operations
-
-Nayna Jain (2):
-  powerpc/pseries: Expose PLPKS config values, support additional fields
-  powerpc/pseries: Implement signed update for PLPKS objects
-
-Russell Currey (13):
-  powerpc/secvar: WARN_ON_ONCE() if multiple secvar ops are set
-  powerpc/secvar: Use sysfs_emit() instead of sprintf()
-  powerpc/secvar: Handle format string in the consumer
-  powerpc/secvar: Handle max object size in the consumer
-  powerpc/secvar: Extend sysfs to include config vars
-  powerpc/pseries: Move plpks.h to include directory
-  powerpc/pseries: Move PLPKS constants to header file
-  powerpc/pseries: Log hcall return codes for PLPKS debug
-  powerpc/pseries: Add helpers to get PLPKS password
-  powerpc/pseries: Pass PLPKS password on kexec
-  powerpc/pseries: Implement secvars for dynamic secure boot
-  integrity/powerpc: Improve error handling & reporting when loading
-    certs
-  integrity/powerpc: Support loading keys from pseries secvar
-
- Documentation/ABI/testing/sysfs-secvar        |  75 +++-
- arch/powerpc/Kconfig                          |   1 +
- arch/powerpc/include/asm/hvcall.h             |   3 +-
- arch/powerpc/include/asm/plpks.h              | 187 ++++++++++
- arch/powerpc/include/asm/secvar.h             |  19 +-
- arch/powerpc/kernel/secvar-ops.c              |   4 +-
- arch/powerpc/kernel/secvar-sysfs.c            | 168 +++++----
- arch/powerpc/kexec/file_load_64.c             |  17 +-
- arch/powerpc/platforms/powernv/opal-secvar.c  |  53 ++-
- arch/powerpc/platforms/pseries/Kconfig        |  11 +-
- arch/powerpc/platforms/pseries/Makefile       |   4 +-
- arch/powerpc/platforms/pseries/plpks-secvar.c | 214 +++++++++++
- arch/powerpc/platforms/pseries/plpks.c        | 338 ++++++++++++++----
- arch/powerpc/platforms/pseries/plpks.h        |  71 ----
- .../integrity/platform_certs/load_powerpc.c   |  47 ++-
- 15 files changed, 965 insertions(+), 247 deletions(-)
- create mode 100644 arch/powerpc/include/asm/plpks.h
- create mode 100644 arch/powerpc/platforms/pseries/plpks-secvar.c
- delete mode 100644 arch/powerpc/platforms/pseries/plpks.h
-
+diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+index 1e4f80a4e71c..dee51606d5f4 100644
+--- a/security/integrity/platform_certs/load_powerpc.c
++++ b/security/integrity/platform_certs/load_powerpc.c
+@@ -14,9 +14,15 @@
+ #include <asm/secure_boot.h>
+ #include <asm/secvar.h>
+ #include "keyring_handler.h"
++#include "../integrity.h"
+ 
+ /*
+  * Get a certificate list blob from the named secure variable.
++ *
++ * Returns:
++ *  - a pointer to a kmalloc'd buffer containing the cert list on success
++ *  - NULL if the key does not exist
++ *  - an ERR_PTR on error
+  */
+ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
+ {
+@@ -25,19 +31,19 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
+ 
+ 	rc = secvar_ops->get(key, keylen, NULL, size);
+ 	if (rc) {
+-		pr_err("Couldn't get size: %d\n", rc);
+-		return NULL;
++		if (rc == -ENOENT)
++			return NULL;
++		return ERR_PTR(rc);
+ 	}
+ 
+ 	db = kmalloc(*size, GFP_KERNEL);
+ 	if (!db)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	rc = secvar_ops->get(key, keylen, db, size);
+ 	if (rc) {
+ 		kfree(db);
+-		pr_err("Error reading %s var: %d\n", key, rc);
+-		return NULL;
++		return ERR_PTR(rc);
+ 	}
+ 
+ 	return db;
+@@ -69,7 +75,11 @@ static int __init load_powerpc_certs(void)
+ 	 */
+ 	db = get_cert_list("db", 3, &dbsize);
+ 	if (!db) {
+-		pr_err("Couldn't get db list from firmware\n");
++		pr_info("Couldn't get db list from firmware\n");
++	} else if (IS_ERR(db)) {
++		rc = PTR_ERR(db);
++		pr_err("Error reading db from firmware: %d\n", rc);
++		return rc;
+ 	} else {
+ 		rc = parse_efi_signature_list("powerpc:db", db, dbsize,
+ 					      get_handler_for_db);
+@@ -81,6 +91,10 @@ static int __init load_powerpc_certs(void)
+ 	dbx = get_cert_list("dbx", 4,  &dbxsize);
+ 	if (!dbx) {
+ 		pr_info("Couldn't get dbx list from firmware\n");
++	} else if (IS_ERR(dbx)) {
++		rc = PTR_ERR(dbx);
++		pr_err("Error reading dbx from firmware: %d\n", rc);
++		return rc;
+ 	} else {
+ 		rc = parse_efi_signature_list("powerpc:dbx", dbx, dbxsize,
+ 					      get_handler_for_dbx);
 -- 
 2.39.0
+
