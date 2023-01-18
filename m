@@ -2,143 +2,176 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D29DC38147
-	for <linux-integrity@archiver.kernel.org>; Tue, 17 Jan 2023 23:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBE6C004D4
+	for <linux-integrity@archiver.kernel.org>; Wed, 18 Jan 2023 06:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229854AbjAQX1Z (ORCPT
+        id S229765AbjARGYZ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 17 Jan 2023 18:27:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49778 "EHLO
+        Wed, 18 Jan 2023 01:24:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbjAQX0a (ORCPT
+        with ESMTP id S229460AbjARGWM (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 17 Jan 2023 18:26:30 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6188C5084F;
-        Tue, 17 Jan 2023 13:26:34 -0800 (PST)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30HJtLUg006414;
-        Tue, 17 Jan 2023 21:26:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=mTIgEIUb70Uqc/ceSLL8F8lZ4X68bD+rbf2CA97c87Y=;
- b=ghuDgZrzZ0zZNIyGR2nch+erl/pUAHrW3aZzjjSkVjjebgEhw+HB4F7gZXYnmLn0hKqd
- FwGmlfZdFXMvjK6ah7xfKVWdMT3oaT/eNC7oVKg0ja6PMFcPVehCR84E4czpBr0J5cws
- osZoqEZq6sVQzzXeXBdPV0vK82L7+upb1eTOrrL2wn8RJOIg4qhWml06uDlHJUGPT7L0
- y6SwM1phJac22ZvKmJHIiGRZtfv4EX1n0jrHazEguTxXSEvLl/E0GCGJwxPpEh+qx0OG
- u694DEi5MU46hnWRHW3D/AoQFXFhApWBg2JGYuE2/yrNiPYfoU44J017vcRoSabzPby/ Sw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n5pehc5rf-1
+        Wed, 18 Jan 2023 01:22:12 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F744DE34;
+        Tue, 17 Jan 2023 22:11:27 -0800 (PST)
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30I5MpfN007543;
+        Wed, 18 Jan 2023 06:11:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=tOqrA5VidJRNAvnD59zsGYLxdqrQfaR9ST7oWeBkVOs=;
+ b=QTdU0tmZ7sX18Cksu331QGwPcFLN2Y8n7S16WOa3Rzne51Tp+WTyAQrz5MXl6uH/PNVQ
+ K5ij5Y0O7jiqMx/+90nGT8oEx7gdon+/q4gPtyKD+7hBAhB2crm7ar1XJl8jd2JNWxzB
+ 4dtCLXhKlVVynpspYKwHn6INToptbTY/LdA2xUjzXKNA4/go1eZs0uLiL8vmPZaAs9Yk
+ YNQmsz4BZkyqpwIem+VHkuIlpuwfTJKsXsQDEZ9QgzWxW4uItIxdsVbpnAmAjA4RllPG
+ ahxLZaWk3YKofB3aVv13osBOpTfH8WF17TCjhGxFVXfkBnKLgd3GfW+qWSdjtkrNasCa BQ== 
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n63tk9abp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Jan 2023 21:26:20 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30HKwBiX029439;
-        Tue, 17 Jan 2023 21:26:19 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n5pehc5qr-1
+        Wed, 18 Jan 2023 06:11:19 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30HLWgwT023782;
+        Wed, 18 Jan 2023 06:11:17 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3n3m16mtte-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Jan 2023 21:26:19 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30HK2HaN019324;
-        Tue, 17 Jan 2023 21:26:18 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([9.208.130.97])
-        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3n3m17g612-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Jan 2023 21:26:18 +0000
-Received: from b03ledav004.gho.boulder.ibm.com ([9.17.130.235])
-        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30HLQH8K21692882
+        Wed, 18 Jan 2023 06:11:17 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30I6BEfn48366026
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jan 2023 21:26:17 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47E3A78060;
-        Tue, 17 Jan 2023 23:08:30 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1B8A37805F;
-        Tue, 17 Jan 2023 23:08:25 +0000 (GMT)
-Received: from lingrow.int.hansenpartnership.com (unknown [9.211.128.24])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Jan 2023 23:08:25 +0000 (GMT)
-Message-ID: <8ef12c81acf42ea87dde8f500485412f0b9f29a2.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 03/11] tpm: Allow PCR 23 to be restricted to
- kernel-only use
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Matthew Garrett <mgarrett@aurora.tech>
-Cc:     William Roberts <bill.c.roberts@gmail.com>,
-        Evan Green <evgreen@chromium.org>,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-integrity@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>, gwendal@chromium.org,
-        dianders@chromium.org, apronin@chromium.org,
-        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
-        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
-        dlunev@google.com, zohar@linux.ibm.com, jarkko@kernel.org,
-        linux-pm@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>
-Date:   Tue, 17 Jan 2023 16:26:11 -0500
-In-Reply-To: <CAHSSk058UoBY2nDx8U7-siG_dbjNSKZaPukZVjSnq=f=CBSKsw@mail.gmail.com>
-References: <20221111231636.3748636-1-evgreen@chromium.org>
-         <20221111151451.v5.3.I9ded8c8caad27403e9284dfc78ad6cbd845bc98d@changeid>
-         <8ae56656a461d7b957b93778d716c6161070383a.camel@linux.ibm.com>
-         <CAHSSk06sH6Ck11R7k8Pk_30KbzLzZVdBdj5MpsNfY-R_1kt_dA@mail.gmail.com>
-         <CAFftDdqUOiysgrAC4wPUXRaEWz4j9V6na3u4bm29AfxE8TAyXw@mail.gmail.com>
-         <CAHSSk04asd_ac8KLJYNRyR1Z+fD+iUb+UxjUu0U=HbT1-2R7Ag@mail.gmail.com>
-         <08302ed1c056da86a71aa2e6ca19111075383e75.camel@linux.ibm.com>
-         <CAHSSk058UoBY2nDx8U7-siG_dbjNSKZaPukZVjSnq=f=CBSKsw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        Wed, 18 Jan 2023 06:11:14 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7C362004F;
+        Wed, 18 Jan 2023 06:11:14 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3CD8420043;
+        Wed, 18 Jan 2023 06:11:14 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jan 2023 06:11:14 +0000 (GMT)
+Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 85806609A2;
+        Wed, 18 Jan 2023 17:11:08 +1100 (AEDT)
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, gcwilson@linux.ibm.com,
+        linux-kernel@vger.kernel.org, nayna@linux.ibm.com,
+        ruscur@russell.cc, zohar@linux.ibm.com, mpe@ellerman.id.au,
+        gjoyce@linux.ibm.com, sudhakar@linux.ibm.com, bgray@linux.ibm.com,
+        erichte@linux.ibm.com
+Subject: [PATCH v3 18/24] powerpc/pseries: Make caller pass buffer to plpks_read_var()
+Date:   Wed, 18 Jan 2023 17:10:43 +1100
+Message-Id: <20230118061049.1006141-19-ajd@linux.ibm.com>
+X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230118061049.1006141-1-ajd@linux.ibm.com>
+References: <20230118061049.1006141-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mMMNlrVlyvpgz9k2WwVb_-8pq86gj_9d
-X-Proofpoint-ORIG-GUID: Q89gwD3oNzvjTTM2_it6RY4oWwj9BaT6
+X-Proofpoint-ORIG-GUID: OCTt7Kb0VNL5SntzAwEFLQUM3J0JRG7N
+X-Proofpoint-GUID: OCTt7Kb0VNL5SntzAwEFLQUM3J0JRG7N
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-17_10,2023-01-17_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 impostorscore=0 spamscore=0 clxscore=1015
- suspectscore=0 mlxlogscore=421 lowpriorityscore=0 malwarescore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301170168
+ definitions=2023-01-18_01,2023-01-17_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 suspectscore=0 adultscore=0
+ clxscore=1015 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301180051
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat, 2023-01-14 at 19:05 -0800, Matthew Garrett wrote:
-> On Sat, Jan 14, 2023 at 6:55 AM James Bottomley <jejb@linux.ibm.com>
-> wrote:
-> > Can we go back again to why you can't use locality?  It's exactly
-> > designed for this since locality is part of creation data. 
-> > Currently everything only uses locality 0, so it's impossible for
-> > anyone on Linux to produce a key with anything other than 0 in the
-> > creation data for locality.  However, the dynamic launch people are
-> > proposing that the Kernel should use Locality 2 for all its
-> > operations, which would allow you to distinguish a key created by
-> > the kernel from one created by a user by locality.
-> > 
-> > I think the previous objection was that not all TPMs implement
-> > locality, but then not all laptops have TPMs either, so if you ever
-> > come across one which has a TPM but no locality, it's in a very
-> > similar security boat to one which has no TPM.
-> 
-> It's not a question of TPM support, it's a question of platform
-> support. Intel chipsets that don't support TXT simply don't forward
-> requests with non-0 locality. Every Windows-sticker laptop since 2014
-> has shipped with a TPM, but the number that ship with TXT support is
-> a very small percentage of that. I agree that locality is the obvious
-> solution for a whole bunch of problems, but it's just not usable in
-> the generic case.
+Currently, plpks_read_var() allocates a buffer to pass to the
+H_PKS_READ_OBJECT hcall, then allocates another buffer, of the caller's
+preferred size if necessary, into which the data is copied, and returns
+that buffer to the caller.
 
-How sure are you of this statement?  Of all the Laptops I have with
-TPM2 (a sample size of 2), my old Dell XPS-13 (a 9350 bought in 2016
-with a TPM 1.2 that was firmware upgraded to 2.0) has a Nuvoton TIS TPM
-that doesn't respond on any locality other than 0.  However, my more
-modern Inspiron 13 2-in-1 (a 7391 from 2019 recently bought
-refurbished) has an Intel PTT TPM using the CRB interface and responds
-fine on locality 1 and also indicates that locality in the creation
-data.  Neither of these laptops has TXT nor the SMX extensions, so that
-would seem to indicate your statement above isn't universal.
+This is a bit over the top - while we probably still want to allocate a
+separate buffer to pass to the hypervisor in the hcall, we can let the
+caller allocate the final buffer and specify the size.
 
-James
+Don't allocate var->data in plpks_read_var(), instead expect the caller to
+allocate it. If the caller needs to discover the size, it can set
+var->data to NULL and var->datalen will be populated. Update header file
+to document this.
+
+Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Russell Currey <ruscur@russell.cc>
+
+---
+
+v3: New patch (mpe)
+---
+ arch/powerpc/include/asm/plpks.h       | 12 ++++++++++++
+ arch/powerpc/platforms/pseries/plpks.c | 11 ++++-------
+ 2 files changed, 16 insertions(+), 7 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/plpks.h b/arch/powerpc/include/asm/plpks.h
+index e7204e6c0ca4..0c49969b0864 100644
+--- a/arch/powerpc/include/asm/plpks.h
++++ b/arch/powerpc/include/asm/plpks.h
+@@ -88,16 +88,28 @@ int plpks_remove_var(char *component, u8 varos,
+ 
+ /**
+  * Returns the data for the specified os variable.
++ *
++ * Caller must allocate a buffer in var->data with length in var->datalen.
++ * If no buffer is provided, var->datalen will be populated with the object's
++ * size.
+  */
+ int plpks_read_os_var(struct plpks_var *var);
+ 
+ /**
+  * Returns the data for the specified firmware variable.
++ *
++ * Caller must allocate a buffer in var->data with length in var->datalen.
++ * If no buffer is provided, var->datalen will be populated with the object's
++ * size.
+  */
+ int plpks_read_fw_var(struct plpks_var *var);
+ 
+ /**
+  * Returns the data for the specified bootloader variable.
++ *
++ * Caller must allocate a buffer in var->data with length in var->datalen.
++ * If no buffer is provided, var->datalen will be populated with the object's
++ * size.
+  */
+ int plpks_read_bootloader_var(struct plpks_var *var);
+ 
+diff --git a/arch/powerpc/platforms/pseries/plpks.c b/arch/powerpc/platforms/pseries/plpks.c
+index 96a026a37285..5d9c6a3b2014 100644
+--- a/arch/powerpc/platforms/pseries/plpks.c
++++ b/arch/powerpc/platforms/pseries/plpks.c
+@@ -578,17 +578,14 @@ static int plpks_read_var(u8 consumer, struct plpks_var *var)
+ 		goto out_free_output;
+ 	}
+ 
+-	if (var->datalen == 0 || var->datalen > retbuf[0])
++	if (!var->data || var->datalen > retbuf[0])
+ 		var->datalen = retbuf[0];
+ 
+-	var->data = kzalloc(var->datalen, GFP_KERNEL);
+-	if (!var->data) {
+-		rc = -ENOMEM;
+-		goto out_free_output;
+-	}
+ 	var->policy = retbuf[1];
+ 
+-	memcpy(var->data, output, var->datalen);
++	if (var->data)
++		memcpy(var->data, output, var->datalen);
++
+ 	rc = 0;
+ 
+ out_free_output:
+-- 
+2.39.0
 
