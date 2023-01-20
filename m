@@ -2,61 +2,61 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A587BC25B4E
-	for <linux-integrity@archiver.kernel.org>; Fri, 20 Jan 2023 07:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B11C25B4E
+	for <linux-integrity@archiver.kernel.org>; Fri, 20 Jan 2023 07:45:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230423AbjATHoI (ORCPT
+        id S231137AbjATHpQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 20 Jan 2023 02:44:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44990 "EHLO
+        Fri, 20 Jan 2023 02:45:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230305AbjATHoD (ORCPT
+        with ESMTP id S230382AbjATHom (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 20 Jan 2023 02:44:03 -0500
+        Fri, 20 Jan 2023 02:44:42 -0500
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9018728E;
-        Thu, 19 Jan 2023 23:43:54 -0800 (PST)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30K7VeZP002519;
-        Fri, 20 Jan 2023 07:43:42 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EA9D7DF95;
+        Thu, 19 Jan 2023 23:44:03 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30K5ncDV025122;
+        Fri, 20 Jan 2023 07:43:40 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=tOqrA5VidJRNAvnD59zsGYLxdqrQfaR9ST7oWeBkVOs=;
- b=oUStr7GChZRIyQ4bMRo6lXPKv3lK7fIQMG5gApmrAICSGPsF0nXKt2vKapDd8fq+ZzEr
- lpBd+bnj+m/mrO+6IjY1Hhoqf4VK1nPwwVPNStd+jcOTEkHwvhaqAjsATcnCsVYRAK59
- IIpgZEY7cVBaDTvKFBTmg5bI2Vzxo4G2v9f6ym14KZy/tCd2YmteEWP00SdIswUTMc2P
- GBOuVgnWcoy76dTCJwfyA9mDORL4WICSiZOmhNX/A9b9+ekBtjtoZFpswBbikYN3kDL/
- WYv9z8yewfUn6mYKQZtb+/5jAteora9GBrH1c31w9tTBZA4j/l3M7vnxp7FnKIZnprqG 8w== 
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n7pn5074y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 Jan 2023 07:43:42 +0000
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30JN76PG006701;
-        Fri, 20 Jan 2023 07:43:40 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-        by ppma03fra.de.ibm.com (PPS) with ESMTPS id 3n3m16njxe-1
+ bh=Te5YU6YGvqU5K6+sZoUFCjko+4aelRmhWa/p/mRpz/s=;
+ b=U1I2H1UkogVHlm6EbSeXSCrFIY4+J4zCBjFIL8rrPtIHqi0XwE4CU3j5B8f/5zBJUzqR
+ 5zoojB+Z6boC59CJP2++Xkja9OeRC7wFEk9kr7jlfHUBzeRQW4/rkala6xnENsXTytVF
+ e2jde0gW9NjxCN+9V2b4j3AF3GSF2uhLRaS5vbBcY48HbDIrVE63E36Cgw2vOlQJQrMC
+ xRUYehjrDfLjPWvD5m2nn2FdqwRZwxalHlbZkbVv5mSqwAxaDi3y64ePK8M1Ij9la6vG
+ BbKfT7CzMP+bjTt/3k2CAFFhjA0bRzSb6PIGtfmrI7uaolvkbpUXEKxkrTmxpHAgGTxU Vg== 
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n7n5b23ru-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 20 Jan 2023 07:43:39 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-        by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30K7hb8L36831672
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30K2ZGbm027441;
         Fri, 20 Jan 2023 07:43:37 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8332D20040;
-        Fri, 20 Jan 2023 07:43:37 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D0B620049;
-        Fri, 20 Jan 2023 07:43:36 +0000 (GMT)
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+        by ppma06fra.de.ibm.com (PPS) with ESMTPS id 3n3knfdkrg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Jan 2023 07:43:37 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30K7hZ7o42992080
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Jan 2023 07:43:35 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B3F22004E;
+        Fri, 20 Jan 2023 07:43:35 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 36D0F20040;
+        Fri, 20 Jan 2023 07:43:34 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Jan 2023 07:43:36 +0000 (GMT)
+        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Jan 2023 07:43:34 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 41B4B609A2;
-        Fri, 20 Jan 2023 18:43:30 +1100 (AEDT)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id D4A09605AB;
+        Fri, 20 Jan 2023 18:43:29 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, gcwilson@linux.ibm.com,
@@ -64,114 +64,135 @@ Cc:     gregkh@linuxfoundation.org, gcwilson@linux.ibm.com,
         ruscur@russell.cc, zohar@linux.ibm.com, mpe@ellerman.id.au,
         gjoyce@linux.ibm.com, sudhakar@linux.ibm.com, bgray@linux.ibm.com,
         erichte@linux.ibm.com, joel@jms.id.au
-Subject: [PATCH v4 18/24] powerpc/pseries: Make caller pass buffer to plpks_read_var()
-Date:   Fri, 20 Jan 2023 18:43:00 +1100
-Message-Id: <20230120074306.1326298-19-ajd@linux.ibm.com>
+Subject: [PATCH v4 07/24] powerpc/secvar: Handle max object size in the consumer
+Date:   Fri, 20 Jan 2023 18:42:49 +1100
+Message-Id: <20230120074306.1326298-8-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230120074306.1326298-1-ajd@linux.ibm.com>
 References: <20230120074306.1326298-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xQagXfniv3MhBxPlqvykTh4A56-LXySU
-X-Proofpoint-GUID: xQagXfniv3MhBxPlqvykTh4A56-LXySU
+X-Proofpoint-GUID: qiEwPYUdPPMhq_6V6tbDj8WTGinipoqJ
+X-Proofpoint-ORIG-GUID: qiEwPYUdPPMhq_6V6tbDj8WTGinipoqJ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-20_04,2023-01-19_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 mlxlogscore=999
- clxscore=1015 spamscore=0 adultscore=0 phishscore=0 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2301200070
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Currently, plpks_read_var() allocates a buffer to pass to the
-H_PKS_READ_OBJECT hcall, then allocates another buffer, of the caller's
-preferred size if necessary, into which the data is copied, and returns
-that buffer to the caller.
+From: Russell Currey <ruscur@russell.cc>
 
-This is a bit over the top - while we probably still want to allocate a
-separate buffer to pass to the hypervisor in the hcall, we can let the
-caller allocate the final buffer and specify the size.
+Currently the max object size is handled in the core secvar code with an
+entirely OPAL-specific implementation, so create a new max_size() op and
+move the existing implementation into the powernv platform.  Should be
+no functional change.
 
-Don't allocate var->data in plpks_read_var(), instead expect the caller to
-allocate it. If the caller needs to discover the size, it can set
-var->data to NULL and var->datalen will be populated. Update header file
-to document this.
-
-Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 Signed-off-by: Russell Currey <ruscur@russell.cc>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 
 ---
 
-v3: New patch (mpe)
----
- arch/powerpc/include/asm/plpks.h       | 12 ++++++++++++
- arch/powerpc/platforms/pseries/plpks.c | 11 ++++-------
- 2 files changed, 16 insertions(+), 7 deletions(-)
+v3: Change uint64_t type to u64 (mpe)
 
-diff --git a/arch/powerpc/include/asm/plpks.h b/arch/powerpc/include/asm/plpks.h
-index e7204e6c0ca4..0c49969b0864 100644
---- a/arch/powerpc/include/asm/plpks.h
-+++ b/arch/powerpc/include/asm/plpks.h
-@@ -88,16 +88,28 @@ int plpks_remove_var(char *component, u8 varos,
+v4: Return immediately if node is NULL (gjoyce)
+---
+ arch/powerpc/include/asm/secvar.h            |  1 +
+ arch/powerpc/kernel/secvar-sysfs.c           | 17 +++------------
+ arch/powerpc/platforms/powernv/opal-secvar.c | 22 ++++++++++++++++++++
+ 3 files changed, 26 insertions(+), 14 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/secvar.h b/arch/powerpc/include/asm/secvar.h
+index 2d9816dff128..b97ab793cc8a 100644
+--- a/arch/powerpc/include/asm/secvar.h
++++ b/arch/powerpc/include/asm/secvar.h
+@@ -18,6 +18,7 @@ struct secvar_operations {
+ 	int (*get_next)(const char *key, u64 *key_len, u64 keybufsize);
+ 	int (*set)(const char *key, u64 key_len, u8 *data, u64 data_size);
+ 	ssize_t (*format)(char *buf, size_t bufsize);
++	int (*max_size)(u64 *max_size);
+ };
  
- /**
-  * Returns the data for the specified os variable.
-+ *
-+ * Caller must allocate a buffer in var->data with length in var->datalen.
-+ * If no buffer is provided, var->datalen will be populated with the object's
-+ * size.
-  */
- int plpks_read_os_var(struct plpks_var *var);
+ #ifdef CONFIG_PPC_SECURE_BOOT
+diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
+index 4beec935f5e7..d2f65a67845c 100644
+--- a/arch/powerpc/kernel/secvar-sysfs.c
++++ b/arch/powerpc/kernel/secvar-sysfs.c
+@@ -132,27 +132,16 @@ static struct kobj_type secvar_ktype = {
+ static int update_kobj_size(void)
+ {
  
- /**
-  * Returns the data for the specified firmware variable.
-+ *
-+ * Caller must allocate a buffer in var->data with length in var->datalen.
-+ * If no buffer is provided, var->datalen will be populated with the object's
-+ * size.
-  */
- int plpks_read_fw_var(struct plpks_var *var);
+-	struct device_node *node;
+ 	u64 varsize;
+-	int rc = 0;
++	int rc = secvar_ops->max_size(&varsize);
  
- /**
-  * Returns the data for the specified bootloader variable.
-+ *
-+ * Caller must allocate a buffer in var->data with length in var->datalen.
-+ * If no buffer is provided, var->datalen will be populated with the object's
-+ * size.
-  */
- int plpks_read_bootloader_var(struct plpks_var *var);
- 
-diff --git a/arch/powerpc/platforms/pseries/plpks.c b/arch/powerpc/platforms/pseries/plpks.c
-index 96a026a37285..5d9c6a3b2014 100644
---- a/arch/powerpc/platforms/pseries/plpks.c
-+++ b/arch/powerpc/platforms/pseries/plpks.c
-@@ -578,17 +578,14 @@ static int plpks_read_var(u8 consumer, struct plpks_var *var)
- 		goto out_free_output;
- 	}
- 
--	if (var->datalen == 0 || var->datalen > retbuf[0])
-+	if (!var->data || var->datalen > retbuf[0])
- 		var->datalen = retbuf[0];
- 
--	var->data = kzalloc(var->datalen, GFP_KERNEL);
--	if (!var->data) {
--		rc = -ENOMEM;
--		goto out_free_output;
+-	node = of_find_compatible_node(NULL, NULL, "ibm,secvar-backend");
+-	if (!of_device_is_available(node)) {
+-		rc = -ENODEV;
+-		goto out;
 -	}
- 	var->policy = retbuf[1];
+-
+-	rc = of_property_read_u64(node, "max-var-size", &varsize);
+ 	if (rc)
+-		goto out;
++		return rc;
  
--	memcpy(var->data, output, var->datalen);
-+	if (var->data)
-+		memcpy(var->data, output, var->datalen);
+ 	data_attr.size = varsize;
+ 	update_attr.size = varsize;
+ 
+-out:
+-	of_node_put(node);
+-
+-	return rc;
++	return 0;
+ }
+ 
+ static int secvar_sysfs_load(void)
+diff --git a/arch/powerpc/platforms/powernv/opal-secvar.c b/arch/powerpc/platforms/powernv/opal-secvar.c
+index e33bb703ecbc..a8436bf35e2f 100644
+--- a/arch/powerpc/platforms/powernv/opal-secvar.c
++++ b/arch/powerpc/platforms/powernv/opal-secvar.c
+@@ -122,11 +122,33 @@ static ssize_t opal_secvar_format(char *buf, size_t bufsize)
+ 	return rc;
+ }
+ 
++static int opal_secvar_max_size(u64 *max_size)
++{
++	int rc;
++	struct device_node *node;
 +
- 	rc = 0;
++	node = of_find_compatible_node(NULL, NULL, "ibm,secvar-backend");
++	if (!node)
++		return -ENODEV;
++
++	if (!of_device_is_available(node)) {
++		rc = -ENODEV;
++		goto out;
++	}
++
++	rc = of_property_read_u64(node, "max-var-size", max_size);
++
++out:
++	of_node_put(node);
++	return rc;
++}
++
+ static const struct secvar_operations opal_secvar_ops = {
+ 	.get = opal_get_variable,
+ 	.get_next = opal_get_next_variable,
+ 	.set = opal_set_variable,
+ 	.format = opal_secvar_format,
++	.max_size = opal_secvar_max_size,
+ };
  
- out_free_output:
+ static int opal_secvar_probe(struct platform_device *pdev)
 -- 
 2.39.0
 
