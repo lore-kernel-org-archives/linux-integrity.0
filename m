@@ -2,53 +2,56 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D44BC54E94
-	for <linux-integrity@archiver.kernel.org>; Wed, 25 Jan 2023 08:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC11C54E94
+	for <linux-integrity@archiver.kernel.org>; Wed, 25 Jan 2023 08:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232306AbjAYIvn (ORCPT
+        id S234367AbjAYIvt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 25 Jan 2023 03:51:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52590 "EHLO
+        Wed, 25 Jan 2023 03:51:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbjAYIvn (ORCPT
+        with ESMTP id S229646AbjAYIvr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 25 Jan 2023 03:51:43 -0500
+        Wed, 25 Jan 2023 03:51:47 -0500
 Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7ABA116
-        for <linux-integrity@vger.kernel.org>; Wed, 25 Jan 2023 00:51:39 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4P1y6b4dv5z9xHvP
-        for <linux-integrity@vger.kernel.org>; Wed, 25 Jan 2023 16:43:35 +0800 (CST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA43172A
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Jan 2023 00:51:46 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4P1y6m31bJz9xHvP
+        for <linux-integrity@vger.kernel.org>; Wed, 25 Jan 2023 16:43:44 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwD3fQmG7dBjf2fGAA--.15976S2;
-        Wed, 25 Jan 2023 09:51:25 +0100 (CET)
+        by APP1 (Coremail) with SMTP id LxC2BwD3fQmG7dBjf2fGAA--.15976S4;
+        Wed, 25 Jan 2023 09:51:33 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com
 Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org, pvorel@suse.cz,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH ima-evm-utils v3 00/11] Support testing in new enviroments
-Date:   Wed, 25 Jan 2023 09:50:19 +0100
-Message-Id: <20230125085030.1568256-1-roberto.sassu@huaweicloud.com>
+Subject: [PATCH ima-evm-utils v3 02/11] Add config for UML kernel
+Date:   Wed, 25 Jan 2023 09:50:21 +0100
+Message-Id: <20230125085030.1568256-3-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230125085030.1568256-1-roberto.sassu@huaweicloud.com>
+References: <20230125085030.1568256-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwD3fQmG7dBjf2fGAA--.15976S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3GFWfXFWfJFWfGr43Gr13XFb_yoWxJw13pa
-        yUWw1Fka97JF9Fy3s7Gr4xKryFqw48Gr15CrykX34rZ3Z8uFy0yF129ay3ZF9xuFy0qry8
-        Za10qr95Wwn8CaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUgCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
-        z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
-        AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
-        IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s
-        0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsG
-        vfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj4QNvwAAsJ
+X-CM-TRANSID: LxC2BwD3fQmG7dBjf2fGAA--.15976S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF43Wr17Kr13Gw4kuFykZrb_yoW3ur4fpr
+        n7JrWxJr4kJr17trW7ArWDGr98tr1DGFWUAr17Xr1UXrykJw4fJr1Ykr1UGr1UXF1UJr48
+        JF97Gr13Ar1UJ37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvlb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
+        A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+        W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
+        JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
+        0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
+        JVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+        1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+        IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+        x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+        DU0xZFpf9x07jeWlkUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAIBF1jj4gLMgABsM
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -56,136 +59,259 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-One of the main limitations of running tests in the current environment is
-that features/bug fixes to be tested need to be already included in the
-running kernel, which is not always the case.
+Add config-uml, with test-specific options that are not enabled in the
+kernel configuration generated with 'make ARCH=um olddefconfig'. The new
+options will be merged with the merge_config.sh script from the kernel
+source code in a Github workflow step.
 
-User Mode Linux (UML) and virtual machines can be used to overcome this
-limitation. They allow to create a new environment and run a custom kernel
-built by a CI or by the user. The tests can then check the features/bug
-fixes of the custom kernel.
-
-Running tests in a new environment also gives the ability to control the
-configuration, and to have a clean state for each test by creating new
-environments as necessary. The current environment might not allow that,
-e.g. for security reasons.
-
-Introduce a mechanism for creating and managing new environments. Expose an
-API that allow to transparently create one or multiple environments in a
-test script, and to reexecute that script in the new one. Using that API
-requires minimal changes to the existing scripts.
-
-The API is generic enough to support different types of enviroments. The
-environment can be selected with the TST_ENV environment variable. At the
-moment, only UML is supported. QEMU will be added at a later stage.
-
-With the ability to test custom kernels, ima-evm-utils might introduce
-specific tests for that, separated from the tests to verify the
-ima-evm-utils user space functionality. At the moment, there is no such
-distinction, existing tests verify both.
-
-First, fix error messages and a variable in evmctl. Then, add the
-config-uml file with custom kernel configuration options for the tests, to
-be merged with the default configuration. Add a new job in the Github
-workflow to build the UML kernel from a repository and branch specified in
-the LINUX_URL and LINUX_BRANCH variables (if the kernel repository does not
-have a branch with the same name of the ima-evm-utils one). Per Github
-documentation, these variables can be defined at organization, repository
-and environment level.
-
-Return the correct script exit code if no test was executed. Introduce the
-new API for creating and managing new enviroments, for existing and new
-test scripts. If TST_ENV is not set, calling the API results in a nop, and
-tests are executed in the current environment.
-
-Add the possibility to select individual tests to run in a test script,
-with the TST_LIST variable, so that a new environment can be created
-multiple times for a subset of tests (useful if for example a test require
-kernel settings different from the previous test).
-
-Add tests for EVM portable signatures and modify fsverity.test to use the
-new API.
-
-Finally, don't require making changes to the system to run fsverity.test,
-install a software dependency after the appropriate repository has been
-set up, and temporarily remove CONFIG_DEBUG_SG to avoid a kernel panic
-until the patches to fix it are accepted in the upstream kernel.
-
-Changelog
-
-v2:
- - Compile everything built-in for the UML kernel in Github Actions
- - Replace UML_MODE with TST_ENV, introduce TST_KERNEL to specify the path
-   of the kernel to run
- - Temporarily disable CONFIG_DEBUG_SG (patch by Mimi)
- - Rename mdlen and hash variable respectively to siglen and sig (suggested
-   by Stefan)
- - Always use _report_exit_and_cleanup() as trap function and pass the
-   cleanup function as argument
- - Rename _run_user_mode(), _exit_user_mode(), _init_user_mode(),
-   _cleanup_user_mode() respectively to _run_env(), _exit_env(),
-   _init_env() and _cleanup_env()
- - Fix style issues in tests/functions.sh and
-   tests/portable_signatures.test (suggested by Stefan)
- - Get the script exit code in _report_exit_and_cleanup() and return that
-   if no test was executed
- - Mount tmpfs in the new environment, to avoid interference with the host
- - Don't delete fsverity-utils and mount-idmapped directories so that the
-   built binaries are available for use without installing them (suggested
-   by Stefan)
- - Rename global variables in tests/portable_signatures.test to avoid
-   collisions (suggested by Stefan)
- - Declare the 'format' variable as local in get_xattr() in
-   tests/portable_signatures.test (suggested by Stefan)
- - Print a message in tests/portable_signatures.test when the
-   mount-idmapped binary is found
- - Check more paths for the private key in tests/portable_signatures.test
-   (suggested by Mimi)
- - Increase the memory allocation for the UML kernel to 2048M to satisfy
-   requests to mount tmpfs
-
-v1:
- - Use Github vars context instead of secrets (suggested by Mimi)
- - Define default values of LINUX_URL and LINUX_BRANCH in case they are not
-   provided (suggested by Mimi)
- - Pull source code with depth 1 instead of 5, as it is not necessary now
- - Run 'make ARCH=um olddefconfig' before merging test-specific options in
-   config-uml
- - Install haveged for CentOS 8 after the EPEL repository is configured
-   (patch by Mimi)
-
-Mimi Zohar (2):
-  ci: haveged requires EPEL on CentOS stream:8
-  Temporarily remove CONFIG_DEBUG_SG to test portable signatures
-
-Roberto Sassu (9):
-  Fix error messages and vars in calc_evm_hmac()
-  Add config for UML kernel
-  Compile the UML kernel and download it in Github Actions
-  Pass cleanup function and its arguments to _report_exit_and_cleanup()
-  Add support for creating a new testing environment in functions.sh
-  Introduce TST_LIST variable to select a test to execute
-  Add tests for EVM portable signatures
-  Adapt fsverity.test to be able to run in a new testing environment
-  Use in-place built fsverity binary instead of installing it
-
- .github/workflows/ci.yml        |   99 ++-
- build.sh                        |    5 +
- ci/fedora.sh                    |   12 +-
- config-uml                      |  234 +++++++
- src/evmctl.c                    |   14 +-
- tests/Makefile.am               |    2 +-
- tests/boot_aggregate.test       |    2 +-
- tests/fsverity.test             |   14 +-
- tests/functions.sh              |  105 ++-
- tests/install-fsverity.sh       |    3 +-
- tests/install-mount-idmapped.sh |    6 +
- tests/portable_signatures.test  | 1088 +++++++++++++++++++++++++++++++
- 12 files changed, 1565 insertions(+), 19 deletions(-)
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Acked-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ config-uml | 235 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 235 insertions(+)
  create mode 100644 config-uml
- create mode 100755 tests/install-mount-idmapped.sh
- create mode 100755 tests/portable_signatures.test
 
+diff --git a/config-uml b/config-uml
+new file mode 100644
+index 000000000000..2d3bb8ba8edb
+--- /dev/null
++++ b/config-uml
+@@ -0,0 +1,235 @@
++CONFIG_LOCALVERSION="-dont-use"
++CONFIG_WATCH_QUEUE=y
++CONFIG_AUDIT=y
++CONFIG_AUDITSYSCALL=y
++CONFIG_HZ_PERIODIC=y
++CONFIG_LOG_BUF_SHIFT=17
++CONFIG_USER_NS=y
++CONFIG_PID_NS=y
++CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y
++CONFIG_KALLSYMS_ALL=y
++CONFIG_SYSTEM_DATA_VERIFICATION=y
++CONFIG_TRACEPOINTS=y
++CONFIG_CON_CHAN="xterm"
++CONFIG_SSL_CHAN="pty"
++CONFIG_MODULE_SIG_FORMAT=y
++CONFIG_MODULE_SIG=y
++CONFIG_MODULE_SIG_FORCE=y
++CONFIG_MODULE_SIG_ALL=y
++CONFIG_MODULE_SIG_SHA1=y
++CONFIG_MODULE_SIG_HASH="sha1"
++CONFIG_MODULES_TREE_LOOKUP=y
++CONFIG_BLK_DEBUG_FS=y
++CONFIG_ASN1=y
++CONFIG_UNINLINE_SPIN_UNLOCK=y
++CONFIG_SLUB=y
++CONFIG_COMPACTION=y
++CONFIG_COMPACT_UNEVICTABLE_DEFAULT=1
++CONFIG_MIGRATION=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_LEGACY_PTY_COUNT=256
++CONFIG_NULL_TTY=y
++CONFIG_SERIAL_DEV_BUS=y
++CONFIG_SERIAL_DEV_CTRL_TTYPORT=y
++CONFIG_VALIDATE_FS_PARSER=y
++CONFIG_EXT4_FS_POSIX_ACL=y
++CONFIG_EXT4_FS_SECURITY=y
++CONFIG_EXT4_DEBUG=y
++CONFIG_REISERFS_FS_XATTR=y
++CONFIG_REISERFS_FS_POSIX_ACL=y
++CONFIG_REISERFS_FS_SECURITY=y
++CONFIG_FS_POSIX_ACL=y
++CONFIG_FS_VERITY=y
++CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_TMPFS_XATTR=y
++CONFIG_CONFIGFS_FS=y
++CONFIG_KEYS=y
++CONFIG_ENCRYPTED_KEYS=y
++CONFIG_SECURITY=y
++CONFIG_SECURITYFS=y
++CONFIG_SECURITY_NETWORK=y
++CONFIG_SECURITY_PATH=y
++CONFIG_INTEGRITY=y
++CONFIG_INTEGRITY_SIGNATURE=y
++CONFIG_INTEGRITY_ASYMMETRIC_KEYS=y
++CONFIG_INTEGRITY_TRUSTED_KEYRING=y
++CONFIG_INTEGRITY_AUDIT=y
++CONFIG_IMA=y
++CONFIG_IMA_MEASURE_PCR_IDX=10
++CONFIG_IMA_NG_TEMPLATE=y
++CONFIG_IMA_DEFAULT_TEMPLATE="ima-ng"
++CONFIG_IMA_DEFAULT_HASH_SHA256=y
++CONFIG_IMA_DEFAULT_HASH="sha256"
++CONFIG_IMA_WRITE_POLICY=y
++CONFIG_IMA_READ_POLICY=y
++CONFIG_IMA_APPRAISE=y
++CONFIG_IMA_ARCH_POLICY=y
++CONFIG_IMA_APPRAISE_BUILD_POLICY=y
++CONFIG_IMA_APPRAISE_BOOTPARAM=y
++CONFIG_IMA_APPRAISE_MODSIG=y
++CONFIG_IMA_TRUSTED_KEYRING=y
++CONFIG_IMA_BLACKLIST_KEYRING=y
++CONFIG_IMA_LOAD_X509=y
++CONFIG_IMA_X509_PATH="/etc/keys/x509_ima.der"
++CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS=y
++CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS=y
++CONFIG_EVM=y
++CONFIG_EVM_ATTR_FSUUID=y
++CONFIG_EVM_ADD_XATTRS=y
++CONFIG_EVM_LOAD_X509=y
++CONFIG_EVM_X509_PATH="/etc/keys/x509_evm.der"
++CONFIG_LSM="lockdown,yama,loadpin,safesetid,integrity,bpf"
++CONFIG_CRYPTO_AEAD2=y
++CONFIG_CRYPTO_SKCIPHER=y
++CONFIG_CRYPTO_SKCIPHER2=y
++CONFIG_CRYPTO_RNG=y
++CONFIG_CRYPTO_RNG2=y
++CONFIG_CRYPTO_RNG_DEFAULT=y
++CONFIG_CRYPTO_AKCIPHER2=y
++CONFIG_CRYPTO_AKCIPHER=y
++CONFIG_CRYPTO_KPP2=y
++CONFIG_CRYPTO_ACOMP2=y
++CONFIG_CRYPTO_MANAGER=y
++CONFIG_CRYPTO_MANAGER2=y
++CONFIG_CRYPTO_NULL2=y
++CONFIG_CRYPTO_RSA=y
++CONFIG_CRYPTO_ECC=y
++CONFIG_CRYPTO_ECDSA=y
++CONFIG_CRYPTO_AES=y
++CONFIG_CRYPTO_CBC=y
++CONFIG_CRYPTO_HMAC=y
++CONFIG_CRYPTO_MD5=y
++CONFIG_CRYPTO_SHA1=y
++CONFIG_CRYPTO_SHA256=y
++CONFIG_CRYPTO_SHA512=y
++CONFIG_CRYPTO_WP512=y
++CONFIG_CRYPTO_LZO=y
++CONFIG_CRYPTO_ZSTD=y
++CONFIG_CRYPTO_DRBG_MENU=y
++CONFIG_CRYPTO_DRBG_HMAC=y
++CONFIG_CRYPTO_DRBG=y
++CONFIG_CRYPTO_JITTERENTROPY=y
++CONFIG_CRYPTO_HASH_INFO=y
++CONFIG_ASYMMETRIC_KEY_TYPE=y
++CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE=y
++CONFIG_X509_CERTIFICATE_PARSER=y
++CONFIG_PKCS8_PRIVATE_KEY_PARSER=y
++CONFIG_PKCS7_MESSAGE_PARSER=y
++CONFIG_PKCS7_TEST_KEY=y
++CONFIG_SIGNED_PE_FILE_VERIFICATION=y
++CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
++CONFIG_MODULE_SIG_KEY_TYPE_RSA=y
++CONFIG_SYSTEM_TRUSTED_KEYRING=y
++CONFIG_SYSTEM_TRUSTED_KEYS=""
++CONFIG_SYSTEM_EXTRA_CERTIFICATE=y
++CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE=4096
++CONFIG_SECONDARY_TRUSTED_KEYRING=y
++CONFIG_SYSTEM_BLACKLIST_KEYRING=y
++CONFIG_SYSTEM_BLACKLIST_HASH_LIST=""
++CONFIG_SYSTEM_REVOCATION_LIST=y
++CONFIG_SYSTEM_REVOCATION_KEYS=""
++CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE=y
++CONFIG_BINARY_PRINTF=y
++CONFIG_CRYPTO_LIB_AES=y
++CONFIG_CRYPTO_LIB_SHA256=y
++CONFIG_CRC_CCITT=y
++CONFIG_XXHASH=y
++CONFIG_AUDIT_GENERIC=y
++CONFIG_LZO_COMPRESS=y
++CONFIG_LZO_DECOMPRESS=y
++CONFIG_ZSTD_COMMON=y
++CONFIG_ZSTD_COMPRESS=y
++CONFIG_ZSTD_DECOMPRESS=y
++CONFIG_ASSOCIATIVE_ARRAY=y
++CONFIG_SGL_ALLOC=y
++CONFIG_GLOB=y
++CONFIG_CLZ_TAB=y
++CONFIG_MPILIB=y
++CONFIG_SIGNATURE=y
++CONFIG_OID_REGISTRY=y
++CONFIG_STACKDEPOT=y
++CONFIG_STACKDEPOT_ALWAYS_INIT=y
++CONFIG_PRINTK_TIME=y
++CONFIG_PRINTK_CALLER=y
++CONFIG_DYNAMIC_DEBUG=y
++CONFIG_DYNAMIC_DEBUG_CORE=y
++CONFIG_DEBUG_INFO_DWARF5=y
++CONFIG_GDB_SCRIPTS=y
++CONFIG_FRAME_WARN=2048
++CONFIG_READABLE_ASM=y
++CONFIG_DEBUG_SECTION_MISMATCH=y
++CONFIG_DEBUG_FS=y
++CONFIG_DEBUG_FS_ALLOW_ALL=y
++CONFIG_UBSAN=y
++CONFIG_CC_HAS_UBSAN_BOUNDS=y
++CONFIG_UBSAN_BOUNDS=y
++CONFIG_UBSAN_ONLY_BOUNDS=y
++CONFIG_UBSAN_SHIFT=y
++CONFIG_UBSAN_DIV_ZERO=y
++CONFIG_UBSAN_BOOL=y
++CONFIG_UBSAN_ENUM=y
++CONFIG_UBSAN_ALIGNMENT=y
++CONFIG_PAGE_EXTENSION=y
++CONFIG_DEBUG_PAGEALLOC=y
++CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT=y
++CONFIG_SLUB_DEBUG=y
++CONFIG_SLUB_DEBUG_ON=y
++CONFIG_PAGE_OWNER=y
++CONFIG_PAGE_POISONING=y
++CONFIG_DEBUG_OBJECTS=y
++CONFIG_DEBUG_OBJECTS_FREE=y
++CONFIG_DEBUG_OBJECTS_TIMERS=y
++CONFIG_DEBUG_OBJECTS_WORK=y
++CONFIG_DEBUG_OBJECTS_RCU_HEAD=y
++CONFIG_DEBUG_OBJECTS_PERCPU_COUNTER=y
++CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT=1
++CONFIG_DEBUG_KMEMLEAK=y
++CONFIG_DEBUG_KMEMLEAK_MEM_POOL_SIZE=16000
++CONFIG_DEBUG_KMEMLEAK_AUTO_SCAN=y
++CONFIG_DEBUG_STACK_USAGE=y
++CONFIG_SCHED_STACK_END_CHECK=y
++CONFIG_DEBUG_SHIRQ=y
++CONFIG_PANIC_ON_OOPS=y
++CONFIG_PANIC_ON_OOPS_VALUE=1
++CONFIG_LOCKUP_DETECTOR=y
++CONFIG_SOFTLOCKUP_DETECTOR=y
++CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC=y
++CONFIG_DETECT_HUNG_TASK=y
++CONFIG_DEFAULT_HUNG_TASK_TIMEOUT=120
++CONFIG_BOOTPARAM_HUNG_TASK_PANIC=y
++CONFIG_WQ_WATCHDOG=y
++CONFIG_DEBUG_TIMEKEEPING=y
++CONFIG_PROVE_LOCKING=y
++CONFIG_PROVE_RAW_LOCK_NESTING=y
++CONFIG_LOCK_STAT=y
++CONFIG_DEBUG_RT_MUTEXES=y
++CONFIG_DEBUG_SPINLOCK=y
++CONFIG_DEBUG_MUTEXES=y
++CONFIG_DEBUG_WW_MUTEX_SLOWPATH=y
++CONFIG_DEBUG_RWSEMS=y
++CONFIG_DEBUG_LOCK_ALLOC=y
++CONFIG_LOCKDEP=y
++CONFIG_LOCKDEP_BITS=15
++CONFIG_LOCKDEP_CHAINS_BITS=16
++CONFIG_LOCKDEP_STACK_TRACE_BITS=19
++CONFIG_LOCKDEP_STACK_TRACE_HASH_BITS=14
++CONFIG_LOCKDEP_CIRCULAR_QUEUE_BITS=12
++CONFIG_WW_MUTEX_SELFTEST=y
++CONFIG_CSD_LOCK_WAIT_DEBUG=y
++CONFIG_TRACE_IRQFLAGS=y
++CONFIG_DEBUG_IRQFLAGS=y
++CONFIG_DEBUG_LIST=y
++CONFIG_DEBUG_PLIST=y
++CONFIG_DEBUG_SG=y
++CONFIG_DEBUG_NOTIFIERS=y
++CONFIG_BUG_ON_DATA_CORRUPTION=y
++CONFIG_PROVE_RCU=y
++CONFIG_RCU_TRACE=y
++CONFIG_NOP_TRACER=y
++CONFIG_TRACE_CLOCK=y
++CONFIG_RING_BUFFER=y
++CONFIG_EVENT_TRACING=y
++CONFIG_CONTEXT_SWITCH_TRACER=y
++CONFIG_PREEMPTIRQ_TRACEPOINTS=y
++CONFIG_TRACING=y
 -- 
 2.25.1
 
