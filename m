@@ -2,95 +2,112 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13B6C54E94
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 14:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D44B2C61DA2
+	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 15:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231633AbjAZOAK (ORCPT
+        id S231891AbjAZPmR (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Jan 2023 09:00:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52900 "EHLO
+        Thu, 26 Jan 2023 10:42:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231971AbjAZN75 (ORCPT
+        with ESMTP id S231880AbjAZPmQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Jan 2023 08:59:57 -0500
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDFBD6DFE8
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 05:59:39 -0800 (PST)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4P2hvF3J9hz9xFQP
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 21:51:21 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwB39P_4htJj+ajLAA--.553S12;
-        Thu, 26 Jan 2023 14:59:12 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com
-Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org, pvorel@suse.cz,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH ima-evm-utils v4 10/11] ci: haveged requires EPEL on CentOS stream:8
-Date:   Thu, 26 Jan 2023 14:58:06 +0100
-Message-Id: <20230126135807.1848668-11-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230126135807.1848668-1-roberto.sassu@huaweicloud.com>
-References: <20230126135807.1848668-1-roberto.sassu@huaweicloud.com>
+        Thu, 26 Jan 2023 10:42:16 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FEBC4EF4
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 07:41:52 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30QE6ref024147;
+        Thu, 26 Jan 2023 15:41:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=D0NPel6FNrKZYLNeD87OLY+XDndb5u+A4peoOQ2rvkM=;
+ b=FjIdzNztCa7zl+xgEviwOVy2Uae/V3h7d2h5VVBnpBGsIbpFI0X/6nbFGsPbnJNJs1kq
+ QrDoqnesPbrgfIPwhVu+DneeGjz0Q7r9qovwj7tpdSTa26IthI0Q7n29ajAXsnK3r0sF
+ qXLDVYk3JKMRgjR/liQRoDYw4PimxNvkf9Jq7F7zX+feNA+s1Xklmb0wNtEmjndUk8tp
+ Mej1/sl1qHrEmrQnZinU7IvkTaikssWxYx2Jue1wqhIWApSMPYQ0ckYH0SIwUgR8FD5r
+ Z7vmgkd+YDargMVDT8qBHAdQxw4i+2nJg2vHGMcNNzhuIKMg1soBUs/41u9dmIto5ZqX Ag== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nbu0etdwm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Jan 2023 15:41:27 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30QFJFJh005754;
+        Thu, 26 Jan 2023 15:41:27 GMT
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nbu0etdwe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Jan 2023 15:41:27 +0000
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30QEku7k006944;
+        Thu, 26 Jan 2023 15:41:26 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([9.208.130.98])
+        by ppma03dal.us.ibm.com (PPS) with ESMTPS id 3n87p7ngnd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 26 Jan 2023 15:41:26 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+        by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30QFfQBN57934296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Jan 2023 15:41:26 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 10F9C58057;
+        Thu, 26 Jan 2023 15:41:26 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 922D158059;
+        Thu, 26 Jan 2023 15:41:25 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Thu, 26 Jan 2023 15:41:25 +0000 (GMT)
+Message-ID: <50d97699-e93e-4ddd-edfa-6b43d5f30713@linux.ibm.com>
+Date:   Thu, 26 Jan 2023 10:41:25 -0500
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwB39P_4htJj+ajLAA--.553S12
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFyfAF1xKFy7Wry3Ww15Jwb_yoWDGrgE93
-        yIgr43Ar45Ar13Xr1rCFZYqr4FgrW2gw4Ygw1UXFy3Z347Arn3Kan3uw4vyan5WrWDurZr
-        JF1kJryFkr17WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb3xYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-        0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-        Y2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-        v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AK
-        xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-        xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-        1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIx
-        AIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-        IxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
-        C2KfnxnUUI43ZEXa7IU13l1DUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj4Qi9AABst
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH ima-evm-utils v4 02/11] Add kernel configuration for tests
+Content-Language: en-US
+To:     Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
+        dmitry.kasatkin@gmail.com
+Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org, pvorel@suse.cz,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20230126135807.1848668-1-roberto.sassu@huaweicloud.com>
+ <20230126135807.1848668-3-roberto.sassu@huaweicloud.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20230126135807.1848668-3-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ExgJdpmgCY22IJGAe7qosBhmJn5-rw7E
+X-Proofpoint-GUID: VwRJEaD1MCMzOIIOwGHT8SnY9xNWtaMg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-26_07,2023-01-25_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=903 lowpriorityscore=0 malwarescore=0
+ clxscore=1015 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301260146
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.ibm.com>
 
-The travis "fedora:latest" matrix rule fails due to not finding
-"haveged".  Install "haveged" after enabling EPEL.
 
-Fixes: 992f60d573bc ("Add support for creating a new testing environment in functions.sh")
+On 1/26/23 08:57, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Add kernel-configs/base with changes to be applied to the default kernel
+> configuration, generated with 'make defconfig'.
+> 
+> Add kernel-configs/integrity, with integrity-specific configuration
+> options.
+> 
+> Splitting changes helps to identify more easily the desired group of
+> options. In the future, options could be split even further.
+> 
+> All changes in this directory will be applied with the merge_config.sh
+> script from the kernel source code in a Github workflow step.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- ci/fedora.sh | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/ci/fedora.sh b/ci/fedora.sh
-index 3f75d2e1ddbd..1d17c6bfb89d 100755
---- a/ci/fedora.sh
-+++ b/ci/fedora.sh
-@@ -46,7 +46,6 @@ yum -y install \
- 	wget \
- 	which \
- 	zstd \
--	haveged \
- 	systemd \
- 	keyutils \
- 	e2fsprogs \
-@@ -62,5 +61,8 @@ if [ -f /etc/centos-release ]; then
- fi
- yum -y install softhsm || true
- 
-+# haveged is available via EPEL on CentOS stream8.
-+yum -y install haveged || true
-+
- ./tests/install-fsverity.sh
- ./tests/install-mount-idmapped.sh
--- 
-2.25.1
-
