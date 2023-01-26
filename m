@@ -2,103 +2,85 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555CFC61DA3
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 13:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5230EC61DA2
+	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 14:00:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbjAZN7h (ORCPT
+        id S231512AbjAZOAJ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Jan 2023 08:59:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52706 "EHLO
+        Thu, 26 Jan 2023 09:00:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbjAZN7e (ORCPT
+        with ESMTP id S232096AbjAZOAE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Jan 2023 08:59:34 -0500
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0E627AAC
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 05:59:16 -0800 (PST)
+        Thu, 26 Jan 2023 09:00:04 -0500
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1542C6FD14
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 05:59:45 -0800 (PST)
 Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4P2hv71Ghcz9v7Qq
-        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 21:51:15 +0800 (CST)
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4P2hvK6Dc7z9xFQZ
+        for <linux-integrity@vger.kernel.org>; Thu, 26 Jan 2023 21:51:25 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwB39P_4htJj+ajLAA--.553S10;
-        Thu, 26 Jan 2023 14:59:03 +0100 (CET)
+        by APP1 (Coremail) with SMTP id LxC2BwB39P_4htJj+ajLAA--.553S13;
+        Thu, 26 Jan 2023 14:59:16 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com
 Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org, pvorel@suse.cz,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH ima-evm-utils v4 08/11] Adapt fsverity.test to be able to run in a new testing environment
-Date:   Thu, 26 Jan 2023 14:58:04 +0100
-Message-Id: <20230126135807.1848668-9-roberto.sassu@huaweicloud.com>
+Subject: [PATCH ima-evm-utils v4 11/11] Temporarily remove CONFIG_DEBUG_SG to test portable signatures
+Date:   Thu, 26 Jan 2023 14:58:07 +0100
+Message-Id: <20230126135807.1848668-12-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230126135807.1848668-1-roberto.sassu@huaweicloud.com>
 References: <20230126135807.1848668-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: LxC2BwB39P_4htJj+ajLAA--.553S10
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar1rAr13XrWfJFW3XFWfuFg_yoW8Xw47pF
-        y5JFyYkFZ5tFyfGw4DWF42yFy0k3y8ZryUXrZ7ua43WF98ArWjyr40kw47WF9FyFZaqFs5
-        u3y0vr13Gw1qkrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUU90b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-        AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-        wI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I
-        80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCj
-        c4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-        AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-        17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMI
-        IF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-        MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-        VFxhVjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAJBF1jj4ggcwAFsj
+X-CM-TRANSID: LxC2BwB39P_4htJj+ajLAA--.553S13
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr4fWw18ur1DXw18Xw45trb_yoW3Awb_Jr
+        4rCw1Iqr4UJr429F4xu3yfX34vya4kXryrWa1UKFy3WF47KrsFgFs5GF15Aws8Ww1UWrWj
+        va1rAF9akr10qjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb3xYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
+        0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+        Y2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+        v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AK
+        xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+        xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+        v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+        1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIx
+        AIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+        IxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+        C2KfnxnUUI43ZEXa7IU13l1DUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBF1jj4Qi9AACsu
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+From: Mimi Zohar <zohar@linux.ibm.com>
 
-Adapt fsverity.test by adding calls to the testing environment API in
-functions.sh. If TST_ENV is set, create a new environment and run the
-kernel specified with the TST_KERNEL environment variable. Otherwise, keep
-the current behavior.
+Enabling CONFIG_DEBUG_SG requires two kernel fixes. For now don't
+enable CONFIG_DEBUG_SG.
 
+Fixes: 8f965b18d96f ("Add kernel configuration for tests")
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- tests/fsverity.test | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ kernel-configs/base | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tests/fsverity.test b/tests/fsverity.test
-index be9594010de5..8261de4ea3c9 100755
---- a/tests/fsverity.test
-+++ b/tests/fsverity.test
-@@ -47,7 +47,7 @@ FSVERITY="$(which fsverity)"
- _require dd mkfs blkid e2fsck tune2fs evmctl setfattr
- ./gen-keys.sh >/dev/null 2>&1
- 
--trap '_report_exit_and_cleanup cleanup' SIGINT SIGTERM EXIT
-+trap '_report_exit_and_cleanup _cleanup_env cleanup' SIGINT SIGTERM EXIT
- 
- cleanup() {
-         if [ -e $TST_MNT ]; then
-@@ -308,6 +308,15 @@ measure-ima() {
- 	return "$error"
- }
- 
-+# Run in the new environment if TST_ENV is set.
-+_run_env "$TST_KERNEL" "$PWD/$(basename "$0")" "TST_ENV=$TST_ENV TST_KERNEL=$TST_KERNEL PATH=$PATH LD_LIBRARY_PATH=$LD_LIBRARY_PATH VERBOSE=$VERBOSE"
-+
-+# Exit from the creator of the new environment.
-+_exit_env "$TST_KERNEL"
-+
-+# Mount filesystems in the new environment.
-+_init_env
-+
- # Dependency on being able to read and write the IMA policy file.
- # Requires both CONFIG_IMA_WRITE_POLICY, CONFIG_IMA_READ_POLICY be
- # enabled.
+diff --git a/kernel-configs/base b/kernel-configs/base
+index 28ae51026399..7acbd5b3b2a6 100644
+--- a/kernel-configs/base
++++ b/kernel-configs/base
+@@ -192,7 +192,6 @@ CONFIG_TRACE_IRQFLAGS=y
+ CONFIG_DEBUG_IRQFLAGS=y
+ CONFIG_DEBUG_LIST=y
+ CONFIG_DEBUG_PLIST=y
+-CONFIG_DEBUG_SG=y
+ CONFIG_DEBUG_NOTIFIERS=y
+ CONFIG_BUG_ON_DATA_CORRUPTION=y
+ CONFIG_PROVE_RCU=y
 -- 
 2.25.1
 
