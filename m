@@ -2,83 +2,86 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF041C54EAA
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 21:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CA9C61DA7
+	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 21:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232762AbjAZVI0 (ORCPT
+        id S232747AbjAZVI3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Jan 2023 16:08:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41194 "EHLO
+        Thu, 26 Jan 2023 16:08:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232747AbjAZVIU (ORCPT
+        with ESMTP id S232785AbjAZVI0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Jan 2023 16:08:20 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BAD812F3E;
-        Thu, 26 Jan 2023 13:08:18 -0800 (PST)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30QKKSje019516;
-        Thu, 26 Jan 2023 21:08:15 GMT
+        Thu, 26 Jan 2023 16:08:26 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6412B65367;
+        Thu, 26 Jan 2023 13:08:22 -0800 (PST)
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30QJIbFW017731;
+        Thu, 26 Jan 2023 21:08:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=YN4wQepIscQnrjjeq8TYGcaDHfM6tUB+QuAo5PrqWJM=;
- b=G0USgGdotVLXdk40XcCePGFJarWkMXvfLutwsK6TwRCjtFOh9+PF9AuKSPcGoyJGyQyB
- BpdNxaFkc2eR4ogSC82VnDsFyqRiqNa4qiMM+m83ze0q7hLg/QFw6iGv4cvIHtaV4Cpf
- NPi0NCQzwDT6IgmfuK22nuV8bxgBGO9DMmcoM4PgtVgkiLwPMuDMXIoXUE8j7tXeUjPh
- +x0z4nPrx6LrZDYjpzN5beGCZgGeJpoVoSyUAomBmRNsdEqrUBGqJGlNFUbvYUALJ36D
- MtDeEPjvOzs3oqJmKBArKJqasf76ELMO0KvuD3FMo0g52sdSTwOpb+SzI1IjK5Ioyjgc rw== 
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=Wy5jGqa36Ei/jzaR8orKTioPfJB7/DMwnd5+9ENVdCo=;
+ b=tdtMpEO7KLez33WvEOGHnfJ65kzdvK7AXKqQFpuuAsa0r1njwIHW0erqwU0EjugroPGw
+ NZ9uyrW2gdYjuVMohc8QtUOcx24cA3g517A19/qXoZjsUoB4Tjubm5fARakrS+i1hs3t
+ v9yZDgGgkmvLNUWS5AkUDjpzV6c61K/CGRz46Gu9/Np/MgatEjsr3/nipNKiQhDHwS0u
+ FQscsHUnynW5lgcPg264yDMF61Z59lVnCN4nbwnQsU4roKLJOlnVhnuG2wygwSeGfdgL
+ mHe7jAwCMsw3t9ocaoLUsQD+zu03mUpfKopT8Z+ATdos3k7/RpJeJKRrNYpg5xP8iRrb 7Q== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nc0fhguy4-1
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nbu2jtbgq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 21:08:14 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30QKqnoT018446;
-        Thu, 26 Jan 2023 21:08:14 GMT
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nc0fhguxp-1
+        Thu, 26 Jan 2023 21:08:18 +0000
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30QL5i9N017326;
+        Thu, 26 Jan 2023 21:08:17 GMT
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nbu2jtbge-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 21:08:14 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30QKCIdl003161;
-        Thu, 26 Jan 2023 21:08:13 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([9.208.130.101])
-        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3n87p7fbu8-1
+        Thu, 26 Jan 2023 21:08:17 +0000
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30QK1GLK012685;
+        Thu, 26 Jan 2023 21:08:17 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([9.208.129.119])
+        by ppma02wdc.us.ibm.com (PPS) with ESMTPS id 3n87p7yar1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 21:08:13 +0000
+        Thu, 26 Jan 2023 21:08:16 +0000
 Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30QL8CbD67043734
+        by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30QL8F3p26542554
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Jan 2023 21:08:12 GMT
+        Thu, 26 Jan 2023 21:08:15 GMT
 Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41BCA58063;
-        Thu, 26 Jan 2023 21:08:12 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 36F9A58059;
+        Thu, 26 Jan 2023 21:08:15 +0000 (GMT)
 Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF94B58059;
-        Thu, 26 Jan 2023 21:08:10 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 020925805F;
+        Thu, 26 Jan 2023 21:08:14 +0000 (GMT)
 Received: from slate16.aus.stglabs.ibm.com (unknown [9.160.3.213])
         by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 26 Jan 2023 21:08:10 +0000 (GMT)
+        Thu, 26 Jan 2023 21:08:13 +0000 (GMT)
 From:   Eddie James <eajames@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
         stefanb@linux.ibm.com, eajames@linux.ibm.com
-Subject: [PATCH v3 0/2] tpm: Add reserved memory event log
-Date:   Thu, 26 Jan 2023 15:08:08 -0600
-Message-Id: <20230126210810.881119-1-eajames@linux.ibm.com>
+Subject: [PATCH v3 2/2] tpm: Add reserved memory event log
+Date:   Thu, 26 Jan 2023 15:08:10 -0600
+Message-Id: <20230126210810.881119-3-eajames@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20230126210810.881119-1-eajames@linux.ibm.com>
+References: <20230126210810.881119-1-eajames@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: cA0NYR5KYYUq_tjkqG5jQP28Au1jsGWy
-X-Proofpoint-GUID: ORLHV1HNL4xE4ctbYlwwid4kIrRKIXMf
+X-Proofpoint-GUID: VHzkvyJ3c-j3u6p9mKvGRC0sFtdq8EkA
+X-Proofpoint-ORIG-GUID: jw-LOoTPqCc19JY8vA4-3_SrxfArdeR3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-26_09,2023-01-26_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
- mlxlogscore=800 phishscore=0 adultscore=0 mlxscore=0 malwarescore=0
- clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0
+ suspectscore=0 clxscore=1015 mlxscore=0 impostorscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2301260198
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -90,26 +93,74 @@ for embedded systems or baseboard management controllers (BMCs)
 booting with U-Boot. IBM OpenBMC BMCs will be the first user.
 Add support for the reserved memory in the TPM core to find the
 region and map it.
-Since the memory is mapped, not allocated, change all the event log
-allocation functions to managed allocations so that the memory can be
-either automatically freed or unmapped.
 
-Changes since v2:
- - Improve commit message for patch 2
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+---
+ drivers/char/tpm/eventlog/of.c | 38 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-Changes since v1:
- - Use managed memory
-
-Eddie James (2):
-  tpm: Use managed allocation for bios event log
-  tpm: Add reserved memory event log
-
- drivers/char/tpm/eventlog/acpi.c |  5 ++--
- drivers/char/tpm/eventlog/efi.c  | 13 +++++-----
- drivers/char/tpm/eventlog/of.c   | 41 ++++++++++++++++++++++++++++++--
- drivers/char/tpm/tpm-chip.c      |  1 -
- 4 files changed, 49 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/char/tpm/eventlog/of.c b/drivers/char/tpm/eventlog/of.c
+index 741ab2204b11..c815cadf00a4 100644
+--- a/drivers/char/tpm/eventlog/of.c
++++ b/drivers/char/tpm/eventlog/of.c
+@@ -12,12 +12,48 @@
+ 
+ #include <linux/device.h>
+ #include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/ioport.h>
+ #include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_reserved_mem.h>
+ #include <linux/tpm_eventlog.h>
+ 
+ #include "../tpm.h"
+ #include "common.h"
+ 
++static int tpm_read_log_memory_region(struct tpm_chip *chip)
++{
++	struct device_node *node;
++	struct resource res;
++	int rc;
++
++	node = of_parse_phandle(chip->dev.parent->of_node, "memory-region", 0);
++	if (!node) {
++		dev_info(&chip->dev, "no phandle\n");
++		return -ENODEV;
++	}
++
++	rc = of_address_to_resource(node, 0, &res);
++	of_node_put(node);
++	if (rc) {
++		dev_info(&chip->dev, "no mem\n");
++		return rc;
++	}
++
++	chip->log.bios_event_log = devm_memremap(&chip->dev, res.start, resource_size(&res),
++						 MEMREMAP_WB);
++	if (!chip->log.bios_event_log) {
++		dev_info(&chip->dev, "err memremap\n");
++		return -ENOMEM;
++	}
++
++	chip->log.bios_event_log_end = chip->log.bios_event_log + resource_size(&res);
++
++	return chip->flags & TPM_CHIP_FLAG_TPM2 ? EFI_TCG2_EVENT_LOG_FORMAT_TCG_2 :
++		EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2;
++}
++
+ int tpm_read_log_of(struct tpm_chip *chip)
+ {
+ 	struct device_node *np;
+@@ -39,7 +75,7 @@ int tpm_read_log_of(struct tpm_chip *chip)
+ 	sizep = of_get_property(np, "linux,sml-size", NULL);
+ 	basep = of_get_property(np, "linux,sml-base", NULL);
+ 	if (sizep == NULL && basep == NULL)
+-		return -ENODEV;
++		return tpm_read_log_memory_region(chip);
+ 	if (sizep == NULL || basep == NULL)
+ 		return -EIO;
+ 
 -- 
 2.31.1
 
