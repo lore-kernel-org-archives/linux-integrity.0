@@ -2,75 +2,115 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6039FC52D11
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 17:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A65C52D11
+	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 17:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229496AbjAZRXt (ORCPT
+        id S229529AbjAZRbL (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Jan 2023 12:23:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58150 "EHLO
+        Thu, 26 Jan 2023 12:31:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229437AbjAZRXs (ORCPT
+        with ESMTP id S229618AbjAZRbK (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Jan 2023 12:23:48 -0500
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF513EF9F;
-        Thu, 26 Jan 2023 09:23:47 -0800 (PST)
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 30QHJRSd028306;
-        Thu, 26 Jan 2023 11:19:27 -0600
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id 30QHJPDN028305;
-        Thu, 26 Jan 2023 11:19:25 -0600
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Thu, 26 Jan 2023 11:19:25 -0600
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Andrew Donnellan <ajd@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org,
-        sudhakar@linux.ibm.com, bgray@linux.ibm.com, erichte@linux.ibm.com,
-        gregkh@linuxfoundation.org, nayna@linux.ibm.com,
-        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        gjoyce@linux.ibm.com, joel@jms.id.au, ruscur@russell.cc,
-        gcwilson@linux.ibm.com
-Subject: Re: [PATCH v4 02/24] powerpc/pseries: Fix alignment of PLPKS structures and buffers
-Message-ID: <20230126171925.GN25951@gate.crashing.org>
-References: <20230120074306.1326298-1-ajd@linux.ibm.com> <20230120074306.1326298-3-ajd@linux.ibm.com> <87pmb2pxpa.fsf@mpe.ellerman.id.au>
-Mime-Version: 1.0
+        Thu, 26 Jan 2023 12:31:10 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AD535B8;
+        Thu, 26 Jan 2023 09:31:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 84BBEB81EC6;
+        Thu, 26 Jan 2023 17:31:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD7F6C433EF;
+        Thu, 26 Jan 2023 17:31:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674754267;
+        bh=9Vz8fsXf+lHADl26EgvxVXAxd89VK+kOoYuLdZ04b8Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R+ZaJ1JwbBRLypCEQqsJZmWtlCPbI5wt169vH7JxK9Apz5CcunVhrHEvK2lsSkiOK
+         Ih3ji3HAp7SeZAT6S24knFOp4Ci2fTFwTDnb2//ifYpYquodw/i1cU3/5VOC5YrqUU
+         OZsz5Sems8kakccPgt5R8N90+ZxJJ5p+loABXvXXqMdSzvJWywyxeivwxx3PNBsQCW
+         B5OQHXC9NTX9vxPxOoX7F7P12pEdjiTFFQxN5e/ia7nSMloqKuufQrvBh0B0Pu14AJ
+         rTV9h/YPJ5U8ypKzyjJX6v3f0kQE6rvow5ppua1nXfq2SFvW83cp95j2UrDz5uN+K7
+         NPDEUglJ2HwkA==
+Date:   Thu, 26 Jan 2023 17:31:04 +0000
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jgg@ziepe.ca, peterhuewe@gmx.de
+Subject: Re: [PATCH v2 1/2] tpm: Use managed allocation for bios event log
+Message-ID: <Y9K42OYk3WX7VH4E@kernel.org>
+References: <20230113161017.1079299-1-eajames@linux.ibm.com>
+ <20230113161017.1079299-2-eajames@linux.ibm.com>
+ <Y8stxF+2XfSFN9wt@kernel.org>
+ <ea8e873f-c052-832f-b4a5-0164f5cd6947@linux.ibm.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87pmb2pxpa.fsf@mpe.ellerman.id.au>
-User-Agent: Mutt/1.4.2.3i
+In-Reply-To: <ea8e873f-c052-832f-b4a5-0164f5cd6947@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 12:09:53AM +1100, Michael Ellerman wrote:
-> Andrew Donnellan <ajd@linux.ibm.com> writes:
-> > A number of structures and buffers passed to PKS hcalls have alignment
-> > requirements, which could on occasion cause problems:
-> >
-> > - Authorisation structures must be 16-byte aligned and must not cross a
-> >   page boundary
-> >
-> > - Label structures must not cross page boundaries
-> >
-> > - Password output buffers must not cross page boundaries
-> >
-> > Round up the allocations of these structures/buffers to the next power of
-> > 2 to make sure this happens.
+On Wed, Jan 25, 2023 at 01:06:31PM -0600, Eddie James wrote:
 > 
-> It's not the *next* power of 2, it's the *nearest* power of 2, including
-> the initial value if it's already a power of 2.
+> On 1/20/23 18:11, Jarkko Sakkinen wrote:
+> > On Fri, Jan 13, 2023 at 10:10:16AM -0600, Eddie James wrote:
+> > > Since the bios event log is freed in the device release function,
+> > > let devres handle the deallocation. This will allow other memory
+> > > allocation/mapping functions to be used for the bios event log.
+> > > 
+> > > Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> > > ---
+> > >   drivers/char/tpm/eventlog/acpi.c |  5 +++--
+> > >   drivers/char/tpm/eventlog/efi.c  | 13 +++++++------
+> > >   drivers/char/tpm/eventlog/of.c   |  3 ++-
+> > >   drivers/char/tpm/tpm-chip.c      |  1 -
+> > >   4 files changed, 12 insertions(+), 10 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
+> > > index 0913d3eb8d51..40360e599bc3 100644
+> > > --- a/drivers/char/tpm/eventlog/acpi.c
+> > > +++ b/drivers/char/tpm/eventlog/acpi.c
+> > > @@ -14,6 +14,7 @@
+> > >    * Access to the event log extended by the TCG BIOS of PC platform
+> > >    */
+> > > +#include <linux/device.h>
+> > >   #include <linux/seq_file.h>
+> > >   #include <linux/fs.h>
+> > >   #include <linux/security.h>
+> > > @@ -135,7 +136,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+> > >   	}
+> > >   	/* malloc EventLog space */
+> > > -	log->bios_event_log = kmalloc(len, GFP_KERNEL);
+> > > +	log->bios_event_log = devm_kmalloc(&chip->dev, len, GFP_KERNEL);
+> > >   	if (!log->bios_event_log)
+> > >   		return -ENOMEM;
+> > > @@ -160,7 +161,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
+> > >   	return format;
+> > >   err:
+> > > -	kfree(log->bios_event_log);
+> > > +	devm_kfree(&chip->dev, log->bios_event_log);
+> > I wonder do we want to do devm_kfree's at all as the memory is freed during
+> > detach, i.e. taken care by devres.
+> 
+> 
+> I think we should since the chip/tpm driver will continue to probe without
+> the bios event log. Therefore that memory will be wasted if there is some
+> error during bios log setup.
 
-It's not the nearest either, the nearest power of two to 65 is 64.  You
-could say "but, round up" to which I would say "round?"  :-P
+OK, I buy this!
 
-"Adjust the allocation size to be the smallest power of two greater than
-or equal to the given size."
+For this patch:
 
-"Pad to a power of two" in shorthand.  "Padded to a power of two if
-necessary" if you want to emphasise it can be a no-op.
+Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
+If you could refine the description for the 2nd, then these would be ready
+to be picked.
 
-Segher
+> Thanks,
+> 
+> Eddie
+
+BR, Jarkko
