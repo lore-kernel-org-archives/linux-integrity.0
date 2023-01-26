@@ -2,214 +2,162 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62E5C636CB
-	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 21:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F00C05027
+	for <linux-integrity@archiver.kernel.org>; Thu, 26 Jan 2023 21:31:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232795AbjAZVI3 (ORCPT
+        id S232758AbjAZVbA (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 26 Jan 2023 16:08:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41438 "EHLO
+        Thu, 26 Jan 2023 16:31:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232783AbjAZVI0 (ORCPT
+        with ESMTP id S232050AbjAZVbA (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 26 Jan 2023 16:08:26 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD2C3403F;
-        Thu, 26 Jan 2023 13:08:20 -0800 (PST)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30QKjk1L005515;
-        Thu, 26 Jan 2023 21:08:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=+mq+uUeCHrDPWFnwLg2XZ5ZnwCg8EmjbRBNrw7PrWWQ=;
- b=b1neWj9Ua36XB6hx0ssooKQx1eguCh81tHDFhujFC2TNff1niHIu0JIrt7zSeQFJrYFF
- LUNzykEIR29bWgmjOoUPGl3TaUx3L5Rm45gKIMSNAz8M3T4Vmti8EpGaCmI+76P7t0+O
- xW9v2Mg5Cx0HW2FLKMkuJWL0Alod+KfB5hQDGGye1eoGNvAZ7D9WRMMWGbwL7D3LxfIw
- rdrlhZzb19FG9guHK/Wu9nJoeAGAkwrpPx47/juWT6jRVkaoQcIgZeI29QyxJPNtPa3K
- K3u/yhw+TswKQUYgOl1P8SikGAEYJH59V6UuXbNegMnJRk/kxUtsL0eB7FyGX6O6mejs sQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nc0ucrdvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 21:08:16 +0000
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30QKt3Cs012098;
-        Thu, 26 Jan 2023 21:08:16 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nc0ucrdvp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 21:08:16 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30QL4lMZ025665;
-        Thu, 26 Jan 2023 21:08:15 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([9.208.130.100])
-        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3n87p7y35j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 26 Jan 2023 21:08:15 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30QL8DPd31195462
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 26 Jan 2023 21:08:14 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BB01058063;
-        Thu, 26 Jan 2023 21:08:13 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7D3915805F;
-        Thu, 26 Jan 2023 21:08:12 +0000 (GMT)
-Received: from slate16.aus.stglabs.ibm.com (unknown [9.160.3.213])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu, 26 Jan 2023 21:08:12 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
-        stefanb@linux.ibm.com, eajames@linux.ibm.com
-Subject: [PATCH v3 1/2] tpm: Use managed allocation for bios event log
-Date:   Thu, 26 Jan 2023 15:08:09 -0600
-Message-Id: <20230126210810.881119-2-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20230126210810.881119-1-eajames@linux.ibm.com>
-References: <20230126210810.881119-1-eajames@linux.ibm.com>
+        Thu, 26 Jan 2023 16:31:00 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31C8D520;
+        Thu, 26 Jan 2023 13:30:58 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 58BE3B81F21;
+        Thu, 26 Jan 2023 21:30:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 728B7C433D2;
+        Thu, 26 Jan 2023 21:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674768656;
+        bh=GakT+DU3G1IWkvYMyHJ7PmIJbKenlLyYfEtm1r43zCo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j8VmXuo6pnreB0wuvLcADBdapg9fUU6jfuDPv6Ga+8hBThdp1Alfl9KSGExC6mJUN
+         7UnnRzf9VDF8arhDtg9scxseA/oSBgWYrvm8FGsrSBJZHfybcEGwJFQ3DryGjE4cxY
+         dQeqFhMVPqPXzzl4CKF3+dedgFDQeRyejXJGC9yRxpy58vChFHcfxlZBEwFsv1qnOU
+         9GyD2yZuYpfPbsTjg2SZZjyl+2R0BKKJJL8G3nY8Ll5V69wugUzkZa4lJrsUF/gq8D
+         td6srB+uQpp08Bnvmsngqr5inFftYH8HyjcQC3S47u1Bbnvey95sm5ZXtU+dwnIvIa
+         Fwx48anoEkmow==
+Date:   Thu, 26 Jan 2023 21:30:53 +0000
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     William Roberts <bill.c.roberts@gmail.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Matthew Garrett <mgarrett@aurora.tech>,
+        Evan Green <evgreen@chromium.org>,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-integrity@vger.kernel.org,
+        Eric Biggers <ebiggers@kernel.org>, gwendal@chromium.org,
+        dianders@chromium.org, apronin@chromium.org,
+        Pavel Machek <pavel@ucw.cz>, Ben Boeckel <me@benboeckel.net>,
+        rjw@rjwysocki.net, Kees Cook <keescook@chromium.org>,
+        dlunev@google.com, zohar@linux.ibm.com, linux-pm@vger.kernel.org,
+        Matthew Garrett <mjg59@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>
+Subject: Re: [PATCH v5 03/11] tpm: Allow PCR 23 to be restricted to
+ kernel-only use
+Message-ID: <Y9LxDYYEp0qTfhqN@kernel.org>
+References: <8ae56656a461d7b957b93778d716c6161070383a.camel@linux.ibm.com>
+ <CAHSSk06sH6Ck11R7k8Pk_30KbzLzZVdBdj5MpsNfY-R_1kt_dA@mail.gmail.com>
+ <CAFftDdqUOiysgrAC4wPUXRaEWz4j9V6na3u4bm29AfxE8TAyXw@mail.gmail.com>
+ <CAHSSk04asd_ac8KLJYNRyR1Z+fD+iUb+UxjUu0U=HbT1-2R7Ag@mail.gmail.com>
+ <08302ed1c056da86a71aa2e6ca19111075383e75.camel@linux.ibm.com>
+ <Y8tcEtr8Kl3p4qtA@kernel.org>
+ <CAFftDdoVraQVKLZGc6gMpZRyyK+LEO3cwjLhKM61qbp8ZSRYrg@mail.gmail.com>
+ <5fb9193be57d22131feecf8b39dffbb03af3f60a.camel@linux.ibm.com>
+ <Y9K2mOsmB1+CFk9l@kernel.org>
+ <CAFftDdqq-eeryycv_11m=-1+aR=cgCUU7C_BFDrmYRwFF13i5w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: iwH1BWMtMax_V1_rlD64QmVl6B3or2Xd
-X-Proofpoint-ORIG-GUID: gn_vLukJEEy3ceATWVIQHXF6EpAlptIg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
- definitions=2023-01-26_09,2023-01-26_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301260198
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFftDdqq-eeryycv_11m=-1+aR=cgCUU7C_BFDrmYRwFF13i5w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Since the bios event log is freed in the device release function,
-let devres handle the deallocation. This will allow other memory
-allocation/mapping functions to be used for the bios event log.
+On Thu, Jan 26, 2023 at 11:32:22AM -0600, William Roberts wrote:
+> On Thu, Jan 26, 2023 at 11:21 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Tue, Jan 24, 2023 at 07:38:04AM -0500, James Bottomley wrote:
+> > > On Mon, 2023-01-23 at 11:48 -0600, William Roberts wrote:
+> > > > On Fri, Jan 20, 2023 at 9:29 PM Jarkko Sakkinen <jarkko@kernel.org>
+> > > > wrote:
+> > > > >
+> > > > > On Sat, Jan 14, 2023 at 09:55:37AM -0500, James Bottomley wrote:
+> > > > > > On Tue, 2023-01-03 at 13:10 -0800, Matthew Garrett wrote:
+> > > > > > > On Tue, Jan 3, 2023 at 1:05 PM William Roberts
+> > > > > > > <bill.c.roberts@gmail.com> wrote:
+> > > > > > >
+> > > > > > > > What's the use case of using the creation data and ticket in
+> > > > > > > > this context? Who gets the creationData and the ticket?
+> > > > > > > > Could a user supplied outsideInfo work? IIRC I saw some
+> > > > > > > > patches flying around where the sessions will get encrypted
+> > > > > > > > and presumably correctly as well. This would allow the
+> > > > > > > > transfer of that outsideInfo, like the NV Index PCR value to
+> > > > > > > > be included and integrity protected by the session HMAC.
+> > > > > > >
+> > > > > > > The goal is to ensure that the key was generated by the kernel.
+> > > > > > > In the absence of the creation data, an attacker could generate
+> > > > > > > a hibernation image using their own key and trick the kernel
+> > > > > > > into resuming arbitrary code. We don't have any way to pass
+> > > > > > > secret data from the hibernate kernel to the resume kernel, so
+> > > > > > > I don't think there's any easy way to do it with outsideinfo.
+> > > > > >
+> > > > > > Can we go back again to why you can't use locality?  It's exactly
+> > > > > > designed for this since locality is part of creation data.
+> > > > > > Currently everything only uses locality 0, so it's impossible for
+> > > > > > anyone on Linux to produce a key with anything other than 0 in
+> > > > > > the creation data for locality.  However, the dynamic launch
+> > > > > > people are proposing that the Kernel should use Locality 2 for
+> > > > > > all its operations, which would allow you to distinguish a key
+> > > > > > created by the kernel from one created by a user by locality.
+> > > > > >
+> > > > > > I think the previous objection was that not all TPMs implement
+> > > > > > locality, but then not all laptops have TPMs either, so if you
+> > > > > > ever come across one which has a TPM but no locality, it's in a
+> > > > > > very similar security boat to one which has no TPM.
+> > > > >
+> > > > > Kernel could try to use locality 2 and use locality 0 as fallback.
+> > > >
+> > > > I don't think that would work for Matthew, they need something
+> > > > reliable to indicate key provenance.
+> > >
+> > > No, I think it would be good enough: locality 0 means anyone (including
+> > > the kernel on a machine which doesn't function correctly) could have
+> > > created this key.  Locality 2 would mean only the kernel could have
+> > > created this key.
+> > >
+> > > By the time the kernel boots and before it loads the hibernation image
+> > > it will know the answer to the question "does my TPM support locality
+> > > 2", so it can use that in its security assessment: if the kernel
+> > > supports locality 2 and the key wasn't created in locality 2 then
+> > > assume an attack.  Obviously, if the kernel doesn't support locality 2
+> > > then the hibernation resume has to accept any old key, but that's the
+> > > same as the situation today.
+> >
+> > This sounds otherwise great to me but why bother even allowing a
+> > machine with no-locality TPM to be involved with hibernate? Simply
+> > detect locality support during driver initialization and disallow
+> > sealed hibernation (or whatever the feature was called) if localities
+> > were not detected.
+> >
+> > I get supporting old hardware with old features but it does not make
+> > sense to maintain new features with hardware, which clearly does not
+> > scale, right?
+> >
+> > BR, Jarkko
+> 
+> Here's a thought, what if we had a static/cmd line configurable
+> no-auth NV Index and writelocked it with the expected key information,
+> name or something. I guess the problem is atomicity with write/lock,
+> but can't the kernel lock out all other users?
+> 
+> An attacker would need to issue tpm2_startup, which in this case would DOS
+> the kernel in both scenarios. If an attacker already wrote and locked the NV
+> index, that would also be a DOS. If they already wrote it, the kernel simply
+> writes whatever they want. Is there an attack I am missing?
+> 
+> I guess the issue here would be setup, since creating the NV index requires
+> hierarchy auth, does the kernel have platform auth or is that already shut down
+> by firmware (I can't recall)? A null hierarchy volatile lockable index would be
+> nice for this, too bad that doesn't exist.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
-Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/eventlog/acpi.c |  5 +++--
- drivers/char/tpm/eventlog/efi.c  | 13 +++++++------
- drivers/char/tpm/eventlog/of.c   |  3 ++-
- drivers/char/tpm/tpm-chip.c      |  1 -
- 4 files changed, 12 insertions(+), 10 deletions(-)
+How do you see this would better when compared to finding a way to use
+locality, which could potentially be made to somewhat simple to setup
+(practically zero config)?
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 0913d3eb8d51..40360e599bc3 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -14,6 +14,7 @@
-  * Access to the event log extended by the TCG BIOS of PC platform
-  */
- 
-+#include <linux/device.h>
- #include <linux/seq_file.h>
- #include <linux/fs.h>
- #include <linux/security.h>
-@@ -135,7 +136,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	}
- 
- 	/* malloc EventLog space */
--	log->bios_event_log = kmalloc(len, GFP_KERNEL);
-+	log->bios_event_log = devm_kmalloc(&chip->dev, len, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		return -ENOMEM;
- 
-@@ -160,7 +161,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	return format;
- 
- err:
--	kfree(log->bios_event_log);
-+	devm_kfree(&chip->dev, log->bios_event_log);
- 	log->bios_event_log = NULL;
- 	return ret;
- }
-diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
-index e6cb9d525e30..4e9d7c2bf32e 100644
---- a/drivers/char/tpm/eventlog/efi.c
-+++ b/drivers/char/tpm/eventlog/efi.c
-@@ -6,6 +6,7 @@
-  *      Thiebaud Weksteen <tweek@google.com>
-  */
- 
-+#include <linux/device.h>
- #include <linux/efi.h>
- #include <linux/tpm_eventlog.h>
- 
-@@ -55,7 +56,7 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 	}
- 
- 	/* malloc EventLog space */
--	log->bios_event_log = kmemdup(log_tbl->log, log_size, GFP_KERNEL);
-+	log->bios_event_log = devm_kmemdup(&chip->dev, log_tbl->log, log_size, GFP_KERNEL);
- 	if (!log->bios_event_log) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -76,7 +77,7 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 			     MEMREMAP_WB);
- 	if (!final_tbl) {
- 		pr_err("Could not map UEFI TPM final log\n");
--		kfree(log->bios_event_log);
-+		devm_kfree(&chip->dev, log->bios_event_log);
- 		ret = -ENOMEM;
- 		goto out;
- 	}
-@@ -91,11 +92,11 @@ int tpm_read_log_efi(struct tpm_chip *chip)
- 	 * Allocate memory for the 'combined log' where we will append the
- 	 * 'final events log' to.
- 	 */
--	tmp = krealloc(log->bios_event_log,
--		       log_size + final_events_log_size,
--		       GFP_KERNEL);
-+	tmp = devm_krealloc(&chip->dev, log->bios_event_log,
-+			    log_size + final_events_log_size,
-+			    GFP_KERNEL);
- 	if (!tmp) {
--		kfree(log->bios_event_log);
-+		devm_kfree(&chip->dev, log->bios_event_log);
- 		ret = -ENOMEM;
- 		goto out;
- 	}
-diff --git a/drivers/char/tpm/eventlog/of.c b/drivers/char/tpm/eventlog/of.c
-index a9ce66d09a75..741ab2204b11 100644
---- a/drivers/char/tpm/eventlog/of.c
-+++ b/drivers/char/tpm/eventlog/of.c
-@@ -10,6 +10,7 @@
-  * Read the event log created by the firmware on PPC64
-  */
- 
-+#include <linux/device.h>
- #include <linux/slab.h>
- #include <linux/of.h>
- #include <linux/tpm_eventlog.h>
-@@ -65,7 +66,7 @@ int tpm_read_log_of(struct tpm_chip *chip)
- 		return -EIO;
- 	}
- 
--	log->bios_event_log = kmemdup(__va(base), size, GFP_KERNEL);
-+	log->bios_event_log = devm_kmemdup(&chip->dev, __va(base), size, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		return -ENOMEM;
- 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 741d8f3e8fb3..b99f55f2d4fd 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -267,7 +267,6 @@ static void tpm_dev_release(struct device *dev)
- 	idr_remove(&dev_nums_idr, chip->dev_num);
- 	mutex_unlock(&idr_lock);
- 
--	kfree(chip->log.bios_event_log);
- 	kfree(chip->work_space.context_buf);
- 	kfree(chip->work_space.session_buf);
- 	kfree(chip->allocated_banks);
--- 
-2.31.1
-
+BR, Jarkko
