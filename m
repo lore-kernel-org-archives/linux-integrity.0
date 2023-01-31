@@ -2,68 +2,68 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4247C6379F
-	for <linux-integrity@archiver.kernel.org>; Tue, 31 Jan 2023 06:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BECAC63797
+	for <linux-integrity@archiver.kernel.org>; Tue, 31 Jan 2023 06:40:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230329AbjAaGkj (ORCPT
+        id S230511AbjAaGkk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 31 Jan 2023 01:40:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35804 "EHLO
+        Tue, 31 Jan 2023 01:40:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229884AbjAaGk0 (ORCPT
+        with ESMTP id S230268AbjAaGk0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 31 Jan 2023 01:40:26 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F4C33D08E;
-        Mon, 30 Jan 2023 22:40:25 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V5PYO2029039;
-        Tue, 31 Jan 2023 06:40:17 GMT
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3C823CE3B;
+        Mon, 30 Jan 2023 22:40:24 -0800 (PST)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V622CN020706;
+        Tue, 31 Jan 2023 06:40:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=U8C+0QlsWH7fAWudF9ims90JHfDey/gQjvgG2A7qCyg=;
- b=aKyB2/Po6mi6UPAx5Mb3498lqP7brZEajgINwM/4hH49tukgYHamN7LmvMXdDycxmfaJ
- rX9N7YxxcM4IrxmqcLYd4U4TYBscU+KFJ5GaksecXmVYE5kW0k1IsPNadB4xmQX5seG+
- qWmCkTi9+YLGyB9NxY8m/dsO8H2yob3/qMHjxvmTESzat1fCED0JaJdqFIZF4rpmROCO
- LHnSuSdFA6oCMzcLccZ8IQpBoSGiOGakJMLO4U9rO9obF4LfCd904vDReNqLCffMsb92
- 81yRW9saiGBbcPTsGCmWTwsPoiDjAAv3efeavI2yFVw9AchCYEIn3qV7A3Onq97Ort/j HQ== 
+ bh=xTlYStkg39Zq6lksZloGiyJlSyVApYtqi6JfwV+gBgc=;
+ b=dD58UcCcy8BHJN8IyuSEG3UYdf8f8tGtS4mmouwl7N4IH4JxHCg4oyHVrqjPPICTwJ4m
+ J3Y0cub8KdcgmQyP1EN3Kn9nCe2AWflJG6RaHEH/eHjvg8R7ef02FkSJZPwgtr9qCLMi
+ s04SiJIPqKHWi1S16QHqbG/D8bAIKkoL5vLgWvGL+L15B5X+q6UeqTwdAfc4NSP3Ne6q
+ /jukFztTgBK6JWl/OjyeWiR8EtvtbSIrQrjDL8b+VUKomBsQoWr1bPmhIL0QkWCziLWq
+ fA767JNVWq21EkBrh8lrGAMQMHPlnloNewvuyQ5YZd+Zi7jIeX0QyNikXXpnS/qWWhPW ug== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nevu21dks-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3newc40rsu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 06:40:17 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30V5ul1h003960;
-        Tue, 31 Jan 2023 06:40:16 GMT
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nevu21djw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 06:40:16 +0000
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30UCZfOd025984;
+        Tue, 31 Jan 2023 06:40:15 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30V6eEM7003654;
         Tue, 31 Jan 2023 06:40:14 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-        by ppma04fra.de.ibm.com (PPS) with ESMTPS id 3ndn6u9g29-1
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3newc40rrj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Tue, 31 Jan 2023 06:40:14 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30V6eBCv36766190
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30UKGT0g020245;
+        Tue, 31 Jan 2023 06:40:12 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+        by ppma04fra.de.ibm.com (PPS) with ESMTPS id 3ndn6u9g25-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Jan 2023 06:40:12 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+        by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30V6e9do47448450
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jan 2023 06:40:11 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFD2E20043;
-        Tue, 31 Jan 2023 06:40:11 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 40B1720040;
-        Tue, 31 Jan 2023 06:40:11 +0000 (GMT)
+        Tue, 31 Jan 2023 06:40:09 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EDCE220040;
+        Tue, 31 Jan 2023 06:40:06 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EECB22004E;
+        Tue, 31 Jan 2023 06:40:05 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Jan 2023 06:40:11 +0000 (GMT)
+        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jan 2023 06:40:05 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.au.ibm.com (unknown [9.192.255.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 91117609C1;
-        Tue, 31 Jan 2023 17:40:05 +1100 (AEDT)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 14E1860687;
+        Tue, 31 Jan 2023 17:40:04 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
 Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
@@ -71,116 +71,166 @@ Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
         stefanb@linux.ibm.com, sudhakar@linux.ibm.com,
         erichte@linux.ibm.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
-        npiggin@gmail.com
-Subject: [PATCH v5 25/25] integrity/powerpc: Support loading keys from PLPKS
-Date:   Tue, 31 Jan 2023 17:39:28 +1100
-Message-Id: <20230131063928.388035-26-ajd@linux.ibm.com>
+        npiggin@gmail.com, Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH v5 04/25] powerpc/secvar: Use u64 in secvar_operations
+Date:   Tue, 31 Jan 2023 17:39:07 +1100
+Message-Id: <20230131063928.388035-5-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230131063928.388035-1-ajd@linux.ibm.com>
 References: <20230131063928.388035-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R9n9s5sVcu5b0hLQV2-aSv-Va5U5mqMs
-X-Proofpoint-GUID: 9-uGLIuU0-_4AgdcK_5hb4nrg6CEJCXv
+X-Proofpoint-ORIG-GUID: iKuhbGJKiOoOMfoMoV3fignntOHeeFRX
+X-Proofpoint-GUID: Tb0QZm_jqZD9qcMKBFQX0wBUUr23CFOT
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-31_02,2023-01-30_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2301310059
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999 clxscore=1015
+ suspectscore=0 bulkscore=0 impostorscore=0 spamscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2301310059
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Russell Currey <ruscur@russell.cc>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-Add support for loading keys from the PLPKS on pseries machines, with the
-"ibm,plpks-sb-v1" format.
+There's no reason for secvar_operations to use uint64_t vs the more
+common kernel type u64.
 
-The object format is expected to be the same, so there shouldn't be any
-functional differences between objects retrieved on powernv or pseries.
+The types are compatible, but they require different printk format
+strings which can lead to confusion.
 
-Unlike on powernv, on pseries the format string isn't contained in the
-device tree. Use secvar_ops->format() to fetch the format string in a
-generic manner, rather than searching the device tree ourselves.
+Change all the secvar related routines to use u64.
 
-(The current code searches the device tree for a node compatible with
-"ibm,edk2-compat-v1". This patch switches to calling secvar_ops->format(),
-which in the case of OPAL/powernv means opal_secvar_format(), which
-searches the device tree for a node compatible with "ibm,secvar-backend"
-and checks its "format" property. These are equivalent, as skiboot creates
-a node with both "ibm,edk2-compat-v1" and "ibm,secvar-backend" as
-compatible strings.)
-
-Signed-off-by: Russell Currey <ruscur@russell.cc>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: Russell Currey <ruscur@russell.cc>
+Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 
 ---
 
-v3: New patch
-
-v4: Pass format buffer size (stefanb, npiggin)
-
-v5: Use sizeof(buf) rather than stating the size twice (npiggin)
-
-    Clarify change to DT compatible strings in commit message (zohar)
-
-    Reword commit message a bit (ajd)
+v3: Include new patch
 ---
- .../integrity/platform_certs/load_powerpc.c     | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ arch/powerpc/include/asm/secvar.h                | 9 +++------
+ arch/powerpc/kernel/secvar-sysfs.c               | 8 ++++----
+ arch/powerpc/platforms/powernv/opal-secvar.c     | 9 +++------
+ security/integrity/platform_certs/load_powerpc.c | 4 ++--
+ 4 files changed, 12 insertions(+), 18 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/secvar.h b/arch/powerpc/include/asm/secvar.h
+index 4cc35b58b986..07ba36f868a7 100644
+--- a/arch/powerpc/include/asm/secvar.h
++++ b/arch/powerpc/include/asm/secvar.h
+@@ -14,12 +14,9 @@
+ extern const struct secvar_operations *secvar_ops;
+ 
+ struct secvar_operations {
+-	int (*get)(const char *key, uint64_t key_len, u8 *data,
+-		   uint64_t *data_size);
+-	int (*get_next)(const char *key, uint64_t *key_len,
+-			uint64_t keybufsize);
+-	int (*set)(const char *key, uint64_t key_len, u8 *data,
+-		   uint64_t data_size);
++	int (*get)(const char *key, u64 key_len, u8 *data, u64 *data_size);
++	int (*get_next)(const char *key, u64 *key_len, u64 keybufsize);
++	int (*set)(const char *key, u64 key_len, u8 *data, u64 data_size);
+ };
+ 
+ #ifdef CONFIG_PPC_SECURE_BOOT
+diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
+index 7fa5f8ed9542..702044edf14d 100644
+--- a/arch/powerpc/kernel/secvar-sysfs.c
++++ b/arch/powerpc/kernel/secvar-sysfs.c
+@@ -47,7 +47,7 @@ static ssize_t format_show(struct kobject *kobj, struct kobj_attribute *attr,
+ static ssize_t size_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 			 char *buf)
+ {
+-	uint64_t dsize;
++	u64 dsize;
+ 	int rc;
+ 
+ 	rc = secvar_ops->get(kobj->name, strlen(kobj->name) + 1, NULL, &dsize);
+@@ -64,8 +64,8 @@ static ssize_t data_read(struct file *filep, struct kobject *kobj,
+ 			 struct bin_attribute *attr, char *buf, loff_t off,
+ 			 size_t count)
+ {
+-	uint64_t dsize;
+ 	char *data;
++	u64 dsize;
+ 	int rc;
+ 
+ 	rc = secvar_ops->get(kobj->name, strlen(kobj->name) + 1, NULL, &dsize);
+@@ -166,9 +166,9 @@ static int update_kobj_size(void)
+ 
+ static int secvar_sysfs_load(void)
+ {
+-	char *name;
+-	uint64_t namesize = 0;
+ 	struct kobject *kobj;
++	u64 namesize = 0;
++	char *name;
+ 	int rc;
+ 
+ 	name = kzalloc(NAME_MAX_SIZE, GFP_KERNEL);
+diff --git a/arch/powerpc/platforms/powernv/opal-secvar.c b/arch/powerpc/platforms/powernv/opal-secvar.c
+index 14133e120bdd..ef89861569e0 100644
+--- a/arch/powerpc/platforms/powernv/opal-secvar.c
++++ b/arch/powerpc/platforms/powernv/opal-secvar.c
+@@ -54,8 +54,7 @@ static int opal_status_to_err(int rc)
+ 	return err;
+ }
+ 
+-static int opal_get_variable(const char *key, uint64_t ksize,
+-			     u8 *data, uint64_t *dsize)
++static int opal_get_variable(const char *key, u64 ksize, u8 *data, u64 *dsize)
+ {
+ 	int rc;
+ 
+@@ -71,8 +70,7 @@ static int opal_get_variable(const char *key, uint64_t ksize,
+ 	return opal_status_to_err(rc);
+ }
+ 
+-static int opal_get_next_variable(const char *key, uint64_t *keylen,
+-				  uint64_t keybufsize)
++static int opal_get_next_variable(const char *key, u64 *keylen, u64 keybufsize)
+ {
+ 	int rc;
+ 
+@@ -88,8 +86,7 @@ static int opal_get_next_variable(const char *key, uint64_t *keylen,
+ 	return opal_status_to_err(rc);
+ }
+ 
+-static int opal_set_variable(const char *key, uint64_t ksize, u8 *data,
+-			     uint64_t dsize)
++static int opal_set_variable(const char *key, u64 ksize, u8 *data, u64 dsize)
+ {
+ 	int rc;
+ 
 diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-index dee51606d5f4..b9de70b90826 100644
+index a2900cb85357..1e4f80a4e71c 100644
 --- a/security/integrity/platform_certs/load_powerpc.c
 +++ b/security/integrity/platform_certs/load_powerpc.c
-@@ -10,7 +10,6 @@
- #include <linux/cred.h>
- #include <linux/err.h>
- #include <linux/slab.h>
--#include <linux/of.h>
- #include <asm/secure_boot.h>
- #include <asm/secvar.h>
- #include "keyring_handler.h"
-@@ -59,16 +58,22 @@ static int __init load_powerpc_certs(void)
+@@ -18,7 +18,7 @@
+ /*
+  * Get a certificate list blob from the named secure variable.
+  */
+-static __init void *get_cert_list(u8 *key, unsigned long keylen, uint64_t *size)
++static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
+ {
+ 	int rc;
+ 	void *db;
+@@ -51,7 +51,7 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, uint64_t *size)
+ static int __init load_powerpc_certs(void)
+ {
  	void *db = NULL, *dbx = NULL;
- 	u64 dbsize = 0, dbxsize = 0;
+-	uint64_t dbsize = 0, dbxsize = 0;
++	u64 dbsize = 0, dbxsize = 0;
  	int rc = 0;
--	struct device_node *node;
-+	ssize_t len;
-+	char buf[32];
+ 	struct device_node *node;
  
- 	if (!secvar_ops)
- 		return -ENODEV;
- 
--	/* The following only applies for the edk2-compat backend. */
--	node = of_find_compatible_node(NULL, NULL, "ibm,edk2-compat-v1");
--	if (!node)
-+	len = secvar_ops->format(buf, sizeof(buf));
-+	if (len <= 0)
- 		return -ENODEV;
- 
-+	// Check for known secure boot implementations from OPAL or PLPKS
-+	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf)) {
-+		pr_err("Unsupported secvar implementation \"%s\", not loading certs\n", buf);
-+		return -ENODEV;
-+	}
-+
- 	/*
- 	 * Get db, and dbx. They might not exist, so it isn't an error if we
- 	 * can't get them.
-@@ -103,8 +108,6 @@ static int __init load_powerpc_certs(void)
- 		kfree(dbx);
- 	}
- 
--	of_node_put(node);
--
- 	return rc;
- }
- late_initcall(load_powerpc_certs);
 -- 
 2.39.1
 
