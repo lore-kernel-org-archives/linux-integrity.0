@@ -2,67 +2,67 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD84C636CD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4247C6379F
 	for <linux-integrity@archiver.kernel.org>; Tue, 31 Jan 2023 06:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230215AbjAaGkj (ORCPT
+        id S230329AbjAaGkj (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Tue, 31 Jan 2023 01:40:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229686AbjAaGk0 (ORCPT
+        with ESMTP id S229884AbjAaGk0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Tue, 31 Jan 2023 01:40:26 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1193E08C;
-        Mon, 30 Jan 2023 22:40:24 -0800 (PST)
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V6IY0h004158;
-        Tue, 31 Jan 2023 06:40:16 GMT
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F4C33D08E;
+        Mon, 30 Jan 2023 22:40:25 -0800 (PST)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V5PYO2029039;
+        Tue, 31 Jan 2023 06:40:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=G0fVIZuQLtZFyHOkb1iCcvNuLmCiPYYFNMTF6Yodh5k=;
- b=Fbys/PTI8ZDdlRwCVjmQqeeMoOPjfvJyid7G8o3RAClOCZH6HFQ12kenpmIWQZAq9knI
- tkZjY5uZiwcfMYPQ0IjBLYp3zHFMSOovN2Tp4nBqMkG1nA+e9RvVGcr2z1cWPgXyTkrU
- rvq2pOQtbUm+MzpwlM2hnmh/WY2dMiA/8B6LOa9nU/PqhkAVLAE/a7MbT6TNPcNx92cd
- rbGu0F1hvgqQNkSilIzdiL/Q0lk0F1jsoj3FrKefnewxs8rlxj2jp0xOIO+T8K8TYmKk
- HjMowf8x7MX4AKY7VZEQIo+iV7FCJCsbFftiJQ942oPNvVd9hO1o2vuxgMUVCvX6AeL5 wg== 
+ bh=U8C+0QlsWH7fAWudF9ims90JHfDey/gQjvgG2A7qCyg=;
+ b=aKyB2/Po6mi6UPAx5Mb3498lqP7brZEajgINwM/4hH49tukgYHamN7LmvMXdDycxmfaJ
+ rX9N7YxxcM4IrxmqcLYd4U4TYBscU+KFJ5GaksecXmVYE5kW0k1IsPNadB4xmQX5seG+
+ qWmCkTi9+YLGyB9NxY8m/dsO8H2yob3/qMHjxvmTESzat1fCED0JaJdqFIZF4rpmROCO
+ LHnSuSdFA6oCMzcLccZ8IQpBoSGiOGakJMLO4U9rO9obF4LfCd904vDReNqLCffMsb92
+ 81yRW9saiGBbcPTsGCmWTwsPoiDjAAv3efeavI2yFVw9AchCYEIn3qV7A3Onq97Ort/j HQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3newkwgf12-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nevu21dks-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Jan 2023 06:40:17 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30V5ul1h003960;
+        Tue, 31 Jan 2023 06:40:16 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nevu21djw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Tue, 31 Jan 2023 06:40:16 +0000
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30V6TgRr011186;
-        Tue, 31 Jan 2023 06:40:15 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3newkwgf01-1
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30UCZfOd025984;
+        Tue, 31 Jan 2023 06:40:14 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+        by ppma04fra.de.ibm.com (PPS) with ESMTPS id 3ndn6u9g29-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 06:40:15 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30UCtaYG012460;
-        Tue, 31 Jan 2023 06:40:13 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3ncvs7k436-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 06:40:13 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30V6eB6m23069274
+        Tue, 31 Jan 2023 06:40:14 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30V6eBCv36766190
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Tue, 31 Jan 2023 06:40:11 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A66D20040;
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BFD2E20043;
         Tue, 31 Jan 2023 06:40:11 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4D65C2004E;
-        Tue, 31 Jan 2023 06:40:10 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 40B1720040;
+        Tue, 31 Jan 2023 06:40:11 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Jan 2023 06:40:10 +0000 (GMT)
+        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jan 2023 06:40:11 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.au.ibm.com (unknown [9.192.255.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 512F4609BC;
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 91117609C1;
         Tue, 31 Jan 2023 17:40:05 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
@@ -72,23 +72,23 @@ Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
         erichte@linux.ibm.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
         npiggin@gmail.com
-Subject: [PATCH v5 22/25] powerpc/pseries: Pass PLPKS password on kexec
-Date:   Tue, 31 Jan 2023 17:39:25 +1100
-Message-Id: <20230131063928.388035-23-ajd@linux.ibm.com>
+Subject: [PATCH v5 25/25] integrity/powerpc: Support loading keys from PLPKS
+Date:   Tue, 31 Jan 2023 17:39:28 +1100
+Message-Id: <20230131063928.388035-26-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230131063928.388035-1-ajd@linux.ibm.com>
 References: <20230131063928.388035-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EFGriNSuUTPOnvAQy2B6cA7ePijGPyF2
-X-Proofpoint-ORIG-GUID: Gqd9rvwleJVWnDo4si71zOwNO2WesUsl
+X-Proofpoint-ORIG-GUID: R9n9s5sVcu5b0hLQV2-aSv-Va5U5mqMs
+X-Proofpoint-GUID: 9-uGLIuU0-_4AgdcK_5hb4nrg6CEJCXv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-31_02,2023-01-30_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- impostorscore=0 mlxscore=0 suspectscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 clxscore=1015 bulkscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ phishscore=0 priorityscore=1501 adultscore=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 spamscore=0
  lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2301310059
 Precedence: bulk
@@ -97,17 +97,23 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Russell Currey <ruscur@russell.cc>
 
-Before interacting with the PLPKS, we ask the hypervisor to generate a
-password for the current boot, which is then required for most further
-PLPKS operations.
+Add support for loading keys from the PLPKS on pseries machines, with the
+"ibm,plpks-sb-v1" format.
 
-If we kexec into a new kernel, the new kernel will try and fail to
-generate a new password, as the password has already been set.
+The object format is expected to be the same, so there shouldn't be any
+functional differences between objects retrieved on powernv or pseries.
 
-Pass the password through to the new kernel via the device tree, in
-/chosen/ibm,plpks-pw. Check for the presence of this property before
-trying to generate a new password - if it exists, use the existing
-password and remove it from the device tree.
+Unlike on powernv, on pseries the format string isn't contained in the
+device tree. Use secvar_ops->format() to fetch the format string in a
+generic manner, rather than searching the device tree ourselves.
+
+(The current code searches the device tree for a node compatible with
+"ibm,edk2-compat-v1". This patch switches to calling secvar_ops->format(),
+which in the case of OPAL/powernv means opal_secvar_format(), which
+searches the device tree for a node compatible with "ibm,secvar-backend"
+and checks its "format" property. These are equivalent, as skiboot creates
+a node with both "ibm,edk2-compat-v1" and "ibm,secvar-backend" as
+compatible strings.)
 
 Signed-off-by: Russell Currey <ruscur@russell.cc>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
@@ -116,205 +122,65 @@ Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 
 v3: New patch
 
-v4: Fix compile when CONFIG_PSERIES_PLPKS=n (snowpatch)
+v4: Pass format buffer size (stefanb, npiggin)
 
-    Fix error handling on fdt_path_offset() call (ruscur)
+v5: Use sizeof(buf) rather than stating the size twice (npiggin)
 
-v5: Fix DT property name in commit message (npiggin)
+    Clarify change to DT compatible strings in commit message (zohar)
 
-    Clear prop in FDT during init to prevent password exposure (mpe)
-
-    Rework to remove ifdefs from C code (npiggin)
+    Reword commit message a bit (ajd)
 ---
- arch/powerpc/include/asm/plpks.h       | 14 ++++++
- arch/powerpc/kernel/prom.c             |  4 ++
- arch/powerpc/kexec/file_load_64.c      | 15 +++++--
- arch/powerpc/platforms/pseries/plpks.c | 60 ++++++++++++++++++++++++++
- 4 files changed, 90 insertions(+), 3 deletions(-)
+ .../integrity/platform_certs/load_powerpc.c     | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/plpks.h b/arch/powerpc/include/asm/plpks.h
-index 757313e00521..23b77027c916 100644
---- a/arch/powerpc/include/asm/plpks.h
-+++ b/arch/powerpc/include/asm/plpks.h
-@@ -176,6 +176,20 @@ u64 plpks_get_signedupdatealgorithms(void);
-  */
- u16 plpks_get_passwordlen(void);
+diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+index dee51606d5f4..b9de70b90826 100644
+--- a/security/integrity/platform_certs/load_powerpc.c
++++ b/security/integrity/platform_certs/load_powerpc.c
+@@ -10,7 +10,6 @@
+ #include <linux/cred.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
+-#include <linux/of.h>
+ #include <asm/secure_boot.h>
+ #include <asm/secvar.h>
+ #include "keyring_handler.h"
+@@ -59,16 +58,22 @@ static int __init load_powerpc_certs(void)
+ 	void *db = NULL, *dbx = NULL;
+ 	u64 dbsize = 0, dbxsize = 0;
+ 	int rc = 0;
+-	struct device_node *node;
++	ssize_t len;
++	char buf[32];
  
-+/**
-+ * Called in early init to retrieve and clear the PLPKS password from the DT.
-+ */
-+void plpks_early_init_devtree(void);
+ 	if (!secvar_ops)
+ 		return -ENODEV;
+ 
+-	/* The following only applies for the edk2-compat backend. */
+-	node = of_find_compatible_node(NULL, NULL, "ibm,edk2-compat-v1");
+-	if (!node)
++	len = secvar_ops->format(buf, sizeof(buf));
++	if (len <= 0)
+ 		return -ENODEV;
+ 
++	// Check for known secure boot implementations from OPAL or PLPKS
++	if (strcmp("ibm,edk2-compat-v1", buf) && strcmp("ibm,plpks-sb-v1", buf)) {
++		pr_err("Unsupported secvar implementation \"%s\", not loading certs\n", buf);
++		return -ENODEV;
++	}
 +
-+/**
-+ * Populates the FDT with the PLPKS password to prepare for kexec.
-+ */
-+int plpks_populate_fdt(void *fdt);
-+#else // CONFIG_PSERIES_PLPKS
-+static inline bool plpks_is_available(void) { return false; }
-+static inline u16 plpks_get_passwordlen(void) { BUILD_BUG(); }
-+static inline void plpks_early_init_devtree(void) { }
-+static inline int plpks_populate_fdt(void *fdt) { BUILD_BUG(); }
- #endif // CONFIG_PSERIES_PLPKS
- 
- #endif // _ASM_POWERPC_PLPKS_H
-diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
-index 4f1c920aa13e..8a13b378770f 100644
---- a/arch/powerpc/kernel/prom.c
-+++ b/arch/powerpc/kernel/prom.c
-@@ -56,6 +56,7 @@
- #include <asm/drmem.h>
- #include <asm/ultravisor.h>
- #include <asm/prom.h>
-+#include <asm/plpks.h>
- 
- #include <mm/mmu_decl.h>
- 
-@@ -893,6 +894,9 @@ void __init early_init_devtree(void *params)
- 		powerpc_firmware_features |= FW_FEATURE_PS3_POSSIBLE;
- #endif
- 
-+	/* If kexec left a PLPKS password in the DT, get it and clear it */
-+	plpks_early_init_devtree();
-+
- 	tm_init();
- 
- 	DBG(" <- early_init_devtree()\n");
-diff --git a/arch/powerpc/kexec/file_load_64.c b/arch/powerpc/kexec/file_load_64.c
-index af8854f9eae3..3f5740fb01a4 100644
---- a/arch/powerpc/kexec/file_load_64.c
-+++ b/arch/powerpc/kexec/file_load_64.c
-@@ -27,6 +27,7 @@
- #include <asm/kexec_ranges.h>
- #include <asm/crashdump-ppc64.h>
- #include <asm/prom.h>
-+#include <asm/plpks.h>
- 
- struct umem_info {
- 	u64 *buf;		/* data buffer for usable-memory property */
-@@ -977,12 +978,16 @@ static unsigned int cpu_node_size(void)
-  */
- unsigned int kexec_extra_fdt_size_ppc64(struct kimage *image)
- {
--	unsigned int cpu_nodes, extra_size;
-+	unsigned int cpu_nodes, extra_size = 0;
- 	struct device_node *dn;
- 	u64 usm_entries;
- 
-+	// Make room for the PLPKS password, plus node overhead for ibm,plpks-pw.
-+	if (plpks_is_available())
-+		extra_size += (unsigned int)plpks_get_passwordlen() + 32;
-+
- 	if (image->type != KEXEC_TYPE_CRASH)
--		return 0;
-+		return extra_size;
- 
  	/*
- 	 * For kdump kernel, account for linux,usable-memory and
-@@ -992,7 +997,7 @@ unsigned int kexec_extra_fdt_size_ppc64(struct kimage *image)
- 	usm_entries = ((memblock_end_of_DRAM() / drmem_lmb_size()) +
- 		       (2 * (resource_size(&crashk_res) / drmem_lmb_size())));
- 
--	extra_size = (unsigned int)(usm_entries * sizeof(u64));
-+	extra_size += (unsigned int)(usm_entries * sizeof(u64));
- 
- 	/*
- 	 * Get the number of CPU nodes in the current DT. This allows to
-@@ -1230,6 +1235,10 @@ int setup_new_fdt_ppc64(const struct kimage *image, void *fdt,
- 		}
+ 	 * Get db, and dbx. They might not exist, so it isn't an error if we
+ 	 * can't get them.
+@@ -103,8 +108,6 @@ static int __init load_powerpc_certs(void)
+ 		kfree(dbx);
  	}
  
-+	// If we have PLPKS active, we need to provide the password to the new kernel
-+	if (plpks_is_available())
-+		ret = plpks_populate_fdt(fdt);
-+
- out:
- 	kfree(rmem);
- 	kfree(umem);
-diff --git a/arch/powerpc/platforms/pseries/plpks.c b/arch/powerpc/platforms/pseries/plpks.c
-index 6940280ae94a..481a669845c5 100644
---- a/arch/powerpc/platforms/pseries/plpks.c
-+++ b/arch/powerpc/platforms/pseries/plpks.c
-@@ -16,6 +16,9 @@
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/types.h>
-+#include <linux/of_fdt.h>
-+#include <linux/libfdt.h>
-+#include <linux/memblock.h>
- #include <asm/hvcall.h>
- #include <asm/machdep.h>
- #include <asm/plpks.h>
-@@ -128,6 +131,12 @@ static int plpks_gen_password(void)
- 	u8 *password, consumer = PLPKS_OS_OWNER;
- 	int rc;
- 
-+	// If we booted from kexec, we could be reusing an existing password already
-+	if (ospassword) {
-+		pr_debug("Password of length %u already in use\n", ospasswordlength);
-+		return 0;
-+	}
-+
- 	// The password must not cross a page boundary, so we align to the next power of 2
- 	password = kzalloc(roundup_pow_of_two(maxpwsize), GFP_KERNEL);
- 	if (!password)
-@@ -621,6 +630,57 @@ int plpks_read_bootloader_var(struct plpks_var *var)
- 	return plpks_read_var(PLPKS_BOOTLOADER_OWNER, var);
+-	of_node_put(node);
+-
+ 	return rc;
  }
- 
-+int plpks_populate_fdt(void *fdt)
-+{
-+	int chosen_offset = fdt_path_offset(fdt, "/chosen");
-+	if (chosen_offset < 0) {
-+		pr_err("Can't find chosen node: %s\n",
-+		       fdt_strerror(chosen_offset));
-+		return chosen_offset;
-+	}
-+
-+	return fdt_setprop(fdt, chosen_offset, "ibm,plpks-pw", ospassword, ospasswordlength);
-+}
-+
-+// Once a password is registered with the hypervisor it cannot be cleared without
-+// rebooting the LPAR, so to keep using the PLPKS across kexec boots we need to
-+// recover the previous password from the FDT.
-+//
-+// There are a few challenges here.  We don't want the password to be visible to
-+// users, so we need to clear it from the FDT.  This has to be done in early boot.
-+// Clearing it from the FDT would make the FDT's checksum invalid, so we have to
-+// manually cause the checksum to be recalculated.
-+void __init plpks_early_init_devtree(void)
-+{
-+	void *fdt = initial_boot_params;
-+	int chosen_node = fdt_path_offset(fdt, "/chosen");
-+	u8 *password;
-+	int len;
-+
-+	if (chosen_node < 0)
-+		return;
-+
-+	password = (u8 *)fdt_getprop(fdt, chosen_node, "ibm,plpks-pw", &len);
-+	if (len <= 0) {
-+		pr_debug("Couldn't find ibm,plpks-pw node.\n");
-+		return;
-+	}
-+
-+	ospassword = memblock_alloc_raw(len, SMP_CACHE_BYTES);
-+	if (!ospassword) {
-+		pr_err("Error allocating memory for password.\n");
-+		goto out;
-+	}
-+
-+	memcpy(ospassword, password, len);
-+	ospasswordlength = (u16)len;
-+
-+out:
-+	fdt_nop_property(fdt, chosen_node, "ibm,plpks-pw");
-+	// Since we've cleared the password, we must update the FDT checksum
-+	early_init_dt_verify(fdt);
-+}
-+
- static __init int pseries_plpks_init(void)
- {
- 	int rc;
+ late_initcall(load_powerpc_certs);
 -- 
 2.39.1
 
