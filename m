@@ -2,67 +2,67 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B66DC636D6
-	for <linux-integrity@archiver.kernel.org>; Tue, 31 Jan 2023 06:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF723C636D3
+	for <linux-integrity@archiver.kernel.org>; Tue, 31 Jan 2023 06:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbjAaGkn (ORCPT
+        id S231154AbjAaGks (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 31 Jan 2023 01:40:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35944 "EHLO
+        Tue, 31 Jan 2023 01:40:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230328AbjAaGk2 (ORCPT
+        with ESMTP id S230377AbjAaGkc (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 31 Jan 2023 01:40:28 -0500
+        Tue, 31 Jan 2023 01:40:32 -0500
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D11253EFC9;
-        Mon, 30 Jan 2023 22:40:27 -0800 (PST)
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V6NkoG019640;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55DE73D08E;
+        Mon, 30 Jan 2023 22:40:30 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30V5uasq010286;
         Tue, 31 Jan 2023 06:40:16 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=u8OlthnPsqzt0JEQei/63XF3osGywMw3vLUsU4ZZ3D8=;
- b=HuhuJw0FRkv355DAuZZdbZ0ZpV7AGvgIZNCCWzamzDeaXjx8wG+RnG4CHNCZRcedxoRr
- 8r8aNwYWk0/e584FNJ56NvfnpDy47rwKGJkN7rSA/yQ05DOZkloALOItVcVwdD9FYeuC
- Z4q9xN18/eh+b8gBbX9j+XcWmvnZ8/v/sbYznHl4L1ExS9dq/yHykRwl6FgDv5rCUmol
- 7RXz06h+rZIkHvsedHFaX47Ks2j6nvpscNaZdCKGFVlaEPuq0LZfmc4E3rC3vUzAg7XU
- Em81EzcVJKEqPwqnSx+H8eN8wTQVLgLaIRCdx/j+e8INWBnLK9VvthZo2KlTVsNu7xbf mg== 
+ bh=N2R3GvZB0FDC5VCJfoPIgMLQTlamhuK00RoCluA8iqA=;
+ b=lha88JHRU3hXl9nGPcNZ7KIFu99hVn3loeJewD6UR8UEazBSmRc7fKda4diMH8l9Qs7O
+ g2D5DvppWXrUihXSKakI4mI0ETC8kk3RfM1jpJFAi5mlrGJnjOWkkttJO00hDW8kOzOj
+ NMIYVBQ+ppd6q17UI3FKYD0AVH7B2IBSqdoiMrd+ROOmgt8wtJ34PMerJIqozFhDFF7s
+ 8rpWJ5Kjrh5FfkeAXR9U95WEeIXXgp9h5NHuHQRHZNfK1+BcNlS5Y5kHeqVP64P1O588
+ 8DKIvTxu9QB77Nuj/lzM9I2YeseDKhGiWjp1IP9sNOsyybUrMvxNDG5vM5CRZVR5w/xg hw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3newpbrah4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 06:40:16 +0000
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30V6P34K022508;
-        Tue, 31 Jan 2023 06:40:15 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3newpbrag4-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3new9kgtgc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Tue, 31 Jan 2023 06:40:15 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30UKk0OR027019;
-        Tue, 31 Jan 2023 06:40:13 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3ncvs7k435-1
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30V6TtVv001270;
+        Tue, 31 Jan 2023 06:40:15 GMT
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3new9kgtey-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 Jan 2023 06:40:13 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30V6eACY25428268
+        Tue, 31 Jan 2023 06:40:15 +0000
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30V3LI8D025083;
+        Tue, 31 Jan 2023 06:40:12 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+        by ppma02fra.de.ibm.com (PPS) with ESMTPS id 3ncvv6a7dr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 Jan 2023 06:40:12 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+        by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30V6e9ph46006688
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 Jan 2023 06:40:11 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CDD542004F;
-        Tue, 31 Jan 2023 06:40:10 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D09142004D;
+        Tue, 31 Jan 2023 06:40:10 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D073F20043;
         Tue, 31 Jan 2023 06:40:09 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2B3E2004D;
+        Tue, 31 Jan 2023 06:40:08 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 31 Jan 2023 06:40:09 +0000 (GMT)
+        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 31 Jan 2023 06:40:08 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.au.ibm.com (unknown [9.192.255.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id EE4776096D;
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 8EB0060953;
         Tue, 31 Jan 2023 17:40:04 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
@@ -72,209 +72,164 @@ Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
         erichte@linux.ibm.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
         npiggin@gmail.com
-Subject: [PATCH v5 17/25] powerpc/pseries: Implement signed update for PLPKS objects
-Date:   Tue, 31 Jan 2023 17:39:20 +1100
-Message-Id: <20230131063928.388035-18-ajd@linux.ibm.com>
+Subject: [PATCH v5 11/25] powerpc/secvar: Allow backend to populate static list of variable names
+Date:   Tue, 31 Jan 2023 17:39:14 +1100
+Message-Id: <20230131063928.388035-12-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230131063928.388035-1-ajd@linux.ibm.com>
 References: <20230131063928.388035-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: n6RkkurCjFfQqYr-9kLwuxjX247SDrOy
-X-Proofpoint-ORIG-GUID: P8-lgLwUBr3UIrBW_i_kAsr4clsdillN
+X-Proofpoint-ORIG-GUID: lwq7PiogdUrvPFkOtxejUs08LyAT8Ocb
+X-Proofpoint-GUID: e7nCQbyZgrdtXeiTDEX2zWKdoPjuGwQS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-01-31_02,2023-01-30_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- suspectscore=0 phishscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2301310059
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 mlxlogscore=999
+ spamscore=0 suspectscore=0 malwarescore=0 adultscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301310059
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Nayna Jain <nayna@linux.ibm.com>
+Currently, the list of variables is populated by calling
+secvar_ops->get_next() repeatedly, which is explicitly modelled on the
+OPAL API (including the keylen parameter).
 
-The Platform Keystore provides a signed update interface which can be used
-to create, replace or append to certain variables in the PKS in a secure
-fashion, with the hypervisor requiring that the update be signed using the
-Platform Key.
+For the upcoming PLPKS backend, we have a static list of variable names.
+It is messy to fit that into get_next(), so instead, let the backend put
+a NULL-terminated array of variable names into secvar_ops->var_names,
+which will be used if get_next() is undefined.
 
-Implement an interface to the H_PKS_SIGNED_UPDATE hcall in the plpks
-driver to allow signed updates to PKS objects.
-
-(The plpks driver doesn't need to do any cryptography or otherwise handle
-the actual signed variable contents - that will be handled by userspace
-tooling.)
-
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-[ajd: split patch, add timeout handling and misc cleanups]
-Co-developed-by: Andrew Donnellan <ajd@linux.ibm.com>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 Signed-off-by: Russell Currey <ruscur@russell.cc>
 
 ---
 
-v3: Merge plpks fixes and signed update series with secvar series
-
-    Fix error code handling in plpks_confirm_object_flushed() (ruscur)
-
-    Pass plpks_var struct to plpks_signed_update_var() by reference (mpe)
-
-    Consistent constant naming scheme (ruscur)
-
-v4: Fix MAX_HCALL_OPCODE rebasing issue (npiggin)
-
-v5: Drop the EXPORT_SYMBOL since we don't need it (npiggin)
-
-    Return an error if plpks_signed_update_var() is called with non-NULL
-    component (npiggin)
+v3: New patch (ajd/mpe)
 ---
- arch/powerpc/include/asm/hvcall.h      |  1 +
- arch/powerpc/include/asm/plpks.h       |  5 ++
- arch/powerpc/platforms/pseries/plpks.c | 74 ++++++++++++++++++++++++--
- 3 files changed, 75 insertions(+), 5 deletions(-)
+ arch/powerpc/include/asm/secvar.h  |  4 ++
+ arch/powerpc/kernel/secvar-sysfs.c | 67 ++++++++++++++++++++----------
+ 2 files changed, 50 insertions(+), 21 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/hvcall.h b/arch/powerpc/include/asm/hvcall.h
-index 95fd7f9485d5..c099780385dd 100644
---- a/arch/powerpc/include/asm/hvcall.h
-+++ b/arch/powerpc/include/asm/hvcall.h
-@@ -335,6 +335,7 @@
- #define H_RPT_INVALIDATE	0x448
- #define H_SCM_FLUSH		0x44C
- #define H_GET_ENERGY_SCALE_INFO	0x450
-+#define H_PKS_SIGNED_UPDATE	0x454
- #define H_WATCHDOG		0x45C
- #define MAX_HCALL_OPCODE	H_WATCHDOG
- 
-diff --git a/arch/powerpc/include/asm/plpks.h b/arch/powerpc/include/asm/plpks.h
-index 7c5f51a9af7c..e7204e6c0ca4 100644
---- a/arch/powerpc/include/asm/plpks.h
-+++ b/arch/powerpc/include/asm/plpks.h
-@@ -68,6 +68,11 @@ struct plpks_var_name_list {
- 	struct plpks_var_name varlist[];
+diff --git a/arch/powerpc/include/asm/secvar.h b/arch/powerpc/include/asm/secvar.h
+index 011a53a8076c..4828e0ab7e3c 100644
+--- a/arch/powerpc/include/asm/secvar.h
++++ b/arch/powerpc/include/asm/secvar.h
+@@ -21,6 +21,10 @@ struct secvar_operations {
+ 	ssize_t (*format)(char *buf, size_t bufsize);
+ 	int (*max_size)(u64 *max_size);
+ 	const struct attribute **config_attrs;
++
++	// NULL-terminated array of fixed variable names
++	// Only used if get_next() isn't provided
++	const char * const *var_names;
  };
  
-+/**
-+ * Updates the authenticated variable. It expects NULL as the component.
-+ */
-+int plpks_signed_update_var(struct plpks_var *var, u64 flags);
-+
- /**
-  * Writes the specified var and its data to PKS.
-  * Any caller of PKS driver should present a valid component type for
-diff --git a/arch/powerpc/platforms/pseries/plpks.c b/arch/powerpc/platforms/pseries/plpks.c
-index 1189246b03dc..cee06fb9a370 100644
---- a/arch/powerpc/platforms/pseries/plpks.c
-+++ b/arch/powerpc/platforms/pseries/plpks.c
-@@ -81,6 +81,12 @@ static int pseries_status_to_err(int rc)
- 		err = -ENOENT;
- 		break;
- 	case H_BUSY:
-+	case H_LONG_BUSY_ORDER_1_MSEC:
-+	case H_LONG_BUSY_ORDER_10_MSEC:
-+	case H_LONG_BUSY_ORDER_100_MSEC:
-+	case H_LONG_BUSY_ORDER_1_SEC:
-+	case H_LONG_BUSY_ORDER_10_SEC:
-+	case H_LONG_BUSY_ORDER_100_SEC:
- 		err = -EBUSY;
- 		break;
- 	case H_AUTHORITY:
-@@ -184,14 +190,17 @@ static struct label *construct_label(char *component, u8 varos, u8 *name,
- 				     u16 namelen)
- {
- 	struct label *label;
--	size_t slen;
-+	size_t slen = 0;
- 
- 	if (!name || namelen > PLPKS_MAX_NAME_SIZE)
- 		return ERR_PTR(-EINVAL);
- 
--	slen = strlen(component);
--	if (component && slen > sizeof(label->attr.prefix))
--		return ERR_PTR(-EINVAL);
-+	// Support NULL component for signed updates
-+	if (component) {
-+		slen = strlen(component);
-+		if (slen > sizeof(label->attr.prefix))
-+			return ERR_PTR(-EINVAL);
-+	}
- 
- 	// The label structure must not cross a page boundary, so we align to the next power of 2
- 	label = kzalloc(roundup_pow_of_two(sizeof(*label)), GFP_KERNEL);
-@@ -397,6 +406,61 @@ static int plpks_confirm_object_flushed(struct label *label,
- 	return pseries_status_to_err(rc);
+ #ifdef CONFIG_PPC_SECURE_BOOT
+diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
+index 7df32be86507..2cbc60b37e4e 100644
+--- a/arch/powerpc/kernel/secvar-sysfs.c
++++ b/arch/powerpc/kernel/secvar-sysfs.c
+@@ -157,9 +157,31 @@ static int secvar_sysfs_config(struct kobject *kobj)
+ 	return 0;
  }
  
-+int plpks_signed_update_var(struct plpks_var *var, u64 flags)
-+{
-+	unsigned long retbuf[PLPAR_HCALL9_BUFSIZE] = {0};
+-static int secvar_sysfs_load(void)
++static int add_var(const char *name)
+ {
+ 	struct kobject *kobj;
 +	int rc;
-+	struct label *label;
-+	struct plpks_auth *auth;
-+	u64 continuetoken = 0;
-+	u64 timeout = 0;
 +
-+	if (!var->data || var->datalen <= 0 || var->namelen > PLPKS_MAX_NAME_SIZE)
-+		return -EINVAL;
++	kobj = kzalloc(sizeof(*kobj), GFP_KERNEL);
++	if (!kobj)
++		return -ENOMEM;
 +
-+	if (!(var->policy & PLPKS_SIGNEDUPDATE))
-+		return -EINVAL;
++	kobject_init(kobj, &secvar_ktype);
 +
-+	// Signed updates need the component to be NULL.
-+	if (var->component)
-+		return -EINVAL;
-+
-+	auth = construct_auth(PLPKS_OS_OWNER);
-+	if (IS_ERR(auth))
-+		return PTR_ERR(auth);
-+
-+	label = construct_label(var->component, var->os, var->name, var->namelen);
-+	if (IS_ERR(label)) {
-+		rc = PTR_ERR(label);
-+		goto out;
++	rc = kobject_add(kobj, &secvar_kset->kobj, "%s", name);
++	if (rc) {
++		pr_warn("kobject_add error %d for attribute: %s\n", rc,
++			name);
++		kobject_put(kobj);
++		return rc;
 +	}
 +
-+	do {
-+		rc = plpar_hcall9(H_PKS_SIGNED_UPDATE, retbuf,
-+				  virt_to_phys(auth), virt_to_phys(label),
-+				  label->size, var->policy, flags,
-+				  virt_to_phys(var->data), var->datalen,
-+				  continuetoken);
-+
-+		continuetoken = retbuf[0];
-+		if (pseries_status_to_err(rc) == -EBUSY) {
-+			int delay_ms = get_longbusy_msecs(rc);
-+			mdelay(delay_ms);
-+			timeout += delay_ms;
-+		}
-+		rc = pseries_status_to_err(rc);
-+	} while (rc == -EBUSY && timeout < PLPKS_MAX_TIMEOUT);
-+
-+	if (!rc)
-+		rc = plpks_confirm_object_flushed(label, auth);
-+
-+	kfree(label);
-+out:
-+	kfree(auth);
-+
-+	return rc;
++	kobject_uevent(kobj, KOBJ_ADD);
++	return 0;
 +}
 +
- int plpks_write_var(struct plpks_var var)
- {
- 	unsigned long retbuf[PLPAR_HCALL_BUFSIZE] = { 0 };
-@@ -443,7 +507,7 @@ int plpks_remove_var(char *component, u8 varos, struct plpks_var_name vname)
- 	struct label *label;
++static int secvar_sysfs_load(void)
++{
+ 	u64 namesize = 0;
+ 	char *name;
  	int rc;
+@@ -179,31 +201,26 @@ static int secvar_sysfs_load(void)
+ 			break;
+ 		}
  
--	if (!component || vname.namelen > PLPKS_MAX_NAME_SIZE)
-+	if (vname.namelen > PLPKS_MAX_NAME_SIZE)
- 		return -EINVAL;
+-		kobj = kzalloc(sizeof(*kobj), GFP_KERNEL);
+-		if (!kobj) {
+-			rc = -ENOMEM;
+-			break;
+-		}
+-
+-		kobject_init(kobj, &secvar_ktype);
+-
+-		rc = kobject_add(kobj, &secvar_kset->kobj, "%s", name);
+-		if (rc) {
+-			pr_warn("kobject_add error %d for attribute: %s\n", rc,
+-				name);
+-			kobject_put(kobj);
+-			kobj = NULL;
+-		}
+-
+-		if (kobj)
+-			kobject_uevent(kobj, KOBJ_ADD);
+-
++		rc = add_var(name);
+ 	} while (!rc);
  
- 	auth = construct_auth(PLPKS_OS_OWNER);
+ 	kfree(name);
+ 	return rc;
+ }
+ 
++static int secvar_sysfs_load_static(void)
++{
++	const char * const *name_ptr = secvar_ops->var_names;
++	int rc;
++	while (*name_ptr) {
++		rc = add_var(*name_ptr);
++		if (rc)
++			return rc;
++		name_ptr++;
++	}
++	return 0;
++}
++
+ static int secvar_sysfs_init(void)
+ {
+ 	int rc;
+@@ -245,7 +262,15 @@ static int secvar_sysfs_init(void)
+ 		goto err;
+ 	}
+ 
+-	secvar_sysfs_load();
++	if (secvar_ops->get_next)
++		rc = secvar_sysfs_load();
++	else
++		rc = secvar_sysfs_load_static();
++
++	if (rc) {
++		pr_err("Failed to create variable attributes\n");
++		goto err;
++	}
+ 
+ 	return 0;
+ err:
 -- 
 2.39.1
 
