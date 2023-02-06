@@ -2,63 +2,63 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1298C63797
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E445DC64EC3
 	for <linux-integrity@archiver.kernel.org>; Mon,  6 Feb 2023 14:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231367AbjBFOE6 (ORCPT
+        id S231450AbjBFOE6 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Mon, 6 Feb 2023 09:04:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231305AbjBFOE0 (ORCPT
+        with ESMTP id S230397AbjBFOE2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 6 Feb 2023 09:04:26 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A17D327495;
-        Mon,  6 Feb 2023 06:03:54 -0800 (PST)
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 316DqLIR023078;
-        Mon, 6 Feb 2023 14:03:42 GMT
+        Mon, 6 Feb 2023 09:04:28 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574D0241E1;
+        Mon,  6 Feb 2023 06:03:57 -0800 (PST)
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 316DqMSS022762;
+        Mon, 6 Feb 2023 14:03:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=s1edFH2qTR/cMKYj/JHX4rluR5lgk1wtRdjk7i6fOMU=;
- b=mTZ9InxqzRCyM4ZPq5qWqXvNFOUWHzNMOAuH/UpFGwha2VwmCJS8rpahDuGLGQfuU6QH
- WJb2BIEfhmOCrxkJFUFOGI8ePb31pmm/M/2AJ1IWRJI+sCvibbBpmte7+VK9QqrtNFod
- rqM3R5/V51765soZfCR2mLliyeQRV7+/WMK4ybbsoulxd51VZ/9AmTa78Eid4etilFyn
- dDNGOKx2DPcxIDDgC/FjxqPl8XhlJE1y0of4myo0vUJ6g+/4SOLngaTPY2XkAt1Slkih
- VmYOrC9JlJoL8qtbwmmztdXem8fhbL8e25oHuCkEp/K1j1dDg8Tg+VAeIhsQ9BHw+M16 8A== 
+ bh=93DDU/Azt3RdacYDN+QmUzQz6lIczxDJCJ+bLgbHD90=;
+ b=dlDqjjccky7iP6vXnXnRxXbFH71qVA7lHgb2y0F3tGHlR3mivpPfx+QFyeNOIkRgEE4j
+ kjsSx4Ij90K/OOKPBykA8VlY8C3Bwf/kwAMPc0dBGDeSmAqRO8Jj6O097cVdZVK4FNAE
+ cnUDpNjErGb5n49cXFZcL3iUZKRbb/WZUWzsX1GYWOLfTl6aoAL4XRkYAbKzrH5JT/Sm
+ NbWMcWJ/2NlNxn+RxNWaDqcq97WfQLesl/7nvomuCix7SyMN2g5lDj5iLJ3L0QlozwDU
+ nfTyMRdL18QvUkin+MsPVrLx4NKKTlYi6x6i8mi8Bq9dspGiKSyYzXxWQyEAzr++ORVu cw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk1abkje0-1
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk2tf0d01-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 14:03:41 +0000
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 316Dtdj6024351;
-        Mon, 6 Feb 2023 14:03:41 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk1abkjd2-1
+        Mon, 06 Feb 2023 14:03:45 +0000
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 316DsVQw008866;
+        Mon, 6 Feb 2023 14:03:45 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nk2tf0cyd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 14:03:41 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 316CL24L001953;
-        Mon, 6 Feb 2023 14:03:39 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([9.208.130.101])
-        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3nhf075pxd-1
+        Mon, 06 Feb 2023 14:03:45 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 316CNNQs003055;
+        Mon, 6 Feb 2023 14:03:44 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([9.208.129.120])
+        by ppma04dal.us.ibm.com (PPS) with ESMTPS id 3nhf07dqcq-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Feb 2023 14:03:39 +0000
+        Mon, 06 Feb 2023 14:03:44 +0000
 Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-        by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 316E3cUO8717010
+        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 316E3gbC5309012
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 6 Feb 2023 14:03:38 GMT
+        Mon, 6 Feb 2023 14:03:42 GMT
 Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 205075805C;
-        Mon,  6 Feb 2023 14:03:38 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 25A6158059;
+        Mon,  6 Feb 2023 14:03:42 +0000 (GMT)
 Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5040958059;
-        Mon,  6 Feb 2023 14:03:36 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 5531A58058;
+        Mon,  6 Feb 2023 14:03:40 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
         by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon,  6 Feb 2023 14:03:36 +0000 (GMT)
+        Mon,  6 Feb 2023 14:03:40 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
@@ -70,122 +70,180 @@ Cc:     zohar@linux.ibm.com, serge@hallyn.com, brauner@kernel.org,
         paul@paul-moore.com, rgb@redhat.com,
         linux-security-module@vger.kernel.org, jmorris@namei.org,
         jpenumak@redhat.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v15 18/26] integrity: Add optional callback function to integrity_inode_free()
-Date:   Mon,  6 Feb 2023 09:02:45 -0500
-Message-Id: <20230206140253.3755945-19-stefanb@linux.ibm.com>
+Subject: [PATCH v15 20/26] ima: Remove unused iints from the integrity_iint_cache
+Date:   Mon,  6 Feb 2023 09:02:47 -0500
+Message-Id: <20230206140253.3755945-21-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230206140253.3755945-1-stefanb@linux.ibm.com>
 References: <20230206140253.3755945-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: cHOPMZ_29Si-x4dUfqSmKGnTmQi4qyNC
-X-Proofpoint-GUID: 6dHNROqfxV077ztijvvyOeI_hHJUoAAi
+X-Proofpoint-GUID: T5W-8djRhCXaV6la8IByiDXutrDa5olH
+X-Proofpoint-ORIG-GUID: pBxC-xhyJ7VTvtY5tr5L2kxtdei2snC9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
  definitions=2023-02-06_07,2023-02-06_03,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 bulkscore=0
- impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501 phishscore=0
- mlxlogscore=889 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2302060121
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 priorityscore=1501 clxscore=1015
+ mlxscore=0 adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2212070000 definitions=main-2302060116
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add an optional callback function to integrity_inode_free() that,
-if provided, must be called and determines whether the iint can be
-freed. Adjust all callers of this function to provide a NULL pointer
-since none of the existing callers needs this check.
+When the rbtree of an IMA namespace is torn down, also remove those iints
+that are completely unused since only the torn-down namespace stored data
+about the associated inode in it.
+
+An iint is unused when the following two conditions are met:
+
+- Its ns_status list is empty which means that no IMA namespace
+  currently has auditing related state stored in it.
+
+- The iint's flags don't contain any of the flags IMA_MEASURE,
+  IMA_APPRAISE or IMA_HASH that the host would still store there.
+  It doesn't need an ns_status list for these but also only for
+  IMA_AUDIT.
+
+Introduce the #define IMA_IINT_FLAGS that represent the mask to test the
+iint->flags with in this case. This test provides the reason to keep the
+iint if any of these flags are set.
+
+The IMA_IINT_FLAGS mask will loose its flags as more flags are namespaced
+and can then be removed in the end and only the check for the empty list
+will remain.
+
+Process the list of garbage-collected ns_status outside the locking of
+the ns_status tree and related lock-group and free any iint that was
+previously found to be unused while walking the list. File accesses, that
+may have happened in the meantime, could have re-activated the iint and
+therefore pass along the test function to check whether the iint is still
+unused.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- include/linux/integrity.h |  8 ++++++--
- security/integrity/iint.c | 15 +++++++++++++--
- security/security.c       |  2 +-
- 3 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index 2ea0f2f65ab6..9fe826b9146e 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -19,10 +19,13 @@ enum integrity_status {
- 	INTEGRITY_UNKNOWN,
- };
- 
-+struct integrity_iint_cache;
-+typedef bool (*iint_removable_cb)(struct integrity_iint_cache *iint);
-+
- /* List of EVM protected security xattrs */
- #ifdef CONFIG_INTEGRITY
- extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
--extern void integrity_inode_free(struct inode *inode);
-+extern void integrity_inode_free(struct inode *inode, iint_removable_cb check);
- extern void __init integrity_load_keys(void);
- 
- #else
-@@ -32,7 +35,8 @@ static inline struct integrity_iint_cache *
- 	return NULL;
- }
- 
--static inline void integrity_inode_free(struct inode *inode)
-+static inline void integrity_inode_free(struct inode *inode,
-+					iint_removable_cb check)
- {
- 	return;
- }
+---
+
+v11:
+  - change write_lock to read_lock in callback
+---
+ security/integrity/iint.c              |  4 +++
+ security/integrity/ima/ima.h           |  2 ++
+ security/integrity/ima/ima_ns_status.c | 43 +++++++++++++++++++++++++-
+ security/integrity/integrity.h         |  1 +
+ 4 files changed, 49 insertions(+), 1 deletion(-)
+
 diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 371cbceaf479..4580df0e716e 100644
+index 4580df0e716e..b0996bd0ee67 100644
 --- a/security/integrity/iint.c
 +++ b/security/integrity/iint.c
-@@ -143,21 +143,32 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- /**
-  * integrity_inode_free - called on security_inode_free
-  * @inode: pointer to the inode
-+ * @check: optional callback function to check whether the iint can be freed
-  *
-  * Free the integrity information(iint) associated with an inode.
-  */
--void integrity_inode_free(struct inode *inode)
-+void integrity_inode_free(struct inode *inode, iint_removable_cb check)
- {
- 	struct integrity_iint_cache *iint;
-+	bool freeit = true;
- 
- 	if (!IS_IMA(inode))
- 		return;
- 
+@@ -158,6 +158,10 @@ void integrity_inode_free(struct inode *inode, iint_removable_cb check)
  	write_lock(&integrity_iint_lock);
-+
+ 
  	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
-+
-+	if (check)
-+		freeit = check(iint);
-+	if (freeit)
-+		rb_erase(&iint->rb_node, &integrity_iint_tree);
-+
- 	write_unlock(&integrity_iint_lock);
- 
-+	if (!freeit)
++	if (!iint) {
++		write_unlock(&integrity_iint_lock);
 +		return;
++	}
+ 
+ 	if (check)
+ 		freeit = check(iint);
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 4ac937c2c039..dfbe1a59b9a1 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -502,6 +502,8 @@ static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+ #define IMA_NS_STATUS_ACTIONS   IMA_AUDIT
+ #define IMA_NS_STATUS_FLAGS     (IMA_AUDIT | IMA_AUDITED)
+ 
++#define IMA_IINT_FLAGS		(IMA_MEASURE | IMA_APPRAISE | IMA_HASH)
 +
- 	ima_free_ns_status_list(&iint->ns_list, &iint->ns_list_lock);
- 
- 	iint_free(iint);
-diff --git a/security/security.c b/security/security.c
-index d1571900a8c7..2b1f9ec8dea9 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1071,7 +1071,7 @@ static void inode_free_by_rcu(struct rcu_head *head)
- 
- void security_inode_free(struct inode *inode)
+ static inline unsigned long iint_flags(struct integrity_iint_cache *iint,
+ 				       struct ns_status *ns_status)
  {
--	integrity_inode_free(inode);
-+	integrity_inode_free(inode, NULL);
- 	call_void_hook(inode_free_security, inode);
- 	/*
- 	 * The inode may still be referenced in a path walk and
+diff --git a/security/integrity/ima/ima_ns_status.c b/security/integrity/ima/ima_ns_status.c
+index 9c753caad6ac..32d75dbd9c21 100644
+--- a/security/integrity/ima/ima_ns_status.c
++++ b/security/integrity/ima/ima_ns_status.c
+@@ -131,6 +131,26 @@ static void ns_status_free(struct ima_namespace *ns,
+ 	kmem_cache_free(ns->ns_status_cache, ns_status);
+ }
+ 
++/* Test whether an iint is unused due to empty ns_status list AND the
++ * not-yet namespaced flags are not set on it.
++ */
++static bool __iint_is_unused(struct integrity_iint_cache *iint)
++{
++	return list_empty(&iint->ns_list) &&
++		(iint_flags(iint, NULL) & IMA_IINT_FLAGS) == 0;
++}
++
++static bool iint_is_unused(struct integrity_iint_cache *iint)
++{
++	bool ret;
++
++	read_lock(&iint->ns_list_lock);
++	ret = __iint_is_unused(iint);
++	read_unlock(&iint->ns_list_lock);
++
++	return ret;
++}
++
+ /*
+  * ima_free_ns_status_tree - free all items on the ns_status_tree and take each
+  *                           one off the list; yield to ns_list free'ers
+@@ -161,6 +181,18 @@ void ima_free_ns_status_tree(struct ima_namespace *ns)
+ 			if (!list_empty(&ns_status->ns_next)) {
+ 				list_del_init(&ns_status->ns_next);
+ 				llist_add(&ns_status->gc_llist, &garbage);
++
++				/*
++				 * While ns_status->iint is guaranteed to be
++				 * there, check whether the iint is still in
++				 * use by anyone at this moment.
++				 */
++				if (__iint_is_unused(ns_status->iint)) {
++					ns_status->inode_to_remove =
++						ns_status->iint->inode;
++				} else {
++					ns_status->inode_to_remove = NULL;
++				}
+ 				ctr++;
+ 			}
+ 			write_unlock(&ns_status->iint->ns_list_lock);
+@@ -180,8 +212,17 @@ void ima_free_ns_status_tree(struct ima_namespace *ns)
+ 	} while (restart);
+ 
+ 	node = llist_del_all(&garbage);
+-	llist_for_each_entry_safe(ns_status, next, node, gc_llist)
++	llist_for_each_entry_safe(ns_status, next, node, gc_llist) {
++		if (ns_status->inode_to_remove) {
++			/*
++			 * Pass along the test function in case inode is in
++			 * use now.
++			 */
++			integrity_inode_free(ns_status->inode_to_remove,
++					     iint_is_unused);
++		}
+ 		ns_status_free(ns, ns_status);
++	}
+ 
+ 	kmem_cache_destroy(ns->ns_status_cache);
+ }
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 50a5d94593e1..0634320a6bc2 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -167,6 +167,7 @@ struct ns_status {
+ 	ino_t i_ino;
+ 	u32 i_generation;
+ 	struct llist_node gc_llist;	/* used while freeing */
++	void *inode_to_remove;		/* used while freeing */
+ #endif
+ };
+ 
 -- 
 2.37.3
 
