@@ -2,207 +2,274 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F99EC636CC
-	for <linux-integrity@archiver.kernel.org>; Sun,  5 Feb 2023 17:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00094C05027
+	for <linux-integrity@archiver.kernel.org>; Mon,  6 Feb 2023 11:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229503AbjBERi2 (ORCPT
+        id S229657AbjBFLDE (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 5 Feb 2023 12:38:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41554 "EHLO
+        Mon, 6 Feb 2023 06:03:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbjBERi1 (ORCPT
+        with ESMTP id S229665AbjBFLDC (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 5 Feb 2023 12:38:27 -0500
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50914420E;
-        Sun,  5 Feb 2023 09:38:26 -0800 (PST)
-Received: from [46.183.103.17] (helo=[172.18.99.178]); authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1pOiy6-0001nS-HZ; Sun, 05 Feb 2023 18:38:22 +0100
-Message-ID: <1c04756b-574b-210d-9580-a4de2aa16a20@leemhuis.info>
-Date:   Sun, 5 Feb 2023 18:38:16 +0100
+        Mon, 6 Feb 2023 06:03:02 -0500
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42EE812054;
+        Mon,  6 Feb 2023 03:02:58 -0800 (PST)
+Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3B21761CC457B;
+        Mon,  6 Feb 2023 12:02:57 +0100 (CET)
+Message-ID: <d356a20f-629c-a534-7a80-b96d0940056d@molgen.mpg.de>
+Date:   Mon, 6 Feb 2023 12:02:56 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [regression] Bug 216989 - since 6.1 systems with AMD Ryzen
- stutter when fTPM is enabled
-From:   "Linux kernel regression tracking (Thorsten Leemhuis)" 
-        <regressions@leemhuis.info>
-To:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     linux-integrity@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux kernel regressions list <regressions@lists.linux.dev>,
-        reach622@mailcuk.com, 1138267643@qq.com,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>,
-          Linux regressions mailing list 
-          <regressions@lists.linux.dev>
-References: <3a196414-68d8-29c9-24cc-2b8cb4c9d358@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <3a196414-68d8-29c9-24cc-2b8cb4c9d358@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8
+ Thunderbird/102.7.1
+Subject: Re: [Patch V2 2/4] tpm: tegra: Support SPI tpm wait state detect
+Content-Language: en-US
+To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
+        jgg@ziepe.ca, jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, ldewangan@nvidia.com
+References: <20230203130133.32901-1-kyarlagadda@nvidia.com>
+ <20230203130133.32901-3-kyarlagadda@nvidia.com>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20230203130133.32901-3-kyarlagadda@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1675618706;f47b7259;
-X-HE-SMSGID: 1pOiy6-0001nS-HZ
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-[ccing Dominik (who authored the culprit) and Herbert (who merged it)]
+Dear Krishna,
 
-On 02.02.23 11:28, Linux kernel regression tracking (Thorsten Leemhuis)
-wrote:
-> 
-> I noticed a regression report in bugzilla.kernel.org. As many (most?)
-> kernel developer don't keep an eye on it, I decided to forward it by
-> mail. Quoting from https://bugzilla.kernel.org/show_bug.cgi?id=216989 :
 
-Turns out according to a bisection from one of the reporters that
-b006c439d58d ("hwrng: core - start hwrng kthread also for untrusted
-sources") (merged for 6.1) apparently makes this hardware issue occur
-quicker/more frequently a lot quicker on any board that didn't get the
-firmware update yet. So it could be argued that from the point of the
-kernel it *might* be considered a regression.
+Thank you for your patch.
 
-For details see the ticket.
+Am 03.02.23 um 14:01 schrieb Krishna Yarlagadda:
+> Tegra234 and Tegra241 chips have QSPI controller that supports TCG
+> TIS hardware flow control. Since the controller only supports half
+> duplex, sw wait polling method implemented in tpm_tis_spi does not
+> suffice. Added extending driver to disable sw flow control and send
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+I’d use imperative mood and maybe use another verb:
 
-#regzbot introduced: b006c439d58d
+Add dedicated Tegra driver …
 
->>  reach622@mailcuk.com 2023-02-02 02:49:48 UTC
->>
->> Linux kernel >=6.1 exhibits a stuttering issue that occurs once every few hours. See https://www.reddit.com/r/archlinux/comments/zvgev0/audio_stuttering_issues_with_kernel_611/ https://www.reddit.com/r/linux_gaming/comments/zzqaf7/having_intermittent_stutters_with_a_ryzen_cpu/ https://bbs.archlinux.org/viewtopic.php?id=282333 for detailed information.
->>
->> The stutter lasts for 1-2 seconds and causes the framerate of the display to decrease dramatically and causes bursts in audio output.
->>
->> Additional info:
->>
->> * linux 6.1.0 or later
->>
->> Steps to reproduce:
->>
->> * Use Linux kernel >=6.1
->>
->> * Use AMD Ryzen CPU with fTPM enabled
->>
->> * Wait for a few hours
->>
->> [reply] [−] Comment 1 Bell 2023-02-02 03:33:24 UTC
->>
->> Hey, Let me add some extra information to help.
->> 1. this issue can happen in 6.2-rc6 without loading third-party kernel modules. (NVIDIA or Virtualbox and so)
->> 2. some guy on the Desktop/Laptop who can disable ftpm and did eliminate the problem.
->> 3. this problem can happen in newer AMD processors from the 4000 series to the 6000 series.
->> 4. this problem isn't caused by the dedicated graphics card I guess, here are some combinations that stuttering can happen:
->> AMD(built-in GPU) + NVIDIA  Laptop
->> AMD(No built-in GPU) + AMD(dedicated) Desktop
->> AMD(built-in GPU) + AMD(dedicated) Laptop/Desktop
->> AMD + AMD(Built-in GPU only) Laptop
->> all suffer from this.
->>
->> Hope this can help :)
+> all transfers in single message.
+
+Please add how you tested and benchmarked this patch.
+
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>   drivers/char/tpm/Makefile            |   1 +
+>   drivers/char/tpm/tpm_tis_spi.h       |   1 +
+>   drivers/char/tpm/tpm_tis_spi_main.c  |   4 +-
+>   drivers/char/tpm/tpm_tis_spi_tegra.c | 123 +++++++++++++++++++++++++++
+>   4 files changed, 128 insertions(+), 1 deletion(-)
+>   create mode 100644 drivers/char/tpm/tpm_tis_spi_tegra.c
 > 
-> See the ticket for more details.
-> 
-> I briefly looked into the links and found this:
-> https://www.amd.com/en/support/kb/faq/pa-410
-> 
->>
->> Intermittent System Stutter Experienced with fTPM Enabled on Windows® 10
->> and 11
->> Article Number
->> PA-410
->>
->> This documentation provides information on improving intermittent
->> performance stutter(s) on select PCs running Windows® 10 and 11 with
->> Firmware Trusted Platform Module (“fTPM”) enabled.
->>
->>
->>
->> Issue Description
->>
->> AMD has determined that select AMD Ryzen™ system configurations may
->> intermittently perform extended fTPM-related memory transactions in SPI
->> flash memory (“SPIROM”) located on the motherboard, which can lead to
->> temporary pauses in system interactivity or responsiveness until the
->> transaction is concluded.
->>
->>
->>
->> Update and Workaround
->>
->>     Update: Affected PCs will require a motherboard system BIOS (sBIOS)
->> update containing enhanced modules for fTPM interaction with SPIROM. AMD
->> expects that flashable customer sBIOS files to be available starting in
->> early May, 2022. Exact BIOS availability timing for a specific
->> motherboard depends on the testing and integration schedule of your
->> manufacturer. Flashable updates for motherboards will be based on AMD
->> AGESA 1207 (or newer).
->>
->>     Workaround: As an immediate solution, affected customers dependent
->> on fTPM functionality for Trusted Platform Module support may instead
->> use a hardware TPM (“dTPM”) device for trusted computing. Platform dTPM
->> modules utilize onboard non-volatile memory (NVRAM) that supersedes the
->> TPM/SPIROM interaction described in this article.
->>
->>         COMPATIBILITY: Please check with your system or motherboard
->> manufacturer to ensure that your platform supports add-in dTPM modules
->> before attempting or implementing this workaround.
->>
->>         WARNING: If switching an active system from fTPM to dTPM, it is
->> critical that you disable TPM-backed encryption systems (e.g. BitLocker
->> Drive Encryption) and/or back up vital system data prior to switching
->> TPM devices. You must have full administrative access to the system, or
->> explicit support from your IT administrator if the system is managed.
->> For more information on transferring ownership to a new TPM device,
->> please visit this Microsoft webpage.
->>
-> 
-> So it's a firmware problem, but apparently one that Linux only triggers
-> since 6.1.
-> 
-> Jason, could the hwrng changes have anything to do with this?
-> 
-> A bisection really would be helpful, but I guess that is not easy as the
-> problem apparently only shows up after some time...
-> 
-> 
-> Anyway:
-> 
-> [TLDR for the rest of this mail: I'm adding this report to the list of
-> tracked Linux kernel regressions; the text you find below is based on a
-> few templates paragraphs you might have encountered already in similar
-> form.]
-> 
-> BTW, let me use this mail to also add the report to the list of tracked
-> regressions to ensure it's doesn't fall through the cracks:
-> 
-> #regzbot introduced: v6.0..v6.1
-> https://bugzilla.kernel.org/show_bug.cgi?id=216989
-> #regzbot title: tpm: systems with AMD Ryzen stutter when fTPM is enabled
-> #regzbot ignore-activity
-> 
-> This isn't a regression? This issue or a fix for it are already
-> discussed somewhere else? It was fixed already? You want to clarify when
-> the regression started to happen? Or point out I got the title or
-> something else totally wrong? Then just reply and tell me -- ideally
-> while also telling regzbot about it, as explained by the page listed in
-> the footer of this mail.
-> 
-> Developers: When fixing the issue, remember to add 'Link:' tags pointing
-> to the report (e.g. the buzgzilla ticket and maybe this mail as well, if
-> this thread sees some discussion). See page linked in footer for details.
-> 
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> If I did something stupid, please tell me, as explained on that page.
+> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
+> index 0222b1ddb310..445b15493cb3 100644
+> --- a/drivers/char/tpm/Makefile
+> +++ b/drivers/char/tpm/Makefile
+> @@ -25,6 +25,7 @@ obj-$(CONFIG_TCG_TIS_SYNQUACER) += tpm_tis_synquacer.o
+>   
+>   obj-$(CONFIG_TCG_TIS_SPI) += tpm_tis_spi.o
+>   tpm_tis_spi-y := tpm_tis_spi_main.o
+> +tpm_tis_spi-y += tpm_tis_spi_tegra.o
+>   tpm_tis_spi-$(CONFIG_TCG_TIS_SPI_CR50) += tpm_tis_spi_cr50.o
+>   
+>   obj-$(CONFIG_TCG_TIS_I2C_CR50) += tpm_tis_i2c_cr50.o
+> diff --git a/drivers/char/tpm/tpm_tis_spi.h b/drivers/char/tpm/tpm_tis_spi.h
+> index d0f66f6f1931..feaea14b428b 100644
+> --- a/drivers/char/tpm/tpm_tis_spi.h
+> +++ b/drivers/char/tpm/tpm_tis_spi.h
+> @@ -31,6 +31,7 @@ extern int tpm_tis_spi_init(struct spi_device *spi, struct tpm_tis_spi_phy *phy,
+>   extern int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+>   				u8 *in, const u8 *out);
+>   
+> +extern int tegra_tpm_spi_probe(struct spi_device *spi);
+>   #ifdef CONFIG_TCG_TIS_SPI_CR50
+>   extern int cr50_spi_probe(struct spi_device *spi);
+>   #else
+> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
+> index a0963a3e92bd..5d4502a4461a 100644
+> --- a/drivers/char/tpm/tpm_tis_spi_main.c
+> +++ b/drivers/char/tpm/tpm_tis_spi_main.c
+> @@ -198,7 +198,7 @@ static int tpm_tis_spi_driver_probe(struct spi_device *spi)
+>   	const struct spi_device_id *spi_dev_id = spi_get_device_id(spi);
+>   	tpm_tis_spi_probe_func probe_func;
+>   
+> -	probe_func = of_device_get_match_data(&spi->dev);
+> +	probe_func = device_get_match_data(&spi->dev);
+>   	if (!probe_func) {
+>   		if (spi_dev_id) {
+>   			probe_func = (tpm_tis_spi_probe_func)spi_dev_id->driver_data;
+> @@ -227,6 +227,7 @@ static const struct spi_device_id tpm_tis_spi_id[] = {
+>   	{ "tpm_tis_spi", (unsigned long)tpm_tis_spi_probe },
+>   	{ "tpm_tis-spi", (unsigned long)tpm_tis_spi_probe },
+>   	{ "cr50", (unsigned long)cr50_spi_probe },
+> +	{ "tegra-tpm-spi", (unsigned long)tegra_tpm_spi_probe },
+>   	{}
+>   };
+>   MODULE_DEVICE_TABLE(spi, tpm_tis_spi_id);
+> @@ -236,6 +237,7 @@ static const struct of_device_id of_tis_spi_match[] = {
+>   	{ .compatible = "infineon,slb9670", .data = tpm_tis_spi_probe },
+>   	{ .compatible = "tcg,tpm_tis-spi", .data = tpm_tis_spi_probe },
+>   	{ .compatible = "google,cr50", .data = cr50_spi_probe },
+> +	{ .compatible = "nvidia,tegra-tpm-spi", .data = tegra_tpm_spi_probe },
+>   	{}
+>   };
+>   MODULE_DEVICE_TABLE(of, of_tis_spi_match);
+> diff --git a/drivers/char/tpm/tpm_tis_spi_tegra.c b/drivers/char/tpm/tpm_tis_spi_tegra.c
+> new file mode 100644
+> index 000000000000..23f20684513d
+> --- /dev/null
+> +++ b/drivers/char/tpm/tpm_tis_spi_tegra.c
+> @@ -0,0 +1,123 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2023 NVIDIA CORPORATION.
+> + *
+> + * This device driver implements TEGRA QSPI hw wait detection for chips
+> + *
+> + * It is based on tpm_tis_spi driver by Peter Huewe and Christophe Ricard.
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/pm.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/wait.h>
+> +
+> +#include "tpm_tis_core.h"
+> +#include "tpm_tis_spi.h"
+> +
+> +#define MAX_SPI_FRAMESIZE 64
+> +
+> +int tpm_tis_spi_tegra_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+> +			       u8 *in, const u8 *out)
+> +{
+> +	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+> +	int ret = 0;
+> +	struct spi_message m;
+> +	struct spi_transfer spi_xfer[3];
+> +	u8 transfer_len;
+
+Just use `unsigned int`? [1]
+
+> +
+> +	spi_bus_lock(phy->spi_device->master);
+> +
+> +	while (len) {
+> +		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
+> +
+> +		spi_message_init(&m);
+> +		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
+> +		phy->iobuf[1] = 0xd4;
+> +		phy->iobuf[2] = addr >> 8;
+> +		phy->iobuf[3] = addr;
+> +
+> +		memset(&spi_xfer, 0, sizeof(spi_xfer));
+> +
+> +		spi_xfer[0].tx_buf = phy->iobuf;
+> +		spi_xfer[0].len = 1;
+> +		spi_message_add_tail(&spi_xfer[0], &m);
+> +
+> +		spi_xfer[1].tx_buf = phy->iobuf + 1;
+> +		spi_xfer[1].len = 3;
+> +		spi_message_add_tail(&spi_xfer[1], &m);
+> +
+> +		if (out) {
+> +			spi_xfer[2].tx_buf = &phy->iobuf[4];
+> +			spi_xfer[2].rx_buf = NULL;
+> +			memcpy(&phy->iobuf[4], out, transfer_len);
+> +			out += transfer_len;
+> +		}
+> +		if (in) {
+> +			spi_xfer[2].tx_buf = NULL;
+> +			spi_xfer[2].rx_buf = &phy->iobuf[4];
+> +		}
+> +		spi_xfer[2].len = transfer_len;
+> +		spi_message_add_tail(&spi_xfer[2], &m);
+> +
+> +		reinit_completion(&phy->ready);
+> +		ret = spi_sync_locked(phy->spi_device, &m);
+> +		if (ret < 0)
+> +			goto exit;
+> +
+> +		if (in) {
+> +			memcpy(in, &phy->iobuf[4], transfer_len);
+> +			in += transfer_len;
+> +		}
+> +
+> +		len -= transfer_len;
+> +	}
+> +
+> +exit:
+> +	spi_bus_unlock(phy->spi_device->master);
+> +	return ret;
+> +}
+> +
+> +static int tpm_tis_spi_tegra_read_bytes(struct tpm_tis_data *data, u32 addr,
+> +					u16 len, u8 *result,
+> +					enum tpm_tis_io_mode io_mode)
+> +{
+> +	return tpm_tis_spi_tegra_transfer(data, addr, len, result, NULL);
+> +}
+> +
+> +static int tpm_tis_spi_tegra_write_bytes(struct tpm_tis_data *data, u32 addr,
+> +					 u16 len, const u8 *value,
+> +					 enum tpm_tis_io_mode io_mode)
+> +{
+> +	return tpm_tis_spi_tegra_transfer(data, addr, len, NULL, value);
+> +}
+> +
+> +static const struct tpm_tis_phy_ops tegra_tpm_spi_phy_ops = {
+> +	.read_bytes = tpm_tis_spi_tegra_read_bytes,
+> +	.write_bytes = tpm_tis_spi_tegra_write_bytes,
+> +};
+> +
+> +int tegra_tpm_spi_probe(struct spi_device *dev)
+> +{
+> +	struct tpm_tis_spi_phy *phy;
+> +	int irq;
+> +
+> +	phy = devm_kzalloc(&dev->dev, sizeof(struct tpm_tis_spi_phy),
+> +			   GFP_KERNEL);
+> +	if (!phy)
+> +		return -ENOMEM;
+> +
+> +	phy->flow_control = NULL;
+> +
+> +	/* If the SPI device has an IRQ then use that */
+> +	if (dev->irq > 0)
+> +		irq = dev->irq;
+> +	else
+> +		irq = -1;
+
+Use ternary operator?
+
+     irq = dev->irq > 0 ? dev->irq : -1;
+
+> +
+> +	init_completion(&phy->ready);
+> +	return tpm_tis_spi_init(dev, phy, irq, &tegra_tpm_spi_phy_ops);
+> +}
+
+
+Kind regards,
+
+Paul
+
+
+[1]: https://notabs.org/coding/smallIntsBigPenalty.htm
