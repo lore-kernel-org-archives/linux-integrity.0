@@ -2,68 +2,68 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F18AC05027
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CC9C636CD
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:05:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231237AbjBJIFF (ORCPT
+        id S231176AbjBJIFG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 10 Feb 2023 03:05:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46650 "EHLO
+        Fri, 10 Feb 2023 03:05:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231569AbjBJIEv (ORCPT
+        with ESMTP id S231570AbjBJIEv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 10 Feb 2023 03:04:51 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 494F280772;
-        Fri, 10 Feb 2023 00:04:36 -0800 (PST)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A7hGNh006808;
-        Fri, 10 Feb 2023 08:04:27 GMT
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB29080754;
+        Fri, 10 Feb 2023 00:04:35 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A83Neo008622;
+        Fri, 10 Feb 2023 08:04:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=6RkPafligA6B+YzStqIbqDRp7JI1Hfw2d/onHYoGAx4=;
- b=ddghUGUKO911Q3wfgJSO6yfv0+tC3KLeKC+cprCbiE7FoUxr8SgsXnaP4TDukhJHMnHR
- UzQMX/bnvc6eRP/wILEH231wqgGis/Rbe/kZoJFrX4j3Vf99SAxb8AJQAF8p1s8GeFsC
- UAJJ/bhNJvYKK9pi/8k0hfa2qwXt5utl/ITajf8ic1YDNA7dgBh21RESBe4i9dGL9QjB
- HcWiaI/5ZJVMwxwBPIH3vcyyFGyPDTMZ7OUzdQM6mD2w1zYFDjaywaKBVVqJOQj7oOB3
- 4W9P0c0D5v1KROLjueCwf8YF55sJzHdyKWzI78NyLJCQBlaWa1feBEUgH1/XDeM251BW 5w== 
+ bh=qShSbKMxV7Z7Qv9mgfP79gBedY4t+fnTdA6Vi24y4q4=;
+ b=kBrAzAADzoucHJAe1LkpQUGvSutkb9kpjbn39LFQu7uCs3gyouh+juIPL2S9eGqiGYf+
+ D9WnvIhR8RI86g1WR23iLYwRsTKN93ISnTv5Q0916twcqfTjtWCV9pRKb7I44xau28AA
+ dkMaYXZC6CynKYy2hH3P+f9IKLrAZ3t7Qbiw1UH85owiHVwAdacLC1Mq4QDam1L8gE9T
+ NTLY6RGVb5cy0tb+jDsIthH4VRbg9jU92B0jkp8nuANw0lrkZrGglbUkEDMGf+Ul7jVX
+ ip8zMLhk1qPb5ucuMn8DDGJaisMTFoynBSEFOOoCRpBstLgrrIjiBxCe8eshghj4E+BH 9g== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnhsjrhnu-1
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj30r1aa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:27 +0000
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A7lVKv022488;
+        Fri, 10 Feb 2023 08:04:26 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A84CVC013305;
         Fri, 10 Feb 2023 08:04:25 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnhsjrhmn-1
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj30r195-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 10 Feb 2023 08:04:25 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 31A6FcSh020984;
-        Fri, 10 Feb 2023 08:04:24 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-        by ppma06ams.nl.ibm.com (PPS) with ESMTPS id 3nhemfq6cc-1
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 319D8J8K026476;
+        Fri, 10 Feb 2023 08:04:23 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+        by ppma02fra.de.ibm.com (PPS) with ESMTPS id 3nhf06w4c1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Fri, 10 Feb 2023 08:04:23 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84LbV22610276
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84L2i43385232
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Fri, 10 Feb 2023 08:04:21 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3204920040;
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 320682005A;
         Fri, 10 Feb 2023 08:04:21 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A214F20043;
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B36F2004E;
         Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
         Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 46DED6096E;
-        Fri, 10 Feb 2023 19:04:15 +1100 (AEDT)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id F41DF60807;
+        Fri, 10 Feb 2023 19:04:14 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
 Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
@@ -72,70 +72,136 @@ Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
         erichte@linux.ibm.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
         npiggin@gmail.com
-Subject: [PATCH v6 13/26] powerpc/secvar: Don't print error on ENOENT when reading variables
-Date:   Fri, 10 Feb 2023 19:03:48 +1100
-Message-Id: <20230210080401.345462-14-ajd@linux.ibm.com>
+Subject: [PATCH v6 08/26] powerpc/secvar: Handle max object size in the consumer
+Date:   Fri, 10 Feb 2023 19:03:43 +1100
+Message-Id: <20230210080401.345462-9-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230210080401.345462-1-ajd@linux.ibm.com>
 References: <20230210080401.345462-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: qkh-ENGpZZfeRl5nFMZ5iqKYoQF2Dlro
-X-Proofpoint-ORIG-GUID: YkWXcUUTfGWKSfQT7UMzOWmM5f7nSl5O
+X-Proofpoint-GUID: ONaePQBeGn3UwiTweLjUb9FfFiMXAIJw
+X-Proofpoint-ORIG-GUID: uyJXsz2nn0TPt2Df-gDe9Nn9bIQHfl-f
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-10_03,2023-02-09_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- spamscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999 impostorscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ mlxlogscore=999 bulkscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2212070000 definitions=main-2302100070
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-If attempting to read the size or data attributes of a  non-existent
-variable (which will be possible after a later patch to expose the PLPKS
-via the secvar interface), don't spam the kernel log with error messages.
-Only print errors for return codes that aren't ENOENT.
+From: Russell Currey <ruscur@russell.cc>
 
-Reported-by: Sudhakar Kuppusamy <sudhakar@linux.ibm.com>
+Currently the max object size is handled in the core secvar code with an
+entirely OPAL-specific implementation, so create a new max_size() op and
+move the existing implementation into the powernv platform.  Should be
+no functional change.
+
+Signed-off-by: Russell Currey <ruscur@russell.cc>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
 ---
 
-v3: New patch
----
- arch/powerpc/kernel/secvar-sysfs.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+v3: Change uint64_t type to u64 (mpe)
 
+v4: Return immediately if node is NULL (gjoyce)
+---
+ arch/powerpc/include/asm/secvar.h            |  1 +
+ arch/powerpc/kernel/secvar-sysfs.c           | 17 +++------------
+ arch/powerpc/platforms/powernv/opal-secvar.c | 22 ++++++++++++++++++++
+ 3 files changed, 26 insertions(+), 14 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/secvar.h b/arch/powerpc/include/asm/secvar.h
+index 1a2c696a48ad..bf396215903d 100644
+--- a/arch/powerpc/include/asm/secvar.h
++++ b/arch/powerpc/include/asm/secvar.h
+@@ -18,6 +18,7 @@ struct secvar_operations {
+ 	int (*get_next)(const char *key, u64 *key_len, u64 keybufsize);
+ 	int (*set)(const char *key, u64 key_len, u8 *data, u64 data_size);
+ 	ssize_t (*format)(char *buf, size_t bufsize);
++	int (*max_size)(u64 *max_size);
+ };
+ 
+ #ifdef CONFIG_PPC_SECURE_BOOT
 diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
-index 6ba23b2bb9da..eb3c053f323f 100644
+index e4661559c855..0966806f28c7 100644
 --- a/arch/powerpc/kernel/secvar-sysfs.c
 +++ b/arch/powerpc/kernel/secvar-sysfs.c
-@@ -43,8 +43,8 @@ static ssize_t size_show(struct kobject *kobj, struct kobj_attribute *attr,
+@@ -132,27 +132,16 @@ static struct kobj_type secvar_ktype = {
+ static int update_kobj_size(void)
+ {
  
- 	rc = secvar_ops->get(kobj->name, strlen(kobj->name) + 1, NULL, &dsize);
- 	if (rc) {
--		pr_err("Error retrieving %s variable size %d\n", kobj->name,
--		       rc);
-+		if (rc != -ENOENT)
-+			pr_err("Error retrieving %s variable size %d\n", kobj->name, rc);
- 		return rc;
- 	}
+-	struct device_node *node;
+ 	u64 varsize;
+-	int rc = 0;
++	int rc = secvar_ops->max_size(&varsize);
  
-@@ -61,7 +61,8 @@ static ssize_t data_read(struct file *filep, struct kobject *kobj,
+-	node = of_find_compatible_node(NULL, NULL, "ibm,secvar-backend");
+-	if (!of_device_is_available(node)) {
+-		rc = -ENODEV;
+-		goto out;
+-	}
+-
+-	rc = of_property_read_u64(node, "max-var-size", &varsize);
+ 	if (rc)
+-		goto out;
++		return rc;
  
- 	rc = secvar_ops->get(kobj->name, strlen(kobj->name) + 1, NULL, &dsize);
- 	if (rc) {
--		pr_err("Error getting %s variable size %d\n", kobj->name, rc);
-+		if (rc != -ENOENT)
-+			pr_err("Error getting %s variable size %d\n", kobj->name, rc);
- 		return rc;
- 	}
- 	pr_debug("dsize is %llu\n", dsize);
+ 	data_attr.size = varsize;
+ 	update_attr.size = varsize;
+ 
+-out:
+-	of_node_put(node);
+-
+-	return rc;
++	return 0;
+ }
+ 
+ static int secvar_sysfs_load(void)
+diff --git a/arch/powerpc/platforms/powernv/opal-secvar.c b/arch/powerpc/platforms/powernv/opal-secvar.c
+index e33bb703ecbc..a8436bf35e2f 100644
+--- a/arch/powerpc/platforms/powernv/opal-secvar.c
++++ b/arch/powerpc/platforms/powernv/opal-secvar.c
+@@ -122,11 +122,33 @@ static ssize_t opal_secvar_format(char *buf, size_t bufsize)
+ 	return rc;
+ }
+ 
++static int opal_secvar_max_size(u64 *max_size)
++{
++	int rc;
++	struct device_node *node;
++
++	node = of_find_compatible_node(NULL, NULL, "ibm,secvar-backend");
++	if (!node)
++		return -ENODEV;
++
++	if (!of_device_is_available(node)) {
++		rc = -ENODEV;
++		goto out;
++	}
++
++	rc = of_property_read_u64(node, "max-var-size", max_size);
++
++out:
++	of_node_put(node);
++	return rc;
++}
++
+ static const struct secvar_operations opal_secvar_ops = {
+ 	.get = opal_get_variable,
+ 	.get_next = opal_get_next_variable,
+ 	.set = opal_set_variable,
+ 	.format = opal_secvar_format,
++	.max_size = opal_secvar_max_size,
+ };
+ 
+ static int opal_secvar_probe(struct platform_device *pdev)
 -- 
 2.39.1
 
