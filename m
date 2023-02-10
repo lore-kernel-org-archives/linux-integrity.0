@@ -2,118 +2,138 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B220C636D4
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 03:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A3DC636CD
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229917AbjBJD4g (ORCPT
+        id S231342AbjBJIEl (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 9 Feb 2023 22:56:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47166 "EHLO
+        Fri, 10 Feb 2023 03:04:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbjBJD4f (ORCPT
+        with ESMTP id S231524AbjBJIEj (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 9 Feb 2023 22:56:35 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD27B6F224;
-        Thu,  9 Feb 2023 19:56:34 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Fri, 10 Feb 2023 03:04:39 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BF580744;
+        Fri, 10 Feb 2023 00:04:34 -0800 (PST)
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A7g6Z2032537;
+        Fri, 10 Feb 2023 08:04:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=SH2UbH2B3c2icAgR9z8QB14k/xdDG7GU+NiJiqoJMLw=;
+ b=UizX3jIMjSc5TdqjtyPNzIE8YRiM9/MwJS+WccISaqUPuLcY1ocG+vefrbpkdVsph2LK
+ 1WgyZsCMIEfoHvWxm66GRBB0SiTtXZlVAwygCvPDTOsue9vxyNYRSa32U2zmS67yzs20
+ QTOSqu6ScbbTxRqSTjnu1ofjBwvQbVctg9WY/2CRQCFHQ5NhmKfnm5DRAAbQAWrDVlLS
+ sMzaiFuMxzPXzqU9242kThE2TaWszWpftWZaEySeIE/rX5425zFxe40/GcVsuXVrNvfC
+ MVVa5OJ/B0sL35kzMeETH1Ep5imnTzDJxs+jcW6yJ3BReYTVOmbM1k2TZwpHXaENI4nD lA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnhrurjhf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Feb 2023 08:04:26 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A7h2WB002304;
+        Fri, 10 Feb 2023 08:04:25 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnhrurjfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Feb 2023 08:04:25 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 31A7MeAH021050;
+        Fri, 10 Feb 2023 08:04:23 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+        by ppma06ams.nl.ibm.com (PPS) with ESMTPS id 3nhemfq6ca-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 10 Feb 2023 08:04:23 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84KFi22610270
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 10 Feb 2023 08:04:20 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A94E82004B;
+        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2632C20040;
+        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
+Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 78B6C61488;
-        Fri, 10 Feb 2023 03:56:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B036C4339B;
-        Fri, 10 Feb 2023 03:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676001393;
-        bh=NZY1/v8Sk6GLpz/11I4nuyXPEbK3cemp/lGf/ubXeZ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=AZuZJLFrbFS2b9ruw9wyTmroDDqdugku3LVd3lAzxtIxZYxFTAOgLYS4IAPPh260M
-         +nRJULnBe//Su9Rhde6oHCb+n6ys2cUpoz3gnfW1+ZEF24W3FmnjysBF5ZqsQzWkgP
-         SXzDJT/JWxIDLzR+o7n335pQFpU3sdP+vaYhRtMDbukcbfcuAMWbHbkIpp2YEEjN3D
-         NK6IXAJMFd6w/YHCQdRQa5yrEfaSnZD7c+hAapVuvm+806OKBCB536iK+mU34gOioE
-         ffmdnDtM4rzSoaWJRTXLia5OVXQuxzY9KgMNw37oSVvg0SwD/c5bgGcosmA9P4qtPT
-         K+Uxn+6+fIdng==
-Date:   Fri, 10 Feb 2023 05:56:31 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v5 2/2] KEYS: asymmetric: Copy sig and digest in
- public_key_verify_signature()
-Message-ID: <Y+XAbz6YmazGNFQr@kernel.org>
-References: <20221227142740.2807136-1-roberto.sassu@huaweicloud.com>
- <20221227142740.2807136-3-roberto.sassu@huaweicloud.com>
- <Y64XB0yi24yjeBDw@sol.localdomain>
- <d2a54ddec403cad12c003132542070bf781d5e26.camel@huaweicloud.com>
- <857eedc5ad18eddae7686dca63cf8c613a051be4.camel@huaweicloud.com>
- <Y+VBMQEwPTPGBIpP@gmail.com>
- <CAHC9VhTYeqCB8roaNvWUYJeKPwT35ixJ8MMXBe0v0+a9o8CXWw@mail.gmail.com>
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id DEE0E60805;
+        Fri, 10 Feb 2023 19:04:14 +1100 (AEDT)
+From:   Andrew Donnellan <ajd@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
+        gcwilson@linux.ibm.com, gjoyce@linux.ibm.com, brking@linux.ibm.com,
+        stefanb@linux.ibm.com, sudhakar@linux.ibm.com,
+        erichte@linux.ibm.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
+        npiggin@gmail.com
+Subject: [PATCH v6 06/26] powerpc/secvar: Use sysfs_emit() instead of sprintf()
+Date:   Fri, 10 Feb 2023 19:03:41 +1100
+Message-Id: <20230210080401.345462-7-ajd@linux.ibm.com>
+X-Mailer: git-send-email 2.39.1
+In-Reply-To: <20230210080401.345462-1-ajd@linux.ibm.com>
+References: <20230210080401.345462-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTYeqCB8roaNvWUYJeKPwT35ixJ8MMXBe0v0+a9o8CXWw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: tdmQBz2FKtsx8QTdA6_EOMd18dFRwJtP
+X-Proofpoint-GUID: ST64kUr2XXAFKFESfCwjMSFrrr1U-_05
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
+ definitions=2023-02-10_03,2023-02-09_03,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2302100070
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Feb 09, 2023 at 05:46:32PM -0500, Paul Moore wrote:
-> On Thu, Feb 9, 2023 at 1:53 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> > On Thu, Feb 09, 2023 at 11:49:19AM +0100, Roberto Sassu wrote:
-> > > On Fri, 2023-01-27 at 09:27 +0100, Roberto Sassu wrote:
-> > > > On Thu, 2022-12-29 at 14:39 -0800, Eric Biggers wrote:
-> > > > > On Tue, Dec 27, 2022 at 03:27:40PM +0100, Roberto Sassu wrote:
-> > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > >
-> > > > > > Commit ac4e97abce9b8 ("scatterlist: sg_set_buf() argument must be in linear
-> > > > > > mapping") checks that both the signature and the digest reside in the
-> > > > > > linear mapping area.
-> > > > > >
-> > > > > > However, more recently commit ba14a194a434c ("fork: Add generic vmalloced
-> > > > > > stack support") made it possible to move the stack in the vmalloc area,
-> > > > > > which is not contiguous, and thus not suitable for sg_set_buf() which needs
-> > > > > > adjacent pages.
-> > > > > >
-> > > > > > Always make a copy of the signature and digest in the same buffer used to
-> > > > > > store the key and its parameters, and pass them to sg_init_one(). Prefer it
-> > > > > > to conditionally doing the copy if necessary, to keep the code simple. The
-> > > > > > buffer allocated with kmalloc() is in the linear mapping area.
-> > > > > >
-> > > > > > Cc: stable@vger.kernel.org # 4.9.x
-> > > > > > Fixes: ba14a194a434 ("fork: Add generic vmalloced stack support")
-> > > > > > Link: https://lore.kernel.org/linux-integrity/Y4pIpxbjBdajymBJ@sol.localdomain/
-> > > > > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> > > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > > ---
-> > > > > >  crypto/asymmetric_keys/public_key.c | 38 ++++++++++++++++-------------
-> > > > > >  1 file changed, 21 insertions(+), 17 deletions(-)
-> > > > >
-> > > > > Reviewed-by: Eric Biggers <ebiggers@google.com>
-> > > >
-> > > > Hi David
-> > > >
-> > > > could you please take this patch in your repo, if it is ok?
-> > >
-> > > Kindly ask your support here. Has this patch been queued somewhere?
-> > > Wasn't able to find it, also it is not in linux-next.
-> > >
-> >
-> > The maintainer of asymmetric_keys (David Howells) is ignoring this patch, so
-> > you'll need to find someone else to apply it.  Herbert Xu, the maintainer of the
-> > crypto subsystem, might be willing to apply it.  Or maybe Jarkko Sakkinen, who
-> > is a co-maintainer of the keyrings subsystem (but not asymmetric_keys, for some
-> > reason; should that change?).
-> 
-> It is problematic that David isn't replying to this.  I have no idea
-> if it will work, but I just reached out to him to see if I can draw
-> his attention back to this ...
+From: Russell Currey <ruscur@russell.cc>
 
-See my response to Eric.
+The secvar format string and object size sysfs files are both ASCII
+text, and should use sysfs_emit().  No functional change.
 
-BR, Jarkko
+Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Russell Currey <ruscur@russell.cc>
+Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+---
+
+v2: New patch (gregkh)
+---
+ arch/powerpc/kernel/secvar-sysfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
+index 702044edf14d..b786d1005027 100644
+--- a/arch/powerpc/kernel/secvar-sysfs.c
++++ b/arch/powerpc/kernel/secvar-sysfs.c
+@@ -35,7 +35,7 @@ static ssize_t format_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 	if (rc)
+ 		goto out;
+ 
+-	rc = sprintf(buf, "%s\n", format);
++	rc = sysfs_emit(buf, "%s\n", format);
+ 
+ out:
+ 	of_node_put(node);
+@@ -57,7 +57,7 @@ static ssize_t size_show(struct kobject *kobj, struct kobj_attribute *attr,
+ 		return rc;
+ 	}
+ 
+-	return sprintf(buf, "%llu\n", dsize);
++	return sysfs_emit(buf, "%llu\n", dsize);
+ }
+ 
+ static ssize_t data_read(struct file *filep, struct kobject *kobj,
+-- 
+2.39.1
+
