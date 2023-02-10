@@ -2,68 +2,68 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CD2C636D3
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:06:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB8DC64EC6
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:06:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbjBJIFz (ORCPT
+        id S231675AbjBJIGB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 10 Feb 2023 03:05:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47338 "EHLO
+        Fri, 10 Feb 2023 03:06:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231625AbjBJIFO (ORCPT
+        with ESMTP id S231601AbjBJIFE (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 10 Feb 2023 03:05:14 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5388C80767;
-        Fri, 10 Feb 2023 00:04:38 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A7wooI014438;
-        Fri, 10 Feb 2023 08:04:27 GMT
+        Fri, 10 Feb 2023 03:05:04 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 729C08184F;
+        Fri, 10 Feb 2023 00:04:37 -0800 (PST)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A7hHQB006819;
+        Fri, 10 Feb 2023 08:04:28 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=BsL1ePXwOOXNjQDluFUSAj3yoloT3UdHoCxMkzSHPkg=;
- b=qquDDg2cYecoGHxOzf4oHFd+dy+aONrlCJRh3Ug+e2VKXYTDwvyZuIUZYxMhf8i3zcG3
- 1aeQ6Jq3YKzsVb/PyuBwyXnUbx/zM/aRdgwaboxFR3F+SyC6YWAWbO/o/DXiii8h8DFf
- lf5slom7oHmIK3qXv604cX1hvM4jadbMrfOzZNAm2d8tKrGLiK11HaIDtBiO1mfFakQC
- hXxbRPol3a0gD12uX19fT01gvAo0TFUffnuVE3DdE9v77Rr9xeKju2gRADAwHkadaHlW
- 2uOV7ICJlJ2eq2Eqtk8UEK125rDNy/SiyDlrLH1Q0SkcA7roV1UyJcEadTNy6p4RFytQ dw== 
+ bh=WMu/Zb3Iphqdf5G/sJin/L6+0Yox6l6Bi4TmsUaD9TQ=;
+ b=UCmJaO45nvIV0W7EGfHgNcSql7sDe54v/Kae5Fgm3Us/NNB4pzFW3hr8v/55lVZcwzBT
+ ROUGF8PG0sdHepscyGv41DUv87aEH7zdbb8mtA7FmjruKaHbkpHwYp/GLZ7qq3Lh4gP5
+ VVpSGecC3Pbz1Ps7Qj+yCYN5ppeGbR/Gj45ULJTWCHpWQI/7kPNw29AIrx5x2YMIKqr/
+ secn9BhgN/0RdDIa+m3yRnSXIjJxgGhtbyH1WZNs8zSAd0E1mFnWrfj1TA9yMWyTCIMg
+ Z82n0rRraEXdmWSGlRY05aBxRVhqsXidzwokW4KpJVUGNriIGmz7bZxDQ+k6j7Dl5DL4 XQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj0sr5ec-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnhsjrhqv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:26 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A7wcHJ013990;
-        Fri, 10 Feb 2023 08:04:26 GMT
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj0sr5cw-1
+        Fri, 10 Feb 2023 08:04:28 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A7lVKx022488;
+        Fri, 10 Feb 2023 08:04:27 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnhsjrhp4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:26 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 319Ft9ft004215;
-        Fri, 10 Feb 2023 08:04:23 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-        by ppma01fra.de.ibm.com (PPS) with ESMTPS id 3nhf06n40f-1
+        Fri, 10 Feb 2023 08:04:27 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 319J2h8U016244;
+        Fri, 10 Feb 2023 08:04:25 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+        by ppma04fra.de.ibm.com (PPS) with ESMTPS id 3nhf06w3vw-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:23 +0000
+        Fri, 10 Feb 2023 08:04:25 +0000
 Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84Le822807254
+        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84M9G31523290
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Feb 2023 08:04:21 GMT
+        Fri, 10 Feb 2023 08:04:22 GMT
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 322592004F;
-        Fri, 10 Feb 2023 08:04:21 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id AF03820040;
+        Fri, 10 Feb 2023 08:04:22 +0000 (GMT)
 Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A26392004E;
-        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 2BFCF2004B;
+        Fri, 10 Feb 2023 08:04:22 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
         by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
+        Fri, 10 Feb 2023 08:04:22 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 5D61C60972;
-        Fri, 10 Feb 2023 19:04:15 +1100 (AEDT)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 15538609C2;
+        Fri, 10 Feb 2023 19:04:16 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
 Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
@@ -72,89 +72,118 @@ Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
         erichte@linux.ibm.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
         npiggin@gmail.com
-Subject: [PATCH v6 14/26] powerpc/pseries: Move plpks.h to include directory
-Date:   Fri, 10 Feb 2023 19:03:49 +1100
-Message-Id: <20230210080401.345462-15-ajd@linux.ibm.com>
+Subject: [PATCH v6 25/26] integrity/powerpc: Improve error handling & reporting when loading certs
+Date:   Fri, 10 Feb 2023 19:04:00 +1100
+Message-Id: <20230210080401.345462-26-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230210080401.345462-1-ajd@linux.ibm.com>
 References: <20230210080401.345462-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: O6LkmVq4q9bBItnu0FqGcwc6eNIeSdcd
-X-Proofpoint-GUID: Au9HCKTEOmBwJd9x1NSQOhxkAWLgckZ-
+X-Proofpoint-GUID: Em6Yri6B21nTAEyUorthCqs09ILSRYOM
+X-Proofpoint-ORIG-GUID: 7Iv5FbqKSN2l7pMBiH0sVq6x69BUo64f
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-10_03,2023-02-09_03,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 suspectscore=0 clxscore=1015
- bulkscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2212070000 definitions=main-2302100070
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
+ spamscore=0 mlxscore=0 clxscore=1015 mlxlogscore=999 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2302100070
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Russell Currey <ruscur@russell.cc>
 
-Move plpks.h from platforms/pseries/ to include/asm/. This is necessary
-for later patches to make use of the PLPKS from code in other subsystems.
+A few improvements to load_powerpc.c:
 
+ - include integrity.h for the pr_fmt()
+ - move all error reporting out of get_cert_list()
+ - use ERR_PTR() to better preserve error detail
+ - don't use pr_err() for missing keys
+
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 Signed-off-by: Russell Currey <ruscur@russell.cc>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
 ---
 
 v3: New patch
 ---
- .../powerpc/{platforms/pseries => include/asm}/plpks.h | 10 +++++++---
- arch/powerpc/platforms/pseries/plpks.c                 |  3 +--
- 2 files changed, 8 insertions(+), 5 deletions(-)
- rename arch/powerpc/{platforms/pseries => include/asm}/plpks.h (89%)
+ .../integrity/platform_certs/load_powerpc.c   | 26 ++++++++++++++-----
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/platforms/pseries/plpks.h b/arch/powerpc/include/asm/plpks.h
-similarity index 89%
-rename from arch/powerpc/platforms/pseries/plpks.h
-rename to arch/powerpc/include/asm/plpks.h
-index 275ccd86bfb5..8295502ee93b 100644
---- a/arch/powerpc/platforms/pseries/plpks.h
-+++ b/arch/powerpc/include/asm/plpks.h
-@@ -6,8 +6,10 @@
-  * Platform keystore for pseries LPAR(PLPKS).
+diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+index 1e4f80a4e71c..dee51606d5f4 100644
+--- a/security/integrity/platform_certs/load_powerpc.c
++++ b/security/integrity/platform_certs/load_powerpc.c
+@@ -14,9 +14,15 @@
+ #include <asm/secure_boot.h>
+ #include <asm/secvar.h>
+ #include "keyring_handler.h"
++#include "../integrity.h"
+ 
+ /*
+  * Get a certificate list blob from the named secure variable.
++ *
++ * Returns:
++ *  - a pointer to a kmalloc'd buffer containing the cert list on success
++ *  - NULL if the key does not exist
++ *  - an ERR_PTR on error
   */
+ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
+ {
+@@ -25,19 +31,19 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
  
--#ifndef _PSERIES_PLPKS_H
--#define _PSERIES_PLPKS_H
-+#ifndef _ASM_POWERPC_PLPKS_H
-+#define _ASM_POWERPC_PLPKS_H
-+
-+#ifdef CONFIG_PSERIES_PLPKS
+ 	rc = secvar_ops->get(key, keylen, NULL, size);
+ 	if (rc) {
+-		pr_err("Couldn't get size: %d\n", rc);
+-		return NULL;
++		if (rc == -ENOENT)
++			return NULL;
++		return ERR_PTR(rc);
+ 	}
  
- #include <linux/types.h>
- #include <linux/list.h>
-@@ -68,4 +70,6 @@ int plpks_read_fw_var(struct plpks_var *var);
-  */
- int plpks_read_bootloader_var(struct plpks_var *var);
+ 	db = kmalloc(*size, GFP_KERNEL);
+ 	if (!db)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
  
--#endif
-+#endif // CONFIG_PSERIES_PLPKS
-+
-+#endif // _ASM_POWERPC_PLPKS_H
-diff --git a/arch/powerpc/platforms/pseries/plpks.c b/arch/powerpc/platforms/pseries/plpks.c
-index a01cf2ff140a..13e6daadb179 100644
---- a/arch/powerpc/platforms/pseries/plpks.c
-+++ b/arch/powerpc/platforms/pseries/plpks.c
-@@ -18,8 +18,7 @@
- #include <linux/types.h>
- #include <asm/hvcall.h>
- #include <asm/machdep.h>
--
--#include "plpks.h"
-+#include <asm/plpks.h>
+ 	rc = secvar_ops->get(key, keylen, db, size);
+ 	if (rc) {
+ 		kfree(db);
+-		pr_err("Error reading %s var: %d\n", key, rc);
+-		return NULL;
++		return ERR_PTR(rc);
+ 	}
  
- #define PKS_FW_OWNER	     0x1
- #define PKS_BOOTLOADER_OWNER 0x2
+ 	return db;
+@@ -69,7 +75,11 @@ static int __init load_powerpc_certs(void)
+ 	 */
+ 	db = get_cert_list("db", 3, &dbsize);
+ 	if (!db) {
+-		pr_err("Couldn't get db list from firmware\n");
++		pr_info("Couldn't get db list from firmware\n");
++	} else if (IS_ERR(db)) {
++		rc = PTR_ERR(db);
++		pr_err("Error reading db from firmware: %d\n", rc);
++		return rc;
+ 	} else {
+ 		rc = parse_efi_signature_list("powerpc:db", db, dbsize,
+ 					      get_handler_for_db);
+@@ -81,6 +91,10 @@ static int __init load_powerpc_certs(void)
+ 	dbx = get_cert_list("dbx", 4,  &dbxsize);
+ 	if (!dbx) {
+ 		pr_info("Couldn't get dbx list from firmware\n");
++	} else if (IS_ERR(dbx)) {
++		rc = PTR_ERR(dbx);
++		pr_err("Error reading dbx from firmware: %d\n", rc);
++		return rc;
+ 	} else {
+ 		rc = parse_efi_signature_list("powerpc:dbx", dbx, dbxsize,
+ 					      get_handler_for_dbx);
 -- 
 2.39.1
 
