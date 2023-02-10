@@ -2,68 +2,68 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75459C636D6
-	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D3FC636D3
+	for <linux-integrity@archiver.kernel.org>; Fri, 10 Feb 2023 08:04:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231475AbjBJIEp (ORCPT
+        id S231523AbjBJIEq (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 10 Feb 2023 03:04:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46294 "EHLO
+        Fri, 10 Feb 2023 03:04:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231524AbjBJIEn (ORCPT
+        with ESMTP id S231435AbjBJIEn (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 10 Feb 2023 03:04:43 -0500
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD07680749;
-        Fri, 10 Feb 2023 00:04:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26F7180747;
+        Fri, 10 Feb 2023 00:04:35 -0800 (PST)
 Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A80gQH002883;
-        Fri, 10 Feb 2023 08:04:26 GMT
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 31A80Zqi002110;
+        Fri, 10 Feb 2023 08:04:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=vC9JVreK0+6SnIM1kW+akAGKStkqNb5m8QZGsYb6oRQ=;
- b=iF32a+a7DKK2eRZwk44Qz6e3KkdinkVopGSbOcHv0tXuG/wSaiDbDds4w3MR1cmd0fWe
- jEhQqK9v2EPj13i9RHkv5JB8Fvpq98/1SP07N7pWjZayWOABkha8Ywc0oBhGEVG61i8s
- MMB5hDrk6AhucNZDA5ZAFIlTCFsgwz/RBsXZ1Bs7MYs2N63bQ7DvqyLK3SJDNSqGcidX
- VDE77SlqrnFb2JPjEGAv+SDKp/QHua/sVFBxO6Rx2gBr3hM2W8Im22wWR990uJLCfL5b
- Z5XhEWwvqpKojiJ+H72Cmrdlb7hNI3tJCEnSLfr1wLjHZ8kZN/UzeApnNunC81YdYg+P 2A== 
+ bh=Mz/m+UoRYuFUUZb89gu8Ix2Q3YtcIMhHY1JJ5tirGWA=;
+ b=VQIcTGBoC5IbxuhCNmLkQ+mXsppMaf6LhUBULr8krLcOS3RZyMhaR+rnqdm/szXq0bn2
+ vkt1cGBxSEM7FJlcxnUrlrSxmv55iGjgwlWZs6aFD8OSEjkTorSfPSbVsJMqk9OOEeAZ
+ Vbo2C54UbAVmPkPT0eZzXjitc1HhfH05F9q+Bm/904bEOf+bottSDXXPklIvXUWDGLRK
+ XfUdTv1+mQZkqZpYJRlEFiGU3s8DjuwbVLRIw1nOSndD5mYXfiXrZXOl+kAtg8hx5pM6
+ 6xbxyhILssIGX4+rEYFGxOPVPV9jXAJ3SYNa07qG6fHxwhOfTEYsRzAadecElkgaYpHv zA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj1r0324-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj1r032p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:25 +0000
+        Fri, 10 Feb 2023 08:04:27 +0000
 Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A80bYc002184;
-        Fri, 10 Feb 2023 08:04:25 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj1r0311-1
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 31A84Qib019162;
+        Fri, 10 Feb 2023 08:04:26 GMT
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3nnj1r031k-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:25 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 319L92V2017164;
-        Fri, 10 Feb 2023 08:04:22 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-        by ppma06fra.de.ibm.com (PPS) with ESMTPS id 3nhemfn4xt-1
+        Fri, 10 Feb 2023 08:04:26 +0000
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 31A6RrxE024301;
+        Fri, 10 Feb 2023 08:04:23 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+        by ppma04ams.nl.ibm.com (PPS) with ESMTPS id 3nhf06y5wd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Feb 2023 08:04:22 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-        by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84InM48038308
+        Fri, 10 Feb 2023 08:04:23 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 31A84LqX22151532
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Feb 2023 08:04:18 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35C2F20040;
-        Fri, 10 Feb 2023 08:04:18 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A50E12005A;
-        Fri, 10 Feb 2023 08:04:17 +0000 (GMT)
+        Fri, 10 Feb 2023 08:04:21 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 300162004B;
+        Fri, 10 Feb 2023 08:04:21 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0B6A2005A;
+        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
 Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 10 Feb 2023 08:04:17 +0000 (GMT)
+        by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 10 Feb 2023 08:04:20 +0000 (GMT)
 Received: from jarvis-ozlabs-ibm-com.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id B3651606E7;
-        Fri, 10 Feb 2023 19:04:14 +1100 (AEDT)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 306B960808;
+        Fri, 10 Feb 2023 19:04:15 +1100 (AEDT)
 From:   Andrew Donnellan <ajd@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
 Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
@@ -72,17 +72,17 @@ Cc:     ruscur@russell.cc, bgray@linux.ibm.com, nayna@linux.ibm.com,
         erichte@linux.ibm.com, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, zohar@linux.ibm.com, joel@jms.id.au,
         npiggin@gmail.com
-Subject: [PATCH v6 03/26] powerpc/secvar: Fix incorrect return in secvar_sysfs_load()
-Date:   Fri, 10 Feb 2023 19:03:38 +1100
-Message-Id: <20230210080401.345462-4-ajd@linux.ibm.com>
+Subject: [PATCH v6 12/26] powerpc/secvar: Warn when PAGE_SIZE is smaller than max object size
+Date:   Fri, 10 Feb 2023 19:03:47 +1100
+Message-Id: <20230210080401.345462-13-ajd@linux.ibm.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20230210080401.345462-1-ajd@linux.ibm.com>
 References: <20230210080401.345462-1-ajd@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4rZK73IOMvncDToE6M0FGvGxRIExe48l
-X-Proofpoint-GUID: sriUhezUdM1NeZLbQwLNNHhLIroukkeL
+X-Proofpoint-ORIG-GUID: bze12ioFa_dsPXoIwHM4yk8Kvs1Yh8E9
+X-Proofpoint-GUID: 1KMOS7QICOR-9IXt1WIRysRbF76ibUU7
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.170.22
  definitions=2023-02-10_03,2023-02-09_03,2023-02-09_01
@@ -95,45 +95,50 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Russell Currey <ruscur@russell.cc>
+Due to sysfs constraints, when writing to a variable, we can only handle
+writes of up to PAGE_SIZE.
 
-secvar_ops->get_next() returns -ENOENT when there are no more variables
-to return, which is expected behaviour.
+It's possible that the maximum object size is larger than PAGE_SIZE, in
+which case, print a warning on boot so that the user is aware.
 
-Fix this by returning 0 if get_next() returns -ENOENT.
-
-This fixes an issue introduced in commit bd5d9c743d38 ("powerpc: expose
-secure variables to userspace via sysfs"), but the return code of
-secvar_sysfs_load() was never checked so this issue never mattered.
-
-Signed-off-by: Russell Currey <ruscur@russell.cc>
 Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+Signed-off-by: Russell Currey <ruscur@russell.cc>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
 ---
 
-v5: New patch
+v3: New patch (ajd)
 ---
- arch/powerpc/kernel/secvar-sysfs.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/secvar-sysfs.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
-index 1ee4640a2641..7fa5f8ed9542 100644
+index bfb19f22c6ba..6ba23b2bb9da 100644
 --- a/arch/powerpc/kernel/secvar-sysfs.c
 +++ b/arch/powerpc/kernel/secvar-sysfs.c
-@@ -179,8 +179,10 @@ static int secvar_sysfs_load(void)
- 		rc = secvar_ops->get_next(name, &namesize, NAME_MAX_SIZE);
- 		if (rc) {
- 			if (rc != -ENOENT)
--				pr_err("error getting secvar from firmware %d\n",
--				       rc);
-+				pr_err("error getting secvar from firmware %d\n", rc);
-+			else
-+				rc = 0;
-+
- 			break;
- 		}
+@@ -225,6 +225,7 @@ static int secvar_sysfs_load_static(void)
  
+ static int secvar_sysfs_init(void)
+ {
++	u64 max_size;
+ 	int rc;
+ 
+ 	if (!secvar_ops) {
+@@ -274,6 +275,14 @@ static int secvar_sysfs_init(void)
+ 		goto err;
+ 	}
+ 
++	// Due to sysfs limitations, we will only ever get a write buffer of
++	// up to 1 page in size. Print a warning if this is potentially going
++	// to cause problems, so that the user is aware.
++	secvar_ops->max_size(&max_size);
++	if (max_size > PAGE_SIZE)
++		pr_warn_ratelimited("PAGE_SIZE (%lu) is smaller than maximum object size (%llu), writes are limited to PAGE_SIZE\n",
++				    PAGE_SIZE, max_size);
++
+ 	return 0;
+ err:
+ 	kobject_put(secvar_kobj);
 -- 
 2.39.1
 
