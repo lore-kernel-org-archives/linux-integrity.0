@@ -2,187 +2,255 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1FCC64ED8
-	for <linux-integrity@archiver.kernel.org>; Thu, 23 Feb 2023 16:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46144C677F1
+	for <linux-integrity@archiver.kernel.org>; Thu, 23 Feb 2023 16:27:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234403AbjBWQ02 (ORCPT
+        id S234450AbjBWQ1L (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 23 Feb 2023 11:26:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59566 "EHLO
+        Thu, 23 Feb 2023 11:27:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbjBWQ0Y (ORCPT
+        with ESMTP id S233541AbjBWQ1K (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 23 Feb 2023 11:26:24 -0500
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2083.outbound.protection.outlook.com [40.107.96.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81E0C5650C;
-        Thu, 23 Feb 2023 08:26:23 -0800 (PST)
+        Thu, 23 Feb 2023 11:27:10 -0500
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02hn2230.outbound.protection.outlook.com [52.100.158.230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BDDD56506;
+        Thu, 23 Feb 2023 08:27:09 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lgjJWgrE+dQMD2FA4wiRIVaBNilbGlrc4CO/CNXa70gwF7uxIJPYyjV/RAuBHtRrJcv9vh3JgSxJbUm4DX3zecuPc64Z9Jt+ZBNmLECx60DEHJRLo1EVDZSXtpQS0uWTspqlCjH7CxgfStLHYd8Lyx+J7IK/1yMvUcR8ABeKdhvPeMIAXu72yxqPzYd3dwGb3C80BS1x7nDFSLAoPDr29RbACSRvSqMMzJ9LVGDIQqkaONsjAYU6gvzLtBB33+YQepEN73F7R0YVxH7h+FY+wxZjdgV0zX5offgHYvmdhlSagBMyeI2iIIEJnQI0I1gaQwfRj6X7CbF91i6cTjpYmg==
+ b=FZmJeoAOgLe4YA6GTGU/fYResr1GI5WnUHrmIW4NvrlmKDyA0k9vIRyEckLqTLkeJ3EAm8CaZ0dKR0ACxrL4SzhfHtL0tYMgz4dxqkZZMY6Vhf5LTr2PXpVxGjCC08Z2kPIaprZd+5M5ww514NLAolPDNFzM/Gb5R4HJXIVE0KqrdFL1plVT5Cn6nVdSlxmddAWwmD/rBcU5E19/X2YuZSAIEif7R5R3mbdDBCGo3/zBBn6TlVOT3OInEIsj90zd7FAB/8zzt2AN06z+R0qHy2k+9V3RF8YL50ii0xY5Y6XrfrA9vOv0t2OEcaYcsd5brYp2dN3fBbR4+NxpXKJcTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3HBX2u+/3flutvOtipm5S4pMD5vNOwGQMeC/s6/66PU=;
- b=Yw8PeNtMKxnR6fqZ/cZVVo81WVooXdh+wkOyFll/NAA9yZOThs7+TMRm3Wzx9M7nyYO92ME6I/c8c9snZGrOXh+VKgI0vP6rUos2vXRAOSLSSxkU3EGdBnXnA4JoEmMUq9nYyW5Ix5cxGzSF56ns1yKIhRoONFnr1t2q/zDTPHiX2UypwRhERzPK5aE7u2BFBd0Q2seMAlMl5L6lkh7hC7+9UVnWBjwo2s9GakWM8XmBKRbhCGcpsUNm/Wb8Y2b6yZtEZSx1+gSa6ALBjAaiEsAjHoyhuaZz/CFd/d3ce90OtUXoctTjUoHkD8mUj4vTo6Vj5qwCQ2yWmzonJAKwLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=OyYLYUH4QzLSiwA6Ej8cpIX1gGW7clql9i1HxVB+TMQ=;
+ b=akhMYZFvaWqL06Rz8fbLA4NZ0YWLjVw7DTnVV1Gepggaa7A+IJX2+AMemZa/w6yDLT6m/FCWYqb0QawakJJsLpmwISnGwLNww8JVOy6C7u/8DSMEw7iBcQ1PacZBfqCYuZj3RFkarC9LGV7oZlUuEAqqHnQ07MyRhmGtFM6V0DQJuL/MFNT/Gfmk6BVOefVbz1MfQMvdoxzcIVNLLkqy35zkdKEHskXzvCx7P4YKVSHouyfBzCYOlje5LL+yn7p+8gWqSsSE79fpkCczZXQ2Z6d2qd+ZjKLQ18UsoQw8WL2qO+TBygjNbpRk3yIxxRwNmJrBBlP9K44B3482l/TQJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3HBX2u+/3flutvOtipm5S4pMD5vNOwGQMeC/s6/66PU=;
- b=T1r+u/PK7X5pvxc/57cb3n28WK66dc0IfksBoWuO905DlYauRMbVBRf3x4rAg38a1Gv+qb/pG/X/ZsU4Jr3b132mWKMEFX+U/oNQ/iWidBMCEaxxSFnTX8XduTAiyOJl8z+q7S7eOotjvq4Br0F8T4DODrWlF7xoAlW83vsx7K+SLba5O2iId7U/IaD+vjlIqRdVlUHz3G94R9zaEjyBx9YxeDZYWG2lh06CnO4/iLVeRCtNDEOnWnYMtD54KthsvActI/kbhd7fkV6c/11imB8PjU4fb/5O8KruHnNKfQS8rCHdpz0NfRce9W580mvmsC+yf4nN41PoxTd+Zb7IsQ==
-Received: from DM4PR12MB5769.namprd12.prod.outlook.com (2603:10b6:8:60::6) by
- MN2PR12MB4373.namprd12.prod.outlook.com (2603:10b6:208:261::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6111.20; Thu, 23 Feb 2023 16:26:19 +0000
-Received: from DM4PR12MB5769.namprd12.prod.outlook.com
- ([fe80::bca7:6774:36b1:78a0]) by DM4PR12MB5769.namprd12.prod.outlook.com
- ([fe80::bca7:6774:36b1:78a0%9]) with mapi id 15.20.6134.019; Thu, 23 Feb 2023
- 16:26:19 +0000
+ bh=OyYLYUH4QzLSiwA6Ej8cpIX1gGW7clql9i1HxVB+TMQ=;
+ b=i/tij5cDPw7pVoxpgP2W0bIK/WIzhBjUKv0t/mK9qtd3Mc0yM1p0x7SghLplBXIatNFUpZz77OHZ2ab9mjVmp6jph/D6FC01uYHlG8XZunfE3zm1rplK68jJAZgKdVbdSnjuGeNtF70ijnC8yKv2KrGhozunmFjJJKEeenpZadepxqviUfjhskdFUpm8sUlYecDbLwuLBHmDMeXTBHkuGGsB57FIg2Z05iK+HWZ9kSUjE2GeGBztsvQ7nHjCER5lEepCFpSB73gCExmIdahlJ9Cph1U4kJQvSD/eJLqV7jTGmau9daqj1Px34CoO7KLrg/dhBmdjjcQ86XbrMutT3w==
+Received: from BN0PR07CA0020.namprd07.prod.outlook.com (2603:10b6:408:141::18)
+ by CH0PR12MB5267.namprd12.prod.outlook.com (2603:10b6:610:d2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.21; Thu, 23 Feb
+ 2023 16:27:04 +0000
+Received: from BN8NAM11FT040.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:141:cafe::e0) by BN0PR07CA0020.outlook.office365.com
+ (2603:10b6:408:141::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.21 via Frontend
+ Transport; Thu, 23 Feb 2023 16:27:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN8NAM11FT040.mail.protection.outlook.com (10.13.177.166) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6134.21 via Frontend Transport; Thu, 23 Feb 2023 16:27:03 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 23 Feb
+ 2023 08:26:57 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.36; Thu, 23 Feb 2023 08:26:56 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Thu, 23 Feb 2023 08:26:52 -0800
 From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     "broonie@kernel.org" <broonie@kernel.org>,
-        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
-        "jgg@ziepe.ca" <jgg@ziepe.ca>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: RE: [Patch V2 3/4] spi: dt-bindings: Add Tegra TPM wait polling flag
-Thread-Topic: [Patch V2 3/4] spi: dt-bindings: Add Tegra TPM wait polling flag
-Thread-Index: AQHZN8++62r3mBEHJ0mzwA9moaCgsa69oaUAgB8ohQA=
-Date:   Thu, 23 Feb 2023 16:26:19 +0000
-Message-ID: <DM4PR12MB5769035B6C55C581B410FA0CC3AB9@DM4PR12MB5769.namprd12.prod.outlook.com>
-References: <20230203130133.32901-1-kyarlagadda@nvidia.com>
- <20230203130133.32901-4-kyarlagadda@nvidia.com>
- <CAL_JsqKph2iK3Qb1=PFKxVScSs1f8sUcDh52py8WyhO6pu27TQ@mail.gmail.com>
-In-Reply-To: <CAL_JsqKph2iK3Qb1=PFKxVScSs1f8sUcDh52py8WyhO6pu27TQ@mail.gmail.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB5769:EE_|MN2PR12MB4373:EE_
-x-ms-office365-filtering-correlation-id: a4737f76-ecfa-4e0e-f459-08db15bab1e3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Z4jwqFHey3krQie58OW8H/v0VBXXhM+YOwnZaSjxN8Qa2OAz2CRUEIeh+WGQnO4m7prygTKT5w7FsJru3HASpmLtPE4h4/o0uoNfKgS4GiyBN8m/H6cUSgk7ZoixNh/0YBIxW/GTR92rCGzgdX+VoHQhYZgyvzg8Vkth1P2Hqcz7xuaUVwxD7WiJKVccWr/KQ0K40LVhuJivwLPRb2mpQZkkQwyZ00gtCwRAFAGm8Wz7221kakXAYvOBTNqG0VjhoLMeaSzDYraPreMFWNmN0IE/qeGT8ylbfj0ixO27cD4whlkQWJMtPvfqLQc6yWDe0GMUMyPP4v1SrCw5tq/TZhldq1BH8xu7Vyd9OKBqnJ1bw1fl5WrBuMJnq5GFnyJE7NVsb4JSM/xhzlgTjAqUkoz+J5sSKzmWbrjW38w8VT4JPA06oaN3Y2focpgwTMd69RfiAo6imWm+cLCBzlMCsh/iVfTAHID7h9M97+Q0OAhvbX4ckb+OfSRkbnIEc5uBz61Oc+pgS+CgpXGtXrY236dflt81gi8vINAdkUzvLL9oUwNrL4mAleIVlZ+NEGsLpuBOdBhoLvePfLt93z/gGIlfDFuj87XAIMu1A0FNZLJdB+cDtTl0m17qz2x0GU17dhU9Q2N5hjdgyZrVX7NsEa9D9S4atP0SW6eJctIiBfqtnZiRpcAxhJGEddRtuZOaq/tSgwhwJHoSe69no1EwNQ==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5769.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230025)(4636009)(376002)(396003)(366004)(39860400002)(136003)(346002)(451199018)(122000001)(38100700002)(6506007)(38070700005)(55016003)(66476007)(26005)(2906002)(66556008)(107886003)(64756008)(4326008)(8676002)(186003)(71200400001)(53546011)(316002)(54906003)(478600001)(66946007)(66446008)(83380400001)(52536014)(8936002)(41300700001)(76116006)(7696005)(86362001)(9686003)(33656002)(7416002)(5660300002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aUQwcHNCNkJ3NmFIYW80UHZ0ck9SWUlqZ1J3TVREVy80VVNFVXpWaWhkLzIw?=
- =?utf-8?B?elpyTkwrZGt2SUZ2bXNGOW9SczdNYklUbWlXYWpDUUNtSGhGVkVlcmhYRDRq?=
- =?utf-8?B?OE5Gd1QwYUY1VTFFRnFCc1V6YWtyZGdpVDZwYUpwclM3aXlaTko5UGJwendQ?=
- =?utf-8?B?a016L2xaMVNQM2loK1NXcTAycjB1S3JlUmN2N3kwSUJkcjdtSEh1azN2RCtt?=
- =?utf-8?B?cWRqRlVFbTljQjBrUnBZZCszK04xRHNYV1o4QkU0NUxVcWZPalAxMHJTZW01?=
- =?utf-8?B?djdrOVhkSXc4RHEva0VGYzE5dU1PSFNPUk9pdGpQejFDUThhSTRFZDh3TmlQ?=
- =?utf-8?B?UU92MHFFTzkyYlpLNUJZejRjZnl1Q292STRNendNZmVIblFVb0JGaThZOHE1?=
- =?utf-8?B?QUNIZVYvOUVQTU9rVUVPMG9CbmxYdW5SRWpZdUZpSytyelNQaERKN2xOU3o0?=
- =?utf-8?B?blF2U29pUUVBZEhKUERKSmlCOFpZQ0dtZEZDTHR5NDhMWXpTTFF5UDJhallI?=
- =?utf-8?B?b2ZESGpLVFl6WUQ2T0U3Tzcyakd6QkJUaHJRS21JVVVoU0dTNTM1NXBwZnJC?=
- =?utf-8?B?VXRpb0hDVGJqdWVJY0twMksvSUxtS3NwNThQUW5TbzVZS3k4NmMwbGIyMGJM?=
- =?utf-8?B?VTVDTWJ3U0VOZkR5NmREMlI2OXlENktualZscGpBWC9lZTJ5SnJZUzJYRTZF?=
- =?utf-8?B?VjlNV284UUh0YWJxMlFHMjJpeHFoaXJsVFpLRUNlSjA3d1lwWTdpTVllWXRB?=
- =?utf-8?B?Nks0a3ZLOGlNU1RQZXpuaXoyTjhiLzkyeFpDWVRzYmVCQXo0ZWFBMWE5bVEv?=
- =?utf-8?B?MGFNR05MUjhoQVhudEUwdnQ1Yi91dkw2a2ZhbThzSUZzaVNhMG1MNUduWUNK?=
- =?utf-8?B?RzRZemQ1dktSV2ZYQk4zTlRDc2NBZ1lINzMydXhQdk9ja1I1eFVkbjczZnZX?=
- =?utf-8?B?c3ZnbDdLaDg4U29ZM21lYjdtTzlLNVMvS05KUko0RzFCY2ZWbVU1Q0k3TnRM?=
- =?utf-8?B?cGVYaGhtRVBIMVMrcVlnZFZ5c29ZSytaNm44V3Q0SW4rbXRrcTZ2OXNRRmxj?=
- =?utf-8?B?bmxvREFGTm5XWjdDYXZpVzl3ZzZ2dG5MV0NmVC9DeDBSU0ZxOVJZa29RMWE3?=
- =?utf-8?B?MFF1dUVQY1poUnZRZ25pSSt5Q1ltdTMveXZudGxOT2RqNFlRdkZ5TURGcmt2?=
- =?utf-8?B?QkE1NmxVaXhIZkdWUzgvRXRpN0lCZ2tCamwxRkZHbWVjYnZzNnljclRkTVYw?=
- =?utf-8?B?YjAzN3cvVE1qdUhGSEFnYUJBMmhuUnBCYzQ2YTF1L0tJWlU2bExHR1lJa2Vq?=
- =?utf-8?B?QitIaHZKWldQS3pDNkViaGZFVEIwY3FNWWtBOFJ2WjZKTkF1UjV4M0pBWmdY?=
- =?utf-8?B?TGxBQnBoYmtCZ2s2Q0dCc3A2a1BXZ0hFQkJUWm9RNU4rMmhuNEJHVlBIci8x?=
- =?utf-8?B?K3Zxc29rbTY0enUvbElDMHpSWllZVW1MUlhjWGpWOXZiWDVjMGVCbWRLR2hl?=
- =?utf-8?B?S09qUFVuajFSa2pCb0pNS0NKWnVIR0NnVkcrV1pnYk5ENXJRbGdOYlljQWJK?=
- =?utf-8?B?OVhwWWRld0h1enBYRUduQi8ycU0yQnNKNFNtaFNYeEpqeEg2WFJZZXhldWRq?=
- =?utf-8?B?OHh2WWFtblFhOU9UbDlNNmg0QVZRbGQ4NjUxUU16WEwwcFBYaVVoWENTWkNp?=
- =?utf-8?B?ZnVLUWNjUzBEemZmZWxGdm5KUm1HSDAyeCttRVJCSzA2MFRvb011NTJTV3Y3?=
- =?utf-8?B?LzhmYzM4aVg2ZTluSVdudTNCL2ZlQ2lCWmRWckhyNUZGeUZOUFZaYlFaTnEy?=
- =?utf-8?B?ZU9GQ0FNRmRzbEZ3QVF3YmlSVVJ3V0ZQN1RudDQrdjlXVzBvb1V6QjQ4U3VB?=
- =?utf-8?B?SjJsRDFQQ3BiTkZNNEV4NDNPYUxlOUM0bS9MN2gwUkpheitwUlpzWktmVGVX?=
- =?utf-8?B?M3pIemZxWElxVTduOGIvVlVhcXZFM1A3akJkR0d2bTJIeEZqYkV0aHVDUmtz?=
- =?utf-8?B?SjlzRUhjWnh2K20xMnprZ2wrb2dONWFnWXJxTVJXaFE2SFZCankwV3dPQUIx?=
- =?utf-8?B?ZW1QWCtnekVJYWczNFluUkNjQTAwQkE5Y2F2UlorbTd6TjlnNGJMeUhneURM?=
- =?utf-8?Q?vXwDMhXq5gS7G6j5ETu4ZHBmW?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+To:     <robh+dt@kernel.org>, <broonie@kernel.org>, <peterhuewe@gmx.de>,
+        <jgg@ziepe.ca>, <jarkko@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <linux-spi@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
+        Krishna Yarlagadda <kyarlagadda@nvidia.com>
+Subject: [Patch V3 1/3] tpm_tis-spi: Support hardware wait polling
+Date:   Thu, 23 Feb 2023 21:56:33 +0530
+Message-ID: <20230223162635.19747-2-kyarlagadda@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20230223162635.19747-1-kyarlagadda@nvidia.com>
+References: <20230223162635.19747-1-kyarlagadda@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT040:EE_|CH0PR12MB5267:EE_
+X-MS-Office365-Filtering-Correlation-Id: e0d4c17d-0b2f-404c-891a-08db15bacc4b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: bjAtRQTC/W4IFem2/NiVGeCjbyU3oo20rNejRaSclHSHYqInoudPQB+OA085L4G+O/rCreabKPoSvt1qql3RKISJigrCuM6VRhODJc9xJDOyjuOVpSxriJInQAfBP3oQfJAxQwEDGxHhM1ynNuVVDj4rNzelpG1OdhUbuLIPXrTrlXtlPHCshv8OueWDD23CoW5XrPv750LvX4esMFg1ugydEK3wRCzjSDA6ZFr1n7/nXE5RnJa8MvoTdoFPV2muGr8U7M7mvGzE2hxuyP4xqg7bLpBrL6Jyzscyydromj9g/GH8vnYMibBHycKGZrN9109VKk0lV1zzBXsreqP/YK73MreZzRy9BDVcVXLlIY4hFGsx2QZ6g+HZrvtH+3XIuu5uGbzIWjurpVOk6hB4PUx8vznIT3sQcwrKMjn5QdBxy8Y0OoNh2+Mk639fEXlAd9dA7CpNs92nzx2u86PuS+YZlLGtUZY5V1QCPDSHCfD1hnB5bfV22N34j1/d05q3UrIQ55GbgJC4UYtHDFUeL+Ij1ZM7OXvFYkANvAlaVJkHS96Owu+bONxDTNvVlfbyb1AQVauG3RU56qbCuwEK6zegqnNPQ9Zle+MWsIIE1T7LJWX1MSVxo214O9RQqz38SznwQwtUwGUGGBzaeL901yRuMW97r0Jnzr2TIuu6NDQ4UKqMgWtprIZAePubNYrsEApPF9GTO3wB/3bY1IibzTcZ6GVGX1QWtOIiVRqlWkWdTtZPqhH06SPiNZokUeehd8jrNHqeiPn07RjcvTgoGG1y61JEXq7losj++T96hsLFG6l4ETuf+UwoT1juCZcc+HxJAsx7+GGKHuYs+JNgdA==
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(39860400002)(346002)(136003)(376002)(396003)(451199018)(5400799012)(40470700004)(36840700001)(46966006)(478600001)(110136005)(1076003)(6666004)(107886003)(7636003)(26005)(186003)(7696005)(47076005)(41300700001)(70206006)(316002)(4326008)(8676002)(336012)(426003)(83380400001)(8936002)(5660300002)(2906002)(34020700004)(36860700001)(7416002)(82740400003)(921005)(356005)(82310400005)(86362001)(54906003)(2616005)(70586007)(40460700003)(40480700001)(36756003)(83996005)(2101003)(12100799015);DIR:OUT;SFP:1501;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5769.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a4737f76-ecfa-4e0e-f459-08db15bab1e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2023 16:26:19.4569
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2023 16:27:03.6784
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kdAGBEpMb8IfcQnizTJmKhWx9rOD5T5MPdqn97WCLLvAm2PdV6p27mmA5wPPCz6mET6bJnisWA9Jy8OXphF/RQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4373
+X-MS-Exchange-CrossTenant-Network-Message-Id: e0d4c17d-0b2f-404c-891a-08db15bacc4b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT040.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5267
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSb2IgSGVycmluZyA8cm9iaCtk
-dEBrZXJuZWwub3JnPg0KPiBTZW50OiAwNCBGZWJydWFyeSAyMDIzIDAxOjIwDQo+IFRvOiBLcmlz
-aG5hIFlhcmxhZ2FkZGEgPGt5YXJsYWdhZGRhQG52aWRpYS5jb20+DQo+IENjOiBicm9vbmllQGtl
-cm5lbC5vcmc7IHBldGVyaHVld2VAZ214LmRlOyBqZ2dAemllcGUuY2E7DQo+IGphcmtrb0BrZXJu
-ZWwub3JnOyBrcnp5c3p0b2Yua296bG93c2tpK2R0QGxpbmFyby5vcmc7IGxpbnV4LQ0KPiBzcGlA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBp
-bnRlZ3JpdHlAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0K
-PiB0aGllcnJ5LnJlZGluZ0BnbWFpbC5jb207IEpvbmF0aGFuIEh1bnRlciA8am9uYXRoYW5oQG52
-aWRpYS5jb20+Ow0KPiBTb3dqYW55YSBLb21hdGluZW5pIDxza29tYXRpbmVuaUBudmlkaWEuY29t
-PjsgTGF4bWFuIERld2FuZ2FuDQo+IDxsZGV3YW5nYW5AbnZpZGlhLmNvbT4NCj4gU3ViamVjdDog
-UmU6IFtQYXRjaCBWMiAzLzRdIHNwaTogZHQtYmluZGluZ3M6IEFkZCBUZWdyYSBUUE0gd2FpdCBw
-b2xsaW5nIGZsYWcNCj4gDQo+IEV4dGVybmFsIGVtYWlsOiBVc2UgY2F1dGlvbiBvcGVuaW5nIGxp
-bmtzIG9yIGF0dGFjaG1lbnRzDQo+IA0KPiANCj4gT24gRnJpLCBGZWIgMywgMjAyMyBhdCA3OjAy
-IEFNIEtyaXNobmEgWWFybGFnYWRkYQ0KPiA8a3lhcmxhZ2FkZGFAbnZpZGlhLmNvbT4gd3JvdGU6
-DQo+ID4NCj4gPiBBZGQgIm52aWRpYSx3YWl0LXBvbGxpbmciIGZsYWcgdG8gZW5hYmxlIFRDRyBU
-SVMgaGFyZHdhcmUgZmxvdyBjb250cm9sLg0KPiANCj4gVGVsbCBtZSBzb21ldGhpbmcgdGhhdCB0
-aGUgZGlmZiBkb2Vzbid0Lg0KPiANCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEtyaXNobmEgWWFy
-bGFnYWRkYSA8a3lhcmxhZ2FkZGFAbnZpZGlhLmNvbT4NCj4gPiAtLS0NCj4gPiAgLi4uL2JpbmRp
-bmdzL3NwaS9udmlkaWEsdGVncmEyMTAtcXVhZC1wZXJpcGhlcmFsLXByb3BzLnlhbWwgfCA2ICsr
-KysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZm
-IC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9udmlkaWEsdGVn
-cmEyMTAtcXVhZC0NCj4gcGVyaXBoZXJhbC1wcm9wcy55YW1sDQo+IGIvRG9jdW1lbnRhdGlvbi9k
-ZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9udmlkaWEsdGVncmEyMTAtcXVhZC1wZXJpcGhlcmFsLQ0K
-PiBwcm9wcy55YW1sDQo+ID4gaW5kZXggMmMzY2FkYTc1MzM5Li4xOWQyYjMwY2FkYmYgMTAwNjQ0
-DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9udmlkaWEs
-dGVncmEyMTAtcXVhZC0NCj4gcGVyaXBoZXJhbC1wcm9wcy55YW1sDQo+ID4gKysrIGIvRG9jdW1l
-bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9udmlkaWEsdGVncmEyMTAtcXVhZC0NCj4g
-cGVyaXBoZXJhbC1wcm9wcy55YW1sDQo+ID4gQEAgLTI5LDQgKzI5LDEwIEBAIHByb3BlcnRpZXM6
-DQo+ID4gICAgICBtaW5pbXVtOiAwDQo+ID4gICAgICBtYXhpbXVtOiAyNTUNCj4gPg0KPiA+ICsg
-IG52aWRpYSx3YWl0LXBvbGxpbmc6DQo+ID4gKyAgICBkZXNjcmlwdGlvbjoNCj4gPiArICAgICAg
-RW5hYmxlIFRQTSB3YWl0IHBvbGxpbmcgZmVhdHVyZSBmb3IgUVNQSSBhcyBzcGVjaWZpZWQgaW4g
-VENHIFBDIENsaWVudA0KPiA+ICsgICAgICBTcGVjaWZpYyBUUE0gSW50ZXJmYWNlIFNwZWNpZmlj
-YXRpb24gKFRJUykuDQo+ID4gKyAgICAkcmVmOiAvc2NoZW1hcy90eXBlcy55YW1sIy9kZWZpbml0
-aW9ucy9mbGFnDQo+IA0KPiBXaHkgZG8geW91IG5lZWQgdGhpcyBmbGFnIHdoZW4geW91IGhhdmUg
-YSBjb21wYXRpYmxlIHRoYXQgYWxzbw0KPiBpbmRpY2F0ZXMgeW91IGhhdmUgYSBxdWlyay4NCj4g
-DQo+IElmIHRoaXMgYSBUUE0gZmVhdHVyZSwgd2h5IGlzIGl0IGVuYWJsZWQgZm9yIGV2ZXJ5IHNp
-bmdsZSBTUEkgc2xhdmUgZGV2aWNlPw0KPiANCj4gSWYgdGhlIGZ1bmRhbWVudGFsIGlzc3VlIGlz
-IHRoZSBjb250cm9sbGVyIG9ubHkgc3VwcG9ydHMgaGFsZi1kdXBsZXgsDQo+IHdoeSBjYW4ndCB5
-b3UganVzdCBjaGVjayB0aGF0IGZyb20gdGhlIGRyaXZlcj8gQ2FuJ3QgdGhlIFNQSSBzdWJzeXN0
-ZW0NCj4gdGVsbCB5b3UgdGhhdCB0aGUgaG9zdCBjb250cm9sbGVyIGlzIGhhbGYtZHVwbGV4PyBU
-aG91Z2ggc29tZXRpbWVzDQo+IHRoYXQgbWF5IGJlIGJvYXJkIGxldmVsIHByb3BlcnR5IEkgc3Vw
-cG9zZS4gSWYgc28sIGRlZmluZSB0aGUgaC93DQo+IHF1aXJrLCBub3QgdGhlIGRyaXZlciBtb2Rl
-IGluIERULiBIYWxmLWR1cGxleCBpcyBwcm9iYWJseSBzb21ldGhpbmcNCj4gZXZlcnlvbmUgY291
-bGQgdXNlLCBub3QganVzdCBOdmlkaWEuDQo+IA0KPiBQbGVhc2UgZGlzY3VzcyB0aGlzIHNlcmll
-cyBpbnRlcm5hbGx5IHdpdGggdGhlIGZvbGtzIHlvdSBtYXJrZWQgYXMNCj4gbWFpbnRhaW5lcnMu
-IEl0IGhhcyBpc3N1ZXMgSSdtIHN1cmUgdGhleSB3b3VsZCBoYXZlIGFsc28gcG9pbnRlZCBvdXQu
-DQo+IA0KPiBSb2INClFTUEkgaXMgYSBtdWx0aS1jaGlwLXNlbGVjdCBjb250cm9sbGVyIGFuZCBI
-VyB3YWl0IHBvbGxpbmcgaXMgb25seSBmb3IgVFBNDQpCb3RoIGNvbnRyb2xsZXIgYW5kIGRldmlj
-ZSB3b3VsZCBuZWVkIGEgZmxhZy9zZXR0aW5nIHRvIGlkZW50aWZ5IHN1cHBvcnQNCmZvciB0aGlz
-IGZlYXR1cmUuIFVzaW5nIFNQSSBjb250cm9sbGVyIGZsYWdzIGFuZCBTUEkgZGV2aWNlIG1vZGUg
-ZmxhZ3MgdG8NCmF2b2lkIGRldmljZSB0cmVlIGZsYWdzLiBNb3ZlZCBIVy9hbHRlcm5hdGUgVFBN
-IGZsb3cgY29udHJvbCBpbnRvIGV4aXN0aW5nDQpkcml2ZXIuIE5vIG5lZWQgb2YgbmV3IGNvbXBh
-dGlibGUgbm93Lg0KDQpLWQ0K
+TPM devices raise wait signal on last addr cycle. This can be detected
+by software driver by reading MISO line on same clock which requires
+full duplex support. In case of half duplex controllers wait detection
+has to be implemented in HW.
+Support hardware wait state detection by sending entire message and let
+controller handle flow control.
+QSPI controller in Tegra236 & Tegra241 implement TPM wait polling.
+
+Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+---
+ drivers/char/tpm/tpm_tis_spi_main.c | 90 ++++++++++++++++++++++++++++-
+ include/linux/spi/spi.h             |  7 ++-
+ 2 files changed, 92 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
+index a0963a3e92bd..0d3da7ef9a89 100644
+--- a/drivers/char/tpm/tpm_tis_spi_main.c
++++ b/drivers/char/tpm/tpm_tis_spi_main.c
+@@ -71,8 +71,72 @@ static int tpm_tis_spi_flow_control(struct tpm_tis_spi_phy *phy,
+ 	return 0;
+ }
+ 
+-int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+-			 u8 *in, const u8 *out)
++int tpm_tis_spi_hw_flow_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
++				 u8 *in, const u8 *out)
++{
++	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
++	struct spi_transfer spi_xfer[3];
++	struct spi_message m;
++	u8 transfer_len;
++	int ret;
++
++	spi_bus_lock(phy->spi_device->master);
++
++	while (len) {
++		transfer_len = min_t(u16, len, MAX_SPI_FRAMESIZE);
++
++		spi_message_init(&m);
++		phy->iobuf[0] = (in ? 0x80 : 0) | (transfer_len - 1);
++		phy->iobuf[1] = 0xd4;
++		phy->iobuf[2] = addr >> 8;
++		phy->iobuf[3] = addr;
++
++		memset(&spi_xfer, 0, sizeof(spi_xfer));
++
++		spi_xfer[0].tx_buf = phy->iobuf;
++		spi_xfer[0].len = 1;
++		spi_message_add_tail(&spi_xfer[0], &m);
++
++		spi_xfer[1].tx_buf = phy->iobuf + 1;
++		spi_xfer[1].len = 3;
++		spi_message_add_tail(&spi_xfer[1], &m);
++
++		if (out) {
++			spi_xfer[2].tx_buf = &phy->iobuf[4];
++			spi_xfer[2].rx_buf = NULL;
++			memcpy(&phy->iobuf[4], out, transfer_len);
++			out += transfer_len;
++		}
++
++		if (in) {
++			spi_xfer[2].tx_buf = NULL;
++			spi_xfer[2].rx_buf = &phy->iobuf[4];
++		}
++
++		spi_xfer[2].len = transfer_len;
++		spi_message_add_tail(&spi_xfer[2], &m);
++
++		reinit_completion(&phy->ready);
++
++		ret = spi_sync_locked(phy->spi_device, &m);
++		if (ret < 0)
++			goto exit;
++
++		if (in) {
++			memcpy(in, &phy->iobuf[4], transfer_len);
++			in += transfer_len;
++		}
++
++		len -= transfer_len;
++	}
++
++exit:
++	spi_bus_unlock(phy->spi_device->master);
++	return ret;
++}
++
++int tpm_tis_spi_sw_flow_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
++				 u8 *in, const u8 *out)
+ {
+ 	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
+ 	int ret = 0;
+@@ -140,6 +204,28 @@ int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
+ 	return ret;
+ }
+ 
++int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
++			 u8 *in, const u8 *out)
++{
++	struct tpm_tis_spi_phy *phy = to_tpm_tis_spi_phy(data);
++	struct spi_controller *ctlr = phy->spi_device->controller;
++
++	/*
++	 * TPM flow control over SPI requires full duplex support.
++	 * Send entire message to a half duplex controller to handle
++	 * wait polling in controller.
++	 * Set TPM HW flow control flag..
++	 */
++	if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX) {
++		phy->spi_device->mode |= SPI_TPM_HW_FLOW;
++		return tpm_tis_spi_hw_flow_transfer(data, addr, len, in,
++						    out);
++	} else {
++		return tpm_tis_spi_sw_flow_transfer(data, addr, len, in,
++						    out);
++	}
++}
++
+ static int tpm_tis_spi_read_bytes(struct tpm_tis_data *data, u32 addr,
+ 				  u16 len, u8 *result, enum tpm_tis_io_mode io_mode)
+ {
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index 988aabc31871..b88494e31239 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -184,8 +184,9 @@ struct spi_device {
+ 	u8			chip_select;
+ 	u8			bits_per_word;
+ 	bool			rt;
+-#define SPI_NO_TX	BIT(31)		/* No transmit wire */
+-#define SPI_NO_RX	BIT(30)		/* No receive wire */
++#define SPI_NO_TX		BIT(31)		/* No transmit wire */
++#define SPI_NO_RX		BIT(30)		/* No receive wire */
++#define SPI_TPM_HW_FLOW		BIT(29)		/* TPM flow control */
+ 	/*
+ 	 * All bits defined above should be covered by SPI_MODE_KERNEL_MASK.
+ 	 * The SPI_MODE_KERNEL_MASK has the SPI_MODE_USER_MASK counterpart,
+@@ -195,7 +196,7 @@ struct spi_device {
+ 	 * These bits must not overlap. A static assert check should make sure of that.
+ 	 * If adding extra bits, make sure to decrease the bit index below as well.
+ 	 */
+-#define SPI_MODE_KERNEL_MASK	(~(BIT(30) - 1))
++#define SPI_MODE_KERNEL_MASK	(~(BIT(29) - 1))
+ 	u32			mode;
+ 	int			irq;
+ 	void			*controller_state;
+-- 
+2.17.1
+
