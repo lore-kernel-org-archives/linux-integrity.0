@@ -2,67 +2,67 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0BAC678D5
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Feb 2023 15:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A110C6FA99
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Feb 2023 15:50:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbjBXPuV (ORCPT
+        id S229780AbjBXPuV (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Fri, 24 Feb 2023 10:50:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45682 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbjBXPuT (ORCPT
+        with ESMTP id S229471AbjBXPuT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Fri, 24 Feb 2023 10:50:19 -0500
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2050.outbound.protection.outlook.com [40.107.244.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04A956CF29;
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04hn2222.outbound.protection.outlook.com [52.100.163.222])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E6496CF2E;
         Fri, 24 Feb 2023 07:50:18 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Uki26hSNx4DrWWpthrLbL0vX937VuEXZ58Eb10PHPR8VbS3D9tr7iI2172QB/OsRyERimVlTLC0DoGpEGLDogOcYP2n7UXcrZeryWF9FKhpfhTBVdW1bX6xkP64VIOE4TYv5cl96nX5P1v26PF/siSbjsda7GQ82L8m2/B0FGnsZ+KERQzqgKtUKfwr5RI9/kvbEodIVQ4qCbh4Q8/LCYt/zhsHxJC+qGIwA08KwaAwkEVOV2S2rsUOYFuQ3ILNAbf6MhUgCkQH8eHN3I5ar2C8ajp6NZz5ar+JwxMQR+o8vwvGKdqubQXsZiNXwXWl7LPMQHzcSVzEPvUQuFpCx9Q==
+ b=FnPy0ri7TiLxRf9TCjRcNgs8Ch/EF/n9dxvC8ULmRGKA531Zg2jU5RcAeHEv9ClhAe1y5WDNHf7FfS1RTnLyYCf9R4vvfON8zsT93Pd0cUTcrW108PTy0RpyVnbLpukjze/fEGhk8w9FhHzllFl+4aVTJzsfIpKMdz8bxwckA7Onur1o6k65g8uOYll74UU2zC4sssvaWlCloUo+Tjngaup6dgSI6yu4zIokXB2aHaRR8auwEpHbcuELq6gKoVH2BdPaA29ubaU5HOLCuA9J9jibMYaWPXVkRKl/jBnw2UNSZIvDcn84vzDmKW03mn3pM8GQ838Xgc1bQm4aXGoseA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x0cEiBaMNIgPRegxXaIJxXz2fOQimc4elvv1wRP+Co8=;
- b=CajXwa2tAMu2dbob6Z62w7RKJi9ElQyCEjusaMt/1dzNWW/cqtBGLARBCe6tfkbswGZHdZHbn4J6bRLqBd2/IrjaOkAH/yN04ehtq55/d/eOzYgCTw/O66na8BymY/TvxA4qEuA1nqDAUHSJ3QZbxTOKUT2YqTY6ykYXdxIU/6BEKSERC7YxKg8sQOFbvobxbbDJRulLEA/Kk2tVy/J57nWb6ZxoUI+8BMBHrnyUyXym/LD+TQ7uMzJXIxZUUZMtu54T8PFZdnIcCpfRAhKmZvmqKeBxtcD+WH7Fo0O6IXjCcnDD1NHpLGMljhUwZBNBrQigQCa/l9JjeqDhs5scFA==
+ bh=16STglZTI/DGYdzA7sqcyZCgku+uxhdaj2buTCIKCMo=;
+ b=CZlDAlylNn6IYhA8kw1vCjdkxqCjHU+CEW11JjRv7XLnMoZ2DRRvQ0v0igAcC/gTBQ6XqbiB66w+3g0ujuF69e839H4AA+eLcPJ9FpzUdpuIbG0LRxJ1C5gMnOkLLpl+A74acLY0OYgw2Vh3ctcd0m0hWQo7wC2RBUNypCawTvZQWWEFAg7X7cMD9nCTCgaXE6NaXOPvsN+qWv9IVeFpmgvTPGq1Zo6OwLoYm1Uj/ip3GzvxxZ8d9hnQgwud3WDg8TbXbR1VbCPqZsUbX7KWQrxA4YJMewCsqymrnCfjt77MpATiKwvCYBzJYoPadr3qw6g6AKnFAI3D0UbbzJFGFQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x0cEiBaMNIgPRegxXaIJxXz2fOQimc4elvv1wRP+Co8=;
- b=iODJeHPIubZKzMRsZGcD49HvwP5UhNHtnxADuRrGalYTNU1d39wAqualIv0djd9RbWPtaAxB5V5n0ylO3J/b39t/gwjQucAFFhfeneJRGbMLECZW5VLCMK6/r16O4dsb8A/t6ne6qx3j/3adgomEZLQBl7AppwxcaIIIWVfRLHh8K1kPkRcx6qXu2EwFvqHSVhlPMvcoJrja17JejDwPf5gDWGOejlDMmEo5tOVMSp6O1rnoAwWbFYxOBB3LXrCvlda+54g1Ci5MGwzl7bnbqjaahTOaAyZo7/rTHhFjQ/kX8IDQUQpNbH3HvUOUEn7twK4iEhcB8eIYAxrDmiszbg==
-Received: from BN8PR15CA0052.namprd15.prod.outlook.com (2603:10b6:408:80::29)
- by DM6PR12MB4561.namprd12.prod.outlook.com (2603:10b6:5:2ac::8) with
+ bh=16STglZTI/DGYdzA7sqcyZCgku+uxhdaj2buTCIKCMo=;
+ b=QWgAUzAjTqo9ajFN5EfLaaQ5VSVE/IWqc8AmD29Dlj62pj6RUqnTpemQzcUC0PVtnjmXEMUNRDLwgRjBPF2yiSY+AnkMWJgH8y+oIeG+dobrlMvnUcOVY+7hAppKSAkzTc7bKDUPItTeS+WAgvorVfaWMsQSBLnvF8TEpse6uHouQS4WfBHc2i44NfY1Mho538/ya/vqTQo7KTOT8vlOgeVU8l6MZYNZa0hAzZgg/CULQz7PecD+nC3WGNMUaF2ipG4JR89OIzFQh20386B7HFojD1Zz+lrdUR7ceCNvmnylprON6MpiyhLKFAqoCb+muhhjVgduTidWxDvIpM1anw==
+Received: from DS7PR03CA0097.namprd03.prod.outlook.com (2603:10b6:5:3b7::12)
+ by CY8PR12MB7729.namprd12.prod.outlook.com (2603:10b6:930:84::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.24; Fri, 24 Feb
- 2023 15:50:15 +0000
-Received: from BL02EPF000108EA.namprd05.prod.outlook.com
- (2603:10b6:408:80:cafe::ea) by BN8PR15CA0052.outlook.office365.com
- (2603:10b6:408:80::29) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 15:50:14 +0000
+Received: from DM6NAM11FT061.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:5:3b7:cafe::77) by DS7PR03CA0097.outlook.office365.com
+ (2603:10b6:5:3b7::12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6134.24 via Frontend
- Transport; Fri, 24 Feb 2023 15:50:15 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ Transport; Fri, 24 Feb 2023 15:50:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF000108EA.mail.protection.outlook.com (10.167.241.203) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6156.12 via Frontend Transport; Fri, 24 Feb 2023 15:50:14 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DM6NAM11FT061.mail.protection.outlook.com (10.13.173.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6134.24 via Frontend Transport; Fri, 24 Feb 2023 15:50:13 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 24 Feb
- 2023 07:49:54 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ 2023 07:50:04 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Fri, 24 Feb
- 2023 07:49:53 -0800
+ 2023 07:50:04 -0800
 Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
  (10.129.68.7) with Microsoft SMTP Server id 15.2.986.36 via Frontend
- Transport; Fri, 24 Feb 2023 07:49:49 -0800
+ Transport; Fri, 24 Feb 2023 07:49:59 -0800
 From:   Krishna Yarlagadda <kyarlagadda@nvidia.com>
 To:     <robh+dt@kernel.org>, <broonie@kernel.org>, <peterhuewe@gmx.de>,
         <jgg@ziepe.ca>, <jarkko@kernel.org>,
@@ -72,9 +72,9 @@ To:     <robh+dt@kernel.org>, <broonie@kernel.org>, <peterhuewe@gmx.de>,
 CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <skomatineni@nvidia.com>, <ldewangan@nvidia.com>,
         Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Subject: [Patch V4 1/3] spi: Add TPM HW flow flag
-Date:   Fri, 24 Feb 2023 21:19:39 +0530
-Message-ID: <20230224154941.68587-2-kyarlagadda@nvidia.com>
+Subject: [Patch V4 3/3] spi: tegra210-quad: set half duplex flag
+Date:   Fri, 24 Feb 2023 21:19:41 +0530
+Message-ID: <20230224154941.68587-4-kyarlagadda@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20230224154941.68587-1-kyarlagadda@nvidia.com>
 References: <20230224154941.68587-1-kyarlagadda@nvidia.com>
@@ -83,63 +83,47 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF000108EA:EE_|DM6PR12MB4561:EE_
-X-MS-Office365-Filtering-Correlation-Id: e56d3671-0a6f-4d90-1730-08db167ed219
+X-MS-TrafficTypeDiagnostic: DM6NAM11FT061:EE_|CY8PR12MB7729:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ca6ab6c-dbb9-43f1-b0e9-08db167ed175
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wrqanw2pJRvFAGqIzmOZFFMUWC/V/CV4HYbavFUG7kvj/BKpCOADJ5fGGQtyXmhLB/J1yA2xTBFcSSAz+ymsWZCi/CqfkBYXwpxMvfIA56vMDnt4nW+LUwaHDRduwB8B+Gch83bum1EvkC8g6pjEnj6SQaxiyAJL/GzZvoAobp+b7WcWxUU6XcA00kfTe7LqKts6ZJQX4r2jAVy+gfKkAV7XcN3Cg2ZdUTiknG9Fvbt3MDkglYbfEC6Gw9aBxcZClPNr7FCnW2oTZvU8TtCOd2byCvM6hftoon1L0mfUcvLSTmPnvO7KUiUN5u2KdR8Yy4Xt8QNmr0WLxIIELfK41MgQ6oTI3c3d7SsnrITMo6ql+Ie1pHd1/T0XqOlB8pHGgWzrKR1pultCnccpJ9TWG1Brp0FsRGoq0X8NuZzmIHxQJbO+s2hK4v45EHg9YNqUwSZBunCUhDytJsRpoJv2n3sZC3Bhd45w//S2ssd/lAm/kZQTN5DazrosJsyZUtaGVN5k+16rQ/rN8lObEnFLyb/5KsmPVvzwSSrSdbjBKpHuIjJWdGl4H6SClllHSpe1mnBmMPjI0S+XTvGk6sb+WYtjxf73glwuHk/I/Q2kf3rPUf9xj5n5D3isivNh67Vezf+KAVled6zExpmlblf0cXQh891BVQmctqwD/QTNTLA3fsiM1GGoZazlEqfVw1n6R0dVsMPHpvtlx+TeqimRmO7s2DCNUxC5e63hBXBzERSgJlSwLAY2l4kLrwNSbBqAUZKGVImJ7P2yEdUF0neYvg==
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(136003)(346002)(396003)(39860400002)(376002)(451199018)(36840700001)(46966006)(40470700004)(7636003)(54906003)(8936002)(316002)(336012)(186003)(36756003)(26005)(478600001)(921005)(40460700003)(356005)(1076003)(7696005)(110136005)(86362001)(107886003)(6666004)(40480700001)(2906002)(2616005)(82310400005)(5660300002)(7416002)(82740400003)(41300700001)(426003)(36860700001)(47076005)(83380400001)(8676002)(70206006)(70586007)(4326008)(83996005)(2101003);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: 1UqUkIAo4S7/DdioFOd0C8fxdYvwS/t9m0TqNI4kqX3SLsNYio37WJxhZObSKJDH+aH9n90lMXpiWY+lFXyixz8xD9DwPmbujjrvFpdraqx5EopUdPH1b08SER66jw+nSJam+SAlOMevs/4pKS194zFgAAn51DRiWvYlaCzdA4CpR3mq3XVdquC/cJOtmtSajoyDt/aA3t7wbEFW6tPzWBLvYdcHv1YUE0BE6AyHeCEMzKFPscR5oI/mYmBzdfolnR1e8n40fDcihG8mtfc775KwD5BPeveZyt6H/1BkvRRQ3LCvuqOwMqnvAtSgcBkBYTmrRrtjrwwL7oyFic78MuDz+GtxoWIxoYNvCdoOTbNWMYiignmMu4EOR0fvq4cU8SGh9lXAqMHWJ2OxDp2wC3bAQoWE0qCb2WdwbFlgsN6bRhrTV8Q3V/mMRhSFuumkDjDZP4G8Nr9G5JcIecNEShOVGEIechBp7jsQqLVLgbAEQHBSjjJdzrKFfq1JX3zIzEYZAuNWwq27NSt8GViU7CAicwg1weeIgbtGmyWLCa++EX1/5nCefmkCekgtevhRqgUcYzTASiiUA3ILFNXVbAjDOk55yy3cNC6TAxaDA/GdiXyEARS4MVm5rpZKYNQxuIU4JxfR6V3UOXixXqSY7k0OIZ2F6Ha38X08sgTgrz44mjoGWt17psH2pjolzst4Dun2CjgBCy4/aAdH8euyBHXlMzoFeOCN/kGlFOeHuxNtKzU4EaPsuqDZlBVK0A8/1o057p7iatoKJuXpDthfvg6SZmaFRdyI5zhrXfO7SsL56YWWakkWMMS6jufH5mvTBF1XKxEF5KB7JV1jG4gWmQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230025)(4636009)(376002)(346002)(136003)(39860400002)(396003)(451199018)(5400799012)(46966006)(40470700004)(36840700001)(83380400001)(41300700001)(426003)(34020700004)(47076005)(36860700001)(70586007)(70206006)(8676002)(4326008)(82740400003)(316002)(186003)(36756003)(26005)(336012)(8936002)(7636003)(54906003)(110136005)(2616005)(5660300002)(82310400005)(7416002)(40460700003)(921005)(356005)(86362001)(7696005)(478600001)(4744005)(2906002)(40480700001)(107886003)(1076003)(6666004)(83996005)(2101003)(12100799015);DIR:OUT;SFP:1501;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2023 15:50:14.7575
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2023 15:50:13.7492
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e56d3671-0a6f-4d90-1730-08db167ed219
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ca6ab6c-dbb9-43f1-b0e9-08db167ed175
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL02EPF000108EA.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT061.eop-nam11.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4561
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7729
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-TPM spec defines flow control over SPI. Client device can insert a wait
-state on MISO when address is trasmitted by controller on MOSI. It can
-work only on full duplex.
-Half duplex controllers need to implement flow control in HW.
-Add a flag for TPM to indicate flow control is expected in controller.
+Tegra QSPI controller only supports half duplex transfers.
+Set half duplex constrain flag.
 
 Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
 ---
- include/linux/spi/spi.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/spi/spi-tegra210-quad.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 988aabc31871..b88494e31239 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -184,8 +184,9 @@ struct spi_device {
- 	u8			chip_select;
- 	u8			bits_per_word;
- 	bool			rt;
--#define SPI_NO_TX	BIT(31)		/* No transmit wire */
--#define SPI_NO_RX	BIT(30)		/* No receive wire */
-+#define SPI_NO_TX		BIT(31)		/* No transmit wire */
-+#define SPI_NO_RX		BIT(30)		/* No receive wire */
-+#define SPI_TPM_HW_FLOW		BIT(29)		/* TPM flow control */
- 	/*
- 	 * All bits defined above should be covered by SPI_MODE_KERNEL_MASK.
- 	 * The SPI_MODE_KERNEL_MASK has the SPI_MODE_USER_MASK counterpart,
-@@ -195,7 +196,7 @@ struct spi_device {
- 	 * These bits must not overlap. A static assert check should make sure of that.
- 	 * If adding extra bits, make sure to decrease the bit index below as well.
- 	 */
--#define SPI_MODE_KERNEL_MASK	(~(BIT(30) - 1))
-+#define SPI_MODE_KERNEL_MASK	(~(BIT(29) - 1))
- 	u32			mode;
- 	int			irq;
- 	void			*controller_state;
+diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
+index 39dec2dc161b..fe15fa6eecd1 100644
+--- a/drivers/spi/spi-tegra210-quad.c
++++ b/drivers/spi/spi-tegra210-quad.c
+@@ -1553,6 +1553,7 @@ static int tegra_qspi_probe(struct platform_device *pdev)
+ 	master->mode_bits = SPI_MODE_0 | SPI_MODE_3 | SPI_CS_HIGH |
+ 			    SPI_TX_DUAL | SPI_RX_DUAL | SPI_TX_QUAD | SPI_RX_QUAD;
+ 	master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) | SPI_BPW_MASK(8);
++	master->flags = SPI_CONTROLLER_HALF_DUPLEX;
+ 	master->setup = tegra_qspi_setup;
+ 	master->transfer_one_message = tegra_qspi_transfer_one_message;
+ 	master->num_chipselect = 1;
 -- 
 2.17.1
 
