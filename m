@@ -2,158 +2,96 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DABC64ED6
-	for <linux-integrity@archiver.kernel.org>; Fri, 24 Feb 2023 03:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A833C64ED6
+	for <linux-integrity@archiver.kernel.org>; Fri, 24 Feb 2023 03:27:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229737AbjBXDZT (ORCPT
+        id S229817AbjBXD1L (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 23 Feb 2023 22:25:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58172 "EHLO
+        Thu, 23 Feb 2023 22:27:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjBXDZS (ORCPT
+        with ESMTP id S229445AbjBXD1K (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 23 Feb 2023 22:25:18 -0500
-Received: from gandalf.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA6744ECFE
-        for <linux-integrity@vger.kernel.org>; Thu, 23 Feb 2023 19:25:16 -0800 (PST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4PNFdK6DS1z4x5Q;
-        Fri, 24 Feb 2023 14:25:09 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-        s=201909; t=1677209111;
-        bh=f9fEx8j0jj89BVTy91Dw+yN7Hc8qMMhDUTexCxs3yxg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=g3OSz7cUBWWWWLJZLFoU23xQhHI5WPBtC6wyvchBhsR09XL/E2NcKtlr1su0w/qZq
-         +QvW6JkoguCNxth8RxOX6pixkO0Tqqm4m+1yHjNYz2oYbYB7xRu+SwtL0nmoejkv3L
-         ScYrMr4lbenKGiFUANVIor0Y0erggqW9Ur/Mp4wmY/HEGStkbDJFoNL9Nga+KdfBCk
-         GgfA+6ZzOtquO2odxVywkjSNRevr0SzhwV2GnrOqEVDx2f+iRorIVR1xSipl6LQ8tc
-         P2lfrYuDXCMJG72d/Z1l3GJ1XEayq/86l0shrZnHfGAs6rh0d4X1zWovpjsm/q+786
-         To9KbydKUZ1+Q==
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     <linuxppc-dev@lists.ozlabs.org>
-Cc:     linux-integrity@vger.kernel.org, yangyingliang@huawei.com,
-        eajames@linux.ibm.com, jgg@ziepe.ca, jarkko@kernel.org,
-        peterhuewe@gmx.de, <stefanb@linux.ibm.com>
-Subject: [PATCH 1/2] powerpc/tpm: Create linux,sml-base/size as big endian
-Date:   Fri, 24 Feb 2023 14:25:07 +1100
-Message-Id: <20230224032508.3331281-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.39.1
+        Thu, 23 Feb 2023 22:27:10 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5B9515C6;
+        Thu, 23 Feb 2023 19:27:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=3IhXFWZbsoRSpNhQKpLcLNnprR4jfrb5zB61a/c73DM=; b=TvJszvU6fu+GFni5Ufd2ji7V0n
+        rI22ILCnkzDwWKe8PUnCgs2zeK0O6Rm6HChCToBO1HqhRUB+0s6jeckV3UPZuO0IGg650u6uaV8cb
+        KWg48RrES0dfHlpkP2SBcJiSZ54+8ILjllVMDgDnS8Xr9Fc53sqMk3rqB28D4BSC6ET9QfLN9LLd2
+        eLHricqsAOb1z+YBHw+7izQvqnqYdH6LP6HC5kWay5yH+tfSkMKG8Xa4+f6rk044cBgu/obZaLOrc
+        jkskMiyRi5nbTWhnQ0Moj7BdQeRIHykwrfayh6v023BI5QrHOKPzjBYcmMQHClPl/NMJz2paQ9Ak7
+        EDfWtiBw==;
+Received: from [2601:1c2:980:9ec0::df2f] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pVOji-0014K7-Fa; Fri, 24 Feb 2023 03:27:06 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Rajiv Andrade <srajiv@linux.vnet.ibm.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-um@lists.infradead.org
+Subject: [PATCH] IMA: allow/fix UML builds
+Date:   Thu, 23 Feb 2023 19:27:03 -0800
+Message-Id: <20230224032703.7789-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There's code in prom_instantiate_sml() to do a "SML handover" (Stored
-Measurement Log) from OF to Linux, before Linux shuts down Open
-Firmware.
+UML supports HAS_IOMEM since 0bbadafdc49d (um: allow disabling
+NO_IOMEM).
 
-This involves creating a buffer to hold the SML, and creating two device
-tree properties to record its base address and size. The kernel then
-later reads those properties from the device tree to find the SML.
+Current IMA build on UML fails on allmodconfig (with TCG_TPM=m):
 
-When the code was initially added in commit 4a727429abec ("PPC64: Add
-support for instantiating SML from Open Firmware") the powerpc kernel
-was always built big endian, so the properties were created big endian
-by default.
+ld: security/integrity/ima/ima_queue.o: in function `ima_add_template_entry':
+ima_queue.c:(.text+0x2d9): undefined reference to `tpm_pcr_extend'
+ld: security/integrity/ima/ima_init.o: in function `ima_init':
+ima_init.c:(.init.text+0x43f): undefined reference to `tpm_default_chip'
+ld: security/integrity/ima/ima_crypto.o: in function `ima_calc_boot_aggregate_tfm':
+ima_crypto.c:(.text+0x1044): undefined reference to `tpm_pcr_read'
+ld: ima_crypto.c:(.text+0x10d8): undefined reference to `tpm_pcr_read'
 
-However since then little endian support was added to powerpc, and now
-the code lacks conversions to big endian when creating the properties.
+Modify the IMA Kconfig entry so that it selects TCG_TPM if HAS_IOMEM
+is set, regardless of the UML Kconfig setting.
+This updates TCG_TPM from =m to =y and fixes the linker errors.
 
-This means on little endian kernels the device tree properties are
-little endian, which is contrary to the device tree spec, and in
-contrast to all other device tree properties.
-
-To cope with that a workaround was added in tpm_read_log_of() to skip
-the endian conversion if the properties were created via the SML
-handover.
-
-A better solution is to encode the properties as big endian as they
-should be, and remove the workaround.
-
-Typically changing the encoding of a property like this would present
-problems for kexec. However the SML is not propagated across kexec, so
-changing the encoding of the properties is a non-issue.
-
-Fixes: e46e22f12b19 ("tpm: enhance read_log_of() to support Physical TPM event log")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: f4a0391dfa91 ("ima: fix Kconfig dependencies")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Rajiv Andrade <srajiv@linux.vnet.ibm.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-um@lists.infradead.org
 ---
- arch/powerpc/kernel/prom_init.c |  8 ++++++--
- drivers/char/tpm/eventlog/of.c  | 23 ++++-------------------
- 2 files changed, 10 insertions(+), 21 deletions(-)
+ security/integrity/ima/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
-index d464ba412084..72fe306b6820 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -1900,6 +1900,7 @@ static void __init prom_instantiate_sml(void)
- 	u32 entry = 0, size = 0, succ = 0;
- 	u64 base;
- 	__be32 val;
-+	__be64 val64;
- 
- 	prom_debug("prom_instantiate_sml: start...\n");
- 
-@@ -1956,10 +1957,13 @@ static void __init prom_instantiate_sml(void)
- 
- 	reserve_mem(base, size);
- 
-+	val64 = cpu_to_be64(base);
- 	prom_setprop(ibmvtpm_node, "/vdevice/vtpm", "linux,sml-base",
--		     &base, sizeof(base));
-+		     &val64, sizeof(val64));
-+
-+	val = cpu_to_be32(size);
- 	prom_setprop(ibmvtpm_node, "/vdevice/vtpm", "linux,sml-size",
--		     &size, sizeof(size));
-+		     &val, sizeof(val));
- 
- 	prom_debug("sml base     = 0x%llx\n", base);
- 	prom_debug("sml size     = 0x%x\n", size);
-diff --git a/drivers/char/tpm/eventlog/of.c b/drivers/char/tpm/eventlog/of.c
-index 930fe43d5daf..0bc0cb6333c6 100644
---- a/drivers/char/tpm/eventlog/of.c
-+++ b/drivers/char/tpm/eventlog/of.c
-@@ -51,8 +51,8 @@ static int tpm_read_log_memory_region(struct tpm_chip *chip)
- int tpm_read_log_of(struct tpm_chip *chip)
- {
- 	struct device_node *np;
--	const u32 *sizep;
--	const u64 *basep;
-+	const __be32 *sizep;
-+	const __be64 *basep;
- 	struct tpm_bios_log *log;
- 	u32 size;
- 	u64 base;
-@@ -73,23 +73,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
- 	if (sizep == NULL || basep == NULL)
- 		return -EIO;
- 
--	/*
--	 * For both vtpm/tpm, firmware has log addr and log size in big
--	 * endian format. But in case of vtpm, there is a method called
--	 * sml-handover which is run during kernel init even before
--	 * device tree is setup. This sml-handover function takes care
--	 * of endianness and writes to sml-base and sml-size in little
--	 * endian format. For this reason, vtpm doesn't need conversion
--	 * but physical tpm needs the conversion.
--	 */
--	if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0 &&
--	    of_property_match_string(np, "compatible", "IBM,vtpm20") < 0) {
--		size = be32_to_cpup((__force __be32 *)sizep);
--		base = be64_to_cpup((__force __be64 *)basep);
--	} else {
--		size = *sizep;
--		base = *basep;
--	}
-+	size = be32_to_cpup(sizep);
-+	base = be64_to_cpup(basep);
- 
- 	if (size == 0) {
- 		dev_warn(&chip->dev, "%s: Event log area empty\n", __func__);
--- 
-2.39.1
-
+diff -- a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -8,7 +8,7 @@ config IMA
+ 	select CRYPTO_HMAC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_HASH_INFO
+-	select TCG_TPM if HAS_IOMEM && !UML
++	select TCG_TPM if HAS_IOMEM
+ 	select TCG_TIS if TCG_TPM && X86
+ 	select TCG_CRB if TCG_TPM && ACPI
+ 	select TCG_IBMVTPM if TCG_TPM && PPC_PSERIES
