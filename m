@@ -2,56 +2,56 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFADC7EE2F
-	for <linux-integrity@archiver.kernel.org>; Wed,  1 Mar 2023 13:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB06C64ED6
+	for <linux-integrity@archiver.kernel.org>; Wed,  1 Mar 2023 13:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229730AbjCANhv (ORCPT
+        id S229786AbjCANjg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 1 Mar 2023 08:37:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57988 "EHLO
+        Wed, 1 Mar 2023 08:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjCANhu (ORCPT
+        with ESMTP id S229787AbjCANje (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 1 Mar 2023 08:37:50 -0500
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B233CE14;
-        Wed,  1 Mar 2023 05:37:49 -0800 (PST)
-Received: by mail-ed1-x536.google.com with SMTP id i34so53824133eda.7;
-        Wed, 01 Mar 2023 05:37:49 -0800 (PST)
+        Wed, 1 Mar 2023 08:39:34 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE53330DF;
+        Wed,  1 Mar 2023 05:39:33 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id cw28so4768170edb.5;
+        Wed, 01 Mar 2023 05:39:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677677868;
+        d=gmail.com; s=20210112; t=1677677972;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a0Tm2Y+hWRKxWl4T5yrSEnRh0lFyul4U3El1HK5aNoo=;
-        b=mbJl8Y9WJ0jLMqRNmVJuAmCzx7Rxb/m087TaNuWoAaxZ9yxleN+hCNRTUiBJIEo956
-         FxiV5bs4Q+x8mVBiS9L15mxeX6/S0m42AE7phKF2bpeHnLnF4mKDtwm4BUr81ecfJSCl
-         IF2SdYwZOWJZ35G3HNQJDcEZ9Wa5Hfw1rrZC+5aQWgVLXz1dV7AC7RhIMH+AQh3vQGd+
-         23acDknu5ql09XMfvRD4vq5VDUDhBp050CaVF2qkhc2vY2d4B2y+4zxtcSd6Sb28h1Es
-         SL9Dhaz9p/ZLY5H0Lflvm9Z4o+KfYCn2fHeAirGs4WmjRGqNKjfkUw53ApTBNeu9qAXA
-         Z59w==
+        bh=qlqXxPhHUGf+ZMStbk2u65C8VeGJJmG1x4p4aNMo314=;
+        b=EFGYbXGRzMcDGa2uoJVTno+ZYO6aNFraJOGz3YaQ3BF35UVa0uAPwmJNEBXVxVOQ5I
+         JDzqzZRx9miLp+/LL3WdtdxYSWE2BeZIT8nSxOoQPOr3q/2V3PpiFZUD0TKRmhcZWIfo
+         5M7lRit9kaDI2LsrxnulibdYe23fFbPbnu2rpEGDlmRF5AVxxZYiwznxXjdRaB0VwFpJ
+         DglxAwdFqIU5w1W3LVMcwpW4Ts948msKlsvMpkZhSj09V5EylR18Ye9afgXt8xjT5Ht6
+         8ZpcEsLtivsLATxpRhDWmiATL6yzN20/qdfV/BwuOXBIKovXp6BKCJXMfTFy4TEfdEvR
+         56og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677677868;
+        d=1e100.net; s=20210112; t=1677677972;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a0Tm2Y+hWRKxWl4T5yrSEnRh0lFyul4U3El1HK5aNoo=;
-        b=7jRLC4KU5fhjlHjoECe1fYGMyM7LbCBv+2mbIsu2IDwDuLiOXyjUn5HmntamJD8EnV
-         CzLz7wSbxO8AgVsJY+1G5nx0xOxqXI7gNa46RORCWrl3DuNl4tD7yaOyeOhN7MpF6aqR
-         iTGkevCEi1Q+hiGPbuRMTEgPw17nHAgBlputhZYy9WYOHNFXjjhwdjuFQ5kEgl0wl6FU
-         l6N60gtW8q4S4mGNj/JpIZ0dbHaOPg3tMMnFoKFL8uN0nUEr6VHHG8OhupYlA+bywhU/
-         auRncrB6ftheQxVj2quAVbrVigTSUTmohTdGK9ayibCNZcPdVm8sO2obiufqZRNucaUE
-         xXRw==
-X-Gm-Message-State: AO0yUKUHqgPu+VoEXpFEi9kK+R8ec/IRBcPC5KaSuqUoDjH287RIHUxM
-        z/pPY1GGjdVuV0S6Hz81mxQ=
-X-Google-Smtp-Source: AK7set9UfrHCyrRTAxw97aQ0S7UIoo02OEM1OfFoOvnNrPoOYEXSM29xcYTuvA/FDVaBedEDIKIncQ==
-X-Received: by 2002:a17:907:7e82:b0:8ab:4c4:d0f6 with SMTP id qb2-20020a1709077e8200b008ab04c4d0f6mr8733391ejc.56.1677677867732;
-        Wed, 01 Mar 2023 05:37:47 -0800 (PST)
+        bh=qlqXxPhHUGf+ZMStbk2u65C8VeGJJmG1x4p4aNMo314=;
+        b=ontdEsHKklsvo1HXf+SJYAnlo5L0Kgg7C0qc3PJfkhZ+1Ssu1gDe1DVrMOJWPqALKZ
+         CPxY/dlgtft2d01hr6giFKVeWeHEsIhGFj9Sp2MhOl2zizJ3/siNJ1uUnm/gQyFTzY6w
+         vlThUzd+AWsux+cbEX7gkWzaVzBtLuijoRMimGpqK950T7tw3YdaRcNunZR/4lUXmGxJ
+         Qk4wj0irgWXz2AsqhjO7nns/UZEo7IY4Pbc5vLED5WOGpRcZEhG+m1CrA4t4wra2dcxK
+         3ESHerW/SNd4MrXeYTyCb4qaoS+wZPYwG0h8v49yJJB3V6l//Y66HnFRNIJiXHFmfGGZ
+         aD/w==
+X-Gm-Message-State: AO0yUKWX4C0uDNCGw9uebQp1ROyskUuxdBWxSHz8TTS3NMvmicG7zYQU
+        IN1XwWj9KSuB/wNKhU7f08E=
+X-Google-Smtp-Source: AK7set+Jusjn82oiZYWpg97yY9K8MmneoqJmwZKq5CQgd1wC8xEu0EBkkk8Rewu/CjtyEJAnl6P4jQ==
+X-Received: by 2002:a17:907:2d1f:b0:88f:8a5:b4cd with SMTP id gs31-20020a1709072d1f00b0088f08a5b4cdmr7956882ejc.1.1677677972412;
+        Wed, 01 Mar 2023 05:39:32 -0800 (PST)
 Received: from orome (p200300e41f1c0800f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:800:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s4-20020a1709067b8400b00905a1abecbfsm1047441ejo.47.2023.03.01.05.37.46
+        by smtp.gmail.com with ESMTPSA id c89-20020a509fe2000000b004aeeb476c5bsm5563086edf.24.2023.03.01.05.39.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Mar 2023 05:37:47 -0800 (PST)
-Date:   Wed, 1 Mar 2023 14:37:45 +0100
+        Wed, 01 Mar 2023 05:39:31 -0800 (PST)
+Date:   Wed, 1 Mar 2023 14:39:30 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
 Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
@@ -59,74 +59,60 @@ Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
         linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         jonathanh@nvidia.com, skomatineni@nvidia.com, ldewangan@nvidia.com
-Subject: Re: [Patch V6 2/3] tpm_tis-spi: Support hardware wait polling
-Message-ID: <Y/9VKV6ddpWlmU9f@orome>
+Subject: Re: [Patch V6 3/3] spi: tegra210-quad: Enable TPM wait polling
+Message-ID: <Y/9Vkk1ioFWq+XLm@orome>
 References: <20230227172108.8206-1-kyarlagadda@nvidia.com>
- <20230227172108.8206-3-kyarlagadda@nvidia.com>
+ <20230227172108.8206-4-kyarlagadda@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="irPaUU4QFHK5esZZ"
+        protocol="application/pgp-signature"; boundary="7CYPnN6GGv8TW0P1"
 Content-Disposition: inline
-In-Reply-To: <20230227172108.8206-3-kyarlagadda@nvidia.com>
+In-Reply-To: <20230227172108.8206-4-kyarlagadda@nvidia.com>
 User-Agent: Mutt/2.2.9 (2022-11-12)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 
---irPaUU4QFHK5esZZ
+--7CYPnN6GGv8TW0P1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 27, 2023 at 10:51:07PM +0530, Krishna Yarlagadda wrote:
-[...]
-> diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_t=
-is_spi_main.c
-[...]
-> @@ -140,6 +206,28 @@ int tpm_tis_spi_transfer(struct tpm_tis_data *data, =
-u32 addr, u16 len,
->  	return ret;
->  }
-> =20
-> +int tpm_tis_spi_transfer(struct tpm_tis_data *data, u32 addr, u16 len,
-> +			 u8 *in, const u8 *out)
-> +{
-> +	struct tpm_tis_spi_phy *phy =3D to_tpm_tis_spi_phy(data);
-> +	struct spi_controller *ctlr =3D phy->spi_device->controller;
-> +
-> +	/*
-> +	 * TPM flow control over SPI requires full duplex support.
-> +	 * Send entire message to a half duplex controller to handle
-> +	 * wait polling in controller.
-> +	 * Set TPM HW flow control flag..
-> +	 */
-> +	if (ctlr->flags & SPI_CONTROLLER_HALF_DUPLEX) {
-> +		phy->spi_device->mode |=3D SPI_TPM_HW_FLOW;
+On Mon, Feb 27, 2023 at 10:51:08PM +0530, Krishna Yarlagadda wrote:
+> Trusted Platform Module requires flow control. As defined in TPM
+> interface specification, client would drive MISO line at same cycle as
+> last address bit on MOSI.
+> Tegra241 QSPI controller has TPM wait state detection feature which is
+> enabled for TPM client devices reported in SPI device mode bits.
+> Set half duplex flag for TPM device to detect and send entire message
+> to controller in one shot.
+>=20
+> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
+> ---
+>  drivers/spi/spi-tegra210-quad.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 
-Can this be pushed up to tpm_tis_spi_probe()? The SPI controller flags
-are fixed, so this isn't going to change at runtime, is it?
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thierry
-
---irPaUU4QFHK5esZZ
+--7CYPnN6GGv8TW0P1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmP/VSkACgkQ3SOs138+
-s6EAvA//fdYOQ31cnHUmBUSq8bSgsADnXCaPRRIfUxQ9WwiLD/pwqi72FoLb8D8E
-aaWr8mCE4zFlml1eMWFp9oEywyqAWGeSaXNQu02jZGg3oX79SCKzD26Y+0XfcTr0
-1bix4kIpQ15X2REtvH5NwGNbdZm2fvFO5gJlx9LIjIhOgkOTGoIQT8BHS72Yvzx8
-Ek+qwCvjiZb6Grv44hvrjVNox4i5Q1NGWUAuUchJiMtBJyAgvNGm+KvVraJYaPoX
-WJA3UXT6h70l0uH3vp021LwmOuftwdwh6XRtgijBttSgSbewHbLf/r3qmX4tpOqs
-MI6QmSi737ZK4JtA/6tjc+NX1rN5Ij3SYGBVQFuvjy84Q6TnOFY9FUw0pL98iyGk
-Fr3Nj11BugNa4Yxo5+CK0+LEAAeJ/SY6Vc9T7yScnTMRmsJQZ4hoWtiK064N6SLp
-/KZVwPzvz4ojmQkJ6XCvtmrlHsFPgS6hKgpDJKITPTks4ckjOVpq9bjKST6ewiso
-GmYNyvQAKiNKr2gWKSUyg1n9bmq/cUzsGvbbpAxTz+aP+I94qY3yG915swfPkfkU
-z8Z7RYDj09ynD9+3Tl9kM5IGijXHh2cmkAq3KqNQF+jtvjcf4i21djTnB0FMCdJM
-gkMjTa22l25OZ776Hd1CHOKQ9BAXiuoD+6VXdn6dmL7a4dtwbIo=
-=232t
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmP/VZIACgkQ3SOs138+
+s6Hi8hAAjC6P2k1n6s/uy9sFmSyNUN/z/M+jWR/gtGEeEB2CmOGxgUPfx4MJVOQb
+OVq8lRF2Qi/5e5dihv7AxwjJMzZamGlvrmhCUtx1YeFwlIkwFbCKCfyI2y/JB15X
+v8qHzE48qmJfYlhpXlTKaYvsUs4X/oEIU9edj+tLM6u4+OtcXr+ncVCqXN64oZHy
+izDYTEBoa7tTSSeDzgsRg/x7+gpcfmMdGV6TtUlVItGwaLrdaSR/r2fs3LLAcO/e
+yA5VPepoYSBKMYm+vz5p40zVBT/BmlAWX8D7J8Lys9lOvTSyMJtmIPDaiseHMF9V
+ZOCKRWp904yKW5zDMWW7025S7AjM2CmATw25kLTSBcHxh4Y9DrRIKbyh+ucQwm6h
+t3SBITPhg/xefb2VURunt9MvcnyakbvBPR0XCLGQ7tsdGU+UWIsMF/Mg4sB7T7p7
+8yyFf0Zn9nGt8pTislbgubs8k/XXCrqGBh2/CaJ/6t0pCmzAdJlaQnrhpTWQhSwo
+UUXwFMR94nUS0/NbYYvkf034E9GytHZI3uqT2ooUJQwxjtrAunPIr8chFlKCiGId
+0N7imv9UE3KW5vlr0mHd+jw2Hc4hwdraQKu/rIKx3eWqmd5/N41W76oAoM4f3Hf3
+ox26xXqnNZkH+ZXpPloE7+spd7P2gMgzy8MINpArstbZwa75iS4=
+=Pxsk
 -----END PGP SIGNATURE-----
 
---irPaUU4QFHK5esZZ--
+--7CYPnN6GGv8TW0P1--
