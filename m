@@ -2,138 +2,98 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A039C678D4
-	for <linux-integrity@archiver.kernel.org>; Fri,  3 Mar 2023 01:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CF3C7EE32
+	for <linux-integrity@archiver.kernel.org>; Fri,  3 Mar 2023 18:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbjCCBEn (ORCPT
+        id S231618AbjCCSVg (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 2 Mar 2023 20:04:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48028 "EHLO
+        Fri, 3 Mar 2023 13:21:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbjCCBEn (ORCPT
+        with ESMTP id S231597AbjCCSVf (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 2 Mar 2023 20:04:43 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3711B3E09B
-        for <linux-integrity@vger.kernel.org>; Thu,  2 Mar 2023 17:04:42 -0800 (PST)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3230v9nH009459;
-        Fri, 3 Mar 2023 01:04:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=sleqTtULt6bjITmKyTy80hL2r2xO8rYgJCVBPumQel8=;
- b=m5ztyFGdI5A1RiS3KGw0q1E9BRhURbamYQHa6s2tT+riTBpcJRXt8/95afO+BQUfRrN9
- iFvjeke3+DEFoZkyYzcEkRnZY5xxoiyKANfyimVVIVj4Sc5lPoU9VQ54FtXNw8X0PYEa
- AC1mjIi8YOPwBKEpeiBb88VV8447Gd1rJEocjL3yx7OiXQe3cwZ20yNoWFmHJMhkE5D1
- 8zMa2WW53d9hq9samBLGZ057+02zAKtPX0UY/i2Ua2rGb5MHfFU8+M9Sr5Z1N9vZcQwG
- YKghVNjkh8iswgMCs1z3SPbVly8lKLkxDRn8sn9viDiBZwhB9iV4iIllPLIz/pVHJ3JI sA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p36e90n8f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Mar 2023 01:04:21 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3230vNM2010456;
-        Fri, 3 Mar 2023 01:04:20 GMT
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3p36e90n7y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Mar 2023 01:04:20 +0000
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3230EFvb016107;
-        Fri, 3 Mar 2023 01:04:20 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([9.208.130.100])
-        by ppma02dal.us.ibm.com (PPS) with ESMTPS id 3nybdm7tgs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 03 Mar 2023 01:04:20 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 32314IRV3277478
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 3 Mar 2023 01:04:19 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA61F5805F;
-        Fri,  3 Mar 2023 01:04:18 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D232258059;
-        Fri,  3 Mar 2023 01:04:17 +0000 (GMT)
-Received: from sig-9-65-202-48.ibm.com (unknown [9.65.202.48])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Fri,  3 Mar 2023 01:04:17 +0000 (GMT)
-Message-ID: <2525a40a145cc51cf10d0b211ef9f58c9128482b.camel@linux.ibm.com>
-Subject: Re: [PATCH ima-evm-utils v7] Add tests for MMAP_CHECK and
- MMAP_CHECK_REQPROT hooks
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        dmitry.kasatkin@gmail.com
-Cc:     linux-integrity@vger.kernel.org, vt@altlinux.org, pvorel@suse.cz,
+        Fri, 3 Mar 2023 13:21:35 -0500
+X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 03 Mar 2023 10:21:34 PST
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90A9D53B;
+        Fri,  3 Mar 2023 10:21:33 -0800 (PST)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4PSwzp5m6nz9xtRp;
+        Sat,  4 Mar 2023 02:12:22 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwBnMVgKOgJk5iFpAQ--.12605S14;
+        Fri, 03 Mar 2023 19:21:09 +0100 (CET)
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     viro@zeniv.linux.org.uk, chuck.lever@oracle.com,
+        jlayton@kernel.org, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, brauner@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
         stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Thu, 02 Mar 2023 20:04:17 -0500
-In-Reply-To: <20230302180502.618368-1-roberto.sassu@huaweicloud.com>
-References: <20230302180502.618368-1-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: F3jV38I8QDo6MFMYqo4ftEvORgUgfUo-
-X-Proofpoint-ORIG-GUID: tJ0kf1x1s1GWye2mz8HcFmDI15LkORD4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-03-02_15,2023-03-02_02,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 spamscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 mlxlogscore=865 phishscore=0 impostorscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2212070000 definitions=main-2303030003
+Subject: [PATCH 12/28] fs: Fix description of vfs_tmpfile()
+Date:   Fri,  3 Mar 2023 19:18:26 +0100
+Message-Id: <20230303181842.1087717-13-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwBnMVgKOgJk5iFpAQ--.12605S14
+X-Coremail-Antispam: 1UD129KBjvdXoWrZw4rWF43tr1kXFy8ur4rKrg_yoWfGFc_CF
+        WvqF18Wan8Xr17Za1FkrWaqry3u3Z8Ar1akws3t342grZ8Jr95JFWkArWrX34kZ3WxXr13
+        Cr92v3WaqF17WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbg8YFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+        Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
+        0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+        Y2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+        v26F4UJVW0owA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+        wI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
+        xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
+        z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
+        AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+        x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
+        W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF
+        7I0E14v26F4UJVW0owCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+        0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7I
+        U0189tUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4YvdwAAss
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2023-03-02 at 19:05 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Add tests to ensure that, after applying the kernel patch 'ima: Align
-> ima_file_mmap() parameters with mmap_file LSM hook', the MMAP_CHECK hook
-> checks the protections applied by the kernel and not those requested by the
-> application.
-> 
-> Also ensure that after applying 'ima: Introduce MMAP_CHECK_REQPROT hook',
-> the MMAP_CHECK_REQPROT hook checks the protections requested by the
-> application.
-> 
-> Test both with the test_mmap application that by default requests the
-> PROT_READ protection flag. Its syntax is:
-> 
-> test_mmap <file> <mode>
-> 
-> where mode can be:
-> - exec: adds the PROT_EXEC protection flag to mmap()
-> - read_implies_exec: calls the personality() system call with
->                      READ_IMPLIES_EXEC as the first argument before mmap()
-> - mprotect: adds the PROT_EXEC protection flag to a memory area in addition
->             to PROT_READ
-> - exec_on_writable: calls mmap() with PROT_EXEC on a file which has a
->                     writable mapping
-> 
-> Check the different combinations of hooks/modes and ensure that a
-> measurement entry is found in the IMA measurement list only when it is
-> expected. No measurement entry should be found when only the PROT_READ
-> protection flag is requested or the matching policy rule has the
-> MMAP_CHECK_REQPROT hook and the personality() system call was called with
-> READ_IMPLIES_EXEC.
-> 
-> mprotect() with PROT_EXEC on an existing memory area protected with
-> PROT_READ should be denied (with an appraisal rule), regardless of the MMAP
-> hook specified in the policy. The same applies for mmap() with PROT_EXEC on
-> a file with a writable mapping.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Thanks, Roberto.  Both this and the ima_policy_check test are now
-queued in next-testing.
+Update the description of vfs_tmpfile() to match the current parameters of
+that function.
 
+Fixes: 9751b338656f ("vfs: move open right after ->tmpfile()")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ fs/namei.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 57727a1ae38..b4c52c4890b 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3574,9 +3574,9 @@ static int do_open(struct nameidata *nd,
+ /**
+  * vfs_tmpfile - create tmpfile
+  * @idmap:	idmap of the mount the inode was found from
+- * @dentry:	pointer to dentry of the base directory
++ * @parentpath:	pointer to the path of the base directory
++ * @file:	file descriptor of the new tmpfile
+  * @mode:	mode of the new tmpfile
+- * @open_flag:	flags
+  *
+  * Create a temporary file.
+  *
 -- 
-thanks,
-
-Mimi
+2.25.1
 
