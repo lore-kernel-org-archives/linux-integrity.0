@@ -2,116 +2,118 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C03FFC6FD1D
-	for <linux-integrity@archiver.kernel.org>; Tue, 14 Mar 2023 14:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1882C74A4B
+	for <linux-integrity@archiver.kernel.org>; Tue, 14 Mar 2023 15:25:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230429AbjCNOYj convert rfc822-to-8bit (ORCPT
+        id S231152AbjCNPZ5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 14 Mar 2023 10:24:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55520 "EHLO
+        Tue, 14 Mar 2023 11:25:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbjCNOYi (ORCPT
+        with ESMTP id S231194AbjCNPZ4 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 14 Mar 2023 10:24:38 -0400
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 169CBD32F;
-        Tue, 14 Mar 2023 07:24:07 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id x33so4755118uaf.12;
-        Tue, 14 Mar 2023 07:24:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678803795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QHk/e8nmrChnVOh0v2KNpG9SPtXK48kelECMBXBBkqg=;
-        b=ohOyp7N9eAMOPS1ECS0RikSqJLkGMixztwHS1SYLIkXkTS6DoJedVTRV5mPsBNNi7G
-         RQizATru5UOMJ758yyKfrXDKb1fuSnqAwntDO9q1rrR84gSxK5ZBK+BWoLQapPer+HXL
-         vJDB+c2ZlnDgbQ3XF1poOgINUf1wVYeKAxwiQ1B07K+dSNH1lwlo4fes0AaqlAmLdjh/
-         EHqRXmySC/9hFzhYVuhcIkNGIlQqnzN0BCsFfnJwaJR57aVSEh22WwxWqpPitmipcabD
-         QYd9dV2mnC0OmZAbBd7+fIO96yp2WPSxnUAAsAIaKi4qUtXfQC/3LVB2xjwh6TdDoYbh
-         vr0w==
-X-Gm-Message-State: AO0yUKVCJrh4J3Ye8id7Nwby6q+qOZIFMge00EG6MlvwI+lNUjhQqBaK
-        4vVhNa92KC9IpS4DAz4XsM2XvbwPnK66LA==
-X-Google-Smtp-Source: AK7set/Ow8ABEmeiqCUpzJDllW4qWq8ZVakyvIFFE3NsuTRp/qBQDbMedOpOD1K+DkRqhazcxraO0g==
-X-Received: by 2002:a1f:ab08:0:b0:432:2c6f:f246 with SMTP id u8-20020a1fab08000000b004322c6ff246mr1831026vke.3.1678803795152;
-        Tue, 14 Mar 2023 07:23:15 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 10-20020a1f110a000000b004320e55b10csm375434vkr.39.2023.03.14.07.23.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Mar 2023 07:23:15 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id e19so7917915vsu.4;
-        Tue, 14 Mar 2023 07:23:15 -0700 (PDT)
-X-Received: by 2002:a05:6902:145:b0:ac2:a7a7:23c3 with SMTP id
- p5-20020a056902014500b00ac2a7a723c3mr17221159ybh.12.1678803452128; Tue, 14
- Mar 2023 07:17:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230314121216.413434-1-schnelle@linux.ibm.com> <20230314121216.413434-4-schnelle@linux.ibm.com>
-In-Reply-To: <20230314121216.413434-4-schnelle@linux.ibm.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 14 Mar 2023 15:17:20 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXXapUNn2-_+WWULq1ELLJEzVgJ7CZ-OJpbTSy-=JjZVA@mail.gmail.com>
-Message-ID: <CAMuHMdXXapUNn2-_+WWULq1ELLJEzVgJ7CZ-OJpbTSy-=JjZVA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/38] char: impi, tpm: depend on HAS_IOPORT
-To:     Niklas Schnelle <schnelle@linux.ibm.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Corey Minyard <minyard@acm.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-pci@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
+        Tue, 14 Mar 2023 11:25:56 -0400
+Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 45DB8A9082;
+        Tue, 14 Mar 2023 08:25:52 -0700 (PDT)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailnew.west.internal (Postfix) with ESMTP id B5AC02B069D9;
+        Tue, 14 Mar 2023 11:08:43 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Tue, 14 Mar 2023 11:08:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm1; t=1678806523; x=1678813723; bh=K4
+        tQ8ndVOUfpM0Pr+iYsgl8sdiO//rofLCiHgEHKHaw=; b=Bs89wlqsdZVa4k07Fb
+        epoolTHKszWvfBhS2lZVBBRcF2IS0ywxX526WC1eBDNhzycvLK/kat0+XRfJx2W3
+        7bMNtqMaeH4ZJIdGU9yRt8ThnhgzDS7LLG23ou/0reQhjVATwpoCDU2V8vqm2W1g
+        J+1jlCnkFsdB00fs75PZcsnbMJQ5s0C5KPnLZjhqSn8SwimhhuRyHr4X0dC/PTsg
+        runNfLuCg/cSr0AkAoZgfQFS4waYRIDooAHqrMWtZtpzKTnjgRDZ+8reMknQWs0Z
+        eoZ852c0rPiprZQoIxvBFd9ZExdObLmVVzDXAkThfBx5XDZj6gfT51hkb+yCSOEK
+        qb1A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:content-type:date:date
+        :feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; t=1678806523; x=1678813723; bh=K4tQ8ndVOUfpM
+        0Pr+iYsgl8sdiO//rofLCiHgEHKHaw=; b=FcVdEJUEJOBFn8vyntSfSiv6vsKGS
+        hxzdTfs9AcxmtwZ5y1sR0yXhzJ99CF9MXTpWC+ABwuF7Rtpv1TkBGNjNpsV6Om5f
+        dtPB6w6JUNhXycjYrxPIg/RAWfQny5kcjIIZY4MsTNL5WQMkK9FZ5JVjfkhq6000
+        I4KrV9UjqLokn4iBCs+nAu+QFd5+zWcdFsaymVn1JdQjXp5p6OIcBjLpx4QgreLj
+        wYQZ3SOWH6tcEuqWKW6Z+BaR70e/RUZ9Fa/F4u+0ul++229JrQKHN7GgAgMbAdAD
+        4cns8a5dDWvtxvYx+83RxxNxPzNTvcFgOby7T3TIytlb8ZsA7HgRcFHmw==
+X-ME-Sender: <xms:-o0QZK7P_IOpvfkXAJTvZsGq0nxcIFi21rXd_e5XDXLyhDMebh2_nA>
+    <xme:-o0QZD7dmPVC77qe5xy7iIFqqccVdVdsSEIY2cJ65en99sOTy5DG8bDWDMZEjjCjK
+    kg8yMOB41kCCRQNqFA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrvddviedgjeehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
+    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:-o0QZJc_ZJnv__s_0rxNyhivqegZK7Z_v0h4mlYw68ZNd9X5urONyg>
+    <xmx:-o0QZHIp6DY7kGHp39y5XRCh11PF4bviEV4MGoRs_tuGNYI_P-Cn5g>
+    <xmx:-o0QZOLVcUPTfqPTZ6w7QlCi-H2uAW7eIfDzED9woacZag2egABCvQ>
+    <xmx:-40QZDB8FC5V93wwc2nXAo4BNIGlkdi-SW-0xyTxCo85UPhNMS4EWPMW1F4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 018F2B60086; Tue, 14 Mar 2023 11:08:41 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-221-gec32977366-fm-20230306.001-gec329773
+Mime-Version: 1.0
+Message-Id: <9894438c-dca7-40cf-adb8-4bc7cb7b5c02@app.fastmail.com>
+In-Reply-To: <CAMuHMdXXapUNn2-_+WWULq1ELLJEzVgJ7CZ-OJpbTSy-=JjZVA@mail.gmail.com>
+References: <20230314121216.413434-1-schnelle@linux.ibm.com>
+ <20230314121216.413434-4-schnelle@linux.ibm.com>
+ <CAMuHMdXXapUNn2-_+WWULq1ELLJEzVgJ7CZ-OJpbTSy-=JjZVA@mail.gmail.com>
+Date:   Tue, 14 Mar 2023 16:08:20 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Geert Uytterhoeven" <geert@linux-m68k.org>,
+        "Niklas Schnelle" <schnelle@linux.ibm.com>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Corey Minyard" <minyard@acm.org>,
+        "Peter Huewe" <peterhuewe@gmx.de>,
+        "Jarkko Sakkinen" <jarkko@kernel.org>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        "Alan Stern" <stern@rowland.harvard.edu>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        "Paul Walmsley" <paul.walmsley@sifive.com>,
+        "Palmer Dabbelt" <palmer@dabbelt.com>,
+        "Albert Ou" <aou@eecs.berkeley.edu>, linux-kernel@vger.kernel.org,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        linux-pci@vger.kernel.org, "Arnd Bergmann" <arnd@kernel.org>,
         openipmi-developer@lists.sourceforge.net,
         linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v3 03/38] char: impi, tpm: depend on HAS_IOPORT
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Niklas,
-
-On Tue, Mar 14, 2023 at 1:12 PM Niklas Schnelle <schnelle@linux.ibm.com> wrote:
-> In a future patch HAS_IOPORT=n will result in inb()/outb() and friends
-> not being declared. We thus need to add this dependency and ifdef
-> sections of code using inb()/outb() as alternative access methods.
+On Tue, Mar 14, 2023, at 15:17, Geert Uytterhoeven wrote:
+>> --- a/drivers/char/Kconfig
+>> +++ b/drivers/char/Kconfig
+>> @@ -34,6 +34,7 @@ config TTY_PRINTK_LEVEL
+>>  config PRINTER
+>>         tristate "Parallel printer support"
+>>         depends on PARPORT
+>> +       depends on HAS_IOPORT
 >
-> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> This looks wrong to me.
+> drivers/char/lp.c uses the parport API, no direct I/O port access.
 
-Thanks for your patch!
+It looks like include/linux/parport.h requires I/O port access
+when PARPORT_PC is enabled and PARPORT_NOT_PC is disabled.
+Maybe this would work:
 
-> --- a/drivers/char/Kconfig
-> +++ b/drivers/char/Kconfig
-> @@ -34,6 +34,7 @@ config TTY_PRINTK_LEVEL
->  config PRINTER
->         tristate "Parallel printer support"
->         depends on PARPORT
-> +       depends on HAS_IOPORT
+      depends on PARPORT
+      depends on HAS_IOPORT || PARPORT_NOT_PC
 
-This looks wrong to me.
-drivers/char/lp.c uses the parport API, no direct I/O port access.
-
->         help
->           If you intend to attach a printer to the parallel port of your Linux
->           box (as opposed to using a serial printer; if the connector at the
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+       Arnd
