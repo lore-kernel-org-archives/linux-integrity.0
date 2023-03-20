@@ -2,112 +2,101 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EFFC76195
-	for <linux-integrity@archiver.kernel.org>; Sun, 19 Mar 2023 14:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F59DC6FD1D
+	for <linux-integrity@archiver.kernel.org>; Mon, 20 Mar 2023 08:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjCSOOD (ORCPT
+        id S230287AbjCTIG2 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 19 Mar 2023 10:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46258 "EHLO
+        Mon, 20 Mar 2023 04:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48884 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230107AbjCSOOB (ORCPT
+        with ESMTP id S230299AbjCTIG0 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 19 Mar 2023 10:14:01 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93603196AB
-        for <linux-integrity@vger.kernel.org>; Sun, 19 Mar 2023 07:13:59 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id z21so37485808edb.4
-        for <linux-integrity@vger.kernel.org>; Sun, 19 Mar 2023 07:13:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1679235238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5P8vV5SdTC8v0eY1KGmdi5SpQmO/V0KvzXuxG5KBGwI=;
-        b=eLvpMkifkBIdXQ7UetfEpMemmF379+5kf09TjY2d6rTkkpv4pDW1mMCQDGrxV2UeqB
-         L9Zkmufygw4svPq9s6pFUWnRJFdd0NCbX+51vy5mJ0HHWmDIdZmS6ipebhtaY6mOBUMR
-         hmGNamy0stqDW6xt9o0t+pctMP3GvmKgYWajnzQFj94SYMy8ayD+lhv7D0by3bSN0dwN
-         9HxXuqqg53hJB20+esXKlhckwnC4AZAept26uMo1QXE/kP6eXVjHxOJSa83pn983O0Xd
-         K9Y39t2cNChcd67fPjQUPnCnX/HDXzOB3PceXqxM5fNmKGGiIcpSB/ahkwGBtloVPTpM
-         oQeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679235238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5P8vV5SdTC8v0eY1KGmdi5SpQmO/V0KvzXuxG5KBGwI=;
-        b=hXCWR5YbXcaz/MxPQfzq72qN+fkUfZ8VM/0UZBb/EBt3BGR4tJAgjXPSk78KHsWB4E
-         hvwBa5UuCa9OM8IMgBpB6yXfWT20IvNj1pxzhZmxeI0E4+vlTYUDrkHu3R9d4QwX/mce
-         j5Njn8gXXIoP5wENtH1FVXeHiDuhbhgC1qrigh+1rFNoOlWpEkMeW1YQT2j/KTJ4DFRe
-         Vyrch+3yVEXTMyVinARbAOd4VuqEUMFA5A2CUwDuJFxwGlpvmsXAPEP4nE5lHfakq6kf
-         YoFY+HZdHZL5g9mGWD57iTp2t/JE0LyInVAoY2gBmiF/y29faudkk/2H5HDVKxT9MCrI
-         jupA==
-X-Gm-Message-State: AO0yUKUoGug9zZWdGKyExbhIeWuvkSgI7hdr7jTSmPCJQNmMINhQ/mk8
-        FG/I7Fc5KxoyEW7xHNJa0nO2zQ==
-X-Google-Smtp-Source: AK7set+7F5xYj57Uc7OdJB7x1zl+UTYlUcK21nOpfQqu9S3MJ+xiyrr4s/wKj3rZ3zx7povZD0tcJQ==
-X-Received: by 2002:aa7:c043:0:b0:500:2a15:f86b with SMTP id k3-20020aa7c043000000b005002a15f86bmr8791029edo.42.1679235238119;
-        Sun, 19 Mar 2023 07:13:58 -0700 (PDT)
-Received: from krzk-bin.. ([2a02:810d:15c0:828:5b5f:f22b:a0b:559d])
-        by smtp.gmail.com with ESMTPSA id t21-20020a50d715000000b004af7191fe35sm3540689edi.22.2023.03.19.07.13.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 19 Mar 2023 07:13:57 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+        Mon, 20 Mar 2023 04:06:26 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E858114E8C
+        for <linux-integrity@vger.kernel.org>; Mon, 20 Mar 2023 01:06:21 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1peAX3-00068e-Qv; Mon, 20 Mar 2023 09:06:17 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1peAX3-005PK5-6G; Mon, 20 Mar 2023 09:06:17 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1peAX1-006OCp-Op; Mon, 20 Mar 2023 09:06:15 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 To:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2 2/2] tpm: tpm_tis_spi: Mark ACPI and OF related data as maybe unused
-Date:   Sun, 19 Mar 2023 15:13:54 +0100
-Message-Id: <20230319141354.22907-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230319141354.22907-1-krzysztof.kozlowski@linaro.org>
-References: <20230319141354.22907-1-krzysztof.kozlowski@linaro.org>
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: [PATCH 1/3] tpm/tpm_ftpm_tee: Convert to platform remove callback returning void
+Date:   Mon, 20 Mar 2023 09:06:05 +0100
+Message-Id: <20230320080607.306495-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230320080607.306495-1-u.kleine-koenig@pengutronix.de>
+References: <20230320080607.306495-1-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1606; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=7Zr2bZcWF6QwqeT4Oa94Xv8wT3EoWo296pQfyEzYldA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBkGBPq7BLdGRigORnKCzVxurX31AhShNoZXB3mt b4rOvOUsAaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZBgT6gAKCRCPgPtYfRL+ Tti8B/4+143+Oeaw4NH1CGYm6M6XnAZ+Dwhnx7OY7Qxbn39f+T6agccRheTw4vXhy/CkQaUsOWb S0Xe/2azKczZSvBeZvEDl4XG2MM5It8ONlMH6ib+Xiac2j21eTAI46+aSblhnG8MoEuOL4OQIiH nV0HXjAEwWA9jh+hHTs2tRvAQDXlsI/gGqZxjgG1Z6RoaroRw1jaoAvAbSeIeMwZ6TAIN1fA9KB SdroYJJp2diCE6E7ZPqLnNArQchmzcMn26zd8xnWWszEmRIsQRkxcwDy6qd3Qk78feOaeRFggFY b89SF4oBr77TW3oX1D7sAJ2Oc7m2rloDTHiFKnlrhENLG25Z
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-integrity@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The driver can be compile tested with !CONFIG_OF or !CONFIG_ACPI making
-unused.  This fixes compile tests with W=1 by annotating device ID table
-as possibly unused:
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is (mostly) ignored
+and this typically results in resource leaks. To improve here there is a
+quest to make the remove callback return void. In the first step of this
+quest all drivers are converted to .remove_new() which already returns
+void.
 
-  drivers/char/tpm/tpm_tis_spi_main.c:234:34: error: ‘of_tis_spi_match’ defined but not used [-Werror=unused-const-variable=]
+ftpm_tee_remove() returns zero unconditionally (and cannot easily
+converted to return void). So ignore the return value to be able to make
+ftpm_plat_tee_remove() return void.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
+ drivers/char/tpm/tpm_ftpm_tee.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Changes since v1:
-1. Enhance commit msg.
----
- drivers/char/tpm/tpm_tis_spi_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index a0963a3e92bd..1f5207974a17 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -231,7 +231,7 @@ static const struct spi_device_id tpm_tis_spi_id[] = {
- };
- MODULE_DEVICE_TABLE(spi, tpm_tis_spi_id);
+diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+index deff23bb54bf..528f35b14fb6 100644
+--- a/drivers/char/tpm/tpm_ftpm_tee.c
++++ b/drivers/char/tpm/tpm_ftpm_tee.c
+@@ -334,11 +334,11 @@ static int ftpm_tee_remove(struct device *dev)
+ 	return 0;
+ }
  
--static const struct of_device_id of_tis_spi_match[] = {
-+static const struct of_device_id of_tis_spi_match[] __maybe_unused = {
- 	{ .compatible = "st,st33htpm-spi", .data = tpm_tis_spi_probe },
- 	{ .compatible = "infineon,slb9670", .data = tpm_tis_spi_probe },
- 	{ .compatible = "tcg,tpm_tis-spi", .data = tpm_tis_spi_probe },
-@@ -240,7 +240,7 @@ static const struct of_device_id of_tis_spi_match[] = {
- };
- MODULE_DEVICE_TABLE(of, of_tis_spi_match);
+-static int ftpm_plat_tee_remove(struct platform_device *pdev)
++static void ftpm_plat_tee_remove(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
  
--static const struct acpi_device_id acpi_tis_spi_match[] = {
-+static const struct acpi_device_id acpi_tis_spi_match[] __maybe_unused = {
- 	{"SMO0768", 0},
- 	{}
+-	return ftpm_tee_remove(dev);
++	ftpm_tee_remove(dev);
+ }
+ 
+ /**
+@@ -367,7 +367,7 @@ static struct platform_driver ftpm_tee_plat_driver = {
+ 	},
+ 	.shutdown = ftpm_plat_tee_shutdown,
+ 	.probe = ftpm_plat_tee_probe,
+-	.remove = ftpm_plat_tee_remove,
++	.remove_new = ftpm_plat_tee_remove,
  };
+ 
+ /* UUID of the fTPM TA */
 -- 
-2.34.1
+2.39.2
 
