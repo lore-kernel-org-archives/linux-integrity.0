@@ -2,142 +2,290 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54358C77B7D
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Apr 2023 12:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B52B2C77B76
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Apr 2023 14:55:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231285AbjDUMvT (ORCPT
+        id S232480AbjDUOzx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Apr 2023 08:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52850 "EHLO
+        Fri, 21 Apr 2023 10:55:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229709AbjDUMvF (ORCPT
+        with ESMTP id S232215AbjDUOzw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Apr 2023 08:51:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D192FC645
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Apr 2023 05:50:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1682081418;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=efvIjEJR7OoLjdwxlft+BlSYZztvjk4NbwCMvuO6Nyc=;
-        b=UiOCyzMQidYbOuwwwJBvGQICTopCZa99mtpzD0i91LQjjNd5jZgi9VONm6v1e/jTOES8FU
-        GEvTMZ/adp7J7s/2QZXC9mKFo124ZWNuAjxzOuwOaJf9b04Ke2Uq9SrkN/RrvQn2G8APte
-        GuZAidvyP95jb7so156EKIApzPxrbaE=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-7ajA2x96Oh-vF6s7rn_akg-1; Fri, 21 Apr 2023 08:50:17 -0400
-X-MC-Unique: 7ajA2x96Oh-vF6s7rn_akg-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-5f1697ce25bso10700126d6.3
-        for <linux-integrity@vger.kernel.org>; Fri, 21 Apr 2023 05:50:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682081416; x=1684673416;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=efvIjEJR7OoLjdwxlft+BlSYZztvjk4NbwCMvuO6Nyc=;
-        b=Ho76AHDfEvTGDJogUUfhQ+fARzlU6gDs/5noou9UkEoZF8BnC4V+Koevm88cdPCz9k
-         0bgWcJUvNbmpDGiHp61Upa6YlKGL+9yRF4oVUn3OYGWY3SXMXtwjA1vSFdv+LrIdtnYD
-         bQNyDw8LVXcPABySL+Mkb6Q62F/+HWNbPWtJbiUjg7AT3AEp4mU/x2ckrvwc7fyKlasw
-         NqyMCZti5m3v0UIzSBoThvFTcokLlmDWwpENzH/NAhwr8rpnlzd7TLzYEKFqcElhzo1N
-         3nvxD/tewBDXDOktSN45Oew4223XYDAwy9U2d1MSPBh7XBTl28+ZCUyxyv+7lwcteOuf
-         oGXA==
-X-Gm-Message-State: AAQBX9d5TLdVBJm0+nFcvmasNvVD+y3rug3R76YyMuo2J+O7Q3MSXzza
-        v8SS6ASCe1NQmtto+Ywhkmi+AP+sYNJFSP6rdmJOwn/zjGc/r78mfKQLn6Tl/0jsGSU5XTRueHy
-        nFvvt8wXgCcP8Yaqj9U2JxF0eTqrCTjUk/0OEktw=
-X-Received: by 2002:a05:6214:20af:b0:606:526:a828 with SMTP id 15-20020a05621420af00b006060526a828mr2230414qvd.21.1682081416170;
-        Fri, 21 Apr 2023 05:50:16 -0700 (PDT)
-X-Google-Smtp-Source: AKy350ZGU0FBC7yj/+VzlSA+dXJ/D9lCCv5dj+6IgY8JAYV2GumyboAfhoGjHhO3ECAo7x8aO972pQ==
-X-Received: by 2002:a05:6214:20af:b0:606:526:a828 with SMTP id 15-20020a05621420af00b006060526a828mr2230385qvd.21.1682081415907;
-        Fri, 21 Apr 2023 05:50:15 -0700 (PDT)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id c2-20020ae9ed02000000b007339c5114a9sm1295618qkg.103.2023.04.21.05.50.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Apr 2023 05:50:15 -0700 (PDT)
-Date:   Fri, 21 Apr 2023 05:50:13 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc:     robh+dt@kernel.org, broonie@kernel.org, peterhuewe@gmx.de,
-        jgg@ziepe.ca, jarkko@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-        linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        skomatineni@nvidia.com, ldewangan@nvidia.com
-Subject: Re: [Patch V10 0/3] Tegra TPM driver with HW flow control
-Message-ID: <ijhnvqkimqkpjfpiat22log3tf3eufi4aj3jscqcpwrxvfjzrz@52tl5bj2dguk>
-References: <20230421091309.2672-1-kyarlagadda@nvidia.com>
+        Fri, 21 Apr 2023 10:55:52 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FADAAF20;
+        Fri, 21 Apr 2023 07:55:46 -0700 (PDT)
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33LE9Q9s031312;
+        Fri, 21 Apr 2023 14:55:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=ytlqZYrH0qoFzwZ2+BYeEx9kCxU/tFANcdaojFrOpM8=;
+ b=VxXvr/AXvJmFrMMZAh6S4MCqMKk4MvWG4ILxEw59tkuRXW43NolKWPUwbVV8WPHIo3OX
+ QDjRyAR50K4v8UASIa5+//Zf1JqFmfG86iH9zhlW7yNaMgfFAsxpNQJ1FMJodrT5te0o
+ iZPhrJZaH/sVEhXpTtp5PaVC3WEphMBnGRbUj7JHkzQnSAgAisA38iG09j8Flgauh8/T
+ xVg0cwFKa7IVkaGmWwpyF3KJF94X6SO5IzbFM9RvNqDBYWak/4AsoW2OIpCTC/DYNCzS
+ U8czRMskNaLO6pOF9EJPQduzCDHTq9N7/U7V736RE5VjACbTyweEcovidTfBQfDBHGEZ 0A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q3umwkf4x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Apr 2023 14:55:41 +0000
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 33LEcGgr013987;
+        Fri, 21 Apr 2023 14:55:40 GMT
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q3umwkf4e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Apr 2023 14:55:40 +0000
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33LC6fls003740;
+        Fri, 21 Apr 2023 14:55:39 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([9.208.129.117])
+        by ppma01dal.us.ibm.com (PPS) with ESMTPS id 3pykj8jb8q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Apr 2023 14:55:39 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+        by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33LEtcRF32506598
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Apr 2023 14:55:38 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3D64658056;
+        Fri, 21 Apr 2023 14:55:35 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5FC3C5805A;
+        Fri, 21 Apr 2023 14:55:34 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.163.8.185])
+        by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Apr 2023 14:55:34 +0000 (GMT)
+Message-ID: <ef89b203b67a4a6a8c6aea069c0a2f188a3cfcb0.camel@linux.ibm.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM
+ after writes
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Christian Brauner <brauner@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Paul Moore <paul@paul-moore.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Date:   Fri, 21 Apr 2023 10:55:34 -0400
+In-Reply-To: <20230411-umgewandelt-gastgewerbe-870e4170781c@brauner>
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+         <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+         <20230409-genick-pelikan-a1c534c2a3c1@brauner>
+         <b2591695afc11a8924a56865c5cd2d59e125413c.camel@kernel.org>
+         <20230411-umgewandelt-gastgewerbe-870e4170781c@brauner>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: jqS1OM330qLgNJZbinJ-NZ1skzQgU5kx
+X-Proofpoint-GUID: boew0fgaxtLpb0GeLYZZDJckZkynqIgn
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230421091309.2672-1-kyarlagadda@nvidia.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
+ definitions=2023-04-21_07,2023-04-21_01,2023-02-09_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 phishscore=0 spamscore=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2303200000 definitions=main-2304210127
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri, Apr 21, 2023 at 02:43:06PM +0530, Krishna Yarlagadda wrote:
-> TPM devices may insert wait state on last clock cycle of ADDR phase.
-> For SPI controllers that support full-duplex transfers, this can be
-> detected using software by reading the MISO line. For SPI controllers
-> that only support half-duplex transfers, such as the Tegra QSPI, it is
-> not possible to detect the wait signal from software. The QSPI
-> controller in Tegra234 and Tegra241 implement hardware detection of the
-> wait signal which can be enabled in the controller for TPM devices.
+On Tue, 2023-04-11 at 10:38 +0200, Christian Brauner wrote:
+> On Sun, Apr 09, 2023 at 06:12:09PM -0400, Jeff Layton wrote:
+> > On Sun, 2023-04-09 at 17:22 +0200, Christian Brauner wrote:
+> > > On Fri, Apr 07, 2023 at 09:29:29AM -0400, Jeff Layton wrote:
+> > > > > > > > 
+> > > > > > > > I would ditch the original proposal in favor of this 2-line patch shown here:
+> > > > > > > > 
+> > > > > > > > https://lore.kernel.org/linux-integrity/a95f62ed-8b8a-38e5-e468-ecbde3b221af@linux.ibm.com/T/#m3bd047c6e5c8200df1d273c0ad551c645dd43232
+> > > > > 
+> > > > > We should cool it with the quick hacks to fix things. :)
+> > > > > 
+> > > > 
+> > > > Yeah. It might fix this specific testcase, but I think the way it uses
+> > > > the i_version is "gameable" in other situations. Then again, I don't
+> > > > know a lot about IMA in this regard.
+> > > > 
+> > > > When is it expected to remeasure? If it's only expected to remeasure on
+> > > > a close(), then that's one thing. That would be a weird design though.
+> > > > 
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > Ok, I think I get it. IMA is trying to use the i_version from the
+> > > > > > > overlayfs inode.
+> > > > > > > 
+> > > > > > > I suspect that the real problem here is that IMA is just doing a bare
+> > > > > > > inode_query_iversion. Really, we ought to make IMA call
+> > > > > > > vfs_getattr_nosec (or something like it) to query the getattr routine in
+> > > > > > > the upper layer. Then overlayfs could just propagate the results from
+> > > > > > > the upper layer in its response.
+> > > > > > > 
+> > > > > > > That sort of design may also eventually help IMA work properly with more
+> > > > > > > exotic filesystems, like NFS or Ceph.
+> > > > > > > 
+> > > > > > > 
+> > > > > > > 
+> > > > > > 
+> > > > > > Maybe something like this? It builds for me but I haven't tested it. It
+> > > > > > looks like overlayfs already should report the upper layer's i_version
+> > > > > > in getattr, though I haven't tested that either:
+> > > > > > 
+> > > > > > -----------------------8<---------------------------
+> > > > > > 
+> > > > > > [PATCH] IMA: use vfs_getattr_nosec to get the i_version
+> > > > > > 
+> > > > > > IMA currently accesses the i_version out of the inode directly when it
+> > > > > > does a measurement. This is fine for most simple filesystems, but can be
+> > > > > > problematic with more complex setups (e.g. overlayfs).
+> > > > > > 
+> > > > > > Make IMA instead call vfs_getattr_nosec to get this info. This allows
+> > > > > > the filesystem to determine whether and how to report the i_version, and
+> > > > > > should allow IMA to work properly with a broader class of filesystems in
+> > > > > > the future.
+> > > > > > 
+> > > > > > Reported-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > ---
+> > > > > 
+> > > > > So, I think we want both; we want the ovl_copyattr() and the
+> > > > > vfs_getattr_nosec() change:
+> > > > > 
+> > > > > (1) overlayfs should copy up the inode version in ovl_copyattr(). That
+> > > > >     is in line what we do with all other inode attributes. IOW, the
+> > > > >     overlayfs inode's i_version counter should aim to mirror the
+> > > > >     relevant layer's i_version counter. I wouldn't know why that
+> > > > >     shouldn't be the case. Asking the other way around there doesn't
+> > > > >     seem to be any use for overlayfs inodes to have an i_version that
+> > > > >     isn't just mirroring the relevant layer's i_version.
+> > > > 
+> > > > It's less than ideal to do this IMO, particularly with an IS_I_VERSION
+> > > > inode.
+> > > > 
+> > > > You can't just copy up the value from the upper. You'll need to call
+> > > > inode_query_iversion(upper_inode), which will flag the upper inode for a
+> > > > logged i_version update on the next write. IOW, this could create some
+> > > > (probably minor) metadata write amplification in the upper layer inode
+> > > > with IS_I_VERSION inodes.
+> > > 
+> > > I'm likely just missing context and am curious about this so bear with me. Why
+> > > do we need to flag the upper inode for a logged i_version update? Any required
+> > > i_version interactions should've already happened when overlayfs called into
+> > > the upper layer. So all that's left to do is for overlayfs' to mirror the
+> > > i_version value after the upper operation has returned.
+> > 
+> > > ovl_copyattr() - which copies the inode attributes - is always called after the
+> > > operation on the upper inode has finished. So the additional query seems odd at
+> > > first glance. But there might well be a good reason for it. In my naive
+> > > approach I would've thought that sm along the lines of:
+> > >
+> > > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> > > index 923d66d131c1..8b089035b9b3 100644
+> > > --- a/fs/overlayfs/util.c
+> > > +++ b/fs/overlayfs/util.c
+> > > @@ -1119,4 +1119,5 @@ void ovl_copyattr(struct inode *inode)
+> > >         inode->i_mtime = realinode->i_mtime;
+> > >         inode->i_ctime = realinode->i_ctime;
+> > >         i_size_write(inode, i_size_read(realinode));
+> > > +       inode_set_iversion_raw(inode, inode_peek_iversion_raw(realinode));
+> > >  }
+> > > 
+> > > would've been sufficient.
+> > > 
+> > 
+> > Nope, because then you wouldn't get any updates to i_version after that
+> > point.
+> > 
+> > Note that with an IS_I_VERSION inode we only update the i_version when
+> > there has been a query since the last update. What you're doing above is
+> > circumventing that mechanism. You'll get the i_version at the time of of
+> > the ovl_copyattr, but there won't be any updates of it after that point
+> > because the QUERIED bit won't end up being set on realinode.
 > 
-> Add HW flow control in TIS driver and a flag in SPI data to indicate
-> wait detection is required in HW. SPI controller driver determines if
-> this is supported. Add HW detection in Tegra QSPI controller.
+> I get all that.
+> But my understanding had been that the i_version value at the time of
+> ovl_copyattr() would be correct. Because when ovl_copyattr() is called
+> the expected i_version change will have been done in the relevant layer
+> includig raising the QUERIED bit. Since the layers are not allowed to be
+> changed outside of the overlayfs mount any change to them can only
+> originate from overlayfs which would necessarily call ovl_copyattr()
+> again. IOW, overlayfs would by virtue of its implementation keep the
+> i_version value in sync.
 > 
-> Updates in this patch set 
->  - Tegra QSPI identifies itself as half duplex.
->  - TPM TIS SPI driver skips flow control for half duplex and send
->    transfers in single message for controller to handle it.
->  - TPM device identifies as TPM device for controller to detect and
->    enable HW TPM wait poll feature.
+> Overlayfs wouldn't even raise SB_I_VERSION. It would indeed just be a
+> cache of i_version of the relevant layer.
 > 
-> Verified with a TPM device on Tegra241 ref board using TPM2 tools.
+> > 
+> > 
+> > > Since overlayfs' does explicitly disallow changes to the upper and lower trees
+> > > while overlayfs is mounted it seems intuitive that it should just mirror the
+> > > relevant layer's i_version.
+> > >
+> > >
+> > > If we don't do this, then we should probably document that i_version doesn't
+> > > have a meaning yet for the inodes of stacking filesystems.
+> > > 
+> > 
+> > Trying to cache the i_version is counterproductive, IMO, at least with
+> > an IS_I_VERSION inode.
+> > 
+> > The problem is that a query against the i_version has a side-effect. It
+> > has to (atomically) mark the inode for an update on the next change.
+> > 
+> > If you try to cache that value, you'll likely end up doing more queries
+> > than you really need to (because you'll need to keep the cache up to
+> > date) and you'll have an i_version that will necessarily lag the one in
+> > the upper layer inode.
+> > 
+> > The whole point of the change attribute is to get the value as it is at
+> > this very moment so we can check whether there have been changes. A
+> > laggy value is not terribly useful.
+> > 
+> > Overlayfs should just always call the upper layer's ->getattr to get the
+> > version. I wouldn't even bother copying it up in the first place. Doing
+> > so is just encouraging someone to try use the value in the overlayfs
+> > inode, when they really need to go through ->getattr and get the one
+> > from the upper layer.
 > 
-> V10
->  - use spi_sync in place of spi_sync_locked
-> V9
->  - renamed tpm spi transfer functions
-> V8:
->  - fix compile warning.
-> V7:
->  - updated patch description.
->  - TPM flag set in probe.
->  - minor comments.
-> V6:
->  - Fix typo in chip name Tegra234.
->  - Debug logs change skipped to be sent later.
->  - Consistent usage of soc flag.
-> V5:
->  - No SPI bus locking.
-> V4:
->  - Split api change to different patch.
->  - Describe TPM HW flow control.
-> V3:
->  - Use SPI device mode flag and SPI controller flags.
->  - Drop usage of device tree flags.
->  - Generic TPM half duplex controller handling.
->  - HW & SW flow control for TPM. Drop additional driver.
-> V2:
->  - Fix dt schema errors.
+> That seems reasonable to me. I read this as an agreeing with my earlier
+> suggestion to document that i_version doesn't have a meaning for the
+> inodes of stacking filesystems and that we should spell out that
+> vfs_getattr()/->getattr() needs to be used to interact with i_version.
 > 
-> Krishna Yarlagadda (3):
->   spi: Add TPM HW flow flag
->   tpm_tis-spi: Add hardware wait polling
->   spi: tegra210-quad: Enable TPM wait polling
+> We need to explain to subsystems such as IMA somwhere what the correct
+> way to query i_version agnostically is; independent of filesystem
+> implementation details.
 > 
->  drivers/char/tpm/tpm_tis_spi_main.c | 91 ++++++++++++++++++++++++++++-
->  drivers/spi/spi-tegra210-quad.c     | 14 +++++
->  include/linux/spi/spi.h             | 16 ++++-
->  3 files changed, 116 insertions(+), 5 deletions(-)
+> Looking at IMA, it queries the i_version directly without checking
+> whether it's an IS_I_VERSION() inode first. This might make a
+> difference.h
 > 
-> -- 
-> 2.17.1
-> 
+> Afaict, filesystems that persist i_version to disk automatically raise
+> SB_I_VERSION. I would guess that it be considered a bug if a filesystem
+> would persist i_version to disk and not raise SB_I_VERSION. If so IMA
+> should probably be made to check for IS_I_VERSION() and it will probably
+> get that by switching to vfs_getattr_nosec().
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+When the filesystem isn't mounted with I_VERSION, i_version should be
+set to 0.
+
+Originally when the filesytem wasn't mounted with I_VERSION support,
+the file would only be measured once.  With commit ac0bf025d2c0 ("ima:
+Use i_version only when filesystem supports it"), this changed.   The
+"iint" flags are reset, causing the file to be re-
+{measure/appraised/audited} on next access.
+
+-- 
+thanks,
+
+Mimi
 
