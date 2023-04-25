@@ -2,136 +2,188 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497A7C77B73
-	for <linux-integrity@archiver.kernel.org>; Tue, 25 Apr 2023 16:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287A0C77B7C
+	for <linux-integrity@archiver.kernel.org>; Tue, 25 Apr 2023 23:34:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234211AbjDYQLY (ORCPT
+        id S234454AbjDYXed (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 25 Apr 2023 12:11:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47698 "EHLO
+        Tue, 25 Apr 2023 19:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234552AbjDYQLX (ORCPT
+        with ESMTP id S231391AbjDYXec (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 25 Apr 2023 12:11:23 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A46711619D
-        for <linux-integrity@vger.kernel.org>; Tue, 25 Apr 2023 09:11:09 -0700 (PDT)
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 33PG8v3j000810
-        for <linux-integrity@vger.kernel.org>; Tue, 25 Apr 2023 16:11:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=s2tHVMMCFITmPapgdnZHjyjowVkUwWdpxNtxvCTj8M4=;
- b=A5bEjs0ZO6kjE2juA6bek1bVwBwt4Ff9v2Gx2FcgfGzyDI+mkugoY2TAXcrR2oJW5h0H
- dIzbp/r91grAMTVpj1Kh8R8hj3ZfJ+kz5bN72RB5Ipe5+bNOeaGva+YdNAZM98WiV9wO
- 4vls90fIbAzluB9P1op34Ea9l3p2MPq8bQmNrgQ7VtsbO+C9sRmSiPMd1GnMDqLy0oHw
- 6811CXRw78gM7bWOJu0GVanw7zE6dyrmcWPPss561JzK0BTCTdOWHSwdpxnxosLD2AgF
- 3TWyTcCZsR9vbJw5czAUbSrSkmlL+Q5sEWJCwzDcPnY9XSzxq9a7N/m/xXmvLN/qqZpA Fg== 
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3q6j0bgd7h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 25 Apr 2023 16:11:06 +0000
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 33PEmCX7026452
-        for <linux-integrity@vger.kernel.org>; Tue, 25 Apr 2023 16:10:21 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([9.208.129.114])
-        by ppma03wdc.us.ibm.com (PPS) with ESMTPS id 3q477812hc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-integrity@vger.kernel.org>; Tue, 25 Apr 2023 16:10:21 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-        by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 33PGAKdt54853932
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 25 Apr 2023 16:10:20 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0B3DC58057;
-        Tue, 25 Apr 2023 16:10:20 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C905758058;
-        Tue, 25 Apr 2023 16:10:19 +0000 (GMT)
-Received: from sbct-2.pok.ibm.com (unknown [9.47.158.152])
-        by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 25 Apr 2023 16:10:19 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH ima-evm-utils v2 1/2] Add openssl command line examples for creation of EC keys
-Date:   Tue, 25 Apr 2023 12:10:14 -0400
-Message-Id: <20230425161015.593988-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230425161015.593988-1-stefanb@linux.ibm.com>
-References: <20230425161015.593988-1-stefanb@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JLFjSOulhL_UgKEH0vApTYETBfMe9YrP
-X-Proofpoint-GUID: JLFjSOulhL_UgKEH0vApTYETBfMe9YrP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.942,Hydra:6.0.573,FMLib:17.11.170.22
- definitions=2023-04-25_07,2023-04-25_01,2023-02-09_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0
- bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2303200000 definitions=main-2304250144
+        Tue, 25 Apr 2023 19:34:32 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6964C17A;
+        Tue, 25 Apr 2023 16:34:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 34038631FF;
+        Tue, 25 Apr 2023 23:34:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B055C433EF;
+        Tue, 25 Apr 2023 23:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682465670;
+        bh=K1s+noYHRNni1Pq8/RE/Mli4hvd2z61+wK3Y1vv2LyM=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=IvyVDNCDCp2/r5VUoQebr/oJMDXprGJWwwUPukWZJTyggmDDXq2zfulSb8y5dg3S+
+         ity3qLWMdUtRj2O7fQVWOoUcT6wIbHMuf5Ng9ZXVSeKwxpDcNgPO9nBj9c5fJNsRzQ
+         1/wPHzv7d4OYTly4E7Vb1DB7MAIbXJ0WkaJVZ5LYE2Ycl+kztWZAYZ8gF1e3OSzYWT
+         45lUd9QwH9I3gSxrpKHJARTqNcEVu68C50jshkFFkizf0AE5nmIcDTQ0XTurTuV+ou
+         Cf4JFjB++Jc/5fT8ylTV0sTaSUooMn3ENKxf/NVHnCBghFauxj735kaHOEmrMx+t/3
+         tnwGYgaMPdoTw==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 26 Apr 2023 02:34:25 +0300
+Message-Id: <CS68AWILHXS4.3M36M1EKZLUMS@suppilovahvero>
+Cc:     "Thorsten Leemhuis" <regressions@leemhuis.info>,
+        "James Bottomley" <James.Bottomley@hansenpartnership.com>,
+        "Vlastimil Babka" <vbabka@suse.cz>,
+        "Peter Huewe" <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, "Jan Dabros" <jsd@semihalf.com>,
+        <regressions@lists.linux.dev>,
+        "LKML" <linux-kernel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>,
+        "Dominik Brodowski" <linux@dominikbrodowski.net>,
+        "Herbert Xu" <herbert@gondor.apana.org.au>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Johannes Altmanninger" <aclopte@gmail.com>
+Subject: Re: [REGRESSION] suspend to ram fails in 6.2-rc1 due to tpm errors
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+X-Mailer: aerc 0.14.0
+References: <Y60RoP77HnwaukEA@zx2c4.com>
+ <7ebab1ff-48f1-2737-f0d3-25c72666d041@leemhuis.info>
+ <Y7w74EBYP3+FHlkw@zx2c4.com>
+ <4268d0ac-278a-28e4-66d1-e0347f011f46@leemhuis.info>
+ <ZBBmVhwsTf/URoqs@kernel.org>
+ <CAHmME9rxeE32g7nKqeVLwRodDNM8QyZUNd54cyE6mZW7FcqD-g@mail.gmail.com>
+ <ZBBxMl5rVjY9FGS9@kernel.org> <ZBBxxftnXHVOjm92@kernel.org>
+ <ZBB8R9H3CyQnNfCt@zx2c4.com> <ZBCDeleGG/fFlkt+@kernel.org>
+ <ZEKlzaQhjd8sbE7I@kernel.org>
+ <CAHmME9q9DZyYo7G__ks=XSrS4kS8sUUZ+eF3c1VSnGCAvfBR+Q@mail.gmail.com>
+ <CS48U6SYIBVB.V05DUEX5I01F@suppilovahvero>
+In-Reply-To: <CS48U6SYIBVB.V05DUEX5I01F@suppilovahvero>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Add openssl command line examples for creation of EC keys for
-EVM and IMA CA and signing key.
+On Sun Apr 23, 2023 at 6:34 PM EEST, Jarkko Sakkinen wrote:
+> On Fri Apr 21, 2023 at 9:27 PM EEST, Jason A. Donenfeld wrote:
+> > Did you use the patch I sent you and suspend and resume according to
+> > the instructions I gave you? If not, I don't have much to add.
+>
+> Finally, I got it reproduced at my side with TPM 1.2:
+>
+> [    0.379677] tpm_tis 00:00: 1.2 TPM (device-id 0x1, rev-id 1)
+> [   32.453447] tpm tpm0: tpm_transmit: tpm_recv: error -5
+> [   33.450601] tpm tpm0: Unable to read header
+> [   33.450607] tpm tpm0: tpm_transmit: tpm_recv: error -62
+>
+> I'll look at this further after I've sent v6.3 PR.
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- README | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+OK, so this gives the exact tpm_transmit call where it fails:
 
-diff --git a/README b/README
-index 75e4fd2..fd12680 100644
---- a/README
-+++ b/README
-@@ -217,6 +217,18 @@ asymmetric keys support:
-     	        -x509 -config x509_evm.genkey \
- 	        -outform DER -out x509_evm.der -keyout privkey_evm.pem
- 
-+Create an elliptic curve (EC) key (supported since Linux v5.13)
-+
-+    openssl ecparam -name prime256v1 -genkey -out privkey_evm.pem
-+
-+Generate self-signed x509 EC public key certificate and private key for using
-+kernel asymmetric key support (supported since Linux v5.13):
-+
-+   openssl req -new -nodes -utf8 -sha1 -days 36500 -batch \
-+                -x509 -config x509_evm.genkey \
-+                -outform DER -out x509_evm.der -keyout privkey_evm.pem \
-+                -newkey ec -pkeyopt ec_paramgen_curve:prime256v1
-+
- Configuration file x509_evm.genkey:
- 
- 	# Beginning of the file
-@@ -244,6 +256,9 @@ Generate public key for using RSA key format:
- 
-     openssl rsa -pubout -in privkey_evm.pem -out pubkey_evm.pem
- 
-+Similarly generate public EC key:
-+
-+    openssl ec -pubout -in privkey_evm.pem -out pubkey_evm.pem
- 
- Copy keys to /etc/keys:
- 
-@@ -290,6 +305,12 @@ Configuration file ima-local-ca.genkey:
- 	# keyUsage = cRLSign, keyCertSign
- 	# EOF
- 
-+Note: To generated elliptic curve keys add the following parameters to
-+      the 'req' commands below (supported since Linux v5.13):
-+
-+      -newkey ec -pkeyopt ec_paramgen_curve:prime256v1
-+
-+
- Generate private key and X509 public key certificate:
- 
-  openssl req -new -x509 -utf8 -sha1 -days 3650 -batch -config $GENKEY \
--- 
-2.39.2
+$ sudo bpftrace -e 'kprobe:tpm_transmit { @[kstack] =3D count(); }'
+[sudo] password for jarkko:
+Attaching 1 probe...
+^C
 
+@[
+    tpm_transmit+1
+    tpm1_pcr_read+177
+    tpm1_do_selftest+287
+    tpm_tis_resume+443
+    pnp_bus_resume+102
+    dpm_run_callback+81
+    device_resume+173
+    dpm_resume+238
+    dpm_resume_end+17
+    suspend_devices_and_enter+473
+    enter_state+563
+    pm_suspend+68
+    state_store+43
+    kobj_attr_store+15
+    sysfs_kf_write+59
+    kernfs_fop_write_iter+304
+    vfs_write+590
+    ksys_write+115
+    __x64_sys_write+25
+    do_syscall_64+88
+    entry_SYSCALL_64_after_hwframe+114
+]: 1
+@[
+    tpm_transmit+1
+    tpm1_do_selftest+179
+    tpm_tis_resume+443
+    pnp_bus_resume+102
+    dpm_run_callback+81
+    device_resume+173
+    dpm_resume+238
+    dpm_resume_end+17
+    suspend_devices_and_enter+473
+    enter_state+563
+    pm_suspend+68
+    state_store+43
+    kobj_attr_store+15
+    sysfs_kf_write+59
+    kernfs_fop_write_iter+304
+    vfs_write+590
+    ksys_write+115
+    __x64_sys_write+25
+    do_syscall_64+88
+    entry_SYSCALL_64_after_hwframe+114
+]: 1
+@[
+    tpm_transmit+1
+    tpm1_pm_suspend+203
+    tpm_pm_suspend+131
+    __pnp_bus_suspend+65
+    pnp_bus_suspend+19
+    dpm_run_callback+81
+    __device_suspend+329
+    dpm_suspend+432
+    dpm_suspend_start+155
+    suspend_devices_and_enter+370
+    enter_state+563
+    pm_suspend+68
+    state_store+43
+    kobj_attr_store+15
+    sysfs_kf_write+59
+    kernfs_fop_write_iter+304
+    vfs_write+590
+    ksys_write+115
+    __x64_sys_write+25
+    do_syscall_64+88
+    entry_SYSCALL_64_after_hwframe+114
+]: 1
+@[
+    tpm_transmit+1
+    tpm1_get_random+206
+    tpm_get_random+70
+    tpm_hwrng_read+21
+    hwrng_fillfn+234
+    kthread+230
+    ret_from_fork+41
+]: 75897
+
+So it is the very first PCR read in tpm1_do_selftest.
+
+There is a bug at plain sight in tpm1_tis_resume(): before
+tpm_tis_resume() calls tpm1_do_selftest(), it only requests
+and relinquishes locality. This is not sufficient: it should
+also disable clkrun protocol.
+
+tpm1_do_selftest() is called also during the driver initialization
+successfully, the difference being that clkrun protocol is disabled.
+
+I'm compiling now a kernel with a test fix that calls tpm_chip_start()
+and tpm_chip_stop() as a substitute for request/relinquish locality.
+These should be used anyway instead of ad-hoc code.
+
+BR, Jarkko
+
+BR, Jarkko
