@@ -2,110 +2,181 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1A0C77B73
-	for <linux-integrity@archiver.kernel.org>; Thu, 27 Apr 2023 15:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8454EC77B73
+	for <linux-integrity@archiver.kernel.org>; Thu, 27 Apr 2023 15:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244214AbjD0Pia (ORCPT
+        id S243711AbjD0Pll (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 27 Apr 2023 11:38:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58714 "EHLO
+        Thu, 27 Apr 2023 11:41:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244132AbjD0Pi3 (ORCPT
+        with ESMTP id S243700AbjD0Plk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 27 Apr 2023 11:38:29 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D13DA26BA
-        for <linux-integrity@vger.kernel.org>; Thu, 27 Apr 2023 08:38:27 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-94ef0a8546fso1411459066b.1
-        for <linux-integrity@vger.kernel.org>; Thu, 27 Apr 2023 08:38:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1682609906; x=1685201906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d7uiTmpUlfL81ZU9AzSI0GBW5946jNS5Utc+TlhKUqY=;
-        b=BF8k0gsGCynf3Aschz2b6YGMo5KEVMtqbqXm/NtTeTwR8Lt9X+D1gnm7GmWlchSfdz
-         5QoRUYrWwomsEZHFhpFgcmIqqw7Q+lnpQIPlG3hMVMoznFCy/R1z2gYNEVWj+TRaHK70
-         7VY5oHrvBVRcXAMEQNT3+FrZKg9hE+R6Fu0zk=
+        Thu, 27 Apr 2023 11:41:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1975E420E
+        for <linux-integrity@vger.kernel.org>; Thu, 27 Apr 2023 08:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1682610051;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=YEofZFRl2d8BOu5BwJ07xScSj7ivyiDT35/EYFvK1+Y=;
+        b=CSspNxfirBvK/d5ngj35SCIUV+y4HBdCf2T51yiD5YIN2IrFPqnhowaMYk9uAY8fN2c7vG
+        lPmZQ415qf3F8KB6njyKJ4Nqt6M4Iv1djpiPYJobm/TSo+ELP6Xqee+rwuiRC8Srlkr0Sy
+        D5D3y6MaEZ2AEThfG1IFFDa5yndteys=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-EriRS00AO6mXfL-mT_i4Tg-1; Thu, 27 Apr 2023 11:11:48 -0400
+X-MC-Unique: EriRS00AO6mXfL-mT_i4Tg-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-74df5c5fd00so672362985a.3
+        for <linux-integrity@vger.kernel.org>; Thu, 27 Apr 2023 08:11:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682609906; x=1685201906;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d7uiTmpUlfL81ZU9AzSI0GBW5946jNS5Utc+TlhKUqY=;
-        b=CaLhIv3JdOQdN7onoKFZS0ZROC2J4I0SzrnekJhGc+f56MJE1KcAkNhRACPb/Bbimg
-         ko9gllbbUD3j2KNXPhBSWvK89GRuBv2F+vK5EZ/sF0YOJIIkkZFOrrOz3DS8FJcex4bH
-         hUipovRLR7ErkITf6WbCOT+tiIxbqGZT20iF89doSKdLPEO6fDb6zbXzPA1uRORMXltz
-         ahhcMfG87oHijt8AjQ50mH22bGl8ziC/Sfq8f+NOMv4r37qYftdPQmkeVK6eG563pDg4
-         J9JQRE4x4jhQ9ijpWELW04QIIKhXpB/MvZ4rAw9Sh8eD6Lt6P0Kub9qNwfnHJxigawnu
-         PEpQ==
-X-Gm-Message-State: AC+VfDxu1fcmGTSTmOKzjw6WJS7SxSiuDv4nZMx3NYYt/gqL/8W7NvV5
-        Fc1s7vedYMw9hFmZMy0K/OgiwfzJy00ZOhfVHWddAA==
-X-Google-Smtp-Source: ACHHUZ51fEHOifNaQW1dB7mshU89g4Z6gw8cOnDpDTd7Vod4KB1qy7AJNK0ema5gn3FXdzYgTEdqnA==
-X-Received: by 2002:a17:906:9c82:b0:94f:6058:4983 with SMTP id fj2-20020a1709069c8200b0094f60584983mr2226183ejc.76.1682609905867;
-        Thu, 27 Apr 2023 08:38:25 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id oq27-20020a170906cc9b00b0094f410225c7sm9773220ejb.169.2023.04.27.08.38.25
-        for <linux-integrity@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Apr 2023 08:38:25 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5055141a8fdso12591540a12.3
-        for <linux-integrity@vger.kernel.org>; Thu, 27 Apr 2023 08:38:25 -0700 (PDT)
-X-Received: by 2002:a05:6402:403:b0:50a:1604:f04c with SMTP id
- q3-20020a056402040300b0050a1604f04cmr1972054edv.4.1682609904880; Thu, 27 Apr
- 2023 08:38:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230427111125.13769-1-jarkko@kernel.org>
-In-Reply-To: <20230427111125.13769-1-jarkko@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Apr 2023 08:38:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiGauUNbV_1ZdxG92aWF+oqnnqdRg4z2h-FxXjB_w3Xiw@mail.gmail.com>
-Message-ID: <CAHk-=wiGauUNbV_1ZdxG92aWF+oqnnqdRg4z2h-FxXjB_w3Xiw@mail.gmail.com>
-Subject: Re: [GIT PULL] tpmdd: a critical bug fix for v6.4-rc1
+        d=1e100.net; s=20221208; t=1682608303; x=1685200303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YEofZFRl2d8BOu5BwJ07xScSj7ivyiDT35/EYFvK1+Y=;
+        b=ZyQoe6XHcnu5mhbbV/KflgOVDWa1Wa0CTIVb79dL85DZ+1IwSmgcRa284xT8zGMRbI
+         qmaNchImNfosyz/tGOGf7ydQdLNDVfPRJ6B9kBFML2AImvhSlTyLEbCHrpV5LExc1OSz
+         PfMJP7DKeSM4QXcGgHS0bGQPKlDSoWqC3bo6f3R6r5CiPtIB8jf3obC6TYXUj6YADQLY
+         jbndriVIoVrbC/s0Cspgxs2RFjSWR0E17wjKwRfQgSWny97XURyLc6DEBsV9mb2Vn6LM
+         UTduNpcm941W9HONwgvBdruqJJfMEvIy7gaQ2RMRO08VY481TF3rzhQNsXjqjlDJSbUo
+         R5Xw==
+X-Gm-Message-State: AC+VfDxnztZoLaPEBQrAPQMXrG57eTIh7Z3x6ZnJmM96Fylmw9zfz3eG
+        s28FYlsEqtqfj9bb99ML2btFD0SbzFb9H8zV1Gf3UfqgQoS7SZZk1rCNKBGvoRClenZHUWmGcES
+        CfdbQJIJyRzAQCuJeTeV7BxBv+Ix2
+X-Received: by 2002:a05:622a:46:b0:3ef:2db1:6e75 with SMTP id y6-20020a05622a004600b003ef2db16e75mr3419079qtw.24.1682608303213;
+        Thu, 27 Apr 2023 08:11:43 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5f58NHVqn1RA2uKocIydh5vQ5dAAMKPYsXYY23arXK+tFiRm0qCVuoSCXJRiBpsH9QLmxHKg==
+X-Received: by 2002:a05:622a:46:b0:3ef:2db1:6e75 with SMTP id y6-20020a05622a004600b003ef2db16e75mr3419054qtw.24.1682608302970;
+        Thu, 27 Apr 2023 08:11:42 -0700 (PDT)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id t10-20020a05622a148a00b003eec85171d6sm6235196qtx.61.2023.04.27.08.11.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Apr 2023 08:11:42 -0700 (PDT)
+Date:   Thu, 27 Apr 2023 08:11:40 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Lino Sanfilippo <l.sanfilippo@kunbus.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        stable@vger.kernel.org, "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [PATCH 1/2] tpm_tis: Use tpm_chip_{start,stop} decoration inside
+ tpm_tis_resume
+Message-ID: <5qxby65cn22wolrlm4xemxfpfxyjgwjchhoev45egiwaubrqdc@f2ufxypkhnjt>
+References: <20230426172928.3963287-1-jarkko@kernel.org>
+ <20230426172928.3963287-2-jarkko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230426172928.3963287-2-jarkko@kernel.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, Apr 27, 2023 at 4:11=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> This PR fixes a critical bug in my first pull request.
+On Wed, Apr 26, 2023 at 08:29:27PM +0300, Jarkko Sakkinen wrote:
+> Before sending a TPM command, CLKRUN protocol must be disabled. This is not
+> done in the case of tpm1_do_selftest() call site inside tpm_tis_resume().
+> 
+> Address this by decorating the calls with tpm_chip_{start,stop}, which arm
+> and disarm the TPM chip for transmission, and take care of disabling and
+> re-enabling CLKRUN, among other things.
+> 
+> Cc: stable@vger.kernel.org
+> Reported-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> Link: https://lore.kernel.org/linux-integrity/CS68AWILHXS4.3M36M1EKZLUMS@suppilovahvero/
+> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 43 +++++++++++++++------------------
+>  1 file changed, 19 insertions(+), 24 deletions(-)
 
-That doesn't work AT ALL.
 
-You have this duplicated line
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com
 
--       TPM_CHIP_FLAG_FIRMWARE_UPGRADE  =3D BIT(7),
-+       TPM_CHIP_FLAG_FIRMWARE_UPGRADE          =3D BIT(7),
-+       TPM_CHIP_FLAG_FIRMWARE_UPGRADE          =3D BIT(7),
-+       TPM_CHIP_FLAG_FIRMWARE_UPGRADE          =3D BIT(7),
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index c2421162cf34..73707026e358 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -1209,25 +1209,20 @@ static void tpm_tis_reenable_interrupts(struct tpm_chip *chip)
+>  	u32 intmask;
+>  	int rc;
+>  
+> -	if (chip->ops->clk_enable != NULL)
+> -		chip->ops->clk_enable(chip, true);
+> -
+> -	/* reenable interrupts that device may have lost or
+> -	 * BIOS/firmware may have disabled
+> +	/*
+> +	 * Re-enable interrupts that device may have lost or BIOS/firmware may
+> +	 * have disabled.
+>  	 */
+>  	rc = tpm_tis_write8(priv, TPM_INT_VECTOR(priv->locality), priv->irq);
+> -	if (rc < 0)
+> -		goto out;
+> +	if (rc < 0) {
+> +		dev_err(&chip->dev, "Setting IRQ failed.\n");
+> +		return;
+> +	}
+>  
+>  	intmask = priv->int_mask | TPM_GLOBAL_INT_ENABLE;
+> -
+> -	tpm_tis_write32(priv, TPM_INT_ENABLE(priv->locality), intmask);
+> -
+> -out:
+> -	if (chip->ops->clk_enable != NULL)
+> -		chip->ops->clk_enable(chip, false);
+> -
+> -	return;
+> +	rc = tpm_tis_write32(priv, TPM_INT_ENABLE(priv->locality), intmask);
+> +	if (rc < 0)
+> +		dev_err(&chip->dev, "Enabling interrupts failed.\n");
+>  }
+>  
+>  int tpm_tis_resume(struct device *dev)
+> @@ -1235,27 +1230,27 @@ int tpm_tis_resume(struct device *dev)
+>  	struct tpm_chip *chip = dev_get_drvdata(dev);
+>  	int ret;
+>  
+> -	ret = tpm_tis_request_locality(chip, 0);
+> -	if (ret < 0)
+> +	ret = tpm_chip_start(chip);
+> +	if (ret)
+>  		return ret;
+>  
+>  	if (chip->flags & TPM_CHIP_FLAG_IRQ)
+>  		tpm_tis_reenable_interrupts(chip);
+>  
+> -	ret = tpm_pm_resume(dev);
+> -	if (ret)
+> -		goto out;
+> -
+>  	/*
+>  	 * TPM 1.2 requires self-test on resume. This function actually returns
+>  	 * an error code but for unknown reason it isn't handled.
+>  	 */
+>  	if (!(chip->flags & TPM_CHIP_FLAG_TPM2))
+>  		tpm1_do_selftest(chip);
+> -out:
+> -	tpm_tis_relinquish_locality(chip, 0);
+>  
+> -	return ret;
+> +	tpm_chip_stop(chip);
+> +
+> +	ret = tpm_pm_resume(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(tpm_tis_resume);
+>  #endif
+> -- 
+> 2.39.2
+> 
 
-in that patch (presumably due to some edit-time fat-fingering), which
-causes lots and lots of
-
-  ./include/linux/tpm.h:285:9: error: redeclaration of enumerator
-=E2=80=98TPM_CHIP_FLAG_FIRMWARE_UPGRADE=E2=80=99
-    285 |         TPM_CHIP_FLAG_FIRMWARE_UPGRADE          =3D BIT(7),
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ./include/linux/tpm.h:284:9: note: previous definition of
-=E2=80=98TPM_CHIP_FLAG_FIRMWARE_UPGRADE=E2=80=99 with type =E2=80=98int=E2=
-=80=99
-    284 |         TPM_CHIP_FLAG_FIRMWARE_UPGRADE          =3D BIT(7),
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ./include/linux/tpm.h:286:9: error: redeclaration of enumerator
-=E2=80=98TPM_CHIP_FLAG_FIRMWARE_UPGRADE=E2=80=99
-    286 |         TPM_CHIP_FLAG_FIRMWARE_UPGRADE          =3D BIT(7),
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-errors.
-
-While I could easily just remove the duplicated lines in my merge,
-that would make things non-bisectable, so I unpulled this instead.
-
-             Linus
