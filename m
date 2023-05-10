@@ -2,86 +2,102 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73CBCC77B7C
-	for <linux-integrity@archiver.kernel.org>; Wed, 10 May 2023 01:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB003C77B7D
+	for <linux-integrity@archiver.kernel.org>; Wed, 10 May 2023 10:24:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbjEJBVs (ORCPT
+        id S236593AbjEJKYX (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 9 May 2023 21:21:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51538 "EHLO
+        Wed, 10 May 2023 06:24:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231468AbjEJBVs (ORCPT
+        with ESMTP id S236497AbjEJKYW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 9 May 2023 21:21:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C29F211B;
-        Tue,  9 May 2023 18:21:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 17658616DA;
-        Wed, 10 May 2023 01:21:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F214DC433EF;
-        Wed, 10 May 2023 01:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1683681706;
-        bh=T+hNUKAHDe9/ZAR53PM2iZM4RaBimliyI1btNF2Jf4k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WoPGVpnQuUFTlGuKZx2LN+aJQD2+DlIT5gCBC8mO4wyKgGinDHp4aovWaFaYexlKU
-         Y6jnJsD/RGrgxlVqUKFSThnxS4m/bVDvO/cCrR6BFvcypk77gTyAydbmojrnFC/nPy
-         wJzQQ6+mHSe0ggabvV7VKj7YdoFe2TkDI4Pt/oS43WyHFDtzqUp7//ER40IjBXvBgb
-         eg0arAk5eTxvrnprmSO5QzZoHAs8wmVeCwtywD5ubsINReU32BkJZpg0UxCkGn99Z7
-         11LRF/RhTZyO+rgagdAYPyMQygKom5LEW09j7fEMpSq2+s+V4f+YMyyQSbHBDvg0B2
-         h+ZlBQRySDMAQ==
-Date:   Tue, 9 May 2023 18:21:44 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ross Philipson <ross.philipson@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, iommu@lists.linux-foundation.org,
-        kexec@lists.infradead.org, linux-efi@vger.kernel.org,
-        dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, ardb@kernel.org, mjg59@srcf.ucam.org,
-        James.Bottomley@hansenpartnership.com, luto@amacapital.net,
-        nivedita@alum.mit.edu, kanth.ghatraju@oracle.com,
-        trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v6 06/14] x86: Add early SHA support for Secure Launch
- early measurements
-Message-ID: <20230510012144.GA1851@quark.localdomain>
-References: <20230504145023.835096-1-ross.philipson@oracle.com>
- <20230504145023.835096-7-ross.philipson@oracle.com>
+        Wed, 10 May 2023 06:24:22 -0400
+Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D5781FE6
+        for <linux-integrity@vger.kernel.org>; Wed, 10 May 2023 03:24:21 -0700 (PDT)
+Received: by mail-ua1-x930.google.com with SMTP id a1e0cc1a2514c-77d456fa0dbso2366968241.3
+        for <linux-integrity@vger.kernel.org>; Wed, 10 May 2023 03:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683714260; x=1686306260;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x7fqRHvgnRvB5mh9CqhIQkHQtj78V1mjTrY+n0K4wyM=;
+        b=H3ZAqCri6LjaN5x36ti1pRjQk5EnhBXVodTDpqXpjq9B9H3jJ1zIjjviz/Zt6KVvUx
+         4ExsZwVU4QLl9VbqNJsOsKsKDW6N3AyCV/vynQDapHKL1XjD/ell+Vu9GBXgTNHK9/jv
+         E/S2eZl6iPVL9ZRIgbg3DNorTArQ9Z5Noquq85dbehdqtjIyTifsKwaPeTiLdH0QsWSi
+         ayxE2P9iu5AyeAfZLAffCW04bKauTbwG6UR5YPZZYQFQg4ANaVCZUxYzs6XLY9iyBmp5
+         SIrRP6llIKdkNt0y8nxpYHgaoH/t5xS5ju3sHpVn94GV0nbhsdjWbaRzCkF/nHDOVKC1
+         U06w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683714260; x=1686306260;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x7fqRHvgnRvB5mh9CqhIQkHQtj78V1mjTrY+n0K4wyM=;
+        b=Zoa6KoZRvrUsSH3yZPeZXl+kQAfyIgGTeWoeiWy27XN2wWPZG3qC2CVSORIoo6oF8O
+         pM7wTBZ/+R1Yn3dY62c/EAXlTufzDKU4yDxVs/3mrIIYB+9KmgmBDMyYl1CLlUc1Be1p
+         cOiEpjEyvwsVqLXzKj+mU5COsH3CIryz/oFzXoWuO6wxXPM7zQsP8eO27Xqq/wKskLww
+         NGWCsjCQ6w7Cz4DQKbNKIKO97LYh4ZdL3CpnrSHXRe7f18/kXuN96uAt479M+p6gPIjQ
+         kRfiZHd5JuLNqnYwzqYnoNe2pnNfpPF09YZQUwTG4EqmLeRkr5jiwz/kj6f0XyXfdHED
+         TN2A==
+X-Gm-Message-State: AC+VfDwLR9Q20lXvjkl7PwugUO7oLdC1rDjRetL+vIMOvY80jiQq1X17
+        hEMZpu36NbgumooWcgm9GkQv3ZvWFnwX4vtY68NF4w==
+X-Google-Smtp-Source: ACHHUZ5IaRFRz709QDQCQuGIQdmAmCBNQHnaBbFFxnKsy2JE8rNTtcqDWC0Y+zspWRYlHB2CiK3dgoG8Uc0s6adZb00=
+X-Received: by 2002:a05:6102:a32:b0:430:7548:c049 with SMTP id
+ 18-20020a0561020a3200b004307548c049mr5502855vsb.7.1683714260420; Wed, 10 May
+ 2023 03:24:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230504145023.835096-7-ross.philipson@oracle.com>
+References: <20230505184318.1355446-1-etienne.carriere@linaro.org>
+In-Reply-To: <20230505184318.1355446-1-etienne.carriere@linaro.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 10 May 2023 15:54:09 +0530
+Message-ID: <CAFA6WYOfFm9R2GynH0bN7hQ4t81T3hkJX5JurCUDG8oOU-RZ4w@mail.gmail.com>
+Subject: Re: [PATCH] char: tpm: ftpm_tee: use kernel login identifier
+To:     Etienne Carriere <etienne.carriere@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, May 04, 2023 at 02:50:15PM +0000, Ross Philipson wrote:
-> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-> 
-> The SHA algorithms are necessary to measure configuration information into
-> the TPM as early as possible before using the values. This implementation
-> uses the established approach of #including the SHA libraries directly in
-> the code since the compressed kernel is not uncompressed at this point.
-> 
-> The SHA code here has its origins in the code from the main kernel:
-> 
-> commit c4d5b9ffa31f ("crypto: sha1 - implement base layer for SHA-1")
-> 
-> That code could not be pulled directly into the setup portion of the
-> compressed kernel because of other dependencies it pulls in. The result
-> is this is a modified copy of that code that still leverages the core
-> SHA algorithms.
-> 
-> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
-> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+Hi Etienne,
 
-SHA-1 is insecure.  Why are you still using SHA-1?  Don't TPMs support SHA-2
-now?
+On Sat, 6 May 2023 at 00:14, Etienne Carriere
+<etienne.carriere@linaro.org> wrote:
+>
+> Changes fTPM TEE driver to open the TEE session with REE kernel login
+> identifier rather than public login. This is needed in case fTPM service
+> it denied to user land application and restricted to kernel operating
+> system services only.
 
-And if you absolutely MUST use SHA-1 despite it being insecure, please at least
-don't obfuscate it by calling it simply "SHA".
+This is a valid restriction to avoid any unintended use of fTPM by
+user-space. But has the corresponding patch landed in fTPM TA which
+would enforce this restriction?
 
-- Eric
+-Sumit
+
+>
+> Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
+> ---
+>  drivers/char/tpm/tpm_ftpm_tee.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
+> index 528f35b14fb6..6d32e260af43 100644
+> --- a/drivers/char/tpm/tpm_ftpm_tee.c
+> +++ b/drivers/char/tpm/tpm_ftpm_tee.c
+> @@ -241,7 +241,7 @@ static int ftpm_tee_probe(struct device *dev)
+>         /* Open a session with fTPM TA */
+>         memset(&sess_arg, 0, sizeof(sess_arg));
+>         export_uuid(sess_arg.uuid, &ftpm_ta_uuid);
+> -       sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
+> +       sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
+>         sess_arg.num_params = 0;
+>
+>         rc = tee_client_open_session(pvt_data->ctx, &sess_arg, NULL);
+> --
+> 2.25.1
+>
