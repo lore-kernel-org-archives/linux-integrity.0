@@ -2,63 +2,96 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293D5C77B7F
-	for <linux-integrity@archiver.kernel.org>; Fri, 19 May 2023 10:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46ADC77B75
+	for <linux-integrity@archiver.kernel.org>; Fri, 19 May 2023 14:58:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231721AbjESKT3 (ORCPT
+        id S232198AbjESO6o (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 19 May 2023 06:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45928 "EHLO
+        Fri, 19 May 2023 10:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230357AbjESKT2 (ORCPT
+        with ESMTP id S231296AbjESO6n (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 19 May 2023 06:19:28 -0400
-Received: from mail.feshiecree.pl (mail.feshiecree.pl [89.40.114.103])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D8A91B8
-        for <linux-integrity@vger.kernel.org>; Fri, 19 May 2023 03:19:27 -0700 (PDT)
-Received: by mail.feshiecree.pl (Postfix, from userid 1001)
-        id 218BB89647; Fri, 19 May 2023 11:16:43 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=feshiecree.pl;
-        s=mail; t=1684491430;
-        bh=hFxZwVw4rIL+JwfEOGI47p+fdoVOAeqVswP6NWoHSHQ=;
-        h=Date:From:To:Subject:From;
-        b=rO+1FroFHzGJtwEmPQCecZ4eWx7ee6U1O2H3g60OPC2IcfLwvfUb2vp5KmbKH9hOG
-         /REX04z5LiPxNhh/tLfhB5sF+2h8Cg265BT+F9ZbLVWgop8Q7OS5vR9mkrBf4tt1/4
-         JmKvnqkrQk9YBWDkeNHoy5UW25Wk3zey01UdjLS2KQMiBauG796e3a05kdr59HMjkR
-         Z+eI1haAZwtid51zYQ/U8jrrYFNW8h+O5XBxq00WsnVXUipUuE4JT25QDjOn0yUxOJ
-         B5WPzENo3M14qMAG+OQcbGwWocJ1nyBopkWwXXRrUh9qkDOrMv1Y3wlw5RsS1tjXFW
-         HrAUnASSgi0Ng==
-Received: by mail.feshiecree.pl for <linux-integrity@vger.kernel.org>; Fri, 19 May 2023 10:15:55 GMT
-Message-ID: <20230519100149-0.1.2n.kaa5.0.b92fk6eif9@feshiecree.pl>
-Date:   Fri, 19 May 2023 10:15:55 GMT
-From:   "Krystian Wieczorek" <krystian.wieczorek@feshiecree.pl>
-To:     <linux-integrity@vger.kernel.org>
-Subject: W sprawie samochodu
-X-Mailer: mail.feshiecree.pl
+        Fri, 19 May 2023 10:58:43 -0400
+Received: from mail-yw1-x1132.google.com (mail-yw1-x1132.google.com [IPv6:2607:f8b0:4864:20::1132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 960CEC7
+        for <linux-integrity@vger.kernel.org>; Fri, 19 May 2023 07:58:42 -0700 (PDT)
+Received: by mail-yw1-x1132.google.com with SMTP id 00721157ae682-561bb2be5f8so42908057b3.0
+        for <linux-integrity@vger.kernel.org>; Fri, 19 May 2023 07:58:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1684508322; x=1687100322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AajyqWszb0uY6qD9cS3VXYrfDU988bXtZCs1rPMruhw=;
+        b=CVjYLnK8pZSm+0s+2JgmOpL6fd7Fh3xe0DrvRV47kW58O8GUdqascT+ihAWb+4/PB5
+         57l1fSbdpzDrjebhCKxmt8dH+h8nzNnzfGUC6O47kcvj+/tq7D0PSJjuIJJayEMDuPTp
+         RZmYcbvGlGStIcUkuVCBO7399/guNv++G9I5Asoz5DROlHagoZjpYdqO7T9i1NOAzJ1w
+         Du4lToaIIcFchOrn0Nn//43a6dCasI0vQfLXRVHExkpStSbCh+g9ayLmw5x0ghVHqblw
+         Dsm6QLKodk9RMwxd+A5A9Ln0JG71pTOJEq/9kFiLF97zE4pLcdM5N8FRzbB5GfM0mP18
+         P5iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684508322; x=1687100322;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AajyqWszb0uY6qD9cS3VXYrfDU988bXtZCs1rPMruhw=;
+        b=PsqBc8wy0yG7UtLBBa4/uqWuDmSXX6C5Sajgftlah4HM05RboCRjJCN+sPsJz04BNH
+         9laSe6rQ7c2TYoBlh2YdE2aPeZxbrO1hUf5gcm6B6oxLgVJiiaB3NO+/jE3xxyhCAokG
+         AnZWDWZlgSUHiyLhf/N7Cxd13XYvpWfbRU5j38HQvr64Rg71tp3szIVsESulZy3eapic
+         ginsknPlB2RnUbPrnhA0vxUBPwsFHUpRkzOlAKemnBgWvXM3UqdCwd0fXmqP1AroLHnE
+         sA2+U7R9a7gAdBerFH8ueaoMzLv4sb0Q5X2tfpfCkJDv5SinjswXmRu5GUY1KeVYyb6f
+         pzTw==
+X-Gm-Message-State: AC+VfDxjMhM3XnI0BUuEm6f295At0bFAsENHdE+yaKGWFzXo4yQfunYZ
+        iJDv0WPr6QpPXGBoJRHxlWz98FfpEZEeGrjOAg8tjpLUdgmn3Ys=
+X-Google-Smtp-Source: ACHHUZ4wVQ8Htbed+cTytEWUQf0lb6NRULZiiMX8VBBzsWBICc5rj9+tiqRxdZAlDEbFGOiNVwJSMMDulwZ/apnybkg=
+X-Received: by 2002:a81:4e92:0:b0:561:d6dd:bc84 with SMTP id
+ c140-20020a814e92000000b00561d6ddbc84mr2216527ywb.48.1684508321812; Fri, 19
+ May 2023 07:58:41 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230407-trasse-umgearbeitet-d580452b7a9b@brauner>
+ <90a25725b4b3c96e84faefdb827b261901022606.camel@kernel.org>
+ <cbffa3dee65ecc0884dd16eb3af95c09a28f4297.camel@linux.ibm.com>
+ <CAHC9VhSeBn-4UN48NcQWhJqLvQuydt4OvdyUsk9AXcviJ9Cqyw@mail.gmail.com> <49a31515666cb0ecf78909f09d40d29eb5528e0f.camel@linux.ibm.com>
+In-Reply-To: <49a31515666cb0ecf78909f09d40d29eb5528e0f.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 19 May 2023 10:58:30 -0400
+Message-ID: <CAHC9VhS7uMMgvwRRDzpZPUQDAeibdkLi0OCdp=j_Q-EcMHm0cw@mail.gmail.com>
+Subject: Re: [PATCH] overlayfs: Trigger file re-evaluation by IMA / EVM after writes
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Stefan Berger <stefanb@linux.ibm.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-integrity@vger.kernel.org, miklos@szeredi.hu,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Thu, May 18, 2023 at 4:56=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Thu, 2023-05-18 at 16:46 -0400, Paul Moore wrote:
+> > On Fri, Apr 21, 2023 at 10:44=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > > On Fri, 2023-04-07 at 09:29 -0400, Jeff Layton wrote:
 
-chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
-, je=C5=9Bli chodzi o system monitoringu GPS.
+...
 
-Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
-e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
-a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
+> > I'm going through my review queue to make sure I haven't missed
+> > anything and this thread popped up ... Stefan, Mimi, did you get a fix
+> > into an upstream tree somewhere?  If not, is it because you are
+> > waiting on a review/merge from me into the LSM tree?
+>
+> Sorry for the delay.  Between vacation and LSS, I just started testing
+> Jeff Layton's patch.
 
-Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
-dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
-szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
-mne znaczenie.
+No worries, I'm a bit behind too, I just wanted to make sure I wasn't
+blocking this thread :)
 
-Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
-b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
-
-
-Pozdrawiam
-Krystian Wieczorek
+--=20
+paul-moore.com
