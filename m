@@ -2,186 +2,279 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF8FC77B75
-	for <linux-integrity@archiver.kernel.org>; Mon, 22 May 2023 14:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 805F3C7EE29
+	for <linux-integrity@archiver.kernel.org>; Mon, 22 May 2023 22:45:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233657AbjEVOc2 (ORCPT
+        id S234612AbjEVWpr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 22 May 2023 10:32:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56462 "EHLO
+        Mon, 22 May 2023 18:45:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233574AbjEVOc2 (ORCPT
+        with ESMTP id S234083AbjEVWpp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 22 May 2023 10:32:28 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3132BA9;
-        Mon, 22 May 2023 07:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1684765901; i=linosanfilippo@gmx.de;
-        bh=lwQ+t7RCqn9sjjERhaQcuu0ceFAVx7n0LyVEjPw+TWs=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
-        b=TDxYqCU9CtVWVrlfU1RaliEa09utKq9fw1wfmUq7CqDOeK5xPtbL9lAaqGO7GWqzM
-         z3/o+MylPzTBZskzESGi2YoWElc7sljBW3ieIPVoE0lem41Erauj+m8OJFki8aXlGQ
-         6XTPfVG4LHofz1Bx4XunH/cvqMOLATg6cBQfvjZQhEdR7b9GJvJiBpyqqCX0KwG8iw
-         svAnco1yeeGU5ZlgmKiKrZAxwNqDLtYVuJbhIPXyZvZaBRL80uXboOH7JSl28cbnbh
-         qgfDfnxzee8UkSoaVlwHX53qQkxFw87r8Cowab78xUqOffHmKanxP2AxVbKyUbkjmC
-         z8nmVh2nlCB5Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from Venus.speedport.ip ([84.162.2.106]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N4hvR-1qADD027vD-011gMN; Mon, 22
- May 2023 16:31:41 +0200
-From:   Lino Sanfilippo <LinoSanfilippo@gmx.de>
-To:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca
-Cc:     jsnitsel@redhat.com, hdegoede@redhat.com, oe-lkp@lists.linux.dev,
-        lkp@intel.com, peter.ujfalusi@linux.intel.com,
-        peterz@infradead.org, linux@mniewoehner.de,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        l.sanfilippo@kunbus.com, LinoSanfilippo@gmx.de, lukas@wunner.de,
-        p.rosenberger@kunbus.com
-Subject: [PATCH 1/2] tpm, tpm_tis: Handle interrupt storm
-Date:   Mon, 22 May 2023 16:31:04 +0200
-Message-Id: <20230522143105.8617-1-LinoSanfilippo@gmx.de>
-X-Mailer: git-send-email 2.40.1
+        Mon, 22 May 2023 18:45:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD60ADB
+        for <linux-integrity@vger.kernel.org>; Mon, 22 May 2023 15:44:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684795499;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DaVz2A4ookrYy0bG1/ownvewposvWWNIhPO/rg/szCc=;
+        b=Sy6kS60bcbWm5wsu8nHLqGZJczvtHYz7SaWlKpQ/wOP9JbrbrzJqJBJkDQ8sAI64zQVmP+
+        Are5ro30YqvKQ0WQLmWkHlt/hsMekNdW3Wzphha/uUwcpIhzdwO/PcttTa6e/RcsyAL6J3
+        RXb7DZhj/6iFiFxOgcshgy+fM6mErz0=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-31-7jq7zHtkNc6Td7CCcipaNQ-1; Mon, 22 May 2023 18:44:57 -0400
+X-MC-Unique: 7jq7zHtkNc6Td7CCcipaNQ-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-75b02da6949so194464085a.2
+        for <linux-integrity@vger.kernel.org>; Mon, 22 May 2023 15:44:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684795497; x=1687387497;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DaVz2A4ookrYy0bG1/ownvewposvWWNIhPO/rg/szCc=;
+        b=dTH7MMv/ZopEYLwtcu18P0CbDPVSYTumQelyO6O8q+dHVT8d8cL73PUYd6H756ipGQ
+         a2xUanvSF2beZK+zoH+yvVr9H92qFnKqH2Vg1Kyujc/NyfHxSnyLhkxDGwC2z/CJ6bXM
+         wwUID9vZVAOjGPPTuvdDzeFRBRZxIuvlUlm7lJJrVIPkiSnbQ0foSiMUQG02IhhWJwTe
+         z2yuEs5yWRP4EvTZEeodvLpEanP4Ph7e6rdGxqn6q+8Q+qAQNdjsj3IFSsLyh4T6zOgs
+         FsmFjroj3Ylx2GcTnNH/yl+nK85eYwKQe03i/cfZC5XSNZquCtVFkkChLoOe6zDfM8wg
+         6x4g==
+X-Gm-Message-State: AC+VfDx+psmWPtglPZgFQoxB2qA3tRgNBoYB27ybzaVTmbl2vq8RPp3C
+        RaBZSDo5/cALOmV73zgj/8jCdff0qGhVfb0suhx53n6q7QEjkpAu30dOw6Gqw+iQKh/3SsUCjHN
+        gQPkyFbuxqCKSKGMNaR39igwMIiHt
+X-Received: by 2002:a05:620a:678e:b0:75b:23a1:424 with SMTP id rr14-20020a05620a678e00b0075b23a10424mr2265045qkn.58.1684795497388;
+        Mon, 22 May 2023 15:44:57 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5E0z/Qztg9m+Xz89ofUOSQ7AaHC2ufX/Shd5E+wODIrQUEtmQTN9GTxHTglw3KD+jjSWGHrA==
+X-Received: by 2002:a05:620a:678e:b0:75b:23a1:424 with SMTP id rr14-20020a05620a678e00b0075b23a10424mr2265021qkn.58.1684795496967;
+        Mon, 22 May 2023 15:44:56 -0700 (PDT)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id q27-20020a05620a039b00b0074411b03972sm2053343qkm.51.2023.05.22.15.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 May 2023 15:44:56 -0700 (PDT)
+Date:   Mon, 22 May 2023 15:44:54 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Lino Sanfilippo <LinoSanfilippo@gmx.de>
+Cc:     peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        hdegoede@redhat.com, oe-lkp@lists.linux.dev, lkp@intel.com,
+        peter.ujfalusi@linux.intel.com, peterz@infradead.org,
+        linux@mniewoehner.de, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, l.sanfilippo@kunbus.com,
+        lukas@wunner.de, p.rosenberger@kunbus.com
+Subject: Re: [PATCH 1/2] tpm, tpm_tis: Handle interrupt storm
+Message-ID: <ur6ype3ki6sxmpbzh53vfoewhq5oiqucioz3nwbdcda2vkaut7@sjt2hr33j3xk>
+References: <20230522143105.8617-1-LinoSanfilippo@gmx.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:yIe+WGyH1ASzJ7ENp03LTV4IXOeonm6dRKoNYtjMLPwcfYAi2iq
- bsV98q//ftrbGfjns3dZRRrI8a0UPsJzqcfUV3ea8Pg/tF5VZGL1bX7WEsGetOCdoX/WwFA
- GQvGPY7rnu6kc3KPfzmEEfx0MQXnyZweOUAuaSmk8Bnsc6ZrWh4uo7+yfvYQbFJxrcs/EIF
- f6xWuxrA2CptkCSbSY0/w==
-UI-OutboundReport: notjunk:1;M01:P0:btJ3+woI3As=;es3Q1meS12RE+lnRJ4+NzVouEpm
- /8b8hj2thexAdcK5YFJ/GTvX3FAw+yLNuCKhp7Vrpuc52EHwzUHYEY6tu/6oKPWDfzApqveMl
- eHUSqnH5lU6Gg6HdOuNcURfE9QxCFqWdc6V9rrXSlOZSH/isqt2ieKoOTdU2MBFhm7Ejl66vX
- RcmXz2mgx56Byh9wHBTRBhgvziYs4AVdGWOA5XznZh0YCFCHaSXJWfEefpRZwHSDfL4ipyYIB
- GYBEyKz/SblbSy6mMN2VlC+1EAQBoKX4fkb1A4yoOyxpaIDpRqwEvSx/vABUvTX13SMMuu5TR
- PNxhDLV569Ms5UGlgta5qe79fHaDfplaqZufVBmcaeVaeYlULtGCAlGIp7DGaZroy9sEt2j48
- E6Khx86YLAjBmcjkASEnA26+bYAruJkCHkNyknY6CC6XN6O2irhv33t5p5wOuLANJGfCxWMSQ
- SfdVKY2hAdtXoPnf6MX6i1/h5fWEXgHIXQn4HiKhGjIwjeMbeMbeKQNelv+H/FycwV0eCQIMa
- VgwcJzgKiJ0t9Hi26GXBz+8f8x3wYCgRVcRUmanaPZrmGCeIWaVJZgCF1JQEMJyik9bNyw8jj
- cD/WBZ6J0YS1SEa7+uBeIicABcJdWU9AYcOkWOesG0VOVCSJLD0S2/l88rZFMSFCHTxeYdvwD
- Y19hgBdHJZi1iaLyWB9fVQhNSSr2tjGCksO6EBkeNhekDaIR8ilet8LesGUl9yeNRbLJBt8O3
- Di0uWzMxEBEECIKMT+CIrJeztQMHknzQMYM3zxx5d9b3dqMkjD1Ie/5pwZ92vXI14pSpmp/7W
- XaNecdyWSR9QKvqRgjMb6o4thr0ateiXCcAFd3tkZ/JE7ChO959fVXP3TUUJm6ZEZ/XQ+3ju5
- DIJlCJVnXEAmyo2eYg2htxMTvFXP8wbE62XI88N0sqHmQhY2QCFobKxhHYm63wIbgefUJle9C
- kALmVPKqb2KoWjEhFO2CM8KUmv0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230522143105.8617-1-LinoSanfilippo@gmx.de>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-RnJvbTogTGlubyBTYW5maWxpcHBvIDxsLnNhbmZpbGlwcG9Aa3VuYnVzLmNvbT4KCkNvbW1pdCBl
-NjQ0YjJmNDk4ZDIgKCJ0cG0sIHRwbV90aXM6IEVuYWJsZSBpbnRlcnJ1cHQgdGVzdCIpIGVuYWJs
-ZWQKaW50ZXJydXB0cyBpbnN0ZWFkIG9mIHBvbGxpbmcgb24gYWxsIGNhcGFibGUgVFBNcy4gVW5m
-b3J0dW5hdGVseSwgb24gc29tZQpwcm9kdWN0cyB0aGUgaW50ZXJydXB0IGxpbmUgaXMgZWl0aGVy
-IG5ldmVyIGFzc2VydGVkIG9yIG5ldmVyIGRlYXNzZXJ0ZWQuCgpUaGUgZm9ybWVyIGNhdXNlcyBp
-bnRlcnJ1cHQgdGltZW91dHMgYW5kIGlzIGRldGVjdGVkIGJ5CnRwbV90aXNfY29yZV9pbml0KCku
-IFRoZSBsYXR0ZXIgcmVzdWx0cyBpbiBpbnRlcnJ1cHQgc3Rvcm1zLgoKUmVjZW50IHJlcG9ydHMg
-Y29uY2VybiB0aGUgTGVub3ZvIFRoaW5rU3RhdGlvbiBQMzYwIFRpbnksIExlbm92byBUaGlua1Bh
-ZApMNDkwIGFuZCBJbnNwdXIgTkY1MTgwTTY6CgpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51
-eC1pbnRlZ3JpdHkvMjAyMzA1MTEwMDU0MDMuMjQ2ODktMS1qc25pdHNlbEByZWRoYXQuY29tLwpo
-dHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1pbnRlZ3JpdHkvZDgwYjE4MGE1NjlhOWYwNjhk
-M2EyNjE0ZjA2MmNmYTNhNzhhZjVhNi5jYW1lbEBrZXJuZWwub3JnLwoKVGhlIGN1cnJlbnQgYXBw
-cm9hY2ggdG8gYXZvaWQgdGhvc2Ugc3Rvcm1zIGlzIHRvIGRpc2FibGUgaW50ZXJydXB0cyBieQph
-ZGRpbmcgYSBETUkgcXVpcmsgZm9yIHRoZSBjb25jZXJuZWQgZGV2aWNlLgoKSG93ZXZlciB0aGlz
-IGlzIGEgbWFpbnRlbmFuY2UgYnVyZGVuIGluIHRoZSBsb25nIHJ1biwgc28gdXNlIGEgZ2VuZXJp
-YwphcHByb2FjaDoKCkRldGVjdCBhbiBpbnRlcnJ1cHQgc3Rvcm0gYnkgY291bnRpbmcgdGhlIG51
-bWJlciBvZiB1bmhhbmRsZWQgaW50ZXJydXB0cwp3aXRoaW4gYSAxMCBtcyB0aW1lIGludGVydmFs
-LiBJbiBjYXNlIHRoYXQgbW9yZSB0aGFuIDEwMDAgd2VyZSB1bmhhbmRsZWQKZGVhY3RpdmF0ZSBp
-bnRlcnJ1cHRzLCBkZXJlZ2lzdGVyIHRoZSBoYW5kbGVyIGFuZCBmYWxsIGJhY2sgdG8gcG9sbGlu
-Zy4KClRoaXMgZXF1YWxzIHRoZSBpbXBsZW1lbnRhdGlvbiB0aGF0IGhhbmRsZXMgaW50ZXJydXB0
-IHN0b3JtcyBpbgpub3RlX2ludGVycnVwdCgpIGJ5IG1lYW5zIG9mIHRpbWVzdGFtcHMgYW5kIGNv
-dW50ZXJzIGluIHN0cnVjdCBpcnFfZGVzYy4KSG93ZXZlciB0aGUgZnVuY3Rpb24gdG8gYWNjZXNz
-IHRoaXMgc3RydWN0dXJlIGlzIHByaXZhdGUgc28gdGhlIGxvZ2ljIGhhcwp0byBiZSByZWltcGxl
-bWVudGVkIGluIHRoZSBUUE0gVElTIGNvcmUuCgpTaW5jZSBoYW5kbGVyIGRlcmVnaXN0cmF0aW9u
-IHdvdWxkIGRlYWRsb2NrIGZyb20gd2l0aGluIHRoZSBpbnRlcnJ1cHQKcm91dGluZSB0cmlnZ2Vy
-IGEgd29ya2VyIHRocmVhZCB0aGF0IGV4ZWN1dGVzIHRoZSB1bnJlZ2lzdHJhdGlvbi4KClN1Z2dl
-c3RlZC1ieTogTHVrYXMgV3VubmVyIDxsdWthc0B3dW5uZXIuZGU+ClNpZ25lZC1vZmYtYnk6IExp
-bm8gU2FuZmlsaXBwbyA8bC5zYW5maWxpcHBvQGt1bmJ1cy5jb20+Ci0tLQogZHJpdmVycy9jaGFy
-L3RwbS90cG1fdGlzX2NvcmUuYyB8IDcxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyst
-LQogZHJpdmVycy9jaGFyL3RwbS90cG1fdGlzX2NvcmUuaCB8ICA2ICsrKwogMiBmaWxlcyBjaGFu
-Z2VkLCA3NCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmMgYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29y
-ZS5jCmluZGV4IDU1ODE0NGZhNzA3YS4uNDU4ZWJmOGMyZjE2IDEwMDY0NAotLS0gYS9kcml2ZXJz
-L2NoYXIvdHBtL3RwbV90aXNfY29yZS5jCisrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19j
-b3JlLmMKQEAgLTc1Miw2ICs3NTIsNTUgQEAgc3RhdGljIGJvb2wgdHBtX3Rpc19yZXFfY2FuY2Vs
-ZWQoc3RydWN0IHRwbV9jaGlwICpjaGlwLCB1OCBzdGF0dXMpCiAJcmV0dXJuIHN0YXR1cyA9PSBU
-UE1fU1RTX0NPTU1BTkRfUkVBRFk7CiB9CiAKK3N0YXRpYyB2b2lkIHRwbV90aXNfaGFuZGxlX2ly
-cV9zdG9ybShzdHJ1Y3QgdHBtX2NoaXAgKmNoaXApCit7CisJc3RydWN0IHRwbV90aXNfZGF0YSAq
-cHJpdiA9IGRldl9nZXRfZHJ2ZGF0YSgmY2hpcC0+ZGV2KTsKKwlpbnQgaW50bWFzayA9IDA7CisK
-KwlkZXZfZXJyKCZjaGlwLT5kZXYsIEhXX0VSUgorCQkiVFBNIGludGVycnVwdCBzdG9ybSBkZXRl
-Y3RlZCwgcG9sbGluZyBpbnN0ZWFkXG4iKTsKKworCXRwbV90aXNfcmVhZDMyKHByaXYsIFRQTV9J
-TlRfRU5BQkxFKHByaXYtPmxvY2FsaXR5KSwgJmludG1hc2spOworCisJaW50bWFzayAmPSB+VFBN
-X0dMT0JBTF9JTlRfRU5BQkxFOworCisJdHBtX3Rpc19yZXF1ZXN0X2xvY2FsaXR5KGNoaXAsIDAp
-OworCXRwbV90aXNfd3JpdGUzMihwcml2LCBUUE1fSU5UX0VOQUJMRShwcml2LT5sb2NhbGl0eSks
-IGludG1hc2spOworCXRwbV90aXNfcmVsaW5xdWlzaF9sb2NhbGl0eShjaGlwLCAwKTsKKworCWNo
-aXAtPmZsYWdzICY9IH5UUE1fQ0hJUF9GTEFHX0lSUTsKKworCS8qCisJICogV2UgbXVzdCBub3Qg
-Y2FsbCBkZXZtX2ZyZWVfaXJxKCkgZnJvbSB3aXRoaW4gdGhlIGludGVycnVwdCBoYW5kbGVyLAor
-CSAqIHNpbmNlIHRoaXMgZnVuY3Rpb24gd2FpdHMgZm9yIHJ1bm5pbmcgaW50ZXJydXB0IGhhbmRs
-ZXJzIHRvIGZpbmlzaAorCSAqIGFuZCB0aHVzIGl0IHdvdWxkIGRlYWRsb2NrLiBJbnN0ZWFkIHRy
-aWdnZXIgYSB3b3JrZXIgdGhhdCBkb2VzIHRoZQorCSAqIHVucmVnaXN0cmF0aW9uLgorCSAqLwor
-CXNjaGVkdWxlX3dvcmsoJnByaXYtPmZyZWVfaXJxX3dvcmspOworfQorCitzdGF0aWMgdm9pZCB0
-cG1fdGlzX3Byb2Nlc3NfdW5oYW5kbGVkX2ludGVycnVwdChzdHJ1Y3QgdHBtX2NoaXAgKmNoaXAp
-Cit7CisJY29uc3QgdW5zaWduZWQgaW50IE1BWF9VTkhBTkRMRURfSVJRUyA9IDEwMDA7CisJc3Ry
-dWN0IHRwbV90aXNfZGF0YSAqcHJpdiA9IGRldl9nZXRfZHJ2ZGF0YSgmY2hpcC0+ZGV2KTsKKwkv
-KgorCSAqIFRoZSB3b3JrZXIgdG8gZnJlZSB0aGUgVFBNIGludGVycnVwdCAoZnJlZV9pcnFfd29y
-aykgbWF5IGFscmVhZHkKKwkgKiBiZSBzY2hlZHVsZWQsIHNvIG1ha2Ugc3VyZSBpdCBpcyBub3Qg
-c2NoZWR1bGVkIGFnYWluLgorCSAqLworCWlmICghKGNoaXAtPmZsYWdzICYgVFBNX0NISVBfRkxB
-R19JUlEpKQorCQlyZXR1cm47CisKKwlpZiAodGltZV9hZnRlcihqaWZmaWVzLCBwcml2LT5sYXN0
-X3VuaGFuZGxlZF9pcnEgKyBIWi8xMCkpCisJCXByaXYtPnVuaGFuZGxlZF9pcnFzID0gMTsKKwll
-bHNlCisJCXByaXYtPnVuaGFuZGxlZF9pcnFzKys7CisKKwlwcml2LT5sYXN0X3VuaGFuZGxlZF9p
-cnEgPSBqaWZmaWVzOworCisJaWYgKHByaXYtPnVuaGFuZGxlZF9pcnFzID4gTUFYX1VOSEFORExF
-RF9JUlFTKQorCQl0cG1fdGlzX2hhbmRsZV9pcnFfc3Rvcm0oY2hpcCk7Cit9CisKIHN0YXRpYyBp
-cnFyZXR1cm5fdCB0aXNfaW50X2hhbmRsZXIoaW50IGR1bW15LCB2b2lkICpkZXZfaWQpCiB7CiAJ
-c3RydWN0IHRwbV9jaGlwICpjaGlwID0gZGV2X2lkOwpAQCAtNzYxLDEwICs4MTAsMTAgQEAgc3Rh
-dGljIGlycXJldHVybl90IHRpc19pbnRfaGFuZGxlcihpbnQgZHVtbXksIHZvaWQgKmRldl9pZCkK
-IAogCXJjID0gdHBtX3Rpc19yZWFkMzIocHJpdiwgVFBNX0lOVF9TVEFUVVMocHJpdi0+bG9jYWxp
-dHkpLCAmaW50ZXJydXB0KTsKIAlpZiAocmMgPCAwKQotCQlyZXR1cm4gSVJRX05PTkU7CisJCWdv
-dG8gdW5oYW5kbGVkOwogCiAJaWYgKGludGVycnVwdCA9PSAwKQotCQlyZXR1cm4gSVJRX05PTkU7
-CisJCWdvdG8gdW5oYW5kbGVkOwogCiAJc2V0X2JpdChUUE1fVElTX0lSUV9URVNURUQsICZwcml2
-LT5mbGFncyk7CiAJaWYgKGludGVycnVwdCAmIFRQTV9JTlRGX0RBVEFfQVZBSUxfSU5UKQpAQCAt
-NzgwLDEwICs4MjksMTQgQEAgc3RhdGljIGlycXJldHVybl90IHRpc19pbnRfaGFuZGxlcihpbnQg
-ZHVtbXksIHZvaWQgKmRldl9pZCkKIAlyYyA9IHRwbV90aXNfd3JpdGUzMihwcml2LCBUUE1fSU5U
-X1NUQVRVUyhwcml2LT5sb2NhbGl0eSksIGludGVycnVwdCk7CiAJdHBtX3Rpc19yZWxpbnF1aXNo
-X2xvY2FsaXR5KGNoaXAsIDApOwogCWlmIChyYyA8IDApCi0JCXJldHVybiBJUlFfTk9ORTsKKwkJ
-Z290byB1bmhhbmRsZWQ7CiAKIAl0cG1fdGlzX3JlYWQzMihwcml2LCBUUE1fSU5UX1NUQVRVUyhw
-cml2LT5sb2NhbGl0eSksICZpbnRlcnJ1cHQpOwogCXJldHVybiBJUlFfSEFORExFRDsKKwordW5o
-YW5kbGVkOgorCXRwbV90aXNfcHJvY2Vzc191bmhhbmRsZWRfaW50ZXJydXB0KGNoaXApOworCXJl
-dHVybiBJUlFfSEFORExFRDsKIH0KIAogc3RhdGljIHZvaWQgdHBtX3Rpc19nZW5faW50ZXJydXB0
-KHN0cnVjdCB0cG1fY2hpcCAqY2hpcCkKQEAgLTgwNCw2ICs4NTcsMTUgQEAgc3RhdGljIHZvaWQg
-dHBtX3Rpc19nZW5faW50ZXJydXB0KHN0cnVjdCB0cG1fY2hpcCAqY2hpcCkKIAkJY2hpcC0+Zmxh
-Z3MgJj0gflRQTV9DSElQX0ZMQUdfSVJROwogfQogCitzdGF0aWMgdm9pZCB0cG1fdGlzX2ZyZWVf
-aXJxX2Z1bmMoc3RydWN0IHdvcmtfc3RydWN0ICp3b3JrKQoreworCXN0cnVjdCB0cG1fdGlzX2Rh
-dGEgKnByaXYgPSBjb250YWluZXJfb2Yod29yaywgdHlwZW9mKCpwcml2KSwgZnJlZV9pcnFfd29y
-ayk7CisJc3RydWN0IHRwbV9jaGlwICpjaGlwID0gcHJpdi0+Y2hpcDsKKworCWRldm1fZnJlZV9p
-cnEoY2hpcC0+ZGV2LnBhcmVudCwgcHJpdi0+aXJxLCBjaGlwKTsKKwlwcml2LT5pcnEgPSAwOwor
-fQorCiAvKiBSZWdpc3RlciB0aGUgSVJRIGFuZCBpc3N1ZSBhIGNvbW1hbmQgdGhhdCB3aWxsIGNh
-dXNlIGFuIGludGVycnVwdC4gSWYgYW4KICAqIGlycSBpcyBzZWVuIHRoZW4gbGVhdmUgdGhlIGNo
-aXAgc2V0dXAgZm9yIElSUSBvcGVyYXRpb24sIG90aGVyd2lzZSByZXZlcnNlCiAgKiBldmVyeXRo
-aW5nIGFuZCBsZWF2ZSBpbiBwb2xsaW5nIG1vZGUuIFJldHVybnMgMCBvbiBzdWNjZXNzLgpAQCAt
-ODE2LDYgKzg3OCw3IEBAIHN0YXRpYyBpbnQgdHBtX3Rpc19wcm9iZV9pcnFfc2luZ2xlKHN0cnVj
-dCB0cG1fY2hpcCAqY2hpcCwgdTMyIGludG1hc2ssCiAJaW50IHJjOwogCXUzMiBpbnRfc3RhdHVz
-OwogCisJSU5JVF9XT1JLKCZwcml2LT5mcmVlX2lycV93b3JrLCB0cG1fdGlzX2ZyZWVfaXJxX2Z1
-bmMpOwogCiAJcmMgPSBkZXZtX3JlcXVlc3RfdGhyZWFkZWRfaXJxKGNoaXAtPmRldi5wYXJlbnQs
-IGlycSwgTlVMTCwKIAkJCQkgICAgICAgdGlzX2ludF9oYW5kbGVyLCBJUlFGX09ORVNIT1QgfCBm
-bGFncywKQEAgLTkxOCw2ICs5ODEsNyBAQCB2b2lkIHRwbV90aXNfcmVtb3ZlKHN0cnVjdCB0cG1f
-Y2hpcCAqY2hpcCkKIAkJaW50ZXJydXB0ID0gMDsKIAogCXRwbV90aXNfd3JpdGUzMihwcml2LCBy
-ZWcsIH5UUE1fR0xPQkFMX0lOVF9FTkFCTEUgJiBpbnRlcnJ1cHQpOworCWZsdXNoX3dvcmsoJnBy
-aXYtPmZyZWVfaXJxX3dvcmspOwogCiAJdHBtX3Rpc19jbGtydW5fZW5hYmxlKGNoaXAsIGZhbHNl
-KTsKIApAQCAtMTAyMSw2ICsxMDg1LDcgQEAgaW50IHRwbV90aXNfY29yZV9pbml0KHN0cnVjdCBk
-ZXZpY2UgKmRldiwgc3RydWN0IHRwbV90aXNfZGF0YSAqcHJpdiwgaW50IGlycSwKIAljaGlwLT50
-aW1lb3V0X2IgPSBtc2Vjc190b19qaWZmaWVzKFRJU19USU1FT1VUX0JfTUFYKTsKIAljaGlwLT50
-aW1lb3V0X2MgPSBtc2Vjc190b19qaWZmaWVzKFRJU19USU1FT1VUX0NfTUFYKTsKIAljaGlwLT50
-aW1lb3V0X2QgPSBtc2Vjc190b19qaWZmaWVzKFRJU19USU1FT1VUX0RfTUFYKTsKKwlwcml2LT5j
-aGlwID0gY2hpcDsKIAlwcml2LT50aW1lb3V0X21pbiA9IFRQTV9USU1FT1VUX1VTRUNTX01JTjsK
-IAlwcml2LT50aW1lb3V0X21heCA9IFRQTV9USU1FT1VUX1VTRUNTX01BWDsKIAlwcml2LT5waHlf
-b3BzID0gcGh5X29wczsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3Jl
-LmggYi9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5oCmluZGV4IGU5NzhmNDU3ZmQ0ZC4u
-NmZjODZiYWE0Mzk4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2NoYXIvdHBtL3RwbV90aXNfY29yZS5o
-CisrKyBiL2RyaXZlcnMvY2hhci90cG0vdHBtX3Rpc19jb3JlLmgKQEAgLTkxLDEyICs5MSwxOCBA
-QCBlbnVtIHRwbV90aXNfZmxhZ3MgewogfTsKIAogc3RydWN0IHRwbV90aXNfZGF0YSB7CisJc3Ry
-dWN0IHRwbV9jaGlwICpjaGlwOwogCXUxNiBtYW51ZmFjdHVyZXJfaWQ7CiAJc3RydWN0IG11dGV4
-IGxvY2FsaXR5X2NvdW50X211dGV4OwogCXVuc2lnbmVkIGludCBsb2NhbGl0eV9jb3VudDsKIAlp
-bnQgbG9jYWxpdHk7CisJLyogSW50ZXJydXB0cyAqLwogCWludCBpcnE7CisJc3RydWN0IHdvcmtf
-c3RydWN0IGZyZWVfaXJxX3dvcms7CisJdW5zaWduZWQgbG9uZyBsYXN0X3VuaGFuZGxlZF9pcnE7
-CisJdW5zaWduZWQgaW50IHVuaGFuZGxlZF9pcnFzOwogCXVuc2lnbmVkIGludCBpbnRfbWFzazsK
-KwogCXVuc2lnbmVkIGxvbmcgZmxhZ3M7CiAJdm9pZCBfX2lvbWVtICppbGJfYmFzZV9hZGRyOwog
-CXUxNiBjbGtydW5fZW5hYmxlZDsKCmJhc2UtY29tbWl0OiA0NGMwMjZhNzNiZTgwMzhmMDNkYmRl
-ZWYwMjhiNjQyODgwY2YxNTExCi0tIAoyLjQwLjEKCg==
+On Mon, May 22, 2023 at 04:31:04PM +0200, Lino Sanfilippo wrote:
+> From: Lino Sanfilippo <l.sanfilippo@kunbus.com>
+> 
+> Commit e644b2f498d2 ("tpm, tpm_tis: Enable interrupt test") enabled
+> interrupts instead of polling on all capable TPMs. Unfortunately, on some
+> products the interrupt line is either never asserted or never deasserted.
+> 
+> The former causes interrupt timeouts and is detected by
+> tpm_tis_core_init(). The latter results in interrupt storms.
+> 
+> Recent reports concern the Lenovo ThinkStation P360 Tiny, Lenovo ThinkPad
+> L490 and Inspur NF5180M6:
+> 
+> https://lore.kernel.org/linux-integrity/20230511005403.24689-1-jsnitsel@redhat.com/
+> https://lore.kernel.org/linux-integrity/d80b180a569a9f068d3a2614f062cfa3a78af5a6.camel@kernel.org/
+> 
+> The current approach to avoid those storms is to disable interrupts by
+> adding a DMI quirk for the concerned device.
+> 
+> However this is a maintenance burden in the long run, so use a generic
+> approach:
+> 
+> Detect an interrupt storm by counting the number of unhandled interrupts
+> within a 10 ms time interval. In case that more than 1000 were unhandled
+> deactivate interrupts, deregister the handler and fall back to polling.
+> 
+> This equals the implementation that handles interrupt storms in
+> note_interrupt() by means of timestamps and counters in struct irq_desc.
+> However the function to access this structure is private so the logic has
+> to be reimplemented in the TPM TIS core.
+> 
+> Since handler deregistration would deadlock from within the interrupt
+> routine trigger a worker thread that executes the unregistration.
+> 
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Signed-off-by: Lino Sanfilippo <l.sanfilippo@kunbus.com>
+
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+
+> ---
+>  drivers/char/tpm/tpm_tis_core.c | 71 +++++++++++++++++++++++++++++++--
+>  drivers/char/tpm/tpm_tis_core.h |  6 +++
+>  2 files changed, 74 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> index 558144fa707a..458ebf8c2f16 100644
+> --- a/drivers/char/tpm/tpm_tis_core.c
+> +++ b/drivers/char/tpm/tpm_tis_core.c
+> @@ -752,6 +752,55 @@ static bool tpm_tis_req_canceled(struct tpm_chip *chip, u8 status)
+>  	return status == TPM_STS_COMMAND_READY;
+>  }
+>  
+> +static void tpm_tis_handle_irq_storm(struct tpm_chip *chip)
+> +{
+> +	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> +	int intmask = 0;
+> +
+> +	dev_err(&chip->dev, HW_ERR
+> +		"TPM interrupt storm detected, polling instead\n");
+> +
+> +	tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
+> +
+> +	intmask &= ~TPM_GLOBAL_INT_ENABLE;
+> +
+> +	tpm_tis_request_locality(chip, 0);
+> +	tpm_tis_write32(priv, TPM_INT_ENABLE(priv->locality), intmask);
+> +	tpm_tis_relinquish_locality(chip, 0);
+> +
+> +	chip->flags &= ~TPM_CHIP_FLAG_IRQ;
+> +
+> +	/*
+> +	 * We must not call devm_free_irq() from within the interrupt handler,
+> +	 * since this function waits for running interrupt handlers to finish
+> +	 * and thus it would deadlock. Instead trigger a worker that does the
+> +	 * unregistration.
+> +	 */
+> +	schedule_work(&priv->free_irq_work);
+> +}
+> +
+> +static void tpm_tis_process_unhandled_interrupt(struct tpm_chip *chip)
+> +{
+> +	const unsigned int MAX_UNHANDLED_IRQS = 1000;
+> +	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
+> +	/*
+> +	 * The worker to free the TPM interrupt (free_irq_work) may already
+> +	 * be scheduled, so make sure it is not scheduled again.
+> +	 */
+> +	if (!(chip->flags & TPM_CHIP_FLAG_IRQ))
+> +		return;
+> +
+> +	if (time_after(jiffies, priv->last_unhandled_irq + HZ/10))
+> +		priv->unhandled_irqs = 1;
+> +	else
+> +		priv->unhandled_irqs++;
+> +
+> +	priv->last_unhandled_irq = jiffies;
+> +
+> +	if (priv->unhandled_irqs > MAX_UNHANDLED_IRQS)
+> +		tpm_tis_handle_irq_storm(chip);
+> +}
+> +
+>  static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+>  {
+>  	struct tpm_chip *chip = dev_id;
+> @@ -761,10 +810,10 @@ static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+>  
+>  	rc = tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
+>  	if (rc < 0)
+> -		return IRQ_NONE;
+> +		goto unhandled;
+>  
+>  	if (interrupt == 0)
+> -		return IRQ_NONE;
+> +		goto unhandled;
+>  
+>  	set_bit(TPM_TIS_IRQ_TESTED, &priv->flags);
+>  	if (interrupt & TPM_INTF_DATA_AVAIL_INT)
+> @@ -780,10 +829,14 @@ static irqreturn_t tis_int_handler(int dummy, void *dev_id)
+>  	rc = tpm_tis_write32(priv, TPM_INT_STATUS(priv->locality), interrupt);
+>  	tpm_tis_relinquish_locality(chip, 0);
+>  	if (rc < 0)
+> -		return IRQ_NONE;
+> +		goto unhandled;
+>  
+>  	tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
+>  	return IRQ_HANDLED;
+> +
+> +unhandled:
+> +	tpm_tis_process_unhandled_interrupt(chip);
+> +	return IRQ_HANDLED;
+>  }
+>  
+>  static void tpm_tis_gen_interrupt(struct tpm_chip *chip)
+> @@ -804,6 +857,15 @@ static void tpm_tis_gen_interrupt(struct tpm_chip *chip)
+>  		chip->flags &= ~TPM_CHIP_FLAG_IRQ;
+>  }
+>  
+> +static void tpm_tis_free_irq_func(struct work_struct *work)
+> +{
+> +	struct tpm_tis_data *priv = container_of(work, typeof(*priv), free_irq_work);
+> +	struct tpm_chip *chip = priv->chip;
+> +
+> +	devm_free_irq(chip->dev.parent, priv->irq, chip);
+> +	priv->irq = 0;
+> +}
+> +
+>  /* Register the IRQ and issue a command that will cause an interrupt. If an
+>   * irq is seen then leave the chip setup for IRQ operation, otherwise reverse
+>   * everything and leave in polling mode. Returns 0 on success.
+> @@ -816,6 +878,7 @@ static int tpm_tis_probe_irq_single(struct tpm_chip *chip, u32 intmask,
+>  	int rc;
+>  	u32 int_status;
+>  
+> +	INIT_WORK(&priv->free_irq_work, tpm_tis_free_irq_func);
+>  
+>  	rc = devm_request_threaded_irq(chip->dev.parent, irq, NULL,
+>  				       tis_int_handler, IRQF_ONESHOT | flags,
+> @@ -918,6 +981,7 @@ void tpm_tis_remove(struct tpm_chip *chip)
+>  		interrupt = 0;
+>  
+>  	tpm_tis_write32(priv, reg, ~TPM_GLOBAL_INT_ENABLE & interrupt);
+> +	flush_work(&priv->free_irq_work);
+>  
+>  	tpm_tis_clkrun_enable(chip, false);
+>  
+> @@ -1021,6 +1085,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+>  	chip->timeout_b = msecs_to_jiffies(TIS_TIMEOUT_B_MAX);
+>  	chip->timeout_c = msecs_to_jiffies(TIS_TIMEOUT_C_MAX);
+>  	chip->timeout_d = msecs_to_jiffies(TIS_TIMEOUT_D_MAX);
+> +	priv->chip = chip;
+>  	priv->timeout_min = TPM_TIMEOUT_USECS_MIN;
+>  	priv->timeout_max = TPM_TIMEOUT_USECS_MAX;
+>  	priv->phy_ops = phy_ops;
+> diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> index e978f457fd4d..6fc86baa4398 100644
+> --- a/drivers/char/tpm/tpm_tis_core.h
+> +++ b/drivers/char/tpm/tpm_tis_core.h
+> @@ -91,12 +91,18 @@ enum tpm_tis_flags {
+>  };
+>  
+>  struct tpm_tis_data {
+> +	struct tpm_chip *chip;
+>  	u16 manufacturer_id;
+>  	struct mutex locality_count_mutex;
+>  	unsigned int locality_count;
+>  	int locality;
+> +	/* Interrupts */
+>  	int irq;
+> +	struct work_struct free_irq_work;
+> +	unsigned long last_unhandled_irq;
+> +	unsigned int unhandled_irqs;
+>  	unsigned int int_mask;
+> +
+>  	unsigned long flags;
+>  	void __iomem *ilb_base_addr;
+>  	u16 clkrun_enabled;
+> 
+> base-commit: 44c026a73be8038f03dbdeef028b642880cf1511
+> -- 
+> 2.40.1
+> 
+
