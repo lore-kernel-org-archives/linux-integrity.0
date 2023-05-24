@@ -2,110 +2,115 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37208C77B7A
-	for <linux-integrity@archiver.kernel.org>; Wed, 24 May 2023 15:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDB7C7EE23
+	for <linux-integrity@archiver.kernel.org>; Wed, 24 May 2023 15:42:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234014AbjEXPaf (ORCPT
+        id S237276AbjEXPmw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 24 May 2023 11:30:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59932 "EHLO
+        Wed, 24 May 2023 11:42:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229876AbjEXPae (ORCPT
+        with ESMTP id S237303AbjEXPma (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 24 May 2023 11:30:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0870F5;
-        Wed, 24 May 2023 08:30:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6D6B763385;
-        Wed, 24 May 2023 15:30:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2A74C433D2;
-        Wed, 24 May 2023 15:30:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1684942232;
-        bh=apv7fp2JStfK/1O9ZPoYlUJJmLzvR6yZ/dFs2Sq5Cl8=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=bKSS11QXhFSdLKI+N5lXBXvtHnz5/ib84JrDNKJoClE//sLm1NMoXl9VeucC2+OAX
-         2kVfV8zfWHHSlkz4qvziDZfUkYJqEVrA7Gr5AXz61O56wvgepoA+ban1Du68+koiae
-         wF4C0/UTAuxlnKVwSZ5l77Y7T8lu6uQir1aMtRy592pW8k9NsbFljp7/52ZXedO+F2
-         IV0aBm4u1muOXGf+D27FD1n2USc7u4pkr6whlm4SgmlG4SpshaiwSf5dIBxNaRBNhy
-         fvj7vB9OpEuybJ9J+FnkoKBDITr0CavIEXUVDYEMFa+O96GB7LaXiI2dVNxfOJr+Ai
-         9STys3pU031dw==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Wed, 24 May 2023 18:30:27 +0300
-Message-Id: <CSUM65JDEX5D.8GL20PUI2XDV@suppilovahvero>
-Cc:     <jsnitsel@redhat.com>, <hdegoede@redhat.com>,
-        <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
-        <peter.ujfalusi@linux.intel.com>, <peterz@infradead.org>,
-        <linux@mniewoehner.de>, <linux-integrity@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <l.sanfilippo@kunbus.com>,
-        <lukas@wunner.de>, <p.rosenberger@kunbus.com>
-Subject: Re: [PATCH 1/2] tpm, tpm_tis: Handle interrupt storm
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
-        "Lino Sanfilippo" <LinoSanfilippo@gmx.de>, <peterhuewe@gmx.de>,
-        <jgg@ziepe.ca>
-X-Mailer: aerc 0.14.0
-References: <20230522143105.8617-1-LinoSanfilippo@gmx.de>
- <CSU7G2UZSZ8K.22EGXU5CJTZBB@suppilovahvero>
-In-Reply-To: <CSU7G2UZSZ8K.22EGXU5CJTZBB@suppilovahvero>
+        Wed, 24 May 2023 11:42:30 -0400
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A8C61716
+        for <linux-integrity@vger.kernel.org>; Wed, 24 May 2023 08:41:51 -0700 (PDT)
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202305241540502efe19dc95d03e040e
+        for <linux-integrity@vger.kernel.org>;
+        Wed, 24 May 2023 17:40:50 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=alexander.sverdlin@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=ZleL3ST0XPNGt2fgQSXW/cK2rv3FOpZbAigNjtSUHpo=;
+ b=Whtsf3wsUzZRPWC2b2MKrRj//aDpTZWpoxk2yrNtcz6L2rzh/g89piOB6KxKvavL21nSHz
+ H2M2xfC1o48MyIri4KaltHmlHri2QW9AceMgY1TEkDff5jc/PpLq3EI9egyJtLl06LSE7sf2
+ lGKVRAr4qK8c0oNPgaeke9XMNG3XQ=;
+From:   "A. Sverdlin" <alexander.sverdlin@siemens.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Michael Haener <michael.haener@siemens.com>
+Subject: [PATCH 1/2] tpm: tis_i2c: Limit read bursts to I2C_SMBUS_BLOCK_MAX (32) bytes
+Date:   Wed, 24 May 2023 17:40:39 +0200
+Message-Id: <20230524154040.1204030-1-alexander.sverdlin@siemens.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-456497:519-21489:flowmailer
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed May 24, 2023 at 6:58 AM EEST, Jarkko Sakkinen wrote:
-> >  	rc =3D tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrup=
-t);
-> >  	if (rc < 0)
-> > -		return IRQ_NONE;
-> > +		goto unhandled;
-> > =20
-> >  	if (interrupt =3D=3D 0)
-> > -		return IRQ_NONE;
-> > +		goto unhandled;
-> > =20
-> >  	set_bit(TPM_TIS_IRQ_TESTED, &priv->flags);
-> >  	if (interrupt & TPM_INTF_DATA_AVAIL_INT)
-> > @@ -780,10 +829,14 @@ static irqreturn_t tis_int_handler(int dummy, voi=
-d *dev_id)
-> >  	rc =3D tpm_tis_write32(priv, TPM_INT_STATUS(priv->locality), interrup=
-t);
-> >  	tpm_tis_relinquish_locality(chip, 0);
-> >  	if (rc < 0)
-> > -		return IRQ_NONE;
-> > +		goto unhandled;
-> > =20
-> >  	tpm_tis_read32(priv, TPM_INT_STATUS(priv->locality), &interrupt);
-> >  	return IRQ_HANDLED;
-> > +
-> > +unhandled:
-> > +	tpm_tis_process_unhandled_interrupt(chip);
-> > +	return IRQ_HANDLED;
-> >  }
+From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 
-Some minor glitches I noticed.
+Underlying I2C bus drivers not always support longer transfers and
+imx-lpi2c for instance doesn't. SLB 9673 offers 427-bytes packets.
 
-You could simplify the flow by making the helper to return IRQ_NONE.
+Visible symptoms are:
 
-E.g.=20
+tpm tpm0: Error left over data
+tpm tpm0: tpm_transmit: tpm_recv: error -5
+tpm_tis_i2c: probe of 1-002e failed with error -5
 
-	tpm_tis_relinquish_locality(chip, 0);
-	if (rc < 0)
-		return tpm_tis_process_unhandled_interrupt(chip);
+Fixes: bbc23a07b072 ("tpm: Add tpm_tis_i2c backend for tpm_tis_core")
+Tested-by: Michael Haener <michael.haener@siemens.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+---
+ drivers/char/tpm/tpm_tis_i2c.c | 37 ++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
-I'd recommend changing the function name simply tpm_tis_rollback_interrupt(=
-).
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+index c8c34adc14c0..106fd20d94e4 100644
+--- a/drivers/char/tpm/tpm_tis_i2c.c
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -189,21 +189,28 @@ static int tpm_tis_i2c_read_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
+ 	int ret;
+ 
+ 	for (i = 0; i < TPM_RETRY; i++) {
+-		/* write register */
+-		msg.len = sizeof(reg);
+-		msg.buf = &reg;
+-		msg.flags = 0;
+-		ret = tpm_tis_i2c_retry_transfer_until_ack(data, &msg);
+-		if (ret < 0)
+-			return ret;
+-
+-		/* read data */
+-		msg.buf = result;
+-		msg.len = len;
+-		msg.flags = I2C_M_RD;
+-		ret = tpm_tis_i2c_retry_transfer_until_ack(data, &msg);
+-		if (ret < 0)
+-			return ret;
++		u16 read = 0;
++
++		while (read < len) {
++			/* write register */
++			msg.len = sizeof(reg);
++			msg.buf = &reg;
++			msg.flags = 0;
++			ret = tpm_tis_i2c_retry_transfer_until_ack(data, &msg);
++			if (ret < 0)
++				return ret;
++
++			/* read data */
++			msg.buf = result + read;
++			msg.len = len - read;
++			msg.flags = I2C_M_RD;
++			if (msg.len > I2C_SMBUS_BLOCK_MAX)
++				msg.len = I2C_SMBUS_BLOCK_MAX;
++			ret = tpm_tis_i2c_retry_transfer_until_ack(data, &msg);
++			if (ret < 0)
++				return ret;
++			read += msg.len;
++		}
+ 
+ 		ret = tpm_tis_i2c_sanity_check_read(reg, len, result);
+ 		if (ret == 0)
+-- 
+2.40.1
 
-Also tpm_tis_handle_irq_storm() is a pretty bad function name=20
-because handle also can mean anything. You are resetting to the
-polling mode, right?
-
-So perhaps that could be e.g. tpm_tis_reenable_polling? I'm open
-for any other name but it really needs to give a hint what the
-function does.
-
-BR, Jarkko
