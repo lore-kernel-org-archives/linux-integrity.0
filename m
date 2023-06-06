@@ -2,113 +2,62 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF14C7EE24
-	for <linux-integrity@archiver.kernel.org>; Tue,  6 Jun 2023 07:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C331C77B7A
+	for <linux-integrity@archiver.kernel.org>; Tue,  6 Jun 2023 09:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbjFFHqT (ORCPT
+        id S232550AbjFFJMw (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 6 Jun 2023 03:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        Tue, 6 Jun 2023 05:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235318AbjFFHoU (ORCPT
+        with ESMTP id S232859AbjFFJMr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 6 Jun 2023 03:44:20 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE68710EF;
-        Tue,  6 Jun 2023 00:41:49 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Qb2Dj2D3Kz9xHM7;
-        Tue,  6 Jun 2023 15:29:57 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDnkzof435kO04NAw--.3705S3;
-        Tue, 06 Jun 2023 08:41:36 +0100 (CET)
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 2/2] ima: Fix build warnings
-Date:   Tue,  6 Jun 2023 09:41:13 +0200
-Message-Id: <20230606074113.2120632-2-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230606074113.2120632-1-roberto.sassu@huaweicloud.com>
-References: <20230606074113.2120632-1-roberto.sassu@huaweicloud.com>
+        Tue, 6 Jun 2023 05:12:47 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00FFF10C7
+        for <linux-integrity@vger.kernel.org>; Tue,  6 Jun 2023 02:12:36 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7770a902912so501085539f.0
+        for <linux-integrity@vger.kernel.org>; Tue, 06 Jun 2023 02:12:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686042756; x=1688634756;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cKjEJ+NhJxp2P/83FzouzrqL0ri1MzUuYoHzC3XIwgQ=;
+        b=eac1cmKwv/u1cmeYEnE7IgKA5gYdcZnybMCr6Y86KvcCJ0JO4n5Pn5qoWXZoKNU4Md
+         c0tNsRiGl4Gi3VpdN1alaRPZW9v3bh2aRJQXaMsiF6JJfvcWAPWxJl/D1Ai9H1bDIZbn
+         lVtGTVTyyJVKwIb87OM7K5SNcBVLqhz21tCnKiN8ZyDghXfNTzMKHxt0CA+Pm0puTPgA
+         mJczA7FdHETLusP1LE44eAX6w8sOneZLRh22VwVQTK6Wda9J+1yQd5MuMnOZ7qFI3gdi
+         kPoNOaf4syfGdrg8fkvd1QZWBgl9H9infrOut9+fDa7at53WvQi9u08mMOoVAco/ftyi
+         TqJA==
+X-Gm-Message-State: AC+VfDwbPH0UZKrNpFn0kHjQ1moAzd3CJaXDQHah1JrNpeYw7+flC91p
+        LDZ3bPrWf4GW1AsPxcuU8o3oYJSyM4oS6cxA+Cf+XtVJdAcR
+X-Google-Smtp-Source: ACHHUZ4hPLNKpE1IYP8UTPjo59Z0ZEP2JEaW0grC8Ojb0fa/yI50EDSv8JRCXB1vPNR0sMhFHlh+lv1sqSuhYH9RxbYGnWQNiPFz
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwDnkzof435kO04NAw--.3705S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFyrtr47Cw18Zw18Zw4ktFb_yoW8Kr47pa
-        nFgFy3Cr97WF92kF97Ca43uF4Fk3yUKryUGws8Z3Wvv3ZxZr18Zry8t3W29r15Jry5AFy0
-        vr4Fqrs8Aa1vv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-        A2048vs2IY020Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-        w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-        WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-        Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
-        Av7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY
-        6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI4
-        8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
-        wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
-        v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k2
-        6cxKx2IYs7xG6r1I6r4UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-        AFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxUI2-eUUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAABF1jj45CQAADs7
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a02:b0c6:0:b0:41c:feac:7a9c with SMTP id
+ w6-20020a02b0c6000000b0041cfeac7a9cmr587850jah.6.1686042756304; Tue, 06 Jun
+ 2023 02:12:36 -0700 (PDT)
+Date:   Tue, 06 Jun 2023 02:12:36 -0700
+In-Reply-To: <CAJfpegtzZnzW506AHyw_5Bqn-thhrd3-_t-qJ5OJBzP-z3O6Fg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000090dbc405fd726b57@google.com>
+Subject: Re: [syzbot] possible deadlock in mnt_want_write (2)
+From:   syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
+To:     miklos@szeredi.hu
+Cc:     linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+> #syz set subsystems: intergrity, overlayfs
 
-Fix build warnings (function parameters description) for
-ima_collect_modsig(), ima_match_policy() and ima_parse_add_rule().
+The specified label value is incorrect.
+"intergrity" is not among the allowed values.
+Please use one of the supported label values.
 
-Fixes: 15588227e086 ("ima: Collect modsig")
-Fixes: 2fe5d6def167 ("ima: integrity appraisal extension")
-Fixes: 4af4662fa4a9 ("integrity: IMA policy")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_modsig.c | 3 +++
- security/integrity/ima/ima_policy.c | 3 ++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima_modsig.c b/security/integrity/ima/ima_modsig.c
-index fb25723c65b..3e7bee30080 100644
---- a/security/integrity/ima/ima_modsig.c
-+++ b/security/integrity/ima/ima_modsig.c
-@@ -89,6 +89,9 @@ int ima_read_modsig(enum ima_hooks func, const void *buf, loff_t buf_len,
- 
- /**
-  * ima_collect_modsig - Calculate the file hash without the appended signature.
-+ * @modsig: parsed module signature
-+ * @buf: data to verify the signature on
-+ * @size: data size
-  *
-  * Since the modsig is part of the file contents, the hash used in its signature
-  * isn't the same one ordinarily calculated by IMA. Therefore PKCS7 code
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 3ca8b7348c2..c9b3bd8f1bb 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -721,6 +721,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  * @secid: LSM secid of the task to be validated
-  * @func: IMA hook identifier
-  * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-+ * @flags: IMA actions to consider (e.g. IMA_MEASURE | IMA_APPRAISE)
-  * @pcr: set the pcr to extend
-  * @template_desc: the template that should be used for this rule
-  * @func_data: func specific data, may be NULL
-@@ -1915,7 +1916,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 
- /**
-  * ima_parse_add_rule - add a rule to ima_policy_rules
-- * @rule - ima measurement policy rule
-+ * @rule: ima measurement policy rule
-  *
-  * Avoid locking by allowing just one writer at a time in ima_write_policy()
-  * Returns the length of the rule parsed, an error code on failure
--- 
-2.25.1
+The following labels are suported:
+missing-backport, no-reminders, prio: {low, normal, high}, subsystems: {.. see below ..}
+The list of subsystems: https://syzkaller.appspot.com/upstream/subsystems?all=true
 
