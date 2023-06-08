@@ -2,93 +2,187 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE6CC7EE2F
-	for <linux-integrity@archiver.kernel.org>; Wed,  7 Jun 2023 17:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3086C7EE29
+	for <linux-integrity@archiver.kernel.org>; Thu,  8 Jun 2023 12:05:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232414AbjFGRt5 (ORCPT
+        id S235638AbjFHMFQ (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 7 Jun 2023 13:49:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47150 "EHLO
+        Thu, 8 Jun 2023 08:05:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232449AbjFGRtz (ORCPT
+        with ESMTP id S235670AbjFHMFQ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 7 Jun 2023 13:49:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF4451FC2;
-        Wed,  7 Jun 2023 10:49:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C3EC63F95;
-        Wed,  7 Jun 2023 17:49:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 779ADC433EF;
-        Wed,  7 Jun 2023 17:49:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1686160193;
-        bh=kGX0qEd54Qgv90p2G878MpRZiHthXw2miPZqsUOHgn8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Vs0ohzxaCSiaUtAgZ8JCY0ss5FDs4L4CgEor0c0YhE63rsVVN+/nKcnXYTke39SMI
-         WzMw3/SSi82jTXvDqiBMBI0EIy6sidbUkzo7Vpnq9k/EYkMjeaB8eG599pgpzcCKJK
-         nJM3vKiQut6O7DoIYLWYaXpneAScvgKOv59N/rG4=
-Date:   Wed, 7 Jun 2023 19:49:45 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Cc:     Bagas Sanjaya <bagasdotme@gmail.com>,
-        Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+        Thu, 8 Jun 2023 08:05:16 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36CF71FDB
+        for <linux-integrity@vger.kernel.org>; Thu,  8 Jun 2023 05:05:11 -0700 (PDT)
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 358BeBeC031269;
+        Thu, 8 Jun 2023 12:04:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=H+37Lslye+qIw9vFX9ZvVCKFhtWRKZLlcWZxRGx/5SE=;
+ b=Eh+vUi5g5eELGlG/ObbIysChyXatjY5uMK9ui3bPqT9NWBCrzBCjUjGvTn9V7CAxMCaW
+ Lk35Y6ueRcQnvu9mu0oWa3GM4lr0yRWB9iYsWzYnx9xlPO5iV3+AamNQ96V0gyCRoNa+
+ 2E4LcKfhpoGPLAdNz+JfdiyekQsfAkP2/p8ydiD1fSyLTN/c9slxVN31TZRhUKb2CGB0
+ aeKYFUmedG5/LSy7vjq0b7tJw8lT5cyirvz1ljEE6dC5Y4tmHI51OxI4dX7J1fc57NSL
+ j7EhVPYlGAlS7W68Gsq0VbHvEWQEubPwNaW2fUYPmQmUDTNdYgIjRzLn8e0frMqlew0e yA== 
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3r3dks9qfr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Jun 2023 12:04:56 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 358BdIn7021066;
+        Thu, 8 Jun 2023 12:04:54 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+        by ppma03fra.de.ibm.com (PPS) with ESMTPS id 3r2a790vay-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Jun 2023 12:04:54 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+        by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 358C4oew12845800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 8 Jun 2023 12:04:51 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1E652004F;
+        Thu,  8 Jun 2023 12:04:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7B68220043;
+        Thu,  8 Jun 2023 12:04:48 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.61.101.222])
+        by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Thu,  8 Jun 2023 12:04:48 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     Andrew Donnellan <ajd@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Linux Kernel Integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Regressions <regressions@lists.linux.dev>,
-        stable@vger.kernel.org
-Subject: Re: New kernel warning after updating from LTS 5.15.110 to 5.15.112
- (and 5.15.113)
-Message-ID: <2023060736-immodest-doormat-f957@gregkh>
-References: <fe6f7aa0-56c2-3729-ce8c-0f2d943b33f4@alliedtelesis.co.nz>
- <ZHQIFLWvrWUNMVxb@debian.me>
- <6e470461-1a9b-ec51-bac5-f2beb1dc11c9@alliedtelesis.co.nz>
- <2b09d2ed-0852-bbc9-b792-aad92235c7fa@gmail.com>
- <03daca5c-e468-8889-4dc2-e625a664d571@alliedtelesis.co.nz>
- <ec5245bd-3103-f0c7-d3ef-85aabb4d4712@alliedtelesis.co.nz>
- <ZH6TIjXeXJVMvSKa@debian.me>
- <2023060606-unlatch-yiddish-a45f@gregkh>
- <ac5b76af-87dc-b04d-6035-8eda8ba5ed12@kunbus.com>
+        Russell Currey <ruscur@russell.cc>,
+        Nageswara R Sastry <rnsastry@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kenrnel.org
+Subject: [PATCH v2] security/integrity: fix pointer to ESL data and its size on pseries
+Date:   Thu,  8 Jun 2023 08:04:44 -0400
+Message-Id: <20230608120444.382527-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac5b76af-87dc-b04d-6035-8eda8ba5ed12@kunbus.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: DZl_F4kyxxumbfpRS0zEWpVOywuDRALL
+X-Proofpoint-GUID: DZl_F4kyxxumbfpRS0zEWpVOywuDRALL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.573,FMLib:17.11.176.26
+ definitions=2023-06-08_08,2023-06-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1011 phishscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2305260000 definitions=main-2306080104
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Jun 07, 2023 at 05:47:57PM +0200, Lino Sanfilippo wrote:
-> 
-> Hi Greg,
-> 
-> On 06.06.23 08:45, Greg KH wrote:
-> >>
-> >> Lino, it looks like this regression is caused by (backported) commit of yours.
-> >> Would you like to take a look on it?
-> >>
-> >> Anyway, telling regzbot:
-> >>
-> >> #regzbot introduced: 51162b05a44cb5
-> > 
-> > There's some tpm backports to 5.15.y that were suspect and I'll look
-> > into reverting them and see if this was one of the ones that was on that
-> > list.  Give me a few days...
-> > 
-> 
-> Could you please consider to apply (mainline) commit 0c7e66e5fd69 ("tpm, tpm_tis: Request threaded
-> interrupt handler") to 5.15.y?
-> 
-> As Chris confirmed it fixes the regression caused by 51162b05a44cb5 ("tpm, tpm_tis: Claim locality
-> before writing interrupt registers").
-> 
-> Commit 0c7e66e5fd69 is also needed for 5.10.y, 6.1.y and 6.3.y.
+On PowerVM guest, variable data is prefixed with 8 bytes of timestamp.
+Extract ESL by stripping off the timestamp before passing to ESL parser.
 
-Now queued up, thanks.
+Fixes: 4b3e71e9a34c ("integrity/powerpc: Support loading keys from PLPKS")
+Cc: stable@vger.kenrnel.org # v6.3
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+---
+Changelog:
+v2: Fixed feedback from Jarkko
+      * added CC to stable
+      * moved *data declaration to same line as *db,*dbx
+    Renamed extract_data() macro to extract_esl() for clarity
+ .../integrity/platform_certs/load_powerpc.c   | 40 ++++++++++++-------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
 
-greg k-h
+diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+index b9de70b90826..170789dc63d2 100644
+--- a/security/integrity/platform_certs/load_powerpc.c
++++ b/security/integrity/platform_certs/load_powerpc.c
+@@ -15,6 +15,9 @@
+ #include "keyring_handler.h"
+ #include "../integrity.h"
+ 
++#define extract_esl(db, data, size, offset)	\
++	do { db = data + offset; size = size - offset; } while (0)
++
+ /*
+  * Get a certificate list blob from the named secure variable.
+  *
+@@ -55,8 +58,9 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
+  */
+ static int __init load_powerpc_certs(void)
+ {
+-	void *db = NULL, *dbx = NULL;
+-	u64 dbsize = 0, dbxsize = 0;
++	void *db = NULL, *dbx = NULL, *data = NULL;
++	u64 dsize = 0;
++	u64 offset = 0;
+ 	int rc = 0;
+ 	ssize_t len;
+ 	char buf[32];
+@@ -74,38 +78,46 @@ static int __init load_powerpc_certs(void)
+ 		return -ENODEV;
+ 	}
+ 
++	if (strcmp("ibm,plpks-sb-v1", buf) == 0)
++		/* PLPKS authenticated variables ESL data is prefixed with 8 bytes of timestamp */
++		offset = 8;
++
+ 	/*
+ 	 * Get db, and dbx. They might not exist, so it isn't an error if we
+ 	 * can't get them.
+ 	 */
+-	db = get_cert_list("db", 3, &dbsize);
+-	if (!db) {
++	data = get_cert_list("db", 3, &dsize);
++	if (!data) {
+ 		pr_info("Couldn't get db list from firmware\n");
+-	} else if (IS_ERR(db)) {
+-		rc = PTR_ERR(db);
++	} else if (IS_ERR(data)) {
++		rc = PTR_ERR(data);
+ 		pr_err("Error reading db from firmware: %d\n", rc);
+ 		return rc;
+ 	} else {
+-		rc = parse_efi_signature_list("powerpc:db", db, dbsize,
++		extract_esl(db, data, dsize, offset);
++
++		rc = parse_efi_signature_list("powerpc:db", db, dsize,
+ 					      get_handler_for_db);
+ 		if (rc)
+ 			pr_err("Couldn't parse db signatures: %d\n", rc);
+-		kfree(db);
++		kfree(data);
+ 	}
+ 
+-	dbx = get_cert_list("dbx", 4,  &dbxsize);
+-	if (!dbx) {
++	data = get_cert_list("dbx", 4,  &dsize);
++	if (!data) {
+ 		pr_info("Couldn't get dbx list from firmware\n");
+-	} else if (IS_ERR(dbx)) {
+-		rc = PTR_ERR(dbx);
++	} else if (IS_ERR(data)) {
++		rc = PTR_ERR(data);
+ 		pr_err("Error reading dbx from firmware: %d\n", rc);
+ 		return rc;
+ 	} else {
+-		rc = parse_efi_signature_list("powerpc:dbx", dbx, dbxsize,
++		extract_esl(dbx, data, dsize, offset);
++
++		rc = parse_efi_signature_list("powerpc:dbx", dbx, dsize,
+ 					      get_handler_for_dbx);
+ 		if (rc)
+ 			pr_err("Couldn't parse dbx signatures: %d\n", rc);
+-		kfree(dbx);
++		kfree(data);
+ 	}
+ 
+ 	return rc;
+-- 
+2.31.1
+
