@@ -2,129 +2,71 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF3BEB64D9
-	for <linux-integrity@archiver.kernel.org>; Tue, 27 Jun 2023 12:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4DCEB64DC
+	for <linux-integrity@archiver.kernel.org>; Wed, 28 Jun 2023 01:01:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230145AbjF0M2O (ORCPT
+        id S230523AbjF1BBh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 27 Jun 2023 08:28:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42082 "EHLO
+        Tue, 27 Jun 2023 21:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230012AbjF0M2N (ORCPT
+        with ESMTP id S230448AbjF1BB1 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 27 Jun 2023 08:28:13 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9A991999;
-        Tue, 27 Jun 2023 05:28:09 -0700 (PDT)
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 35RCLIr3017495;
-        Tue, 27 Jun 2023 12:28:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : content-type : content-transfer-encoding :
- mime-version; s=pp1; bh=1hU+vsd8h40bP1k4AwxoMoM9fqoy0vAXT2UYfeYQWPk=;
- b=LUxxHDZSpG+JL4J9nTS4MpJ+r1bQWOsWdMRwWaPZlEEDSbbd1vE3LDEYjOwdzQ16Y/Oe
- aNgcFzCXv/S/6J5SBoadihwliKf/dw87T3AbI18Rscr3llTAg6b3MoRVlLYeIHdkq4bk
- L4kH3tuzab0oULvXp32xBZrhA015e9CypgyjTWRW6dVL7uCTm7grYq9Tuynlj3JKOf++
- z8MyRp1iajzcmg1s/4V69BQIqOHnOvWdRqz7v7+otI7Qi0iqklFZmZ1WAomB2ldweANQ
- VumT94BWWvxDTWz2v6muoY0E04wUE7FTZPJ1B/cL67/PfJV+uNdNLojtoEEvPV/PPhcO Fg== 
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3rfypxg6ky-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 12:28:08 +0000
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 35RAmZeF025152;
-        Tue, 27 Jun 2023 12:28:07 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([9.208.130.100])
-        by ppma04wdc.us.ibm.com (PPS) with ESMTPS id 3rdr45rgs3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Jun 2023 12:28:07 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-        by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 35RCS7ov42467824
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Jun 2023 12:28:07 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1864F58056;
-        Tue, 27 Jun 2023 12:28:07 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE6ED58052;
-        Tue, 27 Jun 2023 12:28:06 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.149.212])
-        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Jun 2023 12:28:06 +0000 (GMT)
-Message-ID: <bdea3a9112c28fd6c2c158a14b632f89dba53ac6.camel@linux.ibm.com>
-Subject: [GIT PULL] integrity: susbystem updates for v6.5
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        Tue, 27 Jun 2023 21:01:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A072975;
+        Tue, 27 Jun 2023 18:01:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 334776123F;
+        Wed, 28 Jun 2023 01:01:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 97472C433C8;
+        Wed, 28 Jun 2023 01:01:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687914085;
+        bh=Ca2VNQ0Tv6RUBE6dfaDK+smRCTV5c893rp/AOtEarF4=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=MMMHwSkwGly94bz3DgsD2UReNJclQpc0nKTN4BQD5NSsMlYxN5quqRVmjEvhnqkgg
+         LY3DnH6VvkVENU6TenJppM2/MW8p0O84JF8W1Nno5XePlo9vH24EK1Q+ocCdKpvWQ3
+         L5VAhJ3WIeG0HMnakLUWS5Cq0QlHvzuAcLMk7wnqcc2eazXi+IZofdnNj4al+WbnQt
+         MsO/mre/08XjnrZJdAviWwS+mxfZ+Daabn/MSiU64dic2p9kHILafdyU5YU+BuW/Yc
+         S1xWJbfzWAz8wTiaaiu5CekGGv6Dmmts6xVG6xtNDCyI081ow5NXUl8Ck+kkdAWqwd
+         tLkPy+pBali1g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 85259E53807;
+        Wed, 28 Jun 2023 01:01:25 +0000 (UTC)
+Subject: Re: [GIT PULL] integrity: susbystem updates for v6.5
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <bdea3a9112c28fd6c2c158a14b632f89dba53ac6.camel@linux.ibm.com>
+References: <bdea3a9112c28fd6c2c158a14b632f89dba53ac6.camel@linux.ibm.com>
+X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
+X-PR-Tracked-Message-Id: <bdea3a9112c28fd6c2c158a14b632f89dba53ac6.camel@linux.ibm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.5
+X-PR-Tracked-Commit-Id: 95526d13038c2bbddd567a4d8e39fac42484e182
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b4c7f2e6ef40f545054a902e4708ed908d562318
+Message-Id: <168791408554.14121.6436652613056866126.pr-tracker-bot@kernel.org>
+Date:   Wed, 28 Jun 2023 01:01:25 +0000
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Tue, 27 Jun 2023 08:28:06 -0400
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: YWHezjY4nM-U9l3gxhxld4C764K5tpps
-X-Proofpoint-GUID: YWHezjY4nM-U9l3gxhxld4C764K5tpps
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-06-27_08,2023-06-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 bulkscore=0 adultscore=0 clxscore=1011 phishscore=0
- spamscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=964 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2305260000 definitions=main-2306270111
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Tue, 27 Jun 2023 08:28:06 -0400:
 
-Contains an i_version change, one bug fix, and three kernel doc fixes:
+> git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.5
 
-- Instead of IMA detecting file change by directly accesssing
-i_version, it now calls vfs_getattr_nosec().
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b4c7f2e6ef40f545054a902e4708ed908d562318
 
-- The bug fix addresses a race condition when inserting a new node in
-the iint rb-tree.
+Thank you!
 
-thanks,
-
-Mimi
-
-The following changes since commit f1fcbaa18b28dec10281551dfe6ed3a3ed80e3d6:
-
-  Linux 6.4-rc2 (2023-05-14 12:51:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.5
-
-for you to fetch changes up to 95526d13038c2bbddd567a4d8e39fac42484e182:
-
-  ima: Fix build warnings (2023-06-06 09:37:23 -0400)
-
-----------------------------------------------------------------
-integrity-v6.5
-
-----------------------------------------------------------------
-Jeff Layton (1):
-      IMA: use vfs_getattr_nosec to get the i_version
-
-Roberto Sassu (3):
-      evm: Complete description of evm_inode_setattr()
-      evm: Fix build warnings
-      ima: Fix build warnings
-
-Tianjia Zhang (1):
-      integrity: Fix possible multiple allocation in integrity_inode_get()
-
- security/integrity/evm/evm_crypto.c |  2 +-
- security/integrity/evm/evm_main.c   |  4 +++-
- security/integrity/iint.c           | 15 +++++++++------
- security/integrity/ima/ima_api.c    |  9 ++++++---
- security/integrity/ima/ima_main.c   | 12 ++++++++----
- security/integrity/ima/ima_modsig.c |  3 +++
- security/integrity/ima/ima_policy.c |  3 ++-
- 7 files changed, 32 insertions(+), 16 deletions(-)
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
