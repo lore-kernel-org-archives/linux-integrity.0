@@ -2,27 +2,27 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FBFC2FC15
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08FBC2FC17
 	for <linux-integrity@archiver.kernel.org>; Wed, 28 Jun 2023 21:10:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232725AbjF1VKc (ORCPT
+        id S232734AbjF1VKd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 28 Jun 2023 17:10:32 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39546 "EHLO
+        Wed, 28 Jun 2023 17:10:33 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39530 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232420AbjF1VJx (ORCPT
+        with ESMTP id S232381AbjF1VJw (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 28 Jun 2023 17:09:53 -0400
+        Wed, 28 Jun 2023 17:09:52 -0400
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id D8E6D20ABD96; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D8E6D20ABD96
+        id 9FB0920ABD7E; Wed, 28 Jun 2023 14:09:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9FB0920ABD7E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1687986588;
-        bh=cx0zv6rR+qzo8WdhaKLiuQH3326nVtVkIr6dzCROEXU=;
+        bh=jDAVZfGLcA9i+psEagTOByxNSvZxyShuJvujQY6FoMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DiV9Ntwt+GUlRXrcGO6hXlexvEbI5y/bymVGJXcdBLUCZrPmJtXWaUUzgACXqxtT+
-         /Qron7rAqmkKiXX0oacBwtEqsVMZSdULXQHwLdj7sjLVY9ooawvnG+2foyxH5T+e6M
-         nkx/f+oDRZONJ0+OVs0NsYqQ8zy3gzauHzaZOrz4=
+        b=VC/bIisuUI9qsXSEaK7wMsFQ446RGYJ/RPT7yPmV3gwIPTNbYzjRS7hUrbMFUB7P7
+         7/pwtTz7Xzq67eMdPup8vgxmoIuIUR2CXjxaM/8mR/5cdFQq/jZsKv0IjB9gFYFPp4
+         JchWZ70ACL44ssy7f2BgeyXpjp59yJcKf7V+Crrs=
 From:   Fan Wu <wufan@linux.microsoft.com>
 To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
         serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
@@ -35,9 +35,9 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
         Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: [RFC PATCH v10 15/17] scripts: add boot policy generation program
-Date:   Wed, 28 Jun 2023 14:09:29 -0700
-Message-Id: <1687986571-16823-16-git-send-email-wufan@linux.microsoft.com>
+Subject: [RFC PATCH v10 11/17] dm-verity: consume root hash digest and signature data via LSM hook
+Date:   Wed, 28 Jun 2023 14:09:25 -0700
+Message-Id: <1687986571-16823-12-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
 References: <1687986571-16823-1-git-send-email-wufan@linux.microsoft.com>
@@ -47,10 +47,24 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Enables an IPE policy to be enforced from kernel start, enabling access
-control based on trust from kernel startup. This is accomplished by
-transforming an IPE policy indicated by CONFIG_IPE_BOOT_POLICY into a
-c-string literal that is parsed at kernel startup as an unsigned policy.
+dm-verity provides a strong guarantee of a block device's integrity. As
+a generic way to check the integrity of a block device, it provides
+those integrity guarantees to its higher layers, including the filesystem
+level.
+
+An LSM that control access to a resource on the system based on the
+available integrity claims can use this transitive property of
+dm-verity, by querying the underlying block_device of a particular
+file.
+
+The digest and signature information need to be stored in the block
+device to fulfill the next requirement of authorization via LSM policy.
+This will enable the LSM to perform revocation of devices that are still
+mounted, prohibiting execution of files that are no longer authorized
+by the LSM in question.
+
+This patch added two security hook calls in dm-verity to save the
+dm-verity roothash and the roothash signature to LSM blobs.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
@@ -59,376 +73,230 @@ v2:
   + No Changes
 
 v3:
-  + No Changes
+  + No changes
 
 v4:
-  + No Changes
+  + No changes
 
 v5:
-  + No Changes
+  + No changes
 
 v6:
-  + No Changes
+  + Fix an improper cleanup that can result in
+    a leak
 
 v7:
-  + Move from 01/11 to 14/16
-  + Don't return errno directly.
-  + Make output of script more user-friendly
-  + Add escaping for tab and '?'
-  + Mark argv pointer const
-  + Invert return code check in the boot policy parsing code path.
+  + Squash patch 08/12, 10/12 to [11/16]
+  + Use part0 for block_device, to retrieve the block_device, when
+    calling security_bdev_setsecurity
 
 v8:
-  + No significant changes.
+  + Undo squash of 08/12, 10/12 - separating drivers/md/ from
+    security/ & block/
+  + Use common-audit function for dmverity_signature.
+  + Change implementation for storing the dm-verity digest to use the
+    newly introduced dm_verity_digest structure introduced in patch
+    14/20.
+  + Create new structure, dm_verity_digest, containing digest algorithm,
+    size, and digest itself to pass to the LSM layer. V7 was missing the
+    algorithm.
+  + Create an associated public header containing this new structure and
+    the key values for the LSM hook, specific to dm-verity.
+  + Additional information added to commit, discussing the layering of
+    the changes and how the information passed will be used.
 
 v9:
-  + no changes
+  + No changes
 
 v10:
-  + Update the init part code for rcu changes in the eval loop patch
+  + No changes
 ---
- MAINTAINERS                   |   1 +
- scripts/Makefile              |   1 +
- scripts/ipe/Makefile          |   2 +
- scripts/ipe/polgen/.gitignore |   1 +
- scripts/ipe/polgen/Makefile   |   6 ++
- scripts/ipe/polgen/polgen.c   | 145 ++++++++++++++++++++++++++++++++++
- security/ipe/.gitignore       |   1 +
- security/ipe/Kconfig          |  10 +++
- security/ipe/Makefile         |  11 +++
- security/ipe/fs.c             |   8 ++
- security/ipe/ipe.c            |  17 ++++
- 11 files changed, 203 insertions(+)
- create mode 100644 scripts/ipe/Makefile
- create mode 100644 scripts/ipe/polgen/.gitignore
- create mode 100644 scripts/ipe/polgen/Makefile
- create mode 100644 scripts/ipe/polgen/polgen.c
- create mode 100644 security/ipe/.gitignore
+ drivers/md/dm-verity-target.c     | 25 +++++++++++++++++++++++--
+ drivers/md/dm-verity-verify-sig.c | 16 +++++++++++++---
+ drivers/md/dm-verity-verify-sig.h | 10 ++++++----
+ include/linux/dm-verity.h         | 19 +++++++++++++++++++
+ 4 files changed, 61 insertions(+), 9 deletions(-)
+ create mode 100644 include/linux/dm-verity.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ad00887d38ea..fb8d6a16f2a6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10283,6 +10283,7 @@ M:	Fan Wu <wufan@linux.microsoft.com>
- L:	linux-security-module@vger.kernel.org
- S:	Supported
- T:	git git://github.com/microsoft/ipe.git
-+F:	scripts/ipe/
- F:	security/ipe/
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index 26adcfea0302..54d46b2f2723 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -13,6 +13,7 @@
+  * access behavior.
+  */
  
- INTEL 810/815 FRAMEBUFFER DRIVER
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 32b6ba722728..18baecdada01 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -46,6 +46,7 @@ targets += module.lds
- subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
- subdir-$(CONFIG_MODVERSIONS) += genksyms
- subdir-$(CONFIG_SECURITY_SELINUX) += selinux
-+subdir-$(CONFIG_SECURITY_IPE) += ipe
++#include "dm-core.h"
+ #include "dm-verity.h"
+ #include "dm-verity-fec.h"
+ #include "dm-verity-verify-sig.h"
+@@ -22,6 +23,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/string.h>
+ #include <linux/jump_label.h>
++#include <linux/security.h>
++#include <linux/dm-verity.h>
++#include <crypto/hash_info.h>
  
- # Let clean descend into subdirs
- subdir-	+= basic dtc gdb kconfig mod
-diff --git a/scripts/ipe/Makefile b/scripts/ipe/Makefile
-new file mode 100644
-index 000000000000..e87553fbb8d6
---- /dev/null
-+++ b/scripts/ipe/Makefile
-@@ -0,0 +1,2 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+subdir-y := polgen
-diff --git a/scripts/ipe/polgen/.gitignore b/scripts/ipe/polgen/.gitignore
-new file mode 100644
-index 000000000000..80f32f25d200
---- /dev/null
-+++ b/scripts/ipe/polgen/.gitignore
-@@ -0,0 +1 @@
-+polgen
-diff --git a/scripts/ipe/polgen/Makefile b/scripts/ipe/polgen/Makefile
-new file mode 100644
-index 000000000000..066060c22b4a
---- /dev/null
-+++ b/scripts/ipe/polgen/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+hostprogs-always-y	:= polgen
-+HOST_EXTRACFLAGS += \
-+	-I$(srctree)/include \
-+	-I$(srctree)/include/uapi \
-+
-diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
-new file mode 100644
-index 000000000000..40b6fe07f47b
---- /dev/null
-+++ b/scripts/ipe/polgen/polgen.c
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+
-+#include <stdlib.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <errno.h>
-+
-+static void usage(const char *const name)
-+{
-+	printf("Usage: %s OutputFile (PolicyFile)\n", name);
-+	exit(EINVAL);
-+}
-+
-+static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
-+{
-+	int rc = 0;
-+	FILE *fd;
-+	char *lbuf;
-+	size_t fsize;
-+	size_t read;
-+
-+	fd = fopen(pathname, "r");
-+	if (!fd) {
-+		rc = errno;
-+		goto out;
-+	}
-+
-+	fseek(fd, 0, SEEK_END);
-+	fsize = ftell(fd);
-+	rewind(fd);
-+
-+	lbuf = malloc(fsize);
-+	if (!lbuf) {
-+		rc = ENOMEM;
-+		goto out_close;
-+	}
-+
-+	read = fread((void *)lbuf, sizeof(*lbuf), fsize, fd);
-+	if (read != fsize) {
-+		rc = -1;
-+		goto out_free;
-+	}
-+
-+	*buffer = lbuf;
-+	*size = fsize;
-+	fclose(fd);
-+
-+	return rc;
-+
-+out_free:
-+	free(lbuf);
-+out_close:
-+	fclose(fd);
-+out:
-+	return rc;
-+}
-+
-+static int write_boot_policy(const char *pathname, const char *buf, size_t size)
-+{
-+	int rc = 0;
-+	FILE *fd;
-+	size_t i;
-+
-+	fd = fopen(pathname, "w");
-+	if (!fd) {
-+		rc = errno;
-+		goto err;
-+	}
-+
-+	fprintf(fd, "/* This file is automatically generated.");
-+	fprintf(fd, " Do not edit. */\n");
-+	fprintf(fd, "#include <linux/stddef.h>\n");
-+	fprintf(fd, "\nextern const char *const ipe_boot_policy;\n\n");
-+	fprintf(fd, "const char *const ipe_boot_policy =\n");
-+
-+	if (!buf || size == 0) {
-+		fprintf(fd, "\tNULL;\n");
-+		fclose(fd);
-+		return 0;
-+	}
-+
-+	fprintf(fd, "\t\"");
-+
-+	for (i = 0; i < size; ++i) {
-+		switch (buf[i]) {
-+		case '"':
-+			fprintf(fd, "\\\"");
-+			break;
-+		case '\'':
-+			fprintf(fd, "'");
-+			break;
-+		case '\n':
-+			fprintf(fd, "\\n\"\n\t\"");
-+			break;
-+		case '\\':
-+			fprintf(fd, "\\\\");
-+			break;
-+		case '\t':
-+			fprintf(fd, "\\t");
-+			break;
-+		case '\?':
-+			fprintf(fd, "\\?");
-+			break;
-+		default:
-+			fprintf(fd, "%c", buf[i]);
-+		}
-+	}
-+	fprintf(fd, "\";\n");
-+	fclose(fd);
-+
-+	return 0;
-+
-+err:
-+	if (fd)
-+		fclose(fd);
-+	return rc;
-+}
-+
-+int main(int argc, const char *const argv[])
-+{
-+	int rc = 0;
-+	size_t len = 0;
-+	char *policy = NULL;
-+
-+	if (argc < 2)
-+		usage(argv[0]);
-+
-+	if (argc > 2) {
-+		rc = policy_to_buffer(argv[2], &policy, &len);
-+		if (rc != 0)
-+			goto cleanup;
-+	}
-+
-+	rc = write_boot_policy(argv[1], policy, len);
-+cleanup:
-+	if (policy)
-+		free(policy);
-+	if (rc != 0)
-+		perror("An error occurred during policy conversion: ");
-+	return rc;
-+}
-diff --git a/security/ipe/.gitignore b/security/ipe/.gitignore
-new file mode 100644
-index 000000000000..eca22ad5ed22
---- /dev/null
-+++ b/security/ipe/.gitignore
-@@ -0,0 +1 @@
-+boot-policy.c
-\ No newline at end of file
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index 9dd5c4769d79..a6c5d48dd0a3 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -18,6 +18,16 @@ menuconfig SECURITY_IPE
- 	  If unsure, answer N.
+ #define DM_MSG_PREFIX			"verity"
  
- if SECURITY_IPE
-+config IPE_BOOT_POLICY
-+	string "Integrity policy to apply on system startup"
-+	help
-+	  This option specifies a filepath to a IPE policy that is compiled
-+	  into the kernel. This policy will be enforced until a policy update
-+	  is deployed via the $securityfs/ipe/policies/$policy_name/active
-+	  interface.
-+
-+	  If unsure, leave blank.
-+
- menu "IPE Trust Providers"
+@@ -1183,6 +1187,8 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	sector_t hash_position;
+ 	char dummy;
+ 	char *root_hash_digest_to_validate;
++	struct block_device *bdev;
++	struct dm_verity_digest root_digest;
  
- config IPE_PROP_DM_VERITY
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index ec7f69c34735..b7f0118215da 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -5,7 +5,16 @@
- # Makefile for building the IPE module as part of the kernel tree.
- #
+ 	v = kzalloc(sizeof(struct dm_verity), GFP_KERNEL);
+ 	if (!v) {
+@@ -1225,6 +1231,13 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	}
+ 	v->version = num;
  
-+quiet_cmd_polgen = IPE_POL $(2)
-+      cmd_polgen = scripts/ipe/polgen/polgen security/ipe/boot-policy.c $(2)
++	bdev = dm_table_get_md(ti->table)->disk->part0;
++	if (!bdev) {
++		ti->error = "Mapped device lookup failed";
++		r = -ENOMEM;
++		goto bad;
++	}
 +
-+targets += boot-policy.c
-+
-+$(obj)/boot-policy.c: scripts/ipe/polgen/polgen $(CONFIG_IPE_BOOT_POLICY) FORCE
-+	$(call if_changed,polgen,$(CONFIG_IPE_BOOT_POLICY))
-+
- obj-$(CONFIG_SECURITY_IPE) += \
-+	boot-policy.o \
- 	digest.o \
- 	eval.o \
- 	fs.o \
-@@ -15,3 +24,5 @@ obj-$(CONFIG_SECURITY_IPE) += \
- 	policy_fs.o \
- 	policy_parser.o \
- 	audit.o \
-+
-+clean-files := boot-policy.c \
-diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-index 1761d39e4d04..31d30a58a662 100644
---- a/security/ipe/fs.c
-+++ b/security/ipe/fs.c
-@@ -192,6 +192,7 @@ static const struct file_operations enforce_fops = {
- static int __init ipe_init_securityfs(void)
- {
- 	int rc = 0;
-+	struct ipe_policy *ap;
- 
- 	if (!ipe_enabled)
- 		return -EOPNOTSUPP;
-@@ -222,6 +223,13 @@ static int __init ipe_init_securityfs(void)
- 		goto err;
+ 	r = dm_get_device(ti, argv[1], BLK_OPEN_READ, &v->data_dev);
+ 	if (r) {
+ 		ti->error = "Data device lookup failed";
+@@ -1357,7 +1370,7 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
  	}
  
-+	ap = rcu_access_pointer(ipe_active_policy);
-+	if (ap) {
-+		rc = ipe_new_policyfs_node(ap);
-+		if (rc)
-+			goto err;
-+	}
+ 	/* Root hash signature is  a optional parameter*/
+-	r = verity_verify_root_hash(root_hash_digest_to_validate,
++	r = verity_verify_root_hash(bdev, root_hash_digest_to_validate,
+ 				    strlen(root_hash_digest_to_validate),
+ 				    verify_args.sig,
+ 				    verify_args.sig_size);
+@@ -1440,6 +1453,15 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	ti->per_io_data_size = roundup(ti->per_io_data_size,
+ 				       __alignof__(struct dm_verity_io));
+ 
++	root_digest.digest = v->root_digest;
++	root_digest.digest_len = v->digest_size;
++	root_digest.algo = v->alg_name;
 +
- 	np = securityfs_create_file("new_policy", 0200, root, NULL, &np_fops);
- 	if (IS_ERR(np)) {
- 		rc = PTR_ERR(np);
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 1d3d66e1623b..8110fa5ff203 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -7,6 +7,7 @@
- #include "hooks.h"
- #include "eval.h"
++	r = security_bdev_setsecurity(bdev, DM_VERITY_ROOTHASH_SEC_NAME, &root_digest,
++				      sizeof(root_digest));
++	if (r)
++		goto bad;
++
+ 	verity_verify_sig_opts_cleanup(&verify_args);
  
-+extern const char *const ipe_boot_policy;
- bool ipe_enabled;
+ 	dm_audit_log_ctr(DM_MSG_PREFIX, ti, 1);
+@@ -1447,7 +1469,6 @@ static int verity_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	return 0;
  
- static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
-@@ -61,11 +62,27 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
- static int __init ipe_init(void)
+ bad:
+-
+ 	verity_verify_sig_opts_cleanup(&verify_args);
+ 	dm_audit_log_ctr(DM_MSG_PREFIX, ti, 0);
+ 	verity_dtr(ti);
+diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
+index 4836508ea50c..33165dd7470f 100644
+--- a/drivers/md/dm-verity-verify-sig.c
++++ b/drivers/md/dm-verity-verify-sig.c
+@@ -9,6 +9,9 @@
+ #include <linux/verification.h>
+ #include <keys/user-type.h>
+ #include <linux/module.h>
++#include <linux/security.h>
++#include <linux/dm-verity.h>
++#include "dm-core.h"
+ #include "dm-verity.h"
+ #include "dm-verity-verify-sig.h"
+ 
+@@ -97,14 +100,17 @@ int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
+  * verify_verify_roothash - Verify the root hash of the verity hash device
+  *			     using builtin trusted keys.
+  *
++ * @bdev: block_device representing the device-mapper created block device.
++ *	  Used by the security hook, to set information about the block_device.
+  * @root_hash: For verity, the roothash/data to be verified.
+  * @root_hash_len: Size of the roothash/data to be verified.
+  * @sig_data: The trusted signature that verifies the roothash/data.
+  * @sig_len: Size of the signature.
+  *
+  */
+-int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
+-			    const void *sig_data, size_t sig_len)
++int verity_verify_root_hash(struct block_device *bdev, const void *root_hash,
++			    size_t root_hash_len, const void *sig_data,
++			    size_t sig_len)
  {
- 	int rc = 0;
-+	struct ipe_policy *p = NULL;
+ 	int ret;
  
- 	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), "ipe");
- 	ipe_enabled = true;
+@@ -126,8 +132,12 @@ int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
+ 				NULL,
+ #endif
+ 				VERIFYING_UNSPECIFIED_SIGNATURE, NULL, NULL);
++	if (ret)
++		return ret;
  
-+	if (ipe_boot_policy) {
-+		p = ipe_new_policy(ipe_boot_policy, strlen(ipe_boot_policy),
-+				   NULL, 0);
-+		if (IS_ERR(p)) {
-+			rc = PTR_ERR(p);
-+			goto err;
-+		}
-+
-+		rcu_assign_pointer(ipe_active_policy, p);
-+	}
-+
-+out:
- 	return rc;
-+err:
-+	ipe_free_policy(p);
-+	goto out;
+-	return ret;
++	return security_bdev_setsecurity(bdev,
++					 DM_VERITY_SIGNATURE_SEC_NAME,
++					 sig_data, sig_len);
  }
  
- DEFINE_LSM(ipe) = {
+ void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
+diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
+index f36ea92127bf..5c6023fac97b 100644
+--- a/drivers/md/dm-verity-verify-sig.h
++++ b/drivers/md/dm-verity-verify-sig.h
+@@ -20,8 +20,9 @@ struct dm_verity_sig_opts {
+ 
+ #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
+ 
+-int verity_verify_root_hash(const void *data, size_t data_len,
+-			    const void *sig_data, size_t sig_len);
++int verity_verify_root_hash(struct block_device *bdev, const void *data,
++			    size_t data_len, const void *sig_data,
++			    size_t sig_len);
+ bool verity_verify_is_sig_opt_arg(const char *arg_name);
+ 
+ int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+@@ -34,8 +35,9 @@ void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
+ 
+ #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 0
+ 
+-static inline int verity_verify_root_hash(const void *data, size_t data_len,
+-					  const void *sig_data, size_t sig_len)
++int verity_verify_root_hash(struct block_device *bdev, const void *data,
++			    size_t data_len, const void *sig_data,
++			    size_t sig_len)
+ {
+ 	return 0;
+ }
+diff --git a/include/linux/dm-verity.h b/include/linux/dm-verity.h
+new file mode 100644
+index 000000000000..bb0413d55d72
+--- /dev/null
++++ b/include/linux/dm-verity.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _LINUX_DM_VERITY_H
++#define _LINUX_DM_VERITY_H
++
++#include <linux/types.h>
++#include <crypto/hash_info.h>
++#include <linux/device-mapper.h>
++
++struct dm_verity_digest {
++	const char *algo;
++	const u8 *digest;
++	size_t digest_len;
++};
++
++#define DM_VERITY_SIGNATURE_SEC_NAME DM_NAME	".verity-signature"
++#define DM_VERITY_ROOTHASH_SEC_NAME  DM_NAME	".verity-roothash"
++
++#endif /* _LINUX_DM_VERITY_H */
 -- 
 2.25.1
 
