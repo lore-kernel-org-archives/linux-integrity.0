@@ -2,38 +2,38 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E21C001B1
-	for <linux-integrity@archiver.kernel.org>; Mon,  3 Jul 2023 21:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A16C001B3
+	for <linux-integrity@archiver.kernel.org>; Mon,  3 Jul 2023 21:57:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231415AbjGCV5V (ORCPT
+        id S231423AbjGCV5W (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 3 Jul 2023 17:57:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60952 "EHLO
+        Mon, 3 Jul 2023 17:57:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231404AbjGCV5T (ORCPT
+        with ESMTP id S231414AbjGCV5U (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 3 Jul 2023 17:57:19 -0400
+        Mon, 3 Jul 2023 17:57:20 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C9CCC1A1
-        for <linux-integrity@vger.kernel.org>; Mon,  3 Jul 2023 14:57:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C86A7195
+        for <linux-integrity@vger.kernel.org>; Mon,  3 Jul 2023 14:57:19 -0700 (PDT)
 Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (c-98-237-170-177.hsd1.wa.comcast.net [98.237.170.177])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 17AD920C08E6;
-        Mon,  3 Jul 2023 14:57:18 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 17AD920C08E6
+        by linux.microsoft.com (Postfix) with ESMTPSA id 271E320C08F5;
+        Mon,  3 Jul 2023 14:57:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 271E320C08F5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1688421438;
-        bh=QSvlPzRxeFbeULzyjZwN/RPvVC6e2A3pn0e54sScUOg=;
+        s=default; t=1688421439;
+        bh=BnPDGoJ+Z3iQQP7eWODZlOLENbnPQ+oha3+R2NPMATc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TBh2Sg92sT83le5olP6H2y5ygM6Vg6+PyI6OxTsBV0YLUk+L2zOPcZZdKHqlORane
-         W19FFtESmi88heWz0c0dtaXJDq8J/+rg4Pwv9avmAcKEe2GqqcTXOm0fnW3tYcomhU
-         edSdZsYhiTK7eiIBB3wE8dVxKHSx2FkeJOeWBWGM=
+        b=KJr/eV5NllbZREhRLWnmcF6pDsWGV9BgJoBaZK3m5vqn790u32+rAl3fdTIT3IPiM
+         kqQYfP25uCWai5+GtqA7peHixgQapDF0aUq/w3NlsyGlhn8EGyChlSQCQC5vrt2VLJ
+         pQR5Nf0c7E3mtL2uoCq0xjgkqHVzb4oqLJ4NKV2U=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, noodles@fb.com, bauermann@kolabnow.com,
         kexec@lists.infradead.org, linux-integrity@vger.kernel.org
 Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-Subject: [PATCH 02/10] ima: implement function to populate buffer at kexec execute
-Date:   Mon,  3 Jul 2023 14:57:01 -0700
-Message-Id: <20230703215709.1195644-3-tusharsu@linux.microsoft.com>
+Subject: [PATCH 05/10] kexec: implement functions to map and unmap segment to kimage
+Date:   Mon,  3 Jul 2023 14:57:04 -0700
+Message-Id: <20230703215709.1195644-6-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230703215709.1195644-1-tusharsu@linux.microsoft.com>
 References: <20230703215709.1195644-1-tusharsu@linux.microsoft.com>
@@ -43,86 +43,158 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-There is no existing IMA functionality to just populate the buffer at
-kexec execute with IMA measurements.
+Currently, there's no mechanism to map and unmap segments to the kimage
+structure.  This functionality is needed when dealing with memory segments
+in the context of a kexec operation.
 
-Implement a function to iterate over ima_measurements and populate the
-ima_kexec_file buffer.  After the loop, populate ima_khdr with buffer
-details (version, buffer size, number of measurements).  Copy the ima_khdr
-data into ima_kexec_file.buf and update buffer_size and buffer.
+The patch adds two new functions: kimage_map_segment() and
+kimage_unmap_segment().
 
-The patch assumes that the ima_kexec_file.size is sufficient to hold all
-the measurements.  It returns an error and does not handle scenarios where
-additional space might be needed.
+Implement kimage_map_segment() which takes a kimage pointer, an address,
+and a size.  Ensures that the entire segment is being mapped by comparing
+the given address and size to each segment in the kimage's segment array.
+Collect the source pages that correspond to the given address range,
+allocate an array of pointers to these pages, and map them to a contiguous
+range of virtual addresses.  If the mapping operation is successful, the
+function returns the start of this range.  Otherwise, it frees the page
+pointer array and returns NULL.
+
+Implement kimage_unmap_segment() that takes a pointer to a segment buffer
+and unmaps it using vunmap().
+
+Finally, move for_each_kimage_entry() macro to kexec.h.
+
+Note: Use kimage_map_segment() and kimage_unmap_segment() carefully to
+avoid memory leaks and ensure that all mapped segments are properly
+unmapped when they're no longer needed.
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 ---
- security/integrity/ima/ima_kexec.c | 52 ++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
+ include/linux/kexec.h | 13 ++++++++
+ kernel/kexec_core.c   | 72 ++++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 80 insertions(+), 5 deletions(-)
 
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 48a683874044..858b67689701 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -62,6 +62,58 @@ static int ima_allocate_buf_at_kexec_load(void)
- 	return 0;
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index 22b5cd24f581..e00b8101b53b 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -490,6 +490,15 @@ static inline int arch_kexec_post_alloc_pages(void *vaddr, unsigned int pages, g
+ static inline void arch_kexec_pre_free_pages(void *vaddr, unsigned int pages) { }
+ #endif
+ 
++#define for_each_kimage_entry(image, ptr, entry) \
++	for (ptr = &image->head; (entry = *ptr) && !(entry & IND_DONE); \
++		ptr = (entry & IND_INDIRECTION) ? \
++			boot_phys_to_virt((entry & PAGE_MASK)) : ptr + 1)
++
++extern void *kimage_map_segment(struct kimage *image,
++				unsigned long addr, unsigned long size);
++extern void kimage_unmap_segment(void *buffer);
++
+ #else /* !CONFIG_KEXEC_CORE */
+ struct pt_regs;
+ struct task_struct;
+@@ -497,6 +506,10 @@ static inline void __crash_kexec(struct pt_regs *regs) { }
+ static inline void crash_kexec(struct pt_regs *regs) { }
+ static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+ static inline int kexec_crash_loaded(void) { return 0; }
++static inline void *kimage_map_segment(struct kimage *image,
++				       unsigned long addr, unsigned long size)
++{ return NULL; }
++static inline void kimage_unmap_segment(void *buffer) { }
+ #define kexec_in_progress false
+ #endif /* CONFIG_KEXEC_CORE */
+ 
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index 3d578c6fefee..424e303fce25 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -594,11 +594,6 @@ void kimage_terminate(struct kimage *image)
+ 	*image->entry = IND_DONE;
  }
  
-+static int ima_populate_buf_at_kexec_execute(unsigned long *buffer_size, void **buffer)
+-#define for_each_kimage_entry(image, ptr, entry) \
+-	for (ptr = &image->head; (entry = *ptr) && !(entry & IND_DONE); \
+-		ptr = (entry & IND_INDIRECTION) ? \
+-			boot_phys_to_virt((entry & PAGE_MASK)) : ptr + 1)
+-
+ static void kimage_free_entry(kimage_entry_t entry)
+ {
+ 	struct page *page;
+@@ -921,6 +916,73 @@ int kimage_load_segment(struct kimage *image,
+ 	return result;
+ }
+ 
++void *kimage_map_segment(struct kimage *image,
++			 unsigned long addr, unsigned long size)
 +{
-+	struct ima_queue_entry *qe;
-+	int ret = 0;
++	unsigned long eaddr = addr + size;
++	unsigned long src_page_addr, dest_page_addr;
++	struct page **src_pages;
++	int i, npages;
++	kimage_entry_t *ptr, entry;
++	void *vaddr = NULL;
 +
 +	/*
-+	 * Ensure the kexec buffer is large enough to hold ima_khdr
++	 * Make sure that we are mapping a whole segment.
 +	 */
-+	if (ima_kexec_file.size < sizeof(ima_khdr)) {
-+		pr_err("%s: Kexec buffer size too low to hold ima_khdr\n",
-+			__func__);
-+		ima_clear_kexec_file();
-+		return -ENOMEM;
-+	}
-+
-+	list_for_each_entry_rcu(qe, &ima_measurements, later) {
-+		if (ima_kexec_file.count < ima_kexec_file.size) {
-+			ima_khdr.count++;
-+			ima_measurements_show(&ima_kexec_file, qe);
-+		} else {
-+			ret = -ENOMEM;
-+			pr_err("%s: Kexec ima_measurements buffer too small\n",
-+				__func__);
++	for (i = 0; i < image->nr_segments; i++) {
++		if (addr == image->segment[i].mem &&
++		    size == image->segment[i].memsz) {
 +			break;
 +		}
 +	}
-+	if (ret < 0)
-+		goto out;
 +
-+	/*
-+	 * fill in reserved space with some buffer details
-+	 * (eg. version, buffer size, number of measurements)
-+	 */
-+	ima_khdr.buffer_size = ima_kexec_file.count;
-+	if (ima_canonical_fmt) {
-+		ima_khdr.version = cpu_to_le16(ima_khdr.version);
-+		ima_khdr.count = cpu_to_le64(ima_khdr.count);
-+		ima_khdr.buffer_size = cpu_to_le64(ima_khdr.buffer_size);
++	if (i == image->nr_segments) {
++		pr_err("%s: No segment matching [%lx, %lx)\n", __func__,
++		       addr, eaddr);
++		return NULL;
 +	}
 +
-+	memcpy(ima_kexec_file.buf, &ima_khdr, sizeof(ima_khdr));
-+	*buffer_size = ima_kexec_file.count;
-+	*buffer = ima_kexec_file.buf;
++	/*
++	 * Collect the source pages and map them in a contiguous VA range.
++	 */
++	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
++	src_pages = kmalloc(sizeof(*src_pages) * npages, GFP_KERNEL);
++	if (!src_pages) {
++		pr_err("%s: Could not allocate ima pages array.\n", __func__);
++		return NULL;
++	}
 +
-+out:
-+	if (ret < 0)
-+		ima_clear_kexec_file();
++	i = 0;
++	for_each_kimage_entry(image, ptr, entry) {
++		if (entry & IND_DESTINATION)
++			dest_page_addr = entry & PAGE_MASK;
++		else if (entry & IND_SOURCE) {
++			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
++				src_page_addr = entry & PAGE_MASK;
++				src_pages[i++] = phys_to_page(src_page_addr);
++				if (i == npages)
++					break;
++				dest_page_addr += PAGE_SIZE;
++			}
++		}
++	}
 +
-+	return ret;
++	/* Sanity check. */
++	WARN_ON(i < npages);
++
++	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
++	if (!vaddr) {
++		pr_err("%s: Could not map imap buffer.\n", __func__);
++		kfree(src_pages);
++	}
++	return vaddr;
 +}
 +
++void kimage_unmap_segment(void *segment_buffer)
++{
++	vunmap(segment_buffer);
++}
 +
- static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 				     unsigned long segment_size)
- {
+ struct kexec_load_limit {
+ 	/* Mutex protects the limit count. */
+ 	struct mutex mutex;
 -- 
 2.25.1
 
