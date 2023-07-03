@@ -2,38 +2,38 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B325EB64DC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60538C001DD
 	for <linux-integrity@archiver.kernel.org>; Mon,  3 Jul 2023 21:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231417AbjGCV5X (ORCPT
+        id S231418AbjGCV5X (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Mon, 3 Jul 2023 17:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60984 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbjGCV5V (ORCPT
+        with ESMTP id S231404AbjGCV5V (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
         Mon, 3 Jul 2023 17:57:21 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7C6321A1
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EEED1E5B
         for <linux-integrity@vger.kernel.org>; Mon,  3 Jul 2023 14:57:20 -0700 (PDT)
 Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (c-98-237-170-177.hsd1.wa.comcast.net [98.237.170.177])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D099320C08FE;
-        Mon,  3 Jul 2023 14:57:19 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D099320C08FE
+        by linux.microsoft.com (Postfix) with ESMTPSA id 80FE920C091F;
+        Mon,  3 Jul 2023 14:57:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 80FE920C091F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1688421440;
-        bh=qcx5Aa65d/0M8PqhuBesEv2N4gHSQORRxOZKyGZ74F8=;
+        bh=gnWZBlqyn9Og/TXFeYVjeHamDdASDQOleIS25w3NzJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r5u2DuzGdZuk9Iw/VerUCmS8YLz6jLTt7JRHgqgwVLYLILLT6VB/MUzKb5f+tNL/o
-         gaVYhG6pyaoUi/Puv79U/15cRH6AWLj6sATN4hVZxSdgboEezHP2xRMLb8zfceyZvH
-         NxyMyU//JHEwsjnGRh8KbT7jEkt1bhpCcffqM6OA=
+        b=BP7uwA9Z4rK9VvYzQq/a+oZbqsOSr96N5eD6OztrEuWAGoJF73lvv03v3otvWdi6J
+         a/ZcVxEWbMTH8QmHKkaxVKNC5VATJGF3EEgrxGhKni2SM6bhCfKxi/DPZEhLzA+RpE
+         CxMBNbGoeEZH0ggjkoRK6QcZwnYEKWCCcuTtutXw=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, noodles@fb.com, bauermann@kolabnow.com,
         kexec@lists.infradead.org, linux-integrity@vger.kernel.org
 Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-Subject: [PATCH 07/10] ima: remove function ima_dump_measurement_list
-Date:   Mon,  3 Jul 2023 14:57:06 -0700
-Message-Id: <20230703215709.1195644-8-tusharsu@linux.microsoft.com>
+Subject: [PATCH 09/10] ima: suspend measurements while the kexec buffer is being copied
+Date:   Mon,  3 Jul 2023 14:57:08 -0700
+Message-Id: <20230703215709.1195644-10-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230703215709.1195644-1-tusharsu@linux.microsoft.com>
 References: <20230703215709.1195644-1-tusharsu@linux.microsoft.com>
@@ -43,91 +43,52 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The ima_dump_measurement_list function was designed to iterate over the
-IMA measurement list and store each entry into a buffer.  The buffer,
-along with its size, would be returned to the caller.  However, the
-function is no longer required in the IMA subsystem.  It previously served
-to dump the measurement list during the kexec 'load' operation, but this
-functionality has been replaced by an alternative approach in this patch
-series.
+If the new measurements are added to the list while the kexec buffer is
+being copied during kexec execute, the buffer may get corrupted, or it can
+go out of sync with TPM PCRs.  This could potentially lead to breaking the
+integrity of the measurements after the kexec soft reboot to the new
+kernel.
 
-Remove the unused ima_dump_measurement_list function from the IMA
-subsystem, to ensure a cleaner and more maintainable code.
+Introduce a check in the ima_add_template_entry function not to measure
+events and return from the function early when the suspend_ima_measurements
+flag is set.
+
+This ensures the consistency of the IMA measurement list during the copying
+of the kexec buffer.  When the suspend_ima_measurements flag is set, any
+new measurements will be ignored until the flag is unset.  This allows the
+buffer to be safely copied without worrying about concurrent modifications
+to the measurement list.  This is crucial for maintaining the integrity of
+the measurements during a kexec soft reboot.
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 ---
- security/integrity/ima/ima_kexec.c | 58 ------------------------------
- 1 file changed, 58 deletions(-)
+ security/integrity/ima/ima_queue.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 224d88ccfe85..424930085c18 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -115,64 +115,6 @@ static int ima_populate_buf_at_kexec_execute(unsigned long *buffer_size, void **
- }
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index cb9abc02a304..5946a26a2849 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -195,6 +195,19 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+ 		}
+ 	}
  
- 
--static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
--				     unsigned long segment_size)
--{
--	struct ima_queue_entry *qe;
--	struct seq_file file;
--	struct ima_kexec_hdr khdr;
--	int ret = 0;
--
--	/* segment size can't change between kexec load and execute */
--	file.buf = vmalloc(segment_size);
--	if (!file.buf) {
--		ret = -ENOMEM;
--		goto out;
--	}
--
--	file.size = segment_size;
--	file.read_pos = 0;
--	file.count = sizeof(khdr);	/* reserved space */
--
--	memset(&khdr, 0, sizeof(khdr));
--	khdr.version = 1;
--	list_for_each_entry_rcu(qe, &ima_measurements, later) {
--		if (file.count < file.size) {
--			khdr.count++;
--			ima_measurements_show(&file, qe);
--		} else {
--			ret = -EINVAL;
--			break;
--		}
--	}
--
--	if (ret < 0)
--		goto out;
--
--	/*
--	 * fill in reserved space with some buffer details
--	 * (eg. version, buffer size, number of measurements)
--	 */
--	khdr.buffer_size = file.count;
--	if (ima_canonical_fmt) {
--		khdr.version = cpu_to_le16(khdr.version);
--		khdr.count = cpu_to_le64(khdr.count);
--		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
--	}
--	memcpy(file.buf, &khdr, sizeof(khdr));
--
--	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
--			     file.buf, file.count < 100 ? file.count : 100,
--			     true);
--
--	*buffer_size = file.count;
--	*buffer = file.buf;
--out:
--	if (ret == -EINVAL)
--		vfree(file.buf);
--	return ret;
--}
--
- /*
-  * Called during kexec_file_load so that IMA can add a segment to the kexec
-  * image for the measurement list for the next kernel.
++	/*
++	 * suspend_ima_measurements will be set if the system is
++	 * undergoing kexec soft boot to a new kernel.
++	 * suspending measurements in this short window ensures the
++	 * consistency of the IMA measurement list during copying
++	 * of the kexec buffer.
++	 */
++	if (atomic_read(&suspend_ima_measurements)) {
++		audit_cause = "measurements_suspended";
++		audit_info = 0;
++		goto out;
++	}
++
+ 	result = ima_add_digest_entry(entry,
+ 				      !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
+ 	if (result < 0) {
 -- 
 2.25.1
 
