@@ -2,55 +2,55 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D753FEB64DA
-	for <linux-integrity@archiver.kernel.org>; Sat,  8 Jul 2023 05:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 637BFC001DD
+	for <linux-integrity@archiver.kernel.org>; Sat,  8 Jul 2023 05:38:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233061AbjGHFhh (ORCPT
+        id S233119AbjGHFh7 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 8 Jul 2023 01:37:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43944 "EHLO
+        Sat, 8 Jul 2023 01:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232905AbjGHFhN (ORCPT
+        with ESMTP id S233010AbjGHFh3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 8 Jul 2023 01:37:13 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F208D2688
-        for <linux-integrity@vger.kernel.org>; Fri,  7 Jul 2023 22:36:59 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id 6a1803df08f44-634ddd17647so18051586d6.2
-        for <linux-integrity@vger.kernel.org>; Fri, 07 Jul 2023 22:36:59 -0700 (PDT)
+        Sat, 8 Jul 2023 01:37:29 -0400
+Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512B02108
+        for <linux-integrity@vger.kernel.org>; Fri,  7 Jul 2023 22:37:01 -0700 (PDT)
+Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-63770af327fso16994156d6.2
+        for <linux-integrity@vger.kernel.org>; Fri, 07 Jul 2023 22:37:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1688794618; x=1691386618;
+        d=paul-moore.com; s=google; t=1688794620; x=1691386620;
         h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=dLpzT15vthbUVO0k71raasVu18kKS27blTVJmNCp9qw=;
-        b=TJeqWacjduwbP6Y+SlQmoAGQHi1lphT6UAEvJNfG8M7m/0FnuH4lofD3tvQHae013R
-         g+kAwyHtWpHISigG4/rbyEzd6fpSmCmFdpqI3eUvmpIpr9NDiKwyDsB7p2lRdYY/qAkP
-         PkrukE7Z5dEBDUbVtA75oqvybWd1JV9qnpP6SM3Zr5QebCmjbU68jnvQbRl0WDdQJ/8C
-         WClvUbL6oPSan2AXFMETYxTuwPuBbRiUYf0EyknQ60FgP+dNrijlvPFt1pax4Az2PMpM
-         6gd3Z0UQjg5Ba4axeUMQN9xQ3CHwGy2GsMJYkmBRfLzybyCLDgybzBWGa37xu+RyDfXa
-         sxWg==
+        bh=mRTut3OlHqKCWiM81ta7SjbBbT2KSyk5zN+hB2sD2J4=;
+        b=T8iQ+dddv8itdTsndAZ+8dqj8A1P6zmK/5ww1ffgNYZFJ8N7sPBE5Okd3UWfpL9P6U
+         DCnZOtUOvhUqObSjP4bjybp5PUZ0RU8Lu/cbXMHhKXLWXOv+Inevf67blcKSyvzfcnvW
+         78TNHLHpSVvTATjOIB44tQoYi+HjS+oaxzw5FJJQtLj8V5rzDhFIPv/o98BKw5a7knP6
+         NB74vkK9ig1S7erKdH3Emo1Jj9Hpmm7WDiWLF2+khj1l9MEJXd+bYaRWWNz6RSacqfFx
+         USFTaGnlXZ3M//ahGa8v0t7KFWdbbL20SunCGMC+HG0KOt8qOrEN7yj3fe7SB5VOeo/q
+         RMxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688794618; x=1691386618;
+        d=1e100.net; s=20221208; t=1688794620; x=1691386620;
         h=in-reply-to:references:subject:cc:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dLpzT15vthbUVO0k71raasVu18kKS27blTVJmNCp9qw=;
-        b=MP9CMxtBtf/nP1StHlnXOg5BFKaCbdLnPhwKl8JRvG/TXjVJHYtND8+/Chx0UIbtAJ
-         7QB72JknAlCh8RrhIuz0iKjd3cHCRPZV6gc1n5r0ekkE7TfuP36peKHlLWzcaRuFKU/A
-         K8YvemVGz4vGzkgDAv/zMZRaJOrFomPp4d6+PN9SGs2Om65iylRkAsi5w9nax9HYBI7f
-         A/7VPp8S1Rig+PxfFBvv4lscrhnRo2Y1jKRc4uLJQEgPQ2TV7q5BfQSmErX3Dfb35PxR
-         kX/EGrsmKPg4Z2bjuGvHTPerYlCEMdcJ2+7CvdLVnrlqwILlRPL1asbewXciAHQI26mU
-         wc4w==
-X-Gm-Message-State: ABy/qLY6jSbD3drraHL8Zr1u4o9VH9bKm1Xf3Z8YXLqfBVIkS+SWUbZ1
-        rb9PLFxXg0unfDiJ35voq78WDeT2gYhpHEY3zg==
-X-Google-Smtp-Source: APBJJlGlLmfhTVjB4mohkDIyT1aO06AiFpA+DVrG9bmKubtLHJbdM9WNxESZ9ZiNvJziNKwf2PnzYA==
-X-Received: by 2002:a0c:df07:0:b0:635:dfe1:c203 with SMTP id g7-20020a0cdf07000000b00635dfe1c203mr6459539qvl.64.1688794618672;
-        Fri, 07 Jul 2023 22:36:58 -0700 (PDT)
+        bh=mRTut3OlHqKCWiM81ta7SjbBbT2KSyk5zN+hB2sD2J4=;
+        b=gxouRV+GOHP3Uzs2xs4D+GXN4bEMyvpl/AdmScMYtD5YOo6P6P+g3HSoXKjo/1GIOk
+         31L4gBdNb6gJNShQdTVStNyukfSko0emFp2pJawQyr8Vk0xsWOvVADG91EWCuKdT/y0r
+         2zzM3+8D53MCvG/BZEKVdDIexIU7FNCYziJGXqI02ZLpT0W6q52gIjbAGamKJodzS82E
+         5cU9gYDkKxdo2OhXBEFe7eyipM7xexJrHiF0uAUs07YREKyW4sOWssjKZkHWRZo+Hjm4
+         1HBd6cpp3gs2DA/goIegims6tofvDXZLOOoUsiO2t4NguPsrkk1FHsMEvZ3hV/237VGf
+         uq2w==
+X-Gm-Message-State: ABy/qLZm7y3xGvePc4slhbu0AYZdl/zawEZI0C7jNkZVCMdd9FnUwv3U
+        dosYf6ZbdRToOv07itc6/YE2
+X-Google-Smtp-Source: APBJJlHQS5XBlGZlR3aeI4P59arzhT77oU+85EVLNEDa/0Wxlnb/6yUwkLDjlhT0yg5nRtXN/pQPYw==
+X-Received: by 2002:a0c:dc87:0:b0:62d:efa2:f19f with SMTP id n7-20020a0cdc87000000b0062defa2f19fmr6824435qvk.54.1688794620221;
+        Fri, 07 Jul 2023 22:37:00 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id o20-20020a0cf4d4000000b0063007ccaf42sm2971617qvm.57.2023.07.07.22.36.58
+        by smtp.gmail.com with ESMTPSA id m6-20020a0cdb86000000b006362c5760f8sm2952625qvk.139.2023.07.07.22.36.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Jul 2023 22:36:58 -0700 (PDT)
-Date:   Sat, 08 Jul 2023 01:36:57 -0400
-Message-ID: <2308135fa59ff970ca88649872acf35d.paul@paul-moore.com>
+        Fri, 07 Jul 2023 22:36:59 -0700 (PDT)
+Date:   Sat, 08 Jul 2023 01:36:59 -0400
+Message-ID: <59d0824741118eb63b8ced046f1741f4.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
 To:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
         zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
@@ -63,111 +63,216 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
         Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH RFC v10 5/17] ipe: introduce 'boot_verified' as a trust  provider
-References: <1687986571-16823-6-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1687986571-16823-6-git-send-email-wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v10 7/17] ipe: add userspace interface
+References: <1687986571-16823-8-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1687986571-16823-8-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 On Jun 28, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> IPE is designed to provide system level trust guarantees, this usually
-> implies that trust starts from bootup with a hardware root of trust,
-> which validates the bootloader. After this, the bootloader verifies the
-> kernel and the initramfs.
-> 
-> As there's no currently supported integrity method for initramfs, and
-> it's typically already verified by the bootloader, introduce a property
-> that causes the first superblock to have an execution to be "pinned",
-> which is typically initramfs.
-> 
-> When the "pinned" device is unmounted, it will be "unpinned" and
-> `boot_verified` property will always evaluate to false afterward.
-> 
-> We use a pointer with a spin_lock to "pin" the device instead of rcu
-> because rcu synchronization may sleep, which is not allowed when
-> unmounting a device.
+> As is typical with LSMs, IPE uses securityfs as its interface with
+> userspace. for a complete list of the interfaces and the respective
+> inputs/outputs, please see the documentation under
+> admin-guide/LSM/ipe.rst
 > 
 > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > ---
->  security/ipe/eval.c          | 72 +++++++++++++++++++++++++++++++++++-
->  security/ipe/eval.h          |  2 +
->  security/ipe/hooks.c         | 12 ++++++
->  security/ipe/hooks.h         |  2 +
->  security/ipe/ipe.c           |  1 +
->  security/ipe/policy.h        |  2 +
->  security/ipe/policy_parser.c | 37 +++++++++++++++++-
->  7 files changed, 126 insertions(+), 2 deletions(-)
+>  security/ipe/Makefile    |   2 +
+>  security/ipe/fs.c        | 101 ++++++++
+>  security/ipe/fs.h        |  16 ++
+>  security/ipe/ipe.c       |   3 +
+>  security/ipe/ipe.h       |   2 +
+>  security/ipe/policy.c    | 111 +++++++++
+>  security/ipe/policy.h    |   9 +
+>  security/ipe/policy_fs.c | 481 +++++++++++++++++++++++++++++++++++++++
+>  8 files changed, 725 insertions(+)
+>  create mode 100644 security/ipe/fs.c
+>  create mode 100644 security/ipe/fs.h
+>  create mode 100644 security/ipe/policy_fs.c
 
-The compilation errors continue into this patch.
+...
 
-> diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
-> index 27e5767480b0..28c14adfe6d2 100644
-> --- a/security/ipe/policy_parser.c
-> +++ b/security/ipe/policy_parser.c
-> @@ -265,6 +265,12 @@ static enum ipe_action_type parse_action(char *t)
->  	return match_token(t, action_tokens, args);
->  }
+> diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+> index 4069ff075093..3e8e4a06a044 100644
+> --- a/security/ipe/policy.c
+> +++ b/security/ipe/policy.c
+> @@ -7,9 +7,36 @@
+>  #include <linux/verification.h>
 >  
-> +static const match_table_t property_tokens = {
-> +	{__IPE_PROP_BOOT_VERIFIED_FALSE,	"boot_verified=FALSE"},
-> +	{__IPE_PROP_BOOT_VERIFIED_TRUE,		"boot_verified=TRUE"},
-> +	{__IPE_PROP_INVALID,			NULL}
-> +};
+>  #include "ipe.h"
+> +#include "eval.h"
+> +#include "fs.h"
+>  #include "policy.h"
+>  #include "policy_parser.h"
+>  
+> +/* lock for synchronizing writers across ipe policy */
+> +DEFINE_MUTEX(ipe_policy_lock);
+> +
+> +/**
+> + * ver_to_u64 - Convert an internal ipe_policy_version to a u64.
+> + * @p: Policy to extract the version from.
+> + *
+> + * Bits (LSB is index 0):
+> + *	[48,32] -> Major
+> + *	[32,16] -> Minor
+> + *	[16, 0] -> Revision
+> + *
+> + * Return: u64 version of the embedded version structure.
+> + */
+> +static inline u64 ver_to_u64(const struct ipe_policy *const p)
+> +{
+> +	u64 r;
+> +
+> +	r = (((u64)p->parsed->version.major) << 32)
+> +	  | (((u64)p->parsed->version.minor) << 16)
+> +	  | ((u64)(p->parsed->version.rev));
+> +
+> +	return r;
+> +}
 > +
 >  /**
->   * parse_property - Parse the property type given a token string.
->   * @t: Supplies the token string to be parsed.
-> @@ -277,7 +283,36 @@ static enum ipe_action_type parse_action(char *t)
->   */
->  static int parse_property(char *t, struct ipe_rule *r)
->  {
-> -	return -EBADMSG;
-> +	substring_t args[MAX_OPT_ARGS];
-> +	struct ipe_prop *p = NULL;
+>   * ipe_free_policy - Deallocate a given IPE policy.
+>   * @p: Supplies the policy to free.
+> @@ -21,6 +48,7 @@ void ipe_free_policy(struct ipe_policy *p)
+>  	if (IS_ERR_OR_NULL(p))
+>  		return;
+>  
+> +	ipe_del_policyfs_node(p);
+>  	free_parsed_policy(p->parsed);
+>  	if (!p->pkcs7)
+>  		kfree(p->text);
+> @@ -39,6 +67,65 @@ static int set_pkcs7_data(void *ctx, const void *data, size_t len,
+>  	return 0;
+>  }
+>  
+> +/**
+> + * ipe_update_policy - parse a new policy and replace @old with it.
+
+What does "@old" refer to?  I'm guessing you want to drop the "@".
+
+> + * @root: Supplies a pointer to the securityfs inode saved the policy.
+> + * @text: Supplies a pointer to the plain text policy.
+> + * @textlen: Supplies the length of @text.
+> + * @pkcs7: Supplies a pointer to a buffer containing a pkcs7 message.
+> + * @pkcs7len: Supplies the length of @pkcs7len.
+> + *
+> + * @text/@textlen is mutually exclusive with @pkcs7/@pkcs7len - see
+> + * ipe_new_policy.
+> + *
+> + * Return:
+> + * * !IS_ERR	- The old policy
+
+"The old policy" is what?
+
+> + * * -ENOENT	- Policy doesn't exist
+> + * * -EINVAL	- New policy is invalid
+> + */
+> +struct ipe_policy *ipe_update_policy(struct inode *root,
+> +				     const char *text, size_t textlen,
+> +				     const char *pkcs7, size_t pkcs7len)
+> +{
 > +	int rc = 0;
-> +	int token;
+> +	struct ipe_policy *old, *ap, *new = NULL;
 > +
-> +	p = kzalloc(sizeof(*p), GFP_KERNEL);
-> +	if (!p)
-> +		return -ENOMEM;
+> +	lockdep_assert_held(&ipe_policy_lock);
 > +
-> +	token = match_token(t, property_tokens, args);
+> +	old = (struct ipe_policy *)root->i_private;
+> +	if (!old)
+> +		return ERR_PTR(-ENOENT);
 > +
-> +	switch (token) {
-> +	case __IPE_PROP_BOOT_VERIFIED_FALSE:
-> +	case __IPE_PROP_BOOT_VERIFIED_TRUE:
-> +		p->type = token;
-> +		break;
-> +	case __IPE_PROP_INVALID:
-
-You generally don't need to explicitly specify a case if the code
-immediately falls through to 'default'.
-
-> +	default:
-> +		rc = -EBADMSG;
-> +		break;
-> +	}
-> +	if (rc)
+> +	new = ipe_new_policy(text, textlen, pkcs7, pkcs7len);
+> +	if (IS_ERR(new))
+> +		return new;
+> +
+> +	if (strcmp(new->parsed->name, old->parsed->name)) {
+> +		rc = -EINVAL;
 > +		goto err;
-> +	list_add_tail(&p->next, &r->props);
+> +	}
 > +
+> +	if (ver_to_u64(old) > ver_to_u64(new)) {
+> +		rc = -EINVAL;
+> +		goto err;
+> +	}
+> +
+> +	root->i_private = new;
+> +
+> +	ap = rcu_dereference_protected(ipe_active_policy,
+> +				       lockdep_is_held(&ipe_policy_lock));
+> +	if (old == ap)
+> +		rcu_assign_pointer(ipe_active_policy, new);
+> +
+> +	swap(new->policyfs, old->policyfs);
+
+We don't have to worry about @new, but is there a guarantee that this
+function is the only one attempting to modify @old?
+
+*EDIT*: I found that @root is locked by the caller, that's good.  I
+would suggest adding this assumption/requirement to the function's
+description.  In general whenever a function requires something from
+a caller it should be documented in the function's description.
+
 > +out:
-> +	return rc;
+> +	return (rc < 0) ? ERR_PTR(rc) : old;
 > +err:
-> +	kfree(p);
+> +	ipe_free_policy(new);
 > +	goto out;
+> +}
+> +
 
-Once again, don't use a goto when the jump destination simply does a
-return, do the return directly.
+...
 
->  }
->  
->  /**
-> -- 
-> 2.25.1
+> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
+> new file mode 100644
+> index 000000000000..52a120118cda
+> --- /dev/null
+> +++ b/security/ipe/policy_fs.c
+> @@ -0,0 +1,481 @@
+
+...
+
+> +/**
+> + * getactive - Read handler for "ipe/policies/$name/active".
+> + * @f: Supplies a file structure representing the securityfs node.
+> + * @data: Suppleis a buffer passed to the write syscall.
+> + * @len: Supplies the length of @data.
+> + * @offset: unused.
+> + *
+> + * @data will be populated with the 1 or 0 depending on if the
+> + * corresponding policy is active.
+> + *
+> + * Return:
+> + * * >0	- Success, Length of buffer written
+> + * * <0	- Error
+> + */
+> +static ssize_t getactive(struct file *f, char __user *data,
+> +			 size_t len, loff_t *offset)
+> +{
+> +	int rc = 0;
+> +	const char *str;
+> +	struct inode *root = NULL;
+> +	const struct ipe_policy *p = NULL;
+> +
+> +	root = d_inode(f->f_path.dentry->d_parent);
+> +
+> +	inode_lock_shared(root);
+> +	p = (struct ipe_policy *)root->i_private;
+> +	if (!p) {
+> +		inode_unlock_shared(root);
+> +		return -ENOENT;
+> +	}
+> +	inode_unlock_shared(root);
+> +
+> +	str = (p == rcu_access_pointer(ipe_active_policy)) ? "1" : "0";
+
+The line above should be wrapped with a RCU lock.
+
+> +	rc = simple_read_from_buffer(data, len, offset, str, 1);
+> +
+> +	return rc;
+> +}
 
 --
 paul-moore.com
