@@ -2,26 +2,26 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC1DEB64DD
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Jul 2023 16:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6ABC04A6A
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Jul 2023 16:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230501AbjGUQh1 (ORCPT
+        id S230098AbjGUQxh (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36740 "EHLO
+        Fri, 21 Jul 2023 12:53:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230388AbjGUQgm (ORCPT
+        with ESMTP id S229492AbjGUQxg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:36:42 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 575D835A0;
-        Fri, 21 Jul 2023 09:35:53 -0700 (PDT)
+        Fri, 21 Jul 2023 12:53:36 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 412901FD2;
+        Fri, 21 Jul 2023 09:53:34 -0700 (PDT)
 Received: from mail02.huawei.com (unknown [172.18.147.228])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4R6vwH1F1sz9ttD1;
-        Sat, 22 Jul 2023 00:22:23 +0800 (CST)
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R6vwh6X9Kz9xFPw;
+        Sat, 22 Jul 2023 00:22:44 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S14;
-        Fri, 21 Jul 2023 17:35:10 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S2;
+        Fri, 21 Jul 2023 17:33:39 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
@@ -30,33 +30,30 @@ Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
         hch@lst.de, mjg59@srcf.ucam.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 12/12] tools/digest-lists: Add rpm digest list generator and parser
-Date:   Fri, 21 Jul 2023 18:33:26 +0200
-Message-Id: <20230721163326.4106089-13-roberto.sassu@huaweicloud.com>
+Subject: [RFC][PATCH 00/12] integrity: Introduce a digest cache
+Date:   Fri, 21 Jul 2023 18:33:14 +0200
+Message-Id: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
-References: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S14
-X-Coremail-Antispam: 1UD129KBjvAXoWfJr17Jw1DuF1UWFWkurykKrg_yoW8XF45uo
-        Zaga13Gan0kr18uF4vkFy3Xa1ayanYya1UA3yrWryqq3W8AFy0g3Z5KanrXrW7ur4rJryS
-        qr4Iq343Aw4xW3s5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-        AaLaJ3UjIYCTnIWjp_UUUOo7kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
-        8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF
-        0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-        j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
-        AFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x02
-        67AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F4
-        0Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
-        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxV
-        Aaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
-        xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
-        1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY
-        6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2js
-        IE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIF
-        yTuYvjxUxrcTDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4zMmQAAsr
+X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S2
+X-Coremail-Antispam: 1UD129KBjvAXoW3uF45Gr47XFyxKFWkXr45trb_yoW8Xr1fuo
+        Zaqa13Zw4DKry3CF4q9FnrZFsrWanYgw1xJrWvqrW5X3WfXFWUG3Z8Ca17XFy3Zr18Gry7
+        Cw10q3yUJr4ktr93n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+        AaLaJ3UjIYCTnIWjp_UUUYf7kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
+        8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+        AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF
+        7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7
+        CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+        x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+        CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF
+        7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI
+        8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AK
+        xVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI
+        8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY
+        6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2Kf
+        nxnUUI43ZEXa7IU8imRUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DJPgAAsW
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -64,549 +61,316 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Add a generator to generate an rpm digest list from one or multiple RPM
-package headers. The digest list contains the RPM magic string, the content
-of the RPMTAG_IMMUTABLE section, and the user asymmetric key signature
-(module-style) converted from the PGP signature in the RPMTAG_RSAHEADER
-section.
+A bit of history first. The original name of this work was IMA Digest
+Lists, which was somehow considered too invasive. I then moved the code
+to a separate component named DIGLIM (DIGest Lists Integrity Module), with
+the purpose of removing the complexity away of IMA, and also add the
+possibility of using it with other kernel components (e.g. Integrity Policy
+Enforcement, or IPE).
 
-This generator has as prerequisite gpg support for a new command
---conv-kernel, which converts the PGP format to a user asymmetric key
-signature.
+Since it was originally proposed, in 2017, this work grew up a lot thanks
+to the feedback of my colleagues and external reviewers. It became
+integrally part of the openEuler distribution since end of 2020. The
+upstreaming process has been difficult, also due to the fact too many
+features were included in the proposals.
 
-Also add a parser of rpm digest list, to show the content (digest algorithm
-and value, and file path), and to add/remove the security.digest_list xattr
-to/from each file in the RPM packages.
+So, I decided to take a step back and find the minimum possible set of
+features that would make this work meaningful. The really minimum set that
+would make appraisal work is to parse the RPM header (after signature
+verification) containing the reference digests and compare the calculated
+file digest with them. That would be similar to reading the signature from
+the xattr and verifying the digest.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- tools/digest-lists/.gitignore              |   2 +
- tools/digest-lists/Makefile                |  10 +-
- tools/digest-lists/generators/generators.h |   2 +
- tools/digest-lists/generators/rpm.c        | 257 +++++++++++++++++++++
- tools/digest-lists/manage_digest_lists.c   |   2 +
- tools/digest-lists/parsers/parsers.h       |   2 +
- tools/digest-lists/parsers/rpm.c           | 169 ++++++++++++++
- 7 files changed, 442 insertions(+), 2 deletions(-)
+But, maybe that was too minimal. It does not make sense to appraise and
+parse again the same RPM header for another packaged files. And should not
+be necessarily tied to appraisal, as it would be useful for measurement too
+(to make a PCR predictable). Please read the Benefits section here:
+
+https://lore.kernel.org/linux-integrity/20210914163401.864635-1-roberto.sassu@huawei.com/
+
+So, this is how the integrity digest cache is born.
+
+The main difference with the previous attempts is that there is not a
+centralized place to store file/metadata digests, but they are stored in
+the digest cache, attached to the file (the digest list) the digest cache
+was created from.
+
+The link with the files being measured/appraised is the new
+security.digest_list xattr containing the full path of the digest list
+they refer to. At the time there is a measurement/appraisal, the digest
+cache is built by reading (after appraisal) and parsing the digest list
+(a TLV format and the RPM package format are currently supported).
+Extracted digests are added to a per-package hash table, sized depending on
+the number of elements.
+
+Lookup should be much faster, as we are not anymore searching in a hash
+table with 80000 digests, but most of the time with 100 or less. Also,
+there is no need for locking after creation, the digest cache does not
+change depending on writes (it would not make sense, since digest lists are
+signed). Another very important feature is that the digest cache is
+reclaimable, i.e. it disappears if the inode is evicted from memory. In
+that case, the digest cache need to be initialized again. The digest cache
+does not disappear while IMA is using it, by acquiring and releasing a
+reference to the path structure of the digest list.
+
+What about the predictability of PCRs, that some folks are trying to
+address with the Unified Kernel Image? The concept of digest lists is
+quite simple: measure the digest list to represent the possible access of a
+group of files, instead of recording individual file accesses. If digest
+lists are measured in a deterministic way, the PCR remains predictable
+despite files are accessed in a different order. We currently don't support
+xattrs in the initial ram disk, but if we did and the initial ram disk uses
+the same measured files as the root filesystem, the PCR would still remain
+predictable.
+
+Another important point of the design was to avoid any possible
+interference with existing IMA measurement and appraisal behavior. This
+has been achieved in the following way.
+
+First, the digest cache needs to be explicitly enabled in the IMA policy
+through the new policy keyword 'digest_cache=content'. Second, new-style
+measurements cannot be done on the default IMA PCR, a policy writer must
+specify a different PCR or the policy will be rejected. Also, the use of
+the digest cache is incompatible with other appraisal methods, e.g. with
+xattrs or a modsig. The policy writer cannot specify any of the other
+methods if it includes the digest_cache directive. Finally, the digest
+cache does not bypass EVM too. Files matched with the digest caches can
+only be opened read-only, to prevent updating an unverified HMAC to a valid
+one.
+
+Another incorrect policy combination is forbidden. The use of the
+digest_cache directive alone does not enable the new behavior. The action
+for which the digest cache should be used should have also be done on the
+digest list itself. Otherwise, one cannot explain why there are no
+measurements (if the digest list was not measured for example). The same
+applies for appraisal.
+
+The last part I wanted to talk about is about the digest list parsers. This
+was a long debate. In the original proposal, Matthew Garrett and Christoph
+Hellwig said that adding parsers in the kernel is not scalable and not a
+good idea in general. While I do agree with them, I'm also thinking what
+benefits we get if we relax a bit this requirement. If we merge this patch
+set and the dependency (user asymmetric keys and signatures) today, we are
+immediately able to have a predictable PCR for measurement, and do
+appraisal at least of executable code without additional support from the
+Linux distributions. We would need a small rpm plugin to write/remove RPM
+headers and their signature to/from the disk as soon as packages are
+installed/removed.
+
+Over the years, I have tried many alternatives to the kernel-based parsers.
+In the very first version, we supported only one digest list format in the
+kernel, and injected the digest list to each package at build time. While
+it works, it is still one way to do that, others don't support it and it is
+building infrastructure-dependent.
+
+I have tried to do the conversion from the RPM format to the kernel format
+in user space, with the idea that the process doing it could be isolated
+against an untrusted root. I had a recent discussion with the security
+folks and they don't seem excited about it.
+
+I have fully implemented DIGLIM and PGP keys and signatures support in
+eBPF. The idea itself of being able to add kernel functionality in a safe
+way without touching the kernel is very nice, and I would have pursued it
+more. However, after I found LSM policy bypass and other bugs and after my
+patches were not accepted by the maintainers, I didn't really feel I could
+rely on this subsystem. So, back to the original approach for now,
+maintainers seem to be more incline to accept kernel code, if there is a
+need for strong isolation. In the future, we might work on better
+alternative.
+
+This patch set depends on:
+
+https://lore.kernel.org/linux-integrity/20230720153247.3755856-2-roberto.sassu@huaweicloud.com/
+
+which allows to appraise RPM package headers with the PGP keys of Linux
+distribution vendors.
+
+
+Patch 1 introduces a new hook to identify the loading of digest lists and
+consequently appraise them.
+
+Patches 2-4 implement the digest cache, and an iterator to prefetch the
+digest lists to measure them in a deterministic way.
+
+Patches 5-6 implement the currently supported digest list formats: tlv and
+rpm. The tlv format relies on the TLV parser defined in the patch set
+mentioned above.
+
+Patches 7-9 enable the usage of the digest cache in IMA for measurement and
+appraisal.
+
+Patches 10-12 add a tool to manage digest lists.
+
+If you are curious to try on an existing system, you first need to build
+gpg with the patches in the previous patch set, and convert the PGP keys of
+your Linux distribution to the new user asymmetric key format:
+
+$ gpg --conv-kernel <path of PGP key> >> certs/uasym_keys.bin
+
+This embeds the converted keys in the kernel image. Then, enable the
+following kernel options:
+
+CONFIG_INTEGRITY_DIGEST_CACHE=y
+CONFIG_UASYM_KEYS_SIGS=y
+CONFIG_UASYM_PRELOAD_PUBLIC_KEYS=y
+
+and rebuild the kernel with the patches applied. After boot, build and
+install the digest list tool in tools/digest-lists, and execute:
+
+$ manage_digest_lists -o gen -d /etc/digest_lists -i rpmdb -f rpm
+
+You also need the new gpg when you execute this tool, to convert the PGP
+signatures of the RPM headers to the user asymmetric key format.
+
+You may want to add the following additional files in a digest list by
+creating a file named 'list' with the content:
+
+/usr/bin/manage_digest_lists
+/usr/lib64/libgen-tlv-list.so
+/usr/lib64/libgen-rpm-list.so
+/usr/lib64/libparse-rpm-list.so
+/usr/lib64/libparse-tlv-list.so
+
+and, execute:
+
+$ manage_digest_lists -i list -L -d /etc/digest_lists -o gen -f tlv
+
+You need to sign the created file:
+
+scripts/sign-file sha256 certs/signing_key.pem certs/signing_key.pem /etc/digest_lists/tlv-list
+
+The final step is to add security.digest_list to each file with:
+
+$ manage_digest_lists -i /etc/digest_lists -o add-xattr
+
+After that, create the following policy in /etc/ima/ima-policy:
+
+dont_measure fsmagic=0x01021994
+dont_appraise fsmagic=0x01021994
+appraise func=BPRM_CHECK digest_cache=content
+appraise func=MMAP_CHECK digest_cache=content
+appraise func=DIGEST_LIST_CHECK appraise_type=imasig|modsig
+measure func=DIGEST_LIST_CHECK template=ima-modsig pcr=11
+measure func=BPRM_CHECK digest_cache=content pcr=11
+measure func=MMAP_CHECK digest_cache=content pcr=11
+
+I'm excluding tmpfs for now, we need to deal with memfd.
+
+Before loading the policy, you could enable the dynamic debug with:
+
+$ echo "file tlv* +p" > /sys/kernel/debug/dynamic_debug/control
+$ echo "file rpm* +p" > /sys/kernel/debug/dynamic_debug/control
+$ echo "file digest* +p" > /sys/kernel/debug/dynamic_debug/control
+
+Or add the same strings with the dyndbg= option in the kernel command line.
+
+Then, just cat the policy to IMA:
+
+$ cat /etc/ima/ima-policy > /sys/kernel/security/ima/policy
+
+If that worked, you can reboot the system. Systemd will take care of
+loading the IMA policy at boot. Everything works for me on Fedora 38.
+
+You can check the content of the measurement list:
+
+$ cat /sys/kernel/security/ima/ascii_runtime_measurements
+
+You will see only the measurement of the digest lists, not of the other
+files. If you try:
+
+$ cp -a /bin/cat .
+$ ./cat
+
+That will work. But if you do:
+
+$ echo 1 >> cat
+$ cat
+-bash: ./cat: Permission denied
+
+Execution will be denied, and you will see a new entry in the measurement
+list (honestly, it should not be there, as access to the file was denied):
+
+11 50b5a68bea0776a84eef6725f17ce474756e51c0 ima-ng sha256:15e1efee080fe54f5d7404af7e913de01671e745ce55215d89f3d6521d3884f0 /root/cat
+
+Finally, you could try to evict inodes from memory, to free the digest
+cache:
+
+$ echo 3 > /proc/sys/vm/drop_caches
+
+You will see in the kernel logs messages like:
+
+[  313.032536] DIGEST CACHE: Remove digest sha256:102900208eef27b766380135906d431dba87edaa7ec6aa72e6ebd3dd67f3a97b from digest list /etc/digest_lists/rpm-libseccomp-2.5.3-4.fc38.x86_64
+
+Roberto Sassu (12):
+  ima: Introduce hook DIGEST_LIST_CHECK
+  integrity: Introduce a digest cache
+  integrity/digest_cache: Add functions to populate and search
+  integrity/digest_cache: Iterate over digest lists in same dir
+  integrity/digest_cache: Parse tlv digest lists
+  integrity/digest_cache: Parse rpm digest lists
+  ima: Add digest_cache policy keyword
+  ima: Use digest cache for measurement
+  ima: Use digest cache for appraisal
+  tools: Add tool to manage digest lists
+  tools/digest-lists: Add tlv digest list generator and parser
+  tools/digest-lists: Add rpm digest list generator and parser
+
+ Documentation/ABI/testing/ima_policy          |   6 +-
+ MAINTAINERS                                   |   1 +
+ include/linux/kernel_read_file.h              |   1 +
+ include/uapi/linux/tlv_digest_list.h          |  59 +++
+ include/uapi/linux/xattr.h                    |   3 +
+ security/integrity/Kconfig                    |  12 +
+ security/integrity/Makefile                   |   4 +
+ security/integrity/digest_cache.c             | 430 ++++++++++++++++++
+ security/integrity/digest_cache.h             | 113 +++++
+ security/integrity/digest_cache_iter.c        | 163 +++++++
+ .../integrity/digest_list_parsers/parsers.h   |  15 +
+ security/integrity/digest_list_parsers/rpm.c  | 174 +++++++
+ security/integrity/digest_list_parsers/tlv.c  | 188 ++++++++
+ security/integrity/iint.c                     |   7 +
+ security/integrity/ima/ima.h                  |  17 +-
+ security/integrity/ima/ima_api.c              |  22 +-
+ security/integrity/ima/ima_appraise.c         |  16 +-
+ security/integrity/ima/ima_main.c             |  39 +-
+ security/integrity/ima/ima_policy.c           |  54 ++-
+ security/integrity/integrity.h                |   5 +
+ tools/Makefile                                |  16 +-
+ tools/digest-lists/.gitignore                 |   7 +
+ tools/digest-lists/Makefile                   |  72 +++
+ tools/digest-lists/common.c                   | 163 +++++++
+ tools/digest-lists/common.h                   |  90 ++++
+ tools/digest-lists/generators/generators.h    |  18 +
+ tools/digest-lists/generators/rpm.c           | 257 +++++++++++
+ tools/digest-lists/generators/tlv.c           | 168 +++++++
+ tools/digest-lists/manage_digest_lists.c      | 349 ++++++++++++++
+ tools/digest-lists/manage_digest_lists.txt    |  82 ++++
+ tools/digest-lists/parsers/parsers.h          |  16 +
+ tools/digest-lists/parsers/rpm.c              | 169 +++++++
+ tools/digest-lists/parsers/tlv.c              | 195 ++++++++
+ tools/digest-lists/parsers/tlv_parser.h       |  38 ++
+ 34 files changed, 2942 insertions(+), 27 deletions(-)
+ create mode 100644 include/uapi/linux/tlv_digest_list.h
+ create mode 100644 security/integrity/digest_cache.c
+ create mode 100644 security/integrity/digest_cache.h
+ create mode 100644 security/integrity/digest_cache_iter.c
+ create mode 100644 security/integrity/digest_list_parsers/parsers.h
+ create mode 100644 security/integrity/digest_list_parsers/rpm.c
+ create mode 100644 security/integrity/digest_list_parsers/tlv.c
+ create mode 100644 tools/digest-lists/.gitignore
+ create mode 100644 tools/digest-lists/Makefile
+ create mode 100644 tools/digest-lists/common.c
+ create mode 100644 tools/digest-lists/common.h
+ create mode 100644 tools/digest-lists/generators/generators.h
  create mode 100644 tools/digest-lists/generators/rpm.c
+ create mode 100644 tools/digest-lists/generators/tlv.c
+ create mode 100644 tools/digest-lists/manage_digest_lists.c
+ create mode 100644 tools/digest-lists/manage_digest_lists.txt
+ create mode 100644 tools/digest-lists/parsers/parsers.h
  create mode 100644 tools/digest-lists/parsers/rpm.c
+ create mode 100644 tools/digest-lists/parsers/tlv.c
+ create mode 100644 tools/digest-lists/parsers/tlv_parser.h
 
-diff --git a/tools/digest-lists/.gitignore b/tools/digest-lists/.gitignore
-index 9a75ae766ff..51ca25f3b50 100644
---- a/tools/digest-lists/.gitignore
-+++ b/tools/digest-lists/.gitignore
-@@ -3,3 +3,5 @@ manage_digest_lists
- manage_digest_lists.1
- libgen-tlv-list.so
- libparse-tlv-list.so
-+libgen-rpm-list.so
-+libparse-rpm-list.so
-diff --git a/tools/digest-lists/Makefile b/tools/digest-lists/Makefile
-index 23f9fa3b588..2c8089affb8 100644
---- a/tools/digest-lists/Makefile
-+++ b/tools/digest-lists/Makefile
-@@ -15,8 +15,8 @@ CFLAGS=-ggdb -Wall
- 
- PROGS=manage_digest_lists
- 
--GENERATORS=libgen-tlv-list.so
--PARSERS=libparse-tlv-list.so
-+GENERATORS=libgen-tlv-list.so libgen-rpm-list.so
-+PARSERS=libparse-tlv-list.so libparse-rpm-list.so
- 
- MAN1=manage_digest_lists.1
- 
-@@ -31,9 +31,15 @@ manage_digest_lists: manage_digest_lists.c common.c $(GENERATORS) $(PARSERS)
- libgen-tlv-list.so: generators/tlv.c common.c
- 	$(CC) $(CFLAGS) -fPIC --shared -Wl,-soname,libgen-tlv-list.so $^ -o $@
- 
-+libgen-rpm-list.so: generators/rpm.c common.c
-+	$(CC) $(CFLAGS) -fPIC --shared -Wl,-soname,libgen-rpm-list.so $^ -o $@ -lrpm -lrpmio
-+
- libparse-tlv-list.so: parsers/tlv.c common.c ../../lib/tlv_parser.c
- 	$(CC) $(CFLAGS) -fPIC --shared -Wl,-soname,libparse-tlv-list.so $^ -o $@ -I parsers
- 
-+libparse-rpm-list.so: parsers/rpm.c common.c
-+	$(CC) $(CFLAGS) -fPIC --shared -Wl,-soname,libparse-rpm-list.so $^ -o $@ -I parsers -lrpm -lrpmio
-+
- ifneq ($(findstring $(MAKEFLAGS),s),s)
-   ifneq ($(V),1)
-      QUIET_A2X = @echo '  A2X     '$@;
-diff --git a/tools/digest-lists/generators/generators.h b/tools/digest-lists/generators/generators.h
-index 9830b791667..ff3ed6ac8d4 100644
---- a/tools/digest-lists/generators/generators.h
-+++ b/tools/digest-lists/generators/generators.h
-@@ -14,3 +14,5 @@
- void *tlv_list_gen_new(int dirfd, char *input, enum hash_algo algo);
- int tlv_list_gen_add(int dirfd, void *ptr, char *input);
- void tlv_list_gen_close(void *ptr);
-+
-+int rpm_list_gen_add(int dirfd, void *ptr, char *input);
-diff --git a/tools/digest-lists/generators/rpm.c b/tools/digest-lists/generators/rpm.c
-new file mode 100644
-index 00000000000..29e7a6eb0ca
---- /dev/null
-+++ b/tools/digest-lists/generators/rpm.c
-@@ -0,0 +1,257 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017-2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Generate rpm digest lists.
-+ */
-+
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+#include <limits.h>
-+#include <string.h>
-+#include <sys/wait.h>
-+#include <sys/xattr.h>
-+#include <linux/xattr.h>
-+#include <rpm/rpmlib.h>
-+#include <rpm/header.h>
-+#include <rpm/rpmts.h>
-+#include <rpm/rpmdb.h>
-+#include <rpm/rpmlog.h>
-+#include <rpm/rpmtag.h>
-+#include <rpm/rpmpgp.h>
-+#include <rpm/rpmmacro.h>
-+#include <asm/byteorder.h>
-+
-+#include "../common.h"
-+
-+static int gen_filename(Header rpm, char *filename, int filename_len)
-+{
-+	char *_filename = headerFormat(rpm, "rpm-%{nvra}", NULL);
-+
-+	if (!_filename)
-+		return -ENOMEM;
-+
-+	strncpy(filename, _filename, filename_len);
-+	free(_filename);
-+	return 0;
-+}
-+
-+static int write_rpm_header(Header rpm, int dirfd, char *filename)
-+{
-+	rpmtd immutable;
-+	ssize_t ret;
-+	int fd;
-+
-+	fd = openat(dirfd, filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-+	if (fd < 0)
-+		return -EACCES;
-+
-+	ret = _write(fd, (void *)rpm_header_magic, sizeof(rpm_header_magic));
-+	if (ret != sizeof(rpm_header_magic)) {
-+		ret = -EIO;
-+		goto out;
-+	}
-+
-+	immutable = rpmtdNew();
-+	headerGet(rpm, RPMTAG_HEADERIMMUTABLE, immutable, 0);
-+	ret = _write(fd, immutable->data, immutable->count);
-+	if (ret != immutable->count) {
-+		ret = -EIO;
-+		goto out;
-+	}
-+
-+	rpmtdFree(immutable);
-+out:
-+	close(fd);
-+
-+	if (ret < 0)
-+		unlinkat(dirfd, filename, 0);
-+
-+	return ret;
-+}
-+
-+static int write_rpm_header_signature(Header rpm, int dirfd, char *filename)
-+{
-+	char sig_to_convert[] = "/tmp/sig_to_convert_XXXXXX";
-+	char uasym_sig[] = "/tmp/uasym_sig_XXXXXX";
-+	struct module_signature modsig = { 0 };
-+	rpmtd signature = rpmtdNew();
-+	__u8 buf[1024];
-+	struct stat st;
-+	int ret, n_read, status, fd, fd_sig_to_convert, fd_uasym_sig;
-+
-+	fd_sig_to_convert = mkstemp(sig_to_convert);
-+	if (fd_sig_to_convert == -1)
-+		return -errno;
-+
-+	fd_uasym_sig = mkstemp(uasym_sig);
-+	if (fd_uasym_sig == -1) {
-+		ret = -errno;
-+		goto out;
-+	}
-+
-+	headerGet(rpm, RPMTAG_RSAHEADER, signature, 0);
-+	if (!signature->count) {
-+		printf("Warning: no RPM signature for %s\n", filename);
-+		ret = 0;
-+		goto out_get;
-+	}
-+
-+	ret = _write(fd_sig_to_convert, signature->data, signature->count);
-+	if (ret != signature->count)
-+		goto out_get;
-+
-+	close(fd_sig_to_convert);
-+	fd_sig_to_convert = -1;
-+
-+	if (fork() == 0)
-+		return execlp("gpg", "gpg", "--no-keyring", "--conv-kernel",
-+			      "-o", uasym_sig, sig_to_convert, NULL);
-+
-+	wait(&status);
-+	if (WEXITSTATUS(status)) {
-+		ret = WEXITSTATUS(status);
-+		goto out_get;
-+	}
-+
-+	if (stat(uasym_sig, &st) == -1)
-+		goto out_get;
-+
-+	fd = openat(dirfd, filename, O_WRONLY | O_APPEND);
-+	if (fd < 0) {
-+		ret = -errno;
-+		goto out_get;
-+	}
-+
-+	modsig.id_type = PKEY_ID_PGP;
-+	modsig.sig_len = st.st_size;
-+	modsig.sig_len = __cpu_to_be32(modsig.sig_len);
-+
-+	while ((n_read = read(fd_uasym_sig, buf, sizeof(buf))) > 0) {
-+		ret = _write(fd, buf, n_read);
-+		if (ret != n_read)
-+			goto out_fd;
-+	}
-+
-+	ret = _write(fd, &modsig, sizeof(modsig));
-+	if (ret != sizeof(modsig))
-+		goto out_fd;
-+
-+	ret = _write(fd, MODULE_SIG_STRING, sizeof(MODULE_SIG_STRING) - 1);
-+	if (ret != sizeof(MODULE_SIG_STRING) - 1)
-+		goto out_fd;
-+
-+	ret = 0;
-+out_fd:
-+	close(fd);
-+
-+	if (ret < 0)
-+		unlinkat(dirfd, filename, 0);
-+out_get:
-+	rpmtdFree(signature);
-+out:
-+	close(fd_sig_to_convert);
-+	unlink(sig_to_convert);
-+	close(fd_uasym_sig);
-+	unlink(uasym_sig);
-+
-+	return ret;
-+}
-+
-+static void write_rpm_digest_list(Header rpm, int dirfd, char *filename)
-+{
-+	int ret;
-+
-+	ret = write_rpm_header(rpm, dirfd, filename);
-+	if (ret < 0) {
-+		printf("Cannot dump RPM header of %s\n", filename);
-+		return;
-+	}
-+
-+	ret = write_rpm_header_signature(rpm, dirfd, filename);
-+	if (ret < 0)
-+		printf("Cannot add signature to %s\n", filename);
-+}
-+
-+int rpm_list_gen_add(int dirfd, void *ptr, char *input)
-+{
-+	char filename[NAME_MAX + 1], *selection;
-+	rpmts ts = NULL;
-+	Header hdr;
-+	FD_t fd;
-+	rpmdbMatchIterator mi;
-+	rpmVSFlags vsflags = 0;
-+	int ret;
-+
-+	ts = rpmtsCreate();
-+	if (!ts) {
-+		rpmlog(RPMLOG_NOTICE, "rpmtsCreate() error..\n");
-+		ret = -EACCES;
-+		goto out;
-+	}
-+
-+	ret = rpmReadConfigFiles(NULL, NULL);
-+	if (ret != RPMRC_OK) {
-+		rpmlog(RPMLOG_NOTICE, "Unable to read RPM configuration.\n");
-+		ret = -EACCES;
-+		goto out_ts;
-+	}
-+
-+	if (strncmp(input, "rpmdb", 5)) {
-+		vsflags |= _RPMVSF_NODIGESTS;
-+		vsflags |= _RPMVSF_NOSIGNATURES;
-+		rpmtsSetVSFlags(ts, vsflags);
-+
-+		fd = Fopen(input, "r.ufdio");
-+		if (!fd || Ferror(fd)) {
-+			rpmlog(RPMLOG_NOTICE,
-+			       "Failed to open package file %s, %s\n", input,
-+			       Fstrerror(fd));
-+			ret = -EACCES;
-+			goto out_rpm;
-+		}
-+
-+		ret = rpmReadPackageFile(ts, fd, "rpm", &hdr);
-+		Fclose(fd);
-+
-+		if (ret != RPMRC_OK) {
-+			rpmlog(RPMLOG_NOTICE,
-+			       "Could not read package file %s\n", input);
-+			goto out_rpm;
-+		}
-+
-+		gen_filename(hdr, filename, sizeof(filename));
-+
-+		write_rpm_digest_list(hdr, dirfd, filename);
-+		headerFree(hdr);
-+		goto out_rpm;
-+	}
-+
-+	mi = rpmtsInitIterator(ts, RPMDBI_PACKAGES, NULL, 0);
-+	while ((hdr = rpmdbNextIterator(mi)) != NULL) {
-+		gen_filename(hdr, filename, sizeof(filename));
-+
-+		/* Skip rpm- */
-+		if (strstr(filename + 4, "gpg-pubkey"))
-+			continue;
-+
-+		selection = strchr(input, ':');
-+		if (selection && !strstr(filename + 4, selection + 1))
-+			continue;
-+
-+		write_rpm_digest_list(hdr, dirfd, filename);
-+	}
-+
-+	rpmdbFreeIterator(mi);
-+out_rpm:
-+	rpmFreeRpmrc();
-+	rpmFreeCrypto();
-+	rpmFreeMacros(NULL);
-+out_ts:
-+	rpmtsFree(ts);
-+out:
-+	return ret;
-+}
-diff --git a/tools/digest-lists/manage_digest_lists.c b/tools/digest-lists/manage_digest_lists.c
-index db5680506a8..75ddb542062 100644
---- a/tools/digest-lists/manage_digest_lists.c
-+++ b/tools/digest-lists/manage_digest_lists.c
-@@ -33,10 +33,12 @@ const char *ops_str[OP__LAST] = {
- struct generator generators[] = {
- 	{ .name = "tlv", .new = tlv_list_gen_new, .add = tlv_list_gen_add,
- 	  .close = tlv_list_gen_close },
-+	{ .name = "rpm", .add = rpm_list_gen_add },
- };
- 
- struct parser parsers[] = {
- 	{ .name = "tlv", .parse = tlv_list_parse },
-+	{ .name = "rpm", .parse = rpm_list_gen_parse },
- };
- 
- static int generator_add(struct generator *generator, int dirfd,
-diff --git a/tools/digest-lists/parsers/parsers.h b/tools/digest-lists/parsers/parsers.h
-index 708da7eac3b..ecefb2ec79b 100644
---- a/tools/digest-lists/parsers/parsers.h
-+++ b/tools/digest-lists/parsers/parsers.h
-@@ -12,3 +12,5 @@
- #include <errno.h>
- 
- int tlv_list_parse(const char *digest_list_path, enum ops op);
-+
-+int rpm_list_gen_parse(const char *digest_list_path, enum ops op);
-diff --git a/tools/digest-lists/parsers/rpm.c b/tools/digest-lists/parsers/rpm.c
-new file mode 100644
-index 00000000000..7dd063b64ac
---- /dev/null
-+++ b/tools/digest-lists/parsers/rpm.c
-@@ -0,0 +1,169 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017-2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Parse rpm digest lists.
-+ */
-+
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <limits.h>
-+#include <sys/wait.h>
-+#include <sys/xattr.h>
-+#include <linux/xattr.h>
-+#include <rpm/rpmlib.h>
-+#include <rpm/header.h>
-+#include <rpm/rpmts.h>
-+#include <rpm/rpmdb.h>
-+#include <rpm/rpmlog.h>
-+#include <rpm/rpmtag.h>
-+#include <rpm/rpmpgp.h>
-+#include <rpm/rpmmacro.h>
-+#include <asm/byteorder.h>
-+
-+#include "../common.h"
-+
-+static const enum hash_algo pgp_hash_algorithms[PGPHASHALGO_SHA224 + 1] = {
-+	[PGPHASHALGO_MD5]		= HASH_ALGO_MD5,
-+	[PGPHASHALGO_SHA1]		= HASH_ALGO_SHA1,
-+	[PGPHASHALGO_RIPEMD160]		= HASH_ALGO_RIPE_MD_160,
-+	[PGPHASHALGO_SHA256]		= HASH_ALGO_SHA256,
-+	[PGPHASHALGO_SHA384]		= HASH_ALGO_SHA384,
-+	[PGPHASHALGO_SHA512]		= HASH_ALGO_SHA512,
-+	[PGPHASHALGO_SHA224]		= HASH_ALGO_SHA224,
-+};
-+
-+int rpm_list_gen_parse(const char *digest_list_path, enum ops op)
-+{
-+	rpmtd filedigestalgo, filedigests, basenames, dirnames, dirindexes;
-+	rpmts ts = NULL;
-+	Header hdr;
-+	FD_t fd;
-+	rpmVSFlags vsflags = 0;
-+	char file_path[PATH_MAX];
-+	enum hash_algo algo = HASH_ALGO_MD5;
-+	const char *digest_str, *basename, *dirname;
-+	__u32 dirindex, *pgp_algo_ptr;
-+	size_t digest_list_path_len = strlen(digest_list_path);
-+	int ret;
-+
-+	ts = rpmtsCreate();
-+	if (!ts) {
-+		rpmlog(RPMLOG_NOTICE, "rpmtsCreate() error..\n");
-+		ret = -EACCES;
-+		goto out;
-+	}
-+
-+	ret = rpmReadConfigFiles(NULL, NULL);
-+	if (ret != RPMRC_OK) {
-+		rpmlog(RPMLOG_NOTICE, "Unable to read RPM configuration.\n");
-+		ret = -EACCES;
-+		goto out_ts;
-+	}
-+
-+	vsflags |= _RPMVSF_NODIGESTS;
-+	vsflags |= _RPMVSF_NOSIGNATURES;
-+	rpmtsSetVSFlags(ts, vsflags);
-+
-+	fd = Fopen(digest_list_path, "r.ufdio");
-+	if (!fd || Ferror(fd)) {
-+		rpmlog(RPMLOG_NOTICE, "Failed to open package file %s, %s\n",
-+		       digest_list_path, Fstrerror(fd));
-+		ret = -EACCES;
-+		goto out_rpm;
-+	}
-+
-+	ret = rpmReadHeader(ts, fd, &hdr, NULL);
-+	Fclose(fd);
-+
-+	if (ret != RPMRC_OK) {
-+		rpmlog(RPMLOG_NOTICE, "Could not read package file %s\n",
-+		       digest_list_path);
-+		goto out_rpm;
-+	}
-+
-+	filedigestalgo = rpmtdNew();
-+	filedigests = rpmtdNew();
-+	basenames = rpmtdNew();
-+	dirnames = rpmtdNew();
-+	dirindexes = rpmtdNew();
-+
-+	headerGet(hdr, RPMTAG_FILEDIGESTALGO, filedigestalgo, 0);
-+	headerGet(hdr, RPMTAG_FILEDIGESTS, filedigests, 0);
-+	headerGet(hdr, RPMTAG_BASENAMES, basenames, 0);
-+	headerGet(hdr, RPMTAG_DIRNAMES, dirnames, 0);
-+	headerGet(hdr, RPMTAG_DIRINDEXES, dirindexes, 0);
-+
-+	pgp_algo_ptr = rpmtdGetUint32(filedigestalgo);
-+	if (pgp_algo_ptr && *pgp_algo_ptr <= PGPHASHALGO_SHA224)
-+		algo = pgp_hash_algorithms[*pgp_algo_ptr];
-+
-+	while ((digest_str = rpmtdNextString(filedigests))) {
-+		basename = rpmtdNextString(basenames);
-+		dirindex = *rpmtdNextUint32(dirindexes);
-+
-+		rpmtdSetIndex(dirnames, dirindex);
-+		dirname = rpmtdGetString(dirnames);
-+
-+		snprintf(file_path, sizeof(file_path), "%s%s", dirname,
-+			 basename);
-+
-+		if (!strlen(digest_str))
-+			continue;
-+
-+		switch (op) {
-+		case OP_SHOW:
-+			printf("%s:%s %s\n", hash_algo_name[algo], digest_str,
-+			       file_path);
-+			ret = 0;
-+			break;
-+		case OP_ADD_XATTR:
-+			ret = lsetxattr(file_path, XATTR_NAME_DIGEST_LIST,
-+					digest_list_path,
-+					digest_list_path_len, 0);
-+			if (ret < 0 && errno == ENODATA)
-+				ret = 0;
-+
-+			if (ret < 0)
-+				printf("Error setting %s on %s, %s\n",
-+				       XATTR_NAME_DIGEST_LIST, file_path,
-+				       strerror(errno));
-+			break;
-+		case OP_RM_XATTR:
-+			ret = lremovexattr(file_path, XATTR_NAME_DIGEST_LIST);
-+			if (ret < 0 && errno == ENODATA)
-+				ret = 0;
-+
-+			if (ret < 0)
-+				printf("Error removing %s from %s, %s\n",
-+				       XATTR_NAME_DIGEST_LIST, file_path,
-+				       strerror(errno));
-+			break;
-+		default:
-+			ret = -EOPNOTSUPP;
-+			break;
-+		}
-+
-+		if (ret < 0)
-+			break;
-+	}
-+
-+	rpmtdFree(filedigestalgo);
-+	rpmtdFree(filedigests);
-+	rpmtdFree(basenames);
-+	rpmtdFree(dirnames);
-+	rpmtdFree(dirindexes);
-+	headerFree(hdr);
-+out_rpm:
-+	rpmFreeRpmrc();
-+	rpmFreeCrypto();
-+	rpmFreeMacros(NULL);
-+out_ts:
-+	rpmtsFree(ts);
-+out:
-+	return ret;
-+}
 -- 
 2.34.1
 
