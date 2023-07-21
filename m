@@ -2,26 +2,26 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FB7EB64DD
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Jul 2023 16:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B724C001DE
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Jul 2023 16:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229687AbjGUQhV (ORCPT
+        id S232832AbjGUQh3 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Jul 2023 12:37:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36428 "EHLO
+        Fri, 21 Jul 2023 12:37:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbjGUQgj (ORCPT
+        with ESMTP id S231338AbjGUQgm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Jul 2023 12:36:39 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14E4A30D2;
-        Fri, 21 Jul 2023 09:35:48 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4R6vyK645Dz9xFfT;
-        Sat, 22 Jul 2023 00:24:09 +0800 (CST)
+        Fri, 21 Jul 2023 12:36:42 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29E73AA5;
+        Fri, 21 Jul 2023 09:35:56 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.227])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R6vxj2gZ1z9xFQS;
+        Sat, 22 Jul 2023 00:23:37 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S13;
-        Fri, 21 Jul 2023 17:35:02 +0100 (CET)
+        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S9;
+        Fri, 21 Jul 2023 17:34:32 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
 To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
         paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
@@ -30,33 +30,33 @@ Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
         jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
         hch@lst.de, mjg59@srcf.ucam.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 11/12] tools/digest-lists: Add tlv digest list generator and parser
-Date:   Fri, 21 Jul 2023 18:33:25 +0200
-Message-Id: <20230721163326.4106089-12-roberto.sassu@huaweicloud.com>
+Subject: [RFC][PATCH 07/12] ima: Add digest_cache policy keyword
+Date:   Fri, 21 Jul 2023 18:33:21 +0200
+Message-Id: <20230721163326.4106089-8-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
 References: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S13
-X-Coremail-Antispam: 1UD129KBjvAXoWfXr1xCr18urykKr43AFW5Wrg_yoW8WFWxZo
-        ZaqF43Gw48Jr129F4kuF43ZF47Wa9Yqay5Aw1rGrWDX3WFyF18Ka1qka13Ja13Zw18trWj
-        v3W0q3yagw48KrZ7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-        AaLaJ3UjIYCTnIWjp_UUUOo7kC6x804xWl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK
-        8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF
-        0E3s1l82xGYIkIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
-        j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
-        AFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x02
-        67AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F4
-        0Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
-        6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxV
-        Aaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2Iq
-        xVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r
-        1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY
-        6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2js
-        IE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIF
-        yTuYvjxUxrcTDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DJRQACsv
+X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S9
+X-Coremail-Antispam: 1UD129KBjvJXoW3CrWruw17JF4DAFyxCw15Jwb_yoWkXFykpa
+        yvg3WUCr48XryS9r1xAa4q9r4FgrWIqa1UA395X342y3ZxXr10v3WfJr13CFy3ArW5Cr92
+        yF1Ygr4Dua1jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
+        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
+        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
+        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
+        0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvE
+        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+        AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
+        pf9x07j7GYLUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DJQwAAsr
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -64,590 +64,275 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Add a generator of tlv digest lists. It will store the digest
-algorithm, the digest and path of each file provided as input.
+Add the digest_cache policy keyword, to enable the use of the digest cache
+for specific IMA actions and purpose. At the moment, the digest cache can
+be used for measurement and appraisal of file content. They are reflected
+respectively with the new flags DIGEST_CACHE_MEASURE and
+DIGEST_CACHE_APPRAISE_CONTENT.
 
-Also add a parser of tlv digest lists. It will display the content (digest
-algorithm and value, and file path), and will add/remove the
-security.digest_list xattr to/from each file in the digest list.
+Depending on the IMA action of the parsed rule, the new flags are set in
+the digest_cache_mask variable and passed back to process_measurement(), so
+that the latter can determine whether or not it can use the digest cache.
+
+The digest cache cannot be used for measurement on the default PCR. It
+cannot also be used for appraisal together with the other appraisal methods
+(imasig, sigv3, modsig).
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- tools/digest-lists/.gitignore              |   2 +
- tools/digest-lists/Makefile                |  22 ++-
- tools/digest-lists/generators/generators.h |  16 ++
- tools/digest-lists/generators/tlv.c        | 168 ++++++++++++++++++
- tools/digest-lists/manage_digest_lists.c   |   5 +
- tools/digest-lists/parsers/parsers.h       |  14 ++
- tools/digest-lists/parsers/tlv.c           | 195 +++++++++++++++++++++
- tools/digest-lists/parsers/tlv_parser.h    |  38 ++++
- 8 files changed, 458 insertions(+), 2 deletions(-)
- create mode 100644 tools/digest-lists/generators/generators.h
- create mode 100644 tools/digest-lists/generators/tlv.c
- create mode 100644 tools/digest-lists/parsers/parsers.h
- create mode 100644 tools/digest-lists/parsers/tlv.c
- create mode 100644 tools/digest-lists/parsers/tlv_parser.h
+ Documentation/ABI/testing/ima_policy  |  5 ++-
+ security/integrity/ima/ima.h          |  6 ++--
+ security/integrity/ima/ima_api.c      |  6 ++--
+ security/integrity/ima/ima_appraise.c |  2 +-
+ security/integrity/ima/ima_main.c     |  8 ++---
+ security/integrity/ima/ima_policy.c   | 51 +++++++++++++++++++++++++--
+ 6 files changed, 66 insertions(+), 12 deletions(-)
 
-diff --git a/tools/digest-lists/.gitignore b/tools/digest-lists/.gitignore
-index 1b8a7b9c205..9a75ae766ff 100644
---- a/tools/digest-lists/.gitignore
-+++ b/tools/digest-lists/.gitignore
-@@ -1,3 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
- manage_digest_lists
- manage_digest_lists.1
-+libgen-tlv-list.so
-+libparse-tlv-list.so
-diff --git a/tools/digest-lists/Makefile b/tools/digest-lists/Makefile
-index 05af3a91c06..23f9fa3b588 100644
---- a/tools/digest-lists/Makefile
-+++ b/tools/digest-lists/Makefile
-@@ -1,13 +1,23 @@
- # SPDX-License-Identifier: GPL-2.0
- include ../scripts/Makefile.include
-+include ../scripts/Makefile.arch
- include ../scripts/utilities.mak
-+
- BINDIR=usr/bin
-+ifeq ($(LP64), 1)
-+  LIBDIR=usr/lib64
-+else
-+  LIBDIR=usr/lib
-+endif
- MANDIR=usr/share/man
- MAN1DIR=$(MANDIR)/man1
- CFLAGS=-ggdb -Wall
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index 14d92c687ef..7792e65b35c 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -29,7 +29,7 @@ Description:
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[digest_type=] [template=] [permit_directio]
+ 				[appraise_type=] [appraise_flag=]
+-				[appraise_algos=] [keyrings=]
++				[appraise_algos=] [keyrings=] [digest_cache=]
+ 		  base:
+ 			func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
+ 				[FIRMWARE_CHECK]
+@@ -77,6 +77,9 @@ Description:
+ 			For example, "sha256,sha512" to only accept to appraise
+ 			files where the security.ima xattr was hashed with one
+ 			of these two algorithms.
++			digest_cache:= [content]
++			"content" means that the digest cache is used only
++			for file content measurement and/or appraisal.
  
- PROGS=manage_digest_lists
+ 		  default policy:
+ 			# PROC_SUPER_MAGIC
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 859a94bcecb..bdf03525e15 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -260,7 +260,8 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
+ 		   const struct cred *cred, u32 secid, int mask,
+ 		   enum ima_hooks func, int *pcr,
+ 		   struct ima_template_desc **template_desc,
+-		   const char *func_data, unsigned int *allowed_algos);
++		   const char *func_data, unsigned int *allowed_algos,
++		   u8 *digest_cache_mask);
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 			    struct file *file, void *buf, loff_t size,
+@@ -291,7 +292,8 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
+ 		     const struct cred *cred, u32 secid, enum ima_hooks func,
+ 		     int mask, int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+-		     const char *func_data, unsigned int *allowed_algos);
++		     const char *func_data, unsigned int *allowed_algos,
++		     u8 *digest_cache_mask);
+ void ima_init_policy(void);
+ void ima_update_policy(void);
+ void ima_update_policy_flags(void);
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 452e80b541e..bc25675264c 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -173,6 +173,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * @template_desc: pointer filled in if matched measure policy sets template=
+  * @func_data: func specific data, may be NULL
+  * @allowed_algos: allowlist of hash algorithms for the IMA xattr
++ * @digest_cache_mask: For which actions and purpose the digest cache is usable
+  *
+  * The policy is defined in terms of keypairs:
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+@@ -190,7 +191,8 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
+ 		   const struct cred *cred, u32 secid, int mask,
+ 		   enum ima_hooks func, int *pcr,
+ 		   struct ima_template_desc **template_desc,
+-		   const char *func_data, unsigned int *allowed_algos)
++		   const char *func_data, unsigned int *allowed_algos,
++		   u8 *digest_cache_mask)
+ {
+ 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
  
-+GENERATORS=libgen-tlv-list.so
-+PARSERS=libparse-tlv-list.so
-+
- MAN1=manage_digest_lists.1
+@@ -198,7 +200,7 @@ int ima_get_action(struct mnt_idmap *idmap, struct inode *inode,
  
- A2X=a2x
-@@ -15,9 +25,15 @@ a2x_path := $(call get-executable,$(A2X))
+ 	return ima_match_policy(idmap, inode, cred, secid, func, mask,
+ 				flags, pcr, template_desc, func_data,
+-				allowed_algos);
++				allowed_algos, digest_cache_mask);
+ }
  
- all: man $(PROGS)
+ static bool ima_get_verity_digest(struct integrity_iint_cache *iint,
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 491c1aca0b1..10dbafdae3d 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -81,7 +81,7 @@ int ima_must_appraise(struct mnt_idmap *idmap, struct inode *inode,
+ 	security_current_getsecid_subj(&secid);
+ 	return ima_match_policy(idmap, inode, current_cred(), secid,
+ 				func, mask, IMA_APPRAISE | IMA_HASH, NULL,
+-				NULL, NULL, NULL);
++				NULL, NULL, NULL, NULL);
+ }
  
--manage_digest_lists: manage_digest_lists.c common.c
-+manage_digest_lists: manage_digest_lists.c common.c $(GENERATORS) $(PARSERS)
- 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -lcrypto
+ static int ima_fix_xattr(struct dentry *dentry,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 81abdc8b233..4fdfc399fa6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -231,7 +231,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	 */
+ 	action = ima_get_action(file_mnt_idmap(file), inode, cred, secid,
+ 				mask, func, &pcr, &template_desc, NULL,
+-				&allowed_algos);
++				&allowed_algos, NULL);
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK ||
+ 			    func == MMAP_CHECK_REQPROT) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+@@ -473,11 +473,11 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+ 	inode = file_inode(vma->vm_file);
+ 	action = ima_get_action(file_mnt_idmap(vma->vm_file), inode,
+ 				current_cred(), secid, MAY_EXEC, MMAP_CHECK,
+-				&pcr, &template, NULL, NULL);
++				&pcr, &template, NULL, NULL, NULL);
+ 	action |= ima_get_action(file_mnt_idmap(vma->vm_file), inode,
+ 				 current_cred(), secid, MAY_EXEC,
+ 				 MMAP_CHECK_REQPROT, &pcr, &template, NULL,
+-				 NULL);
++				 NULL, NULL);
  
-+libgen-tlv-list.so: generators/tlv.c common.c
-+	$(CC) $(CFLAGS) -fPIC --shared -Wl,-soname,libgen-tlv-list.so $^ -o $@
-+
-+libparse-tlv-list.so: parsers/tlv.c common.c ../../lib/tlv_parser.c
-+	$(CC) $(CFLAGS) -fPIC --shared -Wl,-soname,libparse-tlv-list.so $^ -o $@ -I parsers
-+
- ifneq ($(findstring $(MAKEFLAGS),s),s)
-   ifneq ($(V),1)
-      QUIET_A2X = @echo '  A2X     '$@;
-@@ -32,7 +48,7 @@ else
- endif
- 
- clean:
--	rm -f $(MAN1) $(PROGS)
-+	rm -f $(MAN1) $(PROGS) $(GENERATORS) $(PARSERS)
- 
- man: $(MAN1)
- 
-@@ -43,6 +59,8 @@ install-man: man
- install-tools: $(PROGS)
- 	install -d -m 755 $(INSTALL_ROOT)/$(BINDIR)
- 	install -m 755 -p $(PROGS) "$(INSTALL_ROOT)/$(BINDIR)/$(TARGET)"
-+	install -m 755 -p $(GENERATORS) "$(INSTALL_ROOT)/$(LIBDIR)/$(TARGET)"
-+	install -m 755 -p $(PARSERS) "$(INSTALL_ROOT)/$(LIBDIR)/$(TARGET)"
- 
- install: install-tools install-man
- .PHONY: all clean man install-tools install-man install
-diff --git a/tools/digest-lists/generators/generators.h b/tools/digest-lists/generators/generators.h
-new file mode 100644
-index 00000000000..9830b791667
---- /dev/null
-+++ b/tools/digest-lists/generators/generators.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2017-2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Header for all digest list generators.
-+ */
-+
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+
-+void *tlv_list_gen_new(int dirfd, char *input, enum hash_algo algo);
-+int tlv_list_gen_add(int dirfd, void *ptr, char *input);
-+void tlv_list_gen_close(void *ptr);
-diff --git a/tools/digest-lists/generators/tlv.c b/tools/digest-lists/generators/tlv.c
-new file mode 100644
-index 00000000000..cbc29a49f51
---- /dev/null
-+++ b/tools/digest-lists/generators/tlv.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017-2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Generate tlv digest lists.
-+ */
-+
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
-+#include <limits.h>
-+#include <sys/mman.h>
-+#include <sys/xattr.h>
-+#include <linux/xattr.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <linux/hash_info.h>
-+#include <asm/byteorder.h>
-+
-+#ifndef __packed
-+#define __packed __attribute__((packed))
-+#endif
-+
-+#include "../../../include/uapi/linux/tlv_parser.h"
-+#include "../../../include/uapi/linux/tlv_digest_list.h"
-+#include "../common.h"
-+
-+struct tlv_struct {
-+	__u8 *digest_list;
-+	struct tlv_hdr *outer_hdr;
-+	struct tlv_entry *outer_entry;
-+	__u8 algo;
-+	int fd;
-+};
-+
-+static int new_digest_list(int dirfd, const char *input, struct tlv_struct *tlv)
-+{
-+	char filename[NAME_MAX + 1];
-+	struct tlv_hdr *hdr;
-+	const char *input_ptr;
-+
-+	input_ptr = strrchr(input, '/');
-+	if (input_ptr)
-+		input_ptr++;
-+	else
-+		input_ptr = input;
-+
-+	snprintf(filename, sizeof(filename), "tlv-%s", input_ptr);
-+
-+	tlv->fd = openat(dirfd, filename, O_RDWR | O_CREAT | O_TRUNC, 0644);
-+	if (tlv->fd < 0) {
-+		printf("Unable to create %s\n", filename);
-+		return -errno;
-+	}
-+
-+	ftruncate(tlv->fd, DIGEST_LIST_SIZE_MAX);
-+	tlv->digest_list = mmap(NULL, DIGEST_LIST_SIZE_MAX,
-+				PROT_READ | PROT_WRITE, MAP_SHARED, tlv->fd, 0);
-+
-+	if (tlv->digest_list == MAP_FAILED) {
-+		printf("Cannot allocate buffer\n");
-+		close(tlv->fd);
-+		return -ENOMEM;
-+	}
-+
-+	hdr = (struct tlv_hdr *)tlv->digest_list;
-+	memset(hdr, 0, sizeof(*hdr));
-+
-+	hdr->data_type = __cpu_to_be64(DIGEST_LIST_FILE);
-+	hdr->num_fields = 0;
-+	hdr->total_len = 0;
-+	return 0;
-+}
-+
-+static void write_entry(struct tlv_hdr *hdr, struct tlv_entry **entry,
-+			__u16 field, __u8 *data, __u32 data_len,
-+			bool update_data)
-+{
-+	__u16 num_fields;
-+	__u64 total_len;
-+	__u64 entry_len;
-+
-+	num_fields = __be64_to_cpu(hdr->num_fields);
-+	total_len = __be64_to_cpu(hdr->total_len);
-+
-+	(*entry)->field = __cpu_to_be64(field);
-+	(*entry)->length = __cpu_to_be64(data_len);
-+
-+	if (update_data)
-+		memcpy((*entry)->data, data, data_len);
-+
-+	num_fields++;
-+	entry_len = sizeof(*(*entry)) + data_len;
-+	total_len += entry_len;
-+
-+	hdr->num_fields = __cpu_to_be64(num_fields);
-+	hdr->total_len = __cpu_to_be64(total_len);
-+	(*entry) = (struct tlv_entry *)((__u8 *)*entry + entry_len);
-+}
-+
-+void *tlv_list_gen_new(int dirfd, char *input, enum hash_algo algo)
-+{
-+	struct tlv_struct *tlv;
-+	int ret;
-+
-+	tlv = malloc(sizeof(*tlv));
-+	if (!tlv)
-+		return NULL;
-+
-+	ret = new_digest_list(dirfd, input, tlv);
-+	if (ret < 0) {
-+		free(tlv);
-+		return NULL;
-+	}
-+
-+	tlv->outer_hdr = (struct tlv_hdr *)tlv->digest_list;
-+	tlv->outer_entry = (struct tlv_entry *)(tlv->outer_hdr + 1);
-+	tlv->algo = algo;
-+
-+	write_entry(tlv->outer_hdr, &tlv->outer_entry, DIGEST_LIST_ALGO,
-+		    &tlv->algo, sizeof(tlv->algo), true);
-+	return tlv;
-+}
-+
-+int tlv_list_gen_add(int dirfd, void *ptr, char *input)
-+{
-+	struct tlv_struct *tlv = (struct tlv_struct *)ptr;
-+	__u8 digest[SHA512_DIGEST_SIZE];
-+	struct tlv_hdr *inner_hdr;
-+	struct tlv_entry *inner_entry;
-+	int ret;
-+
-+	ret = calc_file_digest(digest, input, tlv->algo);
-+	if (ret < 0) {
-+		printf("Cannot calculate digest of %s\n", input);
-+		return ret;
-+	}
-+
-+	inner_hdr = (struct tlv_hdr *)(tlv->outer_entry + 1);
-+	inner_hdr->data_type = __cpu_to_be64(DIGEST_LIST_FILE);
-+
-+	inner_entry = (struct tlv_entry *)(inner_hdr + 1);
-+
-+	write_entry(inner_hdr, &inner_entry, ENTRY_DIGEST, digest,
-+		    hash_digest_size[tlv->algo], true);
-+	write_entry(inner_hdr, &inner_entry, ENTRY_PATH, (__u8 *)input,
-+		    strlen(input) + 1, true);
-+
-+	write_entry(tlv->outer_hdr, &tlv->outer_entry, DIGEST_LIST_ENTRY, NULL,
-+		    (__u8 *)inner_entry - (__u8 *)inner_hdr, false);
-+	return 0;
-+}
-+
-+void tlv_list_gen_close(void *ptr)
-+{
-+	struct tlv_struct *tlv = (struct tlv_struct *)ptr;
-+
-+	munmap(tlv->digest_list, DIGEST_LIST_SIZE_MAX);
-+	ftruncate(tlv->fd, (__u8 *)tlv->outer_entry - (__u8 *)tlv->outer_hdr);
-+	close(tlv->fd);
-+	free(tlv);
-+}
-diff --git a/tools/digest-lists/manage_digest_lists.c b/tools/digest-lists/manage_digest_lists.c
-index 9da62bd3570..db5680506a8 100644
---- a/tools/digest-lists/manage_digest_lists.c
-+++ b/tools/digest-lists/manage_digest_lists.c
-@@ -20,6 +20,8 @@
- #include <fts.h>
- 
- #include "common.h"
-+#include "generators/generators.h"
-+#include "parsers/parsers.h"
- 
- const char *ops_str[OP__LAST] = {
- 	[OP_GEN] = "gen",
-@@ -29,9 +31,12 @@ const char *ops_str[OP__LAST] = {
+ 	/* Is the mmap'ed file in policy? */
+ 	if (!(action & (IMA_MEASURE | IMA_APPRAISE_SUBMASK)))
+@@ -958,7 +958,7 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+ 		security_current_getsecid_subj(&secid);
+ 		action = ima_get_action(idmap, inode, current_cred(),
+ 					secid, 0, func, &pcr, &template,
+-					func_data, NULL);
++					func_data, NULL, NULL);
+ 		if (!(action & IMA_MEASURE) && !digest)
+ 			return -ENOENT;
+ 	}
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b32c83d8a72..701c4f21158 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -122,6 +122,7 @@ struct ima_rule_entry {
+ 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+ 	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
+ 	struct ima_template_desc *template;
++	u8 digest_cache_mask;	/* For which actions and purpose the digest cache is usable */
  };
  
- struct generator generators[] = {
-+	{ .name = "tlv", .new = tlv_list_gen_new, .add = tlv_list_gen_add,
-+	  .close = tlv_list_gen_close },
+ /*
+@@ -726,6 +727,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * @template_desc: the template that should be used for this rule
+  * @func_data: func specific data, may be NULL
+  * @allowed_algos: allowlist of hash algorithms for the IMA xattr
++ * @digest_cache_mask: For which actions and purpose the digest cache is usable
+  *
+  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
+  * conditions.
+@@ -738,7 +740,8 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
+ 		     const struct cred *cred, u32 secid, enum ima_hooks func,
+ 		     int mask, int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+-		     const char *func_data, unsigned int *allowed_algos)
++		     const char *func_data, unsigned int *allowed_algos,
++		     u8 *digest_cache_mask)
+ {
+ 	struct ima_rule_entry *entry;
+ 	int action = 0, actmask = flags | (flags << 1);
+@@ -783,6 +786,9 @@ int ima_match_policy(struct mnt_idmap *idmap, struct inode *inode,
+ 		if (template_desc && entry->template)
+ 			*template_desc = entry->template;
+ 
++		if (digest_cache_mask)
++			*digest_cache_mask |= entry->digest_cache_mask;
++
+ 		if (!actmask)
+ 			break;
+ 	}
+@@ -1073,7 +1079,7 @@ enum policy_opt {
+ 	Opt_digest_type,
+ 	Opt_appraise_type, Opt_appraise_flag, Opt_appraise_algos,
+ 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
+-	Opt_label, Opt_err
++	Opt_label, Opt_digest_cache, Opt_err
  };
  
- struct parser parsers[] = {
-+	{ .name = "tlv", .parse = tlv_list_parse },
+ static const match_table_t policy_tokens = {
+@@ -1122,6 +1128,7 @@ static const match_table_t policy_tokens = {
+ 	{Opt_template, "template=%s"},
+ 	{Opt_keyrings, "keyrings=%s"},
+ 	{Opt_label, "label=%s"},
++	{Opt_digest_cache, "digest_cache=%s"},
+ 	{Opt_err, NULL}
  };
  
- static int generator_add(struct generator *generator, int dirfd,
-diff --git a/tools/digest-lists/parsers/parsers.h b/tools/digest-lists/parsers/parsers.h
-new file mode 100644
-index 00000000000..708da7eac3b
---- /dev/null
-+++ b/tools/digest-lists/parsers/parsers.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2017-2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Header for all digest list parsers.
-+ */
+@@ -1886,6 +1893,26 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 						 &(template_desc->num_fields));
+ 			entry->template = template_desc;
+ 			break;
++		case Opt_digest_cache:
++			ima_log_string(ab, "template", args[0].from);
 +
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
++			result = -EINVAL;
 +
-+int tlv_list_parse(const char *digest_list_path, enum ops op);
-diff --git a/tools/digest-lists/parsers/tlv.c b/tools/digest-lists/parsers/tlv.c
-new file mode 100644
-index 00000000000..1c9909e80b9
---- /dev/null
-+++ b/tools/digest-lists/parsers/tlv.c
-@@ -0,0 +1,195 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017-2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Parse tlv digest lists.
-+ */
-+
-+#include <stdio.h>
-+#include <fcntl.h>
-+#include <errno.h>
-+
-+#include <limits.h>
-+#include <sys/mman.h>
-+#include <sys/xattr.h>
-+#include <linux/xattr.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <linux/hash_info.h>
-+#include <asm/byteorder.h>
-+#include <tlv_parser.h>
-+
-+#ifndef __packed
-+#define __packed __attribute__((packed))
-+#endif
-+
-+#include "../../../include/uapi/linux/tlv_digest_list.h"
-+#include "../common.h"
-+
-+struct tlv_parse_ctx {
-+	const char *digest_list_path;
-+	size_t digest_list_path_len;
-+	enum hash_algo algo;
-+	enum ops op;
-+};
-+
-+const char *digest_list_types_str[] = {
-+	FOR_EACH_DIGEST_LIST_TYPE(GENERATE_STRING)
-+};
-+
-+const char *digest_list_fields_str[] = {
-+	FOR_EACH_FIELD(GENERATE_STRING)
-+};
-+
-+const char *entry_fields_str[] = {
-+	FOR_EACH_ENTRY_FIELD(GENERATE_STRING)
-+};
-+
-+static int parse_digest_list_algo(struct tlv_parse_ctx *ctx,
-+				  enum digest_list_fields field,
-+				  const __u8 *field_data, __u64 field_data_len)
-+{
-+	ctx->algo = *field_data;
-+	return 0;
-+}
-+
-+static int parse_entry_digest(struct tlv_parse_ctx *ctx,
-+			      enum entry_fields field, const __u8 *field_data,
-+			      __u64 field_data_len)
-+{
-+	int i;
-+
-+	if (ctx->op != OP_SHOW)
-+		return 0;
-+
-+	printf("%s:", hash_algo_name[ctx->algo]);
-+
-+	for (i = 0; i < hash_digest_size[ctx->algo]; i++)
-+		printf("%02x", field_data[i]);
-+
-+	return 0;
-+}
-+
-+static int parse_entry_path(struct tlv_parse_ctx *ctx, enum entry_fields field,
-+			    const __u8 *field_data, __u64 field_data_len)
-+{
-+	char *entry_path = (char *)field_data;
-+	int ret;
-+
-+	switch (ctx->op) {
-+	case OP_SHOW:
-+		printf(" %s\n", entry_path);
-+		ret = 0;
-+		break;
-+	case OP_ADD_XATTR:
-+		ret = lsetxattr(entry_path, XATTR_NAME_DIGEST_LIST,
-+				ctx->digest_list_path,
-+				ctx->digest_list_path_len, 0);
-+		if (ret < 0 && errno == ENODATA)
-+			ret = 0;
-+
-+		if (ret < 0)
-+			printf("Error setting %s on %s, %s\n",
-+			       XATTR_NAME_DIGEST_LIST, entry_path,
-+			       strerror(errno));
-+		break;
-+	case OP_RM_XATTR:
-+		ret = lremovexattr(entry_path, XATTR_NAME_DIGEST_LIST);
-+		if (ret < 0 && errno == ENODATA)
-+			ret = 0;
-+
-+		if (ret < 0)
-+			printf("Error removing %s from %s, %s\n",
-+			       XATTR_NAME_DIGEST_LIST, entry_path,
-+			       strerror(errno));
-+		break;
-+	default:
-+		break;
++			if (!strcmp(args[0].from, "content")) {
++				switch (entry->action) {
++				case MEASURE:
++					entry->digest_cache_mask |= DIGEST_CACHE_MEASURE;
++					result = 0;
++					break;
++				case APPRAISE:
++					entry->digest_cache_mask |= DIGEST_CACHE_APPRAISE_CONTENT;
++					result = 0;
++					break;
++				default:
++					break;
++				}
++			}
++			break;
+ 		case Opt_err:
+ 			ima_log_string(ab, "UNKNOWN", p);
+ 			result = -EINVAL;
+@@ -1912,6 +1939,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 				     "verity rules should include d-ngv2");
+ 	}
+ 
++	/* New-style measurements with digest cache cannot be on default PCR. */
++	if (entry->action == MEASURE &&
++	    (entry->digest_cache_mask & DIGEST_CACHE_MEASURE)) {
++		if (!(entry->flags & IMA_PCR) ||
++		    entry->pcr == CONFIG_IMA_MEASURE_PCR_IDX)
++			result = -EINVAL;
 +	}
 +
-+	return 0;
-+}
-+
-+static int entry_callback(void *callback_data, __u64 field,
-+			  const __u8 *field_data, __u64 field_data_len)
-+{
-+	struct tlv_parse_ctx *ctx = (struct tlv_parse_ctx *)callback_data;
-+	int ret;
-+
-+	switch (field) {
-+	case ENTRY_DIGEST:
-+		ret = parse_entry_digest(ctx, field, field_data,
-+					 field_data_len);
-+		break;
-+	case ENTRY_PATH:
-+		ret = parse_entry_path(ctx, field, field_data, field_data_len);
-+		break;
-+	default:
-+		pr_debug("Unhandled field %llu\n", field);
-+		/* Just ignore non-relevant fields. */
-+		ret = 0;
-+		break;
++	/* Digest cache should not conflict with other appraisal methods. */
++	if (entry->action == APPRAISE &&
++	    (entry->digest_cache_mask & DIGEST_CACHE_APPRAISE_CONTENT)) {
++		if ((entry->flags & IMA_DIGSIG_REQUIRED) ||
++		    (entry->flags & IMA_VERITY_REQUIRED) ||
++		    (entry->flags & IMA_MODSIG_ALLOWED))
++			result = -EINVAL;
 +	}
 +
-+	return ret;
-+}
-+
-+static int parse_digest_list_entry(struct tlv_parse_ctx *ctx,
-+				   enum digest_list_fields field,
-+				   const __u8 *field_data, __u64 field_data_len)
-+{
-+	return tlv_parse(DIGEST_LIST_FILE, entry_callback, ctx, field_data,
-+			 field_data_len, digest_list_types_str,
-+			 DIGEST_LIST__LAST, entry_fields_str, ENTRY__LAST);
-+}
-+
-+static int digest_list_callback(void *callback_data, __u64 field,
-+				const __u8 *field_data, __u64 field_data_len)
-+{
-+	struct tlv_parse_ctx *ctx = (struct tlv_parse_ctx *)callback_data;
-+	int ret;
-+
-+	switch (field) {
-+	case DIGEST_LIST_ALGO:
-+		ret = parse_digest_list_algo(ctx, field, field_data,
-+					     field_data_len);
-+		break;
-+	case DIGEST_LIST_ENTRY:
-+		ret = parse_digest_list_entry(ctx, field, field_data,
-+					      field_data_len);
-+		break;
-+	default:
-+		pr_debug("Unhandled field %llu\n", field);
-+		/* Just ignore non-relevant fields. */
-+		ret = 0;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+int tlv_list_parse(const char *digest_list_path, enum ops op)
-+{
-+	struct tlv_parse_ctx ctx = {
-+		.op = op, .digest_list_path = digest_list_path,
-+		.digest_list_path_len = strlen(digest_list_path)
-+	};
-+	unsigned char *data;
-+	size_t data_len;
-+	int ret;
-+
-+	ret = read_file(digest_list_path, &data_len, &data);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = tlv_parse(DIGEST_LIST_FILE, digest_list_callback, &ctx, data,
-+			data_len, digest_list_types_str, DIGEST_LIST__LAST,
-+			digest_list_fields_str, FIELD__LAST);
-+
-+	munmap(data, data_len);
-+	return ret;
-+}
-diff --git a/tools/digest-lists/parsers/tlv_parser.h b/tools/digest-lists/parsers/tlv_parser.h
-new file mode 100644
-index 00000000000..3c9f54a97b3
---- /dev/null
-+++ b/tools/digest-lists/parsers/tlv_parser.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Header file of TLV parser.
-+ */
-+
-+#ifndef _TLV_PARSER_H
-+#define _TLV_PARSER_H
-+
-+#include <stdio.h>
-+#include <errno.h>
-+#include <stddef.h>
-+#include <asm/byteorder.h>
-+#include <linux/tlv_parser.h>
-+
-+#ifdef TLV_DEBUG
-+#define pr_debug(fmt, ...) printf(fmt, ##__VA_ARGS__)
-+#else
-+#define pr_debug(fmt, ...) { }
-+#endif
-+
-+typedef int (*parse_callback)(void *, __u64, const __u8 *, __u64);
-+
-+int tlv_parse_hdr(const __u8 **data, size_t *data_len, __u64 *parsed_data_type,
-+		  __u64 *parsed_num_fields, __u64 *parsed_total_len,
-+		  const char **data_types, __u64 num_data_types);
-+int tlv_parse_data(parse_callback callback, void *callback_data,
-+		   __u64 parsed_num_fields, const __u8 *data, size_t data_len,
-+		   const char **fields, __u64 num_fields);
-+int tlv_parse(__u64 expected_data_type, parse_callback callback,
-+	      void *callback_data, const __u8 *data, size_t data_len,
-+	      const char **data_types, __u64 num_data_types,
-+	      const char **fields, __u64 num_fields);
-+
-+#endif /* _TLV_PARSER_H */
+ 	audit_log_format(ab, "res=%d", !result);
+ 	audit_log_end(ab);
+ 	return result;
+@@ -2278,6 +2322,9 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, "appraise_flag=check_blacklist ");
+ 	if (entry->flags & IMA_PERMIT_DIRECTIO)
+ 		seq_puts(m, "permit_directio ");
++	if ((entry->digest_cache_mask & DIGEST_CACHE_MEASURE) ||
++	    (entry->digest_cache_mask & DIGEST_CACHE_APPRAISE_CONTENT))
++		seq_puts(m, "digest_cache=content ");
+ 	rcu_read_unlock();
+ 	seq_puts(m, "\n");
+ 	return 0;
 -- 
 2.34.1
 
