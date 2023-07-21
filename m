@@ -2,135 +2,295 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC9DEB64DC
-	for <linux-integrity@archiver.kernel.org>; Fri, 21 Jul 2023 07:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB41FC00528
+	for <linux-integrity@archiver.kernel.org>; Fri, 21 Jul 2023 16:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230025AbjGUHFE convert rfc822-to-8bit (ORCPT
+        id S229751AbjGUQfx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 21 Jul 2023 03:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45678 "EHLO
+        Fri, 21 Jul 2023 12:35:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229846AbjGUHFD (ORCPT
+        with ESMTP id S231172AbjGUQfm (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 21 Jul 2023 03:05:03 -0400
-Received: from frasgout12.his.huawei.com (ecs-14-137-139-154.compute.hwclouds-dns.com [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9757A270B;
-        Fri, 21 Jul 2023 00:05:01 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.227])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4R6gFz4FnMz9xtVW;
-        Fri, 21 Jul 2023 14:51:51 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwAn3ELoLbpkla7NBA--.21454S2;
-        Fri, 21 Jul 2023 08:04:22 +0100 (CET)
-Message-ID: <21cd4127cee2d920ffab7576e9a6359ec0988b8d.camel@huaweicloud.com>
-Subject: Re: [RFC][PATCH v3 0/9] KEYS: Introduce user asymmetric keys and
- signatures
+        Fri, 21 Jul 2023 12:35:42 -0400
+Received: from frasgout11.his.huawei.com (unknown [14.137.139.23])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109893AB2;
+        Fri, 21 Jul 2023 09:35:20 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.228])
+        by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4R6vxG6K9Qz9xFQR;
+        Sat, 22 Jul 2023 00:23:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+        by APP2 (Coremail) with SMTP id GxC2BwC3hl1bs7pkcDDSBA--.22409S6;
+        Fri, 21 Jul 2023 17:34:09 +0100 (CET)
 From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>, dhowells@redhat.com,
-        dwmw2@infradead.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, pbrobinson@gmail.com,
-        zbyszek@in.waw.pl, wiktor@metacode.biz,
-        devel@lists.sequoia-pgp.org, gnupg-devel@gnupg.org,
-        ebiggers@kernel.org, Jason@zx2c4.com, mail@maciej.szmigiero.name,
-        antony@vennard.ch, konstantin@linuxfoundation.org,
-        James.Bottomley@HansenPartnership.com,
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+        jarkko@kernel.org, pbrobinson@gmail.com, zbyszek@in.waw.pl,
+        hch@lst.de, mjg59@srcf.ucam.org,
         Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Fri, 21 Jul 2023 09:04:04 +0200
-In-Reply-To: <CU76KX3XPZN9.V9GU2ZZKVKO@suppilovahvero>
-References: <20230720153247.3755856-1-roberto.sassu@huaweicloud.com>
-         <CU76KX3XPZN9.V9GU2ZZKVKO@suppilovahvero>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu1 
+Subject: [RFC][PATCH 04/12] integrity/digest_cache: Iterate over digest lists in same dir
+Date:   Fri, 21 Jul 2023 18:33:18 +0200
+Message-Id: <20230721163326.4106089-5-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
+References: <20230721163326.4106089-1-roberto.sassu@huaweicloud.com>
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwAn3ELoLbpkla7NBA--.21454S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF47Zry8XF1DXF48KFWrGrg_yoW8uF13pa
-        yrKr93GFyktw1fAr9rJw4qy3y5Cwn3Jw45G3s8t3yFvw4YgFyIvryfK3WYgFZ0kws3Wryj
-        vrW3Wry7Xa98Z3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5DBXwAAs-
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: GxC2BwC3hl1bs7pkcDDSBA--.22409S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF1UZFyUuF45JFW7XF15CFg_yoWxKF15pa
+        9Ik3W5Kr48Z34fCws7AF4akF4Fg39YgF47Gw45uw15Aw4DZr1qv3WxCryUZry5Jr4Uua47
+        tF4Ygr45Cr4DXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
+        Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
+        rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
+        AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
+        14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
+        C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
+        7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
+        kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
+        6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw
+        0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvE
+        c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+        AFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
+        pf9x07j7GYLUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBF1jj4zMlQAAsn
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Thu, 2023-07-20 at 20:38 +0300, Jarkko Sakkinen wrote:
-> On Thu Jul 20, 2023 at 6:32 PM EEST, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Define a new TLV-based format for keys and signatures, aiming to store and
-> 
-> "type-length-value (TLV) based"
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Ok.
+One advantage of the digest cache is the ability of skipping measurements
+of cached digests. That would allow to accumulate integrity measurements
+on a PCR in a predictable way, since only the digest lists would be
+measured.
 
-> > use in the kernel the crypto material from other unsupported formats
-> > (e.g. PGP).
-> 
-> Where's the motivation part and where is this defined?
+However, since digest lists are accessed on demand, when a file belonging
+to that repo is measured/appraised, it could happen due to parallel
+execution that also digest lists are measured not in the same order.
 
-Ah, thanks for the reminder. Will add it in the next version.
+Thus, eliminate this possibility by iterating over the directory containing
+the digest lists and by reading all of them, to trigger a measurement.
 
-The motivations are:
+Read digest lists are not parsed, to avoid too much memory pressure.
 
-- Avoid adding complex parsers in the kernel that might introduce
-  vulnerabilities
-- Avoid adding support for key and signature formats that some consider
-  weak
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/Makefile            |   3 +-
+ security/integrity/digest_cache.h      |   5 +
+ security/integrity/digest_cache_iter.c | 163 +++++++++++++++++++++++++
+ 3 files changed, 170 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/digest_cache_iter.c
 
-That was basically the summary of the review of my attempt to add
-support for PGP keys and signatures in the kernel.
-
-This patch set adds support for only one format, which other formats
-are converted from.
-
-This is useful for the mere extraction of crypto material, and use it
-with the kernel crypto API.
-
-If there is a trust relationships between the original keys, converting
-keys would lose the ability to verify that trust relationship.
-
-
-Example
-
-Suppose that there is a PGP key in the built-in keyring, and that
-signed another PGP key.
-
-If I want to add the second PGP key to the secondary keyring, I would
-have to verify the signature of that key with the first key.
-
-But the signature is on a PGP packet, so if the kernel verifies that
-signature it would have also to ensure that the public key extracted
-from the signed packet is the same as the converted key.
-
-Originally I thought that we could do the conversion in a fully
-isolated user space process (trustworthy User Mode Driver), so that
-there is the guarantee that the key has not been modified during the
-conversion. However, since it is difficult to achieve perfect
-isolation, that approach has been put on hold.
-
-So, at the moment, verifying trust with user asymmetric keys is not
-possible, but this is not a problem with my use case, as a Linux
-distributions can embed in the kernel all their (converted) public keys
-directly usable for signature verification.
-
-Thanks
-
-Roberto
+diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+index 0c175a567ac..c856ed10fba 100644
+--- a/security/integrity/Makefile
++++ b/security/integrity/Makefile
+@@ -11,7 +11,8 @@ integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+ integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+ integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+ integrity-$(CONFIG_INTEGRITY_MACHINE_KEYRING) += platform_certs/machine_keyring.o
+-integrity-$(CONFIG_INTEGRITY_DIGEST_CACHE) += digest_cache.o
++integrity-$(CONFIG_INTEGRITY_DIGEST_CACHE) += digest_cache.o \
++					      digest_cache_iter.o
+ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+ 				      platform_certs/load_uefi.o \
+ 				      platform_certs/keyring_handler.o
+diff --git a/security/integrity/digest_cache.h b/security/integrity/digest_cache.h
+index 5e3997b2723..d8fd5ce47a7 100644
+--- a/security/integrity/digest_cache.h
++++ b/security/integrity/digest_cache.h
+@@ -69,6 +69,7 @@ int digest_cache_init_htable(struct digest_cache *digest_cache,
+ int digest_cache_add(struct digest_cache *digest_cache, u8 *digest);
+ int digest_cache_lookup(struct digest_cache *digest_cache, u8 *digest,
+ 			enum hash_algo algo, const char *pathname);
++void digest_cache_iter_dir(struct dentry *repo_dentry);
+ #else
+ static inline void digest_cache_free(struct digest_cache *digest_cache)
+ {
+@@ -104,5 +105,9 @@ static inline int digest_cache_lookup(struct digest_cache *digest_cache,
+ 	return -ENOENT;
+ }
+ 
++static inline void digest_cache_iter_dir(struct dentry *repo_dentry)
++{
++}
++
+ #endif /* CONFIG_INTEGRITY_DIGEST_CACHE */
+ #endif /* _DIGEST_CACHE_H */
+diff --git a/security/integrity/digest_cache_iter.c b/security/integrity/digest_cache_iter.c
+new file mode 100644
+index 00000000000..f9c4675d383
+--- /dev/null
++++ b/security/integrity/digest_cache_iter.c
+@@ -0,0 +1,163 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019  IBM Corporation
++ * Copyright (C) 2023 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * Implement a digest list iterator.
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/init_task.h>
++#include <linux/fs.h>
++#include <linux/namei.h>
++#include <linux/xattr.h>
++#include <linux/kernel_read_file.h>
++#include <linux/module_signature.h>
++
++#include "integrity.h"
++
++#ifdef pr_fmt
++#undef pr_fmt
++#endif
++#define pr_fmt(fmt) "DIGEST CACHE ITER: "fmt
++
++static bool iterated;
++/* Ensure there is only one iteration over digest lists, make others wait. */
++DEFINE_MUTEX(iterate_mutex);
++
++struct dir_entry {
++	struct list_head list;
++	char name[];
++} __packed;
++
++struct readdir_callback {
++	struct dir_context ctx;
++	struct list_head *head;
++};
++
++/**
++ * digest_cache_iter_digest_list - Callback func to get digest lists in a dir
++ * @__ctx: iterate_dir() context
++ * @name: Name of file in the accessed dir
++ * @namelen: String length of @name
++ * @offset: Current position in the directory stream (see man readdir)
++ * @ino: Inode number
++ * @d_type: File type
++ *
++ * This function stores the names of the files in the containing directory in
++ * a linked list. Those files will be opened to trigger a measurement.
++ *
++ * Return: True to continue processing, false to stop.
++ */
++static bool digest_cache_iter_digest_list(struct dir_context *__ctx,
++					  const char *name, int namelen,
++					  loff_t offset, u64 ino,
++					  unsigned int d_type)
++{
++	struct readdir_callback *ctx = container_of(__ctx, typeof(*ctx), ctx);
++	struct dir_entry *new_entry;
++
++	if (!strcmp(name, ".") || !strcmp(name, ".."))
++		return true;
++
++	if (d_type != DT_REG)
++		return true;
++
++	new_entry = kmalloc(sizeof(*new_entry) + namelen + 1, GFP_KERNEL);
++	if (!new_entry)
++		return true;
++
++	memcpy(new_entry->name, name, namelen);
++	new_entry->name[namelen] = '\0';
++	list_add(&new_entry->list, ctx->head);
++	return true;
++}
++
++/**
++ * digest_cache_iter_dir - Iterate over all files in the same digest list dir
++ * @digest_list_dentry: Digest list dentry
++ *
++ * This function iterates over all files in the directory containing the digest
++ * list provided as argument. It helps to measure digest lists in a
++ * deterministic order and make a TPM PCR predictable.
++ */
++void digest_cache_iter_dir(struct dentry *digest_list_dentry)
++{
++	struct file *dir_file;
++	struct readdir_callback buf = {
++		.ctx.actor = digest_cache_iter_digest_list,
++	};
++	struct dir_entry *p, *q;
++	struct file *file;
++	char *path_str = NULL;
++	void *data;
++	LIST_HEAD(head);
++	char *ptr;
++	int ret;
++
++	if (iterated)
++		return;
++
++	mutex_lock(&iterate_mutex);
++	if (iterated)
++		goto out;
++
++	iterated = true;
++
++	ret = vfs_getxattr_alloc(&nop_mnt_idmap, digest_list_dentry,
++				 XATTR_NAME_DIGEST_LIST, &path_str, 0,
++				 GFP_NOFS);
++	if (ret <= 0) {
++		pr_debug("%s xattr not found in %s\n", XATTR_NAME_DIGEST_LIST,
++			 digest_list_dentry->d_name.name);
++		goto out;
++	}
++
++	pr_debug("Found %s xattr in %s, digest list: %s\n",
++		 XATTR_NAME_DIGEST_LIST, digest_list_dentry->d_name.name,
++		 path_str);
++
++	ptr = strrchr(path_str, '/');
++	if (!ptr)
++		goto out;
++
++	*ptr = '\0';
++	dir_file = filp_open(path_str, O_RDONLY, 0);
++	*ptr = '/';
++
++	if (IS_ERR(dir_file)) {
++		pr_debug("Cannot access parent directory of repo %s\n",
++			 path_str);
++		goto out;
++	}
++
++	buf.head = &head;
++	iterate_dir(dir_file, &buf.ctx);
++	list_for_each_entry_safe(p, q, &head, list) {
++		pr_debug("Prereading digest list %s in %s\n", p->name,
++			 path_str);
++
++		file = file_open_root(&dir_file->f_path, p->name, O_RDONLY, 0);
++		if (IS_ERR(file))
++			continue;
++
++		data = NULL;
++
++		ret = kernel_read_file(file, 0, &data, INT_MAX, NULL,
++				       READING_DIGEST_LIST);
++		if (ret >= 0)
++			vfree(data);
++
++		fput(file);
++		list_del(&p->list);
++		kfree(p);
++	}
++
++	fput(dir_file);
++out:
++	mutex_unlock(&iterate_mutex);
++	kfree(path_str);
++}
+-- 
+2.34.1
 
