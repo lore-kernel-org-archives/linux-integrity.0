@@ -2,91 +2,119 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA611C001DF
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Aug 2023 18:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB93C0015E
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Aug 2023 18:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbjHASTd (ORCPT
+        id S231180AbjHAS3J (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Aug 2023 14:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
+        Tue, 1 Aug 2023 14:29:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229883AbjHASTa (ORCPT
+        with ESMTP id S229731AbjHAS3G (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Aug 2023 14:19:30 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 81E8C2130
-        for <linux-integrity@vger.kernel.org>; Tue,  1 Aug 2023 11:19:29 -0700 (PDT)
-Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (c-98-237-170-177.hsd1.wa.comcast.net [98.237.170.177])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A88C7238AEA6;
-        Tue,  1 Aug 2023 11:19:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A88C7238AEA6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1690913969;
-        bh=UMsa/6D6amNcXhqqKgULTQeVgWNbTSj6Vc9o3LqSmOA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=egYnxmFXUmAUrYzaMvhqMd5SZj4sz+H5N9yFX1xKDQkZxON3lo0KA07sHiGzJXMUM
-         xJaFYoGEKAw36wRXfIQnm3yIIuNViqGHzFkt0DWFWpq0ZI6fJd+3jXCb4ubf/lUyma
-         vAEhPC0vytGW551wjUAsccwqN44SHlAvINfeKrtc=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, noodles@fb.com, bauermann@kolabnow.com,
-        ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
-        dyoung@redhat.com, peterhuewe@gmx.de, jarkko@kernel.org,
-        jgg@ziepe.ca, kexec@lists.infradead.org,
-        linux-integrity@vger.kernel.org
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-Subject: [PATCH 5/6] ima: measure TPM update counter at ima_init
-Date:   Tue,  1 Aug 2023 11:19:16 -0700
-Message-Id: <20230801181917.8535-6-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
-References: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 1 Aug 2023 14:29:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1672426A6;
+        Tue,  1 Aug 2023 11:28:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A893E61652;
+        Tue,  1 Aug 2023 18:28:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCA47C433C9;
+        Tue,  1 Aug 2023 18:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690914528;
+        bh=vgVYV9KtDNmY3fINh0LBn3d28Rjju1adTv5BCcegXgs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S7KpXyC7YsVn4bCy0g6OarEl0e/GJMlhFwf7pcfPe89AY/qHstW2sdi145peCS7ZO
+         QwfiOyIc8FlBse+4LSJwgChDPTreeGOhjqemo+LRydMLqiMzcqfRaKnMJ6vExlKCKD
+         JO0+p4kMKk5D0QSxF9BtLJanLaBsMjHW/94jQO5fgacPFvO1trl4cSD7+JsCdwjb2M
+         OLwINtfc49eCX+sLR+SeVKwuKNnRp8ZLSBW3DE3E8hqfLT5knjk11BSV1NK/tS4FuN
+         BLiyGW6TQr7pl83T+doEE9qlir/58n0S9DTAW6IDmvcVrHWTs+pN78THJJv49X0npb
+         q/JWwN6P9HzoA==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 01 Aug 2023 21:28:42 +0300
+Message-Id: <CUHF67ZOFOTN.1UFE7Q1IFRQMX@suppilovahvero>
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc:     "Daniil Stas" <daniil.stas@posteo.net>,
+        "Mario Limonciello" <mario.limonciello@amd.com>,
+        <James.Bottomley@hansenpartnership.com>, <Jason@zx2c4.com>,
+        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <regressions@leemhuis.info>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] tpm: disable hwrng for fTPM on some AMD designs
+X-Mailer: aerc 0.14.0
+References: <20230727183805.69c36d6e@g14>
+ <b1dd27df-744b-3977-0a86-f5dde8e24288@amd.com>
+ <20230727193949.55c18805@g14>
+ <65a1c307-826d-4ca3-0336-07a185684e5d@amd.com>
+ <20230727195019.41abb48d@g14>
+ <67eefe98-e6df-e152-3169-44329e22478d@amd.com>
+ <20230727200527.4080c595@g14>
+ <CAHk-=whqT0PxBazwfjWwoHQQFzZt50tV6Jfgq3iYceKMJtyuUg@mail.gmail.com>
+ <CUGAV1Y993FB.1O2Q691015Z2C@seitikki>
+ <CAHk-=whphk8Jp=NYmnm7Qv+vZ6ScYCz+rV8a2G1nD-AQY3z+mQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whphk8Jp=NYmnm7Qv+vZ6ScYCz+rV8a2G1nD-AQY3z+mQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-IMA log entries can be lost due to a variety of causes, such as code bugs
-or error conditions, leading to a mismatch between TPM PCRs and
-the IMA log.  Measuring TPM PCR update counter during ima_init would
-provide a baseline counter for the number of times the TPM PCRs are
-updated.  The remote attestation service can compare this baseline
-counter with a subsequent measured one (e.g., post-kexec soft-boot) to
-identify if there are any lost IMA log events.
+On Mon Jul 31, 2023 at 10:05 PM EEST, Linus Torvalds wrote:
+> On Mon, 31 Jul 2023 at 03:53, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > I quickly carved up a patch (attached), which is only compile tested
+> > because I do not have any AMD hardware at hand.
+>
+> Is there some way to just see "this is a fTPM"?
+>
+> Because honestly, even if AMD is the one that has had stuttering
+> issues, the bigger argument is that there is simply no _point_ in
+> supporting randomness from a firmware source.
+>
+> There is no way anybody should believe that a firmware TPM generates
+> better randomness than we do natively.
+>
+> And there are many reasons to _not_ believe it. The AMD problem is
+> just the most user-visible one.
+>
+> Now, I'm not saying that a fTPM needs to be disabled in general - but
+> I really feel like we should just do
+>
+>  static int tpm_add_hwrng(struct tpm_chip *chip)
+>  {
+>         if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM))
+>                 return 0;
+>         // If it's not hardware, don't treat it as such
+>         if (tpm_is_fTPM(chip))
+>                 return 0;
+>         [...]
+>
+> and be done with it.
+>
+> But hey, if we have no way to see that whole "this is firmware
+> emulation", then just blocking AMD might be the only way.
+>
+>                Linus
 
-Measure the TPM update counter at ima init.
+I would disable it inside tpm_crb driver, which is the driver used
+for fTPM's: they are identified by MSFT0101 ACPI identifier.
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
----
- security/integrity/ima/ima_init.c | 3 +++
- security/integrity/ima/ima_main.c | 1 +
- 2 files changed, 4 insertions(+)
+I think the right scope is still AMD because we don't have such
+regressions with Intel fTPM.
 
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 63979aefc95f..9bb18d6c2fd6 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -154,5 +154,8 @@ int __init ima_init(void)
- 				  UTS_RELEASE, strlen(UTS_RELEASE), false,
- 				  NULL, 0);
- 
-+	/* Measures TPM update counter at ima_init */
-+	ima_measure_update_counter("ima_init_tpm_update_counter");
-+
- 	return rc;
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1bcd45cc5a6a..93357c245e82 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1035,6 +1035,7 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- 				   buf, size, "kexec-cmdline", KEXEC_CMDLINE, 0,
- 				   NULL, false, NULL, 0);
- 	fdput(f);
-+
- }
- 
- /**
--- 
-2.25.1
+I.e. I would move the helper I created inside tpm_crb driver, and
+a new flag, let's say "TPM_CHIP_FLAG_HWRNG_DISABLED", which tpm_crb
+sets before calling tpm_chip_register().
 
+Finally, tpm_add_hwrng() needs the following invariant:
+
+	if (chip->flags & TPM_CHIP_FLAG_HWRNG_DISABLED)
+		return 0;
+
+How does this sound? I can refine this quickly from my first trial.
+
+BR, Jarkko
