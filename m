@@ -2,63 +2,99 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D478AC0015E
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Aug 2023 11:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E067FC001DF
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Aug 2023 18:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234397AbjHALwk (ORCPT
+        id S229854AbjHASTa (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Aug 2023 07:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
+        Tue, 1 Aug 2023 14:19:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234400AbjHALwd (ORCPT
+        with ESMTP id S229605AbjHAST2 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Aug 2023 07:52:33 -0400
-Received: from mail.cothiafon.pl (mail.cothiafon.pl [217.61.106.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA0841BD9
-        for <linux-integrity@vger.kernel.org>; Tue,  1 Aug 2023 04:52:30 -0700 (PDT)
-Received: by mail.cothiafon.pl (Postfix, from userid 1002)
-        id B542E835F5; Mon, 31 Jul 2023 10:36:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cothiafon.pl; s=mail;
-        t=1690792589; bh=dwoca0X6C9VXklO/zRgFQCPapTk5LFz4tKaENdvy6Po=;
-        h=Date:From:To:Subject:From;
-        b=gHMAMv/5WlANbsGFLKorUams/25uuYtH1vurxJzKif/YI/HLGMUGf+QYr7wFUwbCa
-         orn1LfZrxLgWiZSYF73givwoxugtJHmwVWet+0WRDnai7CPxJyE3rdZJ3ILCQfrB/K
-         wyv6jRrihKcn6OkQypBHsuJawK8nAno085oqkAgVVXbFEhsclP2ICQ+VHmC1GwvZUt
-         n2AQA9PA12/r+uzqBBo/7LP66i/HB17IWFxaBBtJwAGIs/WtkbVde74nL+6FgRilOM
-         ez+NB4cZi62pnsSa/O4zH+agMFQRINoxcLtez7wyDIwnHDAzq18bYCiy7+Sf8QM2Gq
-         Y1CKqYyQ+QdfQ==
-Received: by mail.cothiafon.pl for <linux-integrity@vger.kernel.org>; Mon, 31 Jul 2023 08:35:48 GMT
-Message-ID: <20230731095940-0.1.28.omtz.0.4gtg7wur2z@cothiafon.pl>
-Date:   Mon, 31 Jul 2023 08:35:48 GMT
-From:   =?UTF-8?Q? "Rados=C5=82aw_Grabowski" ?= 
-        <radoslaw.grabowski@cothiafon.pl>
-To:     <linux-integrity@vger.kernel.org>
-Subject: W sprawie samochodu
-X-Mailer: mail.cothiafon.pl
+        Tue, 1 Aug 2023 14:19:28 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1CBB22130
+        for <linux-integrity@vger.kernel.org>; Tue,  1 Aug 2023 11:19:27 -0700 (PDT)
+Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (c-98-237-170-177.hsd1.wa.comcast.net [98.237.170.177])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 25642238AE99;
+        Tue,  1 Aug 2023 11:19:26 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 25642238AE99
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1690913966;
+        bh=b4OdcS9sda7T2b0PHVgizsmccOm9TXwQxgnEJfHhAx0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eS8FMRFIyDnqlgfFkDfZxDa/G5VqNOJ6/fDUQwPB0pU/HNFouLWc1OUHO9MraPEvv
+         UTleLgGK+Qy6d/+7fXseSeLfG2uECVRl8l11t3dZF+A+q0OCb65ziVTTb5UES0gwpr
+         rjgCE5Ye22xF3DeTjmFHQU1NdUuysEYAsL4O6jDU=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, noodles@fb.com, bauermann@kolabnow.com,
+        ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, peterhuewe@gmx.de, jarkko@kernel.org,
+        jgg@ziepe.ca, kexec@lists.infradead.org,
+        linux-integrity@vger.kernel.org
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
+Subject: [PATCH 0/6] Measuring TPM update counter in IMA
+Date:   Tue,  1 Aug 2023 11:19:11 -0700
+Message-Id: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Entries in IMA log may be lost due to code bugs, certain error conditions
+being met etc.  This can result in TPM PCRs getting out of sync with the
+IMA log.  One such example is events between kexec 'load' and kexec
+'execute' getting lost from the IMA log when the system soft-boots into
+the new Kernel using kexec[1].  The remote attestation service does not
+have any information if the PCR mismatch with IMA log is because of loss
+of entries in the IMA log or something else.  TPM 2.0 provides an update
+counter which is incremented each time a PCR is updated [2]. Measuring the
+TPM PCR update counter in IMA subsystem will help the remote attestation
+service to validate if there are any missing entries in the IMA log, when
+the system goes through certain important state changes (e.g. kexec soft
+boot, IMA log snapshotting etc.)
 
-chcieliby=C5=9Bmy zapewni=C4=87 Pa=C5=84stwu kompleksowe rozwi=C4=85zania=
-, je=C5=9Bli chodzi o system monitoringu GPS.
-
-Precyzyjne monitorowanie pojazd=C3=B3w na mapach cyfrowych, =C5=9Bledzeni=
-e ich parametr=C3=B3w eksploatacyjnych w czasie rzeczywistym oraz kontrol=
-a paliwa to kluczowe funkcjonalno=C5=9Bci naszego systemu.=20
-
-Organizowanie pracy pracownik=C3=B3w jest dzi=C4=99ki temu prostsze i bar=
-dziej efektywne, a oszcz=C4=99dno=C5=9Bci i optymalizacja w zakresie pono=
-szonych koszt=C3=B3w, maj=C4=85 dla ka=C5=BCdego przedsi=C4=99biorcy ogro=
-mne znaczenie.
-
-Dopasujemy nasz=C4=85 ofert=C4=99 do Pa=C5=84stwa oczekiwa=C5=84 i potrze=
-b organizacji. Czy mogliby=C5=9Bmy porozmawia=C4=87 o naszej propozycji?
+This patch series provides the required functionality to measure the
+update counter through IMA subsystem by -
+ - introducing a function to retrieve PCR update counter in the TPM
+   subsystem.
+ - IMA functionality to acquire the update counter from the TPM subsystem.
+ - Measuring the update counter at system boot and at kexec Kernel
+   load.
 
 
-Pozdrawiam
-Rados=C5=82aw Grabowski
+This patch series would be a prerequisite for the next version of kexec
+load/execute series[1] and the future IMA log snapshotting patch series.
+
+[1] https://lore.kernel.org/all/20230703215709.1195644-1-tusharsu@linux.microsoft.com/
+    ima: measure events between kexec load and execute
+
+[2] https://trustedcomputinggroup.org/wp-content/uploads/TCG_TPM2_r1p59_Part3_Commands_pub.pdf
+    Section 22.4.2, Page 206.
+
+Tushar Sugandhi (6):
+  tpm: implement TPM2 function to get update counter
+  tpm: provide functionality to get update counter
+  ima: get TPM update counter
+  ima: implement functionality to measure TPM update counter
+  ima: measure TPM update counter at ima_init
+  kexec: measure TPM update counter in ima log at kexec load
+
+ drivers/char/tpm/tpm-interface.c   | 28 +++++++++++++++++
+ drivers/char/tpm/tpm.h             |  3 ++
+ drivers/char/tpm/tpm2-cmd.c        | 48 ++++++++++++++++++++++++++++++
+ include/linux/ima.h                |  1 +
+ include/linux/tpm.h                |  8 +++++
+ kernel/kexec_file.c                |  3 ++
+ security/integrity/ima/ima.h       |  2 ++
+ security/integrity/ima/ima_init.c  |  3 ++
+ security/integrity/ima/ima_main.c  | 29 ++++++++++++++++++
+ security/integrity/ima/ima_queue.c | 16 ++++++++++
+ 10 files changed, 141 insertions(+)
+
+-- 
+2.25.1
+
