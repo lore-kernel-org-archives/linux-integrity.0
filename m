@@ -2,31 +2,31 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ED4C04A94
-	for <linux-integrity@archiver.kernel.org>; Tue,  1 Aug 2023 18:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5BEC04FE1
+	for <linux-integrity@archiver.kernel.org>; Tue,  1 Aug 2023 18:19:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbjHASTb (ORCPT
+        id S229833AbjHASTd (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 1 Aug 2023 14:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35648 "EHLO
+        Tue, 1 Aug 2023 14:19:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229823AbjHAST3 (ORCPT
+        with ESMTP id S229996AbjHASTa (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 1 Aug 2023 14:19:29 -0400
+        Tue, 1 Aug 2023 14:19:30 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 803F72136
-        for <linux-integrity@vger.kernel.org>; Tue,  1 Aug 2023 11:19:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C75AE2682
+        for <linux-integrity@vger.kernel.org>; Tue,  1 Aug 2023 11:19:29 -0700 (PDT)
 Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (c-98-237-170-177.hsd1.wa.comcast.net [98.237.170.177])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B4CF7238AEA2;
-        Tue,  1 Aug 2023 11:19:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B4CF7238AEA2
+        by linux.microsoft.com (Postfix) with ESMTPSA id 359E5238AEA9;
+        Tue,  1 Aug 2023 11:19:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 359E5238AEA9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1690913968;
-        bh=XSu/u8+vyhoyKdaPC5jr7V2GlLG5uFfsCE+21U5Fofs=;
+        s=default; t=1690913969;
+        bh=wudBVQFohkkzXxCbB2YMhOCNd/qTfMjxbpTBbqY9dK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kvgYNT7GmYF5rOZ0k6+hig3x2xbFWxcTxTpYi21DHDFieGhqLlltEKw8FAEJpZLrH
-         6QxtNqqZU/uXBPLiSHeM2QJZfwNMVRuHhALQR8rUYFT6b4d4QNP8CjPN8j5XFAWJw8
-         +qurG3UrKDaIX/7Ix/i4zVpJXAStZ2gAtQYp1znI=
+        b=PfaY43aUZRm8DwP24QcvpHl3eVWh3GmSYwFS/W0vNbyTGX5CwEmejnSwQ1M8NolHn
+         KaXAqV6CkHLBVlWThL4p+EqN2M8bBxXM2n6vJFinHjJRhhMihb7do9qxe/ly7y4MN4
+         VVideAkJST33sRJmHVBaLZ9/gG0MTPGTgyleEA6s=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, noodles@fb.com, bauermann@kolabnow.com,
         ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
@@ -34,9 +34,9 @@ To:     zohar@linux.ibm.com, noodles@fb.com, bauermann@kolabnow.com,
         jgg@ziepe.ca, kexec@lists.infradead.org,
         linux-integrity@vger.kernel.org
 Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-Subject: [PATCH 3/6] ima: get TPM update counter
-Date:   Tue,  1 Aug 2023 11:19:14 -0700
-Message-Id: <20230801181917.8535-4-tusharsu@linux.microsoft.com>
+Subject: [PATCH 6/6] kexec: measure TPM update counter in ima log at kexec load
+Date:   Tue,  1 Aug 2023 11:19:17 -0700
+Message-Id: <20230801181917.8535-7-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
 References: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
@@ -46,63 +46,38 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Measuring the TPM PCR update counter will help the remote attestation
-service to validate if there are any missing entries in the IMA log, when
-the system goes through certain important state changes (e.g. kexec soft
-boot, IMA log snapshotting etc.).  Detecting such missing entries would
-help the remote attestation service functionality to be more robust.
-It should also help the system administrators with manual investigations
-when TPM PCR quotes go out of sync with IMA measurements.
+IMA measurements snapshot occurs at kexec 'load', but any additional
+measurements between 'load' and kexec 'execute' aren't carried over
+post kexec soft-reboot.[1] This may lead to TPM PCRs extending with
+events that are not reflected in the new Kernel's IMA log.  By measuring
+the TPM update counter at kexec 'load' and at ima_init after the kexec
+soft-reboot, the remote attestation service can identify potentially
+lost events by comparing the log event count with the counter difference.
 
-Implement a new function, 'ima_tpm_get_update_counter()', which uses
-the 'tpm_pcr_get_update_counter()' function from the TPM driver interface
-to retrieve the PCR update counter of the TPM chip in use.
+Measure the TPM update counter at kexec image load.
+
+[1] https://lore.kernel.org/all/20230703215709.1195644-1-tusharsu@linux.microsoft.com/
+    ima: measure events between kexec load and execute
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 ---
- security/integrity/ima/ima.h       |  1 +
- security/integrity/ima/ima_queue.c | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
+ kernel/kexec_file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index c29db699c996..4acd0e5a830f 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -167,6 +167,7 @@ void ima_init_template_list(void);
- int __init ima_init_digests(void);
- int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
- 			  void *lsm_data);
-+int ima_tpm_get_update_counter(u32 *cpu_update_counter);
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index f1a0e4e3fb5c..4b6391b02c5a 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -246,6 +246,9 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
+ 				  image->cmdline_buf_len - 1);
+ 	}
  
- /*
-  * used to protect h_table and sha_table
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 532da87ce519..38f5c35b23b2 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -135,6 +135,22 @@ unsigned long ima_get_binary_runtime_size(void)
- 		return binary_runtime_size + sizeof(struct ima_kexec_hdr);
- }
++	/* Measures TPM update counter at kexec load. */
++	ima_measure_update_counter("kexec_load_tpm_update_counter");
++
+ 	/* IMA needs to pass the measurement list to the next kernel. */
+ 	ima_add_kexec_buffer(image);
  
-+int ima_tpm_get_update_counter(u32 *update_counter)
-+{
-+	int result;
-+
-+	if (!update_counter)
-+		return -EINVAL;
-+
-+	result = tpm_pcr_get_update_counter(ima_tpm_chip,
-+				CONFIG_IMA_MEASURE_PCR_IDX, TPM_ALG_SHA1, update_counter);
-+
-+	if (result != 0)
-+		pr_err("Failed to get TPM PCR update counter, result: %d\n", result);
-+
-+	return result;
-+}
-+
- static int ima_pcr_extend(struct tpm_digest *digests_arg, int pcr)
- {
- 	int result = 0;
 -- 
 2.25.1
 
