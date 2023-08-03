@@ -2,103 +2,68 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D192C001B0
-	for <linux-integrity@archiver.kernel.org>; Fri, 11 Aug 2023 19:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD96BC04A6A
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Aug 2023 08:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236580AbjHKT2f (ORCPT
+        id S234540AbjHCI26 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 11 Aug 2023 15:28:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42298 "EHLO
+        Thu, 3 Aug 2023 04:28:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236787AbjHKT2e (ORCPT
+        with ESMTP id S234539AbjHCI2d (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 11 Aug 2023 15:28:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 678D430F0;
-        Fri, 11 Aug 2023 12:28:34 -0700 (PDT)
+        Thu, 3 Aug 2023 04:28:33 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C4E49CB;
+        Thu,  3 Aug 2023 01:25:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E779F676D0;
-        Fri, 11 Aug 2023 19:28:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F650C433C7;
-        Fri, 11 Aug 2023 19:28:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B8CC61CBE;
+        Thu,  3 Aug 2023 08:25:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F48C433C7;
+        Thu,  3 Aug 2023 08:25:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691782113;
-        bh=Qwn9nJJxT7GtLecLQ803wJtLDl1iwvMz887QXkdDfdg=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=sd44wt2K7mPeq4mn3lD58KgWAP+5hvdkTjRvak8PcOc5ivRx2Gq3LlHidWFR0YA3u
-         2Ql+yquNQureKaE7fVWETtW/urr5YDljGTGiTz06oqbOgs93NfR58t8b+Y+UnJhSv8
-         BEns2FIPTrpAckUoIusDCsxDaKW6niaoXyOJqOJo1TTuqsNmdiI58iUWVzgF7vdzFO
-         GkZh/1OjlNBECJPS9f5GrO3dQdIgTfRhFDH3D2oY3QUvpptYrLNh3cGdbRaI5RLoiG
-         Acrb3FLExtTn8TdgUoSGdIF1/QNKdrOFuUBBRZPoSqRkd9J/U6wl4gpyyfqTqR13Jx
-         tb6XAX6ZSOebA==
+        s=k20201202; t=1691051144;
+        bh=wMQy275Ol9CD0OwiDgSzpC7pNbHAeOO/DZdFPFRZAHc=;
+        h=Date:Cc:Subject:From:To:From;
+        b=da/JJ4n/Jsc0XqYYQFjVmcnFRESR6nXZ/NFZGLarcHZrtrdVFA27SUM+aY8VlcsBA
+         d71TaWla8VDtMObdi2t39FFDxEb+kF/+S7cO9n6PIqvPOGTQrtISmiQRPV0IVuKbvt
+         6M27xgmR21JEbl1bI94G/M6/d21qkWMiw9b/v2HompVeWuDe4VSu9NdqqYi6fZn7X0
+         wObSKpfqB0orvjMEnVJ4duyw8MJHpFXaoXUoTo+1JMZyW15+df97M2X45xEXP7ChtX
+         Ia/yQD2YHcSpaBTCn/RRoMTMRz0qzDurRRvMthomwSwO8p7G2CSOVIK3/kCr/SK9Vb
+         Zv1mWl5sfl3iA==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Fri, 11 Aug 2023 22:28:27 +0300
-Message-Id: <CUPYPEYOKJ61.1WFKD20WQXVAA@suppilovahvero>
-Cc:     "Thorsten Leemhuis" <regressions@leemhuis.info>,
-        "Lino Sanfilippo" <LinoSanfilippo@gmx.de>,
-        "Linux kernel regressions list" <regressions@lists.linux.dev>,
-        "Peter Huewe" <peterhuewe@gmx.de>,
-        "Christian Hesse" <mail@eworm.de>, <stable@vger.kernel.org>,
-        <roubro1991@gmail.com>, "Grundik" <ggrundik@gmail.com>,
-        "Christian Hesse" <list@eworm.de>,
-        <linux-integrity@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] tpm/tpm_tis: Disable interrupts for Framework
- Laptop Intel 12th gen
+Date:   Thu, 03 Aug 2023 11:25:35 +0300
+Message-Id: <CUIRLIY5N6CI.3O9UKOY2N5BS7@suppilovahvero>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        "Stefan Berger" <stefanb@linux.ibm.com>
+Subject: 
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Linus Torvalds" <torvalds@linux-foundation.org>
+To:     <linux-integrity@vger.kernel.org>
 X-Mailer: aerc 0.14.0
-References: <20230710133836.4367-1-mail@eworm.de>
- <20230710142916.18162-1-mail@eworm.de>
- <20230710231315.4ef54679@leda.eworm.net>
- <bd0587e16d55ef38277ab1f6169909ae7cde3542.camel@kernel.org>
- <bb5580e93d244400c3330d7091bf64868aa2053f.camel@gmail.com>
- <0f272843a33a1706dbcbb2d84b02e3951ee60cbb.camel@kernel.org>
- <fdd5fd9ece045ebd1888672a75f157e64ade98fb.camel@gmail.com>
- <a588d1d3-12e0-b078-b6cc-b0a63c54ab37@leemhuis.info>
- <CUPW0XP1RFXI.162GZ78E46TBJ@suppilovahvero>
- <CAHk-=whRVp4h8uWOX1YO+Y99+44u4s=XxMK4v00B6F1mOfqPLg@mail.gmail.com>
-In-Reply-To: <CAHk-=whRVp4h8uWOX1YO+Y99+44u4s=XxMK4v00B6F1mOfqPLg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Fri Aug 11, 2023 at 9:55 PM EEST, Linus Torvalds wrote:
-> On Fri, 11 Aug 2023 at 10:22, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > I was planning to send a PR to Linus with a quirk for MSI GS66 Stealth
-> > 11UG, and apparently this bug report would add two additional MSI
-> > entries. This is becoming quickly a maintenance hell.
->
-> Honestly, what would be the immediate effects of just not enabling the
-> TPM irq by default at all, and making it an explicit opt-in?
->
-> When a common solution is to just disable the TPM in the BIOS
-> entirely, and the end result is a working system, I really get the
-> teeling that this is all pain for very very little gain.
->
-> Would anybody even notice if we just disabled it by default and added
-> a "if you really want it, use 'tpm=3Dirq' kernel command line"?
->
-> Hmm?
->
->              Linus
+Hi,
 
-It would be in line with what I proposed in [1] (option A), and also
-what Grundik said in this thread.
+I have a working PoC for boot-time initialization of vtpm inside
+tpm_vtpm_proxy. ATM, it uses the Linux firmware interface to load a ELF
+binary for the vtpm, and delivers a communication end for the helper
+process.
 
-Right now IRQs should be only enabled by a command-line option, and what
-"allow list" would mean in practice should really be something that
-would be advertised e.g. Device Tree or ACPI, not really part of the
-solution implemented right now.
+It is a great feature with the current narrow scope for continuous
+integration. Obviously the scope could be later on extended to e.g.
+from unencrypted plain text to a vTPM living inside SGX enclave.
 
-I'll send a patch ASAP, which makes this feature opt-in.
-
-[1] https://lore.kernel.org/linux-integrity/CUPW0XP1RFXI.162GZ78E46TBJ@supp=
-ilovahvero/
+I could send an RFC of this, if there is wider interest for the
+topic.
 
 BR, Jarkko
+
+
