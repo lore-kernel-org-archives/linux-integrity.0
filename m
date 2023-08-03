@@ -2,116 +2,122 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E03BC00528
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Aug 2023 01:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 173A0C001DE
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Aug 2023 01:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230509AbjHCB1j (ORCPT
+        id S230456AbjHCByU (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 2 Aug 2023 21:27:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53890 "EHLO
+        Wed, 2 Aug 2023 21:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230356AbjHCB1j (ORCPT
+        with ESMTP id S230088AbjHCBxS (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 2 Aug 2023 21:27:39 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82CA32D7E
-        for <linux-integrity@vger.kernel.org>; Wed,  2 Aug 2023 18:27:38 -0700 (PDT)
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3731PGu3007458;
-        Thu, 3 Aug 2023 01:27:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=GmyzOxBMyR6kxXjZnhUZb9kBaKDndW0hpW8M78XlOdQ=;
- b=iu0MZy3U9oX6ytXefe7DqGn8fYx5Lx77R8zPZbHYctDQ9GWZY8Futyh9CRbqL2+Nh1Wr
- wYhwpKQl5zzzw8remVwK4NPpDt8wk3exaZ2fP1HVRw3AmKJ5Uf2gGlEq/d6XYCWqimDy
- TlaDdMJNHsBnE4zN1YPWrYErq01w0qVMLJ2yOOXDQR5l7ZrV7WZEXQYQNZjyAfB3vQkr
- GOuUUN24QB7L3dF9HJZjcpAEt54ddqCItfxiNqV+U6ZegCgq7Wj8u5GtqFVYIoTWLVgM
- u1oQVj3/1sZ0lFIE+YLH6veL+iQRel6MmkQbIC230cHA/c8Ks7eC8amNAOfV8FzAzFDz Dg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s82jbr0jp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Aug 2023 01:27:11 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3731RBAN011226;
-        Thu, 3 Aug 2023 01:27:11 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3s82jbr0je-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Aug 2023 01:27:11 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3730teH8017005;
-        Thu, 3 Aug 2023 01:22:09 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3s5dfyhkxh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Aug 2023 01:22:09 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3731M8Dv15532748
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 3 Aug 2023 01:22:09 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B43865805D;
-        Thu,  3 Aug 2023 01:22:08 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27E8058043;
-        Thu,  3 Aug 2023 01:22:07 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.115.23])
-        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Thu,  3 Aug 2023 01:22:07 +0000 (GMT)
-Message-ID: <8c4257fb07a8c9fd26b70ce716665a9535e6af54.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/6] tpm: implement TPM2 function to get update counter
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>, noodles@fb.com,
-        bauermann@kolabnow.com, ebiederm@xmission.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com, peterhuewe@gmx.de,
-        jgg@ziepe.ca, kexec@lists.infradead.org,
-        linux-integrity@vger.kernel.org
-Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-Date:   Wed, 02 Aug 2023 21:22:06 -0400
-In-Reply-To: <CUHRAC79EW66.1VQRXS97GB0UO@suppilovahvero>
-References: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
-         <20230801181917.8535-2-tusharsu@linux.microsoft.com>
-         <CUHFWAAKMKJN.2EA3ZHLOOPPGB@suppilovahvero>
-         <1d592ca1-1f6c-9eef-ce71-b07a837372b0@linux.microsoft.com>
-         <CUHRAC79EW66.1VQRXS97GB0UO@suppilovahvero>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cTPHhMShhoCIqCuBndgM-0ABiYGW3Yiu
-X-Proofpoint-ORIG-GUID: kQek6MPD53-4gkIeExz5Ds8ocwd9lOQ7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.254,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-02_21,2023-08-01_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- mlxlogscore=791 malwarescore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 adultscore=0 phishscore=0 bulkscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308030008
+        Wed, 2 Aug 2023 21:53:18 -0400
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF14C4C09;
+        Wed,  2 Aug 2023 18:50:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pd9/SIB/dq4tngoj2E/6g51tqnoaldJofDiTcwhEJ6wI2hJYCbVU9CzTrn+xGuUmfQ6yzLaTuLYDgBfLYXgm696B8MWwSxZWFXiGm1N0zX1pKHl/78J8tQg1Ci/vDbOelsm2e9pYovsIITqZSgmD4UuyrtApNWLX2EjQJxbbN+ojsHDleNezDAg8WoFYK0J4/7iIfxiKOCG4pxntCE4mV8S+NcNbHYQV2kTRE1syLhjbKPs7xCRP8K+jPMxN6nZf1D/y7ui/wcVOIpNEm/O3HYQnuvC4HGfhJIAkJPJ2nPySPIT/Q5pVHeOrm7Dj2jqsYrhX30dSvaabcIixPPR8hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oMOOmqq/eiZlUbhnmu/KV0sSYQzes5GaMDpH8G+Dg4c=;
+ b=eT6Pz6MtCKUJqd0XKYI6I7zim6nqE1zUu5RFB+LHbQxYuzt6Nbd22+q3pSs7PBoi5wjqDBC81HE+K9MptKSNYbN7x7zroc+Lv3cS3TNoTvK3FBnIQJ5LlaBZVrYuydTlPytM0+DBXor3Lg8afh1e3rAIKHGGHMCWhSNWGG0J02bb7HUefw67kImF654jqvBuG82pQcokqPjFDUQjVRqkedL7CN91gYkKpildlwyJuRkN6uW/V/enBNV4WuEWx3kwplBhGDoXnh5SK98o2TemnFV/twU9VToOQeZaOaf6t/Ij4CiQ6bHAPLtjcHU/qLGRp396hN0krkzf04KqT4McQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oMOOmqq/eiZlUbhnmu/KV0sSYQzes5GaMDpH8G+Dg4c=;
+ b=rz+UIt00b05vp/qmI3yBTpSTwqEKfyDmSrnxGOU1SB67YB5T9K6PAAPr5X4TEv4hMnv9MQwa8X6tPOJI/PrkqZDDBJlENb6rdzM491f9WEnnEzlUb/XZ/KRQtXgBJrfuai6XUUoFETaA6fStOw7D8ZSHlic7qd8gmh7eevEjV4c=
+Received: from MW4PR03CA0147.namprd03.prod.outlook.com (2603:10b6:303:8c::32)
+ by IA1PR12MB6161.namprd12.prod.outlook.com (2603:10b6:208:3eb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6609.32; Thu, 3 Aug
+ 2023 01:50:31 +0000
+Received: from CO1PEPF000044FD.namprd21.prod.outlook.com
+ (2603:10b6:303:8c:cafe::2f) by MW4PR03CA0147.outlook.office365.com
+ (2603:10b6:303:8c::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6631.45 via Frontend
+ Transport; Thu, 3 Aug 2023 01:50:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044FD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.6652.19 via Frontend Transport; Thu, 3 Aug 2023 01:50:31 +0000
+Received: from SITE-L-T34-2.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 2 Aug
+ 2023 20:50:30 -0500
+From:   Mario Limonciello <mario.limonciello@amd.com>
+To:     <jarkko@kernel.org>, <peterhuewe@gmx.de>
+CC:     <linux-kernel@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <Jason@zx2c4.com>, <dragonn@op.pl>,
+        Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH 1/3] tpm: Add a missing check for TPM_CHIP_FLAG_HWRNG_DISABLED
+Date:   Wed, 2 Aug 2023 20:50:13 -0500
+Message-ID: <20230803015015.915-2-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20230803015015.915-1-mario.limonciello@amd.com>
+References: <20230803015015.915-1-mario.limonciello@amd.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FD:EE_|IA1PR12MB6161:EE_
+X-MS-Office365-Filtering-Correlation-Id: aff7b205-4aec-4494-b2d4-08db93c40548
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 1qbkMPpfyqT1K7VzEVtRTk5a73P5xghN1smWbngsDZsLTj3X2xMW6o/ZUIHrid0lRxfibacKKHeXU6e9ars6EjoHjSQ1WHMeVjwZVhraD0amUl7bdlDuDVvb8b8t/yDyfgT1TwP6S+4W6isN8FDNSiSSa4EbWLVW4grO003wvaXrnd9bT2cSG+nyHfuYSIb4Q7Oy607ee3mTuq1PAtML0WO9AgwL99UVDnWZJ1X8SKWauV/EdU7R+ZJA8IJXmQJtUxNlTQFwi9FYgaZKBuqbFtYUEJJC7tEzd9ZGfH03dyZFXhIkDGO55Jdc0HDgwc6VMytmwGQyCnOrM3RpnJi4rtGu2tZcynPrdR09i4qRWD4vA9yC5y4aIyIXSHwt+ELtkPirH6+fbjmvLLoHRra1RkYZ480Vl3yGxDmbXJ4/iQj2CdgRzpR8wdaqKp0Pcq0mxhBpCfyIECkyQ8Jk7Xmce/EiPQxBinKoTfNuxb38t+sdQMDvsjHle83+r0TPGc92gLhO24oE+5GbreW77OPmjFwdFNkrA1Cqo6PndVYHbyG00k+0IpgpMlrOTzZ+sUdB7YFINDYYKYtRH8dYgPxQuqEimbu3IU5BgaM0KpVMjIMZosMhQQPRFPEt8F1ZusXkxNs2FukTMd8WMrCGVXa51i+yRUc4THRsWkrweK1W8ODHN7blOcFT96axMMT0V1nS0co8U0sLnJRqNeB2eQwZaxG82sebXr9kQCnEoJEgVtCYggwVYlRyTg+UnvboxSDDgwkSnwTkt8XTqJVLv/Z2Wg==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230028)(4636009)(136003)(396003)(39860400002)(376002)(346002)(82310400008)(451199021)(36840700001)(46966006)(40470700004)(82740400003)(356005)(8676002)(8936002)(40460700003)(5660300002)(44832011)(36860700001)(2906002)(4744005)(83380400001)(186003)(26005)(1076003)(336012)(86362001)(16526019)(40480700001)(426003)(70586007)(70206006)(2616005)(47076005)(316002)(4326008)(54906003)(110136005)(478600001)(36756003)(7696005)(6666004)(41300700001)(81166007)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2023 01:50:31.3018
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: aff7b205-4aec-4494-b2d4-08db93c40548
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000044FD.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6161
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2023-08-02 at 06:58 +0300, Jarkko Sakkinen wrote:
-> 
-> From long description I see zero motivation to ack this change, except
-> some heresay about IMA requiring it. Why does IMA need update_cnt and
-> why this is not documented to the long description?
+If the TPM is opted out of hwrng the error handling for
+tpm_chip_register() needs to know this so it doesn't try to clean
+up an uninitialized chip->hwrng.
 
-The motivation is to detect whether the IMA measurement list has been
-truncated, for whatever reason.  A new IMA record should be defined
-containing the "pcrCounter" value.  (I have not had a chance to review
-this patch set.)
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/char/tpm/tpm-chip.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-This new record would be a pre-req for both Tushar's "ima: measure
-events between kexec load and execute" patch set and Sush's proposal to
-trim the measurement list.  (I haven't looked at it yet either.)
-
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index e904aae9771be..8f61b784810d6 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -629,7 +629,8 @@ int tpm_chip_register(struct tpm_chip *chip)
+ 	return 0;
+ 
+ out_hwrng:
+-	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM) && !tpm_is_firmware_upgrade(chip))
++	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM) && !tpm_is_firmware_upgrade(chip) &&
++	    !(chip->flags & TPM_CHIP_FLAG_HWRNG_DISABLED))
+ 		hwrng_unregister(&chip->hwrng);
+ out_ppi:
+ 	tpm_bios_log_teardown(chip);
 -- 
-thanks,
-
-Mimi
+2.34.1
 
