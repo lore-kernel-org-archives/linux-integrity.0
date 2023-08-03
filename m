@@ -2,122 +2,78 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6125CC001DF
-	for <linux-integrity@archiver.kernel.org>; Thu,  3 Aug 2023 07:23:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB4FC04A6A
+	for <linux-integrity@archiver.kernel.org>; Thu,  3 Aug 2023 08:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233820AbjHCHXV (ORCPT
+        id S234608AbjHCInt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 3 Aug 2023 03:23:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39660 "EHLO
+        Thu, 3 Aug 2023 04:43:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233753AbjHCHXS (ORCPT
+        with ESMTP id S234457AbjHCInr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 3 Aug 2023 03:23:18 -0400
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D770B30C7;
-        Thu,  3 Aug 2023 00:23:14 -0700 (PDT)
-Received: from [192.168.0.2] (ip5f5aeffd.dynamic.kabel-deutschland.de [95.90.239.253])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+        Thu, 3 Aug 2023 04:43:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8076106
+        for <linux-integrity@vger.kernel.org>; Thu,  3 Aug 2023 01:43:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id D8BAA61E5FE05;
-        Thu,  3 Aug 2023 09:22:43 +0200 (CEST)
-Message-ID: <dcbf7a17-67e3-d97d-bd18-9b0bd917a6cf@molgen.mpg.de>
-Date:   Thu, 3 Aug 2023 09:22:43 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.1
-Subject: Re: [PATCH 3/3] tpm: Drop CONFIG_HW_RANDOM_TPM
-To:     Mario Limonciello <mario.limonciello@amd.com>
-Cc:     jarkko@kernel.org, peterhuewe@gmx.de, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, Jason@zx2c4.com, dragonn@op.pl
-References: <20230803015015.915-1-mario.limonciello@amd.com>
- <20230803015015.915-4-mario.limonciello@amd.com>
-Content-Language: en-US
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20230803015015.915-4-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C77761CC5
+        for <linux-integrity@vger.kernel.org>; Thu,  3 Aug 2023 08:43:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286F2C433C8;
+        Thu,  3 Aug 2023 08:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691052224;
+        bh=AOLcJ1KhDLBUtJkrbox+j2nDyJDRZd0wvc7q6oNEZ84=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=oecah8j38u05dygko8uIB5G9QKEi6ghHOE0ekaFXtkj0pFDBi0dmUinbfSb+kFYuC
+         3hDEX+ur50/KCCLz3B9MXq2yQrlijYdliuhrQrk93MhBCfrkCIS+zGtRl1v2yGSldM
+         R6vEqv1x6STh1V3Cli5ApR1K7KCwjaIFKRabpxpcnz4i5MLLytCLygJdjl+2nwYuu9
+         RdS4OnF9/M20dZKFFUtl1E/J+Kk8JIcl6QycW8t1Hl6ZjWM9zvqoSvWzFMfEe0sCMH
+         vJekB2+bQjs3Ug7st63UwWwMF7Vfyv2w7aJujhoKKiBhIm5w7h4AIkuSaLMHFu2Ith
+         b9ic6xWikVyfg==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 03 Aug 2023 11:43:37 +0300
+Cc:     <code@tyhicks.com>, <nramas@linux.microsoft.com>,
+        <paul@paul-moore.com>
+Subject: Re: [PATCH 1/6] tpm: implement TPM2 function to get update counter
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Tushar Sugandhi" <tusharsu@linux.microsoft.com>,
+        <zohar@linux.ibm.com>, <noodles@fb.com>, <bauermann@kolabnow.com>,
+        <ebiederm@xmission.com>, <bhe@redhat.com>, <vgoyal@redhat.com>,
+        <dyoung@redhat.com>, <peterhuewe@gmx.de>, <jgg@ziepe.ca>,
+        <kexec@lists.infradead.org>, <linux-integrity@vger.kernel.org>
+Message-Id: <CUIRWHEMXL38.29Z2XR564KV33@suppilovahvero>
+X-Mailer: aerc 0.14.0
+References: <20230801181917.8535-1-tusharsu@linux.microsoft.com>
+ <20230801181917.8535-2-tusharsu@linux.microsoft.com>
+ <CUHFWAAKMKJN.2EA3ZHLOOPPGB@suppilovahvero>
+ <1d592ca1-1f6c-9eef-ce71-b07a837372b0@linux.microsoft.com>
+ <CUHRAC79EW66.1VQRXS97GB0UO@suppilovahvero>
+ <dd126081-3216-c15e-124e-ef137b376cdb@linux.microsoft.com>
+In-Reply-To: <dd126081-3216-c15e-124e-ef137b376cdb@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Dear Mario,
+On Thu Aug 3, 2023 at 12:04 AM EEST, Tushar Sugandhi wrote:
+> Btw, the function tpm2_pcr_read is not exposed directly to the other
+> subsystems (like IMA).=C2=A0 It is exposed via tpm_pcr_read.
+>
+> Do you want to expose tpm2_pcr_read directly,
+> or do you want me to update the function signature of tpm_pcr_read as wel=
+l?
 
+As long as you mention that 'update_cnt' causes divegence in the
+in-kernel API, and therefore tpm[12]_pcr_read() cannnot be under the
+same orchestrator.
 
-Thank you for the patch.
+If you take this path, please implement a precursory patch, which
+replace the existing call sites with some sequence of tpm[12]_pcr_read()
+and tpm_is_tpm2() calls.
 
-Am 03.08.23 um 03:50 schrieb Mario Limonciello:
-> As the behavior of whether a TPM is registered for hwrng can be controlled
-> by command line, drop the kernel configuration option.
-
-Shouldn’t this be left in to be able to set the default without having 
-to change the Linux kernel command line?
-
-
-Kind regards
-
-Paul
-
-
-> Cc: Mateusz Schyboll <dragonn@op.pl>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/char/tpm/Kconfig    | 11 -----------
->   drivers/char/tpm/tpm-chip.c |  6 +++---
->   2 files changed, 3 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/Kconfig b/drivers/char/tpm/Kconfig
-> index 927088b2c3d3f..69aaa730dc208 100644
-> --- a/drivers/char/tpm/Kconfig
-> +++ b/drivers/char/tpm/Kconfig
-> @@ -27,17 +27,6 @@ menuconfig TCG_TPM
->   
->   if TCG_TPM
->   
-> -config HW_RANDOM_TPM
-> -	bool "TPM HW Random Number Generator support"
-> -	depends on TCG_TPM && HW_RANDOM && !(TCG_TPM=y && HW_RANDOM=m)
-> -	default y
-> -	help
-> -	  This setting exposes the TPM's Random Number Generator as a hwrng
-> -	  device. This allows the kernel to collect randomness from the TPM at
-> -	  boot, and provides the TPM randomines in /dev/hwrng.
-> -
-> -	  If unsure, say Y.
-> -
->   config TCG_TIS_CORE
->   	tristate
->   	help
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 8fb42232bd7a5..0d69335743469 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -533,7 +533,7 @@ static int tpm_add_hwrng(struct tpm_chip *chip)
->   	if (!trust_tpm)
->   		chip->flags |= TPM_CHIP_FLAG_HWRNG_DISABLED;
->   
-> -	if (!IS_ENABLED(CONFIG_HW_RANDOM_TPM) || tpm_is_firmware_upgrade(chip) ||
-> +	if (tpm_is_firmware_upgrade(chip) ||
->   	    chip->flags & TPM_CHIP_FLAG_HWRNG_DISABLED)
->   		return 0;
->   
-> @@ -639,7 +639,7 @@ int tpm_chip_register(struct tpm_chip *chip)
->   	return 0;
->   
->   out_hwrng:
-> -	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM) && !tpm_is_firmware_upgrade(chip) &&
-> +	if (!tpm_is_firmware_upgrade(chip) &&
->   	    !(chip->flags & TPM_CHIP_FLAG_HWRNG_DISABLED))
->   		hwrng_unregister(&chip->hwrng);
->   out_ppi:
-> @@ -665,7 +665,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
->   void tpm_chip_unregister(struct tpm_chip *chip)
->   {
->   	tpm_del_legacy_sysfs(chip);
-> -	if (IS_ENABLED(CONFIG_HW_RANDOM_TPM) && !tpm_is_firmware_upgrade(chip) &&
-> +	if (!tpm_is_firmware_upgrade(chip) &&
->   	    !(chip->flags & TPM_CHIP_FLAG_HWRNG_DISABLED))
->   		hwrng_unregister(&chip->hwrng);
->   	tpm_bios_log_teardown(chip);
+BR, Jarkko
