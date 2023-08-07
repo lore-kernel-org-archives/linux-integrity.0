@@ -2,75 +2,105 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD028C001B0
-	for <linux-integrity@archiver.kernel.org>; Mon,  7 Aug 2023 20:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39DCC001DB
+	for <linux-integrity@archiver.kernel.org>; Mon,  7 Aug 2023 22:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231255AbjHGUKU (ORCPT
+        id S229905AbjHGW2L (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 7 Aug 2023 16:10:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53228 "EHLO
+        Mon, 7 Aug 2023 18:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbjHGUKT (ORCPT
+        with ESMTP id S229468AbjHGW2K (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 7 Aug 2023 16:10:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 993B0E79;
-        Mon,  7 Aug 2023 13:10:18 -0700 (PDT)
+        Mon, 7 Aug 2023 18:28:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7770B3
+        for <linux-integrity@vger.kernel.org>; Mon,  7 Aug 2023 15:28:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2F9BB621DA;
-        Mon,  7 Aug 2023 20:10:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CA6BC433C7;
-        Mon,  7 Aug 2023 20:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1691439017;
-        bh=oDviU0GY1oLKuY5XIx0foAmc1kNuZwvxIuHvyIn11z0=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=r6uQYcuSBan+gzdOvwt09TUvNckA87Cf9+/o4dsilvSgNSOJXT5AQE6QI0kKhJ+nu
-         gwkM4sm5EvJ5moXs2Rv0PwrbMqd3kJnoyDOEQJB3JfoV2thhcueAhlY3WfGwArXYc8
-         HIa81EwN08ovLVVMUDUhr8xFEZwTfJi4sqnNZtqjN+61dSFTCfC9iHvjxNwNkqduTf
-         HJCcWY/54aOgi/ZpJaeg+iQ+nSiooDkeq9kh5IQVMRDgsHv65BRZJIc04HsTn0x1Co
-         7qsY18zkB9EXOvhj7lrFhM0OrZgAfHsqeuZD0iGybLnpwDCGC35tC+JToHdg16ggGz
-         LDm0ZWLkUwyxg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 77B22E505D4;
-        Mon,  7 Aug 2023 20:10:17 +0000 (UTC)
-Subject: Re: [GIT PULL] tpmdd changes for v6.5-rc6
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230807191037.103938-1-jarkko@kernel.org>
-References: <20230807191037.103938-1-jarkko@kernel.org>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230807191037.103938-1-jarkko@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-v6.5-rc6
-X-PR-Tracked-Commit-Id: e117e7adc637e364b599dc766f1d740698e7e027
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8043e2225aa2ef7c7a04aac129a7ded3b1771aba
-Message-Id: <169143901747.15707.18186377689766814168.pr-tracker-bot@kernel.org>
-Date:   Mon, 07 Aug 2023 20:10:17 +0000
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 42824622D0
+        for <linux-integrity@vger.kernel.org>; Mon,  7 Aug 2023 22:28:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F3AC433C8;
+        Mon,  7 Aug 2023 22:28:07 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EzDbz08+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1691447284;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=i/sR6zlMsW212EFWtq0rbi0vsVh7IJymFItPS0OqlXA=;
+        b=EzDbz08+qw9JSU37EQIbN5NJP6T6ybqwu4NWONrEMyrMNhA9u4BtDm2aPPsIqbf8KF3SaD
+        2fUmebqW2MALvgYno1DiVjd5seH/+GzWrqcLGAU7C6Mj8UJ2k5g/zvwsMnpdRaZ7pnMxb2
+        yP5WaW9qQNo09dR2/hYiej1wfE2CxN8=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 73aa1093 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Mon, 7 Aug 2023 22:28:03 +0000 (UTC)
+Date:   Tue, 8 Aug 2023 00:28:01 +0200
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        David Howells <dhowells@redhat.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Cc:     Mario Limonciello <mario.limonciello@amd.com>, jgg@ziepe.ca,
+        linux@dominikbrodowski.net, linux-integrity@vger.kernel.org,
+        daniil.stas@posteo.net, peterhuewe@gmx.de
+Subject: Re: [PATCH v3] tpm: Disable RNG for all AMD fTPMs
+Message-ID: <ZNFv8f3r86zq3JSh@zx2c4.com>
+References: <20230803182428.25753-1-mario.limonciello@amd.com>
+ <CUK4PB8J51W8.2NQ3CSI1HNLDR@wks-101042-mac.ad.tuni.fi>
+ <6bfc61fb-6432-cb17-3312-53c6268e2a46@amd.com>
+ <CUK5NKQKDAWO.2RCNF768IKZ9Q@wks-101042-mac.ad.tuni.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CUK5NKQKDAWO.2RCNF768IKZ9Q@wks-101042-mac.ad.tuni.fi>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-The pull request you sent on Mon,  7 Aug 2023 19:10:36 +0000:
+On Sat, Aug 05, 2023 at 02:39:11AM +0300, Jarkko Sakkinen wrote:
+> On Sat Aug 5, 2023 at 2:21 AM EEST, Mario Limonciello wrote:
+> > On 8/4/23 17:54, Jarkko Sakkinen wrote:
+> > > On Thu Aug 3, 2023 at 9:24 PM EEST, Mario Limonciello wrote:
+> > >> The TPM RNG functionality is not necessary for entropy when the CPU
+> > >> already supports the RDRAND instruction. The TPM RNG functionality
+> > >> was previously disabled on a subset of AMD fTPM series, but reports
+> > >> continue to show problems on some systems causing stutter root caused
+> > >> to TPM RNG functionality.
+> > >>
+> > >> Expand disabling TPM RNG use for all AMD fTPMs whether they have versions
+> > >> that claim to have fixed or not. To accomplish this, move the detection
+> > >> into part of the TPM CRB registration and add a flag indicating that
+> > >> the TPM should opt-out of registration to hwrng.
+> > >>
+> > >> Cc: stable@vger.kernel.org # 5.5+
+> > >> Fixes: b006c439d58d ("hwrng: core - start hwrng kthread also for untrusted sources")
+> > >> Fixes: f1324bbc4011 ("tpm: disable hwrng for fTPM on some AMD designs")
+> > >> Fixes: 3ef193822b25 ("tpm_crb: fix fTPM on AMD Zen+ CPUs")
+> > >> Reported-by: daniil.stas@posteo.net
+> > >> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217719
+> > >> Reported-by: bitlord0xff@gmail.com
+> > >> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217212
+> > >> Reviewed-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> > >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> > > 
+> > > I will skip rc5 and send this for rc6 on Monday.
+> > > 
+> > > Has anyone with suitable AMD system tested this?
+> >
+> > Probably obvious; but I tested with a system that can support both dTPM 
+> > and fTPM and swapped between the two before I sent it.
+> 
+> Ok, great. I've tested that with non-AMD system things continue to
+> work so I guess that is sufficient enough for:
+> 
+> Tested-by: Jarkko Sakkinen <jarkko@kernel.org>
+> 
+> BR, Jarkko
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-v6.5-rc6
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8043e2225aa2ef7c7a04aac129a7ded3b1771aba
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Why is
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=554b841d470338a3b1d6335b14ee1cd0c8f5d754
+in Linus' tree? After we told you on several email threads to take the
+v3, and you said you would, you still took the v2? What are you doing?
+I'm frustrated because this is not the first time you've been out
+to lunch about this stuff. Now there's the wrong stable metadata and the
+fix is incomplete. Shame.
