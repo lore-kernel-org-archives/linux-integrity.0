@@ -2,101 +2,117 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6A0C001DE
-	for <linux-integrity@archiver.kernel.org>; Tue,  8 Aug 2023 17:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4103C001B0
+	for <linux-integrity@archiver.kernel.org>; Tue,  8 Aug 2023 17:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234635AbjHHR1t (ORCPT
+        id S232766AbjHHRdP (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 8 Aug 2023 13:27:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38552 "EHLO
+        Tue, 8 Aug 2023 13:33:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229763AbjHHR1U (ORCPT
+        with ESMTP id S234632AbjHHRcY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 8 Aug 2023 13:27:20 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D527AA0;
-        Tue,  8 Aug 2023 09:11:46 -0700 (PDT)
+        Tue, 8 Aug 2023 13:32:24 -0400
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D934791B17;
+        Tue,  8 Aug 2023 09:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1691511106; x=1723047106;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N0XoAVAbIxvMxMXqpn4PG97oXQGfuyCdgFNxzbmTuI8=;
-  b=lkH2QWcdRgLAUnkSKeqTg0ZKoGHmT2Hbdp4h8zVZDIjneqm1V/HV5oM5
-   PNk2lRWZQJUnE/ab+QXpFH+zzxufI8yhhqlrNufwlyn1cS/T0cTL3tYm4
-   SqUNDgEjJlrKiaFtlyLspnzcoXz778KD8nygorJAM6sQiUYScSH8JApf5
-   hSGJ5Alm5hp1ab9lkhgChjkf+vjcY7eqzvbyjT/DuhMHF5SqAwxDFHq0P
-   sb0t0MqxN1QJtqIBlnDkMg15np2C36aRBqigyQ2GB5Awp29opVy+OJ674
-   1GhAZgSD/fFUxTmKgaNOhbB2+idiuGX3rZSJtN6fCas4YQz+7ft9vOsPN
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="355709364"
-X-IronPort-AV: E=Sophos;i="6.01,263,1684825200"; 
-   d="scan'208";a="355709364"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 02:35:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10795"; a="977781148"
-X-IronPort-AV: E=Sophos;i="6.01,263,1684825200"; 
-   d="scan'208";a="977781148"
-Received: from romanagn-mobl1.ger.corp.intel.com (HELO [10.252.49.59]) ([10.252.49.59])
-  by fmsmga006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Aug 2023 02:35:54 -0700
-Message-ID: <7fd8bf2e-e7be-4bc9-b153-b156cf5ac090@linux.intel.com>
-Date:   Tue, 8 Aug 2023 12:37:18 +0300
+        d=hansenpartnership.com; s=20151216; t=1691498138;
+        bh=KZKKRT5Ma1nq9ta9abKg3orsaJzYsdcSBENnz8xI6lo=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=pa4OIxVYyMGokTSV6PutSvmvVqZomEWX3xoVHocoLIBZau8s8H2+4PEFqh3aDwHvU
+         kt7FKynZTmm8Soljhwwj0FIB56PqbUiNEaC9hClJ5QRIqxct9gjer4uTHu0l9sWDFJ
+         r+tNpJWjT83wdMDo44bm/sLFpgDUe2WPiwaxJvqs=
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 83FB612868AE;
+        Tue,  8 Aug 2023 08:35:38 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id W9axPlGpAZeL; Tue,  8 Aug 2023 08:35:38 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1691498138;
+        bh=KZKKRT5Ma1nq9ta9abKg3orsaJzYsdcSBENnz8xI6lo=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=pa4OIxVYyMGokTSV6PutSvmvVqZomEWX3xoVHocoLIBZau8s8H2+4PEFqh3aDwHvU
+         kt7FKynZTmm8Soljhwwj0FIB56PqbUiNEaC9hClJ5QRIqxct9gjer4uTHu0l9sWDFJ
+         r+tNpJWjT83wdMDo44bm/sLFpgDUe2WPiwaxJvqs=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (Client did not present a certificate)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id D57FF12868AD;
+        Tue,  8 Aug 2023 08:35:36 -0400 (EDT)
+Message-ID: <8ad131f35c33cf10788344be6c981473971f9c1c.camel@HansenPartnership.com>
+Subject: Re: [RFC] IMA Log Snapshotting Design Proposal
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>,
+        Sush Shringarputale <sushring@linux.microsoft.com>,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        kgold@linux.ibm.com, bhe@redhat.com, vgoyal@redhat.com,
+        dyoung@redhat.com, kexec@lists.infradead.org, jmorris@namei.org,
+        Paul Moore <paul@paul-moore.com>, serge@hallyn.com
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        linux-security-module@vger.kernel.org
+Date:   Tue, 08 Aug 2023 08:35:35 -0400
+In-Reply-To: <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
+References: <c5737141-7827-1c83-ab38-0119dcfea485@linux.microsoft.com>
+         <b748230c8ee291288afcf48898507556c3aa7c71.camel@HansenPartnership.com>
+         <5d21276a-daac-fc9b-add9-62e7c04bbdcd@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tpm: tpm_tis: Fix UPX-i11 DMI_PRODUCT_VERSION string
-Content-Language: en-US
-To:     peterhuewe@gmx.de, jarkko@kernel.org
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, l.sanfilippo@kunbus.com,
-        jsnitsel@redhat.com, pmenzel@molgen.mpg.de
-References: <20230808061816.15695-1-peter.ujfalusi@linux.intel.com>
-From:   =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@linux.intel.com>
-In-Reply-To: <20230808061816.15695-1-peter.ujfalusi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-
-
-On 08/08/2023 09:18, Peter Ujfalusi wrote:
-> The patch which made it to the kernel somehow lost the "01" from the
-> string, making the match to not work anymore.
+On Mon, 2023-08-07 at 18:49 -0400, Stefan Berger wrote:
 > 
-> Link: https://lore.kernel.org/lkml/20230524085844.11580-1-peter.ujfalusi@linux.intel.com/
-> Fixes: edb13d7bb034 ("tpm: tpm_tis: Disable interrupts *only* for AEON UPX-i11")
-> ---
-> Hi Jarkko,
 > 
-> Can you send this patch for the 6.5 cycle?
-> edb13d7bb034 was applied in 6.5-rc3 and I just updated my work tree to notice
-> the regression.
+> On 8/1/23 17:21, James Bottomley wrote:
+> > On Tue, 2023-08-01 at 12:12 -0700, Sush Shringarputale wrote:
+> > [...]
+> > > Truncating IMA log to reclaim memory is not feasible, since it
+> > > makes the log go out of sync with the TPM PCR quote making remote
+> > > attestation fail.
+> > 
+> > This assumption isn't entirely true.  It's perfectly possible to
+> > shard an IMA log using two TPM2_Quote's for the beginning and end
+> > PCR values to validate the shard.  The IMA log could be truncated
+> > in the same way (replace the removed part of the log with a
+> > TPM2_Quote and AK, so the log still validates from the beginning
+> > quote to the end).
+> > 
+> > If you use a TPM2_Quote mechanism to save the log, all you need to
+> > do is have the kernel generate the quote with an internal AK.  You
+> > can keep a record of the quote and the AK at the beginning of the
+> > truncated kernel log.  If the truncated entries are saved in a file
+> > shard it
 > 
-> Thank you,
-> Peter
-> 
->  drivers/char/tpm/tpm_tis.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> index ac4daaf294a3..2bb9901a329a 100644
-> --- a/drivers/char/tpm/tpm_tis.c
-> +++ b/drivers/char/tpm/tpm_tis.c
-> @@ -183,7 +183,7 @@ static const struct dmi_system_id tpm_tis_dmi_table[] = {
->  		.ident = "UPX-TGL",
->  		.matches = {
->  			DMI_MATCH(DMI_SYS_VENDOR, "AAEON"),
-> -			DMI_MATCH(DMI_PRODUCT_VERSION, "UPX-TGL"),
-> +			DMI_MATCH(DMI_PRODUCT_VERSION, "UPX-TGL01"),
+> The truncation seems dangerous to me. Maybe not all the scenarios
+> with an attestation client (client = reading logs and quoting) are
+> possible then anymore, such as starting an attestation client only
+> after truncation but a verifier must have witnessed the system's PCRs
+> and log state before the truncation occurred.
 
-The DMI property also got changed in the applied patch, it should have
-been DMI_PRODUCT_NAME, I will send v2 shortly, please ignore this version
+That's not exactly correct.  Nothing needs to have "witnessed" the
+starting PCR value because the quote vouches for it (and can vouch for
+it after the fact).  The only thing you need to verify the quote is the
+attestation key and the only thing you need to do to trust the
+attestation key is ensure it was TPM created.  All of that can be
+verified after the fact as well.  The only thing that can be done to
+disrupt this is to destroy the TPM (or re-own it).
 
->  		},
->  	},
->  	{}
+Remember the assumption is you *also* have the removed log shard to
+present.  From that the PCR state of the starting quote can be
+calculated and checked for matching the quote.  If you lose that, it's
+equivalent to the log being tampered with and all bets are off.  The
+assumption is that because of the impossibility of engineering TPM
+extensions, it should be impossible to come up with a fake log that
+produces the PCRs of the real one.  If that's violated, then IMA itself
+becomes useless.
 
--- 
-Péter
+James
+
