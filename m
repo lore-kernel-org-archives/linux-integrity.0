@@ -2,123 +2,82 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C82C0015E
-	for <linux-integrity@archiver.kernel.org>; Wed,  9 Aug 2023 20:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0E5C0015E
+	for <linux-integrity@archiver.kernel.org>; Wed,  9 Aug 2023 21:33:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229671AbjHIUvb (ORCPT
+        id S232017AbjHIVdp (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 9 Aug 2023 16:51:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47976 "EHLO
+        Wed, 9 Aug 2023 17:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229601AbjHIUvb (ORCPT
+        with ESMTP id S231977AbjHIVdp (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 9 Aug 2023 16:51:31 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4B9100;
-        Wed,  9 Aug 2023 13:51:30 -0700 (PDT)
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 379JgFhW017381;
-        Wed, 9 Aug 2023 19:53:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=91q+7mvybHfGvVUVLV6PtAy6zTGV6l+q7I4P7aDY71Q=;
- b=PbYrdhX+oeKuWXucaeo0nNpOfzEg2lbVdhXIievhSanAu6wnOCwRFmXYHWNW4gvd+WKm
- nBwsfjydVdjgfcehkj5RHLkj3gP1UsTk3L1H7no8COn0wlRKlwxXVbnRQYIgeZfKsykv
- wzGBHRRcB7gWtLYWuOkeyT+U5weg4AmWs3jXl3/TxmG5/REAlAjjWswKHlHQVnDC9nGP
- J/JViY2afKjs1Fphw4oYw6rw6aleKT/bkAW//z4O63bsXCdhxNEowYY+q1y0Bbp/Cwf7
- 7MpPsI1lL0or59I/JAiZvuwWxaj9HHZsQvjBzJLNwJvhcsrbOmGtiAPUhxiKdHmhCxRc ZA== 
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3sch088e2g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Aug 2023 19:53:41 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 379ICZNw015366;
-        Wed, 9 Aug 2023 19:53:40 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-        by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3sb3f34ubr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Aug 2023 19:53:40 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-        by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 379JrbmG19989240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Aug 2023 19:53:37 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 655E020043;
-        Wed,  9 Aug 2023 19:53:37 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27EF620040;
-        Wed,  9 Aug 2023 19:53:35 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.61.3.84])
-        by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Aug 2023 19:53:34 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v2 3/6] integrity: remove global variable from machine_keyring.c
-Date:   Wed,  9 Aug 2023 15:53:12 -0400
-Message-Id: <20230809195315.1085656-4-nayna@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20230809195315.1085656-1-nayna@linux.ibm.com>
-References: <20230809195315.1085656-1-nayna@linux.ibm.com>
+        Wed, 9 Aug 2023 17:33:45 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59F811718;
+        Wed,  9 Aug 2023 14:33:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE35964A6C;
+        Wed,  9 Aug 2023 21:33:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC3CC433C7;
+        Wed,  9 Aug 2023 21:33:42 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XqrQjeMe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1691616819;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=0eKTcHstXKpJm61TCqIQK1VlktzWVHthhysULNzNQ+E=;
+        b=XqrQjeMeCcQ2go+IEgGvwHicLoEmxAxRRDihJqKaNXTJ3ENvpzTbl1p0bzgo9K64UV3qax
+        Dok2+TENTGKwCUr3dFCCmWsHd+qpfbC9El6vfPbvQ/lB0VETdf/ASS8YdVnppCPU+QJn8b
+        KaE/IM1aM1MM3QUJG7i+1My3xXqLMUY=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id d3327f23 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Wed, 9 Aug 2023 21:33:39 +0000 (UTC)
+Date:   Wed, 9 Aug 2023 23:33:35 +0200
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     stable@vger.kernel.org, gregkh@linuxfoundation.org,
+        linux-integrity@vger.kernel.org
+Cc:     mario.limonciello@amd.com, jarkko@kernel.org
+Subject: AMD fTPM patches for stable
+Message-ID: <ZNQGL6XUtc8WFk1e@zx2c4.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Mts2WIO9sEIZC7kyJDvGmzpoe7_EWIN4
-X-Proofpoint-GUID: Mts2WIO9sEIZC7kyJDvGmzpoe7_EWIN4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-09_17,2023-08-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 mlxscore=0 adultscore=0
- impostorscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308090171
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-trust_mok variable is accessed within a single function locally.
+Hey Greg,
 
-Change trust_mok from global to local static variable.
+There was recently a bit of a snafoo with a maintainer taking the wrong
+version of a patch and sending that up to Linus. That patch had
+incorrect stable@ annotations and had a bug in it. That bug was fixed
+with a follow up patch. But of course the metadata couldn't be changed
+easily retroactively.
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Reviewed-and-tested-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/platform_certs/machine_keyring.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+So I'm emailing to ask you to backport these two patches back to 5.5:
 
-diff --git a/security/integrity/platform_certs/machine_keyring.c b/security/integrity/platform_certs/machine_keyring.c
-index 389a6e7c9245..9482e16cb2ca 100644
---- a/security/integrity/platform_certs/machine_keyring.c
-+++ b/security/integrity/platform_certs/machine_keyring.c
-@@ -8,8 +8,6 @@
- #include <linux/efi.h>
- #include "../integrity.h"
- 
--static bool trust_mok;
--
- static __init int machine_keyring_init(void)
- {
- 	int rc;
-@@ -65,9 +63,11 @@ static __init bool uefi_check_trust_mok_keys(void)
- bool __init trust_moklist(void)
- {
- 	static bool initialized;
-+	static bool trust_mok;
- 
- 	if (!initialized) {
- 		initialized = true;
-+		trust_mok = false;
- 
- 		if (uefi_check_trust_mok_keys())
- 			trust_mok = true;
--- 
-2.31.1
+- 554b841d4703 ("tpm: Disable RNG for all AMD fTPMs")
+- cacc6e22932f ("tpm: Add a helper for checking hwrng enabled")
 
+I know the stable@ tag says 6.1+, but the actual right tags from the
+newer versioned patch that didn't get picked are:
+
+Cc: stable@vger.kernel.org # 5.5+
+Fixes: b006c439d58d ("hwrng: core - start hwrng kthread also for untrusted sources")
+Fixes: f1324bbc4011 ("tpm: disable hwrng for fTPM on some AMD designs")
+Fixes: 3ef193822b25 ("tpm_crb: fix fTPM on AMD Zen+ CPUs")
+Reported-by: daniil.stas@posteo.net
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217719
+Reported-by: bitlord0xff@gmail.com
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=217212
+Reviewed-by: Jason A. Donenfeld <Jason@zx2c4.com>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+
+Let me know if you need any more info.
+
+Thanks,
+Jason
