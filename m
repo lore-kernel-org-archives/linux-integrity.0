@@ -2,141 +2,225 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA8BC04E69
-	for <linux-integrity@archiver.kernel.org>; Sun, 13 Aug 2023 02:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B571C05052
+	for <linux-integrity@archiver.kernel.org>; Mon, 14 Aug 2023 16:42:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbjHMCQQ (ORCPT
+        id S230073AbjHNQla (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 12 Aug 2023 22:16:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60904 "EHLO
+        Mon, 14 Aug 2023 12:41:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230093AbjHMCQA (ORCPT
+        with ESMTP id S230341AbjHNQlD (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 12 Aug 2023 22:16:00 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E847E3;
-        Sat, 12 Aug 2023 19:16:03 -0700 (PDT)
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37D1vZfq031029;
-        Sun, 13 Aug 2023 02:15:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=vGVIqJM22fgvkmIvySR2/oFIP39UZOusBgcxTw+M/Z4=;
- b=ESS4vxLJryZCCp2AG1R5AEQAq8JeEBGozIuDnDMPtfYsZOV98e++/jihy/uJk0K3YFZp
- yIGMPpc3HLjikFXvVe1DbDynGkoIx+YMqD/260YeG0pRHtFZSeJRyN1LN6FDZ3+29Ozw
- FR+a6KcxKPdwFmT/p0QKo3qxtYKML/4VGjnKNECxHYuJt7WaZjeLOOHl1DFY2g/O36ft
- BEd7uMIlYN5uw34VgpErMZWXHhiQGIuErlyS3VmydmdBJWdZrPeMsDzSq9ph9NbHz26q
- oqTi48JZ+JcJm9j8jBFIxeBSimxkAlRNbhMWMY5sIrJUA0cGb77Jl/PGTdFswD0yeB4I Fw== 
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3senyjgamp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Aug 2023 02:15:44 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37D0bHCp001082;
-        Sun, 13 Aug 2023 02:15:43 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3semsxgky9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 13 Aug 2023 02:15:43 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37D2FdGW26870110
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 13 Aug 2023 02:15:39 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9ECC20043;
-        Sun, 13 Aug 2023 02:15:39 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7B5F820040;
-        Sun, 13 Aug 2023 02:15:37 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.61.3.84])
-        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-        Sun, 13 Aug 2023 02:15:37 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
+        Mon, 14 Aug 2023 12:41:03 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45C6110;
+        Mon, 14 Aug 2023 09:41:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 72A7363180;
+        Mon, 14 Aug 2023 16:41:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F34C433C8;
+        Mon, 14 Aug 2023 16:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692031260;
+        bh=sGWBLCcKeaeGw2QE6nrh9AHpg6JP2tE+q6ulpJ2Ul2A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GhN5dR7uNn+jKw3+7bsjBMVuUixNzw6uTJc2rrReQq/HwfJ0tlVOSo0zxN48+17zs
+         0z72diCYB0eHtnYp7yviLPNqVAKkmiNzSgwXJxniezf7/fsMvLVMHbcHT29E1Se8EE
+         gEXoElibfpkbPOArNxGX8nNrIm2XF6Er22tcUfWJgvFKVnKRCjMsTJ4lEkY3cpuvQG
+         klnBRrz+3hxQvhXqF1Lg5OigDffqx9SP7/ZHqUA1YoOa/ZTEOUtgR7M3zBYpOTgVxu
+         cwaFbcYv8qkXK9zS8jHQ5SIlMM31wCBdSRj6Tc25RHfvkgvFFrtiiGlOBXklH9fUf+
+         t0Duu4aRQ7NjA==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>,
-        linux-security-module@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v3 0/6] Enable loading local and third party keys on PowerVM guest
-Date:   Sat, 12 Aug 2023 22:15:25 -0400
-Message-Id: <20230813021531.1382815-1-nayna@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 9sXxDEi_VotCrd52556Z25iwvixh-G1f
-X-Proofpoint-GUID: 9sXxDEi_VotCrd52556Z25iwvixh-G1f
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Richard Cochran <richardcochran@gmail.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH] tpm_tis: Revert "tpm_tis: Disable interrupts on ThinkPad T490s"
+Date:   Mon, 14 Aug 2023 19:40:53 +0300
+Message-Id: <20230814164054.64280-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.591,FMLib:17.11.176.26
- definitions=2023-08-12_27,2023-08-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 malwarescore=0 mlxlogscore=886 spamscore=0 lowpriorityscore=0
- mlxscore=0 bulkscore=0 adultscore=0 impostorscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2306200000 definitions=main-2308130016
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On a secure boot enabled PowerVM guest, local and third party code signing
-keys are needed to verify signed applications, configuration files, and
-kernel modules.
+Since for MMIO driver using FIFO registers, also known as tpm_tis, the
+default (and tbh recommended) behaviour is now the polling mode, the
+"tristate" workaround is no longer for benefit.
 
-Loading these keys onto either the .secondary_trusted_keys or .ima
-keyrings requires the certificates be signed by keys on the
-.builtin_trusted_keys, .machine or .secondary_trusted_keys keyrings.
+If someone wants to explicitly enable IRQs for a TPM chip that should be
+without question allowed. It could very well be a piece hardware in the
+existing deny list because of e.g. firmware update or something similar.
 
-Keys on the .builtin_trusted_keys keyring are trusted because of the chain
-of trust from secure boot up to and including the linux kernel.  Keys on
-the .machine keyring that derive their trust from an entity such as a
-security officer, administrator, system owner, or machine owner are said
-to have "imputed trust." The type of certificates and the mechanism for
-loading them onto the .machine keyring is platform dependent.
+While at it, document the module parameter, as this was not done in 2006
+when it first appeared in the mainline.
 
-Userspace may load certificates onto the .secondary_trusted_keys or .ima
-keyrings. However, keys may also need to be loaded by the kernel if they
-are needed for verification in early boot time. On PowerVM guest, third
-party code signing keys are loaded from the moduledb variable in the
-Platform KeyStore(PKS) onto the .secondary_trusted_keys.
+Link: https://lore.kernel.org/linux-integrity/20201015214430.17937-1-jsnitsel@redhat.com/
+Link: https://lore.kernel.org/all/1145393776.4829.19.camel@localhost.localdomain/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ .../admin-guide/kernel-parameters.txt         |  7 ++
+ drivers/char/tpm/tpm_tis.c                    | 93 +------------------
+ 2 files changed, 9 insertions(+), 91 deletions(-)
 
-The purpose of this patch set is to allow loading of local and third party
-code signing keys on PowerVM.
-
-Changelog:
-
-v3:
-
-* Included Jarkko's feedback for Patch 6/6.
-
-v2:
-
-* Patch 5/6: Update CA restriction to allow only key signing CA's.
-* Rebase on Jarkko's master tree - https://kernel.googlesource.com/pub/scm/linux/kernel/git/jarkko/linux-tpmdd
-* Tested after reverting cfa7522f280aa95 because of build failure due to
-this commit.
-
-Nayna Jain (6):
-  integrity: PowerVM support for loading CA keys on machine keyring
-  integrity: ignore keys failing CA restrictions on non-UEFI platform
-  integrity: remove global variable from machine_keyring.c
-  integrity: check whether imputed trust is enabled
-  integrity: PowerVM machine keyring enablement
-  integrity: PowerVM support for loading third party code signing keys
-
- certs/system_keyring.c                        | 30 +++++++++++++++++
- include/keys/system_keyring.h                 |  7 ++++
- security/integrity/Kconfig                    |  4 ++-
- security/integrity/digsig.c                   |  2 +-
- security/integrity/integrity.h                |  6 ++--
- .../platform_certs/keyring_handler.c          | 19 ++++++++++-
- .../platform_certs/keyring_handler.h          | 10 ++++++
- .../integrity/platform_certs/load_powerpc.c   | 33 +++++++++++++++++++
- .../platform_certs/machine_keyring.c          | 22 ++++++++++---
- 9 files changed, 124 insertions(+), 9 deletions(-)
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 722b6eca2e93..6354aa779178 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6340,6 +6340,13 @@
+ 			This will guarantee that all the other pcrs
+ 			are saved.
+ 
++	tpm_tis.interrupts= [HW,TPM]
++			Enable interrupts for the MMIO based physical layer
++			for the FIFO interface. By default it is set to false
++			(0). For more information about TPM hardware interfaces
++			defined by Trusted Computing Group (TCG) look up to
++			https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
++
+ 	tp_printk	[FTRACE]
+ 			Have the tracepoints sent to printk as well as the
+ 			tracing ring buffer. This is useful for early boot up
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 7fa3d91042b2..077fdb73740c 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -27,7 +27,6 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/kernel.h>
+-#include <linux/dmi.h>
+ #include "tpm.h"
+ #include "tpm_tis_core.h"
+ 
+@@ -89,8 +88,8 @@ static inline void tpm_tis_iowrite32(u32 b, void __iomem *iobase, u32 addr)
+ 	tpm_tis_flush(iobase);
+ }
+ 
+-static int interrupts;
+-module_param(interrupts, int, 0444);
++static bool interrupts;
++module_param(interrupts, bool, 0444);
+ MODULE_PARM_DESC(interrupts, "Enable interrupts");
+ 
+ static bool itpm;
+@@ -103,92 +102,6 @@ module_param(force, bool, 0444);
+ MODULE_PARM_DESC(force, "Force device probe rather than using ACPI entry");
+ #endif
+ 
+-static int tpm_tis_disable_irq(const struct dmi_system_id *d)
+-{
+-	if (interrupts == -1) {
+-		pr_notice("tpm_tis: %s detected: disabling interrupts.\n", d->ident);
+-		interrupts = 0;
+-	}
+-
+-	return 0;
+-}
+-
+-static const struct dmi_system_id tpm_tis_dmi_table[] = {
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "Framework Laptop (12th Gen Intel Core)",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Framework"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "Laptop (12th Gen Intel Core)"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "Framework Laptop (13th Gen Intel Core)",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Framework"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "Laptop (13th Gen Intel Core)"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "ThinkPad T490s",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad T490s"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "ThinkStation P360 Tiny",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkStation P360 Tiny"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "ThinkPad L490",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L490"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "ThinkPad L590",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L590"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "ThinkStation P620",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+-			DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkStation P620"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "TUXEDO InfinityBook S 15/17 Gen7",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "TUXEDO InfinityBook S 15/17 Gen7"),
+-		},
+-	},
+-	{
+-		.callback = tpm_tis_disable_irq,
+-		.ident = "UPX-TGL",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "AAEON"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "UPX-TGL01"),
+-		},
+-	},
+-	{}
+-};
+-
+ #if defined(CONFIG_PNP) && defined(CONFIG_ACPI)
+ static int has_hid(struct acpi_device *dev, const char *hid)
+ {
+@@ -312,8 +225,6 @@ static int tpm_tis_init(struct device *dev, struct tpm_info *tpm_info)
+ 	int irq = -1;
+ 	int rc;
+ 
+-	dmi_check_system(tpm_tis_dmi_table);
+-
+ 	rc = check_acpi_tpm2(dev);
+ 	if (rc)
+ 		return rc;
 -- 
-2.31.1
+2.39.2
+
