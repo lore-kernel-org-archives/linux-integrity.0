@@ -2,117 +2,71 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5A1C83F1B
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9CCC83F01
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241027AbjH3Sqr (ORCPT
+        id S241899AbjH3Sqx (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58982 "EHLO
+        Wed, 30 Aug 2023 14:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242862AbjH3Jxn (ORCPT
+        with ESMTP id S1343694AbjH3Qea (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:53:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F276D1B0;
-        Wed, 30 Aug 2023 02:53:40 -0700 (PDT)
+        Wed, 30 Aug 2023 12:34:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF5F19A;
+        Wed, 30 Aug 2023 09:34:27 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 801C260F0C;
-        Wed, 30 Aug 2023 09:53:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B009C433C8;
-        Wed, 30 Aug 2023 09:53:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E80DF6228C;
+        Wed, 30 Aug 2023 16:34:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5BCDFC433C8;
+        Wed, 30 Aug 2023 16:34:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1693389219;
-        bh=nknoL9w3Y4YI7sgEzXEgy31hHjSBtW5t6+EKdvixVT4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PGeSqtlADXPNsSRMnED5y2bc51bStrsRKgRLsG0vFmeuS7ZjsjtBx9snAHe0G8Vr2
-         puIswmGZMwYKKpvbAUG4hgCkBPfAo5LnG+Zqi6zCKquDATicIUaBHr5eqdyzNoLlT+
-         eDLqK7F5l64Ce6vhg3+b1Cyvv77qi6SuOOpM4UfSj8i00ym6zp0iNwdRQNPeW8AsCh
-         s7jTGiZrttnG7dc7MMCLuv2nzzC2OWwW1dpk2JWvAsdtCdcLabRj31KBbnR0Ga2XvP
-         vjAjcw2evRgbmv/HS/X8EAdywyIIJ9VzMleY3re1+0iiynu1XGC3tw9hN+y2/tEsbr
-         Pj2cy6RWLJA5g==
-Date:   Wed, 30 Aug 2023 11:53:32 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
-Message-ID: <20230830-kultfigur-verrohen-a689c59911d6@brauner>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
- <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
- <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
- <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
+        s=k20201202; t=1693413266;
+        bh=n2/DRhb/Ihb3Ap1FioZFD3qXzwYxwyIv168OqchsSU0=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=oD+vRxHCgfD0Hw+lviSkFRc4ZAZ54jo2ezECLluKKmpgFLH3b2df1E7fB9YdV7vfk
+         ZY819mqEsWYJK2XmWvWT9qaX2XiosliZlgxtlT++ChZ2R+SqJ0BQy2hUtw3NQEwxGw
+         yb4sUhpysP9ZTqVXO6p7Y+S5PowgDbao3hb3ojciFEZLuvraBNF9ItIJP+2+z6X1HZ
+         xqJzKTCI1GM++rxOU11Kzg78ZdZI+qK9777z692IoArGfhE63TCK29yk+RyZegO/BU
+         Bd/AdiZSfnqHACQa0MApbCXeAbqUWQY+piDGq7JYOhRsIVvAF3q19K/w9BLWQbsW+t
+         Fnd/C6vwA20cg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 4A03DC64457;
+        Wed, 30 Aug 2023 16:34:26 +0000 (UTC)
+Subject: Re: [GIT PULL] integrity: susbystem updates for v6.6 (take 2)
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <154c360fb6a21849e89ec003cf2be9ef96599393.camel@linux.ibm.com>
+References: <154c360fb6a21849e89ec003cf2be9ef96599393.camel@linux.ibm.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <154c360fb6a21849e89ec003cf2be9ef96599393.camel@linux.ibm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.6
+X-PR-Tracked-Commit-Id: 55e2b69649be38f1788b38755070875b96111d2f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1a35914f738c564060a14388f52a06669b09e0b3
+Message-Id: <169341326629.28213.6888093003025624318.pr-tracker-bot@kernel.org>
+Date:   Wed, 30 Aug 2023 16:34:26 +0000
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 11:31:35AM +0200, Roberto Sassu wrote:
-> On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
-> > Hi Roberto,
-> > 
-> > On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > 
-> > > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > > the inode_post_removexattr hook.
-> > > 
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  fs/xattr.c                    |  1 +
-> > >  include/linux/lsm_hook_defs.h |  2 ++
-> > >  include/linux/security.h      |  5 +++++
-> > >  security/security.c           | 14 ++++++++++++++
-> > >  4 files changed, 22 insertions(+)
-> > > 
-> > > diff --git a/fs/xattr.c b/fs/xattr.c
-> > > index 14a7eb3c8fa..10c959d9fc6 100644
-> > > --- a/fs/xattr.c
-> > > +++ b/fs/xattr.c
-> > > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> > >  
-> > >  	if (!error) {
-> > >  		fsnotify_xattr(dentry);
-> > > +		security_inode_post_removexattr(dentry, name);
-> > >  		evm_inode_post_removexattr(dentry, name);
-> > >  	}
-> > 
-> > Nothing wrong with this, but other places in this function test "if
-> > (error) goto ...".   Perhaps it is time to clean this up.
-> > 
-> > >  
-> > > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > > index eedefbcdde3..2ae5224d967 100644
-> > > --- a/include/linux/lsm_hook_defs.h
-> > > +++ b/include/linux/lsm_hook_defs.h
-> > > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
-> > >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> > >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> > >  	 struct dentry *dentry, const char *name)
-> > > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> > > +	 const char *name)
-> > 
-> > @Christian should the security_inode_removexattr() and
-> > security_inode_post_removexattr() arguments be the same?
-> 
-> Probably this got lost.
-> 
-> Christian, should security_inode_post_removexattr() have the idmap
-> parameter as well?
+The pull request you sent on Tue, 29 Aug 2023 16:17:55 -0400:
 
-Only if you call anything from any implementers of the hook that needs
-access to the idmap.
+> git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git tags/integrity-v6.6
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1a35914f738c564060a14388f52a06669b09e0b3
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
