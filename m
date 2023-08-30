@@ -2,99 +2,119 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2DAC83F17
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8DEC83F01
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241878AbjH3SrA (ORCPT
+        id S242553AbjH3SrB (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:47:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52642 "EHLO
+        Wed, 30 Aug 2023 14:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242668AbjH3JOW (ORCPT
+        with ESMTP id S1344200AbjH3S0y (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:14:22 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5194D2
-        for <linux-integrity@vger.kernel.org>; Wed, 30 Aug 2023 02:14:18 -0700 (PDT)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.57])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4RbJTy5866z1L9Bk;
-        Wed, 30 Aug 2023 17:12:38 +0800 (CST)
-Received: from [10.67.110.173] (10.67.110.173) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.31; Wed, 30 Aug 2023 17:14:16 +0800
-Message-ID: <47e478d8-1559-a3cc-94c1-a05fd79b2f0b@huawei.com>
-Date:   Wed, 30 Aug 2023 17:14:16 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH -next] ima: Make tpm hash configurable
-Content-Language: en-US
-To:     Mimi Zohar <zohar@linux.ibm.com>, Jonathan Corbet <corbet@lwn.net>
-CC:     <linux-integrity@vger.kernel.org>
-References: <20230817061334.1910-1-guozihua@huawei.com>
- <90b4b5573182ec68b2da2f9ef2bc6567d724f8f1.camel@linux.ibm.com>
- <e2c5711c-6549-e81f-42a7-eec176b39d63@huawei.com>
- <97198ee38422fbb1891981ac5c41263d5b03b321.camel@linux.ibm.com>
-From:   "Guozihua (Scott)" <guozihua@huawei.com>
-In-Reply-To: <97198ee38422fbb1891981ac5c41263d5b03b321.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.173]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemm500024.china.huawei.com (7.185.36.203)
-X-CFilter-Loop: Reflected
+        Wed, 30 Aug 2023 14:26:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A247919A
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Aug 2023 11:26:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1693419963;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=536hEdeJYk89mYwQhbVybpmlRd6HjhERfF4XbjkRN4c=;
+        b=ghJvXEoo++yQfJOuziGrRadZeHEeqELLzHtLJVo/yB5RY5kWm232kL1jk2quvM4nGwzUyF
+        vHftsXcvjHbV7g+DT+UilIbaOdaw6GRme3Y/UTBu35A42j0N31jn9xso/GfcpvSiG2VTxs
+        6EEtb/p5NP/71REeG7t4sBTq8FANrz0=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-utHRCWoPMLuYvU_OEx_H8g-1; Wed, 30 Aug 2023 14:26:00 -0400
+X-MC-Unique: utHRCWoPMLuYvU_OEx_H8g-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2717f4ba116so52223a91.0
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Aug 2023 11:25:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1693419959; x=1694024759;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=536hEdeJYk89mYwQhbVybpmlRd6HjhERfF4XbjkRN4c=;
+        b=fHEXZ1oLLKIyIuXNq2cCE1h1oEXdHg2pAR6X7qAOGzmlSxBM49qhnknuIFw4T4lEKE
+         /zvopy3MTx5cSGblISxzk2g5FD+Zb0Da971e5id9Y48lVeYriro3061huZ/EVRtM/LDK
+         URnzOwEEnuoku3kwhbZOhFkp6ZRcDqQzVZv26Hv478vRNb+iapmlkkXO+lTWUrbmAysB
+         aMtg4xVsXMncuFgq/ZXT2Layzf81rEWLA1aIhxcLEAiF8zkjbaVCU7QYb0fmMZqwq5LS
+         XHM8ftitwhrY6wDpz6D+4HuMy1NtWnuDEgyc239gfqmhIE706YX+GXUEBSUczQvbHaz5
+         pqSg==
+X-Gm-Message-State: AOJu0YxjPKVKFw7paW29bMpzyySzWoH3DQe/BS7fLwPeakk9HpmhI0YN
+        rjBpR1FNEMVMeYgFdDYcRUOL5vCvs3vabRaLupYl5tlTZVxsK8gg8BzRnsP4J4Y04Q97qLvU9Up
+        YM1Xz28FRLm6Zn+uLCUOgQQ23TVQz
+X-Received: by 2002:a17:902:ea0f:b0:1b8:a88c:4dc6 with SMTP id s15-20020a170902ea0f00b001b8a88c4dc6mr3373225plg.45.1693419958891;
+        Wed, 30 Aug 2023 11:25:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJpuzkMKCcUxXuBwzDEAWKKYDzm/197FeA+Z+f1IJBUSeHVr2tKRuQSsaHopYrWCL9mnbIjA==
+X-Received: by 2002:a17:902:ea0f:b0:1b8:a88c:4dc6 with SMTP id s15-20020a170902ea0f00b001b8a88c4dc6mr3373207plg.45.1693419958613;
+        Wed, 30 Aug 2023 11:25:58 -0700 (PDT)
+Received: from smtpclient.apple ([2600:1011:b15c:d1ac:a90e:1171:fe6:7d04])
+        by smtp.gmail.com with ESMTPSA id jj14-20020a170903048e00b001bbaf09ce15sm11357005plb.152.2023.08.30.11.25.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Aug 2023 11:25:58 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3] tpm: Enable hwrng only for Pluton on AMD CPUs
+Date:   Wed, 30 Aug 2023 11:25:45 -0700
+Message-Id: <446E94FC-C47A-453F-9A0E-CBE5049582ED@redhat.com>
+References: <zlywbvfgkkygcpvmj5rd4thuhbdacit2meg2fj6eyua5qpwyoc@beyiattrr7o6>
+Cc:     linux-integrity@vger.kernel.org, stable@vger.kernel.org,
+        Todd Brandt <todd.e.brandt@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mario Limonciello <mario.limonciello@amd.com>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <zlywbvfgkkygcpvmj5rd4thuhbdacit2meg2fj6eyua5qpwyoc@beyiattrr7o6>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+X-Mailer: iPhone Mail (20G75)
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 2023/8/19 7:17, Mimi Zohar wrote:
-> On Fri, 2023-08-18 at 09:25 +0800, Guozihua (Scott) wrote:
->> On 2023/8/17 22:19, Mimi Zohar wrote:
->>> On Thu, 2023-08-17 at 14:13 +0800, GUO Zihua wrote:
-> [...]
->  
->>> Other proposals have changed the hard coded hash algorithm and PCR
->>> value from SHA1 to SHA256.  Both that proposal and this will break
->>> existing userspace applications.
->>
->> This is the part I would like to "RFC" on, and thanks for the comment!
-> 
-> Another proposal included all of the enabled TPM bank digests.
-Will this introduce some performance issue? I don't think we should be
-calculating various hashes on the same thing again and again.
 
-If we are feeding digests for all slots of the same PCR bank, we could
-do a cut-down or padding on the banks we don't care, avoid unnecessary
-hash operations.
-> 
->> In deed this change should break userspace as well as all the existing
->> remote attestation implementation. It should be better to have a brand
->> new file for this.
-> 
-> True SHA1 is being phased out due to hash collisions.  Verifying the
-> template data hash against the template data isn't necessary for the
-> attestation server to verify a TPM quote against any of the enabled TPM
-> banks.  The attestation server walks the measurement list calculating
-> the bank specific template data hash.  Breaking existing applications
-> is unreasonable.
-> 
->>>
->>> Before we can introduce this sort of change, we would need to introduce
->>> an IMA measurement list version.  Perhaps its time to define an IMA
->>> security critical-dbata record, which would include this and other
->>> information.  The measurement list itself would need to include a
->>> version number.
->>>
->> I guess one of the easy way to do it is to make a
->> ascii_runtime_measurements_ng and binary_runtime_measurements_ng, which
->> contains a changed template supporting configurable template hash. What
->> do you think?
-> 
-> Defining additional pseudo filesystems would allow both the old and new
-> measurement list formats to be enabled at the same time.
-> 
 
--- 
-Best
-GUO Zihua
+> On Aug 29, 2023, at 12:03 PM, Jerry Snitselaar <jsnitsel@redhat.com> wrote=
+:
+>=20
+> =EF=BB=BFOn Wed, Aug 23, 2023 at 02:15:10AM +0300, Jarkko Sakkinen wrote:
+>> The vendor check introduced by commit 554b841d4703 ("tpm: Disable RNG for=
+
+>> all AMD fTPMs") doesn't work properly on a number of Intel fTPMs.  On the=
+
+>> reported systems the TPM doesn't reply at bootup and returns back the
+>> command code. This makes the TPM fail probe.
+>>=20
+>> Since only Microsoft Pluton is the only known combination of AMD CPU and
+>> fTPM from other vendor, disable hwrng otherwise. In order to make sysadmi=
+n
+>> aware of this, print also info message to the klog.
+>>=20
+>> Cc: stable@vger.kernel.org
+>> Fixes: 554b841d4703 ("tpm: Disable RNG for all AMD fTPMs")
+>> Reported-by: Todd Brandt <todd.e.brandt@intel.com>
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D217804
+>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>> ---
+>> v3:
+>> * Forgot to amend config flags.
+>> v2:
+>> * CONFIG_X86
+>> * Removed "Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>"
+>> * Removed "Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>"
+>> ---
+>> drivers/char/tpm/tpm_crb.c | 33 ++++++++-------------------------
+>> 1 file changed, 8 insertions(+), 25 deletions(-)
+>>=20
+>=20
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+
+
+It looks like the Fedora folks are getting more reports of the issue.=
 
