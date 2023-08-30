@@ -2,110 +2,129 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEFAC83F24
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1408C6FA8F
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233519AbjH3Sqh (ORCPT
+        id S234132AbjH3Sqn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33730 "EHLO
+        Wed, 30 Aug 2023 14:46:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244064AbjH3M1d (ORCPT
+        with ESMTP id S242764AbjH3JcT (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Aug 2023 08:27:33 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DBACCF
-        for <linux-integrity@vger.kernel.org>; Wed, 30 Aug 2023 05:27:31 -0700 (PDT)
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 37UCNH8h016835;
-        Wed, 30 Aug 2023 12:27:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=mfs07Teqy5wZ6u+jHlk+FanNz6jtvdeIs+VB0zTBTUw=;
- b=XjT0bPhYPZPFRDxHv9hc21rtMgtFBNwptfwrTpww4Yi9k2pQ/56fYYwFBY8UhQCgosjZ
- bQEdSjKZz23yNajcjnRUUQcHpLU105A81iPzZVQ+NhTA7yNh5Qamqv/TqQ/4M2bHZF+w
- SXlGPEm7ZOBtACHQccRW2jbv3Vvyj9xEjcd7tJVHm0WxgmqczcUCwioyVmIC25jXO+Em
- gyN22G6/2L49gXxml0lCFFppAlKjix9Fq5Hp/i7k0rgTYbZVXr1eb7e+5OuX6EhBD/Lt
- j7IwPLjKReD4FIotMircgWNUJUzYd5Pxi45qQ27VBmxq0OldAZ+NbhPEzEKDq7eux9Rf gg== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3st4hktc2g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 12:27:19 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-        by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 37U9uZ8D004888;
-        Wed, 30 Aug 2023 12:27:18 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-        by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3squqsv2ye-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 30 Aug 2023 12:27:18 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-        by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 37UCRIJ464356700
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 30 Aug 2023 12:27:18 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB4A85805D;
-        Wed, 30 Aug 2023 12:27:17 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9B38958052;
-        Wed, 30 Aug 2023 12:27:17 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.185.26])
-        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 30 Aug 2023 12:27:17 +0000 (GMT)
-Message-ID: <7dc816ddc48e50de32debafbeee9c83b728aec75.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH -next] ima: Make tpm hash configurable
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Guozihua (Scott)" <guozihua@huawei.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-integrity@vger.kernel.org
-Date:   Wed, 30 Aug 2023 08:27:17 -0400
-In-Reply-To: <47e478d8-1559-a3cc-94c1-a05fd79b2f0b@huawei.com>
-References: <20230817061334.1910-1-guozihua@huawei.com>
-         <90b4b5573182ec68b2da2f9ef2bc6567d724f8f1.camel@linux.ibm.com>
-         <e2c5711c-6549-e81f-42a7-eec176b39d63@huawei.com>
-         <97198ee38422fbb1891981ac5c41263d5b03b321.camel@linux.ibm.com>
-         <47e478d8-1559-a3cc-94c1-a05fd79b2f0b@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: D3BNMc9l_ZW11zfXgcBudx1N1JVYe-K5
-X-Proofpoint-ORIG-GUID: D3BNMc9l_ZW11zfXgcBudx1N1JVYe-K5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
- definitions=2023-08-29_16,2023-08-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 mlxlogscore=760 spamscore=0 clxscore=1015 impostorscore=0
- phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2308100000 definitions=main-2308300113
+        Wed, 30 Aug 2023 05:32:19 -0400
+Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DF31A1;
+        Wed, 30 Aug 2023 02:32:16 -0700 (PDT)
+Received: from mail02.huawei.com (unknown [172.18.147.229])
+        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4RbJc43j53z9xFb1;
+        Wed, 30 Aug 2023 17:17:56 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+        by APP1 (Coremail) with SMTP id LxC2BwBH+rl6DO9kg7vMAQ--.28846S2;
+        Wed, 30 Aug 2023 10:31:51 +0100 (CET)
+Message-ID: <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
+Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
+From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
+To:     brauner@kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
+        chuck.lever@oracle.com, jlayton@kernel.org,
+        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Date:   Wed, 30 Aug 2023 11:31:35 +0200
+In-Reply-To: <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
+References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
+         <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
+         <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4-0ubuntu2 
+MIME-Version: 1.0
+X-CM-TRANSID: LxC2BwBH+rl6DO9kg7vMAQ--.28846S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1DuFW3ur4ftrWxGr1xXwb_yoW8uFy8pF
+        s8t3ZxCF4rXr17Kr93ta1Du39agw4rGrWUJ3y2gw1jvFn7twn2qFWUKr15CFyrurW0gFyq
+        qF9Igr95Cr15ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5NN2wAAs0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2023-08-30 at 17:14 +0800, Guozihua (Scott) wrote:
-> On 2023/8/19 7:17, Mimi Zohar wrote:
-> > On Fri, 2023-08-18 at 09:25 +0800, Guozihua (Scott) wrote:
-> >> On 2023/8/17 22:19, Mimi Zohar wrote:
-> >>> On Thu, 2023-08-17 at 14:13 +0800, GUO Zihua wrote:
-> > [...]
-> >  
-> >>> Other proposals have changed the hard coded hash algorithm and PCR
-> >>> value from SHA1 to SHA256.  Both that proposal and this will break
-> >>> existing userspace applications.
-> >>
-> >> This is the part I would like to "RFC" on, and thanks for the comment!
+On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
+> Hi Roberto,
+> 
+> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
 > > 
-> > Another proposal included all of the enabled TPM bank digests.
-> Will this introduce some performance issue? I don't think we should be
-> calculating various hashes on the same thing again and again.
+> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> > the inode_post_removexattr hook.
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > ---
+> >  fs/xattr.c                    |  1 +
+> >  include/linux/lsm_hook_defs.h |  2 ++
+> >  include/linux/security.h      |  5 +++++
+> >  security/security.c           | 14 ++++++++++++++
+> >  4 files changed, 22 insertions(+)
+> > 
+> > diff --git a/fs/xattr.c b/fs/xattr.c
+> > index 14a7eb3c8fa..10c959d9fc6 100644
+> > --- a/fs/xattr.c
+> > +++ b/fs/xattr.c
+> > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
+> >  
+> >  	if (!error) {
+> >  		fsnotify_xattr(dentry);
+> > +		security_inode_post_removexattr(dentry, name);
+> >  		evm_inode_post_removexattr(dentry, name);
+> >  	}
+> 
+> Nothing wrong with this, but other places in this function test "if
+> (error) goto ...".   Perhaps it is time to clean this up.
+> 
+> >  
+> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> > index eedefbcdde3..2ae5224d967 100644
+> > --- a/include/linux/lsm_hook_defs.h
+> > +++ b/include/linux/lsm_hook_defs.h
+> > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
+> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
+> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
+> >  	 struct dentry *dentry, const char *name)
+> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
+> > +	 const char *name)
+> 
+> @Christian should the security_inode_removexattr() and
+> security_inode_post_removexattr() arguments be the same?
 
-Per TPM bank specific hashes are already being calculated and extended
-into the TPM banks.  Refer to  ima_calc_field_array_hash().
+Probably this got lost.
 
--- 
-thanks,
+Christian, should security_inode_post_removexattr() have the idmap
+parameter as well?
 
-Mimi
+Thanks
+
+Roberto
+
+> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+> 
 
