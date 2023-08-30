@@ -2,129 +2,96 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1408C6FA8F
-	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A24C83F18
+	for <linux-integrity@archiver.kernel.org>; Wed, 30 Aug 2023 18:47:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234132AbjH3Sqn convert rfc822-to-8bit (ORCPT
+        id S241086AbjH3Sqt (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 30 Aug 2023 14:46:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32776 "EHLO
+        Wed, 30 Aug 2023 14:46:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242764AbjH3JcT (ORCPT
+        with ESMTP id S242789AbjH3Jiv (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 30 Aug 2023 05:32:19 -0400
-Received: from frasgout12.his.huawei.com (unknown [14.137.139.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73DF31A1;
-        Wed, 30 Aug 2023 02:32:16 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4RbJc43j53z9xFb1;
-        Wed, 30 Aug 2023 17:17:56 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP1 (Coremail) with SMTP id LxC2BwBH+rl6DO9kg7vMAQ--.28846S2;
-        Wed, 30 Aug 2023 10:31:51 +0100 (CET)
-Message-ID: <9d482f25475a9d9bc0c93a8cbaf8bd4bb67d2cd6.camel@huaweicloud.com>
-Subject: Re: [PATCH 15/28] security: Introduce inode_post_removexattr hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     brauner@kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com, jlayton@kernel.org,
-        dmitry.kasatkin@gmail.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, dhowells@redhat.com, jarkko@kernel.org,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        casey@schaufler-ca.com, linux-fsdevel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stefanb@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date:   Wed, 30 Aug 2023 11:31:35 +0200
-In-Reply-To: <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
-References: <20230303181842.1087717-1-roberto.sassu@huaweicloud.com>
-         <20230303181842.1087717-16-roberto.sassu@huaweicloud.com>
-         <f5a61c0f09c1b8d8aaeb99ad7ba4aab15818c5ed.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Wed, 30 Aug 2023 05:38:51 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DD5137
+        for <linux-integrity@vger.kernel.org>; Wed, 30 Aug 2023 02:38:48 -0700 (PDT)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RbK1G5f2YzVk2w;
+        Wed, 30 Aug 2023 17:36:18 +0800 (CST)
+Received: from [10.67.110.173] (10.67.110.173) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.31; Wed, 30 Aug 2023 17:38:45 +0800
+Message-ID: <b56c97d6-830a-f1a9-d99e-304821dabc94@huawei.com>
+Date:   Wed, 30 Aug 2023 17:38:44 +0800
 MIME-Version: 1.0
-X-CM-TRANSID: LxC2BwBH+rl6DO9kg7vMAQ--.28846S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1DuFW3ur4ftrWxGr1xXwb_yoW8uFy8pF
-        s8t3ZxCF4rXr17Kr93ta1Du39agw4rGrWUJ3y2gw1jvFn7twn2qFWUKr15CFyrurW0gFyq
-        qF9Igr95Cr15ZaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAFBF1jj5NN2wAAs0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH -next] ima: Make tpm hash configurable
+Content-Language: en-US
+To:     Ken Goldman <kgold@linux.ibm.com>, <zohar@linux.ibm.com>,
+        <corbet@lwn.net>, <dmitry.kasatkin@gmail.com>
+CC:     <linux-integrity@vger.kernel.org>
+References: <20230817061334.1910-1-guozihua@huawei.com>
+ <245b0517-4c13-2815-4b99-c3691f3b86eb@linux.ibm.com>
+From:   "Guozihua (Scott)" <guozihua@huawei.com>
+In-Reply-To: <245b0517-4c13-2815-4b99-c3691f3b86eb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.173]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500024.china.huawei.com (7.185.36.203)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Wed, 2023-03-08 at 10:43 -0500, Mimi Zohar wrote:
-> Hi Roberto,
+On 2023/8/29 4:35, Ken Goldman wrote:
+> On 8/17/2023 2:13 AM, GUO Zihua wrote:
+>> TPM2 chips supports algorithms other than SHA1. However, the original
+>> IMA design hardcode template hash to be SHA1.
+>>
+>> This patch added CONFIG_IMA_TEMPLATE_HASH as well as ima_tpm_hash=
+>> cmdline argument for configurating template hash. The usage is simuliar
+>> to CONFIG_IMA_DEFAULT_HASH and ima_hash=. The configured hash is checked
+>> against TPM and make sure that the hash algorithm is supported by
+>> ima_tpm_chip.
+>>
+>> To accommodate the change, we must put a digest length into binary
+>> measurement list items. The binary measurement list item format is
+>> changed to this:
+>>     16bit-le=pcr#
+>>     16bit-le=template digest size
+>>     char[n]=template digest
+>>     32bit-le=template name size
+>>     char[n]=template name
+>>     [eventdata length]
+>>     eventdata[n]=template specific data
+>> The first element is now a 16bit pcr number and a 16bit template digest
+>> size, instead of the original 32bit pcr number.
+>>
+>> The format of ascii_measurement_list is also changed. For sha1 template
+>> hash, the format is the same as before. For other hash algorithms, a
+>> hash name is prepended as such:
+>> "sha256:30ee3e25620478759600be00e06fda7b4fe23bbf575621d480400d536cf54f5b"
 > 
-> On Fri, 2023-03-03 at 19:18 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > the inode_post_removexattr hook.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  fs/xattr.c                    |  1 +
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/security.h      |  5 +++++
-> >  security/security.c           | 14 ++++++++++++++
-> >  4 files changed, 22 insertions(+)
-> > 
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 14a7eb3c8fa..10c959d9fc6 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -534,6 +534,7 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> >  
-> >  	if (!error) {
-> >  		fsnotify_xattr(dentry);
-> > +		security_inode_post_removexattr(dentry, name);
-> >  		evm_inode_post_removexattr(dentry, name);
-> >  	}
+> I would not change the PCR handle to 16 bits.  The TPM supports NVRAM
+> based PCRs, and their handles would be 0x01xxxxxx. In the future, there
+> may be other 'first byte' values.
 > 
-> Nothing wrong with this, but other places in this function test "if
-> (error) goto ...".   Perhaps it is time to clean this up.
+> A template digest size does not describe the digest algorithm.  E.g.,
+> SM3 and SHA-256 are both 32 bytes.
+
+Oops that's a miss. We would need a brand new format for this I guess.
 > 
-> >  
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index eedefbcdde3..2ae5224d967 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -147,6 +147,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
-> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *name)
-> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> > +	 const char *name)
+> If one wants to describe the digest algorithm in 2 bytes, a reasonable
+> choice would be the values in the TCG Algorithm registry.  Se TPM Spec
+> Part 2 Table 9 — Definition of (UINT16) TPM_ALG_ID Constants <IN/OUT, S>
 > 
-> @Christian should the security_inode_removexattr() and
-> security_inode_post_removexattr() arguments be the same?
-
-Probably this got lost.
-
-Christian, should security_inode_post_removexattr() have the idmap
-parameter as well?
-
-Thanks
-
-Roberto
-
-> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
-> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+> E.g., SHA-256 is 000b and SM3 is 0012.
 > 
+
+-- 
+Best
+GUO Zihua
 
