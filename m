@@ -2,188 +2,115 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA673CA0FFB
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED4FC83F2C
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351667AbjIEQ0M convert rfc822-to-8bit (ORCPT
+        id S1351722AbjIEQ0O (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:26:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
+        Tue, 5 Sep 2023 12:26:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353608AbjIEGwR (ORCPT
+        with ESMTP id S1354499AbjIEMBg (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Sep 2023 02:52:17 -0400
-Received: from frasgout13.his.huawei.com (unknown [14.137.139.46])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A52DA1B4;
-        Mon,  4 Sep 2023 23:52:13 -0700 (PDT)
-Received: from mail02.huawei.com (unknown [172.18.147.229])
-        by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4Rfwq91PZtz9v7ZP;
-        Tue,  5 Sep 2023 14:40:05 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-        by APP2 (Coremail) with SMTP id GxC2BwDX1+_yz_ZkocAiAg--.8435S2;
-        Tue, 05 Sep 2023 07:51:44 +0100 (CET)
-Message-ID: <b4bc9dbb2417dc8afe0bf0a50233d4c2968bfb7a.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 13/25] security: Introduce inode_post_removexattr hook
-From:   Roberto Sassu <roberto.sassu@huaweicloud.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com,
-        tom@talpey.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        dhowells@redhat.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Tue, 05 Sep 2023 08:51:26 +0200
-In-Reply-To: <CVAFXF2BQ14B.19BO7F9P62WGT@suppilovahvero>
-References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
-         <20230831104136.903180-14-roberto.sassu@huaweicloud.com>
-         <CVAFXF2BQ14B.19BO7F9P62WGT@suppilovahvero>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Tue, 5 Sep 2023 08:01:36 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A0D1AB;
+        Tue,  5 Sep 2023 05:01:33 -0700 (PDT)
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1qdUkM-0004Lb-5r; Tue, 05 Sep 2023 14:01:30 +0200
+Message-ID: <8dc067e5-d81f-4c5b-be76-bf0c1227b71e@leemhuis.info>
+Date:   Tue, 5 Sep 2023 14:01:27 +0200
 MIME-Version: 1.0
-X-CM-TRANSID: GxC2BwDX1+_yz_ZkocAiAg--.8435S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr4DAry7AF1kXr4xCFWfZrb_yoWruF47pF
-        s8t3W5Cr4rJFy7WFy8tF17uw4I9ayFgry7A3y2gw12yFn2yrn2qrZxCF1UCryrJr40gFyv
-        qFnFkrs5Cr13J3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-        6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-        vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-        xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-        AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-        x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-        0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-        64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-        8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-        2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-        xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-        c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAkuxUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQALBF1jj5OFhQACsu
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tpm: Enable hwrng only for Pluton on AMD CPUs
+Content-Language: en-US, de-DE
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Mario Limonciello <mario.limonciello@amd.com>
+Cc:     linux-integrity@vger.kernel.org,
+        Jerry Snitselaar <jsnitsel@redhat.com>, stable@vger.kernel.org,
+        Todd Brandt <todd.e.brandt@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+        Patrick Steinhardt <ps@pks.im>, Ronan Pigott <ronan@rjp.ie>,
+        Raymond Jay Golo <rjgolo@gmail.com>,
+        Linux kernel regressions list <regressions@lists.linux.dev>,
+        Dusty Mabe <dusty@dustymabe.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>
+References: <20230822231510.2263255-1-jarkko@kernel.org>
+ <705b9769-4132-450b-bd47-2423c419db2a@molgen.mpg.de>
+ <CV03X3OEI7RE.3NI1QJ6MBJSHA@suppilovahvero>
+ <1eeddbdc-c1f0-4499-b3d1-24c96f42a50b@amd.com>
+ <CV3J3TCMB74C.1WA96NQ9J593U@suppilovahvero>
+ <f6d75cac-2556-484e-8a2c-3531b24b1ca5@amd.com>
+ <fcf2f600-d1f0-de14-956b-4d4f3f0cb3fa@leemhuis.info>
+ <116dd56f-695f-4ecd-dace-805db83f5c3e@leemhuis.info>
+ <CVAHNI7PWVDL.W8194GZA0SMK@suppilovahvero>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+In-Reply-To: <CVAHNI7PWVDL.W8194GZA0SMK@suppilovahvero>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1693915293;db139137;
+X-HE-SMSGID: 1qdUkM-0004Lb-5r
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2023-09-05 at 00:11 +0300, Jarkko Sakkinen wrote:
-> On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> > the inode_post_removexattr hook.
-> > 
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> >  fs/xattr.c                    |  9 +++++----
-> >  include/linux/lsm_hook_defs.h |  2 ++
-> >  include/linux/security.h      |  5 +++++
-> >  security/security.c           | 14 ++++++++++++++
-> >  4 files changed, 26 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index e7bbb7f57557..4a0280295686 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
-> >  		goto out;
-> >  
-> >  	error = __vfs_removexattr(idmap, dentry, name);
-> > +	if (error)
-> > +		goto out;
-> >  
-> > -	if (!error) {
-> > -		fsnotify_xattr(dentry);
-> > -		evm_inode_post_removexattr(dentry, name);
-> > -	}
-> > +	fsnotify_xattr(dentry);
-> > +	security_inode_post_removexattr(dentry, name);
-> > +	evm_inode_post_removexattr(dentry, name);
-> >  
-> >  out:
-> >  	return error;
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index 995d30336cfa..1153e7163b8b 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -148,6 +148,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
-> >  LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
-> >  LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *name)
-> > +LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-> > +	 const char *name)
-> >  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
-> >  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
-> >  LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index 820899db5276..665bba3e0081 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -374,6 +374,7 @@ int security_inode_getxattr(struct dentry *dentry, const char *name);
-> >  int security_inode_listxattr(struct dentry *dentry);
-> >  int security_inode_removexattr(struct mnt_idmap *idmap,
-> >  			       struct dentry *dentry, const char *name);
-> > +void security_inode_post_removexattr(struct dentry *dentry, const char *name);
-> >  int security_inode_need_killpriv(struct dentry *dentry);
-> >  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
-> >  int security_inode_getsecurity(struct mnt_idmap *idmap,
-> > @@ -919,6 +920,10 @@ static inline int security_inode_removexattr(struct mnt_idmap *idmap,
-> >  	return cap_inode_removexattr(idmap, dentry, name);
-> >  }
-> >  
-> > +static inline void security_inode_post_removexattr(struct dentry *dentry,
-> > +						   const char *name)
-> > +{ }
-> 
-> static inline void security_inode_post_removexattr(struct dentry *dentry, const char *name)
-> {
-> }
-> 
-> > +
-> >  static inline int security_inode_need_killpriv(struct dentry *dentry)
-> >  {
-> >  	return cap_inode_need_killpriv(dentry);
-> > diff --git a/security/security.c b/security/security.c
-> > index 764a6f28b3b9..3947159ba5e9 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2354,6 +2354,20 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
-> >  	return evm_inode_removexattr(idmap, dentry, name);
-> >  }
-> >  
-> > +/**
-> > + * security_inode_post_removexattr() - Update the inode after a removexattr op
-> > + * @dentry: file
-> > + * @name: xattr name
-> > + *
-> > + * Update the inode after a successful removexattr operation.
-> > + */
-> > +void security_inode_post_removexattr(struct dentry *dentry, const char *name)
-> > +{
-> > +	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > +		return;
-> > +	call_void_hook(inode_post_removexattr, dentry, name);
-> > +}
-> > +
-> >  /**
-> >   * security_inode_need_killpriv() - Check if security_inode_killpriv() required
-> >   * @dentry: associated dentry
-> > -- 
-> > 2.34.1
-> 
-> 
-> These odd splits are everywhere in the patch set. Just (nit)picking some.
-> 
-> It is huge patch set so I don't really get for addign extra lines for no
-> good reason.
+On 05.09.23 00:32, Jarkko Sakkinen wrote:
+> On Fri Sep 1, 2023 at 11:49 AM EEST, Thorsten Leemhuis wrote:
+>> On 29.08.23 10:38, Linux regression tracking (Thorsten Leemhuis) wrote:
+>>> On 28.08.23 02:35, Mario Limonciello wrote:
+>>>> On 8/27/2023 13:12, Jarkko Sakkinen wrote:
+>>>>> On Wed Aug 23, 2023 at 9:58 PM EEST, Mario Limonciello wrote:
+>>>>>> On 8/23/2023 12:40, Jarkko Sakkinen wrote:
+>>>>>>> On Wed Aug 23, 2023 at 11:23 AM EEST, Paul Menzel wrote:
+>>>>>>>> Am 23.08.23 um 01:15 schrieb Jarkko Sakkinen:
+>>>>>>>>> The vendor check introduced by commit 554b841d4703 ("tpm: Disable
+>>>>>>>>> RNG for
+>>>>>>>>> all AMD fTPMs") doesn't work properly on a number of Intel fTPMs. 
+>>>>>>>>> On the
+>>>>>>>>> reported systems the TPM doesn't reply at bootup and returns back the
+>>>>>>>>> command code. This makes the TPM fail probe.
+> [...]
+>> Hmmm. Quite a bit progress to fix the issue was made in the first week
+>> after Todd's report; Jarkko apparently even applied the earlier patch
+>> from Mario to his master branch:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=b1a62d41bdc1d15b0641759717e8c3651f0a810c
+>> But since then (aka in the past week) there was not much progress.
 
-Thanks for the review, Jarkko.
+Jarkko, many thx for picking this up and submitting it to Linus, much
+appreciated. Sorry again for prodding things, but I felt I had to. Hope
+you didn't mind too much.
 
-I don't know... to be honest I still prefer to stay within 80
-characters.
+> Could it be possible to extend the actual kernel documentation
+> to give at least some guidelines how a maintainer should deal
+> with the bugzilla?
 
-Roberto
+I guess it's best if that is done by somebody that cares about bugzilla
+(I don't fall into that group[1]) and knows the official status.
 
+But FWIW, I wonder what you actually want to see documented. From
+https://lore.kernel.org/all/CVAC8VQPD3PK.1CBS5QTWDSS2C@suppilovahvero/
+it sounds like you had trouble with Link:/Closes: tag and Reported-by.
+From what I can see I don't think bugzilla.kernel.org needs special
+documentation in that area:
+
+ * just use Link:/Closes: to reports to public reports that might be
+helpful later in case somebody wants to look at the backstory of a
+commit, wherever those reports may be (lore, bugzilla.kernel.org,
+https://gitlab.freedesktop.org/drm/intel/-/issues,
+https://github.com/thesofproject/linux/issues, ...)
+
+ * use Reported-by: to give credit to anyone that deserves it, as it is
+a nice way to say thx while motivate people to help again in the future.
+That usually will include the initial reporter, but might also include
+people that replied to a report from somebody else and helped
+perceptible with debugging or fixing.
+
+Ciao, Thorsten
+
+[1] I only sometimes help people that report regressions to
+bugzilla.kernel.org that otherwise would likely would fall through the
+cracks (among others because many reports are never forwarded to the
+proper developers otherwise).
