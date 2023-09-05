@@ -2,115 +2,189 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED4FC83F2C
-	for <linux-integrity@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EED6CA1005
+	for <linux-integrity@archiver.kernel.org>; Tue,  5 Sep 2023 16:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351722AbjIEQ0O (ORCPT
+        id S1351850AbjIEQ0R (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Tue, 5 Sep 2023 12:26:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52008 "EHLO
+        Tue, 5 Sep 2023 12:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354499AbjIEMBg (ORCPT
+        with ESMTP id S1354925AbjIEP41 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Tue, 5 Sep 2023 08:01:36 -0400
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40A0D1AB;
-        Tue,  5 Sep 2023 05:01:33 -0700 (PDT)
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1qdUkM-0004Lb-5r; Tue, 05 Sep 2023 14:01:30 +0200
-Message-ID: <8dc067e5-d81f-4c5b-be76-bf0c1227b71e@leemhuis.info>
-Date:   Tue, 5 Sep 2023 14:01:27 +0200
+        Tue, 5 Sep 2023 11:56:27 -0400
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB12197
+        for <linux-integrity@vger.kernel.org>; Tue,  5 Sep 2023 08:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693929382; bh=THyHfKoPV2fsuUoiXFpq6kpXStlY1R/c05SvFssw8ic=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=nL/MCo2EaOVqeGvQVmPkAgdSTBQbXlbl3f9rZgHSTvBlgYky5+NOpmukm4tFGhxMO8jC3h4Kb8vSYSbZzmEiquFJ8novV5wGGi01YJeRQAwKr3L67KBO4CGOdQFucw5aRGYPcmE0zfx/JspHgZI00SfFWzekolOHFDDivqn6w+VKizmP7KXgzjIQDuvlv3uCRzsYuRBpNXTRnicS61wf0BZBVtBv+id8eJFW3Md2rUgFAAfr7vsSp36lbtc6ray61vMJgCj/G//5WovoZ/jFbE/mo4EuWeTDJEr5wBNW0NofS5VpH28Mwjj4we78bHNQMnxlAuZlNa50Cfy/Eczymg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1693929382; bh=DkaHx4C6jwSxjVSNZ5qs87/z6Ie3ZQRDV6CUZw2QUMp=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jJGG+AJRYrIJ1NDDUdmLlhcBNyn02E5/iy31ivu44RK3Xj9sKJEMywy0yxw9khQ7LQdA8BFC8BKGWKc5XKbzCWM5B15jZqa6w/qiZ8iwvhc5g8X2DLTksd/yGRxFIv9RKfRjM/zqljetV+e+aVQAcVlor9Fpuo9Qas5rD8LT2w1m1futPR27pAylaTWtX1A+aipty0jAceCRtDrZW2XBl1F/+4ZnSHghOo8v7eiHSoXznzM0uLOeARA5ypRGbgQx5ol8ofiERyoVhxEqWTd66YMNKsxoFVq6JCADef3JMRMYaEsxRJfb/pQjs25iOwRpNDUy4osynLPZluWy/Cz1/Q==
+X-YMail-OSG: k9OkTWIVM1ldty.fWbkXGTKLls.RiXQNn_V.9WMitM5BuQk9.mji_TZb73rvWDt
+ 2G4d2n3DNfceBrop4oIfE26eITf..qCEQ3ynZ_SmqYIlMM.gflwN2aflioiUcK_uqFS05Y8lvVod
+ YdDyA9VsyAX9BqStXDFlOvKNgcJWSytWF0kKm02ZMnvnUnNOkFG.sjj.lhhgAjcHrOBrtkFBOdN4
+ vRvh8qQIDMIntuC3m1f.FaMQTORFHiMpSQaN5F0zL0MuWAcRwNuxkdO66AudRNlKcwnoz0MLk4gi
+ HpXAdLVXAu11.jPOV2NuHO4a8VYWNDz6Y7RXGbrlZ75z_yypqTjrxFA1CStMN6PhbF8z_.72Xbvn
+ Qf4uJ93lbdFj3Ze6YmwbfY5sAm.OsVny9s7FXLyYzBS3crMN8t6ti_lv_JQPGysl9f4gOcyZexdD
+ 9kOZZrKMkorjo1PbmKE3WJHsqCFgPRAbKNL_IGdQ6S0H17WoTGxZv6mi6CBzwzmwkE.xa2PVgsQz
+ k5Gc6LAqRizzDZYWsAPhD4XdbiVn1pZlAZ2LAjtF4Vd2VQM9DsnVc5xebzQyffKcKNYpJPNHsTnN
+ 7YW2yLNPL73QsdXj7hpn__mEKDhHnOLR6MyeXgTshYzhsisf.iwqFZ6rVG05KfK4YbZWvc2wCkOA
+ pNwDY5ssnf4D0FLl6n2KbWUnjUeQAbajLp9ZDkyb1gXFLGqPkVhbMfpIWlhk_oRTFm.2nmflv7Rf
+ oUccSSeFpx6N_VmI5AXB2HsvA_gPuKpMdGVq7zaPKa2nllz01NbJYl8sZmiL3tGoZcjt1VUcJe1N
+ G.7cPvEYFineyvxdJ39jPNoeTI8pWbwWD7pm5su.yl6lgfA7x6QomHf58O.dfqJ3L6qmwXGUlx6X
+ 0sEh6brNUlVUD63FGFJfemhPEF8xFNCLwClV3DsC8MS_tnNlDpppJl_CU9S09fhO7D84bv2jAcnA
+ gOlG04QuuG5x.BoROlXyU1DZFIj1LCwqLuRA3GvItkTPuUP7PNl75AraQbxxvbf2wEtgSnQmqTkt
+ qbkzz3ofX.ztFupgMjx5PzSZ8Lz0i.I34ToMu2Wv_ayPltP.VKcgx8ouflSTGqBKB782.sxewDkk
+ 7EScJHPtfFlETKPfcfn6ycj7CTirwJP4WnVkIFfO._fHq7aRTOJujd0dQv6gec.Qi0ud5GXhdNqr
+ 6QVPYhg6ZOSiDzMZJHbtrUCVbtGdaWIANtxP0Q.HzplEYm6lJbPpigaNkT.NXhjV1PN79YceIDhr
+ thQcLl4PjmG6YHtzQgNjWtWrAASRU1I2PxP9.Wk1Jn6log.eU_EtCJOc2nYDzFdBoj8eQwz3MZc_
+ y21f9eQqWafVA0IWNYUOVWZ5rcjl_X2HEgpufWnwGNzslnTWnBvT1qNSB1oNj7EhotsfpqLHnaLL
+ 7UAJrbW.xeHFqdc.434riLleeytm8pD3AnzXK62lpnepko3Hbzxyw3NPSmi3REeM.1hVzTZd3UHt
+ NmCt6xeESYhdvkkehfPu37LNKbRjNDn5pQwi5.jLAlsVbRAp.FIiQR67xWrOIHc13128yc6xV4hD
+ P9TZGmMhytguxLb9AoTAcEX.Wy2VJaEADkECSXNdXoVFJrXpzOhTdRjoklAvsm3zJc0lDme0Dt1U
+ fsOT162D.MZbOMnizIZjeVmW_9t1MBeUnz_1vVI8M1GNTTrV1SQlXgZzhukp986FBWN2J9agwXH7
+ _.U14P0fxKw0ZTw6UG30FHO._HAQaQr4Rw3jUdrMu14Q9UYceS3dKwhE5S1aRN4Z6bvNMeq3Dvfh
+ xp9LHkWUe676tAdVqJkanKbm0Mv9ZK7W.CiHBoyoGYNa6hA6_iWyil26PRggQTY8rgNNZaw15vbn
+ CCngWJpgZkb74SaefEIxE_Z4AVBsAbwwX_e2olh.dbwY4V_m4QFxx7kbLSvSOY10pKRgENSOSogN
+ UV1l3ufpBsJLF3vC3ENKxfAk1vCasx.eKoSMFFPrkrS9Pc7gwBLZWK5KsrV80WkqRz.ZvH3uIrQP
+ xvwM3QeZptygrwEKsjJtD2FEE0EF22N3J578jZGFKqpbxONR00ILBIxeXbruwprjH7gBiclJoMFo
+ 6s2D1e5ZX_N09VZJpCUo3f4wcNwxoABccGsBSzp.5Hwky2wy3sR0Z1RFZYoVuUZPh8w.cWP.sWw8
+ RKqgpRZ9ymR0UwexFMktwjjisAsfGe2UzqNYfOS8BMZjqNktQ6.b04uhpKCJyMzeyZYtFEwCKERq
+ SSyuQeIW7lRU2WnHA8sZ3H8cX8yuUGDOQLWPkCUF3W4A2pdj_vS219mU7Uj.MBBKE
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 4921507d-37f7-4ee8-b527-766546420342
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Sep 2023 15:56:22 +0000
+Received: by hermes--production-bf1-865889d799-k7hdq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2ef8773b1b277e360687bb4b263a51ff;
+          Tue, 05 Sep 2023 15:56:20 +0000 (UTC)
+Message-ID: <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
+Date:   Tue, 5 Sep 2023 08:56:15 -0700
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] tpm: Enable hwrng only for Pluton on AMD CPUs
-Content-Language: en-US, de-DE
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.14.0
+Subject: Re: [PATCH v2 11/25] security: Align inode_setattr hook definition
+ with EVM
+Content-Language: en-US
 To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Mario Limonciello <mario.limonciello@amd.com>
-Cc:     linux-integrity@vger.kernel.org,
-        Jerry Snitselaar <jsnitsel@redhat.com>, stable@vger.kernel.org,
-        Todd Brandt <todd.e.brandt@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
-        Patrick Steinhardt <ps@pks.im>, Ronan Pigott <ronan@rjp.ie>,
-        Raymond Jay Golo <rjgolo@gmail.com>,
-        Linux kernel regressions list <regressions@lists.linux.dev>,
-        Dusty Mabe <dusty@dustymabe.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul Menzel <pmenzel@molgen.mpg.de>
-References: <20230822231510.2263255-1-jarkko@kernel.org>
- <705b9769-4132-450b-bd47-2423c419db2a@molgen.mpg.de>
- <CV03X3OEI7RE.3NI1QJ6MBJSHA@suppilovahvero>
- <1eeddbdc-c1f0-4499-b3d1-24c96f42a50b@amd.com>
- <CV3J3TCMB74C.1WA96NQ9J593U@suppilovahvero>
- <f6d75cac-2556-484e-8a2c-3531b24b1ca5@amd.com>
- <fcf2f600-d1f0-de14-956b-4d4f3f0cb3fa@leemhuis.info>
- <116dd56f-695f-4ecd-dace-805db83f5c3e@leemhuis.info>
- <CVAHNI7PWVDL.W8194GZA0SMK@suppilovahvero>
-From:   Thorsten Leemhuis <regressions@leemhuis.info>
-In-Reply-To: <CVAHNI7PWVDL.W8194GZA0SMK@suppilovahvero>
+        Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        viro@zeniv.linux.org.uk, brauner@kernel.org,
+        chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+        kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dhowells@redhat.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
+ <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
+ <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1693915293;db139137;
-X-HE-SMSGID: 1qdUkM-0004Lb-5r
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.21763 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 05.09.23 00:32, Jarkko Sakkinen wrote:
-> On Fri Sep 1, 2023 at 11:49 AM EEST, Thorsten Leemhuis wrote:
->> On 29.08.23 10:38, Linux regression tracking (Thorsten Leemhuis) wrote:
->>> On 28.08.23 02:35, Mario Limonciello wrote:
->>>> On 8/27/2023 13:12, Jarkko Sakkinen wrote:
->>>>> On Wed Aug 23, 2023 at 9:58 PM EEST, Mario Limonciello wrote:
->>>>>> On 8/23/2023 12:40, Jarkko Sakkinen wrote:
->>>>>>> On Wed Aug 23, 2023 at 11:23 AM EEST, Paul Menzel wrote:
->>>>>>>> Am 23.08.23 um 01:15 schrieb Jarkko Sakkinen:
->>>>>>>>> The vendor check introduced by commit 554b841d4703 ("tpm: Disable
->>>>>>>>> RNG for
->>>>>>>>> all AMD fTPMs") doesn't work properly on a number of Intel fTPMs. 
->>>>>>>>> On the
->>>>>>>>> reported systems the TPM doesn't reply at bootup and returns back the
->>>>>>>>> command code. This makes the TPM fail probe.
-> [...]
->> Hmmm. Quite a bit progress to fix the issue was made in the first week
->> after Todd's report; Jarkko apparently even applied the earlier patch
->> from Mario to his master branch:
->> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?id=b1a62d41bdc1d15b0641759717e8c3651f0a810c
->> But since then (aka in the past week) there was not much progress.
+On 9/4/2023 2:08 PM, Jarkko Sakkinen wrote:
+> On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
+>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>
+>> Add the idmap parameter to the definition, so that evm_inode_setattr() can
+>> be registered as this hook implementation.
+>>
+>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/lsm_hook_defs.h | 3 ++-
+>>  security/security.c           | 2 +-
+>>  security/selinux/hooks.c      | 3 ++-
+>>  security/smack/smack_lsm.c    | 4 +++-
+>>  4 files changed, 8 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>> index 4bdddb52a8fe..fdf075a6b1bb 100644
+>> --- a/include/linux/lsm_hook_defs.h
+>> +++ b/include/linux/lsm_hook_defs.h
+>> @@ -134,7 +134,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
+>>  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
+>>  	 bool rcu)
+>>  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
+>> -LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
+>> +LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
+>> +	 struct iattr *attr)
+> LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry, struct iattr *attr)
+>
+> Only 99 characters, i.e. breaking into two lines is not necessary.
 
-Jarkko, many thx for picking this up and submitting it to Linus, much
-appreciated. Sorry again for prodding things, but I felt I had to. Hope
-you didn't mind too much.
+We're keeping the LSM code in the ancient 80 character format.
+Until we get some fresh, young maintainers involved who can convince
+us that line wrapped 80 character terminals are kewl we're sticking
+with what we know.
 
-> Could it be possible to extend the actual kernel documentation
-> to give at least some guidelines how a maintainer should deal
-> with the bugzilla?
+	https://lwn.net/Articles/822168/
 
-I guess it's best if that is done by somebody that cares about bugzilla
-(I don't fall into that group[1]) and knows the official status.
-
-But FWIW, I wonder what you actually want to see documented. From
-https://lore.kernel.org/all/CVAC8VQPD3PK.1CBS5QTWDSS2C@suppilovahvero/
-it sounds like you had trouble with Link:/Closes: tag and Reported-by.
-From what I can see I don't think bugzilla.kernel.org needs special
-documentation in that area:
-
- * just use Link:/Closes: to reports to public reports that might be
-helpful later in case somebody wants to look at the backstory of a
-commit, wherever those reports may be (lore, bugzilla.kernel.org,
-https://gitlab.freedesktop.org/drm/intel/-/issues,
-https://github.com/thesofproject/linux/issues, ...)
-
- * use Reported-by: to give credit to anyone that deserves it, as it is
-a nice way to say thx while motivate people to help again in the future.
-That usually will include the initial reporter, but might also include
-people that replied to a report from somebody else and helped
-perceptible with debugging or fixing.
-
-Ciao, Thorsten
-
-[1] I only sometimes help people that report regressions to
-bugzilla.kernel.org that otherwise would likely would fall through the
-cracks (among others because many reports are never forwarded to the
-proper developers otherwise).
+>
+>>  LSM_HOOK(int, 0, inode_getattr, const struct path *path)
+>>  LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
+>>  	 struct dentry *dentry, const char *name, const void *value,
+>> diff --git a/security/security.c b/security/security.c
+>> index cb6242feb968..2b24d01cf181 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -2117,7 +2117,7 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+>>  
+>>  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>>  		return 0;
+>> -	ret = call_int_hook(inode_setattr, 0, dentry, attr);
+>> +	ret = call_int_hook(inode_setattr, 0, idmap, dentry, attr);
+>>  	if (ret)
+>>  		return ret;
+>>  	return evm_inode_setattr(idmap, dentry, attr);
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index ee7c49c2cfd3..bfcc4d9aa5ab 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -3075,7 +3075,8 @@ static int selinux_inode_permission(struct inode *inode, int mask)
+>>  	return rc;
+>>  }
+>>  
+>> -static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+>> +static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>> +				 struct iattr *iattr)
+>>  {
+>>  	const struct cred *cred = current_cred();
+>>  	struct inode *inode = d_backing_inode(dentry);
+>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>> index 679156601a10..89f2669d50a9 100644
+>> --- a/security/smack/smack_lsm.c
+>> +++ b/security/smack/smack_lsm.c
+>> @@ -1181,12 +1181,14 @@ static int smack_inode_permission(struct inode *inode, int mask)
+>>  
+>>  /**
+>>   * smack_inode_setattr - Smack check for setting attributes
+>> + * @idmap: idmap of the mount
+>>   * @dentry: the object
+>>   * @iattr: for the force flag
+>>   *
+>>   * Returns 0 if access is permitted, an error code otherwise
+>>   */
+>> -static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
+>> +static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>> +			       struct iattr *iattr)
+> static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry, struct iattr *iattr)
+>
+> Can be still in a single line (100 characters exactly).
+>
+>
+>>  {
+>>  	struct smk_audit_info ad;
+>>  	int rc;
+>> -- 
+>> 2.34.1
+>
+> BR, Jarkko
