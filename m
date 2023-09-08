@@ -2,48 +2,48 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1798EEB566
-	for <linux-integrity@archiver.kernel.org>; Fri,  8 Sep 2023 18:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DDFEEB560
+	for <linux-integrity@archiver.kernel.org>; Fri,  8 Sep 2023 18:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344380AbjIHS1K (ORCPT
+        id S236943AbjIHSbG (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 8 Sep 2023 14:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38258 "EHLO
+        Fri, 8 Sep 2023 14:31:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236998AbjIHS0y (ORCPT
+        with ESMTP id S229654AbjIHSbG (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 8 Sep 2023 14:26:54 -0400
+        Fri, 8 Sep 2023 14:31:06 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 669702707;
-        Fri,  8 Sep 2023 11:23:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B68C116B2;
-        Fri,  8 Sep 2023 18:21:36 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BA2A4691;
+        Fri,  8 Sep 2023 11:20:45 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36717C43395;
+        Fri,  8 Sep 2023 18:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694197297;
-        bh=5weumZREHcScnqcFuN9AIBTPHIckM1nRUtPTlPMiqAw=;
+        s=k20201202; t=1694197184;
+        bh=gTvBjhblGfOCGq6YxqIkoHtJHRP7ZzQuH4eEA0DNYk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lJnQsxmpwuyuaZSgmTY0W20Vcsu1R/EL2sGZHxZpkVrnxihPgEqqAlixQ+OTCPr8/
-         V+63GFmCcnlFTrBg4FbP/b0uE4G8EyY75ZIVhWQxehtqs1hcuGr0L+FAdY1QaMAg9Q
-         vI7r8veCaPTq5HEjeQFLe7rDrbI/tAK4KjyUrflEFNPJ6zjD1e6QSEtr9bg1fmOiaQ
-         DP0zScgqSgfie5A2fTlDBcjElCu1ZvgXJHw++FcQfJxyPkhvoVGWLqRrtAWThBmtSL
-         KYKP0QKnkBp/W/IOGImhv5w5RE/njt9n2i9sQYFkpaXIJyqacysiS0J2i7Cy+4gTvt
-         In1QFq1o/Ot/g==
+        b=fhI/3ZOiNcc3ezNm63kTUSwMXcMSycs7C92jB2QVfLsNxzPYbK1xY8KgZRmOK15yJ
+         dEteKHXbaQ8eyH8QyjoOxIHeWayJf5RMIh91bpxIzcG9mJXFFxa+5fAnpWqSkRomFj
+         fgb/VqcG1Wf82XruiNnkjG853KpoBKoe2l068+i5g3+DdXoTPbshrWAmW0n7Mn8TOt
+         VBmx0YDWfUpNuAXzx1UedZpaSsdRw6fseMxj1xQHF0f7WsTIGSrKw6jYswdQT35yjh
+         ZBeOot5BWaxE5cGjCgr9u6i9ix+xqAcXi5WBqbv/7HWbOLyTgSSBh/SBAcEUXWuW7J
+         C1hRTpr8IbyVw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Alexander Steffen <Alexander.Steffen@infineon.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         Sasha Levin <sashal@kernel.org>, peterhuewe@gmx.de,
         linux-integrity@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 4/8] tpm_tis: Resend command to recover from data transfer errors
-Date:   Fri,  8 Sep 2023 14:21:23 -0400
-Message-Id: <20230908182127.3461199-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 08/15] tpm_tis: Resend command to recover from data transfer errors
+Date:   Fri,  8 Sep 2023 14:19:11 -0400
+Message-Id: <20230908181920.3460520-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230908182127.3461199-1-sashal@kernel.org>
-References: <20230908182127.3461199-1-sashal@kernel.org>
+In-Reply-To: <20230908181920.3460520-1-sashal@kernel.org>
+References: <20230908181920.3460520-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.14.325
+X-stable-base: Linux 5.15.131
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
@@ -66,10 +66,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 3255815585096..9d731e2655949 100644
+index d7c440ac465f3..b3452259d6e0b 100644
 --- a/drivers/char/tpm/tpm_tis_core.c
 +++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -364,10 +364,17 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+@@ -469,10 +469,17 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
  	int rc;
  	u32 ordinal;
  	unsigned long dur;
