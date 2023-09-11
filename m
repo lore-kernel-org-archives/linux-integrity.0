@@ -2,147 +2,113 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9A4CA0ED7
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Sep 2023 22:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D82DCA0EDD
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Sep 2023 22:11:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240768AbjIKWJz (ORCPT
+        id S240575AbjIKWKC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Sep 2023 18:09:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45860 "EHLO
+        Mon, 11 Sep 2023 18:10:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236442AbjIKKkN (ORCPT
+        with ESMTP id S236526AbjIKKu3 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:40:13 -0400
+        Mon, 11 Sep 2023 06:50:29 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88106E5F;
-        Mon, 11 Sep 2023 03:40:07 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2526FC433C8;
-        Mon, 11 Sep 2023 10:40:03 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11675E9;
+        Mon, 11 Sep 2023 03:50:25 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD08AC433C9;
+        Mon, 11 Sep 2023 10:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694428807;
-        bh=RP45snWACyqgDN5ENZuvi66iNSF1V/wDO4v24hihHZE=;
-        h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-        b=lhDQoGRi69jPZZL7AuWVTS8zWlclsXaP73Wu2uz8ZXmysuVGZw02SADwAUV4KCAWR
-         36rS7S0TpOez7u+QCNm3ES4rU9w9/sysv+n5J0rt+f8UqJrv6GH7qXWli/W9gWQB56
-         DowAsUZ58S7bbEAS92MGeo7N4gefx5t42zidoenUpIazcHZCBj2hrFD70uMqenQ+e6
-         xLmRGwt0fwvEgVM+CnBkjQACXN3TGzFwqG5dJVZuhDcmcydfGUATVExwyll/2yw4VH
-         XmpGOdGPkFPYl/qQPZG7MKebkySJFAxDlJb91Dve7LOBXZyF9bbrHPrts1OsHUSnAP
-         ldJHc4Tui3s4w==
+        s=k20201202; t=1694429424;
+        bh=5eCOHpwInPjQA6NxPDr5kZtgwrG8Hy+L9RSiIjoYzXQ=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=I63fO3Oped5CcoSGIlghzn65dDLDS3AgXMOjiToNZvSUdrhpid8dA2fwnZ3L0uvuQ
+         vRO43uNZPPKAjLBYaxKuEpPRCi/DBPQ5JahZ+/xplfXgFn+m6+K1DVaoMVszFQn7e3
+         c/7ShNyPjBTDlCTah8S2O9CnI6mNmrRR5K25WKyBtu4HXfsGlCg1Nmd2cAEeAGJtqk
+         +Xaszsx6GIBzt4dpxcFYC1VW/aJEKgOxHSFW2mvoY/oVjBtFiZDYuvh56WBy8I8ZL6
+         aLRIobdGSMWYlt8ZweMRDuHBYUhcsbpwXJ23mEyEwkNhh06xFKUyD5SbyXxtBFA6QG
+         oJalfh9jeUlHA==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 11 Sep 2023 13:40:02 +0300
-Message-Id: <CVG0VPRMC759.2LT3BCT7Q6M9H@suppilovahvero>
-Subject: Re: [PATCH v3] tpm: Enable hwrng only for Pluton on AMD CPUs
+Date:   Mon, 11 Sep 2023 13:50:18 +0300
+Message-Id: <CVG13KLCIT1X.1MQT6HYAYFRAU@suppilovahvero>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-nfs@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>,
+        "Roberto Sassu" <roberto.sassu@huawei.com>,
+        "Stefan Berger" <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v2 11/25] security: Align inode_setattr hook definition
+ with EVM
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Thorsten Leemhuis" <regressions@leemhuis.info>,
-        "Mario Limonciello" <mario.limonciello@amd.com>
-Cc:     <linux-integrity@vger.kernel.org>,
-        "Jerry Snitselaar" <jsnitsel@redhat.com>, <stable@vger.kernel.org>,
-        "Todd Brandt" <todd.e.brandt@intel.com>,
-        "Peter Huewe" <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, <linux-kernel@vger.kernel.org>,
-        "Patrick Steinhardt" <ps@pks.im>, "Ronan Pigott" <ronan@rjp.ie>,
-        "Raymond Jay Golo" <rjgolo@gmail.com>,
-        "Linux kernel regressions list" <regressions@lists.linux.dev>,
-        "Dusty Mabe" <dusty@dustymabe.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Paul Menzel" <pmenzel@molgen.mpg.de>
+To:     "Casey Schaufler" <casey@schaufler-ca.com>,
+        "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
+        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+        <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+        <kolga@netapp.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+        <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
+        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <dhowells@redhat.com>, <stephen.smalley.work@gmail.com>,
+        <eparis@parisplace.org>
 X-Mailer: aerc 0.14.0
-References: <20230822231510.2263255-1-jarkko@kernel.org>
- <705b9769-4132-450b-bd47-2423c419db2a@molgen.mpg.de>
- <CV03X3OEI7RE.3NI1QJ6MBJSHA@suppilovahvero>
- <1eeddbdc-c1f0-4499-b3d1-24c96f42a50b@amd.com>
- <CV3J3TCMB74C.1WA96NQ9J593U@suppilovahvero>
- <f6d75cac-2556-484e-8a2c-3531b24b1ca5@amd.com>
- <fcf2f600-d1f0-de14-956b-4d4f3f0cb3fa@leemhuis.info>
- <116dd56f-695f-4ecd-dace-805db83f5c3e@leemhuis.info>
- <CVAHNI7PWVDL.W8194GZA0SMK@suppilovahvero>
- <8dc067e5-d81f-4c5b-be76-bf0c1227b71e@leemhuis.info>
-In-Reply-To: <8dc067e5-d81f-4c5b-be76-bf0c1227b71e@leemhuis.info>
+References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
+ <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
+ <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
+ <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
+In-Reply-To: <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue Sep 5, 2023 at 3:01 PM EEST, Thorsten Leemhuis wrote:
-> On 05.09.23 00:32, Jarkko Sakkinen wrote:
-> > On Fri Sep 1, 2023 at 11:49 AM EEST, Thorsten Leemhuis wrote:
-> >> On 29.08.23 10:38, Linux regression tracking (Thorsten Leemhuis) wrote=
-:
-> >>> On 28.08.23 02:35, Mario Limonciello wrote:
-> >>>> On 8/27/2023 13:12, Jarkko Sakkinen wrote:
-> >>>>> On Wed Aug 23, 2023 at 9:58 PM EEST, Mario Limonciello wrote:
-> >>>>>> On 8/23/2023 12:40, Jarkko Sakkinen wrote:
-> >>>>>>> On Wed Aug 23, 2023 at 11:23 AM EEST, Paul Menzel wrote:
-> >>>>>>>> Am 23.08.23 um 01:15 schrieb Jarkko Sakkinen:
-> >>>>>>>>> The vendor check introduced by commit 554b841d4703 ("tpm: Disab=
-le
-> >>>>>>>>> RNG for
-> >>>>>>>>> all AMD fTPMs") doesn't work properly on a number of Intel fTPM=
-s.=C2=A0
-> >>>>>>>>> On the
-> >>>>>>>>> reported systems the TPM doesn't reply at bootup and returns ba=
-ck the
-> >>>>>>>>> command code. This makes the TPM fail probe.
-> > [...]
-> >> Hmmm. Quite a bit progress to fix the issue was made in the first week
-> >> after Todd's report; Jarkko apparently even applied the earlier patch
-> >> from Mario to his master branch:
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git=
-/commit/?id=3Db1a62d41bdc1d15b0641759717e8c3651f0a810c
-> >> But since then (aka in the past week) there was not much progress.
+On Tue Sep 5, 2023 at 6:56 PM EEST, Casey Schaufler wrote:
+> On 9/4/2023 2:08 PM, Jarkko Sakkinen wrote:
+> > On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
+> >> From: Roberto Sassu <roberto.sassu@huawei.com>
+> >>
+> >> Add the idmap parameter to the definition, so that evm_inode_setattr()=
+ can
+> >> be registered as this hook implementation.
+> >>
+> >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> >> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> >> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  include/linux/lsm_hook_defs.h | 3 ++-
+> >>  security/security.c           | 2 +-
+> >>  security/selinux/hooks.c      | 3 ++-
+> >>  security/smack/smack_lsm.c    | 4 +++-
+> >>  4 files changed, 8 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_de=
+fs.h
+> >> index 4bdddb52a8fe..fdf075a6b1bb 100644
+> >> --- a/include/linux/lsm_hook_defs.h
+> >> +++ b/include/linux/lsm_hook_defs.h
+> >> @@ -134,7 +134,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *de=
+ntry)
+> >>  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct ino=
+de *inode,
+> >>  	 bool rcu)
+> >>  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
+> >> -LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *=
+attr)
+> >> +LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentr=
+y *dentry,
+> >> +	 struct iattr *attr)
+> > LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry =
+*dentry, struct iattr *attr)
+> >
+> > Only 99 characters, i.e. breaking into two lines is not necessary.
 >
-> Jarkko, many thx for picking this up and submitting it to Linus, much
-> appreciated. Sorry again for prodding things, but I felt I had to. Hope
-> you didn't mind too much.
+> We're keeping the LSM code in the ancient 80 character format.
+> Until we get some fresh, young maintainers involved who can convince
+> us that line wrapped 80 character terminals are kewl we're sticking
+> with what we know.
 >
-> > Could it be possible to extend the actual kernel documentation
-> > to give at least some guidelines how a maintainer should deal
-> > with the bugzilla?
->
-> I guess it's best if that is done by somebody that cares about bugzilla
-> (I don't fall into that group[1]) and knows the official status.
->
-> But FWIW, I wonder what you actually want to see documented. From
-> https://lore.kernel.org/all/CVAC8VQPD3PK.1CBS5QTWDSS2C@suppilovahvero/
-> it sounds like you had trouble with Link:/Closes: tag and Reported-by.
-> From what I can see I don't think bugzilla.kernel.org needs special
-> documentation in that area:
->
->  * just use Link:/Closes: to reports to public reports that might be
-> helpful later in case somebody wants to look at the backstory of a
-> commit, wherever those reports may be (lore, bugzilla.kernel.org,
-> https://gitlab.freedesktop.org/drm/intel/-/issues,
-> https://github.com/thesofproject/linux/issues, ...)
->
->  * use Reported-by: to give credit to anyone that deserves it, as it is
-> a nice way to say thx while motivate people to help again in the future.
-> That usually will include the initial reporter, but might also include
-> people that replied to a report from somebody else and helped
-> perceptible with debugging or fixing.
+> 	https://lwn.net/Articles/822168/
 
-I *kind of* agree with this but checkpatch.pl disagrees with this :-/
-
-And it is an actual issue that bugzilla is hosted in kernel.org domain,
-and at the same time it is undocumented process.
-
-AFAIK anything that is not part of the process can be ignored in the
-process so *theoretically* anything put to kernel bugzilla ca be
-ignored. This is how it is with e.g. patchwork - some people use it,
-some people don't.
-
-Personally I think bugzilla, being user approachable system, should
-be better defined but *theoretically*, at least by the process, it
-can be fully ignored.
-
-This is where the main source of confusion inherits from, when you
-put your maintainer hat on.
-
-> Ciao, Thorsten
->
-> [1] I only sometimes help people that report regressions to
-> bugzilla.kernel.org that otherwise would likely would fall through the
-> cracks (among others because many reports are never forwarded to the
-> proper developers otherwise).
+Pretty artificial counter-example tbh :-) Even with Rust people tend to
+stick one character variable names for trivial integer indices.
 
 BR, Jarkko
