@@ -2,113 +2,195 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D82DCA0EDD
-	for <linux-integrity@archiver.kernel.org>; Mon, 11 Sep 2023 22:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB9ACA0EC7
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Sep 2023 22:11:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240575AbjIKWKC (ORCPT
+        id S241062AbjIKWKC (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
         Mon, 11 Sep 2023 18:10:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236526AbjIKKu3 (ORCPT
+        with ESMTP id S236383AbjIKKcW (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Sep 2023 06:50:29 -0400
+        Mon, 11 Sep 2023 06:32:22 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11675E9;
-        Mon, 11 Sep 2023 03:50:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD08AC433C9;
-        Mon, 11 Sep 2023 10:50:19 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B736E5F;
+        Mon, 11 Sep 2023 03:32:17 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F4FC433C7;
+        Mon, 11 Sep 2023 10:32:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694429424;
-        bh=5eCOHpwInPjQA6NxPDr5kZtgwrG8Hy+L9RSiIjoYzXQ=;
+        s=k20201202; t=1694428336;
+        bh=NxlAgdm0zBlYQHGHYk0vtHQiaU9QKg+ESRgOgI623QA=;
         h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=I63fO3Oped5CcoSGIlghzn65dDLDS3AgXMOjiToNZvSUdrhpid8dA2fwnZ3L0uvuQ
-         vRO43uNZPPKAjLBYaxKuEpPRCi/DBPQ5JahZ+/xplfXgFn+m6+K1DVaoMVszFQn7e3
-         c/7ShNyPjBTDlCTah8S2O9CnI6mNmrRR5K25WKyBtu4HXfsGlCg1Nmd2cAEeAGJtqk
-         +Xaszsx6GIBzt4dpxcFYC1VW/aJEKgOxHSFW2mvoY/oVjBtFiZDYuvh56WBy8I8ZL6
-         aLRIobdGSMWYlt8ZweMRDuHBYUhcsbpwXJ23mEyEwkNhh06xFKUyD5SbyXxtBFA6QG
-         oJalfh9jeUlHA==
+        b=YPRP152AYRqv5SeEqG2TuzRr1x/m+fO7cpvR0iJom99pBq3WtSTzem7asxaeCIOiW
+         F4fdOOx0PKr1+kqKegAMJTDs1mk2xBUpZ6j0hXL4kThf7PdV2mINHs2l3DVIRwB1Ig
+         +/bx2ApTF8w9Yl5RPIIVNymDA9D0St3XrQ1YGG3bOEy+m845bowZZz03NcoxwDfZcU
+         PY1Pi3XcSq0XAfQdAEnIj/+0RytcIMw/OkEkJxXVLHr0fAGcJXFsFvUlyYWKKZ9a8a
+         l5bcQrdTAv6s3sqwir8369BhcVy8BEvq8LXWA2ZxiOFgcrVq2OYRzALNDk2e28f1oF
+         g5oh1VYx8KEQg==
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date:   Mon, 11 Sep 2023 13:50:18 +0300
-Message-Id: <CVG13KLCIT1X.1MQT6HYAYFRAU@suppilovahvero>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <selinux@vger.kernel.org>,
-        "Roberto Sassu" <roberto.sassu@huawei.com>,
-        "Stefan Berger" <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v2 11/25] security: Align inode_setattr hook definition
- with EVM
+Date:   Mon, 11 Sep 2023 13:32:12 +0300
+Message-Id: <CVG0PQ1NV1XZ.1R2BD85Z1M3FO@suppilovahvero>
+Cc:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        "Jens Wiklander" <jens.wiklander@linaro.org>, <jejb@linux.ibm.com>,
+        <zohar@linux.ibm.com>, <sudeep.holla@arm.com>,
+        <achin.gupta@arm.com>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KEYS: trusted: tee: Refactor register SHM usage
 From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Casey Schaufler" <casey@schaufler-ca.com>,
-        "Roberto Sassu" <roberto.sassu@huaweicloud.com>,
-        <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-        <chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-        <kolga@netapp.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-        <zohar@linux.ibm.com>, <dmitry.kasatkin@gmail.com>,
-        <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
-        <dhowells@redhat.com>, <stephen.smalley.work@gmail.com>,
-        <eparis@parisplace.org>
+To:     "Sumit Garg" <sumit.garg@linaro.org>
 X-Mailer: aerc 0.14.0
-References: <20230831104136.903180-1-roberto.sassu@huaweicloud.com>
- <20230831104136.903180-12-roberto.sassu@huaweicloud.com>
- <CVAFV92MONCH.257Y9YQ3OEU4B@suppilovahvero>
- <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
-In-Reply-To: <19943e35-2e7c-d27a-1a5d-189eea439dfd@schaufler-ca.com>
+References: <20230822112933.1550062-1-sumit.garg@linaro.org>
+ <20230822125555.GA82256@rayden>
+ <CAFA6WYPy=yxGg1HbT+ipWJFpxiJeUGK6BSgMhtRPd=zmKef-cw@mail.gmail.com>
+ <CAHUa44G9jCeHcRq=AZeieaTPWN_tpOVKeJNY=777QAh-bw1QNg@mail.gmail.com>
+ <CAFA6WYPY70iYCmQhzCkATGinqK_C1i4SEZzTdv4yDwntpGNzew@mail.gmail.com>
+ <CAHUa44H5eG6N0M_aAiWsYJorWVt4pYEZPWXgOJHgXAYVmR=cww@mail.gmail.com>
+ <CAFA6WYNAifDVZy-pLSTJWonGTJBECijsTFw4OQdqToW3u6Lj_Q@mail.gmail.com>
+In-Reply-To: <CAFA6WYNAifDVZy-pLSTJWonGTJBECijsTFw4OQdqToW3u6Lj_Q@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue Sep 5, 2023 at 6:56 PM EEST, Casey Schaufler wrote:
-> On 9/4/2023 2:08 PM, Jarkko Sakkinen wrote:
-> > On Thu Aug 31, 2023 at 1:41 PM EEST, Roberto Sassu wrote:
-> >> From: Roberto Sassu <roberto.sassu@huawei.com>
-> >>
-> >> Add the idmap parameter to the definition, so that evm_inode_setattr()=
- can
-> >> be registered as this hook implementation.
-> >>
-> >> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> >> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> >> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> >> ---
-> >>  include/linux/lsm_hook_defs.h | 3 ++-
-> >>  security/security.c           | 2 +-
-> >>  security/selinux/hooks.c      | 3 ++-
-> >>  security/smack/smack_lsm.c    | 4 +++-
-> >>  4 files changed, 8 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_de=
-fs.h
-> >> index 4bdddb52a8fe..fdf075a6b1bb 100644
-> >> --- a/include/linux/lsm_hook_defs.h
-> >> +++ b/include/linux/lsm_hook_defs.h
-> >> @@ -134,7 +134,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *de=
-ntry)
-> >>  LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct ino=
-de *inode,
-> >>  	 bool rcu)
-> >>  LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
-> >> -LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *=
-attr)
-> >> +LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentr=
-y *dentry,
-> >> +	 struct iattr *attr)
-> > LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry =
-*dentry, struct iattr *attr)
+On Tue Sep 5, 2023 at 2:04 PM EEST, Sumit Garg wrote:
+> Hi Jarkko,
+>
+> On Wed, 23 Aug 2023 at 19:58, Jens Wiklander <jens.wiklander@linaro.org> =
+wrote:
 > >
-> > Only 99 characters, i.e. breaking into two lines is not necessary.
+> > On Wed, Aug 23, 2023 at 3:04=E2=80=AFPM Sumit Garg <sumit.garg@linaro.o=
+rg> wrote:
+> > >
+> > > On Wed, 23 Aug 2023 at 13:32, Jens Wiklander <jens.wiklander@linaro.o=
+rg> wrote:
+> > > >
+> > > > On Wed, Aug 23, 2023 at 8:55=E2=80=AFAM Sumit Garg <sumit.garg@lina=
+ro.org> wrote:
+> > > > >
+> > > > > On Tue, 22 Aug 2023 at 18:25, Jens Wiklander <jens.wiklander@lina=
+ro.org> wrote:
+> > > > > >
+> > > > > > On Tue, Aug 22, 2023 at 04:59:33PM +0530, Sumit Garg wrote:
+> > > > > > > The OP-TEE driver using the old SMC based ABI permits overlap=
+ping shared
+> > > > > > > buffers, but with the new FF-A based ABI each physical page m=
+ay only
+> > > > > > > be registered once.
+> > > > > > >
+> > > > > > > As the key and blob buffer are allocated adjancently, there i=
+s no need
+> > > > > > > for redundant register shared memory invocation. Also, it is =
+incompatibile
+> > > > > > > with FF-A based ABI limitation. So refactor register shared m=
+emory
+> > > > > > > implementation to use only single invocation to register both=
+ key and blob
+> > > > > > > buffers.
+> > > > > > >
+> > > > > > > Fixes: 4615e5a34b95 ("optee: add FF-A support")
+> > > > > > > Reported-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > > > > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > > > > > > ---
+> > > > > > >  security/keys/trusted-keys/trusted_tee.c | 64 ++++++++------=
+----------
+> > > > > > >  1 file changed, 20 insertions(+), 44 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/security/keys/trusted-keys/trusted_tee.c b/secur=
+ity/keys/trusted-keys/trusted_tee.c
+> > > > > > > index ac3e270ade69..aa3d477de6db 100644
+> > > > > > > --- a/security/keys/trusted-keys/trusted_tee.c
+> > > > > > > +++ b/security/keys/trusted-keys/trusted_tee.c
+> > > > > > > @@ -65,24 +65,16 @@ static int trusted_tee_seal(struct truste=
+d_key_payload *p, char *datablob)
+> > > > > > >       int ret;
+> > > > > > >       struct tee_ioctl_invoke_arg inv_arg;
+> > > > > > >       struct tee_param param[4];
+> > > > > > > -     struct tee_shm *reg_shm_in =3D NULL, *reg_shm_out =3D N=
+ULL;
+> > > > > > > +     struct tee_shm *reg_shm =3D NULL;
+> > > > > > >
+> > > > > > >       memset(&inv_arg, 0, sizeof(inv_arg));
+> > > > > > >       memset(&param, 0, sizeof(param));
+> > > > > > >
+> > > > > > > -     reg_shm_in =3D tee_shm_register_kernel_buf(pvt_data.ctx=
+, p->key,
+> > > > > > > -                                              p->key_len);
+> > > > > > > -     if (IS_ERR(reg_shm_in)) {
+> > > > > > > -             dev_err(pvt_data.dev, "key shm register failed\=
+n");
+> > > > > > > -             return PTR_ERR(reg_shm_in);
+> > > > > > > -     }
+> > > > > > > -
+> > > > > > > -     reg_shm_out =3D tee_shm_register_kernel_buf(pvt_data.ct=
+x, p->blob,
+> > > > > > > -                                               sizeof(p->blo=
+b));
+> > > > > > > -     if (IS_ERR(reg_shm_out)) {
+> > > > > > > -             dev_err(pvt_data.dev, "blob shm register failed=
+\n");
+> > > > > > > -             ret =3D PTR_ERR(reg_shm_out);
+> > > > > > > -             goto out;
+> > > > > > > +     reg_shm =3D tee_shm_register_kernel_buf(pvt_data.ctx, p=
+->key,
+> > > > > > > +                                           sizeof(p->key) + =
+sizeof(p->blob));
+> > > > > >
+> > > > > > This is somewhat fragile. What if struct trusted_key_payload ha=
+s a small
+> > > > > > unexpected change in layout?
+> > > > >
+> > > > > key and blob buffers are just two adjacent fixed sized byte array=
+s. So
+> > > > > I am not worried here as long as they stay adjacent (which has be=
+en
+> > > > > the case since trusted keys were introduced in the kernel).
+> > > >
+> > > > Yeah, that was my point, but fine if you don't believe it's an issu=
+e.
+> > > >
+> > >
+> > > Does it resolve the issue with FFA ABI for you? It would be good to
+> > > have your Tested-by tag.
+> >
+> > It does:
+> > Tested-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+> >
 >
-> We're keeping the LSM code in the ancient 80 character format.
-> Until we get some fresh, young maintainers involved who can convince
-> us that line wrapped 80 character terminals are kewl we're sticking
-> with what we know.
->
-> 	https://lwn.net/Articles/822168/
+> Can you help pick up this fix for v6.6 kernel release?
 
-Pretty artificial counter-example tbh :-) Even with Rust people tend to
-stick one character variable names for trivial integer indices.
+I pushed it and also added the missing stable tag:
+
+commit 1037d6ec29cdfaaec5277c194b0278eb0a30c3f8 (HEAD -> master, origin/mas=
+ter, origin/HEAD)
+Author: Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue Aug 22 16:59:33 2023 +0530
+
+    KEYS: trusted: tee: Refactor register SHM usage
+
+    The OP-TEE driver using the old SMC based ABI permits overlapping share=
+d
+    buffers, but with the new FF-A based ABI each physical page may only
+    be registered once.
+
+    As the key and blob buffer are allocated adjancently, there is no need
+    for redundant register shared memory invocation. Also, it is incompatib=
+ile
+    with FF-A based ABI limitation. So refactor register shared memory
+    implementation to use only single invocation to register both key and b=
+lob
+    buffers.
+
+    [jarkko: Added cc to stable.]
+    Cc: stable@vger.kernel.org # v5.16+
+    Fixes: 4615e5a34b95 ("optee: add FF-A support")
+    Reported-by: Jens Wiklander <jens.wiklander@linaro.org>
+    Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+    Tested-by: Jens Wiklander <jens.wiklander@linaro.org>
+    Reviewed-by: Jens Wiklander <jens.wiklander@linaro.org>
+    Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+
 
 BR, Jarkko
