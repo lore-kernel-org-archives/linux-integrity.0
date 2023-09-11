@@ -2,116 +2,75 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64366EE14AA
-	for <linux-integrity@archiver.kernel.org>; Sat,  9 Sep 2023 19:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 894ABCA0EDA
+	for <linux-integrity@archiver.kernel.org>; Mon, 11 Sep 2023 22:11:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243018AbjIIT6V (ORCPT
+        id S236282AbjIKWJ5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sat, 9 Sep 2023 15:58:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58274 "EHLO
+        Mon, 11 Sep 2023 18:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232992AbjIIT6V (ORCPT
+        with ESMTP id S236482AbjIKKmr (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sat, 9 Sep 2023 15:58:21 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C99212C;
-        Sat,  9 Sep 2023 12:58:17 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-401d61e9fecso9288985e9.0;
-        Sat, 09 Sep 2023 12:58:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1694289495; x=1694894295; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V0F4jEyD+50Ag5LBcb9IntWEhZBR76+0TAP/uE4iXsw=;
-        b=RKOE2a6LrG4zQP+e3g0llPa/D8B9ZIqFzJSo6scVb2RP/40ln0CGgR0H4OYrbr7YQh
-         7bIqfoYlw0gO9QKIhVeLjK07JR8/G34VGUlQHW+F/ovuny/no2FKdmc+RwuN2ZAX1RwY
-         dBcaISABWzlAE2E20F+8OBjMOYpC25bm229BXV8gBPFBED8G7ks2dCusxXmfWmi0BRb8
-         +PS9/DcDPXXNwlBXg72IHeL4PgIOHr+0K21O1BHgsyQZ3+p3tWEfJ+nS+/7jr5P02D0c
-         rCAFAfwYClEoFB2JctyDlL9/omvW//ywDc7tO2u5kC1eVBfLyBzieyXl6Vmol8KEHJJB
-         R/dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694289495; x=1694894295;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V0F4jEyD+50Ag5LBcb9IntWEhZBR76+0TAP/uE4iXsw=;
-        b=CkBmyyGVRP8bdjQoFLIiYdMpS2OTgTqMKklOc57Nd6DrGR5wVDvOE1SVWuSSE/FkHC
-         O0xPEUYAdxfqDXKgb/SHy6b+TqL37I1MhFcQI+UkxJj5SW8xxSrOKMAiAG9SErYR0FTx
-         Cnn3WjUZOWDyGj5ykRskllYHqJbvAiWxc9jRpHKY5HXcwQjVTwMpmsWPMH1lo7NTMfXV
-         08lMoROAlt8E+aGlkJng8fj4blD8LK3dK6R6X7F0xc/bt9buyHorzx13LpCSwgS+ruZt
-         fOUulsVzxjLkaAZDSYISqe6d+dWTu1bv89+5pQqqTnlkMcFgURab8LAcUbsqU/ssAGtB
-         tzFg==
-X-Gm-Message-State: AOJu0Yz7EnpOXvnpgoc19iH5iMU3YfUVVPB3yII+cXdLOs5wbXteUeSB
-        whMfshF3iPnKmnoa86D1/XdNjU085VM=
-X-Google-Smtp-Source: AGHT+IHxACP3AbFMtWMG5fy2nEKc51ZcY+JEKUYXj3Ef+lMCfr0fXgSP0w1dA0SHwFHwRVJLncNEbg==
-X-Received: by 2002:a5d:5702:0:b0:317:5f08:329f with SMTP id a2-20020a5d5702000000b003175f08329fmr5002226wrv.1.1694289495267;
-        Sat, 09 Sep 2023 12:58:15 -0700 (PDT)
-Received: from [10.0.0.25] ([178.160.241.68])
-        by smtp.gmail.com with ESMTPSA id r17-20020adfce91000000b003198a9d758dsm5589721wrn.78.2023.09.09.12.58.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Sep 2023 12:58:14 -0700 (PDT)
-Message-ID: <2cb0fd0d-acc7-8cdd-85ad-b75ba36afef1@gmail.com>
-Date:   Sat, 9 Sep 2023 23:58:13 +0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-Subject: Re: [PATCH] Fix typo in tpmrm class definition
-Content-Language: en-US
-To:     "Justin M. Forbes" <jforbes@fedoraproject.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     jmforbes@linuxtx.org
-References: <20230908140629.2930150-1-jforbes@fedoraproject.org>
-From:   Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <20230908140629.2930150-1-jforbes@fedoraproject.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Mon, 11 Sep 2023 06:42:47 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C12E5;
+        Mon, 11 Sep 2023 03:42:42 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DAC2C433C7;
+        Mon, 11 Sep 2023 10:42:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694428962;
+        bh=uWJY/w9fi0ck8832Ox7eif8IXgu2yYhH8rrmB2yxmvA=;
+        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+        b=GaoJtjdRaiKbyK6BJ1KHNENgj4HjJLwDRzJQsF3rXDOUqB1WYyeJr0k4aKfiRGo9H
+         yFeoqB793oiRQ8Zvoq64r1hRJySOkl7ukYEs9skFQmPTDQKYcM2FEPD0Co5Soiix9a
+         cuJEpWlIddBAsdOHMiKw9EnPUXTL0qCvQ4hqhMPkbGrhSd9FnTMjaAt9Uqzbcm3bJQ
+         LHpI4mufHn2GoNE7LykXvO6N6fwijzPBkAFIid8bW+Tif8ErWBXMEngtBJkQWPdcaO
+         F4KjMi+ftTpDqX1EmSaEUVv0eK+OtIJ/+od/vb7wL8I/bfs1paS7imbdPwnyvPDd6r
+         dUtsmewgVG5kQ==
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date:   Mon, 11 Sep 2023 13:42:37 +0300
+Message-Id: <CVG0XP0M7KNM.2NA8DSD0TGK4V@suppilovahvero>
+Cc:     <linux-integrity@vger.kernel.org>,
+        "Jerry Snitselaar" <jsnitsel@redhat.com>, <stable@vger.kernel.org>,
+        "Todd Brandt" <todd.e.brandt@intel.com>,
+        "Peter Huewe" <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, <linux-kernel@vger.kernel.org>,
+        "Patrick Steinhardt" <ps@pks.im>, "Ronan Pigott" <ronan@rjp.ie>,
+        "Raymond Jay Golo" <rjgolo@gmail.com>,
+        "Linux kernel regressions list" <regressions@lists.linux.dev>,
+        "Dusty Mabe" <dusty@dustymabe.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Paul Menzel" <pmenzel@molgen.mpg.de>
+Subject: Re: [PATCH v3] tpm: Enable hwrng only for Pluton on AMD CPUs
+From:   "Jarkko Sakkinen" <jarkko@kernel.org>
+To:     "Jarkko Sakkinen" <jarkko@kernel.org>,
+        "Thorsten Leemhuis" <regressions@leemhuis.info>,
+        "Mario Limonciello" <mario.limonciello@amd.com>
+X-Mailer: aerc 0.14.0
+References: <20230822231510.2263255-1-jarkko@kernel.org>
+ <705b9769-4132-450b-bd47-2423c419db2a@molgen.mpg.de>
+ <CV03X3OEI7RE.3NI1QJ6MBJSHA@suppilovahvero>
+ <1eeddbdc-c1f0-4499-b3d1-24c96f42a50b@amd.com>
+ <CV3J3TCMB74C.1WA96NQ9J593U@suppilovahvero>
+ <f6d75cac-2556-484e-8a2c-3531b24b1ca5@amd.com>
+ <fcf2f600-d1f0-de14-956b-4d4f3f0cb3fa@leemhuis.info>
+ <116dd56f-695f-4ecd-dace-805db83f5c3e@leemhuis.info>
+ <CVAHNI7PWVDL.W8194GZA0SMK@suppilovahvero>
+ <8dc067e5-d81f-4c5b-be76-bf0c1227b71e@leemhuis.info>
+ <CVG0VPRMC759.2LT3BCT7Q6M9H@suppilovahvero>
+In-Reply-To: <CVG0VPRMC759.2LT3BCT7Q6M9H@suppilovahvero>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On 08.09.2023 18:06, Justin M. Forbes wrote:
-> Commit d2e8071bed0be ("tpm: make all 'class' structures const")
-> unfortunately had a typo for the name on tpmrm.
-> 
-> Fixes: d2e8071bed0b ("tpm: make all 'class' structures const")
-> Signed-off-by: Justin M. Forbes <jforbes@fedoraproject.org>
-> ---
->   drivers/char/tpm/tpm-chip.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> index 23f6f2eda84c..42b1062e33cd 100644
-> --- a/drivers/char/tpm/tpm-chip.c
-> +++ b/drivers/char/tpm/tpm-chip.c
-> @@ -33,7 +33,7 @@ const struct class tpm_class = {
->   	.shutdown_pre = tpm_class_shutdown,
->   };
->   const struct class tpmrm_class = {
-> -	.name = "tmprm",
-> +	.name = "tpmrm",
->   };
->   dev_t tpm_devt;
-> 
+On Mon Sep 11, 2023 at 1:40 PM EEST, Jarkko Sakkinen wrote:
+> Personally I think bugzilla, being user approachable system, should
+> be better defined but *theoretically*, at least by the process, it
+> can be fully ignored.
 
-Hi Justin,
+I.e. I don't think it should be ignored :-) </disclaimer>
 
-Thank you for fixing this mistake, it's my bad :(
-
-I'm not sure if you know this or not, but merge window is still opened, 
-so the patch could be accidentally skipped by maintainers as they have a 
-huge load during this period... Perhaps resending it in a few days might 
-be a good idea.
-
-Also, probably adding 'tpm:' prefix to the commit title could make it 
-more noticeable to the maintainers.
-
-Thank you again for doing this.
-
---
-Kind regards,
-Ivan Orlov
+BR, Jarkko
