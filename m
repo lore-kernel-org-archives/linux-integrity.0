@@ -2,125 +2,160 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0947CA0ECB
-	for <linux-integrity@archiver.kernel.org>; Tue, 12 Sep 2023 03:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C238ACA0ECD
+	for <linux-integrity@archiver.kernel.org>; Tue, 12 Sep 2023 03:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235148AbjILDEL (ORCPT
+        id S237326AbjILDkM (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 11 Sep 2023 23:04:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49808 "EHLO
+        Mon, 11 Sep 2023 23:40:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241362AbjILDD7 (ORCPT
+        with ESMTP id S237258AbjILDkL (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 11 Sep 2023 23:03:59 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EDC1F9F5A;
-        Mon, 11 Sep 2023 18:37:26 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2359C116A9;
-        Mon, 11 Sep 2023 22:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694469695;
-        bh=t0v/8DwhZ2XTEQS0bqVLXsYjSFysr5rhj5sH1kGkl+U=;
-        h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-        b=Jqu8WLZlx+u3A+ZjgZ4w+1ZrSjel5diyioaKxfCD3EU4XjjB2m/aNRfzgYqQuUCmO
-         hNRXEjBrfRAV8+ZFgysEQt3/HLfNMErWaCdVpTGeYgwNreWYltqqDDf7rq41cntP0W
-         imp1fr8hgHnuu4othbADNuOgzJgb7YPbleLcAen5LQRUWNXz1P9QfWof9QDLU5B+uS
-         S3B1NVPN3ieNkEFr6+lmY3qWgIhKHZHsrKls42c8YqkevUmzbRPeXOp32QAkslaNRX
-         P7PjG0CH64wEI5u0QrXzYO/kSKQ3Xxob7bbvsGHYvsPJFyEJqW3ugQ6iNTjjWLSRj2
-         A1cXjKiQ7b+Kg==
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Tue, 12 Sep 2023 01:01:31 +0300
-Message-Id: <CVGFDI2VELSN.2E98O6TF5TZ0E@suppilovahvero>
-Cc:     <mic@linux.microsoft.com>, <kanth.ghatraju@oracle.com>,
-        <konrad.wilk@oracle.com>, <linux-integrity@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] certs: Restrict blacklist updates to the secondary
- trusted keyring
-From:   "Jarkko Sakkinen" <jarkko@kernel.org>
-To:     "Eric Snowberg" <eric.snowberg@oracle.com>, <zohar@linux.ibm.com>,
-        <dhowells@redhat.com>, <dwmw2@infradead.org>
-X-Mailer: aerc 0.14.0
-References: <20230908213428.731513-1-eric.snowberg@oracle.com>
-In-Reply-To: <20230908213428.731513-1-eric.snowberg@oracle.com>
+        Mon, 11 Sep 2023 23:40:11 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF878CA;
+        Mon, 11 Sep 2023 20:40:07 -0700 (PDT)
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 38C3VdrO032504;
+        Tue, 12 Sep 2023 03:39:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=NFU4wTwzHwHfa9+mQzTQI4YpbvlwC3kC297FAjKVUUg=;
+ b=ZDKiat1y8LwzyMEyMYcler3CZrU4kc5w6ElYza9UtlwfT/zxrVgC62xkVUxscoYJqG50
+ kz/D35qKpaTjVNTEyQphi5Z2mheMGP1PZnGVt+Yg5jh/+LlPRvxPgxOJfTlHUgEy8kEB
+ YPI7jYoN6X778719vA8KfWGiSi0zluO8BE/pphxJqeLWng4gGc5P8H8PwVdsYemiVT3Q
+ wTAPmixMGN9q4014WOSTO30Rzqn7+eLSNeqfRDkccEm37drg7Av77FYcgk7RuwnNVOai
+ QaH+DU9OKOP5tA8/rZkY50YlLICD28jRq7yVZiz5FVJwgTUoXl95JHYL5OTBNc0eKOS+ 2w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t2g5f0jnv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Sep 2023 03:39:42 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 38C3VaJ8031310;
+        Tue, 12 Sep 2023 03:39:41 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3t2g5f0jnn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Sep 2023 03:39:41 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 38C3Z6lm022941;
+        Tue, 12 Sep 2023 03:39:40 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+        by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3t141nfw1d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 12 Sep 2023 03:39:40 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+        by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 38C3ddI825625246
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 12 Sep 2023 03:39:39 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6B475805A;
+        Tue, 12 Sep 2023 03:39:39 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC19258051;
+        Tue, 12 Sep 2023 03:39:38 +0000 (GMT)
+Received: from [9.61.48.18] (unknown [9.61.48.18])
+        by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+        Tue, 12 Sep 2023 03:39:38 +0000 (GMT)
+Message-ID: <92e23f29-1a16-54da-48d1-59186158e923@linux.vnet.ibm.com>
+Date:   Mon, 11 Sep 2023 23:39:38 -0400
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] integrity: powerpc: Do not select CA_MACHINE_KEYRING
+To:     =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>,
+        linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joeyli <jlee@suse.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20230907165224.32256-1-msuchanek@suse.de>
+ <20230907173232.GD8826@kitsune.suse.cz>
+Content-Language: en-US
+From:   Nayna <nayna@linux.vnet.ibm.com>
+In-Reply-To: <20230907173232.GD8826@kitsune.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T17CezFdhedLHXke8Gyoh1jkNFmlvHOb
+X-Proofpoint-ORIG-GUID: 17MJJileaVp_LAD-ypZZ54rJrf3zkS4Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.267,Aquarius:18.0.957,Hydra:6.0.601,FMLib:17.11.176.26
+ definitions=2023-09-11_19,2023-09-05_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
+ malwarescore=0 spamscore=0 bulkscore=0 suspectscore=0 adultscore=0
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2308100000 definitions=main-2309120027
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Sat Sep 9, 2023 at 12:34 AM EEST, Eric Snowberg wrote:
-> Currently root can dynamically update the blacklist keyring if the hash
-> being added is signed and vouched for by the builtin trusted keyring.
-> Currently keys in the secondary trusted keyring can not be used.
->
-> Keys within the secondary trusted keyring carry the same capabilities as
-> the builtin trusted keyring.  Relax the current restriction for updating
-> the .blacklist keyring and allow the secondary to also be referenced as
-> a trust source.  Since the machine keyring is linked to the secondary
-> trusted keyring, any key within it may also be used.
->
-> An example use case for this is IMA appraisal.  Now that IMA both
-> references the blacklist keyring and allows the machine owner to add
-> custom IMA CA certs via the machine keyring, this adds the additional
-> capability for the machine owner to also do revocations on a running
-> system.
->
-> IMA appraisal usage example to add a revocation for /usr/foo:
->
-> sha256sum /bin/foo | awk '{printf "bin:" $1}' > hash.txt
->
-> openssl smime -sign -in hash.txt -inkey machine-private-key.pem \
->        -signer machine-certificate.pem -noattr -binary -outform DER \
->        -out hash.p7s
->
-> keyctl padd blacklist "$(< hash.txt)" %:.blacklist < hash.p7s
->
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> ---
->  certs/Kconfig     | 2 +-
->  certs/blacklist.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/certs/Kconfig b/certs/Kconfig
-> index 1f109b070877..23dc87c52aff 100644
-> --- a/certs/Kconfig
-> +++ b/certs/Kconfig
-> @@ -134,7 +134,7 @@ config SYSTEM_BLACKLIST_AUTH_UPDATE
->  	depends on SYSTEM_DATA_VERIFICATION
->  	help
->  	  If set, provide the ability to load new blacklist keys at run time if
-> -	  they are signed and vouched by a certificate from the builtin trusted
-> +	  they are signed and vouched by a certificate from the secondary trust=
-ed
->  	  keyring.  The PKCS#7 signature of the description is set in the key
->  	  payload.  Blacklist keys cannot be removed.
-> =20
-> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> index 675dd7a8f07a..0b346048ae2d 100644
-> --- a/certs/blacklist.c
-> +++ b/certs/blacklist.c
-> @@ -102,12 +102,12 @@ static int blacklist_key_instantiate(struct key *ke=
-y,
-> =20
->  #ifdef CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE
->  	/*
-> -	 * Verifies the description's PKCS#7 signature against the builtin
-> +	 * Verifies the description's PKCS#7 signature against the secondary
->  	 * trusted keyring.
->  	 */
->  	err =3D verify_pkcs7_signature(key->description,
->  			strlen(key->description), prep->data, prep->datalen,
-> -			NULL, VERIFYING_UNSPECIFIED_SIGNATURE, NULL, NULL);
-> +			VERIFY_USE_SECONDARY_KEYRING, VERIFYING_UNSPECIFIED_SIGNATURE, NULL, =
-NULL);
->  	if (err)
->  		return err;
->  #else
-> --=20
-> 2.39.3
 
-What if a live system in the wild assumes the old policy? I feel that
-this is "sort of" breaking backwards compatibility but please prove me
-wrong.
+On 9/7/23 13:32, Michal Suchánek wrote:
+> Adding more CC's from the original patch, looks like get_maintainers is
+> not that great for this file.
+>
+> On Thu, Sep 07, 2023 at 06:52:19PM +0200, Michal Suchanek wrote:
+>> No other platform needs CA_MACHINE_KEYRING, either.
+>>
+>> This is policy that should be decided by the administrator, not Kconfig
+>> dependencies.
 
-BR, Jarkko
+We certainly agree that flexibility is important. However, in this case, 
+this also implies that we are expecting system admins to be security 
+experts. As per our understanding, CA based infrastructure(PKI) is the 
+standard to be followed and not the policy decision. And we can only 
+speak for Power.
+
+INTEGRITY_CA_MACHINE_KEYRING ensures that we always have CA signed leaf 
+certs.
+
+INTEGRITY_CA_MACHINE_KEYRING_MAX ensures that CA is only allowed to do 
+key signing and not code signing.
+
+Having CA signed certs also permits easy revocation of all leaf certs.
+
+Loading certificates is completely new for Power Systems. We would like 
+to make it as clean as possible from the start. We want to enforce CA 
+signed leaf certificates(INTEGRITY_CA_MACHINE_KEYRING). As per 
+keyUsage(INTEGRITY_CA_MACHINE_KEYRING_MAX), if we want more flexibility, 
+probably a boot time override can be considered.
+
+Thanks & Regards,
+
+     - Nayna
+
+
+>>
+>> cc: joeyli <jlee@suse.com>
+>> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+>> ---
+>>   security/integrity/Kconfig | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+>> index 232191ee09e3..b6e074ac0227 100644
+>> --- a/security/integrity/Kconfig
+>> +++ b/security/integrity/Kconfig
+>> @@ -68,8 +68,6 @@ config INTEGRITY_MACHINE_KEYRING
+>>   	depends on INTEGRITY_ASYMMETRIC_KEYS
+>>   	depends on SYSTEM_BLACKLIST_KEYRING
+>>   	depends on LOAD_UEFI_KEYS || LOAD_PPC_KEYS
+>> -	select INTEGRITY_CA_MACHINE_KEYRING if LOAD_PPC_KEYS
+>> -	select INTEGRITY_CA_MACHINE_KEYRING_MAX if LOAD_PPC_KEYS
+>>   	help
+>>   	 If set, provide a keyring to which Machine Owner Keys (MOK) may
+>>   	 be added. This keyring shall contain just MOK keys.  Unlike keys
+>> -- 
+>> 2.41.0
+>>
