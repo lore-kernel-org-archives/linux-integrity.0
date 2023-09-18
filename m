@@ -2,76 +2,249 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FE3CD13D1
-	for <linux-integrity@archiver.kernel.org>; Mon, 18 Sep 2023 00:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47566CD37B0
+	for <linux-integrity@archiver.kernel.org>; Mon, 18 Sep 2023 15:28:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232236AbjIRAFD (ORCPT
+        id S229489AbjIRP1u (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Sun, 17 Sep 2023 20:05:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60910 "EHLO
+        Mon, 18 Sep 2023 11:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231578AbjIRAEn (ORCPT
+        with ESMTP id S229547AbjIRP1Q (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Sun, 17 Sep 2023 20:04:43 -0400
-Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com [209.85.160.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 947AC12A
-        for <linux-integrity@vger.kernel.org>; Sun, 17 Sep 2023 17:04:37 -0700 (PDT)
-Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1bf00f8cf77so6574713fac.0
-        for <linux-integrity@vger.kernel.org>; Sun, 17 Sep 2023 17:04:37 -0700 (PDT)
+        Mon, 18 Sep 2023 11:27:16 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 177671BD1
+        for <linux-integrity@vger.kernel.org>; Mon, 18 Sep 2023 08:24:23 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id 4fb4d7f45d1cf-52f3ba561d9so10114624a12.1
+        for <linux-integrity@vger.kernel.org>; Mon, 18 Sep 2023 08:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1695050551; x=1695655351; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+qntkmutwprS+2oQeQzgmaP97TAaIsTbzLeg5qvDo3I=;
+        b=ns6Cjpq7n6mC+QYEibmC287uDTytPPlXHkSJTavL7AxY/kxHqALCmtjn9TAnT5smKm
+         ap/vAj03DASyo82n6pK10kfOqVGtPF+qjvCQHXfswhoMlQcmI8sQYoNZcKShwanhVi2G
+         jE+RuGN2EK48UiqyFNxYXOIHKgaBoi+bE0iEuiMc+co/MCZo4DQeeKGt9bGXOHnidvUc
+         lpz401SEDUQzuZsLQYyPIxm6/kIpeIbK0tZt64+1jiYDE7gCYasqtVFLJ/nrLaFPlHkq
+         KrAB4V37v2JSDz4xIvLAZITPBJyLJqjqbuTHIQdtM6+Zlxx8eZyknIOrNtZFhFQCYIZk
+         guAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694995474; x=1695600274;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=plqiVhsHQJW/q4sf5YkInYlIVvS0lexxFRBvtsJXFDw=;
-        b=q4Xj9kF/XPsS8RQKp4pU1GHvftKdZgT68FWzNgEkvJIrEQVsRrcjV0eXn6tTgEbhQD
-         /ngO605OynX0CHVXPecccd0mqxSILMfB2/3sh95crxXjzCvKomdmPiot8dEkjYRrYkF2
-         zUiEFZN0CLIiAiO0xGoqsYt/pMlLFfbUTRGwYqCapSDU8PJhO30WcqlPxvuF5aac+rDF
-         6OiH1AMK1EZDvd1V5YUGcjE2WoBTOlW1mAXgW1YzU2klKo/pp0kdDNndrEHV/u9gLzVY
-         b25fvAi3/qBGgvWSbEVGrFX4rvka6VS4MV0fPAWZGjU1omp9yVV51Z+iNaadfoedlAUn
-         HYyA==
-X-Gm-Message-State: AOJu0YwOE5y2FGUi7EUzWFpKis6676sNtga7vjM+Wg7hXwJiWKgWqQB0
-        oaDexBoAR+T0UhD/139GQSGWoBm0RMkI/SW4xOCXhnijI1aO
-X-Google-Smtp-Source: AGHT+IH/zkGlEDq9VbJg97gGt1EgLfqWnEVJ7h5xnIpv8Ku68gE0DF1eHR9jFI017KdKqlc7/TMCj9QpD4KDhKZQUzCLionLJESV
+        d=1e100.net; s=20230601; t=1695050551; x=1695655351;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+qntkmutwprS+2oQeQzgmaP97TAaIsTbzLeg5qvDo3I=;
+        b=nLLktMs/j/YK5mJjBWifZlDUdSgf6e6YJSqSeAY3nUYSIin9tNCdk3SqtH6s3A+Vzo
+         0MpI2XJ2o9D25/0MaMwpErgHqVB3Rv8alMHp7Wa4CzDmsuKURbbBETkeQSJ7HnvA1nCF
+         dsX7RMHmYyzvl7KA4qwFxu0MOy1YOHHn+o//roJ/MvqXuEHo/1koJ4UwguLnzgzF+wlm
+         6At57K06d9csG68UEW7E/WSUQ2Sel4xBDP9j95o5amiay39n1cjBJt1+VCphFsGHMfuP
+         5v5Sxp/e+A2NCd5R8Uz+GVOdl8NXGErTrKn7y1pMK0BKGV0S9AUMxNsbAE2lazTipP86
+         zTnw==
+X-Gm-Message-State: AOJu0YwUln5kW7JKtunQNUrhfTF0QNUGze+GsctFw/Q321RSojrOBxA2
+        fYaDLdKfgLV9PmXhP+Iq3KOmzbvig8DIcIMp5yoXig==
+X-Google-Smtp-Source: AGHT+IG2rNuc/qU7cun35uIs/6xu+f6PNjQcCosf7tlGzspNosTVVLVBRGNxbIq/UI3P0ddJC/NsSA==
+X-Received: by 2002:a17:907:3e91:b0:9aa:206d:b052 with SMTP id hs17-20020a1709073e9100b009aa206db052mr17366327ejc.27.1695046722736;
+        Mon, 18 Sep 2023 07:18:42 -0700 (PDT)
+Received: from localhost ([82.150.214.1])
+        by smtp.gmail.com with UTF8SMTPSA id g24-20020a170906199800b0099364d9f0e9sm6530301ejd.102.2023.09.18.07.18.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Sep 2023 07:18:42 -0700 (PDT)
+From:   David Gstir <david@sigma-star.at>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     David Gstir <david@sigma-star.at>, Shawn Guo <shawnguo@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+        David Howells <dhowells@redhat.com>,
+        Li Yang <leoyang.li@nxp.com>, Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-security-module@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Subject: [PATCH v3 3/3] doc: trusted-encrypted: add DCP as new trust source
+Date:   Mon, 18 Sep 2023 16:18:25 +0200
+Message-ID: <20230918141826.8139-4-david@sigma-star.at>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20230918141826.8139-1-david@sigma-star.at>
+References: <20230918141826.8139-1-david@sigma-star.at>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:b7ad:b0:1d5:95fc:2a7f with SMTP id
- ed45-20020a056870b7ad00b001d595fc2a7fmr2748642oab.7.1694995474388; Sun, 17
- Sep 2023 17:04:34 -0700 (PDT)
-Date:   Sun, 17 Sep 2023 17:04:34 -0700
-In-Reply-To: <0000000000004f34d705ffbc2604@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000259bd8060596e33f@google.com>
-Subject: Re: [syzbot] [integrity] [overlayfs] general protection fault in d_path
-From:   syzbot <syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, brauner@kernel.org, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        miklos@szeredi.hu, stefanb@linux.ibm.com,
-        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-syzbot has bisected this issue to:
+Update the documentation for trusted and encrypted KEYS with DCP as new
+trust source:
 
-commit db1d1e8b9867aae5c3e61ad7859abfcc4a6fd6c7
-Author: Jeff Layton <jlayton@kernel.org>
-Date:   Mon Apr 17 16:55:51 2023 +0000
+- Describe security properties of DCP trust source
+- Describe key usage
+- Document blob format
 
-    IMA: use vfs_getattr_nosec to get the i_version
+Co-developed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Co-developed-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Signed-off-by: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+Signed-off-by: David Gstir <david@sigma-star.at>
+---
+ .../security/keys/trusted-encrypted.rst       | 85 +++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=106f7e54680000
-start commit:   a747acc0b752 Merge tag 'linux-kselftest-next-6.6-rc2' of g..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=126f7e54680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=146f7e54680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df91a3034fe3f122
-dashboard link: https://syzkaller.appspot.com/bug?extid=a67fc5321ffb4b311c98
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1671b694680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec94d8680000
+diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+index 9bc9db8ec651..4452070afbe9 100644
+--- a/Documentation/security/keys/trusted-encrypted.rst
++++ b/Documentation/security/keys/trusted-encrypted.rst
+@@ -42,6 +42,14 @@ safe.
+          randomly generated and fused into each SoC at manufacturing time.
+          Otherwise, a common fixed test key is used instead.
+ 
++     (4) DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
++
++         Rooted to a one-time programmable key (OTP) that is generally burnt
++         in the on-chip fuses and is accessible to the DCP encryption engine only.
++         DCP provides two keys that can be used as root of trust: the OTP key
++         and the UNIQUE key. Default is to use the UNIQUE key, but selecting
++         the OTP key can be done via a module parameter (dcp_use_otp_key).
++
+   *  Execution isolation
+ 
+      (1) TPM
+@@ -57,6 +65,12 @@ safe.
+ 
+          Fixed set of operations running in isolated execution environment.
+ 
++     (4) DCP
++
++         Fixed set of cryptographic operations running in isolated execution
++         environment. Only basic blob key encryption is executed there.
++         The actual key sealing/unsealing is done on main processor/kernel space.
++
+   * Optional binding to platform integrity state
+ 
+      (1) TPM
+@@ -79,6 +93,11 @@ safe.
+          Relies on the High Assurance Boot (HAB) mechanism of NXP SoCs
+          for platform integrity.
+ 
++     (4) DCP
++
++         Relies on Secure/Trusted boot process (called HAB by vendor) for
++         platform integrity.
++
+   *  Interfaces and APIs
+ 
+      (1) TPM
+@@ -94,6 +113,11 @@ safe.
+ 
+          Interface is specific to silicon vendor.
+ 
++     (4) DCP
++
++         Vendor-specific API that is implemented as part of the DCP crypto driver in
++         ``drivers/crypto/mxs-dcp.c``.
++
+   *  Threat model
+ 
+      The strength and appropriateness of a particular trust source for a given
+@@ -129,6 +153,13 @@ selected trust source:
+      CAAM HWRNG, enable CRYPTO_DEV_FSL_CAAM_RNG_API and ensure the device
+      is probed.
+ 
++  *  DCP (Data Co-Processor: crypto accelerator of various i.MX SoCs)
++
++     The DCP hardware device itself does not provide a dedicated RNG interface,
++     so the kernel default RNG is used. SoCs with DCP like the i.MX6ULL do have
++     a dedicated hardware RNG that is independent from DCP which can be enabled
++     to back the kernel RNG.
++
+ Users may override this by specifying ``trusted.rng=kernel`` on the kernel
+ command-line to override the used RNG with the kernel's random number pool.
+ 
+@@ -231,6 +262,19 @@ Usage::
+ CAAM-specific format.  The key length for new keys is always in bytes.
+ Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
+ 
++Trusted Keys usage: DCP
++-----------------------
++
++Usage::
++
++    keyctl add trusted name "new keylen" ring
++    keyctl add trusted name "load hex_blob" ring
++    keyctl print keyid
++
++"keyctl print" returns an ASCII hex copy of the sealed key, which is in format
++specific to this DCP key-blob implementation.  The key length for new keys is
++always in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
++
+ Encrypted Keys usage
+ --------------------
+ 
+@@ -426,3 +470,44 @@ string length.
+ privkey is the binary representation of TPM2B_PUBLIC excluding the
+ initial TPM2B header which can be reconstructed from the ASN.1 octed
+ string length.
++
++DCP Blob Format
++---------------
++
++The Data Co-Processor (DCP) provides hardware-bound AES keys using its
++AES encryption engine only. It does not provide direct key sealing/unsealing.
++To make DCP hardware encryption keys usable as trust source, we define
++our own custom format that uses a hardware-bound key to secure the sealing
++key stored in the key blob.
++
++Whenever a new trusted key using DCP is generated, we generate a random 128-bit
++blob encryption key (BEK) and 128-bit nonce. The BEK and nonce are used to
++encrypt the trusted key payload using AES-128-GCM.
++
++The BEK itself is encrypted using the hardware-bound key using the DCP's AES
++encryption engine with AES-128-ECB. The encrypted BEK, generated nonce,
++BEK-encrypted payload and authentication tag make up the blob format together
++with a version number, payload length and authentication tag::
++
++    /*
++     * struct dcp_blob_fmt - DCP BLOB format.
++     *
++     * @fmt_version: Format version, currently being %1
++     * @blob_key: Random AES 128 key which is used to encrypt @payload,
++     *            @blob_key itself is encrypted with OTP or UNIQUE device key in
++     *            AES-128-ECB mode by DCP.
++     * @nonce: Random nonce used for @payload encryption.
++     * @payload_len: Length of the plain text @payload.
++     * @payload: The payload itself, encrypted using AES-128-GCM and @blob_key,
++     *           GCM auth tag of size AES_BLOCK_SIZE is attached at the end of it.
++     *
++     * The total size of a DCP BLOB is sizeof(struct dcp_blob_fmt) + @payload_len +
++     * AES_BLOCK_SIZE.
++     */
++    struct dcp_blob_fmt {
++            __u8 fmt_version;
++            __u8 blob_key[AES_KEYSIZE_128];
++            __u8 nonce[AES_KEYSIZE_128];
++            __le32 payload_len;
++            __u8 payload[];
++    } __packed;
+-- 
+2.35.3
 
-Reported-by: syzbot+a67fc5321ffb4b311c98@syzkaller.appspotmail.com
-Fixes: db1d1e8b9867 ("IMA: use vfs_getattr_nosec to get the i_version")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
