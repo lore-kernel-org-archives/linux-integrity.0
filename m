@@ -2,30 +2,30 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3FAE936F5
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Oct 2023 22:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6EACE7C4F9
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Oct 2023 22:10:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232390AbjJDWJ4 (ORCPT
+        id S239277AbjJDWKn (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 Oct 2023 18:09:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36176 "EHLO
+        Wed, 4 Oct 2023 18:10:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36236 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231651AbjJDWJy (ORCPT
+        with ESMTP id S233440AbjJDWJ5 (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Oct 2023 18:09:54 -0400
+        Wed, 4 Oct 2023 18:09:57 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CC9CCC9;
-        Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0CA8C9;
+        Wed,  4 Oct 2023 15:09:52 -0700 (PDT)
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-        id 30FF620B74C2; Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 30FF620B74C2
+        id 6BFDF20B74CA; Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6BFDF20B74CA
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1696457390;
-        bh=oBYPhxhjQL5BN0Kiy8n4HfaBWKlzqDu9gGFuvxbs4W4=;
+        bh=2n5lgcp4RnmB2GgDN4rlfTQK/1WN30bgzzvZiyz2RDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YlE6XpLZ+4/+yT20r/6R09Nc/lR/L+ItVzP+479faG/k3TjLT266PmJZQFNO6GW46
-         B2vIZ+VHlGUOqxvp+AWQl0MmJnSFwEf6asTMMPdsFPJ4eKACvglV+iC2rsWBJ/LuPy
-         XUUSlLY2kj5bhK/WqYQcQL5WVH3qOCeHK0+P2+LY=
+        b=HJUUGcMhS9XA6lXsCc3Hcv+Ovuutp/1Uu1Ec2eicTargMKf2jKmEk6jN5baylpwJt
+         iR1K7rJ185HZby/CtZe3qj2D9tk97ARru7q3NO6qKuAyIO5R3p51NyRxLdPMNhsB71
+         o17vamDf/XzhdSZr4vk5QTLi6kKRL9fpwWmbPk6s=
 From:   Fan Wu <wufan@linux.microsoft.com>
 To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
         serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
@@ -38,9 +38,9 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
         Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: [RFC PATCH v11 01/19] security: add ipe lsm
-Date:   Wed,  4 Oct 2023 15:09:28 -0700
-Message-Id: <1696457386-3010-2-git-send-email-wufan@linux.microsoft.com>
+Subject: [RFC PATCH v11 05/19] ipe: introduce 'boot_verified' as a trust provider
+Date:   Wed,  4 Oct 2023 15:09:32 -0700
+Message-Id: <1696457386-3010-6-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
 References: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
@@ -50,250 +50,306 @@ X-Mailing-List: linux-integrity@vger.kernel.org
 
 From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Integrity Policy Enforcement (IPE) is an LSM that provides an
-complimentary approach to Mandatory Access Control than existing LSMs
-today.
+IPE is designed to provide system level trust guarantees, this usually
+implies that trust starts from bootup with a hardware root of trust,
+which validates the bootloader. After this, the bootloader verifies the
+kernel and the initramfs.
 
-Existing LSMs have centered around the concept of access to a resource
-should be controlled by the current user's credentials. IPE's approach,
-is that access to a resource should be controlled by the system's trust
-of a current resource.
+As there's no currently supported integrity method for initramfs, and
+it's typically already verified by the bootloader, introduce a property
+that causes the first superblock to have an execution to be "pinned",
+which is typically initramfs.
 
-The basis of this approach is defining a global policy to specify which
-resource can be trusted.
+When the "pinned" device is unmounted, it will be "unpinned" and
+`boot_verified` property will always evaluate to false afterward.
+
+We use a pointer with a spin_lock to "pin" the device instead of rcu
+because rcu synchronization may sleep, which is not allowed when
+unmounting a device.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+
 ---
 v2:
-  + Split evaluation loop, access control hooks,
-    and evaluation loop from policy parser and userspace
-    interface to pass mailing list character limit
+  +No Changes
 
 v3:
-  + Move ipe_load_properties to patch 04.
-  + Remove useless 0-initializations
-  + Prefix extern variables with ipe_
-  + Remove kernel module parameters, as these are
-    exposed through sysctls.
-  + Add more prose to the IPE base config option
-    help text.
-  + Use GFP_KERNEL for audit_log_start.
-  + Remove unnecessary caching system.
-  + Remove comments from headers
-  + Use rcu_access_pointer for rcu-pointer null check
-  + Remove usage of reqprot; use prot only.
-  + Move policy load and activation audit event to 03/12
+  + Remove useless caching system
+  + Move ipe_load_properties to this match
+  + Minor changes from checkpatch --strict warnings
 
 v4:
-  + Remove sysctls in favor of securityfs nodes
-  + Re-add kernel module parameters, as these are now
-    exposed through securityfs.
-  + Refactor property audit loop to a separate function.
+  + Remove comments from headers that was missed previously.
+  + Grammatical corrections.
 
 v5:
-  + fix minor grammatical errors
-  + do not group rule by curly-brace in audit record,
-    reconstruct the exact rule.
+  + No significant changes
 
 v6:
   + No changes
 
 v7:
-  + Further split lsm creation into a separate commit from the
-    evaluation loop and audit system, for easier review.
-
-  + Introduce the concept of an ipe_context, a scoped way to
-    introduce execution policies, used initially for allowing for
-    kunit tests in isolation.
+  + Reword and refactor patch 04/12 to [09/16], based on changes in the underlying system.
+  + Add common audit function for boolean values
+  + Use common audit function as implementation.
 
 v8:
-  + Follow lsmname_hook_name convention for lsm hooks.
-  + Move LSM blob accessors to ipe.c and mark LSM blobs as static.
+  + No changes
 
 v9:
-  + Remove ipe_context for simplification
+  + No changes
 
 v10:
-  + Add github url
+  + Replace struct file with struct super_block
 
 v11:
-  + Correct github url
-  + Move ipe before bpf
+  + Fix code style issues
 ---
- MAINTAINERS           |  7 +++++++
- security/Kconfig      | 11 ++++++-----
- security/Makefile     |  1 +
- security/ipe/Kconfig  | 17 +++++++++++++++++
- security/ipe/Makefile |  9 +++++++++
- security/ipe/ipe.c    | 35 +++++++++++++++++++++++++++++++++++
- security/ipe/ipe.h    | 16 ++++++++++++++++
- 7 files changed, 91 insertions(+), 5 deletions(-)
- create mode 100644 security/ipe/Kconfig
- create mode 100644 security/ipe/Makefile
- create mode 100644 security/ipe/ipe.c
- create mode 100644 security/ipe/ipe.h
+ security/ipe/eval.c          | 72 +++++++++++++++++++++++++++++++++++-
+ security/ipe/eval.h          |  2 +
+ security/ipe/hooks.c         | 12 ++++++
+ security/ipe/hooks.h         |  2 +
+ security/ipe/ipe.c           |  1 +
+ security/ipe/policy.h        |  2 +
+ security/ipe/policy_parser.c | 35 +++++++++++++++++-
+ 7 files changed, 124 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 35977b269d5e..b898f2f8f9c4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10389,6 +10389,13 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- F:	security/integrity/
- F:	security/integrity/ima/
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+index 8a8bcc5c7d7f..bdac4abc0ddb 100644
+--- a/security/ipe/eval.c
++++ b/security/ipe/eval.c
+@@ -9,6 +9,7 @@
+ #include <linux/file.h>
+ #include <linux/sched.h>
+ #include <linux/rcupdate.h>
++#include <linux/spinlock.h>
  
-+INTEGRITY POLICY ENFORCEMENT (IPE)
-+M:	Fan Wu <wufan@linux.microsoft.com>
-+L:	linux-security-module@vger.kernel.org
-+S:	Supported
-+T:	git https://github.com/microsoft/ipe.git
-+F:	security/ipe/
-+
- INTEL 810/815 FRAMEBUFFER DRIVER
- M:	Antonino Daplas <adaplas@gmail.com>
- L:	linux-fbdev@vger.kernel.org
-diff --git a/security/Kconfig b/security/Kconfig
-index 52c9af08ad35..cc7adfbb6b96 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -194,6 +194,7 @@ source "security/yama/Kconfig"
- source "security/safesetid/Kconfig"
- source "security/lockdown/Kconfig"
- source "security/landlock/Kconfig"
-+source "security/ipe/Kconfig"
+ #include "ipe.h"
+ #include "eval.h"
+@@ -16,6 +17,44 @@
  
- source "security/integrity/Kconfig"
+ struct ipe_policy __rcu *ipe_active_policy;
  
-@@ -233,11 +234,11 @@ endchoice
- 
- config LSM
- 	string "Ordered list of enabled LSMs"
--	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
--	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
--	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
--	default "landlock,lockdown,yama,loadpin,safesetid,bpf" if DEFAULT_SECURITY_DAC
--	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,bpf"
-+	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,apparmor,ipe,bpf" if DEFAULT_SECURITY_SMACK
-+	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smack,tomoyo,ipe,bpf" if DEFAULT_SECURITY_APPARMOR
-+	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,ipe,bpf" if DEFAULT_SECURITY_TOMOYO
-+	default "landlock,lockdown,yama,loadpin,safesetid,ipe,bpf" if DEFAULT_SECURITY_DAC
-+	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,apparmor,ipe,bpf"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list, except for those with order
-diff --git a/security/Makefile b/security/Makefile
-index 18121f8f85cd..527b1864d96c 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
- obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
- obj-$(CONFIG_BPF_LSM)			+= bpf/
- obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
-+obj-$(CONFIG_SECURITY_IPE)		+= ipe/
- 
- # Object integrity file lists
- obj-$(CONFIG_INTEGRITY)			+= integrity/
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-new file mode 100644
-index 000000000000..e4875fb04883
---- /dev/null
-+++ b/security/ipe/Kconfig
-@@ -0,0 +1,17 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Integrity Policy Enforcement (IPE) configuration
-+#
-+
-+menuconfig SECURITY_IPE
-+	bool "Integrity Policy Enforcement (IPE)"
-+	depends on SECURITY && SECURITYFS
-+	select PKCS7_MESSAGE_PARSER
-+	select SYSTEM_DATA_VERIFICATION
-+	help
-+	  This option enables the Integrity Policy Enforcement LSM
-+	  allowing users to define a policy to enforce a trust-based access
-+	  control. A key feature of IPE is a customizable policy to allow
-+	  admins to reconfigure trust requirements on the fly.
-+
-+	  If unsure, answer N.
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-new file mode 100644
-index 000000000000..f7a80d0f18f8
---- /dev/null
-+++ b/security/ipe/Makefile
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) Microsoft Corporation. All rights reserved.
-+#
-+# Makefile for building the IPE module as part of the kernel tree.
-+#
-+
-+obj-$(CONFIG_SECURITY_IPE) += \
-+	ipe.o \
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-new file mode 100644
-index 000000000000..ba5526f9d527
---- /dev/null
-+++ b/security/ipe/ipe.c
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+
-+#include "ipe.h"
-+
-+static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
-+};
-+
-+static struct security_hook_list ipe_hooks[] __ro_after_init = {
-+};
++static const struct super_block *pinned_sb;
++static DEFINE_SPINLOCK(pin_lock);
++#define FILE_SUPERBLOCK(f) ((f)->f_path.mnt->mnt_sb)
 +
 +/**
-+ * ipe_init - Entry point of IPE.
-+ *
-+ * This is called at LSM init, which happens occurs early during kernel
-+ * start up. During this phase, IPE registers its hooks and loads the
-+ * builtin boot policy.
-+ * Return:
-+ * * 0		- OK
-+ * * -ENOMEM	- Out of memory
++ * pin_sb - Pin the underlying superblock of @f, marking it as trusted.
++ * @sb: Supplies a super_block structure to be pinned.
 + */
-+static int __init ipe_init(void)
++static void pin_sb(const struct super_block *sb)
 +{
-+	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), "ipe");
-+
-+	return 0;
++	if (!sb)
++		return;
++	spin_lock(&pin_lock);
++	if (!pinned_sb)
++		pinned_sb = sb;
++	spin_unlock(&pin_lock);
 +}
 +
-+DEFINE_LSM(ipe) = {
-+	.name = "ipe",
-+	.init = ipe_init,
-+	.blobs = &ipe_blobs,
-+};
-diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-new file mode 100644
-index 000000000000..a1c68d0fc2e0
---- /dev/null
-+++ b/security/ipe/ipe.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
++/**
++ * from_pinned - Determine whether @sb is the pinned super_block.
++ * @sb: Supplies a super_block to check against the pinned super_block.
++ *
++ * Return:
++ * * true	- @sb is the pinned super_block
++ * * false	- @sb is not the pinned super_block
 + */
++static bool from_pinned(const struct super_block *sb)
++{
++	bool rv;
 +
-+#ifndef _IPE_H
-+#define _IPE_H
++	if (!sb)
++		return false;
++	spin_lock(&pin_lock);
++	rv = !IS_ERR_OR_NULL(pinned_sb) && pinned_sb == sb;
++	spin_unlock(&pin_lock);
++	return rv;
++}
 +
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+#define pr_fmt(fmt) "IPE: " fmt
+ /**
+  * build_eval_ctx - Build an evaluation context.
+  * @ctx: Supplies a pointer to the context to be populdated.
+@@ -26,8 +65,14 @@ void build_eval_ctx(struct ipe_eval_ctx *ctx,
+ 		    const struct file *file,
+ 		    enum ipe_op_type op)
+ {
++	if (op == IPE_OP_EXEC && file)
++		pin_sb(FILE_SUPERBLOCK(file));
 +
-+#include <linux/lsm_hooks.h>
+ 	ctx->file = file;
+ 	ctx->op = op;
 +
-+#endif /* _IPE_H */
++	if (file)
++		ctx->from_init_sb = from_pinned(FILE_SUPERBLOCK(file));
+ }
+ 
+ /**
+@@ -42,7 +87,14 @@ void build_eval_ctx(struct ipe_eval_ctx *ctx,
+ static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
+ 			      struct ipe_prop *p)
+ {
+-	return false;
++	switch (p->type) {
++	case IPE_PROP_BOOT_VERIFIED_FALSE:
++		return !ctx->from_init_sb;
++	case IPE_PROP_BOOT_VERIFIED_TRUE:
++		return ctx->from_init_sb;
++	default:
++		return false;
++	}
+ }
+ 
+ /**
+@@ -108,3 +160,21 @@ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+ 
+ 	return 0;
+ }
++
++/**
++ * ipe_invalidate_pinned_sb - invalidate the ipe pinned super_block.
++ * @mnt_sb: super_block to check against the pinned super_block.
++ *
++ * This function is called a super_block like the initramfs's is freed,
++ * if the super_block is currently pinned by ipe it will be invalided,
++ * so ipe won't consider the block device is boot verified afterward.
++ */
++void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb)
++{
++	spin_lock(&pin_lock);
++
++	if (mnt_sb == pinned_sb)
++		pinned_sb = ERR_PTR(-EIO);
++
++	spin_unlock(&pin_lock);
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+index cfdf3c8dfe8a..9769da42c65f 100644
+--- a/security/ipe/eval.h
++++ b/security/ipe/eval.h
+@@ -19,9 +19,11 @@ struct ipe_eval_ctx {
+ 	enum ipe_op_type op;
+ 
+ 	const struct file *file;
++	bool from_init_sb;
+ };
+ 
+ void build_eval_ctx(struct ipe_eval_ctx *ctx, const struct file *file, enum ipe_op_type op);
+ int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb);
+ 
+ #endif /* _IPE_EVAL_H */
+diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
+index 6164a9b53361..e9386762a597 100644
+--- a/security/ipe/hooks.c
++++ b/security/ipe/hooks.c
+@@ -181,3 +181,15 @@ int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents)
+ 	build_eval_ctx(&ctx, NULL, op);
+ 	return ipe_evaluate_event(&ctx);
+ }
++
++/**
++ * ipe_sb_free_security - ipe security hook function for super_block.
++ * @mnt_sb: Supplies a pointer to a super_block is about to be freed.
++ *
++ * IPE does not have any structures with mnt_sb, but uses this hook to
++ * invalidate a pinned super_block.
++ */
++void ipe_sb_free_security(struct super_block *mnt_sb)
++{
++	ipe_invalidate_pinned_sb(mnt_sb);
++}
+diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
+index 23205452f758..ac0cdfd9877f 100644
+--- a/security/ipe/hooks.h
++++ b/security/ipe/hooks.h
+@@ -22,4 +22,6 @@ int ipe_kernel_read_file(struct file *file, enum kernel_read_file_id id,
+ 
+ int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents);
+ 
++void ipe_sb_free_security(struct super_block *mnt_sb);
++
+ #endif /* _IPE_HOOKS_H */
+diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+index 77c950459810..06da94a58aba 100644
+--- a/security/ipe/ipe.c
++++ b/security/ipe/ipe.c
+@@ -15,6 +15,7 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
+ 	LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
+ 	LSM_HOOK_INIT(kernel_load_data, ipe_kernel_load_data),
++	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
+ };
+ 
+ /**
+diff --git a/security/ipe/policy.h b/security/ipe/policy.h
+index 77aa91f2b953..45704465dc01 100644
+--- a/security/ipe/policy.h
++++ b/security/ipe/policy.h
+@@ -30,6 +30,8 @@ enum ipe_action_type {
+ #define IPE_ACTION_INVALID __IPE_ACTION_MAX
+ 
+ enum ipe_prop_type {
++	IPE_PROP_BOOT_VERIFIED_FALSE,
++	IPE_PROP_BOOT_VERIFIED_TRUE,
+ 	__IPE_PROP_MAX
+ };
+ 
+diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
+index c09458bd348d..ee7646de72ed 100644
+--- a/security/ipe/policy_parser.c
++++ b/security/ipe/policy_parser.c
+@@ -265,6 +265,12 @@ static enum ipe_action_type parse_action(char *t)
+ 	return match_token(t, action_tokens, args);
+ }
+ 
++static const match_table_t property_tokens = {
++	{IPE_PROP_BOOT_VERIFIED_FALSE,	"boot_verified=FALSE"},
++	{IPE_PROP_BOOT_VERIFIED_TRUE,	"boot_verified=TRUE"},
++	{IPE_PROP_INVALID,		NULL}
++};
++
+ /**
+  * parse_property - Parse the property type given a token string.
+  * @t: Supplies the token string to be parsed.
+@@ -277,7 +283,34 @@ static enum ipe_action_type parse_action(char *t)
+  */
+ static int parse_property(char *t, struct ipe_rule *r)
+ {
+-	return -EBADMSG;
++	substring_t args[MAX_OPT_ARGS];
++	struct ipe_prop *p = NULL;
++	int rc = 0;
++	int token;
++
++	p = kzalloc(sizeof(*p), GFP_KERNEL);
++	if (!p)
++		return -ENOMEM;
++
++	token = match_token(t, property_tokens, args);
++
++	switch (token) {
++	case IPE_PROP_BOOT_VERIFIED_FALSE:
++	case IPE_PROP_BOOT_VERIFIED_TRUE:
++		p->type = token;
++		break;
++	default:
++		rc = -EBADMSG;
++		break;
++	}
++	if (rc)
++		goto err;
++	list_add_tail(&p->next, &r->props);
++
++	return rc;
++err:
++	kfree(p);
++	return rc;
+ }
+ 
+ /**
 -- 
 2.25.1
 
