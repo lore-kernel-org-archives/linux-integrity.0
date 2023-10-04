@@ -2,79 +2,257 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DE7E7C4E2
-	for <linux-integrity@archiver.kernel.org>; Wed,  4 Oct 2023 16:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB293E936EB
+	for <linux-integrity@archiver.kernel.org>; Wed,  4 Oct 2023 22:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233355AbjJDQpo (ORCPT
+        id S232095AbjJDWJ5 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Wed, 4 Oct 2023 12:45:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51696 "EHLO
+        Wed, 4 Oct 2023 18:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243477AbjJDQpn (ORCPT
+        with ESMTP id S231594AbjJDWJz (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Wed, 4 Oct 2023 12:45:43 -0400
-Received: from mail-oi1-f197.google.com (mail-oi1-f197.google.com [209.85.167.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B500C9
-        for <linux-integrity@vger.kernel.org>; Wed,  4 Oct 2023 09:45:38 -0700 (PDT)
-Received: by mail-oi1-f197.google.com with SMTP id 5614622812f47-3ae4cefdee5so162080b6e.0
-        for <linux-integrity@vger.kernel.org>; Wed, 04 Oct 2023 09:45:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696437938; x=1697042738;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PxK2RXD2bOgzxh1BIYIHwF4FqtGpBF80iTPbZHI2mEs=;
-        b=TVbkyf3bpqaBsC9GMzl+nzQgeekAXccmIBDV5iwzt/caxvRtHtsKky7sTepR64vytW
-         FJWXA58kfec2oKHNmXPkmpXHi3asxFg3r7PS/Xc5qFRwZdslRZpGzcAHL/w2hyedBmVS
-         BbJ4TzOawSsXrWAunOcjXGvs14jEIz23F+ON9ZsGeKZIAXGJaY8PlCiswtHSIOy85eBM
-         VTFDGwMkNiyHJzToD185GcP+8RMz+56hLw6hWoQU/vwrh2EoKdcMkFVCnEthHUHI1gAD
-         rpNVyU71ym4IABRBEYvUkw+YUN0y6zFMgaoucIKfEUI7MjAN3X3jiHGK3mkFi3VGYYy0
-         GQDg==
-X-Gm-Message-State: AOJu0YyOu/KPrdmDkqX39k4GNJ2qFpQVTYaV7aHIIJ7UGsXvVMZzDLBT
-        3LU41MZahz0CW1sW4KclmSqt0V2reZlPaOhRPVbCveAynjAP
-X-Google-Smtp-Source: AGHT+IH9LBqUAa3Czu2Ikd6so6wJCoEmqsI3B4Xy7BXDcw+NDdCsxu/Ij5v71RF5EfonX4kuJiuXe/Pq4wMLTbsrWqQGUZ97gxGX
-MIME-Version: 1.0
-X-Received: by 2002:a05:6808:f8e:b0:3ae:17ed:fdc9 with SMTP id
- o14-20020a0568080f8e00b003ae17edfdc9mr1421317oiw.9.1696437937945; Wed, 04 Oct
- 2023 09:45:37 -0700 (PDT)
-Date:   Wed, 04 Oct 2023 09:45:37 -0700
-In-Reply-To: <00000000000067d24205c4d0e599@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000accfd30606e6bcd0@google.com>
-Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
- mnt_want_write (2)
-From:   syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
-To:     amir73il@gmail.com, hdanton@sina.com,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        mszeredi@redhat.com, syzbot@syzkalhler.appspotmail.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, zohar@us.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 4 Oct 2023 18:09:55 -0400
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F3E82DD;
+        Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+        id 4ECF020B74C6; Wed,  4 Oct 2023 15:09:50 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4ECF020B74C6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1696457390;
+        bh=jGkhEn3ZFwR/GgtoddxjP0SkUVW+MWODAqAxLOOgeiA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nuhx3tGLEpT1yj9wFPQtNUAp58mBUdu6GBUGTyQanRtHBOjkklh16yYhfT9aY0gZ6
+         huOxUMcbhYESb6WW6vXHU/8mSbvsqk89Rk2fl2wtXbNFAmFLSjD1JGmX36qdulk0db
+         U3zyyXu0wECnsvsnkjfsa1e7L/jMxHR89VyWuDh0=
+From:   Fan Wu <wufan@linux.microsoft.com>
+To:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+        axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+        eparis@redhat.com, paul@paul-moore.com
+Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
+        dm-devel@redhat.com, audit@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Fan Wu <wufan@linux.microsoft.com>
+Subject: [RFC PATCH v11 03/19] ipe: add evaluation loop
+Date:   Wed,  4 Oct 2023 15:09:30 -0700
+Message-Id: <1696457386-3010-4-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
+References: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-syzbot has bisected this issue to:
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-commit 708fa01597fa002599756bf56a96d0de1677375c
-Author: Miklos Szeredi <mszeredi@redhat.com>
-Date:   Mon Apr 12 10:00:37 2021 +0000
+IPE must have a centralized function to evaluate incoming callers
+against IPE's policy. This iteration of the policy for against the rules
+for that specific caller is known as the evaluation loop.
 
-    ovl: allow upperdir inside lowerdir
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ad11b2680000
-start commit:   3aba70aed91f Merge tag 'gpio-fixes-for-v6.6-rc3' of git://..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=146d11b2680000
-console output: https://syzkaller.appspot.com/x/log.txt?x=106d11b2680000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4ca82a1bedd37e4
-dashboard link: https://syzkaller.appspot.com/bug?extid=b42fe626038981fb7bfa
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1304fba6680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cec0dc680000
+---
+v2:
++ Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
 
-Reported-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
-Fixes: 708fa01597fa ("ovl: allow upperdir inside lowerdir")
+v3:
++ Move ipe_load_properties to patch 04.
++ Remove useless 0-initializations Prefix extern variables with ipe_
++ Remove kernel module parameters, as these are exposed through sysctls.
++ Add more prose to the IPE base config option help text.
++ Use GFP_KERNEL for audit_log_start.
++ Remove unnecessary caching system.
++ Remove comments from headers
++ Use rcu_access_pointer for rcu-pointer null check
++ Remove usage of reqprot; use prot only.
++Move policy load and activation audit event to 03/12
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+v4:
++ Remove sysctls in favor of securityfs nodes
++ Re-add kernel module parameters, as these are now exposed through securityfs.
++ Refactor property audit loop to a separate function.
+
+v5:
++ fix minor grammatical errors
++ do not group rule by curly-brace in audit record,
++ reconstruct the exact rule.
+
+v6:
++ No changes
+
+v7:
++ Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
++ Propagating changes to support the new ipe_context structure in the evaluation loop.
+
+v8:
++ Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+
+v9:
++ Remove ipe_context related code and simplify the evaluation loop.
+
+v10:
++ Split eval part and boot_verified part
+
+v11:
++ Fix code style issues
+---
+ security/ipe/Makefile |  1 +
+ security/ipe/eval.c   | 96 +++++++++++++++++++++++++++++++++++++++++++
+ security/ipe/eval.h   | 24 +++++++++++
+ 3 files changed, 121 insertions(+)
+ create mode 100644 security/ipe/eval.c
+ create mode 100644 security/ipe/eval.h
+
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index c09aec4904f2..57fe922cf1fc 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -6,6 +6,7 @@
+ #
+ 
+ obj-$(CONFIG_SECURITY_IPE) += \
++	eval.o \
+ 	ipe.o \
+ 	policy.o \
+ 	policy_parser.o \
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+new file mode 100644
+index 000000000000..5533c359bbeb
+--- /dev/null
++++ b/security/ipe/eval.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#include <linux/fs.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/file.h>
++#include <linux/sched.h>
++#include <linux/rcupdate.h>
++
++#include "ipe.h"
++#include "eval.h"
++#include "policy.h"
++
++struct ipe_policy __rcu *ipe_active_policy;
++
++/**
++ * evaluate_property - Analyze @ctx against a property.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ * @p: Supplies a pointer to the property to be evaluated.
++ *
++ * Return:
++ * * true	- The current @ctx match the @p
++ * * false	- The current @ctx doesn't match the @p
++ */
++static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
++			      struct ipe_prop *p)
++{
++	return false;
++}
++
++/**
++ * ipe_evaluate_event - Analyze @ctx against the current active policy.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ *
++ * This is the loop where all policy evaluation happens against IPE policy.
++ *
++ * Return:
++ * * 0		- OK
++ * * -EACCES	- @ctx did not pass evaluation.
++ * * !0		- Error
++ */
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
++{
++	bool match = false;
++	enum ipe_action_type action;
++	struct ipe_policy *pol = NULL;
++	const struct ipe_rule *rule = NULL;
++	const struct ipe_op_table *rules = NULL;
++	struct ipe_prop *prop = NULL;
++
++	rcu_read_lock();
++
++	pol = rcu_dereference(ipe_active_policy);
++	if (!pol) {
++		rcu_read_unlock();
++		return 0;
++	}
++
++	if (ctx->op == IPE_OP_INVALID) {
++		rcu_read_unlock();
++		if (pol->parsed->global_default_action == IPE_ACTION_DENY)
++			return -EACCES;
++		return 0;
++	}
++
++	rules = &pol->parsed->rules[ctx->op];
++
++	list_for_each_entry(rule, &rules->rules, next) {
++		match = true;
++
++		list_for_each_entry(prop, &rule->props, next) {
++			match = match && evaluate_property(ctx, prop);
++			if (!match)
++				break;
++		}
++
++		if (match)
++			break;
++	}
++
++	if (match)
++		action = rule->action;
++	else if (rules->default_action != IPE_ACTION_INVALID)
++		action = rules->default_action;
++	else
++		action = pol->parsed->global_default_action;
++
++	rcu_read_unlock();
++	if (action == IPE_ACTION_DENY)
++		return -EACCES;
++
++	return 0;
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+new file mode 100644
+index 000000000000..6b434515968f
+--- /dev/null
++++ b/security/ipe/eval.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#ifndef _IPE_EVAL_H
++#define _IPE_EVAL_H
++
++#include <linux/file.h>
++#include <linux/types.h>
++
++#include "policy.h"
++
++extern struct ipe_policy __rcu *ipe_active_policy;
++
++struct ipe_eval_ctx {
++	enum ipe_op_type op;
++
++	const struct file *file;
++};
++
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++
++#endif /* _IPE_EVAL_H */
+-- 
+2.25.1
+
