@@ -2,144 +2,261 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121CAE92709
-	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 14:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0E2E9270C
+	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 14:30:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233944AbjJEO00 (ORCPT
+        id S233584AbjJEO3l (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:26:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52636 "EHLO
+        Thu, 5 Oct 2023 10:29:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234902AbjJEOYY (ORCPT
+        with ESMTP id S232676AbjJEO2C (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:24:24 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2AAE27B09
-        for <linux-integrity@vger.kernel.org>; Thu,  5 Oct 2023 06:33:30 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c61bde0b4bso7544455ad.3
-        for <linux-integrity@vger.kernel.org>; Thu, 05 Oct 2023 06:33:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696512810; x=1697117610; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rdJwxwbZqQ4I0O4A5YRp1pd8ZcaJivULLGhl6LhxxQE=;
-        b=KxeJN24Nqn4SB6flKWBzUwOL1qceUEZyWxPoBDjilIEBobJIeaDNXAkcmV/T+z9SKl
-         BrbsQuBMR3xg6VybWl5tEd/5KwRFDC5MgdYQArm79Ktm2wDK28Auijypoa1XlLxuTqIv
-         cnC6oUeCb6Uwp+ZlGZ6Ez9EcypIAAxbYCYR0yUBCEhKbHX+kAersLCABNWg0gFsv+Mbb
-         UAH9U+00PEM9ndapvTil37NhH3opjo7UQELGFG4KZ9AAh2aSGCs/mCQ8bln7tFj8Iqsm
-         pJ5MRdodrPZsCEp0YZMhpzWvbxVwNKP+Ex4tIRi0kw3KbzJobDuHFo4ERLGNwPrc/OLH
-         UKXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696512810; x=1697117610;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rdJwxwbZqQ4I0O4A5YRp1pd8ZcaJivULLGhl6LhxxQE=;
-        b=G0mysxiSMBhR/B0xmUzU81oYHBVjrAowiQITAwRBf1MXeP+HK+jNoENSaQ20YvNg2i
-         GXqqpxY6aI6YlCzkO4Y+A3gNLR3u5t0pEZ3H4ZEDB9MUPOwz0mO7Ek/JoVCInZMpWN9+
-         cSF6DEyXdBp/eX8YRUriBSBUVjHh3D3JofehGjeGY1AKzCQdzurdLWO3lslQOQOFV+1L
-         rDpRR4YQ6wiNdD5MB8Aihyo934rYC/TCU9It69R2QLX7wypoX91l4XDlhmoVQzDH0RIS
-         zqDxjwa1BO8yEPKtkHakakAP8qIbQ+lhg11uYg1pB4BgM7QSz5cZkfjl3lGpLDKeL6cZ
-         vjbA==
-X-Gm-Message-State: AOJu0YxeC9S4p8hooDAwPBixWQtg3AIQy/mDwr9gMdJfgTkJSxNcsdIZ
-        vWzzQzX9GBdGN0ErYsiOcOQIqQ==
-X-Google-Smtp-Source: AGHT+IEA4cLHqQcb+MIGG2dpWiFKleSqErzAWsk+2ZAO5zJgG2wamSV90gtm8PK1QSKzQmHiCELlAw==
-X-Received: by 2002:a17:902:e84a:b0:1c2:218c:3754 with SMTP id t10-20020a170902e84a00b001c2218c3754mr5994686plg.53.1696512810281;
-        Thu, 05 Oct 2023 06:33:30 -0700 (PDT)
-Received: from sumit-X1.. ([223.178.210.23])
-        by smtp.gmail.com with ESMTPSA id jw22-20020a170903279600b001b80d399730sm1643640plb.242.2023.10.05.06.33.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 06:33:29 -0700 (PDT)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     torvalds@linux-foundation.org, jarkko@kernel.org,
-        peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jejb@linux.ibm.com, zohar@linux.ibm.com, David.Kaplan@amd.com,
-        bp@alien8.de, mingo@kernel.org, x86@kernel.org,
-        regressions@leemhuis.info, Sumit Garg <sumit.garg@linaro.org>,
-        Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Subject: [PATCH] KEYS: trusted: Remove redundant static calls usage
-Date:   Thu,  5 Oct 2023 19:03:06 +0530
-Message-Id: <20231005133306.379718-1-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Thu, 5 Oct 2023 10:28:02 -0400
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fa8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECAF720E6C
+        for <linux-integrity@vger.kernel.org>; Thu,  5 Oct 2023 03:32:13 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4S1SY801f8zMqBgm;
+        Thu,  5 Oct 2023 10:32:12 +0000 (UTC)
+Received: from unknown by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4S1SY20tYRzMppL1;
+        Thu,  5 Oct 2023 12:32:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1696501931;
+        bh=suUb32LsvZvJXQo1E+kH10Y5wi38d7ejPfrg9DrJRXo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IKLPqywSv6RJ+AkeGeyrA3f87kAtUIuegt7QuHA4S1cLJZYqM0X7HfQFlaUOeIGov
+         qwIlaTXPuyPlH/IQ2Mgh3QEyANognYDO2f2u1uK2PTH6bq67jgNYQGlXp7NotzoR6h
+         jLyluakXyRrHOlVJ2zt7Dd122Je3xioFtCx+HD+4=
+Date:   Thu, 5 Oct 2023 12:32:08 +0200
+From:   =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Kanth Ghatraju <kanth.ghatraju@oracle.com>,
+        Konrad Wilk <konrad.wilk@oracle.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: RFC: New LSM to control usage of x509 certificates
+Message-ID: <20231005.dajohf2peiBu@digikod.net>
+References: <CEA476C1-4CE5-4FFC-91D7-6061C8605B18@oracle.com>
+ <ba2f5560800608541e81fbdd28efa9875b35e491.camel@linux.ibm.com>
+ <932231F5-8050-4436-84B8-D7708DC43845@oracle.com>
+ <7335a4587233626a39ce9bc8a969957d7f43a34c.camel@linux.ibm.com>
+ <FD6FB139-F901-4E55-9705-E7B0023BDBA8@oracle.com>
+ <1149b6dbfdaabef3e48dc2852cc76aa11a6dd6b0.camel@linux.ibm.com>
+ <4A0505D0-2933-43BD-BEEA-94350BB22AE7@oracle.com>
+ <20230913.Ceifae7ievei@digikod.net>
+ <D0F16BFD-72EB-4BE2-BA3D-BAE1BCCDCB6F@oracle.com>
+ <20230914.shah5al9Kaib@digikod.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20230914.shah5al9Kaib@digikod.net>
+X-Infomaniak-Routing: alpha
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Static calls invocations aren't well supported from module __init and
-__exit functions, especially the static call from cleanup_trusted() led
-to a crash on x86 kernel with CONFIG_DEBUG_VIRTUAL=y.
+The initial subject was "Re: [PATCH] certs: Restrict blacklist updates
+to the secondary trusted keyring":
+https://lore.kernel.org/all/20230908213428.731513-1-eric.snowberg@oracle.com/
 
-However, the usage of static call invocations for trusted_key_init()
-and trusted_key_exit() doesn't adds any value neither from performance
-point and nor there is any security benefit. Hence switch to use indirect
-function calls instead.
-
-Note here that although it will fix the current crash reported. But
-ultimately we need fix up static calls infrastructure to either support
-its future usage from module __init and __exit functions or not.
-
-Reported-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Closes: https://lore.kernel.org/lkml/ZRhKq6e5nF%2F4ZIV1@fedora/#t
-Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
----
- security/keys/trusted-keys/trusted_core.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index c6fc50d67214..85fb5c22529a 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -44,13 +44,12 @@ static const struct trusted_key_source trusted_key_sources[] = {
- #endif
- };
- 
--DEFINE_STATIC_CALL_NULL(trusted_key_init, *trusted_key_sources[0].ops->init);
- DEFINE_STATIC_CALL_NULL(trusted_key_seal, *trusted_key_sources[0].ops->seal);
- DEFINE_STATIC_CALL_NULL(trusted_key_unseal,
- 			*trusted_key_sources[0].ops->unseal);
- DEFINE_STATIC_CALL_NULL(trusted_key_get_random,
- 			*trusted_key_sources[0].ops->get_random);
--DEFINE_STATIC_CALL_NULL(trusted_key_exit, *trusted_key_sources[0].ops->exit);
-+static void (*trusted_key_exit)(void);
- static unsigned char migratable;
- 
- enum {
-@@ -359,19 +358,16 @@ static int __init init_trusted(void)
- 		if (!get_random)
- 			get_random = kernel_get_random;
- 
--		static_call_update(trusted_key_init,
--				   trusted_key_sources[i].ops->init);
- 		static_call_update(trusted_key_seal,
- 				   trusted_key_sources[i].ops->seal);
- 		static_call_update(trusted_key_unseal,
- 				   trusted_key_sources[i].ops->unseal);
- 		static_call_update(trusted_key_get_random,
- 				   get_random);
--		static_call_update(trusted_key_exit,
--				   trusted_key_sources[i].ops->exit);
-+		trusted_key_exit = trusted_key_sources[i].ops->exit;
- 		migratable = trusted_key_sources[i].ops->migratable;
- 
--		ret = static_call(trusted_key_init)();
-+		ret = trusted_key_sources[i].ops->init();
- 		if (!ret)
- 			break;
- 	}
-@@ -388,7 +384,8 @@ static int __init init_trusted(void)
- 
- static void __exit cleanup_trusted(void)
- {
--	static_call_cond(trusted_key_exit)();
-+	if (trusted_key_exit)
-+		(*trusted_key_exit)();
- }
- 
- late_initcall(init_trusted);
--- 
-2.34.1
-
+On Thu, Sep 14, 2023 at 10:34:44AM +0200, Mickaël Salaün wrote:
+> CCing the LSM mailing list for this potential new LSM proposal:
+> 
+> On Wed, Sep 13, 2023 at 10:29:58PM +0000, Eric Snowberg wrote:
+> > 
+> > 
+> > > On Sep 13, 2023, at 4:21 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> > > 
+> > > On Wed, Sep 13, 2023 at 02:40:17AM +0000, Eric Snowberg wrote:
+> > >> 
+> > >> 
+> > >>> On Sep 12, 2023, at 4:47 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >>> 
+> > >>> On Tue, 2023-09-12 at 17:11 +0000, Eric Snowberg wrote:
+> > >>>> 
+> > >>>>> On Sep 12, 2023, at 5:54 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >>>>> 
+> > >>>>> On Tue, 2023-09-12 at 02:00 +0000, Eric Snowberg wrote:
+> > >>>>>> 
+> > >>>>>>> On Sep 11, 2023, at 5:08 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > >>>>>>> 
+> > >>>>>>> On Mon, 2023-09-11 at 22:17 +0000, Eric Snowberg wrote:
+> > >>>>>>>> 
+> > >>>>>>>>> On Sep 11, 2023, at 10:51 AM, Mickaël Salaün <mic@digikod.net> wrote:
+> > >>>>>>>>> 
+> > >>>>>>>>> On Mon, Sep 11, 2023 at 09:29:07AM -0400, Mimi Zohar wrote:
+> > >>>>>>>>>> Hi Eric,
+> > >>>>>>>>>> 
+> > >>>>>>>>>> On Fri, 2023-09-08 at 17:34 -0400, Eric Snowberg wrote:
+> > >>>>>>>>>>> Currently root can dynamically update the blacklist keyring if the hash
+> > >>>>>>>>>>> being added is signed and vouched for by the builtin trusted keyring.
+> > >>>>>>>>>>> Currently keys in the secondary trusted keyring can not be used.
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> Keys within the secondary trusted keyring carry the same capabilities as
+> > >>>>>>>>>>> the builtin trusted keyring.  Relax the current restriction for updating
+> > >>>>>>>>>>> the .blacklist keyring and allow the secondary to also be referenced as
+> > >>>>>>>>>>> a trust source.  Since the machine keyring is linked to the secondary
+> > >>>>>>>>>>> trusted keyring, any key within it may also be used.
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> An example use case for this is IMA appraisal.  Now that IMA both
+> > >>>>>>>>>>> references the blacklist keyring and allows the machine owner to add
+> > >>>>>>>>>>> custom IMA CA certs via the machine keyring, this adds the additional
+> > >>>>>>>>>>> capability for the machine owner to also do revocations on a running
+> > >>>>>>>>>>> system.
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> IMA appraisal usage example to add a revocation for /usr/foo:
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> sha256sum /bin/foo | awk '{printf "bin:" $1}' > hash.txt
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> openssl smime -sign -in hash.txt -inkey machine-private-key.pem \
+> > >>>>>>>>>>>   -signer machine-certificate.pem -noattr -binary -outform DER \
+> > >>>>>>>>>>>   -out hash.p7s
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> keyctl padd blacklist "$(< hash.txt)" %:.blacklist < hash.p7s
+> > >>>>>>>>>>> 
+> > >>>>>>>>>>> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> > >>>>>>>>>> 
+> > >>>>>>>>>> The secondary keyring may include both CA and code signing keys.  With
+> > >>>>>>>>>> this change any key loaded onto the secondary keyring may blacklist a
+> > >>>>>>>>>> hash.  Wouldn't it make more sense to limit blacklisting
+> > >>>>>>>>>> certificates/hashes to at least CA keys? 
+> > >>>>>>>>> 
+> > >>>>>>>>> Some operational constraints may limit what a CA can sign.
+> > >>>>>>>> 
+> > >>>>>>>> Agreed.  
+> > >>>>>>>> 
+> > >>>>>>>> Is there precedents for requiring this S/MIME to be signed by a CA? 
+> > >>>>>>>> 
+> > >>>>>>>>> This change is critical and should be tied to a dedicated kernel config
+> > >>>>>>>>> (disabled by default), otherwise existing systems using this feature
+> > >>>>>>>>> will have their threat model automatically changed without notice.
+> > >>>>>>>> 
+> > >>>>>>>> Today we have INTEGRITY_CA_MACHINE_KEYRING_MAX.  This can 
+> > >>>>>>>> be enabled to enforce CA restrictions on the machine keyring.  Mimi, would 
+> > >>>>>>>> this be a suitable solution for what you are after?
+> > >>>>>>> 
+> > >>>>>>> There needs to be some correlation between the file hashes being added
+> > >>>>>>> to the blacklist and the certificate that signed them.  Without that
+> > >>>>>>> correlation, any key on the secondary trusted keyring could add any
+> > >>>>>>> file hashes it wants to the blacklist.
+> > >>>>>> 
+> > >>>>>> Today any key in the secondary trusted keyring can be used to validate a 
+> > >>>>>> signed kernel module.  At a later time, if a new hash is added to the blacklist 
+> > >>>>>> keyring to revoke loading a signed kernel module,  the ability to do the 
+> > >>>>>> revocation with this additional change would be more restrictive than loading 
+> > >>>>>> the original module.
+> > >>>>> 
+> > >>>>> A public key on the secondary keyring is used to verify code that it
+> > >>>>> signed, but does not impact any other code. Allowing any public key on
+> > >>>>> the secondary keyring to blacklist any file hash is giving it more
+> > >>>>> privileges than it originally had.
+> > >>>>> 
+> > >>>>> This requirement isn't different than how Certificate Revocation List
+> > >>>>> (CRL) work.  Not any CA can revoke a certificate.
+> > >>>> 
+> > >>>> In UEFI Secure Boot we have the Forbidden Signature Database (DBX).  
+> > >>>> Root can update the DBX on a host.  The requirement placed on updating 
+> > >>>> it is the new DBX entry must be signed by any key contained within the 
+> > >>>> KEK.  Following a reboot, all DBX entries load into the .blacklist keyring.  
+> > >>>> There is not a requirement similar to how CRL’s work here, any KEK key 
+> > >>>> can be used.
+> > >>>> 
+> > >>>> With architectures booted through a shim there is the MOKX.  Similar to 
+> > >>>> DBX, MOKX have the same capabilities, however they do not need to be 
+> > >>>> signed by any key, the machine owner must show they have physical 
+> > >>>> presence (and potentially a MOK password) for inclusion.  Again there 
+> > >>>> is not a requirement similar to how CRL’s work here either.  The machine 
+> > >>>> owner can decide what is included.
+> > >>>> 
+> > >>>> Today when a kernel is built, any number of keys may be included within 
+> > >>>> the builtin trusted keyring.  The keys included in the kernel may not have 
+> > >>>> a single usage field set or the CA bit set.  There are no requirements on 
+> > >>>> how these keys get used later on.  Any key in the builtin trusted keyring 
+> > >>>> can be used to sign a revocation that can be added to the blacklist keyring.  
+> > >>>> Additionally, any key in the MOK can be used to sign this kernel and it will 
+> > >>>> boot.  Before booting the kernel, MOK keys have more privileges than 
+> > >>>> after the kernel is booted in some instances.
+> > >>>> 
+> > >>>> Today MOK keys can be loaded into the machine keyring.  These keys get 
+> > >>>> linked to the secondary trusted keyring.  Currently key usage enforcement
+> > >>>> is being applied to these keys behind some Kconfig options.  By default 
+> > >>>> anything in the secondary has the same capabilities as the builtin trusted 
+> > >>>> keyring.  What is challenging here with this request is the inconsistency 
+> > >>>> between how everything else currently works. 
+> > >>>> 
+> > >>>> Root can not arbitrarily add things to the secondary trusted keyring.  These 
+> > >>>> keys must be signed by something in either the machine or the builtin.  In 
+> > >>>> this thread [1], Jarkko is saying CA based infrastructure should be a policy 
+> > >>>> decision not to be enforced by the kernel. Wouldn’t this apply here as well?
+> > >>>> 
+> > >>>> 1. https://lore.kernel.org/lkml/CVGUFUEQVCHS.37OA20PNG9EVB@suppilovahvero/
+> > >>> 
+> > >>> Mickaël said, "This change is critical and should be tied to a
+> > >>> dedicated kernel config
+> > >>> (disabled by default), otherwise existing systems using this feature
+> > >>> will have their threat model automatically changed without notice."
+> > >> 
+> > >> I was thinking he meant it is critical not to change the current behavior
+> > >> by limiting blacklisting to only CA keys.  Not that it was critical to add
+> > >> CA enforcement.  Maybe Mickaël can comment?
+> > > 
+> > > I meant that applying this patch as-is may change the threat model used
+> > > by some users. Currently, only signed hashes vouched by the builtin
+> > > trusted keyring are valid. If we extend this mechanism to the secondary
+> > > trusted keyring without notice, this means that more certificates could
+> > > vouch blacklisted hashes, which may include some certificates with an
+> > > initial different usage.
+> > > 
+> > > See commit 4da8f8c8a1e0 ("dm verity: Add support for signature
+> > > verification with 2nd keyring") that adds
+> > > CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_SECONDARY_KEYRING:
+> > > https://lore.kernel.org/all/20201023170512.201124-1-mic@digikod.net/
+> > 
+> > Thanks for clarifying.  I’ll add something similar in v2.
+> > 
+> > >> 
+> > >>> As a possible alternative I suggested limiting which file hashes the
+> > >>> certs on the secondary (or machine) keyring could blacklist.
+> > >> 
+> > >> I’m not sure I completely understand your suggestion here.
+> > >> Do you mean, verify the CA bit is set for secondary keys, but
+> > >> ignore the bit for builtin?  And then only use those keys to add
+> > >> hashes to the blacklist keyring?  If I have that right, what would 
+> > >> be the justification for the change based on how things currently
+> > >> get included in the blacklist keyring?  Thanks.
+> > > 
+> > > I'd like to be able to specify which kind of certificate can vouch for
+> > > blacklisting hashes, and for other usages, but AFAIK this is not the
+> > > path Linux has followed (e.g. unlike Windows). We only have the keyring
+> > > to identify an usage, which is unfortunate. On the other side, this
+> > > approach lets users manage their certificates without constraint, which
+> > > is quite (too?) flexible.
+> > 
+> > Yes, it is very flexible. What I believe Mimi is after is having a way to 
+> > track what cert actually vouched for each specific binary hash.  But this
+> > information is not tracked, plus entries within it can come from various 
+> > sources that are not signed (dbx, mokx, compiled in).  Also key usage is 
+> > being ignored.
+> > 
+> > > A complementary approach would be to create an
+> > > LSM (or a dedicated interface) to tie certificate properties to a set of
+> > > kernel usages, while still letting users configure these constraints.
+> > 
+> > That is an interesting idea.  Would the other security maintainers be in 
+> > support of such an approach?  Would a LSM be the correct interface?  
+> > Some of the recent work I have done with introducing key usage and CA 
+> > enforcement is difficult for a distro to pick up, since these changes can be 
+> > viewed as a regression.  Each end-user has different signing procedures 
+> > and policies, so making something work for everyone is difficult.  Letting the 
+> > user configure these constraints would solve this problem.
+> > 
