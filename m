@@ -2,77 +2,106 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E039E92734
-	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 15:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D541BE9271B
+	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 16:15:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237991AbjJEP6J (ORCPT
+        id S240992AbjJEQPk (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 5 Oct 2023 11:58:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42906 "EHLO
+        Thu, 5 Oct 2023 12:15:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234238AbjJEP4v (ORCPT
+        with ESMTP id S241112AbjJEQNk (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Oct 2023 11:56:51 -0400
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8B5D9D6E;
-        Thu,  5 Oct 2023 07:05:12 -0700 (PDT)
-Received: from [10.137.106.151] (unknown [131.107.159.23])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B993820B74C2;
-        Wed,  4 Oct 2023 19:49:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B993820B74C2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1696474153;
-        bh=Q9nbMnYwHH7f2GSlKNYYueS4IcpkI9CiL+VC8hIGotI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=WbyW9rxMnFaT2Iu36dhbn8F+5sVeCOT8afGiKS5M3ZL0Um3gbVUZ49Mo8SCCLRpsN
-         UGAMWmzNZClK+Dvzc0KLYQUXO8IZxUrjpwLkyUrxjR1L4etFdOiroBlvNu2qKxByqI
-         0qEvB7/Rp9wtcn280lLIP3CbLdOdFHN3tCRQbyHs=
-Message-ID: <d95c06e5-60e7-4adb-896f-5c99e7f4db52@linux.microsoft.com>
-Date:   Wed, 4 Oct 2023 19:49:13 -0700
+        Thu, 5 Oct 2023 12:13:40 -0400
+Received: from mail-ua1-x935.google.com (mail-ua1-x935.google.com [IPv6:2607:f8b0:4864:20::935])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32CADAD17;
+        Thu,  5 Oct 2023 02:36:16 -0700 (PDT)
+Received: by mail-ua1-x935.google.com with SMTP id a1e0cc1a2514c-7b07c3eaf9bso291393241.3;
+        Thu, 05 Oct 2023 02:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1696498575; x=1697103375; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=miaHJCTsklS6Zbf74LdxRTHsnukEGfuauknHlldmnMc=;
+        b=N4af9kbi6Y+6dW9LsItj5fS5+DyE6zDpoaXlRE63hcUqzTAjlFVy++6BlgMNLc7eoc
+         9aEa02NdBFigDUFax26K4zjqVc1R9QevHORZNCEceZgUNfBD1PoKFZXlmUsuKvcLJB2z
+         Wzq25anMl7eXz6LpGSIH0XC1N/yUmNm0EjsFMP+KHLm7UWHZRh9zSI0p3N9zEQZ5T2pR
+         jH1t6eglUTla2oo0U+yFQhjcilqGxdoULd5rEZUjwZ4FX+CfYcsYszoomCu0204u545P
+         Qb/9Kwa9NQ6OpKIeEhQ8uk5o6pzGL3Q4OAVhpR88DQEJOju8mPcHgkmd00fDwrjBGC1S
+         gpEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696498575; x=1697103375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=miaHJCTsklS6Zbf74LdxRTHsnukEGfuauknHlldmnMc=;
+        b=QFvdY/FyxkbAHDFTe1d61HEPBpvKjezRu16VHZ1FP1fyDKMAWt83XyBW9xdUAkDVMj
+         ucMPRNA+c3b6g2G37Yd6WOGa0fnzrs80dP1WOPrxzb+dZ7x7zPDDWSa6yIx9joVLJ/QK
+         i4g00/bNMTce7wD4UbcH068mTjj+CppEbfVleN9x3P+H+zshm9b2EOLRSDvOZhrVvbKF
+         xMNcM3ZBckOF8jrS6J4qMLGqjOA298urN61hUZ5d98tb7i2iHI6Vrqb6xbh7pIw3R5q7
+         KiNcTC7MCaYHwdwGx4HQZ0OOsTYld6EKj/F/nd4CtRIlq/nofxCN7OUVGiCNTj5krigO
+         Yerw==
+X-Gm-Message-State: AOJu0YyLqGrprqjZuIxtUDycFcIjMJ0drgO0UZTB6ivbyzVEi4eo+C3i
+        IgxweggwkHEHPOg5r2ppndtAk2CBYx7YCtTLmSw=
+X-Google-Smtp-Source: AGHT+IHEmB4hPkLYLPKiUKYdFA8EWWzm/1bKRsSKow5Ph7YiXuo2ENvDu/sgoJxWbdjYFoZ5NkuSiVgyiunS+gZFpDQ=
+X-Received: by 2002:a67:f4c9:0:b0:44d:3aba:b03d with SMTP id
+ s9-20020a67f4c9000000b0044d3abab03dmr4641256vsn.17.1696498575187; Thu, 05 Oct
+ 2023 02:36:15 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v11 15/19] fsverity: consume builtin signature via LSM
- hook
-Content-Language: en-US
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, tytso@mit.edu, axboe@kernel.dk, agk@redhat.com,
-        snitzer@kernel.org, eparis@redhat.com, paul@paul-moore.com,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        dm-devel@redhat.com, audit@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
-        Deven Bowers <deven.desai@linux.microsoft.com>
-References: <1696457386-3010-1-git-send-email-wufan@linux.microsoft.com>
- <1696457386-3010-16-git-send-email-wufan@linux.microsoft.com>
- <20231005022707.GA1688@quark.localdomain>
-From:   Fan Wu <wufan@linux.microsoft.com>
-In-Reply-To: <20231005022707.GA1688@quark.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <00000000000067d24205c4d0e599@google.com> <000000000000accfd30606e6bcd0@google.com>
+In-Reply-To: <000000000000accfd30606e6bcd0@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 5 Oct 2023 12:36:04 +0300
+Message-ID: <CAOQ4uxhbNyDzf0_fFh1Yy5Kz2Coz=gTrfOtsmteE0=ncibBnpw@mail.gmail.com>
+Subject: Re: [syzbot] [integrity] [overlayfs] possible deadlock in
+ mnt_want_write (2)
+To:     syzbot <syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com>
+Cc:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-unionfs@vger.kernel.org,
+        miklos@szeredi.hu, mszeredi@redhat.com,
+        syzbot@syzkalhler.appspotmail.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, zohar@us.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
+On Wed, Oct 4, 2023 at 7:45=E2=80=AFPM syzbot
+<syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has bisected this issue to:
+>
+> commit 708fa01597fa002599756bf56a96d0de1677375c
+> Author: Miklos Szeredi <mszeredi@redhat.com>
+> Date:   Mon Apr 12 10:00:37 2021 +0000
+>
+>     ovl: allow upperdir inside lowerdir
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17ad11b268=
+0000
+> start commit:   3aba70aed91f Merge tag 'gpio-fixes-for-v6.6-rc3' of git:/=
+/..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D146d11b268=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D106d11b268000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3De4ca82a1bedd3=
+7e4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Db42fe626038981f=
+b7bfa
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1304fba6680=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13cec0dc68000=
+0
+>
+> Reported-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
+> Fixes: 708fa01597fa ("ovl: allow upperdir inside lowerdir")
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
 
-
-On 10/4/2023 7:27 PM, Eric Biggers wrote:
-> On Wed, Oct 04, 2023 at 03:09:42PM -0700, Fan Wu wrote:
->> +#ifdef CONFIG_FS_VERITY_BUILTIN_SIGNATURES
->> +static int fsverity_inode_setsecurity(struct inode *inode,
->> +				      struct fsverity_descriptor *desc)
->> +{
->> +	return security_inode_setsecurity(inode, FS_VERITY_INODE_SEC_NAME,
->> +					  desc->signature,
->> +					  le32_to_cpu(desc->sig_size), 0);
->> +}
-> 
-> Why isn't the type of the second argument 'const struct fsverity_descriptor *'?
-> 
-> - Eric
-
-Thanks for the suggestion. I agree that adding 'const' here is a better 
-approach. I will update this in the next version.
-
--Fan
+#syz test: https://github.com/amir73il/linux ima-ovl-fix
