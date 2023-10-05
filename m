@@ -2,65 +2,65 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 380FDE92712
-	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 14:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121CAE92709
+	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 14:26:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231252AbjJEOOm (ORCPT
+        id S233944AbjJEO00 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 5 Oct 2023 10:14:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58328 "EHLO
+        Thu, 5 Oct 2023 10:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231479AbjJEOMb (ORCPT
+        with ESMTP id S234902AbjJEOYY (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Oct 2023 10:12:31 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0F3624864;
-        Thu,  5 Oct 2023 04:16:05 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32157c8e4c7so861319f8f.1;
-        Thu, 05 Oct 2023 04:16:05 -0700 (PDT)
+        Thu, 5 Oct 2023 10:24:24 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2AAE27B09
+        for <linux-integrity@vger.kernel.org>; Thu,  5 Oct 2023 06:33:30 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id d9443c01a7336-1c61bde0b4bso7544455ad.3
+        for <linux-integrity@vger.kernel.org>; Thu, 05 Oct 2023 06:33:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1696504564; x=1697109364; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1696512810; x=1697117610; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xeKrgt2PObn5BYrkIQTlAAhvL5PwerUzmeVsDKTDmUE=;
-        b=Afha9qOj3U8Zm5nXxX+vwj19AxICf4QIeVoVnip40nN40+dXhH4YPbvnFokM6hrKB8
-         0snq3lJd7TPE9I1qRbPoOaNCc4ee8BZfK98WbCCqn/GYxUdfvMPARK+OivDIB14TGMQC
-         NdzATWnTrX8g1aLO+xE/sLZN9esmYTI7g2W020qRTovO8L8u3K1kZ5AXPuAv58+4q7Vd
-         i9oTtgwJWhed/Ydxo50b0oXHbUPr2oHqhtZ3GA3pPuNxKQkiUXNmgCZNgWB5nNcKiPvc
-         v4FvJWO02614bFcT8cybewbu25O1KY62cAhOAUwXc1MGNUp1zAABqJN4xu5cEJs4ySIA
-         08Mg==
+        bh=rdJwxwbZqQ4I0O4A5YRp1pd8ZcaJivULLGhl6LhxxQE=;
+        b=KxeJN24Nqn4SB6flKWBzUwOL1qceUEZyWxPoBDjilIEBobJIeaDNXAkcmV/T+z9SKl
+         BrbsQuBMR3xg6VybWl5tEd/5KwRFDC5MgdYQArm79Ktm2wDK28Auijypoa1XlLxuTqIv
+         cnC6oUeCb6Uwp+ZlGZ6Ez9EcypIAAxbYCYR0yUBCEhKbHX+kAersLCABNWg0gFsv+Mbb
+         UAH9U+00PEM9ndapvTil37NhH3opjo7UQELGFG4KZ9AAh2aSGCs/mCQ8bln7tFj8Iqsm
+         pJ5MRdodrPZsCEp0YZMhpzWvbxVwNKP+Ex4tIRi0kw3KbzJobDuHFo4ERLGNwPrc/OLH
+         UKXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696504564; x=1697109364;
+        d=1e100.net; s=20230601; t=1696512810; x=1697117610;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xeKrgt2PObn5BYrkIQTlAAhvL5PwerUzmeVsDKTDmUE=;
-        b=BFZuEbokeghqEQZ7pgu7gg434sf9+QNf5JSmM4Mox5gcgZHxYycr6QQOTU/ygBQRcy
-         Z1lG5VXnz1WgOe+VJIXTZnFF4Zlokgis9WwMG7qF7BHoDKwevX5S7wxYhKzRjZ6oXO+U
-         u2VFtJDeA/6d9ojU+1gavfvAS2nrYaGnH98DFALxfQs7yTikfgcv+v1FU5b5YBB5vnAE
-         GjwKh8R2iofVrVxkffSqgi/t5mpfXEFVSqnVWe4NnRi8Vj+P0BSyFqZ/KYbPBMW+MkzW
-         whI8JxhSvn1ji4COupfohAtU2yZPnezXI6UutyaFKUTvLAu7JD6q4eUEgs+CcyHHU4mt
-         8x2Q==
-X-Gm-Message-State: AOJu0YyEzoVk5Tm13jXKyBOxAT7sgDTVeuQZzPCmnKi93sSwJTTon96o
-        6SL9UQtEg6uL+g0CsErVLcY=
-X-Google-Smtp-Source: AGHT+IFMA1coSmCYvnBs92G91Z67oy5exgUrf/EGcvBwscocCGaLzGjLCqJ6aspz3E4Rn2zHMXBJGQ==
-X-Received: by 2002:adf:edce:0:b0:317:58e4:e941 with SMTP id v14-20020adfedce000000b0031758e4e941mr4679699wro.33.1696504563834;
-        Thu, 05 Oct 2023 04:16:03 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([5.29.249.86])
-        by smtp.gmail.com with ESMTPSA id k15-20020a5d628f000000b003143c9beeaesm1545169wru.44.2023.10.05.04.16.02
+        bh=rdJwxwbZqQ4I0O4A5YRp1pd8ZcaJivULLGhl6LhxxQE=;
+        b=G0mysxiSMBhR/B0xmUzU81oYHBVjrAowiQITAwRBf1MXeP+HK+jNoENSaQ20YvNg2i
+         GXqqpxY6aI6YlCzkO4Y+A3gNLR3u5t0pEZ3H4ZEDB9MUPOwz0mO7Ek/JoVCInZMpWN9+
+         cSF6DEyXdBp/eX8YRUriBSBUVjHh3D3JofehGjeGY1AKzCQdzurdLWO3lslQOQOFV+1L
+         rDpRR4YQ6wiNdD5MB8Aihyo934rYC/TCU9It69R2QLX7wypoX91l4XDlhmoVQzDH0RIS
+         zqDxjwa1BO8yEPKtkHakakAP8qIbQ+lhg11uYg1pB4BgM7QSz5cZkfjl3lGpLDKeL6cZ
+         vjbA==
+X-Gm-Message-State: AOJu0YxeC9S4p8hooDAwPBixWQtg3AIQy/mDwr9gMdJfgTkJSxNcsdIZ
+        vWzzQzX9GBdGN0ErYsiOcOQIqQ==
+X-Google-Smtp-Source: AGHT+IEA4cLHqQcb+MIGG2dpWiFKleSqErzAWsk+2ZAO5zJgG2wamSV90gtm8PK1QSKzQmHiCELlAw==
+X-Received: by 2002:a17:902:e84a:b0:1c2:218c:3754 with SMTP id t10-20020a170902e84a00b001c2218c3754mr5994686plg.53.1696512810281;
+        Thu, 05 Oct 2023 06:33:30 -0700 (PDT)
+Received: from sumit-X1.. ([223.178.210.23])
+        by smtp.gmail.com with ESMTPSA id jw22-20020a170903279600b001b80d399730sm1643640plb.242.2023.10.05.06.33.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Oct 2023 04:16:03 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
-Subject: [PATCH] ima: annotate iint mutex to avoid lockdep false positive warnings
-Date:   Thu,  5 Oct 2023 14:15:58 +0300
-Message-Id: <20231005111558.1263671-1-amir73il@gmail.com>
+        Thu, 05 Oct 2023 06:33:29 -0700 (PDT)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     torvalds@linux-foundation.org, jarkko@kernel.org,
+        peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jejb@linux.ibm.com, zohar@linux.ibm.com, David.Kaplan@amd.com,
+        bp@alien8.de, mingo@kernel.org, x86@kernel.org,
+        regressions@leemhuis.info, Sumit Garg <sumit.garg@linaro.org>,
+        Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: [PATCH] KEYS: trusted: Remove redundant static calls usage
+Date:   Thu,  5 Oct 2023 19:03:06 +0530
+Message-Id: <20231005133306.379718-1-sumit.garg@linaro.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -68,120 +68,78 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-It is not clear that IMA should be nested at all, but as long is it
-measures files both on overlayfs and on underlying fs, we need to
-annotate the iint mutex to avoid lockdep false positives related to
-IMA + overlayfs, same as overlayfs annotates the inode mutex.
+Static calls invocations aren't well supported from module __init and
+__exit functions, especially the static call from cleanup_trusted() led
+to a crash on x86 kernel with CONFIG_DEBUG_VIRTUAL=y.
 
-Reported-and-tested-by: syzbot+b42fe626038981fb7bfa@syzkaller.appspotmail.com
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+However, the usage of static call invocations for trusted_key_init()
+and trusted_key_exit() doesn't adds any value neither from performance
+point and nor there is any security benefit. Hence switch to use indirect
+function calls instead.
+
+Note here that although it will fix the current crash reported. But
+ultimately we need fix up static calls infrastructure to either support
+its future usage from module __init and __exit functions or not.
+
+Reported-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Closes: https://lore.kernel.org/lkml/ZRhKq6e5nF%2F4ZIV1@fedora/#t
+Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 ---
+ security/keys/trusted-keys/trusted_core.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-Mimi,
-
-Syzbot finally found a reliable reproducer, so it tested this lockdep
-annotation fix and this proves that the warning was a false positive.
-
-Hopefully, this will fix all the different variants of lockdep warnings
-that syzbot reported over time.
-
-Thanks,
-Amir.
-
- security/integrity/iint.c | 48 ++++++++++++++++++++++++++++++---------
- 1 file changed, 37 insertions(+), 11 deletions(-)
-
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index a462df827de2..27ea19fb1f54 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -66,9 +66,32 @@ struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
- 	return iint;
- }
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index c6fc50d67214..85fb5c22529a 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -44,13 +44,12 @@ static const struct trusted_key_source trusted_key_sources[] = {
+ #endif
+ };
  
--static void iint_free(struct integrity_iint_cache *iint)
-+#define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
-+
-+/*
-+ * It is not clear that IMA should be nested at all, but as long is it measures
-+ * files both on overlayfs and on underlying fs, we need to annotate the iint
-+ * mutex to avoid lockdep false positives related to IMA + overlayfs.
-+ * See ovl_lockdep_annotate_inode_mutex_key() for more details.
-+ */
-+static inline void iint_lockdep_annotate(struct integrity_iint_cache *iint,
-+					 struct inode *inode)
-+{
-+#ifdef CONFIG_LOCKDEP
-+	static struct lock_class_key iint_mutex_key[IMA_MAX_NESTING];
-+
-+	int depth = inode->i_sb->s_stack_depth;
-+
-+	if (WARN_ON_ONCE(depth < 0 || depth >= IMA_MAX_NESTING))
-+		depth = 0;
-+
-+	lockdep_set_class(&iint->mutex, &iint_mutex_key[depth]);
-+#endif
-+}
-+
-+static void iint_init_always(struct integrity_iint_cache *iint,
-+			     struct inode *inode)
+-DEFINE_STATIC_CALL_NULL(trusted_key_init, *trusted_key_sources[0].ops->init);
+ DEFINE_STATIC_CALL_NULL(trusted_key_seal, *trusted_key_sources[0].ops->seal);
+ DEFINE_STATIC_CALL_NULL(trusted_key_unseal,
+ 			*trusted_key_sources[0].ops->unseal);
+ DEFINE_STATIC_CALL_NULL(trusted_key_get_random,
+ 			*trusted_key_sources[0].ops->get_random);
+-DEFINE_STATIC_CALL_NULL(trusted_key_exit, *trusted_key_sources[0].ops->exit);
++static void (*trusted_key_exit)(void);
+ static unsigned char migratable;
+ 
+ enum {
+@@ -359,19 +358,16 @@ static int __init init_trusted(void)
+ 		if (!get_random)
+ 			get_random = kernel_get_random;
+ 
+-		static_call_update(trusted_key_init,
+-				   trusted_key_sources[i].ops->init);
+ 		static_call_update(trusted_key_seal,
+ 				   trusted_key_sources[i].ops->seal);
+ 		static_call_update(trusted_key_unseal,
+ 				   trusted_key_sources[i].ops->unseal);
+ 		static_call_update(trusted_key_get_random,
+ 				   get_random);
+-		static_call_update(trusted_key_exit,
+-				   trusted_key_sources[i].ops->exit);
++		trusted_key_exit = trusted_key_sources[i].ops->exit;
+ 		migratable = trusted_key_sources[i].ops->migratable;
+ 
+-		ret = static_call(trusted_key_init)();
++		ret = trusted_key_sources[i].ops->init();
+ 		if (!ret)
+ 			break;
+ 	}
+@@ -388,7 +384,8 @@ static int __init init_trusted(void)
+ 
+ static void __exit cleanup_trusted(void)
  {
--	kfree(iint->ima_hash);
- 	iint->ima_hash = NULL;
- 	iint->version = 0;
- 	iint->flags = 0UL;
-@@ -80,6 +103,14 @@ static void iint_free(struct integrity_iint_cache *iint)
- 	iint->ima_creds_status = INTEGRITY_UNKNOWN;
- 	iint->evm_status = INTEGRITY_UNKNOWN;
- 	iint->measured_pcrs = 0;
-+	mutex_init(&iint->mutex);
-+	iint_lockdep_annotate(iint, inode);
-+}
-+
-+static void iint_free(struct integrity_iint_cache *iint)
-+{
-+	kfree(iint->ima_hash);
-+	mutex_destroy(&iint->mutex);
- 	kmem_cache_free(iint_cache, iint);
+-	static_call_cond(trusted_key_exit)();
++	if (trusted_key_exit)
++		(*trusted_key_exit)();
  }
  
-@@ -104,6 +135,8 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
- 	if (!iint)
- 		return NULL;
- 
-+	iint_init_always(iint, inode);
-+
- 	write_lock(&integrity_iint_lock);
- 
- 	p = &integrity_iint_tree.rb_node;
-@@ -153,25 +186,18 @@ void integrity_inode_free(struct inode *inode)
- 	iint_free(iint);
- }
- 
--static void init_once(void *foo)
-+static void iint_init_once(void *foo)
- {
- 	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
- 
- 	memset(iint, 0, sizeof(*iint));
--	iint->ima_file_status = INTEGRITY_UNKNOWN;
--	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
--	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
--	iint->ima_read_status = INTEGRITY_UNKNOWN;
--	iint->ima_creds_status = INTEGRITY_UNKNOWN;
--	iint->evm_status = INTEGRITY_UNKNOWN;
--	mutex_init(&iint->mutex);
- }
- 
- static int __init integrity_iintcache_init(void)
- {
- 	iint_cache =
- 	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
--			      0, SLAB_PANIC, init_once);
-+			      0, SLAB_PANIC, iint_init_once);
- 	return 0;
- }
- DEFINE_LSM(integrity) = {
+ late_initcall(init_trusted);
 -- 
 2.34.1
 
