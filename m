@@ -2,39 +2,39 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BA1E9272A
-	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 18:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B45E9272C
+	for <linux-integrity@archiver.kernel.org>; Thu,  5 Oct 2023 18:26:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbjJES0Q (ORCPT
+        id S231208AbjJES0R (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Thu, 5 Oct 2023 14:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58788 "EHLO
+        Thu, 5 Oct 2023 14:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231201AbjJES0P (ORCPT
+        with ESMTP id S231213AbjJES0Q (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Thu, 5 Oct 2023 14:26:15 -0400
+        Thu, 5 Oct 2023 14:26:16 -0400
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0681A6
-        for <linux-integrity@vger.kernel.org>; Thu,  5 Oct 2023 11:26:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D8EA1AD
+        for <linux-integrity@vger.kernel.org>; Thu,  5 Oct 2023 11:26:14 -0700 (PDT)
 Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (unknown [50.46.228.62])
-        by linux.microsoft.com (Postfix) with ESMTPSA id DFC1C20B74C4;
-        Thu,  5 Oct 2023 11:26:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DFC1C20B74C4
+        by linux.microsoft.com (Postfix) with ESMTPSA id 56F0320B74C8;
+        Thu,  5 Oct 2023 11:26:14 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 56F0320B74C8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1696530373;
-        bh=j+IdX/spgg7Wp+R25BM5nIX45tDvZ4b/lZmw9PEsJCw=;
+        s=default; t=1696530374;
+        bh=ONPFQaah0h6Qnqt+reZDLhqeK6cEMyobvmiL4JTQPwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cfqWocvHf5ixHq6I905i8+Bg3nWnYv1oIgvbyimnjbEtNYfTp0bT7K7OzElIlywI9
-         nHMAZJi7bsZ2n/Z7MQeGaz8BR454DuBNWtJhUa/YKqpnF0DK4gC4ot0tIXV2oMHt7D
-         FLZnH6FKEl3AAylwPWAtkeYjGEvBqn+9cWnd5lJU=
+        b=g+RGV187kcOPOb2HX1ww0wYPY37J26ztVbuioeuEk33iG+u0PvGcUg5Wrr+U6DFai
+         b1TXW8XvGSpWFEC6BDw1LzfeWeJOU/rTi8vNryDYwCv3D1QOLkpPUnbnsQG4nZfUUN
+         ijrhjYLOd/u0/gKSOjVCFkCzJSIULCxbjyrlPyoM=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, ebiederm@xmission.com, noodles@fb.com,
         bauermann@kolabnow.com, kexec@lists.infradead.org,
         linux-integrity@vger.kernel.org
 Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-Subject: [PATCH v2 3/7] ima: kexec: map source pages containing IMA buffer to image post kexec load
-Date:   Thu,  5 Oct 2023 11:25:58 -0700
-Message-Id: <20231005182602.634615-4-tusharsu@linux.microsoft.com>
+Subject: [PATCH v2 7/7] ima: record log size at kexec load and execute
+Date:   Thu,  5 Oct 2023 11:26:02 -0700
+Message-Id: <20231005182602.634615-8-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20231005182602.634615-1-tusharsu@linux.microsoft.com>
 References: <20231005182602.634615-1-tusharsu@linux.microsoft.com>
@@ -44,237 +44,113 @@ Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-Currently, the mechanism to map and unmap segments to the kimage
-structure is not available to the subsystems outside of kexec.  This
-functionality is needed when IMA is allocating the memory segments
-during kexec 'load' operation.
+The window between kexec 'load' and 'execute' could be arbitrarily long.
+Even with the large chunk of memory allocated at kexec 'load', it may
+run out which would result in missing events in IMA log after the system
+soft reboots to the new Kernel.  This would result in IMA measurements
+getting out of sync with the TPM PCR quotes which would result in remote
+attestation failing for that system.  There is currently no way for the
+new Kernel to know if the IMA log TPM PCR quote out of sync problem is
+because of the missing measurements during kexec.
 
-Implement kimage_map_segment() which takes a kimage pointer, an address,
-and a size.  Ensure that the entire segment is being mapped by comparing
-the given address and size to each segment in the kimage's segment array.
-Collect the source pages that correspond to the given address range,
-allocate an array of pointers to these pages, and map them to a
-contiguous range of virtual addresses.  If the mapping operation is
-successful, the function returns the start of this range.  Otherwise, it
-frees the page pointer array and returns NULL.
+Define two new IMA events, 'kexec_load' and 'kexec_execute', to be 
+measured at kexec 'load' and 'execute' respectively.
 
-Implement kimage_unmap_segment() that takes a pointer to a segment buffer
-and unmaps it using vunmap().
-
-Implement function ima_kexec_post_load(), to be called by IMA after kexec
-loads the new Kernel image.  ima_kexec_post_load() would map the IMA
-buffer allocated during kexec 'load' to a segment in the loaded image.
-
-Finally, move for_each_kimage_entry() macro from kexec_core.c to kexec.h.
+IMA measures 'boot_aggregate' as the first event when the system boots - 
+either cold boot or kexec soft boot.  In case when the system goes
+through multiple soft reboots, the number of 'boot_aggregate' events in
+IMA log corresponds to total number of boots (cold boot plus multiple
+kexec soft reboots).  With this change, there would be additional 
+'kexec_load' and 'kexec_execute' events in between the two 
+'boot_aggregate' events.  In rare cases, when the system runs out of
+memory during kexec soft reboot, 'kexec_execute' won't be copied since
+its one of the very last event measured just before kexec soft reboot.
+The absence of the event 'kexec_execute' in between the two 
+boot_aggregate' events would signal the attestation service that the IMA
+log on the system is out of sync with TPM PCR quotes and the system needs
+to be cold booted for the remote attestation to succeed again.
 
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 ---
- include/linux/ima.h                |  3 ++
- include/linux/kexec.h              | 13 ++++++
- kernel/kexec_core.c                | 73 ++++++++++++++++++++++++++++--
- security/integrity/ima/ima_kexec.c | 32 +++++++++++++
- 4 files changed, 116 insertions(+), 5 deletions(-)
+ security/integrity/ima/ima_kexec.c | 35 +++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 86b57757c7b1..006db20f852d 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -49,6 +49,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
- 
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
-+extern void ima_kexec_post_load(struct kimage *image);
-+#else
-+static inline void ima_kexec_post_load(struct kimage *image) {}
- #endif
- 
- #else
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index 22b5cd24f581..e00b8101b53b 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -490,6 +490,15 @@ static inline int arch_kexec_post_alloc_pages(void *vaddr, unsigned int pages, g
- static inline void arch_kexec_pre_free_pages(void *vaddr, unsigned int pages) { }
- #endif
- 
-+#define for_each_kimage_entry(image, ptr, entry) \
-+	for (ptr = &image->head; (entry = *ptr) && !(entry & IND_DONE); \
-+		ptr = (entry & IND_INDIRECTION) ? \
-+			boot_phys_to_virt((entry & PAGE_MASK)) : ptr + 1)
-+
-+extern void *kimage_map_segment(struct kimage *image,
-+				unsigned long addr, unsigned long size);
-+extern void kimage_unmap_segment(void *buffer);
-+
- #else /* !CONFIG_KEXEC_CORE */
- struct pt_regs;
- struct task_struct;
-@@ -497,6 +506,10 @@ static inline void __crash_kexec(struct pt_regs *regs) { }
- static inline void crash_kexec(struct pt_regs *regs) { }
- static inline int kexec_should_crash(struct task_struct *p) { return 0; }
- static inline int kexec_crash_loaded(void) { return 0; }
-+static inline void *kimage_map_segment(struct kimage *image,
-+				       unsigned long addr, unsigned long size)
-+{ return NULL; }
-+static inline void kimage_unmap_segment(void *buffer) { }
- #define kexec_in_progress false
- #endif /* CONFIG_KEXEC_CORE */
- 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 3d578c6fefee..e01156f3c404 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -594,11 +594,6 @@ void kimage_terminate(struct kimage *image)
- 	*image->entry = IND_DONE;
- }
- 
--#define for_each_kimage_entry(image, ptr, entry) \
--	for (ptr = &image->head; (entry = *ptr) && !(entry & IND_DONE); \
--		ptr = (entry & IND_INDIRECTION) ? \
--			boot_phys_to_virt((entry & PAGE_MASK)) : ptr + 1)
--
- static void kimage_free_entry(kimage_entry_t entry)
- {
- 	struct page *page;
-@@ -921,6 +916,74 @@ int kimage_load_segment(struct kimage *image,
- 	return result;
- }
- 
-+void *kimage_map_segment(struct kimage *image,
-+			 unsigned long addr, unsigned long size)
-+{
-+	unsigned long eaddr = addr + size;
-+	unsigned long src_page_addr, dest_page_addr;
-+	struct page **src_pages;
-+	int i, npages;
-+	kimage_entry_t *ptr, entry;
-+	void *vaddr = NULL;
-+
-+	/*
-+	 * Make sure that we are mapping a whole segment.
-+	 */
-+	for (i = 0; i < image->nr_segments; i++) {
-+		if (addr == image->segment[i].mem &&
-+		    size == image->segment[i].memsz) {
-+			break;
-+		}
-+	}
-+
-+	if (i == image->nr_segments) {
-+		pr_err("%s: No segment matching [%lx, %lx)\n", __func__,
-+		       addr, eaddr);
-+		return NULL;
-+	}
-+
-+	/*
-+	 * Collect the source pages and map them in a contiguous VA range.
-+	 */
-+	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
-+	src_pages = kmalloc(sizeof(*src_pages) * npages, GFP_KERNEL);
-+	if (!src_pages) {
-+		pr_err("%s: Could not allocate ima pages array.\n", __func__);
-+		return NULL;
-+	}
-+
-+	i = 0;
-+	for_each_kimage_entry(image, ptr, entry) {
-+		if (entry & IND_DESTINATION)
-+			dest_page_addr = entry & PAGE_MASK;
-+		else if (entry & IND_SOURCE) {
-+			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
-+				src_page_addr = entry & PAGE_MASK;
-+				src_pages[i++] =
-+					virt_to_page(__va(src_page_addr));
-+				if (i == npages)
-+					break;
-+				dest_page_addr += PAGE_SIZE;
-+			}
-+		}
-+	}
-+
-+	/* Sanity check. */
-+	WARN_ON(i < npages);
-+
-+	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
-+	if (!vaddr) {
-+		pr_err("%s: Could not map imap buffer.\n", __func__);
-+		kfree(src_pages);
-+	}
-+	return vaddr;
-+}
-+
-+void kimage_unmap_segment(void *segment_buffer)
-+{
-+	vunmap(segment_buffer);
-+}
-+
- struct kexec_load_limit {
- 	/* Mutex protects the limit count. */
- 	struct mutex mutex;
 diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 2c11bbe6efef..13fbbb90319b 100644
+index 6cd5f46a7208..0f9c424fe808 100644
 --- a/security/integrity/ima/ima_kexec.c
 +++ b/security/integrity/ima/ima_kexec.c
-@@ -12,6 +12,8 @@
- #include <linux/kexec.h>
- #include <linux/of.h>
- #include <linux/ima.h>
-+#include <linux/reboot.h>
-+#include <asm/page.h>
+@@ -17,6 +17,8 @@
  #include "ima.h"
  
  #ifdef CONFIG_IMA_KEXEC
-@@ -19,6 +21,7 @@ struct seq_file ima_kexec_file;
++#define IMA_KEXEC_EVENT_LEN 128
++
+ struct seq_file ima_kexec_file;
  struct ima_kexec_hdr ima_khdr;
  static void *ima_kexec_buffer;
- static size_t kexec_segment_size;
-+static bool ima_kexec_update_registered;
+@@ -34,6 +36,8 @@ void ima_clear_kexec_file(void)
  
- void ima_clear_kexec_file(void)
+ static int ima_alloc_kexec_buf(size_t kexec_segment_size)
  {
-@@ -221,6 +224,7 @@ static int ima_update_kexec_buffer(struct notifier_block *self,
++	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
++
+ 	if ((kexec_segment_size == 0) ||
+ 	    (kexec_segment_size == ULONG_MAX) ||
+ 	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
+@@ -64,6 +68,12 @@ static int ima_alloc_kexec_buf(size_t kexec_segment_size)
+ 	memset(&ima_khdr, 0, sizeof(ima_khdr));
+ 	ima_khdr.version = 1;
+ 
++	scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
++		  "kexec_segment_size=%lu;", kexec_segment_size);
++
++	ima_measure_critical_data("ima_kexec", "kexec_load", ima_kexec_event,
++				  strlen(ima_kexec_event), false, NULL, 0);
++
+ 	return 0;
+ }
+ 
+@@ -198,6 +208,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+ static int ima_update_kexec_buffer(struct notifier_block *self,
+ 				   unsigned long action, void *data)
+ {
++	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
+ 	void *buf = NULL;
+ 	size_t buf_size;
+ 	bool resume = false;
+@@ -213,9 +224,31 @@ static int ima_update_kexec_buffer(struct notifier_block *self,
+ 		return NOTIFY_OK;
  	}
- 	memcpy(ima_kexec_buffer, buf, buf_size);
- out:
-+	kimage_unmap_segment(ima_kexec_buffer);
- 	ima_kexec_buffer = NULL;
  
- 	if (resume)
-@@ -232,6 +236,34 @@ struct notifier_block update_buffer_nb = {
- 	.notifier_call = ima_update_kexec_buffer,
- };
++	buf_size = ima_get_binary_runtime_size();
++	scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
++		  "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;",
++		  kexec_segment_size, buf_size);
++
++	/*
++	 * This is one of the very last events measured by IMA before kexec
++	 * soft rebooting into the new Kernal.
++	 * This event can be used as a marker after the system soft reboots
++	 * to the new Kernel to check if there was sufficient memory allocated
++	 * at kexec 'load' to capture the events measured between the window
++	 * of kexec 'load' and 'execute'.
++	 * This event needs to be present in the IMA log, in between the two
++	 * 'boot_aggregate' events that are logged for the previous boot and
++	 * the current soft reboot. If it is not present after the system soft
++	 * reboots into the new Kernel, it would mean the IMA log is not
++	 * consistent with the TPM PCR quotes, and the system needs to be
++	 * cold-booted for the attestation to succeed again.
++	 */
++	ima_measure_critical_data("ima_kexec", "kexec_execute",
++				  ima_kexec_event, strlen(ima_kexec_event),
++				  false, NULL, 0);
++
+ 	ima_measurements_suspend();
  
-+/*
-+ * Create a mapping for the source pages that contain the IMA buffer
-+ * so we can update it later.
-+ */
-+void ima_kexec_post_load(struct kimage *image)
-+{
-+	if (ima_kexec_buffer) {
-+		kimage_unmap_segment(ima_kexec_buffer);
-+		ima_kexec_buffer = NULL;
-+	}
-+
-+	if (!image->ima_buffer_addr)
-+		return;
-+
-+	ima_kexec_buffer = kimage_map_segment(image,
-+					      image->ima_buffer_addr,
-+					      image->ima_buffer_size);
-+	if (!ima_kexec_buffer) {
-+		pr_err("%s: Could not map measurements buffer.\n", __func__);
-+		return;
-+	}
-+
-+	if (!ima_kexec_update_registered) {
-+		register_reboot_notifier(&update_buffer_nb);
-+		ima_kexec_update_registered = true;
-+	}
-+}
-+
- #endif /* IMA_KEXEC */
+-	buf_size = ima_get_binary_runtime_size();
+ 	ret = ima_dump_measurement_list(&buf_size, &buf,
+ 					kexec_segment_size);
  
- /*
 -- 
 2.25.1
 
