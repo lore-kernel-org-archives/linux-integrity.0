@@ -2,55 +2,55 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4015CC00A8F
-	for <linux-integrity@archiver.kernel.org>; Tue, 24 Oct 2023 03:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09960C25B6F
+	for <linux-integrity@archiver.kernel.org>; Tue, 24 Oct 2023 03:52:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232137AbjJXDwa (ORCPT
+        id S232156AbjJXDws (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 23 Oct 2023 23:52:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51596 "EHLO
+        Mon, 23 Oct 2023 23:52:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229510AbjJXDw3 (ORCPT
+        with ESMTP id S232251AbjJXDwq (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Mon, 23 Oct 2023 23:52:29 -0400
-Received: from mail-qv1-xf30.google.com (mail-qv1-xf30.google.com [IPv6:2607:f8b0:4864:20::f30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E884F111
-        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:24 -0700 (PDT)
-Received: by mail-qv1-xf30.google.com with SMTP id 6a1803df08f44-66d11fec9a5so22123226d6.1
-        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:24 -0700 (PDT)
+        Mon, 23 Oct 2023 23:52:46 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCBF10D8
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:27 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id af79cd13be357-77891c236fcso312570285a.3
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698119544; x=1698724344; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1698119546; x=1698724346; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=tJ6cgsoW7aQH5On83YMhoiBwYYPuRYMOz8kgYTAfm70=;
-        b=KAxMdUtDsdeg4dkTHCiRKRx2qzgP3I/YsfQWQAttZhThMMFHTachz+vuIDPFno0suJ
-         cwCLtf0I2mh8lOvKs71uzJNM+UqepOh2T1+r/742NcxJSpobudmr+kgmqF/sBTNbUpKv
-         FQAt2TGnMkJf3NGG5qHPee35ccZAwu8W/CS/pf2r/Jmnikc+QCq3ryUq9Ea9YBXLZZg2
-         lDo1fD7Tw4iV+XkbNYf9fj94VnCiNzMrlda2NMe7SY0HiT6fYAsNv47FuS48fdZQzIpy
-         b5/TFB9Bsb1i6bGqfamWvXBThuTL0zClgBvKM/xReZdP4+8IIw5XqYWtn2rUrwHSwDME
-         2P/w==
+        bh=GnPZt7wTu5bHl+yZIdMyk9dSEtxPVy94lr+8pKkfEn4=;
+        b=Qk2NAnk+d3PS2nhphbsNh4pXDwIkiF/OEugwNqtX8DEU03CEfroRIc3UcQKLCx0RJB
+         c/SnoKoKs7NXwkEjbsod/f2u8PP3uqJdYiRs/R2l+++7jXOlKo3J8QMLftlSgdlmrf+S
+         WDpNm7dOHUoRzJI8nxhDZADh7OPpxVkCdKQNTLwgNHsnyxbj6+fDjztk56ap664Rh+ph
+         GiJ4k5abmtn8z0O2bAg5QoevXeJcBa4b8IMwN9UzkCbNXv5BiYWoCajzAoBQt0a80b5Z
+         nchL+39mHH0b1gi98t637zPu3o3WUyn7fI3B9Y99ScaMgRAxoK5C1XdyDLO4ci0w0AAU
+         IysA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698119544; x=1698724344;
+        d=1e100.net; s=20230601; t=1698119546; x=1698724346;
         h=in-reply-to:references:subject:cc:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tJ6cgsoW7aQH5On83YMhoiBwYYPuRYMOz8kgYTAfm70=;
-        b=nARxtZY9XgmCFnlVAn3Bn/tCeE867ZRZOteykilvfZtqkrdQZ05EDvOnXXzLgEfgBf
-         wgjSx/vyOAEFC0yRhr7Q990jjbervICX1kPnBuR6e0bd3XQmN2oFr+rBv6Zhdiegw8iy
-         SSsSTGpCGAlut4T89y0dEvlpRBJ5kmXW1mfahM7ccWNx/T8aZkiub4TYHXG1L6OEj9EZ
-         IblMsWjJY09JG1vOKHxjUG1YlRk82k6EztKHVoHtdQJAeiW6xbDyWHyh8ftzxd/79P/1
-         83FaCe5thr4aGJw+1qosjDfe6SahTCc6tSppOJXjoSfBDXsLJzveSeY2KE16mCcUzpJC
-         gB0g==
-X-Gm-Message-State: AOJu0YwnVNWJ7GeYQkZrSH+wMAshzMIBTmW+58CwtCC4XXI9ohTeUb0e
-        HkCBOFzyIknP/dQ7Uz+Onz1urZpbhk5yheUtHw==
-X-Google-Smtp-Source: AGHT+IEGJExcEmKWOA+GK4RiJy1dG9NUrijjKZKzwgQx3WaST0PHhoK9sXJHymPxgN5Fyv3kt+Yfmg==
-X-Received: by 2002:ad4:5cc2:0:b0:66d:169a:d41c with SMTP id iu2-20020ad45cc2000000b0066d169ad41cmr11857101qvb.19.1698119543857;
-        Mon, 23 Oct 2023 20:52:23 -0700 (PDT)
+        bh=GnPZt7wTu5bHl+yZIdMyk9dSEtxPVy94lr+8pKkfEn4=;
+        b=d0tHYFt+HzbD148rCgCE16M7WhDk0LjfWipy7WT980x+z9z19Eu9jhWjrxzsZrmcOa
+         FwoezxtAk4PetS84nax1w/7ZDMxaVnQvrv28grG+tjIMa3vC1VL3E8ULKHO0QmOCZGxN
+         PgzU3Oq8MF0y1JyIfO8nbboLe1iljZw7JJmGj6dKfZHDhWEI8it1fTq+53BAnxV+7Orp
+         cBEy+CoLDVTeHN+dmHfLeHgN9C/PqjLqTEVOopMH3UB6rgn5nc2hG9ZtD5B8xRwRCL6o
+         KVfca/l1QgHkRGvdDdfurFHqE3+Xy3xVb0dlzWyoJqgbCWEB3Y8yelXEvAA1hzVRcAZl
+         pg8w==
+X-Gm-Message-State: AOJu0YyYR4jOeOjfkc4VrwzIvWFyuaKb711BoZnGYMbrpxXfx7MHQBPe
+        QAUOgWjwpHjSS6+xBuErdXxh
+X-Google-Smtp-Source: AGHT+IFvSV+EXgEeBKXX2Mm2c4Pu+xlgfjLQsVDGRnKVVxJUbzV3yBw9uUXEzF2i2rsqjzOaeFEfJQ==
+X-Received: by 2002:a05:620a:4049:b0:778:9232:a564 with SMTP id i9-20020a05620a404900b007789232a564mr13553158qko.47.1698119546060;
+        Mon, 23 Oct 2023 20:52:26 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id i7-20020a37c207000000b0076db5b792basm3162304qkm.75.2023.10.23.20.52.23
+        by smtp.gmail.com with ESMTPSA id w12-20020ae9e50c000000b0077407e3d68asm3162408qkf.111.2023.10.23.20.52.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 20:52:23 -0700 (PDT)
-Date:   Mon, 23 Oct 2023 23:52:22 -0400
-Message-ID: <aa226bdcba26d74304f6c10c290db840.paul@paul-moore.com>
+        Mon, 23 Oct 2023 20:52:25 -0700 (PDT)
+Date:   Mon, 23 Oct 2023 23:52:25 -0400
+Message-ID: <c53599e9d278fc55be30e3bac9411328.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
 To:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
         zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
@@ -63,184 +63,141 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
         Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH RFC v11 3/19] ipe: add evaluation loop
-References: <1696457386-3010-4-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1696457386-3010-4-git-send-email-wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v11 5/19] ipe: introduce 'boot_verified' as a trust  provider
+References: <1696457386-3010-6-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1696457386-3010-6-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> IPE must have a centralized function to evaluate incoming callers
-> against IPE's policy. This iteration of the policy for against the rules
-> for that specific caller is known as the evaluation loop.
+> IPE is designed to provide system level trust guarantees, this usually
+> implies that trust starts from bootup with a hardware root of trust,
+> which validates the bootloader. After this, the bootloader verifies the
+> kernel and the initramfs.
 > 
+> As there's no currently supported integrity method for initramfs, and
+> it's typically already verified by the bootloader, introduce a property
+> that causes the first superblock to have an execution to be "pinned",
+> which is typically initramfs.
+> 
+> When the "pinned" device is unmounted, it will be "unpinned" and
+> `boot_verified` property will always evaluate to false afterward.
+> 
+> We use a pointer with a spin_lock to "pin" the device instead of rcu
+> because rcu synchronization may sleep, which is not allowed when
+> unmounting a device.
+>
 > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > ---
 > v2:
-> + Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
+>   +No Changes
 > 
 > v3:
-> + Move ipe_load_properties to patch 04.
-> + Remove useless 0-initializations Prefix extern variables with ipe_
-> + Remove kernel module parameters, as these are exposed through sysctls.
-> + Add more prose to the IPE base config option help text.
-> + Use GFP_KERNEL for audit_log_start.
-> + Remove unnecessary caching system.
-> + Remove comments from headers
-> + Use rcu_access_pointer for rcu-pointer null check
-> + Remove usage of reqprot; use prot only.
-> +Move policy load and activation audit event to 03/12
+>   + Remove useless caching system
+>   + Move ipe_load_properties to this match
+>   + Minor changes from checkpatch --strict warnings
 > 
 > v4:
-> + Remove sysctls in favor of securityfs nodes
-> + Re-add kernel module parameters, as these are now exposed through securityfs.
-> + Refactor property audit loop to a separate function.
+>   + Remove comments from headers that was missed previously.
+>   + Grammatical corrections.
 > 
 > v5:
-> + fix minor grammatical errors
-> + do not group rule by curly-brace in audit record,
-> + reconstruct the exact rule.
+>   + No significant changes
 > 
 > v6:
-> + No changes
+>   + No changes
 > 
 > v7:
-> + Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
-> + Propagating changes to support the new ipe_context structure in the evaluation loop.
+>   + Reword and refactor patch 04/12 to [09/16], based on changes in the underlying system.
+>   + Add common audit function for boolean values
+>   + Use common audit function as implementation.
 > 
 > v8:
-> + Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+>   + No changes
 > 
 > v9:
-> + Remove ipe_context related code and simplify the evaluation loop.
+>   + No changes
 > 
 > v10:
-> + Split eval part and boot_verified part
+>   + Replace struct file with struct super_block
 > 
 > v11:
-> + Fix code style issues
+>   + Fix code style issues
 > ---
->  security/ipe/Makefile |  1 +
->  security/ipe/eval.c   | 96 +++++++++++++++++++++++++++++++++++++++++++
->  security/ipe/eval.h   | 24 +++++++++++
->  3 files changed, 121 insertions(+)
->  create mode 100644 security/ipe/eval.c
->  create mode 100644 security/ipe/eval.h
-
-...
-
+>  security/ipe/eval.c          | 72 +++++++++++++++++++++++++++++++++++-
+>  security/ipe/eval.h          |  2 +
+>  security/ipe/hooks.c         | 12 ++++++
+>  security/ipe/hooks.h         |  2 +
+>  security/ipe/ipe.c           |  1 +
+>  security/ipe/policy.h        |  2 +
+>  security/ipe/policy_parser.c | 35 +++++++++++++++++-
+>  7 files changed, 124 insertions(+), 2 deletions(-)
+> 
 > diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-> new file mode 100644
-> index 000000000000..5533c359bbeb
-> --- /dev/null
+> index 8a8bcc5c7d7f..bdac4abc0ddb 100644
+> --- a/security/ipe/eval.c
 > +++ b/security/ipe/eval.c
-> @@ -0,0 +1,96 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) Microsoft Corporation. All rights reserved.
-> + */
-> +
-> +#include <linux/fs.h>
-> +#include <linux/types.h>
-> +#include <linux/slab.h>
-> +#include <linux/file.h>
-> +#include <linux/sched.h>
-> +#include <linux/rcupdate.h>
-> +
-> +#include "ipe.h"
-> +#include "eval.h"
-> +#include "policy.h"
-> +
-> +struct ipe_policy __rcu *ipe_active_policy;
+> @@ -9,6 +9,7 @@
+>  #include <linux/file.h>
+>  #include <linux/sched.h>
+>  #include <linux/rcupdate.h>
+> +#include <linux/spinlock.h>
+>  
+>  #include "ipe.h"
+>  #include "eval.h"
+> @@ -16,6 +17,44 @@
+>  
+>  struct ipe_policy __rcu *ipe_active_policy;
+>  
+> +static const struct super_block *pinned_sb;
+> +static DEFINE_SPINLOCK(pin_lock);
+> +#define FILE_SUPERBLOCK(f) ((f)->f_path.mnt->mnt_sb)
 > +
 > +/**
-> + * evaluate_property - Analyze @ctx against a property.
-> + * @ctx: Supplies a pointer to the context to be evaluated.
-> + * @p: Supplies a pointer to the property to be evaluated.
-> + *
-> + * Return:
-> + * * true	- The current @ctx match the @p
-> + * * false	- The current @ctx doesn't match the @p
+> + * pin_sb - Pin the underlying superblock of @f, marking it as trusted.
+> + * @sb: Supplies a super_block structure to be pinned.
 > + */
-> +static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
-> +			      struct ipe_prop *p)
+> +static void pin_sb(const struct super_block *sb)
 > +{
-> +	return false;
+> +	if (!sb)
+> +		return;
+> +	spin_lock(&pin_lock);
+> +	if (!pinned_sb)
+> +		pinned_sb = sb;
+> +	spin_unlock(&pin_lock);
 > +}
 > +
 > +/**
-> + * ipe_evaluate_event - Analyze @ctx against the current active policy.
-> + * @ctx: Supplies a pointer to the context to be evaluated.
-> + *
-> + * This is the loop where all policy evaluation happens against IPE policy.
+> + * from_pinned - Determine whether @sb is the pinned super_block.
+> + * @sb: Supplies a super_block to check against the pinned super_block.
 > + *
 > + * Return:
-> + * * 0		- OK
-> + * * -EACCES	- @ctx did not pass evaluation.
-> + * * !0		- Error
+> + * * true	- @sb is the pinned super_block
+> + * * false	- @sb is not the pinned super_block
 > + */
-> +int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+> +static bool from_pinned(const struct super_block *sb)
 > +{
-> +	bool match = false;
-> +	enum ipe_action_type action;
-> +	struct ipe_policy *pol = NULL;
-> +	const struct ipe_rule *rule = NULL;
-> +	const struct ipe_op_table *rules = NULL;
-> +	struct ipe_prop *prop = NULL;
+> +	bool rv;
 > +
-> +	rcu_read_lock();
-> +
-> +	pol = rcu_dereference(ipe_active_policy);
-> +	if (!pol) {
-> +		rcu_read_unlock();
-> +		return 0;
-> +	}
-> +
-> +	if (ctx->op == IPE_OP_INVALID) {
-> +		rcu_read_unlock();
-> +		if (pol->parsed->global_default_action == IPE_ACTION_DENY)
-> +			return -EACCES;
+> +	if (!sb)
+> +		return false;
+> +	spin_lock(&pin_lock);
+> +	rv = !IS_ERR_OR_NULL(pinned_sb) && pinned_sb == sb;
+> +	spin_unlock(&pin_lock);
 
-Assuming that the RCU lock protects @pol, shouldn't it be held until
-after the global_default_action comparison?
+It's okay for an initial version, but I still think you need to get
+away from this spinlock in from_pinned() as quickly as possible.
+Maybe I'm wrong, but this looks like a major source of lock contention.
 
-> +		return 0;
-> +	}
-> +
-> +	rules = &pol->parsed->rules[ctx->op];
-> +
-> +	list_for_each_entry(rule, &rules->rules, next) {
-> +		match = true;
-> +
-> +		list_for_each_entry(prop, &rule->props, next) {
-> +			match = match && evaluate_property(ctx, prop);
+I understand the issue around RCU and the potential for matching on
+a reused buffer/address, but if you modified IPE to have its own LSM
+security blob in super_block::security you could mark the superblock
+when it was mounted and do a lockless lookup here in from_pinned().
 
-The @match variable will always be true on the right side above, or am
-I missing something?
-
-> +			if (!match)
-> +				break;
-> +		}
-> +
-> +		if (match)
-> +			break;
-> +	}
-> +
-> +	if (match)
-> +		action = rule->action;
-> +	else if (rules->default_action != IPE_ACTION_INVALID)
-> +		action = rules->default_action;
-> +	else
-> +		action = pol->parsed->global_default_action;
-> +
-> +	rcu_read_unlock();
-> +	if (action == IPE_ACTION_DENY)
-> +		return -EACCES;
-> +
-> +	return 0;
+> +	return rv;
 > +}
 
 --
