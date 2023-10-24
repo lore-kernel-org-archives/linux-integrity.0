@@ -2,55 +2,55 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21125C25B72
-	for <linux-integrity@archiver.kernel.org>; Tue, 24 Oct 2023 03:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3329AC25B70
+	for <linux-integrity@archiver.kernel.org>; Tue, 24 Oct 2023 03:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232277AbjJXDwt (ORCPT
+        id S232315AbjJXDwr (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Mon, 23 Oct 2023 23:52:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232289AbjJXDwr (ORCPT
-        <rfc822;linux-integrity@vger.kernel.org>);
         Mon, 23 Oct 2023 23:52:47 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C4E10EA
-        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:31 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id d75a77b69052e-41cd8bd5727so22426101cf.3
-        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:31 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51634 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232156AbjJXDwa (ORCPT
+        <rfc822;linux-integrity@vger.kernel.org>);
+        Mon, 23 Oct 2023 23:52:30 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11B6310C2
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:26 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id 6a1803df08f44-66d36b2a247so25567816d6.1
+        for <linux-integrity@vger.kernel.org>; Mon, 23 Oct 2023 20:52:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1698119550; x=1698724350; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1698119545; x=1698724345; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=HLvkudqanD7ho/JohV3yYMvdl0m/YZEqjpT0bM0Y7Gw=;
-        b=XNc3KcIb+IR8QS+MHo1fOpYYF218BMMpw9ZcQas/Zpj/xANT2PzcX4M5DsFY6GkHqo
-         GerPdig2n7O8sfAn0qDHvpz7jzGrLAenJNm2fMLtJgW6GHMP1BM/mocMG5qmzrI00V8z
-         OD2X/6lxilvyC0tlj2dWBsJrLgBQnunzBka62gH08EiefGgRKntxbfvMO3yzbVXTldlr
-         QPnp2txrzw92B0Cicpf2FTbrf7sRyc3NGEdJdeTq2R4bArrNpYRBleLaA/LChZocuWuk
-         pjqLpKlaAh+qrOCmUZL5tI60SseyZxjXGmoEe6jGKxvMeejw6mSyHUDZQTDbWUQwK6Hr
-         j0ZQ==
+        bh=pxmiAw9v0MVA3JaImbhJkd/ZdwTT2GQ+ukfNRy8bQak=;
+        b=F3/vT25hmHA76WeDtuGfbPgSaAHSq/UEQQQWZOr1F7Z3nly0BylwsIcgJVh1r9wUEz
+         CNdNa3twMJZ64Aow2/1mGEsTbfpuQaGnWpoPjUJJsbU+Op9n4EkXQgfZcj4q9uPNzE5X
+         URUmcC113w1MHpjnIAwcfW5ZV6W0LdAT+C35BJzg6cFVhr8ifvciiPJruJDvmMM0NNvU
+         QTXgaVCcyXy/qODEAQH/EbV9oxVOyhh1oYm+bFAxIgbvIK3Ub6Nkz8RXmWydrIzbw3G+
+         LoRfb/6MTk3xtttBwtBLSHUapQizVCwWqQi4gD+U31h1TTua0ZnSeDnl/P7ggxOfpDmM
+         6itg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698119550; x=1698724350;
+        d=1e100.net; s=20230601; t=1698119545; x=1698724345;
         h=in-reply-to:references:subject:cc:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLvkudqanD7ho/JohV3yYMvdl0m/YZEqjpT0bM0Y7Gw=;
-        b=m9IjlvsXBY5r1+BeCd6Dmds6AKIzhdVxG2uzLA+ZjENqi/3zZ5tfwmyvjLwbeaF0yO
-         Te11jOZzPWBr7kLdznQoKWIJ0aWRp4zNXATH+DI+4mXq257uW9++GD2ahqe5lVWs6GgL
-         6H5qt6lfi+wVb+wpTWHsBcHI39Clqw9dEA2gon/9qpaHnuJQCU7KuFn6X9z/dmtsKAWX
-         z5h4mvU+21kLQlS5ozbLHdV7GQXz+0SPL2+sVRs76zL+kV4fyUph0lZCxaCBlEJS1O/j
-         juVCsJBl+PLlmQjEUqHhfYE9LdW5oZigKqK3ovDgg8RQj3DPPrdZ2mCx2wSyZHN5bXSw
-         ie6g==
-X-Gm-Message-State: AOJu0Yyy2KVHkAYuSc3fdb0Z0ksmZUMI7oCoZigLm39vuT57sg0xuxOl
-        D55G9cY8IhmOiHrnAqugDmGc
-X-Google-Smtp-Source: AGHT+IHxiDP0oQS0IHZl9PGSzz8xG4YIOPId7UdDJm7uyxgqMm7h4born+PADWw4P1qOvg39+RCjvw==
-X-Received: by 2002:ac8:5c08:0:b0:41b:ff51:4e72 with SMTP id i8-20020ac85c08000000b0041bff514e72mr11390786qti.48.1698119550281;
-        Mon, 23 Oct 2023 20:52:30 -0700 (PDT)
+        bh=pxmiAw9v0MVA3JaImbhJkd/ZdwTT2GQ+ukfNRy8bQak=;
+        b=HjJoNlmz9LFQTez58l6BEWeSzgm0eySLel/AS28It+bweq3zlUZls55uUJZA08Exyj
+         DdK8DyvcakFA5CyiPfTUtiStwyU8njoDCY44D0t4+MU0jy46y1/l3nKuJzgqty0Gs2qB
+         Wkgwq4GhsVdu/f30WrZIKJE/YZkv5Ivv7BM281VsmT+f60ArlUW2ttAD46Ad6U59x5fo
+         ZFAPji83H36JA6FCptpqVApugDaTXbvOdf0+OLfLSOuRzoQAECdqfLHPqZSYQZm3Talr
+         jxoZM5uuaJluU2cW750GcNpliWIqs4XLUy8qDvEdXnDPbhcb5g0+baM1jspBeaObTwTo
+         IjSA==
+X-Gm-Message-State: AOJu0YwhzZO++LGbY/t+qR/ZILQWN6eeEKT2PsEtWpymdwW434gtOecK
+        QPYC+SqQhnuLbMQeGPEIAMoD
+X-Google-Smtp-Source: AGHT+IGtwY2oz/wgwv3J5Ra2yN8YlTA/mtD64ScMKcClxTGhlmWa8YZM7v6uqs3IwKjvRFLtsuevkA==
+X-Received: by 2002:ad4:4ee1:0:b0:656:4a21:2c5a with SMTP id dv1-20020ad44ee1000000b006564a212c5amr15142920qvb.9.1698119545121;
+        Mon, 23 Oct 2023 20:52:25 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id kr25-20020ac861d9000000b004181c32dcc3sm3179140qtb.16.2023.10.23.20.52.29
+        by smtp.gmail.com with ESMTPSA id ep5-20020a05621418e500b0065afedf3aabsm3342527qvb.48.2023.10.23.20.52.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 20:52:29 -0700 (PDT)
-Date:   Mon, 23 Oct 2023 23:52:29 -0400
-Message-ID: <85311850a862fe6ccb946634429b890a.paul@paul-moore.com>
+        Mon, 23 Oct 2023 20:52:24 -0700 (PDT)
+Date:   Mon, 23 Oct 2023 23:52:24 -0400
+Message-ID: <46922873bd020f8cd443b7fca59ef802.paul@paul-moore.com>
 From:   Paul Moore <paul@paul-moore.com>
 To:     Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net,
         zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
@@ -61,51 +61,204 @@ Cc:     linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
         dm-devel@redhat.com, audit@vger.kernel.org,
         roberto.sassu@huawei.com, linux-kernel@vger.kernel.org,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
         Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH RFC v11 11/19] dm verity: set DM_TARGET_SINGLETON feature  flag
-References: <1696457386-3010-12-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1696457386-3010-12-git-send-email-wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v11 4/19] ipe: add LSM hooks on execution and kernel  read
+References: <1696457386-3010-5-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1696457386-3010-5-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
 On Oct  4, 2023 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> The device-mapper has a flag to mark targets as singleton, which is a
-> required flag for immutable targets. Without this flag, multiple
-> dm-verity targets can be added to a mapped device, which has no
-> practical use cases and will let dm_table_get_immutable_target return
-> NULL. This patch adds the missing flag, restricting only one
-> dm-verity target per mapped device.
+> IPE's initial goal is to control both execution and the loading of
+> kernel modules based on the system's definition of trust. It
+> accomplishes this by plugging into the security hooks for
+> bprm_check_security, file_mprotect, mmap_file, kernel_load_data,
+> and kernel_read_data.
 > 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 > ---
-> v1-v10:
->   + Not present
+> v2:
+>   + Split evaluation loop, access control hooks,
+>     and evaluation loop from policy parser and userspace
+>     interface to pass mailing list character limit
+> 
+> v3:
+>   + Move ipe_load_properties to patch 04.
+>   + Remove useless 0-initializations
+>   + Prefix extern variables with ipe_
+>   + Remove kernel module parameters, as these are
+>     exposed through sysctls.
+>   + Add more prose to the IPE base config option
+>     help text.
+>   + Use GFP_KERNEL for audit_log_start.
+>   + Remove unnecessary caching system.
+>   + Remove comments from headers
+>   + Use rcu_access_pointer for rcu-pointer null check
+>   + Remove usage of reqprot; use prot only.
+>   + Move policy load and activation audit event to 03/12
+> 
+> v4:
+>   + Remove sysctls in favor of securityfs nodes
+>   + Re-add kernel module parameters, as these are now
+>     exposed through securityfs.
+>   + Refactor property audit loop to a separate function.
+> 
+> v5:
+>   + fix minor grammatical errors
+>   + do not group rule by curly-brace in audit record,
+>     reconstruct the exact rule.
+> 
+> v6:
+>   + No changes
+> 
+> v7:
+>   + Further split lsm creation, the audit system, the evaluation loop
+>     and access control hooks into separate commits.
+> 
+> v8:
+>   + Rename hook functions to follow the lsmname_hook_name convention
+>   + Remove ipe_hook enumeration, can be derived from correlation with
+>     syscall audit record.
+> 
+> v9:
+>   + Minor changes for adapting to the new parser
+> 
+> v10:
+>   + Remove @reqprot part
+> 
+> v11:
+>   + Fix code style issues
 > ---
->  drivers/md/dm-verity-target.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/ipe/Makefile |   1 +
+>  security/ipe/eval.c   |  14 ++++
+>  security/ipe/eval.h   |   3 +
+>  security/ipe/hooks.c  | 183 ++++++++++++++++++++++++++++++++++++++++++
+>  security/ipe/hooks.h  |  25 ++++++
+>  security/ipe/ipe.c    |   6 ++
+>  6 files changed, 232 insertions(+)
+>  create mode 100644 security/ipe/hooks.c
+>  create mode 100644 security/ipe/hooks.h
 
-This seems reasonable to me and matches with other users of
-DM_TARGET_IMMUTABLE.
+...
 
-Alasdair, Mike, can we get an ACK on this?
+> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
+> new file mode 100644
+> index 000000000000..6164a9b53361
+> --- /dev/null
+> +++ b/security/ipe/hooks.c
+> @@ -0,0 +1,183 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) Microsoft Corporation. All rights reserved.
+> + */
 
-> diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
-> index 26adcfea0302..80673b66c194 100644
-> --- a/drivers/md/dm-verity-target.c
-> +++ b/drivers/md/dm-verity-target.c
-> @@ -1503,7 +1503,7 @@ int dm_verity_get_root_digest(struct dm_target *ti, u8 **root_digest, unsigned i
->  
->  static struct target_type verity_target = {
->  	.name		= "verity",
-> -	.features	= DM_TARGET_IMMUTABLE,
-> +	.features	= DM_TARGET_SINGLETON | DM_TARGET_IMMUTABLE,
->  	.version	= {1, 9, 0},
->  	.module		= THIS_MODULE,
->  	.ctr		= verity_ctr,
-> -- 
-> 2.25.1
+...
+
+> +/**
+> + * ipe_kernel_read_file - ipe security hook function for kernel read.
+> + * @file: Supplies a pointer to the file structure being read in from disk.
+> + * @id: Supplies the enumeration identifying the purpose of the read.
+> + * @contents: Unused.
+> + *
+> + * This LSM hook is called when a file is being read in from disk from
+> + * the kernel.
+> + *
+> + * Return:
+> + * 0 - OK
+> + * !0 - Error
+> + */
+> +int ipe_kernel_read_file(struct file *file, enum kernel_read_file_id id,
+> +			 bool contents)
+> +{
+> +	enum ipe_op_type op;
+> +	struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
+> +
+> +	switch (id) {
+> +	case READING_FIRMWARE:
+> +		op = IPE_OP_FIRMWARE;
+> +		break;
+> +	case READING_MODULE:
+> +		op = IPE_OP_KERNEL_MODULE;
+> +		break;
+> +	case READING_KEXEC_INITRAMFS:
+> +		op = IPE_OP_KEXEC_INITRAMFS;
+> +		break;
+> +	case READING_KEXEC_IMAGE:
+> +		op = IPE_OP_KEXEC_IMAGE;
+> +		break;
+> +	case READING_POLICY:
+> +		op = IPE_OP_IMA_POLICY;
+> +		break;
+> +	case READING_X509_CERTIFICATE:
+> +		op = IPE_OP_IMA_X509;
+> +		break;
+> +	default:
+> +		op = IPE_OP_INVALID;
+> +		WARN(op == IPE_OP_INVALID, "no rule setup for enum %d", id);
+
+I'm not sure you need to test @op above since you set @op on the line
+above, just use true/1 to simplify things.  It also seems like it
+might be helpful to provice some context for the enum above in the
+WARN() message.  For example:
+
+  WARN(1, "no rule setup for kernel_read_file %d", id);
+
+> +	}
+> +
+> +	build_eval_ctx(&ctx, file, op);
+> +	return ipe_evaluate_event(&ctx);
+> +}
+> +
+> +/**
+> + * ipe_kernel_load_data - ipe security hook function for kernel load data.
+> + * @id: Supplies the enumeration identifying the purpose of the read.
+> + * @contents: Unused.
+> + *
+> + * This LSM hook is called when a buffer is being read in from disk.
+> + *
+> + * Return:
+> + * * 0	- OK
+> + * * !0	- Error
+> + */
+> +int ipe_kernel_load_data(enum kernel_load_data_id id, bool contents)
+> +{
+> +	enum ipe_op_type op;
+> +	struct ipe_eval_ctx ctx = IPE_EVAL_CTX_INIT;
+> +
+> +	switch (id) {
+> +	case LOADING_FIRMWARE:
+> +		op = IPE_OP_FIRMWARE;
+> +		break;
+> +	case LOADING_MODULE:
+> +		op = IPE_OP_KERNEL_MODULE;
+> +		break;
+> +	case LOADING_KEXEC_INITRAMFS:
+> +		op = IPE_OP_KEXEC_INITRAMFS;
+> +		break;
+> +	case LOADING_KEXEC_IMAGE:
+> +		op = IPE_OP_KEXEC_IMAGE;
+> +		break;
+> +	case LOADING_POLICY:
+> +		op = IPE_OP_IMA_POLICY;
+> +		break;
+> +	case LOADING_X509_CERTIFICATE:
+> +		op = IPE_OP_IMA_X509;
+> +		break;
+> +	default:
+> +		op = IPE_OP_INVALID;
+> +		WARN(op == IPE_OP_INVALID, "no rule setup for enum %d", id);
+
+See my comments in ipe_kernel_read_file(), they also apply here.
+
+> +	}
+> +
+> +	build_eval_ctx(&ctx, NULL, op);
+> +	return ipe_evaluate_event(&ctx);
+> +}
 
 --
 paul-moore.com
