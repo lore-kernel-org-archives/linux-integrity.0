@@ -2,99 +2,122 @@ Return-Path: <linux-integrity-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E82C25B6E
-	for <linux-integrity@archiver.kernel.org>; Fri, 27 Oct 2023 12:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78910C25B48
+	for <linux-integrity@archiver.kernel.org>; Fri, 27 Oct 2023 19:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbjJ0MZH (ORCPT
+        id S231302AbjJ0Tv0 (ORCPT
         <rfc822;linux-integrity@archiver.kernel.org>);
-        Fri, 27 Oct 2023 08:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60428 "EHLO
+        Fri, 27 Oct 2023 15:51:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231345AbjJ0MZG (ORCPT
+        with ESMTP id S230451AbjJ0TvZ (ORCPT
         <rfc822;linux-integrity@vger.kernel.org>);
-        Fri, 27 Oct 2023 08:25:06 -0400
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 368DBFA;
-        Fri, 27 Oct 2023 05:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1698409502;
-        bh=KmREfUcy5jm4Zpdo+lkmU9dwV5njzrSKpDztzvbFBK8=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=ejA+/H7DnpQ4MKb6lzAne4asm44jjYQTs3KW/SF+iHxv04IY23qZ9CxfjiBqzf2VO
-         qH1Nkeu9eqpk5+eJBKF6n2p9vFxJycrnET9hb/7Jh3MYGyGwqviWZ2X6wNALYG8XJP
-         q3adPoCzz7wENG/uP4RO5Q/mhVqT6V3/ymyXz9ck=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id ABC921287400;
-        Fri, 27 Oct 2023 08:25:02 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id b8Oe44fgnsbz; Fri, 27 Oct 2023 08:25:02 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1698409502;
-        bh=KmREfUcy5jm4Zpdo+lkmU9dwV5njzrSKpDztzvbFBK8=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=ejA+/H7DnpQ4MKb6lzAne4asm44jjYQTs3KW/SF+iHxv04IY23qZ9CxfjiBqzf2VO
-         qH1Nkeu9eqpk5+eJBKF6n2p9vFxJycrnET9hb/7Jh3MYGyGwqviWZ2X6wNALYG8XJP
-         q3adPoCzz7wENG/uP4RO5Q/mhVqT6V3/ymyXz9ck=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5575A12873FC;
-        Fri, 27 Oct 2023 08:25:01 -0400 (EDT)
-Message-ID: <6c733fad84445bd29df230ecb5310535bfef2254.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 5/6] tpm: Add tpm_buf_read_{u8,u16,u32}
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-integrity@vger.kernel.org
-Cc:     keyrings@vger.kernel.org,
-        William Roberts <bill.c.roberts@gmail.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        Julien Gomes <julien@arista.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Fri, 27 Oct 2023 08:24:59 -0400
-In-Reply-To: <20231024011531.442587-6-jarkko@kernel.org>
-References: <20231024011531.442587-1-jarkko@kernel.org>
-         <20231024011531.442587-6-jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 27 Oct 2023 15:51:25 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 432B5AB
+        for <linux-integrity@vger.kernel.org>; Fri, 27 Oct 2023 12:51:23 -0700 (PDT)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39RJkafs016439;
+        Fri, 27 Oct 2023 19:51:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=kUeMCe/VwUkImubdxVU2hrMfBvkt8rGM3VBqBoPvX9g=;
+ b=EUTZNucW9fOpV6StSQ9DxmZYNQtcOOpFwkk1jwSvrOYTBdeWXyKNN/5L4r8ZB64Zt9A7
+ 9MFrBQUmkCdFfU7EoZ7jRlWAzXwhJZIMalzIZFrzJGIbkWpgjSQDJ5lRYS80D8eo6Qcu
+ qIuCnwxvnU38PKY7Aosg2KVDixz6SIWbjbtP/GBg3WzFvzhQQFm7f+eW5yYn6WvWLMTm
+ aPhcdQfO94hndi+fMamsbnxwj5uxJNLAjeG81l2KquTW35zbymkHjigbZe3RTKNQPBRg
+ PiTtKa2ReY3pt4lL+HKwO8YmmtqFKJXPGxFgT/XS9GV6gS3eKzQKUa9Fx4fUQlwdcab2 WA== 
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3u0j2bjnpj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Oct 2023 19:51:04 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+        by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 39RIUXJ7011409;
+        Fri, 27 Oct 2023 19:51:02 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+        by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3tywqr7dbh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Oct 2023 19:51:02 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+        by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 39RJp12L14615062
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Oct 2023 19:51:02 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A416458053;
+        Fri, 27 Oct 2023 19:51:01 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C863458061;
+        Fri, 27 Oct 2023 19:51:00 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.171.13])
+        by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Oct 2023 19:51:00 +0000 (GMT)
+Message-ID: <348e6e3ebd1c6ee1c85cd12f15591f32bb699fdc.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 0/7] ima: kexec: measure events between kexec load
+ and execute
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        ebiederm@xmission.com, noodles@fb.com, bauermann@kolabnow.com,
+        kexec@lists.infradead.org, linux-integrity@vger.kernel.org
+Cc:     code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
+Date:   Fri, 27 Oct 2023 15:51:00 -0400
+In-Reply-To: <8f87e7e4fe5c5a24cdc0d3e2267eeaf00825d1bb.camel@linux.ibm.com>
+References: <20231005182602.634615-1-tusharsu@linux.microsoft.com>
+         <8f87e7e4fe5c5a24cdc0d3e2267eeaf00825d1bb.camel@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: BwLqtpmEhvUrN5JtmVt2cVMAOKUHzHIt
+X-Proofpoint-ORIG-GUID: BwLqtpmEhvUrN5JtmVt2cVMAOKUHzHIt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-27_19,2023-10-27_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ suspectscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0
+ bulkscore=0 impostorscore=0 phishscore=0 clxscore=1015 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2310240000 definitions=main-2310270172
 Precedence: bulk
 List-ID: <linux-integrity.vger.kernel.org>
 X-Mailing-List: linux-integrity@vger.kernel.org
 
-On Tue, 2023-10-24 at 04:15 +0300, Jarkko Sakkinen wrote:
-> +++ b/drivers/char/tpm/tpm-buf.c
-> @@ -124,3 +124,72 @@ void tpm_buf_append_u32(struct tpm_buf *buf,
-> const u32 value)
->         tpm_buf_append(buf, (u8 *)&value2, 4);
->  }
->  EXPORT_SYMBOL_GPL(tpm_buf_append_u32);
-> +
-> +/**
-> + * tpm_buf_read() - Read from a TPM buffer
-> + * @buf:       &tpm_buf instance
-> + * @offset:    offset within the buffer
-> + * @count:     the number of bytes to read
-> + * @output:    the output buffer
-> + */
-> +static void tpm_buf_read(const struct tpm_buf *buf, off_t *offset,
-> size_t count, void *output)
-> +{
-> +       if (*(offset + count) >= buf->length) {
+On Fri, 2023-10-27 at 11:18 -0400, Mimi Zohar wrote:
+> On Thu, 2023-10-05 at 11:25 -0700, Tushar Sugandhi wrote:
+> > The current Kernel behavior is IMA measurements snapshot is taken at
+> > kexec 'load' and not at kexec 'execute'.  IMA log is then carried
+> > over to the new Kernel after kexec 'execute'.
+> > 
+> > Some systems can be configured to call kexec 'load' first, and followed
+> > by kexec 'execute' after some time.  (as opposed to calling 'load' and
+> > 'execute' in one single kexec command).
+> 
+> Additional measurements may be introduced by the kexec load itself. 
+> Saving the measurement list as close as possible to the reboot is
+> beneficial, whether or not the kexec load and kexec execute are
+> executed separately.
+> 
+> > In such scenario, if new IMA
+> > measurements are added between kexec 'load' and kexec 'execute', the
+> > TPM PCRs are extended with the IMA events between 'load' and 'execute'.
+> > But those IMA events are not carried over to the new Kernel after kexec
+> > soft reboot.  This results in mismatch between TPM PCR quotes, and the
+> > actual IMA measurements list, after the system boots into the new kexec
+> > image.  This mismatch results in the remote attestation failing for that
+> > system.
+> > 
+> > This patch series proposes a solution to solve this problem by allocating
+> > the necessary buffer at kexec 'load' time, and populating the buffer
+> > with the IMA measurements at kexec 'execute' time. 
+> 
+> How about beginning the paragraph with "To solve this problem allocate
+> ... and populate ..."
 
-I don't think you mean that; it's dereferencing a random location in
-the stack, which is why I see this check trip randomly when testing.  I
-think you mean
+Does this patch set take into account kexec_calculate_store_digests(),
+which is called from kexec_load, and verify_sha256_digest()?
+-- 
+thanks,
 
-if (*offset + count >= buf->length) {
-
-James
+Mimi
 
