@@ -1,49 +1,49 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QNxLd/OQ"
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 500F61A7
-	for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2023 20:33:53 -0800 (PST)
-Received: by mail-qt1-x836.google.com with SMTP id d75a77b69052e-41ccd38eaa5so3533101cf.0
-        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2023 20:33:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Be2nyhJV"
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 497F81BF
+	for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2023 20:33:50 -0800 (PST)
+Received: by mail-qk1-x729.google.com with SMTP id af79cd13be357-77784edc2edso20792485a.1
+        for <linux-integrity@vger.kernel.org>; Wed, 15 Nov 2023 20:33:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1700109232; x=1700714032; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1700109228; x=1700714028; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:message-id:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=pTk7a67S1QtD8sba7dPNc/tDHo+LguzreZvYAY1S4fY=;
-        b=QNxLd/OQnTNMmenq2+mNq4v5DLEMf5UVSLWa4Rr0TGvf7arRBJRWB8tkqk1zXmO6jS
-         G6NBVvrLQNtS5Wg/KyqNcLQBGZvNNzwaIOLKjZTIrnlVwo4btxdIv8Xm7ZXO0EqKAJX3
-         qZ8Kq5FAoV+Y3Ccnp3Cl9l4dIV2jfSHghxFeJo9XBlmBFQ+/AtTJ4kT6a1MOMsVKJbw3
-         xBhJnJZL4D9VQl+w9Dn/Up7hfA7UGEm4Z2LtMQleLvCb0ncc2rfz47vOIBGtcQhdB1zW
-         8ae9RaG3KxtmP2T/k4mJsi8uIKnNHpPh4s3dFQ7EvPs7SR1gOvldrQ/2Q2BMrJ7Nwr1G
-         Kp5w==
+        bh=bndky/isFZdPv4y+9HMU+8QO0OsZEFaDO/mxDCye0C0=;
+        b=Be2nyhJV8JByTCu9BsElBdGHDrrhMuIfyJI/dW5Ptt4EUKql5kjRdkX35r7Ph+ocBB
+         /LY1ZvqLo1a6v3v/Mji8zsoeKxpSQeJaWYTwmZTLARnwOL+UqNKskMYW81yULkInncEW
+         y/PVI9i7A2a/GmitESvrxjUERfNuMYi4JjrntU7AwykluwNteWHkgFBBJsCpSOCPMjbE
+         Wy9K70Nl1QZaIPNNbUGKu4zdspq8PzlFWKrViqaq3xAsJ7X5SePmlVcXHUWZl176RH3U
+         JEEv8/hCNT7+uizusuOj0/z6OHBcVfKgfMlYBpnKTxfuQO8eXa/2j+IP9b+ViTfn8PHX
+         NsdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700109232; x=1700714032;
+        d=1e100.net; s=20230601; t=1700109228; x=1700714028;
         h=in-reply-to:references:subject:cc:to:from:message-id:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pTk7a67S1QtD8sba7dPNc/tDHo+LguzreZvYAY1S4fY=;
-        b=a4VHPfEj6VJxK1kAk1LPggLq32+JJydEyfjZkpIl3WtzXioD48lqXXaXPXJpV6qEra
-         kEHqeUCjLeiED5ddqhF3+UA3K1QtsYur0zp9uhsFDQfk8G2ioj2sqpjDrsxfaoO5MWMr
-         SSSXJ+GY4vdQCix366Ugy1znboYWadvAqBct05NtdIVd+TuEVIKaJ0lF8qybMsb5pp40
-         BSf9eKZ5KX3uBowf2I6rjLA2PzaT/l94dmvYvnIdpAOWy4c59nKsvs9xFanGPGRL+Fw1
-         155FIvlGtr2kpbzmVl5NRK+ZIm/BTvq83LjPGTa0C5mQFSq42W4UOoyiudqvIKpCxOtR
-         w/8w==
-X-Gm-Message-State: AOJu0YyLEmnHxr4mWN3HE64wcvSrTjj6nWORFWCkVmhib2479bc8ywYh
-	cxcunmXE5TbumQGVF6CpvXt8
-X-Google-Smtp-Source: AGHT+IE6tK6IBkeFsEiWjCzdnINS6WA30ZUhupFJIZkUjsjh41YBZxyWDozBggH4FWZCSzCDyuP/4g==
-X-Received: by 2002:ac8:5706:0:b0:41c:c27e:f8f6 with SMTP id 6-20020ac85706000000b0041cc27ef8f6mr676761qtw.23.1700109232335;
-        Wed, 15 Nov 2023 20:33:52 -0800 (PST)
+        bh=bndky/isFZdPv4y+9HMU+8QO0OsZEFaDO/mxDCye0C0=;
+        b=oyzbKZOzgvJW4uTItZHk6KeM5N8x8JPX02yTHo84APS/ec81eHU/GSGasihc12hUnq
+         kyC7w1g3b6RxL55kn8RgFNxBh2g/r4rEqRhvYisQ+gVgIe/rbEmSvFOTuYAov43BMwwK
+         m22i1dajuAjcIsuNy4GceeSUwWWjcYzv/BAyrGy/Jkfkohg+Kw0vLUjFM48E5PAgAtf+
+         g11ovr7MjOuN267lI7Z/gElX578fgy/jM/E4EqtxW9jzfzvnWeuG4Cc53TLkIpvFFYAL
+         zrog55dkjB+/yAc75e2ELoAWHLJUZ3X9c3khBuGYm9ytRakX+Hyh3h4QO/hIBvzFDVYc
+         fDqg==
+X-Gm-Message-State: AOJu0YwxSgmjjFD0Jqe41wRPoJ6uMjq8hnrlUlxu2oXvNBfQGI17v+OW
+	SMZex3ci159A8Zzfd35Vg2TV
+X-Google-Smtp-Source: AGHT+IGCdgvNrhLjs0RBnM3O7h6Ri70uA7en86HSqfGY/HAxnYl36rBdMYafIeqWPJt4yM0F6QD9XA==
+X-Received: by 2002:a05:620a:4156:b0:775:cf5f:8a57 with SMTP id k22-20020a05620a415600b00775cf5f8a57mr8673614qko.7.1700109228335;
+        Wed, 15 Nov 2023 20:33:48 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id y2-20020ac85242000000b004198f67acbesm4045202qtn.63.2023.11.15.20.33.51
+        by smtp.gmail.com with ESMTPSA id t26-20020a05620a005a00b0077263636a95sm4006757qkt.93.2023.11.15.20.33.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 20:33:51 -0800 (PST)
-Date: Wed, 15 Nov 2023 23:33:51 -0500
-Message-ID: <f529266a02533411e72d706b908924e8.paul@paul-moore.com>
+        Wed, 15 Nov 2023 20:33:47 -0800 (PST)
+Date: Wed, 15 Nov 2023 23:33:47 -0500
+Message-ID: <4f8c441e02222f063242adfbf4d733e1.paul@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, mic@digikod.net
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v5 22/23] integrity: Move integrity functions to the LSM  infrastructure
-References: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20231107134012.682009-23-roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH v5 13/23] security: Introduce file_pre_free_security hook
+References: <20231107134012.682009-14-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20231107134012.682009-14-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -52,101 +52,46 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 
 On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
 > 
-> Remove hardcoded calls to integrity functions from the LSM infrastructure
-> and, instead, register them in integrity_lsm_init() with the IMA or EVM
-> LSM ID (the first non-NULL returned by ima_get_lsm_id() and
-> evm_get_lsm_id()).
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the file_pre_free_security hook.
 > 
-> Also move the global declaration of integrity_inode_get() to
-> security/integrity/integrity.h, so that the function can be still called by
-> IMA.
+> IMA calculates at file close the new digest of the file content and writes
+> it to security.ima, so that appraisal at next file access succeeds.
+> 
+> LSMs could also take some action before the last reference of a file is
+> released.
+> 
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  include/linux/integrity.h      | 26 --------------------------
->  security/integrity/iint.c      | 30 +++++++++++++++++++++++++++++-
->  security/integrity/integrity.h |  7 +++++++
->  security/security.c            |  9 +--------
->  4 files changed, 37 insertions(+), 35 deletions(-)
-
-...
-
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 0b0ac71142e8..882fde2a2607 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -171,7 +171,7 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
->   *
->   * Free the integrity information(iint) associated with an inode.
->   */
-> -void integrity_inode_free(struct inode *inode)
-> +static void integrity_inode_free(struct inode *inode)
->  {
->  	struct integrity_iint_cache *iint;
+>  fs/file_table.c               |  1 +
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  4 ++++
+>  security/security.c           | 11 +++++++++++
+>  4 files changed, 17 insertions(+)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index de4a2915bfd4..64ed74555e64 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -385,6 +385,7 @@ static void __fput(struct file *file)
+>  	eventpoll_release(file);
+>  	locks_remove_file(file);
 >  
-> @@ -193,11 +193,39 @@ static void iint_init_once(void *foo)
->  	memset(iint, 0, sizeof(*iint));
->  }
->  
-> +static struct security_hook_list integrity_hooks[] __ro_after_init = {
-> +	LSM_HOOK_INIT(inode_free_security, integrity_inode_free),
-> +#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-> +	LSM_HOOK_INIT(kernel_module_request, integrity_kernel_module_request),
-> +#endif
-> +};
-> +
-> +/*
-> + * Perform the initialization of the 'integrity', 'ima' and 'evm' LSMs to
-> + * ensure that the management of integrity metadata is working at the time
-> + * IMA and EVM hooks are registered to the LSM infrastructure, and to keep
-> + * the original ordering of IMA and EVM functions as when they were hardcoded.
-> + */
->  static int __init integrity_lsm_init(void)
->  {
-> +	const struct lsm_id *lsmid;
-> +
->  	iint_cache =
->  	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
->  			      0, SLAB_PANIC, iint_init_once);
-> +	/*
-> +	 * Obtain either the IMA or EVM LSM ID to register integrity-specific
-> +	 * hooks under that LSM, since there is no LSM ID assigned to the
-> +	 * 'integrity' LSM.
-> +	 */
-> +	lsmid = ima_get_lsm_id();
-> +	if (!lsmid)
-> +		lsmid = evm_get_lsm_id();
-> +	/* No point in continuing, since both IMA and EVM are disabled. */
-> +	if (!lsmid)
-> +		return 0;
-> +
-> +	security_add_hooks(integrity_hooks, ARRAY_SIZE(integrity_hooks), lsmid);
+> +	security_file_pre_free(file);
 
-Ooof.  I understand, or at least I think I understand, why the above
-hack is needed, but I really don't like the idea of @integrity_hooks
-jumping between IMA and EVM depending on how the kernel is configured.
+I worry that security_file_pre_free() is a misleading name as "free"
+tends to imply memory management tasks, which isn't the main focus of
+this hook.  What do you think of security_file_release() or
+security_file_put() instead?
 
-Just to make sure I'm understanding things correctly, the "integrity"
-LSM exists to ensure the proper hook ordering between IMA/EVM, shared
-metadata management for IMA/EVM, and a little bit of a hack to solve
-some kernel module loading issues with signatures.  Is that correct?
-
-I see that patch 23/23 makes some nice improvements to the metadata
-management, moving them into LSM security blobs, but it appears that
-they are still shared, and thus the requirement is still there for
-an "integrity" LSM to manage the shared blobs.
-
-I'd like to hear everyone's honest opinion on this next question: do
-we have any hope of separating IMA and EVM so they are independent
-(ignore the ordering issues for a moment), or are we always going to
-need to have the "integrity" LSM to manage shared resources, hooks,
-etc.?
-
->  	init_ima_lsm();
->  	init_evm_lsm();
->  	return 0;
+>  	ima_file_free(file);
+>  	if (unlikely(file->f_flags & FASYNC)) {
+>  		if (file->f_op->fasync)
 
 --
 paul-moore.com
