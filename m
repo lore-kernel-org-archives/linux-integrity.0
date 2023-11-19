@@ -1,317 +1,135 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98C6DF4B
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 20:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XU8rkyAa"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BDEE128
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 08:51:18 -0800 (PST)
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJGejvE001788
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=72I2xOrg9vf1uTNNoibqCZ8b92D/DR31HNf4uRamXqA=;
- b=XU8rkyAaqIhKPJ73o0xHDZyk2jZbvD9MpwAv0w1OZrRGJfKL9Q3yfQDORr0NjewSTIww
- IKREYHO0GDH0+hI0pQQdxNAGgHWU+xfOibCDHZInnS31qOkv2ttvywSYGmEtGDjnOBGz
- HbEFQpOy0FcdJJiqVUwgdGvbh+PFl3oW6KXEFiQPNnIklvZ9F25iwAEiEpHT+2eJpepp
- hltT6MywNAUtkr6im+3Uq8H0VbHyA2gVtbZiCZbr+NLLKSuJuqak/GBz+PjS1x8BRfHA
- ZrlgiNiXSM3HnjwhgegpkPHsYFghjhzqXJOUjrMbU6wBlM8/+s2TP3naVFVof7FM5h9A RQ== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uf0ndh2bx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:17 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJEBfQO031842
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:01 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uf93kbwhn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:01 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AJGowPi9306814
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 19 Nov 2023 16:50:58 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 089DF2004B;
-	Sun, 19 Nov 2023 16:50:58 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 71E5C20040;
-	Sun, 19 Nov 2023 16:50:56 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.61.134.108])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 19 Nov 2023 16:50:56 +0000 (GMT)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Subject: [ima-evm-utils PATCH 03/12] Update library function definitions to include a "public_keys" parameter
-Date: Sun, 19 Nov 2023 11:50:34 -0500
-Message-Id: <20231119165043.46960-4-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20231119165043.46960-1-zohar@linux.ibm.com>
-References: <20231119165043.46960-1-zohar@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLb6dVde"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E53B5C433C7
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 20:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1700426149;
+	bh=ox/Zv/pSYwrQSw17XMObIuNObHBwI5V6UZwBFwUfaik=;
+	h=Date:Subject:From:To:From;
+	b=nLb6dVdegiqWVDYvMnMnASyXscucP5jD/RnVPdXzR0PWx/8QXS94Sfr5Xo7wL3LZX
+	 YJ/iyba7DKIupf2DdSaajk0JNIUk/86WkOagPg1FrUgZvFNb0ELhtprs4XyoZEIuJa
+	 7dmq32+jNmE3MmULjbDrxQWhZ7T2CJEFKvPPZ+y7I6qvVMCW/tNCoy2z2JlIMRNtab
+	 knWTkNEMl8VlzOiV5SL809y52SfH+PI9JlCDOgzkjTkQCEps8uF5/7xOiGoo7AjnuQ
+	 5iU14CQ6o4H7x3iNSG60XCoZFo1zDCSduD+38FTgPf1dAn5q3fuXU8205aO5Ndi6e9
+	 4zd7x0grN320Q==
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 0vKyW3VdzX9BaArKrp2J2m2RfffUkiky
-X-Proofpoint-ORIG-GUID: 0vKyW3VdzX9BaArKrp2J2m2RfffUkiky
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-19_15,2023-11-17_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- bulkscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0 adultscore=0
- mlxscore=0 priorityscore=1501 phishscore=0 suspectscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2311190129
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 19 Nov 2023 22:35:46 +0200
+Message-Id: <CX32RFOMJUQ0.3R4YCL9MDCB96@kernel.org>
+Subject: tpm_tis_spi_remove() triggers WARN_ON() in __flushwork (RPi3B+ and
+ SLB9670)
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.15.2
 
-Instead of relying on a global static "public_keys" variable, which is
-not concurrency-safe, update static library function definitions to
-include it as a parameter, define new library functions with it as
-a parameter, and deprecate existing functions.
+Captured from serial link with Raspberry Pi 3B+ and Infineon SLB9670 TPM2 c=
+hip, i.e.
+triggers here:
 
-Define init_public_keys2(), verify_hash2(), and ima_verify_signature2()
-functions. Update static function defintions to include "public_keys".
+static bool __flush_work(struct work_struct *work, bool from_cancel)
+{
+	struct wq_barrier barr;
 
-To avoid library incompatablity, make the existing functions -
-init_public_keys(), verify_hash(), ima_verify_signature() - wrappers
-for the new function versions.
+	if (WARN_ON(!wq_online))
+		return false;
 
-Deprecate init_public_keys(), verify_hash(), ima_verify_signature()
-functions.
+	if (WARN_ON(!work->func)) /* <-- */
+		return false;
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- src/imaevm.h    |  2 ++
- src/libimaevm.c | 94 +++++++++++++++++++++++++++++++++++++------------
- 2 files changed, 74 insertions(+), 22 deletions(-)
 
-diff --git a/src/imaevm.h b/src/imaevm.h
-index 828976e52881..146123ba5c42 100644
---- a/src/imaevm.h
-+++ b/src/imaevm.h
-@@ -249,8 +249,10 @@ uint32_t imaevm_read_keyid(const char *certfile);
- int sign_hash(const char *algo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig);
- int verify_hash(const char *file, const unsigned char *hash, int size, unsigned char *sig, int siglen);
- int ima_verify_signature(const char *file, unsigned char *sig, int siglen, unsigned char *digest, int digestlen);
-+int ima_verify_signature2(void *public_keys, const char *file, unsigned char *sig, int siglen, unsigned char *digest, int digestlen);
- void free_public_keys(void *public_keys);
- void init_public_keys(const char *keyfiles);
-+int init_public_keys2(const char *keyfiles, void **public_keys);
- int imaevm_hash_algo_from_sig(unsigned char *sig);
- const char *imaevm_hash_algo_by_id(int algo);
- int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo, const unsigned char *in_hash, unsigned char *out_hash);
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 74e9d09b1f05..bf8c99770ddc 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -372,12 +372,12 @@ struct public_key_entry {
- };
- static struct public_key_entry *g_public_keys = NULL;
- 
--static EVP_PKEY *find_keyid(uint32_t keyid)
-+static EVP_PKEY *find_keyid(void *public_keys, uint32_t keyid)
- {
--	struct public_key_entry *entry, *tail = g_public_keys;
-+	struct public_key_entry *entry, *tail = public_keys;
- 	int i = 1;
- 
--	for (entry = g_public_keys; entry != NULL; entry = entry->next) {
-+	for (entry = public_keys; entry != NULL; entry = entry->next) {
- 		if (entry->keyid == keyid)
- 			return entry->key;
- 		i++;
-@@ -394,7 +394,7 @@ static EVP_PKEY *find_keyid(uint32_t keyid)
- 	if (tail)
- 		tail->next = entry;
- 	else
--		g_public_keys = entry;
-+		public_keys = (void *) entry;
- 	log_err("key %d: %x (unknown keyid)\n", i, __be32_to_cpup(&keyid));
- 	return 0;
- }
-@@ -412,7 +412,7 @@ void free_public_keys(void *public_keys)
- 	}
- }
- 
--void init_public_keys(const char *keyfiles)
-+int init_public_keys2(const char *keyfiles, void **public_keys)
- {
- 	struct public_key_entry *entry;
- 	char *tmp_keyfiles, *keyfiles_free;
-@@ -420,6 +420,11 @@ void init_public_keys(const char *keyfiles)
- 	int err = 0;
- 	int i = 1;
- 
-+	if (!public_keys)
-+		return -EINVAL;
-+
-+	*public_keys = NULL;
-+
- 	tmp_keyfiles = strdup(keyfiles);
- 	keyfiles_free = tmp_keyfiles;
- 
-@@ -444,12 +449,24 @@ void init_public_keys(const char *keyfiles)
- 		calc_keyid_v2(&entry->keyid, entry->name, entry->key);
- 		sprintf(entry->name, "%x", __be32_to_cpup(&entry->keyid));
- 		log_info("key %d: %s %s\n", i++, entry->name, keyfile);
--		entry->next = g_public_keys;
--		g_public_keys = entry;
-+		entry->next = (struct public_key_entry *) *public_keys;
-+		*public_keys = (void *)entry;
- 	}
-+
- 	free(keyfiles_free);
- 	if (err < 0)
--		free_public_keys(g_public_keys);
-+		free_public_keys(public_keys);
-+	return err;
-+}
-+
-+/*
-+ * Global static variables are not concurrency-safe.
-+ *
-+ * Deprecate init_public_keys() usage.
-+ */
-+void init_public_keys(const char *keyfiles)
-+{
-+	init_public_keys2(keyfiles, (void **)&g_public_keys);
- }
- 
- /*
-@@ -466,7 +483,8 @@ void init_public_keys(const char *keyfiles)
-  *
-  * (Note: signature_v2_hdr struct does not contain the 'type'.)
-  */
--static int verify_hash_common(const char *file, const unsigned char *hash,
-+static int verify_hash_common(void *public_keys, const char *file,
-+			      const unsigned char *hash,
- 			      int size, unsigned char *sig, int siglen)
- {
- 	int ret = -1;
-@@ -481,7 +499,7 @@ static int verify_hash_common(const char *file, const unsigned char *hash,
- 		log_dump(hash, size);
- 	}
- 
--	pkey = find_keyid(hdr->keyid);
-+	pkey = find_keyid(public_keys, hdr->keyid);
- 	if (!pkey) {
- 		uint32_t keyid = hdr->keyid;
- 
-@@ -543,11 +561,13 @@ err:
-  *
-  * Return: 0 verification good, 1 verification bad, -1 error.
-  */
--static int verify_hash_v2(const char *file, const unsigned char *hash,
-+static int verify_hash_v2(void *public_keys, const char *file,
-+			  const unsigned char *hash,
- 			  int size, unsigned char *sig, int siglen)
- {
- 	/* note: signature_v2_hdr does not contain 'type', use sig + 1 */
--	return verify_hash_common(file, hash, size, sig + 1, siglen - 1);
-+	return verify_hash_common(public_keys, file, hash, size,
-+				  sig + 1, siglen - 1);
- }
- 
- /*
-@@ -556,7 +576,8 @@ static int verify_hash_v2(const char *file, const unsigned char *hash,
-  *
-  * Return: 0 verification good, 1 verification bad, -1 error.
-  */
--static int verify_hash_v3(const char *file, const unsigned char *hash,
-+static int verify_hash_v3(void *public_keys, const char *file,
-+			  const unsigned char *hash,
- 			  int size, unsigned char *sig, int siglen)
- {
- 	unsigned char sigv3_hash[MAX_DIGEST_SIZE];
-@@ -567,7 +588,8 @@ static int verify_hash_v3(const char *file, const unsigned char *hash,
- 		return ret;
- 
- 	/* note: signature_v2_hdr does not contain 'type', use sig + 1 */
--	return verify_hash_common(file, sigv3_hash, size, sig + 1, siglen - 1);
-+	return verify_hash_common(public_keys, file, sigv3_hash, size,
-+				  sig + 1, siglen - 1);
- }
- 
- #define HASH_MAX_DIGESTSIZE 64	/* kernel HASH_MAX_DIGESTSIZE is 64 bytes */
-@@ -710,8 +732,9 @@ int imaevm_hash_algo_from_sig(unsigned char *sig)
- 		return -1;
- }
- 
--int verify_hash(const char *file, const unsigned char *hash, int size,
--		unsigned char *sig, int siglen)
-+int verify_hash2(void *public_keys, const char *file,
-+		 const unsigned char *hash, int size,
-+		 unsigned char *sig, int siglen)
- {
- 	/* Get signature type from sig header */
- 	if (sig[1] == DIGSIG_VERSION_1) {
-@@ -730,15 +753,29 @@ int verify_hash(const char *file, const unsigned char *hash, int size,
- 		return -1;
- #endif
- 	} else if (sig[1] == DIGSIG_VERSION_2) {
--		return verify_hash_v2(file, hash, size, sig, siglen);
-+		return verify_hash_v2(public_keys, file, hash, size,
-+				      sig, siglen);
- 	} else if (sig[1] == DIGSIG_VERSION_3) {
--		return verify_hash_v3(file, hash, size, sig, siglen);
-+		return verify_hash_v3(public_keys, file, hash, size,
-+				      sig, siglen);
- 	} else
- 		return -1;
- }
- 
--int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
--			 unsigned char *digest, int digestlen)
-+/*
-+ * Global static variables are not concurrency-safe.
-+ *
-+ * Deprecate verify_hash() usage.
-+ */
-+int verify_hash(const char *file, const unsigned char *hash, int size,
-+		unsigned char *sig, int siglen)
-+{
-+	return verify_hash2(g_public_keys, file, hash, size, sig, siglen);
-+}
-+
-+int ima_verify_signature2(void *public_keys, const char *file,
-+			  unsigned char *sig, int siglen,
-+			  unsigned char *digest, int digestlen)
- {
- 	unsigned char hash[MAX_DIGEST_SIZE];
- 	int hashlen, sig_hash_algo;
-@@ -766,14 +803,27 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
- 	 * measurement list, not by calculating the local file digest.
- 	 */
- 	if (digest && digestlen > 0)
--		return verify_hash(file, digest, digestlen, sig, siglen);
-+		return verify_hash2(public_keys, file, digest, digestlen,
-+				   sig, siglen);
- 
- 	hashlen = ima_calc_hash(file, hash);
- 	if (hashlen <= 1)
- 		return hashlen;
- 	assert(hashlen <= sizeof(hash));
- 
--	return verify_hash(file, hash, hashlen, sig, siglen);
-+	return verify_hash2(public_keys, file, hash, hashlen, sig, siglen);
-+}
-+
-+/*
-+ * Global static variables are not concurrency-safe.
-+ *
-+ * Deprecate ima_verify_signature() usage.
-+ */
-+int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
-+			 unsigned char *digest, int digestlen)
-+{
-+	return ima_verify_signature2(g_public_keys, file, sig, siglen,
-+				     digest, digestlen);
- }
- 
- #if CONFIG_SIGV1
--- 
-2.39.3
+# uname -a
+Linux buildroot 6.6.1-v8 #1 SMP PREEMPT Sun Nov 19 21:46:00 EET 2023 aarch6=
+4 GNU/Linux
+# poweroff
+# Stopping dropbear sshd: OK
+Stopping network: [  246.487818] smsc95xx 3-1.1:1.0 eth0: hardware isn't ca=
+pable of remote wakeup
+OK
+Stopping klogd: OK
+Stopping syslogd: OK
+Seeding 256 bits and crediting
+Saving 256 bits of creditable seed for next boot
+umount: devtmpfs busy - remounted read-only
+[  246.623163] EXT4-fs (mmcblk0p2): re-mounted c5bb63df-c03e-4e4a-9846-0cdf=
+5986edc4 ro. Quota mode: none.
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to al[  248.680154] ------------[ cut here ]------------
+[  248.684825] WARNING: CPU: 1 PID: 298 at kernel/workqueue.c:3400 __flush_=
+work.isra.0+0x29c/0x2c4
+[  248.693582] CPU: 1 PID: 298 Comm: init Tainted: G        W          6.6.=
+1-v8 #1
+[  248.700926] Hardware name: Raspberry Pi 3 Model B Rev 1.2 (DT)
+[  248.706780] pstate: 00000005 (nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[  248.713774] pc : __flush_work.isra.0+0x29c/0x2c4
+[  248.718415] lr : __flush_work.isra.0+0x44/0x2c4
+[  248.722970] sp : ffffffc0812fb910
+[  248.726299] x29: ffffffc0812fb910 x28: ffffff8003e30e40 x27: 00000000000=
+00000
+[  248.733481] x26: fffffff0350c9c10 x25: 0000000000000000 x24: fffffff0350=
+0c028
+[  248.740661] x23: fffffff03500d208 x22: 0000000000000001 x21: fffffff034f=
+37568
+[  248.747840] x20: ffffff80064d9ac0 x19: ffffff80064d9a80 x18: fffffffffff=
+fffff
+[  248.755019] x17: 0000000000000000 x16: 0000000000000000 x15: ffffffc0812=
+fb760
+[  248.762197] x14: 0000000000000004 x13: ffffff8002808410 x12: 00000000000=
+00000
+[  248.769376] x11: 0000000000000040 x10: fffffff034f35a98 x9 : 00000000000=
+00004
+[  248.776554] x8 : ffffffc0812fb9a8 x7 : 0000000000000000 x6 : 00000000000=
+003e8
+[  248.783732] x5 : fffffff034e46000 x4 : 0000000000000000 x3 : 00000000000=
+00000
+[  248.790909] x2 : 0000000000000008 x1 : 0000000000000000 x0 : 00000000000=
+00000
+[  248.798087] Call trace:
+[  248.800546]  __flush_work.isra.0+0x29c/0x2c4
+[  248.804841]  flush_work+0x10/0x1c
+[  248.808177]  tpm_tis_remove+0x90/0xc8
+[  248.811866]  tpm_tis_spi_remove+0x24/0x34
+[  248.815901]  spi_remove+0x30/0x4c
+[  248.819238]  device_remove+0x4c/0x80
+[  248.822836]  device_release_driver_internal+0x1d4/0x228
+[  248.828088]  device_release_driver+0x18/0x24
+[  248.832381]  bus_remove_device+0xcc/0x10c
+[  248.836421]  device_del+0x15c/0x41c
+[  248.839934]  spi_unregister_device+0x48/0x98
+[  248.844231]  __unregister+0x10/0x20
+[  248.847742]  device_for_each_child+0x60/0xb4
+[  248.852037]  spi_unregister_controller+0x48/0x15c
+[  248.856768]  bcm2835_spi_remove+0x20/0x60
+[  248.860804]  platform_shutdown+0x24/0x34
+[  248.864751]  device_shutdown+0x150/0x258
+[  248.868701]  kernel_power_off+0x38/0x7c
+[  248.872563]  __do_sys_reboot+0x200/0x238
+[  248.876511]  __arm64_sys_reboot+0x24/0x30
+[  248.880546]  invoke_syscall+0x48/0x114
+[  248.884324]  el0_svc_common.constprop.0+0x40/0xe0
+[  248.889057]  do_el0_svc+0x1c/0x28
+[  248.892397]  el0_svc+0x40/0xe8
+[  248.895478]  el0t_64_sync_handler+0x100/0x12c
+[  248.899864]  el0t_64_sync+0x190/0x194
+[  248.903549] ---[ end trace 0000000000000000 ]---
+[  248.910555] reboot: Power down
 
+Just putting out. I was testing https://github.com/jarkkojs/buildroot-tpmdd=
+/tree/linux-6.6.y
+and this popped up. To build sdcard.img bootable with Raspberry Pi 3:
+
+make raspberrypi3_tpmdd_64_defconfig && make
+
+BR, Jarkko
