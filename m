@@ -1,149 +1,123 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iHpPlaOp"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5D8FD194;
-	Fri, 17 Nov 2023 14:41:46 -0800 (PST)
-Received: from [10.137.114.52] (unknown [131.107.159.180])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 2826D20B74C0;
-	Fri, 17 Nov 2023 14:41:45 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2826D20B74C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1700260905;
-	bh=orjxgtrNLgPOQYG1EeIPZWuhMWqqoJLBesmwg7RvjbE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iHpPlaOpfAkoYFJ9FqFRdX/pHVe8xCZE8w8oVWmMG88896yM9zTc8B1BuplNYqk5M
-	 R6zcotzAuweQaE1G9dRdSGvhJeD85n3dHOhPPX0ExZ1ipbMtlGHLgXBt+31Tx1SNzk
-	 lzn994NmMM6WScrqGcblyY3A10vKN0CLyKz6MvXY=
-Message-ID: <9e60ad72-fa7a-4a2f-b980-700e98818537@linux.microsoft.com>
-Date: Fri, 17 Nov 2023 14:41:44 -0800
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AFsM1WiD"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84749C2
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 08:50:59 -0800 (PST)
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJGmgr0019561
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:50:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=CwkBaa4lsiRhYPNLE1On08nuVo9v/3eOSjH+gO+zC0M=;
+ b=AFsM1WiDgCC/tuaAa5o3OR2kjhC6a7fSLTG60XQXxGnys0bBezSsodOT5vqkpd2vzO1D
+ nOlwqJcSXPWit4tRVx87daWkVWryoYJ1WAxbpqyVVgjkjpcBlpfG2tz7mbDCenjvQRuO
+ oriSR25S3jB/wuEhaesQ6CsWrB+3nfbQthuCMATJHlPZRO6nBMkq1y8h/0pq3VdZJHVQ
+ pIKtw7SawbmjtzDkIAJ4Jb2KmDPYLmkkcgtSnUVvNHZC8upAxKTUBl+ULHTcQ5TUSZp7
+ FjZM2/caatdRV0l8U+A1fX38I14lxeV8wUlqLwMp8mVz4e1KD80MSbX1LTMLwpHHud3P kg== 
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ufp6s00sr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:50:58 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJEEK7L007577
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:50:57 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ufaa1khsm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:50:57 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AJGotCE17236692
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 19 Nov 2023 16:50:55 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E3DCA20049;
+	Sun, 19 Nov 2023 16:50:54 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2E5F520040;
+	Sun, 19 Nov 2023 16:50:54 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.61.134.108])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 19 Nov 2023 16:50:53 +0000 (GMT)
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Subject: [ima-evm-utils PATCH 01/12] Rename "public_keys" to "g_public_keys"
+Date: Sun, 19 Nov 2023 11:50:32 -0500
+Message-Id: <20231119165043.46960-2-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20231119165043.46960-1-zohar@linux.ibm.com>
+References: <20231119165043.46960-1-zohar@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V2] IMA Log Snapshotting Design Proposal
-To: Paul Moore <paul@paul-moore.com>, Stefan Berger <stefanb@linux.ibm.com>
-Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>,
- linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
- peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca,
- Ken Goldman <kgold@linux.ibm.com>, bhe@redhat.com, vgoyal@redhat.com,
- Dave Young <dyoung@redhat.com>,
- "kexec@lists.infradead.org" <kexec@lists.infradead.org>, jmorris@namei.org,
- serge@hallyn.com, James Bottomley <James.Bottomley@hansenpartnership.com>,
- linux-security-module@vger.kernel.org,
- Tyler Hicks <tyhicks@linux.microsoft.com>,
- Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-References: <6c0c32d5-e636-2a0e-5bdf-538c904ceea3@linux.microsoft.com>
- <53db2f31-e383-445f-b746-961958a619bd@linux.ibm.com>
- <5dfcb0d6-8cbf-428e-b8c1-30333fc668b5@linux.microsoft.com>
- <ce2e6de7-4289-442e-8209-fb7c01f51e14@linux.ibm.com>
- <CAHC9VhQ2ZGxAyB0Zy=BQAyJe7ofknaXaAgsgtt5G-ENExdHA=A@mail.gmail.com>
- <1ed2d72c-4cb2-48b3-bb0f-b0877fc1e9ca@linux.ibm.com>
- <CAHC9VhTxQZ5+omZdjwtQwe7MJeAdaLAXP2d5GgyyABLRYkWkGw@mail.gmail.com>
-Content-Language: en-US
-From: Sush Shringarputale <sushring@linux.microsoft.com>
-In-Reply-To: <CAHC9VhTxQZ5+omZdjwtQwe7MJeAdaLAXP2d5GgyyABLRYkWkGw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 98aBu5pSH5DfblVSr6abE6xmHIkZ9GwV
+X-Proofpoint-ORIG-GUID: 98aBu5pSH5DfblVSr6abE6xmHIkZ9GwV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-11-19_15,2023-11-17_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311190128
 
+In preparation for replacing the library global public_keys variable,
+which is not concurrency-safe, with a local variable, rename public_keys
+to g_public_keys.
 
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ src/libimaevm.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-On 11/16/2023 2:56 PM, Paul Moore wrote:
-> On Thu, Nov 16, 2023 at 5:41 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
->> On 11/16/23 17:07, Paul Moore wrote:
->>> On Tue, Nov 14, 2023 at 1:58 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
->>>> On 11/14/23 13:36, Sush Shringarputale wrote:
->>>>> On 11/13/2023 10:59 AM, Stefan Berger wrote:
->>>>>> On 10/19/23 14:49, Tushar Sugandhi wrote:
->>>>>>> =======================================================================
->>>>>>> | Introduction |
->>>>>>> =======================================================================
->>>>>>> This document provides a detailed overview of the proposed Kernel
->>>>>>> feature IMA log snapshotting.  It describes the motivation behind the
->>>>>>> proposal, the problem to be solved, a detailed solution design with
->>>>>>> examples, and describes the changes to be made in the clients/services
->>>>>>> which are part of remote-attestation system.  This is the 2nd version
->>>>>>> of the proposal.  The first version is present here[1].
->>>>>>>
->>>>>>> Table of Contents:
->>>>>>> ------------------
->>>>>>> A. Motivation and Background
->>>>>>> B. Goals and Non-Goals
->>>>>>>        B.1 Goals
->>>>>>>        B.2 Non-Goals
->>>>>>> C. Proposed Solution
->>>>>>>        C.1 Solution Summary
->>>>>>>        C.2 High-level Work-flow
->>>>>>> D. Detailed Design
->>>>>>>        D.1 Snapshot Aggregate Event
->>>>>>>        D.2 Snapshot Triggering Mechanism
->>>>>>>        D.3 Choosing A Persistent Storage Location For Snapshots
->>>>>>>        D.4 Remote-Attestation Client/Service-side Changes
->>>>>>>            D.4.a Client-side Changes
->>>>>>>            D.4.b Service-side Changes
->>>>>>> E. Example Walk-through
->>>>>>> F. Other Design Considerations
->>>>>>> G. References
->>>>>>>
->>>>>> Userspace applications will have to know
->>>>>> a) where are the shard files?
->>>>> We describe the file storage location choices in section D.3, but user
->>>>> applications will have to query the well-known location described there.
->>>>>> b) how do I read the shard files while locking out the producer of the
->>>>>> shard files?
->>>>>>
->>>>>> IMO, this will require a well known config file and a locking method
->>>>>> (flock) so that user space applications can work together in this new
->>>>>> environment. The lock could be defined in the config file or just be
->>>>>> the config file itself.
->>>>> The flock is a good idea for co-ordination between UM clients. While
->>>>> the Kernel cannot enforce any access in this way, any UM process that
->>>>> is planning on triggering the snapshot mechanism should follow that
->>>>> protocol.  We will ensure we document that as the best-practices in
->>>>> the patch series.
->>>> It's more than 'best practices'. You need a well-known config file with
->>>> well-known config options in it.
->>>>
->>>> All clients that were previously just trying to read new bytes from the
->>>> IMA log cannot do this anymore in the presence of a log shard producer
->>>> but have to also learn that a new log shard has been produced so they
->>>> need to figure out the new position in the log where to read from. So
->>>> maybe a counter in a config file should indicate to the log readers that
->>>> a new log has been produced -- otherwise they would have to monitor all
->>>> the log shard files or the log shard file's size.
->>> If a counter is needed, I would suggest placing it somewhere other
->>> than the config file so that we can enforce limited write access to
->>> the config file.
->>>
->>> Regardless, I imagine there are a few ways one could synchronize
->>> various userspace applications such that they see a consistent view of
->>> the decomposed log state, and the good news is that the approach
->>> described here is opt-in from a userspace perspective.  If the
->> A FUSE filesystem that stitches together the log shards from one or
->> multiple files + IMA log file(s) could make this approach transparent
->> for as long as log shards are not thrown away. Presumably it (or root)
->> could bind-mount its files over the two IMA log files.
->>
->>> userspace does not fully support IMA log snapshotting then it never
->>> needs to trigger it and the system behaves as it does today; on the
->> I don't think individual applications should trigger it , instead some
->> dedicated background process running on a machine would do that every n
->> log entries or so and possibly offer the FUSE filesystem at the same
->> time. In either case, once any application triggers it, all either have
->> to know how to deal with the shards or FUSE would make it completely
->> transparent.
-FUSE would be a reasonable user space co-ordination implementation.  A
-privileged process would trigger the snapshot generation and provide the
-mountpoint to read the full IMA log backed by shards as needed by relying
-parties.
-
-Whether it is a privileged daemon or some other agent that triggers the
-snapshot, it shouldn't impact the Kernel-side implementation.
-
-- Sush
-> Yes, performing a snapshot is a privileged operation which I expect
-> would be done and managed by a dedicated daemon running on the system.
->
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 5b224625644e..117a1a72b60c 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -370,14 +370,14 @@ struct public_key_entry {
+ 	char name[9];
+ 	EVP_PKEY *key;
+ };
+-static struct public_key_entry *public_keys = NULL;
++static struct public_key_entry *g_public_keys = NULL;
+ 
+ static EVP_PKEY *find_keyid(uint32_t keyid)
+ {
+-	struct public_key_entry *entry, *tail = public_keys;
++	struct public_key_entry *entry, *tail = g_public_keys;
+ 	int i = 1;
+ 
+-	for (entry = public_keys; entry != NULL; entry = entry->next) {
++	for (entry = g_public_keys; entry != NULL; entry = entry->next) {
+ 		if (entry->keyid == keyid)
+ 			return entry->key;
+ 		i++;
+@@ -394,7 +394,7 @@ static EVP_PKEY *find_keyid(uint32_t keyid)
+ 	if (tail)
+ 		tail->next = entry;
+ 	else
+-		public_keys = entry;
++		g_public_keys = entry;
+ 	log_err("key %d: %x (unknown keyid)\n", i, __be32_to_cpup(&keyid));
+ 	return 0;
+ }
+@@ -429,8 +429,8 @@ void init_public_keys(const char *keyfiles)
+ 		calc_keyid_v2(&entry->keyid, entry->name, entry->key);
+ 		sprintf(entry->name, "%x", __be32_to_cpup(&entry->keyid));
+ 		log_info("key %d: %s %s\n", i++, entry->name, keyfile);
+-		entry->next = public_keys;
+-		public_keys = entry;
++		entry->next = g_public_keys;
++		g_public_keys = entry;
+ 	}
+ 	free(keyfiles_free);
+ }
+-- 
+2.39.3
 
