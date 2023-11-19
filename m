@@ -1,50 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DCXaWRNv"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tp50mtds"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA256133
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 08:51:09 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C1ED11D
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 08:51:13 -0800 (PST)
 Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJGAblC017234
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:09 GMT
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJGAalx017153
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=xsFDbpYv4KK3iZzG6K+S+qOaUg39s83duIgJ/jl3FDE=;
- b=DCXaWRNvQtOZFRl8Cx+jMvTPHB9QRGC33+lcZZgH25TtkL/aqcj8oiEvqUm4w3JCzh4j
- ltWUPXdXrd5xlXXsL0aR+bgFhpyZvdowIkUw89iBas1/gO1xkxL31dfgNGBihP1gKfZx
- DO0k36ktJ+q21Tp7eArV6XqLqcnChHBhQPmwt3v1+XuPgSduglEdSZeDgdDIhYCKZpgu
- gGz/K6T446tVbcHHXf3NLlQpONT2p7xxVXXp/NmUpXY4J9RGVbgOB42YH4q8BnUp8PWw
- xktOrMCLkjOLZ9YdWFHbNvlo6VcWCtvOLUUMgruoYHsL1aKCfmuLPRgH6x8wZ7h4h1kc lA== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uf0k39787-1
+ bh=vU/emekjruWUbQd1mylP30ucEFIWuRh4gPBGdMI6kfY=;
+ b=tp50mtdsqC9dbyJnScnhijiezzw4Kh3pPPSo1U78GytkWIsvkLjlKFyl/uXkeIEixy8E
+ CReOjZOq7+eJydLwxgu1PH2xQQgWU5ZTc3DM3dYhbDosyt/LHFSjFZnVizeY9ZrylJ+w
+ uOkLuDV/FkYmA6YrnmysjU/30A93f7g2O6fSFessIkyBOOadvzFj8f8tlFqUtrnvDGmM
+ q+LP0VdBl1Uwvr/+kYmONz2qREBY1cz616TuYA/blAX4bnpgnAeZU2LNnbi0bgqBGmij
+ F673n0HH//NO1vmIQw/LWv32rskKYkuhX6bzLOLWHGgA1WR17UCGicZ1y/TejpetcnrO hA== 
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uf0k3979h-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:08 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJEADkV020985
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:04 GMT
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:12 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3AJEEEJ2002233
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:11 GMT
 Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3uf7ksmbgq-1
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3uf7yy47kw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:04 +0000
+	for <linux-integrity@vger.kernel.org>; Sun, 19 Nov 2023 16:51:11 +0000
 Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AJGp1Rb22413982
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3AJGp8LM19792448
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 19 Nov 2023 16:51:01 GMT
+	Sun, 19 Nov 2023 16:51:08 GMT
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 767CB2004B;
-	Sun, 19 Nov 2023 16:51:01 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 373F02004B;
+	Sun, 19 Nov 2023 16:51:08 +0000 (GMT)
 Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C245A20040;
-	Sun, 19 Nov 2023 16:51:00 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 828B720040;
+	Sun, 19 Nov 2023 16:51:07 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.61.134.108])
 	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 19 Nov 2023 16:51:00 +0000 (GMT)
+	Sun, 19 Nov 2023 16:51:07 +0000 (GMT)
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Mimi Zohar <zohar@linux.ibm.com>
-Subject: [ima-evm-utils PATCH 06/12] Update cmd_verify_evm to define and use a local list of public keys
-Date: Sun, 19 Nov 2023 11:50:37 -0500
-Message-Id: <20231119165043.46960-7-zohar@linux.ibm.com>
+Subject: [ima-evm-utils PATCH 12/12] Define and use a file specific "keypass" variable
+Date: Sun, 19 Nov 2023 11:50:43 -0500
+Message-Id: <20231119165043.46960-13-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231119165043.46960-1-zohar@linux.ibm.com>
 References: <20231119165043.46960-1-zohar@linux.ibm.com>
@@ -56,80 +56,124 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cw_EPaxtff2u7qhSBtgvwxXrVoZEW_mK
-X-Proofpoint-ORIG-GUID: cw_EPaxtff2u7qhSBtgvwxXrVoZEW_mK
+X-Proofpoint-GUID: FsymO7FZzs49lXz7WUZa5dHb1IusL8J4
+X-Proofpoint-ORIG-GUID: FsymO7FZzs49lXz7WUZa5dHb1IusL8J4
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-19_15,2023-11-17_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=971 malwarescore=0
  spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
  adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.12.0-2311060000 definitions=main-2311190129
 
-Replace calling init_public_keys() with the init_public_keys2() version.
-Similarly replace verify_hash() with the verify_hash2() version.
+Instead of relying on the "imaevm_params.keypass" global variable, which
+is not concurrency-safe, add keypass as a parameter to the static library
+functions definitions.  Update function callers.
 
-Update the static function verify_evm() definition to include a
-"public_keys" parameter.
-
-Free the local public keys list.
+To avoid library incompatablity, don't remove imaevm_params.keypass
+variable.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ src/evmctl.c    |  9 +++++----
+ src/libimaevm.c | 17 ++++++++---------
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
 diff --git a/src/evmctl.c b/src/evmctl.c
-index bf1f8f07e9ca..f796edfce5f1 100644
+index b802eeb1bf15..6d6160159a1f 100644
 --- a/src/evmctl.c
 +++ b/src/evmctl.c
-@@ -905,7 +905,7 @@ static int cmd_sign_evm(struct command *cmd)
- 	return do_cmd(cmd, sign_evm_path);
- }
+@@ -141,6 +141,7 @@ static bool evm_portable;
+ static bool veritysig;
+ static bool hwtpm;
+ static char *hash_algo;
++static char *keypass;
  
--static int verify_evm(const char *file)
-+static int verify_evm(void *public_keys, const char *file)
- {
- 	unsigned char hash[MAX_DIGEST_SIZE];
- 	unsigned char sig[MAX_SIGNATURE_SIZE];
-@@ -945,12 +945,14 @@ static int verify_evm(const char *file)
- 		return mdlen;
- 	assert(mdlen <= sizeof(hash));
- 
--	return verify_hash(file, hash, mdlen, sig, len);
-+	return verify_hash2(public_keys, file, imaevm_params.hash_algo,
-+			    hash, mdlen, sig, len);
- }
- 
- static int cmd_verify_evm(struct command *cmd)
- {
- 	char *file = g_argv[optind++];
-+	void *public_keys = NULL;
- 	int err;
- 
- 	if (!file) {
-@@ -961,14 +963,17 @@ static int cmd_verify_evm(struct command *cmd)
- 
- 	if (imaevm_params.x509) {
- 		if (imaevm_params.keyfile) /* Support multiple public keys */
--			init_public_keys(imaevm_params.keyfile);
-+			init_public_keys2(imaevm_params.keyfile, &public_keys);
- 		else			   /* assume read pubkey from x509 cert */
--			init_public_keys("/etc/keys/x509_evm.der");
-+			init_public_keys2("/etc/keys/x509_evm.der",
-+					  &public_keys);
+ #define HMAC_FLAG_NO_UUID	0x0001
+ #define HMAC_FLAG_CAPS_SET	0x0002
+@@ -3082,9 +3083,9 @@ int main(int argc, char *argv[])
+ 			break;
+ 		case 'p':
+ 			if (optarg)
+-				imaevm_params.keypass = optarg;
++				keypass = optarg;
+ 			else
+-				imaevm_params.keypass = get_password();
++				keypass = get_password();
+ 			break;
+ 		case 'f':
+ 			sigfile = 1;
+@@ -3226,8 +3227,8 @@ int main(int argc, char *argv[])
+ 		}
  	}
  
--	err = verify_evm(file);
-+	err = verify_evm(public_keys, file);
- 	if (!err && imaevm_params.verbose >= LOG_INFO)
- 		log_info("%s: verification is OK\n", file);
-+
-+	free_public_keys(public_keys);
- 	return err;
+-	if (!imaevm_params.keypass)
+-		imaevm_params.keypass = getenv("EVMCTL_KEY_PASSWORD");
++	if (!keypass)
++		keypass = getenv("EVMCTL_KEY_PASSWORD");
+ 
+ 	if (imaevm_params.keyfile != NULL &&
+ 	    imaevm_params.eng == NULL &&
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 18b6a6f27237..10ec847da08a 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -1124,7 +1124,8 @@ static int get_hash_algo_v1(const char *algo)
  }
  
+ static int sign_hash_v1(const char *hashalgo, const unsigned char *hash,
+-			int size, const char *keyfile, unsigned char *sig)
++			int size, const char *keyfile, const char *keypass,
++			unsigned char *sig)
+ {
+ 	int len = -1, hashalgo_idx;
+ 	SHA_CTX ctx;
+@@ -1158,7 +1159,7 @@ static int sign_hash_v1(const char *hashalgo, const unsigned char *hash,
+ 	log_info("hash(%s): ", hashalgo);
+ 	log_dump(hash, size);
+ 
+-	key = read_priv_key(keyfile, imaevm_params.keypass);
++	key = read_priv_key(keyfile, keypass);
+ 	if (!key)
+ 		return -1;
+ 
+@@ -1211,7 +1212,8 @@ out:
+  * Return: -1 signing error, >0 length of signature
+  */
+ static int sign_hash_v2(const char *algo, const unsigned char *hash,
+-			int size, const char *keyfile, unsigned char *sig)
++			int size, const char *keyfile, const char *keypass,
++			unsigned char *sig)
+ {
+ 	struct signature_v2_hdr *hdr;
+ 	int len = -1;
+@@ -1246,7 +1248,7 @@ static int sign_hash_v2(const char *algo, const unsigned char *hash,
+ 	log_info("hash(%s): ", algo);
+ 	log_dump(hash, size);
+ 
+-	pkey = read_priv_pkey(keyfile, imaevm_params.keypass);
++	pkey = read_priv_pkey(keyfile, keypass);
+ 	if (!pkey)
+ 		return -1;
+ 
+@@ -1316,14 +1318,11 @@ err:
+ 
+ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig)
+ {
+-	if (keypass)
+-		imaevm_params.keypass = keypass;
+-
+ 	if (imaevm_params.x509)
+-		return sign_hash_v2(hashalgo, hash, size, keyfile, sig);
++		return sign_hash_v2(hashalgo, hash, size, keyfile, keypass, sig);
+ #if CONFIG_SIGV1
+ 	else
+-		return sign_hash_v1(hashalgo, hash, size, keyfile, sig);
++		return sign_hash_v1(hashalgo, hash, size, keyfile, keypass, sig);
+ #endif
+ 	log_info("Signature version 1 deprecated.");
+ 	return -1;
 -- 
 2.39.3
 
