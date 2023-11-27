@@ -1,213 +1,58 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mailout1.hostsharing.net (mailout1.hostsharing.net [83.223.95.204])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B1DF386B;
-	Mon, 27 Nov 2023 06:22:32 -0800 (PST)
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+Received: from mailout2.hostsharing.net (mailout2.hostsharing.net [IPv6:2a01:37:3000::53df:4ee9:0])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B38B9469B
+	for <linux-integrity@vger.kernel.org>; Mon, 27 Nov 2023 06:33:08 -0800 (PST)
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
 	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
 	(Client CN "*.hostsharing.net", Issuer "RapidSSL Global TLS RSA4096 SHA256 2022 CA1" (verified OK))
-	by mailout1.hostsharing.net (Postfix) with ESMTPS id 92F1910190FB6;
-	Mon, 27 Nov 2023 15:22:30 +0100 (CET)
+	by mailout2.hostsharing.net (Postfix) with ESMTPS id 311CF10189CF9;
+	Mon, 27 Nov 2023 15:33:07 +0100 (CET)
 Received: from localhost (unknown [89.246.108.87])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by h08.hostsharing.net (Postfix) with ESMTPSA id 64BB360E6433;
-	Mon, 27 Nov 2023 15:22:30 +0100 (CET)
-X-Mailbox-Line: From d6495fb4c59ed60cdd1bb1703ba06abc67c40383 Mon Sep 17 00:00:00 2001
-Message-Id: <d6495fb4c59ed60cdd1bb1703ba06abc67c40383.1701093036.git.lukas@wunner.de>
-In-Reply-To: <cover.1701093036.git.lukas@wunner.de>
-References: <cover.1701093036.git.lukas@wunner.de>
+	by h08.hostsharing.net (Postfix) with ESMTPSA id 0E1F260E6433;
+	Mon, 27 Nov 2023 15:33:07 +0100 (CET)
+X-Mailbox-Line: From 096e5d9d22eaed0a256d2d9b315a77245bd423c6 Mon Sep 17 00:00:00 2001
+Message-Id: <096e5d9d22eaed0a256d2d9b315a77245bd423c6.1701095446.git.lukas@wunner.de>
 From: Lukas Wunner <lukas@wunner.de>
-Date: Mon, 27 Nov 2023 15:02:52 +0100
-Subject: [PATCH v2 2/3] dt-bindings: tpm: Convert IBM vTPM bindings to DT
- schema
-To: Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: devicetree@vger.kernel.org, linux-integrity@vger.kernel.org, Lino Sanfilippo <LinoSanfilippo@gmx.de>, Nayna Jain <nayna@linux.ibm.com>, Thirupathaiah Annapureddy <thiruan@microsoft.com>, Sasha Levin <sashal@kernel.org>, Alexander Steffen <Alexander.Steffen@infineon.com>, Johannes Holland <Johannes.Holland@infineon.com>, Amir Mizinski <amirmizi6@gmail.com>, Benoit HOUYERE <benoit.houyere@st.com>, Peter Delevoryas <peter@pjd.dev>
+Date: Mon, 27 Nov 2023 15:32:04 +0100
+Subject: [PATCH] tpm_tis: Add compatible string atmel,at97sc3204
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 
-Convert the devicetree bindings for the IBM Virtual Trusted Platform
-Module to DT schema.  Drop properties which are already documented in
-tpm-common.yaml.
+Commit 420d439849ca ("tpm_tis: Allow tpm_tis to be bound using DT")
+added the fallback compatible "tcg,tpm-tis-mmio" to the TPM TIS driver,
+but not the chip-specific "atmel,at97sc3204".  However it did document
+it as a valid compatible string.
 
-Document the "IBM,vtpm20" compatible string introduced by commit
-18b3670d79ae ("tpm: ibmvtpm: Add support for TPM2").
+Add it to tis_of_platform_match[] for consistency.
 
 Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
 ---
-Changes v1 -> v2:
-  * Amend device_type with enum (Rob).
-  * Fix nodename in example (Rob).
+ drivers/char/tpm/tpm_tis.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/security/tpm/ibmvtpm.txt         |  41 -------
- .../devicetree/bindings/tpm/ibm,vtpm.yaml     | 104 ++++++++++++++++++
- 2 files changed, 104 insertions(+), 41 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/security/tpm/ibmvtpm.txt
- create mode 100644 Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml
-
-diff --git a/Documentation/devicetree/bindings/security/tpm/ibmvtpm.txt b/Documentation/devicetree/bindings/security/tpm/ibmvtpm.txt
-deleted file mode 100644
-index d89f99971368..000000000000
---- a/Documentation/devicetree/bindings/security/tpm/ibmvtpm.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--* Device Tree Bindings for IBM Virtual Trusted Platform Module(vtpm)
--
--Required properties:
--
--- compatible            : property name that conveys the platform architecture
--                          identifiers, as 'IBM,vtpm'
--- device_type           : specifies type of virtual device
--- interrupts            : property specifying the interrupt source number and
--                          sense code associated with this virtual I/O Adapters
--- ibm,my-drc-index      : integer index for the connector between the device
--                          and its parent - present only if Dynamic
--                          Reconfiguration(DR) Connector is enabled
--- ibm,#dma-address-cells: specifies the number of cells that are used to
--                          encode the physical address field of dma-window
--                          properties
--- ibm,#dma-size-cells   : specifies the number of cells that are used to
--                          encode the size field of dma-window properties
--- ibm,my-dma-window     : specifies DMA window associated with this virtual
--                          IOA
--- ibm,loc-code          : specifies the unique and persistent location code
--                          associated with this virtual I/O Adapters
--- linux,sml-base        : 64-bit base address of the reserved memory allocated
--                          for the firmware event log
--- linux,sml-size        : size of the memory allocated for the firmware event log
--
--Example (IBM Virtual Trusted Platform Module)
-----------------------------------------------
--
--                vtpm@30000003 {
--                        ibm,#dma-size-cells = <0x2>;
--                        compatible = "IBM,vtpm";
--                        device_type = "IBM,vtpm";
--                        ibm,my-drc-index = <0x30000003>;
--                        ibm,#dma-address-cells = <0x2>;
--                        linux,sml-base = <0xc60e 0x0>;
--                        interrupts = <0xa0003 0x0>;
--                        ibm,my-dma-window = <0x10000003 0x0 0x0 0x0 0x10000000>;
--                        ibm,loc-code = "U8286.41A.10082DV-V3-C3";
--                        reg = <0x30000003>;
--                        linux,sml-size = <0xbce10200>;
--                };
-diff --git a/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml b/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml
-new file mode 100644
-index 000000000000..50a3fd31241c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml
-@@ -0,0 +1,104 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/tpm/ibm,vtpm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: IBM Virtual Trusted Platform Module (vTPM)
-+
-+maintainers:
-+  - Nayna Jain <nayna@linux.ibm.com>
-+
-+description: |
-+  Virtual TPM is used on IBM POWER7+ and POWER8 systems running POWERVM.
-+  It is supported through the adjunct partition with firmware release 740
-+  or higher.  With vTPM support, each lpar is able to have its own vTPM
-+  without the physical TPM hardware.  The TPM functionality is provided by
-+  communicating with the vTPM adjunct partition through Hypervisor calls
-+  (Hcalls) and Command/Response Queue (CRQ) commands.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - IBM,vtpm
-+      - IBM,vtpm20
-+
-+  device_type:
-+    description:
-+      type of virtual device
-+    enum:
-+      - IBM,vtpm
-+      - IBM,vtpm20
-+
-+  reg:
-+    maxItems: 1
-+
-+  'ibm,#dma-address-cells':
-+    description:
-+      number of cells that are used to encode the physical address field of
-+      dma-window properties
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+
-+  'ibm,#dma-size-cells':
-+    description:
-+      number of cells that are used to encode the size field of
-+      dma-window properties
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+
-+  ibm,my-dma-window:
-+    description:
-+      DMA window associated with this virtual I/O Adapter
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 5
-+    maxItems: 5
-+
-+  ibm,my-drc-index:
-+    description:
-+      integer index for the connector between the device and its parent;
-+      present only if Dynamic Reconfiguration (DR) Connector is enabled
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  ibm,loc-code:
-+    description:
-+      unique and persistent location code associated with this virtual
-+      I/O Adapter
-+    $ref: /schemas/types.yaml#/definitions/string
-+
-+required:
-+  - compatible
-+  - device_type
-+  - reg
-+  - interrupts
-+  - ibm,#dma-address-cells
-+  - ibm,#dma-size-cells
-+  - ibm,my-dma-window
-+  - ibm,my-drc-index
-+  - ibm,loc-code
-+  - linux,sml-base
-+  - linux,sml-size
-+
-+allOf:
-+  - $ref: tpm-common.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    soc {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        tpm@30000003 {
-+            compatible = "IBM,vtpm";
-+            device_type = "IBM,vtpm";
-+            reg = <0x30000003>;
-+            interrupts = <0xa0003 0x0>;
-+            ibm,#dma-address-cells = <0x2>;
-+            ibm,#dma-size-cells = <0x2>;
-+            ibm,my-dma-window = <0x10000003 0x0 0x0 0x0 0x10000000>;
-+            ibm,my-drc-index = <0x30000003>;
-+            ibm,loc-code = "U8286.41A.10082DV-V3-C3";
-+            linux,sml-base = <0xc60e 0x0>;
-+            linux,sml-size = <0xbce10200>;
-+        };
-+    };
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index 2c52b7905b07..14652aaf8254 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -347,6 +347,7 @@ static void tpm_tis_plat_remove(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id tis_of_platform_match[] = {
++	{.compatible = "atmel,at97sc3204"},
+ 	{.compatible = "tcg,tpm-tis-mmio"},
+ 	{},
+ };
 -- 
 2.40.1
 
