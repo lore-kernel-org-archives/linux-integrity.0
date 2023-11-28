@@ -1,40 +1,40 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tSQAgh6x"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 266BF30E8
-	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 10:16:21 -0800 (PST)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASIAe73000720
-	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:20 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Oj4k2GY2"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DFA630D1
+	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 10:16:22 -0800 (PST)
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASIFrtS032484
+	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=VGoSwG1/4hdiKBk6J2M99Mh8aeFeMRtUXlCTt018fmw=;
- b=tSQAgh6x6nfFNsM81t0ZjwwSJSthLSnJHo6pTn5DSB3F8h/76y3fzd76rfL9AqNXpqgP
- bCJLkVLGX6di9q548sMaj5M5pZjCYRYzWq9JvYDeC++up1baniOKRZQesdY6t5gVBnDQ
- jWu+Th0GsP9tsrhJx8jQJqm45beJjt+sIDURprhhj3k+v8f/7W563xqpvvygJxKcQCcV
- /cQ0yObifNhKl4IXoN9FHbe2x2z+724Blo16gYTQY6iWkGupzJKMJo6MYkScAGZYphg8
- VsqjWF3SZagQsuEQ5M15eJK8UwFMkmx4Yf6g7VMLZ9pQx6hYxKSdppsCR9/Scumiq+SG 5w== 
+ bh=rfQxeGMBaqBV0+aNq47m5YRRAVMZThDcfBKt3QqpC0I=;
+ b=Oj4k2GY29HkXhd9wfLBbNFhGMt2nt7/RAO2Jk8BR3yOd0PNkSua7WaHmQt3wxqjsjRFm
+ 3XV8OhhKyUtzVDRZiOPr6AjXIMNNi5gpYeulL6mz1Xnm1W1pCWFWquk233nuCEQAm5WO
+ Nn/Lytj7ZJRSNyqHlsj1M7GfR5TQQu0PqVI+7dMPDkNjAd8jsUWa7SUtqmQPT9tAw+pd
+ rSjgYUY1ZN8MSW6aoZXcvoSGucrAf5zNQABwDPtGNNj01Fl3SzEdrBtpqGPNbpF0/ibO
+ PJAe/yxCdT5gX0OB8M2CMdjsNDA8XI0gbC/ZH5EzDSRCyMrm3Hxgi4F25FjbOQT5uUgz 7g== 
 Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3unn8k88bb-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3unn2fgh5r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:21 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASG0IIP027610
+	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:20 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ukumyhs3k-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
 	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:20 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3ASG0QJr027615
-	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:19 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3ukumyhs3g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Tue, 28 Nov 2023 18:16:19 +0000
 Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3ASIGIS046006710
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3ASIGJWf6816336
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Nov 2023 18:16:18 GMT
+	Tue, 28 Nov 2023 18:16:19 GMT
 Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B97558051;
-	Tue, 28 Nov 2023 18:16:18 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 3C65D5805A;
+	Tue, 28 Nov 2023 18:16:19 +0000 (GMT)
 Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 205535805A;
+	by IMSVA (Postfix) with ESMTP id E47A758051;
 	Tue, 28 Nov 2023 18:16:18 +0000 (GMT)
 Received: from sbct-2.pok.ibm.com?044watson.ibm.com (unknown [9.47.158.152])
 	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
@@ -42,9 +42,9 @@ Received: from sbct-2.pok.ibm.com?044watson.ibm.com (unknown [9.47.158.152])
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils PATCH v2 08/14] tests: Address issues raised by shellcheck SC2166
-Date: Tue, 28 Nov 2023 13:16:06 -0500
-Message-ID: <20231128181613.1159958-9-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils PATCH v2 10/14] tests: Address issues raised by shellcheck SC2206
+Date: Tue, 28 Nov 2023 13:16:08 -0500
+Message-ID: <20231128181613.1159958-11-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231128181613.1159958-1-stefanb@linux.ibm.com>
 References: <20231128181613.1159958-1-stefanb@linux.ibm.com>
@@ -56,52 +56,53 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: gqj8OIW3sXJLD1x9Dx7nqX3SgxGcMuyG
-X-Proofpoint-GUID: gqj8OIW3sXJLD1x9Dx7nqX3SgxGcMuyG
+X-Proofpoint-GUID: INUZRt62kQ7pql8GJgE_5Kvt3IHIzq6M
+X-Proofpoint-ORIG-GUID: INUZRt62kQ7pql8GJgE_5Kvt3IHIzq6M
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-11-28_20,2023-11-27_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 adultscore=0 impostorscore=0 mlxlogscore=975 malwarescore=0
- suspectscore=0 priorityscore=1501 clxscore=1015 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311060000
- definitions=main-2311280146
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 mlxscore=0 spamscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 impostorscore=0 adultscore=0 phishscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311060000 definitions=main-2311280146
 
-Address issues raised by shellcheck SC2166:
-  "Prefer [ p ] && [ q ] as [ p -a q ] is not well defined."
+Address issue raised by shellcheck SC2206:
+  "Quote to prevent word splitting/globbing, or split robustly with
+   mapfile or read -a."
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- tests/Makefile.am   | 2 +-
- tests/softhsm_setup | 2 +-
+ tests/Makefile.am         | 2 +-
+ tests/boot_aggregate.test | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tests/Makefile.am b/tests/Makefile.am
-index c5b2a2f..df1fbff 100644
+index 9092c43..cbf637c 100644
 --- a/tests/Makefile.am
 +++ b/tests/Makefile.am
-@@ -26,7 +26,7 @@ clean-local:
- distclean: distclean-keys
- 
+@@ -28,7 +28,7 @@ distclean: distclean-keys
  shellcheck:
--	shellcheck -i SC2086,SC2181,SC2046,SC2320,SC2317,SC2034,SC2164 \
-+	shellcheck -i SC2086,SC2181,SC2046,SC2320,SC2317,SC2034,SC2164,SC2166 \
+ 	shellcheck \
+ 		-i SC2086,SC2181,SC2046,SC2320,SC2317,SC2034,SC2164,SC2166 \
+-		-i SC2294 \
++		-i SC2294,SC2206 \
  		functions.sh gen-keys.sh install-fsverity.sh \
  		install-mount-idmapped.sh install-openssl3.sh \
  		install-swtpm.sh install-tss.sh softhsm_setup \
-diff --git a/tests/softhsm_setup b/tests/softhsm_setup
-index 6f8a74e..fc33596 100755
---- a/tests/softhsm_setup
-+++ b/tests/softhsm_setup
-@@ -15,7 +15,7 @@ fi
+diff --git a/tests/boot_aggregate.test b/tests/boot_aggregate.test
+index c7c2b21..c9a8d67 100755
+--- a/tests/boot_aggregate.test
++++ b/tests/boot_aggregate.test
+@@ -129,7 +129,7 @@ check() {
+ 		exit "$SKIP"
+ 	fi
  
- MAJOR=$(softhsm2-util -v | cut -d '.' -f1)
- MINOR=$(softhsm2-util -v | cut -d '.' -f2)
--if [ "${MAJOR}" -lt 2 ] || [ "${MAJOR}" -eq 2 -a "${MINOR}" -lt 2 ]; then
-+if [[ "${MAJOR}" -lt 2 || ( "${MAJOR}" -eq 2  && "${MINOR}" -lt 2 ) ]]; then
- 	echo "Need softhsm v2.2.0 or later"
- 	exit 77
- fi
+-	boot_aggr=( $bootaggr )
++	read -r -a boot_aggr <<< "$bootaggr"
+ 
+ 	echo "INFO: Searching for the boot_aggregate in ${ASCII_RUNTIME_MEASUREMENTS}"
+ 	for hash in "${boot_aggr[@]}"; do
 -- 
 2.43.0
 
