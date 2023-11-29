@@ -1,216 +1,219 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tKzUFzI2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FABC10A
-	for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 08:11:46 -0800 (PST)
-Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3ATFwjC1022918
-	for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 16:11:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : date : in-reply-to : references : content-type : mime-version
- : content-transfer-encoding; s=pp1;
- bh=zeJofaWcSH1xIUofsU2L71yuVGocx/ZL7mc/C8KxDQc=;
- b=tKzUFzI2SMlC2ZA+FmlD3F5RX0Ue9vTrYcwLvoPSd2+nV40OugkXk0RUJva1wVzfI9Nz
- U52nmXjBfInucnkAHCAOt+U9KjESGr5j5ewgGIP5VLTqMdQnE68G3oF0GqTK5P6aBLWy
- vUFFIEl9g+Q7/EKjeyHxJtKWreOyP+x6jaCVerMXx3eJmWH4mTqgdtq7ONMKfmoriCsp
- zVMmlw8HtEDIpvYj0fXv7wIvckTUv/8wPxpEweg92jGEnABZcEVbOLC/SYoErQAf0WC9
- hVHD3/rNkF8eqchRGTxvYRTM1sdbO+w9QPgwpyq1mqEHoZCXftwQKSGxuJpacsWeqoNi hA== 
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3up8dp8heb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 16:11:38 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3ATEBN8k004317
-	for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 16:07:57 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ukwy1yquc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 16:07:57 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3ATG7uFR30409220
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Nov 2023 16:07:56 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E5495805C;
-	Wed, 29 Nov 2023 16:07:56 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 34DF55805A;
-	Wed, 29 Nov 2023 16:07:56 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.61.29.194])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 Nov 2023 16:07:56 +0000 (GMT)
-Message-ID: <f4b9e146341712dc0b274ecb716d83a87d844d1f.camel@linux.ibm.com>
-Subject: Re: [ima-evm-utils PATCH 12/12] Define and use a file specific
- "keypass" variable
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org
-Date: Wed, 29 Nov 2023 11:07:55 -0500
-In-Reply-To: <117e3af9-3372-42ea-bdaf-d5e190ddf196@linux.ibm.com>
-References: <20231119165043.46960-1-zohar@linux.ibm.com>
-	 <20231119165043.46960-13-zohar@linux.ibm.com>
-	 <117e3af9-3372-42ea-bdaf-d5e190ddf196@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WDPrYOYn"
+Received: from mail-yb1-xb2b.google.com (mail-yb1-xb2b.google.com [IPv6:2607:f8b0:4864:20::b2b])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5EF010A
+	for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 09:22:31 -0800 (PST)
+Received: by mail-yb1-xb2b.google.com with SMTP id 3f1490d57ef6-d9caf5cc948so6391586276.0
+        for <linux-integrity@vger.kernel.org>; Wed, 29 Nov 2023 09:22:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1701278551; x=1701883351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C6aGKVyADURyhQk+fo0tbqTCzCtcxOwFDTETgVpc3MM=;
+        b=WDPrYOYnkqi+n2W3RwfrDcHeKLTZlPLJKhkfH1akgQLLjgVH1jB0lhsAqDbpBjTYiS
+         Ro4RZqxKKaIaS//8aW6iyNPyRlYfWgfz8TWxj1+qmw3YLcm2bdo/jHRZbGf8BE9Ss1RO
+         PE4hldwxsQj/EbABvr4zKh8z7vc+uWf8TvhrNavzGClykSz4Kg2vBUYD6A1jAoj7n6Z2
+         WxOkavvMcgEZyr3Hp+IPDQ2GtvPXJz82f3KhJExppw84IJ7JTFcxPxe+hthTRB4kdAVu
+         mvEBOyGF4rBeVLp/LpUKODlBNSOZnZIG1ndn0rHXlLtLLOJYzgBsy4Hy39Y66KYHj3//
+         aNZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701278551; x=1701883351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C6aGKVyADURyhQk+fo0tbqTCzCtcxOwFDTETgVpc3MM=;
+        b=vr/R0LT/OpW64bDg+CjTFqLdl3VNlJoyhZmQRVpziINoMqZu8xWGkCH83PGRnWvZCH
+         PfKorTTUlsgPX4xRpgvkX4uKY6alhf/hBD8CRX1O5BLspVqzdANFJpevKJpbytI9v7aC
+         UkIYzMQ174qvBurV3Ds+zk1YrR0AKBX/SybxZBfkfD4irQmOYkukWdBmQCLZSuAGU3Mk
+         fj3s/jcLjyw6FOw6JFAUH9jJMgKd9kBDFMik/KRjgLVBEr8JcbHCO1GCgSQWo0jbEEXv
+         btb8hLnng1ZA5qbh1zwPOAsJS13DyQlOOc0Od9B4AqrN0W9Vr6/j+zZdusMnQ2QudfO7
+         +Acg==
+X-Gm-Message-State: AOJu0YyYQQ9ntyD82nIawm3J97jNGbZXt31ZkH/Pa2JMvU4HJ2G5M9v7
+	LMNahRAMndjm4yD5/dvMtN/4wyHvol1FItcxY1H0
+X-Google-Smtp-Source: AGHT+IHGRmmx7GBTM1/MZTu0EoNq8zyar5kzldOIFNMC0/+UTXv0mixyo55ycDf8ErfmEbeGIOB34bucSYDQTv2Fe9k=
+X-Received: by 2002:a25:ac5:0:b0:dae:4b98:16f9 with SMTP id
+ 188-20020a250ac5000000b00dae4b9816f9mr19710138ybk.0.1701278550968; Wed, 29
+ Nov 2023 09:22:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4BN0QLCO0YDdzWDaXmv8Ei9oc-mmLNUe
-X-Proofpoint-ORIG-GUID: 4BN0QLCO0YDdzWDaXmv8Ei9oc-mmLNUe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-29_14,2023-11-29_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311290122
+MIME-Version: 1.0
+References: <20231107134012.682009-24-roberto.sassu@huaweicloud.com>
+ <17befa132379d37977fc854a8af25f6d.paul@paul-moore.com> <2084adba3c27a606cbc5ed7b3214f61427a829dd.camel@huaweicloud.com>
+ <CAHC9VhTTKac1o=RnQadu2xqdeKH8C_F+Wh4sY=HkGbCArwc8JQ@mail.gmail.com> <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
+In-Reply-To: <b6c51351be3913be197492469a13980ab379e412.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 29 Nov 2023 12:22:19 -0500
+Message-ID: <CAHC9VhSAryQSeFy0ZMexOiwBG-YdVGRzvh58=heH916DftcmWA@mail.gmail.com>
+Subject: Re: [PATCH v5 23/23] integrity: Switch from rbtree to LSM-managed
+ blob for integrity_iint_cache
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, 
+	jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, 
+	tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
+	dmitry.kasatkin@gmail.com, dhowells@redhat.com, jarkko@kernel.org, 
+	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, 
+	mic@digikod.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2023-11-22 at 09:22 -0500, Stefan Berger wrote:
-> 
-> On 11/19/23 11:50, Mimi Zohar wrote:
-> > Instead of relying on the "imaevm_params.keypass" global variable, which
-> > is not concurrency-safe, add keypass as a parameter to the static library
-> > functions definitions.  Update function callers.
-> > 
-> > To avoid library incompatablity, don't remove imaevm_params.keypass
-> > variable.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> >   src/evmctl.c    |  9 +++++----
-> >   src/libimaevm.c | 17 ++++++++---------
-> >   2 files changed, 13 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/src/evmctl.c b/src/evmctl.c
-> > index b802eeb1bf15..6d6160159a1f 100644
-> > --- a/src/evmctl.c
-> > +++ b/src/evmctl.c
-> > @@ -141,6 +141,7 @@ static bool evm_portable;
-> >   static bool veritysig;
-> >   static bool hwtpm;
-> >   static char *hash_algo;
-> > +static char *keypass;
-> >   
-> >   #define HMAC_FLAG_NO_UUID	0x0001
-> >   #define HMAC_FLAG_CAPS_SET	0x0002
-> > @@ -3082,9 +3083,9 @@ int main(int argc, char *argv[])
-> >   			break;
-> >   		case 'p':
-> >   			if (optarg)
-> > -				imaevm_params.keypass = optarg;
-> > +				keypass = optarg;
-> >   			else
-> > -				imaevm_params.keypass = get_password();
-> > +				keypass = get_password();
-> >   			break;
-> >   		case 'f':
-> >   			sigfile = 1;
-> > @@ -3226,8 +3227,8 @@ int main(int argc, char *argv[])
-> >   		}
-> >   	}
-> >   
-> > -	if (!imaevm_params.keypass)
-> > -		imaevm_params.keypass = getenv("EVMCTL_KEY_PASSWORD");
-> > +	if (!keypass)
-> > +		keypass = getenv("EVMCTL_KEY_PASSWORD");
-> >   
-> >   	if (imaevm_params.keyfile != NULL &&
-> >   	    imaevm_params.eng == NULL &&
-> 
-> 
-> The problem at this point in evmctl is that keypass is never passed to 
-> anywhere. You have to pass it to sign_hash().
+On Wed, Nov 29, 2023 at 7:28=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+>
+> On Mon, 2023-11-20 at 16:06 -0500, Paul Moore wrote:
+> > On Mon, Nov 20, 2023 at 3:16=E2=80=AFAM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Fri, 2023-11-17 at 15:57 -0500, Paul Moore wrote:
+> > > > On Nov  7, 2023 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote=
+:
+> > > > >
+> > > > > Before the security field of kernel objects could be shared among=
+ LSMs with
+> > > > > the LSM stacking feature, IMA and EVM had to rely on an alternati=
+ve storage
+> > > > > of inode metadata. The association between inode metadata and ino=
+de is
+> > > > > maintained through an rbtree.
+> > > > >
+> > > > > Because of this alternative storage mechanism, there was no need =
+to use
+> > > > > disjoint inode metadata, so IMA and EVM today still share them.
+> > > > >
+> > > > > With the reservation mechanism offered by the LSM infrastructure,=
+ the
+> > > > > rbtree is no longer necessary, as each LSM could reserve a space =
+in the
+> > > > > security blob for each inode. However, since IMA and EVM share th=
+e
+> > > > > inode metadata, they cannot directly reserve the space for them.
+> > > > >
+> > > > > Instead, request from the 'integrity' LSM a space in the security=
+ blob for
+> > > > > the pointer of inode metadata (integrity_iint_cache structure). T=
+he other
+> > > > > reason for keeping the 'integrity' LSM is to preserve the origina=
+l ordering
+> > > > > of IMA and EVM functions as when they were hardcoded.
+> > > > >
+> > > > > Prefer reserving space for a pointer to allocating the integrity_=
+iint_cache
+> > > > > structure directly, as IMA would require it only for a subset of =
+inodes.
+> > > > > Always allocating it would cause a waste of memory.
+> > > > >
+> > > > > Introduce two primitives for getting and setting the pointer of
+> > > > > integrity_iint_cache in the security blob, respectively
+> > > > > integrity_inode_get_iint() and integrity_inode_set_iint(). This w=
+ould make
+> > > > > the code more understandable, as they directly replace rbtree ope=
+rations.
+> > > > >
+> > > > > Locking is not needed, as access to inode metadata is not shared,=
+ it is per
+> > > > > inode.
+> > > > >
+> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> > > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > > > ---
+> > > > >  security/integrity/iint.c      | 71 +++++-----------------------=
+------
+> > > > >  security/integrity/integrity.h | 20 +++++++++-
+> > > > >  2 files changed, 29 insertions(+), 62 deletions(-)
+> > > > >
+> > > > > diff --git a/security/integrity/iint.c b/security/integrity/iint.=
+c
+> > > > > index 882fde2a2607..a5edd3c70784 100644
+> > > > > --- a/security/integrity/iint.c
+> > > > > +++ b/security/integrity/iint.c
+> > > > > @@ -231,6 +175,10 @@ static int __init integrity_lsm_init(void)
+> > > > >     return 0;
+> > > > >  }
+> > > > >
+> > > > > +struct lsm_blob_sizes integrity_blob_sizes __ro_after_init =3D {
+> > > > > +   .lbs_inode =3D sizeof(struct integrity_iint_cache *),
+> > > > > +};
+> > > >
+> > > > I'll admit that I'm likely missing an important detail, but is ther=
+e
+> > > > a reason why you couldn't stash the integrity_iint_cache struct
+> > > > directly in the inode's security blob instead of the pointer?  For
+> > > > example:
+> > > >
+> > > >   struct lsm_blob_sizes ... =3D {
+> > > >     .lbs_inode =3D sizeof(struct integrity_iint_cache),
+> > > >   };
+> > > >
+> > > >   struct integrity_iint_cache *integrity_inode_get(inode)
+> > > >   {
+> > > >     if (unlikely(!inode->isecurity))
+> > > >       return NULL;
+> > > >     return inode->i_security + integrity_blob_sizes.lbs_inode;
+> > > >   }
+> > >
+> > > It would increase memory occupation. Sometimes the IMA policy
+> > > encompasses a small subset of the inodes. Allocating the full
+> > > integrity_iint_cache would be a waste of memory, I guess?
+> >
+> > Perhaps, but if it allows us to remove another layer of dynamic memory
+> > I would argue that it may be worth the cost.  It's also worth
+> > considering the size of integrity_iint_cache, while it isn't small, it
+> > isn't exactly huge either.
+> >
+> > > On the other hand... (did not think fully about that) if we embed the
+> > > full structure in the security blob, we already have a mutex availabl=
+e
+> > > to use, and we don't need to take the inode lock (?).
+> >
+> > That would be excellent, getting rid of a layer of locking would be sig=
+nificant.
+> >
+> > > I'm fully convinced that we can improve the implementation
+> > > significantly. I just was really hoping to go step by step and not
+> > > accumulating improvements as dependency for moving IMA and EVM to the
+> > > LSM infrastructure.
+> >
+> > I understand, and I agree that an iterative approach is a good idea, I
+> > just want to make sure we keep things tidy from a user perspective,
+> > i.e. not exposing the "integrity" LSM when it isn't required.
+>
+> Ok, I went back to it again.
+>
+> I think trying to separate integrity metadata is premature now, too
+> many things at the same time.
 
-Thanks for catching this.  Part of the patch was missing was obviously
-missing.
+I'm not bothered by the size of the patchset, it is more important
+that we do The Right Thing.  I would like to hear in more detail why
+you don't think this will work, I'm not interested in hearing about
+difficult it may be, I'm interested in hearing about what challenges
+we need to solve to do this properly.
 
-> 
-> > diff --git a/src/libimaevm.c b/src/libimaevm.c
-> > index 18b6a6f27237..10ec847da08a 100644
-> > --- a/src/libimaevm.c
-> > +++ b/src/libimaevm.c
-> > @@ -1124,7 +1124,8 @@ static int get_hash_algo_v1(const char *algo)
-> >   }
-> >   
-> >   static int sign_hash_v1(const char *hashalgo, const unsigned char *hash,
-> > -			int size, const char *keyfile, unsigned char *sig)
-> > +			int size, const char *keyfile, const char *keypass,
-> > +			unsigned char *sig)
-> >   {
-> >   	int len = -1, hashalgo_idx;
-> >   	SHA_CTX ctx;
-> > @@ -1158,7 +1159,7 @@ static int sign_hash_v1(const char *hashalgo, const unsigned char *hash,
-> >   	log_info("hash(%s): ", hashalgo);
-> >   	log_dump(hash, size);
-> >   
-> > -	key = read_priv_key(keyfile, imaevm_params.keypass);
-> > +	key = read_priv_key(keyfile, keypass);
-> >   	if (!key)
-> >   		return -1;
-> >   
-> > @@ -1211,7 +1212,8 @@ out:
-> >    * Return: -1 signing error, >0 length of signature
-> >    */
-> >   static int sign_hash_v2(const char *algo, const unsigned char *hash,
-> > -			int size, const char *keyfile, unsigned char *sig)
-> > +			int size, const char *keyfile, const char *keypass,
-> > +			unsigned char *sig)
-> >   {
-> >   	struct signature_v2_hdr *hdr;
-> >   	int len = -1;
-> > @@ -1246,7 +1248,7 @@ static int sign_hash_v2(const char *algo, const unsigned char *hash,
-> >   	log_info("hash(%s): ", algo);
-> >   	log_dump(hash, size);
-> >   
-> > -	pkey = read_priv_pkey(keyfile, imaevm_params.keypass);
-> > +	pkey = read_priv_pkey(keyfile, keypass);
-> >   	if (!pkey)
-> >   		return -1;
-> >   
-> > @@ -1316,14 +1318,11 @@ err:
-> >   
-> >   int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig)
-> >   {
-> > -	if (keypass)
-> > -		imaevm_params.keypass = keypass;
-> > -
-> 
-> I hope all library callers, other than evmctl, passed the keypass in 
-> already, otherwise they could have set the password via 
-> imaevm_params.keypass global and passed in NULL and for them this will 
-> be a behavioral change. Anyway, you have no other choice to get rid of 
-> imaevm_params as much as possible, so I guess it's ok.
+> I started to think, does EVM really need integrity metadata or it can
+> work without?
+>
+> The fact is that CONFIG_IMA=3Dn and CONFIG_EVM=3Dy is allowed, so we have
+> the same problem now. What if we make IMA the one that manages
+> integrity metadata, so that we can remove the 'integrity' LSM?
 
-For now we could invert the test and do exactly the opposite, like
-this:
+I guess we should probably revisit the basic idea of if it even makes
+sense to enable EVM without IMA?  Should we update the Kconfig to
+require IMA when EVM is enabled?
 
-+       if (!keypass)   /* Avoid breaking existing libimaevm usage */
-+               keypass = imaevm_params.keypass;
-+
+> Regarding the LSM order, I would take Casey's suggestion of introducing
+> LSM_ORDER_REALLY_LAST, for EVM.
 
-thanks,
+Please understand that I really dislike that we have imposed ordering
+constraints at the LSM layer, but I do understand the necessity (the
+BPF LSM ordering upsets me the most).  I really don't want to see us
+make things worse by adding yet another ordering bucket, I would
+rather that we document it well and leave it alone ... basically treat
+it like the BPF LSM (grrrrrr).
 
-Mimi
-
-> 
-> It looks like at this point imaevm_params.keypass doesn't have a single 
-> user anymore so you could rename it to 'unused1' or so in the stucture 
-> since it will have zero effect for anyone to set it.
-> 
-> >   	if (imaevm_params.x509)
-> > -		return sign_hash_v2(hashalgo, hash, size, keyfile, sig);
-> > +		return sign_hash_v2(hashalgo, hash, size, keyfile, keypass, sig);
-> >   #if CONFIG_SIGV1
-> >   	else
-> > -		return sign_hash_v1(hashalgo, hash, size, keyfile, sig);
-> > +		return sign_hash_v1(hashalgo, hash, size, keyfile, keypass, sig);
-> >   #endif
-> >   	log_info("Signature version 1 deprecated.");
-> >   	return -1;
-
-
+--=20
+paul-moore.com
