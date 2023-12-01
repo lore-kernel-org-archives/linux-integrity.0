@@ -1,50 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="P/5/jmqW"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RP+JSHJB"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45375170E
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4DB1704
 	for <linux-integrity@vger.kernel.org>; Fri,  1 Dec 2023 05:31:57 -0800 (PST)
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B1DCLu2031370
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B1DMOYF011023
 	for <linux-integrity@vger.kernel.org>; Fri, 1 Dec 2023 13:31:56 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=MY0XxR1i2Uz5rXjsDP4/3t/rVNVP+DFyDGF055k7bZo=;
- b=P/5/jmqWgjsKoGvYTN9N+biDb+HiladU+xms1MMs5oGQAhnnTV1YtHGsWFDhdkYxNZv4
- pW7W8g5m19QzRPid6ufxNl4UczJbLhwPCBJ/V2iG3/MGd4kPZvQ+hAzM6UDwmdiGV27o
- XF/SM55LY69trA0ZuHs1jnA+PBTPBI2J71OT2iRivhc918pnncFiHznplDMkqSzs4amm
- YYRmcwkUPwxqN4AFWJBHsEjag1Ikukk6PmUaQ2k/BmcERsRc+nRBuB46Ctberg7iPb7W
- xiH1r/s2ZrX2LMsHOnOCmnT5zhwNzOLm77DdWVxWFTwTst9DwZIhp+AGXeWE35NKFcg9 +w== 
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uqg5pgfkw-1
+ bh=JHiDRhE1u083wRxbpYJTM1GLbDmSGh2BNNSLFCw1Yco=;
+ b=RP+JSHJBKxBrTffjRwPoskeRzgMfv08GWF2a/8ZaQL4rZ9YJBafmWhwGPJihSTO59fpp
+ mZPpC2MD/XZV8ZzdB1VM8uraUPrxBEi43DTGH+ozMYy3gAhs8wPmjCHbUXTPcSiTylwa
+ qgqw3G7MHOAEdU+K8GuEpN24Kl5SFk9TxEfMqNrgj465L5M4Osj4wKZKMAuCf6WiAB3O
+ iTLujgYvVveDTY56HDy/nnZig0YWLM94WcBuWxxXseJuyY1URIpMi1jdH0kM0koNhRkc
+ OOG8x7p8s2OWRbchFl+5IOpHyLl8c4R7n1HhjBomj+LIzuZvc6rHzylPa7GSWroSAvMO 6A== 
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uqgad09et-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
 	for <linux-integrity@vger.kernel.org>; Fri, 01 Dec 2023 13:31:56 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3B1AY30O000744
-	for <linux-integrity@vger.kernel.org>; Fri, 1 Dec 2023 13:31:54 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3uku8tnhfr-1
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3B1AXqg6017324
+	for <linux-integrity@vger.kernel.org>; Fri, 1 Dec 2023 13:31:55 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3ukwy2cqh8-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Fri, 01 Dec 2023 13:31:54 +0000
+	for <linux-integrity@vger.kernel.org>; Fri, 01 Dec 2023 13:31:55 +0000
 Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3B1DVrY319727026
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3B1DVtQH21299858
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Dec 2023 13:31:53 GMT
+	Fri, 1 Dec 2023 13:31:55 GMT
 Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C43A75805A;
-	Fri,  1 Dec 2023 13:31:53 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id E7F5E58052;
+	Fri,  1 Dec 2023 13:31:54 +0000 (GMT)
 Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C54558052;
-	Fri,  1 Dec 2023 13:31:53 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id A0AAC5805E;
+	Fri,  1 Dec 2023 13:31:54 +0000 (GMT)
 Received: from sbct-2.pok.ibm.com?044watson.ibm.com (unknown [9.47.158.152])
 	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Dec 2023 13:31:53 +0000 (GMT)
+	Fri,  1 Dec 2023 13:31:54 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils PATCH v3 09/14] tests: Address issues raised by shellcheck SC2294
-Date: Fri,  1 Dec 2023 08:31:31 -0500
-Message-ID: <20231201133136.2124147-10-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils PATCH v3 12/14] tests: Address issues raised by shellcheck SC2043
+Date: Fri,  1 Dec 2023 08:31:34 -0500
+Message-ID: <20231201133136.2124147-13-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20231201133136.2124147-1-stefanb@linux.ibm.com>
 References: <20231201133136.2124147-1-stefanb@linux.ibm.com>
@@ -56,55 +56,55 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6PeXV3cA8scsOQKjDQ0tzQD6oKYxRDVk
-X-Proofpoint-ORIG-GUID: 6PeXV3cA8scsOQKjDQ0tzQD6oKYxRDVk
+X-Proofpoint-GUID: e4LCfpnWj0nJJeD8qGLRcEuDekM2FGMo
+X-Proofpoint-ORIG-GUID: e4LCfpnWj0nJJeD8qGLRcEuDekM2FGMo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-12-01_11,2023-11-30_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1015 phishscore=0 lowpriorityscore=0
+ impostorscore=0 mlxlogscore=884 suspectscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2311060000 definitions=main-2312010092
 
-Address issues raised by shellcheck SC2294:
-  "eval negates the benefit of arrays. Drop eval to preserve
-   whitespace/symbols (or eval as string)."
+Address issues raised by shellcheck SC2043:
+  "This loop will only ever run once for a constant value. Did you
+   perhaps mean to loop over dir/*, $var or $(cmd)?
+
+Disable this check in gen-keys.sh to leave the loop alone.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- tests/Makefile.am | 4 +++-
- tests/gen-keys.sh | 2 +-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ tests/Makefile.am | 2 +-
+ tests/gen-keys.sh | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/tests/Makefile.am b/tests/Makefile.am
-index df1fbff..9092c43 100644
+index 3c542d7..4ce71f4 100644
 --- a/tests/Makefile.am
 +++ b/tests/Makefile.am
-@@ -26,7 +26,9 @@ clean-local:
- distclean: distclean-keys
- 
+@@ -28,7 +28,7 @@ distclean: distclean-keys
  shellcheck:
--	shellcheck -i SC2086,SC2181,SC2046,SC2320,SC2317,SC2034,SC2164,SC2166 \
-+	shellcheck \
-+		-i SC2086,SC2181,SC2046,SC2320,SC2317,SC2034,SC2164,SC2166 \
-+		-i SC2294 \
+ 	shellcheck \
+ 		-i SC2086,SC2181,SC2046,SC2320,SC2317,SC2034,SC2164,SC2166 \
+-		-i SC2294,SC2206,SC2196 \
++		-i SC2294,SC2206,SC2196,SC2043 \
  		functions.sh gen-keys.sh install-fsverity.sh \
  		install-mount-idmapped.sh install-openssl3.sh \
  		install-swtpm.sh install-tss.sh softhsm_setup \
 diff --git a/tests/gen-keys.sh b/tests/gen-keys.sh
-index 0b03ba4..c3d5a20 100755
+index c3d5a20..601ded2 100755
 --- a/tests/gen-keys.sh
 +++ b/tests/gen-keys.sh
-@@ -21,7 +21,7 @@ type openssl
+@@ -15,6 +15,8 @@
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
  
- log() {
-   echo >&2 - "$*"
--  eval "$@"
-+  eval "$*"
- }
- 
- if [ "$1" = clean ]; then
++# shellcheck disable=SC2043
++
+ cd "$(dirname "$0")" || exit 1
+ PATH=../src:$PATH
+ type openssl
 -- 
 2.43.0
 
