@@ -1,50 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BilgJtll"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFE810DB
-	for <linux-integrity@vger.kernel.org>; Wed,  6 Dec 2023 11:28:12 -0800 (PST)
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B6I7fX9000648
-	for <linux-integrity@vger.kernel.org>; Wed, 6 Dec 2023 19:28:12 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CwZENLyg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C60E910F0
+	for <linux-integrity@vger.kernel.org>; Wed,  6 Dec 2023 11:28:14 -0800 (PST)
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3B6HWUDC009735
+	for <linux-integrity@vger.kernel.org>; Wed, 6 Dec 2023 19:28:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=q0TQvS5giH2eMtSjixVKfys0qaLCDsaZAWzf+A3JdNw=;
- b=BilgJtllXg4Obht4TnxxsHUHnw8SrmAi7oCDF2x5TzrFsK9SVZPvcc5I7XUqw/V+m9Hk
- 2hWCUGOLTQ2KYjTR1Y9/3tmH+heHDZDoXjVPMDaZc4EHzlv/lECdNvOg4MHRdB4c7NUz
- WhBFYM33DwyN6UVsn2A61slDEiBuOTWrww8zdqfkAua6NjClBXqxxAD4q6dGdfkFb8QT
- c4iM+oiHde9+rUtda1FhYQJSaC+kBqUKVHj/4E6USk01sLx3q8xGL6w4uiQu+q1CTTRJ
- RqmZcU5Fnw1T5pzGtECAdPXLcnXToPzRX8tZxJy5MQJE/dQRRyHdyQhQKRAzKzjkCIVx RQ== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3utwm5ap3b-1
+ bh=H0SG/17+ryLopEJiE8hvdPuX0QWkkgd7FfhXknHExQg=;
+ b=CwZENLygeE7uzlKpXpbaMdhaqqvILs1OVu9B5aZP3qRBP/pnljv4Ved+9zuyoQDjBnR1
+ MMfaK3HOrRZLQU4d6jkSs0iKOABXBYPd9IQRxGur4jE5tB+QeHC1CODdFsyeJnoMPb7h
+ jjseKUwdNXFKtuIjGhMLMXEkmFwoK5ZN3CHiinMPkMZ3MM4/eXAihUtFmenvGCk8Jr/u
+ jzdiC42tYtymmIL8jpM8rTJ5lV6NlZ6IDu+LvZ4Y1MHm9rICNDg+NFjDMZZMhPwKx7zK
+ lvNM/jfBvZSdJF5tTKc6CeD4Aoe77v2bPuMRWrpOLMsgA5v3ueYQU83LFwDF91f5Awk/ 3g== 
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3utwem2w35-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2023 19:28:11 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3B6ITDVT013743
-	for <linux-integrity@vger.kernel.org>; Wed, 6 Dec 2023 19:28:11 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3utau46jtr-1
+	for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2023 19:28:14 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3B6ITnlU004681
+	for <linux-integrity@vger.kernel.org>; Wed, 6 Dec 2023 19:28:13 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3utav4ekvj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2023 19:28:10 +0000
+	for <linux-integrity@vger.kernel.org>; Wed, 06 Dec 2023 19:28:13 +0000
 Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3B6JS72w12518070
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3B6JSAFn48366024
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 6 Dec 2023 19:28:08 GMT
+	Wed, 6 Dec 2023 19:28:10 GMT
 Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D567E2004B;
-	Wed,  6 Dec 2023 19:28:07 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 3A51D20043;
+	Wed,  6 Dec 2023 19:28:10 +0000 (GMT)
 Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ED2DC20040;
-	Wed,  6 Dec 2023 19:28:06 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 5E5892004B;
+	Wed,  6 Dec 2023 19:28:09 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.com (unknown [9.61.99.183])
 	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  6 Dec 2023 19:28:06 +0000 (GMT)
+	Wed,  6 Dec 2023 19:28:09 +0000 (GMT)
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Stefan Berger <stefanb@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [ima-evm-utils PATCH v2 03/13] Update library function definitions to include a "public_keys" parameter
-Date: Wed,  6 Dec 2023 14:27:24 -0500
-Message-Id: <20231206192734.339999-4-zohar@linux.ibm.com>
+Subject: [ima-evm-utils PATCH v2 05/13] Update cmd_verify_ima() to define and use a local list of public keys
+Date: Wed,  6 Dec 2023 14:27:26 -0500
+Message-Id: <20231206192734.339999-6-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20231206192734.339999-1-zohar@linux.ibm.com>
 References: <20231206192734.339999-1-zohar@linux.ibm.com>
@@ -56,256 +56,97 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: IfGDGMX8nwL8FH-assGpi_nfi91-X24A
-X-Proofpoint-GUID: IfGDGMX8nwL8FH-assGpi_nfi91-X24A
+X-Proofpoint-ORIG-GUID: CDTZydhbma8gc552RyMjPohWfstOz2Yr
+X-Proofpoint-GUID: CDTZydhbma8gc552RyMjPohWfstOz2Yr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2023-12-06_16,2023-12-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
- malwarescore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ mlxscore=0 bulkscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ impostorscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2311290000 definitions=main-2312060141
 
-Instead of relying on a global static "public_keys" variable, which is
-not concurrency-safe, update static library function definitions to
-include it as a parameter, define new library functions with it as
-a parameter, and deprecate existing functions.
+Update the static verify_ima() function definition to include
+"public_keys".
 
-Define imaevm_init_public_keys(), imaevm_verify_hash(), and
-ima_verify_signature2() functions. Update static function definitions
-to include "public_keys".
+Replace calling init_public_keys() with the imaevm_init_public_keys()
+version.  Similarly replace ima_verify_signature() with the
+ima_verify_signature2() version.
 
-To avoid library incompatibility, make the existing functions -
-init_public_keys(), verify_hash(), ima_verify_signature() - wrappers
-for the new function versions.
-
-Deprecate init_public_keys(), verify_hash(), ima_verify_signature()
-functions.
+Free the local public keys list.
 
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/imaevm.h    |  4 +++
- src/libimaevm.c | 85 ++++++++++++++++++++++++++++++++++++-------------
- 2 files changed, 67 insertions(+), 22 deletions(-)
+ src/evmctl.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/src/imaevm.h b/src/imaevm.h
-index 470e8376f2fb..b29a4745fc77 100644
---- a/src/imaevm.h
-+++ b/src/imaevm.h
-@@ -249,8 +249,12 @@ uint32_t imaevm_read_keyid(const char *certfile);
- int sign_hash(const char *algo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig);
- int verify_hash(const char *file, const unsigned char *hash, int size, unsigned char *sig, int siglen);
- int ima_verify_signature(const char *file, unsigned char *sig, int siglen, unsigned char *digest, int digestlen);
-+int ima_verify_signature2(void *public_keys, const char *file,
-+			  unsigned char *sig, int siglen,
-+			  unsigned char *digest, int digestlen);
- void imaevm_free_public_keys(void *public_keys);
- void init_public_keys(const char *keyfiles);
-+int imaevm_init_public_keys(const char *keyfiles, void **public_keys);
- int imaevm_hash_algo_from_sig(unsigned char *sig);
- const char *imaevm_hash_algo_by_id(int algo);
- int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo, const unsigned char *in_hash, unsigned char *out_hash);
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 534468fe99ca..6fecb2ffd139 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -372,12 +372,13 @@ struct public_key_entry {
- };
- static struct public_key_entry *g_public_keys = NULL;
- 
--static EVP_PKEY *find_keyid(uint32_t keyid)
-+static EVP_PKEY *find_keyid(struct public_key_entry *public_keys,
-+			    uint32_t keyid)
- {
--	struct public_key_entry *entry, *tail = g_public_keys;
-+	struct public_key_entry *entry, *tail = public_keys;
- 	int i = 1;
- 
--	for (entry = g_public_keys; entry; entry = entry->next) {
-+	for (entry = public_keys; entry; entry = entry->next) {
- 		if (entry->keyid == keyid)
- 			return entry->key;
- 		i++;
-@@ -394,7 +395,7 @@ static EVP_PKEY *find_keyid(uint32_t keyid)
- 	if (tail)
- 		tail->next = entry;
- 	else
--		g_public_keys = entry;
-+		public_keys = (void *)entry;
- 	log_err("key %d: %x (unknown keyid)\n", i, __be32_to_cpup(&keyid));
- 	return 0;
- }
-@@ -412,7 +413,7 @@ void imaevm_free_public_keys(void *public_keys)
- 	}
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 2710a27cb305..3ae79262efbb 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -972,7 +972,7 @@ static int cmd_verify_evm(struct command *cmd)
+ 	return err;
  }
  
--void init_public_keys(const char *keyfiles)
-+int imaevm_init_public_keys(const char *keyfiles, void **public_keys)
+-static int verify_ima(const char *file)
++static int verify_ima(void *public_keys, const char *file)
  {
- 	struct public_key_entry *entry;
- 	char *tmp_keyfiles, *keyfiles_free;
-@@ -420,6 +421,11 @@ void init_public_keys(const char *keyfiles)
- 	int err = 0;
- 	int i = 1;
- 
-+	if (!public_keys)
-+		return -EINVAL;
-+
-+	*public_keys = NULL;
-+
- 	tmp_keyfiles = strdup(keyfiles);
- 	keyfiles_free = tmp_keyfiles;
- 
-@@ -444,12 +450,19 @@ void init_public_keys(const char *keyfiles)
- 		calc_keyid_v2(&entry->keyid, entry->name, entry->key);
- 		sprintf(entry->name, "%x", __be32_to_cpup(&entry->keyid));
- 		log_info("key %d: %s %s\n", i++, entry->name, keyfile);
--		entry->next = g_public_keys;
--		g_public_keys = entry;
-+		entry->next = (struct public_key_entry *)*public_keys;
-+		*public_keys = (void *)entry;
- 	}
-+
- 	free(keyfiles_free);
- 	if (err < 0)
--		imaevm_free_public_keys(g_public_keys);
-+		imaevm_free_public_keys(public_keys);
-+	return err;
-+}
-+
-+__attribute__((deprecated)) void init_public_keys(const char *keyfiles)
-+{
-+	imaevm_init_public_keys(keyfiles, (void **)&g_public_keys);
- }
- 
- /*
-@@ -466,7 +479,8 @@ void init_public_keys(const char *keyfiles)
-  *
-  * (Note: signature_v2_hdr struct does not contain the 'type'.)
-  */
--static int verify_hash_common(const char *file, const unsigned char *hash,
-+static int verify_hash_common(struct public_key_entry *public_keys,
-+			      const char *file, const unsigned char *hash,
- 			      int size, unsigned char *sig, int siglen)
- {
- 	int ret = -1;
-@@ -481,7 +495,7 @@ static int verify_hash_common(const char *file, const unsigned char *hash,
- 		log_dump(hash, size);
+ 	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	int len;
+@@ -999,34 +999,43 @@ static int verify_ima(const char *file)
+ 		}
  	}
  
--	pkey = find_keyid(hdr->keyid);
-+	pkey = find_keyid(public_keys, hdr->keyid);
- 	if (!pkey) {
- 		uint32_t keyid = hdr->keyid;
+-	return ima_verify_signature(file, sig, len, NULL, 0);
++	return ima_verify_signature2(public_keys, file, sig, len, NULL, 0);
+ }
  
-@@ -543,11 +557,13 @@ err:
-  *
-  * Return: 0 verification good, 1 verification bad, -1 error.
-  */
--static int verify_hash_v2(const char *file, const unsigned char *hash,
-+static int verify_hash_v2(struct public_key_entry *public_keys,
-+			  const char *file, const unsigned char *hash,
- 			  int size, unsigned char *sig, int siglen)
+ static int cmd_verify_ima(struct command *cmd)
  {
- 	/* note: signature_v2_hdr does not contain 'type', use sig + 1 */
--	return verify_hash_common(file, hash, size, sig + 1, siglen - 1);
-+	return verify_hash_common(public_keys, file, hash, size,
-+				  sig + 1, siglen - 1);
- }
+ 	char *file = g_argv[optind++];
++	void *public_keys = NULL;
+ 	int err, fails = 0;
  
- /*
-@@ -556,7 +572,8 @@ static int verify_hash_v2(const char *file, const unsigned char *hash,
-  *
-  * Return: 0 verification good, 1 verification bad, -1 error.
-  */
--static int verify_hash_v3(const char *file, const unsigned char *hash,
-+static int verify_hash_v3(struct public_key_entry *public_keys,
-+			  const char *file, const unsigned char *hash,
- 			  int size, unsigned char *sig, int siglen)
- {
- 	unsigned char sigv3_hash[MAX_DIGEST_SIZE];
-@@ -567,7 +584,8 @@ static int verify_hash_v3(const char *file, const unsigned char *hash,
- 		return ret;
- 
- 	/* note: signature_v2_hdr does not contain 'type', use sig + 1 */
--	return verify_hash_common(file, sigv3_hash, size, sig + 1, siglen - 1);
-+	return verify_hash_common(public_keys, file, sigv3_hash, size,
-+				  sig + 1, siglen - 1);
- }
- 
- #define HASH_MAX_DIGESTSIZE 64	/* kernel HASH_MAX_DIGESTSIZE is 64 bytes */
-@@ -710,8 +728,9 @@ int imaevm_hash_algo_from_sig(unsigned char *sig)
+-	if (imaevm_params.x509) {
+-		if (imaevm_params.keyfile) /* Support multiple public keys */
+-			init_public_keys(imaevm_params.keyfile);
+-		else			   /* assume read pubkey from x509 cert */
+-			init_public_keys("/etc/keys/x509_evm.der");
+-	}
+-
+ 	if (!file) {
+ 		log_err("Parameters missing\n");
+ 		print_usage(cmd);
  		return -1;
- }
+ 	}
  
--int verify_hash(const char *file, const unsigned char *hash, int size,
--		unsigned char *sig, int siglen)
-+int imaevm_verify_hash(void *public_keys, const char *file,
-+		       const unsigned char *hash, int size,
-+		       unsigned char *sig, int siglen)
- {
- 	/* Get signature type from sig header */
- 	if (sig[1] == DIGSIG_VERSION_1) {
-@@ -730,15 +749,25 @@ int verify_hash(const char *file, const unsigned char *hash, int size,
- 		return -1;
- #endif
- 	} else if (sig[1] == DIGSIG_VERSION_2) {
--		return verify_hash_v2(file, hash, size, sig, siglen);
-+		return verify_hash_v2(public_keys, file, hash, size,
-+				      sig, siglen);
- 	} else if (sig[1] == DIGSIG_VERSION_3) {
--		return verify_hash_v3(file, hash, size, sig, siglen);
-+		return verify_hash_v3(public_keys, file, hash, size,
-+				      sig, siglen);
- 	} else
- 		return -1;
- }
- 
--int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
--			 unsigned char *digest, int digestlen)
-+__attribute__((deprecated)) int verify_hash(const char *file,
-+					    const unsigned char *hash, int size,
-+					    unsigned char *sig, int siglen)
-+{
-+	return imaevm_verify_hash(g_public_keys, file, hash, size, sig, siglen);
-+}
++	if (imaevm_params.x509) {
++		if (imaevm_params.keyfile) /* Support multiple public keys */
++			err = imaevm_init_public_keys(imaevm_params.keyfile,
++						      &public_keys);
++		else			   /* assume read pubkey from x509 cert */
++			err = imaevm_init_public_keys("/etc/keys/x509_evm.der",
++						      &public_keys);
++		if (err < 0) {
++			log_info("Failed loading public keys");
++			return err;
++		}
++	}
 +
-+int ima_verify_signature2(void *public_keys, const char *file,
-+			  unsigned char *sig, int siglen,
-+			  unsigned char *digest, int digestlen)
- {
- 	unsigned char hash[MAX_DIGEST_SIZE];
- 	int hashlen, sig_hash_algo;
-@@ -766,14 +795,26 @@ int ima_verify_signature(const char *file, unsigned char *sig, int siglen,
- 	 * measurement list, not by calculating the local file digest.
- 	 */
- 	if (digest && digestlen > 0)
--		return verify_hash(file, digest, digestlen, sig, siglen);
-+		return imaevm_verify_hash(public_keys, file, digest, digestlen,
-+					  sig, siglen);
- 
- 	hashlen = ima_calc_hash(file, hash);
- 	if (hashlen <= 1)
- 		return hashlen;
- 	assert(hashlen <= sizeof(hash));
- 
--	return verify_hash(file, hash, hashlen, sig, siglen);
-+	return imaevm_verify_hash(public_keys, file, hash, hashlen,
-+				  sig, siglen);
-+}
+ 	do {
+-		err = verify_ima(file);
++		err = verify_ima(public_keys, file);
+ 		if (err)
+ 			fails++;
+ 		if (!err && imaevm_params.verbose >= LOG_INFO)
+ 			log_info("%s: verification is OK\n", file);
+ 	} while ((file = g_argv[optind++]));
 +
-+__attribute__((deprecated)) int ima_verify_signature(const char *file,
-+						     unsigned char *sig,
-+						     int siglen,
-+						     unsigned char *digest,
-+						     int digestlen)
-+{
-+	return ima_verify_signature2(g_public_keys, file, sig, siglen,
-+				     digest, digestlen);
++	imaevm_free_public_keys(public_keys);
+ 	return fails > 0;
  }
  
- #if CONFIG_SIGV1
 -- 
 2.39.3
 
