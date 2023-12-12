@@ -1,310 +1,120 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8927A221;
+	Tue, 12 Dec 2023 17:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W7aAYMmE"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364BF1B6;
-	Tue, 12 Dec 2023 08:41:34 -0800 (PST)
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCF3fML001333;
-	Tue, 12 Dec 2023 16:40:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=jy4/tffTntSGacJXt6QsY6IPV+TiYa52rsAHUe6V6F8=;
- b=W7aAYMmEfaohTFb9oxzfHVNVAo8i8exh4vgDeIz91kVY3lAhQyMTThHa2T/kORM9oMyd
- 4ZBepGnPcHOy91BNgs0OSkS0jnv+XyA0C76Ow1a+PZDshzOVNxb9/yfYhGSXiTWRnpJD
- kSw6jj1ziBXk6O/yKd2NXLimCki0Dq6ED2qGQQi64vldVdprww8n+4l0M3h9TNIlXtsD
- fAEFxf71xktyZO1Pc4vgxz2dZMLs6VIKr+hQqRTBYf7Iw0h/tGzZToG4/RWCVsqfVgnR
- ra61vWF4qeF7NGq3ehov9PKmnE6aP8nc6iT0IkCs8Y5DkcqctqwX/BAxhB/Gum1sHcHF 0A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uxpk3j9k3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 16:40:23 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 3BCEaLha025472;
-	Tue, 12 Dec 2023 16:40:22 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3uxpk3j9j1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 16:40:22 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 3BCGHd5W008491;
-	Tue, 12 Dec 2023 16:40:20 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3uw2jtamm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Dec 2023 16:40:20 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 3BCGeJk526608008
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 12 Dec 2023 16:40:20 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A1D8C58068;
-	Tue, 12 Dec 2023 16:40:19 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 029E958059;
-	Tue, 12 Dec 2023 16:40:18 +0000 (GMT)
-Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 12 Dec 2023 16:40:17 +0000 (GMT)
-From: Ninad Palsule <ninad@linux.ibm.com>
-To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        joel@jms.id.au, andrew@codeconstruct.com.au, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, keescook@chromium.org,
-        tony.luck@intel.com, gpiccoli@igalia.com, ninad@linux.ibm.com,
-        johannes.holland@infineon.com, linux@roeck-us.net, broonie@kernel.org
-Cc: Andrew Geissler <geissonator@yahoo.com>, patrick.rudolph@9elements.com,
-        vincent@vtremblay.dev, peteryin.openbmc@gmail.com, lakshmiy@us.ibm.com,
-        bhelgaas@google.com, naresh.solanki@9elements.com,
-        alexander.stein@ew.tq-group.com, festevam@denx.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH v1 3/8] ARM: dts: aspeed: System1: IBM system1 BMC board
-Date: Tue, 12 Dec 2023 10:39:59 -0600
-Message-Id: <20231212164004.1683589-4-ninad@linux.ibm.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231212164004.1683589-1-ninad@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKjopVXe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D7CFC433C8;
+	Tue, 12 Dec 2023 17:09:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702401004;
+	bh=yjoopt9NEDUJBXYr+uh0GurA19bZL/znMFFec8DNFHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HKjopVXeO6JVxx8562Q1lAsjA3jLS9Lrq37LUVv/9vpA/h4L49qsljC4USp3nIwKv
+	 wmp89DWIDumgmnSah7+tF4tfl/a9iZ7zkwZK5mcLWXS+lrQTEZ5X2aXuv9bwqT6fzH
+	 y2/5Lybl5TsflSGLcFCIfaRXroO9XKBtVpZA+5x91ophu6Q13pvLRM4VfBE5+TW2Fn
+	 bhlQstwmM50jkVhnlqPxT24RWqgS/ZlS33sPgFiFCJo+u50ZvA9SWyr9EYcu83sm/j
+	 0jt35PpifPlW5KwJp7yaxVF4Wa4gu+oJuW4b4gzlmobPImpcV4Rzv0cE8TqtIQrj9y
+	 yhBvAVAnrZzZw==
+Date: Tue, 12 Dec 2023 17:09:57 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Ninad Palsule <ninad@linux.ibm.com>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+	keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
+	johannes.holland@infineon.com, linux@roeck-us.net,
+	broonie@kernel.org, patrick.rudolph@9elements.com,
+	vincent@vtremblay.dev, peteryin.openbmc@gmail.com,
+	lakshmiy@us.ibm.com, bhelgaas@google.com,
+	naresh.solanki@9elements.com, alexander.stein@ew.tq-group.com,
+	festevam@denx.de, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-hardening@vger.kernel.org, geissonator@yahoo.com
+Subject: Re: [PATCH v1 1/8] dt-bindings: arm: aspeed: add IBM system1-bmc
+Message-ID: <20231212-thrower-ebook-d29a85a6ed96@spud>
 References: <20231212164004.1683589-1-ninad@linux.ibm.com>
+ <20231212164004.1683589-2-ninad@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Z2tIFKZzvH28KmLX2eq70n-C6RyojVv4
-X-Proofpoint-ORIG-GUID: FT8kNhgCIR2A8Ia5v3L7PLPmBuahJmXx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-12-12_10,2023-12-12_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2312120128
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="55umEabtpNwX1lRu"
+Content-Disposition: inline
+In-Reply-To: <20231212164004.1683589-2-ninad@linux.ibm.com>
 
-From: Andrew Geissler <geissonator@yahoo.com>
 
-Add a device tree for IBM system1 BMC board. It uses AST2600 SOC.
+--55umEabtpNwX1lRu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested:
-    This board is tested using the simics simulator.
+On Tue, Dec 12, 2023 at 10:39:57AM -0600, Ninad Palsule wrote:
+> Document the new compatibles used on IBM system1-bmc
+>=20
+> Tested:
+>     This board is tested using the simics simulator.
 
-Signed-off-by: Andrew Geissler <geissonator@yahoo.com>
-Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
----
- arch/arm/boot/dts/aspeed/Makefile             |   1 +
- .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 188 ++++++++++++++++++
- 2 files changed, 189 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+I don't see how this is relevant to dt-bindings patches.
 
-diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-index 3e3e6b96cb79..6f7ed11978ff 100644
---- a/arch/arm/boot/dts/aspeed/Makefile
-+++ b/arch/arm/boot/dts/aspeed/Makefile
-@@ -35,6 +35,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-bmc-ibm-rainier.dtb \
- 	aspeed-bmc-ibm-rainier-1s4u.dtb \
- 	aspeed-bmc-ibm-rainier-4u.dtb \
-+	aspeed-bmc-ibm-system1.dtb \
- 	aspeed-bmc-intel-s2600wf.dtb \
- 	aspeed-bmc-inspur-fp5280g2.dtb \
- 	aspeed-bmc-inspur-nf5280m6.dtb \
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-new file mode 100644
-index 000000000000..01291b407f59
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-@@ -0,0 +1,188 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright 2023 IBM Corp.
-+/dts-v1/;
-+
-+#include "aspeed-g6.dtsi"
-+#include <dt-bindings/gpio/aspeed-gpio.h>
-+#include <dt-bindings/i2c/i2c.h>
-+#include <dt-bindings/leds/leds-pca955x.h>
-+
-+/ {
-+	model = "System1";
-+	compatible = "ibm,system1-bmc", "aspeed,ast2600";
-+
-+	chosen {
-+		stdout-path = &uart5;
-+		bootargs = "console=ttyS4,115200n8 earlycon";
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x40000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		event_log: tcg_event_log@b3d00000 {
-+			no-map;
-+			reg = <0xb3d00000 0x100000>;
-+		};
-+
-+		ramoops@b3e00000 {
-+			compatible = "ramoops";
-+			reg = <0xb3e00000 0x200000>; /* 16 * (4 * 0x8000) */
-+			record-size = <0x8000>;
-+			console-size = <0x8000>;
-+			ftrace-size = <0x8000>;
-+			pmsg-size = <0x8000>;
-+			max-reason = <3>; /* KMSG_DUMP_EMERG */
-+		};
-+
-+		/* LPC FW cycle bridge region requires natural alignment */
-+		flash_memory: region@b4000000 {
-+			no-map;
-+			reg = <0xb4000000 0x04000000>; /* 64M */
-+		};
-+
-+		/* VGA region is dictated by hardware strapping */
-+		vga_memory: region@bf000000 {
-+			no-map;
-+			compatible = "shared-dma-pool";
-+			reg = <0xbf000000 0x01000000>;  /* 16M */
-+		};
-+	};
-+};
-+
-+&adc1 {
-+	status = "okay";
-+	aspeed,int-vref-microvolt = <2500000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc8_default
-+		&pinctrl_adc9_default
-+		&pinctrl_adc10_default
-+		&pinctrl_adc11_default
-+		&pinctrl_adc12_default
-+		&pinctrl_adc13_default
-+		&pinctrl_adc14_default
-+		&pinctrl_adc15_default>;
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&uhci {
-+	status = "okay";
-+};
-+
-+&gpio0 {
-+	gpio-line-names =
-+	/*A0-A7*/	"","","","","","","","",
-+	/*B0-B7*/	"","","","","","","","",
-+	/*C0-C7*/	"","","","","","","","",
-+	/*D0-D7*/	"","","","","","","","",
-+	/*E0-E7*/	"","","","","","","","",
-+	/*F0-F7*/	"","","","","","","","",
-+	/*G0-G7*/	"","","","","","","","",
-+	/*H0-H7*/	"","","","","","","","",
-+	/*I0-I7*/	"","","","","","","","",
-+	/*J0-J7*/	"","","","","","","","",
-+	/*K0-K7*/	"","","","","","","","",
-+	/*L0-L7*/	"","","","","","","","",
-+	/*M0-M7*/	"","","","","","","","",
-+	/*N0-N7*/	"","","","","","","","",
-+	/*O0-O7*/	"","","","","","","","",
-+	/*P0-P7*/	"","","","","","","","",
-+	/*Q0-Q7*/	"","","","","","","","",
-+	/*R0-R7*/	"","","","","","","","",
-+	/*S0-S7*/	"","","","","","","","",
-+	/*T0-T7*/	"","","","","","","","",
-+	/*U0-U7*/	"","","","","","","","",
-+	/*V0-V7*/	"","","","power-chassis-control","","","","",
-+	/*W0-W7*/	"","","","","","","","",
-+	/*X0-X7*/	"","power-chassis-good","","","","","","",
-+	/*Y0-Y7*/	"","","","","","","","",
-+	/*Z0-Z7*/	"","","","","","","","";
-+};
-+
-+&emmc_controller {
-+	status = "okay";
-+};
-+
-+&pinctrl_emmc_default {
-+	bias-disable;
-+};
-+
-+&emmc {
-+	status = "okay";
-+	clk-phase-mmc-hs200 = <180>, <180>;
-+};
-+
-+&ibt {
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	status = "okay";
-+};
-+
-+&vuart1 {
-+	status = "okay";
-+};
-+
-+&vuart2 {
-+	status = "okay";
-+};
-+
-+&lpc_ctrl {
-+	status = "okay";
-+	memory-region = <&flash_memory>;
-+};
-+
-+&mac2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii3_default>;
-+	clocks = <&syscon ASPEED_CLK_GATE_MAC3CLK>,
-+		 <&syscon ASPEED_CLK_MAC3RCLK>;
-+	clock-names = "MACCLK", "RCLK";
-+	use-ncsi;
-+};
-+
-+&mac3 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_rmii4_default>;
-+	clocks = <&syscon ASPEED_CLK_GATE_MAC4CLK>,
-+		 <&syscon ASPEED_CLK_MAC4RCLK>;
-+	clock-names = "MACCLK", "RCLK";
-+	use-ncsi;
-+};
-+
-+&wdt1 {
-+	aspeed,reset-type = "none";
-+	aspeed,external-signal;
-+	aspeed,ext-push-pull;
-+	aspeed,ext-active-high;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdtrst1_default>;
-+};
-+
-+&wdt2 {
-+	status = "okay";
-+};
-+
-+&kcs2 {
-+	status = "okay";
-+	aspeed,lpc-io-reg = <0xca8 0xcac>;
-+};
-+
-+&kcs3 {
-+	status = "okay";
-+	aspeed,lpc-io-reg = <0xca2>;
-+	aspeed,lpc-interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+};
--- 
-2.39.2
+>=20
+> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  Documentation/devicetree/bindings/trivial-devices.yaml   | 2 ++
 
+IMO these should be split into two patches.
+
+Cheers,
+Conor.
+
+>  2 files changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/D=
+ocumentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 6f7543463d89..ebebe14c42aa 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -85,6 +85,7 @@ properties:
+>                - facebook,yosemite4-bmc
+>                - ibm,everest-bmc
+>                - ibm,rainier-bmc
+> +              - ibm,system1-bmc
+>                - ibm,tacoma-bmc
+>                - inventec,starscream-bmc
+>                - inventec,transformer-bmc
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
+umentation/devicetree/bindings/trivial-devices.yaml
+> index 441b55723675..b12a60d2eb0f 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -135,6 +135,8 @@ properties:
+>            - ibm,cffps1
+>              # IBM Common Form Factor Power Supply Versions 2
+>            - ibm,cffps2
+> +            # Infineon barometric pressure and temperature sensor
+> +          - infineon,dps310
+>              # Infineon IR36021 digital POL buck controller
+>            - infineon,ir36021
+>              # Infineon IR38060 Voltage Regulator
+> --=20
+> 2.39.2
+>=20
+
+--55umEabtpNwX1lRu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZXiT5AAKCRB4tDGHoIJi
+0pd1AQCSwXdC8RYV745T9gVdIrlReCQJoSuD6J0vvr2NN2/3iAD+Mfx6pgKRXZWu
+G9C1EwvFHJ7rMpBCulVDOhFTvdQLUAA=
+=0EQF
+-----END PGP SIGNATURE-----
+
+--55umEabtpNwX1lRu--
