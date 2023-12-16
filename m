@@ -1,113 +1,56 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7041116
-	for <linux-integrity@vger.kernel.org>; Sat, 16 Dec 2023 01:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="mNPb2AIu"
-Received: from tushar-HP-Pavilion-Laptop-15-eg0xxx.lan (unknown [50.46.228.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6B37520B3CC4;
-	Fri, 15 Dec 2023 17:07:40 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B37520B3CC4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1702688860;
-	bh=Kuh7HHtW0surZQmmoh5+OnSpf7Wv3yhg4QwvyIeBjLQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mNPb2AIur58OR3dj8b86eQdW3bzbIccak3QFeUC8oydKG1wbr6xpxeuGYUhoGr+Jw
-	 8J6BpxZDw68QpOohLkDytm/j6cRBoX9+Jm++2hXVUG24qEHdcHd1Lbreb2NOBiei/O
-	 V6lYA183wfPY//gDdsrR1M5r8XJivJDPr301UZMg=
-From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To: zohar@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com,
-	stefanb@linux.ibm.com,
-	ebiederm@xmission.com,
-	noodles@fb.com,
-	bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org,
-	kexec@lists.infradead.org
-Cc: code@tyhicks.com,
-	nramas@linux.microsoft.com,
-	paul@paul-moore.com
-Subject: [PATCH v3 6/7] ima: configure memory to log events between kexec load and execute
-Date: Fri, 15 Dec 2023 17:07:28 -0800
-Message-Id: <20231216010729.2904751-7-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20231216010729.2904751-1-tusharsu@linux.microsoft.com>
-References: <20231216010729.2904751-1-tusharsu@linux.microsoft.com>
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB42134D9;
+	Sat, 16 Dec 2023 09:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 53E1530000867;
+	Sat, 16 Dec 2023 10:47:15 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 18E274EA64; Sat, 16 Dec 2023 10:47:15 +0100 (CET)
+Date: Sat, 16 Dec 2023 10:47:15 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] tpm: nuvoton: Use i2c_get_match_data()
+Message-ID: <20231216094715.GA7030@wunner.de>
+References: <20231115210215.3743873-1-robh@kernel.org>
+ <CWZPKU58PWLS.1B1N297O1D9CY@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CWZPKU58PWLS.1B1N297O1D9CY@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-IMA currently allocates half a PAGE_SIZE for the extra events that would
-be measured between kexec 'load' and 'execute'.  Depending on the IMA
-policy and the system state, that memory may not be sufficient to hold
-the extra IMA events measured after kexec 'load'.  The memory
-requirements vary from system to system and they should be configurable.
+On Wed, Nov 15, 2023 at 11:37:55PM +0200, Jarkko Sakkinen wrote:
+> On Wed Nov 15, 2023 at 11:02 PM EET, Rob Herring wrote:
+> > Use preferred i2c_get_match_data() instead of of_match_device() to
+> > get the driver match data. With this, adjust the includes to explicitly
+> > include the correct headers.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  drivers/char/tpm/tpm_i2c_nuvoton.c | 15 ++++-----------
+[...]
+> 
+> OK, apologies for having to do a resend. I'll pick this, thanks!
 
-Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
-extra memory (in kb) to be allocated for IMA measurements added in the
-window from kexec 'load' to kexec 'execute'.
+This is now duplicated as commit ebf2d4e8e582 in Jarkko's tree and
+commit 319e31686b9f in Rob's tree:
 
-Update ima_add_kexec_buffer() function to allocate memory based on the 
-Kconfig option value, rather than the currently hardcoded one.
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/commit/?h=next&id=ebf2d4e8e582a444e12eff7d4a59d87f22fb3481
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
----
- security/integrity/ima/Kconfig     |  9 +++++++++
- security/integrity/ima/ima_kexec.c | 13 ++++++++-----
- 2 files changed, 17 insertions(+), 5 deletions(-)
-
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 60a511c6b583..8792b7aab768 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -338,3 +338,12 @@ config IMA_DISABLE_HTABLE
- 	default n
- 	help
- 	   This option disables htable to allow measurement of duplicate records.
-+
-+config IMA_KEXEC_EXTRA_MEMORY_KB
-+	int
-+	depends on IMA && IMA_KEXEC
-+	default 64
-+	help
-+	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-+	  allocated (in kb) for IMA measurements added in the window
-+	  from kexec 'load' to kexec 'execute'.
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 55bd5362262e..063da9c834a0 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -128,15 +128,18 @@ void ima_add_kexec_buffer(struct kimage *image)
- 	int ret;
- 
- 	/*
--	 * Reserve an extra half page of memory for additional measurements
--	 * added during the kexec load.
-+	 * Reserve extra memory for measurements added in the window from
-+	 * kexec 'load' to kexec 'execute'.
- 	 */
--	binary_runtime_size = ima_get_binary_runtime_size();
-+	binary_runtime_size = ima_get_binary_runtime_size() +
-+			      sizeof(struct ima_kexec_hdr) +
-+			      (CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024);
-+
- 	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
- 		kexec_segment_size = ULONG_MAX;
- 	else
--		kexec_segment_size = ALIGN(ima_get_binary_runtime_size() +
--					   PAGE_SIZE / 2, PAGE_SIZE);
-+		kexec_segment_size = ALIGN(binary_runtime_size, PAGE_SIZE);
-+
- 	if ((kexec_segment_size == ULONG_MAX) ||
- 	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
- 		pr_err("Binary measurement list too large.\n");
--- 
-2.25.1
-
+https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/commit/?h=for-next&id=319e31686b9f2bd669fd5c3a63b8ccf2efd9186f
