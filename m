@@ -1,54 +1,54 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6363F2C18F
-	for <linux-integrity@vger.kernel.org>; Thu,  4 Jan 2024 19:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1DB2C19B
+	for <linux-integrity@vger.kernel.org>; Thu,  4 Jan 2024 19:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SUr6dyCl"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SLBJmOut"
 Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 404HtTdW032249
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 404HtRPL032184
 	for <linux-integrity@vger.kernel.org>; Thu, 4 Jan 2024 19:06:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=1/h7TU6SPUJVkcx5Z1049oKSVovmpRlZukyqFhfxR8Y=;
- b=SUr6dyClnZFQRPof8qnhcPsV2Hfp48wnb6zC1aeKy6PhIaV44zoUfmRvrVXOUgajkhsM
- Rcaz/YIU39391nnjGwqxu4dL67KE7OEA8qXdorSlCsDpxVVmKFXMsvbw6UIWFjT+vHlK
- qIalu/2IJl8IC4K6dLftzUkkuYmjx2bD1xGK8Hg4mq39Q76Uo2yc/OGkmsMEeT03slzP
- RxqyTIjXYYfK72IFkjbAisguuNySau2MNvkuQPRkFpOR+1dczSC9xdm+br3jS+DfaGgb
- /dwttnxadBoKR1Cs5UN+YJmDeVVKtbUYQCMwc/DUL50ndHnJXGfh2ikTd7z1hA8JUGGV DA== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ve1gft1am-1
+ bh=BgENYU6MlShfUiJqkPMbZS2hFGBDsFZnskXXsfDDTjw=;
+ b=SLBJmOutnXAkdG/WQaDKDfGj90pm3/Rkl6dMNN+tfD2vUgRjlqEEMVJgp7YVS/B9Zvs6
+ adkb5735vQ/0GlqKqYM+EcS+TixZzkax+TFyjSD8AKjMMfHlG0oYccHBZowQI1zm4vpM
+ 94BALERq0yuyvCCqhK9+Dh0Rq1wbeDmAxNN/yJwl4YpkaL9Q9JGPGo3dfAMS8e4xY+pF
+ LZN0wJdq6OXzX1+Qy2yeR2yx6o74wFrqsUZ5lqA8H1uB28vLeKXbWErWw6Z0fGqqz8lh
+ eYLFVS8znldRaeyoBIOhZJmYl3EmRSiIw6cWAgnFwFsjyCuebFFTl5ROnqADxEb+HuvX 7w== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ve1gft1b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+	for <linux-integrity@vger.kernel.org>; Thu, 04 Jan 2024 19:06:20 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 404HoYNP017971
+	for <linux-integrity@vger.kernel.org>; Thu, 4 Jan 2024 19:06:19 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3vayrkttas-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
 	for <linux-integrity@vger.kernel.org>; Thu, 04 Jan 2024 19:06:19 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 404J4Cga019424
-	for <linux-integrity@vger.kernel.org>; Thu, 4 Jan 2024 19:06:18 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3vc30stabh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Thu, 04 Jan 2024 19:06:18 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 404J6FUv13369882
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 404J6G9e44630350
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 4 Jan 2024 19:06:15 GMT
+	Thu, 4 Jan 2024 19:06:17 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3AC2220043;
-	Thu,  4 Jan 2024 19:06:15 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id D58F120043;
+	Thu,  4 Jan 2024 19:06:16 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D29320040;
-	Thu,  4 Jan 2024 19:06:14 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 4CE3220040;
+	Thu,  4 Jan 2024 19:06:16 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.watson.ibm.com (unknown [9.31.99.90])
 	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  4 Jan 2024 19:06:14 +0000 (GMT)
+	Thu,  4 Jan 2024 19:06:16 +0000 (GMT)
 From: Mimi Zohar <zohar@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: Stefan Berger <stefanb@linux.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: [ima-evm-utils PATCH v3 10/13] Update EVM signature verification to use a local hash algorithm variable
-Date: Thu,  4 Jan 2024 14:05:55 -0500
-Message-Id: <20240104190558.3674008-11-zohar@linux.ibm.com>
+Subject: [ima-evm-utils PATCH v3 12/13] Update sign_hash_v*() definition to include the key password
+Date: Thu,  4 Jan 2024 14:05:57 -0500
+Message-Id: <20240104190558.3674008-13-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.39.3
 In-Reply-To: <20240104190558.3674008-1-zohar@linux.ibm.com>
 References: <20240104190558.3674008-1-zohar@linux.ibm.com>
@@ -60,8 +60,8 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: slaglDOe8vDmXMwh9dlXAV0sD6_32B1m
-X-Proofpoint-GUID: slaglDOe8vDmXMwh9dlXAV0sD6_32B1m
+X-Proofpoint-ORIG-GUID: BKWEJs3mv_OLcIQ4wWpkNku0SO_kZQ-b
+X-Proofpoint-GUID: BKWEJs3mv_OLcIQ4wWpkNku0SO_kZQ-b
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-04_11,2024-01-03_01,2023-05-22_02
@@ -71,82 +71,77 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscor
  malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2311290000 definitions=main-2401040149
 
-Instead of relying on the "imaevm_params.algo" global variable, which
-is not concurrency-safe, define and use a local file hash algorithm
-variable.
-
-Update calc_evm_hash(), imaevm_verify_hash().
+The library sign_hash() definition already includes a key password as a
+parameter, but it isn't passed on to sign_hash_v*() functions.  Update
+the sign_hash_v*() function definitions and callers.
 
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- src/evmctl.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ src/libimaevm.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 2ccaaf244aa9..3eb995031722 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -340,7 +340,8 @@ err:
-  * Returns 0 for EVP_ function failures. Return -1 for other failures.
-  * Return hash algorithm size on success.
-  */
--static int calc_evm_hash(const char *file, unsigned char *hash)
-+static int calc_evm_hash(const char *file, const char *hash_algo,
-+			 unsigned char *hash)
- {
-         const EVP_MD *md;
- 	struct stat st;
-@@ -408,10 +409,9 @@ static int calc_evm_hash(const char *file, unsigned char *hash)
- 	}
- #endif
- 
--	md = EVP_get_digestbyname(imaevm_params.hash_algo);
-+	md = EVP_get_digestbyname(hash_algo);
- 	if (!md) {
--		log_err("EVP_get_digestbyname(%s) failed\n",
--			imaevm_params.hash_algo);
-+		log_err("EVP_get_digestbyname(%s) failed\n", hash_algo);
- 		err = 0;
- 		goto out;
- 	}
-@@ -570,7 +570,7 @@ static int sign_evm(const char *file, const char *key)
- 	unsigned char sig[MAX_SIGNATURE_SIZE];
- 	int len, err;
- 
--	len = calc_evm_hash(file, hash);
-+	len = calc_evm_hash(file, imaevm_params.hash_algo, hash);
- 	if (len <= 1)
- 		return len;
- 	assert(len <= sizeof(hash));
-@@ -909,6 +909,7 @@ static int verify_evm(struct public_key_entry *public_keys, const char *file)
- {
- 	unsigned char hash[MAX_DIGEST_SIZE];
- 	unsigned char sig[MAX_SIGNATURE_SIZE];
-+	const char *hash_algo = NULL;
- 	int sig_hash_algo;
- 	int mdlen;
- 	int len;
-@@ -938,15 +939,15 @@ static int verify_evm(struct public_key_entry *public_keys, const char *file)
- 		log_err("unknown hash algo: %s\n", file);
- 		return -1;
- 	}
--	imaevm_params.hash_algo = imaevm_hash_algo_by_id(sig_hash_algo);
-+	hash_algo = imaevm_hash_algo_by_id(sig_hash_algo);
- 
--	mdlen = calc_evm_hash(file, hash);
-+	mdlen = calc_evm_hash(file, hash_algo, hash);
- 	if (mdlen <= 1)
- 		return mdlen;
- 	assert(mdlen <= sizeof(hash));
- 
--	return imaevm_verify_hash(public_keys, file, imaevm_params.hash_algo,
--				  hash, mdlen, sig, len);
-+	return imaevm_verify_hash(public_keys, file, hash_algo, hash,
-+				  mdlen, sig, len);
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 48bce59fba43..ce4f6f73097d 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -1112,7 +1112,8 @@ static int get_hash_algo_v1(const char *algo)
  }
  
- static int cmd_verify_evm(struct command *cmd)
+ static int sign_hash_v1(const char *hashalgo, const unsigned char *hash,
+-			int size, const char *keyfile, unsigned char *sig)
++			int size, const char *keyfile, const char *keypass,
++			unsigned char *sig)
+ {
+ 	int len = -1, hashalgo_idx;
+ 	SHA_CTX ctx;
+@@ -1146,7 +1147,7 @@ static int sign_hash_v1(const char *hashalgo, const unsigned char *hash,
+ 	log_info("hash(%s): ", hashalgo);
+ 	log_dump(hash, size);
+ 
+-	key = read_priv_key(keyfile, imaevm_params.keypass);
++	key = read_priv_key(keyfile, keypass);
+ 	if (!key)
+ 		return -1;
+ 
+@@ -1199,7 +1200,8 @@ out:
+  * Return: -1 signing error, >0 length of signature
+  */
+ static int sign_hash_v2(const char *algo, const unsigned char *hash,
+-			int size, const char *keyfile, unsigned char *sig)
++			int size, const char *keyfile, const char *keypass,
++			unsigned char *sig)
+ {
+ 	struct signature_v2_hdr *hdr;
+ 	int len = -1;
+@@ -1234,7 +1236,7 @@ static int sign_hash_v2(const char *algo, const unsigned char *hash,
+ 	log_info("hash(%s): ", algo);
+ 	log_dump(hash, size);
+ 
+-	pkey = read_priv_pkey(keyfile, imaevm_params.keypass);
++	pkey = read_priv_pkey(keyfile, keypass);
+ 	if (!pkey)
+ 		return -1;
+ 
+@@ -1304,14 +1306,14 @@ err:
+ 
+ int sign_hash(const char *hashalgo, const unsigned char *hash, int size, const char *keyfile, const char *keypass, unsigned char *sig)
+ {
+-	if (keypass)
+-		imaevm_params.keypass = keypass;
++	if (!keypass)	/* Avoid breaking existing libimaevm usage */
++		keypass = imaevm_params.keypass;
+ 
+ 	if (imaevm_params.x509)
+-		return sign_hash_v2(hashalgo, hash, size, keyfile, sig);
++		return sign_hash_v2(hashalgo, hash, size, keyfile, keypass, sig);
+ #if CONFIG_SIGV1
+ 	else
+-		return sign_hash_v1(hashalgo, hash, size, keyfile, sig);
++		return sign_hash_v1(hashalgo, hash, size, keyfile, keypass, sig);
+ #endif
+ 	log_info("Signature version 1 deprecated.");
+ 	return -1;
 -- 
 2.39.3
 
