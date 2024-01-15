@@ -1,95 +1,136 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0677018B06;
-	Mon, 15 Jan 2024 19:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A4618E10;
+	Mon, 15 Jan 2024 20:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pd37N/n1"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=1D2O/oZLoFQC2/FAJ3H/MWMGvTVUWOLR5lPGQ9I/yas=; b=pd37N/n1SWyqd2aNIP5BnBBqY5
-	6NqeEWSKWIZ5P257VpU1HJ67cKqa/Uo5ydzFVmJxfv6Yy2NVrNr86WtYmINFQuUnFqYkfWQiEYYE2
-	gaYWDZFxjPUXMFetI2ept9LZieP7Z39bvj50BCSwu+cZYSwobvSDhEiQCNKN9qB9FcpfDtRQq3p4K
-	8qzekRsS0FQ6oHeFwjuDbNvsEybHdyneiQ/p4p3eOBonbgeuWbxiL58gkDZkrpbX8k39mozr2qDs+
-	7FKLvJVoJ9Oa7hjxi3xDD1nALDg2IgTbE0SNxAOX2ln6+m+Hl0NTQA1jAGWNWRLVUEapVTfL0z3v/
-	Hk4HF8nA==;
-Received: from [50.53.46.231] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1rPSZk-00A3QP-1K;
-	Mon, 15 Jan 2024 19:24:48 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Thirupathaiah Annapureddy <thiruan@microsoft.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH] tpm/tpm_ftpm_tee: fix all kernel-doc warnings
-Date: Mon, 15 Jan 2024 11:24:47 -0800
-Message-ID: <20240115192447.26481-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Zudq/OQV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mi3ROXdw"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 2815B3200B25;
+	Mon, 15 Jan 2024 15:18:04 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 15 Jan 2024 15:18:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1705349883; x=1705436283; bh=e+ykc0zOmp
+	+y1Z7R5pTDfegBpM5HaaHl2YIznyofnRg=; b=Zudq/OQVUSbgUeJ7VgSexjEMis
+	Yyoi7XQ5AQkOZE1cO8jcSwrnSNFqsmAPtyAEujvTEMJe2w4OU/8E0slEN17nm5hw
+	TPVGSMoDPb8zXQFUu28DDfcA7iQFbfrCypppj1QkJaJbU0wcBrA2OzcxsiOziKQQ
+	v4wz68j7Ett/UYRH4GEwJF6oGetGNJjrzfX7KSE6uY6GTzlCR9AR5nvDSTHUYRtg
+	zUwIabO3NOLxRuzLYH+6HTqewDaKLAaVD0QW00vnsNU5H8nxeGTflkeKCU0ty92z
+	8x3QOkYNK8UVKW3BQQb6rOmZwySIYAeWapxsGm9mVGndOqHmswh4tGT7n8Yw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1705349883; x=1705436283; bh=e+ykc0zOmp+y1Z7R5pTDfegBpM5H
+	aaHl2YIznyofnRg=; b=Mi3ROXdwiL6vOPVn/TnKU+QitRjS39TYAcKwetaXwmo3
+	jC0XdgjlIriLJgI0Tm+TGRAXfaEaqfhuuMsKOFFQJLEtWwFHlsnu2ecajYIrXbdh
+	SeWXyTwWm1WI0Dq1g5c673AAc5rp+0SWTTNc5pPGr5z8OmPWUURXOr8zN/3mW7NF
+	t+19JpX4kU/KtjXxtPqjyhhJy/RQgxWp27uLeBbLXUAfYh52mwQ5B7LGre/w4BUC
+	5GfGZqFl524OIPXAPybjQaEs03sCTgi5CTbQk84mMw+Nh5cdocJJD5DJy1S4GUj1
+	LNSrbQktUKHs+fEnws+jle1ZjmpFKAkPyytZ85Pj0A==
+X-ME-Sender: <xms:-pKlZSeNIxS12fwTkbr06DzcMtTKr4nYHLMiGJ65ir_vW9fuaMTB7g>
+    <xme:-pKlZcM_3r0Rp4UiyUoX5xmyBCCF5qUhl68KBcTzJeKhPe5Br6vKBlJTWg3nlpH69
+    a98kDFMvu2h5LoNC_s>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdejuddgudefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeeiiedtlefgtdfhheetheffudekffefteeiieevudfggfegieefteevgeev
+    veduieenucffohhmrghinhepuggvvhhitggvthhrvggvrdhorhhgpdhkvghrnhgvlhdroh
+    hrghdpghgrthgvfihorhhkshdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:-pKlZTiwDl7yupMOdwsgf6XD1WZQ0S6g-oq3h_Uiu2DhLaZJxuioZw>
+    <xmx:-pKlZf_DFocOrvK91AFNmbCl_5XnYYHQyCukOHgurk9h0AykZwDQEw>
+    <xmx:-pKlZetRIAag5BvUcMXdMOXCc8gn7mMRTTFc4FERKuYIyFOq2E-eqw>
+    <xmx:-5KlZV8O6iaGGFVQ352rrsarpopTVEWvIJtE8_z7GpH_byhOocP9NA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 04AFCB6008D; Mon, 15 Jan 2024 15:18:01 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1374-gc37f3abe3d-fm-20240102.001-gc37f3abe
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <8e138e54-22ba-43d3-898c-ab772039cd99@app.fastmail.com>
+In-Reply-To: <682b50dc-a92a-4da5-ad06-631c5125ebc5@collabora.com>
+References: 
+ <e6d7768e2a257e0bd5948bcf168909b6c670851b.1705168605.git.lukas@wunner.de>
+ <682b50dc-a92a-4da5-ad06-631c5125ebc5@collabora.com>
+Date: Mon, 15 Jan 2024 21:17:41 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Lukas Wunner" <lukas@wunner.de>, "Olof Johansson" <olof@lixom.net>,
+ soc@kernel.org, devicetree@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc: "Yannic Moog" <Y.Moog@phytec.de>, "Alexander Bauer" <a.bauer@phytec.de>,
+ upstream@lists.phytec.de, "Teresa Remmet" <T.Remmet@phytec.de>,
+ "Tim Harvey" <tharvey@gateworks.com>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Fabio Estevam" <festevam@gmail.com>, "NXP Linux Team" <linux-imx@nxp.com>,
+ "Adam Ford" <aford173@gmail.com>, "Heiko Thiery" <heiko.thiery@gmail.com>,
+ "Enric Balletbo i Serra" <eballetbo@kernel.org>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "Hsin-Yi Wang" <hsinyi@chromium.org>, "Chen-Yu Tsai" <wenst@chromium.org>,
+ =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Rob Herring" <robh+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+ "Conor Dooley" <conor+dt@kernel.org>
+Subject: Re: [PATCH] arm64: dts: Fix TPM schema violations
+Content-Type: text/plain
 
-Change @pdev to @dev in 2 places to match the function parameters.
-Correct one function name in kernel-doc comment to match the function
-implementation.
+On Mon, Jan 15, 2024, at 09:41, AngeloGioacchino Del Regno wrote:
+> Il 13/01/24 19:06, Lukas Wunner ha scritto:
+>> Since commit 26c9d152ebf3 ("dt-bindings: tpm: Consolidate TCG TIS
+>> bindings"), several issues are reported by "make dtbs_check" for arm64
+>> devicetrees:
+>> 
+>> The compatible property needs to contain the chip's name in addition to
+>> the generic "tcg,tpm_tis-spi" and the nodename needs to be "tpm@0"
+>> rather than "cr50@0":
+>> 
+>>    tpm@1: compatible: ['tcg,tpm_tis-spi'] is too short
+>>          from schema $id: http://devicetree.org/schemas/tpm/tcg,tpm_tis-spi.yaml#
+>> 
+>>    cr50@0: $nodename:0: 'cr50@0' does not match '^tpm(@[0-9a-f]+)?$'
+>>          from schema $id: http://devicetree.org/schemas/tpm/google,cr50.yaml#
+>> 
+>> Fix these schema violations.
+>> 
+>> phyGATE-Tauri uses an Infineon SLB9670:
+>> https://lore.kernel.org/all/ab45c82485fa272f74adf560cbb58ee60cc42689.camel@phytec.de/
+>> 
+>> Gateworks Venice uses an Atmel ATTPM20P:
+>> https://trac.gateworks.com/wiki/tpm
+>> 
+>> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+>
+> For MediaTek:
+> Reviewed-by: AngeloGioacchino Del Regno 
+> <angelogioacchino.delregno@collabora.com>
+>
+> ...but I think you should split this per-SoC.
+>
+> Anyway, if Arnd wants to take this patch directly I'm also totally fine 
+> with that.
 
-This prevents these warnings:
+I would prefer to apply the combined patches:
+if you end up with a series of patches that all have
+identical commit texts, it's better to combine them
+as that gives a more readable git history.
 
-tpm_ftpm_tee.c:217: warning: Function parameter or struct member 'dev' not described in 'ftpm_tee_probe'
-tpm_ftpm_tee.c:217: warning: Excess function parameter 'pdev' description in 'ftpm_tee_probe'
-tpm_ftpm_tee.c:313: warning: Function parameter or struct member 'dev' not described in 'ftpm_tee_remove'
-tpm_ftpm_tee.c:313: warning: Excess function parameter 'pdev' description in 'ftpm_tee_remove'
-tpm_ftpm_tee.c:348: warning: expecting prototype for ftpm_tee_shutdown(). Prototype was for ftpm_plat_tee_shutdown() instead
+However, I got some conflicts trying to apply them on
+top of v6.7, so maybe check that and resend.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Thirupathaiah Annapureddy <thiruan@microsoft.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org
----
- drivers/char/tpm/tpm_ftpm_tee.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff -- a/drivers/char/tpm/tpm_ftpm_tee.c b/drivers/char/tpm/tpm_ftpm_tee.c
---- a/drivers/char/tpm/tpm_ftpm_tee.c
-+++ b/drivers/char/tpm/tpm_ftpm_tee.c
-@@ -208,7 +208,7 @@ static int ftpm_tee_match(struct tee_ioc
- 
- /**
-  * ftpm_tee_probe() - initialize the fTPM
-- * @pdev: the platform_device description.
-+ * @dev: the device description.
-  *
-  * Return:
-  *	On success, 0. On failure, -errno.
-@@ -304,7 +304,7 @@ static int ftpm_plat_tee_probe(struct pl
- 
- /**
-  * ftpm_tee_remove() - remove the TPM device
-- * @pdev: the platform_device description.
-+ * @dev: the device description.
-  *
-  * Return:
-  *	0 always.
-@@ -341,7 +341,7 @@ static void ftpm_plat_tee_remove(struct
- }
- 
- /**
-- * ftpm_tee_shutdown() - shutdown the TPM device
-+ * ftpm_plat_tee_shutdown() - shutdown the TPM device
-  * @pdev: the platform_device description.
-  */
- static void ftpm_plat_tee_shutdown(struct platform_device *pdev)
+       Arnd
