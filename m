@@ -1,154 +1,149 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B32D13A242;
-	Thu, 25 Jan 2024 21:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2322B45951;
+	Thu, 25 Jan 2024 21:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706217892; cv=none; b=pSEPLFxIfW05rskpy3nb2jLm2IQTMSLix/HN40WH3wNNekOMfirz27sxw0UV1Lrgk5BrXAmwkBAOaPAIW0EAcz1l51zmeKg51m8PcYF03vQaOWDsYfQQA0DGq4n3fmnwkdC1OoOvwqpA54kJCSjpBOUFT0FB/EULxXbvawf0Or8=
+	t=1706217933; cv=none; b=uW03jmhwM6p/3UUTTfYjxJtqgolnMj9QTzbSYqNpyYQFeovvBc4uqyIFVsr14xEMmnaSHYRJzslsDDo5pyR434WDqKF5r2ffCBNviR7v0baU+Np1dlXgVoeifAl4539eV0XjdkMGjHgNVpVnekrvMEDcptXtpeDkcMx07rL+RGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706217892; c=relaxed/simple;
-	bh=wF7lnyES1kcFW+pAAffY+2WrYEqI4AmwamSHD36HjYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uIdbdaRqeNF3FpIaZHeRRSH1lR0tafzQ0lxW961wpxzkeZ3tOoIxE5hUQHhWC7RV8TOrifuhDJq0G2gIshsLMC7f+voTZYRVhFo/uUOPTyrAg1gOpLFk11MY2PLyTkL+2sexedZTCoyNpyfi9kJWclI+fRJnLx98gL3r+jS6y1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oDdGM3I/; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1706217933; c=relaxed/simple;
+	bh=+1rzo44MVhdG1twaPoxAFs/i5CPmmmD3ebkTckAOXgQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FrFqjRPxvrCbLcwrEDtt8JGT9ktSaTQqCvX2Fp3dqa+Pk3Wjb/2VkjDeQ6eNNOYtBcd9Rx1Gnvfh2b33fjbdU2+RglTUG2uzR9+xdOxDO2NIlARga9mB96HQw2TipJBs8R7wznql4QxxayRNRgAL6xofqOl1ScqcxQNupg4bB/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZDEztOj4; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oDdGM3I/"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40PKOsK4003822;
-	Thu, 25 Jan 2024 21:24:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=X4knlC7JqfUtxkp4byTD9WxtEc2D+QZ0DzKaY+9nXvc=;
- b=oDdGM3I/PlfVC3eEYZJUWpkehZIryqK8YI6DAmCPcpEmCGf4pqftn47xiYbX4I7mmDOG
- mWVnRwSabJfoF9QpArNrWfY/InQYzcZ5hdnhb5woY8A5JFE8sbFcU0DDTf7XYFPTz5X/
- kJ9toCpuWfdhs4ggGVSk8NYmLxwM9rTkg4iUjtxo7J2Oy4ebV9/GspiEZT8SYzQqFWkh
- V07dOnACOV4aDFftBOFcdUS3NH95HyQVxXcsepxWQj6FCYVtMYyNTbflCr9mtiPH1m/v
- n2jWNelNZqAuf8t/XmDixav+MiajfrHtUbKmydnzda+WTCr4zTfigZsc3+FtdHiYmqgF 3Q== 
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZDEztOj4"
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40PKrCkj028747;
+	Thu, 25 Jan 2024 21:24:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=TFZLj+iicDe+vF0MlXRj2JagqhpN0qB/SfThMG1aMUg=;
+ b=ZDEztOj4agiJQ17j2f9Af8WlWqTH6pFrMi/3nBfhC8ZQmmaOX/HuNs6zoWkUXbH2vjUX
+ pqAwyyczjCG6x86Hgz1b5A4ckJngo33vQOLdS6hY6uIlfZmsw6gNhNR7a6CB/vRflhij
+ ItvVduz80fiXIB2NS2TmUkTi0xKOBY9ptBTi2EbfSJvmyijnVGkXcTH7l5b5EiXw6nrj
+ fne0PhIN56q9axeA853ev+7UPyxAJ6jPJUidNvhtybefk+1xB8RA7W2wGYTGvzA0vZNq
+ syaTIXw0XR4D+BRKnEH+1Am1wDPtsREvCiyITKsg0ehI+XKxN8Vo3C+Nt0QZj/N1E9/O Yg== 
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vuvv0v9fe-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vuy2srs0v-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jan 2024 21:24:00 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40PLEhiB000766;
-	Thu, 25 Jan 2024 21:23:59 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vuvv0v9es-1
+	Thu, 25 Jan 2024 21:24:40 +0000
+Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 40PLLcEj028686;
+	Thu, 25 Jan 2024 21:24:38 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3vuy2srraf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jan 2024 21:23:59 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 40PK3JJQ025291;
-	Thu, 25 Jan 2024 21:23:58 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3vrtqkpdva-1
+	Thu, 25 Jan 2024 21:24:38 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 40PKe4u3026485;
+	Thu, 25 Jan 2024 21:22:00 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3vrrgtq1md-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 25 Jan 2024 21:23:58 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 40PLNvY125887374
+	Thu, 25 Jan 2024 21:22:00 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 40PLLxq427918698
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 25 Jan 2024 21:23:58 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CB36F58055;
-	Thu, 25 Jan 2024 21:23:57 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C17B358043;
-	Thu, 25 Jan 2024 21:23:56 +0000 (GMT)
-Received: from [9.61.160.70] (unknown [9.61.160.70])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 25 Jan 2024 21:23:56 +0000 (GMT)
-Message-ID: <b5b0e7bd-25e5-49a4-8ac2-349020c2344b@linux.ibm.com>
-Date: Thu, 25 Jan 2024 15:23:56 -0600
+	Thu, 25 Jan 2024 21:21:59 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 28EFA5805C;
+	Thu, 25 Jan 2024 21:21:59 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5370658058;
+	Thu, 25 Jan 2024 21:21:57 +0000 (GMT)
+Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 25 Jan 2024 21:21:57 +0000 (GMT)
+From: Ninad Palsule <ninad@linux.ibm.com>
+To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        joel@jms.id.au, andrew@codeconstruct.com.au, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca, keescook@chromium.org,
+        tony.luck@intel.com, gpiccoli@igalia.com, ninad@linux.ibm.com,
+        johannes.holland@infineon.com, linux@roeck-us.net, broonie@kernel.org,
+        andre.werner@systec-electronic.com
+Cc: patrick.rudolph@9elements.com, vincent@vtremblay.dev,
+        peteryin.openbmc@gmail.com, lakshmiy@us.ibm.com, bhelgaas@google.com,
+        naresh.solanki@9elements.com, alexander.stein@ew.tq-group.com,
+        festevam@denx.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-hardening@vger.kernel.org, geissonator@yahoo.com,
+        geert+renesas@glider.be, luca.ceresoli@bootlin.com
+Subject: [PATCH v5 0/2] Add device tree for IBM system1 BMC
+Date: Thu, 25 Jan 2024 15:21:52 -0600
+Message-Id: <20240125212154.4028640-1-ninad@linux.ibm.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] ARM: dts: aspeed: System1: IBM system1 BMC board
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-        joel@jms.id.au, andrew@codeconstruct.com.au, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, keescook@chromium.org,
-        tony.luck@intel.com, gpiccoli@igalia.com,
-        johannes.holland@infineon.com, linux@roeck-us.net, broonie@kernel.org,
-        andre.werner@systec-electronic.com,
-        Andrew Geissler <geissonator@yahoo.com>, patrick.rudolph@9elements.com,
-        vincent@vtremblay.dev, peteryin.openbmc@gmail.com, lakshmiy@us.ibm.com,
-        bhelgaas@google.com, naresh.solanki@9elements.com,
-        alexander.stein@ew.tq-group.com, festevam@denx.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-hardening@vger.kernel.org,
-        geert+renesas@glider.be, luca.ceresoli@bootlin.com
-References: <20240116190321.GA102334@bhelgaas>
-Content-Language: en-US
-From: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <20240116190321.GA102334@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wUZ0cU7yrFT0wEjuA747LiOyYUO_dYd_
-X-Proofpoint-GUID: HJm4xSjPhV2NU6Q64V5KJgHDqN0uwgdU
+X-Proofpoint-GUID: GysTMrm6-mcL-m8x12davFsbB12pYHLf
+X-Proofpoint-ORIG-GUID: _vbxIRZNqiN081HErlJ-GrANPNmq_t_E
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-01-25_14,2024-01-25_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- adultscore=0 phishscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- suspectscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2401250154
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401250154
 
-Hello Bjorn,
+This patchset adds device tree for IBM system1 bmc board.
 
-On 1/16/24 13:03, Bjorn Helgaas wrote:
-> On Tue, Jan 16, 2024 at 12:37:34PM -0600, Ninad Palsule wrote:
->> From: Andrew Geissler <geissonator@yahoo.com>
->>
->> Add a device tree for IBM system1 BMC board. It uses AST2600 SOC.
->> - Added base board
-> s/Added/Add/ to match first sentence.
-Fixed
->
->> - Added i2c devices and muxes.
->> - Added different voltage regulators.
->> - Added GPIO pin assignements, GPIO expansion devices
->> - Added LED brinker devices
-> "brinker"?  "blinker" maybe (no idea what it actually is).
-Fixed. Its blinker.
->> - Added Fan controllers
-> s/Fan/fan/
-Fixed.
->
->> - Added EEPROM/VPD
->> - Added Power supplies
-> s/Power/power/
-Fixed.
->
->> - Added Humidity, pressure and temperature sensors.
-> s/Humidity/humidity/
-Fixed.
->
->> - Added Trusted platform module(TPM) chip.
-> s/Trusted platform module/Trusted Platform Module /
-Fixed
->
->> Tested:
->>      This board is tested using the simics simulator.
->>
->> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
->> Signed-off-by: Andrew Geissler <geissonator@yahoo.com>
-> Your sign-off should be last since you are sending the series.
+Change log:
+v1:
+ - Added device binding for IBM system1-bmc
+ - Added device binding for TIS I2C devices
+ - Added device tree for IBM system1 BMC board 
+ - Added i2c and muxes
+ - Added voltage regulators
+ - Added GPIO, Fan ctrl, Led
+ - Added more compatible strings for tpm_tis_i2c
+ - Added power supplies, sensors, EEPROMS, TPM and more
 
-Fixed.
+v2:
+ - Incorporated review comments from Conor Dooley, Jarkko Sakkinen,
+   Guenter Roeck, Rob Herring, Krzysztof Kozlowski
+ - Merge all patches into single patch.
+ - Split the trivial device patch.
+ - Cleanup commit messages.
+ - Fixed bootargs string.
+ - Fixed node names.
+ - Dropped tpm schema patch as it is covered by Lukas's patch.
+ - Dropped "tpm: tis-i2c: Add more compatible strings" patch and
+   send it as a separate patch.
 
-Thanks for the review.
+v3:
+ - Fixed voltage-regulators names.
+ - Updated commit message about TPM compatibility string.
 
-Regards,
+v4:
+ - Removed compatibility string "nuvoton,npct75x" from TPM
 
-Ninad Palsule
+v5:
+  - Fixed commit message as per reeview comment by Bjorn
+  - Dropped following commit from patchset as it is already merged.
+    -> dt-bindings-Add-DPS310-as-trivial-device.patch
 
+Andrew Geissler (1):
+  ARM: dts: aspeed: System1: IBM system1 BMC board
+
+Ninad Palsule (1):
+  dt-bindings: arm: aspeed: add IBM system1-bmc
+
+ .../bindings/arm/aspeed/aspeed.yaml           |    1 +
+ arch/arm/boot/dts/aspeed/Makefile             |    1 +
+ .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 1623 +++++++++++++++++
+ 3 files changed, 1625 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+
+-- 
+2.39.2
 
