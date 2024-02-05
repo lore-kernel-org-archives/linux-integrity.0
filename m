@@ -1,210 +1,307 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E73F11C89
-	for <linux-integrity@vger.kernel.org>; Mon,  5 Feb 2024 08:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409D82E63B
+	for <linux-integrity@vger.kernel.org>; Mon,  5 Feb 2024 14:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707122365; cv=none; b=L0QInyaw1Hnbhpy0fyciG+czOAnBFy0cCMR7/Vy+qFa4K6XvRZjhF8TQsfgbHLHTuSV1d6REihjzDlo1j9AHoayLhBs7X9+4BlXB7hovb4uqy45ABamVhOhsxAb1kwASEk5kEgQ18V/CVoR9l7xy3t6M+Yb2VZSdFu7eXkK9KCc=
+	t=1707142542; cv=none; b=dQoJGDqRXlLZWx0vKOMNW4dh+q2IAr79pLGYGzgwGAvkMA4/P+6JsUk0giUMSG6H17RLGOqgdFxbBXpbmCza9C/dWbsfwQFhQl80k6jxVk9ZkxeOo7Ni9Y7tyjVnTb2MoDsMOQqfd+f49Cv8w7vj2t6iJiCU9il2yKm2fB7tjoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707122365; c=relaxed/simple;
-	bh=vWCUg5e3ZEMZK/WPs6t0bqEagLm8F2BxIwdVLhxnKZU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=kIRE1Fl9pjHtgm8gvWBLvN7pmr43fYoASLgLNy4+L6oe6YDZTRenXqA5BI7SkxMeHrfB7GJ4ODr6YzkbK68+ASnUyiGdSU/vYz/Zpy+Ndbq4h98Y7TmkNKlWWgz+uYh4XtT/oWkEQWmUzojuYQYYoLLtKo5D4UaS4eCBoHE3+5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=USQm8JgA; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+	s=arc-20240116; t=1707142542; c=relaxed/simple;
+	bh=Ez8bnVBU4Jkj+lPXX0aV2ZvvlDEN+IMyiqBhu9Gx8wQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RDwyb7WdYmXSfxLUeIJK+fTIiqMBGVJVU2DsHdee2dLA4tr5odSkiLiw2lWrCavlF6Re24qihhDL3W4jRcyKJ4wcLHwmZBqJGVsY11zezlG0u2ew9iShvnoPyPGzHL4MuJE01EsEF6EDHsO6eyv2WpkjMM67O7SAatu46tPxm8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EqLDVLjD; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="USQm8JgA"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a36126e7459so538479066b.2
-        for <linux-integrity@vger.kernel.org>; Mon, 05 Feb 2024 00:39:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1707122360; x=1707727160; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9fYC3H+9fhYO7ZOc/qX6rq1afQIQ11uUH5tLK3IWpXc=;
-        b=USQm8JgAsU+bvggwhfSL5ljcQ5Z14tU+aidl4amOwC7ZtSddvc9cEIU5FQDAtpdiZt
-         00xL062bRmN7OPRxqr9e3hhhQP2KxWABZr8Ma9bEsukUP/+XfBdKrxS8u8xvWWr8r2VP
-         UxZhDLZ4BtL4L3Hy+SGvRO9Zo7LX77N1QosSuLMUgDOa7fp2NEBZlRX8TlRHzfj2xsHg
-         ruw24jXiiwcaiq+nC/CJZi0HDUybbK0aKr+39odEyNF9Ke1tux69a9NVWHrTn2sGHRUW
-         SZ6dIdM1EKfOG0F+J9NXyLx/pz+JwMNCxlMay3J1rr9zgJTm+WrXQnjvV4L2LLRkUFpB
-         W1XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707122360; x=1707727160;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9fYC3H+9fhYO7ZOc/qX6rq1afQIQ11uUH5tLK3IWpXc=;
-        b=bXHR0jja8n/l1XBc2MAr67CvzFkP5oqmQMLTyNxhNBcl6IrX1y1W+K0zHMCfEMSnGh
-         6mQP4I+GCx9lL9KjUKq3LQdZo/oun9IZW4sYrW3XDKnkt46EojXfATiVjkwr8ulswaSx
-         CV2YKqYlTsRgA3NO+rrKHNuBcoSq7DOlsVhwNypXVuM2/wpsSIp7T/Ykw7vayPooZCjZ
-         vLavPb/+p27SxauwA1Vfi7Cj3NDG9caJWCG6O2D6lG4MrJPjWL5T3dz9NqoQEvMRzjb5
-         7GZHAsQS+8eIlDVYmnE9tKDhMhxIIFJZQi0Cc5YOrxvpqPNkhh7Blrctx4X0Z3Giz0i4
-         VHpA==
-X-Gm-Message-State: AOJu0YxjamW04pSIzRg/LZIVUSl4oxdtrqQfd9t3symRQPiKJ+u6s3yx
-	FJ0tDiexPdbwe0dqm8c8hlieT8MQpiD2NSlC+9xBvPvPGLcQQnIAeOA/id9go+o=
-X-Google-Smtp-Source: AGHT+IHLVlIqTHZQT4uS2cWMqHQ2/IKc/41epP/Cs1vBSz9FD6909OEjZv22ODsI8EUgs+fyzA4YHw==
-X-Received: by 2002:a17:906:16c8:b0:a37:bdc2:e4e6 with SMTP id t8-20020a17090616c800b00a37bdc2e4e6mr1530645ejd.10.1707122360096;
-        Mon, 05 Feb 2024 00:39:20 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUTINvkr7TdZxNV3zYWkm9NGPQZ3GBX+JIgmxygvgv41SJzvPqoxxCTp3Tc5PUMHqQw6PbrIpUJx88b3E4cjK5SpUhXe9GIOdkr+YAeq65K7GeGBl1IcKBE3vDLsUsnuV2IbaG0QNY2n7bIZmG6EvZe1SBcWh+cXAGLPTi+gsHzLIB4Ek4PUYTx4gU+ytkjrCv9icm50Zeb3mURGFiiEDIG7cEFIv8APYkltJkm2gyR7ujeOD214DLsYXioA4GA+mfSAn1zE6cUXN3gEY+rLpkmUpLjD2iJPbzDVzGNISNprHIg7SmguU4h2FdVVnwSTySpbdJdWbY3O73k0isTb+fW+2BhqgbYzLQP4Th8toVBowOkBsWLuiIMTWzYAOhJmk6ekd906b1/N5qCiiP0jMcDqGHNHD66is0Ey/uYHly9YuPt9eh1AjwKjjwF5b/qpsQ704D/FfKIJGUGgJ1LvvVEDZ4wkLobm4MWzCyKR42KQu0JY9qwDmsVCk+CmP2XiCJQ8kF2e1uHxU2m6jE1Jk/PCyOQgU3eOv7zuzVmmRlrTGC97+WwZ9lMD8jIvBNhTVIoLbb6F+28AgmyFJsGRwnuvmQaQIBSDluu/HVeamiL/BJF4j44dxmUseTJh1DPAFnwb8JEHWSiMWx8TUueFEYA879cQmBtXxDqUYJWkmFVkkCePJ36slN9TE80+JJXJ1Z0bJJAZkbT5axJshtLmW1nYM/cCaLufm5IJ62p4nLFPkfgMBdpMO6VDWIOUm45cYxAY+QEZfwBlvJpE8Lld5T1ciB/mRzSVLQhcT3wgMswJ4SIQG0CdlYdDMod8umwfxAvQ5eVNuJZUIxogGlCwuZkzTMDTNJW11/MvqvmrxyUY2liKdTG8Q37KBJklaQPX7hBwW80miWJmXOgOFH/ZR0c8gSG0jlvmwQvhcM3zN3VOh/65AVlQsT6eAoJaDQm1u4hW4
- /DnIJlK+OUtw19HfTP17A+oLh+MUcCC6cXuft5pI0Syr4CJfj5Mt2O/zB3IJax/LQQuYmm
-Received: from smtpclient.apple ([82.150.214.1])
-        by smtp.gmail.com with ESMTPSA id vu11-20020a170907a64b00b00a37a38737d5sm1316761ejc.89.2024.02.05.00.39.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Feb 2024 00:39:19 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EqLDVLjD"
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 415E2OOR028763;
+	Mon, 5 Feb 2024 14:15:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=mClszhQYcKHqMqseH4Ll5Wuaa9ykZ8viqoE9QHZ6Qnk=;
+ b=EqLDVLjD+iAKufIwfwmy9aCURI8H0XauAVR8XAKDcMUlGlzumJ65aUS9bJTIijfSNW8s
+ 9dGt+aUR9ZYb7TFLy3YbaWTNHOaphAXyyBPfmbZ+kH+5bNVSz/jJihOyJ0AnYSC789Bw
+ j5kGUljv+bm8mlRwX+ONkyE2NIRDdKYkIZ6BiDQm/jbd+X/wb4PXXIgjOR1UlHtbmv3P
+ g16dcWgU7+DF5JY5byIOFErCa3iDOXkKuNnifpeDMOT5h+e6Kgp3ydk+aUdOB51UgxTx
+ Ja7sfFc0skaoYx9Kyr5zQcr8hUFK0p4Ud3udv28/7IbLDGBIsDN261CqB20Oc6/tzGtX rQ== 
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w3134ggg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Feb 2024 14:15:34 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 415Dpog9014765;
+	Mon, 5 Feb 2024 14:15:33 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w20tngvws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 05 Feb 2024 14:15:33 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 415EFVuP17892076
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 5 Feb 2024 14:15:32 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D312558063;
+	Mon,  5 Feb 2024 14:15:31 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 857205805A;
+	Mon,  5 Feb 2024 14:15:31 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  5 Feb 2024 14:15:31 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v1 ima-evm-utils 3/6] evmctl: Replace deprecated sign_hash with imaevm_signhash
+Date: Mon,  5 Feb 2024 09:15:25 -0500
+Message-ID: <20240205141528.3566511-4-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240205141528.3566511-1-stefanb@linux.ibm.com>
+References: <20240205141528.3566511-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.400.31\))
-Subject: Re: [PATCH v5 0/6] DCP as trusted keys backend
-From: David Gstir <david@sigma-star.at>
-In-Reply-To: <20231215110639.45522-1-david@sigma-star.at>
-Date: Mon, 5 Feb 2024 09:39:07 +0100
-Cc: Shawn Guo <shawnguo@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- NXP Linux Team <linux-imx@nxp.com>,
- Ahmad Fatoum <a.fatoum@pengutronix.de>,
- sigma star Kernel Team <upstream+dcp@sigma-star.at>,
- David Howells <dhowells@redhat.com>,
- Li Yang <leoyang.li@nxp.com>,
- Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Randy Dunlap <rdunlap@infradead.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- Tejun Heo <tj@kernel.org>,
- "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- linux-doc@vger.kernel.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
- "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
- "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org,
- "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7AED262F-9387-446D-B11A-C549C02542F9@sigma-star.at>
-References: <20231215110639.45522-1-david@sigma-star.at>
-To: Mimi Zohar <zohar@linux.ibm.com>,
- James Bottomley <jejb@linux.ibm.com>,
- Jarkko Sakkinen <jarkko@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-X-Mailer: Apple Mail (2.3774.400.31)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: e16ghgapYut8uS5n3Q5Un_hvGAjx7m_v
+X-Proofpoint-ORIG-GUID: e16ghgapYut8uS5n3Q5Un_hvGAjx7m_v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-05_08,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=694 priorityscore=1501
+ bulkscore=0 clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402050108
 
-Hi,
+Replace the deprecated sign_hash with imaevm_signhash.
 
-> On 15.12.2023, at 12:06, David Gstir <david@sigma-star.at> wrote:
->=20
-> This is a revival of the previous patch set submitted by Richard =
-Weinberger:
-> =
-https://lore.kernel.org/linux-integrity/20210614201620.30451-1-richard@nod=
-.at/
->=20
-> v4 is here:
-> =
-https://lore.kernel.org/keyrings/20231024162024.51260-1-david@sigma-star.a=
-t/
->=20
-> v4 -> v5:
-> - Make Kconfig for trust source check scalable as suggested by Jarkko =
-Sakkinen
-> - Add Acked-By from Herbert Xu to patch #1 - thanks!
-> v3 -> v4:
-> - Split changes on MAINTAINERS and documentation into dedicated =
-patches
-> - Use more concise wording in commit messages as suggested by Jarkko =
-Sakkinen
-> v2 -> v3:
-> - Addressed review comments from Jarkko Sakkinen
-> v1 -> v2:
-> - Revive and rebase to latest version
-> - Include review comments from Ahmad Fatoum
->=20
-> The Data CoProcessor (DCP) is an IP core built into many NXP SoCs such
-> as i.mx6ull.
->=20
-> Similar to the CAAM engine used in more powerful SoCs, DCP can AES-
-> encrypt/decrypt user data using a unique, never-disclosed,
-> device-specific key. Unlike CAAM though, it cannot directly wrap and
-> unwrap blobs in hardware. As DCP offers only the bare minimum feature
-> set and a blob mechanism needs aid from software. A blob in this case
-> is a piece of sensitive data (e.g. a key) that is encrypted and
-> authenticated using the device-specific key so that unwrapping can =
-only
-> be done on the hardware where the blob was wrapped.
->=20
-> This patch series adds a DCP based, trusted-key backend and is similar
-> in spirit to the one by Ahmad Fatoum [0] that does the same for CAAM.
-> It is of interest for similar use cases as the CAAM patch set, but for
-> lower end devices, where CAAM is not available.
->=20
-> Because constructing and parsing the blob has to happen in software,
-> we needed to decide on a blob format and chose the following:
->=20
-> struct dcp_blob_fmt {
-> __u8 fmt_version;
-> __u8 blob_key[AES_KEYSIZE_128];
-> __u8 nonce[AES_KEYSIZE_128];
-> __le32 payload_len;
-> __u8 payload[];
-> } __packed;
->=20
-> The `fmt_version` is currently 1.
->=20
-> The encrypted key is stored in the payload area. It is AES-128-GCM
-> encrypted using `blob_key` and `nonce`, GCM auth tag is attached at
-> the end of the payload (`payload_len` does not include the size of
-> the auth tag).
->=20
-> The `blob_key` itself is encrypted in AES-128-ECB mode by DCP using
-> the OTP or UNIQUE device key. A new `blob_key` and `nonce` are =
-generated
-> randomly, when sealing/exporting the DCP blob.
->=20
-> This patchset was tested with dm-crypt on an i.MX6ULL board.
->=20
-> [0] =
-https://lore.kernel.org/keyrings/20220513145705.2080323-1-a.fatoum@pengutr=
-onix.de/
->=20
-> David Gstir (6):
->  crypto: mxs-dcp: Add support for hardware-bound keys
->  KEYS: trusted: improve scalability of trust source config
->  KEYS: trusted: Introduce NXP DCP-backed trusted keys
->  MAINTAINERS: add entry for DCP-based trusted keys
->  docs: document DCP-backed trusted keys kernel params
->  docs: trusted-encrypted: add DCP as new trust source
->=20
-> .../admin-guide/kernel-parameters.txt         |  13 +
-> .../security/keys/trusted-encrypted.rst       |  85 +++++
-> MAINTAINERS                                   |   9 +
-> drivers/crypto/mxs-dcp.c                      | 104 +++++-
-> include/keys/trusted_dcp.h                    |  11 +
-> include/soc/fsl/dcp.h                         |  17 +
-> security/keys/trusted-keys/Kconfig            |  18 +-
-> security/keys/trusted-keys/Makefile           |   2 +
-> security/keys/trusted-keys/trusted_core.c     |   6 +-
-> security/keys/trusted-keys/trusted_dcp.c      | 311 ++++++++++++++++++
-> 10 files changed, 562 insertions(+), 14 deletions(-)
-> create mode 100644 include/keys/trusted_dcp.h
-> create mode 100644 include/soc/fsl/dcp.h
-> create mode 100644 security/keys/trusted-keys/trusted_dcp.c
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ src/evmctl.c | 74 +++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 44 insertions(+), 30 deletions(-)
 
-Jarkko, Mimi, David do you need anything from my side for these patches =
-to get them merged?
-
-Thanks,
-- David
+diff --git a/src/evmctl.c b/src/evmctl.c
+index d050b5e..776f304 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -147,6 +147,13 @@ static char *g_keypass;
+ #define HMAC_FLAG_CAPS_SET	0x0002
+ 
+ static unsigned long hmac_flags;
++static uint32_t imaevm_keyid;
++static struct imaevm_ossl_access access_info;
++static long sigflags;
++
++static inline bool use_x509(long sigflags) {
++	return (sigflags & IMAEVM_SIGFLAG_SIGNATURE_V1) == 0;
++}
+ 
+ typedef int (*find_cb_t)(const char *path);
+ static int find(const char *path, int dts, find_cb_t func);
+@@ -577,7 +584,8 @@ static int sign_evm(const char *file, char *hash_algo, const char *key)
+ 		return len;
+ 	assert(len <= sizeof(hash));
+ 
+-	len = sign_hash(hash_algo, hash, len, key, g_keypass, sig + 1);
++	len = imaevm_signhash(hash_algo, hash, len, key, g_keypass,
++			      sig + 1, sigflags, &access_info, imaevm_keyid);
+ 	if (len <= 1)
+ 		return len;
+ 	assert(len < sizeof(sig));
+@@ -663,7 +671,8 @@ static int sign_ima(const char *file, char *hash_algo, const char *key)
+ 		return len;
+ 	assert(len <= sizeof(hash));
+ 
+-	len = sign_hash(hash_algo, hash, len, key, g_keypass, sig + 1);
++	len = imaevm_signhash(hash_algo, hash, len, key, g_keypass,
++			      sig + 1, sigflags, &access_info, imaevm_keyid);
+ 	if (len <= 1)
+ 		return len;
+ 	assert(len < sizeof(sig));
+@@ -844,8 +853,9 @@ static int cmd_sign_hash(struct command *cmd)
+ 				continue;
+ 			}
+ 
+-			siglen = sign_hash(algo, sigv3_hash, hashlen / 2,
+-					   key, g_keypass, sig + 1);
++			siglen = imaevm_signhash(algo, sigv3_hash, hashlen / 2,
++						 key, g_keypass, sig + 1, sigflags,
++						 &access_info, imaevm_keyid);
+ 
+ 			sig[0] = IMA_VERITY_DIGSIG;
+ 			sig[1] = DIGSIG_VERSION_3;	/* sigv3 */
+@@ -856,8 +866,10 @@ static int cmd_sign_hash(struct command *cmd)
+ 			assert(hashlen / 2 <= sizeof(hash));
+ 			hex2bin(hash, line, hashlen / 2);
+ 
+-			siglen = sign_hash(g_hash_algo, hash,
+-					   hashlen / 2, key, g_keypass, sig + 1);
++			siglen = imaevm_signhash(g_hash_algo, hash,
++						 hashlen / 2, key, g_keypass,
++						 sig + 1, sigflags,
++						 &access_info, imaevm_keyid);
+ 			sig[0] = EVM_IMA_XATTR_DIGSIG;
+ 		}
+ 
+@@ -963,7 +975,7 @@ static int cmd_verify_evm(struct command *cmd)
+ 		return -1;
+ 	}
+ 
+-	if (imaevm_params.x509) {
++	if (use_x509(sigflags)) {
+ 		if (imaevm_params.keyfile) /* Support multiple public keys */
+ 			err = imaevm_init_public_keys(imaevm_params.keyfile,
+ 						      &public_keys);
+@@ -1026,7 +1038,7 @@ static int cmd_verify_ima(struct command *cmd)
+ 		return -1;
+ 	}
+ 
+-	if (imaevm_params.x509) {
++	if (use_x509(sigflags)) {
+ 		if (imaevm_params.keyfile) /* Support multiple public keys */
+ 			err = imaevm_init_public_keys(imaevm_params.keyfile,
+ 						      &public_keys);
+@@ -1061,15 +1073,12 @@ static int cmd_convert(struct command *cmd)
+ 	uint8_t keyid[8];
+ 	RSA *key;
+ 
+-	imaevm_params.x509 = 0;
+-
+ 	inkey = g_argv[optind++];
+ 	if (!inkey) {
+-		inkey = imaevm_params.x509 ? "/etc/keys/x509_evm.der" :
+-					     "/etc/keys/pubkey_evm.pem";
++		inkey = "/etc/keys/pubkey_evm.pem";
+ 	}
+ 
+-	key = read_pub_key(inkey, imaevm_params.x509);
++	key = read_pub_key(inkey, 0);
+ 	if (!key)
+ 		return 1;
+ 
+@@ -1094,7 +1103,7 @@ static int cmd_import(struct command *cmd)
+ 
+ 	inkey = g_argv[optind++];
+ 	if (!inkey) {
+-		inkey = imaevm_params.x509 ? "/etc/keys/x509_evm.der" :
++		inkey = use_x509(sigflags) ? "/etc/keys/x509_evm.der" :
+ 					     "/etc/keys/pubkey_evm.pem";
+ 	} else
+ 		ring = g_argv[optind++];
+@@ -1124,8 +1133,8 @@ static int cmd_import(struct command *cmd)
+ 		}
+ 	}
+ 
+-	if (imaevm_params.x509) {
+-		EVP_PKEY *pkey = read_pub_pkey(inkey, imaevm_params.x509);
++	if (use_x509(sigflags)) {
++		EVP_PKEY *pkey = read_pub_pkey(inkey, 1);
+ 
+ 		if (!pkey)
+ 			return 1;
+@@ -1138,7 +1147,7 @@ static int cmd_import(struct command *cmd)
+ 		EVP_PKEY_free(pkey);
+ 	} else {
+ #if CONFIG_SIGV1
+-		RSA *key = read_pub_key(inkey, imaevm_params.x509);
++		RSA *key = read_pub_key(inkey, 0);
+ 
+ 		if (!key)
+ 			return 1;
+@@ -1153,8 +1162,8 @@ static int cmd_import(struct command *cmd)
+ 
+ 	log_info("Importing public key %s from file %s into keyring %d\n", name, inkey, id);
+ 
+-	id = add_key(imaevm_params.x509 ? "asymmetric" : "user",
+-		     imaevm_params.x509 ? NULL : name, pub, len, id);
++	id = add_key(use_x509(sigflags) ? "asymmetric" : "user",
++		     use_x509(sigflags) ? NULL : name, pub, len, id);
+ 	if (id < 0) {
+ 		log_err("add_key failed\n");
+ 		err = id;
+@@ -3106,7 +3115,7 @@ int main(int argc, char *argv[])
+ 				hmac_flags |= HMAC_FLAG_NO_UUID;
+ 			break;
+ 		case '1':
+-			imaevm_params.x509 = 0;
++			sigflags |= IMAEVM_SIGFLAG_SIGNATURE_V1;
+ 			break;
+ 		case 'k':
+ 			imaevm_params.keyfile = optarg;
+@@ -3172,11 +3181,12 @@ int main(int argc, char *argv[])
+ 			break;
+ #if CONFIG_IMA_EVM_ENGINE
+ 		case 139: /* --engine e */
+-			imaevm_params.eng = setup_engine(optarg);
+-			if (!imaevm_params.eng) {
++			access_info.u.engine = setup_engine(optarg);
++			if (!access_info.u.engine) {
+ 				log_info("setup_engine failed\n");
+ 				goto error;
+ 			}
++			access_info.type = IMAEVM_OSSL_ACCESS_TYPE_ENGINE;
+ 			break;
+ #endif
+ 		case 140: /* --xattr-user */
+@@ -3210,7 +3220,7 @@ int main(int argc, char *argv[])
+ 				log_err("Invalid keyid value.\n");
+ 				exit(1);
+ 			}
+-			imaevm_params.keyid = keyid;
++			imaevm_keyid = keyid;
+ 			break;
+ 		case 145:
+ 			keyid = imaevm_read_keyid(optarg);
+@@ -3218,7 +3228,7 @@ int main(int argc, char *argv[])
+ 				log_err("Error reading keyid.\n");
+ 				exit(1);
+ 			}
+-			imaevm_params.keyid = keyid;
++			imaevm_keyid = keyid;
+ 			break;
+ 		case 146:
+ 			veritysig = 1;
+@@ -3241,12 +3251,16 @@ int main(int argc, char *argv[])
+ 		g_keypass = getenv("EVMCTL_KEY_PASSWORD");
+ 
+ 	if (imaevm_params.keyfile != NULL &&
+-	    imaevm_params.eng == NULL &&
++	    access_info.type == IMAEVM_OSSL_ACCESS_TYPE_NONE &&
+ 	    !strncmp(imaevm_params.keyfile, "pkcs11:", 7)) {
+ #if CONFIG_IMA_EVM_ENGINE
+-		imaevm_params.eng = setup_engine("pkcs11");
++		if (access_info.type == IMAEVM_OSSL_ACCESS_TYPE_NONE) {
++			access_info.u.engine = setup_engine("pkcs11");
++			if (access_info.u.engine)
++				access_info.type = IMAEVM_OSSL_ACCESS_TYPE_ENGINE;
++		}
+ #endif
+-		if (!imaevm_params.eng)
++		if (access_info.type == IMAEVM_OSSL_ACCESS_TYPE_NONE)
+ 			goto error;
+ 	}
+ 
+@@ -3272,9 +3286,9 @@ int main(int argc, char *argv[])
+ 
+ error:
+ #if CONFIG_IMA_EVM_ENGINE
+-	if (imaevm_params.eng) {
+-		ENGINE_finish(imaevm_params.eng);
+-		ENGINE_free(imaevm_params.eng);
++	if (access_info.type == IMAEVM_OSSL_ACCESS_TYPE_ENGINE) {
++		ENGINE_finish(access_info.u.engine);
++		ENGINE_free(access_info.u.engine);
+ #if OPENSSL_API_COMPAT < 0x10100000L
+ 		ENGINE_cleanup();
+ #endif
+-- 
+2.43.0
 
