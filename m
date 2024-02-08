@@ -1,59 +1,61 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7248F2D629
-	for <linux-integrity@vger.kernel.org>; Thu,  8 Feb 2024 03:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97F136AFC
+	for <linux-integrity@vger.kernel.org>; Thu,  8 Feb 2024 03:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707362333; cv=none; b=eiAZjv3Mjutt7LmNjGs+pSHEcPn0DgramL04MSzE+FPhLoTNofS81t7WIQbzd0dwNjfaG7bP1gWElpZ8mC1stfnRrMDgOCEjw8x7p9r3/4B7N/SUJShvA65xYN5L464/Kl01qq/9ef8Rk51h/w6XHLseN1Kof1wdSkNcHyNOkAQ=
+	t=1707362334; cv=none; b=Sm3s+MTnw4mRbBuKDZxLLqhWCiQjHeY5aC34JUv6aDGptuMrclKnNh8ysyoFLLHa8TfSwK2kfZmykLxG50I7frtDnQFXobP022wJIZeYZkhroJMf0va7K1WhAO47CA0pkNc77K2DFTDw+Iw8WPLoVDkwLjX6cCeKBnc6UmWPjdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707362333; c=relaxed/simple;
-	bh=9MBr+RMrpbGZsgM1uUdKh5KZRYI7kg3buUw7CDt16OI=;
+	s=arc-20240116; t=1707362334; c=relaxed/simple;
+	bh=DiwlVKq/rRLjPWH/bc00wUtKBB7mMXp+ciN6o9DkWP8=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=qQX2nq+AUqvsIfgUxqarFV2wL9oNoRAxy2msc27wwc5PRdpmhLHm0C/BBqJkzYPWnBiRDA2dDYFUywyoRaDbhjGeEYmwbPWKfSvk6MuQGkjj5uRQl3MiGggFD2+FUTBOmQ+M6Ww39E1HK1kBNCKM0i67/QtXcS1jlLZkDb1dDcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=R6P81ANE; arc=none smtp.client-ip=209.85.219.47
+	 From:To:Cc:Subject:References:In-Reply-To; b=Dpsrt19HcK3Fw1OXx7kWAEyQIEFxZaMqMTrNWAgzHFWjtU1J08E2Ok4vPWz85xHS/Loy5vhew8VnzjWBXDGJtOI7H2Llf0LPZtR/hLAB07nxNGNSP0XqyTwsv3lYgz/v1mnfh6UvkVjHYl2gRQseDXxjZesjmUzjd5lI6kQ23eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gRN7/ZjC; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="R6P81ANE"
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-68cc87d4aabso1318876d6.1
-        for <linux-integrity@vger.kernel.org>; Wed, 07 Feb 2024 19:18:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gRN7/ZjC"
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7857bc09456so48721385a.3
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Feb 2024 19:18:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707362327; x=1707967127; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1707362329; x=1707967129; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=O7fQSgVt/E7Pqy5yj+eKD+U24pcDYXGXrM2DO75hYp0=;
-        b=R6P81ANE9DyTlwDgT+tZdgm5f+FTIVqxPlTneEGvxzueDdsIasj0Id4SamS8AH/4An
-         ymMEuuPqFqARvlvlZUuFFzzWtT2Mxcka+EQBCVldY6JDV3QwsjVM0Tfh5kV8PhBbo0Nx
-         pVf7BNt0Op5EmotLOHbSCDbJyIKcQIrDIM2L+iP2x1hxQT8Z6ccpglGmdcoINsNpS9y1
-         7ccEJpDipzR6i1ycpSiGhxDcbTLpUe3xqycrem+Iu6R8K1aCsOsK0civRfaiV0sv18rw
-         G8cMbrS4Q8FaybDERvJAt/XfNrEYeXvk0AhlJEYxy9tS2rrSI+jJ6/O/9ymQC0+4BEDh
-         l4ew==
+        bh=w8uIF53Z2DXmiuq41g+nsrX3AvPRF8jg5UUgvEoPViA=;
+        b=gRN7/ZjCN1IvnwEnxdoxsOThk5bMY0fzylZ6zONpLn/qATAkAkbUyZ80kWcjWQmnNs
+         0dLAvsipHS6uScN8IKo4Rp0PjQeu5/1wOOGGtR+fiU1KyGv5KXkgPTLhn3IUW/OFmuJ4
+         yqHzAnZQp1Ja7HKB6cjvpgd6MqthzfJlkw7OMvRrizPcLhIG6Qn+yNPlSWPFapaHHIjN
+         xJcK+jeDcJLGLe0SUDmlD5XIF9SbSubhCCfhc9YrMy2p1OVaFvTybPQtOPUMHBTa0/8X
+         tt9eA/xpwgDHc0HISsQJwxvQqj9nNFZdQfyQPzothgLBHzCAw+23gZQDBy99wQ8H2WlW
+         CphQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707362327; x=1707967127;
+        d=1e100.net; s=20230601; t=1707362329; x=1707967129;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=O7fQSgVt/E7Pqy5yj+eKD+U24pcDYXGXrM2DO75hYp0=;
-        b=XXtl8OdG5o9/F1id0qyTL92HL6wq53LGc83L0BlJpjAMGKMBfq6K4K1FjNV/xs0lGa
-         upRP5x6iiisbB6yzjcOPqdsaL04VJri3ICNY2l2Q7UCYrdRHfCpu5KoXxeHZ3VmVXuF1
-         JHtZIqUZu5SPd2RhZ3qFBsyFilqyVcacrCYBURr1eyY72qErsLn5AURAmAIfM3GBHD4x
-         7PyesKnMlqc5EZpqSxOpOU0K3Xr/uG6OIxlDkdz62w9QnckwhxNadsVhlYah3/xyX2ug
-         A9BYZsQxXNJk/If/lCrCuE3IToRIqrBHULSt2Mttodg/7eEkgqGuN7JYm1JWHJfEwRCA
-         avLA==
-X-Gm-Message-State: AOJu0YxkLvE6VQLAK4d47rn7cjw7fsFZP642m1WGlIGYsZtvFRSrm6YN
-	Ibo5a4Fc+DtIc8jQOhe9/6RU8pExE3nvr08pRc+vHZ1IDPBSsMOtYdoF7u0Mjg==
-X-Google-Smtp-Source: AGHT+IEg2jFuD33qS6tDJsMUauoak+5M3TUvs37Ud043Ss8E8vI85dIo7hUTabiYfP4Deso0lkrPFA==
-X-Received: by 2002:a05:6214:260f:b0:686:7256:c9f4 with SMTP id gu15-20020a056214260f00b006867256c9f4mr10855029qvb.9.1707362327320;
-        Wed, 07 Feb 2024 19:18:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVi3gO1izPeIA/OC5xdbEjweQkU7vk98P9KgyNvjhyv44xwmGNol5Rd//WWoZucdmEstslipX1kJD+Um2MGVgkHystyYQ3F6gklDGcTngACsJLZN3JTz+wsOkwtyqPy171QyMyTNtoMmAqp2YjsKEBSR5YKGpEDHkhHkGA6xZ98WdSCJL45A5As/kwz831Hh35q1Ul9B6yi5DN1Diq7uGnIz+i7VjJgiB3HaPzUOC6IYXt3yPMxsye9o2w6FtqUfab5yGRmeaOr8GYjznCyBJ9M72Z/QmIa1nucm8boNSvGcnp+P1HzZwjMNdI2VxeoJ3DbqzTLZShcg3pBHHLe9xKfiCr5QJRxLpcte3YtgzjFtknPPsnzUsdiR+C89o+wp2n/pA2hLEF6h44sxjqrECq0lUDr/3U/D5L8uis3wJjSeOK0h1Axk2R5z7yXQFpg8AGJn3EwRkMf9y6AGV9LRqWH16ahTzyJsJ7C93FiFNGfuGuzJdnxTAhfHAVAP3rqMh80ZaEPu2BJynMmN1k+CjpEEFCcEoPE/MG1inaHSiewoBxgAmd9HWTx+l123aMLrwpBEWspTZP/xcgnJb5b8wkddvNH/7q6zLTBB5xGKPCz10yblh8LsphhG/GsVzEB8MePk9dk/DJPrjSnZCf85rmplvGT5tzhhwsdtbvCiva2XWU4Q7bwRKe1sRP77LWKyzqrsEa0tuQNE6NBf61KJJrrScQjnzo5Sw1BMuhW8Mag2clgERWpXuQwCz42EU7i6yT0lKB9uzS2HTm1Yw/LhnUn1u0Mkod7TfAVZJW8AqgyN9xQU2tH10qKDxRdzZ1mz1NBjZbnwlRVCc/udCK1UGp8wkUeuny6NP3CFnstxGbS4U1XiChi/BvIsmT16OGPd5S/RNY+U/4s0OKoc+3u5sMzv45XvIHkwKXnDXjQZ+ASBwW+WFNl
+        bh=w8uIF53Z2DXmiuq41g+nsrX3AvPRF8jg5UUgvEoPViA=;
+        b=vpt6p8SFa6PbkYuNyiogck7CbRSGfc+mPinhhHocJCfTbQNuM9y3D0XJI3esGKGFAF
+         CjO2irBWPLfr/DHY2RiMetlfYAi9i5KbHcix1JVI8+0JEg3aElumQTvHVFvJy/g6XRlI
+         zomYn4QhhK4rQODPftStGoM7GbZDQemQLxiOnaX9P+IKGHI6qJhiwmRyWgDWqobB/6G5
+         tHbnOdTwbdzWT0mcEPmfdGa4WnRkZvrtQ2f8vzwRY38RXsJj9mxrRXDqkfhOhOz/p9uB
+         lqq/7jPVpuj1aKzuXHwUhT4QUUQOiBS2IFoO8957NmaqomvLeSSdOeS3ehuR276oEPLg
+         v2yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxKJ1daNQzSOpNrOWCgQ9X4RLjZ0dRsxkK56UYl79XAyC/5QEhC8chsciQ0vJadvq3iv2DqI0ciufszODA+SJduMwi4CtjdvvSuGyAyA44
+X-Gm-Message-State: AOJu0YwaFYEpck5yp5VyWjdHPmHGSAXVH8biQBUDgRAWiBMlVi0gJTSt
+	gfdP87csfaQ7tB/8DL+GL5ePUHGMLitq8MVD2FuH4ohp7SJr1gqyrMWMUehOGQ==
+X-Google-Smtp-Source: AGHT+IGouxVsdwxvxxJ96/FPEYbCGLXmMxM09SVFDDRIXGnHSmuGQLn7Z94ZYhb0/P1VLm8XriRe8g==
+X-Received: by 2002:a05:620a:5d:b0:785:8bb1:5d6d with SMTP id t29-20020a05620a005d00b007858bb15d6dmr7695936qkt.32.1707362329414;
+        Wed, 07 Feb 2024 19:18:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCViKYI8R9WvIOxPbkG2M4Av2YXb0xQA7czB3RiiA4Zzl0QwFFVI56/1xAkCejRCH2QojDt85FsuaL6a6Kb3gZqyuXItl+GGFhfTbtrfsUAhi84hRDUXU/lJMeAoNs3+UcMCV+sKoH74nLJCp+we9mEV9XExWQWsv7JUjTLJRs+MsUrUWrol6axwrKh7asMc4OaSWWr49VWjS4Nrw9tJFCVmeYgZQEJvRy6DCI039tgwg/23ti0cQ43eSIkDbUDu1wZJMeDuNF9p9wEW8F5mil6vM5fOQDBit0UAa5G3WOQenTf5LelmaVd4RD0YYjOYAYoXoLmdJZGUUlrNzWpIw8iVPidW2KkNQU61FneQH6Gv8HPsxvsIFPOyvF86D/k4yUqc9cYrixD+QrJbyjnFPYXwQ1YiJBzqG0quifcUGI25OSqW4cs2XdX5G2wxfAXBtKt4GX3RSvRUbDV+o2BdwrZvm/GUKqLktRs4LBuSPr3GsOkAnIIN064yu/OB4XZwl3WQVqLY38Mo6G8iAt6CcmyGOg+BxBIlILyY/XXjiZz6Mz0sKUgH7cMdU4BN6Sq5zxxkPnq4m3T2Fp6BeIUFIbqK45ht8qNiG4IDfaHI+CY+asy+OLQQEsLVZMrYna9MGzCDDaVu03UHsUgT+jBjCFBuUUgG73Evm9gqAoAMbBUyxN5pAPFi7rkgYlZVkNawpbw10N9sE1XrxLScQuV6GzkeCZ+qBR2FRgadT4E03+to6aVg1JIn4l9/smIr55wYbqYz+r6yFke7CIYYqq8bqBV9ndAvBP78sR5rj/zby4dUph6GCOMkwEYKpxixJL8BAL9xj7inzhrBwXyo6rjWFGu8kOnrTFATEud2Wcp8/WOJZVviJbqSD75JwzW47ZrfXCg+0EbLdoDtUZc+jlnoF2uPo5Xq3JqVMqzXWs2Oknt7AOJthrQCjGENUUpCY7h/isyaT2
+ blihkViOIOu+Q=
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id os47-20020a05620a812f00b00783df78821dsm1079337qkn.25.2024.02.07.19.18.46
+        by smtp.gmail.com with ESMTPSA id l4-20020a05620a210400b007855b0befb4sm1068621qkl.92.2024.02.07.19.18.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 19:18:46 -0800 (PST)
-Date: Wed, 07 Feb 2024 22:18:46 -0500
-Message-ID: <5b4c8041ca471b8a9bb76a8409927d56@paul-moore.com>
+        Wed, 07 Feb 2024 19:18:49 -0800 (PST)
+Date: Wed, 07 Feb 2024 22:18:48 -0500
+Message-ID: <a00ac4a8ea267e7f03912197728c3081@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -65,34 +67,36 @@ Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v9 15/25] security: Introduce inode_post_create_tmpfile  hook
-References: <20240115181809.885385-16-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240115181809.885385-16-roberto.sassu@huaweicloud.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
+Subject: Re: [PATCH v9 17/25] security: Introduce inode_post_remove_acl hook
+References: <20240115181809.885385-18-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240115181809.885385-18-roberto.sassu@huaweicloud.com>
 
 On Jan 15, 2024 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
 > 
 > In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the inode_post_create_tmpfile hook.
+> the inode_post_remove_acl hook.
 > 
-> As temp files can be made persistent, treat new temp files like other new
-> files, so that the file hash is calculated and stored in the security
-> xattr.
+> At inode_remove_acl hook, EVM verifies the file's existing HMAC value. At
+> inode_post_remove_acl, EVM re-calculates the file's HMAC with the passed
+> POSIX ACL removed and other file metadata.
 > 
-> LSMs could also take some action after temp files have been created.
+> Other LSMs could similarly take some action after successful POSIX ACL
+> removal.
 > 
 > The new hook cannot return an error and cannot cause the operation to be
-> canceled.
+> reverted.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  fs/namei.c                    |  1 +
+>  fs/posix_acl.c                |  1 +
 >  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      |  6 ++++++
->  security/security.c           | 15 +++++++++++++++
->  4 files changed, 24 insertions(+)
+>  include/linux/security.h      |  8 ++++++++
+>  security/security.c           | 17 +++++++++++++++++
+>  4 files changed, 28 insertions(+)
 
 Acked-by: Paul Moore <paul@paul-moore.com>
 
