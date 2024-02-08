@@ -1,60 +1,61 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388B323761
-	for <linux-integrity@vger.kernel.org>; Thu,  8 Feb 2024 03:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4FD3771C
+	for <linux-integrity@vger.kernel.org>; Thu,  8 Feb 2024 03:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707362338; cv=none; b=Yn8NLQBkcIu/6weVAJOPw8J9hGXNheBjHKDX/1lVTNM4/MDxzyTnqpybI59c2P7+92rCvAbUjwN0gsRMtMAlM3xyXejuvjYfw+ChRXYl+8SdYI3w2ADfQGT3PArG5FN3wDO3ZnbPBdp0WJRnJKmCqC7iIUSSzgwKzuqLaOlCJlo=
+	t=1707362339; cv=none; b=olga+n/u83UGUxpA0KdLBFr/dMVGiK16Y8hN93RJayDty9ZVecKU0/fGF3SMan7aK1Ge8dpK07mC3GcuwSIZ60rGbuTM0I2Z5YdmSzScO1gjYIlPMUCnGm/TDQ5tmMYag1R3MPBnu7IqPLUr2GSKzNkrzw3G3EIw41j7ig7RtE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707362338; c=relaxed/simple;
-	bh=jiSHgvUoEvn0NaGRHdFdTLX/0GL5XVoEY8AT/sqk0uc=;
+	s=arc-20240116; t=1707362339; c=relaxed/simple;
+	bh=KnkOJYA+ZF6Kmru0kx63nfEJhN73el2zwXpVdx/vkaI=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=Pqvwo8rQUtnMrjOZxc1pjaRdKBBOT4gyIN5oIPr2+fOSwB3d2NnmPzxaxVX2t88+ufphX548sZZKf/nNZxP1VTfLbphGOX2+a7JJ7DJSoX5rEOoos6tdZKtdV52uwWR5Zx4PHhsBprNub+FsK5TCQw9fZOX9bvT4lmTYLZiU1Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fEzUhsqx; arc=none smtp.client-ip=209.85.128.175
+	 From:To:Cc:Subject:References:In-Reply-To; b=natWJ+D4QkWoO0OPVyhqFVtZ1SX9CPKby22DYIaA7Hc8MsUilWR/P7T2Wd0MKov/ZMJDhj9Js6hHmp/Qd80PFCRTBuJiBuluAZszMlL50IOSu2E9FI0EODDZppLYCoc/NYvboujAeAgha8LGCVRgCdpcly9KzcR9QcVfv4ctLgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z7vS4RTV; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fEzUhsqx"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-604aab67616so168137b3.2
-        for <linux-integrity@vger.kernel.org>; Wed, 07 Feb 2024 19:18:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z7vS4RTV"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-42a0ba5098bso6607251cf.0
+        for <linux-integrity@vger.kernel.org>; Wed, 07 Feb 2024 19:18:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707362330; x=1707967130; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1707362333; x=1707967133; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=RSNC61VvebetqsibHsKH2sGD4hIgKVgj6eBAt9xotC0=;
-        b=fEzUhsqxbcTui/0gRmbhWiK/zIQ0yqlMX+Ltpz0Yu9Gt4gf8Jg8LrT/h9Ezai6qo42
-         OGmZYLo6GbXe0T6iD1/0+wkRjSQKW629ELKT5OBNtZmBUGqINATqEL75jnI8TywDRJG/
-         ZoTYvlj4OJLO8+oqXB6cKgIIYG4oeTPWeQI7UWyjJCDXljmJFjRFfnrOZ+ABDIezgQO5
-         +nRpL2BBJlWvFqEJ9UBhtgINCPxmlYROgQAdIXRgUQWs7KxM+64smhkAiFaWUB6mSeKC
-         X3Z+5rJamvSHWcQv6kAKSha9179/6LXp1XTh3gTppp1gdrRA53l9aSFT6iQ3JLAUgfgi
-         aoqw==
+        bh=oNNChvp7enOHaGv67iirqEATQRVn6s2IBOKWY479Ikc=;
+        b=Z7vS4RTV1ce08w4cwCVtDzIGU4FeXT5p1y9uI9jS5wZOA7e0z/TMjreynydFroSFk6
+         e6SHQYCi010WedMqCS0roWlNds6qKlrItkkTrdRQQtk7UEqtu8KrRl0HP5NTdSNxV+Mc
+         zT+Q41UO2jAKxo3nH+/Dy0tYOqQrxe6BGvjs3DEviw/M8Y4Rypuz7qmL5yjPDNPMjwG+
+         BFgQe5oz/vyRONgUqKIMoVcZlryiW+zdE9LUboCxf1c/jRDKFXVT3RkbW3th4WffJpRE
+         wRd/DuroXE7cZflZbQUPsgO+b01l21V4Tfl+cg7NUai43FYqKguI7EKuhK3tQ1xOv6iT
+         VfrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707362330; x=1707967130;
+        d=1e100.net; s=20230601; t=1707362333; x=1707967133;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RSNC61VvebetqsibHsKH2sGD4hIgKVgj6eBAt9xotC0=;
-        b=CWjIItR98O6y7wQrUTn2Mc3660FfUpD/UuF+KgHSM9jZ5+ywdcCL3Ihb0Mknb69oNm
-         gXFsRSCLSHfsk7a64WrC6IzivJZDIZXpI9VhnhA5Eehm8poXqPUhnjD4XrhXeUpn35Fh
-         1YpvmfoGzDYxIg57dRwN4YPwifpPpvjHqAvgmgtwhwHtxAkQkCMUu0sgNVA6vExpRqmQ
-         9GNOibaH2yEIlEbrax9O2bvEZzQ7rrkeUmFPzUfR/tvyqge7frVm+UaQqOYSPbVXJS4p
-         LnR0FI1AbFx+uaNpjvuD7hODyKayWL5jGogFCM6fQr4RwYRkJZfbhht0A0aJICDKL9Ml
-         5N/w==
-X-Gm-Message-State: AOJu0YwR3T0X+GupDbPu9sPNV1aXIrTGCsWqmSpvxvC/3njT8wuHyOcl
-	S7xAM6G5Flq9u4Aqt/eEf5Jsb1ldBgxgRy6+8geS7Md9aQpjcDQ6296XFzMXNg==
-X-Google-Smtp-Source: AGHT+IFVUCM2L23EXMSlmPwkLzABJwpnz6XIVsso3c//vGlSKQzv2J7kobfawtYC/fRxtQXOROvXSg==
-X-Received: by 2002:a81:b389:0:b0:603:fdaf:75bc with SMTP id r131-20020a81b389000000b00603fdaf75bcmr6911865ywh.35.1707362330410;
-        Wed, 07 Feb 2024 19:18:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUQpiDyUF5doWhXPrESvB2IiwwSVc2ZlFe2Pz9l0V3aDs8qdFVrgJN2bNSpwU2HmAmQ6eZZDz2JcVcErT6Ws49K806zxNWURjhW5wV+8aZdThsYdDuAN2Z/xRxscgKIqytknjOL7oPmazwOGODt3XRZJ7ht/L/ggbVaWwScpQXRJ5mB/vvhRBLoPTqvTyfJSpuGbJ0FoVH94u0nnA/MzXE3q7NVD3xW3y7/xccHc8uWvBEzK826miQDvD4Ww3ZkaMBU4e3/fXIwzTWx6/m2d6lLxKqvn8h9xo3W6jbZG3kltAeBOh3EQmaov5wGx54dnWRfKAnR/i7f6+2HJka34SM0IYweE1R8OqM82dudngEGM40xK8wbTYDWHkdeUK1pHk61g2jgVtlc/Uh8+HcWAnC9bPoFNeTq0VWZ7LUeCNzJuNhzO18sdmmKQjW7Biu+5T0YAffngHAxcOd/ciKOwfjwh5KgrYnyWLpf0kO8Vu6o+ICX24X7bagsRPGaJloHGpuO4XnhiQ9p2s6kM9MhWggh//tpK9vrsR8jPykgAt9zF0peJnkImGr9IfAOtM5tRdBfmXYFd/I8hohbbe4iUbKEOXYyU6peepiMkPvCyg55ePojz9yBaNnRejdFY6mOcNR6Cf03OsHslfF/QjREuE01MO+KC6gwCeyMMEwUd4wyhSrre04J+/Ot/zDduKujb1gMJt5HZGHbBtP3lQOHeQt9XXSKqeYzWjiANJUHzTBgW3Xkk4u2j/aoIUYBY+EmbDkswk5vB0h5+Qp5dH9047Ir968XZ/fkcm+SZlmPXsBMLIHi/dGxnHe8RNNWiJHsgRB7/XOLGLa2EUGAe4tDz3H8QNpLcdoD+zYNayJFgIXjxzzWcKVNiVivX9DFNth7JhRLoiWxb3qkE7kDG8I0rRn2z99A7fjo5E1s/h96or63AoKQK3kIGriE/co7Yt6gM5Ovl7
- QkEItQfGXER3k=
+        bh=oNNChvp7enOHaGv67iirqEATQRVn6s2IBOKWY479Ikc=;
+        b=lSHLcZUCQFrX16Z4kBv6tRYh24OabgiA0KeDG+AeKmGP5gEV8wYZZOQw8xv3FE1hab
+         960Hj4Z5sJjxHBJGjr78N0qFQpUJTskBXm6YJb9GTRXncDe67Udyp+h+Vrctuxr9E+zH
+         lgcJyMf0O1MgJ9Ncj0LEJel+ihPy+dAXqUM/Vx+5t3OYFGGW6ete4EG2QNKQOMOBA0Ux
+         mZimWwmwDzoFiO4RAoDflAm1IOJPm/AxfvEdjXftoNSY8dO8aqxDwwLhkhQdy0PlhJId
+         vf+9razbDFW3i9dwrJMVfi0KBZ6kE4XE1itcMuUdPkBlmJ27g3ywZqb/0i4KDkKo6pvt
+         1Sdg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Ffh/w8aUQPCKDgeiONf8BneUsJdvHU6su2Tw3XDrVbAUz8vyKiKiMuiTZ6QJgR0SvoZjr5ITyWcnY8HtATt+5kVOSYTCB1FBUemxxD6b
+X-Gm-Message-State: AOJu0Yyj7XGrlhJvTkyP0y5NVR+30IF/rrGJ1dSEn2Yr2Fm7s3L049J3
+	FcqkGOpN7NyMEk+GVI5tt12WK5tbobLyXL/64E68OCSNBYe8x/qtmqIg43YwOA==
+X-Google-Smtp-Source: AGHT+IHKo6eVNG3Lrb+TDrtEaIoKPGMvwW5MO9vd3s2dXKXoBInyKIDGRzELkkkehv63exQOcsZctw==
+X-Received: by 2002:ac8:598f:0:b0:42c:3a06:8b86 with SMTP id e15-20020ac8598f000000b0042c3a068b86mr7365879qte.28.1707362333523;
+        Wed, 07 Feb 2024 19:18:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW+MlBOyTBXqYsiBUBCbCTQYgv9WrzN1WRMZFtdN7DaHfzyvziQLgUKZwi5r49UoaIul3keNp3G6d5WVnePnjnZq54XB877kwKSpQg2RtUZs4elW9Da/UBkitCLGyILr8adts/F0Ms67geTKWcnl8VyalaKstNF/xnV9zpTWCCmJAGzHH6UUuIrejbZAi+oZY5kGJxIxQF2msrb5rmhWBboiM4ABTNVYVLGx5tw5Jh6OKb3mJJRUmOGwWEoGZSd93GYk5hFv6deuwPUUt1bCwK4cBTLsGd4VPkfln4aX2R/YC4dLHw2PJBkfCI3lt/JriG5PtDTx1xwEpt34uNXDIM43pzdBP1IWlrs5CotTEqgfx9BHYCXJv5JaTjV5zI5Sjy5b3hxUXKdlqEJknjJ3usF6g3C4d91FxU5RSY8d4mZVZv+V3RXK4IOr2LQqmzOrktf+UTnsMjVaLt+9ZC3TK5XFVsXyfYFQfueCGxxkrGUqMeLxXFICO1y1et26DJRgepQOlG+7m8OcxHOuYWd4wAln/OA6k+hMEb0IB4iQbCvZy+YfC2eF8bmGeGSLDUZvlfSg8d6VnwmfXy0WjQTeJKuXR7mWs32UoIBFAhGK+VYiXZ4SKluiK327/qSzo2NkH+tChnJj20FTG5QqgSAs9RBwsEeUmJuFwle0hRLadYXvcjXGfUBwMrwxsv/v3DvWULzRmte7ly/R6a8VTZlFhSiZyQMUi40bkZ7LEIBh6PwjaTZJGkTDmb9dg4VLqVFIhWqescVHhQnEu+9qk3F6lMubdHcQ1RbCpQQDq7e71QomHLmKUssrSTGooO6irxrT+XcAhe5+mtrU/XJR7l3wkT24MCfSJTuGqN800PqsahxbuT/HQW3NnYrwpMMjdckerq5ypm/rsizhlcIC6h5sII6Zs8YqfoDZaJVrppd5+TDUpZm4ejzjCwyIk0+JdV9h8bDaa
+ Rl1yci/c5GEho=
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d16-20020ac85450000000b0042a86e06fdfsm1070436qtq.37.2024.02.07.19.18.49
+        by smtp.gmail.com with ESMTPSA id f8-20020a05622a104800b0042c46268a33sm606763qte.12.2024.02.07.19.18.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 19:18:49 -0800 (PST)
-Date: Wed, 07 Feb 2024 22:18:49 -0500
-Message-ID: <33b05b3789c1c8f05beaeb02c093a77c@paul-moore.com>
+        Wed, 07 Feb 2024 19:18:53 -0800 (PST)
+Date: Wed, 07 Feb 2024 22:18:52 -0500
+Message-ID: <9c2caad915fc512b6d37173008a2e189@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -67,34 +68,38 @@ Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v9 18/25] security: Introduce key_post_create_or_update  hook
-References: <20240115181809.885385-19-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240115181809.885385-19-roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH v9 21/25] ima: Move IMA-Appraisal to LSM infrastructure
+References: <20240115181809.885385-22-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240115181809.885385-22-roberto.sassu@huaweicloud.com>
 
 On Jan 15, 2024 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
 > 
-> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-> the key_post_create_or_update hook.
+> A few additional IMA hooks are needed to reset the cached appraisal
+> status, causing the file's integrity to be re-evaluated on next access.
+> Register these IMA-appraisal only functions separately from the rest of IMA
+> functions, as appraisal is a separate feature not necessarily enabled in
+> the kernel configuration.
 > 
-> Depending on policy, IMA measures the key content after creation or update,
-> so that remote verifiers are aware of the operation.
+> Reuse the same approach as for other IMA functions, move hardcoded calls
+> from various places in the kernel to the LSM infrastructure. Declare the
+> functions as static and register them as hook implementations in
+> init_ima_appraise_lsm(), called by init_ima_lsm().
 > 
-> Other LSMs could similarly take some action after successful key creation
-> or update.
-> 
-> The new hook cannot return an error and cannot cause the operation to be
-> reverted.
+> Also move the inline function ima_inode_remove_acl() from the public ima.h
+> header to ima_appraise.c.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  include/linux/lsm_hook_defs.h |  3 +++
->  include/linux/security.h      | 11 +++++++++++
->  security/keys/key.c           |  7 ++++++-
->  security/security.c           | 19 +++++++++++++++++++
->  4 files changed, 39 insertions(+), 1 deletion(-)
+>  fs/attr.c                             |  2 -
+>  include/linux/ima.h                   | 55 ---------------------------
+>  security/integrity/ima/ima.h          |  5 +++
+>  security/integrity/ima/ima_appraise.c | 38 +++++++++++++-----
+>  security/integrity/ima/ima_main.c     |  1 +
+>  security/security.c                   | 13 -------
+>  6 files changed, 35 insertions(+), 79 deletions(-)
 
 Acked-by: Paul Moore <paul@paul-moore.com>
 
