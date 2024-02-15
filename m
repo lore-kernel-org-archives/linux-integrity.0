@@ -1,414 +1,194 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71543131742;
-	Thu, 15 Feb 2024 10:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707993600; cv=none; b=di8aXNlW16WyUxURB8WlhpZQ71Zm0wJyKlKK22pbXAJO0T8WTnIZkZfQyuwagFooYuN3POgVYP1ajL/p1Opcev5rn6+n5daMdcELFz1A1yWLS5SCugyjEKZQINlxguOyqLiaTQn+r9gGb/2dXpHk/weFGrT3D19H/uyCc+ibdoQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707993600; c=relaxed/simple;
-	bh=xzVxo+pz89esXqXypP0zK8EBUx994TIoRv/UmpnrbNo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CMb1lrSVZQa3hhLRYwaNJVmK7/lzBe3bNjaDUHm1xxZ8oKfv8PNXL2/fq/5ZuYoPp2nEEg6jzlfbpqGgRd1WRicU+9+SSh2CA7hJULz2iqIPDFsSmr3/ifd1B2HThIkk3VnsLWlFHLo7c3q7v7N+vUL1zMhjNxEQIxrYFJ4oX4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TbB541JRtz9yB7M;
-	Thu, 15 Feb 2024 18:24:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 080FD1405A1;
-	Thu, 15 Feb 2024 18:39:46 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAHABmc6c1lwxGNAg--.11795S7;
-	Thu, 15 Feb 2024 11:39:45 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	kolga@netapp.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	dhowells@redhat.com,
-	jarkko@kernel.org,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com,
-	casey@schaufler-ca.com,
-	shuah@kernel.org,
-	mic@digikod.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v10 25/25] integrity: Remove LSM
-Date: Thu, 15 Feb 2024 11:31:13 +0100
-Message-Id: <20240215103113.2369171-26-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
-References: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970A8127B6D;
+	Thu, 15 Feb 2024 10:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707994616; cv=fail; b=UN9zl6ZowK8+WLcz757uSNW9IafpykMhEgF448K0q08twg6NMhURIqKqSn3M/odE/5yBPte2Q5iq2YaEmOUBv6zTjpKLKP/G16Cu7EsZbM/nRpoGeA0WObJOqW7zpo1fFnScxwXEUx6I71d3wwziUVxWSeYXDKXOzBE6k1C0nnA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707994616; c=relaxed/simple;
+	bh=yPCpBZe+BJNcNa7L7yBGygG2Uy/ySl+05MojNia3pRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=KQK8BtHXdKlAEBRJrMy7xv8CAkrq9fOesUZkVhDjLkIvzvcrw1nYdBZtQSjeFpu8n3k7bKAyIADnsXuZrnHxVGbhucRuExt6sD4ywLwdP8VszuSS+BZJTEFbdbU7ESXCe70hecqEboJnFf7w2fn4W9D/Mtn4q9hlOAwdO5v7ji0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MxA9Wv+l; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=SRh6mLPL; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MxA9Wv+l";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="SRh6mLPL"
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41F6ixB0000670;
+	Thu, 15 Feb 2024 10:56:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=yPCpBZe+BJNcNa7L7yBGygG2Uy/ySl+05MojNia3pRY=;
+ b=MxA9Wv+l7gmCcUGJFsjZs8bm5r47iLJvo+GIshrOABT1lbuneLfhJpXjRa2qHtWDH2MR
+ neFB/E0lOu/wtdDlwn4CNj+yigPJ6encW43NHdrmbx1onwQHk7MK8jW+C200PGZrPjNY
+ IECX+wk0uKpLhI7oX4zCx2lQLkxsd4A06dKm5o5JxhzbKWYdKeGjaPiq1HVqqT9Vaqe7
+ ViUSxoYHZQgexaqFSS1AIJQ/CuimP4ID5AAEl+DNkl2DILmrT4JCfNuDP384jFzuX4dd
+ EHeLHe//Mym4YehViLK0Fk+U7Qf9To+nj37wd+E9ezy4G5fGTyFiX8KFYs6i2WNhSfxe og== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w91w6swkg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 10:56:21 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41FAS3uE024589;
+	Thu, 15 Feb 2024 10:56:20 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2100.outbound.protection.outlook.com [104.47.55.100])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3w5ykgmn3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 10:56:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R3m0FsfS9xmYML/ZElm0AuejRKCzXurLdiid6DGXj4REhExu51sP2uWwXLsqkcg81u9Pt7NMIaeClwVZIsREODoVm7076g2waNM6KBwd1mmdSqsX751iStNHILSbYKOL8ocppwm/hAJsVQ7mpWtjZxUjzlMgOse+JnBQxIZ4lxLJLff3eT5gwspgPg9PEMBNkcp3rudjt3n2D0Ca6QuGf03juxBu3Qfpkm1xQ28CNC+FSdSR8dcZoSPPhhJSFkzbL+vcJ++Y4+mX3WH6Hn/tbB/5Q3E63ygVYyXnKooTtpXBcc4zYMiQzHXRqqwF2KFIl4UB9ZBxPcMB51ABIpPDKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yPCpBZe+BJNcNa7L7yBGygG2Uy/ySl+05MojNia3pRY=;
+ b=dEAHP5DUJHFslMjc3Gbc906C2vsg1ZOTmBe7IcapL+eRHaSaAMniGXshUBiqN/8vsvnx8thxsrGDSQ6mIIENNptnAXvryM6QChGSFqis4w7/n6ybPzbTUwAfiniC7ulpOwBU59Z14lJPGFbo0cVuxSDvBYn23jW/iPe1OsJylsL5Zt43NKNUQx3PiILecGa/70uVRYZPYPc0tUsU4lmRL+kD4R6mfUD9peeCz3jStfLjAl9sViPHV0MMcNwxgqt19nMJVWG7tj45rZVs7s3WqPTLO5f+kLu9nRI6sEvl4a8/u30i1iYoPewoA25qk0H+S0oEKOaw9WD9kSLDtfEN2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yPCpBZe+BJNcNa7L7yBGygG2Uy/ySl+05MojNia3pRY=;
+ b=SRh6mLPLac4UDEP+BUewDz/Hvx7enBNvOuDvnarS8A4JVOL1OO0fyNV/ks8NZvDT9/BLalbfWgu875A621eyh7fShVpUc0nCD+v7+KxT1HGRixfacsSmgvgOeroYbnyF2BACCl6RHRtTUqvXJUQuE0PTJ3moQ1WWipbHWSK9apg=
+Received: from LV8PR10MB7920.namprd10.prod.outlook.com (2603:10b6:408:1fd::10)
+ by BLAPR10MB5170.namprd10.prod.outlook.com (2603:10b6:208:321::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.27; Thu, 15 Feb
+ 2024 10:56:17 +0000
+Received: from LV8PR10MB7920.namprd10.prod.outlook.com
+ ([fe80::bdae:43a4:670c:48d1]) by LV8PR10MB7920.namprd10.prod.outlook.com
+ ([fe80::bdae:43a4:670c:48d1%4]) with mapi id 15.20.7270.036; Thu, 15 Feb 2024
+ 10:56:17 +0000
+Date: Thu, 15 Feb 2024 11:56:10 +0100
+From: Daniel Kiper <daniel.kiper@oracle.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-integrity@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org,
+        kexec@lists.infradead.org, linux-efi@vger.kernel.org,
+        dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+        mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+        peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+        luto@amacapital.net, nivedita@alum.mit.edu,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        kanth.ghatraju@oracle.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v8 01/15] x86/boot: Place kernel_info at a fixed offset
+Message-ID: <Zc3tykqH2SjSVtd1@tomti.i.net-space.pl>
+References: <20240214221847.2066632-1-ross.philipson@oracle.com>
+ <20240214221847.2066632-2-ross.philipson@oracle.com>
+ <CAMj1kXH3Gvr3vDRLDdXuc0s7ZAQYE6+D7tmCRBjJWwWt2fn4-w@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXH3Gvr3vDRLDdXuc0s7ZAQYE6+D7tmCRBjJWwWt2fn4-w@mail.gmail.com>
+X-ClientProxiedBy: WA1P291CA0008.POLP291.PROD.OUTLOOK.COM
+ (2603:10a6:1d0:19::19) To LV8PR10MB7920.namprd10.prod.outlook.com
+ (2603:10b6:408:1fd::10)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwAHABmc6c1lwxGNAg--.11795S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFWxAw4fAw1DAFW7Gr4kZwb_yoWfuw4xpF
-	W7KayUJr4rZFW0kF4vyFy5ur4fK34qgFZ7W34Ykw1kAFyqvrn0qFs8AryUuF1rGrWFq34I
-	qr4akr45ZF1DtrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWlIxAI
-	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2js
-	IEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x07UWVbkUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBF1jj5Zf6QAAsZ
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR10MB7920:EE_|BLAPR10MB5170:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1eeb0ab-d3e0-4943-6049-08dc2e14bc8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	rWSEJNDZidz3rrVjKErilHVErG0u96tcwBAaV+sOutnxY/a7Fk1KD35IYpTb79HH8dHligjMh95GOPHYyMm0Vds5AdjGCy/K8KnTp8GpesF1AUFoCAUWXMF99Gpj+lXQLpvbSX3s2OUdcy3IlEbrT18l2wXdDJ9Olgabm3ds02bD8w2/gASBj77tJ3dYiZCZ/fHhNjH0x6c6Npc0cgQXBF1PyeoaybcK2yhpE90xh5QCm3Vwt5pI4KMl9t+nX/6PzjkmlQTj0YqlRFGd9HOYsUwb/VsYWpP9gQQWkx08VUe7PYcsoGBt+CFNAJXQ9Bdo+xdOb7sjkw3ugqSTHs2/Upx4SZB3DM4zZN7Rxpc8ZPsg442PKA3PZYMZeuLWFTmlxl7ZvzvhQT3eEazyw2EvuXUzcgZFhIJ3yZof4bZSajTKDTTeZ2br0iS8vkgcSNXBK8pLFA5fTb3KzUFC0YXb6dD3lP7J7QOMlW3+f1pIo0LTMGv9JUekhV/Gn/QDLZmCVYMoou66/Co9O2VdNXZKqsBDCkjbF+uRlTsk39vKQCu16wnnYKrDxzbQZI4jC/mW
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR10MB7920.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(396003)(136003)(366004)(346002)(39860400002)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(44832011)(66556008)(7416002)(5660300002)(66946007)(4326008)(8936002)(8676002)(6916009)(66476007)(2906002)(26005)(86362001)(38100700002)(316002)(6666004)(478600001)(9686003)(6506007)(6486002)(6512007)(41300700001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?ulL8RWxye+EK5/EQRSOpLvVF7pq+eNXstB4Xm9qON0CHR8D3RcPjV/NDzuQC?=
+ =?us-ascii?Q?vGaF9o7wLy1YyIM/X+KHUSOvYaxVazu6uQDMusyPyAqY9KZk8u98ffUOtZnm?=
+ =?us-ascii?Q?p/dPJfppLWrDt/m7N2X5A+VtJ3P5NUblLA1j3fuYqLKBn2oOe8gQQ7nAabVW?=
+ =?us-ascii?Q?TAj8ymt4CtY3P/CgoSjY1bKRAH2qH5CUplrEc2u6ogo4DHSgF5SEP5Ydcsbd?=
+ =?us-ascii?Q?bPKJAQaFcbZx+4tpEXtrAYkbxN610qQHjVrSPMr3pXpRRxOxjx2+0MqUYwQz?=
+ =?us-ascii?Q?z6XP9X+f/X9ccnBYyNAqXWATglDjzsMyUWac++isyZemHCeCDn1HiJghmo4r?=
+ =?us-ascii?Q?Rw8+7mQqMLgRxN1tfYAHNJeuNgj5odPJmBneprYRWURnLmr/FAUQTuMV9Q8f?=
+ =?us-ascii?Q?5sq3oxfvzEOwkZ3wWXP0bikKMWgdUh2pi8dC5plrIbiPMW+/eL6W0sS7iuFi?=
+ =?us-ascii?Q?Ll68NPjLmtx7yIvIA/PwNzHWlRkyv1KqKnzbGDKqQhcsTPdSu7FDdpaM2YDh?=
+ =?us-ascii?Q?D0EpPBiSalGv6YQw+0X82Seam2P+IUJHkMHx1wqXlYKnmgIAoYPd2drVTL7x?=
+ =?us-ascii?Q?gZFo17fhzyf7lqT4TWQgGbjydXU4H4AAdNehdDIbW9+uRcgDBWvbR3jDRY2o?=
+ =?us-ascii?Q?YalQPPvKPdgOoFeDI9T2PfnIwhIfwuQaGw6xeUubeCtWYsNbfo3x6O96ibTy?=
+ =?us-ascii?Q?o6NodA/KV+i8QIC4zbLg+8OAoonGqt3TLiLz6tjVXsFwpb8/Tot606GaoWsJ?=
+ =?us-ascii?Q?P/ydjMjL8uy+85uV3zCUK+nM2BAZM5YeVNFZ5Ume1OHCwZy8JbNU0UZKYbMG?=
+ =?us-ascii?Q?PBeXlvpyKZ5WJt5NCsbIbVqm/72jr0XSEjNROWD/uthrQm1CN5BbUNYc/ure?=
+ =?us-ascii?Q?CgTMHTClbo+w8jHIo5MAxsdJrvt+oB7zWulG+Dhcm0+iPbxqcsTUN7Iz954b?=
+ =?us-ascii?Q?bNme5nC5OH9M7CITkuBHTsSyzxPfBWNCGH8aaZJDBrPobC1X8O++OsId7Dot?=
+ =?us-ascii?Q?KmdYZ9LeTCWiRhFWHJAD0V2mxiAwBxegItk4RuakRP02iaotSbvCY61EJ3nM?=
+ =?us-ascii?Q?G3z8h5pRM9NRXWy4CXuWqvwT6sk3VBwt8fBLDyWcQfcJW2VTNkQZ3fTDZPeN?=
+ =?us-ascii?Q?1iaoR4PAkgzPjU1uDMqebPaIBaghYQCpkWsHognii9JQoUFiiqz5vup8oiWo?=
+ =?us-ascii?Q?aqXxDdwjNHayZSIiFQdNhlVPRSo6r+s1Qwyhg5YxlTx45qcJg4zfqIOp/SSD?=
+ =?us-ascii?Q?OS6ZnhyJSj9TLSY34CWWsbIUDsTY+joOR9dz/1ey2y5IazU+fLro1JOFL0gh?=
+ =?us-ascii?Q?71OhybIujGlAK74Otjk2qg76lA+SgF1gg8wxzBM7SyG0IIu84/YE9TCC9NH5?=
+ =?us-ascii?Q?29e34CHdU/nk2LrvgGjZvkvvtrB7tuxKHcGvbck74apV1Zq4WCmr9mr19dun?=
+ =?us-ascii?Q?XPxz2rU36iPWa7zZxIa3G4gSBYnmyf86JvIV0Dg4h7xYtEReMgVc7wSrSW7h?=
+ =?us-ascii?Q?dG9cjfHtdDWenoJrgRTz7eTj7aucHnb7axr2vLiMe2gvb+oL+SNxT7/ryux9?=
+ =?us-ascii?Q?CPPHK8fDC/t7HOaFFGsd8z2D+8s5O+CyZpUblNeo?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	99C1mulkHQ/qVS+nRitFJgw8BXbvZZLYFfu5Y800QvtMEOjfzKSJHY/1rl3Ajs7e80PWhZ0l0DldZGrqO8zXF8cw/N19ThPfOVBGDT+HPJX84n/wN3HAxX63fI32ycrkEHk/NK7+57+kwBbUdT/R44WYPudZ3Ek1Mv27ojK7XRY9g2blffT5+oFTKAg+/7ReHjuTCmcbcz2Fx+Tejj1oNdvZ2lO5DJ5QWbZI+vko6+PBAGcN1rcDjBdQW6nBQ/82CCxpq0XzPzMhvVyQ3h/OZaDFrLoJydgMserep6xNyH+cehqktDkeIX0tM1fskry0vrjBrpMa9yqDbd38gNYh4ETinbrboFCn2SUMFnbdDT2hk0hvrZWA+TUgQyppniLi2nvq/tAvRMSF7v7sfVDud+4bOHdgLz1oeHTS1gddu57q0mj7FEXwEv7USvFh1l7YByvZaL9dZKdSZS/DQvNmuGhuJk5lr6kp8y+LqUAJLs0GzPHkXS483iZrpsx0ZqG63ACGtqmrTMryuVhP8s5kDY7ZTzwC9tAFyiuk1w+5Z+heaqitGdVYUVKTPPuzsta0ruKxsTTwEWPs8zzNIEHwmOLsJnBA1ZndKPJD6k71UFU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1eeb0ab-d3e0-4943-6049-08dc2e14bc8a
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR10MB7920.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2024 10:56:17.8120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AoUUkDPLR2vRZVDkv3SSTD7TazsJZNA2PewqJWcgndsXmZnY7ITwPRib/E3Q5ckTv8ojVrdIqiyNMtJKN0z8iA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB5170
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-15_10,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
+ mlxlogscore=999 malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402150086
+X-Proofpoint-ORIG-GUID: v7A_Mx55t8SU1ekVojVwFesSvbiSAqhC
+X-Proofpoint-GUID: v7A_Mx55t8SU1ekVojVwFesSvbiSAqhC
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Thu, Feb 15, 2024 at 08:56:25AM +0100, Ard Biesheuvel wrote:
+> On Wed, 14 Feb 2024 at 23:31, Ross Philipson <ross.philipson@oracle.com> wrote:
+> >
+> > From: Arvind Sankar <nivedita@alum.mit.edu>
+> >
+> > There are use cases for storing the offset of a symbol in kernel_info.
+> > For example, the trenchboot series [0] needs to store the offset of the
+> > Measured Launch Environment header in kernel_info.
+> >
+>
+> Why? Is this information consumed by the bootloader?
 
-Since now IMA and EVM use their own integrity metadata, it is safe to
-remove the 'integrity' LSM, with its management of integrity metadata.
+The bootloader stuffs this info, plus some offset IIRC, into special structure
+and finally it is consumed by SINIT ACM after GETSEC[SENTER] call.
 
-Keep the iint.c file only for loading IMA and EVM keys at boot, and for
-creating the integrity directory in securityfs (we need to keep it for
-retrocompatibility reasons).
+Sadly this data is Intel specific and it is even not compatible with AMD.
+So, if I am not mistaken, we will need additional member for the AMD in
+the kernel_info.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
----
- include/linux/integrity.h      |  14 ---
- security/integrity/iint.c      | 197 +--------------------------------
- security/integrity/integrity.h |  25 -----
- security/security.c            |   2 -
- 4 files changed, 2 insertions(+), 236 deletions(-)
+> I'd like to get away from x86 specific hacks for boot code and boot
+> images, so I would like to explore if we can avoid kernel_info, or at
+> least expose it in a generic way. We might just add a 32-bit offset
+> somewhere in the first 64 bytes of the bootable image: this could
+> co-exist with EFI bootable images, and can be implemented on arm64,
+> RISC-V and LoongArch as well.
 
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index ef0f63ef5ebc..459b79683783 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -19,24 +19,10 @@ enum integrity_status {
- 	INTEGRITY_UNKNOWN,
- };
- 
--/* List of EVM protected security xattrs */
- #ifdef CONFIG_INTEGRITY
--extern struct integrity_iint_cache *integrity_inode_get(struct inode *inode);
--extern void integrity_inode_free(struct inode *inode);
- extern void __init integrity_load_keys(void);
- 
- #else
--static inline struct integrity_iint_cache *
--				integrity_inode_get(struct inode *inode)
--{
--	return NULL;
--}
--
--static inline void integrity_inode_free(struct inode *inode)
--{
--	return;
--}
--
- static inline void integrity_load_keys(void)
- {
- }
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index d4419a2a1e24..068ac6c2ae1e 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -6,207 +6,14 @@
-  * Mimi Zohar <zohar@us.ibm.com>
-  *
-  * File: integrity_iint.c
-- *	- implements the integrity hooks: integrity_inode_alloc,
-- *	  integrity_inode_free
-- *	- cache integrity information associated with an inode
-- *	  using a rbtree tree.
-+ *	- initialize the integrity directory in securityfs
-+ *	- load IMA and EVM keys
-  */
--#include <linux/slab.h>
--#include <linux/init.h>
--#include <linux/spinlock.h>
--#include <linux/rbtree.h>
--#include <linux/file.h>
--#include <linux/uaccess.h>
- #include <linux/security.h>
--#include <linux/lsm_hooks.h>
- #include "integrity.h"
- 
--static struct rb_root integrity_iint_tree = RB_ROOT;
--static DEFINE_RWLOCK(integrity_iint_lock);
--static struct kmem_cache *iint_cache __ro_after_init;
--
- struct dentry *integrity_dir;
- 
--/*
-- * __integrity_iint_find - return the iint associated with an inode
-- */
--static struct integrity_iint_cache *__integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--	struct rb_node *n = integrity_iint_tree.rb_node;
--
--	while (n) {
--		iint = rb_entry(n, struct integrity_iint_cache, rb_node);
--
--		if (inode < iint->inode)
--			n = n->rb_left;
--		else if (inode > iint->inode)
--			n = n->rb_right;
--		else
--			return iint;
--	}
--
--	return NULL;
--}
--
--/*
-- * integrity_iint_find - return the iint associated with an inode
-- */
--struct integrity_iint_cache *integrity_iint_find(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--
--	if (!IS_IMA(inode))
--		return NULL;
--
--	read_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	read_unlock(&integrity_iint_lock);
--
--	return iint;
--}
--
--#define IMA_MAX_NESTING (FILESYSTEM_MAX_STACK_DEPTH+1)
--
--/*
-- * It is not clear that IMA should be nested at all, but as long is it measures
-- * files both on overlayfs and on underlying fs, we need to annotate the iint
-- * mutex to avoid lockdep false positives related to IMA + overlayfs.
-- * See ovl_lockdep_annotate_inode_mutex_key() for more details.
-- */
--static inline void iint_lockdep_annotate(struct integrity_iint_cache *iint,
--					 struct inode *inode)
--{
--#ifdef CONFIG_LOCKDEP
--	static struct lock_class_key iint_mutex_key[IMA_MAX_NESTING];
--
--	int depth = inode->i_sb->s_stack_depth;
--
--	if (WARN_ON_ONCE(depth < 0 || depth >= IMA_MAX_NESTING))
--		depth = 0;
--
--	lockdep_set_class(&iint->mutex, &iint_mutex_key[depth]);
--#endif
--}
--
--static void iint_init_always(struct integrity_iint_cache *iint,
--			     struct inode *inode)
--{
--	iint->ima_hash = NULL;
--	iint->version = 0;
--	iint->flags = 0UL;
--	iint->atomic_flags = 0UL;
--	iint->ima_file_status = INTEGRITY_UNKNOWN;
--	iint->ima_mmap_status = INTEGRITY_UNKNOWN;
--	iint->ima_bprm_status = INTEGRITY_UNKNOWN;
--	iint->ima_read_status = INTEGRITY_UNKNOWN;
--	iint->ima_creds_status = INTEGRITY_UNKNOWN;
--	iint->evm_status = INTEGRITY_UNKNOWN;
--	iint->measured_pcrs = 0;
--	mutex_init(&iint->mutex);
--	iint_lockdep_annotate(iint, inode);
--}
--
--static void iint_free(struct integrity_iint_cache *iint)
--{
--	kfree(iint->ima_hash);
--	mutex_destroy(&iint->mutex);
--	kmem_cache_free(iint_cache, iint);
--}
--
--/**
-- * integrity_inode_get - find or allocate an iint associated with an inode
-- * @inode: pointer to the inode
-- * @return: allocated iint
-- *
-- * Caller must lock i_mutex
-- */
--struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
--{
--	struct rb_node **p;
--	struct rb_node *node, *parent = NULL;
--	struct integrity_iint_cache *iint, *test_iint;
--
--	iint = integrity_iint_find(inode);
--	if (iint)
--		return iint;
--
--	iint = kmem_cache_alloc(iint_cache, GFP_NOFS);
--	if (!iint)
--		return NULL;
--
--	iint_init_always(iint, inode);
--
--	write_lock(&integrity_iint_lock);
--
--	p = &integrity_iint_tree.rb_node;
--	while (*p) {
--		parent = *p;
--		test_iint = rb_entry(parent, struct integrity_iint_cache,
--				     rb_node);
--		if (inode < test_iint->inode) {
--			p = &(*p)->rb_left;
--		} else if (inode > test_iint->inode) {
--			p = &(*p)->rb_right;
--		} else {
--			write_unlock(&integrity_iint_lock);
--			kmem_cache_free(iint_cache, iint);
--			return test_iint;
--		}
--	}
--
--	iint->inode = inode;
--	node = &iint->rb_node;
--	inode->i_flags |= S_IMA;
--	rb_link_node(node, parent, p);
--	rb_insert_color(node, &integrity_iint_tree);
--
--	write_unlock(&integrity_iint_lock);
--	return iint;
--}
--
--/**
-- * integrity_inode_free - called on security_inode_free
-- * @inode: pointer to the inode
-- *
-- * Free the integrity information(iint) associated with an inode.
-- */
--void integrity_inode_free(struct inode *inode)
--{
--	struct integrity_iint_cache *iint;
--
--	if (!IS_IMA(inode))
--		return;
--
--	write_lock(&integrity_iint_lock);
--	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
--	write_unlock(&integrity_iint_lock);
--
--	iint_free(iint);
--}
--
--static void iint_init_once(void *foo)
--{
--	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
--
--	memset(iint, 0, sizeof(*iint));
--}
--
--static int __init integrity_iintcache_init(void)
--{
--	iint_cache =
--	    kmem_cache_create("iint_cache", sizeof(struct integrity_iint_cache),
--			      0, SLAB_PANIC, iint_init_once);
--	return 0;
--}
--DEFINE_LSM(integrity) = {
--	.name = "integrity",
--	.init = integrity_iintcache_init,
--	.order = LSM_ORDER_LAST,
--};
--
--
- /*
-  * integrity_kernel_read - read data from the file
-  *
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 671fc50255f9..50d6f798e613 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -102,31 +102,6 @@ struct ima_file_id {
- 	__u8 hash[HASH_MAX_DIGESTSIZE];
- } __packed;
- 
--/* integrity data associated with an inode */
--struct integrity_iint_cache {
--	struct rb_node rb_node;	/* rooted in integrity_iint_tree */
--	struct mutex mutex;	/* protects: version, flags, digest */
--	struct inode *inode;	/* back pointer to inode in question */
--	u64 version;		/* track inode changes */
--	unsigned long flags;
--	unsigned long measured_pcrs;
--	unsigned long atomic_flags;
--	unsigned long real_ino;
--	dev_t real_dev;
--	enum integrity_status ima_file_status:4;
--	enum integrity_status ima_mmap_status:4;
--	enum integrity_status ima_bprm_status:4;
--	enum integrity_status ima_read_status:4;
--	enum integrity_status ima_creds_status:4;
--	enum integrity_status evm_status:4;
--	struct ima_digest_data *ima_hash;
--};
--
--/* rbtree tree calls to lookup, insert, delete
-- * integrity data associated with an inode.
-- */
--struct integrity_iint_cache *integrity_iint_find(struct inode *inode);
--
- int integrity_kernel_read(struct file *file, loff_t offset,
- 			  void *addr, unsigned long count);
- 
-diff --git a/security/security.c b/security/security.c
-index de8a9a7b2a30..4317bcd6ec6a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/integrity.h>
- #include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
-@@ -1598,7 +1597,6 @@ static void inode_free_by_rcu(struct rcu_head *head)
-  */
- void security_inode_free(struct inode *inode)
- {
--	integrity_inode_free(inode);
- 	call_void_hook(inode_free_security, inode);
- 	/*
- 	 * The inode may still be referenced in a path walk and
--- 
-2.34.1
+The other architectures may or may not have need for such data due to
+differences in DRTM implementation. Anyway, whatever we do I want to
+be sure the DRTM can be used on UEFI and non-UEFI platforms. So, I am
+not entirely convinced the address/pointer to additional DRTM data
+should be part of the MS-DOS and/or PE header. Though I am not against
+building something generic shared among various architectures either.
 
+Daniel
