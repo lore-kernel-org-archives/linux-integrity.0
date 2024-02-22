@@ -1,178 +1,105 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA200148FE6
-	for <linux-integrity@vger.kernel.org>; Thu, 22 Feb 2024 15:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D9D39FC7;
+	Thu, 22 Feb 2024 15:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708615612; cv=none; b=hprk9YJXv8cKlTdJf30onZCCdCmmd8F0qExV6g4Nd60LlJpzShuNxrns577FZxhPfAZchv3PnAOv5cwPiVzXOju9E1Zq8IyYrEFMlbZ1Ud+TMRNjj0ui26h+14kU1OT+8qJMib6OWUTnc+KtoGcbcJO1XWQ7O0YUyJHN3hTMlsk=
+	t=1708615679; cv=none; b=W22T/z2A85CvFeH/kZBcOSubGQNWf8Vn1LDi+O32KDQ6mZREngdzHxyuiNDbBQfWvSP3TwoiS8A8HPkU/QOqkFchCT19knx09tk+j76n/fjACCThH2F1bQ0zKOsWPXyY1f2DVqOvTQ2BL1dJYr6cX8GpFpG4sJK2T0oS8fr4EBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708615612; c=relaxed/simple;
-	bh=4nYoMLWgGDKcKdFLALhsVO0JG+ULM5zHWSE0KHsVL7w=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:Mime-Version; b=CfmaQqW403srBF0jaWL89wzsA5l5qMqRNt0zJrB6MyhS8hpFfo+B4/zKbr6GAeuvM0Y39KZwb/Gm8fgJ9qlAh0e6X/zoIf9JcuSP5Ce2EsRujizJ6slIGd6xIAk9w468tnUhdWasJTjYY3G1oCaQb1T0MJWy+FB6yn2FjrLDnpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VwCbImPh; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1708615679; c=relaxed/simple;
+	bh=b+/c1g1bevjJS6ENQgxxzjivp4907xG9QQXiNgmqTj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a3jiCuznv23xcvfefuQujkqAh7VDrRv2VBdyjasynmWhHEvN+S2cst5qgH5e2Hg0dnGp6vDGwXjADNQ9BWs/1B4+a5qewJNGWw0zVZ0z6qMmoCr0nZf1Xzx3ZjIJT7HxAJRhA1pZw+4mQkSGPT0UydKTILLKfoQq7nHyRmrWhMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTNThF7g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VwCbImPh"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41MF7DtX025764;
-	Thu, 22 Feb 2024 15:26:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : in-reply-to : references : content-type : date :
- mime-version : content-transfer-encoding; s=pp1;
- bh=6is4J6faMXa825k9ObNr0T510me85j4o6wij3IOHWAQ=;
- b=VwCbImPhUWrtNPGrh9gLNOPWGvykpkUXTYYTQJSfNOLVCapry3121UjEh6Abo1tc0ZTn
- ZJ7CM20pSJXANlWorl0lSd8ezTz2Z7roXw16R61Hs8Fxs1u44wwlsqoo0gHz+zxxZe15
- q2oQpIpVvRkDVj5W8HI30e6M4r2/2X5ZDMEt7DKhQnSDbnx6E0WNZABX1XMRbFDxUTL9
- PV10fdF2bX/9YIg59Uah91cTZdkCDqTWIek8Yb9rAbh55MghykuSaDbeIl2Y9UZOMYvC
- RASnZNeY0q92y6lB4w01paY7wrVA7WnAEV/3T+F5lVrBNmBh1YWrBpMSwMQ/Kp0Om/5R bg== 
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3we8mkghgc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Feb 2024 15:26:23 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41ME5wuQ013470;
-	Thu, 22 Feb 2024 15:26:22 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wb7h0q8xn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Feb 2024 15:26:22 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41MFQKZ711207180
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 22 Feb 2024 15:26:22 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D3CD158063;
-	Thu, 22 Feb 2024 15:26:18 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9B6205805D;
-	Thu, 22 Feb 2024 15:26:17 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.99.109])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 22 Feb 2024 15:26:17 +0000 (GMT)
-Message-ID: <c87163b6aae92acec40a98217a4e65b9af4ece2a.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 7/8] ima: make the kexec extra memory configurable
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, stefanb@linux.ibm.com, ebiederm@xmission.com,
-        noodles@fb.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
-Cc: code@tyhicks.com, nramas@linux.microsoft.com, paul@paul-moore.com
-In-Reply-To: <20240214153827.1087657-8-tusharsu@linux.microsoft.com>
-References: <20240214153827.1087657-1-tusharsu@linux.microsoft.com>
-	 <20240214153827.1087657-8-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Date: Thu, 22 Feb 2024 09:13:23 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTNThF7g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01BF5C433F1;
+	Thu, 22 Feb 2024 15:27:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708615678;
+	bh=b+/c1g1bevjJS6ENQgxxzjivp4907xG9QQXiNgmqTj8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UTNThF7gTQurO5gdJ1GkI+CaFtktmaiJxxkHcV8C6mOXZmDmZndo3Eend4/T+PPZ1
+	 OecMMs9q6H0fyqzWuRIEOLvguIG5tCiDI3ok4ALjmGF9A316+J38Bd1PVzWqiOyTvX
+	 7QPL1hZKe3EDURzVhYdtZEpv6XcqVlH5z31pKdyKY1AZHNMOEakzwvsjU4jXMxxoSA
+	 DdFVnfIHSh0YnUrEjAraDFTpmT2ajq6N9QDwulqfdSLNDDWq5UYSfXRaF4qTJXv57I
+	 ZH2lHiVy1Czeym3zx9SuBYLK33jTyNuNX5ae8Z0Et6AVVneuy5H+MKB1oWev60wKzG
+	 n2OiDppEBRI+A==
+Date: Thu, 22 Feb 2024 16:27:50 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
+	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v2 00/25] fs: use type-safe uid representation for
+ filesystem capabilities
+Message-ID: <20240222-fluchen-viren-50e216b653fb@brauner>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HC6JejxVUzYnxr6d_wM70qqaa8GdR82q
-X-Proofpoint-ORIG-GUID: HC6JejxVUzYnxr6d_wM70qqaa8GdR82q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-22_11,2024-02-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 spamscore=0 clxscore=1015
- bulkscore=0 impostorscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402220123
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 
-Hi Tushar,
-
-On Wed, 2024-02-14 at 07:38 -0800, Tushar Sugandhi wrote:
-> The extra memory allocated for carrying the IMA measurement list across
-> kexec is hard-coded as half a PAGE.  Make it configurable.
+On Wed, Feb 21, 2024 at 03:24:31PM -0600, Seth Forshee (DigitalOcean) wrote:
+> This series converts filesystem capabilities from passing around raw
+> xattr data to using a kernel-internal representation with type safe
+> uids, similar to the conversion done previously for posix ACLs.
+> Currently fscaps representations in the kernel have two different
+> instances of unclear or confused types:
 > 
-> Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
-> extra memory (in kb) to be allocated for IMA measurements added during
-> kexec soft reboot.  Ensure the default value of the option is set such
-> that extra half a page of memory for additional measurements is allocated
-> for the additional measurements.
+> - fscaps are generally passed around in the raw xattr form, with the
+>   rootid sometimes containing the user uid value and at other times
+>   containing the filesystem value.
+> - The existing kernel-internal representation of fscaps,
+>   cpu_vfs_cap_data, uses the kuid_t type, but the value stored is
+>   actually a vfsuid.
 > 
-> Update ima_add_kexec_buffer() function to allocate memory based on the
-> Kconfig option value, rather than the currently hard-coded one.
+> This series eliminates this confusion by converting the xattr data to
+> the kernel representation near the userspace and filesystem boundaries,
+> using the kernel representation within the vfs and commoncap code. The
+> internal representation is renamed to vfs_caps to reflect this broader
+> use, and the rootid is changed to a vfsuid_t to correctly identify the
+> type of uid which it contains.
 > 
-> Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> ---
->  security/integrity/ima/Kconfig     |  9 +++++++++
->  security/integrity/ima/ima_kexec.c | 15 ++++++++++-----
->  2 files changed, 19 insertions(+), 5 deletions(-)
+> New vfs interfaces are added to allow for getting and setting fscaps
+> using the kernel representation. This requires the addition of new inode
+> operations to allow overlayfs to handle fscaps properly; all other
+> filesystems fall back to a generic implementation. The top-level vfs
+> xattr interfaces will now reject fscaps xattrs, though the lower-level
+> interfaces continue to accept them for reading and writing the raw xattr
+> data.
 > 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index b98bfe9efd0c..4c0fc53d6aa3 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -320,4 +320,13 @@ config IMA_DISABLE_HTABLE
->  	help
->  	   This option disables htable to allow measurement of duplicate
-> records.
->  
-> +config IMA_KEXEC_EXTRA_MEMORY_KB
-> +	int
-> +	depends on IMA_KEXEC
-> +	default 0
-> +	help
-> +	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-> +	  allocated (in kb) for IMA measurements added during kexec soft reboot.
-> +	  If set to the default value, an extra half a page of memory for those
-> +	  additional measurements will be allocated.
->  endif
-> diff --git a/security/integrity/ima/ima_kexec.c
-> b/security/integrity/ima/ima_kexec.c
-> index dbeeb7f1355e..50903d4ce880 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -126,6 +126,7 @@ void ima_add_kexec_buffer(struct kimage *image)
->  				  .buf_min = 0, .buf_max = ULONG_MAX,
->  				  .top_down = true };
->  	unsigned long binary_runtime_size;
-> +	unsigned long extra_size;
->  
->  	/* use more understandable variable names than defined in kbuf */
->  	void *kexec_buffer = NULL;
-> @@ -133,15 +134,19 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	int ret;
->  
->  	/*
-> -	 * Reserve an extra half page of memory for additional measurements
-> -	 * added during the kexec load.
-> +	 * Reserve extra memory for measurements added during kexec.
->  	 */
-> -	binary_runtime_size = ima_get_binary_runtime_size();
-> +	if (CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB <= 0)
-> +		extra_size = PAGE_SIZE / 2;
-> +	else
-> +		extra_size = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
-> +	binary_runtime_size = ima_get_binary_runtime_size() + extra_size;
+> Based on previous feedback, new security hooks are added for fscaps
+> operations. These are really only needed for EVM, and the selinux and
+> smack implementations just peform the same operations that the
+> equivalent xattr hooks would have done. Note too that this has not yet
+> been updated based on the changes to make EVM into an LSM.
+> 
+> The remainder of the changes are preparatory work, addition of helpers
+> for converting between the xattr and kernel fscaps representation, and
+> various updates to use the kernel representation and new interfaces.
 
-It's clearer if the 'extra_size' is added to the segment_size, not the
-binary_runtime_size.  Please revert this change.
+I still think that the generic_{get,set,remove}_fscaps() helpers falling
+back to plain *vfs_*xattr() calls is a hackish. So ideally I'd like to
+see this killed in a follow-up series and make all fses that support
+them use the inode operation.
 
-> +
->  	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
->  		kexec_segment_size = ULONG_MAX;
->  	else
-> -		kexec_segment_size = ALIGN(ima_get_binary_runtime_size() +
-> -					   PAGE_SIZE / 2, PAGE_SIZE);
-> +		kexec_segment_size = ALIGN(binary_runtime_size, PAGE_SIZE);
+> 
+> I have tested this code with xfstests, ltp, libcap2, and libcap-ng with
+> no regressions found.
 
-Please replace binary_runtime_size with "ima_get_binary_runtime_size() +
-extra_size".
-
-Mimi
-
->  	if ((kexec_segment_size == ULONG_MAX) ||
->  	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
->  		pr_err("Binary measurement list too large.\n");
-
++1
