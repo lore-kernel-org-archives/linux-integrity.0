@@ -1,64 +1,64 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493F67AE45
-	for <linux-integrity@vger.kernel.org>; Fri, 23 Feb 2024 15:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF85823A7
+	for <linux-integrity@vger.kernel.org>; Fri, 23 Feb 2024 15:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708702246; cv=none; b=iaFZ0r4NdDzX8mDQ83DTSS2Rccjo14doPwwDa2H4QU7StVJl/rDZuOUh/Kl+4Z3kRUes8q6HY3BaBIJNHOVR0kZtChLKT63B8VUAzoycMQ0JT+COhTtOnMwjX0+XJlQyDW+Kh3G2l73kgXRj+oP58OLJzphR7FmPNXJXOjxJ9g0=
+	t=1708702270; cv=none; b=uAmXQiqQVV02yFU00BJ0qLL/OvH745SxdiYAYmPD7FaoB9sq8h7k/4jxGxwHt9KF0Ab2dABXDVJY3sMvq6G/Xt6eV2BTLa1A3w/EJMNxmmK1aI1WWw4wg8IXIltZ7Yw/7S1zaSyIpIuFXRPBf8MNv0o8LDw4ZysxCnJWRFEWXss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708702246; c=relaxed/simple;
-	bh=cf/cBRO3MOghuEqppAEkRJmHJlstUpIHBdnLQr3Hp6w=;
+	s=arc-20240116; t=1708702270; c=relaxed/simple;
+	bh=lqHtadbXbj6O5W5AQD2ro+GnD+oelkK4JLiRkxslWuA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fqTnUmxkknDhuXELhUfnDdkDpBdBOq5wl0ftKVXu9RS7tYcTXB5//MqshRW6HxCiIfU83aHW+1UYC7voN0g+lXkDpfevAKM5QJxg44ZneZXB2z/OMet6hdJ53wANZjiy1aOaJSDBpzmE3sPgpr58vTutuyZDIfmrC01Q8oXAhWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HEIqUB13; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=s0QorTOEtVHGPCIhguAQlAUL8ZwdkZfhKQbGE1DPb/7thn+UGdnhcD6mPD2gOl2TJ4lmsddPXXN+vcPBXynKxmwoV+vI0b3vvUaPFMbUCaGau5/zBSziiwDyohBIKHmSa03UVBRrjkEsUoxdez6U0ZIhTveLpBL9OiGjftYBx4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qs5eyo/c; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HEIqUB13"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41NF1Bsa032542;
-	Fri, 23 Feb 2024 15:30:30 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qs5eyo/c"
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41NEVeTG012731;
+	Fri, 23 Feb 2024 15:30:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=5MNMhJZHGplteWkKM4HxwlwvXzRK71bfItKVFb/cdRk=;
- b=HEIqUB13HYnuFQyM7PAv+yt6nvWx235UAFj1eAO+aiZzQOif8rWL2Msw6jOousn7q7oE
- 5Xa8xKeYmCpxnGyZjxTjdyWA6Zu0yGTGSbDn/coLNyDTCvMey6Wy4CewMeJ1EFsiWy4G
- cV75uUbTc8R+yC4CCS4ULdNnDFwmpomL9EfO3pxx3Ij1i8/qrO7/JHzpF9OmAbF2BW8+
- a/sQzyqOEwarBxl8IaKVeahj66J9fP2GEp0LNjMnMzlFYSGy3FXmpD/1O/7rAnZMgVGI
- u7HNzzVg5Ns5fhAAXJplJoAz2WHsMbjeFlpOrYSOL0x529B0Gip2pOn3NmQCRFeV9Ilr GA== 
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wew4whh8w-1
+ bh=iiMpBjvXD/UR8dpbjUgqM+fMQVZYnjiYq+nxrAF/NWY=;
+ b=qs5eyo/c9vLAA9S03BrdWNQAIklc15JAg6HmSAHcaU6PPsHTdbgnJjDKzRyeJSrCglvX
+ nV8t1YNfjmCxVFygvXbFR1jj+OtV60wE+vP4wjwMalaBvMENZenWt3ZQyJhWY+ZzKfla
+ r0j/EWjGJMQ/phzJLf1koCmxRk2wnNMRZvjkZM+DUUG6IgQl2fGYQVfngN1MwkKODLNi
+ gG4T1/GEF1ZXEKQ7J7nSkRcjTvY4V9kLiPPbInYOWpaVPRrdI6qXd0jyrr6IgSlOuKBV
+ SC/5MLNpb6MXl180u8sD0Q5ESueZCZ+d4L5bw5fdOwtoTpQxwcboCqTJJXKHocFzWCDE Ug== 
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wevxdt41b-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Feb 2024 15:30:28 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41ND5UNW013452;
-	Fri, 23 Feb 2024 15:30:27 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wb7h0xesm-1
+	Fri, 23 Feb 2024 15:30:53 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41NEfCxd009577;
+	Fri, 23 Feb 2024 15:30:24 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wb84px71n-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Feb 2024 15:30:27 +0000
+	Fri, 23 Feb 2024 15:30:24 +0000
 Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41NFUOT68782498
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41NFULWr29819326
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Feb 2024 15:30:26 GMT
+	Fri, 23 Feb 2024 15:30:23 GMT
 Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1EC2D58055;
-	Fri, 23 Feb 2024 15:30:24 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 6AD7A58079;
+	Fri, 23 Feb 2024 15:30:21 +0000 (GMT)
 Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9242558073;
-	Fri, 23 Feb 2024 15:30:23 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id CD6F75804E;
+	Fri, 23 Feb 2024 15:30:20 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 23 Feb 2024 15:30:23 +0000 (GMT)
+	Fri, 23 Feb 2024 15:30:20 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, vt@altlinux.org,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 ima-evm-utils 5/6] tests: Add pkcs11 test using provider
-Date: Fri, 23 Feb 2024 10:30:13 -0500
-Message-ID: <20240223153014.4048133-6-stefanb@linux.ibm.com>
+Subject: [PATCH v2 ima-evm-utils 1/6] headers: Remove usage of CONFIG_IMA_EVM_ENGINE from public header
+Date: Fri, 23 Feb 2024 10:30:09 -0500
+Message-ID: <20240223153014.4048133-2-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.43.2
 In-Reply-To: <20240223153014.4048133-1-stefanb@linux.ibm.com>
 References: <20240223153014.4048133-1-stefanb@linux.ibm.com>
@@ -70,73 +70,50 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3Uh8RoXhBqrd3zr8Iqye74JiQzwH20b_
-X-Proofpoint-ORIG-GUID: 3Uh8RoXhBqrd3zr8Iqye74JiQzwH20b_
+X-Proofpoint-ORIG-GUID: DYrrqQdn4xHQyOnUVHZEi7tYHd9fMCzc
+X-Proofpoint-GUID: DYrrqQdn4xHQyOnUVHZEi7tYHd9fMCzc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
  definitions=2024-02-23_01,2024-02-23_01,2023-05-22_02
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
- spamscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999 impostorscore=0
- priorityscore=1501 adultscore=0 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2402230112
+ mlxlogscore=875 phishscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 spamscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402230112
 
-Adjust the existing pkcs11 engine test cases to pass --engine pkcs11 via
-an option (OPTS) to evmctl rather than using a global variable. Then
-duplicate the pkcs11 engine tests and pass --provider pkcs11 to run the
-same tests using OpenSSL provider. Also check whether evmctl was compiled
-with provider support and if the pkcs11 provider is installed.
+An application including the public header imaevm.h won't know whether
+CONFIG_IMA_EVM_ENGINE was set during compilation of the library, so
+remove the usage of CONFIG_IMA_EVM_ENGINE from it.
+
+An application wanting to use the engine will have to find out whether
+engine support is compiled-in by invoking library functions and possibly
+dealing with errors if there's no engine support .
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- tests/functions.sh     |  1 -
- tests/sign_verify.test | 19 ++++++++++++++++---
- 2 files changed, 16 insertions(+), 4 deletions(-)
+ src/imaevm.h | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/tests/functions.sh b/tests/functions.sh
-index c39b894..962a436 100755
---- a/tests/functions.sh
-+++ b/tests/functions.sh
-@@ -373,7 +373,6 @@ _softhsm_setup() {
-     PKCS11_KEYURI=$(echo "$msg" | sed -n 's|^keyuri: \(.*\)|\1|p')
-     export PKCS11_KEYURI
+diff --git a/src/imaevm.h b/src/imaevm.h
+index 8e24f08..6a52afb 100644
+--- a/src/imaevm.h
++++ b/src/imaevm.h
+@@ -48,12 +48,10 @@
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <openssl/rsa.h>
+-#ifdef CONFIG_IMA_EVM_ENGINE
+-#include <openssl/engine.h>
+-#endif
++#include <openssl/opensslconf.h>
  
--    export EVMCTL_ENGINE="--engine pkcs11"
-     export OPENSSL_ENGINE="-engine pkcs11"
-     export OPENSSL_KEYFORM="-keyform engine"
-   else
-diff --git a/tests/sign_verify.test b/tests/sign_verify.test
-index 1b6cf2a..ddda241 100755
---- a/tests/sign_verify.test
-+++ b/tests/sign_verify.test
-@@ -439,11 +439,24 @@ expect_fail \
- # Test signing with key described by pkcs11 URI
- _softhsm_setup "${WORKDIR}"
- if [ -n "${PKCS11_KEYURI}" ]; then
--  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY="${PKCS11_KEYURI}" ALG=sha256 PREFIX=0x030204aabbccdd0100 OPTS=--keyid=aabbccdd
--  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY="${PKCS11_KEYURI}" ALG=sha1   PREFIX=0x030202aabbccdd0100 OPTS=--keyid=aabbccdd
-+  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY="${PKCS11_KEYURI}" ALG=sha256 PREFIX=0x030204aabbccdd0100 OPTS="--keyid=aabbccdd --engine pkcs11"
-+  expect_pass check_sign FILE=pkcs11test TYPE=ima KEY="${PKCS11_KEYURI}" ALG=sha1   PREFIX=0x030202aabbccdd0100 OPTS="--keyid=aabbccdd --engine pkcs11"
-+
-+  # provider may not be supported or pkcs11 provider not installed
-+  if evmctl --help 2>/dev/null | grep -q provider && \
-+     openssl list -providers -provider pkcs11 2>/dev/null; then
-+    PKCS11_PRIVKEYURI=${PKCS11_KEYURI//type=public/type=private}
-+
-+    expect_pass check_sign FILE=pkcs11test TYPE=ima KEY="${PKCS11_PRIVKEYURI}" ALG=sha256 PREFIX=0x030204aabbccdd0100 OPTS="--keyid=aabbccdd --provider pkcs11"
-+    expect_pass check_sign FILE=pkcs11test TYPE=ima KEY="${PKCS11_PRIVKEYURI}" ALG=sha1   PREFIX=0x030202aabbccdd0100 OPTS="--keyid=aabbccdd --provider pkcs11"
-+  else
-+    __skip() { echo "pkcs11 test with provider is skipped since no provider support or pkcs11 not installed"; return "$SKIP"; }
-+    expect_pass __skip
-+    expect_pass __skip
-+  fi
- else
-   # to have a constant number of tests, skip these two tests
--  __skip() { echo "pkcs11 test is skipped: could not setup softhsm"; return $SKIP; }
-+  __skip() { echo "pkcs11 test is skipped: could not setup softhsm"; return "$SKIP"; }
-   expect_pass __skip
-   expect_pass __skip
- fi
+-#if defined(OPENSSL_NO_ENGINE) || defined(OPENSSL_NO_DYNAMIC_ENGINE)
+-#undef CONFIG_IMA_EVM_ENGINE
++#if !defined(OPENSSL_NO_ENGINE) && !defined(OPENSSL_NO_DYNAMIC_ENGINE)
++#include <openssl/engine.h>
+ #endif
+ 
+ #ifdef USE_FPRINTF
 -- 
 2.43.2
 
