@@ -1,163 +1,278 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7483F13D2E5
-	for <linux-integrity@vger.kernel.org>; Thu, 29 Feb 2024 00:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B955F2C856;
+	Thu, 29 Feb 2024 00:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709167634; cv=none; b=oqbSCaVAn4Sro91zczk6OYM4M09Om53Emo8ViPnlgZ/ZmKUVZ1L5P7THs2O6NKeuYUoYPme/FnNJkfe224aFeM26Q6VXjC6Z86aDD5vbcMwHTpaQaWuqrP0j33QYybmpgiOjNvuYnhRPTlG1JHHnFT0/G8C1nlRJ42P6nUR7HL0=
+	t=1709168121; cv=none; b=jtB/mvuWAE7gl6Au+jORpQ4T0elTTXugxBnaAXtiEX2QsJBX/6uv+mGK3ZrFNEE20a/5tmZSBBSjMG1l8CztIY26avSUKD74jfoeX2fF3I1z5DI4wlr2XxfcLKisjg7uakqDHapJkjUqh1/tRgpdTrsJ/IeZj3yprBwNjTcpf4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709167634; c=relaxed/simple;
-	bh=EtzrGr662xCU1sNLieoGEl4ta1zjFTgk8ZydSq/pjlQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Oe7a53mBBt6PyGDRm/GQyCYqTuX62LTPm43RhSwOXmnGfpKwzxBqHRn1EO5VV8RLT25jDMDnjNJLLRxdqxXfRM3OsMpUhps7fOmS1dv/hQrXm+69bTOQZ+bg+jqXszdaz25Q6SPJdJKDXRZyu9GF/lQ6w6Vo95l+EZ47a9MX9fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks-com.20230601.gappssmtp.com header.i=@gateworks-com.20230601.gappssmtp.com header.b=XR+Cr1uP; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+	s=arc-20240116; t=1709168121; c=relaxed/simple;
+	bh=EDo5RTtPeuCmWwByqD0kigCW6lb+mDj+rRRl1BJXMoU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=huaT5/pf/f+0aDIVx0bLUS3LkrmPxPU6W177c8bWEJYhUGfwpotvIBjd8jA4uH/K/nE3RpQvplh+uT4+HSVgXhcV3dN/cyaCoyAX1Tjr9KJcnZ8ICjopjUg/G50tkua//Xi53Nl+Tz2DjPWQtD56aucaX/YBw7ljTkK10QCZG7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VaeyjUDc; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks-com.20230601.gappssmtp.com header.i=@gateworks-com.20230601.gappssmtp.com header.b="XR+Cr1uP"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a3fb8b0b7acso53459166b.2
-        for <linux-integrity@vger.kernel.org>; Wed, 28 Feb 2024 16:47:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20230601.gappssmtp.com; s=20230601; t=1709167630; x=1709772430; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eObertsJakPpi13M9q57oeVvcenpnPh+pTJAq0BssCY=;
-        b=XR+Cr1uPnMtZvtusTFXQdyYmGtavnB3pmkk6IRAJ95fEi6Puk+02sLusQJN+V28Lmq
-         f1cBRnNSTfp6iHucfkCafGJxUjj93NrJUE3bGO56ESZYZblOjC9J7WldgbxNMqS/jvI/
-         42x8jvVL68OGuA58PJnrejnpjFFY8VRJUL3mnhczHJJ9ZqE8RlYQyCw2wFf2Wgwm5JdE
-         tnNrvQ+o0X9meNMBrgvEux4s3FUxd5XHbUCOz+Uh8mMgGsSiRuVL3k1cm0f5fjjJjIAt
-         90lVuxUnwrRH6DjqMQZW38kIGI2dMa16sXEHeKOFC9QeRM+Jbvh3a77kden3UKWaLQhb
-         K8EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709167630; x=1709772430;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eObertsJakPpi13M9q57oeVvcenpnPh+pTJAq0BssCY=;
-        b=fGqu3mH0mJ4iWCiteX3czO1yYQwGoWFUdlCoxoqZXA5Lk1j3z9ZrJ92viuevaI7V79
-         apyHfvWYiQL0CTPCK5u9N3YT/kbc74QZEo6nBn/tH/1+jNy9t/y4eNcmKMKaY29AqfVN
-         xnfmb0bMlWxAl6k3bB7LJLkky8UnbT+0GuY/wrDlWzFF9QZ7vhC9IDKs027h6pb7JzwB
-         p9xs8M/3unCHNAM0uvIlJMPTPu5GrW4IPLKPjMLz7RvM0uL/sIMu+V7TAlmCZzNXOY7m
-         Nz/U0yyS6UJatgC49bxwAd1DD9iv/kuB+RZHinZGpd/AYVxHLk9RpU3tXN0oCyQMWWNQ
-         Uapw==
-X-Gm-Message-State: AOJu0Yx/eJWk71MQ54u01oEdV0TVWKeJn9QirDFIE1I6Z897ovgnkQgy
-	cV3+isQ1jvTcxYwHn9FXcyvVpwm3H4IRLuYhZ07X7hbOpDw/7dGENoScZBR4AkuReJfwvUl80SU
-	Ikm4+pKjuN79W4pygIbXCkniae/KdZ+gx4GqfRtcpTSq7z3xMTic=
-X-Google-Smtp-Source: AGHT+IHKCqfPq48qiYDzf2tAiPSexhtl+EPdKvyt7gADI6g62Gv1JEhXHOgRLKUAKImlFKM4Dck8XEay1QLsGfeGZXc=
-X-Received: by 2002:a17:906:a40e:b0:a44:4317:d65c with SMTP id
- l14-20020a170906a40e00b00a444317d65cmr59979ejz.44.1709167629942; Wed, 28 Feb
- 2024 16:47:09 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VaeyjUDc"
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+	id 8BDCC20B74C5; Wed, 28 Feb 2024 16:55:18 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8BDCC20B74C5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1709168118;
+	bh=HFneUDC8Z8Dzy3b48RYvWYU96HA+vpivC93Ukb00udk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=VaeyjUDc+8JO4rPJ7hesRJoJksglcnozafZKfBahk6zuyIG+QRWSyE+tKnQvxTnaH
+	 Ayl4NCvWI1kr9hog/zpSl9jtmfYwzlQgmBqAGBAptUfY3VB892TGccF7+zPhuIxsYl
+	 Edptdjhq0lGodpRzH/Iu5ov0L4Q/puX05ZpY+kkQ=
+From: Fan Wu <wufan@linux.microsoft.com>
+To: corbet@lwn.net,
+	zohar@linux.ibm.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	tytso@mit.edu,
+	ebiggers@kernel.org,
+	axboe@kernel.dk,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: [RFC PATCH v13 03/20] ipe: add evaluation loop
+Date: Wed, 28 Feb 2024 16:54:45 -0800
+Message-Id: <1709168102-7677-4-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
+References: <1709168102-7677-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Wed, 28 Feb 2024 16:46:58 -0800
-Message-ID: <CAJ+vNU2irDtEn=VD7N2ySofr5wTeko6OHy-QD_SLLZudOwWj0A@mail.gmail.com>
-Subject: TPM error path on probe
-To: linux-integrity@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, Lino Sanfilippo <l.sanfilippo@kunbus.com>, 
-	Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Greetings,
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Commit 481c2d14627d ("tpm,tpm_tis: Disable interrupts after 1000
-unhandled IRQs") introduced a kernel warning for boards that do not
-have a TPM loaded but have one defined in the device-tree (ie a
-subloaded board assembly):
+IPE must have a centralized function to evaluate incoming callers
+against IPE's policy. This iteration of the policy for against the rules
+for that specific caller is known as the evaluation loop.
 
-[    2.434431] WARNING: CPU: 3 PID: 55 at kernel/workqueue.c:3397
-__flush_work.isra.0+0x2ac/0x2d8
-[    2.443069] Modules linked in:
-[    2.446133] CPU: 3 PID: 55 Comm: kworker/u8:3 Not tainted
-6.6.8-00021-g232153790aa6-dirty #434
-[    2.454758] Hardware name: Gateworks Venice GW73xx-2x i.MX8MP
-Development Kit (DT)
-[    2.462337] Workqueue: events_unbound async_run_entry_fn
-[    2.467669] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[    2.474647] pc : __flush_work.isra.0+0x2ac/0x2d8
-[    2.479278] lr : flush_work+0x10/0x1c
-[    2.482950] sp : ffff80008270ba40
-[    2.486271] x29: ffff80008270ba40 x28: 00000000ffffffff x27: 00000000ffffffff
-[    2.493425] x26: ffff000000293000 x25: ffff80008218aff8 x24: ffff800080a1c6a8
-[    2.500578] x23: 00000000ffffffff x22: ffff80008213ca18 x21: 0000000000000001
-[    2.507731] x20: ffff000000e142c0 x19: ffff000000e14280 x18: 0000000000000000
-[    2.514884] x17: 0000000000000000 x16: 000000000000001c x15: 0000000000000000
-[    2.522038] x14: ffff00003fd94100 x13: 0000000000000002 x12: 0000000000000000
-[    2.529191] x11: 0000000000000400 x10: 0000000000000910 x9 : 00000000ffffffff
-[    2.536346] x8 : 0000000000000cc1 x7 : ffff8000804c76d8 x6 : 00000000090ee8ad
-[    2.543500] x5 : ffff00000026c380 x4 : 0000000000000000 x3 : 0000000000000000
-[    2.550655] x2 : 0000000000000000 x1 : ffff00000026c380 x0 : 0000000000000000
-[    2.557806] Call trace:
-[    2.560261]  __flush_work.isra.0+0x2ac/0x2d8
-[    2.564544]  flush_work+0x10/0x1c
-[    2.567869]  tpm_tis_remove+0x8c/0xc4
-[    2.571545]  tpm_tis_core_init+0x194/0x7b8
-[    2.575656]  tpm_tis_spi_probe+0xa4/0xd4
-[    2.579593]  tpm_tis_spi_driver_probe+0x34/0x64
-[    2.584136]  spi_probe+0x84/0xe4
-[    2.587377]  really_probe+0x148/0x2c0
-[    2.591052]  __driver_probe_device+0x78/0x12c
-[    2.595417]  driver_probe_device+0xd8/0x15c
-[    2.599609]  __device_attach_driver+0xb8/0x134
-[    2.604064]  bus_for_each_drv+0x84/0xe0
-[    2.607913]  __device_attach_async_helper+0xac/0xd0
-[    2.612808]  async_run_entry_fn+0x34/0xe0
-[    2.616832]  process_one_work+0x138/0x260
-[    2.620851]  worker_thread+0x32c/0x438
-[    2.624609]  kthread+0x118/0x11c
-[    2.627844]  ret_from_fork+0x10/0x20
-[    2.631428] ---[ end trace 0000000000000000 ]---
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-The issue is caused by tpm_tis_remove() calling flush_work() on the
-work queue that has not yet been initialized. I can move the INIT_WORK
-call added in this commit into the probe to fix this:
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index d5ea22196b5b..e62294b3a437 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -1133,6 +1133,8 @@ int tpm_tis_core_init(struct device *dev, struct
-tpm_tis_data *priv, int irq,
+---
+v2:
++ Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
 
-        dev_set_drvdata(&chip->dev, priv);
+v3:
++ Move ipe_load_properties to patch 04.
++ Remove useless 0-initializations Prefix extern variables with ipe_
++ Remove kernel module parameters, as these are exposed through sysctls.
++ Add more prose to the IPE base config option help text.
++ Use GFP_KERNEL for audit_log_start.
++ Remove unnecessary caching system.
++ Remove comments from headers
++ Use rcu_access_pointer for rcu-pointer null check
++ Remove usage of reqprot; use prot only.
++Move policy load and activation audit event to 03/12
 
-+       INIT_WORK(&priv->free_irq_work, tpm_tis_free_irq_func);
+v4:
++ Remove sysctls in favor of securityfs nodes
++ Re-add kernel module parameters, as these are now exposed through securityfs.
++ Refactor property audit loop to a separate function.
+
+v5:
++ fix minor grammatical errors
++ do not group rule by curly-brace in audit record,
++ reconstruct the exact rule.
+
+v6:
++ No changes
+
+v7:
++ Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
++ Propagating changes to support the new ipe_context structure in the evaluation loop.
+
+v8:
++ Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+
+v9:
++ Remove ipe_context related code and simplify the evaluation loop.
+
+v10:
++ Split eval part and boot_verified part
+
+v11:
++ Fix code style issues
+
+v12:
++ Correct an rcu_read_unlock usage
++ Add a WARN to unknown op during evaluation
+
+v13:
++ No changes
+---
+ security/ipe/Makefile |   1 +
+ security/ipe/eval.c   | 100 ++++++++++++++++++++++++++++++++++++++++++
+ security/ipe/eval.h   |  24 ++++++++++
+ 3 files changed, 125 insertions(+)
+ create mode 100644 security/ipe/eval.c
+ create mode 100644 security/ipe/eval.h
+
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index c09aec4904f2..57fe922cf1fc 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -6,6 +6,7 @@
+ #
+ 
+ obj-$(CONFIG_SECURITY_IPE) += \
++	eval.o \
+ 	ipe.o \
+ 	policy.o \
+ 	policy_parser.o \
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+new file mode 100644
+index 000000000000..af56815ed0fa
+--- /dev/null
++++ b/security/ipe/eval.c
+@@ -0,0 +1,100 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
 +
-        rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
-        if (rc < 0)
-                return rc;
-@@ -1159,8 +1161,6 @@ int tpm_tis_core_init(struct device *dev, struct
-tpm_tis_data *priv, int irq,
-                }
-        }
++#include <linux/fs.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/file.h>
++#include <linux/sched.h>
++#include <linux/rcupdate.h>
++
++#include "ipe.h"
++#include "eval.h"
++#include "policy.h"
++
++struct ipe_policy __rcu *ipe_active_policy;
++
++/**
++ * evaluate_property - Analyze @ctx against a property.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ * @p: Supplies a pointer to the property to be evaluated.
++ *
++ * Return:
++ * * true	- The current @ctx match the @p
++ * * false	- The current @ctx doesn't match the @p
++ */
++static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
++			      struct ipe_prop *p)
++{
++	return false;
++}
++
++/**
++ * ipe_evaluate_event - Analyze @ctx against the current active policy.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ *
++ * This is the loop where all policy evaluation happens against IPE policy.
++ *
++ * Return:
++ * * 0		- OK
++ * * -EACCES	- @ctx did not pass evaluation.
++ * * !0		- Error
++ */
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
++{
++	bool match = false;
++	enum ipe_action_type action;
++	struct ipe_policy *pol = NULL;
++	const struct ipe_rule *rule = NULL;
++	const struct ipe_op_table *rules = NULL;
++	struct ipe_prop *prop = NULL;
++
++	rcu_read_lock();
++
++	pol = rcu_dereference(ipe_active_policy);
++	if (!pol) {
++		rcu_read_unlock();
++		return 0;
++	}
++
++	if (ctx->op == IPE_OP_INVALID) {
++		if (pol->parsed->global_default_action == IPE_ACTION_DENY) {
++			rcu_read_unlock();
++			return -EACCES;
++		}
++		if (pol->parsed->global_default_action == IPE_ACTION_INVALID)
++			WARN(1, "no default rule set for unknown op, ALLOW it");
++		rcu_read_unlock();
++		return 0;
++	}
++
++	rules = &pol->parsed->rules[ctx->op];
++
++	list_for_each_entry(rule, &rules->rules, next) {
++		match = true;
++
++		list_for_each_entry(prop, &rule->props, next) {
++			match = evaluate_property(ctx, prop);
++			if (!match)
++				break;
++		}
++
++		if (match)
++			break;
++	}
++
++	if (match)
++		action = rule->action;
++	else if (rules->default_action != IPE_ACTION_INVALID)
++		action = rules->default_action;
++	else
++		action = pol->parsed->global_default_action;
++
++	rcu_read_unlock();
++	if (action == IPE_ACTION_DENY)
++		return -EACCES;
++
++	return 0;
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+new file mode 100644
+index 000000000000..6b434515968f
+--- /dev/null
++++ b/security/ipe/eval.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) Microsoft Corporation. All rights reserved.
++ */
++
++#ifndef _IPE_EVAL_H
++#define _IPE_EVAL_H
++
++#include <linux/file.h>
++#include <linux/types.h>
++
++#include "policy.h"
++
++extern struct ipe_policy __rcu *ipe_active_policy;
++
++struct ipe_eval_ctx {
++	enum ipe_op_type op;
++
++	const struct file *file;
++};
++
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++
++#endif /* _IPE_EVAL_H */
+-- 
+2.43.1
 
--       INIT_WORK(&priv->free_irq_work, tpm_tis_free_irq_func);
--
-        if (chip->ops->clk_enable != NULL)
-                chip->ops->clk_enable(chip, true);
-
-However I wonder if we should simply have error checking for an
-invalid vendor of 0xffffffff. Is there any reason to not return an
--ENODEV if vendor == 0xffffffff?
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index d5ea22196b5b..1bb1b3e1b2d0 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -1136,6 +1136,8 @@ int tpm_tis_core_init(struct device *dev, struct
-tpm_tis_data *priv, int irq,
-        rc = tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
-        if (rc < 0)
-                return rc;
-+       if (rc == 0xffffffff)
-+               return -ENODEV;
-
-        priv->manufacturer_id = vendor;
-
-I'm not sure if a hard coded 0xffffffff check is best here.
-
-Best regards,
-
-Tim
