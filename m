@@ -1,245 +1,259 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95086136991;
-	Thu,  7 Mar 2024 19:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D6C137C45
+	for <linux-integrity@vger.kernel.org>; Thu,  7 Mar 2024 19:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709840936; cv=none; b=ptU5RbnIZxNXv5P/j8g2an30ppJPoB1sabuE5Z9Cn40nabUL3QIIOgXD6dX9wlOZGtJajDMjqDHcV++J+8jo/i2o4TslpIj+8gZky6UcI2RXQ6npxVBa5fGU548BG2gm7PZ9W3BsUn0O0P3QC/MBdFBZIsJ8CsYVR5Cbq04Mi04=
+	t=1709841162; cv=none; b=UbRAkdKdelyNbDHXW23i8VQ2UCGoV9mUb1m6Te9ynedea8u6Yi4i/n4J8BgIcC07oK2W3cgOjRJ73yCncFw/Bl34sSk0EYSJ8GUVXu5b6LHALVDshyyfUp3yIjEDi5jRZAvMpea7AfhHTHFTZoxJm683BjPWXVN1pnXgnCJHw0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709840936; c=relaxed/simple;
-	bh=PfjtiY5BSu9RUY9kEDtgOzs9DcwZeom0ZTjw0QvKakM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=s1PywRwSLnqxrN+9loWoth4WD/iP1eFgFzPbgB99Wo8uXGnB1P206QeibTjWTIBed40ZZAm2IS6/yqZuCrFvfsnMtntNg2IrtHoO2WvodnXVw/tMudtnRbzJZEBY4yJF0uwUbjJQP9PW0+gNYTwq2IcJSYI08nqPPcZhFUi/34A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hxHfffWC; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1709841162; c=relaxed/simple;
+	bh=p9j4f7lXJjMTDc8l8eBzmBNe7Y0G3gbmonTpOL9sQfQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=GCdAHKjf+kwJF5Ae3VgQ9dDnHZBgqnVEZEp1e7WG/UnYYlBJj6jwg7fKLLN2PawjLPcjcoXytBw4UwrUl7hUm2p9c9y3r1y6e/eff9rUS4E+lybeHjpzXtCmQmYeOOLBzlw7tvv+0SRzBg91ImRIyheg8hwwy/1fnEDXa56JKjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f91E91bQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hxHfffWC"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 427JRCZ0017075;
-	Thu, 7 Mar 2024 19:48:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=LGTv9dsjx32u/5Ptx7ie3IIAHZQQyKvXYvldp9BGYzA=;
- b=hxHfffWCBr5Y7eMEK2h3MWuBDE47SthGutZLaqnZXKPvKzXI4AC+nj6ocz49LzDdnYfc
- WH0XGBhF8E/+nJ7M5YjiY0atDCEHkHUn5wofFUfV7yjerXPzR8KTcc+YXch1xblx4iih
- u8lZcLsRt5KyjeUb9Fr6YcMMP1UkkOuBsh8BxZE/05oKe6jnwKAoH2biIusneXiMfWXY
- 1aG1YAzV9iMZiDtqDgM0oMrdsZL9pws2bfftySYCtmJ2ZwH0rgrKyKde7LQ7OE+XoYo1
- srW0PQuT0orw6nqkGDw9HxpbgVoYdfjzMDuLwEU+3u16/3GI5Xrflfd3+8XDH+dnAm5o Cg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wqkrb8bxk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Mar 2024 19:48:11 +0000
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 427JeDSO026378;
-	Thu, 7 Mar 2024 19:48:10 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wqkrb8bwx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Mar 2024 19:48:10 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 427J7Ro6026212;
-	Thu, 7 Mar 2024 19:42:44 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wmfep7sx1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 07 Mar 2024 19:42:44 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 427Jgfq729950264
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 7 Mar 2024 19:42:43 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A5B25805D;
-	Thu,  7 Mar 2024 19:42:41 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 096A358061;
-	Thu,  7 Mar 2024 19:42:40 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.133.222])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  7 Mar 2024 19:42:39 +0000 (GMT)
-Message-ID: <2f2d07c33170b6ed06f72e927a0d31989bca7c85.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH 2/8] ima: Nest iint mutex for DIGEST_LIST_CHECK hook
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, corbet@lwn.net,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        wufan@linux.microsoft.com, pbrobinson@gmail.com, zbyszek@in.waw.pl,
-        hch@lst.de, mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
-        dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
-        ppavlu@suse.com, petr.vorel@gmail.com, petrtesarik@huaweicloud.com,
-        mzerqung@0pointer.de, kgold@linux.ibm.com,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Date: Thu, 07 Mar 2024 14:42:39 -0500
-In-Reply-To: <20240214143525.2205481-3-roberto.sassu@huaweicloud.com>
-References: <20240214143525.2205481-1-roberto.sassu@huaweicloud.com>
-	 <20240214143525.2205481-3-roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f91E91bQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0453C433C7;
+	Thu,  7 Mar 2024 19:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709841161;
+	bh=p9j4f7lXJjMTDc8l8eBzmBNe7Y0G3gbmonTpOL9sQfQ=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=f91E91bQsJtDdrTecxj2boW4Tb4qVdYLPouDr4N5ww5tIZ2FOiO+qkrF8pAIP5GFz
+	 BeDWhYqrlQFkDjx3b+tfK8MCJmJ9vgId/EiQuhktoJhvyEyxEX7X8h+B4whbLFzACD
+	 I4rERBANOxTU3nTJf8UJgf+qGdVeQEKKaMnoRNRZZgEBpbuyXzl/d9y/vPC+Hx9Qb3
+	 V/XHz6zks87dv3D7a+II+SNv4QvurI/WR920GFCpIsLuQK4fqG7pm5g4tU+BOD4dar
+	 9fINtfSX4qYHoUe01ARYXesZtB7kEwN5iT5R/8gxqconqs2Uz0MTg954zmw1UEUmuC
+	 Qb3X63sG+ga+A==
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 9q3FLHGm8L4aqkf7QjKJUbXERS_yyoBH
-X-Proofpoint-ORIG-GUID: T-KG-TwXTy6r_BBRcBSwABmX6NIDzyu9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-07_14,2024-03-06_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 impostorscore=0 mlxscore=0 malwarescore=0 bulkscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2403070139
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 07 Mar 2024 21:52:39 +0200
+Message-Id: <CZNS3SNVST28.99YVTOEZMSVO@kernel.org>
+Cc: "Jason Gunthorpe" <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>
+Subject: Re: [PATCH] Fix TPM chip hanging system before suspend/shutdown
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Adam Alves" <adamoa@gmail.com>, "Peter Huewe" <peterhuewe@gmx.de>
+X-Mailer: aerc 0.17.0
+References: <CAHwaaX_6OYVy8o8nUjYhNjAV+j28QGLSHxpWxoMDxiBzT2Z50Q@mail.gmail.com>
+In-Reply-To: <CAHwaaX_6OYVy8o8nUjYhNjAV+j28QGLSHxpWxoMDxiBzT2Z50Q@mail.gmail.com>
 
-On Wed, 2024-02-14 at 15:35 +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Invoking digest_cache_get() inside the iint->mutex critical region can
-> cause deadlocks due to the fact that IMA can be recursively invoked for
-> reading the digest list. The deadlock would occur if the digest_cache LSM
-> attempts to read the same inode that is already locked by IMA.
-> 
-> However, since the digest_cache LSM makes sure that the above situation
-> never happens, as it checks the inodes, it is safe to call
-> digest_cache_get() inside the critical region and nest the iint->mutex
-> when the DIGEST_LIST_CHECK hook is executed.
-> 
-> Add a lockdep subclass to the iint->mutex, that is 0 if the IMA hook
-> executed is not DIGEST_LIST_CHECK, and 1 when it is. Since lockdep allows
-> nesting with higher classes and subclasses, that effectively eliminates the
-> warning about the unsafe lock.
-> 
-> Pass the new lockdep subclass (nested variable) from ima_inode_get() to
-> ima_iint_init_always() and ima_iint_lockdep_annotate().
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/ima/ima.h      |  2 +-
->  security/integrity/ima/ima_iint.c | 11 ++++++-----
->  security/integrity/ima/ima_main.c |  6 +++---
->  3 files changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index cea4517e73ab..c9140a57b591 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -216,7 +216,7 @@ static inline void ima_inode_set_iint(const struct inode
-> *inode,
+On Thu Mar 7, 2024 at 1:12 AM EET, Adam Alves wrote:
+> Some buggy firmwares might require the TPM device to be in default
+> locality (Locality 0) before suspend or shutdown. Failing to do so
+> would leave the system in a hanged state before sleep or power off
+> (after =E2=80=9Creboot: Power down=E2=80=9D message). Such is the case fo=
+r the ASUSTeK
+> COMPUTER INC. TUF GAMING B460M-PLUS board, I believe this might be the
+> case for several other boards based on the bugs I have found on the
+> internet while trying to find out how to fix my specific issue. Most
+> forums suggest the user to disable the TPM device on firmware BIOS in
+> order to work around this specific issue, which disables several nice
+> security features provided by TPM, such as secure boot attestation,
+> automatic decryption and hardware random generator.
+
+
+
+>
+> My PC would hang on almost every shutdown/suspend until I started
+> testing this patch and so far in the past week I haven=E2=80=99t experien=
+ced
+> any problems anymore.
+>
+> I suspect that the root cause on my specific board is that after the
+> ACPI command to put the device to S3 or S5, some firmware
+> application/driver will try to use the TPM chip expecting it to be in
+> Locality 0 as expected by TCG PC Client Platform Firmware Profile
+> Version 1.06 Revision 52 (3.1.1 =E2=80=93 Pre-OS Environment) and then wh=
+en it
+> fails to do so it simply halts the whole system.
+>
+> This issue might be related to the following bug:
+> https://bugzilla.kernel.org/show_bug.cgi?id=3D217890
+
+You can put Link: <url> for this before signed-off-by's.
+
+>
+> Enable a user to configure the kernel
+> through =E2=80=9Ctpm.locality_on_suspend=3D1=E2=80=9D boot parameter so t=
+hat the locality
+> is set before suspend/shutdown in order to diagnose whether or not the
+> board is one of the buggy ones that require this workaround. Since this
+> bug is related to the board/platform instead of the specific TPM chip,
+> call dmi_check_system on the tpm_init function so that this setting is
+> automatically enabled for boards specified in code (ASUS TUF GAMING
+> B460M-PLUS already included) =E2=80=93 automatic configuration only works=
+ in
+> case CONFIG_DMI is set though, since dmi_check_system is a non-op when
+> CONFIG_DMI is not set.
+>
+> In case =E2=80=9Ctpm.locality_on_suspend=3D0=E2=80=9D (the default) don't=
+ change any
+> behavior thus preserving current functionality of any other board
+> except ASUSTeK COMPUTER INC. TUF GAMING B460M-PLUS and possibly future
+> boards as we successfully diagnose other boards with the same issue
+> fixed by using =E2=80=9Ctpm.locality_on_suspend=3D1=E2=80=9D.
+>
+> Signed-off-by: Adam Alves <adamoa@gmail.com>
+>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 42b1062e33cd..8fdf7a137a94 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -139,6 +139,9 @@ void tpm_chip_stop(struct tpm_chip *chip)
+>  {
+>   tpm_go_idle(chip);
+>   tpm_relinquish_locality(chip);
+> + // If locality is to be preserved, we need to make sure it is Locality =
+0.
+> + if (chip->flags & TPM_CHIP_PRESERVE_LOCALITY)
+> + tpm_request_locality(chip);
+>   tpm_clk_disable(chip);
 >  }
->  
->  struct ima_iint_cache *ima_iint_find(struct inode *inode);
-> -struct ima_iint_cache *ima_inode_get(struct inode *inode);
-> +struct ima_iint_cache *ima_inode_get(struct inode *inode, bool nested);
->  void ima_inode_free(struct inode *inode);
->  void __init ima_iintcache_init(void);
->  
-> diff --git a/security/integrity/ima/ima_iint.c
-> b/security/integrity/ima/ima_iint.c
-> index e7c9c216c1c6..b4f476fae437 100644
-> --- a/security/integrity/ima/ima_iint.c
-> +++ b/security/integrity/ima/ima_iint.c
-> @@ -41,7 +41,7 @@ struct ima_iint_cache *ima_iint_find(struct inode *inode)
->   * See ovl_lockdep_annotate_inode_mutex_key() for more details.
+>  EXPORT_SYMBOL_GPL(tpm_chip_stop);
+> @@ -291,6 +294,9 @@ int tpm_class_shutdown(struct device *dev)
+>  {
+>   struct tpm_chip *chip =3D container_of(dev, struct tpm_chip, dev);
+>
+> + if (tpm_locality_on_suspend)
+> + chip->flags |=3D TPM_CHIP_PRESERVE_LOCALITY;
+> +
+>   down_write(&chip->ops_sem);
+>   if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+>   if (!tpm_chip_start(chip)) {
+> @@ -668,6 +674,9 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
 >   */
->  static inline void ima_iint_lockdep_annotate(struct ima_iint_cache *iint,
-> -					     struct inode *inode)
-> +					     struct inode *inode, bool nested)
+>  void tpm_chip_unregister(struct tpm_chip *chip)
 >  {
->  #ifdef CONFIG_LOCKDEP
->  	static struct lock_class_key ima_iint_mutex_key[IMA_MAX_NESTING];
-
-
-"nested" is being pushed all the way down to here, perhaps I'm missing
-something, but I don't see it being used in any of the patches.
-
-Mimi
-
-> @@ -56,7 +56,7 @@ static inline void ima_iint_lockdep_annotate(struct
-> ima_iint_cache *iint,
+> + if (tpm_locality_on_suspend)
+> + chip->flags |=3D TPM_CHIP_PRESERVE_LOCALITY;
+> +
+>   tpm_del_legacy_sysfs(chip);
+>   if (tpm_is_hwrng_enabled(chip))
+>   hwrng_unregister(&chip->hwrng);
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-inte=
+rface.c
+> index 66b16d26eecc..8aeea2dee0a8 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/suspend.h>
+>  #include <linux/freezer.h>
+>  #include <linux/tpm_eventlog.h>
+> +#include <linux/dmi.h>
+>
+>  #include "tpm.h"
+>
+> @@ -382,6 +383,34 @@ int tpm_auto_startup(struct tpm_chip *chip)
+>   return rc;
 >  }
->  
->  static void ima_iint_init_always(struct ima_iint_cache *iint,
-> -				 struct inode *inode)
-> +				 struct inode *inode, bool nested)
+>
+> +/*
+> + * Bug workaround - some boards expect the TPM to be on ready
+> + * state before suspend/shutdown, otherwise suspend and shutdown might
+> + * hang the system, so we need to adjust suspend code for handling this.
+> + */
+> +bool tpm_locality_on_suspend;
+> +module_param_named(locality_on_suspend, tpm_locality_on_suspend, bool, 0=
+644);
+> +MODULE_PARM_DESC(locality_on_suspend, "The firmware expects TPM to be
+> at locality 0 before suspend/shutdown.");
+> +
+> +static int __init tpm_set_locality_on_suspend(const struct
+> dmi_system_id *system_id)
+> +{
+> + pr_info("Board %s: TPM locality preserved before
+> suspend/shutdown.\n", system_id->ident);
+> + tpm_locality_on_suspend =3D true;
+> +
+> + return 0;
+> +}
+> +
+> +static const struct dmi_system_id tpm_board_quirks[] __initconst =3D {
+> + {
+> + .ident =3D "TUF GAMING B460M-PLUS",
+> + .matches =3D {
+> + DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC."),
+> + DMI_MATCH(DMI_BOARD_NAME, "TUF GAMING B460M-PLUS"),
+> + },
+> + .callback =3D tpm_set_locality_on_suspend,
+> + },
+> +};
+> +
+>  /*
+>   * We are about to suspend. Save the TPM state
+>   * so that it can be restored.
+> @@ -394,6 +423,9 @@ int tpm_pm_suspend(struct device *dev)
+>   if (!chip)
+>   return -ENODEV;
+>
+> + if (tpm_locality_on_suspend)
+> + chip->flags |=3D TPM_CHIP_PRESERVE_LOCALITY;
+> +
+>   if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
+>   goto suspended;
+>
+> @@ -431,7 +463,7 @@ int tpm_pm_resume(struct device *dev)
+>   if (chip =3D=3D NULL)
+>   return -ENODEV;
+>
+> - chip->flags &=3D ~TPM_CHIP_FLAG_SUSPENDED;
+> + chip->flags &=3D ~(TPM_CHIP_PRESERVE_LOCALITY | TPM_CHIP_FLAG_SUSPENDED=
+);
+>
+>   /*
+>   * Guarantee that SUSPENDED is written last, so that hwrng does not
+> @@ -476,6 +508,8 @@ static int __init tpm_init(void)
 >  {
->  	iint->ima_hash = NULL;
->  	iint->version = 0;
-> @@ -69,7 +69,7 @@ static void ima_iint_init_always(struct ima_iint_cache
-> *iint,
->  	iint->ima_creds_status = INTEGRITY_UNKNOWN;
->  	iint->measured_pcrs = 0;
->  	mutex_init(&iint->mutex);
-> -	ima_iint_lockdep_annotate(iint, inode);
-> +	ima_iint_lockdep_annotate(iint, inode, nested);
->  }
->  
->  static void ima_iint_free(struct ima_iint_cache *iint)
-> @@ -82,13 +82,14 @@ static void ima_iint_free(struct ima_iint_cache *iint)
->  /**
->   * ima_inode_get - Find or allocate an iint associated with an inode
->   * @inode: Pointer to the inode
-> + * @nested: Whether or not the iint->mutex lock can be nested
->   *
->   * Find an iint associated with an inode, and allocate a new one if not
-> found.
->   * Caller must lock i_mutex.
->   *
->   * Return: An iint on success, NULL on error.
->   */
-> -struct ima_iint_cache *ima_inode_get(struct inode *inode)
-> +struct ima_iint_cache *ima_inode_get(struct inode *inode, bool nested)
->  {
->  	struct ima_iint_cache *iint;
->  
-> @@ -100,7 +101,7 @@ struct ima_iint_cache *ima_inode_get(struct inode *inode)
->  	if (!iint)
->  		return NULL;
->  
-> -	ima_iint_init_always(iint, inode);
-> +	ima_iint_init_always(iint, inode, nested);
->  
->  	inode->i_flags |= S_IMA;
->  	ima_inode_set_iint(inode, iint);
-> diff --git a/security/integrity/ima/ima_main.c
-> b/security/integrity/ima/ima_main.c
-> index 780627b0cde7..18285fc8ac07 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -248,7 +248,7 @@ static int process_measurement(struct file *file, const
-> struct cred *cred,
->  	inode_lock(inode);
->  
->  	if (action) {
-> -		iint = ima_inode_get(inode);
-> +		iint = ima_inode_get(inode, func == DIGEST_LIST_CHECK);
->  		if (!iint)
->  			rc = -ENOMEM;
->  	}
-> @@ -699,7 +699,7 @@ static void ima_post_create_tmpfile(struct mnt_idmap
-> *idmap,
->  		return;
->  
->  	/* Nothing to do if we can't allocate memory */
-> -	iint = ima_inode_get(inode);
-> +	iint = ima_inode_get(inode, false);
->  	if (!iint)
->  		return;
->  
-> @@ -731,7 +731,7 @@ static void ima_post_path_mknod(struct mnt_idmap *idmap,
-> struct dentry *dentry)
->  		return;
->  
->  	/* Nothing to do if we can't allocate memory */
-> -	iint = ima_inode_get(inode);
-> +	iint = ima_inode_get(inode, false);
->  	if (!iint)
->  		return;
->  
+>   int rc;
+>
+> + dmi_check_system(tpm_board_quirks);
+> +
+>   rc =3D class_register(&tpm_class);
+>   if (rc) {
+>   pr_err("couldn't create tpm class\n");
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index 61445f1dc46d..f2657b611b81 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -236,6 +236,7 @@ extern dev_t tpm_devt;
+>  extern const struct file_operations tpm_fops;
+>  extern const struct file_operations tpmrm_fops;
+>  extern struct idr dev_nums_idr;
+> +extern bool tpm_locality_on_suspend;
+>
+>  ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
+>  int tpm_get_timeouts(struct tpm_chip *);
+> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> index 4ee9d13749ad..7717f484ac25 100644
+> --- a/include/linux/tpm.h
+> +++ b/include/linux/tpm.h
+> @@ -284,6 +284,7 @@ enum tpm_chip_flags {
+>   TPM_CHIP_FLAG_FIRMWARE_UPGRADE =3D BIT(7),
+>   TPM_CHIP_FLAG_SUSPENDED =3D BIT(8),
+>   TPM_CHIP_FLAG_HWRNG_DISABLED =3D BIT(9),
+> + TPM_CHIP_PRESERVE_LOCALITY =3D BIT(10),
+>  };
+>
+>  #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
 
+Did you use git format-patch to generate this? It does not look to be in
+the mbox format. E.g. diffstat is missing completely.
+
+I neither think that indentation is according to the guidelines at all.
+
+So what you need to do next is to read [1] through and send v2 if with
+those learnings [2]. When you use checkpatch.pl, invoke it as:
+
+scripts/checkpatch.pl --strict <patch file>
+
+[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+[2] git format-patch -1 -v2
+
+BR, Jarkko
