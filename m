@@ -1,113 +1,201 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493753FBB1;
-	Tue, 19 Mar 2024 22:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A269B5FB8E
+	for <linux-integrity@vger.kernel.org>; Tue, 19 Mar 2024 23:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710888921; cv=none; b=dUnvyl+dB1MT6DGmldFEVF3rZwrm+JiXtJdcdaBBhhE0zuttS6l3oimtBR0vkQKVCwlpKjBjo29NNWCtR27urNXjS53NAB5PA5jZTRgNgtnLI37jx9j4QYP8juxXa8xJP4l6rZJ35PV3d4QosClQeK+DGaQLSu74nSXvOkqd/z0=
+	t=1710889241; cv=none; b=Ob48R+v7LZ2WO8CW+0pMSm3DeajpwVDFAo4qD3iU0kqfqtu61ZwtOp0pboPXuuNp/+fpuRJNG1cHV+fuJ4SF07XblCzlBDhMfXd4p8E5hyfGwphvExxLMOU8nR6pavvepLdkDjqIrMCyCiRpCswwMJ8t4JL6fWOCSGGb99N7C0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710888921; c=relaxed/simple;
-	bh=fLjxN0Sk5KrBVRj/F43291DNmPrPvvUPq+zN5q/P3rA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=lBQCEbP3BfM9ZcBDgEYvbmOnw3vbBAzg130Lre0OVr94lTIkvuIC9cq2c13X9T0xsslVvJ+gz7p4Es1R/okQJXm9zfWSyLGJvLNj5ssrsKqyA9ZITFKb0MUazGK3K8Yd0pZvGcSB89ZpzkcoBsXy2r+37usX4WgbBZJ9CAtQWmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bdXBL9s0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1710889241; c=relaxed/simple;
+	bh=bmttXQsn7ePJrS3RSsRzViZwsDiwqJQZqSCfH7XcvBo=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=lWf3DkvUNYRp55GVCypSt5iDX7hMcE+H4pf4tgc00i6zzy/D+3FU0xJQDyMdjdZ7R/dvt0I8eoSqXexO3yCoB0WWCBd3nRbUC1CAFpNAdpi0Rv8ZAcXSo3D6AMAl9Ptu9Zoi2pNJcKQMl3wp9/in7czHC50fVq2Z8sIr8duvhyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZjATGIlj; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bdXBL9s0"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42JMk5on029729;
-	Tue, 19 Mar 2024 22:55:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=xEWRN1kQtdflhyrl2Pxa7AJCVUu9MrlZm0JM8RwO/9o=;
- b=bdXBL9s072ucTw/T756cHbAiv3eHX4VX1bzTqEI/PGp9Ehbyi0QZb2VNMLiaOUqyF53d
- w45hcKopSlSpaQPhsENGAAn7Rcuj/e+JqMOehOOB1OlgWK+7kyVKivfo0FyVm8V0UwpO
- hf/+meSzkh/WYcmVeAKfcVS/TUhvUVtEwpwQo0qwCXB6CJb7b7Xfs9LRbVW04NL2le0f
- dchd9UOlPh8WXcbMt+SbOnyBCvyK6O/KWKjmHX2UunkewiCPk74aUtTVZDqbl8A6eD30
- IAaGfJSN3WCrSPHsHGbE/6lOqbt4dwFF1dRShpV+aAf2tmCIFWD4ZlATNrMpx19o4zeH iw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wyjx0g397-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Mar 2024 22:55:08 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 42JMt7iA011599;
-	Tue, 19 Mar 2024 22:55:07 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wyjx0g35t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Mar 2024 22:55:07 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 42JL1JNs002780;
-	Tue, 19 Mar 2024 22:50:43 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wwrf2j58e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Mar 2024 22:50:43 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 42JMofpc21758708
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Mar 2024 22:50:43 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E7B1F58068;
-	Tue, 19 Mar 2024 22:50:40 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0A43A58056;
-	Tue, 19 Mar 2024 22:50:40 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.80.83])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 19 Mar 2024 22:50:39 +0000 (GMT)
-Message-ID: <9daaa1d12d351bca982b28830354f86f7ef97b6f.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 01/10] ima: Rename backing_inode to real_inode
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, roberto.sassu@huawei.com, amir73il@gmail.com,
-        brauner@kernel.org, miklos@szeredi.hu
-Date: Tue, 19 Mar 2024 18:50:39 -0400
-In-Reply-To: <20240223172513.4049959-2-stefanb@linux.ibm.com>
-References: <20240223172513.4049959-1-stefanb@linux.ibm.com>
-	 <20240223172513.4049959-2-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-23.el8_9) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZjATGIlj"
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6e674136ba4so3895336a34.2
+        for <linux-integrity@vger.kernel.org>; Tue, 19 Mar 2024 16:00:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1710889238; x=1711494038; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=B1lUfZg/s5mLlW6pu+C9FV0f0xOiWFAgmrfGrW7+FU8=;
+        b=ZjATGIljivVKYYgwMgGMIWB8z+sQBX6k+j5wY/UdbOLwZNqYXQtQB+u8GX7wbcUz3c
+         yyG181UcJsN8akPkxvSBPlpq+Wm7yzjzOH9fxGsEXTuHdDRkl1fg3xxV3c6mt6EEy3qO
+         flasldwlS2DaSRo6xP74o3BIze2fU7/4fKCf6XGntIz+n3HjpgsgqWRLvCv4GDGzaAuB
+         6bPv4mn7C8z8pi4L0X9V/jzxVHWmzgOOr8fBWDyV67MZgmKZTmlz9poKUK86yt49af+a
+         +miRssM+ZalwSP/5FLfVo1ohugUWowN5gpnn44H/x8R0tJGQKO0pHqtbdFENRWbjnorO
+         KtGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710889238; x=1711494038;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B1lUfZg/s5mLlW6pu+C9FV0f0xOiWFAgmrfGrW7+FU8=;
+        b=I2dUo3QiDZCaMOv2JIB95Dog8GAwp1R9gw/ssBm5rB7vI2tCItiWM+uqwvJVSuYoNP
+         8RVyuxw/XU7mRyof2C6JNesV3pEsU/ChhwDtUDaNdWzGBpYjNuN0TDrwtK0SzWE+N/Lc
+         a/9ROx8li7G5iGJPWPhvMwjC4X7R70wCdWnEDA23GWagMbn08vKNP1tliKaqNjBxacCX
+         FWmf5G77TvxcHI6ztrFft+VWxGJxuWEab68Tz6sYlVzdQcyLalViYX/sxTPQRR2btKNU
+         T92E3eW5HmRUfdbu44EJ/08TZaCFIEYJdOGQQYIH4EmWJuNUwg5JnVXwHZPrG8ZMAjHS
+         5iOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpSYWjgDADDd3JMJV1z4uWfMROCEOkiF6nOXe10CJrLI9jVFLJ8DmYm5M/VET4MLz1m9OZ6oppjkqKxHeQ63sFE1ZRRt8P48ZLFuTvJHTG
+X-Gm-Message-State: AOJu0Yy4NeLDX26K1UrlKRAcjJRkRKiD1vRnkCrwzcw1mso2WbBvekht
+	EkzdMmQGdQLzirTvK+NopHSUtjSkMzfGVPVsmHVaCwWnQQupoCpKDfUan7N+Ug==
+X-Google-Smtp-Source: AGHT+IH2BedFErXZvc/MdlUeUrWLnHnhWM0nrDa4rkAsKAMXW5C+nK0wePxGkm9DoXwZPu+DqNui8g==
+X-Received: by 2002:a9d:7f94:0:b0:6e6:7a82:5cf with SMTP id t20-20020a9d7f94000000b006e67a8205cfmr4422911otp.33.1710889237766;
+        Tue, 19 Mar 2024 16:00:37 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id dc33-20020a05620a522100b007885cd1c058sm5972263qkb.103.2024.03.19.16.00.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Mar 2024 16:00:37 -0700 (PDT)
+Date: Tue, 19 Mar 2024 19:00:36 -0400
+Message-ID: <f5cf9d285bd5f09bbc3f79b0800d37fc@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jvYkY3ss7LvP5Zm-XbPVGn_4UYQFYrFN
-X-Proofpoint-GUID: cqs4CkSCMlhN4GqJuCVj4XPxha8djzpE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-19_09,2024-03-18_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=693
- priorityscore=1501 spamscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- adultscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2403140000 definitions=main-2403190176
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
+Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH RFC v15 12/21] security: add security_bdev_setintegrity()  hook
+References: <1710560151-28904-13-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1710560151-28904-13-git-send-email-wufan@linux.microsoft.com>
 
-Hi Stefan,
-
-On Fri, 2024-02-23 at 12:25 -0500, Stefan Berger wrote:
-> Rename the backing_inode variable to real_inode since it gets its value
-> from real_inode().
+On Mar 15, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> Suggested-by: Amir Goldstein <amir73il@gmail.com>
-> Co-developed-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Amir Goldstein <amir73il@gmail.com>
+> This patch introduces a new hook to save block device's integrity
+> data. For example, for dm-verity, LSMs can use this hook to save
+> the roothash signature of a dm-verity into the security blob,
+> and LSMs can make access decisions based on the data inside
+> the signature, like the signer certificate.
+> 
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> 
+> --
+> v1-v14:
+>   + Not present
+> 
+> v15:
+>   + Introduced
+> 
+> ---
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      | 14 ++++++++++++++
+>  security/security.c           | 28 ++++++++++++++++++++++++++++
+>  3 files changed, 44 insertions(+)
 
-Thanks for adding me as a co-developer.  The "Co-developed-by" tag needs to be
-followed immediately by their "Signed-off-by" tag.  I'll need to move it
-immediately before my "Signed-off-by" tag.
+I'm not sure why you made this a separate patch, help?  If there is
+no significant reason why this is separate, please squash it together
+with patch 11/21.
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index c335404470dc..6808ae763913 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -455,4 +455,6 @@ LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
+>  
+>  LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
+>  LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
+> +LSM_HOOK(int, 0, bdev_setintegrity, struct block_device *bdev,
+> +	 enum lsm_intgr_type type, const void *value, size_t size)
+>  
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 9965b5c50df4..eaff8868766a 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -83,6 +83,10 @@ enum lsm_event {
+>  	LSM_POLICY_CHANGE,
+>  };
+>  
+> +enum lsm_intgr_type {
+> +	__LSM_INTGR_MAX
+> +};
+> +
+>  /*
+>   * These are reasons that can be passed to the security_locked_down()
+>   * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
+> @@ -511,6 +515,9 @@ int lsm_fill_user_ctx(struct lsm_ctx __user *uctx, u32 *uctx_len,
+>  		      void *val, size_t val_len, u64 id, u64 flags);
+>  int security_bdev_alloc(struct block_device *bdev);
+>  void security_bdev_free(struct block_device *bdev);
+> +int security_bdev_setintegrity(struct block_device *bdev,
+> +			       enum lsm_intgr_type type, const void *value,
+> +			       size_t size);
+>  #else /* CONFIG_SECURITY */
+>  
+>  static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+> @@ -1495,6 +1502,13 @@ static inline void security_bdev_free(struct block_device *bdev)
+>  {
+>  }
+>  
+> +static inline int security_bdev_setintegrity(struct block_device *bdev,
+> +					     enum lsm_intgr_type, type,
+> +					     const void *value, size_t size)
+> +{
+> +	return 0;
+> +}
+> +
+>  #endif	/* CONFIG_SECURITY */
+>  
+>  #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
+> diff --git a/security/security.c b/security/security.c
+> index 4274bbee40d0..8d88529ac904 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5637,6 +5637,34 @@ void security_bdev_free(struct block_device *bdev)
+>  }
+>  EXPORT_SYMBOL(security_bdev_free);
+>  
+> +/**
+> + * security_bdev_setintegrity() - Set the bdev's integrity data
 
-Mimi
+Let's just say "Set the device's integrity data" and not ask people to
+figure out "bdev", although I will admit it should be fairly obvious :)
 
+> + * @bdev: block device
+> + * @type: type of integrity, e.g. hash digest, signature, etc
+> + * @value: the integrity value
+> + * @size: size of the integrity value
+> + *
+> + * Register a verified integrity measurement of a bdev with the LSM.
+> + *
+> + * Return: Returns 0 on success, negative values on failure.
+> + */
+> +int security_bdev_setintegrity(struct block_device *bdev,
+> +			       enum lsm_intgr_type type, const void *value,
+> +			       size_t size)
+> +{
+> +	int rc = 0;
+> +	struct security_hook_list *p;
+> +
+> +	hlist_for_each_entry(p, &security_hook_heads.bdev_setintegrity, list) {
+> +		rc = p->hook.bdev_setintegrity(bdev, type, value, size);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return LSM_RET_DEFAULT(bdev_setintegrity);
+
+We can just use the call_int_hook() macro here instead of open coding
+everything, right?
+
+> +}
+> +EXPORT_SYMBOL(security_bdev_setintegrity);
+> +
+>  #ifdef CONFIG_PERF_EVENTS
+>  /**
+>   * security_perf_event_open() - Check if a perf event open is allowed
+> -- 
+> 2.44.0
+
+--
+paul-moore.com
