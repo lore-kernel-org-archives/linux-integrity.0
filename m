@@ -1,161 +1,207 @@
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F29A1292D3
-	for <linux-integrity@vger.kernel.org>; Thu, 21 Mar 2024 15:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F4F12BF23;
+	Thu, 21 Mar 2024 16:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711036570; cv=none; b=FarcHZfS67NIScKIeERqm8LuZfDpTQl0TIQGKsQ+1CGfHC+xRpl1FtM49xps2mZQDLxyGciXr+ZdjdCKrK6+UnJWvwYtoiOJDfQgIezJ5e6gfns7Glci2Zg/ZOBaaKqbrgjdCbjHnLlatisDM9BtC6ZhzHhpBPlrDuTGFloWqfU=
+	t=1711037399; cv=none; b=IzxLOt6Cmt9cj13kPkD5e8o19B/xbb5IT+p5Syby8KtyNTJcddGq1WxAJFWjoSwIM6I8wydipSWYn9zQReiFVOD9F6tnHDH7O8n5eh1FpvCMk1Beaf9I2sc7VGaBQywaVB+9Kj6ipq3f5h6EMRs4b8VZhEpr4oFHgLmuEj+pJyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711036570; c=relaxed/simple;
-	bh=oUSS9WbWUjleqESpW9c98IHhFOzKOgqmvwrILKrh0+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ohBInxXW1LVvk9WTUqETQCw92wmcSLw25VL/ynVOYZl/rhgBjX9uVmTCCmo7rBAPW38shX5CQjln0wzNM1pxH2A96xmg72YR2peDUnHM16ytLGGbuW9fecjbpFOMPpK41s5cyj6I5epJFjyENKT6byppMI7t5RNrn+bCEYf6d6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=M9uj0aWz; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+	s=arc-20240116; t=1711037399; c=relaxed/simple;
+	bh=st0jyZD6fF0/ceWO3qsXCDcdlU28KeOqhR8RwZFHnqw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Tj9HB7t84/+fsEn5jWsbB9kg1ie8k+4L+ANse0KduwwYVCEjVlw6m/anNuIIKs0HBx1rOj8XBwSjB9fiE/5GWVZoXDIMW/x14siIn3eFpwbPilP25SSmnhIrMn4HsSPjNkPJoQ4NYqQmq9b26mi4ZfHrciNFFfyZ/K5h8WW33p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dAhpKMau; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="M9uj0aWz"
-Received: from eig-obgw-6004a.ext.cloudfilter.net ([10.0.30.197])
-	by cmsmtp with ESMTPS
-	id myjcrebH1tf2QnKm0r2q0h; Thu, 21 Mar 2024 15:56:08 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id nKltrr7FRuv6XnKlurQpu9; Thu, 21 Mar 2024 15:56:02 +0000
-X-Authority-Analysis: v=2.4 cv=YbZ25BRf c=1 sm=1 tr=0 ts=65fc5892
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=UtBFqMlDG83dypD0sxEoAQ==:17
- a=IkcTkHD0fZMA:10 a=K6JAEmCyrfEA:10 a=wYkD_t78qR0A:10
- a=pzMpKnHA-g9QxEOb-IoA:9 a=QEXdDO2ut3YA:10
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=A+WmTPuzkgZDSVrrCRyuXerhZHil+NNsnP3DC6nYWLs=; b=M9uj0aWzYqMtuCLokuF8MmFkPb
-	EJ0Xg5HQdoz3H03McPCY1gKkd+rX2+3UUt6BetiYwYq6SAu2IFYyzWA1LYQWZqHUG3kqVYH8cKI9O
-	c/QHrrUZDxdTFaoq21I6FdsAVX5N5n4gKzD3l3FAHCLG3lko4HdID3R/v+gw4xGsVydK6vSQbvwPT
-	FAraZMHsUIJ+XuF2/GyqgS0NWSitOp/SOR0Oh/P7AF+5jhangUPumjvU46aJvHN1BvxquFDHG7ZS4
-	rjwnDHCL4xgB+cYqwTpUn3OGbmCxib97UU9+IgPtUvDon8YxACiRAtdQJEAXC8gNSXT1LUNeZp3uM
-	GgboiAPg==;
-Received: from [201.172.174.229] (port=45852 helo=[192.168.15.10])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1rnKfa-003VSS-2i;
-	Thu, 21 Mar 2024 10:49:30 -0500
-Message-ID: <afa0afb7-f756-45d0-97ab-44205e984199@embeddedor.com>
-Date: Thu, 21 Mar 2024 09:49:29 -0600
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dAhpKMau"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 42LFph7b011971;
+	Thu, 21 Mar 2024 16:09:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=vTNZJe0IJWDIMN1SbdzAB6ehGYLIFRs8Ff9IeHLNYtA=;
+ b=dAhpKMaumPYzgeaXGcRz3+01DkOtPhvksdFiVh8TGtkFRAb/IqpxXB4MsrV9uToy1kOV
+ UquqfsPRYvqL/saQ5GJBfVTKNMDbRpCS7HdTBPJrZwB0t1gq0h86r93GRYBqf0mM3HdZ
+ yXYvl6Lukh2RoXLoq09vqDfaMvj3WZGpD8jsNyzFba3WYGJzGJ+8tE+i7butysP6F/5o
+ 0TVkN2IclH4HPIEh7GewCcGlzAJHMZZurAVqccyypqe/J6wsNrSK5ZLO0jBGl5JHLlY/
+ kUWBYffiPTco3lA0qOwsrN7gCJOwCQNZECWihURnsJp6CGNEA85Tre9hsXmKS1sXx/bi pA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x0nq48epm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 16:09:36 +0000
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 42LG9asD009100;
+	Thu, 21 Mar 2024 16:09:36 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3x0nq48epg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 16:09:36 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 42LDwf7R002773;
+	Thu, 21 Mar 2024 16:09:35 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wwrf2wtqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Mar 2024 16:09:35 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 42LG9Wpk58851816
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Mar 2024 16:09:34 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7963458055;
+	Thu, 21 Mar 2024 16:09:32 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 62BF85804B;
+	Thu, 21 Mar 2024 16:09:31 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 21 Mar 2024 16:09:31 +0000 (GMT)
+Message-ID: <d957dbd3-4975-48d7-abc5-1a01c0959ea3@linux.ibm.com>
+Date: Thu, 21 Mar 2024 12:09:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Documentation: tpm_tis
+Content-Language: en-US
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        "Daniel P . Smith" <dpsmith@apertussolutions.com>,
+        Lino Sanfilippo <l.sanfilippo@kunbus.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        keyrings@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+References: <20240320085601.40450-1-jarkko@kernel.org>
+ <afc9471c-1c28-4384-82c1-29464ca1fb1f@linux.ibm.com>
+ <CZZJQR121P7H.3QS68A6320S32@kernel.org>
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <CZZJQR121P7H.3QS68A6320S32@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: SD3MVmc3-Va9D44QCOqk-nRPCX-gp5VX
+X-Proofpoint-GUID: k7P-IGXBL7-en4PS3OqwZqkLuLHcI3iB
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3][next] integrity: Avoid -Wflex-array-member-not-at-end
- warnings
-Content-Language: en-US
-To: Mimi Zohar <zohar@linux.ibm.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Roberto Sassu <roberto.sassu@huawei.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <ZfuzWku+ip4fsZrb@neat>
- <267f340e1b309cff2fab01f83a141ee465296907.camel@linux.ibm.com>
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <267f340e1b309cff2fab01f83a141ee465296907.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.174.229
-X-Source-L: No
-X-Exim-ID: 1rnKfa-003VSS-2i
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.10]) [201.172.174.229]:45852
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfOGhFUAS9eDF2SnN96eDFT7ojJRnZssHtkezwb+sv3ltSliCeiji3El3AQwpPcNsk2KT9ZBpKsnCO9FrJ6EGbLMWzyJc88aYVtxvOhc/x+AMGToWazoL
- 7eMqyL2bomVKv3o/T5qeWOAFqv7rdJ0bwktMAKGmB+zMBrXUf/w7wGbs8pPpDf9LrMNJuHgZweFB145rlUt3VAuPZF6LfjQatTeFeSJGc7J/2ZgEeLPH2A/d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-03-21_10,2024-03-21_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 mlxlogscore=995 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2403140000 definitions=main-2403210117
 
 
 
-On 3/21/24 07:58, Mimi Zohar wrote:
-> On Wed, 2024-03-20 at 22:11 -0600, Gustavo A. R. Silva wrote:
->> -Wflex-array-member-not-at-end is coming in GCC-14, and we are getting
->> ready to enable it globally.
+On 3/21/24 11:51, Jarkko Sakkinen wrote:
+> On Wed Mar 20, 2024 at 6:15 PM EET, Stefan Berger wrote:
 >>
->> There is currently an object (`hdr)` in `struct ima_max_digest_data`
->> that contains a flexible structure (`struct ima_digest_data`):
 >>
->>   struct ima_max_digest_data {
->> 	struct ima_digest_data hdr;
->>          u8 digest[HASH_MAX_DIGESTSIZE];
->>   } __packed;
+>> On 3/20/24 04:56, Jarkko Sakkinen wrote:
+>>> Based recent discussions on LKML, provide preliminary bits of tpm_tis_core
+>>> dependent drivers. Includes only bare essentials but can be extended later
+>>> on case by case. This way some people may even want to read it later on.
+>>>
+>>> Cc: Jonathan Corbet <corbet@lwn.net>
+>>> CC: Daniel P. Smith <dpsmith@apertussolutions.com>
+>>> Cc: Lino Sanfilippo <l.sanfilippo@kunbus.com>
+>>> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>>> Cc: Peter Huewe <peterhuewe@gmx.de>
+>>> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+>>> Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
+>>> Cc: keyrings@vger.kernel.org
+>>> Cc: linux-doc@vger.kernel.org
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Cc: linux-integrity@vger.kernel.org
+>>> Cc: Randy Dunlap <rdunlap@infradead.org>
+>>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>> ---
+>>> v2:
+>>> - Fixed errors reported by Randy:
+>>>     https://lore.kernel.org/all/aed28265-d677-491a-a045-24b351854b24@infradead.org/
+>>> - Improved the text a bit to have a better presentation.
+>>> ---
+>>>    Documentation/security/tpm/index.rst   |  1 +
+>>>    Documentation/security/tpm/tpm_tis.rst | 30 ++++++++++++++++++++++++++
+>>>    2 files changed, 31 insertions(+)
+>>>    create mode 100644 Documentation/security/tpm/tpm_tis.rst
+>>>
+>>> diff --git a/Documentation/security/tpm/index.rst b/Documentation/security/tpm/index.rst
+>>> index fc40e9f23c85..f27a17f60a96 100644
+>>> --- a/Documentation/security/tpm/index.rst
+>>> +++ b/Documentation/security/tpm/index.rst
+>>> @@ -5,6 +5,7 @@ Trusted Platform Module documentation
+>>>    .. toctree::
+>>>    
+>>>       tpm_event_log
+>>> +   tpm_tis
+>>>       tpm_vtpm_proxy
+>>>       xen-tpmfront
+>>>       tpm_ftpm_tee
+>>> diff --git a/Documentation/security/tpm/tpm_tis.rst b/Documentation/security/tpm/tpm_tis.rst
+>>> new file mode 100644
+>>> index 000000000000..b331813b3c45
+>>> --- /dev/null
+>>> +++ b/Documentation/security/tpm/tpm_tis.rst
+>>> @@ -0,0 +1,30 @@
+>>> +.. SPDX-License-Identifier: GPL-2.0
+>>> +
+>>> +=========================
+>>> +TPM FIFO interface Driver
+>>> +=========================
+>>> +
+>>> +FIFO (First-In-First-Out) is the name of the hardware interface used by the
 >>
->> So, in order to avoid ending up with a flexible-array member in the
->> middle of a struct, we use the `__struct_group()` helper to separate
->> the flexible array from the rest of the members in the flexible
->> structure:
->>
->> struct ima_digest_data {
->>          __struct_group(ima_digest_data_hdr, hdr, __packed,
->>
->> 	... the rest of the members
->>
->>          );
->>          u8 digest[];
->> } __packed;
->>
->> With the change described above, we can now declare an object of the
->> type of the tagged `struct ima_digest_data_hdr`, without embedding the
->> flexible array in the middle of another struct:
->>
->>   struct ima_max_digest_data {
->>          struct ima_digest_data_hdr hdr;
->>          u8 digest[HASH_MAX_DIGESTSIZE];
->>   } __packed;
->>
+>> FIFO is the type. I am surprised you call it a 'name'. I would say TIS
+>> is the 'name'.
 > 
-> And similarly for 'struct evm_digest'.
-
-Yes. :)
-
+> It's what the official specification calls it [1].
 > 
 > 
->> We also use `container_of()` whenever we need to retrieve a pointer to
->> the flexible structure.
 >>
->> So, with these changes, fix the following warnings:
+>>> +tpm_tis_core dependent drivers. The prefix "tis" comes from the TPM Interface
 >>
->> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible
->> array member is not at the end of another structure [-Wflex-array-member-not-
->> at-end]
->> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible
->> array member is not at the end of another structure [-Wflex-array-member-not-
->> at-end]
->> security/integrity/evm/evm.h:45:32: warning: structure containing a flexible
->> array member is not at the end of another structure [-Wflex-array-member-not-
->> at-end]
+>> tis is a tla -- a three letter *acronym*. You aren't using it as a 'prefix'.
 > 
-> I assume these messages are gone.
+> I don't know what "tla" means.
+> 
+>>
+>>> +Specification, which is the hardware interface specification for TPM 1.x chips.
+>>
+>> It's also available for TPM2.
+>   
+> Yes, but TIS is the name used by the legacy specification.
 
-Yes. :)
 
-Thanks
---
-Gustavo
+The point is that TIS is not just a TPM 1.x interface but also used for 
+TPM 2.
+> 
+>>
+>>> +
+>>> +Communication is based on a 5 KiB buffer shared by the TPM chip through a
+>>
+>> I thought it was typically 4 KiB.
+> 
+> You are basing this on table 9 in [1]?
 
+Yes. See below.
+
+> 
+>>
+>>> +hardware bus or memory map, depending on the physical wiring. The buffer is
+>>> +further split into five equal-size buffers, which provide equivalent sets of
+
+If you are referring to the MMIO region between 0xfed4 0000 and 0xfed4 
+4fff as a buffer then you are talking about a **20kb** MMIO region 
+(0x5000) that is **split** into equal-sized MMIO regions, each having 
+4kb (0x1000). Yes, that's the 4kb then but there that one is no 5kb 
+'further split into five equal-sized buffers' of presumably 1kb each. 
+Each locality has a 0x1000 sized MMIO region.
