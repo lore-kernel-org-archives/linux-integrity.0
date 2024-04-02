@@ -1,59 +1,59 @@
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6368F6D
-	for <linux-integrity@vger.kernel.org>; Tue,  2 Apr 2024 01:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803708F6D
+	for <linux-integrity@vger.kernel.org>; Tue,  2 Apr 2024 01:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712021206; cv=none; b=HoVoYTA/rXDkAS328Nu9isa2WYmJLcdEu59adnjysijLq5rYVLu1MCDLLAwXsxfH+tmPrjzwhcrCI+mJcyN+cvNtHhiQ0DfyRlMM+5M4AHMt1+lPad/jqX4aACUet+P3nHr5A7oshq9hPXq87tzS7VoJVl4NfJZDeYGtt5+we6I=
+	t=1712021208; cv=none; b=sPqcPuTKBAkHKZDQ9lNNb26yh1SoW/H/ecJpzyPaSKP57CO6frz6LWPUYC+c7Nb5rlegYcZvY5KGdBPucXUW537qycYYDrJJjowPDOjAFpsM6U1VaTAyktOpoOmNv7GOpWiuePQgAGprDCuDDS6DZckhLFEGvJ3MMMnjS5eq6+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712021206; c=relaxed/simple;
-	bh=aVxgl65qe63F9RG61q5/c/8ucEYTRdx9vtPoLeH3Y2k=;
+	s=arc-20240116; t=1712021208; c=relaxed/simple;
+	bh=r81tVplr/mXsa6cwAdC5W16sL6mZ3+LlluvNMb7GzWw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=lMHT4BJKGQ+Uj8AfEk/c/LATNdzdiFeNzIhLDLFO1KO4TW+sZ8WgnswWWfjuIgN6RgtRvMjPfoR8vPRATivMfQw3atj/LZkh9ySN7zWCSdOdnBIbp/6RnrMbft4fNpADF6hH0rhp4OSM6c/b0Fl0poEOg0NAIDEqAO5pbu9fop8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Wk/I++s7; arc=none smtp.client-ip=209.85.222.177
+	 From:To:Cc:Subject:References:In-Reply-To; b=FzAyyU/1QIwZzEj0mizj6cx64lhn1Ll6mzVKsdZRmsQpKCqpNXrbFHK3SMrTlKiztjQDhcFooqha9wSVMaB8DI5m9tv2ESR4r4yJdOiD3sCvm3oLpZq9YhgoejNww6T0Bvbj0MGYvYsoaueShTXCBz3Smx8E8YXapfTsZqPZxqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=U1GwS7k7; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Wk/I++s7"
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78a2093cd44so338595885a.0
-        for <linux-integrity@vger.kernel.org>; Mon, 01 Apr 2024 18:26:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="U1GwS7k7"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6150670d372so7514287b3.1
+        for <linux-integrity@vger.kernel.org>; Mon, 01 Apr 2024 18:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1712021203; x=1712626003; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1712021205; x=1712626005; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=R2O8HEb1FethHT20zhCThThb/BGPO8YtMtgX7GfGVZI=;
-        b=Wk/I++s7wtaQ/2FeEcZ38+tZpZp1W1jPudHa22FhK2Udi6xUU0Le9ilyyu2e5ca56f
-         sZTeM6lKEGBaGNN6qmjKv/gxRA/e9dyIusCcDaQecnFRRuaPBnOTM1f6AwUwx42CHzxJ
-         y9F1LJdJWwMi5lAOcrviZfuMxaFFZkTMFcasPSWmm2+EP1815JEJYvnWVIHaMIutXqC+
-         V+LO/zNlbCsDVTxq9eWDgi3zYUXBfHSstT9HigmwXnzVYxh8lZioolkSoZsEojV1wGGX
-         cmR7yfv2ajFGhqAr2iC9CZNS/dUs0WQY07vlVDXKGDxd2tqQb6v89ncIc/NNvWJcyByx
-         FYhA==
+        bh=YvU3eDeGNif8WZjhEP3jhv+aJxwb2qUvZEErn5YlURc=;
+        b=U1GwS7k7R+XTZDYYhT4yW6nOBibRGNZ1dV8n1pvCC0efv8tqTNXyDG18Xz+3tgUYnx
+         lke3nDhDp9vjCqBKuy6UNdbOLYr4TcBthAnQaQJ1ynk7rWhVaWaSfjcn3vsv85EXviEj
+         ZFL4QeN1nW1qWpb5Iwgd00zNcFEXsvgKicYVBmH2+z9NcoyhXG1e+MsRr3Zqv7d0teyy
+         K126Vi73T0gH6l1PpJpTsIky0akqZ0CJ5Z/J/3YLJ3ALyE4Xh1uU+82wrhIs7iY6h0Bm
+         ViANu6YBzvlIoAUFmrB7p8q6GXE/BCeSjjeLqaTDhAcVFP8MF5ghoazQD58FBkPn+5oS
+         1Nfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712021203; x=1712626003;
+        d=1e100.net; s=20230601; t=1712021205; x=1712626005;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=R2O8HEb1FethHT20zhCThThb/BGPO8YtMtgX7GfGVZI=;
-        b=ndj2sYdUoapCZs8KrFfNsZIR7ZAjEDH5XGL2wA7mEbsZHW5e2t3nN0uULNNpRlF3Nx
-         TjLiytwhoSve7Y7vzZ+pllVNf+LOWmooAyCqOEO4Zri+geRwNfYzlvmf1dvYflvmmRzU
-         E7Or6qLfRazCBvUniYL0aQbX+EBe5q/2WigWkcompOK9iG3m3SCoTeR1rEryyEK3DvwY
-         RwFVnK17IN76zb9frX8d3Y+N3uM5CcKU4vQB25Xhd+TqtA8TmqbgVZBxEkU6mSmyWJu8
-         KkE5+p3Aw8tWudlVfx4I9xMcPD/rKVyhDp4sseRDbktTAuUPLtPQdJHl3VUdProRMt1z
-         tDTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfALK1qfpMbrxOQJyvdDexsBr9+sG3KC11zIZLjEX8Cne7SLTPlt3DFamVenYxsE9X0SMYI449l0VU+3MuZrpBB3kI6Kn5YI3phsFJrBvq
-X-Gm-Message-State: AOJu0YxN9Bs5Omp5HbAY+f2gT5MGnnHtLxT7VHT5Wp6h3AfauB2vsRbY
-	kKUF7YWHlm/iTNmk1J3olx192Ju3iPuqGVK6AiR/JWocozlMplpTMPA9CbsHQg==
-X-Google-Smtp-Source: AGHT+IE++PDnPsCAN5ZlJzJBCsY9VL8rWCNTNagzE8bvtbG+6yPqmGk0WcKC3DLF/KWvtXLzI6otLg==
-X-Received: by 2002:ad4:404f:0:b0:699:1026:c0a4 with SMTP id r15-20020ad4404f000000b006991026c0a4mr2755001qvp.38.1712021202974;
-        Mon, 01 Apr 2024 18:26:42 -0700 (PDT)
+        bh=YvU3eDeGNif8WZjhEP3jhv+aJxwb2qUvZEErn5YlURc=;
+        b=rQelbWsmKjto6mLv+D67gb4GYgn2lz+OBCkKjzUqSjtgW80XoRBJDRy6huqGFqdVPD
+         o5FS7w5lRPaN+qb3Ft5o0dqMN4quWaYlt4xC9RMFRWiDVDJ8o6eHlJjuunTwCKCZLoYT
+         rbp+wnUaMfX0QTj7I80FuirvpfWnXcSh1vkxGcRMe65qVbecG6d8YWto8FNrt56BrfHM
+         gb88a4TFes0Y7oXuWTyUHElMOXk0g+joYIRaGSnuijoxaOPI8uqgOX2WgK61AdhcadBl
+         q5/mygXD9zDZ/WcSUZ7EGlAYA6Ah08oCuGAHjfcbv1Z0Gj0hta0muVyS6yDLDzHvklEd
+         zCMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr+YPScpollIgXa0Ru4KIZ1sXIqU1Y2Lu+U4DEyM3+R0q+uHmx7/dSu2rE4Z65/baVC8GrboWth5PX4rPtNVNwGWG5RRNebaS6HY4BIVlz
+X-Gm-Message-State: AOJu0YyKGqcY8UDjbDAwM2vU/sP3A0vtBdGRaMYz4Te3qeIw8WGmN2mT
+	xIyb3tQc7pmt9F1uX+kbQVbKPtEJc/Psf1UyXqReYJkdgU1kIJQpGMztu6iHxA==
+X-Google-Smtp-Source: AGHT+IHcwelFOZJua7sBX5BklkyXs7C7ZndzRUSAmvczI0RmFqF9qben7QrlRY0K6vcuZ7H7X473Hw==
+X-Received: by 2002:a0d:d78c:0:b0:611:2a5b:8543 with SMTP id z134-20020a0dd78c000000b006112a5b8543mr10278060ywd.23.1712021205494;
+        Mon, 01 Apr 2024 18:26:45 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id fn3-20020ad45d63000000b00696934de5f7sm4964016qvb.62.2024.04.01.18.26.42
+        by smtp.gmail.com with ESMTPSA id i19-20020ae9ee13000000b0078a280c92c6sm3861806qkg.134.2024.04.01.18.26.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 01 Apr 2024 18:26:42 -0700 (PDT)
-Date: Mon, 01 Apr 2024 21:26:42 -0400
-Message-ID: <18dfbc23f04422e88993a13ff15b6229@paul-moore.com>
+        Mon, 01 Apr 2024 18:26:45 -0700 (PDT)
+Date: Mon, 01 Apr 2024 21:26:44 -0400
+Message-ID: <a811e4dda817d7a01f39b14ffa16a484@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -66,46 +66,15 @@ Content-Transfer-Encoding: 8bit
 From: Paul Moore <paul@paul-moore.com>
 To: Fan Wu <wufan@linux.microsoft.com>, corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com
 Cc: linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>, Fan Wu <wufan@linux.microsoft.com>
-Subject: Re: [PATCH v16 11/20] block|security: add LSM blob to block_device
-References: <1711657047-10526-12-git-send-email-wufan@linux.microsoft.com>
-In-Reply-To: <1711657047-10526-12-git-send-email-wufan@linux.microsoft.com>
+Subject: Re: [PATCH v16 14/20] ipe: add support for dm-verity as a trust  provider
+References: <1711657047-10526-15-git-send-email-wufan@linux.microsoft.com>
+In-Reply-To: <1711657047-10526-15-git-send-email-wufan@linux.microsoft.com>
 
 On Mar 28, 2024 Fan Wu <wufan@linux.microsoft.com> wrote:
 > 
-> Some block devices have valuable security properties that is only
-> accessible during the creation time.
-
-You should mention the new hook in the subject line, something like
-the following: "block,lsm: add LSM blob and new LSM hook for block
-devices".
-
-> For example, when creating a dm-verity block device, the dm-verity's
-> roothash and roothash signature, which are extreme important security
-> metadata, are passed to the kernel. However, the roothash will be saved
-> privately in dm-verity, which prevents the security subsystem to easily
-> access that information. Worse, in the current implementation the
-> roothash signature will be discarded after the verification, making it
-> impossible to utilize the roothash signature by the security subsystem.
-> 
-> With this patch, an LSM blob is added to the block_device structure.
-> This enables the security subsystem to store security-sensitive data
-> related to block devices within the security blob. For example, LSM can
-> use the new LSM blob to save the roothash signature of a dm-verity,
-> and LSM can make access decision based on the data inside the signature,
-> like the signer certificate.
-> 
-> The implementation follows the same approach used for security blobs in
-> other structures like struct file, struct inode, and struct superblock.
-> The initialization of the security blob occurs after the creation of the
-> struct block_device, performed by the security subsystem. Similarly, the
-> security blob is freed by the security subsystem before the struct
-> block_device is deallocated or freed.
-> 
-> This patch also introduces a new hook to save block device's integrity
-> data. For example, for dm-verity, LSMs can use this hook to save
-> the roothash signature of a dm-verity into the security blob,
-> and LSMs can make access decisions based on the data inside
-> the signature, like the signer certificate.
+> Allows author of IPE policy to indicate trust for a singular dm-verity
+> volume, identified by roothash, through "dmverity_roothash" and all
+> signed dm-verity volumes, through "dmverity_signature".
 > 
 > Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 > Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
@@ -114,107 +83,178 @@ devices".
 >   + No Changes
 > 
 > v3:
->   + Minor style changes from checkpatch --strict
+>   + No changes
 > 
 > v4:
->   + No Changes
+>   + No changes
 > 
 > v5:
->   + Allow multiple callers to call security_bdev_setsecurity
+>   + No changes
 > 
 > v6:
->   + Simplify security_bdev_setsecurity break condition
+>   + Fix an improper cleanup that can result in
+>     a leak
 > 
 > v7:
->   + Squash all dm-verity related patches to two patches,
->     the additions to dm-verity/fs, and the consumption of
->     the additions.
+>   + Squash patch 08/12, 10/12 to [11/16]
 > 
 > v8:
->   + Split dm-verity related patches squashed in v7 to 3 commits based on
->     topic:
->       + New LSM hook
->       + Consumption of hook outside LSM
->       + Consumption of hook inside LSM.
-> 
->   + change return of security_bdev_alloc / security_bdev_setsecurity
->     to LSM_RET_DEFAULT instead of 0.
-> 
->   + Change return code to -EOPNOTSUPP, bring inline with other
->     setsecurity hooks.
+>   + Undo squash of 08/12, 10/12 - separating drivers/md/ from security/
+>     & block/
+>   + Use common-audit function for dmverity_signature.
+>   + Change implementation for storing the dm-verity digest to use the
+>     newly introduced dm_verity_digest structure introduced in patch
+>     14/20.
 > 
 > v9:
->   + Add Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
->   + Remove unlikely when calling LSM hook
->   + Make the security field dependent on CONFIG_SECURITY
+>   + Adapt to the new parser
 > 
 > v10:
->   + No changes
+>   + Select the Kconfig when all dependencies are enabled
 > 
 > v11:
 >   + No changes
 > 
 > v12:
->   + No changes
+>   + Refactor to use struct digest_info* instead of void*
+>   + Correct audit format
 > 
 > v13:
->   + No changes
+>   + Remove the CONFIG_IPE_PROP_DM_VERITY dependency inside the parser
+>     to make the policy grammar independent of the kernel config.
 > 
 > v14:
 >   + No changes
 > 
 > v15:
->   + Drop security_bdev_setsecurity() for new hook
->     security_bdev_setintegrity() in the next commit
->   + Update call_int_hook() for 260017f
+>   + Fix one grammar issue in KCONFIG
+>   + Switch to use security_bdev_setintegrity() hook
 > 
 > v16:
->   + Drop Reviewed-by tag for the new changes
->   + Squash the security_bdev_setintegrity() into this commit
->   + Rename enum from lsm_intgr_type to lsm_integrity_type
->   + Switch to use call_int_hook() for bdev_setintegrity()
->   + Correct comment
->   + Fix return in security_bdev_alloc()
+>   + Refactor for enum integrity type
 > ---
->  block/bdev.c                  |  7 +++
->  include/linux/blk_types.h     |  3 ++
->  include/linux/lsm_hook_defs.h |  5 ++
->  include/linux/lsm_hooks.h     |  1 +
->  include/linux/security.h      | 26 ++++++++++
->  security/security.c           | 89 +++++++++++++++++++++++++++++++++++
->  6 files changed, 131 insertions(+)
+>  security/ipe/Kconfig         |  18 ++++++
+>  security/ipe/Makefile        |   1 +
+>  security/ipe/audit.c         |  29 ++++++++-
+>  security/ipe/digest.c        | 120 +++++++++++++++++++++++++++++++++++
+>  security/ipe/digest.h        |  26 ++++++++
+>  security/ipe/eval.c          |  91 +++++++++++++++++++++++++-
+>  security/ipe/eval.h          |  10 +++
+>  security/ipe/hooks.c         |  72 +++++++++++++++++++++
+>  security/ipe/hooks.h         |   8 +++
+>  security/ipe/ipe.c           |  15 +++++
+>  security/ipe/ipe.h           |   4 ++
+>  security/ipe/policy.h        |   3 +
+>  security/ipe/policy_parser.c |  24 ++++++-
+>  13 files changed, 417 insertions(+), 4 deletions(-)
+>  create mode 100644 security/ipe/digest.c
+>  create mode 100644 security/ipe/digest.h
 
+...
 
-
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index f35af7b6cfba..8e646189740e 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1483,6 +1492,23 @@ static inline int lsm_fill_user_ctx(struct lsm_ctx __user *uctx,
+> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
+> index 6bcc7908ed13..f95986a87d51 100644
+> --- a/security/ipe/hooks.c
+> +++ b/security/ipe/hooks.c
+> @@ -187,3 +191,71 @@ void ipe_unpack_initramfs(void)
 >  {
->  	return -EOPNOTSUPP;
+>  	ipe_sb(current->fs->root.mnt->mnt_sb)->initramfs = true;
 >  }
 > +
-> +static inline int security_bdev_alloc(struct block_device *bdev)
+> +#ifdef CONFIG_IPE_PROP_DM_VERITY
+> +/**
+> + * ipe_bdev_free_security - free IPE's LSM blob of block_devices.
+> + * @bdev: Supplies a pointer to a block_device that contains the structure
+> + *	  to free.
+> + */
+> +void ipe_bdev_free_security(struct block_device *bdev)
 > +{
+> +	struct ipe_bdev *blob = ipe_bdev(bdev);
+> +
+> +	ipe_digest_free(blob->root_hash);
+> +}
+> +
+> +/**
+> + * ipe_bdev_setintegrity - save integrity data from a bdev to IPE's LSM blob.
+> + * @bdev: Supplies a pointer to a block_device that contains the LSM blob.
+> + * @type: Supplies the integrity type.
+> + * @value: Supplies the value to store.
+> + * @size: The size of @value.
+> + */
+> +int ipe_bdev_setintegrity(struct block_device *bdev, enum lsm_integrity_type type,
+> +			  const void *value, size_t size)
+> +{
+> +	struct ipe_bdev *blob = ipe_bdev(bdev);
+> +
+> +	if (type == LSM_INT_DMVERITY_ROOTHASH) {
+> +		if (!value) {
+> +			ipe_digest_free(blob->root_hash);
+> +			blob->root_hash = NULL;
+> +
+> +			return 0;
+> +		}
+> +
+> +		const struct dm_verity_digest *digest = value;
+> +		struct digest_info *info = NULL;
+
+General kernel coding conventions put variable declarations at the top
+of the scope; in other words, move the '!value' if-statement below
+this.
+
+> +		info = kzalloc(sizeof(*info), GFP_KERNEL);
+> +		if (!info)
+> +			return -ENOMEM;
+> +
+> +		info->digest_len = digest->digest_len;
+> +
+> +		info->digest = kmemdup(digest->digest, info->digest_len,
+> +				       GFP_KERNEL);
+> +		if (!info->digest)
+> +			goto err;
+
+It's always a good practice to not do any work you might not need to
+do in case of error:
+
+  info->digest = kmemdup(...);
+  if (!info->digest)
+    goto dmv_roothash_err;
+  info->digest_len = digest->digest_len;
+
+> +		info->alg = kstrdup(digest->alg, GFP_KERNEL);
+> +		if (!info->alg)
+> +			goto err;
+> +
+> +		blob->root_hash = info;
+> +
+> +		return 0;
+> +err:
+
+You might want to consider naming this 'dmv_roothash_err' to help
+indicate that it is a jump label specifically for use within the
+DMVERITY_ROOTHASH block.
+
+> +		ipe_digest_free(info);
+> +
+> +		return -ENOMEM;
+> +	} else if (type == LSM_INT_DMVERITY_SIG) {
+> +		blob->dm_verity_signed = size > 0 && value;
+> +
+> +		return 0;
+> +	}
+
+Woule it be worth returning -EINVAL if some other lsm_integrity_type
+value was used here?
+
+  if (ROOTHASH) {
+    ...
+  } else if (SIG) {
+    ...
+  } else
+    return -EINVAL;
+
 > +	return 0;
 > +}
-> +
-> +static inline void security_bdev_free(struct block_device *bdev)
-> +{
-> +}
-> +
-> +static inline int security_bdev_setintegrity(struct block_device *bdev,
-> +					     enum lsm_integrity_type, type,
-
-I'm sure by now you've seen the reports about the errant comma ...
-
-> +					     const void *value, size_t size)
-> +{
-> +	return 0;
-> +}
-> +
->  #endif	/* CONFIG_SECURITY */
+> +#endif /* CONFIG_IPE_PROP_DM_VERITY */
 
 --
 paul-moore.com
