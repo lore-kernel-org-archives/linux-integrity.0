@@ -1,107 +1,123 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EC68626E;
-	Fri, 12 Apr 2024 14:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B3385285
+	for <linux-integrity@vger.kernel.org>; Fri, 12 Apr 2024 15:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712930505; cv=none; b=BCPK5vNjaorWJrrqcdUeEF8DBbDsl7IZTZLykRTok/OOMCuWiZsK6HieVCS1o9P/imOioOO9kBhzakDYh92a/zMLSZg1guUfnkqptSjcPAz5xya+45zHDSp7ZlG3I3ZdgdHS4mOVX/eti+4l6X/KIVloJu1KnX/SBL8yHJpJ3YA=
+	t=1712934550; cv=none; b=qZE5wgCBRcmM2OiO1twN3pXjIIk3azGsbeFb9rlRGEo47ToiksK6E9GVd4tIL/O097gt52JdYPfXYB9gUqcoen84c1YntRL8gUh307BPQ3QUZfcZOVxb1W/RIrzndN8GNB1nniXucw/BuFVWhFP+uV0IF1VQgeabwysjsVv4eSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712930505; c=relaxed/simple;
-	bh=0ju2OjjZJc4T+HUfUywOCKasDrgbe1ae+klsXdI57bg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jSmBBy6WIXOk9OD95xHDoN7KYxyy+DQ5avkuCJaS/TxGtOVYoUxDCMWFXrBjBKF7fNQyLm5LD1mnZ2TcCbcxEX+5cMOAl7G8CMhqJ4rbztqclv/xko/WGJtq3GKcN2tHYG8e9gGTdlX+tmQITw46jWtYBPNBCqngPO1CSGHGAfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Pw5qvUiD; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1712934550; c=relaxed/simple;
+	bh=Ujj1GT1OiwJhZvMrv50V4ObpLTLWi9ndUBKpX9UYgR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PdaVdIVPAKtwzmG5MlZwYhB3KnmAgZTbm5gYqnzpWrYpZGKmetkJUzsEctvpfatE5EoxNX82ZPr/MgoKtTbr1uyB+joLZPn82VvUWj+hwkeGcNpVcRWsziVsznNEMqESF3ZYk7P5ic/rujCk6WALg8B8stLL5J2bwgBGI2sAfyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IAwZOfoY; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Pw5qvUiD"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 43CE0g57000764;
-	Fri, 12 Apr 2024 14:01:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=P9fBnmlXwY43CvP9wtUDIhcltSi6G92Izqd1cqRnAw8=;
- b=Pw5qvUiDM+LsGpOmAzKPthMIZcfi2g6qtQ6oQuav5dzh27gnGWduSQ5MQUgYJxRwMos+
- FHfaO8exMGa8WrB0TKBWk2p6Rda/gvOrLm9FuqVCcB7zOvpxVtRiTOjyA+1TiYTR8sG6
- 7gGUsS69cL/HuaFJtaFeNoRXSaLVWebzc4G7RUyQa8pHjCgJkzEkw0FsrUbUYN14iXBN
- xNgoInkKfE+HUkR1NraNp0p0L934jV3kKiDKa62qqdwszNLkpZttUW47ZL1b4ggd1BLw
- glMqyOE2AB0P006n8y45h4lg01muZVlD2znJtjRZMN/XLwIpntmv5V/zgAeJGWGDNsM/ yg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xf5b4g4ss-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 14:01:35 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 43CE1Ziv001971;
-	Fri, 12 Apr 2024 14:01:35 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3xf5b4g4sq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 14:01:35 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 43CAlDCP022627;
-	Fri, 12 Apr 2024 14:01:33 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3xbhqpj768-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Apr 2024 14:01:33 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 43CE1U3B56099292
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Apr 2024 14:01:32 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D9BA35807E;
-	Fri, 12 Apr 2024 14:01:28 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 60DD558060;
-	Fri, 12 Apr 2024 14:01:28 +0000 (GMT)
-Received: from sbct-3.bos2.lab (unknown [9.47.158.153])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 12 Apr 2024 14:01:28 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linux-unionfs@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        roberto.sassu@huawei.com, amir73il@gmail.com, miklos@szeredi.hu,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [RFC 0/2] ima: Fix detection of read/write violations on stacked filesystems
-Date: Fri, 12 Apr 2024 10:01:20 -0400
-Message-ID: <20240412140122.2607743-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IAwZOfoY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1712934548; x=1744470548;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ujj1GT1OiwJhZvMrv50V4ObpLTLWi9ndUBKpX9UYgR0=;
+  b=IAwZOfoYCEE7SfpxdRffiOCJlk9gLlPHm2+MdWDPFVvPncE11BPLStFe
+   /gECenFHeOW3YC/We7Cli7XaZ+944Q4nc31xfNgsidRFRR+Gq3AOx5V7j
+   LC8aKKNtWvQaXOwQ1tqRiUIpokBX/Ey346jjQ3E5gN4H4jtbAppOXDv2P
+   lCJUXyuhuTGRJbeNQZjSFrRPGEhV9G/NmLxYs4JFlQcOMwo/EtKt5tNn1
+   XE0NJlb7UQyPv2DrXmSmvXtbwijTBLIx/zEjCwBm1b0yi2A7medYjE66G
+   VHK1wHqbGANtUHRZVXbT3VVsuvtaPHkhC3CjqQ+gNjmRMh/z5SAZq3wmx
+   A==;
+X-CSE-ConnectionGUID: QDivR3OnQHOwj912IVh30A==
+X-CSE-MsgGUID: ShVhiQGwRJGwOXoGDDMv0A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11042"; a="8568413"
+X-IronPort-AV: E=Sophos;i="6.07,196,1708416000"; 
+   d="scan'208";a="8568413"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2024 08:09:07 -0700
+X-CSE-ConnectionGUID: ysHXEuhpRcSeiN00rU6Cbg==
+X-CSE-MsgGUID: 3QXTbJ5WQzGFmQMqU3Koog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,196,1708416000"; 
+   d="scan'208";a="25802571"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 12 Apr 2024 08:09:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1011)
+	id 79984E7; Fri, 12 Apr 2024 18:09:02 +0300 (EEST)
+Date: Fri, 12 Apr 2024 18:09:02 +0300
+From: "Svahn, Kai" <kai.svahn@linux.intel.com>
+To: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org,
+	Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+	Petr Vorel <pvorel@suse.cz>, Mimi Zohar <zohar@linux.ibm.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Vitaly Chikunov <vt@altlinux.org>,
+	Ken Goldman <kgold@linux.ibm.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Bruno Meneguele <bmeneg@redhat.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	George Wilson <gcwilson@linux.ibm.com>,
+	Tergel Myanganbayar <tergelmyanganbayar2024@u.northwestern.edu>,
+	Andr?? Draszik <git@andred.net>,
+	Frank Sorenson <sorenson@redhat.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [ima-evm-utils: PATCH v2 1/1] Change license to
+ LGPL-2.0-or-later and GPL-2.0-or-later
+Message-ID: <ZhlOjunocFKwYENP@black.fi.intel.com>
+References: <103252ffff09c607e83c887cab2e0af5404d62ff.1710774200.git.dmitry.kasatkin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JFkyUhI_LoXXRb5Bdig_y7sHvvMi5UQ_
-X-Proofpoint-GUID: wmwLbrEvujHh0AEYnsqEhFxg5brOExWl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-12_10,2024-04-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
- spamscore=0 mlxlogscore=663 impostorscore=0 mlxscore=0 adultscore=0
- malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2404010000 definitions=main-2404120101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <103252ffff09c607e83c887cab2e0af5404d62ff.1710774200.git.dmitry.kasatkin@gmail.com>
 
-This series fixes the detection of read/write violations on stacked
-filesystems. To be able to access the relevant dentries necessary to
-detect files opened for writing on a stacked filesystem a new d_real_type
-D_REAL_FILEDATA is introduced that allows callers to access all relevant
-files involved in a stacked filesystem.
+Hi,
 
-  Stefan
+On Mon, Mar 18, 2024 at 05:07:24PM +0200, Dmitry Kasatkin wrote:
+> Currently libimaevm provided by this project is used by the tool evmctl,
+> which is also provided by this project.
+> 
+> An issue was reported about using libimaevm with other software. Its
+> GPL2-only license makes it incompatible to use with other licenses, in
+> particular GPL3-only.
+> 
+> To address this issue, change the project license to GPL-2.0-or-later
+> and libimaevm to LGPL 2.0 or later.
+> 
+> This patch includes all acks received so far.
+> 
+> Signed-off-by: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Acked-by: Dmitry Kasatkin <dmitry.kasatkin@huawei.com>
+> Acked-by: Petr Vorel <pvorel@suse.cz>
+> Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Stefan Berger <stefanb@linux.ibm.com>
+> Acked-by: Vitaly Chikunov <vt@altlinux.org>
+> Acked-by: Ken Goldman <kgold@linux.ibm.com>
+> Acked-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Acked-by: Bruno Meneguele <bmeneg@redhat.com>
+> Acked-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Acked-by: George Wilson <gcwilson@linux.ibm.com>
+> Acked-by: Tergel Myanganbayar <tergelmyanganbayar2024@u.northwestern.edu>
+> Acked-by: Andr?? Draszik <git@andred.net>
+> Acked-by: Frank Sorenson <sorenson@redhat.com>
+> Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Acked-by: Vivek Goyal <vgoyal@redhat.com>
+> Acked-by: Eric Biggers <ebiggers@google.com>
+> Acked-by: Alberto Mardegan <a.mardegan@omp.ru>
+> Acked-by: Eric Biggers <ebiggers@google.com> # all Google contributions
+> Acked-by: Dmitry Baryshkov <dbaryshkov@gmail.com>
+> Acked-by: Patrick Uiterwijk <patrick@puiterwijk.org>
+> Acked-by: Mimi Zohar <zohar@linux.ibm.com>  # all IBM contributions
+> Acked-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> ---
 
-Stefan Berger (2):
-  ovl: Define D_REAL_FILEDATA for d_real to return dentry with data
-  ima: Fix detection of read/write violations on stacked filesystems
+Acked-by: Kai Svahn <kai.svahn@linux.intel.com>
 
- fs/overlayfs/super.c              |  6 ++++++
- include/linux/dcache.h            |  1 +
- security/integrity/ima/ima_main.c | 27 ++++++++++++++++++++++-----
- 3 files changed, 29 insertions(+), 5 deletions(-)
-
--- 
-2.43.0
-
+Cheers,
+Kai
