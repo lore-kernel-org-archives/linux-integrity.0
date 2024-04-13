@@ -1,28 +1,28 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A68F4C97;
-	Sat, 13 Apr 2024 00:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD381BC3F;
+	Sat, 13 Apr 2024 00:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712969774; cv=none; b=QLvoqBuWL3zaSTRplwhzKWnWhS7Ezy0Istr1bFdcrrlUDmZ25arap0NIPWrhtByFD+j2lPkliNdAYskEv153YSW97rlU4xR6yVtQ4kqV9EyLqbX6hcutL8Q5q68+nSvvKuAVlMrRZyxou4RCz+ezRnoStfOCOKUgtfqbqrcQ6GA=
+	t=1712969775; cv=none; b=CURmisbDNUc+c9sMYC7g9r9F72qMza0InTrQsmKmxtNdVKqshMNi+KCPomjX5W/OYVzTkqzi3LsWFS/fEGRpg+PSpVQDq1kKXlUt/tQ+DhbK6OiBY2lVepcKswcfXv6l10Lu96hCuh2+P5IwiefSI6CJt4bzk10PHBTSB/G2wG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712969774; c=relaxed/simple;
-	bh=pBU/dUpHcW7hv4jahHyUxb9624g5oZLMksU7XwtQcWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=QT8w+tWBGeKDRK8+TEL8NQu/Q/Ua83Td8mWXu6r4T41Qm0kIymA/UImXMWjTai2XwiJVW3Oc1OMgHXyWOU4Xlhmxqu+XYrG30GtuqxMOpV9zpRLmbOLflLfCEG5FQXzfKgaTB3uoTAfU4c9V2+Xz7sI8CYdrn3v+BlTcnwlXetQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lJOlD+fh; arc=none smtp.client-ip=13.77.154.182
+	s=arc-20240116; t=1712969775; c=relaxed/simple;
+	bh=nTi15qG8lmVh0RkooefIUS4ZyKTgWdzS0Mn6TnFLPw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ilmmywxVjbYSHUsYOsEfBUxn61JZDcA+6oEdXzxskqSv9QnrwGFM/J1q2/AdgXifCVxAy8F2dHRG1FyuLAiwf5uGiQAuWxMlpyR4TgwEkTrpiNC30O2UTMyK/oVffMjybo0vZCQNU9nyQAPAzCb3bLNSsDEHdT973p3e6bWtwEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=f9rfld/V; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lJOlD+fh"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="f9rfld/V"
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-	id AD89A20FC5FA; Fri, 12 Apr 2024 17:56:06 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AD89A20FC5FA
+	id 581A820FC5F0; Fri, 12 Apr 2024 17:56:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 581A820FC5F0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
 	s=default; t=1712969766;
-	bh=RkLiZLmYY6yXHhJqHQYW5lgf/n+IHqe1I+s8c4aEHFk=;
+	bh=LHTCW6UukkGntCuP2Gvty+Tw0pym/FlPsCBlFmagVTA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lJOlD+fhAoGAuJ5iZUO71L5J5LCGOsNCchcUL6JHtoAoyT5JDX0HrG3Eqe3ErOvnU
-	 BvMpI3b83kNEU7wV1u0gMFyOywTOm+CFsHhq6jKBWtwaDvWB2gnKNfr6G56JV/toT7
-	 vogkh3rb+v16VTJ9Opjit07BN+AqWythNOtPfyQ8=
+	b=f9rfld/VezGgp5zZgmyBasHci0PWrt5GN5SmY/SzOu6ButyQ7X7ERgjCGSTr56FBr
+	 psD6XyrxU6Vhs4CCTcfr+4sCesu2RlubJLHKAa3VSdF/RMk2y47T17slU8gDfPG2VK
+	 lxLUGzNNRnsnxV+pYtlmJOSY370gCqgHdo3CUUzE=
 From: Fan Wu <wufan@linux.microsoft.com>
 To: corbet@lwn.net,
 	zohar@linux.ibm.com,
@@ -44,9 +44,9 @@ Cc: linux-doc@vger.kernel.org,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Fan Wu <wufan@linux.microsoft.com>
-Subject: [PATCH v17 21/21] MAINTAINERS: ipe: add ipe maintainer information
-Date: Fri, 12 Apr 2024 17:56:04 -0700
-Message-Id: <1712969764-31039-22-git-send-email-wufan@linux.microsoft.com>
+Subject: [PATCH v17 15/21] security: add security_inode_setintegrity() hook
+Date: Fri, 12 Apr 2024 17:55:58 -0700
+Message-Id: <1712969764-31039-16-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1712969764-31039-1-git-send-email-wufan@linux.microsoft.com>
 References: <1712969764-31039-1-git-send-email-wufan@linux.microsoft.com>
@@ -56,41 +56,104 @@ List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 
-Update MAINTAINERS to include ipe maintainer information.
+This patch introduces a new hook to save inode's integrity
+data. For example, for fsverity enabled files, LSMs can use this hook to
+save the verified fsverity builtin signature into the inode's security
+blob, and LSMs can make access decisions based on the data inside
+the signature, like the signer certificate.
 
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
 --
-v1-v16:
+v1-v14:
   + Not present
 
-v17:
+v15:
   + Introduced
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b5b89687680b..93eb4e12a789 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10745,6 +10745,16 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
- F:	security/integrity/
- F:	security/integrity/ima/
+v16:
+  + Switch to call_int_hook()
+
+v17:
+  + Fix a typo
+---
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      | 10 ++++++++++
+ security/security.c           | 20 ++++++++++++++++++++
+ 3 files changed, 32 insertions(+)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index b391a7f13053..6f746dfdb28b 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -177,6 +177,8 @@ LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
+ LSM_HOOK(void, LSM_RET_VOID, inode_getsecid, struct inode *inode, u32 *secid)
+ LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
+ LSM_HOOK(int, -EOPNOTSUPP, inode_copy_up_xattr, const char *name)
++LSM_HOOK(int, 0, inode_setintegrity, struct inode *inode,
++	 enum lsm_integrity_type type, const void *value, size_t size)
+ LSM_HOOK(int, 0, kernfs_init_security, struct kernfs_node *kn_dir,
+ 	 struct kernfs_node *kn)
+ LSM_HOOK(int, 0, file_permission, struct file *file, int mask)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 9e46b13a356c..703762b0c4ad 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -404,6 +404,9 @@ int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer
+ void security_inode_getsecid(struct inode *inode, u32 *secid);
+ int security_inode_copy_up(struct dentry *src, struct cred **new);
+ int security_inode_copy_up_xattr(const char *name);
++int security_inode_setintegrity(struct inode *inode,
++				enum lsm_integrity_type type, const void *value,
++				size_t size);
+ int security_kernfs_init_security(struct kernfs_node *kn_dir,
+ 				  struct kernfs_node *kn);
+ int security_file_permission(struct file *file, int mask);
+@@ -1020,6 +1023,13 @@ static inline int security_inode_copy_up(struct dentry *src, struct cred **new)
+ 	return 0;
+ }
  
-+INTEGRITY POLICY ENFORCEMENT (IPE)
-+M:	Fan Wu <wufan@linux.microsoft.com>
-+L:	linux-security-module@vger.kernel.org
-+S:	Supported
-+T:	git https://github.com/microsoft/ipe.git
-+F:	Documentation/admin-guide/LSM/ipe.rst
-+F:	Documentation/security/ipe.rst
-+F:	scripts/ipe/
-+F:	security/ipe/
++static inline int security_inode_setintegrity(struct inode *inode,
++					      enum lsm_integrity_type type,
++					      const void *value, size_t size)
++{
++	return 0;
++}
 +
- INTEL 810/815 FRAMEBUFFER DRIVER
- M:	Antonino Daplas <adaplas@gmail.com>
- L:	linux-fbdev@vger.kernel.org
+ static inline int security_kernfs_init_security(struct kernfs_node *kn_dir,
+ 						struct kernfs_node *kn)
+ {
+diff --git a/security/security.c b/security/security.c
+index 3a7724c3dd76..2c20635a589b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2681,6 +2681,26 @@ int security_inode_copy_up_xattr(const char *name)
+ }
+ EXPORT_SYMBOL(security_inode_copy_up_xattr);
+ 
++/**
++ * security_inode_setintegrity() - Set the inode's integrity data
++ * @inode: inode
++ * @type: type of integrity, e.g. hash digest, signature, etc
++ * @value: the integrity value
++ * @size: size of the integrity value
++ *
++ * Register a verified integrity measurement of a inode with LSMs.
++ * LSMs should free the previously saved data if @value is NULL.
++ *
++ * Return: Returns 0 on success, negative values on failure.
++ */
++int security_inode_setintegrity(struct inode *inode,
++				enum lsm_integrity_type type, const void *value,
++				size_t size)
++{
++	return call_int_hook(inode_setintegrity, inode, type, value, size);
++}
++EXPORT_SYMBOL(security_inode_setintegrity);
++
+ /**
+  * security_kernfs_init_security() - Init LSM context for a kernfs node
+  * @kn_dir: parent kernfs node
 -- 
 2.44.0
 
