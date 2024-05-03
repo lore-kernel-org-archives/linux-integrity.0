@@ -1,28 +1,28 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF08C84E05;
-	Fri,  3 May 2024 22:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8738613B;
+	Fri,  3 May 2024 22:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714775560; cv=none; b=rJHeRwm7T7SrWmRU+UM7xSzFDo3a9Qv2Xvbpmh2y2V5osCSb8G2LGihx1ffzLQ7Fg+VIt1YO6nMt0s7oHMiHpzYkr+faCXnxxVLiUo4ZFzKiJIrzRcdAV57bMESZFLckmQfMHCJTOzJJzk1is4blcHg7qRS+lj17TsdjOdm+DzU=
+	t=1714775560; cv=none; b=l/DcJimaEB4u5uwTZPpE3IMkGlxaQxuazXWgRRXsWQxDp4ReaMgPiBDaeHKsT8y6wr0a1dOIZWicYtbfnoACLOxSldX2EXH+fAMKha+tg6A8+YjKFPJ4r9hJfw9LsI0FXqCaKsz1xo44MwOHbHUCQS0Ob0KmM8RleEwMvzbaSFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1714775560; c=relaxed/simple;
-	bh=k0z7C55TCVhBILeGM6qok0cqc1c1mIbTu2t4cVhYWA8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WX7hrBwrYQuFU/OrtqD/t0dYjQFrcJRjwCM1LQn9Y5PhERk6/c1SEDwqbyCNcG/043dYpJLzJJfpiy5n1nfeS0U4maDRDvE+N8+8QlPWe0m/057HPDuw1qKrnnd+8Pt9SNsQqqt9K9vRu4R73NL93Ak/AQnATqawi65SlwNJeU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bLgHkbkk; arc=none smtp.client-ip=13.77.154.182
+	bh=PvxzgxbbV/VpVJzKZ/cL/bhEY1Y4A6ThbpFnwwxEjHg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=d1nEp4dmkvVS1gHH6DgjiLYtz47QLvg3/1Q/lvyGYZAbSlNS/wWVVkK0JytkNwOLnBjRO/HCgnXD5v7e3wI0kFvPZLsV1u43aTtSugW2YLwtDU3nK9cUOtzhWWf1OaCe9Y0C/1bXWXzCGHa2tD4kc4F5HNaXTL2txmQvxp+BozU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Wa719teX; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bLgHkbkk"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Wa719teX"
 Received: by linux.microsoft.com (Postfix, from userid 1052)
-	id 29AAC20B2C92; Fri,  3 May 2024 15:32:32 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 29AAC20B2C92
+	id 6F55C20B2CA1; Fri,  3 May 2024 15:32:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F55C20B2CA1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
 	s=default; t=1714775553;
-	bh=qcfoUW1AGE807w4NVfk1h7IboTHoFwqb0ljSfYgyztA=;
+	bh=5ielKXUdnhytCoyT3XJVEUgvbnqpuqT+0GdH6nmHYZQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bLgHkbkkmEhKDVKy8N40kDPPeo4hDu3bjTjpCN53BsaqiUpyu/ak3JLAdHVo6cY6q
-	 3ClNakHhIbg/nxy4C38D/twopk+s5ilX1o633OdPvxK/MgA9plAhjEWODOEw2PTltW
-	 D/7TxWP46o0aGrDo1z3G6O9wi94ay7UL3PPwpnNg=
+	b=Wa719teXk2a4oIUExjIieiskfBI1IViYsyR7knelaG/GmLj4fY8mYWUVBqreiskGW
+	 EKKu3w4qyyQwZBSow8aGgbrIKZJrOfP1ZjUmM3jgc++vn/hdLw45E/CemYYQJ67I+R
+	 Ok7U7Tikuft07/nLghOM+Svswcki41KN8ZmL15jY=
 From: Fan Wu <wufan@linux.microsoft.com>
 To: corbet@lwn.net,
 	zohar@linux.ibm.com,
@@ -44,9 +44,9 @@ Cc: linux-doc@vger.kernel.org,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Fan Wu <wufan@linux.microsoft.com>
-Subject: [PATCH v18 07/21] security: add new securityfs delete function
-Date: Fri,  3 May 2024 15:32:17 -0700
-Message-Id: <1714775551-22384-8-git-send-email-wufan@linux.microsoft.com>
+Subject: [PATCH v18 12/21] dm: add finalize hook to target_type
+Date: Fri,  3 May 2024 15:32:22 -0700
+Message-Id: <1714775551-22384-13-git-send-email-wufan@linux.microsoft.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
 References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
@@ -56,30 +56,22 @@ List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 
-When deleting a directory in the security file system, the existing
-securityfs_remove requires the directory to be empty, otherwise
-it will do nothing. This leads to a potential risk that the security
-file system might be in an unclean state when the intended deletion
-did not happen.
+This patch adds a target finalize hook.
 
-This commit introduces a new function securityfs_recursive_remove
-to recursively delete a directory without leaving an unclean state.
+The hook is triggered just before activating an inactive table of a
+mapped device. If it returns an error the __bind get cancelled.
 
-Co-developed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+The dm-verity target will use this hook to attach the dm-verity's
+roothash metadata to the block_device struct of the mapped device.
+
 Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
 ---
-v1-v8:
+v1-v10:
   + Not present
 
-v9:
-  + Introduced
-
-v10:
-  + No changes
-
 v11:
-  + Fix code style issues
+  + Introduced
 
 v12:
   + No changes
@@ -88,7 +80,7 @@ v13:
   + No changes
 
 v14:
-  + No changes
+  + Add documentation
 
 v15:
   + No changes
@@ -102,58 +94,60 @@ v17:
 v18:
   + No changes
 ---
- include/linux/security.h |  1 +
- security/inode.c         | 25 +++++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
+ drivers/md/dm.c               | 12 ++++++++++++
+ include/linux/device-mapper.h |  9 +++++++++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 14fff542f2e3..f35af7b6cfba 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2089,6 +2089,7 @@ struct dentry *securityfs_create_symlink(const char *name,
- 					 const char *target,
- 					 const struct inode_operations *iops);
- extern void securityfs_remove(struct dentry *dentry);
-+extern void securityfs_recursive_remove(struct dentry *dentry);
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 7d0746b37c8e..a748c3735156 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2276,6 +2276,18 @@ static struct dm_table *__bind(struct mapped_device *md, struct dm_table *t,
+ 		goto out;
+ 	}
  
- #else /* CONFIG_SECURITYFS */
- 
-diff --git a/security/inode.c b/security/inode.c
-index 9e7cde913667..f21847badb7d 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -313,6 +313,31 @@ void securityfs_remove(struct dentry *dentry)
- }
- EXPORT_SYMBOL_GPL(securityfs_remove);
- 
-+static void remove_one(struct dentry *victim)
-+{
-+	simple_release_fs(&mount, &mount_count);
-+}
++	for (unsigned int i = 0; i < t->num_targets; i++) {
++		struct dm_target *ti = dm_table_get_target(t, i);
 +
-+/**
-+ * securityfs_recursive_remove - recursively removes a file or directory
-+ *
-+ * @dentry: a pointer to a the dentry of the file or directory to be removed.
-+ *
-+ * This function recursively removes a file or directory in securityfs that was
-+ * previously created with a call to another securityfs function (like
-+ * securityfs_create_file() or variants thereof.)
++		if (ti->type->finalize) {
++			ret = ti->type->finalize(ti);
++			if (ret) {
++				old_map = ERR_PTR(ret);
++				goto out;
++			}
++		}
++	}
++
+ 	old_map = rcu_dereference_protected(md->map, lockdep_is_held(&md->suspend_lock));
+ 	rcu_assign_pointer(md->map, (void *)t);
+ 	md->immutable_target_type = dm_table_get_immutable_target_type(t);
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 82b2195efaca..ad368904b1d5 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -160,6 +160,14 @@ typedef int (*dm_dax_zero_page_range_fn)(struct dm_target *ti, pgoff_t pgoff,
+  */
+ typedef size_t (*dm_dax_recovery_write_fn)(struct dm_target *ti, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i);
++/*
++ * This hook allows DM targets in an inactive table to complete their setup
++ * before the table is made active.
++ * Returns:
++ *  < 0 : error
++ *  = 0 : success
 + */
-+void securityfs_recursive_remove(struct dentry *dentry)
-+{
-+	if (IS_ERR_OR_NULL(dentry))
-+		return;
-+
-+	simple_pin_fs(&fs_type, &mount, &mount_count);
-+	simple_recursive_removal(dentry, remove_one);
-+	simple_release_fs(&mount, &mount_count);
-+}
-+EXPORT_SYMBOL_GPL(securityfs_recursive_remove);
-+
- #ifdef CONFIG_SECURITY
- static struct dentry *lsm_dentry;
- static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
++typedef int (*dm_finalize_fn) (struct dm_target *target);
+ 
+ void dm_error(const char *message);
+ 
+@@ -210,6 +218,7 @@ struct target_type {
+ 	dm_dax_direct_access_fn direct_access;
+ 	dm_dax_zero_page_range_fn dax_zero_page_range;
+ 	dm_dax_recovery_write_fn dax_recovery_write;
++	dm_finalize_fn finalize;
+ 
+ 	/* For internal device-mapper use. */
+ 	struct list_head list;
 -- 
 2.44.0
 
