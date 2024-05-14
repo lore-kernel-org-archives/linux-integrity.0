@@ -1,117 +1,109 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746F91E487
-	for <linux-integrity@vger.kernel.org>; Tue, 14 May 2024 18:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A677F18131D
+	for <linux-integrity@vger.kernel.org>; Tue, 14 May 2024 19:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715710999; cv=none; b=T1RW77GEbaRB4AgDkaUmPTaKrXKDGMfIgejXYPxpp112zxyOIO26XmnE5kaOhWrxMtLYK+Mw2aOe3H9rGoI7qM7WeEoqdAZtxsm5z+0wekgnBYBYepN1aggQqNy2HLHSJPw85kirpe07S2aRX+pfaonuaWffBjOgV9PtWR1JnME=
+	t=1715716224; cv=none; b=nDp3tbYpwXbEbvKKVXIgheoHCXKoTeUsM3Hr4PI8rU0tM4L47qRFrQDwg3fsyhR6fnkijRnNeHP815gD+XProIrJRjdLx8xtYw4ark/0iOVOYqwoLMwj/avEIQm/o0mHnFR1N0V4gTcpeFNc/eSvFCkWKEshmxESE57Lq7NlL/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715710999; c=relaxed/simple;
-	bh=WxtBOBX4ox7lKdW3HAHc3dbiWXTmZhs0SoavfJNLdsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YvNL1J2uDHHsM0HKEJpVZzZw0bCyb9S85iRgrYSfRAXEGwfOqNLAEyr7qpVr5Drs9syeESAqDA3XWe5eHg7ca3XQeApuadwV0RA9LYtA48hR61VywXbn/sH1scI5q5XxwbDUPRwRLn5wa5uum/IVyYHacM7Iv/K5GtmGPDkj5NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UEcth81K; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1715716224; c=relaxed/simple;
+	bh=xCGobSiEZZKVIGvtlb17VkXzrJav2cpynpYO5pxHsTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Fs2czrxxGI0radmSkmESPLj67Hh75ERXhVQ7k38fb0cFG6SsiNcVM3ELCOmz2LrB1H+K2FjysqXKQdDwrNpvlOBKF3PBSi7aR5DfjRB1jNcHpW+7elPckJPQAqfilsHlzIlpdXe7RKzh+bOgHk3eAAxICVu1dETHb+DAQQd8V1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JF+Zbwi4; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UEcth81K"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EHvWu2000854;
-	Tue, 14 May 2024 18:23:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=tuckmyljxvprMirqAf2PupBbauQldPLsj0z4AMTtLlA=;
- b=UEcth81KUj/oTZVa8w3sZwzHD95srD1MNAjLZ6HpUQCSIQt6klW8eQerUk/+vnoPTtix
- 1mq3lP0r0gxzhWXZ2n++GWZCxbxcChoED2FjYLN04A2A+qmrrxZJufGE/RpCXTaBkJ3L
- NS9920Y08Ew8OImsfGXaEKjDesTy6laM85oFjHAuDwKAyWNcgOQ/Fb3iSfyGv1Wg3VjJ
- +LPppZ/p2EsA8w+0kxzjq8Z1XNvRIW/Y+cHmpW4uO+qyTz54CKCfWqdOK8Sdkd85RuxO
- c1tOwELNKwAai5D2s/o1GDsrVxxeUQGKuGiqzcBe+/4eqpzW2YqtDAiaqI/EP6ly7FXU Kg== 
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4ct9g1k5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 18:23:07 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EG0Ykm006769;
-	Tue, 14 May 2024 18:23:06 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2mgmeueu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 18:23:06 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EIN3uA27525870
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 18:23:05 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7544A58052;
-	Tue, 14 May 2024 18:23:03 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 22F4A5805A;
-	Tue, 14 May 2024 18:23:03 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 14 May 2024 18:23:03 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils PATCH 1/2] evmctl: Replace OSS_PROVIDER_load with OSSL_PROVIDER_try_load (Ubuntu)
-Date: Tue, 14 May 2024 14:22:59 -0400
-Message-ID: <20240514182300.92440-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240514182300.92440-1-stefanb@linux.ibm.com>
-References: <20240514182300.92440-1-stefanb@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JF+Zbwi4"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-ddda842c399so5911755276.3
+        for <linux-integrity@vger.kernel.org>; Tue, 14 May 2024 12:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715716220; x=1716321020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lkp4I1/EP34xCsXz894jXcfOHu9Xc+3+8P13l0GVrxE=;
+        b=JF+Zbwi4A37UVjOELqyuSxI5XF16PnHoy/clBUi83jiG+YRodmecFW52qZKz4Kq726
+         4PTOrHIBMXKsd7NPB6GCHO6oGJCvxjHHJaMw38WnlU+B/cm4WbJETzVMZ2TafdoTfo4X
+         rBPSV09s7/igRv/0AE1D7RnilAUdFI2LXQQWFeHNyDVUgFRiRFPHAJLU+iEB4N2/widJ
+         cASIqHwqPxifXEwwXws+q0QEDlDblFWXqGYAXJmXfXw3VXV1KCegxMxVhRx0XCksA/sB
+         1VxkK02/WpwjROj2m5sVqBTGjVDYmmzXsDovMQ2t1pd4IrqPTv+jT8xruRy07h+w1pWB
+         IsxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715716220; x=1716321020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lkp4I1/EP34xCsXz894jXcfOHu9Xc+3+8P13l0GVrxE=;
+        b=CDgsQvrwLjqz7i2XwgyBy5GHjK8HPbesytCGW+NawaXUQFLTzZ/Ja36rtSa8o03a49
+         aUVsm7qX8dmST0aJQu9NjUJM4ny21ALc3qc1lRgFbDuefovTd2eKRy+LkXMMJFN39m1l
+         YU/VmyBSvyX8/SlYwSOiViHG5WnRH2dGyAOoY2qHGPvKPSuz2skcJYLa7glbiGwFV2Co
+         lkmT91BfSlywptQiNgnR0Mr1msHwr0bD/ujQCRDJ6BdmVgWcSIoKmVXHL0PEkdz+Y/M6
+         HjPtqqDw5iiY4VQbTGKd/ZUK8GQKfjPd/wRUdG4UIEtoX18d/Yl0NVCeBuFqHUqi5AgI
+         rVhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMvNhFkMzvVFEStSvJdtqjmJcGi5hr2W/xmSDFO9a1vQl8RyRbI4Ih3DdFSR5y6w8MAWzQlRcK/FSXyHWmC8ZGCmhMPr64C2WJL2zEUDca
+X-Gm-Message-State: AOJu0YynOGTuhqIPkZpeCxKNGm2oQb3cOl2QRWQxVmlmZ+KOXu2c5S8Y
+	0Aa5AVi8Y12GEq4qYv8Cb8GcTUHz5U5LGogrwSyRyU9f9/9U9ZIl5RH/4OBB/hCcIb/3VyO5ei1
+	GtZ6lkjXAvMrkUrODn7Rbeew3oxvCbmsGMlud
+X-Google-Smtp-Source: AGHT+IFWIy5UA2F/+z955H9aT1kkILcAstR0rQ1Z6k7ELYYSk3poMncJ+M812qPYw6M0u0TMB7AFkJo/BviRvM2KHkE=
+X-Received: by 2002:a05:6902:218f:b0:dee:8da8:aeb7 with SMTP id
+ 3f1490d57ef6-dee8da8b092mr8719461276.25.1715716220678; Tue, 14 May 2024
+ 12:50:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: TXEsS0y2OauLIgHzAlo7bSiLSyja2CQe
-X-Proofpoint-ORIG-GUID: TXEsS0y2OauLIgHzAlo7bSiLSyja2CQe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_10,2024-05-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- phishscore=0 clxscore=1015 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 mlxscore=0 mlxlogscore=907 spamscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405140130
+References: <1714775551-22384-1-git-send-email-wufan@linux.microsoft.com>
+ <1714775551-22384-21-git-send-email-wufan@linux.microsoft.com>
+ <ZjXsBjAFs-qp9xY4@archie.me> <ab7054cd-affd-47c3-bd98-2cf47d6a6376@linux.microsoft.com>
+In-Reply-To: <ab7054cd-affd-47c3-bd98-2cf47d6a6376@linux.microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 14 May 2024 15:50:09 -0400
+Message-ID: <CAHC9VhQewDL4cWXSiAgzvrHa8N5rd6TbhSCM3jRp29=Kmr3m-Q@mail.gmail.com>
+Subject: Re: [PATCH v18 20/21] Documentation: add ipe documentation
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, corbet@lwn.net, zohar@linux.ibm.com, 
+	jmorris@namei.org, serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org, 
+	axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org, eparis@redhat.com, 
+	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Deven Bowers <deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To avoid the following type of issue replace OSSL_PROVIDER_load with
-OSSL_PROVIDER_try_load():
+On Sat, May 4, 2024 at 4:13=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> w=
+rote:
+> On 5/4/2024 1:04 AM, Bagas Sanjaya wrote:
+> > On Fri, May 03, 2024 at 03:32:30PM -0700, Fan Wu wrote:
+> >> +IPE does not mitigate threats arising from malicious but authorized
+> >> +developers (with access to a signing certificate), or compromised
+> >> +developer tools used by them (i.e. return-oriented programming attack=
+s).
+> >> +Additionally, IPE draws hard security boundary between userspace and
+> >> +kernelspace. As a result, IPE does not provide any protections agains=
+t a
+> >> +kernel level exploit, and a kernel-level exploit can disable or tampe=
+r
+> >> +with IPE's protections.
+> >
+> > So how to mitigate kernel-level exploits then?
+>
+> One possible way is to use hypervisor to protect the kernel integrity.
+> https://github.com/heki-linux is one project on this direction. Perhaps
+> I should also add this link to the doc.
 
-+ evmctl  --engine gost ima_sign --keyid=aabbccdd --provider pkcs11 \
-  --sigfile --hashalgo sha256 \
-  --key pkcs11:model=SoftHSM%20v2;manufacturer=SoftHSM%20project;... \
-  --xattr-user pkcs11test
+I wouldn't spend a lot of time on kernel exploits in the IPE
+documentation as it is out of scope for IPE.  In face, I would say
+just that in the last sentence in the paragraph above:
 
-evmctl ima_sign failed with (1)
-  EVP_DigestInit() failed
-  openssl: error:0308010C:digital envelope routines::unsupported
-  openssl: error:03000086:digital envelope routines::initialization error
+"As a result, kernel-level exploits are considered outside the scope
+of IPE and mitigation is left to other mechanisms."
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- src/evmctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(or something similar)
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index ffe2fc9..3ebda6f 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -3049,7 +3049,7 @@ static char *get_password(void)
- #if CONFIG_IMA_EVM_PROVIDER
- static OSSL_PROVIDER *setup_provider(const char *name)
- {
--	OSSL_PROVIDER *p = OSSL_PROVIDER_load(NULL, name);
-+	OSSL_PROVIDER *p = OSSL_PROVIDER_try_load(NULL, name, 1);
- 
- 	if (!p) {
- 		log_err("provider %s isn't available\n", optarg);
--- 
-2.45.0
-
+--=20
+paul-moore.com
