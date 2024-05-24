@@ -1,186 +1,304 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C257886262;
-	Fri, 24 May 2024 14:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321B185260;
+	Fri, 24 May 2024 20:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716560941; cv=none; b=hcATCuRX2zfK62jGAW7K9/PYTnVv7dlzG416v0jBIAQ8AarlOFrgUumJiuZkERawruMSaPc9ojAN7rlBsA850NA8PPoZwm12/2qXE5POqAO5dew45LHCZ0JhTM0dC4YQ2SnJlr4f+fc2rX3W2O8kQjijvVybHtcyStnM/LVqhEI=
+	t=1716583618; cv=none; b=igsE5oH5mUQuF/cy1jiEvji2KJx1CM25Z/tTavPBP6kad5BnyGXssqUDL/WnTDT62KCj3SilE4TP4f1sgVq8wTgEk0FSnQg52BPtYgDIdCoyi7Zeum1TI2Wr/4WzrN7smcHZsNgSVld9njwjFxdzLM9YJ2S0h4Yn4UO5rq3nJFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716560941; c=relaxed/simple;
-	bh=qP+QIHUAqIQ+G9J6+1L30GluLKN2YZ2B28I2YlJfJPA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=c/rCghdJi9SBjnDCfTIN3+kVqTFnZWdzsbduYuj8qgra+3ocK0jU43rGwtghsny0lJbeVpkyAB+/KUaKS2koX5VLOm0G9W64hNIbEayhYdsQJ8bSCHl7q85i51Q4I1/guw+sCEX+bGd+gpEF91J7uf/YdYJst9gDQiEg5k5h4Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4OE4A8n; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716583618; c=relaxed/simple;
+	bh=Ej3NXiS1J8Asr2mmuc/ZfSdt8aoKbwls798/+3mDHVk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=FM/8eUt91iX1t64q2xmIygOy5rSz0U6k14p7wKBACT7KszbxTHB3lWAGr1CTqCu/i833tEz6/lqO9tTogkr6fQomtKXcy/aR/sUZ4725KJVa/B5DUimPnlQO7i+1jnE8PrNC5za1Sl9DTqoQI/SKc2Yq+xeGjAHj+emAGt0zXeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bw68c8wH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4OE4A8n"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC43C2BBFC;
-	Fri, 24 May 2024 14:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716560941;
-	bh=qP+QIHUAqIQ+G9J6+1L30GluLKN2YZ2B28I2YlJfJPA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=m4OE4A8nRaO09kWJZwvZiLIE/zinWbpZM8cYHPz7ay1f+vehq49MamI4nc7/Q0Bfm
-	 PCEwBkuSdPnfrtltX7opc/qrXN+l1pLLv6y0aQp2os0i43eh1pjKKoVgHPnIAETBuw
-	 +c9w16ph8NFbTSXBZWMJYELOQjoCg8I5mA7WruEF1dCnznEFtPZc97npfSUZJIGsxy
-	 5twLgM0GJ5SDX6qh589cOTu/ZZsTfh9VODHbvi7ZP4R1igBd3fslp98kQwMu9jfAag
-	 9TxDG5z7daKn7tMLNZBzaZNnjGwui39IQcWoz5dlUULaG89VAPTJQjgOf8OHDvrdhc
-	 nlDqHhVdRWpgw==
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bw68c8wH"
+Received: by linux.microsoft.com (Postfix, from userid 1052)
+	id 4C91420B9264; Fri, 24 May 2024 13:46:51 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4C91420B9264
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1716583611;
+	bh=RTkFokh1m1xRTu3Dxcu60JLfdY+F9a8lStIHfNz4qaM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bw68c8wHo27zkg0km7VVZIAvKxIGAaCHomv+sG4NKrELqQ7YxIlj1yUwsHJDVnpBx
+	 oAh+dbVj1xyrfyuCYFtuU2EjBgxsoNAYvFGd3rYCEPyxtcUsf20VQ0v8jLx3g8a6gz
+	 gqadOrjK9NBsRlU/fCfxHU8Nj6Vv930gj9/jHKvw=
+From: Fan Wu <wufan@linux.microsoft.com>
+To: corbet@lwn.net,
+	zohar@linux.ibm.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	tytso@mit.edu,
+	ebiggers@kernel.org,
+	axboe@kernel.dk,
+	agk@redhat.com,
+	snitzer@kernel.org,
+	mpatocka@redhat.com,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: [PATCH v19 03/20] ipe: add evaluation loop
+Date: Fri, 24 May 2024 13:46:32 -0700
+Message-Id: <1716583609-21790-4-git-send-email-wufan@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
+References: <1716583609-21790-1-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 24 May 2024 17:28:58 +0300
-Message-Id: <D1HY2GM17A5X.2TPBRF5Q7DI90@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "David Howells" <dhowells@redhat.com>
-Subject: Re: [PATCH 1/3] lib/oid_registry: add ability to ASN.1 encode OIDs
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240524125955.20739-1-James.Bottomley@HansenPartnership.com>
- <20240524125955.20739-2-James.Bottomley@HansenPartnership.com>
- <D1HWWX4G4ZOO.2UBZQ3L4225UM@kernel.org>
- <7f37bebce37c4bb3b91899629b458762cd34d040.camel@HansenPartnership.com>
- <D1HY0TSQHEZB.3AURD2JXPK0L0@kernel.org>
-In-Reply-To: <D1HY0TSQHEZB.3AURD2JXPK0L0@kernel.org>
 
-On Fri May 24, 2024 at 5:26 PM EEST, Jarkko Sakkinen wrote:
-> On Fri May 24, 2024 at 5:02 PM EEST, James Bottomley wrote:
-> > On Fri, 2024-05-24 at 16:34 +0300, Jarkko Sakkinen wrote:
-> > > On Fri May 24, 2024 at 3:59 PM EEST, James Bottomley wrote:
-> > [...]
-> > > > diff --git a/include/linux/oid_registry.h
-> > > > b/include/linux/oid_registry.h
-> > > > index 51421fdbb0ba..87a6bcb2f5c0 100644
-> > > > --- a/include/linux/oid_registry.h
-> > > > +++ b/include/linux/oid_registry.h
-> > > > @@ -151,5 +151,6 @@ extern enum OID look_up_OID(const void *data,
-> > > > size_t datasize);
-> > > > =C2=A0extern int parse_OID(const void *data, size_t datasize, enum =
-OID
-> > > > *oid);
-> > > > =C2=A0extern int sprint_oid(const void *, size_t, char *, size_t);
-> > > > =C2=A0extern int sprint_OID(enum OID, char *, size_t);
-> > > > +extern ssize_t encode_OID(enum OID, u8 *, size_t);
-> > > > =C2=A0
-> > > > =C2=A0#endif /* _LINUX_OID_REGISTRY_H */
-> > > > diff --git a/lib/oid_registry.c b/lib/oid_registry.c
-> > > > index fe6705cfd780..adbc287875c1 100644
-> > > > --- a/lib/oid_registry.c
-> > > > +++ b/lib/oid_registry.c
-> > > > @@ -12,6 +12,7 @@
-> > > > =C2=A0#include <linux/errno.h>
-> > > > =C2=A0#include <linux/bug.h>
-> > > > =C2=A0#include <linux/asn1.h>
-> > > > +#include <linux/asn1_ber_bytecode.h>
-> > > > =C2=A0#include "oid_registry_data.c"
-> > > > =C2=A0
-> > > > =C2=A0MODULE_DESCRIPTION("OID Registry");
-> > > > @@ -196,3 +197,31 @@ int sprint_OID(enum OID oid, char *buffer,
-> > > > size_t bufsize)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return ret;
-> > > > =C2=A0}
-> > > > =C2=A0EXPORT_SYMBOL_GPL(sprint_OID);
-> > > > +
-> > > > +/**
-> > > > + * encode_OID - embed an ASN.1 encoded OID in the provide buffer
-> > >=20
-> > > nit: "encode_OID()"
-> >
-> > will fix.
-> >
-> > > https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
-> > >=20
-> > > > + * @oid: The OID to encode
-> > > > + * @buffer: The buffer to encode to
-> > > > + * @bufsize: the maximum size of the buffer
-> > >=20
-> > > Align with tab characters.
-> >
-> > The kernel convention is to follow the style in the file, which isn't
-> > currently tab aligned.
-> >
-> > > Hmm just for sake of consistency s/the/The/
-> >
-> > Yes, sure.
-> >
-> > > > + *
-> > > > + * Returns: negative error or encoded size in the buffer.
-> > >=20
-> > > "Return:"
-> > >=20
-> > > > + */
-> > > > +ssize_t encode_OID(enum OID oid, u8 *buffer, size_t bufsize)
-> > > > +{
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int oid_size;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0BUG_ON(oid >=3D OID__NR)=
-;
-> > >=20
-> > > Please use neither WARN's nor BUG_ON's as some sort of assertions.
-> > >=20
-> > > It neither need pr_err() given it has enum type which AFAIK will
-> > > be detected by static analysis, but at most pr_err().
-> >
-> > So this also is the style of the file.  It seems to be because the
-> > internal OID enum is always a fed in constant from kernel code (no user
-> > space exposure) so it's designed to trip in a developer test boot to
-> > alert the developer to bad code.
-> >
-> > >=20
-> > >=20
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0oid_size =3D oid_index[o=
-id + 1] - oid_index[oid];
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (bufsize < oid_size +=
- 2)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return -EINVAL;
-> > >=20
-> > > Hmm... maybe -E2BIG? It would overflow.
-> >
-> > Technically it's an underflow (provided buffer is too small) and we
-> > don't have an E2SMALL error ...
->
-> Let's stick to -EINVAL.
->
-> >
-> > > Here it would make actually sense since it is not enum typed
-> > > parameter to issue pr_err() because it is clearly a programming
-> > > error.
-> >
-> > Sure, I can add that.
-> >
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0buffer[0] =3D _tag(UNIV,=
- PRIM, OID);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0buffer[1] =3D oid_size;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0memcpy(&buffer[2], &oid_=
-data[oid_index[oid]], oid_size);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return oid_size + 2;
-> > > > +}
-> > > > +EXPORT_SYMBOL_GPL(encode_OID);
-> > >=20
-> > > Yep, makes more sense than the old code for sure.
-> >
-> > Thanks,
-> >
-> > James
->
-> Yeah, this is definitely something that can be picked as soon as
-> it is done!
+From: Deven Bowers <deven.desai@linux.microsoft.com>
 
-Yeah, and other series definitely worth of *eventually* taking in
-most likely :-) Don't mean to be impolite but I think it is more
-fair to say that you're ignoring something now, than just ignore
-it.
+Introduce a core evaluation function in IPE that will be triggered by
+various security hooks (e.g., mmap, bprm_check, kexec). This function
+systematically assesses actions against the defined IPE policy, by
+iterating over rules specific to the action being taken. This critical
+addition enables IPE to enforce its security policies effectively,
+ensuring that actions intercepted by these hooks are scrutinized for policy
+compliance before they are allowed to proceed.
 
-BR, Jarkko
+Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+
+---
+v2:
++ Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
+
+v3:
++ Move ipe_load_properties to patch 04.
++ Remove useless 0-initializations Prefix extern variables with ipe_
++ Remove kernel module parameters, as these are exposed through sysctls.
++ Add more prose to the IPE base config option help text.
++ Use GFP_KERNEL for audit_log_start.
++ Remove unnecessary caching system.
++ Remove comments from headers
++ Use rcu_access_pointer for rcu-pointer null check
++ Remove usage of reqprot; use prot only.
++Move policy load and activation audit event to 03/12
+
+v4:
++ Remove sysctls in favor of securityfs nodes
++ Re-add kernel module parameters, as these are now exposed through securityfs.
++ Refactor property audit loop to a separate function.
+
+v5:
++ fix minor grammatical errors
++ do not group rule by curly-brace in audit record,
++ reconstruct the exact rule.
+
+v6:
++ No changes
+
+v7:
++ Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
++ Propagating changes to support the new ipe_context structure in the evaluation loop.
+
+v8:
++ Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+
+v9:
++ Remove ipe_context related code and simplify the evaluation loop.
+
+v10:
++ Split eval part and boot_verified part
+
+v11:
++ Fix code style issues
+
+v12:
++ Correct an rcu_read_unlock usage
++ Add a WARN to unknown op during evaluation
+
+v13:
++ No changes
+
+v14:
++ No changes
+
+v15:
++ No changes
+
+v16:
++ No changes
+
+v17:
++ Add years to license header
++ Fix code and documentation style issues
+
+v18:
++ No changes
+
+v19:
++ No changes
+---
+ security/ipe/Makefile |   1 +
+ security/ipe/eval.c   | 102 ++++++++++++++++++++++++++++++++++++++++++
+ security/ipe/eval.h   |  24 ++++++++++
+ 3 files changed, 127 insertions(+)
+ create mode 100644 security/ipe/eval.c
+ create mode 100644 security/ipe/eval.h
+
+diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+index 3093de1afd3e..4cc17eb92060 100644
+--- a/security/ipe/Makefile
++++ b/security/ipe/Makefile
+@@ -6,6 +6,7 @@
+ #
+ 
+ obj-$(CONFIG_SECURITY_IPE) += \
++	eval.o \
+ 	ipe.o \
+ 	policy.o \
+ 	policy_parser.o \
+diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+new file mode 100644
+index 000000000000..41331afdef7c
+--- /dev/null
++++ b/security/ipe/eval.c
+@@ -0,0 +1,102 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
++ */
++
++#include <linux/fs.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/file.h>
++#include <linux/sched.h>
++#include <linux/rcupdate.h>
++
++#include "ipe.h"
++#include "eval.h"
++#include "policy.h"
++
++struct ipe_policy __rcu *ipe_active_policy;
++
++/**
++ * evaluate_property() - Analyze @ctx against a rule property.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ * @p: Supplies a pointer to the property to be evaluated.
++ *
++ * This is a placeholder. The actual function will be introduced in the
++ * latter commits.
++ *
++ * Return:
++ * * %true	- The current @ctx match the @p
++ * * %false	- The current @ctx doesn't match the @p
++ */
++static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
++			      struct ipe_prop *p)
++{
++	return false;
++}
++
++/**
++ * ipe_evaluate_event() - Analyze @ctx against the current active policy.
++ * @ctx: Supplies a pointer to the context to be evaluated.
++ *
++ * This is the loop where all policy evaluation happens against IPE policy.
++ *
++ * Return:
++ * * %0		- Success
++ * * %-EACCES	- @ctx did not pass evaluation
++ */
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
++{
++	const struct ipe_op_table *rules = NULL;
++	const struct ipe_rule *rule = NULL;
++	struct ipe_policy *pol = NULL;
++	struct ipe_prop *prop = NULL;
++	enum ipe_action_type action;
++	bool match = false;
++
++	rcu_read_lock();
++
++	pol = rcu_dereference(ipe_active_policy);
++	if (!pol) {
++		rcu_read_unlock();
++		return 0;
++	}
++
++	if (ctx->op == IPE_OP_INVALID) {
++		if (pol->parsed->global_default_action == IPE_ACTION_DENY) {
++			rcu_read_unlock();
++			return -EACCES;
++		}
++		if (pol->parsed->global_default_action == IPE_ACTION_INVALID)
++			WARN(1, "no default rule set for unknown op, ALLOW it");
++		rcu_read_unlock();
++		return 0;
++	}
++
++	rules = &pol->parsed->rules[ctx->op];
++
++	list_for_each_entry(rule, &rules->rules, next) {
++		match = true;
++
++		list_for_each_entry(prop, &rule->props, next) {
++			match = evaluate_property(ctx, prop);
++			if (!match)
++				break;
++		}
++
++		if (match)
++			break;
++	}
++
++	if (match)
++		action = rule->action;
++	else if (rules->default_action != IPE_ACTION_INVALID)
++		action = rules->default_action;
++	else
++		action = pol->parsed->global_default_action;
++
++	rcu_read_unlock();
++	if (action == IPE_ACTION_DENY)
++		return -EACCES;
++
++	return 0;
++}
+diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+new file mode 100644
+index 000000000000..b137f2107852
+--- /dev/null
++++ b/security/ipe/eval.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
++ */
++
++#ifndef _IPE_EVAL_H
++#define _IPE_EVAL_H
++
++#include <linux/file.h>
++#include <linux/types.h>
++
++#include "policy.h"
++
++extern struct ipe_policy __rcu *ipe_active_policy;
++
++struct ipe_eval_ctx {
++	enum ipe_op_type op;
++
++	const struct file *file;
++};
++
++int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
++
++#endif /* _IPE_EVAL_H */
+-- 
+2.44.0
+
