@@ -1,111 +1,206 @@
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B51197
-	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1513C39
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718931574; cv=none; b=bQIvaBGWSzZGxrbzwMlSLU3xIGJdtVu9Hsnih1wUpLc17ptQxHCfao+dXkQL4lon6XGIIY/AqVWARdkFoXOarxy28V/1R+dRbv66azwrCsx2EjcUR6VWG2UxUeHW+J6b0UJ1SoHNlEdeq9q+BMdVx66JAwOWnNSKWd+TM8HqoAQ=
+	t=1718931575; cv=none; b=kSeezPHiyKJ9zpdfzCFUg2v/WnKpV7SJnV8VD1Vzutvg93J29GTDB4Tu/VkP6XZkQvE2O4fqakMINAytFXrHGD6zRCq3c161bQTRIamFkuEcomlpyBFUf6FJxIdCt64wtK2sDYogXC4b1FCnnatDVIkbCeoQSus0utQu+guHoTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718931574; c=relaxed/simple;
-	bh=mtnpJpVNOxDSYNzrCPxtmj0JreNV2ScktFRyYfyIbJI=;
+	s=arc-20240116; t=1718931575; c=relaxed/simple;
+	bh=vuD98UR9s/UsH9o4QLJuJCyEYc386Adqfc/rOX83/N0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rpy4R7S6X7af2umjv3rY9fiPtec5v03LGhhCFqIIaHmTszawwQTSSKr2L7TMlr62EJyH1ovIgBMFT+E0nF6qiIcPi5Z/k2qK0hL5oaSMQNWR351cQgKw4vDB787Dm6jj0mNLEKaQdnHhlEtw/Wn5w2QT5Ijklwc+cMh8hQSV/5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ye7fmycd; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=vCikCv3eL38W6e/7uVnY6BEZgEdhJ8mptaE0p9AvAiWiHfoQ4ToJoq3VzwzyzIXvzMvduG4FUfRLqtV4+bWmYHzWfYhQJO4RcPVGdoQb+Wxi3aX326R1yvRyP8AID44Uc+4BheW5S5Ou8vcQVmeiW3bxHHcMJIky2VOzxmrOze8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=l+gdRKjM; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ye7fmycd"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="l+gdRKjM"
 Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L0RKvj025221
-	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:29 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L0pDVr028472
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:30 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:content-transfer-encoding:mime-version; s=pp1; bh=rhQjeN3iYO8Ej
-	PN8Fdjq3snF57dBV/HMi+ZylvaS0MI=; b=Ye7fmycd5ViIsf7QR0G79NBJ5rkGC
-	3PRE6LUbajIyawpi/yjLS70ghz6YzdSKR+3KPZ14io+flvU8sWp0AQBowSR2GZL9
-	hB1zy59lVVlcm0DnT7t+IMz1GLmw7EJF2oP86XE6r1Si7HwMt0qDqx6l/AhuLoKF
-	bdt61DFCYGGqDeKV1iLGr4bbQTfqE7V+AcvtbH+uIDxlLj780C9rmzuhU0SSXApc
-	hR7MQq2/ljxb+iXH7SD/LYf4VBEOJFtqa1lGZvF311PFDOumMNg+S6fOPOPgqZzX
-	+3JdoKg4m8QJPBzezHEFTEAkuORYidbvowduE/lBaCrBEoxnmndoVzxDg==
+	:mime-version:content-transfer-encoding; s=pp1; bh=9BbyOoWrvQMNc
+	rfLWqST6i65BiwMFEo4Co13wIB+/tQ=; b=l+gdRKjMbZjYpyIxLx2k/jgGV7+Nw
+	3oatoLVuPGVD/s62axVmj1MxToPoe6tq8ObqHrCwiTIL6AQz1VQiqotVOD100PIn
+	pMxMeg0zTAMHB2wmYfzaeS3UufgLkoZTYHSi1jmFJIxsTFYfKrDOHuq6+t8HgFUH
+	TOBIdzeC+jUnsmb5jndMtZqZeb2RkFnI4ODEWUuaHGrjLO0TF9U5+Q7gVZrDIu5g
+	+x/DsKkKuzz+XKMHPUdXod1vqP8BZHzXzccq63ayIjkfCOBHxsEVcfPWVC8rQoKO
+	FxNpf6ih4K9sP5P6C9npF4P/bXHv9VEdMq+U6u0Gk3Ql/0lbBFzg3l3Lg==
 Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvwpq86tx-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yvwpq86u0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:29 +0000 (GMT)
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:30 +0000 (GMT)
 Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0DBOV019999
-	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:28 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrquju5a-1
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L0PCZS019980
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:29 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrquju5d-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:28 +0000
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 00:59:29 +0000
 Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0xPBn24314560
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45L0xQ0R23659022
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 00:59:27 GMT
+	Fri, 21 Jun 2024 00:59:28 GMT
 Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 68B2D5805F;
-	Fri, 21 Jun 2024 00:59:25 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 8335458068;
+	Fri, 21 Jun 2024 00:59:26 +0000 (GMT)
 Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0031F58053;
-	Fri, 21 Jun 2024 00:59:25 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 23E2658053;
+	Fri, 21 Jun 2024 00:59:26 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 00:59:24 +0000 (GMT)
+	Fri, 21 Jun 2024 00:59:26 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils][PATCH 1/3] Call OPENSSL_Cleanup before main exit to avoid crashes when engine was used
-Date: Thu, 20 Jun 2024 20:59:10 -0400
-Message-ID: <20240621005912.1365462-2-stefanb@linux.vnet.ibm.com>
+Subject: [ima-evm-utils][PATCH 3/3] CI/CD: Also enable Ubuntu 24.04 (Noble) and run provider tests
+Date: Thu, 20 Jun 2024 20:59:12 -0400
+Message-ID: <20240621005912.1365462-4-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240621005912.1365462-1-stefanb@linux.vnet.ibm.com>
 References: <20240621005912.1365462-1-stefanb@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: FQ7gx84gEdWGHvscyc-TecPH5_jVxmcY
-X-Proofpoint-ORIG-GUID: FQ7gx84gEdWGHvscyc-TecPH5_jVxmcY
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 7OfCa4Vs4KdIrRDxMz3nqeL7ZOOupkcq
+X-Proofpoint-ORIG-GUID: 7OfCa4Vs4KdIrRDxMz3nqeL7ZOOupkcq
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-20_11,2024-06-20_04,2024-05-17_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- suspectscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- mlxlogscore=792 phishscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ mlxlogscore=892 phishscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2406140001 definitions=main-2406210001
 
 From: Stefan Berger <stefanb@linux.ibm.com>
 
-When OPENSSL_Cleanup is called via destructor after main() was left then
-evmctl crashes on Ubuntu 24.04 (Noble). This can be avoided by calling
-OpenSSL_Cleanup explicitly before leaving main().
+With provider support fixed for Ubuntu 24.04 (Noble), enable testing with
+it. To test provider support on Ubuntu, make a copy of the debian.sh
+install file and enable the installation of provider support there.
 
-Link: https://bugs.launchpad.net/ubuntu/+source/softhsm2/+bug/2059340
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- src/evmctl.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .github/workflows/ci.yml |  5 ++++
+ .travis.yml              |  4 +++
+ ci/ubuntu.sh             | 63 +++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 71 insertions(+), 1 deletion(-)
+ mode change 120000 => 100755 ci/ubuntu.sh
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index 3ebda6f..ad75853 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -3347,5 +3347,8 @@ error:
- 	ERR_free_strings();
- 	EVP_cleanup();
- 	BIO_free(NULL);
-+#if OPENSSL_VERSION_NUMBER >= 0x30000000
-+	OPENSSL_cleanup();
-+#endif
- 	return err;
- }
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 5d67c70..772eb34 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -143,6 +143,11 @@ jobs:
+               CC: gcc
+               TSS: ibmtss
+ 
++          - container: "ubuntu:noble"
++            env:
++              CC: gcc
++              TSS: ibmtss
++
+           - container: "ubuntu:xenial"
+             env:
+               CC: clang
+diff --git a/.travis.yml b/.travis.yml
+index af82040..0c78958 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -43,6 +43,10 @@ matrix:
+           env: DISTRO=ubuntu:mantic TSS=ibmtss
+           compiler: gcc
+ 
++        - os: linux
++          env: DISTRO=ubuntu:noble TSS=ibmtss
++          compiler: gcc
++
+         - os: linux
+           env: DISTRO=ubuntu:jammy TSS=ibmtss COMPILE_SSL=openssl-3.0.5
+           compiler: gcc
+diff --git a/ci/ubuntu.sh b/ci/ubuntu.sh
+deleted file mode 120000
+index 0edcb8b..0000000
+--- a/ci/ubuntu.sh
++++ /dev/null
+@@ -1 +0,0 @@
+-debian.sh
+\ No newline at end of file
+diff --git a/ci/ubuntu.sh b/ci/ubuntu.sh
+new file mode 100755
+index 0000000..e1bae43
+--- /dev/null
++++ b/ci/ubuntu.sh
+@@ -0,0 +1,62 @@
++#!/bin/sh
++# Copyright (c) 2020 Petr Vorel <pvorel@suse.cz>
++set -ex
++
++# workaround for Ubuntu impish asking to interactively configure tzdata
++export DEBIAN_FRONTEND="noninteractive"
++
++if [ -z "$CC" ]; then
++	echo "missing \$CC!" >&2
++	exit 1
++fi
++
++# debian.*.sh must be run first
++if [ "$ARCH" ]; then
++	ARCH=":$ARCH"
++	unset CC
++else
++	apt update
++fi
++
++# ibmswtpm2 requires gcc
++[ "$CC" = "gcc" ] || CC="gcc $CC"
++
++case "$TSS" in
++ibmtss) TSS="libtss-dev";;
++tpm2-tss) TSS="libtss2-dev";;
++'') echo "Missing TSS!" >&2; exit 1;;
++*) [ "$TSS" ] && echo "Unsupported TSS: '$TSS'!" >&2; exit 1;;
++esac
++
++apt="apt install -y --no-install-recommends"
++
++$apt \
++	$CC $TSS \
++	asciidoc \
++	attr \
++	autoconf \
++	automake \
++	diffutils \
++	debianutils \
++	docbook-xml \
++	docbook-xsl \
++	e2fsprogs \
++	gzip \
++	libattr1-dev$ARCH \
++	libkeyutils-dev$ARCH \
++	libssl-dev$ARCH \
++	libtool \
++	make \
++	openssl \
++	pkg-config \
++	procps \
++	sudo \
++	util-linux \
++	wget \
++	xsltproc \
++	gawk
++
++$apt xxd || $apt vim-common
++$apt libengine-gost-openssl || true
++$apt softhsm2 gnutls-bin libengine-pkcs11-openssl || true
++$apt softhsm2 gnutls-bin pkcs11-provider || true
 -- 
 2.43.0
 
