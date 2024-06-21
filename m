@@ -1,108 +1,139 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64F516E86B;
-	Fri, 21 Jun 2024 09:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D792197
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 10:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718963461; cv=none; b=l5npDHliebmqw0gBoE7dEbnW+gcwXLgc4IP/QYVoajMqCTD08Rerf+qKRuXLDpywcUcHx/Lx8Ebb7scqi40s7Xuexd1EugaIxKB4LStXsup3rP47LeXQvfFeFiiF1RwZ7ck0Z61J5SnqK9SGH4Q/cjTMhEOckVyE0Wb6/YFw6ks=
+	t=1718965489; cv=none; b=Lwfk4LzgrIza1Qsg6/vIiqlBjwQuTi++kyxdzECglqwsFg8/P7kulViNE1OizzDntuZtzmiwmCMTpWh8nGEHBc73qPThgrq/61+eptpdgypsbwFHscPbzEdWAMIrYWOndBhrSxOrJc7HVHcjiYEjOCPnVf/r7PcvXRuiCGyDl5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718963461; c=relaxed/simple;
-	bh=cvYHNa+hIJJ+RNHkoXRTd4NRdSnicliKkicnX+9ow0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pTkS14PcmXAKj+AyzgKgHxHf0EtkJR3upIMHL7IkCvxT9W1eln0m3he1jp3M5x6T59foiMOS5kgB+aG4W8M8jBp2/QfVFL8gMKpwNuKO0LiDqCxjkmp22UgCBv2OaglO5M7nJCzh3qDlad+Kz5f9PrX3aRHW0z4dhK3E2+qu7so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7Z9Rklj; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718965489; c=relaxed/simple;
+	bh=I4VQ++zq4NUz9W4hU0xxfORLS1Sus7334UibB/61ong=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=KfcsJyMclgwBagxmUIlv/aRIlCxxQtnNJj1TCckKUvP6BJkDP5DldyL9CU7BlGp9cs0+lSZUCXMWRnBYGVWr8y3QQhmruO7xK/JSilUiUdImBQGNmz5oPn20LjOU0veT/0qyibkP3m3VL736Lob4frZFU068IdXICeK5FspsHAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ry2XAr7Q; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7Z9Rklj"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-354b722fe81so1275914f8f.3;
-        Fri, 21 Jun 2024 02:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718963458; x=1719568258; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qMVxhUU5XY6Kva5wDPcO6sBUJYNFOfP/teCdrUpvYVo=;
-        b=X7Z9RkljTy5myI0DGsWtMv0qbv6ksWx3Q9/+UkTZWsAGuAgQ9yM5qAZxqzD31/doPv
-         WduwADlKqE5QhfOYk9p638G4KC2TUIGI9xaxfbrVRw+PgAR9DY75zxBMd44W87T6aIJh
-         wcvvRKh7XlLPz1u/7f/hR21DHa6zkVCQ5kt+VYlaqtGcjlALcxirDGQOABATSilOVLCq
-         4MZhnYmaValj02+byelFxSskvVSynm1PSYlxOsUcA/YI+MJicENJnj8fBXw8N2/dnhMg
-         IbWW8vXP+vhxC3nHCt6ASZyvxAoc+zriGd+AgeS58JEIcq4eOaX2fHeLWGL5ZE2BzCWv
-         Higw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718963458; x=1719568258;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qMVxhUU5XY6Kva5wDPcO6sBUJYNFOfP/teCdrUpvYVo=;
-        b=YBJYAsheIqo6HCshHLMOnK3fwouH4e2gpQXwK2c8PbJgvwa6NA7yxQzwC5Kbls6gCU
-         7x1J7NcxwK/AJ+WyDKz1TDQyLffuhU5keGEHqHAVAW/uzr4PlUZe+e1EdBkM76ZKw8t0
-         K5ZpV2HtZglBn80KaeYUU6s/qPUR9jzUit4T4kb5cicxBe2kFWqym1VlpXicGIPSyp1/
-         CEd7ycr40rcudphs7BCky50MssgUVsTlxPspDy/dAEq+j37cdWwGZorDAXGlMhOOujM6
-         CXLhaU3zqRm95uiOSKQZTOzX+BD6yPbNpMM6B+UIWFEm+nrxWj3uJAJWkWlmJfj4SSMx
-         5P1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUVy2R/H7d6ti7kvyl1G2iNmqa0PAJxAqqSu8smCe/fNlT7ZVydYvw0yGT+KIEpznFY5cYRof+Ch4Yxc+rQ4udocdOxIfzHV4q8v7eoK3cMfuwYN5E6H1VnUZYUico6BZHR6Q4oJ+hmBY1aUCTSSm3Kl4j9AWJ2wXWERzU98VT4GDN383WR
-X-Gm-Message-State: AOJu0YxCXf9KVUJYQsMBk+81qX0hbqGYdrtx20bYUby4IzClQwwlmi7T
-	iGRSUlYYetpVQJlXA53mARKQBe/1JFU4u9XJ3ePwpNA2cPRsc89h
-X-Google-Smtp-Source: AGHT+IFrweBZm7r27ycSwyudMYCNoQgDJxfiX4045xUVNtMnwDt4rTTu0oWIZNtGc5VvXAxtcet+Nw==
-X-Received: by 2002:a5d:4a87:0:b0:360:88a3:e56f with SMTP id ffacd0b85a97d-36319a85e76mr5656363f8f.67.1718963457791;
-        Fri, 21 Jun 2024 02:50:57 -0700 (PDT)
-Received: from vitor-nb.. ([2001:8a0:e622:f700:9e85:710d:d269:42ed])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f85916sm1234604f8f.61.2024.06.21.02.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 02:50:57 -0700 (PDT)
-From: Vitor Soares <ivitro@gmail.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Lukas Wunner <lukas@wunner.de>
-Cc: Vitor Soares <vitor.soares@toradex.com>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ivitro@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v1] tpm_tis_spi: add missing attpm20p SPI device ID entry
-Date: Fri, 21 Jun 2024 10:50:45 +0100
-Message-Id: <20240621095045.1536920-1-ivitro@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ry2XAr7Q"
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LA0E3x023938;
+	Fri, 21 Jun 2024 10:24:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
+	41IeaC/m6JWajMsaWDvrvXVi4Ns2X8Epxg/5o24YIT0=; b=Ry2XAr7QRJgS3QWl
+	1Ewj9yq8alB77jIBw45eJVunan75slKxvEF5VAdiDXPXUSxbFzqduF1AKpgT2SSK
+	hx2nuRXcfetY580U0gRaDIXG8OWPAY+SkUtf/VoLWUOLG+ze6HoZ7Vr5EROyBEX4
+	n/mCWM1NQ8lIe3yrJ6sdnj5NF7l5YHfa9ya3DPdEmR/ljW0GOkvQ1EqZmDxGd5Vf
+	gp6bqt1tj3bgCQkiDuw/YzKWWDmuBCjg56HVwn97rHL2uxZWqI53IB9HoQHGzsTW
+	3sN/WO65LED6wstp+LXLUqLS8nb3TkB+4dqdILo13+Reps3aYJohR6ADXMJAcd5b
+	YGDiBg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yw7by81v2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 10:24:42 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45L9GsaM031899;
+	Fri, 21 Jun 2024 10:24:42 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrsppk9k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 10:24:42 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LAOdUD590422
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 21 Jun 2024 10:24:41 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4F92658045;
+	Fri, 21 Jun 2024 10:24:39 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CD95B58054;
+	Fri, 21 Jun 2024 10:24:38 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.119.207])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Jun 2024 10:24:38 +0000 (GMT)
+Message-ID: <5fc85cd29bc8456bfd1cd47b6dbe38bfbaeb4907.camel@linux.ibm.com>
+Subject: Re: [ima-evm-utils][PATCH 2/3] CI/CD: Disable pkcs11 providers for
+ Debian and AltLinux
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jonathan McDowell <noodles@earth.li>,
+        Stefan Berger
+	 <stefanb@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Date: Fri, 21 Jun 2024 06:24:38 -0400
+In-Reply-To: <ZnVP1nLxm1vhc1l0@earth.li>
+References: <20240621005912.1365462-1-stefanb@linux.vnet.ibm.com>
+	 <20240621005912.1365462-3-stefanb@linux.vnet.ibm.com>
+	 <ZnVP1nLxm1vhc1l0@earth.li>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nzCqWJ2kak7-RmDarI9RMs2gCZww1GAa
+X-Proofpoint-ORIG-GUID: nzCqWJ2kak7-RmDarI9RMs2gCZww1GAa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=861 phishscore=0 priorityscore=1501 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406210077
 
-From: Vitor Soares <vitor.soares@toradex.com>
+On Fri, 2024-06-21 at 11:03 +0100, Jonathan McDowell wrote:
+> On Thu, Jun 20, 2024 at 08:59:11PM -0400, Stefan Berger wrote:
+> > From: Stefan Berger <stefanb@linux.ibm.com>
+> > 
+> > Disable testing provider support on Debian:latest and AltLinux:sisyphus
+> > since both now get stuck while running OpenSSL provider-related tests.
+> > This is most likely due to an update in a dependency (OpenSSL, libp11,
+> > softhsm,  or others).
+> 
+> This seems to disable it for both Debian stable + testing.  Is it
+> actually broken for both?
 
-"atmel,attpm20p" DT compatible is missing its SPI device ID entry, not
-allowing module autoloading and leading to the following message:
+There is no pkcs11-provider package on stable, so the test is skipped.
 
-  "SPI driver tpm_tis_spi has no spi_device_id for atmel,attpm20p"
-
-Based on:
-  commit 7eba41fe8c7b ("tpm_tis_spi: Add missing SPI ID")
-
-Fix this by adding the corresponding "attpm20p" spi_device_id entry.
-
-Fixes: 3c45308c44ed ("tpm_tis_spi: Add compatible string atmel,attpm20p")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
----
- drivers/char/tpm/tpm_tis_spi_main.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/char/tpm/tpm_tis_spi_main.c b/drivers/char/tpm/tpm_tis_spi_main.c
-index c9eca24bbad4..61b42c83ced8 100644
---- a/drivers/char/tpm/tpm_tis_spi_main.c
-+++ b/drivers/char/tpm/tpm_tis_spi_main.c
-@@ -318,6 +318,7 @@ static void tpm_tis_spi_remove(struct spi_device *dev)
- }
- 
- static const struct spi_device_id tpm_tis_spi_id[] = {
-+	{ "attpm20p", (unsigned long)tpm_tis_spi_probe },
- 	{ "st33htpm-spi", (unsigned long)tpm_tis_spi_probe },
- 	{ "slb9670", (unsigned long)tpm_tis_spi_probe },
- 	{ "tpm_tis_spi", (unsigned long)tpm_tis_spi_probe },
--- 
-2.34.1
+> 
+> > On AltLinux the issues is related to a pthread_mutex_lock() down the
+> > C_Login -> C_OpenSession callpath that blocks forever.
+> > 
+> > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > ---
+> >  ci/alt.sh    | 2 +-
+> >  ci/debian.sh | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/ci/alt.sh b/ci/alt.sh
+> > index f86dcec..f1eefbf 100755
+> > --- a/ci/alt.sh
+> > +++ b/ci/alt.sh
+> > @@ -28,4 +28,4 @@ apt-get install -y \
+> >  		xxd \
+> >  	&& control openssl-gost enabled
+> >  
+> > -apt-get install -y pkcs11-provider || true
+> > +# apt-get install -y pkcs11-provider || true
+> > diff --git a/ci/debian.sh b/ci/debian.sh
+> > index e1bae43..34125d4 100755
+> > --- a/ci/debian.sh
+> > +++ b/ci/debian.sh
+> > @@ -59,4 +59,4 @@ $apt \
+> >  $apt xxd || $apt vim-common
+> >  $apt libengine-gost-openssl || true
+> >  $apt softhsm2 gnutls-bin libengine-pkcs11-openssl || true
+> > -$apt softhsm2 gnutls-bin pkcs11-provider || true
+> > +# $apt softhsm2 gnutls-bin pkcs11-provider || true
+> > -- 
+> > 2.43.0
+> 
+> J.
+> 
 
