@@ -1,249 +1,117 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25D615F30F;
-	Fri, 21 Jun 2024 20:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13574374DD
+	for <linux-integrity@vger.kernel.org>; Fri, 21 Jun 2024 20:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719001661; cv=none; b=KwjTxaingAPQ3VKVzcEmb1wM5puDU45x8pIs6ohenKEAVyMIbwOkbhG89kHp77GjySg/fLw/yR0aPnEUG6LkNNzNYhcjYzC1XLzSPF5dQAVwTFIUrv7OKUYCRA3Dic6jbnwIkPDFwOHvLh+S//StClOQcIZTr91WxjL2BEtwenI=
+	t=1719002083; cv=none; b=oY2cAidFbnZNgrjqS1mf9AJDX0MA5S6NvBEh01EK8p0q8cx7BGpjiGhSz2jTb1ZdAuP5lT6tflxDmq1FI+BP1qtUJ/Qw+CTtxAiY2W3KjF3UH60rL7grf0Ql8FBshytwcm7DkgjesTARmtCq/y/eD3wo4DvTW5Lk5yFhkSqhTqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719001661; c=relaxed/simple;
-	bh=K0QZysU1629Ws0/mb6DaaP3/T+9bd+m8dEky9H/JeT8=;
+	s=arc-20240116; t=1719002083; c=relaxed/simple;
+	bh=dl/Q+qnwxcRQyT1ACYnHmDe7mZJSw0E/y0xmJVorrHo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=uUt55ZwTHnQaGuDgPMne3NVtaBp95saSzoN8fAP408yNw8gorB2oXNTgPBGbJH7jkjE/B4SWjIRFIEf0qFGe5noUEm6xCo5q/lfo/fNZTJAvr7Hx8yW7osn9jYg5kHitWnG9bnqZsyM624iomBoj3X78xoYsZ+L9oLySlK8YwsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f1uC/MeS; arc=none smtp.client-ip=148.163.156.1
+	 Content-Type:MIME-Version; b=EowlJnruxJ5Lr5GVzQvrAz+SiLmzhl4hb/uP0qXQoYgQrhVkxsajtPM3mgDE6Yn6lA/PwcS8hSaTGeCH2MLXJqzcHxxBSqqC1ljThHjCjmAjVs6mhfVKsuQCbttFx/QCwiH6ZpEY/iLDF+KlX41VoJMykzvKGG0FvFSQ4CDh7PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Afd3s0/W; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f1uC/MeS"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LKR88t020798;
-	Fri, 21 Jun 2024 20:27:09 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Afd3s0/W"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LKUVuh008167;
+	Fri, 21 Jun 2024 20:34:37 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
 	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
-	v/ZzAE1siODvXHguAt3ifGrf70nhriEjbUc1a8Jzwq0=; b=f1uC/MeSyAaea6JF
-	raI9jhotxCGfD9Zve1CRguweGG8yRqnUl/4dZDV7uv1IbVhIbmYKm3C/QyjAIa1o
-	tVIX/f8jSvjqSWbkTf+vbiemUWffpdZxiTc8HC1rDS2Kzl+tSUKyKFF+Kg+TYxJh
-	gZFn/h4ChsdN5UNo4bgr15eF1kPt+mXJFJt2pYDjxz6Dr7ua/BIwe6q9Y4YR9ubE
-	0j1N29WwpGyhjkCPR6xiCw1s7Je4FQjL/0UzEGVo+lduQoZQrXIc8n4KIKfJHB7c
-	Dso1bSWPy9B1fWNZZdgtM5MEaHVwaHGARATfz4FkYlDcIIwgvx90rleyRwOeItwb
-	/JkFFg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywfy483sh-1
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	ZElm1vn8u6TtGKo5TAK8grmUoyUwj+C4JIeIFChFZhw=; b=Afd3s0/Wi+ufmcDc
+	eyvX+bpx3P4RQVbImO6N7IIc2mQX4Vq7o9oTP8K1kjHPQA8vN8+3TeBe5wrm/cht
+	xn71utOOg855TKRUKYaVxd0uhuYuSH8+fkXxhlEsgkV9BSsZ67G86VSyJCFhmmr7
+	VyJCIoSKIYofxcWOqhVyDtpK2kXn6M8DajJcrxWc0bQ+qCpKq7WVPE0rJlYd9HG9
+	V/a9lDkibtm4J+PW3YOerGX/QfISSI9vJYbM+OZ2eXjGat4Mdn7zOn0l1qSSScNa
+	MVRjvb5ZY6THxgGhV1kxjEUgB06K2rsKZd8GqGcsN8n0E/1B+/OmY42JNU1+2uSZ
+	2QARWA==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywgm4808b-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 20:27:09 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45LKR85F020797;
-	Fri, 21 Jun 2024 20:27:08 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3ywfy483r5-1
+	Fri, 21 Jun 2024 20:34:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45LJAFGZ031347;
+	Fri, 21 Jun 2024 20:34:36 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yvrrq95w9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 20:27:08 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45LJORPR031899;
-	Fri, 21 Jun 2024 20:23:46 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yvrsps3q7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 20:23:46 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LKNhC616974394
+	Fri, 21 Jun 2024 20:34:36 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45LKYYtI19923508
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Jun 2024 20:23:46 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A766758056;
-	Fri, 21 Jun 2024 20:23:43 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C2B25803F;
-	Fri, 21 Jun 2024 20:23:42 +0000 (GMT)
+	Fri, 21 Jun 2024 20:34:36 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 217C158054;
+	Fri, 21 Jun 2024 20:34:34 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 93F4F58052;
+	Fri, 21 Jun 2024 20:34:33 +0000 (GMT)
 Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.41.136])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Jun 2024 20:23:42 +0000 (GMT)
-Message-ID: <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
-Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
- security_audit_rule
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 21 Jun 2024 20:34:33 +0000 (GMT)
+Message-ID: <c7cace8cd944ea83bf93f8db652ead0b07611fe5.camel@linux.ibm.com>
+Subject: Re: [ima-evm-utils][PATCH 2/3] CI/CD: Disable pkcs11 providers for
+ Debian and AltLinux
 From: Mimi Zohar <zohar@linux.ibm.com>
-To: Paul Moore <paul@paul-moore.com>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-        linux-kernel@vger.kernel.org, mic@digikod.net,
-        linux-integrity@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-Date: Fri, 21 Jun 2024 16:23:41 -0400
-In-Reply-To: <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
-References: <20231215221636.105680-1-casey@schaufler-ca.com>
-	 <20231215221636.105680-2-casey@schaufler-ca.com>
-	 <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
-	 <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Date: Fri, 21 Jun 2024 16:34:33 -0400
+In-Reply-To: <ZnVni8XlHevSIfEB@earth.li>
+References: <20240621005912.1365462-1-stefanb@linux.vnet.ibm.com>
+	 <20240621005912.1365462-3-stefanb@linux.vnet.ibm.com>
+	 <ZnVP1nLxm1vhc1l0@earth.li>
+	 <5fc85cd29bc8456bfd1cd47b6dbe38bfbaeb4907.camel@linux.ibm.com>
+	 <ZnVni8XlHevSIfEB@earth.li>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -rCa4i8xTIBqGZcvt7WFOmS400R5NbfX
+X-Proofpoint-ORIG-GUID: -rCa4i8xTIBqGZcvt7WFOmS400R5NbfX
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: tbOBu7IVJSbRsLNFJ_9ruX3sQWtqca8s
-X-Proofpoint-GUID: ol-Mel3agjLg5v6p1Q1qylzGa5vy-XlB
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_12,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 impostorscore=0 clxscore=1015 spamscore=0 mlxscore=0
- adultscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210149
+ definitions=2024-06-21_11,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ clxscore=1015 lowpriorityscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210145
 
-On Fri, 2024-06-21 at 15:07 -0400, Paul Moore wrote:
-> On Fri, Jun 21, 2024 at 12:50 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Fri, Dec 15, 2023 at 5:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > Create real functions for the ima_filter_rule interfaces.
-> > > These replace #defines that obscure the reuse of audit
-> > > interfaces. The new functions are put in security.c because
-> > > they use security module registered hooks that we don't
-> > > want exported.
+On Fri, 2024-06-21 at 12:44 +0100, Jonathan McDowell wrote:
+> On Fri, Jun 21, 2024 at 06:24:38AM -0400, Mimi Zohar wrote:
+> > On Fri, 2024-06-21 at 11:03 +0100, Jonathan McDowell wrote:
+> > > On Thu, Jun 20, 2024 at 08:59:11PM -0400, Stefan Berger wrote:
+> > > > From: Stefan Berger <stefanb@linux.ibm.com>
+> > > > 
+> > > > Disable testing provider support on Debian:latest and AltLinux:sisyphus
+> > > > since both now get stuck while running OpenSSL provider-related tests.
+> > > > This is most likely due to an update in a dependency (OpenSSL, libp11,
+> > > > softhsm,  or others).
 > > > 
-> > > Acked-by: Paul Moore <paul@paul-moore.com>
-> > > Reviewed-by: John Johansen <john.johansen@canonical.com>
-> > > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > To: Mimi Zohar <zohar@linux.ibm.com>
-> > > Cc: linux-integrity@vger.kernel.org
-> > > ---
-> > >  include/linux/security.h     | 24 ++++++++++++++++++++++++
-> > >  security/integrity/ima/ima.h | 26 --------------------------
-> > >  security/security.c          | 21 +++++++++++++++++++++
-> > >  3 files changed, 45 insertions(+), 26 deletions(-)
+> > > This seems to disable it for both Debian stable + testing.  Is it
+> > > actually broken for both?
 > > 
-> > Mimi, Roberto, are you both okay if I merge this into the lsm/dev
-> > branch?  The #define approach taken with the ima_filter_rule_XXX
-> > macros likely contributed to the recent problem where the build
-> > problem caused by the new gfp_t parameter was missed during review;
-> > I'd like to get this into an upstream tree independent of the larger
-> > stacking effort as I believe it has standalone value.
+> > There is no pkcs11-provider package on stable, so the test is skipped.
 > 
-> ... and I just realized neither Mimi or Roberto were directly CC'd on
-> that last email, oops.  Fixed.
+> Ah, right. I can't actually figure out what tree Stefan's patch is
+> against to try myself. https://git.code.sf.net/p/linux-ima/ima-evm-utils
+> does not have the commented out softhsm2 / pkcs11-provider apt line.
+> Where should I be looking?
 
-Paul, I do see things posted on the linux-integrity mailing list pretty quickly.
-Unfortunately, something came up midday and I'm just seeing this now.  As for
-Roberto, it's probably a time zone issue.
-
-The patch looks ok, but I haven't had a chance to apply or test it.  I'll look
-at it over the weekend and get back to you.
+Upstream should be based on the next-testing branch of 
+https://github.com/linux-integrity/ima-evm-utils.git.
 
 Mimi
-
-> 
-> > > diff --git a/include/linux/security.h b/include/linux/security.h
-> > > index 750130a7b9dd..4790508818ee 100644
-> > > --- a/include/linux/security.h
-> > > +++ b/include/linux/security.h
-> > > @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *lsmrule)
-> > >  #endif /* CONFIG_SECURITY */
-> > >  #endif /* CONFIG_AUDIT */
-> > > 
-> > > +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
-> > > +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
-> > > +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
-> > > +void ima_filter_rule_free(void *lsmrule);
-> > > +
-> > > +#else
-> > > +
-> > > +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
-> > > +                                          void **lsmrule)
-> > > +{
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
-> > > +                                           void *lsmrule)
-> > > +{
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static inline void ima_filter_rule_free(void *lsmrule)
-> > > +{ }
-> > > +
-> > > +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
-> > > +
-> > >  #ifdef CONFIG_SECURITYFS
-> > > 
-> > >  extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
-> > > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> > > index c29db699c996..560d6104de72 100644
-> > > --- a/security/integrity/ima/ima.h
-> > > +++ b/security/integrity/ima/ima.h
-> > > @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
-> > >  }
-> > >  #endif /* CONFIG_IMA_APPRAISE_MODSIG */
-> > > 
-> > > -/* LSM based policy rules require audit */
-> > > -#ifdef CONFIG_IMA_LSM_RULES
-> > > -
-> > > -#define ima_filter_rule_init security_audit_rule_init
-> > > -#define ima_filter_rule_free security_audit_rule_free
-> > > -#define ima_filter_rule_match security_audit_rule_match
-> > > -
-> > > -#else
-> > > -
-> > > -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
-> > > -                                      void **lsmrule)
-> > > -{
-> > > -       return -EINVAL;
-> > > -}
-> > > -
-> > > -static inline void ima_filter_rule_free(void *lsmrule)
-> > > -{
-> > > -}
-> > > -
-> > > -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
-> > > -                                       void *lsmrule)
-> > > -{
-> > > -       return -EINVAL;
-> > > -}
-> > > -#endif /* CONFIG_IMA_LSM_RULES */
-> > > -
-> > >  #ifdef CONFIG_IMA_READ_POLICY
-> > >  #define        POLICY_FILE_FLAGS       (S_IWUSR | S_IRUSR)
-> > >  #else
-> > > diff --git a/security/security.c b/security/security.c
-> > > index d7b15ea67c3f..8e5379a76369 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
-> > >  }
-> > >  #endif /* CONFIG_AUDIT */
-> > > 
-> > > +#ifdef CONFIG_IMA_LSM_RULES
-> > > +/*
-> > > + * The integrity subsystem uses the same hooks as
-> > > + * the audit subsystem.
-> > > + */
-> > > +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
-> > > +{
-> > > +       return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
-> > > +}
-> > > +
-> > > +void ima_filter_rule_free(void *lsmrule)
-> > > +{
-> > > +       call_void_hook(audit_rule_free, lsmrule);
-> > > +}
-> > > +
-> > > +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
-> > > +{
-> > > +       return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
-> > > +}
-> > > +#endif /* CONFIG_IMA_LSM_RULES */
-> > > +
-> > >  #ifdef CONFIG_BPF_SYSCALL
-> > >  /**
-> > >   * security_bpf() - Check if the bpf syscall operation is allowed
-> > > --
-> > > 2.41.0
 
