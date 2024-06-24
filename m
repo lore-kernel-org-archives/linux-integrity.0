@@ -1,175 +1,117 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AB81A2FA0
-	for <linux-integrity@vger.kernel.org>; Mon, 24 Jun 2024 22:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BF9135A46
+	for <linux-integrity@vger.kernel.org>; Mon, 24 Jun 2024 22:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719266532; cv=none; b=pJYIWHkVqYoiNHer2XGY6KTfKfpIcjh3LhKkgWvijD00xU4mDma4QxkE+cLGTiBTxpW0AZk4eFSca/iRrrjeNwY187fNUQVaj+Oc2sClVysM5+5AALzFIHEKL5M0nppuWYBFhOp8v1/idx9oMPaXF0a9Hc3xw4CUPA9xA5tu95Q=
+	t=1719266602; cv=none; b=N1AV3g4Xj/fWake6uk6MgNgPJ6Qqbe9xYgwiRIKBeQ8yzre0I22ErgDfrMTI3YxOjzkAOqMH+zuBCenadRNtlcrepJ01Fr2MJAM5eiXYSXGyP7fCXRQOI+o6CnSXwVhDVOjgQ1M/FeJPg/IEvbCQxDh30rr3kyFIQzloEzkDQbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719266532; c=relaxed/simple;
-	bh=ayc7jGLvco6oRXy8QnVQZ7tD+UavLJsJJYwQxNs9OH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qe1qGVRHV+jsyTnJGNwLpTVm/0PtgmvflT8ImYuAmI8HOhOAxksanDA9ivTqoN9mNA9ejdXjrBBPI/503rctoaaMkFhLIUVsZ6is2EXB9vGTq7RR5nxlCanL+qjR386YU1AS/UIIgiaUx79ionJonZUQTwivqik37bwDSYuTv6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n0jcjb5C; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+	s=arc-20240116; t=1719266602; c=relaxed/simple;
+	bh=yH8MfUsxyrSONQCCxY9KuK40EJoit1iS7xUJ625+yHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIAtnzX/oNHCCVOW1YlGvGLCxJUb6VPevfRN7D1VIZEtXTN+G5mWEYfXulB7wkq7iLPLQ/IJocAmVzXAs5n92Zc1IC/xGdcnoDzrIU2ID+toDXI92pYWkwi8VPk3S1afXF/pMSIt988FQmphxYdXu4/kVE/0Islx81lTh9Ony9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XGql1k/o; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n0jcjb5C"
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OM016X002631;
-	Mon, 24 Jun 2024 22:02:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=2ZpN4c7u1hHKq
-	4DW78E+Tc3IL80tS0d2TCNKnshk8Zc=; b=n0jcjb5C5UUzLdWP/6gmXN3nRVtlM
-	5eAQc6TyHEUwTKIYnprUNXQZ5CGW4qB5RBMWKDERaMvpkc/kPhz0vMJKubThCXtm
-	Ya6uYRqa7xU7VzKyS36mHkc2/tKmab24prXQWeQdJ6yFbFNXzFXoZm1div/OB+fC
-	H8zcYeVuVPxdoUHWd0NyGrRyhb2wgVxbW+yWymDnnhpsu97bM0gZQ728wZv1r98x
-	hHXdgZWHAuhX1YDt9vyD11OTLFL8FbJnkNoQWRuTzTq4NzmVLnvtzsOpI0gNxzxX
-	8oKhvjfcxtATjo+go6kgbSyoCyfw39Y+DBy1pgc2HnC2dhZsSRQ97FUNQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyh6b0077-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 22:02:05 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OIUM6j018115;
-	Mon, 24 Jun 2024 22:02:05 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yx8xu3a91-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 22:02:05 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OM21kh18612814
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Jun 2024 22:02:03 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5A10458064;
-	Mon, 24 Jun 2024 22:02:01 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DD35758066;
-	Mon, 24 Jun 2024 22:02:00 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 22:02:00 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.vnet.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, noodles@earth.li,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils][PATCH v2 3/4] CI/CD: Prepare Ubuntu 24.04 (Noble) to run provider tests
-Date: Mon, 24 Jun 2024 18:01:56 -0400
-Message-ID: <20240624220157.2248556-4-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240624220157.2248556-1-stefanb@linux.vnet.ibm.com>
-References: <20240624220157.2248556-1-stefanb@linux.vnet.ibm.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XGql1k/o"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e026a2238d8so4776006276.0
+        for <linux-integrity@vger.kernel.org>; Mon, 24 Jun 2024 15:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719266599; x=1719871399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=52bKNmTPMX1ld5a7SIGDY7nHZbkLXq2rSTU0Z66Dx80=;
+        b=XGql1k/ooTfR7P9hrEG0198RrU7si26Qf2OhTlOZA9tTb/i0jbkTdnshvkn7Dp+cwX
+         ZraAKuEDk/LqUGYo4C+aw0CRegziNRns9JQjoA8genXXTxzpR/TzXD/s9ilfGn9Yy7GK
+         qJxPwuuruw4mtiql9F6VVp95RFmdHVYj6kodrAWMVHiuqdJzZrKwdfrQTdprKmMLNg7d
+         o6Qrssqep86q25ZQxaYeq+hRREzWXNRx54idMFb2Ds/6/xnCbzwV2wuQOGozBZfqtnhD
+         MjLZtuUuz0rZEOHwnqR7YARy+s/0TIci0a7rC8TElLnoHmxDNwAFsISiuV9cgh1epRc4
+         tgOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719266599; x=1719871399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=52bKNmTPMX1ld5a7SIGDY7nHZbkLXq2rSTU0Z66Dx80=;
+        b=mUjARnDgZFygSvXVIL3F321A9dZuC6GCiHQdieA4wT8oFzkvDuC0Hm+sapFwWjQa1W
+         VcB3kgAAelXGvdUH6mFuxpAfwptTjEqs683iYZHqKOGuuoCIUrthKEu0hYJu4Q1VuKhG
+         lCss/ua3z/IITHbb6xKXeMomQUKsW9DuO3g6GmafP1+d3vHToCKwAeDRbXzFzcjLvo3v
+         mUx0mpYgKfUbXt8hP4+yQWG53+5wfyTkLKqaxC/2O6TWfjchgyhmn/EsOVeupFEGxWHB
+         EE4RM9RtGpTXFHoUF+TmcFwflIdcw8BNUSmIh/Za5E9lOy8REk6Za5JaP1PcMgWRM6k/
+         AO3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhDlBhQVDgRjviQi+cAWLav2j2Leq/D3Nzq5rW7icuxEl8pLi/iI8e+RJh4z/4LSFewxi9kTUjWO0xnkdhvUbviNOxVzdr4UxYzMD3Dna2
+X-Gm-Message-State: AOJu0Yyi414A09tt2mw80ZoOS3zcpCfJS5EkllgQhNQ5D/01WgNou9L5
+	RTCr2vuCjOCL+zF4nAY3PIOUnHKx3hfQGUgFNP+lAt3Oac4wXWNPAhlzELjGPPEtC32LLHW2FsM
+	xOF9aHlFfnlGq+UvsQl3r8PdXyZBQWX11hWSq
+X-Google-Smtp-Source: AGHT+IFUpMslya+1feOYS/lW/ARrTRBvD2ducNjI+59U24eltD8K3QjUiXHcvx0G4S+F77LJwubGJrAIyigNmk0ZP6Q=
+X-Received: by 2002:a25:8709:0:b0:e02:68d4:69e5 with SMTP id
+ 3f1490d57ef6-e0303f2ac79mr5746142276.2.1719266599569; Mon, 24 Jun 2024
+ 15:03:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PvWUeSvKPky1CxXmYSDfkkeV2CokKlTW
-X-Proofpoint-ORIG-GUID: PvWUeSvKPky1CxXmYSDfkkeV2CokKlTW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_18,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=699
- priorityscore=1501 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240175
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+ <20231215221636.105680-2-casey@schaufler-ca.com> <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+ <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+ <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+ <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com> <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
+ <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com> <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
+In-Reply-To: <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 24 Jun 2024 18:03:08 -0400
+Message-ID: <CAHC9VhS8mC0NC=-gbK_xBq2Ry6Be76ARZSg9Zm3y0bsocGEtTQ@mail.gmail.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from security_audit_rule
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, mic@digikod.net, 
+	linux-integrity@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Mon, Jun 24, 2024 at 9:57=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Mon, 2024-06-24 at 10:45 +0200, Roberto Sassu wrote:
+> > My only comment would be that I would not call the new functions with
+> > the ima_ prefix, being those in security.c, which is LSM agnostic, but
+> > I would rather use a name that more resembles the differences, if any.
+>
+> Commit 4af4662fa4a9 ("integrity: IMA policy") originally referred to thes=
+e hooks
+> as security_filter_rule_XXXX, but commit b8867eedcf76 ("ima: Rename inter=
+nal
+> filter rule functions") renamed the function to ima_filter_rule_XXX) to a=
+void
+> security namespace polution.
+>
+> If these were regular security hooks, the hooks would be named:
+> filter_rule_init, filter_rule_free, filter_rule_match with the matching
+> "security" prefix functions. Audit and IMA would then register the hooks.
+>
+> I agree these functions should probably be renamed again, probably to
+> security_ima_filter_rule_XXXX.
 
-With provider support fixed for Ubuntu 24.04 (Noble), prepare for
-enabling testing with it. To test provider support on Ubuntu, make a copy
-of the debian.sh install file and enable the installation of provider
-support there.
+It's funny, my mind saw that the patch was removing those preprocessor
+macros and was so happy it must have shut off, because we already have
+security_XXX functions for these :)
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- ci/ubuntu.sh | 63 +++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 62 insertions(+), 1 deletion(-)
- mode change 120000 => 100755 ci/ubuntu.sh
+See security_audit_rule_init(), security_audit_rule_free(), and
+security_audit_rule_match().
 
-diff --git a/ci/ubuntu.sh b/ci/ubuntu.sh
-deleted file mode 120000
-index 0edcb8b..0000000
---- a/ci/ubuntu.sh
-+++ /dev/null
-@@ -1 +0,0 @@
--debian.sh
-\ No newline at end of file
-diff --git a/ci/ubuntu.sh b/ci/ubuntu.sh
-new file mode 100755
-index 0000000..e1bae43
---- /dev/null
-+++ b/ci/ubuntu.sh
-@@ -0,0 +1,62 @@
-+#!/bin/sh
-+# Copyright (c) 2020 Petr Vorel <pvorel@suse.cz>
-+set -ex
-+
-+# workaround for Ubuntu impish asking to interactively configure tzdata
-+export DEBIAN_FRONTEND="noninteractive"
-+
-+if [ -z "$CC" ]; then
-+	echo "missing \$CC!" >&2
-+	exit 1
-+fi
-+
-+# debian.*.sh must be run first
-+if [ "$ARCH" ]; then
-+	ARCH=":$ARCH"
-+	unset CC
-+else
-+	apt update
-+fi
-+
-+# ibmswtpm2 requires gcc
-+[ "$CC" = "gcc" ] || CC="gcc $CC"
-+
-+case "$TSS" in
-+ibmtss) TSS="libtss-dev";;
-+tpm2-tss) TSS="libtss2-dev";;
-+'') echo "Missing TSS!" >&2; exit 1;;
-+*) [ "$TSS" ] && echo "Unsupported TSS: '$TSS'!" >&2; exit 1;;
-+esac
-+
-+apt="apt install -y --no-install-recommends"
-+
-+$apt \
-+	$CC $TSS \
-+	asciidoc \
-+	attr \
-+	autoconf \
-+	automake \
-+	diffutils \
-+	debianutils \
-+	docbook-xml \
-+	docbook-xsl \
-+	e2fsprogs \
-+	gzip \
-+	libattr1-dev$ARCH \
-+	libkeyutils-dev$ARCH \
-+	libssl-dev$ARCH \
-+	libtool \
-+	make \
-+	openssl \
-+	pkg-config \
-+	procps \
-+	sudo \
-+	util-linux \
-+	wget \
-+	xsltproc \
-+	gawk
-+
-+$apt xxd || $apt vim-common
-+$apt libengine-gost-openssl || true
-+$apt softhsm2 gnutls-bin libengine-pkcs11-openssl || true
-+$apt softhsm2 gnutls-bin pkcs11-provider || true
--- 
-2.45.2
+Casey, do you want to respin this patch to use the existing LSM
+functions?  It looks like you should have Mimi's and Roberto's support
+in this.  Please submit this as a standalone patch as it really is a
+IMA/LSM cleanup.
 
+Thanks all.
+
+--=20
+paul-moore.com
