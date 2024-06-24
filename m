@@ -1,64 +1,65 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A561A2554
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D7219F48B
 	for <linux-integrity@vger.kernel.org>; Mon, 24 Jun 2024 22:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719266531; cv=none; b=RJ2lLnQL+csKe1LUzqWrg7R8/xyYtfidHcVCrZkm8AWWDrfkOZ60dQ1ChMPVRNMUELnUlRMXNjCzHTgS+e8BUt6+lItGejU2pP3TVYv1/Wou1foIy1Wp5T6ig5m5kWVHizxne4uSJRKArdzHjjgh45YNL74+MkogfZ2bNqNXpHw=
+	t=1719266531; cv=none; b=DAcdkx0TgRJVA9wr/kcgp6xgk86A8USMWtLzJfFdruXcJ9mInBmbUISPiEKigwGiCZBOe6XP9SsruA21nn4ax5p9I3d2a0trrNd55/oJ4DawrxwnL+JQY5NBXujubqKYALiVOJRC228toKK3gdsW0LTZSp8JCtq1RCBBPNBObBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719266531; c=relaxed/simple;
-	bh=K0PaBxKiaOYNdfWl5Wbqu93EnQ36lUwweTbgsgMpJsA=;
+	bh=DHUOwhNcj8kPNHuUp2c8J5oitS+X2+wIV/cmt8wxc+U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A7U4zVlKq6Gd/FAFLKV3JxFzGLHlP3XtGenWSJadoS09Hl+IdWauNl1UWTAQpGgsbKuFHGY/D7mwxXjbqWh2n82aeXH1Ds1TKoUNNtajZ7a1oKnKPoyz0+IxNA3m73vAQj+Chvb9ICCrrP8eyei+HwqmbS3hGM2luZk9DTDQUmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tqcg32Lg; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=CnDxhRRt0n/C1G88TY2nLfRYk4GKaNBogG1T/3qEBeSpZ30VHN1lZPXAWeBJbU6KqYKk4gdk5gE6PyiNQTjAf3cZd2tknl6UyW1T24TDyRKwb4C4iRLlV/Af+/c9dbI2g7tDlxkMGuwx6MB8AYnaho9TsyN+4GCtXs6gyFhMYKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jtsUgCjS; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tqcg32Lg"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OLvANM023731;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jtsUgCjS"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OLuU2q007194;
 	Mon, 24 Jun 2024 22:02:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
 	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=eUWYv3t7kdrCZ
-	g3v8bfDt0tJ7Abpgg7TeDIK8tq6jMs=; b=tqcg32LgaPBQnmk8cl6utYB8xCPBO
-	fhxsqbyyGNZn8GbV2H+o7HHXPsnrQOgh0lEEMWzOcq3LyCMhZcDws5fP+9SPHNgz
-	tl4eUEdTP3AkEMfOxpOX2CK/QdmjvLeyHIuK9hGLAQPCBRNRT96r6hMnuiX4NfTJ
-	ssCz3gwkt/0S00YL9W6z1ERMIzgBe3ZmBebS2wsvJLtknZxgglbV1Xye+FQI4CpG
-	uGfS1EdgwA6FjSKb5kLU2y7hs3IN12GkpO6NjDNaPHKOplYI4kLab1hhHSCU/zsW
-	ICFL3AVJhfOk/mfV2s3CeWC0j+vy210R6Py88gs+aS0/wfM909d3UhAMg==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yygad843x-1
+	:mime-version:content-transfer-encoding; s=pp1; bh=FU/1ohnBYnzIv
+	rJ0A381BQNGXn+MLd+rF/s0PX8pu/0=; b=jtsUgCjS+qxBLSsdRPRajade1fQaf
+	TPM9XVCytkeIxailo79p84rLo7KyrCJZbI89PVJIELmcmLFGTyl5okiKZEFsO6tv
+	zfpL5JfQCb6Zb887tdoQc3cdh/TpgE02dUPSgD3UsRH0OvMaK7KrbjjQi9A/HmTh
+	Qi5VxVdExUvkaNXy6czMRO8N1wT9J7yP//SRCjB3QD+gRyoVbHKhez9yNOLEQ/p2
+	WXFfUkFmWpzNa9NAUToimJlMdZ+zxqoyZPVgR2Kgx4Vmndykm1XwDORR6WuMPWCe
+	9kMp5CSvacN8+uM9GNemf2GWu7fR4QS9sHC2fhg8v/DTPkb6GgyhrlSJw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yygr9g22v-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 24 Jun 2024 22:02:06 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OIwZFO008196;
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OL4ZW7032606;
 	Mon, 24 Jun 2024 22:02:05 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9b0k8ff-1
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxbn32p5r-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 24 Jun 2024 22:02:05 +0000
 Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OM22CH18547450
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OM22gL28049746
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Mon, 24 Jun 2024 22:02:04 GMT
 Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BA07F58062;
-	Mon, 24 Jun 2024 22:02:00 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 0C03A58066;
+	Mon, 24 Jun 2024 22:02:02 +0000 (GMT)
 Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3F9CB5806C;
-	Mon, 24 Jun 2024 22:02:00 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 7DB945805F;
+	Mon, 24 Jun 2024 22:02:01 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 22:02:00 +0000 (GMT)
+	Mon, 24 Jun 2024 22:02:01 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.vnet.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, noodles@earth.li,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils][PATCH v2 2/4] CI/CD: Disable pkcs11 providers for Debian and AltLinux
-Date: Mon, 24 Jun 2024 18:01:55 -0400
-Message-ID: <20240624220157.2248556-3-stefanb@linux.vnet.ibm.com>
+Subject: [ima-evm-utils][PATCH v2 4/4] Replace Ubuntu mantic with noble
+Date: Mon, 24 Jun 2024 18:01:57 -0400
+Message-ID: <20240624220157.2248556-5-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240624220157.2248556-1-stefanb@linux.vnet.ibm.com>
 References: <20240624220157.2248556-1-stefanb@linux.vnet.ibm.com>
@@ -70,53 +71,65 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Hg6PWQvYa8LaDkK3saMj6Vf3fhEP2Z35
-X-Proofpoint-GUID: Hg6PWQvYa8LaDkK3saMj6Vf3fhEP2Z35
+X-Proofpoint-GUID: ij7Pdp2cZBaxX7g4nYPFQzA52c4pH1AH
+X-Proofpoint-ORIG-GUID: ij7Pdp2cZBaxX7g4nYPFQzA52c4pH1AH
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-24_18,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=675
- adultscore=0 malwarescore=0 lowpriorityscore=0 suspectscore=0
- impostorscore=0 clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240175
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=912
+ impostorscore=0 spamscore=0 clxscore=1015 suspectscore=0 mlxscore=0
+ phishscore=0 priorityscore=1501 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240175
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+As Ubuntu noble contains a pkcs11-provider package, use it for testing.
+Also use the distro provided openssl version.
 
-Disable testing provider support on Debian:latest and AltLinux:sisyphus
-since both now get stuck while running OpenSSL provider-related tests.
-This is most likely due to an update in a dependency (OpenSSL,
-p11-kit-modules, softhsm, or others).
-
-On AltLinux the issues is related to a pthread_mutex_lock() down the
-C_Login -> C_OpenSession callpath that blocks forever.
-
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- ci/alt.sh    | 2 +-
- ci/debian.sh | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ .github/workflows/ci.yml | 5 ++---
+ .travis.yml              | 4 ++--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/ci/alt.sh b/ci/alt.sh
-index f86dcec..f1eefbf 100755
---- a/ci/alt.sh
-+++ b/ci/alt.sh
-@@ -28,4 +28,4 @@ apt-get install -y \
- 		xxd \
- 	&& control openssl-gost enabled
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 8471096..71fcaae 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -132,13 +132,12 @@ jobs:
+               CC: gcc
+               TSS: tpm2-tss
  
--apt-get install -y pkcs11-provider || true
-+# apt-get install -y pkcs11-provider || true
-diff --git a/ci/debian.sh b/ci/debian.sh
-index e1bae43..34125d4 100755
---- a/ci/debian.sh
-+++ b/ci/debian.sh
-@@ -59,4 +59,4 @@ $apt \
- $apt xxd || $apt vim-common
- $apt libengine-gost-openssl || true
- $apt softhsm2 gnutls-bin libengine-pkcs11-openssl || true
--$apt softhsm2 gnutls-bin pkcs11-provider || true
-+# $apt softhsm2 gnutls-bin pkcs11-provider || true
+-          - container: "ubuntu:jammy"
++          - container: "ubuntu:noble"
+             env:
+               CC: gcc
+               TSS: ibmtss
+-              COMPILE_SSL: openssl-3.0.5
+ 
+-          - container: "ubuntu:mantic"
++          - container: "ubuntu:jammy"
+             env:
+               CC: gcc
+               TSS: ibmtss
+diff --git a/.travis.yml b/.travis.yml
+index adaf095..b8876f4 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -40,11 +40,11 @@ matrix:
+           compiler: gcc
+ 
+         - os: linux
+-          env: DISTRO=ubuntu:mantic TSS=ibmtss
++          env: DISTRO=ubuntu:noble TSS=ibmtss
+           compiler: gcc
+ 
+         - os: linux
+-          env: DISTRO=ubuntu:jammy TSS=ibmtss COMPILE_SSL=openssl-3.0.5
++          env: DISTRO=ubuntu:jammy TSS=ibmtss
+           compiler: gcc
+ 
+         - os: linux
 -- 
 2.45.2
 
