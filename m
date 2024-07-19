@@ -1,59 +1,59 @@
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02BB847C
-	for <linux-integrity@vger.kernel.org>; Fri, 19 Jul 2024 02:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9396FAD5E
+	for <linux-integrity@vger.kernel.org>; Fri, 19 Jul 2024 02:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721354884; cv=none; b=BSX2wjXWyhNpQNL8LsWPDbsStwWa70aztWnSidp3qQyrchPIEf9caiRN71qCvASWO5L7o6vIpcjP74zqwLdtkErt1Cg3odJKlk0LIdbLcHL8Zo3rN/LjsVjV62RQnjR1zN6gM1Ad4F5oVxcAudjZDzXGkoXUFIE/GXAdT0UPXHQ=
+	t=1721354885; cv=none; b=dR+lT7YXlZMsx6UmeqZq8oB1EpLcm58QJ2yyOWHjpD1TRfD7LKdLxC0gaDFGgGz2LXkDzDVXEjE8Ika8Bki+BYmi8865xr8aHD1iR3dPMXlt8nOydIpRm1NOgII3PQmvB+V0dzdNpIO5tRhR6vj1MpES6knZ0wWyIYYVRy6Pof8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721354884; c=relaxed/simple;
-	bh=q1GvNezgH341Zylsv1zLw1qihz6L+mDOT/lLwblP/PQ=;
+	s=arc-20240116; t=1721354885; c=relaxed/simple;
+	bh=+jANaNZ1uHYDfjV0wEeG5sQYqdgRrNtGRZ39cOP++f4=;
 	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=ozUr03c94m1Seq62uQw1UDILHnceGD/yOB/milzUbDcW4/FgCRS77cm2Hy5Mtc1Jz8SZXzdbRPuvSOmG2VYUoaRdjT2KC4+1enyNkY795Ch70E/T2AGEZurGy6AMGgGtuGjUCQdhL9DoxzAn4qTGJTGKnGRpFal1YVGwNVuBu+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Fb+oEyI1; arc=none smtp.client-ip=209.85.222.173
+	 From:To:Cc:Subject:References:In-Reply-To; b=bWAZ/50Q31QsUxsFfVB2+pbQ3DFRqoZjr9zwiAcbDQV+9tseInLjo35rIoG3Lv4PuL8IhRpBLsnbUmj5AYnULQBM6rrTA5oCM0OWxJJ364OP7ZSB1uMxsf+y0VaSCa3Alc9VwdRc7rJOQwLMfEvvXHhcgr5O2z8eE5mIYiYFqvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Z5IJkzsp; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Fb+oEyI1"
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-79f19f19070so45683585a.0
-        for <linux-integrity@vger.kernel.org>; Thu, 18 Jul 2024 19:08:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Z5IJkzsp"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b797234b09so13055006d6.0
+        for <linux-integrity@vger.kernel.org>; Thu, 18 Jul 2024 19:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1721354880; x=1721959680; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1721354882; x=1721959682; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=YN0F7LIerr4cOX46aig6AMcwfRaF/WeNOJ4mdmcIzMM=;
-        b=Fb+oEyI1QiZ7CBhJpNqYPr2cWJnHrXGy+S3NPRerxT+S6x5wBku7pW8JSnLLbgXbbz
-         9/DiSc2DNp9TFDQeYK0YZuaVb/T9joah1RHjqodWoAqPuCc9zyMl8DXQla3EBLDRIolI
-         2Un815nffuUEg/vRa0/WSUjYbnVoeA2LIe998RzweHzlDgJe9SV7n/xCrWp5K0xSo68w
-         fxI+D+JfZhAM1NVwiyj3pbCxGTXRsFvgf7tzRgrKczEGqmIOVjZJFyKi5ewUiZnxA0EY
-         ZmemRTZ3rurD9W08lmA6P/1tB8YYuCrdwxVZ4VawTyfUGtP7wkAkMidcDX0snlyOs4kv
-         MCbg==
+        bh=qpUClzeR8WUAL/85YFkQrfnDMzFYM1Y27FAQCvWcN9Q=;
+        b=Z5IJkzspjONUQy+7giNPV4aDWSsOissdYpbaeSMvt0Z/gCiSH7XXZjWpGE6JtjVHDQ
+         UWA6acGP/+mktE1QmyJqL5Y9preDcRLimxsfvVDUkxmjkc/nTDhoE8f5LX3KLJn8HebB
+         HARxX68tUmx5EX8lYQovIn7tJtMfuEyiUgBz4BDCSxCAwXvhURj7i/nl4f+rYh8N1B0E
+         yT59fE6qtA54t9YB3eHlxtNWRTPqJ863KpWtFN1mdy9A+jrPCxnUCfKCN/0+bhKlbxpv
+         ucrPHMb9WWtz9ZxV/OdXnzovCs5FnzUOXGNX7a0dJ+9agEioXNbHaC556heDk/9kBafW
+         tr4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721354880; x=1721959680;
+        d=1e100.net; s=20230601; t=1721354882; x=1721959682;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :content-disposition:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=YN0F7LIerr4cOX46aig6AMcwfRaF/WeNOJ4mdmcIzMM=;
-        b=hbKW7G3QFYxsV2o6OKwTCqB3jUVDSnQL428HgTh+ouPmXssz/kMBMbotnLFWs0RX/I
-         rjvF5f4TyAeJ3hVh871mCnVU5n1kJIhrE+tQGAJnKWFGKnbyPvTd5oTe8/0RbiROS/c4
-         z7DfqJAu1lEjI+GkJiF21givqfWcHDG7R7dqZm5QsC1Sg5Jz5zk3mVr/YDc4Kubg7dKJ
-         SQSV3JbeCdqs7WC8xMGx3FFNB0rhXTf9Z7w6Kkz0Dhu3q87voTX4e9qw3SejLrK6I53u
-         9ABSBV3nuho02xk/UYqC8r7d4vuNY4OulVHJ8ltCaZes9bGEQZ/fMA3Zhc6QFEp1IqS8
-         Dgyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWm8Gt/lFTOKL4CXIpWFfW/AzUaSB+dXJWpRX0J/pzHZ61YWnRSMGX/djvVl3z492Gf60yWpLmy7mHAZfn0tip3IN/QO3/gJFb7nMgYLn0m
-X-Gm-Message-State: AOJu0YxotGokHHB6skSXQpbjN9B4hUQVZCuzb5khc9zdngKjYDgYDPAG
-	q30fK2OoUWrpdktTRfYjLlFX2XJAmySSSMmF0sRqADLjnJSJEht443pzjjWnKg==
-X-Google-Smtp-Source: AGHT+IEJE9bHW4MkqmVWTJe4nMZnX+ZemFrNsydAipO8flZxWwZcYvxCDwNTgld7OQbeKd7vnKjGpw==
-X-Received: by 2002:a05:620a:4725:b0:79d:61e3:97f5 with SMTP id af79cd13be357-7a1874412dcmr781338685a.10.1721354880438;
-        Thu, 18 Jul 2024 19:08:00 -0700 (PDT)
+        bh=qpUClzeR8WUAL/85YFkQrfnDMzFYM1Y27FAQCvWcN9Q=;
+        b=tSI2lLS6mRQwQI9qzbUMuZgqDNIbIMgA3nSim8+4cz5/p5ny+xp4mjtgFuFrHprcWR
+         cMafOuJFt4x0qGOlILh8un0wMG72MUIDkkaEE2FawgRaSFSnCSpVgbd5EEZ1lAaCneR8
+         7oPZesvcEULmA5xJTCpq+P2yc83ECOxoiOqFewphDunDn2V6SQhOs1r5o6rG25YgLSKz
+         9eYkChk8gXWf3GgdsOjDUgyMhLrPQfrOk8EIivYICzw8vvlFWLzJ1qVRI28g6OgwMnDw
+         woT+I/JVW1/yeUa+FAnh2iHpjnbASdxwnKrd8nibKDq4v0lUa7q1muHOTIP0gYhF863H
+         XVJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVT+aWKT5UZvdXL3TNij4Wv5N7n8y+nrMHoE8F7dydkorDcRXKRJdBIEd4WAqPmWnkA2avTAtbavtUSCZL+kiKz1t7YqENWmgPBCw+JXs9d
+X-Gm-Message-State: AOJu0YwkfG6O1xeHMnfKm12p2JqD4tapbvIsUQm7MWjUlVQErPGHgbHe
+	gRqD7RoriJDOplYQCh+NgBv6lr4U3HLIFk2qjEMiV7FYp5jAohrKLlXe3zjB3w==
+X-Google-Smtp-Source: AGHT+IHEUtiYsL4YugJiIyZ94uYFP7Pn9ZMTuclQ82/x8BDKHK0utglqJt/CxhW41ZG/NKpa0e+C4Q==
+X-Received: by 2002:a0c:eb83:0:b0:6b2:a68e:6cf5 with SMTP id 6a1803df08f44-6b79cbe7860mr83634476d6.5.1721354882351;
+        Thu, 18 Jul 2024 19:08:02 -0700 (PDT)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198fbfba7sm21203885a.53.2024.07.18.19.08.00
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7acaf3bc3sm1717036d6.125.2024.07.18.19.08.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 19:08:00 -0700 (PDT)
-Date: Thu, 18 Jul 2024 22:07:59 -0400
-Message-ID: <075e4eb5185cbc5156136240d56b6d0d@paul-moore.com>
+        Thu, 18 Jul 2024 19:08:01 -0700 (PDT)
+Date: Thu, 18 Jul 2024 22:08:01 -0400
+Message-ID: <bae9304f6fd9ac9536f709a990085119@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -81,34 +81,91 @@ Cc: Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
 	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, 
 	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
 	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH v4 1/20] lsm: Refactor return value of LSM hook  vm_enough_memory
-References: <20240711111908.3817636-2-xukuohai@huaweicloud.com>
-In-Reply-To: <20240711111908.3817636-2-xukuohai@huaweicloud.com>
+Subject: Re: [PATCH v4 3/20] lsm: Refactor return value of LSM hook  inode_getsecurity
+References: <20240711111908.3817636-4-xukuohai@huaweicloud.com>
+In-Reply-To: <20240711111908.3817636-4-xukuohai@huaweicloud.com>
 
 On Jul 11, 2024 Xu Kuohai <xukuohai@huaweicloud.com> wrote:
 > 
 > To be consistent with most LSM hooks, convert the return value of
-> hook vm_enough_memory to 0 or a negative error code.
+> hook inode_getsecurity to 0 or a negative error code.
 > 
 > Before:
-> - Hook vm_enough_memory returns 1 if permission is granted, 0 if not.
-> - LSM_RET_DEFAULT(vm_enough_memory_mm) is 1.
+> - Hook inode_getsecurity returns size of buffer on success or a
+>   negative error code on failure.
 > 
 > After:
-> - Hook vm_enough_memory reutrns 0 if permission is granted, negative
->   error code if not.
-> - LSM_RET_DEFAULT(vm_enough_memory_mm) is 0.
+> - Hook inode_getsecurity returns 0 on success or a negative error
+>   code on failure. An output parameter @len is introduced to hold
+>   the buffer size on success.
 > 
 > Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
 > ---
->  include/linux/lsm_hook_defs.h |  2 +-
->  include/linux/security.h      |  2 +-
->  security/commoncap.c          | 11 +++--------
->  security/security.c           | 11 +++++------
->  security/selinux/hooks.c      | 15 ++++-----------
->  5 files changed, 14 insertions(+), 27 deletions(-)
+>  fs/xattr.c                    | 19 ++++++++++---------
+>  include/linux/lsm_hook_defs.h |  3 ++-
+>  include/linux/security.h      | 12 ++++++------
+>  security/commoncap.c          |  9 ++++++---
+>  security/security.c           | 11 ++++++-----
+>  security/selinux/hooks.c      | 16 ++++++----------
+>  security/smack/smack_lsm.c    | 14 +++++++-------
+>  7 files changed, 43 insertions(+), 41 deletions(-)
 
-A nice improvement, thank you!
+Aside from Simon's concern over variable types, I saw a few other issues
+when looking at this patch (below).
+
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 17d6188d22cf..ff82e2ab6f8f 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -485,7 +485,10 @@ int cap_inode_getsecurity(struct mnt_idmap *idmap,
+>  	}
+>  out_free:
+>  	kfree(tmpbuf);
+> -	return size;
+> +	if (size < 0)
+> +		return size;
+> +	*len = size;
+> +	return 0;
+>  }
+
+We should do a better job converting cap_inode_getsecurity(), create a
+new local variable, e.g. 'int error', and use it to store and return the
+error code instead of reusing @size.  I understand that what you've done
+is easier, but I'd prefer to see it done properly.
+
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 9cd5a8f1f6a3..70792bba24d9 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3407,7 +3407,7 @@ static int selinux_path_notify(const struct path *path, u64 mask,
+>   */
+>  static int selinux_inode_getsecurity(struct mnt_idmap *idmap,
+>  				     struct inode *inode, const char *name,
+> -				     void **buffer, bool alloc)
+> +				     bool alloc, void **buffer, u32 *len)
+>  {
+>  	u32 size;
+>  	int error;
+> @@ -3440,14 +3440,14 @@ static int selinux_inode_getsecurity(struct mnt_idmap *idmap,
+>  						&context, &size);
+>  	if (error)
+>  		return error;
+> -	error = size;
+> +	*len = size;
+
+Depending on how you choose to resolve the variable type issue, you may
+be able to pass @len directly to security_sid_to_context().
+
+>  	if (alloc) {
+>  		*buffer = context;
+>  		goto out_nofree;
+>  	}
+>  	kfree(context);
+>  out_nofree:
+> -	return error;
+> +	return 0;
+>  }
+
 
 --
 paul-moore.com
