@@ -1,121 +1,118 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECA717BA2
-	for <linux-integrity@vger.kernel.org>; Sun, 18 Aug 2024 17:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BA725763;
+	Mon, 19 Aug 2024 14:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724001783; cv=none; b=s+DH7ph6TGqhaHHc6Pkjzw6l+JsXFHZMGUWl9vrmJStbahwjol2LxTbz9t/Md9GCqr08f+Z5z+EA2pQ1oUyIRfr4Y/c/cp5S1aC3vJgt+MnQhDxM0PEgu7vXLJM/GBVi08A41b8ZNis2dEwbzLSylsdZYrDYqlSLVqDB1vDmL00=
+	t=1724078229; cv=none; b=ewzw45ZwUyTXN+xskT4dstl1iNrtKGJY89hk/c0uDiHrz3ibSvDR+LhApjLacBYq3X6/8ubvGmhzx3saC8yS7Pz8mueFpM5maEduSAAOOCP8IFooSc9NkJy8dYGvEVJXA2+I/VP8pykAVcoQoMlukuZP8s9G9QQq/vb3Yh2U+jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724001783; c=relaxed/simple;
-	bh=PRdiw6GJWM/P370VLjhMZ0dhU6tZKbF78aSZqYEGp5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ScvQ3azayV4ZOb0Qswf4xBImqRVprFcSzYXKdqbnFfcWFYua7zUbBxq3nvipzGoi9sO05Pju9mxNklDIdi2CokLjyq+H1sxT2Y7zNbOtCmzfcmy+mqeOegega4GmbEmtokPxtKADaiRIDkKJO4ssTarXI9HHQr3Blzd/fSjNoUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f3X054ET; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1724078229; c=relaxed/simple;
+	bh=D34aUEVplVWbSVUxspPBx/hjlZG8P5NgEK4WBVoQAnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eTM6rKZ3Nn4GjZFQxp/H0EYd/FoV4biHlHgi34fIOqnk6E+oNNpjRgQjJ5pPyrP25YGJKYdlMakBcYfaIiTGBUYxf6wwiJf8ThhhGPJG4WTGe/spJ5GV1ArXfXqLnaF4gneVqJX0mOi2agb1vMMLxIKWNclywxSpEzRpImQzM4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JKoOtn05; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f3X054ET"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-691bb56eb65so35937747b3.0
-        for <linux-integrity@vger.kernel.org>; Sun, 18 Aug 2024 10:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1724001779; x=1724606579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rea1kNp4EkbAOzAU8f/a10Vwm+fxF1V1CIr9tWa1sDQ=;
-        b=f3X054ETV7yigtr0M5N3HUiRAAE+GS1VunwBvvTJL3GlmEqi97mnC9yoJnXb7Rojen
-         PMwtRmBw52jh/OPas2uIFSpi2wmLB60XDgnSq8lbzpzd3ICq5DpP7Zps52Y1owwUeylv
-         A5+MGFnRO/ZsKqkhEyfafUIVWSz7k1wC5HvuIbCjR1KzFOAkvmzuJDl1EqS4Wyg6+VF7
-         ao2VZPZQPP3er9vJC4duFXTTopdGJVPTFNX30xslqJI1WzdKebGIOt0pzdsWhDYUzsXy
-         hexKTjrJF7q1AJ3GLKTo3qtNNH/BGPqrpgO+QVMzR1XLbjHk843zxBth2qF4DACVkGUD
-         2aVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724001779; x=1724606579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rea1kNp4EkbAOzAU8f/a10Vwm+fxF1V1CIr9tWa1sDQ=;
-        b=MH4t0IuquX4UCTHUqCNZXFi2iNRCRevSb2a4njX5NbZo8AvuX3wnIk8kYf0IEqXNCz
-         uukRRHAHVcMCD7xBF+I8gE0rJZxiByBxIP3SNxs/BnQczp68fqpVOyrYDmZVDm4J/gKI
-         0ZgNsEtPo0BpnujUVsM9AS/OGQuyQyfA+XV2+IYb5ib405Md4fhZ1/wGK+NmH1EV/ahp
-         WvRRs9hAKnrIwad8Lfs1ug1LkTKWmTjadEiBdK9sWAs5ju1VbYO81BEaJjQ5jPQz3e5L
-         IOpgKhOtEbRV4V5EipJ3jRBnnvg0oxc8scwPPlDUM83oPnL9+qLpewCPfKn5h0NyrmYS
-         ssDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKeonBNmc96ob9osH2nfqDf1V3134pQ6NUqFFM7oTPCqYdJpl1bR91WPcO6kQyDM1BLRULTWj00+Yna40VD7nsDf5ZwVHIMIITa9op4j5s
-X-Gm-Message-State: AOJu0Yy7J2tt15ZJXfmk0L9tmnyaAdWWS46Ucj92T2uvKtdTi6XAH9AB
-	QVmGXDguNGTeDlemCuq6B7Zi+g1rMdddomDTxWtB2+DoHOUusEmZA0zcmHTekWJDHs8S5JYzesu
-	Dm1NjxVU/hiDzKHxAobuJe0duhS3BV9DMh0PJ
-X-Google-Smtp-Source: AGHT+IFjiqllbtZbfh6H7hOfR01xf4G8PNDyn1RyHhO2ITzkhGOqhIPLS7VFIHAGqVDoJDMdk8WysOY4o+NEDwrxuHA=
-X-Received: by 2002:a05:690c:ec5:b0:64b:7500:2e9 with SMTP id
- 00721157ae682-6b1b759714bmr105555907b3.9.1724001779618; Sun, 18 Aug 2024
- 10:22:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JKoOtn05"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47JBJKIm030786;
+	Mon, 19 Aug 2024 14:36:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f2I9VnJLg09vMfui0oYKnkAiN0FjyP0W/1DM3xr+yrU=; b=JKoOtn05eJHa01r/
+	cOO+5ZJQqghOj1SYgVvOla6TjkdWhkEdrf9icatO3iP1PWhUv18RMgZcQVG3qigv
+	DT3Bl+8r7youJBqLCV5k+QUGNoMElqhaJrGKP5OpNDj6lnfFGchS70ErwMPfeThf
+	f+oVR61x1n1SWEV5YQtuoXN/cwbd63OH7gaGFfvlg6Wm4ds+mnN+AC3dTzB3doeI
+	ZdWegamtzRK1OHf/dxGq4BojP56ce/ashbUgJp9g/ZggtxMuvC0lREI4REiEm4em
+	hzCGAbLbwp4Pqltnol1WUVLQ5XpOfKPtYVNh37myK7X9ErwgUV6rzu+yOMNiVLek
+	4QAvWQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412hjdcpaj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:36:40 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47JEae6n020052
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Aug 2024 14:36:40 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 19 Aug
+ 2024 07:36:39 -0700
+Message-ID: <45accf08-bb98-4199-b0a0-a314f3d0574b@quicinc.com>
+Date: Mon, 19 Aug 2024 07:36:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
- <1722665314-21156-13-git-send-email-wufan@linux.microsoft.com>
- <9dc30ca6-486c-4fa9-910d-ed1dc6da0e95@linux.microsoft.com>
- <CAHC9VhQrnu8Sj=XnDvg=wGTBxacvMSW6OJyG3-tpwrsbGat6vA@mail.gmail.com>
- <88695db-efc0-6cc6-13ee-fd7c2abe61c@redhat.com> <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
-In-Reply-To: <ac6e33b8-ec1f-494a-874f-9a16d3316fce@linux.microsoft.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 18 Aug 2024 13:22:48 -0400
-Message-ID: <CAHC9VhSe0HkzX0gy5Oo+549wG9xqfeHmsveJqdR_xRcYtim+sA@mail.gmail.com>
-Subject: Re: [PATCH v20 12/20] dm verity: expose root hash digest and
- signature data to LSMs
-To: Fan Wu <wufan@linux.microsoft.com>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-	Alasdair Kergon <agk@redhat.com>, linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev, 
-	linux-block@vger.kernel.org, dm-devel@lists.linux.dev, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/14] KEYS: PGP data parser
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
+        <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
+        <linux-integrity@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240818165756.629203-1-roberto.sassu@huaweicloud.com>
+ <20240818165756.629203-7-roberto.sassu@huaweicloud.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240818165756.629203-7-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: bQBIRa2GbtTcjgxR3oFqm_nkP3gzxYyV
+X-Proofpoint-ORIG-GUID: bQBIRa2GbtTcjgxR3oFqm_nkP3gzxYyV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-19_13,2024-08-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 phishscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408190097
 
-On Fri, Aug 16, 2024 at 3:11=E2=80=AFPM Fan Wu <wufan@linux.microsoft.com> =
-wrote:
-> On 8/16/2024 6:35 AM, Mikulas Patocka wrote:
-
+On 8/18/24 09:57, Roberto Sassu wrote:
 ...
+> diff --git a/crypto/asymmetric_keys/pgp_public_key.c b/crypto/asymmetric_keys/pgp_public_key.c
+> new file mode 100644
+> index 000000000000..cb399f5cdd3e
+> --- /dev/null
+> +++ b/crypto/asymmetric_keys/pgp_public_key.c
+> @@ -0,0 +1,366 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Instantiate a public key crypto key from PGP format data [RFC 4880]
+> + *
+> + * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#define pr_fmt(fmt) "PGP: "fmt
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +#include <linux/mpi.h>
+> +#include <keys/asymmetric-subtype.h>
+> +#include <keys/asymmetric-parser.h>
+> +#include <crypto/hash.h>
+> +#include <crypto/public_key.h>
+> +
+> +#include "pgp_parser.h"
+> +
+> +#define MAX_MPI 5
+> +#define KEYCTL_SUPPORTS_ENCDEC \
+> +	(KEYCTL_SUPPORTS_ENCRYPT | KEYCTL_SUPPORTS_DECRYPT)
+> +#define KEYCTL_SUPPORTS_SIGVER (KEYCTL_SUPPORTS_SIGN | KEYCTL_SUPPORTS_VERIFY)
+> +
+> +MODULE_LICENSE("GPL");
 
-> >>>>
-> >>>> +#ifdef CONFIG_SECURITY
-> >>>> +     u8 *root_digest_sig;    /* signature of the root digest */
-> >>>> +#endif /* CONFIG_SECURITY */
-> >>>>        unsigned int salt_size;
-> >>>>        sector_t data_start;    /* data offset in 512-byte sectors */
-> >>>>        sector_t hash_start;    /* hash start in blocks */
-> >>>> @@ -58,6 +61,9 @@ struct dm_verity {
-> >>>>        bool hash_failed:1;     /* set if hash of any block failed */
-> >>>>        bool use_bh_wq:1;       /* try to verify in BH wq before norm=
-al work-queue */
-> >>>>        unsigned int digest_size;       /* digest size for the curren=
-t hash algorithm */
-> >>>> +#ifdef CONFIG_SECURITY
-> >>>> +     unsigned int sig_size;  /* root digest signature size */
-> >>>> +#endif /* CONFIG_SECURITY */
-> >>>>        unsigned int hash_reqsize; /* the size of temporary space for=
- crypto */
-> >>>>        enum verity_mode mode;  /* mode for handling verification err=
-ors */
-> >>>>        unsigned int corrupted_errs;/* Number of errors for corrupted=
- blocks */
-> >
-> > Just nit-picking: I would move "unsigned int sig_size" up, after "u8
-> > *root_digest_sig" entry.
-> >
-> > Mikulas
->
-> Sure, I can make these two fields together.
+Missing MODULE_DESCRIPTION()
 
-Fan, do you want me to move the @sig_size field when merging or are
-you planning to submit another revision?  I'm happy to do it during
-the merge, but I don't want to bother if you are going to post another
-patchset.
-
---=20
-paul-moore.com
