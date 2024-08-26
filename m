@@ -1,125 +1,120 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE85E13C8EA;
-	Mon, 26 Aug 2024 21:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670919B3D8;
+	Mon, 26 Aug 2024 22:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707477; cv=none; b=WS9Kzm+cDsUqWhmjafrMj2zYn6wWqzvlyTUtSgJUQQBzgOkbNtlj+9XVAnp33ppro2lq0GUAO9UH3jXFn7vrtykDSHRZe5sTYrADAzBOgW/X1Aw7W+SnK5fAWN+e1l+i3+bN6beDGNHWYo6ax/wCfCGuEXi7X/vWTzIsgU1fuOY=
+	t=1724712131; cv=none; b=byG/X0wNeMK1ZgQgqOUyjgVvtoN2P9Z/p8hOIpd945WaQNqbg7IjjDdX4ARQQIJpPKFf6QfJqOVdG+EnBZ4FtH+xQShup0BdZ/sWDDgtK7CXOzOXkwC4JfoVBqD3cTtKHfiKP8wlnK32cIJkJMNxqecIiYDSgSsXLHRDFM35oqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707477; c=relaxed/simple;
-	bh=J1sh0JGMwBFt+RuTIyEsiQH6h/297F/9Mo1VkS8wDQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUi5NVPf7TTosHn5NPA86BwgrjyFntLFyov5yII/r+M6WOdmLouqKsT5x4Ut0bAxqGTP/Evgabo6ZTA05uH3LYXKEtP9A96h7sT6j3sLtgD1KOmbB9lQ8PYQCejB+HDEyC1dCCo6jSOMT3BHixrffF/EflHISZX74RnIxsQUtmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iAtXZjz3; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1724712131; c=relaxed/simple;
+	bh=Ekbb1Q88jFmCxW2b8lXU7X0MWMz236zAwpvL67zG9ig=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BlF8EnMRKPXWFrJP+Cm9erO7nW86e6sEf8Gr1w+U5eSjLF9pwVm488E+u2kN3n2WauJGgAjbrY5ObN4VSsnzLm7R1iut/6HNngZQjgc+Y9NbW4bZeROuyQN6Ch6UhIf6gPrLn1bc2oKyYrA6nk5+dWZJ5CP87oJPEffMOXU9I10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EcEcybTK; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iAtXZjz3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724707476; x=1756243476;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=J1sh0JGMwBFt+RuTIyEsiQH6h/297F/9Mo1VkS8wDQ0=;
-  b=iAtXZjz3EOd1S6HLYg6PCD4zCWiYtDtpuLzYG0mTCDgAB8cwljRQTQvx
-   hi3hdqrUEsMNZhMplRoSEsor6FJsnBmCetgJlj65ljmbEYJCi3PUpmYkR
-   cMzYI1G+j8X7GgVLIGWSTYXEpLYLldOS28/8oEO53if59fbhCpVb4ZNd8
-   0ob2TQozPNkPhM3XBsW07/O1Y+3Zh5h9urwko/Od8b6nRxdFksmZnzgbp
-   R0D47GfxDZ0fbfvzlgYXlSLzRrNnhsfG66sBvgH0o08TY9pBOhH0yz01w
-   VcicIbliM2bEorcy3sVLEuXU/Hyk2DX1zJv7Wy9Bk0wn6EmgImbIO1yLV
-   w==;
-X-CSE-ConnectionGUID: g6QesiqmSvynN0KJifAGMg==
-X-CSE-MsgGUID: yEwqeXOoTQOmmtV7XmKPoA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="23337144"
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="23337144"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 14:24:35 -0700
-X-CSE-ConnectionGUID: /Epz5TVJRmKWkjh2VxUsjg==
-X-CSE-MsgGUID: Dct1gWmaT0eV6Pz1/y1SBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,178,1719903600"; 
-   d="scan'208";a="93369759"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 26 Aug 2024 14:24:31 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sihCO-000Hc2-0L;
-	Mon, 26 Aug 2024 21:24:28 +0000
-Date: Tue, 27 Aug 2024 05:24:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
-	keescook@chromium.org, john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org, mic@digikod.net,
-	linux-integrity@vger.kernel.org, linux-audit@redhat.com,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 07/13] LSM: Use lsmblob in security_current_getsecid
-Message-ID: <202408270512.9cZ78Eog-lkp@intel.com>
-References: <20240825190048.13289-8-casey@schaufler-ca.com>
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EcEcybTK"
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QKtSN8007318;
+	Mon, 26 Aug 2024 22:41:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=E
+	cqTseYjTndPo7qnnktrBgiljIE8peMHL6Zd2VChAJc=; b=EcEcybTKQawn84wlR
+	tAA+aQye7h1zOClxQzDJ9ImqEf9WNMVPvuPVnMxTZLXUJlvo5OOlPL0hp7x+v9YU
+	pCR6AXX8bbNkTjNEOfoti9qiWUfjXtH2xJrKXifE3f+uDHiVMmfVVyvbVD8tfCFH
+	9MMZFpjfUmJjA4RS9hwD58V6TO6JV4dQ/9uqk5hcypNegI8pAr9c4XCGZD7M9whO
+	k7EEeFVbFZIGoDfGzN0kQtugLHnKLedbzH4D+8uEygUX4ZPHiUUxnZCcqWKaLKQx
+	BWihLnK7Ez0TvkzDUAdiaC8Ng0I8YJVD/TnOWSXw2I2+5W9zpNYPl6xya54eYGsG
+	KuPPw==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4177u6mbcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 26 Aug 2024 22:41:23 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47QMJXdO017382;
+	Mon, 26 Aug 2024 22:41:22 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 418a5rmnye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 26 Aug 2024 22:41:22 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47QMfLg2024733;
+	Mon, 26 Aug 2024 22:41:21 GMT
+Received: from localhost.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 418a5rmnvd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 26 Aug 2024 22:41:21 +0000
+From: Ross Philipson <ross.philipson@oracle.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
+        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+        trenchboot-devel@googlegroups.com
+Subject: [PATCH v10 02/20] x86: Secure Launch Kconfig
+Date: Mon, 26 Aug 2024 15:38:17 -0700
+Message-Id: <20240826223835.3928819-3-ross.philipson@oracle.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20240826223835.3928819-1-ross.philipson@oracle.com>
+References: <20240826223835.3928819-1-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240825190048.13289-8-casey@schaufler-ca.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_16,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408260174
+X-Proofpoint-ORIG-GUID: YIaGp_4ebV8l0VAxwRvHDVc2ng7lhzN_
+X-Proofpoint-GUID: YIaGp_4ebV8l0VAxwRvHDVc2ng7lhzN_
 
-Hi Casey,
+Initial bits to bring in Secure Launch functionality. Add Kconfig
+options for compiling in/out the Secure Launch code.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ arch/x86/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on zohar-integrity/next-integrity linus/master pcmoore-audit/next v6.11-rc5 next-20240826]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240826-170520
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20240825190048.13289-8-casey%40schaufler-ca.com
-patch subject: [PATCH 07/13] LSM: Use lsmblob in security_current_getsecid
-config: arc-randconfig-001-20240827 (https://download.01.org/0day-ci/archive/20240827/202408270512.9cZ78Eog-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408270512.9cZ78Eog-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408270512.9cZ78Eog-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> security/smack/smack_lsm.c:2265: warning: Function parameter or struct member 'blob' not described in 'smack_task_getlsmblob_obj'
->> security/smack/smack_lsm.c:2265: warning: Excess function parameter 'secid' description in 'smack_task_getlsmblob_obj'
-
-
-vim +2265 security/smack/smack_lsm.c
-
-1fb057dcde11b35 Paul Moore      2021-02-19  2255  
-1fb057dcde11b35 Paul Moore      2021-02-19  2256  /**
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2257   * smack_task_getlsmblob_obj - get the objective data of the task
-1fb057dcde11b35 Paul Moore      2021-02-19  2258   * @p: the task
-1fb057dcde11b35 Paul Moore      2021-02-19  2259   * @secid: where to put the result
-1fb057dcde11b35 Paul Moore      2021-02-19  2260   *
-1fb057dcde11b35 Paul Moore      2021-02-19  2261   * Sets the secid to contain a u32 version of the task's objective smack label.
-e114e473771c848 Casey Schaufler 2008-02-04  2262   */
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2263  static void smack_task_getlsmblob_obj(struct task_struct *p,
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2264  				      struct lsmblob *blob)
-e114e473771c848 Casey Schaufler 2008-02-04 @2265  {
-1fb057dcde11b35 Paul Moore      2021-02-19  2266  	struct smack_known *skp = smk_of_task_struct_obj(p);
-2f823ff8bec03a1 Casey Schaufler 2013-05-22  2267  
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2268  	blob->smack.skp = skp;
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2269  	/* scaffolding */
-fd64f9693f6c226 Casey Schaufler 2024-08-25  2270  	blob->scaffold.secid = skp->smk_secid;
-e114e473771c848 Casey Schaufler 2008-02-04  2271  }
-e114e473771c848 Casey Schaufler 2008-02-04  2272  
-
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 007bab9f2a0e..24df5f468fdc 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2056,6 +2056,17 @@ config EFI_RUNTIME_MAP
+ 
+ 	  See also Documentation/ABI/testing/sysfs-firmware-efi-runtime-map.
+ 
++config SECURE_LAUNCH
++	bool "Secure Launch support"
++	depends on X86_64 && X86_X2APIC && TCG_TPM && CRYPTO_LIB_SHA1 && CRYPTO_LIB_SHA256
++	help
++	   The Secure Launch feature allows a kernel to be loaded
++	   directly through an Intel TXT measured launch. Intel TXT
++	   establishes a Dynamic Root of Trust for Measurement (DRTM)
++	   where the CPU measures the kernel image. This feature then
++	   continues the measurement chain over kernel configuration
++	   information and init images.
++
+ source "kernel/Kconfig.hz"
+ 
+ config ARCH_SUPPORTS_KEXEC
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.3
+
