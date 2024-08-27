@@ -1,654 +1,386 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CCB1A0712;
-	Mon, 26 Aug 2024 22:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C43B17993;
+	Tue, 27 Aug 2024 05:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724712433; cv=none; b=ZHkchC6I//ECEIDzb+gpM0YRhaV+E0TdEkd2GvoAhbwfZgaRs3LZKJLxQ/oJfPNuv+7MgslSK423E0yEVLZUSbgfM9Gb6L7micGmWRXATq6cIPX81h9SloIpKI/9oSOaU8PLt9/R7GDaD6zcXTtMLO3pX1M+KBHIoy164qt3MNQ=
+	t=1724734862; cv=none; b=CB5Zew3o0lPbCjVddieHGvj0skzoSqx2q5b1DnklUJmudk55M+NJsRmiH5jY6jwP1L7m0d+ygJXATox4fYCgQJXdp2wRG6X6+I/lwu1XtwreHgLIaRFs3se5rTo7TgtEJ6kbJmjxeXkb0VbwkD3wSu4zukMyk4c2r/q0TTKpsZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724712433; c=relaxed/simple;
-	bh=J3OsuBDtx3veAcbd8tIFBNF8KT2ieK7cfam3Fworhjs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CtxwHm2ZYpl4jp1sCXDvTaMe/We+1bNVaODVEddlEmsZKmnKF0nAg0fEZaeBFCkrtuJJoJ9IwbMdO84x3/PGB2pauUGnhpJoK/4utAPXFm/fO91ZbtXgmC0KvxdHrVInNicNrTG5FZo7dHsctTOeCqxO4nbl9CHg+L3a5aMLDLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dDsDJfH9; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1724734862; c=relaxed/simple;
+	bh=LT+n52z0vmTnoEELUIHA8ypGoGLWc6mpSjDsZFEOnNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=breD3UA5GpkstVPind5BNZZaswNRuDveYi4GTE3u+uOj1NltNMCNHa4iOO3z6jmEReOsuUZIkFgf3ChhaNodo1dYLtxKNkB5PCJ7+3lahlr2//TwO7KQaczXfItsiJdQ6nVSfrkEt8CcOU6LvGuBGWse8gtDnGt/IPv6NbXXAUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zy1vEalb; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dDsDJfH9"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QKtUKj029254;
-	Mon, 26 Aug 2024 22:41:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=
-	corp-2023-11-20; bh=+GlPFNEbINVnwMIFGKDr6SpAd36aIYo7CErTuUU3G94=; b=
-	dDsDJfH9unZ9HCiMeBkkSamGB28TeieJsSOVUYqsnPiSeXOFG3ARC+bmFd4AUVyK
-	fj8qzLLuSk4JSmE9JvrttarwqS0/fJ/it7nXJuT5S9rNGnxY2t3jUirjx/b9PfaR
-	6xiAmcj6BKBTWv9653/BI2fZK9I7iHp83PCxsdAOdYG9CjLK1u1Am/U4Y7+Embmw
-	/FN7DIBHAwgdCXSIqcmug7ubpJYoR21/yGX6kVMiac5Yo9UlN2uycJHNxBiA+gMY
-	4baQ13w+8iw/l/sDrc+mxz4MvEATHehlkdg4IjvVVw9ySPiVlz5R2spfhX94XCi2
-	37QreVTXnE3U940HBL1wgg==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4177ksv7p4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 26 Aug 2024 22:41:40 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 47QM2ELI016704;
-	Mon, 26 Aug 2024 22:41:39 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 418a5rmp7p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 26 Aug 2024 22:41:39 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47QMfcDh025807;
-	Mon, 26 Aug 2024 22:41:38 GMT
-Received: from localhost.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 418a5rmp5n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 26 Aug 2024 22:41:38 +0000
-From: Ross Philipson <ross.philipson@oracle.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
-        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
-        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
-        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-        trenchboot-devel@googlegroups.com
-Subject: [PATCH v10 04/20] x86: Secure Launch main header file
-Date: Mon, 26 Aug 2024 15:38:19 -0700
-Message-Id: <20240826223835.3928819-5-ross.philipson@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240826223835.3928819-1-ross.philipson@oracle.com>
-References: <20240826223835.3928819-1-ross.philipson@oracle.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zy1vEalb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724734860; x=1756270860;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LT+n52z0vmTnoEELUIHA8ypGoGLWc6mpSjDsZFEOnNM=;
+  b=Zy1vEalbV6G/2DcDwgP49etQUPYzFjNub5B8edeCBelvTj9Ur2RYJTBG
+   7pt9c58x2jy1WvlEunHewhzunj8KgYYIXvtCIFpTZBlIg2e9ac0cecvKr
+   IwILFklOzhd0TwGDhqLkR48ng03J0rUnM+GFSjfgGK8wI+5WZXWTA4lC5
+   K2QIz+TMAjFiN+am+GnT3T9LmVLqDoF+u0spx4vmaSlXdhi8tybGebq8Z
+   k832yQDmAi6kKem7yxWhlFCZw2Yow3Gazkc7i9cXGgbgqIEEBTiKddVVF
+   ipIu08w7fYEZKW/kl8HUmptVhj9LmE73weVQHiaNDxeOfSTcGFk5wQcrh
+   A==;
+X-CSE-ConnectionGUID: /gUwcSIjSmCsOFzLVV6pgQ==
+X-CSE-MsgGUID: I1Xai+XbTTiKiRo6v1FjwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11176"; a="48577149"
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="48577149"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2024 22:00:54 -0700
+X-CSE-ConnectionGUID: SLvRwghqSJGiWI/RFUxDSQ==
+X-CSE-MsgGUID: Ff5I6f2ZRdebz46+AMtIuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,179,1719903600"; 
+   d="scan'208";a="62903723"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 26 Aug 2024 22:00:50 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sioK0-000I0A-2a;
+	Tue, 27 Aug 2024 05:00:48 +0000
+Date: Tue, 27 Aug 2024 13:00:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
+	serge@hallyn.com, keescook@chromium.org,
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+	mic@digikod.net, linux-integrity@vger.kernel.org,
+	audit@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH 10/13] LSM: Create new security_cred_getlsmblob LSM hook
+Message-ID: <202408271124.LJcw8xus-lkp@intel.com>
+References: <20240825190048.13289-11-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_16,2024-08-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 mlxlogscore=999
- phishscore=0 bulkscore=0 malwarescore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408260174
-X-Proofpoint-ORIG-GUID: PmQ7cYwOK5tf8WrkJfHjmY4aXYbqNFEw
-X-Proofpoint-GUID: PmQ7cYwOK5tf8WrkJfHjmY4aXYbqNFEw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240825190048.13289-11-casey@schaufler-ca.com>
 
-Introduce the main Secure Launch header file used in the early SL stub
-and the early setup code.
+Hi Casey,
 
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
----
- include/linux/slaunch.h | 548 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 548 insertions(+)
- create mode 100644 include/linux/slaunch.h
+kernel test robot noticed the following build errors:
 
-diff --git a/include/linux/slaunch.h b/include/linux/slaunch.h
-new file mode 100644
-index 000000000000..efb1235b3e1b
---- /dev/null
-+++ b/include/linux/slaunch.h
-@@ -0,0 +1,548 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Main Secure Launch header file.
-+ *
-+ * Copyright (c) 2024 Apertus Solutions, LLC
-+ * Copyright (c) 2024, Oracle and/or its affiliates.
-+ */
-+
-+#ifndef _LINUX_SLAUNCH_H
-+#define _LINUX_SLAUNCH_H
-+
-+/*
-+ * Secure Launch Defined State Flags
-+ */
-+#define SL_FLAG_ACTIVE		0x00000001
-+#define SL_FLAG_ARCH_TXT	0x00000002
-+
-+/*
-+ * Secure Launch CPU Type
-+ */
-+#define SL_CPU_INTEL	1
-+
-+#define __SL32_CS	0x0008
-+#define __SL32_DS	0x0010
-+
-+/*
-+ * Intel Safer Mode Extensions (SMX)
-+ *
-+ * Intel SMX provides a programming interface to establish a Measured Launched
-+ * Environment (MLE). The measurement and protection mechanisms supported by the
-+ * capabilities of an Intel Trusted Execution Technology (TXT) platform. SMX is
-+ * the processor’s programming interface in an Intel TXT platform.
-+ *
-+ * See:
-+ *   Intel SDM Volume 2 - 6.1 "Safer Mode Extensions Reference"
-+ *   Intel Trusted Execution Technology - Measured Launch Environment Developer’s Guide
-+ */
-+
-+/*
-+ * SMX GETSEC Leaf Functions
-+ */
-+#define SMX_X86_GETSEC_SEXIT	5
-+#define SMX_X86_GETSEC_SMCTRL	7
-+#define SMX_X86_GETSEC_WAKEUP	8
-+
-+/*
-+ * Intel Trusted Execution Technology MMIO Registers Banks
-+ */
-+#define TXT_PUB_CONFIG_REGS_BASE	0xfed30000
-+#define TXT_PRIV_CONFIG_REGS_BASE	0xfed20000
-+#define TXT_NR_CONFIG_PAGES     ((TXT_PUB_CONFIG_REGS_BASE - \
-+				  TXT_PRIV_CONFIG_REGS_BASE) >> PAGE_SHIFT)
-+
-+/*
-+ * Intel Trusted Execution Technology (TXT) Registers
-+ */
-+#define TXT_CR_STS			0x0000
-+#define TXT_CR_ESTS			0x0008
-+#define TXT_CR_ERRORCODE		0x0030
-+#define TXT_CR_CMD_RESET		0x0038
-+#define TXT_CR_CMD_CLOSE_PRIVATE	0x0048
-+#define TXT_CR_DIDVID			0x0110
-+#define TXT_CR_VER_EMIF			0x0200
-+#define TXT_CR_CMD_UNLOCK_MEM_CONFIG	0x0218
-+#define TXT_CR_SINIT_BASE		0x0270
-+#define TXT_CR_SINIT_SIZE		0x0278
-+#define TXT_CR_MLE_JOIN			0x0290
-+#define TXT_CR_HEAP_BASE		0x0300
-+#define TXT_CR_HEAP_SIZE		0x0308
-+#define TXT_CR_SCRATCHPAD		0x0378
-+#define TXT_CR_CMD_OPEN_LOCALITY1	0x0380
-+#define TXT_CR_CMD_CLOSE_LOCALITY1	0x0388
-+#define TXT_CR_CMD_OPEN_LOCALITY2	0x0390
-+#define TXT_CR_CMD_CLOSE_LOCALITY2	0x0398
-+#define TXT_CR_CMD_SECRETS		0x08e0
-+#define TXT_CR_CMD_NO_SECRETS		0x08e8
-+#define TXT_CR_E2STS			0x08f0
-+
-+/* TXT default register value */
-+#define TXT_REGVALUE_ONE		0x1ULL
-+
-+/* TXTCR_STS status bits */
-+#define TXT_SENTER_DONE_STS		BIT(0)
-+#define TXT_SEXIT_DONE_STS		BIT(1)
-+
-+/*
-+ * SINIT/MLE Capabilities Field Bit Definitions
-+ */
-+#define TXT_SINIT_MLE_CAP_WAKE_GETSEC	0
-+#define TXT_SINIT_MLE_CAP_WAKE_MONITOR	1
-+
-+/*
-+ * OS/MLE Secure Launch Specific Definitions
-+ */
-+#define TXT_OS_MLE_STRUCT_VERSION	1
-+#define TXT_OS_MLE_MAX_VARIABLE_MTRRS	32
-+
-+/*
-+ * TXT Heap Table Enumeration
-+ */
-+#define TXT_BIOS_DATA_TABLE		1
-+#define TXT_OS_MLE_DATA_TABLE		2
-+#define TXT_OS_SINIT_DATA_TABLE		3
-+#define TXT_SINIT_MLE_DATA_TABLE	4
-+#define TXT_SINIT_TABLE_MAX		TXT_SINIT_MLE_DATA_TABLE
-+
-+/*
-+ * Secure Launch Defined Error Codes used in MLE-initiated TXT resets.
-+ *
-+ * TXT Specification
-+ * Appendix I ACM Error Codes
-+ */
-+#define SL_ERROR_GENERIC		0xc0008001
-+#define SL_ERROR_TPM_INIT		0xc0008002
-+#define SL_ERROR_TPM_INVALID_LOG20	0xc0008003
-+#define SL_ERROR_TPM_LOGGING_FAILED	0xc0008004
-+#define SL_ERROR_REGION_STRADDLE_4GB	0xc0008005
-+#define SL_ERROR_TPM_EXTEND		0xc0008006
-+#define SL_ERROR_MTRR_INV_VCNT		0xc0008007
-+#define SL_ERROR_MTRR_INV_DEF_TYPE	0xc0008008
-+#define SL_ERROR_MTRR_INV_BASE		0xc0008009
-+#define SL_ERROR_MTRR_INV_MASK		0xc000800a
-+#define SL_ERROR_MSR_INV_MISC_EN	0xc000800b
-+#define SL_ERROR_INV_AP_INTERRUPT	0xc000800c
-+#define SL_ERROR_INTEGER_OVERFLOW	0xc000800d
-+#define SL_ERROR_HEAP_WALK		0xc000800e
-+#define SL_ERROR_HEAP_MAP		0xc000800f
-+#define SL_ERROR_REGION_ABOVE_4GB	0xc0008010
-+#define SL_ERROR_HEAP_INVALID_DMAR	0xc0008011
-+#define SL_ERROR_HEAP_DMAR_SIZE		0xc0008012
-+#define SL_ERROR_HEAP_DMAR_MAP		0xc0008013
-+#define SL_ERROR_HI_PMR_BASE		0xc0008014
-+#define SL_ERROR_HI_PMR_SIZE		0xc0008015
-+#define SL_ERROR_LO_PMR_BASE		0xc0008016
-+#define SL_ERROR_LO_PMR_MLE		0xc0008017
-+#define SL_ERROR_INITRD_TOO_BIG		0xc0008018
-+#define SL_ERROR_HEAP_ZERO_OFFSET	0xc0008019
-+#define SL_ERROR_WAKE_BLOCK_TOO_SMALL	0xc000801a
-+#define SL_ERROR_MLE_BUFFER_OVERLAP	0xc000801b
-+#define SL_ERROR_BUFFER_BEYOND_PMR	0xc000801c
-+#define SL_ERROR_OS_SINIT_BAD_VERSION	0xc000801d
-+#define SL_ERROR_EVENTLOG_MAP		0xc000801e
-+#define SL_ERROR_TPM_NUMBER_ALGS	0xc000801f
-+#define SL_ERROR_TPM_UNKNOWN_DIGEST	0xc0008020
-+#define SL_ERROR_TPM_INVALID_EVENT	0xc0008021
-+#define SL_ERROR_INVALID_SLRT		0xc0008022
-+#define SL_ERROR_SLRT_MISSING_ENTRY	0xc0008023
-+#define SL_ERROR_SLRT_MAP		0xc0008024
-+
-+/*
-+ * Secure Launch Defined Limits
-+ */
-+#define TXT_MAX_CPUS		512
-+#define TXT_BOOT_STACK_SIZE	128
-+
-+/*
-+ * Secure Launch event log entry type. The TXT specification defines the
-+ * base event value as 0x400 for DRTM values.
-+ */
-+#define TXT_EVTYPE_BASE			0x400
-+#define TXT_EVTYPE_SLAUNCH		(TXT_EVTYPE_BASE + 0x102)
-+#define TXT_EVTYPE_SLAUNCH_START	(TXT_EVTYPE_BASE + 0x103)
-+#define TXT_EVTYPE_SLAUNCH_END		(TXT_EVTYPE_BASE + 0x104)
-+
-+/*
-+ * MLE scratch area offsets
-+ */
-+#define SL_SCRATCH_AP_EBX		0
-+#define SL_SCRATCH_AP_JMP_OFFSET	4
-+#define SL_SCRATCH_AP_STACKS_OFFSET	8
-+
-+#ifndef __ASSEMBLY__
-+
-+#include <linux/io.h>
-+#include <linux/tpm.h>
-+#include <linux/tpm_eventlog.h>
-+
-+/*
-+ * Secure Launch AP stack and monitor block
-+ */
-+struct sl_ap_stack_and_monitor {
-+	u32 monitor;
-+	u32 cache_pad[15];
-+	u32 stack_pad[15];
-+	u32 apicid;
-+} __packed;
-+
-+/*
-+ * Secure Launch AP wakeup information fetched in SMP boot code.
-+ */
-+struct sl_ap_wake_info {
-+	u32 ap_wake_block;
-+	u32 ap_wake_block_size;
-+	u32 ap_jmp_offset;
-+	u32 ap_stacks_offset;
-+};
-+
-+/*
-+ * TXT heap extended data elements.
-+ */
-+struct txt_heap_ext_data_element {
-+	u32 type;
-+	u32 size;
-+	/* Data */
-+} __packed;
-+
-+#define TXT_HEAP_EXTDATA_TYPE_END			0
-+
-+struct txt_heap_end_element {
-+	u32 type;
-+	u32 size;
-+} __packed;
-+
-+#define TXT_HEAP_EXTDATA_TYPE_TPM_EVENT_LOG_PTR		5
-+
-+struct txt_heap_event_log_element {
-+	u64 event_log_phys_addr;
-+} __packed;
-+
-+#define TXT_HEAP_EXTDATA_TYPE_EVENT_LOG_POINTER2_1	8
-+
-+struct txt_heap_event_log_pointer2_1_element {
-+	u64 phys_addr;
-+	u32 allocated_event_container_size;
-+	u32 first_record_offset;
-+	u32 next_record_offset;
-+} __packed;
-+
-+/*
-+ * Secure Launch defined OS/MLE TXT Heap table
-+ */
-+struct txt_os_mle_data {
-+	u32 version;
-+	u32 reserved;
-+	u64 boot_params_addr;
-+	u64 slrt;
-+	u64 txt_info;
-+	u32 ap_wake_block;
-+	u32 ap_wake_block_size;
-+	u8 mle_scratch[64];
-+} __packed;
-+
-+/*
-+ * TXT specification defined BIOS data TXT Heap table
-+ */
-+struct txt_bios_data {
-+	u32 version; /* Currently 5 for TPM 1.2 and 6 for TPM 2.0 */
-+	u32 bios_sinit_size;
-+	u64 reserved1;
-+	u64 reserved2;
-+	u32 num_logical_procs;
-+	/* Versions >= 5 with updates in version 6 */
-+	u32 sinit_flags;
-+	u32 mle_flags;
-+	/* Versions >= 4 */
-+	/* Ext Data Elements */
-+} __packed;
-+
-+/*
-+ * TXT specification defined OS/SINIT TXT Heap table
-+ */
-+struct txt_os_sinit_data {
-+	u32 version; /* Currently 6 for TPM 1.2 and 7 for TPM 2.0 */
-+	u32 flags;
-+	u64 mle_ptab;
-+	u64 mle_size;
-+	u64 mle_hdr_base;
-+	u64 vtd_pmr_lo_base;
-+	u64 vtd_pmr_lo_size;
-+	u64 vtd_pmr_hi_base;
-+	u64 vtd_pmr_hi_size;
-+	u64 lcp_po_base;
-+	u64 lcp_po_size;
-+	u32 capabilities;
-+	/* Version = 5 */
-+	u64 efi_rsdt_ptr;
-+	/* Versions >= 6 */
-+	/* Ext Data Elements */
-+} __packed;
-+
-+/*
-+ * TXT specification defined SINIT/MLE TXT Heap table
-+ */
-+struct txt_sinit_mle_data {
-+	u32 version;             /* Current values are 6 through 9 */
-+	/* Versions <= 8 */
-+	u8 bios_acm_id[20];
-+	u32 edx_senter_flags;
-+	u64 mseg_valid;
-+	u8 sinit_hash[20];
-+	u8 mle_hash[20];
-+	u8 stm_hash[20];
-+	u8 lcp_policy_hash[20];
-+	u32 lcp_policy_control;
-+	/* Versions >= 7 */
-+	u32 rlp_wakeup_addr;
-+	u32 reserved;
-+	u32 num_of_sinit_mdrs;
-+	u32 sinit_mdrs_table_offset;
-+	u32 sinit_vtd_dmar_table_size;
-+	u32 sinit_vtd_dmar_table_offset;
-+	/* Versions >= 8 */
-+	u32 processor_scrtm_status;
-+	/* Versions >= 9 */
-+	/* Ext Data Elements */
-+} __packed;
-+
-+/*
-+ * TXT data reporting structure for memory types
-+ */
-+struct txt_sinit_memory_descriptor_record {
-+	u64 address;
-+	u64 length;
-+	u8 type;
-+	u8 reserved[7];
-+} __packed;
-+
-+/*
-+ * TXT data structure used by a responsive local processor (RLP) to start
-+ * execution in response to a GETSEC[WAKEUP].
-+ */
-+struct smx_rlp_mle_join {
-+	u32 rlp_gdt_limit;
-+	u32 rlp_gdt_base;
-+	u32 rlp_seg_sel;     /* cs (ds, es, ss are seg_sel+8) */
-+	u32 rlp_entry_point; /* phys addr */
-+} __packed;
-+
-+/*
-+ * TPM event log structures defined in both the TXT specification and
-+ * the TCG documentation.
-+ */
-+#define TPM_EVTLOG_SIGNATURE "TXT Event Container"
-+
-+struct tpm_event_log_header {
-+	char signature[20];
-+	char reserved[12];
-+	u8 container_ver_major;
-+	u8 container_ver_minor;
-+	u8 pcr_event_ver_major;
-+	u8 pcr_event_ver_minor;
-+	u32 container_size;
-+	u32 pcr_events_offset;
-+	u32 next_event_offset;
-+	/* PCREvents[] */
-+} __packed;
-+
-+/*
-+ * Functions to extract data from the Intel TXT Heap Memory. The layout
-+ * of the heap is as follows:
-+ *  +----------------------------+
-+ *  | Size Bios Data table (u64) |
-+ *  +----------------------------+
-+ *  | Bios Data table            |
-+ *  +----------------------------+
-+ *  | Size OS MLE table (u64)    |
-+ *  +----------------------------+
-+ *  | OS MLE table               |
-+ *  +--------------------------- +
-+ *  | Size OS SINIT table (u64)  |
-+ *  +----------------------------+
-+ *  | OS SINIT table             |
-+ *  +----------------------------+
-+ *  | Size SINIT MLE table (u64) |
-+ *  +----------------------------+
-+ *  | SINIT MLE table            |
-+ *  +----------------------------+
-+ *
-+ *  NOTE: the table size fields include the 8 byte size field itself.
-+ */
-+static inline u64 txt_bios_data_size(void *heap)
-+{
-+	return *((u64 *)heap);
-+}
-+
-+static inline void *txt_bios_data_start(void *heap)
-+{
-+	return heap + sizeof(u64);
-+}
-+
-+static inline u64 txt_os_mle_data_size(void *heap)
-+{
-+	return *((u64 *)(heap + txt_bios_data_size(heap)));
-+}
-+
-+static inline void *txt_os_mle_data_start(void *heap)
-+{
-+	return heap + txt_bios_data_size(heap) + sizeof(u64);
-+}
-+
-+static inline u64 txt_os_sinit_data_size(void *heap)
-+{
-+	return *((u64 *)(heap + txt_bios_data_size(heap) +
-+			txt_os_mle_data_size(heap)));
-+}
-+
-+static inline void *txt_os_sinit_data_start(void *heap)
-+{
-+	return heap + txt_bios_data_size(heap) +
-+		txt_os_mle_data_size(heap) + sizeof(u64);
-+}
-+
-+static inline u64 txt_sinit_mle_data_size(void *heap)
-+{
-+	return *((u64 *)(heap + txt_bios_data_size(heap) +
-+			txt_os_mle_data_size(heap) +
-+			txt_os_sinit_data_size(heap)));
-+}
-+
-+static inline void *txt_sinit_mle_data_start(void *heap)
-+{
-+	return heap + txt_bios_data_size(heap) +
-+		txt_os_mle_data_size(heap) +
-+		txt_os_sinit_data_size(heap) + sizeof(u64);
-+}
-+
-+#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
-+
-+/*
-+ * TPM event logging functions.
-+ */
-+static inline struct txt_heap_event_log_pointer2_1_element*
-+tpm2_find_log2_1_element(struct txt_os_sinit_data *os_sinit_data)
-+{
-+	struct txt_heap_ext_data_element *ext_elem;
-+
-+	/* The extended element array as at the end of this table */
-+	ext_elem = (struct txt_heap_ext_data_element *)
-+		((u8 *)os_sinit_data + sizeof(struct txt_os_sinit_data));
-+
-+	while (ext_elem->type != TXT_HEAP_EXTDATA_TYPE_END) {
-+		if (ext_elem->type ==
-+		    TXT_HEAP_EXTDATA_TYPE_EVENT_LOG_POINTER2_1) {
-+			return (struct txt_heap_event_log_pointer2_1_element *)
-+				((u8 *)ext_elem +
-+					sizeof(struct txt_heap_ext_data_element));
-+		}
-+		ext_elem =
-+			(struct txt_heap_ext_data_element *)
-+			((u8 *)ext_elem + ext_elem->size);
-+	}
-+
-+	return NULL;
-+}
-+
-+static inline int tpm_log_event(void *evtlog_base, u32 evtlog_size,
-+				u32 event_size, void *event)
-+{
-+	struct tpm_event_log_header *evtlog =
-+		(struct tpm_event_log_header *)evtlog_base;
-+
-+	if (memcmp(evtlog->signature, TPM_EVTLOG_SIGNATURE,
-+		   sizeof(TPM_EVTLOG_SIGNATURE)))
-+		return -EINVAL;
-+
-+	if (evtlog->container_size > evtlog_size)
-+		return -EINVAL;
-+
-+	if (evtlog->next_event_offset + event_size > evtlog->container_size)
-+		return -E2BIG;
-+
-+	memcpy(evtlog_base + evtlog->next_event_offset, event, event_size);
-+	evtlog->next_event_offset += event_size;
-+
-+	return 0;
-+}
-+
-+static inline int tpm2_log_event(struct txt_heap_event_log_pointer2_1_element *elem,
-+				 void *evtlog_base, u32 evtlog_size,
-+				 u32 event_size, void *event)
-+{
-+	struct tcg_pcr_event *header =
-+		(struct tcg_pcr_event *)evtlog_base;
-+
-+	/* Has to be at least big enough for the signature */
-+	if (header->event_size < sizeof(TCG_SPECID_SIG))
-+		return -EINVAL;
-+
-+	if (memcmp((u8 *)header + sizeof(struct tcg_pcr_event),
-+		   TCG_SPECID_SIG, sizeof(TCG_SPECID_SIG)))
-+		return -EINVAL;
-+
-+	if (elem->allocated_event_container_size > evtlog_size)
-+		return -EINVAL;
-+
-+	if (elem->next_record_offset + event_size >
-+	    elem->allocated_event_container_size)
-+		return -E2BIG;
-+
-+	memcpy(evtlog_base + elem->next_record_offset, event, event_size);
-+	elem->next_record_offset += event_size;
-+
-+	return 0;
-+}
-+
-+/*
-+ * External functions avalailable in mainline kernel.
-+ */
-+void slaunch_setup_txt(void);
-+void slaunch_fixup_jump_vector(void);
-+u32 slaunch_get_flags(void);
-+struct sl_ap_wake_info *slaunch_get_ap_wake_info(void);
-+struct acpi_table_header *slaunch_get_dmar_table(struct acpi_table_header *dmar);
-+void __noreturn slaunch_txt_reset(void __iomem *txt,
-+					 const char *msg, u64 error);
-+void slaunch_finalize(int do_sexit);
-+
-+static inline bool slaunch_is_txt_launch(void)
-+{
-+	u32 mask =  SL_FLAG_ACTIVE | SL_FLAG_ARCH_TXT;
-+
-+	return (slaunch_get_flags() & mask) == mask;
-+}
-+
-+#else
-+
-+static inline void slaunch_setup_txt(void)
-+{
-+}
-+
-+static inline void slaunch_fixup_jump_vector(void)
-+{
-+}
-+
-+static inline u32 slaunch_get_flags(void)
-+{
-+	return 0;
-+}
-+
-+static inline struct acpi_table_header *slaunch_get_dmar_table(struct acpi_table_header *dmar)
-+{
-+	return dmar;
-+}
-+
-+static inline void slaunch_finalize(int do_sexit)
-+{
-+}
-+
-+static inline bool slaunch_is_txt_launch(void)
-+{
-+	return false;
-+}
-+
-+#endif /* !IS_ENABLED(CONFIG_SECURE_LAUNCH) */
-+
-+#endif /* !__ASSEMBLY */
-+
-+#endif /* _LINUX_SLAUNCH_H */
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on zohar-integrity/next-integrity linus/master pcmoore-audit/next v6.11-rc5 next-20240826]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/LSM-Add-the-lsmblob-data-structure/20240826-170520
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20240825190048.13289-11-casey%40schaufler-ca.com
+patch subject: [PATCH 10/13] LSM: Create new security_cred_getlsmblob LSM hook
+config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240827/202408271124.LJcw8xus-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 08e5a1de8227512d4774a534b91cb2353cef6284)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240827/202408271124.LJcw8xus-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408271124.LJcw8xus-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from fs/open.c:9:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/open.c:14:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from fs/open.c:14:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from fs/open.c:14:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   In file included from fs/open.c:19:
+>> include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+   13 warnings and 1 error generated.
+--
+   In file included from fs/read_write.c:14:
+   In file included from include/linux/fsnotify.h:16:
+   In file included from include/linux/audit.h:13:
+   In file included from include/linux/ptrace.h:10:
+   In file included from include/linux/pid_namespace.h:7:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/read_write.c:15:
+>> include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+   1 warning and 1 error generated.
+--
+   In file included from fs/namei.c:25:
+   In file included from include/linux/pagemap.h:8:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/namei.c:29:
+>> include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+   In file included from fs/namei.c:41:
+   In file included from include/linux/init_task.h:18:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from fs/namei.c:41:
+   In file included from include/linux/init_task.h:18:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from fs/namei.c:41:
+   In file included from include/linux/init_task.h:18:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   13 warnings and 1 error generated.
+--
+   In file included from fs/splice.c:21:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/splice.c:27:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+   In file included from fs/splice.c:31:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:62:
+>> include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+   3 warnings and 1 error generated.
+--
+   In file included from fs/statfs.c:2:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:5:
+   In file included from include/linux/tracepoint.h:21:
+   In file included from include/linux/static_call.h:135:
+   In file included from include/linux/cpu.h:17:
+   In file included from include/linux/node.h:18:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/statfs.c:2:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:62:
+>> include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+   fs/statfs.c:131:3: warning: 'memcpy' will always overflow; destination buffer has size 88, but size argument is 120 [-Wfortify-source]
+     131 |                 memcpy(&buf, st, sizeof(*st));
+         |                 ^
+   fs/statfs.c:172:3: warning: 'memcpy' will always overflow; destination buffer has size 88, but size argument is 120 [-Wfortify-source]
+     172 |                 memcpy(&buf, st, sizeof(*st));
+         |                 ^
+   3 warnings and 1 error generated.
+--
+   In file included from fs/aio.c:20:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:5:
+   In file included from include/linux/tracepoint.h:21:
+   In file included from include/linux/static_call.h:135:
+   In file included from include/linux/cpu.h:17:
+   In file included from include/linux/node.h:18:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/aio.c:20:
+   In file included from include/linux/syscalls.h:93:
+   In file included from include/trace/syscall.h:7:
+   In file included from include/linux/trace_events.h:10:
+   In file included from include/linux/perf_event.h:62:
+>> include/linux/security.h:1199:3: error: use of undeclared identifier 'secid'
+    1199 |         *secid = 0;
+         |          ^
+   In file included from fs/aio.c:29:
+   include/linux/mman.h:158:9: warning: division by zero is undefined [-Wdivision-by-zero]
+     158 |                _calc_vm_trans(flags, MAP_SYNC,       VM_SYNC      ) |
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
+     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
+         |                     ^ ~~~~~~~~~~~~~~~~~
+   include/linux/mman.h:159:9: warning: division by zero is undefined [-Wdivision-by-zero]
+     159 |                _calc_vm_trans(flags, MAP_STACK,      VM_NOHUGEPAGE) |
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mman.h:136:21: note: expanded from macro '_calc_vm_trans'
+     136 |    : ((x) & (bit1)) / ((bit1) / (bit2))))
+         |                     ^ ~~~~~~~~~~~~~~~~~
+   3 warnings and 1 error generated.
+
+
+vim +/secid +1199 include/linux/security.h
+
+  1195	
+  1196	static inline void security_cred_getlsmblob(const struct cred *c,
+  1197						    struct lsmblob *blob)
+  1198	{
+> 1199		*secid = 0;
+  1200	}
+  1201	
+
 -- 
-2.39.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
