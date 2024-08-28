@@ -1,64 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33B414AD25;
-	Wed, 28 Aug 2024 05:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CDB15B54E;
+	Wed, 28 Aug 2024 11:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724823140; cv=none; b=S4H9qoqDP2WRfb+UCLRhUgX0yaq1pnqMre2WP5+rIbyGhql+WfxcyeI7Lt71RFfta1ZdWCu1ncuVYt4/5D2lu+JJCxDNEUcJHQyBUjmbwp1spePrkyQ3PUZZKNdXjvQCGEQQVq6uRSrsz1cbS9KYBcFvqjFOsetQE5c8Fkx0FUk=
+	t=1724844222; cv=none; b=MLTbXTAKAX1Wan7HFFaipyWuorX3yn0x0TIetB3/jOuuEKQ/ZYHMfylJ2VHbJgOz/bcyQUEj5pmKZ0cmQeLE3h63mtjE+ZfI9I2GyVwa2fZXAN2VLWvBfBUOWJgqfA7uMPtVA2aTFBhEcpJn/3QKz9uS3GsDZM72gEgeklTdd50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724823140; c=relaxed/simple;
-	bh=olmmimMEbwDxYfJ3/akHUI21VGIKzZvVUXeUuGj+0WI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=L/++jdJT4151elDAUxTNU62X7By1fdoLJ+6TFoo71JQ7+FT1gPo0YF9MEw20/WKZqHWJcbqAlG2zrrbDA0rydQwKf+9A3+LW8wBryw1EuPKdqXNUagz582sXtwVAHTOzPGsa5PIArS0hQ9Ndm7Y0jKjt4hR0dIuJqmAZpU70ipc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDb1l480; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724844222; c=relaxed/simple;
+	bh=woMfM9462eOJrwEHB3r89jnJI7ptsCPZp79CgwGCT4I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tUYFnBaPdj0pDWhOKXG8GPBXtKj8rOdf64tRd9oUJzDpWDAIT8FZpjbbNDIGSK/CN5tYejXkuJ17Vb4IlDsDJsCzzHeMVPCJrG363jJDDjRZiC6ntEZmMJxMyAj8hvvQ1fiSdgVhY72fvygWaDsL/bHYS4DUbenglYDPx5c4ZyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mEMkloe8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MfN8i1Nh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0iVyuTYF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DKNLhB3p; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDb1l480"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B0EC4AF19;
-	Wed, 28 Aug 2024 05:32:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724823140;
-	bh=olmmimMEbwDxYfJ3/akHUI21VGIKzZvVUXeUuGj+0WI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VDb1l480Cks0yXzbSebTymGYQhmtZ/U9YSBbjpnGRGdmHEtVfmjMd76lju0LBtEBy
-	 Bh9Y9VJg2aHY+jXiczPTDS32BLLxo2g0VmbJ0LcwQVbIEU8fBS3RyPP5ZOl3y9RUaA
-	 2hJkCdZpQe+NWnZVb0SmWYrPC4eAc+oRdihfd6PHm0idli+HdCC5e+d/WanEq9vzZe
-	 uqX7X8DrftlMcEO0EefGQ+PCdB0koQJQOtSZwfAAfoXhQ1RSMJhUxdLSFSFCW5q1AA
-	 4TqmPhymrb1eMYi+Tep8wFN061f9bzR9iMxRzLJl7ea/heDHLwe4IU1nFCO2YYVQGS
-	 LZjdrO/PcVyyQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F493822D6F;
-	Wed, 28 Aug 2024 05:32:21 +0000 (UTC)
-Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.11-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <D3QXXCFHY73S.26C2JS9ZOV7IQ@kernel.org>
-References: <D3QXXCFHY73S.26C2JS9ZOV7IQ@kernel.org>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <D3QXXCFHY73S.26C2JS9ZOV7IQ@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.11-rc6
-X-PR-Tracked-Commit-Id: 08d08e2e9f0ad1af0044e4747723f66677c35ee9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 46d22bfdf0bc76429f596c58ca74a8f67d0f6251
-Message-Id: <172482314011.853602.7428886411403749943.pr-tracker-bot@kernel.org>
-Date: Wed, 28 Aug 2024 05:32:20 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan
- Berger <stefanb@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mEMkloe8";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MfN8i1Nh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0iVyuTYF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DKNLhB3p"
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	by smtp-out2.suse.de (Postfix) with ESMTP id DDD861FC11;
+	Wed, 28 Aug 2024 11:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724844219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
+	b=mEMkloe8uBVVT65y8ATG3DiHAAVImkLXI9lDirmuTeKgh2rFDbXKbQPRFjonMoIPKDTOmD
+	v3TnsT8rKiBNZxLlJiyW/bRQFNSAWMrbYgbMYlS8JdV5QHxFTFNk6B0UXz0gygH2M7Q/EE
+	eLVSGdwZrXuyISBg8OcXH87M7K6dBVk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724844219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
+	b=MfN8i1NhZKFqEHz2fh+F4GZwU/JhkaoOfEUsGv2WkHjuPsMjQA18HArQFTV63SQyTDa9EE
+	uya6Y0L68/ffM2DA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1724844218; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
+	b=0iVyuTYFlBgdulA+mST/oUVSrgTpEQdFdfa8adNsEQ1qNNGQIExpE4mSBwNXGiiktB9P3s
+	REf5AhuwPFq+jB83IMPiJINNZ6FSbZVxkyk3762SO6csfVUOTjpot6HRXpYOV3twir9hPt
+	2POKkYtjuzvJjk7xL+lcIimRDAgx7AA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1724844218;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZS4TScwxClFiQ42wXyGSbjTyqoV2glgYXGELYPtGsIg=;
+	b=DKNLhB3pEiloMcO4Z2CGHXoLoLC99guHQ3I6cj7US3kbnqTTrMSZhUZlZ87tXKKDlSELsH
+	Yx1AzSkpjlfrn9AA==
+From: Michal Suchanek <msuchanek@suse.de>
+To: linux-integrity@vger.kernel.org
+Cc: Michal Suchanek <msuchanek@suse.de>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH 2/2] selftests: tpm2: test_smoke: Run only when TPM2 is avaialable.
+Date: Wed, 28 Aug 2024 13:23:20 +0200
+Message-ID: <1794c9c1d60a34ebae28d3a18b408765e955907b.1724842902.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <52c629ebbfc8f5218a90fa539f816c8555cb552a.1724842902.git.msuchanek@suse.de>
+References: <52c629ebbfc8f5218a90fa539f816c8555cb552a.1724842902.git.msuchanek@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -6.80
+X-Spamd-Result: default: False [-6.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,gmx.de,kernel.org,ziepe.ca,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email];
+	FREEMAIL_ENVRCPT(0.00)[gmx.de]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-The pull request you sent on Tue, 27 Aug 2024 22:28:13 +0300:
+Since Linux 5.6 tpm_version_major sysfs file is avaialble which gives
+the TPM version.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-6.11-rc6
+Using this file the test can be skipped on systems with TPM 1.2.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/46d22bfdf0bc76429f596c58ca74a8f67d0f6251
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+ tools/testing/selftests/tpm2/test_smoke.sh | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thank you!
-
+diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
+index 58af963e5b55..e5e3386077d9 100755
+--- a/tools/testing/selftests/tpm2/test_smoke.sh
++++ b/tools/testing/selftests/tpm2/test_smoke.sh
+@@ -5,5 +5,7 @@
+ ksft_skip=4
+ 
+ [ -e /dev/tpm0 ] || exit $ksft_skip
++read tpm_version < /sys/class/tpm/tpm0/tpm_version_major
++[ "$tpm_version" == 2 ] || exit $ksft_skip
+ 
+ python3 -m unittest -v tpm2_tests.SmokeTest
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.46.0
+
