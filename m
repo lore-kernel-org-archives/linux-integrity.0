@@ -1,37 +1,36 @@
 Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A62224D7;
-	Fri,  6 Sep 2024 06:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE23B1A2;
+	Fri,  6 Sep 2024 06:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725603007; cv=none; b=QdFcee/b/8lbhXH67e4aVErXGl/Kq80Y/oDI10f6xDpbH13W/G2DCp7fBOanuGI51sl4ib3pF0Rstj/2Zc+pT3fJxA0dZYEpBO4dReYULjkglUruJ+zy24ymJINPrRdbsk0P+TEg5R4S+8c8KrkUTEr/iiW1razJAkVAm+T2rvA=
+	t=1725603007; cv=none; b=aRw8kKQkx8tBWTkojeqPZQB2SFdzpPE5+G/I2Y9AZJ6czKj18rErtfxWugrMGgaFz1zCohbVEXXZDYumGztI5QhB9fHzAd05+3kF3GX1UCNxk3/WfYjpIxGoNaxmg/aYbrpPrL/GPufJrXcwijm7it15yjoXqofow94mtPg3/pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1725603007; c=relaxed/simple;
-	bh=lecfhukrHUWAp+GZ93B56Tr7Zso06MRPZjsNqjMukKI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tiC4TZ6eRX14cgbbRgmUgrXeZ21tZUXn6BzzsD6vnCp4w1bdQTK+lDUNTvqJmv9BnvgYItncUWUZCYpHDVQfkOgrHpovh9jrwC2ahXTCrVd3TBpqxZrl6ZJBkzkC6j4Q2xDciTMN40eprVy1vq9P6WZ88n72pvGZV16rysT0qtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=NZDnBLEv; arc=none smtp.client-ip=212.227.15.15
+	bh=L/M6VWT0huBTc7VVB3Vitg3CYBgjtnhiy6HcqOb6g3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iURr50JCNNV3hwTAMMBtHps98gAIAeeBxPq0Cm7d9ijOKfBVY2R/XckI4sQC/EPah0xpbXFsmM57NDsZMlETCMJPgTdTxl+ubAWYRbhxCFT/4UttSZ/QogCVeRGNKUdg1q0R8Dva8h76wPXmjjHT+gau3wzqko20LK/Kr3G/uYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=lWt/ZQRz; arc=none smtp.client-ip=212.227.15.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="NZDnBLEv"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="lWt/ZQRz"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1725602996; x=1726207796; i=wahrenst@gmx.net;
-	bh=+XbPJ8LsOXG/b/TRXHeXh1z/5ZeRbhx7UZWUzuL3bms=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1725602995; x=1726207795; i=wahrenst@gmx.net;
+	bh=KuGidECZWeZ8PGviZlVT4SoHZf65jEZKxo1C4Og2fno=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=NZDnBLEvxVV/T581ERw2VtvRhlvOzYERU7uqQqPpfp+fsTM/ikrbdIyX+hfgjC8W
-	 FoPa2C7V6xd/s/Z6AiL2dgz5ozdRCsAudEo7j4c5g4hnsi1gL6qzOH8hs9S1kwWfO
-	 UhIScjBLzDb07kcFSY8du5bdapd5bt3VA9u50Se/piForNc0G8stEaU/ERNPQ3/ko
-	 KQSpUtp9VsMgMO6CUtydjHvPMFWY9E74X3tV/AfrZbHhLqOHIpzRxuiII9JPCMAG6
-	 9rabHqxUq9nQlp5SECF7qHKXt5XZvfE78HcS57InYFVzziZpyLWzNyEfMjFRDg36X
-	 t0oYfvb2nDb4SeXR0w==
+	b=lWt/ZQRzpNWWy3+BBlDNet2tXS/QBAnoiswOnB8d4iHrrxnlg9Xj5/6PcgcPQec+
+	 2Iqftn2oyyNeJS1pnRAJEhn/CdR9UlUN33hLF/rDg+BvC8qE4DYZsGeqWTTTLzBDI
+	 5ePmaVcNSB3Yp92Qpdxb28r/d3rn2FkTTUgYu44V9fAUIxRPBDBMyORsLUXVAjImk
+	 UqjY5ZEtcRfwcj20otWR71+3LU9bF9NAqBR13d/o0Ik0DklyJvhGFM1SV5FP9ho0E
+	 r0zfdrx7c+mz2JmXOd56fBjyFYn/V+v0jI40syhitUGI1zcT2g4RfKbOWCl75w8pI
+	 AVRXgoB3CTPaKTTRvA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N33Il-1s3aJC3Gur-00veS3; Fri, 06
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MuUj2-1rv2X30RxC-017zRs; Fri, 06
  Sep 2024 08:09:55 +0200
 From: Stefan Wahren <wahrenst@gmx.net>
 To: Peter Huewe <peterhuewe@gmx.de>,
@@ -41,12 +40,10 @@ Cc: linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Stefan Berger <stefanb@linux.ibm.com>,
 	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH RFC 2/2] tpm: tpm_tis: Provide error messages in tpm_tis_core_init
-Date: Fri,  6 Sep 2024 08:09:47 +0200
-Message-Id: <20240906060947.4844-3-wahrenst@gmx.net>
+Subject: [PATCH RFC 0/2] tpm: Minor improvements
+Date: Fri,  6 Sep 2024 08:09:45 +0200
+Message-Id: <20240906060947.4844-1-wahrenst@gmx.net>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240906060947.4844-1-wahrenst@gmx.net>
-References: <20240906060947.4844-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -54,91 +51,36 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Prv4qvya/RrWQwDEQS03tjIOD8eqxAwtqxHmk5hipQFeIJya5yW
- mD9xMvaE/OBqrIsIeYKtusiYH3KTx/RF5WP7oS2Vip/NO/BN57z4RJP6X9BWFm6lVzJwLWt
- oFg2wgDUmoC6yGD4IDN9fEd7GFRtrXW14SW1GfRZw58B8ufoHx9TNnGD1K6aSU4MF95PMW2
- +nBKJuCJA2PgybF5FK5iw==
+X-Provags-ID: V03:K1:aASnBdfZ/MVzEme5ExVgqoinWwXUIVXtOKN4ohK93s3WbcgGgin
+ EolGARfiVCMEHVhSUGhIeE7XJ8l2EeS6wmzSkEAiuih2HKdEG/Od+M4fwQC7VSPBYxQo9pI
+ j+gn7Qrl3urIEvDiKb9fwhlkxDOJ1aYWoEuBFV4RS7Kqx424eXNdw4eA9R2UthThDL8uflD
+ 66JnjGnmUbYXBvRlXK/+Q==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zIh6P9ax0Qw=;6M2nEot+SGZxbhBbYXQ8VJe0TD0
- k4/nn3dImJq8+NO1PG5Fxd49e5tHys3SNMC8ayulR2rU9yZLJc45HM+B/8fF6C8BZPgSDGxL+
- OyQugzyhaLpwckbHNx7MzDSWv2lEeeoNaTeD35id8XyZXDWZJ5bX26b7HzeBCnOPbWTY4mgzl
- /1tjjLjFCHRCfnB6IuQalK5zXv1YIMQ1o9y8dfyczAChDFhGWsIWcMQOq16PjD4jci4FDuTMy
- AX2l5QhiFEeI0Inkeec56Rawph/bLtlkpMlfU1y+ABUJsVIhI0v/0ZSjZft1wuLU8L/cAvKv6
- LLsj0uNzD/ENtfJiNn37gWr0zZUBWfN/k7JsDjsd6J/eIcMZv0mTmfW8XD1ooPE2uO0XUWqpa
- yW4aIt/v0bKcbK5NLri2n+U5q42D3TTSAMF3E+4CbF92VDYIbIWRsAfjSZ/ElUoxQ7vlasuUC
- hdExU1FxSYcWfP9fbv+pL/QSU4vlX7iuLVqVO/YX6TPe4WGvaiumWN2H+cFqMMdkXYBy4XcHT
- 91bI6uvbnplC8yLBJTRQ1wEHwPj4vBa4PxTJHfQSCPyWXcZhP0aL3yzjj8QpCKD8WqejLMXaV
- I+ka0wZUXrJ6aRexI+7HZ797LceBOBXkhiWCO7SAtOE5EHmpPnwgjq/rgDiuoOEL0o3CJeTuq
- LiwFTmM7HBiB8ykF18jfY7097NKN6dGSP5bOCTVyKZ/59yj6fArzEVT3O+ETz0X2wJRL8YYNc
- p7kb1hqx3dEMpBErjiMTm0Q4JsaVbStuGUFA4ata6+C7D4zXjMkdywsX0AQxoqhFXUfGHWKtA
- JWAZox0l/Ljdt01yn9QZhaOQ==
+UI-OutboundReport: notjunk:1;M01:P0:+vZOc4yaGqo=;lvuPGRmr68xbyKUJXtnxnyHrjad
+ tf6gTkzHeFUT4vSCDj8msruW0jTcZAx7RgXHVSkX4ggOvMsMI2faRdjMW2Y+Or5rk9E1rBSKG
+ u3D6D9EEaNtcTz+DIWj02lnrhyZfJLQSAH6mk8BG4NGdgvL16/KTVeIeDa2sf6FyAYjWx0lX/
+ r1UnSJUTAluRED3a7kb20aexcVo7RmpwpO5DdbwD1jrl16t48J8mcU/p5NHpMseVvZFPBes9c
+ NjPeeQwg2+Ip/NMiJqnwh3ETPnjOQzD8lnSM9pnHz26yaCyGpUXUAiyiOFbbzywXHIdtfGMBK
+ u6D5rMAzTD+u0JZCLFxFQg1F0mqKyLKcBqx6OxOUOWTg5x9R8al9HemPPyd6nTZ14bS2EXT78
+ JJKeyqmswz76zeUkGfMgorFb2tNkVE7U9ScdUeDu7jncqxGm6LYfPUsGL4KXetehrrM/G/bpx
+ lEwUAA2qOOXBm30LBaczV1wvEdmbe3bJYeMQ/qPv0NHcLDAIBNEtvmXkSh5vh4KSBgy1fkgdn
+ 788F1IYhAG7mASkEhiC1U8VCQ2lehbF2avjsWi4u4XR5k+74q/IBrjfCucCH8F1c/LiS2nmjR
+ NmM9FMzF3ZGlGPt9iQwLqSF7lDIa2Kq9tSWvTBTJaKYX9VSbcZy1xaOSRvnbLCLDGV6ch7cOS
+ ejVcRHBRTtyonLOuM6+CK6+kEXeYzVe4Ax6v7bQ2+Zlu7irhL1myxJF9P8WZ4cj1fOXb6f/8E
+ BP+yAOBu7F/jutgUhw4a2Gk2K4j2Ahqdof04i6GCKzUtfuQyEx1Gu8My2mJO605pCefE0F8av
+ UCy/eIq9sRwzJZYgx43RMpCw==
 
-In case of SPI wiring issues (e.g. MISO pin permanent high) the
-core init won't provide any error message on failure. Add some
-helpful error messages to tpm_tis_core_init(), which helps
-to better understand why the driver won't probe.
+These minor improvements are the results of wiring up a
+Infineon SLB9670 chip on a custom board.
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/char/tpm/tpm_tis_core.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+Stefan Wahren (2):
+  tpm: tpm_tis_spi: Ensure SPI mode 0
+  tpm: tpm_tis: Provide error messages in tpm_tis_core_init
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_co=
-re.c
-index fdef214b9f6b..830e331fcebe 100644
-=2D-- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -1133,8 +1133,10 @@ int tpm_tis_core_init(struct device *dev, struct tp=
-m_tis_data *priv, int irq,
- 	dev_set_drvdata(&chip->dev, priv);
+ drivers/char/tpm/tpm_tis_core.c     | 15 ++++++++++++---
+ drivers/char/tpm/tpm_tis_spi_main.c | 11 +++++++++++
+ 2 files changed, 23 insertions(+), 3 deletions(-)
 
- 	rc =3D tpm_tis_read32(priv, TPM_DID_VID(0), &vendor);
--	if (rc < 0)
-+	if (rc < 0) {
-+		dev_err(dev, "Failed to read TPM_DID_VID register: %d\n", rc);
- 		return rc;
-+	}
-
- 	priv->manufacturer_id =3D vendor;
-
-@@ -1162,19 +1164,25 @@ int tpm_tis_core_init(struct device *dev, struct t=
-pm_tis_data *priv, int irq,
- 		chip->ops->clk_enable(chip, true);
-
- 	if (wait_startup(chip, 0) !=3D 0) {
-+		dev_err(dev, "TPM device not accessible (0x%0x)\n",
-+			vendor);
- 		rc =3D -ENODEV;
- 		goto out_err;
- 	}
-
- 	/* Take control of the TPM's interrupt hardware and shut it off */
- 	rc =3D tpm_tis_read32(priv, TPM_INT_ENABLE(priv->locality), &intmask);
--	if (rc < 0)
-+	if (rc < 0) {
-+		dev_err(dev, "Failed to read TPM_INT_ENABLE register: %d\n", rc);
- 		goto out_err;
-+	}
-
- 	/* Figure out the capabilities */
- 	rc =3D tpm_tis_read32(priv, TPM_INTF_CAPS(priv->locality), &intfcaps);
--	if (rc < 0)
-+	if (rc < 0) {
-+		dev_err(dev, "Failed to read TPM_INTF_CAPS register: %d\n", rc);
- 		goto out_err;
-+	}
-
- 	dev_dbg(dev, "TPM interface capabilities (0x%x):\n",
- 		intfcaps);
-@@ -1209,6 +1217,7 @@ int tpm_tis_core_init(struct device *dev, struct tpm=
-_tis_data *priv, int irq,
-
- 	rc =3D tpm_tis_request_locality(chip, 0);
- 	if (rc < 0) {
-+		dev_err(dev, "Failed to request locality (0x%0x)\n", vendor);
- 		rc =3D -ENODEV;
- 		goto out_err;
- 	}
 =2D-
 2.34.1
 
