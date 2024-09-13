@@ -1,120 +1,381 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221C01D7E39;
-	Fri, 13 Sep 2024 10:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50B6146593;
+	Fri, 13 Sep 2024 20:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224383; cv=none; b=hS65T82EXrSjawsMwRzD3VNRHo2Y2q+uOWzNT7uUbEUX64a/8e1RIfbr33MrFm6j24iRIqDCZEwN9AN6rerHF/ESijvPhehMCk8hfA9yi+Jjxc+qiL0umtepd8GYtCz+QyZRdkyz153fXG5/YMxxZnwQWLxinO4j9AE4Jf9KaWA=
+	t=1726258279; cv=none; b=s5/6t9E0TVcSDSDE8IsGip+h0f/f8bERibkyfKehgKBrYqHcBt0TnhED9E6JsJAh2mOUE80H1LzY42tPgGrRtGktFg8uhMHZu8r1xSzNsTXmPg4hni+fqwW1pW+zH/QIPmGiu0CLxOGO5WsAyfkaVoW1EuCk6Vt67ku6a7XzHtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224383; c=relaxed/simple;
-	bh=S3OfFPhvngzIXVIBvvu2VJ7Ne9DtASb05dIPumrAuGA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BVQV6Ubx3ptMeyUN0tT8O7ZmO/xgIQnn/I8Ee74AP3BNM35UQBI8QiL9nuzghXKge+d5n6kfBsbtVrtLIjmiboqw30UtYl0/rV+KUtQ4N2cbjLuTB+mucGHVNWgEb5Lv4wCF0T/+ob5daD6PabwP3AvyHcfMyYTYbvQD1FI9Ae8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCesijiR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726258279; c=relaxed/simple;
+	bh=Veu537oAwqWjWR1jZFoIWo7OYMM72eAF5LCL+8RySHs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=I7O0vHfOGvojtL7g6uAnbwrvvoXY4xPTmRsM97bAWjy0U2NRZQZZ33UWnpC+PyQ9RclXbouAkNLhYYyQX7wbRilnUsIToynThN0KPWtg8EIvzR28qSCRdahNa8jnARLSo57TpjHar3NbKmu6FhIvIGuLTkoIFQtIAk321GcnJMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=P3YOFY7D; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCesijiR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A22C4CED0;
-	Fri, 13 Sep 2024 10:46:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726224382;
-	bh=S3OfFPhvngzIXVIBvvu2VJ7Ne9DtASb05dIPumrAuGA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PCesijiRN0EG3csPIokYtW3nnlsM02Sn8/crXyeded6Dwiab1FXZ1fvHFnj32e9UD
-	 cUpXq9+9gb60uH+AhkYtovgYOFsLDU2WvffuKLjvouAEUdvtELf8wLcUFpeHcbx7UE
-	 PQRmFs+U5Oaa0v1kQ6ALW5DOePB1fBbdgCS1l4awJ9RecUVQQidV/f/6/CVaZvssFR
-	 9pLsHQ0AA8fyZh64QFPAmLTZOMJ5OnOGzfpFynP8FAX1vINw2F1j0K34I4XiMXX5Y8
-	 AnOGx3kl3u0eqy8V5gzcrzME/JZ336CG29Z3URffZrBjoA79xZam0o+VvZqNjuhuY4
-	 BRMp/RZi+BS3Q==
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f75b13c2a8so24190331fa.3;
-        Fri, 13 Sep 2024 03:46:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUtjXwnFTNIuWnSbnkUwh3mG3eK9s80i598NqBybOM9WFflbthvaSQWT/sI23aDneB8mZCIDM+YDQLKVkBX@vger.kernel.org, AJvYcCUxlrTIMOpFB/UGvEnX4EaxQWiD2lHaNEILJooPdrIhFCtINDH8U2/jPJQxg2G0rbD6Q7BTyPkEccIO55kD@vger.kernel.org, AJvYcCXIHqZUR184CNDIy8QLX2hEkhyAs0T+fhGvgyWME+slirwUQprRnxfVIDWez3vAlwJ97UkQ4l3Cyw==@vger.kernel.org, AJvYcCXsvIfTLerldLa2wE4EUT769Y8N8i/BevX+aQ6HjWbIAv1j/whDkaAwxlbAv6SCG7OoDGHTGzzL2myKIknLJEce@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWUcLhFUar0QGK9HSPfpf6X9uw0wPDOW8TOnshNJYQhbv19RF1
-	5luUdTsRwJFNZ7u7ywM40DmK0ftvRKVaTxydIjWxdrTSABfosIyW6ovFn80ms3T0TA+hf5ZmaDd
-	AK13nl3cc9om3s4u8tZnjX+Q76js=
-X-Google-Smtp-Source: AGHT+IHgfCxPiT5vZMtaQepta9uqXpG4/5TNPzFxOmRXvEQwfvgwsKyWmN8/Fya2mEuSKQsg4t5AMIdDxMekLTQEEkM=
-X-Received: by 2002:a2e:1311:0:b0:2f3:ed34:41c9 with SMTP id
- 38308e7fff4ca-2f787f32dc2mr26801081fa.37.1726224380930; Fri, 13 Sep 2024
- 03:46:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="P3YOFY7D"
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DJ0Xg0008475;
+	Fri, 13 Sep 2024 20:10:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=7
+	JJ9HiTmEJl7AaKFafvYzLztmjCtZfg3MTAOlquSpD0=; b=P3YOFY7DFzH5nA3X/
+	bDDWzKkD+cHNZPvg1u+wto4+wjNdV0MzZScVy3+MXVdiJQJKrL/RdWxoHgXfcPQc
+	X+fqglDrGcG1XsZalfvhOL+ZGpoZ9H4OgUOY50jSdBs/8UVQBKocYgrXRvbCojVf
+	sO28gb+z9ZuauxFTMEJYx7CR/1cZpz0+WRiT3Vn94Y/7fjAQwKSlr+ClmNsSABy8
+	PhKHOTWkfAIPs4kvqX/xFx6hDZEPiwc72zn9cQ3DhRvLAFPEChE8K+zHhUQiVeit
+	S9NhQvaCOz9sSMlr1pwTPOtQw1Ul5bcXQTLbVpnxwe1o6HC3nmxhIdtJAhJp9Maa
+	C4k/A==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gdrbegu7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 20:10:44 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48DITMWv040809;
+	Fri, 13 Sep 2024 20:10:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9etdrv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 13 Sep 2024 20:10:43 +0000
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48DKAgQ8022137;
+	Fri, 13 Sep 2024 20:10:42 GMT
+Received: from localhost.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9etdq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 13 Sep 2024 20:10:42 +0000
+From: Ross Philipson <ross.philipson@oracle.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
+Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
+        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+        trenchboot-devel@googlegroups.com
+Subject: [PATCH v11 03/20] x86: Secure Launch Resource Table header file
+Date: Fri, 13 Sep 2024 13:05:00 -0700
+Message-Id: <20240913200517.3085794-4-ross.philipson@oracle.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20240913200517.3085794-1-ross.philipson@oracle.com>
+References: <20240913200517.3085794-1-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <1266435.1726219950@warthog.procyon.org.uk>
-In-Reply-To: <1266435.1726219950@warthog.procyon.org.uk>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 13 Sep 2024 12:46:09 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com>
-Message-ID: <CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-To: David Howells <dhowells@redhat.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, dwmw2@infradead.org, davem@davemloft.net, 
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
-	linux-integrity@vger.kernel.org, torvalds@linux-foundation.org, 
-	roberto.sassu@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409130143
+X-Proofpoint-ORIG-GUID: 5TtgLMiB6zVcpfff6k3InXrWFEzgMUGL
+X-Proofpoint-GUID: 5TtgLMiB6zVcpfff6k3InXrWFEzgMUGL
 
-On Fri, 13 Sept 2024 at 11:32, David Howells <dhowells@redhat.com> wrote:
->
-> Herbert Xu <herbert@gondor.apana.org.au> wrote:
->
-> > Personally I don't think the argument above holds water.  With
-> > IPsec we had a similar issue of authenticating untrusted peers
-> > using public key cryptography.  In that case we successfully
-> > delegated the task to user-space and it is still how it works
-> > to this day.
+Introduce the Secure Launch Resource Table which forms the formal
+interface between the pre and post launch code.
 
-This is slightly disingenuous. The kernel itself has no need to trust
-the peer - it only manages the network pipe and authenticates/decrypts
-the packets on behalf of user space.
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ include/linux/slr_table.h | 276 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 276 insertions(+)
+ create mode 100644 include/linux/slr_table.h
 
-The situation would be radically different if the kernel itself would
-communicate over IPsec (or HTTPS) directly.
+diff --git a/include/linux/slr_table.h b/include/linux/slr_table.h
+new file mode 100644
+index 000000000000..a44fd6fbce23
+--- /dev/null
++++ b/include/linux/slr_table.h
+@@ -0,0 +1,276 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * TrenchBoot Secure Launch Resource Table
++ *
++ * The Secure Launch Resource Table is TrenchBoot project defined
++ * specfication to provide cross-architecture compatibility. See
++ * TrenchBoot Secure Launch kernel documentation for details.
++ *
++ * Copyright (c) 2024 Apertus Solutions, LLC
++ * Copyright (c) 2024, Oracle and/or its affiliates.
++ */
++
++#ifndef _LINUX_SLR_TABLE_H
++#define _LINUX_SLR_TABLE_H
++
++/* Put this in efi.h if it becomes a standard */
++#define SLR_TABLE_GUID				EFI_GUID(0x877a9b2a, 0x0385, 0x45d1, 0xa0, 0x34, 0x9d, 0xac, 0x9c, 0x9e, 0x56, 0x5f)
++
++/* SLR table header values */
++#define SLR_TABLE_MAGIC		0x4452544d
++#define SLR_TABLE_REVISION	1
++
++/* Current revisions for the policy and UEFI config */
++#define SLR_POLICY_REVISION		1
++#define SLR_UEFI_CONFIG_REVISION	1
++
++/* SLR defined architectures */
++#define SLR_INTEL_TXT		1
++#define SLR_AMD_SKINIT		2
++
++/* SLR defined bootloaders */
++#define SLR_BOOTLOADER_INVALID	0
++#define SLR_BOOTLOADER_GRUB	1
++
++/* Log formats */
++#define SLR_DRTM_TPM12_LOG	1
++#define SLR_DRTM_TPM20_LOG	2
++
++/* DRTM Policy Entry Flags */
++#define SLR_POLICY_FLAG_MEASURED	0x1
++#define SLR_POLICY_IMPLICIT_SIZE	0x2
++
++/* Array Lengths */
++#define TPM_EVENT_INFO_LENGTH		32
++#define TXT_VARIABLE_MTRRS_LENGTH	32
++
++/* Tags */
++#define SLR_ENTRY_INVALID	0x0000
++#define SLR_ENTRY_DL_INFO	0x0001
++#define SLR_ENTRY_LOG_INFO	0x0002
++#define SLR_ENTRY_ENTRY_POLICY	0x0003
++#define SLR_ENTRY_INTEL_INFO	0x0004
++#define SLR_ENTRY_AMD_INFO	0x0005
++#define SLR_ENTRY_ARM_INFO	0x0006
++#define SLR_ENTRY_UEFI_INFO	0x0007
++#define SLR_ENTRY_UEFI_CONFIG	0x0008
++#define SLR_ENTRY_END		0xffff
++
++/* Entity Types */
++#define SLR_ET_UNSPECIFIED	0x0000
++#define SLR_ET_SLRT		0x0001
++#define SLR_ET_BOOT_PARAMS	0x0002
++#define SLR_ET_SETUP_DATA	0x0003
++#define SLR_ET_CMDLINE		0x0004
++#define SLR_ET_UEFI_MEMMAP	0x0005
++#define SLR_ET_RAMDISK		0x0006
++#define SLR_ET_TXT_OS2MLE	0x0010
++#define SLR_ET_UNUSED		0xffff
++
++#ifndef __ASSEMBLY__
++
++/*
++ * Primary Secure Launch Resource Table Header
++ */
++struct slr_table {
++	u32 magic;
++	u16 revision;
++	u16 architecture;
++	u32 size;
++	u32 max_size;
++	/* table entries */
++} __packed;
++
++/*
++ * Common SLRT Table Header
++ */
++struct slr_entry_hdr {
++	u32 tag;
++	u32 size;
++} __packed;
++
++/*
++ * Boot loader context
++ */
++struct slr_bl_context {
++	u16 bootloader;
++	u16 reserved[3];
++	u64 context;
++} __packed;
++
++/*
++ * Dynamic Launch Callback Function type
++ */
++typedef void (*dl_handler_func)(struct slr_bl_context *bl_context);
++
++/*
++ * DRTM Dynamic Launch Configuration
++ */
++struct slr_entry_dl_info {
++	struct slr_entry_hdr hdr;
++	u64 dce_size;
++	u64 dce_base;
++	u64 dlme_size;
++	u64 dlme_base;
++	u64 dlme_entry;
++	struct slr_bl_context bl_context;
++	u64 dl_handler;
++} __packed;
++
++/*
++ * TPM Log Information
++ */
++struct slr_entry_log_info {
++	struct slr_entry_hdr hdr;
++	u16 format;
++	u16 reserved;
++	u32 size;
++	u64 addr;
++} __packed;
++
++/*
++ * DRTM Measurement Entry
++ */
++struct slr_policy_entry {
++	u16 pcr;
++	u16 entity_type;
++	u16 flags;
++	u16 reserved;
++	u64 size;
++	u64 entity;
++	char evt_info[TPM_EVENT_INFO_LENGTH];
++} __packed;
++
++/*
++ * DRTM Measurement Policy
++ */
++struct slr_entry_policy {
++	struct slr_entry_hdr hdr;
++	u16 reserved[2];
++	u16 revision;
++	u16 nr_entries;
++	struct slr_policy_entry policy_entries[];
++} __packed;
++
++/*
++ * Secure Launch defined MTRR saving structures
++ */
++struct slr_txt_mtrr_pair {
++	u64 mtrr_physbase;
++	u64 mtrr_physmask;
++} __packed;
++
++struct slr_txt_mtrr_state {
++	u64 default_mem_type;
++	u64 mtrr_vcnt;
++	struct slr_txt_mtrr_pair mtrr_pair[TXT_VARIABLE_MTRRS_LENGTH];
++} __packed;
++
++/*
++ * Intel TXT Info table
++ */
++struct slr_entry_intel_info {
++	struct slr_entry_hdr hdr;
++	u64 txt_heap;
++	u64 saved_misc_enable_msr;
++	struct slr_txt_mtrr_state saved_bsp_mtrrs;
++} __packed;
++
++/*
++ * UEFI config measurement entry
++ */
++struct slr_uefi_cfg_entry {
++	u16 pcr;
++	u16 reserved;
++	u32 size;
++	u64 cfg; /* address or value */
++	char evt_info[TPM_EVENT_INFO_LENGTH];
++} __packed;
++
++/*
++ * UEFI config measurements
++ */
++struct slr_entry_uefi_config {
++	struct slr_entry_hdr hdr;
++	u16 reserved[2];
++	u16 revision;
++	u16 nr_entries;
++	struct slr_uefi_cfg_entry uefi_cfg_entries[];
++} __packed;
++
++static inline void *slr_end_of_entries(struct slr_table *table)
++{
++	return (void *)table + table->size;
++}
++
++static inline void *
++slr_next_entry(struct slr_table *table,
++	       struct slr_entry_hdr *curr)
++{
++	struct slr_entry_hdr *next = (struct slr_entry_hdr *)((u8 *)curr + curr->size);
++
++	if ((void *)next >= slr_end_of_entries(table))
++		return NULL;
++	if (next->tag == SLR_ENTRY_END)
++		return NULL;
++
++	return next;
++}
++
++static inline void *
++slr_next_entry_by_tag(struct slr_table *table,
++		      struct slr_entry_hdr *entry,
++		      u16 tag)
++{
++	if (!entry) /* Start from the beginning */
++		entry = (struct slr_entry_hdr *)(((u8 *)table) + sizeof(*table));
++
++	for ( ; ; ) {
++		if (entry->tag == tag)
++			return entry;
++
++		entry = slr_next_entry(table, entry);
++		if (!entry)
++			return NULL;
++	}
++
++	return NULL;
++}
++
++static inline int
++slr_add_entry(struct slr_table *table,
++	      struct slr_entry_hdr *entry)
++{
++	struct slr_entry_hdr *end;
++
++	if ((table->size + entry->size) > table->max_size)
++		return -1;
++
++	memcpy((u8 *)table + table->size - sizeof(*end), entry, entry->size);
++	table->size += entry->size;
++
++	end  = (struct slr_entry_hdr *)((u8 *)table + table->size - sizeof(*end));
++	end->tag = SLR_ENTRY_END;
++	end->size = sizeof(*end);
++
++	return 0;
++}
++
++static inline void
++slr_init_table(struct slr_table *slrt, u16 architecture, u32 max_size)
++{
++	struct slr_entry_hdr *end;
++
++	slrt->magic = SLR_TABLE_MAGIC;
++	slrt->revision = SLR_TABLE_REVISION;
++	slrt->architecture = architecture;
++	slrt->size = sizeof(*slrt) + sizeof(*end);
++	slrt->max_size = max_size;
++	end = (struct slr_entry_hdr *)((u8 *)slrt + sizeof(*slrt));
++	end->tag = SLR_ENTRY_END;
++	end->size = sizeof(*end);
++}
++
++#endif /* !__ASSEMBLY */
++
++#endif /* _LINUX_SLR_TABLE_H */
+-- 
+2.39.3
 
-Likewise for module loading: there is no way the authentication can be
-delegated to user space, unless that user space component is
-authenticated by the kernel (and runs in a special, hardened context).
->
-> It transpires that we do actually need at least a PGP parser in the kernel -
-> and it needs to be used prior to loading any modules: some Lenovo Thinkpads,
-> at least, may have EFI variables holding a list of keys in PGP form, not X.509
-> form.
->
-> For example, in dmesg, you might see:
->
-> May 16 04:01:01 localhost kernel: integrity: Loading X.509 certificate: UEFI:MokListRT (MOKvar table)
-> May 16 04:01:01 localhost kernel: integrity: Problem loading X.509 certificate -126
->
-
-MokListRT is a shim construct, which is a component in the downstream
-distro boot chain. It is not part of EFI, and in your case, this is
-unlikely to be specific to Lenovo systems.
-
-> On my laptop, if I dump this variable:
->
->         efivar -e /tmp/q --name=605dab50-e046-4300-abb6-3dd810dd8b23-MokListRT
->
-> And then looking at the data exported:
->
->         file /tmp/q
->
-> I see:
->
->         /tmp/q: PGP Secret Sub-key -
->
-> The kernel doesn't currently have a PGP parser.  I've checked and the value
-> doesn't parse as ASN.1:
->
->         openssl asn1parse -in /tmp/q -inform DER
->             0:d=0  hl=2 l=  21 prim: cont [ 23 ]
->         Error in encoding
->         001EBA93B67F0000:error:0680007B:asn1 encoding routines:ASN1_get_object:header too long:crypto/asn1/asn1_lib.c:105:
->
-> which would suggest that it isn't X.509.
->
-
-This should be fixed in shim not the kernel.
