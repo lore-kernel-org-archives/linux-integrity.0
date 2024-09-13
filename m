@@ -1,120 +1,128 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D83153836;
-	Fri, 13 Sep 2024 20:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726258566; cv=none; b=e343aLKakTiEgWhm84uZ4+Nz8OdTOedAJn48IhvsZPmMCM58TSS9R5a0gXVc+sQpAi8URa0B5F5EB0NHfHpp9a5FdrY4FZsLtNrg3lD/+KoFGK5tGHNgOXZ2TjCLYgKi+RtQV91hZ7+u0k8NLanTkInw0pIWqqM0toH2JJIKq3Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726258566; c=relaxed/simple;
-	bh=Ekbb1Q88jFmCxW2b8lXU7X0MWMz236zAwpvL67zG9ig=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qgAdBG2/+oPjEfEL1fRhnnsMYabwxYL7CTqS01e485N1wu4Z5l2/f6bMKdQBQzmbrc8ChhlbYAh6UQAOKMuOVctibTxHE7bM22AyNSvyGXmTWK6kFmb1j5yg1wPlCMh3NDMYFYGCKF7ySJIoz6Zu495jRgUB5BRuRDr881voOsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=auACBlqy; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D64E824A1;
+	Fri, 13 Sep 2024 20:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726260637; cv=pass; b=ZOAculWvAIBub2yMfpA9tANHY7O5Nqv6QOID5ydA8JQq1lt3mSUHaoL918MGTYLK9oro7VALPyijBHmwU/wOqZRi8+Bpa6sUmPZyPNQXp1rtKPntMVzzW/7+H2vAe+zDfAM7bWLEmU4Ui0P6rghZ3tcx1/k8uKevh1Z3L0IK6R0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726260637; c=relaxed/simple;
+	bh=IyHwq3gLv93dYm4dDVxpET0KKx/gYmYIpij+l71ZSgk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rucmliWrdZ/A8jSAqvAtw/NUCHLJP4XUhsFR5vo/wnSiSyp8XCRqiYCqe3uYHsHNrvrl3GC92uvi8MuUdelnZCfhXt+MFqvrq5Y0e0s1wP7EldXQ41vJpA4Y3G+Nf0q8OZtYVty2Wm0Q/Y0MAeLLf2AIJ3Dwa/DkvZnqdwgJsMs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=l4tNLFek; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="auACBlqy"
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DJ0c9L016842;
-	Fri, 13 Sep 2024 20:10:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=E
-	cqTseYjTndPo7qnnktrBgiljIE8peMHL6Zd2VChAJc=; b=auACBlqyc9a/KDE4j
-	iIO78V9N/oYd3XOL2ArBn8Gqo0JJcRnxKIEWy2lyE5cqBxXq4NmHUf3AoSD3Q0hq
-	e+BNGwRW92sxatocgiLlDctQuwnSRh58knLd+ybAPv/mkbNk1OptnILomzcdJ/D/
-	ZDh3cVHwNWT4FBLKgFS4IHLOzguKZpXk7E1dAeTQgkdOt1cI9B21ijuG1GiVWs1Y
-	rKNY96kaFqAeJ9PzrV2YEk+TtDPbPZhP7vnogHuzhyO0dEBrYuhoSeqf7VntgHPI
-	RY81r1Ihia38uUQjQFOoMebqyIhRoP1koxQwoN4eI6f+S5ouuxXkau5wO9NRjgSw
-	9hbrA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41geq9xcaf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 20:10:33 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48DJ6wZE033703;
-	Fri, 13 Sep 2024 20:10:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9d3ma4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 13 Sep 2024 20:10:33 +0000
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48DKAWfg020873;
-	Fri, 13 Sep 2024 20:10:32 GMT
-Received: from localhost.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9d3m7s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 13 Sep 2024 20:10:32 +0000
-From: Ross Philipson <ross.philipson@oracle.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
-        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
-        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
-        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-        trenchboot-devel@googlegroups.com
-Subject: [PATCH v11 02/20] x86: Secure Launch Kconfig
-Date: Fri, 13 Sep 2024 13:04:59 -0700
-Message-Id: <20240913200517.3085794-3-ross.philipson@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240913200517.3085794-1-ross.philipson@oracle.com>
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="l4tNLFek"
+Received: from localhost (83-245-197-106.elisa-laajakaista.fi [83.245.197.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4X55zk1W3lz49Q33;
+	Fri, 13 Sep 2024 23:50:26 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1726260626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IyHwq3gLv93dYm4dDVxpET0KKx/gYmYIpij+l71ZSgk=;
+	b=l4tNLFek/TDFwZBOxa+fufpxVTS+FaVSZS33KwbLImz/KcR4/yPUbBM+N9mBLBmCVJp2zn
+	lcAkmPGVA34ADF8ARM2q+fvXoa5CSxGA2o9JIJpFkqZEwJK9Mw6KFvY9ApCHdfjfITi5Qy
+	N6dV9tb+HK9pv9CEEwY02m5yrIyrAB0Nm/6fPhUz4j/+C2vsTqSwabdrm+BjlbqDWNkSEE
+	CyO+hLGlJ6+yvbQGKOvWg4lnJAZK6sY8CF6fT7pkdyqwv34BaOH8lhL/b0IsZsKoGq4bUP
+	e4LumVA1oJNkj+rVGvEheQTwClDtgOo6RIviy8keZClra+arl1qUE3UcBA0pRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1726260626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IyHwq3gLv93dYm4dDVxpET0KKx/gYmYIpij+l71ZSgk=;
+	b=tq6KLSnUXAW1zeEzBJT5ak+sbn2fl9eh3+XRND730ZPBak+kO3yCAVJ/LJzMcZoXBPFr6k
+	9h7ag0Fr107V2BYG5QODKqXy/MwSXVqFQiL1H+ugjtD0ExQxW7YB8nRlD9GerDtP+z/ru4
+	bEe5SVHORRcOAbSoTl8M2rgQxfB/qdR5VCSnr6BMdrD5w+GZ3Vlo5J9H9L0/WycErZxCmT
+	4JK808o8/4IC4YO7HiuOxWWgA23KWLTgXsRM/qh1zH+pDf6YtvV6vlOupxjujDQlb+M6+b
+	zrCts5dXDqiwl1SQEaOSzZ3nmILXBN3odFX76NhMzbuC14d+bE18+m/k6qY32g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1726260626; a=rsa-sha256;
+	cv=none;
+	b=pG0r/+T06biVOJqOTx9dZx9owVgyiCBY71em/k7Jqt0XexY9dhdCJESOjNgZbpUT6qN2Zh
+	9/p9eUZtENLEXI6P33uHs3B4epwcUnTtmyIYJo3o90Vhz3nB8p5XeRhBkwpFhaKM0tpSIy
+	2CMvpQ/FLzeqUZHud1MIeUEfk99BV09pU5J1Flb1/dcX5QxEMFvnToA3kVs0o3bp1LT6vF
+	3VKz1bDaPI8o5SEQMTzYjwiWG3TD7F1DXq1hDhGyuC2gJZVkT2EcAscOPiQATcE2p/gEmE
+	QeSHYKK34qyu0753tG42ueBslcgp5XT9ril+fud9t8B4DBbZmB1zvb69lcj/Dg==
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 phishscore=0
- spamscore=0 malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409130143
-X-Proofpoint-ORIG-GUID: qD11seGVYcFoJ9CGrRQlvaZVq1RAvV5T
-X-Proofpoint-GUID: qD11seGVYcFoJ9CGrRQlvaZVq1RAvV5T
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Sep 2024 23:50:24 +0300
+Message-Id: <D45GBJ51SBNP.1WR34VCVNSN52@iki.fi>
+Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
+ <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
+ "Pengyu Ma" <mapengyu@gmail.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, "Jarkko Sakkinen"
+ <jarkko@kernel.org>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Linux regressions mailing list"
+ <regressions@lists.linux.dev>
+X-Mailer: aerc 0.18.2
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+ <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+ <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+ <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+ <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+ <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
+ <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
+ <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
+ <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
+In-Reply-To: <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
 
-Initial bits to bring in Secure Launch functionality. Add Kconfig
-options for compiling in/out the Secure Launch code.
+On Thu Sep 12, 2024 at 11:13 AM EEST, Roberto Sassu wrote:
+> On Wed, 2024-09-11 at 18:14 +0300, Jarkko Sakkinen wrote:
+> > On Wed Sep 11, 2024 at 11:53 AM EEST, Roberto Sassu wrote:
+> > > I made few measurements. I have a Fedora 38 VM with TPM passthrough.
+> >=20
+> > I was thinking more like
+> >=20
+> > sudo bpftrace -e 'k:tpm_transmit { @start[tid] =3D nsecs; } kr:tpm_tran=
+smit { @[kstack, ustack, comm] =3D sum(nsecs - @start[tid]); delete(@start[=
+tid]); } END { clear(@start); }'
+> >=20
+> > For example when running "tpm2_createprimary --hierarchy o -G rsa2048 -=
+c owner.txt", I get:
+>
+> Sure:
 
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
----
- arch/x86/Kconfig | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Took couple of days to upgrade my BuildRoot environment to have bcc and
+bpftrace [1] but finally got similar figures (not the same test but doing
+extends).
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 007bab9f2a0e..24df5f468fdc 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2056,6 +2056,17 @@ config EFI_RUNTIME_MAP
- 
- 	  See also Documentation/ABI/testing/sysfs-firmware-efi-runtime-map.
- 
-+config SECURE_LAUNCH
-+	bool "Secure Launch support"
-+	depends on X86_64 && X86_X2APIC && TCG_TPM && CRYPTO_LIB_SHA1 && CRYPTO_LIB_SHA256
-+	help
-+	   The Secure Launch feature allows a kernel to be loaded
-+	   directly through an Intel TXT measured launch. Intel TXT
-+	   establishes a Dynamic Root of Trust for Measurement (DRTM)
-+	   where the CPU measures the kernel image. This feature then
-+	   continues the measurement chain over kernel configuration
-+	   information and init images.
-+
- source "kernel/Kconfig.hz"
- 
- config ARCH_SUPPORTS_KEXEC
--- 
-2.39.3
+Summarizing your results looking at call before tpm_transmit:
 
+- HMAC management: 124 ms
+- extend with HMAC: 25 ms
+- extend without HMAC: 5.2 ms=20
+
+I'd see the only possible way to fix this would be refactor the HMAC
+implementation by making the caller always the orchestrator and thus
+allowing to use continueSession flag for TPM2_StartAuthSession to be
+used.
+
+For example if you do multiple extends there should not be good reason
+to setup and rollback session for each call separately right?
+
+[1] https://codeberg.org/jarkko/linux-tpmdd-test
+
+BR, Jarkko
