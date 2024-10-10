@@ -1,111 +1,112 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060672AEFC;
-	Thu, 10 Oct 2024 03:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EA71A0AF5
+	for <linux-integrity@vger.kernel.org>; Thu, 10 Oct 2024 09:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728529339; cv=none; b=QMzzncNS+KzHKBHpnUNiK6WmfGicHN+vDB+cGYl1aABO7y5kOEab215CCEzDoRerdORYFNj/J++SGSdp2COWc2UUzQvMHisJa3hEr/azasHZkPgKUz1EmAdvi1Wvpwm2jQdEMGojQVY9XIzJ2qaUglaDJh4pfy2CgnJRDvvfgKQ=
+	t=1728551784; cv=none; b=idUYeXH+vr6rS+DOTqDf0To1wtPkj+bmvCcQ4Kzw5IvATzC1MDw6NHVRY7N/ByH0heZ1w5ffc+W3efhP9YIgoBip0fs6eVYj/AMTyh8VmfhOLyLShSu+iJ1n+mHdgPmu+FAKa7kyvpRCgn9aypkcTUk6bCB//L2ZkBQglm9kI1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728529339; c=relaxed/simple;
-	bh=4BgPCK+F3LiivdMjYfBfIZJiX2GAwTIMuPjuDQpPFBE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WDLm0zUNUHFrBRF7MY/z8kfN9dWOciTa9vbWCSXomWYUPfZzQKFF09UCU3Xx8YFTNA7rJrpQF/mHcpjqMooJsFP5sDaSKIyKoQ4heFpocv6xYZ1rAd2emk6OQ5TUskf0NJxvlQs0L1ARaf+Yxp6YOgpUFnFpuzTHSmEeMbC6oPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SFRa6cBT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1728551784; c=relaxed/simple;
+	bh=EO/fJ5gxawdwHd6z275SjhTP+0iWL961IIKeWy15XJs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=pERPOKU2NST9CrbEqI3TUj5nPo0sYyzLf200+z9Kxe8c0dj7epzbgAX01RbOAEvBa/KRRDyNC4VJwK0va2uFA6Eqgtz66GPT/ri9qnA0g2KS7sL03s1IBpjohzLDC8rYoxMdnjy3CYrNESgPPttH1PFD/qt2Z53Fe4mil2SEAgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EkSIHNTk; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SFRa6cBT"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A302ie032232;
-	Thu, 10 Oct 2024 03:00:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	HtPgc7a33i+KxQeGQwFZGzpWFHyY7NpEQ7Dwhb4PZE8=; b=SFRa6cBTBlbHerBI
-	N53+ZGT7A3S0zNEkkDJDoWgAlvCyR6mB9jFkmU6Hk3FfYvQW4bwHIwAcrmsXVWIj
-	jGW9U2LetZwBhgDTqQGrrEkKHQIlshd1u12IOx27TDYzmUhth7yHGOZ3K1ewIq5i
-	Nt6/PX+WyWsaVM5NnAZeRKD/Y0ImG2udxe0PjA6wQ+VYRi/GnGTxenKQy0wzf7J4
-	tw9UeTkKQwT4K2LxcoLdIe7f2eG7DoeN9ibx/ISki+PzvrGDX5R5soJXAmwjnZFS
-	EwqaXTMp2yeUrtXtkSEn/Ex9LN2NBIxOVLRRjrQKoNGW9iwJcN9T8XO2ERSTn5//
-	zIR+rw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4266mpg00r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 03:00:02 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49A302p2032247;
-	Thu, 10 Oct 2024 03:00:02 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4266mpg00g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 03:00:02 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 499NPiFR022861;
-	Thu, 10 Oct 2024 03:00:01 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 423jg153fu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 03:00:01 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49A301NB40501566
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Oct 2024 03:00:01 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2946B58055;
-	Thu, 10 Oct 2024 03:00:01 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8A52758043;
-	Thu, 10 Oct 2024 03:00:00 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.45.194])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Oct 2024 03:00:00 +0000 (GMT)
-Message-ID: <7a4f5be16e822236901e8cae032b0bee417d5f50.camel@linux.ibm.com>
-Subject: Re: [PATCH] evm: stop avoidably reading i_writecount in
- evm_file_release
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, roberto.sassu@huawei.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date: Wed, 09 Oct 2024 23:00:00 -0400
-In-Reply-To: <20240806133607.869394-1-mjguzik@gmail.com>
-References: <20240806133607.869394-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EkSIHNTk"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43118c9a955so2952605e9.3
+        for <linux-integrity@vger.kernel.org>; Thu, 10 Oct 2024 02:16:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728551781; x=1729156581; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Hn61sT4RcQBO3g+5Fw/xbaPw1uDG6B3Lg71XIa3mow=;
+        b=EkSIHNTkXY6EMxhUWyUFBxLUZGTbxLHo1lMkbWmwB3laYq87L6Ni0hQvMaElbxf4+I
+         2LqQq0klQLkxtENjZtV/134guoVpD6/U0ve0eqrGGpMy9YNLj0X0jyfgBcjTD1cmB0QH
+         jXMhMecNKW/waVmMDAFLZCExnK/BFxdObBeOg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728551781; x=1729156581;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Hn61sT4RcQBO3g+5Fw/xbaPw1uDG6B3Lg71XIa3mow=;
+        b=b0wXyAz9fA/JA+ITe+FP+tp9W4GedTK1C42n4ZQRA0MiXbYxXx0aGFI9PL8U8HMB95
+         EHY+byePXNbPYERS1v1XGyoDxzZmx/mZVSp8TcJIMLwNm23ngn5Rlb1tPCiKDgnXexC7
+         bTph8gPzeQM+gWpe9ri+RfccXVmtKhjtSdQvgbovkdD7GVxC2e8T/qRO4gitNj59gyGA
+         cBFcCwgi9mcZ9Kn5T7a0YUVBLLCL+4nJUOMGH7vTA8ZL8QUfLYCu5pRUfRJiv81ii8EQ
+         DTBKUgnIipq3f4IlFIFZHUc3RH+xt986p8ys0NRRE6FhnwS1wJOvBU/UfKl+8a6As60S
+         iBlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNkGXPsU2cGADFiII44TNRVzCsnuTvYMPoJ4xUkWpHe+2D/QCOWorSWEnciaftpEPmBgko9eSBGHn3c3ZzKZw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEwwUD5hqr6f2VjPUmIL9KFU+IQJWH1PRKyeV6CIWjkzocJj0p
+	UCjcUVQpefSLSfzbtIhdKTZ027Tohf01MUHdyDVgOAkpSlaNVlK7pu7iiejOgA==
+X-Google-Smtp-Source: AGHT+IGsc6ZWOKmMT2C6mmCpBSJNpa6cqmQkvDPQ6WfR1nHR7R6PDd1IVvFXqajvxsApCJ88hYzafg==
+X-Received: by 2002:a05:600c:5117:b0:42c:bcc8:5877 with SMTP id 5b1f17b1804b1-430ccf1c2cdmr52396985e9.13.1728551780860;
+        Thu, 10 Oct 2024 02:16:20 -0700 (PDT)
+Received: from localhost (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4304efc0460sm71604375e9.1.2024.10.10.02.16.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 02:16:20 -0700 (PDT)
+From: Grzegorz Bernacki <bernacki@chromium.org>
+X-Google-Original-From: Grzegorz Bernacki <bernacki@google.com>
+To: jsd@semihalf.com
+Cc: apronin@google.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	jarkko@kernel.org,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	mw@semihalf.com,
+	peterhuewe@gmx.de,
+	rrangel@chromium.org,
+	timvp@google.com,
+	Grzegorz Bernacki <bernacki@chromium.org>
+Subject: [PATCH V3 0/2]  char: tpm: Adjust cr50_i2c locking mechanism
+Date: Thu, 10 Oct 2024 09:15:57 +0000
+Message-ID: <20241010091559.30866-1-bernacki@google.com>
+X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
+In-Reply-To: <20221101020352.939691-1-jsd@semihalf.com>
+References: <20221101020352.939691-1-jsd@semihalf.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: C5HIWflkvMbHnIq5KDRL2uOAhffbOyub
-X-Proofpoint-GUID: LzIkJNG4EN0eC1IZLxcRruNI0sWvK33e
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_23,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 spamscore=0 mlxlogscore=611 phishscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100017
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-08-06 at 15:36 +0200, Mateusz Guzik wrote:
-> The EVM_NEW_FILE flag is unset if the file already existed at the time
-> of open and this can be checked without looking at i_writecount.
->=20
-> Not accessing it reduces traffic on the cacheline during parallel open
-> of the same file and drop the evm_file_release routine from second place
-> to bottom of the profile.
->=20
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+From: Grzegorz Bernacki <bernacki@chromium.org>
 
-Sorry for the delay.  It's now queued in next-integrity.
+This patchset contains two patches from original patchset which have
+not yet be merged. As per original description:
 
-thanks,
+This patchset aims to add support for a platforms with cr50(tpm) i2c
+chip shared across two CPUs. We need to provide a mechanism, which will
+allow to synchronize accesses on a TPM-transaction boundaries.
 
-Mimi
+These two patches are modifying cr50 to use generic callbacks for
+locality management and then leverage this solution to apply i2c bus
+locking on a TPM-operation level.
 
+Changes from V1:
+- add dev_err() and return instead of WARN_ONCE()
+- correct returned value in tpm_cr50_i2c_probe() functions
+- I did not address Tim's suggestion to return 0 instead of loc
+in check and request locality, I would like to follow convention
+from tpm_tis_core.c file 
+
+Changes from V2:
+- remove unnecesary locality checking
+
+Jan Dabros (2):
+  char: tpm: cr50: Use generic request/relinquish locality ops
+  char: tpm: cr50: Move i2c locking to request/relinquish locality ops
+
+ drivers/char/tpm/tpm_tis_i2c_cr50.c | 114 ++++++++++++++++------------
+ 1 file changed, 66 insertions(+), 48 deletions(-)
+
+-- 
+2.47.0.rc0.187.ge670bccf7e-goog
 
