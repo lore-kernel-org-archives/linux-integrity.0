@@ -1,119 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C01C160783;
-	Fri,  1 Nov 2024 10:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AEB1A4F19
+	for <linux-integrity@vger.kernel.org>; Fri,  1 Nov 2024 14:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730456923; cv=none; b=mU8LHtEPoK95EASrcuPCKpQBARf862Jd7zPpGsxwOeoD5iZCPZv/5tllSMrvsOmhMczQQMynZtvrZFtKjjKH2SZWYZ/9Rh7V9YOOUUbqk18FKCwiYQ20hyISSiNRQOtZlLTClYbJJa6Z21XP1/mbecoy1TieSk9yGyDuAn+a3GI=
+	t=1730471860; cv=none; b=D3QZEAZV7NLqevKd1Ut49NkEDBc3/Sur1jbnEzO1BZBrC2CG+Fu/tx+VRna9u2GRb10/P3OaTGlAREIXHBHBQNLzoX1ytM9PDG/sS9I431OJGb9Qjouv24sKstypvs0T3dqXVe/XLzubWfKGsx4guJKT0cR93bHwbReItieGmrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730456923; c=relaxed/simple;
-	bh=mSFWh3r0scHZ1FR2DYIx0Tc2V6UZfNOyeDKa23YOOmQ=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Oti4BDohuQvNKzBY3gUG1Ha5F/4lewH1QnZlvuGQPqzRenKDNxo7iaJv+7ro3p+hCJbsmSYxuTIKXbFjSAokZJnbLeo2286RrvF1cKvLLxDI1vcrcOGQNvk8VmfvaKVGr/HV/mphtmDgn0JTCoUN7HuMBPWRzYmc9LPd9ZV787g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dp17+hLh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730471860; c=relaxed/simple;
+	bh=Nm/LzHFqaAEdnSCt8V7M4IveW/lrWQ++itwRPJNV8Ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RXM4bNIqSQ6nQmcia1MM2iV9Kk3rcSl6Mc2Z+Xap7oZm+PiymxKBt7aI/V81Cb12h8RVh8l2vayVZ389LzMUCahRJSYY/iq6u4bL1v0+AxEKsVVBeTxnWeO4RlAaRX70ww647p7d5BDxoPFV0cpmZf8zBqvrbaFjRrOhRauVRIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZW+b8BB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0NiI5UVC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZW+b8BB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0NiI5UVC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dp17+hLh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40FEBC4CECD;
-	Fri,  1 Nov 2024 10:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730456922;
-	bh=mSFWh3r0scHZ1FR2DYIx0Tc2V6UZfNOyeDKa23YOOmQ=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Dp17+hLhUwjK7Vwhq5YmGk2Rk/Vmsz7lB3wJrvj8hnCTYk50wdScvildLCtA4iBAO
-	 6eA4s5JD6uE23Qn4gAlSnK9KxBlBRbni3VS+RIg95V3ZR/azVJqcizrcu6XMMtwJAS
-	 Mvjp40ENNcaw476FxBKgo0TQsqFR++HZ6ibnCwrrM//1IzgoZzHcNk39p6ZsvxZJ7S
-	 /6ePK9AoJdXCSJrtoWkjNiKAf21Y79MeAo+g1X290rINW5gItxttGySRNYb2V1w5wM
-	 LSIpd6L/3kNBbY9n6PC3N3wVb1ZkATqlA0IZVVOaZZ7pzVAgK9/bqmoMGP2MRUsCT1
-	 ME7TUSxuYp0XA==
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZW+b8BB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0NiI5UVC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZW+b8BB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0NiI5UVC"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3611421CED;
+	Fri,  1 Nov 2024 14:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730471856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ck9LSDMaMipvJgF6iuCZtXIr9HtMH0CnwH80XNmU9+Q=;
+	b=tZW+b8BBn57rJptZ/DS24vvdVnuUTM5+A5zzAIeg5dZa1tJBxBXZCVKmkkFuEHZ+Zj7A4K
+	OFKZqRtnL48ZCztEB7E/DfVYZ0qHAJNQflyhF3kLG6PrLOnZMW5Hgp106scjDI5F/TEJoU
+	BuEaE1KsFOtAym9PIvIRMEBh/BiXi1g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730471856;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ck9LSDMaMipvJgF6iuCZtXIr9HtMH0CnwH80XNmU9+Q=;
+	b=0NiI5UVCtXqS4AwwlY0AOXN72DtiwTbkyHhj+DO/m75Rf9UgII/8GJ1O8cNB0pZFhCzMne
+	0Jp6/69oGYAYpLCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730471856; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ck9LSDMaMipvJgF6iuCZtXIr9HtMH0CnwH80XNmU9+Q=;
+	b=tZW+b8BBn57rJptZ/DS24vvdVnuUTM5+A5zzAIeg5dZa1tJBxBXZCVKmkkFuEHZ+Zj7A4K
+	OFKZqRtnL48ZCztEB7E/DfVYZ0qHAJNQflyhF3kLG6PrLOnZMW5Hgp106scjDI5F/TEJoU
+	BuEaE1KsFOtAym9PIvIRMEBh/BiXi1g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730471856;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ck9LSDMaMipvJgF6iuCZtXIr9HtMH0CnwH80XNmU9+Q=;
+	b=0NiI5UVCtXqS4AwwlY0AOXN72DtiwTbkyHhj+DO/m75Rf9UgII/8GJ1O8cNB0pZFhCzMne
+	0Jp6/69oGYAYpLCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 09B7913ACC;
+	Fri,  1 Nov 2024 14:37:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GGnTALDnJGeICwAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 01 Nov 2024 14:37:36 +0000
+From: Petr Vorel <pvorel@suse.cz>
+To: ltp@lists.linux.it
+Cc: Petr Vorel <pvorel@suse.cz>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	linux-integrity@vger.kernel.org
+Subject: [PATCH 2/2] ima_boot_aggregate: TBROK on fread() failure
+Date: Fri,  1 Nov 2024 15:37:26 +0100
+Message-ID: <20241101143726.1278291-2-pvorel@suse.cz>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241101143726.1278291-1-pvorel@suse.cz>
+References: <20241101143726.1278291-1-pvorel@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Nov 2024 12:28:38 +0200
-Message-Id: <D5ARS5Y7EATS.2GVNSARKXKIDI@kernel.org>
-Cc: <dpsmith@apertussolutions.com>, <tglx@linutronix.de>,
- <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>,
- <dave.hansen@linux.intel.com>, <ardb@kernel.org>, <mjg59@srcf.ucam.org>,
- <James.Bottomley@hansenpartnership.com>, <peterhuewe@gmx.de>,
- <jgg@ziepe.ca>, <luto@amacapital.net>, <nivedita@alum.mit.edu>,
- <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <corbet@lwn.net>,
- <ebiederm@xmission.com>, <dwmw2@infradead.org>, <baolu.lu@linux.intel.com>,
- <kanth.ghatraju@oracle.com>, <andrew.cooper3@citrix.com>,
- <trenchboot-devel@googlegroups.com>
-Subject: Re: [PATCH v11 00/20] x86: Trenchboot secure dynamic launch Linux
- kernel support
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ross Philipson" <ross.philipson@oracle.com>,
- <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <kexec@lists.infradead.org>,
- <linux-efi@vger.kernel.org>, <iommu@lists.linux-foundation.org>
-X-Mailer: aerc 0.18.2
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
-In-Reply-To: <20240913200517.3085794-1-ross.philipson@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_THREE(0.00)[4]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Fri Sep 13, 2024 at 11:04 PM EEST, Ross Philipson wrote:
-> The larger focus of the TrenchBoot project (https://github.com/TrenchBoot=
-) is to
-> enhance the boot security and integrity in a unified manner. The first ar=
-ea of
-> focus has been on the Trusted Computing Group's Dynamic Launch for establ=
-ishing
-> a hardware Root of Trust for Measurement, also know as DRTM (Dynamic Root=
- of
-> Trust for Measurement). The project has been and continues to work on pro=
-viding
-> a unified means to Dynamic Launch that is a cross-platform (Intel and AMD=
-) and
-> cross-architecture (x86 and Arm), with our recent involvment in the upcom=
-ing
-> Arm DRTM specification. The order of introducing DRTM to the Linux kernel
-> follows the maturity of DRTM in the architectures. Intel's Trusted eXecut=
-ion
-> Technology (TXT) is present today and only requires a preamble loader, e.=
-g. a
-> boot loader, and an OS kernel that is TXT-aware. AMD DRTM implementation =
-has
-> been present since the introduction of AMD-V but requires an additional
-> component that is AMD specific and referred to in the specification as th=
-e
-> Secure Loader, which the TrenchBoot project has an active prototype in
-> development. Finally Arm's implementation is in specification development=
- stage
-> and the project is looking to support it when it becomes available.
->
-> This patchset provides detailed documentation of DRTM, the approach used =
-for
-> adding the capbility, and relevant API/ABI documentation. In addition to =
-the
-> documentation the patch set introduces Intel TXT support as the first pla=
-tform
-> for Linux Secure Launch.
->
-> A quick note on terminology. The larger open source project itself is cal=
-led
-> TrenchBoot, which is hosted on Github (links below). The kernel feature e=
-nabling
-> the use of Dynamic Launch technology is referred to as "Secure Launch" wi=
-thin
-> the kernel code. As such the prefixes sl_/SL_ or slaunch/SLAUNCH will be =
-seen
-> in the code. The stub code discussed above is referred to as the SL stub.
+fread() should read 1 byte, quit when it fails it.
 
-1. I don't see any tags in most of the patches so don't get the rush. This
-   includes also patches for x86. Why I would care to review TPM patches
-   when there is over a dozen unreviewed and untested patches before it?
-2. TPM patches have been in circulation in and out of the patch set
-   for some time now with little or no improvement.
+This fixes warning: ignoring return value of ‘fread’ declared with
+attribute ‘warn_unused_result’ [-Wunused-result].
 
-Why the sudden buzz? I have not heard much about this since last early
-summer.  Have to spend some time recalling what this is about anyway. I
-cannot trust that my tags make any sense before more reviewed/tested-by
-tags before the TPM patches.
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+ .../kernel/security/integrity/ima/src/ima_boot_aggregate.c     | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-BR, Jarkko
+diff --git a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+index 68d12fc3c2..420b0c736d 100644
+--- a/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
++++ b/testcases/kernel/security/integrity/ima/src/ima_boot_aggregate.c
+@@ -116,7 +116,8 @@ static void do_test(void)
+ 			break;
+ 		}
+ #endif
+-		fread(event.data, event.header.len, 1, fp);
++		if (fread(event.data, event.header.len, 1, fp) != 1)
++			tst_brk(TBROK, "failed to read 1 byte");
+ 	}
+ 
+ 	SAFE_FCLOSE(fp);
+-- 
+2.45.2
+
