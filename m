@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D0021442E;
-	Tue, 12 Nov 2024 17:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33552144CB;
+	Tue, 12 Nov 2024 17:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434262; cv=none; b=bvPVplfK3iVuoIyUjfLA2hxZp3w7giB+4f+2rb97V6b1ZNXBv50vd65YFWd8PbywXkH93aGZxoqOX1Zleh5LrSFxhlMRwiPv5ch110SP6Bldc+0lJn5q5vYy/tMSrNpL2GEZDcmYTrZ5luGekphidcSVBcIEwetfk+wBs6nom9s=
+	t=1731434371; cv=none; b=jAHBXFE25VaprCE8LtVhi3E4WsFx3Rk+8bG4LAqZSrJ/dSO71trFS7cKu9R4gPzhBU2oXewvWCaEnGENf0lgEoyzZ9S5rBqWRvmT1uPSpHiU5WWCtFriOpSp+dsfQTK/EmA72xNkJXtlET8qcuOejEyNk72GXPbIunqxzZWahxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434262; c=relaxed/simple;
-	bh=1URpfIrCXwUDp20J+85VGQv7B1uElnbl53FjCZonyuU=;
+	s=arc-20240116; t=1731434371; c=relaxed/simple;
+	bh=wXCw1HCeuSt/vVeQUJWNGdsHcK2BT2IDvmf7fX1EKmM=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=tghjhhlh79DypIZNxH7EvsYIR1eyA4EwQvMEdKb6FpBHS6eYX7PCWLFxYEbyqPSeWXd975/JmHg2Ccvouv7hPAOVBiBKvsQT3tlHh4maVJeF7ufVVVD84jX2l+Lre9fmrZZpebKq3ZswBQg0PjppzaILA7p5yD5tle6rL+1wbRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uzp8TFWI; arc=none smtp.client-ip=10.30.226.201
+	 References:In-Reply-To; b=ntfJQitdmI96APAuRNzZ+xiYhSosxRJLOnwTX1maVyIhAZcdWhDqiLY2t3wu2kgfPi1fWD0TQ36eZ9rvYtLvbuek9xWLHpkiYnRJAo+lc5PuqolV8gx0vKWUUvz48QonhRe2Ko1fkqWfZAAY7FjgomBsNpesJNsPc3PD3gl1Uik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leM9g1tw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uzp8TFWI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B00DC4CECD;
-	Tue, 12 Nov 2024 17:57:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leM9g1tw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D43EC4CECD;
+	Tue, 12 Nov 2024 17:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731434262;
-	bh=1URpfIrCXwUDp20J+85VGQv7B1uElnbl53FjCZonyuU=;
+	s=k20201202; t=1731434371;
+	bh=wXCw1HCeuSt/vVeQUJWNGdsHcK2BT2IDvmf7fX1EKmM=;
 	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=uzp8TFWIFln5YzU8/cX9CtUrWs5/n5PMJb84/N0vbWt9G2svGTOsIS6sPvrWSf3aU
-	 NRzhnS9uXgiQJpr6qWxBRSt+i0qynR4FxOg6xKI+wZDs2bTEsU3RAp9IcopSU/OCan
-	 Ej97IxAi+iT1N1J/5O0tjEcTzj0cCvyh2cT5RfcKV5s60VDlMtm+/vJTJkGn3k2GUb
-	 5MuuIlMe8zAxOIllEesaN1NwDjEeySr7nZovPNksQUKp4now4Bazi1ffDLtpUA2aw4
-	 hjX8lqRp2oo5M8ptdAJhIcG6AxznFK96TR938ddqFz1f1W93x02NI9gg9+AIq49gF7
-	 IdCmW06ypgxQQ==
+	b=leM9g1twN2GBlyIEkhw5oxePTDf6OIhpbgPxUbE90/j70yrnA7a0FHWIHPLXj0i9E
+	 +a3pNz/UVENeTyCJEw7+OslTVgDGFUz0818enYl8IJqYHhN9IeFvtzUiZgaf/zCiko
+	 apqazSUwF6UQ0ufWWIIHoATqCBYych5Qn7tUt3/dgsFwfxDqOP2SwcSmpx3HiJzakZ
+	 1o52JHYhLmEaL5W14UwhLPLHjX/LxhRgb8KMdcmIU/GsTv0J6Tz1fbTn1ew+527nfD
+	 WTSPD6uVz6iqcrUPmcE1BP+q471NEJG7eyOcsvwJQ3fe8WOHpNXciLop8ArURwmLlU
+	 hCKHKj/64yYFQ==
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -34,33 +34,166 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 12 Nov 2024 19:57:37 +0200
-Message-Id: <D5KE7X6LMR5Z.AA8PPWDBPQP7@kernel.org>
-Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
+Date: Tue, 12 Nov 2024 19:59:27 +0200
+Message-Id: <D5KE9BP4M319.2G0BNVFSLUUEX@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <roberto.sassu@huawei.com>, "Tushar
+ Sugandhi" <tusharsu@linux.microsoft.com>
+Subject: Re: [PATCH v2] ima: Suspend PCR extends and log appends when
+ rebooting
 From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <zohar@linux.ibm.com>
 X-Mailer: aerc 0.18.2
-References: <20241107095138.78209-1-jarkko@kernel.org>
- <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
- <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
- <10296fd8b0fcbf1d813577ef41738ffea12b70d1.camel@HansenPartnership.com>
- <dd51366e50de86e8a6002f2f53801c53a9b770f3.camel@linux.ibm.com>
-In-Reply-To: <dd51366e50de86e8a6002f2f53801c53a9b770f3.camel@linux.ibm.com>
+References: <20241112165206.756351-1-stefanb@linux.ibm.com>
+In-Reply-To: <20241112165206.756351-1-stefanb@linux.ibm.com>
 
-On Mon Nov 11, 2024 at 9:53 PM EET, Mimi Zohar wrote:
-> > The original open coded the empty auth append with struct
-> > tpm2_null_auth since it's the only user.  However, since we do have
-> > another user in trusted keys, it might make sense to consolidate.
+On Tue Nov 12, 2024 at 6:52 PM EET, Stefan Berger wrote:
+> To avoid the following types of error messages due to a failure by the TP=
+M
+> driver to use the TPM, suspend TPM PCR extensions and the appending of
+> entries to the IMA log once IMA's reboot notifier has been called. This
+> avoids trying to use the TPM after the TPM subsystem has been shut down.
 >
-> Instead of delaying the current patch from being upstreamed, perhaps this=
- change
-> can be deferred?
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+>
+> This error could be observed on a ppc64 machine running SuSE Linux where
+> processes are still accessing files after devices have been shut down.
+>
+> Suspending the IMA log and PCR extensions shortly before reboot does not
+> seem to open a significant measurement gap since neither TPM quoting woul=
+d
+> work for attestation nor that new log entries could be written to anywher=
+e
+> after devices have been shut down. However, there's a time window between
+> the invocation of the reboot notifier and the shutdown of devices in
+> kernel_restart_prepare() where __usermodehelper_disable() waits for all
+> running_helpers to exit. During this time window IMA could now miss log
+> entries even though attestation would still work. The reboot of the syste=
+m
+> shortly after may make this small gap insignificant.
+>
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>
+> ---
+>  v2:
+>   - followed Mimi's suggestions
+>
+> ---
+>  security/integrity/ima/ima.h       |  1 +
+>  security/integrity/ima/ima_init.c  |  2 ++
+>  security/integrity/ima/ima_queue.c | 43 ++++++++++++++++++++++++++++++
+>  3 files changed, 46 insertions(+)
+>
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 3c323ca213d4..3f1a82b7cd71 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -278,6 +278,7 @@ unsigned long ima_get_binary_runtime_size(void);
+>  int ima_init_template(void);
+>  void ima_init_template_list(void);
+>  int __init ima_init_digests(void);
+> +void __init ima_init_reboot_notifier(void);
+>  int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event=
+,
+>  			  void *lsm_data);
+> =20
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/i=
+ma_init.c
+> index 4e208239a40e..a2f34f2d8ad7 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -152,6 +152,8 @@ int __init ima_init(void)
+> =20
+>  	ima_init_key_queue();
+> =20
+> +	ima_init_reboot_notifier();
+> +
+>  	ima_measure_critical_data("kernel_info", "kernel_version",
+>  				  UTS_RELEASE, strlen(UTS_RELEASE), false,
+>  				  NULL, 0);
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 532da87ce519..9b3c9587313f 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -16,6 +16,7 @@
+>   */
+> =20
+>  #include <linux/rculist.h>
+> +#include <linux/reboot.h>
+>  #include <linux/slab.h>
+>  #include "ima.h"
+> =20
+> @@ -44,6 +45,12 @@ struct ima_h_table ima_htable =3D {
+>   */
+>  static DEFINE_MUTEX(ima_extend_list_mutex);
+> =20
+> +/*
+> + * Used internally by the kernel to suspend measurements.
+> + * Protected by ima_extend_list_mutex.
+> + */
+> +static bool ima_measurements_suspended;
+> +
+>  /* lookup up the digest value in the hash table, and return the entry */
+>  static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+>  						       int pcr)
+> @@ -176,6 +183,17 @@ int ima_add_template_entry(struct ima_template_entry=
+ *entry, int violation,
+>  		}
+>  	}
+> =20
+> +	/*
+> +	 * ima_measurements_suspended will be set before the TPM subsystem has
+> +	 * been shut down.
+> +	 */
+> +	if (ima_measurements_suspended) {
+> +		audit_cause =3D "measurements_suspended";
+> +		audit_info =3D 0;
+> +		result =3D -ENODEV;
+> +		goto out;
+> +	}
+> +
+>  	result =3D ima_add_digest_entry(entry,
+>  				      !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
+>  	if (result < 0) {
+> @@ -211,6 +229,31 @@ int ima_restore_measurement_entry(struct ima_templat=
+e_entry *entry)
+>  	return result;
+>  }
+> =20
+> +static void ima_measurements_suspend(void)
+> +{
+> +	mutex_lock(&ima_extend_list_mutex);
+> +	ima_measurements_suspended =3D true;
+> +	mutex_unlock(&ima_extend_list_mutex);
+> +}
+> +
+> +static int ima_reboot_notifier(struct notifier_block *nb,
+> +			       unsigned long action,
+> +			       void *data)
+> +{
+> +	ima_measurements_suspend();
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block ima_reboot_nb =3D {
+> +	.notifier_call =3D ima_reboot_notifier,
+> +};
+> +
+> +void __init ima_init_reboot_notifier(void)
+> +{
+> +	register_reboot_notifier(&ima_reboot_nb);
+> +}
+> +
+>  int __init ima_init_digests(void)
+>  {
+>  	u16 digest_size;
 
-Yes.
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
 BR, Jarkko
