@@ -1,100 +1,103 @@
-Received: from crocodile.elm.relay.mailchannels.net (crocodile.elm.relay.mailchannels.net [23.83.212.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164D119258B
-	for <linux-integrity@vger.kernel.org>; Mon, 25 Nov 2024 13:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732542590; cv=pass; b=q1Ihhz0BMOVgt49lnvS0lylp3RDCnh+l94rol4chYgzahu+OpYRSo0z4YHUhKhrPmrIEW+VJrEuIVMSLxkVMq1biS7g9/qlyHQSdXJ/317VveaN4PO4Dbkhf8MJzGCuc3qXg75zaibk2qrhnvszuZJkZnkM19OwojqaUVQutBSI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732542590; c=relaxed/simple;
-	bh=VHQtaV/5qNjoYZArCaBfjykdFwaQ/h0uNReLC4UdOvI=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=at5BoE/9mjwu2HaeZIml4H5wbENktVOXIy5c2RsVRiSVWUUZP1i1mkkEzNzAj5r883UgvUHq0OGkNgzFa1B2OV7zfCj5EPcLi+00Bf48k4Z6w4dK7FltNpCb0IsR6gP1ehzniXMlx1IzR4v7SqeFFmk85ba+JQUwD93ozVvcXWA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=scientia.org; spf=pass smtp.mailfrom=scientia.org; arc=pass smtp.client-ip=23.83.212.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=scientia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scientia.org
-X-Sender-Id: instrampxe0y3a|x-authuser|calestyo@scientia.org
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id BAA8E9412D3;
-	Mon, 25 Nov 2024 13:49:42 +0000 (UTC)
-Received: from cpanel-007-fra.hostingww.com (100-125-209-122.trex-nlb.outbound.svc.cluster.local [100.125.209.122])
-	(Authenticated sender: instrampxe0y3a)
-	by relay.mailchannels.net (Postfix) with ESMTPA id CAF079420BE;
-	Mon, 25 Nov 2024 13:49:41 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1732542582; a=rsa-sha256;
-	cv=none;
-	b=rsOrjfrPtZNPfWK9OeXsnXqM89IWZtqvI2gZlnMPIuNAf8lQT2EG8GoLUE7tnPwOqVHfRA
-	P8iAOieZgPKtsuTVIXCuUSF11F+jL5PbV+4wds526JkhO4J/RAYmII0uUVTQJFdE7pz8D/
-	raWckcy2i3o0kFvaI9UyGxP2wque0j6iZuqW6HTjk7tiYxf/81uyCukSIUrLqht9Jr2Vzo
-	Qdkmbfjvo4zkJPKnrk38ip6D2YManjqOmdtvGqm+pfjoVtkRGsm5x5Pxq4D5UWjimJdcH1
-	y+JcNbsaU1HlLZR7OFVNHEuyultOesS4FsVNeAtpZbeBVs0ArSq4BHRaQmfzdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1732542582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VHQtaV/5qNjoYZArCaBfjykdFwaQ/h0uNReLC4UdOvI=;
-	b=sjb2WAhZ0ySQjpJE9Lhjd05F5LPujtYI6G5PbPnUJuVLKaR4rQIxsKJb6J06v80O5DnLae
-	6EiFT9awOd4DlbPbOIlucCs2L3304lmeueLlFFTYhSQ/Kk9m3xTVdiiygVwWL0PcgtlO4L
-	OYSh3BF/oUd91g0MiLcRdn0Of39xY9t85l3lcl5XsmXynojAWRASxnW9jy0smYeOyOIuEr
-	qLIObU3McU/JziIzt/mBWxWwKBvgSXRNg5TIqV9V5sWaVuXlPJnZzd3wBo0x4+hCNX0Zyc
-	UWUT+jEO0qq78Nfta6jsHS7ui05n0VAF4ejXZlpeimG7UKUbdSVI1+IRFOBgsA==
-ARC-Authentication-Results: i=1;
-	rspamd-dcc6979f6-rdxx7;
-	auth=pass smtp.auth=instrampxe0y3a smtp.mailfrom=calestyo@scientia.org
-X-Sender-Id: instrampxe0y3a|x-authuser|calestyo@scientia.org
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: instrampxe0y3a|x-authuser|calestyo@scientia.org
-X-MailChannels-Auth-Id: instrampxe0y3a
-X-Celery-Eyes: 7b5bc2e80200749e_1732542582413_3037724163
-X-MC-Loop-Signature: 1732542582413:3479798707
-X-MC-Ingress-Time: 1732542582412
-Received: from cpanel-007-fra.hostingww.com (cpanel-007-fra.hostingww.com
- [3.69.87.180])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.125.209.122 (trex/7.0.2);
-	Mon, 25 Nov 2024 13:49:42 +0000
-Received: from p5090f5d8.dip0.t-ipconnect.de ([80.144.245.216]:60130 helo=heisenberg.fritz.box)
-	by cpanel-007-fra.hostingww.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <calestyo@scientia.org>)
-	id 1tFZT9-0000000BbrJ-0qMP;
-	Mon, 25 Nov 2024 13:49:40 +0000
-Message-ID: <05f8e45aad9f3d975653d8e52bb8cc7c7389442e.camel@scientia.org>
-Subject: Re: regression: kernel log "flooded" with tpm tpm0: A TPM error
- (2306) occurred attempting to create NULL primary
-From: Christoph Anton Mitterer <calestyo@scientia.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>, James Bottomley
-	 <James.Bottomley@HansenPartnership.com>, linux-integrity@vger.kernel.org
-Date: Mon, 25 Nov 2024 14:49:37 +0100
-In-Reply-To: <D5LMVWUBX2FK.205ZHBLQKY7SB@kernel.org>
-References: <693caa85c3ee1b3117a562894971de60b6842d00.camel@scientia.org>
-	 <8fe12e2eb9beb159d2af8462fa0b9b1f946deacb.camel@HansenPartnership.com>
-	 <c1b56e93bd7e92d5313fde89dc0ee09fdd4c8577.camel@scientia.org>
-	 <05f511502a5918fe81d69201ec3df01b25803bcd.camel@HansenPartnership.com>
-	 <6b66684616408e2f9576bd5eca5ab58254a69438.camel@scientia.org>
-	 <D5LMVWUBX2FK.205ZHBLQKY7SB@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA6C1B415E
+	for <linux-integrity@vger.kernel.org>; Mon, 25 Nov 2024 16:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732551759; cv=none; b=OSRDrjGGY05XE9SgKyHgeSsr5/qvFQF4t4IqBJ3aKa4vWilGwPVWqY4wdese7bJ6UUBnKFvsm6VpIzsnK8r6T5JCI7TYujFbjUQIEzFu99skqpartoyeAiDmiZ+IW8p4IrumqXSks6rE2rNNgaDxZF0YetmTLeHlEvRIZ3vCeyM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732551759; c=relaxed/simple;
+	bh=SOtD3wRCEIiC5+ezgG0pVQMc32AJMnknrAMHMNt4Pa0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=r7fEK/fVTfK2BVJNW37YzHIxfUug6fNT/Wzg8lPiXs2IkBre/yS59ZFD1RNDMQA57AftbxBzEF8FPkr4SxGolr6dowacYg6a1/vYVe1ql7ABYsngpTE6lWfUYKDg3aZh0LTgydIkvYz1RJGNy9NFKKWUu9lLcluSvraoQcwLJDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Qig0sME+; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Qig0sME+"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa560a65fd6so68377766b.0
+        for <linux-integrity@vger.kernel.org>; Mon, 25 Nov 2024 08:22:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1732551756; x=1733156556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SOtD3wRCEIiC5+ezgG0pVQMc32AJMnknrAMHMNt4Pa0=;
+        b=Qig0sME+T50bu/058Mc2w4SYJ7qi+wuIZNcElyS0kuPsXuO+Bh3uoHRAspw5sia+7M
+         x269KLsIo7AovBBXvGg81S+eVbj7KcOoRua14Ysm0qAoJzAJga7FoAxYbQFaF0gaH3n3
+         vyXf4xdUtWjr2CivqwTtkn3hc1GF7ZzDc374yU8OHS055FXjA8KvF95MzCCH71wh11/e
+         EIcJmz7xT7rl3FmL7Bw7RCzOio2yzTs+QprVjD26nerEY0rzL7xDTh9LE0rUOpfd3y6O
+         dpXQ/K8RTY211OB8/gF/jlU3v4RwYUl2go2K3j4NRMfYosWQcF38kMZMleL85zb4Kw+m
+         i8zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732551756; x=1733156556;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SOtD3wRCEIiC5+ezgG0pVQMc32AJMnknrAMHMNt4Pa0=;
+        b=RQ2qdu9/G2+fM6EGwYakRTFUIIt33HYWP5YaKlHB4eBsH3d2xsOfojCezBtV8Wfqx6
+         eMXMNN2Ml3xmWQCJ62EYuTAv8ER4qvplLSFyJjxxLG/dHN3X0S33xhHSp62Iere+LOml
+         Flge+QhZZTT6KEAj08Qc+xVJz+/Z7R0CKb4D4ilsA298/vp/vfa5ZcjJWhkF1epm12MQ
+         LZlRKBOsGUmU7EDFQqP098V728hIuwEgvhARg18h7jCA0Fkrz8cJlzs5B/1eKOt1WQEv
+         Bvl1IOIxxd/gbxCX0IolkfxLqOAyA2Kz5CaYM22Pg01OXbgJ5xtJ6JGvrBmxgbhI/Wps
+         FWww==
+X-Gm-Message-State: AOJu0YxZYr4j2lFcAmAy3UbPw0nmOetc/wQbZr3DjpF4ArX07yZSeRFX
+	EDSMlsC/cBDSQb29rTWJ1AemjvzD8BpQUodBd6GaaHcs1iMml9Ok
+X-Gm-Gg: ASbGncvRqOSAtKfnUdPMRyTQkd7redSyIA8VNOl5+tfd0jW4uPElGo4KwLtMi54Ex5L
+	HxRTa/mo/22PVH5Gxy+Ejm/2Y5w3tMWjMH+1BzKvgtdo9eR/bwKL5F+QfzfNiu8TE73QObhRs8P
+	p6v/UJdV3d70KmIQv3HDQyxMPuaPUkHKC7IJkDImgEV6lzrpuwLZ9cLTHVX3NZH4auLBet9ZsVh
+	UIRxe1ZGY7wGj2DBdkg3C7pxMTblUOEwjk2xH3gUUCM+IUWw6pRfngzLRf0iottDwfTTR8nMAl+
+	Fp92D7QT4oRjbB8aiHH28Fu0/GmzlyuoaA==
+X-Google-Smtp-Source: AGHT+IE8UMTywdm0jDOUXXuFrwcaAvAzVnuNlX5Rrf7X+wMJlfPboTf1C2RisoIFN2Sj5FPvzsBaGA==
+X-Received: by 2002:a17:907:7751:b0:aa5:1cdf:7bfd with SMTP id a640c23a62f3a-aa56486a009mr137366b.7.1732551756070;
+        Mon, 25 Nov 2024 08:22:36 -0800 (PST)
+Received: from [127.0.0.1] (dynamic-095-116-179-226.95.116.pool.telefonica.de. [95.116.179.226])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b584131sm478519066b.168.2024.11.25.08.22.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 25 Nov 2024 08:22:35 -0800 (PST)
+Date: Mon, 25 Nov 2024 17:22:34 +0100 (GMT+01:00)
+From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+	"M: Roberto Sassu" <roberto.sassu@huawei.com>,
+	"M: Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+	"R: Eric Snowberg" <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>
+Message-ID: <3a3a1a22-636a-4ac5-ba12-4c59eabad664@googlemail.com>
+In-Reply-To: <85139843-047b-44be-a1c1-4b0110206cf5@schaufler-ca.com>
+References: <CAJ2a_DeUX9UdAYOo9OwG-yXSH1etKQZortPcyxfzG70K3N+g7g@mail.gmail.com> <85139843-047b-44be-a1c1-4b0110206cf5@schaufler-ca.com>
+Subject: Re: ima: property parameter unused in ima_match_rules()
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-AuthUser: calestyo@scientia.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Correlation-ID: <3a3a1a22-636a-4ac5-ba12-4c59eabad664@googlemail.com>
 
-Hey.
+Nov 25, 2024 17:17:19 Casey Schaufler <casey@schaufler-ca.com>:
 
-Just for confirmation:
+> On 11/25/2024 3:38 AM, Christian G=C3=B6ttsche wrote:
+>> Hi,
+>>
+>> I noticed that the `prop` parameter of `ima_match_rules()` is
+>> currently unused (due to shadowing).
+>> Is that by design or a mishap of the recent rework?
+>
+> Which tree are you looking at?
 
-The patch indeed fixed the repeated log messages after a resume from
-hibernate :-)
+torvalds/linux:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
 
 
-Thanks again,
-Chris.
+>
+>>
+>> Related commits:
+>>
+>> 37f670a ("lsm: use lsm_prop in security_current_getsecid")
+>> 870b7fd ("lsm: use lsm_prop in security_audit_rule_match")
+>> 07f9d2c ("lsm: use lsm_prop in security_inode_getsecid")
+
