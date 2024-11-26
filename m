@@ -1,282 +1,219 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B7D1DAC88
-	for <linux-integrity@vger.kernel.org>; Tue, 26 Nov 2024 17:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09732182BC;
+	Tue, 26 Nov 2024 17:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732642717; cv=none; b=GEmJCyHCtfIoK6M6OHXFF0KUhh8w25DsO9F+WcLu2BG2EtllKVvUbbVDyLcr4Q7uOl769kZxmvfow2Gw7GHrW2h6uBuaYXb0I6YdNriCVC6dWqWMRRsWB5EeifMDd6JOqWuOLlUoIBNbYf/FZYrr3nmdkLNSDd3k36BVWMJeq5Q=
+	t=1732643367; cv=none; b=aHFjcLlBcnWYSvhxpfmwLPtgTJQcXJtUkPXVFhYV2CqunZu04nHYnVtHNTseiqs9+2subiVffhztRutvUVEHxNAMMZGCfKjNUMmWBZbJY0Bl0r8R2VqCnYrx5IIrpP8k4TUhirYfjP/uhtWIcKVeErdt5Dk3Bf8RwBhVEgxRpCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732642717; c=relaxed/simple;
-	bh=FhFq3zNl2d0xQsSQp29x/nsFrrHE/Pq5QUm1OgdNTiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qvaTA2WmSAlZpUkP85LAcQAMWARw2WsNesnY+vqIO+T2ygv5peJ9C9WfhR4klzQqjFDDenw6XDaRgUSltc4yJ6kRIBzJjkm3SCN3iB+m79Oc0OvdixH7WLBfKQ03NWInRuCWrs89IWVwaZuU8caUnLP7mQsNazbxnqo74meU8po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x4jw3cxd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ci7LcNko; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x4jw3cxd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ci7LcNko; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1732643367; c=relaxed/simple;
+	bh=F7FDeE/BUYT5S6TNc+6yiD5emwOFUBL+9TtRDrcmB6c=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=OYtKLPvKkAHIirBMSjsYqIO6tAyaKoNEuMcreFeJHMt3OPMg7eyOg9DvNfPzA/JEEwBguSpjzijMeQwgPuTeR7KxbkJ7K20Mm/4amrfYkrMViyrNOyFEWLaXZfQzJDeIpyuKV1oWsWRIWRGgWi8mg7mQtWxvbFb6hO9B7PYzd/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZJ4zlMdz; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x4jw3cxd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ci7LcNko";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x4jw3cxd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ci7LcNko"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 554F71F766;
-	Tue, 26 Nov 2024 17:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732642713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrWank4tcr+vU8qiBUPC/7ef67hJYayhhGjGbPCpZ/s=;
-	b=x4jw3cxdzDrJq+sUZly+hbHZnp/OYZiGAcvnDRY4jP6zOu78OY5ppH/GdsJEsDL2HpAjJV
-	liBXvATqXtFZHYunYKjXgz4QP0H07VxHIK+ythwZeCdgGFjMIN/wwBduqUJM+pmb5wBqjS
-	XI8Pp7ZuFqGWHnz5b/x0WagjMAoYs7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732642713;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrWank4tcr+vU8qiBUPC/7ef67hJYayhhGjGbPCpZ/s=;
-	b=ci7LcNkoiyOFBaNWD+Wm3ctjrUTDNtMjk4oAANK33r3+2XyZPIRdG776VhBIFhwKPdpX4L
-	TLmO1L+mm8wTLiDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732642713; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrWank4tcr+vU8qiBUPC/7ef67hJYayhhGjGbPCpZ/s=;
-	b=x4jw3cxdzDrJq+sUZly+hbHZnp/OYZiGAcvnDRY4jP6zOu78OY5ppH/GdsJEsDL2HpAjJV
-	liBXvATqXtFZHYunYKjXgz4QP0H07VxHIK+ythwZeCdgGFjMIN/wwBduqUJM+pmb5wBqjS
-	XI8Pp7ZuFqGWHnz5b/x0WagjMAoYs7Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732642713;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RrWank4tcr+vU8qiBUPC/7ef67hJYayhhGjGbPCpZ/s=;
-	b=ci7LcNkoiyOFBaNWD+Wm3ctjrUTDNtMjk4oAANK33r3+2XyZPIRdG776VhBIFhwKPdpX4L
-	TLmO1L+mm8wTLiDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28CFC13890;
-	Tue, 26 Nov 2024 17:38:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4H/7CJkHRmf2OAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 26 Nov 2024 17:38:33 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH 2/3] ima_setup.sh: Allow to load predefined policy
-Date: Tue, 26 Nov 2024 18:38:29 +0100
-Message-ID: <20241126173830.98960-3-pvorel@suse.cz>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241126173830.98960-1-pvorel@suse.cz>
-References: <20241126173830.98960-1-pvorel@suse.cz>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZJ4zlMdz"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQAcOjP003594;
+	Tue, 26 Nov 2024 17:48:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tNFAwQ
+	Pf7JigwXLQ0UnmIgzsZn4TdCYwde4TNk3iD00=; b=ZJ4zlMdzYd29sRG62XA8O4
+	K5ZSWU2vOtHpQ171myXV9sFIwXoCqCUDyqsq0geuQiTsIHoXsZ5mVrZk7XGzTA2M
+	AMb5OVqXxfS/Hkk4A6x/rM5uuUprMGEgbUwUbIEIApRGE+CYJrGQzX//jShp5wrQ
+	Vzs4MeUVsRW7rCe8TCskGb79eAbsDeTbukn6WJx6Lpq1yWAe5BUILPO2FBT4mtTJ
+	4GUv1sBtLqmSDD6ZunV0iV3Dzu2SpAAKU85RgGAQI/Sfvr07OlKx33mDSZB89rbk
+	J1v07zUhckJcw2vhfGmKxGJa5RmWgg63Zs1BVhP7ScXydN9Kjgg8EX0Sie+UX5aA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jy20e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 17:48:06 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AQHm5su009038;
+	Tue, 26 Nov 2024 17:48:05 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43386jy209-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 17:48:05 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AQEkcwx027220;
+	Tue, 26 Nov 2024 17:48:04 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 433ukj4tjn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 26 Nov 2024 17:48:04 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AQHm40U55837170
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 26 Nov 2024 17:48:04 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB8C258059;
+	Tue, 26 Nov 2024 17:48:03 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 822F358043;
+	Tue, 26 Nov 2024 17:47:59 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.177.21])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 26 Nov 2024 17:47:59 +0000 (GMT)
+Message-ID: <623f89b4de41ac14e0e48e106b846abc9e9d70cf.camel@linux.ibm.com>
+Subject: Re: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc"
+ interpreter and 28 tests
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>,
+        Kees Cook <keescook@chromium.org>, Paul Moore
+ <paul@paul-moore.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Adhemerval Zanella
+ Netto <adhemerval.zanella@linaro.org>,
+        Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton
+ <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Heimes <christian@python.org>,
+        Dmitry Vyukov
+ <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+        Eric Biggers
+ <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Fan Wu
+ <wufan@linux.microsoft.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert
+ Uytterhoeven <geert@linux-m68k.org>,
+        James Morris
+ <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn
+ <jannh@google.com>, Jeff Xu <jeffxu@google.com>,
+        Jonathan Corbet
+ <corbet@lwn.net>,
+        Jordan R Abrahams <ajordanr@google.com>,
+        Lakshmi
+ Ramasubramanian <nramas@linux.microsoft.com>,
+        Linus Torvalds
+ <torvalds@linux-foundation.org>,
+        Luca Boccassi <bluca@debian.org>,
+        Luis
+ Chamberlain <mcgrof@kernel.org>,
+        "Madhavan T . Venkataraman"
+ <madvenka@linux.microsoft.com>,
+        Matt Bobrowski <mattbobrowski@google.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew Wilcox
+ <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas
+ Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+        Scott Shell
+ <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell
+ <sfr@canb.auug.org.au>,
+        Steve Dower <steve.dower@python.org>, Steve Grubb
+ <sgrubb@redhat.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Thibaut Sautereau
+ <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel
+ <vincent.strubel@ssi.gouv.fr>,
+        Xiaoming Ni <nixiaoming@huawei.com>,
+        Yin
+ Fengwei <fengwei.yin@intel.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+In-Reply-To: <20241122.ahY1pooz1ing@digikod.net>
+References: <20241112191858.162021-1-mic@digikod.net>
+	 <20241112191858.162021-7-mic@digikod.net>
+	 <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
+	 <20241122.ahY1pooz1ing@digikod.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -6.80
-X-Spam-Flag: NO
+Date: Tue, 26 Nov 2024 12:41:45 -0500
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _b6UFancxFPo-Mc2udQhYrK2rs1bE-Zs
+X-Proofpoint-GUID: 5BPxwchR-GJDXOm4zLUufwuqPvRYVmxk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ mlxlogscore=940 spamscore=0 suspectscore=0 phishscore=0 clxscore=1011
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411260139
 
-environment variable LTP_IMA_LOAD_POLICY=1 tries to load example policy
-if available. This should be used only if tooling running LTP tests
-allows to reboot afterwards (because policy may be writable only once,
-e.g. missing CONFIG_IMA_WRITE_POLICY=y, or policies can influence each
-other).
+On Fri, 2024-11-22 at 15:50 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Thu, Nov 21, 2024 at 03:34:47PM -0500, Mimi Zohar wrote:
+> > Hi Micka=C3=ABl,
+> >=20
+> > On Tue, 2024-11-12 at 20:18 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> > >=20
+> > > +
+> > > +/* Returns 1 on error, 0 otherwise. */
+> > > +static int interpret_stream(FILE *script, char *const script_name,
+> > > +			    char *const *const envp, const bool restrict_stream)
+> > > +{
+> > > +	int err;
+> > > +	char *const script_argv[] =3D { script_name, NULL };
+> > > +	char buf[128] =3D {};
+> > > +	size_t buf_size =3D sizeof(buf);
+> > > +
+> > > +	/*
+> > > +	 * We pass a valid argv and envp to the kernel to emulate a native
+> > > +	 * script execution.  We must use the script file descriptor instea=
+d of
+> > > +	 * the script path name to avoid race conditions.
+> > > +	 */
+> > > +	err =3D execveat(fileno(script), "", script_argv, envp,
+> > > +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
+> >=20
+> > At least with v20, the AT_CHECK always was being set, independent of wh=
+ether
+> > set-exec.c set it.  I'll re-test with v21.
+>=20
+> AT_EXECVE_CEHCK should always be set, only the interpretation of the
+> result should be relative to securebits.  This is highlighted in the
+> documentation.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- .../kernel/security/integrity/ima/README.md   |  6 +++
- .../integrity/ima/tests/ima_measurements.sh   | 17 +++++-
- .../security/integrity/ima/tests/ima_setup.sh | 52 ++++++++++++++++---
- 3 files changed, 66 insertions(+), 9 deletions(-)
+Sure, that sounds correct.  With an IMA-appraisal policy, any unsigned scri=
+pt
+with the is_check flag set now emits an "cause=3DIMA-signature-required" au=
+dit
+message.  However since IMA-appraisal isn't enforcing file signatures, this
+sounds wrong.
 
-diff --git a/testcases/kernel/security/integrity/ima/README.md b/testcases/kernel/security/integrity/ima/README.md
-index 5b261a1914..a00b01b5fe 100644
---- a/testcases/kernel/security/integrity/ima/README.md
-+++ b/testcases/kernel/security/integrity/ima/README.md
-@@ -8,6 +8,12 @@ CONFIG_INTEGRITY=y
- CONFIG_IMA=y
- ```
- 
-+### Loading policy for testing (optional)
-+Setting environment variable `LTP_IMA_LOAD_POLICY=1` tries to load example
-+policy if available. This should be used only if tooling running LTP tests
-+allows to reboot afterwards (because policy may be writable only once, e.g.
-+missing `CONFIG_IMA_WRITE_POLICY=y`, or policies can influence each other).
-+
- ### IMA measurement tests
- `ima_measurements.sh` require builtin IMA tcb policy to be loaded
- (`ima_policy=tcb` kernel parameter).
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-index 1da2aa6a51..b4205ab95f 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0-or-later
- # Copyright (c) 2009 IBM Corporation
--# Copyright (c) 2018-2021 Petr Vorel <pvorel@suse.cz>
-+# Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
- # Author: Mimi Zohar <zohar@linux.ibm.com>
- #
- # Verify that measurements are added to the measurement list based on policy.
-@@ -12,10 +12,23 @@ TST_CNT=3
- 
- setup()
- {
--	require_ima_policy_cmdline "tcb"
-+	local policy="tcb"
- 
- 	TEST_FILE="$PWD/test.txt"
- 	[ -f "$IMA_POLICY" ] || tst_res TINFO "not using default policy"
-+
-+	if [ "$LTP_IMA_LOAD_POLICY" != 1 ]; then
-+		require_ima_policy_cmdline $policy
-+		return
-+	elif check_ima_policy_cmdline $policy; then
-+		return
-+	fi
-+
-+	if ! check_ima_policy_cmdline $policy &&
-+		! require_ima_policy_content '^measure func=FILE_CHECK mask=^MAY_READ uid=0' &&
-+		! require_ima_policy_content 'measure func=POLICY_CHECK'; then
-+		tst_brk TCONF "IMA measurement tests require builtin IMA $policy policy (e.g. ima_policy=$policy kernel parameter or it's equivalent)"
-+	fi
- }
- 
- check_iversion_support()
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index df3fc5603f..e585418c17 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0-or-later
- # Copyright (c) 2009 IBM Corporation
--# Copyright (c) 2018-2020 Petr Vorel <pvorel@suse.cz>
-+# Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
- # Author: Mimi Zohar <zohar@linux.ibm.com>
- 
- TST_TESTFUNC="test"
-@@ -72,14 +72,20 @@ require_policy_readable()
- 	fi
- }
- 
--require_policy_writable()
-+check_policy_writable()
- {
--	local err="IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
--
--	[ -f $IMA_POLICY ] || tst_brk TCONF "$err"
--	# CONFIG_IMA_READ_POLICY
-+	[ -f $IMA_POLICY ] || return 1
-+	# workaround for kernels < v4.18 without fix
-+	# ffb122de9a60b ("ima: Reflect correct permissions for policy")
- 	echo "" 2> log > $IMA_POLICY
--	grep -q "Device or resource busy" log && tst_brk TCONF "$err"
-+	grep -q "Device or resource busy" log && return 1
-+	return 0
-+}
-+
-+require_policy_writable()
-+{
-+	check_policy_writable || tst_brk TCONF \
-+		"IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
- }
- 
- check_ima_policy_content()
-@@ -158,6 +164,32 @@ print_ima_config()
- 	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
- }
- 
-+load_ima_policy()
-+{
-+	local policy="$(ls $TST_DATAROOT/*.policy 2>/dev/null)"
-+
-+	if [ "$LTP_IMA_LOAD_POLICY" != 1 -a "$policy" -a -f "$policy" ]; then
-+		tst_res TINFO "NOTE: set LTP_IMA_LOAD_POLICY=1 to load policy for this test"
-+		return
-+	fi
-+
-+	if [ -z "$policy" -o ! -f "$policy" ]; then
-+		tst_res TINFO "no policy for this test"
-+		return
-+	fi
-+
-+	tst_res TINFO "trying to load '$policy' policy:"
-+	cat $policy
-+	if ! check_policy_writable; then
-+		tst_res TINFO "WARNING: IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y), reboot required"
-+		return
-+	fi
-+
-+	cat "$policy" 2> log > $IMA_POLICY
-+	if grep -q "Device or resource busy" log; then
-+		tst_brk TBROK "Loading policy failed"
-+	fi
-+}
- ima_setup()
- {
- 	SECURITYFS="$(mount_helper securityfs $SYSFS/kernel/security)"
-@@ -180,6 +212,8 @@ ima_setup()
- 		cd "$TST_MNTPOINT"
- 	fi
- 
-+	load_ima_policy
-+
- 	[ -n "$TST_SETUP_CALLER" ] && $TST_SETUP_CALLER
- }
- 
-@@ -192,6 +226,10 @@ ima_cleanup()
- 	for dir in $UMOUNT; do
- 		umount $dir
- 	done
-+
-+	if [ "$LTP_IMA_LOAD_POLICY" = 1 ]; then
-+		tst_res TINFO "WARNING: policy loaded via LTP_IMA_LOAD_POLICY=1, reboot recommended"
-+	fi
- }
- 
- set_digest_index()
--- 
-2.45.2
+New audit messages like "IMA-signature-required-by-interpreter" and "IMA-
+signature-not-required-by-interpreter" would need to be defined based on th=
+e
+SECBIT_EXEC_RESTRICT_FILE.
+
+
+> >=20
+> > > +	if (err && restrict_stream) {
+> > > +		perror("ERROR: Script execution check");
+> > > +		return 1;
+> > > +	}
+> > > +
+> > > +	/* Reads script. */
+> > > +	buf_size =3D fread(buf, 1, buf_size - 1, script);
+> > > +	return interpret_buffer(buf, buf_size);
+> > > +}
+> > > +
+> >=20
+> >=20
+>=20
 
