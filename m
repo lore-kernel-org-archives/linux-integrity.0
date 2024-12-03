@@ -1,136 +1,405 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90011DAC9B;
-	Tue,  3 Dec 2024 07:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA951DA0F5;
+	Tue,  3 Dec 2024 11:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733212695; cv=none; b=E+hxWsrBcEEI7wBNisjG81KTZwNkD9H/SPwRPgMluPTVkEJnpVv92m7CB1P6fPMeDsSGlu2QUzrq5u7bdNXQJIdL3QkGqYLcVNrnXrYkVsQnmGdqQfQt6oIR6weWX402OIhzdybiHOkFTDAlKymbDMW9HyhlM2pM5E2zeXldzbU=
+	t=1733226814; cv=none; b=A9jg+SBs1r0RE4oA4ouWXgGC26OEnowgXq1sZt6NpzyQF5pueSrdyP7xquxVxJb10p2oc8brF814uEcdlAnCMmpxc82HCQr94BkkK8QjHMglWbboZmVEjvy+tBtlaDcKN4No7uj23z02IAVSvmfhEq7QNdHekZ7iqSFvYwtqnrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733212695; c=relaxed/simple;
-	bh=LlAMOkFBWltyk8d13cDz4Chrf+wL/mxVKWgO+2b0Z+E=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=PDeG6f72auF+XNnMaq5ZmRf41L8XLLJEG+lKs7oX1CjBfmmWRYA01nSMJXmc7VmncX8VsPRkL7sGbHeLgRTTQsovdYm9Q6arv7dbfoGErU9vuI5jedvm/F6iHGl397m+LXU1HJFDDvC2s5pqHERxBKXcb5qUbysq8cuOIJP1ibQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MWSNHbyT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1733226814; c=relaxed/simple;
+	bh=0Ao4eT/8fVUK1kOamzPiFew8wk9LUkUUOCqvyg3sN0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPNXu74faFsj9hjVz8OLXpzrnqQn0Ra/yCR3QrAqAsLmXhSY49cnkYn4vUDx4V2Fcz1di850yLd1Nc+Kvj87l3agzuCJc9bBuEFpXmD/cTraAuKtqXvjAUm+NRN+cFOz85N5dS/rXvhHugBiq8uKLWKx3zA3+b2ZWZXJdRBAGPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Dp3qSVZD; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MWSNHbyT"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2JQCjs021372;
-	Tue, 3 Dec 2024 07:58:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=yuRrjyJ0isQXXOueNN03As
-	MDhQuBXNE367Q7Ha7DMH4=; b=MWSNHbyTE712Rr+v6wd0pKmixSfbzr5SUlEVuT
-	m/6+kuCBJA5iFuSrpIVC1GSQIp9rM83ku8CxU5nz+s4oZt8w+H9jYr26EJeNGQRc
-	VsTFk6r48x7mir11jALA8GY+sNZeQqx+1AYaX6F2ofkLPFbqUU3h7GW0nY7NW4XE
-	cxVskgvU/pLatPWSpl5MdzN8Cjjz48H8HpzxcAiNlR3bCqgCqq4v2xWpje3bfZGr
-	EDOno8yp2TA/CIrIYTACXNNXmCfhFzpM6PHVfDdPWFGVprDa6afdC2iS9/RFASme
-	VwoRiET5tJ0RvrLElb2xLuzQCcaH0CA6wT2uXAn8PJr9ThqQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 437ufe7810-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 07:58:08 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B37w74C030608
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 3 Dec 2024 07:58:07 GMT
-Received: from [10.218.0.48] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Dec 2024
- 23:58:05 -0800
-Message-ID: <c5776544-235b-47bd-bab7-d00d436db893@quicinc.com>
-Date: Tue, 3 Dec 2024 13:28:01 +0530
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Dp3qSVZD"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y2fDl6MqBzn9L;
+	Tue,  3 Dec 2024 12:53:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733226807;
+	bh=uVP6xeVGF+DF+rBiRGFZ66SqEoa+zqntUsncijuxsy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dp3qSVZDi3xJ2YFwphu7XXFrOQ0EMn52sqQzwovjGdemPIFu3WPkfH+ANzgfACuw8
+	 XlCKERzvZuUVSLiXtvJ/wcnjOlWGZhE28DiGO/qG1vH42ZZhgUnMwQm3znte5rr3Gz
+	 H/dG9Urz+jwKCNRn3VFzcncEWScC6e2YLqnOjG68=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y2fDl2kmwz3GS;
+	Tue,  3 Dec 2024 12:53:27 +0100 (CET)
+Date: Tue, 3 Dec 2024 12:53:25 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, audit@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>, Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
+Message-ID: <20241203.oZu0aemaiv5a@digikod.net>
+References: <20241127210234.121546-1-zohar@linux.ibm.com>
+ <20241129.keeDathoo3Oh@digikod.net>
+ <421b119b81ec044fcdc714aac5748ebe5b4557aa.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: <peterhuewe@gmx.de>, <jarkko@kernel.org>, <jgg@ziepe.ca>,
-        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: Yuvaraj Ranganathan <quic_yrangana@quicinc.com>
-Subject: QEMU launch failure with TPM passthrough
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -Ex58Sr52x0azX7Mmh8CY5HmXcPYUwny
-X-Proofpoint-GUID: -Ex58Sr52x0azX7Mmh8CY5HmXcPYUwny
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- spamscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=989 clxscore=1011 adultscore=0 bulkscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412030067
+In-Reply-To: <421b119b81ec044fcdc714aac5748ebe5b4557aa.camel@linux.ibm.com>
+X-Infomaniak-Routing: alpha
 
-Hi Everyone,
+On Mon, Dec 02, 2024 at 02:40:35PM -0500, Mimi Zohar wrote:
+> On Fri, 2024-11-29 at 12:06 +0100, Mickaël Salaün wrote:
+> > For reference, here is the base patch series:
+> > https://lore.kernel.org/all/20241112191858.162021-1-mic@digikod.net/
+> > 
+> > CCing audit@
+> > 
+> > On Wed, Nov 27, 2024 at 04:02:34PM -0500, Mimi Zohar wrote:
+> > > Like direct file execution (e.g. ./script.sh), indirect file execution
+> > > (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> > > the new security_bprm_creds_for_exec() hook to measure and verify the
+> > > indirect file's integrity.  Unlike direct file execution, indirect file
+> > > execution integrity is optionally enforced by the interpreter.
+> > > 
+> > > Update the audit messages to differentiate between kernel and userspace
+> > > enforced integrity.
+> > 
+> > I'm not sure to see the full picture.  What is the difference between
+> > execveat() calls and execveat() + AT_EXECVE_CHECK calls?  Both are from
+> > user space, the only difference is that the first can lead to a full
+> > execution, but the intent is the same.
+> 
+> We do want the full execution in order to measure/appraise/audit both the direct
+> file execution (e.g. ./script.sh) and the interpreter (e.g. #!/usr/bin/bash)
+> specified.
 
-We are trying to launch a VM’s using qemu with TPM passthrough
-(https://www.qemu.org/docs/master/specs/tpm.html) and
-we are encountering the QEMU launch is failing on below experiments,
+Yes, but I was wondering about the difference in the log messages.  In
+both cases the script is checked, but only without AT_EXECVE_CHECK its
+"dependencies" (e.g. script interpreter) are checked.  I guess it could
+be useful to differenciate those but I wanted to make sure we were on
+the same page.
 
-Problem 1:
-qemu-system-aarch64 \
-    -M virt -m 2G \
- -tpmdev passthrough,id=tpm0,path=/dev/tpmrm0 -device tpm-tis,tpmdev=tpm0 \
-    -kernel /mnt/overlay/Image \
-    -drive
-file=/mnt/overlay/qcom-guestvm-image-qcs9100-ride-sx-20241118050754.rootfs.ext4,if=virtio,format=raw
-\
-    -append "root=/dev/vda" \
-    -cpu host --enable-kvm -smp 4 -nographic
+> 
+> > 
+> > > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > ---
+> > >  security/integrity/ima/ima_appraise.c | 84 ++++++++++++++++++++-------
+> > >  security/integrity/ima/ima_main.c     | 22 +++++++
+> > >  2 files changed, 86 insertions(+), 20 deletions(-)
+> > > 
+> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > > index 656c709b974f..b5f8e49cde9d 100644
+> > > --- a/security/integrity/ima/ima_appraise.c
+> > > +++ b/security/integrity/ima/ima_appraise.c
+> > > @@ -8,6 +8,7 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/init.h>
+> > >  #include <linux/file.h>
+> > > +#include <linux/binfmts.h>
+> > >  #include <linux/fs.h>
+> > >  #include <linux/xattr.h>
+> > >  #include <linux/magic.h>
+> > > @@ -16,6 +17,7 @@
+> > >  #include <linux/fsverity.h>
+> > >  #include <keys/system_keyring.h>
+> > >  #include <uapi/linux/fsverity.h>
+> > > +#include <linux/securebits.h>
+> > >  
+> > >  #include "ima.h"
+> > >  
+> > > @@ -276,7 +278,8 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
+> > >   */
+> > >  static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  			struct evm_ima_xattr_data *xattr_value, int xattr_len,
+> > > -			enum integrity_status *status, const char **cause)
+> > > +			enum integrity_status *status, const char **cause,
+> > > +			bool is_check)
+> > >  {
+> > >  	struct ima_max_digest_data hash;
+> > >  	struct signature_v2_hdr *sig;
+> > > @@ -292,9 +295,11 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  		if (*status != INTEGRITY_PASS_IMMUTABLE) {
+> > >  			if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> > >  				if (iint->flags & IMA_VERITY_REQUIRED)
+> > > -					*cause = "verity-signature-required";
+> > > +					*cause = !is_check ? "verity-signature-required" :
+> > > +						"verity-signature-required(userspace)";
+> > 
+> > This looks simpler (same for all following checks):
+> > is_check ? "verity-signature-required(userspace)" : "verity-signature-required";
+> > 
+> > >  				else
+> > > -					*cause = "IMA-signature-required";
+> > > +					*cause = !is_check ? "IMA-signature-required" :
+> > > +						"IMA-signature-required(userspace)";
+> > >  				*status = INTEGRITY_FAIL;
+> > >  				break;
+> > >  			}
+> > > @@ -314,7 +319,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  		else
+> > >  			rc = -EINVAL;
+> > >  		if (rc) {
+> > > -			*cause = "invalid-hash";
+> > > +			*cause = !is_check ? "invalid-hash" :
+> > > +				"invalid-hash(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -325,14 +331,16 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		mask = IMA_DIGSIG_REQUIRED | IMA_VERITY_REQUIRED;
+> > >  		if ((iint->flags & mask) == mask) {
+> > > -			*cause = "verity-signature-required";
+> > > +			*cause = !is_check ? "verity-signature-required" :
+> > > +				"verity-signature-required(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > >  
+> > >  		sig = (typeof(sig))xattr_value;
+> > >  		if (sig->version >= 3) {
+> > > -			*cause = "invalid-signature-version";
+> > > +			*cause = !is_check ? "invalid-signature-version" :
+> > > +				"invalid-signature-version(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -353,7 +361,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  						     iint->ima_hash->digest,
+> > >  						     iint->ima_hash->length);
+> > >  		if (rc) {
+> > > -			*cause = "invalid-signature";
+> > > +			*cause = !is_check ? "invalid-signature" :
+> > > +				"invalid-signature(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  		} else {
+> > >  			*status = INTEGRITY_PASS;
+> > > @@ -364,7 +373,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> > >  			if (!(iint->flags & IMA_VERITY_REQUIRED)) {
+> > > -				*cause = "IMA-signature-required";
+> > > +				*cause = !is_check ? "IMA-signature-required" :
+> > > +					"IMA-signature-required(userspace)";
+> > >  				*status = INTEGRITY_FAIL;
+> > >  				break;
+> > >  			}
+> > > @@ -372,7 +382,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		sig = (typeof(sig))xattr_value;
+> > >  		if (sig->version != 3) {
+> > > -			*cause = "invalid-signature-version";
+> > > +			*cause = !is_check ? "invalid-signature-version" :
+> > > +				"invalid-signature-version(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -382,7 +393,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  				       container_of(&hash.hdr,
+> > >  					       struct ima_digest_data, hdr));
+> > >  		if (rc) {
+> > > -			*cause = "sigv3-hashing-error";
+> > > +			*cause = !is_check ? "sigv3-hashing-error" :
+> > > +				"sigv3-hashing-error(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  			break;
+> > >  		}
+> > > @@ -392,7 +404,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  					     xattr_len, hash.digest,
+> > >  					     hash.hdr.length);
+> > >  		if (rc) {
+> > > -			*cause = "invalid-verity-signature";
+> > > +			*cause = !is_check ? "invalid-verity-signature" :
+> > > +				"invalid-verify-signature(userspace)";
+> > >  			*status = INTEGRITY_FAIL;
+> > >  		} else {
+> > >  			*status = INTEGRITY_PASS;
+> > > @@ -401,7 +414,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  		break;
+> > >  	default:
+> > >  		*status = INTEGRITY_UNKNOWN;
+> > > -		*cause = "unknown-ima-data";
+> > > +		*cause = !is_check ? "unknown-ima-data" :
+> > > +			"unknown-ima-data(userspace)";
+> > >  		break;
+> > >  	}
+> > >  
+> > > @@ -469,6 +483,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+> > >  	return rc;
+> > >  }
+> > >  
+> > > +static int is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
+> > > +{
+> > > +	struct linux_binprm *bprm = NULL;
+> > > +
+> > > +	if (func == BPRM_CHECK) {
+> > > +		bprm = container_of(&file, struct linux_binprm, file);
+> > > +		if (bprm->is_check)
+> > > +			return 1;
+> > > +	}
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  /*
+> > >   * ima_appraise_measurement - appraise file measurement
+> > >   *
+> > > @@ -489,11 +515,24 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  	enum integrity_status status = INTEGRITY_UNKNOWN;
+> > >  	int rc = xattr_len;
+> > >  	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
+> > > +	bool is_check = false;
+> > >  
+> > >  	/* If not appraising a modsig, we need an xattr. */
+> > >  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+> > >  		return INTEGRITY_UNKNOWN;
+> > >  
+> > > +	/*
+> > > +	 * Unlike any of the other LSM hooks where the kernel enforces file
+> > > +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
+> > > +	 * LSM hook is left up to the discretion of the script interpreter
+> > > +	 * (userspace).
+> > > +	 *
+> > > +	 * Since the SECBIT_EXEC_RESTRICT_FILE flag is just a hint as to
+> > > +	 * userspace intentions, simply annotate the audit messages indicating
+> > > +	 * a userspace based query.
+> > > +	 */
+> > > +	is_check = is_bprm_creds_for_exec(func, file);
+> > > +
+> > >  	/* If reading the xattr failed and there's no modsig, error out. */
+> > >  	if (rc <= 0 && !try_modsig) {
+> > >  		if (rc && rc != -ENODATA)
+> > > @@ -501,11 +540,14 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  		if (iint->flags & IMA_DIGSIG_REQUIRED) {
+> > >  			if (iint->flags & IMA_VERITY_REQUIRED)
+> > > -				cause = "verity-signature-required";
+> > > +				cause = !is_check ? "verity-signature-required" :
+> > > +					"verity-signature-required(userspace)";
+> > >  			else
+> > > -				cause = "IMA-signature-required";
+> > > +				cause = !is_check ? "IMA-signature-required" :
+> > > +					"IMA-signature-required(userspace)";
+> > >  		} else {
+> > > -			cause = "missing-hash";
+> > > +			cause = !is_check ? "missing-hash" :
+> > > +				"missing-hash(userspace)";
+> > >  		}
+> > >  
+> > >  		status = INTEGRITY_NOLABEL;
+> > > @@ -531,14 +573,15 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  			break;
+> > >  		fallthrough;
+> > >  	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+> > > -		cause = "missing-HMAC";
+> > > +		cause = !is_check ? "missing-HMAC" : "missing-HMAC(userspace)";
+> > >  		goto out;
+> > >  	case INTEGRITY_FAIL_IMMUTABLE:
+> > >  		set_bit(IMA_DIGSIG, &iint->atomic_flags);
+> > > -		cause = "invalid-fail-immutable";
+> > > +		cause = !is_check ? "invalid-fail-immutable" :
+> > > +		       "invalid-fail-immutable(userspace)";
+> > >  		goto out;
+> > >  	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+> > > -		cause = "invalid-HMAC";
+> > > +		cause = !is_check ? "invalid-HMAC" : "invalid-HMAC(userspace)";
+> > >  		goto out;
+> > >  	default:
+> > >  		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
+> > > @@ -546,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  
+> > >  	if (xattr_value)
+> > >  		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
+> > > -				  &cause);
+> > > +				  &cause, is_check);
+> > >  
+> > >  	/*
+> > >  	 * If we have a modsig and either no imasig or the imasig's key isn't
+> > > @@ -568,7 +611,8 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  	    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
+> > >  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+> > >  		status = INTEGRITY_FAIL;
+> > > -		cause = "unverifiable-signature";
+> > > +		cause = !is_check ? "unverifiable-signature" :
+> > > +			"unverifiable-signature(userspace)";
+> > >  		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > >  				    op, cause, rc, 0);
+> > 
+> > Instead of adding new causes, another option would be to add a new audit
+> > record type (e.g. AUDIT_INTEGRITY_DATA_CHECK).  This would help filter
+> > these new kind of messages and I guess scale better.
+> 
+> Thanks.  This sounds like a better alternative.
+> 
+> > 
+> > Another alternative would be to extend the audit message with a new
+> > field (e.g. "check=1"), but that would not help for efficient filtering.
+> > 
+> > >  	} else if (status != INTEGRITY_PASS) {
+> > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > index 06132cf47016..2b5d6bae77a4 100644
+> > > --- a/security/integrity/ima/ima_main.c
+> > > +++ b/security/integrity/ima/ima_main.c
+> > > @@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+> > >  				   MAY_EXEC, CREDS_CHECK);
+> > >  }
+> > >  
+> > > +/**
+> > > + * ima_bprm_creds_for_exec - based on policy, collect/store/appraise measurement.
+> > > + * @bprm: contains the linux_binprm structure
+> > > + *
+> > > + * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
+> > > + * appraise the integrity of a file to be executed by script interpreters.
+> > > + * Unlike any of the other LSM hooks where the kernel enforces file integrity,
+> > > + * enforcing file integrity is left up to the discretion of the script
+> > > + * interpreter (userspace).
+> > > + *
+> > > + * On success return 0.  On integrity appraisal error, assuming the file
+> > > + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+> > > + */
+> > > +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
+> > > +{
+> > > +	if (!bprm->is_check)
+> > > +		return 0;
+> > > +
+> > > +	return ima_bprm_check(bprm);
+> > > +}
+> > > +
+> > >  /**
+> > >   * ima_file_check - based on policy, collect/store measurement.
+> > >   * @file: pointer to the file to be measured
+> > > @@ -1177,6 +1198,7 @@ static int __init init_ima(void)
+> > >  
+> > >  static struct security_hook_list ima_hooks[] __ro_after_init = {
+> > >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+> > > +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+> > 
+> > Why not replace bprm_check_security with bprm_creds_for_exec
+> > implementation altogether?
+> 
+> To measure/appraise/audit the interpreter specified in the direct file (e.g.
+> ./script.sh).
 
+It makes sense. :)
 
-qemu-system-aarch64: -tpmdev passthrough,id=tpm0,path=/dev/tpmrm0:
-tpm_passthrough: Could not guess TPM cancel path
+And there is no need to add another is_check check in the
+bprm_check_security implementation because it will not be called when
+is_check is set.
 
-
-Problem 2: (experimented based on open source discussions)
-qemu-system-aarch64 \
-    -M virt -m 2G \
- -tpmdev
-passthrough,id=tpm0,path=/dev/tpmrm0,cancel-path=/sys/class/tpm/tpm0/device/cancel
--device tpm-tis,tpmdev=tpm0 \
-    -kernel /mnt/overlay/Image \
-    -drive
-file=/mnt/overlay/qcom-guestvm-image-qcs9100-ride-sx-20241118050754.rootfs.ext4,if=virtio,format=raw
-\
-    -append "root=/dev/vda" \
-    -cpu host --enable-kvm -smp 4 -nographic
-
-qemu-system-aarch64: -tpmdev
-passthrough,id=tpm0,path=/dev/tpmrm0,cancel-path=/sys/class/tpm/tpm0/device/cancel:
-tpm_passthrough: Could not open TPM cancel path: No such file or directory
-
-On further checking, it is due to /sys/class/tpm/tpm0/device/cancel
-attribute is not created by TPM driver.
-
-Temporary Solution explored:
-
-We made the change in TPM driver to use tpm1_dev_group irrespective of
-TPM version.
-tpm2_dev_group is creating only tpm_version_major attribute while
-tpm1_dev_group is creating multiple attributes including cancel + tpm2
-attributes.
-With this change, we are able to launch VM’s successfully using QEMU
-command.
-
-TPM HW version: 2.0
-QEMU emulator version: 6.2.0
-
-This seems to be basic issue with QEMU + TPM 2.0 HW.
-Could you please help us know are we missing any procedure in the QEMU
-steps ?
-
-If the procedure is good, I shall go ahead to post an upstream patch
-with the fix. Need your comments here!!!
-
-Thanks,
-Yuvaraj.
+> 
+> > 
+> > >  	LSM_HOOK_INIT(file_post_open, ima_file_check),
+> > >  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+> > >  	LSM_HOOK_INIT(file_release, ima_file_free),
+> > > -- 
+> > > 2.47.0
+> > > 
+> > > 
+> > 
+> 
+> 
