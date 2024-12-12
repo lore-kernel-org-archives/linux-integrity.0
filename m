@@ -1,183 +1,363 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9566123A585
-	for <linux-integrity@vger.kernel.org>; Thu, 12 Dec 2024 16:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7891913CA81;
+	Thu, 12 Dec 2024 17:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734019944; cv=none; b=k9bjGOcbdhsp10gaJJDH03q5prN9cCs7dUsj0Dzq8dWY9LKoNUEQ2UifQnEPpQLMmVr1CrcopYr1NyPzrJS4HKlAYPWVMnPH8elx3BKIikvEOdAcKtpFARQCho4qTtWW35Zpsan13Qhaes8PABifF7DBS39XiIcGEY1VzKVOOzY=
+	t=1734025368; cv=none; b=g4FKr0nnaMP2CUYLdNQX1elup6nkY3kiv0CgGWvBExxDFtQwsC/mB8rC1yWqEdP1b6IQPvMcGMsMbFBsaau1v92qizrNj32Z/cY33baVXzoHP+ocebZ/EdjrzXoh7diyO7Oe+pV8liaGtNTgZ0WXaghJM4dwvc4kNJxr07DWhQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734019944; c=relaxed/simple;
-	bh=gQeMN/hzMse2RdZ8TAIK8FaDfdRqMn7t4SI9J9weUu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AygxKvaxBkEFjutuy1SjvzcUOegHkcBKIDwQE7J7SUN8Xk0l/4P/GmNfeWUz3YCvmuTqk4J/jSukZqJPFrDzk7wPeJ3aoAkDmBJUtJncaQ2R4TWjGQ6s5HgTXPgpVposqOyy5pTS59C4Da86wgtzV48es+hx0QOr0KnF+HCvz2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MZvApBMa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1734025368; c=relaxed/simple;
+	bh=6ISTzPyG0vA4HXEz/YvgvPMW2vlpuaelG0lMdRMgubc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=etieYP3OnPZH3OQ4Ba0XLx4xPyTviiblan3oRBEQEXxfPTpeOYVNV2HBvNV5vXMOgG2Ih3ICmefGXYnfNDF5BwHYSTxDLJmcz3KeCf8SiQ1dtErJsvTdORkQDoAgUT9yPIp/O0nuY0UqGt8d17H0aGI+fV5i/PTGdNTm9IN+HJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vJrgiH2U; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MZvApBMa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1734019941;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n3yKeZBqhENcBvrI8hOmZpd1UmWO6hrsqES60Q4cdw4=;
-	b=MZvApBMahV41KA+DfnRjXoncnJpcQKc4S7q7QMzD8hmM+wRb7PwD7V2EGCstS8mmCaHvx/
-	bMC50TVDMRcbbek6MsHAwp0w93YBtRY7bSP20VCEsfBurZxlAndFUU3izk9sPlX3a5ENUh
-	oP9GIBMF+fdnIgZ0DEN50mf6Seia9l0=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-l3-E2ZkHPDuGmFoppSyuTA-1; Thu, 12 Dec 2024 11:12:20 -0500
-X-MC-Unique: l3-E2ZkHPDuGmFoppSyuTA-1
-X-Mimecast-MFC-AGG-ID: l3-E2ZkHPDuGmFoppSyuTA
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b6e1b036e9so78977985a.1
-        for <linux-integrity@vger.kernel.org>; Thu, 12 Dec 2024 08:12:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734019940; x=1734624740;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3yKeZBqhENcBvrI8hOmZpd1UmWO6hrsqES60Q4cdw4=;
-        b=j3VUsmTQgYZJyv8odz5KJTEXUG9nWEss7zkC4Ox8ALf7kitcaYqainCiwFoaQb3+vH
-         m0UwgrV97xAfn95CbI4LEWT/w3Yjp4rz2w/kyCGrmRxs7TPaAlyBak34W76VG09t+5Dy
-         Znd+t9k457kLfAscBNN4NRGMC2lcxHHazmc4o+DVmM+UA0WYCqIgUrsQ/abjO/LPYA12
-         nShuohpD6gkobfjJXxcnIjXiRaArYiAYelTJgbHfEtVHxNLMEEsg7KNitrjbZ0Rx9b85
-         r3da3+U+ZlCUqHPN/Q9jQozUOX3GWChrfy8WbROEuWxMAaD8A67EGQ/YGbHVIRsDx9Gy
-         /qhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhk+Ik5HkrPcXNwMrujsKxcsazEVOBjEzZKsoGRLmAmaQbX4EIi4k5rpmvqSzT9d0SZX5aiJ8KP5ykXyyvmvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKdrxqgDR23ZfkrRVljWfVm8CzWWVVcjDMLsrB3jGXwbKEnfwj
-	nq7Sq/y0GvoB9PwLdKVo/uPoK8TYu7UXsvRgqmXVyn1VLb6OsPv5WjyIozwsQomiyO14hetSIxK
-	Va9O7wUT+OqbmyYVQpxDBgoWVNluODPZcrbz7Gk4F9eF4eaBPxTIz+e88tZtwOx324g==
-X-Gm-Gg: ASbGncu2HL9XRkTqKQRABRni6xWtftilFPACg6aEZS9JMSn0CK4+89JtJbtrVqWJ9Xu
-	MClerSqFM5GmU8342V3IcGVUUHvKpzfG7q1qrbnuNRe+5P6f41A64t3A1il57KJRlw5q0rjeW1z
-	HIc9eYDfDnJFOqYSbKXODuNLA/eM/at6lL7cVKKtiRoHyxQlbEclK9VCsRm7s1dPpL+nRd/LD4m
-	n2QwvKI778GIztxQivzm9DgqaJ7iI8R49Jx9NznHUTDfyGMsOO5ajW1xE2XQZi3fLivqg9ylZcs
-	OS9T8OEqoxzofGVPVJB2y8z1kalTQ9qK
-X-Received: by 2002:a05:620a:2402:b0:7a9:bd5b:eb61 with SMTP id af79cd13be357-7b6f893e1e5mr122010985a.27.1734019939744;
-        Thu, 12 Dec 2024 08:12:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHYVaqJoVFY+tmY6ANONIZ3h5S86lA/dyXyVvVbMqYIqUn3UoSvlQ53qJQSvuWrq2qJ25Yn0g==
-X-Received: by 2002:a05:620a:2402:b0:7a9:bd5b:eb61 with SMTP id af79cd13be357-7b6f893e1e5mr122006285a.27.1734019939299;
-        Thu, 12 Dec 2024 08:12:19 -0800 (PST)
-Received: from sgarzare-redhat (host-87-12-185-21.business.telecomitalia.it. [87.12.185.21])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d990baf2sm365110085a.113.2024.12.12.08.12.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2024 08:12:18 -0800 (PST)
-Date: Thu, 12 Dec 2024 17:12:05 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Claudio Carvalho <cclaudio@linux.ibm.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, x86@kernel.org, 
-	Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Dov Murik <dovmurik@linux.ibm.com>, 
-	Oliver Steffen <osteffen@redhat.com>
-Subject: Re: [PATCH 1/3] tpm: add generic platform device
-Message-ID: <qjfj2dkue6r54di4hsrsguzbaxasvpyvv2llcnruhp75s6izc3@7lgj7zmxzsly>
-References: <20241210143423.101774-1-sgarzare@redhat.com>
- <20241210143423.101774-2-sgarzare@redhat.com>
- <zzi3fvbo2rnb2d76soseuekwaqe22ifnrhhjplqhvw6x26lbb4@nmcqylrenzyj>
- <b92113a11f121dc4d485b5ba522c8c8c0781d1be.camel@HansenPartnership.com>
- <cnq6nzhvrsas6ud7t4woybktpesepm7a3sq5sd5yldq4hr5kyl@ezm4xi3o7eax>
- <d84a9a960e419cf8cbfd086e8210b6c4a112d04f.camel@HansenPartnership.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vJrgiH2U"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y8KYV59stzxHF;
+	Thu, 12 Dec 2024 18:42:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1734025358;
+	bh=npnKZXnv4b1R5z+Vngwvt5NzlI7RoalRi26qAbzadu8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=vJrgiH2UcFH343++GSaovTWGpPYNAqWiH7YFPZ+BAF2CxktOXK1NYPg3pGQ65Rbx3
+	 tdbPBVvFlm2LlCjykCYtvcHWRGd5Bkz+dcc/IGiml9lAErLVqmTl+Sx3tA8iBu828D
+	 Q5vNA4j+nKCI4HqoE0M4OsCtlGZNJoyZF+yaOdno=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y8KYT4s1Qz3vG;
+	Thu, 12 Dec 2024 18:42:37 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	kernel-hardening@lists.openwall.com,
+	linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Jeff Xu <jeffxu@chromium.org>
+Subject: [PATCH v23 1/8] exec: Add a new AT_EXECVE_CHECK flag to execveat(2)
+Date: Thu, 12 Dec 2024 18:42:16 +0100
+Message-ID: <20241212174223.389435-2-mic@digikod.net>
+In-Reply-To: <20241212174223.389435-1-mic@digikod.net>
+References: <20241212174223.389435-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d84a9a960e419cf8cbfd086e8210b6c4a112d04f.camel@HansenPartnership.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Dec 12, 2024 at 10:41:40AM -0500, James Bottomley wrote:
->On Thu, 2024-12-12 at 16:30 +0100, Stefano Garzarella wrote:
->> On Thu, Dec 12, 2024 at 09:35:46AM -0500, James Bottomley wrote:
->> > On Thu, 2024-12-12 at 10:51 +0100, Stefano Garzarella wrote:
->> > > On Tue, Dec 10, 2024 at 03:34:21PM +0100, Stefano Garzarella
->> > > wrote:
->> > [...]
->> > > > +static int tpm_platform_recv(struct tpm_chip *chip, u8 *buf,
->> > > > size_t len)
->> > > > +{
->> > > > +       struct tpm_resp *resp = (struct tpm_resp *)buffer;
->> > > > +
->> > > > +       if (resp->size < 0)
->> > > > +               return resp->size;
->> > >
->> > > While reviewing Oliver's work for the driver in edk2[1], I
->> > > noticed that there wasn't this check and asked to add it, but
->> > > talking to him and looking in the code/spec, we realized that
->> > > it's strange that tpm_resp.size field is signed.
->> > >
->> > >  From SVSM spec it looks like it can't be negative:
->> > >
->> > >      Table 17: TPM_SEND_COMMAND Response Structure
->> > >
->> > >      Byte     Size        Meaning
->> > >      Offset   (Bytes)
->> > >      0x000    4           Response size (in bytes)
->> > >      0x004    Variable    Variable Response
->> > >
->> > > And also Coconut SVSM remap it to the `responseSize` of the TCG
->> > > TPM implementation which is unsigned:
->> > >
->> > >      LIB_EXPORT void _plat__RunCommand(
->> > >          uint32_t        requestSize,   // IN: command buffer size
->> > >          unsigned char*  request,       // IN: command buffer
->> > >          uint32_t*       responseSize,  // IN/OUT: response buffer
->> > > size
->> > >          unsigned char** response       // IN/OUT: response buffer
->> > >      )
->> > >
->> > > @James, @Claudio, @Tom, should we use u32 for tpm_resp.size?
->> >
->> > The original idea was to allow the protocol to return an error
->> > (like out of memory or something) before the command ever got to
->> > the TPM rather than having to wrap it up in a TPM error.  However,
->> > that's done in the actual return from the SVSM call, which the
->> > sendrecv routine checks, so I agree this can be removed and a u32
->> > done for the length.
->>
->> Thanks for the details!
->> I'll fix it in v2 and put a comment also in the edk2 PR.
->>
->> > Dov did recommend we should check the returned length against the
->> > maximum allowable:
->> >
->> > https://lore.kernel.org/linux-coco/f7d0bd07-ba1b-894e-5e39-15fb1817bc8b@linux.ibm.com/
->>
->> I added in this version the check he suggested:
->>
->>         if (resp->size > TPM_PLATFORM_MAX_BUFFER - sizeof(*resp))
->>                 return -EINVAL;  // Invalid response from the
->> platform TPM
->>
->> Were you referring to that?
->
->Yes, the theory being that we're required to provide a buffer of this
->length for the response, but if someone can inject a bogus response
->they could induce us to copy beyond the end of the buffer we provided.
+Add a new AT_EXECVE_CHECK flag to execveat(2) to check if a file would
+be allowed for execution.  The main use case is for script interpreters
+and dynamic linkers to check execution permission according to the
+kernel's security policy. Another use case is to add context to access
+logs e.g., which script (instead of interpreter) accessed a file.  As
+any executable code, scripts could also use this check [1].
 
-I see, but we alread check that `len < resp->size` in
-tpm_platform_recv(), so on second glance, for the current
-implementation, maybe it's a duplicate check.
+This is different from faccessat(2) + X_OK which only checks a subset of
+access rights (i.e. inode permission and mount options for regular
+files), but not the full context (e.g. all LSM access checks).  The main
+use case for access(2) is for SUID processes to (partially) check access
+on behalf of their caller.  The main use case for execveat(2) +
+AT_EXECVE_CHECK is to check if a script execution would be allowed,
+according to all the different restrictions in place.  Because the use
+of AT_EXECVE_CHECK follows the exact kernel semantic as for a real
+execution, user space gets the same error codes.
 
-This because in tpm_platform_send() we return an error if `len >
-TPM_PLATFORM_MAX_BUFFER - sizeof(*req)` and here, in
-tpm_platform_recv(), we already return an error if `len < resp->size`.
+An interesting point of using execveat(2) instead of openat2(2) is that
+it decouples the check from the enforcement.  Indeed, the security check
+can be logged (e.g. with audit) without blocking an execution
+environment not yet ready to enforce a strict security policy.
 
-IIUC buf/len are the same for send() and recv(), so the `resp->size >
-TPM_PLATFORM_MAX_BUFFER - sizeof(*resp)` case would already be covered,
-right?
+LSMs can control or log execution requests with
+security_bprm_creds_for_exec().  However, to enforce a consistent and
+complete access control (e.g. on binary's dependencies) LSMs should
+restrict file executability, or measure executed files, with
+security_file_open() by checking file->f_flags & __FMODE_EXEC.
 
-Anyway this code will change a bit in v2 if we implement the send_recv() 
-op for tpm_class_ops, so I'll be sure to take care of this case.
+Because AT_EXECVE_CHECK is dedicated to user space interpreters, it
+doesn't make sense for the kernel to parse the checked files, look for
+interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
+if the format is unknown.  Because of that, security_bprm_check() is
+never called when AT_EXECVE_CHECK is used.
 
-Thanks,
-Stefano
+It should be noted that script interpreters cannot directly use
+execveat(2) (without this new AT_EXECVE_CHECK flag) because this could
+lead to unexpected behaviors e.g., `python script.sh` could lead to Bash
+being executed to interpret the script.  Unlike the kernel, script
+interpreters may just interpret the shebang as a simple comment, which
+should not change for backward compatibility reasons.
+
+Because scripts or libraries files might not currently have the
+executable permission set, or because we might want specific users to be
+allowed to run arbitrary scripts, the following patch provides a dynamic
+configuration mechanism with the SECBIT_EXEC_RESTRICT_FILE and
+SECBIT_EXEC_DENY_INTERACTIVE securebits.
+
+This is a redesign of the CLIP OS 4's O_MAYEXEC:
+https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+This patch has been used for more than a decade with customized script
+interpreters.  Some examples can be found here:
+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+Reviewed-by: Jeff Xu <jeffxu@chromium.org>
+Tested-by: Jeff Xu <jeffxu@chromium.org>
+Link: https://docs.python.org/3/library/io.html#io.open_code [1]
+Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
+Link: https://lore.kernel.org/r/20241212174223.389435-2-mic@digikod.net
+---
+
+Changes since v21:
+* Remove the audit changes, requested by Paul.
+* Add Paul's Acked-by.
+* Fix a typo in comments and in commit message.
+* Add SPDX-License-Identifier header to the documentation.
+* Rebase on v6.13-rc1 .
+* Add Jeff's Reviewed-by and Tested-by.
+
+Changes since v20:
+* Rename AT_CHECK to AT_EXECVE_CHECK, requested by Amir Goldstein and
+  Serge Hallyn.
+* Move the UAPI documentation to a dedicated RST file.
+* Add Serge's Reviewed-by.
+
+Changes since v19:
+* Remove mention of "role transition" as suggested by Andy.
+* Highlight the difference between security_bprm_creds_for_exec() and
+  the __FMODE_EXEC check for LSMs (in commit message and LSM's hooks) as
+  discussed with Jeff.
+* Improve documentation both in UAPI comments and kernel comments
+  (requested by Kees).
+
+New design since v18:
+https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
+---
+ Documentation/userspace-api/check_exec.rst | 37 ++++++++++++++++++++++
+ Documentation/userspace-api/index.rst      |  1 +
+ fs/exec.c                                  | 20 ++++++++++--
+ include/linux/binfmts.h                    |  7 +++-
+ include/uapi/linux/fcntl.h                 |  4 +++
+ security/security.c                        | 10 ++++++
+ 6 files changed, 76 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/userspace-api/check_exec.rst
+
+diff --git a/Documentation/userspace-api/check_exec.rst b/Documentation/userspace-api/check_exec.rst
+new file mode 100644
+index 000000000000..393dd7ca19c4
+--- /dev/null
++++ b/Documentation/userspace-api/check_exec.rst
+@@ -0,0 +1,37 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. Copyright Â© 2024 Microsoft Corporation
++
++===================
++Executability check
++===================
++
++AT_EXECVE_CHECK
++===============
++
++Passing the ``AT_EXECVE_CHECK`` flag to :manpage:`execveat(2)` only performs a
++check on a regular file and returns 0 if execution of this file would be
++allowed, ignoring the file format and then the related interpreter dependencies
++(e.g. ELF libraries, script's shebang).
++
++Programs should always perform this check to apply kernel-level checks against
++files that are not directly executed by the kernel but passed to a user space
++interpreter instead.  All files that contain executable code, from the point of
++view of the interpreter, should be checked.  However the result of this check
++should only be enforced according to ``SECBIT_EXEC_RESTRICT_FILE`` or
++``SECBIT_EXEC_DENY_INTERACTIVE.``.
++
++The main purpose of this flag is to improve the security and consistency of an
++execution environment to ensure that direct file execution (e.g.
++``./script.sh``) and indirect file execution (e.g. ``sh script.sh``) lead to
++the same result.  For instance, this can be used to check if a file is
++trustworthy according to the caller's environment.
++
++In a secure environment, libraries and any executable dependencies should also
++be checked.  For instance, dynamic linking should make sure that all libraries
++are allowed for execution to avoid trivial bypass (e.g. using ``LD_PRELOAD``).
++For such secure execution environment to make sense, only trusted code should
++be executable, which also requires integrity guarantees.
++
++To avoid race conditions leading to time-of-check to time-of-use issues,
++``AT_EXECVE_CHECK`` should be used with ``AT_EMPTY_PATH`` to check against a
++file descriptor instead of a path.
+diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
+index 274cc7546efc..6272bcf11296 100644
+--- a/Documentation/userspace-api/index.rst
++++ b/Documentation/userspace-api/index.rst
+@@ -35,6 +35,7 @@ Security-related interfaces
+    mfd_noexec
+    spec_ctrl
+    tee
++   check_exec
+ 
+ Devices and I/O
+ ===============
+diff --git a/fs/exec.c b/fs/exec.c
+index 98cb7ba9983c..e3f461096e84 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -892,7 +892,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+ 		.lookup_flags = LOOKUP_FOLLOW,
+ 	};
+ 
+-	if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
++	if ((flags &
++	     ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_EXECVE_CHECK)) != 0)
+ 		return ERR_PTR(-EINVAL);
+ 	if (flags & AT_SYMLINK_NOFOLLOW)
+ 		open_exec_flags.lookup_flags &= ~LOOKUP_FOLLOW;
+@@ -1541,6 +1542,21 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
+ 	}
+ 	bprm->interp = bprm->filename;
+ 
++	/*
++	 * At this point, security_file_open() has already been called (with
++	 * __FMODE_EXEC) and access control checks for AT_EXECVE_CHECK will
++	 * stop just after the security_bprm_creds_for_exec() call in
++	 * bprm_execve().  Indeed, the kernel should not try to parse the
++	 * content of the file with exec_binprm() nor change the calling
++	 * thread, which means that the following security functions will not
++	 * be called:
++	 * - security_bprm_check()
++	 * - security_bprm_creds_from_file()
++	 * - security_bprm_committing_creds()
++	 * - security_bprm_committed_creds()
++	 */
++	bprm->is_check = !!(flags & AT_EXECVE_CHECK);
++
+ 	retval = bprm_mm_init(bprm);
+ 	if (!retval)
+ 		return bprm;
+@@ -1836,7 +1852,7 @@ static int bprm_execve(struct linux_binprm *bprm)
+ 
+ 	/* Set the unchanging part of bprm->cred */
+ 	retval = security_bprm_creds_for_exec(bprm);
+-	if (retval)
++	if (retval || bprm->is_check)
+ 		goto out;
+ 
+ 	retval = exec_binprm(bprm);
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index e6c00e860951..8ff0eb3644a1 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -42,7 +42,12 @@ struct linux_binprm {
+ 		 * Set when errors can no longer be returned to the
+ 		 * original userspace.
+ 		 */
+-		point_of_no_return:1;
++		point_of_no_return:1,
++		/*
++		 * Set by user space to check executability according to the
++		 * caller's environment.
++		 */
++		is_check:1;
+ 	struct file *executable; /* Executable to pass to the interpreter */
+ 	struct file *interpreter;
+ 	struct file *file;
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 6e6907e63bfc..a15ac2fa4b20 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -155,4 +155,8 @@
+ #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
+ #define AT_HANDLE_CONNECTABLE	0x002	/* Request a connectable file handle */
+ 
++/* Flags for execveat2(2). */
++#define AT_EXECVE_CHECK		0x10000	/* Only perform a check if execution
++					   would be allowed. */
++
+ #endif /* _UAPI_LINUX_FCNTL_H */
+diff --git a/security/security.c b/security/security.c
+index 09664e09fec9..dae7e903947f 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1248,6 +1248,12 @@ int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
+  * to 1 if AT_SECURE should be set to request libc enable secure mode.  @bprm
+  * contains the linux_binprm structure.
+  *
++ * If execveat(2) is called with the AT_EXECVE_CHECK flag, bprm->is_check is
++ * set.  The result must be the same as without this flag even if the execution
++ * will never really happen and @bprm will always be dropped.
++ *
++ * This hook must not change current->cred, only @bprm->cred.
++ *
+  * Return: Returns 0 if the hook is successful and permission is granted.
+  */
+ int security_bprm_creds_for_exec(struct linux_binprm *bprm)
+@@ -3098,6 +3104,10 @@ int security_file_receive(struct file *file)
+  * Save open-time permission checking state for later use upon file_permission,
+  * and recheck access if anything has changed since inode_permission.
+  *
++ * We can check if a file is opened for execution (e.g. execve(2) call), either
++ * directly or indirectly (e.g. ELF's ld.so) by checking file->f_flags &
++ * __FMODE_EXEC .
++ *
+  * Return: Returns 0 if permission is granted.
+  */
+ int security_file_open(struct file *file)
+-- 
+2.47.1
 
