@@ -1,86 +1,86 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DD61A8F91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFAD1A8F9C
 	for <linux-integrity@vger.kernel.org>; Fri, 13 Dec 2024 22:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734128422; cv=none; b=Uhwabt5a3lU6jAr6vdHJzZQujb9dUu/APeQGnSrNCCTFCSuIFrWsqE9khneT3dubQyINtAW5eA5EaxKBOhLSHLpR6H2STo9Wj57017DAArrsGIwoI7sWSVDFWX/dkHzF8+wyf8ZucxrsGQ2tyj8W0xmEmyUq9gwz+yyIQjhKxE4=
+	t=1734128423; cv=none; b=aVvVmpE3D3g+UnpuMCDm/9U0v1HnRsNYAbo9F/CsquG2wd38GfpdByK3NNxjZ/vIKcv6JKcwvEY/239pzPuuytuY7+vbMdzbusPxaNfNsHQ9XnRC73O1AhBdDD8WH26vauHfbUoZivy+OovNfI2pBn6aDjVWpXl64JNefAnLYn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734128422; c=relaxed/simple;
-	bh=x48c2tzlRe2VEMfLEc0kC1+QC2kWZtX1sJ+I5IeGda4=;
+	s=arc-20240116; t=1734128423; c=relaxed/simple;
+	bh=HoMyYN5J2yL3cx0DpEEfmITCgnrPVSA+rXnLph4fguE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=REjObHzgRL46Uc3BzrEQH2bFDLcOwFRfA62cJniQ6vvSosZ+WP0F5q84NLYOyY/sSC+HffVW5S4ZzzVYir0oE1JrZfT0/0BCtsoFj/GBFrfnLlYoG5HS6BXQQK/Kyw7w2tVt3lSEfr1MOh9AxmIkzQc4kzbiryK2+gqscyA4q4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NEGP9VdU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D4Arjtvi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qdXnf2Qm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AP4jDfkD; arc=none smtp.client-ip=195.135.223.131
+	 MIME-Version; b=bpg5uHpVZmfvzkJPpWJq6IuvwHxPBvfoLQ9+SNxZw3xNTnIrtmiEhel6qhl+g6PjlJOx2+xOCSGLuKMsw4qO6V1+QVqwApmTdsJTobacKY/WiE8e93PHNbOPhonIBFtaHgYsN0cV+lGluwaS0hVHyuJJ8IyhxBpFmlzgNxDQlT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OsyGGQhM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q7nrjrxi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OsyGGQhM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q7nrjrxi; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NEGP9VdU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D4Arjtvi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qdXnf2Qm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AP4jDfkD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OsyGGQhM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q7nrjrxi";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OsyGGQhM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q7nrjrxi"
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C8E261F442;
-	Fri, 13 Dec 2024 22:20:17 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B03021196;
+	Fri, 13 Dec 2024 22:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734128418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734128419; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cuiiUtJ1LIssrkXNjvaHrB/KOqTnvtCiuvZnB1bzDN0=;
-	b=NEGP9VdUj0w+mMwgt9PlRrfV4U7PGMkeHA8K8lu/WqilLUsEkmBE61B4dkX3evrsz5Kf/5
-	K+XuTCmNL01dQfnyATxOZEu3S5q8avAealNQs8xgnWiOL16I3JGEaVJMqoVU5JWZuNQDfk
-	YPFYSifoAN9SzZ1SP4n7wNm79JmRjks=
+	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
+	b=OsyGGQhMyqzu69X//ITStD4ftphXU9WtyZZboywVLIhaNVWobxrDY0b+jpbIEcahuaeyXL
+	6w6a/oJsegwpw88wTYMexL4eTS6hHhRaHkQ+xbdSJFm60uwQTDZ//cx1C5YRJQlZvA9oRV
+	PBlq9fVZlpTDExYNyZXsksTCo7cq5VM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734128418;
+	s=susede2_ed25519; t=1734128419;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cuiiUtJ1LIssrkXNjvaHrB/KOqTnvtCiuvZnB1bzDN0=;
-	b=D4Arjtvi3PYkklusRyvADw1BodlallmbdGyxfV8XGUpZvqnVE1OGcFOuTW/dDLhjOTDxd/
-	djk4yRvYDWFCdcDA==
-Authentication-Results: smtp-out2.suse.de;
+	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
+	b=Q7nrjrxiAT2qFnFfuG44FVyuVGE/dNfqXF61AuK1pYqLOgANhKvxhMvPFLFxq9Gj1HDYMZ
+	JKWs+F9KGOIRqAAQ==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734128417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734128419; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cuiiUtJ1LIssrkXNjvaHrB/KOqTnvtCiuvZnB1bzDN0=;
-	b=qdXnf2Qm8EGlqjDCmCI44pC4hZzx+YHgs9+ppZDTtrDM/oFaPvc1bKOVA+nFkFORRea6dB
-	kUACUa/v74p0LiQCqLf1bpiYpB5bQwfRPthIr7KTn62mE2HGRZvoFsYyINrzs2Fdww9Jyl
-	kPRFQgz8qQHOyEEh9JRQydaDA7ZQtKM=
+	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
+	b=OsyGGQhMyqzu69X//ITStD4ftphXU9WtyZZboywVLIhaNVWobxrDY0b+jpbIEcahuaeyXL
+	6w6a/oJsegwpw88wTYMexL4eTS6hHhRaHkQ+xbdSJFm60uwQTDZ//cx1C5YRJQlZvA9oRV
+	PBlq9fVZlpTDExYNyZXsksTCo7cq5VM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734128417;
+	s=susede2_ed25519; t=1734128419;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cuiiUtJ1LIssrkXNjvaHrB/KOqTnvtCiuvZnB1bzDN0=;
-	b=AP4jDfkDOaxX0/IW/odjqu3QVRrLQotPgOB+y6qT4fiqWaeJ8CATRIE4VsAfcFgeTHWn3m
-	DfTwiqtx3u/TUrDw==
+	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
+	b=Q7nrjrxiAT2qFnFfuG44FVyuVGE/dNfqXF61AuK1pYqLOgANhKvxhMvPFLFxq9Gj1HDYMZ
+	JKWs+F9KGOIRqAAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8DF1613A52;
-	Fri, 13 Dec 2024 22:20:17 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E235C13939;
+	Fri, 13 Dec 2024 22:20:18 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4FHYHSGzXGf5QQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Fri, 13 Dec 2024 22:20:17 +0000
+	id GIpRNCKzXGf5QQAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 13 Dec 2024 22:20:18 +0000
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	linux-integrity@vger.kernel.org
-Subject: [PATCH v2 2/8] ima_setup.sh: Allow to load predefined policy
-Date: Fri, 13 Dec 2024 23:20:08 +0100
-Message-ID: <20241213222014.1580991-3-pvorel@suse.cz>
+Subject: [PATCH v2 7/8] ima_violations.sh: Check for a required policy
+Date: Fri, 13 Dec 2024 23:20:13 +0100
+Message-ID: <20241213222014.1580991-8-pvorel@suse.cz>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241213222014.1580991-1-pvorel@suse.cz>
 References: <20241213222014.1580991-1-pvorel@suse.cz>
@@ -91,10 +91,10 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -6.80
+X-Spam-Level: 
 X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
@@ -113,93 +113,22 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -6.80
 X-Spam-Flag: NO
-X-Spam-Level: 
 
-environment variable LTP_IMA_LOAD_POLICY=1 tries to load example policy
-if available. This should be used only if tooling running LTP tests
-allows to reboot afterwards because policy may be writable only once,
-e.g. missing CONFIG_IMA_WRITE_POLICY=y, or policies can influence each
-other.
+Add check for ^func=FILE_CHECK'
 
-Loading may fail due various reasons (e.g. previously mentioned missing
-CONFIG_IMA_WRITE_POLICY=y and policy already loaded or when secure boot is
-enabled and the kernel is configured with CONFIG_IMA_ARCH_POLICY enabled, an
-appraise func=POLICY_CHECK appraise_type=imasig rule is loaded, requiring the
-IMA policy itself to be signed).
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
 
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
- .../kernel/security/integrity/ima/README.md   | 12 +++++
- .../integrity/ima/tests/ima_measurements.sh   | 17 +++++-
- .../security/integrity/ima/tests/ima_setup.sh | 54 ++++++++++++++++---
- 3 files changed, 74 insertions(+), 9 deletions(-)
+ .../kernel/security/integrity/ima/tests/ima_violations.sh    | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/README.md b/testcases/kernel/security/integrity/ima/README.md
-index 5b261a1914..c5b3db1a5a 100644
---- a/testcases/kernel/security/integrity/ima/README.md
-+++ b/testcases/kernel/security/integrity/ima/README.md
-@@ -8,6 +8,18 @@ CONFIG_INTEGRITY=y
- CONFIG_IMA=y
- ```
- 
-+### Loading policy for testing (optional)
-+Setting environment variable `LTP_IMA_LOAD_POLICY=1` tries to load example
-+policy if available. This should be used only if tooling running LTP tests
-+allows to reboot afterwards because policy may be writable only once, e.g.
-+missing `CONFIG_IMA_WRITE_POLICY=y`, or policies can influence each other.
-+
-+Loading may fail due various reasons (e.g. previously mentioned missing
-+`CONFIG_IMA_WRITE_POLICY=y` and policy already loaded or when secure boot is
-+enabled and the kernel is configured with `CONFIG_IMA_ARCH_POLICY` enabled, an
-+`appraise func=POLICY_CHECK appraise_type=imasig` rule is loaded, requiring the
-+IMA policy itself to be signed).
-+
- ### IMA measurement tests
- `ima_measurements.sh` require builtin IMA tcb policy to be loaded
- (`ima_policy=tcb` kernel parameter).
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-index 1da2aa6a51..2c95aeb990 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0-or-later
- # Copyright (c) 2009 IBM Corporation
--# Copyright (c) 2018-2021 Petr Vorel <pvorel@suse.cz>
-+# Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
- # Author: Mimi Zohar <zohar@linux.ibm.com>
- #
- # Verify that measurements are added to the measurement list based on policy.
-@@ -12,10 +12,23 @@ TST_CNT=3
- 
- setup()
- {
--	require_ima_policy_cmdline "tcb"
-+	local policy="tcb"
- 
- 	TEST_FILE="$PWD/test.txt"
- 	[ -f "$IMA_POLICY" ] || tst_res TINFO "not using default policy"
-+
-+	if [ "$LTP_IMA_LOAD_POLICY" != 1 ]; then
-+		require_ima_policy_cmdline $policy
-+		return
-+	elif check_ima_policy_cmdline $policy; then
-+		return
-+	fi
-+
-+	if ! check_ima_policy_cmdline $policy &&
-+		! require_ima_policy_content '^measure func=FILE_CHECK mask=^MAY_READ uid=0' &&
-+		! require_ima_policy_content 'measure func=POLICY_CHECK'; then
-+			tst_brk TCONF "IMA measurement tests require builtin IMA $policy policy (e.g. ima_policy=$policy kernel parameter) or it's equivalent (try LTP_IMA_LOAD_POLICY=1)"
-+	fi
- }
- 
- check_iversion_support()
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index df3fc5603f..7afb1a0967 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
+index 0f710dea2e..73b9fe6f30 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
 @@ -1,7 +1,7 @@
  #!/bin/sh
  # SPDX-License-Identifier: GPL-2.0-or-later
@@ -207,90 +136,25 @@ index df3fc5603f..7afb1a0967 100644
 -# Copyright (c) 2018-2020 Petr Vorel <pvorel@suse.cz>
 +# Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
  # Author: Mimi Zohar <zohar@linux.ibm.com>
+ #
+ # Test whether ToMToU and open_writer violations invalidatethe PCR and are logged.
+@@ -9,6 +9,7 @@
+ TST_SETUP="setup"
+ TST_CLEANUP="cleanup"
+ TST_CNT=3
++REQUIRED_POLICY='^func=FILE_CHECK'
  
- TST_TESTFUNC="test"
-@@ -72,14 +72,20 @@ require_policy_readable()
- 	fi
- }
- 
--require_policy_writable()
-+check_policy_writable()
+ setup()
  {
--	local err="IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
--
--	[ -f $IMA_POLICY ] || tst_brk TCONF "$err"
--	# CONFIG_IMA_READ_POLICY
-+	[ -f $IMA_POLICY ] || return 1
-+	# workaround for kernels < v4.18 without fix
-+	# ffb122de9a60b ("ima: Reflect correct permissions for policy")
- 	echo "" 2> log > $IMA_POLICY
--	grep -q "Device or resource busy" log && tst_brk TCONF "$err"
-+	grep -q "Device or resource busy" log && return 1
-+	return 0
-+}
-+
-+require_policy_writable()
-+{
-+	check_policy_writable || tst_brk TCONF \
-+		"IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y)"
- }
+@@ -17,6 +18,8 @@ setup()
+ 	LOG="/var/log/messages"
+ 	PRINTK_RATE_LIMIT=
  
- check_ima_policy_content()
-@@ -158,6 +164,34 @@ print_ima_config()
- 	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
- }
- 
-+load_ima_policy()
-+{
-+	local policy="$(ls $TST_DATAROOT/*.policy 2>/dev/null)"
++	require_ima_policy_content_if_readable "$REQUIRED_POLICY"
 +
-+	if [ "$LTP_IMA_LOAD_POLICY" != 1 -a "$policy" -a -f "$policy" ]; then
-+		tst_res TINFO "NOTE: set LTP_IMA_LOAD_POLICY=1 to load policy for this test"
-+		return
-+	fi
-+
-+	if [ -z "$policy" -o ! -f "$policy" ]; then
-+		tst_res TINFO "no policy for this test"
-+		LTP_IMA_LOAD_POLICY=
-+		return
-+	fi
-+
-+	tst_res TINFO "trying to load '$policy' policy:"
-+	cat $policy
-+	if ! check_policy_writable; then
-+		tst_res TINFO "WARNING: IMA policy already loaded and kernel not configured to enable multiple writes to it (need CONFIG_IMA_WRITE_POLICY=y), reboot required"
-+		LTP_IMA_LOAD_POLICY=
-+		return
-+	fi
-+
-+	cat "$policy" 2> log > $IMA_POLICY
-+	if grep -q "Device or resource busy" log; then
-+		tst_brk TBROK "Loading policy failed"
-+	fi
-+}
- ima_setup()
- {
- 	SECURITYFS="$(mount_helper securityfs $SYSFS/kernel/security)"
-@@ -180,6 +214,8 @@ ima_setup()
- 		cd "$TST_MNTPOINT"
- 	fi
- 
-+	load_ima_policy
-+
- 	[ -n "$TST_SETUP_CALLER" ] && $TST_SETUP_CALLER
- }
- 
-@@ -192,6 +228,10 @@ ima_cleanup()
- 	for dir in $UMOUNT; do
- 		umount $dir
- 	done
-+
-+	if [ "$LTP_IMA_LOAD_POLICY" = 1 ]; then
-+		tst_res TINFO "WARNING: policy loaded via LTP_IMA_LOAD_POLICY=1, reboot recommended"
-+	fi
- }
- 
- set_digest_index()
+ 	if status_daemon auditd; then
+ 		LOG="/var/log/audit/audit.log"
+ 	elif tst_check_cmds sysctl; then
 -- 
 2.47.1
 
