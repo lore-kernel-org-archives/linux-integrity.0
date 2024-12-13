@@ -1,86 +1,86 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFAD1A8F9C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D871A8F8F
 	for <linux-integrity@vger.kernel.org>; Fri, 13 Dec 2024 22:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734128423; cv=none; b=aVvVmpE3D3g+UnpuMCDm/9U0v1HnRsNYAbo9F/CsquG2wd38GfpdByK3NNxjZ/vIKcv6JKcwvEY/239pzPuuytuY7+vbMdzbusPxaNfNsHQ9XnRC73O1AhBdDD8WH26vauHfbUoZivy+OovNfI2pBn6aDjVWpXl64JNefAnLYn8=
+	t=1734128423; cv=none; b=GDx+k1hAqByfgpw4oeRYkOdcAH9di77wPJarSVbtfbie7XD5z6Bss3GU3mF0cEx6WGbq9qopTRq2E0oUMj8iaT/b3Um5qzE3OkFtxSl89dXumih9wJZASJBUe/C+ixAzfgiZXHS0zrpmvBHwmprMiUrY3ZcikUNI1JD4hzj5hxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1734128423; c=relaxed/simple;
-	bh=HoMyYN5J2yL3cx0DpEEfmITCgnrPVSA+rXnLph4fguE=;
+	bh=2j47SL2xdfmfoTQwUxRGq8LY9+6SOl/r/n+rmtThisE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bpg5uHpVZmfvzkJPpWJq6IuvwHxPBvfoLQ9+SNxZw3xNTnIrtmiEhel6qhl+g6PjlJOx2+xOCSGLuKMsw4qO6V1+QVqwApmTdsJTobacKY/WiE8e93PHNbOPhonIBFtaHgYsN0cV+lGluwaS0hVHyuJJ8IyhxBpFmlzgNxDQlT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OsyGGQhM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q7nrjrxi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OsyGGQhM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q7nrjrxi; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=QOlpzo+fCQ9X6hH2BMHxClrXO1wTw2m3Sb8VFZgrW/XPKrU4RWvMpTFRmiytfMSm3Nw/2nBFPlqPVXLTZ5KHHuzcmn/wHKP4cSNePxUe1Vh8GYTTfbzmOuBmIKZySX/n/PwY4E8TlIBFefTjyRfGQpPFbMItIPPTwDjDaU6Ior4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I2KBoSRU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ezCxDRs3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZqoDs/3M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6dIbI435; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OsyGGQhM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q7nrjrxi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OsyGGQhM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q7nrjrxi"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I2KBoSRU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ezCxDRs3";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZqoDs/3M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6dIbI435"
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B03021196;
-	Fri, 13 Dec 2024 22:20:19 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D7C41F394;
+	Fri, 13 Dec 2024 22:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734128419; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734128418; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
-	b=OsyGGQhMyqzu69X//ITStD4ftphXU9WtyZZboywVLIhaNVWobxrDY0b+jpbIEcahuaeyXL
-	6w6a/oJsegwpw88wTYMexL4eTS6hHhRaHkQ+xbdSJFm60uwQTDZ//cx1C5YRJQlZvA9oRV
-	PBlq9fVZlpTDExYNyZXsksTCo7cq5VM=
+	bh=v8/U+Ch2bJ8t8VQWtTlo5ySV+zmxuP8YmkpK5rGFIEU=;
+	b=I2KBoSRU3A28VjUmCtweUXPQtKD8kw3s0X3tYQQ7zRe00S8BhPIS/3o8PaoFN5k01vOzb1
+	mjh2DIGsEPVq68/EDPmrV7M3mZowcBOOwQR61Yv7XuK+Whykqg0lBHL5AX8/U64EVrlRQC
+	ag9KiVJ20njVVMunaRVCLNRJJ5G4jTA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734128419;
+	s=susede2_ed25519; t=1734128418;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
-	b=Q7nrjrxiAT2qFnFfuG44FVyuVGE/dNfqXF61AuK1pYqLOgANhKvxhMvPFLFxq9Gj1HDYMZ
-	JKWs+F9KGOIRqAAQ==
-Authentication-Results: smtp-out1.suse.de;
+	bh=v8/U+Ch2bJ8t8VQWtTlo5ySV+zmxuP8YmkpK5rGFIEU=;
+	b=ezCxDRs3P3b0AWXOUMfgCb4lTyOH2zV47vrUVUcS7U57vW65EoHPSY8mRNxVPP7h7PWBbr
+	8YSYfynZeDFOVUAA==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734128419; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1734128417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
-	b=OsyGGQhMyqzu69X//ITStD4ftphXU9WtyZZboywVLIhaNVWobxrDY0b+jpbIEcahuaeyXL
-	6w6a/oJsegwpw88wTYMexL4eTS6hHhRaHkQ+xbdSJFm60uwQTDZ//cx1C5YRJQlZvA9oRV
-	PBlq9fVZlpTDExYNyZXsksTCo7cq5VM=
+	bh=v8/U+Ch2bJ8t8VQWtTlo5ySV+zmxuP8YmkpK5rGFIEU=;
+	b=ZqoDs/3MkizEcuKjrbV+FD2IPEzm5bBZiMEM2K8Mbr9vZ56oHSuFypN4uUNDrS20YSjM06
+	mz6JYXT7OGUQY5Faj5rlulMDTQUQdeTsX7gfpSJTrJlv1yFBtShQPEM+EomRQlrwGh1hpV
+	LMjzrzuHXvCltc5XvlMlW1G9xBwF8Nk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734128419;
+	s=susede2_ed25519; t=1734128417;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+IACrbzar+q2gwbFX3a7IyWwyvw/T4otCMTSaJqhvFw=;
-	b=Q7nrjrxiAT2qFnFfuG44FVyuVGE/dNfqXF61AuK1pYqLOgANhKvxhMvPFLFxq9Gj1HDYMZ
-	JKWs+F9KGOIRqAAQ==
+	bh=v8/U+Ch2bJ8t8VQWtTlo5ySV+zmxuP8YmkpK5rGFIEU=;
+	b=6dIbI435E4eXn3Z8DtuW0sc3j2wFUVG92zKEzzYx99HqTW+CT2bqu7bpPrwEnN8J19dwHN
+	nB2vKfQMrn+3A0BQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E235C13939;
-	Fri, 13 Dec 2024 22:20:18 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D4B813939;
+	Fri, 13 Dec 2024 22:20:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GIpRNCKzXGf5QQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Fri, 13 Dec 2024 22:20:18 +0000
+	id CEUuESGzXGf5QQAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Fri, 13 Dec 2024 22:20:17 +0000
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	linux-integrity@vger.kernel.org
-Subject: [PATCH v2 7/8] ima_violations.sh: Check for a required policy
-Date: Fri, 13 Dec 2024 23:20:13 +0100
-Message-ID: <20241213222014.1580991-8-pvorel@suse.cz>
+Subject: [PATCH v2 1/8] IMA: Add TCB policy as an example for ima_measurements.sh
+Date: Fri, 13 Dec 2024 23:20:07 +0100
+Message-ID: <20241213222014.1580991-2-pvorel@suse.cz>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241213222014.1580991-1-pvorel@suse.cz>
 References: <20241213222014.1580991-1-pvorel@suse.cz>
@@ -91,10 +91,10 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
+X-Spam-Score: -6.80
 X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
+	BAYES_HAM(-3.00)[100.00%];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
@@ -113,48 +113,49 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -6.80
 X-Spam-Flag: NO
+X-Spam-Level: 
 
-Add check for ^func=FILE_CHECK'
+Taken from IMA docs [1], removed dont_measure fsmagic=0x1021994 (tmpfs)
+as suggested by Mimi.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
+[1] https://ima-doc.readthedocs.io/en/latest/ima-policy.html#ima-tcb
 
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
- .../kernel/security/integrity/ima/tests/ima_violations.sh    | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I would like to check in ima_measurements.sh for this policy as an
+variant to ima_policy=tcb command line parameter. Do I need to check for
+all of these (suppose all are in ima_policy=tcb).
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
-index 0f710dea2e..73b9fe6f30 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0-or-later
- # Copyright (c) 2009 IBM Corporation
--# Copyright (c) 2018-2020 Petr Vorel <pvorel@suse.cz>
-+# Copyright (c) 2018-2024 Petr Vorel <pvorel@suse.cz>
- # Author: Mimi Zohar <zohar@linux.ibm.com>
- #
- # Test whether ToMToU and open_writer violations invalidatethe PCR and are logged.
-@@ -9,6 +9,7 @@
- TST_SETUP="setup"
- TST_CLEANUP="cleanup"
- TST_CNT=3
-+REQUIRED_POLICY='^func=FILE_CHECK'
- 
- setup()
- {
-@@ -17,6 +18,8 @@ setup()
- 	LOG="/var/log/messages"
- 	PRINTK_RATE_LIMIT=
- 
-+	require_ima_policy_content_if_readable "$REQUIRED_POLICY"
-+
- 	if status_daemon auditd; then
- 		LOG="/var/log/audit/audit.log"
- 	elif tst_check_cmds sysctl; then
+ .../ima/datafiles/ima_measurements/tcb.policy | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
+
+diff --git a/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy b/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
+new file mode 100644
+index 0000000000..1c919f7260
+--- /dev/null
++++ b/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
+@@ -0,0 +1,19 @@
++dont_measure fsmagic=0x9fa0
++dont_measure fsmagic=0x62656572
++dont_measure fsmagic=0x64626720
++dont_measure fsmagic=0x1cd1
++dont_measure fsmagic=0x42494e4d
++dont_measure fsmagic=0x73636673
++dont_measure fsmagic=0xf97cff8c
++dont_measure fsmagic=0x43415d53
++dont_measure fsmagic=0x27e0eb
++dont_measure fsmagic=0x63677270
++dont_measure fsmagic=0x6e736673
++dont_measure fsmagic=0xde5e81e4
++measure func=MMAP_CHECK mask=MAY_EXEC
++measure func=BPRM_CHECK mask=MAY_EXEC
++measure func=FILE_CHECK mask=^MAY_READ euid=0
++measure func=FILE_CHECK mask=^MAY_READ uid=0
++measure func=MODULE_CHECK
++measure func=FIRMWARE_CHECK
++measure func=POLICY_CHECK
 -- 
 2.47.1
 
