@@ -1,87 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9D12E403;
-	Sat, 14 Dec 2024 03:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83B9156F53
+	for <linux-integrity@vger.kernel.org>; Mon, 16 Dec 2024 06:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734148472; cv=none; b=pZ/yw6xPSyUGbAdSrqjGDik/wt/azbfRo1Vcy/pMX0YuRYdlxNaAj99cJ9EubPtdM4b5+oL8yeyNMVQYauHG/G6VwNc+C8M774d5rfj9IUPqy+YukkiJECyoF2S9gR7LoIpkvbtaV8LXAERkbdLpS4kKHtf6IXg5tyAkWLuLcTk=
+	t=1734330665; cv=none; b=azJrfvaJ1A215WOtP/m9o3H4aztXSJQ7jK2sYuVicEy/YQpdJ3cV5nhzNfpg+UrqGG2OdoxwYtV7caz4tIrFEJfJ/d8tjJ4Ay60Q1eff8z4MmXg1/GlMYKPhGlpO3M4i496gkL8F8RrANe1cB7iB0XtOR2IvYlQChinQ3MeqTtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734148472; c=relaxed/simple;
-	bh=pkMggiR4I9xyqrzBwGdVtJ5InOhQ3pMI9hdzFsc3fVs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mIBm2BG7Z6TmCY9aNErzhqeR1Dehmw3ACjI2+6fIgcTr1KFQaaQFvTKF+XvkTDdHB39djF50DA8EBQfZUPY7I18ozO3yiZ8umtN1QpWpGUeX0OU7YZTKh5+FHvH/VLct9/ui6EafoX5MBpzZ7fUs0oJH+LtTiDavxi5lLDQRKIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/bpPLUl; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/bpPLUl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A20DFC4CED1;
-	Sat, 14 Dec 2024 03:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734148471;
-	bh=pkMggiR4I9xyqrzBwGdVtJ5InOhQ3pMI9hdzFsc3fVs=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=o/bpPLUloyN5mPTJXnop1A3x//2oqdw3fGfEh0BauhlMkMaZS5g/7pkB8qAIjnLue
-	 U5mUipwzsWZqHd+3f0NCnyd8qmFEIpRE3UVtmDoXpyFykLsNvu4qoK16Eq/q7IMOSo
-	 ghF31vgDN2dbxibVIBzqjwYF2rOmPNftnHywNiYdAiX3UoLArScxoqRNHCLIy1KjiU
-	 Q6K1FR9zJoLXQmqWL3UjHgpnqR4sam8b/x76yTh5gMUYmvrtMfM1T+dVIaK6t+UAr9
-	 WEper+Rc7axBvadIYXcGXRN+53AsIRpSMO5dGOogYHbu7zJsHURNMOWPu9x3hoXSGq
-	 rqudibqoDXEmQ==
+	s=arc-20240116; t=1734330665; c=relaxed/simple;
+	bh=3E2pDLSWpHz+qKRsyOCvMIVk3xBO/le3IAkheabOoFY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nadFhiYCPPafablJSb9eWzgcHitUitj//lh4rP37NxOGYpu02RSIfKGKQha+oEJsCb8VKjOfqTXIV7/5UMIrd8vtCdeDgxUhQgsPP1jP2r4QJjo54TB4WfPa4CZVtguehPDjL8pXfMawi4NLtf1rYw5huMsdbCcfK+l/KDVGQjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a9d195e6e5so38649675ab.2
+        for <linux-integrity@vger.kernel.org>; Sun, 15 Dec 2024 22:31:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734330663; x=1734935463;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGgwY9doc2BDYdLeq+Akm53OqV4dukJ6miTwWudPyro=;
+        b=flYCSz/to1YBxWcDD5pfyfUta0Im22U6qwi1nI5DOX9wJQzN5sxFrYvo+nNyAi3HBB
+         5UT9YTDevDQXIwe89/9TeESHH/OM1nV3kQ0CrxDEN3XOOCmUImqdx3e+q1QbQb6/PYVc
+         Jz5upsfHrJ+rtHr/pBmDE18+x6+TVxU7rTe51lXw+esZyVAx24A4aYXFmkwKK8yZ1DIl
+         AQCo80SJVqNZtANvbkKomrlCmnwipgKi2In80reZoabP9T2BKJWoDQmBIaKMq3n4GWBf
+         9q6wyBec9KnB6iMxqOvSr+dAbzVQKi6aqMXWXetub1mYQ77SieEzeFJv9OCY7j5yDZ07
+         Ufdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXssqMrtB0JFqOZuBqfTX+aWLgdP3iLt0XnhKUVBdRLMdhn8djyLXbzchr8UMkBXZ4Rg8Ko9JxriT8lRUOz4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEnG6i4dmM/PyrH2Uak8en9sQdy1/R9UY8Fw4M9DVc7S43Y0G8
+	dofazNNsNvnF/XdRMMsX8BRvKJO9aS9qDphtO+TaLcfldcJPHinPDvxck9c4gMGHIxvE9S+W8bz
+	smcyTIpMQKO0yzHMIx/A80q2gG3wQdB5eypjZwJfShjUzfIrQKtvqmnY=
+X-Google-Smtp-Source: AGHT+IHqyW8xz9AMDJraQb4QIo+grq8CirvIaFyaiu/OxyxIYJNdfxD/b3iOyQaCcqMOivRLvs+i9Vhs3cxNSZWzH/wAGnEz188Q
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 14 Dec 2024 05:54:26 +0200
-Message-Id: <D6B4BRNN9S4U.IJ3IU91D6YRB@kernel.org>
-Cc: =?utf-8?q?Peter_H=C3=BCwe?= <PeterHuewe@gmx.de>, "Jason Gunthorpe"
- <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>, "Ard Biesheuvel"
- <ardb@kernel.org>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
-Subject: Re: TPM/EFI issue [Was: Linux 6.12]
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Jiri Slaby"
- <jirislaby@kernel.org>, "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.18.2
-References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com> <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org> <D5Z66HQJNNNL.1CPU2KF13269F@kernel.org> <39f16df2-9f4b-49e9-b004-b0e702d08dad@kernel.org> <D65GMNDAP2VG.1OM0JQG5Q934M@kernel.org> <D676OAD5YQU7.26INY71381WIO@kernel.org> <b33007e9-c468-4395-8eac-8e0f9860562a@kernel.org> <878beebf9064abb7911c015d894192077f17ef0b.camel@HansenPartnership.com>
-In-Reply-To: <878beebf9064abb7911c015d894192077f17ef0b.camel@HansenPartnership.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:12cd:b0:3a7:e592:55cd with SMTP id
+ e9e14a558f8ab-3aff086d9admr103467895ab.14.1734330662864; Sun, 15 Dec 2024
+ 22:31:02 -0800 (PST)
+Date: Sun, 15 Dec 2024 22:31:02 -0800
+In-Reply-To: <PUZPR04MB6316F684BF023564B7DDD812813B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675fc926.050a0220.37aaf.0116.GAE@google.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] INFO: task hung in
+ process_measurement (2)
+From: syzbot <syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue Dec 10, 2024 at 3:04 PM EET, James Bottomley wrote:
-> On Tue, 2024-12-10 at 07:13 +0100, Jiri Slaby wrote:
-> [...]
-> > Perhaps, you can give a hint why those happen exclusively with 6.12+?
->
-> For which one: the ramdisk size not being modulo 4 or the unseal
-> getting a PCR changed error?  For the former I don't have much of an
-> idea, it would seem to be a dracut (or whatever initrd builder you use)
-> issue; the kernel doesn't care about the ramdisk size.  For the latter,
-> I would suspect something is delaying IMA measurements such that
-> they're still going on when you're trying to unseal.  The error you're
-> getting occurs if any PCR changes, not just the ones the policy is
-> locked to (thanks TCG).  We have had syzbot reports of processes
-> getting stuck in measurement that have been identified as exfat
-> related:
->
-> https://syzkaller.appspot.com/bug?extid=3D1de5a37cb85a2d536330
->
-> But it could be a more generic filesystem issue that measurement is
-> slowing but not enough to trigger the stuck process warning.
->
-> In particular systemd parallelizes a lot of stuff, so if it's doing
-> something that causes IMA measurement in parallel with the unseal and
-> this parallel process finished before unseal on an earlier kernel, that
-> would explain it.  You could probably verify this by adding more
-> dependencies to the tpm target, but I'm not really well versed in
-> systemd.
+Hello,
 
-Yeah, I agree. This is too much looking for needle from the haystack.
-A bit more evidence for kernel issue is needed than just kernel version
-change in order to make progress.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> Regards,
->
-> James
+Reported-by: syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com
+Tested-by: syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com
 
-BR, Jarkko
+Tested on:
+
+commit:         78d4f34e Linux 6.13-rc3
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11259ed7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fe704d2356374ad
+dashboard link: https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=105d1730580000
+
+Note: testing is done by a robot and is best-effort only.
