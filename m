@@ -1,139 +1,134 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4453D3B8;
-	Thu, 19 Dec 2024 15:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F12218AC8
+	for <linux-integrity@vger.kernel.org>; Thu, 19 Dec 2024 16:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734623957; cv=none; b=T6s7oV8vOjWGoyXWFRAkcNwbBaMzoz5HLBxrmD9cUyWAdOMtQ71bCJluR183h1bZ5iOfj18xIDfrCIyXVI6Hw39cjqgxoHsskv+AOdffg6DKuC8PnymooB1tWmT/omaNibYrBj+wYTKNrAs0UQngTkUFucPCNM7k0K7WcJxnVuU=
+	t=1734624430; cv=none; b=n01Yj6gICCn1WIKtq8AYMA6QOm1XGkZWCG5Vu468asGJPB9R4FN5NMMZL3fZyHIzq8IQsKsCApTZdtunnjRU6GX+BkQxdEsp9Df7hvjHRoLVtBtaoyF45vFgvfFdFg8H30biTUZO6wjj8GttYDxOZEPmUATLvQ2O9l5NZGTQjUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734623957; c=relaxed/simple;
-	bh=ju2mr1duQXKgCD16dzig3TiPnyKVJiihG96mICQIInI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I0frv3K91hOnpwz5WADDsqZ+nZrRMWNKQ5sPxVT4UPqtMe+sgIje6ySGKaEcqw9zh7Jl+J7IUEJJbQTjV68jIoBfNg9K49PNU/4CgxTSecMLGMUu16PfAaMyHVnDWIN9mXbiidfcrgik6GL7LhQmIKXpcJsEQBtIZ/bzlPsVlQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4YDZ312xl9z9v7NX;
-	Thu, 19 Dec 2024 23:19:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 56268140FD0;
-	Thu, 19 Dec 2024 23:40:52 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAX1zd0PmRnk++5Aw--.39435S2;
-	Thu, 19 Dec 2024 16:40:49 +0100 (CET)
-Message-ID: <ac0d0d8f3d40ec3f7279f3ece0e75d0b2ec32b4e.camel@huaweicloud.com>
-Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable
- IMA/EVM
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Song Liu <songliubraving@meta.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Song Liu <song@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org"
-	 <linux-fsdevel@vger.kernel.org>, "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>, "linux-security-module@vger.kernel.org"
-	 <linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "roberto.sassu@huawei.com"
-	 <roberto.sassu@huawei.com>, "dmitry.kasatkin@gmail.com"
-	 <dmitry.kasatkin@gmail.com>, "eric.snowberg@oracle.com"
-	 <eric.snowberg@oracle.com>, "paul@paul-moore.com" <paul@paul-moore.com>, 
-	"jmorris@namei.org"
-	 <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, Kernel Team
-	 <kernel-team@meta.com>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"jack@suse.cz"
-	 <jack@suse.cz>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Date: Thu, 19 Dec 2024 16:40:32 +0100
-In-Reply-To: <C01F96FE-0E0F-46B1-A50C-42E83543B9E1@fb.com>
-References: <20241217202525.1802109-1-song@kernel.org>
-	 <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-	 <bd5a5029302bc05c2fbe3ee716abb644c568da48.camel@linux.ibm.com>
-	 <C01F96FE-0E0F-46B1-A50C-42E83543B9E1@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1734624430; c=relaxed/simple;
+	bh=A0aKZ83JDldiNCQojVArEWJB/LRrGLTjJkXrVOs2jAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIMB4PGW+aGQIvAX2bMwDYvGf2Vfnco0scpn0CH+axja/tu34h2Mx3oiHAPfwsUGR40tQLm0U1Ojhbz5RTN67k1MUrcDBHCgNQFTmHMIU6MdTNSXrcByH6eSloS0igY+KTKMD0OKYMAEbvjIwbrgvpHQjLbQr9T3vt5RsFLATJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fr8U9syg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fr8U9syg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734624427;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cSEIOt+Dl/39K7+8+fjxrm9chDB16camj9uOLkCkitw=;
+	b=fr8U9sygbpMHCor2cDQh7yDUY3lHFM8rO6mvYSMv2VwpTp0QsOJ7MwurlpWsKLuaYw1T2C
+	p46F6vsEemdgO3PL8Lnct8VBwwvvXDJsAvBVhf18YdBudjuYI+moMQI/VKjtCf2QyMqoVN
+	6SsDzfvktXnGHhFtNQMg6V0WM8DVVc0=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-660-9NGrGkt6MhGvwtXy5n7w9A-1; Thu, 19 Dec 2024 11:07:06 -0500
+X-MC-Unique: 9NGrGkt6MhGvwtXy5n7w9A-1
+X-Mimecast-MFC-AGG-ID: 9NGrGkt6MhGvwtXy5n7w9A
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa665246a3cso80652566b.0
+        for <linux-integrity@vger.kernel.org>; Thu, 19 Dec 2024 08:07:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734624425; x=1735229225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cSEIOt+Dl/39K7+8+fjxrm9chDB16camj9uOLkCkitw=;
+        b=ZskWNa5cSJ8/P3zfKwycQddk+3jKOyS6C9AS0NxpkI8IsiLmGTua308a7QUo+2/8z/
+         pbjl46D1UEHriSc/guORCk53TqIA+LsVu5VBXscLDqlGIeQxgHmXaXtre4U8wxI12029
+         iMO68+oh678I67xqtj8UNDtO8qy01QoF3MIW5g5BD7O4RBcX9v6aJGtzO96QVaTuo3j0
+         etxgbbbmJpo5VC6YrJ9a0ZtZybgObToy3XTJ8dwuOqqZDkGBOh1QSzK3YegwQccb0dU+
+         BIrWeYmWtXmMlG9VJl9v5gB3gaHBnRzAoGAHaAPlRG2Rm6/HkmhcSAiDJSkmHforUNp4
+         /Rlw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/nT8bLs1uU2+ULVXnetXWD+p1G0Gn0xDitMzuFnAZWWjFTTHYVfRYXdLb8uq72EqGTrvTZgZTYh6WZA6H8kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxkbei6Wvzjkk9FpCKs4iMGaRub8VmMWYofEbnDLRInj3O6CVxa
+	rUS6JUUVAi8q/iD5JAqmTXOdrRpwOnV87TZVQBItFhoVIgiy4H3kmyJ/EEx79NGIgL/cbCCnGh1
+	nZ6Yv5t3hyseGxcR/GVnIj32aRyXBYGnGU1+IjzVeSUWhDP5AOFZ2/6GEZLV7tiRFZg==
+X-Gm-Gg: ASbGncsPma6v4XtdvyXWQlb3eS72gNnzCgeUugmKupXQZgDcfJNR6G3GipQdLk+dtk3
+	ePmAu/745B0wssq5wuyz10xeCXP5w/uy+mFrzvwu0NyExBiY5u2x28ce4aiTIK60jtLGKcPsZrg
+	gXWtbzuDq428cDzIJkZZYMDJJtyiCZeVVqJJ/tJpPLvGt573Xrer3s+rYH7KHYw/YclCZ9DXKyr
+	+Mt2cdVCa0LWD6F1rVkJ8197STscLZc/47TSQMpoULV7g+jaA1xfxf+2ujFi0zFeUsTb/dpkZxp
+	ISXSmsnFdYapMClafr7qIlR9Xkvpiewt
+X-Received: by 2002:a17:907:728a:b0:aa6:25c6:d94f with SMTP id a640c23a62f3a-aac07952880mr326060066b.31.1734624425156;
+        Thu, 19 Dec 2024 08:07:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH93jwst7HGR8fbtTFBzBd4WHWnWQ7D9jH0jl2qZrx1lTc4+74MEteF4Sm/hWaXI73/yPDyWw==
+X-Received: by 2002:a17:907:728a:b0:aa6:25c6:d94f with SMTP id a640c23a62f3a-aac07952880mr326051066b.31.1734624424311;
+        Thu, 19 Dec 2024 08:07:04 -0800 (PST)
+Received: from sgarzare-redhat (host-82-53-134-100.retail.telecomitalia.it. [82.53.134.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0eae5902sm78939866b.85.2024.12.19.08.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2024 08:07:03 -0800 (PST)
+Date: Thu, 19 Dec 2024 17:06:57 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, 
+	James Bottomley <james.bottomley@hansenpartnership.com>, linux-coco@lists.linux.dev, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Peter Huewe <peterhuewe@gmx.de>, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-integrity@vger.kernel.org, x86@kernel.org, 
+	Joerg Roedel <jroedel@suse.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Claudio Carvalho <cclaudio@linux.ibm.com>, 
+	Dov Murik <dovmurik@linux.ibm.com>, Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 3/3] x86/sev: add a SVSM vTPM platform device
+Message-ID: <6rwo7tkdst227kb4pwvr54w4mfz2zw3offux7mqfupi3rgwkaz@65yklvvqw6n4>
+References: <20241210143423.101774-1-sgarzare@redhat.com>
+ <20241210143423.101774-4-sgarzare@redhat.com>
+ <20241210144025.GG1888283@ziepe.ca>
+ <50a2e1d29b065498146f459035e447851a518d1a.camel@HansenPartnership.com>
+ <20241210150413.GI1888283@ziepe.ca>
+ <CAGxU2F6yzqb0o_pQDakBbCj3RdKy_XfZfzGsiywnYL65g6WeGg@mail.gmail.com>
+ <20241211150048.GJ1888283@ziepe.ca>
+ <CAGxU2F7QjQTnXsqYeKc0q03SQCoW+BHbej9Q2Z8gxbgu-3O2fA@mail.gmail.com>
+ <D6FSHG5Z9UJQ.CWQTAANBVIQQ@iki.fi>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAX1zd0PmRnk++5Aw--.39435S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar43GFWxJFW3Xr4DAFWDJwb_yoW8uF17pr
-	WxJFW7tr4vqa40yw1Iyw43uryFv3s7Kan8Kry5Ww1xZa45Cr18tr1Ikry8uaykurn7JFyY
-	vFnxXFyq93WqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQACBGdjhLgFFAAAsu
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <D6FSHG5Z9UJQ.CWQTAANBVIQQ@iki.fi>
 
-On Wed, 2024-12-18 at 17:07 +0000, Song Liu wrote:
-> Hi Mimi,=20
->=20
-> Thanks for your comments!
->=20
-> > On Dec 18, 2024, at 3:02=E2=80=AFAM, Mimi Zohar <zohar@linux.ibm.com> w=
-rote:
-> >=20
-> > On Tue, 2024-12-17 at 13:29 -0800, Casey Schaufler wrote:
-> > > On 12/17/2024 12:25 PM, Song Liu wrote:
-> > > > While reading and testing LSM code, I found IMA/EVM consume per ino=
-de
-> > > > storage even when they are not in use. Add options to diable them i=
-n
-> > > > kernel command line. The logic and syntax is mostly borrowed from a=
-n
-> > > > old serious [1].
-> > >=20
-> > > Why not omit ima and evm from the lsm=3D parameter?
-> >=20
-> > Casey, Paul, always enabling IMA & EVM as the last LSMs, if configured,=
- were the
-> > conditions for making IMA and EVM LSMs.  Up to that point, only when an=
- inode
-> > was in policy did it consume any memory (rbtree).  I'm pretty sure you =
-remember
-> > the rather heated discussion(s).
->=20
-> I didn't know about this history until today. I apologize if this=20
-> RFC/PATCH is moving to the direction against the original agreement.=20
-> I didn't mean to break any agreement.=20
->=20
-> My motivation is actually the per inode memory consumption of IMA=20
-> and EVM. Once enabled, EVM appends a whole struct evm_iint_cache to=20
-> each inode via i_security. IMA is better on memory consumption, as=20
-> it only adds a pointer to i_security.=20
->=20
-> It appears to me that a way to disable IMA and EVM at boot time can=20
-> be useful, especially for distro kernels. But I guess there are=20
-> reasons to not allow this (thus the earlier agreement). Could you=20
-> please share your thoughts on this?
+On Thu, Dec 19, 2024 at 05:40:58PM +0200, Jarkko Sakkinen wrote:
+>On Thu Dec 19, 2024 at 5:35 PM EET, Stefano Garzarella wrote:
+>> So to use them directly in sev, we would have to move these definitions
+>> into include/linux/tpm.h or some other file in inlcude/. Is this
+>> acceptable for TPM maintainers?
+>
+>There's only me.
+>
+>I don't know.
+>
+>What you want to put to include/linux/tpm.h anyway?
 
-Hi Song
+At least tpmm_chip_alloc(), tpm2_probe(), and tpm_chip_register()
 
-IMA/EVM cannot be always disabled for two reasons: (1) for secure and
-trusted boot, IMA is expected to enforce architecture-specific
-policies; (2) accidentally disabling them will cause modified files to
-be rejected when IMA/EVM are turned on again.
+>I have not followed this discussion.
 
-If the requirements above are met, we are fine on disabling IMA/EVM.
+Let me try to summarize what we are doing: We are writing a small TPM
+driver to support AMD SEV-SNP SVSM. Basically SVSM defines some sort of
+hypercalls, which the guest OS can call to talk to the emulated vTPM.
 
-As for reserving space in the inode security blob, please refer to this
-discussion, where we reached the agreement:
+In the current version of this series, based on James' RFC, we have an
+intermediate module (tpm_platform) and then another small driver
+(platform_device) in arch/x86/coco/sev/core.c that registers the
+callback to use.
 
-https://lore.kernel.org/linux-integrity/CAHC9VhTTKac1o=3DRnQadu2xqdeKH8C_F+=
-Wh4sY=3DHkGbCArwc8JQ@mail.gmail.com/
+To avoid the intermediate driver (Jason correct me if I misunderstood),
+we want to register the `tpm_chip` with its `tpm_class_ops` directly in
+arch/x86/coco/sev/core.c where it's easy to use "SVSM calls" (i.e.
+svsm_perform_call_protocol()).
 
-Thanks
+And here I have this problem, so I was proposing to expose these APIs.
+BTW, we do have an alternative though that I proposed in the previous 
+email that might avoid this.
 
-Roberto
+Thanks,
+Stefano
 
