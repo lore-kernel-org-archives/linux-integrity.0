@@ -1,128 +1,68 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E63B320B;
-	Fri, 27 Dec 2024 15:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D385B1F8662;
+	Fri, 27 Dec 2024 16:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735313959; cv=none; b=RGRVfP5Js9hj8aN59hlvhfJBR4MzXWrV9DuZAoe38vuzkCm5YWqwk84JjAJWF7vUSMYG7MDzw0LNl3t3xhjvEr8e1qjrQyjWqY5JE5dOZRw+B4v+d/aSaiQ6ALhiLEQZsmom4Gh8XrYRGbmAdMbOMy16AGyGlVr6MWpTo/TcvPs=
+	t=1735317621; cv=none; b=uNvAe7/yW0X3GSkdXbumO3YktC3Rlx8KWfw3pJ0xsB2fN3nvf/oCJ4LD03LLuMAP5YTBfaQwuZb3u4U77kKm4ECIwvaHIl2s1JD7ZbEeFzNAei9DuqamRc+JPv9Fgn3mcUZEjz6MNtYuFNI0xv/JFTKi6OiohySQ1KnXZeFGFa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735313959; c=relaxed/simple;
-	bh=7mzQY7/7p8tFlllO115gV5ll9BUzuzVq7bkL40Yq9nA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qqKyrGMsgOfctMowzEnJ6D1BFZWuXSPvNLlkX57Om4dxDWW1zore1YyoOewYzYItUH8P9GMj1HbC90npmhFwXRbY1IPhqjaFJrd6EvQDsHZqqYWIWvvs/nFYKYPFBwZD+f3jnKoTaWFAAu19SA0v3xX7NUs9/4vWzoVOzAGk7YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvS+Lu51; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735317621; c=relaxed/simple;
+	bh=m34uzEhxEFm8Pkht0brnD9Kz7nFsyXOA51OvSgJ3DVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MwZxSr1T4w2vXyiY764psuWD3H3mgidp+uVcNYi7bwVk+oUpL6RefFEyuNWz/1ScBpJJegJXZcrtJPdEM+Jt0UnheX1+QXy08G1DaA0kXt7I9nk+SUM3cUMi/vZuPAX8xOrDN/g2dFRiso3pboANu7kpc/1VGix2tLPV4LFktns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Zt7lHEvL; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvS+Lu51"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09FD9C4CED0;
-	Fri, 27 Dec 2024 15:39:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735313957;
-	bh=7mzQY7/7p8tFlllO115gV5ll9BUzuzVq7bkL40Yq9nA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lvS+Lu51+qHR29oFWarwrXqW3Zvq2gaHNcgjMXmwoffTt8my6Sk/dc1zCZrS/QsSY
-	 yeYfFQ4ewY5/RXzfz7D+9mcD8RVOQCs/agCDY2sIysb8jrEcegTHZkAz3xrcTV54wu
-	 5hS25Hu0oq8/hgMFNmBlSz0CcqnnT04VyY5aexcCkw9gkpYUkODZc2Jyws62NDfeDW
-	 yPOapP3UFJ+VXlJsT5H7ArFb4foQP3CGV3hWdvYt/+ilQzjzmCGHbUuMLp374GWpuL
-	 RmqkZyogJEn5rDKgmuM2WWfx2hfO2Za/Cq33/VwU0FctWxA9FbvMow8cdb7tAZWZhJ
-	 8w3cE6+40oIWQ==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Stefan Berger <stefanb@us.ibm.com>,
-	Andrew Morton <akpm@osdl.org>,
-	Seiji Munetoh <munetoh@jp.ibm.com>,
-	Kylene Jo Hall <kjhall@us.ibm.com>,
-	Reiner Sailer <sailer@us.ibm.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	stable@vger.kernel.org,
-	Andy Liang <andy.liang@hpe.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v8] tpm: Map the ACPI provided event log
-Date: Fri, 27 Dec 2024 17:39:09 +0200
-Message-ID: <20241227153911.28128-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Zt7lHEvL"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3561110408FAF;
+	Fri, 27 Dec 2024 17:40:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1735317617;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vDOUthU7q4/qupG9iVWUrtQQQgRrjg8BgH9r7Z4OERQ=;
+	b=Zt7lHEvLwnywX5A0iM5lO0i7k4jf5RIQ83CWlR2bzGay7UL/7+g2+qTg3IZmXU4KXylfSN
+	Hh1gvc3zLKckwYYkaFPMsBMN05W+XG5kEFZ4LbfCfhF26vK/a9VeiHNELD7YLtzNgeBWqM
+	oBnf6P/wBGCTB95Z3A4BiW5+tL6+v0/XfrfhpJYesN6bC/B9SBaSaOkcn3G1+mNTCr//fB
+	ACw6jy1BznDqBB9IuRAedQvwbnKl9j+Kp+Ju/FLxo7jwcKl3HegOkCBaU7Q7Pp8MJ1xZI3
+	ss1YtUf+TzaKfAI/CIJi88q3ZsPkgjwUqmrIAAWAerhK2zZCiYWIbFTkB6mCNw==
+Message-ID: <1a7826ed-5f0e-46ea-bc44-32a389b99171@denx.de>
+Date: Fri, 27 Dec 2024 16:00:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: tpm: Add st,st33tphf2ei2c
+To: Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org
+Cc: Conor Dooley <conor+dt@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Lukas Wunner <lukas@wunner.de>, Peter Huewe <peterhuewe@gmx.de>,
+ Rob Herring <robh@kernel.org>, linux-integrity@vger.kernel.org
+References: <20241226171124.83735-1-marex@denx.de>
+ <81c31cbb-c632-4558-b415-7bfe5c527c75@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <81c31cbb-c632-4558-b415-7bfe5c527c75@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The following failure was reported:
+On 12/27/24 8:00 AM, Krzysztof Kozlowski wrote:
+> On 26/12/2024 18:10, Marek Vasut wrote:
+>> Add the ST chip st33tphf2ei2c to the supported compatible strings of the
+>> TPM TIS I2C schema. The Chip is compliant with the TCG PC Client TPM
+>> Profile specification.
+>>
+> 
+> Where is any user of this?
+Submitted to linux-arm-kernel in
 
-[   10.693310][    T1] tpm_tis STM0925:00: 2.0 TPM (device-id 0x3, rev-id 0)
-[   10.848132][    T1] ------------[ cut here ]------------
-[   10.853559][    T1] WARNING: CPU: 59 PID: 1 at mm/page_alloc.c:4727 __alloc_pages_noprof+0x2ca/0x330
-[   10.862827][    T1] Modules linked in:
-[   10.866671][    T1] CPU: 59 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-lp155.2.g52785e2-default #1 openSUSE Tumbleweed (unreleased) 588cd98293a7c9eba9013378d807364c088c9375
-[   10.882741][    T1] Hardware name: HPE ProLiant DL320 Gen12/ProLiant DL320 Gen12, BIOS 1.20 10/28/2024
-[   10.892170][    T1] RIP: 0010:__alloc_pages_noprof+0x2ca/0x330
-[   10.898103][    T1] Code: 24 08 e9 4a fe ff ff e8 34 36 fa ff e9 88 fe ff ff 83 fe 0a 0f 86 b3 fd ff ff 80 3d 01 e7 ce 01 00 75 09 c6 05 f8 e6 ce 01 01 <0f> 0b 45 31 ff e9 e5 fe ff ff f7 c2 00 00 08 00 75 42 89 d9 80 e1
-[   10.917750][    T1] RSP: 0000:ffffb7cf40077980 EFLAGS: 00010246
-[   10.923777][    T1] RAX: 0000000000000000 RBX: 0000000000040cc0 RCX: 0000000000000000
-[   10.931727][    T1] RDX: 0000000000000000 RSI: 000000000000000c RDI: 0000000000040cc0
-
-Above shows that ACPI pointed a 16 MiB buffer for the log events because
-RSI maps to the 'order' parameter of __alloc_pages_noprof(). Address the
-bug with kvmalloc() and devm_add_action_or_reset().
-
-Suggested-by: Ard Biesheuvel <ardb@kernel.org>
-Cc: stable@vger.kernel.org # v2.6.16+
-Fixes: 55a82ab3181b ("[PATCH] tpm: add bios measurement log")
-Reported-by: Andy Liang <andy.liang@hpe.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219495
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v8:
-* Reduced to only to this quick fix. Let HPE reserve 16 MiB if they want
-  to. We have mapping approach backed up in lore.
-v7:
-* Use devm_add_action_or_reset().
-* Fix tags.
-v6:
-* A new patch.
----
- drivers/char/tpm/eventlog/acpi.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 69533d0bfb51..394c8302cefd 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -63,6 +63,11 @@ static bool tpm_is_tpm2_log(void *bios_event_log, u64 len)
- 	return n == 0;
- }
- 
-+static void tpm_bios_log_free(void *data)
-+{
-+	kvfree(data);
-+}
-+
- /* read binary bios log */
- int tpm_read_log_acpi(struct tpm_chip *chip)
- {
-@@ -136,10 +141,16 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	}
- 
- 	/* malloc EventLog space */
--	log->bios_event_log = devm_kmalloc(&chip->dev, len, GFP_KERNEL);
-+	log->bios_event_log = kvmalloc(len, GFP_KERNEL);
- 	if (!log->bios_event_log)
- 		return -ENOMEM;
- 
-+	ret = devm_add_action_or_reset(&chip->dev, tpm_bios_log_free, log->bios_event_log);
-+	if (ret) {
-+		log->bios_event_log = NULL;
-+		return ret;
-+	}
-+
- 	log->bios_event_log_end = log->bios_event_log + len;
- 
- 	virt = acpi_os_map_iomem(start, len);
--- 
-2.47.1
-
+[PATCH] arm64: dts: imx8mp: Update Data Modul i.MX8M Plus eDM SBC DT to 
+rev.903
