@@ -1,86 +1,86 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D682022962B
-	for <linux-integrity@vger.kernel.org>; Tue, 14 Jan 2025 11:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9046C24025B
+	for <linux-integrity@vger.kernel.org>; Tue, 14 Jan 2025 11:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736854168; cv=none; b=MTaOPaFLfgHxLcH8namaCDx0wPjjqmtnpfQW5PeFKkcIzPQVI1Ak6rak1tQJzr8QblLkuFskyhNu1kjBte5x0DAep4Z1GStkTrBCSKhPDl9PGP6JZq35ehbgyu+SsuKsWjPWOIKGzr9JAhXXvqpG6SqnniNTBBj6YF7gG3q/O94=
+	t=1736854168; cv=none; b=F4fsMcyw3NkJWF8TSIcsJ25NJP6eX3Jz4xsVoBfGB2wKnRPJEAUuxVE4GVOwzOcsfqTzV1H55OBRLeWPuhwEsm/LIa2OeS32gPLU623naV8X4K3MVAm+va8ZliecasOmDC35kiipynUfuHChYCxHG3hWVd/lHgYhPbmDXIp6X8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736854168; c=relaxed/simple;
-	bh=3UN/P26F9ScNrsch9mWgI8HV9iYA5JBg6S6C1tu5UOM=;
+	bh=diVLOcmvehwxzrDGEckNGTdkpApjEIck7IloGFnp9Ao=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A93cdCC57ddfu5tYZe/71QHk/zd8shScdXxZZgHbZP5k+AQ9qXUJeFv+8SBJX42xX1DvWSuMDVhLVHR1Q6g8wyomOA7E0SVzZbaVr3rz/M05gjRkE/6snQKSCbXPzU/1P4u8zjiOfDxoA3s0XZOKP2378lMvRmfwd26Gp49RjBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qfSIUHaz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D5/6G9fC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rZ2g2Inx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P8ESsQFm; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=L17skRhmxGhCdzoPhZmIYYYS3XF6DEwoAtaO3Xj74n34H5OX/xXireRXG6rXiDNH/LpFt29qtksRYlA9kxJBJsiqJ0SlZJMTMClMNU/CjvwOqFj2SX9HuoFHQD+qlF+hYYVrbGEKGIyZc800nQX0rqWp8wv0Hz6SPJVRiSbymVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vpeN8EDg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6MWbL1tI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vpeN8EDg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6MWbL1tI; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qfSIUHaz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D5/6G9fC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rZ2g2Inx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P8ESsQFm"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vpeN8EDg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6MWbL1tI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vpeN8EDg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6MWbL1tI"
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DE6322116A;
-	Tue, 14 Jan 2025 11:29:23 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id BC9B72117E;
+	Tue, 14 Jan 2025 11:29:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1736854164; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I+WXyKE2K3p5EG+WHjfaMCB+mhIvRAATFDUklAB18hQ=;
-	b=qfSIUHazWkYs8e2IUgCNOvGIjhtNQ62CqNoIEE9FfVddsG8ZGHltt6BfFt4D4i6D3U9ja3
-	HpThJQZ9WwcMP651fp3PqU6bq37QZklB4pLf/atBWc8EkhjJOP0mpEqnGRLWsvkJhU8HsG
-	jWeIGmwBfYR+5WV15xpFuUwlbY0o9O0=
+	bh=PrmAkrf9zSPs3YZrI4aN2+q55IQh2OjPjwxkARwftys=;
+	b=vpeN8EDgtYdiFuXKzI00WYXTHrFFblYsaGIypPnLb6vTUj6tzvXiu0UBSPWPxVXfr5O85R
+	n4l5vWiABiqx6Ldrpyis0gbDp67ysDLNCORvYhxdU+DtrxMNA/kqXgFudeL4F/rfH5jb3l
+	Q7R3bdYc25pThS6sr6dGuJpRiv2YVhc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1736854164;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I+WXyKE2K3p5EG+WHjfaMCB+mhIvRAATFDUklAB18hQ=;
-	b=D5/6G9fC0mT9GorqmxEtjTR6qseKxX0y+CzC/nQuJUWPSwZQxFACGRhDCXj45rqxKfomQJ
-	wY035S05Z2P35+DQ==
+	bh=PrmAkrf9zSPs3YZrI4aN2+q55IQh2OjPjwxkARwftys=;
+	b=6MWbL1tIlzLD/1xW/F/CDQ7BTVmkf1M3nl6RKj+t3eCUDQci1JFL/9ll5Zs5hOwjS2W+5U
+	oTrvQzhg9AZoewBQ==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736854163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1736854164; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I+WXyKE2K3p5EG+WHjfaMCB+mhIvRAATFDUklAB18hQ=;
-	b=rZ2g2InxisYGDWjiI1XQfs38/2QzNYRa4Ps2MLqa3K7FREk4fGJxQigyKidbu2wsZHpykJ
-	sck1nM2HfEaUZoTQpwTpj9ia2me/jGicwR+SorZSj1Klq7JdheAzVFeeuVquCTvIonRhGD
-	sLJZy1nWb0doh/acPQNxBJ3NTbaLWdg=
+	bh=PrmAkrf9zSPs3YZrI4aN2+q55IQh2OjPjwxkARwftys=;
+	b=vpeN8EDgtYdiFuXKzI00WYXTHrFFblYsaGIypPnLb6vTUj6tzvXiu0UBSPWPxVXfr5O85R
+	n4l5vWiABiqx6Ldrpyis0gbDp67ysDLNCORvYhxdU+DtrxMNA/kqXgFudeL4F/rfH5jb3l
+	Q7R3bdYc25pThS6sr6dGuJpRiv2YVhc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736854163;
+	s=susede2_ed25519; t=1736854164;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I+WXyKE2K3p5EG+WHjfaMCB+mhIvRAATFDUklAB18hQ=;
-	b=P8ESsQFmtroA7bKRS/qCzhBea2G/8Wd9385iVV4uMSeb7oTvFszzZDfB419wUXUUz6ilfU
-	mA1FXDlCM3UnAQAw==
+	bh=PrmAkrf9zSPs3YZrI4aN2+q55IQh2OjPjwxkARwftys=;
+	b=6MWbL1tIlzLD/1xW/F/CDQ7BTVmkf1M3nl6RKj+t3eCUDQci1JFL/9ll5Zs5hOwjS2W+5U
+	oTrvQzhg9AZoewBQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A48D3139CB;
-	Tue, 14 Jan 2025 11:29:23 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BDA413A86;
+	Tue, 14 Jan 2025 11:29:24 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2NNVJpNKhmeMIAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 14 Jan 2025 11:29:23 +0000
+	id CJb/IJRKhmeMIAAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Tue, 14 Jan 2025 11:29:24 +0000
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	linux-integrity@vger.kernel.org
-Subject: [PATCH v3 02/10] IMA: Add TCB policy as an example for ima_measurements.sh
-Date: Tue, 14 Jan 2025 12:29:07 +0100
-Message-ID: <20250114112915.610297-3-pvorel@suse.cz>
+Subject: [PATCH v3 05/10] IMA: Read required policy from file
+Date: Tue, 14 Jan 2025 12:29:10 +0100
+Message-ID: <20250114112915.610297-6-pvorel@suse.cz>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250114112915.610297-1-pvorel@suse.cz>
 References: <20250114112915.610297-1-pvorel@suse.cz>
@@ -116,82 +116,481 @@ X-Spamd-Result: default: False [-6.80 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-Taken from IMA docs [1], removed dont_measure fsmagic=0x1021994 (tmpfs)
-as suggested by Mimi.
+Previously snipped of required policy was as a string or regexp.
+Loading required policy from file allows to move code to ima_setup.sh.
+This is a preparation for loading IMA policy from file.
 
-[1] https://ima-doc.readthedocs.io/en/latest/ima-policy.html#ima-tcb
+Check can be done on one or both:
+1) IMA builtin policy (based on /proc/cmdline)
+2) IMA policy content (actual content of /sys/kernel/security/ima/policy)
+
+When missing CONFIG_IMA_READ_POLICY=y on required policy convert: test, but convert TFAIL => TCONF.
 
 Signed-off-by: Petr Vorel <pvorel@suse.cz>
 ---
- .../security/integrity/ima/datafiles/Makefile |  4 ++--
- .../ima/datafiles/ima_measurements/Makefile   | 11 ++++++++++
- .../ima/datafiles/ima_measurements/tcb.policy | 20 +++++++++++++++++++
- 3 files changed, 33 insertions(+), 2 deletions(-)
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_measurements/Makefile
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
+ .../security/integrity/ima/tests/ima_kexec.sh | 19 ++----
+ .../security/integrity/ima/tests/ima_keys.sh  | 47 ++++---------
+ .../integrity/ima/tests/ima_measurements.sh   |  8 ++-
+ .../integrity/ima/tests/ima_selinux.sh        | 22 +++---
+ .../security/integrity/ima/tests/ima_setup.sh | 68 ++++++++++++++-----
+ .../integrity/ima/tests/ima_violations.sh     |  8 ++-
+ 6 files changed, 92 insertions(+), 80 deletions(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/datafiles/Makefile b/testcases/kernel/security/integrity/ima/datafiles/Makefile
-index 200fd3f4d3..0f2b4fdb11 100644
---- a/testcases/kernel/security/integrity/ima/datafiles/Makefile
-+++ b/testcases/kernel/security/integrity/ima/datafiles/Makefile
-@@ -1,5 +1,5 @@
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh b/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh
+index 3446bc24bf..95e6186bb5 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
  # SPDX-License-Identifier: GPL-2.0-or-later
--# Copyright (c) Linux Test Project, 2019-2020
-+# Copyright (c) Linux Test Project, 2019-2025
  # Copyright (c) 2020 Microsoft Corporation
- # Copyright (C) 2009, Cisco Systems Inc.
- # Ngie Cooper, July 2009
-@@ -8,6 +8,6 @@ top_srcdir	?= ../../../../../..
+-# Copyright (c) 2020 Petr Vorel <pvorel@suse.cz>
++# Copyright (c) 2020-2025 Petr Vorel <pvorel@suse.cz>
+ # Author: Lachlan Sneff <t-josne@linux.microsoft.com>
+ #
+ # Verify that kexec cmdline is measured correctly.
+@@ -14,7 +14,7 @@ TST_SETUP="setup"
+ TST_MIN_KVER="5.3"
  
- include	$(top_srcdir)/include/mk/env_pre.mk
+ IMA_KEXEC_IMAGE="${IMA_KEXEC_IMAGE:-/boot/vmlinuz-$(uname -r)}"
+-REQUIRED_POLICY='^measure.*func=KEXEC_CMDLINE'
++REQUIRED_POLICY_CONTENT='kexec.policy'
  
--SUBDIRS	:= ima_kexec ima_keys ima_policy ima_selinux
-+SUBDIRS	:= ima_kexec ima_keys ima_measurements ima_policy ima_selinux
+ measure()
+ {
+@@ -46,11 +46,6 @@ setup()
+ 	if [ ! -f "$IMA_KEXEC_IMAGE" ]; then
+ 		tst_brk TCONF "kernel image not found, specify path in \$IMA_KEXEC_IMAGE"
+ 	fi
+-
+-	if check_policy_readable; then
+-		require_ima_policy_content "$REQUIRED_POLICY"
+-		policy_readable=1
+-	fi
+ }
  
- include $(top_srcdir)/include/mk/generic_trunk_target.mk
-diff --git a/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/Makefile b/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/Makefile
-new file mode 100644
-index 0000000000..6317f2bf85
---- /dev/null
-+++ b/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/Makefile
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# Copyright (c) Linux Test Project, 2025
+ kexec_failure_hint()
+@@ -79,7 +74,6 @@ kexec_test()
+ {
+ 	local param="$1"
+ 	local cmdline="$2"
+-	local res=TFAIL
+ 	local kexec_cmd
+ 
+ 	kexec_cmd="$param=$cmdline"
+@@ -97,13 +91,10 @@ kexec_test()
+ 
+ 	ROD kexec -su
+ 	if ! measure "$cmdline"; then
+-		if [ "$policy_readable" != 1 ]; then
+-			tst_res TWARN "policy not readable, it might not contain required policy '$REQUIRED_POLICY'"
+-			res=TBROK
+-		fi
+-		tst_brk $res "unable to find a correct measurement"
++		tst_res $IMA_FAIL "unable to find a correct measurement"
++	else
++		tst_res TPASS "kexec cmdline was measured correctly"
+ 	fi
+-	tst_res TPASS "kexec cmdline was measured correctly"
+ }
+ 
+ test()
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+index ff32eb6c43..a2e9c77738 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_keys.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2020 Microsoft Corporation
+-# Copyright (c) 2020-2021 Petr Vorel <pvorel@suse.cz>
++# Copyright (c) 2020-2025 Petr Vorel <pvorel@suse.cz>
+ # Author: Lachlan Sneff <t-josne@linux.microsoft.com>
+ #
+ # Verify that keys are measured correctly based on policy.
+@@ -12,38 +12,24 @@ TST_SETUP=setup
+ TST_CLEANUP=cleanup
+ TST_MIN_KVER="5.6"
+ 
+-FUNC_KEYCHECK='func=KEY_CHECK'
+-REQUIRED_POLICY="^measure.*$FUNC_KEYCHECK"
++REQUIRED_POLICY_CONTENT='keycheck.policy'
+ 
+ setup()
+ {
+-	require_ima_policy_content "$REQUIRED_POLICY" '-E' > $TST_TMPDIR/policy.txt
+-	require_valid_policy_template
+-}
++	local line
+ 
+-cleanup()
+-{
+-	tst_is_num $KEYRING_ID && keyctl clear $KEYRING_ID
+-}
++	require_policy_readable
+ 
+-require_valid_policy_template()
+-{
+ 	while read line; do
+-	if echo $line | grep -q 'template=' && ! echo $line | grep -q 'template=ima-buf'; then
+-		tst_brk TCONF "only template=ima-buf can be specified for KEY_CHECK"
+-	fi
+-	done < $TST_TMPDIR/policy.txt
++		if echo $line | grep -q 'template=' && ! echo $line | grep -q 'template=ima-buf'; then
++			tst_brk TCONF "only template=ima-buf can be specified for KEY_CHECK"
++		fi
++	done < $IMA_POLICY
+ }
+ 
+-check_keys_policy()
++cleanup()
+ {
+-	local pattern="$1"
+-
+-	if ! grep -E "$pattern" $TST_TMPDIR/policy.txt; then
+-		tst_res TCONF "IMA policy must specify $pattern, $FUNC_KEYCHECK"
+-		return 1
+-	fi
+-	return 0
++	tst_is_num $KEYRING_ID && keyctl clear $KEYRING_ID
+ }
+ 
+ # Based on https://lkml.org/lkml/2019/12/13/564.
+@@ -51,12 +37,10 @@ check_keys_policy()
+ test1()
+ {
+ 	local keycheck_lines i keyrings templates
+-	local pattern='keyrings=[^[:space:]]+'
+ 	local test_file="file.txt" tmp_file="file2.txt"
+ 
+ 	tst_res TINFO "verify key measurement for keyrings and templates specified in IMA policy"
+ 
+-	check_keys_policy "$pattern" > $tmp_file || return
+ 	keycheck_lines=$(cat $tmp_file)
+ 	keyrings=$(for i in $keycheck_lines; do echo "$i" | grep "keyrings" | \
+ 		sed "s/\./\\\./g" | cut -d'=' -f2; done | sed ':a;N;$!ba;s/\n/|/g')
+@@ -87,7 +71,7 @@ test1()
+ 		fi
+ 
+ 		if [ "$digest" != "$expected_digest" ]; then
+-			tst_res TFAIL "incorrect digest was found for $keyring keyring"
++			tst_res $IMA_FAIL "incorrect digest was found for $keyring keyring"
+ 			return
+ 		fi
+ 	done
+@@ -105,13 +89,10 @@ test2()
+ 
+ 	local cert_file="$TST_DATAROOT/x509_ima.der"
+ 	local keyring_name="key_import_test"
+-	local pattern="keyrings=[^[:space:]]*$keyring_name"
+ 	local temp_file="file.txt"
+ 
+ 	tst_res TINFO "verify measurement of certificate imported into a keyring"
+ 
+-	check_keys_policy "$pattern" >/dev/null || return
+-
+ 	KEYRING_ID=$(keyctl newring $keyring_name @s) || \
+ 		tst_brk TBROK "unable to create a new keyring"
+ 
+@@ -126,19 +107,19 @@ test2()
+ 		tst_hexdump -d > $temp_file
+ 
+ 	if [ ! -s $temp_file ]; then
+-		tst_res TFAIL "keyring $keyring_name not found in $ASCII_MEASUREMENTS"
++		tst_res $IMA_FAIL "keyring $keyring_name not found in $ASCII_MEASUREMENTS"
+ 		return
+ 	fi
+ 
+ 	if ! openssl x509 -in $temp_file -inform der > /dev/null; then
+-		tst_res TFAIL "logged certificate is not a valid x509 certificate"
++		tst_res $IMA_FAIL "logged certificate is not a valid x509 certificate"
+ 		return
+ 	fi
+ 
+ 	if cmp -s $temp_file $cert_file; then
+ 		tst_res TPASS "logged certificate matches the original"
+ 	else
+-		tst_res TFAIL "logged certificate does not match original"
++		tst_res $IMA_FAIL "logged certificate does not match original"
+ 	fi
+ }
+ 
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+index ca9d73b4aa..41d53aa03b 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+@@ -11,6 +11,7 @@ TST_NEEDS_CMDS="awk cut sed"
+ TST_SETUP="setup"
+ TST_CNT=3
+ REQUIRED_BUILTIN_POLICY="tcb"
++REQUIRED_POLICY_CONTENT='tcb.policy'
+ 
+ setup()
+ {
+@@ -70,6 +71,7 @@ test3()
+ 	local user="nobody"
+ 	local dir="$PWD/user"
+ 	local file="$dir/test.txt"
++	local cmd="grep $file $ASCII_MEASUREMENTS"
+ 
+ 	# Default policy does not measure user files
+ 	tst_res TINFO "verify not measuring user files"
+@@ -87,7 +89,11 @@ test3()
+ 	sudo -n -u $user sh -c "echo $(cat /proc/uptime) user file > $file; cat $file > /dev/null"
+ 	cd ..
+ 
+-	EXPECT_FAIL "grep $file $ASCII_MEASUREMENTS"
++	if tst_rod "$cmd" 2> /dev/null; then
++		tst_res TPASS "$cmd failed as expected"
++	else
++		tst_res $IMA_FAIL "$cmd passed unexpectedly"
++	fi
+ }
+ 
+ . ima_setup.sh
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_selinux.sh b/testcases/kernel/security/integrity/ima/tests/ima_selinux.sh
+index 75f9ba84e4..45fd741b5f 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_selinux.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_selinux.sh
+@@ -1,6 +1,7 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2021 Microsoft Corporation
++# Copyright (c) Linux Test Project, 2021-2025
+ # Author: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+ #
+ # Verify measurement of SELinux policy hash and state.
+@@ -14,15 +15,12 @@ TST_CNT=2
+ TST_SETUP="setup"
+ TST_MIN_KVER="5.12"
+ 
+-FUNC_CRITICAL_DATA='func=CRITICAL_DATA'
+-REQUIRED_POLICY="^measure.*$FUNC_CRITICAL_DATA"
++REQUIRED_POLICY_CONTENT='selinux.policy'
+ 
+ setup()
+ {
+ 	SELINUX_DIR=$(tst_get_selinux_dir)
+ 	[ "$SELINUX_DIR" ] || tst_brk TCONF "SELinux is not enabled"
+-
+-	require_ima_policy_content "$REQUIRED_POLICY" '-E' > $TST_TMPDIR/policy.txt
+ }
+ 
+ # Format of the measured SELinux state data.
+@@ -45,7 +43,7 @@ validate_policy_capabilities()
+ 		measured_value=$(echo $1 | awk -F'[=;]' -v inx="$inx" '{print $inx}')
+ 		expected_value=$(cat "$SELINUX_DIR/policy_capabilities/$measured_cap")
+ 		if [ "$measured_value" != "$expected_value" ]; then
+-			tst_res TFAIL "$measured_cap: expected: $expected_value, got: $digest"
++			tst_res $IMA_FAIL "$measured_cap: expected: $expected_value, got: $digest"
+ 			return
+ 		fi
+ 
+@@ -75,7 +73,7 @@ test1()
+ 	# in kernel memory for SELinux
+ 	line=$(grep -E "selinux-policy-hash" $ASCII_MEASUREMENTS | tail -1)
+ 	if [ -z "$line" ]; then
+-		tst_res TFAIL "SELinux policy hash not measured"
++		tst_res $IMA_FAIL "SELinux policy hash not measured"
+ 		return
+ 	fi
+ 
+@@ -86,7 +84,7 @@ test1()
+ 		tst_brk TCONF "cannot compute digest for $algorithm"
+ 
+ 	if [ "$policy_digest" != "$expected_policy_digest" ]; then
+-		tst_res TFAIL "Digest mismatch: expected: $expected_policy_digest, got: $policy_digest"
++		tst_res $IMA_FAIL "Digest mismatch: expected: $expected_policy_digest, got: $policy_digest"
+ 		return
+ 	fi
+ 
+@@ -116,7 +114,7 @@ test2()
+ 	# state matches that currently set for SELinux
+ 	line=$(grep -E "selinux-state" $ASCII_MEASUREMENTS | tail -1)
+ 	if [ -z "$line" ]; then
+-		tst_res TFAIL "SELinux state not measured"
++		tst_res $IMA_FAIL "SELinux state not measured"
+ 		return
+ 	fi
+ 
+@@ -129,7 +127,7 @@ test2()
+ 	tst_brk TCONF "cannot compute digest for $algorithm"
+ 
+ 	if [ "$digest" != "$expected_digest" ]; then
+-		tst_res TFAIL "digest mismatch: expected: $expected_digest, got: $digest"
++		tst_res $IMA_FAIL "digest mismatch: expected: $expected_digest, got: $digest"
+ 		return
+ 	fi
+ 
+@@ -146,20 +144,20 @@ test2()
+ 	enforced_value=$(echo $measured_data | awk -F'[=;]' '{print $4}')
+ 	expected_enforced_value=$(cat $SELINUX_DIR/enforce)
+ 	if [ "$expected_enforced_value" != "$enforced_value" ]; then
+-		tst_res TFAIL "enforce: expected: $expected_enforced_value, got: $enforced_value"
++		tst_res $IMA_FAIL "enforce: expected: $expected_enforced_value, got: $enforced_value"
+ 		return
+ 	fi
+ 
+ 	checkreqprot_value=$(echo $measured_data | awk -F'[=;]' '{print $6}')
+ 	expected_checkreqprot_value=$(cat $SELINUX_DIR/checkreqprot)
+ 	if [ "$expected_checkreqprot_value" != "$checkreqprot_value" ]; then
+-		tst_res TFAIL "checkreqprot: expected: $expected_checkreqprot_value, got: $checkreqprot_value"
++		tst_res $IMA_FAIL "checkreqprot: expected: $expected_checkreqprot_value, got: $checkreqprot_value"
+ 		return
+ 	fi
+ 
+ 	initialized_value=$(echo $measured_data | awk -F'[=;]' '{print $2}')
+ 	if [ "$initialized_value" != "1" ]; then
+-		tst_res TFAIL "initialized: expected 1, got: $initialized_value"
++		tst_res $IMA_FAIL "initialized: expected 1, got: $initialized_value"
+ 		return
+ 	fi
+ 
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+index 2a578ceb45..af5584951c 100644
+--- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+@@ -19,6 +19,9 @@ SYSFS="/sys"
+ UMOUNT=
+ TST_FS_TYPE="ext3"
+ 
++IMA_FAIL="TFAIL"
++IMA_BROK="TBROK"
 +
-+top_srcdir	?= ../../../../../../..
+ # TODO: find support for rmd128 rmd256 rmd320 wp256 wp384 tgr128 tgr160
+ compute_digest()
+ {
+@@ -85,21 +88,9 @@ require_policy_writable()
+ check_ima_policy_content()
+ {
+ 	local pattern="$1"
+-	local grep_params="${2--q}"
+ 
+ 	check_policy_readable || return 1
+-	grep $grep_params "$pattern" $IMA_POLICY
+-}
+-
+-require_ima_policy_content()
+-{
+-	local pattern="$1"
+-	local grep_params="${2--q}"
+-
+-	require_policy_readable
+-	if ! grep $grep_params "$pattern" $IMA_POLICY; then
+-		tst_brk TCONF "IMA policy does not specify '$pattern'"
+-	fi
++	grep -q "$pattern" $IMA_POLICY
+ }
+ 
+ check_ima_policy_cmdline()
+@@ -158,6 +149,51 @@ print_ima_config()
+ 	tst_res TINFO "/proc/cmdline: $(cat /proc/cmdline)"
+ }
+ 
++# Check for required
++# 1) IMA builtin policy (based on /proc/cmdline)
++# 2) IMA policy content (actual content of /sys/kernel/security/ima/policy)
++# When missing CONFIG_IMA_READ_POLICY=y on required policy convert: test, but convert TFAIL => TCONF.
++# $REQUIRED_POLICY_CONTENT: file with required IMA policy
++# $REQUIRED_BUILTIN_POLICY: IMA policy specified as kernel cmdline
++verify_ima_policy()
++{
++	local check_content line
++	local file="$TST_DATAROOT/$REQUIRED_POLICY_CONTENT"
 +
-+include	$(top_srcdir)/include/mk/env_pre.mk
++	if [ -z "$REQUIRED_POLICY_CONTENT" -a -z "$REQUIRED_BUILTIN_POLICY" ]; then
++		return 0
++	fi
 +
-+INSTALL_DIR		:= testcases/data/ima_measurements
-+INSTALL_TARGETS	:= *.policy
++	if [ -n "$REQUIRED_POLICY_CONTENT" ]; then
++		check_content=1
++		if [ -n "$REQUIRED_BUILTIN_POLICY" ] && check_ima_policy_cmdline "$REQUIRED_BUILTIN_POLICY"; then
++			tst_res TINFO "booted with IMA policy: $REQUIRED_BUILTIN_POLICY"
++			return 0
++		fi
++	elif [ -n "$REQUIRED_BUILTIN_POLICY" ]; then
++		require_ima_policy_cmdline "$REQUIRED_BUILTIN_POLICY"
++	fi
 +
-+include $(top_srcdir)/include/mk/generic_leaf_target.mk
-diff --git a/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy b/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
-new file mode 100644
-index 0000000000..1e4a932bf0
---- /dev/null
-+++ b/testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
-@@ -0,0 +1,20 @@
-+dont_measure fsmagic=0x9fa0
-+dont_measure fsmagic=0x62656572
-+dont_measure fsmagic=0x64626720
-+dont_measure fsmagic=0x1021994 func=FILE_CHECK
-+dont_measure fsmagic=0x1cd1
-+dont_measure fsmagic=0x42494e4d
-+dont_measure fsmagic=0x73636673
-+dont_measure fsmagic=0xf97cff8c
-+dont_measure fsmagic=0x43415d53
-+dont_measure fsmagic=0x27e0eb
-+dont_measure fsmagic=0x63677270
-+dont_measure fsmagic=0x6e736673
-+dont_measure fsmagic=0xde5e81e4
-+measure func=MMAP_CHECK mask=MAY_EXEC
-+measure func=BPRM_CHECK mask=MAY_EXEC
-+measure func=FILE_CHECK mask=^MAY_READ euid=0
-+measure func=FILE_CHECK mask=^MAY_READ uid=0
-+measure func=MODULE_CHECK
-+measure func=FIRMWARE_CHECK
-+measure func=POLICY_CHECK
++	if [ "$check_content" = 1 ]; then
++		[ -e $file ] || tst_brk TBROK "policy file '$file' does not exist (LTPROOT=$LTPROOT)"
++		tst_res TINFO "test requires IMA policy:"
++		cat $file
++		if check_policy_readable; then
++			# check IMA policy content
++			while read line; do
++				if ! grep -q "$line" $IMA_POLICY; then
++					tst_brk TCONF "missing required policy '$line'"
++				fi
++				IMA_POLICY_CHECKED=1
++			done < $file
++		else
++			tst_res TINFO "policy is not readable, failure will be treated as TCONF"
++			IMA_FAIL="TCONF"
++			IMA_BROK="TCONF"
++		fi
++	fi
++}
++
+ ima_setup()
+ {
+ 	SECURITYFS="$(mount_helper securityfs $SYSFS/kernel/security)"
+@@ -180,9 +216,7 @@ ima_setup()
+ 		cd "$TST_MNTPOINT"
+ 	fi
+ 
+-	if [ "$REQUIRED_BUILTIN_POLICY" ]; then
+-		require_ima_policy_cmdline "$REQUIRED_BUILTIN_POLICY"
+-	fi
++	verify_ima_policy
+ 
+ 	[ -n "$TST_SETUP_CALLER" ] && $TST_SETUP_CALLER
+ }
+@@ -290,7 +324,7 @@ ima_check()
+ 		algorithm=$(cat tmp | cut -d'|' -f1)
+ 		digest=$(cat tmp | cut -d'|' -f2)
+ 	else
+-		tst_brk TBROK "failed to get algorithm/digest for '$test_file'"
++		tst_brk $IMA_BROK "failed to get algorithm/digest for '$test_file'"
+ 	fi
+ 
+ 	tst_res TINFO "computing digest for $algorithm algorithm"
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
+index b2b597ad08..1852e8bc74 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_violations.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2009 IBM Corporation
+-# Copyright (c) 2018-2020 Petr Vorel <pvorel@suse.cz>
++# Copyright (c) 2018-2025 Petr Vorel <pvorel@suse.cz>
+ # Author: Mimi Zohar <zohar@linux.ibm.com>
+ #
+ # Test whether ToMToU and open_writer violations invalidatethe PCR and are logged.
+@@ -10,6 +10,8 @@ TST_SETUP="setup"
+ TST_CLEANUP="cleanup"
+ TST_CNT=3
+ 
++REQUIRED_POLICY_CONTENT='violations.policy'
++
+ setup()
+ {
+ 	FILE="test.txt"
+@@ -83,11 +85,11 @@ validate()
+ 				tst_sleep 1s
+ 			fi
+ 		else
+-			tst_res TFAIL "$search violation not added"
++			tst_res $IMA_FAIL "$search violation not added"
+ 			return
+ 		fi
+ 	done
+-	tst_res TFAIL "$search not found in $LOG"
++	tst_res $IMA_FAIL "$search not found in $LOG"
+ }
+ 
+ test1()
 -- 
 2.47.1
 
