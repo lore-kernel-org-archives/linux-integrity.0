@@ -1,78 +1,48 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F383224B07
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D688522963F
 	for <linux-integrity@vger.kernel.org>; Tue, 14 Jan 2025 11:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736854167; cv=none; b=WNUPZQajxFbqKDGYy1aKtyFfSw7f4mOoMGA/TCZrzyAe3YlCPBPbD15Y5eDppAAOHStUb9ipVpDyTxfexpGH1TCSoxNiftb4YI6aU2BztT+xiB3kzNo84JkbpT4fn+uvTyzI9YgJUUzDDEzAd5SB/skJHx2PGpSSO0Ww3AwI1WI=
+	t=1736854167; cv=none; b=CR6IS0WcDnqjujgT56/GEeG2Rq35Z5U1ULnIaAfQ8H9shwAzp9CSUfHKaamZO9X21rJWivFjCI5qnR5JYTD3ohlzJWrw6uzaFNXAhZTMTvagGlcN+eUJ1ZigUNBhjwryLWWuelwBqhG4gLS479b5sIXfo0ohyR+s/R1XijR4FPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736854167; c=relaxed/simple;
-	bh=i01zXafbwIg9Q8a1VI2M+Q6xVCRTaVhur6rjBo4bSUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u8GjEswMT5K/AopFZCd1vIU4jo6VqhsX4arusNE0WJJ1sozx7seTsfWxi7PUkaBIfkuTXPuOSCOb135BYo73UzSr5Dc7KxzaVoWcUqJDgKg/oHziKUYxbaGUcQDhzlKCazeLFUGOhhoddmMXamqch7wR1s6hSZ7QFDrjBenGMFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LUpwNvJd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RYIGfKg5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LUpwNvJd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RYIGfKg5; arc=none smtp.client-ip=195.135.223.130
+	bh=6xvNtCzW+/6cOMbTDmmQEuptcvwgsgB/5oEfh2v/ec8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nLCiQpGuZvJ3iD8S1XNVVVq+QZEjxOB2Z+3BvBmUlXBEO/qDfjE0lsMQuCnF3TPJHmCzb2IgMXioFdowiz46jqxOJePJ5lUvV+TuzmQcuCHAQab8i8q9caI70gw8+vHJV0ZtDMvU+6zP2yHszu/+Oj5N2IvF1MqT8dAUoBtESw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LUpwNvJd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYIGfKg5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LUpwNvJd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYIGfKg5"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6BB552117C;
-	Tue, 14 Jan 2025 11:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736854163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=fO/s0NZFEMKAk0O+hRINtnsWQ1xdbifZa+NKDJ5KFd8=;
-	b=LUpwNvJd3SX7e3G+1gnh2kuSdpxP7DIYWRi9+D7SRV6XOADTZ18pJCFN2uleZt691uQzEc
-	M4fWq0vLCZTUWxSFESxbU+1JT0eaBpDCmHRDlqFUn1mvNzAMqHX4aCo3t0W+kWQ+ydDroo
-	kQOw8+eKMtaMHMi0hnT8cAAHUrapiJ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736854163;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=fO/s0NZFEMKAk0O+hRINtnsWQ1xdbifZa+NKDJ5KFd8=;
-	b=RYIGfKg5isC934otZjO4An+0/xzy2R9wONn2owIkTREnsyPV7FKUiZ4BtqK3zzIGlD9f3X
-	nrdv5eWcpZsH3SCA==
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3C9A62117D;
+	Tue, 14 Jan 2025 11:29:24 +0000 (UTC)
 Authentication-Results: smtp-out1.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736854163; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=fO/s0NZFEMKAk0O+hRINtnsWQ1xdbifZa+NKDJ5KFd8=;
-	b=LUpwNvJd3SX7e3G+1gnh2kuSdpxP7DIYWRi9+D7SRV6XOADTZ18pJCFN2uleZt691uQzEc
-	M4fWq0vLCZTUWxSFESxbU+1JT0eaBpDCmHRDlqFUn1mvNzAMqHX4aCo3t0W+kWQ+ydDroo
-	kQOw8+eKMtaMHMi0hnT8cAAHUrapiJ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736854163;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=fO/s0NZFEMKAk0O+hRINtnsWQ1xdbifZa+NKDJ5KFd8=;
-	b=RYIGfKg5isC934otZjO4An+0/xzy2R9wONn2owIkTREnsyPV7FKUiZ4BtqK3zzIGlD9f3X
-	nrdv5eWcpZsH3SCA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BC99139CB;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ED76213A86;
 	Tue, 14 Jan 2025 11:29:23 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id b7RgDZNKhmeMIAAAD6G6ig
+	id aBdDOJNKhmeMIAAAD6G6ig
 	(envelope-from <pvorel@suse.cz>); Tue, 14 Jan 2025 11:29:23 +0000
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>,
 	Mimi Zohar <zohar@linux.ibm.com>,
 	linux-integrity@vger.kernel.org
-Subject: [PATCH v3 00/10] LTP tests: load predefined policy, enhancements
-Date: Tue, 14 Jan 2025 12:29:05 +0100
-Message-ID: <20250114112915.610297-1-pvorel@suse.cz>
+Subject: [PATCH v3 03/10] IMA: Move requirement check to ima_setup.sh
+Date: Tue, 14 Jan 2025 12:29:08 +0100
+Message-ID: <20250114112915.610297-4-pvorel@suse.cz>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20250114112915.610297-1-pvorel@suse.cz>
+References: <20250114112915.610297-1-pvorel@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -80,81 +50,100 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
 X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Spam-Score: -4.00
 X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 3C9A62117D
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 
-Changes v2->v3:
-* Rewrite verifying logic if policy needs to be loaded and how it is
-  loaded.
-* Allow testing when policy is not reliable, but relax failures to TCONF.
-* Add TCB policy example.
-* Document LTP_IMA_LOAD_POLICY in doc/users/setup_tests.rst.
-* Fix test policy installation (previously wrong Makefile).
-* Removed some of the previous commits ("ima_kexec.sh: Relax result on
-  unreadable policy to TCONF", "ima_violations.sh: Check for a required policy",
-  "ima_setup: Print warning when policy not readable").
-* More cleanup.
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
+ .../kernel/security/integrity/ima/tests/evm_overlay.sh      | 3 +--
+ .../kernel/security/integrity/ima/tests/ima_measurements.sh | 6 +++---
+ testcases/kernel/security/integrity/ima/tests/ima_setup.sh  | 6 +++++-
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-TODO: ima_measurements.sh and ima_violations.sh use detection for
-ima_policy=tcb builtin policy. But if example policy is loaded there is
-no longer tcb policy. Not sure how to fix it - some tooling might not
-support reboot, thus I wanted to use ima_policy=tcb, which previously
-worked.
-
-Petr Vorel (10):
-  ima_violations.sh: Fix log detection
-  IMA: Add TCB policy as an example for ima_measurements.sh
-  IMA: Move requirement check to ima_setup.sh
-  IMA: Add example policy for ima_violations.sh
-  IMA: Read required policy from file
-  ima_violations.sh: Declare tcb builtin policy
-  ima_setup.sh: Add digest index detection for ima-buf format
-  ima_setup.sh: Allow to load predefined policy
-  ima_measurements.sh: Check policy for test3
-  tst_test.sh: IMA: Allow to disable LSM warnings and use it for IMA
-
- doc/users/setup_tests.rst                     |   3 +
- .../kernel/security/integrity/ima/README.md   |  12 ++
- .../security/integrity/ima/datafiles/Makefile |   4 +-
- .../ima/datafiles/ima_measurements/Makefile   |  11 ++
- .../ima/datafiles/ima_measurements/tcb.policy |  20 +++
- .../ima/datafiles/ima_violations/Makefile     |  11 ++
- .../ima_violations/violations.policy          |   2 +
- .../integrity/ima/tests/evm_overlay.sh        |   3 +-
- .../security/integrity/ima/tests/ima_kexec.sh |  20 +--
- .../security/integrity/ima/tests/ima_keys.sh  |  48 ++-----
- .../integrity/ima/tests/ima_measurements.sh   |  19 ++-
- .../integrity/ima/tests/ima_selinux.sh        |  23 ++-
- .../security/integrity/ima/tests/ima_setup.sh | 135 +++++++++++++++---
- .../integrity/ima/tests/ima_violations.sh     |  15 +-
- testcases/lib/tst_test.sh                     |   4 +-
- 15 files changed, 235 insertions(+), 95 deletions(-)
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_measurements/Makefile
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_measurements/tcb.policy
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_violations/Makefile
- create mode 100644 testcases/kernel/security/integrity/ima/datafiles/ima_violations/violations.policy
-
+diff --git a/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh b/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh
+index 12b2a28c25..6a48f63aaa 100755
+--- a/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh
++++ b/testcases/kernel/security/integrity/ima/tests/evm_overlay.sh
+@@ -9,6 +9,7 @@
+ TST_SETUP="setup"
+ TST_CLEANUP="cleanup"
+ TST_CNT=4
++REQUIRED_BUILTIN_POLICY="appraise_tcb"
+ 
+ setup()
+ {
+@@ -17,8 +18,6 @@ setup()
+ 	[ -f "$EVM_FILE" ] || tst_brk TCONF "EVM not enabled in kernel"
+ 	[ $(cat $EVM_FILE) -eq 1 ] || tst_brk TCONF "EVM not enabled for this boot"
+ 
+-	require_ima_policy_cmdline "appraise_tcb"
+-
+ 	lower="$TST_MNTPOINT/lower"
+ 	upper="$TST_MNTPOINT/upper"
+ 	work="$TST_MNTPOINT/work"
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+index 1da2aa6a51..ca9d73b4aa 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
+@@ -1,19 +1,19 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2009 IBM Corporation
+-# Copyright (c) 2018-2021 Petr Vorel <pvorel@suse.cz>
++# Copyright (c) 2018-2025 Petr Vorel <pvorel@suse.cz>
+ # Author: Mimi Zohar <zohar@linux.ibm.com>
+ #
+ # Verify that measurements are added to the measurement list based on policy.
++# Test requires ima_policy=tcb.
+ 
+ TST_NEEDS_CMDS="awk cut sed"
+ TST_SETUP="setup"
+ TST_CNT=3
++REQUIRED_BUILTIN_POLICY="tcb"
+ 
+ setup()
+ {
+-	require_ima_policy_cmdline "tcb"
+-
+ 	TEST_FILE="$PWD/test.txt"
+ 	[ -f "$IMA_POLICY" ] || tst_res TINFO "not using default policy"
+ }
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+index fc0e769729..2a578ceb45 100644
+--- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
+@@ -1,7 +1,7 @@
+ #!/bin/sh
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2009 IBM Corporation
+-# Copyright (c) 2018-2020 Petr Vorel <pvorel@suse.cz>
++# Copyright (c) 2018-2025 Petr Vorel <pvorel@suse.cz>
+ # Author: Mimi Zohar <zohar@linux.ibm.com>
+ 
+ TST_TESTFUNC="test"
+@@ -180,6 +180,10 @@ ima_setup()
+ 		cd "$TST_MNTPOINT"
+ 	fi
+ 
++	if [ "$REQUIRED_BUILTIN_POLICY" ]; then
++		require_ima_policy_cmdline "$REQUIRED_BUILTIN_POLICY"
++	fi
++
+ 	[ -n "$TST_SETUP_CALLER" ] && $TST_SETUP_CALLER
+ }
+ 
 -- 
 2.47.1
 
