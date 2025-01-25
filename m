@@ -1,137 +1,107 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5FB1EEA33;
-	Fri, 24 Jan 2025 22:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193031E480;
+	Sat, 25 Jan 2025 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737759361; cv=none; b=ly4hUNcTTzEwA1RJFq0QJuq5x9CHH2vTHb2UYpjecfSFxTjmv3inttUWM5i9rkKCKpb/NCPf3ysd0+adVLj5xZCFzj4oX1JElCz3pBA9H1ggBxEAZOeZYBHg56DHLym/p01KEj9KK7eYSHEIGbih69Et/j5QaRK1gMllyX7u4YU=
+	t=1737795529; cv=none; b=J/Er5AHVA+WzipE7wRRpuyx3iiRxsOlRQfbvE3UVJmojxkRctcDDlF55fPnr0zMSz8Ss5px9lzOIXtZdH959EYynWthsmHPsrQ6unrjFUh0DRq7iU7FV2bdRIgAg4sKJcvUPbkf/tcxyw/IZ20Cp8o9RCJNtFJ8s/tIOfADuaxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737759361; c=relaxed/simple;
-	bh=jn33izLaF7k8JTTLeThaIMhJzaisLVYTCVaFAQihJ4o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qEgRFsjbEAYLkATQHrUofUltHs6z918SimMq1JNyKXqkQma49OU6+KFwaB7L4lBCtBntPSIPqLWmKZZtsPe3PPWpbBX1LD7ItqxFCYW/3XCIP2Tmbm9tHMon4KeJ67N/LUaP0Q7MtnWFOo55i1oOJ2XSPGVMEErscGKZTL3OIfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hclP+hYP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1737795529; c=relaxed/simple;
+	bh=TFLJTGQH+IfghEQHwQQQY305r9PjDiYbPFl+QY0G8IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uxt4cTAD6xK35XhyBKi7ZhR/A7k/MOTCdFzYUqHhrhLSIltR+2Ln9II0D/VPl2QlepGOpH1FdJvGxFUpFM+l+nB55IBEA2wSB7Rd3x64+BS07bw4/FLkKdnAnGBt0Z6qylSnKf0UMVnZyXWj9raqWW4Az2kryxSUyS/QQxMif7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1/0iT90; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hclP+hYP"
-Received: from localhost.localdomain (unknown [167.220.59.4])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 68750210D0DA;
-	Fri, 24 Jan 2025 14:55:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 68750210D0DA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1737759357;
-	bh=geSM+tomMYqqRJERm+x35GcWFvYZOAcnOC3d66dp8xI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hclP+hYPoyj8XW/nWcBq7fLgSVGucxR0CRqhP1mEID5bUbhwVJ5PAAcjIymWRpwDb
-	 bCQnWYqibvGvsk8Yz8MYggbGJl4IG3uGKY4IVhxl99lbuejikpUD3e2KL1WjrfroWQ
-	 8ynRjfPMnV8w1+725wWfVG/EfcOcLZ7jhj3+cwdo=
-From: steven chen <chenste@linux.microsoft.com>
-To: zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	petr@tesarici.cz,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	code@tyhicks.com,
-	nramas@linux.microsoft.com,
-	James.Bottomley@HansenPartnership.com,
-	madvenka@linux.microsoft.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenste@linux.microsoft.com
-Subject: [PATCH v6 6/7] ima: make the kexec extra memory configurable
-Date: Fri, 24 Jan 2025 14:55:46 -0800
-Message-Id: <20250124225547.22684-7-chenste@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250124225547.22684-1-chenste@linux.microsoft.com>
-References: <20250124225547.22684-1-chenste@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1/0iT90"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361c705434so20061025e9.3;
+        Sat, 25 Jan 2025 00:58:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737795525; x=1738400325; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lmwGPPNzlJtZJRego8Mf9GW0LIkhJZd2o2VD3LR/nh0=;
+        b=B1/0iT90/KZw/gYnr1vrwyXLLG3cX0YDWoBDg7VDuDoxplAIbdf3gOUK7vL/JzWvmh
+         kTlJHZVJz24IxpXa4cxnAm3Tv6iHg0U/qkDXORjtcBLyYsRXSU1+xh+AEszdUIKQlXDe
+         4ZWWlbKjZCM+dWpBHXI5k7lcFhCRj6MjjKPmh4cLtzu074lLR7+32EmTiCVKlWHl5q3e
+         gxuaslm84xqAe83cC7rUnSiHNHY2wYHzgOzPnW16SZtVbhh9cvPbR6bjhawB5FFYU99i
+         4SNQWyDCBopof2aqwK8iwDkZz/nsRytbDipJnLeTRamZxdIv23vJEaROKFwA9jY8wvep
+         ff/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737795525; x=1738400325;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lmwGPPNzlJtZJRego8Mf9GW0LIkhJZd2o2VD3LR/nh0=;
+        b=A1PFHmq3BAlOOvWRZsiq2WVFxjZqLCknApIARLzfqGcRMBZQb0XN2Yu+bU38BvTpM5
+         c+Swv2lN5Cn/3XRFvEfsSNgWAFcfMm+8t9YyE0NRFB0hP7u026Gn36WOlOO4ZDQvbxqH
+         o1cwsWXMCzFjNdoLgoxJhXrEX9dUyUSo73n8ag/tutnUgOWqH2Ml3xZNx/RAN6VFXkrQ
+         2ZW1m00oLfxsMD7Vaev7qAzZRiBVt3kqjjCQehNUyt5tEni3PrHgOMzAmAMtgGrqmTdc
+         zxAdmkklLOikO0ptiPPMSK7LkKavnbFpGd17qFXMf5mjgcvAWh4nBiPqa7AGpZo74YkE
+         l+LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4hlghrB7qPQS/30NX+YFEQipgaqlB4TECPYhvTeZ6rQig7/TZlTz9I0Zd8JmjpC3FDFoTd0WpxV3pj1E=@vger.kernel.org, AJvYcCVs0bsXC/vzPQVfjuO5tC0AyIITkUEF4H5+/lk+9/i5mL4I+UYkffsYfZFeFgaTWapVVXy31woUltxNscY+KSkH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8eyUirOvsgqwxaF4iXx++YPJ9Bnore6JwTzC9WKwoZ3Aga6x/
+	/F1aHcyRUXMWa5xQ6ZsTvctq+98S2AJuIa+egBzqHXiH6BuoCMxE
+X-Gm-Gg: ASbGncuM3QYl5lZ94XXIq30l72P1BG7eWSs4/oZskjlzGoLpRydkyu4WvdecLpc7Oj8
+	naYmdiUsznWNqbg35kcjZ9Kt99hubVSFI7dEFrfAmIvRQ423/BC1APUe0yqWc9YczCXrxj2T/MB
+	X3HDp7T9ZzVe8R6rsxZsDWoYcjVIwV9X8UR/mBaNVKq4HmPaE01HCfAT80ZPukzr+WjXokQmwLa
+	TGjyIViNV5NhtWAIYiKtEQkdEzb+uOJX/HtD91fPXwPK5ecXtyfa6Z44KCDyfkxxyX+YAwnRHHR
+	N0CoWk0XhPq09EK1Dcfiaw==
+X-Google-Smtp-Source: AGHT+IEkPmayOMbCgrecuRx9ckGS5dq3Zg+z1tS6+pEg63yu93KOXX9JemlG6tTnhvFbmGOVqkBuQA==
+X-Received: by 2002:a05:600c:510c:b0:434:a1e7:27b0 with SMTP id 5b1f17b1804b1-438913ccd4amr387244395e9.11.1737795525059;
+        Sat, 25 Jan 2025 00:58:45 -0800 (PST)
+Received: from [192.168.1.14] ([197.63.236.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd54c0ecsm54661695e9.30.2025.01.25.00.58.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 Jan 2025 00:58:44 -0800 (PST)
+Message-ID: <518c6b84-63f0-4192-89a1-af0e8000318c@gmail.com>
+Date: Sat, 25 Jan 2025 10:58:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: tpm2: create a dedicated .gitignore
+To: Jarkko Sakkinen <jarkko@kernel.org>, peterhuewe@gmx.de, jgg@ziepe.ca,
+ shuah@kernel.org
+Cc: linux-integrity@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250122065021.91814-1-khaledelnaggarlinux@gmail.com>
+ <D79CVJJBY9KX.23K6C7S5BU8AV@kernel.org>
+ <d7c0995d-5159-47a8-9193-d9d29fdfeea0@gmail.com>
+ <D7AG8K6T8KRI.LZFD4J6OFGGZ@kernel.org>
+ <D7AGBYQ5T2P2.3L3HM84HUCS1V@kernel.org>
+Content-Language: en-US
+From: Khaled Elnaggar <khaledelnaggarlinux@gmail.com>
+In-Reply-To: <D7AGBYQ5T2P2.3L3HM84HUCS1V@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The extra memory allocated for carrying the IMA measurement list across
-kexec is hard-coded as half a PAGE.  Make it configurable.
+On 1/24/25 6:42 PM, Jarkko Sakkinen wrote:
 
-Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
-extra memory (in kb) to be allocated for IMA measurements added during
-kexec soft reboot.  Ensure the default value of the option is set such
-that extra half a page of memory for additional measurements is allocated
-for the additional measurements.
+> Shortest ever commit message tutorial:
+> 
+> 1. Problem
+> 2. Motivation
+> 3. Solution with explanation how it will map on addressing the problem.
+> 
+> Do this for every possible commit and you will get it right 99%
+> of time. I can admit that even today I don't always get this myself
+> fully right but I try my best ;-) That does not mean you could not
+> do better than me.
+> 
+> And generally, depending on subsystem tho, people usually feel more
+> confortable with "imperative form" rather than "science paper" form.
+> 
+> BR, Jarkko
 
-Update ima_add_kexec_buffer() function to allocate memory based on the
-Kconfig option value, rather than the currently hard-coded one.
+Ah great, thank you for the review the tutorial.
+Hopefully, I will do better in v3 :)
 
-From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Signed-off-by: steven chen <chenste@linux.microsoft.com>
----
- security/integrity/ima/Kconfig     | 10 ++++++++++
- security/integrity/ima/ima_kexec.c | 16 ++++++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 475c32615006..7dd2ed8b2cdc 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
- 	help
- 	   This option disables htable to allow measurement of duplicate records.
- 
-+config IMA_KEXEC_EXTRA_MEMORY_KB
-+	int
-+	depends on IMA_KEXEC
-+	default 0
-+	help
-+	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-+	  allocated (in kb) for IMA measurements added during kexec soft reboot.
-+	  If set to the default value, an extra half a page of memory for those
-+	  additional measurements will be allocated.
-+
- endif
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index d5f004cfeaec..c9c916f69ca7 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -128,22 +128,26 @@ void ima_add_kexec_buffer(struct kimage *image)
- 				  .buf_min = 0, .buf_max = ULONG_MAX,
- 				  .top_down = true };
- 	unsigned long binary_runtime_size;
--
-+	unsigned long extra_size;
- 	/* use more understandable variable names than defined in kbuf */
- 	void *kexec_buffer = NULL;
- 	size_t kexec_buffer_size = 0;
- 	int ret;
- 
- 	/*
--	 * Reserve an extra half page of memory for additional measurements
--	 * added during the kexec load.
-+	 * Reserve extra memory for measurements added during kexec.
- 	 */
--	binary_runtime_size = ima_get_binary_runtime_size();
-+	if (CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB <= 0)
-+		extra_size = PAGE_SIZE / 2;
-+	else
-+		extra_size = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
-+	binary_runtime_size = ima_get_binary_runtime_size() + extra_size;
-+
- 	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
- 		kexec_segment_size = ULONG_MAX;
- 	else
--		kexec_segment_size = ALIGN(ima_get_binary_runtime_size() +
--					   PAGE_SIZE / 2, PAGE_SIZE);
-+		kexec_segment_size = ALIGN(binary_runtime_size, PAGE_SIZE);
-+
- 	if ((kexec_segment_size == ULONG_MAX) ||
- 	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
- 		pr_err("Binary measurement list too large.\n");
--- 
-2.25.1
-
+Many thanks,
+Khaled
