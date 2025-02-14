@@ -1,22 +1,22 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533ED53BE;
-	Fri, 14 Feb 2025 00:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C659CCA4E;
+	Fri, 14 Feb 2025 00:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739492878; cv=none; b=D8dgTlkzT5dvD5jlVSAEYAxWlm3zOFFg14nAQI7m/08F5Lp5QJUNDvmmSZTQsYjpJSvSpka+rwljU75/i5OLasQnbxj/7BF70qf8EixhPk0frJCm7OTrMKOXNMnFx6+zf/53H+S9Mq8hSNNXJVml7+Fe9Pu1UjcX7s1yEeQhoRU=
+	t=1739492880; cv=none; b=qWdhxj53AIYhvGjPOgtNkYhRJ3jpQvYIQmf/Q7xrBTDkYdoeJ8rwQ0/zdnCyfhK+ykQG2l4Viyu2pDClOEFA0FsF2BaJru5MKHA3nmT7YrXLodK6Y7goMAalpT3z32VltFe8Fy1uMhgd5y4wrbGinLH1mDl+OTxMXPfLcrhpoHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739492878; c=relaxed/simple;
-	bh=erurvnKCndlcZUUX0TdrNA0ewd1gfKnrKe9z/7uPwPA=;
+	s=arc-20240116; t=1739492880; c=relaxed/simple;
+	bh=jUSUz00ESf+S26jtK/k3pKofGf7cV8jQzbW7nQEsROM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bklr+JqnqOLjKgwHqEuUZcs5wBI5sEIfI1viDcFno9Yv4t2QmCTnCNJ/RRrz0KkxzazuF5p2AT5uD1emrX04BUnQJzIzLl3I45AwWbuEGOjrlGpjBCXzV7VBHU4FsCvrQi78E47Cem5Tu+X+mWPsZXDIj2XtCqoihjL+2vt9Gik=
+	 MIME-Version; b=l+FCfgNwqQRqCBXwsOJ4aUerSjut7UNXHrQ2T0k6GytsU5o34NwA78L/8bKTdFI/nLfYUu+1dHSHeCkYSKjzw7lNyPZoqJ8QmqiS2P7uff9cM4sK0WqDkJRY/EOz6I7hLgkjmfD5ewfr1WrMoAwhZKE1FMpee8dTMRZEuQgbJFs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 427151AED;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 855F4271B;
 	Thu, 13 Feb 2025 16:28:16 -0800 (PST)
 Received: from beelzebub.ast.arm.com (u203013-lin.austin.arm.com [10.118.28.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B089C3F5A1;
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F37613F762;
 	Thu, 13 Feb 2025 16:27:55 -0800 (PST)
 From: Stuart Yoder <stuart.yoder@arm.com>
 To: linux-integrity@vger.kernel.org,
@@ -28,9 +28,9 @@ To: linux-integrity@vger.kernel.org,
 	lenb@kernel.org
 Cc: linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] tpm_crb: refactor check for idle support into TPM into inline function
-Date: Thu, 13 Feb 2025 18:27:42 -0600
-Message-Id: <20250214002745.878890-3-stuart.yoder@arm.com>
+Subject: [PATCH v3 5/5] Documentation: tpm: add documentation for the CRB FF-A interface
+Date: Thu, 13 Feb 2025 18:27:45 -0600
+Message-Id: <20250214002745.878890-6-stuart.yoder@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250214002745.878890-1-stuart.yoder@arm.com>
 References: <20250214002745.878890-1-stuart.yoder@arm.com>
@@ -42,57 +42,86 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Refactor the two checks for whether the TPM supports idle into a single
-inline function.
+Add documentation providing details of how the CRB driver interacts
+with FF-A.
 
 Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
 ---
- drivers/char/tpm/tpm_crb.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ Documentation/security/tpm/tpm_ffa_crb.rst | 65 ++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
 
-diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
-index ea085b14ab7c..d696226906a2 100644
---- a/drivers/char/tpm/tpm_crb.c
-+++ b/drivers/char/tpm/tpm_crb.c
-@@ -115,6 +115,16 @@ struct tpm2_crb_pluton {
- 	u64 reply_addr;
- };
- 
-+static inline bool tpm_crb_has_idle(u32 start_method)
-+{
-+	if ((start_method == ACPI_TPM2_START_METHOD) ||
-+	    (start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
-+	    (start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC))
-+		return false;
-+	else
-+		return true;
-+}
+diff --git a/Documentation/security/tpm/tpm_ffa_crb.rst b/Documentation/security/tpm/tpm_ffa_crb.rst
+new file mode 100644
+index 000000000000..0184193da3c7
+--- /dev/null
++++ b/Documentation/security/tpm/tpm_ffa_crb.rst
+@@ -0,0 +1,65 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
- 				unsigned long timeout)
- {
-@@ -173,9 +183,7 @@ static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
- {
- 	int rc;
- 
--	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
--	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
--	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC))
-+	if (!tpm_crb_has_idle(priv->sm))
- 		return 0;
- 
- 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
-@@ -222,9 +230,7 @@ static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
- {
- 	int rc;
- 
--	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
--	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
--	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC))
-+	if (!tpm_crb_has_idle(priv->sm))
- 		return 0;
- 
- 	iowrite32(CRB_CTRL_REQ_CMD_READY, &priv->regs_t->ctrl_req);
++========================
++TPM CRB over FF-A Driver
++========================
++
++The TPM Command Response Buffer (CRB) interface is a standard TPM interface
++defined in the TCG PC Client Platform TPM Profile (PTP) Specification [1]_.
++The CRB provides a structured set of control registers a client uses when
++interacting with a TPM as well as a data buffer for storing TPM commands and
++responses. A CRB interface can be implemented in:
++
++- hardware registers in a discrete TPM chip
++
++- in memory for a TPM running in isolated environment where shared memory
++  allows a client to interact with the TPM
++
++The Firmware Framework for Arm A-profile (FF-A) [2]_ is a specification
++that defines interfaces and protocols for the following purposes:
++
++- Compartmentalize firmware into software partitions that run in the Arm
++  Secure world environment (also know as TrustZone)
++
++- Provide a standard interface for software components in the Non-secure
++  state, for example OS and Hypervisors, to communicate with this firmware.
++
++A TPM can be implemented as an FF-A secure service.  This could be a firmware
++TPM or could potentially be a TPM service that acts as a proxy to a discrete
++TPM chip. An FF-A based TPM abstracts hardware details (e.g. bus controller
++and chip selects) away from the OS and can protect locality 4 from access
++by an OS.  The TCG-defined CRB interface is used by clients to interact
++with the TPM service.
++
++The Arm TPM Service Command Response Buffer Interface Over FF-A [3]_
++specification defines FF-A messages that can be used by a client to signal
++when updates have been made to the CRB.
++
++How the Linux CRB driver interacts with FF-A is summarized below:
++
++- The tpm_crb_ffa driver registers with the FF-A subsystem in the kernel
++  with an architected TPM service UUID defined in the CRB over FF-A spec.
++
++- If a TPM service is discovered by FF-A, the probe() function in the
++  tpm_crb_ffa driver runs, and the driver initializes.
++
++- The probing and initialization of the Linux CRB driver is triggered
++  by the discovery of a TPM advertised via ACPI.  The CRB driver can
++  detect the type of TPM through the ACPI 'start' method.  The start
++  method for Arm FF-A was defined in TCG ACPI v1.4 [4]_.
++
++- When the CRB driver performs its normal functions such as signaling 'start'
++  and locality request/relinquish it invokes the tpm_crb_ffa_start() funnction
++  in the tpm_crb_ffa driver which handles the FF-A messaging to the TPM.
++
++References
++==========
++
++.. [1] **TCG PC Client Platform TPM Profile (PTP) Specification**
++   https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
++.. [2] **Arm Firmware Framework for Arm A-profile (FF-A)**
++   https://developer.arm.com/documentation/den0077/latest/
++.. [3] **Arm TPM Service Command Response Buffer Interface Over FF-A**
++   https://developer.arm.com/documentation/den0138/latest/
++.. [4] **TCG ACPI Specification**
++   https://trustedcomputinggroup.org/resource/tcg-acpi-specification/
 -- 
 2.34.1
 
