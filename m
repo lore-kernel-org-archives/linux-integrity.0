@@ -1,21 +1,22 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A21523A;
-	Fri, 14 Feb 2025 00:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A1563B9;
+	Fri, 14 Feb 2025 00:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739492878; cv=none; b=attrYDpG+nqSTTjuL6E0G67puGu4I3qt7CZU9DERlA24YRFTgWiZapncE2cxWu5t6jcICD77u5gULP7B3W8JGT8/pXXBOqzttggBzJLSDUzMTHFgXcThPqmNa8Xi9fFvkOIRz9JCMsqtm1mD4R+AB3QH3hvB/JavrKhipxTysZA=
+	t=1739492878; cv=none; b=ab4NAED82ywLgfAj4TmJrYw3+Yj+KW+eLDjt7RVTriEjw30L6am+GMsAATAkOF/fY5smRnLpyCJz7pqpss/4yh42c++M5L63S5Wbd/TOtMw25HxUpJ/H8OywN5+D3eXKvRuc2tf/KIuhX8tEBzUpsUdk9YOhTwUqoXDJzP8cq4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1739492878; c=relaxed/simple;
-	bh=WeL1LHcc8sEkQPzhMSDaIxJt+tn9CF57Rhk1EpDs/bc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hh6s6nl+ZKrmZkS8cF+o56trvCcNvB9YV0B+FPBoRvvAqL9kzwbopP5OYjpuGGSKkfLFY9sq05HAiFoj/BRDKFRihczHnmOWEEdotreTl5up5FP+LqvQNAYSqao+C5/f5Jbv1+ee0sPPHpctFNud5+oOHn6kOq6lgVqDT4uAHCI=
+	bh=SvYIUsvI5FBjGU4eAJImdjcnKIvJmowA4jxSaBrpb2Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qymrn9Oex5PGV3G0YedwfJ61X6pLD0ovDk0TDYdNJDGrHkLfaJpUwWJvHzuyyPVQIxF1GuFC1AZ4COxHGKN8S4QygkqWFyO/yvbhAC8W7jP+RpOqMIVMcq1zfObxBtjvOD2Pn+q3vw4hB7UKmhEpEy5b0zMsbwOMaV8u0HkzsAM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19153113E;
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E6B41E2F;
 	Thu, 13 Feb 2025 16:28:16 -0800 (PST)
 Received: from beelzebub.ast.arm.com (u203013-lin.austin.arm.com [10.118.28.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 83B143F5A1;
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C3ADC3F762;
 	Thu, 13 Feb 2025 16:27:55 -0800 (PST)
 From: Stuart Yoder <stuart.yoder@arm.com>
 To: linux-integrity@vger.kernel.org,
@@ -27,10 +28,12 @@ To: linux-integrity@vger.kernel.org,
 	lenb@kernel.org
 Cc: linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/5] Add support for the TPM FF-A start method
-Date: Thu, 13 Feb 2025 18:27:40 -0600
-Message-Id: <20250214002745.878890-1-stuart.yoder@arm.com>
+Subject: [PATCH v3 3/5] ACPICA: add start method for Arm FF-A
+Date: Thu, 13 Feb 2025 18:27:43 -0600
+Message-Id: <20250214002745.878890-4-stuart.yoder@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250214002745.878890-1-stuart.yoder@arm.com>
+References: <20250214002745.878890-1-stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -39,62 +42,27 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Firmware Framework for Arm A-profile (FF-A) is a messaging framework
-for Arm-based systems, and in the context of the TPM CRB driver is used
-to signal 'start' to a CRB-based TPM service which is hosted in an
-FF-A secure partition running in TrustZone.
+Add TPM start method for Arm FF-A defined in the TCG ACPI
+specification v1.4.
 
-These patches add support for the CRB FF-A start method defined
-in the TCG ACPI specification v1.4 and the FF-A ABI defined
-in the Arm TPM Service CRB over FF-A (DEN0138) specification:
-https://developer.arm.com/documentation/den0138/latest/
+Link: https://github.com/acpica/acpica/pull/1000
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+---
+ include/acpi/actbl3.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-The first patch adds an FF-A driver to handle the FF-A messaging when
-communicating with a CRB-based TPM secure partition built on FF-A.
-The driver is probed when the TPM secure partition is discovered by
-the Linux FF-A infrastructure.
-
-The second patch consolidates the check for idle support in the CRB
-driver to one place.
-
-The third patch defines the new ACPI start method enumeration for
-CRB over FF-A.
-
-The fourth patch adds support for the FF-A ACPI start method to
-the TPM crb driver.
-
-The fifth patch adds documentation explaining how the CRB driver
-and FF-A relate.
-
-Version 3
--changed prefixes used throughout patch series to tpm_crb_ffa*
-
-Version 2
--updates to cover letter to define FF-A
--added new patch with documentation
--created pull request in ACPIA and added link to the patch
- updating actbl3.h
--added tpm_ prefix to the FF-A CRB driver
-
-Stuart Yoder (5):
-  tpm_crb: implement driver compliant to CRB over FF-A
-  tpm_crb: refactor check for idle support into TPM into inline function
-  ACPICA: add start method for Arm FF-A
-  tpm_crb: add support for the Arm FF-A start method
-  Documentation: tpm: add documentation for the CRB FF-A interface
-
- Documentation/security/tpm/tpm_ffa_crb.rst |  65 +++++
- drivers/char/tpm/Kconfig                   |   9 +
- drivers/char/tpm/Makefile                  |   1 +
- drivers/char/tpm/tpm_crb.c                 |  81 +++++-
- drivers/char/tpm/tpm_crb_ffa.c             | 310 +++++++++++++++++++++
- drivers/char/tpm/tpm_crb_ffa.h             |  30 ++
- include/acpi/actbl3.h                      |   1 +
- 7 files changed, 491 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
- create mode 100644 drivers/char/tpm/tpm_crb_ffa.c
- create mode 100644 drivers/char/tpm/tpm_crb_ffa.h
-
+diff --git a/include/acpi/actbl3.h b/include/acpi/actbl3.h
+index 5cd755143b7d..a97b1dbab975 100644
+--- a/include/acpi/actbl3.h
++++ b/include/acpi/actbl3.h
+@@ -466,6 +466,7 @@ struct acpi_tpm2_phy {
+ #define ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC       11	/* V1.2 Rev 8 */
+ #define ACPI_TPM2_RESERVED                          12
+ #define ACPI_TPM2_COMMAND_BUFFER_WITH_PLUTON        13
++#define ACPI_TPM2_CRB_WITH_ARM_FFA                  15
+ 
+ /* Optional trailer appears after any start_method subtables */
+ 
 -- 
 2.34.1
 
