@@ -1,157 +1,114 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806FB21D00A
-	for <linux-integrity@vger.kernel.org>; Mon, 17 Feb 2025 14:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09998225405;
+	Mon, 17 Feb 2025 15:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739802936; cv=none; b=qmpQXHTmasY5PcthSMckivNzIRc6Uuba2HNoMffk80kufWSLddQ2hKcIXK8M0e4KRJt3Z/wRK610rkE0kZjB4vI0UMhQZoiqXgAdYaMej4VIVIr8OVWK6Yx5G5M9ka0fgROxyuEMGT5RB/yTGJ0a3Q1IYUw1VSG107UYP8TkxqA=
+	t=1739807607; cv=none; b=Kdhbgtab1rIZs7s7uowSOuy+gIn92K4/7xR6+UgtcTyNDFLnNV/Nj//QpgyY4ziZlXfaVwg8TwXEjA7jclznqh70d8RiUrIqr3Y9CEGvUg+IUKplDVn8V9OT/efUcDO+F1e4wllyFlhBQRJ7smEpJwb6o7l0ds8PIiUYRAkGPjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739802936; c=relaxed/simple;
-	bh=HMCm0RJqs2yno8N3OQ3jjLN+OFLaPtEq0yPrNipTkCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Urp0v+rj7iWkF2D0aAr5/V/yr5KlY9XIJUpjASLhYz43bIUnYB9L7yaEn74M+SbeMKTtv805GnTXCiHAivWMea6z1vJ/vMx3j4mYqjKJcsEij+s574+U3ltn5qyZSl9txY9EFVF9oRqKg4lzkB8MbOIYN3VLgsweF2gsPNwSvrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=fail smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p5J/3NL4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iDW3cZzd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WVpaqwGu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yL5Tndyt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p5J/3NL4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iDW3cZzd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WVpaqwGu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yL5Tndyt"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B82E721172;
-	Mon, 17 Feb 2025 14:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739802933;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osH2yIRMon3beHg6dXYC4bmmZJF07X2KmM7uMOrspS0=;
-	b=p5J/3NL4KxRExSu5gXw9fY5EhB69r+6uyAOv3qQe7EDPjk5ydAymqLhW8jf+zgtGff56DO
-	t6YzJFn9m6cpK5jy8kabAr3G4Km7YuSasLy5CmbHOm0fADon/2UumYW9BXznOgh9m772ns
-	c3X+QapQgRIqhJNbkIX78dNmbZAZdNM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739802933;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osH2yIRMon3beHg6dXYC4bmmZJF07X2KmM7uMOrspS0=;
-	b=iDW3cZzdBu3Ru0iJRxUyyiGtoGckCIsWvzLX1NsvMQ3aK7PM1XSv3snufF2HFfBstFsFMl
-	SOdaXooVmDz9tLDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739802932;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osH2yIRMon3beHg6dXYC4bmmZJF07X2KmM7uMOrspS0=;
-	b=WVpaqwGuBuD3c0X65i7vW7Kd14WqlbO+OIXCdXwjCFTsOYO2uASdUyKGOUmEVkIhYKY31j
-	RU3rX1zsoGzwH+s/qH+fIfyKR4WUURcfl3I5urgydfzm4JgzGEw6iaZz26s2faFMtxqL62
-	KDXy3XyOOIlUYNbaavG9eEfWFq4RHJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739802932;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=osH2yIRMon3beHg6dXYC4bmmZJF07X2KmM7uMOrspS0=;
-	b=yL5TndytC1khoRo/jPtRiT8GsVKSJu46g2k5sbvYs2Yiq8hQxcGWG2Oe6O7Qc1l53QhnQJ
-	3EAn/t7s46iaBPAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 972E6133F9;
-	Mon, 17 Feb 2025 14:35:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CjBmIzRJs2eBJgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Mon, 17 Feb 2025 14:35:32 +0000
-Date: Mon, 17 Feb 2025 15:35:26 +0100
-From: Petr Vorel <pvorel@suse.cz>
-To: Andrea Cervesato <andrea.cervesato@suse.com>
-Cc: ltp@lists.linux.it, linux-integrity@vger.kernel.org
-Subject: Re: [LTP] [PATCH 1/2] tst_security.sh: Fix SELinux detection
-Message-ID: <20250217143526.GA2402962@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20250217130839.2392666-1-pvorel@suse.cz>
- <f8d6c3fd-7b1d-4d16-b034-a2b01f956870@suse.com>
+	s=arc-20240116; t=1739807607; c=relaxed/simple;
+	bh=Gb9tT7GHGhrsX9hN/sCMCBb5o0oWmHYRnrWf2XeKYCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VXqZVOsX5/5jEG99+dmZzSqiaOnv5kgbtHrjUAugYWtusHXyK+pgILTNSly5Jl4G1uLcQTAXP+zzmgZL7awulcq/y+ZfiaZreqjaTMqGmQrXRFkmVMIsEjTy33ls0Uf0bNVl4NW2gTRTFZdtVhq85c21DGT7v3jThJNH7AygLKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 951CB152B;
+	Mon, 17 Feb 2025 07:53:44 -0800 (PST)
+Received: from [10.122.18.64] (unknown [10.122.18.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 380AD3F5A1;
+	Mon, 17 Feb 2025 07:53:25 -0800 (PST)
+Message-ID: <195bc518-a20a-487f-b1ad-e83ca9ed5630@arm.com>
+Date: Mon, 17 Feb 2025 09:53:24 -0600
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8d6c3fd-7b1d-4d16-b034-a2b01f956870@suse.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:replyto];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Score: -3.50
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] tpm_crb: implement driver compliant to CRB over
+ FF-A
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+ sudeep.holla@arm.com, rafael@kernel.org, lenb@kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250214002745.878890-1-stuart.yoder@arm.com>
+ <20250214002745.878890-2-stuart.yoder@arm.com> <Z670QLo_FefvuNb8@kernel.org>
+Content-Language: en-US
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <Z670QLo_FefvuNb8@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Andrea,
 
-> Hi!
+>> +int tpm_crb_ffa_init(void)
+>> +{
+>> +	if (tpm_crb_ffa == NULL)
+>> +		return -ENOENT;
+>> +
+>> +	if (IS_ERR_VALUE(tpm_crb_ffa))
+>> +		return -ENODEV;
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL_GPL(tpm_crb_ffa_init);
+> 
+> Should be documented given export [1].
 
-Thanks for your review, merged as a needed fix.
+Ack.
 
-Kind regards,
-Petr
+> 
+>> +
+>> +static int __tpm_crb_ffa_send_recieve(unsigned long func_id,
+>> +		unsigned long a0, unsigned long a1, unsigned long a2)
+>> +{
+>> +	int ret;
+>> +	const struct ffa_msg_ops *msg_ops;
+> 
+> Reverse tree-order would be easier for brain.
 
-> Reviewed-by: Andrea Cervesato <andrea.cervesato@suse.com>
+Ack.
 
-> On 2/17/25 14:08, Petr Vorel wrote:
-> > Some SLES15 versions create /selinux directory which fails the detection
-> > if SELinux is actually not enabled. Therefore detect if directory
-> > actually contains the 'enforce' file.
+>> +
+>> +	if (tpm_crb_ffa == NULL)
+> 
+> You probably did not run checkpatch.pl with '--strict', did you? ;-)
 
-> > Also drop /selinux directory detection and detect only /sys/fs/selinux,
-> > /sys/fs/selinux mount point was added in kernel 3.0 in commit
-> > 7a627e3b9a2b ("SELINUX: add /sys/fs/selinux mount point to put selinuxfs")
-> > 14 years is enough, kernel 3.0 is not even supported in current LTP and
-> > we don't even support /selinux in C API (tst_security.c).
+No, did no check with --strict.  Will do that.
 
-> > Fixes: e7b804df65 ("shell: Add tst_security.sh helper")
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> >   testcases/lib/tst_security.sh | 3 +--
-> >   1 file changed, 1 insertion(+), 2 deletions(-)
+>> +}
+>> +EXPORT_SYMBOL_GPL(tpm_crb_ffa_get_interface_version);
+> 
+> Ditto.
 
-> > diff --git a/testcases/lib/tst_security.sh b/testcases/lib/tst_security.sh
-> > index 05640234ea..356c28fc73 100644
-> > --- a/testcases/lib/tst_security.sh
-> > +++ b/testcases/lib/tst_security.sh
-> > @@ -127,8 +127,7 @@ tst_get_selinux_dir()
-> >   {
-> >   	local dir="/sys/fs/selinux"
-> > -	[ -d "$dir" ] || dir="/selinux"
-> > -	[ -d "$dir" ] && echo "$dir"
-> > +	[ -f "$dir/enforce" ] && echo "$dir"
-> >   }
-> >   # Get SELinux enforce file path
+Ack.
+
+
+>> +}
+>> +EXPORT_SYMBOL_GPL(tpm_crb_ffa_start);
+> 
+> Ditto.
+
+Ack
+
+>> +++ b/drivers/char/tpm/tpm_crb_ffa.h
+>> @@ -0,0 +1,30 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2024 Arm Ltd.
+>> + *
+>> + * Authors:
+>> + * Stuart Yoder <stuart.yoder@arm.com>
+>> + *
+>> + * Maintained by: <tpmdd-devel@lists.sourceforge.net>
+> 
+> Please, rip off this authors and maintainers clutter:
+> 
+> 1. Git maintains authorship
+> 2. MAINTAINERS takes care of the rest.
+
+Ack
+
+Thanks,
+Stuart
