@@ -1,62 +1,25 @@
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AED72248B6
-	for <linux-integrity@vger.kernel.org>; Mon, 17 Feb 2025 16:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D36226528;
+	Mon, 17 Feb 2025 16:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739809573; cv=none; b=kIAV+pAKcVNZK2DXg6MtLw/MarVGbj3N+uwkw5x+tbBE7/GbFAAkAzb1sP88ZAH2x6zPa60icbmoPteaFPCKTY+IcwiVNjO7SUM/ipOfNA3nEjAET1Kkly3mNRN8QNRpOuxJhBodhjPnuV9VNV6p5PvnrF5l7tffWfCNOzX84wo=
+	t=1739811422; cv=none; b=VUDjg+HCTFphd7gZ1ERb6LmX/3S/nYUvncRMDspVzlQEo/li7QhnjgyJeY4uZl37QDFi0vJi/51HE31u0WFBiJ9Xr/Dn/AlmpqcUqUvpOzVUiUYxuC5MTNNrUmMXQq+M/x8E6Prr4hovbN29FF4u/xr5vD+AM2q1vlndPbfEzcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739809573; c=relaxed/simple;
-	bh=aE9dHMw6iGX541XczEVRIjmcPX+oIYHH0KH8u4Kv2mE=;
+	s=arc-20240116; t=1739811422; c=relaxed/simple;
+	bh=+Slhdyr87sEDrXnPmfmh/DMOQQHysATe1TTy7flwAmI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=phyWP5DXfHof6ZIT6oLnQIc2Vrq9HCLcFthBm2Fia9Kvqug6udKqq7Xe/HSA20ScoZseKdpnw6zm0YKCAVrLRIKN3PrPKBhoVFjMMFKp5cco9/zlmLrYf8G5J5EFcKInhMZ6MdxXriSX9J5yS1zBRhcbjaU/Kn2Wr7YfM5Izsow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=gHYIXTr3; arc=none smtp.client-ip=66.163.187.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gHYIXTr3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1739809570; bh=Zpb2VQfhVcERHcagIIPwkdYYaV8LHvjypjKwYQxC+mw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gHYIXTr3LbQap68/s4T2MvLnKOcBibIMc/CVW3x2TM85Je2+py4Zq+kXMybQz22Uw+tGOTAcoRFn2CCE6FDgLtJcmZl3gai/uP6VvOd2N81DzS+IZddznr3D5/yVO/6lqPJu1khlLTRQQS7xiMjm1KDfwf/wGyuX7FX2YXLaxYsA/miE6ihlSMxigCJExLzrMxlc8882bVXmVxzKjh/N7p4LyzUHUuY1rDua+1JpTxIOibbzPZLNVBZKztYtT5DUB6m1Rj75EKfbi9p9tzeoUEHaKefPUHlehbIeauiA/HqO8gAaUf11v/UZU/pIJ5Zix7dDS8lTwGZuHC9U0+ux+A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1739809570; bh=uuoYm0u3CclL/i4Wg+XsiboZEdl8i8wRC5ouwGoc2AR=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=rnSHs1tX+pXLv30GrsOPT7GtqD12ccOa2ipkwdYpR94D20M62jH6GAuczYK8q4iqvrL51K2AFJ+SYxICCJhnlsGZnYUNHtSz/PN3/5nMeaE3MAs7ldRX9hDWuQlTHhy0yPAZmiDHmqEboOQxRf2/8sGD9YGs5cPxB6oNnantuKQI2C9i0b85HRC17BymZZ+zsppB/QKKgpiGq6gByuGHL66TVoGXVNPB1eHxzdWMlcHP3+u8VbkhidtopHhF+4WlJ5KV11LiTdQnX5yz+8nTM/av/vWiBA8aEhtyOI1OX7LAXzvgNSIVbEQkFesO+44AVhjVBEZD3s5VEaszB9V46A==
-X-YMail-OSG: 0bH4v6gVM1kVlS_TSOnTiejnjDb__lMixZ5mpExKR5R1ZV4lrgDoaMFwJlBf7A1
- .D9pKpWXGNcpzHzpYxETYdkpySdmghlAy_BPJYgsUkGuLoajsgSUgRlFfC3F29iVSI37QhgZ.jpc
- hargzNxKatnM9Kqk2MZsILhaaDQ9TN45P3rdRtoKEPbl47xv2uQ.Jjzq5W_9GsQ2G9rLPE7B5K0T
- fi_atr7bMCdZcVHBtRYCr3_a.7NsYj7sxPoWdskeflrmpAV7owqfX1A4ezfvX3owm9C0VccZpyQB
- V0u0wbnowo80gkD0LzPWGAlE7PcGWs_xg47ZzpS5kOSGYXIBYN10G.EdSI_dYqmx2lZ6DXiWfjiB
- R092T1xWL2ezOlPn_m71rWJMdZx6qL4FRThwAcv_vwVabRGSNGlqX9Mgbnx_HWaDn9CuEkgWe8dz
- 4D_UzHc3xTScKhyeEXROXdrKexQGRdu8DKbVtw04oenrjqGN0F_plNhYiS0euEcO1XvFEopuTq8Z
- Czpsi_VZJJngqxUuDwv1YQXj.vZ00fAviWg8IBKe3UWROXGpEUmJdt7SiDxdrbPPR.UEgLe2W7RB
- kezZNMxlok7cXCiZrwCi06TgF7O4nOV1WjDSWSDtaBolnPbRy9fd.rnoXm2eP2FF.6tSp8D.ZakW
- 8.9lem5.rDMd6ajLCQX9ymh_euc6D4oSN.DHnItPO3GPoLDBj9jkxiv6N3GvjFfrAeL7qLnv_e.6
- TASR1UaFY5neHK5p_64.wIfw.C7GCVoBxB.g.Z.tO5st_XLtdrgEbV25tH7Y6mZUuZX8QDoI3ygs
- y77sSFPVgdYJK7KNoBH7TV1rnYUiafAS1_Vz1BTzdY.qhWAbDNATdZUlB4ViSv5ZrWW2Mlk31VP.
- H6TNa9Dsex0EU937oHT.RKuX9En_dunhyAsqyxsIa8E0iZ7RdLd5A9d7FcGdHcmo8hkgu9feqIsR
- I7FyXXK3w42INkJH_6n67hXNUCoCOZiPVrJjnJPhD3y5kHOTx81HmMMvnm2gG1hFhdAZZqqXeu1b
- X4MLY2YC.IjsY2JVQePOfnagYQ5wzryd2UpHXBPxkZG39FoIA225_znarBeWhrxGr3HIo.DGyK4h
- E2LntHfomAI1e6PBnkSPYpzQ4ap.22FfjZqef0U7vnUXapg0NLwLE7UQxC2mzCsIOMqSOI21j1Ft
- G5QlRbATtmt8jQsXJFPtGFwl481iJHGXHEa_K8FltIm18RK55AH52Dl_uaG6aRFeX_N3CYlHIwkS
- 5OvC6nzaBtAU02drAmrF7jUcygEOlUkFSaq_rb2olPaMbuCHk8IXnUJXKzJ23.cyIT2eCJKiXBpZ
- OBTB5bSWcikgsrZ5M2IvVaSUWorEgZCeq46H3CqrFiqI.3pG65Qnvcsfv0iaqr3394Cin.3Q1uKb
- J55pxclHjmS40OfP7n8_qqi4xSrHtnxSGZ0SzcWTI8JO05KyKATKUh9gbsAvED608etnbAkwtucT
- mrp13y11R.GgOFXzb8boMpHAJryOAC2RXER3oIMd94OOf37P04at4sTMQ8v0FEkDEVrZraehSPBY
- 4g6ZJ1l0dsc7U7602lJ05my03m8CN_4_7VdH25cdwVD9yPbTAGstpXJbbQU0j92P1CpGUajH_0M_
- oWTPCc4fKUjgVg9IzSeAjUmLtYKiw8FNfXZCXOgwPFOYWlB7Bqm_cP3IK.4MyoWIN7gQE5qC08a_
- ksJN43kB9OiajfZiDL0jHlSgT28qIyGVN.J5ciy5_rB_bR0czT0l7BD4eutzC1eT2kWKKAUVx7wa
- xjAQNPmALGNYtaj4IFQubyFRoqjGHiGObJVfR7msH3AAzEdASUnxhO_cKeA9hx6RG86jS8XUiRR6
- cX.5NH5tTc1avVKgCSXu6PbnbGISRjybyCtsgymWV9HCEEWQhPpS3bdoHJk6ebXnTX_Fvf_yIIbY
- WLDmn693pq.tPp9878fEpIPEhrvSFBgO4x9F9cvh.jdGflbSeU05RCChH_pbj71_g1t9b4K_rGb8
- YMkC.LzylkFu2zwzCErdKgEZRK_ZHRR0BYxsawkXoA4nBF_oQsivBMPgUs3Dp4.oNrgXl_sVrq97
- tys9suoIjgcU1ThuuY0yPRQzc3Sb5IBF_NR5jdVB4uX02ZPIpO3k.FXmKJVN_VKY2ITVZNdWYSqE
- HtC3mIffrzRUgL7V2IfOXTZ5iqSZ3W8AeuKNULU2.c3nTB6.qOjRW6GmnH3joSaxqqox.R23ipBX
- jeS3ITP1fVbAClPTRTKRJeSIcA3wuq4mPm7h03nLwe89lpvT1LJ.Vp1d7JHfwsrvyCXMTyTIQZtK
- YhMkjMOneROXrQw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 5be9a88d-1e33-4b5a-8ae7-c419c1a8997d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 17 Feb 2025 16:26:10 +0000
-Received: by hermes--production-gq1-5dd4b47f46-xsxj6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 48a84cd0d3819ca8b4e0fa98bc037007;
-          Mon, 17 Feb 2025 15:45:35 +0000 (UTC)
-Message-ID: <97506d0e-8487-4233-ab4f-78dc646b12cb@schaufler-ca.com>
-Date: Mon, 17 Feb 2025 07:45:34 -0800
+	 In-Reply-To:Content-Type; b=rq8UFvNo7tEv3tVgFo6L2HK3abnfmyIgIIhSWg8FEnT8cqSO+WSyzSLku5MI6v/HWlyx4oE/X5ZRIpDvYmU50TWiACdQXlFGloy2hJSNFR5OjZvT/Yw8xqW0cT8yhtWu4/oA6bD9/Oyl/PMeSuMMLlIEuyRjWbUWiZa3MyafHtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7B13F152B;
+	Mon, 17 Feb 2025 08:57:18 -0800 (PST)
+Received: from [10.122.18.64] (unknown [10.122.18.64])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 042953F5A1;
+	Mon, 17 Feb 2025 08:56:58 -0800 (PST)
+Message-ID: <5dae96fa-0e54-4274-bcc6-1c20fe846f60@arm.com>
+Date: Mon, 17 Feb 2025 10:56:58 -0600
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -64,128 +27,158 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Announce] Linux Security Summit North America 2025 CfP
-To: "Dr. Greg" <greg@enjellic.com>, James Morris <jmorris@namei.org>
-Cc: linux-security-module@vger.kernel.org,
- Linux Security Summit Program Committee <lss-pc@lists.linuxfoundation.org>,
- linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
- linux-integrity@vger.kernel.org, lwn@lwn.net,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
- <20250217124538.GA11605@wind.enjellic.com>
+Subject: Re: [PATCH 0/4] Add support for the TPM FF-A start method
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Sumit Garg <sumit.garg@linaro.org>, linux-integrity@vger.kernel.org,
+ jarkko@kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca, sudeep.holla@arm.com,
+ rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jens Wiklander <jens.wiklander@linaro.org>,
+ Rob Herring <robh@kernel.org>
+References: <20250210232227.97761-1-stuart.yoder@arm.com>
+ <CAFA6WYM7K4_toy5_n1arW4po4SOX0R9624rCgO=_MvcMeySwUA@mail.gmail.com>
+ <4bb3cefa-b843-45ca-82c5-d96b13454baa@arm.com>
+ <CAFA6WYM3UA9+TE8L2U5Qd8FZfaGZnbba=QzWU7fEu3LKQVm-tw@mail.gmail.com>
+ <fdaa9a58-790f-4839-8db7-1b9a81eb8edf@arm.com>
+ <CAFA6WYM0ANqc--ScYtJFRjOsCCjzO3NX46=F5V=rza_6Q-Q96g@mail.gmail.com>
+ <e142afd2-38ec-4640-b9be-cb414bccc807@arm.com> <Z7LGbZsOh_w-HRY2@sumit-X1>
 Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250217124538.GA11605@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
+From: Stuart Yoder <stuart.yoder@arm.com>
+In-Reply-To: <Z7LGbZsOh_w-HRY2@sumit-X1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 2/17/2025 4:45 AM, Dr. Greg wrote:
-> On Mon, Feb 10, 2025 at 01:03:02PM -0800, James Morris wrote:
->
-> Good morning, I hope the week is starting well for everyone.
->
->> The Call for Participation for the 2025 Linux Security Summit North 
->> America (LSS-NA) is now open.
+
+
+On 2/16/25 11:17 PM, Sumit Garg wrote:
+> On Thu, Feb 13, 2025 at 09:19:58AM -0600, Stuart Yoder wrote:
 >>
->> LSS-NA 2025 is a technical forum for collaboration between Linux 
->> developers, researchers, and end-users. Its primary aim is to foster 
->> community efforts in deeply analyzing and solving Linux operating system 
->> security challenges, including those in the Linux kernel. Presentations 
->> are expected to focus deeply on new or improved technology and how it 
->> advances the state of practice for addressing these challenges.
 >>
->> Key dates:
+>> On 2/12/25 11:31 PM, Sumit Garg wrote:
+>>> + Rob
+>>>
+>>> On Thu, 13 Feb 2025 at 03:25, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 2/12/25 1:39 AM, Sumit Garg wrote:
+>>>>> On Tue, 11 Feb 2025 at 21:39, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>>>>>>
+>>>>>> Hi Sumit,
+>>>>>>
+>>>>>> On 2/11/25 12:45 AM, Sumit Garg wrote:
+>>>>>>> + Jens
+>>>>>>>
+>>>>>>> Hi Stuart,
+>>>>>>>
+>>>>>>> On Tue, 11 Feb 2025 at 04:52, Stuart Yoder <stuart.yoder@arm.com> wrote:
+>>>>>>>>
+>>>>>>>> These patches add support for the CRB FF-A start method defined
+>>>>>>>> in the TCG ACPI specification v1.4 and the FF-A ABI defined
+>>>>>>>> in the Arm TPM Service CRB over FF-A (DEN0138) specification.
+>>>>>>>> (https://developer.arm.com/documentation/den0138/latest/)
+>>>>>>>
+>>>>>>> Nice to have a specification standardizing interface to TPM
+>>>>>>> managed/implemented by the firmware. Care to add corresponding kernel
+>>>>>>> documentation under Documentation/security/tpm/.
+>>>>>>
+>>>>>> Yes, I can add some documentation there.
+>>>>>>
+>>>>>>> BTW, we already have drivers/char/tpm/tpm_ftpm_tee.c, so do you see
+>>>>>>> possibilities for an abstraction layer on top of communication channel
+>>>>>>> based on either FF-A or TEE or platform bus?
+>>>>>>
+>>>>>> I think the CRB and OP-TEE based messaging approaches for interacting
+>>>>>> with a TZ-based TPM are fundamentally different and I don't see how
+>>>>>> to harmonize them through some abstraction.
+>>>>>>
+>>>>>> The OP-TEE TPM protocol copies the TPM command into a temp shared memory
+>>>>>> buffer and sends a message to the TPM referencing that buffer.
+>>>>>>
+>>>>>> The CRB uses a permanently shared memory carve-out that in addition
+>>>>>> to the command/response data has other fields for locality control,
+>>>>>> command control, status, TPM idle, etc. The only 'message' needed is
+>>>>>> something to signal 'start'.  Any OS that is FF-A aware and has a
+>>>>>> CRB driver can simply add a new start method, which is what this
+>>>>>> patch series does.
+>>>>>
+>>>>> Okay, I see how the CRB driver is closely tied to the ACPI based
+>>>>> systems.
+>>>>
+>>>> The CRB driver is currently probed based on ACPI, but it fundamentally
+>>>> doesn't have to be.  If there was a DT binding for CRB-based
+>>>> TPMs the different start methods would be defined there and the
+>>>> CRB driver could support that.
+>>>>
+>>>
+>>> Can't we rather enable the CRB driver itself probed based on FF-A bus
+>>> and rather dynamically discover the shared memory buffer via FF-A
+>>> instead? AFAIU, FF-A provides you with a discovery framework for
+>>> firmware bits.
 >>
->>     - CFP Closes:  Monday, March 10 at 11:59 PM MDT / 10:59 PM PDT
->>     - CFP Notifications: Monday, March 31
->>     - Schedule Announcement: Wednesday, April 2
->>     - Presentation Slide Due Date: Tuesday, June 24
->>     - Event Dates: Thursday, June 26 ??? Friday, June 27
+>> Yes, you could do this. But, then the TPM CRB drivers in all the
+>> ACPI-based OSes (Linux, Windows) and hypervisors need to be
+>> taught this new method of discovery. Adding new start methods is
+>> reasonably straightforward, but changing the basic discovery
+>> mechanism is a much bigger change.
+> 
+> We will be teaching every other OS or hypervisor about FF-A
+> communication regardless. So it's rather about if we want to do it
+> properly leveraging auto discovery mechanisms supported by FF-A or not.
+> 
 >>
->> Location: Denver, Colorado, USA (co-located with OSS).
-> I reflected a great deal before responding to this note and finally
-> elected to do so.  Given the stated desire of this conference to
-> 'focus deeply on new or improved technologies' for advancing the state
-> of practice in addressing the security challenges facing Linux, and
-> presumably by extension, the technology industry at large.
->
-> I'm not not sure what defines membership in the Linux 'security
-> community'.  I first presented at the Linux Security Summit in 2015,
-> James you were moderating the event and sitting in the first row.
->
-> If there is a desire by the Linux Foundation to actually promote
-> security innovation, it would seem the most productive use of
-> everyone's time would be to have a discussion at this event focusing
-> on how this can best be accomplished in the context of the current
-> Linux development environment.
->
-> If we have done nothing else with our Quixote/TSEM initiative, I
-> believe we have demonstrated that Linux security development operates
-> under the 'omniscient maintainer' model, a concept that is the subject
-> of significant discussion in other venues of the Linux community:
->
-> https://lore.kernel.org/lkml/CAEg-Je9BiTsTmaadVz7S0=Mj3PgKZSu4EnFixf+65bcbuu7+WA@mail.gmail.com/
->
-> I'm not here to debate whether that is a good or bad model.  I do
-> believe, that by definition, it constrains the innovation that can
-> successfully emerge to something that an 'omniscient' maintainer
-> understands, feels comfortable with or is not offended by.
->
-> It should be lost on no one that the history of the technology
-> industry has largely been one of disruptive innovation that is
-> completely missed by technology incumbents.
->
-> The future may be the BPF/LSM, although no one has yet publically
-> demonstrated the ability to implement something on the order of
-> SeLinux, TOMOYO or Apparmor through that mechanism.  It brings as an
-> advantage the ability to innovate without constraints as to would be
-> considered 'acceptable' security.
->
-> Unfortunately, a careful review of the LSM mailing list would suggest
-> that the BPF/LSM, as a solution, is not politically popular in some
-> quarters of the Linux security community.  There have been public
-> statements that there isn't much concern if BPF breaks, as the concept
-> of having external security policy is not something that should be
-> supported.
->
-> We took an alternative approach with TSEM, but after two years of
-> submissions, no code was ever reviewed.
+>>> But if we still want to overload ACPI or DT with the
+>>> discoverable firmware bits then it seems like an overkill here.
+>>
+>> I think it would make sense to do ACPI based discovery or FF-A
+>> based discovery, but doing both I think would be overkill.  For
+>> ease of OS integration ACPI is the way to go.  And, potentially
+>> device tree in the future.
+> 
+> Encoding firmware bits in ACPI/DT can be seen as an easy upstream path
+> in the shorter run. But when the ACPI/DT becomes overloaded with
+> information that has to be passed from firmware to the OS rather than
+> purely describing hardware to the OS, it's ABI maintainability becomes
+> complex. We are already dealing with DT ABI compatibility challenges
+> especially the forward compatibility, so let's not make it even worse
+> with firmware information that can be discovered automatically.
 
-1. Not true.
-2. I have suggested changes to the way you submit patches that will
-   make reviewing your code easier. You have ignored these suggestions.
-3. Recommendations have been made about your approach. Your arguments
-   have been heard.
+The TCG defined ACPI table has the following:
+    -Physical address of the TPM
+    -Start method
+    -Start method specific parameters
+    -event log address
 
->   I'm not here to bitch about
-> that, however, the simple fact is that two years with no progress is
-> an eternity in the technology industry, particularly security, and
-> will serve to drive security innovation out of the kernel.
->
-> One can make a reasoned and informed argument that has already
-> happened.  One of the questions worthy of debate at a conference with
-> the objectives stated above.
->
-> I apologize if these reflections are less than popular but they are
-> intended to stimulate productive discussion, if the actual intent of
-> the conference organizers is to focus deeply on new and improved
-> security technology.
+This has been in place 8+ years and this is what OSes expect.
+The start method advertises the mechanism a driver uses to
+signal the TPM that something has changed in the CRB, and
+this allows different types of TPM implementations:
+    -memory mapped
+    -signal via ACPI
+    -signal via ARM SMC (legacy)
+    -signal via Pluton mailbox
+    -signal via FF-A
 
-Please propose a talk for the summit. Talks have a limited duration,
-so do be concise.
+I don't see this as overloading the ACPI table, it's just what
+the OS needs to know.
 
->
-> There is far more technology potentially available than there are good
-> answers to the questions as to how to effectively exploit it.
->
->> James Morris
->> <jmorris@namei.org>
-> Best wishes for a productive week.
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
->
+The TPM does not know (and should not know) the address of
+the event log. An FF-A based TPM has no way to know this.
+
+I don't see how changing TPM discovery to be via FF-A directly
+would improve maintainability.
+
+> The other benefit of auto discovery is that platform enablement becomes
+> really smooth. Once the firmware starts supporting a particular feature
+> like TPM over FF-A then the OS can discover and support it.
+
+If we added new CRB/FF-A ABIs to get the CRB physical address,
+start method specific parameters, event log, it would mean that
+all OSes and hypervisors need to re-architect their CRB drivers
+or create new FF-A specific CRB drivers.  That will not smooth
+enablement for TPMs.  And I don't see advantages for
+maintainability.
+
+Thanks,
+Stuart
+
+
