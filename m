@@ -1,228 +1,301 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF51621B9E4
-	for <linux-integrity@vger.kernel.org>; Tue, 18 Feb 2025 20:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415291D9A50;
+	Tue, 18 Feb 2025 22:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739908819; cv=none; b=cBE4wNtfYn5/P4nQsaREWPVCbH6HYkXseVF5tBD/NlTcQa+d19ddRKTe1e3oAPsA4qRF0LIgSdKQQSnsrdjGF62Bt6or0MhG/SBwJ2PdxYEbj1SWi24PjJRxltGgCWa+M4w5k0T3UjEga2EqNey1Hk3iAQZpO6MN5ZFvPUF1BgM=
+	t=1739919311; cv=none; b=pEZmZH/NjdH75SNiyF8gOFmpRYUjZlbG4PP3/srO5Gris1XABfzntqhmOBusbgENJiR6FiApcVVhEH6YGirafVLZx6z7GsfErj4RW6WNqdZUO3UblA/CCG36cDWP89eCYf+DYEqWqVz31ljONfONuD3e/Yop/Lf318eqDYnCacA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739908819; c=relaxed/simple;
-	bh=oJRaHUXdW2yTDICL0A57MPoltMJ6iS/3wB5ZmF9sI9M=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h+LAzCMfrz4XqbOUGfPWfLGS3NU2sb9dhPJkUm0tgxxIx2Cm5P2UkvT3Mm0xtEp6jW+la45qgOdMoUas8GEfAKoo/MfYoQC6SEXxfAk4dXo5AjEM+1OdUocpqz/6xTruaProinptOGwHAPF6ysnp+9xhqXx/ra7WwnifSrIGKI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Kp/gLChc; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1739919311; c=relaxed/simple;
+	bh=VJOBw4GThr5LYUEPCLPqlHpZVqiWOgWhVLSnsQC7kzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=W8I8mLGGSgs2sPk7AF2U/yFdThpJYeZdyt974boakRzbmwjGlDovqNSGirE2EMRO9tGcrLOEqRSIlwSwqhC/A8vmJwLc/4Kayb4pAvSfKjziipMXLNxqS7sN0KdG4sb8vNkgQWWQrIYrGbUMdo2mRQjhoEoPsblkdr3XF+4TjNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jBJ2dLw1; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Kp/gLChc"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IIxeF6025458;
-	Tue, 18 Feb 2025 20:00:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=v8RpPR
-	GMR0TauxDZ0DTZZPyr9kDBvVCvWvINdudXozY=; b=Kp/gLChc710oh4vaF5fgxC
-	E/L3xTQEivNCWuYyRcIEBil/aoAcPjLZPHgYekGsF1rZBK4HC3XbG4A/1UrnbtY4
-	SH28WCsdApB7yMTRWz80D3XRWeJr2uCXDxjkrh8SqnDZlCyCOS4wbwCblD3D2/2s
-	0a9OJWvVoXcf88kvwFaSxfbbgnqj7DxkFPjB+DnJxe8v4YZ4dBEd2sGnK0dU8vr3
-	l4QpddSK8S6+KF0uBw2nJBPsAy1uXZ7tEsUzOU6b/enorY7xTXCtGlPD5WRZV5Pa
-	Y5PTMvgGaBL685CSjOIWr55NtIrqqyZ5lu/ZIS1LylKf9SarWv+mCK3dm5jczKog
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44vyynr7sa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 20:00:15 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51IJ8juA009646;
-	Tue, 18 Feb 2025 20:00:14 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03y066r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 20:00:14 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51IK0DDG27329192
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 18 Feb 2025 20:00:13 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7292958043;
-	Tue, 18 Feb 2025 20:00:13 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 34D7C5805D;
-	Tue, 18 Feb 2025 20:00:13 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 18 Feb 2025 20:00:13 +0000 (GMT)
-Message-ID: <ed0adec273c5fff47e85b61a3d2b969af475d8dd.camel@linux.ibm.com>
-Subject: Re: [RFC] Issue of  historical file and script invocation when
- using IMA for runtime attestation
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: "Wang, Nicholas" <chenkai3@illinois.edu>,
-        "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>
-Date: Tue, 18 Feb 2025 15:00:12 -0500
-In-Reply-To: <2601749.ElGaqSPkdT@nicoripper>
-References: <6165162.lOV4Wx5bFT@nicoripper>
-	 <f77c848b588811236ebb88e6731270943dd22e82.camel@linux.ibm.com>
-	 <2601749.ElGaqSPkdT@nicoripper>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jBJ2dLw1"
+Received: from localhost.localdomain (unknown [167.220.59.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A916120376ED;
+	Tue, 18 Feb 2025 14:55:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A916120376ED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739919309;
+	bh=oYVHNkbt845qc4At8T+7xSFjWVvWbhRzCIpl+tl8a1U=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jBJ2dLw1tKOONGiEFEBXMm5dj1FUIrRcwAEhC+pHxvNApgwI3HZXJ+PoceHTsPM8K
+	 LiAAJXvHtfx4vEXAlfoo7M5WpHYwaJmmDfU9ziODkKqtNLjPX8J0VjcoY9u2dorW7P
+	 8fJ8tcscWC5pVeyhqDeUcO8TvK+deOGIiw/ht8x4=
+From: steven chen <chenste@linux.microsoft.com>
+To: zohar@linux.ibm.com,
+	stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com,
+	roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com,
+	ebiederm@xmission.com,
+	paul@paul-moore.com,
+	code@tyhicks.com,
+	bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org,
+	kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	James.Bottomley@HansenPartnership.com,
+	bhe@redhat.com,
+	vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+Date: Tue, 18 Feb 2025 14:54:56 -0800
+Message-Id: <20250218225502.747963-2-chenste@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250218225502.747963-1-chenste@linux.microsoft.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xa8Er2UdbU1hf0pl_q4xfxjJMS-gMg13
-X-Proofpoint-GUID: xa8Er2UdbU1hf0pl_q4xfxjJMS-gMg13
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_09,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 phishscore=0
- clxscore=1015 adultscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502180137
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-02-18 at 18:06 +0000, Wang, Nicholas wrote:
-> Hi,
->=20
-> Thank you both Roberto and Mimi for your timely replies! I have been=20
-> discussing with our collaborators since and we believe the information=
-=20
-> definitely helps us more on understanding the issue from IMA's perspectiv=
-e.=20
-> While I cannot immediately give a comprehensive reply, I can quickly clar=
-ify=20
-> some of it whichever I can.
->=20
-> On Friday, 14 February 2025 14:30:42 CST Zohar, Mimi wrote:
-> > On Thu, 2025-02-13 at 12:57 +0000, Wang, Nicholas wrote:
-> > > Linux-integrity community,
-> > >=20
-> > > Hi, I'm Nicholas Wang from UIUC, and we are researching the potential
-> > > challenges of a remote runtime attestation tool using IMA, Keylime, u=
-nder=20
-> > > a
-> > > simulated deployment environment. In the process, we conducted multip=
-le
-> > > experiments, and we encountered some issues that we realize may not b=
-e
-> > > able to be solved entirely in userspace.
-> > >=20
-> > > To sum up the first issue, IMA may not reflect the whole picture of
-> > > invocation or activation history. In particular, we are in question a=
-bout
-> > > "Once the earlier measurements are verified, there is no need to veri=
-fy
-> > > them again" according to IMA event log documentation. First off, Keyl=
-ime
-> > > uses directories or paths for matching and ignoring files in their po=
-licy
-> > > file; in IMA policy, "dont_measure" filters out filesystems. We see t=
-wo
-> > > potential scenarios in which malicious actors may silently bypass the
-> > > attestation. We assume Keylime user does not use "dont_measure" filte=
-rs
-> > > in IMA policy and IMA indeed measured everything while Keylime attest=
- the
-> > > digests according to its own policy. Keylime would filter and ignore
-> > > certain files based on its own directories and file filtering, and su=
-ch
-> > > ignored files would only appear in IMA log once as long as the system=
- is
-> > > not rebooted. Now the issue arises: 1. if the file being moved within=
- the
-> > > same filesystem, it will never re-appear in IMA logs even with furthe=
-r
-> > > invocations, as IMA treated them the exact same file. This may allow =
-an
-> > > attack to persist throughout until a fresh reboot. 2. In case of a
-> > > long-lived system which has patched a vulnerable version of one softw=
-are,
-> > > the old, vulnerable version which has been in the IMA log before will=
- not
-> > > appear in case of further activation before a reboot. Thus, we believ=
-e
-> > > that the design which measures each file once may in some cases not
-> > > reflect a comprehensive state of the machine to meet runtime attestat=
-ion
-> > > needs.
-> >=20
-> > Hi Nicholas,
-> >=20
-> > Can you explain what you mean by "patched"?=C2=A0 In general, software =
-packages
-> > on long-lived systems can and would be updated (e.g. dnf, apt).=C2=A0 T=
-he new
-> > software would be a different inode and would be measured on first acce=
-ss.
->=20
-> By patched I meant exactly updated to a patched version, and I believe in=
- most=20
-> cases your arguments should hold: old executable is either directly=20
-> overwritten, or been deleted and then replaced with new version by the pa=
-ckage=20
-> manager. HOWEVER, I believe the inode assumption does not apply to the=
-=20
-> scenarios I tried to describe. In case 1, assuming attacker "moves" the f=
-ile,=20
-> inode would stay the same, result would be that executable being executed=
- in a=20
-> new directory without reflecting in the IMA log; In case 2, assuming a so=
-ftware=20
-> is updated, new binary now has a new inode, and is executed therefore att=
-ested=20
-> by IMA after update. IMA log now shows an entry of the vulnerable version=
-, as=20
-> well as an entry of the updated version, with the same path. Now if attac=
-ker=20
-> replace updated executable with the previous vulnerable version at the ex=
-act=20
-> same path, based on our testing, further execution of the vulnerable vers=
-ion=20
-> would never cause a third entry to appear in IMA log, regardless inode is=
- same=20
-> or different (as long as it has identical path to the first (vulnerable v=
-ersion=20
-> exec.) IMA log entry).
+Carrying the IMA measurement list across kexec requires allocating a
+buffer and copying the measurement records.  Separate allocating the
+buffer and copying the measurement records into separate functions in
+order to allocate the buffer at kexec 'load' and copy the measurements
+at kexec 'execute'.
 
-Hi Nicholas,
+This patch includes the following changes:
+ - Refactor ima_dump_measurement_list() to move the memory allocation
+   to a separate function ima_alloc_kexec_file_buf() which allocates
+   buffer of size 'kexec_segment_size' at kexec 'load'.
+ - Make the local variable ima_kexec_file in ima_dump_measurement_list()
+   a local static to the file, so that it can be accessed from 
+   ima_alloc_kexec_file_buf(). Compare actual memory required to ensure 
+   there is enough memory for the entire measurement record.
+ - Copy as many measurement events as possible.
+ - Make necessary changes to the function ima_add_kexec_buffer() to call
+   the above two functions.
+ - Compared the memory size allocated with memory size of the entire 
+   measurement record. If there is not enough memory, it will copy as many
+   IMA measurement records as possible, and this situation will result
+   in a failure of remote attestation.
 
-Right, the renamed file (case 1) would not be re-measured unless the file w=
-as also
-modified.  As Roberto explained, the file name is part of the directory, no=
-t metadata
-associated with the inode.  Refer to the getdents man page.
+Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Signed-off-by: steven chen <chenste@linux.microsoft.com>
+---
+ security/integrity/ima/ima.h       |   1 +
+ security/integrity/ima/ima_kexec.c | 102 +++++++++++++++++++++--------
+ security/integrity/ima/ima_queue.c |   4 +-
+ 3 files changed, 77 insertions(+), 30 deletions(-)
 
-The case 2 concern was addressed by enabling CONFIG_IMA_DISABLE_HTABLE.  Fo=
-r an
-explanation, please refer to commit 52c208397c24 ("IMA: support for duplica=
-te measurement
-records") patch description.
-
->=20
-> >=20
-> > There's been discussion on resetting the measured/appraised flags after=
- a
-> > configurable period of time, but nobody has actually submitted patches.=
-=20
-> > There were a couple of ideas: - Walk the rb tree to reset the
-> > measured/appraised flags. (Obsolete) - Include a timestamp in the iint =
-to
-> > detect "expired" measured/appraised flags on access.
-> >=20
-> > I welcome a patch set that enables re-measuring/re-appraising files.
->=20
-> Thanks for the information and we will look into the past discussions and=
-=20
-> further discuss with our team, see if we would propose a feasible solutio=
-n and=20
-> potentially submit a patch set to upstream.
-
-Sounds good.
-
-Mimi
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 24d09ea91b87..4428fcf42167 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -274,6 +274,7 @@ bool ima_template_has_modsig(const struct ima_template_desc *ima_template);
+ int ima_restore_measurement_entry(struct ima_template_entry *entry);
+ int ima_restore_measurement_list(loff_t bufsize, void *buf);
+ int ima_measurements_show(struct seq_file *m, void *v);
++int ima_get_binary_runtime_entry_size(struct ima_template_entry *entry);
+ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 9d45f4d26f73..89088f1fa989 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -15,63 +15,97 @@
+ #include "ima.h"
+ 
+ #ifdef CONFIG_IMA_KEXEC
++static struct seq_file ima_kexec_file;
++
++static void ima_reset_kexec_file(struct seq_file *sf)
++{
++	sf->buf = NULL;
++	sf->size = 0;
++	sf->read_pos = 0;
++	sf->count = 0;
++}
++
++static void ima_free_kexec_file_buf(struct seq_file *sf)
++{
++	vfree(sf->buf);
++	ima_reset_kexec_file(sf);
++}
++
++static int ima_alloc_kexec_file_buf(size_t segment_size)
++{
++	/*
++	 * kexec 'load' may be called multiple times.
++	 * Free and realloc the buffer only if the segment_size is
++	 * changed from the previous kexec 'load' call.
++	 */
++	if (ima_kexec_file.buf && ima_kexec_file.size == segment_size)
++		goto out;
++
++	ima_free_kexec_file_buf(&ima_kexec_file);
++
++	/* segment size can't change between kexec load and execute */
++	ima_kexec_file.buf = vmalloc(segment_size);
++	if (!ima_kexec_file.buf)
++		return -ENOMEM;
++
++	ima_kexec_file.size = segment_size;
++
++out:
++	ima_kexec_file.read_pos = 0;
++	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
++
++	return 0;
++}
++
+ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 				     unsigned long segment_size)
+ {
+ 	struct ima_queue_entry *qe;
+-	struct seq_file file;
+ 	struct ima_kexec_hdr khdr;
+ 	int ret = 0;
++	size_t entry_size = 0;
+ 
+-	/* segment size can't change between kexec load and execute */
+-	file.buf = vmalloc(segment_size);
+-	if (!file.buf) {
+-		ret = -ENOMEM;
+-		goto out;
++	if (!ima_kexec_file.buf) {
++		pr_err("Kexec file buf not allocated\n");
++		return -EINVAL;
+ 	}
+ 
+-	file.file = NULL;
+-	file.size = segment_size;
+-	file.read_pos = 0;
+-	file.count = sizeof(khdr);	/* reserved space */
+-
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+ 	/* This is an append-only list, no need to hold the RCU read lock */
++	/* Copy as many IMA measurements list records as possible */
+ 	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+-		if (file.count < file.size) {
++		entry_size += ima_get_binary_runtime_entry_size(qe->entry);
++		if (entry_size <= segment_size) {
+ 			khdr.count++;
+-			ima_measurements_show(&file, qe);
++			ima_measurements_show(&ima_kexec_file, qe);
+ 		} else {
+ 			ret = -EINVAL;
++			pr_err("IMA log file is too big for Kexec buf\n");
+ 			break;
+ 		}
+ 	}
+ 
+-	if (ret < 0)
+-		goto out;
+-
+ 	/*
+ 	 * fill in reserved space with some buffer details
+ 	 * (eg. version, buffer size, number of measurements)
+ 	 */
+-	khdr.buffer_size = file.count;
++	khdr.buffer_size = ima_kexec_file.count;
+ 	if (ima_canonical_fmt) {
+ 		khdr.version = cpu_to_le16(khdr.version);
+ 		khdr.count = cpu_to_le64(khdr.count);
+ 		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
+ 	}
+-	memcpy(file.buf, &khdr, sizeof(khdr));
++	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+ 
+ 	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+-			     file.buf, file.count < 100 ? file.count : 100,
++			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
++			     ima_kexec_file.count : 100,
+ 			     true);
+ 
+-	*buffer_size = file.count;
+-	*buffer = file.buf;
+-out:
+-	if (ret == -EINVAL)
+-		vfree(file.buf);
++	*buffer_size = ima_kexec_file.count;
++	*buffer = ima_kexec_file.buf;
++
+ 	return ret;
+ }
+ 
+@@ -90,7 +124,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 
+ 	/* use more understandable variable names than defined in kbuf */
+ 	void *kexec_buffer = NULL;
+-	size_t kexec_buffer_size;
++	size_t kexec_buffer_size = 0;
+ 	size_t kexec_segment_size;
+ 	int ret;
+ 
+@@ -110,13 +144,19 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 		return;
+ 	}
+ 
+-	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+-				  kexec_segment_size);
+-	if (!kexec_buffer) {
++	ret = ima_alloc_kexec_file_buf(kexec_segment_size);
++	if (ret < 0) {
+ 		pr_err("Not enough memory for the kexec measurement buffer.\n");
+ 		return;
+ 	}
+ 
++	ret = ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
++					kexec_segment_size);
++	if (ret < 0) {
++		pr_err("Failed to dump IMA measurements. Error:%d.\n", ret);
++		return;
++	}
++
+ 	kbuf.buffer = kexec_buffer;
+ 	kbuf.bufsz = kexec_buffer_size;
+ 	kbuf.memsz = kexec_segment_size;
+@@ -131,6 +171,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 	image->ima_buffer_size = kexec_segment_size;
+ 	image->ima_buffer = kexec_buffer;
+ 
++	/*
++	 * kexec owns kexec_buffer after kexec_add_buffer() is called
++	 * and it will vfree() that buffer.
++	 */
++	ima_reset_kexec_file(&ima_kexec_file);
++
+ 	kexec_dprintk("kexec measurement buffer for the loaded kernel at 0x%lx.\n",
+ 		      kbuf.mem);
+ }
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 83d53824aa98..3dfd178d4292 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -78,7 +78,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+  * binary_runtime_measurement list entry, which contains a
+  * couple of variable length fields (e.g template name and data).
+  */
+-static int get_binary_runtime_size(struct ima_template_entry *entry)
++int ima_get_binary_runtime_entry_size(struct ima_template_entry *entry)
+ {
+ 	int size = 0;
+ 
+@@ -122,7 +122,7 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
+ 	if (binary_runtime_size != ULONG_MAX) {
+ 		int size;
+ 
+-		size = get_binary_runtime_size(entry);
++		size = ima_get_binary_runtime_entry_size(entry);
+ 		binary_runtime_size = (binary_runtime_size < ULONG_MAX - size) ?
+ 		     binary_runtime_size + size : ULONG_MAX;
+ 	}
+-- 
+2.25.1
 
