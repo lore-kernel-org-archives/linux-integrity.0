@@ -1,173 +1,186 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B798468
-	for <linux-integrity@vger.kernel.org>; Wed, 19 Feb 2025 18:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630A722A813;
+	Wed, 19 Feb 2025 19:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739989184; cv=none; b=RTjoklUKrSyBEHOZn5+VfkWcfGsYKzNr1ZDTJoOYGdl74i/bmlOOSUlhwCXjbqk1vZxsmnlV755ytfOq+Cp2FtoXlqgq9VTLbH8YjOyCVRsEGyK/5JJ0WrnzvDZjzlOH1yK83KCG+GvKLinP2R1vcyO2nLq8rTQkJ0jiUAxwHnE=
+	t=1739992917; cv=none; b=O2kKj0oB8mUqdlLsgs78ATAfB8GPQOCrqnzeglXsv70Y43bwonzQAVu4K96x9HsyaZvW+WClCcg4rcl5j8soNp5fsxs5cH/bl9WIUY0na+h7K3IBJ1sOM6XvQTvHdy/mOrF6Ul40kYkc5WJFGwfMv2Q0IE1b6Xj9za+YhuTWviw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739989184; c=relaxed/simple;
-	bh=sFkihA0RWAfy3ZLLdvrtNVLYmpJx2Kxq4ijUK8YSyYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d0GmLnrDJVeDCy2KN4lwQ2L0K8PG/NC0VwY+QZArh3GdGaakvm3mEox+32nBBUKbdDaJi+0jdJKisQW7ktCyIUJkomvPpd+qCloZjkVQBYZo47nQ9aU5UvMVC6xbL8oSLkjk7CYyjyHy9zWTi33xkKw3yTjxChpFuS+ZwmrCVug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AAuCYwF1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dHxWhvz/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Jtu9bCg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cfwI9rUh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1739992917; c=relaxed/simple;
+	bh=adWKiQEJVT6/B9N5eQDBQYCGF9NVr8QvocoDPUjiRz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jr5VZBRbwoNJfuBMgu5AiIgcmfgUMeC7AKPWjpHdURpIrHObDXmEaV3vRyp3mF4XiUxYCb9IIw6Ph+p3OhkURbXca0fmPNoKBogo2RA859YgPmOOiGI48A1ODSM/OLRqP5zsf3lTC2oYTQssORAc1uMXnsHU9kY8knqhpTxvim8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=j5kJaBRW; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AAuCYwF1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dHxWhvz/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Jtu9bCg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cfwI9rUh"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DB448216DF;
-	Wed, 19 Feb 2025 18:19:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739989174; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=gIWUA2TILeu1njVMXfRRtb7dMzEQdDlVzIn4sqxFzl0=;
-	b=AAuCYwF19sGBTK/IEpwx0Fxm8XO2A9oAe8PLmqrcNkDjAA7fcbM2ei+jT8vh1m3XmeMf8o
-	FSHMgCo72UqCcQAmsmvpiG8Jv0hq79BDzMQK08xEhUeNajo4mJVlI+8ERDk/eeVAi/03Gy
-	oYG9TFAxt24PINpaZnTKkMzTTUkwcAk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739989174;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=gIWUA2TILeu1njVMXfRRtb7dMzEQdDlVzIn4sqxFzl0=;
-	b=dHxWhvz/HJNyCufBBPk4xXWd/ocjmT+pQa30pi5cqItyhjHdFMI3qrjDh2fJ/+X6hNEGHB
-	OeaKd1O3KY12vgCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1Jtu9bCg;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cfwI9rUh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739989173; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=gIWUA2TILeu1njVMXfRRtb7dMzEQdDlVzIn4sqxFzl0=;
-	b=1Jtu9bCgRVEAGRQi8idFXV+ldWNgh7PsJEZY1nPKiU+io80J8ojHoxxHmUGv4FqxRtS6D6
-	PBtYtFBgLHn+QnEtjaGO2+pFoW8gpyXyqlbAynz8yCXC1U9KmQJh6eSx5UsRGWBHwWSI3Y
-	7X2NsM6IeMtOraC/imjZyoNvhBdxpNw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739989173;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=gIWUA2TILeu1njVMXfRRtb7dMzEQdDlVzIn4sqxFzl0=;
-	b=cfwI9rUhYcDCVdmTdG/MgP6BK433YDwJMqmF+sFworUiGKcVPgnVKfyoRiAudWgk4bJN3I
-	CJNIenJP+ZXPuADw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A3AC013715;
-	Wed, 19 Feb 2025 18:19:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id UPHEJbUgtmeqawAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Wed, 19 Feb 2025 18:19:33 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH 1/2] ima_setup.sh: Postpone loading policy after test setup
-Date: Wed, 19 Feb 2025 19:19:24 +0100
-Message-ID: <20250219181926.2620960-1-pvorel@suse.cz>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="j5kJaBRW"
+Received: from [10.17.64.130] (unknown [131.107.147.130])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 9903B2043DE8;
+	Wed, 19 Feb 2025 11:21:54 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9903B2043DE8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739992914;
+	bh=pu/UW7PCLv8X83zZl5RWnpubpgAZ6B+Swf12/QdxSxQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j5kJaBRWrM6equjNG9/ULVyGXaOGZkWvh/d9z/GERoOxMPje1JSbf/+HpyTUSdUZ2
+	 MTeGmqRCHLphVU8p/RB6vUleYWgDhv4FaXYdwfqMNqAwnlNDUjBwBrrVcdcFeAKHAH
+	 5LSb12vWUDz53yAyCcC6+JpCIUSLDSoIbnoDZlSc=
+Message-ID: <05eadac7-fa98-42a5-88a8-079e7c99c0b9@linux.microsoft.com>
+Date: Wed, 19 Feb 2025 11:21:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
+ soft boot
+To: Stefan Berger <stefanb@linux.ibm.com>, zohar@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
+ dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-5-chenste@linux.microsoft.com>
+ <f102607b-963a-40c6-a14f-0803f8b059cc@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <f102607b-963a-40c6-a14f-0803f8b059cc@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: DB448216DF
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-Usual approach for LTP is to quit test early on missing prerequisites
-(e.g. disabled SELinux in ima_selinux.sh). This is even more important
-for IMA tests run with LTP_IMA_LOAD_POLICY=1, where it's useful to avoid
-loading policy if test will be skipped with TCONF (often requires reboot).
+On 2/19/2025 7:37 AM, Stefan Berger wrote:
+>
+>
+> On 2/18/25 5:54 PM, steven chen wrote:
+>> IMA log is copied to the new Kernel during kexec 'load' using
+>
+> The IMA log is currently copied to the new kernel ...
+>
+>
+>> ima_dump_measurement_list().  The log copy at kexec 'load' may result in
+>> loss of IMA measurements during kexec soft reboot.  It needs to be 
+>> copied
+>
+> However, the log copied at kexec 'load' may result in loss of IMA 
+> measurements due to missed measurements that only occurred after kexec 
+> 'load'. Therefore, the log needs to be copied during kexec 'execute'. 
+> Setup the ...
+>
+>> over during kexec 'execute'.  Setup the needed infrastructure to move 
+>> the
+>> IMA log copy from kexec 'load' to 'execute'.
+>>
+>> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
+>> It will be used to call ima_dump_measurement_list() during kexec
+>> 'execute'.
+>>
+>> Implement ima_kexec_post_load() function to be invoked after the new
+>> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the
+>> IMA buffer to a segment in the newly loaded Kernel.  It also registers
+>> the reboot notifier_block to trigger ima_update_kexec_buffer() at
+>> exec 'execute'.
+>
+> kexec 'execute'
+>
+>>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>
+> With the above changes:
+>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>
+>> ---
+>>   include/linux/ima.h                |  3 ++
+>>   security/integrity/ima/ima_kexec.c | 46 ++++++++++++++++++++++++++++++
+>>   2 files changed, 49 insertions(+)
+>>
+>> diff --git a/include/linux/ima.h b/include/linux/ima.h
+>> index 0bae61a15b60..8e29cb4e6a01 100644
+>> --- a/include/linux/ima.h
+>> +++ b/include/linux/ima.h
+>> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
+>>     #ifdef CONFIG_IMA_KEXEC
+>>   extern void ima_add_kexec_buffer(struct kimage *image);
+>> +extern void ima_kexec_post_load(struct kimage *image);
+>> +#else
+>> +static inline void ima_kexec_post_load(struct kimage *image) {}
+>>   #endif
+>>     #else
+>> diff --git a/security/integrity/ima/ima_kexec.c 
+>> b/security/integrity/ima/ima_kexec.c
+>> index 704676fa6615..0fa65f91414b 100644
+>> --- a/security/integrity/ima/ima_kexec.c
+>> +++ b/security/integrity/ima/ima_kexec.c
+>> @@ -12,10 +12,14 @@
+>>   #include <linux/kexec.h>
+>>   #include <linux/of.h>
+>>   #include <linux/ima.h>
+>> +#include <linux/reboot.h>
+>> +#include <asm/page.h>
+>>   #include "ima.h"
+>>     #ifdef CONFIG_IMA_KEXEC
+>>   static struct seq_file ima_kexec_file;
+>> +static void *ima_kexec_buffer;
+>> +static bool ima_kexec_update_registered;
+>>     static void ima_reset_kexec_file(struct seq_file *sf)
+>>   {
+>> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
+>>       kexec_dprintk("kexec measurement buffer for the loaded kernel 
+>> at 0x%lx.\n",
+>>                 kbuf.mem);
+>>   }
+>> +
+>> +/*
+>> + * Called during kexec execute so that IMA can update the 
+>> measurement list.
+>> + */
+>> +static int ima_update_kexec_buffer(struct notifier_block *self,
+>> +                   unsigned long action, void *data)
+>> +{
+>> +    return NOTIFY_OK;
+>> +}
+>> +
+>> +struct notifier_block update_buffer_nb = {
+>> +    .notifier_call = ima_update_kexec_buffer,
+>> +};
+>> +
+>> +/*
+>> + * Create a mapping for the source pages that contain the IMA buffer
+>> + * so we can update it later.
+>> + */
+>> +void ima_kexec_post_load(struct kimage *image)
+>> +{
+>> +    if (ima_kexec_buffer) {
+>> +        kimage_unmap_segment(ima_kexec_buffer);
+>> +        ima_kexec_buffer = NULL;
+>> +    }
+>> +
+>> +    if (!image->ima_buffer_addr)
+>> +        return;
+>> +
+>> +    ima_kexec_buffer = kimage_map_segment(image,
+>> +                          image->ima_buffer_addr,
+>> +                          image->ima_buffer_size);
+>> +    if (!ima_kexec_buffer) {
+>> +        pr_err("Could not map measurements buffer.\n");
+>> +        return;
+>> +    }
+>> +
+>> +    if (!ima_kexec_update_registered) {
+>> +        register_reboot_notifier(&update_buffer_nb);
+>> +        ima_kexec_update_registered = true;
+>> +    }
+>> +}
+>> +
+>>   #endif /* IMA_KEXEC */
+>>     /*
 
-Therefore first check $REQUIRED_BUILTIN_POLICY (value of ima_policy
-kernel cmdline parameter, it can TCONF), then run the test specific
-setup and finally run the policy if needed.
-
-Fixes: aac97cca96 ("ima_setup.sh: Allow to load predefined policy")
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
-Link to v1:
-https://patchwork.ozlabs.org/project/ltp/patch/20250217130839.2392666-2-pvorel@suse.cz/
-
-Changes from v1:
-* Instead of explicitly state that test setup should be run before
-loading policy just postpone loading policy after running test setup.
-
- .../kernel/security/integrity/ima/tests/ima_setup.sh  | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-index 1f1c267c4b..9732aa7b43 100644
---- a/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_setup.sh
-@@ -245,6 +245,8 @@ load_ima_policy()
- 
- ima_setup()
- {
-+	local load_policy
-+
- 	SECURITYFS="$(mount_helper securityfs $SYSFS/kernel/security)"
- 
- 	IMA_DIR="$SECURITYFS/ima"
-@@ -265,11 +267,16 @@ ima_setup()
- 		cd "$TST_MNTPOINT"
- 	fi
- 
--	if ! verify_ima_policy; then
-+	verify_ima_policy
-+	load_policy=$?
-+
-+	# Run setup in case of TCONF before loading policy
-+	[ -n "$TST_SETUP_CALLER" ] && $TST_SETUP_CALLER
-+
-+	if [ "$load_policy" = 1 ]; then
- 		load_ima_policy
- 	fi
- 
--	[ -n "$TST_SETUP_CALLER" ] && $TST_SETUP_CALLER
- }
- 
- ima_cleanup()
--- 
-2.47.2
+Hi Stefan, thanks for your comments. I will update in next version.
 
