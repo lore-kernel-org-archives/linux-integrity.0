@@ -1,155 +1,188 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7818527BF70
-	for <linux-integrity@vger.kernel.org>; Tue,  4 Mar 2025 17:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AF7253F2A;
+	Tue,  4 Mar 2025 19:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110228; cv=none; b=hrXqVSnHVrT2e1V3T1JfrMEiDOQd2bkA7fu5a8l2FFBRehnKEKFjOkaHV/ZKNZWS6y5ibM2tp+cyU7ldD2KqciJlaITl1+UKTd5Y3M6bmj3UfhaAAVO1VKq3AUvl9l+607j5KlDSGJhMKe8wJjo/oDvxt8dIA7Kf4XEiZ20ZRcU=
+	t=1741115046; cv=none; b=pcq3sf6ysanylsJAUGnrjqR0Wh2MTtDMERQp2zLl9rqQPPkutp+DgIwsMi7nNMCBZTd3xlm2lzbo44ksqrEw4X6gzwBMFjrs/E8n0ZA6g/injaPkcI5oC+uwwrkqnnRrkavoQ+HtrWzQkGAW7etuPVMihgA4wyzdw4lS4iYPzc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110228; c=relaxed/simple;
-	bh=wRz8PDlQEnBAoGjSE8WiVs13vPxJ6QgfY5BP20z9I0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N55F0KiXxV/9tytsIib9F+dYRySXCfVFOzMDjVY5xiE9qhEZVUBDAghzUXWPSFGNfHEMhTaAPz0hTQQhi3SatSw3ahxkjVR+cRE95GitKvSsQ3YM0zHNjeeLePpYnpNFrEMj5hMdvyj7z9KIzJ8fhQFatR6lagg6VCEF8kr7uD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xeNCDDs3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=se7dNW2W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xeNCDDs3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=se7dNW2W; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1741115046; c=relaxed/simple;
+	bh=pD1H3asyMZ0VZ1iTcZ+E7bEPXPmDb0ZznjbNPV9kD0U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=r5m6wSfpPqXzX6RzThvE2b4ur38cIYQQHX19943YBUUdbpcwMJ27RpvEKGwbcNLkyby+X2vx7Tzvp1jCncdMSozeyCtiUMPiu8ceRNasWOgsxfYmU+RiiN1U8+l/erhBydexSqqBqqFV7njqoqT0/4Bw6qx1s2t+Woj0So58HKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qQVKvgY1; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xeNCDDs3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="se7dNW2W";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xeNCDDs3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="se7dNW2W"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7B2FD1F456;
-	Tue,  4 Mar 2025 17:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741110224;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eB0kFmZ1ba8iiUIFBYCBKE7udjSI3kpPf37ki3Fbwcg=;
-	b=xeNCDDs3HlYQ6d+5/EwiLmJJtvSCTsyMRXHwCailt4BuaEOCIhgIcc9znNsoIF9eUbY+JN
-	zrulqkQJxqwO8R4CMhSTyVO7Bo1jymMYV9bRACvn7ZbR4xVr7HFIw06z2CuCnmkYKf9dB3
-	lf7CcJOmuLFKpOW840NtnqaLmuJBWtg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741110224;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eB0kFmZ1ba8iiUIFBYCBKE7udjSI3kpPf37ki3Fbwcg=;
-	b=se7dNW2WMHrH4vZem2bva8uQZCU7wIvDcSelRa+vHK3MO7wOWGKqKywKUi0ibhBz65vbcH
-	UzoU9BVFfoFjGGBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741110224;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eB0kFmZ1ba8iiUIFBYCBKE7udjSI3kpPf37ki3Fbwcg=;
-	b=xeNCDDs3HlYQ6d+5/EwiLmJJtvSCTsyMRXHwCailt4BuaEOCIhgIcc9znNsoIF9eUbY+JN
-	zrulqkQJxqwO8R4CMhSTyVO7Bo1jymMYV9bRACvn7ZbR4xVr7HFIw06z2CuCnmkYKf9dB3
-	lf7CcJOmuLFKpOW840NtnqaLmuJBWtg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741110224;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eB0kFmZ1ba8iiUIFBYCBKE7udjSI3kpPf37ki3Fbwcg=;
-	b=se7dNW2WMHrH4vZem2bva8uQZCU7wIvDcSelRa+vHK3MO7wOWGKqKywKUi0ibhBz65vbcH
-	UzoU9BVFfoFjGGBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EF99213967;
-	Tue,  4 Mar 2025 17:43:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CtpuNc87x2dccAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 04 Mar 2025 17:43:43 +0000
-Date: Tue, 4 Mar 2025 18:43:42 +0100
-From: Petr Vorel <pvorel@suse.cz>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: ltp@lists.linux.it, Stefan Berger <stefanb@linux.ibm.com>,
-	linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] ima_violations.sh: Update validate() to support
- multiple violations
-Message-ID: <20250304174342.GA97130@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20250304115331.524842-1-zohar@linux.ibm.com>
- <20250304115331.524842-2-zohar@linux.ibm.com>
- <20250304133101.GC81126@pevik>
- <678478de87319625e591e8e956a57b31c700bbd2.camel@linux.ibm.com>
- <54cf5311ec5e0debd6dfd63669e8d01883c0ba23.camel@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qQVKvgY1"
+Received: from localhost.localdomain (unknown [167.220.59.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DD945210EAF5;
+	Tue,  4 Mar 2025 11:03:57 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DD945210EAF5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741115038;
+	bh=GjiBuoKXsGyAWW6cnySvQv4nQ9sBfDgvkq6VWxqqivo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=qQVKvgY1FlgcHfMKgMiLN33jbU7Np8CgnNa/lOH0rXsuul3op0pQkknnhFbUb7B/V
+	 9dCdk2v9eCAnhvMB7lkk/mwGgdfP4JfUcgJJHE9lFWM7TVaOK7VhsdtB9evmSvIrmH
+	 5UZa3Dr5US/BQsqycrB4i5xmrf10q1QnFAQcHeZw=
+From: steven chen <chenste@linux.microsoft.com>
+To: zohar@linux.ibm.com,
+	stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com,
+	roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com,
+	ebiederm@xmission.com,
+	paul@paul-moore.com,
+	code@tyhicks.com,
+	bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org,
+	kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com,
+	nramas@linux.microsoft.com,
+	James.Bottomley@HansenPartnership.com,
+	bhe@redhat.com,
+	vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: [PATCH v9 2/7] kexec: define functions to map and unmap segments
+Date: Tue,  4 Mar 2025 11:03:46 -0800
+Message-Id: <20250304190351.96975-3-chenste@linux.microsoft.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250304190351.96975-1-chenste@linux.microsoft.com>
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54cf5311ec5e0debd6dfd63669e8d01883c0ba23.camel@linux.ibm.com>
-X-Spam-Score: -3.50
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-> On Tue, 2025-03-04 at 09:44 -0500, Mimi Zohar wrote:
-> > On Tue, 2025-03-04 at 14:31 +0100, Petr Vorel wrote:
-> > > Hi Mimi,
+The content of memory segments carried over to the new kernel during the 
+kexec systemcall can be changed at kexec 'execute' stage, but the size of
+the memory segments cannot be changed at kexec 'execute' stage.
 
-> > > > Add support for the number of expected violations.  Include the
-> > > > expected number of violations in the output.
+To copy IMA measurement logs during the kexec operation, IMA needs to 
+allocate memory at the kexec 'load' stage and map the segments to the 
+kimage structure. The mapped address will then be used to copy IMA 
+measurements during the kexec 'execute' stage.
 
-> > > Unfortunately this works only on fixed kernel (e.g. the one with v1 of your
-> > > "ima: limit both open-writers and ToMToU violations" kernel patchset [1]
-> > > (I haven't built v2 [2], but it's really just
-> > > s/IMA_LIMIT_VIOLATIONS/IMA_EMITTED_OPENWRITERS/ => it will work)
+Currently, the mechanism to map and unmap segments to the kimage 
+structure is not available to subsystems outside of kexec.
 
-> > > Testing on any other kernel it fails on first testing after reboot:
+Implement kimage_map_segment() to enable IMA to map measurement log list to 
+the kimage structure during kexec 'load' stage.  This function takes a kimage 
+pointer, a memory address, and a size, then gathers the
+source pages within the specified address range, creates an array of page
+pointers, and maps these to a contiguous virtual address range.  The
+function returns the start virtual address of this range if successful, or NULL on
+failure.
 
-> > Hi Petr,
+Implement kimage_unmap_segment() for unmapping segments
+using vunmap().
 
-> > I only tested by specifying the "ima_policy=tcb" on the boot command line.  This
-> > failure happens when loading the test specific policy rules.  If setup() is
-> > called before loading the test specific policy rules, forcing the $LOG file
-> > violation at setup() would be too early.
+From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Baoquan He <bhe@redhat.com> 
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Signed-off-by: steven chen <chenste@linux.microsoft.com>
+---
+ include/linux/kexec.h |  6 +++++
+ kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
 
-> Sorry, that doesn't seem to be the case.
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index f0e9f8eda7a3..7d6b12f8b8d0 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+ #define kexec_dprintk(fmt, arg...) \
+         do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+ 
++extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
++extern void kimage_unmap_segment(void *buffer);
+ #else /* !CONFIG_KEXEC_CORE */
+ struct pt_regs;
+ struct task_struct;
++struct kimage;
+ static inline void __crash_kexec(struct pt_regs *regs) { }
+ static inline void crash_kexec(struct pt_regs *regs) { }
+ static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+ static inline int kexec_crash_loaded(void) { return 0; }
++static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
++{ return NULL; }
++static inline void kimage_unmap_segment(void *buffer) { }
+ #define kexec_in_progress false
+ #endif /* CONFIG_KEXEC_CORE */
+ 
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index c0bdc1686154..63e4d16b6023 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+ 	return result;
+ }
+ 
++void *kimage_map_segment(struct kimage *image,
++			 unsigned long addr, unsigned long size)
++{
++	unsigned long eaddr = addr + size;
++	unsigned long src_page_addr, dest_page_addr;
++	unsigned int npages;
++	struct page **src_pages;
++	int i;
++	kimage_entry_t *ptr, entry;
++	void *vaddr = NULL;
++
++	/*
++	 * Collect the source pages and map them in a contiguous VA range.
++	 */
++	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
++	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
++	if (!src_pages) {
++		pr_err("Could not allocate ima pages array.\n");
++		return NULL;
++	}
++
++	i = 0;
++	for_each_kimage_entry(image, ptr, entry) {
++		if (entry & IND_DESTINATION) {
++			dest_page_addr = entry & PAGE_MASK;
++		} else if (entry & IND_SOURCE) {
++			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
++				src_page_addr = entry & PAGE_MASK;
++				src_pages[i++] =
++					virt_to_page(__va(src_page_addr));
++				if (i == npages)
++					break;
++				dest_page_addr += PAGE_SIZE;
++			}
++		}
++	}
++
++	/* Sanity check. */
++	WARN_ON(i < npages);
++
++	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
++	kfree(src_pages);
++
++	if (!vaddr)
++		pr_err("Could not map ima buffer.\n");
++
++	return vaddr;
++}
++
++void kimage_unmap_segment(void *segment_buffer)
++{
++	vunmap(segment_buffer);
++}
++
+ struct kexec_load_limit {
+ 	/* Mutex protects the limit count. */
+ 	struct mutex mutex;
+-- 
+2.25.1
 
-> With the changes to validate(), even the original tests will only work on a new
-> kernel.  I'll rework the patch set, so at least the original tests will continue
-> to work.
-
-+1, thank you!
-
-Kind regards,
-Petr
-
-> Mimi
