@@ -1,22 +1,23 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CF2A95C;
-	Wed,  5 Mar 2025 17:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EB61957E4;
+	Wed,  5 Mar 2025 17:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196182; cv=none; b=Uhl3WkDb2xL0RoSY/XU9O0vV8Rw7G10SfR6lZLsGKSgmvVzxn7VaGdaxSG7xNxWcm+QeRRXsjLEcUvAbtU48NPQEWRt9Lkvkr7cTBmuvWJa0/cvM7yW4A7d8g+d+cFVugaLyCoWrnDE8xeS44pKVEGlFGTSgK/AHr++xN2dLCQE=
+	t=1741196183; cv=none; b=Zrm1eGk2exvKYb+/S4fzhQLO9IU5FHDv72tUltlK6j4ukol2uZHVxJlTWYELxlfRbGCYXQQzQ3dasR2veL/s46ToaOyJHorXG9d8L6e79+qg2oo+rIyAnmVsgv/xn8J4uqjpvDoYChAmUl9p7Yf1ChqoC2VKpLdFGOAWcv5wHlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196182; c=relaxed/simple;
-	bh=WJc7RLlXNUDvCMFCecKZTWhzNFrOu3CwEitjOEKnO6c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Efd7ZPcsyJuhXbU/NKsvx+hhFC8yu9RHow2OgBH6nxebMdjCbZdggQdcqOFF54Tv4EH2dzX9UwU2cbXvF5dA6uGVWVNtdIaVOquW/ytfCcVIjH5pYk0mzcPMFYSn8YXHqnYh24q69S7EJiCKmarif2BVySeZncMWyxvoy4yMr9Y=
+	s=arc-20240116; t=1741196183; c=relaxed/simple;
+	bh=B7DiRQvXT5D+JOioD/pxfSeyiGbHzo9IR3jcSEirGaI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mUJfwYiUK6+hYimyEpgIteMl+52LS1+SS5vqWJvVQMNa0M56hOoLnUFkL5MqWqzZPjSNjp7u2QKt39V2GkfYyyUhyf6um6Xg9kG2MzwJQaF/0rBcmCUILuBzBSVEBycXsUJKiBH/X7YExi0qDtEn6wM3lKwEvCj2bH5iZh2iTKA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8190EFEC;
-	Wed,  5 Mar 2025 09:36:33 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DB3E1FC7;
+	Wed,  5 Mar 2025 09:36:34 -0800 (PST)
 Received: from beelzebub.ast.arm.com (u203013-lin.austin.arm.com [10.118.29.240])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 030EE3F66E;
-	Wed,  5 Mar 2025 09:36:19 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A442D3F792;
+	Wed,  5 Mar 2025 09:36:20 -0800 (PST)
 From: Stuart Yoder <stuart.yoder@arm.com>
 To: linux-integrity@vger.kernel.org,
 	jarkko@kernel.org,
@@ -27,10 +28,12 @@ To: linux-integrity@vger.kernel.org,
 	lenb@kernel.org
 Cc: linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/5] Add support for the TPM FF-A start method
-Date: Wed,  5 Mar 2025 11:36:06 -0600
-Message-Id: <20250305173611.74548-1-stuart.yoder@arm.com>
+Subject: [PATCH v6 2/5] tpm_crb: clean-up and refactor check for idle support
+Date: Wed,  5 Mar 2025 11:36:08 -0600
+Message-Id: <20250305173611.74548-3-stuart.yoder@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250305173611.74548-1-stuart.yoder@arm.com>
+References: <20250305173611.74548-1-stuart.yoder@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -39,88 +42,99 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Firmware Framework for Arm A-profile (FF-A) is a messaging framework
-for Arm-based systems, and in the context of the TPM CRB driver is used
-to signal 'start' to a CRB-based TPM service which is hosted in an
-FF-A secure partition running in TrustZone.
+Refactor TPM idle check to tpm_crb_has_idle(), and reduce paraentheses
+usage in start method checks
 
-These patches add support for the CRB FF-A start method defined
-in the TCG ACPI specification v1.4 and the FF-A ABI defined
-in the Arm TPM Service CRB over FF-A (DEN0138) specification:
-https://developer.arm.com/documentation/den0138/latest/
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+---
+ drivers/char/tpm/tpm_crb.c | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
-The first patch adds an FF-A driver to handle the FF-A messaging when
-communicating with a CRB-based TPM secure partition built on FF-A.
-The driver is probed when the TPM secure partition is discovered by
-the Linux FF-A infrastructure.
-
-The second patch consolidates the check for idle support in the CRB
-driver to one place.
-
-The third patch defines the new ACPI start method enumeration for
-CRB over FF-A.
-
-The fourth patch adds support for the FF-A ACPI start method to
-the TPM crb driver.
-
-The fifth patch adds documentation explaining how the CRB driver
-and FF-A relate.
-
-Version 6
--in tpm_crb removed unnecessary brackets from if statement and
- fixed comment style
--noticed and fixed bug in patch 2, polarity of return value
- from tpm_crb_has_idle() was wrong and wasn't caught in past
- testing
--added Reviewed-by tag to patches 2 and 5
-
-Version 5
--tpm_ffa_crb patch: removed module version
--tpm_ffa_crb patch: fixed module description
--tpm_ffa_crb patch: updated comment on mutex declaration
--reworded commit message for patch 2 as per Jarkko's 
- suggestion
--added Acked tag by Sudeep to patch 1 for FF-A changes 
--added Reviewed-by tag to patches 3 and 4
-
-Version 4
--fix warning from kernel test robot in patch 1
--fix warnings from checkpatch.pl --strict
--clean up unnecessary parenthesis usage
--update variable declaration to be reverse tree order
--document exported functions in tpm_crb_ffa driver
--remove unnecessary author and maintainer info in tpm_crb_ffa driver
--fix declaration of variables to be in reverse tree order
-
-Version 3
--changed prefixes used throughout patch series to tpm_crb_ffa*
-
-Version 2
--updates to cover letter to define FF-A
--added new patch with documentation
--created pull request in ACPIA and added link to the patch
- updating actbl3.h
--added tpm_ prefix to the FF-A CRB driver
-
-Stuart Yoder (5):
-  tpm_crb: implement driver compliant to CRB over FF-A
-  tpm_crb: clean-up and refactor check for idle support
-  ACPICA: add start method for Arm FF-A
-  tpm_crb: add support for the Arm FF-A start method
-  Documentation: tpm: add documentation for the CRB FF-A interface
-
- Documentation/security/tpm/tpm_ffa_crb.rst |  65 ++++
- drivers/char/tpm/Kconfig                   |   9 +
- drivers/char/tpm/Makefile                  |   1 +
- drivers/char/tpm/tpm_crb.c                 | 105 +++++--
- drivers/char/tpm/tpm_crb_ffa.c             | 348 +++++++++++++++++++++
- drivers/char/tpm/tpm_crb_ffa.h             |  25 ++
- include/acpi/actbl3.h                      |   1 +
- 7 files changed, 535 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/security/tpm/tpm_ffa_crb.rst
- create mode 100644 drivers/char/tpm/tpm_crb_ffa.c
- create mode 100644 drivers/char/tpm/tpm_crb_ffa.h
-
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index ea085b14ab7c..c6898710a66b 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -115,6 +115,16 @@ struct tpm2_crb_pluton {
+ 	u64 reply_addr;
+ };
+ 
++/*
++ * Returns true if the start method supports idle.
++ */
++static inline bool tpm_crb_has_idle(u32 start_method)
++{
++	return !(start_method == ACPI_TPM2_START_METHOD ||
++	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD ||
++	       start_method == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC);
++}
++
+ static bool crb_wait_for_reg_32(u32 __iomem *reg, u32 mask, u32 value,
+ 				unsigned long timeout)
+ {
+@@ -173,9 +183,7 @@ static int __crb_go_idle(struct device *dev, struct crb_priv *priv)
+ {
+ 	int rc;
+ 
+-	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+-	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+-	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC))
++	if (!tpm_crb_has_idle(priv->sm))
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_GO_IDLE, &priv->regs_t->ctrl_req);
+@@ -222,9 +230,7 @@ static int __crb_cmd_ready(struct device *dev, struct crb_priv *priv)
+ {
+ 	int rc;
+ 
+-	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+-	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) ||
+-	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC))
++	if (!tpm_crb_has_idle(priv->sm))
+ 		return 0;
+ 
+ 	iowrite32(CRB_CTRL_REQ_CMD_READY, &priv->regs_t->ctrl_req);
+@@ -423,13 +429,13 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t len)
+ 	 * report only ACPI start but in practice seems to require both
+ 	 * CRB start, hence invoking CRB start method if hid == MSFT0101.
+ 	 */
+-	if ((priv->sm == ACPI_TPM2_COMMAND_BUFFER) ||
+-	    (priv->sm == ACPI_TPM2_MEMORY_MAPPED) ||
+-	    (!strcmp(priv->hid, "MSFT0101")))
++	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
++	    priv->sm == ACPI_TPM2_MEMORY_MAPPED ||
++	    !strcmp(priv->hid, "MSFT0101"))
+ 		iowrite32(CRB_START_INVOKE, &priv->regs_t->ctrl_start);
+ 
+-	if ((priv->sm == ACPI_TPM2_START_METHOD) ||
+-	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD))
++	if (priv->sm == ACPI_TPM2_START_METHOD ||
++	    priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD)
+ 		rc = crb_do_acpi_start(chip);
+ 
+ 	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_ARM_SMC) {
+@@ -449,8 +455,8 @@ static void crb_cancel(struct tpm_chip *chip)
+ 
+ 	iowrite32(CRB_CANCEL_INVOKE, &priv->regs_t->ctrl_cancel);
+ 
+-	if (((priv->sm == ACPI_TPM2_START_METHOD) ||
+-	    (priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD)) &&
++	if ((priv->sm == ACPI_TPM2_START_METHOD ||
++	     priv->sm == ACPI_TPM2_COMMAND_BUFFER_WITH_START_METHOD) &&
+ 	     crb_do_acpi_start(chip))
+ 		dev_err(&chip->dev, "ACPI Start failed\n");
+ }
+@@ -609,8 +615,8 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 	 * the control area, as one nice sane region except for some older
+ 	 * stuff that puts the control area outside the ACPI IO region.
+ 	 */
+-	if ((priv->sm == ACPI_TPM2_COMMAND_BUFFER) ||
+-	    (priv->sm == ACPI_TPM2_MEMORY_MAPPED)) {
++	if (priv->sm == ACPI_TPM2_COMMAND_BUFFER ||
++	    priv->sm == ACPI_TPM2_MEMORY_MAPPED) {
+ 		if (iores &&
+ 		    buf->control_address == iores->start +
+ 		    sizeof(*priv->regs_h))
 -- 
 2.34.1
 
