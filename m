@@ -1,53 +1,43 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915128F6B;
-	Thu, 20 Mar 2025 15:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D79F1DE4C5;
+	Thu, 20 Mar 2025 15:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482995; cv=none; b=CTH86RLNSbENqzYhsLDBSkNhP6ELQbl1QwyozOdQup1d8K8OGVZhGXHTms1XAcGh751odtw1rwLr/oOxM5DgvOKObinhFBX0uOuzm5C54Iv09CtWeAKtJR9QTiZGDmC1gJgH45UBScfjIOaRLb1uoYSGCNXCiomOPAwg0V4Hyeg=
+	t=1742483795; cv=none; b=W81D/UG5t2EjM3mSL7lnsESWHqfzgJjigXEU+AeYuL0mPHSpiip5lpH+hfE8jhvgnzHDG8H6obUuJgcaKuIrSafOIdVulHl5m/iRv3klADeZgfnEbFabOX6Y7WKo+Te3UU0b5rra3m+JoZe2pqK+A+sGRW+pTU09Ide3RudTv5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482995; c=relaxed/simple;
-	bh=DB/W4NR9cvvIykrHiJ1LIkganubjE8k9NAuFhlU53xY=;
+	s=arc-20240116; t=1742483795; c=relaxed/simple;
+	bh=3ISFEoedf+AsgYKpMB/pWOzZYb8aFav8C0G9rOCDxCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXGvxdWov5LJwgpibowo7S+N+qFlZykOU5+dtWMGcSlb1H9eGIXODSoxh3aHUwlXDnKvutb4oFQp50LZOUhEOvzyxFi78VhAVRric3vBFGCchspIp7G6ZwAieZE1gsydlQmF0r53tuHpu6aze+wvHCFiWPrQiwndp0PY2pCwXjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIjIUWs9; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rWGzupM6hvwhxwlcNsO0OgokTKgSn7miqtI/iMbOPCbLHhE/WRL1voX8BEBtg5kdXUHK5eIqafboMafY2TlLpj8uOMs3Y9EyXKO6/fuq9vTSgcquUhgVC31BqVjnzDtWLo4NTTun4Y+hMbUvU4JjYF7hXAHkoSpadp80j8Ma2Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM7dm3My; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIjIUWs9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72B78C4CEDD;
-	Thu, 20 Mar 2025 15:03:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM7dm3My"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28BB4C4CEDD;
+	Thu, 20 Mar 2025 15:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742482994;
-	bh=DB/W4NR9cvvIykrHiJ1LIkganubjE8k9NAuFhlU53xY=;
+	s=k20201202; t=1742483794;
+	bh=3ISFEoedf+AsgYKpMB/pWOzZYb8aFav8C0G9rOCDxCU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iIjIUWs9mj23/ngqm4gOxFYJNc1lbS0WSbo3ow5sfyziDCMwIQioHR1hc6VWCLOSX
-	 S0OgDz7YFHqEsvI8W3nE+NNFtfRizV2jeWKP66Fp4xgSp3DVly3ByOc4Y9l1os4XxL
-	 7Ib/n2bykBzh2VCmauHHh6O+ekai6JbiJU3TQOZDDFx1wvk+Z80k6ugFmfxEU96gdX
-	 QxeWphlvL2yPR6Ls8mZ9VTs8GdDtDHeqy4DxKxD+CyBgKJGJ2SC4ns1xf/ipSH2QKS
-	 NWmpsFrmF4NVUwlbEUm5kqa+U0Y0Hhr2/CPrzWV9/9UOQ0lQ5LsnglmSGc3Ep/k5QX
-	 aX7gtES8Do3vQ==
-Date: Thu, 20 Mar 2025 17:03:09 +0200
+	b=ZM7dm3MyW1u9kYmnpMqxZbxFqmooKpRDJaGCFC6WSQ75koW1s6RCSXzYTQSj3qFKN
+	 LWK2New6mbyX+UphtaHktjHvLutibQ4P7boeCPjFVcXN0RP4d6xwdeszLrg7HVRxeQ
+	 1a47qfrPK3VJFVuZivf5hnw5F+zpWmJBt9wRbV8OFdTu53liiSaSmySOm0jUdffMXQ
+	 bqZAecPY0PTg1PDEfgzvj2Eq3rAGm9fIOs4k9v8M0coA4vfeImo4+y8uPycUpcPmQv
+	 AuGTXu5s5DycnFUDEbOoQ3QaCZJ4mRmoy3Th2UvffwULb0IQC0axYtUdDzF5vgd0nH
+	 KDUv7WRxVsUEA==
+Date: Thu, 20 Mar 2025 17:16:31 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, Borislav Petkov <bp@alien8.de>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org, Dov Murik <dovmurik@linux.ibm.com>,
-	Dionna Glaze <dionnaglaze@google.com>, linux-coco@lists.linux.dev,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v3 1/4] x86/sev: add SVSM vTPM probe/send_command
- functions
-Message-ID: <Z9wuLVeP726Cssqp@kernel.org>
-References: <20250311094225.35129-1-sgarzare@redhat.com>
- <20250311094225.35129-2-sgarzare@redhat.com>
- <d7e5a1d2-5fcc-bf7f-a67d-7871a1627c98@amd.com>
- <Z9glWp6U6vyEmKQa@kernel.org>
- <7kuhiyy7gj4py323g5n2vy3ddlg666zwhtx3mjcklebgtlstdc@xgdyeecifwei>
+To: Bo Liu <liubo03@inspur.com>
+Cc: dhowells@redhat.com, James.Bottomley@hansenpartnership.com,
+	zohar@linux.ibm.com, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KEYS: trusted: dcp: Use kfree_sensitive() to fix
+ Coccinelle warnings
+Message-ID: <Z9wxT9SV4BmehzmT@kernel.org>
+References: <20250320103557.7236-1-liubo03@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -56,117 +46,54 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7kuhiyy7gj4py323g5n2vy3ddlg666zwhtx3mjcklebgtlstdc@xgdyeecifwei>
+In-Reply-To: <20250320103557.7236-1-liubo03@inspur.com>
 
-On Tue, Mar 18, 2025 at 11:07:57AM +0100, Stefano Garzarella wrote:
-> On Mon, Mar 17, 2025 at 03:36:26PM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Mar 14, 2025 at 10:27:07AM -0500, Tom Lendacky wrote:
-> > > On 3/11/25 04:42, Stefano Garzarella wrote:
-> > > > Add two new functions to probe and send commands to the SVSM vTPM.
-> > > > They leverage the two calls defined by the AMD SVSM specification [1]
-> > > > for the vTPM protocol: SVSM_VTPM_QUERY and SVSM_VTPM_CMD.
-> > > >
-> > > > Expose these functions to be used by other modules such as a tpm
-> > > > driver.
-> > > >
-> > > > [1] "Secure VM Service Module for SEV-SNP Guests"
-> > > >     Publication # 58019 Revision: 1.00
-> > > >
-> > > > Co-developed-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> > > > Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-> > > > Co-developed-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> > > > Signed-off-by: Claudio Carvalho <cclaudio@linux.ibm.com>
-> > > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > > 
-> > > One minor nit below, otherwise:
-> > > 
-> > > Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+On Thu, Mar 20, 2025 at 06:35:57AM -0400, Bo Liu wrote:
+> Replace memzero_explicit() and kfree() with kfree_sensitive() to fix
+> warnings reported by Coccinelle:
 > 
-> Thanks!
-> 
-> > > 
-> > > > ---
-> > > > v3:
-> > > > - removed link to the spec because those URLs are unstable [Borislav]
-> > > > - squashed "x86/sev: add SVSM call macros for the vTPM protocol" patch
-> > > >   in this one [Borislav]
-> > > > - slimmed down snp_svsm_vtpm_probe() [Borislav]
-> > > > - removed features check and any print related [Tom]
-> > > > ---
-> > > >  arch/x86/include/asm/sev.h |  7 +++++++
-> > > >  arch/x86/coco/sev/core.c   | 31 +++++++++++++++++++++++++++++++
-> > > >  2 files changed, 38 insertions(+)
-> > > >
-> > > > diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> > > > index ba7999f66abe..09471d058ce5 100644
-> > > > --- a/arch/x86/include/asm/sev.h
-> > > > +++ b/arch/x86/include/asm/sev.h
-> > > > @@ -384,6 +384,10 @@ struct svsm_call {
-> > > >  #define SVSM_ATTEST_SERVICES		0
-> > > >  #define SVSM_ATTEST_SINGLE_SERVICE	1
-> > > >
-> > > > +#define SVSM_VTPM_CALL(x)		((2ULL << 32) | (x))
-> > > > +#define SVSM_VTPM_QUERY			0
-> > > > +#define SVSM_VTPM_CMD			1
-> > > > +
-> > > >  #ifdef CONFIG_AMD_MEM_ENCRYPT
-> > > >
-> > > >  extern u8 snp_vmpl;
-> > > > @@ -481,6 +485,9 @@ void snp_msg_free(struct snp_msg_desc *mdesc);
-> > > >  int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req,
-> > > >  			   struct snp_guest_request_ioctl *rio);
-> > > >
-> > > > +bool snp_svsm_vtpm_probe(void);
-> > > > +int snp_svsm_vtpm_send_command(u8 *buffer);
-> > > > +
-> > > >  void __init snp_secure_tsc_prepare(void);
-> > > >  void __init snp_secure_tsc_init(void);
-> > > >
-> > > > diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> > > > index 96c7bc698e6b..2166bdff88b7 100644
-> > > > --- a/arch/x86/coco/sev/core.c
-> > > > +++ b/arch/x86/coco/sev/core.c
-> > > > @@ -2628,6 +2628,37 @@ static int snp_issue_guest_request(struct snp_guest_req *req, struct snp_req_dat
-> > > >  	return ret;
-> > > >  }
-> > > >
-> > > > +bool snp_svsm_vtpm_probe(void)
-> > > > +{
-> > > > +	struct svsm_call call = {};
-> > > > +
-> > > > +	/* The vTPM device is available only if a SVSM is present */
-> > > > +	if (!snp_vmpl)
-> > > > +		return false;
-> > > > +
-> > > > +	call.caa = svsm_get_caa();
-> > > > +	call.rax = SVSM_VTPM_CALL(SVSM_VTPM_QUERY);
-> > > > +
-> > > > +	if (svsm_perform_call_protocol(&call))
-> > > > +		return false;
-> > > > +
-> > > > +	/* Check platform commands contains TPM_SEND_COMMAND - platform command 8 */
-> > > > +	return (call.rcx_out & BIT_ULL(8)) == BIT_ULL(8);
-> > > 
-> > > It's a bool function, so this could simplified to just:
-> > > 
-> > > 	return call.rcx_out & BIT_ULL(8);
-> 
-> Sure.
-> 
-> > 
-> > Or perhaps even just "call.rcx_out & 0x100". I don't think BIT_ULL()
-> > here brings much additional clarity or anything useful...
-> 
-> I can do that, I slightly prefer BIT_ULL() macro, but I don't have a strong
-> opinion on my side.
-> @Borislav since you suggested it, WDYT?
+> WARNING opportunity for kfree_sensitive/kvfree_sensitive
+> WARNING opportunity for kfree_sensitive/kvfree_sensitive
 
-Either goes for me. Sorry for nitpicking that :-) The first comment
-stil applies.
+Even if you get the error from Coccinelle, you should still go trouble
+why this warning happens. Otherwise, you are contributing a change that
+you don't understand yourself.
 
 > 
-> Thanks,
-> Stefano
+> Signed-off-by: Bo Liu <liubo03@inspur.com>
+> ---
+>  security/keys/trusted-keys/trusted_dcp.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
+> diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
+> index 7b6eb655df0c..c967837e72ee 100644
+> --- a/security/keys/trusted-keys/trusted_dcp.c
+> +++ b/security/keys/trusted-keys/trusted_dcp.c
+> @@ -233,8 +233,7 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
+>  	ret = 0;
+>  
+>  out:
+> -	memzero_explicit(plain_blob_key, AES_KEYSIZE_128);
+> -	kfree(plain_blob_key);
+> +	kfree_sensitive(plain_blob_key);
+>  
+>  	return ret;
+>  }
+> @@ -283,8 +282,7 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
+>  	ret = 0;
+>  out:
+>  	if (plain_blob_key) {
+> -		memzero_explicit(plain_blob_key, AES_KEYSIZE_128);
+> -		kfree(plain_blob_key);
+> +		kfree_sensitive(plain_blob_key);
+>  	}
+>  
+>  	return ret;
+> -- 
+> 2.31.1
+> 
+
+Not gonna fly because you did not include KEYS-TRUSTED-DCP maintainer to
+the CC list.
 
 BR, Jarkko
