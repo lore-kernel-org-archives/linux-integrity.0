@@ -1,84 +1,85 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8FE36124;
-	Wed, 26 Mar 2025 10:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB2B1A2632;
+	Wed, 26 Mar 2025 12:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984101; cv=none; b=Zi3PLL8Sg+uhDy6HVXCS9SM9IFmVCPeoH7Lv7LxpVBn9DIDTYw89WmEq57g3fMhRvGA1iWWP2hEPZ1WNIHOrMYtMgMgsUM5bx9EGCo7W1kr7fruYfKaIO+UDLcxP74SziFJ7l261suss0N60IlGsTJddTCsPhR4so2dZdW+155w=
+	t=1742991079; cv=none; b=QILVDNOmA59aFOX/5leh+TWo+wyb8tjLOSfntzij+OU2asKWil2b2yPV7/LwMd3nyXeOHY3OpO6jjgfFwOBrDpoyITlO++gn5/6CeJnaxWCv+DMNa8mXALy3ohXnIXiKWDmeFMQKVEOChxV5YTXE5qNcApwQm4F/pW6ypv1pLUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742984101; c=relaxed/simple;
-	bh=kXaKKpHXSslrbwHTWT5CPLZBU7qrIImltiwwUCWX1DA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/UkQJ0uZ3JkxL4jXzZA8JI/aTaBsxdo3T4VhvmheYBI1IyfuInfcEfL20fWWsGHiRQsSYMYFqHOdHQtUPX4epF3+CywAXfBmdoNmN9w6J139rpG5sRfvtx3v0UHSctnkoFMHb4bdx6wibMEcBpzlbxDrlwQ3n2hgAmdZw9P7rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZN2Gy10QbzsRwR;
-	Wed, 26 Mar 2025 17:55:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 7FC691400DD;
-	Wed, 26 Mar 2025 17:56:14 +0800 (CST)
-Received: from [10.221.98.126] (unknown [10.221.98.126])
-	by APP1 (Coremail) with SMTP id LxC2BwDna0o1z+NnTirkBA--.50162S2;
-	Wed, 26 Mar 2025 10:56:14 +0100 (CET)
-Message-ID: <b39bc11b-11d6-4847-9afd-0e8ead173af8@huaweicloud.com>
-Date: Wed, 26 Mar 2025 10:56:02 +0100
+	s=arc-20240116; t=1742991079; c=relaxed/simple;
+	bh=I4aAtoXcp4D+di0R3eD2oZvCXhk++HNE6yAkPHEq7+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZrG+l7gKSnSQL/pctoQxSJ0S65mUjh5aqX0qoyPAJwM5kb1sYma4qBP9Ukq2SNQf0QacBwCwIgnuZ7Dn31wIrYzhVY1PbJOeZ6Ut/5TUZrkffnI5xhfHc2R1Ss+l+hZT8Rrfgu1Ejx/My/WqQJQRqvzlYAmavLF7qRjS1NyZKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5oQwf1X; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5oQwf1X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69BF3C4CEE2;
+	Wed, 26 Mar 2025 12:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742991075;
+	bh=I4aAtoXcp4D+di0R3eD2oZvCXhk++HNE6yAkPHEq7+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e5oQwf1XGe1elkMMxGis5jNX7zG9LFWzC1bkKtp6S5KEtRMhTkYA5KMzp9Bbe2CR7
+	 qbclLpHlDO8HYVxtKkDDlUdFPgwY9nwNeohCHK5vfqSC3EFbL52uc2R61c99IWaUf1
+	 9CJtK4PCbAr+Ua5zv1tQGw8DFumUQRtN3y54vP87e4RjbWMLgTLmCx+ULtH+F09EDi
+	 yHDI51Jn/G/k9RGGUAyVx24F3T8SgiYw5g8h7PI3w4uyHC2OBWkQ1mxmrsuobUxR7I
+	 Y9FQx17iPrPdeyAC2DobiIf7uZHsJF8dVJ/T+IFT2nEDC+n/PVdA7g+2t8JhZaMm6Z
+	 sfQfNcFfV74bg==
+Date: Wed, 26 Mar 2025 14:11:12 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Sumit Garg <sumit.garg@kernel.org>
+Cc: Stefano Garzarella <sgarzare@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Jens Wiklander <jens.wiklander@linaro.org>
+Subject: Re: [PATCH 2/2] tpm/tpm_ftpm_tee: use send_recv() op
+Message-ID: <Z-Pu4FhcntnKii61@kernel.org>
+References: <20250320152433.144083-1-sgarzare@redhat.com>
+ <20250320152433.144083-3-sgarzare@redhat.com>
+ <Z-I86tWMcD6b_YeM@sumit-X1>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
- on MAY_READ
-To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, linux-ima-devel@lists.sourceforge.net,
- linux-integrity@vger.kernel.org, linux-ima-user@lists.sourceforge.net,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@cloudfalre.com
-References: <20250325181616.79540-2-fred@cloudflare.com>
- <Z-LzWCbROAI2H2Dx@CMGLRV3>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <Z-LzWCbROAI2H2Dx@CMGLRV3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwDna0o1z+NnTirkBA--.50162S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBGfjp1oCQgAAss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z-I86tWMcD6b_YeM@sumit-X1>
 
-On 3/25/2025 7:18 PM, Frederick Lawler wrote:
-> My mistake, this is PATCH v2. I forgot to change the subject in git
-> send-email. I can resend if that's needed.
+On Tue, Mar 25, 2025 at 10:49:38AM +0530, Sumit Garg wrote:
+> On Thu, Mar 20, 2025 at 04:24:33PM +0100, Stefano Garzarella wrote:
+> > From: Stefano Garzarella <sgarzare@redhat.com>
+> > 
+> > This driver does not support interrupts, and receiving the response is
+> > synchronous with sending the command.
+> > 
+> > It used an internal buffer to cache the response when .send() is called,
+> > and then return it when .recv() is called.
+> > 
+> > Let's simplify the driver by implementing the new send_recv() op, so that
+> > we can also remove the 4KB internal buffer used to cache the response.
+> > 
+> > Tested-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> > ---
+> > v1:
+> > - added Jens' T-b
+> > ---
+> >  drivers/char/tpm/tpm_ftpm_tee.h |  4 --
+> >  drivers/char/tpm/tpm_ftpm_tee.c | 86 ++++++++-------------------------
+> >  2 files changed, 21 insertions(+), 69 deletions(-)
+> >
+> 
+> Reviewed-by: Sumit Garg <sumit.garg@kernel.org>
 
-No problem. However, let's change:
+I've knowingly even peeked at these patches because of stuff
+in-flight.
 
-mask & MAY_WRITE
+Generally speaking I don't see enough value in complicating
+callback interface. It's better to handle complications in
+the leaves (i.e. dictatorship of majority ;-) ).
 
-with
-
-file->f_mode & FMODE_WRITE
-
-Thanks
-
-Roberto
-
+BR, Jarkko
