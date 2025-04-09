@@ -1,62 +1,63 @@
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC06725A344
-	for <linux-integrity@vger.kernel.org>; Wed,  9 Apr 2025 18:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC4027703E
+	for <linux-integrity@vger.kernel.org>; Wed,  9 Apr 2025 18:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224813; cv=none; b=ULZI9vadDH33KiFVyy0Hsud5dHDjNt6rPFno4JCePgJR8muIaQvI0GVc3qaH57MdBx8cZvc4xuzbuexYnBWhIIgadymbdSR6WV5DJ3khdqLlBu7QmsiWoAiWRzyygGqVTIpw1sOXkKmVWF+1Kfq5IvJYDfMtaI9fpcfWwJAsYOM=
+	t=1744224816; cv=none; b=Eaj9OqYOg2TBF1dvufMTz234EADAAnR0GpZhb0Z4e2VCSjt6d97Nl8oEC9qIQzV982YgdBGo+jIm11Na9Cus3p0lgrkxvQvy0fKcfjQui5zIjh1I5fMjNNJgfHMbRvIiX2tfPxz9O14WnRJkbl6ZPebE+5MvvVazF7goiQv+PlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744224813; c=relaxed/simple;
-	bh=sLMzSrXsUIil2wRtDnFkLH+HQYSi3rPJfhvER7QLSAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bwqq0L/CLqbuJ/baCd5iDStkY0zuw6ZorB+Yp7yNM4Yj7zKfaZyGGfDhRXqjfosugIgpIH/8I5xqZnhvB5YN6AMChQ1LW6Sd4uIhWPXCJnwGpEgsIkuVnR9pH/H2UMfLh89ck9MZOZBobadPr+Fko4UIJ0UBiAPVNAvGPurt63M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MjLp0N4S; arc=none smtp.client-ip=209.85.222.175
+	s=arc-20240116; t=1744224816; c=relaxed/simple;
+	bh=r3LlTbBg0v5L6VO7OKEzr0vj9s7D5oPdwgU1H8/sOCc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gOHaVR6NLtRMnTnw4BG1PU6XqD7v5rGmMinTrboaTuU6b6KaSTO7agIGJe/VmjNErhf4ANKcxnlzdXJwL54OQST4FOcsB5jWQpVa7CR2PGh68vbbyazYHtIaK5zfS/kozW+46ACQshFLbjWAWYHK3bcUkQdccYgK9QPY+lBKBE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TkrT1mAo; arc=none smtp.client-ip=209.85.160.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MjLp0N4S"
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c560c55bc1so1886485a.1
-        for <linux-integrity@vger.kernel.org>; Wed, 09 Apr 2025 11:53:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TkrT1mAo"
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4767e969b94so120193631cf.2
+        for <linux-integrity@vger.kernel.org>; Wed, 09 Apr 2025 11:53:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744224809; x=1744829609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=miFGAAuBMi9MBGwDEl9qwyMnAIkegKYbeffs6codIYs=;
-        b=MjLp0N4SJh+tlcg92Vg4f1dBkA8kkcIQF29bbSBfr/4eFji3AwlrGQR50xiK5QT7tU
-         ar3vZeC9BJwWGQFFNWldPxFMAYXfyl8dQG0/ZkOIXAa94zgJEuHN4nihRkeF3dnIV5Bd
-         fuQoiF6RIvCJJFxIb39+rj40SnSUcA4yqvDtTfYYNn5h0OXTV3uiWcd4LCiN8yQW5NJo
-         HgrJaQFAHYoj6OAK+bKYEfttTYSQwvMUvRk9JDNBsZDDLxuSVxl0T7ZLTtGwmb5Sc1tg
-         /l0ZIORYd6fs4da48uC1xcctwecqa0sWUqhkFiQfYR2rvIgoF0VefCuGs9EdcmPI7pDt
-         YxrA==
+        d=paul-moore.com; s=google; t=1744224812; x=1744829612; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bwYwsOs1aQwmbIE5IlUqhyi2oMhQFITmOISMC3oihkg=;
+        b=TkrT1mAobwA0EwWotHI5ggIQbNjZ11E6gh/XDtEpsZLIbaMIg9BVsBIe8ZT0Ut2dWd
+         ZqTK7YveOBT7fRhY9WRPwJg4ebJkmOKL1MmWWMZECoIr/esRAw4+RBSTEh5LweaQlpKN
+         cDNEnGbzD8Xoew0/t/XOfk1RlY54j6eBamctISES/qnEMmPfKimteHOfEusl/ZTAUWde
+         9YMp7SRvwD1PVkuJiksLfcxCJ+KJxsjUvS28CME9n+RxOUeDtXaZq9EFIMQhEDvahlI7
+         3ycAcqll79im/6WCo1huBJT01RipmWzfa4RIEmkSzdgHA71++4an14N2NC1/JXNcrQc0
+         8HNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744224809; x=1744829609;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=miFGAAuBMi9MBGwDEl9qwyMnAIkegKYbeffs6codIYs=;
-        b=LU0+3YjD61RcnDW5Z3e2waprDR9F1rK7auBB6RWB1R5oPwnPba5kV+pYdsALeCQ5SP
-         PF9oorXdIS+gfTg/CQxghZllTvZZk9U3Rfe8fAKehKjsrzss3O2etWK5DkXg1iMqINdK
-         1W+rw/As+jM0YFHfzfgEacUTPKw8+Ov5V5dQyyCRVs791jyiU+uaPOtXs35qaEQGkxjK
-         rHApmjUmUCcR5Qah1EOcaqLhMStTY+Am23WZDInGFxOu8HMTSZZZS7Wye28AaNUvTgpf
-         xui8tfDKEPrctBdxmaAXM8b5ooMP7410ddihzG4PeY3FO3PDRRl64VLMttiug67hEPUA
-         aU8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUM1xZxxxAr9ILCxWMRz6PUhWXiiiV+Pt0XgU/wouEWjyqnjZuTaAvwTT1xU2PMc5CEl1vtdEm5czbyENIjd70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFIodCgoFXqs0ptDISlUUXG0n7Hya/hLtmQIB5W+L7W/u0uNgp
-	JjqgconW7RKNxxhk1QSn4mDTlAzLF3cU+l+4GV2kuRxNR2Da1lYyW+3l2ex5wOXMHgAgkOND8Co
-	=
-X-Gm-Gg: ASbGncsaIoyflSIMZ7K+iRZgY1SjGzL8ypQPodq2dWUJVVoqE+gBJCeYfbgfZdKvtYx
-	QdBzcG8cNjOhSMephEvutyeDNvkwRe7IeCm0+HTLpy/WHz5fd98s9dYHITANJWYTtWnA2vhktRF
-	1644gjYIkmQFi66WcQ2xPJLovpqo+Eo9FbZ18yEuArJBRZbcK+hj40p7sHJLqquWmkAFDZ2yZa9
-	NmaWqsADM/ypFGTSY4cSRo/s9zP0DkOzcQVekicWXw6JgKaGsEhG/E+W2yjopKOw6Nz+5wYBvkb
-	1cl47uFAlnrIB8pMRi09QsK8l2HM0Aw80xJ+P3KResFeFyATovTfGIMW4Iav/WAtVtQWpJsGTTS
-	oe7QiV6R3fg==
-X-Google-Smtp-Source: AGHT+IEFQZZfpjTxBPbxnAt5NtSsTZKlOx6o2FSyNOuE9kBJYVho9NQQBcVz13YHelwz1j5lnd+j9A==
-X-Received: by 2002:a05:620a:4002:b0:7c5:5d4b:e62a with SMTP id af79cd13be357-7c79cc4b05cmr690761685a.54.1744224809591;
-        Wed, 09 Apr 2025 11:53:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744224812; x=1744829612;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bwYwsOs1aQwmbIE5IlUqhyi2oMhQFITmOISMC3oihkg=;
+        b=WLJylKokKJWH0kSYzLImqc1EJ+yAWPAc9H4IdJom6jFFCwxBCMU7F4BGCcDpPxHvOZ
+         fmFis8LPjwjXTRj55l6O8tcAbqO947KzPAtl4Uk29s3psH2gAMoXs++yj+K5JDr68y5T
+         Ri7TqKEG4d1K0VjHbz9Novo3ki6S6tHjN5fjIiJnL8hHR02wiAO43IaXJdSMYL7LS7s9
+         5tKxWEGyJmIO1ik0gwJS0q+zrNstIjy80DK2qa+V8Ybfa5dZM/hXnqfgLDzcGztmGEeq
+         Gybnug1G8Pkva4wFi0OxR0ug7lBQu5hxkxXypn9MFq/TcfyhdHKIsQZFWwrSJPEGtkc9
+         m3mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUULbw+wsBdhiG9ZznXzkqIU5pi1mfrRcB4GPJRPUc9GEGqzn5XJp+mNLPyUQ5//VjlQvYJOEOBi8h44EIXpXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT4lvMajIKdndFdmT3ILq4q9xIhJsj4tU/hhdxk8oIADR62+ng
+	0Xr/MfwLz4YccinuKkRXzfVsDK8mLylXm0ZBCvrqgns0vgEnCyKVvRrPKzwFcQ==
+X-Gm-Gg: ASbGncv1nWN3iHmhtzfH2Bjewm7ifgV6uSsQ5l7H0PoCYrxyDzNItxbLAk3cCL9MxGP
+	eiD2o/w5hvWDNYGMjAP627LvTv5v0FWL3NWtcOvSbAPAYO5hK0s4t7r2Z3AqsOG02DsVh4FFxH/
+	hyp+suhlw2HpKIzFCTB9RENuwWWsd1Bu6sGnN1n+GbNWjZ3pUtNzlSlZFouBN7JYjUknNiuel+N
+	p0/hzibNbFvtZpHyMnR8DTvchWgxk4bJYI206VjTS053IR62fxu9DO1fIdVXGz4jmNDai1aTs6A
+	598MIqDza7BYZS6uJWerCViqUyfKWkHzzAaQaCEAU2q7Snv1U9nFNr9qGxuL/B089wczBdjHFeN
+	NdPubQpFDxA==
+X-Google-Smtp-Source: AGHT+IGaIUi4G/RR3z11v27jpCnKDvarJVjCRYPeih2X67y6Pf/OUnyXfy7M8ebEujGpSfglKywUMw==
+X-Received: by 2002:ac8:59cf:0:b0:477:64b0:6a21 with SMTP id d75a77b69052e-479600c1df6mr53978941cf.23.1744224812386;
+        Wed, 09 Apr 2025 11:53:32 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a10ba5d9sm106723685a.26.2025.04.09.11.53.29
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47964ef6f58sm10319561cf.74.2025.04.09.11.53.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:53:29 -0700 (PDT)
+        Wed, 09 Apr 2025 11:53:32 -0700 (PDT)
 From: Paul Moore <paul@paul-moore.com>
 To: linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
@@ -71,159 +72,168 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Micah Morton <mortonm@chromium.org>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 0/29] Rework the LSM initialization
-Date: Wed,  9 Apr 2025 14:49:45 -0400
-Message-ID: <20250409185019.238841-31-paul@paul-moore.com>
+Subject: [RFC PATCH 03/29] lsm: simplify prepare_lsm() and rename to lsm_prep_single()
+Date: Wed,  9 Apr 2025 14:49:48 -0400
+Message-ID: <20250409185019.238841-34-paul@paul-moore.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250409185019.238841-31-paul@paul-moore.com>
+References: <20250409185019.238841-31-paul@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5272; i=paul@paul-moore.com; h=from:subject; bh=r3LlTbBg0v5L6VO7OKEzr0vj9s7D5oPdwgU1H8/sOCc=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sF78za+C6z3zkwal2wB33pphGO6OesCpmiai fvw17kIBj2JAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bBewAKCRDqIPLalzeJ c+KrD/9sZpUJPcJF/4YweCjxX3p+LcuF9WIqR1Vf1exq1GPMG8u68zsgT9r7swvCbLodkeykLh9 jCgCYykeANDJSosrHm2P+e/VwCNLTDPpwDekROyWO5TBGPUPga2qkSCe6Z7ra+M1BdctfoE5vLo 6yMx/FJFbUBRpAFpxs+5Dhs+tGqr0X90kctubDGqBPURPSn6m8rA9hUgxAZjNieh1wYm/WIUVe1 0YigZPBgYAu9IPgEVGLr7CxLtl+UgsU2/Hql4PQZFR41v5alNZcinqkEETzYDJHu39g0C2Qi4f6 5StGpRdgNJozZkdqHIcOJ2Fd2FCq+QCFix+goiL04reRUzPdq/g9cdyLatW6sjtWFL6cFXNHQD2 HMbqYMunjtk548Xo6byv+aUg7qInIwcXMsMCsVUlnQrqqo7lxKyIQWn2sj6X6slcfUZig3D6DJy O1UDV4JGA1JE58i5y7WK9e/uiJVRo3KPPweqohQE6N/35kmK/YLsTqulwhErkri6VauAa/4glHT el8NcGC1djZZ14Xj0suHceDV1AoaZuy1PavTNpXzKokbAhuPcU1zHwiu3uvZSkFJbnaAreQGbCV FLEHqmk5ajJtxZ//tHyL5lh5xKvU6R1reDvDbNq6BiSnQBUyCTAHL4WG+kw7SPOW5KHmmbx3AUd f8i7W8vkj+8hdoQ==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
-This is one of those patchsets that started out small and then quickly
-expanded to what you see here.  I will warn you that some of the
-individual patches are a bit ugly to look at, but I believe the end
-result is much cleaner than what we have now, fixes some odd/undesirable
-behavior on boot, and enables some new functionality.
+One part of a larger effort to cleanup the LSM framework initialization
+code.
 
-The most obvious changes are the extraction of the LSM notifier and
-initialization code out of security/security.c and into their own files,
-security/lsm_notifier.c and security/lsm_init.c.  While not strictly
-necessary, I think we can all agree that security/security.c has grown
-to be a bit of a mess, and these are two bits of functionality which
-can be extracted out into their own files without too much fuss.  I
-personally find this to be a nice quality-of-life improvement, and while
-I'm open to keeping everything in security.c, the argument for doing so
-is going to need to be *very* persuasive.
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ security/lsm_init.c | 103 ++++++++++++++++++--------------------------
+ 1 file changed, 43 insertions(+), 60 deletions(-)
 
-The other significant change is moving all of the LSM initcalls into the
-LSM framework.  While I've always pushed to keep the LSM framework as
-minimal as possible, there are some things that we really can't defer to
-the individual LSMs and with the LSM framework responsible for enabling
-or disabling the individual LSMs at boot, I believe management and
-execution of the LSM initcalls needs to be handled in the framework as
-well.  Not only does this move ensure that we aren't running initcalls
-for LSMs which are disabled, it also provides us with a convenient spot
-to signal when all of the LSMs have been actived (see the LSM_STARTED_ALL
-patch towards the end of the patchset).  This is not a feature we
-currently need, but I'm aware of some future work that does require this
-so I thought it would be good to think about it now while doing this
-work.
-
-Related to the LSM_STARTED_ALL patch, the final patch in this series
-adds support for LSMs to indicate if they provide lsm_prop values for
-subjects and/or objects.  Casey needs this functionality for his recent
-audit changes, and I personally find the counting approach presented
-here to be ... less ugly I guess?
-
-This patchset is marked as a RFC for a number of reasons: additional
-testing is required, the commit descriptions could benefit from some
-extra attention, and I still have hopes that some of the individual
-patches could be cleaned up a bit (I still like the end result, but how
-we get there could be improved).  I would really appreciate if the
-individual LSM maintainers could give this a quick look, especially
-the individual LSM patches that move the initcalls into the LSM
-framework as some of those are non-trivial.  Mimi and Roberto, the
-IMA/EVM work here was particularly "fun"; from what I've seen thus far
-it appears to work correctly, but I have no idea if that code is good
-or bad from you perspective.  It's perfectly okay if you want to
-reject the approach taken in IMA/EVM, but we do need to move the
-initcalls up to the LSM framework, so please suggest some code that
-would allow us to do that for IMA/EVM.
-
---
-Paul Moore (29):
-      lsm: split the notifier code out into lsm_notifier.c
-      lsm: split the init code out into lsm_init.c
-      lsm: simplify prepare_lsm() and rename to lsm_prep_single()
-      lsm: simplify ordered_lsm_init() and rename to lsm_init_ordered()
-      lsm: replace the name field with a pointer to the lsm_id struct
-      lsm: cleanup and normalize the LSM order symbols naming
-      lsm: rework lsm_active_cnt and lsm_idlist[]
-      lsm: get rid of the lsm_names list and do some cleanup
-      lsm: cleanup and normalize the LSM enabled functions
-      lsm: cleanup the LSM blob size code
-      lsm: cleanup initialize_lsm() and rename to lsm_init_single()
-      lsm: cleanup the LSM ordered parsing
-      lsm: fold lsm_init_ordered() into security_init()
-      lsm: add missing function header comment blocks in lsm_init.c
-      lsm: cleanup the debug and console output in lsm_init.c
-      lsm: output available LSMs when debugging
-      lsm: introduce an initcall mechanism into the LSM framework
-      loadpin: move initcalls to the LSM framework
-      ipe: move initcalls to the LSM framework
-      smack: move initcalls to the LSM framework
-      tomoyo: move initcalls to the LSM framework
-      safesetid: move initcalls to the LSM framework
-      apparmor: move initcalls to the LSM framework
-      lockdown: move initcalls to the LSM framework
-      ima,evm: move initcalls to the LSM framework
-      selinux: move initcalls to the LSM framework
-      lsm: consolidate all of the LSM framework initcalls
-      lsm: add a LSM_STARTED_ALL notification event
-      lsm: add support for counting lsm_prop support among LSMs
-
- include/linux/lsm_hooks.h                            |   73 -
- include/linux/security.h                             |    3 
- security/Makefile                                    |    2 
- security/apparmor/apparmorfs.c                       |    4 
- security/apparmor/crypto.c                           |    4 
- security/apparmor/include/apparmorfs.h               |    2 
- security/apparmor/include/crypto.h                   |    1 
- security/apparmor/lsm.c                              |   12 
- security/bpf/hooks.c                                 |    3 
- security/commoncap.c                                 |    3 
- security/inode.c                                     |   29 
- security/integrity/Makefile                          |    2 
- security/integrity/evm/evm_main.c                    |   10 
- security/integrity/iint.c                            |    4 
- security/integrity/ima/ima_main.c                    |   10 
- security/integrity/ima/ima_mok.c                     |    4 
- security/integrity/initcalls.c                       |   97 +
- security/integrity/initcalls.h                       |   23 
- security/integrity/platform_certs/load_ipl_s390.c    |    4 
- security/integrity/platform_certs/load_powerpc.c     |    4 
- security/integrity/platform_certs/load_uefi.c        |    4 
- security/integrity/platform_certs/machine_keyring.c  |    4 
- security/integrity/platform_certs/platform_keyring.c |   14 
- security/ipe/fs.c                                    |    4 
- security/ipe/ipe.c                                   |    4 
- security/ipe/ipe.h                                   |    2 
- security/landlock/setup.c                            |    3 
- security/loadpin/loadpin.c                           |   16 
- security/lockdown/lockdown.c                         |    6 
- security/lsm.h                                       |   46 
- security/lsm_init.c                                  |  566 ++++++++++
- security/lsm_notifier.c                              |   31 
- security/lsm_syscalls.c                              |    8 
- security/min_addr.c                                  |    5 
- security/safesetid/lsm.c                             |    4 
- security/safesetid/lsm.h                             |    2 
- security/safesetid/securityfs.c                      |    3 
- security/security.c                                  |  620 -----------
- security/selinux/Makefile                            |    2 
- security/selinux/hooks.c                             |   12 
- security/selinux/ibpkey.c                            |    5 
- security/selinux/include/audit.h                     |    5 
- security/selinux/include/initcalls.h                 |   19 
- security/selinux/initcalls.c                         |   50 
- security/selinux/netif.c                             |    5 
- security/selinux/netlink.c                           |    5 
- security/selinux/netnode.c                           |    5 
- security/selinux/netport.c                           |    5 
- security/selinux/selinuxfs.c                         |    5 
- security/selinux/ss/services.c                       |   26 
- security/smack/smack.h                               |    6 
- security/smack/smack_lsm.c                           |   19 
- security/smack/smack_netfilter.c                     |    4 
- security/smack/smackfs.c                             |    4 
- security/tomoyo/common.h                             |    2 
- security/tomoyo/securityfs_if.c                      |    4 
- security/tomoyo/tomoyo.c                             |    4 
- security/yama/yama_lsm.c                             |    3 
- 58 files changed, 1102 insertions(+), 724 deletions(-)
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 70e7d4207dae..dffa8dc2da36 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -123,22 +123,6 @@ static void __init append_ordered_lsm(struct lsm_info *lsm, const char *from)
+ 		   is_enabled(lsm) ? "enabled" : "disabled");
+ }
+ 
+-/* Is an LSM allowed to be initialized? */
+-static bool __init lsm_allowed(struct lsm_info *lsm)
+-{
+-	/* Skip if the LSM is disabled. */
+-	if (!is_enabled(lsm))
+-		return false;
+-
+-	/* Not allowed if another exclusive LSM already initialized. */
+-	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
+-		init_debug("exclusive disabled: %s\n", lsm->name);
+-		return false;
+-	}
+-
+-	return true;
+-}
+-
+ static void __init lsm_set_blob_size(int *need, int *lbs)
+ {
+ 	int offset;
+@@ -151,51 +135,50 @@ static void __init lsm_set_blob_size(int *need, int *lbs)
+ 	*need = offset;
+ }
+ 
+-static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
++/**
++ * lsm_prep_single - Prepare the LSM framework for a new LSM
++ * @lsm: LSM definition
++ */
++static void __init lsm_prep_single(struct lsm_info *lsm)
+ {
+-	if (!needed)
++	struct lsm_blob_sizes *blobs;
++
++	if (!is_enabled(lsm)) {
++		set_enabled(lsm, false);
++		return;
++	} else if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && exclusive) {
++		init_debug("exclusive disabled: %s\n", lsm->name);
++		set_enabled(lsm, false);
+ 		return;
+-
+-	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+-	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
+-	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
+-	/*
+-	 * The inode blob gets an rcu_head in addition to
+-	 * what the modules might need.
+-	 */
+-	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
+-		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+-	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
+-	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+-	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
+-	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+-	lsm_set_blob_size(&needed->lbs_perf_event, &blob_sizes.lbs_perf_event);
+-	lsm_set_blob_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
+-	lsm_set_blob_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
+-	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
+-	lsm_set_blob_size(&needed->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
+-	lsm_set_blob_size(&needed->lbs_xattr_count,
+-			  &blob_sizes.lbs_xattr_count);
+-	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
+-}
+-
+-/* Prepare LSM for initialization. */
+-static void __init prepare_lsm(struct lsm_info *lsm)
+-{
+-	int enabled = lsm_allowed(lsm);
+-
+-	/* Record enablement (to handle any following exclusive LSMs). */
+-	set_enabled(lsm, enabled);
+-
+-	/* If enabled, do pre-initialization work. */
+-	if (enabled) {
+-		if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
+-			exclusive = lsm;
+-			init_debug("exclusive chosen:   %s\n", lsm->name);
+-		}
+-
+-		lsm_set_blob_sizes(lsm->blobs);
+ 	}
++
++	/* Mark the LSM as enabled. */
++	set_enabled(lsm, true);
++	if ((lsm->flags & LSM_FLAG_EXCLUSIVE) && !exclusive) {
++		init_debug("exclusive chosen:   %s\n", lsm->name);
++		exclusive = lsm;
++	}
++
++	/* Register the LSM blob sizes. */
++	blobs = lsm->blobs;
++	lsm_set_blob_size(&blobs->lbs_cred, &blob_sizes.lbs_cred);
++	lsm_set_blob_size(&blobs->lbs_file, &blob_sizes.lbs_file);
++	lsm_set_blob_size(&blobs->lbs_ib, &blob_sizes.lbs_ib);
++	/* inode blob gets an rcu_head in addition to LSM blobs. */
++	if (blobs->lbs_inode && blob_sizes.lbs_inode == 0)
++		blob_sizes.lbs_inode = sizeof(struct rcu_head);
++	lsm_set_blob_size(&blobs->lbs_inode, &blob_sizes.lbs_inode);
++	lsm_set_blob_size(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
++	lsm_set_blob_size(&blobs->lbs_key, &blob_sizes.lbs_key);
++	lsm_set_blob_size(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
++	lsm_set_blob_size(&blobs->lbs_perf_event, &blob_sizes.lbs_perf_event);
++	lsm_set_blob_size(&blobs->lbs_sock, &blob_sizes.lbs_sock);
++	lsm_set_blob_size(&blobs->lbs_superblock, &blob_sizes.lbs_superblock);
++	lsm_set_blob_size(&blobs->lbs_task, &blob_sizes.lbs_task);
++	lsm_set_blob_size(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
++	lsm_set_blob_size(&blobs->lbs_xattr_count,
++			  &blob_sizes.lbs_xattr_count);
++	lsm_set_blob_size(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
+ }
+ 
+ /* Initialize a given LSM, if it is enabled. */
+@@ -358,7 +341,7 @@ static void __init ordered_lsm_init(void)
+ 		ordered_lsm_parse(builtin_lsm_order, "builtin");
+ 
+ 	for (lsm = ordered_lsms; *lsm; lsm++)
+-		prepare_lsm(*lsm);
++		lsm_prep_single(*lsm);
+ 
+ 	report_lsm_order();
+ 
+@@ -499,7 +482,7 @@ int __init early_security_init(void)
+ 	for (lsm = __start_early_lsm_info; lsm < __end_early_lsm_info; lsm++) {
+ 		if (!lsm->enabled)
+ 			lsm->enabled = &lsm_enabled_true;
+-		prepare_lsm(lsm);
++		lsm_prep_single(lsm);
+ 		initialize_lsm(lsm);
+ 	}
+ 
+-- 
+2.49.0
 
