@@ -1,196 +1,120 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B35A1EE02F;
-	Thu, 10 Apr 2025 19:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F1A290BD5;
+	Thu, 10 Apr 2025 20:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744314475; cv=none; b=V3v3zH56b1g04pmEwjj/7qiRDqG1sOlmYHXxplNNturgnU3/W3Z/hAWPO5CcgdWp/sl+gwptW/zD04qZv5ifyN4iD8HEgjNuoknbttA6+V6gNq492xCEfsOHrvweN/6cT79CtSmgEKRHDbPX1fzsKHrjjNn4EznL1i7Xvf/zj/k=
+	t=1744318063; cv=none; b=tnrUsx/6HScU5Qh2AE5rywbjSxxwy4/PyMNeBnC+flejk8I16CZ2RpMKkx/1yZbMhMLsH6x/ChzuWxM5bsFpx3QfPhj6nhUEjHQ0rSHWcGRI5snrGF4sh3byr1i9+zKgpZCnf5dFRxQHN1vFQGpU9GaTUb0sG1iT/ELElImeMVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744314475; c=relaxed/simple;
-	bh=3vq9IfT+coLy3S0xB0lkBwcw/X7RYkV6rTC8tZQpm8k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ppq+/JREanFfvk88AritrD/5P/0zgpI+u8skUHGcT35I9WO6BwR+3PsUZbOIozCdI7rNpgsAe09hVkgHCJfaPMPIghv6ttQ5GslMORUcZfMQQTLkRYuQv5B/wP/RZO/x0TncS3uNI5Fmumc+TxvNUsGCK1Ya5dxwvPH/9Wq9V/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H/7jrECt; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1744318063; c=relaxed/simple;
+	bh=KdWCqli66+wnrOmBVJgZedK6VLKkVCmNvwTWLkM2Cw0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cPC17wRSIkmIkmVj0l1Dg0DFj/GJeJkU0Lu+fQiLERTkAlA6ARn9gp3BEcPTSF+mH/Uki6rs85xaHW0C0m+qEe7xtAzI4i/Y5ODSTqg8wsRNk7shYKL1Kym4nSNp29v//kYh0X7Zb8/C9xCJdKYzgM6YoopCTLA3WZqxDHJetzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WSdk78/0; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H/7jrECt"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AJeNL2018133;
-	Thu, 10 Apr 2025 19:47:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Ym5t2H
-	BCUys4CJouuMEi1f6kxfT8lHW6yUI2giZDpJY=; b=H/7jrECtafdhFxMAWv/jdf
-	Vj3b1FxjH7kfpzpEvD/2bgKCWfRI/dE8w4hburlcKcJ8Txke/0w5tNrGXf10Ap4f
-	ldD/F70TQxoDpEO4IIFz9biUPt0pK+RdwmEDX4hge1Oj5GQeAgoEwx2i4cIDX9co
-	4P76CwzJYc5wlKGYyA1F5r0ajVEOHXaS3chYAXFV7xU1/buXM77qK7GhlrlYwSib
-	mbtZsPirZGX2IqYJiuiPpi7S0pUH7toZb3PmNFz3H94upcqTcmtQZLw/Mut67AwW
-	jdm8d67LHqDeXtX7FfQQ2CSUdni6lS3Ikj60/KWt+1TSPkbZl+5yPa4uygWnMyog
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45x6ca53st-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 19:47:28 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53AJ0CCK024651;
-	Thu, 10 Apr 2025 19:47:27 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ueutqwfw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 19:47:27 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53AJlR6d31589090
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 19:47:27 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4165558055;
-	Thu, 10 Apr 2025 19:47:27 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D64358043;
-	Thu, 10 Apr 2025 19:47:26 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Apr 2025 19:47:26 +0000 (GMT)
-Message-ID: <80c8323c5ba2698cf4352e9d64eb8517250955d6.camel@linux.ibm.com>
-Subject: Re: [PATCH v11 8/9] ima: make the kexec extra memory configurable
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, Baoquan He <bhe@redhat.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
-        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
-        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
-        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
-        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-        dyoung@redhat.com
-Date: Thu, 10 Apr 2025 15:47:26 -0400
-In-Reply-To: <692121f5-fc17-45b5-b4c0-c4393bb05bc4@linux.microsoft.com>
-References: <20250402124725.5601-1-chenste@linux.microsoft.com>
-	 <20250402124725.5601-9-chenste@linux.microsoft.com>
-	 <Z/eVWQw3z7yyzyxb@MiWiFi-R3L-srv>
-	 <8b5e5495-4b11-4acc-8df1-fb94b2a34f0f@linux.microsoft.com>
-	 <8120a7b1eafaa5452981484671e841a7a7872877.camel@linux.ibm.com>
-	 <692121f5-fc17-45b5-b4c0-c4393bb05bc4@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WSdk78/0"
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AKg4tu005017;
+	Thu, 10 Apr 2025 20:47:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=corp-2023-11-20; bh=tGkyk
+	5X6t38/9y2W68Skl7oHbPOQVzKyOCP/d1hW/Cg=; b=WSdk78/0Fbpz7SEVNpAXn
+	xJ+VVvsc5rlTRaAF5AmecTaPIt0jKoSVaZz7wzSRyCXQK8Bot6Mk8ztFejRldFKG
+	5eLuP7PXo3uWh6BWiXSBU2Ni6SnaJfviAuzd+SPw6IT4KcJm1adiiNgo8Gy1DzsZ
+	hLkK1k1LKKwHK/vXxse5afWW3lyK/dVhQhu/eNqGjKoSBTE8V+W/PHDMknRsVlur
+	79WvQdr4qGsJMNzmk5b4wGekWN0bV52RoLK2kJ7S8qk9ctWVXvn9HRHrLWnSwydK
+	kL/k4N6Prf4x4QuaMGnvlrgRkBoJI57O0LOW3QP7Q719fsm1D2DHKDT8myG4HiaO
+	A==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 45xn8fr0cw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 10 Apr 2025 20:47:06 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53AJYenL016314;
+	Thu, 10 Apr 2025 20:47:05 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45ttycrnkt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 10 Apr 2025 20:47:05 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 53AKl4i7039892;
+	Thu, 10 Apr 2025 20:47:04 GMT
+Received: from bur-virt-x6-2-100.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 45ttycrnfu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 10 Apr 2025 20:47:04 +0000
+From: Ross Philipson <ross.philipson@oracle.com>
+To: linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+        linux-efi@vger.kernel.org, iommu@lists.linux.dev
+Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
+        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
+        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
+        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+        trenchboot-devel@googlegroups.com
+Subject: [PATCH v13 02/19] x86: Secure Launch Kconfig
+Date: Thu, 10 Apr 2025 13:41:32 -0700
+Message-Id: <20250410204149.2576104-3-ross.philipson@oracle.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20250410204149.2576104-1-ross.philipson@oracle.com>
+References: <20250410204149.2576104-1-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: s8_Ot0gv62iN1FhFfWFNmq5-4qh7VQcq
-X-Proofpoint-ORIG-GUID: s8_Ot0gv62iN1FhFfWFNmq5-4qh7VQcq
+Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504100137
+ definitions=2025-04-10_06,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
+ definitions=main-2504100150
+X-Proofpoint-GUID: JxuJSkmEcr6Sw152GbvVq16TkYUDuk_6
+X-Proofpoint-ORIG-GUID: JxuJSkmEcr6Sw152GbvVq16TkYUDuk_6
 
-On Thu, 2025-04-10 at 11:49 -0700, steven chen wrote:
-> On 4/10/2025 11:04 AM, Mimi Zohar wrote:
-> > On Thu, 2025-04-10 at 09:59 -0700, steven chen wrote:
-> > > On 4/10/2025 2:54 AM, Baoquan He wrote:
-> > > > On 04/02/25 at 05:47am, steven chen wrote:
-> > > > > The extra memory allocated for carrying the IMA measurement list =
-across
-> > > > > kexec is hard-coded as half a PAGE.  Make it configurable.
-> > > > >=20
-> > > > > Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure =
-the
-> > > > > extra memory (in kb) to be allocated for IMA measurements added d=
-uring
-> > > > > kexec soft reboot.  Ensure the default value of the option is set=
- such
-> > > > > that extra half a page of memory for additional measurements is a=
-llocated
-> > > > > for the additional measurements.
-> > > > >=20
-> > > > > Update ima_add_kexec_buffer() function to allocate memory based o=
-n the
-> > > > > Kconfig option value, rather than the currently hard-coded one.
-> > > > >=20
-> > > > > Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> > > > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > ---
-> > > > >    security/integrity/ima/Kconfig     | 10 ++++++++++
-> > > > >    security/integrity/ima/ima_kexec.c | 16 +++++++++++-----
-> > > > >    2 files changed, 21 insertions(+), 5 deletions(-)
-> > > > >=20
-> > > > > diff --git a/security/integrity/ima/Kconfig b/security/integrity/=
-ima/Kconfig
-> > > > > index 475c32615006..d73c96c3c1c9 100644
-> > > > > --- a/security/integrity/ima/Kconfig
-> > > > > +++ b/security/integrity/ima/Kconfig
-> > > > > @@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
-> > > > >    	help
-> > > > >    	   This option disables htable to allow measurement of duplic=
-ate records.
-> > > > >   =20
-> > > > > +config IMA_KEXEC_EXTRA_MEMORY_KB
-> > > > > +	int "Extra memory for IMA measurements added during kexec soft =
-reboot"
-> > > > > +	depends on IMA_KEXEC
-> > > > > +	default 0
-> > > > Usually a new Kconfig item which accepts a range should define the =
-range
-> > > > boundary, otherwise it's not clear to people how large or how small=
- it
-> > > > can be set. For example, can I set it as value of 1<<40? We should =
-at
-> > > > least estimate a possible upper limit for it for other people's
-> > > > reference. My personal opinion.
-> > > Hi Baoquan,
-> > >=20
-> > > How about I set range 2-40? Default set as 2, same as the fixed setti=
-ng.
-> > 0, the current default, sets the "extra" memory to the existing "extra =
-half a
-> > page of memory for the additional measurements".  For backwards compati=
-bility,
-> > please do not change this.
-> >=20
-> > The requirement for a larger "extra" measurement is coming from Microso=
-ft. If
-> > this isn't any longer a requirement, we could drop this patch.  Lakshmi=
-, do you
-> > have any thoughts on this?
->=20
-> How about the range set as 0-40 and the default as 0?
->=20
-> We (Microsoft) are ok with 0 as the default.
+Initial bits to bring in Secure Launch functionality. Add Kconfig
+options for compiling in/out the Secure Launch code.
 
-Thanks, fine.
+Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+---
+ arch/x86/Kconfig | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
->=20
-> Thanks
->=20
-> > > > The rest looks good to me.
-> > > >=20
-> > > >=20
-> > > > > +	help
-> > > > > +	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-> > > > > +	  allocated (in kb) for IMA measurements added during kexec sof=
-t reboot.
-> > > > > +	  If set to the default value of 0, an extra half page of memor=
-y for those
-> > > > > +	  additional measurements will be allocated.
-> > > > > +
-> > > > >    endif
-> > > > ...snip...
-> > >=20
-> > >=20
->=20
->=20
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 9427b5292ca2..a92788060a05 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1990,6 +1990,17 @@ config EFI_RUNTIME_MAP
+ 
+ 	  See also Documentation/ABI/testing/sysfs-firmware-efi-runtime-map.
+ 
++config SECURE_LAUNCH
++	bool "Secure Launch support"
++	depends on X86_64 && X86_X2APIC && TCG_TIS && TCG_CRB && CRYPTO_LIB_SHA1 && CRYPTO_LIB_SHA256
++	help
++	   The Secure Launch feature allows a kernel to be loaded
++	   directly through an Intel TXT measured launch. Intel TXT
++	   establishes a Dynamic Root of Trust for Measurement (DRTM)
++	   where the CPU measures the kernel image. This feature then
++	   continues the measurement chain over kernel configuration
++	   information and init images.
++
+ source "kernel/Kconfig.hz"
+ 
+ config ARCH_SUPPORTS_KEXEC
+-- 
+2.39.3
 
