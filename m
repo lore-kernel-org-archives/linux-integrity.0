@@ -1,121 +1,121 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from sonic307-16.consmr.mail.ne1.yahoo.com (sonic307-16.consmr.mail.ne1.yahoo.com [66.163.190.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C16226FD83
-	for <linux-integrity@vger.kernel.org>; Fri, 11 Apr 2025 01:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000B4A94F
+	for <linux-integrity@vger.kernel.org>; Fri, 11 Apr 2025 01:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744334520; cv=none; b=F0pDBgZcyLVb80rIRxoI584lqkPz/jX+0XoH67EGPbG9KZNCyrwgzz38uabwQjSeObWqsmG1peXiYfDFfDj6EW9o8l8oOKV+sFJg016MX60BXxfndGClFAfPjpmN4X/CZIuu60UVZXD1N2AaWmJEBws13p8kBc5xxOWixKF1K5U=
+	t=1744334959; cv=none; b=gpAXlGWYSetYMoqHZ/g9x1ebYQX6LCd4l8jNOv/04lAjJQkSfwUiYi5F70FpbaljdYTeNg3qo9KG1VZsrI+rHUx2GL9cqeog9nl7MOoBDp49BKN3u4+qqEj7QVeULpgpcPRaVT2T0zF2kuOo7gV+YefQ8R3Ewxk8oERHVnrvhwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744334520; c=relaxed/simple;
-	bh=0W34x8Ck2m4q/Qa+lzOYSRJAJBcw975BtQwXfNHZXj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xmwe/eZOmfVxfAhYXySKPapsAvpjy7qybxCVIABBb/Z0nfnGKocDUE/XdXNxSE4pN87r+CX42iaiWPT5m65iETIps1ALeetpHiMxK7Bv7UNnuvtmRkENM/oGWD4qFod9RvVr1QL2rShCi6YLVJxPVlgMvltXzNh5GcQe0T1PNf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ShCFN5lc; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1744334959; c=relaxed/simple;
+	bh=bGyPUyI2VTEZCCu4Gg2nbEgKRDX4SV2djzd8qMStHrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XQg7nsNEmj9gQK62XLVYiv+IRZuZcRvK3Hqe77PehiFRqWPL3il1ErJiiXz+UfVJqNp15WX2LTaNsGxF/LKnrDWcqiStjCnH2ylzHnTxskDmT+g5LGzYUyzYJG7ylJpPFHaftd7lYCymbPr+dkXV+aKJowcUkto8ms8JawyKTP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=nfj37JrA; arc=none smtp.client-ip=66.163.190.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ShCFN5lc"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e6df1419f94so1158042276.0
-        for <linux-integrity@vger.kernel.org>; Thu, 10 Apr 2025 18:21:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744334517; x=1744939317; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mDZj3yQ14A5xcIpe7c0DSs5qSG0Hnq5KDdt6cHHAOgY=;
-        b=ShCFN5lcBIMD2qx87n80CsrOt1TElZUZ/3xNWFNSnMM5cqtnoJe077KRiCZb52IrlK
-         zJi9mQToaJa6+MV1qUj9XtDfrv2wYtKWjgj3DPUmOalhR6t+On0UG9dL+rKLx5unhpLI
-         6HPvtfdmARbLxfdux3fGN50TB2+w1T8TvggoVzcadtAkk1UvpqMQkKTeiHsW/vrbu9Pi
-         IyKM165CYs2uku3Arc9FJSNJqLVeSHOPra+JgSmziW6UG7M2ZpgfIv37Pcgf04uMVbb0
-         9qxHDz0/jaoZqz1fbxNH8TKC88iZwyBYCr4X8/q8uDmEZQm/HsnQXACGVIU+NOm3mG6d
-         zufA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744334517; x=1744939317;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mDZj3yQ14A5xcIpe7c0DSs5qSG0Hnq5KDdt6cHHAOgY=;
-        b=ghpa13+DhcMLhzz85bTPVhouG59lEwK+88t+LkrCNNNWneFUfk+cs8P3cVkdNw4oYA
-         RJ9tvRpv/LNBcqvaOmJyORVjNXUb8UOTZm8a1U1RBlAsvTBqeEhGZFwzZHbss8e8XLom
-         acGGxO/ktXEWfIFChPSrHPg+lPCgllsHy5O6KO/fGCdyJtn5VkFJD9xEaY302CqTWUpm
-         8bZrumvLV1fLGmUslM/6SaWaPt8V7NrBjV8CfdImHccRJ3vhjF+he6Z4szPrAzSmO5y2
-         3kpIhEnmuplER6cZToHa3tsPA1omApp329VE1YW2m3lUURRx3CEvYbrCE85Bwy50P4Xa
-         Q96A==
-X-Forwarded-Encrypted: i=1; AJvYcCU30TTeim2hDMNhduOSBsGjXOw07TuxeesvVYZsykDIcrTcZCbeoDcMuFSAizuc7jlQORKc6a5DLA5RtrBs4HY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRSPP+LloRJ7RR120ZxowECttXl0bDPqsnc+kyDgE+JnXqXZS9
-	N54lOCBafQaQ4yN0sEgyLN8Y5ea5rmI8VgFn8neFiCltttQu70Y1wa+cckz9KQMbfyPnkzFzrzW
-	F0979OAcSS5QLBbdQnbfZSfNzxhtCSTfQX0p8r+ZButpR71Y=
-X-Gm-Gg: ASbGncspF3ZVnR0kC2ExdIIfRotCbXWWlFeXcqhcnNjU4ER8sIUDlt4ZNGSj/GgQnIT
-	dfySA+wsj1pr1mH2e99lf//Pc/jZ/Ydq7WKxk71FL/PvFfBH4ZOTnqsm7+/rR4f+YLDRIzlX6ea
-	b3nbmetGuxfKySsP8DavhLRw==
-X-Google-Smtp-Source: AGHT+IG7WXGp7fnjjFYKUmfliUjJExX03/TYU/y9D8duxhk/OQGZU8sKLSMddfn2XvWf/re46nHpnP9HIJ7dpJxGopo=
-X-Received: by 2002:a05:6902:91a:b0:e5a:b05e:4da8 with SMTP id
- 3f1490d57ef6-e704e025162mr1839801276.42.1744334517198; Thu, 10 Apr 2025
- 18:21:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="nfj37JrA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744334957; bh=+gfBpPZikXi3DUtgUbivPiG8JP42rMRyPjo+JoS6oVg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=nfj37JrAWHzk5edUqF1uE6ehYHBGGpTiNUeLYOYCylROJoreQ5KzrD8+q6vgQZJnvLvi+RtaQaPBbBBe56dxWT7DxWXIrvpNA6wLneAvL1c+GvevY1OQD5S/h4tIj8NKc4o4AbgpC9KceVM+lVslESggPETYvJvXfh3a+gisPDcv5TnO25vlYBOa0dn74IgdgS0pTttFspmB0jLJVxgfgx5Hlhjk8axOm2h2iqH0KEhNgnGdMC9FwuLC/bAEWhFug5PuPuOBxDtWHrETAxoYGGGHSDsckrrgNvZcY/APeXoOKBlWFUR66DG3nixxAYKXepiE7jb1UZNJeqSo9uT2tg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744334957; bh=1mM2csxiwkeY7Sb33PccOkMZy2tNE+g9XjRKpmaQj1F=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=n2pdCYZWyJ8+Z/Y0uAQ5G8EZLbOYNqnAty0y300vPqL4ngi4CKfw0gk7hfmnNPcxs9HDwQAAO4O4GuDaoT752zyFnHbG8ZPFIK0nmFJm5wyvSggJimWfshkOprv8PlQOiMPWRGbYxOGd+46WPZkiYxm9jc7pP+6ZNEmsDNruwx0/6PzzTHjcWzrezna11F0JivTyJWT+XZebYy+RzslbW1ZKA9EKgzV60XRBWRXKKEKgZ3Vhmm6cNn6OQyDX3vM1cMUWGKNMzucDI610kDU78tc0P3yRaPchqLt4dm+Z+tc4YiqYaBsOllNNSr4VgvOb+S3XtWGAuaRDWtncROo9ow==
+X-YMail-OSG: H6TaDp0VM1kjLMjzWBzpKFbx0WrV2HH7jQLw3QQ4xn2AyK23xoadF1ebeqpFxaV
+ eaW6_YeCK.cE_jdd.4YjrSJQrtwql6kgYAI7DZXpciDbB84AEaRdyf0BFZlssCfjrCIO2QVA_pTh
+ MaDY5etFZHp36_y_.pzc6YeI6X_nn8Xe.XSyOSZ7w7ESKR5gCs_0qMuMH6DQ1ug7uQD_rciOKGUQ
+ d7Nuhc8zyDhVhL9lH62YcdbtaVwkb5NSZm4DKy.mGyjn2u8jmEsHAC7E5Fv4iAqwzDTleskspmhZ
+ Cj.95gkOKFW50iaWKqh1G_x6rd848BCTcgeF6WxClR4YgjYf9J6fWgSgnGSyO0MwvJHvmXtmpaz6
+ 7Y_UmheTp7DS9G4X4eeEFAF7kasTHnPvSDttHT19pP7i7frMQDsq2KMGfYk48qYRHkYsb1Q.mxF5
+ L9JE7gNCOGaO_MtYacZA186tKz3K5xcDOECGr5ln9tZtjwgqIPUdE.BjDMJRw2wrdA7lcfeS1ahZ
+ v3v_cE7.O2.g6_AEw8tXcXsnxBdMUgWcXsv6td3a6eJ8EUjjvU_HljOXYSdfOba0DzkkqcGUwKXO
+ DwN.uuQULWoU6lv0fO7R4_CDJ8JlEr0ADTv7OQvd3i2aNAvXOyuxgJ9QvaJ0vNpqSykvYKk1SVpu
+ k9yxOGwuECbbA8r7ORM3.9.VP6cCHEP9T6lEyVX1uH_C6qckZS6LrOx4CiqoCKjOF5VgxcU_GAL2
+ qf5nPz8cwiEsptLez26heM0qQ_wMerUeWvzTDUiPdz773Y6pfal7ZoKTDEjJYKmgvwd6qTXM1w1Y
+ LRi7pckOfjL5oyyUQuqsrloPrcwC.1OLWvOjMilPl4UtHLyYCqjAnRbmvOTp_N6poJtG_qCW58j1
+ 1nwYssfKc3YrEvsw.sgLLXp7WOCGCAO.d5hpWviRDNFpRzbVevLLDcOJjb5INAdrJhItbBEx5cCs
+ 7J152sobkJYP3hkpy_saDGPqn2TkBeIQiIH_3ZPeuSaUq_52VvrzI.svMCX73kHUlrNZPUHsnhUb
+ fFTMs32UNOZqqUjBIU2w6XTMpOXc3lBVk1qlY.jQATkoFTcamCuC897P6y5aSQ4wKQx_YegL88r1
+ u4sz65LBPfG5mwu.eZi4blAU_ZRvFqMPTp8B5RT.NvYdkVXl8E5jO_f1HF1iD8Z_5fzgAztKggyd
+ EibHp0HEcW8tNaFVxnrF6vNt46eSnwLiagh_NiulNU3fVQ5wsSSnmtj2cv_ZnSPfV_BZOTzBao7t
+ HmGKTD3f0pT1RAjxa.3cNTSzB7gZYL1Q3j0LYEBjbQqr7zGp1LgYv_IiAGYWES3i5GxwqEkj.52Y
+ KwGwgERcSZGQEy7VM6fJCBa2j97QyFjz8OFsP866Jd0oO8Y0G8czgO.ywIoIuXQjqd5MyfDJ.MWf
+ I9TOCRLFc7nB2WCaYbikVncCVK9WampNeI4phPZhh8doLPyiRPrBuNG7MYjOVt2lUujamodQ5Gpk
+ g3YqFxW1N8yrPwN52EP4AR5CzsscPLiMe7s67TWDIfGq3ChvYnBm9ACcYPRlEbZmVkENmuwk81K3
+ cg7ZzPXF4fIQ1K3uYTQrer0nSUThheOOUVoZ63YgZ.lnGLqAO8XcSIjgdef0GixITSxWyEZJLdju
+ BPBVnnKzgdyG1LcsrEL8.pL9OXZQ7thFGI3zkCsbFw0ast3Yxxxn1UZP5Ze7_U1Ez3LvAyG9yAOJ
+ c2bQEqPyAZHDscGO1Ti_Ld_sBr4hdSGgj7VXzUzPPC.qet3cx33TqjmaJGyHXaxBH8bhjKBIj6dj
+ lMc6RFo8wcyCAkysEFOkEH3XEDIYAxvv9hOrVe6oczD7ygAXeCoZjH0iInxACl2bKDAu0g6uZxMt
+ OqaJ2T3KnRy3T_UjrxUakYQUEij4InJ3BiDueBY1H_hSHu0TEXIe_T6vTCHCzB5pepAfPzy4b6bG
+ 4WGKTUoHq8mtwwtKyktlmWwwOstovoEiOKPBcs2yCZMLUJeeXWZBMkrBVdKXCmnTIWiLXNenOH8.
+ Ade1zCXGLlGSRypwel86BWKTDMAqzk77cHY8vTXwc3Iigji1e3KAQz6US0Elz90iB1n1AmSIQvzo
+ BLkdXdl9rXpGBGKnTQYVJKkKE2WfDA6NL6ujq6hzf7MoU7CeP5.gIMZr_bW7Fm7aBC829qmUN8mg
+ VP4Fg1BQEu.6HJ4j00VFmDBd9Xsea2c09cYs8JRAKEzCP7XdeXO5MO6BkNPHmrYb1HjX2el3ai19
+ sxuj8AVZR6xJEVeKNlOqlLsJL4jNqWF0FjwuSiWJdQc_5ML3RSb3M276GPf0bR4dzuSSU5zOaUeT
+ cXpCvZNeKE7dlXpWby9e.xMBevppOj0gq
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 79ac8f6b-f216-4850-9c7e-a007caa7459f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Fri, 11 Apr 2025 01:29:17 +0000
+Received: by hermes--production-gq1-6f8bfcd964-g7jn2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e936a47855da028a6f6000b5683c216e;
+          Fri, 11 Apr 2025 00:58:55 +0000 (UTC)
+Message-ID: <63b4c34d-94f5-4da6-88cc-98a808d418f7@schaufler-ca.com>
+Date: Thu, 10 Apr 2025 17:58:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-58-paul@paul-moore.com>
- <202504091649.E30A1670@keescook>
-In-Reply-To: <202504091649.E30A1670@keescook>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 10 Apr 2025 21:21:46 -0400
-X-Gm-Features: ATxdqUFV6nml9Pgs1tXUY-RKXULr_XkSZF2rF4yd2I4HaYI1g1tN1bIqwvmlvGI
-Message-ID: <CAHC9VhSFGfEJ1-f48hdBMgrXwCMcqxi22ze5WZz1N_yPuFdriQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 27/29] lsm: consolidate all of the LSM framework initcalls
-To: Kees Cook <kees@kernel.org>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Micah Morton <mortonm@chromium.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 07/29] lsm: rework lsm_active_cnt and lsm_idlist[]
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Fan Wu <wufan@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Micah Morton <mortonm@chromium.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250409185019.238841-31-paul@paul-moore.com>
+ <20250409185019.238841-38-paul@paul-moore.com>
+ <202504091603.107B41F4@keescook>
+ <CAHC9VhT+yr=Pf=sSpFAO7RbAGejRgQhKPDLppCeOmydfhds5qQ@mail.gmail.com>
+ <202504101524.827B6FE55@keescook>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <202504101524.827B6FE55@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23665 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Apr 9, 2025 at 7:52=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
-> On Wed, Apr 09, 2025 at 02:50:12PM -0400, Paul Moore wrote:
-> > The LSM framework itself registers a small number of initcalls, this
-> > patch converts these initcalls into the new initcall mechanism.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  security/inode.c    |  3 +--
-> >  security/lsm.h      |  4 ++++
-> >  security/lsm_init.c | 14 ++++++++++++--
-> >  security/min_addr.c |  5 +++--
-> >  4 files changed, 20 insertions(+), 6 deletions(-)
+On 4/10/2025 3:25 PM, Kees Cook wrote:
+> On Thu, Apr 10, 2025 at 06:04:38PM -0400, Paul Moore wrote:
+>> On Wed, Apr 9, 2025 at 7:06 PM Kees Cook <kees@kernel.org> wrote:
+>>> On Wed, Apr 09, 2025 at 02:49:52PM -0400, Paul Moore wrote:
+>> ...
+>>
+>>>> diff --git a/security/lsm_init.c b/security/lsm_init.c
+>>>> index edf2f4140eaa..981ddb20f48e 100644
+>>>> --- a/security/lsm_init.c
+>>>> +++ b/security/lsm_init.c
+>>>> @@ -22,8 +22,8 @@ static __initdata const char *lsm_order_cmdline;
+>>>>  static __initdata const char *lsm_order_legacy;
+>>>>
+>>>>  /* Ordered list of LSMs to initialize. */
+>>>> -static __initdata struct lsm_info *lsm_order[MAX_LSM_COUNT + 1];
+>>>>  static __initdata struct lsm_info *lsm_exclusive;
+>>>> +static __initdata struct lsm_info *lsm_order[MAX_LSM_COUNT + 1];
+>>> I don't care either way, but why re-order these? Just local reverse
+>>> xmas-tree?
+>> Sure?
+>>
+>> Honestly can't say for certain, at this point in the development
+>> process I had somewhat resigned myself to having a mess of a patchset
+>> so I figured this was an opportunity to make it look "nice" (er?) in
+>> my mind, and I suppose at that point that looked better to me ... ?
+> Understood. I think I ordered the original way because I was hopefully
+> we'd remove "exclusive" soon,
 
-...
+In the pipeline. Small values of "soon".
 
-> > @@ -503,7 +508,12 @@ early_initcall(security_initcall_early);
-> >   */
-> >  static int __init security_initcall_core(void)
-> >  {
-> > -     return lsm_initcall(core);
-> > +     int rc_sfs, rc_lsm;
-> > +
-> > +     rc_sfs =3D securityfs_init();
-> > +     rc_lsm =3D lsm_initcall(core);
-> > +
-> > +     return (rc_sfs ? rc_sfs : rc_lsm);
-> >  }
-> >  core_initcall(security_initcall_core);
+>  and it felt better to remove it from the
+> end of a list of variables. *shrug* yay code vibes
 >
-> Hrm. Given these aren't really _lsm_ hooks, maybe just leave this out. I
-> worry about confusing the lsm inits with the lsm subsystem's core inits.
-
-I'm not too concerned about that, and I do prefer it this way.
-
-> Or we need a new stacking type for "required"? But that seems ... heavy.
-
-So I understand the motivation behind that, but that's a big hard "no"
-from me at this point in time ;)
-
---=20
-paul-moore.com
