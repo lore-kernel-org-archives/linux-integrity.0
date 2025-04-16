@@ -1,141 +1,155 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1547C236440
-	for <linux-integrity@vger.kernel.org>; Wed, 16 Apr 2025 09:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EB9236421;
+	Wed, 16 Apr 2025 09:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744794539; cv=none; b=UZE0f3RqHj2IzhKMjx1sBtesbPTqR4XDZbe1nCRokekLqtjuTn3ix1ffqS4dBBtGteH1lNxu31oIkgWjFqoFBdR2ltwacLIzqytyeQzb2V2xL66CnG49IYZQROXTay0uwayuhgyZg5W6IcQ9b+e1+NETICjlJnaVB9p6danvTZ4=
+	t=1744796701; cv=none; b=MMXUDDfAbzMNGebvyDPFy60k4NUIZvq5F43Bu6Sl0hNG+J504Soc16EoKYbmrc8FO2PzZH6rcVbPP6MDj37jGoibGHrpt5WWYCxOEMpPM1XiYnkz56C6mMPwXbL8Z1/znqvAMOA2Ku+X+hswD/0gxQv5vF+jcoELx9Vpsmo13zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744794539; c=relaxed/simple;
-	bh=g8jueIBgcTn+FYC4lrbEtVTxxGmm6Nd0Tmk/DQVTIpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8iG/C4hSIgQh+7NN6QyC/fMsxngcTaG5j4o1Wmd/fdaR7mSZp/Z2q4UcC+pLxpGZ87WQ+f4acUezt65UQlH7PkM5lMl0298S+B1Lv/d2N+lXpOrjnLqefQyz2KxdFGvwlyiuwSk74zZ/+DcM1eQh6yXKK3RMMTPOGo2iwgxCgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OEp7HlI4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1744796701; c=relaxed/simple;
+	bh=Yv+kifpgtaJLLbyR4rAn27RlbXnINX7O4xl+RP8J8Ps=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VgRVEp2sZGCjELve5cK7CflNS8wzSwNIOwmcaJNskzC7fjULShYnIIrefT8YaiG1HUcKjvyNNZRKXB00/8LX/OIgUEOUYkHvwYoEQV5hnYZh57BsLmiSyB6dL+3ierpoKovyWd+eTbENv6WIcRpf4ZVRpnVfZKQ5W13TjGNg7Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lach4qKY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OEp7HlI4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744794537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YIOfu8RrFqeGGuM6flhzjgQUceI7NT+dd2DxCzt2hy4=;
-	b=OEp7HlI4KBenJAUPQvTqQdIwe/+H9O+xJY8dY6pTM5ssma1YCtXgLAYJhVHqLwl0ZQx3tS
-	glbWILkgGZEkvZD0DF1/q8AJM24I0JfDvWEYRPeGYgNdHXE3N0KA0DDooXzNBet2qzuJ14
-	Sj66yJRs3KdS3fdihKuI+HWEObtCmM4=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-14-E5B81TLINSiYZNB2J7og9g-1; Wed, 16 Apr 2025 05:08:55 -0400
-X-MC-Unique: E5B81TLINSiYZNB2J7og9g-1
-X-Mimecast-MFC-AGG-ID: E5B81TLINSiYZNB2J7og9g_1744794534
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac2a113c5d8so486965366b.1
-        for <linux-integrity@vger.kernel.org>; Wed, 16 Apr 2025 02:08:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744794534; x=1745399334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YIOfu8RrFqeGGuM6flhzjgQUceI7NT+dd2DxCzt2hy4=;
-        b=SU4rOx8nGVmWrP25DA7USaFegvLZ/6467zGKc6h0VGj3QD+ePJkPpF4QHBd3K9U3YU
-         g2v3PqJQR6apQOIOnLVOChpzw/7QGD+mEAdEmXqWNp8fRH/2qMg2krfeapN8ZqOT12da
-         +d+FFJvhGIBCIcyYMPDqvEcDDnZnyfy/Si7xLu1RtUhtHu+N0KgwD6gRYyFf9qI0QsFU
-         pQn9tqM6EQ1gJ+kNbxl/geEQSt2N2tG97joH8Yh4C+Ck+IhJXpoHEVUTbwWG2eMtAWxC
-         81WuhuCBloz8Vk6aIIAZK5aAESrGQbZSiJaSKLT993S3eumR5k84NClu9w4UC0ibFb/T
-         glmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUR0+YpgcfZ4PXBAwYe4K/DFFOBoqk3P9vx9s7ka+w1ousKGCGU6eoNnhxFLZM5xkv6eFeg35Vhl0mXHiC63U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMPI6xMZbbRuCpprXqLIiBNKb/5YN6qqc2EyL2456Bjv2Q3VUR
-	6OHNw4uxIfXe7o8C6kOxpXfsg1m7xkObuE+P297/Av6/D+P1ZPObUCmxnfVuOxRsMWQpaIMnrS4
-	/ug/KofZIIbUAJOwadKbICO3lU238dUlT+VQd+AObEhuubwBEaaOlEX9c3manRTed//BcMgh6Jw
-	==
-X-Gm-Gg: ASbGncujiS2qO0pd35k8rGt0c6w/22JoG5+IuW9MbUMjX588Hq7g2NdiDB7m69D42J2
-	UsTqxwJlSy2lOVqs6C48qxHwopr2f/rQ2N+9YIydJQouSIK1VBO9UpZfnSBo8PB3DBVlaYhsWW+
-	ofTRIfFcJAyDl5ku0veT1OnDcPfUJb3g46HGBPUf9tldCLG2PaZygQvlkIS6w9SzG8USRjhqsy4
-	B/8kognZ5soq/4jwt9zjSiPs0g/pdqIGAiL1UCNNRZSVQzaaFS5DxwIDSRyyLM+AyHk3xpVGJfO
-	MAV+Ckr2wpngCDVqXA==
-X-Received: by 2002:a17:907:3fa6:b0:ab7:6606:a8b9 with SMTP id a640c23a62f3a-acb42b5717dmr80245766b.42.1744794534140;
-        Wed, 16 Apr 2025 02:08:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBsN4+oh5QxQ8vbKn116QSLShSvGFPIX2Be2WSdAd0ELx306bEqsJC2ErLqnEdyZGudqNVhw==
-X-Received: by 2002:a5d:5f90:0:b0:38f:3e1c:211d with SMTP id ffacd0b85a97d-39ee5b18357mr957262f8f.14.1744794523366;
-        Wed, 16 Apr 2025 02:08:43 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.148.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43d38fsm16568008f8f.71.2025.04.16.02.08.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 02:08:42 -0700 (PDT)
-Date: Wed, 16 Apr 2025 11:08:36 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, 
-	sudeep.holla@arm.com, stuart.yoder@arm.com, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] tpm_crb_ffa: use dev_xx() macro to print log
-Message-ID: <ss6mjfgbiq4z324uaamqfn7idcvv3hjjsictqqzfjvhftduexz@rvwrb6xsuy4j>
-References: <20250415185013.2387369-1-yeoreum.yun@arm.com>
- <20250415185013.2387369-3-yeoreum.yun@arm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lach4qKY"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 94480C4CEEF;
+	Wed, 16 Apr 2025 09:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744796700;
+	bh=Yv+kifpgtaJLLbyR4rAn27RlbXnINX7O4xl+RP8J8Ps=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Lach4qKYDtR1r2uJIArcYnjlMTOKDb0ehkvd5UN0MlTPQ66miK+ydvERbEHHi1kFA
+	 tBpf9tUwVubeot9VKKHdObFIhyHr/l51RlJxsTRZ8oj+g4/BdRuPjSBNuldgQBVM+9
+	 UvX2qv3N66+SaIbevmpj0dgd+m8BxLNLtkxxA8hz1nsdQQLysQx6/OlU0DrTjpN/i1
+	 pfOB/R/QsgyA7x4qHvwXeyAh6EW9/Zr4yPpm4MGoXjLe/CsH00SkVm2vlbMhQ71VT6
+	 zbEXJXdUkgPzB0m6KeyasjYLeU/Lt3gTqLYOSq30P+a2Ew9wGYWT/leA7ITiHM3RxA
+	 LyZSn/JD5X2vw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C67C369BD;
+	Wed, 16 Apr 2025 09:45:00 +0000 (UTC)
+From: Chen Linxuan via B4 Relay <devnull+chenlinxuan.uniontech.com@kernel.org>
+Date: Wed, 16 Apr 2025 17:44:47 +0800
+Subject: [PATCH RFC v2 1/5] nvme: add __always_inline for
+ nvme_pci_npages_prp
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250415185013.2387369-3-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250416-noautoinline-v2-1-e69a2717530f@uniontech.com>
+References: <20250416-noautoinline-v2-0-e69a2717530f@uniontech.com>
+In-Reply-To: <20250416-noautoinline-v2-0-e69a2717530f@uniontech.com>
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+ Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, 
+ Kevin Tian <kevin.tian@intel.com>, 
+ Alex Williamson <alex.williamson@redhat.com>, 
+ Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-mm@kvack.org, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
+ linux-integrity@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ llvm@lists.linux.dev, Winston Wen <wentao@uniontech.com>, 
+ Chen Linxuan <chenlinxuan@uniontech.com>, 
+ Changbin Du <changbin.du@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2975;
+ i=chenlinxuan@uniontech.com; h=from:subject:message-id;
+ bh=sGDh7M1GW9E/6Y/0K/CCKXvss9WxUze9tBDMdqLrW6k=;
+ b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBn/3wVG003JQmokzL+qRyfJcdxP60RFA0LrONcP
+ OK5orjrbTuJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCZ/98FQAKCRB2HuYUOZmu
+ i8TED/0fmsPVnspcWh0W6L0ZSZOLbCvbFNwkSR8ln0sclXUOPtKwmyiPlZa4zJmx7OcofjIaLD/
+ r/WJyI8YJpl735QY3QIBTbrps+iGTDVaqLw8NMv1GsgSn5r61K4TxGHIfCjlSFoamR3OMWdNCrS
+ WgKkuDC2E6ay6dA0WfzSP78maBTAvxztzt0mrFpxZQijD5Ky6gSFVQAeztouTp6ootKC9gvMeO5
+ +gtRmuu9R5kMvmwGyagr3VY9mc0otVIg2xlYhJiaVOu4CfRoc0oOpQcaFGlds7Ffe9vB6Apy562
+ 0ADyZ/DVMUzU4vli0sb0ABqeWUWJvQn0/PvNjTUSDE7ohfpIGMasSJ4U4pGTk2h2Uup4lO1Qk5Y
+ itpYWcQQWcxZirZzGnfIAEsscrdlIW1hfEPHbAAmbwUCKwM4mYIvIvT4jVx7V8WAsDJybp72ugL
+ sSHbcb/PohzAsREiVXj+ctQfKvFssyCqeC4QmvrsOAIySwTmvnVd/kmriXFtFBV32jCCFt1yrzy
+ DHcdVAGXK0AEbs+63WGWuWrlpIqyutFQpNNkxOFaL3DlLSgZdNLg8Z6TeBEpltgoSrnRHWSN6KK
+ 2We5DBjR8F7GIDWR3F/H9QRYE/Z0BaE7a9oEZKSwd3QL13ItpXVkjs4ZYIJ497+OIimgPtSzbF9
+ Tn7aHUXUKD2PLjg==
+X-Developer-Key: i=chenlinxuan@uniontech.com; a=openpgp;
+ fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
+X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
+ auth_id=380
+X-Original-From: Chen Linxuan <chenlinxuan@uniontech.com>
+Reply-To: chenlinxuan@uniontech.com
 
-On Tue, Apr 15, 2025 at 07:50:13PM +0100, Yeoreum Yun wrote:
->Instead of pr_xxx() macro, use dev_xxx() to print log.
->This patch changes some error log level to warn log level when
->the tpm_crb_ffa secure partition doesn't support properly but
->system can run without it.
->(i.e) unsupport of direct message ABI or unsupported ABI version
->
->Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
->---
-> drivers/char/tpm/tpm_crb_ffa.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
+From: Winston Wen <wentao@uniontech.com>
 
-LGTM!
+On x86_64 with gcc version 13.3.0, I build drivers/nvme/host/pci.c
+with:
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+  make defconfig
+  ./scripts/kconfig/merge_config.sh .config <(
+    echo CONFIG_BLK_DEV_NVME=m
+  )
+  make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once" \
+    drivers/nvme/host/pci.o
 
->
->diff --git a/drivers/char/tpm/tpm_crb_ffa.c b/drivers/char/tpm/tpm_crb_ffa.c
->index fed775cf53ab..66b38b2cbdd5 100644
->--- a/drivers/char/tpm/tpm_crb_ffa.c
->+++ b/drivers/char/tpm/tpm_crb_ffa.c
->@@ -303,7 +303,7 @@ static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
->
-> 	if (!ffa_partition_supports_direct_recv(ffa_dev) &&
-> 	    !ffa_partition_supports_direct_req2_recv(ffa_dev)) {
->-		pr_err("TPM partition doesn't support direct message receive.\n");
->+		dev_warn(&ffa_dev->dev, "partition doesn't support direct message receive.\n");
-> 		return -EINVAL;
-> 	}
->
->@@ -324,17 +324,17 @@ static int tpm_crb_ffa_probe(struct ffa_device *ffa_dev)
-> 	rc = tpm_crb_ffa_get_interface_version(&tpm_crb_ffa->major_version,
-> 					       &tpm_crb_ffa->minor_version);
-> 	if (rc) {
->-		pr_err("failed to get crb interface version. rc:%d", rc);
->+		dev_err(&ffa_dev->dev, "failed to get crb interface version. rc:%d\n", rc);
-> 		goto out;
-> 	}
->
->-	pr_info("ABI version %u.%u", tpm_crb_ffa->major_version,
->+	dev_info(&ffa_dev->dev, "ABI version %u.%u\n", tpm_crb_ffa->major_version,
-> 		tpm_crb_ffa->minor_version);
->
-> 	if (tpm_crb_ffa->major_version != CRB_FFA_VERSION_MAJOR ||
-> 	    (tpm_crb_ffa->minor_version > 0 &&
-> 	    tpm_crb_ffa->minor_version < CRB_FFA_VERSION_MINOR)) {
->-		pr_err("Incompatible ABI version");
->+		dev_warn(&ffa_dev->dev, "Incompatible ABI version\n");
-> 		goto out;
-> 	}
->
->-- 
->LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
->
+Then I get a compile error:
+
+    CALL    scripts/checksyscalls.sh
+    DESCEND objtool
+    INSTALL libsubcmd_headers
+    CC      drivers/nvme/host/pci.o
+  In file included from <command-line>:
+  drivers/nvme/host/pci.c: In function 'nvme_init':
+  ././include/linux/compiler_types.h:557:45: error: call to '__compiletime_assert_878' declared with attribute error: BUILD_BUG_ON failed: nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS
+    557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |                                             ^
+  ././include/linux/compiler_types.h:538:25: note: in definition of macro '__compiletime_assert'
+    538 |                         prefix ## suffix();                             \
+        |                         ^~~~~~
+  ././include/linux/compiler_types.h:557:9: note: in expansion of macro '_compiletime_assert'
+    557 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+        |         ^~~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+        |                                     ^~~~~~~~~~~~~~~~~~
+  ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+        |         ^~~~~~~~~~~~~~~~
+  drivers/nvme/host/pci.c:3804:9: note: in expansion of macro 'BUILD_BUG_ON'
+   3804 |         BUILD_BUG_ON(nvme_pci_npages_prp() > NVME_MAX_NR_ALLOCATIONS);
+        |         ^~~~~~~~~~~~
+
+Mark nvme_pci_npages_prp() with __always_inline make it can be computed
+at compile time.
+
+Co-developed-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+Signed-off-by: Winston Wen <wentao@uniontech.com>
+---
+ drivers/nvme/host/pci.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index b178d52eac1b7f7286e217226b9b3686d07b7b6c..9ab070a9f0372bc6595c29a884ee9f2ffe5ae8e9 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -390,7 +390,7 @@ static bool nvme_dbbuf_update_and_check_event(u16 value, __le32 *dbbuf_db,
+  * as it only leads to a small amount of wasted memory for the lifetime of
+  * the I/O.
+  */
+-static int nvme_pci_npages_prp(void)
++static __always_inline int nvme_pci_npages_prp(void)
+ {
+ 	unsigned max_bytes = (NVME_MAX_KB_SZ * 1024) + NVME_CTRL_PAGE_SIZE;
+ 	unsigned nprps = DIV_ROUND_UP(max_bytes, NVME_CTRL_PAGE_SIZE);
+
+-- 
+2.48.1
+
 
