@@ -1,84 +1,105 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCAD280A52;
-	Tue, 29 Apr 2025 12:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BCD21325C;
+	Tue, 29 Apr 2025 13:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745930115; cv=none; b=qLdqkvkkMJrachoxXmtxZZMklURwNE2/8UTE9LgXA7YHAskSsl0rEvT1WQ6jocT82W6H7Gg+drcV3yuc+tLXsMEqzBojH0/3Izt3RMAlLvUQNJP35hnwzQwil5KS8vxXVcG5BJA/pDrJxLNOmBWl+fCnBnYue5V85rfl7s/YtWo=
+	t=1745931887; cv=none; b=p9Tfecl2YqHoPajQO1glOYhV/hPNDkLIjkcWQIIX2iw5yFb6TdUIjTfov6VkzjbyvzN6i2VNYxPbvJRNqkYk3y5ADvfskvV4+cV/wJHWt2nLQedUaHz5FVmrqtqg4XxTHMqO5E5/PyIC0+aeGK0lCAGKhYromLvMgpQYQvgvg58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745930115; c=relaxed/simple;
-	bh=YA9K64SGJNboEqUy75D/7syj4zAm+0ahG0X4Cz9zGlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HThWlnZanLKK1YO+MeGM+jVLM+vNMRZej75JPaSkaIa0uJKbv69nRm9i9kD7Eb5IzYsYyU3UB/SxbOgRUDr352Vb2jmXZXTFrnRUfdMuG6ag6z5zlH6sEIgu4kRbJj4tir0wCzdrH6zBLK/k8ppGepLDPzd2utUC9qB7y32LiDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id DBA7F68AA6; Tue, 29 Apr 2025 14:35:04 +0200 (CEST)
-Date: Tue, 29 Apr 2025 14:35:04 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: chenlinxuan@uniontech.com
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yishai Hadas <yishaih@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kvm@vger.kernel.org, virtualization@lists.linux.dev,
-	linux-integrity@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	llvm@lists.linux.dev, Winston Wen <wentao@uniontech.com>,
-	kasan-dev@googlegroups.com, xen-devel@lists.xenproject.org,
-	Changbin Du <changbin.du@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH RFC v3 0/8] kernel-hacking: introduce
- CONFIG_NO_AUTO_INLINE
-Message-ID: <20250429123504.GA13093@lst.de>
-References: <20250429-noautoinline-v3-0-4c49f28ea5b5@uniontech.com>
+	s=arc-20240116; t=1745931887; c=relaxed/simple;
+	bh=d/NdlzD2KV2pF2aazqdTVXD1jSSYLt8dgjzDd7PvoPo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=P0UnnbS11tEtaitF4W3lQk1ZGOuXwQ2Nj2c9F4RX4j8CEAZ0thTICwsSeB/yTeL4dNIyGxor97O2lS4e1CVnITO+GmKMt1djm0OasOo6VKJ07hI29l27Dyt6oa5xNpjs6AaVgF/BGC3zaJtjmIDoFjFcouxA8aPqvvshcHkQhTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ndr5eUgV; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ndr5eUgV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1745931874;
+	bh=d/NdlzD2KV2pF2aazqdTVXD1jSSYLt8dgjzDd7PvoPo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=ndr5eUgVSV+gAn8uBtqf5gkqDazOK0n25l02cugLtcQTuqMr/LNpa6t6wzbfuMAjH
+	 12Qulrdyx2c2aBEE5Yq6GwMxJfjD8udHNeMcCf4DwcNNIpMaOWa5/Pa3TCszUfVEud
+	 TJ/gfqJ/aj7cVBefjCJblpJsOrMKeMlWCvvIu+FQ=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Tue, 29 Apr 2025 15:04:28 +0200
+Subject: [PATCH v3 1/9] powerpc/ima: Drop unnecessary check for
+ CONFIG_MODULE_SIG
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429-noautoinline-v3-0-4c49f28ea5b5@uniontech.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250429-module-hashes-v3-1-00e9258def9e@weissschuh.net>
+References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+In-Reply-To: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+ Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, 
+ Nicolas Schier <nicolas.schier@linux.dev>, 
+ Nicolas Schier <nicolas.schier@linux.dev>
+Cc: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
+ Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
+ kpcyrd <kpcyrd@archlinux.org>, Christian Heusel <christian@heusel.eu>, 
+ =?utf-8?q?C=C3=A2ju_Mihai-Drosi?= <mcaju95@gmail.com>, 
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arch@vger.kernel.org, linux-modules@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745931873; l=1136;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=d/NdlzD2KV2pF2aazqdTVXD1jSSYLt8dgjzDd7PvoPo=;
+ b=xAYAenyFdE04MOoAyCY51VYJoTBGGcK4Soq/RQ+egxA1KIPa8xT21DSMBRyeZrix2b6b8RUK5
+ 4oPcru3LJfZABty4/kT+0dOo2ZPe8NuL+rpxUHGjPov6s65d3wYcJWl
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Tue, Apr 29, 2025 at 12:06:04PM +0800, Chen Linxuan via B4 Relay wrote:
-> This series introduces a new kernel configuration option NO_AUTO_INLINE,
-> which can be used to disable the automatic inlining of functions.
-> 
-> This will allow the function tracer to trace more functions
-> because it only traces functions that the compiler has not inlined.
+When CONFIG_MODULE_SIG is disabled set_module_sig_enforced() is defined
+as an empty stub, so the check is unnecessary.
+The specific configuration option for set_module_sig_enforced() is
+about to change and removing the check avoids some later churn.
 
-This still feels like a bad idea because it is extremely fragile.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+
+---
+This patch is not strictly necessary right now, but makes looking for
+usages of CONFIG_MODULE_SIG easier.
+---
+ arch/powerpc/kernel/ima_arch.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/kernel/ima_arch.c b/arch/powerpc/kernel/ima_arch.c
+index b7029beed847dc0acf15b3edbdd7fe9e60626f24..690263bf4265c78331b5f306097543ce12ac7dbd 100644
+--- a/arch/powerpc/kernel/ima_arch.c
++++ b/arch/powerpc/kernel/ima_arch.c
+@@ -63,8 +63,7 @@ static const char *const secure_and_trusted_rules[] = {
+ const char *const *arch_get_ima_policy(void)
+ {
+ 	if (is_ppc_secureboot_enabled()) {
+-		if (IS_ENABLED(CONFIG_MODULE_SIG))
+-			set_module_sig_enforced();
++		set_module_sig_enforced();
+ 
+ 		if (is_ppc_trustedboot_enabled())
+ 			return secure_and_trusted_rules;
+
+-- 
+2.49.0
 
