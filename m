@@ -1,37 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8832B210F59;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C01270ED0;
 	Tue, 29 Apr 2025 04:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745899577; cv=none; b=JilON7LA5nt0tSp9ueYCsCeNYx34VZr650z8Pr9/1rpkOmdCsSATMKUg2lwjuKmGK9DY9FX7SJri8kXl8k8dHNfsJaQ2fVxBavGwOrK4MsBLkJwAkgQIi3Fhb9U5AzGpS2NE8rSUaqD7vrBkjl2xqMVGuTQss2B1m7Qj9ouD234=
+	t=1745899577; cv=none; b=pfrHwvliT7+J39elDBuEkcQuuQ31fY9Dcy5SL9A2aRtfOCkl0ymWGJw06SGd8XCE7vm9Tm/pg+uz/HBHkjEtW43cVKFV7FGbTfjc6YmaT9/X/GqjCr78ZxNzAHgSeZMbSkhgt25w/8WgoyuWs49xPXaJZy9yECXLr8jBoRDUecc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745899577; c=relaxed/simple;
-	bh=puwaWg0YW0DjsEBEYIoY8x/bLms2MxI/ob3ZfklRDPw=;
+	bh=xaBPg6MMzZtyI5BynxGLu2CWzfYAh0y0igpwIukNl4w=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GgZjT7ElXAqxC2kEp9ARElSu871fbQG5E+zbaHTMSGbr+t5ftaIIqfnAV6HnY/Gn7CnXYxYGOCcDfCP15w729UDW9f3J7sX5DE12FKx8L+d5POZ1woyk1xO3PTMrog+bYxhEYq0SDGgInPqu0VmF4XIAtJv8tHGs5krJ6S/Y9Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0NlFGD/; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=RvMsLXax76/pjn56J0aRi+zcCeUSfNOoBzjkWQBjX9zxIPNpSYICxdJ0hDWhlxdqe8e0wTrOZLNrSxRSWntGa5iEe9jsQSlUx+tFkfJ6yBSc8i5uLF218phTcuh+KwlPhTPJSxbLasmBXplmxAqa0VOFRKsVRPldM9xFXjhmwIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRQ75lu0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0NlFGD/"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 469C7C4CEF3;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRQ75lu0"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D9C1C4CEF4;
 	Tue, 29 Apr 2025 04:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1745899577;
-	bh=puwaWg0YW0DjsEBEYIoY8x/bLms2MxI/ob3ZfklRDPw=;
+	bh=xaBPg6MMzZtyI5BynxGLu2CWzfYAh0y0igpwIukNl4w=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=c0NlFGD/nhB9z6/D4xtydBdI9lJs5L3xbB+eo5cTRMg4n9RpEdjaAhdvc2frC/XoC
-	 5Lj5jHazpgfih7eU9Ip8zL87n2W5/Y7Xl7J5MUrNvUFI2sb3RB4BqU5pWTALmAZxrL
-	 regj0Ag6HkRUHS3xBvMdE2pb2vrLgesn1qt2AbGY8HXFnjIdmTVcNrNrmloKS1de70
-	 gu28EB9CLlaP68ai4PHXtKJqNUO/eYwYJM4vU8DspesAceo2GgBqak5RBzqxLyJenI
-	 KBmESNyXPRuCOOdoZcRlGFtuk67AXj0qsy35tYZK+DJvG69bCPTNEcNR9Ad1mpMaJl
-	 Y5LlZLpxc/FHA==
+	b=rRQ75lu00znvBITjVyrAMVKtCn2AtPLSrSuYcoZf125A63zHSdMhkAi/HFUGNCNeK
+	 J7X1yl7r0rN29gdmq5SsHcGn/T7CmDF/ID2Uvi7mvr0PFwvdGJmCpdOIysf5LfRnjC
+	 1w21Gx6IhBsNzjDnYjd6ko75qTravedUuRFoDbjzIS1z9I6hCFuD3mi0z2GXS1i4t6
+	 27AUHJ9cCIxoiAkllQIMQpLiz/s3c9V6KCvxFG9I9FzO5D6fpDGPZSi6DGeJKkmgmX
+	 LtIjdVeuyd+wIT4KgskYvFdzQ7diMBplESrWTHBJv/Ah47o30uQF/CA+9DkHa7pT6h
+	 70djD7BzAwDPA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A16FC369CB;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13BE0C3ABA8;
 	Tue, 29 Apr 2025 04:06:17 +0000 (UTC)
 From: Chen Linxuan via B4 Relay <devnull+chenlinxuan.uniontech.com@kernel.org>
-Date: Tue, 29 Apr 2025 12:06:11 +0800
-Subject: [PATCH RFC v3 7/8] x86/xen: add __init for xen_pgd_walk
+Date: Tue, 29 Apr 2025 12:06:09 +0800
+Subject: [PATCH RFC v3 5/8] rseq: add __always_inline for
+ rseq_kernel_fields
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -40,7 +41,7 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250429-noautoinline-v3-7-4c49f28ea5b5@uniontech.com>
+Message-Id: <20250429-noautoinline-v3-5-4c49f28ea5b5@uniontech.com>
 References: <20250429-noautoinline-v3-0-4c49f28ea5b5@uniontech.com>
 In-Reply-To: <20250429-noautoinline-v3-0-4c49f28ea5b5@uniontech.com>
 To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
@@ -76,21 +77,21 @@ Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
  Chen Linxuan <chenlinxuan@uniontech.com>, 
  Changbin Du <changbin.du@intel.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1213;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1064;
  i=chenlinxuan@uniontech.com; h=from:subject:message-id;
- bh=lLv+eC36iR+BfXD2pJvuB8T7k1wRLfuYuYg6Rtr4yeI=;
- b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoEFA0cu56sCmDMkf/pntxUHuMuekP/XRkxukwU
- 9g4TyNMqLaJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaBBQNAAKCRB2HuYUOZmu
- i6oqEACNTdOu+wT9VWzDqaJxYPJzTDzhyaDgOrIaxGP72CExKq84a645B1Jl3TWZN1v4YEQN+Ex
- U4BBfSuuQ9Yh0TKak7F0oJPgeJp4PeTVBP15tbocmZJmYUHXdJX5kcB6+MgIe90/7/tlKRXQlN5
- uY8GMIazOdRrWgafA6k6G+0lJvn3E3R5v7129rFXvHWCYC7Nvp2Vr8gyxE2IYJVHEfZx/+ua0oe
- z4a0WQgFS0t6W9PacgGnUTntuj/TGKVYb500Jwut0dBDJITdWXpackuvyCzviwumgxcGnbW66J/
- sPOW9GIhrql6r3JIF1vU1iTJ1wxWyv8Al2Yy2Y7j9ypL0F07+xTB5euDs2A9h8HHd2x+0MwnqRD
- 4T62VOpuvuHAy1CMHBv75g1GHhwTGMN1KwfuI0Pf0TXrf9JM01deVHQ7vjI5kZhyeYMl537pJVJ
- 0itemi/gfnvcGViZ8usYXjp9yKtWO3JsSCn31sNT7BwsAtjyIUQl+DeQyQADc9wUchfIkTRw2AT
- nXmGd9l2kspY+Bd3KtnokiL1Gm1q49EmDFnwJw+FvsjxRdcZ56x9pI1MXcoOzCJNGSxYn35Witw
- vt49LNms8G/08qnrm3qBl6k+q0+gMBVS+JCmJst68knEU97MDg5chkLEEiEkEAzZLrlhGHN4eU8
- gFY2uFKRqDDEdqA==
+ bh=yuauFI3DVy8k9g1XQ1OrB7eESWm7f+B3/2pt9syGKzM=;
+ b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoEFAyanc3Cwc7HAg/63YHY6NNSEBN2RhZfPBtP
+ dtxoPOqXNeJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaBBQMgAKCRB2HuYUOZmu
+ i7aID/44sv/mzy4WT2GTGw2LDhzFHfM+7rL13wS9xt+G7CMG4l6A0rduPv9Kj1+aTi8eOVMJft5
+ 5TiNxVdcrGKSr3zwVOY/PNRlc66oIZlthPkrupbFv0SD5r0m5xlYv9Q9WAMMOLU1a+CKw7KXlIK
+ zUkQ0dGZaFEhfFS3giTzwyMqJS6nvmjb5iRc4Zz/XOtdtIIBsD6qlLRwQDdV4KuiKgfabOvMbeX
+ C/d2ZrlzN8bw8uBY9bJS4LF4cptR+kay58eEnIn86mc9en18eq/l2Y01BEqmDWaad6N+FJDodwI
+ pMr/+GVr6bsXlGZJ+sULeKleGffl4G1zIhAoz7H8I0oNmr/nSGd3Wn6BKIxuLhtVppnLY1KsvGa
+ yf2RsSmPzJHLCXkfpLhDD/oicoxFl43gpHqaND1YU47v6537LXhTaUC1wslQX7j/d1+ujI4YwtF
+ vOr8GQoQM+gOCkSVJLMdhN73NjDBDQByqvsYdot/uoc2GscYToCLN6G8w6S/yE1iwgbv9J0upsK
+ hCjXyMYy0yLyfeIMCV/s3OTjYIs2fkUTwhR/5ByE/gU+4GGrFSrBbZP1FArrKKo834SUQ98QfUi
+ V+gTyYTxvmL/HMhC3LP7oMkp9BWNsUvbCEi3F0KTEm/YPo52etQ+1LPa6z6VqhkHXnGwZSJcPtW
+ crGc2BctRQzKvsw==
 X-Developer-Key: i=chenlinxuan@uniontech.com; a=openpgp;
  fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
 X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
@@ -105,31 +106,29 @@ Presume that kernel is compiled for x86_64 with gcc version 13.3.0:
   make allmodconfig
   make KCFLAGS="-fno-inline-small-functions -fno-inline-functions-called-once"
 
-This results a modpost warning:
+This results some objtool warnings:
 
-  WARNING: modpost: vmlinux: section mismatch in reference: xen_pgd_walk+0x42 (section: .text) -> xen_mark_pinned (section: .init.text)
-
-As xen_pgd_walk is only referenced in xen_after_bootmem(void) which is
-also in .init.text, I add __init for xen_pgd_walk to fix this issue.
+  vmlinux.o: warning: objtool: rseq_update_cpu_node_id+0x14c: call to rseq_kernel_fields() with UACCESS enabled
+  vmlinux.o: warning: objtool: rseq_reset_rseq_cpu_node_id+0xef: call to rseq_kernel_fields() with UACCESS enabled
 
 Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
 ---
- arch/x86/xen/mmu_pv.c | 2 +-
+ kernel/rseq.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 38971c6dcd4b78b6b14f51bc69c4bf6b70ebd622..53650888be0a7b1dba170a5b7ba9c654244b5125 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -696,7 +696,7 @@ static void __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
- 	(*func)(mm, virt_to_page(pgd), PT_PGD);
- }
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index b7a1ec327e8117b47e353cab92d62111dd261520..7a4b6c211359714087a753047581bc8ff0c6c76b 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -27,7 +27,7 @@
+ 				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
  
--static void xen_pgd_walk(struct mm_struct *mm,
-+static void __init xen_pgd_walk(struct mm_struct *mm,
- 			 void (*func)(struct mm_struct *mm, struct page *,
- 				      enum pt_level),
- 			 unsigned long limit)
+ #ifdef CONFIG_DEBUG_RSEQ
+-static struct rseq *rseq_kernel_fields(struct task_struct *t)
++static __always_inline struct rseq *rseq_kernel_fields(struct task_struct *t)
+ {
+ 	return (struct rseq *) t->rseq_fields;
+ }
 
 -- 
 2.43.0
