@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E85324110F;
-	Mon, 19 May 2025 21:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A35244689;
+	Mon, 19 May 2025 21:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747689800; cv=none; b=bFQWV1zVetjaitlGEPMefwnGTC6Mc+oMzwlAQAPj8h+5kMkFIhUGd6xpEbkaZybXL5QmP2RNjlOvLWSPrWBf16JOfg+HVHCXRMB8YCwGloAHigGqxLdDshDkHg9st12cQRkdDhQCQxHWhaHhTI/CoAUiqx36xovVWeR1JS0ak4Y=
+	t=1747689811; cv=none; b=AnbpIdkh9ArW25jrtga13cs31uIIWVNrCC+zFfjKOY2T0Jyhp1s3/bz+AGqpzW0WSqgt5fAaKs/LFQ4PUVm3n0Z249XP5jCLKU2Hwl8SXiAsFfSlLwkAt2K2yqas2cptOdUZI7pcAelo6R2GwGBSGvXbzoaCIDZhlRTTBwkGx8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747689800; c=relaxed/simple;
-	bh=Bk4HScsX6dMMIRV2eHPtcIh3oN/Gp9o6FmcIgx+RUVk=;
+	s=arc-20240116; t=1747689811; c=relaxed/simple;
+	bh=O33U2Imm5ypbs0NToGKPRgFoOC4/c8VH64LahKk3eME=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ml4OwkM3GK2eYUan9mRV7SmVe26t1GKGB8aMsLPZezQDNLebVoOkCLzjlx//lrkOcChNL4BTVvHp0RevHNubf1nFf7hdFu37kO3ZMWab8c4dNTxA0tHD2ut7t7w0tqv6FKkiUg8qt4df1h41CtbRNhZPX7SoGIBxaXWcz07a65c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/VFhxnV; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=pVJkHVMSTWN6/1RF/lMdJE02bGfPIXcOvdM7eXqKKVLGIB/a12ERHFWlwwI8gpdCfoncH7NVsw+MSVAbtEvTWh0uaWbuG86c/n0nLahEKTk+v2F7RDTp6Lk7uDvBrCQCdC2w4MbRT34h6xmRwmNBNQ07JF2YCFCOGpwFvKWOzcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnNCHM3O; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/VFhxnV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A80C4CEE4;
-	Mon, 19 May 2025 21:23:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnNCHM3O"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6C39C4CEEB;
+	Mon, 19 May 2025 21:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747689800;
-	bh=Bk4HScsX6dMMIRV2eHPtcIh3oN/Gp9o6FmcIgx+RUVk=;
+	s=k20201202; t=1747689810;
+	bh=O33U2Imm5ypbs0NToGKPRgFoOC4/c8VH64LahKk3eME=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a/VFhxnVQknzbdXVFga7D8gC5W/EvXUu8HniF8u7tM+RMJx6QPUamgR4QWA4vOsvm
-	 ubFUWN4CBLNfxPhxGju9vcxSCqPl5vsc5A302R8edc+LeAssV1QD01PFL/FnRQOZ+H
-	 h1FcD/E/v59A41uZdsxFgTBVEkcFf+lvT79oo9qQfct3FGTQwtnMNgTdWsUDDPqIIx
-	 JfHnN+WgtAJp7ocqX/L4oFjp/Se5tIbB33yYXafCsaURiFVRapdJuKa6MuZV5j4yNp
-	 VETye1A1hTQ6N//oEglJzdnEShjFUXDsCrTw8n/f88sqZ7sIhVlodnzj/x0oIn3moL
-	 YN/tYaEcIa/LA==
+	b=lnNCHM3O8IiaHlYWmJAEUrjtWotXwX9naW/eDUZOXv0fs+rSzi8W8viwqbomuFPO0
+	 LkIlIDJO7wnIVdnXkJ3Kil/d+l/My17pMmkJHS+3NnT3fOIwK2fUAZ56BqK4/Yhqxy
+	 ijhvuHMxpxqQQcN1OQzylRRxXtaT24xDD8GDw9iUIRIEcTItuQ2bVSxu3+Ci5j6iNZ
+	 1U5XEgk2CPt1Jq8p4zqlAbS8DXstEhxRhddMtEm1DrGJ216Rd1yEB36Qfbp50TzQIx
+	 dK/LPC++lh4lv57U/MHrxrLwJDqhh0OVh+ouzySc87CtqqtzvusP7aRX3zq2or9H/k
+	 U/+L+NYxlMdPA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -37,12 +37,12 @@ Cc: Michal Suchanek <msuchanek@suse.de>,
 	gregkh@linuxfoundation.org,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 7/7] tpm: tis: Double the timeout B to 4s
-Date: Mon, 19 May 2025 17:23:08 -0400
-Message-Id: <20250519212308.1986645-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 6/6] tpm: tis: Double the timeout B to 4s
+Date: Mon, 19 May 2025 17:23:20 -0400
+Message-Id: <20250519212320.1986749-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250519212308.1986645-1-sashal@kernel.org>
-References: <20250519212308.1986645-1-sashal@kernel.org>
+In-Reply-To: <20250519212320.1986749-1-sashal@kernel.org>
+References: <20250519212320.1986749-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.183
+X-stable-base: Linux 5.10.237
 Content-Transfer-Encoding: 8bit
 
 From: Michal Suchanek <msuchanek@suse.de>
@@ -110,10 +110,10 @@ index 464ed352ab2e8..ed7b2caa9ebbd 100644
  	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
  };
 diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 12d827734686d..2652de93e97b2 100644
+index 95c3069823f9b..7868e847eee0e 100644
 --- a/include/linux/tpm.h
 +++ b/include/linux/tpm.h
-@@ -181,7 +181,7 @@ enum tpm2_const {
+@@ -174,7 +174,7 @@ enum tpm2_const {
  
  enum tpm2_timeouts {
  	TPM2_TIMEOUT_A          =    750,
