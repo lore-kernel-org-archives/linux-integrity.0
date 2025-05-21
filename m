@@ -1,200 +1,242 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5DA2620FA;
-	Wed, 21 May 2025 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D17267F48;
+	Wed, 21 May 2025 12:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747825116; cv=none; b=hDxCUyVszXDRF2RowmNdht/2+lfwaAjmQQRNjfF6EZJnJmfkL0YcEnlsgV7//izeCWltP4lBuXAjW9l5Awh5vnvTTRuZyTuMwOJdLp15F1THEQkFepSUVq/UmRMUAgJjcetS8EXpG7nd06FPMGcaX5vAq1hoqBUOuaARyIWCuus=
+	t=1747832070; cv=none; b=uXHENk+sl0tX9aDakITXXrpZcTAEd3QRtoeY6h7CLcx498F8iPBbWtyASs6T777vSZr68f0BT9NPzKomlyu8HftEMximBi5QmLblrv2wrl5O690VwOJg5m6pRt/e1FqBjGuZs58sM4KpsDHnJcJhJ7fW6xuDwAl3uJd1pS5/ec8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747825116; c=relaxed/simple;
-	bh=Yj5FESqYIA7ScGcVcpjZcFcYpZM3cIeXjw2DKRH2ckg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F0z++MgohzewgIgB77MSDH/vF7yckxk5W7l62IpyB0kcs9N4TtifFj/6MQDO+bIJvYWWsPRK9WIiCdakjqAUXXDuQWCDgTkT9G9EyZxPikh2ilh0BSVNOa4MmObsEAQ1NVTugUyzhjIO4flWWaoKu28WoeheW+V+GX735oO/WTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kzjWMpCI; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1747832070; c=relaxed/simple;
+	bh=5BHjPodNxPkDFRb2pZOoLtV2R+N3FjkRVfnZRtvxEoI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LUkiypfEY0a7d9IF98cmx+/eM6e+K8e4tTfnLnb7Tk295P4Nw45Xq6EXZtpIw5Ov+D6u9F2/9+1XWVE+iccRGRg69Jvx6WHACg5LMPxvjQRRAYqs7x/ihM588+Pi97ERsvU30HCPAdx7vrr8uUdYu3fLYuSzlTNMUHO/lLomZ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WG5lWPVB; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kzjWMpCI"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L8phhu014686;
-	Wed, 21 May 2025 10:58:13 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WG5lWPVB"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54L7DXpH012569;
+	Wed, 21 May 2025 12:54:13 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=+iv47Tf1NAy3MKg7J
-	pMt0tSZMZNUHjGtMkJcRX2ZoxQ=; b=kzjWMpCI2yMJnJ2+8F9Q2uOymy+5O4LcM
-	dogMhK1cYNMNfdv5VIHHlqxXnTu9vnyz0UrsMMZhsxKoQCsKgmH6rkHNL0pjWSIl
-	PlrQmIkUh+l98LHMzwnkIrcSTj+jdOuy90cPR1rkfx2Hk/8qgEHWXSvYl0vhEzvn
-	KPette/LmqGZffkdrpbjNq6Bt+EoQDJhVP2oxhcqYG9Cm3UWJkwJfO+goH066omT
-	v6xzoeKcZyBxzUZrZukZ5f6VCpwjFCk76v3eBKxHHsIOFiMyXou/33BEgkZmY8dV
-	vfV2te0E448moV+2OC2sat//+jtWxkhS6BuodTbCVN4Pkq6fh3IuA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sbph0j2n-1
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=9njQgb
+	HwVVKKgMPLZo8Fg1k9epS2wmidLMKCgwjiL4Q=; b=WG5lWPVBUw+Hh4ajtt6ve5
+	SFnUkhSPWfHJ1+yq6plxE1SVz1pdDzfJ12Gw0+gvAb/W3P5D1WTAfIZ7YiQzEXTd
+	xk09NGWS/+MayLrGQnDbr5ReSk3mV2iDifunrRypRzR97FeSaI5MwNxQeJGhOCGj
+	As85eYQcOrgtnOIaSUCsBmqbdCwS1WSPQ9kG9DFiD+MBNJUDJk9wJuHQuGmwiS8V
+	Gs20jUfFwKcZfgWaPSI9zCAKFF7wnxgBuC0X0BQRSGg8AHavPVDawlmqv/ttv/No
+	InCbxTThy2Smv1h7uunAFFKl8rfdhiV9XLqTkGJ+MPqNwntvq9O1v5CdzVNZcd3Q
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46rye6m4s4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:13 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54LAsMH6025326;
-	Wed, 21 May 2025 10:58:13 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46sbph0j2g-1
+	Wed, 21 May 2025 12:54:13 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9JE5i015497;
+	Wed, 21 May 2025 12:54:12 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 46rwnnc7t0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:13 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54L9gx4T010640;
-	Wed, 21 May 2025 10:58:11 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwnmbt5g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 21 May 2025 10:58:11 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LAw7m130147158
+	Wed, 21 May 2025 12:54:12 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54LCsBKq22938140
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 21 May 2025 10:58:07 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 938C920043;
-	Wed, 21 May 2025 10:58:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B88D20040;
-	Wed, 21 May 2025 10:58:05 +0000 (GMT)
-Received: from li-fc74f8cc-3279-11b2-a85c-ef5828687581.in.ibm.com (unknown [9.204.203.112])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 21 May 2025 10:58:05 +0000 (GMT)
-From: Srish Srinivasan <ssrish@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
-        zohar@linux.ibm.com, nayna@linux.ibm.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] powerpc/secvar: Expose secvars relevant to the key management mode
-Date: Wed, 21 May 2025 16:27:58 +0530
-Message-ID: <20250521105759.8408-3-ssrish@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250521105759.8408-1-ssrish@linux.ibm.com>
-References: <20250521105759.8408-1-ssrish@linux.ibm.com>
+	Wed, 21 May 2025 12:54:12 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BF4EA5805E;
+	Wed, 21 May 2025 12:54:11 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E88BA58052;
+	Wed, 21 May 2025 12:54:10 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.23.72])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 21 May 2025 12:54:10 +0000 (GMT)
+Message-ID: <1d2848fe45dbf58707cecf16c4fc46b179e24415.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: add a knob ima= to make IMA be able to be disabled
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, pmenzel@molgen.mpg.de, coxu@redhat.com,
+        ruyang@redhat.com, chenste@linux.microsoft.com
+Date: Wed, 21 May 2025 08:54:10 -0400
+In-Reply-To: <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+References: <20250515233953.14685-1-bhe@redhat.com>
+	 <aCaFNvHbYxrCaPbe@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEwNSBTYWx0ZWRfXxj+Kr/SU8DGu 7cCuWAgvM3Wh88Nc9JjXMxjU5hz4F3VBsgjEKA2jQyrfRJFwRqsAsBJ/8SEzmCUi+DyVsOMoA6T ibhivpF6lol5UhjPIDQRNTpFGpb4aF7N8r/CtBHNg/ApAtu9oppIRpsJjKJi2dd8PcMjyeCzMcY
- 7QgcG8Y/jrxIEUGcS+2GRCDF71UNHtj70XXyjMJRiNtsZiB/cwnsYZ6LWNfDsnyfvAVqLPfUb2W TFF2ig7rkfHWPPWi8VhoNaXD2B/IKiap+XXxOydwsyCfhAWB5MUQlExMiatXq937BYcrJj4BvWT 3v94iLAS5Kck5RtFHhX6q6rZz+PSEeOlY67NMn4n866ElpK0yIvF/LYnAcJr3mwJTjQgLvZjBhH
- 0Vn1sWCmFmUl8SILKBoZryWG3jmVNy+HRIj+RImKLn20sZYXjVuFbgmgpR7DEt8kQrvxh5mI
-X-Proofpoint-ORIG-GUID: Vww7UlYtzeEycHD7TKb6YTyr59h6E1Iq
-X-Authority-Analysis: v=2.4 cv=L5kdQ/T8 c=1 sm=1 tr=0 ts=682db1c5 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=dt9VzEwgFbYA:10 a=VnNF1IyMAAAA:8 a=tLxTvSBFvjwC67ZwczkA:9
-X-Proofpoint-GUID: GHnn0WbiKF2p2z2DrVtQ5F2IFlZ2RgHo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIxMDEyMiBTYWx0ZWRfX+v9fZt+yWeWp /dzdbNrtWM3bCphbSBrlGm/yvLFy2lWUz/g+LEdXUpoRgQWgOBz+yyAO4+yUloNNpvFSogr9OFx rb1wj+jASPx8Wa37WnUXNWDh58J8YtDPbLpL1LuvWnLGbYv679hkIh0Z4T40Hr2/Y1rykuZjXDR
+ zNsE+FJBBQVP1aSatPijD0oLTHt1UWn+xZFCsL4ELZgOTpYNp6ru/03UQ3mHFj0Pxaax4YPpbBn oIrhc8VkaaLXCkpGrjOki0kLdtDoMoack0RMbHhI2KdU60VvMR+esUlATvMqOMWGhuNJRTLVAkI 3MmPLcSBR+0Y+54sLhylMnBXPSseDXtsNbvVzqRrt6mqrQGNwo06g0dVsBV1ge3DY8C0e7O7jQ9
+ yuqocjV0YqAsnWsEpTSlbz18ZC90ygYXXnasAp0SJoIJC62v+VWwrVBYOLMA2gRe3W7TYeM1
+X-Authority-Analysis: v=2.4 cv=esrfzppX c=1 sm=1 tr=0 ts=682dccf5 cx=c_pps a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17 a=UeMwZWw34uBX8khp:21 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=20KFwNOVAAAA:8 a=2HI49ejy6j84m9CP7MAA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: J-RZBjokabeiWH5x4PVvyOY15NRYoHOn
+X-Proofpoint-GUID: J-RZBjokabeiWH5x4PVvyOY15NRYoHOn
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-21_03,2025-05-20_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 clxscore=1015
- mlxlogscore=999 suspectscore=0 phishscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505210105
+ definitions=2025-05-21_04,2025-05-20_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0 phishscore=0
+ priorityscore=1501 clxscore=1011 bulkscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505210122
 
-The PLPKS enabled PowerVM LPAR sysfs exposes all of the secure boot
-secvars irrespective of the key management mode.
+On Fri, 2025-05-16 at 08:22 +0800, Baoquan He wrote:
+> CC kexec list.
+>=20
+> On 05/16/25 at 07:39am, Baoquan He wrote:
+> > Kdump kernel doesn't need IMA functionality, and enabling IMA will cost
+> > extra memory. It would be very helpful to allow IMA to be disabled for
+> > kdump kernel.
 
-The PowerVM LPAR supports static and dynamic key management for secure
-boot. The key management option can be updated in the management
-console. Only in the dynamic key mode can the user modify the secure
-boot secvars db, dbx, grubdb, grubdbx, and sbat, which are exposed via
-the sysfs interface. But the sysfs interface exposes these secvars even
-in the static key mode. This could lead to errors when reading them or
-writing to them in the static key mode.
+The real question is not whether kdump needs "IMA", but whether not enablin=
+g
+IMA in the kdump kernel could be abused.  The comments below don't address
+that question but limit/emphasize, as much as possible, turning IMA off is
+limited to the kdump kernel.
 
-Expose only PK, trustedcadb, and moduledb in the static key mode to
-enable loading of signed third-party kernel modules.
+> >=20
+> > And Coiby also mentioned that for kdump kernel incorrect ima-policy loa=
+ded
+> > by systemd could cause kdump kernel hang, and it's possible the booting
+> > process may be stopped by a strict, albeit syntax-correct policy and us=
+ers
+> > can't log into the system to fix the policy. In these cases, allowing t=
+o
+> > disable IMA is very helpful too for kdump kernel.
+> >=20
+> > Hence add a knob ima=3Don|off here to allow people to disable IMA in kd=
+ump
+> > kenrel if needed.
 
-Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
-Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
-Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
----
- Documentation/ABI/testing/sysfs-secvar        |  6 ++++
- arch/powerpc/platforms/pseries/plpks-secvar.c | 28 ++++++++++++++++---
- 2 files changed, 30 insertions(+), 4 deletions(-)
+^kernel
 
-diff --git a/Documentation/ABI/testing/sysfs-secvar b/Documentation/ABI/testing/sysfs-secvar
-index 45281888e520..948df3446a03 100644
---- a/Documentation/ABI/testing/sysfs-secvar
-+++ b/Documentation/ABI/testing/sysfs-secvar
-@@ -37,6 +37,12 @@ Description:	Each secure variable is represented as a directory named as
- 		representation. The data and size can be determined by reading
- 		their respective attribute files.
- 
-+		Only secvars relevant to the key management mode are exposed.
-+		Only in the dynamic key mode can the user modify the secure boot
-+		secvars db, dbx, grubdb, grubdbx, and sbat. PK, trustedcadb and
-+		moduledb are the secvars common to both static and dynamic key
-+		management modes.
-+
- What:		/sys/firmware/secvar/vars/<variable_name>/size
- Date:		August 2019
- Contact:	Nayna Jain <nayna@linux.ibm.com>
-diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c b/arch/powerpc/platforms/pseries/plpks-secvar.c
-index 767e5e8c6990..f9e9cc40c9d0 100644
---- a/arch/powerpc/platforms/pseries/plpks-secvar.c
-+++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
-@@ -59,7 +59,14 @@ static u32 get_policy(const char *name)
- 		return PLPKS_SIGNEDUPDATE;
- }
- 
--static const char * const plpks_var_names[] = {
-+static const char * const plpks_var_names_static[] = {
-+	"PK",
-+	"moduledb",
-+	"trustedcadb",
-+	NULL,
-+};
-+
-+static const char * const plpks_var_names_dynamic[] = {
- 	"PK",
- 	"KEK",
- 	"db",
-@@ -213,21 +220,34 @@ static int plpks_max_size(u64 *max_size)
- 	return 0;
- }
- 
-+static const struct secvar_operations plpks_secvar_ops_static = {
-+	.get = plpks_get_variable,
-+	.set = plpks_set_variable,
-+	.format = plpks_secvar_format,
-+	.max_size = plpks_max_size,
-+	.config_attrs = config_attrs,
-+	.var_names = plpks_var_names_static,
-+};
- 
--static const struct secvar_operations plpks_secvar_ops = {
-+static const struct secvar_operations plpks_secvar_ops_dynamic = {
- 	.get = plpks_get_variable,
- 	.set = plpks_set_variable,
- 	.format = plpks_secvar_format,
- 	.max_size = plpks_max_size,
- 	.config_attrs = config_attrs,
--	.var_names = plpks_var_names,
-+	.var_names = plpks_var_names_dynamic,
- };
- 
- static int plpks_secvar_init(void)
- {
-+	u8 mode;
-+
- 	if (!plpks_is_available())
- 		return -ENODEV;
- 
--	return set_secvar_ops(&plpks_secvar_ops);
-+	mode = plpks_get_sb_keymgmt_mode();
-+	if (mode)
-+		return set_secvar_ops(&plpks_secvar_ops_dynamic);
-+	return set_secvar_ops(&plpks_secvar_ops_static);
- }
- machine_device_initcall(pseries, plpks_secvar_init);
--- 
-2.47.1
+> >=20
+> > Signed-off-by: Baoquan He <bhe@redhat.com>
+> > ---
+> > =C2=A0.../admin-guide/kernel-parameters.txt=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 5 +++++
+> > =C2=A0security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 22 +++++++++++++++++++
+> > =C2=A02 files changed, 27 insertions(+)
+> >=20
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt
+> > b/Documentation/admin-guide/kernel-parameters.txt
+> > index d9fd26b95b34..762fb6ddcc24 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2202,6 +2202,11 @@
+> > =C2=A0			different crypto accelerators. This option can be
+> > used
+> > =C2=A0			to achieve best performance for particular HW.
+> > =C2=A0
+> > +	ima=3D		[IMA] Enable or disable IMA
+> > +			Format: { "off" | "on" }
+> > +			Default: "on"
+> > +			Note that this is only useful for kdump kernel.
 
+Instead of "useful" I would prefer something clearer like "limited".
+
+> > +
+> > =C2=A0	init=3D		[KNL]
+> > =C2=A0			Format: <full_path>
+> > =C2=A0			Run specified binary instead of /sbin/init as
+> > init
+> > diff --git a/security/integrity/ima/ima_main.c
+> > b/security/integrity/ima/ima_main.c
+> > index f3e7ac513db3..07af5c6af138 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -27,6 +27,7 @@
+> > =C2=A0#include <linux/fs.h>
+> > =C2=A0#include <linux/iversion.h>
+> > =C2=A0#include <linux/evm.h>
+> > +#include <linux/crash_dump.h>
+> > =C2=A0
+> > =C2=A0#include "ima.h"
+> > =C2=A0
+> > @@ -38,11 +39,27 @@ int ima_appraise;
+> > =C2=A0
+> > =C2=A0int __ro_after_init ima_hash_algo =3D HASH_ALGO_SHA1;
+> > =C2=A0static int hash_setup_done;
+> > +static int ima_disabled;
+
+Like the ima_hash_algo variable definition above, ima_disabled should be
+defined as __ro_after_init.
+
+> > =C2=A0
+> > =C2=A0static struct notifier_block ima_lsm_policy_notifier =3D {
+> > =C2=A0	.notifier_call =3D ima_lsm_policy_change,
+> > =C2=A0};
+> > =C2=A0
+> > +static int __init ima_setup(char *str)
+> > +{
+
+is_kdump_kernel() should also be called here, before the tests below.=20
+Something like:
+
++       if (!is_kdump_kernel()) {
++               pr_info("Warning ima setup option only permitted in kdump")=
+;
++               return 1;
++       }
+
+> > +	if (strncmp(str, "off", 3) =3D=3D 0)
+> > +		ima_disabled =3D 1;
+> > +	else if (strncmp(str, "on", 2) =3D=3D 0)
+> > +		ima_disabled =3D 0;
+> > +	else
+> > +		pr_err("Invalid ima setup option: \"%s\" , please specify
+> > ima=3Don|off.", str);
+> > +
+> > +	return 1;
+> > +}
+> > +__setup("ima=3D", ima_setup);
+> > +
+> > +
+> > +
+
+Remove the extraneous blank line.
+
+> > =C2=A0static int __init hash_setup(char *str)
+> > =C2=A0{
+> > =C2=A0	struct ima_template_desc *template_desc =3D
+> > ima_template_desc_current();
+> > @@ -1184,6 +1201,11 @@ static int __init init_ima(void)
+> > =C2=A0{
+> > =C2=A0	int error;
+> > =C2=A0
+> > +	if (ima_disabled && is_kdump_kernel()) {
+> > +		pr_info("IMA functionality is disabled");
+> > +		return 0;
+> > +	}
+> > +
+
+Even with the additional call to is_kdump_kernel() in ima_setup, please kee=
+p
+the is_kdump_kernel() test here as well.  Even though the code is self
+describing, please add a one line comment emphasizing disabling IMA is limi=
+ted
+to kdump.
+
+> > =C2=A0	ima_appraise_parse_cmdline();
+> > =C2=A0	ima_init_template_list();
+> > =C2=A0	hash_setup(CONFIG_IMA_DEFAULT_HASH);
+> > --=20
+> > 2.41.0
+> >=20
+>=20
+>=20
+
+thanks,
+
+Mimi
