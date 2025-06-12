@@ -1,120 +1,110 @@
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1ED1DDC1B;
-	Thu, 12 Jun 2025 03:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7850422DF95;
+	Thu, 12 Jun 2025 10:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749697920; cv=none; b=RYaa2ByoFfy1ytfsKkwEf2flt/nyeSHD2ZEAWcLXqU2L90f5kQ9hjZ+xOvwnP3vwvJIBsRIDultBb50C03YsKDsurMU28VEpgdOCQr6oSj7p2jGBN76+EC4nNek8sqNipoaLRosHvGgXNUrfJEDRxLXnF7EoTy/QBf2+MbYO1Hs=
+	t=1749724259; cv=none; b=DLEQMgi43CYvQkBi1aePje5pX+N8K7x2NJNc4gM58MkVt5mY2vb5piwLi2ebtq7l2TxAxhXkyIbUh9oocQN/7EtgZ4cMFf5h4Vnokw08Wyw8nR2vZhemTC5Ypwdqz2JiTO9Emymi/RoJmdjNA4/XiSWJke+me77lmspw5dCTHh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749697920; c=relaxed/simple;
-	bh=RpBt7G8UMT8cBL1bpUy64BEQSdksoaRYKd4Dis2oXVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mkoL63kG+v0v36RCu6OBZy1HeAFJOvL8D9Vx+iKXFctoTreluU4NrD2PWdLYueiMzpvMXH7/XPN03O2UiXJZxcB+lsFJhcWT16BchoB+1RZ45RFTUYe8+GatvAd+8e19k8P9pn5rbXm2TrMXCQBrP38bxOsUSpF0ztHI/TwT2po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aRm2msyw; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1749724259; c=relaxed/simple;
+	bh=UptZCHL/SIqqhiJnZoOAivvnbhhBVRs8nh2meH1TAcc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFF/i4L+7W13AGFlZx8BJcqOX47cbzjt5jV8IITOgCSdyezUKcAloJtJtBqzI2FdWgdHUcT2ItETIoGMXV5Auwgqlk907Qnq8VBT3B3TdqmpS46dEjzpZ8I7kxnKYyq9MqFVUpEzNuNcvKnyxNzr0xVQqngqa44xWtc1kjH9UJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RoppQeLr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aRm2msyw"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=4LvPHOEpM+pAb08p/VgZZBblKknsXF/euiji+ptj9wc=; b=aRm2msywatEwP5NAsFER+/3GrW
-	WhUNrBcfcq9TfprWp/UfKZ0lb+UR4ejQ359V2CtWyrLHy6gXlx/17NAR30o7m4kzQmlBOMthSG7Lm
-	COWfJ/INa1y/AO5ywQ6CF7ed8uBa7dIYgo4vUnpbxVeTLKdHp1jvAW+dOpPxjvI6GksLkSWCs/y7s
-	YenQHcIFice7Qah5Bp59XVHkIXBsfHCbezhGciWkvntimbEPsp7kT8sTobn5vb4XAu5ZkDoW6LmGk
-	2aNjtiZsADsyMEYUWTSMIkBgJ8GuFykbFmRRTTcLyxQLlKdyAt9uYlUQilLOhy/gg6H2hVqFVuNCk
-	rHMaEQ2Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPYM7-00000009gen-0EyR;
-	Thu, 12 Jun 2025 03:11:55 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Subject: [PATCH 02/10] securityfs: pin filesystem only for objects directly in root
-Date: Thu, 12 Jun 2025 04:11:46 +0100
-Message-ID: <20250612031154.2308915-2-viro@zeniv.linux.org.uk>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
-References: <20250612030951.GC1647736@ZenIV>
- <20250612031154.2308915-1-viro@zeniv.linux.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RoppQeLr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0929C4CEEA;
+	Thu, 12 Jun 2025 10:30:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749724259;
+	bh=UptZCHL/SIqqhiJnZoOAivvnbhhBVRs8nh2meH1TAcc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RoppQeLrgwYBS3NtzwQCtg9PLDtH/IW+ZdBAiOqEUnLKHV7xetiRSWhnJCL+5ufcr
+	 TLeO5n8ZYUTLCEvR/bpqNXAckoT3PD8OstCVmnSkcaacWAbQsqFbjhxXKXjml9hGx0
+	 g3gSZuma6ldoBoH5tCj1cqwYsBg2wt9X1kp5GrcAf4TiSTpkVKYjM+D3rKXThm2kxd
+	 prCk207kuuLlS4HyEGVy5tHgKTtw4uBDlBdiwDjwHvU1wLmKsvzQab0rtIAj96qAz3
+	 VHItFaOFe64btH1Wmli7MOVyhz4OR9jLZe/OH0J0Mk5NXu+XyRzR9n0F+9KokdT4vT
+	 Y798ZykDBKcQQ==
+Date: Thu, 12 Jun 2025 13:30:55 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: sudeep.holla@arm.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+	stuart.yoder@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] fix failure of integration IMA with tpm_crb_ffa
+Message-ID: <aEqsX0hBKb7ZC1qZ@kernel.org>
+References: <20250610060334.2149041-1-yeoreum.yun@arm.com>
+ <aEgmhwu1RP27yBpw@kernel.org>
+ <aEgwpXXftXW6JNRy@e129823.arm.com>
+ <aEg6Bgh8TqzK5nSu@kernel.org>
+ <aEhDY4VlkIPYAjPE@e129823.arm.com>
+ <aEhIPC95FisptBO5@kernel.org>
+ <aEhNnAxlToRMteA2@e129823.arm.com>
+ <aEmxaJQNfYJwSCd0@kernel.org>
+ <aEm+gqyp0aa4ULYa@e129823.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEm+gqyp0aa4ULYa@e129823.arm.com>
 
-Nothing on securityfs ever changes parents, so we don't need
-to pin the internal mount if it's already pinned for parent.
+On Wed, Jun 11, 2025 at 06:36:02PM +0100, Yeoreum Yun wrote:
+> Hi Jarkko,
+> 
+> > On Tue, Jun 10, 2025 at 04:22:04PM +0100, Yeoreum Yun wrote:
+> > > > OK, if ffa_init() is leveled up in the initcall hierarchy, shouldn't
+> > > > that be enough as long as ko's can be found from initramfs?
+> > >
+> > > As you mentioned, this is handled in Patch #1.
+> > > However, although ffa_init() is called first,
+> > > unless tpm_crb_ffa_init() is also invoked,
+> > > crb_acpi_driver_init() will fail with -EPROBE_DEFER.
+> > >
+> > > Please note that IMA is always built-in and cannot be built as a module.
+> >
+> > Sure but if one needs IMA, then tpm_crb_ffa can be compiled as built-in
+> > with zero code changes.
+> 
+> All of my describtion based on all things are built as "built-in".
+> in case of ffa_init() changes the init level to root_initcall,
+> so, the ffa_device will be produced first before the trial of TPM probe.
+> 
+> Note that tpm_crb_ffa_init() which is the "ffa_driver" is called in
+> device_initcall level. I mean
+> 
+>     ffa_init() -> arm_ffa -> root_initcall
+>     tpm_crb_ffa_init() -> device_initcall
+>     crb_acpi_driver_init() -> device_initcall
+> 
+> therefore, "crb_acpi_driver_init()" can be call first before
+> tpm_crb_ffa_init() since they're deployed in device_initcall.
+> If this happen, "crb_acpi_driver_init()" failed with -EPROBE_DEFER.
+> 
+> That's why this patch is required to probe "tpm_crb_ffa" when
+> crb_acpi_driver_init() called to complete the TPM device probe before
+> IMA subsystem initailization.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- security/inode.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+Yep, and you sort it out by not compiling it as a module.
 
-diff --git a/security/inode.c b/security/inode.c
-index 93460eab8216..1ecb8859c272 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -112,18 +112,20 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	struct dentry *dentry;
- 	struct inode *dir, *inode;
- 	int error;
-+	bool pinned = false;
- 
- 	if (!(mode & S_IFMT))
- 		mode = (mode & S_IALLUGO) | S_IFREG;
- 
- 	pr_debug("securityfs: creating file '%s'\n",name);
- 
--	error = simple_pin_fs(&fs_type, &mount, &mount_count);
--	if (error)
--		return ERR_PTR(error);
--
--	if (!parent)
-+	if (!parent) {
-+		error = simple_pin_fs(&fs_type, &mount, &mount_count);
-+		if (error)
-+			return ERR_PTR(error);
-+		pinned = true;
- 		parent = mount->mnt_root;
-+	}
- 
- 	dir = d_inode(parent);
- 
-@@ -167,7 +169,8 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	dentry = ERR_PTR(error);
- out:
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	if (pinned)
-+		simple_release_fs(&mount, &mount_count);
- 	return dentry;
- }
- 
-@@ -307,13 +310,15 @@ void securityfs_remove(struct dentry *dentry)
- 			simple_unlink(dir, dentry);
- 	}
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	if (dir == dir->i_sb->s_root->d_inode)
-+		simple_release_fs(&mount, &mount_count);
- }
- EXPORT_SYMBOL_GPL(securityfs_remove);
- 
- static void remove_one(struct dentry *victim)
- {
--	simple_release_fs(&mount, &mount_count);
-+	if (victim->d_parent == victim->d_sb->s_root)
-+		simple_release_fs(&mount, &mount_count);
- }
- 
- /**
--- 
-2.39.5
++	ret = ffa_register(&tpm_crb_ffa_driver);
++	BUG_ON(!ret && !tpm_crb_ffa);
 
+These lines struck me in your patch. The commit message has nothing
+about ffa_register().
+
+Also, please remove BUG_ON(). That said, I don't think 2/2 is needed.
+
+> 
+> Thanks.
+> 
+> --
+> Sincerely,
+> Yeoreum Yun
+
+
+BR, Jarkko
