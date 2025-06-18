@@ -1,110 +1,112 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C735619E819;
-	Wed, 18 Jun 2025 08:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBC7610D;
+	Wed, 18 Jun 2025 10:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750235617; cv=none; b=R3M7C/CvdfD9x9+JHLysaZ0iPZXB75ucdDD9vTPi4/wj8KVzaHkCmB9L5BxJ8L5Srwv7DH4/GeCIrFfCSzkn+/67eERhekLtYVkHDdqwU9REDEoWfhq2PH8GWHdkcG994xx0Vd6mLOvIqWwxi88t5tp3fMUuxCO6X7SB/S3NIyA=
+	t=1750242188; cv=none; b=dGh3o2wshSqYp/LB7qRcOg280AmTM8pfPGkIirTV7dvydvEqBZYPdmb4qINN17hRvx5x++sgku/ehgnPKUO3Bs5UVRJEpT+RcohFxsXwkpVBKZqp5oSFi2feqpMl2U2jTgUw8ycKth7WDJqPxEiqdUKhbUYC7wSvdcrLBbi0omY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750235617; c=relaxed/simple;
-	bh=fIu3H0X1ir+ab5DgfWZw8Zxf2egqeIQlXSOMOU+My5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i4VIhubzAJEKUAe+BobFLMmBSY0E5svDZQc0+jTUXKt1joy07bh6JgkMFo8q7lLLbnSMTRUI/nRb1z6oCi4k0919pJGi3CPvHnt2uAzPBi6mQrxGGwPZvgk3J7DlygJi3hp4kaP18QY4RxNEWVEq+XYQyemEW7S6btFScuXMVvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TZo+Qjfz; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TZo+Qjfz"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1750235616; x=1781771616;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fIu3H0X1ir+ab5DgfWZw8Zxf2egqeIQlXSOMOU+My5c=;
-  b=TZo+Qjfzi4wCLHB/11wruSp9VA8QxlGISaG66w533v1WSxc0plEdsYs+
-   hkjO9HgyUl/JUZyJm3wc2EovJu+JzqMcKAhEriaMtjq67akzMNj1KIHmD
-   JkdU1/Zk3puJlDlHVqjsZgY9Ayzk1ORsS+CYrkwVbuWk0h4oqiEZ/6f0c
-   BPbxaD9Mt41TjdHdZrN5BBXjIMYvS757sd07ljxPsHwNSZx13Wury3aLx
-   LMpgMVpttEdIn61q9L4rTT8bwABNHd/zfZjr9givGPHYZX+S9VHV98hrO
-   EL0tpav7TZTcKGQoiCIVBa9ecXgQUiSwlNg7rGuD7WIXrCrQAsQyEj5Lc
-   A==;
-X-CSE-ConnectionGUID: m3aupNNSTI222TTctr1y+Q==
-X-CSE-MsgGUID: kOfACOHfRR6RwtxVlSIOCA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11467"; a="63048642"
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="63048642"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 01:32:27 -0700
-X-CSE-ConnectionGUID: XdbUQy3CRfOUfn7iOGHy+w==
-X-CSE-MsgGUID: HBtqD8F8So280xiJlFKgkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,245,1744095600"; 
-   d="scan'208";a="149986926"
-Received: from mmowka-mobl.ger.corp.intel.com (HELO [10.245.101.212]) ([10.245.101.212])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2025 01:32:20 -0700
-Message-ID: <231e4cef-2e44-4e25-9169-f298e72e8e07@linux.intel.com>
-Date: Wed, 18 Jun 2025 10:32:04 +0200
+	s=arc-20240116; t=1750242188; c=relaxed/simple;
+	bh=ux1uyRqapS3lKxK73KHN1pIOkqToPUz8ZdJxrZAGaeg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FjzkqmHY7i991mYEw3xfiMxOtNGTk5JSIzxoC5bit5cymI2u+9DEIb85Ob4Dee6CwrDgD8wrA2bC5mN2NSe8pNAjnXxyMbjMxuHOSQ63y8qWEH36b1Vrv9kaa+aXZkpZABTLEHdar0aXJmm2t97/OleILbnRKr9kvwSYyaeNuow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 965ED14BF;
+	Wed, 18 Jun 2025 03:22:45 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CBD383F66E;
+	Wed, 18 Jun 2025 03:23:04 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: jarkko@kernel.org,
+	sudeep.holla@arm.com,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	stuart.yoder@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v4 0/2] generate boot_aggregate log in IMA with TPM using CRB over FF-A
+Date: Wed, 18 Jun 2025 11:23:00 +0100
+Message-Id: <20250618102302.2379029-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 02/19] x86: Secure Launch Kconfig
-To: Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
- linux-efi@vger.kernel.org, iommu@lists.linux.dev
-Cc: dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org,
- mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
- peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
- nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net,
- corbet@lwn.net, ebiederm@xmission.com, dwmw2@infradead.org,
- baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
- andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-References: <20250421162712.77452-1-ross.philipson@oracle.com>
- <20250421162712.77452-3-ross.philipson@oracle.com>
-Content-Language: pl
-From: "Mowka, Mateusz" <mateusz.mowka@linux.intel.com>
-In-Reply-To: <20250421162712.77452-3-ross.philipson@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+the TPM driver must be built as built-in and
+must be probed before the IMA subsystem is initialized.
 
-On 21-Apr-25 6:26 PM, Ross Philipson wrote:
-> Initial bits to bring in Secure Launch functionality. Add Kconfig
-> options for compiling in/out the Secure Launch code.
->
-> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+However, when the TPM device operates over the FF-A protocol using the CRB interface,
+probing fails and returns -EPROBE_DEFER if
+the tpm_crb_ffa device — an FF-A device that provides the communication
+interface to the tpm_crb driver — has not yet been probed.
 
-Acked-by: Mateusz Mowka <mateusz.mowka@linux.intel.com>
+To ensure the TPM device operating over the FF-A protocol with
+the CRB interface is probed before IMA initialization,
+the following conditions must be met:
 
-> ---
->   arch/x86/Kconfig | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 4b9f378e05f6..badde1e9742e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2001,6 +2001,17 @@ config EFI_RUNTIME_MAP
->   
->   	  See also Documentation/ABI/testing/sysfs-firmware-efi-runtime-map.
->   
-> +config SECURE_LAUNCH
-> +	bool "Secure Launch support"
-> +	depends on X86_64 && X86_X2APIC && TCG_TIS && TCG_CRB && CRYPTO_LIB_SHA1 && CRYPTO_LIB_SHA256
-> +	help
-> +	   The Secure Launch feature allows a kernel to be loaded
-> +	   directly through an Intel TXT measured launch. Intel TXT
-> +	   establishes a Dynamic Root of Trust for Measurement (DRTM)
-> +	   where the CPU measures the kernel image. This feature then
-> +	   continues the measurement chain over kernel configuration
-> +	   information and init images.
-> +
->   source "kernel/Kconfig.hz"
->   
->   config ARCH_SUPPORTS_KEXEC
+   1. The corresponding ffa_device must be registered,
+      which is done via ffa_init().
+
+   2. The tpm_crb_driver must successfully probe this device via
+      tpm_crb_ffa_init().
+
+   3. The tpm_crb driver using CRB over FF-A can then
+      be probed successfully. (See crb_acpi_add() and
+      tpm_crb_ffa_init() for reference.)
+
+Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+all registered with device_initcall, which means crb_acpi_driver_init() may
+be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
+
+When this occurs, probing the TPM device is deferred.
+However, the deferred probe may happen after
+the IMA subsystem has already been initialized,
+since IMA initialization is performed during late_initcall,
+and deferred probing is handled asynchronously via a workqueue.
+
+This patch addresses the issue by ensuring timely probing of
+the tpm_crb_ffa device during TPM initialization:
+
+  Patch #1: Change the initcall level of ffa_init() to rootfs_initcall,
+            so that the FF-A device is created before any FF-A drivers are loaded.
+
+  Patch #2: When built as built-in, call ffa_register() within tpm_crb_ffa_init()
+            to ensure the Secure Partition used by tpm_crb_ffa is already registered
+            before the TPM device is probed.
+
+==============
+Patch History
+==============
+  Since v3:
+     - remove BUG_ON.
+     - https://lore.kernel.org/all/20250611112448.17751-1-yeoreum.yun@arm.com/
+
+  Since v2:
+     - rewrite cover letter and commit message:
+     - https://lore.kernel.org/all/aEgwpXXftXW6JNRy@e129823.arm.com/
+
+  Since v1:
+     - rewrite commit message.
+     - https://lore.kernel.org/all/20250606105754.1202649-1-yeoreum.yun@arm.com/
+
+Yeoreum Yun (2):
+  firmware: arm_ffa: Change initcall level of ffa_init() to
+    rootfs_initcall
+  tpm: tpm_crb_ffa: try to probe tpm_crb_ffa when it's built-in
+
+ drivers/char/tpm/tpm_crb_ffa.c    | 19 ++++++++++++++++---
+ drivers/firmware/arm_ffa/driver.c |  2 +-
+ 2 files changed, 17 insertions(+), 4 deletions(-)
+
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
