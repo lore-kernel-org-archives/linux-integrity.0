@@ -1,100 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA6E24679A
-	for <linux-integrity@vger.kernel.org>; Wed,  2 Jul 2025 22:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A741853;
+	Thu,  3 Jul 2025 01:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751496391; cv=none; b=CpJkRtASRtlzvS7EGAukin/+R9MfM4/c2Yj/jmSq4NAbIpPqLIa21+QnUllaVdEgb3dg72QynZEIUge8B+y+3LKx8lnsr/zzB1XmWFZ8yUpqNoxY30vr5pyBlezBuXsnesWDE/jnglD47IRJRIE5knrhZfXuElW3hm5AIHJA6fs=
+	t=1751506440; cv=none; b=XxTOnfNUVWBhTDQ+OfyKMutEbkG3NQLQWQv4HidMHddkKsteNcp0vqJLF7A0LpnIEa8KzGbdfVbUsEF8IMB4jttoEtXBotBU6TT6jHaSblhDNXNJ+A4F2txDB8I6SSQNPa52d3Z8/Py9tePkSBqc5p2q9Qc4qE3AjpZL6afOBOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751496391; c=relaxed/simple;
-	bh=YJZDpJ4WPdgUAWJ8luDJqi5MpU/82ToTDmJsSuKzI9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0phPw5aEH4hGzN8iU8+0OS02kIX1tJEdW7DEqE5CJQLOWqyIdvepi1cm0Y2GTsDQWPexnlwzNhVZDg1EisoctHbU7GV0+53boicnC86mke+keTElaDaXXYLURSoayxUz0u3C/sEIN393+ndlKh4OJzM057MgwXoIMjYIX3nA9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2TOkb76; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2TOkb76"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F6BEC4CEEE;
-	Wed,  2 Jul 2025 22:46:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1751496389;
-	bh=YJZDpJ4WPdgUAWJ8luDJqi5MpU/82ToTDmJsSuKzI9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c2TOkb76ewCVkkx7NNu12g2zQmmF1eGq5WUsNDrxx+vGyDPuaRfuMIJ/j2D1o7l6/
-	 lxtkGpXFpqkmGa2oLCjN/YByPSc6hKkzOtZx90JX2NjS7+6z/ht8Mu7aLbFSwZUuSy
-	 eUkf714kvWhBjGeLxw0/zOXHYN8YAui57XnhXvPFyIU9LxONBT8NhFhC4t2P3x3H5x
-	 aG5SGqnOfz6WAyEGDDLn7hbaIPtDSYczPCaaq71Jmf/RfMS80FJfka4iF/Tj4JyJZD
-	 uwWiJAUwYU14KIyYTDZbJYQWhoEdj4WhrSvd563bTFHDPv4KnZos3MwHS/N0pK+YO/
-	 yABPfpS5IMlVg==
-Date: Thu, 3 Jul 2025 01:46:25 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Denis Aleksandrov <daleksan@redhat.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	Jan Stancek <jstancek@redhat.com>
-Subject: Re: [PATCH] tpm: prevents local DOS via tpm/tpm0/ppi/*operations
-Message-ID: <aGW2wabMXtdBEQxR@kernel.org>
-References: <20250702202851.33344-1-daleksan@redhat.com>
+	s=arc-20240116; t=1751506440; c=relaxed/simple;
+	bh=wB63E55R6GEbdZL69RCytBGhgs7kgufcm+3PucP2thk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OPfvliJ6RgyHfaM3jogR2dQ6vSPcsx2flcgTnRIgRF1l0SMJbYu2rBZ3ayyRIeOJGqCLIgY7b0VxUvhodxnH7n8ejVJ4EMb1+WZ4sBgSynsHU8Zymj3Um3tcL3vn+NmmG6gjPzJgRDEb76A2KmyDuQb/uyEeQQsnGJjxyyaXBzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4bXfQl0FsWztSk4;
+	Thu,  3 Jul 2025 09:32:47 +0800 (CST)
+Received: from kwepemg100016.china.huawei.com (unknown [7.202.181.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B1F001400E3;
+	Thu,  3 Jul 2025 09:33:54 +0800 (CST)
+Received: from huawei.com (10.67.174.33) by kwepemg100016.china.huawei.com
+ (7.202.181.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 3 Jul
+ 2025 09:33:53 +0800
+From: GONG Ruiqi <gongruiqi1@huawei.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
+	<roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+CC: Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn"
+	<serge@hallyn.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H . Peter Anvin"
+	<hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>, <keyrings@vger.kernel.org>, Lu Jialin
+	<lujialin4@huawei.com>, <gongruiqi1@huawei.com>
+Subject: [PATCH v3 0/2] integrity: Extract secure boot enquiry function out of IMA
+Date: Thu, 3 Jul 2025 09:43:51 +0800
+Message-ID: <20250703014353.3366268-1-gongruiqi1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250702202851.33344-1-daleksan@redhat.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg100016.china.huawei.com (7.202.181.57)
 
-On Wed, Jul 02, 2025 at 04:28:51PM -0400, Denis Aleksandrov wrote:
-> This bug is not seen on most machines. Reads on tpm/tpm0/ppi/*operations
-> can become very long on misconfigured systems. Reading the TPM is a
-> blocking operation, thus a user could effectively trigger a DOS.
-> 
-> Resolve this by restricting unprivileged user from reading the
-> above-mentioned device files.
+v3:
+- Redesign the implementation. Keep the name of arch_ima_get_secureboot
+  to escape from the morass consisted of multiple arch and configs.
+- Rephrase the commit message.
+v2:
+- Fix compile errors for CONFIG_IMA_ARCH_POLICY=n on s390 & powerpc
 
-I suppose we can do this. I'm going to holiday for one week next
-week so I'll hold for additional feedback for that period and
-apply this if nothing comes up.
+---
 
-There's no use case for unprivileged user, or app that stops
-working because of this. If you cut hairs, with patch shifting
-uapi you have to we always prepared that tree falls down
-somewhere but I'm willing to take risk with this :-)
+Hi,
 
+We encountered a boot failure issue in an in-house testing, where the
+kernel refused to load its modules since it couldn't verify their
+signature. The root cause turned out to be the early return of
+load_uefi_certs(), where arch_ima_get_secureboot() returned false
+unconditionally due to CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT=n, even
+though the secure boot was enabled.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+This patch set attempts to remove this implicit dependency by shifting
+the functionality of efi secure boot enquiry from IMA to the integrity
+subsystem, so that both certificate loading and IMA can make use of it
+independently.
 
-> 
-> Reported-by: Jan Stancek <jstancek@redhat.com>
-> Signed-off-by: Denis Aleksandrov <daleksan@redhat.com>
-> ---
-> 
-> Running scripts/checkpatch.pl suggested that the permissions be
-> changed to octal format. What do the maintainers think of this?
-> The rest of the permissions in the file are macros.
-> 
-> Lastly, this bug was reproduced and the fix was tested accordingly.
-> 
->  drivers/char/tpm/tpm_ppi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
-> index bc7b1b4501b3..ac6e0aee566e 100644
-> --- a/drivers/char/tpm/tpm_ppi.c
-> +++ b/drivers/char/tpm/tpm_ppi.c
-> @@ -347,8 +347,8 @@ static DEVICE_ATTR(request, S_IRUGO | S_IWUSR | S_IWGRP,
->  static DEVICE_ATTR(transition_action, S_IRUGO,
->  		   tpm_show_ppi_transition_action, NULL);
->  static DEVICE_ATTR(response, S_IRUGO, tpm_show_ppi_response, NULL);
-> -static DEVICE_ATTR(tcg_operations, S_IRUGO, tpm_show_ppi_tcg_operations, NULL);
-> -static DEVICE_ATTR(vs_operations, S_IRUGO, tpm_show_ppi_vs_operations, NULL);
-> +static DEVICE_ATTR(tcg_operations, S_IRUSR | S_IRGRP, tpm_show_ppi_tcg_operations, NULL);
-> +static DEVICE_ATTR(vs_operations, S_IRUSR | S_IRGRP, tpm_show_ppi_vs_operations, NULL);
->  
->  static struct attribute *ppi_attrs[] = {
->  	&dev_attr_version.attr,
-> -- 
-> 2.48.1
-> 
+-Ruiqi
 
-BR, Jarkko
+GONG Ruiqi (2):
+  x86/efi: Rename IMA-related function and macro of boot mode
+  integrity: Extract secure boot enquiry function out of IMA
+
+ arch/x86/include/asm/efi.h                    |  4 +-
+ arch/x86/platform/efi/efi.c                   |  2 +-
+ include/linux/integrity.h                     |  1 +
+ security/integrity/Makefile                   |  1 +
+ security/integrity/ima/ima_efi.c              | 42 +----------------
+ security/integrity/platform_certs/load_uefi.c |  3 +-
+ security/integrity/secureboot.c               | 46 +++++++++++++++++++
+ 7 files changed, 54 insertions(+), 45 deletions(-)
+ create mode 100644 security/integrity/secureboot.c
+
+-- 
+2.25.1
+
