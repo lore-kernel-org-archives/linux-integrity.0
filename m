@@ -1,123 +1,257 @@
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A9C282F5;
-	Fri,  4 Jul 2025 07:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2702EE60E;
+	Fri,  4 Jul 2025 08:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751615234; cv=none; b=I2ykW4EfQUNT7CwnPHLEoBKZ2l52oRGAQv8hHPe+xqubn0F0TuOooIaMWq518ijBS929h0dedalJMP/+VbXB3n+iaLfjKEEFJUbY5b0+CuMtTJf31e/0ck82iQesXGIjkTnU9HhN8bFD43/Q9ElATLOxEqqiC8k0nWzqRla34iM=
+	t=1751618584; cv=none; b=VCH2TJNWh0xXFfn7smzxgZ4ABQNSLhSS0d2yEsLNGwIHfa/HBExdbfUcP8W7xwX19o/VrJ71z2ijTZmJwMmNglaTGYEJxhol84d89WnWV1dpZ+gIF9dc7emnxYHjEtqmj83c0t5MSMB10cI5zn9S0HDAEg1qty23O9JOGt96gyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751615234; c=relaxed/simple;
-	bh=f5bUyETWuLf21xHjox/tbacH4YnaGKFp9ktsm1YeJpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XTZKQWBUid95ecls9Tt4BWQIcF00rIhhf3sljXyAe/iZKX/AYRotn3bXc6jws3NU9WZ7KjgALw/06f6WFJQHiRrR/vKXsbQZT6DAtfYzMinHnk7NsblTGgP+jRCGYVOK07in8VNz1BhOjUgPv2QU7Uu7r0Dj3/+AGBQzFbd+5do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-	by gardel.0pointer.net (Postfix) with ESMTP id 103F1E81788;
-	Fri,  4 Jul 2025 09:47:10 +0200 (CEST)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id 1F09416005E; Fri,  4 Jul 2025 09:47:09 +0200 (CEST)
-Date: Fri, 4 Jul 2025 09:47:08 +0200
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: GONG Ruiqi <gongruiqi1@huawei.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure
- boot be disabled"
-Message-ID: <aGeG_C2fcWqpgo1O@gardel-login>
-References: <Z9wDxeRQPhTi1EIS@gardel-login>
- <1a6cf2097487816e4b93890ad760f18fe750bd70.camel@linux.ibm.com>
- <aGYurikYK1ManAp3@gardel-login>
- <8401c23009db3b8447b0b06710b37b1585a081ab.camel@linux.ibm.com>
- <aGZ_x8Ar6iwzt2zV@gardel-login>
- <c74b5581-b5a5-4f71-a4da-2cef73351715@huawei.com>
+	s=arc-20240116; t=1751618584; c=relaxed/simple;
+	bh=FEXr7+A8Sh3z5TppCZoEqeu3TrnS62oJtNLrMLmX9Ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jlBL+1fnIQqeL4yzYZnlpaRPRukE2BQuctTaR8Pdp8940VgypROfR88J2Pyi8m8wR4AX+cDMOOI5YsKeMlSFZWnzbTHpjY37ooDppqpErWgjPYu9yh2OGiRIzuIEWGvX2m3gn6paUbWG6sWoa4P/OTyEB5DYNt80KN+/RicoGpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TCcWXlqc; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TCcWXlqc"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5643QCx3020597;
+	Fri, 4 Jul 2025 08:42:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=3UdQ8D
+	xjk4XDYNnQQ3bQvUxc58xt/mNU1w0LcNH4EvA=; b=TCcWXlqc8GcxQktbr9NM6q
+	ttXDjiepo6npGnqo4dXoc20L0cM1yZLbYtit3jH9llDNLP97qOCs3o6QvPL2H3tg
+	B0PMI2tJFEAix9Z6FJ/JwnW0GERHUzpEXSNKIP7L5H5VB8eCKungDdk5TilZTi+Q
+	+sy24DTHcJz/7b3sBoJb+LDjlAw7vSoYRf7Y+i1npdFY/eJjkvl5MDd1eXwbfZU3
+	t/ZfBudt2FRWAi6aE4I86gm8tRX6GtvB+wxc6cuFs0iLi6siq43J25htoU5BzSML
+	nDQU7sHcct2YuVgI/TcYzX7SkL/LkOQ4GuItpZxQ4WHSnOrgJHmx21Utz0fiWPyw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u287n2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 08:42:44 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5648bLAL021704;
+	Fri, 4 Jul 2025 08:42:44 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 47j6u287mx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 08:42:44 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56461FKL032151;
+	Fri, 4 Jul 2025 08:42:43 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 47ju4116vq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 04 Jul 2025 08:42:43 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5648gdCh58327392
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 4 Jul 2025 08:42:39 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 230E82004B;
+	Fri,  4 Jul 2025 08:42:39 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1093B20040;
+	Fri,  4 Jul 2025 08:42:34 +0000 (GMT)
+Received: from [9.61.253.3] (unknown [9.61.253.3])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  4 Jul 2025 08:42:33 +0000 (GMT)
+Message-ID: <ea69919d-87dd-4d5c-b096-620a4050af6f@linux.ibm.com>
+Date: Fri, 4 Jul 2025 14:12:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c74b5581-b5a5-4f71-a4da-2cef73351715@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] powerpc/pseries: Correct secvar format
+ representation for static key management
+To: Srish Srinivasan <ssrish@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, naveen@kernel.org, ajd@linux.ibm.com,
+        zohar@linux.ibm.com, nayna@linux.ibm.com, msuchanek@suse.de,
+        linux-kernel@vger.kernel.org
+References: <20250610211907.101384-1-ssrish@linux.ibm.com>
+ <20250610211907.101384-2-ssrish@linux.ibm.com>
+Content-Language: en-US
+From: R Nageswara Sastry <rnsastry@linux.ibm.com>
+In-Reply-To: <20250610211907.101384-2-ssrish@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: gVgEwNCUjoQDvVkuldKTtmrvcZX4v83C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzA0MDA2NCBTYWx0ZWRfX5VMG+ECazCKX L3bYeVBvWCDf/09q5KykN1lagxUyLzrHF2qFzzMaPa8XneKmDIX0S8jA+zzZFJfrV+23OwE3Fcz TOkwcrt3QTEqFPasMrdHn/q4idiWc1+CHqzcVSrb8ls1vA75RtTagu0Z9d9Th4YB3tPDSfQj8B1
+ +R+GgR8jVLUACxnpC7Anon9ClblIuRBVTvorNH3SVZodWLIMRN7zQ6px7kt8lKfmG4uYei5YIQu OaFBJ4ZRRo3ePD+gSLE+Ui7xenx5LsBQHGRRpN4vjkwauyGXeNQUryRhGENxFTfqSJZhGFe8U7L es3NI6UUsyByHCX1t441C2w6Yb1LNRWNlgCyphVerkqIiIUy0AfnqJ/OZgu+6ugmDLpXj41TNR0
+ MRpWRqDf+BkUQVti8uEsPOmTTsqlPbNSBdrJH8G8Ev1DhKG9ZkE3aNtoHFphkaD0UZ9dBfLI
+X-Proofpoint-GUID: EHLgPpDBDYIi4ey7y9-9AwS7zr8TuSZc
+X-Authority-Analysis: v=2.4 cv=GrRC+l1C c=1 sm=1 tr=0 ts=68679404 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=JeGirNJSJm6n8U7jAzIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-07-04_03,2025-07-02_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 adultscore=0 mlxlogscore=999 mlxscore=0 impostorscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507040064
 
-On Fr, 04.07.25 09:30, GONG Ruiqi (gongruiqi1@huawei.com) wrote:
 
-> > patch arbitrary keys into the ELF image of the kernel before starting
-> > it, and everything will look perfect later on, because the image is
-> > not authenticated after all via SB. So there *already* is a way into
-> > the kernel keyring with this – it's just really messy to parse and
-> > patch ELF at runtime like this from the bootloader. My hope with just
-> > relaxing the rules on MOK keys when SB is off is to just make this
-> > stuff cleaner and more elegant (and also to leave the ELF image intact
-> > so that we get clean measurements, both of the kernel and of the keys
-> > we add).
+On 11/06/25 2:49 AM, Srish Srinivasan wrote:
+> On a PLPKS enabled PowerVM LPAR, the secvar format property for static
+> key management is misrepresented as "ibm,plpks-sb-unknown", creating
+> reason for confusion.
 >
-> Just curious: if an attacker takes control of the boot phase earlier
-> than the kernel, then not just this check has no value, but any check in
-> the kernel has no value, right? Anything that got loaded early enough
-> could theoretically patch the kernel with anything on anywhere. So shall
-> we just remove them all?
-
-Measured boot protects you against that, as I explained: what we do in
-our model is lock the full disk encryption to a key in the TPM that
-enforces an local attestation policy: only if a all measurements match
-that policy the FDE key is released to the OS. Hence yes, if SB is off
-*any* code can run, but if it's not the right code then it cannot
-unlock the disk. If it *is* able to unlock the FDE however, then this
-is proof that the boot chain is in order, and hence the kernel can be
-trusted, and it makes sense for it to defend itself from later steps.
-
-> Certainly the answer is no, and they are still meaningful somehow and
-> somewhere. IMHO I think the concern behind the check is reasonable, but
-> the actual code could be an overkill. It would be better if it does:
+> Static key management mode uses fixed, built-in keys. Dynamic key
+> management mode allows keys to be updated in production to handle
+> security updates without firmware rebuilds.
 >
->   if (arch_ima_get_secureboot() && ima_mok_verify()) // hypothetical
+> Define a function named plpks_get_sb_keymgmt_mode() to retrieve the
+> key management mode based on the existence of the SB_VERSION property
+> in the firmware.
 >
-> , and in the future we could extend the ima policy for the boot phase
-> chain of trust and perform the check here accordingly, i.e. let the
-> users decide how things should go.
+> Set the secvar format property to either "ibm,plpks-sb-v<version>" or
+> "ibm,plpks-sb-v0" based on the key management mode, and return the
+> length of the secvar format property.
 >
-> While for the current situation, my personal advice would be to add a
-> config to control whether or not the check is conducted. Let's call it
-> CONFIG_LOAD_UEFI_KEYS_STRICT temporarily:
+> Co-developed-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Souradeep <soura@imap.linux.ibm.com>
+> Signed-off-by: Srish Srinivasan <ssrish@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+Tested-by: R Nageswara Sastry <rnsastry@linux.ibm.com>
+With the following scenarios:
+1. With and with out secure boot by enabling keystore_signed_updates and 
+keystore_kbytes
+2. With Dynamic Key Guest Secure Boot
+3. With Static Key Guest Secure Boot
+
+> ---
+>   Documentation/ABI/testing/sysfs-secvar        | 10 ++-
+>   arch/powerpc/platforms/pseries/plpks-secvar.c | 76 +++++++++++--------
+>   2 files changed, 53 insertions(+), 33 deletions(-)
 >
-> #ifdef CONFIG_LOAD_UEFI_KEYS_STRICT
->   /* the MOK/MOKx can not be trusted when secure boot is disabled */
->   if (!arch_ima_get_secureboot())
->           return 0;
-> #endif
->
-> so that both sides are happy, and we can think of more fine-grained
-> verification methods, like the one I said above, for the strict mode
-> afterwards.
+> diff --git a/Documentation/ABI/testing/sysfs-secvar b/Documentation/ABI/testing/sysfs-secvar
+> index 857cf12b0904..f001a4f4bd2e 100644
+> --- a/Documentation/ABI/testing/sysfs-secvar
+> +++ b/Documentation/ABI/testing/sysfs-secvar
+> @@ -22,9 +22,13 @@ Description:	A string indicating which backend is in use by the firmware.
+>   		and is expected to be "ibm,edk2-compat-v1".
+>   
+>   		On pseries/PLPKS, this is generated by the kernel based on the
+> -		version number in the SB_VERSION variable in the keystore, and
+> -		has the form "ibm,plpks-sb-v<version>", or
+> -		"ibm,plpks-sb-unknown" if there is no SB_VERSION variable.
+> +		version number in the SB_VERSION variable in the keystore. The
+> +		version numbering in the SB_VERSION variable starts from 1. The
+> +		format string takes the form "ibm,plpks-sb-v<version>" in the
+> +		case of dynamic key management mode. If the SB_VERSION variable
+> +		does not exist (or there is an error while reading it), it takes
+> +		the form "ibm,plpks-sb-v0", indicating that the key management
+> +		mode is static.
+>   
+>   What:		/sys/firmware/secvar/vars/<variable name>
+>   Date:		August 2019
+> diff --git a/arch/powerpc/platforms/pseries/plpks-secvar.c b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> index 257fd1f8bc19..767e5e8c6990 100644
+> --- a/arch/powerpc/platforms/pseries/plpks-secvar.c
+> +++ b/arch/powerpc/platforms/pseries/plpks-secvar.c
+> @@ -152,39 +152,55 @@ static int plpks_set_variable(const char *key, u64 key_len, u8 *data,
+>   	return rc;
+>   }
+>   
+> -// PLPKS dynamic secure boot doesn't give us a format string in the same way OPAL does.
+> -// Instead, report the format using the SB_VERSION variable in the keystore.
+> -// The string is made up by us, and takes the form "ibm,plpks-sb-v<n>" (or "ibm,plpks-sb-unknown"
+> -// if the SB_VERSION variable doesn't exist). Hypervisor defines the SB_VERSION variable as a
+> -// "1 byte unsigned integer value".
+> -static ssize_t plpks_secvar_format(char *buf, size_t bufsize)
+> +/*
+> + * Return the key management mode.
+> + *
+> + * SB_VERSION is defined as a "1 byte unsigned integer value", taking values
+> + * starting from 1. It is owned by the Partition Firmware and its presence
+> + * indicates that the key management mode is dynamic. Any failure in
+> + * reading SB_VERSION defaults the key management mode to static. The error
+> + * codes -ENOENT or -EPERM are expected in static key management mode. An
+> + * unexpected error code will have to be investigated. Only signed variables
+> + * have null bytes in their names, SB_VERSION does not.
+> + *
+> + * Return 0 to indicate that the key management mode is static. Otherwise
+> + * return the SB_VERSION value to indicate that the key management mode is
+> + * dynamic.
+> + */
+> +static u8 plpks_get_sb_keymgmt_mode(void)
+>   {
+> -	struct plpks_var var = {0};
+> -	ssize_t ret;
+> -	u8 version;
+> -
+> -	var.component = NULL;
+> -	// Only the signed variables have null bytes in their names, this one doesn't
+> -	var.name = "SB_VERSION";
+> -	var.namelen = strlen(var.name);
+> -	var.datalen = 1;
+> -	var.data = &version;
+> -
+> -	// Unlike the other vars, SB_VERSION is owned by firmware instead of the OS
+> -	ret = plpks_read_fw_var(&var);
+> -	if (ret) {
+> -		if (ret == -ENOENT) {
+> -			ret = snprintf(buf, bufsize, "ibm,plpks-sb-unknown");
+> -		} else {
+> -			pr_err("Error %ld reading SB_VERSION from firmware\n", ret);
+> -			ret = -EIO;
+> -		}
+> -		goto err;
+> +	u8 mode;
+> +	ssize_t rc;
+> +	struct plpks_var var = {
+> +		.component = NULL,
+> +		.name = "SB_VERSION",
+> +		.namelen = 10,
+> +		.datalen = 1,
+> +		.data = &mode,
+> +	};
+> +
+> +	rc = plpks_read_fw_var(&var);
+> +	if (rc) {
+> +		if (rc != -ENOENT && rc != -EPERM)
+> +			pr_info("Error %ld reading SB_VERSION from firmware\n", rc);
+> +		mode = 0;
+>   	}
+> +	return mode;
+> +}
+>   
+> -	ret = snprintf(buf, bufsize, "ibm,plpks-sb-v%hhu", version);
+> -err:
+> -	return ret;
+> +/*
+> + * PLPKS dynamic secure boot doesn't give us a format string in the same way
+> + * OPAL does. Instead, report the format using the SB_VERSION variable in the
+> + * keystore. The string, made up by us, takes the form of either
+> + * "ibm,plpks-sb-v<n>" or "ibm,plpks-sb-v0", based on the key management mode,
+> + * and return the length of the secvar format property.
+> + */
+> +static ssize_t plpks_secvar_format(char *buf, size_t bufsize)
+> +{
+> +	u8 mode;
+> +
+> +	mode = plpks_get_sb_keymgmt_mode();
+> +	return snprintf(buf, bufsize, "ibm,plpks-sb-v%hhu", mode);
+>   }
+>   
+>   static int plpks_max_size(u64 *max_size)
 
-Having an option for this would be better than nothing of course, but
-I seriously wonder what the value of the check is supposed to be at
-all. SecureBoot=off tells the system: hey, please accept any boot-time
-resource without validation, and firmware and boot loaders honour that,
-but Linux then does the opposite, invents some artificial checks not
-even done if SB is on!
+-- 
+Thanks and Regards
+R.Nageswara Sastry
 
-I mean, a boot trust chain means: trust what comes before, and
-authenticate/measure what comes next before you pass control to it.
-
-But for some reason Linux makes up a different model, where if told to
-not authenticate it suddenly doesn't trust half of what comes before
-anymore, but the other half it does. And that's just bogus, and
-illogical.
-
-Lennart
-
---
-Lennart Poettering, Berlin
