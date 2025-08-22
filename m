@@ -1,227 +1,126 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D20B31EB5FE
-	for <linux-integrity@vger.kernel.org>; Fri, 22 Aug 2025 17:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD1C2D543A
+	for <linux-integrity@vger.kernel.org>; Fri, 22 Aug 2025 19:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755882920; cv=none; b=bsDUBnAVozJNm72TUX/A/cdgU+MxzovOPTqt3i+S5kpeK8rZNZHA3hGDz/6/EvWqbSPHM07HQdcsWUH+36xFanHJpFdaXy6+zJ1kJzPNUuyafcTDLq2eAG6Fvn2E0sXkmsqzxRdiAikMk9JRo4bhrUYTVgqbI1o5GmPgxm8pUS0=
+	t=1755891972; cv=none; b=QKOt9R/988s7dQPXtYohKC8073nqZYkvMVdtJha/HB/F2H/Yc3fVOinVyoPelKIgCwq72RwtSuWMduqmQlWLmgMFhZPKlhhpXFLVUxKKJjl704sj8AVX8VImwarWhfsrxCZvfokP2pq6S8W0WHNTD2Ea+E5kcl4Iv41GxHtHWJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755882920; c=relaxed/simple;
-	bh=OVRFRLu8F4BN74Vc9MYDMSp8Mg+F6qqRLo8coEYach4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nOc6w8Vh13a6ieJpWAUXP5vOfzdvnv2L2mG2dffEpdKSWa8iaxqrGFLCSHkD6LnxjXYiengOXYEyF4pVCC+H50xckAmOoFIQMm/MZtl7rxFMZLHx3L/ZQyLQk4lu1G27L1kwa7DvmaVZYrWicxOLsOrV26t8Xol102c/2cY80n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CL0DjqcS; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1755891972; c=relaxed/simple;
+	bh=XBIUH0wquQctWkgcUJPdSrr7nfWPNHBoFiNbn8Q/vok=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nUvEjEECgdov9BN1RV6zFYN60hNe2hD3+7fFmGr8kbyQ8/RpDpdsb4+s0AgyeADTq40hl/9EKn6WYbOlH+OZcWjJW+j2X7zK6AEUmCinq4ii1A/lKdSLdxROMefr9XuNAe+9rND6HlWEULl6gDrPWTm3WKX9GpLL0J8CjKZJkt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iUWpPkOs; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CL0DjqcS"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4c7mpz6rt0zxm0;
-	Fri, 22 Aug 2025 19:08:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1755882491;
-	bh=5o2Snc62pQDeQeVLTbKOiBddxc56vMXJxU1FHFkA7Dg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CL0DjqcSBYJJIhJfdzz2FzDPpC3tpbvLbbM6cbWkA+SacJfY8HFZa9H5ILY4C0yX3
-	 mSOoJdW2r3Kz1QsaWiWAOjtQwd9VA1S2ej8RoBbm3ro1oxUHQvbx6B3O8FFn+XhHJV
-	 /NxPrguHkgRpzlAPYrS502DKeqq/Jr4JEV/uGRCg=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4c7mpy695FznnJ;
-	Fri, 22 Aug 2025 19:08:10 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Serge Hallyn <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Heimes <christian@python.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Elliott Hughes <enh@google.com>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jordan R Abrahams <ajordanr@google.com>,
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-	Luca Boccassi <bluca@debian.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Robert Waite <rowait@microsoft.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Scott Shell <scottsh@microsoft.com>,
-	Steve Dower <steve.dower@python.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	kernel-hardening@lists.openwall.com,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Andy Lutomirski <luto@amacapital.net>,
-	Jeff Xu <jeffxu@chromium.org>
-Subject: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
-Date: Fri, 22 Aug 2025 19:07:59 +0200
-Message-ID: <20250822170800.2116980-2-mic@digikod.net>
-In-Reply-To: <20250822170800.2116980-1-mic@digikod.net>
-References: <20250822170800.2116980-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iUWpPkOs"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-618660b684fso2004a12.0
+        for <linux-integrity@vger.kernel.org>; Fri, 22 Aug 2025 12:46:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755891969; x=1756496769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eDGPq2QAoamqAsn96zDYfVwrsh9uyHlSfDp4Mt63PH0=;
+        b=iUWpPkOshd2mUXVt+rBH22eNjxhtSdMpQMdXL+Sg76oTxb0XrNSBPb+ygkQQox2iH8
+         RuZziDcm7Omrsv9tS3dEQrMSrhCnRnOWspTBcpkX3TzniYxwfYNUyfkh+H1dRymc0Uur
+         alpwRFGLngP6PYeq6DReukClGyT59aKk5pwR0FtwRahPUDwWliTXwROROw4+kuCMQ+8c
+         XFcjseldZGzUEFLij/x34u7USjHWBLzPN186BEmjtNEo2grwJXOAIvBwWBK8yMWYqnii
+         T+UTquaAiGBJwI4FnYWqHg7W5QemP3VZ9VSOIGJCBvn5UgO767o4GXvpDi1CP9sH6Lh3
+         eW5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755891969; x=1756496769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eDGPq2QAoamqAsn96zDYfVwrsh9uyHlSfDp4Mt63PH0=;
+        b=BPpfGtg17UVlXECK1mcuZWSdBSdUI5P/ewT2kdqndw5IE1O+pPa9iDD8chlJvM/fQX
+         J9itsi9DRcedpDlrkvGgfAsImbAlQqGxiEZ72Nk6K4Fsb9foc24svDDUL0n5KVXvE3RG
+         qjgaHDNl+kX7BM3SbR6qTIMmwkxD5l42rpuxx5mjoNjh/RXhM6vPYAoOMcZLbUU2YwL5
+         vSs/eD59IsNID55TAdTE6yZqQMZvdhc4y8psib0W1OhJet+y2UG2ypsJ2H1H+JZ9Shx6
+         11wynrW3LY0A+Ipx9qh7+IppHDlX8pw45ZfFq/RQR/3cZjN6MDHF8FMbpRB8BmBI8S28
+         Mosg==
+X-Forwarded-Encrypted: i=1; AJvYcCXaaSBhRdFzyDactiISd/8LdUQuDHZ4obKEPaBABqbKz+G7XghI96jxSvK5rq7Cqgq2qOkvpcpgnT8zxPdQwsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA48XrQiCO31oFfvKC4QCX9d7C6oEfIw1dZrVvrpoJHF5Qlljh
+	vsQ6XTIlYPXlYVlp05ymmunl8IyUiDQVD5WnQJdxoNjW4xpBV0X7/VIuaHcFgnbD7Ku3uXejlQj
+	YspZKXYJ29rRkil8vtoSjoZ5hSq/2q4FVOv0X6Znn
+X-Gm-Gg: ASbGnct76QCHnlZHgsJKzjxtxGMAyOxZMV76I2aRaK/oSJuGqAoCMnBHpvFJBayyhYq
+	2FVovN+sex0slomB5m5h4aLv7mL3guxg6qeN3v01bbWSVAkYJZQxJ9GkjoxfWoh5GyI9WlgVWAr
+	HIM+A3/NHDWXegLSDecpMeLuz7bEk7UyTU0Eof/5oxStxn9ZNiKTXBCs+hcN4ulLa0XbmeTb6CZ
+	SaM54DZeirzStIvTa3k7QiA/26QDMyruCgPqis=
+X-Google-Smtp-Source: AGHT+IEp5JtOIpLeEMiI4+ZgwDstAGg61BU3UaS/vBzIt/3oQq6zs0o3AsSV2sCxqe1VwQ3ShoALvJizriSBAYLp6Cs=
+X-Received: by 2002:a05:6402:2393:b0:61a:590c:481c with SMTP id
+ 4fb4d7f45d1cf-61c361f8759mr8808a12.6.1755891968513; Fri, 22 Aug 2025 12:46:08
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <20250822170800.2116980-1-mic@digikod.net> <20250822170800.2116980-2-mic@digikod.net>
+In-Reply-To: <20250822170800.2116980-2-mic@digikod.net>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 22 Aug 2025 21:45:32 +0200
+X-Gm-Features: Ac12FXwjpgWQzX75-i1-fxwmf--db3NEnzMzNGlpF6QflXz8uRcHgI7dwyXvzpA
+Message-ID: <CAG48ez1XjUdcFztc_pF2qcoLi7xvfpJ224Ypc=FoGi-Px-qyZw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/2] fs: Add O_DENY_WRITE
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
+	Elliott Hughes <enh@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>, Robert Waite <rowait@microsoft.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Scott Shell <scottsh@microsoft.com>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Andy Lutomirski <luto@amacapital.net>, Jeff Xu <jeffxu@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
-passed file descriptors).  This changes the state of the opened file by
-making it read-only until it is closed.  The main use case is for script
-interpreters to get the guarantee that script' content cannot be altered
-while being read and interpreted.  This is useful for generic distros
-that may not have a write-xor-execute policy.  See commit a5874fde3c08
-("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+On Fri, Aug 22, 2025 at 7:08=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+> Add a new O_DENY_WRITE flag usable at open time and on opened file (e.g.
+> passed file descriptors).  This changes the state of the opened file by
+> making it read-only until it is closed.  The main use case is for script
+> interpreters to get the guarantee that script' content cannot be altered
+> while being read and interpreted.  This is useful for generic distros
+> that may not have a write-xor-execute policy.  See commit a5874fde3c08
+> ("exec: Add a new AT_EXECVE_CHECK flag to execveat(2)")
+>
+> Both execve(2) and the IOCTL to enable fsverity can already set this
+> property on files with deny_write_access().  This new O_DENY_WRITE make
 
-Both execve(2) and the IOCTL to enable fsverity can already set this
-property on files with deny_write_access().  This new O_DENY_WRITE make
-it widely available.  This is similar to what other OSs may provide
-e.g., opening a file with only FILE_SHARE_READ on Windows.
+The kernel actually tried to get rid of this behavior on execve() in
+commit 2a010c41285345da60cece35575b4e0af7e7bf44.; but sadly that had
+to be reverted in commit 3b832035387ff508fdcf0fba66701afc78f79e3d
+because it broke userspace assumptions.
 
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Xu <jeffxu@chromium.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Reported-by: Robert Waite <rowait@microsoft.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250822170800.2116980-2-mic@digikod.net
----
- fs/fcntl.c                       | 26 ++++++++++++++++++++++++--
- fs/file_table.c                  |  2 ++
- fs/namei.c                       |  6 ++++++
- include/linux/fcntl.h            |  2 +-
- include/uapi/asm-generic/fcntl.h |  4 ++++
- 5 files changed, 37 insertions(+), 3 deletions(-)
+> it widely available.  This is similar to what other OSs may provide
+> e.g., opening a file with only FILE_SHARE_READ on Windows.
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 5598e4d57422..0c80c0fbc706 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -34,7 +34,8 @@
- 
- #include "internal.h"
- 
--#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME)
-+#define SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT | O_NOATIME | \
-+	O_DENY_WRITE)
- 
- static int setfl(int fd, struct file * filp, unsigned int arg)
- {
-@@ -80,8 +81,29 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
- 			error = 0;
- 	}
- 	spin_lock(&filp->f_lock);
-+
-+	if (arg & O_DENY_WRITE) {
-+		/* Only regular files. */
-+		if (!S_ISREG(inode->i_mode)) {
-+			error = -EINVAL;
-+			goto unlock;
-+		}
-+
-+		/* Only sets once. */
-+		if (!(filp->f_flags & O_DENY_WRITE)) {
-+			error = exe_file_deny_write_access(filp);
-+			if (error)
-+				goto unlock;
-+		}
-+	} else {
-+		if (filp->f_flags & O_DENY_WRITE)
-+			exe_file_allow_write_access(filp);
-+	}
-+
- 	filp->f_flags = (arg & SETFL_MASK) | (filp->f_flags & ~SETFL_MASK);
- 	filp->f_iocb_flags = iocb_flags(filp);
-+
-+unlock:
- 	spin_unlock(&filp->f_lock);
- 
-  out:
-@@ -1158,7 +1180,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(20 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC));
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 81c72576e548..6ba896b6a53f 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -460,6 +460,8 @@ static void __fput(struct file *file)
- 	locks_remove_file(file);
- 
- 	security_file_release(file);
-+	if (unlikely(file->f_flags & O_DENY_WRITE))
-+		exe_file_allow_write_access(file);
- 	if (unlikely(file->f_flags & FASYNC)) {
- 		if (file->f_op->fasync)
- 			file->f_op->fasync(-1, file, 0);
-diff --git a/fs/namei.c b/fs/namei.c
-index cd43ff89fbaa..366530bf937d 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3885,6 +3885,12 @@ static int do_open(struct nameidata *nd,
- 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
- 	if (!error && !(file->f_mode & FMODE_OPENED))
- 		error = vfs_open(&nd->path, file);
-+	if (!error && (open_flag & O_DENY_WRITE)) {
-+		if (S_ISREG(file_inode(file)->i_mode))
-+			error = exe_file_deny_write_access(file);
-+		else
-+			error = -EINVAL;
-+	}
- 	if (!error)
- 		error = security_file_post_open(file, op->acc_mode);
- 	if (!error && do_truncate)
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index a332e79b3207..dad14101686f 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -10,7 +10,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_DENY_WRITE)
- 
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 613475285643..facd9136f5af 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -91,6 +91,10 @@
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- 
-+#ifndef O_DENY_WRITE
-+#define O_DENY_WRITE	040000000
-+#endif
-+
- #ifndef O_NDELAY
- #define O_NDELAY	O_NONBLOCK
- #endif
--- 
-2.50.1
+We used to have the analogous mmap() flag MAP_DENYWRITE, and that was
+removed for security reasons; as
+https://man7.org/linux/man-pages/man2/mmap.2.html says:
 
+|        MAP_DENYWRITE
+|               This flag is ignored.  (Long ago=E2=80=94Linux 2.0 and earl=
+ier=E2=80=94it
+|               signaled that attempts to write to the underlying file
+|               should fail with ETXTBSY.  But this was a source of denial-
+|               of-service attacks.)"
+
+It seems to me that the same issue applies to your patch - it would
+allow unprivileged processes to essentially lock files such that other
+processes can't write to them anymore. This might allow unprivileged
+users to prevent root from updating config files or stuff like that if
+they're updated in-place.
