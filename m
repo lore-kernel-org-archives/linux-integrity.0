@@ -1,69 +1,37 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F3B311C2C
-	for <linux-integrity@vger.kernel.org>; Thu,  2 Oct 2025 08:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F482EA725
+	for <linux-integrity@vger.kernel.org>; Thu,  2 Oct 2025 08:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759394237; cv=none; b=XZodjc/RUM5RvzWSdFCqTnYvmV7Xl4Ii1IxR4RbZMenh7oO5VTHGzN/e2RCLj7BD6vVirudj1xdaB6bW5tii6b0l0iO4mYxPCmsgVXes4hc1h1I4m5JGtsnB7uBz3S9JRmUxI1Kw/smLxHjVCbvhpDv1slYfF6ViqDnpO8qj9Tk=
+	t=1759394243; cv=none; b=UxXu6MooD+rKFQGXmLU4VunZ9SfhFLr2TcZYlzcLl3LYdU1GJQtY/sRN+Hi04j89q5Pj9iiE1qKRdzZOa+SmK7oL9pn5ui6H7yPT3D2L3nzaO47/UjVmSQxzVwEXnGG+g/bEz7YKs/Bc903cMSepz0i9TYb4sObY8RQZ8R6BGxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759394237; c=relaxed/simple;
-	bh=6zoj/3XaiyJArvjPCfYaAwEhIvw6f4a+jIVZ+Z6xa3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LFCqUDaVEUC27UVY0VhSDttEPMYVi428e80dGFNqjSgihMa0j3JVkrMEDK1w7kEbIWmwI6gZcRtqyaMo5ZKmJsWtLaZK0O5yolV77UB9taINU/4bGHb9Tyat78VF/cBgYJBrHLE/FRNTzFI/K2PCz0HqdkM/7H7AUm2kGMmeO64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=25uo8ZTH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5SJ61uoT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=25uo8ZTH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5SJ61uoT; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1759394243; c=relaxed/simple;
+	bh=bcsMVMg+iyRzyWnnns7XgyMoNlHYjtUa64h6q7oOxXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BbchD1bhIBt7nMwws0VTBXt1nVTJf+B0IUkMKu3ZVqeMRDuKNPOZQoRoIltYMD5NmcbA4uKcRL4O7ACI+lJqMf/PrYS3zB1tF9fbZ3Gkiyy+4XeBFVPGWPkB2UcOzmO67tqDH/4cBBIXy9vRrx7277NS0NUi+SuALmdK7h+G4Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="25uo8ZTH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5SJ61uoT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="25uo8ZTH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5SJ61uoT"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5659533846;
-	Thu,  2 Oct 2025 08:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759394224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=KNwNW8+GpdP3RkB0MEUHO+PnqhML7d+AlfzTXFBKkg8=;
-	b=25uo8ZTH1Vv1zGjuCO56kaP1O/s3yRgRCnsiuhAbG8yff4+kXIVLqbSYp3gbA26ezhks3k
-	U1MPr/1V8r1Lp2k6XjCBHBU9JgFHbYEVPwaYN0HiOY0i3JQ2Mmf1w5/FjCUm5/xgUK6tPZ
-	77keuw0sU/W3Tn0IwqOVb1bKUga6BKk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759394224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=KNwNW8+GpdP3RkB0MEUHO+PnqhML7d+AlfzTXFBKkg8=;
-	b=5SJ61uoTMBoGzXQNiFA3T820IXhLLWbPTf99U9C9bOV4rBFdDIEydgVFBw/7MJvN8/7A14
-	UuAsYDUDrqaaTYBw==
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AEF0833826;
+	Thu,  2 Oct 2025 08:37:05 +0000 (UTC)
 Authentication-Results: smtp-out1.suse.de;
 	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759394224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=KNwNW8+GpdP3RkB0MEUHO+PnqhML7d+AlfzTXFBKkg8=;
-	b=25uo8ZTH1Vv1zGjuCO56kaP1O/s3yRgRCnsiuhAbG8yff4+kXIVLqbSYp3gbA26ezhks3k
-	U1MPr/1V8r1Lp2k6XjCBHBU9JgFHbYEVPwaYN0HiOY0i3JQ2Mmf1w5/FjCUm5/xgUK6tPZ
-	77keuw0sU/W3Tn0IwqOVb1bKUga6BKk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759394224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=KNwNW8+GpdP3RkB0MEUHO+PnqhML7d+AlfzTXFBKkg8=;
-	b=5SJ61uoTMBoGzXQNiFA3T820IXhLLWbPTf99U9C9bOV4rBFdDIEydgVFBw/7MJvN8/7A14
-	UuAsYDUDrqaaTYBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D79B213990;
-	Thu,  2 Oct 2025 08:37:03 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F3AE13AA1;
+	Thu,  2 Oct 2025 08:37:05 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2JM9MK853miCWQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Thu, 02 Oct 2025 08:37:03 +0000
+	id iBadBbE53miCWQAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Thu, 02 Oct 2025 08:37:05 +0000
 From: Petr Vorel <pvorel@suse.cz>
 To: ltp@lists.linux.it
 Cc: Petr Vorel <pvorel@suse.cz>,
@@ -71,10 +39,12 @@ Cc: Petr Vorel <pvorel@suse.cz>,
 	linux-integrity@vger.kernel.org,
 	Cyril Hrubis <chrubis@suse.cz>,
 	Martin Doucha <mdoucha@suse.cz>
-Subject: [PATCH 0/4] ima_{conditionals,measurements}.sh enhancements
-Date: Thu,  2 Oct 2025 10:36:57 +0200
-Message-ID: <20251002083701.315334-1-pvorel@suse.cz>
+Subject: [PATCH 2/4] ima_conditionals.sh: Split test by request
+Date: Thu,  2 Oct 2025 10:36:59 +0200
+Message-ID: <20251002083701.315334-3-pvorel@suse.cz>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251002083701.315334-1-pvorel@suse.cz>
+References: <20251002083701.315334-1-pvorel@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -82,43 +52,155 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
 X-Spam-Level: 
-X-Spam-Score: -2.80
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: AEF0833826
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
+This helps to run all testcases on systems without CONFIG_IMA_WRITE_POLICY=y
+(disabled by default in mainline, therefore disabled for some distros,
+e.g. openSUSE Tumbleweed), if SUT reboots.
 
-Petr Vorel (4):
-  ima_{conditionals,measurements}.sh: Add temporary user
-  ima_conditionals.sh: Split test by request
-  ima_conditionals.sh: Use 'sg' without 'sudo'
-  ima_{conditionals,measurements}.sh: Use 'su' instead of 'sudo'
+The downside is creating user account 4x instead just once.
 
+Signed-off-by: Petr Vorel <pvorel@suse.cz>
+---
  runtest/ima                                   |  5 +-
- .../integrity/ima/tests/ima_conditionals.sh   | 81 ++++++++++++-------
- .../integrity/ima/tests/ima_measurements.sh   | 15 ++--
- .../security/integrity/ima/tests/ima_setup.sh | 12 +++
- 4 files changed, 71 insertions(+), 42 deletions(-)
+ .../integrity/ima/tests/ima_conditionals.sh   | 67 ++++++++++++-------
+ 2 files changed, 47 insertions(+), 25 deletions(-)
 
+diff --git a/runtest/ima b/runtest/ima
+index 01942eefa3..c8d0c6801e 100644
+--- a/runtest/ima
++++ b/runtest/ima
+@@ -6,5 +6,8 @@ ima_violations ima_violations.sh
+ ima_keys ima_keys.sh
+ ima_kexec ima_kexec.sh
+ ima_selinux ima_selinux.sh
+-ima_conditionals ima_conditionals.sh
++ima_conditionals_uid ima_conditionals.sh -r uid
++ima_conditionals_fowner ima_conditionals.sh -r fowner
++ima_conditionals_gid ima_conditionals.sh -r gid
++ima_conditionals_fgroup ima_conditionals.sh -r fgroup
+ evm_overlay evm_overlay.sh
+diff --git a/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh b/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh
+index a8b2e1015a..afa2ae05da 100755
+--- a/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh
++++ b/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh
+@@ -11,35 +11,68 @@
+ 
+ TST_NEEDS_CMDS="cat chgrp chown id sg sudo useradd userdel"
+ TST_SETUP="setup"
+-TST_CNT=1
++TST_TESTFUNC="test"
+ REQUIRE_TMP_USER=1
++TST_OPTS="r:"
++TST_USAGE="usage"
++TST_PARSE_ARGS="parse_args"
++REQUEST="uid"
++
++parse_args()
++{
++	REQUEST="$2"
++}
++
++usage()
++{
++	cat << EOF
++usage: $0 [-r <uid|fowner|gid|fgroup>]
++
++OPTIONS
++-r	Specify the request to be measured. One of:
++	uid, fowner, gid, fgroup
++	Default: uid
++EOF
++}
+ 
+ setup()
+ {
++	case "$REQUEST" in
++	fgroup|fowner|gid|uid)
++		tst_res TINFO "request '$REQUEST'"
++		;;
++	*) tst_brk TBROK "Invalid -r '$REQUEST', use: -r <uid|fowner|gid|fgroup>";;
++	esac
++
+ 	if check_need_signed_policy; then
+ 		tst_brk TCONF "policy have to be signed"
+ 	fi
+ }
+ 
+-verify_measurement()
++test()
+ {
++	# needs to be checked each run (not in setup)
++	require_policy_writable
++
+ 	local request="$1"
+ 	local test_file="$PWD/test.txt"
+ 	local cmd="cat $test_file > /dev/null"
+-
+ 	local value="$(id -u $IMA_USER)"
+-	[ "$request" = 'gid' -o "$request" = 'fgroup' ] && value="$(id -g $IMA_USER)"
+ 
+-	# needs to be checked each run (not in setup)
+-	require_policy_writable
++	if [ "$REQUEST" = 'gid' -o "$REQUEST" = 'fgroup' ]; then
++		if tst_kvcmp -lt 5.16; then
++			tst_brk TCONF "gid and fgroup options require kernel 5.16 or newer"
++		fi
++		value="$(id -g $IMA_USER)"
++	fi
+ 
+ 	ROD rm -f $test_file
+ 
+-	tst_res TINFO "verify measuring user files when requested via $request"
+-	ROD echo "measure $request=$value" \> $IMA_POLICY
+-	ROD echo "$(cat /proc/uptime) $request test" \> $test_file
++	tst_res TINFO "verify measuring user files when requested via $REQUEST"
++	ROD echo "measure $REQUEST=$value" \> $IMA_POLICY
++	ROD echo "$(cat /proc/uptime) $REQUEST test" \> $test_file
+ 
+-	case "$request" in
++	case "$REQUEST" in
+ 	fgroup)
+ 		chgrp $IMA_USER $test_file
+ 		sh -c "$cmd"
+@@ -50,24 +83,10 @@ verify_measurement()
+ 		;;
+ 	gid) sudo sg $IMA_USER "sh -c '$cmd'";;
+ 	uid) sudo -n -u $IMA_USER sh -c "$cmd";;
+-	*) tst_brk TBROK "Invalid res type '$1'";;
+ 	esac
+ 
+ 	ima_check $test_file
+ }
+ 
+-test1()
+-{
+-	verify_measurement uid
+-	verify_measurement fowner
+-
+-	if tst_kvcmp -lt 5.16; then
+-		tst_brk TCONF "gid and fgroup options require kernel 5.16 or newer"
+-	fi
+-
+-	verify_measurement gid
+-	verify_measurement fgroup
+-}
+-
+ . ima_setup.sh
+ tst_run
 -- 
 2.51.0
 
