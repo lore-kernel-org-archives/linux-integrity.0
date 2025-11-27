@@ -1,109 +1,205 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02A22DC780;
-	Thu, 27 Nov 2025 17:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D880B2EFD8F;
+	Thu, 27 Nov 2025 17:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1764263885; cv=none; b=KdMS5i80Wca/hw8/OQXjXFy3wl7XbfFf+WKbm9rmomzKhgCtXJl/TMp4JQA6ZZ2TlW7BkhO3Jw9a5jhKHamLbCduiTEN56kUOSXhgr03PHRVTrq1eYfVWUqfU/LoGuhOzcFLKxwQUjf81fltokrFXoWNEcM7fnx++i8u17Ok/nw=
+	t=1764265390; cv=none; b=MewhSXLO6ylWO0YikFoGGMFI4AzgbSUfsb8RR18noVlGnwyRQo2Jq0lHavQxO3sNM49VHvPpruxV5mD7rlNdTkxLZVtYLJLEcfL5UTX9ehnD5eZUtT/MbGpcaMjezsBeDFswXSkL4cGBwWb2p5O1tjT7HjJzoJoIjlOHYdxSgyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1764263885; c=relaxed/simple;
-	bh=a8WR3f67LKcyBamT2NsN62oLNE7f8zUSAqolLpJGnps=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jh3o8Zq0eeYLrOe1Tr1WQwPaMRbH0zHLO+xlB1N5x4DpH2UeJsx5shBGcgTgzK1BMlHeduFxWGrHw1PMqyizqHzrEJPsm7DhDY/uRuLJbymn/FR/a9OZpMuOlNErul+y14ocPqGJ1vXFMl0KqJPniTROh7atx+b3/ZbhZQ6YETA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4dHNPt3XPjz1HC5W;
-	Fri, 28 Nov 2025 01:16:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id E9F371402DB;
-	Fri, 28 Nov 2025 01:17:54 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDnwIi6hyhpM2cvAQ--.65380S2;
-	Thu, 27 Nov 2025 18:17:54 +0100 (CET)
-Message-ID: <a6e73690e73b7a3e190719d179dbc73b93d1c1f1.camel@huaweicloud.com>
-Subject: Re: [PATCH v7 01/11] tpm: Cap the number of PCR banks
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, ross.philipson@oracle.com, Jonathan
- McDowell <noodles@earth.li>, Stefano Garzarella <sgarzare@redhat.com>,
- Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, Roberto Sassu
- <roberto.sassu@huawei.com>,  Jonathan McDowell <noodles@meta.com>, Peter
- Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-kernel@vger.kernel.org
-Date: Thu, 27 Nov 2025 18:17:42 +0100
-In-Reply-To: <aSiG7l_1E12r_56c@kernel.org>
-References: <20251127135445.2141241-1-jarkko@kernel.org>
-	 <20251127135445.2141241-2-jarkko@kernel.org>
-	 <69de8fea4851ef378613e66685c3c34c43d71f05.camel@huaweicloud.com>
-	 <aSiG7l_1E12r_56c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1764265390; c=relaxed/simple;
+	bh=JuuK9dt0RwhVCyHH4XjPC7KjOchaPXHlGe5Dqh8rv/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WM3vIq4po5Q5NwOFNx4UAEw7mEMOKAQBaSDCINcMOlxaOXRqLMdVjfjMckuO5YEGK3Qjrj4GY9wi2Ddn49KuuPpZ4noD51akX5qaepdgMZqHF1E04GSmNQL/XKArQmR5PRJenye+VffVrOdMckw3bpnfA+t7+MTKvG7OyOyUX3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=MIVq0snt; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b="MIVq0snt"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=fCgl254ccdh+08DpxRDFQjoRJloyFg/hWgha3lcPjXU=; b=M
+	IVq0snthkWQebaXW7a5tF/9tf5p/XWvZ7QxoXzAriVoTR23WYoUFY5ntFkR8HkWfqRyTMAm1wdRlK
+	LMw9akrzAv/QVyPUC4eZJ9OaOHkoM1anybkkMvbtOAI7uvUHsGc+xOR5TSxwtF1+dfjy18IUGVsOv
+	cG6TNHXunU2Y3sIiLQkfz0ar6XNHmMhSUnZyumbq/Ln3ZeN5heahMOXBRaIp8gzBGaD9/tJceIA6h
+	qnWJlDqwr1gz5UBi/D4XyVDgA19twtsPIhx54IIhikQZg7bY4kpoK39GjFO3WMdaEREwk9S/NAR40
+	6+OwzCHTqg3LdjGETKZZXOX+Eyvge0TJg==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1vOfO1-003Gs2-1A;
+	Thu, 27 Nov 2025 17:02:29 +0000
+Date: Thu, 27 Nov 2025 17:02:29 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: Remove tpm_find_get_ops
+Message-ID: <aSiEJWcmkADPHEOY@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDnwIi6hyhpM2cvAQ--.65380S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrtFW5GFy5Jr43uryrAF1DWrg_yoW8JF1kpF
-	Zaq3W7ZF1Yqr4rA34qka4Ikryvka97KFnrXwn5Zr18Zr97Wr1akw1Iq34xWa4F9ryUt3W8
-	t343Za4xA3ZFvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBGkntCQLBQACsR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 2025-11-27 at 19:14 +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 27, 2025 at 05:09:38PM +0100, Roberto Sassu wrote:
-> > On Thu, 2025-11-27 at 15:54 +0200, Jarkko Sakkinen wrote:
-> > > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > >=20
-> > > tpm2_get_pcr_allocation() does not cap any upper limit for the number=
- of
-> > > banks. Cap the limit to eight banks so that out of bounds values comi=
-ng
-> > > from external I/O cause on only limited harm.
-> > >=20
-> > > Cc: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Sorry, I realized that you are expecting me to review.
-> >=20
-> > I have a couple of questions:
-> > - Could you explain better how out of bounds would occur, since one
-> >   could check the number of PCR banks?
-> > - Is dynamic allocation that bad? And if yes, why?
-> > - Couldn't you just check that the number of available PCR banks is=C2=
-=A0
-> >   below the threshold you like and keep dynamic allocation?
-> > - Is removing tpm1_get_pcr_allocation() improving code readability?
->=20
-> nr_possible_banks is read from external source i.e., neither kernel nor
-> CPU fully control its value. This causes *uncontrolled* dynamic
-> allocation. Thus, it must be capped to some value.
+tpm_find_get_ops() looks for the first valid TPM if the caller passes in
+NULL. All internal users have been converted to either associate
+themselves with a TPM directly, or call tpm_default_chip() as part of
+their setup. Remove the no longer necessary tpm_find_get_ops().
 
-Sure, I'm fine with capping. Isn't that enough?
+Signed-off-by: Jonathan McDowell <noodles@meta.com>
+---
+(Separating this out from the exclusive access series, because I think 
+this bit is uncontroversial and is a legit cleanup.)
 
-Thanks
+ drivers/char/tpm/tpm-chip.c      | 36 --------------------------------
+ drivers/char/tpm/tpm-interface.c | 20 ++++++++++++++----
+ drivers/char/tpm/tpm.h           |  1 -
+ drivers/char/tpm/tpm_tis_core.c  |  3 +--
+ 4 files changed, 17 insertions(+), 43 deletions(-)
 
-Roberto
-
-> > Thanks
-> >=20
-> > Roberto
->=20
-> BR, Jarkko
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index e25daf2396d3..30d00219f9f3 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -230,42 +230,6 @@ struct tpm_chip *tpm_default_chip(void)
+ }
+ EXPORT_SYMBOL_GPL(tpm_default_chip);
+ 
+-/**
+- * tpm_find_get_ops() - find and reserve a TPM chip
+- * @chip:	a &struct tpm_chip instance, %NULL for the default chip
+- *
+- * Finds a TPM chip and reserves its class device and operations. The chip must
+- * be released with tpm_put_ops() after use.
+- * This function is for internal use only. It supports existing TPM callers
+- * by accepting NULL, but those callers should be converted to pass in a chip
+- * directly.
+- *
+- * Return:
+- * A reserved &struct tpm_chip instance.
+- * %NULL if a chip is not found.
+- * %NULL if the chip is not available.
+- */
+-struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip)
+-{
+-	int rc;
+-
+-	if (chip) {
+-		if (!tpm_try_get_ops(chip))
+-			return chip;
+-		return NULL;
+-	}
+-
+-	chip = tpm_default_chip();
+-	if (!chip)
+-		return NULL;
+-	rc = tpm_try_get_ops(chip);
+-	/* release additional reference we got from tpm_default_chip() */
+-	put_device(&chip->dev);
+-	if (rc)
+-		return NULL;
+-	return chip;
+-}
+-
+ /**
+  * tpm_dev_release() - free chip memory and the device number
+  * @dev: the character device for the TPM chip
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index c9f173001d0e..f745a098908b 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -313,10 +313,13 @@ int tpm_is_tpm2(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+-	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
++	rc = tpm_try_get_ops(chip);
++	if (rc)
++		return rc;
++
+ 	rc = (chip->flags & TPM_CHIP_FLAG_TPM2) != 0;
+ 
+ 	tpm_put_ops(chip);
+@@ -338,10 +341,13 @@ int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+ {
+ 	int rc;
+ 
+-	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
++	rc = tpm_try_get_ops(chip);
++	if (rc)
++		return rc;
++
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		rc = tpm2_pcr_read(chip, pcr_idx, digest, NULL);
+ 	else
+@@ -369,10 +375,13 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+ 	int rc;
+ 	int i;
+ 
+-	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
++	rc = tpm_try_get_ops(chip);
++	if (rc)
++		return rc;
++
+ 	for (i = 0; i < chip->nr_allocated_banks; i++) {
+ 		if (digests[i].alg_id != chip->allocated_banks[i].alg_id) {
+ 			rc = -EINVAL;
+@@ -492,10 +501,13 @@ int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+ 	if (!out || max > TPM_MAX_RNG_DATA)
+ 		return -EINVAL;
+ 
+-	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
+ 		return -ENODEV;
+ 
++	rc = tpm_try_get_ops(chip);
++	if (rc)
++		return rc;
++
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ 		rc = tpm2_get_random(chip, out, max);
+ 	else
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 2726bd38e5ac..02c07fef41ba 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -267,7 +267,6 @@ static inline void tpm_msleep(unsigned int delay_msec)
+ int tpm_chip_bootstrap(struct tpm_chip *chip);
+ int tpm_chip_start(struct tpm_chip *chip);
+ void tpm_chip_stop(struct tpm_chip *chip);
+-struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+ 
+ struct tpm_chip *tpm_chip_alloc(struct device *dev,
+ 				const struct tpm_class_ops *ops);
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8954a8660ffc..e2a1769081b1 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -265,8 +265,7 @@ static u8 tpm_tis_status(struct tpm_chip *chip)
+ 
+ 			/*
+ 			 * Dump stack for forensics, as invalid TPM_STS.x could be
+-			 * potentially triggered by impaired tpm_try_get_ops() or
+-			 * tpm_find_get_ops().
++			 * potentially triggered by impaired tpm_try_get_ops().
+ 			 */
+ 			dump_stack();
+ 		}
+-- 
+2.52.0
 
