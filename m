@@ -1,229 +1,194 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC9B303A1F
-	for <linux-integrity@vger.kernel.org>; Tue,  9 Dec 2025 18:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751962032D;
+	Wed, 10 Dec 2025 01:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1765306580; cv=none; b=izb2znLhqkQOskCFy2OMUJfkcMgCqBer/ioxldtim8rLKYj2HLGvS2QWgrWC3G79yt4Ebi2sGLGKYSZTcsn2sA6BkcBS/BD81i4WwU6YGmsTHG5bhzDBYRcU7uUxWG8nifwKvtu+XXNdiK/yr4Y5235oTWMTwjri1khzqEg5R4A=
+	t=1765329339; cv=none; b=Q8czBOjsHN4FmVVEf2PPoKDRkXmqCLHXjpCcWs9x8bsPBR8yEHHk7UKq8qWfQu6oNkc6T+l3jCXdo6jxszctoiL/YttVqaUskA3nakegcOrkGTgp5ngd6nTxF1MPZ6Pwa6iIWh08a0+bGqWEn7nI+hQ1KD8jcSEr59hDm0Ufk94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1765306580; c=relaxed/simple;
-	bh=mTU56RQkQt0zIK8voFFa0bQdeqqcopR6IsGOdFlCW5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SNYYYm7qiZJ/ROnxfId6qyLJdg4etGSYuyYCaT7d9HaYuM2IYXYEX1rrDJNhIFQNW0jeEBkJXfSYrUmoUE1zSnwUZdX+ZD797/1t5yGKZSlZhndcgp4bcVod5d5U8Cz5+Q3lXxmO9cgXWI90QGj2XPMw02JTFaDZhAmT75CmArg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Swt/T1nj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3gBGTqqD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S55Mu65I; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6zvKynHL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1765329339; c=relaxed/simple;
+	bh=qfCf0jZSwmNZ7QZUIDNQ2sTYMrRE6CST2dy2cbqolCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tXSFvSPuho0VrA/USn2FXtr8mValZ1Mj672tsQDvWZ/Z3LjeGHj4BWYt9tsTiVEJ4ssj45KEzBX94uF1JvYlTIPepxC1TrD9rnfawasBJDNhF6rxonexirnqC6mh4RNq//l8iPbnt/R94Pi970hrv6uA4pbzJJKHlUmJqAojoZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7E6xAvw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Swt/T1nj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3gBGTqqD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S55Mu65I";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6zvKynHL"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6144C5BE03;
-	Tue,  9 Dec 2025 18:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765306563; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/P8UQAkwsKDxj/7A3oMQW2mFBFDU2oZ5ypQ0Oe/SU58=;
-	b=Swt/T1njlihtZMbxZp02dLl1U2lhsEvIA7f24rQxFtbUi2VElKPPIorH37ca0NP1c5CHoh
-	70PjXJTke43CKvAUUMU3XbEBLW2xMr7BSfM5NiuZRr7QKSoDPLmZlCxRU5I0JX1fkl9307
-	qVzxs2f75FGnqrkg7fqhFmWy2uLaDmA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765306563;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/P8UQAkwsKDxj/7A3oMQW2mFBFDU2oZ5ypQ0Oe/SU58=;
-	b=3gBGTqqDkXnnG4gu25ddiUEQohtcIPX/Ga1+2LAe54WQD8MietTJe5m1ESxhBH3tNzFRNQ
-	7+cV25PiuXStrdCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=S55Mu65I;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6zvKynHL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1765306562; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/P8UQAkwsKDxj/7A3oMQW2mFBFDU2oZ5ypQ0Oe/SU58=;
-	b=S55Mu65IQnigi90WcQVUMEJS03lJIA9Kt61gXQJSEHpALPxoUAFGKaoPEHDMKF25E20SMr
-	OOQ9Yy3qHd4r47cCEFuFRMDe+JuLwmxk6UMEFkhqG6s+INM8p0K9Nwy8C936bkCZ8n6150
-	wFAOOS4r85slL/mIO8O+wt6nf7tbfnQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1765306562;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/P8UQAkwsKDxj/7A3oMQW2mFBFDU2oZ5ypQ0Oe/SU58=;
-	b=6zvKynHLj9ng0eOnEdCk86UnorvZNqbeTLW91qBUumnaxCvfIja3qxN935ki3oyyOcqp74
-	tRtc8U82fPQXcfDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A1BE3EA65;
-	Tue,  9 Dec 2025 18:56:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KJN2BcJwOGnSSAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Tue, 09 Dec 2025 18:56:02 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-integrity@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Cyril Hrubis <chrubis@suse.cz>,
-	Jan Stancek <jstancek@redhat.com>,
-	Li Wang <liwang@redhat.com>
-Subject: [PATCH v4 3/4] ima_{conditionals,measurements}.sh: Use tst_runas
-Date: Tue,  9 Dec 2025 19:55:56 +0100
-Message-ID: <20251209185557.20598-4-pvorel@suse.cz>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251209185557.20598-1-pvorel@suse.cz>
-References: <20251209185557.20598-1-pvorel@suse.cz>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7E6xAvw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB128C4CEF5;
+	Wed, 10 Dec 2025 01:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1765329339;
+	bh=qfCf0jZSwmNZ7QZUIDNQ2sTYMrRE6CST2dy2cbqolCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i7E6xAvws2TEZjxKYuUsT3MOWDZJoMLbA/i/ul+RhoZ+WbnitDQ4HblsJxMIiGTQC
+	 1u5ZtQhJocDXnN9fOcDq+p+xJiuwKM9LsguDJtshyHDN6WjnNenLmb2J1fGFdx2P0N
+	 +Dklvtok3+4ndYqcgFJYUlO/rTO/7zLKpO8QP+PIorQd0tZxo5UZcXMEID4HQ6Y3Kx
+	 rKjdXejEmF6AZ7/HtDBzY4NUOsVWhP8XBF3J9mfufxOVg7VE+EBM4wQUfEjIXTgWwc
+	 nOUzi2f51wc9xeG7YFva6kEnSp2UYMXONCZ6Be5hCM1g8ZoytHpZKqtkD1hwIKiEoP
+	 WYpyKBRW4MW3w==
+Date: Wed, 10 Dec 2025 03:15:35 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	open list <linux-kernel@vger.kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2 0/5] Streamline TPM2 HMAC sessions
+Message-ID: <aTjJtw4mx9URFrE7@kernel.org>
+References: <20251209100529.1700779-1-jarkko@kernel.org>
+ <aThDeSWFhbI6GRgh@kernel.org>
+ <aThdJwpDWD_-hhy6@kernel.org>
+ <aThqCYgK1_zvk5UO@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
-X-Rspamd-Queue-Id: 6144C5BE03
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim,suse.cz:email];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aThqCYgK1_zvk5UO@kernel.org>
 
-Replace 'sudo' and 'sg' with 'tst_runas'.
+On Tue, Dec 09, 2025 at 08:27:25PM +0200, Jarkko Sakkinen wrote:
+> On Tue, Dec 09, 2025 at 07:32:27PM +0200, Jarkko Sakkinen wrote:
+> > On Tue, Dec 09, 2025 at 05:42:55PM +0200, Jarkko Sakkinen wrote:
+> > > On Tue, Dec 09, 2025 at 12:05:23PM +0200, Jarkko Sakkinen wrote:
+> > > > Since we cannot at this point cache names of the keys given limitations
+> > > > of the ASN.1 file format, I'll start a fresh patch set. Let's fixup what
+> > > > we can right now.
+> > > > 
+> > > > This patch set addresses two major issues in the feature:
+> > > > 
+> > > > 1. Dynamic resolution without gain. All kernel sites have at most single
+> > > >    handle to authorize. Even if this changes some day this is how it is
+> > > >    as of today and we definitely do not want to dictate the future but
+> > > >    instead downscale code to the metrics that we have as of today.
+> > > > 2. Eliminate at least one unnnecessary tpm2_read_public() call.
+> > > > 
+> > > > Jarkko Sakkinen (5):
+> > > >   KEYS: trusted: Remove dead branch from tpm2_unseal_cmd
+> > > >   tpm2-sessions: Define TPM2_NAME_MAX_SIZE
+> > > >   KEYS: trusted: Re-orchestrate tpm2_read_public() calls
+> > > >   tpm2-sessions: Remove AUTH_MAX_NAMES
+> > > >   tpm-buf: Remove tpm_buf_append_handle
+> > > > 
+> > > >  drivers/char/tpm/tpm-buf.c                |  25 ----
+> > > >  drivers/char/tpm/tpm-sysfs.c              |   2 +-
+> > > >  drivers/char/tpm/tpm2-cmd.c               |   9 +-
+> > > >  drivers/char/tpm/tpm2-sessions.c          | 130 ++++++---------------
+> > > >  include/linux/tpm.h                       |  49 +++++---
+> > > >  security/keys/trusted-keys/trusted_tpm2.c | 134 +++++++++++++---------
+> > > >  6 files changed, 155 insertions(+), 194 deletions(-)
+> > > > 
+> > > > -- 
+> > > > 2.52.0
+> > > > 
+> > > 
+> > > For hwrng we can e.g., calculate factor by timing tpm2_get_random() with
+> > > and without HMAC encryption. Then we can use this as frequency how often 
+> > > data is pulled.
+> > > 
+> > > The other angle to combine this is to maintain largeish FIFO of random 
+> > > bytes and fill this when it goes below a treshold. 
+> > > 
+> > > Probably some combination of these will provide answer to performance
+> > > and latency problem with hwrng when HMAC encryption is turned on:
+> > > 
+> > > 1. The first amortizes the overall quota.
+> > > 2. Second provides constant latency without major spikes.
+> > 
+> > Another perhaps more unorthodox idea:
+> > 
+> > 1. Calculate factor as said above. Let's call it N.
+> > 2. Every Nth step seed a pseudo rng from TPM.
+> > 3. On steps not divisible by N, pull from pseud rng.
+> > 
+> > I'm not a cryptographer but would randomness suffer from this? Then the
+> > seeds that woud come from TPM are HMAC encrypted at least without major 
+> > hits on performance.
+> > 
+> > Just enumerated this. Not sure about this idea yet by any means but I do 
+> > like simplicy of it (and that also makes me concerned about missed
+> > details).
+> 
+> Third option would be to have simply a kthread with a rate that fills a
+> pool and hwrng callbacks serves from that pool. If there is no bytes,
+> there is no bytes (which is fine as far as API is concerned).
+> 
+> This has optimal system latency properties I'd figure.
 
-This not only removes 'sudo' external dependency, but it s required
-because new releases of many distros (e.g. Debian, openSUSE Tumbleweed,
-SLES, ...) switched shell for 'nobody' user from /bin/bash (or /bin/sh)
-to /usr/sbin/nologin. That effectively disables using 'sudo', 'su', 'sg':
+OK so the very first thing that should be done with hwrng is this: it 
+should be opportunistic instead of being committing (to X number of 
+bytes). Further optimizations should be considered only after changing
+this heuristics.
 
-    ima_conditionals 1 TINFO: verify measuring user files when requested via uid
-    sudo: Account expired or PAM config lacks an "account" section for sudo, contact your system administrator
-    sudo: a password is required
+That guarantees that when hwrng's thread queries bytes from TPM driver
+it is guaranteed to cause always exactly one TPM2_GetRandom transaction.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
----
- .../integrity/ima/tests/ima_conditionals.sh         | 13 ++++++-------
- .../integrity/ima/tests/ima_measurements.sh         | 11 ++---------
- 2 files changed, 8 insertions(+), 16 deletions(-)
+How this can be done is to first re-orchestrate tpm_get_random() along 
+the lines (out of top of my head, did not even compile this):
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh b/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh
-index ba19176039..ae947db1e9 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_conditionals.sh
-@@ -9,7 +9,7 @@
- # gid and fgroup options test kernel commit 40224c41661b ("ima: add gid
- # support") from v5.16.
- 
--TST_NEEDS_CMDS="cat chgrp chown id sg sudo"
-+TST_NEEDS_CMDS="cat chgrp chown"
- TST_SETUP="setup"
- TST_CNT=1
- 
-@@ -27,8 +27,8 @@ verify_measurement()
- 	local test_file="$PWD/test.txt"
- 	local cmd="cat $test_file > /dev/null"
- 
--	local value="$(id -u $user)"
--	[ "$request" = 'gid' -o "$request" = 'fgroup' ] && value="$(id -g $user)"
-+	local value="$TST_USR_UID"
-+	[ "$request" = 'gid' -o "$request" = 'fgroup' ] && value="$TST_USR_GID"
- 
- 	# needs to be checked each run (not in setup)
- 	require_policy_writable
-@@ -41,15 +41,14 @@ verify_measurement()
- 
- 	case "$request" in
- 	fgroup)
--		chgrp $user $test_file
-+		chgrp $TST_USR_GID $test_file
- 		sh -c "$cmd"
- 		;;
- 	fowner)
--		chown $user $test_file
-+		chown $TST_USR_UID $test_file
- 		sh -c "$cmd"
- 		;;
--	gid) sg $user "sh -c '$cmd'";;
--	uid) sudo -n -u $user sh -c "$cmd";;
-+	gid|uid) tst_runas sh -c "$cmd";;
- 	*) tst_brk TBROK "Invalid res type '$1'";;
- 	esac
- 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-index 60350f3926..cf35e131ed 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_measurements.sh
-@@ -68,30 +68,23 @@ test2()
- 
- test3()
- {
--	local user="nobody"
- 	local dir="$PWD/user"
- 	local file="$dir/test.txt"
- 	local cmd="grep $file $ASCII_MEASUREMENTS"
- 
- 	# Default policy does not measure user files
- 	tst_res TINFO "verify not measuring user files"
--	tst_check_cmds sudo || return
- 
- 	if [ "$IMA_MISSING_POLICY_CONTENT" = 1 ]; then
- 		tst_res TCONF "test requires specific policy, try load it with LTP_IMA_LOAD_POLICY=1"
- 		return
- 	fi
- 
--	if ! id $user >/dev/null 2>/dev/null; then
--		tst_res TCONF "missing system user $user (wrong installation)"
--		return
--	fi
--
- 	[ -d "$dir" ] || mkdir -m 0700 $dir
--	chown $user $dir
-+	chown $TST_USR_UID $dir
- 	cd $dir
- 	# need to read file to get updated $ASCII_MEASUREMENTS
--	sudo -n -u $user sh -c "echo $(cat /proc/uptime) user file > $file; cat $file > /dev/null"
-+	tst_runas sh -c "echo $(cat /proc/uptime) user file > $file; cat $file > /dev/null"
- 	cd ..
- 
- 	if ! tst_rod "$cmd" 2> /dev/null; then
--- 
-2.51.0
+int tpm_get_random(struct tpm_chip *chip, u8 *out, size_t max)
+{
+	u32 num_bytes = max;
+	u8 *out_ptr = out;
+	int retries = 5;
+	int total = 0;
+	int rc;
+
+	if (!out || !max || max > TPM_MAX_RNG_DATA)
+		return -EINVAL;
+
+	if (!chip)
+		return -ENODEV;
+
+	rc = tpm_try_get_ops(chip);
+	if (rc)
+		return rc;
+
+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+		rc = tpm2_start_auth_session(chip);
+		if (rc)
+			return rc;
+	}
+
+	do {
+		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+			rc = tpm2_get_random(chip, out_ptr, num_bytes);
+		else
+			rc = tpm1_get_random(chip, out_ptr, num_bytes);
+
+		if (rc < 0)
+			goto err;
+
+		out_ptr += rc;
+		total += rc;
+		num_bytes -= rc;
+	} while (retries-- && total < max);
+
+	tpm_put_ops(chip);
+	return total ? total : -EIO;
+
+err:
+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+		tpm2_end_auth_session(chip);
+
+	tpm_put_ops(chip);
+	return rc;
+}
+EXPORT_SYMBOL_GPL(tpm_get_random);
+
+{tpm1,tpm2}_get_random() are changed to do exactly single transaction
+and on success they return how many bytes were read.
+
+hwrng code should also use {tpm1,tpm2}_get_random() and use the
+requested size as a hint not as something that we commit into.
+
+I think this will benefit kernel even without HMAC encryption because
+it objectively makes things a bit more deterministic.
+
+BR, Jarkko
+
+
+
 
