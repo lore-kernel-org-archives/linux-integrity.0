@@ -1,90 +1,41 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9215038807A
-	for <linux-integrity@vger.kernel.org>; Wed,  7 Jan 2026 15:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587D2355042;
+	Wed,  7 Jan 2026 16:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1767801466; cv=none; b=UgBZYxaXhPD5+gjcnTQzwZWqL8wlnhx5ZwEKxoDeHLJgjMS1T1uvl8bagJ+eko6/uix2U/kQcjCtvvNTq/YcpV0CROWsmp0uk2+p1regdWPuwzDHGcOjncRFAqfxQCWxSoeVRXTktMt/GZMFeBUxhIp8lxvI/Qk29EfJzV+rOvQ=
+	t=1767802570; cv=none; b=mQhuodZI+nIGy1E8MrRTu3Q5QHf6nLQKoD9eKlOrUUYHQDIfMhwjdvm1AgPAFbdto5kxog/BrjyUJc2U5lzFlVuF2igxfvcFwsROVpA8oZ+39tQBMHY2lqxV0EuU91rSFrNqe9FGK32tuXMibjQzWtAnPOEhYhJsyrKJ/5jqGA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1767801466; c=relaxed/simple;
-	bh=kFpGiTpESuFEA2zUYyAN1AgJE/6PJlhdY1pbnZDT1TM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S9TiCuuDem4zsrUyAXILqyW+nm84BCvPcq+9Wu/fO0Jn0kbd9ttnZMXQfXoyZGVP8wpdIqGs5DMr6uMhQua6R0tgJb/dke3RlL1VIFsbBcDCKcV4jvlAAaW6gntwzOgCdOos3tAq9XpjnvWT7uX98tPB09HT9ujr6pCZicyjIsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JUctFvKX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wJTnjI7P; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JUctFvKX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wJTnjI7P; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1767802570; c=relaxed/simple;
+	bh=10JTA/GF2GbzhsA7K1qACneMcHSQxQXMbTewSt7FuaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y/Er6z97PHkWOYeb7giwphgZptFzmy5fBsFo63jgYb6M8LbXK5M5uvVKjTxtocPW2DBUS1SCUJO9bZR9PK1qMSbBRCU0vUXz9i5VC9i3A8rD3EcdfWpHbO0trVdO4V1kQZI1ZrwXtqQHhy49PRi2a6ToBTtn3zYWFkda1dAmcRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxaXArPo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JUctFvKX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wJTnjI7P";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JUctFvKX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wJTnjI7P"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B81A833BE7;
-	Wed,  7 Jan 2026 15:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767801460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h753lh0IfA1INWdbSt/afBGkR8ljC2rlzZ2c1c5/New=;
-	b=JUctFvKXZoIpT9VvUQkussD1OkVNW3IIHw7fVvBiGcYdOT5d12iF+b2uzHziZCpqSkCAVn
-	ewlpTIAFHdlGxtGbbJ8MRSGP+s59ZWBizE7R1F2uyaei/7mDzvLiXZ0Hp2OSiOivLoIEB0
-	tRoSEcwGjDPP4wW04BN2BiCNgZNIwIE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767801460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h753lh0IfA1INWdbSt/afBGkR8ljC2rlzZ2c1c5/New=;
-	b=wJTnjI7PoZCW6Hn2A+22X8LcOFwTNxxIlY5WoBc3mWCqgQ4jW42HlyvGK1DpFvkhkCFSkw
-	K+Uj4eF1d7amEFDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=JUctFvKX;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=wJTnjI7P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1767801460; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h753lh0IfA1INWdbSt/afBGkR8ljC2rlzZ2c1c5/New=;
-	b=JUctFvKXZoIpT9VvUQkussD1OkVNW3IIHw7fVvBiGcYdOT5d12iF+b2uzHziZCpqSkCAVn
-	ewlpTIAFHdlGxtGbbJ8MRSGP+s59ZWBizE7R1F2uyaei/7mDzvLiXZ0Hp2OSiOivLoIEB0
-	tRoSEcwGjDPP4wW04BN2BiCNgZNIwIE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1767801460;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h753lh0IfA1INWdbSt/afBGkR8ljC2rlzZ2c1c5/New=;
-	b=wJTnjI7PoZCW6Hn2A+22X8LcOFwTNxxIlY5WoBc3mWCqgQ4jW42HlyvGK1DpFvkhkCFSkw
-	K+Uj4eF1d7amEFDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E8EC3EA65;
-	Wed,  7 Jan 2026 15:57:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KDl+G3SCXmm9HQAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Wed, 07 Jan 2026 15:57:40 +0000
-From: Petr Vorel <pvorel@suse.cz>
-To: ltp@lists.linux.it
-Cc: Petr Vorel <pvorel@suse.cz>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH 2/2] ima_kexec.sh: Document kernel config dependencies
-Date: Wed,  7 Jan 2026 16:57:36 +0100
-Message-ID: <20260107155737.791588-2-pvorel@suse.cz>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260107155737.791588-1-pvorel@suse.cz>
-References: <20260107155737.791588-1-pvorel@suse.cz>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxaXArPo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33306C4CEF1;
+	Wed,  7 Jan 2026 16:16:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1767802568;
+	bh=10JTA/GF2GbzhsA7K1qACneMcHSQxQXMbTewSt7FuaM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GxaXArPoRxWT6qmCAHJ+c+bTwrWzvq7hEuqbxq8LF4zMfE9kgAm4jnDegqOX7nOdz
+	 WBWcdvx68HS8JA/73IiGDJU0nMIU76tN1oeubb6MAhNbaVsk99pZSTIweuABXrkwdY
+	 YQoBeBDX5wputixsAoa4feF8i0kS4ujjw4Lvd+9ejmEbsX8/2IDvmy6oA1LqHFgNoK
+	 jRo2vPEhRcQwTT2JmkMbk6zoxKiYUEGnuwW7/yiwbEhqN9RuQAVrpphXC9vSA9vXN5
+	 ANDm7kHOOaCstdYF7Tj61cNuHvSg15Q68umTpcWEMnc5nd+xKsArdOSIPn/Xy8atdo
+	 YT/a3lVaeCbOw==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: stable@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Lai Yi <yi1.lai@linux.intel.com>,
+	Jonathan McDowell <noodles@meta.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] tpm: Cap the number of PCR banks
+Date: Wed,  7 Jan 2026 18:15:51 +0200
+Message-ID: <20260107161551.53475-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.52.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -92,68 +43,109 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.cz:mid];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCPT_COUNT_THREE(0.00)[4];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Rspamd-Queue-Id: B81A833BE7
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
 
-CONFIG_HAVE_IMA_KEXEC=y is enough for test, ie. test is working with:
+From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 
-    # CONFIG_IMA_KEXEC is not set
-    CONFIG_HAVE_IMA_KEXEC=y
+[ Upstream commit faf07e611dfa464b201223a7253e9dc5ee0f3c9e ]
 
-Probably obvious as CONFIG_HAVE_IMA_KEXEC is arch specific and
-CONFIG_IMA_KEXEC is "TPM PCRs are only reset on a hard reboot."
-and ima_kexec.c requires CONFIG_HAVE_IMA_KEXEC (only parts are skipped
-when CONFIG_IMA_KEXEC not set) but better to clarify for users.
+tpm2_get_pcr_allocation() does not cap any upper limit for the number of
+banks. Cap the limit to eight banks so that out of bounds values coming
+from external I/O cause on only limited harm.
 
-Signed-off-by: Petr Vorel <pvorel@suse.cz>
+Cc: stable@vger.kernel.org # v5.10+
+Fixes: bcfff8384f6c ("tpm: dynamically allocate the allocated_banks array")
+Tested-by: Lai Yi <yi1.lai@linux.intel.com>
+Reviewed-by: Jonathan McDowell <noodles@meta.com>
+Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 ---
- testcases/kernel/security/integrity/ima/tests/ima_kexec.sh | 3 +++
- 1 file changed, 3 insertions(+)
+Backport for v5.10, v5.15, v6.1 and v6.6
+ drivers/char/tpm/tpm-chip.c | 1 -
+ drivers/char/tpm/tpm1-cmd.c | 5 -----
+ drivers/char/tpm/tpm2-cmd.c | 8 +++-----
+ include/linux/tpm.h         | 8 +++++---
+ 4 files changed, 8 insertions(+), 14 deletions(-)
 
-diff --git a/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh b/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh
-index 7688690af2..de595fcdd7 100755
---- a/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh
-+++ b/testcases/kernel/security/integrity/ima/tests/ima_kexec.sh
-@@ -6,8 +6,11 @@
- #
- # Verify that kexec cmdline is measured correctly.
- # Test attempts to kexec the existing running kernel image.
-+#
- # To kexec a different kernel image export IMA_KEXEC_IMAGE=<pathname>.
- # Test requires example IMA policy loadable with LTP_IMA_LOAD_POLICY=1.
-+#
-+# Test requires CONFIG_HAVE_IMA_KEXEC=y (CONFIG_IMA_KEXEC is not mandatory).
- 
- TST_NEEDS_CMDS="grep kexec sed"
- TST_CNT=3
--- 
-2.51.0
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 70e3fe20fdcf..458a3e9ea73a 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -279,7 +279,6 @@ static void tpm_dev_release(struct device *dev)
+
+ 	kfree(chip->work_space.context_buf);
+ 	kfree(chip->work_space.session_buf);
+-	kfree(chip->allocated_banks);
+ 	kfree(chip);
+ }
+
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index cf64c7385105..b49a790f1bd5 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -799,11 +799,6 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+  */
+ int tpm1_get_pcr_allocation(struct tpm_chip *chip)
+ {
+-	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
+-					GFP_KERNEL);
+-	if (!chip->allocated_banks)
+-		return -ENOMEM;
+-
+ 	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
+ 	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
+ 	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 93545be190a5..57bb3e34b770 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -574,11 +574,9 @@ ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+
+ 	nr_possible_banks = be32_to_cpup(
+ 		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+-
+-	chip->allocated_banks = kcalloc(nr_possible_banks,
+-					sizeof(*chip->allocated_banks),
+-					GFP_KERNEL);
+-	if (!chip->allocated_banks) {
++	if (nr_possible_banks > TPM2_MAX_PCR_BANKS) {
++		pr_err("tpm: out of bank capacity: %u > %u\n",
++		       nr_possible_banks, TPM2_MAX_PCR_BANKS);
+ 		rc = -ENOMEM;
+ 		goto out;
+ 	}
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index bf8a4ec8a01c..f5e7cca2f257 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -25,7 +25,9 @@
+ #include <crypto/hash_info.h>
+
+ #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+-#define TPM_MAX_DIGEST_SIZE SHA512_DIGEST_SIZE
++
++#define TPM2_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
++#define TPM2_MAX_PCR_BANKS	8
+
+ struct tpm_chip;
+ struct trusted_key_payload;
+@@ -51,7 +53,7 @@ enum tpm_algorithms {
+
+ struct tpm_digest {
+ 	u16 alg_id;
+-	u8 digest[TPM_MAX_DIGEST_SIZE];
++	u8 digest[TPM2_MAX_DIGEST_SIZE];
+ } __packed;
+
+ struct tpm_bank_info {
+@@ -157,7 +159,7 @@ struct tpm_chip {
+ 	unsigned int groups_cnt;
+
+ 	u32 nr_allocated_banks;
+-	struct tpm_bank_info *allocated_banks;
++	struct tpm_bank_info allocated_banks[TPM2_MAX_PCR_BANKS];
+ #ifdef CONFIG_ACPI
+ 	acpi_handle acpi_dev_handle;
+ 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+--
+2.52.0
 
