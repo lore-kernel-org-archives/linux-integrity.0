@@ -1,47 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7067B286A7;
-	Tue,  3 Feb 2026 00:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B680618D658;
+	Tue,  3 Feb 2026 00:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770077415; cv=none; b=e1A4Iwximrdxg8wgKc4pI5qNznOQiI9Br24HkQM7M6u3DshfYLY2aJ5DdnI8pxBmm9gF41zBf8+uWbZUFN7IipjbYMBXZFzz0QFRUCA97ldIa6nGFV7dK5LMo64VMmlH9y03aTxbpK32Jf/O2kkRll8KR6HZ0tow2SSrVkmknAk=
+	t=1770079618; cv=none; b=iB5gl3eklbwUCii/eNxhEp5RtU48QgbtFfHCFfFHchT47awWr0lKMVSnL3wZAj1t8tx1wS6sSJ6JKbVHoZjqiqhk2Kfb451cxZ/TRfWK+K8hbnQMCkyfprlBFYecsYjLU1SLu6N/bh4nTdD8qKzitvHlEaWrWflS5FYpjizOcRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770077415; c=relaxed/simple;
-	bh=pQbDcmtewWa2yjdxKfKtqWzgPlFPxdEm3ir44Cdhu88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h297lGvtmBS6fXZnfhPWO6Z2+0WubiCGX75zTVItLypEPtdczhee5PfLQARdD3fz17ktDWnhB0GDV7iAwpwEA4hFjxjl9nz7YTAe/tJS9ddcmHIFB1al2MzriLmiIpRfjzYk1Ortcz5Ff501HdnW0ZMsunYkDpls9XhihvXkyoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9jwU9c1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1770079618; c=relaxed/simple;
+	bh=wMEb+K7wVxpTfzG0K8oltYhyF9V+GZypbi3NiBA/RHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=s+cimhSm65RWyDisAt7m5OUPt9+dNb2KiNZe8IlcJhIC2cfMMI/WmoVGJSWPOwZuJg15fV8MMiYgCRuuOdzah9+8ENf+vkxh/XB3fdD/Xn4M9ZurzR0I65y6YFVO9mHzHXOzQNU0yVpku4qlMUtNtATEt9PeExhYqbCj45BpsUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvxHWthq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9jwU9c1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E125C116C6;
-	Tue,  3 Feb 2026 00:10:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvxHWthq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA441C116C6;
+	Tue,  3 Feb 2026 00:46:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770077415;
-	bh=pQbDcmtewWa2yjdxKfKtqWzgPlFPxdEm3ir44Cdhu88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r9jwU9c1z3oMvPX+hp/h4oxyPvJw2t3r93uJdCT+3VrY5u2gTp6MvAb18xH1v2ytQ
-	 tOIjnqfpt4GMVyH6BEnDxPGemLkgFuSQJebrHeaVHVWzBB8sl1wf8GRrpvfEkCZpm4
-	 fHdzU9+rvZx6YmFgpQq0dQGVqlwnCAcxZKPndu4RQ9oPXctzazudnUCda47w/b78su
-	 G/rZq9m8+z87BLtZcq1WWpP9QhPh/1WXcWRi8Qm8yyBVDD67YoKorGtybUwFSyBYXN
-	 duCnqrfxnWHUd0+jBeDFKkgiFWUGuCJh7bGOpK947wLRptoK4v0NvzEzNgmQFRY1a+
-	 /+sVBLX6OA1zA==
-Date: Tue, 3 Feb 2026 02:10:10 +0200
+	s=k20201202; t=1770079618;
+	bh=wMEb+K7wVxpTfzG0K8oltYhyF9V+GZypbi3NiBA/RHg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SvxHWthqVurOZ64wkVlP/HInyn6aWgT0MnznocyiRcnTpwSZO539+56RfVRCD6rK0
+	 pA13UusCXHXbpI/pQkWNlshA26sjavpvbF4HCyw8q9PXvkZGTqIM2zWr4087xz9usN
+	 UEXLNWcnlIgE7VM5CtlBn41Tl5+A4YwljMu/r7fiQ96sNdzPiPC3IHul7SW0mTABnU
+	 ozE2R88Zqsxc5ECabW8UCXZ4vwrqa8Sz16MnI3X0tg4QH7gGP9+fsFbwmB4qURDc4T
+	 y+JDkrZFo/elADLFvrCvBNZXouvB9ovD2Hw11WtexpDksfQVqrgAZzxfHPI2kgV0Yf
+	 zgq8hGqJD3Jdw==
+Date: Tue, 3 Feb 2026 02:46:53 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, jani.nikula@linux.intel.com,
-	anisse@astier.eu, oleksandr@natalenko.name,
-	linux-integrity@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] media: Virtual camera driver
-Message-ID: <aYE84i2GT5ntqZsO@kernel.org>
-References: <20260202204425.2614054-1-jarkko@kernel.org>
- <aYEqHogDBqR1qGw3@kekkonen.localdomain>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-7.0-rc1
+Message-ID: <aYFFfTwGGFFl6hn7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -50,86 +42,31 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aYEqHogDBqR1qGw3@kekkonen.localdomain>
 
-On Tue, Feb 03, 2026 at 12:50:06AM +0200, Sakari Ailus wrote:
-> Hi Jarkko,
-> 
-> On Mon, Feb 02, 2026 at 10:44:21PM +0200, Jarkko Sakkinen wrote:
-> > Already a quick Google survey backs strongly that OOT drivers (e.g.,
-> > v4l2loopback) are the defacto solution for streaming phone cameras in
-> > video conference calls, which puts confidential discussions at risk.
-> 
-> As I think it was pointed out in review comments for v1, the reason behind
-> using v4l2loopback is the use of a downstream driver, which itself is a
-> source of a security risk. If I understand correctly, supporting this
-> (proprietary/downstream vendor drivers) would be the main use case this
-> driver serves? Should this downstream driver be upstreamed to alleviate the
-> security risks, the need for v4l2loopback or similar drivers presumably
-> disappears.
+The following changes since commit dee65f79364c18033cabdf0728c7e7025405cf40:
 
-My goal is not to proactively support proprietary drivers, and I don't
-know how to measure such incentive or risk, when it comes to video
-drivers.
+  Merge tag 'lsm-pr-20260202' of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm (2026-02-02 09:48:23 -0800)
 
-And besides there is e.g. FUSE.
+are available in the Git repository at:
 
-> 
-> Another of the downsides of such proprietary/downstream solutions is they
-> can never be properly integrated into the Linux ecosystem so functionality
-> will remain spotty (limited to specific systems and specific releases of
-> specific distributions) at best.
-> 
-> In other words, this driver appears to be orthogonal to solving either of
-> the above two problems the proprietary/downstream solutions have.
-> 
-> From the Open Source libcamera based camera software stack point of view
-> there doesn't seem to be a need for v4l2loopback or another similar driver.
-> The two main reasons for this is that (1) there's no need for glueing
-> something separate together like this and (2) V4L2 isn't a great
-> application interface for cameras -- use libcamera or Pipewire instead.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/tpmdd-next-7.0-rc1
 
-While I get this argument isolated, it does not match the observed
-reality, and does not provide tools to address the core issue. I
-will be in my grave before I've fixed the world like you are
-suggesting :-)
+for you to fetch changes up to 3e91b44c93ad2871f89fc2a98c5e4fe6ca5db3d9:
 
-Like, first off, where would I use libcamera or Pipewire? There's
-no well-defined target other than kernel in this problem.
+  tpm: st33zp24: Fix missing cleanup on get_burstcount() error (2026-02-03 02:36:32 +0200)
 
-> 
-> > 
-> > It can be also claimed that there's enough OOT usage in the wild that
-> > possible security bugs could be considered as potential zerodays for the
-> > benefit of malicious actors.
-> > 
-> > The situation has been stagnated for however many years, which is
-> > unsastainable situation, and it further factors potential security
-> > risks. Therefore, a driver is needed to address the popular use case.
-> > 
-> > vcam is a DMA-BUF backed virtual camera driver capable of creating video
-> > capture devices to which data can be streamed through /dev/vcam after
-> > calling VCAM_IOC_CREATE. Frames are pushed with VCAM_IOC_QUEUE and recycled
-> > with VCAM_IOC_DEQUEUE. Zero-copy semantics are supported for shared DMA-BUF
-> > between capture and output.
-> > 
-> > This enables efficient implementation of software, which can manage network
-> > video streams from phone cameras, and map those streams to video devices.
-> 
-> I'd really try to avoid involving V4L2 in-kernel implementation when the
-> source of the video is network. V4L2 is meant to be used (when it comes to
-> video) for interfacing video related hardware such as cameras, ISPs and
-> codecs. There are limited number of video output related devices, too, but
-> network is something quite different from these.
+----------------------------------------------------------------
+Hi,
 
-I'd look at the usage patterns in the field too. It is pretty obvious
-that there is a significant gap what users want and expect when it
-comes to this debate.
-
-> 
-> -- 
-> Kind regards,
-> 
-> Sakari Ailus
+Here are TPM driver updates for Linux v7.0.
 
 BR, Jarkko
+
+----------------------------------------------------------------
+Alper Ak (2):
+      tpm: tpm_i2c_infineon: Fix locality leak on get_burstcount() failure
+      tpm: st33zp24: Fix missing cleanup on get_burstcount() error
+
+ drivers/char/tpm/st33zp24/st33zp24.c | 6 ++++--
+ drivers/char/tpm/tpm_i2c_infineon.c  | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
