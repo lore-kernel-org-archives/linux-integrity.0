@@ -1,118 +1,185 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96D133985A;
-	Tue,  3 Feb 2026 21:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A9A24DFF3;
+	Wed,  4 Feb 2026 12:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770154833; cv=none; b=NtpfrcH5DBIJq5AP4sRvjp45C7dd805AYln/0jF9OXDMDOh5YssWKnU47K/rtllVmmL7ZpG1phQtSd4aewWK3FqthWqZGoF7UnYBui12GN/l9Pgx10xoqr2fVka90pSNFKDzkuC0GxyJDRqJR52HlIIBmP/XYeZvpuB7/v0cExk=
+	t=1770208594; cv=none; b=uACnV36OwRwJrqC1kwNLjYdCD4xgmffbL8wbkv0rRk+OjjP5azk4DUp+kvR/twc83R12TNAnb3Be0PQw2phiKxw5Flih/qXpgPkOd2TVIQz9D/Pt8/2JNhArENZgiDXdJSZ5mvD/Pd/M7lT+cSkDonJ/A3EvZFLdo/iMN1frR1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770154833; c=relaxed/simple;
-	bh=xk6hSF5V+5b2PHodbBhcUfr7/vd2d7OrNJYmZhHpJtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEkWGKROUiZj46lBWsVVTlLk4Um1p/MVgHcUFNIYYbaUi56mwcBK03o6ItVFh+4A2kPpcIQ6DIE0boxBiC3T81qtRsuQ14imME+9SZrXCRqYwwHjP85gQ9ZDFgvCKakD6wH9RUD2/x/LYPvWjZXisu30sNeDUG3B8LY1IJR/b4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2k+KUSC; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2k+KUSC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1E4C116D0;
-	Tue,  3 Feb 2026 21:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1770154833;
-	bh=xk6hSF5V+5b2PHodbBhcUfr7/vd2d7OrNJYmZhHpJtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n2k+KUSCQGS2HIl4lOxN6SSEJHrKToFPcCZ378Qj8QaaJ7omGy6OoiCE9HzIXHZT1
-	 FNXu428ovxNgTejVZICaeMynyXsZx2XwNXhKPx0npX6ULP+tEyJv0orAUIel0ebEaU
-	 7/StXeti70dowR9YNsU1HDZfBb+/6PcwKHlzZxpjViZMSv7C4nxuCZY8M/f8QDHWNT
-	 mq7TMmsaihRmMqdzJL2/8ckDvp2fX9VkRxQKEpTbiuyymCGit6bisXLVbsmK7syO5z
-	 bOAO7pSBBYN3Hy+/XA11QkfZHVouSGKDhEUUUSkelrUPW6nntZK2cLWe224+Hznhmp
-	 IDOrpTzg7gmuw==
-Date: Tue, 3 Feb 2026 23:40:30 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	johannes.goede@oss.qualcomm.com, linux-media@vger.kernel.org,
-	anisse@astier.eu, oleksandr@natalenko.name,
-	linux-integrity@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2] media: Virtual camera driver
-Message-ID: <aYJrTj8QDenVKuyv@kernel.org>
-References: <20260202204425.2614054-1-jarkko@kernel.org>
- <6b192c71-c389-4a6e-b7c3-ddcd5cc4aa34@oss.qualcomm.com>
- <37a0d91c2e78c97f3d956444c4f7a2a2fca9ae06@intel.com>
- <c6b5832f-d7b3-4bc2-834e-4ce7b0c0b4cd@oss.qualcomm.com>
- <2bda02cb3da6cb6ca7dcf545a5b7af27fb7a6e37@intel.com>
- <aYJHeOtZT9qBmLQu@kernel.org>
- <aYJJWPLr4Qxkmn7z@kernel.org>
- <20260203212226.GF11369@killaraus>
+	s=arc-20240116; t=1770208594; c=relaxed/simple;
+	bh=sWQufUt4Wl8FLh8zolfcswlckPOBFwgWTQYpLXo+15E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hToVfQnNQSL9vbyotQYaUavaQ2q2WtYAAe0jW8B94lIPtHGbe13fFro3WgXa3qGHgmoHBa5kjtE2Q2dltOMH4637oQ7DN57PeAhYSk78eMVm8JAJ0AjLUlKIeLjapRQftE3B8Li7r5cS8lUjnzegkRkk7/xwN86tA+XL1RuhDAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.224.196])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4f5fsk53y5zvbBV;
+	Wed,  4 Feb 2026 20:33:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id DF2AF40565;
+	Wed,  4 Feb 2026 20:36:24 +0800 (CST)
+Received: from [10.204.63.22] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwCHn2o6PYNpHysyAw--.45535S2;
+	Wed, 04 Feb 2026 13:36:24 +0100 (CET)
+Message-ID: <c449523aef301a6b199e06d4c3fbf7587d1218c5.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 3/3] ima: Use kstat.ctime as a fallback change
+ detection for stacked fs
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar
+ <zohar@linux.ibm.com>,  Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
+ Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
+ <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, Josef
+ Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@cloudflare.com
+Date: Wed, 04 Feb 2026 13:36:09 +0100
+In-Reply-To: <20260130-xfs-ima-fixup-v5-3-57e84ea91712@cloudflare.com>
+References: <20260130-xfs-ima-fixup-v5-0-57e84ea91712@cloudflare.com>
+	 <20260130-xfs-ima-fixup-v5-3-57e84ea91712@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20260203212226.GF11369@killaraus>
+X-CM-TRANSID:GxC2BwCHn2o6PYNpHysyAw--.45535S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw1kKryftw1fGFyDuw1DAwb_yoWrtry7pa
+	1q9F1UKr48GFy2kFs7C3ZFka1Fg3yFgFyUW345K3W0yF13Z3Wjqr9xAryYvr90qrWYyw1x
+	tFZYyr13Cw4qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUoY
+	FADUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBGmCux4MagAAsg
 
-On Tue, Feb 03, 2026 at 11:22:26PM +0200, Laurent Pinchart wrote:
-> On Tue, Feb 03, 2026 at 09:15:36PM +0200, Jarkko Sakkinen wrote:
-> > On Tue, Feb 03, 2026 at 09:07:41PM +0200, Jarkko Sakkinen wrote:
-> > > On Tue, Feb 03, 2026 at 08:53:13PM +0200, Jani Nikula wrote:
-> > > > On Tue, 03 Feb 2026, johannes.goede@oss.qualcomm.com wrote:
-> > > > > OTHO evdi: https://github.com/DisplayLink/evdi has been kept out
-> > > > > of the kernel for pretty much the same reasons by the drm/kms folks.
-> > > > >
-> > > > > At least AFAIK there still is no way to present virtual kms capable
-> > > > > display outputs backed by userspace in the kernel.
-> > > > >
-> > > > > I completely understand where you're coming from wrt v4l2-loopback
-> > > > > support (or something equivalent) but asking for this really is
-> > > > > the same as asking for the evdi driver to get merged, which AFAIK
-> > > > > has been blocked for the reason of avoiding proprietary userspace
-> > > > > display output drivers (I guess there might be technical reasons too).
-> > > > 
-> > > > I'm not sure this is the same thing, though.
-> > > > 
-> > > > The DRM subsystem does require an open source userspace for new uAPI,
-> > > > which is stricter than most subsystems [1]. Other than that, I don't
-> > > > think anyone's actively keeping evdi out of the kernel. AFAIK there
-> > > > hasn't been a serious attempt at upstreaming it either. Which is pretty
-> > > > much because there's no open userspace. Nobody's cared enough to either
-> > > > write one or open source the existing one for a decade [2].
-> > > 
-> > > This is unrelated of ACK/NACK and not saying this as a "selling point"
-> > > but realistically speaking based on what I've read I have extremely hard
-> > > time to believe that my driver would enable a market of proprietary
-> > > camera drivers :-) Actually, after looking up mipi.org based on Hans
-> > > response, I even more so believe that this is the case.
-> > 
-> > With my maintainer hat on, I'd get the nack better if the driver was
-> > intrusive on changes to V4L2 subsystem itself. Then, it accumlates
-> > weight to other maintainers, and as we all have limited amount of time
-> > in our lives, I do get that. But since the driver would be compliance
-> > aligning leaf driver with a MAINTAINER entry of its own, it should not
-> > be a huge burden for V4L2 community and kernel maintainers.  And I do
-> > have a track record of being long-term on maintaining stuff that I vomit
-> > out.
-> 
-> I don't dispute that. Even though we haven't really worked together on
-> kernel development, I have no prejudice towards your commitment as a
-> driver maintainer :-) There's nothing personal in this mail thread.
+On Fri, 2026-01-30 at 16:39 -0600, Frederick Lawler wrote:
+> IMA performs unnecessary measurements on files in stacked file systems
+> that do not set kstat.change_cookie to an inode's i_version.
+>=20
+> For example: TMPFS (upper) is stacked onto XFS (lower).
+> Actions files result in re-measurement because commit 1cf7e834a6fb
+> ("xfs: switch to multigrain timestamps") introduced multigrain
+> timestamps into XFS which changed the kstat.change_cookie semantics
+> to no longer supply an i_version to compare against in
+> integrity_inode_attributes_changed(). Once the inode is in TMPFS,
+> the change detection behavior operates as normal because TMPFS updates
+> kstat.change_cookie to the i_version.
+>=20
+> Instead, fall back onto a ctime comparison. This also gives file systems
+> that do not support i_version an opportunity avoid the same behavior,
+> as they're more likely to have ctime support.
+>=20
+> timespec64_to_ns() is chosen to avoid adding extra storage to
+> integrity_inode_attributes by leveraging the existing version field.
 
-Absolutely non taken either (and neither from my side).
+Correct me if I'm wrong, but this issue seems to me xfs-specific. In
+that case, maybe it is better to remove the stacked filesystem part,
+which might be misleading.
 
-> 
-> > That also does make difference as there are some guarantees that the
-> > end product would not be left into rotten.
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+Thanks
 
-BR, Jarkko
+Roberto
+
+> Link: https://lore.kernel.org/all/aTspr4_h9IU4EyrR@CMGLRV3
+> Fixes: 1cf7e834a6fb ("xfs: switch to multigrain timestamps")
+> Suggested-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> ---
+>  include/linux/integrity.h         |  6 +++++-
+>  security/integrity/ima/ima_api.c  | 11 ++++++++---
+>  security/integrity/ima/ima_main.c |  2 +-
+>  3 files changed, 14 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+> index 382c783f0fa3ae4a938cdf9559291ba1903a378e..ec2c94907f417c4a71ecce29a=
+c79edac9bc2c6f8 100644
+> --- a/include/linux/integrity.h
+> +++ b/include/linux/integrity.h
+> @@ -10,6 +10,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/iversion.h>
+>  #include <linux/kernel.h>
+> +#include <linux/time64.h>
+> =20
+>  enum integrity_status {
+>  	INTEGRITY_PASS =3D 0,
+> @@ -58,6 +59,9 @@ integrity_inode_attrs_stat_changed
+>  	if (stat->result_mask & STATX_CHANGE_COOKIE)
+>  		return stat->change_cookie !=3D attrs->version;
+> =20
+> +	if (stat->result_mask & STATX_CTIME)
+> +		return timespec64_to_ns(&stat->ctime) !=3D (s64)attrs->version;
+> +
+>  	return true;
+>  }
+> =20
+> @@ -84,7 +88,7 @@ integrity_inode_attrs_changed(const struct integrity_in=
+ode_attributes *attrs,
+>  	 * only for IMA if vfs_getattr_nosec() fails.
+>  	 */
+>  	if (!file || vfs_getattr_nosec(&file->f_path, &stat,
+> -				       STATX_CHANGE_COOKIE,
+> +				       STATX_CHANGE_COOKIE | STATX_CTIME,
+>  				       AT_STATX_SYNC_AS_STAT))
+>  		return !IS_I_VERSION(inode) ||
+>  		       !inode_eq_iversion(inode, attrs->version);
+> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/im=
+a_api.c
+> index c35ea613c9f8d404ba4886e3b736c3bab29d1668..e47d6281febc15a0ac1bd2ea1=
+d28fea4d0cd5c58 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -272,10 +272,15 @@ int ima_collect_measurement(struct ima_iint_cache *=
+iint, struct file *file,
+>  	 * to an initial measurement/appraisal/audit, but was modified to
+>  	 * assume the file changed.
+>  	 */
+> -	result =3D vfs_getattr_nosec(&file->f_path, &stat, STATX_CHANGE_COOKIE,
+> +	result =3D vfs_getattr_nosec(&file->f_path, &stat,
+> +				   STATX_CHANGE_COOKIE | STATX_CTIME,
+>  				   AT_STATX_SYNC_AS_STAT);
+> -	if (!result && (stat.result_mask & STATX_CHANGE_COOKIE))
+> -		i_version =3D stat.change_cookie;
+> +	if (!result) {
+> +		if (stat.result_mask & STATX_CHANGE_COOKIE)
+> +			i_version =3D stat.change_cookie;
+> +		else if (stat.result_mask & STATX_CTIME)
+> +			i_version =3D timespec64_to_ns(&stat.ctime);
+> +	}
+>  	hash.hdr.algo =3D algo;
+>  	hash.hdr.length =3D hash_digest_size[algo];
+> =20
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 8cb17c9d446caaa5a98f5ec8f027c17ba7babca8..776db158b0bd8a0d053729ac0=
+cc15af8b6020a98 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -199,7 +199,7 @@ static void ima_check_last_writer(struct ima_iint_cac=
+he *iint,
+>  					    &iint->atomic_flags);
+>  		if ((iint->flags & IMA_NEW_FILE) ||
+>  		    vfs_getattr_nosec(&file->f_path, &stat,
+> -				      STATX_CHANGE_COOKIE,
+> +				      STATX_CHANGE_COOKIE | STATX_CTIME,
+>  				      AT_STATX_SYNC_AS_STAT) ||
+>  		    integrity_inode_attrs_stat_changed(&iint->real_inode,
+>  						       &stat)) {
+>=20
+
