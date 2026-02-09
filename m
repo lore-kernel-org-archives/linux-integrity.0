@@ -1,257 +1,157 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF142FDC30;
-	Mon,  9 Feb 2026 20:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D2F2EA173
+	for <linux-integrity@vger.kernel.org>; Mon,  9 Feb 2026 21:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1770669841; cv=none; b=kqQ1Bb65S/iXWq9a9QpqodeOyWsT06mnyRWaf1U9/UR6vAHZMDNyshugvWAxX9NENX19xnyP/vbHVXxu3kOnrD37t7PcWw6f9QJNL5TmVYfdB6GxrSFAYFBaZwG4MbEHfFOUmbEim83xjBoQhbeTW+27mjTm+HKSWEwlDVgKl4M=
+	t=1770672115; cv=none; b=hJ72AIX6dlvqmi5VVKlRgjaI6sqf97rR9MRkU3zgQchVN4Dsyt1RnL14RvjoZyIKiO2sEjRhs6bN3kvo3PnJ74HCq+r0FtamdnFBYLitkrWhVb6N7RKjbPUhmWL8YQMXQ/xwchPMIDVh6L+OjzVWuJY4xa5FQYOzM3t2sSQu+V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1770669841; c=relaxed/simple;
-	bh=OBCAinmo1/yXNiuFG0jZDJieIwicQOFYy+5fr2wrbas=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=OWCR/sePtNM2tgft2Lu83OTgg6r31cV8F/hy2YZ66LupzyrEzjUIrPsFN6w0n02VB0jvOZk7GGHtJJlQ7tWo0TEPjBLcRBNM0LVRmmOUr7u81xL63SU8o5IHPZz1iTk69bZmWZuThNLZLyx/nrrX0ulpBFu4kiaPc7n4xWzm2gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tXt5ZzuV; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1770672115; c=relaxed/simple;
+	bh=E44D0I52YoGh+U5fwPkQ5hEITkBV+sZorQSKCWfktmc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=R57amnqquyensQdlFEuZJaZ5RHomq/S4Ixizv9lUCX5LlkjAgnA+X68s/3iQM4eE7NnTV/J/YzB9IHLelT+s+1R+P5XqbRwH8P5VcIk+sNQLlZZTzgKX4ozuQnhEAV/8bt2eh4Kv2dk8maaQF/Pkv5e0KGW90OV0rfWAbuRrISU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=UjWsGNw3; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tXt5ZzuV"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 619HKqDO883546;
-	Mon, 9 Feb 2026 20:43:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dop6p6
-	rsLZKac/t5TeQjfJbjHcYGRmra2zjnHrlmz0E=; b=tXt5ZzuV3+5JXRaWSz9tDa
-	QC6QZNurjqjxngLuSU7Td7b+kuQPXdq6I7ydsO/3slOeWxP8EtRrCgf/mCgbaDAk
-	067Q3pJ49VfR9ZQM7irZ4CVDCttaeuF9BFiJSFaG5w519Xf4lXFWpNQfuVoA+Ozm
-	/6BB98tjaF6b5tqr8bLO5jTtB+HoUjxDOkIXHsyAvH6z2Sh11xlNBCv3UeE2NNA0
-	Ukn8mlzjnuKF5MKWbbp19/J/ULp1D7aUWhRgi87P3pNsspl1FjNGgDTw1JC+cqXo
-	6LyJBUjHdo+8aA/F8NvJh0HH10WQfUf4jxImct3BSSow0YfbDQVUVgzyq5FSjYQQ
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="UjWsGNw3"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-662fe3ff6f6so2571062eaf.0
+        for <linux-integrity@vger.kernel.org>; Mon, 09 Feb 2026 13:21:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1770672113; x=1771276913; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B8RijGQOfqPIwUgELzLaWOi9LUBjEfJ1NBk4LJfVwV0=;
+        b=UjWsGNw3GBANp1Ibh+JJia1OeYMnwWi09DWePej20aQMtbCT1fXT/G24nTO6bGhMmL
+         SwIJ6FnnfZ4gofxXO0Xd+VWhVCl71k753SK+tXn6CJCqBdciNTdsP8zHaZCoK9XcBE6B
+         RXQkqkxqXWNycwtMRR5rkMvfaBb2cZXJhej9zxrOzsn5O98IpiL44p4HVs0yHSp7UBXE
+         5dQ7rF51s3JaL9ZWDJ/WfSZ7LJ1zGoIfvTm/WtnEt+zMixPEzcKgRQd6kfn9R52XvMnn
+         GJi0Fm6RP+TfOCK6hwxUgrtVOHTzlytSVIRORoUdjQxqfQ/4OEaaykkckgbTO6JhTO6o
+         6bEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1770672113; x=1771276913;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-gg:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=B8RijGQOfqPIwUgELzLaWOi9LUBjEfJ1NBk4LJfVwV0=;
+        b=K806e7L0ilem6A1caFLWScjUmf5PrBs/W53Y36LeoTJXNuBlSyHFmkJFPdw+S9gFCo
+         n8lPvXGq/xyZtKjMvgMSNTF5vlrF1M98E0ipQavPccZsmTueINKdOHIs5vgvFl0sxEbN
+         uahDTn5rvwHXxIRzuCq0hKeXhPINYa4dCkrc0bK1oKaQSwaAEZ0DDLaeAwdvYQlNXJXv
+         q/vFazfxOK2pGiOOwsb7nw81zn/r/K2CAw9jcHcpQo1EbNv9sr85e76ipTw660n50ZYU
+         FiiBL9s/Qisfxymk02GR+oZ3C+JS32Qay20gIsY1bZO0nArxN3ZT5WSnUIXt8ZemLzWW
+         EORw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnHim0NaskkYGB3l0VhW640KXckGeccJLx9QkGQ6jmxm0iewy81azv0nS7jZDTqVCP/FhXhmZzVHKph/TfxYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4lFP8zb9wPAtixB080um6wJU+dm2FDhegf4cDYz0lVa+80cGk
+	Gl2e9Pr/Nqo1asujM2Zfutvc630ZEXpWOQt46LiXAhf3bpGXwqhFV6qVxGtjQjE348c=
+X-Gm-Gg: AZuq6aJaMu2dQ8WzMDVd//RsD/2aI8itTd4yZ0DROCYmuPucHIQ1LKTogyvSOzqWCwS
+	OwyeDxAIDQxrm4uIU5/R/Ic4ISGnVg3Ka2AGzLqT5iXsE0Wck7TxATu2T/xzAjY2zM63Ah7Wm0+
+	XlKJlYPzIp50QFgkjOH67NDElThQbkGKadkN044BqUa5Lo6+qsFCBKz7TJC+nTtn7uOH733zRiM
+	zxTlGtJndfBCU1xj3GL9hNTcbG2njUV/wxcFSq6m5KmV7CiTmLDm0sk5nzr327e2D4wPxpFu3B6
+	44xn+49YS1KiW69GiOHEYKcyWqgjeSivHcTeJ7HNM++nhn1u7pMSqn+2/GEvorGAOJUTGV0tEmL
+	rM+FMqOOAbRH1g8aS04Y10Tg4m0X87eh4o+Q2M+nxCnqxJZQxTFN3yHvrWh6C3wDO4Ld03dqW6g
 	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4c696u96fr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Feb 2026 20:43:13 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 619ISMot012616;
-	Mon, 9 Feb 2026 20:43:12 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4c6h7k6ja8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Feb 2026 20:43:12 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 619KhBL265012132
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Feb 2026 20:43:11 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D41F25805D;
-	Mon,  9 Feb 2026 20:43:10 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 16A9558055;
-	Mon,  9 Feb 2026 20:43:09 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.108.92])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Feb 2026 20:43:09 +0000 (GMT)
-Message-ID: <66f9d13875e81a965984e2a661e992a3fe43c516.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/3] integrity: Make arch_ima_get_secureboot
- integrity-wide
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Egorenkov	
- <egorenar@linux.ibm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Dave Hansen	
- <dave.hansen@intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Madhavan
- Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin	 <npiggin@gmail.com>,
-        "Christophe Leroy (CS GROUP)"
- <chleroy@kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger	
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas
- Gleixner <tglx@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov
- <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "maintainer:X86
- ARCHITECTURE (32-BIT AND 64-BIT)"	 <x86@kernel.org>,
-        "H. Peter Anvin"
- <hpa@zytor.com>,
-        Dmitry Kasatkin	 <dmitry.kasatkin@gmail.com>,
-        Eric
- Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"	 <serge@hallyn.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        open list	
- <linux-kernel@vger.kernel.org>,
-        "open list:LINUX FOR POWERPC (32-BIT AND
- 64-BIT)" <linuxppc-dev@lists.ozlabs.org>,
-        "open list:S390 ARCHITECTURE"
- <linux-s390@vger.kernel.org>,
-        "open list:EXTENSIBLE FIRMWARE INTERFACE
- (EFI)"	 <linux-efi@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM"	
- <linux-security-module@vger.kernel.org>,
-        "open
- list:KEYS/KEYRINGS_INTEGRITY"	 <keyrings@vger.kernel.org>
-In-Reply-To: <20260203041434.872784-2-coxu@redhat.com>
-References: <20260203041434.872784-1-coxu@redhat.com>
-	 <20260203041434.872784-2-coxu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 09 Feb 2026 15:43:08 -0500
+X-Received: by 2002:a05:6820:602:b0:664:685e:76b3 with SMTP id 006d021491bc7-66d0d205325mr5909878eaf.73.1770672113246;
+        Mon, 09 Feb 2026 13:21:53 -0800 (PST)
+Received: from [127.0.1.1] ([2a09:bac5:947d:1b37::2b6:46])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-66d390b935asm6591730eaf.5.2026.02.09.13.21.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Feb 2026 13:21:53 -0800 (PST)
+From: Frederick Lawler <fred@cloudflare.com>
+Date: Mon, 09 Feb 2026 15:21:48 -0600
+Subject: [PATCH v6 1/3] ima: Unify vfs_getattr_nosec() stat comparisons
+ under helper function
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Authority-Analysis: v=2.4 cv=KZnfcAYD c=1 sm=1 tr=0 ts=698a46e2 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22
- a=Mpw57Om8IfrbqaoTuvik:22 a=GgsMoib0sEa3-_RKJdDe:22 a=VnNF1IyMAAAA:8
- a=i0EeH86SAAAA:8 a=20KFwNOVAAAA:8 a=4cj3x1ySzUcWov3_WBgA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjA5MDE2NyBTYWx0ZWRfX8NzdX8SjuD/z
- Jr6LoY8ySh8S2uljRfOdx3N6Y3IZkgvwOvV3vQ+MBs1IeAtCvNusu0RQligiYQ+OBLf92h6a+Q4
- s+tteIdVwupKFPapl7+ybHOa9dYBmVixKW368DUjb0UhC1/QlNRB/dvb2eWG9mO6lOGDZJWVS/e
- CyyEZdfMTE3fRMYSYNDXsQzAj5T/r210A4ZJvVuMAm1t5sQd+VW+hq7E3oON/pcJ1qk9NRTDI0z
- k4iWPmA3gQxZZ1osSzKF/0WmU7RmDRwXLUNGyzUy5DvxwDLO+YRDz9IkdBSznR9qvF8kPGQpuJI
- P5arwaGKksQkJc+uoOWXO7ZNb6MEz6BPUrTosOsTr3oYuKLkrkOC1PTEQ6yck6aFZfXH/OOdg+n
- BKRyuo7qOvIOIMda8QPQEK+WfsvptoSJQxaxeBTGRgYSzO7sO7SbQRhSneTExGmyXbIH0nQh+Y1
- vYmYuM5hpCdClYTI1yg==
-X-Proofpoint-ORIG-GUID: qFeWjB0THaoEJqNN4oNEEH-uukJg8mvI
-X-Proofpoint-GUID: EW8OSGEJoKAL3MfAfS-L_UR2r-2UpTiB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-02-09_01,2026-02-09_04,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- clxscore=1011 suspectscore=0 phishscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2601150000 definitions=main-2602090167
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20260209-xfs-ima-fixup-v6-1-72f576f90e67@cloudflare.com>
+References: <20260209-xfs-ima-fixup-v6-0-72f576f90e67@cloudflare.com>
+In-Reply-To: <20260209-xfs-ima-fixup-v6-0-72f576f90e67@cloudflare.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+ Jeff Layton <jlayton@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, kernel-team@cloudflare.com, 
+ Frederick Lawler <fred@cloudflare.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1964; i=fred@cloudflare.com;
+ h=from:subject:message-id; bh=E44D0I52YoGh+U5fwPkQ5hEITkBV+sZorQSKCWfktmc=;
+ b=owEBbQKS/ZANAwAKAasltHYDktNtAcsmYgBpik/tn6socxTvLoAVUKBxgks8JYngsmEQKClzr
+ 9PM/m9505aJAjMEAAEKAB0WIQTLNBqMVmu1PHvjOe2rJbR2A5LTbQUCaYpP7QAKCRCrJbR2A5LT
+ bWf/EACRQr5bwV3DkSeYkjepPfCow9f0Jr7heeQz7lqiKJFOsMCSFCDBhJYOA23nT2Ea77SUlPe
+ m/Uwiv9MG4ys0RaFvnPwtTDrVX4CUwWZrq1qaCadNlL8gfnJrHOHiwRFMkJjE5Ac332XRK0lcIX
+ W7cuICWBzOZE5PI8KIwiijeL9ZAUDcGMYNu5FkRK9MkLSU5hyOr9vDqTi6o18TR2J+/FO+uCAss
+ ZpKWlVck4xy821WwrgLUfCMZfYWkRd+Y2H//r7GA3Ve2/Ya25h34L9RKxNaJbmrjluV+sGhQHrT
+ ELDCW2TA1MMLooG8qd07MN0LoajUHEO9amvBMOX3pdbl7okt457Ogc2GdKquP31STJFmhlJI4mz
+ WulxzkC9LhFbzrCdVs2ZiJEufNxPODo1aZOs4MBqE/CT4O0m4lpCxFIGUe2cMEDCAQWXSr/bP4X
+ oRIIMdOvZXk4jaAWUuYv0r9cZhQjYryDRFNop1Yxk7rne23EOLA0CLm0gWHQU6FxxiPJx908WIH
+ cbH28KD9pwJ2zmsR+IT9KZUayWzkVlxTOPWRG8v0LLYSaVjoCKdN5WOAMWs2WNfOFWZvN7XR9Vd
+ Dc8UZiu0RoEkK88tfAenmAtq78oIW4WDIt2XUPLV41BIG+H/ejmvtjckxEN54W8W3ugoKLlA3he
+ PfKIr1+nk/S8j5g==
+X-Developer-Key: i=fred@cloudflare.com; a=openpgp;
+ fpr=CB341A8C566BB53C7BE339EDAB25B4760392D36D
 
-On Tue, 2026-02-03 at 12:14 +0800, Coiby Xu wrote:
-> EVM and other LSMs need the ability to query the secure boot status of
-> the system, without directly calling the IMA arch_ima_get_secureboot
-> function. Refactor the secure boot status check into a general function
-> named arch_get_secureboot.
->=20
-> Reported-and-suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
+The logic for comparing kstat.change_cookie against IMA version is
+hard to read. Abstract comparison logic into a new function
+integrity_inode_attrs_stat_changed().
 
-Thanks, Coiby.  Other than unnecessarily splitting a line, the patch set lo=
-oks
-good.  As soon as the open window closes, I'll queue these patches for linu=
-x-
-next.
+No functional change intended.
 
-> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/im=
-a_efi.c
-> index 138029bfcce1..27521d665d33 100644
-> --- a/security/integrity/ima/ima_efi.c
-> +++ b/security/integrity/ima/ima_efi.c
-> @@ -2,52 +2,9 @@
->  /*
->   * Copyright (C) 2018 IBM Corporation
->   */
-> -#include <linux/efi.h>
->  #include <linux/module.h>
->  #include <linux/ima.h>
-> -#include <asm/efi.h>
-> -
-> -#ifndef arch_ima_efi_boot_mode
-> -#define arch_ima_efi_boot_mode efi_secureboot_mode_unset
-> -#endif
-> -
-> -static enum efi_secureboot_mode get_sb_mode(void)
-> -{
-> -	enum efi_secureboot_mode mode;
-> -
-> -	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
-> -		pr_info("ima: secureboot mode unknown, no efi\n");
-> -		return efi_secureboot_mode_unknown;
-> -	}
-> -
-> -	mode =3D efi_get_secureboot_mode(efi.get_variable);
-> -	if (mode =3D=3D efi_secureboot_mode_disabled)
-> -		pr_info("ima: secureboot mode disabled\n");
-> -	else if (mode =3D=3D efi_secureboot_mode_unknown)
-> -		pr_info("ima: secureboot mode unknown\n");
-> -	else
-> -		pr_info("ima: secureboot mode enabled\n");
-> -	return mode;
-> -}
-> -
-> -bool arch_ima_get_secureboot(void)
-> -{
-> -	static enum efi_secureboot_mode sb_mode;
-> -	static bool initialized;
-> -
-> -	if (!initialized && efi_enabled(EFI_BOOT)) {
-> -		sb_mode =3D arch_ima_efi_boot_mode;
-> -
-> -		if (sb_mode =3D=3D efi_secureboot_mode_unset)
-> -			sb_mode =3D get_sb_mode();
-> -		initialized =3D true;
-> -	}
-> -
-> -	if (sb_mode =3D=3D efi_secureboot_mode_enabled)
-> -		return true;
-> -	else
-> -		return false;
-> -}
-> +#include <linux/secure_boot.h>
-> =20
->  /* secureboot arch rules */
->  static const char * const sb_arch_rules[] =3D {
-> @@ -67,7 +24,8 @@ static const char * const sb_arch_rules[] =3D {
-> =20
->  const char * const *arch_get_ima_policy(void)
->  {
-> -	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-> +	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) &&
-> +	    arch_get_secureboot()) {
+Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+---
+ include/linux/integrity.h         | 11 +++++++++++
+ security/integrity/ima/ima_main.c |  4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
-No need to split the line here or below.
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index f5842372359be5341b6870a43b92e695e8fc78af..beb9ab19fa6257e79266b58bcb5f55b0c5445828 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -49,6 +49,17 @@ integrity_inode_attrs_store(struct integrity_inode_attributes *attrs,
+ 	attrs->ino = inode->i_ino;
+ }
+ 
++/* Compares stat attributes for change detection. */
++static inline bool
++integrity_inode_attrs_stat_changed
++(const struct integrity_inode_attributes *attrs, const struct kstat *stat)
++{
++	if (stat->result_mask & STATX_CHANGE_COOKIE)
++		return stat->change_cookie != attrs->version;
++
++	return true;
++}
++
+ /*
+  * On stacked filesystems detect whether the inode or its content has changed.
+  */
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 5770cf691912aa912fc65280c59f5baac35dd725..6570ad10887b9ea1172c78274cf62482350e87ff 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -201,8 +201,8 @@ static void ima_check_last_writer(struct ima_iint_cache *iint,
+ 		    vfs_getattr_nosec(&file->f_path, &stat,
+ 				      STATX_CHANGE_COOKIE,
+ 				      AT_STATX_SYNC_AS_STAT) ||
+-		    !(stat.result_mask & STATX_CHANGE_COOKIE) ||
+-		    stat.change_cookie != iint->real_inode.version) {
++		    integrity_inode_attrs_stat_changed(&iint->real_inode,
++						       &stat)) {
+ 			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+ 			iint->measured_pcrs = 0;
+ 			if (update)
 
+-- 
+2.43.0
 
->  		if (IS_ENABLED(CONFIG_MODULE_SIG))
->  			set_module_sig_enforced();
->  		if (IS_ENABLED(CONFIG_KEXEC_SIG))
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
-ma_main.c
-> index 5770cf691912..6d093ac82a45 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -949,8 +949,8 @@ static int ima_load_data(enum kernel_load_data_id id,=
- bool contents)
-> =20
->  	switch (id) {
->  	case LOADING_KEXEC_IMAGE:
-> -		if (IS_ENABLED(CONFIG_KEXEC_SIG)
-> -		    && arch_ima_get_secureboot()) {
-> +		if (IS_ENABLED(CONFIG_KEXEC_SIG) &&
-> +		    arch_get_secureboot()) {
-
-=3D=3D=3D>
-
-Mimi
-
->  			pr_err("impossible to appraise a kernel image without a file descript=
-or; try using kexec_file_load syscall.\n");
->  			return -EACCES;
->  		}
