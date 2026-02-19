@@ -1,156 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10C4199920;
-	Thu, 19 Feb 2026 15:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF6D34CFD7;
+	Thu, 19 Feb 2026 17:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1771515393; cv=none; b=R8VgNODAZE0cUyAK5+fppQdmUvKtGDmMWbt+K+sYmCn/SKEAl6C63O3p5rajmvvHf4VTsvEaMT8AHKg7/XJn4YZ+rJzhM6Xfkwixk5lZitcnifATnoZEe5xAKvIz5Ki7qi3wdW9BtYKYRxvb2Xxp6KYFHIaxTZS7nzkRANO4X9I=
+	t=1771521074; cv=none; b=qClpwlzPd69Lq3fjpt0Vck1ubswCIo6dQJIyk4b8xb2DAFRr5ZwOHQsgGiu5wRCJpY6svMFFe802KrSbAigpuTdn2YMXiJldK7OQjUTwDRFT/AtRmwDDWP4HCiMvfAg3dpzAozZLG+/U3SSWvkqi2SEZOfxxWImdxnqRdXcQoCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1771515393; c=relaxed/simple;
-	bh=xvGScHjuinZ0ATzJQB4XWDn+7FfGiPuiuds790maVJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i7sWn0jm99MR6P+3O/mWsftjTZwxoTw0GUmasEgn2q0BAfoR1us1GepskVekNBO4fI+I6gm8+7g6ZKRhrwtndNTcYaEhw5aIbNQC0qIkucgSwuqKBi5jEMAkbIgTlCxLqKeMwuoP0snYrQ+eK7DtluI3Da4z15eL7e4+At+mWWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9Y8eQbd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1771521074; c=relaxed/simple;
+	bh=YsjWyAGSyAzJqcz0jlZAz0lznVHz9OA+6mfXetjPUxQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=s48aMWDjiD5z9Z67yU1rF+9m3LcDyn40wtURrYWz7+gK5Uza6zdTGwEsTJYMmVtT3Dn9OlkJP1i9saOiZac6FWXftaMEZH1cXkHmTTwaPjm09QqfUTtMwrIOeT2f9wOSqi6jaZU0cOIDQEv4IF5NIcqdzo2q6iFTl1rWZudAikQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qi9a6aXI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9Y8eQbd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1105BC4CEF7;
-	Thu, 19 Feb 2026 15:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1771515392;
-	bh=xvGScHjuinZ0ATzJQB4XWDn+7FfGiPuiuds790maVJM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X9Y8eQbdJ27k5PgYNvucYbCou7PyhGWqSaSw5zQ9BMp5TfRnUEdlq6LpQNPShYF5f
-	 5+FQ33fjy0j5phsKwCSp4c7vnv/kHZcBDSSjYmZlxE1Rtj1KPTdsrqJGBOt45xASBq
-	 44TBES2c3aRoJck462y43Jn27YvOo7ETxGA06SfCErH9+rqHx3PFjCIsihwiliYBCg
-	 veM9FYkRpCNI2Sz3gH5imjY0d+gVJfxUt6b95uJIf9Q9ucaEOWthJTA5KvIjlhbXNZ
-	 UhYdrRsiVZ56wQU95sEc+CesXOgk3pKmiLRxYkB6wDl85KBhED/TFJPanXaK4uOKHr
-	 DM1nWzuo7fGxA==
-Date: Thu, 19 Feb 2026 15:27:56 +0100
-From: Nicolas Schier <nsc@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Nathan Chancellor <nathan@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Daniel Gomez <da.gomez@kernel.org>,
-	Aaron Tomlin <atomlin@atomlin.com>,
-	"Christophe Leroy (CS GROUP)" <chleroy@kernel.org>,
-	Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>,
-	Xiu Jianfeng <xiujianfeng@huawei.com>,
-	Fabian =?iso-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>,
-	Arnout Engelen <arnout@bzzt.net>,
-	Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>,
-	Christian Heusel <christian@heusel.eu>,
-	=?iso-8859-1?Q?C=E2ju?= Mihai-Drosi <mcaju95@gmail.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 15/17] module: Introduce hash-based integrity checking
-Message-ID: <aZcd7PpetL8J6CM4@derry.ads.avm.de>
-References: <20260113-module-hashes-v4-0-0b932db9b56b@weissschuh.net>
- <20260113-module-hashes-v4-15-0b932db9b56b@weissschuh.net>
- <db1ed045-d7b6-49dc-b111-9fea7c30f8ab@suse.com>
- <28cf8d51-7530-41d5-a47b-cad5ecabd269@t-8ch.de>
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qi9a6aXI"
+Received: from ehlo.thunderbird.net (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 61JHA6mF061543
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 19 Feb 2026 09:10:07 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 61JHA6mF061543
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2026012301; t=1771521011;
+	bh=kccVFgKV/Gov4dZzwLE1ZqBthUx7ayVQs5AokW/GCIk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=qi9a6aXIYjVNA1t7lLg6lec45w4xiw/YNvwOXsl/BeUiwX3xR8D9fg6pp9oKGexCZ
+	 6D3eyWIxQARRqjXrLiPOKFSwMuvLa3SxUpYrik5QBcJlaohTjifVD4ietFKfvE7YN0
+	 wGeIqxEW8FdjCO8akb1R+UoMvl4JtQ7/RU8Xif3Ylgo+7pe4T+aNWgPHm1TKvr0DBT
+	 h5QK/ukeiKE88Z1agf+xXaZbQMsQlIdbiodoT0w2TISCu7dIboN8odsnzmqr+SnZuM
+	 duXP5P8r7zdUdBl8CEBY5fTSLz/lMWYG/QiQKEhgKr0CyRp8VCM0Z1hAXRxr36F9Jq
+	 mAhHSoO2EMSOA==
+Date: Thu, 19 Feb 2026 09:10:01 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Ard Biesheuvel <ardb@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
+        Simo Sorce <simo@redhat.com>
+CC: "Daniel P. Smith" <dpsmith@apertussolutions.com>,
+        Ross Philipson <ross.philipson@oracle.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+        linux-efi@vger.kernel.org, iommu@lists.linux.dev,
+        dave.hansen@linux.intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+        peterhuewe@gmx.de, Jarkko Sakkinen <jarkko@kernel.org>, jgg@ziepe.ca,
+        nivedita@alum.mit.edu, Herbert Xu <herbert@gondor.apana.org.au>,
+        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com,
+        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
+        trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v15 00/28] x86: Secure Launch support for Intel TXT
+User-Agent: K-9 Mail for Android
+In-Reply-To: <558d0f28-01fb-4447-891c-2ffbf869c077@app.fastmail.com>
+References: <20251215233316.1076248-1-ross.philipson@oracle.com> <b5f2b5a5-b984-4ed3-a023-c06d634f9146@app.fastmail.com> <1ffd3cb5-2c76-4371-a067-3e4849907d80@apertussolutions.com> <49d169bf-0ad2-49be-b7d7-fceb9e7f831a@app.fastmail.com> <CALCETrUE8c-dxRWhtHKz_PojwZuWMXJSzOsFQf2vt5LS3ATwpA@mail.gmail.com> <1BBD7449-8420-43FD-930B-A4E1BA38FFC6@zytor.com> <CALCETrWzG1Mjb-RcwLQ5-tGFZ15WKHjZbqtLvyif+UPuVKJ_5g@mail.gmail.com> <32e62cef7b89d9691bdd4120388ce752fd041230.camel@redhat.com> <CALCETrUMR0RvOFXGzL7=F4c-3veL+1Sm2xf-BprHTK4=UKw8yA@mail.gmail.com> <558d0f28-01fb-4447-891c-2ffbf869c077@app.fastmail.com>
+Message-ID: <4AF70D88-AD0C-4421-B8D5-2055D6B5E736@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <28cf8d51-7530-41d5-a47b-cad5ecabd269@t-8ch.de>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 03, 2026 at 01:55:05PM +0100, Thomas Weißschuh wrote:
-> On 2026-01-30 18:06:20+0100, Petr Pavlu wrote:
-> > On 1/13/26 1:28 PM, Thomas Weißschuh wrote:
-> > > Normally the .ko module files depend on a fully built vmlinux to be
-> > > available for modpost validation and BTF generation. With
-> > > CONFIG_MODULE_HASHES, vmlinux now depends on the modules
-> > > to build a merkle tree. This introduces a dependency cycle which is
-> > > impossible to satisfy. Work around this by building the modules during
-> > > link-vmlinux.sh, after vmlinux is complete enough for modpost and BTF
-> > > but before the final module hashes are
-> > 
-> > I wonder if this dependency cycle could be resolved by utilizing the
-> > split into vmlinux.unstripped and vmlinux that occurred last year.
-> > 
-> > The idea is to create the following ordering: vmlinux.unstripped ->
-> > modules -> vmlinux, and to patch in .module_hashes only when building
-> > the final vmlinux.
-> > 
-> > This would require the following:
-> > * Split scripts/Makefile.vmlinux into two Makefiles, one that builds the
-> >   current vmlinux.unstripped and the second one that builds the final
-> >   vmlinux from it.
-> > * Modify the top Makefile to recognize vmlinux.unstripped and update the
-> >   BTF generation rule 'modules: vmlinux' to
-> >   'modules: vmlinux.unstripped'.
-> > * Add the 'vmlinux: modules' ordering in the top Makefile for
-> >   CONFIG_MODULE_HASHES=y.
-> > * Remove the patching of vmlinux.unstripped in scripts/link-vmlinux.sh
-> >   and instead move it into scripts/Makefile.vmlinux when running objcopy
-> >   to produce the final vmlinux.
-> > 
-> > I think this approach has two main advantages:
-> > * CONFIG_MODULE_HASHES can be made orthogonal to
-> >   CONFIG_DEBUG_INFO_BTF_MODULES.
-> > * All dependencies are expressed at the Makefile level instead of having
-> >   scripts/link-vmlinux.sh invoke 'make -f Makefile modules'.
-> > 
-> > Below is a rough prototype that applies on top of this series. It is a
-> > bit verbose due to the splitting of part of scripts/Makefile.vmlinux
-> > into scripts/Makefile.vmlinux_unstripped.
-> 
-> That looks like a feasible alternative. Before adopting it, I'd like to
-> hear the preference of the kbuild folks.
-> 
-> > diff --git a/Makefile b/Makefile
-> > index 841772a5a260..19a3beb82fa7 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -1259,7 +1259,7 @@ vmlinux_o: vmlinux.a $(KBUILD_VMLINUX_LIBS)
-> >  vmlinux.o modules.builtin.modinfo modules.builtin: vmlinux_o
-> >  	@:
-> >  
-> > -PHONY += vmlinux
-> > +PHONY += vmlinux.unstripped vmlinux
-> >  # LDFLAGS_vmlinux in the top Makefile defines linker flags for the top vmlinux,
-> >  # not for decompressors. LDFLAGS_vmlinux in arch/*/boot/compressed/Makefile is
-> >  # unrelated; the decompressors just happen to have the same base name,
-> > @@ -1270,9 +1270,11 @@ PHONY += vmlinux
-> >  #   https://savannah.gnu.org/bugs/?61463
-> >  # For Make > 4.4, the following simple code will work:
-> >  #  vmlinux: private export LDFLAGS_vmlinux := $(LDFLAGS_vmlinux)
-> > -vmlinux: private _LDFLAGS_vmlinux := $(LDFLAGS_vmlinux)
-> > -vmlinux: export LDFLAGS_vmlinux = $(_LDFLAGS_vmlinux)
-> > -vmlinux: vmlinux.o $(KBUILD_LDS) modpost
-> > +vmlinux.unstripped: private _LDFLAGS_vmlinux := $(LDFLAGS_vmlinux)
-> > +vmlinux.unstripped: export LDFLAGS_vmlinux = $(_LDFLAGS_vmlinux)
-> > +vmlinux.unstripped: vmlinux.o $(KBUILD_LDS) modpost
-> > +	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.vmlinux_unstripped
-> > +vmlinux: vmlinux.unstripped
-> >  	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.vmlinux
-> 
-> Maybe we could keep them together in a single Makefile,
-> and instead have different targets in it.
-> 
+On February 18, 2026 11:54:55 PM PST, Ard Biesheuvel <ardb@kernel=2Eorg> wr=
+ote:
+>On Wed, 18 Feb 2026, at 22:54, Andy Lutomirski wrote:
+>> On Wed, Feb 18, 2026 at 1:04=E2=80=AFPM Simo Sorce <simo@redhat=2Ecom> =
+wrote:
+>>>
+>>> On Wed, 2026-02-18 at 12:34 -0800, Andy Lutomirski wrote:
+>>> > On Wed, Feb 18, 2026 at 12:29=E2=80=AFPM H=2E Peter Anvin <hpa@zytor=
+=2Ecom> wrote:
+>>> > >
+>>> > > On February 18, 2026 12:03:27 PM PST, Andy Lutomirski <luto@amacap=
+ital=2Enet> wrote:
+>>> > > > On Thu, Feb 12, 2026 at 12:40=E2=80=AFPM Ard Biesheuvel <ardb@ke=
+rnel=2Eorg> wrote:
+>>> > > > >
+>>> > > > > On Thu, 12 Feb 2026, at 20:49, Daniel P=2E Smith wrote:
+>>> > > > > > On 2/9/26 09:04, Ard Biesheuvel wrote:
+>>> > > > > =2E=2E=2E
+>>> > > > > But would it be better to disable the runtime services by defa=
+ult when doing a secure launch? PREEMPT_RT already does the same=2E
+>>> > > >
+>>> > > > So I have a possible way to disable EFI runtime service without =
+losing
+>>> > > > the ability to write EFI vars=2E  We come up with a simple file =
+format
+>>> > > > to store deferred EFI var updates and we come up with a place to=
+ put
+>>> > > > it so that we find it early-ish in boot the next time around=2E =
+ (This
+>>> > > > could be done via integration with systemd-boot or shim some oth=
+er
+>>> > > > boot loader or it could actually be part of the kernel=2E)  And =
+then,
+>>> > > > instead of writing variables directly, we write them to the defe=
+rred
+>>> > > > list and then update them on reboot (before TXT launch, etc)=2E =
+ [0]
+>>> > > > This would be a distincly nontrivial project and would not work =
+for
+>>> > > > all configurations=2E
+>>> > > >
+>>> > > > As a maybe less painful option, we could disable EFI runtime ser=
+vices
+>>> > > > but have a root-writable thing in sysfs that (a) turns them back=
+ on
+>>> > > > but (b) first extends a PCR to say that they're turned back on=
+=2E
+>>> > > >
+>>> > > > (Or someone could try running runtime services at CPL3=2E=2E=2E)
+>>> > > >
+>>> > > > [0] I have thought for years that Intel and AMD should do this o=
+n
+>>> > > > their end, too=2E  Keep the sensitive part of SMI flash entirely=
+ locked
+>>> > > > after boot and, instead of using magic SMM stuff to validate tha=
+t
+>>> > > > write attempts have the appropriate permissions and signatures, =
+queue
+>>> > > > them up as deferred upates and validate the signatures on the ne=
+xt
+>>> > > > boot before locking flash=2E
+>>> > > >
+>>> > >
+>>> > > *If* a physical EFI partition exists there is a lot to be said for=
+ this approach=2E
+>>> > >
+>>> > > The only issue with this that I can see is for things like network=
+ or CD/DVD booting where there isn't necessarily any EFI boot partition, it=
+ might not be writable, or it might not be persistent (e=2Eg=2E http bootin=
+g typically uses a ramdisk, like the old Linux initrd=2E)
+>>> >
+>>> > Hmm, I guess my approach is a 100% complete nonstarter for installin=
+g
+>>> > Linux from a CD, and it's really not awesome for installing Linux fr=
+om
+>>> > a USB stick=2E
+>>>
+>>> Doing any of this on a removable device feels generally like a trap=2E
+>>> You get your USB disk in, try to boot, and it saves vars, but reboot
+>>> fails for whatever reason, you plug it in another machine =2E=2E=2E an=
+d it
+>>> tries to "continue" from there? The amount of validation needed and
+>>> testing for failure modes across reboots sounds really painful=2E
+>>
+>> I kind of stand by my other previous suggestion, though:
+>>
+>> As a maybe less painful option, we could disable EFI runtime services
+>> but have a root-writable thing in sysfs that (a) turns them back on
+>> but (b) first extends a PCR to say that they're turned back on=2E
+>>
+>
+>After setting the EFI boot path to GRUB (or systemd-boot or whatever) at =
+installation time, what other meaningful interactions do we expect with the=
+ EFI runtime services?
+>
+>And given that the secure launch is orchestrated by the bootloader , with=
+ which the kernel has a backchannel via its configuration file, it should b=
+e rather straight-forward to implement the staging of variable updates ther=
+e if we really need it=2E=20
+>
+>Doing any of this at the EFI/spec level might lead to a situation where t=
+he OS now has to guess which of the provided APIs to manipulate variables i=
+s the least broken=2E
+>
+>Of course, for readinf variables, dumping the RT variables into a memory =
+buffer at boot time and exposing it via a EFI config table would be rather =
+straight-forward, but it is also something I feel should be the job of the =
+boot component that takes part in the decision to shield the runtime servic=
+es from the OS=2E
+>
+>
+>
+>
 
-yes, I think so, too.  I like the Petr's alternative.
-
-Kind regards,
-Nicolas
+The statement "that the kernel has a backchannel to" is *not true in gener=
+al*=2E
