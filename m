@@ -1,46 +1,47 @@
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFC737AA78;
-	Thu,  5 Mar 2026 09:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A257137A492;
+	Thu,  5 Mar 2026 09:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1772703106; cv=none; b=nFDAK4ftoCBgcFgu0uwphRsf5zVA0n103xUr04JyxuoTAmrVqpIJKtqhmE2nQLnuMqI7BLpZoxtGDtVQ5Zxx4wn2WQAZ3pBX2NL7aPD/7LAaxAEz22sqGhtlLQBdm+TwyFNj6MKOFwb+Bxo6/5417WZma7F0WvM2Khokm+gAi5U=
+	t=1772703107; cv=none; b=uxXEMDETzc1xd8qlETYbVVf8JtGul4SPAmuF7WZPOPjoEACp5wJVca8iVEeIk9zwfGtxOuspUg4BFsn/j1vdGCVbcO6TeL5otV55DqifrYM8OU+d7i17eZpx6d8wAfNXHs5jcYreG2jEoRmXSeN+TsjmkcdvMeZQWMrDIB2OucQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1772703106; c=relaxed/simple;
-	bh=tKTmRc6HrP6/OQRgSe9OxodcJLXzMpfhw17bqU4f6CI=;
+	s=arc-20240116; t=1772703107; c=relaxed/simple;
+	bh=MilPBKT5qdBGv3KAqViaqGXVrPTSiq77sK756EO+4xk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=peNvCyPa2cSoJUD28KtjZnY/bMVysparMoFNjWSaYUhxniP1XhT2OO5vA7exBurRP26dL7bE6O49Lo7pdTuCsuftq1J0FjZfGaIPJe1Lefsx+Va4DyC/84AhPH+3o/QA4pXGl9D2J9N2PAQc9dhVDe904XOa3XlVe0DhbpYL0uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2q0tqhpH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u2BNmBaj; arc=none smtp.client-ip=193.142.43.55
+	 In-Reply-To:To:Cc; b=fO1KKUIp2epjBtf92z8DplHqPs0jpVzBuNxYcVFBvuZluC94fe9WLYDV6sYISRxF35Cqlp0BuxZ2TqSsmNnDZHqcPlii9WS18VlVvTxBm0dA1pqHOsmrdUMpPDWUZR1P8mwVj4ITxxBsFnRuL76OFrXNw9/JKs/4XfGNnMiftas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p9C5y9rw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/OGcQce9; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2q0tqhpH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u2BNmBaj"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p9C5y9rw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/OGcQce9"
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1772703102;
+	s=2020; t=1772703103;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZMGtWqBpnjIDTR6LwAmpIJP3Qy4dhjS1J0sd7mm9aeM=;
-	b=2q0tqhpHSQ7pyhJqjKNNDuHQhCEEhWAhou5DUBBj+SxPyKXHKCZVJyyY+AEs9gEHFixKUv
-	64JQkBnlsbKEqpSEOvVrmHiMW1F9CZHB7wLoGXBvmYGk3TH6YlFxZZfQs5+iVnwGpPNzwl
-	QwZCnMvB4NCqEfMzkYo1Zd30wVfcsBRbOZx+OW0wt53KKZCHoEk2o+96QoGHCBqQJAzDH4
-	EMA24kZJBQVKF49oTNEJcQPxGau37YJ2I3Acn2lE8yS51ko33SFJVAqjt1ErauDxLOPzUs
-	ESPSWahMb5V58sfHU2tTzCJ8fAsUdf/we1e2gno3bQTDWaJAjuDVjo72Z2cmIw==
+	bh=+RqUxSzmka9uuI1Wx1AJs8zJfLvQqhjOS+vbWhu9tD0=;
+	b=p9C5y9rwFEmnAp2CGqAtFKMjnqIe1zdQ4+nOtpBSsamNDNzfKJgdqzAeQDDsLd4DJF+kgZ
+	6sNvKLC3RvhGMB3hVQwOQ6ekuINp+DWT3tlf4gywh84hFHdri/uBlqAJNeU8UFgPnlbnNW
+	EvtRJDgwGFT1FOe57Z5Ea3hK3zv4JW3VUCJ79ZXL9XpWUYFxehI00gpyoMxHx5fUbLqiOM
+	b1X+UVgjJ+fmT1tLUJ98b0nMgyhY5il29ACDOPkGI5fCRopEXXYwtoWpU5UeKzMtwr4rRm
+	bwezwyrPY9P3y/HIfrI1KsUx3TVUwMvGvdIxhHY5SxLrtqgRT7HzC5V4mr+1uQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1772703102;
+	s=2020e; t=1772703103;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZMGtWqBpnjIDTR6LwAmpIJP3Qy4dhjS1J0sd7mm9aeM=;
-	b=u2BNmBajX+Bc2va3ByC4+zg2NFcD2PhiKSxYLWK768rveJGiJpCuI3NnFrgHMoaBzufHbO
-	IyUQz+I7Ub+HzKCA==
-Date: Thu, 05 Mar 2026 10:31:42 +0100
-Subject: [PATCH v3 6/8] tools uapi headers: add linux/module_signature.h
+	bh=+RqUxSzmka9uuI1Wx1AJs8zJfLvQqhjOS+vbWhu9tD0=;
+	b=/OGcQce9mannqgNlVUhX9Q2OG9BZlxlgOuGhkqtIhPYabSxY7r4FrUr3NWSidwwpjnL85d
+	IQvqXwinNVdG3rCA==
+Date: Thu, 05 Mar 2026 10:31:44 +0100
+Subject: [PATCH v3 8/8] selftests/bpf: verify_pkcs7_sig: Use 'struct
+ module_signature' from the UAPI headers
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -49,7 +50,7 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20260305-module-signature-uapi-v3-6-92f45ea6028c@linutronix.de>
+Message-Id: <20260305-module-signature-uapi-v3-8-92f45ea6028c@linutronix.de>
 References: <20260305-module-signature-uapi-v3-0-92f45ea6028c@linutronix.de>
 In-Reply-To: <20260305-module-signature-uapi-v3-0-92f45ea6028c@linutronix.de>
 To: David Howells <dhowells@redhat.com>, 
@@ -79,69 +80,83 @@ Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-kbuild@vger.kernel.org, bpf@vger.kernel.org, 
  linux-kselftest@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1772703098; l=1785;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1772703098; l=2348;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=tKTmRc6HrP6/OQRgSe9OxodcJLXzMpfhw17bqU4f6CI=;
- b=6okz7H5JeywVCnE7bUZrCe9AgS1uJ6mwkeuil3PLFb3vxveVwTbPuI95Dm5erhFwiWK6RKhUc
- GaJuJnTTdvsDCLpSsFbjySD4CYwEz7DnHRN/ooZ1gxPAeIz5Ak7qNdd
+ bh=MilPBKT5qdBGv3KAqViaqGXVrPTSiq77sK756EO+4xk=;
+ b=rKfAFWzdoNIT7gthnby0DUqAt4PvCm+Oyhh6b2OsiAR4IYV2cjqpGSAzej9eSAFHoarRyr7W8
+ 1JYGHvD0QNQA34xWrSWMB2K3+eZa4zH/T3ZRUnvHW48bm8RU3tfyNrX
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-This header is going to be used from scripts/sign-file.
+Now that the UAPI headers provide the required definitions, use those.
+Some symbols have been renamed, adapt to those.
 
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 ---
- tools/include/uapi/linux/module_signature.h | 41 +++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+ .../selftests/bpf/prog_tests/verify_pkcs7_sig.c    | 28 +++-------------------
+ 1 file changed, 3 insertions(+), 25 deletions(-)
 
-diff --git a/tools/include/uapi/linux/module_signature.h b/tools/include/uapi/linux/module_signature.h
-new file mode 100644
-index 000000000000..634c9f1c8fc2
---- /dev/null
-+++ b/tools/include/uapi/linux/module_signature.h
-@@ -0,0 +1,41 @@
-+/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-+/*
-+ * Module signature handling.
-+ *
-+ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
-+ */
-+
-+#ifndef _UAPI_LINUX_MODULE_SIGNATURE_H
-+#define _UAPI_LINUX_MODULE_SIGNATURE_H
-+
-+#include <linux/types.h>
-+
-+/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
-+#define MODULE_SIGNATURE_MARKER "~Module signature appended~\n"
-+
-+enum module_signature_type {
-+	MODULE_SIGNATURE_TYPE_PKCS7 = 2,	/* Signature in PKCS#7 message */
-+};
-+
-+/*
-+ * Module signature information block.
-+ *
-+ * The constituents of the signature section are, in order:
-+ *
-+ *	- Signer's name
-+ *	- Key identifier
-+ *	- Signature data
-+ *	- Information block
-+ */
-+struct module_signature {
-+	__u8	algo;		/* Public-key crypto algorithm [0] */
-+	__u8	hash;		/* Digest algorithm [0] */
-+	__u8	id_type;	/* Key identifier type [enum module_signature_type] */
-+	__u8	signer_len;	/* Length of signer's name [0] */
-+	__u8	key_id_len;	/* Length of key identifier [0] */
-+	__u8	__pad[3];
-+	__be32	sig_len;	/* Length of signature data */
-+};
-+
-+#endif /* _UAPI_LINUX_MODULE_SIGNATURE_H */
+diff --git a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
+index 4d69d9d55e17..f327feb8e38c 100644
+--- a/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
++++ b/tools/testing/selftests/bpf/prog_tests/verify_pkcs7_sig.c
+@@ -18,6 +18,7 @@
+ #include <linux/keyctl.h>
+ #include <sys/xattr.h>
+ #include <linux/fsverity.h>
++#include <linux/module_signature.h>
+ #include <test_progs.h>
+ 
+ #include "test_verify_pkcs7_sig.skel.h"
+@@ -33,29 +34,6 @@
+ #define SHA256_DIGEST_SIZE      32
+ #endif
+ 
+-/* In stripped ARM and x86-64 modules, ~ is surprisingly rare. */
+-#define MODULE_SIG_STRING "~Module signature appended~\n"
+-
+-/*
+- * Module signature information block.
+- *
+- * The constituents of the signature section are, in order:
+- *
+- *	- Signer's name
+- *	- Key identifier
+- *	- Signature data
+- *	- Information block
+- */
+-struct module_signature {
+-	__u8	algo;		/* Public-key crypto algorithm [0] */
+-	__u8	hash;		/* Digest algorithm [0] */
+-	__u8	id_type;	/* Key identifier type [PKEY_ID_PKCS7] */
+-	__u8	signer_len;	/* Length of signer's name [0] */
+-	__u8	key_id_len;	/* Length of key identifier [0] */
+-	__u8	__pad[3];
+-	__be32	sig_len;	/* Length of signature data */
+-};
+-
+ struct data {
+ 	__u8 data[MAX_DATA_SIZE];
+ 	__u32 data_len;
+@@ -215,7 +193,7 @@ static int populate_data_item_mod(struct data *data_item)
+ 		return 0;
+ 
+ 	modlen = st.st_size;
+-	marker_len = sizeof(MODULE_SIG_STRING) - 1;
++	marker_len = sizeof(MODULE_SIGNATURE_MARKER) - 1;
+ 
+ 	fd = open(mod_path, O_RDONLY);
+ 	if (fd == -1)
+@@ -228,7 +206,7 @@ static int populate_data_item_mod(struct data *data_item)
+ 	if (mod == MAP_FAILED)
+ 		return -errno;
+ 
+-	if (strncmp(mod + modlen - marker_len, MODULE_SIG_STRING, marker_len)) {
++	if (strncmp(mod + modlen - marker_len, MODULE_SIGNATURE_MARKER, marker_len)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
 
 -- 
 2.53.0
