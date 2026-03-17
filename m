@@ -1,127 +1,88 @@
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4271B3ED106
-	for <linux-integrity@vger.kernel.org>; Tue, 17 Mar 2026 14:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1773756844; cv=pass; b=VEvdSk5T35JOa4Z++6Z3Pw0PGPm1F2MyxFBh0Om9vHMjoxksEY/6eqs+0w+DNJAiFPCb3vgPf4qCknKPeg5GAbpo3/qR/hjiuTgWqAWjBZF9C11SF6CQdm40c2kForhQmVuV8bBWUmaGV5cu120/bNuY36e3zojltkBfh4B+FSc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1773756844; c=relaxed/simple;
-	bh=EdqnQ/ee9hXi08kIYDisfAokTsXv/oY+z6ZTg1VNQQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XWtdeaWM304U6ULg/6zQUEgc3YbjO5+/gIXSnLh1Fn0iRVk/EQcSWKIRR8v547DhCs3FMdnC2FEPlBCoOhHuvOkY+bO6gc0PcJ2DKcMMTQzE8tQP4NlnbZBA68wb3ycuY2dHhbfa/mnTga8tXC3hc0ab8JekUFZbKDuDzXXVxbQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmSHWHx9; arc=pass smtp.client-ip=74.125.82.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A18D3E3C6E;
+	Tue, 17 Mar 2026 14:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1773758366; cv=none; b=N7nGp/ZN7l64N1V6D1ZcPJXLjfHLsUzqS9/zfLl5d3qJjVCFASlejUKccIK/go6QaPCI5IQF8sUuREt03UlX9jsGZIOuXd0NEtG+misHlwZFXlSZLXjVAbrru6jBxIFZzQTusN0JnDm20o25DvzuW05UMsfV0wmo4qboEhuF56I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1773758366; c=relaxed/simple;
+	bh=PWfE+o5Hz+nic40jQHCKcE3T28Qk2FdkhdgeMe1G7Jc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fGRgxuXc0jIurbPp1m6NpHxpN0NanOjm4+Tu+X0V0r5iOTfLs5IUUrGctyORFt2ifsgw3NL0yBRwIxpZckE/x+R/NQReE97AvgLBla4dkp4WXfmzpPbHrWs3rZeg1Y/ujWiYcia0awWhg405kZiWAIaya08MUXqYi7R+xdzAKcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZxYgYDn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmSHWHx9"
-Received: by mail-dl1-f52.google.com with SMTP id a92af1059eb24-12732165d1eso7526633c88.1
-        for <linux-integrity@vger.kernel.org>; Tue, 17 Mar 2026 07:14:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773756842; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DnFxC8JmPTh52D8Pa5TJdS7GwXJcDGZLGkSxiCo3GtiBdiJwTqRpQI42uFnqb5hB80
-         mGGh7MRNDAteJMKR+ehrK8lp3bHMNToHTRjLUPmb54bu1qKeYXQfSDP7qXzA7a6SVO44
-         8MAHPR1VvbHFmDo0pBbhv8E73zGx6p9ZRLSBUlxINSDCps0GlGOOG/q8u8oKTlK5/s1o
-         i1cC5i09n5M+8dYrBcgil7IytukaCSKyFjEcS1GG486G924uDHBhr3LiO+mh4xLjF6xQ
-         Ph+C5M7YF8YoNbDX5K2hnP7n1Ia4++v9k37N9hLh8uM+MBXI82SSKixxD7NLV3jiI1RA
-         pZLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature;
-        bh=xn/itZbZbF5nwf/139mTUaS6349g0FmeD4vfOEoMPrU=;
-        fh=uZDhXECgK8gpkAatwFNzDwNYftBE+gb4Iw1Ktw2DaGg=;
-        b=QTwZcHRnhQP2iqAVRPhvKbVDVDfbk10CWbhP6h497JFKNZpZg5L4Yr8IUG431wXBKD
-         tF8qgqR7NbHvYJVp0d5zHxGSTvokPliptuCHCsQuzvr4uNkowRvq+MrviGzFg9CstWBt
-         S+8O2pPincUrFh9iyb3lP/mxKk5xnAySRxFrhA/oUaRr+n+bJ/FzvojwBPP1mKeIKAcs
-         PxEm1szPHpIR0jXJhPIIxk2osiXQxCTTowFgKVHlzTJlLeSk5SobD/ZY8gTI3T1tV1zZ
-         sHYGH9ImQR5GudDIsCFl6AyD93UodtYcUDaUzgwiToOfgx030rmxzR/kxwo8eGLTKgBv
-         JLPA==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1773756842; x=1774361642; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xn/itZbZbF5nwf/139mTUaS6349g0FmeD4vfOEoMPrU=;
-        b=fmSHWHx9dXPAErt44YRpyvkLs8p4i3xNZnFGfcK4gzr/8x7XQFyJYPvrlWkMbE7Bb8
-         QktYlpBuV8fCv5QYq4xuEcJ3GjSAlLURXw3j9A4l8RxSJ5b9axEzi+zs4chvMG70ucCO
-         dm/SIroG2d3RbfaOKAfYbmbGbjRHG/LCvikZpLi+5h/M5fFim2qjhuGETWVH24RWVbQP
-         iqOfF71+P4fNb8dSOge+OkjE6sUXwFR00xQpuY12e3wti5bO/d+fhaLH2Jee+tlA0q4Z
-         ZXHF6oqZ6w2HflphSxZBZKXQIxPOtqc/WOlPHD9mNHGqfNYkXwX8wH4QpqqAaE0g0c7u
-         m4tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1773756842; x=1774361642;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xn/itZbZbF5nwf/139mTUaS6349g0FmeD4vfOEoMPrU=;
-        b=qyCf35y3as1+z8Sr5fVC6Zeivun2dnYvcgj+sc2kin2Rt6XKVwbkjjHTVqm5xBvISt
-         HWuvZPCk268s8m3cmmRmHFU6ew+wEVub51AsZOkb5Cep9GJL6pv1a5TtQmdg1BCDMbmS
-         d37IzSGYZT0yRPQU4HLrkU2q7WgPCAQQNpGgboxwCk2lX3P2BtH3Ol6eWnqJHPnKKuU6
-         MGFDfqS4gtO+e3KnlsICMxxyAH4DvRBfjBSA12cuymoG7Zlbeaa1fM0mRtdiX4VvnA6F
-         v1LyVO3x9+apiOCQn7fv3GlxBdFK5TL9g15vXiqb4L72Ew5pQ4NeDF+1lZMIOVc9UQPy
-         j0YA==
-X-Forwarded-Encrypted: i=1; AJvYcCXynV/odJdFondLXD90DETJeH1IS69k4qGS3FcKl4+yIvWGFjwnMHUEht+YvGA7CFabL1HqHWVsJnujXwuIca4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz54jSXxQkVsn50tViN3waGpeYz6RQG3Y6RvuP8jGKMBlg1tlBR
-	Rr/YwZLUZeIs8cdHAwIl9rkYBKs9bcP8nJYhPZ0ppkSKK8pVsbexygDe8yu2ztLxvV5JX4mhXUn
-	TKWTqp9LdGxhwg3CZUyudXaEpisC5a+o=
-X-Gm-Gg: ATEYQzySRXJR9sibrlO40lStQ+qYoe3DCktvw7FEOw5CO62kqJLJofIRhdcc7sFjKfc
-	QFlbySxC+prefXf4W8XWpT/A+MwYN5AvVXbt7E+zaJFurTsammH5zmc55bHMYMcxxpfFrtsjjXD
-	3D+l9VtXJS1WLBvZObeQ9I0uk9movIy4E8/F57hyty8olPracPhlCzKi2beb4o3djRcncdtuyT3
-	o7caTMEDt3/q3bRK9O2ofhz3XOyfu99u+3VIWoHfu0crIHMqGscjiQiBWEEV7LfDDfSsoan1pvC
-	YiGWS/LHdm/bjD4VnaveFM0HjyauaB+CFhNermklnOLfZk5W1AA=
-X-Received: by 2002:a05:7022:51b:b0:128:d2d1:8a5c with SMTP id
- a92af1059eb24-128f3d4681fmr6943205c88.19.1773756842325; Tue, 17 Mar 2026
- 07:14:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZxYgYDn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CEAC4CEF7;
+	Tue, 17 Mar 2026 14:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1773758366;
+	bh=PWfE+o5Hz+nic40jQHCKcE3T28Qk2FdkhdgeMe1G7Jc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=DZxYgYDnyUnQJBVCjIKBFtdKrR2n2NDrbhTvaPnowGyWoBVJekeM7cIgG+q1myQN0
+	 Q3LaLPEsNuYB0/60IkP+b/ZQc+WFEI/JROmJfRmFVKm3ao+OixC+nKDHQhyeP89YhT
+	 mWlJVI0tZhEVv1Ri05KsVEN7QkwB5o9jvOoNmo8+Yb+HJWh6ZUXo1nMf/zo6bOHDC0
+	 N2QuhWcAwm0LaRrEMx8DuU9zjtS4kL0cz06zZwAdJ/ToHBt78o33mXZiTrQzuhns8U
+	 nmErHEvDg9TEY8zFd2ckWIo+VmPouiHiZwlw8IDAVjJ8+On/NOY0cZs/BML0xNqAuK
+	 sBolTqWEqo6kQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	David Laight <david.laight.linux@gmail.com>,
+	linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v3 0/2] vfs: follow-on fixes for i_ino widening
+Date: Tue, 17 Mar 2026 15:39:13 +0100
+Message-ID: <20260317-sinkflug-symmetrie-0f05964e6492@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260316-iino-u64-v3-0-d1076b8f7a20@kernel.org>
+References: <20260316-iino-u64-v3-0-d1076b8f7a20@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260312053933.53012-1-ebiggers@kernel.org> <1c5f16f0913bae48bf2f24feaaaf3525ecdf4c97.camel@linux.ibm.com>
- <20260314182501.GA40504@quark>
-In-Reply-To: <20260314182501.GA40504@quark>
-From: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date: Tue, 17 Mar 2026 16:13:49 +0200
-X-Gm-Features: AaiRm50EY-Jww0f9BnxQWlTlgvfUmiFvfTcAZE0nG1rtFf2YfTEdbV6WxDtjKlU
-Message-ID: <CACE9dm9mZmPMYF7Soeo+ACgmQ-zH_JCaV1jyL8drZEZMq8cCtA@mail.gmail.com>
-Subject: Re: [PATCH] ima: remove buggy support for asynchronous hashes
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1142; i=brauner@kernel.org; h=from:subject:message-id; bh=PWfE+o5Hz+nic40jQHCKcE3T28Qk2FdkhdgeMe1G7Jc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTuTJ9uts1atzj19PQgX3uBpmW2KeHf5/RMYZrsfYLj3 r+nO3Z2dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExE+ijDX8mHen/cTkl2SNxT XyElLh3AushE/ufxeHfeSwYHv050EmVkOPteyPUTy+HPZzdsWJh86/sJzo4dvTyPf4Skn1wr+U7 Ykg8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Sat, 14 Mar 2026 at 20:25, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Thu, Mar 12, 2026 at 07:29:05PM -0400, Mimi Zohar wrote:
-> > On Wed, 2026-03-11 at 22:39 -0700, Eric Biggers wrote:
-> > > IMA computes hashes using the crypto_shash or crypto_ahash API.  The
-> > > latter is used only when ima.ahash_minsize is set on the command line,
-> > > and its purpose is ostensibly to make the hash computation faster.
-> > >
-> > > However, going off the CPU to a crypto engine and back again is actually
-> > > quite slow, especially compared with the acceleration that is built into
-> > > modern CPUs and the kernel now enables by default for most algorithms.
-> > > Typical performance results for SHA-256 on a modern platform can be
-> > > found at https://lore.kernel.org/linux-crypto/20250615184638.GA1480@sol/
-> > >
-> > > Partly for this reason, several other kernel subsystems have already
-> > > dropped support for the crypto_ahash API.
-> >
-> > The performance benefit was the ability of reading and filling a buffer from
-> > disk, which was slow, while the other buffer was sent to the crypto engine.
->
-> On normal filesystems, sequential reads from a file already kick off
-> async readahead.  So the hashing and disk reads can already happen
-> concurrently anyway.
->
-> - Eric
+On Mon, 16 Mar 2026 15:02:21 -0400, Jeff Layton wrote:
+> Just some patches to fix follow-on issues reported after the
+> inode->i_ino widening series. Christian, could you toss these
+> onto the vfs-7.1.kino branch?
 
-I think this is fine. It was developed to be used on OMAP processors a
-long time ago.
-It can go away..
+Applied to the vfs-7.1.kino branch of the vfs/vfs.git tree.
+Patches in the vfs-7.1.kino branch should appear in linux-next soon.
 
-Ack
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-7.1.kino
+
+[1/2] EVM: add comment describing why ino field is still unsigned long
+      https://git.kernel.org/vfs/vfs/c/bef5b11087ce
+[2/2] nilfs2: fix 64-bit division operations in nilfs_bmap_find_target_in_group()
+      https://git.kernel.org/vfs/vfs/c/81359c146fba
