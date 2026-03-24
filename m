@@ -1,67 +1,64 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B3035E921
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254EC2E093E
 	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 21:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774387437; cv=none; b=Hv3ujeWs0fBmD3WGD2tj2MxLOHdKK+D3uAFb8bvO8POgmSMzsmtSn/ay38aLVx06GrkDEm3EK8g6bGwTwg9ZrLTf15UeaBnuElxo0BR56Ikug5+o0xpui6jADH2Y6oFJ7iXaL2GWNl/JfidWrswBFItA+saKc+adL1Glumorw5w=
+	t=1774387438; cv=none; b=HBd+lWgEPcJnfnTnsIbpJfRZGdUu/rYrT4owtYQJUpZUCk1uOgYD4Y/cFWFW0BcQ5KwqjBkWLjqGDcAcnExXA3T4M+SwYkgpJ40i9V1XDdROus7unUJPRHJxQZONF4tAgoMPFYisjYtSBn6DIIlean3FGMaiyTA7GwVLF9Wh5sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774387437; c=relaxed/simple;
-	bh=cuMuZZ5llceaOlaP7IRLuQCGnHGFR7L3Z2yDYB+wNU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fBsLacbzU9TqHvGHq9UhYi/fAgwCS852yaV3ztFkzD/g/HGPZCQbyh7JGljDzVCfUgZtO1UgC9xBnnWceNUyKAZ8KiNVObFHgGvCVJ/PcDyZuMEZQFYs4FEqLrrJpusWexHuG1DRZe8JF57Au2ML728DHDjIh0vjBhOcG4w30Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TImDoRzq; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1774387438; c=relaxed/simple;
+	bh=U7k3fOkYslLyTjIDKsjuBHibd2Iz+LlK8hlOwl9PHHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i8FP51ibHyqFC+cGqQW+pP/WYBTOUuCv7NwaTpromymWRV8ezrLIALder1MaGp2uMAEtWFSCbvXu6c7hT+fqbfrXVxxJxihkMkfCJ7w9Fx5FMH476uPRiKXzuxz2d/ymFN8yU4yfyoBxIyGRdk2SDCBQ2Fij5BTx955nEMaUPKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AA0REGxK; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TImDoRzq"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OGTPsN213179;
-	Tue, 24 Mar 2026 21:23:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=LibFgLp7cGA/w4A/4
-	kO1rWIjTH7yb/A+27GbB4TeEJk=; b=TImDoRzq0iRNm1760yIxHxtHXaDo78DUU
-	5hxFGaIdJPY5Tu+xFpi5utT3SdCynqyAPMY+I+rojYRPeBT2rYY6u6vvzIl2yU5c
-	fFhoXC+3YIi4jdBfhjMFxq9xap+4qUKv2sXkZEvLaI63yMHOcgYNrdKMJw05VWj1
-	kXhOWgLH9SYCwJOpS3AFAklH3eKxosAmuo4qHv4kSs4TX192Jh3La78QyGzuqZPD
-	dNxgo5dgqhHDIioX5M26tf6L5Zd8uE08tVjoLOgrA6hVveCiByKyyht6BGcIg8Wn
-	gXze+jjhW+Bm0or7ce9Nl3/Q3aK4+4U2j1hsHYuYtIDHWdP7Kab4Q==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktxwsdq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 21:23:48 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OJC4Hn009143;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AA0REGxK"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62ODUdQP2945148;
 	Tue, 24 Mar 2026 21:23:47 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d26nnky2h-1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=ypceqVtZN1tpHfkHkM485+dUEpO1xNhdga/hawz4E
+	x4=; b=AA0REGxKtM9OKiZpxYirJ0xTfEvxeiZFG+K7NlwrvkPisjnZ2QLFxM35r
+	iv6GZ7NEDlQh/8baqOHo/pZvGT2cdOhAEEpU+THU18MuA0mslKVJ65bhVaHEsQj4
+	SrACCCf8s1l+gLo4Aurpx/S3YVk5gzNyRHRd9r1Nm+0whQy0yAkx68OsY/m6rdO8
+	chvOWrXypmoeZnfQop5FdgsubvwdWv7VsA9zV9FEAz0G0DBET6doWus+gqYKruBg
+	8Lw9L4rKxPKRb7oNyXHsnrz+RZHad/4+vkO1u3nBtKzbxYWH4t+6jg8BhufuGlpG
+	WnzyDGH6PtLcjU197fhgLQPxwawvg==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktuw43u-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 21:23:47 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OLNjbY197190
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Mar 2026 21:23:47 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OKj8nG011789;
 	Tue, 24 Mar 2026 21:23:46 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d27vk3qux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Mar 2026 21:23:46 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OLNjAA33358590
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Mar 2026 21:23:45 GMT
 Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CFF645805A;
-	Tue, 24 Mar 2026 21:23:45 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id F1FB158051;
+	Tue, 24 Mar 2026 21:23:44 +0000 (GMT)
 Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 82C0558051;
-	Tue, 24 Mar 2026 21:23:45 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 9AFD85805A;
+	Tue, 24 Mar 2026 21:23:44 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Mar 2026 21:23:45 +0000 (GMT)
+	Tue, 24 Mar 2026 21:23:44 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils: PATCH 2/2] Avoid memory leak if public_keys is NULL
-Date: Tue, 24 Mar 2026 17:23:42 -0400
-Message-ID: <20260324212342.739685-3-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils: PATCH 0/2] Fix memory leaks in libimaevm
+Date: Tue, 24 Mar 2026 17:23:40 -0400
+Message-ID: <20260324212342.739685-1-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260324212342.739685-1-stefanb@linux.ibm.com>
-References: <20260324212342.739685-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -70,76 +67,40 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=IqITsb/g c=1 sm=1 tr=0 ts=69c300e4 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+X-Proofpoint-ORIG-GUID: etYZTBKC1-f9ej1-wwUIR8Lrr0jpvj2d
+X-Authority-Analysis: v=2.4 cv=aMr9aL9m c=1 sm=1 tr=0 ts=69c300e3 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=uAbxVGIbfxUO_5tXvNgY:22 a=VnNF1IyMAAAA:8 a=bs58pr9YfctX8r2ydCAA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2NCBTYWx0ZWRfXyIMZRKvFnLH5
- 8KJcstQbYhBk8OA/sdQtbzYON7I/IFM1N73Cqd00m0V/gqgi1mj1n356eTXn1VzPQ8O55H/MWrn
- xobG4DpWAdxVx0J3uJjY2MynGQn953FFVSlaq/In/Dgqt3/aQ+fHnsiDItRecUAO+3PYRQTHet2
- 9KFJNVZhIdhYbD82VXGAbLV9sxRjnLBlmtvxBVvsV1vqyflURvTEgD+RyK7NfP/sRGHIacNjJUR
- QjwkF8iHf3vp0WUJkXFNF81+ovuCQ8luxWO1L8RBtsnU8A/sMmz0hBKuxJIK4bvP8+fXqCzY3w2
- Ak7Fn1V6aOZJccOC0R+HzK770cffVjB34AaroHHsVCgUK2mG2L/QK1nlgwzFCnp8C2q3UeKFIlP
- 7m9Ya7CCwwrd8suE5THZ89gdroWX24YdpvuNVd5hQAGuPxZKTr/Ayqzl8y08A3vA0kSHwDYH0Yk
- yqPSggdexNxlrrMvqOw==
-X-Proofpoint-GUID: xaDs2al5xNRB3UTj9wDK8WV9XHylnY3I
-X-Proofpoint-ORIG-GUID: xaDs2al5xNRB3UTj9wDK8WV9XHylnY3I
+ a=Y2IxJ9c9Rs8Kov3niI8_:22 a=fP-ZIkwX40fDXU7GDZgA:9 a=zZCYzV9kfG8A:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2NCBTYWx0ZWRfXwoIztYuqCFL3
+ vcI8mhk0pzLS4muVNm+jvE1erb3dsssa/lK6OdH1W3dBSKte11GZUiAQ4t7uPhCKPRACouDz/dV
+ B82SuV0xo7GJg5Q/+WggQus3xnTgnCQalxUFSD3DD0Uubs4fhl3obWFgxKN8QJchrB/LHslNxWO
+ etXV944zvqbeWzfBbILH/iZBgcDFxnIQkJtGIBok/4wx5VFUp7EJsxIBpL35bmaGhE0ix08oU5R
+ vo22O/YxnRHH5pde0h9j7aiNPsRQW9xSShckucIODxmkEtLSH/v2w5SSBVxyLgb001AAM9BY8YS
+ l71JZteZU1DMtwwkOYVqW725OjZotuTJRIU0xdtTXjPxkSGbHZZni/Knr+iStOhVAlX/TUxOrj2
+ 5Hjv7BAKFtqAACdZ0Es88HAaI05ed/kpzEzfY4Q40rLFF7+1+g3L3nNJo2pFLyQzEXt5cKevbs/
+ txAoVgru4sO50ZlX0Vg==
+X-Proofpoint-GUID: etYZTBKC1-f9ej1-wwUIR8Lrr0jpvj2d
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 spamscore=0 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 adultscore=0 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 clxscore=1015
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240164
 
-Avoid a memory leak of a public_key_entry if the passed public_keys
-pointer is NULL because in this case the entry is lost. For this particular
-case to work we would need public keys to be passed in as
-'struct public_key_entry **public_keys' so that '*public_keys = entry'
-could be assign. However, this change would propagate all the way to the
-API of the library and we don't want to change existing functions'
-signature.
+This series fixes two memory leaks in libimaevm.
 
-This change should not have any noticeable side-effect since the resolved
-case did not work before but the newly allocated entry was lost.
+   Stefan
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- src/libimaevm.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Stefan Berger (2):
+  Use EVP_PKEY_free to free a key of public_key_entry
+  Avoid memory leak if public_keys is NULL
 
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index 6512ee5..d8d5dbc 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -378,17 +378,16 @@ static EVP_PKEY *find_keyid(struct public_key_entry *public_keys,
- 		tail = entry;
- 	}
- 
--	/* add unknown keys to list */
--	entry = calloc(1, sizeof(struct public_key_entry));
--	if (!entry) {
--		perror("calloc");
--		return 0;
--	}
--	entry->keyid = keyid;
--	if (tail)
-+	/* add unknown keys to tail of list */
-+	if (tail) {
-+		entry = calloc(1, sizeof(struct public_key_entry));
-+		if (!entry) {
-+			perror("calloc");
-+			return 0;
-+		}
-+		entry->keyid = keyid;
- 		tail->next = entry;
--	else
--		public_keys = entry;
-+	}
- 	log_err("key %d: %x (unknown keyid)\n", i, __be32_to_cpup(&keyid));
- 	return 0;
- }
+ src/libimaevm.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
+
 -- 
 2.53.0
 
