@@ -1,64 +1,67 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E518B35E925
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABCF23B612
 	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 22:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774389810; cv=none; b=niMLGQkMksITRQx1xmc3t8s8mYvSDnniGfFp40hgfiGrlq/f2zLymjqFLEG9b8ToP4noAXUVzYhZTdkq3FH+5fTsvMSlorkU+zxMVwDsMbf/f/v1bVgbXyR+5tElDx+V+aP2KHt8n18OQ0l5uGy31cSDgjGd2COKz9BurfCg8gs=
+	t=1774389810; cv=none; b=YbwJ32muWCGtm+Q8yYRmku0rQ1hk479ISTiCrWZlLhnufS41kal5mg26Ov0VlXviGwhIfkTNVDSyOCTvXS51JYli+4lmUyvfhtXUtSb3fulghchvaJj7RaotOCAQprA8u/ysUeA7HXWuKFMl0ZXtZbpYvm8ad3r7s3mQ7lvcFwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1774389810; c=relaxed/simple;
-	bh=bjwIHGLLegNcz33BuxxyjNfzVIuR2H5SKP10qPTgvdM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sdg2Mn3aY4fLQaPFCZnx2BpGjxLEUV70cqlRhDOgnRJfK7lp9fXVRcqKRTx0doBCOOuvHICvJXxTXfGgj/sZbF+TUGobosa5eGBknOQUCgI1GI3/f1luvmM7OLIycYC4eHIgFUm/VQkmvfFdkNh6vxYd5hpElwm6FDF16W8+NQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=q1Q6LwvN; arc=none smtp.client-ip=148.163.156.1
+	bh=1W/Xwj2X+mgfCtD0v2GkHeMJIs5t9j3U5QL0INDv0ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TtwyqdQ0YgejUxEjdrUJu7GTDezZZoJ57dq+lZIKYaKwuPrNls9wf/pBcNBpA6ajhEsGWyygEOAzy92o7ocuP6kYBeW520q1TK7ia3NFkOgBWKqPVVf0ZtDPtGicAlLg2zqV/jHG2116mlFfEB0Lomp0bP/OIZVu/+0eP86CeRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U+GDsXA1; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="q1Q6LwvN"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OHYG8H044132;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U+GDsXA1"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OEqMS13468674;
 	Tue, 24 Mar 2026 22:03:21 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=VnX7fY+8+now1qa+ofNP7tz7XK9ze63EysjFWR/bT
-	/0=; b=q1Q6LwvN8SiDVohr4i4vNO83ks7aToWVs2FvvgwqNXyf9AWSD/Nit+YMC
-	s5x7KG/8yNDnC2YDlub6OI5eBbv66wKwWewO8IPpseUF6jd0L06A/tymk73MYjZq
-	xKv6bdOc8sdZUAsGmDj8CeUsS8W8gEZw2ZA9Crt7qhVHf+GnHafA1l/1YETh2iHZ
-	M7bt1qRaDx+Ixax35vyNREM5ajB8LngqMMik/nNA//wWzEU9SBi/eWkBL2w1zf50
-	kU7NOkxMbeATbB1swIyJ/Y00JKOy4QyF3k/+iBqGOvii9y77lmiAAGeaNB9EZTSi
-	/PbOE+ri6hY/Dnu8Gk+YyPrvGx3rA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kw9wwm4-1
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=fa1h2qNNhP3Ty4GPz
+	ykYhVzWwrBb592PxCTcjTd3AC4=; b=U+GDsXA1oIC4zK+zrRe9y1Z3kS8idzQkh
+	OzbkA+EGcibWN4WVQ7w3eKiEGbEH7py7fFxsUDs+7fabGGPFx2rXLRDRpywRc/kb
+	OsdEe1cPVKyMDswpxA52qbJyt0Uj77wSuglHd17s4xe7Z4uLJSVSKHn5Tir6z5lq
+	zyl2xFvVZHqcVxwBKxibiVp1p7Bx/RE9hBzdHhwa/9t2MwRQT6G3c8+cupogw9KK
+	9iQ+J3YwJuiKTwK8BpA1w86bCdBysi9OqpS8kNeqo8TQzoceBAPa6wRkjUE7UQpb
+	cU+Xgfp6OpmoDbrQaEjCZ8XYOt1UbrFdhQRKkpK8Qd43LTcGMObqg==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kumn8hu-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 22:03:20 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OJUAcF009115;
-	Tue, 24 Mar 2026 22:03:19 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d26nnm2p0-1
+	Tue, 24 Mar 2026 22:03:21 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OIunmD005972;
+	Tue, 24 Mar 2026 22:03:20 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d261ym59m-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 22:03:19 +0000
+	Tue, 24 Mar 2026 22:03:20 +0000
 Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OM3HQm23462434
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OM3Jcg27722444
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Mar 2026 22:03:17 GMT
+	Tue, 24 Mar 2026 22:03:19 GMT
 Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7C34D58056;
-	Tue, 24 Mar 2026 22:03:17 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 8A15A58062;
+	Tue, 24 Mar 2026 22:03:19 +0000 (GMT)
 Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 25DF458052;
-	Tue, 24 Mar 2026 22:03:17 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 3D23D58052;
+	Tue, 24 Mar 2026 22:03:19 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Mar 2026 22:03:17 +0000 (GMT)
+	Tue, 24 Mar 2026 22:03:19 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils: PATCH 0/8] Add sigv3 support for IMA and EVM and all key types
-Date: Tue, 24 Mar 2026 18:03:06 -0400
-Message-ID: <20260324220314.743709-1-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils: PATCH 5/8] Use imaevm_create_sigv3 for fsverity signature creation
+Date: Tue, 24 Mar 2026 18:03:11 -0400
+Message-ID: <20260324220314.743709-6-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260324220314.743709-1-stefanb@linux.ibm.com>
+References: <20260324220314.743709-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -67,56 +70,86 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: oX5qxTFlbJB49njZKO_XwZs1TUiSzFa8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2OCBTYWx0ZWRfX/ONa86xXwU3d
- r6kpyL0iKTDk9AwGuG7LMl9HsTUvR5xPNUKf7m6Qw6amcS9aBACsH36Do8PrXeU4miqWs1ZN8LP
- ETaVGREeBaHIBguJkJN2rfqVmvbdlNiQqVq0W5/Zg3D1IB+GEpZfHIQKhTbpH9G/baehNo/bJdu
- 1k3pVsycWiAxISggUR+O0CdMenJPECuMCc9TbEM/mWbSKdbzBPW52ld2tVfuW1Kd/1H5eQyM+YT
- l9dOTmmwAUwYVDgpeXeam4cLT7+QD08Sx3WbwhDK1FSsh9FUalP8olaF/cRxlXmnW9YqJOek0vb
- hNnPQZ2ZFmi/WUZjamqsYFrnF1retomn/QVF/CU/9bvE8f2PxuTcM5hEbhpuANesFvogDdpkzXo
- xU2HhMyIbCWF9u0ROGbwhE2p2jsWFQuTYKbWyBBqSHUC9Ejj70MOo5WX4I6tTi/TutEu0xc3NJy
- h0KoM7B63m5QL6kVa6A==
-X-Proofpoint-GUID: oX5qxTFlbJB49njZKO_XwZs1TUiSzFa8
-X-Authority-Analysis: v=2.4 cv=OsZCCi/t c=1 sm=1 tr=0 ts=69c30a28 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+X-Proofpoint-GUID: I3UnF5Pd3vZVGMWVtCUIo1UInc-fAB1S
+X-Proofpoint-ORIG-GUID: I3UnF5Pd3vZVGMWVtCUIo1UInc-fAB1S
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2OCBTYWx0ZWRfX22RBkR6JG8Pu
+ CEbRSpC2EWEEls8vUauimYxvImrBnU8CYvZqkgSR00nIqY61Ubk79XhyFsdFrNMtRWHj+zJmRQx
+ k+JqyHnA/IfTZXqICSXLNIP8ZCA5qWFVL+FdxBrXYnDcc7Cdo3t4jjL8IWW+NAD7BZorwyyZNQ/
+ vOPA5H5ex5m8xYwghhgSumMco0WaXHANFzd82gQf4wCWAAS48eBRr/C7J/1dWre5uE6mfvozoCT
+ FCaEdxN3HmtD2LVemLixv6U6ORloiZk4AvBtmQqF5/B9Oy5gGcg5xOp0JiCNKb+hPBjeMWaSd2+
+ G8IvEvwYf43rVvHMLZtkJGgc8JCt19yQtTstjXE2fpYGpcFXf5B27eVMGKduecg8ntWwQ9p7G9b
+ In1WzsIOB87HncKV0NY2WIs9wUkkBA35IrAKdflGdLoMqR5KNHiLa4z//6IjMIvVha287kCzvUr
+ V6L3DuLBG72lkS+GYbw==
+X-Authority-Analysis: v=2.4 cv=KbXfcAYD c=1 sm=1 tr=0 ts=69c30a29 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=U7nrCbtTmkRpXpFmAIza:22 a=-bVt1fKA4n57iD5zKkkA:9
+ a=RzCfie-kr_QcCd8fBx8p:22 a=VnNF1IyMAAAA:8 a=R_VBs2EOIYhiIciYRg4A:9
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 phishscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 malwarescore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240168
 
-This series of patches adds sigv3 support for IMA and EVM for all currently
-supported key types (RSA, ECDSA, ECRDSA, SM2). evmctl gets a --v3 option
-for creating the sigv3 signatures and also a --v2 option for creating the
-old sigv2 signatures. --v2 is still the default.
+Convert the code that built the fsverity signature with V3 signing scheme
+to use the new imaevm_create_sigv3 function.
 
-Some test cases are duplicated to test with --v3.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ src/evmctl.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-Regards,
-   Stefan
-
-Stefan Berger (8):
-  Implement imaevm_create_sigv3 for creating V3 signatures
-  Implement support for IMA signatures V3 signing scheme
-  Implement support for EVM signatures V3 signing scheme
-  Support v3 IMA and EVM file signatures with --v3 option.
-  Use imaevm_create_sigv3 for fsverity signature creation
-  tests: Add new --v3 option to sign_verify tests
-  Allow verification of EVM_XATTR_PORTABLE_DIGSIG with sigv3
-  Allow hashing for sigv3 on EVM_XATTR_PORTABLE_DIGSIG
-
- README                 |   6 +-
- src/evmctl.c           | 170 ++++++++++++++++++++++++++++-------------
- src/imaevm.h           |   7 ++
- src/libimaevm.c        |  69 ++++++++++++++++-
- tests/sign_verify.test |  31 ++++++--
- 5 files changed, 221 insertions(+), 62 deletions(-)
-
+diff --git a/src/evmctl.c b/src/evmctl.c
+index 2843ff8..0a38aa7 100644
+--- a/src/evmctl.c
++++ b/src/evmctl.c
+@@ -828,7 +828,6 @@ static int cmd_sign_ima(struct command *cmd)
+  */
+ static int cmd_sign_hash(struct command *cmd)
+ {
+-	unsigned char sigv3_hash[MAX_DIGEST_SIZE];
+ 	unsigned char sig[MAX_SIGNATURE_SIZE];
+ 	unsigned char hash[MAX_DIGEST_SIZE];
+ 	size_t algolen = 0;
+@@ -840,7 +839,6 @@ static int cmd_sign_hash(struct command *cmd)
+ 	const char *key;
+ 	char algo[7];	/* Current maximum fsverity hash algo name length */
+ 	ssize_t len;
+-	int ret;
+ 
+ 	key = imaevm_params.keyfile ? : "/etc/keys/privkey_evm.pem";
+ 
+@@ -888,19 +886,15 @@ static int cmd_sign_hash(struct command *cmd)
+ 			assert(hashlen / 2 <= sizeof(hash));
+ 			hex2bin(hash, hashp, hashlen / 2);
+ 
+-			ret = calc_hash_sigv3(IMA_VERITY_DIGSIG, algo, hash,
+-					      sigv3_hash);
+-			if (ret < 0 || ret == 1) {
+-				log_info("Failure to calculate fs-verity hash\n");
+-				continue;
+-			}
+-
+-			siglen = imaevm_signhash(algo, sigv3_hash, hashlen / 2,
+-						 key, g_keypass, sig + 1, sigflags,
+-						 &access_info, imaevm_keyid);
+-
+-			sig[0] = IMA_VERITY_DIGSIG;
+-			sig[1] = DIGSIG_VERSION_3;	/* sigv3 */
++			psig = sig;
++			siglen = imaevm_create_sigv3(algo, hash,
++						     hashlen / 2, key, g_keypass,
++						     &psig, sizeof(sig), sigflags,
++						     IMA_VERITY_DIGSIG,
++						     &access_info, imaevm_keyid);
++			if (siglen <= 1)
++				return siglen;
++			assert(siglen <= (int)sizeof(sig));
+ 		} else {
+ 			/* Parse the shaXsum output */
+ 			token = strpbrk(line, " \t");
 -- 
 2.53.0
 
