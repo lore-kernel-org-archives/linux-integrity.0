@@ -1,95 +1,67 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E67394476
-	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 18:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD8C32D0F5
+	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 20:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774375987; cv=none; b=Uh40euTICOPpJ2/oHtVpcKzqVh67AqJoieqWvucfX07YTQQ/Id6+htplSFaKF+vSqf7kQSET2ZXjtw6tMhl5sFkLwgHZBlo8tPx+eEzGfawuhU69YTFRjZThTZo4WxGt9DpOPMSJhEqwp6MKYJ96rN2fI5juwH2GluaNVum1WWI=
+	t=1774384789; cv=none; b=DFDzXoQep+SrLxVHb+KTclsHRf/55QryDpNNTOr0Sd2y4wSmTQY2xeYp+FrKk/O0Qh1Kjc6uWdhQeI2S5ejJUD0LA/oNV3ITEf64Q8y5aCrrXz1zsNo3nVGG4qQKgylA5sNmJYwPAvxqUpz/SFR+wbMX7Pgq/nFHwkhRs7XmFJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774375987; c=relaxed/simple;
-	bh=NVqoURi6GkLCUA6hulCm/FUPyOAGzXe36crCDX+t3B4=;
+	s=arc-20240116; t=1774384789; c=relaxed/simple;
+	bh=UDA68rXYw4BnFPGV+0ALpAgBYecShCC8jrbHWVBYleQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=o7iJSXdDHTptbs9FcxwVC5Ieix2OrBIIDnb+x7Sg75wi92vTEQsvzyjD5lr9Rv/1TMuie+F1y02RqJYzLkrn5RfYm+xy/plJ40R0duby8WVLi1xaagu+Xp/wlecZaP52aoCril9CCHKXEdq99PmfOx7L/onZHBTESJqKkA+5PiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I7J6J2GD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=ChRQdfky; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 MIME-Version; b=BqfayMHxDL5WlZ5SD0H4j3VOdMfQKu2mahMZnZS02DHk3oYQAONOxQQA2FhB0SJH/y7BL09xP0r5LPHtuC65QLz/rslP3G5qgifD3Dhby3bIyTEMwzOeMjgw3YvKZpjsfzaB6rpVEJKPp78WJQwcTM0JXVrnWTqTiUWrtkMwSgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lVNd/ckF; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I7J6J2GD";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="ChRQdfky"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1774375985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qjOFiAc+loOVh0FFRv70s4LnEAsNKmBF0aaLgN5vhcY=;
-	b=I7J6J2GDRc7PnxfiqV5SdG5/z+fKoLAC72Bi+qeZKfT+ig0Zsix11+Wcehy4kfcXxH330P
-	VWKRP+6t/B/46bkTCXBvfuPe8Dm3+SMcJX4Jq5B4HZH5jtmy6W9Fyipr4VWwCn/1XFrLjp
-	DUtBytA063syAc4jihCsAFHQcL8pVhc=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-59-RFiuzPryPkuwi8TNwaXBag-1; Tue, 24 Mar 2026 14:13:04 -0400
-X-MC-Unique: RFiuzPryPkuwi8TNwaXBag-1
-X-Mimecast-MFC-AGG-ID: RFiuzPryPkuwi8TNwaXBag_1774375983
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-c73c065dd15so3883239a12.0
-        for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 11:13:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1774375983; x=1774980783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qjOFiAc+loOVh0FFRv70s4LnEAsNKmBF0aaLgN5vhcY=;
-        b=ChRQdfkybmRvpdr0WrG4YksrkfpVxC1tSrRxecVzOzSL/zqjaHpqUm684ORDdeDGak
-         OCGYSbMA8jTYH7Ud831Y1zADs7BulHlX/d031r5oKtDMBz/AGNwgxj3yHN/diqxFN3hX
-         1DX2fak124+MSpdvJTsZKy2H7za+qD/mZNY0WOltmtLqNfC1KntqSWJlzp7YGIM75yBr
-         ZlDNYWybhAyIVoK2crDDE0Zz7Rid2l1Se/wT5/va8Nw0P6O6rnnqof5k9at33qseMuwR
-         31/BydTN6ythUwjGFSGCul6aIRGaVbqS1PWJZjBTjFgNHltQV455pZrS4h/YpyJikAuP
-         hSHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1774375983; x=1774980783;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=qjOFiAc+loOVh0FFRv70s4LnEAsNKmBF0aaLgN5vhcY=;
-        b=m1nAifID1gULEVHAl4zoUVjy3REgft2cZ8rUpmc1jt+/FnuMXDWEcqG9uyjxfETFH7
-         Gj3fRJA3TcDzKuXsdV4+zdQDwkLe5iR/rzFmtD0BX6k/9Cj0hjaBYvkDYzybleKXG9CE
-         MB2PAB5qhIia2cnmh8zEbKEYviqSLK+IJx+wnsS/JCugKBiL8y59zBo68YxYjcvVVmco
-         oA9cwm36HoQtumVlRJbaOnPW0De4SyLcN1QAmaQnIBwd63rY4qybF5I+XiJo59aW52mC
-         UUgsWYzhbZNxjv6w5vnP885LIBG3cArp/EUeGy7eM99UTx2DX4K1RD6tFY57WSNpPEu0
-         59IA==
-X-Forwarded-Encrypted: i=1; AJvYcCXEzeCZcFEGm1nhEyHH/12tZSI7aWq19OA14+okbSABJ6uwqVyX0tHOC0/8gOfPk0pZQNr5ETx1ePR21wymWLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfFgUKn2Qhf8pywNpCSYb28E1m8ZNKZq18Q1hZ40U71XMZeCMx
-	+tfh/TUlFKVWnp/KNLcwA47Dyl4CMj0zLLknMAmbeZQzLFBLOQK9K6wmGx1KhzuigTRjim3KJKC
-	eg/52XK8mH33C4H94pgWHQNrUpDeCol92Fzd7oWj3YBt4zGTGzGsAP1xULcY5TzjGzxY4Dg==
-X-Gm-Gg: ATEYQzzUvoWQSD+AS0aR4GTUmj6Cp5CGEkjOS2tCVwUN3WX2QQMPCYn13TwBEPDARlZ
-	9hSN79f8zchUHCnJB7cokuQusw2RLeqCstbuTgnF9WCcyrhauLoxVhhbx2lUk/imEILB318WaVo
-	g4TvjHFjVhqwc5BZiqjXugnc7VjURXhEQ0itEO+ph4Hla+I1fguIVyx7QowEkyNuRU5Halty4Ei
-	JF1H5ctWVpKI63OXs/Rmb6YhZL4Thg0OdhU+KuzWOea8uawXojsTBmutmSFMgV2KDm3744/ZrrJ
-	Xh49K13aeT6qGJwuDljkcyNCepphKDLrbQPcoJL6SGcyezQxAHuRERnSkYUdJlU1RPW1CSrWYEN
-	p/r7UNcJLjwhj5+G4dwBwIt3Yi+icrnaXcmNSXZz6+nd6MnVxKmN7VBdO3UFvyQ==
-X-Received: by 2002:a05:6a00:27a7:b0:82c:6da7:2d3d with SMTP id d2e1a72fcca58-82c6de7adbfmr532181b3a.11.1774375982923;
-        Tue, 24 Mar 2026 11:13:02 -0700 (PDT)
-X-Received: by 2002:a05:6a00:27a7:b0:82c:6da7:2d3d with SMTP id d2e1a72fcca58-82c6de7adbfmr532160b3a.11.1774375982417;
-        Tue, 24 Mar 2026 11:13:02 -0700 (PDT)
-Received: from fedora.armenon-thinkpadp16vgen1.bengluru.csb ([49.36.108.16])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-82b0410b1bdsm16654229b3a.57.2026.03.24.11.13.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Mar 2026 11:13:01 -0700 (PDT)
-From: Arun Menon <armenon@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Arun Menon <armenon@redhat.com>
-Subject: [RFC v2 5/5] tpm: tis_i2c: Use local 4KB buffer to limit memory usage
-Date: Tue, 24 Mar 2026 23:42:44 +0530
-Message-ID: <20260324181244.17741-6-armenon@redhat.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lVNd/ckF"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OJtAMf511484;
+	Tue, 24 Mar 2026 20:39:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=VB+xssmaRvgmpBOWl
+	jNYbAxNyZXEdRJMcfIQqIbH+mo=; b=lVNd/ckFxdtnJP1A7z1/w9Ez8BL2CuOGI
+	+zD0+VGnCGIgg6RIXcsyhGzufQ5R4prjB8X1Fjjf6zgyWTPw6zwCNQeFS0tm/NaF
+	jvHsBit1GM8GoyrcONyVKsJ2Dm2znd9GLZF5T+LqWiJFcEu5RkSXSkpjgDKSoKUv
+	+Niil8LvvQz+o7ZHMdU7D0OwcMjtYnszOHIQ6T4E4X2PoVE+Qu4Y2jDElgYOIgSS
+	3tQx5KWFHGMkhar1mJIS1M0YXKWooQyIivXIfqRC0Md3rmA/nXrydAcGSli6TScU
+	kt2tq0SEfjr7IwUZSz3OKPWs3WQ0YIY4hxhekjuZnoCQGllqp6syw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kw9wnaj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Mar 2026 20:39:44 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OH25dm011789;
+	Tue, 24 Mar 2026 20:39:43 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d27vk3k5f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Mar 2026 20:39:43 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OKdear44302634
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Mar 2026 20:39:40 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E2A372004B;
+	Tue, 24 Mar 2026 20:39:39 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8A0220040;
+	Tue, 24 Mar 2026 20:39:38 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.fios-router.home (unknown [9.61.188.204])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Mar 2026 20:39:38 +0000 (GMT)
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Eric Biggers <ebiggers@kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH 1/3] ima: Define asymmetric_verify_v3() to verify IMA sigv3 signatures
+Date: Tue, 24 Mar 2026 16:39:27 -0400
+Message-ID: <20260324203929.2475782-2-zohar@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260324181244.17741-1-armenon@redhat.com>
-References: <20260324181244.17741-1-armenon@redhat.com>
+In-Reply-To: <20260324203929.2475782-1-zohar@linux.ibm.com>
+References: <20260324203929.2475782-1-zohar@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -97,53 +69,304 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Xz_iZ1Dc_Zz8wj8_ry_5hOG1nYhopmpU
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE1NyBTYWx0ZWRfX73nea6+FSamZ
+ hsmTtl0exHofjMMH9N67tBRFGcfksG5u9uEKwsMiGWTBJJtVy9yV+LemQfU/JnkYCEyesPd0gNY
+ BfMlEpAeVJJQyCRlPBYSKjjP+WC+djCHrRlfVj0AZUg2yylbAM3Hg3ft+KneuOUhf23BzMXGqJ8
+ V/HssPTyJ2V+AP9lXVIGSRevkTRV+XNU1MD8P7yuIwjFyZoQNTgaGdwIeTZE36ZIEmV4KH7VDDM
+ yENhcangvM8kvSZcMVGpn5SXUhvneQD/gqddY86gmk20YWjJph8K4P2fVI/0gbvOQJJlp0ehg7b
+ i7+NPPAmtW62vzZ2TMpFKmEdtTj9z6hvSd21ptPXEOUaNClhey525WjTDKKmHl19es96zrTFw7D
+ bBPXdeM6VKA5VhLdTy3IWzgnLrlEvfSChmIB/Ljrky8KfDvPg4atn31NY6K74WB2kigCPoHoEJK
+ Q9Ui3z9k4x5qM8l731w==
+X-Proofpoint-GUID: Xz_iZ1Dc_Zz8wj8_ry_5hOG1nYhopmpU
+X-Authority-Analysis: v=2.4 cv=OsZCCi/t c=1 sm=1 tr=0 ts=69c2f690 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=U7nrCbtTmkRpXpFmAIza:22 a=VnNF1IyMAAAA:8 a=UvSFq85gdjxu-dxzRUkA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 clxscore=1015 phishscore=0 suspectscore=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240157
 
-The global increase of TPM_BUFSIZE to 8KB is necessary to support
-Post-Quantum Cryptography (PQC) payloads. However, applying this increase
-to the tpm_tis_i2c driver is unnecessary and wasteful due to physical
-transport limitations as pointed out in [1]
+Define asymmetric_verify_v3() to calculate the hash of the struct
+ima_file_id, before calling asymmetric_verify() to verify the
+signature.
 
-This commit introduces a local buffer limit that is used in the i2c
-driver.
+Move and update the existing calc_file_id_hash() function with a
+simpler, self contained version.  In addition to the existing hash
+data and hash data length arguments, also pass the hash algorithm.
 
-[1] https://sashiko.dev/#/patchset/20260324071803.324774-1-armenon%40redhat.com?patch=8319
-
-Signed-off-by: Arun Menon <armenon@redhat.com>
+Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- drivers/char/tpm/tpm_tis_i2c.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ security/integrity/digsig.c            |  8 ++--
+ security/integrity/digsig_asymmetric.c | 58 ++++++++++++++++++++++++
+ security/integrity/evm/evm_main.c      |  3 +-
+ security/integrity/ima/ima_appraise.c  | 63 ++++++--------------------
+ security/integrity/integrity.h         | 14 +++++-
+ 5 files changed, 90 insertions(+), 56 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
-index 6cd07dd34507e..db19d459ea1e1 100644
---- a/drivers/char/tpm/tpm_tis_i2c.c
-+++ b/drivers/char/tpm/tpm_tis_i2c.c
-@@ -54,6 +54,8 @@
- #define TPM_INTF_CAPABILITY_ZERO 0x0FFFF000
- #define TPM_I2C_INTERFACE_CAPABILITY_ZERO 0x80000000
+diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+index 75c684cce370..1ed686154d7a 100644
+--- a/security/integrity/digsig.c
++++ b/security/integrity/digsig.c
+@@ -59,7 +59,7 @@ static struct key *integrity_keyring_from_id(const unsigned int id)
+ }
  
-+#define TPM_I2C_BUFSIZE 4096
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+-			    const char *digest, int digestlen)
++			    const char *digest, int digestlen, u8 algo)
+ {
+ 	struct key *keyring;
+ 
+@@ -76,9 +76,11 @@ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+ 		return digsig_verify(keyring, sig + 1, siglen - 1, digest,
+ 				     digestlen);
+ 	case 2: /* regular file data hash based signature */
+-	case 3: /* struct ima_file_id data based signature */
+ 		return asymmetric_verify(keyring, sig, siglen, digest,
+-					 digestlen);
++					    digestlen);
++	case 3: /* struct ima_file_id data based signature */
++		return asymmetric_verify_v3(keyring, sig, siglen, digest,
++					    digestlen, algo);
+ 	}
+ 
+ 	return -EOPNOTSUPP;
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index 87be85f477d1..dc5313746609 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -131,3 +131,61 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 	pr_debug("%s() = %d\n", __func__, ret);
+ 	return ret;
+ }
 +
- struct tpm_tis_i2c_phy {
- 	struct tpm_tis_data priv;
- 	struct i2c_client *i2c_client;
-@@ -232,7 +234,7 @@ static int tpm_tis_i2c_write_bytes(struct tpm_tis_data *data, u32 addr, u16 len,
- 	int ret;
- 	u16 wrote = 0;
++/*
++ * calc_file_id_hash - calculate the hash of the ima_file_id struct data
++ * @type: xattr type [enum evm_ima_xattr_type]
++ * @algo: hash algorithm [enum hash_algo]
++ * @digest: pointer to the digest to be hashed
++ * @hash: (out) pointer to the hash
++ *
++ * IMA signature version 3 disambiguates the data that is signed by
++ * indirectly signing the hash of the ima_file_id structure data.
++ *
++ * Return 0 on success, error code otherwise.
++ */
++static int calc_file_id_hash(enum evm_ima_xattr_type type,
++			     enum hash_algo algo, const u8 *digest,
++			     struct ima_max_digest_data *hash)
++{
++	struct ima_file_id file_id = {.hash_type = type, .hash_algorithm = algo};
++	size_t digest_size = hash_digest_size[algo];
++	struct crypto_shash *tfm;
++	size_t file_id_size;
++	int rc;
++
++	if (type != IMA_VERITY_DIGSIG)
++		return -EINVAL;
++
++	tfm = crypto_alloc_shash(hash_algo_name[algo], 0, 0);
++	if (IS_ERR(tfm))
++		return PTR_ERR(tfm);
++
++	memcpy(file_id.hash, digest, digest_size);
++
++	/* Calculate the ima_file_id struct hash on the portion used. */
++	file_id_size = sizeof(file_id) - (HASH_MAX_DIGESTSIZE - digest_size);
++
++	hash->hdr.algo = algo;
++	hash->hdr.length = digest_size;
++	rc = crypto_shash_tfm_digest(tfm, (const u8 *)&file_id, file_id_size,
++				     hash->digest);
++
++	crypto_free_shash(tfm);
++	return rc;
++}
++
++int asymmetric_verify_v3(struct key *keyring, const char *sig, int siglen,
++			 const char *data, int datalen, u8 algo)
++{
++	struct signature_v2_hdr *hdr = (struct signature_v2_hdr *)sig;
++	struct ima_max_digest_data hash;
++	int rc;
++
++	rc = calc_file_id_hash(hdr->type, algo, data, &hash);
++	if (rc)
++		return -EINVAL;
++
++	return asymmetric_verify(keyring, sig, siglen, hash.digest,
++				 hash.hdr.length);
++}
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 1b0089b4b796..b15d9d933b84 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -266,7 +266,8 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 			break;
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_EVM,
+ 					(const char *)xattr_data, xattr_len,
+-					digest.digest, digest.hdr.length);
++					digest.digest, digest.hdr.length,
++					digest.hdr.algo);
+ 		if (!rc) {
+ 			if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG) {
+ 				if (iint)
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 0d41d102626a..5b42307ac254 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -234,40 +234,6 @@ int ima_read_xattr(struct dentry *dentry,
+ 	return ret;
+ }
  
--	if (len > TPM_BUFSIZE - 1)
-+	if (len > TPM_I2C_BUFSIZE - 1)
- 		return -EIO;
+-/*
+- * calc_file_id_hash - calculate the hash of the ima_file_id struct data
+- * @type: xattr type [enum evm_ima_xattr_type]
+- * @algo: hash algorithm [enum hash_algo]
+- * @digest: pointer to the digest to be hashed
+- * @hash: (out) pointer to the hash
+- *
+- * IMA signature version 3 disambiguates the data that is signed by
+- * indirectly signing the hash of the ima_file_id structure data.
+- *
+- * Signing the ima_file_id struct is currently only supported for
+- * IMA_VERITY_DIGSIG type xattrs.
+- *
+- * Return 0 on success, error code otherwise.
+- */
+-static int calc_file_id_hash(enum evm_ima_xattr_type type,
+-			     enum hash_algo algo, const u8 *digest,
+-			     struct ima_digest_data *hash)
+-{
+-	struct ima_file_id file_id = {
+-		.hash_type = IMA_VERITY_DIGSIG, .hash_algorithm = algo};
+-	unsigned int unused = HASH_MAX_DIGESTSIZE - hash_digest_size[algo];
+-
+-	if (type != IMA_VERITY_DIGSIG)
+-		return -EINVAL;
+-
+-	memcpy(file_id.hash, digest, hash_digest_size[algo]);
+-
+-	hash->algo = algo;
+-	hash->length = hash_digest_size[algo];
+-
+-	return ima_calc_buffer_hash(&file_id, sizeof(file_id) - unused, hash);
+-}
+-
+ /*
+  * xattr_verify - verify xattr digest or signature
+  *
+@@ -279,7 +245,6 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			struct evm_ima_xattr_data *xattr_value, int xattr_len,
+ 			enum integrity_status *status, const char **cause)
+ {
+-	struct ima_max_digest_data hash;
+ 	struct signature_v2_hdr *sig;
+ 	int rc = -EINVAL, hash_start = 0;
+ 	int mask;
+@@ -341,7 +306,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+ 					     (const char *)xattr_value,
+ 					     xattr_len,
+ 					     iint->ima_hash->digest,
+-					     iint->ima_hash->length);
++					     iint->ima_hash->length,
++					     iint->ima_hash->algo);
+ 		if (rc == -EOPNOTSUPP) {
+ 			*status = INTEGRITY_UNKNOWN;
+ 			break;
+@@ -352,7 +318,9 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+ 						     (const char *)xattr_value,
+ 						     xattr_len,
+ 						     iint->ima_hash->digest,
+-						     iint->ima_hash->length);
++						     iint->ima_hash->length,
++						     iint->ima_hash->algo);
++
+ 		if (rc) {
+ 			*cause = "invalid-signature";
+ 			*status = INTEGRITY_FAIL;
+@@ -378,21 +346,16 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			break;
+ 		}
  
- 	phy->io_buf[0] = reg;
-@@ -339,7 +341,7 @@ static int tpm_tis_i2c_probe(struct i2c_client *dev)
- 	if (!phy)
- 		return -ENOMEM;
+-		rc = calc_file_id_hash(IMA_VERITY_DIGSIG, iint->ima_hash->algo,
+-				       iint->ima_hash->digest,
+-				       container_of(&hash.hdr,
+-					       struct ima_digest_data, hdr));
+-		if (rc) {
+-			*cause = "sigv3-hashing-error";
+-			*status = INTEGRITY_FAIL;
+-			break;
+-		}
+-
+ 		rc = integrity_digsig_verify(INTEGRITY_KEYRING_IMA,
+ 					     (const char *)xattr_value,
+-					     xattr_len, hash.digest,
+-					     hash.hdr.length);
+-		if (rc) {
++					     xattr_len,
++					     iint->ima_hash->digest,
++					     iint->ima_hash->length,
++					     iint->ima_hash->algo);
++		if (rc == -EOPNOTSUPP) {
++			*status = INTEGRITY_UNKNOWN;
++			break;
++		} else if (rc) {
+ 			*cause = "invalid-verity-signature";
+ 			*status = INTEGRITY_FAIL;
+ 		} else {
+diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+index 4636629533af..0c581c03c5da 100644
+--- a/security/integrity/integrity.h
++++ b/security/integrity/integrity.h
+@@ -131,7 +131,7 @@ struct modsig;
+ #ifdef CONFIG_INTEGRITY_SIGNATURE
  
--	phy->io_buf = devm_kzalloc(&dev->dev, TPM_BUFSIZE, GFP_KERNEL);
-+	phy->io_buf = devm_kzalloc(&dev->dev, TPM_I2C_BUFSIZE, GFP_KERNEL);
- 	if (!phy->io_buf)
- 		return -ENOMEM;
+ int integrity_digsig_verify(const unsigned int id, const char *sig, int siglen,
+-			    const char *digest, int digestlen);
++			    const char *digest, int digestlen, u8 algo);
+ int integrity_modsig_verify(unsigned int id, const struct modsig *modsig);
  
+ int __init integrity_init_keyring(const unsigned int id);
+@@ -142,7 +142,8 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
+ 
+ static inline int integrity_digsig_verify(const unsigned int id,
+ 					  const char *sig, int siglen,
+-					  const char *digest, int digestlen)
++					  const char *digest, int digestlen,
++					  u8 algo)
+ {
+ 	return -EOPNOTSUPP;
+ }
+@@ -170,12 +171,21 @@ static inline int __init integrity_load_cert(const unsigned int id,
+ #ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+ int asymmetric_verify(struct key *keyring, const char *sig,
+ 		      int siglen, const char *data, int datalen);
++int asymmetric_verify_v3(struct key *keyring, const char *sig,
++			 int siglen, const char *data, int datalen, u8 algo);
+ #else
+ static inline int asymmetric_verify(struct key *keyring, const char *sig,
+ 				    int siglen, const char *data, int datalen)
+ {
+ 	return -EOPNOTSUPP;
+ }
++
++static inline int asymmetric_verify_v3(struct key *keyring,
++				       const char *sig, int siglen,
++				       const char *data, int datalen, u8 algo)
++{
++	return -EOPNOTSUPP;
++}
+ #endif
+ 
+ #ifdef CONFIG_IMA_APPRAISE_MODSIG
 -- 
 2.53.0
 
