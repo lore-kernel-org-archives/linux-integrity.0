@@ -1,64 +1,64 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DC93AC0DE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E084D23B612
 	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 22:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774389811; cv=none; b=Ih6Mm+HRthSeLT8P3TmYTNmxueKpilFJv1cG4PKFye8OeCQ1KbYrBFR+pIQvfFEZJIZXGIX6qjb04DuU+q1zyHicLwKsd2TU0jrTp4gRYKBZmmH+pEIriUhLoaG4RoWKJ96EuzYqe96YllrrgPWVZzetOiKI+eJ2A7UtFXh07wM=
+	t=1774389812; cv=none; b=TvfTx5zietrNciDdm/VpHaJTHDekkVH6x8V361Pb0kyH3bxsEMOPh+Jk6Av+tKeJYRgYmKcRHDoB+Y4ad0Dj9Uj4p+BMwv8ltXqWq101R5g6PEFwGll7Ka8o0qdKgA2pPDOQZT1rppLRQNTRldrFCbunaaesZsL63SwYHeEOcQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774389811; c=relaxed/simple;
-	bh=vnlDOEh9sepeBzBlQxYirAnee240rnID4GlqRmBJjvc=;
+	s=arc-20240116; t=1774389812; c=relaxed/simple;
+	bh=ufIGW5fqNxEVNu7JtH9QQ3IiUf/pqW02ip4NF/WQbAA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lkzO9AOJh37W6apIxNtfucDk4aYoBEZVQ3JOaPsfa6hhwZYhUsodbvYHmpwOjqLpdoLqO30FH8fp8C3yawbzmJYV5PLgLEFxP6I4/Dr6y2rceI6bucqn/UROFwBEbM+6rtu42bKze35odbQ/RCknfI3bkc7z2YOChcc/Vc0m5qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Thb+H7mO; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version; b=cByeDvXERJEdSUg7d0jZoHTZt+fauneQZKek66XO8EVMbohBhnvSOrSDwMLb6DhVXjxzkXIaFQ+VawA9ryzf6XYbzrCAyVdyRv2Iy04agXuXBOIEaldeTwmw2YS56jL6+zeYWlmon3mU9l207k9fMFqfpTEPAwITw02jsWClJPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SMBynIec; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Thb+H7mO"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SMBynIec"
 Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OFSKuG3792418;
-	Tue, 24 Mar 2026 22:03:23 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OFSKsE3743898;
+	Tue, 24 Mar 2026 22:03:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=b2njq2pdZMWo7/wJW
-	OhvX7NZN+GfB5XOucqApYyzJXM=; b=Thb+H7mOTjybFwMRQDFxl7jAUBprTg7y3
-	P57kAHkiR2/lc7JkiuhxA4e96yaFaX6rDNTFVmm35QK+VF96WghC+sM7mauU7OgJ
-	pjg2faug1dJXvxp+QG0qZknfYUGwq7SyEGEKHZJYrzq0BG6FH0CGc5nZ7cIybZvu
-	iCLS6VTwCLp9samjwqX/uXGYYY0agvQXoOboE9uCYSexaYbCVdSG01ojNhbSkyB2
-	vgG/m6EAb69dJ6NPkoDFZX4zUVj9mUwcoZnRFPYIsDNs0Z6jzBhm1c0NrZ9juNxb
-	foUf1w8jGCycOwlpsPb7RqiEY9lM7LY3C27T+L/oNKf0wuWMa4R5A==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kxqdxjc-1
+	:mime-version:references:subject:to; s=pp1; bh=i1kGp51gS0aryqo5a
+	1nWMg16KJCANoQCgkqHjOTFA4M=; b=SMBynIecQFZZN/p+UVFGgrr8rZxZ+xxXD
+	XOn7xtkRbzSUZjqOwltpcbS34Ch1cb4GB11CdW8nAb0AzBSow6VgBYQsr/lP64e8
+	XfgHaljTUv7+0BCjUqCkCWIIfHHuDLA2znXXaX/t2DosadTsxJeyGN+Dapq6jtln
+	LKoHHFAlhRhShLPAtb2IvBCNrWeirtIWdVHH0Rbl/Qwj3Rv+chc6uZ3bE8sAaruT
+	iDADm/TzN9TZgRwT5zds69T8PtymK46hsygMhEq/77peNXhgZ0NOHxqN6bVI1XNK
+	0e/dt74nMzfS2MXipV45/v4WHk+28SDrYA5ipEbPQuZbCgBhlMAbw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kxqdxjj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 22:03:20 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OKo3tZ004407;
-	Tue, 24 Mar 2026 22:03:20 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d28c23sxg-1
+	Tue, 24 Mar 2026 22:03:22 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OJJdV8031635;
+	Tue, 24 Mar 2026 22:03:21 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d25nsv5pw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 22:03:20 +0000
+	Tue, 24 Mar 2026 22:03:21 +0000
 Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OM3JHr31457858
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OM3K4Z22741728
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Mar 2026 22:03:19 GMT
+	Tue, 24 Mar 2026 22:03:20 GMT
 Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 25FB658056;
-	Tue, 24 Mar 2026 22:03:19 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id D37D55805A;
+	Tue, 24 Mar 2026 22:03:20 +0000 (GMT)
 Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD2AE58052;
-	Tue, 24 Mar 2026 22:03:18 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 7DD3458052;
+	Tue, 24 Mar 2026 22:03:20 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Mar 2026 22:03:18 +0000 (GMT)
+	Tue, 24 Mar 2026 22:03:20 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils: PATCH 4/8] Support v3 IMA and EVM file signatures with --v3 option.
-Date: Tue, 24 Mar 2026 18:03:10 -0400
-Message-ID: <20260324220314.743709-5-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils: PATCH 8/8] Allow hashing for sigv3 on EVM_XATTR_PORTABLE_DIGSIG
+Date: Tue, 24 Mar 2026 18:03:14 -0400
+Message-ID: <20260324220314.743709-9-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260324220314.743709-1-stefanb@linux.ibm.com>
 References: <20260324220314.743709-1-stefanb@linux.ibm.com>
@@ -70,20 +70,20 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ltsT6zhdvVVMI3XNFtCFXvBz9ZDJamv3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2OCBTYWx0ZWRfX5oBi7agqd9wq
- Ga47lnjgebWUA4mJ3D1HqltggFtMRKO5dP0iiy+XKTTkCXOV5p/I8MM6Bqjn2McIxicRodfnACU
- SM7vVgBxyjylAnOgT+HWtYmPZw47ixMEbLDPGm6R/290lQxP4DC2IMAcBMDn5c3lPOS0Po5x+ED
- j5K5XjEljsszYx26io/Q0mabtjmhgF915WcQbzifwH2EGZ6v96hlrLmTSISywK2idqd71FEFiUI
- EGjFSE6npb2mq09voMe9enrVEHZpRdqw+xKBZBmjWGlTSiB46Ky+YwYjQ8NtIXEFgg15InkBFj1
- TkCjrQEtSkyJCNZETHxnlc8T3CpbO/knM892PuGYd7ZT+HvtG2GQ7B3bhiqyM8GbUe8HGWct9cU
- CMJIMJ5CnmSGTKyUC32QSUqzVlL++OWBRbUCQ4k4Jvo1+FWiCA+YloVE2EXh99FJVfEhU/Jleej
- p2RVfF0UN7xDc7ogW3Q==
-X-Authority-Analysis: v=2.4 cv=bLEb4f+Z c=1 sm=1 tr=0 ts=69c30a28 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+X-Proofpoint-ORIG-GUID: FN8T7dLrQnn6XpHuALdde7A3onGt_ath
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2OCBTYWx0ZWRfX/NN9i6BnZ2Nt
+ Na3Cm888xSxh7q7Je0vyXShALbXogH3R9NwpEWLF/M8b5/uspR905uBWCpletsaCnMkNKSPcjQx
+ wzqotpzgIiB3rGuNdv0gStfh9oeaplAasY44vyoaDehPhT35aiEtS+9GZ3Cm0YrUBeEVRsjkmS4
+ +ANyp4jNveU5U8XdrJnrh08qQR9x1g1OhrZNKJy62t2zKlnPm6KaNwuef2TI31aUFRYHHV8SAMq
+ KeQgHHUkXumAxvQewjTObMGoB697xTTtJrFoZKflIrdF5FCRpBb6Yt/tHKxEI1RKUNOI+p/qxHG
+ 6yOhximkDmo5wAkfTLnq5LLLIad0oOn+Txr7CYiAc56LYs4AQGH+FP7Oae3onCmQQ8LnR9KjDvs
+ tvSb3AhPKKBhnZKlgX7yd3ExmFTzNcKzYAMexu8Xs2IS0Ep+TrIvxeT0VD5Qwp+XChKrEnbEORn
+ /80k5tKRlD+4H8muqjA==
+X-Authority-Analysis: v=2.4 cv=bLEb4f+Z c=1 sm=1 tr=0 ts=69c30a2a cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=iQ6ETzBq9ecOQQE5vZCe:22 a=VnNF1IyMAAAA:8 a=KIJi67mhznwvO7aXmeMA:9
-X-Proofpoint-GUID: ltsT6zhdvVVMI3XNFtCFXvBz9ZDJamv3
+ a=iQ6ETzBq9ecOQQE5vZCe:22 a=VnNF1IyMAAAA:8 a=umbOzg4GSnhNpTA8p7kA:9
+X-Proofpoint-GUID: FN8T7dLrQnn6XpHuALdde7A3onGt_ath
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
@@ -94,88 +94,28 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
  definitions=main-2603240168
 
-Enable both IMA and EVM file signatures with a new --v3 option that sets
-the previously introduced global variable that states which signature
-version to use.
-
-Similarly, introduce a --v2 option for users to (already) choose old V2
-type of signatures.
-
-Update the README with the dump of the evmctl help screen and mention
-v3 signature format that is expected for Linux 7.1.
+To enable sigv3 for EVM portable signatures, enable hashing for sigv3 for
+EVM_XATTR_PORTABLE_DIGSIG.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- README       |  6 ++++--
- src/evmctl.c | 10 ++++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ src/libimaevm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/README b/README
-index 815b555..34dfddf 100644
---- a/README
-+++ b/README
-@@ -84,6 +84,8 @@ OPTIONS
-       --provider p   preload OpenSSL provider (such as: pkcs11)
-       --ignore-violations ignore ToMToU measurement violations
-       --hmackey      path to symmetric key (default: /etc/keys/evm-key-plain)
-+      --v2           create V2 signatures; this is the default
-+      --v3           create V3 signatures; this requires Linux 7.1 or later
-   -v                 increase verbosity level
-   -h, --help         display this help and exit
+diff --git a/src/libimaevm.c b/src/libimaevm.c
+index 7c78432..49bfb62 100644
+--- a/src/libimaevm.c
++++ b/src/libimaevm.c
+@@ -623,7 +623,8 @@ int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo,
+ 	unsigned int unused;
  
-@@ -139,7 +141,7 @@ evmctl '--smack' options enables that.
- Key and signature formats
- -------------------------
- 
--Linux integrity subsystem supports two type of signature and respectively two
-+Linux integrity subsystem supports three types of signature and respectively two
- key formats.
- 
- First key format (v1) is pure RSA key encoded in PEM a format and uses own signature
-@@ -149,7 +151,7 @@ for signing and importing the key.
- Second key format uses X509 DER encoded public key certificates and uses asymmetric key support
- in the kernel (since kernel 3.9). CONFIG_INTEGRITY_ASYMMETRIC_KEYS must be enabled (default).
- 
--For v2 signatures x509 certificate (containing the public key) could be appended to the
-+For v2 and v3 signatures x509 certificate (containing the public key) could be appended to the
- private key (they both are in PEM format) to automatically extract keyid from its Subject
- Key Identifier (SKID).
- 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index aab5af9..2843ff8 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -3017,6 +3017,8 @@ static void usage(void)
- #ifdef DEBUG
- 		"      --hmackey      path to symmetric key (default: /etc/keys/evm-key-plain)\n"
- #endif
-+		"      --v2           create V2 signatures; this is the default\n"
-+		"      --v3           create V3 signatures; this requires Linux 7.1 or later\n"
- 		"  -v                 increase verbosity level\n"
- 		"  -h, --help         display this help and exit\n"
- 		"\n"
-@@ -3092,6 +3094,8 @@ static struct option opts[] = {
- #if CONFIG_IMA_EVM_PROVIDER
- 	{"provider", 1, 0, 149},
- #endif
-+	{"v2", 0, 0, 150},
-+	{"v3", 0, 0, 151},
- 	{}
- 
- };
-@@ -3370,6 +3374,12 @@ int main(int argc, char *argv[])
- 			access_info.type = IMAEVM_OSSL_ACCESS_TYPE_PROVIDER;
- 			break;
- #endif
-+		case 150: /* --v2 */
-+			g_signature_version = SIGNATURE_V2;
-+			break;
-+		case 151: /* --v3 */
-+			g_signature_version = SIGNATURE_V3;
-+			break;
- 		case '?':
- 			exit(1);
- 			break;
+ 	if (type != IMA_VERITY_DIGSIG &&
+-	    type != EVM_IMA_XATTR_DIGSIG) {
++	    type != EVM_IMA_XATTR_DIGSIG &&
++	    type != EVM_XATTR_PORTABLE_DIGSIG) {
+ 		log_err("Only fsverity and IMA/EVM support signature format v3 (sigv3)\n");
+ 		return -EINVAL;
+ 	}
 -- 
 2.53.0
 
