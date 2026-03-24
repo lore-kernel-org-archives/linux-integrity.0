@@ -1,63 +1,63 @@
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254EC2E093E
-	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 21:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586D735B634
+	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 21:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774387438; cv=none; b=HBd+lWgEPcJnfnTnsIbpJfRZGdUu/rYrT4owtYQJUpZUCk1uOgYD4Y/cFWFW0BcQ5KwqjBkWLjqGDcAcnExXA3T4M+SwYkgpJ40i9V1XDdROus7unUJPRHJxQZONF4tAgoMPFYisjYtSBn6DIIlean3FGMaiyTA7GwVLF9Wh5sw=
+	t=1774387623; cv=none; b=I40cNTN4bgVgep7SlCpf7PQeSpvHiZdThMPbtCEuxaVQDAAgceTWDDoygcTs3/q1/fK44Ii2j72xonZetVEV3II27BaygRCBEH2wLE94iaAvEFweDtD7YFrwutegbVftxSFk35hW1qtAor7fjszh+R5Bvk42EJL+WphNmakr/tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774387438; c=relaxed/simple;
-	bh=U7k3fOkYslLyTjIDKsjuBHibd2Iz+LlK8hlOwl9PHHw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i8FP51ibHyqFC+cGqQW+pP/WYBTOUuCv7NwaTpromymWRV8ezrLIALder1MaGp2uMAEtWFSCbvXu6c7hT+fqbfrXVxxJxihkMkfCJ7w9Fx5FMH476uPRiKXzuxz2d/ymFN8yU4yfyoBxIyGRdk2SDCBQ2Fij5BTx955nEMaUPKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AA0REGxK; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1774387623; c=relaxed/simple;
+	bh=40VjQ/tS1Q6lNqAoxj3f8HjQkS9JaIU2QbXA4gE5Ovs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LWuQQVuFIGAry12qyDslkoWusnlezIoVH6lk/ISIEo5Sgb9wwVge9vtdIB2VLKu+ezwL8EikcXjWGNQDzBrcWVeFXoQWo4g67j8toLOsqVa2dRpSz8zzu4cYTYa6TexgYPbdUyNyoYDVtuqW1P50WYthLW4/RlZQNcjZtQIJFrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ELxx+e0O; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AA0REGxK"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ELxx+e0O"
 Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62ODUdQP2945148;
-	Tue, 24 Mar 2026 21:23:47 GMT
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OJ12Qd717890;
+	Tue, 24 Mar 2026 21:26:53 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=ypceqVtZN1tpHfkHkM485+dUEpO1xNhdga/hawz4E
-	x4=; b=AA0REGxKtM9OKiZpxYirJ0xTfEvxeiZFG+K7NlwrvkPisjnZ2QLFxM35r
-	iv6GZ7NEDlQh/8baqOHo/pZvGT2cdOhAEEpU+THU18MuA0mslKVJ65bhVaHEsQj4
-	SrACCCf8s1l+gLo4Aurpx/S3YVk5gzNyRHRd9r1Nm+0whQy0yAkx68OsY/m6rdO8
-	chvOWrXypmoeZnfQop5FdgsubvwdWv7VsA9zV9FEAz0G0DBET6doWus+gqYKruBg
-	8Lw9L4rKxPKRb7oNyXHsnrz+RZHad/4+vkO1u3nBtKzbxYWH4t+6jg8BhufuGlpG
-	WnzyDGH6PtLcjU197fhgLQPxwawvg==
+	:subject:to; s=pp1; bh=7IrmQ6Vf9aRDiD+IqkWEj4lAsASLCjeBWmVI2DC9c
+	Mg=; b=ELxx+e0OdLeDhvFeBZDuiOFh8W7GHt1KmM+IJn1WPwUXDlF5fuLv1rKvt
+	VnurOSnmM/NPOppgIuQULYeA5EtwbKSptUbBIRuZfXS1fUREwaOSZzYtRMlUBg7K
+	Lp5hfNMkU1G7rOTRWD76QMMqdBwFVdCWf70ffKIpSINczODGIOklKaugDC/ftaZF
+	J7et0iK2wgz5THyEzEbo/+RdYhywCOrPDw/UJuuhlq8/wuoV0SF6BIkm6g1xrapW
+	wm3WTyD9pDdMZ6rymoPQImKUOxSWtYohbVuCrB67dS5Sa4zuXYH5SxLwHQ9rt/0a
+	P3mbittt9Clji7MZJc3YjiuI8OxJA==
 Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktuw43u-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1ktuw4a4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 21:23:47 +0000 (GMT)
+	Tue, 24 Mar 2026 21:26:52 +0000 (GMT)
 Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OKj8nG011789;
-	Tue, 24 Mar 2026 21:23:46 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d27vk3qux-1
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OK2aJe012203;
+	Tue, 24 Mar 2026 21:26:52 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d27vk3r4b-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 21:23:46 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OLNjAA33358590
+	Tue, 24 Mar 2026 21:26:51 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OLQo9M20972116
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Mar 2026 21:23:45 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F1FB158051;
-	Tue, 24 Mar 2026 21:23:44 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9AFD85805A;
-	Tue, 24 Mar 2026 21:23:44 +0000 (GMT)
+	Tue, 24 Mar 2026 21:26:50 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5ACAA58055;
+	Tue, 24 Mar 2026 21:26:50 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D6FC95804B;
+	Tue, 24 Mar 2026 21:26:49 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Mar 2026 21:23:44 +0000 (GMT)
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Mar 2026 21:26:49 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils: PATCH 0/2] Fix memory leaks in libimaevm
-Date: Tue, 24 Mar 2026 17:23:40 -0400
-Message-ID: <20260324212342.739685-1-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils: PATCH] shellcheck: Fix shellcheck v0.11.0 issues detected in fsverity.test
+Date: Tue, 24 Mar 2026 17:26:38 -0400
+Message-ID: <20260324212638.739797-1-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
@@ -67,20 +67,21 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: etYZTBKC1-f9ej1-wwUIR8Lrr0jpvj2d
-X-Authority-Analysis: v=2.4 cv=aMr9aL9m c=1 sm=1 tr=0 ts=69c300e3 cx=c_pps
+X-Proofpoint-ORIG-GUID: z_yPaFLKp-Tt_Ws8cD3QGOsNaHJK1877
+X-Authority-Analysis: v=2.4 cv=aMr9aL9m c=1 sm=1 tr=0 ts=69c3019c cx=c_pps
  a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=Y2IxJ9c9Rs8Kov3niI8_:22 a=fP-ZIkwX40fDXU7GDZgA:9 a=zZCYzV9kfG8A:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2NCBTYWx0ZWRfXwoIztYuqCFL3
- vcI8mhk0pzLS4muVNm+jvE1erb3dsssa/lK6OdH1W3dBSKte11GZUiAQ4t7uPhCKPRACouDz/dV
- B82SuV0xo7GJg5Q/+WggQus3xnTgnCQalxUFSD3DD0Uubs4fhl3obWFgxKN8QJchrB/LHslNxWO
- etXV944zvqbeWzfBbILH/iZBgcDFxnIQkJtGIBok/4wx5VFUp7EJsxIBpL35bmaGhE0ix08oU5R
- vo22O/YxnRHH5pde0h9j7aiNPsRQW9xSShckucIODxmkEtLSH/v2w5SSBVxyLgb001AAM9BY8YS
- l71JZteZU1DMtwwkOYVqW725OjZotuTJRIU0xdtTXjPxkSGbHZZni/Knr+iStOhVAlX/TUxOrj2
- 5Hjv7BAKFtqAACdZ0Es88HAaI05ed/kpzEzfY4Q40rLFF7+1+g3L3nNJo2pFLyQzEXt5cKevbs/
- txAoVgru4sO50ZlX0Vg==
-X-Proofpoint-GUID: etYZTBKC1-f9ej1-wwUIR8Lrr0jpvj2d
+ a=Y2IxJ9c9Rs8Kov3niI8_:22 a=H9VqmB7XAAAA:8 a=VnNF1IyMAAAA:8
+ a=hwfshhjcq_gbVOUJzI0A:9 a=v3k57InNul7ldpsxCyLV:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2NCBTYWx0ZWRfX2cZM8489OgjF
+ 945rp1ikpxCBtqxPVCmzKk1hRBkgGazjWQg7Z9THXqQ+VovC5+B8yuPzB45+TgIwWRTvdXE4AL+
+ FKKKmTWrD+hll/g82YKW7nvSHcSugDmmUt+KBvsMpDwwBojbdVK/NNzZ8tDQsi4Aex/zlOtHHK/
+ PXbG96abWGnwetoqq8DvdPvdKdSkmqAmLEYi9d50RVpgT9oSsGt2SOOIh5PzfZnXRekGXsE0z5u
+ FFE3Vs4ORXU5Ak02MoMcN3ryh5OTZrU8CMt74PN4XOAeOZ4JU9LM3rGduTEW2EmyYVlgAwVInXl
+ /E4GZXYUDgfgGrutfvXs0cbmPjDPyMduMkiHXeReNyVbQmFWit/0KtnvsmPgMpafNMGHE8BNeRV
+ oAFTA0mTrwlWgyyWOn3cgM9A1R3APEgLdpv31rX27qa8mekbm+e4jLCpCtSTKVQ0S1zpUTXoM1I
+ o63J8X6/fMdl87LS+pA==
+X-Proofpoint-GUID: z_yPaFLKp-Tt_Ws8cD3QGOsNaHJK1877
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
@@ -90,17 +91,81 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240164
 
-This series fixes two memory leaks in libimaevm.
+Fix the following issue detected by shellcheck:
 
-   Stefan
+if [ "x$(id -u)" != "x0" ]; then
+     ^---------^ SC2268 (style): Avoid x-prefix in comparisons as it no \
+    longer serves a purpose.
 
-Stefan Berger (2):
-  Use EVP_PKEY_free to free a key of public_key_entry
-  Avoid memory leak if public_keys is NULL
+Also fix several of the following types of issues by disabling the
+shellcheck error. Shellcheck does not recognize the invocation of functions
+when they are indirectly invoked when they are passed as parameter to
+another function.
 
- src/libimaevm.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+__skip() { return "$SKIP"; }
+^-- SC2329 (info): This function is never invoked. Check usage (or \
+    ignored if invoked indirectly).
 
+Also see: https://www.shellcheck.net/wiki/SC2329
+
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ tests/kernel/fsverity.test | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/tests/kernel/fsverity.test b/tests/kernel/fsverity.test
+index 734d490..9c0f381 100755
+--- a/tests/kernel/fsverity.test
++++ b/tests/kernel/fsverity.test
+@@ -52,6 +52,7 @@ _require dd mkfs blkid e2fsck tune2fs evmctl setfattr
+ 
+ trap '_report_exit_and_cleanup _cleanup_env cleanup' SIGINT SIGTERM EXIT
+ 
++# shellcheck disable=SC2329
+ cleanup() {
+         if [ -e "$TST_MNT" ]; then
+ 		if [ "$LOOPBACK_MOUNTED" -eq 1 ]; then
+@@ -220,6 +221,7 @@ load_policy_rule() {
+ 	return 0
+ }
+ 
++# shellcheck disable=SC2329
+ create_file() {
+ 	local test=$1
+ 	local type=$2
+@@ -236,6 +238,7 @@ create_file() {
+ 	chmod a+x "$TST_FILE"
+ }
+ 
++# shellcheck disable=SC2329
+ measure-verity() {
+ 	local test=$1
+ 	local verity="${2:-disabled}"
+@@ -297,6 +300,7 @@ measure-verity() {
+ 	return "$error"
+ }
+ 
++# shellcheck disable=SC2329
+ measure-ima() {
+ 	local test=$1
+ 	local digest_filename
+@@ -375,7 +379,7 @@ if ! evmctl --help | grep -q veritysig ; then
+ 	exit "$SKIP"
+ fi
+ 
+-if [ "x$(id -u)" != "x0" ]; then
++if [ "$(id -u)" != "0" ]; then
+ 	echo "${CYAN}SKIP: Must be root to execute this test${NORM}"
+ 	exit "$SKIP"
+ fi
+@@ -403,6 +407,7 @@ create_loopback_file ext4
+ 
+ # Commit 989dc72511f7 ("ima: define a new template field named 'd-ngv2' and
+ # templates") introduced ima-ngv2 and ima-sigv2 in linux-5.19.
++# shellcheck disable=SC2329
+ __skip() { return "$SKIP"; }
+ 
+ # IMA policy rule using the ima-ngv2 template
 -- 
 2.53.0
 
