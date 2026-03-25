@@ -1,67 +1,64 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98C135295C
-	for <linux-integrity@vger.kernel.org>; Tue, 24 Mar 2026 22:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0671F4A35;
+	Wed, 25 Mar 2026 00:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774389870; cv=none; b=AL4RpMs1u2P5v6iDhLMFBW00B+ySGkV71H2DgcBTJmPQlHU//KoNme1Ks9skcmJ0nkrq2szLbxJpYhhXq2/XU2yt5Hvtlc+fsAyr9WlLUSSH1kOBg6eaASg9whR2ftY91w7KaIiQkPxIQBP/pZnQrIdPHDohtrpFyFO5bvOvEl4=
+	t=1774397493; cv=none; b=YNeZTn6RGJV5KOLkgRYBYaRgem4VFnpfq1SCHprZqS/W3QEZ+fxFnrW8Halz7GWBmGYr43mVmtRdEtsebVQ2jrFLqr3CUPSBu0IslmffcEuhfraqBkxiBzE4VcrvcnljXnqmsH/vkDpobkZvblmVRP/yyUIb4XUymxVSzsAwt1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774389870; c=relaxed/simple;
-	bh=mWv4o5rPlNjCC5EIZP/FmU7uQTDMEWM97rQMkAlPMq0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PWtHlfABz3NdhUh0K/lGuBigfGlAxX8JXsWlfssrEI3VrOCjVNIwIl4ZSn12gHlzWR1jXiXkjK2BWsTO6OcRwvNw4/mcczlgbuGWQaRL1Zx/pSF5xbMZfiBWg0FbnickPvacZwHiP7aylYiQSqOtWvEmolOrQlSjg+JkI0gBk9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K6NhXgbl; arc=none smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1774397493; c=relaxed/simple;
+	bh=uIorWTZWgTZVMHoRTs0Im0qK4t4jvXiMGAlSTLwugAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbIF2TXT8F9wzYa8Njr6q+zP0N1c33SFQCu8L9bxJTWl1VAI7QbpsxdENwEFUtnxn5nOioOY5RheJtZ7ZjDPyAi4ssvRtzpo62GHPAPPIcHxigSg25B8oTf2HNz9PtPaAgw3gt2xpv5y0oSTcHzCHDFjyTBa5/lcpGFgS/7/lMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gYYkp9hW; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K6NhXgbl"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OHNstR641818;
-	Tue, 24 Mar 2026 22:03:20 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gYYkp9hW"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 62OJOHjQ826235;
+	Wed, 25 Mar 2026 00:11:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=AHlK4iyhlKvVaH/pn
-	vVgr9BNhaJaNelSwKBWaUsGS84=; b=K6NhXgblu17PfQkyd++g+43cSWdbExGLb
-	STAqo+RDMw5jKzzUy0qiPu7o59GKkb4CfbnirzCb2gHXR4Jr6lT2zo8cCRSHWLpe
-	ovETeGLJ5XkIfdMV3qXcKfzkoeLpD48PSIJHz85tuQgbhVC+cs0Ly6N3TAgo0Gws
-	pFlyMkXhCypMIHNkFCsU7o3liCFIrJLSU2BRMksKsBxZLwEyI2eFN4tkW1LK2kce
-	6KVXxOV8VN/evdDfd1dn5WS9huHy6KeSlk8q5bCrM1FlS7Vb373Hv0Rz9j79xNAe
-	tiewvwh9OZMRfhwTd3FM0VmmLAr5aPEGkVdYBeKLo5rEsRKy3N+zA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kw9wwm3-1
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=Uhhmf3Yy7ioyocANGCnACGhjSI129Jke5G9koze/N
+	zc=; b=gYYkp9hWdpA0q5vR0tq5UZBY+pRucRgtxZWikv/uu69feWBz2Bv+aeoVI
+	PZUxksj32w6v0FcE/Z3MTggS2zH0GGQLSdD4t5UK9ft3NkiiNm6qjpqzfxXl5YEU
+	/xCsp7MyPaYqwhTq9rk8vi1v+l0qNWoh6mCTw2gy9exaLw6fOdZ4Bd5curLEYc/n
+	jS92VDqXaHhtg0ZXNXmRNyRMlGO+6PLql04h3etfMV5jCbuR9HlC3pU57e6FXCHj
+	R/N6ulL22B931M/3Fwydq9/P+CdPYSCDPB7i2SWpYHkvrd2ultQN1V6J7gSGlpYF
+	jAAjJ1VzPGQCQdY7SkncZtAENOjaQ==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d1kxqe7q6-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 22:03:20 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62OIdaho005969;
-	Tue, 24 Mar 2026 22:03:19 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d261ym59f-1
+	Wed, 25 Mar 2026 00:11:03 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62P03foS031631;
+	Wed, 25 Mar 2026 00:11:02 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4d25nsvg67-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Mar 2026 22:03:19 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62OM3HQM23462436
+	Wed, 25 Mar 2026 00:11:02 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 62P0B0bO20054592
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 24 Mar 2026 22:03:18 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E10FE58056;
-	Tue, 24 Mar 2026 22:03:17 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 93A0358052;
-	Tue, 24 Mar 2026 22:03:17 +0000 (GMT)
+	Wed, 25 Mar 2026 00:11:00 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94CB858058;
+	Wed, 25 Mar 2026 00:11:00 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EAE675805E;
+	Wed, 25 Mar 2026 00:10:59 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 24 Mar 2026 22:03:17 +0000 (GMT)
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 25 Mar 2026 00:10:59 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils: PATCH 1/8] Implement imaevm_create_sigv3 for creating V3 signatures
-Date: Tue, 24 Mar 2026 18:03:07 -0400
-Message-ID: <20260324220314.743709-2-stefanb@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, ebiggers@kernel.org, zohar@linux.ibm.com,
+        roberto.sassu@huawei.com, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] integrity: Allow sigv3 verification on EVM_XATTR_PORTABLE_DIGSIG
+Date: Tue, 24 Mar 2026 20:10:51 -0400
+Message-ID: <20260325001051.754093-1-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260324220314.743709-1-stefanb@linux.ibm.com>
-References: <20260324220314.743709-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -70,149 +67,55 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: uM5_f5boAHUB2_-a8NqyAH1tBFAkyMXT
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE2OCBTYWx0ZWRfXzwENrCyJaCNE
- PqmHvnxD0H5ViQDYXzUjuszoQcyksL5Y8qdtsbGQvFSc3rKwHpPmz1CRV6DiHYk2GaGb9FvpRjS
- pqt8ZR+rJNhUDZgbX4WDrevv6NFKTr29BjHnW+0R3pNIKj5KwC3KrxA2MocJg5n89yh378nxUHT
- fjNksB73QgIXgwpM6qbpBzEXkedHYwuOljr5WbP5coXe5rScJHsq3D4O/DFVutnwa4+k4FXJBZl
- LRVB+yWFOepkbkQQqZE6OxcIIOfsoQmg0KTAL/OpZE1n746/K03JFuz/ZuGM9EVvF13Zq+YLK8V
- 8QAlptqq33HjrjQjsPaLRyxp11kvgdNweyEp+EB8+EEre6MVAfI1HGtGtLMMBhlLrrTNPOH7hhL
- 90zJ/o39piEIopzNCp3PaaVA9QrvAxP5T6hL0bbbgiOvu8Eac6udzigYCQRNKq+ojYO6Y7hWuda
- D5sTbxv0dusrKDi04gg==
-X-Proofpoint-GUID: uM5_f5boAHUB2_-a8NqyAH1tBFAkyMXT
-X-Authority-Analysis: v=2.4 cv=OsZCCi/t c=1 sm=1 tr=0 ts=69c30a28 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+X-Proofpoint-ORIG-GUID: B8CD-AT6hvq7MJfhwUThvotqqTb_xZ0C
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE4NCBTYWx0ZWRfX1MjR4eTbE2Y9
+ 5RuXAaR8sQ2O4j7UFy3cuRkhF6b4LLPZ9O26Vh/7tF4dT/hXPyp4JQHVd6a0ICB9ALAXEKZIQeU
+ m0CmyUY0htxTlR2FB0wfBIzRMiFNzbmvt55b06uFGztaGLE7xfx/NVfftcoYdwgvQN+9OCUa3Qo
+ tE5AEF6VQcOlBgUu+qxGLwqwCTjVk0JSY09RDBd++1otBeWdPBDY3NAl3Dk6WpfZHNVPtnRGBAW
+ SgICOXfSHibDkYvZsvaybTj/JwIiVFXXW4gzSUTtJcGHnZyYhyX9Rn7FddYlTIoR7X9gkRbzhhf
+ FdOi7UpmQ5zskTekzCsVEpEq/ItpkatGJTEZ6+kem9ZZbDPuCDoYDlVXbOYNOm2Y3pJZbZllgxV
+ 1ldHNI88v+VAKyIjReh/X2nVE2bD523MOt05O96RhvnRZx6x3UNZVw73tJksBg1oQ3H9Vu0O6FK
+ KFInKttfhZoL1VFa3ag==
+X-Authority-Analysis: v=2.4 cv=bLEb4f+Z c=1 sm=1 tr=0 ts=69c32817 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=U7nrCbtTmkRpXpFmAIza:22 a=VnNF1IyMAAAA:8 a=J_aLqOt9Vw-xw-7SAykA:9
+ a=iQ6ETzBq9ecOQQE5vZCe:22 a=VnNF1IyMAAAA:8 a=uN4yorV44qNG5XsAaIAA:9
+ a=ZXulRonScM0A:10 a=zZCYzV9kfG8A:10
+X-Proofpoint-GUID: B8CD-AT6hvq7MJfhwUThvotqqTb_xZ0C
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
+ definitions=2026-03-24_04,2026-03-24_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 clxscore=1015 phishscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 spamscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2603240168
+ spamscore=0 adultscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603240184
 
-Implement imaevm_create_sigv3 that creates v3 signatures. This function
-will now also allocate a buffer if the caller did not provide one.
-Further, it will write the full signature into the signature buffer,
-including the leading xattr type byte.
+Allow sigv3 verification on EVM_XATTR_PORTABLE_DIGSIG on RSA, ECDSA,
+ECRDSA, and SM2 signatures.
 
 Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- src/imaevm.h    |  7 +++++
- src/libimaevm.c | 68 ++++++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 72 insertions(+), 3 deletions(-)
+ security/integrity/digsig_asymmetric.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/src/imaevm.h b/src/imaevm.h
-index 3b720d5..5a8441b 100644
---- a/src/imaevm.h
-+++ b/src/imaevm.h
-@@ -282,4 +282,11 @@ int imaevm_hash_algo_from_sig(unsigned char *sig);
- const char *imaevm_hash_algo_by_id(int algo);
- int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo, const unsigned char *in_hash, unsigned char *out_hash);
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index 6b21b9bf829e..6e68ec3becbd 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -154,7 +154,8 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
+ 	size_t file_id_size;
+ 	int rc;
  
-+int imaevm_create_sigv3(const char *hash_algo, const unsigned char *hash, int size,
-+			const char *keyfile, const char *keypass,
-+			unsigned char **sig, size_t siglen, long sigflags,
-+			enum evm_ima_xattr_type xattr_type,
-+			const struct imaevm_ossl_access *access_info,
-+			uint32_t keyid);
-+
- #endif
-diff --git a/src/libimaevm.c b/src/libimaevm.c
-index d8d5dbc..7c78432 100644
---- a/src/libimaevm.c
-+++ b/src/libimaevm.c
-@@ -605,7 +605,7 @@ struct ima_file_id {
- int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo,
- 		    const unsigned char *in_hash, unsigned char *out_hash)
- {
--	struct ima_file_id file_id = { .hash_type = IMA_VERITY_DIGSIG };
-+	struct ima_file_id file_id = { .hash_type = type };
- 	uint8_t *data = (uint8_t *) &file_id;
- 
- 	const EVP_MD *md;
-@@ -622,8 +622,9 @@ int calc_hash_sigv3(enum evm_ima_xattr_type type, const char *algo,
- 	int hash_size;
- 	unsigned int unused;
- 
--	if (type != IMA_VERITY_DIGSIG) {
--		log_err("Only fsverity supports signature format v3 (sigv3)\n");
-+	if (type != IMA_VERITY_DIGSIG &&
-+	    type != EVM_IMA_XATTR_DIGSIG) {
-+		log_err("Only fsverity and IMA/EVM support signature format v3 (sigv3)\n");
+-	if (type != IMA_VERITY_DIGSIG && type != EVM_IMA_XATTR_DIGSIG)
++	if (type != IMA_VERITY_DIGSIG && type != EVM_IMA_XATTR_DIGSIG &&
++	    type != EVM_XATTR_PORTABLE_DIGSIG)
  		return -EINVAL;
- 	}
  
-@@ -1449,6 +1450,67 @@ int imaevm_signhash(const char *hashalgo, const unsigned char *hash, int size,
- 			    access_info, keyid);
- }
- 
-+/*
-+ * Create a v3 signature given a file hash
-+ *
-+ * @hash_algo: The hash algorithm to use for hashing
-+ * @hash: The file hash
-+ * @size: The size of the file hash
-+ * @sig: A pointer to signature buffer pointer; if pointing to NULL, then
-+ *       this function will allocate a buffer large enough for the signature
-+ * @siglen: Size of the given signature buffer; if it is too small then
-+ *          an error will be returned
-+ * @sigflag: Flags related to the signature
-+ * @xattr_type: Type of xattr that will be written; needed for creating
-+ *              ima_file_id structure
-+ * @access_info: Needed in case an engine or provider is used
-+ * @keyid: The key id to use
-+ *
-+ * Note: This function behaves slightly different than older signature creation
-+ *       functions because it already writes the xattr type to offset 0 in the
-+ *       signature buffer.
-+ */
-+int imaevm_create_sigv3(const char *hash_algo, const unsigned char *hash, int size,
-+			const char *keyfile, const char *keypass,
-+			unsigned char **sig, size_t siglen, long sigflags,
-+			enum evm_ima_xattr_type xattr_type,
-+			const struct imaevm_ossl_access *access_info,
-+			uint32_t keyid)
-+{
-+	unsigned char sigv3_hash[MAX_DIGEST_SIZE];
-+	/* buffer capable of holding (more than) RSA-4096 signature; */
-+	unsigned char sigbuf[1024];
-+	int len, slen, err;
-+
-+	len = calc_hash_sigv3(xattr_type, hash_algo, hash, sigv3_hash);
-+	if (len < 0 || len == 1) {
-+		log_err("Failure to calculate v3 file hash\n");
-+		return len;
-+	}
-+	assert(len <= sizeof(sigv3_hash));
-+
-+	err = imaevm_signhash(hash_algo, sigv3_hash, len, keyfile, keypass,
-+			      &sigbuf[1], sigflags, access_info, keyid);
-+	/* err holds error or signature length */
-+	if (err < 0)
-+		return err;
-+	slen = 1 + err; /* will prepend xattr type */
-+
-+	if (!*sig) {
-+		*sig = malloc(slen);
-+		if (!*sig)
-+			return -1;
-+	} else if (siglen < slen) {
-+		/* provided buffer is too small */
-+		return -1;
-+	}
-+
-+	sigbuf[0] = xattr_type;
-+	sigbuf[1] = DIGSIG_VERSION_3;
-+	memcpy(*sig, sigbuf, slen);
-+
-+	return slen;
-+}
- 
- int sign_hash(const char *hashalgo, const unsigned char *hash, int size,
- 	      const char *keyfile, const char *keypass, unsigned char *sig)
+ 	tfm = crypto_alloc_shash(hash_algo_name[algo], 0, 0);
+
+base-commit: 3fa0dea50084da8279fb4b1175b3a9b4fc16f052
 -- 
 2.53.0
 
