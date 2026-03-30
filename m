@@ -1,40 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270E83976BB
-	for <linux-integrity@vger.kernel.org>; Mon, 30 Mar 2026 20:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79E73BB48
+	for <linux-integrity@vger.kernel.org>; Mon, 30 Mar 2026 20:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1774901685; cv=none; b=CMfXkH/r+qcDanqAcShmR8Z6kRbJk6qj1IvdE8e4Cd5iTzjp6HXbXDhbN2EZ6QnYtLIB9qwOFjMfKYnxBTIOgHkLbl85+S1QK7sefTF8QXg7dymh0b35qCPQmPW9e0q7NSUBuGUcPK+PrbeXm2i8rVmQvRsZOf3OUI1OXg2vBhE=
+	t=1774901864; cv=none; b=B9sHNQPoyaMEAxxEVwJI5JGSTMDgAsTGN7Cxr13GO1dPTaovD/kJqlsc29B24u++LGtPXMlf7QYj0bJ8GIjv5QCgLrEVAnsMH28aW1kg9CWkivqRuiRJW8xJ6Dpqwi29oVgXU9UXAF1Bc8uepCOhyOVZceuh6RiSOnqwtomJ3zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1774901685; c=relaxed/simple;
-	bh=R1pwynaUgdRNgwi51uAR6jOtIkYi7AVrXxJDFaXkJh4=;
+	s=arc-20240116; t=1774901864; c=relaxed/simple;
+	bh=KMKVq0GGBN8BsOCvMA1MrSH86cSO5JtwlNZBDQ+a6pk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMbVNPJCFsZqhxOgazOj9wDEYB3lbH/7UQ+FvVVbZD5sH9wb9iuQaSyobat+mskjStn/s5eLCEU+Iev035ARtll+lk7lXxswHtJbqKUmkbjeIZn9MhB0r1W/a99YZOUihfJOwsVeWemXahvM63ZgZMDZHig1/CDCu+fATqei0pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RoXe/XtP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDaHgcNiHgZv5i3DbuKjTmvmT8SHHkUtb7QIDw/i6/t2QDGjwYIK1q+OBbYc5957/y0h2egjQTmNzt2H2BRXvjBE6I/AtcpPBszoB+6lzLalbLuxZMeRSJXzlr3N4CADtPugO6g5UtZIdtljfVZzKj8qMaj2xKCDXHSPIwTzzVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CkmtniJf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RoXe/XtP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E6C0C4CEF7;
-	Mon, 30 Mar 2026 20:14:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CkmtniJf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 209E8C2BCB0;
+	Mon, 30 Mar 2026 20:17:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1774901684;
-	bh=R1pwynaUgdRNgwi51uAR6jOtIkYi7AVrXxJDFaXkJh4=;
+	s=k20201202; t=1774901864;
+	bh=KMKVq0GGBN8BsOCvMA1MrSH86cSO5JtwlNZBDQ+a6pk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RoXe/XtPnlKlcGuJVUli+flPMw9Uxht+mTZxi25g1tonWQrIZVC6LgcnmWzWFWDW2
-	 tirkNFjtenNxxOPjFuIykvi+kABfgYNI6B8bOpOI0RKxAaA1a1G3UFK0zPIz82m8AD
-	 XOhDZDwP+sVYWXusA1RXCrTTF58Da6TwcH8rS3TDIYXF+hdQtFiXQq7Uag/sPAebjl
-	 LYKSmKz2hbQ55iKX9NWVTEWhM7txw+G+sZ78npwiOOigATTXmg8Qw1Pnbi8U5NoYhv
-	 L/dih5KUb/cfbJ3evSuAdyRwpC8F7as9uQz0ot+Pk6tgmA7oGIv1mcPPEbxu9olad9
-	 8Fp8iCE4NLJug==
-Date: Mon, 30 Mar 2026 13:13:36 -0700
+	b=CkmtniJf1OPngIfaPwSrQa5u5vQNiCDxiG9csIxuRuUlq1f0nHEpHRbd4pNNL/oZT
+	 VOVj0yGpdjdBeI3uk4y2+DuwPrYYg9o6MtwWJH731uzNGEh/dDQbV4cVMhVe7uN+H5
+	 c8PJ4xXQUZJXNvzUeLlOcOYyxqLDBXvNciA4uK1Krg4y/1mWoY9GIJgF7EgCJyKlN4
+	 QCspdESyP1Ba4IRATYVWjuTsemdfQ8grBbYMDFOuDO8/C0xw0yHGTzl4byP+LRZcLn
+	 blpeQujR3go1QmWNjPO775vYMpPELaknWjeqPXz2RaKQnihUYp1FfVkIaS9fJdddvd
+	 e8FjwvW+/UrGw==
+Date: Mon, 30 Mar 2026 13:16:35 -0700
 From: Eric Biggers <ebiggers@kernel.org>
 To: Mimi Zohar <zohar@linux.ibm.com>
 Cc: linux-integrity@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH 1/3] ima: Define asymmetric_verify_v3() to verify IMA
- sigv3 signatures
-Message-ID: <20260330201336.GE4303@sol>
+Subject: Re: [PATCH 0/3] ima: add regular file data hash support for sigv3
+Message-ID: <20260330201635.GF4303@sol>
 References: <20260324203929.2475782-1-zohar@linux.ibm.com>
- <20260324203929.2475782-2-zohar@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -43,16 +41,26 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260324203929.2475782-2-zohar@linux.ibm.com>
+In-Reply-To: <20260324203929.2475782-1-zohar@linux.ibm.com>
 
-On Tue, Mar 24, 2026 at 04:39:27PM -0400, Mimi Zohar wrote:
-> + * IMA signature version 3 disambiguates the data that is signed by
-> + * indirectly signing the hash of the ima_file_id structure data.
+On Tue, Mar 24, 2026 at 04:39:26PM -0400, Mimi Zohar wrote:
+> IMA signature version 3 (sigv3) support was introduced to avoid file
+> signature ambiguity. Instead of directly signing a raw fs-verity hash,
+> IMA signs the hash of ima_file_id structure, containing the type of
+> signature, the hash algorithm, and the hash.
+> 
+> Pure ML-DSA calculates and signs the hash directly rather than a
+> pre-hashed digest. To avoid ML-DSA having to re-calculate the file data
+> hash, Eric Biggers suggested signing the smaller ima_file_id structure.
+> 
+> This patch set adds the sigv3 support for regular file data hashes. A
+> subsequent patch set will add the ML-DSA support.
 
-The right way to think about it is that it's the ima_file_id itself that
-is being signed and verified, and taking the hash of it is only a
-workaround for legacy algorithms that can only sign and verify hashes.
-With modern algorithms like Ed25519 and ML-DSA that accept
-arbitrary-length messages, that workaround won't be needed.
+This explanation is a bit confusing, since this is actually needed
+regardless of ML-DSA support.
+
+Anyway, it's still the right thing to do.
+
+Acked-by: Eric Biggers <ebiggers@kernel.org>
 
 - Eric
