@@ -1,230 +1,83 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E82D17D6
-	for <linux-integrity@vger.kernel.org>; Mon,  6 Apr 2026 00:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063D938759D;
+	Mon,  6 Apr 2026 16:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775434124; cv=none; b=JkrK3z6bKLSYb+TLe86PT2AVwM7+oShRRWTtadupxlwOE7fPf8oUnzhqb1Hm76MGTIASvY67H7UWI0rM8pA8voGCre3wwPqBczKmGEwL1D0ZBnmBho5ZmKoSO2n0B89dJzmuygTt3R1j/iCZqPLuAsTQ4BCpvTDeyg5/q9w+61A=
+	t=1775494508; cv=none; b=EHM4UIWclohcYnwBJ9icPmjQl3CCAJzjCKQLEKVkaK97aRmEJClbtbx4rDMh6CcbFGleq2Hy5ia1P2l7rf9blmhTvwA5+khEsYIY95OfLdx00Sma+9U5Fd2hY73FLArqiq8FPOv1p8cdJf89Ku6cLKZnw+5Hu0lvVaiLmK9HgVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1775434124; c=relaxed/simple;
-	bh=U1Jsyasc3cJPKETfJqj59bd0OOKg6yMiD0x4swXV6JM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c0q9FiFrLD8SEoBI4Ge/k4BrvkXhxrdOGhUwTDDDSHS0rhaOOLfam/simHX3D3KQJHat6fN/8w0LaZJWlqrVQqmXQRuAtJt946CwreBDDuA2brCZAIEorMswPbdgmzbXUprltnVirtHRbc6Viv9dknbmajp4OfF1jYo41Se6ZLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UCoJQyAM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1775494508; c=relaxed/simple;
+	bh=YPa/uyVI/zqPFLBKVoFkDJwBwijtEHRHs03s3tfOZ/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j6W92YKfkwNoOr/kNCfh1P1pQDwSYwx8Wxjg+dUUFRHnFlvmAyXtv2wjCp6TmhCYzzShbZPuIpd+QJVQxzmZ1tCdwz+xk4yDQjwTkBjkcRnm8wZtIWrepBUtL4tB4QhE8OXQtNBPfCyn63hg5jA6MDNbSUUsl+qd6euoR30E0DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPSu1G8y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UCoJQyAM"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 634IMiHr614811;
-	Mon, 6 Apr 2026 00:08:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=XjNLJFYU0iNj27zH0
-	EHytKTpXapZpFmvGJ+COD2c9P4=; b=UCoJQyAM7aLvISXUiaZR8f/0jBPIrKIIb
-	bhFC8A2LrO0vo7f2JniSiA06ZXYhPIQon69UnVmh26F4DuVBhEt7G9rnS2BWH++Y
-	P1p9PS/DOCfeWflbYUKmfwbnIYiBA9zkB2ggdEycaS5whWXfWohj6XFGc7Qdm1BM
-	ana5II3DEvlDf7S2xwFXlf3biNLbOYeUmPzJeO8RxEvTtyA23inntcNZfegLKZ0Q
-	ZMhHdvFHZHPlMrecmPm5TocQOR6z96C+hTewTeoR4/LTJpmQi58dFG2joWOcoDfn
-	MbGJD5J16EIMlBrJC7Kue8Ik1aobBjo0JxN29vgDWowI/0p2f7vbg==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dar2gcgbd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Apr 2026 00:08:22 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 635HbGZZ006360;
-	Mon, 6 Apr 2026 00:08:21 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dbfp1jjp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Apr 2026 00:08:21 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63608Jo32229240
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 6 Apr 2026 00:08:19 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3214658059;
-	Mon,  6 Apr 2026 00:08:19 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C8C0958057;
-	Mon,  6 Apr 2026 00:08:18 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  6 Apr 2026 00:08:18 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, ebiggers@kernel.org,
-        coxu@redhat.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils PATCH 4/5] examples: Implement script to create ML-DSA-65 CA and signing keys
-Date: Sun,  5 Apr 2026 20:08:09 -0400
-Message-ID: <20260406000810.4013201-5-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260406000810.4013201-1-stefanb@linux.ibm.com>
-References: <20260406000810.4013201-1-stefanb@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPSu1G8y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4343BC4CEF7;
+	Mon,  6 Apr 2026 16:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1775494507;
+	bh=YPa/uyVI/zqPFLBKVoFkDJwBwijtEHRHs03s3tfOZ/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RPSu1G8yBRgJShEMiu/+j9upL2j+a0NY3G8eULqcdFSnVU+teFCtNYnqjbCFLkUj2
+	 eMRppvBNylHBFD+njmyliTADdLua7U7arTjjkYbfU5TQW7Mivuv1/2ExjlAh/PcXnS
+	 IZpfs1K7j+enuMZ8dsjdg3XlSa5ci/cbq+biGIiHagNSLKjOjq1TUzkfkYc4Uduqkz
+	 fzgqWC69jt8FIqUNX6fqQcCcYKUdEu1K8Hrjux3iTMXDW/Y/MsmDvz1vSfaTdBlsp3
+	 Bly1FwKmjXyKXPYDXGj4I7vNjBvQCNlzk0Da+qPhwU9ytoBLDupG4J0bwENGxvpBdI
+	 /qHBboGghIp3g==
+Date: Mon, 6 Apr 2026 09:53:50 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+	roberto.sassu@huawei.com, David Howells <dhowells@redhat.com>,
+	Lukas Wunner <lukas@wunner.de>, Ignat Korchagin <ignat@linux.win>,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org
+Subject: Re: [PATCH 1/3] crypto: public_key: Remove check for valid hash_algo
+ for ML-DSA keys
+Message-ID: <20260406165350.GD2971@sol>
+References: <20260405231224.4008298-1-stefanb@linux.ibm.com>
+ <20260405231224.4008298-2-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: lVs3QeMSlbm73t_iemHoD8SAcHiLZ5JZ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA1MDI0NyBTYWx0ZWRfX3X/4aweo8+zJ
- tmnYlWwZS9zYncaA8eqiuz9cYZjh/jdD7M3HYNDabXJf5PFcobfjcm5Yse9oZZ5fe3cYJsY3lM5
- 4Hb4EmT4SQhcJeU3nkUMIzu5eq5vzgH1Xg55pp0OBLtIn2xOl6oScPivQhGxPUWe0N+UGMXi66R
- +t4fOqUMppKa0pMq43TxMr7mXLAANUyU9auA8GPPuxaogfzzFlfmPHiib44U23gUvB9xebvM+AL
- voYF4zyBMCOuX0ixbxDXvpEPH/np9RmGPOdV2RYXFp0WJRkqpOLd16yuOLy8ktKjlwqsBtkydNc
- jQgJXwDHtsfrPsMNSPrmJcqFV8yHxBwunkBHL4iVGBboqOXgnaEaoTdBfa6oQ9h4W9jLrkMUlOt
- cwGTGr6PbQMwvm2mKeuxBP3hpXi/a82WJabiOu6YqN/Q0l2E9p/aejbBe3GOB6tbMtweayHbFYe
- Yi8Vb7bycm0Q4DQ5liA==
-X-Authority-Analysis: v=2.4 cv=b+u/I9Gx c=1 sm=1 tr=0 ts=69d2f976 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VnNF1IyMAAAA:8 a=GnB_NaH4Y8p_GKf6GlsA:9
-X-Proofpoint-ORIG-GUID: lVs3QeMSlbm73t_iemHoD8SAcHiLZ5JZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-05_08,2026-04-03_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 bulkscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2604050247
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260405231224.4008298-2-stefanb@linux.ibm.com>
 
-ima-gen-local-ca-mldsa65.sh creates a CA with an ML-DSA-65 key and
-ima-genkey-mldsa65.sh creates an ML-DSA-65 IMA file signing key along with
-its certificate.
+On Sun, Apr 05, 2026 at 07:12:22PM -0400, Stefan Berger wrote:
+> Remove the check for the hash_algo since ML-DSA is only used in pure mode
+> and there is no relevance of a hash_algo for the input data.
+> 
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Ignat Korchagin <ignat@linux.win>
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  crypto/asymmetric_keys/public_key.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
+> index 09a0b83d5d77..df6918a77ab8 100644
+> --- a/crypto/asymmetric_keys/public_key.c
+> +++ b/crypto/asymmetric_keys/public_key.c
+> @@ -147,11 +147,6 @@ software_key_determine_akcipher(const struct public_key *pkey,
+>  		   strcmp(pkey->pkey_algo, "mldsa87") == 0) {
+>  		if (strcmp(encoding, "raw") != 0)
+>  			return -EINVAL;
+> -		if (!hash_algo)
+> -			return -EINVAL;
+> -		if (strcmp(hash_algo, "none") != 0 &&
+> -		    strcmp(hash_algo, "sha512") != 0)
+> -			return -EINVAL;
 
-Also add a script for creating an ML-DSA-87 IMA file signing key. This key
-type is good for local testing with the largest possible signature.
+Does this broaden which hash algorithms are accepted for CMS signatures
+that use ML-DSA and contain signed attributes?
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- examples/ima-gen-local-ca-mldsa65.sh | 29 ++++++++++++++++++++++++
- examples/ima-genkey-mldsa65.sh       | 34 ++++++++++++++++++++++++++++
- examples/ima-genkey-mldsa87.sh       | 34 ++++++++++++++++++++++++++++
- 3 files changed, 97 insertions(+)
- create mode 100755 examples/ima-gen-local-ca-mldsa65.sh
- create mode 100755 examples/ima-genkey-mldsa65.sh
- create mode 100755 examples/ima-genkey-mldsa87.sh
-
-diff --git a/examples/ima-gen-local-ca-mldsa65.sh b/examples/ima-gen-local-ca-mldsa65.sh
-new file mode 100755
-index 0000000..e2b54cd
---- /dev/null
-+++ b/examples/ima-gen-local-ca-mldsa65.sh
-@@ -0,0 +1,29 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+
-+GENKEY=ima-local-ca.genkey
-+
-+cat << __EOF__ >$GENKEY
-+[ req ]
-+distinguished_name = req_distinguished_name
-+prompt = no
-+string_mask = utf8only
-+x509_extensions = v3_ca
-+
-+[ req_distinguished_name ]
-+O = IMA-CA
-+CN = IMA/EVM certificate signing key
-+emailAddress = ca@ima-ca
-+
-+[ v3_ca ]
-+basicConstraints=CA:TRUE
-+subjectKeyIdentifier=hash
-+authorityKeyIdentifier=keyid:always,issuer
-+keyUsage = cRLSign, keyCertSign
-+__EOF__
-+
-+openssl req -new -x509 -utf8 -sha256 -days 3650 -batch -config $GENKEY \
-+		-outform DER -out ima-local-ca.x509 -keyout ima-local-ca.priv \
-+		-newkey mldsa65
-+
-+openssl x509 -inform DER -in ima-local-ca.x509 -out ima-local-ca.pem
-diff --git a/examples/ima-genkey-mldsa65.sh b/examples/ima-genkey-mldsa65.sh
-new file mode 100755
-index 0000000..b1aaf41
---- /dev/null
-+++ b/examples/ima-genkey-mldsa65.sh
-@@ -0,0 +1,34 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+
-+GENKEY=ima.genkey
-+
-+cat << __EOF__ >$GENKEY
-+[ req ]
-+distinguished_name = req_distinguished_name
-+prompt = no
-+string_mask = utf8only
-+x509_extensions = v3_usr
-+
-+[ req_distinguished_name ]
-+O = `hostname`
-+CN = `whoami` signing key
-+emailAddress = `whoami`@`hostname`
-+
-+[ v3_usr ]
-+basicConstraints=critical,CA:FALSE
-+#basicConstraints=CA:FALSE
-+keyUsage=digitalSignature
-+#keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-+extendedKeyUsage=critical,codeSigning
-+subjectKeyIdentifier=hash
-+authorityKeyIdentifier=keyid
-+#authorityKeyIdentifier=keyid,issuer
-+__EOF__
-+
-+openssl req -new -nodes -utf8 -sha256 -days 365 -batch -config $GENKEY \
-+		-out csr_ima.pem -keyout privkey_ima.pem \
-+		-newkey mldsa65
-+openssl x509 -req -in csr_ima.pem -days 365 -extfile $GENKEY -extensions v3_usr \
-+		-CA ima-local-ca.pem -CAkey ima-local-ca.priv -CAcreateserial \
-+		-outform DER -out x509_ima.der
-diff --git a/examples/ima-genkey-mldsa87.sh b/examples/ima-genkey-mldsa87.sh
-new file mode 100755
-index 0000000..347ff91
---- /dev/null
-+++ b/examples/ima-genkey-mldsa87.sh
-@@ -0,0 +1,34 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+
-+GENKEY=ima.genkey
-+
-+cat << __EOF__ >$GENKEY
-+[ req ]
-+distinguished_name = req_distinguished_name
-+prompt = no
-+string_mask = utf8only
-+x509_extensions = v3_usr
-+
-+[ req_distinguished_name ]
-+O = `hostname`
-+CN = `whoami` signing key
-+emailAddress = `whoami`@`hostname`
-+
-+[ v3_usr ]
-+basicConstraints=critical,CA:FALSE
-+#basicConstraints=CA:FALSE
-+keyUsage=digitalSignature
-+#keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-+extendedKeyUsage=critical,codeSigning
-+subjectKeyIdentifier=hash
-+authorityKeyIdentifier=keyid
-+#authorityKeyIdentifier=keyid,issuer
-+__EOF__
-+
-+openssl req -new -nodes -utf8 -sha256 -days 365 -batch -config $GENKEY \
-+		-out csr_ima.pem -keyout privkey_ima.pem \
-+		-newkey mldsa87
-+openssl x509 -req -in csr_ima.pem -days 365 -extfile $GENKEY -extensions v3_usr \
-+		-CA ima-local-ca.pem -CAkey ima-local-ca.priv -CAcreateserial \
-+		-outform DER -out x509_ima.der
--- 
-2.53.0
-
+- Eric
