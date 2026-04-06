@@ -1,67 +1,64 @@
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54FA17D6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B991A3FCC
 	for <linux-integrity@vger.kernel.org>; Mon,  6 Apr 2026 00:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1775434110; cv=none; b=Hq73geutVgz9H7c6LcenzO6TwGhkFd8gohsDiSE+xl23pGbjjLuz9RgF8Fr7I76XpcwZmbwUeNCDgy0Cvov7ssHCyBwQ87a1EhQAPs/40HHIN4AjMkFKhb8s6OSLPtzGach85PzImr01KdZWWI2XdkL+LuR0seRBIvhmZOyouwo=
+	t=1775434110; cv=none; b=UfhXZqniJdTCyLgDwaHS70Hho/qaY9lGp8uHQJ65OQXNtSZcVw/Ts3ec9Rl1lhjJ2ZrS2u4x3f6Gb4PJuiFM5uj7P/PcXIEAnUw7O/xzuL51Kx3bOrXYVb3O6NSm4Vai2vrQ3O5b7B/6hIujg/wayct3cIN5UlNaqGV8OlquoYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1775434110; c=relaxed/simple;
-	bh=Ni6IDew4pZt7Miq3JB05x2b14dOw6tR5ziC+sIu9suo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aqZ3dLt/MuPv3VCzpwrQCzbVmRDNVdHOE1/f8WlPt6wu4EIdyJpalNLn1JKTNlhyvgyQGQwuMJEqK+p+CqnpoJT3T/BY0S8GQckfpy/RCzXTcxEJSGax2a5y5geV4znCAiZfHP+bcVpKih1xTNdZHHhhsyfmC7g92TIHWDQKRjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ScEyY/Om; arc=none smtp.client-ip=148.163.156.1
+	bh=byHwMv9UirY7eBBJzUgBsKQ37H8XFvUDCwzZ7bp6ogc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kZbi1lAv9S+1GSuqBESYB7/roei7Gfimp4NBvBaHdy4dFBuWftHsj/3SQTMWlZrhvnOqUE6LM+Ma47osQXH5XEPhcLOv4fd6ZhF+WuzJSoJ1CXtHZQUW/G0S4PdKsQ/RMrx4ODPLaCiameiLGM+TkgfO7zBto9zfy8jEb4yhNsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tmwsZc39; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ScEyY/Om"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 635DCab02694011;
-	Mon, 6 Apr 2026 00:08:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=00y3LH3GE6xMyCGUF
-	f8zdpOKtGo5VxkfDbCZdzipRJA=; b=ScEyY/OmOYL4CB+Dpnn1D0L7g6mX3tS4N
-	/AuL6Id6DhBF8kxgFiqQYqpSnyxix8AFg4HAxAXO3yXDPL+7due4u0V2c1mxAMDh
-	KgtGP6QvjJ8lb530KRf8LCqeOOT/rcYTWA71JjGKNRX2nzv3JDpvt/NMg9zkO5Yo
-	5NnwNfZw3m1AU441Pxa3AOaYxQBOlS36awqUeeV9ITP7Jl8gYYLByIiElfdxlgjD
-	OnukzMZ0pBOFw7GHKsB90IIA85ZvFV4qn8bAJ4eah2fAonlRO4N1D9sddbZ8QXuu
-	nmAXPSIoKK0vDy2xJawYPtIB3L7omWn1a07xV66GawopjK3JHBnNw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4datc2mmth-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Apr 2026 00:08:20 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 635HR34i014731;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tmwsZc39"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 635Lboci3922792;
 	Mon, 6 Apr 2026 00:08:19 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dbf6jtmua-1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=tbfA8UQHiAiFtFsuIvdi/RfplFZ1dfyJlhl0ZJZgc
+	DI=; b=tmwsZc39Ucfg2aaDJMe3aDQbk/yGrYiNjjGWl93I1i3sA+GvNqAsPxayB
+	wsXHE2Pq4xqwsVajf4l3YA0ojCS1klYPukaNuIiNe1fvDmZJBIW0gMC9gk5WrprM
+	h6iBVgvowhElcCWpZkMhLrNpZVzNGVGxQTKpY0N55MXz7FhyZOYaBhmEc97cXAJ7
+	tbLECH96ZX8HE55euNwBHJ8HgMSvZZ1jJ0qfOemhE3Oro+ffTSUQoIV895VDL6B1
+	0y9kVGFeOEnIxdJn/cDxMPwXSM16LtKe/V8aiX1mDZwSQrStgOR+iY/uAPO5ra0x
+	EF/N08+L5uNmuT4TZ6e62E0JC6QbQ==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dat51vnpr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 06 Apr 2026 00:08:19 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63608IdK24904268
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 06 Apr 2026 00:08:19 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 635Hffpm006400;
 	Mon, 6 Apr 2026 00:08:18 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dbfp1jjp0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 06 Apr 2026 00:08:18 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63608Htw57737492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 6 Apr 2026 00:08:17 GMT
 Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BC2658059;
-	Mon,  6 Apr 2026 00:08:18 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C886F58057;
+	by IMSVA (Postfix) with ESMTP id 3CFE858058;
 	Mon,  6 Apr 2026 00:08:17 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D20BA58057;
+	Mon,  6 Apr 2026 00:08:16 +0000 (GMT)
 Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
 	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  6 Apr 2026 00:08:17 +0000 (GMT)
+	Mon,  6 Apr 2026 00:08:16 +0000 (GMT)
 From: Stefan Berger <stefanb@linux.ibm.com>
 To: linux-integrity@vger.kernel.org
 Cc: zohar@linux.ibm.com, roberto.sassu@huawei.com, ebiggers@kernel.org,
         coxu@redhat.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [ima-evm-utils PATCH 2/5] Set size of xattr_value to MAX_SIGNATURE_SIZE
-Date: Sun,  5 Apr 2026 20:08:07 -0400
-Message-ID: <20260406000810.4013201-3-stefanb@linux.ibm.com>
+Subject: [ima-evm-utils PATCH 0/5] Add support for ML-DSA signing and verification
+Date: Sun,  5 Apr 2026 20:08:05 -0400
+Message-ID: <20260406000810.4013201-1-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260406000810.4013201-1-stefanb@linux.ibm.com>
-References: <20260406000810.4013201-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -70,51 +67,62 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA1MDI0NyBTYWx0ZWRfXweu8LpQD37S1
- Si1srwzapicPQcZmYjOniGjwvhubt3Ul+IuUNGozGyl7Tm9iB/HyWlu2hUNfWmHKI02HEtguVMO
- bs73FCNbC7BSeTVc0tiisE0c3T/9ifyf87RvHnv6tYUmJbb8MQPXt/N3TIsmsoW9r5HykixR1y/
- mcXGlLVpUef8RZ+1UzcCLxMpaAMBcgU2CcXeTI3onExyJyI5mpd+Xp7ZTRWCFZ2+IU5R+BTgO5v
- YZX6k/h3rKKP0gD6KV+dqoJRQ6fdv0a7GpFn0QqCWM1hBG6Si1f1sUX843/EshCC14cNxdF4NH6
- LR9j4SEhIlM0Bu2KWwdM/35SGDfe9kzzmzv33s9zYA2CA10TfeqVOPVvQgetxxwJ6RQiO09p/RZ
- skglXzRpV1rjGQo0JPZipOUg5U1lrjTJP9h5yi2Vw6ES3qbelevZNFmvLjXA1+543d4mxmkxBT1
- uRXVVX2j4HA2oLNgkLw==
-X-Proofpoint-GUID: Mok3l34NnCq2fyeJKAPbIiR744J1lQI9
-X-Proofpoint-ORIG-GUID: Mok3l34NnCq2fyeJKAPbIiR744J1lQI9
-X-Authority-Analysis: v=2.4 cv=HJvO14tv c=1 sm=1 tr=0 ts=69d2f974 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+X-Authority-Analysis: v=2.4 cv=J6anLQnS c=1 sm=1 tr=0 ts=69d2f973 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
  a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=U7nrCbtTmkRpXpFmAIza:22 a=VnNF1IyMAAAA:8 a=mA4aZrZgGGEE23H5QREA:9
+ a=iQ6ETzBq9ecOQQE5vZCe:22 a=BLDyFmNgsX99shYY7EQA:9
+X-Proofpoint-GUID: IaTAzSaU5jGoxYAWGgyu9bvJFcLbzfE-
+X-Proofpoint-ORIG-GUID: IaTAzSaU5jGoxYAWGgyu9bvJFcLbzfE-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDA1MDI0NyBTYWx0ZWRfX2wWb1AF0iSVp
+ K1isUw2RdCL/x26Tf3+etS1EAin4a7dxd+JFxWy5B/JY2iwoxvg2K6KM+pIimze4rNfOdIjfKSn
+ 14Fhzpdc19RChpp+PeiqyMA8niiYB3fHJc12BvwavJhr9ncpI6WWF/slQr7UGfaDSwZIxsUuvBk
+ 0P6vQLeIFma0ctZ1e0iKgUJpgcu4tJ9jKnnELM+9FzwYQHzdnIufnbhFyrdH1W65Fa++Beo3N7I
+ MyhbvnlqTn0XX/WMMvyzojpkyH8EFd/fhC7kJtCaAulk7M3Q45RQ9WVpGxko9PxAx2pyB+Kd8z4
+ X1ZBFAXXMSPKY60zJovXFRJzakJDutHoLujzXZEFSoZyjEZdJ9EdqvD0xssDgMd9zVJEO/83+HU
+ uVyJhUr2S/eSppji0a1k6wwhJ4S0OHFuwGZ9O8iM039lURaAWgBGlzJxeMq6oRSoIocbAvNpSyD
+ 7DTmkPY778NjfPuHcQw==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-04-05_08,2026-04-03_01,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0
- malwarescore=0 spamscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ spamscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 phishscore=0 malwarescore=0 suspectscore=0 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2603050001 definitions=main-2604050247
 
-Set the size of an xattr_value that can be read to MAX_SIGNATURE_SIZE
-so that ML-DSA keys can also be read once enabled (and MAX_SIGNATURE_SIZE
-gets a larger value).
+This series adds support for ML-DSA signing and verification for EVM and
+IMA using ML-DSA in pure mode and IMA's sigv3 signature format. Evmctl
+will prevent users from trying to use sigv2 signatures with ML-DSA and
+therefore ML-DSA requires the usage of --v3. Test cases for IMA and EVM
+sigv3 are added using ML-DSA-44 (2420 bytes) and ML-DSA-65 (3309 bytes)
+type of keys since those are more likely to fit into xattrs on most
+filesystems than the even larger ML-DSA-87 signatures (4627 bytes).
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- src/evmctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   Stefan
 
-diff --git a/src/evmctl.c b/src/evmctl.c
-index de67178..c8da495 100644
---- a/src/evmctl.c
-+++ b/src/evmctl.c
-@@ -347,7 +347,7 @@ static int calc_evm_hash(const char *file, const char *hash_algo,
- 	EVP_MD_CTX *pctx;
- 	unsigned int mdlen;
- 	char **xattrname;
--	char xattr_value[1024];
-+	char xattr_value[MAX_SIGNATURE_SIZE];
- 	char list[1024];
- 	ssize_t list_size;
- 	char uuid[16];
+Stefan Berger (5):
+  checkpatch: Remove warning when function name is found in output
+    string
+  Set size of xattr_value to MAX_SIGNATURE_SIZE
+  Support signing with ML-DSA keys when OpenSSL >=3.5 is available
+  examples: Implement script to create ML-DSA-65 CA and signing keys
+  test: Add tests for signing and verifying with ML-DSA keys
+
+ README                               |   3 +-
+ examples/ima-gen-local-ca-mldsa65.sh |  29 +++
+ examples/ima-genkey-mldsa65.sh       |  34 ++++
+ examples/ima-genkey-mldsa87.sh       |  34 ++++
+ scripts/checkpatch.pl                |  14 +-
+ src/evmctl.c                         |   6 +-
+ src/imaevm.h                         |   5 +-
+ src/libimaevm.c                      | 258 +++++++++++++++++++++++++--
+ tests/gen-keys.sh                    |  22 +++
+ tests/sign_verify.test               |  40 ++++-
+ 10 files changed, 417 insertions(+), 28 deletions(-)
+ create mode 100755 examples/ima-gen-local-ca-mldsa65.sh
+ create mode 100755 examples/ima-genkey-mldsa65.sh
+ create mode 100755 examples/ima-genkey-mldsa87.sh
+
 -- 
 2.53.0
 
