@@ -1,106 +1,108 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9663E122E;
-	Mon, 13 Apr 2026 15:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5251E5207
+	for <linux-integrity@vger.kernel.org>; Tue, 14 Apr 2026 00:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776094781; cv=none; b=GXJhixyPEni82bFYr2O2JQys5k5iGtr/PqJddOE843qoz0kNM25ll6wflYJKV32KqW3+bD3aLyAEu+5ZCh7PW+j2rQiYADYWtQW7j/dsZqO7Pn0y8SKHYCVnPP1NGHpPTUvFw4i2h0xIQlR6ZuzjSbg/8miO2sqopzJ2FfYty00=
+	t=1776126172; cv=none; b=YIeZPIrpAxTPzXbyuaDtoR1u54lWzjQiA3A2MGMDwzzADEmFAKfKGA/BNiEBHvzsxm3iG3CZvjLKe0MpHqBBLr/rEa4WLsmvnoD1L8Deb/p2LognPQ40Gs4HC1KFbV4yclY7ROiAZChT7VJAWEX/jQAr1cSM3FEt3O0szTn0t+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776094781; c=relaxed/simple;
-	bh=KLHXMxmpNRD6wvf4gCGYsc4aoUyDu7HAGgr8qoNH8eU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bRI2sZdLUirq4tLfX080V96ITfaCs98SlHbNpQq54hJLcgVyCkXuqpaBR4ClvyqOCK8o/bRV0E1NYgtGKbMDHrDcXjgs8kbQLX861DEeWWzdjqzFRNF5g19bvjTGfwTG6ICWPuizqEUCzFqHKi+No+osVwJkaZK6bUtjOqaqXcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.196])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4fvWFs5CDTztf5N;
-	Mon, 13 Apr 2026 23:16:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id E0FB84056C;
-	Mon, 13 Apr 2026 23:20:14 +0800 (CST)
-Received: from [10.204.63.22] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwC3xN6mCd1pR5okAA--.31610S2;
-	Mon, 13 Apr 2026 16:20:14 +0100 (CET)
-Message-ID: <d95993e3d879bec4c9e3416906d409cca9c8ffeb.camel@huaweicloud.com>
-Subject: Re: [PATCH] evm: zero-initialize the evm_xattrs read buffer
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Pengpeng Hou <pengpeng@iscas.ac.cn>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg
-	 <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris
-	 <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 13 Apr 2026 17:20:04 +0200
-In-Reply-To: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
-References: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1776126172; c=relaxed/simple;
+	bh=S2t/1ZIPTPz36gInG8LpTnv9ZVB7pK1s7Wd3Rc/7Xz0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lJQpY/jr7iY4tlUsNZdD3svygxsPrXIjvo8bwsGNdfW1GM/LmQTU6ssoWUFgashe1Zq54e0P70OQ11172xX1iUirHMF5XLkJ9A5ujoYEtzyeI0wbP1ODhWa6nm1Inyq+b+5Zgs9O/RtJ4tk3Hju5OWDGapgRtIsHAIof/Auyw8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gjovigCl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gjovigCl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1776126170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iIGjSRzHjgHK3cVWJrouI3TfS1aOqL3ldvWQApm8Ax0=;
+	b=gjovigClRk78ZssNcisUNetASM3zICjlHcc5+3t/mhKgFpxCRtJYdUfNskTYskGnFMGaQl
+	Vadt+KYWOCUvWVt6Fzmg4vPjMpuYmkBw+XEeCfQFXF2RLNPE6BMmfyFeeAhRkilcSQ/tDJ
+	UAmrvxt1JKFnxcRWltJvhF9CkKdmNmY=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-m7oIsHyAMDeas_JGBiIC2Q-1; Mon,
+ 13 Apr 2026 20:22:48 -0400
+X-MC-Unique: m7oIsHyAMDeas_JGBiIC2Q-1
+X-Mimecast-MFC-AGG-ID: m7oIsHyAMDeas_JGBiIC2Q_1776126167
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E8F41956048;
+	Tue, 14 Apr 2026 00:22:47 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AA3B18002A6;
+	Tue, 14 Apr 2026 00:22:47 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.17.1) with ESMTPS id 63E0Mkt91917498
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Mon, 13 Apr 2026 20:22:46 -0400
+Received: (from bmarzins@localhost)
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.18.1/Submit) id 63E0MkSL1917497;
+	Mon, 13 Apr 2026 20:22:46 -0400
+From: Benjamin Marzinski <bmarzins@redhat.com>
+To: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: dm-devel@lists.linux.dev, linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Subject: [PATCH 08/10] dm-ima: Handle race between rename and table swap
+Date: Mon, 13 Apr 2026 20:22:42 -0400
+Message-ID: <20260414002244.1917447-9-bmarzins@redhat.com>
+In-Reply-To: <20260414002244.1917447-1-bmarzins@redhat.com>
+References: <20260414002244.1917447-1-bmarzins@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwC3xN6mCd1pR5okAA--.31610S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFW5Aw4UAr1fGw4kZF4kCrg_yoW8Jw4xpF
-	sxtayDtrn8XrykCF98AF1rua4rW3yYkryUGrsavw1vvF9IvryxXr92krWUur1rKrW0yw45
-	t3Wvyr1Yk3Z0qaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUOB
-	MKDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBGnckwUOtQACse
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, 2026-04-07 at 14:09 +0800, Pengpeng Hou wrote:
-> evm_read_xattrs() allocates size + 1 bytes, fills them from the list of
-> enabled xattrs and then passes strlen(temp) to simple_read_from_buffer().
-> When no configured xattrs are enabled, the fill loop stores nothing and
-> temp[0] remains uninitialized, so strlen() reads beyond initialized
-> memory.
->=20
-> Use kzalloc() so the empty-list case stays a valid empty C string.
+a device rename could happen after do_resume() removed the inactive
+table that it was swapping to out of the hash cell, but before it was
+made the active table. In this case, the table metadata would still
+have the old name. Update the swapped table's metadata to avoid this.
 
-Please also add the Fixes: tag with the relevant commit.
+Signed-off-by: Benjamin Marzinski <bmarzins@redhat.com>
+---
+ drivers/md/dm-ima.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-> Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
-> ---
->  security/integrity/evm/evm_secfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/=
-evm_secfs.c
-> index acd840461902..03d376fa36c2 100644
-> --- a/security/integrity/evm/evm_secfs.c
-> +++ b/security/integrity/evm/evm_secfs.c
-> @@ -145,7 +145,7 @@ static ssize_t evm_read_xattrs(struct file *filp, cha=
-r __user *buf,
->  		size +=3D strlen(xattr->name) + 1;
->  	}
-> =20
-> -	temp =3D kmalloc(size + 1, GFP_KERNEL);
-> +	temp =3D kzalloc(size + 1, GFP_KERNEL);
-
-Yes, or just set temp[size] to the terminator so that we don't waste
-computation. Can you also change sprintf() to snprintf()?
-
-Thanks
-
-Roberto
-
->  	if (!temp) {
->  		mutex_unlock(&xattr_list_mutex);
->  		return -ENOMEM;
+diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
+index 5c6f3f8761a8..4631dc2a6d4d 100644
+--- a/drivers/md/dm-ima.c
++++ b/drivers/md/dm-ima.c
+@@ -367,6 +367,19 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap,
+ 		kfree(md->ima.active_table.device_metadata);
+ 		md->ima.active_table = context->table;
+ 		memset(&context->table, 0, sizeof(context->table));
++		if (md->ima.active_table.device_metadata) {
++			/*
++			 * A rename could have happened while the swap was
++			 * going on. In that case, the saved table info would
++			 * still have the old name. Update the metadata to be
++			 * sure that it has the current name
++			 */
++			struct dm_ima_device_table_metadata *table = &md->ima.active_table;
++			fix_context_strings(context);
++			dm_ima_copy_device_data(md, table->device_metadata,
++						context, table->num_targets);
++			table->device_metadata_len = strlen(table->device_metadata);
++		}
+ 	}
+ 
+ 	if (md->ima.active_table.device_metadata) {
+-- 
+2.53.0
 
