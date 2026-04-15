@@ -1,40 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90772314B77;
-	Wed, 15 Apr 2026 02:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217FA328B7B
+	for <linux-integrity@vger.kernel.org>; Wed, 15 Apr 2026 02:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776220697; cv=none; b=Y9QBNeaCEt6ZLvP5rij8E67rvkUhCs3xM3d7PRNmGseUF9TCsdodIZPi3blXa26AjhClA1rWn3AQdqkXZR9fquKRycaT5Zon/NNLWOKbsZ0ax+pPX3LMhtGeEf+B16pvucAsLniBornPGlOh9NnbYAyavsdY/jWLYtiKk5ZU2jA=
+	t=1776220821; cv=none; b=QiwTgtvZlxtnqyowfC1dESGcetkbnDDon1kpPtgM5WZNPQBDagWfMpBOs5oQuJifDPnQimnotFae3X7un997ewSEBvT9yqVpmJUlfV0WdxBzJpsE16KIZ3+LmovsSBwAxXpk8NJGZ/MHAHogwHdJAdYOjC021pKBWyENCQbOwVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776220697; c=relaxed/simple;
-	bh=39azMKTNlL6YESjrd49QChrlL7zprLIrlRZ3l/csz5E=;
+	s=arc-20240116; t=1776220821; c=relaxed/simple;
+	bh=GvMYdQDO9RGH9FMVjqSjcbhtQ3xhAxzGrHIs5G+AhbA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c1WpoG8CeMwttZt96Y0HlEdYOyYAzvC96hpfcstlLeMkdzA/NEqinwBXf0txorqSwXihEH/abp4O3E7x2voO0D9aXssCg85C/M9ssQkjKzQH/WqVMCcZlfMWr/7WbPMuVKlpmVVaBP7Qe0KGWTOqPaiLZFO3+FrUuIP8odh+KRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYsWWPpx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLK1/eUV5YQ+m5YZ0cW5lQlhrZ8VpcWCAiOEhaZcrBpSVll76NAR+Xds+xuvfz9iVm+WVmfsKctgDdff2tUB2LiVpiDwqtkpmPE6DSQ79VhlbqqFNBJM4Nd6AgE/w7WszkqJ6noSFrNI/IXd8i9wPnrtwhaQCmHufETyoEiEiso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPjr+LW1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYsWWPpx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D7A3C2BCB5;
-	Wed, 15 Apr 2026 02:38:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPjr+LW1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41D6C2BCB3;
+	Wed, 15 Apr 2026 02:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776220697;
-	bh=39azMKTNlL6YESjrd49QChrlL7zprLIrlRZ3l/csz5E=;
+	s=k20201202; t=1776220821;
+	bh=GvMYdQDO9RGH9FMVjqSjcbhtQ3xhAxzGrHIs5G+AhbA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LYsWWPpxTh0hxYYWq9dSoshPqX2mACNrmZXNdM5O9muKZyyempK6iXZVmUN8QUyGj
-	 ZaBfZFy2m5rSRz8kkIDgtB2BSYhj7SxJWaOxTz/ixCDCal9BdHFmMJ+6HsS7sojEek
-	 LZ8pgrIGmUXQhsrTpFhvGGC8FLnSSNEYjEni+ruh5yFq2tOV7LvdET6DAw5MS7h/De
-	 cZJ4Zv+jtK2R/Ui+Oj20l9f2nqmMkVOe+/rE+f/Suj0v4FX9QusnWJLP9azglpZXFX
-	 KjZR3r/q9/d2UiZZQOxEaQRbW2ReZwp7s6FPronC8B5NdCyHDLUXvRXVLbkDeq6gNT
-	 rwgURg/cg6m5w==
-Date: Wed, 15 Apr 2026 05:38:13 +0300
+	b=gPjr+LW1jPBG5cn6E3K/fg8EetfzdetIibPJq9YTaEXoGZc1gOdPMcVP6jSLcDZE/
+	 jhLjiapm+wL8MYHLxXNKKZSHAtGrgBFvADAI0EfBE613ji7iqen2lz3kNlbw+kHv9V
+	 4h/BGvS2hOFuxxfN1hgqzybVzankLTB1hok0puG8Rb3Wn+d8T9h2pFEc87GYa1h7Sf
+	 jemleFbIm2kzClpvala43IiMleyw3LbGcKi5xn1lmibkXWMDaa6oXdW+vDYjE6a1jv
+	 HoodnMd+YqvZ2l5UtGXuyDszXlARplmI1C3Kp7jYhJToWTQWKsr18Toob+rYDhzu/b
+	 zY4SQqh+rR8yA==
+Date: Wed, 15 Apr 2026 05:40:17 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
 To: Jacqueline Wong <jacqwong@google.com>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, Alexander.Steffen@infineon.com,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	axelrasmussen@google.com, Jordan Hand <jhand@google.com>
-Subject: Re: [PATCH] tpm_tis: Check for an error after exhausting send retires
-Message-ID: <ad76FXFSzJCL8L4y@kernel.org>
-References: <20260410211350.1132611-1-jacqwong@google.com>
+Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+	axelrasmussen@google.com
+Subject: Re: [PATCH v2 0/2] tpm_tis: fix retry exhaustion and add logging
+Message-ID: <ad76kaEBsVIjeOX-@kernel.org>
+References: <20260411003300.1823020-1-jacqwong@google.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
@@ -43,89 +42,52 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20260410211350.1132611-1-jacqwong@google.com>
+In-Reply-To: <20260411003300.1823020-1-jacqwong@google.com>
 
-On Fri, Apr 10, 2026 at 09:13:50PM +0000, Jacqueline Wong wrote:
-> From: Jordan Hand <jhand@google.com>
+On Sat, Apr 11, 2026 at 12:32:58AM +0000, Jacqueline Wong wrote:
+> The Fix:
+> - Patch 1: Adds error logs to identify the specific hardware status mismatch.
+> - Patch 2: Stops execution immediately when retries are exhausted.
 > 
-> tpm_tis_send_main() will attempt to retry sending data TPM_RETRY times.
-> Currently, if those retries are exhausted, the driver will attempt to
-> call execute. The TPM will be in the wrong state, leading to the
-> operation simply timing out.
+> v2 changes:
+> - Split logging and logic into separate patches.
+> - Added retry count to the error message.
+> - Included dmesg traces below.
 > 
-> Instead, if there is still an error after retries are exhausted, return
-> that error immediately.
+> Testing:
+> Dmesg traces obtained using error injection to simulate status register mismatches.
 > 
-> Additionally, add logging to more easily determine reason for transmit
-> failure.
+> Before:
+> [  130.288751] tpm tpm0: Operation Timed out
+> [  250.306070] tpm tpm0: Operation Timed out
+> [  250.310173] tpm tpm0: A TPM error (-62) occurred attempting to determine the timeouts
 > 
-> Fixes: 280db21e153d8 ("tpm_tis: Resend command to recover from data transfer errors")
-> Signed-off-by: Jordan Hand <jhand@google.com>
-> ---
+> After:
+> [   10.271547] tpm tpm0: TPM_STS_DATA_EXPECT should be unset. sts = 0x00000080
+> ...
+> [   10.646283] tpm tpm0: TPM_STS_DATA_EXPECT should be unset. sts = 0x00000080
+> [   10.653461] tpm tpm0: Exhausted 50 tpm_tis_send_data retries
+> [   10.659304] tpm tpm0: tpm_try_transmit: send(): error -5
+> [   10.665435] tpm tpm0: TPM_STS_DATA_EXPECT should be unset. sts = 0x00000080
+> ...
+> [   11.037198] tpm tpm0: TPM_STS_DATA_EXPECT should be unset. sts = 0x00000080
+> [   11.044441] tpm tpm0: Exhausted 50 tpm_tis_send_data retries
+> [   11.050288] tpm tpm0: tpm_try_transmit: send(): error -5
+> [   11.055723] tpm tpm0: A TPM error (-5) occurred attempting to determine the timeouts
+> 
+> Jacqueline Wong (2):
+>   tpm: tpm_tis: add error logging for data transfer
+>   tpm: tpm_tis: stop transmit if retries are exhausted
+> 
 >  drivers/char/tpm/tpm_tis_core.c | 11 ++++++++++-
 >  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-> index e2a1769081b1..b78937841879 100644
-> --- a/drivers/char/tpm/tpm_tis_core.c
-> +++ b/drivers/char/tpm/tpm_tis_core.c
-> @@ -471,6 +471,8 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
->  		status = tpm_tis_status(chip);
->  		if (!itpm && (status & TPM_STS_DATA_EXPECT) == 0) {
->  			rc = -EIO;
-> +			dev_err(&chip->dev, "TPM_STS_DATA_EXPECT should be set. sts = 0x%08x\n",
-> +					status);
->  			goto out_err;
->  		}
->  	}
-> @@ -491,6 +493,8 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
->  	status = tpm_tis_status(chip);
->  	if (!itpm && (status & TPM_STS_DATA_EXPECT) != 0) {
->  		rc = -EIO;
-> +		dev_err(&chip->dev, "TPM_STS_DATA_EXPECT should be unset. sts = 0x%08x\n",
-> +				status);
->  		goto out_err;
->  	}
->  
-> @@ -552,11 +556,16 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
->  			break;
->  		else if (rc != -EAGAIN && rc != -EIO)
->  			/* Data transfer failed, not recoverable */
-> -			return rc;
-> +			goto out_err;
->  
->  		usleep_range(priv->timeout_min, priv->timeout_max);
->  	}
->  
-> +	if (rc == -EAGAIN || rc == -EIO) {
-> +		dev_err(&chip->dev, "Exhausted tpm_tis_send_data retries\n");
-> +		goto out_err;
-> +	}
-> +
->  	/* go and do it */
->  	rc = tpm_tis_write8(priv, TPM_STS(priv->locality), TPM_STS_GO);
->  	if (rc < 0)
 > -- 
 > 2.53.0.1213.gd9a14994de-goog
 > 
 
-CHECK: Alignment should match open parenthesis
-#35: FILE: drivers/char/tpm/tpm_tis_core.c:475:
-+                       dev_err(&chip->dev, "TPM_STS_DATA_EXPECT should be set. sts = 0x%08x\n",
-+                                       status);
+OK, I dropped the patch that as I applied as I did not see this :-)
 
-CHECK: Alignment should match open parenthesis
-#44: FILE: drivers/char/tpm/tpm_tis_core.c:497:
-+               dev_err(&chip->dev, "TPM_STS_DATA_EXPECT should be unset. sts = 0x%08x\n",
-+                               status);
-
-
-I fixed these manually.
-
-Good catch, thanks:
-
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-
-Applied.
+Now that we are cycling, please send v3 with checkpatch --strict passing
 
 BR, Jarkko
