@@ -1,226 +1,123 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BBB3B9DA9;
-	Thu, 16 Apr 2026 13:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D8138AC76;
+	Thu, 16 Apr 2026 15:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776345539; cv=none; b=S0LBPHHYiTyJgBLMi8ZVvH/8/AU5il4K42PTe7wZsV6zxuDAV+W6qqy7GFWuFDvaGsKwHMj7iCcHNKn1T38tTpBkYOUfibkVsX8hCJ1ueTrjE1jtCbExCiPtT8h7KwC+wHuhQ0PSbQlv2WchEWkwMvOjLETjUR9Q6iLZEDiWMBw=
+	t=1776354059; cv=none; b=cj5JMUw0jsipblGZa682m1CAEkwciCrDU9gZORd25UVWmmQOIagHmBdPFeQZ6qTkg1yHn3VFguHExrs5JQ6SK/mi2mdyDaYfK/4WDj+6iayDDewhvbVehw95Qkl8OmqN3n6fZeqoxjJhEuaoz6zu+yFwyjqEE+D7k0KB7lTWk0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776345539; c=relaxed/simple;
-	bh=m1iekBXqjq91pB15kUrkZ4jwreH+egi4HWeRP9WeBfI=;
-	h=Message-ID:Subject:From:To:Cc:Content-Type:Date:MIME-Version; b=MyFvMyn5CU9gXeW+697WN9HIEJxtfRIV8zAJz/A2JmR1LCPgMRMmObcd5UkivG7U6LUDD+IUdZdw5aJR558pLNDnfPqln3Czu1iAPquJcaBKRqlJXOsjrj2RXOKS0Cc90XWQH1E/l5vhQe9SJaQ6Mv1M4tS+/lXYle+Ovrk8Fi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ssrnp1vz; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1776354059; c=relaxed/simple;
+	bh=KSW3oXd5KG4BXMp266u00qlZVulV/X7WE2gh+sk401w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Zgw6cXIDPPo3CXOYsAu0nGa+ZRVQtMpuE+pROzB/A+vdnhkDQE+f3UBgzcx0539/qok729qgzTmPVN91XxvywxC1rF7NcHnWmOy4Q42eQ80hbfxtqZl0RxsIFliFlF/3BzwPrKDxkk2mBXcWXvmiUrLklIRmTaJRIuFPj18miSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DtIfO9jT; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ssrnp1vz"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63G0wxXv1862693;
-	Thu, 16 Apr 2026 13:18:52 GMT
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DtIfO9jT"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63G7kMM02130871;
+	Thu, 16 Apr 2026 15:40:48 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=iB+uDH0J24tnNmMVbl1meAInHK0v
-	68JLJsZF/enx/Qc=; b=ssrnp1vz0/MMfSL41VU/UQRgHB848BV88cFypFtZ3gzy
-	s2cb/hA34wsS7iTc2wKRcu7BSQ63J1ZgbOcOZFaQp10J7r5QMo4Tc6h3QG8SLyIj
-	iecuQF7xgwKLQ763KXtwAayI6ur1z8C2qZMlKUWRYrOXuVhIk0fj74237ss7IhSp
-	Lew3f9a0F49sH6dDOwzWgZN7mLgDZ3XqGfVxtmOrKGw77l0QTq6JQvOuqQwMsiaC
-	w6qsWtpr30repW13liKdHee0JBBkjqmGpXZvQY54up9A8RF9ONUmNDq0WfHTP1ci
-	8NS66QeU1hxjYpdhfyXBJfvjUU6wUmgroyFOvOMDGQ==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dh89pmp63-1
+	:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=pp1; bh=BLQSW5ONXGVxURJ29
+	ktDSRluzzqwNUlSpl3meSRiUfo=; b=DtIfO9jTl5iFIxsDS84e142JZJM5EWN/T
+	DIpBJZpt3gYq3GHdBhTUgdWtFE8VhsO92Oer1zY5suXLJ0iUPAWNAB9l25qZiSzR
+	GROal13jZDRb+EpOVz1oNeudffg0cw2YVmde/8WW4MeiEhyMeOTCzrsjroFkYj7X
+	wF8ePcqajwQMPo0OuiQEHn9uX9Ba5ysg6vmX/9tYGo4e/cXtKHW8J7ekI1LCVnFN
+	OoWz3qIHINQB2RV2UG84mBCDfCfFf90tRqHFohc88g2M9ySEHNTB4nDO3HxZr4/7
+	sxtYdlqA23eOZxN+LMYmj+eh2Jy7Df4QSpS8SAOMoyq8F9eh1Corg==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dh89npaad-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Apr 2026 13:18:51 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63GCSPsG003305;
-	Thu, 16 Apr 2026 13:18:50 GMT
+	Thu, 16 Apr 2026 15:40:48 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63GEj8Ij031240;
+	Thu, 16 Apr 2026 15:40:47 GMT
 Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4djbh94kg5-1
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dg10ykkv7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Apr 2026 13:18:50 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63GDIoJu22413888
+	Thu, 16 Apr 2026 15:40:47 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63GFejM16161100
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Apr 2026 13:18:50 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3200F58053;
-	Thu, 16 Apr 2026 13:18:50 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 95B8C58043;
-	Thu, 16 Apr 2026 13:18:49 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.84.116])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 Apr 2026 13:18:49 +0000 (GMT)
-Message-ID: <67d7f2aba75660bf44478e5718820061390b080e.camel@linux.ibm.com>
-Subject: [GIT PULL] integrity: subsystem fixes for v7.1
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel	
- <linux-kernel@vger.kernel.org>,
-        Roberto Sassu
- <roberto.sassu@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 16 Apr 2026 09:18:49 -0400
+	Thu, 16 Apr 2026 15:40:45 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8FAF65803F;
+	Thu, 16 Apr 2026 15:40:45 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D3C1058054;
+	Thu, 16 Apr 2026 15:40:44 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 16 Apr 2026 15:40:44 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        roberto.sassu@huawei.com, ebiggers@kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v3 1/4] integrity: Check for NULL returned by asymmetric_key_public_key
+Date: Thu, 16 Apr 2026 11:40:36 -0400
+Message-ID: <20260416154039.1648083-2-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260416154039.1648083-1-stefanb@linux.ibm.com>
+References: <20260416154039.1648083-1-stefanb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wDWiu1CAVXJL4ii8FaBFCvn3Y2qTGZLm
-X-Proofpoint-ORIG-GUID: wDWiu1CAVXJL4ii8FaBFCvn3Y2qTGZLm
-X-Authority-Analysis: v=2.4 cv=WbE8rUhX c=1 sm=1 tr=0 ts=69e0e1bb cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=tBJjWXG4mUQVYkpuR2UA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDEyNyBTYWx0ZWRfX9KBYhyCjO8Hd
- hkgO8kilFdqtCmWXTIV9/ytwTdtx1oDCbzkoDmsAbqYD29AsQTCrbSvcb4BXgbBqV0GRqlanLqP
- JW6Cb1czDggcFHmRiu3qR9eVvVAnbvm/NnwnR91azJYzffotQOedHSGoajZ4LINp+Pv1gKVc46X
- I0kdem3jlTauIjrYWEgyGdL7Y4sDDbw1u2CdYWw9hO+WC0dOst/sRsW/4rsvG1mqLojt6RNSG7Z
- mLGeluV+7PjIIqGaizjVyIZW52vJel+MiJ1Jt7WiLUMPfg1snkwAHyTSfkxF3+60dqqbI2tv1PL
- d334VeEuXRaVlRcUt1D6PXf2q8KEk0t5TELG2ZOdHZbChuTHZyhGKfiL8itB5bnIYnZqJqebPw6
- 3lPnGqnDjRwB6jgrkCn5ILj0X4pGhCuxCOPTjU2hfVv2dVCdw1CF4yVTH6cFgE97ElpklYDWE6O
- ieMij9Y1u2PmYnuGy1Q==
+X-Proofpoint-GUID: UZMjdfT4mqU9tO9zBHQQezglrTPPa_89
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDE0NiBTYWx0ZWRfXw7rsenU5mfub
+ y3LCvkqNO6JS1sizpkNjN4MnjtLw/LPnF61whiWlXGf9OeVAfhMLzuILvzEJph2za7w4pM8hKsw
+ dZuCSQE20HI+i3dRXMniX1ogzCpsi/OOGy1XjkZDLpYhkMCsR259pl+twRN4YGcf42bol41r2oE
+ Z7OOvop5rpFRihXhC346/CD4juyMuuUPIp26Ou6E798+yGH22X6SYNCnOqvf6ZWxuEvX3eZR4wO
+ zBmwJyqDUsQJqBMDZLD+WbeN2cVq3WHLo1stVH8XrwnvxXokyXhT6/TNo3DjGW+wiU/8vKbANZD
+ fVYqtuE9SOUWlhbZQdSd52QnxAKrkvqDKS4S3wDQCGOPzhNQ/9akxJqqZqOX7RthPIBFrZZFOFy
+ u21zrZGoM7/kNWo67Ji649mUjtnHw5p9JXtw4QKabnAHWu1gygKHxfTlGPTsFjoLmZ9zMex9jRD
+ nzoWSGfg0xyCTqpg44w==
+X-Proofpoint-ORIG-GUID: UZMjdfT4mqU9tO9zBHQQezglrTPPa_89
+X-Authority-Analysis: v=2.4 cv=FY4HAp+6 c=1 sm=1 tr=0 ts=69e10300 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=iQ6ETzBq9ecOQQE5vZCe:22 a=VnNF1IyMAAAA:8 a=2XTCyd9mqVENZwl6Km4A:9
+ a=ZXulRonScM0A:10
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-16_03,2026-04-16_02,2025-10-01_01
+ definitions=2026-04-16_03,2026-04-16_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 bulkscore=0 priorityscore=1501 spamscore=0 clxscore=1011
- phishscore=0 impostorscore=0 adultscore=0 malwarescore=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0 spamscore=0
+ lowpriorityscore=0 suspectscore=0 clxscore=1015 malwarescore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604160127
+ reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604160146
 
-Hi Linus,
+Check for a NULL pointer returned by asymmetric_key_public_key and return
+-ENOKEY in this case.
 
-There are 2 main changes, 1 feature removal, some code cleanup, and        =
-   =20
-a number of bug fixes.
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+ security/integrity/digsig_asymmetric.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Main changes:
-- Detecting secure boot mode was limited to IMA.  Make detecting secure boo=
-t
-mode accessible to EVM and other LSMs.
-- IMA sigv3 support was limited to fsverity.  Add IMA sigv3 support for IMA
-regular file hashes and EVM portable signatures.
+diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
+index 6e68ec3becbd..a791ad43b3fb 100644
+--- a/security/integrity/digsig_asymmetric.c
++++ b/security/integrity/digsig_asymmetric.c
+@@ -108,6 +108,10 @@ int asymmetric_verify(struct key *keyring, const char *sig,
+ 	pks.hash_algo = hash_algo_name[hdr->hash_algo];
+ 
+ 	pk = asymmetric_key_public_key(key);
++	if (!pk) {
++		ret = -ENOKEY;
++		goto out;
++	}
+ 	pks.pkey_algo = pk->pkey_algo;
+ 	if (!strcmp(pk->pkey_algo, "rsa")) {
+ 		pks.encoding = "pkcs1";
+-- 
+2.53.0
 
-Remove:
-- Remove IMA support for asychronous hash calculation originally added for
-hardware acceleration.
-
-Cleanup:
-- Remove unnecessary Kconfig CONFIG_MODULE_SIG and CONFIG_KEXEC_SIG tests.
-- Add descriptions of the IMA atomic flags.
-
-Bug fixes:
-- Like IMA, properly limit EVM "fix" mode.
-- Define and call evm_fix_hmac() to update security.evm.
-- Fallback to using i_version to detect file change for filesystems that do=
- not
-support STATX_CHANGE_COOKIE.
-- Address missing kernel support for configured (new) TPM hash algorithms.
-- Add missing crypto_shash_final() return value.
-
-Thanks,
-
-Mimi
-
-The following changes since commit 11439c4635edd669ae435eec308f4ab8a0804808=
-:
-
-  Linux 7.0-rc2 (2026-03-01 15:39:31 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git=
-/ tags/integrity-v7.1
-
-for you to fetch changes up to 82bbd447199ff1441031d2eaf9afe041550cf525:
-
-  evm: Enforce signatures version 3 with new EVM policy 'bit 3' (2026-04-01=
- 10:16:53 -0400)
-
-----------------------------------------------------------------
-integrity-v7.1
-
-----------------------------------------------------------------
-Coiby Xu (5):
-      integrity: Make arch_ima_get_secureboot integrity-wide
-      evm: Don't enable fix mode when secure boot is enabled
-      s390: Drop unnecessary CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
-      evm: fix security.evm for a file with IMA signature
-      ima: Add code comments to explain IMA iint cache atomic_flags
-
-Daniel Hodges (1):
-      ima: check return value of crypto_shash_final() in boot aggregate
-
-Dmitry Safonov (1):
-      ima_fs: Correctly create securityfs files for unsupported hash algos
-
-Eric Biggers (1):
-      ima: remove buggy support for asynchronous hashes
-
-Mimi Zohar (4):
-      ima: fallback to using i_version to detect file change
-      ima: Define asymmetric_verify_v3() to verify IMA sigv3 signatures
-      ima: add regular file data hash signature version 3 support
-      ima: add support to require IMA sigv3 signatures
-
-Nathan Chancellor (1):
-      integrity: Eliminate weak definition of arch_get_secureboot()
-
-Roberto Sassu (1):
-      ima: Define and use a digest_size field in the ima_algo_desc structur=
-e
-
-Stefan Berger (2):
-      integrity: Allow sigv3 verification on EVM_XATTR_PORTABLE_DIGSIG
-      evm: Enforce signatures version 3 with new EVM policy 'bit 3'
-
-Thomas Wei=C3=9Fschuh (2):
-      ima: efi: Drop unnecessary check for CONFIG_MODULE_SIG/CONFIG_KEXEC_S=
-IG
-      powerpc/ima: Drop unnecessary check for CONFIG_MODULE_SIG
-
- Documentation/ABI/testing/evm                   |   1 +
- Documentation/ABI/testing/ima_policy            |  10 +-
- Documentation/admin-guide/kernel-parameters.txt |  17 --
- MAINTAINERS                                     |   1 +
- arch/Kconfig                                    |   3 +
- arch/powerpc/Kconfig                            |   1 +
- arch/powerpc/kernel/ima_arch.c                  |   8 +-
- arch/powerpc/kernel/secure_boot.c               |   6 +
- arch/s390/Kconfig                               |   2 +-
- arch/s390/kernel/Makefile                       |   1 -
- arch/s390/kernel/ima_arch.c                     |  14 -
- arch/s390/kernel/ipl.c                          |   6 +
- arch/x86/include/asm/efi.h                      |   4 +-
- arch/x86/platform/efi/efi.c                     |   2 +-
- include/linux/evm.h                             |   8 +
- include/linux/ima.h                             |   7 +-
- include/linux/secure_boot.h                     |  23 ++
- security/integrity/Makefile                     |   1 +
- security/integrity/digsig.c                     |   8 +-
- security/integrity/digsig_asymmetric.c          |  59 ++++
- security/integrity/efi_secureboot.c             |  56 ++++
- security/integrity/evm/evm.h                    |   3 +-
- security/integrity/evm/evm_main.c               |  69 ++++-
- security/integrity/ima/ima.h                    |  29 +-
- security/integrity/ima/ima_api.c                |  13 +-
- security/integrity/ima/ima_appraise.c           |  79 ++---
- security/integrity/ima/ima_crypto.c             | 390 +-------------------=
-----
- security/integrity/ima/ima_efi.c                |  53 +---
- security/integrity/ima/ima_fs.c                 |  34 ++-
- security/integrity/ima/ima_main.c               |  37 ++-
- security/integrity/ima/ima_policy.c             |  22 +-
- security/integrity/integrity.h                  |  15 +-
- security/integrity/platform_certs/load_uefi.c   |   2 +-
- 33 files changed, 398 insertions(+), 586 deletions(-)
- delete mode 100644 arch/s390/kernel/ima_arch.c
- create mode 100644 include/linux/secure_boot.h
- create mode 100644 security/integrity/efi_secureboot.c
