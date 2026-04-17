@@ -1,121 +1,64 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1940E1E9B3A;
-	Thu, 16 Apr 2026 15:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692C5265621;
+	Fri, 17 Apr 2026 03:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776354357; cv=none; b=pR3DZqtDDsduynzhGeokPR85ltl1o9IYpTVEzJPspORY/a58pq3jTS5lWNMDJ8XnYueslcAPCNy4eUVXWjK7aOJA0z2eF7bvD4l199cHWb7Fkaud5kbFjDofrNJ0Ed/T4929iAnq1UgUomaqVKVtySLtam2HbHJ/+CmvRY2Wv/g=
+	t=1776395214; cv=none; b=Wget3tp9Qf4YwPPHdaCQYA1iUzUy1cgVU4054JJpk6cofdE+Bpar8leV0+XXjpMZ7rolOYe7bPktzOQ48k8hxGKR/q8F47w+ff8Dzh8ICj/2bqmNwVtIZYu79ZNqwJjuwBTije8IYkAqhKGocv0tHkvCnLp8mgDbuzEk2ZDBNHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776354357; c=relaxed/simple;
-	bh=+UPMKRQGt2oiKqYwpxIjDTS39Px41gwCkqKJkh8yXc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IQ16ame+J01Zehg8nv3qSGuqVPBRFL/P5xv3wIQHKBLZdcciS/eDPsVCFbxVMHS+wZnbdo8PkmDnBJABzysb2NWiQ11TXdMVFdOdDq0pi5+FbMXGwzMdvJgMKrf3tVSJ0EKSCGCG5HWjmQXyeQfBH2gzYQdn+/2Z0KvGx7TFZas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hUqScc5m; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hUqScc5m"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63G85Tm81833338;
-	Thu, 16 Apr 2026 15:40:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=HsIV1xEB9fQ/JWCdHfzfG4/zGhRNUgvR6kV9Gf3VR
-	vE=; b=hUqScc5mu/cQUVCJ3YaJP38+AwIZ+3+oIQLbd8ZX3ZflA+HpDrtsSSOAi
-	IVzFEIcMWh0HrwC6z6BhSv60LWOsFchkEjvAQ1j0ezb8BXVpud/fMygrLN9Qqnk3
-	Tq6QVrY8Pek+Vw2QzrAwvkV3aza+LLgx5bcmUMaTIOpqq2psz6ruRtJZ5AA2zQ5X
-	NuFTX3qCRQym1vD8FqEGmida11XqzM3mzqsLd96ypRpMhij4OYLWPu4G8DbEQWpt
-	h12vDlXstvuMPSEkjD5Z271wsncikMFAPQNDQD66CHfGCEU/5AiBz0G5BlPb8bOp
-	O4g51st+P1UVNtpyNGuZdlNW/rJ7g==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dh89rp8x2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Apr 2026 15:40:47 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 63GBuMwY003594;
-	Thu, 16 Apr 2026 15:40:46 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4dg1mnkfs3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 Apr 2026 15:40:46 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63GFei9Z29229678
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 16 Apr 2026 15:40:44 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF91A58060;
-	Thu, 16 Apr 2026 15:40:44 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F282E58054;
-	Thu, 16 Apr 2026 15:40:43 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 16 Apr 2026 15:40:43 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        roberto.sassu@huawei.com, ebiggers@kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 0/4] Add support for ML-DSA signature for EVM and IMA
-Date: Thu, 16 Apr 2026 11:40:35 -0400
-Message-ID: <20260416154039.1648083-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.53.0
+	s=arc-20240116; t=1776395214; c=relaxed/simple;
+	bh=/1SxhRBxYMAL3pjerId2Ah2s3M9DRq2tcCYGomDLNYI=;
+	h=From:Date:Message-ID:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UupRSxxxhYYkEpv9v8Pi3ggdjwF0DuYmwYWzRxhAak43OtW0XgqB7GpDeMP/hTUgWCmVnqt7ToWZIKat0YxW7ZUbplhTnU/GJckbGm87PHZSzkqLToZiKoLxw/dBMuQhOUhqMDOZMq7YJTir/1FY2PZhflFjKq4gY61U+aoUnFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from 0004-evm-xattrs-reply.eml (unknown [111.196.245.116])
+	by APP-03 (Coremail) with SMTP id rQCowACHnNPBo+FpSrhVDg--.50365S2;
+	Fri, 17 Apr 2026 11:06:41 +0800 (CST)
+From: Pengpeng Hou <pengpeng@iscas.ac.cn>
+Date: Fri, 17 Apr 2026 11:06:41 +0800
+Message-ID: <20260417190004.4-evm-xattrs-reply-pengpeng@iscas.ac.cn>
+To: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, Serge Hallyn <serge@hallyn.com>, linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, pengpeng@iscas.ac.cn
+Subject: Re: [PATCH] evm: zero-initialize the evm_xattrs read buffer
+In-Reply-To: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
+References: <20260407153002.2-evm-xattrs-pengpeng@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDE0NiBTYWx0ZWRfXx8wg7EBImvad
- aJRV7VFzdzZuJzvo0wjL+0N0pNob+gGbXg+CCEYsuj83sBTFUl9XK09ERmvPALNcTJ/LHzBT3fC
- DAv9TY+MhpPsy2YFx9U0+35oD6SQxOOkMz7As1AR2gOk9RlSHQRmXINnud67NtxRuSqQqZvHU2P
- 5nNbVS1Zjz7+Rq5aMcELqE5bBDCW6MJg8sTbnAvH8N9RmUrzQKmE5IafNycIaZKy41ffItrg6Gz
- Z0ilNxVcLThLB3QtCjIjuUGeYxh6tPHAxMMdC+bwxbGSsJWLlyZOmjBA/NbljsCqZkKpNtYOCpm
- WEP7wYEZ7fSCH0ErNllSUuqXqxSlzRxeyE8WoW23c3EMf34HYSX5RkjTolpOrWOge2HN6UwbZnr
- aVidFBwBS4yvv4/ayd7/Snk0V1sW2N7BSWZqDD8i4GNdptXCTVT6rSnjF8uOCmNtslWuYpIAv5F
- UzcYwDFoNGZC7fGgNQw==
-X-Proofpoint-ORIG-GUID: jWv8dB5JhOAR2GWJ9nGvjsUaEjb-qaoJ
-X-Proofpoint-GUID: jWv8dB5JhOAR2GWJ9nGvjsUaEjb-qaoJ
-X-Authority-Analysis: v=2.4 cv=fYidDUQF c=1 sm=1 tr=0 ts=69e102ff cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
- a=U7nrCbtTmkRpXpFmAIza:22 a=TEWfzw_xA5YbLXciGhYA:9 a=ZXulRonScM0A:10
- a=zZCYzV9kfG8A:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-16_03,2026-04-16_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 clxscore=1015 malwarescore=0 phishscore=0
- bulkscore=0 priorityscore=1501 spamscore=0 suspectscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2604070000 definitions=main-2604160146
+X-CM-TRANSID:rQCowACHnNPBo+FpSrhVDg--.50365S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY97AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87
+	Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
+	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx
+	8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAC
+	I402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxV
+	WUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUp6wZUUUUU=
+X-CM-SenderInfo: pshqw1xhqjqxpvfd2hldfou0/
 
-Based on IMA sigv3 type of signatures, add support for ML-DSA signature
-for EVM and IMA. Use the existing ML-DSA hashless signing mode (pure mode).
+Hi Roberto,
 
-   Stefan
+Thanks, I'll respin this.
 
-v3:
-  - new patches 1/4 and 2/4
-  - addressed Mimi's comments on v2
+I'll add the `Fixes:` tag, switch the formatting site to `snprintf()`,
+and rework the empty-list handling so it does not depend on `kzalloc()`
+for the terminator.
 
-v2:
-  - Dropped 1/3
-  - Using "none" as hash_algo in 2/2
+Thanks,
+Pengpeng
 
-Stefan Berger (4):
-  integrity: Check for NULL returned by asymmetric_key_public_key
-  integrity: Check that algo parameter is within valid range
-  integrity: Refactor asymmetric_verify for reusability
-  integrity: Add support for sigv3 verification using ML-DSA keys
-
- security/integrity/digsig_asymmetric.c | 152 +++++++++++++++++++++----
- 1 file changed, 131 insertions(+), 21 deletions(-)
-
-
-base-commit: 82bbd447199ff1441031d2eaf9afe041550cf525
--- 
-2.53.0
 
