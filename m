@@ -1,63 +1,146 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0011C84BC;
-	Fri, 17 Apr 2026 22:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DB532FA2B;
+	Sat, 18 Apr 2026 09:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776466719; cv=none; b=W3R9OyipA3ZhkWEz2/E0UKJJ/8zUlpAxKYtP+9E+VWQ0jMsBTwFXBK7Wxkbop/16pogGKC1nhaKuZqUrzbcOlmnC4rEPz0PBuPK8+2DNxieNdPBN6s/EiaKMgqSqs51IbsL9i9J0mytxyFuHiDKrnxe8T3NymaTDs865fjcZVUg=
+	t=1776504248; cv=none; b=S7wG1Akj02JavqdARcAaAB4zHsWHtfAof0yXryaC+QszmadJogQ0ABEQD6J+70yhFi9aQq2eO2mgJChFwNgfAS3dP6XT3XkuzQeP9wnFZVdPchcE+n7dBs+t9Z9G1L7XVCLTuTCSeL4YFCl3QMMORoX/OQgmS4QWPhMWB32J/vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776466719; c=relaxed/simple;
-	bh=oMV8E+S9JlTt5Tg1DdtkjAualGhtTe7raWO/BGuGf0o=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WRECCCUhQujCrhDyqNjt1zlRVy2zBzI+8aMs8nhjb/7zRytEDQW3lGWD1j8WdlhiaLP2SLCcyBmUe/FXWWRjUGZOTsX3UtXSzoSN1JUBEKdgoy7ZvAWpuJhIDVIzsGIenOD0EXsMYDOAaFzdfjziAay/PsXMu5D3KGTWasuunNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+qtN3yF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1776504248; c=relaxed/simple;
+	bh=0ov1NsdSXTwZuP0OYLxLpWWdS0BPSYlf16OkCz2Chuo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sOVVX7arzxbMU17sH+jciscpafAWwt/sWtGi6B1lp/1RFb3pziL12J+Ea9aojiGU24Jciup1GiTLcx4yoYIIATlCHvUzj69CCOg3Ew5MQD+3oWxr1FZa6pZ2Cac5CB8+VRX0ilFAAFyohf+A1eY9ofQcqcupasuU3D8HnqpHnts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psaqB+Py; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+qtN3yF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF91CC19425;
-	Fri, 17 Apr 2026 22:58:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psaqB+Py"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EA38C19424;
+	Sat, 18 Apr 2026 09:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776466718;
-	bh=oMV8E+S9JlTt5Tg1DdtkjAualGhtTe7raWO/BGuGf0o=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=h+qtN3yFsX1YGS714Ymc76kf0XwotoWmPkON2MsCeqco94TsBF08kC7c5vU/INn0C
-	 xJgOgjCZJBrBTIjKSi/+gYXP+9zARVqmAv2WKAEif9jr4I+HhVV34Qa4l7rNRsrMit
-	 KjzD8wMjnAhrluPcJtMY8P9dZmVR3JdvijCPTVnsPDc7RsmiSWJZ+fg7DM81ZsFxZx
-	 uuk75sxooOfAkkg0NvTzP0C28KDWskerC5qSfWMnK9j+nFlpN6TVxb44nWVnXMEs+I
-	 vLZ3HAt5hzCE2n1V5o+rwqY/cSHpG2CFVHkltNdbZ8Ao5uRFHJwKO+G6L5THvQOu82
-	 kjDBtgd4JSlHQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3FE07380CEEC;
-	Fri, 17 Apr 2026 22:58:07 +0000 (UTC)
-Subject: Re: [GIT PULL] integrity: subsystem fixes for v7.1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <67d7f2aba75660bf44478e5718820061390b080e.camel@linux.ibm.com>
-References: <67d7f2aba75660bf44478e5718820061390b080e.camel@linux.ibm.com>
-X-PR-Tracked-List-Id: <linux-integrity.vger.kernel.org>
-X-PR-Tracked-Message-Id: <67d7f2aba75660bf44478e5718820061390b080e.camel@linux.ibm.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/ tags/integrity-v7.1
-X-PR-Tracked-Commit-Id: 82bbd447199ff1441031d2eaf9afe041550cf525
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9cdca336677b4d15579ec462e33c8a330ab3a9de
-Message-Id: <177646668590.187646.18250842633780608365.pr-tracker-bot@kernel.org>
-Date: Fri, 17 Apr 2026 22:58:05 +0000
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-integrity <linux-integrity@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Roberto Sassu <roberto.sassu@huaweicloud.com>
+	s=k20201202; t=1776504248;
+	bh=0ov1NsdSXTwZuP0OYLxLpWWdS0BPSYlf16OkCz2Chuo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=psaqB+PyHoKTjVFVeG1nWNLU/sIFLD+gwKXR0ZkpnwTxxDwvh7ea2whG6uFskH68m
+	 xX1SlgQtWzY4vHCHRKEuGDpYZ+MWqlGn46DAvyRaKZvUuwZphTshFDZIvywN8XhVtu
+	 mfxR1hp2QOdnDjjjQMt2eSZuODCbzU8y5iROWtz4D0eBx462YMAtsp1nd/1Bh6sJq2
+	 JAGi19lsreaard3IcKPmuHzuVjc0fzd5xfPypjSZMupd8Q3iIAgS0JZbuPYLbJZkk8
+	 toAWTtRD2kuh0LJKYQ6rnJo7LODmjg4f+HkC4TEMNrIEKBPw8XjoeCbsDbx0ZU6PiR
+	 Eur4BRYWDQLFw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1wE1uH-0000000CeR1-1NIO;
+	Sat, 18 Apr 2026 09:24:05 +0000
+Date: Sat, 18 Apr 2026 10:24:04 +0100
+Message-ID: <87se8sbozv.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	peterhuewe@gmx.de,
+	jarkko@kernel.org,
+	jgg@ziepe.ca,
+	sudeep.holla@kernel.org,
+	oupton@kernel.org,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org
+Subject: Re: [RFC PATCH 4/4] firmware: arm_ffa: check pkvm initailised when initailise ffa driver
+In-Reply-To: <20260417175759.3191279-5-yeoreum.yun@arm.com>
+References: <20260417175759.3191279-1-yeoreum.yun@arm.com>
+	<20260417175759.3191279-5-yeoreum.yun@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, sudeep.holla@kernel.org, oupton@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The pull request you sent on Thu, 16 Apr 2026 09:18:49 -0400:
+On Fri, 17 Apr 2026 18:57:59 +0100,
+Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+> 
+> When pKVM is enabled, the FF-A driver must be initialized after pKVM.
+> Otherwise, pKVM cannot negotiate the FF-A version or
+> obtain RX/TX buffer information, leading to failures in FF-A calls.
+> 
+> During FF-A driver initialization, check whether pKVM has been initialized.
+> If not, defer probing of the FF-A driver.
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
+>  arch/arm64/kvm/arm.c              |  1 +
+>  drivers/firmware/arm_ffa/driver.c | 12 ++++++++++++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index 410ffd41fd73..0f517b1c05cd 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -119,6 +119,7 @@ bool is_kvm_arm_initialised(void)
+>  {
+>  	return kvm_arm_initialised;
+>  }
+> +EXPORT_SYMBOL(is_kvm_arm_initialised);
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git/ tags/integrity-v7.1
+EXPORT_SYMBOL_GPL(), please.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9cdca336677b4d15579ec462e33c8a330ab3a9de
+> 
+>  int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+>  {
+> diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+> index 02c76ac1570b..2647d6554afd 100644
+> --- a/drivers/firmware/arm_ffa/driver.c
+> +++ b/drivers/firmware/arm_ffa/driver.c
+> @@ -42,6 +42,8 @@
+>  #include <linux/uuid.h>
+>  #include <linux/xarray.h>
+> 
+> +#include <asm/virt.h>
+> +
+>  #include "common.h"
+> 
+>  #define FFA_DRIVER_VERSION	FFA_VERSION_1_2
+> @@ -2035,6 +2037,16 @@ static int __init ffa_init(void)
+>  	u32 buf_sz;
+>  	size_t rxtx_bufsz = SZ_4K;
+> 
+> +	/*
+> +	 * When pKVM is enabled, the FF-A driver must be initialized
+> +	 * after pKVM initialization. Otherwise, pKVM cannot negotiate
+> +	 * the FF-A version or obtain RX/TX buffer information,
+> +	 * which leads to failures in FF-A calls.
+> +	 */
+> +	if (IS_ENABLED(CONFIG_KVM) && is_protected_kvm_enabled() &&
+> +	    !is_kvm_arm_initialised())
+> +		return -EPROBE_DEFER;
+> +
 
-Thank you!
+That's still fundamentally wrong: pkvm is not ready until
+finalize_pkvm() has finished, and that's not indicated by
+is_kvm_arm_initialised().
+
+	M.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jazz isn't dead. It just smells funny.
