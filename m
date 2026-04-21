@@ -1,103 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4FF3491D0;
-	Tue, 21 Apr 2026 18:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF3E35B646;
+	Tue, 21 Apr 2026 18:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776795899; cv=none; b=X6G1nnvnLwpCfw99RYwWllfNLc6PE7r8vs4UXs7HFJUVwAygltFms9nQ/ki9mZg3CFjpRgY/SpOxZhSoC3iRjXc2zPjEVQ8vCgcxUEwO7l3kdff/28UXgkhQlRsQi8whTQItEMFh5eCfJAlbaQAkCrkVIx+UPHEPxyrHh/Aljvw=
+	t=1776796092; cv=none; b=Dr8EovFnvd3EoUZKcep+d+bEr9yLUmkIv/7kW07gYyh+LjrkNBY2xBEAO/RPa92AYs+UnW8k9qb1tSkYZk4jE1IiulOmIL74Kf+b+K2LYyY++/k/wruabyG2uiO+LnvEiCc/QwstuX3yBF5vNOT1H8n/6gEvSjSFgLTGdlefWDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776795899; c=relaxed/simple;
-	bh=FXrcHXGPPzN4CG0CocolDjh3xpdM551N8TdL7CwWXzQ=;
+	s=arc-20240116; t=1776796092; c=relaxed/simple;
+	bh=n3dFxMKJkQu67xhbz49OLagibL5gtHF+dkwuBR5uteg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGRcFBhxA/aqwdGvKy54UFcyuF+BXb+D3zq77fviY2H7gP5ZEzdt9cooBXshrGaBIRvry8w3mo1P1ktA1ZLdf+D1YPZgqHoyHxu7DtO74vZPUvFXnPPKLVDzy89d6mWOVA9ldUWeG52/J4CrzZMgYV6FFtQAEjEH5JwYS+9o0Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cQoKMxtC; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=MY+Fwtd1L/n7HKZHwZ2hendA/hnUCHinCsyRt0/DIZaizzCnnGQdc1ojB53xT26bM8B3X9j1bNGu4BilRrsh5FyghaFTFHagfPRFXeXjanWQx3hul0MAs0Hq5udkUqVrY68sl0h53I/mWD+trN1KuZZSz13XzzxEeBCfSo4spzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5kgsuKx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cQoKMxtC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0BB8C2BCB0;
-	Tue, 21 Apr 2026 18:24:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5kgsuKx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DCFC2BCB0;
+	Tue, 21 Apr 2026 18:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1776795897;
-	bh=FXrcHXGPPzN4CG0CocolDjh3xpdM551N8TdL7CwWXzQ=;
+	s=k20201202; t=1776796092;
+	bh=n3dFxMKJkQu67xhbz49OLagibL5gtHF+dkwuBR5uteg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cQoKMxtCUl8l5b5mbTPiSQxWtGp96jSrIvsXWotlEy9lrv1W9HBivoYWtDwC84bcJ
-	 b8QaXfLz6NU6N7HtvW7O3DUWPpFWQDRSj2Q82w5XuZTYLfK1TLQqXQbIK+EXRYAs2Y
-	 wedF3vQ3MVXbf6mKmdCKpAjbuvfBq/wl5OdZA1sUlrOonxqPUlNSQA3B/ErYAAicbj
-	 x/5sv1PhxMK8JEd5lT/eYrRB8x/HZrpSj0tS6m146ikLbR3lrsbt1XjF1IVcyF4FtQ
-	 2xO4dKAmp667kRZbHi4YDFMvUNa0UVXwpi6frby8NiBMi6O/gRuQAjqFl3HxRTi0z2
-	 hGzO38+5zRTJQ==
-Date: Tue, 21 Apr 2026 21:24:53 +0300
+	b=S5kgsuKxgTalvztk266gbjNGjYD49ThIX5hAUweIJvRZYCD11hJ5ZbEZWzXep5IJ1
+	 zRLQIzB1nldVn1oHvvdITsCT+ZxgcJHn9ADXOPj/yJFxl/fO1mSyBpsgLwiGyANe+m
+	 5KdDqVqaGsAtWFQG74e2iQSfBOypmjAMbPejHna96UNRsknNjM1LwbHnDmNGCwkYkR
+	 5cncruZ5QTysqMSeBMySB1g2wsMOwpM9vgBdGFuUunJ+ZASNc6e8AKxeCUouhjXGKZ
+	 kfys1uJQ3vwVupbj5rBZxRDHNPFBWAFd14VVJg03/B/VlNUaYZZIONasPcaqLonxBO
+	 tc0XWwMLmoKPA==
+Date: Tue, 21 Apr 2026 21:28:07 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Baoli Zhang <baoli.zhang@linux.intel.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Serge Hallyn <serge@hallyn.com>, Lili Li <lili.li@intel.com>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tpm: restore timeout for key creation commands
-Message-ID: <aefA9RxVgilxTH96@kernel.org>
-References: <20260421005021.13765-1-baoli.zhang@linux.intel.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Stefan Wahren <wahrenst@gmx.net>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	Frank Li <frank.li@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: tpm: spi: do not call blocking ops when !TASK_RUNNING; during
+ shutdown
+Message-ID: <aefBt9T89WDFTTtF@kernel.org>
+References: <e7974d35-0d50-4742-8747-822f28915e00@gmx.net>
+ <PAXPR04MB84598325136E394E0A7D94D6882C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20260421005021.13765-1-baoli.zhang@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PAXPR04MB84598325136E394E0A7D94D6882C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Tue, Apr 21, 2026 at 08:50:20AM +0800, Baoli Zhang wrote:
-> From: "Baoli Zhang" <baoli.zhang@linux.intel.com>
+On Tue, Apr 21, 2026 at 09:04:43AM +0000, Peng Fan wrote:
+> > Subject: tpm: spi: do not call blocking ops when !TASK_RUNNING;
+> > during shutdown
+> > 
+> > Hi,
+> > we use a custom i.MX93 board, which based on Phytec Phycore i.MX93
+> > with a TPM connected via SPI. If I enable
+> > CONFIG_DEBUG_ATOMIC_SLEEP=y in our kernel config with mainline
+> > kernel 6.18.23 and reboot our board, I will get the following warning:
+> > ffff0000000d8000
 > 
-> Commit 207696b17f38 ("tpm: use a map for tpm2_calc_ordinal_duration()")
-> inadvertently reduced the timeout for TPM2 key creation commands
-> (`CREATE_PRIMARY`, `CREATE`, `CREATE_LOADED`) from 300 seconds to 30
-> seconds.
+> The issue seems at drivers/char/tpm/tpm_tis_core.c
+>   94                 rc = wait_event_interruptible_timeout(*queue,                                       
+>   95                         wait_for_tpm_stat_cond(chip, sts_mask, check_cancel,                        
+>   96                                                &canceled),                                          
+>   97                         timeout);
 > 
-> This causes intermittent timeout failures, with several failures observed
-> across hundreds of test runs on some Intel platforms using Infineon
-> SLB9670 and SLB9672 TPM modules. Restore the timeout to 300 seconds to
-> avoid spurious failures.
+> wait_event_interruptible_timeout set task to !TASK_RUNNING,
+> but wait_for_tpm_stat_cond still calls into mutex_lock.
 > 
-> Fixes: 207696b17f38 ("tpm: use a map for tpm2_calc_ordinal_duration()")
-> Co-developed-by: Lili Li <lili.li@intel.com>
-> Signed-off-by: Lili Li <lili.li@intel.com>
-> Signed-off-by: Baoli Zhang <baoli.zhang@linux.intel.com>
-> ---
-> Changes in v2:
-> - Add description of intermittent nature of the timeout issue.
-> - Fix Co-developed-by and Signed-off-by tag ordering.
+> Regards
+> Peng
 > 
-> v1: https://patchwork.kernel.org/project/linux-integrity/patch/20260410014940.3557934-1-baoli.zhang@linux.intel.com/
-> 
->  drivers/char/tpm/tpm2-cmd.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-> index 3a77be7ebf4aa..430022f695f24 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -71,9 +71,9 @@ static const struct {
->  	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
->  	{TPM2_CC_GET_CAPABILITY, 750},
->  	{TPM2_CC_NV_READ, 2000},
-> -	{TPM2_CC_CREATE_PRIMARY, 30000},
-> -	{TPM2_CC_CREATE, 30000},
-> -	{TPM2_CC_CREATE_LOADED, 30000},
-> +	{TPM2_CC_CREATE_PRIMARY, 300000},
-> +	{TPM2_CC_CREATE, 300000},
-> +	{TPM2_CC_CREATE_LOADED, 300000},
->  };
->  
->  /**
-> -- 
-> 2.43.0
-> 
+> > [   43.422135] Call trace:
+> > [   43.424570]  __might_sleep+0x74/0x7c (P)
+> > [   43.428487]  mutex_lock+0x24/0x80
+> > [   43.431797]  spi_bus_lock+0x20/0x50
+> > [   43.435281]  tpm_tis_spi_transfer_full+0x70/0x2c4
+> > [   43.439979]  tpm_tis_spi_read_bytes+0x3c/0x48
+> > [   43.444321]  tpm_tis_status+0x58/0xf8
+> > [   43.447978]  wait_for_tpm_stat_cond+0x30/0x90
+> > [   43.452329]  wait_for_tpm_stat+0x1cc/0x2e0
+> > [   43.456419]  tpm_tis_send_data+0xdc/0x334
+> > [   43.460423]  tpm_tis_send_main+0x74/0x160
+> > [   43.464427]  tpm_tis_send+0xd4/0x13c
+> > [   43.467998]  tpm_transmit+0xc4/0x3c4
+> > [   43.471569]  tpm_transmit_cmd+0x38/0xd4
+> > [   43.475399]  tpm2_shutdown+0x6c/0xa4
+> > [   43.478970]  tpm_class_shutdown+0x60/0x88
+> > [   43.482974]  device_shutdown+0x130/0x25c
+> > [   43.486891]  kernel_restart+0x44/0xa4
+> > [   43.490549]  __do_sys_reboot+0x114/0x254
+> > [   43.494466]  __arm64_sys_reboot+0x24/0x30
+> > [   43.498470]  invoke_syscall+0x48/0x10c
+> > [   43.502214]  el0_svc_common.constprop.0+0x40/0xe0
+> > [   43.506911]  do_el0_svc+0x1c/0x28
+> > [   43.510222]  el0_svc+0x34/0xec
+> > [   43.513273]  el0t_64_sync_handler+0xa0/0xe4
+> > [   43.517441]  el0t_64_sync+0x198/0x19c
+> > 
+> > Best regards
 
+On travel this week but thanks for the report. Investigating next weeek
 
-Much better! I'm fine with this and it is a regression.
+In the meantime, patches are welcome (whcih I will review next week).
 
-On travel right now but I do have one SLB9670 connected to RPi4.
-
-I'll do peer testing once at home (next week).
-
-BR, Jarkko
+Br, Jarkko
