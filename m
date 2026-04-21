@@ -1,111 +1,125 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A49D1C84BB;
-	Tue, 21 Apr 2026 00:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD7F2EB5A6;
+	Tue, 21 Apr 2026 06:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1776733141; cv=none; b=sKbhOCTOALurY+RiqN9UbI4ZuF99ljVGpzcewJKC88yl7PuRvkfaLA7aybymsgZ1BQWSWI8gMAEpeXEMEsSfoUUWd6tN5C8FrKsaCuyxOF4CMcqfcH6IaJPY6xBhIxLoo/rvV+7+znri0thdfj+eX+S29j0l6cD9b11qpxdQZaQ=
+	t=1776754671; cv=none; b=HA38Hiun3ihCU1eg4KaW0xusxkKwxCDDEzXGC53JoNmYn/5zdwyQIcSXSxeoAjQ+w6yDxsWyZd4GI3zqPxFQkVbbfkMuocRn86YaO0I8HmfVdp9BwRCyJJ3NLh9YgwO3bsjRgiRjv52HseI7Hil0/UnKKVMtXBCIVoTnF9nPOHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1776733141; c=relaxed/simple;
-	bh=CbMbXUZSh7Wbh64kOD2rAH3fItsdaCEy8sLYTFVUI8s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rr9Jf7gvFmp+AtRMm5OrirjTnph4ms4H5KljHM47yJcC3dZes23V6O1dkMM68tMsh2PEsj1aHRbIWM/QrupBmwkbczoNYcE3FEkna/6jmEEXEsXtLAxYDcP0RbxeMGyQiub6PrtDWq8h+q94iBFuhhvzNr4g4NPTB1J9KGxwPB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KvodOw7T; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1776754671; c=relaxed/simple;
+	bh=QSlJWj/ZlGmtGszuI1E4a2OjETy6Q0GCQCorMuB2AXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCFgL3l30stOvnPudkIFipnRccfi44ymZvPIP1tIPLypKT68jFEU61KBt5kwKr82EGqaCilIvyQTYpkMwm5QZhhwftKGvThaYx+D5lHmkrnDZKIpSuVzDCtG3UtWCgMhzXJK/HADiMOXSF+doNo2OVLwGJgQkw8V35a1T1zbpCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=Pt1psxwr; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KvodOw7T"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1776733140; x=1808269140;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=CbMbXUZSh7Wbh64kOD2rAH3fItsdaCEy8sLYTFVUI8s=;
-  b=KvodOw7TNb8vKaJ4mcCMvneyIn5c4NoXo0VSb8wAV7R5cu3JimwMGjE5
-   uAZIqNQBMC8I/YZkxTeHCwIZ1O68MjaIqqI819d09SdZ+X2dgXfJpYIjf
-   92cwxFT/oRvXW26mXFaC7EtVSIbz/qkSouGDAJzKKBuLCcOOFbO3j08dM
-   KgIVUF9wu6B16CQohbqIgfw+O6V2TY6fTlUgSwu5YAL95QWQhfZ+GxtXQ
-   hhNiwqWkLOMOiwCoXV3/rAFD8E3mhGsH/vCqNejUjkjPoh4tXVOiCw1cz
-   Ar8eVgyvFgrlXXrjB1UwMKJIQ/aRuEtBwCO3ymUvakjL6OUTHnfv/OMMi
-   g==;
-X-CSE-ConnectionGUID: aOEVnVVcR5W5RvJHbG9W8A==
-X-CSE-MsgGUID: yl/clTnwR1CNZ0abR3srSQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11762"; a="80249664"
-X-IronPort-AV: E=Sophos;i="6.23,190,1770624000"; 
-   d="scan'208";a="80249664"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2026 17:58:59 -0700
-X-CSE-ConnectionGUID: PuSTAuUoQw6a+PeP2YGNzg==
-X-CSE-MsgGUID: JTY83li/Q0y0pQuLGJoWjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,190,1770624000"; 
-   d="scan'208";a="235887487"
-Received: from emr-371.sh.intel.com ([10.67.116.174])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2026 17:58:57 -0700
-From: Baoli Zhang <baoli.zhang@linux.intel.com>
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Serge Hallyn <serge@hallyn.com>
-Cc: "Baoli Zhang" <baoli.zhang@linux.intel.com>,
-	Lili Li <lili.li@intel.com>,
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="Pt1psxwr"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EAA02573;
+	Mon, 20 Apr 2026 23:57:43 -0700 (PDT)
+Received: from e129823.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13E2C3F915;
+	Mon, 20 Apr 2026 23:57:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1776754669; bh=QSlJWj/ZlGmtGszuI1E4a2OjETy6Q0GCQCorMuB2AXM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pt1psxwrIkpsDuFunhfbZr6dKT6D8qOQqYLotTMpPy0Bq9X70/1jgHJ8dYVsS2jHp
+	 zgJCeSn1zyMK6cIzVPpRKiODcxHa5pZV850tmFXeADvmwDhubwnQo58d9Y8P47F8Vy
+	 tyYxXc6QoreOaQt+3CkwM2btIckSac4AVcSR3hBI=
+Date: Tue, 21 Apr 2026 07:57:43 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] tpm: restore timeout for key creation commands
-Date: Tue, 21 Apr 2026 08:50:20 +0800
-Message-ID: <20260421005021.13765-1-baoli.zhang@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+	peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca,
+	sudeep.holla@kernel.org, oupton@kernel.org, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org
+Subject: Re: [RFC PATCH 4/4] firmware: arm_ffa: check pkvm initailised when
+ initailise ffa driver
+Message-ID: <aecf57rWloQwDh6v@e129823.arm.com>
+References: <20260417175759.3191279-1-yeoreum.yun@arm.com>
+ <20260417175759.3191279-5-yeoreum.yun@arm.com>
+ <87se8sbozv.wl-maz@kernel.org>
+ <aeNeNjfO7i128TIP@e129823.arm.com>
+ <87pl3vb5bm.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87pl3vb5bm.wl-maz@kernel.org>
 
-From: "Baoli Zhang" <baoli.zhang@linux.intel.com>
+Hi Marc,
 
-Commit 207696b17f38 ("tpm: use a map for tpm2_calc_ordinal_duration()")
-inadvertently reduced the timeout for TPM2 key creation commands
-(`CREATE_PRIMARY`, `CREATE`, `CREATE_LOADED`) from 300 seconds to 30
-seconds.
+> On Sat, 18 Apr 2026 11:34:30 +0100,
+> Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+> >
+> > > > @@ -2035,6 +2037,16 @@ static int __init ffa_init(void)
+> > > >  	u32 buf_sz;
+> > > >  	size_t rxtx_bufsz = SZ_4K;
+> > > >
+> > > > +	/*
+> > > > +	 * When pKVM is enabled, the FF-A driver must be initialized
+> > > > +	 * after pKVM initialization. Otherwise, pKVM cannot negotiate
+> > > > +	 * the FF-A version or obtain RX/TX buffer information,
+> > > > +	 * which leads to failures in FF-A calls.
+> > > > +	 */
+> > > > +	if (IS_ENABLED(CONFIG_KVM) && is_protected_kvm_enabled() &&
+> > > > +	    !is_kvm_arm_initialised())
+> > > > +		return -EPROBE_DEFER;
+> > > > +
+> > >
+> > > That's still fundamentally wrong: pkvm is not ready until
+> > > finalize_pkvm() has finished, and that's not indicated by
+> > > is_kvm_arm_initialised().
+> >
+> > Thanks. I miss the TSC bit set in here.
+>
+> That's the least of the problems. None of the infrastructure is in
+> place at this stage...
+>
+> > IMHO, I'd like to make an new state check function --
+> > is_pkvm_arm_initialised() so that ff-a driver to know whether
+> > pkvm is initialised.
+>
+> Doesn't sound great, TBH.
+>
+> > or any other suggestion?
+>
+> Instead of adding more esoteric predicates, I'd rather you build on an
+> existing infrastructure. You have a dependency on KVM, use something
+> that is designed to enforce dependencies. Device links spring to mind
+> as something designed for that.
+>
+> Can you look into enabling this for KVM? If that's possible, then it
+> should be easy enough to delay the actual KVM registration after pKVM
+> is finalised.
 
-This causes intermittent timeout failures, with several failures observed
-across hundreds of test runs on some Intel platforms using Infineon
-SLB9670 and SLB9672 TPM modules. Restore the timeout to 300 seconds to
-avoid spurious failures.
+Hmm, I also considered moving kvm_init() into finalised_pkvm() and
+then handling the remaining ffa_init() work after /dev/kvm is registered.
 
-Fixes: 207696b17f38 ("tpm: use a map for tpm2_calc_ordinal_duration()")
-Co-developed-by: Lili Li <lili.li@intel.com>
-Signed-off-by: Lili Li <lili.li@intel.com>
-Signed-off-by: Baoli Zhang <baoli.zhang@linux.intel.com>
----
-Changes in v2:
-- Add description of intermittent nature of the timeout issue.
-- Fix Co-developed-by and Signed-off-by tag ordering.
+However, this approach seems awkward in practice,
+because misc has neither a bus nor a dedicated class notifier that we can hook into.
 
-v1: https://patchwork.kernel.org/project/linux-integrity/patch/20260410014940.3557934-1-baoli.zhang@linux.intel.com/
+Also, the FF-A initialization is not driven by a device probe, but rather
+happens as part of the bus registration itself,
+so it does not fit well with a device_link or probe deferral based approach.
 
- drivers/char/tpm/tpm2-cmd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Instead, perhaps we could go with the idea I mentioned previously:
+either introduce a notifier, or create a pseudo ffa_device
+once pKVM initialization has completed, and
+then let the ffa driver perform the additional initialization from there.
 
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 3a77be7ebf4aa..430022f695f24 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -71,9 +71,9 @@ static const struct {
- 	{TPM2_CC_HIERARCHY_CHANGE_AUTH, 2000},
- 	{TPM2_CC_GET_CAPABILITY, 750},
- 	{TPM2_CC_NV_READ, 2000},
--	{TPM2_CC_CREATE_PRIMARY, 30000},
--	{TPM2_CC_CREATE, 30000},
--	{TPM2_CC_CREATE_LOADED, 30000},
-+	{TPM2_CC_CREATE_PRIMARY, 300000},
-+	{TPM2_CC_CREATE, 300000},
-+	{TPM2_CC_CREATE_LOADED, 300000},
- };
- 
- /**
--- 
-2.43.0
+Am I missing something?
 
+--
+Sincerely,
+Yeoreum Yun
