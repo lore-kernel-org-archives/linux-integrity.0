@@ -1,210 +1,191 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DDC2F7462;
-	Wed, 29 Apr 2026 20:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CE327CCE0
+	for <linux-integrity@vger.kernel.org>; Wed, 29 Apr 2026 20:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777492916; cv=none; b=V4G/hsOX2uimfWi8YWrzGggHoE5lF+zqgeE73U908luwCKf2WCvkPW2DsW4DPu+0fXAw/sMTZSMSQL/ylKFyQiiORbu2nETx+Y38LuAPMqix2xO66I1tY7iy4FgXtgnzhjp2VKhjKgrNhRXn+nX+Cd37w8H9OpF6Iqabh76JsJM=
+	t=1777494077; cv=none; b=s0jeP/4t1HHpyISAqm0wZ3XFbglcuze0jhg3HJwXNf853eILoCdfH34GwcMH39Bg5217tDRUpgMCGD/AD+6W2v9zN5RXGDUjh+Tg+Ku5bbzcl3wTGyjtkZ+yLnO7u1Ev4apG7JiMri1otcBjVddcl2KGjdOoJyzGkuEqwqMCsD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777492916; c=relaxed/simple;
-	bh=fJSg5n+VTofLF+R3vGeT0B6uJwenTXr9SrOBn2KG+f8=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=u8Xap3xTeVjvKIRru02bLB/QbhufSWkjfNjqxtB915GVmfHzag1WxbE6GvdN+XbBrMB7SQqmmoXVfXzttwpMom+UAb7fznyBh/ry22q+1uGNM7qpCNtNmx3G2uAU40cvi4EknmPOHBlzCmeW2UT/eVd9TfOhrHyAVhfWLjMedY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XN8bSfMy; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1777494077; c=relaxed/simple;
+	bh=8fXDxeTmMxhwow1M5hchJUf1OMkBFumWlMe6KZ5+umo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p1X5fz+zdXdpvNlZcawCR+eDEAGgQECoAw8L/nuMiYiBFQYCKIkSzN6+/pUQn8kOl6YwEnpT2puNYBsvHjaaOv+4pIhlcVpYqZXsv6UuVt7g30EoHprhNcFDUEDk0Qy0ndCUThRBSkdjb6s0qAwUNlH1cCt6ZwVMkY/K6VAEOAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qy9EE2mg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XN8bSfMy"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63TFUqIl1317126;
-	Wed, 29 Apr 2026 20:01:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=R2x2PQ
-	rvORUdwNxHDcUtETRc8rS0gty21jpHed4L61s=; b=XN8bSfMyWP8gMr/AlEGpjg
-	I9o25iCplYG0leQKr/pZYRG7PLhl95Ed2+CYsJhH4qP+Lo4NYjDh/HzB9RUOTqL+
-	aPy3pnBcvVFfaCWE/ZIWOvitKBZ7cJmClG6R6SDSOAwG/NoIkemEPUsSAGJcuprL
-	JMlC3+ku0+VNHW4R3wqWMuI3lcENDx+3vIpxgmBTxPs4Kg0sZZN0Jr6tIKQo5Ue5
-	+0iKoIDgbNiIWR2wpr8MR39Y1Nap0sXOI5oXtK13NQiai4YmH/AMs7plpOWZY9xy
-	v9R+8j/nJvKvvhjIoJcpuGZCsaHDEe/Az/VoJDq5080NvHc5KXwwK83I9Dml+m0A
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4drk1ju408-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Apr 2026 20:01:15 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63TJrroh010290;
-	Wed, 29 Apr 2026 20:01:14 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dsa5gfsjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Apr 2026 20:01:14 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63TK1EAE30343876
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 29 Apr 2026 20:01:14 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0D87958052;
-	Wed, 29 Apr 2026 20:01:14 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7D9FA58065;
-	Wed, 29 Apr 2026 20:01:12 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.118.181])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 29 Apr 2026 20:01:12 +0000 (GMT)
-Message-ID: <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
-Subject: [PATCH] ima: debugging late_initcall_sync measurements
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jonathan McDowell <noodles@earth.li>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.linux.dev
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
-        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
-        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
-        sebastianene@google.com, Yeoreum Yun <yeoreum.yun@arm.com>
-In-Reply-To: <cover.1777036497.git.noodles@meta.com>
-References: <cover.1777036497.git.noodles@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 29 Apr 2026 16:01:12 -0400
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qy9EE2mg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1777494074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Dujh8cnhmj46JPJbIpzxfAM/9ZMdECRNyBwQKHXMAlc=;
+	b=Qy9EE2mgU7B1EdIffWpHiYVMqKf8jvNXbKC2rzbDIGPM+PxXo8xkJAyBKqUt2oUvpXzLMQ
+	kWmsE96hbZAYG6sCPHx3txSQeAL/gY4o8T3y4CTrwAUh8tPVTtAkf0Rxph4SAx6itYfG0c
+	9IKVdM7/oZia3HcpJ07hKOlgiAslUeM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-64-Ms-d_UtINAuIJrs4UTTORg-1; Wed,
+ 29 Apr 2026 16:21:13 -0400
+X-MC-Unique: Ms-d_UtINAuIJrs4UTTORg-1
+X-Mimecast-MFC-AGG-ID: Ms-d_UtINAuIJrs4UTTORg_1777494071
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ABD691956095;
+	Wed, 29 Apr 2026 20:21:11 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 47795180034F;
+	Wed, 29 Apr 2026 20:21:11 +0000 (UTC)
+Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.17.1) with ESMTPS id 63TKLAYD2823296
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 29 Apr 2026 16:21:10 -0400
+Received: (from bmarzins@localhost)
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.18.1/Submit) id 63TKLASm2823295;
+	Wed, 29 Apr 2026 16:21:10 -0400
+From: Benjamin Marzinski <bmarzins@redhat.com>
+To: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>
+Cc: dm-devel@lists.linux.dev, linux-integrity@vger.kernel.org,
+        Alasdair Kergon <agk@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        steven chen <chenste@linux.microsoft.com>
+Subject: [PATCH v2 04/10] dm-ima: don't copy the active table to the inactive table
+Date: Wed, 29 Apr 2026 16:21:02 -0400
+Message-ID: <20260429202108.2823261-5-bmarzins@redhat.com>
+In-Reply-To: <20260429202108.2823261-1-bmarzins@redhat.com>
+References: <20260429202108.2823261-1-bmarzins@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Reinject: loops=2 maxloops=12
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI5MDE5OCBTYWx0ZWRfX7FCsE6eIcPV0
- dRO44UnF0wfI9Fsdy2pzNYSqckElbnehPhzYgU59deAy09/NqVV5peRfk/XnbOaVW4WNoW3yIeh
- 5F+xYDm7ICIWl6PiWsn9iHAP1ul1MYT7KzCitUYIxkTTG19zx6c8QY6KuVi8oxcM9zdCQPY8ObM
- r9CMcB2a2GKNRKXO/IeLvVr2M4oKebO8S43cNheX553J3+3F+CUMfY8bMCnlJ8d9j7Ai4xxA0g0
- h+c8R0ktb+8HGBQfxSF+PRXxXejvuC6BsLbJf+Fu3oHQivQmbviOYnZP/e+oyKNzqrGn1CZmGWK
- WiLsM3Uq/RkPd0CFQziWQZ1FSxfcMvfGF0u+zsxxDD7Ya5RQYxWa8fK48enDGobj4cMyO3GfQqZ
- XEvi6l4hn5CYxmeDkErHfoJjX6+ewPe+gLpxlN/DGP1CJcwZrDob9FSjNkZbySgRy4so59IQp57
- iZ9BLkgkza1SODVqvrQ==
-X-Proofpoint-GUID: G4mI1EHlNTHJ2Sv4EmdWBE_u_oyWeRVx
-X-Proofpoint-ORIG-GUID: 6taI1q2EF8KzjwX9tVp-Ex5_1ZWFnHn4
-X-Authority-Analysis: v=2.4 cv=MohiLWae c=1 sm=1 tr=0 ts=69f2638c cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
- a=VabnemYjAAAA:8 a=fWDe5KWseGDh5RaNRN8A:9 a=QEXdDO2ut3YA:10
- a=gKebqoRLp9LExxC7YDUY:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-29_02,2026-04-28_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 suspectscore=0 bulkscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 lowpriorityscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
- definitions=main-2604290198
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-With this "[RFC PATCH v3 0/4] Fix IMA + TPM initialisation ordering
-issue" patch set, how many records would be missing if IMA
-initialization is deferred to late_initcall_sync [1]?
+If an inactive table was cleared, dm_ima_measure_on_table_clear() was
+copying the ima.active_table to ima.inactive_table. This is not what
+device-mapper does, and it makes the IMA measurements show an inactive
+table when there isn't one. Also, once this is removed, the code no
+longer needs to keep checking if the active and the inactive table point
+to the same memory.
 
-[1]https://lore.kernel.org/linux-integrity/cover.1777036497.git.noodles@met=
-a.com/
+Signed-off-by: Benjamin Marzinski <bmarzins@redhat.com>
 ---
-Jonathan, Yeoreum, others -
+ drivers/md/dm-ima.c | 64 +++++++--------------------------------------
+ 1 file changed, 10 insertions(+), 54 deletions(-)
 
-By going into TPM-bypass mode, we can see how many measurements are actuall=
-y
-missing when deferring IMA initialization to late_initcall_sync. As this is
-system/TPM dependent, I'd appreciate your checking. Please use the boot com=
-mand
-line option "ima_policy=3Dtcb|critical_data".
-
-thanks, Mimi
-
- security/integrity/ima/ima.h      |  1 +
- security/integrity/ima/ima_init.c |  6 ++++++
- security/integrity/ima/ima_main.c | 19 +++++++++++++++++++
- 3 files changed, 26 insertions(+)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 01aae19ed365..9a1117112fb2 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -286,6 +286,7 @@ extern bool ima_canonical_fmt;
-=20
- /* Internal IMA function definitions */
- int ima_init_core(bool late);
-+int ima_init_debug(bool late);
- int ima_fs_init(void);
- int ima_add_template_entry(struct ima_template_entry *entry, int violation=
-,
- 			   const char *op, struct inode *inode,
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima=
-_init.c
-index 5f335834a9bb..edd063b99685 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -122,6 +122,12 @@ void __init ima_load_x509(void)
- }
- #endif
-=20
-+int __init ima_init_debug(bool late)
-+{
-+	ima_add_boot_aggregate(late); /* just add an additional record */
-+	return 0;
-+}
-+
- int __init ima_init_core(bool late)
- {
- 	int rc;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima=
-_main.c
-index 42099bfe7e43..23e669be54fc 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1254,6 +1254,7 @@ static int ima_kernel_module_request(char *kmod_name)
-=20
- #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
-=20
-+#define TESTING 1
- static int __init init_ima(bool late)
- {
- 	int error;
-@@ -1264,6 +1265,23 @@ static int __init init_ima(bool late)
- 		return 0;
+diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
+index 8b84b676cad4..c141068bc6b4 100644
+--- a/drivers/md/dm-ima.c
++++ b/drivers/md/dm-ima.c
+@@ -281,17 +281,13 @@ void dm_ima_measure_on_table_load(struct dm_table *table)
+ 	if (!digest_buf)
+ 		goto error;
+ 
+-	if (table->md->ima.active_table.hash != table->md->ima.inactive_table.hash)
+-		kfree(table->md->ima.inactive_table.hash);
+-
++	kfree(table->md->ima.inactive_table.hash);
+ 	table->md->ima.inactive_table.hash = digest_buf;
+ 	table->md->ima.inactive_table.hash_len = strlen(digest_buf);
+ 	table->md->ima.inactive_table.num_targets = num_targets;
+ 
+-	if (table->md->ima.active_table.device_metadata !=
+-	    table->md->ima.inactive_table.device_metadata)
+-		kfree(table->md->ima.inactive_table.device_metadata);
+ 
++	kfree(table->md->ima.inactive_table.device_metadata);
+ 	table->md->ima.inactive_table.device_metadata = device_data_buf;
+ 	table->md->ima.inactive_table.device_metadata_len = device_data_buf_len;
+ 
+@@ -330,19 +326,9 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
+ 	l += strlen(DM_IMA_VERSION_STR);
+ 
+ 	if (swap) {
+-		if (md->ima.active_table.hash != md->ima.inactive_table.hash)
+-			kfree(md->ima.active_table.hash);
+-
+-		md->ima.active_table.hash = NULL;
+-		md->ima.active_table.hash_len = 0;
+-
+-		if (md->ima.active_table.device_metadata !=
+-		    md->ima.inactive_table.device_metadata)
+-			kfree(md->ima.active_table.device_metadata);
+-
+-		md->ima.active_table.device_metadata = NULL;
+-		md->ima.active_table.device_metadata_len = 0;
+-		md->ima.active_table.num_targets = 0;
++		kfree(md->ima.active_table.hash);
++		kfree(md->ima.active_table.device_metadata);
++		memset(&md->ima.active_table, 0, sizeof(md->ima.active_table));
+ 
+ 		if (md->ima.inactive_table.hash) {
+ 			md->ima.active_table.hash = md->ima.inactive_table.hash;
+@@ -518,15 +504,10 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
+ 	kfree(capacity_str);
+ exit:
+ 	kfree(md->ima.active_table.device_metadata);
+-
+-	if (md->ima.active_table.device_metadata !=
+-	    md->ima.inactive_table.device_metadata)
+-		kfree(md->ima.inactive_table.device_metadata);
++	kfree(md->ima.inactive_table.device_metadata);
+ 
+ 	kfree(md->ima.active_table.hash);
+-
+-	if (md->ima.active_table.hash != md->ima.inactive_table.hash)
+-		kfree(md->ima.inactive_table.hash);
++	kfree(md->ima.inactive_table.hash);
+ 
+ 	memset(&md->ima.active_table, 0, sizeof(md->ima.active_table));
+ 	memset(&md->ima.inactive_table, 0, sizeof(md->ima.inactive_table));
+@@ -594,34 +575,9 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
+ 	dm_ima_measure_data("dm_table_clear", device_table_data, l, noio);
+ 
+ 	if (new_map) {
+-		if (md->ima.inactive_table.hash &&
+-		    md->ima.inactive_table.hash != md->ima.active_table.hash)
+-			kfree(md->ima.inactive_table.hash);
+-
+-		md->ima.inactive_table.hash = NULL;
+-		md->ima.inactive_table.hash_len = 0;
+-
+-		if (md->ima.inactive_table.device_metadata &&
+-		    md->ima.inactive_table.device_metadata != md->ima.active_table.device_metadata)
+-			kfree(md->ima.inactive_table.device_metadata);
+-
+-		md->ima.inactive_table.device_metadata = NULL;
+-		md->ima.inactive_table.device_metadata_len = 0;
+-		md->ima.inactive_table.num_targets = 0;
+-
+-		if (md->ima.active_table.hash) {
+-			md->ima.inactive_table.hash = md->ima.active_table.hash;
+-			md->ima.inactive_table.hash_len = md->ima.active_table.hash_len;
+-		}
+-
+-		if (md->ima.active_table.device_metadata) {
+-			md->ima.inactive_table.device_metadata =
+-				md->ima.active_table.device_metadata;
+-			md->ima.inactive_table.device_metadata_len =
+-				md->ima.active_table.device_metadata_len;
+-			md->ima.inactive_table.num_targets =
+-				md->ima.active_table.num_targets;
+-		}
++		kfree(md->ima.inactive_table.hash);
++		kfree(md->ima.inactive_table.device_metadata);
++		memset(&md->ima.inactive_table, 0, sizeof(md->ima.inactive_table));
  	}
-=20
-+#ifdef TESTING
-+	/*
-+	 * Initialize early, even if it means going into TPM-bypass mode,
-+	 * but add an additional boot_aggregrate message for the
-+	 * late_initcall_sync.
-+	 *
-+	 * If measurement list records exist between the boot_aggregate
-+	 * and the boot_aggregate_late records, these records would be
-+	 * missing when IMA initializion is deferred to late_initcall_sync.
-+	 */
-+	if (ima_tpm_chip) {
-+		ima_init_debug(late); /* Add an additional record */
-+		return 0;
-+	}
-+
-+	ima_tpm_chip =3D tpm_default_chip();
-+#elif
- 	/*
- 	 * If we found the TPM during our first attempt, or we know there's no
- 	 * TPM, nothing further to do
-@@ -1276,6 +1294,7 @@ static int __init init_ima(bool late)
- 		pr_debug("TPM not available, will try later\n");
- 		return -EPROBE_DEFER;
- 	}
-+#endif
-=20
- 	if (!ima_tpm_chip)
- 		pr_info("No TPM chip found, activating TPM-bypass!\n");
---=20
+ 
+ 	kfree(dev_name);
+-- 
 2.53.0
+
