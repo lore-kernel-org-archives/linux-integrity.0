@@ -1,53 +1,53 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F6238A29A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E22439280C
 	for <linux-integrity@vger.kernel.org>; Wed, 29 Apr 2026 20:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777494079; cv=none; b=rzNYPDtevHply37JQy8IljnbCi59WFurXx8f3TWkwFFYAj2BiKYCiqH+I3WHpCylWdA30vwUyRbWtaMMn2DJPb3zmHQCp461VTpBJnJqy0wRZXk4xE9PUXyAKeKBKlK8Tcg77Ji5zhAaTWWQLM+Sze/BgMRM/Nm0C3ClXYihs0U=
+	t=1777494079; cv=none; b=QzHs56UH9kUPx0T/kVQSO/p6fzVgsx6r0Dw0Jb24UzihjgYz9w3yDJJ5RM7y8qArFBdGlpDxkw3Mym/HL33oSLApW0W745HL2lfyVkBRmX7Eiwjno6u+3Q6XHw064m3lnC+Oc+UXb5XvD44RTcgCQv3JCMh/06QLfNqAA/eem2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1777494079; c=relaxed/simple;
-	bh=ORIvckZt2jSkddDsux0hSRr+GV/AnGOc9Qvj7yYAm/s=;
+	bh=jWFjd5Wdi3AOccT9GTdXOGJaQvG2/ZYt2cK4IJQxg9s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lOdHX3qewKdWFWo+Dpa6hW5R2R+0j5pQB9HhK1Sks4iXjYbg/9MZVR+tRD4X4YLvZsOoTGImL8Tw2gwk3EoEXoAw254Hoz3e+dmCasnS/aUlUKW10qM4Zs0W4B+ds/CWsZa4isOLVixPBcwZpVcutvcyAREWAkYlIOXK0S6EyTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dwYDmCuV; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=rz4FxPqIQCsWJi3R5k0HwYPatpeVrzhJMaA0F9y0viP3pdXoV5GI5wnNcU/9nU5uvRD/zXEPX/AU7dtkiKrHSZHXSnu9rwiDvObFeJzYUjeLWQyeHNzK0SB10byXx2Q6PgZtUeq76Koa/zTAWX8DQPiIylR2AxxIamwmcYtMY+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WrZZokgZ; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dwYDmCuV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WrZZokgZ"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	s=mimecast20190719; t=1777494076;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oF+i8JGuoRRVgN4Ucsmr8gvo+be6kQhWhDQaarZPrg0=;
-	b=dwYDmCuVttit+8jkIsi5/yQmr4adp/4gtah9IWhKnFYEsWP2V+ZQIWiVwNF0r0hbet9qwI
-	KdfTTcpn5H2ZzclKfbpZtaTfsb6HBOoc46af7D4/jf1nlpWJ1FzREa6yUn2nCr7+Wm9CYa
-	xmzY5lWfDcGlTUjVbTtJp010+8b7USE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=jYkLh9bC9ifBjvBZ7J6NOmEIfBfQMxuwlkqale5umV0=;
+	b=WrZZokgZgkM8nEdBTjdtGwmQ3ZJqonViGsstdaIz3/AjGrIctWEUpViKz3ddlm+42wxoOR
+	FFekfBx8wttcSJV3uE4cgplkVapU0Q8nm7pNevnasiJJFja2Kc6Os8uB23gh/Mcz1JbhMi
+	Ja5XACnJcajy8axDTY+OjtzqTbVOf7E=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-zsqFRm3gMZC8a5KE28ejaw-1; Wed,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-64-0wy6pmwmPk-oMqnOd8Z4ag-1; Wed,
  29 Apr 2026 16:21:13 -0400
-X-MC-Unique: zsqFRm3gMZC8a5KE28ejaw-1
-X-Mimecast-MFC-AGG-ID: zsqFRm3gMZC8a5KE28ejaw_1777494071
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+X-MC-Unique: 0wy6pmwmPk-oMqnOd8Z4ag-1
+X-Mimecast-MFC-AGG-ID: 0wy6pmwmPk-oMqnOd8Z4ag_1777494071
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 856951956056;
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B80F1800367;
 	Wed, 29 Apr 2026 20:21:11 +0000 (UTC)
 Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (bmarzins-01.fast.eng.rdu2.dc.redhat.com [10.6.23.12])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBDBD1800347;
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 045F61955D87;
 	Wed, 29 Apr 2026 20:21:10 +0000 (UTC)
 Received: from bmarzins-01.fast.eng.rdu2.dc.redhat.com (localhost [127.0.0.1])
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.17.1) with ESMTPS id 63TKL9x32823284
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.17.1) with ESMTPS id 63TKL99C2823292
 	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Wed, 29 Apr 2026 16:21:09 -0400
+	Wed, 29 Apr 2026 16:21:10 -0400
 Received: (from bmarzins@localhost)
-	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.18.1/Submit) id 63TKL9HP2823283;
+	by bmarzins-01.fast.eng.rdu2.dc.redhat.com (8.18.1/8.18.1/Submit) id 63TKL9wC2823291;
 	Wed, 29 Apr 2026 16:21:09 -0400
 From: Benjamin Marzinski <bmarzins@redhat.com>
 To: Mikulas Patocka <mpatocka@redhat.com>, Mike Snitzer <snitzer@kernel.org>
@@ -57,9 +57,9 @@ Cc: dm-devel@lists.linux.dev, linux-integrity@vger.kernel.org,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         steven chen <chenste@linux.microsoft.com>
-Subject: [PATCH v2 01/10] dm-ima: remove dm_ima_reset_data()
-Date: Wed, 29 Apr 2026 16:20:59 -0400
-Message-ID: <20260429202108.2823261-2-bmarzins@redhat.com>
+Subject: [PATCH v2 03/10] dm-ima: Remove status_flags from dm_ima_measure_on_table_load()
+Date: Wed, 29 Apr 2026 16:21:01 -0400
+Message-ID: <20260429202108.2823261-4-bmarzins@redhat.com>
 In-Reply-To: <20260429202108.2823261-1-bmarzins@redhat.com>
 References: <20260429202108.2823261-1-bmarzins@redhat.com>
 Precedence: bulk
@@ -69,140 +69,76 @@ List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-There's no point in saving the string length of DM_IMA_VERSION_STR. It's
-a constant, so the compiler will precompute it. dm_create() will already
-zero out the rest of dm->ima.
+There is no status flag that is is used for STATUSTYPE_IMA type
+status() calls, and STATUSTYPE_IMA itself is not a valid
+status flag.
 
 Signed-off-by: Benjamin Marzinski <bmarzins@redhat.com>
 ---
- drivers/md/dm-ima.c | 32 ++++++++++++--------------------
- drivers/md/dm-ima.h |  3 ---
- drivers/md/dm.c     |  2 --
- 3 files changed, 12 insertions(+), 25 deletions(-)
+ drivers/md/dm-ima.c   | 4 ++--
+ drivers/md/dm-ima.h   | 4 ++--
+ drivers/md/dm-ioctl.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/md/dm-ima.c b/drivers/md/dm-ima.c
-index 9495ca035056..a639bb0fe6c3 100644
+index 209221fa8bc5..8b84b676cad4 100644
 --- a/drivers/md/dm-ima.c
 +++ b/drivers/md/dm-ima.c
-@@ -159,15 +159,6 @@ static int dm_ima_alloc_and_copy_capacity_str(struct mapped_device *md, char **c
- 			 capacity);
- }
- 
--/*
-- * Initialize/reset the dm ima related data structure variables.
-- */
--void dm_ima_reset_data(struct mapped_device *md)
--{
--	memset(&(md->ima), 0, sizeof(md->ima));
--	md->ima.dm_version_str_len = strlen(DM_IMA_VERSION_STR);
--}
--
+@@ -162,7 +162,7 @@ static int dm_ima_alloc_and_copy_capacity_str(struct mapped_device *md, char **c
  /*
   * Build up the IMA data for each target, and finally measure.
   */
-@@ -204,8 +195,8 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 
- 	sha256_init(&hash_ctx);
- 
--	memcpy(ima_buf + l, DM_IMA_VERSION_STR, table->md->ima.dm_version_str_len);
--	l += table->md->ima.dm_version_str_len;
-+	memcpy(ima_buf + l, DM_IMA_VERSION_STR, strlen(DM_IMA_VERSION_STR));
-+	l += strlen(DM_IMA_VERSION_STR);
- 
- 	device_data_buf_len = strlen(device_data_buf);
- 	memcpy(ima_buf + l, device_data_buf, device_data_buf_len);
-@@ -260,8 +251,8 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
- 			 * prefix, so that multiple records from the same "dm_table_load" for
- 			 * a given device can be linked together.
- 			 */
--			memcpy(ima_buf + l, DM_IMA_VERSION_STR, table->md->ima.dm_version_str_len);
--			l += table->md->ima.dm_version_str_len;
-+			memcpy(ima_buf + l, DM_IMA_VERSION_STR, strlen(DM_IMA_VERSION_STR));
-+			l += strlen(DM_IMA_VERSION_STR);
- 
- 			memcpy(ima_buf + l, device_data_buf, device_data_buf_len);
- 			l += device_data_buf_len;
-@@ -349,8 +340,8 @@ void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap)
- 	if (capacity_len < 0)
- 		goto error;
- 
--	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
--	l += md->ima.dm_version_str_len;
-+	memcpy(device_table_data + l, DM_IMA_VERSION_STR, strlen(DM_IMA_VERSION_STR));
-+	l += strlen(DM_IMA_VERSION_STR);
- 
- 	if (swap) {
- 		if (md->ima.active_table.hash != md->ima.inactive_table.hash)
-@@ -460,8 +451,8 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
- 		goto exit;
- 	}
- 
--	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
--	l += md->ima.dm_version_str_len;
-+	memcpy(device_table_data + l, DM_IMA_VERSION_STR, strlen(DM_IMA_VERSION_STR));
-+	l += strlen(DM_IMA_VERSION_STR);
- 
- 	if (md->ima.active_table.device_metadata) {
- 		memcpy(device_table_data + l, device_active_str, device_active_len);
-@@ -551,7 +542,8 @@ void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all)
- 	if (md->ima.active_table.hash != md->ima.inactive_table.hash)
- 		kfree(md->ima.inactive_table.hash);
- 
--	dm_ima_reset_data(md);
-+	memset(&md->ima.active_table, 0, sizeof(md->ima.active_table));
-+	memset(&md->ima.inactive_table, 0, sizeof(md->ima.inactive_table));
- 
- 	kfree(dev_name);
- 	kfree(dev_uuid);
-@@ -578,8 +570,8 @@ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map)
- 	if (capacity_len < 0)
- 		goto error1;
- 
--	memcpy(device_table_data + l, DM_IMA_VERSION_STR, md->ima.dm_version_str_len);
--	l += md->ima.dm_version_str_len;
-+	memcpy(device_table_data + l, DM_IMA_VERSION_STR, strlen(DM_IMA_VERSION_STR));
-+	l += strlen(DM_IMA_VERSION_STR);
- 
- 	if (md->ima.inactive_table.device_metadata_len &&
- 	    md->ima.inactive_table.hash_len) {
+-void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags)
++void dm_ima_measure_on_table_load(struct dm_table *table)
+ {
+ 	size_t device_data_buf_len, target_metadata_buf_len, target_data_buf_len, l = 0;
+ 	char *target_metadata_buf = NULL, *target_data_buf = NULL, *digest_buf = NULL;
+@@ -217,7 +217,7 @@ void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_fl
+ 		 * Then retrieve the actual target data.
+ 		 */
+ 		if (ti->type->status)
+-			ti->type->status(ti, type, status_flags, target_data_buf,
++			ti->type->status(ti, type, 0, target_data_buf,
+ 					 DM_IMA_TARGET_DATA_BUF_LEN);
+ 		else
+ 			target_data_buf[0] = '\0';
 diff --git a/drivers/md/dm-ima.h b/drivers/md/dm-ima.h
-index a403deca6093..b0b166aa2283 100644
+index b0b166aa2283..c0548492bef0 100644
 --- a/drivers/md/dm-ima.h
 +++ b/drivers/md/dm-ima.h
-@@ -52,10 +52,8 @@ struct dm_ima_device_table_metadata {
- struct dm_ima_measurements {
- 	struct dm_ima_device_table_metadata active_table;
+@@ -54,7 +54,7 @@ struct dm_ima_measurements {
  	struct dm_ima_device_table_metadata inactive_table;
--	unsigned int dm_version_str_len;
  };
  
--void dm_ima_reset_data(struct mapped_device *md);
- void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags);
+-void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags);
++void dm_ima_measure_on_table_load(struct dm_table *table);
  void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap);
  void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all);
-@@ -64,7 +62,6 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md);
+ void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map);
+@@ -62,7 +62,7 @@ void dm_ima_measure_on_device_rename(struct mapped_device *md);
  
  #else
  
--static inline void dm_ima_reset_data(struct mapped_device *md) {}
- static inline void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags) {}
+-static inline void dm_ima_measure_on_table_load(struct dm_table *table, unsigned int status_flags) {}
++static inline void dm_ima_measure_on_table_load(struct dm_table *table) {}
  static inline void dm_ima_measure_on_device_resume(struct mapped_device *md, bool swap) {}
  static inline void dm_ima_measure_on_device_remove(struct mapped_device *md, bool remove_all) {}
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index e178fe19973e..8b60c9804f5b 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -2546,8 +2546,6 @@ int dm_create(int minor, struct mapped_device **result)
- 	if (!md)
- 		return -ENXIO;
+ static inline void dm_ima_measure_on_table_clear(struct mapped_device *md, bool new_map) {}
+diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+index a529174c94cf..074a3c71297e 100644
+--- a/drivers/md/dm-ioctl.c
++++ b/drivers/md/dm-ioctl.c
+@@ -1552,7 +1552,7 @@ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_si
+ 	if (r)
+ 		goto err_unlock_md_type;
  
--	dm_ima_reset_data(md);
--
- 	*result = md;
- 	return 0;
- }
+-	dm_ima_measure_on_table_load(t, STATUSTYPE_IMA);
++	dm_ima_measure_on_table_load(t);
+ 
+ 	immutable_target_type = dm_get_immutable_target_type(md);
+ 	if (immutable_target_type &&
 -- 
 2.53.0
 
