@@ -1,249 +1,210 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E4340F8F4;
-	Wed, 29 Apr 2026 16:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DDC2F7462;
+	Wed, 29 Apr 2026 20:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1777479618; cv=none; b=FGQlHzYn3A0RuuLiDemgmRoL0va8sWxQAT+zOvpoWKAnMC+o81cPIUbvTFz7yFnNRMuS0w+SfGXBpSy1r9rUPsvJIi6U32xtRPtgxTFniy3ehMflpKSKVBRYWbZLhIvWIebViRb+SxS3vHmHA0600eAElNtnLK2zyrF2+rBUQA4=
+	t=1777492916; cv=none; b=V4G/hsOX2uimfWi8YWrzGggHoE5lF+zqgeE73U908luwCKf2WCvkPW2DsW4DPu+0fXAw/sMTZSMSQL/ylKFyQiiORbu2nETx+Y38LuAPMqix2xO66I1tY7iy4FgXtgnzhjp2VKhjKgrNhRXn+nX+Cd37w8H9OpF6Iqabh76JsJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1777479618; c=relaxed/simple;
-	bh=MP9+scg3dwoUSuqETp6ePAjChlt97Y7yrh+Xbl1cumQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nIIGw8yZV9Zwl5aYK+2kgcWvphL7AmNjuWhfv8kK4G+ViXd5AOitUVMYcNvdqThPC97HK1Vx46OltmwBIN0uGpM44jq6IkxbQe7V+RTdOao/h5/jxZwMLBZVeZ7a9K/LVrC5PQdVpOrHf49O1Okz0Yg73XZRNRjTmcdWNJ6a3dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.224.235])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4g5MSD2wKbzpTvM;
-	Wed, 29 Apr 2026 23:59:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 989D44056A;
-	Thu, 30 Apr 2026 00:03:54 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBHPmrYK_JpRQ1BAA--.12298S3;
-	Wed, 29 Apr 2026 17:03:54 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net,
-	skhan@linuxfoundation.org,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	gregorylumen@linux.microsoft.com,
-	chenste@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v5 01/13] ima: Remove ima_h_table structure
-Date: Wed, 29 Apr 2026 18:03:07 +0200
-Message-ID: <20260429160319.4162918-2-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
-References: <20260429160319.4162918-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1777492916; c=relaxed/simple;
+	bh=fJSg5n+VTofLF+R3vGeT0B6uJwenTXr9SrOBn2KG+f8=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=u8Xap3xTeVjvKIRru02bLB/QbhufSWkjfNjqxtB915GVmfHzag1WxbE6GvdN+XbBrMB7SQqmmoXVfXzttwpMom+UAb7fznyBh/ry22q+1uGNM7qpCNtNmx3G2uAU40cvi4EknmPOHBlzCmeW2UT/eVd9TfOhrHyAVhfWLjMedY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XN8bSfMy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XN8bSfMy"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 63TFUqIl1317126;
+	Wed, 29 Apr 2026 20:01:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=R2x2PQ
+	rvORUdwNxHDcUtETRc8rS0gty21jpHed4L61s=; b=XN8bSfMyWP8gMr/AlEGpjg
+	I9o25iCplYG0leQKr/pZYRG7PLhl95Ed2+CYsJhH4qP+Lo4NYjDh/HzB9RUOTqL+
+	aPy3pnBcvVFfaCWE/ZIWOvitKBZ7cJmClG6R6SDSOAwG/NoIkemEPUsSAGJcuprL
+	JMlC3+ku0+VNHW4R3wqWMuI3lcENDx+3vIpxgmBTxPs4Kg0sZZN0Jr6tIKQo5Ue5
+	+0iKoIDgbNiIWR2wpr8MR39Y1Nap0sXOI5oXtK13NQiai4YmH/AMs7plpOWZY9xy
+	v9R+8j/nJvKvvhjIoJcpuGZCsaHDEe/Az/VoJDq5080NvHc5KXwwK83I9Dml+m0A
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4drk1ju408-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Apr 2026 20:01:15 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63TJrroh010290;
+	Wed, 29 Apr 2026 20:01:14 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dsa5gfsjt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Apr 2026 20:01:14 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 63TK1EAE30343876
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 Apr 2026 20:01:14 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0D87958052;
+	Wed, 29 Apr 2026 20:01:14 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7D9FA58065;
+	Wed, 29 Apr 2026 20:01:12 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.118.181])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 29 Apr 2026 20:01:12 +0000 (GMT)
+Message-ID: <7734099f5e7fda5480bca016a9e6707983325fbd.camel@linux.ibm.com>
+Subject: [PATCH] ima: debugging late_initcall_sync measurements
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jonathan McDowell <noodles@earth.li>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, jarkko@kernel.org, jgg@ziepe.ca,
+        sudeep.holla@kernel.org, maz@kernel.org, oupton@kernel.org,
+        joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+        catalin.marinas@arm.com, will@kernel.org, noodles@meta.com,
+        sebastianene@google.com, Yeoreum Yun <yeoreum.yun@arm.com>
+In-Reply-To: <cover.1777036497.git.noodles@meta.com>
+References: <cover.1777036497.git.noodles@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 29 Apr 2026 16:01:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwBHPmrYK_JpRQ1BAA--.12298S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtw4rXFW5Zw1fXFWUuw17Jrb_yoWxtw1kpa
-	nFga42kF48XFyI9ryDAayqkrWrW3yUKr17Wws8Gw1Fk3ZrXr12gF15AFy2kFyfGrZYyF1I
-	qrs0qrn0kwsYyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r1j6r4UM28EF7xvwVC2z280aVCY1x0267AKxVW8
-	JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx
-	0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWU
-	JVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxV
-	WUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jnpnQU
-	UUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGnx6jgGGgAAsB
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDI5MDE5OCBTYWx0ZWRfX7FCsE6eIcPV0
+ dRO44UnF0wfI9Fsdy2pzNYSqckElbnehPhzYgU59deAy09/NqVV5peRfk/XnbOaVW4WNoW3yIeh
+ 5F+xYDm7ICIWl6PiWsn9iHAP1ul1MYT7KzCitUYIxkTTG19zx6c8QY6KuVi8oxcM9zdCQPY8ObM
+ r9CMcB2a2GKNRKXO/IeLvVr2M4oKebO8S43cNheX553J3+3F+CUMfY8bMCnlJ8d9j7Ai4xxA0g0
+ h+c8R0ktb+8HGBQfxSF+PRXxXejvuC6BsLbJf+Fu3oHQivQmbviOYnZP/e+oyKNzqrGn1CZmGWK
+ WiLsM3Uq/RkPd0CFQziWQZ1FSxfcMvfGF0u+zsxxDD7Ya5RQYxWa8fK48enDGobj4cMyO3GfQqZ
+ XEvi6l4hn5CYxmeDkErHfoJjX6+ewPe+gLpxlN/DGP1CJcwZrDob9FSjNkZbySgRy4so59IQp57
+ iZ9BLkgkza1SODVqvrQ==
+X-Proofpoint-GUID: G4mI1EHlNTHJ2Sv4EmdWBE_u_oyWeRVx
+X-Proofpoint-ORIG-GUID: 6taI1q2EF8KzjwX9tVp-Ex5_1ZWFnHn4
+X-Authority-Analysis: v=2.4 cv=MohiLWae c=1 sm=1 tr=0 ts=69f2638c cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=Y2IxJ9c9Rs8Kov3niI8_:22 a=VwQbUJbxAAAA:8
+ a=VabnemYjAAAA:8 a=fWDe5KWseGDh5RaNRN8A:9 a=QEXdDO2ut3YA:10
+ a=gKebqoRLp9LExxC7YDUY:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-29_02,2026-04-28_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 suspectscore=0 bulkscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1015 lowpriorityscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
+ definitions=main-2604290198
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+With this "[RFC PATCH v3 0/4] Fix IMA + TPM initialisation ordering
+issue" patch set, how many records would be missing if IMA
+initialization is deferred to late_initcall_sync [1]?
 
-With the upcoming change of dynamically allocating and replacing the hash
-table, the ima_h_table structure would have been replaced with a new one.
-
-However, since the ima_h_table structure contains also the counters for
-number of measurements entries and violations, we would have needed to
-preserve their values in the new ima_h_table structure.
-
-Instead, separate those counters from the hash table, remove the
-ima_h_table structure, and just replace the hash table pointer.
-
-Finally, rename ima_show_htable_value(), ima_show_htable_violations()
-and ima_htable_violations_ops respectively to ima_show_counter(),
-ima_show_num_violations() and ima_num_violations_ops.
-
-Link: https://github.com/linux-integrity/linux/issues/1
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+[1]https://lore.kernel.org/linux-integrity/cover.1777036497.git.noodles@met=
+a.com/
 ---
- security/integrity/ima/ima.h       |  9 +++------
- security/integrity/ima/ima_api.c   |  2 +-
- security/integrity/ima/ima_fs.c    | 19 +++++++++----------
- security/integrity/ima/ima_kexec.c |  2 +-
- security/integrity/ima/ima_queue.c | 17 ++++++++++-------
- 5 files changed, 24 insertions(+), 25 deletions(-)
+Jonathan, Yeoreum, others -
+
+By going into TPM-bypass mode, we can see how many measurements are actuall=
+y
+missing when deferring IMA initialization to late_initcall_sync. As this is
+system/TPM dependent, I'd appreciate your checking. Please use the boot com=
+mand
+line option "ima_policy=3Dtcb|critical_data".
+
+thanks, Mimi
+
+ security/integrity/ima/ima.h      |  1 +
+ security/integrity/ima/ima_init.c |  6 ++++++
+ security/integrity/ima/ima_main.c | 19 +++++++++++++++++++
+ 3 files changed, 26 insertions(+)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 69e9bf0b82c6..51a8a582df56 100644
+index 01aae19ed365..9a1117112fb2 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -324,12 +324,9 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
-  */
- extern spinlock_t ima_queue_lock;
- 
--struct ima_h_table {
--	atomic_long_t len;	/* number of stored measurements in the list */
--	atomic_long_t violations;
--	struct hlist_head queue[IMA_MEASURE_HTABLE_SIZE];
--};
--extern struct ima_h_table ima_htable;
-+extern atomic_long_t ima_num_entries;
-+extern atomic_long_t ima_num_violations;
-+extern struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE];
- 
- static inline unsigned int ima_hash_key(u8 *digest)
- {
-diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-index 0916f24f005f..122d127e108d 100644
---- a/security/integrity/ima/ima_api.c
-+++ b/security/integrity/ima/ima_api.c
-@@ -146,7 +146,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
- 	int result;
- 
- 	/* can overflow, only indicator */
--	atomic_long_inc(&ima_htable.violations);
-+	atomic_long_inc(&ima_num_violations);
- 
- 	result = ima_alloc_init_template(&event_data, &entry, NULL);
- 	if (result < 0) {
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index ca4931a95098..aaa460d70ff7 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -38,8 +38,8 @@ __setup("ima_canonical_fmt", default_canonical_fmt_setup);
- 
- static int valid_policy = 1;
- 
--static ssize_t ima_show_htable_value(char __user *buf, size_t count,
--				     loff_t *ppos, atomic_long_t *val)
-+static ssize_t ima_show_counter(char __user *buf, size_t count, loff_t *ppos,
-+				atomic_long_t *val)
- {
- 	char tmpbuf[32];	/* greater than largest 'long' string value */
- 	ssize_t len;
-@@ -48,15 +48,14 @@ static ssize_t ima_show_htable_value(char __user *buf, size_t count,
- 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
+@@ -286,6 +286,7 @@ extern bool ima_canonical_fmt;
+=20
+ /* Internal IMA function definitions */
+ int ima_init_core(bool late);
++int ima_init_debug(bool late);
+ int ima_fs_init(void);
+ int ima_add_template_entry(struct ima_template_entry *entry, int violation=
+,
+ 			   const char *op, struct inode *inode,
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima=
+_init.c
+index 5f335834a9bb..edd063b99685 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -122,6 +122,12 @@ void __init ima_load_x509(void)
  }
- 
--static ssize_t ima_show_htable_violations(struct file *filp,
--					  char __user *buf,
--					  size_t count, loff_t *ppos)
-+static ssize_t ima_show_num_violations(struct file *filp, char __user *buf,
-+				       size_t count, loff_t *ppos)
- {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.violations);
-+	return ima_show_counter(buf, count, ppos, &ima_num_violations);
- }
- 
--static const struct file_operations ima_htable_violations_ops = {
--	.read = ima_show_htable_violations,
-+static const struct file_operations ima_num_violations_ops = {
-+	.read = ima_show_num_violations,
- 	.llseek = generic_file_llseek,
- };
- 
-@@ -64,7 +63,7 @@ static ssize_t ima_show_measurements_count(struct file *filp,
- 					   char __user *buf,
- 					   size_t count, loff_t *ppos)
- {
--	return ima_show_htable_value(buf, count, ppos, &ima_htable.len);
-+	return ima_show_counter(buf, count, ppos, &ima_num_entries);
- 
- }
- 
-@@ -545,7 +544,7 @@ int __init ima_fs_init(void)
- 	}
- 
- 	dentry = securityfs_create_file("violations", S_IRUSR | S_IRGRP,
--				   ima_dir, NULL, &ima_htable_violations_ops);
-+				   ima_dir, NULL, &ima_num_violations_ops);
- 	if (IS_ERR(dentry)) {
- 		ret = PTR_ERR(dentry);
- 		goto out;
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 36a34c54de58..5801649fbbef 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -43,7 +43,7 @@ void ima_measure_kexec_event(const char *event_name)
- 	int n;
- 
- 	buf_size = ima_get_binary_runtime_size();
--	len = atomic_long_read(&ima_htable.len);
-+	len = atomic_long_read(&ima_num_entries);
- 
- 	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
- 		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 319522450854..1f6515f7d015 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -32,11 +32,14 @@ static unsigned long binary_runtime_size;
- static unsigned long binary_runtime_size = ULONG_MAX;
  #endif
- 
-+/* num of stored measurements in the list */
-+atomic_long_t ima_num_entries = ATOMIC_LONG_INIT(0);
-+/* num of violations in the list */
-+atomic_long_t ima_num_violations = ATOMIC_LONG_INIT(0);
+=20
++int __init ima_init_debug(bool late)
++{
++	ima_add_boot_aggregate(late); /* just add an additional record */
++	return 0;
++}
 +
- /* key: inode (before secure-hashing a file) */
--struct ima_h_table ima_htable = {
--	.len = ATOMIC_LONG_INIT(0),
--	.violations = ATOMIC_LONG_INIT(0),
--	.queue[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
-+struct hlist_head ima_htable[IMA_MEASURE_HTABLE_SIZE] = {
-+	[0 ... IMA_MEASURE_HTABLE_SIZE - 1] = HLIST_HEAD_INIT
- };
- 
- /* mutex protects atomicity of extending measurement list
-@@ -61,7 +64,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 
- 	key = ima_hash_key(digest_value);
- 	rcu_read_lock();
--	hlist_for_each_entry_rcu(qe, &ima_htable.queue[key], hnext) {
-+	hlist_for_each_entry_rcu(qe, &ima_htable[key], hnext) {
- 		rc = memcmp(qe->entry->digests[ima_hash_algo_idx].digest,
- 			    digest_value, hash_digest_size[ima_hash_algo]);
- 		if ((rc == 0) && (qe->entry->pcr == pcr)) {
-@@ -113,10 +116,10 @@ static int ima_add_digest_entry(struct ima_template_entry *entry,
- 	INIT_LIST_HEAD(&qe->later);
- 	list_add_tail_rcu(&qe->later, &ima_measurements);
- 
--	atomic_long_inc(&ima_htable.len);
-+	atomic_long_inc(&ima_num_entries);
- 	if (update_htable) {
- 		key = ima_hash_key(entry->digests[ima_hash_algo_idx].digest);
--		hlist_add_head_rcu(&qe->hnext, &ima_htable.queue[key]);
-+		hlist_add_head_rcu(&qe->hnext, &ima_htable[key]);
+ int __init ima_init_core(bool late)
+ {
+ 	int rc;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima=
+_main.c
+index 42099bfe7e43..23e669be54fc 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -1254,6 +1254,7 @@ static int ima_kernel_module_request(char *kmod_name)
+=20
+ #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
+=20
++#define TESTING 1
+ static int __init init_ima(bool late)
+ {
+ 	int error;
+@@ -1264,6 +1265,23 @@ static int __init init_ima(bool late)
+ 		return 0;
  	}
- 
- 	if (binary_runtime_size != ULONG_MAX) {
--- 
-2.43.0
-
+=20
++#ifdef TESTING
++	/*
++	 * Initialize early, even if it means going into TPM-bypass mode,
++	 * but add an additional boot_aggregrate message for the
++	 * late_initcall_sync.
++	 *
++	 * If measurement list records exist between the boot_aggregate
++	 * and the boot_aggregate_late records, these records would be
++	 * missing when IMA initializion is deferred to late_initcall_sync.
++	 */
++	if (ima_tpm_chip) {
++		ima_init_debug(late); /* Add an additional record */
++		return 0;
++	}
++
++	ima_tpm_chip =3D tpm_default_chip();
++#elif
+ 	/*
+ 	 * If we found the TPM during our first attempt, or we know there's no
+ 	 * TPM, nothing further to do
+@@ -1276,6 +1294,7 @@ static int __init init_ima(bool late)
+ 		pr_debug("TPM not available, will try later\n");
+ 		return -EPROBE_DEFER;
+ 	}
++#endif
+=20
+ 	if (!ima_tpm_chip)
+ 		pr_info("No TPM chip found, activating TPM-bypass!\n");
+--=20
+2.53.0
