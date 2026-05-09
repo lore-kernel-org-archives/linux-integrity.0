@@ -1,138 +1,80 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345761A316E;
-	Sat,  9 May 2026 18:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C53C78F2B;
+	Sat,  9 May 2026 19:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778352689; cv=none; b=upbjo9j8kbrzBqRfWgp2PAE7dlbHaj5zp3Iy5Y1+NuvdpxqQojYgZ4CC16MPR4BosW3l8GwonPuYwsx1pUOyai4Ed7zOkFR/VxQLf84jL2EL0tXRT56qkcat1IppHJZ0fTj/FSbA/QPyBMOZWYNWTezvljjWVZedmfX1NgMZxbM=
+	t=1778353374; cv=none; b=iZM78Lq6hVUXGeFEIKDS/qntvi/xodFM2eIQAflnUO5hCxUhsN11hJb1zGjb+MprIQv2rWJ9/HT9K3O6GH6BVc33KSF7gqsN/Dm72dkddIkNwV2Nqqy47g9CNNIhgIyEGzZwcWtKuT252Z/dogNmXSMmiKlV9tOGw5EJLC8mVHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778352689; c=relaxed/simple;
-	bh=U/l5ecjWoPA3uBSBClQ6V2t87GiPQTd+0V5zvKq22qY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NK7paz9uu2T/+5rQTzUJtgcIQqnMTq/ybRf2NWlfS2SQKteUlFoucOb7YKD4PQKYQaP0u87huM8ZIgoms8LzyV2Ouy3/2DoYCEXnR44c/YXdDmVMCmIhC9/+i5mH3MiPx3HOu95FJssRmZ7p0EoYCQtV9LywF8gU57QMGvYW4Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdpEEOCL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1778353374; c=relaxed/simple;
+	bh=3L5MGmAY4K7yVhPbWt+iykzQHgmJT3cO9wISvo86ih0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jw353/89wgBzWbF5HntfqW2P61EUBSLQuQN31OKUBz+y9U7dsjDZ4o8PwVYCv+3RrmqwxiBuHj3nVsr0Fsf2AkHP53K8rJYaz+uB+7LLkj+IZmpA7/sgsqgcMiRdcBBysyACZ1dJO0WHPMj2j+WfWx1UpGO+COgJ7kf7/ZsmM5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F929bkZj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdpEEOCL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66E7BC2BCB2;
-	Sat,  9 May 2026 18:51:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F929bkZj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72693C2BCB2;
+	Sat,  9 May 2026 19:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1778352688;
-	bh=U/l5ecjWoPA3uBSBClQ6V2t87GiPQTd+0V5zvKq22qY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DdpEEOCLtKpE7Z9TIvZL6g3RB7fQfGVnvKXLljNFilsKy5SgK0/xq1sE4Nkwpl33F
-	 ONIlWxKyTDqIFi/GrRM9zCApzOiUKqIS+mJw5kliiU4chb9pNwVhOas8bCWcZnAJQ4
-	 tWebG3CMtt1k66ZE56Z/bIiHHPY2Z/vdJx7Uj51hkhq3DxP4SpUJYNhJqaw6qsrhBN
-	 F+qursnkI6dXWUqxpORbQlrW1CdY4BceNHD90d90okhr5U7dJ0Xl758ISRXqJgpcwb
-	 /NX7LhfQ5cdBIdbPrn4y5qFxBrTO+9Br5C4gkqdBV1GtPuYc84pDHGMdY/xf43G7br
-	 wnVp9knuG1EmQ==
+	s=k20201202; t=1778353373;
+	bh=3L5MGmAY4K7yVhPbWt+iykzQHgmJT3cO9wISvo86ih0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F929bkZj/KQNErTx2YN8zFhEeb92XpjTpU9o0yk/8bxuz5oz859uh0hMoHNaE/Mqs
+	 Hs6seTCZRIe8xbqEhKM7pcI/fsB43G3vuFdTb8kdcqM47887xJckIuc88qPfaf/+KJ
+	 RbDAxsrjnsIycMCHNUvx1DJLjz+/r6zC+C2oSBXGa0j5fFm5F3W4So5EDpy9j8dWrN
+	 uw4lQCd0qS2Rg2JLhZZ1kdmEgNjTSf+UrpME2bU6Nx5uGpu+Ai7fdIO7v4olPkJJvq
+	 6tOKU+jL+EAUaswsMiGAnASh4QOBE9Qj7y3VzAIQJ5rwmSGO8obvhjf1f0n0oIfRPv
+	 QFKvw3XZGrHyQ==
+Date: Sat, 9 May 2026 22:02:49 +0300
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	stable@vger.kernel.org,
-	Linus Walleij <linusw@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: tpm_tis_spi: Use wait_woken() in wait_for_tmp_stat()
-Date: Sat,  9 May 2026 21:51:07 +0300
-Message-ID: <20260509185108.2681198-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.3
+To: David Windsor <dwindsor@gmail.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: svsm: constify tpm_chip_ops
+Message-ID: <af-E2d_jlowRk0ta@kernel.org>
+References: <20260505202738.145800-1-dwindsor@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260505202738.145800-1-dwindsor@gmail.com>
 
-wait_event_interruptible_timeout() evaluates its condition after setting
-the current task state to TASK_INTERRUPTIBLE.
+On Tue, May 05, 2026 at 04:27:38PM -0400, David Windsor wrote:
+> Constify the SVSM vTPM ops. It is statically initialized and never
+> written to, so let's store it in .rodata.
+> 
+> Every other tpm_class_ops instance in drivers/char/tpm/ is already
+> const.
+> 
+> Signed-off-by: David Windsor <dwindsor@gmail.com>
+> ---
+>  drivers/char/tpm/tpm_svsm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_svsm.c b/drivers/char/tpm/tpm_svsm.c
+> index f5ba0f64850b..b74d60f687d5 100644
+> --- a/drivers/char/tpm/tpm_svsm.c
+> +++ b/drivers/char/tpm/tpm_svsm.c
+> @@ -49,7 +49,7 @@ static int tpm_svsm_send(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>  	return svsm_vtpm_cmd_response_parse(priv->buffer, buf, bufsiz);
+>  }
+>  
+> -static struct tpm_class_ops tpm_chip_ops = {
+> +static const struct tpm_class_ops tpm_chip_ops = {
+>  	.flags = TPM_OPS_AUTO_STARTUP,
+>  	.send = tpm_svsm_send,
+>  };
+> 
+> base-commit: 254f49634ee16a731174d2ae34bc50bd5f45e731
+> -- 
+> 2.53.0
+> 
 
-With CONFIG_DEBUG_ATOMIC_SLEEP this triggers a warning when the IRQ wait
-path is used:
+Thanks, applied.
 
-    tpm_tis_status()
-      tpm_tis_spi_read_bytes()
-        tpm_tis_spi_transfer_full()
-          spi_bus_lock()
-            mutex_lock()
-
-Address this with the following measures:
-
-1. Call wait_tpm_stat_cond() only while tasking is running.
-2. Use wait_woken() to wait for changes.
-
-Cc: stable@vger.kernel.org # v4.19+
-Cc: Linus Walleij <linusw@kernel.org>
-Reported-by: Stefan Wahren <wahrenst@gmx.net>
-Closes: https://lore.kernel.org/linux-integrity/6964bec7-3dbb-453b-89ef-9b990217a8b9@gmx.net/
-Fixes: 1a339b658d9d ("tpm_tis_spi: Pass the SPI IRQ down to the driver")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-Linus' change only unmasked a pre-existing bug but it is the change
-realizes it in tpm_tis_spi.
- drivers/char/tpm/tpm_tis_core.c | 35 ++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 21d79ad3b164..153a57c79240 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -66,8 +66,8 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 		bool check_cancel)
- {
- 	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-+	DEFINE_WAIT_FUNC(wait, woken_wake_function);
- 	unsigned long stop;
--	long rc;
- 	u8 status;
- 	bool canceled = false;
- 	u8 sts_mask;
-@@ -87,23 +87,30 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 	/* process status changes with irq support */
- 	if (sts_mask) {
- 		ret = -ETIME;
-+		add_wait_queue(queue, &wait);
- again:
-+		if (wait_for_tpm_stat_cond(chip, sts_mask, check_cancel,
-+					   &canceled)) {
-+			ret = canceled ? -ECANCELED : 0;
-+			goto out;
-+		}
-+
- 		timeout = stop - jiffies;
- 		if ((long)timeout <= 0)
--			return -ETIME;
--		rc = wait_event_interruptible_timeout(*queue,
--			wait_for_tpm_stat_cond(chip, sts_mask, check_cancel,
--					       &canceled),
--			timeout);
--		if (rc > 0) {
--			if (canceled)
--				return -ECANCELED;
--			ret = 0;
--		}
--		if (rc == -ERESTARTSYS && freezing(current)) {
--			clear_thread_flag(TIF_SIGPENDING);
--			goto again;
-+			goto out;
-+
-+		if (signal_pending(current)) {
-+			if (freezing(current)) {
-+				clear_thread_flag(TIF_SIGPENDING);
-+				goto again;
-+			}
-+			goto out;
- 		}
-+
-+		wait_woken(&wait, TASK_INTERRUPTIBLE, timeout);
-+		goto again;
-+out:
-+		remove_wait_queue(queue, &wait);
- 	}
-
- 	if (ret)
---
-2.47.3
-
+BR, Jarkko
