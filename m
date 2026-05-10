@@ -1,93 +1,77 @@
-Received: from pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.13.214.179])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1D136E460;
-	Sat,  9 May 2026 22:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.13.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A9B1DF248;
+	Sun, 10 May 2026 01:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778367304; cv=none; b=Xkbt84bGEjqcoUmD86+APY7vXtqZpbRn6pziscUVGvxdJeTUZuvLcret/E9NlV/W9y9UsUVl5UW7aCJXlcGZYioVlcXBFxOJYroZ387u0SMy3scDlECNm/XcTeHwdbglGQCDpKvTOoR7rBS+xe5WhvXeEpvmjirtFHOfA+wuwUQ=
+	t=1778377225; cv=none; b=XJKrrCJjyssGFtVTS5j1+JoSU9OeHSZBkhx2Sc8iuxe6asZU9o7VrCrl6GAgkIkhqdequXHG3QhRqX1DBILhTm0qPHk5pVLOWZtCF9HhKWtl+nUl41ckYV0RUcK8mGFu7bfghg4ZrpL7Ijyj7d6bxkT2CwXi83U3lepiFWyWqHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778367304; c=relaxed/simple;
-	bh=YnqZ6fALL68v4IIVCqAdLhs5TJAUt8WKNMevqIgY1wg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LR9Fs6pitBLx+5gSDMrSLcDrhgzlt8KJs6k3RN5CNrEJdk0F97MlhmQ5p9faPElniXxr17o+pKxkY/cJwv5UmaKw1o+qhT8gJoMqaA/eOTmj9mFnU69QR9f6jc0+ecY0FYjsPN4IPVA78nEKkF97ZB9qbwnMGGC8TLxGm2lO8hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=sUfdIS3y; arc=none smtp.client-ip=52.13.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1778377225; c=relaxed/simple;
+	bh=mrozHPPskf0IcuzmNrktTLea1r7KvMHO2Gs96cHR86I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBHyRWEymUg0EMRL350Qf3W7aAIzZt6nKC0W2I3TSrsSucI67M/Zk1mXOaV5p26l4k9z1fwD6mDj+J3Gt7TZZMEFLr/sPw3yXHVi7SZmAxrVSlu1v452XaI5dY1lJCeudVtOCqIK596PPHWBYuYnI0Gj9jzxeuteUHGc/FUcaIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SC+0uxYR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="sUfdIS3y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1778367302; x=1809903302;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YnqZ6fALL68v4IIVCqAdLhs5TJAUt8WKNMevqIgY1wg=;
-  b=sUfdIS3ycT42XmZXHRMP1sextQ9pcg6hXY9YqD3zRh2cD7mor0NVCmvX
-   l9QX+RWs1+atUhON1Ig6OJOpzTHO4SUlhRvEZZKRAzY/U+rhKpYCvWLk4
-   2Tum5aBTVAeedH/YnleyXXhAbQJqc+PcvQI5GJ1vXzT1GdT1sHVNWgkKj
-   HfaPF7nT3a4umqqLs64go8TxW4xm7nGgSQ2hv8NPuIBNZH/CeHEDV82ld
-   hUhPrO4+TjIS9eWFjibZb+E0m2G9BYaEL1JXT2U5fIdZrLX5nOfg8BQ6O
-   zQqW+YMVY3NolVgZJzkjIe4R9JMpHcH8E+ssmPU6TIG01R0Y4nfPp98sO
-   Q==;
-X-CSE-ConnectionGUID: 6P4S8ZNOSyCkP0Y+sc6k3w==
-X-CSE-MsgGUID: MNUxI7rYTY6B9MQiLc/onQ==
-X-IronPort-AV: E=Sophos;i="6.23,225,1770595200"; 
-   d="scan'208";a="19258207"
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-005.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2026 22:55:02 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [205.251.233.105:22102]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.4.227:2525] with esmtp (Farcaster)
- id b6b0afdd-9700-4361-a648-ecc040b7a4d2; Sat, 9 May 2026 22:55:02 +0000 (UTC)
-X-Farcaster-Flow-ID: b6b0afdd-9700-4361-a648-ecc040b7a4d2
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37;
- Sat, 9 May 2026 22:55:00 +0000
-Received: from dev-dsk-gunnarku-2c-36117f29.us-west-2.amazon.com
- (172.23.139.22) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.37; Sat, 9 May 2026
- 22:55:00 +0000
-From: Gunnar Kudrjavets <gunnarku@amazon.com>
-To: <jarkko@kernel.org>
-CC: <gunnarku@amazon.com>, <jbouron@amazon.com>, <jgg@ziepe.ca>,
-	<linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<noodles@meta.com>, <peterhuewe@gmx.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SC+0uxYR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98510C2BCB2;
+	Sun, 10 May 2026 01:40:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1778377225;
+	bh=mrozHPPskf0IcuzmNrktTLea1r7KvMHO2Gs96cHR86I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SC+0uxYRmYZ50l+F3uAn6DpaQOdqdtyRakceSpPFOdcldGsg/2gPzCEJSdjNP65Nx
+	 BEcH83bgwyaHutWWBPmlpKimL8zAg4dUFf1uvF6rE+EahrQG1YiIGXkT8V8oJF0nV2
+	 lvJD+j85Q7GEzgHJFbDBAq8loEKEJ98i3/ybpWn/wnVuqrrdTTgAw/3f28KDU2WW1+
+	 ZxestruQ2/VZFK0at4I3LsNcCQ75oDFVtw6lPw+yPx/2cRlvDDtFSYd4wmRdgLULzc
+	 /Srxs9PKChaj13Ttl+0Pc6MIOwVQ31705khknnNhI5rkpty+wxBlLEIZT+xZ2sw/jY
+	 b6M1qCfgeIhAw==
+Date: Sun, 10 May 2026 04:40:21 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Gunnar Kudrjavets <gunnarku@amazon.com>
+Cc: jbouron@amazon.com, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, noodles@meta.com, peterhuewe@gmx.de
 Subject: Re: [PATCH] tpm: Remove dead NULL check in tpm2_flush_space()
-Date: Sat, 9 May 2026 22:54:49 +0000
-Message-ID: <20260509225450.29027-1-gunnarku@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <af8aRHUDDho2orTW@kernel.org>
+Message-ID: <af_iBSYsCCxK4h2l@kernel.org>
 References: <af8aRHUDDho2orTW@kernel.org>
+ <20260509225450.29027-1-gunnarku@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D032UWA004.ant.amazon.com (10.13.139.56) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20260509225450.29027-1-gunnarku@amazon.com>
 
-On Fri, May 09, 2026 at 11:28 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> Just for sake of understanding:
->
-> What is "kiro" and is assisted-by the tag supposed to be used here?
+On Sat, May 09, 2026 at 10:54:49PM +0000, Gunnar Kudrjavets wrote:
+> On Fri, May 09, 2026 at 11:28 AM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > Just for sake of understanding:
+> >
+> > What is "kiro" and is assisted-by the tag supposed to be used here?
+> 
+> Kiro is an AI-powered IDE built on top of Claude [1]. In this case,
+> it helped with reasoning about the correctness of the fix, generating
+> test cases to validate the change, and formalizing the commit message.
+> 
+> I'm trying to follow the established guidelines for AI attribution
+> in kernel contributions to maintain scientific integrity [2] ;-)
 
-Kiro is an AI-powered IDE built on top of Claude [1]. In this case,
-it helped with reasoning about the correctness of the fix, generating
-test cases to validate the change, and formalizing the commit message.
+OK, cool. I do know what Claude is :-) Just was unfamiliar term.
 
-I'm trying to follow the established guidelines for AI attribution
-in kernel contributions to maintain scientific integrity [2] ;-)
+> 
+> On a more utopian note, it is likely that in a year or so there'll be
+> research conducted into how AI-assisted development is influencing the
+> changes to the kernel. My goal is to get into the habit of indicating
+> that AI was used to increase the number of valid data points.
 
-On a more utopian note, it is likely that in a year or so there'll be
-research conducted into how AI-assisted development is influencing the
-changes to the kernel. My goal is to get into the habit of indicating
-that AI was used to increase the number of valid data points.
+Sure.
 
-[1] https://kiro.dev/
-[2] https://docs.kernel.org/process/coding-assistants.html
+> 
+> [1] https://kiro.dev/
+> [2] https://docs.kernel.org/process/coding-assistants.html
+> 
+> Gunnar
 
-Gunnar
+BR, Jarkko
