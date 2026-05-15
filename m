@@ -1,63 +1,63 @@
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com [74.125.82.172])
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com [74.125.82.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0B73EBF3B
-	for <linux-integrity@vger.kernel.org>; Fri, 15 May 2026 21:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE343ED5A8
+	for <linux-integrity@vger.kernel.org>; Fri, 15 May 2026 21:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.82.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1778879667; cv=none; b=nDdzNseBYGZJEX4ERXL6H6qFNfYBZNmJdnzHn4ikInB4MphAAWLoTKKGQVikLCXzTSBZO2f+z7S9EOcvzFbjsqa7MF237bXBAAkIVsAHbpDjRPI16ASHKYhNgJpUTXuNgYFe3neSsG5LBcT2r8+4Qy9AmPPvn72NMd4WiDptxwk=
+	t=1778879669; cv=none; b=b3iV1VMrioCYqvTdZVm9jMQdwdyvHjm7pvg+VrPJUBxFPqJ4Cf6MS2ETgdEHryzi/mL65fKi2Njb1hJzMbpBLMyO2VDlMv770votMtr+GgaUgZDU1O+sMfcKk4yOq2ZuBDkWTL852n8cRAo0vOdNcaUdKeLLI3YKtu7cicJDDl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1778879667; c=relaxed/simple;
-	bh=xFdieBqUqN/M8WrAKk61/d5q8AXUROY3V7K0ANiVKIs=;
+	s=arc-20240116; t=1778879669; c=relaxed/simple;
+	bh=iZx+Ma9ZLO27Qd1OSFPbIPI91crZcyGUmYYOTAyaGV8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iXLFizkskZae4XP8e1AALnpoFmWiQY6HYUnJFGDuifoz8GMtqF1ANAbgX82+pvSw3DYJ+XfJQa6hhi3ZArszFidz/hTs2ZdZjtZ9C49VhsuylL5kPmXvqx/EQiu4H7/NkrlYTyrSHe9PhibXjY+Y4kV8T1h74ZpCU8a//g5uMCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1F1Y9xD; arc=none smtp.client-ip=74.125.82.172
+	 MIME-Version; b=WqUd7fNod8EAKJ18lpm8pA2XlovXYfKRGysntxPLJGmBiPcbx3IO/FJ4rFJaGcdS0dDdQGecsPHQL2D64P5B0aU6AIFxiSHA+OudybtROMrqx2OlqICjrEA/nXXg56AFGKNEGhYfwc9DEWy5Teer65JGngZyqTlII4LFD5IOpXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V+aYs+sS; arc=none smtp.client-ip=74.125.82.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1F1Y9xD"
-Received: by mail-dy1-f172.google.com with SMTP id 5a478bee46e88-2f3c623322bso1041319eec.0
-        for <linux-integrity@vger.kernel.org>; Fri, 15 May 2026 14:14:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+aYs+sS"
+Received: by mail-dy1-f171.google.com with SMTP id 5a478bee46e88-2ee1054627bso1071545eec.1
+        for <linux-integrity@vger.kernel.org>; Fri, 15 May 2026 14:14:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1778879661; x=1779484461; darn=vger.kernel.org;
+        d=gmail.com; s=20251104; t=1778879667; x=1779484467; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/ArL4NEl7kvaG8IsOXiHUmX/R5DnmrcPFIeRPtVMEkM=;
-        b=b1F1Y9xDMYi+ytYhjdUZDZ3FqMV3pVxGKjRv2Y3hemzL8wqAKhOYvD1AzZ0Ef1CA1Q
-         r55eNYcqHZfo0EERA7qVLpVEOrrCm07BmdB+pGTUyp5Oi6WGUdtrmm0LCdqH3tO9HPuZ
-         mWnivW6pje2Ehzgc//ixqq4omJFZBY0Nq+9j0UPsLc21Sg/GctLuFD+WuAwonX5Rczb5
-         y9YRLu80Ln/hmStw61DHliMBrUaWDNUnx9ATLibZZCYXvvoVXyZZFrbccUjT1qs1QqLn
-         Lg3GeaiwKCC7gsMYZGo/cSdwAWZyS+fO9KS3Vwqr3ky2wcruUvSCiZxDkpl1llsrTNPu
-         8y8A==
+        bh=zvhJ+ydmVFUO/FtDIG83CBk7wY0hq1hCXhxrxXZ6CzE=;
+        b=V+aYs+sS8kXrENeJEYszeay1jLDUpy8kXTjVEGtORS5QflQnwyXwrVZZf6AWM3KSrH
+         p3loYQh1cSwdAH/ClG38n2IltMK+e+QOktZ38/7Y61DNR3BjE4PCfA70fYeMWoObIYQK
+         /p9MxXRFQJNWOpsVpYiTDEpWiImZO33lHIadpJUJZByA8Z99pwIYnt7mHy0EyH59Kk7x
+         fgijEtE5LZNrecyVn1qopbBriufmCDUELfAUlJycyuOY9klZvELHtlqwnqr5gPv2clmN
+         XbwhCSWJxy5i6rnS69hSWFvNrp6n+ExzeVaF9t6zyjEBan8Q0DvbKV98dDCXMuGLjW6j
+         xVfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1778879661; x=1779484461;
+        d=1e100.net; s=20251104; t=1778879667; x=1779484467;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=/ArL4NEl7kvaG8IsOXiHUmX/R5DnmrcPFIeRPtVMEkM=;
-        b=R5vsrPswIzgAhKfZ8JW9vhuiwfuRY2oOc1JXFyzlFVzmVrRStHJ5465WHM6Cz2w8jX
-         ieWxABv1+TZ3lLbaWZJurnfE3RUWHuLyhksioR7DBiU5aWpHfI/S2GEJROfaZbz8RUf1
-         nR6q6onX/GXX0m6EPg3kTiCjykv/2DTGh1c8vOjUloMVbWTMtAZvXsxajxFM/f6Ar5aZ
-         b+As/sfv4ubZ8sFmcM1/psHQfDATJk/Yk7HsrDsUM6b58TqHCwQP0OBJilX+Pcz9SKvP
-         zJfv0br/jGY/8TnVJMFmOXqSzDMv3OjBv5iPB+afzrb0i/5fl3zij5gxxDmyeI/U4hel
-         4QUw==
-X-Forwarded-Encrypted: i=1; AFNElJ9Crp5UJc6jQDIDbM9RUl8wafca4QmEfNkUCUvr0EgF3GzhhiyQ1tlKcbMbreg3lEmbqnG+UCxu3FO6IVzk3IE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9YotUo2IUF9UKZkCzbSOuf3Gbgw42spDGSE4Aac8JHsQCve+V
-	+GD3YR6MTJA14vjzmIyTPxuOYxdTCR69aP7jFidVrSgos7WEWvQ/YhSM
-X-Gm-Gg: Acq92OGFhyVXNCrj3i7ro/dzUGaV0KXqdInZ+QaYaIUQ8tr8ohf+P/42HrIKCp66xMk
-	p0YMLa1EbTkb9JoadOvfLdyi/gsDU7NOKpVRDxH07Ni8HfHZbQuU3d/XblfuKY5ki4FqIM5ORzZ
-	sDTgHIdFPLQO2Xdq+zXXhRT9YiXZ71Dw8oToSn7ALzcZXMIqI28S4nXdE/iyXfIVuy1xQZ2pO0O
-	pG3Xa2bAN+Ywl7Kj6N2YHuAyVQBLhTQAoXWdcL5fQBiEV7IeqkznDK+9Ksyp3BW+tc/7+YL8qLI
-	bpQY5Z7BaAf2gXMRBXlVshGswpxCrgtsL5H6InymmklNLJ8g0phFe5tKwH1TRkgK2NRyKZ1bJ8X
-	hE00n6NUSVO+b0SfAGoIYIMm+wSRvIqSqg8N0z2gpJUiE6pFJYsQ7OD5bT5rBntg6BZi3f/bJh3
-	QKjnNaWeER1W5+eSoVyIsGR9p7fP/XYqk=
-X-Received: by 2002:a05:693c:3282:b0:2ed:e12:3771 with SMTP id 5a478bee46e88-303986b1633mr2898164eec.33.1778879661136;
-        Fri, 15 May 2026 14:14:21 -0700 (PDT)
+        bh=zvhJ+ydmVFUO/FtDIG83CBk7wY0hq1hCXhxrxXZ6CzE=;
+        b=g5jJvCgAoqNS8l8WDk1V1Nw9AmgViwetzHdJ4Gayv4aFdZJ/wYELjaFwDN0xT2EzZS
+         Yd3xBmy0oCVLKWcJXOLQvKcBxtgFyOW/tB0KxucHbWsuaLVjyXWC5IgY+WK8qxyz0jJ5
+         utFAhY22lJQqZ8f9vmXcPMhGanVwpb14xUp4ERV/HzplQpeB7bY1v4ZRcjOtUIzc6dIE
+         M+d3L6IpzmAqTaYjkUOlU2Ih2NV16UHNPj/9TBuaDwIXTwBL8MeFACvX3oOCUYxgM9F5
+         kvURe1MMRQldhX1j8j4+fniiybaCOJ264R9LGrqbMW3i3xu6J+528TX88cJlP5ap3+NW
+         L/lw==
+X-Forwarded-Encrypted: i=1; AFNElJ+nURWlLKJ3CgqukrVHANOMiU1whTSMYayeR2dLKqASQd5MHHs7ToeexTrRDaRD46wixEag4jvghiCJRTR1Bzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/QHMm3rMcGUzd5gJ9jalAj6nZoWtnusE7uKHTo6R0NuqPvW73
+	CW/FF8KFyZo9jwUHR1NojtWGG9G3u1KVDK12ADjbeU+ExqWTERT4xD9n
+X-Gm-Gg: Acq92OETf7dxX3z5BEyCuXuFIu4VtK+b8UYsP8nLuFuXGG+xKCbhdWu4yPZlLoWrOHZ
+	vE4e4rx8/MA0d9AOW/vWX18OCIJt4t0sOO9f8QcNseg98lO5NIwyaJo1tcY9yUhBimajcpM+bho
+	XcgUmrYJ4JkEHEdHr+O0Yf03izXg53zGQ/iKeX3FRcp4bWbdGELKXSmvYfxe6eLOHXEGamQi06E
+	jhFzoSnhZwj0MXlCCw+mUbuKcwpdf3GmGwor/E7sSSQ74sMfkLSDbe9Ats3W2+NE6IMq+5PgWoV
+	gVeA8EO9pvgYc8z9YCADzLMC7hQt7i0N04WobpHE/hPX38a/KujStw9FvnLQL2KzYr2qcfxnGx5
+	RhUnVV7IVy9G/8syxmmf2+OmozRMFATqDWWIsoVHzAqhtGm4hWfFfftFbwYR2cKFAEzhE9ZwLjA
+	R+d4xx6Ud9IiqJd/FTDSBu/Y9OeWpFoVjQkJca477bvQ==
+X-Received: by 2002:a05:7301:2a02:b0:2c1:67e1:61a9 with SMTP id 5a478bee46e88-303979af82emr2367379eec.13.1778879666828;
+        Fri, 15 May 2026 14:14:26 -0700 (PDT)
 Received: from mimas.lan ([2603:8000:df01:38f7:a6bb:6dff:fecf:e71a])
-        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-302978ad18asm8001602eec.26.2026.05.15.14.14.19
+        by smtp.gmail.com with ESMTPSA id 5a478bee46e88-30296dcb6f6sm9726668eec.17.2026.05.15.14.14.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2026 14:14:20 -0700 (PDT)
+        Fri, 15 May 2026 14:14:26 -0700 (PDT)
 From: Ross Philipson <ross.philipson@gmail.com>
 To: linux-kernel@vger.kernel.org,
 	x86@kernel.org,
@@ -92,9 +92,9 @@ Cc: ross.philipson@gmail.com,
 	daniel.kiper@oracle.com,
 	andrew.cooper3@citrix.com,
 	trenchboot-devel@googlegroups.com
-Subject: [PATCH v16 03/38] tpm: Move TPM2 specific definitions to the command header
-Date: Fri, 15 May 2026 14:13:35 -0700
-Message-ID: <20260515211410.31440-4-ross.philipson@gmail.com>
+Subject: [PATCH v16 05/38] tpm: Move platform specific definitions to the new PTP header
+Date: Fri, 15 May 2026 14:13:37 -0700
+Message-ID: <20260515211410.31440-6-ross.philipson@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260515211410.31440-1-ross.philipson@gmail.com>
 References: <20260515211410.31440-1-ross.philipson@gmail.com>
@@ -106,17 +106,19 @@ List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Gather all the TPM2 definitions and structures in the internal header
-file drivers/char/tpm/tpm.h into the command header, including:
- - Command codes, return codes and definitions from the public and
-internal tpm.h files.
- - Structures defined in numerous TPM driver C modules.
+These are definitions for TPM 2.0 interface and interactions with
+the platform as defined in the TCG specification:
 
-The definitions moved to these files correspond to the TCG specification
-for TPM 2 family:
+These definitions are located here in a separate file to avoid conflicts
+with vendor specific TIS/FIFO definition (e.g. STMicroelectronics,
+Infineon Technologies, etc). This allows the TCG defined TIS/FIFO
+interface to be in a public header while the former chip specific
+implementations contain their own definitions. TPM 1.x family chips
+that adhere to the TCG specifications use the TIS/FIFO interface as
+defined here.
 
-TPM 2.0 Library
- - https://trustedcomputinggroup.org/resource/tpm-library-specification/
+TCG PC Client Platform TPM Profile (PTP) Specification
+ - https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
 
 Co-developed-by: Daniel P. Smith <dpsmith@apertussolutions.com>
 Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
@@ -124,649 +126,245 @@ Co-developed-by: Alec Brown <alec.r.brown@oracle.com>
 Signed-off-by: Alec Brown <alec.r.brown@oracle.com>
 Signed-off-by: Ross Philipson <ross.philipson@gmail.com>
 ---
- drivers/char/tpm/tpm.h        |  77 ----------
- drivers/char/tpm/tpm2-cmd.c   |  30 ----
- drivers/char/tpm/tpm2-space.c |  13 --
- include/linux/tpm.h           | 145 ------------------
- include/linux/tpm_command.h   | 271 ++++++++++++++++++++++++++++++++++
- 5 files changed, 271 insertions(+), 265 deletions(-)
+ drivers/char/tpm/tpm_tis_core.h |  64 +-------------
+ include/linux/tpm_ptp.h         | 151 ++++++++++++++++++++++++++++++++
+ 2 files changed, 152 insertions(+), 63 deletions(-)
+ create mode 100644 include/linux/tpm_ptp.h
 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index 043d78a9617a..680f89d9c9f9 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -52,83 +52,6 @@ enum tpm_addr {
- 	TPM_ADDR = 0x4E,
- };
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index 6c3aa480396b..be68883ed399 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -19,71 +19,9 @@
+ #ifndef __TPM_TIS_CORE_H__
+ #define __TPM_TIS_CORE_H__
  
--/* TPM2 specific constants. */
--#define TPM2_SPACE_BUFFER_SIZE		16384 /* 16 kB */
--
--enum tpm2_pt_props {
--	TPM2_PT_NONE = 0x00000000,
--	TPM2_PT_GROUP = 0x00000100,
--	TPM2_PT_FIXED = TPM2_PT_GROUP * 1,
--	TPM2_PT_FAMILY_INDICATOR = TPM2_PT_FIXED + 0,
--	TPM2_PT_LEVEL = TPM2_PT_FIXED + 1,
--	TPM2_PT_REVISION = TPM2_PT_FIXED + 2,
--	TPM2_PT_DAY_OF_YEAR = TPM2_PT_FIXED + 3,
--	TPM2_PT_YEAR = TPM2_PT_FIXED + 4,
--	TPM2_PT_MANUFACTURER = TPM2_PT_FIXED + 5,
--	TPM2_PT_VENDOR_STRING_1 = TPM2_PT_FIXED + 6,
--	TPM2_PT_VENDOR_STRING_2 = TPM2_PT_FIXED + 7,
--	TPM2_PT_VENDOR_STRING_3 = TPM2_PT_FIXED + 8,
--	TPM2_PT_VENDOR_STRING_4 = TPM2_PT_FIXED + 9,
--	TPM2_PT_VENDOR_TPM_TYPE = TPM2_PT_FIXED + 10,
--	TPM2_PT_FIRMWARE_VERSION_1 = TPM2_PT_FIXED + 11,
--	TPM2_PT_FIRMWARE_VERSION_2 = TPM2_PT_FIXED + 12,
--	TPM2_PT_INPUT_BUFFER = TPM2_PT_FIXED + 13,
--	TPM2_PT_HR_TRANSIENT_MIN = TPM2_PT_FIXED + 14,
--	TPM2_PT_HR_PERSISTENT_MIN = TPM2_PT_FIXED + 15,
--	TPM2_PT_HR_LOADED_MIN = TPM2_PT_FIXED + 16,
--	TPM2_PT_ACTIVE_SESSIONS_MAX = TPM2_PT_FIXED + 17,
--	TPM2_PT_PCR_COUNT = TPM2_PT_FIXED + 18,
--	TPM2_PT_PCR_SELECT_MIN = TPM2_PT_FIXED + 19,
--	TPM2_PT_CONTEXT_GAP_MAX = TPM2_PT_FIXED + 20,
--	TPM2_PT_NV_COUNTERS_MAX = TPM2_PT_FIXED + 22,
--	TPM2_PT_NV_INDEX_MAX = TPM2_PT_FIXED + 23,
--	TPM2_PT_MEMORY = TPM2_PT_FIXED + 24,
--	TPM2_PT_CLOCK_UPDATE = TPM2_PT_FIXED + 25,
--	TPM2_PT_CONTEXT_HASH = TPM2_PT_FIXED + 26,
--	TPM2_PT_CONTEXT_SYM = TPM2_PT_FIXED + 27,
--	TPM2_PT_CONTEXT_SYM_SIZE = TPM2_PT_FIXED + 28,
--	TPM2_PT_ORDERLY_COUNT = TPM2_PT_FIXED + 29,
--	TPM2_PT_MAX_COMMAND_SIZE = TPM2_PT_FIXED + 30,
--	TPM2_PT_MAX_RESPONSE_SIZE = TPM2_PT_FIXED + 31,
--	TPM2_PT_MAX_DIGEST = TPM2_PT_FIXED + 32,
--	TPM2_PT_MAX_OBJECT_CONTEXT = TPM2_PT_FIXED + 33,
--	TPM2_PT_MAX_SESSION_CONTEXT = TPM2_PT_FIXED + 34,
--	TPM2_PT_PS_FAMILY_INDICATOR = TPM2_PT_FIXED + 35,
--	TPM2_PT_PS_LEVEL = TPM2_PT_FIXED + 36,
--	TPM2_PT_PS_REVISION = TPM2_PT_FIXED + 37,
--	TPM2_PT_PS_DAY_OF_YEAR = TPM2_PT_FIXED + 38,
--	TPM2_PT_PS_YEAR = TPM2_PT_FIXED + 39,
--	TPM2_PT_SPLIT_MAX = TPM2_PT_FIXED + 40,
--	TPM2_PT_TOTAL_COMMANDS = TPM2_PT_FIXED + 41,
--	TPM2_PT_LIBRARY_COMMANDS = TPM2_PT_FIXED + 42,
--	TPM2_PT_VENDOR_COMMANDS = TPM2_PT_FIXED + 43,
--	TPM2_PT_NV_BUFFER_MAX = TPM2_PT_FIXED + 44,
--	TPM2_PT_MODES = TPM2_PT_FIXED + 45,
--	TPM2_PT_MAX_CAP_BUFFER = TPM2_PT_FIXED + 46,
--	TPM2_PT_VAR = TPM2_PT_GROUP * 2,
--	TPM2_PT_PERMANENT = TPM2_PT_VAR + 0,
--	TPM2_PT_STARTUP_CLEAR = TPM2_PT_VAR + 1,
--	TPM2_PT_HR_NV_INDEX = TPM2_PT_VAR + 2,
--	TPM2_PT_HR_LOADED = TPM2_PT_VAR + 3,
--	TPM2_PT_HR_LOADED_AVAIL = TPM2_PT_VAR + 4,
--	TPM2_PT_HR_ACTIVE = TPM2_PT_VAR + 5,
--	TPM2_PT_HR_ACTIVE_AVAIL = TPM2_PT_VAR + 6,
--	TPM2_PT_HR_TRANSIENT_AVAIL = TPM2_PT_VAR + 7,
--	TPM2_PT_HR_PERSISTENT = TPM2_PT_VAR + 8,
--	TPM2_PT_HR_PERSISTENT_AVAIL = TPM2_PT_VAR + 9,
--	TPM2_PT_NV_COUNTERS = TPM2_PT_VAR + 10,
--	TPM2_PT_NV_COUNTERS_AVAIL = TPM2_PT_VAR + 11,
--	TPM2_PT_ALGORITHM_SET = TPM2_PT_VAR + 12,
--	TPM2_PT_LOADED_CURVES = TPM2_PT_VAR + 13,
--	TPM2_PT_LOCKOUT_COUNTER = TPM2_PT_VAR + 14,
--	TPM2_PT_MAX_AUTH_FAIL = TPM2_PT_VAR + 15,
--	TPM2_PT_LOCKOUT_INTERVAL = TPM2_PT_VAR + 16,
--	TPM2_PT_LOCKOUT_RECOVERY = TPM2_PT_VAR + 17,
--	TPM2_PT_NV_WRITE_RECOVERY = TPM2_PT_VAR + 18,
--	TPM2_PT_AUDIT_COUNTER_0 = TPM2_PT_VAR + 19,
--	TPM2_PT_AUDIT_COUNTER_1 = TPM2_PT_VAR + 20,
--};
--
- extern const struct class tpm_class;
- extern const struct class tpmrm_class;
- extern dev_t tpm_devt;
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 3a77be7ebf4a..1fa3e8a43c79 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -94,17 +94,6 @@ unsigned long tpm2_calc_ordinal_duration(u32 ordinal)
- 	return msecs_to_jiffies(TPM2_DURATION_DEFAULT);
- }
- 
--struct tpm2_pcr_read_out {
--	__be32	update_cnt;
--	__be32	pcr_selects_cnt;
--	__be16	hash_alg;
--	u8	pcr_select_size;
--	u8	pcr_select[TPM2_PCR_SELECT_MIN];
--	__be32	digests_cnt;
--	__be16	digest_size;
--	u8	digest[];
--} __packed;
--
- /**
-  * tpm2_pcr_read() - read a PCR value
-  * @chip:	TPM chip to use.
-@@ -238,11 +227,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
- 	return rc;
- }
- 
--struct tpm2_get_random_out {
--	__be16 size;
--	u8 buffer[TPM_MAX_RNG_DATA];
--} __packed;
--
- /**
-  * tpm2_get_random() - get random bytes from the TPM RNG
-  *
-@@ -366,14 +350,6 @@ void tpm2_flush_context(struct tpm_chip *chip, u32 handle)
- }
- EXPORT_SYMBOL_GPL(tpm2_flush_context);
- 
--struct tpm2_get_cap_out {
--	u8 more_data;
--	__be32 subcap_id;
--	__be32 property_cnt;
--	__be32 property_id;
--	__be32 value;
--} __packed;
--
- /**
-  * tpm2_get_tpm_pt() - get value of a TPM_CAP_TPM_PROPERTIES type property
-  * @chip:		a &tpm_chip instance
-@@ -541,12 +517,6 @@ static int tpm2_init_bank_info(struct tpm_chip *chip, u32 bank_index)
- 	return tpm2_pcr_read(chip, 0, &digest, &bank->digest_size);
- }
- 
--struct tpm2_pcr_selection {
--	__be16  hash_alg;
--	u8  size_of_select;
--	u8  pcr_select[3];
--} __packed;
--
- ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- {
- 	struct tpm2_pcr_selection pcr_selection;
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 60354cd53b5c..7c1c0a174a2b 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -15,19 +15,6 @@
- #include <linux/unaligned.h>
++#include <linux/tpm_ptp.h>
  #include "tpm.h"
  
--enum tpm2_handle_types {
--	TPM2_HT_HMAC_SESSION	= 0x02000000,
--	TPM2_HT_POLICY_SESSION	= 0x03000000,
--	TPM2_HT_TRANSIENT	= 0x80000000,
+-enum tis_access {
+-	TPM_ACCESS_VALID = 0x80,
+-	TPM_ACCESS_ACTIVE_LOCALITY = 0x20,
+-	TPM_ACCESS_REQUEST_PENDING = 0x04,
+-	TPM_ACCESS_REQUEST_USE = 0x02,
 -};
 -
--struct tpm2_context {
--	__be64 sequence;
--	__be32 saved_handle;
--	__be32 hierarchy;
--	__be16 blob_size;
--} __packed;
--
- static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
- {
- 	int i;
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 1846d5485a2c..8551b24c2bff 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -38,12 +38,6 @@ struct trusted_key_options;
- /* opaque structure, holds auth session parameters like the session key */
- struct tpm2_auth;
- 
--enum tpm2_session_types {
--	TPM2_SE_HMAC	= 0x00,
--	TPM2_SE_POLICY	= 0x01,
--	TPM2_SE_TRIAL	= 0x02,
+-enum tis_status {
+-	TPM_STS_VALID = 0x80,
+-	TPM_STS_COMMAND_READY = 0x40,
+-	TPM_STS_GO = 0x20,
+-	TPM_STS_DATA_AVAIL = 0x10,
+-	TPM_STS_DATA_EXPECT = 0x08,
+-	TPM_STS_RESPONSE_RETRY = 0x02,
+-	TPM_STS_READ_ZERO = 0x23, /* bits that must be zero on read */
 -};
 -
- /* if you add a new hash to this, increment TPM_MAX_HASHES below */
- enum tpm_algorithms {
- 	TPM_ALG_ERROR		= 0x0000,
-@@ -65,11 +59,6 @@ enum tpm_algorithms {
-  */
- #define TPM_MAX_HASHES	5
- 
--enum tpm2_curves {
--	TPM2_ECC_NONE		= 0x0000,
--	TPM2_ECC_NIST_P256	= 0x0003,
+-enum tis_int_flags {
+-	TPM_GLOBAL_INT_ENABLE = 0x80000000,
+-	TPM_INTF_BURST_COUNT_STATIC = 0x100,
+-	TPM_INTF_CMD_READY_INT = 0x080,
+-	TPM_INTF_INT_EDGE_FALLING = 0x040,
+-	TPM_INTF_INT_EDGE_RISING = 0x020,
+-	TPM_INTF_INT_LEVEL_LOW = 0x010,
+-	TPM_INTF_INT_LEVEL_HIGH = 0x008,
+-	TPM_INTF_LOCALITY_CHANGE_INT = 0x004,
+-	TPM_INTF_STS_VALID_INT = 0x002,
+-	TPM_INTF_DATA_AVAIL_INT = 0x001,
 -};
 -
- struct tpm_digest {
- 	u16 alg_id;
- 	u8 digest[TPM2_MAX_DIGEST_SIZE];
-@@ -222,122 +211,11 @@ struct tpm_chip {
- 
- #define TPM_HEADER_SIZE		10
- 
--enum tpm2_const {
--	TPM2_PLATFORM_PCR       =     24,
--	TPM2_PCR_SELECT_MIN     = ((TPM2_PLATFORM_PCR + 7) / 8),
+-enum tis_defaults {
+-	TIS_MEM_LEN = 0x5000,
+-	TIS_SHORT_TIMEOUT = 750,	/* ms */
+-	TIS_LONG_TIMEOUT = 4000,	/* 4 secs */
+-	TIS_TIMEOUT_MIN_ATML = 14700,	/* usecs */
+-	TIS_TIMEOUT_MAX_ATML = 15000,	/* usecs */
 -};
 -
--enum tpm2_timeouts {
--	TPM2_TIMEOUT_A          =    750,
--	TPM2_TIMEOUT_B          =   4000,
--	TPM2_TIMEOUT_C          =    200,
--	TPM2_TIMEOUT_D          =     30,
--};
+-/* Some timeout values are needed before it is known whether the chip is
+- * TPM 1.0 or TPM 2.0.
+- */
+-#define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
+-#define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
+-#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
+-#define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
 -
--enum tpm2_durations {
--	TPM2_DURATION_SHORT     =     20,
--	TPM2_DURATION_LONG      =   2000,
--	TPM2_DURATION_DEFAULT   = 120000,
--};
+-#define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
+-#define	TPM_INT_ENABLE(l)		(0x0008 | ((l) << 12))
+-#define	TPM_INT_VECTOR(l)		(0x000C | ((l) << 12))
+-#define	TPM_INT_STATUS(l)		(0x0010 | ((l) << 12))
+-#define	TPM_INTF_CAPS(l)		(0x0014 | ((l) << 12))
+-#define	TPM_STS(l)			(0x0018 | ((l) << 12))
+-#define	TPM_STS3(l)			(0x001b | ((l) << 12))
+-#define	TPM_DATA_FIFO(l)		(0x0024 | ((l) << 12))
 -
--enum tpm2_structures {
--	TPM2_ST_NO_SESSIONS	= 0x8001,
--	TPM2_ST_SESSIONS	= 0x8002,
--	TPM2_ST_CREATION	= 0x8021,
--};
+-#define	TPM_DID_VID(l)			(0x0F00 | ((l) << 12))
+-#define	TPM_RID(l)			(0x0F04 | ((l) << 12))
 -
--/* Indicates from what layer of the software stack the error comes from */
--#define TSS2_RC_LAYER_SHIFT	 16
--#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
+-#define LPC_CNTRL_OFFSET		0x84
+-#define LPC_CLKRUN_EN			(1 << 2)
+-#define INTEL_LEGACY_BLK_BASE_ADDR	0xFED08000
+-#define ILB_REMAP_SIZE			0x100
 -
--enum tpm2_return_codes {
--	TPM2_RC_SUCCESS		= 0x0000,
--	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
--	TPM2_RC_HANDLE		= 0x008B,
--	TPM2_RC_INTEGRITY	= 0x009F,
--	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
--	TPM2_RC_FAILURE		= 0x0101,
--	TPM2_RC_DISABLED	= 0x0120,
--	TPM2_RC_UPGRADE		= 0x012D,
--	TPM2_RC_COMMAND_CODE    = 0x0143,
--	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
--	TPM2_RC_REFERENCE_H0	= 0x0910,
--	TPM2_RC_RETRY		= 0x0922,
--	TPM2_RC_SESSION_MEMORY	= 0x0903,
--};
--
--enum tpm2_command_codes {
--	TPM2_CC_FIRST		        = 0x011F,
--	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
--	TPM2_CC_HIERARCHY_CHANGE_AUTH   = 0x0129,
--	TPM2_CC_CREATE_PRIMARY          = 0x0131,
--	TPM2_CC_SEQUENCE_COMPLETE       = 0x013E,
--	TPM2_CC_SELF_TEST	        = 0x0143,
--	TPM2_CC_STARTUP		        = 0x0144,
--	TPM2_CC_SHUTDOWN	        = 0x0145,
--	TPM2_CC_NV_READ                 = 0x014E,
--	TPM2_CC_CREATE		        = 0x0153,
--	TPM2_CC_LOAD		        = 0x0157,
--	TPM2_CC_SEQUENCE_UPDATE         = 0x015C,
--	TPM2_CC_UNSEAL		        = 0x015E,
--	TPM2_CC_CONTEXT_LOAD	        = 0x0161,
--	TPM2_CC_CONTEXT_SAVE	        = 0x0162,
--	TPM2_CC_FLUSH_CONTEXT	        = 0x0165,
--	TPM2_CC_READ_PUBLIC		= 0x0173,
--	TPM2_CC_START_AUTH_SESS		= 0x0176,
--	TPM2_CC_VERIFY_SIGNATURE        = 0x0177,
--	TPM2_CC_GET_CAPABILITY	        = 0x017A,
--	TPM2_CC_GET_RANDOM	        = 0x017B,
--	TPM2_CC_PCR_READ	        = 0x017E,
--	TPM2_CC_PCR_EXTEND	        = 0x0182,
--	TPM2_CC_EVENT_SEQUENCE_COMPLETE = 0x0185,
--	TPM2_CC_HASH_SEQUENCE_START     = 0x0186,
--	TPM2_CC_CREATE_LOADED           = 0x0191,
--	TPM2_CC_LAST		        = 0x0193, /* Spec 1.36 */
--};
--
--enum tpm2_permanent_handles {
--	TPM2_RH_NULL		= 0x40000007,
--	TPM2_RS_PW		= 0x40000009,
--};
--
--/* Most Significant Octet for key types  */
--enum tpm2_mso_type {
--	TPM2_MSO_NVRAM		= 0x01,
--	TPM2_MSO_SESSION	= 0x02,
--	TPM2_MSO_POLICY		= 0x03,
--	TPM2_MSO_PERMANENT	= 0x40,
--	TPM2_MSO_VOLATILE	= 0x80,
--	TPM2_MSO_PERSISTENT	= 0x81,
--};
--
- static inline enum tpm2_mso_type tpm2_handle_mso(u32 handle)
- {
- 	return handle >> 24;
- }
- 
--enum tpm2_capabilities {
--	TPM2_CAP_HANDLES	= 1,
--	TPM2_CAP_COMMANDS	= 2,
--	TPM2_CAP_PCRS		= 5,
--	TPM2_CAP_TPM_PROPERTIES = 6,
--};
--
--enum tpm2_properties {
--	TPM_PT_TOTAL_COMMANDS	= 0x0129,
--};
--
--enum tpm2_startup_types {
--	TPM2_SU_CLEAR	= 0x0000,
--	TPM2_SU_STATE	= 0x0001,
--};
--
--enum tpm2_cc_attrs {
--	TPM2_CC_ATTR_CHANDLES	= 25,
--	TPM2_CC_ATTR_RHANDLE	= 28,
--	TPM2_CC_ATTR_VENDOR	= 29,
--};
--
- #define TPM_VID_INTEL    0x8086
- #define TPM_VID_WINBOND  0x1050
- #define TPM_VID_STM      0x104A
-@@ -389,29 +267,6 @@ struct tpm_buf {
- 	u8 handles;
- };
- 
--enum tpm2_object_attributes {
--	TPM2_OA_FIXED_TPM		= BIT(1),
--	TPM2_OA_ST_CLEAR		= BIT(2),
--	TPM2_OA_FIXED_PARENT		= BIT(4),
--	TPM2_OA_SENSITIVE_DATA_ORIGIN	= BIT(5),
--	TPM2_OA_USER_WITH_AUTH		= BIT(6),
--	TPM2_OA_ADMIN_WITH_POLICY	= BIT(7),
--	TPM2_OA_NO_DA			= BIT(10),
--	TPM2_OA_ENCRYPTED_DUPLICATION	= BIT(11),
--	TPM2_OA_RESTRICTED		= BIT(16),
--	TPM2_OA_DECRYPT			= BIT(17),
--	TPM2_OA_SIGN			= BIT(18),
--};
--
--enum tpm2_session_attributes {
--	TPM2_SA_CONTINUE_SESSION	= BIT(0),
--	TPM2_SA_AUDIT_EXCLUSIVE		= BIT(1),
--	TPM2_SA_AUDIT_RESET		= BIT(3),
--	TPM2_SA_DECRYPT			= BIT(5),
--	TPM2_SA_ENCRYPT			= BIT(6),
--	TPM2_SA_AUDIT			= BIT(7),
--};
--
- struct tpm2_hash {
- 	unsigned int crypto_id;
- 	unsigned int tpm_id;
-diff --git a/include/linux/tpm_command.h b/include/linux/tpm_command.h
-index 30d01953a6f8..9dd903dd6b5c 100644
---- a/include/linux/tpm_command.h
-+++ b/include/linux/tpm_command.h
-@@ -156,4 +156,275 @@ struct tpm1_get_random_out {
- #define TPM_NONCE_SIZE                  20
- #define TPM_ST_CLEAR			1
- 
+ enum tpm_tis_flags {
+ 	TPM_TIS_ITPM_WORKAROUND		= 0,
+ 	TPM_TIS_INVALID_STATUS		= 1,
+diff --git a/include/linux/tpm_ptp.h b/include/linux/tpm_ptp.h
+new file mode 100644
+index 000000000000..143e887599bb
+--- /dev/null
++++ b/include/linux/tpm_ptp.h
+@@ -0,0 +1,151 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * == TPM 2 Family Chips ==
++ * Following copyright information was take from the original file
++ * <drivers/char/tpm/tpm_tis_core.h> where the definitions were moved
++ * from:
 + *
-+ * TPM 2.0 Library
-+ * https://trustedcomputinggroup.org/resource/tpm-library-specification/
++ * Copyright (C) 2005, 2006 IBM Corporation
++ * Copyright (C) 2014, 2015 Intel Corporation
++ *
++ * Authors:
++ * Leendert van Doorn <leendert@watson.ibm.com>
++ * Kylene Hall <kjhall@us.ibm.com>
++ *
++ * Maintained by: <tpmdd-devel@lists.sourceforge.net>
++ *
++ * Device driver for TCG/TCPA TPM (trusted platform module).
++ * Specifications at www.trustedcomputinggroup.org
++ *
++ * This device driver implements the TPM interface as defined in
++ * the TCG TPM Interface Spec version 1.2, revision 1.0.
 + */
 +
-+/* TPM2 specific constants. */
-+#define TPM2_SPACE_BUFFER_SIZE		16384 /* 16 kB */
++#ifndef __LINUX_TPM_PTP_H__
++#define __LINUX_TPM_PTP_H__
 +
-+enum tpm2_session_types {
-+	TPM2_SE_HMAC	= 0x00,
-+	TPM2_SE_POLICY	= 0x01,
-+	TPM2_SE_TRIAL	= 0x02,
++/*
++ * TCG PC Client Platform TPM Profile (PTP) Specification
++ * https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/
++ */
++
++/* TIS/FIFO macros and definitions */
++
++enum tis_access {
++	TPM_ACCESS_VALID		= 0x80,
++	TPM_ACCESS_ACTIVE_LOCALITY	= 0x20,	/* (R) */
++	TPM_ACCESS_RELINQUISH_LOCALITY	= 0x20, /* (W) */
++	TPM_ACCESS_REQUEST_PENDING	= 0x04,	/* (W) */
++	TPM_ACCESS_REQUEST_USE		= 0x02,	/* (W) */
 +};
 +
-+enum tpm2_timeouts {
-+	TPM2_TIMEOUT_A		= 750,
-+	TPM2_TIMEOUT_B		= 4000,
-+	TPM2_TIMEOUT_C		= 200,
-+	TPM2_TIMEOUT_D		= 30,
-+	TPM2_DURATION_SHORT	= 20,
-+	TPM2_DURATION_MEDIUM	= 750,
-+	TPM2_DURATION_LONG	= 2000,
-+	TPM2_DURATION_LONG_LONG	= 300000,
-+	TPM2_DURATION_DEFAULT	= 120000,
++enum tis_status {
++	TPM_STS_VALID		= 0x80, /* (R) */
++	TPM_STS_COMMAND_READY	= 0x40, /* (R) */
++	TPM_STS_DATA_AVAIL	= 0x10, /* (R) */
++	TPM_STS_DATA_EXPECT	= 0x08, /* (R) */
++	TPM_STS_GO		= 0x20, /* (W) */
++	TPM_STS_RESPONSE_RETRY	= 0x02, /* (R) */
++	TPM_STS_READ_ZERO	= 0x23, /* bits that must be zero on read */
 +};
 +
-+enum tpm2_structures {
-+	TPM2_ST_NO_SESSIONS	= 0x8001,
-+	TPM2_ST_SESSIONS	= 0x8002,
-+	TPM2_ST_CREATION	= 0x8021,
++enum tis_int_flags {
++	TPM_GLOBAL_INT_ENABLE		= 0x80000000,
++	TPM_INTF_BURST_COUNT_STATIC	= 0x100,
++	TPM_INTF_CMD_READY_INT		= 0x080,
++	TPM_INTF_INT_EDGE_FALLING	= 0x040,
++	TPM_INTF_INT_EDGE_RISING	= 0x020,
++	TPM_INTF_INT_LEVEL_LOW		= 0x010,
++	TPM_INTF_INT_LEVEL_HIGH		= 0x008,
++	TPM_INTF_LOCALITY_CHANGE_INT	= 0x004,
++	TPM_INTF_STS_VALID_INT		= 0x002,
++	TPM_INTF_DATA_AVAIL_INT		= 0x001,
 +};
 +
-+/* Indicates from what layer of the software stack the error comes from */
-+#define TSS2_RC_LAYER_SHIFT	 16
-+#define TSS2_RESMGR_TPM_RC_LAYER (11 << TSS2_RC_LAYER_SHIFT)
-+
-+enum tpm2_return_codes {
-+	TPM2_RC_SUCCESS		= 0x0000,
-+	TPM2_RC_HASH		= 0x0083, /* RC_FMT1 */
-+	TPM2_RC_HANDLE		= 0x008B,
-+	TPM2_RC_INTEGRITY	= 0x009F,
-+	TPM2_RC_INITIALIZE	= 0x0100, /* RC_VER1 */
-+	TPM2_RC_FAILURE		= 0x0101,
-+	TPM2_RC_DISABLED	= 0x0120,
-+	TPM2_RC_UPGRADE		= 0x012D,
-+	TPM2_RC_COMMAND_CODE	= 0x0143,
-+	TPM2_RC_TESTING		= 0x090A, /* RC_WARN */
-+	TPM2_RC_REFERENCE_H0	= 0x0910,
-+	TPM2_RC_RETRY		= 0x0922,
-+	TPM2_RC_SESSION_MEMORY	= 0x0903,
++enum tis_defaults {
++	TIS_MEM_LEN		= 0x5000,
++	TIS_SHORT_TIMEOUT	= 750,   /* ms */
++	TIS_LONG_TIMEOUT	= 4000,  /* 4 secs */
++	TIS_TIMEOUT_MIN_ATML	= 14700, /* usecs */
++	TIS_TIMEOUT_MAX_ATML	= 15000, /* usecs */
 +};
 +
-+enum tpm2_command_codes {
-+	TPM2_CC_FIRST			= 0x011F,
-+	TPM2_CC_HIERARCHY_CONTROL	= 0x0121,
-+	TPM2_CC_HIERARCHY_CHANGE_AUTH	= 0x0129,
-+	TPM2_CC_CREATE_PRIMARY		= 0x0131,
-+	TPM2_CC_SEQUENCE_COMPLETE	= 0x013E,
-+	TPM2_CC_SELF_TEST		= 0x0143,
-+	TPM2_CC_STARTUP			= 0x0144,
-+	TPM2_CC_SHUTDOWN		= 0x0145,
-+	TPM2_CC_NV_READ			= 0x014E,
-+	TPM2_CC_CREATE			= 0x0153,
-+	TPM2_CC_LOAD			= 0x0157,
-+	TPM2_CC_SEQUENCE_UPDATE		= 0x015C,
-+	TPM2_CC_UNSEAL			= 0x015E,
-+	TPM2_CC_CONTEXT_LOAD		= 0x0161,
-+	TPM2_CC_CONTEXT_SAVE		= 0x0162,
-+	TPM2_CC_FLUSH_CONTEXT		= 0x0165,
-+	TPM2_CC_READ_PUBLIC		= 0x0173,
-+	TPM2_CC_START_AUTH_SESS		= 0x0176,
-+	TPM2_CC_VERIFY_SIGNATURE	= 0x0177,
-+	TPM2_CC_GET_CAPABILITY		= 0x017A,
-+	TPM2_CC_GET_RANDOM		= 0x017B,
-+	TPM2_CC_PCR_READ		= 0x017E,
-+	TPM2_CC_PCR_EXTEND		= 0x0182,
-+	TPM2_CC_EVENT_SEQUENCE_COMPLETE	= 0x0185,
-+	TPM2_CC_HASH_SEQUENCE_START	= 0x0186,
-+	TPM2_CC_CREATE_LOADED		= 0x0191,
-+	TPM2_CC_LAST			= 0x0193, /* Spec 1.36 */
++enum tis_x86_defaults {
++	TIS_MEM_X86_LPC_BASE		= 0xFED40000,
++	TIS_MEM_X86_LEN			= 0x5000,
++	INTEL_LEGACY_BLK_BASE_ADDR	= 0xFED08000,
++	ILB_REMAP_SIZE			= 0x100,
++	LPC_CNTRL_OFFSET		= 0x84,
++	LPC_CLKRUN_EN			= (1 << 2),
 +};
 +
-+enum tpm2_capabilities {
-+	TPM2_CAP_HANDLES	= 1,
-+	TPM2_CAP_COMMANDS	= 2,
-+	TPM2_CAP_PCRS		= 5,
-+	TPM2_CAP_TPM_PROPERTIES = 6,
-+};
++/*
++ * Some timeout values are needed before it is known whether the chip is
++ * TPM 1.0 or TPM 2.0.
++ */
++#define TIS_TIMEOUT_A_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_A)
++#define TIS_TIMEOUT_B_MAX	max_t(int, TIS_LONG_TIMEOUT, TPM2_TIMEOUT_B)
++#define TIS_TIMEOUT_C_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_C)
++#define TIS_TIMEOUT_D_MAX	max_t(int, TIS_SHORT_TIMEOUT, TPM2_TIMEOUT_D)
 +
-+enum tpm2_properties {
-+	TPM_PT_TOTAL_COMMANDS	= 0x0129,
-+};
++#define	TPM_ACCESS(l)			(0x0000 | ((l) << 12))
++#define	TPM_INT_ENABLE(l)		(0x0008 | ((l) << 12))
++#define	TPM_INT_VECTOR(l)		(0x000C | ((l) << 12))
++#define	TPM_INT_STATUS(l)		(0x0010 | ((l) << 12))
++#define	TPM_INTF_CAPS(l)		(0x0014 | ((l) << 12))
++#define	TPM_STS(l)			(0x0018 | ((l) << 12))
++#define	TPM_STS3(l)			(0x001b | ((l) << 12))
++#define	TPM_DATA_FIFO(l)		(0x0024 | ((l) << 12))
++#define	TPM_INTF_ID(l)			(0x0030 | ((l) << 12))
 +
-+enum tpm2_startup_types {
-+	TPM2_SU_CLEAR		= 0x0000,
-+	TPM2_SU_STATE		= 0x0001,
-+};
++#define	TPM_DID_VID(l)			(0x0F00 | ((l) << 12))
++#define	TPM_RID(l)			(0x0F04 | ((l) << 12))
 +
-+enum tpm2_cc_attrs {
-+	TPM2_CC_ATTR_CHANDLES	= 25,
-+	TPM2_CC_ATTR_RHANDLE	= 28,
-+	TPM2_CC_ATTR_VENDOR	= 29,
-+};
++/* TPM HW Interface and Capabilities */
++#define TPM_TIS_INTF_ACTIVE	0x00
++#define TPM_CRB_INTF_ACTIVE	0x01
 +
-+enum tpm2_permanent_handles {
-+	TPM2_RH_NULL		= 0x40000007,
-+	TPM2_RS_PW		= 0x40000009,
-+};
-+
-+/* Most Significant Octet for key types  */
-+enum tpm2_mso_type {
-+	TPM2_MSO_NVRAM		= 0x01,
-+	TPM2_MSO_SESSION	= 0x02,
-+	TPM2_MSO_POLICY		= 0x03,
-+	TPM2_MSO_PERMANENT	= 0x40,
-+	TPM2_MSO_VOLATILE	= 0x80,
-+	TPM2_MSO_PERSISTENT	= 0x81,
-+};
-+
-+enum tpm2_curves {
-+	TPM2_ECC_NONE		= 0x0000,
-+	TPM2_ECC_NIST_P256	= 0x0003,
-+};
-+
-+enum tpm2_object_attributes {
-+	TPM2_OA_FIXED_TPM		= BIT(1),
-+	TPM2_OA_ST_CLEAR		= BIT(2),
-+	TPM2_OA_FIXED_PARENT		= BIT(4),
-+	TPM2_OA_SENSITIVE_DATA_ORIGIN	= BIT(5),
-+	TPM2_OA_USER_WITH_AUTH		= BIT(6),
-+	TPM2_OA_ADMIN_WITH_POLICY	= BIT(7),
-+	TPM2_OA_NO_DA			= BIT(10),
-+	TPM2_OA_ENCRYPTED_DUPLICATION	= BIT(11),
-+	TPM2_OA_RESTRICTED		= BIT(16),
-+	TPM2_OA_DECRYPT			= BIT(17),
-+	TPM2_OA_SIGN			= BIT(18),
-+};
-+
-+enum tpm2_session_attributes {
-+	TPM2_SA_CONTINUE_SESSION	= BIT(0),
-+	TPM2_SA_AUDIT_EXCLUSIVE		= BIT(1),
-+	TPM2_SA_AUDIT_RESET		= BIT(3),
-+	TPM2_SA_DECRYPT			= BIT(5),
-+	TPM2_SA_ENCRYPT			= BIT(6),
-+	TPM2_SA_AUDIT			= BIT(7),
-+};
-+
-+enum tpm2_pcr_select {
-+	TPM2_PLATFORM_PCR	= 24,
-+	TPM2_PCR_SELECT_MIN	= ((TPM2_PLATFORM_PCR + 7) / 8),
-+};
-+
-+enum tpm2_handle_types {
-+	TPM2_HT_HMAC_SESSION	= 0x02000000,
-+	TPM2_HT_POLICY_SESSION	= 0x03000000,
-+	TPM2_HT_TRANSIENT	= 0x80000000,
-+};
-+
-+enum tpm2_pt_props {
-+	TPM2_PT_NONE			= 0x00000000,
-+	TPM2_PT_GROUP			= 0x00000100,
-+	TPM2_PT_FIXED			= TPM2_PT_GROUP * 1,
-+	TPM2_PT_FAMILY_INDICATOR	= TPM2_PT_FIXED + 0,
-+	TPM2_PT_LEVEL		= TPM2_PT_FIXED + 1,
-+	TPM2_PT_REVISION	= TPM2_PT_FIXED + 2,
-+	TPM2_PT_DAY_OF_YEAR	= TPM2_PT_FIXED + 3,
-+	TPM2_PT_YEAR		= TPM2_PT_FIXED + 4,
-+	TPM2_PT_MANUFACTURER	= TPM2_PT_FIXED + 5,
-+	TPM2_PT_VENDOR_STRING_1	= TPM2_PT_FIXED + 6,
-+	TPM2_PT_VENDOR_STRING_2	= TPM2_PT_FIXED + 7,
-+	TPM2_PT_VENDOR_STRING_3	= TPM2_PT_FIXED + 8,
-+	TPM2_PT_VENDOR_STRING_4	= TPM2_PT_FIXED + 9,
-+	TPM2_PT_VENDOR_TPM_TYPE	= TPM2_PT_FIXED + 10,
-+	TPM2_PT_FIRMWARE_VERSION_1	= TPM2_PT_FIXED + 11,
-+	TPM2_PT_FIRMWARE_VERSION_2	= TPM2_PT_FIXED + 12,
-+	TPM2_PT_INPUT_BUFFER		= TPM2_PT_FIXED + 13,
-+	TPM2_PT_HR_TRANSIENT_MIN	= TPM2_PT_FIXED + 14,
-+	TPM2_PT_HR_PERSISTENT_MIN	= TPM2_PT_FIXED + 15,
-+	TPM2_PT_HR_LOADED_MIN		= TPM2_PT_FIXED + 16,
-+	TPM2_PT_ACTIVE_SESSIONS_MAX	= TPM2_PT_FIXED + 17,
-+	TPM2_PT_PCR_COUNT	= TPM2_PT_FIXED + 18,
-+	TPM2_PT_PCR_SELECT_MIN	= TPM2_PT_FIXED + 19,
-+	TPM2_PT_CONTEXT_GAP_MAX	= TPM2_PT_FIXED + 20,
-+	TPM2_PT_NV_COUNTERS_MAX	= TPM2_PT_FIXED + 22,
-+	TPM2_PT_NV_INDEX_MAX	= TPM2_PT_FIXED + 23,
-+	TPM2_PT_MEMORY		= TPM2_PT_FIXED + 24,
-+	TPM2_PT_CLOCK_UPDATE	= TPM2_PT_FIXED + 25,
-+	TPM2_PT_CONTEXT_HASH	= TPM2_PT_FIXED + 26,
-+	TPM2_PT_CONTEXT_SYM	= TPM2_PT_FIXED + 27,
-+	TPM2_PT_CONTEXT_SYM_SIZE	= TPM2_PT_FIXED + 28,
-+	TPM2_PT_ORDERLY_COUNT		= TPM2_PT_FIXED + 29,
-+	TPM2_PT_MAX_COMMAND_SIZE	= TPM2_PT_FIXED + 30,
-+	TPM2_PT_MAX_RESPONSE_SIZE	= TPM2_PT_FIXED + 31,
-+	TPM2_PT_MAX_DIGEST		= TPM2_PT_FIXED + 32,
-+	TPM2_PT_MAX_OBJECT_CONTEXT	= TPM2_PT_FIXED + 33,
-+	TPM2_PT_MAX_SESSION_CONTEXT	= TPM2_PT_FIXED + 34,
-+	TPM2_PT_PS_FAMILY_INDICATOR	= TPM2_PT_FIXED + 35,
-+	TPM2_PT_PS_LEVEL	= TPM2_PT_FIXED + 36,
-+	TPM2_PT_PS_REVISION	= TPM2_PT_FIXED + 37,
-+	TPM2_PT_PS_DAY_OF_YEAR	= TPM2_PT_FIXED + 38,
-+	TPM2_PT_PS_YEAR		= TPM2_PT_FIXED + 39,
-+	TPM2_PT_SPLIT_MAX	= TPM2_PT_FIXED + 40,
-+	TPM2_PT_TOTAL_COMMANDS	= TPM2_PT_FIXED + 41,
-+	TPM2_PT_LIBRARY_COMMANDS	= TPM2_PT_FIXED + 42,
-+	TPM2_PT_VENDOR_COMMANDS		= TPM2_PT_FIXED + 43,
-+	TPM2_PT_NV_BUFFER_MAX		= TPM2_PT_FIXED + 44,
-+	TPM2_PT_MODES			= TPM2_PT_FIXED + 45,
-+	TPM2_PT_MAX_CAP_BUFFER		= TPM2_PT_FIXED + 46,
-+	TPM2_PT_VAR		= TPM2_PT_GROUP * 2,
-+	TPM2_PT_PERMANENT	= TPM2_PT_VAR + 0,
-+	TPM2_PT_STARTUP_CLEAR	= TPM2_PT_VAR + 1,
-+	TPM2_PT_HR_NV_INDEX	= TPM2_PT_VAR + 2,
-+	TPM2_PT_HR_LOADED	= TPM2_PT_VAR + 3,
-+	TPM2_PT_HR_LOADED_AVAIL	= TPM2_PT_VAR + 4,
-+	TPM2_PT_HR_ACTIVE	= TPM2_PT_VAR + 5,
-+	TPM2_PT_HR_ACTIVE_AVAIL	= TPM2_PT_VAR + 6,
-+	TPM2_PT_HR_TRANSIENT_AVAIL	= TPM2_PT_VAR + 7,
-+	TPM2_PT_HR_PERSISTENT		= TPM2_PT_VAR + 8,
-+	TPM2_PT_HR_PERSISTENT_AVAIL	= TPM2_PT_VAR + 9,
-+	TPM2_PT_NV_COUNTERS		= TPM2_PT_VAR + 10,
-+	TPM2_PT_NV_COUNTERS_AVAIL	= TPM2_PT_VAR + 11,
-+	TPM2_PT_ALGORITHM_SET		= TPM2_PT_VAR + 12,
-+	TPM2_PT_LOADED_CURVES		= TPM2_PT_VAR + 13,
-+	TPM2_PT_LOCKOUT_COUNTER		= TPM2_PT_VAR + 14,
-+	TPM2_PT_MAX_AUTH_FAIL		= TPM2_PT_VAR + 15,
-+	TPM2_PT_LOCKOUT_INTERVAL	= TPM2_PT_VAR + 16,
-+	TPM2_PT_LOCKOUT_RECOVERY	= TPM2_PT_VAR + 17,
-+	TPM2_PT_NV_WRITE_RECOVERY	= TPM2_PT_VAR + 18,
-+	TPM2_PT_AUDIT_COUNTER_0	= TPM2_PT_VAR + 19,
-+	TPM2_PT_AUDIT_COUNTER_1	= TPM2_PT_VAR + 20,
-+};
-+
-+struct tpm2_pcr_read_out {
-+	__be32 update_cnt;
-+	__be32 pcr_selects_cnt;
-+	__be16 hash_alg;
-+	u8 pcr_select_size;
-+	u8 pcr_select[TPM2_PCR_SELECT_MIN];
-+	__be32 digests_cnt;
-+	__be16 digest_size;
-+	u8 digest[];
++struct tpm_interface_id {
++	union {
++		u32 val;
++		struct {
++			u32 interface_type:4;
++			u32 interface_version:4;
++			u32 cap_locality:1;
++			u32 reserved1:4;
++			u32 cap_tis:1;
++			u32 cap_crb:1;
++			u32 cap_if_res:2;
++			u32 interface_selector:2;
++			u32 intf_sel_lock:1;
++			u32 reserved2:4;
++			u32 reserved3:8;
++		};
++	};
 +} __packed;
 +
-+struct tpm2_get_random_out {
-+	__be16 size;
-+	u8 buffer[TPM_MAX_RNG_DATA];
++#define TPM_TIS_INTF_12		0x00
++#define TPM_TIS_INTF_13		0x02
++#define TPM2_TIS_INTF_13	0x03
++
++struct tpm_intf_capability {
++	union {
++		u32 val;
++		struct {
++			u32 data_avail_int_support:1;
++			u32 sts_valid_int_support:1;
++			u32 locality_change_int_support:1;
++			u32 interrupt_level_high:1;
++			u32 interrupt_level_low:1;
++			u32 interrupt_edge_rising:1;
++			u32 interrupt_edge_falling:1;
++			u32 command_ready_int_support:1;
++			u32 burst_count_static:1;
++			u32 data_transfer_size_support:2;
++			u32 reserved1:17;
++			u32 interface_version:3;
++			u32 reserved2:1;
++		};
++	};
 +} __packed;
 +
-+struct tpm2_get_cap_out {
-+	u8 more_data;
-+	__be32 subcap_id;
-+	__be32 property_cnt;
-+	__be32 property_id;
-+	__be32 value;
-+} __packed;
-+
-+struct tpm2_pcr_selection {
-+	__be16 hash_alg;
-+	u8 size_of_select;
-+	u8 pcr_select[3];
-+} __packed;
-+
-+struct tpm2_context {
-+	__be64 sequence;
-+	__be32 saved_handle;
-+	__be32 hierarchy;
-+	__be16 blob_size;
-+} __packed;
-+
- #endif
++#endif
 -- 
 2.47.3
 
