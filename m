@@ -1,218 +1,191 @@
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com [74.125.82.179])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAF13603DA
-	for <linux-integrity@vger.kernel.org>; Fri, 22 May 2026 06:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=74.125.82.179
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1779429825; cv=pass; b=Y7MrcOz36+SaXdvjmfd94DdFInv/qUHw6csJY70Gp0+x8tRzytDpTuu/wxocHP2qvoaDQPycYSh0WemssvX80yT6c9uCL2rRv0Z03bWRQvaOyNSOcF/hXIe0M9f6EDgLSZVIIA3Zv+dH4ZUwSN6veQ1yQamcUECmTQHmv+5qnZE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1779429825; c=relaxed/simple;
-	bh=HhLz431XC/1SBtKZs6jOZJe1J0Hy0TUDih2j/njNowo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AQwQKOr9lcOfvXDyB3RVflkFH6+6H51PEhOS3joQpFNqB2FiPQEZNhbzTr3xmIS9FEJvQ2SPaPFKPC1zkSjDJqLQmxRxpT4dgs2TJabArBJWgwCxcgWhVDVJGhqGQR0l/DlblACkEneehiBIF+G6fFR55glFI1rDuBKpHFX75AM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m79J9SIe; arc=pass smtp.client-ip=74.125.82.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFE239EF05
+	for <linux-integrity@vger.kernel.org>; Fri, 22 May 2026 08:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1779437806; cv=none; b=ZULmulOT9mwaft9I50hKSgRNF2dJIYKomD6HHjpWtpiuLeDxtOYzMx4XOq8ShnM9rSlWzZjzdVs3j/hr4IivvNQ7PmqYlwqi3m+xhTioWDOYd8s8EsHWkziis5l9xWQxo/QR34J+cl+OivgGk0fFinmL1dyTVrwrBGuYL7PeE58=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1779437806; c=relaxed/simple;
+	bh=4xr6TiUPW8v1GkJ2kQh+aF08s5fPR+TLtY9G5S+pan0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZu7Qnks7b0qdP4RUU/IlC+PbvQG2Be6IMYsPHxo4nwLSj6UwoEwEJSBYyNjW5VS/8kSVijkBVol0MbEtNoMHWodnM3ppRB7OOUNoo2PS1wxqtch6KKy5whITEjfKRuH8qfFB1vMAJ9AiuNo5CV7VFOc66kixJ0cAliFpqN9hxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b=Z2kPyC+w; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m79J9SIe"
-Received: by mail-dy1-f179.google.com with SMTP id 5a478bee46e88-2f03d6cf77bso7045316eec.0
-        for <linux-integrity@vger.kernel.org>; Thu, 21 May 2026 23:03:43 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1779429823; cv=none;
-        d=google.com; s=arc-20240605;
-        b=DxOqbVKhe0VlrBumaj2DSoxI3SvscjzFW/s6wXmicS84cK+MSO3WmsDoywVqF3gbg9
-         otyDAJS/VIYtViQjFR9uxSrjvd7WAP17a53c6oNTGeD3bMbbPyNGkOL+iWBTO7mbAHiK
-         RthapqrqWVJQeBv+rU0Ko3XFVAC+Sq/noKJ/XhZMPbWdPeKgqMMPCbs4JH8qXU8J1ZeJ
-         tN9ha5DzxqgGnHYUdIovkTTvXw+tFP4RYFKe/vWeXlXrHpVaq3KFaV3HLoGATwt9bABe
-         eezhjy4QG/IV+lVBT90XMkZPpMvrENcQes63ci/dw87USSXpXpgSnftbbGRO1Zwg5eL3
-         5WnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=dQ6hVnT8+IvfQww+UWuTp0nQS0/uDMuAD01ImXMAqTM=;
-        fh=6JWiylxW3WcNtqCp5HQ9K7bHrW7o11OWckxHu2eB5zw=;
-        b=GDoYYlAIJPVhHzRl+pdo9Nm7ANMdC3jS9gbQeAAUa78BtoW1L5SOurbNlujnWBA58t
-         dxy7IcMpAJg+mlhFq+RdNaju6xZtaT/vs4E3yhwdytakSe99U5SHunv+K9s+j3hid40p
-         L1wt3nmIja/1gLwcLs9j6FOEzQe/PrMvCq8UOeLD0K1KZQiMvM88Pp+EOTKWijy2gYX+
-         BIVcPnXef/rUHHGKMBak/Uxo/OpiVnCEY1J4Cg/9Knh+Wj+nB/HK1sCpDgg4hoM7y2Kn
-         mtnzpD9RNSApI+aMhMYDXqYNWGk0YvyrsnXSKEtJe1BMfJxmKzA38HbDDqRHpykfINXi
-         fEvQ==;
-        darn=vger.kernel.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.b="Z2kPyC+w"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-488a8ca4aadso68680295e9.3
+        for <linux-integrity@vger.kernel.org>; Fri, 22 May 2026 01:16:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20251104; t=1779429823; x=1780034623; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dQ6hVnT8+IvfQww+UWuTp0nQS0/uDMuAD01ImXMAqTM=;
-        b=m79J9SIeYJVw+fQtfY7IjR5CxEzgTT0XMaFULHPp4eWRK9UX4oCciHJkykyDXx8iTj
-         uhlfjH/HOXznWzetoZbEqNoVhVyzBJ+vYkVcQvnGyeN9mJiufKkt9dv4qQ4V4rjJUgCV
-         +IC1fWbZEiOqRmGSQD/YF2vxnDniLh0Attw2w2t3bjS9DevywxkRfZ9MU82XQCi+eqK4
-         BeQr9ne7R6OZiThcEeAZDYkfdzBfaPLlcQZw0rPlkGA1T5cu9QWisc4YRlqgY5cgglGu
-         O0vy98ybuRYcm/ZX4A131awzxC3/oCd4SWVvsW+3XoJad6a2mGzVr2IMre+NM+IteFGX
-         Kwxw==
+        d=baylibre.com; s=google; t=1779437803; x=1780042603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3w5FjT/WZBxeuDvVvB7bWeB0eUVUUyftobEv50KkzpY=;
+        b=Z2kPyC+wj+bezCgK81TqyXpH9deHhgbalx0zkveS5+3Ipm6yj4rVrvqaGlpDfX5HsU
+         BIs7AznBPmj7fmQ6d/zMOXmSBOVt0TKK+Y57PneGFax1hs69ZfyfXcT1BpvH/cVKRnc/
+         xM6XwDUdRR6wjaFInRJa4wcjVQP+JI4I4xybyWAegZTfG1E6vqc4aC4h00kqUU76vJRr
+         XkCIGURQNTj55w2K1YuGsi1qruMUx3hmYXBQd+0RtEy3p2cUcG8CD6NEoFE88mpdH3CD
+         x20LaDub6E/6JNlQXzzq7P/s+RdWhuZMPWrPHNos0g//dnbC6+RFvo6Cf7eVo8p7tyif
+         g1PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20251104; t=1779429823; x=1780034623;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dQ6hVnT8+IvfQww+UWuTp0nQS0/uDMuAD01ImXMAqTM=;
-        b=FtBZo2d6G5Dgdqrv8AQnfmpaSgzoEyagAjI9+0qMYS9gyBg2LaVmLm4if5J3rsOzDL
-         HPHv7gbfOEr/9OKdBz8yHh17CuvFUzcNaIT6F13Kq6WiVSiiLWQuxJuBHHHH6o6r5wy1
-         xTGhdumIutWuiWBscWHnAQGw58meaZ3rohh30ZETa2our4Phlt6yYmVPo3KV6KRGNieN
-         s9s0kjOPfinFNK4I3lAwsLQ2qaSKmXsTHjsvND6aLfX/PBA4OgP0e/mGx4jF7UfsXm74
-         86mJKRMTDc7UxbIhsqKjFRK7Vm3U7M1T9kOk2sm+FR42a/pQfWITbz6VtVd3jIu+qujz
-         KwEQ==
-X-Gm-Message-State: AOJu0YxvDhn8GR7R/ONlpi2F9argq5WzzeePg/STg+PK8FiW02gcAUJc
-	bK3eqjWb8MQ1ANJxedKgjyzX0pVeL+6ccjlvrz8Mfaui5gYZ8IJi0GM7p9v2WgwLFx7p42fkxPq
-	SLDTtJvL98OJFIscLTggckYS+6cwbCiI=
-X-Gm-Gg: Acq92OFD44gstViMDG91oiZDwbmhT0eGZ7T4xicJxUXKsKMGusJQNO7KQuLYhjWfetQ
-	KUAPhVW687TO4jwasovkQ5fLxBIRGsoVeXKVo7XLCSngWXxppcXDKluW8t/Y+GlYUhAi1zfH8Dj
-	smTkYlIX6hc0h1zBJqVGTWs3nvz+P9oJ//RsUWfttJyymwQRJKEom3EHwYtwc2tCgGoZPH98+6x
-	4Ue03NirmId3fSAq8+QEvMuiSSdYI4iFnctGMHGdm8vz58nV3GJSkyt5X+0oA+M1VjOdDZQ4niv
-	S9TLgg==
-X-Received: by 2002:a05:7300:a509:b0:2da:2ec2:64e5 with SMTP id
- 5a478bee46e88-304491840e6mr1102704eec.18.1779429822576; Thu, 21 May 2026
- 23:03:42 -0700 (PDT)
+        d=1e100.net; s=20251104; t=1779437803; x=1780042603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3w5FjT/WZBxeuDvVvB7bWeB0eUVUUyftobEv50KkzpY=;
+        b=jZNP31dJ/oG+YaEDiTe2mKbPEyuK4mv7UpZ1kEIB+OXwybqsvTIFYB0jgXUybByjb9
+         QzNAG2WcNKPETXdqNsJJDlCpwOR1bmLGuzOqZorRtaIW7VBsV7ulpBhsFCK0Ash4wEjC
+         KetiEMZNVU665CuqEqvv2dTtowOyDFjtuvSOAzT5NqjOx55H0Q3YYYHT/IdhPLGmQDZJ
+         F5xuz7eY1chiyHIetqTZOd1zm9KKR1Oy0rC0KipB+S2R1MHfM/oXB3PY0jno+YQbufIF
+         gboBR4717/gwMUQodykGOeRocncoT/oozf0u9hwkszsyTH+Tz0j6ewKxKnmeASoE0Tn1
+         5BJw==
+X-Forwarded-Encrypted: i=1; AFNElJ8e9S6TknkZ3ehQ1Kpmj/QfrWxFTaLNWZxME7KP7jrXNl8uKMxedS7obmvwvEqUU3Yz1GEVhkF2PYGcmdkZWRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybFgbBrUrauyZh49VC64jY0fdjo83Dt9ngfcVLO8pNkOM19BWj
+	Bmc1B2K3uCv7jK17wEITAf/i1jZLy2G+cPPI2mdPXX5GtjFbyl8hP1v7wLflmB4h0lXwVUmtD24
+	gfq5wvnU=
+X-Gm-Gg: Acq92OH/RUvrriaBAD5F/3erAQHX6BmziBPgpiIt6Phtf8qp/yg5tng1tdbfJ3K8L2c
+	PcbJ8srSoD67ntq3VyWCFrkmgVe2SvPe8bqqOUVFwYRSLsIN5HyfytdUn3km6eVi6/n6gUCbMhv
+	7rtQ40/UTrFmBxCGkWSAXSuUV+lZP+wXZLMst4Tazr6qnsK1OUTMXryqcR35OTQL2UkLadHSqmM
+	lqzGqo7BbuOvmkUVWDBv5M1nXBsn9olI0/Vxb8lVCTNRPBNHmApmqAwUtAvIY+2EZpN/je4z0Du
+	RNzNCd6wUR3mM7BQLhqNvXi91ZIE5gjG6K6QASCuRyZ88Ntn2JlwWS6By62VdJqL72Zyaeu3vdr
+	FCsR2B+qnVy5E/ct67MfhzOyOYFILWKADutMGvOdDwULzTLED1ttcOUnXo0UKmiRqAUyY4w4y4R
+	NPXZ6MLPrNsWCJz2AC5rka1HGOdC+W3Q2mLlUMRhI4E0+WicXoiVQiLiL1a125ur/mlpdztOZ0g
+	2aWgMftCPk4QEcDOd8hERpgkg==
+X-Received: by 2002:a05:600c:a402:b0:488:a882:c7 with SMTP id 5b1f17b1804b1-490426ddc0fmr22001735e9.25.1779437802772;
+        Fri, 22 May 2026 01:16:42 -0700 (PDT)
+Received: from localhost (p200300f65f47db041c3ec60b7ac1bfbb.dip0.t-ipconnect.de. [2003:f6:5f47:db04:1c3e:c60b:7ac1:bfbb])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-49042af0ac1sm10569715e9.31.2026.05.22.01.16.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 May 2026 01:16:40 -0700 (PDT)
+Date: Fri, 22 May 2026 10:16:39 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig_=28The_Capable_Hub=29?= <u.kleine-koenig@baylibre.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm: Use named initializers for arrays of i2c_device_data
+Message-ID: <ag_vkHJjmCo_FFa5@monoceros>
+References: <20260518134035.644762-2-u.kleine-koenig@baylibre.com>
+ <ag98e88678TSfwxG@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20260519060926.103727-1-jbroadus@gmail.com> <ag-ZuEt4uXnrO8AK@kernel.org>
-In-Reply-To: <ag-ZuEt4uXnrO8AK@kernel.org>
-From: Jim Broadus <jbroadus@gmail.com>
-Date: Thu, 21 May 2026 23:03:29 -0700
-X-Gm-Features: AVHnY4LA3QImdAO1-9EbSoxvRtYQWmfgsDIstzlg6YCBI-BFraaiDzGtwN3bdiw
-Message-ID: <CAKgEEwswj4in29_hoy_dQQ18+GF=Uwf0LnwS=w7bwZCSW=mwjw@mail.gmail.com>
-Subject: Re: [PATCH] tpm: tpm_tis: Add optional delay after relinquish
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, peterhuewe@gmx.de, jgg@ziepe.ca
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ureockz27qr6vm2b"
+Content-Disposition: inline
+In-Reply-To: <ag98e88678TSfwxG@kernel.org>
+
+
+--ureockz27qr6vm2b
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] tpm: Use named initializers for arrays of i2c_device_data
+MIME-Version: 1.0
 
-Thank you Jarkko. I'll do that.
+Hello Jarkko,
 
-Jim
+On Fri, May 22, 2026 at 12:43:23AM +0300, Jarkko Sakkinen wrote:
+> On Mon, May 18, 2026 at 03:40:35PM +0200, Uwe Kleine-K=F6nig (The Capable=
+ Hub) wrote:
+> > The union added to struct i2c_device_id enables further cleanups like:
+> >=20
+> > 	diff --git a/drivers/regulator/ad5398.c b/drivers/regulator/ad5398.c
+> > 	index 0123ca8157a8..dfb0b07500a7 100644
+> > 	--- a/drivers/regulator/ad5398.c
+> > 	+++ b/drivers/regulator/ad5398.c
+> > 	@@ -207,8 +207,8 @@ struct ad5398_current_data_format {
+> > 	 static const struct ad5398_current_data_format df_10_4_120 =3D {10, 4=
+, 0, 120000};
+> >=20
+> > 	 static const struct i2c_device_id ad5398_id[] =3D {
+> > 	-	{ .name =3D "ad5398", .driver_data =3D (kernel_ulong_t)&df_10_4_120 =
+},
+> > 	-	{ .name =3D "ad5821", .driver_data =3D (kernel_ulong_t)&df_10_4_120 =
+},
+> > 	+	{ .name =3D "ad5398", .driver_data_ptr =3D &df_10_4_120 },
+> > 	+	{ .name =3D "ad5821", .driver_data_ptr =3D &df_10_4_120 },
+> > 	 	{ }
+> > 	 };
+> > 	 MODULE_DEVICE_TABLE(i2c, ad5398_id);
+> > 	@@ -219,8 +219,7 @@ static int ad5398_probe(struct i2c_client *client)
+> > 	 	struct regulator_init_data *init_data =3D dev_get_platdata(&client->=
+dev);
+> > 	 	struct regulator_config config =3D { };
+> > 	 	struct ad5398_chip_info *chip;
+> > 	-	const struct ad5398_current_data_format *df =3D
+> > 	-	                (struct ad5398_current_data_format *)id->driver_data;
+> > 	+	const struct ad5398_current_data_format *df =3D id->driver_data_ptr;
+> >=20
+> > 	 	chip =3D devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+> > 	 	if (!chip)
 
-On Thu, May 21, 2026 at 4:48=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Mon, May 18, 2026 at 11:09:26PM -0700, Jim Broadus wrote:
-> > Some TPMs fail to grant locality when requested immediately after being
-> > relinquished. In this case, the TPM_ACCESS_REQUEST_USE bit of the
-> > TPM_ACCESS register is cleared immediately without setting
-> > TPM_ACCESS_ACTIVE_LOCALITY.
-> >
-> > This issue can be seen at boot since tpm_chip_start, called right
-> > after locality is relinquished, fails. This causes the probe to fail:
-> >
-> > tpm_tis MSFT0101:00: probe with driver tpm_tis failed with error -1
-> >
-> > This occurs on some older Dell Latitudes and maybe others. To work
-> > around this, add a "settle" boolean param to tpm_tis. When this is
-> > enabled, a delay is added after locality is relinquished.
-> >
-> > Signed-off-by: Jim Broadus <jbroadus@gmail.com>
->
-> It would be better idea first to replace priv->manufacturer_id with
-> priv->did_vid, and make necessary changes to sites where it is used.
->
-> Then in the if-statement compare DID/VID of the device to priv->did_vid
-> and apply quirk only if it matches.
->
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
-> >  drivers/char/tpm/tpm_tis.c                      | 7 +++++++
-> >  drivers/char/tpm/tpm_tis_core.c                 | 3 +++
-> >  drivers/char/tpm/tpm_tis_core.h                 | 1 +
-> >  4 files changed, 18 insertions(+)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index 4d0f545fb3ec..5b7111033fbb 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -7651,6 +7651,13 @@ Kernel parameters
-> >                       defined by Trusted Computing Group (TCG) see
-> >                       https://trustedcomputinggroup.org/resource/pc-cli=
-ent-platform-tpm-profile-ptp-specification/
-> >
-> > +     tpm_tis.settle=3D [HW,TPM]
-> > +                     Format: <bool>
-> > +                     When enabled, this adds a delay after locality is
-> > +                     relinquished. Some TPMs will fail to grant locali=
-ty if
-> > +                     requested immediately after being relinquished. T=
-his
-> > +                     causes the probe to fail.
-> > +
-> >       tp_printk       [FTRACE]
-> >                       Have the tracepoints sent to printk as well as th=
-e
-> >                       tracing ring buffer. This is useful for early boo=
-t up
-> > diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-> > index 9aa230a63616..8ac0ea78570e 100644
-> > --- a/drivers/char/tpm/tpm_tis.c
-> > +++ b/drivers/char/tpm/tpm_tis.c
-> > @@ -101,6 +101,10 @@ module_param(force, bool, 0444);
-> >  MODULE_PARM_DESC(force, "Force device probe rather than using ACPI ent=
-ry");
-> >  #endif
-> >
-> > +static bool settle;
-> > +module_param(settle, bool, 0444);
-> > +MODULE_PARM_DESC(settle, "Add settle time after relinquish");
-> > +
-> >  #if defined(CONFIG_PNP) && defined(CONFIG_ACPI)
-> >  static int has_hid(struct acpi_device *dev, const char *hid)
-> >  {
-> > @@ -242,6 +246,9 @@ static int tpm_tis_init(struct device *dev, struct =
-tpm_info *tpm_info)
-> >       if (itpm || is_itpm(ACPI_COMPANION(dev)))
-> >               set_bit(TPM_TIS_ITPM_WORKAROUND, &phy->priv.flags);
-> >
-> > +     if (settle)
-> > +             set_bit(TPM_TIS_SETTLE_AFTER_RELINQUISH, &phy->priv.flags=
-);
-> > +
-> >       return tpm_tis_core_init(dev, &phy->priv, irq, &tpm_tcg,
-> >                                ACPI_HANDLE(dev));
-> >  }
-> > diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis=
-_core.c
-> > index 21d79ad3b164..68be26fa5817 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.c
-> > +++ b/drivers/char/tpm/tpm_tis_core.c
-> > @@ -184,6 +184,9 @@ static int tpm_tis_relinquish_locality(struct tpm_c=
-hip *chip, int l)
-> >               __tpm_tis_relinquish_locality(priv, l);
-> >       mutex_unlock(&priv->locality_count_mutex);
-> >
-> > +     if (test_bit(TPM_TIS_SETTLE_AFTER_RELINQUISH, &priv->flags))
-> > +             tpm_msleep(TPM_TIMEOUT);
-> > +
-> >       return 0;
-> >  }
-> >
-> > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis=
-_core.h
-> > index 6c3aa480396b..413cac5e0f31 100644
-> > --- a/drivers/char/tpm/tpm_tis_core.h
-> > +++ b/drivers/char/tpm/tpm_tis_core.h
-> > @@ -90,6 +90,7 @@ enum tpm_tis_flags {
-> >       TPM_TIS_DEFAULT_CANCELLATION    =3D 2,
-> >       TPM_TIS_IRQ_TESTED              =3D 3,
-> >       TPM_TIS_STATUS_VALID_RETRY      =3D 4,
-> > +     TPM_TIS_SETTLE_AFTER_RELINQUISH =3D 5,
-> >  };
-> >
-> >  struct tpm_tis_data {
-> > --
-> > 2.54.0
-> >
->
-> BR, Jarkko
+[redacted the example as it didn't compile as presented, added "_ptr" on
+last hunk's + line.]
+=20
+> > that are an improvement for readability (again!) and it keeps some
+> > properties of the pointers (here: being const) without having to pay
+> > attention for that. (I didn't find a tpm driver that benefits, so this
+> > is "only" a regulator driver example.)
+> >=20
+> > My additional motivation for this effort is CHERI[1]. This is a hardware
+> > extension that uses 128 bit pointers but unsigned long is still 64 bit.
+> > So with CHERI you cannot store pointers in unsigned long variables.
+>=20
+> I don't understand why any of this should be merged to be honest and
+> why I should care about CHERI when reviewing mainline patches.
+
+While I think and hope that CHERI will become relevant for the industry soo=
+n,
+it's ok to not care about CHERI today and I mostly mentioned it to be
+transparent about *my* motivation.
+
+Our eventual goal is to bring CHERI support to mainline linux so my team
+mates and I have to find a way to get patches like that in. In my eyes
+this compares well to PREEMPT RT: With that you have to follow more
+rules in some situations and implementing these and running an RT kernel
+makes bugs pop up that also affect mainline.
+
+So I claim that working on CHERI is obviously beneficial to folks who
+have CHERI hardware, but also helps those who don't as CHERI is a way to
+easily spot a relevant set of bugs.
+
+> Clean up can be side-effect but not a purpose.
+
+Oh, I disagree. Having code in a state where you can easily see what
+happens helps to concentrate on the parts that are more complicated. So
+it's a win for maintenance and lowering the entry bar for people who are
+not used to Linux kernel code. There are parts in the kernel that are
+complicated, and we won't get rid of them, because operating systems are
+complicated. But my POV here is that making it easier where it's
+possible is a good thing and a reason for itself. You might call that a
+paper cut only, but these add up.
+
+Also with the union in i2c_device_id the compiler warns you if some code
+is lacking a "const". So it becomes harder to make mistakes, this is
+also a reason that in my book is good enough for itself.
+
+Best regards
+Uwe
+
+--ureockz27qr6vm2b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmoQENsACgkQj4D7WH0S
+/k45kAgAqkAkvJVYFJvmCb/Ow6OtCLbDmgMC4pHbX+AFjY//4ZasznV3eliwAL0U
+JO2SE9QCUPVHR3X2kJ5vHU8M9O3tH5UTd3sIoCClyfAvAvHznK1aNc5tL3EMkZs+
+//OcE3tbopZobdoqZk5TW/zG1NO9JD+RELeeG0bZSFIjoxCxb6u4CK6e9RnkZpfZ
+yICl5zzDrpjm0/DZCz3Te4S2CTgSm0Bnt9QqBaQLLyzu3KpdI8zzwC2O+hrJRY38
+TCabhRp55hin4KsVspCZoyGvf36029DKTSeN+LlFZfjuecW43z6eh9YJL3rurCAu
+bOM3HPSHoo/xqjKlSmLHKx1hXwks9Q==
+=ePXN
+-----END PGP SIGNATURE-----
+
+--ureockz27qr6vm2b--
