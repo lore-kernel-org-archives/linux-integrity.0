@@ -1,148 +1,159 @@
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0663823D7F0;
-	Thu,  4 Jun 2026 02:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D067368299;
+	Fri,  5 Jun 2026 14:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1780541645; cv=none; b=rmpcOn4pbY7hx3sk6Ys5XfUD0gxa8mUjwxB/0huEetpPaJ7ku9NSereY5zehTGw+FVoOD5YJHxecBXShqYTSXkHHcPw49Mn679SlhYt+2vhqYrFu1r1Tu644IfyihlqefwqEACZHQjdlJbgJQlyBa2GsB3CdSttFJcRRqD9nI78=
+	t=1780670622; cv=none; b=i3XEXRcsbnrS216OqY5mP7KDH4LpVGjPBGn8dj/mtEtROQevDl77DixVZM24t4DE7CbIqQLQntUFt7Uy9wYYlSNbeeimbB8yjWYJjWPfJYw8Xw30lxN9FIwX98EBUKSfkKJ8w/ix7HTLAdykYYBN4Rly9cOR9nZFSXRmzlAqViI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1780541645; c=relaxed/simple;
-	bh=7+C6Nw6iMQL+90/+XKxfgRLwMLCaC5fM1Y3EGM8tlMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oGNPqadGU2BrwGYPir4W8CHsC2FCsODd4NVd64fmGl8ihMFslt/ZTFJgzNUqKZL7/+FhXNLgdR92zolwt8br2DprFYN+2H5t/sALZB3De9gb5HTFjKZW/I7aZZjOuikTHF06LKiTdCDoh/GZKTNwfk64vDRdIwxYT9f44GTgVDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YvapC/JJ; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+	s=arc-20240116; t=1780670622; c=relaxed/simple;
+	bh=OMQjeAoCepwlcTOllxIGRjOyfmXjVBQjlhbICvD3SAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=o5hORbMXy+RA9LXEVqg0dZ/sITJyDoMT4Qz/3NHwRwdLtZVJsyV+zzgS9bshwsPH56BvnFiOTyOXNQaghKbmEF6lV4FO3MNt4gL4mfgGxX/rLLDURdysOuWSLF2jlEwrPcW95DUzJe1xNEsKSV/z/m8zuGSp3wWyUeLxnISSt30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=LQ/Yoc1o; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YvapC/JJ"
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1780541640; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=aQaB2ZmZl+E8FocwraYwhjlJEmmAKUy+YTGT5D/wOTI=;
-	b=YvapC/JJHqcyAul/EE4tPh/Tu0KPT+t+sb4Ab9qMemSO7jr2hd1D6rS3ctCTz77xxSmmxmIunvfTO8pJgomiOu0o/vq2hr6PUqluDVyciKTBxHaTYulwDM43guwd3/5CckOjAjFcIAoAmEpF1eeUSXkDcXmTJeTH/cofPsqcfXw=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037026112;MF=zongyao.chen@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0X48rcwu_1780541638;
-Received: from localhost(mailfrom:ZongYao.Chen@linux.alibaba.com fp:SMTPD_---0X48rcwu_1780541638 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 04 Jun 2026 10:53:59 +0800
-From: ZongYao.Chen@linux.alibaba.com
-To: Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	Nayna Jain <nayna@linux.vnet.ibm.com>,
-	Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-	Zongyao Chen <ZongYao.Chen@linux.alibaba.com>,
-	linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: eventlog: tpm2: allow event log entries ending at the log boundary
-Date: Thu,  4 Jun 2026 10:53:47 +0800
-Message-ID: <20260604025356.3436943-1-ZongYao.Chen@linux.alibaba.com>
-X-Mailer: git-send-email 2.47.3
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="LQ/Yoc1o"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EB56237B;
+	Fri,  5 Jun 2026 07:43:33 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3F7293F7D8;
+	Fri,  5 Jun 2026 07:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+	t=1780670618; bh=OMQjeAoCepwlcTOllxIGRjOyfmXjVBQjlhbICvD3SAQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LQ/Yoc1oX020uC06MsmCzMuwvoLO75RatEVWIl8KrXjqJVsgK4GP8O5nKdqglzkj0
+	 45saIGgOCkllw6LgERHphTDGDWxja1IOaHgJ3T+7R4MNf5Qd2PAnOd2QM1n2BkwFyL
+	 3nZQfqPb/GkshatfXjdDDOad4hC79o6hKcCc/594=
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Cc: paul@paul-moore.com,
+	zohar@linux.ibm.com,
+	roberto.sassu@huaweicloud.com,
+	noodles@earth.li,
+	jarkko@kernel.org,
+	sudeep.holla@kernel.org,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	jgg@ziepe.ca,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v6 0/4] introduce IMA_INIT_LATE_SYNC option
+Date: Fri,  5 Jun 2026 15:43:21 +0100
+Message-Id: <20260605144325.434436-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-integrity@vger.kernel.org
 List-Id: <linux-integrity.vger.kernel.org>
 List-Subscribe: <mailto:linux-integrity+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-integrity+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Zongyao Chen <ZongYao.Chen@linux.alibaba.com>
+To generate the boot_aggregate log in the IMA subsystem with TPM PCR values,
+the TPM driver must be built as built-in and
+must be probed before the IMA subsystem is initialized.
 
-The TPM2 firmware event log buffer is a half-open range:
-[bios_event_log, bios_event_log_end). An entry ending exactly at
-bios_event_log_end is still inside the buffer; only an entry extending
-past that address is malformed.
+However, when the TPM device operates over the FF-A protocol using
+the CRB interface, probing fails and returns -EPROBE_DEFER if
+the tpm_crb_ffa device — an FF-A device that provides the communication
+interface to the tpm_crb driver — has not yet been probed.
 
-The TPM2 seq_file iterator did not handle this boundary consistently.
-The TCG_EfiSpecIdEvent header had to satisfy "addr + size < limit".
-Later events were rejected when "addr + size >= limit". Firmware that
-packs the final measurement tightly at the end of the log can therefore
-lose that measurement. If it is the first measurement after the spec ID
-header, binary_bios_measurements shows only the header.
+To ensure the TPM device operating over the FF-A protocol with
+the CRB interface is probed before IMA initialization,
+the following conditions must be met:
 
-This has been observed on bare-metal systems whose UEFI enables the SM3
-PCR bank, but the bug is not SM3-specific. Any tightly packed TPM2 log
-whose final event ends at bios_event_log_end can hit it.
+1. The corresponding ffa_device must be registered,
+   which is done via ffa_init().
 
-Accept entries that end exactly at the log boundary by rejecting only
-"addr + size > limit". An accepted boundary entry has its last byte at
-limit - 1, so this does not allow reading past the buffer. Keep
-zero-length entries rejected.
+2. The tpm_crb_driver must successfully probe this device via
+   tpm_crb_ffa_init().
 
-Also treat addr >= limit as EOF in tpm2_bios_measurements_start().
-After seq_file restarts from a later position, start() can scan past a
-valid final entry and leave addr equal to bios_event_log_end. That
-address is the end marker, not another event header.
+3. The tpm_crb driver using CRB over FF-A can then
+   be probed successfully. (See crb_acpi_add() and
+   tpm_crb_ffa_init() for reference.)
 
-Leave the "marker >= limit" check in tpm2_bios_measurements_next()
-unchanged. There, marker is already the start of the next event, so
-"marker == limit" means EOF.
+Unfortunately, ffa_init(), tpm_crb_ffa_init(), and crb_acpi_driver_init() are
+all registered with device_initcall, which means crb_acpi_driver_init() may
+be invoked before ffa_init() and tpm_crb_ffa_init() are completed.
 
-Fixes: 4d23cc323cdb ("tpm: add securityfs support for TPM 2.0 firmware event log")
-Signed-off-by: Zongyao Chen <ZongYao.Chen@linux.alibaba.com>
----
- drivers/char/tpm/eventlog/tpm2.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+When this occurs, probing the TPM device is deferred.
+However, the deferred probe can happen after the IMA subsystem
+has already been initialized, since IMA initialization is performed
+during late_initcall, and deferred_probe_initcall() is performed
+at the same level.
 
-diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-index 37a05800980c..6b65d872e43a 100644
---- a/drivers/char/tpm/eventlog/tpm2.c
-+++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -54,31 +54,38 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- 	size = struct_size(event_header, event, event_header->event_size);
- 
- 	if (*pos == 0) {
--		if (addr + size < limit) {
--			if ((event_header->event_type == 0) &&
--			    (event_header->event_size == 0))
--				return NULL;
--			return SEQ_START_TOKEN;
--		}
-+		if (addr + size > limit)
-+			return NULL;
-+		if (event_header->event_type == 0 &&
-+		    event_header->event_size == 0)
-+			return NULL;
-+		return SEQ_START_TOKEN;
- 	}
- 
- 	if (*pos > 0) {
- 		addr += size;
-+		if (addr >= limit)
-+			return NULL;
- 		event = addr;
- 		size = calc_tpm2_event_size(event, event_header);
--		if ((addr + size >=  limit) || (size == 0))
-+		if ((addr + size > limit) || size == 0)
- 			return NULL;
- 	}
- 
- 	for (i = 0; i < (*pos - 1); i++) {
-+		if (addr >= limit)
-+			return NULL;
- 		event = addr;
- 		size = calc_tpm2_event_size(event, event_header);
- 
--		if ((addr + size >= limit) || (size == 0))
-+		if ((addr + size > limit) || size == 0)
- 			return NULL;
- 		addr += size;
- 	}
- 
-+	if (addr >= limit)
-+		return NULL;
-+
- 	return addr;
- }
- 
-@@ -115,7 +122,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 	event = v;
- 
- 	event_size = calc_tpm2_event_size(event, event_header);
--	if (((v + event_size) >= limit) || (event_size == 0))
-+	if (((v + event_size) > limit) || event_size == 0)
- 		return NULL;
- 
- 	return v;
+And the similar situation is reported on TPM devices attached on SPI
+bus[0].
+
+To resolve this, introduce IMA_INIT_LATE_SYNC option to initialise
+IMA at late_inicall_sync so that IMA is initialized with the TPM
+device probed defered.
+
+When this option is enabled, modules that access files in the
+initramfs through usermode helper calls such as request_module()
+during initcall must not be built-in. Otherwise, IMA may miss
+measuring those files since they're the file accesses before the
+initialisation of IMA [1].
+
+Link: https://lore.kernel.org/all/aYXEepLhUouN5f99@earth.li/ [0]
+Link: https://lore.kernel.org/all/2b3782398cc17ce9d355490a0c42ebce9120a9ae.camel@linux.ibm.com/ [1]
+
+Patch history
+=============
+from v5 to v6:
+  - add rb tag and missing SOB.
+  - https://lore.kernel.org/all/20260601142749.3379697-1-yeoreum.yun@arm.com/
+
+from v4 to v5:
+  - rebase on v7.1-rc6
+  - apply boot_aggreate name patch from @Jonathan and align it with
+    IMA_INIT_LATE_SYNC option.
+  - https://lore.kernel.org/all/20260525075404.3480282-1-yeoreum.yun@arm.com/
+
+from v3 to v4:
+  - rebase on v7.1-rc5
+  - introduce IMA_INIT_LATE_SYNC option to control IMA initailisation.
+  - https://lore.kernel.org/all/cover.1777036497.git.noodles@meta.com/
+
+from v2 to v3:
+  - Drop ff-a/pKVM diff (this seems to have a separate set of
+    discussion)
+  - Rework IMA delayed initialisation to avoid delaying when unnecessary
+  - Ensure IMA log clearly indicates when we've initialised late
+  - https://lore.kernel.org/all/20260422162449.1814615-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - add notifier to make ffa-driver pkvm initialised.
+  - modify to try initailisation again when IMA coudln't find proper TPM device.
+  - https://lore.kernel.org/all/20260417175759.3191279-1-yeoreum.yun@arm.com/#t
+
+
+Jonathan McDowell (1):
+  security: ima: rename boot_aggregate when ima is initialised at
+    late_sync
+
+Yeoreum Yun (3):
+  security: lsm: allow LSMs to register for late_initcall_sync init
+  security: ima: introduce IMA_INIT_LATE_SYNC option
+  tpm: tpm_crb_ffa: revert defered_probed when tpm_crb_ffa is built-in
+
+ drivers/char/tpm/tpm_crb_ffa.c            | 18 +++---------------
+ include/linux/lsm_hooks.h                 |  2 ++
+ security/integrity/ima/Kconfig            | 10 ++++++++++
+ security/integrity/ima/ima.h              |  1 +
+ security/integrity/ima/ima_init.c         | 15 +++++++++++----
+ security/integrity/ima/ima_main.c         |  4 ++++
+ security/integrity/ima/ima_template_lib.c |  3 ++-
+ security/lsm_init.c                       | 13 +++++++++++--
+ 8 files changed, 44 insertions(+), 22 deletions(-)
+
+
+base-commit: e43ffb69e0438cddd72aaa30898b4dc446f664f8
 -- 
-2.47.3
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
